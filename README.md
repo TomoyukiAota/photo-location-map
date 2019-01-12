@@ -4,7 +4,7 @@ This application displays the locations where your photos are taken on Google Ma
 
 Currently, this application is a work in progress.
 
-Development of this application is started by using [maximegris/angular-electron](https://github.com/maximegris/angular-electron). The contents of the respository as of commit 7618abcea496a26656be11f31542713b728919e9 (on Dec 31, 2018) are used with some modification and removal.
+Development of this application is started by using [maximegris/angular-electron](https://github.com/maximegris/angular-electron). [The contents of the respository as of commit 7618abcea496a26656be11f31542713b728919e9 (on Dec 31, 2018)](https://github.com/maximegris/angular-electron/tree/7618abcea496a26656be11f31542713b728919e9) are used with some modification and removal.
 
 <hr>
 
