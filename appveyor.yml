@@ -9,8 +9,10 @@ platform:
 
 # Install scripts. (runs after repo cloning)
 install:
+  - choco install googlechrome
   - dir C:\avvm\node        # Print available versions of Node.js in AppVeyor
   - ps: Install-Product node $env:nodejs_version $env:platform
+  - npm set progress=false
   - npm install
 
 # Post-install test scripts.
