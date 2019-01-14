@@ -8,6 +8,7 @@
 /release
 main.js
 src/**/*.js
+!karma.conf.js
 *.js.map
 
 # dependencies
