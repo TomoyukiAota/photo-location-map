@@ -19,7 +19,7 @@ test_script:
   - node --version
   - npm --version
   # run tests
-  - ng lint
+  - npm run lint
   - npm run test
   - npm run e2e
   - npm run build
