@@ -1,7 +1,7 @@
 environment:
   matrix:
     - nodejs_version: "10"      # Highest LTS version available in AppVeyor
-    - nodejs_version: "''"      # Latest version available in AppVeyor
+    - nodejs_version: "11"      # Latest version available in AppVeyor
 
 platform:
   - x86
