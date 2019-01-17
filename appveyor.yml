@@ -4,13 +4,12 @@ environment:
     - nodejs_version: "11"      # Latest version available in AppVeyor
 
 platform:
-  - x86
   - x64
 
 # Install scripts. (runs after repo cloning)
 install:
   - choco install googlechrome
-  - dir C:\avvm\node        # Print available versions of Node.js in AppVeyor
+  - dir C:\avvm\node            # Print available versions of Node.js in AppVeyor
   - ps: Install-Product node $env:nodejs_version $env:platform
   - npm set progress=false
   - npm install
