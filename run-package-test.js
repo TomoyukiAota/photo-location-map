@@ -22,7 +22,7 @@ function getTestInfo() {
                 executablePath: `${releaseDirectory}/angular-electron 0.0.1.ex`
             };
         default:
-            throw new Error("Unsupported platform for test-package.js");
+            throw new Error(`Unsupported platform for "${__filename}"`);
     }
 }
 
