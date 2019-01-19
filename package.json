@@ -35,6 +35,7 @@
     "lint": "ng lint",
     "test:unit": "npm run postinstall:web && ng test",
     "test:e2e": "npm run postinstall:web && ng e2e",
+    "test:package": "node test-package",
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md"
   },
   "dependencies": {},
