@@ -69,7 +69,6 @@ function launchExecutable(testInfo) {
 
     executableProcess.stderr.on('data', function(data){
         console.error(`stderr: ${data}`);
-        throw new Error(data)
     });
 
     executableProcess.on('error', (err) => {
