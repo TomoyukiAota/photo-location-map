@@ -1,6 +1,7 @@
 console.log(`Start of "${__filename}"`);
 
 const child_process = require("child_process");
+const fs = require('fs');
 
 const releaseDirectory = './release';
 
@@ -8,17 +9,20 @@ function getTestInfo() {
     switch(process.platform) {
         case "win32":
             return {
-                executableCreationCommand: "npm run electron:windows",
+                packageCreationCommand: "npm run electron:windows",
+                expectedPackageLocation: `${releaseDirectory}/angular-electron 0.0.1.exe`,
                 executableLaunchCommand: `"${releaseDirectory}/angular-electron 0.0.1.exe"`
             };
         case "darwin":
             return {
-                executableCreationCommand: "npm run electron:mac",
+                packageCreationCommand: "npm run electron:mac",
+                expectedPackageLocation: `${releaseDirectory}/angular-electron-0.0.1.dmg`,
                 executableLaunchCommand: `hdiutil attach ${releaseDirectory}/angular-electron-0.0.1.dmg && open -W "/Volumes/angular-electron 0.0.1/angular-electron.app"`
             };
         case "linux":
             return {
-                executableCreationCommand: "npm run electron:linux",
+                packageCreationCommand: "npm run electron:linux",
+                expectedPackageLocation: `${releaseDirectory}/angular-electron 0.0.1.ex`,
                 executableLaunchCommand: `${releaseDirectory}/angular-electron 0.0.1.ex`
             };
         default:
@@ -26,21 +30,31 @@ function getTestInfo() {
     }
 }
 
-function createExecutable(testInfo) {
-    console.log(`Start of "${testInfo.executableCreationCommand}"`);
-    const stdout = child_process.execSync(testInfo.executableCreationCommand);
+function createPackage(testInfo) {
+    console.log(`Start of "${testInfo.packageCreationCommand}"`);
+    const stdout = child_process.execSync(testInfo.packageCreationCommand);
     console.log(stdout.toString())
-    console.log(`End of "${testInfo.executableCreationCommand}"`);
+    console.log(`End of "${testInfo.packageCreationCommand}"`);
 }
 
 function printItemsInReleaseDirectory() {
     console.log("-----------------------------------------------");
     console.log(`Following items exist in "${releaseDirectory}":`)
-    const fs = require('fs');
     fs.readdirSync(releaseDirectory).forEach(file => {
       console.log(`  ${file}`);
     })
     console.log("-----------------------------------------------");
+}
+
+function testIfPackageExists(testInfo) {
+    console.log(`Expected Package Location: "${testInfo.expectedPackageLocation}"`);
+    if (fs.existsSync(testInfo.expectedPackageLocation)) {
+        console.log("Package exists in the expected location.");
+    } else {
+        const errorMessage = "Package does NOT exist in the expected location.";
+        console.error(errorMessage);
+        throw new Error(errorMessage);
+    }
 }
 
 function launchExecutable(testInfo) {
@@ -77,8 +91,9 @@ function launchExecutable(testInfo) {
 
 async function runPackageTest() {
     const testInfo = getTestInfo();
-    createExecutable(testInfo);
+    createPackage(testInfo);
     printItemsInReleaseDirectory();
+    testIfPackageExists(testInfo);
     await launchExecutable(testInfo);
 }
 
