@@ -9,7 +9,7 @@ function getTestInfo() {
         case "win32":
             return {
                 executableCreationCommand: "npm run electron:windows",
-                executableLaunchCommand: `${releaseDirectory}/angular-electron 0.0.1.exe`
+                executableLaunchCommand: `"${releaseDirectory}/angular-electron 0.0.1.exe"`
             };
         case "darwin":
             return {
@@ -55,6 +55,7 @@ function launchExecutable(testInfo) {
 
     executableProcess.stderr.on('data', function(data){
         console.error(`stderr: ${data}`);
+        throw new Error(data)
     });
 
     executableProcess.on('error', (err) => {
