@@ -9,17 +9,17 @@ function getTestInfo() {
         case "win32":
             return {
                 executableCreationCommand: "npm run electron:windows",
-                executablePath: `${releaseDirectory}/angular-electron 0.0.1.exe`
+                executableLaunchCommand: `${releaseDirectory}/angular-electron 0.0.1.exe`
             };
         case "darwin":
             return {
                 executableCreationCommand: "npm run electron:mac",
-                executablePath: `${releaseDirectory}/angular-electron 0.0.1.ex`
+                executableLaunchCommand: `hdiutil attach ${releaseDirectory}/angular-electron-0.0.1.dmg && open -W "/Volumes/angular-electron 0.0.1/angular-electron.app"`
             };
         case "linux":
             return {
                 executableCreationCommand: "npm run electron:linux",
-                executablePath: `${releaseDirectory}/angular-electron 0.0.1.ex`
+                executableLaunchCommand: `${releaseDirectory}/angular-electron 0.0.1.ex`
             };
         default:
             throw new Error(`Unsupported platform for "${__filename}"`);
@@ -45,8 +45,9 @@ function printItemsInReleaseDirectory() {
 
 function launchExecutable(testInfo) {
     const executionTime = 30000;
-    console.log(`Launch "${testInfo.executablePath}" and let it run for ${executionTime} ms.`);
-    const executableProcess = child_process.spawn(testInfo.executablePath);
+    console.log(`Launch executable and let it run for ${executionTime} ms.`);
+    console.log(`Executable Launch Command: "${testInfo.executableLaunchCommand}"`)
+    const executableProcess = child_process.spawn(testInfo.executableLaunchCommand, [], { shell: true });
 
     executableProcess.stdout.on('data', function(data){
         console.log(`stdout: ${data}`);
@@ -57,13 +58,13 @@ function launchExecutable(testInfo) {
     });
 
     executableProcess.on('error', (err) => {
-        console.error(`Failed to start ${testInfo.executablePath}`);
+        console.error(`Failed to start ${testInfo.executableLaunchCommand}`);
         console.error(err);
         throw err;
     });
 
     executableProcess.on('close', (code) => {
-        console.log(`"${testInfo.executablePath}" is manually killed.`);
+        console.log(`"${testInfo.executableLaunchCommand}" is terminated.`);
     });
 
     return new Promise(resolve => setTimeout(resolve, executionTime))
