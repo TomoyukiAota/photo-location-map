@@ -41,7 +41,7 @@ function printItemsInReleaseDirectory() {
     console.log("-----------------------------------------------");
     console.log(`Following items exist in "${releaseDirectory}":`)
     fs.readdirSync(releaseDirectory).forEach(file => {
-      console.log(`  ${file}`);
+      console.log(`  ${releaseDirectory}/${file}`);
     })
     console.log("-----------------------------------------------");
 }
@@ -100,7 +100,9 @@ async function runPackageTest() {
 runPackageTest()
 .then(() => {
     console.log(`End of "${__filename}"`);
+    process.exitCode = 0;
 }).catch((reason) => {
     console.error(reason)
     console.error(`End of "${__filename}" with some errors.`);
+    process.exitCode = 1;
 });
