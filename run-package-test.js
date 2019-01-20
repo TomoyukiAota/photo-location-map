@@ -9,7 +9,7 @@ function getTestInfo() {
         case "win32":
             return {
                 executableCreationCommand: "npm run electron:windows",
-                executablePath: `${releaseDirectory}/angular-electron 0.0.1.ex`
+                executablePath: `${releaseDirectory}/angular-electron 0.0.1.exe`
             };
         case "darwin":
             return {
@@ -66,19 +66,24 @@ function launchExecutable(testInfo) {
         console.log(`"${testInfo.executablePath}" is manually killed.`);
     });
 
-    setTimeout(() => {
+    return new Promise(resolve => setTimeout(resolve, executionTime))
+    .then(() => {
         const kill  = require('tree-kill');
         kill(executableProcess.pid);
-    }, executionTime);
+    });
 }
 
-function runPackageTest() {
+async function runPackageTest() {
     const testInfo = getTestInfo();
     createExecutable(testInfo);
     printItemsInReleaseDirectory();
-    launchExecutable(testInfo);
+    await launchExecutable(testInfo);
 }
 
-runPackageTest();
-
-console.log(`End of "${__filename}"`);
+runPackageTest()
+.then(() => {
+    console.log(`End of "${__filename}"`);
+}).catch((reason) => {
+    console.error(reason)
+    console.error(`End of "${__filename}" with some errors.`);
+});
