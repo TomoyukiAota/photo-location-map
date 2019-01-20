@@ -22,8 +22,8 @@ function getTestInfo() {
         case "linux":
             return {
                 packageCreationCommand: "npm run electron:linux",
-                expectedPackageLocation: `${releaseDirectory}/angular-electron 0.0.1.ex`,
-                executableLaunchCommand: `${releaseDirectory}/angular-electron 0.0.1.ex`
+                expectedPackageLocation: `${releaseDirectory}/photo-location-map-0.0.1-x86_64.AppImage`,
+                executableLaunchCommand: `${releaseDirectory}/photo-location-map-0.0.1-x86_64.AppImage`
             };
         default:
             throw new Error(`Unsupported platform for "${__filename}"`);
