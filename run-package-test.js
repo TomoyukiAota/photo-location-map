@@ -1,7 +1,24 @@
-console.log(`Start of "${__filename}"`);
 
 const child_process = require("child_process");
 const fs = require('fs');
+const moment = require('moment-timezone');
+
+class Logger
+{
+    static dateTime() {
+        return moment.utc().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
+    }
+
+    static log(message) {
+        console.log(`[${this.dateTime()}] [log] ${message}`);
+    }
+
+    static error(message) {
+        console.error(`[${this.dateTime()}] [error] ${message}`);
+    }
+}
+
+Logger.log(`Start of "${__filename}"`);
 
 const releaseDirectory = './release';
 
@@ -31,54 +48,54 @@ function getTestInfo() {
 }
 
 function createPackage(testInfo) {
-    console.log(`Start of "${testInfo.packageCreationCommand}"`);
+    Logger.log(`Start of "${testInfo.packageCreationCommand}"`);
     const stdout = child_process.execSync(testInfo.packageCreationCommand);
-    console.log(stdout.toString())
-    console.log(`End of "${testInfo.packageCreationCommand}"`);
+    Logger.log(stdout.toString())
+    Logger.log(`End of "${testInfo.packageCreationCommand}"`);
 }
 
 function printItemsInReleaseDirectory() {
-    console.log("-----------------------------------------------");
-    console.log(`Following items exist in "${releaseDirectory}":`)
+    Logger.log("-----------------------------------------------");
+    Logger.log(`Following items exist in "${releaseDirectory}":`)
     fs.readdirSync(releaseDirectory).forEach(file => {
-      console.log(`  ${releaseDirectory}/${file}`);
+      Logger.log(`  ${releaseDirectory}/${file}`);
     })
-    console.log("-----------------------------------------------");
+    Logger.log("-----------------------------------------------");
 }
 
 function testIfPackageExists(testInfo) {
-    console.log(`Expected Package Location: "${testInfo.expectedPackageLocation}"`);
+    Logger.log(`Expected Package Location: "${testInfo.expectedPackageLocation}"`);
     if (fs.existsSync(testInfo.expectedPackageLocation)) {
-        console.log("Package exists in the expected location.");
+        Logger.log("Package exists in the expected location.");
     } else {
         const errorMessage = "Package does NOT exist in the expected location.";
-        console.error(errorMessage);
+        Logger.error(errorMessage);
         throw new Error(errorMessage);
     }
 }
 
 function launchExecutable(testInfo) {
     const executionTime = 30000;
-    console.log(`Launch executable and let it run for ${executionTime} ms.`);
-    console.log(`Executable Launch Command: "${testInfo.executableLaunchCommand}"`)
+    Logger.log(`Launch executable and let it run for ${executionTime} ms.`);
+    Logger.log(`Executable Launch Command: "${testInfo.executableLaunchCommand}"`)
     const executableProcess = child_process.spawn(testInfo.executableLaunchCommand, [], { shell: true });
 
     executableProcess.stdout.on('data', function(data){
-        console.log(`stdout: ${data}`);
+        Logger.log(`stdout: ${data}`);
     });
 
     executableProcess.stderr.on('data', function(data){
-        console.error(`stderr: ${data}`);
+        Logger.error(`stderr: ${data}`);
     });
 
     executableProcess.on('error', (err) => {
-        console.error(`Failed to start ${testInfo.executableLaunchCommand}`);
-        console.error(err);
+        Logger.error(`Failed to start ${testInfo.executableLaunchCommand}`);
+        Logger.error(err);
         throw err;
     });
 
     executableProcess.on('close', (code) => {
-        console.log(`"${testInfo.executableLaunchCommand}" is terminated.`);
+        Logger.log(`"${testInfo.executableLaunchCommand}" is terminated.`);
     });
 
     return new Promise(resolve => setTimeout(resolve, executionTime))
@@ -98,10 +115,10 @@ async function runPackageTest() {
 
 runPackageTest()
 .then(() => {
-    console.log(`End of "${__filename}"`);
+    Logger.log(`End of "${__filename}"`);
     process.exitCode = 0;
 }).catch((reason) => {
-    console.error(reason)
-    console.error(`End of "${__filename}" with some errors.`);
+    Logger.error(reason)
+    Logger.error(`End of "${__filename}" with some errors.`);
     process.exitCode = 1;
 });

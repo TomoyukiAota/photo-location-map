@@ -38,7 +38,9 @@
     "test:package": "node run-package-test",
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md"
   },
-  "dependencies": {},
+  "dependencies": {
+    "moment-timezone": "0.5.23"
+  },
   "devDependencies": {
     "@angular-devkit/build-angular": "0.11.4",
     "@angular/cli": "7.1.4",
