@@ -9,16 +9,20 @@ class Logger
         return moment.utc().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
     }
 
-    static log(message) {
-        console.log(`[${this.dateTime()}] [log] ${message}`);
-    }
-
     static error(message) {
         console.error(`[${this.dateTime()}] [error] ${message}`);
     }
+
+    static warn(message) {
+        console.warn(`[${this.dateTime()}] [warn] ${message}`);
+    }
+
+    static info(message) {
+        console.info(`[${this.dateTime()}] [info] ${message}`);
+    }
 }
 
-Logger.log(`Start of "${__filename}"`);
+Logger.info(`Start of "${__filename}"`);
 
 const releaseDirectory = './release';
 
@@ -48,25 +52,25 @@ function getTestInfo() {
 }
 
 function createPackage(testInfo) {
-    Logger.log(`Start of "${testInfo.packageCreationCommand}"`);
+    Logger.info(`Start of "${testInfo.packageCreationCommand}"`);
     const stdout = child_process.execSync(testInfo.packageCreationCommand);
-    Logger.log(stdout.toString())
-    Logger.log(`End of "${testInfo.packageCreationCommand}"`);
+    Logger.info(stdout.toString())
+    Logger.info(`End of "${testInfo.packageCreationCommand}"`);
 }
 
 function printItemsInReleaseDirectory() {
-    Logger.log("-----------------------------------------------");
-    Logger.log(`Following items exist in "${releaseDirectory}":`)
+    Logger.info("-----------------------------------------------");
+    Logger.info(`Following items exist in "${releaseDirectory}":`)
     fs.readdirSync(releaseDirectory).forEach(file => {
-      Logger.log(`  ${releaseDirectory}/${file}`);
+      Logger.info(`  ${releaseDirectory}/${file}`);
     })
-    Logger.log("-----------------------------------------------");
+    Logger.info("-----------------------------------------------");
 }
 
 function testIfPackageExists(testInfo) {
-    Logger.log(`Expected Package Location: "${testInfo.expectedPackageLocation}"`);
+    Logger.info(`Expected Package Location: "${testInfo.expectedPackageLocation}"`);
     if (fs.existsSync(testInfo.expectedPackageLocation)) {
-        Logger.log("Package exists in the expected location.");
+        Logger.info("Package exists in the expected location.");
     } else {
         const errorMessage = "Package does NOT exist in the expected location.";
         Logger.error(errorMessage);
@@ -76,16 +80,16 @@ function testIfPackageExists(testInfo) {
 
 function launchExecutable(testInfo) {
     const executionTime = 30000;
-    Logger.log(`Launch executable and let it run for ${executionTime} ms.`);
-    Logger.log(`Executable Launch Command: "${testInfo.executableLaunchCommand}"`)
+    Logger.info(`Launch executable and let it run for ${executionTime} ms.`);
+    Logger.info(`Executable Launch Command: "${testInfo.executableLaunchCommand}"`)
     const executableProcess = child_process.spawn(testInfo.executableLaunchCommand, [], { shell: true });
 
     executableProcess.stdout.on('data', function(data){
-        Logger.log(`stdout: ${data}`);
+        Logger.info(`stdout: ${data}`);
     });
 
     executableProcess.stderr.on('data', function(data){
-        Logger.error(`stderr: ${data}`);
+        Logger.warn(`stderr: ${data}`);
     });
 
     executableProcess.on('error', (err) => {
@@ -95,7 +99,7 @@ function launchExecutable(testInfo) {
     });
 
     executableProcess.on('close', (code) => {
-        Logger.log(`"${testInfo.executableLaunchCommand}" is terminated.`);
+        Logger.info(`"${testInfo.executableLaunchCommand}" is terminated.`);
     });
 
     return new Promise(resolve => setTimeout(resolve, executionTime))
@@ -115,7 +119,7 @@ async function runPackageTest() {
 
 runPackageTest()
 .then(() => {
-    Logger.log(`End of "${__filename}"`);
+    Logger.info(`End of "${__filename}"`);
     process.exitCode = 0;
 }).catch((reason) => {
     Logger.error(reason)
