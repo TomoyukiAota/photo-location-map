@@ -27,19 +27,19 @@ function getTestInfo() {
         case "win32":
             return {
                 packageCreationCommand: "npm run electron:windows",
-                expectedPackageLocation: `${releaseDirectory}/angular-electron 0.0.1.exe`,
+                expectedPackageLocation: `${releaseDirectory}/angular-electron 0.0.1.exe-foobar`,
                 executableLaunchCommand: `"${releaseDirectory}/angular-electron 0.0.1.exe"`
             };
         case "darwin":
             return {
                 packageCreationCommand: "npm run electron:mac",
-                expectedPackageLocation: `${releaseDirectory}/angular-electron-0.0.1.dmg`,
+                expectedPackageLocation: `${releaseDirectory}/angular-electron-0.0.1.dmg-foobar`,
                 executableLaunchCommand: `hdiutil attach ${releaseDirectory}/angular-electron-0.0.1.dmg && open -W "/Volumes/angular-electron 0.0.1/angular-electron.app"`
             };
         case "linux":
             return {
                 packageCreationCommand: "npm run electron:linux",
-                expectedPackageLocation: `${releaseDirectory}/photo-location-map-0.0.1-x86_64.AppImage`,
+                expectedPackageLocation: `${releaseDirectory}/photo-location-map-0.0.1-x86_64.AppImage-foobar`,
                 executableLaunchCommand: `${releaseDirectory}/photo-location-map-0.0.1-x86_64.AppImage`
             };
         default:
