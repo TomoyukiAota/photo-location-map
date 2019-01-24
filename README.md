@@ -10,6 +10,18 @@ Development of this application is started by using [maximegris/angular-electron
 
 # Development Information
 
+## CI Status
+
+| OS             | Status                             |
+|:--------------:|:----------------------------------:|
+| Windows        | [![appveyor-image]][appveyor-link] |
+| macOS & Ubuntu | [![travisci-image]][travisci-link] |
+
+[appveyor-image]: https://ci.appveyor.com/api/projects/status/5v9p3ccw0jj0pgwn/branch/master?svg=true
+[appveyor-link]: https://ci.appveyor.com/project/TomoyukiAota/photo-location-map/branch/master
+[travisci-image]: https://travis-ci.org/TomoyukiAota/photo-location-map.svg?branch=master
+[travisci-link]: https://travis-ci.org/TomoyukiAota/photo-location-map
+
 ## Getting Started
 
 Clone this repository locally :
