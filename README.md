@@ -22,6 +22,14 @@ Development of this application is started by using [maximegris/angular-electron
 [travisci-image]: https://travis-ci.org/TomoyukiAota/photo-location-map.svg?branch=master
 [travisci-link]: https://travis-ci.org/TomoyukiAota/photo-location-map
 
+## Prerequisite
+
+ - More than 2GB of RAM
+   - Application packaging frequently fails on a PC with 1GB of RAM. Add more RAM depending on the available memory for application packaging on your PC.
+ - Node.js (64-bit, version 10+)
+ - Globally installed Angular CLI (version 7+)
+
+
 ## Getting Started
 
 Clone this repository locally :
@@ -48,7 +56,9 @@ npm install -g @angular/cli
 
 ## To build for development
 
-- **in a terminal window** -> npm start
+```
+npm start
+```
 
 The application code is managed by `main.ts`. The application runs with a simple Angular App (http://localhost:4200) and an Electron window.
 The Angular component contains an example of Electron and NodeJS native lib import.
