@@ -36,9 +36,11 @@
     "test:unit": "npm run postinstall:web && ng test",
     "test:e2e": "npm run postinstall:web && ng e2e",
     "test:package": "node run-package-test",
+    "test:all": "npm-run-all lint test:unit test:e2e test:package",
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md"
   },
   "dependencies": {
+    "electron-window-state": "5.0.3",
     "moment-timezone": "0.5.23"
   },
   "devDependencies": {
