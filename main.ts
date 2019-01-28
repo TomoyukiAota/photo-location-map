@@ -1,22 +1,26 @@
 import { app, BrowserWindow, screen } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+import * as windowStateKeeper from 'electron-window-state';
+
 
 let browserWindow: BrowserWindow;
 const args = process.argv.slice(1);
 const isLiveReloadMode = args.some(val => val === '--serve');
 
 function createWindow() {
+  // Load the previous state with fallback to defaults
+  const mainWindowState = windowStateKeeper({
+    defaultWidth: 1000,
+    defaultHeight: 800
+  });
 
-  const electronScreen = screen;
-  const size = electronScreen.getPrimaryDisplay().workAreaSize;
-
-  // Create the browser window.
+  // Create the browser window using the state information.
   browserWindow = new BrowserWindow({
-    x: 0,
-    y: 0,
-    width: size.width,
-    height: size.height
+    x: mainWindowState.x,
+    y: mainWindowState.y,
+    width: mainWindowState.width,
+    height: mainWindowState.height
   });
 
   if (isLiveReloadMode) {
@@ -42,10 +46,11 @@ function createWindow() {
     browserWindow = null;
   });
 
+  mainWindowState.manage(browserWindow);
 }
 
-try {
 
+try {
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
@@ -67,7 +72,6 @@ try {
       createWindow();
     }
   });
-
 } catch (e) {
   // Catch Error
   // throw e;

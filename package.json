@@ -39,6 +39,7 @@
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md"
   },
   "dependencies": {
+    "electron-window-state": "5.0.3",
     "moment-timezone": "0.5.23"
   },
   "devDependencies": {
