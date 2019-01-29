@@ -26,4 +26,9 @@ describe('SidebarComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should render "Select Folder" button', async(() => {
+    const compiled = fixture.debugElement.nativeElement;
+    expect(compiled.querySelector('#select-folder-button>button').textContent).toContain('SIDEBAR.SELECT_FOLDER');
+  }));
 });
