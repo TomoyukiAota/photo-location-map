@@ -1,6 +1,7 @@
+import { Component } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateModule } from '@ngx-translate/core';
 import { AngularSplitModule } from 'angular-split';
+
 import { HomeComponent } from './home.component';
 
 describe('HomeComponent', () => {
@@ -8,10 +9,12 @@ describe('HomeComponent', () => {
   let fixture: ComponentFixture<HomeComponent>;
 
   beforeEach(async(() => {
+    @Component({ selector: 'app-sidebar', template: '' })
+    class DummySidebarComponent {}
+
     TestBed.configureTestingModule({
-      declarations: [ HomeComponent ],
+      declarations: [ HomeComponent, DummySidebarComponent ],
       imports: [
-        TranslateModule.forRoot(),
         AngularSplitModule.forRoot()
       ]
     })
