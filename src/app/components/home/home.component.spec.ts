@@ -1,3 +1,4 @@
+import { Component } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { AngularSplitModule } from 'angular-split';
 
@@ -8,8 +9,11 @@ describe('HomeComponent', () => {
   let fixture: ComponentFixture<HomeComponent>;
 
   beforeEach(async(() => {
+    @Component({ selector: 'app-sidebar', template: '' })
+    class DummySidebarComponent {}
+
     TestBed.configureTestingModule({
-      declarations: [ HomeComponent ],
+      declarations: [ HomeComponent, DummySidebarComponent ],
       imports: [
         AngularSplitModule.forRoot()
       ]
