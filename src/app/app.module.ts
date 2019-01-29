@@ -1,10 +1,11 @@
 import 'reflect-metadata';
 import '../polyfills';
 
-import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { MatButtonModule } from '@angular/material';
+import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
@@ -42,7 +43,8 @@ export function HttpLoaderFactory(http: HttpClient) {
       }
     }),
     AngularSplitModule.forRoot(),
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatButtonModule
   ],
   providers: [ElectronService],
   bootstrap: [AppComponent]
