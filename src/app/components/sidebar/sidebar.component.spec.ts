@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { ElectronService } from '../../providers/electron.service';
+
 import { SidebarComponent } from './sidebar.component';
 
 describe('SidebarComponent', () => {
@@ -9,10 +11,11 @@ describe('SidebarComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SidebarComponent ],
+      declarations: [SidebarComponent],
       imports: [
         TranslateModule.forRoot()
-      ]
+      ],
+      providers: [ElectronService]
     })
     .compileComponents();
   }));
