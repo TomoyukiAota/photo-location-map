@@ -1,8 +1,8 @@
-import { app, BrowserWindow, screen } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import * as windowStateKeeper from 'electron-window-state';
-
+import './menu';
 
 let browserWindow: BrowserWindow;
 const args = process.argv.slice(1);

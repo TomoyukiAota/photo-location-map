@@ -7,6 +7,7 @@
 /app-builds
 /release
 main.js
+menu.js
 src/**/*.js
 !src/karma.conf.js
 *.js.map
