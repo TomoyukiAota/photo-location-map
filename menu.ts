@@ -38,7 +38,7 @@ const templateMenu: MenuItemConstructorOptions[] = [
       {
         label: 'Reload',
         accelerator: 'CmdOrCtrl+R',
-        click(item, focusedWindow){
+        click(item, focusedWindow) {
           if (focusedWindow) focusedWindow.reload();
         },
       },
