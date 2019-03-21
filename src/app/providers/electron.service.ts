@@ -28,7 +28,8 @@ export class ElectronService {
   }
 
   isElectron = () => {
-    return window && window.process && window.process.type;
+    return (typeof window !== 'undefined')
+        && (typeof window.process !== 'undefined')
+        && (typeof window.process.type !== 'undefined');
   }
-
 }
