@@ -43,43 +43,28 @@ const templateMenu: MenuItemConstructorOptions[] = [
         },
       },
       {
-        type: 'separator',
+        type: 'separator'
       },
       {
-        role: 'resetzoom',
+        role: 'resetzoom'
       },
       {
-        role: 'zoomin',
+        role: 'zoomin'
       },
       {
-        role: 'zoomout',
+        role: 'zoomout'
       },
       {
-        type: 'separator',
+        type: 'separator'
       },
       {
-        role: 'togglefullscreen',
-      }
-    ]
-  },
-  {
-    label: 'Option',
-    submenu: [
+        role: 'togglefullscreen'
+      },
       {
-        label: 'Show Log',
-        click(item, focusedWindow) {
-          const browserWindow = new BrowserWindow({
-            width: 400,
-            height: 400
-          });
-          // TODO: Prepare html file and call "browerWindow.loadURL(urlToHtmlFile);"
-          if (process.platform !== 'darwin') {
-            // On Window and Linux, there is no menu bar for the log window.
-            // On macOS, both main and log windows share the same menu bar. (And browserWindow.setMenu function is not available.)
-            browserWindow.setMenu(null);
-          }
-          browserWindow.show();
-        }
+        type: 'separator'
+      },
+      {
+        role: 'toggledevtools'
       }
     ]
   }
