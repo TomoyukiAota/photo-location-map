@@ -1,4 +1,4 @@
-import { BrowserWindow, dialog, Menu, MenuItemConstructorOptions } from 'electron';
+import { dialog, Menu, MenuItemConstructorOptions } from 'electron';
 
 const templateMenu: MenuItemConstructorOptions[] = [
   {
