@@ -37,11 +37,12 @@
     "test:unit:watch": "npm run postinstall:web && ng test --code-coverage --watch",
     "test:e2e": "npm run postinstall:web && ng e2e",
     "test:package": "node run-package-test",
-    "test:all": "npm-run-all lint test:unit test:e2e test:package",
+    "test:all": "npm-run-all lint test:package",
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md"
   },
   "dependencies": {
     "electron-window-state": "5.0.3",
+    "fs-extra": "7.0.1",
     "moment-timezone": "0.5.23"
   },
   "devDependencies": {
