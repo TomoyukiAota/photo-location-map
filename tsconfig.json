@@ -20,7 +20,9 @@
   },
   "include": [
     "main.ts",
-    "src/**/*"
+    "src/**/*",
+    "src-main/**/*",
+    "src-shared/**/*"
   ],
   "exclude": [
     "node_modules"
