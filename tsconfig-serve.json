@@ -17,7 +17,10 @@
     ]
   },
   "include": [
-    "main.ts"
+    "main.ts",
+    "src/**/*",
+    "src-main/**/*",
+    "src-shared/**/*"
   ],
   "exclude": [
     "node_modules",
