@@ -15,22 +15,52 @@ class LogFileConfigState {
     }
 }
 
+/**
+ * Handler of LogFileConfigState to ensure that
+ *  - LogFileConfigState is initialized only once.
+ *  - LogFileConfigState can be gotten after initialization.
+ */
+class LogFileConfigStateHandler {
+    private logFileConfigState: LogFileConfigState | 'uninitialized' = 'uninitialized';
+
+    public isInitialized(): boolean {
+        return this.logFileConfigState !== 'uninitialized';
+    }
+
+    public initialize(logFileConfigState: LogFileConfigState) {
+        if (this.logFileConfigState === 'uninitialized') {
+            this.logFileConfigState = logFileConfigState;
+        } else {
+            throw new Error('LogFileConfigStateHandler is already initalized and cannot be initialized more than once.');
+        }
+    }
+
+    public get(): LogFileConfigState {
+        if (this.logFileConfigState === 'uninitialized') {
+            throw new Error('LogFileConfigStateHandler is NOT initialized yet and cannot be gotten before initialization.');
+        } else {
+           return this.logFileConfigState;
+        }
+    }
+}
+
 export class LogFileConfig {
-    public static config: LogFileConfigState;
-    public static configCacheForRenderer: LogFileConfigState | 'unavailable' = 'unavailable';
+    public static config = new LogFileConfigStateHandler();
+    public static configCacheForRenderer = new LogFileConfigStateHandler();
 
     public static setup(dirName: string, fileName: string) {
         if (!ProcessUtil.isElectron())
             throw new Error('Use of this method from non-Electron process is not expected.');
 
         if (ProcessUtil.isElectronMain()) {
-            this.config = new LogFileConfigState(dirName, fileName);
+            this.config.initialize(new LogFileConfigState(dirName, fileName));
         }
     }
 
     private static ensureCacheForRenderer() {
-        if (this.configCacheForRenderer === 'unavailable') {
-            this.configCacheForRenderer = ipcRenderer.sendSync(ipcChannelName);
+        if (!this.configCacheForRenderer.isInitialized()) {
+            const configFromMain = ipcRenderer.sendSync(ipcChannelName);
+            this.configCacheForRenderer.initialize(configFromMain);
         }
     }
 
@@ -39,10 +69,10 @@ export class LogFileConfig {
             throw new Error('Use of this method from non-Electron process is not expected.');
 
         if (ProcessUtil.isElectronMain()) {
-            return this.config.dirName;
+            return this.config.get().dirName;
         } else {
             this.ensureCacheForRenderer();
-            return (this.configCacheForRenderer as LogFileConfigState).dirName;
+            return this.configCacheForRenderer.get().dirName;
         }
     }
 
@@ -51,10 +81,10 @@ export class LogFileConfig {
             throw new Error('Use of this method from non-Electron process is not expected.');
 
         if (ProcessUtil.isElectronMain()) {
-            return this.config.fileName;
+            return this.config.get().fileName;
         } else {
             this.ensureCacheForRenderer();
-            return (this.configCacheForRenderer as LogFileConfigState).fileName;
+            return this.configCacheForRenderer.get().dirName;
         }
     }
 
@@ -63,16 +93,16 @@ export class LogFileConfig {
             throw new Error('Use of this method from non-Electron process is not expected.');
 
         if (ProcessUtil.isElectronMain()) {
-            return this.config.filePath;
+            return this.config.get().filePath;
         } else {
             this.ensureCacheForRenderer();
-            return (this.configCacheForRenderer as LogFileConfigState).filePath;
+            return this.configCacheForRenderer.get().filePath;
         }
     }
 }
 
 if (ProcessUtil.isElectronMain()) {
     ipcMain.on(ipcChannelName, (event, arg) => {
-        event.returnValue = LogFileConfig.config;
+        event.returnValue = LogFileConfig.config.get();
     });
 }
