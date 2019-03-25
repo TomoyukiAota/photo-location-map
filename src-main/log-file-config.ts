@@ -72,33 +72,27 @@ export class LogFileConfig {
         if (!ProcessUtil.isElectron())
             throw new Error('Use of this method from non-Electron process is not expected.');
 
-        if (ProcessUtil.isElectronMain()) {
-            return this.config.get().dirName;
-        } else {
-            return this.getConfigCacheForRenderer().dirName;
-        }
+        return ProcessUtil.isElectronMain()
+            ? this.config.get().dirName
+            : this.getConfigCacheForRenderer().dirName;
     }
 
     public static get fileName(): string {
         if (!ProcessUtil.isElectron())
             throw new Error('Use of this method from non-Electron process is not expected.');
 
-        if (ProcessUtil.isElectronMain()) {
-            return this.config.get().fileName;
-        } else {
-            return this.getConfigCacheForRenderer().fileName;
-        }
+        return ProcessUtil.isElectronMain()
+            ? this.config.get().fileName
+            : this.getConfigCacheForRenderer().fileName;
     }
 
     public static get filePath(): string {
         if (!ProcessUtil.isElectron())
             throw new Error('Use of this method from non-Electron process is not expected.');
 
-        if (ProcessUtil.isElectronMain()) {
-            return this.config.get().filePath;
-        } else {
-            return this.getConfigCacheForRenderer().filePath;
-        }
+        return ProcessUtil.isElectronMain()
+            ? this.config.get().filePath
+            : this.getConfigCacheForRenderer().filePath;
     }
 }
 
