@@ -49,19 +49,23 @@ export class LogFileConfig {
     public static configCacheForRenderer = new LogFileConfigStateHandler();
 
     public static setup(dirName: string, fileName: string) {
-        if (!ProcessUtil.isElectron())
-            throw new Error('Use of this method from non-Electron process is not expected.');
-
         if (ProcessUtil.isElectronMain()) {
             this.config.initialize(new LogFileConfigState(dirName, fileName));
+        } else {
+            throw new Error('LogFileConfig can be set up from Electron main process only.');
         }
     }
 
     private static ensureCacheForRenderer() {
         if (!this.configCacheForRenderer.isInitialized()) {
-            const configFromMain = ipcRenderer.sendSync(ipcChannelName);
+            const configFromMain: LogFileConfigState = ipcRenderer.sendSync(ipcChannelName);
             this.configCacheForRenderer.initialize(configFromMain);
         }
+    }
+
+    private static getConfigCacheForRenderer(): LogFileConfigState {
+        this.ensureCacheForRenderer();
+        return this.configCacheForRenderer.get();
     }
 
     public static get dirName(): string {
@@ -71,8 +75,7 @@ export class LogFileConfig {
         if (ProcessUtil.isElectronMain()) {
             return this.config.get().dirName;
         } else {
-            this.ensureCacheForRenderer();
-            return this.configCacheForRenderer.get().dirName;
+            return this.getConfigCacheForRenderer().dirName;
         }
     }
 
@@ -83,8 +86,7 @@ export class LogFileConfig {
         if (ProcessUtil.isElectronMain()) {
             return this.config.get().fileName;
         } else {
-            this.ensureCacheForRenderer();
-            return this.configCacheForRenderer.get().dirName;
+            return this.getConfigCacheForRenderer().fileName;
         }
     }
 
@@ -95,8 +97,7 @@ export class LogFileConfig {
         if (ProcessUtil.isElectronMain()) {
             return this.config.get().filePath;
         } else {
-            this.ensureCacheForRenderer();
-            return this.configCacheForRenderer.get().filePath;
+            return this.getConfigCacheForRenderer().filePath;
         }
     }
 }
