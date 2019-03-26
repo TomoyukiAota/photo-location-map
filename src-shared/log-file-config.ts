@@ -1,5 +1,5 @@
 import { ipcRenderer, ipcMain } from 'electron';
-import { ProcessIdentifier } from '../src-shared/process-identifier';
+import { ProcessIdentifier } from './process-identifier';
 
 const ipcChannelName = 'get-log-file-config-from-main';
 
