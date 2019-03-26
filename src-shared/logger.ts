@@ -4,14 +4,14 @@ import * as os from 'os';
 import * as fs from 'fs-extra';
 import * as moment from 'moment-timezone';
 import { LogFileConfig } from '../src-main/log-file-config';
-import { ProcessUtil } from './process-util';
+import { ProcessIdentifier } from './process-identifier';
 
 class LoggerImpl {
     private static fileSystem: typeof fs | 'unavailable';
 
     public static initialize() {
-        if (ProcessUtil.isElectron()) {
-            if (ProcessUtil.isElectronMain()) {
+        if (ProcessIdentifier.isElectron()) {
+            if (ProcessIdentifier.isElectronMain()) {
                 LogFileConfig.setup('./log', `${this.dateTimeInBasicFormat()}_photo-location-map_log.txt`);
                 fs.ensureFileSync(LogFileConfig.filePath);
                 this.fileSystem = fs;
@@ -31,7 +31,7 @@ class LoggerImpl {
 
     public static generateLogText(message: string, level: string): string {
         const dateTime = this.dateTimeInExtendedFormat();
-        const processType = ProcessUtil.processType();
+        const processType = ProcessIdentifier.processType();
         return `[${dateTime}] [${processType}] [${level}] ${message}`;
     }
 
