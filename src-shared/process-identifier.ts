@@ -1,4 +1,4 @@
-export class ProcessUtil {
+export class ProcessIdentifier {
     public static isElectron(): boolean {
         //             |  process  | process.type
         // ------------+-----------+----------------

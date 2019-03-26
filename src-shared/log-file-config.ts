@@ -1,5 +1,5 @@
 import { ipcRenderer, ipcMain } from 'electron';
-import { ProcessUtil } from '../src-shared/process-util';
+import { ProcessIdentifier } from './process-identifier';
 
 const ipcChannelName = 'get-log-file-config-from-main';
 
@@ -49,7 +49,7 @@ export class LogFileConfig {
     public static configCacheForRenderer = new LogFileConfigStateHandler();
 
     public static setup(dirName: string, fileName: string) {
-        if (ProcessUtil.isElectronMain()) {
+        if (ProcessIdentifier.isElectronMain()) {
             this.config.initialize(new LogFileConfigState(dirName, fileName));
         } else {
             throw new Error('LogFileConfig can be set up from Electron main process only.');
@@ -69,34 +69,34 @@ export class LogFileConfig {
     }
 
     public static get dirName(): string {
-        if (!ProcessUtil.isElectron())
+        if (!ProcessIdentifier.isElectron())
             throw new Error('Use of this method from non-Electron process is not expected.');
 
-        return ProcessUtil.isElectronMain()
+        return ProcessIdentifier.isElectronMain()
             ? this.config.get().dirName
             : this.getConfigCacheForRenderer().dirName;
     }
 
     public static get fileName(): string {
-        if (!ProcessUtil.isElectron())
+        if (!ProcessIdentifier.isElectron())
             throw new Error('Use of this method from non-Electron process is not expected.');
 
-        return ProcessUtil.isElectronMain()
+        return ProcessIdentifier.isElectronMain()
             ? this.config.get().fileName
             : this.getConfigCacheForRenderer().fileName;
     }
 
     public static get filePath(): string {
-        if (!ProcessUtil.isElectron())
+        if (!ProcessIdentifier.isElectron())
             throw new Error('Use of this method from non-Electron process is not expected.');
 
-        return ProcessUtil.isElectronMain()
+        return ProcessIdentifier.isElectronMain()
             ? this.config.get().filePath
             : this.getConfigCacheForRenderer().filePath;
     }
 }
 
-if (ProcessUtil.isElectronMain()) {
+if (ProcessIdentifier.isElectronMain()) {
     ipcMain.on(ipcChannelName, (event, arg) => {
         event.returnValue = LogFileConfig.config.get();
     });
