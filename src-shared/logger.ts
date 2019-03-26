@@ -3,7 +3,7 @@
 import * as os from 'os';
 import * as fs from 'fs-extra';
 import * as moment from 'moment-timezone';
-import { LogFileConfig } from '../src-main/log-file-config';
+import { LogFileConfig } from './log-file-config';
 import { ProcessIdentifier } from './process-identifier';
 
 class LoggerImpl {
