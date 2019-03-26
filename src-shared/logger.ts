@@ -1,10 +1,16 @@
 /* tslint:disable:no-console */
 
+console.log('before imports');
+
 import * as os from 'os';
-import * as fs from 'fs-extra';
+// import * as fs from 'fs-extra';
+let fs: any;
 import * as moment from 'moment-timezone';
 import { LogFileConfig } from './log-file-config';
 import { ProcessIdentifier } from './process-identifier';
+
+console.log('after imports');
+
 
 class LoggerImpl {
     private static fileSystem: typeof fs | 'unavailable';
@@ -36,7 +42,7 @@ class LoggerImpl {
     }
 
     public static appendToLogFile(message: string, ...object: any) {
-        if (this.fileSystem === 'unavailable') {
+        if (this.fileSystem === undefined || this.fileSystem === 'unavailable') {
             // Do nothing because File System API is not avaialble.
         } else {
             this.fileSystem.appendFile(LogFileConfig.filePath, message + os.EOL, (err) => {
@@ -50,15 +56,15 @@ LoggerImpl.initialize();
 
 export class Logger {
     public static error(message: string, ...object: any) {
-        const text = LoggerImpl.generateLogText(message, 'error');
-        console.error(text, ...object);
-        LoggerImpl.appendToLogFile(text, ...object);
+        // const text = LoggerImpl.generateLogText(message, 'error');
+        // console.error(text, ...object);
+        // LoggerImpl.appendToLogFile(text, ...object);
     }
 
     public static warn(message: string, ...object: any) {
         const text = LoggerImpl.generateLogText(message, 'warn');
         console.warn(text, ...object);
-        LoggerImpl.appendToLogFile(text, ...object);
+        // LoggerImpl.appendToLogFile(text, ...object);
     }
 
     public static info(message: string, ...object: any) {
@@ -70,6 +76,6 @@ export class Logger {
     public static debug(message: string, ...object: any) {
         const text = LoggerImpl.generateLogText(message, 'debug');
         console.debug(text, ...object);
-        LoggerImpl.appendToLogFile(text, ...object);
+        // LoggerImpl.appendToLogFile(text, ...object);
     }
 }
