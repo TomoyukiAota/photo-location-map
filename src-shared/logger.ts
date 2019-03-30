@@ -67,12 +67,18 @@ export class Logger {
     }
 
     public static info(message: string, ...object: any) {
+        if (EnvironmentDetector.isTest())
+            return;
+
         const text = LoggerImpl.generateLogText(message, 'info');
         console.info(text, ...object);
         LoggerImpl.appendToLogFile(text, ...object);
     }
 
     public static debug(message: string, ...object: any) {
+        if (EnvironmentDetector.isTest())
+            return;
+
         const text = LoggerImpl.generateLogText(message, 'debug');
         console.debug(text, ...object);
         LoggerImpl.appendToLogFile(text, ...object);
