@@ -57,7 +57,7 @@ export class LogFileConfig {
 
     private static ensureCacheForRenderer() {
         if (!this.configCacheForRenderer.isInitialized()) {
-            const configFromMain: LogFileConfigState = require('electron').ipcRenderer.sendSync(ipcChannelName);
+            const configFromMain: LogFileConfigState = window.require('electron').ipcRenderer.sendSync(ipcChannelName);
             this.configCacheForRenderer.initialize(configFromMain);
         }
     }
