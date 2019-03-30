@@ -8,20 +8,21 @@ export class ProcessIdentifier {
     // Electron Main     |   defined |  "browser"
 
     public static isNode(): boolean {
-        return (typeof process !== 'undefined')
-            && (typeof process.versions.node !== 'undefined');  // Check process.versions.node in case of process variable unexpectedly defined in global scope.
+        return (typeof window !== 'undefined')
+            && (typeof window.process !== 'undefined')
+            && (typeof window.process.versions.node !== 'undefined');  // Check process.versions.node in case of process variable unexpectedly defined in global scope.
     }
 
     public static isElectron(): boolean {
-        return this.isNode() && (typeof process.type !== 'undefined');
+        return this.isNode() && (typeof window.process.type !== 'undefined');
     }
 
     public static isElectronMain(): boolean {
-        return this.isElectron() && process.type === 'browser';
+        return this.isElectron() && window.process.type === 'browser';
     }
 
     public static isElectronRenderer(): boolean {
-        return this.isElectron() && process.type === 'renderer';
+        return this.isElectron() && window.process.type === 'renderer';
     }
 
     public static processType(): 'Renderer' | 'Main' | 'Node' | 'Non-Node' {

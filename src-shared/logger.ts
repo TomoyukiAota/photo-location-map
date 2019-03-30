@@ -57,15 +57,15 @@ LoggerImpl.initialize();
 
 export class Logger {
     public static error(message: string, ...object: any) {
-        // const text = LoggerImpl.generateLogText(message, 'error');
-        // console.error(text, ...object);
-        // LoggerImpl.appendToLogFile(text, ...object);
+        const text = LoggerImpl.generateLogText(message, 'error');
+        console.error(text, ...object);
+        LoggerImpl.appendToLogFile(text, ...object);
     }
 
     public static warn(message: string, ...object: any) {
         const text = LoggerImpl.generateLogText(message, 'warn');
         console.warn(text, ...object);
-        // LoggerImpl.appendToLogFile(text, ...object);
+        LoggerImpl.appendToLogFile(text, ...object);
     }
 
     public static info(message: string, ...object: any) {
@@ -77,6 +77,6 @@ export class Logger {
     public static debug(message: string, ...object: any) {
         const text = LoggerImpl.generateLogText(message, 'debug');
         console.debug(text, ...object);
-        // LoggerImpl.appendToLogFile(text, ...object);
+        LoggerImpl.appendToLogFile(text, ...object);
     }
 }
