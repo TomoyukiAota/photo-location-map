@@ -1,15 +1,8 @@
-/* tslint:disable:no-console */
-
-console.log('before imports');
-
 import * as os from 'os';
 import * as moment from 'moment-timezone';
 import { LogFileConfig } from './log-file-config';
 import { ProcessIdentifier } from './process-identifier';
 import { EnvironmentDetector } from './environment-detector';
-
-console.log('after imports');
-
 
 class LoggerImpl {
     private static fileSystem: any;
