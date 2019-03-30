@@ -22,7 +22,7 @@ class LoggerImpl {
                 fs.ensureFileSync(LogFileConfig.filePath);
                 this.fileSystem = fs;
             } else {
-                this.fileSystem = window.require('electron').remote.require('fs');
+                this.fileSystem = window.require('electron').remote.require('fs-extra');
             }
         }
     }
