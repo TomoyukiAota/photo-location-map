@@ -18,7 +18,7 @@ export class ProcessIdentifier {
     }
 
     public static isElectronMain(): boolean {
-        return this.isElectron() && window.process.type === 'browser';
+        return this.isElectron() && process.type === 'browser';
     }
 
     public static isElectronRenderer(): boolean {
