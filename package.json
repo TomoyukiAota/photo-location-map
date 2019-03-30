@@ -37,7 +37,7 @@
     "test:unit:watch": "npm run postinstall:electron && ng test --code-coverage --watch",
     "test:e2e": "npm run postinstall:web && ng e2e",
     "test:package": "node run-package-test",
-    "test:all": "npm-run-all lint test:package",
+    "test:all": "npm-run-all lint test:unit test:package",
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md"
   },
   "dependencies": {
