@@ -3,9 +3,6 @@
 console.log('before imports');
 
 import * as os from 'os';
-// import * as fs from 'fs-extra';
-// tslint:disable-next-line:prefer-const
-let fs: any;
 import * as moment from 'moment-timezone';
 import { LogFileConfig } from './log-file-config';
 import { ProcessIdentifier } from './process-identifier';
@@ -15,12 +12,13 @@ console.log('after imports');
 
 
 class LoggerImpl {
-    private static fileSystem: typeof fs | 'unavailable';
+    private static fileSystem: any;
 
     public static initialize() {
         if (ProcessIdentifier.isElectron()) {
             if (ProcessIdentifier.isElectronMain()) {
                 LogFileConfig.setup('./log', `${this.dateTimeInBasicFormat()}_photo-location-map_log.txt`);
+                const fs = require('fs-extra');
                 fs.ensureFileSync(LogFileConfig.filePath);
                 this.fileSystem = fs;
             } else {
