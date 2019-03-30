@@ -1,4 +1,3 @@
-import { ipcRenderer, ipcMain } from 'electron';
 import { ProcessIdentifier } from './process-identifier';
 
 const ipcChannelName = 'get-log-file-config-from-main';
@@ -58,7 +57,7 @@ export class LogFileConfig {
 
     private static ensureCacheForRenderer() {
         if (!this.configCacheForRenderer.isInitialized()) {
-            const configFromMain: LogFileConfigState = ipcRenderer.sendSync(ipcChannelName);
+            const configFromMain: LogFileConfigState = window.require('electron').ipcRenderer.sendSync(ipcChannelName);
             this.configCacheForRenderer.initialize(configFromMain);
         }
     }
@@ -97,7 +96,7 @@ export class LogFileConfig {
 }
 
 if (ProcessIdentifier.isElectronMain()) {
-    ipcMain.on(ipcChannelName, (event, arg) => {
+    require('electron').ipcMain.on(ipcChannelName, (event, arg) => {
         event.returnValue = LogFileConfig.config.get();
     });
 }

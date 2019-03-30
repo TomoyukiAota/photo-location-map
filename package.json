@@ -33,17 +33,18 @@
     "electron:windows": "npm run build:prod && electron-builder build --windows",
     "electron:mac": "npm run build:prod && electron-builder build --mac",
     "lint": "ng lint",
-    "test:unit": "npm run postinstall:web && ng test --code-coverage",
-    "test:unit:watch": "npm run postinstall:web && ng test --code-coverage --watch",
+    "test:unit": "npm run postinstall:electron && ng test --code-coverage",
+    "test:unit:watch": "npm run postinstall:electron && ng test --code-coverage --watch",
     "test:e2e": "npm run postinstall:web && ng e2e",
     "test:package": "node run-package-test",
-    "test:all": "npm-run-all lint test:package",
+    "test:all": "npm-run-all lint test:unit test:package",
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md"
   },
   "dependencies": {
     "electron-window-state": "5.0.3",
     "fs-extra": "7.0.1",
-    "moment-timezone": "0.5.23"
+    "moment-timezone": "0.5.23",
+    "ngx-electron": "2.1.1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "0.12.3",
@@ -79,8 +80,10 @@
     "karma": "4.0.0",
     "karma-chrome-launcher": "2.2.0",
     "karma-coverage-istanbul-reporter": "2.0.4",
+    "karma-electron": "6.0.0",
     "karma-jasmine": "2.0.1",
     "karma-jasmine-html-reporter": "1.4.0",
+    "karma-mocha-reporter": "2.2.5",
     "npm-run-all": "4.1.5",
     "protractor": "5.4.2",
     "rxjs": "6.3.3",
@@ -91,5 +94,8 @@
     "wait-on": "3.2.0",
     "webdriver-manager": "12.1.1",
     "zone.js": "0.8.29"
+  },
+  "browser": {
+    "fs": false
   }
 }
