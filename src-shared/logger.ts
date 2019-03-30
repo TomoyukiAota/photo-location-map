@@ -4,6 +4,7 @@ console.log('before imports');
 
 import * as os from 'os';
 // import * as fs from 'fs-extra';
+// tslint:disable-next-line:prefer-const
 let fs: any;
 import * as moment from 'moment-timezone';
 import { LogFileConfig } from './log-file-config';
