@@ -38,7 +38,7 @@ class LoggerImpl {
     }
 
     public static appendToLogFile(message: string, ...object: any) {
-        if (EnvironmentDetector.isTest())
+        if (EnvironmentDetector.isUnitTest())
             return;
 
         if (this.fs === this.unavailableStr || this.os === this.unavailableStr) {
@@ -67,7 +67,7 @@ export class Logger {
     }
 
     public static info(message: string, ...object: any) {
-        if (EnvironmentDetector.isTest())
+        if (EnvironmentDetector.isUnitTest())
             return;
 
         const text = LoggerImpl.generateLogText(message, 'info');
@@ -76,7 +76,7 @@ export class Logger {
     }
 
     public static debug(message: string, ...object: any) {
-        if (EnvironmentDetector.isTest())
+        if (EnvironmentDetector.isUnitTest())
             return;
 
         const text = LoggerImpl.generateLogText(message, 'debug');

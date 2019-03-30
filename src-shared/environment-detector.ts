@@ -3,7 +3,7 @@ export class EnvironmentDetector {
         return typeof __karma__ !== 'undefined';
     }
 
-    public static isTest(): boolean {
+    public static isUnitTest(): boolean {
         return this.isKarma();
     }
 }
