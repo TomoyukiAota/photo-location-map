@@ -1,9 +1,9 @@
 export class EnvironmentDetector {
-    public static isKarma() {
+    public static isKarma(): boolean {
         return typeof __karma__ !== 'undefined';
     }
 
-    public static isTest() {
+    public static isTest(): boolean {
         return this.isKarma();
     }
 }
