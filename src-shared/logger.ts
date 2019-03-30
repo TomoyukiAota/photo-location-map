@@ -1,22 +1,24 @@
-/* tslint:disable:no-console */
-
-import * as os from 'os';
-import * as fs from 'fs-extra';
 import * as moment from 'moment-timezone';
 import { LogFileConfig } from './log-file-config';
 import { ProcessIdentifier } from './process-identifier';
+import { EnvironmentDetector } from './environment-detector';
 
 class LoggerImpl {
-    private static fileSystem: typeof fs | 'unavailable';
+    private static readonly unavailableStr = 'unavailable';
+    private static fs: any = LoggerImpl.unavailableStr;
+    private static os: any = LoggerImpl.unavailableStr;
 
     public static initialize() {
         if (ProcessIdentifier.isElectron()) {
             if (ProcessIdentifier.isElectronMain()) {
                 LogFileConfig.setup('./log', `${this.dateTimeInBasicFormat()}_photo-location-map_log.txt`);
-                fs.ensureFileSync(LogFileConfig.filePath);
-                this.fileSystem = fs;
+                this.fs = require('fs-extra');
+                this.fs.ensureFileSync(LogFileConfig.filePath);
+                this.os = require('os');
             } else {
-                this.fileSystem = window.require('electron').remote.require('fs');
+                const remote: Electron.Remote = window.require('electron').remote;
+                this.fs = remote.require('fs-extra');
+                this.os = remote.require('os');
             }
         }
     }
@@ -36,10 +38,13 @@ class LoggerImpl {
     }
 
     public static appendToLogFile(message: string, ...object: any) {
-        if (this.fileSystem === 'unavailable') {
-            // Do nothing because File System API is not avaialble.
+        if (EnvironmentDetector.isUnitTest())
+            return;
+
+        if (this.fs === this.unavailableStr || this.os === this.unavailableStr) {
+            // Do nothing because APIs required for writing to file are unavailable.
         } else {
-            this.fileSystem.appendFile(LogFileConfig.filePath, message + os.EOL, (err) => {
+            this.fs.appendFile(LogFileConfig.filePath, message + this.os.EOL, (err) => {
                 if (err) throw err;
             });
         }
@@ -62,12 +67,18 @@ export class Logger {
     }
 
     public static info(message: string, ...object: any) {
+        if (EnvironmentDetector.isUnitTest())
+            return;
+
         const text = LoggerImpl.generateLogText(message, 'info');
         console.info(text, ...object);
         LoggerImpl.appendToLogFile(text, ...object);
     }
 
     public static debug(message: string, ...object: any) {
+        if (EnvironmentDetector.isUnitTest())
+            return;
+
         const text = LoggerImpl.generateLogText(message, 'debug');
         console.debug(text, ...object);
         LoggerImpl.appendToLogFile(text, ...object);

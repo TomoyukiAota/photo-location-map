@@ -1,27 +1,33 @@
+import { ProcessUtil } from './process-util';
+
 export class ProcessIdentifier {
     //                   |  process  | process.type
     // ------------------+-----------+----------------
     // Non-Node.js       | undefined |    N/A
-    // Node.js           |   defined | undefined
+    // Node.js           |   defined |   defined in Electron. Otherwise, undefined.
     // Electron          |   defined |   defined (either "renderer" or "browser")
     // Electron Renderer |   defined | "renderer"
     // Electron Main     |   defined |  "browser"
 
+    private static readonly process = ProcessUtil.getProcess();
+
     public static isNode(): boolean {
-        return (typeof process !== 'undefined')
-            && (typeof process.versions.node !== 'undefined');  // Check process.versions.node in case of process variable unexpectedly defined in global scope.
+        return (typeof this.process !== 'undefined');
     }
 
     public static isElectron(): boolean {
-        return this.isNode() && (typeof process.type !== 'undefined');
+        return this.isNode()
+            && (typeof this.process.type !== 'undefined');
     }
 
     public static isElectronMain(): boolean {
-        return this.isElectron() && process.type === 'browser';
+        return this.isElectron()
+            && (this.process.type === 'browser');
     }
 
     public static isElectronRenderer(): boolean {
-        return this.isElectron() && process.type === 'renderer';
+        return this.isElectron()
+            && (this.process.type === 'renderer');
     }
 
     public static processType(): 'Renderer' | 'Main' | 'Node' | 'Non-Node' {
