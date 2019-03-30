@@ -1,21 +1,24 @@
-import * as os from 'os';
 import * as moment from 'moment-timezone';
 import { LogFileConfig } from './log-file-config';
 import { ProcessIdentifier } from './process-identifier';
 import { EnvironmentDetector } from './environment-detector';
 
 class LoggerImpl {
-    private static fileSystem: any;
+    private static readonly unavailableStr = 'unavailable';
+    private static fs: any = LoggerImpl.unavailableStr;
+    private static os: any = LoggerImpl.unavailableStr;
 
     public static initialize() {
         if (ProcessIdentifier.isElectron()) {
             if (ProcessIdentifier.isElectronMain()) {
                 LogFileConfig.setup('./log', `${this.dateTimeInBasicFormat()}_photo-location-map_log.txt`);
-                const fs = require('fs-extra');
-                fs.ensureFileSync(LogFileConfig.filePath);
-                this.fileSystem = fs;
+                this.fs = require('fs-extra');
+                this.fs.ensureFileSync(LogFileConfig.filePath);
+                this.os = require('os');
             } else {
-                this.fileSystem = window.require('electron').remote.require('fs-extra');
+                const remote: Electron.Remote = window.require('electron').remote;
+                this.fs = remote.require('fs-extra');
+                this.os = remote.require('os');
             }
         }
     }
@@ -38,10 +41,10 @@ class LoggerImpl {
         if (EnvironmentDetector.isTest())
             return;
 
-        if (this.fileSystem === undefined || this.fileSystem === 'unavailable') {
-            // Do nothing because File System API is not avaialble.
+        if (this.fs === this.unavailableStr || this.os === this.unavailableStr) {
+            // Do nothing because APIs required for writing to file are unavailable.
         } else {
-            this.fileSystem.appendFile(LogFileConfig.filePath, message + os.EOL, (err) => {
+            this.fs.appendFile(LogFileConfig.filePath, message + this.os.EOL, (err) => {
                 if (err) throw err;
             });
         }
