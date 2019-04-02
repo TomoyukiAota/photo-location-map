@@ -23,7 +23,7 @@
     "src-shared/**/*"
   ],
   "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
+    "src/**/*.spec.ts",
+    "src-shared/**/*.spec.ts"
   ]
 }
