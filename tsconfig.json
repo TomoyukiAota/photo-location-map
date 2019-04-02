@@ -17,14 +17,5 @@
       "es2015",
       "dom"
     ]
-  },
-  "include": [
-    "main.ts",
-    "src/**/*",
-    "src-main/**/*",
-    "src-shared/**/*"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  }
 }

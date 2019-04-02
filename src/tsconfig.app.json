@@ -6,7 +6,14 @@
     "baseUrl": "",
     "types": []
   },
+  "include": [
+    "../main.ts",
+    "../src/**/*",
+    "../src-main/**/*",
+    "../src-shared/**/*"
+  ],
   "exclude": [
-    "**/*.spec.ts"
+    "../src/**/*.spec.ts",
+    "../src-shared/**/*.spec.ts"
   ]
 }
