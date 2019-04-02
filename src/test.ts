@@ -15,6 +15,8 @@ getTestBed().initTestEnvironment(
   platformBrowserDynamicTesting()
 );
 // Then we find all the tests.
-const context = require.context('./', true, /\.spec\.ts$/);
+const context1 = require.context('../src/', true, /\.spec\.ts$/);
+const context2 = require.context('../src-shared/', true, /\.spec\.ts$/);
 // And load the modules.
-context.keys().map(context);
+context1.keys().map(context1);
+context2.keys().map(context2);
