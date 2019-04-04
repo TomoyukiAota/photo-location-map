@@ -1,9 +1,9 @@
-import { ProcessUtil } from './process-util';
+import { ProcessAccessor } from './process-accessor';
 
-describe('ProcessUtil', () => {
+describe('ProcessAccessor', () => {
   it('getProcess() should return window.process (not process)', () => {
-    expect(ProcessUtil.getProcess()).toBe(window.process);
-    expect(ProcessUtil.getProcess()).not.toBe(process);
+    expect(ProcessAccessor.getProcess()).toBe(window.process);
+    expect(ProcessAccessor.getProcess()).not.toBe(process);
   });
 
   it('window.process.type should be "renderer"', () => {
