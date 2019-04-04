@@ -1,4 +1,4 @@
-import { ProcessUtil } from './process-util';
+import { ProcessAccessor } from './process-accessor';
 
 export class ProcessIdentifier {
     //                   |  process  | process.type
@@ -9,7 +9,7 @@ export class ProcessIdentifier {
     // Electron Renderer |   defined | "renderer"
     // Electron Main     |   defined |  "browser"
 
-    private static readonly process = ProcessUtil.getProcess();
+    private static readonly process = ProcessAccessor.getProcess();
 
     public static isNode(): boolean {
         return (typeof this.process !== 'undefined');

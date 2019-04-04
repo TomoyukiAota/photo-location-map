@@ -1,6 +1,6 @@
 import { EnvironmentDetector } from './environment-detector';
 
-export class ProcessUtil {
+export class ProcessAccessor {
     public static getProcess(): NodeJS.Process {
         // In Karma, process variable is overridden like following:
         // "{"title":"browser","browser":true,"env":{},"argv":[],"version":"","versions":{}}'"
