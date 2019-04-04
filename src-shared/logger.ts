@@ -1,6 +1,6 @@
-import { DateTime } from './date-time';
 import { EnvironmentDetector } from './environment-detector';
 import { LogFileConfig } from './log-file-config';
+import { Now } from './now';
 import { ProcessIdentifier } from './process-identifier';
 
 class LoggerImpl {
@@ -11,7 +11,7 @@ class LoggerImpl {
     public static initialize() {
         if (ProcessIdentifier.isElectron()) {
             if (ProcessIdentifier.isElectronMain()) {
-                LogFileConfig.setup('./log', `${DateTime.dateTimeInBasicFormat()}_photo-location-map_log.txt`);
+                LogFileConfig.setup('./log', `${Now.basicFormat}_photo-location-map_log.txt`);
                 this.fs = require('fs-extra');
                 this.fs.ensureFileSync(LogFileConfig.filePath);
                 this.os = require('os');
@@ -24,9 +24,8 @@ class LoggerImpl {
     }
 
     public static generateLogText(message: string, level: string): string {
-        const dateTime = DateTime.dateTimeInExtendedFormat();
         const processType = ProcessIdentifier.processType();
-        return `[${dateTime}] [${processType}] [${level}] ${message}`;
+        return `[${Now.extendedFormat}] [${processType}] [${level}] ${message}`;
     }
 
     public static appendToLogFile(message: string, ...object: any) {
