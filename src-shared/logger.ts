@@ -1,7 +1,7 @@
-import * as moment from 'moment-timezone';
-import { LogFileConfig } from './log-file-config';
-import { ProcessIdentifier } from './process-identifier';
 import { EnvironmentDetector } from './environment-detector';
+import { LogFileConfig } from './log-file-config';
+import { Now } from './now';
+import { ProcessIdentifier } from './process-identifier';
 
 class LoggerImpl {
     private static readonly unavailableStr = 'unavailable';
@@ -11,7 +11,7 @@ class LoggerImpl {
     public static initialize() {
         if (ProcessIdentifier.isElectron()) {
             if (ProcessIdentifier.isElectronMain()) {
-                LogFileConfig.setup('./log', `${this.dateTimeInBasicFormat()}_photo-location-map_log.txt`);
+                LogFileConfig.setup('./log', `${Now.basicFormat}_photo-location-map_log.txt`);
                 this.fs = require('fs-extra');
                 this.fs.ensureFileSync(LogFileConfig.filePath);
                 this.os = require('os');
@@ -23,18 +23,9 @@ class LoggerImpl {
         }
     }
 
-    private static dateTimeInBasicFormat() {
-        return moment.utc().format('YYYYMMDDTHHmmss.SSS[Z]');
-    }
-
-    private static dateTimeInExtendedFormat() {
-        return moment.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
-    }
-
     public static generateLogText(message: string, level: string): string {
-        const dateTime = this.dateTimeInExtendedFormat();
         const processType = ProcessIdentifier.processType();
-        return `[${dateTime}] [${processType}] [${level}] ${message}`;
+        return `[${Now.extendedFormat}] [${processType}] [${level}] ${message}`;
     }
 
     public static appendToLogFile(message: string, ...object: any) {
