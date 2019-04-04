@@ -66,6 +66,7 @@
     "@ngx-translate/http-loader": "4.0.0",
     "@types/jasmine": "3.3.8",
     "@types/jasminewd2": "2.0.6",
+    "@types/moment-timezone": "0.5.12",
     "@types/node": "10.12.19",
     "angular-split": "2.0.1",
     "codelyzer": "4.5.0",
