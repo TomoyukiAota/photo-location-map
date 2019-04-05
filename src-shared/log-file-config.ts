@@ -1,4 +1,4 @@
-import { ProcessIdentifier } from './process-identifier';
+import { ProcessIdentifier } from './process/process-identifier';
 
 const ipcChannelName = 'get-log-file-config-from-main';
 
