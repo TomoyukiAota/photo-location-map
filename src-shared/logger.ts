@@ -1,7 +1,7 @@
 import { EnvironmentDetector } from './environment-detector';
 import { LogFileConfig } from './log-file-config';
 import { Now } from './date-time/now';
-import { ProcessIdentifier } from './process-identifier';
+import { ProcessIdentifier } from './process/process-identifier';
 
 class LoggerImpl {
     private static readonly unavailableStr = 'unavailable';
