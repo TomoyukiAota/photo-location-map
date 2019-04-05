@@ -5,7 +5,7 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app/app.module';
 import { AppConfig } from './environments/environment';
 
-import { Logger } from '../src-shared/logger';
+import { Logger } from '../src-shared/log/logger';
 
 if (AppConfig.production) {
   enableProdMode();
