@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as url from 'url';
 import * as windowStateKeeper from 'electron-window-state';
 import './menu';
-import { Logger } from './src-shared/logger';
+import { Logger } from './src-shared/log/logger';
 
 let browserWindow: BrowserWindow;
 const args = process.argv.slice(1);
