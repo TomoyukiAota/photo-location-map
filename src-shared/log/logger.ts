@@ -1,27 +1,10 @@
 import { EnvironmentDetector } from '../environment-detector';
-import { LogFileConfig } from './log-file-config';
+import { LogFileWriter } from '../log/log-file-writer';
 import { Now } from '../date-time/now';
 import { ProcessIdentifier } from '../process/process-identifier';
 
 class LoggerImpl {
-  private static readonly unavailableStr = 'unavailable';
-  private static fs: any = LoggerImpl.unavailableStr;
-  private static os: any = LoggerImpl.unavailableStr;
-
-  public static initialize() {
-    if (ProcessIdentifier.isElectron()) {
-      if (ProcessIdentifier.isElectronMain()) {
-        LogFileConfig.setup('./log', `${Now.basicFormat}_photo-location-map_log.txt`);
-        this.fs = require('fs-extra');
-        this.fs.ensureFileSync(LogFileConfig.filePath);
-        this.os = require('os');
-      } else {
-        const remote: Electron.Remote = window.require('electron').remote;
-        this.fs = remote.require('fs-extra');
-        this.os = remote.require('os');
-      }
-    }
-  }
+  private static logFileWriter = new LogFileWriter();
 
   public static generateLogText(message: string, level: string): string {
     const processType = ProcessIdentifier.processType();
@@ -29,20 +12,9 @@ class LoggerImpl {
   }
 
   public static appendToLogFile(message: string, ...object: any) {
-    if (EnvironmentDetector.isUnitTest())
-      return;
-
-    if (this.fs === this.unavailableStr || this.os === this.unavailableStr) {
-      // Do nothing because APIs required for writing to file are unavailable.
-    } else {
-      this.fs.appendFile(LogFileConfig.filePath, message + this.os.EOL, (err) => {
-        if (err) throw err;
-      });
-    }
+    this.logFileWriter.append(message, ...object);
   }
 }
-
-LoggerImpl.initialize();
 
 export class Logger {
   public static error(message: string, ...object: any) {
