@@ -1,3 +1,4 @@
+import { Now } from '../date-time/now';
 import { ProcessIdentifier } from '../process/process-identifier';
 
 const ipcChannelName = 'get-log-file-config-from-main';
@@ -99,4 +100,6 @@ if (ProcessIdentifier.isElectronMain()) {
   require('electron').ipcMain.on(ipcChannelName, (event, arg) => {
     event.returnValue = LogFileConfig.config.get();
   });
+
+  LogFileConfig.setup('./log', `${Now.basicFormat}_photo-location-map_log.txt`);
 }
