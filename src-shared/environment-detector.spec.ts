@@ -1,6 +1,6 @@
 import { EnvironmentDetector } from './environment-detector';
 
-describe('EnvironmentDetector', () => {
+describe('EnvironmentDetector (in Karma)', () => {
   it('isKarma() should return true', () => {
     expect(EnvironmentDetector.isKarma()).toEqual(true);
   });
