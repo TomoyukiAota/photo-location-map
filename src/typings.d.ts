@@ -6,8 +6,8 @@ interface NodeModule {
 
 declare var window: Window;
 interface Window {
-  process: any;
-  require: any;
+  process: NodeJS.Process;
+  require: NodeRequire;
 }
 
 declare var __karma__: any;
