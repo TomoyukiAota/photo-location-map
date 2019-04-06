@@ -96,10 +96,31 @@ export class LogFileConfig {
   }
 }
 
-if (ProcessIdentifier.isElectronMain()) {
-  require('electron').ipcMain.on(ipcChannelName, (event, arg) => {
-    event.returnValue = LogFileConfig.config.get();
-  });
+class LogFileConfigSetup {
+  private static setupDone = false;
 
-  LogFileConfig.setup('./log', `${Now.basicFormat}_photo-location-map_log.txt`);
+  private static setupIpcChannelListnerInMainProcess() {
+    require('electron').ipcMain.on(ipcChannelName, (event, arg) => {
+      event.returnValue = LogFileConfig.config.get();
+    });
+  }
+
+  private static setupLogFileConfig() {
+    const appDataDirectory = require('electron').app.getPath('appData');
+    const logDirectory = `${appDataDirectory}/Photo Location Map/logs`;
+    LogFileConfig.setup(logDirectory, `${Now.basicFormat}_photo-location-map_log.txt`);
+  }
+
+  public static setup() {
+    if (this.setupDone)
+      return;
+
+    this.setupIpcChannelListnerInMainProcess();
+    this.setupLogFileConfig();
+    this.setupDone = true;
+  }
+}
+
+if (ProcessIdentifier.isElectronMain()) {
+  LogFileConfigSetup.setup();
 }
