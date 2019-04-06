@@ -4,6 +4,22 @@ interface NodeModule {
   id: string;
 }
 
+interface NodeRequireFunction {
+  // Add a overload here in order to add a return type of global.require and window.require functions.
+  (id: 'child_process'): typeof import('child_process');
+  (id: 'fs'): typeof import('fs');
+  (id: 'fs-extra'): typeof import('fs-extra');
+  (id: 'os'): typeof import('os');
+}
+
+declare namespace Electron {
+  interface Remote {
+    // Add a overload here in order to add a return type of window.require('electron').remote.require function.
+    require(module: 'fs-extra'): typeof import('fs-extra');
+    require(module: 'os'): typeof import('os');
+  }
+}
+
 declare var window: Window;
 interface Window {
   process: NodeJS.Process;
