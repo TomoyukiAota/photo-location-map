@@ -1,6 +1,6 @@
 import { ProcessAccessor } from './process-accessor';
 
-describe('ProcessAccessor', () => {
+describe('ProcessAccessor (in Karma)', () => {
   it('getProcess() should return window.process (not process)', () => {
     expect(ProcessAccessor.getProcess()).toBe(window.process);
     expect(ProcessAccessor.getProcess()).not.toBe(process);
