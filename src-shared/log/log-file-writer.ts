@@ -3,8 +3,8 @@ import { LogFileConfig } from './log-file-config';
 import { ProcessIdentifier } from '../process/process-identifier';
 
 export class LogFileWriter {
-  private fs: any = null;
-  private os: any = null;
+  private fs: typeof import('fs-extra') = null;
+  private os: typeof import('os') = null;
 
   constructor() {
     if (ProcessIdentifier.isElectron()) {
@@ -13,7 +13,7 @@ export class LogFileWriter {
         this.fs.ensureFileSync(LogFileConfig.filePath);
         this.os = require('os');
       } else {
-        const remote: Electron.Remote = window.require('electron').remote;
+        const remote = window.require('electron').remote;
         this.fs = remote.require('fs-extra');
         this.os = remote.require('os');
       }
