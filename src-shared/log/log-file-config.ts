@@ -97,7 +97,7 @@ export class LogFileConfig {
 }
 
 class LogFileConfigSetup {
-  private static setupDone = false;
+  private static isSetupDone = false;
 
   private static setupIpcChannelListnerInMainProcess() {
     require('electron').ipcMain.on(ipcChannelName, (event, arg) => {
@@ -112,12 +112,12 @@ class LogFileConfigSetup {
   }
 
   public static setup() {
-    if (this.setupDone)
+    if (this.isSetupDone)
       return;
 
     this.setupIpcChannelListnerInMainProcess();
     this.setupLogFileConfig();
-    this.setupDone = true;
+    this.isSetupDone = true;
   }
 }
 
