@@ -4,6 +4,9 @@ import * as url from 'url';
 import * as windowStateKeeper from 'electron-window-state';
 import './menu';
 import { Logger } from './src-shared/log/logger';
+import { LogFileConfig } from './src-shared/log/log-file-config';
+
+Logger.info(`Log File Location: ${LogFileConfig.filePath}`);
 
 let browserWindow: BrowserWindow;
 const args = process.argv.slice(1);
