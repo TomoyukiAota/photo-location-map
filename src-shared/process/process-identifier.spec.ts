@@ -1,6 +1,6 @@
 import { ProcessIdentifier } from './process-identifier';
 
-describe('ProcessIdentifier', () => {
+describe('ProcessIdentifier (in renderer process)', () => {
   it('isNode() should return true', () => {
     expect(ProcessIdentifier.isNode()).toEqual(true);
   });
