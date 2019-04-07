@@ -5,7 +5,7 @@ describe('RequireFromMainProcess (in renderer process)', () => {
     expect(RequireFromMainProcess.fsExtra).not.toBeNull();
   });
 
-  it('fsExtra should return window.require("electron").remote.require("fs-extra")', () => {
+  it('fsExtra should be window.require("electron").remote.require("fs-extra")', () => {
     expect(RequireFromMainProcess.fsExtra).toBe(window.require('electron').remote.require('fs-extra'));
   });
 
@@ -13,7 +13,7 @@ describe('RequireFromMainProcess (in renderer process)', () => {
     expect(RequireFromMainProcess.os).not.toBeNull();
   });
 
-  it('os should return window.require("electron").remote.require("os")', () => {
+  it('os should be window.require("electron").remote.require("os")', () => {
     expect(RequireFromMainProcess.os).toBe(window.require('electron').remote.require('os'));
   });
 });
