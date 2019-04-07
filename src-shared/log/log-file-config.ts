@@ -99,8 +99,6 @@ export class LogFileConfig {
 }
 
 class LogFileConfigSetup {
-  private static isSetupDone = false;
-
   private static setupIpcChannelListnerInMainProcess() {
     ConditionalRequire.electron.ipcMain.on(ipcChannelName, (event, arg) => {
       event.returnValue = LogFileConfig.config.get();
@@ -115,12 +113,8 @@ class LogFileConfigSetup {
   }
 
   public static setup() {
-    if (this.isSetupDone)
-      return;
-
     this.setupIpcChannelListnerInMainProcess();
     this.setupLogFileConfig();
-    this.isSetupDone = true;
   }
 }
 
