@@ -1,7 +1,9 @@
+import { ConditionalRequire } from '../require/conditional-require';
 import { Now } from '../date-time/now';
 import { ProcessIdentifier } from '../process/process-identifier';
 
 const ipcChannelName = 'get-log-file-config-from-main';
+const pathSep = ConditionalRequire.path.sep;
 
 class LogFileConfigState {
   public dirName: string;
@@ -11,7 +13,7 @@ class LogFileConfigState {
   constructor(dirName: string, fileName: string) {
     this.dirName = dirName;
     this.fileName = fileName;
-    this.filePath = `${dirName}/${fileName}`;
+    this.filePath = `${dirName}${pathSep}${fileName}`;
   }
 }
 
@@ -58,7 +60,7 @@ export class LogFileConfig {
 
   private static ensureCacheForRenderer() {
     if (!this.configCacheForRenderer.isInitialized()) {
-      const configFromMain: LogFileConfigState = window.require('electron').ipcRenderer.sendSync(ipcChannelName);
+      const configFromMain: LogFileConfigState = ConditionalRequire.electron.ipcRenderer.sendSync(ipcChannelName);
       this.configCacheForRenderer.initialize(configFromMain);
     }
   }
@@ -97,27 +99,22 @@ export class LogFileConfig {
 }
 
 class LogFileConfigSetup {
-  private static isSetupDone = false;
-
   private static setupIpcChannelListnerInMainProcess() {
-    require('electron').ipcMain.on(ipcChannelName, (event, arg) => {
+    ConditionalRequire.electron.ipcMain.on(ipcChannelName, (event, arg) => {
       event.returnValue = LogFileConfig.config.get();
     });
   }
 
   private static setupLogFileConfig() {
-    const appDataDirectory = require('electron').app.getPath('appData');
-    const logDirectory = `${appDataDirectory}/Photo Location Map/logs`;
-    LogFileConfig.setup(logDirectory, `${Now.basicFormat}_photo-location-map_log.txt`);
+    const appDataDirectory = ConditionalRequire.electron.app.getPath('appData');
+    const logDirectory = `${appDataDirectory}${pathSep}Photo Location Map${pathSep}logs`;
+    const fileName = `${Now.basicFormat}_photo-location-map_log.txt`;
+    LogFileConfig.setup(logDirectory, fileName);
   }
 
   public static setup() {
-    if (this.isSetupDone)
-      return;
-
     this.setupIpcChannelListnerInMainProcess();
     this.setupLogFileConfig();
-    this.isSetupDone = true;
   }
 }
 
