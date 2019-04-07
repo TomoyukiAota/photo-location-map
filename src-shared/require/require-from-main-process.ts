@@ -13,7 +13,7 @@ export class RequireFromMainProcess {
       this.fsExtra = require('fs-extra');
       this.os = require('os');
     } else {
-      // For Electron renderer process, use  window.require('electron').remote.require function.
+      // For Electron renderer process, use window.require('electron').remote.require function.
       const remote = window.require('electron').remote;
       this.fsExtra = remote.require('fs-extra');
       this.os = remote.require('os');
