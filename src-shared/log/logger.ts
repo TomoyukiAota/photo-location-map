@@ -1,4 +1,4 @@
-import { EnvironmentDetector } from '../environment-detector';
+import { EnvironmentDetector } from '../environment/environment-detector';
 import { LogFileWriter } from '../log/log-file-writer';
 import { Now } from '../date-time/now';
 import { ProcessIdentifier } from '../process/process-identifier';
