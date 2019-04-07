@@ -1,4 +1,4 @@
-import { EnvironmentDetector } from '../environment-detector';
+import { EnvironmentDetector } from '../environment/environment-detector';
 import { LogFileConfig } from './log-file-config';
 import { ProcessIdentifier } from '../process/process-identifier';
 
