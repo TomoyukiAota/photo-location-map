@@ -1,4 +1,4 @@
-import { EnvironmentDetector } from '../environment-detector';
+import { EnvironmentDetector } from '../environment/environment-detector';
 
 export class ProcessAccessor {
   public static getProcess(): NodeJS.Process {
