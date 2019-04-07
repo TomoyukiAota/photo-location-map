@@ -1,3 +1,4 @@
+import { ConditionalRequire } from '../require/conditional-require';
 import { Now } from '../date-time/now';
 import { ProcessIdentifier } from '../process/process-identifier';
 
@@ -58,7 +59,7 @@ export class LogFileConfig {
 
   private static ensureCacheForRenderer() {
     if (!this.configCacheForRenderer.isInitialized()) {
-      const configFromMain: LogFileConfigState = window.require('electron').ipcRenderer.sendSync(ipcChannelName);
+      const configFromMain: LogFileConfigState = ConditionalRequire.electron.ipcRenderer.sendSync(ipcChannelName);
       this.configCacheForRenderer.initialize(configFromMain);
     }
   }
@@ -100,13 +101,13 @@ class LogFileConfigSetup {
   private static isSetupDone = false;
 
   private static setupIpcChannelListnerInMainProcess() {
-    require('electron').ipcMain.on(ipcChannelName, (event, arg) => {
+    ConditionalRequire.electron.ipcMain.on(ipcChannelName, (event, arg) => {
       event.returnValue = LogFileConfig.config.get();
     });
   }
 
   private static setupLogFileConfig() {
-    const appDataDirectory = require('electron').app.getPath('appData');
+    const appDataDirectory = ConditionalRequire.electron.app.getPath('appData');
     const logDirectory = `${appDataDirectory}/Photo Location Map/logs`;
     LogFileConfig.setup(logDirectory, `${Now.basicFormat}_photo-location-map_log.txt`);
   }
