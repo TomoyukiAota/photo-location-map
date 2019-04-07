@@ -3,6 +3,7 @@ import { Now } from '../date-time/now';
 import { ProcessIdentifier } from '../process/process-identifier';
 
 const ipcChannelName = 'get-log-file-config-from-main';
+const pathSep = ConditionalRequire.path.sep;
 
 class LogFileConfigState {
   public dirName: string;
@@ -12,7 +13,7 @@ class LogFileConfigState {
   constructor(dirName: string, fileName: string) {
     this.dirName = dirName;
     this.fileName = fileName;
-    this.filePath = `${dirName}/${fileName}`;
+    this.filePath = `${dirName}${pathSep}${fileName}`;
   }
 }
 
@@ -108,8 +109,9 @@ class LogFileConfigSetup {
 
   private static setupLogFileConfig() {
     const appDataDirectory = ConditionalRequire.electron.app.getPath('appData');
-    const logDirectory = `${appDataDirectory}/Photo Location Map/logs`;
-    LogFileConfig.setup(logDirectory, `${Now.basicFormat}_photo-location-map_log.txt`);
+    const logDirectory = `${appDataDirectory}${pathSep}Photo Location Map${pathSep}logs`;
+    const fileName = `${Now.basicFormat}_photo-location-map_log.txt`;
+    LogFileConfig.setup(logDirectory, fileName);
   }
 
   public static setup() {
