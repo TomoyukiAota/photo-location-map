@@ -17,5 +17,8 @@
       "es2015",
       "dom"
     ]
-  }
+  },
+  "include": [
+    "typings.d.ts"
+  ]
 }
