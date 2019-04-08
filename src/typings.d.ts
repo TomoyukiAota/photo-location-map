@@ -5,7 +5,7 @@ interface NodeModule {
 }
 
 interface NodeRequireFunction {
-  // Add a overload here in order to add a return type of global.require and window.require functions.
+  // Add overloads here in order to add return types of global.require and window.require functions.
   (id: 'child_process'): typeof import('child_process');
   (id: 'fs'): typeof import('fs');
   (id: 'fs-extra'): typeof import('fs-extra');
@@ -14,7 +14,7 @@ interface NodeRequireFunction {
 
 declare namespace Electron {
   interface Remote {
-    // Add a overload here in order to add a return type of window.require('electron').remote.require function.
+    // Add overloads here in order to add return types of window.require('electron').remote.require function.
     require(module: 'fs-extra'): typeof import('fs-extra');
     require(module: 'os'): typeof import('os');
   }

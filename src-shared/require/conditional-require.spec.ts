@@ -5,7 +5,7 @@ describe('ConditionalRequire (in renderer process)', () => {
     expect(ConditionalRequire.electron).not.toBeNull();
   });
 
-  it('electron should return window.require("electron")', () => {
+  it('electron should be window.require("electron")', () => {
     expect(ConditionalRequire.electron).toBe(window.require('electron'));
   });
 
@@ -13,7 +13,7 @@ describe('ConditionalRequire (in renderer process)', () => {
     expect(ConditionalRequire.os).not.toBeNull();
   });
 
-  it('os should return window.require("os")', () => {
+  it('os should be window.require("os")', () => {
     expect(ConditionalRequire.os).toBe(window.require('os'));
   });
 
@@ -21,7 +21,7 @@ describe('ConditionalRequire (in renderer process)', () => {
     expect(ConditionalRequire.path).not.toBeNull();
   });
 
-  it('path should return window.require("path")', () => {
+  it('path should be window.require("path")', () => {
     expect(ConditionalRequire.path).toBe(window.require('path'));
   });
 });
