@@ -13,6 +13,7 @@
     "polyfills-test.ts"
   ],
   "include": [
+    "../typings.d.ts",
     "../src/**/*.spec.ts",
     "../src/**/*.d.ts",
     "../src-shared/**/*.spec.ts"

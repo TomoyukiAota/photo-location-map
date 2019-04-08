@@ -17,6 +17,7 @@
     ]
   },
   "include": [
+    "typings.d.ts",
     "main.ts",
     "src/**/*",
     "src-main/**/*",
