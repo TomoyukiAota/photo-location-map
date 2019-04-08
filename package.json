@@ -34,12 +34,13 @@
     "electron:windows": "npm run build:prod && electron-builder build --windows",
     "electron:mac": "npm run build:prod && electron-builder build --mac",
     "lint": "ng lint",
-    "test:unit": "npm run postinstall:electron && ng test --code-coverage",
-    "test:unit:watch": "npm run postinstall:electron && ng test --code-coverage --watch",
+    "test:unit:karma": "npm run postinstall:electron && ng test --code-coverage",
+    "test:unit:karma:watch": "npm run postinstall:electron && ng test --code-coverage --watch",
     "test:unit:em:main": "electron-mocha --require espower-typescript/guess \"test/**/*spec.em.main.ts\"",
+    "test:unit:all": "npm-run-all test:unit:karma test:unit:em:main",
     "test:e2e": "npm run postinstall:web && ng e2e",
     "test:package": "node run-package-test",
-    "test:all": "npm-run-all lint test:unit test:unit:em:main test:package",
+    "test:all": "npm-run-all lint test:unit:all test:package",
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md"
   },
   "dependencies": {
