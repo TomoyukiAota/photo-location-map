@@ -27,3 +27,4 @@ interface Window {
 }
 
 declare var __karma__: any;
+declare var __electronMochaMain__: any;

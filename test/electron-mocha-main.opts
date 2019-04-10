@@ -1,0 +1,2 @@
+ --require espower-typescript/guess ./test/electron-mocha-main-setup.js
+ test/**/*.spec.em.main.ts
