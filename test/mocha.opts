@@ -1,0 +1,2 @@
+ --require espower-typescript/guess
+ test/**/*spec.em.main.ts
