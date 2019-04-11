@@ -10,6 +10,7 @@ interface NodeRequireFunction {
   (id: 'fs'): typeof import('fs');
   (id: 'fs-extra'): typeof import('fs-extra');
   (id: 'os'): typeof import('os');
+  (id: 'path'): typeof import('path');
 }
 
 declare namespace Electron {
