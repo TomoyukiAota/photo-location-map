@@ -13,17 +13,15 @@ export class LogFileWriter {
     }
   }
 
-  public append(message: string, ...object: any) {
-    if (EnvironmentDetector.isUnitTest())
-      return;
+  public append(message: string, ...object: any): Promise<void> {
+    // Renderer process needs IPC channel setup in main process to write logs to the log file.
+    // In unit test, the IPC channel is not available.
+    if (EnvironmentDetector.isUnitTest() && ProcessIdentifier.isElectronRenderer())
+      return Promise.reject();
 
-    if (this.fsExtra === null || this.os === null) {
-      // Do nothing because APIs required for writing to file are unavailable.
-    } else {
-      this.fsExtra.appendFile(LogFileConfig.filePath, message + this.os.EOL, (err) => {
-        if (err)
-          throw err;
-      });
-    }
+    const isApiAvailable = (this.fsExtra !== null && this.os !== null);
+    return isApiAvailable
+         ? this.fsExtra.promises.appendFile(LogFileConfig.filePath, message + this.os.EOL)
+         : Promise.reject();
   }
 }
