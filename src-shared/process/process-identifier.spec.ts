@@ -17,7 +17,7 @@ describe('ProcessIdentifier (in renderer process)', () => {
     expect(ProcessIdentifier.isElectronRenderer).toEqual(true);
   });
 
-  it('processType() should return "Renderer"', () => {
-    expect(ProcessIdentifier.processType()).toEqual('Renderer');
+  it('processType should return "Renderer"', () => {
+    expect(ProcessIdentifier.processType).toEqual('Renderer');
   });
 });

@@ -7,7 +7,7 @@ class LoggerImpl {
   private static logFileWriter = new LogFileWriter();
 
   public static generateLogText(message: string, level: string): string {
-    const processType = ProcessIdentifier.processType();
+    const processType = ProcessIdentifier.processType;
     return `[${Now.extendedFormat}] [${processType}] [${level}] ${message}`;
   }
 

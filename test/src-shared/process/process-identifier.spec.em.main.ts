@@ -18,7 +18,7 @@ describe('ProcessIdentifier (in main process)', () => {
     assert(ProcessIdentifier.isElectronRenderer === false);
   });
 
-  it('processType() should return "Main"', () => {
-    assert(ProcessIdentifier.processType() === 'Main');
+  it('processType should return "Main"', () => {
+    assert(ProcessIdentifier.processType === 'Main');
   });
 });

@@ -30,7 +30,7 @@ export class ProcessIdentifier {
         && (this.process.type === 'renderer');
   }
 
-  public static processType(): 'Renderer' | 'Main' | 'Node' | 'Non-Node' {
+  public static get processType(): 'Renderer' | 'Main' | 'Node' | 'Non-Node' {
     if (this.isElectronRenderer)
       return 'Renderer';
 
