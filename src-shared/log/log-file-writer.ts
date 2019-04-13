@@ -8,7 +8,7 @@ export class LogFileWriter {
   private os = RequireFromMainProcess.os;
 
   constructor() {
-    if (ProcessIdentifier.isElectronMain()) {
+    if (ProcessIdentifier.isElectronMain) {
       this.fsExtra.ensureFileSync(LogFileConfig.filePath);
     }
   }

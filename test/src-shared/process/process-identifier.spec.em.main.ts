@@ -10,8 +10,8 @@ describe('ProcessIdentifier (in main process)', () => {
     assert(ProcessIdentifier.isElectron === true);
   });
 
-  it('isElectronMain() should return true', () => {
-    assert(ProcessIdentifier.isElectronMain() === true);
+  it('isElectronMain should return true', () => {
+    assert(ProcessIdentifier.isElectronMain === true);
   });
 
   it('isElectronRenderer() should return false', () => {

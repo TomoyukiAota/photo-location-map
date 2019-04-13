@@ -20,7 +20,7 @@ export class ProcessIdentifier {
         && (typeof this.process.type !== 'undefined');
   }
 
-  public static isElectronMain(): boolean {
+  public static get isElectronMain(): boolean {
     return this.isElectron
         && (this.process.type === 'browser');
   }
@@ -34,7 +34,7 @@ export class ProcessIdentifier {
     if (this.isElectronRenderer())
       return 'Renderer';
 
-    if (this.isElectronMain())
+    if (this.isElectronMain)
       return 'Main';
 
     if (this.isNode)
