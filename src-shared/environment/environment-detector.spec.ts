@@ -5,8 +5,8 @@ describe('EnvironmentDetector (in renderer process in Karma)', () => {
     expect(EnvironmentDetector.isKarma).toEqual(true);
   });
 
-  it('isElectronMochaMain() should return false', () => {
-    expect(EnvironmentDetector.isElectronMochaMain()).toEqual(false);
+  it('isElectronMochaMain should return false', () => {
+    expect(EnvironmentDetector.isElectronMochaMain).toEqual(false);
   });
 
   it('isUnitTest() should return true', () => {

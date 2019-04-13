@@ -6,8 +6,8 @@ describe('EnvironmentDetector (in main process in electron-mocha)', () => {
     assert(EnvironmentDetector.isKarma === false);
   });
 
-  it('isElectronMochaMain() should return true', () => {
-    assert(EnvironmentDetector.isElectronMochaMain() === true);
+  it('isElectronMochaMain should return true', () => {
+    assert(EnvironmentDetector.isElectronMochaMain === true);
   });
 
   it('isUnitTest() should return true', () => {
