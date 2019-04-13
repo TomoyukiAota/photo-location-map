@@ -1,5 +1,5 @@
 export class EnvironmentDetector {
-  public static isKarma(): boolean {
+  public static get isKarma(): boolean {
     return typeof __karma__ !== 'undefined';
   }
 
@@ -8,6 +8,6 @@ export class EnvironmentDetector {
   }
 
   public static isUnitTest(): boolean {
-    return this.isKarma() || this.isElectronMochaMain();
+    return this.isKarma || this.isElectronMochaMain();
   }
 }
