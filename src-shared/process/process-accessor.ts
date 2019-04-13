@@ -8,7 +8,7 @@ export class ProcessAccessor {
     // Also, Karma is for tests on Electron renderer process, so window variable must exist.
     // In cases other than Karma, process variable exists both on main and renderer process.
 
-    return EnvironmentDetector.isKarma()
+    return EnvironmentDetector.isKarma
          ? window.process
          : process;
   }
