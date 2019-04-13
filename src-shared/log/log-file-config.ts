@@ -51,7 +51,7 @@ export class LogFileConfig {
   public static configCacheForRenderer = new LogFileConfigStateHandler();
 
   public static setup(dirName: string, fileName: string) {
-    if (ProcessIdentifier.isElectronMain()) {
+    if (ProcessIdentifier.isElectronMain) {
       this.config.initialize(new LogFileConfigState(dirName, fileName));
     } else {
       throw new Error('LogFileConfig can be set up from Electron main process only.');
@@ -74,7 +74,7 @@ export class LogFileConfig {
     if (!ProcessIdentifier.isElectron)
       throw new Error('Use of this method from non-Electron process is not expected.');
 
-    return ProcessIdentifier.isElectronMain()
+    return ProcessIdentifier.isElectronMain
       ? this.config.get().dirName
       : this.getConfigCacheForRenderer().dirName;
   }
@@ -83,7 +83,7 @@ export class LogFileConfig {
     if (!ProcessIdentifier.isElectron)
       throw new Error('Use of this method from non-Electron process is not expected.');
 
-    return ProcessIdentifier.isElectronMain()
+    return ProcessIdentifier.isElectronMain
       ? this.config.get().fileName
       : this.getConfigCacheForRenderer().fileName;
   }
@@ -92,7 +92,7 @@ export class LogFileConfig {
     if (!ProcessIdentifier.isElectron)
       throw new Error('Use of this method from non-Electron process is not expected.');
 
-    return ProcessIdentifier.isElectronMain()
+    return ProcessIdentifier.isElectronMain
       ? this.config.get().filePath
       : this.getConfigCacheForRenderer().filePath;
   }
@@ -118,6 +118,6 @@ class LogFileConfigSetup {
   }
 }
 
-if (ProcessIdentifier.isElectronMain()) {
+if (ProcessIdentifier.isElectronMain) {
   LogFileConfigSetup.setup();
 }

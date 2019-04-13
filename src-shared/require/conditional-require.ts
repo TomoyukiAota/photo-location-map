@@ -9,7 +9,7 @@ export class ConditionalRequire {
     if (!ProcessIdentifier.isElectron)
       return;
 
-    if (ProcessIdentifier.isElectronMain()) {
+    if (ProcessIdentifier.isElectronMain) {
       // For Electron main process, use global.require function.
       this.electron = require('electron');
       this.os = require('os');
