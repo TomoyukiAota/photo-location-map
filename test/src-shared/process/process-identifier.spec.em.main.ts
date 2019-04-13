@@ -2,23 +2,23 @@ import assert = require('assert');
 import { ProcessIdentifier } from '../../../src-shared/process/process-identifier';
 
 describe('ProcessIdentifier (in main process)', () => {
-  it('isNode should return true', () => {
+  it('isNode should be true', () => {
     assert(ProcessIdentifier.isNode === true);
   });
 
-  it('isElectron should return true', () => {
+  it('isElectron should be true', () => {
     assert(ProcessIdentifier.isElectron === true);
   });
 
-  it('isElectronMain should return true', () => {
+  it('isElectronMain should be true', () => {
     assert(ProcessIdentifier.isElectronMain === true);
   });
 
-  it('isElectronRenderer should return false', () => {
+  it('isElectronRenderer should be false', () => {
     assert(ProcessIdentifier.isElectronRenderer === false);
   });
 
-  it('processType should return "Main"', () => {
+  it('processType should be "Main"', () => {
     assert(ProcessIdentifier.processType === 'Main');
   });
 });
