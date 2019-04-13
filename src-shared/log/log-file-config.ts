@@ -71,7 +71,7 @@ export class LogFileConfig {
   }
 
   public static get dirName(): string {
-    if (!ProcessIdentifier.isElectron())
+    if (!ProcessIdentifier.isElectron)
       throw new Error('Use of this method from non-Electron process is not expected.');
 
     return ProcessIdentifier.isElectronMain()
@@ -80,7 +80,7 @@ export class LogFileConfig {
   }
 
   public static get fileName(): string {
-    if (!ProcessIdentifier.isElectron())
+    if (!ProcessIdentifier.isElectron)
       throw new Error('Use of this method from non-Electron process is not expected.');
 
     return ProcessIdentifier.isElectronMain()
@@ -89,7 +89,7 @@ export class LogFileConfig {
   }
 
   public static get filePath(): string {
-    if (!ProcessIdentifier.isElectron())
+    if (!ProcessIdentifier.isElectron)
       throw new Error('Use of this method from non-Electron process is not expected.');
 
     return ProcessIdentifier.isElectronMain()

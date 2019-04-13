@@ -5,7 +5,7 @@ export class RequireFromMainProcess {
   public static os: typeof import('os') = null;
 
   public static initialize() {
-    if (!ProcessIdentifier.isElectron())
+    if (!ProcessIdentifier.isElectron)
       return;
 
     if (ProcessIdentifier.isElectronMain()) {

@@ -15,18 +15,18 @@ export class ProcessIdentifier {
     return (typeof this.process !== 'undefined');
   }
 
-  public static isElectron(): boolean {
+  public static get isElectron(): boolean {
     return this.isNode
         && (typeof this.process.type !== 'undefined');
   }
 
   public static isElectronMain(): boolean {
-    return this.isElectron()
+    return this.isElectron
         && (this.process.type === 'browser');
   }
 
   public static isElectronRenderer(): boolean {
-    return this.isElectron()
+    return this.isElectron
         && (this.process.type === 'renderer');
   }
 
