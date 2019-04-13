@@ -11,12 +11,12 @@ export class ProcessIdentifier {
 
   private static readonly process = ProcessAccessor.getProcess();
 
-  public static isNode(): boolean {
+  public static get isNode(): boolean {
     return (typeof this.process !== 'undefined');
   }
 
   public static isElectron(): boolean {
-    return this.isNode()
+    return this.isNode
         && (typeof this.process.type !== 'undefined');
   }
 
@@ -37,7 +37,7 @@ export class ProcessIdentifier {
     if (this.isElectronMain())
       return 'Main';
 
-    if (this.isNode())
+    if (this.isNode)
       return 'Node';
 
     return 'Non-Node';
