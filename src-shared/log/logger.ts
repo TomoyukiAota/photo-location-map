@@ -14,6 +14,16 @@ class LoggerImpl {
   public static appendToLogFile(message: string, ...object: any) {
     this.logFileWriter.append(message, ...object);
   }
+
+  public static infoWithTrace(text, ...object) {
+    if (ProcessIdentifier.isElectronRenderer()) {
+      console.groupCollapsed(text, ...object);
+      console.trace();
+      console.groupEnd();
+    } else {
+      console.info(text, ...object);
+    }
+  }
 }
 
 export class Logger {
@@ -34,7 +44,7 @@ export class Logger {
       return;
 
     const text = LoggerImpl.generateLogText(message, 'info');
-    console.info(text, ...object);
+    LoggerImpl.infoWithTrace(text, ...object);
     LoggerImpl.appendToLogFile(text, ...object);
   }
 
