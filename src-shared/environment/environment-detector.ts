@@ -7,7 +7,7 @@ export class EnvironmentDetector {
     return typeof __electronMochaMain__ !== 'undefined';
   }
 
-  public static isUnitTest(): boolean {
+  public static get isUnitTest(): boolean {
     return this.isKarma || this.isElectronMochaMain;
   }
 }
