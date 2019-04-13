@@ -7,7 +7,7 @@ class LoggerImpl {
   private static logFileWriter = new LogFileWriter();
 
   public static generateLogText(message: string, level: string): string {
-    const processType = ProcessIdentifier.processType();
+    const processType = ProcessIdentifier.processType;
     return `[${Now.extendedFormat}] [${processType}] [${level}] ${message}`;
   }
 
@@ -30,7 +30,7 @@ export class Logger {
   }
 
   public static info(message: string, ...object: any) {
-    if (EnvironmentDetector.isUnitTest())
+    if (EnvironmentDetector.isUnitTest)
       return;
 
     const text = LoggerImpl.generateLogText(message, 'info');
@@ -39,7 +39,7 @@ export class Logger {
   }
 
   public static debug(message: string, ...object: any) {
-    if (EnvironmentDetector.isUnitTest())
+    if (EnvironmentDetector.isUnitTest)
       return;
 
     const text = LoggerImpl.generateLogText(message, 'debug');

@@ -6,10 +6,10 @@ export class ConditionalRequire {
   public static path: typeof import('path') = null;
 
   public static initialize() {
-    if (!ProcessIdentifier.isElectron())
+    if (!ProcessIdentifier.isElectron)
       return;
 
-    if (ProcessIdentifier.isElectronMain()) {
+    if (ProcessIdentifier.isElectronMain) {
       // For Electron main process, use global.require function.
       this.electron = require('electron');
       this.os = require('os');

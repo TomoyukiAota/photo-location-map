@@ -11,33 +11,33 @@ export class ProcessIdentifier {
 
   private static readonly process = ProcessAccessor.getProcess();
 
-  public static isNode(): boolean {
+  public static get isNode(): boolean {
     return (typeof this.process !== 'undefined');
   }
 
-  public static isElectron(): boolean {
-    return this.isNode()
+  public static get isElectron(): boolean {
+    return this.isNode
         && (typeof this.process.type !== 'undefined');
   }
 
-  public static isElectronMain(): boolean {
-    return this.isElectron()
+  public static get isElectronMain(): boolean {
+    return this.isElectron
         && (this.process.type === 'browser');
   }
 
-  public static isElectronRenderer(): boolean {
-    return this.isElectron()
+  public static get isElectronRenderer(): boolean {
+    return this.isElectron
         && (this.process.type === 'renderer');
   }
 
-  public static processType(): 'Renderer' | 'Main' | 'Node' | 'Non-Node' {
-    if (this.isElectronRenderer())
+  public static get processType(): 'Renderer' | 'Main' | 'Node' | 'Non-Node' {
+    if (this.isElectronRenderer)
       return 'Renderer';
 
-    if (this.isElectronMain())
+    if (this.isElectronMain)
       return 'Main';
 
-    if (this.isNode())
+    if (this.isNode)
       return 'Node';
 
     return 'Non-Node';
