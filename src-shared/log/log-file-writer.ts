@@ -16,7 +16,7 @@ export class LogFileWriter {
   public append(message: string, ...object: any): Promise<void> {
     // Renderer process needs IPC channel setup in main process to write logs to the log file.
     // In unit test, the IPC channel is not available.
-    if (EnvironmentDetector.isUnitTest && ProcessIdentifier.isElectronRenderer())
+    if (EnvironmentDetector.isUnitTest && ProcessIdentifier.isElectronRenderer)
       return Promise.reject();
 
     const isApiAvailable = (this.fsExtra !== null && this.os !== null);
