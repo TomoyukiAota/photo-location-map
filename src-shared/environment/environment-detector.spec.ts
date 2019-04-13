@@ -1,8 +1,8 @@
 import { EnvironmentDetector } from './environment-detector';
 
 describe('EnvironmentDetector (in renderer process in Karma)', () => {
-  it('isKarma() should return true', () => {
-    expect(EnvironmentDetector.isKarma()).toEqual(true);
+  it('isKarma should return true', () => {
+    expect(EnvironmentDetector.isKarma).toEqual(true);
   });
 
   it('isElectronMochaMain() should return false', () => {
