@@ -1,8 +1,8 @@
 import { ProcessIdentifier } from './process-identifier';
 
 describe('ProcessIdentifier (in renderer process)', () => {
-  it('isNode() should return true', () => {
-    expect(ProcessIdentifier.isNode()).toEqual(true);
+  it('isNode should return true', () => {
+    expect(ProcessIdentifier.isNode).toEqual(true);
   });
 
   it('isElectron() should return true', () => {
