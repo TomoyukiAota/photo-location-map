@@ -5,8 +5,8 @@ describe('ProcessIdentifier (in renderer process)', () => {
     expect(ProcessIdentifier.isNode).toEqual(true);
   });
 
-  it('isElectron() should return true', () => {
-    expect(ProcessIdentifier.isElectron()).toEqual(true);
+  it('isElectron should return true', () => {
+    expect(ProcessIdentifier.isElectron).toEqual(true);
   });
 
   it('isElectronMain() should return false', () => {
