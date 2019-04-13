@@ -25,13 +25,13 @@ export class ProcessIdentifier {
         && (this.process.type === 'browser');
   }
 
-  public static isElectronRenderer(): boolean {
+  public static get isElectronRenderer(): boolean {
     return this.isElectron
         && (this.process.type === 'renderer');
   }
 
   public static processType(): 'Renderer' | 'Main' | 'Node' | 'Non-Node' {
-    if (this.isElectronRenderer())
+    if (this.isElectronRenderer)
       return 'Renderer';
 
     if (this.isElectronMain)
