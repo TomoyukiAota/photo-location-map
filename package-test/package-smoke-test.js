@@ -4,7 +4,7 @@ const testInfo = require('./package-test-info');
 const testUtil = require('./package-test-util');
 
 class PackageSmokeTest {
-  launchExecutable() {
+  async launchExecutable() {
     const executionTime = 30000;
     logger.info(`Launch executable and let it run for ${executionTime} ms.`);
     logger.info(`Executable Launch Command: "${testInfo.executableLaunchCommand}"`)
@@ -28,12 +28,10 @@ class PackageSmokeTest {
       logger.info(`"${testInfo.executableLaunchCommand}" is terminated.`);
     });
 
-    return new Promise(resolve => setTimeout(resolve, executionTime))
-      .then(() => {
-        const kill  = require('tree-kill');
-        kill(executableProcess.pid);
-        logger.info('Finished running the executable.');
-      });
+    await new Promise(resolve => setTimeout(resolve, executionTime));
+    const kill = require('tree-kill');
+    kill(executableProcess.pid);
+    logger.info('Finished running the executable.');
   }
 
   testLog() {
