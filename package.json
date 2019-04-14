@@ -39,7 +39,7 @@
     "test:unit:em:main": "cross-env TS_NODE_TRANSPILE_ONLY=1 electron-mocha --opts ./test/electron-mocha-main.opts",
     "test:unit:all": "npm-run-all test:unit:karma test:unit:em:main",
     "test:e2e": "npm run postinstall:web && ng e2e",
-    "test:package": "node run-package-test",
+    "test:package": "node ./package-test/run-package-test",
     "test:all": "npm-run-all lint test:unit:all test:package",
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md"
   },
@@ -92,6 +92,7 @@
     "karma-jasmine": "2.0.1",
     "karma-jasmine-html-reporter": "1.4.0",
     "karma-mocha-reporter": "2.2.5",
+    "lodash": "4.17.11",
     "npm-run-all": "4.1.5",
     "power-assert": "1.6.1",
     "protractor": "5.4.2",
