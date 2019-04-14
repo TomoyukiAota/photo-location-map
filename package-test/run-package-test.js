@@ -1,27 +1,9 @@
 const child_process = require("child_process");
 const fs = require('fs');
-const moment = require('moment-timezone');
+const logger = require('./package-test-logger');
 
-class Logger
-{
-    static dateTime() {
-        return moment.utc().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
-    }
 
-    static error(message) {
-        console.error(`[${this.dateTime()}] [error] ${message}`);
-    }
-
-    static warn(message) {
-        console.warn(`[${this.dateTime()}] [warn] ${message}`);
-    }
-
-    static info(message) {
-        console.info(`[${this.dateTime()}] [info] ${message}`);
-    }
-}
-
-Logger.info(`Start of "${__filename}"`);
+logger.info(`Start of "${__filename}"`);
 
 const releaseDirectory = './release';
 
@@ -51,54 +33,54 @@ function getTestInfo() {
 }
 
 function createPackage(testInfo) {
-    Logger.info(`Start of "${testInfo.packageCreationCommand}"`);
+    logger.info(`Start of "${testInfo.packageCreationCommand}"`);
     const stdout = child_process.execSync(testInfo.packageCreationCommand);
-    Logger.info(stdout.toString())
-    Logger.info(`End of "${testInfo.packageCreationCommand}"`);
+    logger.info(stdout.toString())
+    logger.info(`End of "${testInfo.packageCreationCommand}"`);
 }
 
 function printItemsInReleaseDirectory() {
-    Logger.info("-----------------------------------------------");
-    Logger.info(`Following items exist in "${releaseDirectory}":`)
+    logger.info("-----------------------------------------------");
+    logger.info(`Following items exist in "${releaseDirectory}":`)
     fs.readdirSync(releaseDirectory).forEach(file => {
-      Logger.info(`  ${releaseDirectory}/${file}`);
+      logger.info(`  ${releaseDirectory}/${file}`);
     })
-    Logger.info("-----------------------------------------------");
+    logger.info("-----------------------------------------------");
 }
 
 function testIfPackageExists(testInfo) {
-    Logger.info(`Expected Package Location: "${testInfo.expectedPackageLocation}"`);
+    logger.info(`Expected Package Location: "${testInfo.expectedPackageLocation}"`);
     if (fs.existsSync(testInfo.expectedPackageLocation)) {
-        Logger.info("Package exists in the expected location.");
+        logger.info("Package exists in the expected location.");
     } else {
         const errorMessage = "Package does NOT exist in the expected location.";
-        Logger.error(errorMessage);
+        logger.error(errorMessage);
         throw new Error(errorMessage);
     }
 }
 
 function launchExecutable(testInfo) {
     const executionTime = 30000;
-    Logger.info(`Launch executable and let it run for ${executionTime} ms.`);
-    Logger.info(`Executable Launch Command: "${testInfo.executableLaunchCommand}"`)
+    logger.info(`Launch executable and let it run for ${executionTime} ms.`);
+    logger.info(`Executable Launch Command: "${testInfo.executableLaunchCommand}"`)
     const executableProcess = child_process.spawn(testInfo.executableLaunchCommand, [], { shell: true });
 
     executableProcess.stdout.on('data', function(data){
-        Logger.info(`stdout: ${data}`);
+        logger.info(`stdout: ${data}`);
     });
 
     executableProcess.stderr.on('data', function(data){
-        Logger.warn(`stderr: ${data}`);
+        logger.warn(`stderr: ${data}`);
     });
 
     executableProcess.on('error', (err) => {
-        Logger.error(`Failed to start ${testInfo.executableLaunchCommand}`);
-        Logger.error(err);
+        logger.error(`Failed to start ${testInfo.executableLaunchCommand}`);
+        logger.error(err);
         throw err;
     });
 
     executableProcess.on('close', (code) => {
-        Logger.info(`"${testInfo.executableLaunchCommand}" is terminated.`);
+        logger.info(`"${testInfo.executableLaunchCommand}" is terminated.`);
     });
 
     return new Promise(resolve => setTimeout(resolve, executionTime))
@@ -118,10 +100,10 @@ async function runPackageTest() {
 
 runPackageTest()
 .then(() => {
-    Logger.info(`End of "${__filename}"`);
+    logger.info(`End of "${__filename}"`);
     process.exitCode = 0;
 }).catch((reason) => {
-    Logger.error(reason)
-    Logger.error(`End of "${__filename}" with some errors.`);
+    logger.error(reason)
+    logger.error(`End of "${__filename}" with some errors.`);
     process.exitCode = 1;
 });
