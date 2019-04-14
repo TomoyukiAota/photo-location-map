@@ -71,7 +71,7 @@ class PackageSmokeTest {
 
     const isTestPass = isMainProcessLogFound && isRendererProcessLogFound;
     if (isTestPass) {
-      logger.info('Both "[Main]" and "[Renderer]" are logged more than once.');
+      logger.info('Both "[Main]" and "[Renderer]" are logged at least once.');
       logger.info('Log file content is OK.');
     } else {
       logger.error('"[Main]" and/or "[Renderer]" is not logged.');
