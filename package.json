@@ -39,7 +39,7 @@
     "test:unit:em:main": "cross-env TS_NODE_TRANSPILE_ONLY=1 electron-mocha --opts ./test/electron-mocha-main.opts",
     "test:unit:all": "npm-run-all test:unit:karma test:unit:em:main",
     "test:e2e": "npm run postinstall:web && ng e2e",
-    "test:package": "node run-package-test",
+    "test:package": "node ./package-test/run-package-test",
     "test:all": "npm-run-all lint test:unit:all test:package",
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md"
   },
