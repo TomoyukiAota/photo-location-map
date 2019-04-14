@@ -2,18 +2,10 @@ const child_process = require("child_process");
 const fs = require('fs');
 const logger = require('./package-test-logger');
 const testInfo = require('./package-test-info');
+const testUtil = require('./package-test-util');
 
 
 logger.info(`Start of "${__filename}"`);
-
-function printItemsInDirectory(directory) {
-  logger.info("-----------------------------------------------");
-  logger.info(`Following items exist in "${directory}":`)
-  fs.readdirSync(directory).forEach(file => {
-    logger.info(`  ${file}`);
-  })
-  logger.info("-----------------------------------------------");
-}
 
 function createPackage() {
   logger.info(`Start of "${testInfo.packageCreationCommand}" to create a package.`);
@@ -23,7 +15,7 @@ function createPackage() {
 }
 
 function testIfPackageExists() {
-  printItemsInDirectory(testInfo.releaseDirectory);
+  testUtil.printItemsInDirectory(testInfo.releaseDirectory);
   logger.info(`Expected Package Location: "${testInfo.expectedPackageLocation}"`);
   if (fs.existsSync(testInfo.expectedPackageLocation)) {
     logger.info("Package exists in the expected location.");
@@ -67,7 +59,7 @@ function launchExecutable() {
 }
 
 function testLog() {
-  printItemsInDirectory(testInfo.logDirectory);
+  testUtil.printItemsInDirectory(testInfo.logDirectory);
 }
 
 async function runPackageTest() {
