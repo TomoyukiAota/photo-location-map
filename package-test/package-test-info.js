@@ -22,7 +22,7 @@ class PackageTestInfo {
       case "linux":
         this.packageCreationCommand = "npm run electron:linux",
         this.expectedPackageLocation = `${this.releaseDirectory}/angular-electron 0.0.1.AppImage`,
-        this.executableLaunchCommand = `${this.releaseDirectory}/angular-electron 0.0.1.AppImage`
+        this.executableLaunchCommand = `"${this.releaseDirectory}/angular-electron 0.0.1.AppImage"`
         break;
       default:
         throw new Error(`Unsupported platform for "${__filename}"`);
