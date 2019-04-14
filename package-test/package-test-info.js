@@ -1,10 +1,13 @@
+const getLogDirectory = require('./get-log-directory');
+
 class PackageTestInfo {
   constructor() {
     this.releaseDirectory = './release';
-    this.addPlatformDependentProperties();
+    this.logDirectory = getLogDirectory();
+    this.addMiscPlatformDependentProperties();
   }
 
-  addPlatformDependentProperties() {
+  addMiscPlatformDependentProperties() {
     switch(global.process.platform) {
       case "win32":
         this.packageCreationCommand = "npm run electron:windows",

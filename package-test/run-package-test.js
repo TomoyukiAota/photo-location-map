@@ -6,23 +6,24 @@ const testInfo = require('./package-test-info');
 
 logger.info(`Start of "${__filename}"`);
 
+function printItemsInDirectory(directory) {
+  logger.info("-----------------------------------------------");
+  logger.info(`Following items exist in "${directory}":`)
+  fs.readdirSync(directory).forEach(file => {
+    logger.info(`  ${file}`);
+  })
+  logger.info("-----------------------------------------------");
+}
+
 function createPackage() {
-  logger.info(`Start of "${testInfo.packageCreationCommand}"`);
+  logger.info(`Start of "${testInfo.packageCreationCommand}" to create a package.`);
   const stdout = child_process.execSync(testInfo.packageCreationCommand);
   logger.info(stdout.toString())
   logger.info(`End of "${testInfo.packageCreationCommand}"`);
 }
 
-function printItemsInReleaseDirectory() {
-  logger.info("-----------------------------------------------");
-  logger.info(`Following items exist in "${testInfo.releaseDirectory}":`)
-  fs.readdirSync(testInfo.releaseDirectory).forEach(file => {
-    logger.info(`  ${testInfo.releaseDirectory}/${file}`);
-  })
-  logger.info("-----------------------------------------------");
-}
-
 function testIfPackageExists() {
+  printItemsInDirectory(testInfo.releaseDirectory);
   logger.info(`Expected Package Location: "${testInfo.expectedPackageLocation}"`);
   if (fs.existsSync(testInfo.expectedPackageLocation)) {
     logger.info("Package exists in the expected location.");
@@ -61,14 +62,19 @@ function launchExecutable() {
     .then(() => {
       const kill  = require('tree-kill');
       kill(executableProcess.pid);
+      logger.info('Finished running the executable.');
     });
+}
+
+function testLog() {
+  printItemsInDirectory(testInfo.logDirectory);
 }
 
 async function runPackageTest() {
   createPackage();
-  printItemsInReleaseDirectory();
   testIfPackageExists();
   await launchExecutable();
+  testLog();
 }
 
 runPackageTest()
