@@ -13,7 +13,7 @@ async function runPackageTest() {
 
 runPackageTest()
 .then(() => {
-  logger.info(`End of package test`);
+  logger.info(`End of package test.`);
   process.exitCode = 0;
 }).catch((reason) => {
   logger.error(reason)
