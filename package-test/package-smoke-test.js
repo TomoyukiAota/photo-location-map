@@ -39,8 +39,10 @@ class PackageSmokeTest {
   }
 
   async run() {
+    logger.info('Start of package smoke test.');
     await this.launchExecutable();
     this.testLog();
+    logger.info('End of package smoke test.');
   }
 }
 

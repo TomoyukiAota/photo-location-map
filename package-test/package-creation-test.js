@@ -25,8 +25,10 @@ class PackageCreationTest {
   }
 
   run() {
+    logger.info('Start of package creation test.');
     this.createPackage();
     this.testIfPackageExists();
+    logger.info('End of package creation test.');
   }
 }
 
