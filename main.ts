@@ -52,7 +52,7 @@ function createWindow() {
 
   mainWindowState.manage(browserWindow);
 
-  Logger.info('Main window is created.');
+  Logger.info('Main window is launched.');
 }
 
 
@@ -79,6 +79,7 @@ try {
     }
   });
 } catch (e) {
-  // Catch Error
-  // throw e;
+  Logger.error(e);
+  Logger.error('Fatal error occured in main process. Photo Location Map is closing.');
+  process.exitCode = 1;
 }
