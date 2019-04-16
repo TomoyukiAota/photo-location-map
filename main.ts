@@ -52,7 +52,7 @@ function createWindow() {
 
   mainWindowState.manage(browserWindow);
 
-  Logger.info('Main window is created.');
+  Logger.info('Main window is launched.');
 }
 
 
