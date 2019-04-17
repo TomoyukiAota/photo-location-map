@@ -15,7 +15,7 @@ runPackageTest()
 .then(() => {
   logger.info(`End of package test.`);
   process.exitCode = 0;
-}).catch((reason) => {
+}).catch(reason => {
   logger.error(reason)
   logger.error(`End of package test with some errors.`);
   process.exitCode = 1;
