@@ -8,33 +8,24 @@ const testInfo = require('./package-test-info');
 const testUtil = require('./package-test-util');
 
 class PackageSmokeTest {
-  async launchExecutable() {
+  async runExecutable() {
     const executionTime = 30000;
     logger.info(`Launch executable and let it run for ${executionTime} ms.`);
     logger.info(`Executable Launch Command: "${testInfo.executableLaunchCommand}"`)
     const executableProcess = child_process.spawn(testInfo.executableLaunchCommand, [], { shell: true });
 
-    executableProcess.stdout.on('data', function(data){
-      logger.info(`stdout: ${data}`);
-    });
+    executableProcess.stdout.on('data', data => logger.info(`stdout: ${data}`));
+    executableProcess.stderr.on('data', data => logger.warn(`stderr: ${data}`));
+    executableProcess.on('close', code => logger.info(`"${testInfo.executableLaunchCommand}" is terminated.`));
 
-    executableProcess.stderr.on('data', function(data){
-      logger.warn(`stderr: ${data}`);
-    });
-
-    executableProcess.on('error', (err) => {
+    executableProcess.on('error', error => {
       logger.error(`Failed to start ${testInfo.executableLaunchCommand}`);
-      logger.error(err);
-      throw err;
-    });
-
-    executableProcess.on('close', (code) => {
-      logger.info(`"${testInfo.executableLaunchCommand}" is terminated.`);
+      logger.error(error);
+      throw error;
     });
 
     await new Promise(resolve => setTimeout(resolve, executionTime));
-    const kill = require('tree-kill');
-    kill(executableProcess.pid);
+    require('tree-kill')(executableProcess.pid);
     logger.info('Finished running the executable.');
   }
 
@@ -84,15 +75,17 @@ class PackageSmokeTest {
     testUtil.printItemsInDirectory(testInfo.logDirectory);
     const mostRecentLogFilePath = this.getMostRecentLogFilePath();
     logger.info(`Most recent log file: ${path.basename(mostRecentLogFilePath)}`);
-    logger.info(`Content of the most recent log file:`)
+
+    logger.info(`Content of the most recent log file:`);
     const content = fs.readFileSync(mostRecentLogFilePath, 'utf8');
     this.printFileContent(content);
+
     this.testLogFileConent(content);
   }
 
   async run() {
     logger.info('Start of package smoke test.');
-    await this.launchExecutable();
+    await this.runExecutable();
     this.testLog();
     logger.info('End of package smoke test.');
   }
