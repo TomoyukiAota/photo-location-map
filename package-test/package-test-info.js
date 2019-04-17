@@ -1,8 +1,9 @@
+const path = require('path');
 const getLogDirectory = require('./get-log-directory');
 
 class PackageTestInfo {
   constructor() {
-    this.releaseDirectory = './release';
+    this.releaseDirectory = `.${path.sep}release`;
     this.logDirectory = getLogDirectory();
     this.addMiscPlatformDependentProperties();
   }
@@ -11,8 +12,8 @@ class PackageTestInfo {
     switch(global.process.platform) {
       case "win32":
         this.packageCreationCommand = "npm run electron:windows",
-        this.expectedPackageLocation = `${this.releaseDirectory}/angular-electron 0.0.1.exe`,
-        this.executableLaunchCommand = `"${this.releaseDirectory}/angular-electron 0.0.1.exe"`
+        this.expectedPackageLocation = `${this.releaseDirectory}\\angular-electron 0.0.1.exe`,
+        this.executableLaunchCommand = `"${this.releaseDirectory}\\angular-electron 0.0.1.exe"`
         break;
       case "darwin":
         this.packageCreationCommand = "npm run electron:mac",
