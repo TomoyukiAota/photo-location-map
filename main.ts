@@ -24,7 +24,10 @@ function createWindow() {
     x: mainWindowState.x,
     y: mainWindowState.y,
     width: mainWindowState.width,
-    height: mainWindowState.height
+    height: mainWindowState.height,
+    webPreferences: {
+      nodeIntegration: true
+    }
   });
 
   if (isLiveReloadMode) {
