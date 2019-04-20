@@ -9,12 +9,12 @@ class PackageTestUtil {
       return;
     }
 
-    logger.info("-----------------------------------------------");
+    logger.info('-----------------------------------------------');
     logger.info(`Following items are found in "${directory}":`)
     fileNames.forEach(file => {
       logger.info(`  ${file}`);
     })
-    logger.info("-----------------------------------------------");
+    logger.info('-----------------------------------------------');
   }
 }
 
