@@ -2,7 +2,7 @@ const moment = require('moment-timezone');
 
 module.exports = class PackageTestLogger {
   static dateTime() {
-    return moment.utc().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");
+    return moment.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
   }
 
   static error(message) {

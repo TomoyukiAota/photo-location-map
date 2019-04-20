@@ -1,13 +1,30 @@
-const child_process = require("child_process");
-const fs = require('fs');
+const child_process = require('child_process');
+const fs = require('fs-extra');
 const os = require('os');
 const path = require('path');
-const _ = require('lodash');
 const logger = require('./package-test-logger');
 const testInfo = require('./package-test-info');
 const testUtil = require('./package-test-util');
 
 class PackageSmokeTest {
+  emptyLogDirectory() {
+    logger.info('To test the log file created by the application, there needs to be no log files (*_log.txt) in the log directory before running the application.');
+    logger.info(`Searching the log directory "${testInfo.logDirectory}"`);
+    testUtil.printItemsInDirectory(testInfo.logDirectory);
+    logger.info('Removing all files in the log directory...');
+    fs.emptyDirSync(testInfo.logDirectory);
+    testUtil.printItemsInDirectory(testInfo.logDirectory);
+    const logFiles = fs.readdirSync(testInfo.logDirectory)
+                       .filter(fileName => fileName.endsWith('_log.txt'));
+    if (logFiles.length === 0) {
+      logger.info('There is no log file (*_log.txt). Proceeding to the next step of the smoke test.');
+    } else {
+      const message = 'Log file(s) (*_log.txt) still exist. Aborting the smoke test.';
+      logger.error(message);
+      throw new Error(message);
+    }
+  }
+
   async runExecutable() {
     const executionTime = 30000;
     logger.info(`Launch executable and let it run for ${executionTime} ms.`);
@@ -29,19 +46,25 @@ class PackageSmokeTest {
     logger.info('Finished running the executable.');
   }
 
-  getMostRecentLogFilePath() {
+  getLogFileName() {
     const logFileNames = fs.readdirSync(testInfo.logDirectory)
                            .filter(fileName => fileName.endsWith('_log.txt'));
 
-    if (logFileNames.length === 0) {
-      const errorMessage = 'Log file (*_log.txt) is not found.';
-      logger.error(errorMessage);
-      throw new Error(errorMessage);
+    switch(logFileNames.length) {
+      case 0: {
+        const errorMessage = 'Log file (*_log.txt) is not found.';
+        logger.error(errorMessage);
+        throw new Error(errorMessage);
+      }
+      case 1: {
+        return logFileNames[0];
+      }
+      default: { // Case of more than 1 log files
+        const errorMessage = 'There are more than 1 log files (*_log.txt).';
+        logger.error(errorMessage);
+        throw new Error(errorMessage);
+      }
     }
-
-    const logFilePaths = logFileNames.map(fileName => path.join(testInfo.logDirectory, fileName));
-    const mostRecentLogFilePath = _.maxBy(logFilePaths, filePath => fs.statSync(filePath).ctime);
-    return mostRecentLogFilePath;
   }
 
   printFileContent(content) {
@@ -72,12 +95,14 @@ class PackageSmokeTest {
   }
 
   testLog() {
+    logger.info(`Searching the log directory "${testInfo.logDirectory}"`);
     testUtil.printItemsInDirectory(testInfo.logDirectory);
-    const mostRecentLogFilePath = this.getMostRecentLogFilePath();
-    logger.info(`Most recent log file: ${path.basename(mostRecentLogFilePath)}`);
+    const logFileName = this.getLogFileName();
+    logger.info(`Log file to test: ${logFileName}`);
 
-    logger.info(`Content of the most recent log file:`);
-    const content = fs.readFileSync(mostRecentLogFilePath, 'utf8');
+    logger.info(`Content of the log file:`);
+    const logFilePath = path.join(testInfo.logDirectory, logFileName);
+    const content = fs.readFileSync(logFilePath, 'utf8');
     this.printFileContent(content);
 
     this.testLogFileConent(content);
@@ -85,6 +110,7 @@ class PackageSmokeTest {
 
   async run() {
     logger.info('Start of package smoke test.');
+    this.emptyLogDirectory();
     await this.runExecutable();
     this.testLog();
     logger.info('End of package smoke test.');
