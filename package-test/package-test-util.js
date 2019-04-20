@@ -3,9 +3,15 @@ const logger = require('./package-test-logger');
 
 class PackageTestUtil {
   printItemsInDirectory(directory) {
+    const fileNames = fs.readdirSync(directory);
+    if (fileNames.length === 0) {
+      logger.info(`Searched and no item is found in "${directory}".`);
+      return;
+    }
+
     logger.info("-----------------------------------------------");
-    logger.info(`Following items exist in "${directory}":`)
-    fs.readdirSync(directory).forEach(file => {
+    logger.info(`Following items are found in "${directory}":`)
+    fileNames.forEach(file => {
       logger.info(`  ${file}`);
     })
     logger.info("-----------------------------------------------");
