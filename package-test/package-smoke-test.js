@@ -2,7 +2,6 @@ const child_process = require("child_process");
 const fs = require('fs-extra');
 const os = require('os');
 const path = require('path');
-const _ = require('lodash');
 const logger = require('./package-test-logger');
 const testInfo = require('./package-test-info');
 const testUtil = require('./package-test-util');
