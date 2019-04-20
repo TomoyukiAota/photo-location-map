@@ -7,11 +7,11 @@ function parsePathWithWindowsEnvironmentVariable(path) {
 
 function getAppDataDirectory() {
   switch(global.process.platform) {
-    case "win32":
+    case 'win32':
       return parsePathWithWindowsEnvironmentVariable('%APPDATA%');
-    case "darwin":
+    case 'darwin':
       return `${process.env.HOME}/Library/Application Support`;
-    case "linux":
+    case 'linux':
       return `${process.env.HOME}/.config`;
     default:
       throw new Error(`Unsupported platform for "${__filename}"`);
