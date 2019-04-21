@@ -43,7 +43,9 @@ function createWindow() {
     }));
   }
 
-  browserWindow.webContents.openDevTools();
+  if (isLiveReloadMode) {
+    browserWindow.webContents.openDevTools();
+  }
 
   // Emitted when the window is closed.
   browserWindow.on('closed', () => {
