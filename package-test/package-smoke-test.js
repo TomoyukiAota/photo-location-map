@@ -28,7 +28,7 @@ class PackageSmokeTest {
   async runExecutable() {
     const executionTime = 30000;
     logger.info(`Launch executable and let it run for ${executionTime} ms.`);
-    logger.info(`Executable Launch Command: "${testInfo.executableLaunchCommand}"`)
+    logger.info(`Executable Launch Command: "${testInfo.executableLaunchCommand}"`);
     const executableProcess = child_process.spawn(testInfo.executableLaunchCommand, [], { shell: true });
 
     executableProcess.stdout.on('data', data => logger.info(`stdout: ${data}`));
@@ -100,7 +100,7 @@ class PackageSmokeTest {
     const logFileName = this.getLogFileName();
     logger.info(`Log file to test: ${logFileName}`);
 
-    logger.info(`Content of the log file:`);
+    logger.info('Content of the log file:');
     const logFilePath = path.join(testInfo.logDirectory, logFileName);
     const content = fs.readFileSync(logFilePath, 'utf8');
     this.printFileContent(content);
