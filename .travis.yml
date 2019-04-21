@@ -19,5 +19,5 @@ script:
   - npm run lint:es
   - npm run test:unit:karma
   - npm run test:unit:em:main
-  # - npm run test:e2e
+  - npm run test:e2e
   - npm run test:package
