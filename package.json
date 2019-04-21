@@ -85,7 +85,7 @@
     "electron-builder": "20.38.5",
     "electron-mocha": "7.0.0",
     "electron-reload": "1.4.0",
-    "eslint": "^5.16.0",
+    "eslint": "5.16.0",
     "espower-typescript": "9.0.2",
     "hammerjs": "2.0.8",
     "jasmine-core": "3.3.0",
