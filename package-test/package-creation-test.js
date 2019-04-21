@@ -8,7 +8,7 @@ class PackageCreationTest {
   createPackage() {
     logger.info(`Start of "${testInfo.packageCreationCommand}" to create a package.`);
     const stdout = child_process.execSync(testInfo.packageCreationCommand);
-    logger.info(stdout.toString())
+    logger.info(stdout.toString());
     logger.info(`End of "${testInfo.packageCreationCommand}"`);
   }
 

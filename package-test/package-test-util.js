@@ -10,10 +10,10 @@ class PackageTestUtil {
     }
 
     logger.info('-----------------------------------------------');
-    logger.info(`Following items are found in "${directory}":`)
+    logger.info(`Following items are found in "${directory}":`);
     fileNames.forEach(file => {
       logger.info(`  ${file}`);
-    })
+    });
     logger.info('-----------------------------------------------');
   }
 }
