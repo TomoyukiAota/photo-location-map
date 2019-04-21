@@ -43,7 +43,7 @@
     "test:unit:all": "npm-run-all test:unit:karma test:unit:em:main",
     "test:e2e": "npm run build:prod && mocha --opts ./e2e/mocha-e2e.opts",
     "test:package": "node ./package-test/run-package-test",
-    "test:all": "npm-run-all lint:all test:unit:all test:package",
+    "test:all": "npm-run-all lint:all test:unit:all test:e2e test:package",
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md"
   },
   "dependencies": {
