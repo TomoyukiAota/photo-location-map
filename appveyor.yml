@@ -20,7 +20,8 @@ test_script:
   - node --version
   - npm --version
   # run tests
-  - npm run lint
+  - npm run lint:ng
+  - npm run lint:es
   - npm run test:unit:karma
   - npm run test:unit:em:main
   # - npm run test:e2e
