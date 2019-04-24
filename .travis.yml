@@ -3,9 +3,8 @@ os:
   - osx
 language: node_js
 node_js:
-  - "node"
-  - "lts/*"
   - "10"
+  - "11"
 sudo: required
 addons:
     chrome: stable
