@@ -4,7 +4,7 @@ import '../polyfills';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material';
+import { MatButtonModule, MatTreeModule, MatIconModule } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -19,6 +19,7 @@ import { WebviewDirective } from './directives/webview.directive';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { DirectoryTreeViewComponent } from './components/directory-tree-view/directory-tree-view.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -30,7 +31,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppComponent,
     HomeComponent,
     WebviewDirective,
-    SidebarComponent
+    SidebarComponent,
+    DirectoryTreeViewComponent
   ],
   imports: [
     BrowserModule,
@@ -46,7 +48,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     }),
     AngularSplitModule.forRoot(),
     BrowserAnimationsModule,
-    MatButtonModule
+    MatButtonModule,
+    MatTreeModule,
+    MatIconModule
   ],
   providers: [ElectronService],
   bootstrap: [AppComponent]
