@@ -1,3 +1,4 @@
+import { Component } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -10,8 +11,11 @@ describe('SidebarComponent', () => {
   let fixture: ComponentFixture<SidebarComponent>;
 
   beforeEach(async(() => {
+    @Component({ selector: 'app-directory-tree-view', template: '' })
+    class DummyDirectoryTreeViewComponent {}
+
     TestBed.configureTestingModule({
-      declarations: [SidebarComponent],
+      declarations: [SidebarComponent, DummyDirectoryTreeViewComponent],
       imports: [
         TranslateModule.forRoot()
       ],
