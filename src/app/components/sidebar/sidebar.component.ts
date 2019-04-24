@@ -1,5 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
+import * as createDirectoryTree from 'directory-tree';
 
+import { Logger } from '../../../../src-shared/log/logger';
 import { ElectronService } from '../../providers/electron.service';
 
 @Component({
@@ -24,7 +26,11 @@ export class SidebarComponent {
         if (!folderPaths)
           return;
 
-        this.selectedFolderPath = folderPaths[0];
+        const selectedFolderPath = folderPaths[0];
+        Logger.info(`Following directory is selected: ${selectedFolderPath}`);
+        const directoryTreeObject = createDirectoryTree(selectedFolderPath);
+        Logger.info('Directory tree object: ', directoryTreeObject);
+        this.selectedFolderPath = selectedFolderPath;
         this.changeDetectorRef.detectChanges();
       }
     );
