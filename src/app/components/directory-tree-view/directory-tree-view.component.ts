@@ -4,6 +4,8 @@ import {Component, Injectable} from '@angular/core';
 import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
 import {BehaviorSubject} from 'rxjs';
 
+import { treeData } from './tree-data';
+
 /**
  * Node for to-do item
  */
@@ -18,27 +20,6 @@ export class TodoItemFlatNode {
   level: number;
   expandable: boolean;
 }
-
-/**
- * The Json object for to-do list data.
- */
-const TREE_DATA = {
-  Groceries: {
-    'Almond Meal flour': null,
-    'Organic eggs': null,
-    'Protein Powder': null,
-    Fruits: {
-      Apple: null,
-      Berries: ['Blueberry', 'Raspberry'],
-      Orange: null
-    }
-  },
-  Reminders: [
-    'Cook dinner',
-    'Read the Material Design spec',
-    'Upgrade Application to Angular'
-  ]
-};
 
 /**
  * Checklist database, it can build a tree structured Json object.
@@ -58,7 +39,7 @@ export class ChecklistDatabase {
   initialize() {
     // Build the tree nodes from Json object. The result is a list of `TodoItemNode` with nested
     //     file node as children.
-    const data = this.buildFileTree(TREE_DATA, 0);
+    const data = this.buildFileTree(treeData, 0);
 
     // Notify the change.
     this.dataChange.next(data);
