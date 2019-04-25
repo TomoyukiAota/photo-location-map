@@ -7,57 +7,52 @@ import {BehaviorSubject} from 'rxjs';
 import { treeData } from './tree-data';
 
 /**
- * Node for to-do item
+ * Nested node of tree view.
  */
-export class TodoItemNode {
-  children: TodoItemNode[];
+export class NestedNode {
+  children: NestedNode[];
   item: string;
 }
 
-/** Flat to-do item node with expandable and level information */
-export class TodoItemFlatNode {
+/** Flat node with expandable and level information */
+export class FlatNode {
   item: string;
   level: number;
   expandable: boolean;
 }
 
 /**
- * Checklist database, it can build a tree structured Json object.
- * Each node in Json object represents a to-do item or a category.
- * If a node is a category, it has children items and new items can be added under the category.
+ * Tree view data service. This can build a tree structured object for tree view.
  */
 @Injectable()
-export class ChecklistDatabase {
-  dataChange = new BehaviorSubject<TodoItemNode[]>([]);
+export class TreeViewDataService {
+  dataChange = new BehaviorSubject<NestedNode[]>([]);
 
-  get data(): TodoItemNode[] { return this.dataChange.value; }
+  get data(): NestedNode[] { return this.dataChange.value; }
 
   constructor() {
     this.initialize();
   }
 
   initialize() {
-    // Build the tree nodes from Json object. The result is a list of `TodoItemNode` with nested
-    //     file node as children.
-    const data = this.buildFileTree(treeData, 0);
+    const tree = this.buildNodeTree(treeData, 0);
 
     // Notify the change.
-    this.dataChange.next(data);
+    this.dataChange.next(tree);
   }
 
   /**
-   * Build the file structure tree. The `value` is the Json object, or a sub-tree of a Json object.
-   * The return value is the list of `TodoItemNode`.
+   * Build the node tree.
    */
-  buildFileTree(obj: {[key: string]: any}, level: number): TodoItemNode[] {
-    return Object.keys(obj).reduce<TodoItemNode[]>((accumulator, key) => {
+  buildNodeTree(obj: {[key: string]: any}, level: number): NestedNode[] {
+    return Object.keys(obj).reduce<NestedNode[]>((accumulator, key) => {
       const value = obj[key];
-      const node = new TodoItemNode();
+      const node = new NestedNode();
       node.item = key;
 
       if (value != null) {
         if (typeof value === 'object') {
-          node.children = this.buildFileTree(value, level + 1);
+          node.children = this.buildNodeTree(value, level + 1);
         } else {
           node.item = value;
         }
@@ -68,14 +63,14 @@ export class ChecklistDatabase {
   }
 
   /** Add an item to to-do list */
-  insertItem(parent: TodoItemNode, name: string) {
+  insertItem(parent: NestedNode, name: string) {
     if (parent.children) {
-      parent.children.push({item: name} as TodoItemNode);
+      parent.children.push({item: name} as NestedNode);
       this.dataChange.next(this.data);
     }
   }
 
-  updateItem(node: TodoItemNode, name: string) {
+  updateItem(node: NestedNode, name: string) {
     node.item = name;
     this.dataChange.next(this.data);
   }
@@ -88,107 +83,106 @@ export class ChecklistDatabase {
   selector: 'app-directory-tree-view',
   templateUrl: 'directory-tree-view.component.html',
   styleUrls: ['directory-tree-view.component.css'],
-  providers: [ChecklistDatabase]
+  providers: [TreeViewDataService]
 })
 export class DirectoryTreeViewComponent {
   /** Map from flat node to nested node. This helps us finding the nested node to be modified */
-  flatNodeMap = new Map<TodoItemFlatNode, TodoItemNode>();
+  flatToNestedNodeMap = new Map<FlatNode, NestedNode>();
 
   /** Map from nested node to flattened node. This helps us to keep the same object for selection */
-  nestedNodeMap = new Map<TodoItemNode, TodoItemFlatNode>();
+  nestedToFlatNodeMap = new Map<NestedNode, FlatNode>();
 
   /** A selected parent node to be inserted */
-  selectedParent: TodoItemFlatNode | null = null;
+  selectedParent: FlatNode | null = null;
 
   /** The new item's name */
   newItemName = '';
 
-  treeControl: FlatTreeControl<TodoItemFlatNode>;
+  treeControl: FlatTreeControl<FlatNode>;
 
-  treeFlattener: MatTreeFlattener<TodoItemNode, TodoItemFlatNode>;
+  treeFlattener: MatTreeFlattener<NestedNode, FlatNode>;
 
-  dataSource: MatTreeFlatDataSource<TodoItemNode, TodoItemFlatNode>;
+  dataSource: MatTreeFlatDataSource<NestedNode, FlatNode>;
 
-  /** The selection for checklist */
-  checklistSelection = new SelectionModel<TodoItemFlatNode>(true /* multiple */);
+  flatNodeSelectionModel = new SelectionModel<FlatNode>(true /* multiple */);
 
-  constructor(private database: ChecklistDatabase) {
+  constructor(private treeViewDataService: TreeViewDataService) {
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel,
       this.isExpandable, this.getChildren);
-    this.treeControl = new FlatTreeControl<TodoItemFlatNode>(this.getLevel, this.isExpandable);
+    this.treeControl = new FlatTreeControl<FlatNode>(this.getLevel, this.isExpandable);
     this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
-    database.dataChange.subscribe(data => {
+    treeViewDataService.dataChange.subscribe(data => {
       this.dataSource.data = data;
     });
   }
 
-  getLevel = (node: TodoItemFlatNode) => node.level;
+  getLevel = (flatNode: FlatNode) => flatNode.level;
 
-  isExpandable = (node: TodoItemFlatNode) => node.expandable;
+  isExpandable = (flatNode: FlatNode) => flatNode.expandable;
 
-  getChildren = (node: TodoItemNode): TodoItemNode[] => node.children;
+  getChildren = (nestedNode: NestedNode): NestedNode[] => nestedNode.children;
 
-  hasChild = (_: number, _nodeData: TodoItemFlatNode) => _nodeData.expandable;
+  hasChild = (_: number, flatNode: FlatNode) => flatNode.expandable;
 
-  hasNoContent = (_: number, _nodeData: TodoItemFlatNode) => _nodeData.item === '';
+  hasNoContent = (_: number, flatNode: FlatNode) => flatNode.item === '';
 
   /**
    * Transformer to convert nested node to flat node. Record the nodes in maps for later use.
    */
-  transformer = (node: TodoItemNode, level: number) => {
-    const existingNode = this.nestedNodeMap.get(node);
-    const flatNode = existingNode && existingNode.item === node.item
-        ? existingNode
-        : new TodoItemFlatNode();
-    flatNode.item = node.item;
+  transformer = (nestedNode: NestedNode, level: number) => {
+    const existingFlatNode = this.nestedToFlatNodeMap.get(nestedNode);
+    const flatNode = existingFlatNode && existingFlatNode.item === nestedNode.item  // TODO: Is `item` property comparison required?
+        ? existingFlatNode
+        : new FlatNode();
+    flatNode.item = nestedNode.item;
     flatNode.level = level;
-    flatNode.expandable = !!node.children;
-    this.flatNodeMap.set(flatNode, node);
-    this.nestedNodeMap.set(node, flatNode);
+    flatNode.expandable = !!nestedNode.children;
+    this.flatToNestedNodeMap.set(flatNode, nestedNode);
+    this.nestedToFlatNodeMap.set(nestedNode, flatNode);
     return flatNode;
   }
 
   /** Whether all the descendants of the node are selected. */
-  descendantsAllSelected(node: TodoItemFlatNode): boolean {
-    const descendants = this.treeControl.getDescendants(node);
-    const descAllSelected = descendants.every(child =>
-      this.checklistSelection.isSelected(child)
+  descendantsAllSelected(flatNode: FlatNode): boolean {
+    const descendants = this.treeControl.getDescendants(flatNode);
+    const descendantsAllSelected = descendants.every(child =>
+      this.flatNodeSelectionModel.isSelected(child)
     );
-    return descAllSelected;
+    return descendantsAllSelected;
   }
 
   /** Whether part of the descendants are selected */
-  descendantsPartiallySelected(node: TodoItemFlatNode): boolean {
-    const descendants = this.treeControl.getDescendants(node);
-    const result = descendants.some(child => this.checklistSelection.isSelected(child));
-    return result && !this.descendantsAllSelected(node);
+  descendantsPartiallySelected(flatNode: FlatNode): boolean {
+    const descendants = this.treeControl.getDescendants(flatNode);
+    const result = descendants.some(child => this.flatNodeSelectionModel.isSelected(child));
+    return result && !this.descendantsAllSelected(flatNode);
   }
 
   /** Toggle the to-do item selection. Select/deselect all the descendants node */
-  todoItemSelectionToggle(node: TodoItemFlatNode): void {
-    this.checklistSelection.toggle(node);
-    const descendants = this.treeControl.getDescendants(node);
-    this.checklistSelection.isSelected(node)
-      ? this.checklistSelection.select(...descendants)
-      : this.checklistSelection.deselect(...descendants);
+  todoItemSelectionToggle(flatNode: FlatNode): void {
+    this.flatNodeSelectionModel.toggle(flatNode);
+    const descendants = this.treeControl.getDescendants(flatNode);
+    this.flatNodeSelectionModel.isSelected(flatNode)
+      ? this.flatNodeSelectionModel.select(...descendants)
+      : this.flatNodeSelectionModel.deselect(...descendants);
 
     // Force update for the parent
     descendants.every(child =>
-      this.checklistSelection.isSelected(child)
+      this.flatNodeSelectionModel.isSelected(child)
     );
-    this.checkAllParentsSelection(node);
+    this.checkAllParentsSelection(flatNode);
   }
 
   /** Toggle a leaf to-do item selection. Check all the parents to see if they changed */
-  todoLeafItemSelectionToggle(node: TodoItemFlatNode): void {
-    this.checklistSelection.toggle(node);
-    this.checkAllParentsSelection(node);
+  todoLeafItemSelectionToggle(flatNode: FlatNode): void {
+    this.flatNodeSelectionModel.toggle(flatNode);
+    this.checkAllParentsSelection(flatNode);
   }
 
   /* Checks all the parents when a leaf node is selected/unselected */
-  checkAllParentsSelection(node: TodoItemFlatNode): void {
-    let parent: TodoItemFlatNode | null = this.getParentNode(node);
+  checkAllParentsSelection(flatNode: FlatNode): void {
+    let parent: FlatNode | null = this.getParentNode(flatNode);
     while (parent) {
       this.checkRootNodeSelection(parent);
       parent = this.getParentNode(parent);
@@ -196,28 +190,28 @@ export class DirectoryTreeViewComponent {
   }
 
   /** Check root node checked state and change it accordingly */
-  checkRootNodeSelection(node: TodoItemFlatNode): void {
-    const nodeSelected = this.checklistSelection.isSelected(node);
-    const descendants = this.treeControl.getDescendants(node);
+  checkRootNodeSelection(flatNode: FlatNode): void {
+    const nodeSelected = this.flatNodeSelectionModel.isSelected(flatNode);
+    const descendants = this.treeControl.getDescendants(flatNode);
     const descAllSelected = descendants.every(child =>
-      this.checklistSelection.isSelected(child)
+      this.flatNodeSelectionModel.isSelected(child)
     );
     if (nodeSelected && !descAllSelected) {
-      this.checklistSelection.deselect(node);
+      this.flatNodeSelectionModel.deselect(flatNode);
     } else if (!nodeSelected && descAllSelected) {
-      this.checklistSelection.select(node);
+      this.flatNodeSelectionModel.select(flatNode);
     }
   }
 
   /* Get the parent node of a node */
-  getParentNode(node: TodoItemFlatNode): TodoItemFlatNode | null {
-    const currentLevel = this.getLevel(node);
+  getParentNode(flatNode: FlatNode): FlatNode | null {
+    const currentLevel = this.getLevel(flatNode);
 
     if (currentLevel < 1) {
       return null;
     }
 
-    const startIndex = this.treeControl.dataNodes.indexOf(node) - 1;
+    const startIndex = this.treeControl.dataNodes.indexOf(flatNode) - 1;
 
     for (let i = startIndex; i >= 0; i--) {
       const currentNode = this.treeControl.dataNodes[i];
@@ -230,15 +224,15 @@ export class DirectoryTreeViewComponent {
   }
 
   /** Select the category so we can insert the new item. */
-  addNewItem(node: TodoItemFlatNode) {
-    const parentNode = this.flatNodeMap.get(node);
-    this.database.insertItem(parentNode, '');
-    this.treeControl.expand(node);
+  addNewItem(flatNode: FlatNode) {
+    const nestedNode = this.flatToNestedNodeMap.get(flatNode);
+    this.treeViewDataService.insertItem(nestedNode, '');
+    this.treeControl.expand(flatNode);
   }
 
   /** Save the node to database */
-  saveNode(node: TodoItemFlatNode, itemValue: string) {
-    const nestedNode = this.flatNodeMap.get(node);
-    this.database.updateItem(nestedNode, itemValue);
+  saveNode(flatNode: FlatNode, itemValue: string) {
+    const nestedNode = this.flatToNestedNodeMap.get(flatNode);
+    this.treeViewDataService.updateItem(nestedNode, itemValue);
   }
 }
