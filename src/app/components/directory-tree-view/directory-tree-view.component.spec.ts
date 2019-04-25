@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatButtonModule, MatIconModule, MatTreeModule } from '@angular/material';
+import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatIconModule, MatInputModule, MatTreeModule } from '@angular/material';
 
 import { DirectoryTreeViewComponent } from './directory-tree-view.component';
 
@@ -12,8 +12,11 @@ describe('DirectoryTreeViewComponent', () => {
       declarations: [ DirectoryTreeViewComponent ],
       imports: [
         MatButtonModule,
+        MatCheckboxModule,
+        MatFormFieldModule,
         MatIconModule,
-        MatTreeModule,
+        MatInputModule,
+        MatTreeModule
       ]
     }).compileComponents();
   }));
