@@ -4,7 +4,7 @@ import '../polyfills';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatButtonModule, MatTreeModule, MatIconModule } from '@angular/material';
+import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatIconModule, MatInputModule, MatTreeModule } from '@angular/material';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -49,8 +49,11 @@ export function HttpLoaderFactory(http: HttpClient) {
     AngularSplitModule.forRoot(),
     BrowserAnimationsModule,
     MatButtonModule,
-    MatTreeModule,
-    MatIconModule
+    MatCheckboxModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatTreeModule
   ],
   providers: [ElectronService],
   bootstrap: [AppComponent]
