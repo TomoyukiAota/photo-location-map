@@ -61,19 +61,6 @@ export class TreeViewDataService {
       return accumulator.concat(node);
     }, []);
   }
-
-  /** Add an item to to-do list */
-  insertItem(parent: NestedNode, name: string) {
-    if (parent.children) {
-      parent.children.push({item: name} as NestedNode);
-      this.dataChange.next(this.data);
-    }
-  }
-
-  updateItem(node: NestedNode, name: string) {
-    node.item = name;
-    this.dataChange.next(this.data);
-  }
 }
 
 /**
@@ -91,12 +78,6 @@ export class DirectoryTreeViewComponent {
 
   /** Map from nested node to flattened node. This helps us to keep the same object for selection */
   nestedToFlatNodeMap = new Map<NestedNode, FlatNode>();
-
-  /** A selected parent node to be inserted */
-  selectedParent: FlatNode | null = null;
-
-  /** The new item's name */
-  newItemName = '';
 
   treeControl: FlatTreeControl<FlatNode>;
 
