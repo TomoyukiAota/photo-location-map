@@ -125,8 +125,6 @@ export class DirectoryTreeViewComponent {
 
   hasChild = (_: number, flatNode: FlatNode) => flatNode.expandable;
 
-  hasNoContent = (_: number, flatNode: FlatNode) => flatNode.item === '';
-
   /**
    * Transformer to convert nested node to flat node. Record the nodes in maps for later use.
    */
@@ -221,18 +219,5 @@ export class DirectoryTreeViewComponent {
       }
     }
     return null;
-  }
-
-  /** Select the category so we can insert the new item. */
-  addNewItem(flatNode: FlatNode) {
-    const nestedNode = this.flatToNestedNodeMap.get(flatNode);
-    this.treeViewDataService.insertItem(nestedNode, '');
-    this.treeControl.expand(flatNode);
-  }
-
-  /** Save the node to database */
-  saveNode(flatNode: FlatNode, itemValue: string) {
-    const nestedNode = this.flatToNestedNodeMap.get(flatNode);
-    this.treeViewDataService.updateItem(nestedNode, itemValue);
   }
 }
