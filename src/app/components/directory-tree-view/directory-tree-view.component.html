@@ -3,7 +3,7 @@
     <button mat-icon-button disabled></button>
     <mat-checkbox class="checklist-leaf-node"
                   [checked]="flatNodeSelectionModel.isSelected(node)"
-                  (change)="todoLeafItemSelectionToggle(node)">{{node.item}}</mat-checkbox>
+                  (change)="toggleLeafNodeSelection(node)">{{node.item}}</mat-checkbox>
   </mat-tree-node>
 
   <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
@@ -15,6 +15,6 @@
     </button>
     <mat-checkbox [checked]="descendantsAllSelected(node)"
                   [indeterminate]="descendantsPartiallySelected(node)"
-                  (change)="todoItemSelectionToggle(node)">{{node.item}}</mat-checkbox>
+                  (change)="toggleInternalNodeSelection(node)">{{node.item}}</mat-checkbox>
   </mat-tree-node>
 </mat-tree>

@@ -157,8 +157,7 @@ export class DirectoryTreeViewComponent {
     return result && !this.descendantsAllSelected(flatNode);
   }
 
-  /** Toggle the to-do item selection. Select/deselect all the descendants node */
-  todoItemSelectionToggle(flatNode: FlatNode): void {
+  toggleInternalNodeSelection(flatNode: FlatNode): void {
     this.flatNodeSelectionModel.toggle(flatNode);
     const descendants = this.treeControl.getDescendants(flatNode);
     this.flatNodeSelectionModel.isSelected(flatNode)
@@ -172,8 +171,7 @@ export class DirectoryTreeViewComponent {
     this.checkAllParentsSelection(flatNode);
   }
 
-  /** Toggle a leaf to-do item selection. Check all the parents to see if they changed */
-  todoLeafItemSelectionToggle(flatNode: FlatNode): void {
+  toggleLeafNodeSelection(flatNode: FlatNode): void {
     this.flatNodeSelectionModel.toggle(flatNode);
     this.checkAllParentsSelection(flatNode);
   }
