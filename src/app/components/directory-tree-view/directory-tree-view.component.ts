@@ -163,11 +163,6 @@ export class DirectoryTreeViewComponent {
     this.flatNodeSelectionModel.isSelected(flatNode)
       ? this.flatNodeSelectionModel.select(...descendants)
       : this.flatNodeSelectionModel.deselect(...descendants);
-
-    // Force update for the parent
-    descendants.every(child =>
-      this.flatNodeSelectionModel.isSelected(child)
-    );
     this.checkAllParentsSelection(flatNode);
   }
 
