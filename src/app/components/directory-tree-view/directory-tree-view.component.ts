@@ -1,89 +1,18 @@
-import {SelectionModel} from '@angular/cdk/collections';
-import {FlatTreeControl} from '@angular/cdk/tree';
-import {Component, Injectable} from '@angular/core';
-import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
-import {BehaviorSubject} from 'rxjs';
-
-import { treeData } from './tree-data';
-
-/**
- * Nested node of tree view.
- */
-export class NestedNode {
-  children: NestedNode[];
-  item: string;
-}
-
-/** Flat node with expandable and level information */
-export class FlatNode {
-  item: string;
-  level: number;
-  expandable: boolean;
-}
+import { SelectionModel } from '@angular/cdk/collections';
+import { FlatTreeControl } from '@angular/cdk/tree';
+import { Component } from '@angular/core';
+import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
+import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
+import { FlatNode, NestedNode } from './directory-tree-view.model';
 
 /**
- * Tree view data service. This can build a tree structured object for tree view.
- */
-@Injectable()
-export class TreeViewDataService {
-  dataChange = new BehaviorSubject<NestedNode[]>([]);
-
-  get data(): NestedNode[] { return this.dataChange.value; }
-
-  constructor() {
-    this.initialize();
-  }
-
-  initialize() {
-    const tree = this.buildNodeTree(treeData, 0);
-
-    // Notify the change.
-    this.dataChange.next(tree);
-  }
-
-  /**
-   * Build the node tree.
-   */
-  buildNodeTree(obj: {[key: string]: any}, level: number): NestedNode[] {
-    return Object.keys(obj).reduce<NestedNode[]>((accumulator, key) => {
-      const value = obj[key];
-      const node = new NestedNode();
-      node.item = key;
-
-      if (value != null) {
-        if (typeof value === 'object') {
-          node.children = this.buildNodeTree(value, level + 1);
-        } else {
-          node.item = value;
-        }
-      }
-
-      return accumulator.concat(node);
-    }, []);
-  }
-
-  /** Add an item to to-do list */
-  insertItem(parent: NestedNode, name: string) {
-    if (parent.children) {
-      parent.children.push({item: name} as NestedNode);
-      this.dataChange.next(this.data);
-    }
-  }
-
-  updateItem(node: NestedNode, name: string) {
-    node.item = name;
-    this.dataChange.next(this.data);
-  }
-}
-
-/**
- * @title Tree with checkboxes
+ * @title Directory tree view
  */
 @Component({
   selector: 'app-directory-tree-view',
   templateUrl: 'directory-tree-view.component.html',
   styleUrls: ['directory-tree-view.component.css'],
-  providers: [TreeViewDataService]
+  providers: [DirectoryTreeViewDataService]
 })
 export class DirectoryTreeViewComponent {
   /** Map from flat node to nested node. This helps us finding the nested node to be modified */
@@ -91,12 +20,6 @@ export class DirectoryTreeViewComponent {
 
   /** Map from nested node to flattened node. This helps us to keep the same object for selection */
   nestedToFlatNodeMap = new Map<NestedNode, FlatNode>();
-
-  /** A selected parent node to be inserted */
-  selectedParent: FlatNode | null = null;
-
-  /** The new item's name */
-  newItemName = '';
 
   treeControl: FlatTreeControl<FlatNode>;
 
@@ -106,7 +29,7 @@ export class DirectoryTreeViewComponent {
 
   flatNodeSelectionModel = new SelectionModel<FlatNode>(true /* multiple */);
 
-  constructor(private treeViewDataService: TreeViewDataService) {
+  constructor(private treeViewDataService: DirectoryTreeViewDataService) {
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel,
       this.isExpandable, this.getChildren);
     this.treeControl = new FlatTreeControl<FlatNode>(this.getLevel, this.isExpandable);
@@ -124,8 +47,6 @@ export class DirectoryTreeViewComponent {
   getChildren = (nestedNode: NestedNode): NestedNode[] => nestedNode.children;
 
   hasChild = (_: number, flatNode: FlatNode) => flatNode.expandable;
-
-  hasNoContent = (_: number, flatNode: FlatNode) => flatNode.item === '';
 
   /**
    * Transformer to convert nested node to flat node. Record the nodes in maps for later use.
@@ -159,46 +80,37 @@ export class DirectoryTreeViewComponent {
     return result && !this.descendantsAllSelected(flatNode);
   }
 
-  /** Toggle the to-do item selection. Select/deselect all the descendants node */
-  todoItemSelectionToggle(flatNode: FlatNode): void {
+  toggleInternalNodeSelection(flatNode: FlatNode): void {
     this.flatNodeSelectionModel.toggle(flatNode);
     const descendants = this.treeControl.getDescendants(flatNode);
     this.flatNodeSelectionModel.isSelected(flatNode)
       ? this.flatNodeSelectionModel.select(...descendants)
       : this.flatNodeSelectionModel.deselect(...descendants);
-
-    // Force update for the parent
-    descendants.every(child =>
-      this.flatNodeSelectionModel.isSelected(child)
-    );
-    this.checkAllParentsSelection(flatNode);
+    this.updateAllParents(flatNode);
   }
 
-  /** Toggle a leaf to-do item selection. Check all the parents to see if they changed */
-  todoLeafItemSelectionToggle(flatNode: FlatNode): void {
+  toggleLeafNodeSelection(flatNode: FlatNode): void {
     this.flatNodeSelectionModel.toggle(flatNode);
-    this.checkAllParentsSelection(flatNode);
+    this.updateAllParents(flatNode);
   }
 
-  /* Checks all the parents when a leaf node is selected/unselected */
-  checkAllParentsSelection(flatNode: FlatNode): void {
+  updateAllParents(flatNode: FlatNode): void {
     let parent: FlatNode | null = this.getParentNode(flatNode);
     while (parent) {
-      this.checkRootNodeSelection(parent);
+      this.updateSelectionAccordingToDescendants(parent);
       parent = this.getParentNode(parent);
     }
   }
 
-  /** Check root node checked state and change it accordingly */
-  checkRootNodeSelection(flatNode: FlatNode): void {
-    const nodeSelected = this.flatNodeSelectionModel.isSelected(flatNode);
+  updateSelectionAccordingToDescendants(flatNode: FlatNode): void {
+    const isSelected = this.flatNodeSelectionModel.isSelected(flatNode);
     const descendants = this.treeControl.getDescendants(flatNode);
-    const descAllSelected = descendants.every(child =>
+    const isAllDescendantsSelected = descendants.every(child =>
       this.flatNodeSelectionModel.isSelected(child)
     );
-    if (nodeSelected && !descAllSelected) {
+    if (isSelected && !isAllDescendantsSelected) {
       this.flatNodeSelectionModel.deselect(flatNode);
-    } else if (!nodeSelected && descAllSelected) {
+    } else if (!isSelected && isAllDescendantsSelected) {
       this.flatNodeSelectionModel.select(flatNode);
     }
   }
@@ -221,18 +133,5 @@ export class DirectoryTreeViewComponent {
       }
     }
     return null;
-  }
-
-  /** Select the category so we can insert the new item. */
-  addNewItem(flatNode: FlatNode) {
-    const nestedNode = this.flatToNestedNodeMap.get(flatNode);
-    this.treeViewDataService.insertItem(nestedNode, '');
-    this.treeControl.expand(flatNode);
-  }
-
-  /** Save the node to database */
-  saveNode(flatNode: FlatNode, itemValue: string) {
-    const nestedNode = this.flatToNestedNodeMap.get(flatNode);
-    this.treeViewDataService.updateItem(nestedNode, itemValue);
   }
 }
