@@ -1,76 +1,18 @@
-import {SelectionModel} from '@angular/cdk/collections';
-import {FlatTreeControl} from '@angular/cdk/tree';
-import {Component, Injectable} from '@angular/core';
-import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
-import {BehaviorSubject} from 'rxjs';
-
-import { treeData } from './tree-data';
-
-/**
- * Nested node of tree view.
- */
-export class NestedNode {
-  children: NestedNode[];
-  item: string;
-}
-
-/** Flat node with expandable and level information */
-export class FlatNode {
-  item: string;
-  level: number;
-  expandable: boolean;
-}
+import { SelectionModel } from '@angular/cdk/collections';
+import { FlatTreeControl } from '@angular/cdk/tree';
+import { Component } from '@angular/core';
+import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
+import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
+import { FlatNode, NestedNode } from './directory-tree-view.model';
 
 /**
- * Tree view data service. This can build a tree structured object for tree view.
- */
-@Injectable()
-export class TreeViewDataService {
-  dataChange = new BehaviorSubject<NestedNode[]>([]);
-
-  get data(): NestedNode[] { return this.dataChange.value; }
-
-  constructor() {
-    this.initialize();
-  }
-
-  initialize() {
-    const tree = this.buildNodeTree(treeData, 0);
-
-    // Notify the change.
-    this.dataChange.next(tree);
-  }
-
-  /**
-   * Build the node tree.
-   */
-  buildNodeTree(obj: {[key: string]: any}, level: number): NestedNode[] {
-    return Object.keys(obj).reduce<NestedNode[]>((accumulator, key) => {
-      const value = obj[key];
-      const node = new NestedNode();
-      node.item = key;
-
-      if (value != null) {
-        if (typeof value === 'object') {
-          node.children = this.buildNodeTree(value, level + 1);
-        } else {
-          node.item = value;
-        }
-      }
-
-      return accumulator.concat(node);
-    }, []);
-  }
-}
-
-/**
- * @title Tree with checkboxes
+ * @title Directory tree view
  */
 @Component({
   selector: 'app-directory-tree-view',
   templateUrl: 'directory-tree-view.component.html',
   styleUrls: ['directory-tree-view.component.css'],
-  providers: [TreeViewDataService]
+  providers: [DirectoryTreeViewDataService]
 })
 export class DirectoryTreeViewComponent {
   /** Map from flat node to nested node. This helps us finding the nested node to be modified */
@@ -87,7 +29,7 @@ export class DirectoryTreeViewComponent {
 
   flatNodeSelectionModel = new SelectionModel<FlatNode>(true /* multiple */);
 
-  constructor(private treeViewDataService: TreeViewDataService) {
+  constructor(private treeViewDataService: DirectoryTreeViewDataService) {
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel,
       this.isExpandable, this.getChildren);
     this.treeControl = new FlatTreeControl<FlatNode>(this.getLevel, this.isExpandable);
