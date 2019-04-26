@@ -163,33 +163,31 @@ export class DirectoryTreeViewComponent {
     this.flatNodeSelectionModel.isSelected(flatNode)
       ? this.flatNodeSelectionModel.select(...descendants)
       : this.flatNodeSelectionModel.deselect(...descendants);
-    this.checkAllParentsSelection(flatNode);
+    this.updateAllParents(flatNode);
   }
 
   toggleLeafNodeSelection(flatNode: FlatNode): void {
     this.flatNodeSelectionModel.toggle(flatNode);
-    this.checkAllParentsSelection(flatNode);
+    this.updateAllParents(flatNode);
   }
 
-  /* Checks all the parents when a leaf node is selected/unselected */
-  checkAllParentsSelection(flatNode: FlatNode): void {
+  updateAllParents(flatNode: FlatNode): void {
     let parent: FlatNode | null = this.getParentNode(flatNode);
     while (parent) {
-      this.checkRootNodeSelection(parent);
+      this.updateSelectionAccordingToDescendants(parent);
       parent = this.getParentNode(parent);
     }
   }
 
-  /** Check root node checked state and change it accordingly */
-  checkRootNodeSelection(flatNode: FlatNode): void {
-    const nodeSelected = this.flatNodeSelectionModel.isSelected(flatNode);
+  updateSelectionAccordingToDescendants(flatNode: FlatNode): void {
+    const isSelected = this.flatNodeSelectionModel.isSelected(flatNode);
     const descendants = this.treeControl.getDescendants(flatNode);
-    const descAllSelected = descendants.every(child =>
+    const isAllDescendantsSelected = descendants.every(child =>
       this.flatNodeSelectionModel.isSelected(child)
     );
-    if (nodeSelected && !descAllSelected) {
+    if (isSelected && !isAllDescendantsSelected) {
       this.flatNodeSelectionModel.deselect(flatNode);
-    } else if (!nodeSelected && descAllSelected) {
+    } else if (!isSelected && isAllDescendantsSelected) {
       this.flatNodeSelectionModel.select(flatNode);
     }
   }
