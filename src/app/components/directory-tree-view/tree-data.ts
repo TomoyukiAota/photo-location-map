@@ -1,22 +1,56 @@
 /**
  * The data for tree view.
  */
-export const treeData = {
-  Root: {
-    Groceries: {
-      'Almond Meal flour': null,
-      'Organic eggs': null,
-      'Protein Powder': null,
-      Fruits: {
-        Apple: null,
-        Berries: ['Blueberry', 'Raspberry'],
-        Orange: null
+import { NestedNode } from './directory-tree-view.model';
+
+export const directoryTreeData: NestedNode[] = [
+  {
+    name: 'root',
+    isSelectable: true,
+    children: [
+      {
+        name: 'child1',
+        isSelectable: true,
+        children: [
+          {
+            name: 'child1-1',
+            isSelectable: true,
+            children: [
+              {
+                name: 'child1-1-1.JPG',
+                isSelectable: true
+              },
+              {
+                name: 'child1-1-2.JPG',
+                isSelectable: true
+              }
+            ]
+          },
+          {
+            name: 'child1-2.JPG',
+            isSelectable: true
+          },
+          {
+            name: 'child1-3.txt',
+            isSelectable: false
+          }
+        ]
+      },
+      {
+        name: 'child2',
+        isSelectable: false,
+        children: [
+          {
+            name: 'child2-1.txt',
+            isSelectable: false
+          },
+          {
+            name: 'child2-2.txt',
+            isSelectable: false
+          }
+        ]
       }
-    },
-    Reminders: [
-      'Cook dinner',
-      'Read the Material Design spec',
-      'Upgrade Application to Angular'
     ]
   }
-};
+];
+
