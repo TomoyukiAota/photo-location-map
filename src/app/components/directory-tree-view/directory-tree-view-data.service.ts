@@ -8,27 +8,14 @@ import { NestedNode } from './directory-tree-view.model';
  */
 @Injectable()
 export class DirectoryTreeViewDataService {
-  dataChange = new BehaviorSubject<NestedNode[]>([]);
-
-  get data(): NestedNode[] {
-    return this.dataChange.value;
-  }
+  public readonly dataChange = new BehaviorSubject<NestedNode[]>([]);
 
   constructor() {
-    this.initialize();
-  }
-
-  initialize() {
     const tree = this.buildNodeTree(treeData, 0);
-
-    // Notify the change.
     this.dataChange.next(tree);
   }
 
-  /**
-   * Build the node tree.
-   */
-  buildNodeTree(obj: { [key: string]: any }, level: number): NestedNode[] {
+  private buildNodeTree(obj: { [key: string]: any }, level: number): NestedNode[] {
     return Object.keys(obj).reduce<NestedNode[]>((accumulator, key) => {
       const value = obj[key];
       const node = new NestedNode();
