@@ -12,11 +12,11 @@ before_script:
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then export DISPLAY=:99.0; sh -e /etc/init.d/xvfb start; fi
 install:
   - npm set progress=false
-  - npm install
+  - travis_retry npm install
 script:
-  - npm run lint:ng
-  - npm run lint:es
-  - npm run test:unit:karma
-  - npm run test:unit:em:main
-  - npm run test:e2e
-  - npm run test:package
+  - travis_retry npm run lint:ng
+  - travis_retry npm run lint:es
+  - travis_retry npm run test:unit:karma
+  - travis_retry npm run test:unit:em:main
+  - travis_retry npm run test:e2e
+  - travis_retry npm run test:package
