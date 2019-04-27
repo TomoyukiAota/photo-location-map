@@ -30,10 +30,10 @@ export class DirectoryTreeViewComponent {
    */
   private readonly transform = (nestedNode: NestedNode, level: number) => {
     const existingFlatNode = this.nestedToFlatNodeMap.get(nestedNode);
-    const flatNode = existingFlatNode && existingFlatNode.item === nestedNode.item  // TODO: Is `item` property comparison required?
+    const flatNode = existingFlatNode && existingFlatNode.name === nestedNode.name  // TODO: Is `name` property comparison required?
         ? existingFlatNode
         : new FlatNode();
-    flatNode.item = nestedNode.item;
+    flatNode.name = nestedNode.name;
     flatNode.level = level;
     flatNode.expandable = !!nestedNode.children;
     this.flatToNestedNodeMap.set(flatNode, nestedNode);
