@@ -34,6 +34,7 @@ export class DirectoryTreeViewComponent {
         ? existingFlatNode
         : new FlatNode();
     flatNode.name = nestedNode.name;
+    flatNode.isSelectable = nestedNode.isSelectable;
     flatNode.level = level;
     flatNode.expandable = !!nestedNode.children;
     this.flatToNestedNodeMap.set(flatNode, nestedNode);
@@ -55,19 +56,24 @@ export class DirectoryTreeViewComponent {
 
   public descendantsAllSelected(flatNode: FlatNode): boolean {
     const descendants = this.treeControl.getDescendants(flatNode);
-    const descendantsAllSelected = descendants.every(child =>
-      this.flatNodeSelectionModel.isSelected(child)
-    );
+    const descendantsAllSelected = descendants
+      .filter(child => child.isSelectable)
+      .every(child => this.flatNodeSelectionModel.isSelected(child));
     return descendantsAllSelected;
   }
 
   public descendantsPartiallySelected(flatNode: FlatNode): boolean {
     const descendants = this.treeControl.getDescendants(flatNode);
-    const result = descendants.some(child => this.flatNodeSelectionModel.isSelected(child));
+    const result = descendants
+      .filter(child => child.isSelectable)
+      .some(child => this.flatNodeSelectionModel.isSelected(child));
     return result && !this.descendantsAllSelected(flatNode);
   }
 
   public toggleInternalNodeSelection(flatNode: FlatNode): void {
+    if (!flatNode.isSelectable)
+      return;
+
     this.flatNodeSelectionModel.toggle(flatNode);
     const descendants = this.treeControl.getDescendants(flatNode);
     this.flatNodeSelectionModel.isSelected(flatNode)
@@ -77,6 +83,9 @@ export class DirectoryTreeViewComponent {
   }
 
   public toggleLeafNodeSelection(flatNode: FlatNode): void {
+    if (!flatNode.isSelectable)
+      return;
+
     this.flatNodeSelectionModel.toggle(flatNode);
     this.updateAllParents(flatNode);
   }
@@ -92,9 +101,9 @@ export class DirectoryTreeViewComponent {
   private updateSelectionAccordingToDescendants(flatNode: FlatNode): void {
     const isSelected = this.flatNodeSelectionModel.isSelected(flatNode);
     const descendants = this.treeControl.getDescendants(flatNode);
-    const isAllDescendantsSelected = descendants.every(child =>
-      this.flatNodeSelectionModel.isSelected(child)
-    );
+    const isAllDescendantsSelected = descendants
+      .filter(child => child.isSelectable)
+      .every(child => this.flatNodeSelectionModel.isSelected(child));
     if (isSelected && !isAllDescendantsSelected) {
       this.flatNodeSelectionModel.deselect(flatNode);
     } else if (!isSelected && isAllDescendantsSelected) {
