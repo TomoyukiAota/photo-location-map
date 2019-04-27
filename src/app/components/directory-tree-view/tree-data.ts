@@ -37,7 +37,7 @@ export const directoryTreeData: NestedNode[] = [
         ]
       },
       {
-        name: 'child2.txt',
+        name: 'child2',
         isSelectable: false,
         children: [
           {
