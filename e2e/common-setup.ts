@@ -13,9 +13,9 @@ export default function setup() {
     });
     await this.app.start();
     const browser = this.app.client;
-    await browser.waitUntilWindowLoaded();
+    await browser.waitUntilWindowLoaded(30000);
 
-    browser.timeouts('script', 15000);
+    browser.timeouts('script', 30000);
   });
 
   afterEach(function () {
