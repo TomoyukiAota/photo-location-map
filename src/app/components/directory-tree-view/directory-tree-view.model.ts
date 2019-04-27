@@ -2,13 +2,15 @@
  * Nested node of tree view.
  */
 export class NestedNode {
-  children: NestedNode[];
-  item: string;
+  name: string;
+  isSelectable: boolean;
+  children?: NestedNode[];
 }
 
 /** Flat node with expandable and level information */
 export class FlatNode {
-  item: string;
+  name: string;
+  isSelectable: boolean;
   level: number;
   expandable: boolean;
 }
