@@ -62,7 +62,7 @@ export class DirectoryTreeViewComponent {
     this.flatToNestedNodeMap.set(flatNode, nestedNode);
     this.nestedToFlatNodeMap.set(nestedNode, flatNode);
     return flatNode;
-  }
+  };
 
   /** Whether all the descendants of the node are selected. */
   descendantsAllSelected(flatNode: FlatNode): boolean {
