@@ -11,7 +11,7 @@ import { FlatNode, NestedNode } from './directory-tree-view.model';
 @Component({
   selector: 'app-directory-tree-view',
   templateUrl: 'directory-tree-view.component.html',
-  styleUrls: ['directory-tree-view.component.css'],
+  styleUrls: ['directory-tree-view.component.scss'],
   providers: [DirectoryTreeViewDataService]
 })
 export class DirectoryTreeViewComponent {
