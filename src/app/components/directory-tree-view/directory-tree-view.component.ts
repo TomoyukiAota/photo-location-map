@@ -17,7 +17,7 @@ import { FlatNode, NestedNode } from './directory-tree-view.model';
 export class DirectoryTreeViewComponent {
   public readonly treeControl: FlatTreeControl<FlatNode>;
   public readonly dataSource: MatTreeFlatDataSource<NestedNode, FlatNode>;
-  public readonly flatNodeSelectionModel = new SelectionModel<FlatNode>(true /* multiple */);
+  private readonly flatNodeSelectionModel = new SelectionModel<FlatNode>(true /* multiple */);
   private readonly flatToNestedNodeMap = new Map<FlatNode, NestedNode>();
   private readonly nestedToFlatNodeMap = new Map<NestedNode, FlatNode>();
   private readonly treeFlattener: MatTreeFlattener<NestedNode, FlatNode>;
@@ -54,20 +54,24 @@ export class DirectoryTreeViewComponent {
     });
   }
 
-  public descendantsAllSelected(flatNode: FlatNode): boolean {
-    const descendants = this.treeControl.getDescendants(flatNode);
-    const descendantsAllSelected = descendants
-      .filter(child => child.isSelectable)
-      .every(child => this.flatNodeSelectionModel.isSelected(child));
-    return descendantsAllSelected;
+  public isSelected(flatNode: FlatNode): boolean {
+    return this.flatNodeSelectionModel.isSelected(flatNode);
   }
 
-  public descendantsPartiallySelected(flatNode: FlatNode): boolean {
+  public allDescendantsSelected(flatNode: FlatNode): boolean {
     const descendants = this.treeControl.getDescendants(flatNode);
-    const result = descendants
+    const allDescendantsSelected = descendants
       .filter(child => child.isSelectable)
-      .some(child => this.flatNodeSelectionModel.isSelected(child));
-    return result && !this.descendantsAllSelected(flatNode);
+      .every(child => this.isSelected(child));
+    return allDescendantsSelected;
+  }
+
+  public partOfDescendantsSelected(flatNode: FlatNode): boolean {
+    const descendants = this.treeControl.getDescendants(flatNode);
+    const moreThanOneDescendantsSelected = descendants
+      .filter(child => child.isSelectable)
+      .some(child => this.isSelected(child));
+    return moreThanOneDescendantsSelected && !this.allDescendantsSelected(flatNode);
   }
 
   public toggleInternalNodeSelection(flatNode: FlatNode): void {
@@ -76,7 +80,7 @@ export class DirectoryTreeViewComponent {
 
     this.flatNodeSelectionModel.toggle(flatNode);
     const descendants = this.treeControl.getDescendants(flatNode);
-    this.flatNodeSelectionModel.isSelected(flatNode)
+    this.isSelected(flatNode)
       ? this.flatNodeSelectionModel.select(...descendants)
       : this.flatNodeSelectionModel.deselect(...descendants);
     this.updateAllParents(flatNode);
@@ -99,14 +103,11 @@ export class DirectoryTreeViewComponent {
   }
 
   private updateSelectionAccordingToDescendants(flatNode: FlatNode): void {
-    const isSelected = this.flatNodeSelectionModel.isSelected(flatNode);
-    const descendants = this.treeControl.getDescendants(flatNode);
-    const isAllDescendantsSelected = descendants
-      .filter(child => child.isSelectable)
-      .every(child => this.flatNodeSelectionModel.isSelected(child));
-    if (isSelected && !isAllDescendantsSelected) {
+    const isSelected = this.isSelected(flatNode);
+    const allDescendantsSelected = this.allDescendantsSelected(flatNode);
+    if (isSelected && !allDescendantsSelected) {
       this.flatNodeSelectionModel.deselect(flatNode);
-    } else if (!isSelected && isAllDescendantsSelected) {
+    } else if (!isSelected && allDescendantsSelected) {
       this.flatNodeSelectionModel.select(flatNode);
     }
   }
