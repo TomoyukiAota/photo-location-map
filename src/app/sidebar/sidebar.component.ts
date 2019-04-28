@@ -1,8 +1,8 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import * as createDirectoryTree from 'directory-tree';
 
 import { Logger } from '../../../src-shared/log/logger';
 import { ElectronService } from '../shared/electron.service';
+import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -14,7 +14,8 @@ export class SidebarComponent {
   selectedFolderPath = '';
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
-              private electronService: ElectronService) {
+              private electronService: ElectronService,
+              private directoryTreeViewDataService: DirectoryTreeViewDataService) {
   }
 
   showSelectFolderDialog() {
@@ -28,8 +29,7 @@ export class SidebarComponent {
 
         const selectedFolderPath = folderPaths[0];
         Logger.info(`Following directory is selected: ${selectedFolderPath}`);
-        const directoryTreeObject = createDirectoryTree(selectedFolderPath);
-        Logger.info('Directory tree object: ', directoryTreeObject);
+        this.directoryTreeViewDataService.update(selectedFolderPath);
         this.selectedFolderPath = selectedFolderPath;
         this.changeDetectorRef.detectChanges();
       }

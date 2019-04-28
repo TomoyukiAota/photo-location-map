@@ -3,6 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ElectronService } from '../shared/electron.service';
+import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
 
 import { SidebarComponent } from './sidebar.component';
 
@@ -15,11 +16,17 @@ describe('SidebarComponent', () => {
     class DummyDirectoryTreeViewComponent {}
 
     TestBed.configureTestingModule({
-      declarations: [SidebarComponent, DummyDirectoryTreeViewComponent],
+      declarations: [
+        SidebarComponent,
+        DummyDirectoryTreeViewComponent
+      ],
       imports: [
         TranslateModule.forRoot()
       ],
-      providers: [ElectronService]
+      providers: [
+        ElectronService,
+        DirectoryTreeViewDataService
+      ]
     })
     .compileComponents();
   }));
