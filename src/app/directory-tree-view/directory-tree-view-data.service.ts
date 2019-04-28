@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import * as createDirectoryTree from 'directory-tree';
 import { Logger } from '../../../src-shared/log/logger';
-import { directoryTreeData } from './tree-data';
 import { NestedNode } from './directory-tree-view.model';
 
 type DirectoryTree = ReturnType<typeof createDirectoryTree>;
@@ -13,10 +12,6 @@ type DirectoryTree = ReturnType<typeof createDirectoryTree>;
 @Injectable()
 export class DirectoryTreeViewDataService {
   public readonly dataChange = new BehaviorSubject<NestedNode[]>([]);
-
-  constructor() {
-    this.dataChange.next(directoryTreeData);
-  }
 
   public update(directoryPath: string): void {
     const directoryTreeObject = createDirectoryTree(directoryPath);
