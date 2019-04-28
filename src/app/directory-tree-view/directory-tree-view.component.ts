@@ -35,13 +35,7 @@ export class DirectoryTreeViewComponent {
     flatNode.name = nestedNode.name;
     flatNode.isSelectable = nestedNode.isSelectable;
     flatNode.level = level;
-
-    if (typeof nestedNode.children === 'undefined') {
-      flatNode.expandable = false;
-    } else {
-      flatNode.expandable = nestedNode.children.length > 0;
-    }
-
+    flatNode.expandable = nestedNode.children.length > 0;
     this.flatToNestedNodeMap.set(flatNode, nestedNode);
     this.nestedToFlatNodeMap.set(nestedNode, flatNode);
     return flatNode;
