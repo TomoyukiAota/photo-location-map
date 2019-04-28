@@ -19,6 +19,7 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { DirectoryTreeViewComponent } from './directory-tree-view/directory-tree-view.component';
+import { DirectoryTreeViewDataService } from './directory-tree-view/directory-tree-view-data.service';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -53,7 +54,10 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatInputModule,
     MatTreeModule
   ],
-  providers: [ElectronService],
+  providers: [
+    ElectronService,
+    DirectoryTreeViewDataService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
