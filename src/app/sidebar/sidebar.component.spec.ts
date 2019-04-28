@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { ElectronService } from '../../providers/electron.service';
+import { ElectronService } from '../shared/electron.service';
 
 import { SidebarComponent } from './sidebar.component';
 
