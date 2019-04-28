@@ -49,15 +49,18 @@ export class DirectoryTreeViewComponent {
     this.treeControl = new FlatTreeControl<FlatNode>(this.getLevel, this.isExpandable);
     this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
-    directoryTreeViewDataService.dataChange.subscribe(data => {
-      this.dataSource.data = data;
-      if (data.length === 0)
-        return;
+    directoryTreeViewDataService.dataChange
+      .subscribe(data => this.updateDataSourceAndSelectAllNodes(data));
+  }
 
-      const rootNestedNode = data[0];
-      const rootFlatNode = this.nestedToFlatNodeMap.get(rootNestedNode);
-      this.toggleInternalNodeSelection(rootFlatNode);
-    });
+  private updateDataSourceAndSelectAllNodes(data: NestedNode[]) {
+    this.dataSource.data = data;
+    if (data.length === 0)
+      return;
+
+    const rootNestedNode = data[0];
+    const rootFlatNode = this.nestedToFlatNodeMap.get(rootNestedNode);
+    this.toggleInternalNodeSelection(rootFlatNode);
   }
 
   public isSelected(flatNode: FlatNode): boolean {
