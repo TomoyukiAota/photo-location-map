@@ -1,8 +1,8 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import * as createDirectoryTree from 'directory-tree';
 
-import { Logger } from '../../../../src-shared/log/logger';
-import { ElectronService } from '../../providers/electron.service';
+import { Logger } from '../../../src-shared/log/logger';
+import { ElectronService } from '../shared/electron.service';
 
 @Component({
   selector: 'app-sidebar',
