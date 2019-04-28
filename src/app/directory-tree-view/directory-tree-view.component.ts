@@ -1,6 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { FlatNode, NestedNode } from './directory-tree-view.model';
@@ -11,8 +11,7 @@ import { FlatNode, NestedNode } from './directory-tree-view.model';
 @Component({
   selector: 'app-directory-tree-view',
   templateUrl: 'directory-tree-view.component.html',
-  styleUrls: ['directory-tree-view.component.scss'],
-  providers: [DirectoryTreeViewDataService]
+  styleUrls: ['directory-tree-view.component.scss']
 })
 export class DirectoryTreeViewComponent {
   public readonly treeControl: FlatTreeControl<FlatNode>;
@@ -36,7 +35,13 @@ export class DirectoryTreeViewComponent {
     flatNode.name = nestedNode.name;
     flatNode.isSelectable = nestedNode.isSelectable;
     flatNode.level = level;
-    flatNode.expandable = !!nestedNode.children;
+
+    if (typeof nestedNode.children === 'undefined') {
+      flatNode.expandable = false;
+    } else {
+      flatNode.expandable = nestedNode.children.length > 0;
+    }
+
     this.flatToNestedNodeMap.set(flatNode, nestedNode);
     this.nestedToFlatNodeMap.set(nestedNode, flatNode);
     return flatNode;
@@ -44,12 +49,13 @@ export class DirectoryTreeViewComponent {
 
   public readonly hasChild = (_: number, flatNode: FlatNode) => flatNode.expandable;
 
-  constructor(private treeViewDataService: DirectoryTreeViewDataService) {
+  constructor(private directoryTreeViewDataService: DirectoryTreeViewDataService,
+              private changeDetectorRef: ChangeDetectorRef) {
     this.treeFlattener = new MatTreeFlattener(this.transform, this.getLevel, this.isExpandable, this.getChildren);
     this.treeControl = new FlatTreeControl<FlatNode>(this.getLevel, this.isExpandable);
     this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
-    treeViewDataService.dataChange.subscribe(data => {
+    directoryTreeViewDataService.dataChange.subscribe(data => {
       this.dataSource.data = data;
     });
   }
@@ -84,6 +90,7 @@ export class DirectoryTreeViewComponent {
       ? this.flatNodeSelectionModel.select(...descendants)
       : this.flatNodeSelectionModel.deselect(...descendants);
     this.updateAllParents(flatNode);
+    this.changeDetectorRef.detectChanges();
   }
 
   public toggleLeafNodeSelection(flatNode: FlatNode): void {
@@ -92,6 +99,7 @@ export class DirectoryTreeViewComponent {
 
     this.flatNodeSelectionModel.toggle(flatNode);
     this.updateAllParents(flatNode);
+    this.changeDetectorRef.detectChanges();
   }
 
   private updateAllParents(flatNode: FlatNode): void {

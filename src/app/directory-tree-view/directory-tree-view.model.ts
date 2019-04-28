@@ -4,7 +4,7 @@
 export class NestedNode {
   name: string;
   isSelectable: boolean;
-  children?: NestedNode[];
+  children?: NestedNode[] = [];
 }
 
 /** Flat node with expandable and level information */
