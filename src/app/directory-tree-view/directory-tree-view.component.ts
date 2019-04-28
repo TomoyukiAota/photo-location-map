@@ -51,6 +51,12 @@ export class DirectoryTreeViewComponent {
 
     directoryTreeViewDataService.dataChange.subscribe(data => {
       this.dataSource.data = data;
+      if (data.length === 0)
+        return;
+
+      const rootNestedNode = data[0];
+      const rootFlatNode = this.nestedToFlatNodeMap.get(rootNestedNode);
+      this.toggleInternalNodeSelection(rootFlatNode);
     });
   }
 
