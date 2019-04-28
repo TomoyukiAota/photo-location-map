@@ -14,12 +14,11 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AngularSplitModule } from 'angular-split';
 
 import { AppRoutingModule } from './app-routing.module';
-import { ElectronService } from './providers/electron.service';
-import { WebviewDirective } from './directives/webview.directive';
+import { ElectronService } from './shared/electron.service';
 import { AppComponent } from './app.component';
-import { HomeComponent } from './components/home/home.component';
-import { SidebarComponent } from './components/sidebar/sidebar.component';
-import { DirectoryTreeViewComponent } from './components/directory-tree-view/directory-tree-view.component';
+import { HomeComponent } from './home/home.component';
+import { SidebarComponent } from './sidebar/sidebar.component';
+import { DirectoryTreeViewComponent } from './directory-tree-view/directory-tree-view.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -30,7 +29,6 @@ export function HttpLoaderFactory(http: HttpClient) {
   declarations: [
     AppComponent,
     HomeComponent,
-    WebviewDirective,
     SidebarComponent,
     DirectoryTreeViewComponent
   ],

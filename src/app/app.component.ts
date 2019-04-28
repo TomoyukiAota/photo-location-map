@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ElectronService } from './providers/electron.service';
+import { ElectronService } from './shared/electron.service';
 import { TranslateService } from '@ngx-translate/core';
 import { AppConfig } from '../environments/environment';
 import { Logger } from '../../src-shared/log/logger';
