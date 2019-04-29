@@ -2,6 +2,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
+import { SelectedPhotoService } from '../shared/selected-photo.service';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { FlatNode, NestedNode } from './directory-tree-view.model';
 
@@ -21,7 +22,7 @@ export class DirectoryTreeViewComponent {
   private readonly nestedToFlatNodeMap = new Map<NestedNode, FlatNode>();
   private readonly treeFlattener: MatTreeFlattener<NestedNode, FlatNode>;
   private readonly getLevel = (flatNode: FlatNode) => flatNode.level;
-  private readonly isExpandable = (flatNode: FlatNode) => flatNode.expandable;
+  private readonly isExpandable = (flatNode: FlatNode) => flatNode.isExpandable;
   private readonly getChildren = (nestedNode: NestedNode): NestedNode[] => nestedNode.children;
 
   /**
@@ -33,17 +34,19 @@ export class DirectoryTreeViewComponent {
         ? existingFlatNode
         : new FlatNode();
     flatNode.name = nestedNode.name;
+    flatNode.path = nestedNode.path;
     flatNode.isSelectable = nestedNode.isSelectable;
     flatNode.level = level;
-    flatNode.expandable = nestedNode.children.length > 0;
+    flatNode.isExpandable = nestedNode.children.length > 0;
     this.flatToNestedNodeMap.set(flatNode, nestedNode);
     this.nestedToFlatNodeMap.set(nestedNode, flatNode);
     return flatNode;
   };
 
-  public readonly hasChild = (_: number, flatNode: FlatNode) => flatNode.expandable;
+  public readonly hasChildren = (_: number, flatNode: FlatNode) => flatNode.isExpandable;
 
   constructor(private directoryTreeViewDataService: DirectoryTreeViewDataService,
+              private selectedPhotoService: SelectedPhotoService,
               private changeDetectorRef: ChangeDetectorRef) {
     this.treeFlattener = new MatTreeFlattener(this.transform, this.getLevel, this.isExpandable, this.getChildren);
     this.treeControl = new FlatTreeControl<FlatNode>(this.getLevel, this.isExpandable);
@@ -84,25 +87,33 @@ export class DirectoryTreeViewComponent {
   }
 
   public toggleInternalNodeSelection(flatNode: FlatNode): void {
-    if (!flatNode.isSelectable)
-      return;
-
-    this.flatNodeSelectionModel.toggle(flatNode);
-    const descendants = this.treeControl.getDescendants(flatNode);
-    this.isSelected(flatNode)
-      ? this.flatNodeSelectionModel.select(...descendants)
-      : this.flatNodeSelectionModel.deselect(...descendants);
-    this.updateAllParents(flatNode);
-    this.changeDetectorRef.detectChanges();
+    this.toggleNodeSelection(flatNode, true);
   }
 
   public toggleLeafNodeSelection(flatNode: FlatNode): void {
+    this.toggleNodeSelection(flatNode, false);
+  }
+
+  private toggleNodeSelection(flatNode: FlatNode, isInternalNode: boolean) {
     if (!flatNode.isSelectable)
       return;
 
     this.flatNodeSelectionModel.toggle(flatNode);
+
+    if (isInternalNode) {
+      const descendants = this.treeControl.getDescendants(flatNode);
+      this.isSelected(flatNode)
+        ? this.flatNodeSelectionModel.select(...descendants)
+        : this.flatNodeSelectionModel.deselect(...descendants);
+    }
+
     this.updateAllParents(flatNode);
     this.changeDetectorRef.detectChanges();
+    const selectedPaths = this.flatNodeSelectionModel.selected
+      .filter(node => !node.isExpandable)
+      .filter(node => node.isSelectable)
+      .map(node => node.path);
+    this.selectedPhotoService.update(selectedPaths);
   }
 
   private updateAllParents(flatNode: FlatNode): void {
