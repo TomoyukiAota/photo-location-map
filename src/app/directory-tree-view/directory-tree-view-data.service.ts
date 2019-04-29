@@ -9,7 +9,9 @@ type DirectoryTree = ReturnType<typeof createDirectoryTree>;
 /**
  * Tree view data service. This can build a tree structured object for tree view.
  */
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class DirectoryTreeViewDataService {
   public readonly dataChange = new BehaviorSubject<NestedNode[]>([]);
 
