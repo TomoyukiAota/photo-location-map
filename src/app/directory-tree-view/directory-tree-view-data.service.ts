@@ -24,6 +24,7 @@ export class DirectoryTreeViewDataService {
     const nestedNodeArray = directoryTreeArray.map(directoryTree => {
       const nestedNode = new NestedNode();
       nestedNode.name = directoryTree.name;
+      nestedNode.path = directoryTree.path;
       nestedNode.isSelectable = this.isSelectableNode(directoryTree);
       nestedNode.children = !!directoryTree.children
         ? this.convertToNestedNodeArray(directoryTree.children)
