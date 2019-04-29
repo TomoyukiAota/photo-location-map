@@ -53,10 +53,11 @@ export class DirectoryTreeViewComponent {
     this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
     directoryTreeViewDataService.dataChange
-      .subscribe(data => this.updateDataSourceAndSelectAllNodes(data));
+      .subscribe(data => this.handleDataChange(data));
   }
 
-  private updateDataSourceAndSelectAllNodes(data: NestedNode[]) {
+  private handleDataChange(data: NestedNode[]) {
+    this.flatNodeSelectionModel.clear();
     this.dataSource.data = data;
     if (data.length === 0)
       return;
