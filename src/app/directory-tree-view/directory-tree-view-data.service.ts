@@ -9,7 +9,9 @@ type DirectoryTree = ReturnType<typeof createDirectoryTree>;
 /**
  * Tree view data service. This can build a tree structured object for tree view.
  */
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class DirectoryTreeViewDataService {
   public readonly dataChange = new BehaviorSubject<NestedNode[]>([]);
 
@@ -24,6 +26,7 @@ export class DirectoryTreeViewDataService {
     const nestedNodeArray = directoryTreeArray.map(directoryTree => {
       const nestedNode = new NestedNode();
       nestedNode.name = directoryTree.name;
+      nestedNode.path = directoryTree.path;
       nestedNode.isSelectable = this.isSelectableNode(directoryTree);
       nestedNode.children = !!directoryTree.children
         ? this.convertToNestedNodeArray(directoryTree.children)

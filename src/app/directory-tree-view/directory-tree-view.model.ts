@@ -1,16 +1,14 @@
-/**
- * Nested node of tree view.
- */
-export class NestedNode {
+class DirectoryTreeViewNode {
   name: string;
+  path: string;
   isSelectable: boolean;
-  children?: NestedNode[] = [];
 }
 
-/** Flat node with expandable and level information */
-export class FlatNode {
-  name: string;
-  isSelectable: boolean;
+export class NestedNode extends DirectoryTreeViewNode {
+  children: NestedNode[];
+}
+
+export class FlatNode extends DirectoryTreeViewNode {
   level: number;
-  expandable: boolean;
+  isExpandable: boolean;
 }
