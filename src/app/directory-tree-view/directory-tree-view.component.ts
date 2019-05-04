@@ -137,20 +137,16 @@ export class DirectoryTreeViewComponent {
 
   private getParentNode(flatNode: FlatNode): FlatNode | null {
     const currentLevel = this.getLevel(flatNode);
-
-    if (currentLevel < 1) {
+    if (currentLevel < 1)
       return null;
-    }
 
     const startIndex = this.treeControl.dataNodes.indexOf(flatNode) - 1;
-
     for (let i = startIndex; i >= 0; i--) {
       const currentNode = this.treeControl.dataNodes[i];
-
-      if (this.getLevel(currentNode) < currentLevel) {
+      if (this.getLevel(currentNode) < currentLevel)
         return currentNode;
-      }
     }
+
     return null;
   }
 }
