@@ -64,7 +64,7 @@ export class DirectoryTreeViewComponent {
 
     const rootNestedNode = data[0];
     const rootFlatNode = this.nestedToFlatNodeMap.get(rootNestedNode);
-    this.toggleInternalNodeSelection(rootFlatNode);
+    this.toggleNodeSelection(rootFlatNode);
   }
 
   public isSelected(flatNode: FlatNode): boolean {
@@ -72,40 +72,31 @@ export class DirectoryTreeViewComponent {
   }
 
   public allDescendantsSelected(flatNode: FlatNode): boolean {
-    const descendants = this.treeControl.getDescendants(flatNode);
+    const descendants = this.getSelectableDescendants(flatNode);
     const allDescendantsSelected = descendants
-      .filter(child => child.isSelectable)
       .every(child => this.isSelected(child));
     return allDescendantsSelected;
   }
 
   public partOfDescendantsSelected(flatNode: FlatNode): boolean {
-    const descendants = this.treeControl.getDescendants(flatNode);
+    const descendants = this.getSelectableDescendants(flatNode);
     const moreThanOneDescendantsSelected = descendants
-      .filter(child => child.isSelectable)
       .some(child => this.isSelected(child));
     return moreThanOneDescendantsSelected && !this.allDescendantsSelected(flatNode);
   }
 
-  public toggleInternalNodeSelection(flatNode: FlatNode): void {
-    this.toggleNodeSelection(flatNode, true);
+  private getSelectableDescendants(parent: FlatNode) {
+    return this.treeControl.getDescendants(parent)
+      .filter(child => child.isSelectable);
   }
 
-  public toggleLeafNodeSelection(flatNode: FlatNode): void {
-    this.toggleNodeSelection(flatNode, false);
-  }
-
-  private toggleNodeSelection(flatNode: FlatNode, isInternalNode: boolean) {
+  public toggleNodeSelection(flatNode: FlatNode) {
     if (!flatNode.isSelectable)
       return;
 
     this.flatNodeSelectionModel.toggle(flatNode);
-
-    if (isInternalNode) {
-      const descendants = this.treeControl.getDescendants(flatNode);
-      this.isSelected(flatNode)
-        ? this.flatNodeSelectionModel.select(...descendants)
-        : this.flatNodeSelectionModel.deselect(...descendants);
+    if (flatNode.isExpandable) {
+      this.toggleAllDescendants(flatNode);
     }
 
     this.updateAllParents(flatNode);
@@ -115,6 +106,15 @@ export class DirectoryTreeViewComponent {
       .filter(node => node.isSelectable)
       .map(node => node.path);
     this.selectedPhotoService.update(selectedPaths);
+  }
+
+  private toggleAllDescendants(parent: FlatNode) {
+    const descendants = this.getSelectableDescendants(parent);
+    if (this.isSelected(parent)) {
+      this.flatNodeSelectionModel.select(...descendants);
+    } else {
+      this.flatNodeSelectionModel.deselect(...descendants);
+    }
   }
 
   private updateAllParents(flatNode: FlatNode): void {
@@ -137,20 +137,16 @@ export class DirectoryTreeViewComponent {
 
   private getParentNode(flatNode: FlatNode): FlatNode | null {
     const currentLevel = this.getLevel(flatNode);
-
-    if (currentLevel < 1) {
+    if (currentLevel < 1)
       return null;
-    }
 
     const startIndex = this.treeControl.dataNodes.indexOf(flatNode) - 1;
-
     for (let i = startIndex; i >= 0; i--) {
       const currentNode = this.treeControl.dataNodes[i];
-
-      if (this.getLevel(currentNode) < currentLevel) {
+      if (this.getLevel(currentNode) < currentLevel)
         return currentNode;
-      }
     }
+
     return null;
   }
 }
