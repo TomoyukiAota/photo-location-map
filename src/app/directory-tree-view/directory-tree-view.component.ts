@@ -71,18 +71,21 @@ export class DirectoryTreeViewComponent {
     return this.flatNodeSelectionModel.isSelected(flatNode);
   }
 
+  private getSelectableDescendants(parent: FlatNode) {
+    return this.treeControl.getDescendants(parent)
+      .filter(child => child.isSelectable);
+  }
+
   public allDescendantsSelected(flatNode: FlatNode): boolean {
-    const descendants = this.treeControl.getDescendants(flatNode);
+    const descendants = this.getSelectableDescendants(flatNode);
     const allDescendantsSelected = descendants
-      .filter(child => child.isSelectable)
       .every(child => this.isSelected(child));
     return allDescendantsSelected;
   }
 
   public partOfDescendantsSelected(flatNode: FlatNode): boolean {
-    const descendants = this.treeControl.getDescendants(flatNode);
+    const descendants = this.getSelectableDescendants(flatNode);
     const moreThanOneDescendantsSelected = descendants
-      .filter(child => child.isSelectable)
       .some(child => this.isSelected(child));
     return moreThanOneDescendantsSelected && !this.allDescendantsSelected(flatNode);
   }
@@ -102,10 +105,7 @@ export class DirectoryTreeViewComponent {
     this.flatNodeSelectionModel.toggle(flatNode);
 
     if (isInternalNode) {
-      const descendants = this.treeControl.getDescendants(flatNode);
-      this.isSelected(flatNode)
-        ? this.flatNodeSelectionModel.select(...descendants)
-        : this.flatNodeSelectionModel.deselect(...descendants);
+      this.toggleAllDescendants(flatNode);
     }
 
     this.updateAllParents(flatNode);
@@ -115,6 +115,15 @@ export class DirectoryTreeViewComponent {
       .filter(node => node.isSelectable)
       .map(node => node.path);
     this.selectedPhotoService.update(selectedPaths);
+  }
+
+  private toggleAllDescendants(parent: FlatNode) {
+    const descendants = this.getSelectableDescendants(parent);
+    if (this.isSelected(parent)) {
+      this.flatNodeSelectionModel.select(...descendants);
+    } else {
+      this.flatNodeSelectionModel.deselect(...descendants);
+    }
   }
 
   private updateAllParents(flatNode: FlatNode): void {
