@@ -4,7 +4,7 @@
     <mat-checkbox *ngIf="node.isSelectable"
                   class="checklist-leaf-node"
                   [checked]="isSelected(node)"
-                  (change)="toggleLeafNodeSelection(node)">{{node.name}}</mat-checkbox>
+                  (change)="toggleNodeSelection(node)">{{node.name}}</mat-checkbox>
     <mat-label *ngIf="!node.isSelectable">{{node.name}}</mat-label>
   </mat-tree-node>
 
@@ -17,7 +17,7 @@
     <mat-checkbox *ngIf="node.isSelectable"
                   [checked]="allDescendantsSelected(node)"
                   [indeterminate]="partOfDescendantsSelected(node)"
-                  (change)="toggleInternalNodeSelection(node)">{{node.name}}</mat-checkbox>
+                  (change)="toggleNodeSelection(node)">{{node.name}}</mat-checkbox>
     <mat-label *ngIf="!node.isSelectable">{{node.name}}</mat-label>
   </mat-tree-node>
 </mat-tree>

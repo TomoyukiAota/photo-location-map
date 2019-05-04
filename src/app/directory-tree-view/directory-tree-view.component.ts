@@ -64,16 +64,11 @@ export class DirectoryTreeViewComponent {
 
     const rootNestedNode = data[0];
     const rootFlatNode = this.nestedToFlatNodeMap.get(rootNestedNode);
-    this.toggleInternalNodeSelection(rootFlatNode);
+    this.toggleNodeSelection(rootFlatNode);
   }
 
   public isSelected(flatNode: FlatNode): boolean {
     return this.flatNodeSelectionModel.isSelected(flatNode);
-  }
-
-  private getSelectableDescendants(parent: FlatNode) {
-    return this.treeControl.getDescendants(parent)
-      .filter(child => child.isSelectable);
   }
 
   public allDescendantsSelected(flatNode: FlatNode): boolean {
@@ -90,21 +85,17 @@ export class DirectoryTreeViewComponent {
     return moreThanOneDescendantsSelected && !this.allDescendantsSelected(flatNode);
   }
 
-  public toggleInternalNodeSelection(flatNode: FlatNode): void {
-    this.toggleNodeSelection(flatNode, true);
+  private getSelectableDescendants(parent: FlatNode) {
+    return this.treeControl.getDescendants(parent)
+      .filter(child => child.isSelectable);
   }
 
-  public toggleLeafNodeSelection(flatNode: FlatNode): void {
-    this.toggleNodeSelection(flatNode, false);
-  }
-
-  private toggleNodeSelection(flatNode: FlatNode, isInternalNode: boolean) {
+  public toggleNodeSelection(flatNode: FlatNode) {
     if (!flatNode.isSelectable)
       return;
 
     this.flatNodeSelectionModel.toggle(flatNode);
-
-    if (isInternalNode) {
+    if (flatNode.isExpandable) {
       this.toggleAllDescendants(flatNode);
     }
 
