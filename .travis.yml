@@ -1,6 +1,8 @@
 os:
   - linux
   - osx
+dist: xenial
+osx_image: xcode10.2
 language: node_js
 node_js:
   - "10"
@@ -8,8 +10,8 @@ node_js:
 sudo: required
 addons:
     chrome: stable
-before_script:
-  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then export DISPLAY=:99.0; sh -e /etc/init.d/xvfb start; fi
+services:
+  - xvfb
 install:
   - npm set progress=false
   - travis_retry npm install
