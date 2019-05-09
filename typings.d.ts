@@ -27,5 +27,7 @@ interface Window {
   require: NodeRequire;
 }
 
+type DirectoryTree = ReturnType<typeof import('directory-tree')>;
+
 declare var __karma__: any;
 declare var __electronMochaMain__: any;

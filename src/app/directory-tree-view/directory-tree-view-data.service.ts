@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import * as createDirectoryTree from 'directory-tree';
-import { Logger } from '../../../src-shared/log/logger';
+import { PhotoDataService } from '../shared/photo-data.service';
 import { NestedNode } from './directory-tree-view.model';
-
-type DirectoryTree = ReturnType<typeof createDirectoryTree>;
 
 /**
  * Tree view data service. This can build a tree structured object for tree view.
@@ -15,9 +12,10 @@ type DirectoryTree = ReturnType<typeof createDirectoryTree>;
 export class DirectoryTreeViewDataService {
   public readonly dataChange = new BehaviorSubject<NestedNode[]>([]);
 
-  public update(directoryPath: string): void {
-    const directoryTreeObject = createDirectoryTree(directoryPath);
-    Logger.info('Directory tree object: ', directoryTreeObject);
+  constructor(private photoDataService: PhotoDataService) {
+  }
+
+  public update(directoryTreeObject: DirectoryTree): void {
     const nestedNodeArray = this.convertToNestedNodeArray([directoryTreeObject]);
     this.dataChange.next(nestedNodeArray);
   }
@@ -39,9 +37,8 @@ export class DirectoryTreeViewDataService {
   private isSelectableNode(directoryTree: DirectoryTree): boolean {
     const isFile = directoryTree.type === 'file';
     if (isFile) {
-      const supportedExtensions = ['.jpeg', '.jpg', '.jpe', '.jfif', '.jfi', '.jif']; // JPEG extensions
-      const isSupportedExtension = supportedExtensions.includes(directoryTree.extension);
-      return isSupportedExtension;
+      const isExifAvailable = !!this.photoDataService.getExif(directoryTree.path);
+      return isExifAvailable;
     }
 
     const someChildrenSelectable = directoryTree.children.some(child => {
