@@ -17,27 +17,30 @@ import { FlatNode, NestedNode } from './directory-tree-view.model';
 export class DirectoryTreeViewComponent {
   public readonly treeControl: FlatTreeControl<FlatNode>;
   public readonly dataSource: MatTreeFlatDataSource<NestedNode, FlatNode>;
+  private readonly treeFlattener: MatTreeFlattener<NestedNode, FlatNode>;
   private readonly flatNodeSelectionModel = new SelectionModel<FlatNode>(true /* multiple */);
   private readonly flatToNestedNodeMap = new Map<FlatNode, NestedNode>();
   private readonly nestedToFlatNodeMap = new Map<NestedNode, FlatNode>();
-  private readonly treeFlattener: MatTreeFlattener<NestedNode, FlatNode>;
   private readonly getLevel = (flatNode: FlatNode) => flatNode.level;
   private readonly isExpandable = (flatNode: FlatNode) => flatNode.isExpandable;
   private readonly getChildren = (nestedNode: NestedNode): NestedNode[] => nestedNode.children;
 
-  /**
-   * Transform function to convert nested node to flat node. Record the nodes in maps for later use.
-   */
-  private readonly transform = (nestedNode: NestedNode, level: number) => {
-    const existingFlatNode = this.nestedToFlatNodeMap.get(nestedNode);
-    const flatNode = existingFlatNode && existingFlatNode.name === nestedNode.name  // TODO: Is `name` property comparison required?
-        ? existingFlatNode
-        : new FlatNode();
+  private readonly createFlatNode = (nestedNode: NestedNode, level: number) => {
+    const flatNode =  new FlatNode();
     flatNode.name = nestedNode.name;
     flatNode.path = nestedNode.path;
     flatNode.isSelectable = nestedNode.isSelectable;
     flatNode.level = level;
     flatNode.isExpandable = nestedNode.children.length > 0;
+    return flatNode;
+  };
+
+  private readonly transformNodeFromNestedToFlat = (nestedNode: NestedNode, level: number) => {
+    const existingFlatNode = this.nestedToFlatNodeMap.get(nestedNode);
+    if (existingFlatNode)
+      return existingFlatNode;
+
+    const flatNode =  this.createFlatNode(nestedNode, level);
     this.flatToNestedNodeMap.set(flatNode, nestedNode);
     this.nestedToFlatNodeMap.set(nestedNode, flatNode);
     return flatNode;
@@ -48,8 +51,8 @@ export class DirectoryTreeViewComponent {
   constructor(private directoryTreeViewDataService: DirectoryTreeViewDataService,
               private selectedPhotoService: SelectedPhotoService,
               private changeDetectorRef: ChangeDetectorRef) {
-    this.treeFlattener = new MatTreeFlattener(this.transform, this.getLevel, this.isExpandable, this.getChildren);
     this.treeControl = new FlatTreeControl<FlatNode>(this.getLevel, this.isExpandable);
+    this.treeFlattener = new MatTreeFlattener(this.transformNodeFromNestedToFlat, this.getLevel, this.isExpandable, this.getChildren);
     this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
     directoryTreeViewDataService.dataChange
@@ -58,6 +61,8 @@ export class DirectoryTreeViewComponent {
 
   private handleDataChange(data: NestedNode[]) {
     this.flatNodeSelectionModel.clear();
+    this.flatToNestedNodeMap.clear();
+    this.nestedToFlatNodeMap.clear();
     this.dataSource.data = data;
     if (data.length === 0)
       return;
