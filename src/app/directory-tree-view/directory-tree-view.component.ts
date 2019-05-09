@@ -61,6 +61,8 @@ export class DirectoryTreeViewComponent {
 
   private handleDataChange(data: NestedNode[]) {
     this.flatNodeSelectionModel.clear();
+    this.flatToNestedNodeMap.clear();
+    this.nestedToFlatNodeMap.clear();
     this.dataSource.data = data;
     if (data.length === 0)
       return;
