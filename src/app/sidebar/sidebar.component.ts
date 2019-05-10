@@ -25,7 +25,7 @@ export class SidebarComponent {
       {
         properties: ['openDirectory'],
       },
-      (folderPaths) => {
+      async folderPaths => {
         if (!folderPaths)
           return;
 
@@ -33,7 +33,7 @@ export class SidebarComponent {
         Logger.info(`Selected Folder: ${selectedFolderPath}`);
         const directoryTreeObject = createDirectoryTree(selectedFolderPath);
         Logger.info('Directory tree object: ', directoryTreeObject);
-        this.photoDataService.update(directoryTreeObject);
+        await this.photoDataService.update(directoryTreeObject);
         this.directoryTreeViewDataService.update(directoryTreeObject);
         this.selectedFolderPath = selectedFolderPath;
         this.changeDetectorRef.detectChanges();
