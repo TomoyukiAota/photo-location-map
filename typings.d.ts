@@ -27,6 +27,10 @@ interface Window {
   require: NodeRequire;
 }
 
+declare module 'exif-parser';
+interface ExifParserResult {
+}
+
 type DirectoryTree = ReturnType<typeof import('directory-tree')>;
 
 declare var __karma__: any;

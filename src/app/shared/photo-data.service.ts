@@ -1,4 +1,6 @@
+import * as fs from 'fs';
 import { Injectable } from '@angular/core';
+import * as exifParser from 'exif-parser';
 import { Logger } from '../../../src-shared/log/logger';
 import { Photo } from './photo.model';
 
@@ -43,10 +45,8 @@ export class PhotoDataService {
     photo.name = directoryTreeObject.name;
     photo.path = directoryTreeObject.path;
 
-    const exif = this.fetchExifFromFile(directoryTreeObject.path);
-    if (exif) {
-      // TODO: Add EXIF-related info in Photo.
-    }
+    const exif = this.parseExifFromFile(photo.path);
+    photo.exifParserResult = exif;
 
     this.pathPhotoMap.set(photo.path, photo);
   }
@@ -57,8 +57,15 @@ export class PhotoDataService {
     return isSupportedExtension;
   }
 
-  private fetchExifFromFile(path: string) {
-    // TODO: Fetch and return EXIF.
-    return true;
+  private parseExifFromFile(path: string): ExifParserResult | null {
+    const buffer = fs.readFileSync(path);
+    try {
+      const result: ExifParserResult = exifParser.create(buffer).parse();
+      Logger.info(`Fetched EXIF from ${path} `, result);
+      return result;
+    } catch (error) {
+      Logger.warn(`Failed to fetch EXIF from ${path} `, error);
+      return null;
+    }
   }
 }
