@@ -11,8 +11,8 @@ import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-t
   styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent {
-  readonly messageWhenFolderIsNotSelected = 'The selected folder will be displayed here.';
-  selectedFolderPath = '';
+  public readonly messageWhenFolderIsNotSelected = 'The selected folder will be displayed here.';
+  public selectedFolderPath = '';
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
               private electronService: ElectronService,
@@ -20,24 +20,31 @@ export class SidebarComponent {
               private directoryTreeViewDataService: DirectoryTreeViewDataService) {
   }
 
-  showSelectFolderDialog() {
+  public showSelectFolderDialog() {
     this.electronService.remote.dialog.showOpenDialog(
       {
         properties: ['openDirectory'],
       },
-      async folderPaths => {
-        if (!folderPaths)
-          return;
+      this.handleFolderSelected
+    );
+  }
 
-        const selectedFolderPath = folderPaths[0];
-        Logger.info(`Selected Folder: ${selectedFolderPath}`);
-        const directoryTreeObject = createDirectoryTree(selectedFolderPath);
-        Logger.info('Directory tree object: ', directoryTreeObject);
-        await this.photoDataService.update(directoryTreeObject);
+  private readonly handleFolderSelected = (folderPaths: string[]) => {
+    if (!folderPaths)
+      return;
+
+    const selectedFolderPath = folderPaths[0];
+    Logger.info(`Selected Folder: ${selectedFolderPath}`);
+    const directoryTreeObject = createDirectoryTree(selectedFolderPath);
+    Logger.info('Directory tree object: ', directoryTreeObject);
+    this.photoDataService.update(directoryTreeObject)
+      .then(() => {
         this.directoryTreeViewDataService.update(directoryTreeObject);
         this.selectedFolderPath = selectedFolderPath;
         this.changeDetectorRef.detectChanges();
-      }
-    );
-  }
+      })
+      .catch(reason =>
+        Logger.error(`Something went wrong after selecting the folder ${selectedFolderPath} : `, reason)
+      );
+  };
 }

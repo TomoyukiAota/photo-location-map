@@ -14,7 +14,12 @@ export class PhotoDataService {
     this.pathPhotoMap.clear();
     this.updatePathPhotoMap(directoryTreeObject);
 
-    const pathExifPairs = await ExifFetcher.generatePathExifPairs(directoryTreeObject);
+    const pathExifPairs = await ExifFetcher.generatePathExifPairs(directoryTreeObject)
+      .catch(reason => {
+        Logger.error(`Something went wrong in ExifFetcher.generatePathExifPairs(directoryTreeObject) : `, directoryTreeObject, reason);
+        return [];
+      });
+
     pathExifPairs.forEach(pair => {
       const photo = this.pathPhotoMap.get(pair.path);
       photo.exifParserResult = pair.exifParserResult;
