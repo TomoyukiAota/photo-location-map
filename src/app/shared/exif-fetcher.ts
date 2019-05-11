@@ -13,9 +13,14 @@ export class ExifFetcher {
   private static readonly pathExifPairPromises: Promise<PathExifPair>[] = [];
 
   public static async generatePathExifPairs(directoryTreeObject: DirectoryTree): Promise<PathExifPair[]> {
+    Logger.debug(`ExifFetcher.generatePathExifPairs function: Started with `, directoryTreeObject);
     this.pathExifPairPromises.length = 0;
+    Logger.debug(`ExifFetcher.generatePathExifPairs function: Before calling updatePathExifPairPromises`);
     this.updatePathExifPairPromises(directoryTreeObject);
-    return await Promise.all(this.pathExifPairPromises);
+    Logger.debug(`ExifFetcher.generatePathExifPairs function: After calling updatePathExifPairPromises`, this.pathExifPairPromises);
+    const pathExifPairs = await Promise.all(this.pathExifPairPromises);
+    Logger.debug(`ExifFetcher.generatePathExifPairs function: After await Promise.all(this.pathExifPairPromises) and gotten pathExifPairs`, pathExifPairs);
+    return pathExifPairs;
   }
 
   private static updatePathExifPairPromises(directoryTreeElement: DirectoryTree) {
@@ -82,6 +87,8 @@ export class ExifFetcher {
         Logger.warn(`An error occurred when fetching data from ${directoryTreeElement.path} `, error);
         reject(error);
       });
+
+      readStream.resume();
     });
   }
 }
