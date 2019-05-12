@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import * as exifParser from 'exif-parser';
 import { Logger } from '../../../src-shared/log/logger';
 import { SupportedFilenameExtensions } from './supported-filename-extensions';
@@ -58,7 +57,7 @@ export class ExifFetcher {
     return new Promise((resolve, reject) => {
       let exif: ExifParserResult = null;
       const bufferLengthRequiredToParseExif = 65635;
-      const readStream = fs.createReadStream(
+      const readStream = window.require('fs-extra').createReadStream(
         directoryTreeElement.path,
         {start: 0, end: bufferLengthRequiredToParseExif - 1});
 
