@@ -55,6 +55,7 @@ export class ExifFetcher {
 
   private static instantiatePromiseToFetchExif(directoryTreeElement: DirectoryTree): Promise<ExifParserResult> {
     return new Promise((resolve, reject) => {
+      console.debug('instantiatePromise function: Start of new Promise');
       let exif: ExifParserResult = null;
       const bufferLengthRequiredToParseExif = 65635;
       const readStream = window.require('fs-extra').createReadStream(
@@ -62,6 +63,7 @@ export class ExifFetcher {
         {start: 0, end: bufferLengthRequiredToParseExif - 1});
 
       readStream.on('readable', () => {
+        console.debug(`readStream.on "readable" start for ${directoryTreeElement.path}`);
         let buffer;
         while (null !== (buffer = readStream.read(bufferLengthRequiredToParseExif))) {
           Logger.info(`Fetched ${buffer.length} bytes from ${directoryTreeElement.path}`);
@@ -75,6 +77,7 @@ export class ExifFetcher {
       });
 
       readStream.on('end', () => {
+        console.debug(`readStream.on "end" start for ${directoryTreeElement.path}`, exif);
         if (exif) {
           resolve(exif);
         } else {
@@ -88,6 +91,7 @@ export class ExifFetcher {
       });
 
       readStream.resume();
+      console.debug('instantiatePromise function: End of new Promise');
     });
   }
 }
