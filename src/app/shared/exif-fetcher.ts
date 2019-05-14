@@ -38,46 +38,89 @@ export class ExifFetcher {
     if (!isSupportedExtension)
       return;
 
-    this.addPathExifPairPromise(directoryTreeElement);
+    this.addPathExifPairPromise(directoryTreeElement.path);
   }
 
-  private static addPathExifPairPromise(directoryTreeElement: DirectoryTree) {
-    const promise = this.instantiatePromiseToFetchExif(directoryTreeElement)
+  private static addPathExifPairPromise(filePath: string) {
+    const promise = this.instantiatePromiseToFetchExif(filePath)
       .then(exifParserResult =>
-        new PathExifPair(directoryTreeElement.path, exifParserResult)
+        new PathExifPair(filePath, exifParserResult)
       )
       .catch(() =>
-        new PathExifPair(directoryTreeElement.path, null)
+        new PathExifPair(filePath, null)
       );
 
     this.pathExifPairPromises.push(promise);
   }
 
-  private static instantiatePromiseToFetchExif(directoryTreeElement: DirectoryTree): Promise<ExifParserResult> {
+  private static instantiatePromiseToFetchExif(filePath: string): Promise<ExifParserResult> {
+    return new Promise((resolve, reject) => {
+      const bufferLengthRequiredToParseExif = 65635;
+      window.require('fs-extra').open(filePath, 'r', (error, fd) => {
+        if (error) {
+          Logger.warn(`Failed to open ${filePath}`, error);
+          reject(`Failed to open file ${filePath}`);
+          return;
+        }
+
+        const buffer = new Buffer(bufferLengthRequiredToParseExif);
+        window.require('fs-extra').read(fd, buffer, 0, bufferLengthRequiredToParseExif, 0, (err, bytesRead) => {
+          if (err) {
+            Logger.warn(`Failed to read file content of ${filePath}`, err, fd);
+            reject(`Failed to read file content of ${filePath}`);
+            return;
+          }
+
+          try {
+            const exif = exifParser.create(buffer).parse();
+            Logger.info(`Fetched EXIF of ${filePath} `, exif);
+            resolve(exif);
+          } catch (error) {
+            if (error.message === 'Invalid JPEG section offset') {
+              Logger.info(`exif-parser reported "Invalid JPEG section offset" for "${filePath}" reading ${bytesRead} bytes.`);
+            } else {
+              Logger.warn(`Failed to fetch EXIF of ${filePath} `, error);
+            }
+
+            reject(`Failed to fetch EXIF of ${filePath}`);
+          }
+
+          window.require('fs-extra').close(fd, e => {
+            if (e)
+              Logger.warn(`Failed to close ${filePath}`, error);
+          });
+        });
+      });
+    });
+  }
+
+  // Previous implementation using readStream. Stopped using this because the readStream does not flow in some cases.
+  // TODO: When another implementation becomes stable, remove this implementation.
+  private static instantiatePromiseToFetchExif_old(filePath: string): Promise < ExifParserResult > {
     return new Promise((resolve, reject) => {
       console.debug('instantiatePromise function: Start of new Promise');
       let exif: ExifParserResult = null;
       const bufferLengthRequiredToParseExif = 65635;
       const readStream = window.require('fs-extra').createReadStream(
-        directoryTreeElement.path,
+        filePath,
         {start: 0, end: bufferLengthRequiredToParseExif - 1});
 
       readStream.on('readable', () => {
-        console.debug(`readStream.on "readable" start for ${directoryTreeElement.path}`);
+        console.debug(`readStream.on "readable" start for ${filePath}`);
         let buffer;
         while (null !== (buffer = readStream.read(bufferLengthRequiredToParseExif))) {
-          Logger.info(`Fetched ${buffer.length} bytes from ${directoryTreeElement.path}`);
+          Logger.info(`Fetched ${buffer.length} bytes from ${filePath}`);
           try {
             exif = exifParser.create(buffer).parse();
-            Logger.info(`Fetched EXIF of ${directoryTreeElement.path} `, exif);
+            Logger.info(`Fetched EXIF of ${filePath} `, exif);
           } catch (error) {
-            Logger.warn(`Failed to fetch EXIF of ${directoryTreeElement.path} `, error);
+            Logger.warn(`Failed to fetch EXIF of ${filePath} `, error);
           }
         }
       });
 
       readStream.on('end', () => {
-        console.debug(`readStream.on "end" start for ${directoryTreeElement.path}`, exif);
+        console.debug(`readStream.on "end" start for ${filePath}`, exif);
         if (exif) {
           resolve(exif);
         } else {
@@ -86,7 +129,7 @@ export class ExifFetcher {
       });
 
       readStream.on('error', error => {
-        Logger.warn(`An error occurred when fetching data from ${directoryTreeElement.path} `, error);
+        Logger.warn(`An error occurred when fetching data from ${filePath} `, error);
         reject(error);
       });
 
