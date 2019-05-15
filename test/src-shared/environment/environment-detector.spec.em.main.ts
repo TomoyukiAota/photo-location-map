@@ -10,6 +10,10 @@ describe('EnvironmentDetector (in main process in electron-mocha)', () => {
     assert(EnvironmentDetector.isElectronMochaMain === true);
   });
 
+  it('isElectronMochaRenderer should be false', () => {
+    assert(EnvironmentDetector.isElectronMochaRenderer === false);
+  });
+
   it('isUnitTest should be true', () => {
     assert(EnvironmentDetector.isUnitTest === true);
   });
