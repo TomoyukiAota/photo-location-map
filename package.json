@@ -40,6 +40,7 @@
     "test:unit:karma": "npm run postinstall:electron && ng test --code-coverage",
     "test:unit:karma:watch": "npm run postinstall:electron && ng test --code-coverage --watch",
     "test:unit:em:main": "cross-env TS_NODE_TRANSPILE_ONLY=1 electron-mocha --opts ./test/electron-mocha-main.opts",
+    "test:unit:em:renderer": "cross-env TS_NODE_TRANSPILE_ONLY=1 electron-mocha --opts ./test/electron-mocha-renderer.opts",
     "test:unit:all": "npm-run-all test:unit:karma test:unit:em:main",
     "test:e2e": "npm run build:prod && mocha --opts ./e2e/mocha-e2e.opts",
     "test:package": "node ./package-test/run-package-test",

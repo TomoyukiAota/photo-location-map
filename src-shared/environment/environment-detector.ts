@@ -7,7 +7,11 @@ export class EnvironmentDetector {
     return typeof __electronMochaMain__ !== 'undefined';
   }
 
+  public static get isElectronMochaRenderer(): boolean {
+    return typeof __electronMochaRenderer__ !== 'undefined';
+  }
+
   public static get isUnitTest(): boolean {
-    return this.isKarma || this.isElectronMochaMain;
+    return this.isKarma || this.isElectronMochaMain || this.isElectronMochaRenderer;
   }
 }
