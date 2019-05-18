@@ -63,7 +63,7 @@ export class ExifFetcher {
           return;
         }
 
-        const buffer = new Buffer(bufferLengthRequiredToParseExif);
+        const buffer = Buffer.allocUnsafe(bufferLengthRequiredToParseExif);
         window.require('fs-extra').read(fd, buffer, 0, bufferLengthRequiredToParseExif, 0, (err, bytesRead) => {
           if (err) {
             Logger.warn(`Failed to read file content of ${filePath}`, err, fd);
