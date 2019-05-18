@@ -24,6 +24,7 @@ test_script:
   - appveyor-retry npm run lint:es
   - appveyor-retry npm run test:unit:karma
   - appveyor-retry npm run test:unit:em:main
+  - appveyor-retry npm run test:unit:em:renderer
   - appveyor-retry npm run test:e2e
   - appveyor-retry npm run test:package
 
