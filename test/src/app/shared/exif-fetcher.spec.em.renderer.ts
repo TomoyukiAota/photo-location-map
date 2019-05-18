@@ -1,10 +1,12 @@
 import assert = require('assert');
+import * as path from 'path';
 import * as createDirectoryTree from 'directory-tree';
 import { ExifFetcher } from '../../../../src/app/shared/exif-fetcher';
 
 describe('ExifFetcher', () => {
   it('should create PathExifPair from DirectoryTree object', () => {
-    const directoryTreeObject = createDirectoryTree('C:\\GitRepo\\GitHub\\TomoyukiAota\\photo-location-map\\test\\test-resources');
+    const testResourceDirectory = path.join(__dirname, '..', '..', '..', 'test-resources');
+    const directoryTreeObject = createDirectoryTree(testResourceDirectory);
     assert(!!directoryTreeObject.path === true);
     assert(window.process.type === 'renderer');
 
