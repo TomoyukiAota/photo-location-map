@@ -20,5 +20,6 @@ script:
   - travis_retry npm run lint:es
   - travis_retry npm run test:unit:karma
   - travis_retry npm run test:unit:em:main
+  - travis_retry npm run test:unit:em:renderer
   - travis_retry npm run test:e2e
   - travis_retry npm run test:package
