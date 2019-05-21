@@ -13,9 +13,8 @@
     "polyfills-test.ts"
   ],
   "include": [
-    "../typings.d.ts",
+    "../type-declaration/**/*",
     "../src/**/*.spec.ts",
-    "../src/**/*.d.ts",
     "../src-shared/**/*.spec.ts"
   ]
 }
