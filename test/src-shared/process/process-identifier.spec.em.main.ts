@@ -1,7 +1,7 @@
 import assert = require('assert');
 import { ProcessIdentifier } from '../../../src-shared/process/process-identifier';
 
-describe('ProcessIdentifier (in main process)', () => {
+describe('ProcessIdentifier (in main process in electron-mocha)', () => {
   it('isNode should be true', () => {
     assert(ProcessIdentifier.isNode === true);
   });
