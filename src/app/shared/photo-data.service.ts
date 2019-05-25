@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Logger } from '../../../src-shared/log/logger';
-import { Photo } from './photo.model';
+import { GpsInfo, Photo } from './photo.model';
 import { ExifFetcher } from './exif-fetcher';
 import { SupportedFilenameExtensions } from './supported-filename-extensions';
 
@@ -13,28 +13,9 @@ export class PhotoDataService {
   public async update(directoryTreeObject: DirectoryTree): Promise<void> {
     this.pathPhotoMap.clear();
     this.updatePathPhotoMap(directoryTreeObject);
-
-    const pathExifPairs = await ExifFetcher.generatePathExifPairs(directoryTreeObject)
-      .catch(reason => {
-        Logger.error(`Something went wrong in ExifFetcher.generatePathExifPairs(directoryTreeObject) : `, directoryTreeObject, reason);
-        return [];
-      });
-
-    pathExifPairs.forEach(pair => {
-      const photo = this.pathPhotoMap.get(pair.path);
-      photo.exifParserResult = pair.exifParserResult;
-    });
-
-    Logger.info(`Fetched path-photo map: `, this.pathPhotoMap);
-  }
-
-  public getExif(path: string) {
-    const photo = this.pathPhotoMap.get(path);
-    if (!photo)
-      return null;
-
-    // TODO: Return photo.exif if available. If not, return null.
-    return true;
+    await this.updateExifParserResult(directoryTreeObject);
+    this.processExifParserResult();
+    Logger.info(`Updated path-photo map: `, this.pathPhotoMap);
   }
 
   private updatePathPhotoMap(directoryTreeObject: DirectoryTree) {
@@ -58,5 +39,46 @@ export class PhotoDataService {
     photo.path = directoryTreeElement.path;
     photo.exifParserResult = null;
     this.pathPhotoMap.set(photo.path, photo);
+  }
+
+  private async updateExifParserResult(directoryTreeObject: DirectoryTree) {
+    const pathExifPairs = await ExifFetcher.generatePathExifPairs(directoryTreeObject)
+      .catch(reason => {
+        Logger.error(`Something went wrong in ExifFetcher.generatePathExifPairs(directoryTreeObject) : `, directoryTreeObject, reason);
+        return [];
+      });
+
+    pathExifPairs.forEach(pair => {
+      const photo = this.pathPhotoMap.get(pair.path);
+      photo.exifParserResult = pair.exifParserResult;
+    });
+  }
+
+  private processExifParserResult() {
+    this.pathPhotoMap.forEach((photo, path, map) => {
+      const exifParserResult = photo.exifParserResult;
+      if (exifParserResult && exifParserResult.tags && exifParserResult.tags.GPSLatitude && exifParserResult.tags.GPSLongitude) {
+        const gpsInfo = new GpsInfo();
+        gpsInfo.gpsLatitude = exifParserResult.tags.GPSLatitude;
+        gpsInfo.gpsLongitude = exifParserResult.tags.GPSLongitude;
+        photo.gpsInfo = gpsInfo;
+      }
+    });
+  }
+
+  public getExifParserResult(path: string) {
+    const photo = this.pathPhotoMap.get(path);
+    if (!photo || !photo.exifParserResult)
+      return null;
+
+    return photo.exifParserResult;
+  }
+
+  public getGpsInfo(path: string) {
+    const photo = this.pathPhotoMap.get(path);
+    if (!photo || !photo.gpsInfo)
+      return null;
+
+    return photo.gpsInfo;
   }
 }
