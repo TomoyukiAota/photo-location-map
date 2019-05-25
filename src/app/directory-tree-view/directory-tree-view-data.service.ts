@@ -37,8 +37,8 @@ export class DirectoryTreeViewDataService {
   private isSelectableNode(directoryTree: DirectoryTree): boolean {
     const isFile = directoryTree.type === 'file';
     if (isFile) {
-      const isExifAvailable = !!this.photoDataService.getExif(directoryTree.path);
-      return isExifAvailable;
+      const isGpsInfoAvailable = !!this.photoDataService.getGpsInfo(directoryTree.path);
+      return isGpsInfoAvailable;
     }
 
     const someChildrenSelectable = directoryTree.children.some(child => {
