@@ -7,14 +7,14 @@ import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-t
 
 import { SidebarComponent } from './sidebar.component';
 
+@Component({ selector: 'app-directory-tree-view', template: '' })
+class DummyDirectoryTreeViewComponent {}
+
 describe('SidebarComponent', () => {
   let component: SidebarComponent;
   let fixture: ComponentFixture<SidebarComponent>;
 
   beforeEach(async(() => {
-    @Component({ selector: 'app-directory-tree-view', template: '' })
-    class DummyDirectoryTreeViewComponent {}
-
     TestBed.configureTestingModule({
       declarations: [
         SidebarComponent,
