@@ -4,16 +4,19 @@ import { AngularSplitModule } from 'angular-split';
 
 import { HomeComponent } from './home.component';
 
+@Component({ selector: 'app-sidebar', template: '' })
+class DummySidebarComponent {}
+
+@Component({ selector: 'app-map', template: '' })
+class DummyMapComponent {}
+
 describe('HomeComponent', () => {
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
 
   beforeEach(async(() => {
-    @Component({ selector: 'app-sidebar', template: '' })
-    class DummySidebarComponent {}
-
     TestBed.configureTestingModule({
-      declarations: [ HomeComponent, DummySidebarComponent ],
+      declarations: [ HomeComponent, DummySidebarComponent, DummyMapComponent ],
       imports: [
         AngularSplitModule.forRoot()
       ]
