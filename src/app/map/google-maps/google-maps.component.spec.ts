@@ -1,3 +1,4 @@
+import { AgmCoreModule } from '@agm/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { GoogleMapsComponent } from './google-maps.component';
@@ -8,6 +9,11 @@ describe('GoogleMapsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [
+        AgmCoreModule.forRoot({
+          apiKey: ''
+        })
+      ],
       declarations: [ GoogleMapsComponent ]
     })
     .compileComponents();
