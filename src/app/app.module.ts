@@ -18,6 +18,8 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { DirectoryTreeViewComponent } from './directory-tree-view/directory-tree-view.component';
+import { MapComponent } from './map/map/map.component';
+import { GoogleMapsComponent } from './map/google-maps/google-maps.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -29,7 +31,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppComponent,
     HomeComponent,
     SidebarComponent,
-    DirectoryTreeViewComponent
+    DirectoryTreeViewComponent,
+    MapComponent,
+    GoogleMapsComponent
   ],
   imports: [
     BrowserModule,
