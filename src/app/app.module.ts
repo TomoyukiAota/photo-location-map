@@ -12,12 +12,15 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { AngularSplitModule } from 'angular-split';
+import { AgmCoreModule } from '@agm/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { DirectoryTreeViewComponent } from './directory-tree-view/directory-tree-view.component';
+import { MapComponent } from './map/map/map.component';
+import { GoogleMapsComponent } from './map/google-maps/google-maps.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -29,7 +32,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppComponent,
     HomeComponent,
     SidebarComponent,
-    DirectoryTreeViewComponent
+    DirectoryTreeViewComponent,
+    MapComponent,
+    GoogleMapsComponent
   ],
   imports: [
     BrowserModule,
@@ -50,7 +55,10 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatTreeModule
+    MatTreeModule,
+    AgmCoreModule.forRoot({
+      apiKey: ''
+    })
   ],
   bootstrap: [AppComponent]
 })
