@@ -12,6 +12,7 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { AngularSplitModule } from 'angular-split';
+import { AgmCoreModule } from '@agm/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -54,7 +55,10 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatTreeModule
+    MatTreeModule,
+    AgmCoreModule.forRoot({
+      apiKey: ''
+    })
   ],
   bootstrap: [AppComponent]
 })
