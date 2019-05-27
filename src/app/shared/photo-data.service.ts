@@ -66,6 +66,11 @@ export class PhotoDataService {
     });
   }
 
+  public getPhoto(path: string) {
+    const photo = this.pathPhotoMap.get(path);
+    return !!photo ? photo : null;
+  }
+
   public getExifParserResult(path: string) {
     const photo = this.pathPhotoMap.get(path);
     if (!photo || !photo.exifParserResult)
