@@ -4,13 +4,13 @@ const path = window.require('path');
 
 export class GoogleMapsApiKeyHandler {
   private static readonly fileName = 'google-maps-api-key.json';
-  private static filePath = path.join(window.require('electron').remote.app.getPath('userData'), GoogleMapsApiKeyHandler.fileName);
-  public static apiKey = GoogleMapsApiKeyHandler.fetchApiKey();
+  private static filePath: string;
+  private static apiKey: string;
 
-  // public static initialize() {
-  //   this.filePath = path.join(window.require('electron').remote.app.getPath('userData'), GoogleMapsApiKeyHandler.fileName);
-  //   this.apiKey = this.fetchApiKey();
-  // }
+  public static initialize() {
+    this.filePath = path.join(window.require('electron').remote.app.getPath('userData'), GoogleMapsApiKeyHandler.fileName);
+    this.apiKey = this.fetchApiKey();
+  }
 
   public static fetchApiKey(): string {
     let apiKey = '';
@@ -18,9 +18,6 @@ export class GoogleMapsApiKeyHandler {
     try {
       const fs = window.require('fs');
       const fileContent = JSON.parse(fs.readFileSync(this.filePath, 'utf8'));
-      // const jsonfile = window.require('electron').remote.require('jsonfile');
-
-      // const fileContent = jsonfile.readFileSync(this.filePath);
       apiKey = fileContent.apiKey;
     } catch (err) {
       // TODO: Log error cases.
@@ -30,4 +27,4 @@ export class GoogleMapsApiKeyHandler {
   }
 }
 
-// GoogleMapsApiKeyHandler.initialize();
+GoogleMapsApiKeyHandler.initialize();
