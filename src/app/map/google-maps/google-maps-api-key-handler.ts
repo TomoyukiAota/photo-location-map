@@ -26,8 +26,8 @@ export class GoogleMapsApiKeyHandler {
       const jsonObject = JSON.parse(fileContent);
       apiKey = jsonObject.apiKey;
       Logger.info(`Fetched Google Maps API Key "${apiKey}" from "${this.filePath}".`);
-    } catch (err) {
-      Logger.warn(`Failed to fetch Google Maps API Key from "${this.filePath}".`);
+    } catch (error) {
+      Logger.warn(`Failed to fetch Google Maps API Key from "${this.filePath}".`, error);
       this.logHowToUseGoogleMapsMessage();
     }
 
