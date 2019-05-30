@@ -6,11 +6,7 @@ const path = window.require('path');
 
 export class GoogleMapsApiKeyHandler {
   private static readonly fileName = 'google-maps-api-key.json';
-  private static filePath: string;
-
-  public static initialize() {
-    this.filePath = path.join(app.getPath('userData'), GoogleMapsApiKeyHandler.fileName);
-  }
+  private static readonly filePath = path.join(app.getPath('userData'), GoogleMapsApiKeyHandler.fileName);
 
   public static fetchApiKey(): string {
     if (!fs.existsSync(this.filePath)) {
@@ -43,5 +39,3 @@ export class GoogleMapsApiKeyHandler {
     Logger.info(`To use Google Maps, create "${this.filePath}" with file content "{ "apiKey": "YOUR_API_KEY" }"`);
   }
 }
-
-GoogleMapsApiKeyHandler.initialize();
