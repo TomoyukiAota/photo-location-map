@@ -33,7 +33,7 @@ const googleMapsApiKey = GoogleMapsApiKeyHandler.apiKey;
 Logger.info(`Google Maps API Key: ${googleMapsApiKey}`);
 
 @Injectable()
-export class MapsConfig implements LazyMapsAPILoaderConfigLiteral {
+export class AgmConfig implements LazyMapsAPILoaderConfigLiteral {
   public apiKey: string;
   public libraries: string[];
   constructor() {
@@ -75,7 +75,7 @@ export class MapsConfig implements LazyMapsAPILoaderConfigLiteral {
     AgmCoreModule.forRoot()
   ],
   providers: [
-    {provide: LAZY_MAPS_API_CONFIG, useClass: MapsConfig}
+    {provide: LAZY_MAPS_API_CONFIG, useClass: AgmConfig}
   ],
   bootstrap: [AppComponent]
 })
