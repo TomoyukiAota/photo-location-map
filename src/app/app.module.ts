@@ -12,7 +12,7 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { AngularSplitModule } from 'angular-split';
-import { AgmCoreModule } from '@agm/core';
+import { AgmCoreModule, LAZY_MAPS_API_CONFIG } from '@agm/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -21,6 +21,7 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { DirectoryTreeViewComponent } from './directory-tree-view/directory-tree-view.component';
 import { MapComponent } from './map/map/map.component';
 import { GoogleMapsComponent } from './map/google-maps/google-maps.component';
+import { AgmConfig } from './map/google-maps/agm-config';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -56,9 +57,10 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatIconModule,
     MatInputModule,
     MatTreeModule,
-    AgmCoreModule.forRoot({
-      apiKey: ''
-    })
+    AgmCoreModule.forRoot()
+  ],
+  providers: [
+    {provide: LAZY_MAPS_API_CONFIG, useClass: AgmConfig}
   ],
   bootstrap: [AppComponent]
 })
