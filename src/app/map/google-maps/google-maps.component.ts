@@ -1,7 +1,8 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { SelectedPhotoService } from '../../shared/selected-photo.service';
 import { Subscription } from 'rxjs';
-import { LatLng, Photo } from '../../shared/model/photo.model';
+import { SelectedPhotoService } from '../../shared/selected-photo.service';
+import { LatLng } from '../../shared/model/lat-lng.model';
+import { Photo } from '../../shared/model/photo.model';
 
 @Component({
   selector: 'app-google-maps',
