@@ -1,4 +1,5 @@
+import { LatLng } from './lat-lng.model';
+
 export class GpsInfo {
-  gpsLatitude: number;
-  gpsLongitude: number;
+  latLng: LatLng;
 }

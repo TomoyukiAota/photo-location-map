@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { SelectedPhotoService } from '../../shared/service/selected-photo.service';
-import { LatLng } from '../../shared/model/lat-lng.model';
+import { calculateCenterLatLng, LatLng } from '../../shared/model/lat-lng.model';
 import { Photo } from '../../shared/model/photo.model';
 
 @Component({
@@ -13,8 +13,8 @@ export class GoogleMapsComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
   public photos: Photo[];
 
-  public lat = 51.678418;
-  public lng = 7.809007;
+  public centerLatitude = 51.678418;
+  public centerLongitude = 7.809007;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
               private selectedPhotoService: SelectedPhotoService) {
@@ -35,15 +35,12 @@ export class GoogleMapsComponent implements OnInit, OnDestroy {
   }
 
   private updateCenterLatLng(photos: Photo[]) {
-    const totalLatLng = photos.reduce((previous: LatLng, current: Photo) => {
-      return new LatLng(
-        previous.latitude + current.gpsInfo.gpsLatitude,
-        previous.longitude + current.gpsInfo.gpsLongitude
-      );
-    }, new LatLng());
-    const centerLat = totalLatLng.latitude / photos.length;
-    const centerLng = totalLatLng.longitude / photos.length;
-    this.lat = centerLat;
-    this.lng = centerLng;
+    if (photos.length === 0)
+      return;
+
+    const latLngArray = photos.map(photo => photo.gpsInfo.latLng);
+    const centerLatLng = calculateCenterLatLng(latLngArray);
+    this.centerLatitude = centerLatLng.latitude;
+    this.centerLongitude = centerLatLng.longitude;
   }
 }
