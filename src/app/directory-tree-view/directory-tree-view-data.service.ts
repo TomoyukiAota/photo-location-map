@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { PhotoDataService } from '../shared/photo-data.service';
+import { PhotoDataService } from '../shared/service/photo-data.service';
 import { NestedNode } from './directory-tree-view.model';
 
 /**
