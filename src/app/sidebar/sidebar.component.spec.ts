@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { ElectronService } from '../shared/electron.service';
+import { ElectronService } from '../shared/service/electron.service';
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
 
 import { SidebarComponent } from './sidebar.component';

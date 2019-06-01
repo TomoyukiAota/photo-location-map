@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Logger } from '../../../src-shared/log/logger';
-import { GpsInfo } from './model/gps-info.model';
-import { Photo } from './model/photo.model';
-import { ExifFetcher } from './exif-fetcher';
-import { SupportedFilenameExtensions } from './supported-filename-extensions';
+import { Logger } from '../../../../src-shared/log/logger';
+import { GpsInfo } from '../model/gps-info.model';
+import { Photo } from '../model/photo.model';
+import { ExifFetcher } from '../exif-fetcher';
+import { SupportedFilenameExtensions } from '../supported-filename-extensions';
 
 @Injectable({
   providedIn: 'root'
