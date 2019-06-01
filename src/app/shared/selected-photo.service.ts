@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Logger } from '../../../src-shared/log/logger';
-import { Photo } from './photo.model';
+import { Photo } from './model/photo.model';
 import { PhotoDataService } from './photo-data.service';
 
 @Injectable({
