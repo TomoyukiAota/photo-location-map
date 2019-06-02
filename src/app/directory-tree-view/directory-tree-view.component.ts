@@ -2,7 +2,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
-import { SelectedPhotoService } from '../shared/selected-photo.service';
+import { SelectedPhotoService } from '../shared/service/selected-photo.service';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { FlatNode, NestedNode } from './directory-tree-view.model';
 
