@@ -1,8 +1,8 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import * as createDirectoryTree from 'directory-tree';
 import { Logger } from '../../../src-shared/log/logger';
-import { ElectronService } from '../shared/electron.service';
-import { PhotoDataService } from '../shared/photo-data.service';
+import { ElectronService } from '../shared/service/electron.service';
+import { PhotoDataService } from '../shared/service/photo-data.service';
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
 
 @Component({

@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Logger } from '../../../src-shared/log/logger';
-import { GpsInfo, Photo } from './photo.model';
-import { ExifFetcher } from './exif-fetcher';
-import { SupportedFilenameExtensions } from './supported-filename-extensions';
+import { Logger } from '../../../../src-shared/log/logger';
+import { GpsInfo } from '../model/gps-info.model';
+import { Photo } from '../model/photo.model';
+import { ExifFetcher } from '../exif-fetcher';
+import { SupportedFilenameExtensions } from '../supported-filename-extensions';
+import { LatLng } from '../model/lat-lng.model';
 
 @Injectable({
   providedIn: 'root'
@@ -59,8 +61,7 @@ export class PhotoDataService {
       const exifParserResult = photo.exifParserResult;
       if (exifParserResult && exifParserResult.tags && exifParserResult.tags.GPSLatitude && exifParserResult.tags.GPSLongitude) {
         const gpsInfo = new GpsInfo();
-        gpsInfo.gpsLatitude = exifParserResult.tags.GPSLatitude;
-        gpsInfo.gpsLongitude = exifParserResult.tags.GPSLongitude;
+        gpsInfo.latLng = new LatLng(exifParserResult.tags.GPSLatitude, exifParserResult.tags.GPSLongitude);
         photo.gpsInfo = gpsInfo;
       }
     });

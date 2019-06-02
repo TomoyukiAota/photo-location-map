@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Logger } from '../../../src-shared/log/logger';
-import { Photo } from './photo.model';
+import { Subject } from 'rxjs';
+import { Logger } from '../../../../src-shared/log/logger';
+import { Photo } from '../model/photo.model';
 import { PhotoDataService } from './photo-data.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SelectedPhotoService {
-  private selectedPhotos: Photo[];
+  public selectedPhotosChanged = new Subject<Photo[]>();
 
   constructor(private photoDataService: PhotoDataService) {
   }
@@ -15,6 +16,6 @@ export class SelectedPhotoService {
   public update(selectedPaths: string[]) {
     const selectedPhotos = selectedPaths.map(path => this.photoDataService.getPhoto(path));
     Logger.info('Selected Photos: ', selectedPhotos);
-    this.selectedPhotos = selectedPhotos;
+    this.selectedPhotosChanged.next(selectedPhotos);
   }
 }

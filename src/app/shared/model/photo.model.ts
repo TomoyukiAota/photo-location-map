@@ -1,7 +1,4 @@
-export class GpsInfo {
-  gpsLatitude: number;
-  gpsLongitude: number;
-}
+import { GpsInfo } from './gps-info.model';
 
 export class Photo {
   name: string;
