@@ -2,6 +2,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '
 import { Subscription } from 'rxjs';
 import { SelectedPhotoService } from '../../shared/service/selected-photo.service';
 import { Photo } from '../../shared/model/photo.model';
+import { InfoWindowContentGenerator } from './info-window-content-generator';
 
 declare var google;
 
@@ -78,8 +79,7 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
       bounds.extend(marker.position);
       google.maps.event.addListener(marker, 'click', (function (clickedMarker, clickedIndex) {
         return function () {
-          // const content = infoWindowContentGenerator.generate(photos[clickedIndex]);
-          const content = 'InfoWindow content is here.';
+          const content = InfoWindowContentGenerator.generate(photos[clickedIndex]);
           infoWindow.setContent(content);
           infoWindow.open(map, clickedMarker);
         };
