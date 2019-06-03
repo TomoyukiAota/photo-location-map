@@ -39,6 +39,10 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    this.initializeGoogleMaps();
+  }
+
+  private initializeGoogleMaps(): void {
     const script = document.createElement('script');
     script.setAttribute('src', 'http://maps.google.com/maps/api/js');
     script.setAttribute('type', 'text/javascript');
@@ -46,13 +50,6 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
 
     const div = document.getElementById('google-map');
     div.parentNode.insertBefore(script, null);
-
-    // // tslint:disable-next-line:no-unused-expression
-    // new google.maps.Map(document.getElementById('google-map'), {
-    //   mapTypeId: google.maps.MapTypeId.ROADMAP,
-    //   center: { lat: 0.0, lng: 0.0 },
-    //   zoom: 2
-    // });
 
     // Wait for 1 second for Google Maps API script to load.
     // Then, render initial state of Google Maps.
@@ -70,14 +67,4 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
       zoom: 2
     });
   }
-
-  // private updateCenterLatLng(photos: Photo[]) {
-  //   if (photos.length === 0)
-  //     return;
-  //
-  //   const latLngArray = photos.map(photo => photo.gpsInfo.latLng);
-  //   const centerLatLng = calculateCenterLatLng(latLngArray);
-  //   this.centerLatitude = centerLatLng.latitude;
-  //   this.centerLongitude = centerLatLng.longitude;
-  // }
 }
