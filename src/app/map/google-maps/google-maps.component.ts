@@ -1,7 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { SelectedPhotoService } from '../../shared/service/selected-photo.service';
-import { calculateCenterLatLng, LatLng } from '../../shared/model/lat-lng.model';
 import { Photo } from '../../shared/model/photo.model';
 
 declare var google;
@@ -15,9 +14,6 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
   private subscription: Subscription;
   public photos: Photo[];
 
-  public centerLatitude = 51.678418;
-  public centerLongitude = 7.809007;
-
   constructor(private changeDetectorRef: ChangeDetectorRef,
               private selectedPhotoService: SelectedPhotoService) {
   }
@@ -26,9 +22,7 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.subscription = this.selectedPhotoService.selectedPhotosChanged.subscribe(
       (photos: Photo[]) => {
         this.photos = photos;
-        // this.updateCenterLatLng(photos);
-
-        console.log(window['google']);
+        this.renderGoogleMaps(photos);
         this.changeDetectorRef.detectChanges();
       }
     );
@@ -66,5 +60,38 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
       center: { lat: 0.0, lng: 0.0 },
       zoom: 2
     });
+  }
+
+  private renderGoogleMaps(photos: Photo[]) {
+    const map = new google.maps.Map(document.getElementById('google-map'), {
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+    const infoWindow = new google.maps.InfoWindow();
+    const bounds = new google.maps.LatLngBounds();
+
+    let marker, i;
+    for (i = 0; i < photos.length; i++) {
+      marker = new google.maps.Marker({
+        position: new google.maps.LatLng(photos[i].gpsInfo.latLng.latitude, photos[i].gpsInfo.latLng.longitude),
+        map: map
+      });
+      bounds.extend(marker.position);
+      // google.maps.event.addListener(marker, 'click', (function (marker, i) {
+      //   return function () {
+      //     const content = infoWindowContentGenerator.generate(photos[i]);
+      //     infoWindow.setContent(content);
+      //     infoWindow.open(map, marker);
+      //   };
+      // })(marker, i));
+    }
+
+    google.maps.event.addListenerOnce(map, 'bounds_changed', function (event) {
+      const initialMaxZoomLevel = 15;
+      if (this.getZoom() > initialMaxZoomLevel) {
+        this.setZoom(initialMaxZoomLevel);
+      }
+    });
+
+    map.fitBounds(bounds);
   }
 }
