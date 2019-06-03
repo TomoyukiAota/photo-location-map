@@ -38,13 +38,13 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private initializeGoogleMaps(): void {
-    const script = document.createElement('script');
-    script.setAttribute('src', 'http://maps.google.com/maps/api/js');
-    script.setAttribute('type', 'text/javascript');
-    script.async = false;
+    const scriptElement = document.createElement('script');
+    scriptElement.setAttribute('src', 'http://maps.google.com/maps/api/js');
+    scriptElement.setAttribute('type', 'text/javascript');
+    scriptElement.async = false;
 
-    const div = document.getElementById('google-map');
-    div.parentNode.insertBefore(script, null);
+    const divElementForGoogleMaps = document.getElementById('google-map');
+    divElementForGoogleMaps.parentNode.insertBefore(scriptElement, null);
 
     // Wait for 1 second for Google Maps API script to load.
     // Then, render initial state of Google Maps.
