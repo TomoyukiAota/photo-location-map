@@ -76,13 +76,14 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
         map: map
       });
       bounds.extend(marker.position);
-      // google.maps.event.addListener(marker, 'click', (function (marker, i) {
-      //   return function () {
-      //     const content = infoWindowContentGenerator.generate(photos[i]);
-      //     infoWindow.setContent(content);
-      //     infoWindow.open(map, marker);
-      //   };
-      // })(marker, i));
+      google.maps.event.addListener(marker, 'click', (function (clickedMarker, clickedIndex) {
+        return function () {
+          // const content = infoWindowContentGenerator.generate(photos[clickedIndex]);
+          const content = 'InfoWindow content is here.';
+          infoWindow.setContent(content);
+          infoWindow.open(map, clickedMarker);
+        };
+      })(marker, i));
     }
 
     google.maps.event.addListenerOnce(map, 'bounds_changed', function (event) {
