@@ -2,6 +2,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '
 import { Subscription } from 'rxjs';
 import { SelectedPhotoService } from '../../shared/service/selected-photo.service';
 import { Photo } from '../../shared/model/photo.model';
+import { GoogleMapsApiKeyHandler } from './google-maps-api-key-handler';
 import { InfoWindowContentGenerator } from './info-window-content-generator';
 
 declare var google;
@@ -38,8 +39,10 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private initializeGoogleMaps(): void {
+    const apiKey = GoogleMapsApiKeyHandler.fetchApiKey();
+
     const scriptElement = document.createElement('script');
-    scriptElement.setAttribute('src', 'http://maps.google.com/maps/api/js');
+    scriptElement.setAttribute('src', `http://maps.google.com/maps/api/js?key=${apiKey}`);
     scriptElement.setAttribute('type', 'text/javascript');
     scriptElement.async = false;
 
