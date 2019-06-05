@@ -4,8 +4,7 @@ import { SelectedPhotoService } from '../../shared/service/selected-photo.servic
 import { Photo } from '../../shared/model/photo.model';
 import { GoogleMapsApiKeyHandler } from './google-maps-api-key-handler';
 import { InfoWindowContentGenerator } from './info-window-content-generator';
-
-declare var google;
+import { GoogleMapsApiLoader } from './google-maps-api-loader';
 
 @Component({
   selector: 'app-google-maps',
@@ -49,9 +48,7 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
     const divElementForGoogleMaps = document.getElementById('google-map');
     divElementForGoogleMaps.parentNode.insertBefore(scriptElement, null);
 
-    // Wait for 1 second for Google Maps API script to load.
-    // Then, render initial state of Google Maps.
-    setTimeout(() => this.renderInitialGoogleMapsState(), 1000);
+    GoogleMapsApiLoader.waitUntilLoaded().then(this.renderInitialGoogleMapsState);
   }
 
   private renderInitialGoogleMapsState(): void {
