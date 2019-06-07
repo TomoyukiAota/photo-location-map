@@ -6,7 +6,7 @@ interface Window {
 
 type DirectoryTree = ReturnType<typeof import('directory-tree')>;
 
-declare var google;
+declare var google: any;
 
 declare var __karma__: any;
 declare var __electronMochaMain__: any;
