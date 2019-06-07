@@ -6,11 +6,11 @@ export class InfoWindowContentGenerator {
 
     // const thumbnailElement = createThumbnailElement(photo);
     const nameElement = this.createNameElement(photo);
-    // const dateTakenElement = this.createDateTakenElement(photo);
+    const dateTakenElement = this.createDateTimeTakenElement(photo);
 
     // [thumbnailElement, nameElement, dateTakenElement]
     //   .forEach(element => root.appendChild(element));
-    [nameElement]
+    [nameElement, dateTakenElement]
       .forEach(element => root.appendChild(element));
 
     return root;
@@ -38,12 +38,12 @@ export class InfoWindowContentGenerator {
     return nameElement;
   }
 
-  // private static createDateTakenElement(photo: Photo) {
-  //   const dateTaken = photo.dateTaken || 'Date taken is not available.';
-  //   const dateTakenElement = document.createElement('div');
-  //   dateTakenElement.style.textAlign  = 'center';
-  //   dateTakenElement.style.fontWeight = 'bold';
-  //   dateTakenElement.innerText        = dateTaken;
-  //   return dateTakenElement;
-  // }
+  private static createDateTimeTakenElement(photo: Photo) {
+    const dateTaken = photo.dateTimeTaken || 'Date taken is not available.';
+    const dateTakenElement = document.createElement('div');
+    dateTakenElement.style.textAlign  = 'center';
+    dateTakenElement.style.fontWeight = 'bold';
+    dateTakenElement.innerText        = dateTaken;
+    return dateTakenElement;
+  }
 }
