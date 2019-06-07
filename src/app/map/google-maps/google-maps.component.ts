@@ -48,7 +48,9 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
     const divElementForGoogleMaps = document.getElementById('google-map');
     divElementForGoogleMaps.parentNode.insertBefore(scriptElement, null);
 
-    GoogleMapsApiLoader.waitUntilLoaded().then(this.renderInitialGoogleMapsState);
+    GoogleMapsApiLoader.waitUntilLoaded()
+      .then(this.renderInitialGoogleMapsState)
+      .catch(this.displayGoogleMapsLoadFailureMessage);
   }
 
   private renderInitialGoogleMapsState(): void {
@@ -61,6 +63,10 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
       center: { lat: 0.0, lng: 0.0 },
       zoom: 2
     });
+  }
+
+  private displayGoogleMapsLoadFailureMessage(): void {
+    document.getElementById('google-map').innerText = 'Failed to load Google Maps. Please check Internet connection to Google Maps.';
   }
 
   private renderGoogleMaps(photos: Photo[]) {
