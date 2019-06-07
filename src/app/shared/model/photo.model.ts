@@ -5,4 +5,5 @@ export class Photo {
   path: string;
   exifParserResult: ExifParserResult;
   gpsInfo: GpsInfo;
+  dateTimeTaken: string;
 }

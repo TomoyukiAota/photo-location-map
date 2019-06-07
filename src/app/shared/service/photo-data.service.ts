@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { Logger } from '../../../../src-shared/log/logger';
 import { GpsInfo } from '../model/gps-info.model';
 import { Photo } from '../model/photo.model';
-import { ExifFetcher } from '../exif-fetcher';
-import { SupportedFilenameExtensions } from '../supported-filename-extensions';
 import { LatLng } from '../model/lat-lng.model';
+import { ExifFetcher } from '../exif-fetcher';
+import { PhotoDateTimeTakenGenerator } from '../photo-date-time-taken-generator';
+import { SupportedFilenameExtensions } from '../supported-filename-extensions';
 
 @Injectable({
   providedIn: 'root'
@@ -64,6 +65,8 @@ export class PhotoDataService {
         gpsInfo.latLng = new LatLng(exifParserResult.tags.GPSLatitude, exifParserResult.tags.GPSLongitude);
         photo.gpsInfo = gpsInfo;
       }
+
+      photo.dateTimeTaken = PhotoDateTimeTakenGenerator.generate(photo);
     });
   }
 
