@@ -6,6 +6,7 @@ import { LatLng } from '../model/lat-lng.model';
 import { ExifFetcher } from '../exif-fetcher';
 import { PhotoDateTimeTakenGenerator } from '../photo-date-time-taken-generator';
 import { SupportedFilenameExtensions } from '../supported-filename-extensions';
+import { Thumbnail } from '../model/thumbnail.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class PhotoDataService {
     this.pathPhotoMap.clear();
     this.updatePathPhotoMap(directoryTreeObject);
     await this.updateExifParserResult(directoryTreeObject);
-    this.processExifParserResult();
+    await this.processExifParserResult();
     Logger.info(`Updated path-photo map: `, this.pathPhotoMap);
   }
 
@@ -57,8 +58,9 @@ export class PhotoDataService {
     });
   }
 
-  private processExifParserResult() {
-    this.pathPhotoMap.forEach((photo, path, map) => {
+  private async processExifParserResult() {
+    const pathPhotoArray = Array.from(this.pathPhotoMap);
+    const promiseArray = pathPhotoArray.map(async ([path, photo]) => {
       const exifParserResult = photo.exifParserResult;
       if (exifParserResult && exifParserResult.tags && exifParserResult.tags.GPSLatitude && exifParserResult.tags.GPSLongitude) {
         const gpsInfo = new GpsInfo();
@@ -66,8 +68,10 @@ export class PhotoDataService {
         photo.gpsInfo = gpsInfo;
       }
 
+      photo.thumbnail = await Thumbnail.create(photo);
       photo.dateTimeTaken = PhotoDateTimeTakenGenerator.generate(photo);
     });
+    await Promise.all(promiseArray);
   }
 
   public getPhoto(path: string) {

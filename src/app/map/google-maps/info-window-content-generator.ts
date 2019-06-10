@@ -4,31 +4,29 @@ export class InfoWindowContentGenerator {
   public static generate(photo: Photo) {
     const root = document.createElement('div');
 
-    // const thumbnailElement = createThumbnailElement(photo);
+    const thumbnailElement = this.createThumbnailElement(photo);
     const nameElement = this.createNameElement(photo);
     const dateTakenElement = this.createDateTimeTakenElement(photo);
 
-    // [thumbnailElement, nameElement, dateTakenElement]
-    //   .forEach(element => root.appendChild(element));
-    [nameElement, dateTakenElement]
+    [thumbnailElement, nameElement, dateTakenElement]
       .forEach(element => root.appendChild(element));
 
     return root;
   }
 
-  // private createThumbnailElement(photo: Photo) {
-  //   if (photo.thumbnail === null) {
-  //     return document.createTextNode('Thumbnail is not available.');
-  //   }
-  //
-  //   const thumbnailElement = document.createElement('img');
-  //   thumbnailElement.border  = '0';
-  //   thumbnailElement.src     = photo.thumbnail.dataUrl;
-  //   thumbnailElement.width   = photo.thumbnail.width;
-  //   thumbnailElement.height  = photo.thumbnail.height;
-  //   // thumbnailElement.onclick = event => photoViewerLauncher.launch(photo); //TODO: Implement photoViewerLauncher.
-  //   return thumbnailElement;
-  // }
+  private static createThumbnailElement(photo: Photo) {
+    if (photo.thumbnail === null) {
+      return document.createTextNode('Thumbnail is not available.');
+    }
+
+    const thumbnailElement = document.createElement('img');
+    thumbnailElement.border  = '0';
+    thumbnailElement.src     = photo.thumbnail.dataUrl;
+    thumbnailElement.width   = photo.thumbnail.width;
+    thumbnailElement.height  = photo.thumbnail.height;
+    // thumbnailElement.onclick = event => photoViewerLauncher.launch(photo); //TODO: Implement photoViewerLauncher.
+    return thumbnailElement;
+  }
 
   private static createNameElement(photo: Photo) {
     const nameElement = document.createElement('div');
