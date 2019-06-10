@@ -60,4 +60,8 @@ interface ExifParserResult {
     LensMake?: string,
     LensModel?: string
   };
+
+  hasThumbnail(mimeType: string): boolean;
+
+  getThumbnailBuffer(): Buffer;
 }
