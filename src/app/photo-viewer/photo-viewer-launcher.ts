@@ -1,4 +1,4 @@
-import { Photo } from '../model/photo.model';
+import { Photo } from '../shared/model/photo.model';
 const BrowserWindow = window.require('electron').remote.BrowserWindow;
 
 export class PhotoViewerLauncher {
