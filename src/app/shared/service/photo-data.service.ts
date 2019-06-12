@@ -60,18 +60,29 @@ export class PhotoDataService {
 
   private async processExifParserResult() {
     const pathPhotoArray = Array.from(this.pathPhotoMap);
-    const promiseArray = pathPhotoArray.map(async ([path, photo]) => {
-      const exifParserResult = photo.exifParserResult;
-      if (exifParserResult && exifParserResult.tags && exifParserResult.tags.GPSLatitude && exifParserResult.tags.GPSLongitude) {
-        const gpsInfo = new GpsInfo();
-        gpsInfo.latLng = new LatLng(exifParserResult.tags.GPSLatitude, exifParserResult.tags.GPSLongitude);
-        photo.gpsInfo = gpsInfo;
-      }
-
-      photo.thumbnail = await Thumbnail.create(photo);
-      photo.dateTimeTaken = PhotoDateTimeTakenGenerator.generate(photo);
-    });
+    const promiseArray = pathPhotoArray.map(async ([path, photo]) => await this.updatePhotoFromExifParserResult(photo));
     await Promise.all(promiseArray);
+  }
+
+  private async updatePhotoFromExifParserResult(photo: Photo) {
+    const exifParserResult = photo.exifParserResult;
+
+    if (!exifParserResult)
+      return;
+
+    if (exifParserResult.imageSize) {
+      photo.width = exifParserResult.imageSize.width;
+      photo.height = exifParserResult.imageSize.height;
+    }
+
+    if (exifParserResult.tags && exifParserResult.tags.GPSLatitude && exifParserResult.tags.GPSLongitude) {
+      const gpsInfo = new GpsInfo();
+      gpsInfo.latLng = new LatLng(exifParserResult.tags.GPSLatitude, exifParserResult.tags.GPSLongitude);
+      photo.gpsInfo = gpsInfo;
+    }
+
+    photo.thumbnail = await Thumbnail.create(photo);
+    photo.dateTimeTaken = PhotoDateTimeTakenGenerator.generate(photo);
   }
 
   public getPhoto(path: string) {
