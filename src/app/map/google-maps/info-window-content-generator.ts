@@ -1,5 +1,5 @@
 import { Photo } from '../../shared/model/photo.model';
-import { PhotoViewerLauncher } from '../../shared/service/photo-viewer-launcher';
+import { PhotoViewerLauncher } from '../../photo-viewer/photo-viewer-launcher';
 
 export class InfoWindowContentGenerator {
   public static generate(photo: Photo) {
