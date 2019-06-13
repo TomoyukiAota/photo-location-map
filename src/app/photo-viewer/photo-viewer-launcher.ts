@@ -5,7 +5,7 @@ export class PhotoViewerLauncher {
   public static launch(photo: Photo): void {
     console.log('launched!!!!');
 
-    const photoDisplaySize = this.shrinkSizeAccordingToScreen(photo.width, photo.height);
+    const photoDisplaySize = this.reduceSizeAccordingToScreen(photo.width, photo.height);
 
     let browserWindow = new BrowserWindow({
       title: photo.name,
@@ -25,7 +25,7 @@ export class PhotoViewerLauncher {
     browserWindow.show();
   }
 
-  private static shrinkSizeAccordingToScreen(srcWidth: number, srcHeight: number) {
+  private static reduceSizeAccordingToScreen(srcWidth: number, srcHeight: number) {
     const maxSrcToScreenRatio = 0.9;
     const srcToScreenWidthRatio = srcWidth / window.screen.width;
     const srcToScreenHeightRatio = srcHeight / window.screen.height;
@@ -38,12 +38,12 @@ export class PhotoViewerLauncher {
       };
     }
 
-    const shrinkRatio = maxSrcToScreenRatio / srcToScreenLargerSideRatio;
-    const shrinkedWidth  = srcWidth  * shrinkRatio;
-    const shrinkedHeight = srcHeight * shrinkRatio;
+    const reduceRatio = maxSrcToScreenRatio / srcToScreenLargerSideRatio;
+    const reducedWidth  = srcWidth  * reduceRatio;
+    const reducedHeight = srcHeight * reduceRatio;
     return {
-      width: shrinkedWidth,
-      height: shrinkedHeight
+      width: reducedWidth,
+      height: reducedHeight
     };
   }
 
