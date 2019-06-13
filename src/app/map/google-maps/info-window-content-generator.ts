@@ -1,4 +1,5 @@
 import { Photo } from '../../shared/model/photo.model';
+import { PhotoViewerLauncher } from '../../photo-viewer/photo-viewer-launcher';
 
 export class InfoWindowContentGenerator {
   public static generate(photo: Photo) {
@@ -24,7 +25,7 @@ export class InfoWindowContentGenerator {
     thumbnailElement.src     = photo.thumbnail.dataUrl;
     thumbnailElement.width   = photo.thumbnail.width;
     thumbnailElement.height  = photo.thumbnail.height;
-    // thumbnailElement.onclick = event => photoViewerLauncher.launch(photo); //TODO: Implement photoViewerLauncher.
+    thumbnailElement.onclick = () => PhotoViewerLauncher.launch(photo);
     return thumbnailElement;
   }
 
