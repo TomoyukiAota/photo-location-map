@@ -7,6 +7,7 @@ import { ExifFetcher } from '../exif-fetcher';
 import { PhotoDateTimeTakenGenerator } from '../photo-date-time-taken-generator';
 import { SupportedFilenameExtensions } from '../supported-filename-extensions';
 import { Thumbnail } from '../model/thumbnail.model';
+import { Dimensions } from '../model/dimensions.model';
 
 @Injectable({
   providedIn: 'root'
@@ -71,8 +72,7 @@ export class PhotoDataService {
       return;
 
     if (exifParserResult.imageSize) {
-      photo.width = exifParserResult.imageSize.width;
-      photo.height = exifParserResult.imageSize.height;
+      photo.dimensions = new Dimensions(exifParserResult.imageSize.width, exifParserResult.imageSize.height);
     }
 
     if (exifParserResult.tags && exifParserResult.tags.GPSLatitude && exifParserResult.tags.GPSLongitude) {
