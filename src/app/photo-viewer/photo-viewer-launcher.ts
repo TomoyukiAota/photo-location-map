@@ -51,6 +51,8 @@ export class PhotoViewerLauncher {
   }
 
   private static createHtmlString(photo: Photo, viewerDimensions: Dimensions): string {
+    const escapedPhotoPath = photo.path.replace(/\\/g, '\\\\');
+
     return `
         <!DOCTYPE html>
         <html lang="en-us">
@@ -75,9 +77,9 @@ export class PhotoViewerLauncher {
             </style>
           </head>
           <body>
-            <img src="${photo.path}" width="${viewerDimensions.width}" height="${viewerDimensions.height}" alt="photo">
+            <img src="${photo.path}" width="${viewerDimensions.width}" height="${viewerDimensions.height}" alt="${photo.name}">
             <script>
-              console.info('This is the photo viewer for ${photo.path}');
+              console.info('This is the photo viewer for ' + '${escapedPhotoPath}');
             </script>
           </body>
         </html>
