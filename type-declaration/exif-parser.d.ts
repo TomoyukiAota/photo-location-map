@@ -7,6 +7,10 @@ declare module 'exif-parser' {
 }
 
 interface ExifParserResult {
+  imageSize?: {
+    width?: number,
+    height?: number
+  };
   tags?: {
     Make?: string,
     Model?: string,
