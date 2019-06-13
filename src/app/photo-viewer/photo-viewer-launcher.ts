@@ -1,5 +1,6 @@
 import { Photo } from '../shared/model/photo.model';
 import { Dimensions } from '../shared/model/dimensions.model';
+import { Logger } from '../../../src-shared/log/logger';
 const BrowserWindow = window.require('electron').remote.BrowserWindow;
 
 export class PhotoViewerLauncher {
@@ -22,6 +23,7 @@ export class PhotoViewerLauncher {
     browserWindow.loadURL(dataUrl);
     // browserWindow.setMenu(null);
     browserWindow.show();
+    Logger.info(`Launched the photo viewer for ${photo.path}`, photo);
   }
 
   private static getPhotoViewerDimensions(src: Dimensions): Dimensions {
@@ -75,7 +77,7 @@ export class PhotoViewerLauncher {
           <body>
             <img src="${photo.path}" width="${viewerDimensions.width}" height="${viewerDimensions.height}" alt="photo">
             <script>
-              console.log("logged.");
+              console.info('This is the photo viewer for ${photo.path}');
             </script>
           </body>
         </html>
