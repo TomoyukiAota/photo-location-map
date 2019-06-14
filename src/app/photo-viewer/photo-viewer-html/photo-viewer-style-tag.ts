@@ -11,10 +11,10 @@ export class PhotoViewerStyleTag {
       }
 
       img {
-        height: 100%;
-        width: 100%;
+        width: 100vw;
+        height: 100vh;
         object-fit: contain;
-        image-orientation: from-image;
+        transition: transform 0.3s ease-out;
       }
 
       button {
@@ -31,7 +31,7 @@ export class PhotoViewerStyleTag {
         border-radius: 5px;
         text-align: center;
         opacity: 0;
-        transition: opacity .35s ease;
+        transition: opacity 0.3s ease;
       }
 
       .container:hover button {

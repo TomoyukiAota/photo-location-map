@@ -32,7 +32,10 @@ export class PhotoViewerLauncher {
 
     // BrowserWindow does not correctly handle width and height values when they are decimals like 1735.1404958677685 (not like 2000).
     // Therefore, the width and height values are floored.
-    return reduced.floor();
+    const floored = reduced.floor();
+
+    // For the rotated photo to be displayed well, the photo viewer needs to be square.
+    return floored.cropToSquare();
   }
 
   private static reduceDimensionsAccordingToScreen(src: Dimensions): Dimensions {

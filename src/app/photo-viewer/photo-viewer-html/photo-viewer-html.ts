@@ -15,8 +15,12 @@ export class PhotoViewerHtml {
   </head>
   <body>
     <div class="container">
-      <img src="${photo.path}" width="${viewerDimensions.width}" height="${viewerDimensions.height}" alt="${photo.name}">
-      <button>Rotate</button>
+      <img src="${photo.path}"
+        width="${viewerDimensions.width}"
+        height="${viewerDimensions.height}"
+        alt="${photo.name}"
+        id="photo-image">
+      <button onclick="rotate()">Rotate</button>
     </div>
     ${PhotoViewerScriptTag.create(photo, viewerDimensions)}
   </body>
