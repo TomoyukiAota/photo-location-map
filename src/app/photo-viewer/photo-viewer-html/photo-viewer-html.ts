@@ -1,5 +1,5 @@
-import { Photo } from '../shared/model/photo.model';
-import { Dimensions } from '../shared/model/dimensions.model';
+import { Photo } from '../../shared/model/photo.model';
+import { Dimensions } from '../../shared/model/dimensions.model';
 import { PhotoViewerStyleTag } from './photo-viewer-style-tag';
 
 export class PhotoViewerHtml {

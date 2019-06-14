@@ -1,4 +1,4 @@
-import { PhotoViewerHtml } from './photo-viewer-html';
+import { PhotoViewerHtml } from './photo-viewer-html/photo-viewer-html';
 import { Photo } from '../shared/model/photo.model';
 import { Dimensions } from '../shared/model/dimensions.model';
 
