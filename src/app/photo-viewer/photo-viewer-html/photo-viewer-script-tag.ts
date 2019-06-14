@@ -1,8 +1,7 @@
 import { Photo } from '../../shared/model/photo.model';
-import { Dimensions } from '../../shared/model/dimensions.model';
 
 export class PhotoViewerScriptTag {
-  public static create(photo: Photo, viewerDimensions: Dimensions): string {
+  public static create(photo: Photo): string {
     const escapedPhotoPath = photo.path.replace(/\\/g, '\\\\');
 
     return `

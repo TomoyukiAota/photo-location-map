@@ -1,10 +1,9 @@
 import { Photo } from '../../shared/model/photo.model';
-import { Dimensions } from '../../shared/model/dimensions.model';
 import { PhotoViewerStyleTag } from './photo-viewer-style-tag';
 import { PhotoViewerScriptTag } from './photo-viewer-script-tag';
 
 export class PhotoViewerHtml {
-  public static create(photo: Photo, viewerDimensions: Dimensions): string {
+  public static create(photo: Photo): string {
     return `
 <!DOCTYPE html>
 <html lang="en-us">
@@ -16,13 +15,11 @@ export class PhotoViewerHtml {
   <body>
     <div class="container">
       <img src="${photo.path}"
-        width="${viewerDimensions.width}"
-        height="${viewerDimensions.height}"
         alt="${photo.name}"
         id="photo-image">
       <button onclick="rotate()">Rotate</button>
     </div>
-    ${PhotoViewerScriptTag.create(photo, viewerDimensions)}
+    ${PhotoViewerScriptTag.create(photo)}
   </body>
 </html>
     `;
