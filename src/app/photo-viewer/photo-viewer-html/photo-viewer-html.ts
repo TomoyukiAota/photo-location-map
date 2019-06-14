@@ -1,5 +1,3 @@
-/* tslint:disable:max-line-length */
-
 import { Photo } from '../../shared/model/photo.model';
 import { PhotoViewerStyleTag } from './photo-viewer-style-tag';
 import { PhotoViewerScriptTag } from './photo-viewer-script-tag';
@@ -17,9 +15,7 @@ export class PhotoViewerHtml {
   </head>
   <body>
     <div class="container">
-      <img src="${photo.path}"
-        alt="${photo.name}"
-        id="photo-image">
+      <img src="${photo.path}" alt="${photo.name}" id="photo-image">
       <i class="fas fa-sync" id="rotate-button" onclick="rotate()" title="Rotate 90 degrees"></i>
     </div>
     ${PhotoViewerScriptTag.create(photo)}
