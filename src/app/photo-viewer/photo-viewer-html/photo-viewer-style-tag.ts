@@ -14,7 +14,7 @@ export class PhotoViewerStyleTag {
         width: 100vw;
         height: 100vh;
         object-fit: contain;
-        transition: transform 0.3s ease-out;
+        transition: transform 0.3s ease-in-out;
       }
 
       button {
