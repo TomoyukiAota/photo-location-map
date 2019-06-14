@@ -22,16 +22,17 @@ export class PhotoViewerStyleTag {
         top: 90%;
         left: 90%;
         transform: translate(-50%, -50%);
-        background-color: #555;
+        background-color: #555555;
         color: white;
         font-size: 16px;
         padding: 12px 24px;
         border: none;
+        outline: none;
         cursor: pointer;
         border-radius: 5px;
         text-align: center;
         opacity: 0;
-        transition: opacity 0.3s ease;
+        transition: opacity 0.3s ease, background-color 0.2s ease;
       }
 
       .container:hover button {
@@ -39,7 +40,11 @@ export class PhotoViewerStyleTag {
       }
 
       button:hover {
-        background-color: #303030;
+        background-color: #777777;
+      }
+
+      button:active {
+        background-color: #1c1ad6;
       }
     </style>
     `;
