@@ -1,24 +1,24 @@
 import { Photo } from '../../shared/model/photo.model';
-import { Dimensions } from '../../shared/model/dimensions.model';
 import { PhotoViewerStyleTag } from './photo-viewer-style-tag';
 import { PhotoViewerScriptTag } from './photo-viewer-script-tag';
 
 export class PhotoViewerHtml {
-  public static create(photo: Photo, viewerDimensions: Dimensions): string {
+  public static create(photo: Photo): string {
     return `
 <!DOCTYPE html>
 <html lang="en-us">
   <head>
     <title>${photo.name}</title>
     <meta charset="UTF-8">
+    <script src="https://kit.fontawesome.com/71953eb5ec.js"></script>
     ${PhotoViewerStyleTag.create()}
   </head>
   <body>
     <div class="container">
-      <img src="${photo.path}" width="${viewerDimensions.width}" height="${viewerDimensions.height}" alt="${photo.name}">
-      <button>Rotate</button>
+      <img src="${photo.path}" alt="${photo.name}" id="photo-image">
+      <i class="fas fa-sync" id="rotate-button" onclick="rotate()" title="Rotate 90 degrees"></i>
     </div>
-    ${PhotoViewerScriptTag.create(photo, viewerDimensions)}
+    ${PhotoViewerScriptTag.create(photo)}
   </body>
 </html>
     `;
