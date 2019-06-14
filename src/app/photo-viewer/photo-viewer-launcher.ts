@@ -20,7 +20,7 @@ export class PhotoViewerLauncher {
 
     browserWindow.on('close', function () { browserWindow = null; });
 
-    const dataUrl = PhotoViewerDataUrl.create(photo, viewerDimensions);
+    const dataUrl = PhotoViewerDataUrl.create(photo);
     browserWindow.loadURL(dataUrl);
     // browserWindow.setMenu(null);
     browserWindow.show();
