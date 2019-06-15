@@ -22,7 +22,7 @@ export class PhotoViewerLauncher {
       case 'darwin':
         return `open "${photo.path}"`;
       case 'linux':
-        return `xdg-open "${photo.path}"`
+        return `xdg-open "${photo.path}"`;
       default:
         return null;
     }
