@@ -1,4 +1,4 @@
-export class PhotoViewerStyleTag {
+export class FallbackPhotoViewerStyleTag {
   public static create(): string {
     return `
     <style type="text/css">
