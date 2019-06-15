@@ -10,6 +10,8 @@ export class PhotoViewerLauncher {
   public static launch(photo: Photo): void {
     if (os.platform() === 'win32') {
       child_process.spawn(`explorer "${photo.path}"`, [], { shell: true });
+    } else if (os.platform() === 'darwin') {
+      child_process.spawn(`open "${photo.path}"`, [], { shell: true });
     } else {
       this.launchFallbackPhotoViewer(photo);
     }
