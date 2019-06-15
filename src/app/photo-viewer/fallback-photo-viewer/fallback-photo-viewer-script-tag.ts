@@ -1,6 +1,6 @@
 import { Photo } from '../../shared/model/photo.model';
 
-export class PhotoViewerScriptTag {
+export class FallbackPhotoViewerScriptTag {
   public static create(photo: Photo): string {
     const escapedPhotoPath = photo.path.replace(/\\/g, '\\\\');
 
