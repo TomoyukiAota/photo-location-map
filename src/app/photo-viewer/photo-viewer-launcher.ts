@@ -4,19 +4,31 @@ import { Logger } from '../../../src-shared/log/logger';
 import { PhotoViewerDataUrl } from './photo-viewer-data-url';
 const os = window.require('os');
 const child_process = window.require('child_process');
+const commandExistsSync = window.require('command-exists').sync;
 const BrowserWindow = window.require('electron').remote.BrowserWindow;
 
 export class PhotoViewerLauncher {
   public static launch(photo: Photo): void {
     if (os.platform() === 'win32') {
-      child_process.spawn(`explorer "${photo.path}"`, [], { shell: true });
-    } else if (os.platform() === 'darwin') {
-      child_process.spawn(`open "${photo.path}"`, [], { shell: true });
+      this.launchAssociatedAppOnWindows(photo);
+    } else if (commandExistsSync('open')) {
+      // On non-Windows platform, if "open" command is available, use it to launch the associated application.
+      // At least on macOS and Ubuntu, "open" command is available.
+      this.launchAssociatedAppOnNonWindows(photo);
     } else {
+      // On non-Windows platform, if "open" command is not available, launch the fallback photo viewer.
       this.launchFallbackPhotoViewer(photo);
     }
+  }
 
-    Logger.info(`Launched the photo viewer for ${photo.path}`, photo);
+  private static launchAssociatedAppOnWindows(photo: Photo): void {
+    child_process.spawn(`explorer "${photo.path}"`, [], { shell: true });
+    Logger.info(`Launched the associated application for ${photo.path}`, photo);
+  }
+
+  private static launchAssociatedAppOnNonWindows(photo: Photo): void {
+    child_process.spawn(`open "${photo.path}"`, [], {shell: true});
+    Logger.info(`Launched the associated application for ${photo.path}`, photo);
   }
 
   private static launchFallbackPhotoViewer(photo: Photo): void {
@@ -38,6 +50,7 @@ export class PhotoViewerLauncher {
     browserWindow.loadURL(dataUrl);
     // browserWindow.setMenu(null);
     browserWindow.show();
+    Logger.info(`Launched the fallback photo viewer for ${photo.path}`, photo);
   }
 
   private static getPhotoViewerDimensions(src: Dimensions): Dimensions {

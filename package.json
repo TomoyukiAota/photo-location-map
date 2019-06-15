@@ -81,6 +81,7 @@
     "angular-split": "2.0.1",
     "chai": "4.2.0",
     "codelyzer": "4.5.0",
+    "command-exists": "1.2.8",
     "conventional-changelog-cli": "2.0.11",
     "core-js": "2.6.3",
     "cross-env": "5.2.0",
