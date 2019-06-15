@@ -59,10 +59,12 @@ const templateMenu: MenuItemConstructorOptions[] = [
       },
       {
         role: 'togglefullscreen'
-      },
-      {
-        type: 'separator'
-      },
+      }
+    ]
+  },
+  {
+    label: 'Tools',
+    submenu: [
       {
         role: 'toggledevtools'
       }
