@@ -1,6 +1,7 @@
 import { Photo } from '../../shared/model/photo.model';
-import { FallbackPhotoViewerDataUrl } from './fallback-photo-viewer-data-url';
 import { Dimensions } from '../../shared/model/dimensions.model';
+import { FallbackPhotoViewerDataUrl } from './fallback-photo-viewer-data-url';
+import { fallbackPhotoViewerMenu } from './fallback-photo-viewer-menu';
 
 const BrowserWindow = window.require('electron').remote.BrowserWindow;
 
@@ -22,7 +23,7 @@ export class FallbackPhotoViewer {
 
     const dataUrl = FallbackPhotoViewerDataUrl.create(photo);
     browserWindow.loadURL(dataUrl);
-    // browserWindow.setMenu(null);
+    browserWindow.setMenu(fallbackPhotoViewerMenu);
     browserWindow.show();
   }
 
