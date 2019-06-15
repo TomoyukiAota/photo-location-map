@@ -2,10 +2,22 @@ import { Photo } from '../shared/model/photo.model';
 import { Dimensions } from '../shared/model/dimensions.model';
 import { Logger } from '../../../src-shared/log/logger';
 import { PhotoViewerDataUrl } from './photo-viewer-data-url';
+const os = window.require('os');
+const child_process = window.require('child_process');
 const BrowserWindow = window.require('electron').remote.BrowserWindow;
 
 export class PhotoViewerLauncher {
   public static launch(photo: Photo): void {
+    if (os.platform() === 'win32') {
+      child_process.spawn(`explorer "${photo.path}"`, [], { shell: true });
+    } else {
+      this.launchFallbackPhotoViewer(photo);
+    }
+
+    Logger.info(`Launched the photo viewer for ${photo.path}`, photo);
+  }
+
+  private static launchFallbackPhotoViewer(photo: Photo): void {
     const viewerDimensions = this.getPhotoViewerDimensions(photo.dimensions);
 
     let browserWindow = new BrowserWindow({
@@ -24,7 +36,6 @@ export class PhotoViewerLauncher {
     browserWindow.loadURL(dataUrl);
     // browserWindow.setMenu(null);
     browserWindow.show();
-    Logger.info(`Launched the photo viewer for ${photo.path}`, photo);
   }
 
   private static getPhotoViewerDimensions(src: Dimensions): Dimensions {
