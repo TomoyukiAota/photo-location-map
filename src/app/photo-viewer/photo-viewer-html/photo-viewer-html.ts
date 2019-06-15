@@ -15,7 +15,7 @@ export class PhotoViewerHtml {
   </head>
   <body>
     <div class="container">
-      <img src="${photo.path}" alt="${photo.name}" id="photo-image">
+      <img src="file:///${photo.path}" alt="${photo.name}" id="photo-image">
       <i class="fas fa-sync" id="rotate-button" onclick="rotate()" title="Rotate 90 degrees"></i>
     </div>
     ${PhotoViewerScriptTag.create(photo)}
