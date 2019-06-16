@@ -54,10 +54,7 @@ export class InfoWindowContentGenerator {
     rotateIconElement.width = 30;
     rotateIconElement.height = 30;
     rotateIconElement.title = 'Rotate the thumbnail 90 degrees';
-    rotateIconElement.style.padding = '4px';
-    rotateIconElement.style.marginTop = '6px';
-    rotateIconElement.style.backgroundColor = '#bbbbbb';
-    rotateIconElement.style.borderRadius = '5px';
+    rotateIconElement.className = 'info-window-rotate-icon';
     return rotateIconElement;
   }
 }
