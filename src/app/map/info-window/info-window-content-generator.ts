@@ -51,10 +51,13 @@ export class InfoWindowContentGenerator {
   private static createRotateIconElement(): HTMLImageElement {
     const rotateIconElement = document.createElement('img');
     rotateIconElement.src     = IconDataUrl.rotate;
-    rotateIconElement.width = 35;
+    rotateIconElement.width = 30;
     rotateIconElement.height = 30;
-    rotateIconElement.style.marginTop = '8px';
     rotateIconElement.title = 'Rotate the thumbnail 90 degrees';
+    rotateIconElement.style.padding = '4px';
+    rotateIconElement.style.marginTop = '6px';
+    rotateIconElement.style.backgroundColor = '#bbbbbb';
+    rotateIconElement.style.borderRadius = '5px';
     return rotateIconElement;
   }
 }
