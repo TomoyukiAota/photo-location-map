@@ -1,18 +1,21 @@
 import { Photo } from '../../shared/model/photo.model';
 import { PhotoViewerLauncher } from '../../photo-viewer/photo-viewer-launcher';
+import { IconDataUrl } from '../../../assets/icon-data-url';
 
 export class InfoWindowContentGenerator {
   public static generate(photo: Photo) {
-    const root = document.createElement('div');
+    const rootDivElement = document.createElement('div');
+    rootDivElement.style.textAlign = 'center';
 
     const thumbnailElement = this.createThumbnailElement(photo);
     const nameElement = this.createNameElement(photo);
     const dateTakenElement = this.createDateTimeTakenElement(photo);
+    const rotateIconElement = this.createRotateIconElement();
 
-    [thumbnailElement, nameElement, dateTakenElement]
-      .forEach(element => root.appendChild(element));
+    [thumbnailElement, nameElement, dateTakenElement, rotateIconElement]
+      .forEach(element => rootDivElement.appendChild(element));
 
-    return root;
+    return rootDivElement;
   }
 
   private static createThumbnailElement(photo: Photo) {
@@ -43,5 +46,15 @@ export class InfoWindowContentGenerator {
     dateTakenElement.style.fontWeight = 'bold';
     dateTakenElement.innerText        = dateTaken;
     return dateTakenElement;
+  }
+
+  private static createRotateIconElement(): HTMLImageElement {
+    const rotateIconElement = document.createElement('img');
+    rotateIconElement.src     = IconDataUrl.rotate;
+    rotateIconElement.width = 35;
+    rotateIconElement.height = 30;
+    rotateIconElement.style.marginTop = '8px';
+    rotateIconElement.title = 'Rotate the thumbnail 90 degrees';
+    return rotateIconElement;
   }
 }
