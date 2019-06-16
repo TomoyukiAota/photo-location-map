@@ -15,9 +15,24 @@ export class InfoWindowContentGenerator {
     [thumbnailContainerElement, nameElement, dateTakenElement]
       .forEach(element => rootDivElement.appendChild(element));
 
-    this.appendRotateIcon(rootDivElement, thumbnailElement);
+    this.appendRotateIconElement(rootDivElement, thumbnailElement);
 
     return rootDivElement;
+  }
+
+  private static createThumbnailElement(photo: Photo) {
+    if (!photo.thumbnail) {
+      return document.createTextNode('Thumbnail is not available.');
+    }
+
+    const thumbnailElement = document.createElement('img');
+    thumbnailElement.src = photo.thumbnail.dataUrl;
+    thumbnailElement.width = photo.thumbnail.dimensions.width;
+    thumbnailElement.height = photo.thumbnail.dimensions.height;
+    thumbnailElement.title = `Click the thumbnail to open ${photo.name}`;
+    thumbnailElement.style.transition = 'transform 0.3s ease-in-out';
+    thumbnailElement.onclick = () => PhotoViewerLauncher.launch(photo);
+    return thumbnailElement;
   }
 
   private static createThumbnailContainerElement(photo: Photo, thumbnailElement: HTMLImageElement | Text) {
@@ -36,21 +51,6 @@ export class InfoWindowContentGenerator {
     return thumbnailContainer;
   }
 
-  private static createThumbnailElement(photo: Photo) {
-    if (!photo.thumbnail) {
-      return document.createTextNode('Thumbnail is not available.');
-    }
-
-    const thumbnailElement = document.createElement('img');
-    thumbnailElement.src = photo.thumbnail.dataUrl;
-    thumbnailElement.width = photo.thumbnail.dimensions.width;
-    thumbnailElement.height = photo.thumbnail.dimensions.height;
-    thumbnailElement.title = `Click the thumbnail to open ${photo.name}`;
-    thumbnailElement.style.transition = 'transform 0.3s ease-in-out';
-    thumbnailElement.onclick = () => PhotoViewerLauncher.launch(photo);
-    return thumbnailElement;
-  }
-
   private static createNameElement(photo: Photo) {
     const nameElement = document.createElement('div');
     nameElement.style.fontWeight = 'bold';
@@ -64,6 +64,14 @@ export class InfoWindowContentGenerator {
     dateTakenElement.style.fontWeight = 'bold';
     dateTakenElement.innerText        = dateTaken;
     return dateTakenElement;
+  }
+
+  private static appendRotateIconElement(rootDivElement: HTMLDivElement, thumbnailElement: HTMLImageElement | Text): void {
+    if (thumbnailElement instanceof Text)
+      return;
+
+    const rotateIconElement = this.createRotateIconElement(thumbnailElement);
+    rootDivElement.appendChild(rotateIconElement);
   }
 
   private static createRotateIconElement(thumbnailElement: HTMLImageElement): HTMLImageElement {
@@ -87,13 +95,5 @@ export class InfoWindowContentGenerator {
     } else {
       thumbnailElement.style.transform = 'rotate(90deg)';
     }
-  }
-
-  private static appendRotateIcon(rootDivElement: HTMLDivElement, thumbnailElement: HTMLImageElement | Text): void {
-    if (thumbnailElement instanceof Text)
-      return;
-
-    const rotateIconElement = this.createRotateIconElement(thumbnailElement);
-    rootDivElement.appendChild(rotateIconElement);
   }
 }
