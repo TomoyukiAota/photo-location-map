@@ -1,6 +1,6 @@
 export class Dimensions {
-  constructor(public readonly width,
-              public readonly height) {
+  constructor(public readonly width: number,
+              public readonly height: number) {
   }
 
   public floor(): Dimensions {
@@ -11,6 +11,12 @@ export class Dimensions {
 
   public cropToSquare(): Dimensions {
     return (this.width < this.height)
+      ? new Dimensions(this.width, this.width)
+      : new Dimensions(this.height, this.height);
+  }
+
+  public expandToSquare(): Dimensions {
+    return (this.width > this.height)
       ? new Dimensions(this.width, this.width)
       : new Dimensions(this.height, this.height);
   }
