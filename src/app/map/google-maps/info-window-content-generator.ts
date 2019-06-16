@@ -21,7 +21,6 @@ export class InfoWindowContentGenerator {
     }
 
     const thumbnailElement = document.createElement('img');
-    thumbnailElement.border  = '0';
     thumbnailElement.src     = photo.thumbnail.dataUrl;
     thumbnailElement.width   = photo.thumbnail.width;
     thumbnailElement.height  = photo.thumbnail.height;
