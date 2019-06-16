@@ -1,4 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+
 html, body {
   margin: 0;
   padding: 0;
@@ -8,3 +9,5 @@ html, body {
 body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
+@import "info-window";
