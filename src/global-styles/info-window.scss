@@ -1,15 +1,15 @@
-.info-window-rotate-icon {
+.info-window-icon {
   background-color: #888888;
   border-radius: 5px;
-  margin-top: 6px;
+  margin: 6px 3px 0px 3px;
   padding: 4px;
   transition: background-color 0.2s ease;
 }
 
-.info-window-rotate-icon:hover {
+.info-window-icon:hover {
   background-color: #555555;
 }
 
-.info-window-rotate-icon:active {
-  background-color: #1c1ad6;
+.info-window-icon:active {
+  background-color: #7776d6;
 }
