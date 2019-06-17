@@ -33,7 +33,7 @@ export class OpenContainingFolderIconElement {
       case 'darwin':
         return `open -R "${photo.path}"`;
       case 'linux':
-        return null;  // TODO: Support "Open containing folder" on Linux.
+        return `nautilus "${photo.path}"`;
       default:
         return null;
     }
