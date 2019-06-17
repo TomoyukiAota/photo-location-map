@@ -1,6 +1,8 @@
 import { Photo } from '../../shared/model/photo.model';
 import { PhotoViewerLauncher } from '../../photo-viewer/photo-viewer-launcher';
 import { IconDataUrl } from '../../../assets/icon-data-url';
+import { OpenContainingFolderIconElement } from './open-containing-folder-icon-element';
+import { RotateIconElement } from './rotate-icon-element';
 
 export class InfoWindowContentGenerator {
   public static generate(photo: Photo) {
@@ -16,6 +18,7 @@ export class InfoWindowContentGenerator {
       .forEach(element => rootDivElement.appendChild(element));
 
     this.appendRotateIconElement(rootDivElement, thumbnailElement);
+    this.appendOpenContainingFolderElement(rootDivElement, photo);
 
     return rootDivElement;
   }
@@ -70,30 +73,12 @@ export class InfoWindowContentGenerator {
     if (thumbnailElement instanceof Text)
       return;
 
-    const rotateIconElement = this.createRotateIconElement(thumbnailElement);
+    const rotateIconElement = RotateIconElement.create(thumbnailElement);
     rootDivElement.appendChild(rotateIconElement);
   }
 
-  private static createRotateIconElement(thumbnailElement: HTMLImageElement): HTMLImageElement {
-    const rotateIconElement = document.createElement('img');
-    rotateIconElement.src     = IconDataUrl.rotate;
-    rotateIconElement.width = 30;
-    rotateIconElement.height = 30;
-    rotateIconElement.title = 'Rotate the thumbnail 90 degrees';
-    rotateIconElement.className = 'info-window-rotate-icon';
-    rotateIconElement.onclick = () => this.rotateThumbnail(thumbnailElement);
-    return rotateIconElement;
-  }
-
-  private static rotateThumbnail(thumbnailElement: HTMLImageElement): void {
-    const transformString = thumbnailElement.style.transform;
-    if (transformString.includes('rotate(')) {
-      const currentDegreeInString = transformString.split('rotate(')[1].split('deg)')[0];
-      const currentDegree = Number(currentDegreeInString);
-      const nextDegree = currentDegree + 90;
-      thumbnailElement.style.transform = `rotate(${nextDegree}deg)`;
-    } else {
-      thumbnailElement.style.transform = 'rotate(90deg)';
-    }
+  private static appendOpenContainingFolderElement(rootDivElement: HTMLDivElement, photo: Photo): void {
+    const element = OpenContainingFolderIconElement.create(photo);
+    rootDivElement.appendChild(element);
   }
 }
