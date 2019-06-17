@@ -31,7 +31,7 @@ export class OpenContainingFolderIconElement {
       case 'win32':
         return `explorer /select,"${photo.path}"`;
       case 'darwin':
-        return null;  // TODO: Support "Open containing folder" on macOS.
+        return `open -R "${photo.path}"`;
       case 'linux':
         return null;  // TODO: Support "Open containing folder" on Linux.
       default:
