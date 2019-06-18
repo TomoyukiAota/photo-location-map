@@ -3,6 +3,7 @@ import { PhotoViewerLauncher } from '../../photo-viewer/photo-viewer-launcher';
 import { IconDataUrl } from '../../../assets/icon-data-url';
 import { OpenContainingFolderIconElement } from './open-containing-folder-icon-element';
 import { RotateIconElement } from './rotate-icon-element';
+import { LaunchPhotoViewerIconElement } from './launch-photo-viewer-icon-element';
 
 export class InfoWindowContentGenerator {
   public static generate(photo: Photo) {
@@ -18,7 +19,8 @@ export class InfoWindowContentGenerator {
       .forEach(element => rootDivElement.appendChild(element));
 
     this.appendRotateIconElement(rootDivElement, thumbnailElement);
-    this.appendOpenContainingFolderElement(rootDivElement, photo);
+    this.appendOpenContainingFolderIconElement(rootDivElement, photo);
+    this.appendLaunchPhotoViewerIconElement(rootDivElement, photo);
 
     return rootDivElement;
   }
@@ -77,8 +79,13 @@ export class InfoWindowContentGenerator {
     rootDivElement.appendChild(rotateIconElement);
   }
 
-  private static appendOpenContainingFolderElement(rootDivElement: HTMLDivElement, photo: Photo): void {
+  private static appendOpenContainingFolderIconElement(rootDivElement: HTMLDivElement, photo: Photo): void {
     const element = OpenContainingFolderIconElement.create(photo);
+    rootDivElement.appendChild(element);
+  }
+
+  private static appendLaunchPhotoViewerIconElement(rootDivElement: HTMLDivElement, photo: Photo): void {
+    const element = LaunchPhotoViewerIconElement.create(photo);
     rootDivElement.appendChild(element);
   }
 }
