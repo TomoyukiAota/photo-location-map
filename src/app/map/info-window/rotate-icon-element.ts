@@ -1,7 +1,7 @@
 import { IconDataUrl } from '../../../assets/icon-data-url';
 
 export class RotateIconElement {
-  static create(thumbnailElement: HTMLImageElement): HTMLImageElement {
+  public static create(thumbnailElement: HTMLImageElement): HTMLImageElement {
     const rotateIconElement = document.createElement('img');
     rotateIconElement.src     = IconDataUrl.rotate;
     rotateIconElement.width = 25;
