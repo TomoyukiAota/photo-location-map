@@ -4,6 +4,7 @@ import { IconDataUrl } from '../../../assets/icon-data-url';
 import { OpenContainingFolderIconElement } from './open-containing-folder-icon-element';
 import { RotateIconElement } from './rotate-icon-element';
 import { LaunchPhotoViewerIconElement } from './launch-photo-viewer-icon-element';
+import { PlayLivePhotosIconElement } from './play-live-photos-icon-element';
 
 export class InfoWindowContentGenerator {
   public static generate(photo: Photo) {
@@ -21,6 +22,7 @@ export class InfoWindowContentGenerator {
     this.appendRotateIconElement(rootDivElement, thumbnailElement);
     this.appendOpenContainingFolderIconElement(rootDivElement, photo);
     this.appendLaunchPhotoViewerIconElement(rootDivElement, photo);
+    this.appendPlayLivePhotosIconElement(rootDivElement, photo);
 
     return rootDivElement;
   }
@@ -87,5 +89,12 @@ export class InfoWindowContentGenerator {
   private static appendLaunchPhotoViewerIconElement(rootDivElement: HTMLDivElement, photo: Photo): void {
     const element = LaunchPhotoViewerIconElement.create(photo);
     rootDivElement.appendChild(element);
+  }
+
+  private static appendPlayLivePhotosIconElement(rootDivElement: HTMLDivElement, photo: Photo) {
+    const element = PlayLivePhotosIconElement.create(photo);
+    if (element) {
+      rootDivElement.appendChild(element);
+    }
   }
 }
