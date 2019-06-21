@@ -31,7 +31,7 @@ export class PhotoViewerLauncher {
   private static launchAssociatedApp(command: string, photo: Photo): void {
     child_process.spawn(command, [], { shell: true });
     Logger.info(`Issued a command: ${command}`);
-    Logger.info(`Launched the associated application for ${photo.path}`, photo);
+    Logger.info(`Opened ${photo.path}`, photo);
   }
 
   private static launchFallbackPhotoViewer(photo: Photo): void {
