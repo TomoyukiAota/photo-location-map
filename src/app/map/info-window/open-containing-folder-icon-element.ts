@@ -1,6 +1,7 @@
-import { Photo } from '../../shared/model/photo.model';
-import { IconDataUrl } from '../../../assets/icon-data-url';
+import { Command } from '../../../../src-shared/command/command';
 import { Logger } from '../../../../src-shared/log/logger';
+import { IconDataUrl } from '../../../assets/icon-data-url';
+import { Photo } from '../../shared/model/photo.model';
 
 const child_process = window.require('child_process');
 const os = window.require('os');
@@ -18,24 +19,11 @@ export class OpenContainingFolderIconElement {
   }
 
   public static openContainingFolder(photo: Photo): void {
-    const command = this.getCommandToOpenContainingFolder(photo);
+    const command = Command.toOpenContainingFolder(photo.path);
     if (command) {
       this.issueCommandToOpenContainingFolder(command, photo);
     } else {
       Logger.warn(`"Open containing folder" is not supported on this platform: ${os.platform()}`);
-    }
-  }
-
-  private static getCommandToOpenContainingFolder(photo: Photo): string {
-    switch (os.platform()) {
-      case 'win32':
-        return `explorer /select,"${photo.path}"`;
-      case 'darwin':
-        return `open -R "${photo.path}"`;
-      case 'linux':
-        return `nautilus "${photo.path}"`;
-      default:
-        return null;
     }
   }
 
