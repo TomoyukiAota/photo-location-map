@@ -1,6 +1,7 @@
+import { Command } from '../../../../src-shared/command/command';
+import { Logger } from '../../../../src-shared/log/logger';
 import { IconDataUrl } from '../../../assets/icon-data-url';
 import { Photo } from '../../shared/model/photo.model';
-import { Logger } from '../../../../src-shared/log/logger';
 
 const child_process = window.require('child_process');
 const fs = window.require('fs');
@@ -25,24 +26,11 @@ export class PlayLivePhotosIconElement {
   }
 
   public static playLivePhotos(livePhotosFilePath: string, photo: Photo): void {
-    const command = this.getCommandToPlayLivePhotos(livePhotosFilePath);
+    const command = Command.toRunAssociatedApp(livePhotosFilePath);
     if (command) {
       this.issueCommandToPlayLivePhotos(command, livePhotosFilePath, photo);
     } else {
       Logger.warn(`"Live Photos" is not supported on this platform: ${os.platform()}`);
-    }
-  }
-
-  private static getCommandToPlayLivePhotos(livePhotosFilePath: string): string {
-    switch (os.platform()) {
-      case 'win32':
-        return `explorer "${livePhotosFilePath}"`;
-      case 'darwin':
-        return `open "${livePhotosFilePath}"`;
-      case 'linux':
-        return `xdg-open "${livePhotosFilePath}"`;
-      default:
-        return null;
     }
   }
 
