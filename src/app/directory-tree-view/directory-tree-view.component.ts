@@ -3,6 +3,7 @@ import { FlatTreeControl } from '@angular/cdk/tree';
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
+import { PhotoDataService } from '../shared/service/photo-data.service';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { FlatNode, NestedNode } from './directory-tree-view.model';
 
@@ -50,6 +51,7 @@ export class DirectoryTreeViewComponent {
 
   constructor(private directoryTreeViewDataService: DirectoryTreeViewDataService,
               private selectedPhotoService: SelectedPhotoService,
+              private photoDataService: PhotoDataService,
               private changeDetectorRef: ChangeDetectorRef) {
     this.treeControl = new FlatTreeControl<FlatNode>(this.getLevel, this.isExpandable);
     this.treeFlattener = new MatTreeFlattener(this.transformNodeFromNestedToFlat, this.getLevel, this.isExpandable, this.getChildren);
@@ -153,5 +155,10 @@ export class DirectoryTreeViewComponent {
     }
 
     return null;
+  }
+
+  public tooltipEnabled(flatNode: FlatNode): boolean {
+    const photoExists = !!this.photoDataService.getPhoto(flatNode.path);
+    return photoExists;
   }
 }
