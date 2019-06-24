@@ -5,7 +5,7 @@ import { RotateIconElement } from './rotate-icon-element';
 import { LaunchPhotoViewerIconElement } from './launch-photo-viewer-icon-element';
 import { PlayLivePhotosIconElement } from './play-live-photos-icon-element';
 
-export class InfoWindowContentGenerator {
+export class PhotoQuickViewerContent {
   public static generate(photo: Photo) {
     const rootDivElement = document.createElement('div');
     rootDivElement.style.textAlign = 'center';
