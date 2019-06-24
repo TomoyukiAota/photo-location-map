@@ -1,5 +1,5 @@
-import { Photo } from '../../shared/model/photo.model';
-import { PhotoViewerLauncher } from '../../photo-viewer/photo-viewer-launcher';
+import { Photo } from '../shared/model/photo.model';
+import { PhotoViewerLauncher } from '../photo-viewer/photo-viewer-launcher';
 import { OpenContainingFolderIconElement } from './open-containing-folder-icon-element';
 import { RotateIconElement } from './rotate-icon-element';
 import { LaunchPhotoViewerIconElement } from './launch-photo-viewer-icon-element';
