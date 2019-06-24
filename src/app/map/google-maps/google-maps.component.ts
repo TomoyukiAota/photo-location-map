@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { SelectedPhotoService } from '../../shared/service/selected-photo.service';
 import { Photo } from '../../shared/model/photo.model';
 import { GoogleMapsApiKeyHandler } from './google-maps-api-key-handler';
-import { InfoWindowContentGenerator } from '../info-window/info-window-content-generator';
+import { InfoWindowContentGenerator } from '../../info-window/info-window-content-generator';
 import { GoogleMapsApiLoader } from './google-maps-api-loader';
 
 @Component({

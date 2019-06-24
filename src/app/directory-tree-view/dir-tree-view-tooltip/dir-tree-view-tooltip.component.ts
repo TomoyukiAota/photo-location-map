@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { PhotoDataService } from '../../shared/service/photo-data.service';
 import { Photo } from '../../shared/model/photo.model';
-import { InfoWindowContentGenerator } from '../../map/info-window/info-window-content-generator';
+import { InfoWindowContentGenerator } from '../../info-window/info-window-content-generator';
 
 @Component({
   selector: 'app-dir-tree-view-tooltip',

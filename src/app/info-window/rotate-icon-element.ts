@@ -1,4 +1,4 @@
-import { IconDataUrl } from '../../../assets/icon-data-url';
+import { IconDataUrl } from '../../assets/icon-data-url';
 
 export class RotateIconElement {
   public static create(thumbnailElement: HTMLImageElement): HTMLImageElement {

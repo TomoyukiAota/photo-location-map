@@ -1,7 +1,7 @@
-import { Command } from '../../../../src-shared/command/command';
-import { Logger } from '../../../../src-shared/log/logger';
-import { IconDataUrl } from '../../../assets/icon-data-url';
-import { Photo } from '../../shared/model/photo.model';
+import { Command } from '../../../src-shared/command/command';
+import { Logger } from '../../../src-shared/log/logger';
+import { IconDataUrl } from '../../assets/icon-data-url';
+import { Photo } from '../shared/model/photo.model';
 
 const child_process = window.require('child_process');
 const os = window.require('os');
