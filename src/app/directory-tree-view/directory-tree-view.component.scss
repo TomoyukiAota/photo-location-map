@@ -25,17 +25,15 @@ div.tooltip > .tooltip-target {
   line-height: 40px;
 }
 
-div.tooltip > div.tooltip-content {
+div.tooltip > .tooltip-content {
   display: none;
 }
 
-div.tooltip:hover > div.tooltip-content {
+div.tooltip:hover > .tooltip-content {
   display: block;
   position: absolute;
-  width: 200px;
-  height: 200px;
   bottom: 35px;
-  left: -40px;
+  left: -30px;
   padding: 0.5em;
   color: #000000;
   background: #ebf4fb;

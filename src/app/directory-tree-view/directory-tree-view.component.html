@@ -12,10 +12,10 @@
                  class="tooltip-target">
         {{node.name}}
       </mat-label>
-      <div *ngIf="tooltipEnabled(node)"
-           class="tooltip-content">
-        {{ node.name }}
-      </div>
+      <app-dir-tree-view-tooltip *ngIf="tooltipEnabled(node)"
+                                 [photoPath]="node.path"
+                                 class="tooltip-content">
+      </app-dir-tree-view-tooltip>
     </div>
   </mat-tree-node>
 

@@ -1,6 +1,5 @@
 import { Photo } from '../../shared/model/photo.model';
 import { PhotoViewerLauncher } from '../../photo-viewer/photo-viewer-launcher';
-import { IconDataUrl } from '../../../assets/icon-data-url';
 import { OpenContainingFolderIconElement } from './open-containing-folder-icon-element';
 import { RotateIconElement } from './rotate-icon-element';
 import { LaunchPhotoViewerIconElement } from './launch-photo-viewer-icon-element';
@@ -11,6 +10,16 @@ export class InfoWindowContentGenerator {
     const rootDivElement = document.createElement('div');
     rootDivElement.style.textAlign = 'center';
 
+    if (photo) {
+      this.appendToRootDivElement(rootDivElement, photo);
+    } else {
+      rootDivElement.innerText = 'Photo information is unavailable.';
+    }
+
+    return rootDivElement;
+  }
+
+  private static appendToRootDivElement(rootDivElement, photo: Photo) {
     const thumbnailElement = this.createThumbnailElement(photo);
     const thumbnailContainerElement = this.createThumbnailContainerElement(photo, thumbnailElement);
     const nameElement = this.createNameElement(photo);
@@ -23,8 +32,6 @@ export class InfoWindowContentGenerator {
     this.appendOpenContainingFolderIconElement(rootDivElement, photo);
     this.appendLaunchPhotoViewerIconElement(rootDivElement, photo);
     this.appendPlayLivePhotosIconElement(rootDivElement, photo);
-
-    return rootDivElement;
   }
 
   private static createThumbnailElement(photo: Photo) {
@@ -51,6 +58,7 @@ export class InfoWindowContentGenerator {
       thumbnailContainer.style.alignItems = 'center';
       const thumbnailContainerDimensions = photo.thumbnail.dimensions.expandToSquare();
       thumbnailContainer.style.width = thumbnailContainerDimensions.width.toString() + 'px';
+      thumbnailContainer.style.minWidth = '200px';
       thumbnailContainer.style.height = thumbnailContainerDimensions.height.toString() + 'px';
     }
 
@@ -60,16 +68,18 @@ export class InfoWindowContentGenerator {
 
   private static createNameElement(photo: Photo) {
     const nameElement = document.createElement('div');
-    nameElement.style.fontWeight = 'bold';
     nameElement.innerText        = photo.name;
+    nameElement.style.fontSize = '14px';
+    nameElement.style.fontWeight = 'bold';
     return nameElement;
   }
 
   private static createDateTimeTakenElement(photo: Photo) {
     const dateTaken = photo.dateTimeTaken || 'Date taken is not available.';
     const dateTakenElement = document.createElement('div');
-    dateTakenElement.style.fontWeight = 'bold';
     dateTakenElement.innerText        = dateTaken;
+    dateTakenElement.style.fontSize = '14px';
+    dateTakenElement.style.fontWeight = 'bold';
     return dateTakenElement;
   }
 
