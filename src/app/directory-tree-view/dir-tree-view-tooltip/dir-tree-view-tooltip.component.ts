@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { PhotoDataService } from '../../shared/service/photo-data.service';
 import { Photo } from '../../shared/model/photo.model';
-import { PhotoQuickViewerContent } from '../../info-window/photo-quick-viewer-content';
+import { PhotoQuickViewerContent } from '../../photo-quick-viewer/photo-quick-viewer-content';
 
 @Component({
   selector: 'app-dir-tree-view-tooltip',
