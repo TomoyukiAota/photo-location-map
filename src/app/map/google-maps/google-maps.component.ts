@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { SelectedPhotoService } from '../../shared/service/selected-photo.service';
 import { Photo } from '../../shared/model/photo.model';
 import { GoogleMapsApiKeyHandler } from './google-maps-api-key-handler';
-import { InfoWindowContentGenerator } from '../../info-window/info-window-content-generator';
+import { PhotoQuickViewerContent } from '../../info-window/photo-quick-viewer-content';
 import { GoogleMapsApiLoader } from './google-maps-api-loader';
 
 @Component({
@@ -85,7 +85,7 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
       bounds.extend(marker.position);
       google.maps.event.addListener(marker, 'click', (function (clickedMarker, clickedIndex) {
         return function () {
-          const content = InfoWindowContentGenerator.generate(photos[clickedIndex]);
+          const content = PhotoQuickViewerContent.generate(photos[clickedIndex]);
           infoWindow.setContent(content);
           infoWindow.open(map, clickedMarker);
         };
