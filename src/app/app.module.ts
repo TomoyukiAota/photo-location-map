@@ -20,6 +20,7 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { DirectoryTreeViewComponent } from './directory-tree-view/directory-tree-view.component';
 import { MapComponent } from './map/map/map.component';
 import { GoogleMapsComponent } from './map/google-maps/google-maps.component';
+import { DirTreeViewTooltipComponent } from './directory-tree-view/dir-tree-view-tooltip/dir-tree-view-tooltip.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -33,7 +34,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     SidebarComponent,
     DirectoryTreeViewComponent,
     MapComponent,
-    GoogleMapsComponent
+    GoogleMapsComponent,
+    DirTreeViewTooltipComponent
   ],
   imports: [
     BrowserModule,

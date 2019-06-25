@@ -1,7 +1,7 @@
-import { Command } from '../../../../src-shared/command/command';
-import { Logger } from '../../../../src-shared/log/logger';
-import { IconDataUrl } from '../../../assets/icon-data-url';
-import { Photo } from '../../shared/model/photo.model';
+import { Command } from '../../../src-shared/command/command';
+import { Logger } from '../../../src-shared/log/logger';
+import { IconDataUrl } from '../../assets/icon-data-url';
+import { Photo } from '../shared/model/photo.model';
 
 const child_process = window.require('child_process');
 const fs = window.require('fs');
@@ -20,7 +20,7 @@ export class PlayLivePhotosIconElement {
     element.width = 25;
     element.height = 25;
     element.title = 'Live Photos';
-    element.className = 'info-window-icon';
+    element.className = 'photo-quick-viewer-button';
     element.onclick = () => this.playLivePhotos(livePhotosFilePath, photo);
     return element;
   }

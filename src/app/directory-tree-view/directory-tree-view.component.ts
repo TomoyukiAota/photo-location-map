@@ -3,6 +3,7 @@ import { FlatTreeControl } from '@angular/cdk/tree';
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
+import { PhotoDataService } from '../shared/service/photo-data.service';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { FlatNode, NestedNode } from './directory-tree-view.model';
 
@@ -50,6 +51,7 @@ export class DirectoryTreeViewComponent {
 
   constructor(private directoryTreeViewDataService: DirectoryTreeViewDataService,
               private selectedPhotoService: SelectedPhotoService,
+              private photoDataService: PhotoDataService,
               private changeDetectorRef: ChangeDetectorRef) {
     this.treeControl = new FlatTreeControl<FlatNode>(this.getLevel, this.isExpandable);
     this.treeFlattener = new MatTreeFlattener(this.transformNodeFromNestedToFlat, this.getLevel, this.isExpandable, this.getChildren);
@@ -153,5 +155,41 @@ export class DirectoryTreeViewComponent {
     }
 
     return null;
+  }
+
+  public tooltipEnabled(flatNode: FlatNode): boolean {
+    const photoExists = !!this.photoDataService.getPhoto(flatNode.path);
+    return photoExists;
+  }
+
+  public onMouseEnter(event: MouseEvent, leafNodeDiv: HTMLDivElement) {
+    const tooltipContent: HTMLElement = leafNodeDiv.querySelector('.tooltip-content');
+    tooltipContent.classList.replace('hide', 'visible');
+    tooltipContent.style.display = 'block';
+  }
+
+  public onMouseLeave(event: MouseEvent, leafNodeDiv: HTMLDivElement) {
+    const tooltipContent: HTMLElement = leafNodeDiv.querySelector('.tooltip-content');
+    this.fadeOut(tooltipContent, 300);
+    tooltipContent.classList.replace('visible', 'hide');
+  }
+
+  // This function is taken from this link:
+  // https://spyweb.media/2018/01/14/jquery-fadeout-pure-javascript/
+  private fadeOut(node: HTMLElement, duration: number) {
+    node.style.opacity = '1';
+    const start = performance.now();
+
+    requestAnimationFrame(function tick(timestamp: number) {
+      const easing = (timestamp - start) / duration;
+      node.style.opacity = Math.max(1 - easing, 0).toString();
+
+      if (easing < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        node.style.opacity = '';
+        node.style.display = 'none';
+      }
+    });
   }
 }

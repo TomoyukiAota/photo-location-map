@@ -1,0 +1,41 @@
+@keyframes show {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+mat-tree-node {
+  min-height: 40px;
+  overflow: visible;
+}
+
+.mat-icon-button {
+  width: 40px;
+  height: 40px;
+}
+
+div.tooltip {
+  position: relative;
+}
+
+div.tooltip > .tooltip-target {
+  line-height: 40px;
+}
+
+div.tooltip > .tooltip-content {
+  position: absolute;
+  bottom: 35px;
+  left: -30px;
+  padding: 0.5em;
+  color: #000000;
+  background: #ebf4fb;
+  border: 0.1em solid #b7ddf2;
+  border-radius: 0.5em;
+}
+
+div.tooltip > .tooltip-content.visible {
+  animation: show 0.5s ease 0s;
+}
