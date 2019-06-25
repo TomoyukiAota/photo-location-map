@@ -1,9 +1,15 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { Component, Input } from '@angular/core';
 import { MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatIconModule, MatInputModule, MatTreeModule } from '@angular/material';
 
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 
 import { DirectoryTreeViewComponent } from './directory-tree-view.component';
+
+@Component({ selector: 'app-dir-tree-view-tooltip', template: '' })
+class DummyDirTreeViewTooltipComponent {
+  @Input() public photoPath: string;
+}
 
 describe('DirectoryTreeViewComponent', () => {
   let component: DirectoryTreeViewComponent;
@@ -12,7 +18,8 @@ describe('DirectoryTreeViewComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
-        DirectoryTreeViewComponent
+        DirectoryTreeViewComponent,
+        DummyDirTreeViewTooltipComponent
       ],
       imports: [
         MatButtonModule,
