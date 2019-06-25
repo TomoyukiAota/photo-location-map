@@ -9,7 +9,7 @@ export class LaunchPhotoViewerIconElement {
     element.width = 25;
     element.height = 25;
     element.title = `Open ${photo.name}`;
-    element.className = 'info-window-icon';
+    element.className = 'photo-quick-viewer-button';
     element.onclick = () => PhotoViewerLauncher.launch(photo);
     return element;
   }

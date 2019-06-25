@@ -13,7 +13,7 @@ export class OpenContainingFolderIconElement {
     element.width = 25;
     element.height = 25;
     element.title = 'Open containing folder';
-    element.className = 'info-window-icon';
+    element.className = 'photo-quick-viewer-button';
     element.onclick = () => this.openContainingFolder(photo);
     return element;
   }

@@ -7,7 +7,7 @@ export class RotateIconElement {
     rotateIconElement.width = 25;
     rotateIconElement.height = 25;
     rotateIconElement.title = 'Rotate the thumbnail 90 degrees';
-    rotateIconElement.className = 'info-window-icon';
+    rotateIconElement.className = 'photo-quick-viewer-button';
     rotateIconElement.onclick = () => this.rotateThumbnail(thumbnailElement);
     return rotateIconElement;
   }
