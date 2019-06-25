@@ -161,4 +161,35 @@ export class DirectoryTreeViewComponent {
     const photoExists = !!this.photoDataService.getPhoto(flatNode.path);
     return photoExists;
   }
+
+  public onMouseEnter(event: MouseEvent, leafNodeDiv: HTMLDivElement) {
+    const tooltipContent: HTMLElement = leafNodeDiv.querySelector('.tooltip-content');
+    tooltipContent.classList.replace('hide', 'visible');
+    tooltipContent.style.display = 'block';
+  }
+
+  public onMouseLeave(event: MouseEvent, leafNodeDiv: HTMLDivElement) {
+    const tooltipContent: HTMLElement = leafNodeDiv.querySelector('.tooltip-content');
+    this.fadeOut(tooltipContent, 300);
+    tooltipContent.classList.replace('visible', 'hide');
+  }
+
+  // This function is taken from this link:
+  // https://spyweb.media/2018/01/14/jquery-fadeout-pure-javascript/
+  private fadeOut(node: HTMLElement, duration: number) {
+    node.style.opacity = '1';
+    const start = performance.now();
+
+    requestAnimationFrame(function tick(timestamp: number) {
+      const easing = (timestamp - start) / duration;
+      node.style.opacity = Math.max(1 - easing, 0).toString();
+
+      if (easing < 1) {
+        requestAnimationFrame(tick);
+      } else {
+        node.style.opacity = '';
+        node.style.display = 'none';
+      }
+    });
+  }
 }
