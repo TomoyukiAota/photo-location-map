@@ -164,14 +164,14 @@ export class DirectoryTreeViewComponent {
 
   public onMouseEnter(event: MouseEvent, leafNodeDiv: HTMLDivElement) {
     const tooltipContent: HTMLElement = leafNodeDiv.querySelector('.tooltip-content');
-    tooltipContent.classList.replace('hide', 'visible');
+    tooltipContent.classList.add('show');
     tooltipContent.style.display = 'block';
   }
 
   public onMouseLeave(event: MouseEvent, leafNodeDiv: HTMLDivElement) {
     const tooltipContent: HTMLElement = leafNodeDiv.querySelector('.tooltip-content');
     this.fadeOut(tooltipContent, 300);
-    tooltipContent.classList.replace('visible', 'hide');
+    tooltipContent.classList.remove('show');
   }
 
   // This function is taken from this link:
