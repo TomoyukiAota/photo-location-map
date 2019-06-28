@@ -6,8 +6,7 @@ export default function setup() {
   beforeEach(async function () {
     this.app = new Application({
       path: electronPath,
-      // The following line tells spectron to look and use the main.js file
-      // and the package.json located 1 level above.
+      // The following line tells Spectron to use package.json located 1 level above.
       args: [path.join(__dirname, '..')],
       webdriverOptions: {}
     });

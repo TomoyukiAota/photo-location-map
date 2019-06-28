@@ -18,7 +18,6 @@
   },
   "include": [
     "type-declaration/**/*",
-    "main.ts",
     "src/**/*",
     "src-main/**/*",
     "src-shared/**/*"

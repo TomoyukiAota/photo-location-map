@@ -3,8 +3,8 @@ import * as path from 'path';
 import * as url from 'url';
 import * as windowStateKeeper from 'electron-window-state';
 import './menu';
-import { Logger } from './src-shared/log/logger';
-import { LogFileConfig } from './src-shared/log/log-file-config';
+import { Logger } from '../src-shared/log/logger';
+import { LogFileConfig } from '../src-shared/log/log-file-config';
 
 Logger.info(`Log File Location: ${LogFileConfig.filePath}`);
 
@@ -32,12 +32,12 @@ function createWindow() {
 
   if (isLiveReloadMode) {
     require('electron-reload')(__dirname, {
-      electron: require(`${__dirname}/node_modules/electron`)
+      electron: require(`${__dirname}/../node_modules/electron`)
     });
     browserWindow.loadURL('http://localhost:4200');
   } else {
     browserWindow.loadURL(url.format({
-      pathname: path.join(__dirname, 'dist/index.html'),
+      pathname: path.join(__dirname, '..', 'dist', 'index.html'),
       protocol: 'file:',
       slashes: true
     }));
