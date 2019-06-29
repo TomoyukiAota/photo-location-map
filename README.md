@@ -63,9 +63,9 @@ npm install -g @angular/cli
 npm start
 ```
 
-The application code is managed by `main.ts`. The application runs with a simple Angular App (http://localhost:4200) and an Electron window.
+The application runs with a simple Angular App (http://localhost:4200) and an Electron window.
 The Angular component contains an example of Electron and NodeJS native lib import.
-You can disable "Developer Tools" by commenting `win.webContents.openDevTools();` in `main.ts`.
+You can disable "Developer Tools" by commenting `win.webContents.openDevTools();` in `electron-main.ts`.
 
 
 ## Included Commands
@@ -85,7 +85,7 @@ You can disable "Developer Tools" by commenting `win.webContents.openDevTools();
 
 ## You want to use a specific lib (like rxjs) in electron main thread?
 
-You can do this! Just by importing your library in npm dependencies (not devDependencies) with `npm install --save`. It will be loaded by electron during build phase and added to the final package. Then use your library by importing it in `main.ts` file.
+You can do this! Just by importing your library in npm dependencies (not devDependencies) with `npm install --save`. It will be loaded by electron during build phase and added to the final package. Then use your library by importing it in `electron-main.ts` file.
 
 
 ## Browser mode
