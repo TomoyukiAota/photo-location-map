@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as url from 'url';
 import * as windowStateKeeper from 'electron-window-state';
 import './menu';
+import { Analytics } from '../src-shared/analytics/analytics';
 import { Logger } from '../src-shared/log/logger';
 import { LogFileConfig } from '../src-shared/log/log-file-config';
 
@@ -11,6 +12,8 @@ Logger.info(`Log File Location: ${LogFileConfig.filePath}`);
 let browserWindow: BrowserWindow;
 const args = process.argv.slice(1);
 const isLiveReloadMode = args.some(val => val === '--serve');
+
+Analytics.trackEvent('App', 'Launch');  // TODO: Add app version, OS, and OS version.
 
 function createWindow() {
   // Load the previous state with fallback to defaults
