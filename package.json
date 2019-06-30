@@ -52,7 +52,9 @@
     "electron-window-state": "5.0.3",
     "fs-extra": "7.0.1",
     "moment-timezone": "0.5.23",
-    "ngx-electron": "2.1.1"
+    "ngx-electron": "2.1.1",
+    "universal-analytics": "0.4.20",
+    "uuid": "3.3.2"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "0.13.8",
@@ -77,6 +79,8 @@
     "@types/jasminewd2": "2.0.6",
     "@types/moment-timezone": "0.5.12",
     "@types/node": "10.12.19",
+    "@types/universal-analytics": "0.4.2",
+    "@types/uuid": "3.4.4",
     "@types/webdriverio": "4.13.3",
     "angular-split": "2.0.1",
     "chai": "4.2.0",
@@ -117,6 +121,8 @@
     "zone.js": "0.8.29"
   },
   "browser": {
-    "fs": false
+    "fs": false,
+    "net": false,
+    "tls": false
   }
 }
