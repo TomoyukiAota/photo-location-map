@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import * as createDirectoryTree from 'directory-tree';
+import { Analytics } from '../../../src-shared/analytics/analytics';
 import { Logger } from '../../../src-shared/log/logger';
 import { ElectronService } from '../shared/service/electron.service';
 import { PhotoDataService } from '../shared/service/photo-data.service';
@@ -35,6 +36,7 @@ export class SidebarComponent {
 
     const selectedFolderPath = folderPaths[0];
     Logger.info(`Selected Folder: ${selectedFolderPath}`);
+    Analytics.trackEvent('Sidebar', 'Selected Folder');
     const directoryTreeObject = createDirectoryTree(selectedFolderPath);
     Logger.info('Directory tree object: ', directoryTreeObject);
     this.photoDataService.update(directoryTreeObject)
