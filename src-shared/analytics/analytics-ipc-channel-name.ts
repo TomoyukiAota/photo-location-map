@@ -1,3 +1,3 @@
 export class AnalyticsIpcChannelName {
-  public static readonly traceEvent = 'analytics-trace-event';
+  public static readonly trackEvent = 'analytics-track-event';
 }

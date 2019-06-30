@@ -10,7 +10,7 @@ let analytics: AnalyticsInterface;
 
 if (ProcessIdentifier.isElectronMain) {
   const analyticsMain = new AnalyticsMain();
-  ConditionalRequire.electron.ipcMain.on(AnalyticsIpcChannelName.traceEvent, (event, category, action, label, value) => {
+  ConditionalRequire.electron.ipcMain.on(AnalyticsIpcChannelName.trackEvent, (event, category, action, label, value) => {
     analyticsMain.trackEvent(category, action, label, value);
   });
   analytics = analyticsMain;

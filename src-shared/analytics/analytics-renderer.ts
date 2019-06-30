@@ -5,7 +5,7 @@ import { AnalyticsIpcChannelName } from './analytics-ipc-channel-name';
 export class AnalyticsRenderer implements AnalyticsInterface {
   trackEvent(category: string, action: string, label?: string, value?: string | number): void {
     ConditionalRequire.electron.ipcRenderer.send(
-      AnalyticsIpcChannelName.traceEvent,
+      AnalyticsIpcChannelName.trackEvent,
       category, action, label, value);
   }
 }
