@@ -4,6 +4,7 @@ import { AnalyticsInterface } from './analytics-interface';
 import { AnalyticsRenderer } from './analytics-renderer';
 import { AnalyticsMain } from './analytics-main';
 import { AnalyticsIpcChannelName } from './analytics-ipc-channel-name';
+import { DevOrProd } from './dev-or-prod';
 
 
 let analytics: AnalyticsInterface;
@@ -17,6 +18,14 @@ if (ProcessIdentifier.isElectronMain) {
 } else {
   analytics = new AnalyticsRenderer();
 }
+
+export const setDevOrProdForAnalytics = (devOrProd: DevOrProd) => {
+  if (analytics instanceof AnalyticsMain) {
+    analytics.setDevOrProd(devOrProd);
+  } else {
+    throw new Error('setDevOrProdForAnalytics cannot be called from renderer process. Call it from main process');
+  }
+};
 
 export class Analytics {
   public static trackEvent(category: string, action: string, label?: string, value?: string | number): void {
