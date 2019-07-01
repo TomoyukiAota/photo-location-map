@@ -6,7 +6,7 @@ import { ConditionalRequire } from '../require/conditional-require';
 
 export class AnalyticsMain implements AnalyticsInterface {
   private readonly fs = require('fs');
-  private readonly dirPath = path.join(ConditionalRequire.electron.app.getPath('userData'), 'analytics');
+  private readonly dirPath = path.join(ConditionalRequire.electron.app.getPath('userData'), 'photo-location-map-analytics');
   private readonly filePath = path.join(this.dirPath, 'user-id.json');
   private readonly trackingId = 'UA-143091961-1';
   private readonly usr: ReturnType<typeof import('universal-analytics')>;
