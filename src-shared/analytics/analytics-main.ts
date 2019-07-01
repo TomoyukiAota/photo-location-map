@@ -3,6 +3,7 @@ import * as uuid from 'uuid/v4';
 import { Logger } from '../log/logger';
 import { AnalyticsInterface } from './analytics-interface';
 import { ConditionalRequire } from '../require/conditional-require';
+import { DevOrProd } from './dev-or-prod';
 
 export class AnalyticsMain implements AnalyticsInterface {
   private readonly fs = require('fs');
@@ -10,6 +11,7 @@ export class AnalyticsMain implements AnalyticsInterface {
   private readonly filePath = path.join(this.dirPath, 'user-id.json');
   private readonly trackingId = 'UA-143091961-1';
   private readonly usr: ReturnType<typeof import('universal-analytics')>;
+  private devOrProd: DevOrProd = null;
 
   constructor() {
     const userId = this.getUserId();
@@ -48,12 +50,23 @@ export class AnalyticsMain implements AnalyticsInterface {
     this.fs.writeFileSync(this.filePath, JSON.stringify(object));
   }
 
+  public setDevOrProd(devOrProd: DevOrProd): void {
+    this.devOrProd = devOrProd;
+  }
+
   public trackEvent(category: string, action: string, label?: string, value?: string | number): void {
+    if (!this.devOrProd)
+      throw new Error('"Dev" or "Prod" needs to be set before calling Analytics.trackEvent');
+
+    const eventCategory = `${this.devOrProd}; ${category}`;
+    const eventAction = `${this.devOrProd}; ${action}`;
+    const eventLabel = label ? `${this.devOrProd}; ${label}` : undefined;
+
     this.usr
       .event({
-        ec: category,   // TODO: Add "Prod" or "Dev" prefix to category.
-        ea: action,
-        el: label,
+        ec: eventCategory,
+        ea: eventAction,
+        el: eventLabel,
         ev: value,
       })
       .send();
