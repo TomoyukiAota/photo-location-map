@@ -53,8 +53,8 @@ export class AnalyticsMain implements AnalyticsInterface {
 
   public setUserAgent(userAgent: string) {
     this.userAgent = userAgent;
-    this.visitor.set('ua', this.userAgent);
-    Logger.info(`User Agent for Google Analytics is "${userAgent}"`);
+    this.visitor.set('userAgentOverride', this.userAgent);
+    Logger.info(`User Agent for Google Analytics is "${this.userAgent}"`);
   }
 
   public setDevOrProd(devOrProd: DevOrProd): void {
@@ -62,6 +62,9 @@ export class AnalyticsMain implements AnalyticsInterface {
   }
 
   public trackEvent(category: string, action: string, label?: string, value?: string | number): void {
+    if (!this.userAgent)
+      throw new Error('User Agent needs to be set before calling Analytics.trackEvent');
+
     if (!this.devOrProd)
       throw new Error('"Dev" or "Prod" needs to be set before calling Analytics.trackEvent');
 
