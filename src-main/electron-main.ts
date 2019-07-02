@@ -1,4 +1,5 @@
 import { app, BrowserWindow } from 'electron';
+import * as os from 'os';
 import * as path from 'path';
 import * as url from 'url';
 import * as windowStateKeeper from 'electron-window-state';
@@ -62,7 +63,9 @@ function createWindow() {
 
   mainWindowState.manage(browserWindow);
 
-  Analytics.trackEvent('App', 'Launch');  // TODO: Add app version, OS, and OS version.
+  const verAndEnvString = `App Ver: ${app.getVersion()}; OS: ${os.platform()}; OS Ver: ${os.release()}`;
+  Logger.info(verAndEnvString);
+  Analytics.trackEvent('App', 'Launch', verAndEnvString);
   Logger.info('Main window is launched.');
 }
 
