@@ -23,7 +23,7 @@ export const setUserAgentForAnalytics = (userAgent: string) => {
   if (analytics instanceof AnalyticsMain) {
     analytics.setUserAgent(userAgent);
   } else {
-    throw new Error('setUserAgentForAnalytics cannot be called in renderer process. Call it in main process');
+    throw new Error('setUserAgentForAnalytics cannot be called in renderer process. Call it in main process.');
   }
 };
 
