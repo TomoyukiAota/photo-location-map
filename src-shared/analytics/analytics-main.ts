@@ -10,13 +10,14 @@ export class AnalyticsMain implements AnalyticsInterface {
   private readonly dirPath = path.join(ConditionalRequire.electron.app.getPath('userData'), 'photo-location-map-analytics');
   private readonly filePath = path.join(this.dirPath, 'user-id.json');
   private readonly trackingId = 'UA-143091961-1';
-  private readonly usr: ReturnType<typeof import('universal-analytics')>;
+  private readonly visitor: ReturnType<typeof import('universal-analytics')>;
+  private userAgent: string = null;
   private devOrProd: DevOrProd = null;
 
   constructor() {
     const userId = this.getUserId();
     const ua = require('universal-analytics');
-    this.usr = ua(this.trackingId, userId);
+    this.visitor = ua(this.trackingId, userId);
     Logger.info(`Initialized Google Analytics with user ID "${userId}"`);
   }
 
@@ -50,11 +51,20 @@ export class AnalyticsMain implements AnalyticsInterface {
     this.fs.writeFileSync(this.filePath, JSON.stringify(object));
   }
 
+  public setUserAgent(userAgent: string) {
+    this.userAgent = userAgent;
+    this.visitor.set('userAgentOverride', this.userAgent);
+    Logger.info(`User Agent for Google Analytics is "${this.userAgent}"`);
+  }
+
   public setDevOrProd(devOrProd: DevOrProd): void {
     this.devOrProd = devOrProd;
   }
 
   public trackEvent(category: string, action: string, label?: string, value?: string | number): void {
+    if (!this.userAgent)
+      throw new Error('User Agent needs to be set before calling Analytics.trackEvent');
+
     if (!this.devOrProd)
       throw new Error('"Dev" or "Prod" needs to be set before calling Analytics.trackEvent');
 
@@ -62,7 +72,7 @@ export class AnalyticsMain implements AnalyticsInterface {
     const eventAction = `${this.devOrProd}; ${action}`;
     const eventLabel = label ? `${this.devOrProd}; ${label}` : undefined;
 
-    this.usr
+    this.visitor
       .event({
         ec: eventCategory,
         ea: eventAction,

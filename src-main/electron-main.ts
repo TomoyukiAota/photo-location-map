@@ -1,9 +1,10 @@
 import { app, BrowserWindow } from 'electron';
+import * as os from 'os';
 import * as path from 'path';
 import * as url from 'url';
 import * as windowStateKeeper from 'electron-window-state';
 import './menu';
-import { Analytics, setDevOrProdForAnalytics } from '../src-shared/analytics/analytics';
+import { Analytics, setDevOrProdForAnalytics, setUserAgentForAnalytics } from '../src-shared/analytics/analytics';
 import { Logger } from '../src-shared/log/logger';
 import { LogFileConfig } from '../src-shared/log/log-file-config';
 
@@ -12,9 +13,7 @@ Logger.info(`Log File Location: ${LogFileConfig.filePath}`);
 let browserWindow: BrowserWindow;
 const args = process.argv.slice(1);
 const isLiveReloadMode = args.some(val => val === '--serve');
-
 setDevOrProdForAnalytics(isLiveReloadMode ? 'Dev' : 'Prod');
-Analytics.trackEvent('App', 'Launch');  // TODO: Add app version, OS, and OS version.
 
 function createWindow() {
   // Load the previous state with fallback to defaults
@@ -33,6 +32,9 @@ function createWindow() {
       nodeIntegration: true
     }
   });
+
+  const userAgent = browserWindow.webContents.getUserAgent();
+  setUserAgentForAnalytics(userAgent);
 
   if (isLiveReloadMode) {
     require('electron-reload')(__dirname, {
@@ -61,6 +63,9 @@ function createWindow() {
 
   mainWindowState.manage(browserWindow);
 
+  const verAndEnvString = `App Ver: ${app.getVersion()}; OS: ${os.platform()}; OS Ver: ${os.release()}`;
+  Logger.info(verAndEnvString);
+  Analytics.trackEvent('App', 'Launch', verAndEnvString);
   Logger.info('Main window is launched.');
 }
 
@@ -89,6 +94,6 @@ try {
   });
 } catch (e) {
   Logger.error(e);
-  Logger.error('Fatal error occured in main process. Photo Location Map is closing.');
+  Logger.error('Fatal error occurred in main process. Photo Location Map is closing.');
   process.exitCode = 1;
 }

@@ -19,11 +19,19 @@ if (ProcessIdentifier.isElectronMain) {
   analytics = new AnalyticsRenderer();
 }
 
+export const setUserAgentForAnalytics = (userAgent: string) => {
+  if (analytics instanceof AnalyticsMain) {
+    analytics.setUserAgent(userAgent);
+  } else {
+    throw new Error('setUserAgentForAnalytics cannot be called in renderer process. Call it in main process.');
+  }
+};
+
 export const setDevOrProdForAnalytics = (devOrProd: DevOrProd) => {
   if (analytics instanceof AnalyticsMain) {
     analytics.setDevOrProd(devOrProd);
   } else {
-    throw new Error('setDevOrProdForAnalytics cannot be called from renderer process. Call it from main process');
+    throw new Error('setDevOrProdForAnalytics cannot be called in renderer process. Call it in main process.');
   }
 };
 
