@@ -91,6 +91,6 @@ try {
   });
 } catch (e) {
   Logger.error(e);
-  Logger.error('Fatal error occured in main process. Photo Location Map is closing.');
+  Logger.error('Fatal error occurred in main process. Photo Location Map is closing.');
   process.exitCode = 1;
 }
