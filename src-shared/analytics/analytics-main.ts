@@ -11,6 +11,7 @@ export class AnalyticsMain implements AnalyticsInterface {
   private readonly filePath = path.join(this.dirPath, 'user-id.json');
   private readonly trackingId = 'UA-143091961-1';
   private readonly usr: ReturnType<typeof import('universal-analytics')>;
+  private userAgent: string = null;
   private devOrProd: DevOrProd = null;
 
   constructor() {
@@ -48,6 +49,12 @@ export class AnalyticsMain implements AnalyticsInterface {
       this.fs.mkdirSync(this.dirPath);
     }
     this.fs.writeFileSync(this.filePath, JSON.stringify(object));
+  }
+
+  public setUserAgent(userAgent: string) {
+    this.userAgent = userAgent;
+    this.usr.set('ua', this.userAgent);
+    Logger.info(`User Agent for Google Analytics is "${userAgent}"`);
   }
 
   public setDevOrProd(devOrProd: DevOrProd): void {
