@@ -15,7 +15,18 @@ const args = process.argv.slice(1);
 const isLiveReloadMode = args.some(val => val === '--serve');
 setDevOrProdForAnalytics(isLiveReloadMode ? 'Dev' : 'Prod');
 
-function createWindow() {
+const logAndTrackAtAppLaunch = () => {
+  // TODO: Add label for how many times this app is launched, period of use, first launch date, last launched date.
+  Analytics.trackEvent('App', 'Launch');
+
+  Analytics.trackEvent('App Info', 'Version', app.getVersion());
+  Logger.info(`Application Version: ${app.getVersion()}`);
+
+  Analytics.trackEvent('OS Info', `OS: ${os.platform()}`, `OS Ver: ${os.release()}`);
+  Logger.info(`OS: ${os.platform()}; OS Ver: ${os.release()}`);
+};
+
+const createWindow = () => {
   // Load the previous state with fallback to defaults
   const mainWindowState = windowStateKeeper({
     defaultWidth: 1000,
@@ -63,11 +74,9 @@ function createWindow() {
 
   mainWindowState.manage(browserWindow);
 
-  const verAndEnvString = `App Ver: ${app.getVersion()}; OS: ${os.platform()}; OS Ver: ${os.release()}`;
-  Logger.info(verAndEnvString);
-  Analytics.trackEvent('App', 'Launch', verAndEnvString);
-  Logger.info('Main window is launched.');
-}
+  logAndTrackAtAppLaunch();
+  Logger.info('Launching the main window.');
+};
 
 
 try {
