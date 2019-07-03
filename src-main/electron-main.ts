@@ -19,7 +19,7 @@ const logAndTrackAtAppLaunch = () => {
   // TODO: Add label for how many times this app is launched, period of use, first launch date, last launched date.
   Analytics.trackEvent('App', 'Launch');
 
-  Analytics.trackEvent('App Info', 'Version', app.getVersion());
+  Analytics.trackEvent('App Info', `App Ver: ${app.getVersion()}`);
   Logger.info(`Application Version: ${app.getVersion()}`);
 
   Analytics.trackEvent('OS Info', `OS: ${os.platform()}`, `OS Ver: ${os.release()}`);
