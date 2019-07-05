@@ -1,15 +1,13 @@
 import { Logger } from '../../../../src-shared/log/logger';
-
-const app = window.require('electron').remote.app;
-const fs = window.require('fs');
-const path = window.require('path');
+import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
+import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/user-data-stroage-path';
+import { RequireFromMainProcess } from '../../../../src-shared/require/require-from-main-process';
 
 export class GoogleMapsApiKeyHandler {
-  private static readonly fileName = 'google-maps-api-key.json';
-  private static readonly filePath = path.join(app.getPath('userData'), GoogleMapsApiKeyHandler.fileName);
+  private static readonly filePath = UserDataStorage.getFilePath(UserDataStoragePath.GoogleMaps.ApiKey);
 
   public static fetchApiKey(): string {
-    if (!fs.existsSync(this.filePath)) {
+    if (!RequireFromMainProcess.fsExtra.existsSync(this.filePath)) {
       Logger.info(`The file for Google Maps API Key does not exist.`);
       this.logHowToUseGoogleMapsMessage();
       return '';
@@ -22,9 +20,7 @@ export class GoogleMapsApiKeyHandler {
     let apiKey = '';
 
     try {
-      const fileContent = fs.readFileSync(this.filePath, 'utf8');
-      const jsonObject = JSON.parse(fileContent);
-      apiKey = jsonObject.apiKey;
+      apiKey = UserDataStorage.read(UserDataStoragePath.GoogleMaps.ApiKey);
       Logger.info(`Fetched Google Maps API Key "${apiKey}" from "${this.filePath}".`);
     } catch (error) {
       Logger.warn(`Failed to fetch Google Maps API Key from "${this.filePath}".`, error);
