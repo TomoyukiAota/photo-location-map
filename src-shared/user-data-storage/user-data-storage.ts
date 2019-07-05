@@ -6,7 +6,7 @@ export class UserDataStorage {
   private static userDataPath = RequireFromMainProcess.electron.app.getPath('userData');
   private static storageRootPath = UserDataStorage.path.join(UserDataStorage.userDataPath, 'PhotoLocationMapStorage');
 
-  public static read(storagePath: string[]): string {
+  public static read(storagePath: ReadonlyArray<string>): string {
     const {filePath, key} = this.getFilePathAndKey(storagePath);
 
     if (!this.fsExtra.existsSync(filePath))
@@ -18,7 +18,7 @@ export class UserDataStorage {
     return value;
   }
 
-  public static write(storagePath: string[], value: string): void {
+  public static write(storagePath: ReadonlyArray<string>, value: string): void {
     const {filePath, key} = this.getFilePathAndKey(storagePath);
     const jsonObject = {};
     jsonObject[key] = value;
@@ -27,7 +27,12 @@ export class UserDataStorage {
     this.fsExtra.writeFileSync(filePath, fileContent);
   }
 
-  private static getFilePathAndKey(storagePath: string[]): {filePath: string, key: string} {
+  public static getFilePath(storagePath: ReadonlyArray<string>): string {
+    const {filePath} = this.getFilePathAndKey(storagePath);
+    return filePath;
+  }
+
+  private static getFilePathAndKey(storagePath: ReadonlyArray<string>): { filePath: string; key: string } {
     if (!storagePath || !storagePath.length) {
       throw new Error('storagePath needs to be a string array which contains at least 1 element.');
     }
