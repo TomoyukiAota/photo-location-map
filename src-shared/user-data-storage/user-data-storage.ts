@@ -32,8 +32,9 @@ export class UserDataStorage {
       throw new Error('storagePath needs to be a string array which contains at least 1 element.');
     }
 
-    const filePath = this.path.join(this.storageRootPath, ...storagePath);
-    const key = storagePath[storagePath.length - 1];
-    return {filePath, key};
+    const copiedStoragePath = Array.from(storagePath);
+    const lastElement = copiedStoragePath.pop();
+    const filePath = this.path.join(this.storageRootPath, ...copiedStoragePath, `${lastElement}.json`);
+    return {filePath: filePath, key: lastElement};
   }
 }
