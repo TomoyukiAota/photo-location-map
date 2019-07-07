@@ -4,17 +4,18 @@ import { AnalyticsInterface } from './analytics-interface';
 import { DevOrProd } from './dev-or-prod';
 import { UserDataStorage } from '../user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../user-data-storage/user-data-stroage-path';
+import { AnalyticsTrackingId } from './analytics-tracking-id';
 
 export class AnalyticsMain implements AnalyticsInterface {
-  private readonly trackingId = 'UA-143091961-1';
   private readonly visitor: ReturnType<typeof import('universal-analytics')>;
   private userAgent: string = null;
   private devOrProd: DevOrProd = null;
 
   constructor() {
+    const trackingId = AnalyticsTrackingId.get();
     const userId = this.getUserId();
     const ua = require('universal-analytics');
-    this.visitor = ua(this.trackingId, userId);
+    this.visitor = ua(trackingId, userId);
     Logger.info(`Initialized Google Analytics with user ID "${userId}"`);
   }
 
