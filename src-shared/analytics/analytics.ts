@@ -4,7 +4,6 @@ import { AnalyticsInterface } from './analytics-interface';
 import { AnalyticsRenderer } from './analytics-renderer';
 import { AnalyticsMain } from './analytics-main';
 import { AnalyticsIpcChannelName } from './analytics-ipc-channel-name';
-import { DevOrProd } from './dev-or-prod';
 
 
 let analytics: AnalyticsInterface;
@@ -24,14 +23,6 @@ export const setUserAgentForAnalytics = (userAgent: string) => {
     analytics.setUserAgent(userAgent);
   } else {
     throw new Error('setUserAgentForAnalytics cannot be called in renderer process. Call it in main process.');
-  }
-};
-
-export const setDevOrProdForAnalytics = (devOrProd: DevOrProd) => {
-  if (analytics instanceof AnalyticsMain) {
-    analytics.setDevOrProd(devOrProd);
-  } else {
-    throw new Error('setDevOrProdForAnalytics cannot be called in renderer process. Call it in main process.');
   }
 };
 

@@ -1,4 +1,4 @@
-import { getDevOrProd } from './dev-or-prod';
+import { getDevOrProd } from '../dev-or-prod/dev-or-prod';
 
 class TrackingId {
   public static dev  = 'UA-143091961-1';
