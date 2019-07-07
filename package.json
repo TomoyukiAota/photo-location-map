@@ -16,6 +16,9 @@
   ],
   "main": "src-main/electron-main.js",
   "private": true,
+  "config" : {
+    "devOrProd": "Dev"
+  },
   "scripts": {
     "postinstall": "npm run postinstall:electron && electron-builder install-app-deps",
     "postinstall:web": "node postinstall-web",
