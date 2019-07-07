@@ -1,21 +1,21 @@
 import * as uuid from 'uuid/v4';
 import { Logger } from '../log/logger';
 import { AnalyticsInterface } from './analytics-interface';
-import { DevOrProd } from './dev-or-prod';
 import { UserDataStorage } from '../user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../user-data-storage/user-data-stroage-path';
+import { AnalyticsTrackingId } from './analytics-tracking-id';
 
 export class AnalyticsMain implements AnalyticsInterface {
-  private readonly trackingId = 'UA-143091961-1';
   private readonly visitor: ReturnType<typeof import('universal-analytics')>;
   private userAgent: string = null;
-  private devOrProd: DevOrProd = null;
 
   constructor() {
+    const trackingId = AnalyticsTrackingId.get();
     const userId = this.getUserId();
     const ua = require('universal-analytics');
-    this.visitor = ua(this.trackingId, userId);
-    Logger.info(`Initialized Google Analytics with user ID "${userId}"`);
+    this.visitor = ua(trackingId, userId);
+    Logger.info(`Tracking ID for Google Analytics: "${trackingId}"`);
+    Logger.info(`User ID for Google Analytics: "${userId}"`);
   }
 
   private getUserId(): string {
@@ -37,26 +37,15 @@ export class AnalyticsMain implements AnalyticsInterface {
     Logger.info(`User Agent for Google Analytics is "${this.userAgent}"`);
   }
 
-  public setDevOrProd(devOrProd: DevOrProd): void {
-    this.devOrProd = devOrProd;
-  }
-
   public trackEvent(category: string, action: string, label?: string, value?: string | number): void {
     if (!this.userAgent)
       throw new Error('User Agent needs to be set before calling Analytics.trackEvent');
 
-    if (!this.devOrProd)
-      throw new Error('"Dev" or "Prod" needs to be set before calling Analytics.trackEvent');
-
-    const eventCategory = `${this.devOrProd}; ${category}`;
-    const eventAction = `${this.devOrProd}; ${action}`;
-    const eventLabel = label ? `${this.devOrProd}; ${label}` : undefined;
-
     this.visitor
       .event({
-        ec: eventCategory,
-        ea: eventAction,
-        el: eventLabel,
+        ec: category,
+        ea: action,
+        el: label,
         ev: value,
       })
       .send();
