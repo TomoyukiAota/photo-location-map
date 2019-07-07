@@ -1,10 +1,13 @@
 import { RequireFromMainProcess } from '../require/require-from-main-process';
 
 export class UserDataStorage {
-  private static fsExtra = RequireFromMainProcess.fsExtra;
-  private static path = RequireFromMainProcess.path;
-  private static userDataPath = RequireFromMainProcess.electron.app.getPath('userData');
-  private static storageRootPath = UserDataStorage.path.join(UserDataStorage.userDataPath, 'PhotoLocationMapStorage');
+  private static readonly fsExtra = RequireFromMainProcess.fsExtra;
+  private static readonly path = RequireFromMainProcess.path;
+  private static readonly userDataPath = RequireFromMainProcess.electron.app.getPath('userData');
+
+  // 'PhotoLocationMapStorage' is named like this to be unique without collision in 'userData' directory.
+  private static readonly subDirForStorage = 'PhotoLocationMapStorage';
+  private static readonly storageRootPath = UserDataStorage.path.join(UserDataStorage.userDataPath, UserDataStorage.subDirForStorage);
 
   public static read(storagePath: ReadonlyArray<string>): string {
     const {filePath, key} = this.getFilePathAndKey(storagePath);
