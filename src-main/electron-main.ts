@@ -1,32 +1,19 @@
 import { app, BrowserWindow } from 'electron';
-import * as os from 'os';
 import * as path from 'path';
 import * as url from 'url';
 import * as windowStateKeeper from 'electron-window-state';
-import './menu';
-import { Analytics, setUserAgentForAnalytics } from '../src-shared/analytics/analytics';
-import { getDevOrProd } from '../src-shared/dev-or-prod/dev-or-prod';
+import { setUserAgentForAnalytics } from '../src-shared/analytics/analytics';
 import { Logger } from '../src-shared/log/logger';
 import { LogFileConfig } from '../src-shared/log/log-file-config';
+import './menu';
+import { recordAtAppLaunch } from './record-at-app-launch';
+
 
 Logger.info(`Log File Location: ${LogFileConfig.filePath}`);
 
 let browserWindow: BrowserWindow;
 const args = process.argv.slice(1);
 const isLiveReloadMode = args.some(val => val === '--serve');
-
-const logAndTrackAtAppLaunch = () => {
-  // TODO: Add label for how many times this app is launched, period of use, first launch date, last launched date.
-  Analytics.trackEvent('App', 'App: Launch');
-
-  Analytics.trackEvent('App Ver', `App Ver: ${app.getVersion()}`);
-  Logger.info(`Application Version: ${app.getVersion()}`);
-
-  Analytics.trackEvent('DevOrProd', `DevOrProd: ${getDevOrProd()}`);
-
-  Analytics.trackEvent('OS Info', `OS: ${os.platform()}`, `OS Ver: ${os.release()}`);
-  Logger.info(`OS: ${os.platform()}; OS Ver: ${os.release()}`);
-};
 
 const createWindow = () => {
   // Load the previous state with fallback to defaults
@@ -76,7 +63,7 @@ const createWindow = () => {
 
   mainWindowState.manage(browserWindow);
 
-  logAndTrackAtAppLaunch();
+  recordAtAppLaunch();
   Logger.info('Launching the main window.');
 };
 
