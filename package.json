@@ -16,7 +16,7 @@
   ],
   "main": "src-main/electron-main.js",
   "private": true,
-  "config" : {
+  "config": {
     "devOrProd": "Dev"
   },
   "scripts": {
