@@ -92,7 +92,7 @@
     "core-js": "2.6.3",
     "cross-env": "5.2.0",
     "devtron": "1.4.0",
-    "directory-tree": "2.2.1",
+    "directory-tree": "2.2.3",
     "electron": "4.0.2",
     "electron-builder": "20.40.2",
     "electron-mocha": "7.0.0",
