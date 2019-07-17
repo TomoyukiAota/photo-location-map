@@ -12,7 +12,7 @@ install:
   - dir C:\avvm\node            # Print available versions of Node.js in AppVeyor
   - ps: Install-Product node $env:nodejs_version $env:platform
   - npm set progress=false
-  - appveyor-retry npm install
+  - appveyor-retry npm ci
 
 # Post-install test scripts.
 test_script:
