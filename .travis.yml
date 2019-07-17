@@ -14,7 +14,7 @@ services:
   - xvfb
 install:
   - npm set progress=false
-  - travis_retry npm install
+  - travis_retry npm ci
 script:
   - travis_retry npm run lint:ng
   - travis_retry npm run lint:es
