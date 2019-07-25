@@ -13,10 +13,10 @@ import { Dimensions } from '../model/dimensions.model';
   providedIn: 'root'
 })
 export class PhotoDataService {
-  private readonly pathPhotoMap: Map<string, Photo> = new Map<string, Photo>();
+  private pathPhotoMap: Map<string, Photo> = new Map<string, Photo>();
 
   public async update(directoryTreeObject: DirectoryTree): Promise<void> {
-    this.pathPhotoMap.clear();
+    this.pathPhotoMap = new Map<string, Photo>();
     this.updatePathPhotoMap(directoryTreeObject);
     await this.updateExifParserResult(directoryTreeObject);
     await this.processExifParserResult();
