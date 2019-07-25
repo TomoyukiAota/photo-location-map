@@ -5,6 +5,7 @@ import { Logger } from '../../../src-shared/log/logger';
 import { ElectronService } from '../shared/service/electron.service';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
+import { DirTreeObjectRecorder } from './dir-tree-object-recorder';
 
 @Component({
   selector: 'app-sidebar',
@@ -38,7 +39,7 @@ export class SidebarComponent {
     Logger.info(`Selected Folder: ${selectedFolderPath}`);
     Analytics.trackEvent('Sidebar', 'Selected Folder');
     const directoryTreeObject = createDirectoryTree(selectedFolderPath);
-    Logger.info('Directory tree object: ', directoryTreeObject);
+    DirTreeObjectRecorder.record(directoryTreeObject);
     this.photoDataService.update(directoryTreeObject)
       .then(() => {
         this.directoryTreeViewDataService.update(directoryTreeObject);
