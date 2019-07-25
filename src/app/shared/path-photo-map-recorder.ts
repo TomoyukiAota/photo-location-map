@@ -1,0 +1,20 @@
+import { Analytics } from '../../../src-shared/analytics/analytics';
+import { Logger } from '../../../src-shared/log/logger';
+import { Photo } from './model/photo.model';
+
+export class PathPhotoMapRecorder {
+  public static record(pathPhotoMap: Map<string, Photo>): void {
+    const photos = Array.from(pathPhotoMap.values());
+
+    const numOfPhotosWithExif = photos.filter(photo => !!photo.exifParserResult).length;
+    const numOfPhotosWithGpsInfo = photos.filter(photo => !!photo.gpsInfo).length;
+
+    Logger.info(`Number of files with EXIF: ${numOfPhotosWithExif}`);
+    Logger.info(`Number of files with GPS info: ${numOfPhotosWithGpsInfo}`);
+
+    Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: Files with EXIF',
+      `Files with EXIF: ${numOfPhotosWithExif}`);
+    Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: Files with GPS Info',
+      `Files with GPS Info: ${numOfPhotosWithGpsInfo}`);
+  }
+}

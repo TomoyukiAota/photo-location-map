@@ -5,6 +5,7 @@ import { LatLng } from './model/lat-lng.model';
 import { Thumbnail } from './model/thumbnail.model';
 import { Photo } from './model/photo.model';
 import { ExifFetcher } from './exif-fetcher';
+import { PathPhotoMapRecorder } from './path-photo-map-recorder';
 import { PhotoDateTimeTakenGenerator } from './photo-date-time-taken-generator';
 import { SupportedFilenameExtensions } from './supported-filename-extensions';
 
@@ -14,6 +15,7 @@ export class PathPhotoMapCreator {
   public static async create(directoryTreeObject: DirectoryTree): Promise<Map<string, Photo>> {
     this.pathPhotoMap = new Map<string, Photo>();
     await this.updatePathPhotoMap(directoryTreeObject);
+    PathPhotoMapRecorder.record(this.pathPhotoMap);
     return this.pathPhotoMap;
   }
 
