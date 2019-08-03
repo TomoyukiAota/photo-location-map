@@ -1,3 +1,4 @@
+import { EnvironmentDetector } from '../environment/environment-detector';
 import { ProcessIdentifier } from '../process/process-identifier';
 import { ConditionalRequire } from '../require/conditional-require';
 import { AnalyticsInterface } from './analytics-interface';
@@ -28,6 +29,9 @@ export const setUserAgentForAnalytics = (userAgent: string) => {
 
 export class Analytics {
   public static trackEvent(category: string, action: string, label?: string, value?: string | number): void {
+    if (EnvironmentDetector.isUnitTest)
+      return;
+
     analytics.trackEvent(category, action, label, value);
   }
 }
