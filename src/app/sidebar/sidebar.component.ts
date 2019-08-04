@@ -1,11 +1,10 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import * as createDirectoryTree from 'directory-tree';
-import { Analytics } from '../../../src-shared/analytics/analytics';
-import { Logger } from '../../../src-shared/log/logger';
+import { DirTreeObjectRecorder } from '../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
 import { ElectronService } from '../shared/service/electron.service';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
-import { DirTreeObjectRecorder } from '../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
+import { FolderSelectionRecorder } from './folder-selection-recorder';
 
 @Component({
   selector: 'app-sidebar',
@@ -36,8 +35,7 @@ export class SidebarComponent {
       return;
 
     const selectedFolderPath = folderPaths[0];
-    Logger.info(`Selected Folder: ${selectedFolderPath}`);
-    Analytics.trackEvent('Sidebar', 'Selected Folder');
+    FolderSelectionRecorder.start(selectedFolderPath);
     const directoryTreeObject = createDirectoryTree(selectedFolderPath);
     DirTreeObjectRecorder.record(directoryTreeObject);
     this.photoDataService.update(directoryTreeObject)
@@ -45,9 +43,10 @@ export class SidebarComponent {
         this.directoryTreeViewDataService.update(directoryTreeObject);
         this.selectedFolderPath = selectedFolderPath;
         this.changeDetectorRef.detectChanges();
+        FolderSelectionRecorder.complete();
       })
       .catch(reason =>
-        Logger.error(`Something went wrong after selecting the folder ${selectedFolderPath} : `, reason)
+        FolderSelectionRecorder.fail(reason)
       );
   };
 }
