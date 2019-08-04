@@ -1,15 +1,24 @@
+import { Analytics } from '../../../src-shared/analytics/analytics';
+import { Logger } from '../../../src-shared/log/logger';
 import { IconDataUrl } from '../../assets/icon-data-url';
+import { Photo } from '../shared/model/photo.model';
 
 export class RotateIconElement {
-  public static create(thumbnailElement: HTMLImageElement): HTMLImageElement {
+  public static create(thumbnailElement: HTMLImageElement, photo: Photo): HTMLImageElement {
     const rotateIconElement = document.createElement('img');
-    rotateIconElement.src     = IconDataUrl.rotate;
+    rotateIconElement.src = IconDataUrl.rotate;
     rotateIconElement.width = 25;
     rotateIconElement.height = 25;
     rotateIconElement.title = 'Rotate the thumbnail 90 degrees';
     rotateIconElement.className = 'photo-quick-viewer-button';
-    rotateIconElement.onclick = () => this.rotateThumbnail(thumbnailElement);
+    rotateIconElement.onclick = () => this.handleRotateIconClick(thumbnailElement, photo);
     return rotateIconElement;
+  }
+
+  private static handleRotateIconClick(thumbnailElement: HTMLImageElement, photo: Photo): void {
+    Logger.info(`Photo Quick Viewer: Clicked the rotate icon for ${photo.path}`);
+    Analytics.trackEvent('Photo Quick Viewer', 'Clicked Rotate Icon');
+    this.rotateThumbnail(thumbnailElement);
   }
 
   private static rotateThumbnail(thumbnailElement: HTMLImageElement): void {

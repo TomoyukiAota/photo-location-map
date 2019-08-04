@@ -1,3 +1,4 @@
+import { Analytics } from '../../../src-shared/analytics/analytics';
 import { Command } from '../../../src-shared/command/command';
 import { Logger } from '../../../src-shared/log/logger';
 import { IconDataUrl } from '../../assets/icon-data-url';
@@ -16,16 +17,22 @@ export class PlayLivePhotosIconElement {
       return null;
 
     const element = document.createElement('img');
-    element.src     = IconDataUrl.play;
+    element.src = IconDataUrl.play;
     element.width = 25;
     element.height = 25;
     element.title = 'Live Photos';
     element.className = 'photo-quick-viewer-button';
-    element.onclick = () => this.playLivePhotos(livePhotosFilePath, photo);
+    element.onclick = () => this.handlePlayLivePhotosIconClick(livePhotosFilePath, photo);
     return element;
   }
 
-  public static playLivePhotos(livePhotosFilePath: string, photo: Photo): void {
+  private static handlePlayLivePhotosIconClick(livePhotosFilePath: string, photo: Photo): void {
+    Logger.info(`Photo Quick Viewer: Clicked the play live photos icon for ${photo.path}`);
+    Analytics.trackEvent('Photo Quick Viewer', 'Clicked Play Live Photos Icon');
+    this.playLivePhotos(livePhotosFilePath, photo);
+  }
+
+  private static playLivePhotos(livePhotosFilePath: string, photo: Photo): void {
     const command = Command.toRunAssociatedApp(livePhotosFilePath);
     if (command) {
       this.issueCommandToPlayLivePhotos(command, livePhotosFilePath, photo);
