@@ -25,7 +25,7 @@ export class FolderSelectionRecorder {
     this.recordPerf('Fail');
   }
 
-  public static clearPerf(): void {
+  private static clearPerf(): void {
     performance.clearMarks();
     performance.clearMeasures();
   }
