@@ -1,3 +1,5 @@
+import { Analytics } from '../../../src-shared/analytics/analytics';
+import { Logger } from '../../../src-shared/log/logger';
 import { Photo } from '../shared/model/photo.model';
 import { PhotoViewerLauncher } from '../photo-viewer/photo-viewer-launcher';
 import { OpenContainingFolderIconElement } from './open-containing-folder-icon-element';
@@ -28,7 +30,7 @@ export class PhotoQuickViewerContent {
     [thumbnailContainerElement, nameElement, dateTakenElement]
       .forEach(element => rootDivElement.appendChild(element));
 
-    this.appendRotateIconElement(rootDivElement, thumbnailElement);
+    this.appendRotateIconElement(rootDivElement, thumbnailElement, photo);
     this.appendOpenContainingFolderIconElement(rootDivElement, photo);
     this.appendLaunchPhotoViewerIconElement(rootDivElement, photo);
     this.appendPlayLivePhotosIconElement(rootDivElement, photo);
@@ -45,8 +47,14 @@ export class PhotoQuickViewerContent {
     thumbnailElement.height = photo.thumbnail.dimensions.height;
     thumbnailElement.title = `Click the thumbnail to open ${photo.name}`;
     thumbnailElement.style.transition = 'transform 0.3s ease-in-out';
-    thumbnailElement.onclick = () => PhotoViewerLauncher.launch(photo);
+    thumbnailElement.onclick = () => this.handleThumbnailClick(photo);
     return thumbnailElement;
+  }
+
+  private static handleThumbnailClick(photo: Photo): void {
+    Logger.info(`Photo Quick Viewer: Clicked the thumbnail of ${photo.path}`);
+    Analytics.trackEvent('Photo Quick Viewer', 'Clicked Thumbnail');
+    PhotoViewerLauncher.launch(photo);
   }
 
   private static createThumbnailContainerElement(photo: Photo, thumbnailElement: HTMLImageElement | Text) {
@@ -83,11 +91,11 @@ export class PhotoQuickViewerContent {
     return dateTakenElement;
   }
 
-  private static appendRotateIconElement(rootDivElement: HTMLDivElement, thumbnailElement: HTMLImageElement | Text): void {
+  private static appendRotateIconElement(rootDivElement: HTMLDivElement, thumbnailElement: HTMLImageElement | Text, photo: Photo): void {
     if (thumbnailElement instanceof Text)
       return;
 
-    const rotateIconElement = RotateIconElement.create(thumbnailElement);
+    const rotateIconElement = RotateIconElement.create(thumbnailElement, photo);
     rootDivElement.appendChild(rotateIconElement);
   }
 
