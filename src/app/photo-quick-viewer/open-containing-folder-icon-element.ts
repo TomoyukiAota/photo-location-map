@@ -1,3 +1,4 @@
+import { Analytics } from '../../../src-shared/analytics/analytics';
 import { Command } from '../../../src-shared/command/command';
 import { Logger } from '../../../src-shared/log/logger';
 import { IconDataUrl } from '../../assets/icon-data-url';
@@ -14,11 +15,17 @@ export class OpenContainingFolderIconElement {
     element.height = 25;
     element.title = 'Open containing folder';
     element.className = 'photo-quick-viewer-button';
-    element.onclick = () => this.openContainingFolder(photo);
+    element.onclick = () => this.handleOpenContainingFolderIconClick(photo);
     return element;
   }
 
-  public static openContainingFolder(photo: Photo): void {
+  private static handleOpenContainingFolderIconClick(photo: Photo): void {
+    Logger.info(`Photo Quick Viewer: Clicked the open containing folder icon for ${photo.path}`);
+    Analytics.trackEvent('Photo Quick Viewer', 'Clicked Open Containing Folder Icon');
+    this.openContainingFolder(photo);
+  }
+
+  private static openContainingFolder(photo: Photo): void {
     const command = Command.toOpenContainingFolder(photo.path);
     if (command) {
       this.issueCommandToOpenContainingFolder(command, photo);
