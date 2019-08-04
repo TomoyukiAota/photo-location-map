@@ -6,7 +6,7 @@ import { Photo } from '../shared/model/photo.model';
 export class RotateIconElement {
   public static create(thumbnailElement: HTMLImageElement, photo: Photo): HTMLImageElement {
     const rotateIconElement = document.createElement('img');
-    rotateIconElement.src     = IconDataUrl.rotate;
+    rotateIconElement.src = IconDataUrl.rotate;
     rotateIconElement.width = 25;
     rotateIconElement.height = 25;
     rotateIconElement.title = 'Rotate the thumbnail 90 degrees';

@@ -76,7 +76,7 @@ export class PhotoQuickViewerContent {
 
   private static createNameElement(photo: Photo) {
     const nameElement = document.createElement('div');
-    nameElement.innerText        = photo.name;
+    nameElement.innerText = photo.name;
     nameElement.style.fontSize = '14px';
     nameElement.style.fontWeight = 'bold';
     return nameElement;
@@ -85,7 +85,7 @@ export class PhotoQuickViewerContent {
   private static createDateTimeTakenElement(photo: Photo) {
     const dateTaken = photo.dateTimeTaken || 'Date taken is not available.';
     const dateTakenElement = document.createElement('div');
-    dateTakenElement.innerText        = dateTaken;
+    dateTakenElement.innerText = dateTaken;
     dateTakenElement.style.fontSize = '14px';
     dateTakenElement.style.fontWeight = 'bold';
     return dateTakenElement;

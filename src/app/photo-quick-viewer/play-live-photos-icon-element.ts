@@ -17,7 +17,7 @@ export class PlayLivePhotosIconElement {
       return null;
 
     const element = document.createElement('img');
-    element.src     = IconDataUrl.play;
+    element.src = IconDataUrl.play;
     element.width = 25;
     element.height = 25;
     element.title = 'Live Photos';
