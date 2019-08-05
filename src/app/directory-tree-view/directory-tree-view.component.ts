@@ -171,13 +171,19 @@ export class DirectoryTreeViewComponent {
     return photoExists;
   }
 
-  public onMouseEnter(event: MouseEvent, leafNodeDiv: HTMLDivElement) {
+  public onMouseEnter(flatNode: FlatNode, leafNodeDiv: HTMLDivElement) {
+    if (!flatNode.isSelectable)
+      return;
+
     const tooltipContent: HTMLElement = leafNodeDiv.querySelector('.tooltip-content');
     tooltipContent.classList.add('show');
     tooltipContent.style.display = 'block';
   }
 
-  public onMouseLeave(event: MouseEvent, leafNodeDiv: HTMLDivElement) {
+  public onMouseLeave(flatNode: FlatNode, leafNodeDiv: HTMLDivElement) {
+    if (!flatNode.isSelectable)
+      return;
+
     const tooltipContent: HTMLElement = leafNodeDiv.querySelector('.tooltip-content');
     this.fadeOut(tooltipContent, 300);
     tooltipContent.classList.remove('show');
