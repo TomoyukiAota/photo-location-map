@@ -2,8 +2,10 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
-import { SelectedPhotoService } from '../shared/service/selected-photo.service';
+import { Analytics } from '../../../src-shared/analytics/analytics';
+import { Logger } from '../../../src-shared/log/logger';
 import { PhotoDataService } from '../shared/service/photo-data.service';
+import { SelectedPhotoService } from '../shared/service/selected-photo.service';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { FlatNode, NestedNode } from './directory-tree-view.model';
 
@@ -97,7 +99,14 @@ export class DirectoryTreeViewComponent {
       .filter(child => child.isSelectable);
   }
 
-  public toggleNodeSelection(flatNode: FlatNode) {
+  public handleCheckboxChange(flatNode: FlatNode): void {
+    const folderOrFile = flatNode.isExpandable ? 'Folder' : 'File';
+    Logger.info(`Toggled Directory Tree View Checkbox (${folderOrFile}): ${flatNode.path}`);
+    Analytics.trackEvent('Directory Tree View', `Toggle Checkbox (${folderOrFile})`);
+    this.toggleNodeSelection(flatNode);
+  }
+
+  private toggleNodeSelection(flatNode: FlatNode) {
     if (!flatNode.isSelectable)
       return;
 
