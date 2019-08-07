@@ -172,7 +172,7 @@ export class DirectoryTreeViewComponent {
   }
 
   public onMouseEnter(flatNode: FlatNode, leafNodeDiv: HTMLDivElement) {
-    if (!flatNode.isSelectable)
+    if (!this.tooltipEnabled(flatNode))
       return;
 
     const tooltipContent: HTMLElement = leafNodeDiv.querySelector('.tooltip-content');
@@ -181,7 +181,7 @@ export class DirectoryTreeViewComponent {
   }
 
   public onMouseLeave(flatNode: FlatNode, leafNodeDiv: HTMLDivElement) {
-    if (!flatNode.isSelectable)
+    if (!this.tooltipEnabled(flatNode))
       return;
 
     const tooltipContent: HTMLElement = leafNodeDiv.querySelector('.tooltip-content');
