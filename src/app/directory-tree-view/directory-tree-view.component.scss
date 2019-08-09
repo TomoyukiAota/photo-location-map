@@ -36,13 +36,15 @@ div.tooltip > .tooltip-content {
   z-index: 1; // Assuming that z-index of other elements are 0 (default value).
 }
 
-$fade-in-animation: fadeIn 0.5s ease 0s;
+@mixin fade-in-animation {
+  animation: fadeIn 0.5s ease 0s;
+}
 
 div.tooltip > .tooltip-content.visible-above {
-  animation: $fade-in-animation;
+  @include fade-in-animation;
   bottom: 35px;
 }
 
 div.tooltip > .tooltip-content.visible-below {
-  animation: $fade-in-animation;
+  @include fade-in-animation;
 }
