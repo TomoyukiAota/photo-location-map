@@ -2,8 +2,8 @@
   <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
     <button mat-icon-button disabled></button>
     <div class="tooltip"
-         (mouseenter)="onMouseEnter(node, leafNodeDiv, $event)"
-         (mouseleave)="onMouseLeave(node, leafNodeDiv)"
+         (mouseenter)="tooltipLogic.onMouseEnter(node, leafNodeDiv, $event)"
+         (mouseleave)="tooltipLogic.onMouseLeave(node, leafNodeDiv)"
          #leafNodeDiv>
       <mat-checkbox *ngIf="node.isSelectable"
                     class="checklist-leaf-node tooltip-target"
@@ -15,7 +15,7 @@
                  class="tooltip-target">
         {{node.name}}
       </mat-label>
-      <app-dir-tree-view-tooltip *ngIf="tooltipEnabled(node)"
+      <app-dir-tree-view-tooltip *ngIf="tooltipLogic.tooltipEnabled(node)"
                                  [photoPath]="node.path"
                                  class="tooltip-content"
                                  style="display: none">
