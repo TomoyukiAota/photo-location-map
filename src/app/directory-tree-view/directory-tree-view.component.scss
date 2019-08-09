@@ -27,15 +27,24 @@ div.tooltip > .tooltip-target {
 
 div.tooltip > .tooltip-content {
   position: absolute;
-  bottom: 35px;
   left: -30px;
   padding: 0.5em;
   color: #000000;
   background: #ebf4fb;
   border: 0.1em solid #b7ddf2;
   border-radius: 0.5em;
+  z-index: 1; // Assuming that z-index of other elements are 0 (default value).
 }
 
-div.tooltip > .tooltip-content.show {
+@mixin fade-in-animation {
   animation: fadeIn 0.5s ease 0s;
+}
+
+div.tooltip > .tooltip-content.visible-above {
+  @include fade-in-animation;
+  bottom: 35px;
+}
+
+div.tooltip > .tooltip-content.visible-below {
+  @include fade-in-animation;
 }

@@ -8,6 +8,7 @@ import { PhotoDataService } from '../shared/service/photo-data.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { FlatNode, NestedNode } from './directory-tree-view.model';
+import { DirTreeViewTooltipVisibilityLogic } from './dir-tree-view-tooltip-visibility-logic';
 
 /**
  * @title Directory tree view
@@ -27,6 +28,7 @@ export class DirectoryTreeViewComponent {
   private readonly getLevel = (flatNode: FlatNode) => flatNode.level;
   private readonly isExpandable = (flatNode: FlatNode) => flatNode.isExpandable;
   private readonly getChildren = (nestedNode: NestedNode): NestedNode[] => nestedNode.children;
+  public readonly hasChildren = (_: number, flatNode: FlatNode) => flatNode.isExpandable;
 
   private readonly createFlatNode = (nestedNode: NestedNode, level: number) => {
     const flatNode =  new FlatNode();
@@ -49,7 +51,7 @@ export class DirectoryTreeViewComponent {
     return flatNode;
   };
 
-  public readonly hasChildren = (_: number, flatNode: FlatNode) => flatNode.isExpandable;
+  public readonly tooltipLogic: DirTreeViewTooltipVisibilityLogic;
 
   constructor(private directoryTreeViewDataService: DirectoryTreeViewDataService,
               private selectedPhotoService: SelectedPhotoService,
@@ -61,6 +63,8 @@ export class DirectoryTreeViewComponent {
 
     directoryTreeViewDataService.dataChange
       .subscribe(data => this.handleDataChange(data));
+
+    this.tooltipLogic = new DirTreeViewTooltipVisibilityLogic(this.photoDataService);
   }
 
   private handleDataChange(data: NestedNode[]) {
@@ -164,47 +168,5 @@ export class DirectoryTreeViewComponent {
     }
 
     return null;
-  }
-
-  public tooltipEnabled(flatNode: FlatNode): boolean {
-    const photoExists = !!this.photoDataService.getPhoto(flatNode.path);
-    return photoExists;
-  }
-
-  public onMouseEnter(flatNode: FlatNode, leafNodeDiv: HTMLDivElement) {
-    if (!this.tooltipEnabled(flatNode))
-      return;
-
-    const tooltipContent: HTMLElement = leafNodeDiv.querySelector('.tooltip-content');
-    tooltipContent.classList.add('show');
-    tooltipContent.style.display = 'block';
-  }
-
-  public onMouseLeave(flatNode: FlatNode, leafNodeDiv: HTMLDivElement) {
-    if (!this.tooltipEnabled(flatNode))
-      return;
-
-    const tooltipContent: HTMLElement = leafNodeDiv.querySelector('.tooltip-content');
-    this.fadeOut(tooltipContent, 300);
-    tooltipContent.classList.remove('show');
-  }
-
-  // This function is taken from this link:
-  // https://spyweb.media/2018/01/14/jquery-fadeout-pure-javascript/
-  private fadeOut(node: HTMLElement, duration: number) {
-    node.style.opacity = '1';
-    const start = performance.now();
-
-    requestAnimationFrame(function tick(timestamp: number) {
-      const easing = (timestamp - start) / duration;
-      node.style.opacity = Math.max(1 - easing, 0).toString();
-
-      if (easing < 1) {
-        requestAnimationFrame(tick);
-      } else {
-        node.style.opacity = '';
-        node.style.display = 'none';
-      }
-    });
   }
 }
