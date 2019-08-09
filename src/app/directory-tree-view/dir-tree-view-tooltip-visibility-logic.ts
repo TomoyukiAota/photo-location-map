@@ -1,8 +1,8 @@
-import { FlatNode } from './directory-tree-view.model';
 import { PhotoDataService } from '../shared/service/photo-data.service';
+import { FlatNode } from './directory-tree-view.model';
 
 export class DirTreeViewTooltipVisibilityLogic {
-  private photoDataService: PhotoDataService;
+  private readonly photoDataService: PhotoDataService;
 
   constructor(photoDataService: PhotoDataService) {
     this.photoDataService = photoDataService;
