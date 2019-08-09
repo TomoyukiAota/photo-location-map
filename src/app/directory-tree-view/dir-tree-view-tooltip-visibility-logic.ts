@@ -2,6 +2,9 @@ import { PhotoDataService } from '../shared/service/photo-data.service';
 import { FlatNode } from './directory-tree-view.model';
 
 export class DirTreeViewTooltipVisibilityLogic {
+  private readonly tooltipContentSelector = '.tooltip-content';
+  private readonly visibleAboveCssClass = 'visible-above';
+  private readonly visibleBelowCssClass = 'visible-below';
   private readonly photoDataService: PhotoDataService;
 
   constructor(photoDataService: PhotoDataService) {
@@ -19,9 +22,9 @@ export class DirTreeViewTooltipVisibilityLogic {
 
     const centerHeight = document.documentElement.clientHeight / 2;
     const isMousePositionInUpperHalf = event.clientY < centerHeight;
-    const classToAdd = isMousePositionInUpperHalf ? 'visible-below' : 'visible-above';
+    const classToAdd = isMousePositionInUpperHalf ? this.visibleBelowCssClass : this.visibleAboveCssClass;
 
-    const tooltipContent: HTMLElement = leafNodeDiv.querySelector('.tooltip-content');
+    const tooltipContent: HTMLElement = leafNodeDiv.querySelector(this.tooltipContentSelector);
     tooltipContent.classList.add(classToAdd);
     tooltipContent.style.display = 'block';
   }
@@ -30,18 +33,18 @@ export class DirTreeViewTooltipVisibilityLogic {
     if (!this.tooltipEnabled(flatNode))
       return;
 
-    const tooltipContent: HTMLElement = leafNodeDiv.querySelector('.tooltip-content');
-    const fadeOutDuration = 300;  // ms
+    const tooltipContent: HTMLElement = leafNodeDiv.querySelector(this.tooltipContentSelector);
 
     let classToRemove: string;
-    if (tooltipContent.classList.contains('visible-above')) {
-      classToRemove = 'visible-above';
-    } else if (tooltipContent.classList.contains('visible-below')) {
-      classToRemove = 'visible-below';
+    if (tooltipContent.classList.contains(this.visibleAboveCssClass)) {
+      classToRemove = this.visibleAboveCssClass;
+    } else if (tooltipContent.classList.contains(this.visibleBelowCssClass)) {
+      classToRemove =  this.visibleBelowCssClass;
     } else {
       return;
     }
 
+    const fadeOutDuration = 300;  // ms
     setTimeout(() => tooltipContent.classList.remove(classToRemove), fadeOutDuration);
     this.fadeOut(tooltipContent, fadeOutDuration);
   }
