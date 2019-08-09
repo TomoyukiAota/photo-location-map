@@ -34,18 +34,9 @@ export class DirTreeViewTooltipVisibilityLogic {
       return;
 
     const tooltipContent: HTMLElement = leafNodeDiv.querySelector(this.tooltipContentSelector);
-
-    let classToRemove: string;
-    if (tooltipContent.classList.contains(this.visibleAboveCssClass)) {
-      classToRemove = this.visibleAboveCssClass;
-    } else if (tooltipContent.classList.contains(this.visibleBelowCssClass)) {
-      classToRemove =  this.visibleBelowCssClass;
-    } else {
-      return;
-    }
-
     const fadeOutDuration = 300;  // ms
-    setTimeout(() => tooltipContent.classList.remove(classToRemove), fadeOutDuration);
+    setTimeout(() => tooltipContent.classList.remove(this.visibleAboveCssClass), fadeOutDuration);
+    setTimeout(() => tooltipContent.classList.remove(this.visibleBelowCssClass), fadeOutDuration);
     this.fadeOut(tooltipContent, fadeOutDuration);
   }
 
