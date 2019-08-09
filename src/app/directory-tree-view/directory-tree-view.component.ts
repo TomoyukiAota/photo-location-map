@@ -176,7 +176,7 @@ export class DirectoryTreeViewComponent {
       return;
 
     const tooltipContent: HTMLElement = leafNodeDiv.querySelector('.tooltip-content');
-    tooltipContent.classList.add('show');
+    tooltipContent.classList.add('visible-above');
     tooltipContent.style.display = 'block';
   }
 
@@ -186,7 +186,7 @@ export class DirectoryTreeViewComponent {
 
     const tooltipContent: HTMLElement = leafNodeDiv.querySelector('.tooltip-content');
     this.fadeOut(tooltipContent, 300);
-    tooltipContent.classList.remove('show');
+    tooltipContent.classList.remove('visible-above');
   }
 
   // This function is taken from this link:

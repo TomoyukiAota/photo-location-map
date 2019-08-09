@@ -36,6 +36,6 @@ div.tooltip > .tooltip-content {
   border-radius: 0.5em;
 }
 
-div.tooltip > .tooltip-content.show {
+div.tooltip > .tooltip-content.visible-above {
   animation: fadeIn 0.5s ease 0s;
 }
