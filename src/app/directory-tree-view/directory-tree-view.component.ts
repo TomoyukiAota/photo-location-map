@@ -171,12 +171,16 @@ export class DirectoryTreeViewComponent {
     return photoExists;
   }
 
-  public onMouseEnter(flatNode: FlatNode, leafNodeDiv: HTMLDivElement) {
+  public onMouseEnter(flatNode: FlatNode, leafNodeDiv: HTMLDivElement, event: MouseEvent) {
     if (!this.tooltipEnabled(flatNode))
       return;
 
+    const centerHeight = document.documentElement.clientHeight / 2;
+    const isMousePositionInUpperHalf = event.clientY < centerHeight;
+    const classToAdd = isMousePositionInUpperHalf ? 'visible-below' : 'visible-above';
+
     const tooltipContent: HTMLElement = leafNodeDiv.querySelector('.tooltip-content');
-    tooltipContent.classList.add('visible-above');
+    tooltipContent.classList.add(classToAdd);
     tooltipContent.style.display = 'block';
   }
 
@@ -185,8 +189,19 @@ export class DirectoryTreeViewComponent {
       return;
 
     const tooltipContent: HTMLElement = leafNodeDiv.querySelector('.tooltip-content');
-    this.fadeOut(tooltipContent, 300);
-    tooltipContent.classList.remove('visible-above');
+    const fadeOutDuration = 300;  // ms
+
+    let classToRemove: string;
+    if (tooltipContent.classList.contains('visible-above')) {
+      classToRemove = 'visible-above';
+    } else if (tooltipContent.classList.contains('visible-below')) {
+      classToRemove = 'visible-below';
+    } else {
+      return;
+    }
+
+    setTimeout(() => tooltipContent.classList.remove(classToRemove), fadeOutDuration);
+    this.fadeOut(tooltipContent, fadeOutDuration);
   }
 
   // This function is taken from this link:
