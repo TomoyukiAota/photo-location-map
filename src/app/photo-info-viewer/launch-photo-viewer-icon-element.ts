@@ -11,14 +11,14 @@ export class LaunchPhotoViewerIconElement {
     element.width = 25;
     element.height = 25;
     element.title = `Open ${photo.name}`;
-    element.className = 'photo-quick-viewer-button';
+    element.className = 'photo-info-viewer-button';
     element.onclick = () => this.handleLaunchPhotoViewerIconClick(photo);
     return element;
   }
 
   private static handleLaunchPhotoViewerIconClick(photo: Photo): void {
-    Logger.info(`Photo Quick Viewer: Clicked the launch photo viewer icon for ${photo.path}`);
-    Analytics.trackEvent('Photo Quick Viewer', 'Clicked Launch Photo Viewer Icon');
+    Logger.info(`Photo Info Viewer: Clicked the launch photo viewer icon for ${photo.path}`);
+    Analytics.trackEvent('Photo Info Viewer', 'Clicked Launch Photo Viewer Icon');
     PhotoViewerLauncher.launch(photo);
   }
 }
