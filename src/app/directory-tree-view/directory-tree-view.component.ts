@@ -8,7 +8,7 @@ import { PhotoDataService } from '../shared/service/photo-data.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { FlatNode, NestedNode } from './directory-tree-view.model';
-import { DirTreeViewTooltipVisibilityLogic } from './dir-tree-view-tooltip-visibility-logic';
+import { DirTreeViewTooltipDisplayLogic } from './dir-tree-view-tooltip-display-logic';
 
 /**
  * @title Directory tree view
@@ -51,7 +51,7 @@ export class DirectoryTreeViewComponent {
     return flatNode;
   };
 
-  public readonly tooltipLogic: DirTreeViewTooltipVisibilityLogic;
+  public readonly tooltipDisplayLogic: DirTreeViewTooltipDisplayLogic;
 
   constructor(private directoryTreeViewDataService: DirectoryTreeViewDataService,
               private selectedPhotoService: SelectedPhotoService,
@@ -64,7 +64,7 @@ export class DirectoryTreeViewComponent {
     directoryTreeViewDataService.dataChange
       .subscribe(data => this.handleDataChange(data));
 
-    this.tooltipLogic = new DirTreeViewTooltipVisibilityLogic(this.photoDataService);
+    this.tooltipDisplayLogic = new DirTreeViewTooltipDisplayLogic(this.photoDataService);
   }
 
   private handleDataChange(data: NestedNode[]) {
