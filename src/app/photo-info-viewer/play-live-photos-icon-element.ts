@@ -21,14 +21,14 @@ export class PlayLivePhotosIconElement {
     element.width = 25;
     element.height = 25;
     element.title = 'Live Photos';
-    element.className = 'photo-quick-viewer-button';
+    element.className = 'photo-info-viewer-button';
     element.onclick = () => this.handlePlayLivePhotosIconClick(livePhotosFilePath, photo);
     return element;
   }
 
   private static handlePlayLivePhotosIconClick(livePhotosFilePath: string, photo: Photo): void {
-    Logger.info(`Photo Quick Viewer: Clicked the play live photos icon for ${photo.path}`);
-    Analytics.trackEvent('Photo Quick Viewer', 'Clicked Play Live Photos Icon');
+    Logger.info(`Photo Info Viewer: Clicked the play live photos icon for ${photo.path}`);
+    Analytics.trackEvent('Photo Info Viewer', 'Clicked Play Live Photos Icon');
     this.playLivePhotos(livePhotosFilePath, photo);
   }
 

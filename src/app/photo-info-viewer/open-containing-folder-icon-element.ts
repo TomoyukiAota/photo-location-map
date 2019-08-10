@@ -14,14 +14,14 @@ export class OpenContainingFolderIconElement {
     element.width = 25;
     element.height = 25;
     element.title = 'Open containing folder';
-    element.className = 'photo-quick-viewer-button';
+    element.className = 'photo-info-viewer-button';
     element.onclick = () => this.handleOpenContainingFolderIconClick(photo);
     return element;
   }
 
   private static handleOpenContainingFolderIconClick(photo: Photo): void {
-    Logger.info(`Photo Quick Viewer: Clicked the open containing folder icon for ${photo.path}`);
-    Analytics.trackEvent('Photo Quick Viewer', 'Clicked Open Containing Folder Icon');
+    Logger.info(`Photo Info Viewer: Clicked the open containing folder icon for ${photo.path}`);
+    Analytics.trackEvent('Photo Info Viewer', 'Clicked Open Containing Folder Icon');
     this.openContainingFolder(photo);
   }
 
