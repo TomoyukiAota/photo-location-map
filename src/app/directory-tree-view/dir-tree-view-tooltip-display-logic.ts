@@ -1,7 +1,7 @@
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { FlatNode } from './directory-tree-view.model';
 
-export class DirTreeViewTooltipVisibilityLogic {
+export class DirTreeViewTooltipDisplayLogic {
   private readonly tooltipContentSelector = '.tooltip-content';
   private readonly visibleAboveCssClass = 'visible-above';
   private readonly visibleBelowCssClass = 'visible-below';
