@@ -7,7 +7,7 @@ import { RotateIconElement } from './rotate-icon-element';
 import { LaunchPhotoViewerIconElement } from './launch-photo-viewer-icon-element';
 import { PlayLivePhotosIconElement } from './play-live-photos-icon-element';
 
-export class PhotoQuickViewerContent {
+export class PhotoInfoViewerContent {
   public static generate(photo: Photo) {
     const rootDivElement = document.createElement('div');
     rootDivElement.style.textAlign = 'center';
@@ -52,8 +52,8 @@ export class PhotoQuickViewerContent {
   }
 
   private static handleThumbnailClick(photo: Photo): void {
-    Logger.info(`Photo Quick Viewer: Clicked the thumbnail of ${photo.path}`);
-    Analytics.trackEvent('Photo Quick Viewer', 'Clicked Thumbnail');
+    Logger.info(`Photo Info Viewer: Clicked the thumbnail of ${photo.path}`);
+    Analytics.trackEvent('Photo Info Viewer', 'Clicked Thumbnail');
     PhotoViewerLauncher.launch(photo);
   }
 

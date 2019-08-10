@@ -10,14 +10,14 @@ export class RotateIconElement {
     rotateIconElement.width = 25;
     rotateIconElement.height = 25;
     rotateIconElement.title = 'Rotate the thumbnail 90 degrees';
-    rotateIconElement.className = 'photo-quick-viewer-button';
+    rotateIconElement.className = 'photo-info-viewer-button';
     rotateIconElement.onclick = () => this.handleRotateIconClick(thumbnailElement, photo);
     return rotateIconElement;
   }
 
   private static handleRotateIconClick(thumbnailElement: HTMLImageElement, photo: Photo): void {
-    Logger.info(`Photo Quick Viewer: Clicked the rotate icon for ${photo.path}`);
-    Analytics.trackEvent('Photo Quick Viewer', 'Clicked Rotate Icon');
+    Logger.info(`Photo Info Viewer: Clicked the rotate icon for ${photo.path}`);
+    Analytics.trackEvent('Photo Info Viewer', 'Clicked Rotate Icon');
     this.rotateThumbnail(thumbnailElement);
   }
 
