@@ -13,7 +13,6 @@ import { GoogleMapsApiLoader } from './google-maps-api-loader';
 })
 export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
   private subscription: Subscription;
-  public photos: Photo[];
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
               private selectedPhotoService: SelectedPhotoService) {
@@ -21,11 +20,7 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.subscription = this.selectedPhotoService.selectedPhotosChanged.subscribe(
-      (photos: Photo[]) => {
-        this.photos = photos;
-        this.renderGoogleMaps(photos);
-        this.changeDetectorRef.detectChanges();
-      }
+      photos => this.handleSelectedPhotosChanged(photos)
     );
   }
 
@@ -35,6 +30,15 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.initializeGoogleMaps();
+  }
+
+  private handleSelectedPhotosChanged(photos: Photo[]) {
+    if (photos.length === 0) {
+      this.renderInitialGoogleMapsState();
+    } else {
+      this.renderGoogleMaps(photos);
+    }
+    this.changeDetectorRef.detectChanges();
   }
 
   private initializeGoogleMaps(): void {
