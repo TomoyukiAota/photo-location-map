@@ -1,13 +1,14 @@
 import { DirectoryTree } from 'directory-tree';
 import { Analytics } from '../analytics/analytics';
 import { Logger } from '../log/logger';
-import { SupportedFilenameExtensions } from '../../src/app/shared/supported-filename-extensions';
+import { FilenameExtension } from '../../src/app/shared/filename-extension';
 
 class NumbersToRecordFromDirTreeObject {
   public totalItems: number;
   public directories: number;
   public files: number;
   public jpegFiles: number;
+  public tiffFiles: number;
   public livePhotos: number;
 }
 
@@ -18,12 +19,14 @@ export class DirTreeObjectRecorder {
 
     Logger.info(`Numbers of items in the selected directory are as follows:`);
     Logger.info(`Total Items: ${numberOf.totalItems}, Directories: ${numberOf.directories}, Files: ${numberOf.files}`);
-    Logger.info(`JPEG Files: ${numberOf.jpegFiles}, Live Photos: ${numberOf.livePhotos}`);
+    Logger.info(`JPEG Files: ${numberOf.jpegFiles}, TIFF Files: ${numberOf.tiffFiles}`);
+    Logger.info(`Live Photos: ${numberOf.livePhotos}`);
 
     Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: Total Items', `Total Items: ${numberOf.totalItems}`);
     Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: Directories', `Directories: ${numberOf.directories}`);
     Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: Files', `Files: ${numberOf.files}`);
     Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: JPEG Files', `JPEG Files: ${numberOf.jpegFiles}`);
+    Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: TIFF Files', `TIFF Files: ${numberOf.tiffFiles}`);
     Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: Live Photos', `Live Photos: ${numberOf.livePhotos}`);
   }
 
@@ -35,8 +38,8 @@ export class DirTreeObjectRecorder {
     numberOf.totalItems = flattenedDirTree.length;
     numberOf.directories = flattenedDirTree.filter(element => element.type === 'directory').length;
     numberOf.files = flattenedDirTree.filter(element => element.type === 'file').length;
-    numberOf.jpegFiles = flattenedDirTree.filter(
-      element => SupportedFilenameExtensions.isJpeg(element.extension)).length;
+    numberOf.jpegFiles = flattenedDirTree.filter(element => FilenameExtension.isJpeg(element.extension)).length;
+    numberOf.tiffFiles = flattenedDirTree.filter(element => FilenameExtension.isTiff(element.extension)).length;
     numberOf.livePhotos = this.getNumberOfLivePhotos(flattenedDirTree);
     return numberOf;
   }
@@ -59,7 +62,7 @@ export class DirTreeObjectRecorder {
 
   private static getNumberOfLivePhotos(flattenedDirTree: DirectoryTree[]): number {
     const possibleLivePhotoMovFilePaths = flattenedDirTree
-      .filter(element => SupportedFilenameExtensions.isJpeg(element.extension))
+      .filter(element => FilenameExtension.isJpeg(element.extension))
       .map(element => element.path)
       .map(path => this.removeExtension(path))
       .map(path => `${path}.MOV`)
