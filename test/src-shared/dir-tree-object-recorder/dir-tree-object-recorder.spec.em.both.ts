@@ -14,10 +14,11 @@ describe('DirTreeObjectRecorder', () => {
     const numberOf = DirTreeObjectRecorder.getNumbersToRecord(directoryTreeObject);
 
     // Assert
-    assert(numberOf.totalItems === 9);
-    assert(numberOf.directories === 5);
-    assert(numberOf.files === 4);
+    assert(numberOf.totalItems === 11);
+    assert(numberOf.directories === 6);
+    assert(numberOf.files === 5);
     assert(numberOf.jpegFiles === 2);
+    assert(numberOf.tiffFiles === 1);
     assert(numberOf.livePhotos === 1);
   });
 });

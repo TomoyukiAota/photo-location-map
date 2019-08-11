@@ -8,6 +8,7 @@ class NumbersToRecordFromDirTreeObject {
   public directories: number;
   public files: number;
   public jpegFiles: number;
+  public tiffFiles: number;
   public livePhotos: number;
 }
 
@@ -18,12 +19,14 @@ export class DirTreeObjectRecorder {
 
     Logger.info(`Numbers of items in the selected directory are as follows:`);
     Logger.info(`Total Items: ${numberOf.totalItems}, Directories: ${numberOf.directories}, Files: ${numberOf.files}`);
-    Logger.info(`JPEG Files: ${numberOf.jpegFiles}, Live Photos: ${numberOf.livePhotos}`);
+    Logger.info(`JPEG Files: ${numberOf.jpegFiles}, TIFF Files: ${numberOf.tiffFiles}`);
+    Logger.info(`Live Photos: ${numberOf.livePhotos}`);
 
     Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: Total Items', `Total Items: ${numberOf.totalItems}`);
     Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: Directories', `Directories: ${numberOf.directories}`);
     Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: Files', `Files: ${numberOf.files}`);
     Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: JPEG Files', `JPEG Files: ${numberOf.jpegFiles}`);
+    Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: TIFF Files', `TIFF Files: ${numberOf.tiffFiles}`);
     Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: Live Photos', `Live Photos: ${numberOf.livePhotos}`);
   }
 
@@ -37,6 +40,8 @@ export class DirTreeObjectRecorder {
     numberOf.files = flattenedDirTree.filter(element => element.type === 'file').length;
     numberOf.jpegFiles = flattenedDirTree.filter(
       element => SupportedFilenameExtensions.isJpeg(element.extension)).length;
+    numberOf.tiffFiles = flattenedDirTree.filter(
+      element => SupportedFilenameExtensions.isTiff(element.extension)).length;
     numberOf.livePhotos = this.getNumberOfLivePhotos(flattenedDirTree);
     return numberOf;
   }
