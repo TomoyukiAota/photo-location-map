@@ -1,6 +1,6 @@
 import * as exifParser from 'exif-parser';
 import { Logger } from '../../../src-shared/log/logger';
-import { SupportedFilenameExtensions } from './supported-filename-extensions';
+import { FilenameExtension } from './filename-extension';
 
 export class PathExifPair {
   constructor(public readonly path: string,
@@ -34,7 +34,7 @@ export class ExifFetcher {
     if (isDirectory)
       return;
 
-    const isSupportedExtension = SupportedFilenameExtensions.isSupported(directoryTreeElement.extension);
+    const isSupportedExtension = FilenameExtension.isSupported(directoryTreeElement.extension);
     if (!isSupportedExtension)
       return;
 
