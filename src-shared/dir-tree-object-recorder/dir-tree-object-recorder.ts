@@ -1,7 +1,7 @@
 import { DirectoryTree } from 'directory-tree';
 import { Analytics } from '../analytics/analytics';
 import { Logger } from '../log/logger';
-import { SupportedFilenameExtensions } from '../../src/app/shared/supported-filename-extensions';
+import { FilenameExtension } from '../../src/app/shared/filename-extension';
 
 class NumbersToRecordFromDirTreeObject {
   public totalItems: number;
@@ -38,10 +38,8 @@ export class DirTreeObjectRecorder {
     numberOf.totalItems = flattenedDirTree.length;
     numberOf.directories = flattenedDirTree.filter(element => element.type === 'directory').length;
     numberOf.files = flattenedDirTree.filter(element => element.type === 'file').length;
-    numberOf.jpegFiles = flattenedDirTree.filter(
-      element => SupportedFilenameExtensions.isJpeg(element.extension)).length;
-    numberOf.tiffFiles = flattenedDirTree.filter(
-      element => SupportedFilenameExtensions.isTiff(element.extension)).length;
+    numberOf.jpegFiles = flattenedDirTree.filter(element => FilenameExtension.isJpeg(element.extension)).length;
+    numberOf.tiffFiles = flattenedDirTree.filter(element => FilenameExtension.isTiff(element.extension)).length;
     numberOf.livePhotos = this.getNumberOfLivePhotos(flattenedDirTree);
     return numberOf;
   }
@@ -64,7 +62,7 @@ export class DirTreeObjectRecorder {
 
   private static getNumberOfLivePhotos(flattenedDirTree: DirectoryTree[]): number {
     const possibleLivePhotoMovFilePaths = flattenedDirTree
-      .filter(element => SupportedFilenameExtensions.isJpeg(element.extension))
+      .filter(element => FilenameExtension.isJpeg(element.extension))
       .map(element => element.path)
       .map(path => this.removeExtension(path))
       .map(path => `${path}.MOV`)

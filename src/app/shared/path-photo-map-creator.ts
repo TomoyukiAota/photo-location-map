@@ -7,7 +7,7 @@ import { Photo } from './model/photo.model';
 import { ExifFetcher } from './exif-fetcher';
 import { PathPhotoMapRecorder } from './path-photo-map-recorder';
 import { PhotoDateTimeTakenGenerator } from './photo-date-time-taken-generator';
-import { SupportedFilenameExtensions } from './supported-filename-extensions';
+import { FilenameExtension } from './filename-extension';
 
 export class PathPhotoMapCreator {
   private static pathPhotoMap: Map<string, Photo>;
@@ -38,7 +38,7 @@ export class PathPhotoMapCreator {
     if (isDirectory)
       return;
 
-    const isSupportedExtension = SupportedFilenameExtensions.isSupported(directoryTreeElement.extension);
+    const isSupportedExtension = FilenameExtension.isSupported(directoryTreeElement.extension);
     if (!isSupportedExtension)
       return;
 
