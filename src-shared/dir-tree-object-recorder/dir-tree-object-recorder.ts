@@ -10,7 +10,13 @@ class NumbersToRecordFromDirTreeObject {
   public jpegFiles: number;
   public tiffFiles: number;
   public heifFiles: number;
-  public livePhotos: number;
+  public livePhotosByJpeg: number;
+  public livePhotosByHeif: number;
+}
+
+enum LivePhotosFormat {
+  Jpeg,
+  Heif
 }
 
 export class DirTreeObjectRecorder {
@@ -21,7 +27,7 @@ export class DirTreeObjectRecorder {
     Logger.info(`Numbers of items in the selected directory are as follows:`);
     Logger.info(`Total Items: ${numberOf.totalItems}, Directories: ${numberOf.directories}, Files: ${numberOf.files}`);
     Logger.info(`JPEG Files: ${numberOf.jpegFiles}, TIFF Files: ${numberOf.tiffFiles}, HEIF Files: ${numberOf.heifFiles}`);
-    Logger.info(`Live Photos: ${numberOf.livePhotos}`);
+    Logger.info(`Live Photos (JPEG): ${numberOf.livePhotosByJpeg}, Live Photos (HEIF): ${numberOf.livePhotosByHeif}`);
 
     Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: Total Items', `Total Items: ${numberOf.totalItems}`);
     Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: Directories', `Directories: ${numberOf.directories}`);
@@ -29,7 +35,8 @@ export class DirTreeObjectRecorder {
     Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: JPEG Files', `JPEG Files: ${numberOf.jpegFiles}`);
     Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: TIFF Files', `TIFF Files: ${numberOf.tiffFiles}`);
     Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: HEIF Files', `HEIF Files: ${numberOf.heifFiles}`);
-    Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: Live Photos', `Live Photos: ${numberOf.livePhotos}`);
+    Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: Live Photos (JPEG)', `Live Photos (JPEG): ${numberOf.livePhotosByJpeg}`);
+    Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: Live Photos (HEIF)', `Live Photos (HEIF): ${numberOf.livePhotosByHeif}`);
   }
 
   public static getNumbersToRecord(dirTreeObject: DirectoryTree): NumbersToRecordFromDirTreeObject {
@@ -43,7 +50,8 @@ export class DirTreeObjectRecorder {
     numberOf.jpegFiles = flattenedDirTree.filter(element => FilenameExtension.isJpeg(element.extension)).length;
     numberOf.tiffFiles = flattenedDirTree.filter(element => FilenameExtension.isTiff(element.extension)).length;
     numberOf.heifFiles = flattenedDirTree.filter(element => FilenameExtension.isHeif(element.extension)).length;
-    numberOf.livePhotos = this.getNumberOfLivePhotos(flattenedDirTree);
+    numberOf.livePhotosByJpeg = this.getNumberOfLivePhotos(flattenedDirTree, LivePhotosFormat.Jpeg);
+    numberOf.livePhotosByHeif = this.getNumberOfLivePhotos(flattenedDirTree, LivePhotosFormat.Heif);
     return numberOf;
   }
 
@@ -63,9 +71,13 @@ export class DirTreeObjectRecorder {
     return dstDirTreeArray;
   }
 
-  private static getNumberOfLivePhotos(flattenedDirTree: DirectoryTree[]): number {
+  private static getNumberOfLivePhotos(flattenedDirTree: DirectoryTree[], format: LivePhotosFormat): number {
+    const filterByExtension = format === LivePhotosFormat.Jpeg
+      ? element => FilenameExtension.isJpeg(element.extension)
+      : element => FilenameExtension.isHeif(element.extension);
+
     const possibleLivePhotoMovFilePaths = flattenedDirTree
-      .filter(element => FilenameExtension.isJpeg(element.extension))
+      .filter(filterByExtension)
       .map(element => element.path)
       .map(path => this.removeExtension(path))
       .map(path => `${path}.MOV`)
