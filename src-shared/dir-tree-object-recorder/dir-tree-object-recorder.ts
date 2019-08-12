@@ -7,6 +7,7 @@ class NumbersOfPhotos {
   public jpeg: number;
   public tiff: number;
   public heif: number;
+  public get total(): number { return this.jpeg + this.tiff + this.heif; }
 }
 
 class NumbersOfLivePhotos {
@@ -35,13 +36,14 @@ export class DirTreeObjectRecorder {
 
     Logger.info(`Numbers of items in the selected directory are as follows:`);
     Logger.info(`Total Items: ${numberOf.totalItems}, Directories: ${numberOf.directories}, Files: ${numberOf.files}`);
-    Logger.info(`JPEG Files: ${numberOf.photos.jpeg}, TIFF Files: ${numberOf.photos.tiff}, HEIF Files: ${numberOf.photos.heif}`);
+    Logger.info(`[Photos] Total: ${numberOf.photos.total}, JPEG: ${numberOf.photos.jpeg}, TIFF: ${numberOf.photos.tiff}, HEIF: ${numberOf.photos.heif}`);
     Logger.info(`[Live Photos] Total: ${numberOf.livePhotos.total}, JPEG: ${numberOf.livePhotos.jpeg}, HEIF: ${numberOf.livePhotos.heif}`);
 
     const category = 'Selected Folder Info';
     Analytics.trackEvent(category, `${category}: Total Items`, `Total Items: ${numberOf.totalItems}`);
     Analytics.trackEvent(category, `${category}: Directories`, `Directories: ${numberOf.directories}`);
     Analytics.trackEvent(category, `${category}: Files`, `Files: ${numberOf.files}`);
+    Analytics.trackEvent(category, `${category}: Total Photos`, `Total Photos: ${numberOf.photos.total}`);
     Analytics.trackEvent(category, `${category}: JPEG Files`, `JPEG Files: ${numberOf.photos.jpeg}`);
     Analytics.trackEvent(category, `${category}: TIFF Files`, `TIFF Files: ${numberOf.photos.tiff}`);
     Analytics.trackEvent(category, `${category}: HEIF Files`, `HEIF Files: ${numberOf.photos.heif}`);
