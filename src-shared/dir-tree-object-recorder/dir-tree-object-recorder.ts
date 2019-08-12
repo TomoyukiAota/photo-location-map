@@ -3,6 +3,12 @@ import { Analytics } from '../analytics/analytics';
 import { Logger } from '../log/logger';
 import { FilenameExtension } from '../../src/app/shared/filename-extension';
 
+class NumbersOfLivePhotos {
+  public total: number;
+  public jpeg: number;
+  public heif: number;
+}
+
 class NumbersToRecordFromDirTreeObject {
   public totalItems: number;
   public directories: number;
@@ -10,8 +16,7 @@ class NumbersToRecordFromDirTreeObject {
   public jpegFiles: number;
   public tiffFiles: number;
   public heifFiles: number;
-  public livePhotosByJpeg: number;
-  public livePhotosByHeif: number;
+  public livePhotos = new NumbersOfLivePhotos();
 }
 
 enum LivePhotosFormat {
@@ -27,7 +32,7 @@ export class DirTreeObjectRecorder {
     Logger.info(`Numbers of items in the selected directory are as follows:`);
     Logger.info(`Total Items: ${numberOf.totalItems}, Directories: ${numberOf.directories}, Files: ${numberOf.files}`);
     Logger.info(`JPEG Files: ${numberOf.jpegFiles}, TIFF Files: ${numberOf.tiffFiles}, HEIF Files: ${numberOf.heifFiles}`);
-    Logger.info(`Live Photos (JPEG): ${numberOf.livePhotosByJpeg}, Live Photos (HEIF): ${numberOf.livePhotosByHeif}`);
+    Logger.info(`Live Photos (JPEG): ${numberOf.livePhotos.jpeg}, Live Photos (HEIF): ${numberOf.livePhotos.heif}`);
 
     const category = 'Selected Folder Info';
     Analytics.trackEvent(category, `${category}: Total Items`, `Total Items: ${numberOf.totalItems}`);
@@ -36,8 +41,8 @@ export class DirTreeObjectRecorder {
     Analytics.trackEvent(category, `${category}: JPEG Files`, `JPEG Files: ${numberOf.jpegFiles}`);
     Analytics.trackEvent(category, `${category}: TIFF Files`, `TIFF Files: ${numberOf.tiffFiles}`);
     Analytics.trackEvent(category, `${category}: HEIF Files`, `HEIF Files: ${numberOf.heifFiles}`);
-    Analytics.trackEvent(category, `${category}: Live Photos (JPEG)`, `Live Photos (JPEG): ${numberOf.livePhotosByJpeg}`);
-    Analytics.trackEvent(category, `${category}: Live Photos (HEIF)`, `Live Photos (HEIF): ${numberOf.livePhotosByHeif}`);
+    Analytics.trackEvent(category, `${category}: Live Photos (JPEG)`, `Live Photos (JPEG): ${numberOf.livePhotos.jpeg}`);
+    Analytics.trackEvent(category, `${category}: Live Photos (HEIF)`, `Live Photos (HEIF): ${numberOf.livePhotos.heif}`);
   }
 
   public static getNumbersToRecord(dirTreeObject: DirectoryTree): NumbersToRecordFromDirTreeObject {
@@ -51,8 +56,8 @@ export class DirTreeObjectRecorder {
     numberOf.jpegFiles = flattenedDirTree.filter(element => FilenameExtension.isJpeg(element.extension)).length;
     numberOf.tiffFiles = flattenedDirTree.filter(element => FilenameExtension.isTiff(element.extension)).length;
     numberOf.heifFiles = flattenedDirTree.filter(element => FilenameExtension.isHeif(element.extension)).length;
-    numberOf.livePhotosByJpeg = this.getNumberOfLivePhotos(flattenedDirTree, LivePhotosFormat.Jpeg);
-    numberOf.livePhotosByHeif = this.getNumberOfLivePhotos(flattenedDirTree, LivePhotosFormat.Heif);
+    numberOf.livePhotos.jpeg = this.getNumberOfLivePhotos(flattenedDirTree, LivePhotosFormat.Jpeg);
+    numberOf.livePhotos.heif = this.getNumberOfLivePhotos(flattenedDirTree, LivePhotosFormat.Heif);
     return numberOf;
   }
 

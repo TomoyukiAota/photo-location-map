@@ -20,7 +20,7 @@ describe('DirTreeObjectRecorder', () => {
     assert(numberOf.jpegFiles === 7);
     assert(numberOf.tiffFiles === 2);
     assert(numberOf.heifFiles === 3);
-    assert(numberOf.livePhotosByJpeg === 1);
-    assert(numberOf.livePhotosByHeif === 1);
+    assert(numberOf.livePhotos.jpeg === 1);
+    assert(numberOf.livePhotos.heif === 1);
   });
 });
