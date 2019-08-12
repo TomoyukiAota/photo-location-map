@@ -29,14 +29,15 @@ export class DirTreeObjectRecorder {
     Logger.info(`JPEG Files: ${numberOf.jpegFiles}, TIFF Files: ${numberOf.tiffFiles}, HEIF Files: ${numberOf.heifFiles}`);
     Logger.info(`Live Photos (JPEG): ${numberOf.livePhotosByJpeg}, Live Photos (HEIF): ${numberOf.livePhotosByHeif}`);
 
-    Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: Total Items', `Total Items: ${numberOf.totalItems}`);
-    Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: Directories', `Directories: ${numberOf.directories}`);
-    Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: Files', `Files: ${numberOf.files}`);
-    Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: JPEG Files', `JPEG Files: ${numberOf.jpegFiles}`);
-    Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: TIFF Files', `TIFF Files: ${numberOf.tiffFiles}`);
-    Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: HEIF Files', `HEIF Files: ${numberOf.heifFiles}`);
-    Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: Live Photos (JPEG)', `Live Photos (JPEG): ${numberOf.livePhotosByJpeg}`);
-    Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: Live Photos (HEIF)', `Live Photos (HEIF): ${numberOf.livePhotosByHeif}`);
+    const category = 'Selected Folder Info';
+    Analytics.trackEvent(category, `${category}: Total Items`, `Total Items: ${numberOf.totalItems}`);
+    Analytics.trackEvent(category, `${category}: Directories`, `Directories: ${numberOf.directories}`);
+    Analytics.trackEvent(category, `${category}: Files`, `Files: ${numberOf.files}`);
+    Analytics.trackEvent(category, `${category}: JPEG Files`, `JPEG Files: ${numberOf.jpegFiles}`);
+    Analytics.trackEvent(category, `${category}: TIFF Files`, `TIFF Files: ${numberOf.tiffFiles}`);
+    Analytics.trackEvent(category, `${category}: HEIF Files`, `HEIF Files: ${numberOf.heifFiles}`);
+    Analytics.trackEvent(category, `${category}: Live Photos (JPEG)`, `Live Photos (JPEG): ${numberOf.livePhotosByJpeg}`);
+    Analytics.trackEvent(category, `${category}: Live Photos (HEIF)`, `Live Photos (HEIF): ${numberOf.livePhotosByHeif}`);
   }
 
   public static getNumbersToRecord(dirTreeObject: DirectoryTree): NumbersToRecordFromDirTreeObject {
