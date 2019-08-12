@@ -18,13 +18,15 @@ describe('DirTreeObjectRecorder', () => {
     assert(numberOf.directories === 9);
     assert(numberOf.files === 15);
 
-    assert(numberOf.photos.total === (7 + 2 + 3));
     assert(numberOf.photos.jpeg === 7);
     assert(numberOf.photos.tiff === 2);
     assert(numberOf.photos.heif === 3);
+    assert(numberOf.photos.total === (7 + 2 + 3));
+    assert(numberOf.photos.supportedPercentage === '58.333');
 
-    assert(numberOf.livePhotos.total === (1 + 1));
     assert(numberOf.livePhotos.jpeg === 1);
     assert(numberOf.livePhotos.heif === 1);
+    assert(numberOf.livePhotos.total === (1 + 1));
+    assert(numberOf.livePhotos.supportedPercentage === '50.000');
   });
 });
