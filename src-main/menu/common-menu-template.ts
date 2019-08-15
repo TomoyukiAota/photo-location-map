@@ -51,11 +51,3 @@ export const commonMenuTemplate: MenuItemConstructorOptions[] = [
     ]
   }
 ];
-
-export const commonHelpSubmenuTemplate: MenuItemConstructorOptions[] = [
-  {
-    label: 'Welcome'
-  },
-  { type: 'separator' },
-  { role: 'toggledevtools' }
-];

@@ -1,5 +1,6 @@
-import { dialog, MenuItemConstructorOptions } from 'electron';
-import { commonHelpSubmenuTemplate, commonMenuTemplate } from './common-menu-template';
+import { MenuItemConstructorOptions } from 'electron';
+import { commonMenuTemplate } from './common-menu-template';
+import { commonHelpSubmenuTemplate } from './common-help-submenu-template';
 
 export const menuTemplateOnMac: MenuItemConstructorOptions[] = [
   {
