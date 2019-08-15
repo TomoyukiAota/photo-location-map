@@ -5,7 +5,7 @@ import * as windowStateKeeper from 'electron-window-state';
 import { setUserAgentForAnalytics } from '../src-shared/analytics/analytics';
 import { Logger } from '../src-shared/log/logger';
 import { LogFileConfig } from '../src-shared/log/log-file-config';
-import './menu';
+import './menu/menu';
 import { recordAtAppLaunch } from './record-at-app-launch';
 
 
