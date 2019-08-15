@@ -1,5 +1,5 @@
 import { dialog, MenuItemConstructorOptions } from 'electron';
-import { commonMenuTemplate } from './common-menu-template';
+import { commonHelpSubmenuTemplate, commonMenuTemplate } from './common-menu-template';
 
 export const menuTemplateOnMac: MenuItemConstructorOptions[] = [
   {
@@ -20,15 +20,7 @@ export const menuTemplateOnMac: MenuItemConstructorOptions[] = [
   {
     label: 'Help',
     submenu: [
-      {
-        label: 'Welcome'
-      },
-      { type: 'separator' },
-      { role: 'toggledevtools' },
-      { type: 'separator' },
-      {
-        label: 'Privacy Statement'
-      }
+      ...commonHelpSubmenuTemplate
     ]
   }
 ];
