@@ -1,6 +1,6 @@
-import { dialog, Menu, MenuItemConstructorOptions } from 'electron';
+import { dialog, MenuItemConstructorOptions } from 'electron';
 
-const templateMenu: MenuItemConstructorOptions[] = [
+export const commonMenuTemplate: MenuItemConstructorOptions[] = [
   {
     label: 'Selection',
     submenu: [
@@ -42,35 +42,12 @@ const templateMenu: MenuItemConstructorOptions[] = [
           if (focusedWindow) focusedWindow.reload();
         },
       },
-      {
-        type: 'separator'
-      },
-      {
-        role: 'resetzoom'
-      },
-      {
-        role: 'zoomin'
-      },
-      {
-        role: 'zoomout'
-      },
-      {
-        type: 'separator'
-      },
-      {
-        role: 'togglefullscreen'
-      }
-    ]
-  },
-  {
-    label: 'Tools',
-    submenu: [
-      {
-        role: 'toggledevtools'
-      }
+      { type: 'separator' },
+      { role: 'resetzoom' },
+      { role: 'zoomin' },
+      { role: 'zoomout' },
+      { type: 'separator' },
+      { role: 'togglefullscreen' }
     ]
   }
 ];
-
-const menu = Menu.buildFromTemplate(templateMenu);
-Menu.setApplicationMenu(menu);
