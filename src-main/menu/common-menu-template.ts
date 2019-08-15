@@ -57,9 +57,5 @@ export const commonHelpSubmenuTemplate: MenuItemConstructorOptions[] = [
     label: 'Welcome'
   },
   { type: 'separator' },
-  { role: 'toggledevtools' },
-  { type: 'separator' },
-  {
-    label: 'Privacy Statement'
-  }
+  { role: 'toggledevtools' }
 ];
