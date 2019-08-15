@@ -61,13 +61,5 @@ export const commonMenuTemplate: MenuItemConstructorOptions[] = [
         role: 'togglefullscreen'
       }
     ]
-  },
-  {
-    label: 'Tools',
-    submenu: [
-      {
-        role: 'toggledevtools'
-      }
-    ]
   }
 ];

@@ -16,5 +16,19 @@ export const menuTemplateOnMac: MenuItemConstructorOptions[] = [
       { role: 'quit' }
     ]
   },
-  ...commonMenuTemplate
+  ...commonMenuTemplate,
+  {
+    label: 'Help',
+    submenu: [
+      {
+        label: 'Welcome'
+      },
+      { type: 'separator' },
+      { role: 'toggledevtools' },
+      { type: 'separator' },
+      {
+        label: 'Privacy Statement'
+      }
+    ]
+  }
 ];
