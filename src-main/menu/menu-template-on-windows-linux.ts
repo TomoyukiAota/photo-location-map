@@ -6,11 +6,10 @@ export const menuTemplateOnWindowsLinux: MenuItemConstructorOptions[] = [
   {
     label: 'Help',
     submenu: [
-      ...commonHelpSubmenuTemplate,
-      { type: 'separator' },
       {
-        label: 'About'
+        label: 'About Photo Location Map'
       },
+      ...commonHelpSubmenuTemplate
     ]
   }
 ];
