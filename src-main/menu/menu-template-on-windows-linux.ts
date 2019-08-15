@@ -1,6 +1,6 @@
-import { dialog, Menu, MenuItemConstructorOptions } from 'electron';
+import { dialog, MenuItemConstructorOptions } from 'electron';
 
-const templateMenu: MenuItemConstructorOptions[] = [
+export const menuTemplateOnWindowsLinux: MenuItemConstructorOptions[] = [
   {
     label: 'Selection',
     submenu: [
@@ -71,6 +71,3 @@ const templateMenu: MenuItemConstructorOptions[] = [
     ]
   }
 ];
-
-const menu = Menu.buildFromTemplate(templateMenu);
-Menu.setApplicationMenu(menu);
