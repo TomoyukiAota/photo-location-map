@@ -26,7 +26,7 @@ const templateMenu: menuItemConstructorOptions[] = [
     label: 'Tools',
     submenu: [
       {
-        role: 'toggledevtools'
+        role: 'toggleDevTools'
       }
     ]
   }
