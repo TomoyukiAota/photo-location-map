@@ -43,9 +43,9 @@ export const commonMenuTemplate: MenuItemConstructorOptions[] = [
         },
       },
       { type: 'separator' },
-      { role: 'resetzoom' },
-      { role: 'zoomin' },
-      { role: 'zoomout' },
+      { role: 'resetZoom' },
+      { role: 'zoomIn' },
+      { role: 'zoomOut' },
       { type: 'separator' },
       { role: 'togglefullscreen' }
     ]
