@@ -36,8 +36,5 @@
     "target": [
       "AppImage"
     ]
-  },
-  "appImage": {
-    "systemIntegration": "doNotAsk"
   }
 }
