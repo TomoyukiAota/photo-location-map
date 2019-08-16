@@ -28,7 +28,17 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['Electron'],
+    browsers: ['CustomElectron'],
+    customLaunchers: {
+      CustomElectron: {
+        base: 'Electron',
+        browserWindowOptions: {
+          webPreferences: {
+            nodeIntegration: true
+          }
+        }
+      }
+    },
     preprocessors: {
       '**/*.js': ['electron']
     },
