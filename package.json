@@ -55,7 +55,6 @@
     "electron-window-state": "5.0.3",
     "fs-extra": "7.0.1",
     "moment-timezone": "0.5.26",
-    "ngx-electron": "2.1.1",
     "universal-analytics": "0.4.20",
     "uuid": "3.3.2"
   },
@@ -119,7 +118,6 @@
     "tslint": "5.18.0",
     "typescript": "3.2.4",
     "wait-on": "3.3.0",
-    "webdriver-manager": "12.1.6",
     "zone.js": "0.10.2"
   },
   "browser": {
