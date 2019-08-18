@@ -10,7 +10,7 @@ import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewe
 })
 export class DirTreeViewTooltipComponent implements AfterViewInit, OnInit {
   @Input() public photoPath: string;
-  @ViewChild('dirTreeViewTooltip') public divElementRef: ElementRef<HTMLDivElement>;
+  @ViewChild('dirTreeViewTooltip', { static: true }) public divElementRef: ElementRef<HTMLDivElement>;
   private photo: Photo;
 
   constructor(private photoDataService: PhotoDataService) {
