@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MapType } from './map-type';
 
 @Component({
   selector: 'app-map',
@@ -6,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent implements OnInit {
+  public mapType = MapType;
+  public selectedMap = MapType.OpenStreetMap;
 
   constructor() { }
 
