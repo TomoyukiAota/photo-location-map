@@ -11,7 +11,7 @@ import { recordAtAppLaunch } from './record-at-app-launch';
 
 Logger.info(`Log File Location: ${LogFileConfig.filePath}`);
 
-let browserWindow: BrowserWindow;
+export let mainWindow: BrowserWindow;
 const args = process.argv.slice(1);
 const isLiveReloadMode = args.some(val => val === '--serve');
 
@@ -22,8 +22,8 @@ const createWindow = () => {
     defaultHeight: 800
   });
 
-  // Create the browser window using the state information.
-  browserWindow = new BrowserWindow({
+  // Create the main window using the state information.
+  mainWindow = new BrowserWindow({
     x: mainWindowState.x,
     y: mainWindowState.y,
     width: mainWindowState.width,
@@ -33,16 +33,16 @@ const createWindow = () => {
     }
   });
 
-  const userAgent = browserWindow.webContents.getUserAgent();
+  const userAgent = mainWindow.webContents.getUserAgent();
   setUserAgentForAnalytics(userAgent);
 
   if (isLiveReloadMode) {
     require('electron-reload')(__dirname, {
       electron: require(`${__dirname}/../node_modules/electron`)
     });
-    browserWindow.loadURL('http://localhost:4200');
+    mainWindow.loadURL('http://localhost:4200');
   } else {
-    browserWindow.loadURL(url.format({
+    mainWindow.loadURL(url.format({
       pathname: path.join(__dirname, '..', 'dist', 'index.html'),
       protocol: 'file:',
       slashes: true
@@ -50,18 +50,18 @@ const createWindow = () => {
   }
 
   if (isLiveReloadMode) {
-    browserWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
   }
 
   // Emitted when the window is closed.
-  browserWindow.on('closed', () => {
+  mainWindow.on('closed', () => {
     // Dereference the window object, usually you would store window
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    browserWindow = null;
+    mainWindow = null;
   });
 
-  mainWindowState.manage(browserWindow);
+  mainWindowState.manage(mainWindow);
 
   recordAtAppLaunch();
   Logger.info('Launching the main window.');
@@ -86,7 +86,7 @@ try {
   app.on('activate', () => {
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (browserWindow === null) {
+    if (mainWindow === null) {
       createWindow();
     }
   });
