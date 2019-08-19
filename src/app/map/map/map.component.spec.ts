@@ -6,13 +6,16 @@ import { MapComponent } from './map.component';
 @Component({ selector: 'app-google-maps', template: '' })
 class DummyGoogleMapsComponent {}
 
+@Component({ selector: 'app-osm', template: '' })
+class DummyOsmComponent {}
+
 describe('MapComponent', () => {
   let component: MapComponent;
   let fixture: ComponentFixture<MapComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MapComponent, DummyGoogleMapsComponent ]
+      declarations: [ MapComponent, DummyGoogleMapsComponent, DummyOsmComponent ]
     })
     .compileComponents();
   }));

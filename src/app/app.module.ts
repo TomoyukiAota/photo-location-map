@@ -23,9 +23,10 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { DirectoryTreeViewComponent } from './directory-tree-view/directory-tree-view.component';
+import { DirTreeViewTooltipComponent } from './directory-tree-view/dir-tree-view-tooltip/dir-tree-view-tooltip.component';
 import { MapComponent } from './map/map/map.component';
 import { GoogleMapsComponent } from './map/google-maps/google-maps.component';
-import { DirTreeViewTooltipComponent } from './directory-tree-view/dir-tree-view-tooltip/dir-tree-view-tooltip.component';
+import { OsmComponent } from './map/osm/osm.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -38,9 +39,10 @@ export function HttpLoaderFactory(http: HttpClient) {
     HomeComponent,
     SidebarComponent,
     DirectoryTreeViewComponent,
+    DirTreeViewTooltipComponent,
     MapComponent,
     GoogleMapsComponent,
-    DirTreeViewTooltipComponent
+    OsmComponent
   ],
   imports: [
     BrowserModule,
