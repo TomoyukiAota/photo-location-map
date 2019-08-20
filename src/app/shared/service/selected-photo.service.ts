@@ -8,6 +8,7 @@ import { PhotoDataService } from './photo-data.service';
   providedIn: 'root'
 })
 export class SelectedPhotoService {
+  private selectedPhotos: Photo[] = [];
   public selectedPhotosChanged = new Subject<Photo[]>();
 
   constructor(private photoDataService: PhotoDataService) {
@@ -15,7 +16,13 @@ export class SelectedPhotoService {
 
   public update(selectedPaths: string[]) {
     const selectedPhotos = selectedPaths.map(path => this.photoDataService.getPhoto(path));
-    Logger.info('Selected Photos: ', selectedPhotos);
     this.selectedPhotosChanged.next(selectedPhotos);
+    this.selectedPhotos = selectedPhotos;
+    Logger.info('Selected Photos: ', selectedPhotos);
+  }
+
+  public getSelectedPhotos(): Photo[] {
+    const selectedPhotosClone = Array.from(this.selectedPhotos);
+    return selectedPhotosClone;
   }
 }

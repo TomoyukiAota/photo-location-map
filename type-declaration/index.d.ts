@@ -1,7 +1,13 @@
 declare var window: Window;
+
+interface PlmGlobalRendererInternal {
+  map: any;
+}
+
 interface Window {
   process: NodeJS.Process;
   require: NodeRequire;
+  plmGlobalRendererInternal: PlmGlobalRendererInternal;
 }
 
 type DirectoryTree = ReturnType<typeof import('directory-tree')>;
