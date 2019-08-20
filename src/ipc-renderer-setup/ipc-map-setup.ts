@@ -5,5 +5,5 @@ const ipcRenderer = ConditionalRequire.electron.ipcRenderer;
 
 ipcRenderer.on(IpcConstants.Map.ChangeEvent.Name, (event, ipcMapChangeArg) => {
   console.log(ipcMapChangeArg);
-  window.plmGlobalRendererInternal.map.changeMap(ipcMapChangeArg);
+  window.plmInternalRenderer.map.changeMap(ipcMapChangeArg);
 });

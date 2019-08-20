@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit } from '@angular/core';
-import { PlmGlobalRendererInternal } from '../../../global-varriable-renderer';
+import { PlmInternalRenderer, PlmInternalRendererMap } from '../../../global-variables/global-variable-for-internal-use-in-renderer';
 import { getMapType, MapType } from './map-type';
 
 @Component({
@@ -16,13 +16,13 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    window.plmGlobalRendererInternal = window.plmGlobalRendererInternal || new PlmGlobalRendererInternal();
-    window.plmGlobalRendererInternal.map = window.plmGlobalRendererInternal.map || {};
-    window.plmGlobalRendererInternal.map.changeMap = this.changeMap.bind(this);
+    window.plmInternalRenderer = window.plmInternalRenderer || new PlmInternalRenderer();
+    window.plmInternalRenderer.map = window.plmInternalRenderer.map || new PlmInternalRendererMap();
+    window.plmInternalRenderer.map.changeMap = mapTypeStr => this.changeMap(mapTypeStr);
   }
 
   ngOnDestroy(): void {
-    window.plmGlobalRendererInternal.map.changeMap = null;
+    window.plmInternalRenderer.map.changeMap = null;
   }
 
   public changeMap(mapTypeStr: string) {
