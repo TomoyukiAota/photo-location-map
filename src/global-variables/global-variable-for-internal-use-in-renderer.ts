@@ -3,5 +3,5 @@ export class PlmInternalRenderer implements PlmInternalRenderer {
 }
 
 export class PlmInternalRendererMap implements MapChangeable {
-  public changeMap: (mapTypeStr: string) => void;
+  public changeMap: (ipcMapChangeArg: string) => void;
 }
