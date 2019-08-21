@@ -11,6 +11,11 @@ const changeMap = (ipcMapChangeArg: string) => {
   mainWindow.webContents.send(IpcConstants.Map.ChangeEvent.Name, ipcMapChangeArg);
 };
 
+const selectMap = (ipcMapChangeArg: string) => {
+  Logger.info(`[Menu] Selected ${ipcMapChangeArg}.`);
+  changeMap(ipcMapChangeArg);
+};
+
 export const commonHelpSubmenuTemplate: MenuItemConstructorOptions[] = [
   {
     label: 'Welcome'
@@ -26,7 +31,7 @@ export const commonHelpSubmenuTemplate: MenuItemConstructorOptions[] = [
       const isAdvancedModeOn = menuItem.checked;
       const mapMenu = Menu.getApplicationMenu().getMenuItemById(MenuId.Map);
       mapMenu.visible = isAdvancedModeOn;
-      Logger.info(`Changed Advanced Mode to "${isAdvancedModeOn}".`);
+      Logger.info(`[Menu] Changed Advanced Mode to "${isAdvancedModeOn}".`);
     }
   },
   {
@@ -38,18 +43,12 @@ export const commonHelpSubmenuTemplate: MenuItemConstructorOptions[] = [
         label: 'OpenStreetMap',
         type: 'radio',
         checked: true,
-        click: () => {
-          changeMap(IpcConstants.Map.ChangeEvent.Arg.OpenStreetMap);
-          Logger.info(`Changed to use OpenStreetMap.`);
-        }
+        click: () => selectMap(IpcConstants.Map.ChangeEvent.Arg.OpenStreetMap)
       },
       {
         label: 'Google Maps (Your API key is required)',
         type: 'radio',
-        click: () => {
-          changeMap(IpcConstants.Map.ChangeEvent.Arg.GoogleMaps);
-          Logger.info(`Changed to use Google Maps.`);
-        }
+        click: () => selectMap(IpcConstants.Map.ChangeEvent.Arg.GoogleMaps)
       }
     ]
   }
