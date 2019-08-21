@@ -1,8 +1,8 @@
 import { Menu, MenuItemConstructorOptions } from 'electron';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { Logger } from '../../src-shared/log/logger';
-import { MenuId } from './menu-id';
 import { mainWindow } from '../electron-main';
+import { MenuId } from './menu-id';
 
 const changeMap = (ipcMapChangeArg: string) => {
   if (!mainWindow)
