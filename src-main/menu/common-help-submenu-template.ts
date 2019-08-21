@@ -1,6 +1,20 @@
 import { Menu, MenuItemConstructorOptions } from 'electron';
+import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { Logger } from '../../src-shared/log/logger';
+import { mainWindow } from '../electron-main';
 import { MenuId } from './menu-id';
+
+const changeMap = (ipcMapChangeArg: string) => {
+  if (!mainWindow)
+    return;
+
+  mainWindow.webContents.send(IpcConstants.Map.ChangeEvent.Name, ipcMapChangeArg);
+};
+
+const selectMap = (ipcMapChangeArg: string) => {
+  Logger.info(`[Menu] Selected ${ipcMapChangeArg}.`);
+  changeMap(ipcMapChangeArg);
+};
 
 export const commonHelpSubmenuTemplate: MenuItemConstructorOptions[] = [
   {
@@ -17,7 +31,7 @@ export const commonHelpSubmenuTemplate: MenuItemConstructorOptions[] = [
       const isAdvancedModeOn = menuItem.checked;
       const mapMenu = Menu.getApplicationMenu().getMenuItemById(MenuId.Map);
       mapMenu.visible = isAdvancedModeOn;
-      Logger.info(`Changed Advanced Mode to "${isAdvancedModeOn}".`);
+      Logger.info(`[Menu] Changed Advanced Mode to "${isAdvancedModeOn}".`);
     }
   },
   {
@@ -29,16 +43,12 @@ export const commonHelpSubmenuTemplate: MenuItemConstructorOptions[] = [
         label: 'OpenStreetMap',
         type: 'radio',
         checked: true,
-        click: () => {
-          Logger.info(`Changed to use OpenStreetMap.`);
-        }
+        click: () => selectMap(IpcConstants.Map.ChangeEvent.Arg.OpenStreetMap)
       },
       {
         label: 'Google Maps (Your API key is required)',
         type: 'radio',
-        click: () => {
-          Logger.info(`Changed to use Google Maps.`);
-        }
+        click: () => selectMap(IpcConstants.Map.ChangeEvent.Arg.GoogleMaps)
       }
     ]
   }
