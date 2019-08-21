@@ -1,4 +1,4 @@
-export class PlmInternalRenderer implements PlmInternalRenderer {
+export class PlmInternalRenderer implements IPlmInternalRenderer {
   public map: PlmInternalRendererMap;
 }
 
