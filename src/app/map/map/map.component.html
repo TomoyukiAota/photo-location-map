@@ -1,1 +1,4 @@
-<app-google-maps></app-google-maps>
+<div [ngSwitch]="selectedMap">
+  <app-google-maps *ngSwitchCase="mapType.GoogleMaps"></app-google-maps>
+  <app-osm *ngSwitchCase="mapType.OpenStreetMap"></app-osm>
+</div>

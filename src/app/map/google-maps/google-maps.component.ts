@@ -29,16 +29,17 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.initializeGoogleMaps();
+    const isGoogleMapsApiLoaded = typeof google !== 'undefined';
+    if (isGoogleMapsApiLoaded) {
+      this.getSelectedPhotosAndRenderGoogleMaps();
+    } else {
+      this.initializeGoogleMaps();
+    }
   }
 
-  private handleSelectedPhotosChanged(photos: Photo[]) {
-    if (photos.length === 0) {
-      this.renderInitialGoogleMapsState();
-    } else {
-      this.renderGoogleMaps(photos);
-    }
-    this.changeDetectorRef.detectChanges();
+  private getSelectedPhotosAndRenderGoogleMaps() {
+    const photos = this.selectedPhotoService.getSelectedPhotos();
+    this.renderGoogleMaps(photos);
   }
 
   private initializeGoogleMaps(): void {
@@ -53,8 +54,26 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
     divElementForGoogleMaps.parentNode.insertBefore(scriptElement, null);
 
     GoogleMapsApiLoader.waitUntilLoaded()
-      .then(this.renderInitialGoogleMapsState)
-      .catch(this.displayGoogleMapsLoadFailureMessage);
+      .then(() => this.getSelectedPhotosAndRenderGoogleMaps())
+      .catch(() => this.displayGoogleMapsLoadFailureMessage());
+  }
+
+  private displayGoogleMapsLoadFailureMessage(): void {
+    document.getElementById('google-map').innerText = 'Failed to load Google Maps. Please check Internet connection to Google Maps.';
+  }
+
+  private handleSelectedPhotosChanged(photos: Photo[]) {
+    this.renderGoogleMaps(photos);
+  }
+
+  private renderGoogleMaps(photos: Photo[]) {
+    if (photos.length === 0) {
+      this.renderInitialGoogleMapsState();
+    } else {
+      this.renderGoogleMapsWithPhotos(photos);
+    }
+
+    this.changeDetectorRef.detectChanges();
   }
 
   private renderInitialGoogleMapsState(): void {
@@ -69,11 +88,7 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  private displayGoogleMapsLoadFailureMessage(): void {
-    document.getElementById('google-map').innerText = 'Failed to load Google Maps. Please check Internet connection to Google Maps.';
-  }
-
-  private renderGoogleMaps(photos: Photo[]) {
+  private renderGoogleMapsWithPhotos(photos: Photo[]) {
     const map = new google.maps.Map(document.getElementById('google-map'), {
       mapTypeId: google.maps.MapTypeId.ROADMAP
     });
