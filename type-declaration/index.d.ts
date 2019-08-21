@@ -4,14 +4,14 @@ interface MapChangeable {
   changeMap(ipcMapChangeArg: string): void;
 }
 
-interface PlmInternalRenderer {
+interface IPlmInternalRenderer {
   map: MapChangeable;
 }
 
 interface Window {
   process: NodeJS.Process;
   require: NodeRequire;
-  plmInternalRenderer: PlmInternalRenderer;
+  plmInternalRenderer: IPlmInternalRenderer;
 }
 
 type DirectoryTree = ReturnType<typeof import('directory-tree')>;
