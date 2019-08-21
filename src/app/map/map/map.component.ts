@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { Logger } from '../../../../src-shared/log/logger';
 import { PlmInternalRenderer, PlmInternalRendererMap } from '../../../global-variables/global-variable-for-internal-use-in-renderer';
 import { getMapType, MapType } from './map-type';
 
@@ -28,8 +29,8 @@ export class MapComponent implements OnInit, OnDestroy {
   public changeMap(ipcMapChangeArg: string) {
     this.ngZone.run(() => {
       this.selectedMap = getMapType(ipcMapChangeArg);
-      console.log(`changeMap called with ${ipcMapChangeArg}`);
       this.changeDetectorRef.detectChanges();
+      Logger.info(`Changed Map: ${ipcMapChangeArg}`);
     });
   }
 }
