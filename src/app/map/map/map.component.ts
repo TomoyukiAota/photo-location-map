@@ -18,17 +18,17 @@ export class MapComponent implements OnInit, OnDestroy {
   ngOnInit() {
     window.plmInternalRenderer = window.plmInternalRenderer || new PlmInternalRenderer();
     window.plmInternalRenderer.map = window.plmInternalRenderer.map || new PlmInternalRendererMap();
-    window.plmInternalRenderer.map.changeMap = mapTypeStr => this.changeMap(mapTypeStr);
+    window.plmInternalRenderer.map.changeMap = ipcMapChangeArg => this.changeMap(ipcMapChangeArg);
   }
 
   ngOnDestroy(): void {
     window.plmInternalRenderer.map.changeMap = null;
   }
 
-  public changeMap(mapTypeStr: string) {
+  public changeMap(ipcMapChangeArg: string) {
     this.ngZone.run(() => {
-      this.selectedMap = getMapType(mapTypeStr);
-      console.log(`changeMap called with ${mapTypeStr}`);
+      this.selectedMap = getMapType(ipcMapChangeArg);
+      console.log(`changeMap called with ${ipcMapChangeArg}`);
       this.changeDetectorRef.detectChanges();
     });
   }

@@ -1,7 +1,7 @@
 declare var window: Window;
 
 interface MapChangeable {
-  changeMap(mapTypeStr: string): void;
+  changeMap(ipcMapChangeArg: string): void;
 }
 
 interface PlmInternalRenderer {
