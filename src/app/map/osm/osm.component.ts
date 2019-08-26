@@ -1,5 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { Map } from 'leaflet';
 import { Photo } from '../../shared/model/photo.model';
 import { SelectedPhotoService } from '../../shared/service/selected-photo.service';
 import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewer-content';
@@ -11,7 +12,7 @@ import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewe
 })
 export class OsmComponent implements OnInit, OnDestroy, AfterViewInit {
   private subscription: Subscription;
-  private map: any;
+  private map: Map;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
               private selectedPhotoService: SelectedPhotoService) {
@@ -32,17 +33,35 @@ export class OsmComponent implements OnInit, OnDestroy, AfterViewInit {
     this.renderOsm(photos);
   }
 
-  public renderOsm(photos: Photo[]): void {
+  private renderOsm(photos: Photo[]): void {
+    this.ensureOsmRemoved();
+    this.initializeOsm();
+
+    if (photos.length > 0) {
+      this.renderMarkerClusterGroup(photos);
+    }
+
+    this.changeDetectorRef.detectChanges();
+  }
+
+  private ensureOsmRemoved() {
     if (this.map) {
       this.map.off();
       this.map.remove();
     }
+  }
 
-    this.initializeOsm();
+  private initializeOsm(): void {
+    this.map = L.map('osm').setView([0, 0], 2);
+    const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+      maxNativeZoom: 19,
+      maxZoom: 19
+    });
+    tileLayer.addTo(this.map);
+  }
 
-    if (photos.length === 0)
-      return;
-
+  private renderMarkerClusterGroup(photos: Photo[]) {
     const markerClusterGroup = L.markerClusterGroup();
 
     photos.forEach(photo => {
@@ -53,18 +72,5 @@ export class OsmComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.map.addLayer(markerClusterGroup);
     this.map.fitBounds(markerClusterGroup.getBounds());
-
-    this.changeDetectorRef.detectChanges();
-  }
-
-  public initializeOsm(): void {
-    this.map = L.map('osm').setView([0, 0], 2);
-    const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
-      maxNativeZoom: 19,
-      maxZoom: 19
-    });
-    tileLayer.addTo(this.map);
-    this.changeDetectorRef.detectChanges();
   }
 }
