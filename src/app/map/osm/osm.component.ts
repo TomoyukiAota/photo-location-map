@@ -44,7 +44,7 @@ export class OsmComponent implements OnInit, OnDestroy, AfterViewInit {
     this.changeDetectorRef.detectChanges();
   }
 
-  private ensureOsmRemoved() {
+  private ensureOsmRemoved(): void {
     if (this.map) {
       this.map.off();
       this.map.remove();
@@ -61,7 +61,7 @@ export class OsmComponent implements OnInit, OnDestroy, AfterViewInit {
     tileLayer.addTo(this.map);
   }
 
-  private renderMarkerClusterGroup(photos: Photo[]) {
+  private renderMarkerClusterGroup(photos: Photo[]): void {
     const markerClusterGroup = L.markerClusterGroup();
 
     photos.forEach(photo => {
