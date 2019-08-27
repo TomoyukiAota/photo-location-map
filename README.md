@@ -1,6 +1,6 @@
 # Photo Location Map
 
-This application displays the locations where your photos are taken on OpenStreetMap.
+This application displays the locations where your photos are taken on a map.
 
 Currently, this application is a work in progress.
 
