@@ -2,17 +2,11 @@
   "name": "photo-location-map",
   "productName": "Photo Location Map",
   "version": "0.0.1",
-  "description": "Display the locations where your photos are taken on Google Maps.",
+  "description": "Display the locations where your photos are taken on OpenStreetMap.",
   "homepage": "https://github.com/TomoyukiAota/photo-location-map",
   "author": {
     "name": "Tomoyuki Aota"
   },
-  "keywords": [
-    "angular",
-    "electron",
-    "typescript",
-    "sass"
-  ],
   "main": "src-main/electron-main.js",
   "private": true,
   "config": {
