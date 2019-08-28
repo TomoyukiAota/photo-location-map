@@ -25,16 +25,18 @@ export class SidebarComponent {
     this.electronService.remote.dialog.showOpenDialog(
       {
         properties: ['openDirectory'],
-      },
-      this.handleFolderSelected
-    );
+      }
+    ).then(result => {
+      const isCanceled = result.filePaths.length === 0;
+      if (isCanceled)
+        return;
+
+      const selectedFolderPath = result.filePaths[0];
+      this.handleSelectedFolder(selectedFolderPath);
+    });
   }
 
-  private readonly handleFolderSelected = (folderPaths: string[]) => {
-    if (!folderPaths)
-      return;
-
-    const selectedFolderPath = folderPaths[0];
+  private readonly handleSelectedFolder = (selectedFolderPath: string) => {
     FolderSelectionRecorder.start(selectedFolderPath);
     const directoryTreeObject = createDirectoryTree(selectedFolderPath);
     DirTreeObjectRecorder.record(directoryTreeObject);
