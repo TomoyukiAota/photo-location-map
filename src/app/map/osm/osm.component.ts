@@ -60,7 +60,7 @@ export class OsmComponent implements OnInit, OnDestroy, AfterViewInit {
     });
     tileLayer.addTo(this.map);
     this.map.once('moveend', event => {
-      const initialMaxZoomLevel = 15;
+      const initialMaxZoomLevel = 13;
       if (this.map.getZoom() > initialMaxZoomLevel) {
         this.map.setZoom(initialMaxZoomLevel);
       }
