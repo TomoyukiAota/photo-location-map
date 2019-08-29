@@ -22,7 +22,7 @@ export const commonHelpSubmenuTemplate: MenuItemConstructorOptions[] = [
   },
   { type: 'separator' },
   {
-    label: ' ----- Advanced Mode Menu ----- ',
+    label: ' ----- Advanced Menu ----- ',
     enabled: false
   },
   { role: 'toggleDevTools' },
