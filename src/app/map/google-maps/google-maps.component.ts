@@ -112,7 +112,7 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     google.maps.event.addListenerOnce(map, 'bounds_changed', function (event) {
-      const initialMaxZoomLevel = 15;
+      const initialMaxZoomLevel = 13;
       if (this.getZoom() > initialMaxZoomLevel) {
         this.setZoom(initialMaxZoomLevel);
       }
