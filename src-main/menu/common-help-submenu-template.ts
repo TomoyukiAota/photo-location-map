@@ -18,26 +18,16 @@ const selectMap = (ipcMapChangeArg: string) => {
 
 export const commonHelpSubmenuTemplate: MenuItemConstructorOptions[] = [
   {
-    label: 'Welcome'
+    label: 'Show Welcome Dialog'
   },
-  { type: 'separator' },
-  { role: 'toggleDevTools' },
   { type: 'separator' },
   {
-    label: 'Advanced Mode',
-    type: 'checkbox',
-    checked: false,
-    click: menuItem => {
-      const isAdvancedModeOn = menuItem.checked;
-      const mapMenu = Menu.getApplicationMenu().getMenuItemById(MenuId.Map);
-      mapMenu.visible = isAdvancedModeOn;
-      Logger.info(`[Menu] Changed Advanced Mode to "${isAdvancedModeOn}".`);
-    }
+    label: ' ----- Advanced Menu ----- ',
+    enabled: false
   },
+  { role: 'toggleDevTools' },
   {
     label: 'Map',
-    id: MenuId.Map,
-    visible: false,
     submenu: [
       {
         label: 'OpenStreetMap',
