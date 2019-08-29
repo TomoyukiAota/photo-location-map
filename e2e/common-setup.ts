@@ -12,9 +12,9 @@ export default function setup() {
     });
     await this.app.start();
     const browser = this.app.client;
-    await browser.waitUntilWindowLoaded(30000);
+    await browser.waitUntilWindowLoaded(300000);
 
-    browser.timeouts('script', 30000);
+    browser.timeouts('script', 300000);
   });
 
   afterEach(function () {
