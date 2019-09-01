@@ -17,6 +17,26 @@ mat-tree-node {
   height: 40px;
 }
 
+.spacer-to-align-with-tree-expand-button {
+  width: 40px;
+}
+
+.non-selectable-node {
+  color: #c0c0c0;
+  height: 16px;
+  line-height: 16px;
+}
+
+div.disabled-checkbox-alternative {
+  display: inline-block;
+  vertical-align: middle;
+  background-color: #e0e0e0;
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+  margin-right: 4px;
+}
+
 div.tooltip {
   position: relative;
 }

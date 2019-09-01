@@ -1,18 +1,25 @@
 <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
-  <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
-    <button mat-icon-button disabled></button>
+  <mat-tree-node *matTreeNodeDef="let node"
+                 matTreeNodeToggle
+                 matTreeNodePadding
+                 [matTreeNodePaddingIndent]="indentPerLevel">
+
+    <!-- Adjust space to align with tree expand button (which look like > or v) -->
+    <div class="spacer-to-align-with-tree-expand-button"></div>
+
     <div class="tooltip"
          (mouseenter)="tooltipDisplayLogic.onMouseEnter(node, leafNodeDiv, $event)"
          (mouseleave)="tooltipDisplayLogic.onMouseLeave(node, leafNodeDiv)"
          #leafNodeDiv>
       <mat-checkbox *ngIf="node.isSelectable"
-                    class="checklist-leaf-node tooltip-target"
+                    class="tooltip-target"
                     [checked]="isSelected(node)"
                     (change)="handleCheckboxChange(node)">
         {{node.name}}
       </mat-checkbox>
       <mat-label *ngIf="!node.isSelectable"
-                 class="tooltip-target">
+                 class="tooltip-target non-selectable-node">
+        <div class="disabled-checkbox-alternative"></div>
         {{node.name}}
       </mat-label>
       <app-dir-tree-view-tooltip *ngIf="tooltipDisplayLogic.tooltipEnabled(node)"
@@ -23,7 +30,9 @@
     </div>
   </mat-tree-node>
 
-  <mat-tree-node *matTreeNodeDef="let node; when: hasChildren" matTreeNodePadding>
+  <mat-tree-node *matTreeNodeDef="let node; when: hasChildren"
+                 matTreeNodePadding
+                 [matTreeNodePaddingIndent]="indentPerLevel">
     <button mat-icon-button matTreeNodeToggle>
       <mat-icon class="mat-icon-rtl-mirror">
         {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
@@ -35,6 +44,10 @@
                   (change)="handleCheckboxChange(node)">
       {{node.name}}
     </mat-checkbox>
-    <mat-label *ngIf="!node.isSelectable">{{node.name}}</mat-label>
+    <mat-label *ngIf="!node.isSelectable"
+               class="non-selectable-node">
+      <div class="disabled-checkbox-alternative"></div>
+      {{node.name}}
+    </mat-label>
   </mat-tree-node>
 </mat-tree>

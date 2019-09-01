@@ -19,6 +19,9 @@ import { DirTreeViewTooltipDisplayLogic } from './dir-tree-view-tooltip-display-
   styleUrls: ['directory-tree-view.component.scss']
 })
 export class DirectoryTreeViewComponent {
+  // padding-left for each tree view node is `level * indentPerLevel` pixels where level is depth of the tree view node.
+  public readonly indentPerLevel = 30;
+
   public readonly treeControl: FlatTreeControl<FlatNode>;
   public readonly dataSource: MatTreeFlatDataSource<NestedNode, FlatNode>;
   private readonly treeFlattener: MatTreeFlattener<NestedNode, FlatNode>;
