@@ -7,6 +7,10 @@
   }
 }
 
+mat-tree {
+  white-space: nowrap;
+}
+
 mat-tree-node {
   min-height: 40px;
   overflow: visible;
