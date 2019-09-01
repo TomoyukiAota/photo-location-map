@@ -7,6 +7,10 @@
   }
 }
 
+mat-tree {
+  white-space: nowrap;
+}
+
 mat-tree-node {
   min-height: 40px;
   overflow: visible;
@@ -17,15 +21,31 @@ mat-tree-node {
   height: 40px;
 }
 
-div.tooltip {
+.non-selectable-node {
+  color: #c0c0c0;
+  height: 16px;
+  line-height: 16px;
+}
+
+div.disabled-checkbox-alternative {
+  display: inline-block;
+  vertical-align: middle;
+  background-color: #e0e0e0;
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+  margin-right: 4px;
+}
+
+div.tooltip-container {
   position: relative;
 }
 
-div.tooltip > .tooltip-target {
+div.tooltip-container > .tooltip-target {
   line-height: 40px;
 }
 
-div.tooltip > .tooltip-content {
+div.tooltip-container > .tooltip-content {
   position: absolute;
   left: -30px;
   padding: 0.5em;
@@ -40,11 +60,11 @@ div.tooltip > .tooltip-content {
   animation: fadeIn 0.5s ease 0s;
 }
 
-div.tooltip > .tooltip-content.visible-above {
+div.tooltip-container > .tooltip-content.visible-above {
   @include fade-in-animation;
   bottom: 35px;
 }
 
-div.tooltip > .tooltip-content.visible-below {
+div.tooltip-container > .tooltip-content.visible-below {
   @include fade-in-animation;
 }

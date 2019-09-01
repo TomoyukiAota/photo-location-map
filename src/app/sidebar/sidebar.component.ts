@@ -1,10 +1,13 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import * as createDirectoryTree from 'directory-tree';
 import { DirTreeObjectRecorder } from '../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
+import { ConditionalRequire } from '../../../src-shared/require/conditional-require';
 import { ElectronService } from '../shared/service/electron.service';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
 import { FolderSelectionRecorder } from './folder-selection-recorder';
+
+const path = ConditionalRequire.path;
 
 @Component({
   selector: 'app-sidebar',
@@ -13,7 +16,7 @@ import { FolderSelectionRecorder } from './folder-selection-recorder';
 })
 export class SidebarComponent {
   public readonly messageWhenFolderIsNotSelected = 'The selected folder will be displayed here.';
-  public selectedFolderPath = '';
+  public parentFolderPath = '';
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
               private electronService: ElectronService,
@@ -43,7 +46,7 @@ export class SidebarComponent {
     this.photoDataService.update(directoryTreeObject)
       .then(() => {
         this.directoryTreeViewDataService.update(directoryTreeObject);
-        this.selectedFolderPath = selectedFolderPath;
+        this.parentFolderPath = path.dirname(selectedFolderPath) + path.sep;
         this.changeDetectorRef.detectChanges();
         FolderSelectionRecorder.complete();
       })

@@ -2,6 +2,8 @@
   <div id="select-folder-button" (click)="showSelectFolderDialog()">
     <button mat-stroked-button>{{ 'SIDEBAR.SELECT_FOLDER' | translate }}</button>
   </div>
-  <p>{{ selectedFolderPath || messageWhenFolderIsNotSelected }}</p>
-  <app-directory-tree-view></app-directory-tree-view>
+  <div class="path-or-message">{{ parentFolderPath || messageWhenFolderIsNotSelected }}</div>
+  <div class="directory-tree-view-area">
+    <app-directory-tree-view></app-directory-tree-view>
+  </div>
 </div>
