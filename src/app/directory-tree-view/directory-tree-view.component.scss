@@ -37,15 +37,15 @@ div.disabled-checkbox-alternative {
   margin-right: 4px;
 }
 
-div.tooltip {
+div.tooltip-container {
   position: relative;
 }
 
-div.tooltip > .tooltip-target {
+div.tooltip-container > .tooltip-target {
   line-height: 40px;
 }
 
-div.tooltip > .tooltip-content {
+div.tooltip-container > .tooltip-content {
   position: absolute;
   left: -30px;
   padding: 0.5em;
@@ -60,11 +60,11 @@ div.tooltip > .tooltip-content {
   animation: fadeIn 0.5s ease 0s;
 }
 
-div.tooltip > .tooltip-content.visible-above {
+div.tooltip-container > .tooltip-content.visible-above {
   @include fade-in-animation;
   bottom: 35px;
 }
 
-div.tooltip > .tooltip-content.visible-below {
+div.tooltip-container > .tooltip-content.visible-below {
   @include fade-in-animation;
 }
