@@ -46,7 +46,8 @@ export class SidebarComponent {
     const dialogRef = this.dialog.open(FolderSelectionProgressComponent, {
       width: '300px',
       height: '150px',
-      panelClass: 'custom-dialog-container'
+      panelClass: 'custom-dialog-container',
+      disableClose: true
     });
     FolderSelectionRecorder.start(selectedFolderPath);
     const directoryTreeObject = createDirectoryTree(selectedFolderPath);
