@@ -1,3 +1,4 @@
+import { MatProgressSpinnerModule } from '@angular/material';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FolderSelectionProgressComponent } from './folder-selection-progress.component';
@@ -8,7 +9,8 @@ describe('FolderSelectionProgressComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FolderSelectionProgressComponent ]
+      declarations: [ FolderSelectionProgressComponent ],
+      imports: [ MatProgressSpinnerModule ]
     })
     .compileComponents();
   }));

@@ -10,4 +10,9 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+.custom-dialog-container .mat-dialog-container {
+  padding: 0;
+  position: relative;
+}
+
 @import "photo-info-viewer";
