@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component} from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ElectronService } from '../shared/service/electron.service';
@@ -9,6 +10,8 @@ import { SidebarComponent } from './sidebar.component';
 
 @Component({ selector: 'app-directory-tree-view', template: '' })
 class DummyDirectoryTreeViewComponent {}
+
+class DummyMatDialog {}
 
 describe('SidebarComponent', () => {
   let component: SidebarComponent;
@@ -25,7 +28,8 @@ describe('SidebarComponent', () => {
       ],
       providers: [
         ElectronService,
-        DirectoryTreeViewDataService
+        DirectoryTreeViewDataService,
+        { provide: MatDialog, useClass: DummyMatDialog }
       ]
     })
     .compileComponents();

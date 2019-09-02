@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTreeModule } from '@angular/material/tree';
@@ -24,6 +25,7 @@ import { HomeComponent } from './home/home.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { DirectoryTreeViewComponent } from './directory-tree-view/directory-tree-view.component';
 import { DirTreeViewTooltipComponent } from './directory-tree-view/dir-tree-view-tooltip/dir-tree-view-tooltip.component';
+import { FolderSelectionProgressComponent } from './folder-selection-progress/folder-selection-progress.component';
 import { MapComponent } from './map/map/map.component';
 import { GoogleMapsComponent } from './map/google-maps/google-maps.component';
 import { OsmComponent } from './map/osm/osm.component';
@@ -40,9 +42,13 @@ export function HttpLoaderFactory(http: HttpClient) {
     SidebarComponent,
     DirectoryTreeViewComponent,
     DirTreeViewTooltipComponent,
+    FolderSelectionProgressComponent,
     MapComponent,
     GoogleMapsComponent,
     OsmComponent
+  ],
+  entryComponents: [
+    FolderSelectionProgressComponent
   ],
   imports: [
     BrowserModule,
@@ -60,6 +66,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     BrowserAnimationsModule,
     MatButtonModule,
     MatCheckboxModule,
+    MatDialogModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
