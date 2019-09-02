@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import * as createDirectoryTree from 'directory-tree';
 import { DirTreeObjectRecorder } from '../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
 import { ConditionalRequire } from '../../../src-shared/require/conditional-require';
@@ -6,6 +7,7 @@ import { ElectronService } from '../shared/service/electron.service';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
 import { FolderSelectionRecorder } from './folder-selection-recorder';
+import { FolderSelectionProgressComponent } from '../folder-selection-progress/folder-selection-progress.component';
 
 const path = ConditionalRequire.path;
 
@@ -19,6 +21,7 @@ export class SidebarComponent {
   public parentFolderPath = '';
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
+              private dialog: MatDialog,
               private electronService: ElectronService,
               private photoDataService: PhotoDataService,
               private directoryTreeViewDataService: DirectoryTreeViewDataService) {
@@ -40,6 +43,12 @@ export class SidebarComponent {
   }
 
   private readonly handleSelectedFolder = (selectedFolderPath: string) => {
+    const dialogRef = this.dialog.open(FolderSelectionProgressComponent, {
+      width: '300px',
+      height: '150px',
+      panelClass: 'custom-dialog-container',
+      disableClose: true
+    });
     FolderSelectionRecorder.start(selectedFolderPath);
     const directoryTreeObject = createDirectoryTree(selectedFolderPath);
     DirTreeObjectRecorder.record(directoryTreeObject);
@@ -52,6 +61,9 @@ export class SidebarComponent {
       })
       .catch(reason =>
         FolderSelectionRecorder.fail(reason)
-      );
+      )
+      .finally(() => {
+        dialogRef.close();
+      });
   };
 }
