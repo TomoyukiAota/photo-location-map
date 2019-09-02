@@ -1,0 +1,16 @@
+.progress-indicator {
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translateY(-50%) translateX(-50%);
+}
+
+mat-progress-spinner {
+  margin: 0 auto 0 auto;
+}
+
+.progress-text {
+  margin-top: 15px;
+}

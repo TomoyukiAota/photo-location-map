@@ -10,6 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule, MatSpinner } from '@angular/material/progress-spinner';
 import { MatTreeModule } from '@angular/material/tree';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -48,7 +49,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     OsmComponent
   ],
   entryComponents: [
-    FolderSelectionProgressComponent
+    FolderSelectionProgressComponent,
+    MatSpinner
   ],
   imports: [
     BrowserModule,
@@ -70,6 +72,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    MatProgressSpinnerModule,
     MatTreeModule
   ],
   bootstrap: [AppComponent]
