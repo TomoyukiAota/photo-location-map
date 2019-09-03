@@ -7,7 +7,7 @@ import { ElectronService } from '../shared/service/electron.service';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
 import { FolderSelectionRecorder } from './folder-selection-recorder';
-import { FolderSelectionProgressComponent } from '../folder-selection-progress/folder-selection-progress.component';
+import { FolderSelectionProgressComponent } from '../folder-selection-progress/dialog/folder-selection-progress.component';
 
 const path = ConditionalRequire.path;
 
