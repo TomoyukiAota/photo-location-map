@@ -7,6 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class LoadingFolderDialogComponent implements OnInit {
 
+  // TODO: Inject LoadingFolderProgressReporterService and get progress text to display on the dialog.
   constructor() { }
 
   ngOnInit() {
