@@ -26,7 +26,7 @@ import { HomeComponent } from './home/home.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { DirectoryTreeViewComponent } from './directory-tree-view/directory-tree-view.component';
 import { DirTreeViewTooltipComponent } from './directory-tree-view/dir-tree-view-tooltip/dir-tree-view-tooltip.component';
-import { FolderSelectionProgressComponent } from './folder-selection-progress/folder-selection-progress.component';
+import { FolderSelectionProgressComponent } from './folder-selection-progress/dialog/folder-selection-progress.component';
 import { MapComponent } from './map/map/map.component';
 import { GoogleMapsComponent } from './map/google-maps/google-maps.component';
 import { OsmComponent } from './map/osm/osm.component';
