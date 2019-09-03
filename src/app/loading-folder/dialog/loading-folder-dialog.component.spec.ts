@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { LoadingFolderDialogComponent } from './loading-folder-dialog.component';
 
-describe('FolderSelectionProgressComponent', () => {
+describe('LoadingFolderDialogComponent', () => {
   let component: LoadingFolderDialogComponent;
   let fixture: ComponentFixture<LoadingFolderDialogComponent>;
 
