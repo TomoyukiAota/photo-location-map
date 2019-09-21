@@ -45,7 +45,7 @@ export class SidebarComponent {
   private readonly handleSelectedFolder = (selectedFolderPath: string) => {
     const dialogRef = this.dialog.open(LoadingFolderDialogComponent, {
       width: '300px',
-      height: '150px',
+      height: '90px',
       panelClass: 'custom-dialog-container',
       disableClose: true
     });
