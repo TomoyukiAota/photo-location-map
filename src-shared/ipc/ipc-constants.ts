@@ -1,4 +1,8 @@
 export namespace IpcConstants {
+  export namespace AboutBox {
+    export const Name = 'ipc-constants-show-about-box';
+  }
+
   export namespace Map {
     export namespace ChangeEvent {
       export const Name = 'ipc-constants-map-change';
