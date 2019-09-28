@@ -1,10 +1,15 @@
 declare var window: Window;
 
+interface AboutBoxShowable {
+  showAboutBox(): void;
+}
+
 interface MapChangeable {
   changeMap(ipcMapChangeArg: string): void;
 }
 
 interface IPlmInternalRenderer {
+  aboutBox: AboutBoxShowable;
   map: MapChangeable;
 }
 
