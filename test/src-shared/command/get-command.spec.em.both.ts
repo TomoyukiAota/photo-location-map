@@ -1,8 +1,8 @@
 import assert = require('assert');
-import { ConditionalRequire } from '../../../src-shared/require/conditional-require';
+import { ProxyRequire } from '../../../src-shared/require/proxy-require';
 import { Command } from '../../../src-shared/command/command';
 
-const os = ConditionalRequire.os;
+const os = ProxyRequire.os;
 
 describe('Command', () => {
   it('toRunAssociatedApp should create the command', () => {

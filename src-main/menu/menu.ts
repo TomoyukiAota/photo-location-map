@@ -1,10 +1,10 @@
 import { Menu } from 'electron';
-import { ConditionalRequire } from '../../src-shared/require/conditional-require';
+import { ProxyRequire } from '../../src-shared/require/proxy-require';
 import { Logger } from '../../src-shared/log/logger';
 import { menuTemplateOnWindowsLinux } from './menu-template-on-windows-linux';
 import { menuTemplateOnMac } from './menu-template-on-mac';
 
-const os = ConditionalRequire.os;
+const os = ProxyRequire.os;
 
 const getMenuTemplate = () => {
   switch (os.platform()) {
