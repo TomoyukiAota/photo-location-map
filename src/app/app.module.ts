@@ -30,6 +30,7 @@ import { LoadingFolderDialogComponent } from './loading-folder/dialog/loading-fo
 import { MapComponent } from './map/map/map.component';
 import { GoogleMapsComponent } from './map/google-maps/google-maps.component';
 import { OsmComponent } from './map/osm/osm.component';
+import { AboutBoxComponent } from './about-box/about-box.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -39,6 +40,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 @NgModule({
   declarations: [
     AppComponent,
+    AboutBoxComponent,
     HomeComponent,
     SidebarComponent,
     DirectoryTreeViewComponent,
@@ -49,6 +51,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     OsmComponent
   ],
   entryComponents: [
+    AboutBoxComponent,
     LoadingFolderDialogComponent
   ],
   imports: [

@@ -5,7 +5,7 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { Logger } from '../src-shared/log/logger';
 import { AppModule } from './app/app.module';
 import { AppConfig } from './environments/environment';
-import './ipc-renderer-setup/ipc-map-setup';
+import './ipc-renderer-setup/ipc-renderer-all-setup';
 
 if (AppConfig.production) {
   enableProdMode();

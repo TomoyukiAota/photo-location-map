@@ -1,17 +1,22 @@
-import { Component } from '@angular/core';
-import { ElectronService } from './shared/service/electron.service';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { AppConfig } from '../environments/environment';
 import { Logger } from '../../src-shared/log/logger';
+import { AppConfig } from '../environments/environment';
+import { PlmInternalRenderer, PlmInternalRendererAboutBox } from '../global-variables/global-variable-for-internal-use-in-renderer';
+import { ElectronService } from './shared/service/electron.service';
+import { AboutBoxComponent } from './about-box/about-box.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
-  constructor(public electronService: ElectronService,
-    private translate: TranslateService) {
+export class AppComponent implements OnInit, OnDestroy {
+  constructor(private dialog: MatDialog,
+              private ngZone: NgZone,
+              public electronService: ElectronService,
+              private translate: TranslateService) {
 
     translate.setDefaultLang('en');
     Logger.info('AppConfig', AppConfig);
@@ -23,5 +28,26 @@ export class AppComponent {
     } else {
       Logger.info('Mode web');
     }
+  }
+
+  public ngOnInit(): void {
+    window.plmInternalRenderer = window.plmInternalRenderer || new PlmInternalRenderer();
+    window.plmInternalRenderer.aboutBox = window.plmInternalRenderer.aboutBox || new PlmInternalRendererAboutBox();
+    window.plmInternalRenderer.aboutBox.showAboutBox = () => this.showAboutBox();
+  }
+
+  public ngOnDestroy(): void {
+    window.plmInternalRenderer.aboutBox.showAboutBox = null;
+  }
+
+  public showAboutBox(): void {
+    this.ngZone.run(() => {
+      this.dialog.open(AboutBoxComponent, {
+        width: '300px',
+        height: '300px',
+        panelClass: 'custom-dialog-container'
+      });
+      Logger.info('Displayed About Box.');
+    });
   }
 }

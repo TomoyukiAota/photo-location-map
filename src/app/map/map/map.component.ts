@@ -16,13 +16,13 @@ export class MapComponent implements OnInit, OnDestroy {
               private ngZone: NgZone) {
   }
 
-  ngOnInit() {
+  public ngOnInit(): void {
     window.plmInternalRenderer = window.plmInternalRenderer || new PlmInternalRenderer();
     window.plmInternalRenderer.map = window.plmInternalRenderer.map || new PlmInternalRendererMap();
     window.plmInternalRenderer.map.changeMap = ipcMapChangeArg => this.changeMap(ipcMapChangeArg);
   }
 
-  ngOnDestroy(): void {
+  public ngOnDestroy(): void {
     window.plmInternalRenderer.map.changeMap = null;
   }
 
