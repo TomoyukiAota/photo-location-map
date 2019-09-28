@@ -1,6 +1,6 @@
 import { EnvironmentDetector } from '../environment/environment-detector';
 import { ProcessIdentifier } from '../process/process-identifier';
-import { ConditionalRequire } from '../require/conditional-require';
+import { ProxyRequire } from '../require/proxy-require';
 import { AnalyticsInterface } from './analytics-interface';
 import { AnalyticsRenderer } from './analytics-renderer';
 import { AnalyticsMain } from './analytics-main';
@@ -11,7 +11,7 @@ let analytics: AnalyticsInterface;
 
 if (ProcessIdentifier.isElectronMain) {
   const analyticsMain = new AnalyticsMain();
-  ConditionalRequire.electron.ipcMain.on(AnalyticsIpcChannelName.trackEvent, (event, category, action, label, value) => {
+  ProxyRequire.electron.ipcMain.on(AnalyticsIpcChannelName.trackEvent, (event, category, action, label, value) => {
     analyticsMain.trackEvent(category, action, label, value);
   });
   analytics = analyticsMain;

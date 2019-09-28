@@ -1,9 +1,9 @@
-import { ConditionalRequire } from '../require/conditional-require';
+import { ProxyRequire } from '../require/proxy-require';
 import { Now } from '../date-time/now';
 import { ProcessIdentifier } from '../process/process-identifier';
 
 const ipcChannelName = 'get-log-file-config-from-main';
-const pathSep = ConditionalRequire.path.sep;
+const pathSep = ProxyRequire.path.sep;
 
 class LogFileConfigState {
   public dirName: string;
@@ -60,7 +60,7 @@ export class LogFileConfig {
 
   private static ensureCacheForRenderer() {
     if (!this.configCacheForRenderer.isInitialized()) {
-      const configFromMain: LogFileConfigState = ConditionalRequire.electron.ipcRenderer.sendSync(ipcChannelName);
+      const configFromMain: LogFileConfigState = ProxyRequire.electron.ipcRenderer.sendSync(ipcChannelName);
       this.configCacheForRenderer.initialize(configFromMain);
     }
   }
@@ -100,13 +100,13 @@ export class LogFileConfig {
 
 class LogFileConfigSetup {
   private static setupIpcChannelListnerInMainProcess() {
-    ConditionalRequire.electron.ipcMain.on(ipcChannelName, (event, arg) => {
+    ProxyRequire.electron.ipcMain.on(ipcChannelName, (event, arg) => {
       event.returnValue = LogFileConfig.config.get();
     });
   }
 
   private static setupLogFileConfig() {
-    const appDataDirectory = ConditionalRequire.electron.app.getPath('appData');
+    const appDataDirectory = ProxyRequire.electron.app.getPath('appData');
     const logDirectory = `${appDataDirectory}${pathSep}Photo Location Map${pathSep}logs`;
     const fileName = `${Now.basicFormat}_photo-location-map_log.txt`;
     LogFileConfig.setup(logDirectory, fileName);
