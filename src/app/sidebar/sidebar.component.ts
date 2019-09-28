@@ -2,14 +2,14 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import * as createDirectoryTree from 'directory-tree';
 import { DirTreeObjectRecorder } from '../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
-import { ConditionalRequire } from '../../../src-shared/require/conditional-require';
+import { ProxyRequire } from '../../../src-shared/require/proxy-require';
 import { ElectronService } from '../shared/service/electron.service';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
 import { FolderSelectionRecorder } from './folder-selection-recorder';
 import { LoadingFolderDialogComponent } from '../loading-folder/dialog/loading-folder-dialog.component';
 
-const path = ConditionalRequire.path;
+const path = ProxyRequire.path;
 
 @Component({
   selector: 'app-sidebar',

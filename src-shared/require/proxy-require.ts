@@ -1,6 +1,6 @@
 import { ProcessIdentifier } from '../process/process-identifier';
 
-export class ConditionalRequire {
+export class ProxyRequire {
   public static electron: typeof import('electron') = null;
   public static os: typeof import('os') = null;
   public static path: typeof import('path') = null;
@@ -23,4 +23,4 @@ export class ConditionalRequire {
   }
 }
 
-ConditionalRequire.initialize();
+ProxyRequire.initialize();

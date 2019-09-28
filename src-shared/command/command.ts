@@ -1,6 +1,6 @@
-import { ConditionalRequire } from '../require/conditional-require';
+import { ProxyRequire } from '../require/proxy-require';
 
-const os = ConditionalRequire.os;
+const os = ProxyRequire.os;
 
 export class Command {
   public static toRunAssociatedApp(path: string): string {
