@@ -48,6 +48,7 @@ export class SidebarComponent {
       height: '90px',
       panelClass: 'custom-dialog-container',
       disableClose: true,
+      autoFocus: false,
       restoreFocus: false
     });
     FolderSelectionRecorder.start(selectedFolderPath);
