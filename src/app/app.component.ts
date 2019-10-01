@@ -45,7 +45,9 @@ export class AppComponent implements OnInit, OnDestroy {
       this.dialog.open(AboutBoxComponent, {
         width: '350px',
         height: '300px',
-        panelClass: 'custom-dialog-container'
+        panelClass: 'custom-dialog-container',
+        autoFocus: false,
+        restoreFocus: false
       });
       Logger.info('Displayed About Box.');
     });
