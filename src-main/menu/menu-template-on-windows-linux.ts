@@ -1,18 +1,7 @@
 import { MenuItemConstructorOptions } from 'electron';
-import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
-import { Logger } from '../../src-shared/log/logger';
 import { commonMenuTemplate } from './common-menu-template';
 import { commonHelpSubmenuTemplate } from './common-help-submenu-template';
-import { mainWindow } from '../electron-main';
-
-const handleAboutMenuClicked = () => {
-  Logger.info(`[Menu] Clicked "About Photo Location Map".`);
-
-  if (!mainWindow)
-    return;
-
-  mainWindow.webContents.send(IpcConstants.AboutBox.Name);
-};
+import { handleAboutMenuClicked } from './handle-about-menu-clicked';
 
 export const menuTemplateOnWindowsLinux: MenuItemConstructorOptions[] = [
   ...commonMenuTemplate,
