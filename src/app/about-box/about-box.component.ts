@@ -14,7 +14,7 @@ export class AboutBoxComponent implements AfterViewInit {
 
   public ngAfterViewInit() {
     this.configureOpeningInOsBrowser(this.gitHubRepoLink, 'https://github.com/TomoyukiAota/photo-location-map');
-    this.configureOpeningInOsBrowser(this.authorLink, 'https://github.com/tomoyukiaota');
+    this.configureOpeningInOsBrowser(this.authorLink, 'https://github.com/TomoyukiAota');
   }
 
   private configureOpeningInOsBrowser(elementRef: ElementRef<HTMLAnchorElement>, url: string) {
