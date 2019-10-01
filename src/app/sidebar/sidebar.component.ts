@@ -47,7 +47,8 @@ export class SidebarComponent {
       width: '300px',
       height: '90px',
       panelClass: 'custom-dialog-container',
-      disableClose: true
+      disableClose: true,
+      restoreFocus: false
     });
     FolderSelectionRecorder.start(selectedFolderPath);
     const directoryTreeObject = createDirectoryTree(selectedFolderPath);
