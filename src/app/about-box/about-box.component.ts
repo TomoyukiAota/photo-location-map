@@ -1,6 +1,7 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { ProxyRequire } from '../../../src-shared/require/proxy-require';
 
+const app = ProxyRequire.electron.remote.app;
 const shell = ProxyRequire.electron.shell;
 
 @Component({
@@ -9,6 +10,8 @@ const shell = ProxyRequire.electron.shell;
   styleUrls: ['./about-box.component.scss']
 })
 export class AboutBoxComponent implements AfterViewInit {
+  public readonly appVersion = app.getVersion();
+
   @ViewChild('gitHubRepoLink', { static: false }) gitHubRepoLink: ElementRef<HTMLAnchorElement>;
   @ViewChild('authorLink', { static: false }) authorLink: ElementRef<HTMLAnchorElement>;
 
