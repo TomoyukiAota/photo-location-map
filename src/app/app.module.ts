@@ -31,6 +31,7 @@ import { MapComponent } from './map/map/map.component';
 import { GoogleMapsComponent } from './map/google-maps/google-maps.component';
 import { OsmComponent } from './map/osm/osm.component';
 import { AboutBoxComponent } from './about-box/about-box.component';
+import { WelcomeDialogComponent } from './welcome-dialog/welcome-dialog.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -41,6 +42,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   declarations: [
     AppComponent,
     AboutBoxComponent,
+    WelcomeDialogComponent,
     HomeComponent,
     SidebarComponent,
     DirectoryTreeViewComponent,
@@ -52,6 +54,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   ],
   entryComponents: [
     AboutBoxComponent,
+    WelcomeDialogComponent,
     LoadingFolderDialogComponent
   ],
   imports: [
