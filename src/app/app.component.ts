@@ -66,11 +66,12 @@ export class AppComponent implements OnInit, OnDestroy {
   public showWelcomeDialog(): void {
     this.ngZone.run(() => {
       this.dialog.open(WelcomeDialogComponent, {
-        width: '350px',
-        height: '300px',
+        width: '600px',
+        height: '400px',
         panelClass: 'custom-dialog-container',
         autoFocus: false,
-        restoreFocus: false
+        restoreFocus: false,
+        disableClose: true
       });
       Logger.info('Displayed Welcome Dialog.');
     });
