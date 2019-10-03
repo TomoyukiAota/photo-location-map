@@ -3,6 +3,10 @@ export namespace IpcConstants {
     export const Name = 'ipc-constants-show-about-box';
   }
 
+  export namespace WelcomeDialog {
+    export const Name = 'ipc-constants-show-welcome-dialog';
+  }
+
   export namespace Map {
     export namespace ChangeEvent {
       export const Name = 'ipc-constants-map-change';
