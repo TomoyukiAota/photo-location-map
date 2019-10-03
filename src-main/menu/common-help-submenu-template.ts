@@ -1,8 +1,16 @@
-import { Menu, MenuItemConstructorOptions } from 'electron';
+import { MenuItemConstructorOptions } from 'electron';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { Logger } from '../../src-shared/log/logger';
 import { mainWindow } from '../electron-main';
-import { MenuId } from './menu-id';
+
+const handleShowWelcomeDialogClicked = () => {
+  Logger.info(`[Menu] Clicked "Show Welcome Dialog".`);
+
+  if (!mainWindow)
+    return;
+
+  mainWindow.webContents.send(IpcConstants.WelcomeDialog.Name);
+};
 
 const changeMap = (ipcMapChangeArg: string) => {
   if (!mainWindow)
@@ -18,7 +26,8 @@ const selectMap = (ipcMapChangeArg: string) => {
 
 export const commonHelpSubmenuTemplate: MenuItemConstructorOptions[] = [
   {
-    label: 'Show Welcome Dialog'
+    label: 'Show Welcome Dialog',
+    click: () => handleShowWelcomeDialogClicked()
   },
   { type: 'separator' },
   {

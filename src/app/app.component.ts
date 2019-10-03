@@ -3,9 +3,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from '../../src-shared/log/logger';
 import { AppConfig } from '../environments/environment';
-import { PlmInternalRenderer, PlmInternalRendererAboutBox } from '../global-variables/global-variable-for-internal-use-in-renderer';
+import {
+  PlmInternalRenderer,
+  PlmInternalRendererAboutBox,
+  PlmInternalRendererWelcomeDialog
+} from '../global-variables/global-variable-for-internal-use-in-renderer';
 import { ElectronService } from './shared/service/electron.service';
 import { AboutBoxComponent } from './about-box/about-box.component';
+import { WelcomeDialogComponent } from './welcome-dialog/welcome-dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -32,12 +37,17 @@ export class AppComponent implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     window.plmInternalRenderer = window.plmInternalRenderer || new PlmInternalRenderer();
+
     window.plmInternalRenderer.aboutBox = window.plmInternalRenderer.aboutBox || new PlmInternalRendererAboutBox();
     window.plmInternalRenderer.aboutBox.showAboutBox = () => this.showAboutBox();
+
+    window.plmInternalRenderer.welcomeDialog = window.plmInternalRenderer.welcomeDialog || new PlmInternalRendererWelcomeDialog();
+    window.plmInternalRenderer.welcomeDialog.showWelcomeDialog = () => this.showWelcomeDialog();
   }
 
   public ngOnDestroy(): void {
     window.plmInternalRenderer.aboutBox.showAboutBox = null;
+    window.plmInternalRenderer.welcomeDialog.showWelcomeDialog = null;
   }
 
   public showAboutBox(): void {
@@ -50,6 +60,19 @@ export class AppComponent implements OnInit, OnDestroy {
         restoreFocus: false
       });
       Logger.info('Displayed About Box.');
+    });
+  }
+
+  public showWelcomeDialog(): void {
+    this.ngZone.run(() => {
+      this.dialog.open(WelcomeDialogComponent, {
+        width: '350px',
+        height: '300px',
+        panelClass: 'custom-dialog-container',
+        autoFocus: false,
+        restoreFocus: false
+      });
+      Logger.info('Displayed Welcome Dialog.');
     });
   }
 }
