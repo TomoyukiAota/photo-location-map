@@ -1,4 +1,4 @@
-import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from '../../src-shared/log/logger';
@@ -11,17 +11,19 @@ import {
 import { ElectronService } from './shared/service/electron.service';
 import { AboutBoxComponent } from './about-box/about-box.component';
 import { WelcomeDialogComponent } from './welcome-dialog/welcome-dialog.component';
+import { WelcomeDialogAtAppLaunchService } from './welcome-dialog/welcome-dialog-at-app-launch/welcome-dialog-at-app-launch.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(private dialog: MatDialog,
               private ngZone: NgZone,
               public electronService: ElectronService,
-              private translate: TranslateService) {
+              private translate: TranslateService,
+              private welcomeDialogAtAppLaunchService: WelcomeDialogAtAppLaunchService) {
 
     translate.setDefaultLang('en');
     Logger.info('AppConfig', AppConfig);
@@ -43,6 +45,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
     window.plmInternalRenderer.welcomeDialog = window.plmInternalRenderer.welcomeDialog || new PlmInternalRendererWelcomeDialog();
     window.plmInternalRenderer.welcomeDialog.showWelcomeDialog = () => this.showWelcomeDialog();
+  }
+
+  public ngAfterViewInit(): void {
+    this.welcomeDialogAtAppLaunchService.showWelcomeDialogIfUserHasNotClickedOk();
   }
 
   public ngOnDestroy(): void {

@@ -7,6 +7,7 @@ export namespace UserDataStoragePath {
     export const FirstLaunchDateTime: ReadonlyArray<string> = ['History', 'FirstLaunchDateTime'];
     export const LastLaunchDateTime: ReadonlyArray<string> = ['History', 'LastLaunchDateTime'];
     export const LaunchCount: ReadonlyArray<string> = ['History', 'LaunchCount'];
+    export const ClickedOkOnWelcomeDialog: ReadonlyArray<string> = ['History', 'ClickedOkOnWelcomeDialog'];
   }
 
   export namespace GoogleMaps {
