@@ -1,8 +1,12 @@
-import { UserDataStorage } from '../../../src-shared/user-data-storage/user-data-storage';
-import { UserDataStoragePath } from '../../../src-shared/user-data-storage/user-data-stroage-path';
+import { Injectable } from '@angular/core';
+import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
+import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/user-data-stroage-path';
 
-export class WelcomeDialogAtAppLaunch {
-  public static showWelcomeDialogIfUserHasNotClickedOk() {
+@Injectable({
+  providedIn: 'root'
+})
+export class WelcomeDialogAtAppLaunchService {
+  public showWelcomeDialogIfUserHasNotClickedOk() {
     let clickedOkOnWelcomeScreen = false;
 
     try {
@@ -15,7 +19,7 @@ export class WelcomeDialogAtAppLaunch {
       window.plmInternalRenderer.welcomeDialog.showWelcomeDialog();
   }
 
-  public static saveThatUserClickedOk() {
+  public saveThatUserClickedOk() {
     UserDataStorage.write(UserDataStoragePath.History.ClickedOkOnWelcomeDialog, true.toString());
   }
 }

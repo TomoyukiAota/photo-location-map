@@ -1,9 +1,18 @@
+import { Injectable } from '@angular/core';
 import { TestBed, async, ComponentFixture } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
+
 import { ElectronService } from './shared/service/electron.service';
+import { WelcomeDialogAtAppLaunchService } from './welcome-dialog/welcome-dialog-at-app-launch/welcome-dialog-at-app-launch.service';
+
 import { AppComponent } from './app.component';
+
+@Injectable()
+class DummyWelcomeDialogAtAppLaunchService {
+  public showWelcomeDialogIfUserHasNotClickedOk() {}
+}
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -15,7 +24,11 @@ describe('AppComponent', () => {
         AppComponent
       ],
       providers: [
-        ElectronService
+        ElectronService,
+        {
+          provide: WelcomeDialogAtAppLaunchService,
+          useClass: DummyWelcomeDialogAtAppLaunchService
+        }
       ],
       imports: [
         MatDialogModule,

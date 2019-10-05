@@ -11,7 +11,7 @@ import {
 import { ElectronService } from './shared/service/electron.service';
 import { AboutBoxComponent } from './about-box/about-box.component';
 import { WelcomeDialogComponent } from './welcome-dialog/welcome-dialog.component';
-import { WelcomeDialogAtAppLaunch } from './welcome-dialog/welcome-dialog-at-app-launch';
+import { WelcomeDialogAtAppLaunchService } from './welcome-dialog/welcome-dialog-at-app-launch/welcome-dialog-at-app-launch.service';
 
 @Component({
   selector: 'app-root',
@@ -22,7 +22,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(private dialog: MatDialog,
               private ngZone: NgZone,
               public electronService: ElectronService,
-              private translate: TranslateService) {
+              private translate: TranslateService,
+              private welcomeDialogAtAppLaunchService: WelcomeDialogAtAppLaunchService) {
 
     translate.setDefaultLang('en');
     Logger.info('AppConfig', AppConfig);
@@ -47,7 +48,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public ngAfterViewInit(): void {
-    WelcomeDialogAtAppLaunch.showWelcomeDialogIfUserHasNotClickedOk();
+    this.welcomeDialogAtAppLaunchService.showWelcomeDialogIfUserHasNotClickedOk();
   }
 
   public ngOnDestroy(): void {
