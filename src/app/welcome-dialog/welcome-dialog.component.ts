@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ProxyRequire } from '../../../src-shared/require/proxy-require';
+import { WelcomeDialogAtAppLaunch } from './welcome-dialog-at-app-launch';
 
 const app = ProxyRequire.electron.remote.app;
 
@@ -10,4 +11,8 @@ const app = ProxyRequire.electron.remote.app;
 })
 export class WelcomeDialogComponent {
   public readonly appVersion = app.getVersion();
+
+  onOkClicked() {
+    WelcomeDialogAtAppLaunch.saveThatUserClickedOk();
+  }
 }

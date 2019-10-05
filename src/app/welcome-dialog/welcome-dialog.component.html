@@ -3,5 +3,11 @@
   <div class="welcome-message">Welcome to Photo Location Map</div>
   <div class="app-version">Version {{ appVersion }}</div>
   <div class="usage-info-notice">To improve this application, this application collects anonymized usage information. By continuing to use this application, you agree to the privacy policy.</div>
-  <button mat-stroked-button mat-dialog-close class="ok-button">OK</button>
+  <button
+    mat-stroked-button
+    mat-dialog-close
+    class="ok-button"
+    (click)="onOkClicked()">
+    OK
+  </button>
 </div>
