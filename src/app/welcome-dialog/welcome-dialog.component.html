@@ -2,6 +2,15 @@
   <img src="favicon.svg" alt="Application Icon" class="app-icon">
   <div class="welcome-message">Welcome to Photo Location Map</div>
   <div class="app-version">Version {{ appVersion }}</div>
-
-  <button mat-stroked-button mat-dialog-close>OK</button>
+  <div class="usage-info-collection-message">
+    To improve this application, this application collects anonymized usage information. By continuing to use this application, you agree to the privacy policy.
+  </div>
+  <button
+    mat-stroked-button
+    color="primary"
+    mat-dialog-close
+    class="ok-button"
+    (click)="onOkClicked()">
+    OK
+  </button>
 </div>
