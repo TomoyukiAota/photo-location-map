@@ -16,7 +16,7 @@ archive.on('error', function(err) { throw err; });
 
 const output = fsExtra
   .createWriteStream(zipFilePath)
-  .on('close', () => console.log(`Finished creating a ZIP file (${archive.pointer()} bytes).`));
+  .on('close', () => console.log(`Finished creating ${zipFilePath} (${archive.pointer()} bytes).`));
 
 archive.pipe(output);
 archive.file(exeFilePathFromElectronBuilder, { name: exeFileNameInZipFile });
