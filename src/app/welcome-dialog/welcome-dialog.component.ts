@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { ProxyRequire } from '../../../src-shared/require/proxy-require';
+import { configureOpeningInOsBrowser } from '../shared/configure-opening-in-os-browser';
 import { WelcomeDialogAtAppLaunchService } from './welcome-dialog-at-app-launch/welcome-dialog-at-app-launch.service';
 
 const app = ProxyRequire.electron.remote.app;
@@ -9,10 +10,18 @@ const app = ProxyRequire.electron.remote.app;
   templateUrl: './welcome-dialog.component.html',
   styleUrls: ['./welcome-dialog.component.scss']
 })
-export class WelcomeDialogComponent {
+export class WelcomeDialogComponent implements AfterViewInit {
   public readonly appVersion = app.getVersion();
 
+  @ViewChild('authorLink', { static: false }) public authorLink: ElementRef<HTMLAnchorElement>;
+  @ViewChild('gitHubIssuesLink', { static: false }) public gitHubIssuesLink: ElementRef<HTMLAnchorElement>;
+
   constructor(private welcomeDialogAtAppLaunchService: WelcomeDialogAtAppLaunchService) {
+  }
+
+  public ngAfterViewInit() {
+    configureOpeningInOsBrowser(this.authorLink, 'https://github.com/TomoyukiAota');
+    configureOpeningInOsBrowser(this.gitHubIssuesLink, 'https://github.com/TomoyukiAota/photo-location-map/issues');
   }
 
   onOkClicked() {
