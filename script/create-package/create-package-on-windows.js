@@ -1,9 +1,10 @@
 const fsExtra = require('fs-extra');
 const archiver = require('archiver');
-const { version } = require('../package.json');
 
-const exeFilePathFromElectronBuilder = `${__dirname}\\..\\release\\Photo Location Map ${version}.exe`;
-const packageDir = `${__dirname}\\..\\package`;
+const repoRootDir = `${__dirname}\\..\\..`;
+const { version } = require(`${repoRootDir}\\package.json`);
+const exeFilePathFromElectronBuilder = `${repoRootDir}\\release\\Photo Location Map ${version}.exe`;
+const packageDir = `${repoRootDir}\\package`;
 const zipFilePath = `${packageDir}\\Photo Location Map ${version}.zip`;
 const exeFileNameInZipFile = 'Photo Location Map.exe';
 
