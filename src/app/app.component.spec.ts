@@ -4,7 +4,6 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { ElectronService } from './shared/service/electron.service';
 import { WelcomeDialogAtAppLaunchService } from './welcome-dialog/welcome-dialog-at-app-launch/welcome-dialog-at-app-launch.service';
 
 import { AppComponent } from './app.component';
@@ -24,7 +23,6 @@ describe('AppComponent', () => {
         AppComponent
       ],
       providers: [
-        ElectronService,
         {
           provide: WelcomeDialogAtAppLaunchService,
           useClass: DummyWelcomeDialogAtAppLaunchService

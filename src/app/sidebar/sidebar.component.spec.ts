@@ -3,7 +3,6 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { ElectronService } from '../shared/service/electron.service';
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
 
 import { SidebarComponent } from './sidebar.component';
@@ -27,7 +26,6 @@ describe('SidebarComponent', () => {
         TranslateModule.forRoot()
       ],
       providers: [
-        ElectronService,
         DirectoryTreeViewDataService,
         { provide: MatDialog, useClass: DummyMatDialog }
       ]
