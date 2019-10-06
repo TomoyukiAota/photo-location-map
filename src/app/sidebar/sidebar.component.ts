@@ -28,6 +28,7 @@ export class SidebarComponent {
 
   public showSelectFolderDialog() {
     electron.remote.dialog.showOpenDialog(
+      electron.remote.getCurrentWindow(),
       {
         properties: ['openDirectory'],
       }
