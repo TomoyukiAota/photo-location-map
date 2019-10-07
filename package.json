@@ -29,7 +29,7 @@
     "electron:linux": "npm run build:prod && electron-builder build --linux",
     "electron:windows": "npm run build:prod && electron-builder build --windows",
     "electron:mac": "npm run build:prod && electron-builder build --mac",
-    "package:windows": "node ./script/create-package/create-package-on-windows.js",
+    "package": "node ./script/create-package/create-package.js",
     "lint:ng": "ng lint",
     "lint:es": "eslint ./package-test/*.js",
     "lint:es:fix": "eslint --fix ./package-test/*.js",
