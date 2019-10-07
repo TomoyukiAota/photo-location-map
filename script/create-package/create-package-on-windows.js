@@ -2,8 +2,8 @@ const child_process = require('child_process');
 const fsExtra = require('fs-extra');
 const archiver = require('archiver');
 
-const repoRootDir = `${__dirname}\\..\\..`;
-const { version } = require(`${repoRootDir}\\package.json`);
+const repoRootDir = `${__dirname}/../..`;
+const { version } = require(`${repoRootDir}/package.json`);
 const exeFilePathFromElectronBuilder = `${repoRootDir}\\release\\Photo Location Map ${version}.exe`;
 
 const createExeFile = () => {
@@ -43,4 +43,4 @@ const createPackageOnWindows = () => {
   createZipFile();
 };
 
-createPackageOnWindows();
+module.exports = createPackageOnWindows;
