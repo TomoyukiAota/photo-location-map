@@ -1,19 +1,17 @@
-const child_process = require('child_process');
 const fsExtra = require('fs-extra');
 const archiver = require('archiver');
+const runCommandSync = require('./run-command-sync');
 
 const repoRootDir = `${__dirname}/../..`;
 const { version } = require(`${repoRootDir}/package.json`);
 const exeFilePathFromElectronBuilder = `${repoRootDir}\\release\\Photo Location Map ${version}.exe`;
 
 const createExeFile = () => {
-  console.info(`Started creating an EXE file "${exeFilePathFromElectronBuilder}".`);
-
-  const commandToCreateExeFile = 'npm run electron:windows';
-  const stdout = child_process.execSync(commandToCreateExeFile);
-  console.info(stdout.toString());
-
-  console.info(`Finished creating an EXE file "${exeFilePathFromElectronBuilder}".`);
+  runCommandSync(
+    'npm run electron:windows',
+    `Started creating an EXE file "${exeFilePathFromElectronBuilder}".`,
+    `Finished creating an EXE file "${exeFilePathFromElectronBuilder}".`
+  );
 };
 
 const createZipFile = () => {
