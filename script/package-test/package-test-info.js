@@ -1,5 +1,5 @@
 const path = require('path');
-const { version } = require('../package.json');
+const { version } = require('../../package.json');
 const getLogDirectory = require('./get-log-directory');
 
 class PackageTestInfo {
