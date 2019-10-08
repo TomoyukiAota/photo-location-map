@@ -1,5 +1,5 @@
 const fs = require('fs');
-const logger = require('./package-test-logger');
+const logger = require('../logger');
 
 class PackageTestUtil {
   printItemsInDirectory(directory) {
