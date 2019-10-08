@@ -1,4 +1,4 @@
-const logger = require('./package-test-logger');
+const logger = require('../util/logger');
 const packageCreationTest = require('./package-creation-test');
 const packageSmokeTest = require('./package-smoke-test');
 

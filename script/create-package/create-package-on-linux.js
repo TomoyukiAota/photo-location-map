@@ -1,5 +1,6 @@
 const fsExtra = require('fs-extra');
-const runCommandSync = require('./run-command-sync');
+const logger = require('../util/logger');
+const runCommandSync = require('../util/run-command-sync');
 
 const repoRootDir = `${__dirname}/../..`;
 const { version } = require(`${repoRootDir}/package.json`);
@@ -15,9 +16,9 @@ const createAppImageFile = () => {
 
 const moveAppImageFile = () => {
   const dstPath = `${repoRootDir}/package/Photo Location Map-${version}.AppImage`;
-  console.info(`Started moving the AppImage file from "${appImageFilePathFromElectronBuilder}" to ${dstPath}.`);
+  logger.info(`Started moving the AppImage file from "${appImageFilePathFromElectronBuilder}" to ${dstPath}.`);
   fsExtra.moveSync(appImageFilePathFromElectronBuilder, dstPath, { overwrite: true });
-  console.info(`Finished moving the AppImage file from "${appImageFilePathFromElectronBuilder}" to ${dstPath}.`);
+  logger.info(`Finished moving the AppImage file from "${appImageFilePathFromElectronBuilder}" to ${dstPath}.`);
 };
 
 const createPackageOnLinux = () => {

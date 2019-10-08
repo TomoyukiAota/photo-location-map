@@ -1,6 +1,7 @@
 const fsExtra = require('fs-extra');
 const archiver = require('archiver');
-const runCommandSync = require('./run-command-sync');
+const logger = require('../util/logger');
+const runCommandSync = require('../util/run-command-sync');
 
 const repoRootDir = `${__dirname}/../..`;
 const { version } = require(`${repoRootDir}/package.json`);
@@ -19,7 +20,7 @@ const createZipFile = () => {
   const zipFilePath = `${packageDir}\\Photo Location Map ${version}.zip`;
   const exeFileNameInZipFile = 'Photo Location Map.exe';
 
-  console.info(`Started creating a ZIP file "${zipFilePath}".`);
+  logger.info(`Started creating a ZIP file "${zipFilePath}".`);
 
   fsExtra.ensureDirSync(packageDir);
 
@@ -29,7 +30,7 @@ const createZipFile = () => {
 
   const output = fsExtra
     .createWriteStream(zipFilePath)
-    .on('close', () => console.log(`Finished creating a ZIP file "${zipFilePath}" (${archive.pointer()} bytes).`));
+    .on('close', () => logger.info(`Finished creating a ZIP file "${zipFilePath}" (${archive.pointer()} bytes).`));
 
   archive.pipe(output);
   archive.file(exeFilePathFromElectronBuilder, { name: exeFileNameInZipFile });

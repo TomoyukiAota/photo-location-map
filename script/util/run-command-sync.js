@@ -1,10 +1,11 @@
 const child_process = require('child_process');
+const logger = require('./logger');
 
 const runCommandSync = (command, startMsg, endMsg) => {
-  console.info(startMsg);
+  logger.info(startMsg);
   const stdout = child_process.execSync(command);
   console.info(stdout.toString());
-  console.info(endMsg);
+  logger.info(endMsg);
 };
 
 module.exports = runCommandSync;
