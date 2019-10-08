@@ -1,7 +1,7 @@
 const child_process = require('child_process');
 const fs = require('fs');
+const logger = require('../logger');
 const testInfo = require('./package-test-info');
-const logger = require('./package-test-logger');
 const testUtil = require('./package-test-util');
 
 class PackageCreationTest {
