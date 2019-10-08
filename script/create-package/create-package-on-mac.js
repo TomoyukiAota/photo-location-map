@@ -1,5 +1,6 @@
 const fsExtra = require('fs-extra');
-const runCommandSync = require('./run-command-sync');
+const logger = require('../util/logger');
+const runCommandSync = require('../util/run-command-sync');
 
 const repoRootDir = `${__dirname}/../..`;
 const { version } = require(`${repoRootDir}/package.json`);
@@ -15,9 +16,9 @@ const createDmgFile = () => {
 
 const moveDmgFile = () => {
   const dstPath = `${repoRootDir}/package/Photo Location Map-${version}.dmg`;
-  console.info(`Started moving the DMG file from "${dmgFilePathFromElectronBuilder}" to ${dstPath}.`);
+  logger.info(`Started moving the DMG file from "${dmgFilePathFromElectronBuilder}" to ${dstPath}.`);
   fsExtra.moveSync(dmgFilePathFromElectronBuilder, dstPath, { overwrite: true });
-  console.info(`Finished moving the DMG file from "${dmgFilePathFromElectronBuilder}" to ${dstPath}.`);
+  logger.info(`Finished moving the DMG file from "${dmgFilePathFromElectronBuilder}" to ${dstPath}.`);
 };
 
 const createPackageOnMac = () => {

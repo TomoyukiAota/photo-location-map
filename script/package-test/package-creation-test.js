@@ -1,15 +1,16 @@
-const child_process = require('child_process');
 const fs = require('fs');
+const logger = require('../util/logger');
+const runCommandSync = require('../util/run-command-sync');
 const testInfo = require('./package-test-info');
-const logger = require('./package-test-logger');
 const testUtil = require('./package-test-util');
 
 class PackageCreationTest {
   createPackage() {
-    logger.info(`Start of "${testInfo.packageCreationCommand}" to create a package.`);
-    const stdout = child_process.execSync(testInfo.packageCreationCommand);
-    logger.info(stdout.toString());
-    logger.info(`End of "${testInfo.packageCreationCommand}"`);
+    runCommandSync(
+      testInfo.packageCreationCommand,
+      `Start of "${testInfo.packageCreationCommand}" to create a package.`,
+      `End of "${testInfo.packageCreationCommand}"`
+    );
   }
 
   testIfPackageExists() {
