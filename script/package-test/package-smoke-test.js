@@ -28,14 +28,15 @@ class PackageSmokeTest {
 
   runExecutablePrelaunchCommand() {
     const command = testInfo.executablePrelaunchCommand;
-    if(!command)
-      return;
-
-    runCommandSync(
-      command,
-      `Start of executable prelaunch command: ${command}`,
-      `End of executable prelaunch command: ${command}`
-    );
+    if(command) {
+      runCommandSync(
+        command,
+        `Start of executable prelaunch command: ${command}`,
+        `End of executable prelaunch command: ${command}`
+      );
+    } else {
+      logger.info('No executable prelaunch command on this platform.');
+    }
   }
 
   async runExecutable() {
