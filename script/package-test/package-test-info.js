@@ -20,7 +20,8 @@ class PackageTestInfo {
       case 'darwin':
         this.packageCreationCommand = 'npm run electron:mac';
         this.expectedPackageLocation = `${this.releaseDirectory}/Photo Location Map-${version}.dmg`;
-        this.executableLaunchCommand = `hdiutil attach "${this.releaseDirectory}/Photo Location Map-${version}.dmg" && open -W "/Volumes/Photo Location Map ${version}/Photo Location Map.app"`;
+        this.executablePrelaunchCommand = `hdiutil attach "${this.releaseDirectory}/Photo Location Map-${version}.dmg"`;
+        this.executableLaunchCommand = `open -W "/Volumes/Photo Location Map ${version}/Photo Location Map.app"`;
         break;
       case 'linux':
         this.packageCreationCommand = 'npm run electron:linux';
