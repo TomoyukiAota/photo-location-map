@@ -31,8 +31,8 @@ class PackageSmokeTest {
     if(command) {
       runCommandSync(
         command,
-        `Start of executable prelaunch command: ${command}`,
-        `End of executable prelaunch command: ${command}`
+        `Start of executable prelaunch command: "${command}"`,
+        `End of executable prelaunch command: "${command}"`
       );
     } else {
       logger.info('No executable prelaunch command on this platform.');
