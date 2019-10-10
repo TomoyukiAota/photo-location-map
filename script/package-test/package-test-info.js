@@ -13,8 +13,9 @@ class PackageTestInfo {
     switch(global.process.platform) {
       case 'win32':
         this.packageCreationCommand = 'npm run electron:windows';
-        this.expectedPackageLocation = `${this.releaseDirectory}\\Photo Location Map ${version}.exe`;
-        this.executableLaunchCommand = `"${this.releaseDirectory}\\Photo Location Map ${version}.exe"`;
+        this.expectedPackageLocation = `${this.releaseDirectory}\\Photo Location Map Setup ${version}.exe`;
+        this.executablePrelaunchCommand = `"${this.releaseDirectory}\\Photo Location Map Setup ${version}.exe" /S`;
+        this.executableLaunchCommand = `"${process.env.APPDATA}\\..\\Local\\Programs\\Photo Location Map\\Photo Location Map.exe"`;
         break;
       case 'darwin':
         this.packageCreationCommand = 'npm run electron:mac';
