@@ -13,13 +13,15 @@ class PackageTestInfo {
     switch(global.process.platform) {
       case 'win32':
         this.packageCreationCommand = 'npm run electron:windows';
-        this.expectedPackageLocation = `${this.releaseDirectory}\\Photo Location Map ${version}.exe`;
-        this.executableLaunchCommand = `"${this.releaseDirectory}\\Photo Location Map ${version}.exe"`;
+        this.expectedPackageLocation = `${this.releaseDirectory}\\Photo Location Map Setup ${version}.exe`;
+        this.executablePrelaunchCommand = `"${this.releaseDirectory}\\Photo Location Map Setup ${version}.exe" /S`;
+        this.executableLaunchCommand = `"${process.env.APPDATA}\\..\\Local\\Programs\\Photo Location Map\\Photo Location Map.exe"`;
         break;
       case 'darwin':
         this.packageCreationCommand = 'npm run electron:mac';
         this.expectedPackageLocation = `${this.releaseDirectory}/Photo Location Map-${version}.dmg`;
-        this.executableLaunchCommand = `hdiutil attach "${this.releaseDirectory}/Photo Location Map-${version}.dmg" && open -W "/Volumes/Photo Location Map ${version}/Photo Location Map.app"`;
+        this.executablePrelaunchCommand = `hdiutil attach "${this.releaseDirectory}/Photo Location Map-${version}.dmg"`;
+        this.executableLaunchCommand = `open -W "/Volumes/Photo Location Map ${version}/Photo Location Map.app"`;
         break;
       case 'linux':
         this.packageCreationCommand = 'npm run electron:linux';
