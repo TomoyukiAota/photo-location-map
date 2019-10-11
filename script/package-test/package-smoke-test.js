@@ -3,6 +3,7 @@ const fs = require('fs-extra');
 const os = require('os');
 const path = require('path');
 const logger = require('../util/logger');
+const runCommandSync = require('../util/run-command-sync');
 const testInfo = require('./package-test-info');
 const testUtil = require('./package-test-util');
 
@@ -22,6 +23,19 @@ class PackageSmokeTest {
       const message = 'Log file(s) (*_log.txt) still exist. Aborting the smoke test.';
       logger.error(message);
       throw new Error(message);
+    }
+  }
+
+  runExecutablePrelaunchCommand() {
+    const command = testInfo.executablePrelaunchCommand;
+    if(command) {
+      runCommandSync(
+        command,
+        `Start of executable prelaunch command: "${command}"`,
+        `End of executable prelaunch command: "${command}"`
+      );
+    } else {
+      logger.info('No executable prelaunch command on this platform.');
     }
   }
 
@@ -111,6 +125,7 @@ class PackageSmokeTest {
   async run() {
     logger.info('Start of package smoke test.');
     this.emptyLogDirectory();
+    this.runExecutablePrelaunchCommand();
     await this.runExecutable();
     this.testLog();
     logger.info('End of package smoke test.');

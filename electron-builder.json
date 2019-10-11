@@ -13,8 +13,11 @@
   "win": {
     "icon": "dist",
     "target": [
-      "portable"
+      "nsis"
     ]
+  },
+  "nsis": {
+    "oneClick": false
   },
   "mac": {
     "icon": "dist",
