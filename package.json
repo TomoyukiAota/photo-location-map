@@ -29,6 +29,9 @@
     "electron:linux": "npm run build:prod && electron-builder build --linux",
     "electron:windows": "npm run build:prod && electron-builder build --windows",
     "electron:mac": "npm run build:prod && electron-builder build --mac",
+    "publish:linux": "npm run electron:linux -- --publish always",
+    "publish:windows": "npm run electron:windows -- --publish always",
+    "publish:mac": "npm run electron:mac -- --publish always",
     "lint:ng": "ng lint",
     "lint:es": "eslint ./script/**/*.js",
     "lint:es:fix": "eslint --fix ./script/**/*.js",
@@ -45,6 +48,7 @@
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md"
   },
   "dependencies": {
+    "electron-updater": "4.1.2",
     "electron-window-state": "5.0.3",
     "fs-extra": "8.1.0",
     "moment-timezone": "0.5.26",
