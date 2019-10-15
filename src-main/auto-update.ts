@@ -1,6 +1,7 @@
-import { app } from 'electron';
+import { app, dialog } from 'electron';
+import { autoUpdater, UpdateInfo } from 'electron-updater';
 import { Logger } from '../src-shared/log/logger';
-import { autoUpdater } from 'electron-updater';
+import { mainWindow } from './electron-main';
 
 autoUpdater.logger = Logger;
 Logger.info('App starting...');
@@ -32,11 +33,31 @@ autoUpdater.on('download-progress', (progressObj) => {
   sendStatusToWindow(log_message);
 });
 
-autoUpdater.on('update-downloaded', (info) => {
+const createMessage = (info: UpdateInfo) => {
+  return `A new version of Photo Location Map is available and will be installed after restart.
+Do you want to restart this application now?
+
+Current version: ${app.getVersion()}
+Latest version: ${info.version}`;
+};
+
+autoUpdater.on('update-downloaded', (info: UpdateInfo) => {
   sendStatusToWindow('Update downloaded');
+
+  dialog.showMessageBox(mainWindow, {
+    title: 'A new version of Photo Location Map is available!',
+    type: 'info',
+    message: createMessage(info),
+    buttons: ['Yes', 'No'],
+  }).then(result => {
+    const yes = result.response === 0;
+    sendStatusToWindow(`User clicked "${yes ? 'Yes' : 'No'}" on the dialog to restart this application to install a new version ${info.version}.`);
+    if (yes) {
+      autoUpdater.quitAndInstall(true, true);
+    }
+  });
 });
 
-
 app.on('ready', async () => {
-  autoUpdater.checkForUpdatesAndNotify();
+  autoUpdater.checkForUpdates();
 });
