@@ -22,8 +22,6 @@ Latest version: ${info.version}`;
 };
 
 autoUpdater.on('update-downloaded', (info: UpdateInfo) => {
-  AutoUpdateLogger.info('Update downloaded.');
-
   dialog.showMessageBox(mainWindow, {
     title: 'A new version of Photo Location Map is available!',
     type: 'info',
