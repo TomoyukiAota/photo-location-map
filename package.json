@@ -78,7 +78,7 @@
     "@types/leaflet": "1.5.1",
     "@types/leaflet.markercluster": "1.4.0",
     "@types/moment-timezone": "0.5.12",
-    "@types/node": "10.14.15",
+    "@types/node": "12.11.6",
     "@types/universal-analytics": "0.4.3",
     "@types/uuid": "3.4.5",
     "@types/webdriverio": "4.13.3",
