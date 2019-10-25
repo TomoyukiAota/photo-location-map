@@ -6,6 +6,7 @@ pull_request_rules:
       - status-success=continuous-integration/appveyor/pr
       - status-success=continuous-integration/appveyor/branch
       - label=auto-merge
+      - author=TomoyukiAota
     actions:
       merge:
         method: merge
