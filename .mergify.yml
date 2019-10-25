@@ -1,8 +1,8 @@
 pull_request_rules:
   - name: automatic merge on CI success
     conditions:
-      - status-success=continuous-integration/travis-ci/pr
-      - status-success=continuous-integration/travis-ci/push
+      - status-success=Travis CI - Branch
+      - status-success=Travis CI - Pull Request
       - status-success=continuous-integration/appveyor/pr
       - status-success=continuous-integration/appveyor/branch
       - label=auto-merge
