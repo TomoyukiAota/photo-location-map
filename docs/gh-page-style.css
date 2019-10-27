@@ -1,0 +1,35 @@
+.layout-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.title {
+  text-align: center;
+  font-size: 50px;
+  margin-top: 60px;
+  margin-bottom: 30px;
+}
+
+.app-description {
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 40px;
+}
+
+.download-buttons {
+  text-align: center;
+}
+
+.download-buttons button {
+  margin: 0 20px;
+}
+
+.demo-gif {
+  display: block;
+  margin: 40px auto;
+  width: 800px;
+}
+
+.project-description {
+  text-align: center;
+}
