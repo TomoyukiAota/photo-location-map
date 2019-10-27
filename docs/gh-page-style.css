@@ -1,12 +1,21 @@
 .layout-container {
   max-width: 800px;
-  margin: 0 auto;
+  margin: 20px auto;
+}
+
+.app-icon {
+  text-align: center;
+  margin: 30px 0 auto;
+}
+
+.app-icon-img {
+  width: 120px;
 }
 
 .title {
   text-align: center;
   font-size: 50px;
-  margin-top: 40px;
+  margin-top: 20px;
   margin-bottom: 30px;
 }
 
