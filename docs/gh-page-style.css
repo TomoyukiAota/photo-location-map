@@ -9,14 +9,14 @@
 }
 
 .app-icon-img {
-  width: 120px;
+  width: 100px;
 }
 
 .title {
   text-align: center;
-  font-size: 50px;
+  font-size: 45px;
   margin-top: 20px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .app-description {
