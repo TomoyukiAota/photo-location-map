@@ -10,6 +10,7 @@
     "!**/*.ts",
     "!**/*.js.map"
   ],
+  "afterSign": "script/notarize/notarize.js",
   "win": {
     "icon": "dist",
     "target": [
@@ -23,7 +24,11 @@
     "icon": "dist",
     "target": [
       "dmg"
-    ]
+    ],
+    "hardenedRuntime": true,
+    "gatekeeperAssess": false,
+    "entitlements": "script/notarize/entitlements.mac.plist",
+    "entitlementsInherit": "script/notarize/entitlements.mac.plist",
   },
   "linux": {
     "icon": "dist",
