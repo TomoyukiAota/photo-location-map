@@ -44,7 +44,7 @@
     "test:unit:em:all": "npm-run-all test:unit:em:main test:unit:em:renderer",
     "test:unit:all": "npm-run-all test:unit:karma test:unit:em:all",
     "test:e2e": "npm run build:prod && mocha --opts ./e2e/mocha-e2e.opts",
-    "test:package": "node ./script/package-test/run-package-test.js",
+    "test:package": "cross-env PLM_PACKAGE_TEST=true node ./script/package-test/run-package-test.js",
     "test:all": "npm-run-all lint:all test:unit:all test:e2e test:package",
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md"
   },
