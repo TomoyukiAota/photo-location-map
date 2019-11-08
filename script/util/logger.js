@@ -1,6 +1,6 @@
 const moment = require('moment-timezone');
 
-module.exports = class PackageTestLogger {
+module.exports = class ScriptLogger {
   static dateTime() {
     return moment.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
   }

@@ -89,7 +89,7 @@ class PackageSmokeTest {
     console.info('----------------------------------------------');
   }
 
-  testLogFileConent(content) {
+  testLogFileContent(content) {
     const lines = content.split(os.EOL);
     const isMainProcessLogFound = lines.some(line => line.includes('[Main]'));
     const isRendererProcessLogFound = lines.some(line => line.includes('[Renderer]'));
@@ -119,7 +119,7 @@ class PackageSmokeTest {
     const content = fs.readFileSync(logFilePath, 'utf8');
     this.printFileContent(content);
 
-    this.testLogFileConent(content);
+    this.testLogFileContent(content);
   }
 
   async run() {
