@@ -28,7 +28,7 @@
     "hardenedRuntime": true,
     "gatekeeperAssess": false,
     "entitlements": "script/notarize/entitlements.mac.plist",
-    "entitlementsInherit": "script/notarize/entitlements.mac.plist",
+    "entitlementsInherit": "script/notarize/entitlements.mac.plist"
   },
   "linux": {
     "icon": "dist",
