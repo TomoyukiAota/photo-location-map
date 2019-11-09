@@ -29,7 +29,8 @@
   text-align: center;
 }
 
-.download-buttons button {
+.download-buttons button,
+.download-buttons a {
   margin: 0 20px;
 }
 
