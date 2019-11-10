@@ -3,8 +3,11 @@ body {
 }
 
 .layout-container {
-  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  max-width: 820px;
   margin: 20px auto;
+  padding: 0 10px;
 }
 
 .app-icon {
@@ -18,9 +21,20 @@ body {
 
 .title {
   text-align: center;
-  font-size: 45px;
   margin-top: 20px;
   margin-bottom: 20px;
+}
+
+@media screen and (max-width:500px) {
+  .title {
+    font-size: 10vw;
+  }
+}
+
+@media screen and (min-width:501px) {
+  .title {
+    font-size: 45px;
+  }
 }
 
 .app-description {
@@ -30,12 +44,40 @@ body {
 }
 
 .download-buttons {
-  text-align: center;
+  display: flex;
+}
+
+@media screen and (max-width:500px) {
+  .download-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media screen and (min-width:501px) {
+  .download-buttons {
+    flex-direction: row;
+    justify-content: center;
+  }
 }
 
 .download-buttons button,
 .download-buttons a {
-  margin: 0 20px;
+  margin: 10px 20px;
+}
+
+@media screen and (max-width:500px) {
+  .download-buttons button,
+  .download-buttons a {
+    width: 200px;
+  }
+}
+
+@media screen and (min-width:501px) {
+  .download-buttons button,
+  .download-buttons a {
+    width: unset;
+  }
 }
 
 .demo {
@@ -45,14 +87,28 @@ body {
 .demo-gif {
   display: block;
   margin: 10px auto;
-  width: 800px;
+  width: 100%;
+  max-width: 800px;
 }
 
 .demo-gif-description {
   text-align: center;
+  font-size: 16px;
 }
 
 .project-description {
   text-align: center;
   margin-top: 60px;
+}
+
+@media screen and (max-width:500px) {
+  .project-description {
+    font-size: 14px;
+  }
+}
+
+@media screen and (min-width:501px) {
+  .project-description {
+    font-size: 16px;
+  }
 }
