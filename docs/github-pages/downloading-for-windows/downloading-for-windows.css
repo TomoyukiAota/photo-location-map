@@ -5,6 +5,7 @@ body {
 .layout-container {
   max-width: 800px;
   margin: 40px auto;
+  padding: 0 10px;
 }
 
 .how-to-install-section {
@@ -18,11 +19,13 @@ body {
 .windows-defender-more-info {
   display: block;
   margin: 0 auto;
-  width: 500px;
+  width: 100%;
+  max-width: 500px;
 }
 
 .windows-defender-run-anyway {
   display: block;
   margin: 0 auto;
-  width: 500px;
+  width: 100%;
+  max-width: 500px;
 }
