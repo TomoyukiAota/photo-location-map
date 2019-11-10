@@ -1,0 +1,20 @@
+.layout-container {
+  max-width: 800px;
+  margin: 40px auto;
+}
+
+.how-to-install-section {
+  margin-top: 100px;
+}
+
+.windows-defender-more-info {
+  display: block;
+  margin: 0 auto;
+  width: 500px;
+}
+
+.windows-defender-run-anyway {
+  display: block;
+  margin: 0 auto;
+  width: 500px;
+}
