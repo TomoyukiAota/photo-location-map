@@ -14,7 +14,7 @@ export class Thumbnail {
       ? await this.createBase64StringFromFile(photo)
       : await this.createBase64StringFromExif(exif);
 
-    if(!base64String)
+    if (!base64String)
       return null;
 
     const dataUrl = `data:image/jpg;base64,${base64String}`;
