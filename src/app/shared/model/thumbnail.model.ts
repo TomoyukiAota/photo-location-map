@@ -1,5 +1,4 @@
-import DepreciatedJimp from 'jimp';
-const Jimp: DepreciatedJimp = window.require('jimp');
+const Jimp: typeof import('jimp') = window.require('jimp');
 
 import { Logger } from '../../../../src-shared/log/logger';
 import { Photo } from './photo.model';
@@ -42,7 +41,7 @@ export class Thumbnail {
       Logger.info(`Thumbnail generation completed for "${photo.path}"`);
       return dataUrl;
     } catch (error) {
-      Logger.error(`Error occurred in thumbnail generation for "${photo.path}", error: "${error}"`);
+      Logger.error(`Error occurred in thumbnail generation for "${photo.path}", error: "${error}"`, error);
       return null;
     }
   }
