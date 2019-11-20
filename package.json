@@ -52,7 +52,6 @@
     "electron-updater": "4.1.2",
     "electron-window-state": "5.0.3",
     "fs-extra": "8.1.0",
-    "jimp": "0.6.4",
     "moment-timezone": "0.5.26",
     "universal-analytics": "0.4.20",
     "uuid": "3.3.3"
