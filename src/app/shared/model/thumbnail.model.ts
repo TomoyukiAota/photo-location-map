@@ -9,14 +9,21 @@ export class Thumbnail {
 
   public static async create(photo: Photo): Promise<Thumbnail> {
     const exif = photo.exifParserResult;
-    if (exif === null || !exif.hasThumbnail('image/jpeg'))
+    const isThumbnailAvailableInExif = exif && exif.hasThumbnail('image/jpeg');
+    if (!isThumbnailAvailableInExif) {
       return null;
+    }
 
-    const buffer = exif.getThumbnailBuffer();
-    const base64String = btoa(String.fromCharCode.apply(null, buffer));
-    const dataUrl = `data:image/jpg;base64,${base64String}`;
+    const dataUrl = this.createDataUrlFromExif(exif);
     const rotated = await imageRotator.correctRotation(dataUrl, exif.tags.Orientation);
     const rotatedDimensions = new Dimensions(rotated.width, rotated.height);
     return new Thumbnail(rotated.dataUrl, rotatedDimensions);
+  }
+
+  private static createDataUrlFromExif(exif): string {
+    const buffer = exif.getThumbnailBuffer();
+    const base64String = btoa(String.fromCharCode.apply(null, buffer));
+    const dataUrl = `data:image/jpg;base64,${base64String}`;
+    return dataUrl;
   }
 }

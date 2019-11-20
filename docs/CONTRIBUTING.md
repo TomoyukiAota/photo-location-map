@@ -48,9 +48,11 @@ npm start
 
 ### Electron renderer process
 
-npm modules used only in Electron renderer process should be configured in `devDependencies` (not `dependencies`) in `package.json`.
+npm modules which are 1) used only in Electron renderer process and 2) imported by `import` (not `require`) should be configured in `devDependencies` (not `dependencies`) in `package.json`.
 
-Angular is used in Electron renderer process. The Angular build system creates a bundle file from `.ts` files. The bundle file will contain `import`ed npm module for both `dependencies` and `devDependencies`. Also, electron-builder will copy all npm modules in `dependencies` (not `devDependencies`) to create an application package. Therefore, configuring the npm modules used only in renderer process with `devDependencies` saves the size of application package.
+Angular build system creates a bundle file from `.ts` files. The bundle file will have the copy of `import`ed (not `require` d) npm module, and the copy is used at run time. Also, electron-builder will copy npm modules listed in `dependencies` (not `devDependencies`) to create an application package. Therefore, configuring `import`ed (again, not `require`d) npm modules used only in Electron renderer process with `devDependencies` saves the size of application package.
+
+
 
 ### Electron main process
 
