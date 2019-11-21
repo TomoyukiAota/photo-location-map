@@ -29,7 +29,7 @@ test_script:
   # Disabled since "".\release\Photo Location Map Setup 0.0.1.exe" /S" fails for unknown reason. (My local PC is fine.)
   #  - appveyor-retry npm run test:package
 
-  # Deploy to GitHub release
+  # Publish to GitHub release (To publish, GH_TOKEN environment variable needs to be set on AppVeyor.)
   - appveyor-retry git clean -fdx   # Delete files which are not registered to git before starting to create the release package.
   - appveyor-retry git clean -fdx   # Run twice to be sure of deleting files
   - appveyor-retry npm ci
