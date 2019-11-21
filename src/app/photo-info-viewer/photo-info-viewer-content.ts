@@ -47,7 +47,7 @@ export class PhotoInfoViewerContent {
     } else {
       // # needs to be escaped. See https://www.w3schools.com/tags/ref_urlencode.asp for encoding.
       const escapedPath = photo.path.replace(/#/g, '%23');
-      thumbnailElement.src = escapedPath;
+      thumbnailElement.src = `file://${escapedPath}`;
       const largerSideLength = 200;
       if (photo.dimensions.width > photo.dimensions.height) {
         thumbnailElement.width = largerSideLength;
