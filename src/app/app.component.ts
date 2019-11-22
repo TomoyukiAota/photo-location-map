@@ -5,6 +5,7 @@ import { Logger } from '../../src-shared/log/logger';
 import {
   PlmInternalRenderer,
   PlmInternalRendererAboutBox,
+  PlmInternalRendererSettingsDialog,
   PlmInternalRendererWelcomeDialog
 } from '../global-variables/global-variable-for-internal-use-in-renderer';
 import { AboutBoxComponent } from './about-box/about-box.component';
@@ -30,6 +31,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     window.plmInternalRenderer.aboutBox = window.plmInternalRenderer.aboutBox || new PlmInternalRendererAboutBox();
     window.plmInternalRenderer.aboutBox.showAboutBox = () => this.showAboutBox();
 
+    window.plmInternalRenderer.settingsDialog = window.plmInternalRenderer.settingsDialog || new PlmInternalRendererSettingsDialog();
+    window.plmInternalRenderer.settingsDialog.showSettingsDialog = () => this.showSettingsDialog();
+
     window.plmInternalRenderer.welcomeDialog = window.plmInternalRenderer.welcomeDialog || new PlmInternalRendererWelcomeDialog();
     window.plmInternalRenderer.welcomeDialog.showWelcomeDialog = () => this.showWelcomeDialog();
   }
@@ -40,6 +44,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public ngOnDestroy(): void {
     window.plmInternalRenderer.aboutBox.showAboutBox = null;
+    window.plmInternalRenderer.settingsDialog.showSettingsDialog = null;
     window.plmInternalRenderer.welcomeDialog.showWelcomeDialog = null;
   }
 
@@ -53,6 +58,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         restoreFocus: false
       });
       Logger.info('Displayed About Box.');
+    });
+  }
+
+  private showSettingsDialog() {
+    this.ngZone.run(() => {
+      // TODO: Show Settings Dialog.
+      Logger.info('Displayed Settings Dialog.');
     });
   }
 
