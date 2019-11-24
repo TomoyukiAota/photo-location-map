@@ -1,0 +1,47 @@
+.settings-dialog-header {
+  padding: 10px 0 10px 20px;
+  border-bottom: 2px solid #7f7f7f;
+  background-color: #eeeeee;
+  font-size: 20px;
+}
+
+.settings-dialog-content {
+  margin: 10px;
+}
+
+.setting-title {
+  font-size: 18px;
+}
+
+.settings-dialog-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border-top: 2px solid #7f7f7f;
+  background-color: #eeeeee;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.settings-dialog-footer-description {
+  font-size: 15px;
+}
+
+.settings-dialog-footer-buttons {
+  flex-shrink: 0;
+}
+
+.settings-dialog-footer-buttons > button {
+  display: inline-block;
+  margin: 0 10px;
+  width: 80px;
+}
+
+.settings-dialog-cancel-button {
+  background-color: #7f7f7f;
+  color: whitesmoke;
+}
