@@ -9,6 +9,7 @@ import {
   PlmInternalRendererWelcomeDialog
 } from '../global-variables/global-variable-for-internal-use-in-renderer';
 import { AboutBoxComponent } from './about-box/about-box.component';
+import { SettingsDialogComponent } from './settings-dialog/settings-dialog.component';
 import { WelcomeDialogComponent } from './welcome-dialog/welcome-dialog.component';
 import { WelcomeDialogAtAppLaunchService } from './welcome-dialog/welcome-dialog-at-app-launch/welcome-dialog-at-app-launch.service';
 
@@ -63,7 +64,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private showSettingsDialog() {
     this.ngZone.run(() => {
-      // TODO: Show Settings Dialog.
+      this.dialog.open(SettingsDialogComponent, {
+        width: '600px',
+        height: '460px',
+        panelClass: 'custom-dialog-container',
+        autoFocus: false,
+        restoreFocus: false,
+        disableClose: true
+      });
       Logger.info('Displayed Settings Dialog.');
     });
   }
