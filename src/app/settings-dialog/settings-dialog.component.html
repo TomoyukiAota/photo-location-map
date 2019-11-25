@@ -3,10 +3,27 @@
 </div>
 <div class="settings-dialog-content">
   <div class="setting-title">Date Time Format</div>
-  <div>
-    <div>Dropdown for YYYY/MM/DD</div>
-    <div>Dropdown for 12h/24h</div>
-    <div>Actual sample using date time for now</div>
+  <div class="setting-container">
+    <mat-form-field class="date-format-dropdown">
+      <mat-label>Date Format</mat-label>
+      <mat-select [(value)]="selectedDateFormat">
+        <mat-option *ngFor="let dateFormat of dateFormatList" [value]="dateFormat">
+          {{dateFormat}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="clock-system-format-dropdown">
+      <mat-label>12- or 24-hour</mat-label>
+      <mat-select [(value)]="selectedClockSystemFormat">
+        <mat-option *ngFor="let clockSystemFormat of clockSystemFormatList" [value]="clockSystemFormat">
+          {{clockSystemFormat}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div class="date-time-example">
+      <div>Example:</div>
+      <div>{{getDateTimeNow()}}</div>
+    </div>
   </div>
 </div>
 <div class="settings-dialog-footer">

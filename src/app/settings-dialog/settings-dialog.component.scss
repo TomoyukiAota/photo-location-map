@@ -6,11 +6,31 @@
 }
 
 .settings-dialog-content {
-  margin: 10px;
+  margin: 20px;
 }
 
 .setting-title {
   font-size: 18px;
+}
+
+.setting-container {
+  display: flex;
+  flex-direction: row;
+  padding: 12px 0 0 20px;
+}
+
+.date-format-dropdown {
+  width: 150px;
+  margin-right: 30px;
+}
+
+.clock-system-format-dropdown {
+  width: 100px;
+  margin-right: 30px;
+}
+
+.date-time-example > div {
+  padding: 3px 0;
 }
 
 .settings-dialog-footer {
