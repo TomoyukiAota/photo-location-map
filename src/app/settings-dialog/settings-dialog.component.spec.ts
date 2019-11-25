@@ -1,4 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatSelectModule } from '@angular/material';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { SettingsDialogComponent } from './settings-dialog.component';
 
@@ -8,7 +10,11 @@ describe('SettingsDialogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SettingsDialogComponent ]
+      declarations: [ SettingsDialogComponent ],
+      imports: [
+        BrowserAnimationsModule,
+        MatSelectModule
+      ]
     })
     .compileComponents();
   }));
