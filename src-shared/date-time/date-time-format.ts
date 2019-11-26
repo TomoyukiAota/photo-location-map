@@ -9,9 +9,11 @@ export namespace DateTimeFormat {
     export const Date_YYYYMMDD = 'YYYY/MM/DD';
     export const Date_DDMMYYYY = 'DD/MM/YYYY';
     export const Date_MMDDYYYY = 'MM/DD/YYYY';
+    export const Date_Default = Date_ISO8601Like;
 
     export const ClockSystem_12h = '12-hour';
     export const ClockSystem_24h = '24-hour';
+    export const ClockSystem_Default = ClockSystem_24h;
 
     export const dateFormatList = [
       Date_ISO8601Like,
