@@ -21,6 +21,18 @@ export class UserDataStorage {
     return value;
   }
 
+  public static readOrDefault(storagePath: ReadonlyArray<string>, defaultValue: string): string {
+    let result: string;
+
+    try {
+      result = UserDataStorage.read(storagePath);
+    } catch {
+      result = defaultValue;
+    }
+
+    return result;
+  }
+
   public static write(storagePath: ReadonlyArray<string>, value: string): void {
     const {filePath, key} = this.getFilePathAndKey(storagePath);
     const jsonObject = {};
