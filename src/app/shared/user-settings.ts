@@ -11,20 +11,20 @@ export class UserSettings {
 const loadDateFormat: (() => string) = () => {
   const loadedDateFormat = UserDataStorage.readOrDefault(
     UserDataStoragePath.UserSettings.DateFormat,
-    DateTimeFormat.ForUser.Date_Default);
+    DateTimeFormat.ForUser.DateFormat_Default);
 
-  const isValidFormat = DateTimeFormat.ForUser.dateFormatList.includes(loadedDateFormat as DateFormatType);
-  const dateFormat = isValidFormat ? loadedDateFormat : DateTimeFormat.ForUser.Date_Default;
+  const isValidFormat = DateTimeFormat.ForUser.DateFormat_List.includes(loadedDateFormat as DateFormatType);
+  const dateFormat = isValidFormat ? loadedDateFormat : DateTimeFormat.ForUser.DateFormat_Default;
   return dateFormat;
 };
 
 const loadClockSystemFormat: (() => string) = () => {
   const loadedClockSystemFormat = UserDataStorage.readOrDefault(
     UserDataStoragePath.UserSettings.ClockSystemFormat,
-    DateTimeFormat.ForUser.ClockSystem_Default);
+    DateTimeFormat.ForUser.ClockSystemFormat_Default);
 
-  const isValidFormat = DateTimeFormat.ForUser.clockSystemFormatList.includes(loadedClockSystemFormat as DateFormatType);
-  const clockSystemFormat = isValidFormat ? loadedClockSystemFormat : DateTimeFormat.ForUser.ClockSystem_Default;
+  const isValidFormat = DateTimeFormat.ForUser.ClockSystemFormat_List.includes(loadedClockSystemFormat as DateFormatType);
+  const clockSystemFormat = isValidFormat ? loadedClockSystemFormat : DateTimeFormat.ForUser.ClockSystemFormat_Default;
   return clockSystemFormat;
 };
 
