@@ -5,39 +5,39 @@ export namespace DateTimeFormat {
   }
 
   export namespace ForUser {
-    export const Date_ISO8601Like = 'YYYY-MM-DD';
-    export const Date_YYYYMMDD = 'YYYY/MM/DD';
-    export const Date_DDMMYYYY = 'DD/MM/YYYY';
-    export const Date_MMDDYYYY = 'MM/DD/YYYY';
-    export const Date_Default = Date_ISO8601Like;
+    export const DateFormat_ISO8601Like = 'YYYY-MM-DD';
+    export const DateFormat_YYYYMMDD = 'YYYY/MM/DD';
+    export const DateFormat_DDMMYYYY = 'DD/MM/YYYY';
+    export const DateFormat_MMDDYYYY = 'MM/DD/YYYY';
+    export const DateFormat_Default = DateFormat_ISO8601Like;
 
-    export const ClockSystem_12h = '12-hour';
-    export const ClockSystem_24h = '24-hour';
-    export const ClockSystem_Default = ClockSystem_24h;
+    export const ClockSystemFormat_12h = '12-hour';
+    export const ClockSystemFormat_24h = '24-hour';
+    export const ClockSystemFormat_Default = ClockSystemFormat_24h;
 
-    export const dateFormatList = [
-      Date_ISO8601Like,
-      Date_YYYYMMDD,
-      Date_DDMMYYYY,
-      Date_MMDDYYYY,
+    export const DateFormat_List = [
+      DateFormat_ISO8601Like,
+      DateFormat_YYYYMMDD,
+      DateFormat_DDMMYYYY,
+      DateFormat_MMDDYYYY,
     ] as const;
 
-    export const clockSystemFormatList = [
-      ClockSystem_12h,
-      ClockSystem_24h
+    export const ClockSystemFormat_List = [
+      ClockSystemFormat_12h,
+      ClockSystemFormat_24h
     ];
 
-    export type DateFormatType = typeof dateFormatList[number];
-    export type ClockSystemFormatType = typeof clockSystemFormatList[number];
+    export type DateFormatType = typeof DateFormat_List[number];
+    export type ClockSystemFormatType = typeof ClockSystemFormat_List[number];
 
     export const getMomentJsFormatString = (dateFormat: DateFormatType, clockSystemFormat: ClockSystemFormatType): string => {
       const dateFormatMap = new Map<DateFormatType, string>();
-      dateFormatMap.set(Date_ISO8601Like, 'YYYY-MM-DD ddd');
-      dateFormatMap.set(Date_YYYYMMDD   , 'YYYY/MM/DD ddd');
-      dateFormatMap.set(Date_DDMMYYYY   , 'DD/MM/YYYY ddd');
-      dateFormatMap.set(Date_MMDDYYYY   , 'MM/DD/YYYY ddd');
+      dateFormatMap.set(DateFormat_ISO8601Like, 'YYYY-MM-DD ddd');
+      dateFormatMap.set(DateFormat_YYYYMMDD   , 'YYYY/MM/DD ddd');
+      dateFormatMap.set(DateFormat_DDMMYYYY   , 'DD/MM/YYYY ddd');
+      dateFormatMap.set(DateFormat_MMDDYYYY   , 'MM/DD/YYYY ddd');
       const momentJsDateFormat = dateFormatMap.get(dateFormat);
-      const momentJsFormat = clockSystemFormat === ClockSystem_24h
+      const momentJsFormat = clockSystemFormat === ClockSystemFormat_24h
         ? `${momentJsDateFormat} HH:mm:ss`
         : `${momentJsDateFormat} hh:mm:ss a`;
       return momentJsFormat;

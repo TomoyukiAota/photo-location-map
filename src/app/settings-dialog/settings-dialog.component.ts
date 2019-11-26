@@ -10,8 +10,8 @@ import { loadedUserSettings, saveUserSettings, UserSettings } from '../shared/us
   styleUrls: ['./settings-dialog.component.scss']
 })
 export class SettingsDialogComponent {
-  public dateFormatList = DateTimeFormat.ForUser.dateFormatList;
-  public clockSystemFormatList = DateTimeFormat.ForUser.clockSystemFormatList;
+  public dateFormatList = DateTimeFormat.ForUser.DateFormat_List;
+  public clockSystemFormatList = DateTimeFormat.ForUser.ClockSystemFormat_List;
   public selectedDateFormat = loadedUserSettings.dateFormat;
   public selectedClockSystemFormat = loadedUserSettings.clockSystemFormat;
 
