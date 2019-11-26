@@ -1,5 +1,8 @@
 import * as moment from 'moment-timezone';
+import { DateTimeFormat } from '../../../src-shared/date-time/date-time-format';
+import FormatNameType = DateTimeFormat.ForUser.DateFormatType;
 import { Photo } from './model/photo.model';
+import { loadedUserSettings } from './user-settings';
 
 export class PhotoDateTimeTakenGenerator {
   public static generate(photo: Photo) {
@@ -20,6 +23,9 @@ export class PhotoDateTimeTakenGenerator {
       return null;
 
     const dateTimeOriginal = photo.exifParserResult.tags.DateTimeOriginal;
-    return moment.unix(dateTimeOriginal).tz('UTC').format('YYYY/MM/DD ddd HH:mm:ss');
+    const dateFormat = loadedUserSettings.dateFormat;
+    const clockSystemFormat = loadedUserSettings.clockSystemFormat;
+    const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsFormatString(dateFormat as FormatNameType, clockSystemFormat);
+    return moment.unix(dateTimeOriginal).tz('UTC').format(momentJsFormatString);
   }
 }
