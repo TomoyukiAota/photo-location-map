@@ -1,4 +1,5 @@
 import { DateTimeFormat } from '../../../src-shared/date-time/date-time-format';
+import { Logger } from '../../../src-shared/log/logger';
 import { UserDataStorage } from '../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../src-shared/user-data-storage/user-data-stroage-path';
 import DateFormatType = DateTimeFormat.ForUser.DateFormatType;
@@ -37,6 +38,7 @@ const loadUserSettings: (() => UserSettings) = () => {
   const dateFormat = loadDateFormat();
   const clockSystemFormat = loadClockSystemFormat();
   const userSettings = new UserSettings(dateFormat, clockSystemFormat);
+  Logger.info(`Loaded user settings ${JSON.stringify(userSettings)}`);
   return userSettings;
 };
 
@@ -45,4 +47,5 @@ export const loadedUserSettings = loadUserSettings();
 export const saveUserSettings: ((UserSettings) => void) = (userSettings: UserSettings) => {
   UserDataStorage.write(UserDataStoragePath.UserSettings.DateFormat, userSettings.dateFormat);
   UserDataStorage.write(UserDataStoragePath.UserSettings.ClockSystemFormat, userSettings.clockSystemFormat);
+  Logger.info(`Saved user settings ${JSON.stringify(userSettings)}`);
 };

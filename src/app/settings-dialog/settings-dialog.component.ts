@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import * as moment from 'moment-timezone';
 import { DateTimeFormat } from '../../../src-shared/date-time/date-time-format';
+import { Logger } from '../../../src-shared/log/logger';
 import { ProxyRequire } from '../../../src-shared/require/proxy-require';
 import { loadedUserSettings, saveUserSettings, UserSettings } from '../shared/user-settings';
 
@@ -36,6 +37,7 @@ export class SettingsDialogComponent {
 
     const userSettings = new UserSettings(this.selectedDateFormat, this.selectedClockSystemFormat);
     saveUserSettings(userSettings);
+    Logger.info(`User settings are saved, so the application will restart.`);
     electron.remote.app.relaunch();
     electron.remote.app.exit(0);
   }
