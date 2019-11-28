@@ -9,5 +9,4 @@ export class Photo {
   dimensions: Dimensions;
   gpsInfo: GpsInfo;
   thumbnail: Thumbnail;
-  dateTimeTaken: string;
 }

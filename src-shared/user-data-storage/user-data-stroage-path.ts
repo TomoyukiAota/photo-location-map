@@ -13,4 +13,9 @@ export namespace UserDataStoragePath {
   export namespace GoogleMaps {
     export const ApiKey: ReadonlyArray<string> = ['GoogleMaps', 'ApiKey'];
   }
+
+  export namespace UserSettings {
+    export const DateFormat: ReadonlyArray<string> = ['UserSettings', 'DateFormat'];
+    export const ClockSystemFormat: ReadonlyArray<string> = ['UserSettings', 'ClockSystemFormat'];
+  }
 }
