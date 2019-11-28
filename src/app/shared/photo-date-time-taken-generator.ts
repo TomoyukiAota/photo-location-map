@@ -1,6 +1,5 @@
 import * as moment from 'moment-timezone';
 import { DateTimeFormat } from '../../../src-shared/date-time/date-time-format';
-import FormatNameType = DateTimeFormat.ForUser.DateFormatType;
 import { Photo } from './model/photo.model';
 import { loadedUserSettings } from './user-settings';
 
