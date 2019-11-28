@@ -2,7 +2,10 @@ import { Component } from '@angular/core';
 import * as moment from 'moment-timezone';
 import { DateTimeFormat } from '../../../src-shared/date-time/date-time-format';
 import FormatNameType = DateTimeFormat.ForUser.DateFormatType;
+import { ProxyRequire } from '../../../src-shared/require/proxy-require';
 import { loadedUserSettings, saveUserSettings, UserSettings } from '../shared/user-settings';
+
+const electron = ProxyRequire.electron;
 
 @Component({
   selector: 'app-settings-dialog',
@@ -28,9 +31,15 @@ export class SettingsDialogComponent {
   }
 
   public saveSettings() {
+    const isOkPressed = window.confirm('This application will restart after saving settings.\nDo you want to continue?');
+    if (!isOkPressed)
+      return;
+
     const userSettings = new UserSettings();
     userSettings.dateFormat = this.selectedDateFormat;
     userSettings.clockSystemFormat = this.selectedClockSystemFormat;
     saveUserSettings(userSettings);
+    electron.remote.app.relaunch();
+    electron.remote.app.exit(0);
   }
 }
