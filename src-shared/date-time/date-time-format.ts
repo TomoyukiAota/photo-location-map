@@ -25,7 +25,7 @@ export namespace DateTimeFormat {
     export const ClockSystemFormat_List = [
       ClockSystemFormat_12h,
       ClockSystemFormat_24h
-    ];
+    ] as const;
 
     export type DateFormatType = typeof DateFormat_List[number];
     export type ClockSystemFormatType = typeof ClockSystemFormat_List[number];
