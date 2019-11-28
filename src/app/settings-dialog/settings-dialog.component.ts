@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import * as moment from 'moment-timezone';
 import { DateTimeFormat } from '../../../src-shared/date-time/date-time-format';
-import FormatNameType = DateTimeFormat.ForUser.DateFormatType;
 import { ProxyRequire } from '../../../src-shared/require/proxy-require';
 import { loadedUserSettings, saveUserSettings, UserSettings } from '../shared/user-settings';
 
@@ -19,7 +18,7 @@ export class SettingsDialogComponent {
   public selectedClockSystemFormat = loadedUserSettings.clockSystemFormat;
 
   public getDateTimeNow() {
-    const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsFormatString(this.selectedDateFormat as FormatNameType, this.selectedClockSystemFormat);
+    const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsFormatString(this.selectedDateFormat, this.selectedClockSystemFormat);
     const now = moment('2019-11-25T14:53:29.396Z').utc().format(momentJsFormatString);
     return now;
   }
