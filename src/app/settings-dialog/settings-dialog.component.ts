@@ -35,9 +35,7 @@ export class SettingsDialogComponent {
     if (!isOkPressed)
       return;
 
-    const userSettings = new UserSettings();
-    userSettings.dateFormat = this.selectedDateFormat;
-    userSettings.clockSystemFormat = this.selectedClockSystemFormat;
+    const userSettings = new UserSettings(this.selectedDateFormat, this.selectedClockSystemFormat);
     saveUserSettings(userSettings);
     electron.remote.app.relaunch();
     electron.remote.app.exit(0);

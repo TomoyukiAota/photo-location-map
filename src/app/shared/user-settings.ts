@@ -4,8 +4,8 @@ import { UserDataStoragePath } from '../../../src-shared/user-data-storage/user-
 import DateFormatType = DateTimeFormat.ForUser.DateFormatType;
 
 export class UserSettings {
-  public dateFormat: string;
-  public clockSystemFormat: string;
+  constructor(public readonly dateFormat: string,
+              public readonly clockSystemFormat: string) {}
 }
 
 const loadDateFormat: (() => string) = () => {
@@ -29,9 +29,9 @@ const loadClockSystemFormat: (() => string) = () => {
 };
 
 const loadUserSettings: (() => UserSettings) = () => {
-  const userSettings = new UserSettings();
-  userSettings.dateFormat = loadDateFormat();
-  userSettings.clockSystemFormat = loadClockSystemFormat();
+  const dateFormat = loadDateFormat();
+  const clockSystemFormat = loadClockSystemFormat();
+  const userSettings = new UserSettings(dateFormat, clockSystemFormat);
   return userSettings;
 };
 
