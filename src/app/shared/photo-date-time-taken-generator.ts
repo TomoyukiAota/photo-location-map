@@ -25,7 +25,7 @@ export class PhotoDateTimeTakenGenerator {
     const dateTimeOriginal = photo.exifParserResult.tags.DateTimeOriginal;
     const dateFormat = loadedUserSettings.dateFormat;
     const clockSystemFormat = loadedUserSettings.clockSystemFormat;
-    const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsFormatString(dateFormat as FormatNameType, clockSystemFormat);
+    const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsFormatString(dateFormat, clockSystemFormat);
     return moment.unix(dateTimeOriginal).tz('UTC').format(momentJsFormatString);
   }
 }
