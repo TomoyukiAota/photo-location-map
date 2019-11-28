@@ -10,7 +10,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatProgressBarModule, MatProgressBar } from '@angular/material/progress-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSelectModule } from '@angular/material/select';
 import { MatTreeModule } from '@angular/material/tree';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -32,6 +33,7 @@ import { GoogleMapsComponent } from './map/google-maps/google-maps.component';
 import { OsmComponent } from './map/osm/osm.component';
 import { AboutBoxComponent } from './about-box/about-box.component';
 import { WelcomeDialogComponent } from './welcome-dialog/welcome-dialog.component';
+import { SettingsDialogComponent } from './settings-dialog/settings-dialog.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -42,6 +44,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   declarations: [
     AppComponent,
     AboutBoxComponent,
+    SettingsDialogComponent,
     WelcomeDialogComponent,
     HomeComponent,
     SidebarComponent,
@@ -54,6 +57,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   ],
   entryComponents: [
     AboutBoxComponent,
+    SettingsDialogComponent,
     WelcomeDialogComponent,
     LoadingFolderDialogComponent
   ],
@@ -78,6 +82,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatIconModule,
     MatInputModule,
     MatProgressBarModule,
+    MatSelectModule,
     MatTreeModule
   ],
   bootstrap: [AppComponent]

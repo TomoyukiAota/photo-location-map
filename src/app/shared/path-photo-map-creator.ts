@@ -6,7 +6,6 @@ import { Thumbnail } from './model/thumbnail.model';
 import { Photo } from './model/photo.model';
 import { ExifFetcher } from './exif-fetcher';
 import { PathPhotoMapRecorder } from './path-photo-map-recorder';
-import { PhotoDateTimeTakenGenerator } from './photo-date-time-taken-generator';
 import { FilenameExtension } from './filename-extension';
 
 export class PathPhotoMapCreator {
@@ -85,6 +84,5 @@ export class PathPhotoMapCreator {
     }
 
     photo.thumbnail = await Thumbnail.create(photo);
-    photo.dateTimeTaken = PhotoDateTimeTakenGenerator.generate(photo);
   }
 }

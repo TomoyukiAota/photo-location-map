@@ -1,0 +1,47 @@
+<div class="settings-dialog-header">
+  Settings
+</div>
+<div class="settings-dialog-content">
+  <div class="setting-title">Date Time Format</div>
+  <div class="setting-container">
+    <mat-form-field class="date-format-dropdown">
+      <mat-label>Date Format</mat-label>
+      <mat-select [(value)]="selectedDateFormat">
+        <mat-option *ngFor="let dateFormat of dateFormatList" [value]="dateFormat">
+          {{dateFormat}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="clock-system-format-dropdown">
+      <mat-label>12- or 24-hour</mat-label>
+      <mat-select [(value)]="selectedClockSystemFormat">
+        <mat-option *ngFor="let clockSystemFormat of clockSystemFormatList" [value]="clockSystemFormat">
+          {{clockSystemFormat}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <div class="date-time-example">
+      <div>Example</div>
+      <div>{{getDateTimeNow()}}</div>
+    </div>
+  </div>
+</div>
+<div class="settings-dialog-footer">
+  <div class="settings-dialog-footer-description"
+       [style.visibility]="isSaveButtonEnabled() ? 'visible' : 'hidden'">
+    This application will restart after saving settings.
+  </div>
+  <div class="settings-dialog-footer-buttons">
+    <button mat-flat-button
+            color="primary"
+            [disabled]="!isSaveButtonEnabled()"
+            (click)="saveSettings()">
+      Save
+    </button>
+    <button mat-button
+            mat-dialog-close
+            class="settings-dialog-cancel-button">
+      Cancel
+    </button>
+  </div>
+</div>
