@@ -7,9 +7,11 @@ const download = (url) => {
   document.body.removeChild(a);
 };
 
+const version = '0.2.0';
+const downloadDirectory = `https://github.com/TomoyukiAota/photo-location-map/releases/download/v${version}`;
 const downloadLink = {
-  win: 'https://github.com/TomoyukiAota/photo-location-map/releases/download/v0.2.0/Photo-Location-Map-Setup-0.2.0.exe',
-  mac: 'https://github.com/TomoyukiAota/photo-location-map/releases/download/v0.2.0/Photo-Location-Map-0.2.0.dmg'
+  win: `${downloadDirectory}/Photo-Location-Map-Setup-${version}.exe`,
+  mac: `${downloadDirectory}/Photo-Location-Map-${version}.dmg`
 };
 
 const downloadForWindows = () => download(downloadLink.win);
