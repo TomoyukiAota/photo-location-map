@@ -7,7 +7,7 @@ This application displays the locations where your photos are taken on a map.
 [![demo-gif]][demo-youtube]
 
 [demo-gif]: ./docs/docs-resources/PhotoLocationMapDemo_ResizedForGitHub.gif
-[demo-youtube]: https://youtu.be/G-P7PB3fhdc "Clicking this image navigates to YouTube."
+[demo-youtube]: https://youtu.be/n7hv_h1llKo "Clicking this image navigates to YouTube."
 
 Clicking the above image navigates to YouTube.
 
