@@ -1,5 +1,5 @@
 import { MenuItemConstructorOptions } from 'electron';
-import { getDevOrProd } from '../../src-shared/dev-or-prod/dev-or-prod';
+import { DevOrProd } from '../../src-shared/dev-or-prod/dev-or-prod';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { Logger } from '../../src-shared/log/logger';
 import { mainWindow } from '../electron-main';
@@ -38,7 +38,7 @@ export const commonHelpSubmenuTemplate: MenuItemConstructorOptions[] = [
   { role: 'toggleDevTools' },
   {
     label: 'Map',
-    visible: getDevOrProd() === 'Dev',
+    visible: DevOrProd.isDev,
     submenu: [
       {
         label: 'OpenStreetMap',
