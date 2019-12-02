@@ -1,4 +1,5 @@
 import { MenuItemConstructorOptions } from 'electron';
+import { DevOrProd } from '../../src-shared/dev-or-prod/dev-or-prod';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { Logger } from '../../src-shared/log/logger';
 import { mainWindow } from '../electron-main';
@@ -37,6 +38,7 @@ export const commonHelpSubmenuTemplate: MenuItemConstructorOptions[] = [
   { role: 'toggleDevTools' },
   {
     label: 'Map',
+    visible: DevOrProd.isDev,
     submenu: [
       {
         label: 'OpenStreetMap',
@@ -45,7 +47,7 @@ export const commonHelpSubmenuTemplate: MenuItemConstructorOptions[] = [
         click: () => selectMap(IpcConstants.Map.ChangeEvent.Arg.OpenStreetMap)
       },
       {
-        label: 'Google Maps (Your API key is required)',
+        label: '[Experimental] Google Maps (Your API key is required. See Developer Tools console.)',
         type: 'radio',
         click: () => selectMap(IpcConstants.Map.ChangeEvent.Arg.GoogleMaps)
       }

@@ -3,7 +3,7 @@ import { app } from 'electron';
 import * as moment from 'moment-timezone';
 import { Analytics } from '../src-shared/analytics/analytics';
 import { Logger } from '../src-shared/log/logger';
-import { getDevOrProd } from '../src-shared/dev-or-prod/dev-or-prod';
+import { DevOrProd } from '../src-shared/dev-or-prod/dev-or-prod';
 import { UserDataStorage } from '../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../src-shared/user-data-storage/user-data-stroage-path';
 import { Now } from '../src-shared/date-time/now';
@@ -73,7 +73,7 @@ export const recordAtAppLaunch = () => {
   Analytics.trackEvent('App Ver', `App Ver: ${app.getVersion()}`);
   Logger.info(`Application Version: ${app.getVersion()}`);
 
-  Analytics.trackEvent('DevOrProd', `DevOrProd: ${getDevOrProd()}`);
+  Analytics.trackEvent('DevOrProd', `DevOrProd: ${DevOrProd.toString()}`);
 
   Analytics.trackEvent('OS Info', `OS: ${os.platform()}`, `OS Ver: ${os.release()}`);
   Logger.info(`OS: ${os.platform()}; OS Ver: ${os.release()}`);
