@@ -27,6 +27,16 @@ const fetchDevOrProdFromConfig: (() => DevOrProdType) = () => {
 const devOrProd = fetchDevOrProdFromConfig();
 Logger.info(`Determined DevOrProd: ${devOrProd}`);
 
-export const getDevOrProd: (() => DevOrProdType) = () => {
-  return devOrProd;
-};
+export class DevOrProd {
+  public static toString(): DevOrProdType {
+    return devOrProd;
+  }
+
+  public static get isDev(): boolean {
+    return devOrProd === 'Dev';
+  }
+
+  public static get isProd(): boolean {
+    return devOrProd === 'Prod';
+  }
+}
