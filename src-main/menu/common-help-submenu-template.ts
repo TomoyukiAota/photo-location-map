@@ -45,7 +45,7 @@ export const commonHelpSubmenuTemplate: MenuItemConstructorOptions[] = [
         click: () => selectMap(IpcConstants.Map.ChangeEvent.Arg.OpenStreetMap)
       },
       {
-        label: 'Google Maps (Your API key is required)',
+        label: '[Experimental] Google Maps (Your API key is required. See Developer Tools console.)',
         type: 'radio',
         click: () => selectMap(IpcConstants.Map.ChangeEvent.Arg.GoogleMaps)
       }
