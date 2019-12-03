@@ -1,4 +1,5 @@
 import { MenuItemConstructorOptions } from 'electron';
+import { DevOrProd } from '../../src-shared/dev-or-prod/dev-or-prod';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { Logger } from '../../src-shared/log/logger';
 import { mainWindow } from '../electron-main';
@@ -18,12 +19,12 @@ export const commonMenuTemplate: MenuItemConstructorOptions[] = [
     submenu: [
       {
         label: 'Reload',
-        accelerator: 'CmdOrCtrl+R',
+        visible: DevOrProd.isDev,
+        accelerator: DevOrProd.isDev ? 'CmdOrCtrl+R' : '',
         click(item, focusedWindow) {
           if (focusedWindow) focusedWindow.reload();
         },
       },
-      { type: 'separator' },
       { role: 'resetZoom' },
       { role: 'zoomIn' },
       { role: 'zoomOut' },
