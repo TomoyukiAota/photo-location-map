@@ -32,24 +32,25 @@ export const commonHelpSubmenuTemplate: MenuItemConstructorOptions[] = [
   },
   { type: 'separator' },
   {
-    label: ' ----- Advanced Menu ----- ',
-    enabled: false
-  },
-  { role: 'toggleDevTools' },
-  {
-    label: 'Map',
-    visible: DevOrProd.isDev,
+    label: 'Advanced Menu',
     submenu: [
+      { role: 'toggleDevTools' },
       {
-        label: 'OpenStreetMap',
-        type: 'radio',
-        checked: true,
-        click: () => selectMap(IpcConstants.Map.ChangeEvent.Arg.OpenStreetMap)
-      },
-      {
-        label: '[Experimental] Google Maps (Your API key is required. See Developer Tools console.)',
-        type: 'radio',
-        click: () => selectMap(IpcConstants.Map.ChangeEvent.Arg.GoogleMaps)
+        label: 'Map',
+        visible: DevOrProd.isDev,
+        submenu: [
+          {
+            label: 'OpenStreetMap',
+            type: 'radio',
+            checked: true,
+            click: () => selectMap(IpcConstants.Map.ChangeEvent.Arg.OpenStreetMap)
+          },
+          {
+            label: '[Experimental] Google Maps (Your API key is required. See Developer Tools console.)',
+            type: 'radio',
+            click: () => selectMap(IpcConstants.Map.ChangeEvent.Arg.GoogleMaps)
+          }
+        ]
       }
     ]
   }
