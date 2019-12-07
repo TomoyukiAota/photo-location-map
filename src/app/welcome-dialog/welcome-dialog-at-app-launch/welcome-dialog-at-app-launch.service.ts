@@ -7,15 +7,12 @@ import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/us
 })
 export class WelcomeDialogAtAppLaunchService {
   public showWelcomeDialogIfUserHasNotClickedOk() {
-    let clickedOkOnWelcomeScreen = false;
+    const clickedOkOnWelcomeDialogStr = UserDataStorage.readOrDefault(
+      UserDataStoragePath.History.ClickedOkOnWelcomeDialog,
+      'false');
+    const clickedOkOnWelcomeDialog = clickedOkOnWelcomeDialogStr.toLowerCase() === 'true';
 
-    try {
-      clickedOkOnWelcomeScreen = UserDataStorage.read(UserDataStoragePath.History.ClickedOkOnWelcomeDialog).toLowerCase() === 'true';
-    } catch {
-      clickedOkOnWelcomeScreen = false;
-    }
-
-    if (!clickedOkOnWelcomeScreen)
+    if (!clickedOkOnWelcomeDialog)
       window.plmInternalRenderer.welcomeDialog.showWelcomeDialog();
   }
 

@@ -8,7 +8,7 @@ export class GoogleMapsApiKeyHandler {
 
   public static fetchApiKey(): string {
     if (!RequireFromMainProcess.fsExtra.existsSync(this.filePath)) {
-      Logger.info(`The file for Google Maps API Key does not exist.`);
+      Logger.warn(`The file for Google Maps API Key does not exist.`);
       this.logHowToUseGoogleMapsMessage();
       return '';
     }
@@ -32,6 +32,6 @@ export class GoogleMapsApiKeyHandler {
 
   private static logHowToUseGoogleMapsMessage() {
     Logger.info(`The Google Maps API Key will be '' (empty string).`);
-    Logger.info(`To use Google Maps, create "${this.filePath}" with file content "{ "ApiKey": "YOUR_API_KEY" }"`);
+    Logger.warn(`To use Google Maps, create "${this.filePath}" with file content "{ "ApiKey": "YOUR_API_KEY" }"`);
   }
 }
