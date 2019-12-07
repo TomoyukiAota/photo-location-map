@@ -1,3 +1,4 @@
+import { Logger } from '../log/logger';
 import { RequireFromMainProcess } from '../require/require-from-main-process';
 
 export class UserDataStorage {
@@ -18,6 +19,7 @@ export class UserDataStorage {
     const fileContent = this.fsExtra.readFileSync(filePath, 'utf8');
     const jsonObject = JSON.parse(fileContent);
     const value = jsonObject[key];
+    this.log(`Read "${value}" from "${storagePath.join(',')}"`);
     return value;
   }
 
@@ -26,7 +28,8 @@ export class UserDataStorage {
 
     try {
       result = UserDataStorage.read(storagePath);
-    } catch {
+    } catch (error) {
+      this.log(`Tried reading "${storagePath.join(',')}" but failed. The value will be "${defaultValue}". Error Message: ${error.toString()}`);
       result = defaultValue;
     }
 
@@ -40,6 +43,7 @@ export class UserDataStorage {
     const fileContent = JSON.stringify(jsonObject);
     this.fsExtra.ensureFileSync(filePath);
     this.fsExtra.writeFileSync(filePath, fileContent);
+    this.log(`Write "${value}" to "${storagePath.join(',')}"`);
   }
 
   public static getFilePath(storagePath: ReadonlyArray<string>): string {
@@ -56,5 +60,9 @@ export class UserDataStorage {
     const lastElement = copiedStoragePath.pop();
     const filePath = this.path.join(this.storageRootPath, ...copiedStoragePath, `${lastElement}.json`);
     return {filePath: filePath, key: lastElement};
+  }
+
+  private static log(message: string): void {
+    Logger.debug(`[UserDataStorage] ${message}`);
   }
 }
