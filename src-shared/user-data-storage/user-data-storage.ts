@@ -11,6 +11,7 @@ export class UserDataStorage {
   private static readonly storageRootPath = UserDataStorage.path.join(UserDataStorage.userDataPath, UserDataStorage.subDirForStorage);
 
   public static read(storagePath: ReadonlyArray<string>): string {
+    this.log(storagePath, 'Attempt to read');
     const {filePath, key} = this.getFilePathAndKey(storagePath);
 
     if (!this.fsExtra.existsSync(filePath))
@@ -19,7 +20,7 @@ export class UserDataStorage {
     const fileContent = this.fsExtra.readFileSync(filePath, 'utf8');
     const jsonObject = JSON.parse(fileContent);
     const value = jsonObject[key];
-    this.log(`Read "${value}" from "${storagePath.join(',')}"`);
+    this.log(storagePath, `Read result is "${value}"`);
     return value;
   }
 
@@ -29,7 +30,7 @@ export class UserDataStorage {
     try {
       result = UserDataStorage.read(storagePath);
     } catch (error) {
-      this.log(`Tried reading "${storagePath.join(',')}" but failed. The value will be "${defaultValue}". Error Message: ${error.toString()}`);
+      this.log(storagePath, `Failed to read. Instead, "${defaultValue}" will be the read result. Error Message: ${error.toString()}`);
       result = defaultValue;
     }
 
@@ -37,13 +38,14 @@ export class UserDataStorage {
   }
 
   public static write(storagePath: ReadonlyArray<string>, value: string): void {
+    this.log(storagePath, `Attempt to write "${value}"`);
     const {filePath, key} = this.getFilePathAndKey(storagePath);
     const jsonObject = {};
     jsonObject[key] = value;
     const fileContent = JSON.stringify(jsonObject);
     this.fsExtra.ensureFileSync(filePath);
     this.fsExtra.writeFileSync(filePath, fileContent);
-    this.log(`Write "${value}" to "${storagePath.join(',')}"`);
+    this.log(storagePath, `Finished writing "${value}"`);
   }
 
   public static getFilePath(storagePath: ReadonlyArray<string>): string {
@@ -62,7 +64,7 @@ export class UserDataStorage {
     return {filePath: filePath, key: lastElement};
   }
 
-  private static log(message: string): void {
-    Logger.debug(`[UserDataStorage] ${message}`);
+  private static log(storagePath: ReadonlyArray<string>, message: string) {
+    Logger.debug(`[UserDataStorage] Path: "${storagePath.join(',')}" | ${message}`);
   }
 }
