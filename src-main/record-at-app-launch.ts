@@ -58,7 +58,7 @@ const recordLaunchCount = () => {
   UserDataStorage.write(UserDataStoragePath.History.LaunchCount, launchCount.toString());
 };
 
-const recordUserSettings = () => {
+const recordLoadedUserSettings = () => {
   Analytics.trackEvent('Loaded User Settings', `Date Format: ${loadedUserSettings.dateFormat}`);
   Analytics.trackEvent('Loaded User Settings', `Clock System Format: ${loadedUserSettings.clockSystemFormat}`);
 };
@@ -77,5 +77,5 @@ export const recordAtAppLaunch = () => {
   Analytics.trackEvent('OS Info', `OS: ${os.platform()}`, `OS Ver: ${os.release()}`);
   Logger.info(`OS: ${os.platform()}; OS Ver: ${os.release()}`);
 
-  recordUserSettings();
+  recordLoadedUserSettings();
 };
