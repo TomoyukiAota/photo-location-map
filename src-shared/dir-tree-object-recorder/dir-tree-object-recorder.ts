@@ -1,7 +1,7 @@
 import { DirectoryTree } from 'directory-tree';
 import { Analytics } from '../analytics/analytics';
+import { FilenameExtension } from '../filename-extension/filename-extension';
 import { Logger } from '../log/logger';
-import { FilenameExtension } from '../../src/app/shared/filename-extension';
 
 class NumbersOfPhotos {
   public jpeg: number;
