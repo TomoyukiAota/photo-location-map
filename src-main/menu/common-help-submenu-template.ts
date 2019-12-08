@@ -1,4 +1,5 @@
 import { MenuItemConstructorOptions } from 'electron';
+import { Analytics } from '../../src-shared/analytics/analytics';
 import { DevOrProd } from '../../src-shared/dev-or-prod/dev-or-prod';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { Logger } from '../../src-shared/log/logger';
@@ -6,6 +7,7 @@ import { mainWindow } from '../electron-main';
 
 const handleShowWelcomeDialogClicked = () => {
   Logger.info(`[Menu] Clicked "Show Welcome Dialog".`);
+  Analytics.trackEvent('Clicked Menu', 'Show Welcome Dialog');
 
   if (!mainWindow)
     return;
@@ -22,6 +24,7 @@ const changeMap = (ipcMapChangeArg: string) => {
 
 const selectMap = (ipcMapChangeArg: string) => {
   Logger.info(`[Menu] Selected ${ipcMapChangeArg}.`);
+  Analytics.trackEvent('Clicked Menu', `Selected Map: ${ipcMapChangeArg}`);
   changeMap(ipcMapChangeArg);
 };
 
