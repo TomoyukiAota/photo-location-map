@@ -1,7 +1,7 @@
-import { DateTimeFormat } from '../../../src-shared/date-time/date-time-format';
-import { Logger } from '../../../src-shared/log/logger';
-import { UserDataStorage } from '../../../src-shared/user-data-storage/user-data-storage';
-import { UserDataStoragePath } from '../../../src-shared/user-data-storage/user-data-stroage-path';
+import { DateTimeFormat } from '../date-time/date-time-format';
+import { Logger } from '../log/logger';
+import { UserDataStorage } from '../user-data-storage/user-data-storage';
+import { UserDataStoragePath } from '../user-data-storage/user-data-stroage-path';
 import DateFormatType = DateTimeFormat.ForUser.DateFormatType;
 import ClockSystemFormatType = DateTimeFormat.ForUser.ClockSystemFormatType;
 

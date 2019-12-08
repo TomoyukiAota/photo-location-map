@@ -3,7 +3,7 @@ import * as moment from 'moment-timezone';
 import { DateTimeFormat } from '../../../src-shared/date-time/date-time-format';
 import { Logger } from '../../../src-shared/log/logger';
 import { ProxyRequire } from '../../../src-shared/require/proxy-require';
-import { loadedUserSettings, saveUserSettings, UserSettings } from '../shared/user-settings';
+import { loadedUserSettings, saveUserSettings, UserSettings } from '../../../src-shared/user-settings/user-settings';
 
 const electron = ProxyRequire.electron;
 
