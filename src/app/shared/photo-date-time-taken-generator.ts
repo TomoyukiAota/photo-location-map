@@ -1,7 +1,7 @@
 import * as moment from 'moment-timezone';
 import { DateTimeFormat } from '../../../src-shared/date-time/date-time-format';
+import { loadedUserSettings } from '../../../src-shared/user-settings/user-settings';
 import { Photo } from './model/photo.model';
-import { loadedUserSettings } from './user-settings';
 
 export class PhotoDateTimeTakenGenerator {
   public static generate(photo: Photo) {
