@@ -3,6 +3,7 @@ import { app } from 'electron';
 import isNaturalNumber = require('is-natural-number');
 import * as moment from 'moment-timezone';
 import { Analytics } from '../src-shared/analytics/analytics';
+import { DateTimeFormat } from '../src-shared/date-time/date-time-format';
 import { Now } from '../src-shared/date-time/now';
 import { DevOrProd } from '../src-shared/dev-or-prod/dev-or-prod';
 import { Logger } from '../src-shared/log/logger';
@@ -59,8 +60,11 @@ const recordLaunchCount = () => {
 };
 
 const recordLoadedUserSettings = () => {
-  Analytics.trackEvent('Loaded User Settings', `Date Format: ${loadedUserSettings.dateFormat}`);
-  Analytics.trackEvent('Loaded User Settings', `Clock System Format: ${loadedUserSettings.clockSystemFormat}`);
+  const settings = loadedUserSettings;
+  const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsFormatString(settings.dateFormat, settings.clockSystemFormat);
+  Analytics.trackEvent('Loaded User Settings', `Date Format: ${settings.dateFormat}`);
+  Analytics.trackEvent('Loaded User Settings', `Clock System Format: ${settings.clockSystemFormat}`);
+  Analytics.trackEvent('Loaded User Settings', `moment.js format: ${momentJsFormatString}`);
 };
 
 export const recordAtAppLaunch = () => {
