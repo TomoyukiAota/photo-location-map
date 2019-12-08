@@ -1,16 +1,18 @@
 import { MenuItemConstructorOptions } from 'electron';
+import { Analytics } from '../../src-shared/analytics/analytics';
 import { DevOrProd } from '../../src-shared/dev-or-prod/dev-or-prod';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { Logger } from '../../src-shared/log/logger';
 import { mainWindow } from '../electron-main';
 
 const handleManageSettingsClicked = () => {
-    Logger.info(`[Menu] Clicked "Manage Settings".`);
+  Logger.info(`[Menu] Clicked "Manage Settings".`);
+  Analytics.trackEvent('Clicked Menu', 'Manage Settings');
 
-    if (!mainWindow)
-      return;
+  if (!mainWindow)
+    return;
 
-    mainWindow.webContents.send(IpcConstants.ManageSettings.Name);
+  mainWindow.webContents.send(IpcConstants.ManageSettings.Name);
 };
 
 export const commonMenuTemplate: MenuItemConstructorOptions[] = [

@@ -1,6 +1,6 @@
 import * as exifParser from 'exif-parser';
+import { FilenameExtension } from '../../../src-shared/filename-extension/filename-extension';
 import { Logger } from '../../../src-shared/log/logger';
-import { FilenameExtension } from './filename-extension';
 
 export class PathExifPair {
   constructor(public readonly path: string,
