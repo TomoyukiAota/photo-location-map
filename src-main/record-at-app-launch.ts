@@ -8,6 +8,7 @@ import { DevOrProd } from '../src-shared/dev-or-prod/dev-or-prod';
 import { Logger } from '../src-shared/log/logger';
 import { UserDataStorage } from '../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../src-shared/user-data-storage/user-data-stroage-path';
+import { loadedUserSettings } from '../src-shared/user-settings/user-settings';
 
 const now = Now.extendedFormat;
 
@@ -57,6 +58,11 @@ const recordLaunchCount = () => {
   UserDataStorage.write(UserDataStoragePath.History.LaunchCount, launchCount.toString());
 };
 
+const recordUserSettings = () => {
+  Analytics.trackEvent('Loaded User Settings', `Date Format: ${loadedUserSettings.dateFormat}`);
+  Analytics.trackEvent('Loaded User Settings', `Clock System Format: ${loadedUserSettings.clockSystemFormat}`);
+};
+
 export const recordAtAppLaunch = () => {
   recordAppLaunch();
   recordLastLaunchDateTime();
@@ -70,4 +76,6 @@ export const recordAtAppLaunch = () => {
 
   Analytics.trackEvent('OS Info', `OS: ${os.platform()}`, `OS Ver: ${os.release()}`);
   Logger.info(`OS: ${os.platform()}; OS Ver: ${os.release()}`);
+
+  recordUserSettings();
 };
