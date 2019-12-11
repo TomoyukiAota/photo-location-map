@@ -113,8 +113,7 @@
               "src/favicon.svg"
             ],
             "customWebpackConfig": {
-              "path": "./angular.webpack.js",
-              "target": "web"
+              "path": "./angular.webpack.js"
             }
           }
         },
