@@ -31,7 +31,7 @@
             ],
             "scripts": [],
             "customWebpackConfig": {
-              "path": "./angular.webpack.js"
+              "path": "./angular.webpack.ts"
             }
           },
           "configurations": {
@@ -49,23 +49,6 @@
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.dev.ts"
-                }
-              ]
-            },
-            "dev-web": {
-              "optimization": false,
-              "outputHashing": "all",
-              "sourceMap": true,
-              "extractCss": true,
-              "namedChunks": false,
-              "aot": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": false,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.web.ts"
                 }
               ]
             },
@@ -96,9 +79,6 @@
           "configurations": {
             "dev": {
               "browserTarget": "angular-electron:build:dev"
-            },
-            "dev-web": {
-              "browserTarget": "angular-electron:build:dev-web"
             },
             "production": {
               "browserTarget": "angular-electron:build:production"
@@ -133,8 +113,7 @@
               "src/favicon.svg"
             ],
             "customWebpackConfig": {
-              "path": "./angular.webpack.js",
-              "target": "web"
+              "path": "./angular.webpack.ts"
             }
           }
         },
