@@ -2,7 +2,7 @@
           Photo Location Map for macOS
 --------------------------------------------------------------
 作者   Tomoyuki Aota
-連絡先 tomoyukiaあっとgmail.com　（「あっと」を「@」に置換して下さい）
+連絡先 tomoyukiaあっとgmail.com　（「あっと」を「@」に置換してください）
 HP     https://tomoyukiaota.github.io/photo-location-map/
 --------------------------------------------------------------
 
@@ -36,7 +36,7 @@ HP     https://tomoyukiaota.github.io/photo-location-map/
 
 ○ イ ン ス ト ー ル 方 法
 
-  ダウンロードしたzipファイルを展開し、その中にあるdmgファイルをダブルクリックしてください。
+  ダウンロードしたzipファイルを展開するとdmgファイルが作成されますので、それをダブルクリックしてください。
   Photo Location Map.appを、ドラッグ＆ドロップでApplicationsフォルダにコピーしてください。
 
 --------------------------------------------------------------
