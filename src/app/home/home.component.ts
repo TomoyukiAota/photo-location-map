@@ -15,6 +15,7 @@ export class HomeComponent implements AfterViewInit {
     Split(['#left-sidebar', '#right-map'], {
       sizes: [25, 75],
       minSize: 200,
+      snapOffset: 0,
     });
 
     // OSM needs to be rendered again after Split.js starts working. Otherwise, OSM is not rendered correctly.
