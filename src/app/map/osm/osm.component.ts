@@ -4,6 +4,7 @@ import { Map } from 'leaflet';
 import { Photo } from '../../shared/model/photo.model';
 import { SelectedPhotoService } from '../../shared/service/selected-photo.service';
 import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewer-content';
+import { OsmForceRenderService } from './osm-force-render/osm-force-render.service';
 
 @Component({
   selector: 'app-osm',
@@ -11,21 +12,27 @@ import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewe
   styleUrls: ['./osm.component.scss']
 })
 export class OsmComponent implements OnInit, OnDestroy, AfterViewInit {
-  private subscription: Subscription;
+  private selectedPhotoServiceSubscription: Subscription;
+  private osmForceRenderServiceSubscription: Subscription;
   private map: Map;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
-              private selectedPhotoService: SelectedPhotoService) {
+              private selectedPhotoService: SelectedPhotoService,
+              private osmForceRenderService: OsmForceRenderService) {
   }
 
   ngOnInit(): void {
-    this.subscription = this.selectedPhotoService.selectedPhotosChanged.subscribe(
+    this.selectedPhotoServiceSubscription = this.selectedPhotoService.selectedPhotosChanged.subscribe(
       photos => this.renderOsm(photos)
+    );
+    this.osmForceRenderServiceSubscription = this.osmForceRenderService.forceRenderWithoutPhotoHappened.subscribe(
+      () => this.renderOsm([])
     );
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.selectedPhotoServiceSubscription.unsubscribe();
+    this.osmForceRenderServiceSubscription.unsubscribe();
   }
 
   ngAfterViewInit(): void {
