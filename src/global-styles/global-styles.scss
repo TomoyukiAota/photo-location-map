@@ -10,6 +10,13 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+// The gutter provided by Split.js
+.gutter.gutter-horizontal {
+  height: 100%;
+  background-color: #eeeeee;
+  cursor: col-resize;
+}
+
 .custom-dialog-container .mat-dialog-container {
   padding: 0;
   position: relative;
