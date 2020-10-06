@@ -33,7 +33,10 @@ module.exports = function (config) {
         base: 'Electron',
         browserWindowOptions: {
           webPreferences: {
-            nodeIntegration: true
+            enableRemoteModule: true,
+            nodeIntegration: true,
+            webSecurity: false,
+            worldSafeExecuteJavaScript: false
           }
         }
       }
