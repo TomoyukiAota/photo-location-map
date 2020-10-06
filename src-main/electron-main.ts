@@ -35,7 +35,7 @@ const createWindow = () => {
     }
   });
 
-  const userAgent = mainWindow.webContents.getUserAgent();
+  const userAgent = mainWindow.webContents.userAgent;
   setUserAgentForAnalytics(userAgent);
 
   if (isLiveReloadMode) {
