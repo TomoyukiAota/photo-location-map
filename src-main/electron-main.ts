@@ -30,8 +30,10 @@ const createWindow = () => {
     width: mainWindowState.width,
     height: mainWindowState.height,
     webPreferences: {
+      enableRemoteModule: true,
       nodeIntegration: true,
-      webSecurity: false
+      webSecurity: false,
+      worldSafeExecuteJavaScript: false
     }
   });
 
