@@ -1,3 +1,0 @@
---timeout 300000
---require ts-node/register
-"./e2e/**/*.spec.ts"
