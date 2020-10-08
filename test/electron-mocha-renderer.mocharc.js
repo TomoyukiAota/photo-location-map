@@ -1,5 +1,5 @@
 module.exports = {
-  'require': [
+  require: [
     './test/electron-mocha-renderer.hooks.js',
     'espower-typescript/guess'
   ],
