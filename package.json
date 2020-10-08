@@ -36,7 +36,7 @@
     "lint:all": "npm-run-all lint:ng lint:es",
     "test:unit:karma": "ng test --code-coverage",
     "test:unit:karma:watch": "ng test --code-coverage --watch",
-    "test:unit:em:main": "cross-env TS_NODE_TRANSPILE_ONLY=1 electron-mocha --config ./test/electron-mocha-main.mocharc.js \"test/**/*.spec.em.@(main|both).ts\"",
+    "test:unit:em:main": "cross-env TS_NODE_TRANSPILE_ONLY=1 electron-mocha --config ./test/electron-mocha-main.mocharc.js",
     "test:unit:em:renderer": "cross-env TS_NODE_TRANSPILE_ONLY=1 electron-mocha --opts ./test/electron-mocha-renderer.opts",
     "test:unit:em:renderer:not-working": "cross-env TS_NODE_TRANSPILE_ONLY=1 electron-mocha --config ./test/electron-mocha-renderer.mocharc.js --renderer \"test/**/*.spec.em.@(renderer|both).ts\"",
     "test:unit:em:all": "npm-run-all test:unit:em:main test:unit:em:renderer",
