@@ -6,7 +6,7 @@ describe('OsmForceRenderService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: OsmForceRenderService = TestBed.get(OsmForceRenderService);
+    const service: OsmForceRenderService = TestBed.inject(OsmForceRenderService);
     expect(service).toBeTruthy();
   });
 });
