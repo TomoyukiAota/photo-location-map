@@ -13,8 +13,8 @@ const app = ProxyRequire.electron.remote.app;
 export class WelcomeDialogComponent implements AfterViewInit {
   public readonly appVersion = app.getVersion();
 
-  @ViewChild('authorLink', { static: false }) public authorLink: ElementRef<HTMLAnchorElement>;
-  @ViewChild('gitHubIssuesLink', { static: false }) public gitHubIssuesLink: ElementRef<HTMLAnchorElement>;
+  @ViewChild('authorLink') public authorLink: ElementRef<HTMLAnchorElement>;
+  @ViewChild('gitHubIssuesLink') public gitHubIssuesLink: ElementRef<HTMLAnchorElement>;
 
   constructor(private welcomeDialogAtAppLaunchService: WelcomeDialogAtAppLaunchService) {
   }

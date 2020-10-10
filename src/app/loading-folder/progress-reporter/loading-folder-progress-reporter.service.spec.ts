@@ -6,7 +6,7 @@ describe('LoadingFolderProgressReporterService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: LoadingFolderProgressReporterService = TestBed.get(LoadingFolderProgressReporterService);
+    const service: LoadingFolderProgressReporterService = TestBed.inject(LoadingFolderProgressReporterService);
     expect(service).toBeTruthy();
   });
 });

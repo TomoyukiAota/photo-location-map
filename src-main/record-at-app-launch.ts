@@ -1,6 +1,5 @@
 import * as os from 'os';
 import { app } from 'electron';
-import isNaturalNumber = require('is-natural-number');
 import * as moment from 'moment-timezone';
 import { Analytics } from '../src-shared/analytics/analytics';
 import { DateTimeFormat } from '../src-shared/date-time/date-time-format';
@@ -10,6 +9,8 @@ import { Logger } from '../src-shared/log/logger';
 import { UserDataStorage } from '../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../src-shared/user-data-storage/user-data-stroage-path';
 import { loadedUserSettings } from '../src-shared/user-settings/user-settings';
+
+const isNaturalNumber = require('is-natural-number');
 
 const now = Now.extendedFormat;
 
