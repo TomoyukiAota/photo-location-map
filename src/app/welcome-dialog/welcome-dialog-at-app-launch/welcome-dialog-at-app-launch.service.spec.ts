@@ -6,7 +6,7 @@ describe('WelcomeDialogAtAppLaunchService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: WelcomeDialogAtAppLaunchService = TestBed.get(WelcomeDialogAtAppLaunchService);
+    const service: WelcomeDialogAtAppLaunchService = TestBed.inject(WelcomeDialogAtAppLaunchService);
     expect(service).toBeTruthy();
   });
 });
