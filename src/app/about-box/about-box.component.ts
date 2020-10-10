@@ -12,8 +12,8 @@ const app = ProxyRequire.electron.remote.app;
 export class AboutBoxComponent implements AfterViewInit {
   public readonly appVersion = app.getVersion();
 
-  @ViewChild('gitHubRepoLink', { static: false }) public gitHubRepoLink: ElementRef<HTMLAnchorElement>;
-  @ViewChild('authorLink', { static: false }) public authorLink: ElementRef<HTMLAnchorElement>;
+  @ViewChild('gitHubRepoLink') public gitHubRepoLink: ElementRef<HTMLAnchorElement>;
+  @ViewChild('authorLink') public authorLink: ElementRef<HTMLAnchorElement>;
 
   public ngAfterViewInit() {
     configureOpeningInOsBrowser(this.gitHubRepoLink, 'https://github.com/TomoyukiAota/photo-location-map');
