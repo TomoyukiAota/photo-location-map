@@ -53,12 +53,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     GoogleMapsComponent,
     OsmComponent
   ],
-  entryComponents: [
-    AboutBoxComponent,
-    SettingsDialogComponent,
-    WelcomeDialogComponent,
-    LoadingFolderDialogComponent
-  ],
   imports: [
     BrowserModule,
     FormsModule,
