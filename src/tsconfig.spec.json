@@ -1,5 +1,5 @@
 {
-  "extends": "../tsconfig.json",
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "../out-tsc/spec",
     "types": [
@@ -9,7 +9,7 @@
   },
   "files": [
     "test.ts",
-    "polyfills-test.ts"
+    "polyfills.ts"
   ],
   "include": [
     "../type-declaration/**/*",
