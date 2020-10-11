@@ -21,6 +21,6 @@ describe('Photo Location Map', function () {
 
   it('should display Select Folder button', async function () {
     const text = await browser.getText('#select-folder-button > button > span');
-    expect(text).to.equal('Select Folder');
+    expect(text).to.contain('Select Folder');
   });
 });
