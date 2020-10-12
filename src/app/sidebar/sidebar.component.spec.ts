@@ -1,5 +1,5 @@
-import { Component} from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { Component } from '@angular/core';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -16,7 +16,7 @@ describe('SidebarComponent', () => {
   let component: SidebarComponent;
   let fixture: ComponentFixture<SidebarComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
         SidebarComponent,
@@ -43,7 +43,7 @@ describe('SidebarComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render "Select Folder" button', async(() => {
+  it('should render "Select Folder" button', waitForAsync(() => {
     const compiled = fixture.debugElement.nativeElement;
     expect(compiled.querySelector('#select-folder-button>button').textContent).toEqual('SIDEBAR.SELECT_FOLDER');
   }));

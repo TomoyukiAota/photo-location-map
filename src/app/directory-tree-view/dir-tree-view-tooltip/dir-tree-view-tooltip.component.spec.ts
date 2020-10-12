@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DirTreeViewTooltipComponent } from './dir-tree-view-tooltip.component';
 
@@ -6,7 +6,7 @@ describe('DirTreeViewTooltipComponent', () => {
   let component: DirTreeViewTooltipComponent;
   let fixture: ComponentFixture<DirTreeViewTooltipComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ DirTreeViewTooltipComponent ]
     })
