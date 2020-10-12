@@ -50,7 +50,7 @@
   "dependencies": {
     "electron-updater": "4.3.5",
     "electron-window-state": "5.0.3",
-    "fs-extra": "8.1.0",
+    "fs-extra": "9.0.1",
     "is-natural-number": "4.0.1",
     "moment-timezone": "0.5.26",
     "universal-analytics": "0.4.20",
@@ -74,7 +74,7 @@
     "@angular/router": "10.1.5",
     "@ngx-translate/core": "13.0.0",
     "@ngx-translate/http-loader": "6.0.0",
-    "@types/fs-extra": "8.0.0",
+    "@types/fs-extra": "9.0.2",
     "@types/is-natural-number": "4.0.0",
     "@types/jasmine": "3.5.14",
     "@types/jasminewd2": "2.0.8",
