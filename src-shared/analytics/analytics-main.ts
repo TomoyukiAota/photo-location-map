@@ -1,4 +1,4 @@
-import * as uuid from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 import { Logger } from '../log/logger';
 import { AnalyticsInterface } from './analytics-interface';
 import { UserDataStorage } from '../user-data-storage/user-data-storage';
@@ -24,7 +24,7 @@ export class AnalyticsMain implements AnalyticsInterface {
     try {
       userId = UserDataStorage.read(UserDataStoragePath.Analytics.UserId);
     } catch {
-      userId = uuid();
+      userId = uuidv4();
       UserDataStorage.write(UserDataStoragePath.Analytics.UserId, userId);
     }
 
