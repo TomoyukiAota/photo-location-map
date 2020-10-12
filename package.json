@@ -89,7 +89,7 @@
     "chai": "4.2.0",
     "codelyzer": "6.0.1",
     "conventional-changelog-cli": "2.1.0",
-    "cross-env": "5.2.0",
+    "cross-env": "7.0.2",
     "devtron": "1.4.0",
     "directory-tree": "2.2.5",
     "electron": "9.3.2",
