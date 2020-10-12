@@ -2,17 +2,13 @@
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "../out-tsc/app",
-    "baseUrl": "",
-    "types": []
+    "baseUrl": ""
   },
-  "include": [
-    "../type-declaration/**/*",
-    "../src/**/*",
-    "../src-main/**/*",
-    "../src-shared/**/*"
+  "files": [
+    "main.ts",
+    "polyfills.ts"
   ],
-  "exclude": [
-    "../src/**/*.spec.ts",
-    "../src-shared/**/*.spec.ts"
+  "include": [
+    "../**/*.d.ts"
   ]
 }
