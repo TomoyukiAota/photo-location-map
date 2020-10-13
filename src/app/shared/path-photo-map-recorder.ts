@@ -6,8 +6,8 @@ export class PathPhotoMapRecorder {
   public static record(pathPhotoMap: Map<string, Photo>): void {
     const photos = Array.from(pathPhotoMap.values());
 
-    const numOfPhotosWithExif = photos.filter(photo => !!photo.exifParserResult).length;
-    const numOfPhotosWithGpsInfo = photos.filter(photo => !!photo.gpsInfo).length;
+    const numOfPhotosWithExif = photos.filter(photo => !!photo.exif).length;
+    const numOfPhotosWithGpsInfo = photos.filter(photo => !!photo.exif?.gpsInfo).length;
 
     Logger.info(`Number of files with EXIF: ${numOfPhotosWithExif}`);
     Logger.info(`Number of files with GPS info: ${numOfPhotosWithGpsInfo}`);
