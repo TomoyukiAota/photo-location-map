@@ -18,10 +18,10 @@ export class PhotoDateTimeTakenGenerator {
     // In order to just use the local time avoiding such conversion,
     // the time zone of Moment instance is set to UTC because no conversion will occur when UTC time zone is used.
 
-    if (!photo || !photo.exifParserResult || !photo.exifParserResult.tags || !photo.exifParserResult.tags.DateTimeOriginal)
+    if (!photo || !photo.exif || !photo.exif.dateTimeOriginal)
       return null;
 
-    const dateTimeOriginal = photo.exifParserResult.tags.DateTimeOriginal;
+    const dateTimeOriginal = photo.exif.dateTimeOriginal;
     const dateFormat = loadedUserSettings.dateFormat;
     const clockSystemFormat = loadedUserSettings.clockSystemFormat;
     const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsFormatString(dateFormat, clockSystemFormat);

@@ -98,7 +98,7 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
     let marker, i;
     for (i = 0; i < photos.length; i++) {
       marker = new google.maps.Marker({
-        position: new google.maps.LatLng(photos[i].gpsInfo.latLng.latitude, photos[i].gpsInfo.latLng.longitude),
+        position: new google.maps.LatLng(photos[i].exif.gpsInfo.latLng.latitude, photos[i].exif.gpsInfo.latLng.longitude),
         map: map
       });
       bounds.extend(marker.position);

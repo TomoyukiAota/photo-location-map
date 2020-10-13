@@ -17,19 +17,11 @@ export class PhotoDataService {
     return !!photo ? photo : null;
   }
 
-  public getExifParserResult(path: string) {
-    const photo = this.pathPhotoMap.get(path);
-    if (!photo || !photo.exifParserResult)
-      return null;
-
-    return photo.exifParserResult;
-  }
-
   public getGpsInfo(path: string) {
     const photo = this.pathPhotoMap.get(path);
-    if (!photo || !photo.gpsInfo)
+    if (!photo || !photo.exif || !photo.exif.gpsInfo)
       return null;
 
-    return photo.gpsInfo;
+    return photo.exif.gpsInfo;
   }
 }

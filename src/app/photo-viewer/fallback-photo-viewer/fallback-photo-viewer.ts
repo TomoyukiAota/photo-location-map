@@ -7,7 +7,7 @@ const BrowserWindow = window.require('electron').remote.BrowserWindow;
 
 export class FallbackPhotoViewer {
   public static launch(photo: Photo): void {
-    const viewerDimensions = this.getPhotoViewerDimensions(photo.dimensions);
+    const viewerDimensions = this.getPhotoViewerDimensions(photo.exif.imageDimensions);
 
     let browserWindow = new BrowserWindow({
       title: photo.name,
