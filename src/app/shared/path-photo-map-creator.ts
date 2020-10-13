@@ -3,8 +3,8 @@ import { Logger } from '../../../src-shared/log/logger';
 import { Dimensions } from './model/dimensions.model';
 import { GpsInfo } from './model/gps-info.model';
 import { LatLng } from './model/lat-lng.model';
-import { Thumbnail } from './model/thumbnail.model';
 import { Photo } from './model/photo.model';
+import { createThumbnail } from './create-thumbnail-from-exif-parser-result';
 import { ExifFetcher } from './exif-fetcher';
 import { PathPhotoMapRecorder } from './path-photo-map-recorder';
 
@@ -83,6 +83,6 @@ export class PathPhotoMapCreator {
       photo.gpsInfo = gpsInfo;
     }
 
-    photo.thumbnail = await Thumbnail.create(photo);
+    photo.thumbnail = await createThumbnail(photo.exifParserResult);
   }
 }
