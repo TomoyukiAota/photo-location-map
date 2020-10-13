@@ -41,20 +41,20 @@ export class PhotoInfoViewerContent {
   private static createThumbnailElement(photo: Photo) {
     const thumbnailElement = document.createElement('img');
 
-    if (photo.thumbnail) {
-      thumbnailElement.src = photo.thumbnail.dataUrl;
-      thumbnailElement.width = photo.thumbnail.dimensions.width;
-      thumbnailElement.height = photo.thumbnail.dimensions.height;
+    if (photo.exif.thumbnail) {
+      thumbnailElement.src = photo.exif.thumbnail.dataUrl;
+      thumbnailElement.width = photo.exif.thumbnail.dimensions.width;
+      thumbnailElement.height = photo.exif.thumbnail.dimensions.height;
     } else {
       // # needs to be escaped. See https://www.w3schools.com/tags/ref_urlencode.asp for encoding.
       const escapedPath = photo.path.replace(/#/g, '%23');
       thumbnailElement.src = `file://${escapedPath}`;
       const largerSideLength = 200;
-      if (photo.dimensions.width > photo.dimensions.height) {
+      if (photo.exif.imageDimensions.width > photo.exif.imageDimensions.height) {
         thumbnailElement.width = largerSideLength;
-        thumbnailElement.height = largerSideLength * (photo.dimensions.height / photo.dimensions.width);
+        thumbnailElement.height = largerSideLength * (photo.exif.imageDimensions.height / photo.exif.imageDimensions.width);
       } else {
-        thumbnailElement.width = largerSideLength * (photo.dimensions.width / photo.dimensions.height);
+        thumbnailElement.width = largerSideLength * (photo.exif.imageDimensions.width / photo.exif.imageDimensions.height);
         thumbnailElement.height = largerSideLength;
       }
     }
