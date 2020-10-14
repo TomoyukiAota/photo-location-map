@@ -1,7 +1,7 @@
 import { FilenameExtension } from '../../../src-shared/filename-extension/filename-extension';
 import { Logger } from '../../../src-shared/log/logger';
 import { Photo } from './model/photo.model';
-import { ExifFetcher, PathExifPair } from './exif-fetcher';
+import { ExifFetcher, PathExifPair } from './exif-fetcher/exif-fetcher';
 import { PathPhotoMapRecorder } from './path-photo-map-recorder';
 
 export class PathPhotoMapCreator {
