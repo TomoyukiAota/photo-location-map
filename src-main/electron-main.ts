@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, protocol } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import * as windowStateKeeper from 'electron-window-state';
@@ -93,6 +93,21 @@ try {
     if (mainWindow === null) {
       createWindow();
     }
+  });
+
+  // Below is a workaround for the issue that displaying a file with "file://" protocol
+  // on the browser using development server results in an error like
+  // -------------------------------
+  // GET file:///C:/temp/temp.JPG
+  // net::ERR_UNKNOWN_URL_SCHEME
+  // -------------------------------
+  // This issue happens from Electron 9.
+  // See https://github.com/electron/electron/issues/23757#issuecomment-640146333
+  app.whenReady().then(() => {
+    protocol.registerFileProtocol('file', (request, callback) => {
+      const pathname = decodeURI(request.url.replace('file:///', ''));
+      callback(pathname);
+    });
   });
 } catch (e) {
   Logger.error(e);
