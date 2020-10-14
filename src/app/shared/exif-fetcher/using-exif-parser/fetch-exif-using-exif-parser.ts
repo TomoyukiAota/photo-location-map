@@ -1,9 +1,9 @@
 import * as exifParser from 'exif-parser';
-import { Exif } from '../model/exif.model';
-import { Logger } from '../../../../src-shared/log/logger';
-import { Dimensions } from '../model/dimensions.model';
-import { GpsInfo } from '../model/gps-info.model';
-import { LatLng } from '../model/lat-lng.model';
+import { Exif } from '../../model/exif.model';
+import { Logger } from '../../../../../src-shared/log/logger';
+import { Dimensions } from '../../model/dimensions.model';
+import { GpsInfo } from '../../model/gps-info.model';
+import { LatLng } from '../../model/lat-lng.model';
 import { createThumbnail } from './create-thumbnail-from-exif-parser-result';
 
 export function fetchExifUsingExifParser(filePath: string): Promise<Exif> {
