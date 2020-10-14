@@ -1,7 +1,7 @@
 import { FilenameExtension } from '../../../../src-shared/filename-extension/filename-extension';
 import { Logger } from '../../../../src-shared/log/logger';
 import { Exif } from '../model/exif.model';
-import { fetchExifUsingExifParser } from './fetch-exif-using-exif-parser';
+import { fetchExifUsingExifParser } from './using-exif-parser/fetch-exif-using-exif-parser';
 
 export class PathExifPair {
   constructor(public readonly path: string,

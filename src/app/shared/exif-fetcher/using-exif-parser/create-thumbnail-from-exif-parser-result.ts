@@ -1,6 +1,6 @@
-import { Dimensions } from '../model/dimensions.model';
-import { Thumbnail } from '../model/thumbnail.model';
-import * as imageRotator from '../image-rotator';
+import { Dimensions } from '../../model/dimensions.model';
+import { Thumbnail } from '../../model/thumbnail.model';
+import * as imageRotator from '../../image-rotator';
 
 export async function createThumbnail(exifParserResult: ExifParserResult): Promise<Thumbnail> {
   const isThumbnailAvailableInExif = exifParserResult && exifParserResult.hasThumbnail('image/jpeg');
