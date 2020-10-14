@@ -2,7 +2,7 @@ import assert = require('assert');
 import * as path from 'path';
 import * as createDirectoryTree from 'directory-tree';
 import { nearlyEqual } from '../../../test-util/number-comparison';
-import { ExifFetcher, PathExifPair } from '../../../../src/app/shared/exif-fetcher';
+import { ExifFetcher, PathExifPair } from '../../../../src/app/shared/exif-fetcher/exif-fetcher';
 
 const testResourceDirectory = path.join(__dirname, '..', '..', '..', 'test-resources');
 
@@ -25,13 +25,13 @@ describe('ExifFetcher', () => {
       const IMG_4676_pathExifPair = pathExifPairs.find(pair => pair.path === IMG_4676_path);
       assert(!!IMG_4676_pathExifPair === true);
 
-      const actual_IMG_4676_GPSLatitude = IMG_4676_pathExifPair.exifParserResult.tags.GPSLatitude;
-      const expected_IMG_4676_GPSLatitude = 34.688075;
-      assert(nearlyEqual(actual_IMG_4676_GPSLatitude, expected_IMG_4676_GPSLatitude, 1.0e-5));
+      const actual_IMG_4676_latitude = IMG_4676_pathExifPair.exif.gpsInfo.latLng.latitude;
+      const expected_IMG_4676_latitude = 34.688075;
+      assert(nearlyEqual(actual_IMG_4676_latitude, expected_IMG_4676_latitude, 1.0e-5));
 
-      const actual_IMG_4676_GPSLongitude = IMG_4676_pathExifPair.exifParserResult.tags.GPSLongitude;
-      const expected_IMG_4676_GPSLongitude = 135.19586111111113;
-      assert(nearlyEqual(actual_IMG_4676_GPSLongitude, expected_IMG_4676_GPSLongitude, 1.0e-5));
+      const actual_IMG_4676_longitude = IMG_4676_pathExifPair.exif.gpsInfo.latLng.longitude;
+      const expected_IMG_4676_longitude = 135.19586111111113;
+      assert(nearlyEqual(actual_IMG_4676_longitude, expected_IMG_4676_longitude, 1.0e-5));
     });
 
     it('should return null for unsupported-files/Invalid Photo.JPG', () => {
@@ -39,7 +39,7 @@ describe('ExifFetcher', () => {
       const Invalid_Photo_pathExifPair = pathExifPairs.find(pair => pair.path === Invalid_Photo_path);
       assert(!!Invalid_Photo_pathExifPair === true);
 
-      assert(Invalid_Photo_pathExifPair.exifParserResult === null);
+      assert(Invalid_Photo_pathExifPair.exif === null);
     });
   });
 });
