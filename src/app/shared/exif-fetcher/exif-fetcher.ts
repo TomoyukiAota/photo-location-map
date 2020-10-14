@@ -2,6 +2,7 @@ import { FilenameExtension } from '../../../../src-shared/filename-extension/fil
 import { Logger } from '../../../../src-shared/log/logger';
 import { Exif } from '../model/exif.model';
 import { fetchExifUsingExifParser } from './using-exif-parser/fetch-exif-using-exif-parser';
+import { fetchExifUsingExifr } from './using-exifr/fetch-exif-using-exifr';
 
 export class PathExifPair {
   constructor(public readonly path: string,
@@ -43,7 +44,7 @@ export class ExifFetcher {
   }
 
   private static addPathExifPairPromise(filePath: string) {
-    const pathExifPairPromise = fetchExifUsingExifParser(filePath)
+    const pathExifPairPromise = fetchExifUsingExifr(filePath)
       .then(exif => new PathExifPair(filePath, exif));
 
     this.pathExifPairPromises.push(pathExifPairPromise);
