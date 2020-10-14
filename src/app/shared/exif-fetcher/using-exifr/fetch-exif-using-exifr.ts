@@ -26,10 +26,13 @@ interface ExifrParseOutput {
   longitude?: number;
   ExifImageHeight?: number;
   ExifImageWidth?: number;
+  Orientation?: number;
 }
 
 async function fetchExifrParseOutput(filePath: string): Promise<ExifrParseOutput> {
-  const exifrResult: ExifrParseOutput = await exifr.parse(filePath);
+  const exifrResult: ExifrParseOutput = await exifr.parse(filePath, {
+    translateValues: false
+  });
   return exifrResult;
 }
 
@@ -55,17 +58,17 @@ async function createExifFromExifrParseOutput(exifrResult: ExifrParseOutput, fil
 
   const thumbnailBuffer = await exifr.thumbnail(filePath);
   if (thumbnailBuffer) {
-    const thumbnail = await createThumbnail(thumbnailBuffer, filePath);
+    const orientation = exifrResult.Orientation ?? 1;   // If orientation is not available, assume 1, and display thumbnail.
+    const thumbnail = await createThumbnail(thumbnailBuffer, orientation);
     exif.thumbnail = thumbnail;
   }
 
   return exif;
 }
 
-async function createThumbnail(thumbnailBuffer: Uint8Array | Buffer, filePath: string) {
+async function createThumbnail(thumbnailBuffer: Uint8Array | Buffer, orientation: number) {
   const base64String = btoa(String.fromCharCode.apply(null, thumbnailBuffer));
   const dataUrl = `data:image/jpg;base64,${base64String}`;
-  const orientation = await exifr.orientation(filePath);
   const rotatedImage = await imageRotator.correctRotation(dataUrl, orientation);
   const rotatedDimensions = new Dimensions(rotatedImage.width, rotatedImage.height);
   const thumbnail = new Thumbnail(rotatedImage.dataUrl, rotatedDimensions);
