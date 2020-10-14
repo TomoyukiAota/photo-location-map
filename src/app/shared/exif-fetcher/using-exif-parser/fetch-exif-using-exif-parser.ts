@@ -19,7 +19,7 @@ function fetchExifParserResult(filePath: string): Promise<ExifParserResult> {
     const bufferLengthRequiredToParseExif = 65635;
     window.require('fs-extra').open(filePath, 'r', (error, fd) => {
       if (error) {
-        Logger.warn(`Failed to open ${filePath}`, error);
+        Logger.warn(`[using exif-parser] Failed to open ${filePath}`, error);
         reject(`Failed to open file ${filePath}`);
         return;
       }
@@ -27,20 +27,20 @@ function fetchExifParserResult(filePath: string): Promise<ExifParserResult> {
       const buffer = Buffer.allocUnsafe(bufferLengthRequiredToParseExif);
       window.require('fs-extra').read(fd, buffer, 0, bufferLengthRequiredToParseExif, 0, (err, bytesRead) => {
         if (err) {
-          Logger.warn(`Failed to read file content of ${filePath}`, err, fd);
+          Logger.warn(`[using exif-parser] Failed to read file content of ${filePath}`, err, fd);
           reject(`Failed to read file content of ${filePath}`);
           return;
         }
 
         try {
           const exifParserResult = exifParser.create(buffer).parse();
-          Logger.info(`Fetched EXIF of ${filePath} `, exifParserResult);
+          Logger.info(`[using exif-parser] Fetched EXIF of ${filePath} `, exifParserResult);
           resolve(exifParserResult);
         } catch (error) {
           if (error.message === 'Invalid JPEG section offset') {
-            Logger.info(`exif-parser reported "Invalid JPEG section offset" for "${filePath}" reading ${bytesRead} bytes.`);
+            Logger.info(`[using exif-parser] exif-parser reported "Invalid JPEG section offset" for "${filePath}" reading ${bytesRead} bytes.`);
           } else {
-            Logger.warn(`Failed to fetch EXIF of ${filePath} `, error);
+            Logger.warn(`[using exif-parser] Failed to fetch EXIF of ${filePath} `, error);
           }
 
           reject(`Failed to fetch EXIF of ${filePath}`);
@@ -48,7 +48,7 @@ function fetchExifParserResult(filePath: string): Promise<ExifParserResult> {
 
         window.require('fs-extra').close(fd, e => {
           if (e)
-            Logger.warn(`Failed to close ${filePath}`, error);
+            Logger.warn(`[using exif-parser] Failed to close ${filePath}`, error);
         });
       });
     });
