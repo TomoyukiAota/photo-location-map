@@ -1,10 +1,15 @@
 import * as exifParser from 'exif-parser';
 import { FilenameExtension } from '../../../src-shared/filename-extension/filename-extension';
 import { Logger } from '../../../src-shared/log/logger';
+import { Exif } from './model/exif.model';
+import { Dimensions } from './model/dimensions.model';
+import { GpsInfo } from './model/gps-info.model';
+import { LatLng } from './model/lat-lng.model';
+import { createThumbnail } from './create-thumbnail-from-exif-parser-result';
 
 export class PathExifPair {
   constructor(public readonly path: string,
-              public readonly exifParserResult: ExifParserResult) {
+              public readonly exif: Exif) {
   }
 }
 
@@ -42,18 +47,21 @@ export class ExifFetcher {
   }
 
   private static addPathExifPairPromise(filePath: string) {
-    const promise = this.instantiatePromiseToFetchExif(filePath)
-      .then(exifParserResult =>
-        new PathExifPair(filePath, exifParserResult)
-      )
-      .catch(() =>
-        new PathExifPair(filePath, null)
-      );
+    const pathExifPairPromise = this.getExifUsingExifParser(filePath)
+      .then(exif => new PathExifPair(filePath, exif));
 
-    this.pathExifPairPromises.push(promise);
+    this.pathExifPairPromises.push(pathExifPairPromise);
   }
 
-  private static instantiatePromiseToFetchExif(filePath: string): Promise<ExifParserResult> {
+  private static getExifUsingExifParser(filePath: string): Promise<Exif> {
+    const exifPromise = this.getExifParserResult(filePath)
+      .then(async exifParserResult => await this.createExifFromExifParserResult(exifParserResult))
+      .catch(() => null );
+
+    return exifPromise;
+  }
+
+  private static getExifParserResult(filePath: string): Promise<ExifParserResult> {
     return new Promise((resolve, reject) => {
       const bufferLengthRequiredToParseExif = 65635;
       window.require('fs-extra').open(filePath, 'r', (error, fd) => {
@@ -72,9 +80,9 @@ export class ExifFetcher {
           }
 
           try {
-            const exif = exifParser.create(buffer).parse();
-            Logger.info(`Fetched EXIF of ${filePath} `, exif);
-            resolve(exif);
+            const exifParserResult = exifParser.create(buffer).parse();
+            Logger.info(`Fetched EXIF of ${filePath} `, exifParserResult);
+            resolve(exifParserResult);
           } catch (error) {
             if (error.message === 'Invalid JPEG section offset') {
               Logger.info(`exif-parser reported "Invalid JPEG section offset" for "${filePath}" reading ${bytesRead} bytes.`);
@@ -92,6 +100,28 @@ export class ExifFetcher {
         });
       });
     });
+  }
+
+  private static async createExifFromExifParserResult(exifParserResult: ExifParserResult): Promise<Exif> {
+    const exif = new Exif();
+
+    if (exifParserResult.tags && exifParserResult.tags.DateTimeOriginal) {
+      exif.dateTimeOriginal = exifParserResult.tags.DateTimeOriginal;
+    }
+
+    if (exifParserResult.imageSize) {
+      exif.imageDimensions = new Dimensions(exifParserResult.imageSize.width, exifParserResult.imageSize.height);
+    }
+
+    if (exifParserResult.tags && exifParserResult.tags.GPSLatitude && exifParserResult.tags.GPSLongitude) {
+      const gpsInfo = new GpsInfo();
+      gpsInfo.latLng = new LatLng(exifParserResult.tags.GPSLatitude, exifParserResult.tags.GPSLongitude);
+      exif.gpsInfo = gpsInfo;
+    }
+
+    exif.thumbnail = await createThumbnail(exifParserResult);
+
+    return exif;
   }
 
   // Previous implementation using readStream. Stopped using this because the readStream does not flow in some cases.
