@@ -43,8 +43,20 @@ export class ExifFetcher {
     this.addPathExifPairPromise(directoryTreeElement.path);
   }
 
+  public static exifFetchLibraryInUse: 'exifr' | 'exif-parser' = 'exifr';
+
   private static addPathExifPairPromise(filePath: string) {
-    const pathExifPairPromise = fetchExifUsingExifr(filePath)
+    let exifPromise: Promise<Exif>;
+
+    if (this.exifFetchLibraryInUse === 'exifr') {
+      exifPromise = fetchExifUsingExifr(filePath);
+    } else if (this.exifFetchLibraryInUse === 'exif-parser') {
+      exifPromise = fetchExifUsingExifParser(filePath);
+    } else {
+      Logger.error(`Something went wrong with exifFetchLibraryInUse. The value of exifFetchLibraryInUse is "${this.exifFetchLibraryInUse}"`);
+    }
+
+    const pathExifPairPromise = exifPromise
       .then(exif => new PathExifPair(filePath, exif));
 
     this.pathExifPairPromises.push(pathExifPairPromise);
