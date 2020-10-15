@@ -11,11 +11,7 @@ const exifr: typeof import('exifr') = window.require('electron').remote.require(
 
 export function fetchExifUsingExifr(filePath: string): Promise<Exif> {
   const exifPromise = fetchExifrParseOutput(filePath)
-    .then(async exifrParseOutput => {
-      const exif = await createExifFromExifrParseOutput(exifrParseOutput, filePath);
-      Logger.info(`[using exifr] Fetched EXIF of ${filePath} `, exifrParseOutput);
-      return exif;
-    })
+    .then(async exifrParseOutput => await createExifFromExifrParseOutput(exifrParseOutput, filePath))
     .catch(() => null );
 
   return exifPromise;
@@ -34,6 +30,7 @@ async function fetchExifrParseOutput(filePath: string): Promise<ExifrParseOutput
   const exifrParseOutput: ExifrParseOutput = await exifr.parse(filePath, {
     translateValues: false
   });
+  Logger.info(`[using exifr] Fetched EXIF of ${filePath} `, exifrParseOutput);
   return exifrParseOutput;
 }
 
@@ -63,6 +60,8 @@ async function createExifFromExifrParseOutput(exifrParseOutput: ExifrParseOutput
     const thumbnail = await createThumbnail(thumbnailBuffer, orientation);
     exif.thumbnail = thumbnail;
   }
+
+  Logger.info(`[using exifr] Created Exif class instance of ${filePath} `, exif);
 
   return exif;
 }
