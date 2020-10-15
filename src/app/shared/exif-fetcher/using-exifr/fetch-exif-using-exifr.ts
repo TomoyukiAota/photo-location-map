@@ -6,6 +6,7 @@ import { LatLng } from '../../model/lat-lng.model';
 import { Thumbnail } from '../../model/thumbnail.model';
 import * as imageRotator from '../../image-rotator';
 
+// exifr in the main process is used because it runs faster than the one in the renderer process.
 const exifr: typeof import('exifr') = window.require('electron').remote.require('exifr');
 
 export function fetchExifUsingExifr(filePath: string): Promise<Exif> {
