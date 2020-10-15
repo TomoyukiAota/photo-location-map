@@ -36,8 +36,8 @@ export class ExifFetcher {
     if (isDirectory)
       return;
 
-    const isSupportedExtension = FilenameExtension.isSupported(directoryTreeElement.extension);
-    if (!isSupportedExtension)
+    const isSupportedByPlm = FilenameExtension.isSupportedByPlm(directoryTreeElement.extension);
+    if (!isSupportedByPlm)
       return;
 
     this.addPathExifPairPromise(directoryTreeElement.path);
