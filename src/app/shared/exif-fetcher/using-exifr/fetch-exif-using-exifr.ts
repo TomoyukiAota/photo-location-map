@@ -31,35 +31,35 @@ interface ExifrParseOutput {
 }
 
 async function fetchExifrParseOutput(filePath: string): Promise<ExifrParseOutput> {
-  const exifrResult: ExifrParseOutput = await exifr.parse(filePath, {
+  const exifrParseOutput: ExifrParseOutput = await exifr.parse(filePath, {
     translateValues: false
   });
-  return exifrResult;
+  return exifrParseOutput;
 }
 
-async function createExifFromExifrParseOutput(exifrResult: ExifrParseOutput, filePath: string): Promise<Exif> {
-  if (!exifrResult)
+async function createExifFromExifrParseOutput(exifrParseOutput: ExifrParseOutput, filePath: string): Promise<Exif> {
+  if (!exifrParseOutput)
     return;
 
   const exif = new Exif();
 
-  if (exifrResult.DateTimeOriginal) {
-    exif.dateTimeOriginal = exifrResult.DateTimeOriginal;
+  if (exifrParseOutput.DateTimeOriginal) {
+    exif.dateTimeOriginal = exifrParseOutput.DateTimeOriginal;
   }
 
-  if (exifrResult.ExifImageWidth && exifrResult.ExifImageHeight) {
-    exif.imageDimensions = new Dimensions(exifrResult.ExifImageWidth, exifrResult.ExifImageWidth);
+  if (exifrParseOutput.ExifImageWidth && exifrParseOutput.ExifImageHeight) {
+    exif.imageDimensions = new Dimensions(exifrParseOutput.ExifImageWidth, exifrParseOutput.ExifImageWidth);
   }
 
-  if (exifrResult.latitude && exifrResult.longitude) {
+  if (exifrParseOutput.latitude && exifrParseOutput.longitude) {
     const gpsInfo = new GpsInfo();
-    gpsInfo.latLng = new LatLng(exifrResult.latitude, exifrResult.longitude);
+    gpsInfo.latLng = new LatLng(exifrParseOutput.latitude, exifrParseOutput.longitude);
     exif.gpsInfo = gpsInfo;
   }
 
   const thumbnailBuffer = await exifr.thumbnail(filePath);
   if (thumbnailBuffer) {
-    const orientation = exifrResult.Orientation ?? 1;   // If orientation is not available, assume 1, and display thumbnail.
+    const orientation = exifrParseOutput.Orientation ?? 1;   // If orientation is not available, assume 1, and display thumbnail.
     const thumbnail = await createThumbnail(thumbnailBuffer, orientation);
     exif.thumbnail = thumbnail;
   }
