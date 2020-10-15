@@ -6,15 +6,12 @@ import { LatLng } from '../../model/lat-lng.model';
 import { Thumbnail } from '../../model/thumbnail.model';
 import * as imageRotator from '../../image-rotator';
 
+// exifr in the main process is used because it runs faster than the one in the renderer process.
 const exifr: typeof import('exifr') = window.require('electron').remote.require('exifr');
 
 export function fetchExifUsingExifr(filePath: string): Promise<Exif> {
   const exifPromise = fetchExifrParseOutput(filePath)
-    .then(async exifrParseOutput => {
-      const exif = await createExifFromExifrParseOutput(exifrParseOutput, filePath);
-      Logger.info(`[using exifr] Fetched EXIF of ${filePath} `, exifrParseOutput);
-      return exif;
-    })
+    .then(async exifrParseOutput => await createExifFromExifrParseOutput(exifrParseOutput, filePath))
     .catch(() => null );
 
   return exifPromise;
@@ -30,38 +27,41 @@ interface ExifrParseOutput {
 }
 
 async function fetchExifrParseOutput(filePath: string): Promise<ExifrParseOutput> {
-  const exifrResult: ExifrParseOutput = await exifr.parse(filePath, {
+  const exifrParseOutput: ExifrParseOutput = await exifr.parse(filePath, {
     translateValues: false
   });
-  return exifrResult;
+  Logger.info(`[using exifr] Fetched EXIF of ${filePath} `, exifrParseOutput);
+  return exifrParseOutput;
 }
 
-async function createExifFromExifrParseOutput(exifrResult: ExifrParseOutput, filePath: string): Promise<Exif> {
-  if (!exifrResult)
+async function createExifFromExifrParseOutput(exifrParseOutput: ExifrParseOutput, filePath: string): Promise<Exif> {
+  if (!exifrParseOutput)
     return;
 
   const exif = new Exif();
 
-  if (exifrResult.DateTimeOriginal) {
-    exif.dateTimeOriginal = exifrResult.DateTimeOriginal;
+  if (exifrParseOutput.DateTimeOriginal) {
+    exif.dateTimeOriginal = exifrParseOutput.DateTimeOriginal;
   }
 
-  if (exifrResult.ExifImageWidth && exifrResult.ExifImageHeight) {
-    exif.imageDimensions = new Dimensions(exifrResult.ExifImageWidth, exifrResult.ExifImageWidth);
+  if (exifrParseOutput.ExifImageWidth && exifrParseOutput.ExifImageHeight) {
+    exif.imageDimensions = new Dimensions(exifrParseOutput.ExifImageWidth, exifrParseOutput.ExifImageWidth);
   }
 
-  if (exifrResult.latitude && exifrResult.longitude) {
+  if (exifrParseOutput.latitude && exifrParseOutput.longitude) {
     const gpsInfo = new GpsInfo();
-    gpsInfo.latLng = new LatLng(exifrResult.latitude, exifrResult.longitude);
+    gpsInfo.latLng = new LatLng(exifrParseOutput.latitude, exifrParseOutput.longitude);
     exif.gpsInfo = gpsInfo;
   }
 
   const thumbnailBuffer = await exifr.thumbnail(filePath);
   if (thumbnailBuffer) {
-    const orientation = exifrResult.Orientation ?? 1;   // If orientation is not available, assume 1, and display thumbnail.
+    const orientation = exifrParseOutput.Orientation ?? 1;   // If orientation is not available, assume 1, and display thumbnail.
     const thumbnail = await createThumbnail(thumbnailBuffer, orientation);
     exif.thumbnail = thumbnail;
   }
+
+  Logger.info(`[using exifr] Created Exif class instance of ${filePath} `, exif);
 
   return exif;
 }
