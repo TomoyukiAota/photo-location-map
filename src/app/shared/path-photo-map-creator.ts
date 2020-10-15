@@ -32,13 +32,14 @@ export class PathPhotoMapCreator {
     if (isDirectory)
       return;
 
-    const isSupportedExtension = FilenameExtension.isSupported(directoryTreeElement.extension);
-    if (!isSupportedExtension)
+    const isSupportedByPlm = FilenameExtension.isSupportedByPlm(directoryTreeElement.extension);
+    if (!isSupportedByPlm)
       return;
 
     const photo = new Photo();
     photo.name = directoryTreeElement.name;
     photo.path = directoryTreeElement.path;
+    photo.filenameExtension = directoryTreeElement.extension;
     photo.exif = null;
     this.pathPhotoMap.set(photo.path, photo);
   }
