@@ -1,5 +1,7 @@
 import { Analytics } from '../../../src-shared/analytics/analytics';
+import { FilenameExtension } from '../../../src-shared/filename-extension/filename-extension';
 import { Logger } from '../../../src-shared/log/logger';
+import { IconDataUrl } from '../../assets/icon-data-url';
 import { Dimensions } from '../shared/model/dimensions.model';
 import { Photo } from '../shared/model/photo.model';
 import { PhotoDateTimeTakenGenerator } from '../shared/photo-date-time-taken-generator';
@@ -45,7 +47,8 @@ export class PhotoInfoViewerContent {
       thumbnailElement.src = photo.exif.thumbnail.dataUrl;
       thumbnailElement.width = photo.exif.thumbnail.dimensions.width;
       thumbnailElement.height = photo.exif.thumbnail.dimensions.height;
-    } else {
+      thumbnailElement.title = `Click the thumbnail to open ${photo.name}`;
+    } else if (FilenameExtension.isDisplayableInBrowser(photo.filenameExtension)) {
       // # needs to be escaped. See https://www.w3schools.com/tags/ref_urlencode.asp for encoding.
       const escapedPath = photo.path.replace(/#/g, '%23');
       thumbnailElement.src = `file://${escapedPath}`;
@@ -57,9 +60,14 @@ export class PhotoInfoViewerContent {
         thumbnailElement.width = largerSideLength * (photo.exif.imageDimensions.width / photo.exif.imageDimensions.height);
         thumbnailElement.height = largerSideLength;
       }
+      thumbnailElement.title = `Click the thumbnail to open ${photo.name}`;
+    } else {
+      thumbnailElement.width = 150;
+      thumbnailElement.height = 15;
+      thumbnailElement.src = IconDataUrl.noThumbnailAvailable;
+      thumbnailElement.title = `Thumbnail is not available for ${photo.name}.`;
     }
 
-    thumbnailElement.title = `Click the thumbnail to open ${photo.name}`;
     thumbnailElement.style.transition = 'transform 0.3s ease-in-out';
     thumbnailElement.onclick = () => this.handleThumbnailClick(photo);
     return thumbnailElement;
