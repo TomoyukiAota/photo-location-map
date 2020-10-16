@@ -1,11 +1,18 @@
+import { exifFetchLibraryInUse } from '../exif-fetch-library-in-use/exif-fetch-library-in-use';
+import { Logger } from '../log/logger';
+
 export class FilenameExtension {
   public static readonly jpegExtensions: ReadonlyArray<string> = ['.jpeg', '.jpg', '.jpe', '.jfif', '.jfi', '.jif'];
   public static readonly tiffExtensions: ReadonlyArray<string> = ['.tiff', '.tif'];
   public static readonly heifExtensions: ReadonlyArray<string> = ['.heif', '.heic'];
 
-  public static readonly extensionsSupportedByPlm = [
+  public static readonly extensionsSupportedByExifr = [
     ...FilenameExtension.jpegExtensions,
     ...FilenameExtension.heifExtensions,
+  ];
+
+  public static readonly extensionsSupportedByExifParser = [
+    ...FilenameExtension.jpegExtensions,
   ];
 
   public static readonly extensionsDisplayableInBrowser = [
@@ -13,7 +20,17 @@ export class FilenameExtension {
   ];
 
   public static isSupportedByPlm(extension: string) {
-    return this.extensionsSupportedByPlm.includes(extension);
+    let supportedExtensions: Array<string>;
+
+    if (exifFetchLibraryInUse === 'exifr') {
+      supportedExtensions = this.extensionsSupportedByExifr;
+    } else if (exifFetchLibraryInUse === 'exif-parser') {
+      supportedExtensions = this.extensionsSupportedByExifParser;
+    } else {
+      Logger.error(`Specified value of exifFetchLibraryInUse is incorrect. The value is "${exifFetchLibraryInUse}"`);
+    }
+
+    return supportedExtensions.includes(extension);
   }
 
   public static isDisplayableInBrowser(extension: string) {

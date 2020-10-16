@@ -4,7 +4,6 @@ import { Logger } from '../../../src-shared/log/logger';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { Dimensions } from '../shared/model/dimensions.model';
 import { Photo } from '../shared/model/photo.model';
-import { PhotoDateTimeTakenGenerator } from '../shared/photo-date-time-taken-generator';
 import { PhotoViewerLauncher } from '../photo-viewer/photo-viewer-launcher';
 import { OpenContainingFolderIconElement } from './open-containing-folder-icon-element';
 import { RotateIconElement } from './rotate-icon-element';
@@ -102,7 +101,7 @@ export class PhotoInfoViewerContent {
   }
 
   private static createDateTimeTakenElement(photo: Photo) {
-    const dateTimeTaken = PhotoDateTimeTakenGenerator.generate(photo);
+    const dateTimeTaken = photo?.exif?.dateTimeOriginal?.displayString();
     const dateTakenElement = document.createElement('div');
     dateTakenElement.innerText = dateTimeTaken || 'Date taken is not available.';
     dateTakenElement.style.fontSize = '14px';

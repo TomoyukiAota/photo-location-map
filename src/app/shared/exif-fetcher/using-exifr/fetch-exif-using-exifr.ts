@@ -1,6 +1,7 @@
 import { Logger } from '../../../../../src-shared/log/logger';
-import { Exif } from '../../model/exif.model';
+import { DateTimeOriginal } from '../../model/date-time-original';
 import { Dimensions } from '../../model/dimensions.model';
+import { Exif } from '../../model/exif.model';
 import { GpsInfo } from '../../model/gps-info.model';
 import { LatLng } from '../../model/lat-lng.model';
 import { Thumbnail } from '../../model/thumbnail.model';
@@ -11,14 +12,21 @@ const exifr: typeof import('exifr') = window.require('electron').remote.require(
 
 export function fetchExifUsingExifr(filePath: string): Promise<Exif> {
   const exifPromise = fetchExifrParseOutput(filePath)
+    .catch(error => {
+      Logger.info(`[using exifr] Failed to fetch EXIF from ${filePath}`, error);
+      return null;
+    })
     .then(async exifrParseOutput => await createExifFromExifrParseOutput(exifrParseOutput, filePath))
-    .catch(() => null );
+    .catch(error => {
+      Logger.info(`[using exifr] Failed to create Exif class instance of ${filePath}`, error);
+      return null;
+    });
 
   return exifPromise;
 }
 
 interface ExifrParseOutput {
-  DateTimeOriginal?: any;
+  DateTimeOriginal?: Date;
   latitude?: number;
   longitude?: number;
   ExifImageHeight?: number;
@@ -36,12 +44,12 @@ async function fetchExifrParseOutput(filePath: string): Promise<ExifrParseOutput
 
 async function createExifFromExifrParseOutput(exifrParseOutput: ExifrParseOutput, filePath: string): Promise<Exif> {
   if (!exifrParseOutput)
-    return;
+    return null;
 
   const exif = new Exif();
 
   if (exifrParseOutput.DateTimeOriginal) {
-    exif.dateTimeOriginal = exifrParseOutput.DateTimeOriginal;
+    exif.dateTimeOriginal = new DateTimeOriginal(exifrParseOutput.DateTimeOriginal);
   }
 
   if (exifrParseOutput.ExifImageWidth && exifrParseOutput.ExifImageHeight) {
