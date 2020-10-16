@@ -38,9 +38,6 @@ describe('ExifFetcher', () => {
       const Invalid_Photo_path = path.join(testResourceDirectory, 'unsupported-files', 'Invalid Photo.JPG');
       const Invalid_Photo_pathExifPair = pathExifPairs.find(pair => pair.path === Invalid_Photo_path);
       assert(!!Invalid_Photo_pathExifPair === true);
-
-      console.log(Invalid_Photo_pathExifPair.exif);
-
       assert(Invalid_Photo_pathExifPair.exif === null);
     });
   });
