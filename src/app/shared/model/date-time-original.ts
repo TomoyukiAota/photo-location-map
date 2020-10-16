@@ -1,6 +1,6 @@
 import * as moment from 'moment';
-import { loadedUserSettings } from '../../../../src-shared/user-settings/user-settings';
 import { DateTimeFormat } from '../../../../src-shared/date-time/date-time-format';
+import { loadedUserSettings } from '../../../../src-shared/user-settings/user-settings';
 
 export class DateTimeOriginal {
   constructor(dateOrMoment: Date | ReturnType<typeof import('moment')>) {
