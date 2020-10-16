@@ -1,6 +1,8 @@
 import * as exifParser from 'exif-parser';
+import * as moment from 'moment-timezone';
 import { Exif } from '../../model/exif.model';
 import { Logger } from '../../../../../src-shared/log/logger';
+import { DateTimeOriginal } from '../../model/date-time-original';
 import { Dimensions } from '../../model/dimensions.model';
 import { GpsInfo } from '../../model/gps-info.model';
 import { LatLng } from '../../model/lat-lng.model';
@@ -58,8 +60,14 @@ function fetchExifParserResult(filePath: string): Promise<ExifParserResult> {
 async function createExifFromExifParserResult(exifParserResult: ExifParserResult): Promise<Exif> {
   const exif = new Exif();
 
-  if (exifParserResult.tags && exifParserResult.tags.DateTimeOriginal) {
-    exif.dateTimeOriginal = exifParserResult.tags.DateTimeOriginal;
+  if (exifParserResult?.tags?.DateTimeOriginal) {
+    // DateTimeOriginal gotten from exif-parser is recorded in unix timestamp format although the time is in local time when the photo was taken.
+    // moment.js thinks that the time is in UTC (because it is in UTC format) and tries to convert the time zone.
+    // This results in applying the time-zone conversion to the time which is already in local time, which ends up in incorrect time.
+    // In order to correctly use the local time without such conversion,
+    // the time zone of Moment instance is set to UTC because no conversion will occur when UTC time zone is used.
+    const momentFromExifParserResult = moment.unix(exifParserResult.tags.DateTimeOriginal).tz('UTC');
+    exif.dateTimeOriginal = new DateTimeOriginal(momentFromExifParserResult);
   }
 
   if (exifParserResult.imageSize) {

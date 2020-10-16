@@ -1,3 +1,4 @@
+import { exifFetchLibraryInUse } from '../../../../src-shared/exif-fetch-library-in-use/exif-fetch-library-in-use';
 import { FilenameExtension } from '../../../../src-shared/filename-extension/filename-extension';
 import { Logger } from '../../../../src-shared/log/logger';
 import { Exif } from '../model/exif.model';
@@ -43,17 +44,15 @@ export class ExifFetcher {
     this.addPathExifPairPromise(directoryTreeElement.path);
   }
 
-  public static exifFetchLibraryInUse: 'exifr' | 'exif-parser' = 'exifr';
-
   private static addPathExifPairPromise(filePath: string) {
     let exifPromise: Promise<Exif>;
 
-    if (this.exifFetchLibraryInUse === 'exifr') {
+    if (exifFetchLibraryInUse === 'exifr') {
       exifPromise = fetchExifUsingExifr(filePath);
-    } else if (this.exifFetchLibraryInUse === 'exif-parser') {
+    } else if (exifFetchLibraryInUse === 'exif-parser') {
       exifPromise = fetchExifUsingExifParser(filePath);
     } else {
-      Logger.error(`Something went wrong with exifFetchLibraryInUse. The value of exifFetchLibraryInUse is "${this.exifFetchLibraryInUse}"`);
+      Logger.error(`Something went wrong with exifFetchLibraryInUse. The value of exifFetchLibraryInUse is "${exifFetchLibraryInUse}"`);
     }
 
     const pathExifPairPromise = exifPromise
