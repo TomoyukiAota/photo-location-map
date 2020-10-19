@@ -7,6 +7,7 @@ import { Logger } from '../src-shared/log/logger';
 import { LogFileConfig } from '../src-shared/log/log-file-config';
 import './auto-update/configure-auto-update';
 import './menu/menu';
+import './thumbnail-generation/thumbnail-generation';
 import { recordAtAppLaunch } from './record-at-app-launch';
 
 
