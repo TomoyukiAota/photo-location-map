@@ -21,4 +21,8 @@ export namespace IpcConstants {
       }
     }
   }
+
+  export namespace ThumbnailGenerationInMainProcess {
+    export const Name = 'ipc-constants-thumbnail-generation-in-main-process';
+  }
 }
