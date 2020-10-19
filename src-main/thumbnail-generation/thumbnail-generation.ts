@@ -1,7 +1,7 @@
 import * as pathModule from 'path';
 import { promisify } from 'util';
-import * as fs from 'fs';
-import * as convert from 'heic-convert';
+// import * as fs from 'fs';
+// import * as convert from 'heic-convert';
 
 // const { promisify } = require('util');
 // const fs = require('fs');
@@ -19,22 +19,26 @@ function getThumbnailOutputPath(filePath: string) {
   const intermediateDir = pathModule.parse(
     filePath.replace(':', '') // Replace C:\\abc\\def.jpg to C\\abc\\def.jpg
   ).dir;                                          // Get C\\abc\\def from C\\abc\\def.jpg
-  const outputPath = pathModule.resolve('C:', 'plmTemp', intermediateDir, `${thumbnailFileName}.jpg`);
+  const outputDir = pathModule.join('C:', 'plmTemp', intermediateDir);
+  const outputPath = pathModule.join(outputDir, `${thumbnailFileName}.jpg`);
   console.log(outputPath);
+  return { outputDir, outputPath };
 }
 
 function generateThumbnails(heifFiles: DirectoryTree[]) {
   heifFiles.forEach(async file => {
+    const fs = require('fs-extra');
     const inputBuffer = await promisify(fs.readFile)(file.path);
+    const convert = require('heic-convert');
     const outputBuffer = await convert({
       buffer: inputBuffer, // the HEIC file buffer
       format: 'JPEG',      // output format
       quality: 0.1           // the jpeg compression quality, between 0 and 1
     });
 
-    const outputPath = getThumbnailOutputPath(file.path);
-
-    // await promisify(fs.writeFile)(outputPath, outputBuffer);
+    const { outputDir, outputPath } = getThumbnailOutputPath(file.path);
+    await fs.ensureDir(outputDir);
+    await promisify(require('fs').writeFile)(outputPath, outputBuffer).catch(err => console.log(err));
   });
 }
 
@@ -44,6 +48,6 @@ ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Name, (event, direc
   const heifFiles = flattenedDirTree.filter(element => FilenameExtension.isHeif(element.extension));
   console.log(`heifFiles`);
   console.log(heifFiles);
-  // generateThumbnails(heifFiles);
+  generateThumbnails(heifFiles);
   return;
 });
