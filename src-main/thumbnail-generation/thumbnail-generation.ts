@@ -1,7 +1,6 @@
 import * as pathModule from 'path';
 import { promisify } from 'util';
 // import * as fs from 'fs';
-import * as convert from 'heic-convert';
 
 // const { promisify } = require('util');
 // const fs = require('fs');
@@ -25,11 +24,18 @@ function getThumbnailOutputPath(filePath: string) {
 }
 
 function generateThumbnails(heifFiles: DirectoryTree[]) {
+  // Requiring heic-convert here because this module is premature and untrustworthy as of Oct 21, 2020.
+  // When this module is imported at the top of the file, the application terminates right after launching it.
+  // Importing heic-convert appears to enable the option to terminate the application
+  // for unhandled promise rejection, and the unhandled promise comes from electron-updater.
+  // When this kind of butterfly effect is shown at application launch, it is very difficult to debug.
+  // Therefore, importing heic-convert here to be able to track when things go wrong.
+  const heicConvert: typeof import('heic-convert') = require('heic-convert');
+
   heifFiles.forEach(async file => {
     const fs = require('fs-extra');
     const inputBuffer = await promisify(fs.readFile)(file.path);
-    // const convert = require('heic-convert');
-    const outputBuffer = await convert({
+    const outputBuffer = await heicConvert({
       buffer: inputBuffer, // the HEIC file buffer
       format: 'JPEG',      // output format
       quality: 0.1           // the jpeg compression quality, between 0 and 1
