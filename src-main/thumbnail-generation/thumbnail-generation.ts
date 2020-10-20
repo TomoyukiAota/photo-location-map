@@ -1,11 +1,10 @@
 import * as pathModule from 'path';
 import { promisify } from 'util';
 // import * as fs from 'fs';
-// import * as convert from 'heic-convert';
+import * as convert from 'heic-convert';
 
 // const { promisify } = require('util');
 // const fs = require('fs');
-// const convert = require('heic-convert');
 
 import { ipcMain } from 'electron';
 import { DirectoryTree } from 'directory-tree';
@@ -29,7 +28,7 @@ function generateThumbnails(heifFiles: DirectoryTree[]) {
   heifFiles.forEach(async file => {
     const fs = require('fs-extra');
     const inputBuffer = await promisify(fs.readFile)(file.path);
-    const convert = require('heic-convert');
+    // const convert = require('heic-convert');
     const outputBuffer = await convert({
       buffer: inputBuffer, // the HEIC file buffer
       format: 'JPEG',      // output format
