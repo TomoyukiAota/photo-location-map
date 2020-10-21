@@ -13,7 +13,10 @@ import { ThumbnailFileGenerationArgs } from './generate-thumbnail-file-arg-and-r
 
 
 class FileForWorkerThread {
+  // The file path for worker thread needs to be relative to the file for main thread
+  // (where thread.js's spawn and Worker are called).
   private static _relativePathWithoutExtension = './generate-thumbnail-file-worker';
+
   public static get relativePathWithoutExtension() { return this._relativePathWithoutExtension; }
   public static get relativePathWithExtension() { return `${this._relativePathWithoutExtension}.js`; }
 }
