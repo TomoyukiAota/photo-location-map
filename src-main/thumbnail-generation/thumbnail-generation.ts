@@ -25,7 +25,7 @@ async function generateThumbnails(heifFiles: DirectoryTree[]) {
   const promiseArray = heifFiles.map(async file => {
     console.log(`heifFile`, file);
 
-    const generateThumbnailFile = await spawn(new Worker('./generate-thumbnail-file'));
+    const generateThumbnailFile = await spawn(new Worker('./generate-thumbnail-file-worker'));
 
     const args = new ThumbnailFileGenerationArgs();
     args.srcFilePath = file.path;
