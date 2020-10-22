@@ -4,12 +4,12 @@ import { ThumbnailFileGenerationArgs, ThumbnailFileGenerationResult } from './ge
 
 
 expose(async function generateThumbnailFile(args: ThumbnailFileGenerationArgs)  {
-  console.log('worker therad', args);
+  console.log(`[worker thread] A worker thread is created to generate thumbnail for ${args.srcFilePath}`);
 
   if (!args)
     return;
 
-  // Requiring heic-convert here because this module is premature and untrustworthy as of Oct 21, 2020.
+  // Requiring heic-convert here because this module is premature as of Oct 21, 2020.
   // When this module is imported at the top of the file, the application terminates right after launching it.
   // Importing heic-convert appears to enable the option to terminate the application
   // for unhandled promise rejection, and the unhandled promise comes from electron-updater.
@@ -26,7 +26,9 @@ expose(async function generateThumbnailFile(args: ThumbnailFileGenerationArgs)  
   });
 
   await fs.ensureDir(args.outputFileDir);
-  await promisify(require('fs').writeFile)(args.outputFilePath, outputBuffer).catch(err => console.log(err));
+  await promisify(require('fs').writeFile)(args.outputFilePath, outputBuffer).catch(err => {
+    console.log(`[worker thread] Something went wrong when writing a file for thumbnail in "${args.outputFilePath}"`, err);
+  });
 
   const result = new ThumbnailFileGenerationResult();
   result.success = true;

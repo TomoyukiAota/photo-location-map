@@ -1,9 +1,10 @@
 import { DirectoryTree } from 'directory-tree';
 import { ipcMain } from 'electron';
 import * as fs from 'fs';
-import { spawn, Thread, Worker } from 'threads';
+import * as os from 'os';
 import * as pathModule from 'path';
-import * as allSettled from 'promise.allsettled';
+import * as physicalCpuCount from 'physical-cpu-count';
+import { Pool, spawn, Worker } from 'threads';
 
 import { convertToFlattenedDirTree } from '../../src-shared/dir-tree/dir-tree-util';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
@@ -41,36 +42,46 @@ function getThumbnailOutputPath(filePath: string) {
   ).dir;                                          // Get C\\abc\\def from C\\abc\\def.jpg
   const outputDir = pathModule.join('C:', 'plmTemp', intermediateDir);
   const outputPath = pathModule.join(outputDir, `${thumbnailFileName}.jpg`);
-  console.log(outputPath);
   return { outputDir, outputPath };
 }
 
+
+function createThumbnailFileGenerationArgs(file: DirectoryTree) {
+  const args = new ThumbnailFileGenerationArgs();
+  args.srcFilePath = file.path;
+  const {outputDir, outputPath} = getThumbnailOutputPath(file.path);
+  args.outputFileDir = outputDir;
+  args.outputFilePath = outputPath;
+  return args;
+}
+
 async function generateThumbnails(heifFiles: DirectoryTree[]) {
-  const promiseArray = heifFiles.map(async file => {
-    console.log(`heifFile`, file);
+  const logicalCpuCount = os.cpus().length;
+  const numberOfThreadsToUse = physicalCpuCount >= 2 ? physicalCpuCount - 1 : 1;
+  Logger.info(`Number of CPU cores, Physical: ${physicalCpuCount}, Logical: ${logicalCpuCount}`);
+  Logger.info(`Number of threads for thumbnail generation: ${numberOfThreadsToUse}`);
 
-    const generateThumbnailFile = await spawn(new Worker(FileForWorkerThread.relativePathWithoutExtension));
+  const pool = Pool(() => spawn(new Worker(FileForWorkerThread.relativePathWithoutExtension)), numberOfThreadsToUse);
 
-    const args = new ThumbnailFileGenerationArgs();
-    args.srcFilePath = file.path;
-    const { outputDir, outputPath } = getThumbnailOutputPath(file.path);
-    args.outputFileDir = outputDir;
-    args.outputFilePath = outputPath;
+  heifFiles.forEach(file => {
+    const args = createThumbnailFileGenerationArgs(file);
 
-    console.log('before await generateThumbnailFile(args);');
-    const result = await generateThumbnailFile(args);
+    Logger.info('[main thread] Queuing a task for worker thread to generate thumbnail. ' +
+      `From "${args.srcFilePath}", a thumbnail file "${args.outputFilePath}" will be generated.`);
 
-    await Thread.terminate(generateThumbnailFile);
-
-    return;
+    pool.queue(async generateThumbnailFile => await generateThumbnailFile(args))
+      .then(() => {
+        Logger.info('[main thread] Observed worker thread completion for thumbnail generation. ' +
+          `From "${args.srcFilePath}", a thumbnail file "${args.outputFilePath}" should have been generated.`);
+      });
   });
 
-  await allSettled(promiseArray);
+  await pool.settled();
+  await pool.terminate();
 }
 
 ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Name, (event, directoryTreeObject: DirectoryTree) => {
   const flattenedDirTree = convertToFlattenedDirTree(directoryTreeObject);
-  console.log(flattenedDirTree);
   const heifFiles = flattenedDirTree.filter(element => FilenameExtension.isHeif(element.extension));
   console.log(`heifFiles`);
   console.log(heifFiles);
