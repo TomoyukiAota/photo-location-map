@@ -35,16 +35,16 @@ function checkFileForWorkerThreadExists(): void {
   }
 }
 
-function createThumbnailFileGenerationArgs(file: DirectoryTree) {
+function createThumbnailFileGenerationArgs(filePath: string) {
   const args = new ThumbnailFileGenerationArgs();
-  args.srcFilePath = file.path;
+  args.srcFilePath = filePath;
   const {thumbnailFileDir, thumbnailFilePath} = getThumbnailFilePath(args.srcFilePath);
   args.outputFileDir = thumbnailFileDir;
   args.outputFilePath = thumbnailFilePath;
   return args;
 }
 
-async function generateThumbnails(heifFiles: DirectoryTree[]) {
+async function generateThumbnails(heifFilePaths: string[]) {
   const logicalCpuCount = os.cpus().length;
   const numberOfThreadsToUse = physicalCpuCount >= 2 ? physicalCpuCount - 1 : 1;
   Logger.info(`Number of CPU cores, Physical: ${physicalCpuCount}, Logical: ${logicalCpuCount}`);
@@ -52,8 +52,8 @@ async function generateThumbnails(heifFiles: DirectoryTree[]) {
 
   const pool = Pool(() => spawn(new Worker(FileForWorkerThread.relativePathWithoutExtension)), numberOfThreadsToUse);
 
-  heifFiles.forEach(file => {
-    const args = createThumbnailFileGenerationArgs(file);
+  heifFilePaths.forEach(filePath => {
+    const args = createThumbnailFileGenerationArgs(filePath);
 
     Logger.info('[main thread] Queuing a task for worker thread to generate thumbnail. ' +
       `From "${args.srcFilePath}", a thumbnail file "${args.outputFilePath}" will be generated.`);
@@ -71,14 +71,16 @@ async function generateThumbnails(heifFiles: DirectoryTree[]) {
 
 ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Name, (event, directoryTreeObject: DirectoryTree) => {
   const flattenedDirTree = convertToFlattenedDirTree(directoryTreeObject);
-  const heifFiles = flattenedDirTree.filter(element => FilenameExtension.isHeif(element.extension));
-  console.log(`heifFiles`);
-  console.log(heifFiles);
+  const heifFilePaths = flattenedDirTree
+    .filter(element => FilenameExtension.isHeif(element.extension))
+    .map(element => element.path);
+  console.log(`heifFilePaths`);
+  console.log(heifFilePaths);
 
   checkFileForWorkerThreadExists();
 
   // noinspection JSUnusedLocalSymbols
-  const ignoredPromise = generateThumbnails(heifFiles);    // Promise is deliberately ignored.
+  const ignoredPromise = generateThumbnails(heifFilePaths);    // Promise is deliberately ignored.
 
   return;
 });
