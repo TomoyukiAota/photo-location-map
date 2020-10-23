@@ -7,9 +7,10 @@ import * as physicalCpuCount from 'physical-cpu-count';
 import { Pool, spawn, Worker } from 'threads';
 
 import { convertToFlattenedDirTree } from '../../src-shared/dir-tree/dir-tree-util';
+import { FilenameExtension } from '../../src-shared/filename-extension/filename-extension';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { Logger } from '../../src-shared/log/logger';
-import { FilenameExtension } from '../../src-shared/filename-extension/filename-extension';
+import { getThumbnailFilePath } from '../../src-shared/thumbnail/get-thumbnail-file-path';
 import { ThumbnailFileGenerationArgs } from './generate-thumbnail-file-arg-and-result';
 
 
@@ -34,24 +35,12 @@ function checkFileForWorkerThreadExists(): void {
   }
 }
 
-function getThumbnailOutputPath(filePath: string) {
-  const parsedPath = pathModule.parse(filePath);
-  const thumbnailFileName = `${parsedPath.name}_plmThumb`;
-  const intermediateDir = pathModule.parse(
-    filePath.replace(':', '') // Replace C:\\abc\\def.jpg to C\\abc\\def.jpg
-  ).dir;                                          // Get C\\abc\\def from C\\abc\\def.jpg
-  const outputDir = pathModule.join('C:', 'plmTemp', intermediateDir);
-  const outputPath = pathModule.join(outputDir, `${thumbnailFileName}.jpg`);
-  return { outputDir, outputPath };
-}
-
-
 function createThumbnailFileGenerationArgs(file: DirectoryTree) {
   const args = new ThumbnailFileGenerationArgs();
   args.srcFilePath = file.path;
-  const {outputDir, outputPath} = getThumbnailOutputPath(file.path);
-  args.outputFileDir = outputDir;
-  args.outputFilePath = outputPath;
+  const {thumbnailFileDir, thumbnailFilePath} = getThumbnailFilePath(args.srcFilePath);
+  args.outputFileDir = thumbnailFileDir;
+  args.outputFilePath = thumbnailFilePath;
   return args;
 }
 
