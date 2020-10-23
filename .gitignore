@@ -13,7 +13,6 @@ src/**/*.js
 src-shared/**/*.js
 src-main/**/*.js
 !src/karma.conf.js
-!**/image-rotator.js
 *.js.map
 
 # dependencies
