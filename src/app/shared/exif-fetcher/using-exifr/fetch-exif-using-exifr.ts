@@ -79,7 +79,6 @@ async function createThumbnail(thumbnailBuffer: Uint8Array | Buffer, orientation
   const base64String = btoa(String.fromCharCode.apply(null, thumbnailBuffer));
   const dataUrl = `data:image/jpg;base64,${base64String}`;
   const rotatedImage = await correctRotation(dataUrl, orientation);
-  const rotatedDimensions = new Dimensions(rotatedImage.width, rotatedImage.height);
-  const thumbnail = new Thumbnail(rotatedImage.dataUrl, rotatedDimensions);
+  const thumbnail = new Thumbnail(rotatedImage.dataUrl, rotatedImage.dimensions);
   return thumbnail;
 }

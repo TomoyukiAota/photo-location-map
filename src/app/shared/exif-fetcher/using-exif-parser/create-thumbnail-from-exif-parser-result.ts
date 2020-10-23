@@ -1,4 +1,3 @@
-import { Dimensions } from '../../model/dimensions.model';
 import { Thumbnail } from '../../model/thumbnail.model';
 import { correctRotation } from '../../image-rotation';
 
@@ -11,8 +10,7 @@ export async function createThumbnail(exifParserResult: ExifParserResult): Promi
 
   const dataUrl = createDataUrlFromExif(exifParserResult);
   const rotated = await correctRotation(dataUrl, exifParserResult.tags.Orientation);
-  const rotatedDimensions = new Dimensions(rotated.width, rotated.height);
-  return new Thumbnail(rotated.dataUrl, rotatedDimensions);
+  return new Thumbnail(rotated.dataUrl, rotated.dimensions);
 }
 
 function createDataUrlFromExif(exifParserResult: ExifParserResult): string {
