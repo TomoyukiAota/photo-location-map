@@ -47,17 +47,9 @@ export class PhotoInfoViewerContent {
     if (photo.exif.thumbnail) {
       this.displayThumbnailFromExif(thumbnailElement, photo);
     } else if (FilenameExtension.isDisplayableInBrowser(photo.filenameExtension)) {
-      this.displayThumbnailUsingFile(thumbnailElement, photo, photo.path);
+      this.displayThumbnailUsingPhotoItself(thumbnailElement, photo);
     } else if (FilenameExtension.isThumbnailGenerationAvailable(photo.filenameExtension)) {
-      const intervalId = setInterval(() => {
-        const { thumbnailFilePath } = getThumbnailFilePath(photo.path);
-        if (fs.existsSync(thumbnailFilePath)) {
-          this.displayThumbnailUsingFile(thumbnailElement, photo, thumbnailFilePath);
-          clearInterval(intervalId);
-        } else {
-          this.displayGeneratingThumbnailImage(thumbnailElement, photo);
-        }
-      }, 1000);
+      this.displayGeneratedThumbnail(thumbnailElement, photo);
     } else {
       this.displayNoThumbnailAvailableImage(thumbnailElement, photo);
     }
@@ -72,6 +64,23 @@ export class PhotoInfoViewerContent {
     thumbnailElement.width = photo.exif.thumbnail.dimensions.width;
     thumbnailElement.height = photo.exif.thumbnail.dimensions.height;
     thumbnailElement.title = `Click the thumbnail to open ${photo.name}`;
+  }
+
+  private static displayThumbnailUsingPhotoItself(thumbnailElement: HTMLImageElement, photo: Photo) {
+    this.displayThumbnailUsingFile(thumbnailElement, photo, photo.path);
+  }
+
+  private static displayGeneratedThumbnail(thumbnailElement: HTMLImageElement, photo: Photo) {
+    const intervalId = setInterval(() => {
+      const { thumbnailFilePath } = getThumbnailFilePath(photo.path);
+      const thumbnailFileExists = fs.existsSync(thumbnailFilePath);
+      if (thumbnailFileExists) {
+        this.displayThumbnailUsingFile(thumbnailElement, photo, thumbnailFilePath);
+        clearInterval(intervalId);
+      } else {
+        this.displayGeneratingThumbnailImage(thumbnailElement, photo);
+      }
+    }, 1000);
   }
 
   // Minimum length of a side of a square for a thumbnail container.
