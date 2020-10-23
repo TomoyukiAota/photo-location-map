@@ -6,10 +6,10 @@ export class RotatedImage {
 }
 
 /**
- * Correct rotation of an image using EXIF orientation
- * @param {string} dataUrl Data URL of the image to correct rotation
+ * Rotate image using EXIF orientation.
+ * @param {string} dataUrl Data URL of the image to rotate
  * @param {number} orientation EXIF orientation
- * @returns {Promise<RotatedImage>} Data URL, width, and height of the rotated image
+ * @returns {Promise<RotatedImage>} Data URL and dimensions of the rotated image
  */
 export function rotateImage(dataUrl: string, orientation: number): Promise<RotatedImage> {
   return new Promise(resolve => {
