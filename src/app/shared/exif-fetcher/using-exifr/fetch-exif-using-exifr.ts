@@ -5,7 +5,7 @@ import { Exif } from '../../model/exif.model';
 import { GpsInfo } from '../../model/gps-info.model';
 import { LatLng } from '../../model/lat-lng.model';
 import { Thumbnail } from '../../model/thumbnail.model';
-import { correctRotation, getRotatedSize } from '../../image-rotator';
+import { correctRotation, getRotatedSize } from '../../image-rotation';
 
 // exifr in the main process is used because it runs faster than the one in the renderer process.
 const exifr: typeof import('exifr') = window.require('electron').remote.require('exifr');

@@ -1,6 +1,6 @@
 import { Dimensions } from '../../model/dimensions.model';
 import { Thumbnail } from '../../model/thumbnail.model';
-import { correctRotation } from '../../image-rotator';
+import { correctRotation } from '../../image-rotation';
 
 
 export async function createThumbnail(exifParserResult: ExifParserResult): Promise<Thumbnail> {
