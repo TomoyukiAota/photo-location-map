@@ -1,3 +1,4 @@
+import './configure-electron-unhandled';
 import { app, BrowserWindow, protocol } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
@@ -7,6 +8,7 @@ import { Logger } from '../src-shared/log/logger';
 import { LogFileConfig } from '../src-shared/log/log-file-config';
 import './auto-update/configure-auto-update';
 import './menu/menu';
+import './thumbnail-generation/thumbnail-generation';
 import { recordAtAppLaunch } from './record-at-app-launch';
 
 
@@ -112,5 +114,8 @@ try {
 } catch (e) {
   Logger.error(e);
   Logger.error('Fatal error occurred in main process. Photo Location Map is closing.');
+
+  // TODO: Handle error with electron-unhandled
+
   process.exitCode = 1;
 }
