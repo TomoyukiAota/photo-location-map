@@ -1,7 +1,8 @@
+import { Dimensions } from './model/dimensions.model';
+
 export class CorrectRotationResult {
-  public dataUrl;
-  public width;
-  public height;
+  public dataUrl: string;
+  public dimensions: Dimensions;
 }
 
 /**
@@ -40,8 +41,7 @@ export function correctRotation(dataUrl: string, orientation: number): Promise<C
 
       const result = new CorrectRotationResult();
       result.dataUrl = canvas.toDataURL();
-      result.width = canvas.width;
-      result.height = canvas.height;
+      result.dimensions = new Dimensions(canvas.width, canvas.height);
       resolve(result);
     };
 
