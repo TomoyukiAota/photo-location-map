@@ -1,5 +1,6 @@
 import { DirectoryTree } from 'directory-tree';
 import { Analytics } from '../analytics/analytics';
+import { convertToFlattenedDirTree } from '../dir-tree/dir-tree-util';
 import { FilenameExtension } from '../filename-extension/filename-extension';
 import { Logger } from '../log/logger';
 
@@ -70,7 +71,7 @@ export class DirTreeObjectRecorder {
   }
 
   public static getNumbersToRecord(dirTreeObject: DirectoryTree): NumbersToRecordFromDirTreeObject {
-    const flattenedDirTree = this.convertToFlattenedDirTree(dirTreeObject);
+    const flattenedDirTree = convertToFlattenedDirTree(dirTreeObject);
     Logger.info('Flattened directory tree: ', flattenedDirTree);
 
     const numberOf = new NumbersToRecordFromDirTreeObject();
@@ -83,22 +84,6 @@ export class DirTreeObjectRecorder {
     numberOf.livePhotos.jpeg = this.getNumberOfLivePhotos(flattenedDirTree, LivePhotosFormat.Jpeg);
     numberOf.livePhotos.heif = this.getNumberOfLivePhotos(flattenedDirTree, LivePhotosFormat.Heif);
     return numberOf;
-  }
-
-  private static convertToFlattenedDirTree(dirTreeObject: DirectoryTree): DirectoryTree[] {
-    const flattenedDirTree: DirectoryTree[] = [];
-    this.flattenDirectoryTree([dirTreeObject], flattenedDirTree);
-    return flattenedDirTree;
-  }
-
-  private static flattenDirectoryTree(srcDirTreeArray: DirectoryTree[], dstDirTreeArray: DirectoryTree[]): DirectoryTree[] {
-    srcDirTreeArray.forEach((element: DirectoryTree) => {
-      dstDirTreeArray.push(element);
-      if (element.children) {
-        this.flattenDirectoryTree(element.children, dstDirTreeArray);
-      }
-    });
-    return dstDirTreeArray;
   }
 
   private static getNumberOfLivePhotos(flattenedDirTree: DirectoryTree[], format: LivePhotosFormat): number {
