@@ -20,7 +20,8 @@
     "skipLibCheck": true
   },
   "files": [
-    "src-main/electron-main.ts"
+    "src-main/electron-main.ts",
+    "src-main/thumbnail-generation/generate-thumbnail-file-worker.ts"
   ],
   "include": [
     "**/*.d.ts"
