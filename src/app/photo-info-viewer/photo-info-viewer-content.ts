@@ -59,10 +59,7 @@ export class PhotoInfoViewerContent {
         }
       }, 1000);
     } else {
-      thumbnailElement.width = 150;
-      thumbnailElement.height = 15;
-      thumbnailElement.src = IconDataUrl.noThumbnailAvailable;
-      thumbnailElement.title = `Thumbnail is not available for ${photo.name}.`;
+      this.displayNoThumbnailAvailableImage(thumbnailElement, photo);
     }
 
     thumbnailElement.style.transition = 'transform 0.3s ease-in-out';
@@ -100,6 +97,13 @@ export class PhotoInfoViewerContent {
     thumbnailElement.height = 15;
     thumbnailElement.src = IconDataUrl.generatingThumbnail;
     thumbnailElement.title = `Generating thumbnail for ${photo.name}.`;
+  }
+
+  private static displayNoThumbnailAvailableImage(thumbnailElement: HTMLImageElement, photo: Photo) {
+    thumbnailElement.width = 150;
+    thumbnailElement.height = 15;
+    thumbnailElement.src = IconDataUrl.noThumbnailAvailable;
+    thumbnailElement.title = `Thumbnail is not available for ${photo.name}.`;
   }
 
   private static handleThumbnailClick(photo: Photo): void {
