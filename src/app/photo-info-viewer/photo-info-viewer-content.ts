@@ -47,12 +47,12 @@ export class PhotoInfoViewerContent {
     if (photo.exif.thumbnail) {
       this.displayThumbnailFromExif(thumbnailElement, photo);
     } else if (FilenameExtension.isDisplayableInBrowser(photo.filenameExtension)) {
-      this.useFileAsThumbnail(thumbnailElement, photo, photo.path);
+      this.displayThumbnailUsingFile(thumbnailElement, photo, photo.path);
     } else if (FilenameExtension.isThumbnailGenerationAvailable(photo.filenameExtension)) {
       const intervalId = setInterval(() => {
         const { thumbnailFilePath } = getThumbnailFilePath(photo.path);
         if (fs.existsSync(thumbnailFilePath)) {
-          this.useFileAsThumbnail(thumbnailElement, photo, thumbnailFilePath);
+          this.displayThumbnailUsingFile(thumbnailElement, photo, thumbnailFilePath);
           clearInterval(intervalId);
         } else {
           this.displayGeneratingThumbnailImage(thumbnailElement, photo);
@@ -80,7 +80,7 @@ export class PhotoInfoViewerContent {
   // Minimum length of a side of a square for a thumbnail container.
   private static minThumbnailContainerWidthHeight = 200;
 
-  private static useFileAsThumbnail(thumbnailElement: HTMLImageElement, photo: Photo, thumbnailFilePath: string) {
+  private static displayThumbnailUsingFile(thumbnailElement: HTMLImageElement, photo: Photo, thumbnailFilePath: string) {
     // # needs to be escaped. See https://www.w3schools.com/tags/ref_urlencode.asp for encoding.
     const escapedPath = thumbnailFilePath.replace(/#/g, '%23');
     thumbnailElement.src = `file://${escapedPath}`;
