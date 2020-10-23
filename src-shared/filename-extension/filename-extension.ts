@@ -37,6 +37,10 @@ export class FilenameExtension {
     return this.extensionsDisplayableInBrowser.includes(extension);
   }
 
+  public static isThumbnailGenerationAvailable(extension: string) {
+    return this.isHeif(extension);
+  }
+
   public static isJpeg(extension: string) {
     return this.jpegExtensions.includes(extension);
   }
