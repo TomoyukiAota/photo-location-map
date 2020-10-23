@@ -87,14 +87,13 @@ export class PhotoInfoViewerContent {
     }, 1000);
   }
 
-  // Minimum length of a side of a square for a thumbnail container.
-  private static minThumbnailContainerWidthHeight = 200;
+  private static minThumbnailContainerSquareSideLength = 200;
 
   private static displayThumbnailUsingFile(thumbnailElement: HTMLImageElement, photo: Photo, thumbnailFilePath: string) {
     // # needs to be escaped. See https://www.w3schools.com/tags/ref_urlencode.asp for encoding.
     const escapedPath = thumbnailFilePath.replace(/#/g, '%23');
     thumbnailElement.src = `file://${escapedPath}`;
-    const largerSideLength = this.minThumbnailContainerWidthHeight;
+    const largerSideLength = this.minThumbnailContainerSquareSideLength;
     if (photo.exif.imageDimensions.width > photo.exif.imageDimensions.height) {
       thumbnailElement.width = largerSideLength;
       thumbnailElement.height = largerSideLength * (photo.exif.imageDimensions.height / photo.exif.imageDimensions.width);
@@ -132,9 +131,9 @@ export class PhotoInfoViewerContent {
     thumbnailContainer.style.alignItems = 'center';
     const thumbnailContainerDimensions = new Dimensions(thumbnailElement.width, thumbnailElement.height).expandToSquare();
     thumbnailContainer.style.width = thumbnailContainerDimensions.width.toString() + 'px';
-    thumbnailContainer.style.minWidth = `${this.minThumbnailContainerWidthHeight}px`;
+    thumbnailContainer.style.minWidth = `${this.minThumbnailContainerSquareSideLength}px`;
     thumbnailContainer.style.height = thumbnailContainerDimensions.height.toString() + 'px';
-    thumbnailContainer.style.minHeight = `${this.minThumbnailContainerWidthHeight}px`;
+    thumbnailContainer.style.minHeight = `${this.minThumbnailContainerSquareSideLength}px`;
 
     thumbnailContainer.appendChild(thumbnailElement);
     return thumbnailContainer;
