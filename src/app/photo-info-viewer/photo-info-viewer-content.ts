@@ -28,7 +28,7 @@ export class PhotoInfoViewerContent {
 
   private static appendToRootDivElement(rootDivElement, photo: Photo) {
     const thumbnailElement = this.createThumbnailElement(photo);
-    const thumbnailContainerElement = this.createThumbnailContainerElement(photo, thumbnailElement);
+    const thumbnailContainerElement = this.createThumbnailContainerElement(thumbnailElement);
     const nameElement = this.createNameElement(photo);
     const dateTakenElement = this.createDateTimeTakenElement(photo);
 
@@ -125,7 +125,7 @@ export class PhotoInfoViewerContent {
     PhotoViewerLauncher.launch(photo);
   }
 
-  private static createThumbnailContainerElement(photo: Photo, thumbnailElement: HTMLImageElement) {
+  private static createThumbnailContainerElement(thumbnailElement: HTMLImageElement) {
     const thumbnailContainer = document.createElement('div');
     thumbnailContainer.style.display = 'flex';
     thumbnailContainer.style.justifyContent = 'center';
