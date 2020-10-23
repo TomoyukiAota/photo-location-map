@@ -53,7 +53,8 @@ async function createExifFromExifrParseOutput(exifrParseOutput: ExifrParseOutput
   }
 
   if (exifrParseOutput.ExifImageWidth && exifrParseOutput.ExifImageHeight) {
-    exif.imageDimensions = new Dimensions(exifrParseOutput.ExifImageWidth, exifrParseOutput.ExifImageWidth);
+    const rotatedSize = imageRotator.getRotatedSize(exifrParseOutput.ExifImageWidth, exifrParseOutput.ExifImageHeight, exifrParseOutput.Orientation);
+    exif.imageDimensions = new Dimensions(rotatedSize.width, rotatedSize.height);
   }
 
   if (exifrParseOutput.latitude && exifrParseOutput.longitude) {

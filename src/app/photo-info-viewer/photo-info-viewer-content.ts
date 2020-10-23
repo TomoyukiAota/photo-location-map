@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { FilenameExtension } from '../../../src-shared/filename-extension/filename-extension';
 import { Logger } from '../../../src-shared/log/logger';
@@ -9,6 +10,7 @@ import { OpenContainingFolderIconElement } from './open-containing-folder-icon-e
 import { RotateIconElement } from './rotate-icon-element';
 import { LaunchPhotoViewerIconElement } from './launch-photo-viewer-icon-element';
 import { PlayLivePhotosIconElement } from './play-live-photos-icon-element';
+import { getThumbnailFilePath } from '../../../src-shared/thumbnail/get-thumbnail-file-path';
 
 export class PhotoInfoViewerContent {
   public static generate(photo: Photo) {
@@ -48,18 +50,17 @@ export class PhotoInfoViewerContent {
       thumbnailElement.height = photo.exif.thumbnail.dimensions.height;
       thumbnailElement.title = `Click the thumbnail to open ${photo.name}`;
     } else if (FilenameExtension.isDisplayableInBrowser(photo.filenameExtension)) {
-      // # needs to be escaped. See https://www.w3schools.com/tags/ref_urlencode.asp for encoding.
-      const escapedPath = photo.path.replace(/#/g, '%23');
-      thumbnailElement.src = `file://${escapedPath}`;
-      const largerSideLength = 200;
-      if (photo.exif.imageDimensions.width > photo.exif.imageDimensions.height) {
-        thumbnailElement.width = largerSideLength;
-        thumbnailElement.height = largerSideLength * (photo.exif.imageDimensions.height / photo.exif.imageDimensions.width);
-      } else {
-        thumbnailElement.width = largerSideLength * (photo.exif.imageDimensions.width / photo.exif.imageDimensions.height);
-        thumbnailElement.height = largerSideLength;
-      }
-      thumbnailElement.title = `Click the thumbnail to open ${photo.name}`;
+      this.useFileAsThumbnail(thumbnailElement, photo, photo.path);
+    } else if (FilenameExtension.isThumbnailGenerationAvailable(photo.filenameExtension)) {
+      const intervalId = setInterval(() => {
+        const { thumbnailFilePath } = getThumbnailFilePath(photo.path);
+        if (fs.existsSync(thumbnailFilePath)) {
+          this.useFileAsThumbnail(thumbnailElement, photo, thumbnailFilePath);
+          clearInterval(intervalId);
+        } else {
+          this.displayGeneratingThumbnailImage(thumbnailElement, photo);
+        }
+      }, 1000);
     } else {
       thumbnailElement.width = 150;
       thumbnailElement.height = 15;
@@ -70,6 +71,31 @@ export class PhotoInfoViewerContent {
     thumbnailElement.style.transition = 'transform 0.3s ease-in-out';
     thumbnailElement.onclick = () => this.handleThumbnailClick(photo);
     return thumbnailElement;
+  }
+
+  // Minimum length of a side of a square for a thumbnail container.
+  private static minThumbnailContainerWidthHeight = 200;
+
+  private static useFileAsThumbnail(thumbnailElement: HTMLImageElement, photo: Photo, thumbnailFilePath: string) {
+    // # needs to be escaped. See https://www.w3schools.com/tags/ref_urlencode.asp for encoding.
+    const escapedPath = thumbnailFilePath.replace(/#/g, '%23');
+    thumbnailElement.src = `file://${escapedPath}`;
+    const largerSideLength = this.minThumbnailContainerWidthHeight;
+    if (photo.exif.imageDimensions.width > photo.exif.imageDimensions.height) {
+      thumbnailElement.width = largerSideLength;
+      thumbnailElement.height = largerSideLength * (photo.exif.imageDimensions.height / photo.exif.imageDimensions.width);
+    } else {
+      thumbnailElement.width = largerSideLength * (photo.exif.imageDimensions.width / photo.exif.imageDimensions.height);
+      thumbnailElement.height = largerSideLength;
+    }
+    thumbnailElement.title = `Click the thumbnail to open ${photo.name}`;
+  }
+
+  private static displayGeneratingThumbnailImage(thumbnailElement: HTMLImageElement, photo: Photo) {
+    thumbnailElement.width = 150;
+    thumbnailElement.height = 15;
+    thumbnailElement.src = IconDataUrl.generatingThumbnail;
+    thumbnailElement.title = `Generating thumbnail for ${photo.name}.`;
   }
 
   private static handleThumbnailClick(photo: Photo): void {
@@ -85,8 +111,9 @@ export class PhotoInfoViewerContent {
     thumbnailContainer.style.alignItems = 'center';
     const thumbnailContainerDimensions = new Dimensions(thumbnailElement.width, thumbnailElement.height).expandToSquare();
     thumbnailContainer.style.width = thumbnailContainerDimensions.width.toString() + 'px';
-    thumbnailContainer.style.minWidth = '200px';
+    thumbnailContainer.style.minWidth = `${this.minThumbnailContainerWidthHeight}px`;
     thumbnailContainer.style.height = thumbnailContainerDimensions.height.toString() + 'px';
+    thumbnailContainer.style.minHeight = `${this.minThumbnailContainerWidthHeight}px`;
 
     thumbnailContainer.appendChild(thumbnailElement);
     return thumbnailContainer;
