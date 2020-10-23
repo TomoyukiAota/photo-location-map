@@ -5,7 +5,7 @@ import { Exif } from '../../model/exif.model';
 import { GpsInfo } from '../../model/gps-info.model';
 import { LatLng } from '../../model/lat-lng.model';
 import { Thumbnail } from '../../model/thumbnail.model';
-import * as imageRotator from '../../image-rotator';
+import { correctRotation, getRotatedSize } from '../../image-rotator';
 
 // exifr in the main process is used because it runs faster than the one in the renderer process.
 const exifr: typeof import('exifr') = window.require('electron').remote.require('exifr');
@@ -53,7 +53,7 @@ async function createExifFromExifrParseOutput(exifrParseOutput: ExifrParseOutput
   }
 
   if (exifrParseOutput.ExifImageWidth && exifrParseOutput.ExifImageHeight) {
-    const rotatedSize = imageRotator.getRotatedSize(exifrParseOutput.ExifImageWidth, exifrParseOutput.ExifImageHeight, exifrParseOutput.Orientation);
+    const rotatedSize = getRotatedSize(exifrParseOutput.ExifImageWidth, exifrParseOutput.ExifImageHeight, exifrParseOutput.Orientation);
     exif.imageDimensions = new Dimensions(rotatedSize.width, rotatedSize.height);
   }
 
@@ -78,7 +78,7 @@ async function createExifFromExifrParseOutput(exifrParseOutput: ExifrParseOutput
 async function createThumbnail(thumbnailBuffer: Uint8Array | Buffer, orientation: number) {
   const base64String = btoa(String.fromCharCode.apply(null, thumbnailBuffer));
   const dataUrl = `data:image/jpg;base64,${base64String}`;
-  const rotatedImage = await imageRotator.correctRotation(dataUrl, orientation);
+  const rotatedImage = await correctRotation(dataUrl, orientation);
   const rotatedDimensions = new Dimensions(rotatedImage.width, rotatedImage.height);
   const thumbnail = new Thumbnail(rotatedImage.dataUrl, rotatedDimensions);
   return thumbnail;

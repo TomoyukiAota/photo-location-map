@@ -1,11 +1,17 @@
+export class CorrectRotationResult {
+  public dataUrl;
+  public width;
+  public height;
+}
+
 /**
  * Correct rotation of an image using EXIF orientation
  * @param {string} dataUrl Data URL of the image to correct rotation
  * @param {number} orientation EXIF orientation
- * @returns {Promise<{dataUrl: string, width: number, height: number}>} Data URL, width, and height of the rotated image
+ * @returns {Promise<CorrectRotationResult>} Data URL, width, and height of the rotated image
  */
-exports.correctRotation = function (dataUrl, orientation) {
-  return new Promise(function (resolve, reject) {
+export function correctRotation(dataUrl: string, orientation: number): Promise<CorrectRotationResult> {
+  return new Promise(resolve => {
     const img = new Image();
 
     img.onload = function () {
@@ -14,7 +20,7 @@ exports.correctRotation = function (dataUrl, orientation) {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
 
-      const rotatedSize = exports.getRotatedSize(srcWidth, srcHeight, orientation);
+      const rotatedSize = getRotatedSize(srcWidth, srcHeight, orientation);
       canvas.width = rotatedSize.width;
       canvas.height = rotatedSize.height;
 
@@ -31,16 +37,17 @@ exports.correctRotation = function (dataUrl, orientation) {
       }
 
       ctx.drawImage(img, 0, 0);
-      resolve({
-        dataUrl: canvas.toDataURL(),
-        width: canvas.width,
-        height: canvas.height
-      });
+
+      const result = new CorrectRotationResult();
+      result.dataUrl = canvas.toDataURL();
+      result.width = canvas.width;
+      result.height = canvas.height;
+      resolve(result);
     };
 
     img.src = dataUrl;
   });
-};
+}
 
 /**
  * Get rotated width and height using EXIF orientation.
@@ -48,7 +55,7 @@ exports.correctRotation = function (dataUrl, orientation) {
  * @param {number} srcHeight height to rotate
  * @param {number} orientation EXIF orientation
  */
-exports.getRotatedSize = function (srcWidth, srcHeight, orientation) {
+export function getRotatedSize(srcWidth: number, srcHeight: number, orientation: number): { width: number, height: number } {
   let dstWidth, dstHeight;
   if (4 < orientation && orientation < 9) {
     // noinspection JSSuspiciousNameCombination
@@ -63,4 +70,4 @@ exports.getRotatedSize = function (srcWidth, srcHeight, orientation) {
     width: dstWidth,
     height: dstHeight
   };
-};
+}
