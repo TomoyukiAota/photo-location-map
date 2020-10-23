@@ -44,11 +44,15 @@ export class PhotoInfoViewerContent {
   private static createThumbnailElement(photo: Photo) {
     const thumbnailElement = document.createElement('img');
 
-    if (photo.exif.thumbnail) {
+    const isThumbnailAvailableFromExif = photo.exif.thumbnail;
+    const isPhotoDisplayableInBrowser = FilenameExtension.isDisplayableInBrowser(photo.filenameExtension);
+    const isThumbnailGenerationAvailable = FilenameExtension.isThumbnailGenerationAvailable(photo.filenameExtension);
+
+    if (isThumbnailAvailableFromExif) {
       this.displayThumbnailFromExif(thumbnailElement, photo);
-    } else if (FilenameExtension.isDisplayableInBrowser(photo.filenameExtension)) {
+    } else if (isPhotoDisplayableInBrowser) {
       this.displayThumbnailUsingPhotoItself(thumbnailElement, photo);
-    } else if (FilenameExtension.isThumbnailGenerationAvailable(photo.filenameExtension)) {
+    } else if (isThumbnailGenerationAvailable) {
       this.displayGeneratedThumbnail(thumbnailElement, photo);
     } else {
       this.displayNoThumbnailAvailableImage(thumbnailElement, photo);
