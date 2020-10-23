@@ -1,5 +1,5 @@
 import { Thumbnail } from '../../model/thumbnail.model';
-import { correctRotation } from '../../image-rotation';
+import { rotateImage } from '../../image-rotation';
 
 
 export async function createThumbnail(exifParserResult: ExifParserResult): Promise<Thumbnail> {
@@ -9,8 +9,8 @@ export async function createThumbnail(exifParserResult: ExifParserResult): Promi
   }
 
   const dataUrl = createDataUrlFromExif(exifParserResult);
-  const rotated = await correctRotation(dataUrl, exifParserResult.tags.Orientation);
-  return new Thumbnail(rotated.dataUrl, rotated.dimensions);
+  const rotatedImage = await rotateImage(dataUrl, exifParserResult.tags.Orientation);
+  return new Thumbnail(rotatedImage.dataUrl, rotatedImage.dimensions);
 }
 
 function createDataUrlFromExif(exifParserResult: ExifParserResult): string {

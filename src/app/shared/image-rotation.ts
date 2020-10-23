@@ -1,6 +1,6 @@
 import { Dimensions } from './model/dimensions.model';
 
-export class CorrectRotationResult {
+export class RotatedImage {
   public dataUrl: string;
   public dimensions: Dimensions;
 }
@@ -9,9 +9,9 @@ export class CorrectRotationResult {
  * Correct rotation of an image using EXIF orientation
  * @param {string} dataUrl Data URL of the image to correct rotation
  * @param {number} orientation EXIF orientation
- * @returns {Promise<CorrectRotationResult>} Data URL, width, and height of the rotated image
+ * @returns {Promise<RotatedImage>} Data URL, width, and height of the rotated image
  */
-export function correctRotation(dataUrl: string, orientation: number): Promise<CorrectRotationResult> {
+export function rotateImage(dataUrl: string, orientation: number): Promise<RotatedImage> {
   return new Promise(resolve => {
     const img = new Image();
 
@@ -39,10 +39,10 @@ export function correctRotation(dataUrl: string, orientation: number): Promise<C
 
       ctx.drawImage(img, 0, 0);
 
-      const result = new CorrectRotationResult();
-      result.dataUrl = canvas.toDataURL();
-      result.dimensions = new Dimensions(canvas.width, canvas.height);
-      resolve(result);
+      const rotatedImage = new RotatedImage();
+      rotatedImage.dataUrl = canvas.toDataURL();
+      rotatedImage.dimensions = new Dimensions(canvas.width, canvas.height);
+      resolve(rotatedImage);
     };
 
     img.src = dataUrl;
