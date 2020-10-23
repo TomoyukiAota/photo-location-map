@@ -45,10 +45,7 @@ export class PhotoInfoViewerContent {
     const thumbnailElement = document.createElement('img');
 
     if (photo.exif.thumbnail) {
-      thumbnailElement.src = photo.exif.thumbnail.dataUrl;
-      thumbnailElement.width = photo.exif.thumbnail.dimensions.width;
-      thumbnailElement.height = photo.exif.thumbnail.dimensions.height;
-      thumbnailElement.title = `Click the thumbnail to open ${photo.name}`;
+      this.displayThumbnailFromExif(thumbnailElement, photo);
     } else if (FilenameExtension.isDisplayableInBrowser(photo.filenameExtension)) {
       this.useFileAsThumbnail(thumbnailElement, photo, photo.path);
     } else if (FilenameExtension.isThumbnailGenerationAvailable(photo.filenameExtension)) {
@@ -71,6 +68,13 @@ export class PhotoInfoViewerContent {
     thumbnailElement.style.transition = 'transform 0.3s ease-in-out';
     thumbnailElement.onclick = () => this.handleThumbnailClick(photo);
     return thumbnailElement;
+  }
+
+  private static displayThumbnailFromExif(thumbnailElement: HTMLImageElement, photo: Photo) {
+    thumbnailElement.src = photo.exif.thumbnail.dataUrl;
+    thumbnailElement.width = photo.exif.thumbnail.dimensions.width;
+    thumbnailElement.height = photo.exif.thumbnail.dimensions.height;
+    thumbnailElement.title = `Click the thumbnail to open ${photo.name}`;
   }
 
   // Minimum length of a side of a square for a thumbnail container.
