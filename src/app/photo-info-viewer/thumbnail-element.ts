@@ -110,7 +110,7 @@ export class ThumbnailElement {
   private static displayThumbnailUsingFile(thumbnailElement: HTMLImageElement, photo: Photo, thumbnailFilePath: string) {
     // # needs to be escaped. See https://www.w3schools.com/tags/ref_urlencode.asp for encoding.
     const escapedPath = thumbnailFilePath.replace(/#/g, '%23');
-    thumbnailElement.src = `file://\\\\?\\${escapedPath}`;
+    thumbnailElement.src = `file://${escapedPath}`;
     const largerSideLength = this.minThumbnailContainerSquareSideLength;
     if (photo.exif.imageDimensions.width > photo.exif.imageDimensions.height) {
       thumbnailElement.width = largerSideLength;
