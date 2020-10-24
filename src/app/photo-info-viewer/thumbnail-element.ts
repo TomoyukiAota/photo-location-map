@@ -1,9 +1,9 @@
 import * as fs from 'fs';
-import * as os from 'os';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { FilenameExtension } from '../../../src-shared/filename-extension/filename-extension';
-import { getThumbnailFilePath } from '../../../src-shared/thumbnail/get-thumbnail-file-path';
 import { Logger } from '../../../src-shared/log/logger';
+import { isFilePathTooLongOnWindows, maxFilePathLengthOnWindows } from '../../../src-shared/max-file-path-length-on-windows/max-file-path-length-on-windows';
+import { getThumbnailFilePath } from '../../../src-shared/thumbnail/get-thumbnail-file-path';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { Dimensions } from '../shared/model/dimensions.model';
 import { Photo } from '../shared/model/photo.model';
@@ -45,10 +45,6 @@ export class ThumbnailElement {
     thumbnailElement.title = `Click the thumbnail to open ${photo.name}`;
   }
 
-  // 259 comes from MAX_PATH (i.e. 260) minus the terminating null character.
-  // See https://stackoverflow.com/a/1880453/7947548
-  private static maxPathLengthOnWindows = 259;
-
   private static displayThumbnailUsingPhotoItself(thumbnailElement: HTMLImageElement, photo: Photo) {
     this.displayThumbnailUsingFile(thumbnailElement, photo, photo.path);
     this.handlePathTooLongCaseOnWindowsWhenUsingPhotoForThumbnail(thumbnailElement, photo);
@@ -69,15 +65,15 @@ export class ThumbnailElement {
   }
 
   private static handlePathTooLongCaseOnWindowsWhenUsingPhotoForThumbnail(thumbnailElement: HTMLImageElement, photo: Photo) {
-    if (os.platform() === 'win32' && photo.path.length > this.maxPathLengthOnWindows) {
+    if (isFilePathTooLongOnWindows(photo.path)) {
       thumbnailElement.alt = `Thumbnail cannot be displayed because the length of the file path is ${photo.path.length}. `
-        + `Windows restricts the maximum path length to ${this.maxPathLengthOnWindows}. Please change file location to shorten the path of the file. `
+        + `Windows restricts the maximum path length to ${maxFilePathLengthOnWindows}. Please change file location to shorten the path of the file. `
         + `For details, press Ctrl+Shift+I and read the console messages.`;
       Logger.warn(`\n`
         + `Thumbnail of ${photo.name} cannot be displayed because the length of the file path exceeds the maximum.\n`
         + `Please change the location of ${photo.name} to shorten the path.\n`
         + `-------------------------------\n`
-        + `Maximum file path length: ${this.maxPathLengthOnWindows}\n`
+        + `Maximum file path length: ${maxFilePathLengthOnWindows}\n`
         + `File path length of ${photo.name}: ${photo.path.length}\n`
         + `-------------------------------\n`
         + `File path of ${photo.name} is "${photo.path}"\n`
@@ -86,15 +82,15 @@ export class ThumbnailElement {
   }
 
   private static handlePathTooLongCaseOnWindowsForGeneratedThumbnail(thumbnailElement: HTMLImageElement, photo: Photo, thumbnailFilePath: string) {
-    if (os.platform() === 'win32' && thumbnailFilePath.length > this.maxPathLengthOnWindows) {
+    if (isFilePathTooLongOnWindows(thumbnailFilePath)) {
       thumbnailElement.alt = `Thumbnail cannot be displayed because the length of the file path of the generated thumbnail is ${thumbnailFilePath.length}. `
-                           + `Windows restricts the maximum path length to ${this.maxPathLengthOnWindows}. Please change file location to shorten the path of the generated thumbnail. `
+                           + `Windows restricts the maximum path length to ${maxFilePathLengthOnWindows}. Please change file location to shorten the path of the generated thumbnail. `
                            + `For details, press Ctrl+Shift+I and read the console messages.`;
       Logger.warn(`\n`
                 + `Thumbnail of ${photo.name} cannot be displayed because the length of the file path of the generated thumbnail exceeds the maximum.\n`
                 + `Please change the location of ${photo.name} to shorten the path of the generated thumbnail.\n`
                 + `-------------------------------\n`
-                + `Maximum file path length: ${this.maxPathLengthOnWindows}\n`
+                + `Maximum file path length: ${maxFilePathLengthOnWindows}\n`
                 + `File path length of ${photo.name}: ${photo.path.length}\n`
                 + `File path length of generated thumbnail: ${thumbnailFilePath.length}\n`
                 + `-------------------------------\n`
