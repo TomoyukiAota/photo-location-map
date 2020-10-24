@@ -35,6 +35,7 @@ export class ThumbnailElement {
 
     thumbnailElement.style.whiteSpace = 'pre-wrap';
     thumbnailElement.style.fontSize = '12px';
+    thumbnailElement.style.lineHeight = '1.3';
     thumbnailElement.style.transition = 'transform 0.3s ease-in-out';
     thumbnailElement.onclick = () => this.handleThumbnailClick(photo);
     return thumbnailElement;
