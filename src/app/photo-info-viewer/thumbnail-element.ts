@@ -33,6 +33,8 @@ export class ThumbnailElement {
       this.displayNoThumbnailAvailableImage(thumbnailElement, photo);
     }
 
+    thumbnailElement.style.whiteSpace = 'pre-wrap';
+    thumbnailElement.style.fontSize = '12px';
     thumbnailElement.style.transition = 'transform 0.3s ease-in-out';
     thumbnailElement.onclick = () => this.handleThumbnailClick(photo);
     return thumbnailElement;
