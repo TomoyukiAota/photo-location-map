@@ -21,4 +21,4 @@ script:
   - travis_retry npm run test:unit:em:main
   - travis_retry npm run test:unit:em:renderer
   - travis_retry npm run test:e2e
-  - travis_retry npm run test:package
+  - travis_wait 40 travis_retry npm run test:package
