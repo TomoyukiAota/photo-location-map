@@ -1,6 +1,7 @@
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { Command } from '../../../src-shared/command/command';
 import { Logger } from '../../../src-shared/log/logger';
+import { isFilePathTooLongOnWindows, maxFilePathLengthOnWindows } from '../../../src-shared/max-file-path-length-on-windows/max-file-path-length-on-windows';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { Photo } from '../shared/model/photo.model';
 
@@ -45,5 +46,12 @@ export class PlayLivePhotosIconElement {
     child_process.spawn(command, [], { shell: true });
     Logger.info(`Issued a command: ${command}`);
     Logger.info(`Played Live Photos by opening ${livePhotosFilePath}`, photo);
+
+
+    if (isFilePathTooLongOnWindows(photo.path)) {
+      Logger.warn(`"Live Photos" might not work because the length of the file path exceeds the maximum on Windows.\n`
+        + `Maximum: ${maxFilePathLengthOnWindows} characters\n`
+        + `Photo path: ${photo.path.length} characters`);
+    }
   }
 }
