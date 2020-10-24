@@ -1,6 +1,7 @@
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { Command } from '../../../src-shared/command/command';
 import { Logger } from '../../../src-shared/log/logger';
+import { isFilePathTooLongOnWindows, maxFilePathLengthOnWindows } from '../../../src-shared/max-file-path-length-on-windows/max-file-path-length-on-windows';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { Photo } from '../shared/model/photo.model';
 
@@ -38,5 +39,11 @@ export class OpenContainingFolderIconElement {
     child_process.spawn(command, [], { shell: true });
     Logger.info(`Issued a command: ${command}`);
     Logger.info(`Opened the containing folder for ${photo.path}`, photo);
+
+    if (isFilePathTooLongOnWindows(photo.path)) {
+      Logger.warn(`"Open containing folder" might not work because the length of the file path exceeds the maximum on Windows.\n`
+                 + `Maximum: ${maxFilePathLengthOnWindows} characters\n`
+                 + `Photo path: ${photo.path.length} characters`);
+    }
   }
 }
