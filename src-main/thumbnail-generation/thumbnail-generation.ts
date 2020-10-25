@@ -26,9 +26,9 @@ class FileForWorkerThread {
 function checkFileForWorkerThreadExists(): void {
   const absoluteFilePathForWorkerThread = pathModule.join(__dirname, FileForWorkerThread.relativePathWithExtension);
   Logger.info(`The expected file path for worker thread used during thumbnail generation is "${absoluteFilePathForWorkerThread}"`);
-  const fileExists = fs.existsSync(absoluteFilePathForWorkerThread);
+  const workerThreadFileExists = fs.existsSync(absoluteFilePathForWorkerThread);
 
-  if (fileExists) {
+  if (workerThreadFileExists) {
     Logger.info(`The file for worker thread used during thumbnail generation is found.`);
   } else {
     Logger.error(`The file for worker thread used during thumbnail generation is NOT found.`);
@@ -70,12 +70,20 @@ async function generateThumbnails(heifFilePaths: string[]) {
   await pool.terminate();
 }
 
+const lastModifiedKey = 'LastModified';
+
+function getThumbnailLogFilePath(srcFilePath: string): string {
+  const srcFileName = pathModule.basename(srcFilePath);
+  const { thumbnailFileDir } = getThumbnailFilePath(srcFilePath);
+  const logFilePath = pathModule.join(thumbnailFileDir, `${srcFileName}.log.json`);
+  return logFilePath;
+}
+
 async function createFileForLastModified(srcFilePath: string, thumbnailFileDir: string) {
   const srcFileName = pathModule.basename(srcFilePath);
-  const lastModified = fs.statSync(srcFilePath).mtime;
-  const fileContentObj = {
-    'LastModified': lastModified
-  };
+  const lastModified = fs.statSync(srcFilePath).mtime.toISOString();
+  const fileContentObj = {};
+  fileContentObj[lastModifiedKey] = lastModified;
   const fileContentStr = JSON.stringify(fileContentObj, null, 2);
   const logFilePath = pathModule.join(thumbnailFileDir, `${srcFileName}.log.json`);
 
@@ -89,7 +97,66 @@ async function createFileForLastModified(srcFilePath: string, thumbnailFileDir: 
   Logger.info(`[main thread] Wrote a file for last modified "${lastModified}" for "${srcFileName}" in ${logFilePath}`);
 }
 
-ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Name, (event, directoryTreeObject: DirectoryTree) => {
+async function fileExists(filePath: string): Promise<boolean> {
+  return fs.promises.access(filePath, fs.constants.F_OK)
+    .then(() => true)
+    .catch(() => false);
+}
+
+async function isThumbnailCacheAvailable(srcFilePath: string): Promise<boolean> {
+  if (!srcFilePath)
+    return false;
+
+  const srcFileName = pathModule.basename(srcFilePath);
+
+  const { thumbnailFilePath } = getThumbnailFilePath(srcFilePath);
+  const thumbnailFileExists = await fileExists(thumbnailFilePath);
+  if (!thumbnailFileExists)
+    return false;
+
+  const logFilePath = getThumbnailLogFilePath(srcFilePath);
+  const logFileExists = await fileExists(logFilePath);
+  if (!logFileExists)
+    return false;
+
+  let fileContentStr;
+  try {
+    fileContentStr = await fs.promises.readFile(logFilePath, 'utf8');
+  } catch (error) {
+    Logger.error(`Failed to read log file for ${srcFileName}. Log file location is "${logFilePath}". error: ${error}`, error);
+    return false;
+  }
+
+  const fileContentObj = JSON.parse(fileContentStr);
+  const lastModifiedFromLogFile = fileContentObj[lastModifiedKey];
+  if (!lastModifiedFromLogFile)
+    return false;
+
+  const lastModifiedFromSrcFile = fs.statSync(srcFilePath).mtime.toISOString();
+  const lastModifiedMatch = lastModifiedFromLogFile === lastModifiedFromSrcFile;
+  if (!lastModifiedMatch)
+    return false;
+
+  Logger.info(`Thumbnail cache is available for ${srcFileName}. Thumbnail cache file path is "${thumbnailFilePath}", which is generated from "${srcFilePath}"`);
+  return true;
+}
+
+async function asyncMap<TInput, TOutput>(array: TInput[], operation: (item: TInput) => Promise<TOutput>): Promise<TOutput[]> {
+  return await Promise.all(array.map(async item => await operation(item)));
+}
+
+// https://qiita.com/janus_wel/items/1dc491d866f49af76e98
+async function asyncFilter<TItem>(array: TItem[], predicate: (item: TItem) => Promise<boolean>) {
+  const evaluateds = await asyncMap(array, async item => {
+    const shouldExist = await predicate(item);
+    return { item, shouldExist };
+  });
+  return evaluateds
+    .filter(evaluated => evaluated.shouldExist)
+    .map(evaluated => evaluated.item);
+}
+
+ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Name, async (event, directoryTreeObject: DirectoryTree) => {
   const flattenedDirTree = convertToFlattenedDirTree(directoryTreeObject);
   const heifFilePaths = flattenedDirTree
     .filter(element => FilenameExtension.isHeif(element.extension))
@@ -97,10 +164,14 @@ ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Name, (event, direc
   console.log(`heifFilePaths`);
   console.log(heifFilePaths);
 
+  const feifFilePathsToGenerateThumbnail = await asyncFilter(heifFilePaths, async filePath => !(await isThumbnailCacheAvailable(filePath)));
+  console.log(`feifFilePathsToGenerateThumbnail`);
+  console.log(feifFilePathsToGenerateThumbnail);
+
   checkFileForWorkerThreadExists();
 
   // noinspection JSUnusedLocalSymbols
-  const ignoredPromise = generateThumbnails(heifFilePaths);    // Promise is deliberately ignored.
+  const ignoredPromise = generateThumbnails(feifFilePathsToGenerateThumbnail);    // Promise is deliberately ignored.
 
   return;
 });
