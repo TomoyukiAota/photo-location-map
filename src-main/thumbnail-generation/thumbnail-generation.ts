@@ -9,6 +9,7 @@ import { Pool, spawn, Worker } from 'threads';
 import { asyncFilter } from '../../src-shared/async-util/async-util';
 import { convertToFlattenedDirTree } from '../../src-shared/dir-tree/dir-tree-util';
 import { FilenameExtension } from '../../src-shared/filename-extension/filename-extension';
+import { fileExists } from '../../src-shared/file-util/file-util';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { Logger } from '../../src-shared/log/logger';
 import { getThumbnailFilePath } from '../../src-shared/thumbnail/get-thumbnail-file-path';
@@ -96,12 +97,6 @@ async function createFileForLastModified(srcFilePath: string, thumbnailFileDir: 
   }
 
   Logger.info(`[main thread] Wrote a file for last modified "${lastModified}" for "${srcFileName}" in ${logFilePath}`);
-}
-
-async function fileExists(filePath: string): Promise<boolean> {
-  return fs.promises.access(filePath, fs.constants.F_OK)
-    .then(() => true)
-    .catch(() => false);
 }
 
 async function isThumbnailCacheAvailable(srcFilePath: string): Promise<boolean> {
