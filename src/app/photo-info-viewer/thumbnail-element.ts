@@ -1,9 +1,8 @@
-import * as fs from 'fs';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { FilenameExtension } from '../../../src-shared/filename-extension/filename-extension';
 import { Logger } from '../../../src-shared/log/logger';
 import { isFilePathTooLongOnWindows, maxFilePathLengthOnWindows } from '../../../src-shared/max-file-path-length-on-windows/max-file-path-length-on-windows';
-import { getThumbnailFilePath } from '../../../src-shared/thumbnail/get-thumbnail-file-path';
+import { getThumbnailFilePath, isThumbnailCacheAvailable } from '../../../src-shared/thumbnail/thumbnail-generation-util';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { Dimensions } from '../shared/model/dimensions.model';
 import { Photo } from '../shared/model/photo.model';
@@ -55,9 +54,8 @@ export class ThumbnailElement {
 
   private static displayGeneratedThumbnail(thumbnailElement: HTMLImageElement, photo: Photo) {
     const intervalId = setInterval(() => {
-      const { thumbnailFilePath } = getThumbnailFilePath(photo.path);
-      const thumbnailFileExists = fs.existsSync(thumbnailFilePath);
-      if (thumbnailFileExists) {
+      if (isThumbnailCacheAvailable(photo.path)) {
+        const { thumbnailFilePath } = getThumbnailFilePath(photo.path);
         this.displayThumbnailUsingFile(thumbnailElement, photo, thumbnailFilePath);
         this.handlePathTooLongCaseOnWindowsForGeneratedThumbnail(thumbnailElement, photo, thumbnailFilePath);
         clearInterval(intervalId);
@@ -109,16 +107,25 @@ export class ThumbnailElement {
   private static displayThumbnailUsingFile(thumbnailElement: HTMLImageElement, photo: Photo, thumbnailFilePath: string) {
     // # needs to be escaped. See https://www.w3schools.com/tags/ref_urlencode.asp for encoding.
     const escapedPath = thumbnailFilePath.replace(/#/g, '%23');
-    thumbnailElement.src = `file://${escapedPath}`;
-    const largerSideLength = this.minThumbnailContainerSquareSideLength;
-    if (photo.exif.imageDimensions.width > photo.exif.imageDimensions.height) {
-      thumbnailElement.width = largerSideLength;
-      thumbnailElement.height = largerSideLength * (photo.exif.imageDimensions.height / photo.exif.imageDimensions.width);
-    } else {
-      thumbnailElement.width = largerSideLength * (photo.exif.imageDimensions.width / photo.exif.imageDimensions.height);
-      thumbnailElement.height = largerSideLength;
-    }
-    thumbnailElement.title = `Click the thumbnail to open ${photo.name}`;
+
+    const tempImg = new Image();
+    tempImg.src = `file://${escapedPath}`;
+    tempImg.onload = () => {
+      const largerSideLength = this.minThumbnailContainerSquareSideLength;
+      const originalWidth = tempImg.width;
+      const originalHeight = tempImg.height;
+
+      if (originalWidth > originalHeight) {
+        thumbnailElement.width = largerSideLength;
+        thumbnailElement.height = largerSideLength * (originalHeight / originalWidth);
+      } else {
+        thumbnailElement.width = largerSideLength * (originalWidth / originalHeight);
+        thumbnailElement.height = largerSideLength;
+      }
+
+      thumbnailElement.src = `file://${escapedPath}`;
+      thumbnailElement.title = `Click the thumbnail to open ${photo.name}`;
+    };
   }
 
   private static displayGeneratingThumbnailImage(thumbnailElement: HTMLImageElement, photo: Photo) {
