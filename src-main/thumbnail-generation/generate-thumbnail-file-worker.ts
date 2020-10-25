@@ -68,5 +68,6 @@ expose(async function generateThumbnailFile(args: ThumbnailFileGenerationArgs): 
     return new ThumbnailFileGenerationResult('failed-to-write-thumbnail-file');
   }
 
+  logger.info(`Created the file for thumbnail in "${args.outputFilePath}".`);
   return new ThumbnailFileGenerationResult('success');
 });
