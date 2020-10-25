@@ -9,10 +9,10 @@ import { Pool, spawn, Worker } from 'threads';
 import { asyncFilter } from '../../src-shared/async-util/async-util';
 import { convertToFlattenedDirTree } from '../../src-shared/dir-tree/dir-tree-util';
 import { FilenameExtension } from '../../src-shared/filename-extension/filename-extension';
-import { fileExists } from '../../src-shared/file-util/file-util';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { Logger } from '../../src-shared/log/logger';
 import { getThumbnailFilePath } from '../../src-shared/thumbnail/get-thumbnail-file-path';
+import { createFileForLastModified, isThumbnailCacheAvailable } from '../../src-shared/thumbnail/thumbnail-generation-util';
 import { ThumbnailFileGenerationArgs } from './generate-thumbnail-file-arg-and-result';
 
 
@@ -70,71 +70,6 @@ async function generateThumbnails(heifFilePaths: string[]) {
 
   await pool.settled();
   await pool.terminate();
-}
-
-const lastModifiedKey = 'LastModified';
-
-function getThumbnailLogFilePath(srcFilePath: string): string {
-  const srcFileName = pathModule.basename(srcFilePath);
-  const { thumbnailFileDir } = getThumbnailFilePath(srcFilePath);
-  const logFilePath = pathModule.join(thumbnailFileDir, `${srcFileName}.log.json`);
-  return logFilePath;
-}
-
-async function createFileForLastModified(srcFilePath: string, thumbnailFileDir: string) {
-  const srcFileName = pathModule.basename(srcFilePath);
-  const lastModified = fs.statSync(srcFilePath).mtime.toISOString();
-  const fileContentObj = {};
-  fileContentObj[lastModifiedKey] = lastModified;
-  const fileContentStr = JSON.stringify(fileContentObj, null, 2);
-  const logFilePath = pathModule.join(thumbnailFileDir, `${srcFileName}.log.json`);
-
-  try {
-    await fs.promises.writeFile(logFilePath, fileContentStr);
-  } catch (error) {
-    Logger.error(`[main thread] Failed to write file for last modified "${lastModified}" for "${srcFileName}" in "${logFilePath}". error: ${error}`, error);
-    return;
-  }
-
-  Logger.info(`[main thread] Wrote a file for last modified "${lastModified}" for "${srcFileName}" in ${logFilePath}`);
-}
-
-async function isThumbnailCacheAvailable(srcFilePath: string): Promise<boolean> {
-  if (!srcFilePath)
-    return false;
-
-  const srcFileName = pathModule.basename(srcFilePath);
-
-  const { thumbnailFilePath } = getThumbnailFilePath(srcFilePath);
-  const thumbnailFileExists = await fileExists(thumbnailFilePath);
-  if (!thumbnailFileExists)
-    return false;
-
-  const logFilePath = getThumbnailLogFilePath(srcFilePath);
-  const logFileExists = await fileExists(logFilePath);
-  if (!logFileExists)
-    return false;
-
-  let fileContentStr;
-  try {
-    fileContentStr = await fs.promises.readFile(logFilePath, 'utf8');
-  } catch (error) {
-    Logger.error(`Failed to read log file for ${srcFileName}. Log file location is "${logFilePath}". error: ${error}`, error);
-    return false;
-  }
-
-  const fileContentObj = JSON.parse(fileContentStr);
-  const lastModifiedFromLogFile = fileContentObj[lastModifiedKey];
-  if (!lastModifiedFromLogFile)
-    return false;
-
-  const lastModifiedFromSrcFile = fs.statSync(srcFilePath).mtime.toISOString();
-  const lastModifiedMatch = lastModifiedFromLogFile === lastModifiedFromSrcFile;
-  if (!lastModifiedMatch)
-    return false;
-
-  Logger.info(`Thumbnail cache is available for ${srcFileName}. Thumbnail cache file path is "${thumbnailFilePath}", which is generated from "${srcFilePath}"`);
-  return true;
 }
 
 ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Name, async (event, directoryTreeObject: DirectoryTree) => {
