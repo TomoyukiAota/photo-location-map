@@ -3,11 +3,12 @@ import { expose } from 'threads/worker';
 import { ThumbnailFileGenerationArgs, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result';
 
 
-expose(async function generateThumbnailFile(args: ThumbnailFileGenerationArgs)  {
+expose(async function generateThumbnailFile(args: ThumbnailFileGenerationArgs): Promise<ThumbnailFileGenerationResult> {
   console.log(`[worker thread] A worker thread is created to generate thumbnail for ${args.srcFilePath}`);
 
-  if (!args)
-    return;
+  if (!args) {
+    return new ThumbnailFileGenerationResult('null-args');
+  }
 
   // Requiring heic-convert here because this module is premature as of Oct 21, 2020.
   // When this module is imported at the top of the file, the application terminates right after launching it.
@@ -29,7 +30,5 @@ expose(async function generateThumbnailFile(args: ThumbnailFileGenerationArgs)  
     console.log(`[worker thread] Something went wrong when writing a file for thumbnail in "${args.outputFilePath}"`, err);
   });
 
-  const result = new ThumbnailFileGenerationResult();
-  result.success = true;
-  return result;
+  return new ThumbnailFileGenerationResult('success');
 });
