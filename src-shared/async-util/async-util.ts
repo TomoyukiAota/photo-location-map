@@ -14,7 +14,7 @@ export async function asyncMap<TInput, TOutput>(inputArray: TInput[], mapFn: (it
 /**
  * Filters itemArray by filterFn asynchronously.
  * Note that filterFn must always resolve to a boolean value.
- * This function does not correctly work when rejection occurs in mapFn.
+ * This function does not correctly work when rejection occurs in filterFn.
  */
 export async function asyncFilter<TItem>(itemArray: TItem[], filterFn: (item: TItem) => Promise<boolean>): Promise<TItem[]> {
   const itemAndPredicateResultPair = await asyncMap(itemArray, async item => {
