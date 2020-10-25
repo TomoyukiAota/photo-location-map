@@ -1,19 +1,20 @@
 import * as fsExtra from 'fs-extra';
 import { expose } from 'threads/worker';
+import { Now } from '../../src-shared/date-time/now';
 import { ThumbnailFileGenerationArgs, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result';
 
 
 class WorkerThreadLogger {
   public info(message: string, ...obj: any[]) {
-    console.info(`[worker thread] ${message}`, ...obj);
+    console.info(`[${Now.extendedFormat}] [Main] [info] [worker thread] ${message}`, ...obj);
   }
 
   public warn(message: string, ...obj: any[]) {
-    console.warn(`[worker thread] ${message}`, ...obj);
+    console.warn(`[${Now.extendedFormat}] [Main] [warn] [worker thread] ${message}`, ...obj);
   }
 
   public error(message: string, ...obj: any[]) {
-    console.error(`[worker thread] ${message}`, ...obj);
+    console.error(`[${Now.extendedFormat}] [Main] [error] [worker thread] ${message}`, ...obj);
   }
 }
 
