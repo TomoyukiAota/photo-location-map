@@ -3,7 +3,7 @@ import { Analytics } from '../../../src-shared/analytics/analytics';
 import { FilenameExtension } from '../../../src-shared/filename-extension/filename-extension';
 import { Logger } from '../../../src-shared/log/logger';
 import { isFilePathTooLongOnWindows, maxFilePathLengthOnWindows } from '../../../src-shared/max-file-path-length-on-windows/max-file-path-length-on-windows';
-import { getThumbnailFilePath } from '../../../src-shared/thumbnail/get-thumbnail-file-path';
+import { getThumbnailFilePath } from '../../../src-shared/thumbnail/thumbnail-generation-util';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { Dimensions } from '../shared/model/dimensions.model';
 import { Photo } from '../shared/model/photo.model';

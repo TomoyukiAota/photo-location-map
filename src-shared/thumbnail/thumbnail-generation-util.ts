@@ -1,10 +1,22 @@
 import * as fs from 'fs';
+import * as os from 'os';
 import * as pathModule from 'path';
 import { fileExists } from '../file-util/file-util';
 import { Logger } from '../log/logger';
-import { getThumbnailFilePath } from './get-thumbnail-file-path';
 
 const lastModifiedKey = 'LastModified';
+
+export function getThumbnailFilePath(srcFilePath: string) {
+  const thumbnailFileName = `${pathModule.basename(srcFilePath)}.plm`;
+  const intermediateDir = pathModule.parse(
+    // Convert "C:\\abc\\def.jpg" to "C\\abc\\def.jpg"
+    srcFilePath.replace(':', '')
+    // Convert "C\\abc\\def.jpg" to "C\\abc\\def"
+  ).dir;
+  const thumbnailFileDir = pathModule.join(os.homedir(), '.PlmCache', intermediateDir);
+  const thumbnailFilePath = pathModule.join(thumbnailFileDir, `${thumbnailFileName}.jpg`);
+  return { thumbnailFileDir, thumbnailFilePath };
+}
 
 export function getThumbnailLogFilePath(srcFilePath: string): string {
   const srcFileName = pathModule.basename(srcFilePath);
