@@ -71,7 +71,7 @@ async function generateThumbnails(heifFilePaths: string[]) {
   await pool.terminate();
 }
 
-ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Name, async (event, directoryTreeObject: DirectoryTree) => {
+ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Name, (event, directoryTreeObject: DirectoryTree) => {
   const flattenedDirTree = convertToFlattenedDirTree(directoryTreeObject);
   const heifFilePaths = flattenedDirTree
     .filter(element => FilenameExtension.isHeif(element.extension))
@@ -79,7 +79,7 @@ ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Name, async (event,
   console.log(`heifFilePaths`);
   console.log(heifFilePaths);
 
-  const feifFilePathsToGenerateThumbnail = await asyncFilter(heifFilePaths, async filePath => !(await isThumbnailCacheAvailable(filePath)));
+  const feifFilePathsToGenerateThumbnail = heifFilePaths.filter(filePath => !isThumbnailCacheAvailable(filePath));
   console.log(`feifFilePathsToGenerateThumbnail`);
   console.log(feifFilePathsToGenerateThumbnail);
 
