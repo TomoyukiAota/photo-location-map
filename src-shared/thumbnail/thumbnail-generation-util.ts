@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as pathModule from 'path';
-import { fileExists } from '../file-util/file-util';
 import { Logger } from '../log/logger';
 
 const lastModifiedKey = 'LastModified';
@@ -43,25 +42,25 @@ export async function createFileForLastModified(srcFilePath: string, thumbnailFi
   Logger.info(`[main thread] Wrote a file for last modified "${lastModified}" for "${srcFileName}" in ${logFilePath}`);
 }
 
-export async function isThumbnailCacheAvailable(srcFilePath: string): Promise<boolean> {
+export function isThumbnailCacheAvailable(srcFilePath: string): boolean {
   if (!srcFilePath)
     return false;
 
   const srcFileName = pathModule.basename(srcFilePath);
 
   const { thumbnailFilePath } = getThumbnailFilePath(srcFilePath);
-  const thumbnailFileExists = await fileExists(thumbnailFilePath);
+  const thumbnailFileExists = fs.existsSync(thumbnailFilePath);
   if (!thumbnailFileExists)
     return false;
 
   const logFilePath = getThumbnailLogFilePath(srcFilePath);
-  const logFileExists = await fileExists(logFilePath);
+  const logFileExists = fs.existsSync(logFilePath);
   if (!logFileExists)
     return false;
 
   let fileContentStr;
   try {
-    fileContentStr = await fs.promises.readFile(logFilePath, 'utf8');
+    fileContentStr = fs.readFileSync(logFilePath, 'utf8');
   } catch (error) {
     Logger.error(`Failed to read log file for ${srcFileName}. Log file location is "${logFilePath}". error: ${error}`, error);
     return false;
