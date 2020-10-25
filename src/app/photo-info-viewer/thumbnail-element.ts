@@ -108,15 +108,19 @@ export class ThumbnailElement {
     // # needs to be escaped. See https://www.w3schools.com/tags/ref_urlencode.asp for encoding.
     const escapedPath = thumbnailFilePath.replace(/#/g, '%23');
     thumbnailElement.src = `file://${escapedPath}`;
-    const largerSideLength = this.minThumbnailContainerSquareSideLength;
-    if (photo.exif.imageDimensions.width > photo.exif.imageDimensions.height) {
-      thumbnailElement.width = largerSideLength;
-      thumbnailElement.height = largerSideLength * (photo.exif.imageDimensions.height / photo.exif.imageDimensions.width);
-    } else {
-      thumbnailElement.width = largerSideLength * (photo.exif.imageDimensions.width / photo.exif.imageDimensions.height);
-      thumbnailElement.height = largerSideLength;
-    }
+
     thumbnailElement.title = `Click the thumbnail to open ${photo.name}`;
+
+    const largerSideLength = this.minThumbnailContainerSquareSideLength;
+    thumbnailElement.onload = () => {
+      const originalWidth = thumbnailElement.width;
+      const originalHeight = thumbnailElement.height;
+      if (originalWidth > originalHeight) {
+        thumbnailElement.width = largerSideLength;
+      } else {
+        thumbnailElement.height = largerSideLength;
+      }
+    };
   }
 
   private static displayGeneratingThumbnailImage(thumbnailElement: HTMLImageElement, photo: Photo) {
