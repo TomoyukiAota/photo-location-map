@@ -6,11 +6,12 @@ import * as pathModule from 'path';
 import * as physicalCpuCount from 'physical-cpu-count';
 import { Pool, spawn, Worker } from 'threads';
 
+import { asyncFilter } from '../../src-shared/async-util/async-util';
 import { convertToFlattenedDirTree } from '../../src-shared/dir-tree/dir-tree-util';
 import { FilenameExtension } from '../../src-shared/filename-extension/filename-extension';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { Logger } from '../../src-shared/log/logger';
-import { getThumbnailFilePath } from '../../src-shared/thumbnail/get-thumbnail-file-path';
+import { createFileForLastModified, getThumbnailFilePath, isThumbnailCacheAvailable } from '../../src-shared/thumbnail/thumbnail-generation-util';
 import { ThumbnailFileGenerationArgs } from './generate-thumbnail-file-arg-and-result';
 
 
@@ -26,9 +27,9 @@ class FileForWorkerThread {
 function checkFileForWorkerThreadExists(): void {
   const absoluteFilePathForWorkerThread = pathModule.join(__dirname, FileForWorkerThread.relativePathWithExtension);
   Logger.info(`The expected file path for worker thread used during thumbnail generation is "${absoluteFilePathForWorkerThread}"`);
-  const fileExists = fs.existsSync(absoluteFilePathForWorkerThread);
+  const workerThreadFileExists = fs.existsSync(absoluteFilePathForWorkerThread);
 
-  if (fileExists) {
+  if (workerThreadFileExists) {
     Logger.info(`The file for worker thread used during thumbnail generation is found.`);
   } else {
     Logger.error(`The file for worker thread used during thumbnail generation is NOT found.`);
@@ -59,9 +60,10 @@ async function generateThumbnails(heifFilePaths: string[]) {
       `From "${args.srcFilePath}", a thumbnail file "${args.outputFilePath}" will be generated.`);
 
     pool.queue(async generateThumbnailFile => await generateThumbnailFile(args))
-      .then(() => {
+      .then(result => {
         Logger.info('[main thread] Observed worker thread completion for thumbnail generation. ' +
           `From "${args.srcFilePath}", a thumbnail file "${args.outputFilePath}" should have been generated.`);
+        createFileForLastModified(args.srcFilePath, args.outputFileDir);
       });
   });
 
@@ -77,10 +79,14 @@ ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Name, (event, direc
   console.log(`heifFilePaths`);
   console.log(heifFilePaths);
 
+  const feifFilePathsToGenerateThumbnail = heifFilePaths.filter(filePath => !isThumbnailCacheAvailable(filePath));
+  console.log(`feifFilePathsToGenerateThumbnail`);
+  console.log(feifFilePathsToGenerateThumbnail);
+
   checkFileForWorkerThreadExists();
 
   // noinspection JSUnusedLocalSymbols
-  const ignoredPromise = generateThumbnails(heifFilePaths);    // Promise is deliberately ignored.
+  const ignoredPromise = generateThumbnails(feifFilePathsToGenerateThumbnail);    // Promise is deliberately ignored.
 
   return;
 });
