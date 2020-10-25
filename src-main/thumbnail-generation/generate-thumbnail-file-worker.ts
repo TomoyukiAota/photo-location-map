@@ -1,5 +1,5 @@
+import * as fsExtra from 'fs-extra';
 import { expose } from 'threads/worker';
-import { promisify } from 'util';
 import { ThumbnailFileGenerationArgs, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result';
 
 
@@ -17,16 +17,15 @@ expose(async function generateThumbnailFile(args: ThumbnailFileGenerationArgs)  
   // Therefore, importing heic-convert here to be able to track when things go wrong.
   const heicConvert: typeof import('heic-convert') = require('heic-convert');
 
-  const fs = require('fs-extra');
-  const inputBuffer = await promisify(fs.readFile)(args.srcFilePath);
+  const inputBuffer = await fsExtra.promises.readFile(args.srcFilePath);
   const outputBuffer = await heicConvert({
     buffer: inputBuffer, // the HEIC file buffer
     format: 'JPEG',      // output format
     quality: 0.1           // the jpeg compression quality, between 0 and 1
   });
 
-  await fs.ensureDir(args.outputFileDir);
-  await promisify(require('fs').writeFile)(args.outputFilePath, outputBuffer).catch(err => {
+  await fsExtra.ensureDir(args.outputFileDir);
+  await fsExtra.promises.writeFile(args.outputFilePath, outputBuffer).catch(err => {
     console.log(`[worker thread] Something went wrong when writing a file for thumbnail in "${args.outputFilePath}"`, err);
   });
 
