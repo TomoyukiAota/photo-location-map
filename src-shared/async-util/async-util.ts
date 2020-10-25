@@ -11,13 +11,17 @@ export async function asyncMap<TInput, TOutput>(inputArray: TInput[], mapFn: (it
   return await Promise.all(outputPromiseArray);
 }
 
-// Modified based on https://qiita.com/janus_wel/items/1dc491d866f49af76e98
-export async function asyncFilter<TItem>(array: TItem[], predicate: (item: TItem) => Promise<boolean>) {
-  const evaluateds = await asyncMap(array, async item => {
-    const shouldExist = await predicate(item);
-    return { item, shouldExist };
+/**
+ * Filters itemArray by filterFn asynchronously.
+ * Note that filterFn must always resolve to a boolean value.
+ * This function does not correctly work when rejection occurs in mapFn.
+ */
+export async function asyncFilter<TItem>(itemArray: TItem[], filterFn: (item: TItem) => Promise<boolean>): Promise<TItem[]> {
+  const itemAndPredicateResultPair = await asyncMap(itemArray, async item => {
+    const filterFnResult = await filterFn(item);
+    return { item, filterFnResult };
   });
-  return evaluateds
-    .filter(evaluated => evaluated.shouldExist)
-    .map(evaluated => evaluated.item);
+  return itemAndPredicateResultPair
+    .filter(pair => pair.filterFnResult)
+    .map(pair => pair.item);
 }
