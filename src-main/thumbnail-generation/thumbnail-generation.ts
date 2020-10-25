@@ -59,14 +59,34 @@ async function generateThumbnails(heifFilePaths: string[]) {
       `From "${args.srcFilePath}", a thumbnail file "${args.outputFilePath}" will be generated.`);
 
     pool.queue(async generateThumbnailFile => await generateThumbnailFile(args))
-      .then(() => {
+      .then(result => {
         Logger.info('[main thread] Observed worker thread completion for thumbnail generation. ' +
           `From "${args.srcFilePath}", a thumbnail file "${args.outputFilePath}" should have been generated.`);
+        createFileForLastModified(args.srcFilePath, args.outputFileDir);
       });
   });
 
   await pool.settled();
   await pool.terminate();
+}
+
+async function createFileForLastModified(srcFilePath: string, thumbnailFileDir: string) {
+  const srcFileName = pathModule.basename(srcFilePath);
+  const lastModified = fs.statSync(srcFilePath).mtime;
+  const fileContentObj = {
+    'LastModified': lastModified
+  };
+  const fileContentStr = JSON.stringify(fileContentObj, null, 2);
+  const logFilePath = pathModule.join(thumbnailFileDir, `${srcFileName}_log.json`);
+
+  try {
+    await fs.promises.writeFile(logFilePath, fileContentStr);
+  } catch (error) {
+    Logger.error(`[main thread] Failed to write file for last modified "${lastModified}" for "${srcFileName}" in "${logFilePath}". error: ${error}`, error);
+    return;
+  }
+
+  Logger.info(`[main thread] Wrote a file for last modified "${lastModified}" for "${srcFileName}" in ${logFilePath}`);
 }
 
 ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Name, (event, directoryTreeObject: DirectoryTree) => {
