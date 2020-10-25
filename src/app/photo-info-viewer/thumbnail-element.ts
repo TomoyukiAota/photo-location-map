@@ -111,10 +111,10 @@ export class ThumbnailElement {
 
     thumbnailElement.title = `Click the thumbnail to open ${photo.name}`;
 
-    const largerSideLength = this.minThumbnailContainerSquareSideLength;
     thumbnailElement.onload = () => {
       const originalWidth = thumbnailElement.width;
       const originalHeight = thumbnailElement.height;
+      const largerSideLength = this.minThumbnailContainerSquareSideLength;
       if (originalWidth > originalHeight) {
         thumbnailElement.width = largerSideLength;
       } else {
