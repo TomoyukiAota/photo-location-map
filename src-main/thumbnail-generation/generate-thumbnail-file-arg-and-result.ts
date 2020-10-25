@@ -5,7 +5,8 @@ export class ThumbnailFileGenerationArgs {
 }
 
 export type ThumbnailFileGenerationResultStatus =
-  'null-args' | 'failed-to-read-src-file' | 'failed-to-write-thumbnail-file' | 'success';
+  'null-args' | 'failed-to-read-src-file' | 'failed-in-heic-convert' | 'failed-to-ensure-dir' |
+  'failed-to-write-thumbnail-file' | 'success';
 
 
 export class ThumbnailFileGenerationResult {
