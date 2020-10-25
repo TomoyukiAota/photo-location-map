@@ -8,7 +8,7 @@ export function getThumbnailFilePath(srcFilePath: string) {
     srcFilePath.replace(':', '')
     // Convert "C\\abc\\def.jpg" to "C\\abc\\def"
     ).dir;
-  const thumbnailFileDir = pathModule.join(os.homedir(), 'PlmCache', intermediateDir);
+  const thumbnailFileDir = pathModule.join(os.homedir(), '.PlmCache', intermediateDir);
   const thumbnailFilePath = pathModule.join(thumbnailFileDir, `${thumbnailFileName}.jpg`);
   return { thumbnailFileDir, thumbnailFilePath };
 }
