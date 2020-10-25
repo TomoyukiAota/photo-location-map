@@ -11,8 +11,7 @@ import { convertToFlattenedDirTree } from '../../src-shared/dir-tree/dir-tree-ut
 import { FilenameExtension } from '../../src-shared/filename-extension/filename-extension';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { Logger } from '../../src-shared/log/logger';
-import { getThumbnailFilePath } from '../../src-shared/thumbnail/get-thumbnail-file-path';
-import { createFileForLastModified, isThumbnailCacheAvailable } from '../../src-shared/thumbnail/thumbnail-generation-util';
+import { createFileForLastModified, getThumbnailFilePath, isThumbnailCacheAvailable } from '../../src-shared/thumbnail/thumbnail-generation-util';
 import { ThumbnailFileGenerationArgs } from './generate-thumbnail-file-arg-and-result';
 
 
