@@ -76,6 +76,8 @@ export function isThumbnailCacheAvailable(srcFilePath: string): boolean {
   if (!lastModifiedMatch)
     return false;
 
-  Logger.info(`Thumbnail cache is available for ${srcFileName}. Thumbnail cache file path is "${thumbnailFilePath}", which is generated from "${srcFilePath}"`);
+  Logger.info(`Thumbnail cache is available for ${srcFileName}.\n`
+    + `Original file path: "${srcFilePath}"\n`
+    + `Thumbnail cache file path: "${thumbnailFilePath}"`);
   return true;
 }
