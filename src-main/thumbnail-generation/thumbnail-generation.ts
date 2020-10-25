@@ -77,7 +77,7 @@ async function createFileForLastModified(srcFilePath: string, thumbnailFileDir: 
     'LastModified': lastModified
   };
   const fileContentStr = JSON.stringify(fileContentObj, null, 2);
-  const logFilePath = pathModule.join(thumbnailFileDir, `${srcFileName}_log.json`);
+  const logFilePath = pathModule.join(thumbnailFileDir, `${srcFileName}.log.json`);
 
   try {
     await fs.promises.writeFile(logFilePath, fileContentStr);

@@ -2,7 +2,7 @@ import * as os from 'os';
 import * as pathModule from 'path';
 
 export function getThumbnailFilePath(srcFilePath: string) {
-  const thumbnailFileName = `${pathModule.parse(srcFilePath).name}_plm`;
+  const thumbnailFileName = `${pathModule.basename(srcFilePath)}.plm`;
   const intermediateDir = pathModule.parse(
     // Convert "C:\\abc\\def.jpg" to "C\\abc\\def.jpg"
     srcFilePath.replace(':', '')
