@@ -73,11 +73,5 @@ export function isThumbnailCacheAvailable(srcFilePath: string): boolean {
 
   const lastModifiedFromSrcFile = fs.statSync(srcFilePath).mtime.toISOString();
   const lastModifiedMatch = lastModifiedFromLogFile === lastModifiedFromSrcFile;
-  if (!lastModifiedMatch)
-    return false;
-
-  Logger.debug(`Thumbnail cache is available for ${srcFileName}.\n`
-    + `Original file path: "${srcFilePath}"\n`
-    + `Thumbnail cache file path: "${thumbnailFilePath}"`);
-  return true;
+  return lastModifiedMatch;
 }
