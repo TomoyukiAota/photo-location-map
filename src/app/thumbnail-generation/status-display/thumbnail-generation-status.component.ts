@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Logger } from '../../../../src-shared/log/logger';
 import { isThumbnailCacheAvailable } from '../../../../src-shared/thumbnail/thumbnail-generation-util';
 import { ThumbnailGenerationService } from '../service/thumbnail-generation.service';
 
@@ -24,6 +25,9 @@ export class ThumbnailGenerationStatusComponent implements OnInit {
       this.numberOfTotalHeifFiles = status.numOfAllHeifFiles;
       this.numberOfThumbnailsGenerationRequired = status.generationRequiredFilePaths.length;
       this.numberOfThumbnailsUsingCache = this.numberOfTotalHeifFiles - this.numberOfThumbnailsGenerationRequired;
+      this.numberOfGeneratedThumbnails = 0;
+      Logger.info(`Total HEIF/HEIC files: ${ this.numberOfTotalHeifFiles }, Using cache: ${ this.numberOfThumbnailsUsingCache }, `
+        + `Generation required: ${ this.numberOfThumbnailsGenerationRequired }`);
       this.updateThumbnailGenerationStatus(status.generationRequiredFilePaths);
     });
   }
@@ -31,8 +35,11 @@ export class ThumbnailGenerationStatusComponent implements OnInit {
   private updateThumbnailGenerationStatus(generationRequiredFilePaths: string[]) {
     const intervalId = setInterval(() => {
       this.numberOfGeneratedThumbnails = generationRequiredFilePaths.filter(filePath => isThumbnailCacheAvailable(filePath)).length;
+      Logger.info(`Thumbnail generation progress (generated/generation-required): `
+        + `${this.numberOfGeneratedThumbnails}/${this.numberOfThumbnailsGenerationRequired}`);
       if (this.numberOfGeneratedThumbnails === this.numberOfThumbnailsGenerationRequired) {
         this.isThumbnailGenerationDone = true;
+        Logger.info(`Completed thumbnail generation.`);
         clearInterval(intervalId);
       }
       this.changeDetectorRef.detectChanges();
