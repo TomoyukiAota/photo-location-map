@@ -1,14 +1,15 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import * as createDirectoryTree from 'directory-tree';
-import { ipcRenderer } from 'electron';
+
 import { DirTreeObjectRecorder } from '../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
 import { ProxyRequire } from '../../../src-shared/require/proxy-require';
+
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
-import { FolderSelectionRecorder } from './folder-selection-recorder';
 import { LoadingFolderDialogComponent } from '../loading-folder/dialog/loading-folder-dialog.component';
-import { IpcConstants } from '../../../src-shared/ipc/ipc-constants';
+import { ThumbnailGenerationService } from '../thumbnail-generation/service/thumbnail-generation.service';
+import { FolderSelectionRecorder } from './folder-selection-recorder';
 
 const electron = ProxyRequire.electron;
 const path = ProxyRequire.path;
@@ -25,7 +26,8 @@ export class SidebarComponent {
   constructor(private changeDetectorRef: ChangeDetectorRef,
               private dialog: MatDialog,
               private photoDataService: PhotoDataService,
-              private directoryTreeViewDataService: DirectoryTreeViewDataService) {
+              private directoryTreeViewDataService: DirectoryTreeViewDataService,
+              private thumbnailGenerationService: ThumbnailGenerationService) {
   }
 
   public showSelectFolderDialog() {
@@ -56,7 +58,6 @@ export class SidebarComponent {
     FolderSelectionRecorder.start(selectedFolderPath);
     const directoryTreeObject = createDirectoryTree(selectedFolderPath);
     DirTreeObjectRecorder.record(directoryTreeObject);
-    ipcRenderer.invoke(IpcConstants.ThumbnailGenerationInMainProcess.Name, directoryTreeObject);
     this.photoDataService.update(directoryTreeObject)
       .then(() => {
         this.directoryTreeViewDataService.update(directoryTreeObject);
@@ -69,6 +70,7 @@ export class SidebarComponent {
       )
       .finally(() => {
         dialogRef.close();
+        this.thumbnailGenerationService.generateThumbnail(directoryTreeObject);
       });
   };
 }
