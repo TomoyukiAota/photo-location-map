@@ -6,7 +6,6 @@ import * as pathModule from 'path';
 import * as physicalCpuCount from 'physical-cpu-count';
 import { Pool, spawn, Worker } from 'threads';
 
-import { asyncFilter } from '../../src-shared/async-util/async-util';
 import { convertToFlattenedDirTree } from '../../src-shared/dir-tree/dir-tree-util';
 import { FilenameExtension } from '../../src-shared/filename-extension/filename-extension';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
@@ -71,22 +70,11 @@ async function generateThumbnails(heifFilePaths: string[]) {
   await pool.terminate();
 }
 
-ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Name, (event, directoryTreeObject: DirectoryTree) => {
-  const flattenedDirTree = convertToFlattenedDirTree(directoryTreeObject);
-  const heifFilePaths = flattenedDirTree
-    .filter(element => FilenameExtension.isHeif(element.extension))
-    .map(element => element.path);
-  console.log(`heifFilePaths`);
-  console.log(heifFilePaths);
-
-  const feifFilePathsToGenerateThumbnail = heifFilePaths.filter(filePath => !isThumbnailCacheAvailable(filePath));
-  console.log(`feifFilePathsToGenerateThumbnail`);
-  console.log(feifFilePathsToGenerateThumbnail);
-
+ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Name, (event, heifFilePathsToGenerateThumbnail: string[]) => {
   checkFileForWorkerThreadExists();
 
   // noinspection JSUnusedLocalSymbols
-  const ignoredPromise = generateThumbnails(feifFilePathsToGenerateThumbnail);    // Promise is deliberately ignored.
+  const ignoredPromise = generateThumbnails(heifFilePathsToGenerateThumbnail);    // Promise is deliberately ignored.
 
   return;
 });

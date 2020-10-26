@@ -1,5 +1,14 @@
-.container {
+:host {
   height: 100%;
+  display: grid;
+  grid: "sidebar-and-map" minmax(0, 1fr)
+        "thumbnail-generation-status" auto
+        / auto;
+}
+
+.sidebar-and-map-container {
+  height: 100%;
+  grid-area: sidebar-and-map;
   display: flex;
   flex-direction: row;
 }
@@ -11,4 +20,8 @@
 
 #right-map {
   height: 100%;
+}
+
+app-thumbnail-generation-status {
+  grid-area: thumbnail-generation-status;
 }

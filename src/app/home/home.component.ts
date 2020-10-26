@@ -1,6 +1,7 @@
-import { Component, ChangeDetectionStrategy, AfterViewInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, AfterViewInit, OnInit } from '@angular/core';
 import Split from 'split.js';
 import { OsmForceRenderService } from '../map/osm/osm-force-render/osm-force-render.service';
+import { ThumbnailGenerationService } from '../thumbnail-generation/service/thumbnail-generation.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -8,8 +9,16 @@ import { OsmForceRenderService } from '../map/osm/osm-force-render/osm-force-ren
   styleUrls: ['./home.component.scss'],
   templateUrl: './home.component.html'
 })
-export class HomeComponent implements AfterViewInit {
-  constructor(private osmForceRenderService: OsmForceRenderService) {}
+export class HomeComponent implements AfterViewInit, OnInit {
+  public thumbnailGenerationStatusVisible = false;
+
+  constructor(private thumbnailGenerationService: ThumbnailGenerationService,
+              private osmForceRenderService: OsmForceRenderService) {}
+
+  ngOnInit() {
+    this.thumbnailGenerationService.thumbnailGenerationStarted.subscribe(
+      () => this.thumbnailGenerationStatusVisible = true);
+  }
 
   ngAfterViewInit() {
     Split(['#left-sidebar', '#right-map'], {

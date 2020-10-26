@@ -1,0 +1,8 @@
+<ng-container *ngIf="isThumbnailGenerationDone; else thumbnailGenerationInProgress">
+  <div>Completed thumbnail generation for HEIF/HEIC files.</div>
+</ng-container>
+<ng-template #thumbnailGenerationInProgress>
+  <div>Generating thumbnails for HEIF/HEIC files... Progress: {{ numberOfGeneratedThumbnails }}/{{ numberOfThumbnailsGenerationRequired }}</div>
+</ng-template>
+<div>Total HEIF/HEIC files: {{ numberOfTotalHeifFiles }}, Using cache: {{ numberOfThumbnailsUsingCache }},
+  Generation required: {{ numberOfThumbnailsGenerationRequired }}, Generated: {{ numberOfGeneratedThumbnails }}</div>
