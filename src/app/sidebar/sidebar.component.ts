@@ -5,6 +5,7 @@ import * as createDirectoryTree from 'directory-tree';
 import { DirTreeObjectRecorder } from '../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
 import { ProxyRequire } from '../../../src-shared/require/proxy-require';
 
+import { FolderSelectionService } from '../shared/service/folder-selection.service';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
 import { LoadingFolderDialogComponent } from '../loading-folder/dialog/loading-folder-dialog.component';
@@ -25,6 +26,7 @@ export class SidebarComponent {
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
               private dialog: MatDialog,
+              private folderSelectionService: FolderSelectionService,
               private photoDataService: PhotoDataService,
               private directoryTreeViewDataService: DirectoryTreeViewDataService,
               private thumbnailGenerationService: ThumbnailGenerationService) {
@@ -47,6 +49,7 @@ export class SidebarComponent {
   }
 
   private readonly handleSelectedFolder = (selectedFolderPath: string) => {
+    this.folderSelectionService.folderSelected.next();
     const dialogRef = this.dialog.open(LoadingFolderDialogComponent, {
       width: '300px',
       height: '90px',
