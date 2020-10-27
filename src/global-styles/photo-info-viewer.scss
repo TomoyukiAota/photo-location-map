@@ -1,7 +1,17 @@
+@keyframes flickerAnimation {
+  0%   { opacity: 0.2; }
+  50%  { opacity: 1; }
+  100% { opacity: 0.2; }
+}
+
+.photo-info-viewer-generating-thumbnail {
+  animation: flickerAnimation 3s infinite;
+}
+
 .photo-info-viewer-button {
   background-color: #888888;
   border-radius: 5px;
-  margin: 6px 3px 0px 3px;
+  margin: 6px 3px 0 3px;
   padding: 4px;
   transition: background-color 0.2s ease;
 }

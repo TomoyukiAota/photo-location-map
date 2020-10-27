@@ -27,7 +27,7 @@ export class ThumbnailElement {
     } else if (isPhotoDisplayableInBrowser) {
       this.displayThumbnailUsingPhotoItself(thumbnailElement, photo);
     } else if (isThumbnailGenerationAvailable) {
-      this.displayGeneratedThumbnail(thumbnailElement, photo);
+      this.displayThumbnailAfterWaitingForGeneration(thumbnailElement, photo);
     } else {
       this.displayNoThumbnailAvailableImage(thumbnailElement, photo);
     }
@@ -52,17 +52,30 @@ export class ThumbnailElement {
     this.handlePathTooLongCaseOnWindowsWhenUsingPhotoForThumbnail(thumbnailElement, photo);
   }
 
-  private static displayGeneratedThumbnail(thumbnailElement: HTMLImageElement, photo: Photo) {
+  private static displayThumbnailAfterWaitingForGeneration(thumbnailElement: HTMLImageElement, photo: Photo) {
+    const cssClassAppliedToGeneratingThumbnailImage = 'photo-info-viewer-generating-thumbnail';
+
+    if (isThumbnailCacheAvailable(photo.path)) {
+      this.displayGeneratedThumbnail(photo, thumbnailElement);
+      return;
+    } else {
+      this.displayGeneratingThumbnailImage(thumbnailElement, photo);
+      thumbnailElement.classList.add(cssClassAppliedToGeneratingThumbnailImage);
+    }
+
     const intervalId = setInterval(() => {
       if (isThumbnailCacheAvailable(photo.path)) {
-        const { thumbnailFilePath } = getThumbnailFilePath(photo.path);
-        this.displayThumbnailUsingFile(thumbnailElement, photo, thumbnailFilePath);
-        this.handlePathTooLongCaseOnWindowsForGeneratedThumbnail(thumbnailElement, photo, thumbnailFilePath);
+        thumbnailElement.classList.remove(cssClassAppliedToGeneratingThumbnailImage);
+        this.displayGeneratedThumbnail(photo, thumbnailElement);
         clearInterval(intervalId);
-      } else {
-        this.displayGeneratingThumbnailImage(thumbnailElement, photo);
       }
     }, 1000);
+  }
+
+  private static displayGeneratedThumbnail(photo: Photo, thumbnailElement: HTMLImageElement) {
+    const { thumbnailFilePath } = getThumbnailFilePath(photo.path);
+    this.displayThumbnailUsingFile(thumbnailElement, photo, thumbnailFilePath);
+    this.handlePathTooLongCaseOnWindowsForGeneratedThumbnail(thumbnailElement, photo, thumbnailFilePath);
   }
 
   private static handlePathTooLongCaseOnWindowsWhenUsingPhotoForThumbnail(thumbnailElement: HTMLImageElement, photo: Photo) {
@@ -129,8 +142,8 @@ export class ThumbnailElement {
   }
 
   private static displayGeneratingThumbnailImage(thumbnailElement: HTMLImageElement, photo: Photo) {
-    thumbnailElement.width = 150;
-    thumbnailElement.height = 15;
+    thumbnailElement.width = 160;
+    thumbnailElement.height = 20;
     thumbnailElement.src = IconDataUrl.generatingThumbnail;
     thumbnailElement.title = `Generating thumbnail for ${photo.name}.`;
   }
