@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, AfterViewInit, OnInit } from '@angular/core';
 import Split from 'split.js';
 import { OsmForceRenderService } from '../map/osm/osm-force-render/osm-force-render.service';
+import { FolderSelectionService } from '../shared/service/folder-selection.service';
 import { ThumbnailGenerationService } from '../thumbnail-generation/service/thumbnail-generation.service';
 
 @Component({
@@ -12,10 +13,13 @@ import { ThumbnailGenerationService } from '../thumbnail-generation/service/thum
 export class HomeComponent implements AfterViewInit, OnInit {
   public thumbnailGenerationStatusVisible = false;
 
-  constructor(private thumbnailGenerationService: ThumbnailGenerationService,
+  constructor(private folderSelectionService: FolderSelectionService,
+              private thumbnailGenerationService: ThumbnailGenerationService,
               private osmForceRenderService: OsmForceRenderService) {}
 
   ngOnInit() {
+    this.folderSelectionService.folderSelected.subscribe(
+      () => this.thumbnailGenerationStatusVisible = false);
     this.thumbnailGenerationService.thumbnailGenerationStarted.subscribe(
       () => this.thumbnailGenerationStatusVisible = true);
   }
