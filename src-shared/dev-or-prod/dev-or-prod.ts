@@ -1,5 +1,4 @@
 import { Logger } from '../log/logger';
-import { RequireFromMainProcess } from '../require/require-from-main-process';
 
 export type DevOrProdType = 'Dev' | 'Prod';
 
@@ -18,22 +17,10 @@ function determineDevOrProd(): DevOrProdType {
   if (isDevOrProdSpecifiedInPackageJson) {
     return devOrProdInPackageJson;
   } else if (!devOrProdInPackageJson) {
-    return determineDevOrProdWhenPackagedAppIsDirectlyLaunched();
+    return 'Prod';
   } else {
     throw new Error(`Either "Dev" or "Prod" needs to be specified for "devOrProd" in "config" in package.json, but the specified value is "${devOrProdInPackageJson}".`);
   }
-}
-
-function determineDevOrProdWhenPackagedAppIsDirectlyLaunched(): DevOrProdType {
-  const appVersion = RequireFromMainProcess?.electron?.app?.getVersion();
-  Logger.info(`Application version to determine DevOrProd: ${appVersion}`);
-  if (!appVersion) {
-    throw new Error(`"devOrProd" in "config" in package.json is falsy. Also, the application version is falsy. Something went wrong.`);
-  }
-
-  const isAlphaVersion = appVersion.toLowerCase().includes('alpha');
-  Logger.info(`Is alpha version? : ${isAlphaVersion}`);
-  return isAlphaVersion ? 'Dev' : 'Prod';
 }
 
 const devOrProd = determineDevOrProd();

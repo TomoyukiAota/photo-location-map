@@ -14,8 +14,9 @@ export class AnalyticsMain implements AnalyticsInterface {
     const userId = this.getUserId();
     const ua = require('universal-analytics');
     this.visitor = ua(trackingId, userId);
-    Logger.info(`Tracking ID for Google Analytics: "${trackingId}"`);
-    Logger.info(`User ID for Google Analytics: "${userId}"`);
+    Logger.info(`[GoogleAnalytics] Tracking ID: ${trackingId}`);
+    Logger.info(`[GoogleAnalytics] Property Name for Tracking ID: ${AnalyticsTrackingId.getPropertyName()}`);
+    Logger.info(`[GoogleAnalytics] User ID: ${userId}`);
   }
 
   private getUserId(): string {
@@ -34,7 +35,7 @@ export class AnalyticsMain implements AnalyticsInterface {
   public setUserAgent(userAgent: string) {
     this.userAgent = userAgent;
     this.visitor.set('userAgentOverride', this.userAgent);
-    Logger.info(`User Agent for Google Analytics is "${this.userAgent}"`);
+    Logger.info(`[GoogleAnalytics] User Agent for Google Analytics is "${this.userAgent}"`);
   }
 
   public trackEvent(category: string, action: string, label?: string, value?: string | number): void {
