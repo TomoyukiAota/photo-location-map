@@ -5,3 +5,9 @@
   color: #333333;
   border-top: solid 1px #cccccc;
 }
+
+.message-and-progress {
+  display: flex;
+  justify-content: space-between;
+  width: 480px;
+}
