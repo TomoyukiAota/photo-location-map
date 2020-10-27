@@ -3,20 +3,20 @@ import { Logger } from '../log/logger';
 import { AnalyticsInterface } from './analytics-interface';
 import { UserDataStorage } from '../user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../user-data-storage/user-data-stroage-path';
-import { AnalyticsTrackingId } from './analytics-tracking-id';
+import { AnalyticsConfig } from './analytics-config';
 
 export class AnalyticsMain implements AnalyticsInterface {
   private readonly visitor: ReturnType<typeof import('universal-analytics')>;
   private userAgent: string = null;
 
   constructor() {
-    const trackingId = AnalyticsTrackingId.get();
+    const trackingId = AnalyticsConfig.trackingId;
     const userId = this.getUserId();
     const ua = require('universal-analytics');
     this.visitor = ua(trackingId, userId);
-    Logger.info(`[GoogleAnalytics] Tracking ID: ${trackingId}`);
-    Logger.info(`[GoogleAnalytics] Property Name for Tracking ID: ${AnalyticsTrackingId.getPropertyName()}`);
-    Logger.info(`[GoogleAnalytics] User ID: ${userId}`);
+    Logger.info(`[Google Analytics] Tracking ID: ${trackingId}`);
+    Logger.info(`[Google Analytics] Property Name: ${AnalyticsConfig.propertyName}`);
+    Logger.info(`[Google Analytics] User ID: ${userId}`);
   }
 
   private getUserId(): string {
@@ -35,7 +35,7 @@ export class AnalyticsMain implements AnalyticsInterface {
   public setUserAgent(userAgent: string) {
     this.userAgent = userAgent;
     this.visitor.set('userAgentOverride', this.userAgent);
-    Logger.info(`[GoogleAnalytics] User Agent for Google Analytics is "${this.userAgent}"`);
+    Logger.info(`[Google Analytics] User Agent for Google Analytics is "${this.userAgent}"`);
   }
 
   public trackEvent(category: string, action: string, label?: string, value?: string | number): void {
