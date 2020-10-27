@@ -1,13 +1,12 @@
 :host {
-  background-color: #eeeeee;
-  padding: 2px 0 2px 10px;
-  font-size: 14px;
-  color: #333333;
+  padding: 2px 10px 2px 10px;
   border-top: solid 1px #cccccc;
+  font-size: 14px;
+  background-color: #eeeeee;
+  color: #333333;
 }
 
-.message-and-progress {
+.progress-messages {
   display: flex;
   justify-content: space-between;
-  width: 480px;
 }
