@@ -1,5 +1,4 @@
 import { Logger } from '../log/logger';
-import { ProxyRequire } from '../require/proxy-require';
 import { RequireFromMainProcess } from '../require/require-from-main-process';
 
 export type DevOrProdType = 'Dev' | 'Prod';
