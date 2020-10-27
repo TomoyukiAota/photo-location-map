@@ -15,4 +15,11 @@ export class AnalyticsTrackingId {
       ? TrackingId.dev
       : TrackingId.prod;
   }
+
+  public static getPropertyName(): 'photo-location-map-dev' | 'photo-location-map-prod' {
+    const trackingId = this.get();
+    return trackingId === TrackingId.dev
+      ? 'photo-location-map-dev'
+      : 'photo-location-map-prod';
+  }
 }
