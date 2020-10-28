@@ -4,6 +4,7 @@ const getLogDirectory = require('./get-log-directory');
 
 class PackageTestInfo {
   constructor() {
+    this.distDirectory = `.${path.sep}dist`;
     this.releaseDirectory = `.${path.sep}release`;
     this.logDirectory = getLogDirectory();
     this.addMiscPlatformDependentProperties();
