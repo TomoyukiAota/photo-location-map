@@ -1,4 +1,5 @@
 const logger = require('../util/logger');
+const removePreviousPackageTestOutcomes = require('./remove-previous-package-test-outcomes');
 const packageCreationTest = require('./package-creation-test');
 const packageSmokeTest = require('./package-smoke-test');
 
@@ -7,6 +8,7 @@ logger.info(`Running "${__filename}"`);
 logger.info('Start of package test.');
 
 async function runPackageTest() {
+  removePreviousPackageTestOutcomes();
   packageCreationTest.run();
   await packageSmokeTest.run();
 }
