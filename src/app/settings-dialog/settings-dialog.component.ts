@@ -24,8 +24,8 @@ export class SettingsDialogComponent {
   public get isSaveButtonEnabled(): boolean {
     const isDateFormatChanged = this.userSettingsToBeSaved.dateFormat !== currentUserSettings.dateFormat;
     const isClockSystemFormatChanged = this.userSettingsToBeSaved.clockSystemFormat !== currentUserSettings.clockSystemFormat;
-    const isUserSettingsChanged = isDateFormatChanged || isClockSystemFormatChanged;
-    return isUserSettingsChanged;
+    const changedFromCurrentUserSettings = isDateFormatChanged || isClockSystemFormatChanged;
+    return changedFromCurrentUserSettings;
   }
 
   public saveSettings() {
