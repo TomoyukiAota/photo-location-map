@@ -17,6 +17,11 @@ body {
   cursor: col-resize;
 }
 
+.custom-dialog-container {
+  max-width: 95vw !important;   // important! to override the max-width restriction of 80vw given by inline styling
+  max-height: 95vh;
+}
+
 .custom-dialog-container .mat-dialog-container {
   padding: 0;
   position: relative;
