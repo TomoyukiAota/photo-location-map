@@ -25,7 +25,7 @@ export class DateTimeSettingsComponent {
     return now;
   }
 
-  public updateSaveButtonStatus() {
+  public notifySettingsChanged() {
     const parameter = new DateTimeSettingsChangedParameter();
     parameter.dateFormat = this.selectedDateFormat;
     parameter.clockSystemFormat = this.selectedClockSystemFormat;
