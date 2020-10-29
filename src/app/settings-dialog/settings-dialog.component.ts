@@ -4,7 +4,7 @@ import {
   getUserSettingsToBeSaved,
   saveUserSettingsAndRestartApp
 } from '../../../src-shared/user-settings/user-settings';
-import { SettingDialogService } from './service/setting-dialog.service';
+import { SettingsDialogService } from './service/settings-dialog.service';
 
 @Component({
   selector: 'app-settings-dialog',
@@ -14,7 +14,7 @@ import { SettingDialogService } from './service/setting-dialog.service';
 export class SettingsDialogComponent {
   public userSettingsToBeSaved = getUserSettingsToBeSaved();
 
-  constructor(private settingsDialogService: SettingDialogService) {
+  constructor(private settingsDialogService: SettingsDialogService) {
     this.settingsDialogService.dateTimeSettingsChanged.subscribe(changed => {
       this.userSettingsToBeSaved.dateFormat = changed.dateFormat;
       this.userSettingsToBeSaved.clockSystemFormat = changed.clockSystemFormat;
