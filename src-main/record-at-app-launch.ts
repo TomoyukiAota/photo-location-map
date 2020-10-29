@@ -8,7 +8,7 @@ import { DevOrProd } from '../src-shared/dev-or-prod/dev-or-prod';
 import { Logger } from '../src-shared/log/logger';
 import { UserDataStorage } from '../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../src-shared/user-data-storage/user-data-stroage-path';
-import { loadedUserSettings } from '../src-shared/user-settings/user-settings';
+import { currentUserSettings } from '../src-shared/user-settings/user-settings';
 
 const isNaturalNumber = require('is-natural-number');
 
@@ -61,7 +61,7 @@ const recordLaunchCount = () => {
 };
 
 const recordLoadedUserSettings = () => {
-  const settings = loadedUserSettings;
+  const settings = currentUserSettings;
   const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsFormatString(settings.dateFormat, settings.clockSystemFormat);
   Analytics.trackEvent('Loaded User Settings', `Date Format: ${settings.dateFormat}`);
   Analytics.trackEvent('Loaded User Settings', `Clock System Format: ${settings.clockSystemFormat}`);
