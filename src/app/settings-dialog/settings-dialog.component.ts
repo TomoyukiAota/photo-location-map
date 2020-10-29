@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
-import * as moment from 'moment-timezone';
-import { DateTimeFormat } from '../../../src-shared/date-time/date-time-format';
-import { loadedUserSettings, saveUserSettingsAndRestartApp, UserSettings } from '../../../src-shared/user-settings/user-settings';
+import {
+  currentUserSettings,
+  getUserSettingsToBeSaved,
+  saveUserSettingsAndRestartApp
+} from '../../../src-shared/user-settings/user-settings';
+import { SettingsDialogService } from './service/settings-dialog.service';
 
 @Component({
   selector: 'app-settings-dialog',
@@ -9,21 +12,20 @@ import { loadedUserSettings, saveUserSettingsAndRestartApp, UserSettings } from 
   styleUrls: ['./settings-dialog.component.scss']
 })
 export class SettingsDialogComponent {
-  public dateFormatList = DateTimeFormat.ForUser.DateFormat_List;
-  public clockSystemFormatList = DateTimeFormat.ForUser.ClockSystemFormat_List;
-  public selectedDateFormat = loadedUserSettings.dateFormat;
-  public selectedClockSystemFormat = loadedUserSettings.clockSystemFormat;
+  public userSettingsToBeSaved = getUserSettingsToBeSaved();
 
-  public getDateTimeNow() {
-    const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsFormatString(this.selectedDateFormat, this.selectedClockSystemFormat);
-    const now = moment('2019-11-25T14:53:29.396Z').utc().format(momentJsFormatString);
-    return now;
+  constructor(private settingsDialogService: SettingsDialogService) {
+    this.settingsDialogService.dateTimeSettingsChanged.subscribe(changed => {
+      this.userSettingsToBeSaved.dateFormat = changed.dateFormat;
+      this.userSettingsToBeSaved.clockSystemFormat = changed.clockSystemFormat;
+    });
   }
 
-  public isSaveButtonEnabled() {
-    const isDateFormatChanged = this.selectedDateFormat !== loadedUserSettings.dateFormat;
-    const isClockSystemFormatChanged = this.selectedClockSystemFormat !== loadedUserSettings.clockSystemFormat;
-    return isDateFormatChanged || isClockSystemFormatChanged;
+  public get isSaveButtonEnabled(): boolean {
+    const isDateFormatChanged = this.userSettingsToBeSaved.dateFormat !== currentUserSettings.dateFormat;
+    const isClockSystemFormatChanged = this.userSettingsToBeSaved.clockSystemFormat !== currentUserSettings.clockSystemFormat;
+    const changedFromCurrentUserSettings = isDateFormatChanged || isClockSystemFormatChanged;
+    return changedFromCurrentUserSettings;
   }
 
   public saveSettings() {
@@ -31,7 +33,6 @@ export class SettingsDialogComponent {
     if (!isOkPressed)
       return;
 
-    const userSettings = new UserSettings(this.selectedDateFormat, this.selectedClockSystemFormat);
-    saveUserSettingsAndRestartApp(userSettings);
+    saveUserSettingsAndRestartApp(this.userSettingsToBeSaved);
   }
 }

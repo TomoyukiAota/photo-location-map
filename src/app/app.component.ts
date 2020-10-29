@@ -65,8 +65,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   private showSettingsDialog() {
     this.ngZone.run(() => {
       this.dialog.open(SettingsDialogComponent, {
-        width: '600px',
-        height: '240px',
+        width: '1000px',
+        height: '600px',
         panelClass: 'custom-dialog-container',
         autoFocus: false,
         restoreFocus: false,

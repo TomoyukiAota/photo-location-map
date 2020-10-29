@@ -6,9 +6,19 @@ import { UserDataStoragePath } from '../user-data-storage/user-data-stroage-path
 import DateFormatType = DateTimeFormat.ForUser.DateFormatType;
 import ClockSystemFormatType = DateTimeFormat.ForUser.ClockSystemFormatType;
 
-export class UserSettings {
+interface UserSettings {
+  dateFormat: DateFormatType;
+  clockSystemFormat: ClockSystemFormatType;
+}
+
+export class CurrentUserSettings implements UserSettings {
   constructor(public readonly dateFormat: DateFormatType,
               public readonly clockSystemFormat: ClockSystemFormatType) {}
+}
+
+export class UserSettingsToBeSaved implements UserSettings {
+  public dateFormat: DateFormatType;
+  public clockSystemFormat: ClockSystemFormatType;
 }
 
 const loadDateFormat: (() => DateFormatType) = () => {
@@ -35,20 +45,24 @@ const loadClockSystemFormat: (() => ClockSystemFormatType) = () => {
   return clockSystemFormat;
 };
 
-const loadUserSettings: (() => UserSettings) = () => {
+const loadUserSettings: (() => CurrentUserSettings) = () => {
   const dateFormat = loadDateFormat();
   const clockSystemFormat = loadClockSystemFormat();
-  const userSettings = new UserSettings(dateFormat, clockSystemFormat);
+  const userSettings = new CurrentUserSettings(dateFormat, clockSystemFormat);
   Logger.info(`Loaded user settings ${JSON.stringify(userSettings)}`);
   return userSettings;
 };
 
-export const loadedUserSettings = loadUserSettings();
+export const currentUserSettings = loadUserSettings();
 
-export const saveUserSettingsAndRestartApp: ((UserSettings) => void) = (userSettings: UserSettings) => {
-  UserDataStorage.write(UserDataStoragePath.UserSettings.DateFormat, userSettings.dateFormat);
-  UserDataStorage.write(UserDataStoragePath.UserSettings.ClockSystemFormat, userSettings.clockSystemFormat);
-  Logger.info(`Saved user settings ${JSON.stringify(userSettings)}`);
+export const getUserSettingsToBeSaved: (() => UserSettingsToBeSaved) = () => {
+  return {...currentUserSettings};
+};
+
+export const saveUserSettingsAndRestartApp: ((UserSettingsToBeSaved) => void) = (settings: UserSettingsToBeSaved) => {
+  UserDataStorage.write(UserDataStoragePath.UserSettings.DateFormat, settings.dateFormat);
+  UserDataStorage.write(UserDataStoragePath.UserSettings.ClockSystemFormat, settings.clockSystemFormat);
+  Logger.info(`Saved user settings ${JSON.stringify(settings)}`);
   Logger.info(`User settings are saved, so the application will restart.`);
   RequireFromMainProcess.electron.app.relaunch();
   RequireFromMainProcess.electron.app.exit(0);

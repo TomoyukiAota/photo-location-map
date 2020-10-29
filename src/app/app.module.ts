@@ -33,6 +33,7 @@ import { AboutBoxComponent } from './about-box/about-box.component';
 import { WelcomeDialogComponent } from './welcome-dialog/welcome-dialog.component';
 import { SettingsDialogComponent } from './settings-dialog/settings-dialog.component';
 import { ThumbnailGenerationStatusComponent } from './thumbnail-generation/status-display/thumbnail-generation-status.component';
+import { DateTimeSettingsComponent } from './settings-dialog/date-time-settings/date-time-settings.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -53,7 +54,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     MapComponent,
     GoogleMapsComponent,
     OsmComponent,
-    ThumbnailGenerationStatusComponent
+    ThumbnailGenerationStatusComponent,
+    DateTimeSettingsComponent
   ],
   imports: [
     BrowserModule,
