@@ -2,7 +2,7 @@
 <div class="setting-container">
   <mat-form-field class="date-format-dropdown">
     <mat-label>Date Format</mat-label>
-    <mat-select [(value)]="selectedDateFormat" (selectionChange)="updateSaveButtonStatus()">
+    <mat-select [(value)]="selectedDateFormat" (selectionChange)="notifySettingsChanged()">
       <mat-option *ngFor="let dateFormat of dateFormatList" [value]="dateFormat">
         {{dateFormat}}
       </mat-option>
@@ -10,7 +10,7 @@
   </mat-form-field>
   <mat-form-field class="clock-system-format-dropdown">
     <mat-label>12- or 24-hour</mat-label>
-    <mat-select [(value)]="selectedClockSystemFormat" (selectionChange)="updateSaveButtonStatus()">
+    <mat-select [(value)]="selectedClockSystemFormat" (selectionChange)="notifySettingsChanged()">
       <mat-option *ngFor="let clockSystemFormat of clockSystemFormatList" [value]="clockSystemFormat">
         {{clockSystemFormat}}
       </mat-option>
