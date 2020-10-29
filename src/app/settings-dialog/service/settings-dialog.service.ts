@@ -5,6 +5,6 @@ import { DateTimeSettingsChangedParameter } from '../date-time-settings/date-tim
 @Injectable({
   providedIn: 'root'
 })
-export class SettingDialogService {
+export class SettingsDialogService {
   public dateTimeSettingsChanged = new Subject<DateTimeSettingsChangedParameter>();
 }
