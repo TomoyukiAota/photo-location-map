@@ -10,6 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTreeModule } from '@angular/material/tree';
@@ -34,6 +35,7 @@ import { WelcomeDialogComponent } from './welcome-dialog/welcome-dialog.componen
 import { SettingsDialogComponent } from './settings-dialog/settings-dialog.component';
 import { ThumbnailGenerationStatusComponent } from './thumbnail-generation/status-display/thumbnail-generation-status.component';
 import { DateTimeSettingsComponent } from './settings-dialog/date-time-settings/date-time-settings.component';
+import { CacheSettingsComponent } from './settings-dialog/cache-settings/cache-settings.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -55,7 +57,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     GoogleMapsComponent,
     OsmComponent,
     ThumbnailGenerationStatusComponent,
-    DateTimeSettingsComponent
+    DateTimeSettingsComponent,
+    CacheSettingsComponent
   ],
   imports: [
     BrowserModule,
@@ -76,6 +79,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    MatListModule,
     MatProgressBarModule,
     MatSelectModule,
     MatTreeModule
