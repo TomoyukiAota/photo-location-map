@@ -1,8 +1,16 @@
 <div class="settings-dialog-header">
   Settings
 </div>
-<div class="settings-dialog-content">
-  <app-date-time-settings></app-date-time-settings>
+<mat-nav-list class="settings-tab">
+  <mat-list-item *ngFor="let tabName of tabNames"
+                 (click)="selectTab(tabName)"
+                 [ngClass]="{'selected-tab': isSelectedTab(tabName)}">
+    {{ tabName }}
+  </mat-list-item>
+</mat-nav-list>
+<div class="settings-content">
+  <app-date-time-settings [style.display]="isSelectedTab('Date & Time') ? 'block' : 'none'"></app-date-time-settings>
+  <app-cache-settings     [style.display]="isSelectedTab('Cache')       ? 'block' : 'none'"></app-cache-settings>
 </div>
 <div class="settings-dialog-footer">
   <div class="settings-dialog-footer-description"
