@@ -1,21 +1,45 @@
+:host {
+  height: 100%;
+  display: grid;
+  grid: "header       header          " auto
+        "settings-tab settings-content" 1fr
+        "footer       footer          " auto
+        /200px        1fr;
+
+  .settings-dialog-header { grid-area: header;           }
+  .settings-tab           { grid-area: settings-tab;     }
+  .settings-content       { grid-area: settings-content; }
+  .settings-dialog-footer { grid-area: footer;           }
+}
+
 .settings-dialog-header {
   padding: 10px 0 10px 20px;
-  border-bottom: 2px solid #7f7f7f;
+  border-bottom: 1px solid #7f7f7f;
   background-color: #eeeeee;
   font-size: 20px;
 }
 
-.settings-dialog-content {
+.settings-tab {
+  padding: 0;
+  border-right: solid 1px #7f7f7f;
+
+  .selected-tab {
+    background-color: #dee1f0;
+  }
+
+  .selected-tab:hover {
+    background-color: #c2c7e6;
+  }
+}
+
+.settings-content {
   margin: 20px;
 }
 
 .settings-dialog-footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
   box-sizing: border-box;
   padding: 10px;
-  border-top: 2px solid #7f7f7f;
+  border-top: 1px solid #7f7f7f;
   background-color: #eeeeee;
   display: flex;
   flex-direction: row;
