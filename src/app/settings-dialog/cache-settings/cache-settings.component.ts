@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import * as child_process from 'child_process';
 import * as fsExtra from 'fs-extra';
 import * as os from 'os';
@@ -7,16 +7,19 @@ import { Logger } from '../../../../src-shared/log/logger';
 import { getSizeInStringFormat } from '../../../../src-shared/plm-fs-util/plm-fs-util';
 import { RequireFromMainProcess } from '../../../../src-shared/require/require-from-main-process';
 import { plmThumbnailCacheDir } from '../../../../src-shared/thumbnail/thumbnail-generation-util';
+import { configureOpeningInOsBrowser } from '../../shared/configure-opening-in-os-browser';
 
 @Component({
   selector: 'app-cache-settings',
   templateUrl: './cache-settings.component.html',
   styleUrls: ['./cache-settings.component.scss']
 })
-export class CacheSettingsComponent implements OnDestroy, OnInit {
+export class CacheSettingsComponent implements AfterViewInit, OnDestroy, OnInit {
   public thumbnailCacheLocation = plmThumbnailCacheDir;
   public thumbnailCacheSize: string;
   public updateThumbnailCacheSizeIntervalId: NodeJS.Timeout;
+
+  @ViewChild('heifWikipediaLink') public heifWikipediaLink: ElementRef<HTMLAnchorElement>;
 
   ngOnInit(): void {
     fsExtra.ensureDirSync(this.thumbnailCacheLocation);
@@ -30,6 +33,10 @@ export class CacheSettingsComponent implements OnDestroy, OnInit {
     this.updateThumbnailCacheSizeIntervalId = setInterval(() => {
       this.thumbnailCacheSize =  getSizeInStringFormat(this.thumbnailCacheLocation).size;
     }, 1000);
+  }
+
+  ngAfterViewInit() {
+    configureOpeningInOsBrowser(this.heifWikipediaLink, 'https://en.wikipedia.org/wiki/High_Efficiency_Image_File_Format');
   }
 
   ngOnDestroy(): void {
