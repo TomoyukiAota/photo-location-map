@@ -6,8 +6,12 @@
   margin: 20px 0 0 20px;
 }
 
-.description {
+.cache-description {
   font-size: 14px;
+
+  p {
+    margin: 5px 0;
+  }
 }
 
 .location-and-size-table {
@@ -35,12 +39,12 @@
   }
 }
 
-.delete-button-description {
-  margin-top: 30px;
-  font-size: 14px;
-  color: red;
+.delete-button {
+  margin-top: 40px;
 }
 
-.delete-button {
-  margin-top: 20px;
+.delete-button-description {
+  margin-top: 15px;
+  font-size: 14px;
+  color: red;
 }
