@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import * as child_process from 'child_process';
+import * as fsExtra from 'fs-extra';
 import * as os from 'os';
 import { Command } from '../../../../src-shared/command/command';
 import { Logger } from '../../../../src-shared/log/logger';
@@ -17,6 +18,7 @@ export class CacheSettingsComponent implements OnDestroy, OnInit {
   public updateThumbnailCacheSizeIntervalId: NodeJS.Timeout;
 
   ngOnInit(): void {
+    fsExtra.ensureDirSync(this.thumbnailCacheLocation);
     const { size, errors } = getSizeInStringBytes(this.thumbnailCacheLocation);
     this.thumbnailCacheSize = size;
     if (errors.length) {
