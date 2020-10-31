@@ -48,6 +48,7 @@
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md"
   },
   "dependencies": {
+    "bytes": "3.1.0",
     "electron-unhandled": "3.0.2",
     "electron-updater": "4.3.5",
     "electron-window-state": "5.0.3",
@@ -56,6 +57,7 @@
     "heic-convert": "1.2.3",
     "is-natural-number": "4.0.1",
     "moment-timezone": "0.5.31",
+    "nodejs-fs-utils": "1.2.5",
     "physical-cpu-count": "2.0.0",
     "promise.allsettled": "1.0.2",
     "threads": "1.6.3",
@@ -81,6 +83,7 @@
     "@angular/router": "10.1.5",
     "@ngx-translate/core": "13.0.0",
     "@ngx-translate/http-loader": "6.0.0",
+    "@types/bytes": "3.1.0",
     "@types/fs-extra": "9.0.2",
     "@types/is-natural-number": "4.0.0",
     "@types/jasmine": "3.5.14",
