@@ -4,7 +4,7 @@ import * as fsExtra from 'fs-extra';
 import * as os from 'os';
 import { Command } from '../../../../src-shared/command/command';
 import { Logger } from '../../../../src-shared/log/logger';
-import { getSizeInStringBytes } from '../../../../src-shared/plm-fs-util/plm-fs-util';
+import { getSizeInStringFormat } from '../../../../src-shared/plm-fs-util/plm-fs-util';
 import { plmThumbnailCacheDir } from '../../../../src-shared/thumbnail/thumbnail-generation-util';
 
 @Component({
@@ -19,7 +19,7 @@ export class CacheSettingsComponent implements OnDestroy, OnInit {
 
   ngOnInit(): void {
     fsExtra.ensureDirSync(this.thumbnailCacheLocation);
-    const { size, errors } = getSizeInStringBytes(this.thumbnailCacheLocation);
+    const { size, errors } = getSizeInStringFormat(this.thumbnailCacheLocation);
     this.thumbnailCacheSize = size;
     if (errors.length) {
       Logger.warn(`Error(s) detected during getting the size of "${this.thumbnailCacheLocation}"`);
@@ -27,7 +27,7 @@ export class CacheSettingsComponent implements OnDestroy, OnInit {
     errors.forEach(error => Logger.warn(`Detected Error: ${error}`, error));
 
     this.updateThumbnailCacheSizeIntervalId = setInterval(() => {
-      this.thumbnailCacheSize =  getSizeInStringBytes(this.thumbnailCacheLocation).size;
+      this.thumbnailCacheSize =  getSizeInStringFormat(this.thumbnailCacheLocation).size;
     }, 1000);
   }
 
