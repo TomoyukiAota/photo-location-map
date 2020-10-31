@@ -19,7 +19,7 @@
   display: grid;
   grid: "location-label location-value" auto
         "size-label     size-value    " auto
-        /auto          1fr;
+        /auto           1fr;
   grid-column-gap: 30px;
   grid-row-gap: 10px;
 
@@ -29,6 +29,7 @@
   .size-value     { grid-area: size-value;     }
 }
 
+// anchor-tag-style is to give styles like <a> tag to the specified text without using <a> tag.
 .anchor-tag-style {
   color: -webkit-link;
   cursor: pointer;
