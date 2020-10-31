@@ -1,1 +1,12 @@
-<p>cache-settings works!</p>
+<div class="setting-title">HEIF Thumbnail Cache</div>
+<div class="setting-container">
+  <div class="description">For HEIF files, thumbnails need to be generated and cached.</div>
+  <div class="location-and-size-table">
+    <div class="location-label">Cache location</div>
+    <div class="location-value anchor-tag-style" (click)="openThumbnailCacheLocation()">{{ thumbnailCacheLocation }}</div>
+    <div class="size-label">Cache size</div>
+    <div class="cache-value">{{ thumbnailCacheSize }}</div>
+  </div>
+  <div class="delete-button-description">This application will restart after deleting the thumbnail cache.</div>
+  <button mat-flat-button color="warn" class="delete-button">Delete Thumbnail Cache</button>
+</div>

@@ -3,7 +3,7 @@ import * as os from 'os';
 import * as pathModule from 'path';
 import { Logger } from '../log/logger';
 
-const lastModifiedKey = 'LastModified';
+export const plmThumbnailCacheDir = pathModule.join(os.homedir(), '.PlmCache');
 
 export function getThumbnailFilePath(srcFilePath: string) {
   const thumbnailFileName = `${pathModule.basename(srcFilePath)}.plm`;
@@ -12,7 +12,7 @@ export function getThumbnailFilePath(srcFilePath: string) {
     srcFilePath.replace(':', '')
     // Convert "C\\abc\\def.jpg" to "C\\abc\\def"
   ).dir;
-  const thumbnailFileDir = pathModule.join(os.homedir(), '.PlmCache', intermediateDir);
+  const thumbnailFileDir = pathModule.join(plmThumbnailCacheDir, intermediateDir);
   const thumbnailFilePath = pathModule.join(thumbnailFileDir, `${thumbnailFileName}.jpg`);
   return { thumbnailFileDir, thumbnailFilePath };
 }
@@ -23,6 +23,8 @@ export function getThumbnailLogFilePath(srcFilePath: string): string {
   const logFilePath = pathModule.join(thumbnailFileDir, `${srcFileName}.log.json`);
   return logFilePath;
 }
+
+const lastModifiedKey = 'LastModified';
 
 export async function createFileForLastModified(srcFilePath: string, thumbnailFileDir: string) {
   const srcFileName = pathModule.basename(srcFilePath);
