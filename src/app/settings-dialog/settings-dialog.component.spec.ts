@@ -1,7 +1,5 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatListModule } from '@angular/material/list';
-import { MatSelectModule } from '@angular/material/select';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MockComponents } from 'ng-mocks';
 
 import { CacheSettingsComponent } from './cache-settings/cache-settings.component';
@@ -23,9 +21,7 @@ describe('SettingsDialogComponent', () => {
         )
       ],
       imports: [
-        BrowserAnimationsModule,
-        MatListModule,
-        MatSelectModule
+        MatListModule
       ]
     })
     .compileComponents();
