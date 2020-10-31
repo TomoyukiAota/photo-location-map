@@ -1,6 +1,6 @@
-import * as bytes from 'bytes';
 import * as fs from 'fs';
 import * as fsUtils from 'nodejs-fs-utils';
+import * as prettySize from 'prettysize';
 
 export async function fileExists(filePath: string): Promise<boolean> {
   return fs.promises.access(filePath, fs.constants.F_OK)
@@ -18,8 +18,8 @@ export function getSizeInNumber(path: string): { size: number, errors: any[] } {
   return { size, errors };
 }
 
-export function getSizeInStringBytes(path: string): { size: string, errors: any[] } {
+export function getSizeInStringFormat(path: string): { size: string, errors: any[] } {
   const result = getSizeInNumber(path);
-  const sizeInStringBytes = bytes(result.size, { unitSeparator: ' ' });
+  const sizeInStringBytes = prettySize(result.size, {places: 2});
   return { size: sizeInStringBytes, errors: result.errors };
 }
