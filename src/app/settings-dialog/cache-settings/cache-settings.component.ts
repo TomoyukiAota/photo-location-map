@@ -5,6 +5,7 @@ import * as os from 'os';
 import { Command } from '../../../../src-shared/command/command';
 import { Logger } from '../../../../src-shared/log/logger';
 import { getSizeInStringFormat } from '../../../../src-shared/plm-fs-util/plm-fs-util';
+import { RequireFromMainProcess } from '../../../../src-shared/require/require-from-main-process';
 import { plmThumbnailCacheDir } from '../../../../src-shared/thumbnail/thumbnail-generation-util';
 
 @Component({
@@ -44,5 +45,16 @@ export class CacheSettingsComponent implements OnDestroy, OnInit {
     } else {
       Logger.warn(`"Open Thumbnail Cache Location" is not supported on this platform: ${os.platform()}`);
     }
+  }
+
+  public handleDeleteThumbnailCacheButtonClicked() {
+    const isOkPressed = window.confirm('This application will restart after deleting the thumbnail cache.\nDo you want to continue?');
+    if (!isOkPressed)
+      return;
+
+    fsExtra.emptyDirSync(this.thumbnailCacheLocation);
+    Logger.info(`Thumbnail cache is deleted, so the application will restart.`);
+    RequireFromMainProcess.electron.app.relaunch();
+    RequireFromMainProcess.electron.app.exit(0);
   }
 }

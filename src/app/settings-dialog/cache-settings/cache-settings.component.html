@@ -8,5 +8,10 @@
     <div class="cache-value">{{ thumbnailCacheSize }}</div>
   </div>
   <div class="delete-button-description">This application will restart after deleting the thumbnail cache.</div>
-  <button mat-flat-button color="warn" class="delete-button">Delete Thumbnail Cache</button>
+  <button mat-flat-button
+          color="warn"
+          class="delete-button"
+          (click)="handleDeleteThumbnailCacheButtonClicked()">
+    Delete Thumbnail Cache
+  </button>
 </div>
