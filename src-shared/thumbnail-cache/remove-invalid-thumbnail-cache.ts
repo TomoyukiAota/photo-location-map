@@ -16,7 +16,7 @@ export function removeInvalidThumbnailCache(): void {
   }
 }
 
-// Use this function in order to be very sure of deleting files in plmThumbnailCacheDir, not any other places.
+// Use this function in order to be very sure of removing files in plmThumbnailCacheDir, not any other places.
 function removeFileInCacheDir(filePath: string): void {
   const isSomewhereInCacheDir = filePath.startsWith(plmThumbnailCacheDir);
   if (!isSomewhereInCacheDir) {
