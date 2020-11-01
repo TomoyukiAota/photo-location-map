@@ -6,7 +6,7 @@ import { Command } from '../../../../src-shared/command/command';
 import { Logger } from '../../../../src-shared/log/logger';
 import { getSizeInStringFormat } from '../../../../src-shared/plm-fs-util/plm-fs-util';
 import { RequireFromMainProcess } from '../../../../src-shared/require/require-from-main-process';
-import { plmThumbnailCacheDir } from '../../../../src-shared/thumbnail/thumbnail-generation-util';
+import { plmThumbnailCacheDir } from '../../../../src-shared/thumbnail-cache/thumbnail-cache-util';
 import { configureOpeningInOsBrowser } from '../../shared/configure-opening-in-os-browser';
 
 @Component({
