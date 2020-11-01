@@ -8,6 +8,15 @@ import { getOriginalFilePath, getThumbnailLogFilePath, plmThumbnailCacheDir } fr
 const logger = createSpecificLogger('[Invalid thumbnail cache removal]');
 
 export function removeInvalidThumbnailCache(): void {
+  try {
+    tryRemoveInvalidThumbnailCache();
+  } catch (error) {
+    logger.warn(`Caught error(s) during invalid thumbnail cache removal. Error: ${error}`, error);
+    logger.warn('Swallowing the error to continue application running because errors in invalid cache removal is not critical.');
+  }
+}
+
+function tryRemoveInvalidThumbnailCache() {
   const directoryTreeObject = createDirectoryTree(plmThumbnailCacheDir);
   const flattenedDirTree = convertToFlattenedDirTree(directoryTreeObject);
   const thumbnailFilePaths = flattenedDirTree
