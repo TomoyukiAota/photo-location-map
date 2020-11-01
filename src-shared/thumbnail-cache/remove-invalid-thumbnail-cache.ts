@@ -20,7 +20,7 @@ export function removeInvalidThumbnailCache(): void {
 function removeFileInCacheDir(filePath: string): void {
   const isSomewhereInCacheDir = filePath.startsWith(plmThumbnailCacheDir);
   if (!isSomewhereInCacheDir) {
-    const message = `Tried to remove the file which is not in the cache directory. This is unsafe. File path: "${filePath}"`;
+    const message = `Tried to remove the file which is not in the cache directory. This is unsafe, so the file will not be removed. File path: "${filePath}"`;
     logger.error(message);
     throw new Error(message);
   }
