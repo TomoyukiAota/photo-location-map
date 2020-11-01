@@ -5,11 +5,11 @@ import { Logger } from '../log/logger';
 
 export const plmThumbnailCacheDir = pathModule.join(os.homedir(), '.PlmCache');
 
-export function getThumbnailFilePath(srcFilePath: string) {
-  const thumbnailFileName = `${pathModule.basename(srcFilePath)}.plm`;
+export function getThumbnailFilePath(originalFilePath: string) {
+  const thumbnailFileName = `${pathModule.basename(originalFilePath)}.plm`;
   const intermediateDir = pathModule.parse(
     // Convert "C:\\abc\\def.jpg" to "C\\abc\\def.jpg"
-    srcFilePath.replace(':', '')
+    originalFilePath.replace(':', '')
     // Convert "C\\abc\\def.jpg" to "C\\abc\\def"
   ).dir;
   const thumbnailFileDir = pathModule.join(plmThumbnailCacheDir, intermediateDir);
@@ -17,11 +17,37 @@ export function getThumbnailFilePath(srcFilePath: string) {
   return { thumbnailFileDir, thumbnailFilePath };
 }
 
-export function getThumbnailLogFilePath(srcFilePath: string): string {
-  const srcFileName = pathModule.basename(srcFilePath);
-  const { thumbnailFileDir } = getThumbnailFilePath(srcFilePath);
-  const logFilePath = pathModule.join(thumbnailFileDir, `${srcFileName}.log.json`);
+export function getThumbnailLogFilePath(originalFilePath: string): string {
+  const originalFileName = pathModule.basename(originalFilePath);
+  const { thumbnailFileDir } = getThumbnailFilePath(originalFilePath);
+  const logFilePath = pathModule.join(thumbnailFileDir, `${originalFileName}.log.json`);
   return logFilePath;
+}
+
+export function getOriginalFilePath(thumbnailFilePath: string): string {
+  // Converting thumbnailFilePath to pathAfterStep2
+  // -----------------------------------------------------
+  // On Windows, assuming that plmThumbnailCacheDir is "C:\Users\Tomoyuki\.PlmCache",
+  // thumbnailFilePath | "C:\Users\Tomoyuki\.PlmCache\C\Users\Tomoyuki\Desktop\IMG_100.HEIC.plm.jpg"
+  // After step 1      | "\C\Users\Tomoyuki\Desktop\IMG_100.HEIC.plm.jpg"
+  // After step 2      | "\C\Users\Tomoyuki\Desktop\IMG_100.HEIC"
+  // ------------------------------------------------------
+  // On macOS, assuming that plmThumbnailCacheDir is "/Users/Tomoyuki/.PlmCache",
+  // thumbnailFilePath | "/Users/Tomoyuki/.PlmCache/Users/Tomoyuki/Desktop/IMG_100.HEIC.plm.jpg"
+  // After step 1      | "/Users/Tomoyuki/Desktop/IMG_100.HEIC.plm.jpg"
+  // After step 2      | "/Users/Tomoyuki/Desktop/IMG_100.HEIC"
+  const pathAfterStep2 = thumbnailFilePath
+    .replace(`${plmThumbnailCacheDir}`, '')    // See step 1 above
+    .replace(/(.+)\.plm\.jpg$/, '$1');         // See step 2 above
+
+  let originalFilePath = pathAfterStep2;
+  if (os.platform() === 'win32') {
+    const driveLetter = pathAfterStep2.split(pathModule.sep)[1];
+    const pathAfterDriverLetter = pathAfterStep2.replace(`${pathModule.sep}${driveLetter}`, '');
+    originalFilePath = `${driveLetter}:${pathAfterDriverLetter}`;
+  }
+
+  return originalFilePath;
 }
 
 const lastModifiedKey = 'LastModified';

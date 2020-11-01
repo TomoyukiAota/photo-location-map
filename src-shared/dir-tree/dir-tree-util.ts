@@ -9,7 +9,7 @@ export function convertToFlattenedDirTree(dirTreeObject: DirectoryTree): Directo
 function flattenDirectoryTree(srcDirTreeArray: DirectoryTree[], dstDirTreeArray: DirectoryTree[]): DirectoryTree[] {
   srcDirTreeArray.forEach((element: DirectoryTree) => {
     dstDirTreeArray.push(element);
-    if (element.children) {
+    if (element?.children) {
       flattenDirectoryTree(element.children, dstDirTreeArray);
     }
   });
