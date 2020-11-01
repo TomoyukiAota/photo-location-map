@@ -17,16 +17,22 @@ export function removeInvalidThumbnailCache(): void {
 }
 
 // Use this function in order to be very sure of deleting files in plmThumbnailCacheDir, not any other places.
-function removeFileInCacheDir(path: string): void {
-  const isSubdirectoryOfCacheDir = path.includes(plmThumbnailCacheDir) && path.split(plmThumbnailCacheDir)[0] === '';
-  if (!isSubdirectoryOfCacheDir) {
-    const message = `Tried to remove the file which is not in the cache directory. This is unsafe. File path: "${path}"`;
+function removeFileInCacheDir(filePath: string): void {
+  const isSomewhereInCacheDir = filePath.startsWith(plmThumbnailCacheDir);
+  if (!isSomewhereInCacheDir) {
+    const message = `Tried to remove the file which is not in the cache directory. This is unsafe. File path: "${filePath}"`;
     logger.error(message);
     throw new Error(message);
   }
 
-  logger.info(`Removing "${path}"`);
-  fs.unlinkSync(path);
+  const fileExists = fs.existsSync(filePath);
+  if (!fileExists) {
+    logger.warn(`Tried to remove the file which does not exist. File path: "${filePath}"`);
+    return;
+  }
+
+  logger.info(`Removing "${filePath}"`);
+  fs.unlinkSync(filePath);
 }
 
 function tryRemoveInvalidThumbnailCache() {
