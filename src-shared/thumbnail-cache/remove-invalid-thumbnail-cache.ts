@@ -12,7 +12,7 @@ export function removeInvalidThumbnailCache(): void {
     tryRemoveInvalidThumbnailCache();
   } catch (error) {
     logger.warn(`Caught error(s) during invalid thumbnail cache removal. Error: ${error}`, error);
-    logger.warn('Swallowing the error to continue application running because errors in invalid cache removal is not critical.');
+    logger.warn('Swallowing the error to continue application running because errors in invalid cache removal are not critical.');
   }
 }
 
@@ -42,7 +42,7 @@ function tryRemoveInvalidThumbnailCache() {
     return;
   }
 
-  logger.info('Following thumbnail cache files do not have corresponding original files:');
+  logger.info('The corresponding original files are not found for the following thumbnail cache files:');
   cacheFilePathsWithoutOriginalFiles.forEach(filePath => logger.info(filePath));
   logger.info('The thumbnail cache files without corresponding original files are invalid. Removing the invalid cache...');
   cacheFilePathsWithoutOriginalFiles.forEach(filePath => fs.unlinkSync(filePath));
