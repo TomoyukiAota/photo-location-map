@@ -20,6 +20,7 @@ function tryRemoveInvalidThumbnailCache() {
   const directoryTreeObject = createDirectoryTree(plmThumbnailCacheDir);
   const flattenedDirTree = convertToFlattenedDirTree(directoryTreeObject);
   const thumbnailFilePaths = flattenedDirTree
+    .filter(element => !!element)
     .filter(element => element.path.match(/.+\.plm\.jpg$/))
     .map(element => element.path);
 
