@@ -24,8 +24,8 @@ class SpecificLogger {
     Logger.debug(text, ...object);
   }
 
-  private prependLoggerName(text): string {
-    return `${this.stringToPrepend} ${text}`;
+  private prependLoggerName(message: string): string {
+    return `${this.stringToPrepend} ${message}`;
   }
 }
 
