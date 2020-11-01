@@ -11,8 +11,8 @@ export function removeInvalidThumbnailCache(): void {
   try {
     tryRemoveInvalidThumbnailCache();
   } catch (error) {
-    logger.warn(`Caught error(s) during invalid thumbnail cache removal. Error: ${error}`, error);
-    logger.warn('Swallowing the error to continue application running because errors in invalid cache removal are not critical.');
+    logger.warn(`Aborted the procedure of invalid thumbnail cache removal because error(s) are caught. Error: ${error}`, error);
+    logger.warn('Swallowed the error(s) to continue application running because errors in invalid cache removal are negligible to the other features of this application.');
   }
 }
 
@@ -20,7 +20,7 @@ export function removeInvalidThumbnailCache(): void {
 function removeFileInCacheDir(path: string): void {
   const isSubdirectoryOfCacheDir = path.includes(plmThumbnailCacheDir) && path.split(plmThumbnailCacheDir)[0] === '';
   if (!isSubdirectoryOfCacheDir) {
-    const message = `Tried to remove the file which is not in the cache directory. This is unsafe. File path: ${path}`;
+    const message = `Tried to remove the file which is not in the cache directory. This is unsafe. File path: "${path}"`;
     logger.error(message);
     throw new Error(message);
   }
