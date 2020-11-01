@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Logger } from '../../../../src-shared/log/logger';
-import { isThumbnailCacheAvailable } from '../../../../src-shared/thumbnail/thumbnail-generation-util';
+import { isThumbnailCacheAvailable } from '../../../../src-shared/thumbnail-cache/thumbnail-cache-util';
 import { ThumbnailGenerationService } from '../service/thumbnail-generation.service';
 
 @Component({

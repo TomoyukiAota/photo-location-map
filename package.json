@@ -48,6 +48,7 @@
     "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md"
   },
   "dependencies": {
+    "delete-empty": "3.0.0",
     "electron-unhandled": "3.0.2",
     "electron-updater": "4.3.5",
     "electron-window-state": "5.0.3",
@@ -83,6 +84,7 @@
     "@angular/router": "10.1.5",
     "@ngx-translate/core": "13.0.0",
     "@ngx-translate/http-loader": "6.0.0",
+    "@types/delete-empty": "3.0.0",
     "@types/fs-extra": "9.0.2",
     "@types/is-natural-number": "4.0.0",
     "@types/jasmine": "3.5.14",
