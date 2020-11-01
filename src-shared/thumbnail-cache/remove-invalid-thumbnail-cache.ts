@@ -16,6 +16,19 @@ export function removeInvalidThumbnailCache(): void {
   }
 }
 
+// Use this function in order to be very sure of deleting files in plmThumbnailCacheDir, not any other places.
+function removeFileInCacheDir(path: string): void {
+  const isSubdirectoryOfCacheDir = path.includes(plmThumbnailCacheDir) && path.split(plmThumbnailCacheDir)[0] === '';
+  if (!isSubdirectoryOfCacheDir) {
+    const message = `Tried to remove somewhere not in the cache directory. This is unsafe.`;
+    logger.error(message);
+    throw new Error(message);
+  }
+
+  logger.info(`Removing "${path}"`);
+  fs.unlinkSync(path);
+}
+
 function tryRemoveInvalidThumbnailCache() {
   const directoryTreeObject = createDirectoryTree(plmThumbnailCacheDir);
   const flattenedDirTree = convertToFlattenedDirTree(directoryTreeObject);
@@ -46,7 +59,7 @@ function tryRemoveInvalidThumbnailCache() {
   logger.info('The corresponding original files are not found for the following thumbnail cache files:');
   cacheFilePathsWithoutOriginalFiles.forEach(filePath => logger.info(filePath));
   logger.info('The thumbnail cache files without corresponding original files are invalid. Removing the invalid cache...');
-  cacheFilePathsWithoutOriginalFiles.forEach(filePath => fs.unlinkSync(filePath));
+  cacheFilePathsWithoutOriginalFiles.forEach(filePath => removeFileInCacheDir(filePath));
 
   const invalidCacheFilesStillExist = cacheFilePathsWithoutOriginalFiles.filter(filePath => fs.existsSync(filePath)).length > 0;
   if (invalidCacheFilesStillExist) {
@@ -71,7 +84,7 @@ function tryRemoveInvalidThumbnailCache() {
   logger.info('Following log files for the thumbnail cache are invalid since the thumbnail cache file is invalid:');
   invalidLogFiles.forEach(logFile => logger.info(logFile));
   logger.info('Removing the invalid log files...');
-  invalidLogFiles.forEach(logFile => fs.unlinkSync(logFile));
+  invalidLogFiles.forEach(logFile => removeFileInCacheDir(logFile));
 
   const invalidLogFilesStillExist = invalidLogFiles.filter(filePath => fs.existsSync(filePath)).length > 0;
   if (invalidLogFilesStillExist) {
