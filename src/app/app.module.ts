@@ -33,7 +33,7 @@ import { OsmComponent } from './map/osm/osm.component';
 import { AboutBoxComponent } from './about-box/about-box.component';
 import { WelcomeDialogComponent } from './welcome-dialog/welcome-dialog.component';
 import { SettingsDialogComponent } from './settings-dialog/settings-dialog.component';
-import { ThumbnailGenerationStatusDisplayComponent } from './thumbnail-generation/status-display/component/thumbnail-generation-status-display.component';
+import { ThumbnailGenerationStatusDisplayComponent } from './thumbnail-generation/status-bar/component/thumbnail-generation-status-display.component';
 import { DateTimeSettingsComponent } from './settings-dialog/date-time-settings/date-time-settings.component';
 import { CacheSettingsComponent } from './settings-dialog/cache-settings/cache-settings.component';
 

@@ -3,7 +3,7 @@ import Split from 'split.js';
 import { OsmForceRenderService } from '../map/osm/osm-force-render/osm-force-render.service';
 import { FolderSelectionService } from '../shared/service/folder-selection.service';
 import { ThumbnailGenerationService } from '../thumbnail-generation/service/thumbnail-generation.service';
-import { ThumbnailGenerationStatusDisplayService } from '../thumbnail-generation/status-display/service/thumbnail-generation-status-display.service';
+import { ThumbnailGenerationStatusDisplayService } from '../thumbnail-generation/status-bar/service/thumbnail-generation-status-display.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
