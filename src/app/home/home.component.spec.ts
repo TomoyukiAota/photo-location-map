@@ -1,16 +1,10 @@
-import { Component } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MockComponents } from 'ng-mocks';
 
 import { HomeComponent } from './home.component';
-
-@Component({ selector: 'app-sidebar', template: '' })
-class DummySidebarComponent {}
-
-@Component({ selector: 'app-map', template: '' })
-class DummyMapComponent {}
-
-@Component({ selector: 'app-thumbnail-generation-status', template: '' })
-class DummyThumbnailGenerationStatusComponent {}
+import { MapComponent } from '../map/map/map.component';
+import { SidebarComponent } from '../sidebar/sidebar.component';
+import { ThumbnailGenerationStatusBarComponent } from '../thumbnail-generation/status-bar/component/thumbnail-generation-status-bar.component';
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
@@ -20,9 +14,11 @@ describe('HomeComponent', () => {
     TestBed.configureTestingModule({
       declarations: [
         HomeComponent,
-        DummySidebarComponent,
-        DummyMapComponent,
-        DummyThumbnailGenerationStatusComponent
+        MockComponents(
+          MapComponent,
+          SidebarComponent,
+          ThumbnailGenerationStatusBarComponent
+        )
       ]
     })
     .compileComponents();

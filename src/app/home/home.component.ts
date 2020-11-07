@@ -12,7 +12,7 @@ import { ThumbnailGenerationStatusBarService } from '../thumbnail-generation/sta
   templateUrl: './home.component.html'
 })
 export class HomeComponent implements AfterViewInit, OnInit {
-  public thumbnailGenerationStatusVisible = false;
+  public thumbnailGenerationStatusBarVisible = false;
 
   constructor(private folderSelectionService: FolderSelectionService,
               private thumbnailGenerationService: ThumbnailGenerationService,
@@ -21,11 +21,11 @@ export class HomeComponent implements AfterViewInit, OnInit {
 
   ngOnInit() {
     this.folderSelectionService.folderSelected.subscribe(
-      () => this.thumbnailGenerationStatusVisible = false);
+      () => this.thumbnailGenerationStatusBarVisible = false);
     this.thumbnailGenerationService.thumbnailGenerationStarted.subscribe(
-      () => this.thumbnailGenerationStatusVisible = true);
+      () => this.thumbnailGenerationStatusBarVisible = true);
     this.thumbnailGenerationStatusBarService.closeRequested.subscribe(
-      () => this.thumbnailGenerationStatusVisible = false);
+      () => this.thumbnailGenerationStatusBarVisible = false);
   }
 
   ngAfterViewInit() {
