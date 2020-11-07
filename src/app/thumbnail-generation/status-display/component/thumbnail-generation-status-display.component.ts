@@ -1,22 +1,24 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { Logger } from '../../../../src-shared/log/logger';
-import { isThumbnailCacheAvailable } from '../../../../src-shared/thumbnail-cache/thumbnail-cache-util';
-import { ThumbnailGenerationService } from '../service/thumbnail-generation.service';
+import { Logger } from '../../../../../src-shared/log/logger';
+import { isThumbnailCacheAvailable } from '../../../../../src-shared/thumbnail-cache/thumbnail-cache-util';
+import { ThumbnailGenerationService } from '../../service/thumbnail-generation.service';
+import { ThumbnailGenerationStatusDisplayService } from '../service/thumbnail-generation-status-display.service';
 
 @Component({
-  selector: 'app-thumbnail-generation-status',
-  templateUrl: './thumbnail-generation-status.component.html',
-  styleUrls: ['./thumbnail-generation-status.component.scss']
+  selector: 'app-thumbnail-generation-status-display',
+  templateUrl: './thumbnail-generation-status-display.component.html',
+  styleUrls: ['./thumbnail-generation-status-display.component.scss']
 })
-export class ThumbnailGenerationStatusComponent implements OnInit {
-  public isThumbnailGenerationDone = false;
+export class ThumbnailGenerationStatusDisplayComponent implements OnInit {
+  public isThumbnailGenerationDone = true;
   public numberOfTotalHeifFiles: number;
   public numberOfThumbnailsUsingCache: number;
   public numberOfThumbnailsGenerationRequired: number;
   public numberOfGeneratedThumbnails: number;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
-              private thumbnailGenerationService: ThumbnailGenerationService) {
+              private thumbnailGenerationService: ThumbnailGenerationService,
+              private thumbnailGenerationStatusDisplayService: ThumbnailGenerationStatusDisplayService) {
   }
 
   ngOnInit() {
@@ -44,5 +46,9 @@ export class ThumbnailGenerationStatusComponent implements OnInit {
       }
       this.changeDetectorRef.detectChanges();
     }, 500);
+  }
+
+  public handleCloseButtonClicked() {
+    this.thumbnailGenerationStatusDisplayService.closeRequested.next();
   }
 }

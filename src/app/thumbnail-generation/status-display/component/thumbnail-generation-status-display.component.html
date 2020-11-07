@@ -1,0 +1,17 @@
+<div class="message">
+  <ng-container *ngIf="isThumbnailGenerationDone; else thumbnailGenerationInProgress">
+    <div>Completed generating thumbnails for HEIF/HEIC files.</div>
+  </ng-container>
+  <ng-template #thumbnailGenerationInProgress>
+    <div>Generating thumbnails for HEIF/HEIC files...</div>
+  </ng-template>
+</div>
+<div class="progress">Progress: {{ numberOfGeneratedThumbnails }}/{{ numberOfThumbnailsGenerationRequired }}</div>
+<div class="details">Total HEIF/HEIC files: {{ numberOfTotalHeifFiles }}, Using cache: {{ numberOfThumbnailsUsingCache }},
+  Generation required: {{ numberOfThumbnailsGenerationRequired }}, Generated: {{ numberOfGeneratedThumbnails }}</div>
+<span class="close-button"
+      title="Close Thumbnail Generation Status"
+      [ngClass]="{'hidden': !isThumbnailGenerationDone, 'fade-in-close-button': isThumbnailGenerationDone}"
+      (click)="handleCloseButtonClicked()">
+  ×
+</span>
