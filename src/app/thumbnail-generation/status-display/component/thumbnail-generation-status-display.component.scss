@@ -1,7 +1,7 @@
 :host {
   display: grid;
   align-items: center;
-  column-gap: 20px;
+  column-gap: 10px;
   grid: "message  message close-button" auto
         "progress details close-button" auto
         /200px    1fr     auto;
