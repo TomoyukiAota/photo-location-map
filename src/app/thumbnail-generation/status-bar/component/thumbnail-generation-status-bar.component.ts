@@ -2,14 +2,14 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Logger } from '../../../../../src-shared/log/logger';
 import { isThumbnailCacheAvailable } from '../../../../../src-shared/thumbnail-cache/thumbnail-cache-util';
 import { ThumbnailGenerationService } from '../../service/thumbnail-generation.service';
-import { ThumbnailGenerationStatusDisplayService } from '../service/thumbnail-generation-status-display.service';
+import { ThumbnailGenerationStatusBarService } from '../service/thumbnail-generation-status-bar.service';
 
 @Component({
-  selector: 'app-thumbnail-generation-status-display',
-  templateUrl: './thumbnail-generation-status-display.component.html',
-  styleUrls: ['./thumbnail-generation-status-display.component.scss']
+  selector: 'app-thumbnail-generation-status-bar',
+  templateUrl: './thumbnail-generation-status-bar.component.html',
+  styleUrls: ['./thumbnail-generation-status-bar.component.scss']
 })
-export class ThumbnailGenerationStatusDisplayComponent implements OnInit {
+export class ThumbnailGenerationStatusBarComponent implements OnInit {
   public isThumbnailGenerationDone = true;
   public numberOfTotalHeifFiles: number;
   public numberOfThumbnailsUsingCache: number;
@@ -18,7 +18,7 @@ export class ThumbnailGenerationStatusDisplayComponent implements OnInit {
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
               private thumbnailGenerationService: ThumbnailGenerationService,
-              private thumbnailGenerationStatusDisplayService: ThumbnailGenerationStatusDisplayService) {
+              private thumbnailGenerationStatusBarService: ThumbnailGenerationStatusBarService) {
   }
 
   ngOnInit() {
@@ -49,6 +49,6 @@ export class ThumbnailGenerationStatusDisplayComponent implements OnInit {
   }
 
   public handleCloseButtonClicked() {
-    this.thumbnailGenerationStatusDisplayService.closeRequested.next();
+    this.thumbnailGenerationStatusBarService.closeRequested.next();
   }
 }
