@@ -5,11 +5,11 @@ import { ThumbnailGenerationService } from '../../service/thumbnail-generation.s
 import { ThumbnailGenerationStatusDisplayService } from '../service/thumbnail-generation-status-display.service';
 
 @Component({
-  selector: 'app-thumbnail-generation-status-display',
-  templateUrl: './thumbnail-generation-status-display.component.html',
-  styleUrls: ['./thumbnail-generation-status-display.component.scss']
+  selector: 'app-thumbnail-generation-status-bar',
+  templateUrl: './thumbnail-generation-status-bar.component.html',
+  styleUrls: ['./thumbnail-generation-status-bar.component.scss']
 })
-export class ThumbnailGenerationStatusDisplayComponent implements OnInit {
+export class ThumbnailGenerationStatusBarComponent implements OnInit {
   public isThumbnailGenerationDone = true;
   public numberOfTotalHeifFiles: number;
   public numberOfThumbnailsUsingCache: number;
