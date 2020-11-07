@@ -6,4 +6,4 @@
     <app-map></app-map>
   </div>
 </div>
-<app-thumbnail-generation-status [style.display]="thumbnailGenerationStatusVisible ? 'block' : 'none'"></app-thumbnail-generation-status>
+<app-thumbnail-generation-status [ngClass]="{'hidden': !thumbnailGenerationStatusVisible}" ></app-thumbnail-generation-status>
