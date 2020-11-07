@@ -10,7 +10,7 @@
 <div class="details">Total HEIF/HEIC files: {{ numberOfTotalHeifFiles }}, Using cache: {{ numberOfThumbnailsUsingCache }},
   Generation required: {{ numberOfThumbnailsGenerationRequired }}, Generated: {{ numberOfGeneratedThumbnails }}</div>
 <span class="close-button"
-      title="Close Thumbnail Generation Status"
+      title="Close Thumbnail Generation Status Bar"
       [ngClass]="{'hidden': !isThumbnailGenerationDone, 'fade-in-close-button': isThumbnailGenerationDone}"
       (click)="handleCloseButtonClicked()">
   ×
