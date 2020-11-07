@@ -3,7 +3,7 @@ import Split from 'split.js';
 import { OsmForceRenderService } from '../map/osm/osm-force-render/osm-force-render.service';
 import { FolderSelectionService } from '../shared/service/folder-selection.service';
 import { ThumbnailGenerationService } from '../thumbnail-generation/service/thumbnail-generation.service';
-import { ThumbnailGenerationStatusDisplayService } from '../thumbnail-generation/status-display/service/thumbnail-generation-status-display.service';
+import { ThumbnailGenerationStatusBarService } from '../thumbnail-generation/status-bar/service/thumbnail-generation-status-bar.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -12,20 +12,20 @@ import { ThumbnailGenerationStatusDisplayService } from '../thumbnail-generation
   templateUrl: './home.component.html'
 })
 export class HomeComponent implements AfterViewInit, OnInit {
-  public thumbnailGenerationStatusVisible = false;
+  public thumbnailGenerationStatusBarVisible = false;
 
   constructor(private folderSelectionService: FolderSelectionService,
               private thumbnailGenerationService: ThumbnailGenerationService,
-              private thumbnailGenerationStatusDisplayService: ThumbnailGenerationStatusDisplayService,
+              private thumbnailGenerationStatusBarService: ThumbnailGenerationStatusBarService,
               private osmForceRenderService: OsmForceRenderService) {}
 
   ngOnInit() {
     this.folderSelectionService.folderSelected.subscribe(
-      () => this.thumbnailGenerationStatusVisible = false);
+      () => this.thumbnailGenerationStatusBarVisible = false);
     this.thumbnailGenerationService.thumbnailGenerationStarted.subscribe(
-      () => this.thumbnailGenerationStatusVisible = true);
-    this.thumbnailGenerationStatusDisplayService.closeRequested.subscribe(
-      () => this.thumbnailGenerationStatusVisible = false);
+      () => this.thumbnailGenerationStatusBarVisible = true);
+    this.thumbnailGenerationStatusBarService.closeRequested.subscribe(
+      () => this.thumbnailGenerationStatusBarVisible = false);
   }
 
   ngAfterViewInit() {

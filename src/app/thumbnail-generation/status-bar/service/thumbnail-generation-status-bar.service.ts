@@ -4,6 +4,6 @@ import { Subject } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class ThumbnailGenerationStatusDisplayService {
+export class ThumbnailGenerationStatusBarService {
   public closeRequested = new Subject<void>();
 }
