@@ -22,6 +22,10 @@
   height: 100%;
 }
 
-app-thumbnail-generation-status {
+app-thumbnail-generation-status-display {
   grid-area: thumbnail-generation-status;
+}
+
+.hidden {
+  display: none;
 }
