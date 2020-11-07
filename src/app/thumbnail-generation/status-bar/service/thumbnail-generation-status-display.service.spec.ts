@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ThumbnailGenerationStatusDisplayService } from './thumbnail-generation-status-display.service';
+import { ThumbnailGenerationStatusBarService } from './thumbnail-generation-status-bar.service';
 
-describe('ThumbnailGenerationStatusDisplayService', () => {
-  let service: ThumbnailGenerationStatusDisplayService;
+describe('ThumbnailGenerationStatusBarService', () => {
+  let service: ThumbnailGenerationStatusBarService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(ThumbnailGenerationStatusDisplayService);
+    service = TestBed.inject(ThumbnailGenerationStatusBarService);
   });
 
   it('should be created', () => {
