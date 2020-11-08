@@ -10,11 +10,13 @@ import { ThumbnailGenerationStatusBarService } from '../service/thumbnail-genera
   styleUrls: ['./thumbnail-generation-status-bar.component.scss']
 })
 export class ThumbnailGenerationStatusBarComponent implements OnInit {
-  public isThumbnailGenerationDone = true;
+  public isThumbnailGenerationDone: boolean;
   public numberOfTotalHeifFiles: number;
   public numberOfThumbnailsUsingCache: number;
   public numberOfThumbnailsGenerationRequired: number;
   public numberOfGeneratedThumbnails: number;
+  public progressPercent: number;
+  public detailsVisible: boolean;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
               private thumbnailGenerationService: ThumbnailGenerationService,
@@ -28,7 +30,9 @@ export class ThumbnailGenerationStatusBarComponent implements OnInit {
       this.numberOfThumbnailsGenerationRequired = status.generationRequiredFilePaths.length;
       this.numberOfThumbnailsUsingCache = this.numberOfTotalHeifFiles - this.numberOfThumbnailsGenerationRequired;
       this.numberOfGeneratedThumbnails = 0;
-      Logger.info(`Total HEIF/HEIC files: ${ this.numberOfTotalHeifFiles }, Using cache: ${ this.numberOfThumbnailsUsingCache }, `
+      this.progressPercent = 0;
+      this.detailsVisible = false;
+      Logger.info(`Total HEIF files: ${ this.numberOfTotalHeifFiles }, Using cache: ${ this.numberOfThumbnailsUsingCache }, `
         + `Generation required: ${ this.numberOfThumbnailsGenerationRequired }`);
       this.updateThumbnailGenerationStatus(status.generationRequiredFilePaths);
     });
@@ -37,7 +41,8 @@ export class ThumbnailGenerationStatusBarComponent implements OnInit {
   private updateThumbnailGenerationStatus(generationRequiredFilePaths: string[]) {
     const intervalId = setInterval(() => {
       this.numberOfGeneratedThumbnails = generationRequiredFilePaths.filter(filePath => isThumbnailCacheAvailable(filePath)).length;
-      Logger.info(`Thumbnail generation progress (generated/generation-required): `
+      this.progressPercent = (this.numberOfGeneratedThumbnails / this.numberOfThumbnailsGenerationRequired) * 100;
+      Logger.info(`Thumbnail generation progress: ${this.progressPercent} %, Generated/Generation-required: `
         + `${this.numberOfGeneratedThumbnails}/${this.numberOfThumbnailsGenerationRequired}`);
       if (this.numberOfGeneratedThumbnails === this.numberOfThumbnailsGenerationRequired) {
         this.isThumbnailGenerationDone = true;
@@ -50,5 +55,13 @@ export class ThumbnailGenerationStatusBarComponent implements OnInit {
 
   public handleCloseButtonClicked() {
     this.thumbnailGenerationStatusBarService.closeRequested.next();
+  }
+
+  public showDetails() {
+    this.detailsVisible = true;
+  }
+
+  public hideDetails() {
+    this.detailsVisible = false;
   }
 }
