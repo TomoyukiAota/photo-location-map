@@ -7,19 +7,19 @@
       <span>Generating thumbnails for HEIF files...</span>
     </ng-template>
     <ng-container *ngIf="detailsVisible; else detailExpandButton">
-      <mat-icon class="expand-button" title="Hide Details" (click)="hideDetails()">expand_more</mat-icon>
+      <mat-icon class="expand-button" title="Hide Details" (click)="hideDetails()">expand_less</mat-icon>
     </ng-container>
     <ng-template #detailExpandButton>
-      <mat-icon class="expand-button" title="Show Details" (click)="showDetails()">expand_less</mat-icon>
+      <mat-icon class="expand-button" title="Show Details" (click)="showDetails()">expand_more</mat-icon>
     </ng-template>
   </div>
   <div class="details" *ngIf="detailsVisible">
     <div>
-      Generated {{ numberOfGeneratedThumbnails }} files out of generation required {{ numberOfThumbnailsGenerationRequired }} files.
+      Generated {{ numberOfGeneratedThumbnails }} files out of generation-required {{ numberOfThumbnailsGenerationRequired }} files.
     </div>
     <div class="generation-required-files-description">
-      Generation required files are given by "Total HEIF files ({{ numberOfTotalHeifFiles }} files)
-      - Cache available files ({{ numberOfThumbnailsUsingCache }} files)".
+      Generation-required files are given by "Total HEIF files ({{ numberOfTotalHeifFiles }} files)
+      − Cache-available files ({{ numberOfThumbnailsUsingCache }} files)".
     </div>
   </div>
 </div>
