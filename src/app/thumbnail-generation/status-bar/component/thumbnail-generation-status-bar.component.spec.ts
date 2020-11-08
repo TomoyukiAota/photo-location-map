@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { ThumbnailGenerationStatusBarComponent } from './thumbnail-generation-status-bar.component';
@@ -10,7 +11,10 @@ describe('ThumbnailGenerationStatusBarComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ ThumbnailGenerationStatusBarComponent ],
-      imports: [ MatProgressBarModule ]
+      imports: [
+        MatIconModule,
+        MatProgressBarModule
+      ]
     })
     .compileComponents();
   });
