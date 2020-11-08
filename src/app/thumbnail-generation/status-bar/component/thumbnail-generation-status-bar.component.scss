@@ -1,13 +1,14 @@
 :host {
   display: grid;
-  align-items: center;
+  align-items: start;
   column-gap: 10px;
-  grid: "message progress-bar close-button" auto
-        /auto    300px        30px;
+  grid: "summary progress-bar        close-button" auto
+        /auto    minmax(auto, 700px) 30px;
 
-  .message         { grid-area: message;       }
-  mat-progress-bar { grid-area: progress-bar;  }
-  .close-button    { grid-area: close-button;  }
+  .summary-and-expand-button { grid-area: summary;
+                               justify-self: end;       }
+  .progress-bar-and-details  { grid-area: progress-bar; }
+  .close-button              { grid-area: close-button; }
 
   padding: 2px 10px 2px 10px;
   border-top: solid 1px #cccccc;
@@ -16,7 +17,7 @@
   color: #333333;
 }
 
-.short-message-and-expand-button {
+.summary-and-expand-button {
   display: flex;
   align-items: center;
 }
@@ -35,6 +36,16 @@
   &:active {
     background-color: #bbb;
   }
+}
+
+.progress-bar-and-details {
+  width: 100%;
+}
+
+.progress-bar-container {
+  display: grid;
+  align-items: center;
+  height: 28px;
 }
 
 .details > div {
