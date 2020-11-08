@@ -37,12 +37,11 @@
   }
 }
 
-.details {
-  display: flex;
+.details > div {
+  line-height: 22px;
 }
 
 .generation-required-files-description {
-  margin-left: 10px;
   color: #888;
 }
 
