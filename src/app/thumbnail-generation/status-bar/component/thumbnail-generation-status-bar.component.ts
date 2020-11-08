@@ -10,12 +10,13 @@ import { ThumbnailGenerationStatusBarService } from '../service/thumbnail-genera
   styleUrls: ['./thumbnail-generation-status-bar.component.scss']
 })
 export class ThumbnailGenerationStatusBarComponent implements OnInit {
-  public isThumbnailGenerationDone = true;
+  public isThumbnailGenerationDone: boolean;
   public numberOfTotalHeifFiles: number;
   public numberOfThumbnailsUsingCache: number;
   public numberOfThumbnailsGenerationRequired: number;
   public numberOfGeneratedThumbnails: number;
   public progressPercent: number;
+  public detailsVisible: boolean;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
               private thumbnailGenerationService: ThumbnailGenerationService,
@@ -30,6 +31,7 @@ export class ThumbnailGenerationStatusBarComponent implements OnInit {
       this.numberOfThumbnailsUsingCache = this.numberOfTotalHeifFiles - this.numberOfThumbnailsGenerationRequired;
       this.numberOfGeneratedThumbnails = 0;
       this.progressPercent = 0;
+      this.detailsVisible = false;
       Logger.info(`Total HEIF files: ${ this.numberOfTotalHeifFiles }, Using cache: ${ this.numberOfThumbnailsUsingCache }, `
         + `Generation required: ${ this.numberOfThumbnailsGenerationRequired }`);
       this.updateThumbnailGenerationStatus(status.generationRequiredFilePaths);
@@ -53,5 +55,13 @@ export class ThumbnailGenerationStatusBarComponent implements OnInit {
 
   public handleCloseButtonClicked() {
     this.thumbnailGenerationStatusBarService.closeRequested.next();
+  }
+
+  public showDetails() {
+    this.detailsVisible = true;
+  }
+
+  public hideDetails() {
+    this.detailsVisible = false;
   }
 }
