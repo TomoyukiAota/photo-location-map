@@ -2,15 +2,16 @@
   display: grid;
   align-items: center;
   column-gap: 10px;
-  grid: "message  message close-button" auto
-        "progress details close-button" auto
-        /200px    1fr     auto;
+  grid: "message progress-bar progress-text             close-button" auto
+        "details progress-bar progress-text             close-button" auto
+        /auto    300px        minmax(40px, max-content) 30px;
 
-  .message      { grid-area: message;      }
-  .progress     { grid-area: progress;     }
-  .details      { grid-area: details;
-                  justify-self: right;     }
-  .close-button { grid-area: close-button; }
+  .message         { grid-area: message;       }
+  mat-progress-bar { grid-area: progress-bar;  }
+  .progress-text   { grid-area: progress-text;
+                     justify-self: center;     }
+  .details         { grid-area: details;       }
+  .close-button    { grid-area: close-button;  }
 
   padding: 2px 10px 2px 10px;
   border-top: solid 1px #cccccc;
