@@ -1,17 +1,20 @@
-<div class="message">
-  <div class="short-message-and-expand-button">
-    <ng-container *ngIf="isThumbnailGenerationDone; else thumbnailGenerationInProgress">
-      <span>Completed generating thumbnails for HEIF files.</span>
-    </ng-container>
-    <ng-template #thumbnailGenerationInProgress>
-      <span>Generating thumbnails for HEIF files...</span>
-    </ng-template>
-    <ng-container *ngIf="detailsVisible; else detailExpandButton">
-      <mat-icon class="expand-button" title="Hide Details" (click)="hideDetails()">expand_less</mat-icon>
-    </ng-container>
-    <ng-template #detailExpandButton>
-      <mat-icon class="expand-button" title="Show Details" (click)="showDetails()">expand_more</mat-icon>
-    </ng-template>
+<div class="summary-and-expand-button">
+  <ng-container *ngIf="isThumbnailGenerationDone; else thumbnailGenerationInProgress">
+    <span>Completed generating thumbnails for HEIF files.</span>
+  </ng-container>
+  <ng-template #thumbnailGenerationInProgress>
+    <span>Generating thumbnails for HEIF files...</span>
+  </ng-template>
+  <ng-container *ngIf="detailsVisible; else detailExpandButton">
+    <mat-icon class="expand-button" title="Hide Details" (click)="hideDetails()">expand_less</mat-icon>
+  </ng-container>
+  <ng-template #detailExpandButton>
+    <mat-icon class="expand-button" title="Show Details" (click)="showDetails()">expand_more</mat-icon>
+  </ng-template>
+</div>
+<div class="progress-bar-and-details">
+  <div class="progress-bar-container">
+    <mat-progress-bar mode="buffer" [value]="progressPercent"></mat-progress-bar>
   </div>
   <div class="details" *ngIf="detailsVisible">
     <div>
@@ -23,7 +26,6 @@
     </div>
   </div>
 </div>
-<mat-progress-bar mode="buffer" [value]="progressPercent"></mat-progress-bar>
 <span class="close-button"
       title="Close Thumbnail Generation Status Bar"
       [ngClass]="{'hidden': !isThumbnailGenerationDone, 'fade-in-close-button': isThumbnailGenerationDone}"
