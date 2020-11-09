@@ -30,9 +30,15 @@
     background-color: #ddd;
   }
 
-  &:active {
-    background-color: #bbb;
-  }
+  transition: height 0.2s ease-in-out;
+}
+
+.shrunk-progress-bar-with-details {
+  height: 28px;
+}
+
+.expanded-progress-bar-with-details {
+  height: 72px;
 }
 
 .progress-bar-and-expand-button {
@@ -51,6 +57,11 @@
   width: 24px;
   padding: 2px;
   color: #888;
+  transition: transform 0.3s ease-in-out;
+}
+
+.expanded-expand-button {
+  transform: rotate(180deg);
 }
 
 .details > div {
