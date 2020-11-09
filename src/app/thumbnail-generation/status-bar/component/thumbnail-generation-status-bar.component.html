@@ -7,25 +7,22 @@
   </ng-template>
 </div>
 <div class="progress-bar-with-details"
+     [class]="detailsVisible ? 'expanded-progress-bar-with-details' : 'shrunk-progress-bar-with-details'"
      [title]="detailsVisible ? 'Hide Details' : 'Show Details'"
      (click)="toggleDetailsVisibility()">
-  <div class="progress-bar-and-expand-button">
+  <div class="progress-bar-and-expand-icon">
     <mat-progress-bar mode="buffer" [value]="progressPercent"></mat-progress-bar>
-    <div class="expand-button">
-      <ng-container *ngIf="detailsVisible; else detailExpandButton">
-        <mat-icon>expand_less</mat-icon>
-      </ng-container>
-      <ng-template #detailExpandButton>
-        <mat-icon>expand_more</mat-icon>
-      </ng-template>
-    </div>
+    <mat-icon class="expand-icon"
+              [ngClass]="{'expanded-expand-icon': detailsVisible}">
+      expand_more
+    </mat-icon>
   </div>
-  <div class="details" *ngIf="detailsVisible">
+  <div class="details">
     <div>
-      Generated {{ numberOfGeneratedThumbnails }} files out of generation-required {{ numberOfThumbnailsGenerationRequired }} files.
+      Generated thumbnails for {{ numberOfGeneratedThumbnails }} files out of {{ numberOfThumbnailsGenerationRequired }} files which need generation.
     </div>
     <div class="generation-required-files-description">
-      Generation-required files are given by "Total HEIF files ({{ numberOfTotalHeifFiles }} files)
+      Files which need generation are given by "Total HEIF files ({{ numberOfTotalHeifFiles }} files)
       − Cache-available files ({{ numberOfThumbnailsUsingCache }} files)".
     </div>
   </div>

@@ -1,5 +1,6 @@
 :host {
   height: 100%;
+  overflow: hidden;
   display: grid;
   grid: "sidebar-and-map                " minmax(0, 1fr)
         "thumbnail-generation-status-bar" auto
