@@ -53,15 +53,11 @@ export class ThumbnailGenerationStatusBarComponent implements OnInit {
     }, 500);
   }
 
+  public toggleDetailsVisibility() {
+    this.detailsVisible = !this.detailsVisible;
+  }
+
   public handleCloseButtonClicked() {
     this.thumbnailGenerationStatusBarService.closeRequested.next();
-  }
-
-  public showDetails() {
-    this.detailsVisible = true;
-  }
-
-  public hideDetails() {
-    this.detailsVisible = false;
   }
 }
