@@ -59,10 +59,10 @@
   color: #888;
 }
 
-// --- Animation for the rotation of the expand button ---
+// --- Animation for the rotation of the expand icon ---
 .expand-icon          { transition: transform 0.3s ease-in-out; }
 .expanded-expand-icon { transform: rotate(180deg);              }
-// -------------------------------------------------------
+// -----------------------------------------------------
 
 .details > div {
   line-height: 22px;
