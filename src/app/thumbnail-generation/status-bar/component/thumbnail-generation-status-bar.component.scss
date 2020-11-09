@@ -3,7 +3,7 @@
   align-items: start;
   column-gap: 10px;
   grid: "summary progress-bar-with-details close-button" auto
-        /auto    minmax(auto, 700px)       min-content;
+        /auto    minmax(auto, 750px)       min-content;
 
   .summary                   { grid-area: summary;
                                justify-self: end;                    }
@@ -19,6 +19,7 @@
 
 .summary {
   line-height: 28px;
+  white-space: nowrap;
 }
 
 .progress-bar-with-details {
@@ -31,11 +32,14 @@
   }
 }
 
-// --- Animation for the height of the progress-bar-with-details area ---
-.progress-bar-with-details          { transition: height 0.2s ease-in-out; }
-.shrunk-progress-bar-with-details   { height: 28px;                        }
-.expanded-progress-bar-with-details { height: 72px;                        }
-// ----------------------------------------------------------------------
+// --- Animation for the max-height of the progress-bar-with-details area ---
+// Note that the animation needs to be set to max-height (NOT height) considering the cases that
+// lines of texts increase because of the small width of the progress-bar-with-details area
+// caused by small window width.
+.progress-bar-with-details          { transition: max-height 0.4s linear; }
+.shrunk-progress-bar-with-details   { max-height: 28px;                   }
+.expanded-progress-bar-with-details { max-height: 200px;                  }
+// --------------------------------------------------------------------------
 
 .progress-bar-and-expand-icon {
   display: grid;
