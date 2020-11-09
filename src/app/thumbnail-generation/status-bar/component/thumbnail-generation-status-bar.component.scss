@@ -33,22 +33,22 @@
 
 // --- Animation for the height of the progress-bar-with-details area ---
 .progress-bar-with-details          { transition: height 0.2s ease-in-out; }
-.shrunk-progress-bar-with-details   { height: 28px; }
-.expanded-progress-bar-with-details { height: 72px; }
+.shrunk-progress-bar-with-details   { height: 28px;                        }
+.expanded-progress-bar-with-details { height: 72px;                        }
 // ----------------------------------------------------------------------
 
-.progress-bar-and-expand-button {
+.progress-bar-and-expand-icon {
   display: grid;
   align-items: center;
   column-gap: 10px;
-  grid: "progress-bar expand-button" auto
+  grid: "progress-bar expand-icon" auto
         /auto         min-content;
 
-  mat-progress-bar { grid-area: progress-bar;  }
-  .expand-button   { grid-area: expand-button; }
+  mat-progress-bar { grid-area: progress-bar; }
+  .expand-icon     { grid-area: expand-icon;  }
 }
 
-.expand-button {
+.expand-icon {
   height: 24px;
   width: 24px;
   padding: 2px;
@@ -56,8 +56,8 @@
 }
 
 // --- Animation for the rotation of the expand button ---
-.expand-button          { transition: transform 0.3s ease-in-out; }
-.expanded-expand-button { transform: rotate(180deg); }
+.expand-icon          { transition: transform 0.3s ease-in-out; }
+.expanded-expand-icon { transform: rotate(180deg);              }
 // -------------------------------------------------------
 
 .details > div {

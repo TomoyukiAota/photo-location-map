@@ -10,10 +10,10 @@
      [class]="detailsVisible ? 'expanded-progress-bar-with-details' : 'shrunk-progress-bar-with-details'"
      [title]="detailsVisible ? 'Hide Details' : 'Show Details'"
      (click)="toggleDetailsVisibility()">
-  <div class="progress-bar-and-expand-button">
+  <div class="progress-bar-and-expand-icon">
     <mat-progress-bar mode="buffer" [value]="progressPercent"></mat-progress-bar>
-    <mat-icon class="expand-button"
-              [ngClass]="{'expanded-expand-button': detailsVisible}">
+    <mat-icon class="expand-icon"
+              [ngClass]="{'expanded-expand-icon': detailsVisible}">
       expand_more
     </mat-icon>
   </div>
