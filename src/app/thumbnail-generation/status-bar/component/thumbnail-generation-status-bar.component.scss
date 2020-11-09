@@ -29,17 +29,13 @@
   &:hover {
     background-color: #ddd;
   }
-
-  transition: height 0.2s ease-in-out;
 }
 
-.shrunk-progress-bar-with-details {
-  height: 28px;
-}
-
-.expanded-progress-bar-with-details {
-  height: 72px;
-}
+// --- Animation for the height of the progress-bar-with-details area ---
+.progress-bar-with-details          { transition: height 0.2s ease-in-out; }
+.shrunk-progress-bar-with-details   { height: 28px; }
+.expanded-progress-bar-with-details { height: 72px; }
+// ----------------------------------------------------------------------
 
 .progress-bar-and-expand-button {
   display: grid;
@@ -57,12 +53,12 @@
   width: 24px;
   padding: 2px;
   color: #888;
-  transition: transform 0.3s ease-in-out;
 }
 
-.expanded-expand-button {
-  transform: rotate(180deg);
-}
+// --- Animation for the rotation of the expand button ---
+.expand-button          { transition: transform 0.3s ease-in-out; }
+.expanded-expand-button { transform: rotate(180deg); }
+// -------------------------------------------------------
 
 .details > div {
   line-height: 22px;
