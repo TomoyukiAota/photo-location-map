@@ -6,9 +6,19 @@
     <span>Generating thumbnails for HEIF files...</span>
   </ng-template>
 </div>
-<div class="progress-bar-and-details">
-  <div class="progress-bar-container">
+<div class="progress-bar-with-details"
+     [title]="detailsVisible ? 'Hide Details' : 'Show Details'"
+     (click)="toggleDetailsVisibility()">
+  <div class="progress-bar-and-expand-button">
     <mat-progress-bar mode="buffer" [value]="progressPercent"></mat-progress-bar>
+    <div class="expand-button">
+      <ng-container *ngIf="detailsVisible; else detailExpandButton">
+        <mat-icon>expand_less</mat-icon>
+      </ng-container>
+      <ng-template #detailExpandButton>
+        <mat-icon>expand_more</mat-icon>
+      </ng-template>
+    </div>
   </div>
   <div class="details" *ngIf="detailsVisible">
     <div>
@@ -19,14 +29,6 @@
       − Cache-available files ({{ numberOfThumbnailsUsingCache }} files)".
     </div>
   </div>
-</div>
-<div class="expand-button">
-  <ng-container *ngIf="detailsVisible; else detailExpandButton">
-    <mat-icon title="Hide Details" (click)="hideDetails()">expand_less</mat-icon>
-  </ng-container>
-  <ng-template #detailExpandButton>
-    <mat-icon title="Show Details" (click)="showDetails()">expand_more</mat-icon>
-  </ng-template>
 </div>
 <span class="close-button"
       title="Close Thumbnail Generation Status Bar"
