@@ -2,13 +2,13 @@
   display: grid;
   align-items: start;
   column-gap: 10px;
-  grid: "summary expand-button progress-bar        close-button" auto
-        /auto    min-content   minmax(auto, 700px) min-content;
+  grid: "summary progress-bar        expand-button close-button" auto
+        /auto    minmax(auto, 700px) min-content   min-content;
 
   .summary                  { grid-area: summary;
                               justify-self: end;        }
-  .expand-button            { grid-area: expand-button; }
   .progress-bar-and-details { grid-area: progress-bar;  }
+  .expand-button            { grid-area: expand-button; }
   .close-button             { grid-area: close-button;  }
 
   padding: 2px 10px 2px 10px;
@@ -20,24 +20,7 @@
 
 .summary {
   line-height: 28px;
-}
-
-.expand-button {
-  height: 24px;
-  width: 24px;
-  margin: 0 10px;
-  padding: 2px;
-  border-radius: 4px;
-  color: #888;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #ddd;
-  }
-
-  &:active {
-    background-color: #bbb;
-  }
+  margin-right: 10px;
 }
 
 .progress-bar-and-details {
@@ -58,10 +41,27 @@
   color: #888;
 }
 
+.expand-button {
+  height: 24px;
+  width: 24px;
+  margin: 0 10px;
+  padding: 2px;
+  border-radius: 4px;
+  color: #888;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #ddd;
+  }
+
+  &:active {
+    background-color: #bbb;
+  }
+}
+
 .close-button {
   width: 20px;
   height: 20px;
-  margin: 0 10px;
   padding: 4px;
   border-radius: 4px;
   text-align: center;
