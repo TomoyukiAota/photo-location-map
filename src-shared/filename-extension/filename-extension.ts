@@ -2,25 +2,34 @@ import { exifFetchLibraryInUse } from '../exif-fetch-library-in-use/exif-fetch-l
 import { Logger } from '../log/logger';
 
 export class FilenameExtension {
-  public static readonly jpegExtensions: ReadonlyArray<string> = ['.jpeg', '.jpg', '.jpe', '.jfif', '.jfi', '.jif'];
-  public static readonly tiffExtensions: ReadonlyArray<string> = ['.tiff', '.tif'];
-  public static readonly heifExtensions: ReadonlyArray<string> = ['.heif', '.heic'];
+  private static readonly jpegExtensions: ReadonlyArray<string> = ['.jpeg', '.jpg', '.jpe', '.jfif', '.jfi', '.jif'];
+  private static readonly tiffExtensions: ReadonlyArray<string> = ['.tiff', '.tif'];
+  private static readonly pngExtensions:  ReadonlyArray<string> = ['.png'];
+  private static readonly heifExtensions: ReadonlyArray<string> = ['.heif', '.heic'];
+  private static readonly webpExtensions: ReadonlyArray<string> = ['.webp'];
 
-  public static readonly extensionsSupportedByExifr = [
+  public static isJpeg(extension: string) { return this.jpegExtensions.includes(extension); }
+  public static isTiff(extension: string) { return this.tiffExtensions.includes(extension); }
+  public static isPng (extension: string) { return this.pngExtensions.includes(extension);  }
+  public static isHeif(extension: string) { return this.heifExtensions.includes(extension); }
+  public static isWebp(extension: string) { return this.webpExtensions.includes(extension); }
+
+  private static readonly extensionsSupportedByExifr: ReadonlyArray<string> = [
     ...FilenameExtension.jpegExtensions,
     ...FilenameExtension.heifExtensions,
   ];
 
-  public static readonly extensionsSupportedByExifParser = [
+  private static readonly extensionsSupportedByExifParser: ReadonlyArray<string> = [
     ...FilenameExtension.jpegExtensions,
   ];
 
-  public static readonly extensionsDisplayableInBrowser = [
+  private static readonly extensionsDisplayableInBrowser: ReadonlyArray<string> = [
     ...FilenameExtension.jpegExtensions
+    // TODO: Add PNG and WebP here when supporting them.
   ];
 
   public static isSupportedByPlm(extension: string) {
-    let supportedExtensions: Array<string>;
+    let supportedExtensions: ReadonlyArray<string>;
 
     if (exifFetchLibraryInUse === 'exifr') {
       supportedExtensions = this.extensionsSupportedByExifr;
@@ -39,17 +48,5 @@ export class FilenameExtension {
 
   public static isThumbnailGenerationAvailable(extension: string) {
     return this.isHeif(extension);
-  }
-
-  public static isJpeg(extension: string) {
-    return this.jpegExtensions.includes(extension);
-  }
-
-  public static isTiff(extension: string) {
-    return this.tiffExtensions.includes(extension);
-  }
-
-  public static isHeif(extension: string) {
-    return this.heifExtensions.includes(extension);
   }
 }
