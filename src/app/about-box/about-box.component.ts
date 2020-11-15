@@ -35,8 +35,8 @@ export class AboutBoxComponent implements AfterViewInit {
   public handleHomeIconClicked() {
     // noinspection JSIgnoredPromiseFromCall
     shell.openExternal('https://tomoyukiaota.github.io/photo-location-map/');
-    Logger.info(`Opened Project Home Page.`);
-    Analytics.trackEvent(`Opened Project Home Page`, '');
+    Logger.info(`Opened Home Page.`);
+    Analytics.trackEvent(`Opened Home Page`, '');
   }
 
   public handleGitHubLogoClicked() {
