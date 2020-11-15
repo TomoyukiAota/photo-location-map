@@ -13,14 +13,14 @@ const app = ProxyRequire.electron.remote.app;
 export class WelcomeDialogComponent implements AfterViewInit {
   public readonly appVersion = app.getVersion();
 
-  @ViewChild('authorLink') public authorLink: ElementRef<HTMLAnchorElement>;
+  @ViewChild('developedByLink') public developedByLink: ElementRef<HTMLAnchorElement>;
   @ViewChild('gitHubIssuesLink') public gitHubIssuesLink: ElementRef<HTMLAnchorElement>;
 
   constructor(private welcomeDialogAtAppLaunchService: WelcomeDialogAtAppLaunchService) {
   }
 
   public ngAfterViewInit() {
-    configureOpeningInOsBrowser(this.authorLink, 'https://github.com/TomoyukiAota');
+    configureOpeningInOsBrowser(this.developedByLink, 'https://github.com/TomoyukiAota');
     configureOpeningInOsBrowser(this.gitHubIssuesLink, 'https://github.com/TomoyukiAota/photo-location-map/issues');
   }
 
