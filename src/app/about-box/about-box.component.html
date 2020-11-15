@@ -2,8 +2,23 @@
   <img src="favicon.svg" alt="Application Icon" class="app-icon">
   <div class="app-name">Photo Location Map</div>
   <div class="app-version">Version {{ appVersion }}</div>
-  <a class="github-repo-link" #gitHubRepoLink href="">GitHub Repository</a>
+  <a class="releases-link" #releasesLink href="">Releases</a>
   <div class="developed-by">
     Developed by <a #developedByLink href="">Tomoyuki Aota</a>.
+  </div>
+  <div class="bug-report-message">
+    Please submit issues and bugs in <a #gitHubIssuesLink href="">GitHub Issues</a>.
+  </div>
+  <div class="icons-grid">
+    <mat-icon class="home-icon"
+              title="Open Project Home Page"
+              (click)="handleHomeIconClicked()">
+      home
+    </mat-icon>
+    <img class="github-logo"
+         [src]="gitHubLogoDataUrl"
+         alt="GitHub"
+         title="Open GitHub Repository"
+         (click)="handleGitHubLogoClicked()"/>
   </div>
 </div>

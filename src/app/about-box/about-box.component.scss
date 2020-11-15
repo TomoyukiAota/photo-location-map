@@ -1,5 +1,5 @@
 .about-box-container {
-  padding: 20px;
+  padding: 20px 20px 0 20px;
   text-align: center;
 }
 
@@ -18,13 +18,55 @@
   font-size: 15px;
 }
 
-.github-repo-link {
+.releases-link {
   display: block;
-  margin-top: 10px;
+  margin-top: 15px;
   font-size: 15px
 }
 
 .developed-by {
-  margin-top: 10px;
+  margin-top: 15px;
   font-size: 15px;
+}
+
+.bug-report-message {
+  margin-top: 20px;
+  font-size: 15px;
+}
+
+.icons-grid {
+  margin: 20px 40px 0 40px;
+
+  display: grid;
+  grid: "home-icon github-logo" auto
+        /1fr       1fr;
+  justify-items: center;
+  .home-icon { grid-area: home-icon; }
+  .github-logo { grid-area: github-logo; }
+
+  > * {
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #ddd;
+    }
+
+    &:active {
+      background-color: #bbb;
+    }
+  }
+}
+
+.home-icon {
+  padding: 5px;
+  width: 30px;
+  height: 30px;
+  font-size: 30px;
+}
+
+.github-logo {
+  padding: 5px;
+  width: 30px;
+  height: 30px;
 }

@@ -52,8 +52,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public showAboutBox(): void {
     this.ngZone.run(() => {
       this.dialog.open(AboutBoxComponent, {
-        width: '350px',
-        height: '300px',
+        width: '400px',
+        height: '400px',
         panelClass: 'custom-dialog-container',
         autoFocus: false,
         restoreFocus: false
