@@ -13,10 +13,10 @@ export class AboutBoxComponent implements AfterViewInit {
   public readonly appVersion = app.getVersion();
 
   @ViewChild('gitHubRepoLink') public gitHubRepoLink: ElementRef<HTMLAnchorElement>;
-  @ViewChild('authorLink') public authorLink: ElementRef<HTMLAnchorElement>;
+  @ViewChild('developedByLink') public developedByLink: ElementRef<HTMLAnchorElement>;
 
   public ngAfterViewInit() {
     configureOpeningInOsBrowser(this.gitHubRepoLink, 'https://github.com/TomoyukiAota/photo-location-map');
-    configureOpeningInOsBrowser(this.authorLink, 'https://github.com/TomoyukiAota');
+    configureOpeningInOsBrowser(this.developedByLink, 'https://github.com/TomoyukiAota');
   }
 }
