@@ -34,28 +34,28 @@ export class AboutBoxComponent implements AfterViewInit {
   public handleTwitterProfileIconClicked() {
     // noinspection JSIgnoredPromiseFromCall
     shell.openExternal('https://twitter.com/TomoyukiAota');
-    Logger.info(`Opened Twitter Profile of Tomoyuki Aota.`);
+    Logger.info(`Opened Twitter Profile of Tomoyuki Aota on About Box.`);
     Analytics.trackEvent(`Opened Twitter Profile of Tomoyuki Aota`, '');
   }
 
   public handleGitHubProfileIconClicked() {
     // noinspection JSIgnoredPromiseFromCall
     shell.openExternal('https://github.com/TomoyukiAota');
-    Logger.info(`Opened GitHub Profile of Tomoyuki Aota.`);
+    Logger.info(`Opened GitHub Profile of Tomoyuki Aota on About Box.`);
     Analytics.trackEvent(`Opened GitHub Profile of Tomoyuki Aota`, '');
   }
 
   public handleHomeIconClicked() {
     // noinspection JSIgnoredPromiseFromCall
     shell.openExternal('https://tomoyukiaota.github.io/photo-location-map/');
-    Logger.info(`Opened Home Page.`);
+    Logger.info(`Opened Home Page on About Box.`);
     Analytics.trackEvent(`Opened Home Page`, '');
   }
 
   public handleSourceCodeIconClicked() {
     // noinspection JSIgnoredPromiseFromCall
     shell.openExternal('https://github.com/TomoyukiAota/photo-location-map');
-    Logger.info(`Opened Source Code in GitHub.`);
+    Logger.info(`Opened Source Code in GitHub on About Box.`);
     Analytics.trackEvent(`Opened Source Code in GitHub`, '');
   }
 }
