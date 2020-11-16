@@ -6,7 +6,7 @@ import { Analytics } from '../../../src-shared/analytics/analytics';
 import { Logger } from '../../../src-shared/log/logger';
 import { ProxyRequire } from '../../../src-shared/require/proxy-require';
 import { IconDataUrl } from '../../assets/icon-data-url';
-import { configureOpeningInOsBrowser } from '../shared/configure-opening-in-os-browser';
+import { configureOpeningInOsBrowser } from '../shared/open-url/configure-opening-in-os-browser';
 import { WelcomeDialogAtAppLaunchService } from './welcome-dialog-at-app-launch/welcome-dialog-at-app-launch.service';
 
 const app = ProxyRequire.electron.remote.app;
