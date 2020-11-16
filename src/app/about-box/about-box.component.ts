@@ -1,11 +1,10 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { shell } from 'electron';
-import { Analytics } from '../../../src-shared/analytics/analytics';
-import { Logger } from '../../../src-shared/log/logger';
+
 import { ProxyRequire } from '../../../src-shared/require/proxy-require';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { configureOpeningInOsBrowser } from '../shared/open-url/configure-opening-in-os-browser';
+import { openUrl } from '../shared/open-url/open-url';
 
 const app = ProxyRequire.electron.remote.app;
 
@@ -32,30 +31,18 @@ export class AboutBoxComponent implements AfterViewInit {
   }
 
   public handleTwitterProfileIconClicked() {
-    // noinspection JSIgnoredPromiseFromCall
-    shell.openExternal('https://twitter.com/TomoyukiAota');
-    Logger.info(`Opened Twitter Profile of Tomoyuki Aota on About Box.`);
-    Analytics.trackEvent(`Opened Twitter Profile of Tomoyuki Aota`, '');
+    openUrl('https://twitter.com/TomoyukiAota', 'Twitter Profile of Tomoyuki Aota', 'About Box');
   }
 
   public handleGitHubProfileIconClicked() {
-    // noinspection JSIgnoredPromiseFromCall
-    shell.openExternal('https://github.com/TomoyukiAota');
-    Logger.info(`Opened GitHub Profile of Tomoyuki Aota on About Box.`);
-    Analytics.trackEvent(`Opened GitHub Profile of Tomoyuki Aota`, '');
+    openUrl('https://github.com/TomoyukiAota', 'GitHub Profile of Tomoyuki Aota', 'About Box');
   }
 
   public handleHomeIconClicked() {
-    // noinspection JSIgnoredPromiseFromCall
-    shell.openExternal('https://tomoyukiaota.github.io/photo-location-map/');
-    Logger.info(`Opened Home Page on About Box.`);
-    Analytics.trackEvent(`Opened Home Page`, '');
+    openUrl('https://tomoyukiaota.github.io/photo-location-map/', 'Home Page', 'About Box');
   }
 
   public handleSourceCodeIconClicked() {
-    // noinspection JSIgnoredPromiseFromCall
-    shell.openExternal('https://github.com/TomoyukiAota/photo-location-map');
-    Logger.info(`Opened Source Code in GitHub on About Box.`);
-    Analytics.trackEvent(`Opened Source Code in GitHub`, '');
+    openUrl('https://github.com/TomoyukiAota/photo-location-map', 'Source Code in GitHub', 'About Box');
   }
 }
