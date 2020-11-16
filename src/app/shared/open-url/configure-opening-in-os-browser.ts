@@ -1,7 +1,7 @@
 import { ElementRef } from '@angular/core';
-import { Analytics } from '../../../src-shared/analytics/analytics';
-import { Logger } from '../../../src-shared/log/logger';
-import { ProxyRequire } from '../../../src-shared/require/proxy-require';
+import { Analytics } from '../../../../src-shared/analytics/analytics';
+import { Logger } from '../../../../src-shared/log/logger';
+import { ProxyRequire } from '../../../../src-shared/require/proxy-require';
 
 const shell = ProxyRequire.electron.shell;
 
