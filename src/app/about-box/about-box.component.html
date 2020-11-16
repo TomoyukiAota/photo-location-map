@@ -2,12 +2,26 @@
   <img src="favicon.svg" alt="Application Icon" class="app-icon">
   <div class="app-name">Photo Location Map</div>
   <div class="app-version">Version {{ appVersion }}</div>
-  <a class="releases-link" #releasesLink href="">Releases</a>
+  <a class="releases-link" href="" title="Open Downloads and Release Notes" #releasesLink>
+    Downloads and Release Notes
+  </a>
   <div class="developed-by">
-    Developed by <a #developedByLink href="">Tomoyuki Aota</a>.
+    <div class="developed-by-message">
+      Developed by Tomoyuki Aota.
+    </div>
+    <img  class="twitter-profile-icon"
+          [src]="twitterLogoDataUrl"
+          alt="Twitter Profile"
+          title="Open Twitter Profile"
+          (click)="handleTwitterProfileIconClicked()">
+    <img class="github-profile-icon"
+         [src]="gitHubLogoDataUrl"
+         alt="GitHub Profile"
+         title="Open GitHub Profile"
+         (click)="handleGitHubProfileIconClicked()"/>
   </div>
   <div class="bug-report-message">
-    Please submit issues and bugs in <a #gitHubIssuesLink href="">GitHub Issues</a>.
+    Please submit issues and bugs in <a href="" title="Open GitHub Issues" #gitHubIssuesLink>GitHub Issues</a>.
   </div>
   <div class="icons-grid">
     <mat-icon class="home-icon"
@@ -15,10 +29,10 @@
               (click)="handleHomeIconClicked()">
       home
     </mat-icon>
-    <img class="github-logo"
-         [src]="gitHubLogoDataUrl"
-         alt="GitHub"
-         title="Open GitHub Repository"
-         (click)="handleGitHubLogoClicked()"/>
+    <mat-icon class="code-icon"
+              title="View Source Code in GitHub"
+              (click)="handleSourceCodeIconClicked()">
+      code
+    </mat-icon>
   </div>
 </div>

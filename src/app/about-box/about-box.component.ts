@@ -18,9 +18,9 @@ export class AboutBoxComponent implements AfterViewInit {
   public readonly appVersion = app.getVersion();
 
   @ViewChild('releasesLink') public releasesLink: ElementRef<HTMLAnchorElement>;
-  @ViewChild('developedByLink') public developedByLink: ElementRef<HTMLAnchorElement>;
   @ViewChild('gitHubIssuesLink') public gitHubIssuesLink: ElementRef<HTMLAnchorElement>;
 
+  public get twitterLogoDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.twitterLogo); }
   public get gitHubLogoDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.gitHubLogo); }
 
   constructor(private sanitizer: DomSanitizer) {
@@ -28,8 +28,21 @@ export class AboutBoxComponent implements AfterViewInit {
 
   public ngAfterViewInit() {
     configureOpeningInOsBrowser(this.releasesLink, 'https://github.com/TomoyukiAota/photo-location-map/releases');
-    configureOpeningInOsBrowser(this.developedByLink, 'https://github.com/TomoyukiAota');
     configureOpeningInOsBrowser(this.gitHubIssuesLink, 'https://github.com/TomoyukiAota/photo-location-map/issues');
+  }
+
+  public handleTwitterProfileIconClicked() {
+    // noinspection JSIgnoredPromiseFromCall
+    shell.openExternal('https://twitter.com/TomoyukiAota');
+    Logger.info(`Opened Twitter Profile of Tomoyuki Aota.`);
+    Analytics.trackEvent(`Opened Twitter Profile of Tomoyuki Aota`, '');
+  }
+
+  public handleGitHubProfileIconClicked() {
+    // noinspection JSIgnoredPromiseFromCall
+    shell.openExternal('https://github.com/TomoyukiAota');
+    Logger.info(`Opened GitHub Profile of Tomoyuki Aota.`);
+    Analytics.trackEvent(`Opened GitHub Profile of Tomoyuki Aota`, '');
   }
 
   public handleHomeIconClicked() {
@@ -39,10 +52,10 @@ export class AboutBoxComponent implements AfterViewInit {
     Analytics.trackEvent(`Opened Home Page`, '');
   }
 
-  public handleGitHubLogoClicked() {
+  public handleSourceCodeIconClicked() {
     // noinspection JSIgnoredPromiseFromCall
     shell.openExternal('https://github.com/TomoyukiAota/photo-location-map');
-    Logger.info(`Opened GitHub Repository.`);
-    Analytics.trackEvent(`Opened GitHub Repository`, '');
+    Logger.info(`Opened Source Code in GitHub.`);
+    Analytics.trackEvent(`Opened Source Code in GitHub`, '');
   }
 }
