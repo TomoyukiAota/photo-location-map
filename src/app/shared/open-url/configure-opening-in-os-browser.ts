@@ -1,16 +1,12 @@
 import { ElementRef } from '@angular/core';
-import { Analytics } from '../../../../src-shared/analytics/analytics';
-import { Logger } from '../../../../src-shared/log/logger';
-import { ProxyRequire } from '../../../../src-shared/require/proxy-require';
+import { openUrl } from './open-url';
 
-const shell = ProxyRequire.electron.shell;
-
-export const configureOpeningInOsBrowser = (elementRef: ElementRef<HTMLElement>, url: string) => {
+export function configureOpeningInOsBrowser(elementRef: ElementRef<HTMLElement>,
+                                            url: string,
+                                            urlDescription: string,
+                                            from: string): void {
   elementRef.nativeElement.addEventListener('click', event => {
     event.preventDefault();
-    // noinspection JSIgnoredPromiseFromCall
-    shell.openExternal(url);
-    Logger.info(`Opened URL in OS browser: ${url}`);
-    Analytics.trackEvent('Opened URL in OS browser', url);
+    openUrl(url, urlDescription, from);
   });
-};
+}
