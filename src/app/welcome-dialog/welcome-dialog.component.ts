@@ -1,12 +1,12 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { shell } from 'electron';
 
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { Logger } from '../../../src-shared/log/logger';
 import { ProxyRequire } from '../../../src-shared/require/proxy-require';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { configureOpeningInOsBrowser } from '../shared/open-url/configure-opening-in-os-browser';
+import { openUrl } from '../shared/open-url/open-url';
 import { WelcomeDialogAtAppLaunchService } from './welcome-dialog-at-app-launch/welcome-dialog-at-app-launch.service';
 
 const app = ProxyRequire.electron.remote.app;
@@ -33,17 +33,11 @@ export class WelcomeDialogComponent implements AfterViewInit {
   }
 
   public handleTwitterProfileIconClicked() {
-    // noinspection JSIgnoredPromiseFromCall
-    shell.openExternal('https://twitter.com/TomoyukiAota');
-    Logger.info(`Opened Twitter Profile of Tomoyuki Aota on Welcome Dialog.`);
-    Analytics.trackEvent(`Opened Twitter Profile of Tomoyuki Aota on Welcome Dialog`, '');
+    openUrl('https://twitter.com/TomoyukiAota', 'Twitter Profile of Tomoyuki Aota', 'Welcome Dialog');
   }
 
   public handleGitHubProfileIconClicked() {
-    // noinspection JSIgnoredPromiseFromCall
-    shell.openExternal('https://github.com/TomoyukiAota');
-    Logger.info(`Opened GitHub Profile of Tomoyuki Aota on Welcome Dialog.`);
-    Analytics.trackEvent(`Opened GitHub Profile of Tomoyuki Aota on Welcome Dialog`, '');
+    openUrl('https://github.com/TomoyukiAota', 'GitHub Profile of Tomoyuki Aota', 'Welcome Dialog');
   }
 
   public onOkClicked() {
