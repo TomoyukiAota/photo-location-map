@@ -36,7 +36,8 @@ export class CacheSettingsComponent implements AfterViewInit, OnDestroy, OnInit 
   }
 
   ngAfterViewInit() {
-    configureOpeningInOsBrowser(this.heifWikipediaLink, 'https://en.wikipedia.org/wiki/High_Efficiency_Image_File_Format');
+    configureOpeningInOsBrowser(this.heifWikipediaLink, 'https://en.wikipedia.org/wiki/High_Efficiency_Image_File_Format',
+                                'HEIF page in Wikipedia', 'Settings Dialog] [Cache');
   }
 
   ngOnDestroy(): void {

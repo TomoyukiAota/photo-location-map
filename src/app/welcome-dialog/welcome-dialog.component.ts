@@ -29,7 +29,8 @@ export class WelcomeDialogComponent implements AfterViewInit {
   }
 
   public ngAfterViewInit() {
-    configureOpeningInOsBrowser(this.gitHubIssuesLink, 'https://github.com/TomoyukiAota/photo-location-map/issues');
+    configureOpeningInOsBrowser(this.gitHubIssuesLink, 'https://github.com/TomoyukiAota/photo-location-map/issues',
+                                'GitHub Issues', 'Welcome Dialog');
   }
 
   public handleTwitterProfileIconClicked() {

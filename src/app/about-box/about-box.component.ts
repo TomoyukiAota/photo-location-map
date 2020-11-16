@@ -26,8 +26,10 @@ export class AboutBoxComponent implements AfterViewInit {
   }
 
   public ngAfterViewInit() {
-    configureOpeningInOsBrowser(this.releasesLink, 'https://github.com/TomoyukiAota/photo-location-map/releases');
-    configureOpeningInOsBrowser(this.gitHubIssuesLink, 'https://github.com/TomoyukiAota/photo-location-map/issues');
+    configureOpeningInOsBrowser(this.releasesLink, 'https://github.com/TomoyukiAota/photo-location-map/releases',
+                                'GitHub Releases', 'About Box');
+    configureOpeningInOsBrowser(this.gitHubIssuesLink, 'https://github.com/TomoyukiAota/photo-location-map/issues',
+                                'GitHub Issues', 'About Box');
   }
 
   public handleTwitterProfileIconClicked() {
