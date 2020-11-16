@@ -5,6 +5,6 @@ import { Logger } from '../../../../src-shared/log/logger';
 export function openUrl(url: string, urlDescription: string, from: string): void {
   // noinspection JSIgnoredPromiseFromCall
   shell.openExternal(url);
-  Logger.info(`[${from}] Opened ${urlDescription}.`);
-  Analytics.trackEvent(`[${from}] Opened ${urlDescription}`, url);
+  Logger.info(`[${from}] Opened URL for ${urlDescription} - ${url}`);
+  Analytics.trackEvent(`[${from}] Opened URL for ${urlDescription}`, url);
 }
