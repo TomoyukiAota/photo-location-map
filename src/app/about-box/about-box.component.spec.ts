@@ -1,4 +1,5 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatIconModule } from '@angular/material/icon';
 
 import { AboutBoxComponent } from './about-box.component';
 
@@ -8,7 +9,8 @@ describe('AboutBoxComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ AboutBoxComponent ]
+      declarations: [ AboutBoxComponent ],
+      imports: [ MatIconModule ]
     })
     .compileComponents();
   }));
