@@ -1,5 +1,5 @@
 .about-box-container {
-  padding: 20px;
+  padding: 20px 20px 0 20px;
   text-align: center;
 }
 
@@ -10,21 +10,98 @@
 
 .app-name {
   margin-top: 15px;
-  font-size: 25px;
+  font-size: 28px;
 }
 
 .app-version {
-  margin-top: 10px;
-  font-size: 15px;
+  margin-top: 15px;
+  font-size: 16px;
 }
 
-.github-repo-link {
+.releases-link {
   display: block;
-  margin-top: 10px;
-  font-size: 15px
+  margin-top: 20px;
+  font-size: 14px
 }
 
-.author {
-  margin-top: 10px;
-  font-size: 15px;
+.developed-by {
+  margin-top: 15px;
+  font-size: 14px;
+
+  display: grid;
+  grid: "message     twitter-logo github-logo" auto
+        /max-content min-content  min-content;
+  justify-content: center;
+  align-items: center;
+  column-gap: 5px;
+  .developed-by-message { grid-area: message; }
+  .twitter-profile-icon { grid-area: twitter-logo; }
+  .github-profile-icon { grid-area: github-logo; }
+
+  > img {
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #ddd;
+    }
+
+    &:active {
+      background-color: #bbb;
+    }
+  }
+}
+
+.twitter-profile-icon {
+  width: 40px;
+  height: 40px;
+}
+
+.github-profile-icon {
+  padding: 5px;
+  width: 30px;
+  height: 30px;
+}
+
+.bug-report-message {
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.icons-grid {
+  margin: 15px 60px 0 60px;
+
+  display: grid;
+  grid: "home-icon code-icon" auto
+        /1fr       1fr;
+  justify-items: center;
+  .home-icon { grid-area: home-icon; }
+  .code-icon { grid-area: code-icon; }
+
+  > * {
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #ddd;
+    }
+
+    &:active {
+      background-color: #bbb;
+    }
+  }
+}
+
+.home-icon {
+  padding: 5px;
+  width: 30px;
+  height: 30px;
+  font-size: 30px;
+}
+
+.code-icon {
+  padding: 5px;
+  width: 30px;
+  height: 30px;
+  font-size: 30px;
 }

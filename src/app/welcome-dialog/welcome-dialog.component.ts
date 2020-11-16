@@ -1,6 +1,12 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
+
+import { Analytics } from '../../../src-shared/analytics/analytics';
+import { Logger } from '../../../src-shared/log/logger';
 import { ProxyRequire } from '../../../src-shared/require/proxy-require';
-import { configureOpeningInOsBrowser } from '../shared/configure-opening-in-os-browser';
+import { IconDataUrl } from '../../assets/icon-data-url';
+import { configureOpeningInOsBrowser } from '../shared/open-url/configure-opening-in-os-browser';
+import { openUrl } from '../shared/open-url/open-url';
 import { WelcomeDialogAtAppLaunchService } from './welcome-dialog-at-app-launch/welcome-dialog-at-app-launch.service';
 
 const app = ProxyRequire.electron.remote.app;
@@ -13,18 +19,31 @@ const app = ProxyRequire.electron.remote.app;
 export class WelcomeDialogComponent implements AfterViewInit {
   public readonly appVersion = app.getVersion();
 
-  @ViewChild('authorLink') public authorLink: ElementRef<HTMLAnchorElement>;
   @ViewChild('gitHubIssuesLink') public gitHubIssuesLink: ElementRef<HTMLAnchorElement>;
 
-  constructor(private welcomeDialogAtAppLaunchService: WelcomeDialogAtAppLaunchService) {
+  public get twitterLogoDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.twitterLogo); }
+  public get gitHubLogoDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.gitHubLogo); }
+
+  constructor(private sanitizer: DomSanitizer,
+              private welcomeDialogAtAppLaunchService: WelcomeDialogAtAppLaunchService) {
   }
 
   public ngAfterViewInit() {
-    configureOpeningInOsBrowser(this.authorLink, 'https://github.com/TomoyukiAota');
-    configureOpeningInOsBrowser(this.gitHubIssuesLink, 'https://github.com/TomoyukiAota/photo-location-map/issues');
+    configureOpeningInOsBrowser(this.gitHubIssuesLink, 'https://github.com/TomoyukiAota/photo-location-map/issues',
+                                'GitHub Issues', 'Welcome Dialog');
   }
 
-  onOkClicked() {
+  public handleTwitterProfileIconClicked() {
+    openUrl('https://twitter.com/TomoyukiAota', 'Twitter Profile of Tomoyuki Aota', 'Welcome Dialog');
+  }
+
+  public handleGitHubProfileIconClicked() {
+    openUrl('https://github.com/TomoyukiAota', 'GitHub Profile of Tomoyuki Aota', 'Welcome Dialog');
+  }
+
+  public onOkClicked() {
+    Logger.info(`Clicked "OK" button on Welcome Dialog.`);
+    Analytics.trackEvent(`Clicked "OK" button on Welcome Dialog`, '');
     this.welcomeDialogAtAppLaunchService.saveThatUserClickedOk();
   }
 }

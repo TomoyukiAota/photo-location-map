@@ -52,8 +52,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public showAboutBox(): void {
     this.ngZone.run(() => {
       this.dialog.open(AboutBoxComponent, {
-        width: '350px',
-        height: '300px',
+        width: '420px',
+        height: '420px',
         panelClass: 'custom-dialog-container',
         autoFocus: false,
         restoreFocus: false
@@ -79,8 +79,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public showWelcomeDialog(): void {
     this.ngZone.run(() => {
       this.dialog.open(WelcomeDialogComponent, {
-        width: '600px',
-        height: '460px',
+        width: '620px',
+        height: '490px',
         panelClass: 'custom-dialog-container',
         autoFocus: false,
         restoreFocus: false,
