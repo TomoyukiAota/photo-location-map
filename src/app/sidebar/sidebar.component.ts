@@ -10,6 +10,7 @@ import { FolderSelectionService } from '../shared/service/folder-selection.servi
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
 import { LoadingFolderDialogComponent } from '../loading-folder/dialog/loading-folder-dialog.component';
+import { PhotoWithLocationNotFoundDialogComponent } from '../photo-with-location-not-found-dialog/photo-with-location-not-found-dialog.component';
 import { ThumbnailGenerationService } from '../thumbnail-generation/service/thumbnail-generation.service';
 import { FolderSelectionRecorder } from './folder-selection-recorder';
 
@@ -64,6 +65,7 @@ export class SidebarComponent {
     DirTreeObjectRecorder.record(directoryTreeObject);
     this.photoDataService.update(directoryTreeObject)
       .then(() => {
+        this.showPhotoWithLocationNotFoundDialogIfApplicable();
         this.directoryTreeViewDataService.update(directoryTreeObject);
         this.parentFolderPath = path.dirname(selectedFolderPath) + path.sep;
         this.changeDetectorRef.detectChanges();
@@ -78,4 +80,19 @@ export class SidebarComponent {
         this.thumbnailGenerationService.generateThumbnail(directoryTreeObject);
       });
   };
+
+  private showPhotoWithLocationNotFoundDialogIfApplicable(): void {
+    const photoWithLocation = this.photoDataService.getPhotosWithGpsInfo();
+    if (photoWithLocation.length >= 1)
+      return;
+
+    this.dialog.open(PhotoWithLocationNotFoundDialogComponent, {
+      width: '500px',
+      height: '125px',
+      panelClass: 'custom-dialog-container',
+      disableClose: true,
+      autoFocus: false,
+      restoreFocus: false
+    });
+  }
 }

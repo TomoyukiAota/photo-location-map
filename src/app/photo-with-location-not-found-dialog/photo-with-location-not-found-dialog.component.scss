@@ -1,0 +1,19 @@
+:host {
+  padding: 10px;
+
+  display: grid;
+  grid: "message" auto
+        "close-button" auto
+        /auto;
+  justify-items: center;
+  .message      { grid-area: message;      }
+  .close-button { grid-area: close-button; }
+}
+
+.message {
+  margin: 20px 0;
+}
+
+.close-button {
+  width: 80px;
+}
