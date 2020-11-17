@@ -18,7 +18,7 @@ export class ThumbnailElement {
   private static createThumbnailElement(photo: Photo) {
     const thumbnailElement = document.createElement('img');
 
-    const isThumbnailAvailableFromExif = photo.exif.thumbnail;
+    const isThumbnailAvailableFromExif = !!(photo?.exif?.thumbnail);
     const isPhotoDisplayableInBrowser = FilenameExtension.isDisplayableInBrowser(photo.filenameExtension);
     const isThumbnailGenerationAvailable = FilenameExtension.isThumbnailGenerationAvailable(photo.filenameExtension);
 
