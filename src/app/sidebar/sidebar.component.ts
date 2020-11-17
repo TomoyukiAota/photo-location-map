@@ -22,7 +22,7 @@ const path = ProxyRequire.path;
   styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent {
-  public readonly messageWhenFolderIsNotSelected = 'The selected folder will be displayed here.';
+  public readonly messageWhenFolderIsNotSelected = 'Please select a folder to see where photos were taken.';
   public parentFolderPath = '';
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
