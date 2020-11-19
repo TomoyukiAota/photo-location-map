@@ -88,7 +88,7 @@ export class DirectoryTreeViewComponent {
     } else {
       // When the root node is not selectable (i.e. no photos with GPS location exist in the selected folder),
       // update SelectedPhotoService.selectedPhotos with an empty array so that the map will be displayed without photos.
-      this.selectedPhotoService.update([]);
+      this.selectedPhotoService.setSelectedPhotosByPaths([]);
     }
   }
 
@@ -137,7 +137,7 @@ export class DirectoryTreeViewComponent {
       .filter(node => !node.isExpandable)
       .filter(node => node.isSelectable)
       .map(node => node.path);
-    this.selectedPhotoService.update(selectedPaths);
+    this.selectedPhotoService.setSelectedPhotosByPaths(selectedPaths);
   }
 
   private toggleAllDescendants(parent: FlatNode) {
