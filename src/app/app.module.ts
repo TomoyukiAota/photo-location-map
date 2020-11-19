@@ -36,7 +36,7 @@ import { SettingsDialogComponent } from './settings-dialog/settings-dialog.compo
 import { ThumbnailGenerationStatusBarComponent } from './thumbnail-generation/status-bar/component/thumbnail-generation-status-bar.component';
 import { DateTimeSettingsComponent } from './settings-dialog/date-time-settings/date-time-settings.component';
 import { CacheSettingsComponent } from './settings-dialog/cache-settings/cache-settings.component';
-import { PhotoWithLocationNotFoundDialogComponent } from './photo-with-location-not-found-dialog/photo-with-location-not-found-dialog.component';
+import { NoPhotosWithGpsLocationDialogComponent } from './no-photos-with-gps-location-dialog/no-photos-with-gps-location-dialog.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -60,7 +60,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     ThumbnailGenerationStatusBarComponent,
     DateTimeSettingsComponent,
     CacheSettingsComponent,
-    PhotoWithLocationNotFoundDialogComponent
+    NoPhotosWithGpsLocationDialogComponent
   ],
   imports: [
     BrowserModule,
