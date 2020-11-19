@@ -1,22 +1,22 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 
-import { PhotoWithLocationNotFoundDialogComponent } from './photo-with-location-not-found-dialog.component';
+import { NoPhotosWithGpsLocationDialogComponent } from './no-photos-with-gps-location-dialog.component';
 
-describe('PhotoWithLocationNotFoundDialogComponent', () => {
-  let component: PhotoWithLocationNotFoundDialogComponent;
-  let fixture: ComponentFixture<PhotoWithLocationNotFoundDialogComponent>;
+describe('NoPhotosWithGpsLocationDialogComponent', () => {
+  let component: NoPhotosWithGpsLocationDialogComponent;
+  let fixture: ComponentFixture<NoPhotosWithGpsLocationDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PhotoWithLocationNotFoundDialogComponent ],
+      declarations: [ NoPhotosWithGpsLocationDialogComponent ],
       imports: [ MatButtonModule ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PhotoWithLocationNotFoundDialogComponent);
+    fixture = TestBed.createComponent(NoPhotosWithGpsLocationDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
