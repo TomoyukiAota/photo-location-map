@@ -14,8 +14,8 @@ export class SelectedPhotoService {
   constructor(private photoDataService: PhotoDataService) {
   }
 
-  public update(selectedPaths: string[]) {
-    const selectedPhotos = selectedPaths.map(path => this.photoDataService.getPhoto(path));
+  public setSelectedPhotosByPaths(selectedPhotoPaths: string[]) {
+    const selectedPhotos = selectedPhotoPaths.map(path => this.photoDataService.getPhoto(path));
     this.selectedPhotos = selectedPhotos;
     this.selectedPhotosChanged.next(selectedPhotos);
     Logger.info('Selected Photos: ', selectedPhotos);

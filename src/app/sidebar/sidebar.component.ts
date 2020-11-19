@@ -10,7 +10,7 @@ import { FolderSelectionService } from '../shared/service/folder-selection.servi
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
 import { LoadingFolderDialogComponent } from '../loading-folder/dialog/loading-folder-dialog.component';
-import { PhotoWithLocationNotFoundDialogComponent } from '../photo-with-location-not-found-dialog/photo-with-location-not-found-dialog.component';
+import { NoPhotosWithGpsLocationDialogComponent } from '../no-photos-with-gps-location-dialog/no-photos-with-gps-location-dialog.component';
 import { ThumbnailGenerationService } from '../thumbnail-generation/service/thumbnail-generation.service';
 import { FolderSelectionRecorder } from './folder-selection-recorder';
 
@@ -66,7 +66,7 @@ export class SidebarComponent {
     this.photoDataService.update(directoryTreeObject)
       .then(() => {
         this.showPhotoWithLocationNotFoundDialogIfApplicable();
-        this.directoryTreeViewDataService.update(directoryTreeObject);
+        this.directoryTreeViewDataService.replace(directoryTreeObject);
         this.parentFolderPath = path.dirname(selectedFolderPath) + path.sep;
         this.changeDetectorRef.detectChanges();
         FolderSelectionRecorder.complete();
@@ -86,7 +86,7 @@ export class SidebarComponent {
     if (photoWithLocation.length >= 1)
       return;
 
-    this.dialog.open(PhotoWithLocationNotFoundDialogComponent, {
+    this.dialog.open(NoPhotosWithGpsLocationDialogComponent, {
       width: '500px',
       height: '125px',
       panelClass: 'custom-dialog-container',
