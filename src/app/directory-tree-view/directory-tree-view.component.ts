@@ -64,13 +64,13 @@ export class DirectoryTreeViewComponent {
     this.treeFlattener = new MatTreeFlattener(this.transformNodeFromNestedToFlat, this.getLevel, this.isExpandable, this.getChildren);
     this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
-    directoryTreeViewDataService.dataChange
-      .subscribe(data => this.handleDataChange(data));
+    directoryTreeViewDataService.dataReplaced
+      .subscribe(data => this.handleDirectoryTreeViewDataReplaced(data));
 
     this.tooltipDisplayLogic = new DirTreeViewTooltipDisplayLogic(this.photoDataService);
   }
 
-  private handleDataChange(data: NestedNode[]) {
+  private handleDirectoryTreeViewDataReplaced(data: NestedNode[]) {
     this.flatNodeSelectionModel.clear();
     this.flatToNestedNodeMap.clear();
     this.nestedToFlatNodeMap.clear();
@@ -80,7 +80,16 @@ export class DirectoryTreeViewComponent {
 
     const rootNestedNode = data[0];
     const rootFlatNode = this.nestedToFlatNodeMap.get(rootNestedNode);
-    this.toggleNodeSelection(rootFlatNode);
+
+    if (rootFlatNode.isSelectable) {
+      // When the root node is selectable (i.e. some photos with GPS location exist in the selected folder),
+      // select the root node in order to select all photos as the map's state after loading the folder.
+      this.toggleNodeSelection(rootFlatNode);
+    } else {
+      // When the root node is not selectable (i.e. no photos with GPS location exist in the selected folder),
+      // update SelectedPhotoService.selectedPhotos with an empty array so that the map will be displayed without photos.
+      this.selectedPhotoService.update([]);
+    }
   }
 
   public isSelected(flatNode: FlatNode): boolean {

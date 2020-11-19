@@ -66,7 +66,7 @@ export class SidebarComponent {
     this.photoDataService.update(directoryTreeObject)
       .then(() => {
         this.showPhotoWithLocationNotFoundDialogIfApplicable();
-        this.directoryTreeViewDataService.update(directoryTreeObject);
+        this.directoryTreeViewDataService.replace(directoryTreeObject);
         this.parentFolderPath = path.dirname(selectedFolderPath) + path.sep;
         this.changeDetectorRef.detectChanges();
         FolderSelectionRecorder.complete();
