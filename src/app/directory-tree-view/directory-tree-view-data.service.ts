@@ -10,14 +10,14 @@ import { NestedNode } from './directory-tree-view.model';
   providedIn: 'root'
 })
 export class DirectoryTreeViewDataService {
-  public readonly dataChange = new BehaviorSubject<NestedNode[]>([]);
+  public readonly dataReplaced = new BehaviorSubject<NestedNode[]>([]);
 
   constructor(private photoDataService: PhotoDataService) {
   }
 
-  public update(directoryTreeObject: DirectoryTree): void {
+  public replace(directoryTreeObject: DirectoryTree): void {
     const nestedNodeArray = this.convertToNestedNodeArray([directoryTreeObject]);
-    this.dataChange.next(nestedNodeArray);
+    this.dataReplaced.next(nestedNodeArray);
   }
 
   private convertToNestedNodeArray(directoryTreeArray: DirectoryTree[]): NestedNode[] {
