@@ -122,8 +122,8 @@ export class ThumbnailElement {
 
   private static displayThumbnailUsingFile(thumbnailElement: HTMLImageElement, photo: Photo, thumbnailFilePath: string) {
     const imgSrcPath = app.isPackaged
-      ? thumbnailFilePath.replace(/#/g, '%23')   // # needs to be escaped in the packaged app. See https://www.w3schools.com/tags/ref_urlencode.asp for encoding.
-      : thumbnailFilePath;
+      ? thumbnailFilePath.replace(/#/g, '%23')   // In package app, # needs to be escaped. See https://www.w3schools.com/tags/ref_urlencode.asp for encoding.
+      : thumbnailFilePath;                       // With development server, thumbnail will not be displayed if # is escaped.
 
     const tempImg = new Image();
     tempImg.src = `file://${imgSrcPath}`;
