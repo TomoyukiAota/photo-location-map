@@ -11,61 +11,86 @@ import { isThumbnailCacheAvailable } from '../../../../src-shared/thumbnail-cach
   providedIn: 'root'
 })
 export class ThumbnailGenerationService {
-  public thumbnailGenerationStarted = new Subject<{numOfAllHeifFiles: number, generationRequiredFilePaths: string[]}>();
-  public thumbnailGenerationInProgress = new Subject<{numberOfGeneratedThumbnails: number, progressPercent: number}>();
-  public thumbnailGenerationDone = new Subject<void>();
+  public generationStarted = new Subject<{numOfAllHeifFiles: number, numOfCacheAvailableThumbnails: number, numOfGenerationRequiredThumbnails: number}>();
+  public generationInProgress = new Subject<{numOfGeneratedThumbnails: number, progressPercent: number}>();
+  public generationDone = new Subject<void>();
+
+  private allHeifFilePaths: string[];
+  private get numOfAllHeifFiles(): number { return this.allHeifFilePaths.length; }
 
   private heifFilePathsToGenerateThumbnail: string[];
+  private get numOfHeifFilesToGenerateThumbnail(): number { return this.heifFilePathsToGenerateThumbnail.length; }
+  private get numOfGenerationRequiredThumbnails(): number { return this.numOfHeifFilesToGenerateThumbnail; }
 
   public startThumbnailGeneration(dirTreeObj: DirectoryTree): void {
     const flattenedDirTree = convertToFlattenedDirTree(dirTreeObj);
-    const allHeifFilePaths = flattenedDirTree
+    this.allHeifFilePaths = flattenedDirTree
       .filter(element => FilenameExtension.isHeif(element.extension))
       .map(element => element.path);
+    this.logAllHeifFiles();
 
-    Logger.info(`Number of all HEIF files: ${allHeifFilePaths.length}`);
-    if (allHeifFilePaths.length >= 1) {
-      Logger.info(`All HEIF file paths are as follows: `);
-      allHeifFilePaths.forEach(filePath => Logger.info(filePath));
-    }
+    this.heifFilePathsToGenerateThumbnail = this.allHeifFilePaths.filter(filePath => !isThumbnailCacheAvailable(filePath));
+    this.logHeifFilesToGenerateThumbnail();
 
-    this.heifFilePathsToGenerateThumbnail = allHeifFilePaths.filter(filePath => !isThumbnailCacheAvailable(filePath));
-
-    Logger.info(`Number of HEIF files to generate thumbnails: ${this.heifFilePathsToGenerateThumbnail.length}`);
-    if (this.heifFilePathsToGenerateThumbnail.length >= 1) {
-      Logger.info(`HEIF files to generate thumbnails are as follows: `);
-      this.heifFilePathsToGenerateThumbnail.forEach(filePath => Logger.info(filePath));
-
-      Logger.info(`Thumbnails for HEIF files will be generated in the main process.`);
-      ipcRenderer.invoke(IpcConstants.ThumbnailGenerationInMainProcess.Name, this.heifFilePathsToGenerateThumbnail);
-
-      this.thumbnailGenerationStarted.next({
-        numOfAllHeifFiles: allHeifFilePaths.length,
-        generationRequiredFilePaths: this.heifFilePathsToGenerateThumbnail
-      });
-
-      const numberOfThumbnailsUsingCache = allHeifFilePaths.length - this.heifFilePathsToGenerateThumbnail.length;
-      Logger.info(`Total HEIF files: ${ allHeifFilePaths.length }, Using cache: ${ numberOfThumbnailsUsingCache }, `
-        + `Generation required: ${ this.heifFilePathsToGenerateThumbnail.length }`);
-      this.updateThumbnailGenerationStatus();
+    if (this.numOfHeifFilesToGenerateThumbnail >= 1) {
+      this.startGenerationInMainProcess();
+      this.updateGenerationStatusAsStarted();
+      this.updateGenerationStatusFromInProgressToDone();
     } else {
       Logger.info(`Cached thumbnails are available for all HEIF files. Thumbnail generation is skipped.`);
     }
   }
 
-  private updateThumbnailGenerationStatus(): void {
+  private logAllHeifFiles(): void {
+    Logger.info(`Number of all HEIF files: ${this.numOfAllHeifFiles}`);
+    if (this.numOfAllHeifFiles >= 1) {
+      Logger.info(`All HEIF file paths are as follows: `);
+      this.allHeifFilePaths.forEach(filePath => Logger.info(filePath));
+    }
+  }
+
+  private logHeifFilesToGenerateThumbnail(): void {
+    Logger.info(`Number of HEIF files to generate thumbnails: ${this.numOfHeifFilesToGenerateThumbnail}`);
+    if (this.numOfHeifFilesToGenerateThumbnail >= 1) {
+      Logger.info(`HEIF files to generate thumbnails are as follows: `);
+      this.heifFilePathsToGenerateThumbnail.forEach(filePath => Logger.info(filePath));
+    }
+  }
+
+  private startGenerationInMainProcess() {
+    Logger.info(`Thumbnails for HEIF files will be generated in the main process.`);
+
+    // noinspection JSIgnoredPromiseFromCall
+    ipcRenderer.invoke(IpcConstants.ThumbnailGenerationInMainProcess.Name, this.heifFilePathsToGenerateThumbnail);
+  }
+
+  private updateGenerationStatusAsStarted() {
+    const numOfCacheAvailableThumbnails = this.numOfAllHeifFiles - this.numOfGenerationRequiredThumbnails;
+
+    this.generationStarted.next({
+      numOfAllHeifFiles: this.numOfAllHeifFiles,
+      numOfCacheAvailableThumbnails: numOfCacheAvailableThumbnails,
+      numOfGenerationRequiredThumbnails: this.numOfGenerationRequiredThumbnails,
+    });
+
+    Logger.info(`Total HEIF files: ${this.numOfAllHeifFiles}, Cache-available: ${numOfCacheAvailableThumbnails}, `
+      + `Generation-required: ${this.numOfGenerationRequiredThumbnails}`);
+  }
+
+  private updateGenerationStatusFromInProgressToDone(): void {
+    const updateMilliseconds = 500;
     const intervalId = setInterval(() => {
       const numberOfGeneratedThumbnails = this.heifFilePathsToGenerateThumbnail.filter(filePath => isThumbnailCacheAvailable(filePath)).length;
-      const progressPercent = (numberOfGeneratedThumbnails / this.heifFilePathsToGenerateThumbnail.length) * 100;
+      const progressPercent = (numberOfGeneratedThumbnails / this.numOfGenerationRequiredThumbnails) * 100;
       Logger.info(`Thumbnail generation progress: ${progressPercent} %, Generated/Generation-required: `
-        + `${numberOfGeneratedThumbnails}/${this.heifFilePathsToGenerateThumbnail.length}`);
-      this.thumbnailGenerationInProgress.next({numberOfGeneratedThumbnails, progressPercent});
+        + `${numberOfGeneratedThumbnails}/${this.numOfGenerationRequiredThumbnails}`);
+      this.generationInProgress.next({numOfGeneratedThumbnails: numberOfGeneratedThumbnails, progressPercent});
 
-      if (numberOfGeneratedThumbnails === this.heifFilePathsToGenerateThumbnail.length) {
-        this.thumbnailGenerationDone.next();
+      if (numberOfGeneratedThumbnails === this.numOfGenerationRequiredThumbnails) {
+        this.generationDone.next();
         Logger.info(`Completed thumbnail generation.`);
         clearInterval(intervalId);
       }
-    }, 500);
+    }, updateMilliseconds);
   }
 }
