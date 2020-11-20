@@ -2,11 +2,14 @@ import { Analytics } from '../../../src-shared/analytics/analytics';
 import { FilenameExtension } from '../../../src-shared/filename-extension/filename-extension';
 import { Logger } from '../../../src-shared/log/logger';
 import { isFilePathTooLongOnWindows, maxFilePathLengthOnWindows } from '../../../src-shared/max-file-path-length-on-windows/max-file-path-length-on-windows';
+import { RequireFromMainProcess } from '../../../src-shared/require/require-from-main-process';
 import { getThumbnailFilePath, isThumbnailCacheAvailable } from '../../../src-shared/thumbnail-cache/thumbnail-cache-util';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { Dimensions } from '../shared/model/dimensions.model';
 import { Photo } from '../shared/model/photo.model';
 import { PhotoViewerLauncher } from '../photo-viewer/photo-viewer-launcher';
+
+const app = RequireFromMainProcess.electron.app;
 
 export class ThumbnailElement {
   public static create(photo: Photo): { thumbnailElement: HTMLImageElement; thumbnailContainerElement: HTMLDivElement } {
@@ -118,8 +121,12 @@ export class ThumbnailElement {
   private static minThumbnailContainerSquareSideLength = 200;
 
   private static displayThumbnailUsingFile(thumbnailElement: HTMLImageElement, photo: Photo, thumbnailFilePath: string) {
+    const imgSrcPath = app.isPackaged
+      ? thumbnailFilePath.replace(/#/g, '%23')   // # needs to be escaped in the packaged app. See https://www.w3schools.com/tags/ref_urlencode.asp for encoding.
+      : thumbnailFilePath;
+
     const tempImg = new Image();
-    tempImg.src = `file://${thumbnailFilePath}`;
+    tempImg.src = `file://${imgSrcPath}`;
     tempImg.onload = () => {
       const largerSideLength = this.minThumbnailContainerSquareSideLength;
       const originalWidth = tempImg.width;
@@ -133,7 +140,7 @@ export class ThumbnailElement {
         thumbnailElement.height = largerSideLength;
       }
 
-      thumbnailElement.src = `file://${thumbnailFilePath}`;
+      thumbnailElement.src = `file://${imgSrcPath}`;
       thumbnailElement.title = `Click the thumbnail to open ${photo.name}`;
     };
   }
