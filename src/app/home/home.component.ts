@@ -22,7 +22,7 @@ export class HomeComponent implements AfterViewInit, OnInit {
   ngOnInit() {
     this.folderSelectionService.folderSelected.subscribe(
       () => this.thumbnailGenerationStatusBarVisible = false);
-    this.thumbnailGenerationService.thumbnailGenerationStarted.subscribe(
+    this.thumbnailGenerationService.generationStarted.subscribe(
       () => this.thumbnailGenerationStatusBarVisible = true);
     this.thumbnailGenerationStatusBarService.closeRequested.subscribe(
       () => this.thumbnailGenerationStatusBarVisible = false);
