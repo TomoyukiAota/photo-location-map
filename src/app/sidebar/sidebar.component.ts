@@ -77,7 +77,7 @@ export class SidebarComponent {
       .finally(() => {
         dialogRef.close();
         removeInvalidThumbnailCache();
-        this.thumbnailGenerationService.generateThumbnail(directoryTreeObject);
+        this.thumbnailGenerationService.startThumbnailGeneration(directoryTreeObject);
       });
   };
 

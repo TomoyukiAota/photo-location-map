@@ -32,25 +32,18 @@ export class ThumbnailGenerationStatusBarComponent implements OnInit {
       this.numberOfGeneratedThumbnails = 0;
       this.progressPercent = 0;
       this.detailsVisible = false;
-      Logger.info(`Total HEIF files: ${ this.numberOfTotalHeifFiles }, Using cache: ${ this.numberOfThumbnailsUsingCache }, `
-        + `Generation required: ${ this.numberOfThumbnailsGenerationRequired }`);
-      this.updateThumbnailGenerationStatus(status.generationRequiredFilePaths);
     });
-  }
 
-  private updateThumbnailGenerationStatus(generationRequiredFilePaths: string[]) {
-    const intervalId = setInterval(() => {
-      this.numberOfGeneratedThumbnails = generationRequiredFilePaths.filter(filePath => isThumbnailCacheAvailable(filePath)).length;
-      this.progressPercent = (this.numberOfGeneratedThumbnails / this.numberOfThumbnailsGenerationRequired) * 100;
-      Logger.info(`Thumbnail generation progress: ${this.progressPercent} %, Generated/Generation-required: `
-        + `${this.numberOfGeneratedThumbnails}/${this.numberOfThumbnailsGenerationRequired}`);
-      if (this.numberOfGeneratedThumbnails === this.numberOfThumbnailsGenerationRequired) {
-        this.isThumbnailGenerationDone = true;
-        Logger.info(`Completed thumbnail generation.`);
-        clearInterval(intervalId);
-      }
+    this.thumbnailGenerationService.thumbnailGenerationInProgress.subscribe(status => {
+      this.numberOfGeneratedThumbnails = status.numberOfGeneratedThumbnails;
+      this.progressPercent = status.progressPercent;
       this.changeDetectorRef.detectChanges();
-    }, 500);
+    });
+
+    this.thumbnailGenerationService.thumbnailGenerationDone.subscribe(() => {
+      this.isThumbnailGenerationDone = true;
+      this.changeDetectorRef.detectChanges();
+    });
   }
 
   public toggleDetailsVisibility() {
