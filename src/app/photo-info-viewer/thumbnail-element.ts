@@ -118,11 +118,8 @@ export class ThumbnailElement {
   private static minThumbnailContainerSquareSideLength = 200;
 
   private static displayThumbnailUsingFile(thumbnailElement: HTMLImageElement, photo: Photo, thumbnailFilePath: string) {
-    // # needs to be escaped. See https://www.w3schools.com/tags/ref_urlencode.asp for encoding.
-    const escapedPath = thumbnailFilePath.replace(/#/g, '%23');
-
     const tempImg = new Image();
-    tempImg.src = `file://${escapedPath}`;
+    tempImg.src = `file://${thumbnailFilePath}`;
     tempImg.onload = () => {
       const largerSideLength = this.minThumbnailContainerSquareSideLength;
       const originalWidth = tempImg.width;
@@ -136,7 +133,7 @@ export class ThumbnailElement {
         thumbnailElement.height = largerSideLength;
       }
 
-      thumbnailElement.src = `file://${escapedPath}`;
+      thumbnailElement.src = `file://${thumbnailFilePath}`;
       thumbnailElement.title = `Click the thumbnail to open ${photo.name}`;
     };
   }
