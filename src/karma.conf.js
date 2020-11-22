@@ -44,6 +44,7 @@ module.exports = function (config) {
     preprocessors: {
       '**/*.js': ['electron']
     },
-    singleRun: true
+    singleRun: true,
+    captureTimeout: 180000,    // Increased from 60000 ms (default) to 180000 ms for CI using GitHub Actions.
   });
 };
