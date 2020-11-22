@@ -28,31 +28,36 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - run: npm ci
-    - run: npm run lint:ng
-    - run: npm run lint:es
+    - name: npm ci
+      run: npm ci
 
-    - name: Run "npm run test:unit:ng" with Xvfb
+    - name: npm run lint:ng
+      run: npm run lint:ng
+
+    - name: npm run lint:es
+      run: npm run lint:es
+
+    - name: npm run test:unit:ng
       uses: GabrielBB/xvfb-action@v1.4
       with:
         run: npm run test:unit:ng
 
-    - name: Run "npm run test:unit:em:main" with Xvfb
+    - name: npm run test:unit:em:main
       uses: GabrielBB/xvfb-action@v1.4
       with:
         run: npm run test:unit:em:main
 
-    - name: Run "npm run test:unit:em:renderer" with Xvfb
+    - name: npm run test:unit:em:renderer
       uses: GabrielBB/xvfb-action@v1.4
       with:
         run: npm run test:unit:em:renderer
 
-    - name: Run "npm run test:e2e" with Xvfb
+    - name: npm run test:e2e
       uses: GabrielBB/xvfb-action@v1.4
       with:
         run: npm run test:e2e
 
-    - name: Run "npm run test:package" with Xvfb
+    - name: npm run test:package
       uses: GabrielBB/xvfb-action@v1.4
       with:
         run: npm run test:package
