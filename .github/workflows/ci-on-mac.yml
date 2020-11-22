@@ -18,6 +18,9 @@ jobs:
         os: [macOS-latest]
         node-version: [12.x]
 
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # for electron-builder
+
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
@@ -25,7 +28,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
-    - run: npm run electron:mac
     - run: npm run lint:ng
     - run: npm run lint:es
     - run: npm run test:unit:ng
