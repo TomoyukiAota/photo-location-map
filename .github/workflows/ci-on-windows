@@ -1,0 +1,34 @@
+name: CI on Windows
+
+on:
+  push:
+    branches:
+      - '**'    # matches every branch
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [windows-latest]
+        node-version: [12.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.os }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm ci
+    - run: npm run lint:ng
+    - run: npm run lint:es
+    - run: npm run test:unit:ng
+    - run: npm run test:unit:em:main
+    - run: npm run test:unit:em:renderer
+    - run: npm run test:e2e
+    - run: npm run test:package
