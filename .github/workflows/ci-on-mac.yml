@@ -20,7 +20,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Run tests on ${{ matrix.os }} with Node.js ${{ matrix.node-version }}
+    - name: Use Node.js ${{ matrix.os }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
