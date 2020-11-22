@@ -1,0 +1,39 @@
+name: CI on Ubuntu
+
+on:
+  push:
+    branches:
+      - '**'    # matches every branch
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node-version: [12.x]
+
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # for electron-builder
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: gabrielbb/xvfb-action       # for npm run test:unit:ng
+      uses: GabrielBB/xvfb-action@v1.4
+    - run: npm ci
+    - run: npm run lint:ng
+    - run: npm run lint:es
+    - run: npm run test:unit:ng
+    - run: npm run test:unit:em:main
+    - run: npm run test:unit:em:renderer
+    - run: npm run test:e2e
+    - run: npm run test:package
