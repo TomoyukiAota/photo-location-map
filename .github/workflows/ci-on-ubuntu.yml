@@ -30,11 +30,28 @@ jobs:
     - run: npm ci
     - run: npm run lint:ng
     - run: npm run lint:es
+
     - name: Run "npm run test:unit:ng" with Xvfb
       uses: GabrielBB/xvfb-action@v1.4
       with:
         run: npm run test:unit:ng
-    - run: npm run test:unit:em:main
-    - run: npm run test:unit:em:renderer
-    - run: npm run test:e2e
-    - run: npm run test:package
+
+    - name: Run "test:unit:em:main" with Xvfb
+      uses: GabrielBB/xvfb-action@v1.4
+      with:
+        run: test:unit:em:main
+
+    - name: Run "test:unit:em:renderer" with Xvfb
+      uses: GabrielBB/xvfb-action@v1.4
+      with:
+        run: test:unit:em:renderer
+
+    - name: Run "npm run test:e2e" with Xvfb
+      uses: GabrielBB/xvfb-action@v1.4
+      with:
+        run: npm run test:e2e
+
+    - name: Run "npm run test:package" with Xvfb
+      uses: GabrielBB/xvfb-action@v1.4
+      with:
+        run: npm run test:package
