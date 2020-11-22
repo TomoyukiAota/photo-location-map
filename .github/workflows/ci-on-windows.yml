@@ -36,11 +36,14 @@ jobs:
     - run: npm run test:e2e
     - run: npm run test:package
 
-    - name: Publish to GitHub release     # To publish, GH_TOKEN environment variable needs to be set.
-      run: |
-        echo "Making sure files unregistered to git are deleted by running "git clean -fdx" twice..."
-        git clean -fdx
-        git clean -fdx
-        echo "Install npm modules. Then, create and publish Windows package."
-        npm ci
-        npm run publish:windows
+    - name: '[Publish to GitHub Releases] Clean-up by "git clean -fdx" (1st time)'
+      run: git clean -fdx
+
+    - name: '[Publish to GitHub Releases] Clean-up by "git clean -fdx" (2nd time to be sure)'
+      run: git clean -fdx
+
+    - name: '[Publish to GitHub Releases] npm ci'
+      run: npm ci
+
+    - name: '[Publish to GitHub Releases] Create and publish Windows package'
+      run: npm run publish:windows      # To publish, GH_TOKEN environment variable needs to be set.
