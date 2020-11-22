@@ -28,11 +28,26 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - run: npm ci
-    - run: npm run lint:ng
-    - run: npm run lint:es
-    - run: npm run test:unit:ng
-    - run: npm run test:unit:em:main
-    - run: npm run test:unit:em:renderer
-    - run: npm run test:e2e
-    - run: npm run test:package
+    - name: npm ci
+      run: npm ci
+
+    - name: npm run lint:ng
+      run: npm run lint:ng
+
+    - name: npm run lint:es
+      run: npm run lint:es
+
+    - name: npm run test:unit:ng
+      run: npm run test:unit:ng
+
+    - name: npm run test:unit:em:main
+      run: npm run test:unit:em:main
+
+    - name: npm run test:unit:em:renderer
+      run: npm run test:unit:em:renderer
+
+    - name: npm run test:e2e
+      run: npm run test:e2e
+
+    - name: npm run test:package
+      run: npm run test:package
