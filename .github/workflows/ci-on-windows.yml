@@ -61,4 +61,9 @@ jobs:
       run: npm ci
 
     - name: '[Publish to GitHub Releases] Create and publish Windows package'
-      run: npm run publish:windows      # To publish, GH_TOKEN environment variable needs to be set.
+      uses: nick-invision/retry@v2.2.0
+        with:
+          timeout_minutes: 60
+          max_attempts: 10
+          retry_on: error
+          command: npm run publish:windows      # To publish, GH_TOKEN environment variable needs to be set.
