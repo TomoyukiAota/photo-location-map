@@ -28,7 +28,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
-    - run: npm run electron:windows
     - run: npm run lint:ng
     - run: npm run lint:es
     - run: npm run test:unit:ng
