@@ -13,19 +13,19 @@ class PackageTestInfo {
   addMiscPlatformDependentProperties() {
     switch(global.process.platform) {
       case 'win32':
-        this.packageCreationCommand = 'npm run electron:windows';
+        this.packageCreationCommand = 'npm run package:windows';
         this.expectedPackageLocation = `${this.releaseDirectory}\\Photo Location Map Setup ${version}.exe`;
         this.executablePrelaunchCommand = `"${this.releaseDirectory}\\Photo Location Map Setup ${version}.exe" /S`;
         this.executableLaunchCommand = `"${process.env.APPDATA}\\..\\Local\\Programs\\Photo Location Map\\Photo Location Map.exe"`;
         break;
       case 'darwin':
-        this.packageCreationCommand = 'npm run electron:mac';
+        this.packageCreationCommand = 'npm run package:mac';
         this.expectedPackageLocation = `${this.releaseDirectory}/Photo Location Map-${version}.dmg`;
         this.executablePrelaunchCommand = `hdiutil attach "${this.releaseDirectory}/Photo Location Map-${version}.dmg"`;
         this.executableLaunchCommand = `open -W "/Volumes/Photo Location Map ${version}/Photo Location Map.app"`;
         break;
       case 'linux':
-        this.packageCreationCommand = 'npm run electron:linux';
+        this.packageCreationCommand = 'npm run package:linux';
         this.expectedPackageLocation = `${this.releaseDirectory}/Photo Location Map-${version}.AppImage`;
         this.executableLaunchCommand = `"${this.releaseDirectory}/Photo Location Map-${version}.AppImage"`;
         break;

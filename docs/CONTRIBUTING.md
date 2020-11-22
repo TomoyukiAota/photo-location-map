@@ -39,9 +39,9 @@ npm start
 |--|--|
 |`npm start`| Build and run the application for development. |
 |`npm run test:all`| Run all tests. Linting, unit tests, e2e tests, and package creation/smoke tests are included. |
-|`npm run electron:windows`| Create an installer for Windows. |
-|`npm run electron:mac`| Create a `.dmg` file which contains a `.app` file for macOS. |
-|`npm run electron:linux`| Create an application for Linux. |
+|`npm run package:windows`| Create an installer for Windows. |
+|`npm run package:mac`| Create a `.dmg` file which contains a `.app` file for macOS. |
+|`npm run package:linux`| Create an application for Linux. |
 
 
 ## Using npm modules

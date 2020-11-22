@@ -1,0 +1,52 @@
+name: CI on macOS
+
+on:
+  push:
+    branches:
+      - '**'    # matches every branch
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macOS-latest]
+
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # for electron-builder
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Use Node.js 12
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+
+    - name: npm ci
+      run: npm ci
+
+    - name: npm run lint:ng
+      run: npm run lint:ng
+
+    - name: npm run lint:es
+      run: npm run lint:es
+
+    - name: npm run test:unit:ng
+      run: npm run test:unit:ng
+
+    - name: npm run test:unit:em:main
+      run: npm run test:unit:em:main
+
+    - name: npm run test:unit:em:renderer
+      run: npm run test:unit:em:renderer
+
+    - name: npm run test:e2e
+      run: npm run test:e2e
+
+    - name: npm run test:package
+      run: npm run test:package
