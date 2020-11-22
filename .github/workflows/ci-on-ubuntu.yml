@@ -36,12 +36,12 @@ jobs:
       with:
         run: npm run test:unit:ng
 
-    - name: Run "test:unit:em:main" with Xvfb
+    - name: Run "npm run test:unit:em:main" with Xvfb
       uses: GabrielBB/xvfb-action@v1.4
       with:
         run: npm run test:unit:em:main
 
-    - name: Run "test:unit:em:renderer" with Xvfb
+    - name: Run "npm run test:unit:em:renderer" with Xvfb
       uses: GabrielBB/xvfb-action@v1.4
       with:
         run: npm run test:unit:em:renderer
