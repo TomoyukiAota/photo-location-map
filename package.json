@@ -44,6 +44,7 @@
     "test:unit:em:renderer": "cross-env TS_NODE_TRANSPILE_ONLY=1 electron-mocha --opts ./test/electron-mocha-renderer.opts",
     "test:unit:em:renderer:not-working": "cross-env TS_NODE_TRANSPILE_ONLY=1 electron-mocha --renderer --config ./test/electron-mocha-renderer.mocharc.js",
     "test:unit:em:all": "npm-run-all test:unit:em:main test:unit:em:renderer",
+    "test:unit:em:help": "electron-mocha --help",
     "test:unit:all": "npm-run-all test:unit:ng test:unit:em:all",
     "test:e2e": "npm run build:prod && mocha --config ./e2e/e2e.mocharc.js",
     "test:package": "cross-env PLM_PACKAGE_TEST=true node ./script/package-test/run-package-test.js",
