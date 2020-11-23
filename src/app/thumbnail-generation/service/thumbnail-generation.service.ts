@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ipcRenderer } from 'electron';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { convertToFlattenedDirTree } from '../../../../src-shared/dir-tree/dir-tree-util';
 import { FilenameExtension } from '../../../../src-shared/filename-extension/filename-extension';
 import { IpcConstants } from '../../../../src-shared/ipc/ipc-constants';
@@ -14,6 +14,12 @@ export class ThumbnailGenerationService {
   public generationStarted = new Subject<{numOfAllHeifFiles: number, numOfCacheAvailableThumbnails: number, numOfGenerationRequiredThumbnails: number}>();
   public generationProgress = new Subject<{numOfGeneratedThumbnails: number, progressPercent: number}>();
   public generationDone = new Subject<void>();
+  public isGenerating = new BehaviorSubject<boolean>(false);
+
+  constructor() {
+    this.generationStarted.subscribe(() => this.isGenerating.next(true));
+    this.generationDone.subscribe(() => this.isGenerating.next(false));
+  }
 
   private allHeifFilePaths: string[];
   private get numOfAllHeifFiles(): number { return this.allHeifFilePaths.length; }

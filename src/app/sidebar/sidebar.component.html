@@ -1,6 +1,11 @@
 <div class="sidebar">
-  <div id="select-folder-button" (click)="showSelectFolderDialog()">
-    <button mat-stroked-button>{{ 'SIDEBAR.SELECT_FOLDER' | translate }}</button>
+  <div id="select-folder-button">
+    <button mat-stroked-button
+            [disabled]="thumbnailGenerationService.isGenerating | async"
+            [title]="(thumbnailGenerationService.isGenerating | async) ? 'Cannot select a folder when generating thumbnails.' : ''"
+            (click)="showSelectFolderDialog()">
+      {{ 'SIDEBAR.SELECT_FOLDER' | translate }}
+    </button>
   </div>
   <div class="path-or-message">{{ parentFolderPath || messageWhenFolderIsNotSelected }}</div>
   <div class="directory-tree-view-area">
