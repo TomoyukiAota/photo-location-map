@@ -32,7 +32,7 @@ export class ThumbnailGenerationStatusBarComponent implements OnInit {
       this.detailsVisible = false;
     });
 
-    this.thumbnailGenerationService.generationInProgress.subscribe(status => {
+    this.thumbnailGenerationService.generationProgress.subscribe(status => {
       this.numberOfGeneratedThumbnails = status.numOfGeneratedThumbnails;
       this.progressPercent = status.progressPercent;
       this.changeDetectorRef.detectChanges();
