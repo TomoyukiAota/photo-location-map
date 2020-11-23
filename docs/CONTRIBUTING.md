@@ -5,15 +5,18 @@ This page contains useful information to contribute to this project.
 
 ## CI Status
 
-| OS             | Status                             |
-|:--------------:|:----------------------------------:|
-| Windows        | [![appveyor-image]][appveyor-link] |
-| macOS & Ubuntu | [![travisci-image]][travisci-link] |
+| OS      | Status                                       |
+|:-------:|:--------------------------------------------:|
+| Windows | [![ci-on-windows-image]][ci-on-windows-link] |
+| macOS   | [![ci-on-macos-image]][ci-on-macos-link]     |
+| Ubuntu  | [![ci-on-ubuntu-image]][ci-on-ubuntu-link]   |
 
-[appveyor-image]: https://ci.appveyor.com/api/projects/status/5v9p3ccw0jj0pgwn/branch/master?svg=true
-[appveyor-link]: https://ci.appveyor.com/project/TomoyukiAota/photo-location-map/branch/master
-[travisci-image]: https://travis-ci.org/TomoyukiAota/photo-location-map.svg?branch=master
-[travisci-link]: https://travis-ci.org/TomoyukiAota/photo-location-map
+[ci-on-windows-image]: https://github.com/TomoyukiAota/photo-location-map/workflows/CI%20on%20Windows/badge.svg
+[ci-on-windows-link]: https://github.com/TomoyukiAota/photo-location-map/actions?query=workflow%3A%22CI+on+Windows%22
+[ci-on-macos-image]: https://github.com/TomoyukiAota/photo-location-map/workflows/CI%20on%20macOS/badge.svg
+[ci-on-macos-link]: https://github.com/TomoyukiAota/photo-location-map/actions?query=workflow%3A%22CI+on+macOS%22
+[ci-on-ubuntu-image]: https://github.com/TomoyukiAota/photo-location-map/workflows/CI%20on%20Ubuntu/badge.svg
+[ci-on-ubuntu-link]: https://github.com/TomoyukiAota/photo-location-map/actions?query=workflow%3A%22CI+on+Ubuntu%22
 
 
 ## Prerequisite
