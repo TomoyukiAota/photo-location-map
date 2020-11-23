@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ipcRenderer } from 'electron';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { convertToFlattenedDirTree } from '../../../../src-shared/dir-tree/dir-tree-util';
 import { FilenameExtension } from '../../../../src-shared/filename-extension/filename-extension';
 import { IpcConstants } from '../../../../src-shared/ipc/ipc-constants';
@@ -12,8 +12,14 @@ import { isThumbnailCacheAvailable } from '../../../../src-shared/thumbnail-cach
 })
 export class ThumbnailGenerationService {
   public generationStarted = new Subject<{numOfAllHeifFiles: number, numOfCacheAvailableThumbnails: number, numOfGenerationRequiredThumbnails: number}>();
-  public generationInProgress = new Subject<{numOfGeneratedThumbnails: number, progressPercent: number}>();
+  public generationProgress = new Subject<{numOfGeneratedThumbnails: number, progressPercent: number}>();
   public generationDone = new Subject<void>();
+  public isGenerating = new BehaviorSubject<boolean>(false);
+
+  constructor() {
+    this.generationStarted.subscribe(() => this.isGenerating.next(true));
+    this.generationDone.subscribe(() => this.isGenerating.next(false));
+  }
 
   private allHeifFilePaths: string[];
   private get numOfAllHeifFiles(): number { return this.allHeifFilePaths.length; }
@@ -84,7 +90,7 @@ export class ThumbnailGenerationService {
       const progressPercent = (numberOfGeneratedThumbnails / this.numOfGenerationRequiredThumbnails) * 100;
       Logger.info(`Thumbnail generation progress: ${progressPercent} %, Generated/Generation-required: `
         + `${numberOfGeneratedThumbnails}/${this.numOfGenerationRequiredThumbnails}`);
-      this.generationInProgress.next({numOfGeneratedThumbnails: numberOfGeneratedThumbnails, progressPercent});
+      this.generationProgress.next({numOfGeneratedThumbnails: numberOfGeneratedThumbnails, progressPercent});
 
       if (numberOfGeneratedThumbnails === this.numOfGenerationRequiredThumbnails) {
         this.generationDone.next();

@@ -45,6 +45,6 @@ describe('SidebarComponent', () => {
 
   it('should render "Select Folder" button', waitForAsync(() => {
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('#select-folder-button>button').textContent).toEqual('SIDEBAR.SELECT_FOLDER');
+    expect(compiled.querySelector('#select-folder-button>button').textContent).toContain('SIDEBAR.SELECT_FOLDER');
   }));
 });
