@@ -1,3 +1,4 @@
+ --timeout 60s
  --require espower-typescript/guess ./test/electron-mocha-renderer-setup.js
  --renderer
  test/**/*.spec.em.@(renderer|both).ts
