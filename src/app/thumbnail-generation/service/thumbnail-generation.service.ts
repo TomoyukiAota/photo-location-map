@@ -12,7 +12,7 @@ import { isThumbnailCacheAvailable } from '../../../../src-shared/thumbnail-cach
 })
 export class ThumbnailGenerationService {
   public generationStarted = new Subject<{numOfAllHeifFiles: number, numOfCacheAvailableThumbnails: number, numOfGenerationRequiredThumbnails: number}>();
-  public generationInProgress = new Subject<{numOfGeneratedThumbnails: number, progressPercent: number}>();
+  public generationProgress = new Subject<{numOfGeneratedThumbnails: number, progressPercent: number}>();
   public generationDone = new Subject<void>();
 
   private allHeifFilePaths: string[];
@@ -84,7 +84,7 @@ export class ThumbnailGenerationService {
       const progressPercent = (numberOfGeneratedThumbnails / this.numOfGenerationRequiredThumbnails) * 100;
       Logger.info(`Thumbnail generation progress: ${progressPercent} %, Generated/Generation-required: `
         + `${numberOfGeneratedThumbnails}/${this.numOfGenerationRequiredThumbnails}`);
-      this.generationInProgress.next({numOfGeneratedThumbnails: numberOfGeneratedThumbnails, progressPercent});
+      this.generationProgress.next({numOfGeneratedThumbnails: numberOfGeneratedThumbnails, progressPercent});
 
       if (numberOfGeneratedThumbnails === this.numOfGenerationRequiredThumbnails) {
         this.generationDone.next();
