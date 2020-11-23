@@ -1,10 +1,12 @@
 pull_request_rules:
   - name: automatic merge on CI success
     conditions:
-      - status-success=Travis CI - Branch
-      - status-success=Travis CI - Pull Request
-      - status-success=continuous-integration/appveyor/pr
-      - status-success=continuous-integration/appveyor/branch
+      - status-success=CI on Ubuntu / test (ubuntu-latest) (pull_request)
+      - status-success=CI on Ubuntu / test (ubuntu-latest) (push)
+      - status-success=CI on Windows / test (windows-latest) (pull_request)
+      - status-success=CI on Windows / test (windows-latest) (push)
+      - status-success=CI on macOS / test (macOS-latest) (pull_request)
+      - status-success=CI on macOS / test (macOS-latest) (push)
       - label=auto-merge
       - author=TomoyukiAota
     actions:
