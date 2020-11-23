@@ -45,6 +45,7 @@ module.exports = function (config) {
       '**/*.js': ['electron']
     },
     singleRun: true,
-    captureTimeout: 180000,    // Increased from 60000 ms (default) to 180000 ms for CI using GitHub Actions.
+    captureTimeout: 180000,             // Increased from 60000 ms (default) to 180000 ms for CI using GitHub Actions.
+    browserNoActivityTimeout: 120000,   // Increased from 30000 ms (default) to 120000 ms for CI using GitHub Actions.
   });
 };
