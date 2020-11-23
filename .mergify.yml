@@ -7,7 +7,7 @@ pull_request_rules:
       - status-success=CI on Windows / test (windows-latest) (push)
       - status-success=CI on macOS / test (macOS-latest) (pull_request)
       - status-success=CI on macOS / test (macOS-latest) (push)
-      - label=auto-merge
+      - label=automerge
       - author=TomoyukiAota
     actions:
       merge:
