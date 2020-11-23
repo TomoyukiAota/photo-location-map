@@ -1,12 +1,9 @@
 pull_request_rules:
   - name: automatic merge on CI success
     conditions:
-      - status-success=CI on Ubuntu / test (ubuntu-latest) (pull_request)
-      - status-success=CI on Ubuntu / test (ubuntu-latest) (push)
-      - status-success=CI on Windows / test (windows-latest) (pull_request)
-      - status-success=CI on Windows / test (windows-latest) (push)
-      - status-success=CI on macOS / test (macOS-latest) (pull_request)
-      - status-success=CI on macOS / test (macOS-latest) (push)
+      - status-success=test (ubuntu-latest)
+      - status-success=test (windows-latest)
+      - status-success=test (macOS-latest)
       - label=automerge
       - author=TomoyukiAota
     actions:
