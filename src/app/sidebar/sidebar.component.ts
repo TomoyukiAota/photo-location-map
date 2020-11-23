@@ -31,7 +31,7 @@ export class SidebarComponent {
               private folderSelectionService: FolderSelectionService,
               private photoDataService: PhotoDataService,
               private directoryTreeViewDataService: DirectoryTreeViewDataService,
-              private thumbnailGenerationService: ThumbnailGenerationService) {
+              public thumbnailGenerationService: ThumbnailGenerationService) {
   }
 
   public showSelectFolderDialog() {
