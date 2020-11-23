@@ -2,7 +2,6 @@ import './configure-electron-unhandled';
 import { app, BrowserWindow, protocol } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import * as windowStateKeeper from 'electron-window-state';
 import { setUserAgentForAnalytics } from '../src-shared/analytics/analytics';
 import { Logger } from '../src-shared/log/logger';
 import { LogFileConfig } from '../src-shared/log/log-file-config';
@@ -10,6 +9,7 @@ import './auto-update/configure-auto-update';
 import './menu/menu';
 import './thumbnail-generation/thumbnail-generation';
 import { recordAtAppLaunch } from './record-at-app-launch';
+import { createMainWindowState } from './window-config';
 
 
 Logger.info(`Log File Location: ${LogFileConfig.filePath}`);
@@ -19,13 +19,8 @@ const args = process.argv.slice(1);
 const isLiveReloadMode = args.some(val => val === '--serve');
 
 const createWindow = () => {
-  // Load the previous state with fallback to defaults
-  const mainWindowState = windowStateKeeper({
-    defaultWidth: 1000,
-    defaultHeight: 800
-  });
+  const mainWindowState = createMainWindowState();
 
-  // Create the main window using the state information.
   mainWindow = new BrowserWindow({
     x: mainWindowState.x,
     y: mainWindowState.y,

@@ -1,16 +1,13 @@
 import * as os from 'os';
-import { app } from 'electron';
-import * as moment from 'moment-timezone';
+import { app, screen } from 'electron';
 import { Analytics } from '../src-shared/analytics/analytics';
 import { DateTimeFormat } from '../src-shared/date-time/date-time-format';
 import { Now } from '../src-shared/date-time/now';
 import { DevOrProd } from '../src-shared/dev-or-prod/dev-or-prod';
 import { Logger } from '../src-shared/log/logger';
-import { UserDataStorage } from '../src-shared/user-data-storage/user-data-storage';
-import { UserDataStoragePath } from '../src-shared/user-data-storage/user-data-stroage-path';
 import { currentUserSettings } from '../src-shared/user-settings/user-settings';
-
-const isNaturalNumber = require('is-natural-number');
+import { LaunchInfo } from './launch-info';
+import { recordWindowState } from './window-config';
 
 const now = Now.extendedFormat;
 
@@ -20,44 +17,53 @@ const recordAppLaunch = () => {
 };
 
 const recordLastLaunchDateTime = () => {
-  const lastLaunchDateTime = UserDataStorage.readOrDefault(
-    UserDataStoragePath.History.LastLaunchDateTime,
-    '"This is the first launch."');
-
+  const lastLaunchDateTime = LaunchInfo.lastLaunchDateTime;
   Analytics.trackEvent('Launch Info', `Launch Info: Last Launch Date`, `Last Launch Date: ${lastLaunchDateTime}`);
   Logger.info(`Last Launch Date: ${lastLaunchDateTime}`);
-  UserDataStorage.write(UserDataStoragePath.History.LastLaunchDateTime, now);
 };
 
-const recordFirstLaunchDateTimeAndPeriodOfUse = () => {
-  let firstLaunchDateTime: string;
-
-  try {
-    firstLaunchDateTime = UserDataStorage.read(UserDataStoragePath.History.FirstLaunchDateTime);
-  } catch {
-    firstLaunchDateTime = now;
-    UserDataStorage.write(UserDataStoragePath.History.FirstLaunchDateTime, firstLaunchDateTime);
-  }
-
+const recordFirstLaunchDateTime = () => {
+  const firstLaunchDateTime = LaunchInfo.firstLaunchDateTime;
   Analytics.trackEvent('Launch Info', `Launch Info: First Launch Date`, `First Launch Date: ${firstLaunchDateTime}`);
   Logger.info(`First Launch Date: ${firstLaunchDateTime}`);
+};
 
-  const duration = moment.duration(moment(now).diff(moment(firstLaunchDateTime)));
-  const durationStr = duration.toISOString();
-  Analytics.trackEvent('Launch Info', `Launch Info: Period of Use`, `Period of Use: ${durationStr}`);
-  Logger.info(`Period of Use: ${durationStr}`);
+const recordPeriodOfUse = () => {
+  const periodOfUse = LaunchInfo.periodOfUse;
+  Analytics.trackEvent('Launch Info', `Launch Info: Period of Use`, `Period of Use: ${periodOfUse}`);
+  Logger.info(`Period of Use: ${periodOfUse}`);
 };
 
 const recordLaunchCount = () => {
-  const prevLaunchCountStr = UserDataStorage.readOrDefault(
-    UserDataStoragePath.History.LaunchCount,
-    '0');
-  const maybePrevLaunchCount = Number(prevLaunchCountStr);
-  const prevLaunchCount = isNaturalNumber(maybePrevLaunchCount, {includeZero: true}) ? maybePrevLaunchCount : 0;
-  const launchCount = prevLaunchCount + 1;
+  const launchCount = LaunchInfo.launchCount;
   Analytics.trackEvent('Launch Info', `Launch Info: Launch Count`, `Launch Count: ${launchCount}`);
   Logger.info(`Launch Count: ${launchCount}`);
-  UserDataStorage.write(UserDataStoragePath.History.LaunchCount, launchCount.toString());
+};
+
+const recordAppVer = () => {
+  Analytics.trackEvent('App Ver', `App Ver: ${app.getVersion()}`);
+  Logger.info(`Application Version: ${app.getVersion()}`);
+};
+
+const recordDevOrProd = () => {
+  Analytics.trackEvent('DevOrProd', `DevOrProd: ${DevOrProd.toString()}`);
+  Logger.info(`DevOrProd: ${DevOrProd.toString()}`);
+};
+
+const recordOs = () => {
+  Analytics.trackEvent('OS Info', `OS: ${os.platform()}`, `OS Ver: ${os.release()}`);
+  Logger.info(`OS: ${os.platform()}; OS Ver: ${os.release()}`);
+};
+
+const recordDisplays = () => {
+  const allDisplays = screen.getAllDisplays();
+  Analytics.trackEvent('Number of displays', `${allDisplays.length}`);
+  Logger.info(`[Display] Number of displays: ${allDisplays.length}`);
+  allDisplays.forEach((display, index) => {
+    Analytics.trackEvent('Displays', `All Displays`, `Width: ${display.size.width}, Height: ${display.size.height}`);
+    Analytics.trackEvent('Displays', `Display ${index + 1}`, `Width: ${display.size.width}, Height: ${display.size.height}`);
+    Logger.info(`[Display] Display ${index + 1}, Width: ${display.size.width}, Height: ${display.size.height}`);
+  });
 };
 
 const recordLoadedUserSettings = () => {
@@ -71,16 +77,17 @@ const recordLoadedUserSettings = () => {
 export const recordAtAppLaunch = () => {
   recordAppLaunch();
   recordLastLaunchDateTime();
-  recordFirstLaunchDateTimeAndPeriodOfUse();
+  recordFirstLaunchDateTime();
+  recordPeriodOfUse();
   recordLaunchCount();
 
-  Analytics.trackEvent('App Ver', `App Ver: ${app.getVersion()}`);
-  Logger.info(`Application Version: ${app.getVersion()}`);
+  recordAppVer();
+  recordDevOrProd();
 
-  Analytics.trackEvent('DevOrProd', `DevOrProd: ${DevOrProd.toString()}`);
+  recordOs();
 
-  Analytics.trackEvent('OS Info', `OS: ${os.platform()}`, `OS Ver: ${os.release()}`);
-  Logger.info(`OS: ${os.platform()}; OS Ver: ${os.release()}`);
+  recordDisplays();
+  recordWindowState();
 
   recordLoadedUserSettings();
 };
