@@ -8,7 +8,8 @@ export default function setup() {
       path: electronPath,
       // The following line tells Spectron to use package.json located 1 level above.
       args: [path.join(__dirname, '..')],
-      webdriverOptions: {}
+      webdriverOptions: {},
+      startTimeout: 50000,
     });
     await this.app.start();
     const browser = this.app.client;
