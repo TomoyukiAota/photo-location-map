@@ -57,6 +57,7 @@ export class ThumbnailElement {
 
   private static displayThumbnailAfterWaitingForGeneration(thumbnailElement: HTMLImageElement, photo: Photo) {
     const cssClassAppliedToGeneratingThumbnailImage = 'photo-info-viewer-generating-thumbnail';
+    const cssClassToFadeInAfterThumbnailGeneration = 'photo-info-viewer-fade-in-after-thumbnail-generation';
 
     if (isThumbnailCacheAvailable(photo.path)) {
       this.displayGeneratedThumbnail(photo, thumbnailElement);
@@ -69,6 +70,11 @@ export class ThumbnailElement {
     const intervalId = setInterval(() => {
       if (isThumbnailCacheAvailable(photo.path)) {
         thumbnailElement.classList.remove(cssClassAppliedToGeneratingThumbnailImage);
+
+        // Apply and remove the CSS class in order for thumbnail to fade in just once after its generation is done.
+        thumbnailElement.classList.add(cssClassToFadeInAfterThumbnailGeneration);
+        setTimeout(() => thumbnailElement.classList.remove(cssClassToFadeInAfterThumbnailGeneration), 2500); // 2000 ms for animation definition plus 500 ms for processing lag.
+
         this.displayGeneratedThumbnail(photo, thumbnailElement);
         clearInterval(intervalId);
       }
