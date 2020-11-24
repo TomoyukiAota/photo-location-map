@@ -1,11 +1,20 @@
+.photo-info-viewer-generating-thumbnail {
+  animation: flickerAnimation 3s infinite;
+}
+
 @keyframes flickerAnimation {
   0%   { opacity: 0.2; }
   50%  { opacity: 1; }
   100% { opacity: 0.2; }
 }
 
-.photo-info-viewer-generating-thumbnail {
-  animation: flickerAnimation 3s infinite;
+.photo-info-viewer-fade-in-after-thumbnail-generation {
+  animation: fadeIn 2s ease 0s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 .photo-info-viewer-button {
