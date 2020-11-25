@@ -60,7 +60,6 @@
     "exifr": "6.0.0",
     "fs-extra": "9.0.1",
     "heic-convert": "1.2.3",
-    "is-alphabetical": "^1.0.4",
     "is-natural-number": "4.0.1",
     "moment-timezone": "0.5.31",
     "nodejs-fs-utils": "1.2.5",
