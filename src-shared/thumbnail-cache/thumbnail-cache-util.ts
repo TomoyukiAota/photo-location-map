@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as isAlphabetical from 'is-alphabetical';
 import * as os from 'os';
 import * as pathModule from 'path';
 import { Logger } from '../log/logger';
@@ -7,11 +8,18 @@ export const plmThumbnailCacheDir = pathModule.join(os.homedir(), '.PlmCache');
 
 export function getThumbnailFilePath(originalFilePath: string) {
   const thumbnailFileName = `${pathModule.basename(originalFilePath)}.plm`;
-  const intermediateDir = pathModule.parse(
+  let intermediateDir = pathModule.parse(
     // Convert "C:\\abc\\def.jpg" to "C\\abc\\def.jpg"
     originalFilePath.replace(':', '')
     // Convert "C\\abc\\def.jpg" to "C\\abc\\def"
   ).dir;
+
+  if (intermediateDir.endsWith('\\')) {
+    // For a folder in a network on Windows, path.parse().dir returns \\\\Hostname\\Folder\\,
+    // so remove the last '\\' character in that case.
+    intermediateDir = intermediateDir.slice(0, -1);
+  }
+
   const thumbnailFileDir = pathModule.join(plmThumbnailCacheDir, intermediateDir);
   const thumbnailFilePath = pathModule.join(thumbnailFileDir, `${thumbnailFileName}.jpg`);
   return { thumbnailFileDir, thumbnailFilePath };
@@ -28,9 +36,10 @@ export function getOriginalFilePath(thumbnailFilePath: string): string {
   // Converting thumbnailFilePath to pathAfterStep2
   // -----------------------------------------------------
   // On Windows, assuming that plmThumbnailCacheDir is "C:\Users\Tomoyuki\.PlmCache",
-  // thumbnailFilePath | "C:\Users\Tomoyuki\.PlmCache\C\Users\Tomoyuki\Desktop\IMG_100.HEIC.plm.jpg"
-  // After step 1      | "\C\Users\Tomoyuki\Desktop\IMG_100.HEIC.plm.jpg"
-  // After step 2      | "\C\Users\Tomoyuki\Desktop\IMG_100.HEIC"
+  //                   | Files in a Drive                                                            or Files in a Network
+  // thumbnailFilePath | "C:\Users\Tomoyuki\.PlmCache\C\Users\Tomoyuki\Desktop\IMG_100.HEIC.plm.jpg" or "C:\Users\Tomoyuki\.PlmCache\Hostname\Folder\IMG_100.HEIC.plm.jpg"
+  // After step 1      | "\C\Users\Tomoyuki\Desktop\IMG_100.HEIC.plm.jpg"                            or "\Hostname\Folder\IMG_100.HEIC.plm.jpg"
+  // After step 2      | "\C\Users\Tomoyuki\Desktop\IMG_100.HEIC"                                    or "\Hostname\Folder\IMG_100.HEIC"
   // ------------------------------------------------------
   // On macOS, assuming that plmThumbnailCacheDir is "/Users/Tomoyuki/.PlmCache",
   // thumbnailFilePath | "/Users/Tomoyuki/.PlmCache/Users/Tomoyuki/Desktop/IMG_100.HEIC.plm.jpg"
@@ -42,9 +51,20 @@ export function getOriginalFilePath(thumbnailFilePath: string): string {
 
   let originalFilePath = pathAfterStep2;
   if (os.platform() === 'win32') {
-    const driveLetter = pathAfterStep2.split(pathModule.sep)[1];
-    const pathAfterDriverLetter = pathAfterStep2.replace(`${pathModule.sep}${driveLetter}`, '');
-    originalFilePath = `${driveLetter}:${pathAfterDriverLetter}`;
+    const driveLetterOrHostname = pathAfterStep2.split(pathModule.sep)[1];
+
+    // A single alphabet is assumed to be a drive letter.
+    // Hostname of a single alphabet is not considered, but they should be rare cases,
+    // and there is no way to know that a single alphabet comes from a drive letter or a hostname of a single alphabet...
+    const isDriveLetter = driveLetterOrHostname.length === 1 && isAlphabetical(driveLetterOrHostname);
+
+    if (isDriveLetter) {
+      const driveLetter = driveLetterOrHostname;
+      const pathAfterDriverLetter = pathAfterStep2.replace(`${pathModule.sep}${driveLetter}`, '');
+      originalFilePath = `${driveLetter}:${pathAfterDriverLetter}`;
+    } else {
+      originalFilePath = `\\${pathAfterStep2}`;
+    }
   }
 
   return originalFilePath;
