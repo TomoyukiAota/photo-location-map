@@ -3,7 +3,7 @@
   align-items: start;
   column-gap: 10px;
   grid: "summary progress-bar-with-details close-button" auto
-        /auto    minmax(auto, 750px)       min-content;
+        /auto    minmax(auto, 800px)       min-content;
 
   .summary                   { grid-area: summary;
                                justify-self: end;                    }
@@ -23,7 +23,7 @@
 }
 
 .progress-bar-with-details {
-  padding: 0 6px 0 15px;
+  padding: 0 0 0 15px;
   border-radius: 4px;
   cursor: pointer;
 
