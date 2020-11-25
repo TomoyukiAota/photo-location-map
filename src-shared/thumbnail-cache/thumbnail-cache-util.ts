@@ -1,26 +1,35 @@
 import * as fs from 'fs';
-import * as isAlphabetical from 'is-alphabetical';
 import * as os from 'os';
 import * as pathModule from 'path';
 import { Logger } from '../log/logger';
 
 export const plmThumbnailCacheDir = pathModule.join(os.homedir(), '.PlmCache');
 
-export function getThumbnailFilePath(originalFilePath: string) {
-  const thumbnailFileName = `${pathModule.basename(originalFilePath)}.plm`;
-  let intermediateDir = pathModule.parse(
-    // Convert "C:\\abc\\def.jpg" to "C\\abc\\def.jpg"
-    originalFilePath.replace(':', '')
-    // Convert "C\\abc\\def.jpg" to "C\\abc\\def"
-  ).dir;
+function getThumbnailIntermediateDirOnWindows(originalFilePath: string) {
+  let intermediateDir: string;
 
-  if (intermediateDir.endsWith('\\')) {
-    // For a folder in a network on Windows, path.parse().dir returns \\\\Hostname\\Folder\\,
-    // so remove the last '\\' character in that case.
-    intermediateDir = intermediateDir.slice(0, -1);
+  if (originalFilePath.includes(':')) {                              // in a drive (e.g. C drive, like C:\folder\file.heic)
+    const originalFilePathWithoutColon = originalFilePath.replace(':', '');               // Convert to C\folder\file.heic
+    intermediateDir = `D_${pathModule.dirname(originalFilePathWithoutColon)}`;            // Convert to D_C\folder
+  } else {                                                                      // in a network (e.g. \\Hostname\folder\file.heic)
+    const originalFilePathWithoutLeadingSlashes = originalFilePath.substring(2);          // Convert to Hostname\folder\file.heic
+    intermediateDir = `H_${pathModule.dirname(originalFilePathWithoutLeadingSlashes)}`;   // Convert to H_Hostname\folder
+  }
+
+  return intermediateDir;
+}
+
+export function getThumbnailFilePath(originalFilePath: string) {
+  let intermediateDir: string;
+
+  if (os.platform() === 'darwin' || os.platform() === 'linux') {
+    intermediateDir = pathModule.dirname(originalFilePath);
+  } else {    // on Windows
+    intermediateDir = getThumbnailIntermediateDirOnWindows(originalFilePath);
   }
 
   const thumbnailFileDir = pathModule.join(plmThumbnailCacheDir, intermediateDir);
+  const thumbnailFileName = `${pathModule.basename(originalFilePath)}.plm`;
   const thumbnailFilePath = pathModule.join(thumbnailFileDir, `${thumbnailFileName}.jpg`);
   return { thumbnailFileDir, thumbnailFilePath };
 }
@@ -36,10 +45,10 @@ export function getOriginalFilePath(thumbnailFilePath: string): string {
   // Converting thumbnailFilePath to pathAfterStep2
   // -----------------------------------------------------
   // On Windows, assuming that plmThumbnailCacheDir is "C:\Users\Tomoyuki\.PlmCache",
-  //                   | Files in a Drive                                                            | Files in a Network
-  // thumbnailFilePath | "C:\Users\Tomoyuki\.PlmCache\C\Users\Tomoyuki\Desktop\IMG_100.HEIC.plm.jpg" | "C:\Users\Tomoyuki\.PlmCache\Hostname\Folder\IMG_100.HEIC.plm.jpg"
-  // After step 1      | "\C\Users\Tomoyuki\Desktop\IMG_100.HEIC.plm.jpg"                            | "\Hostname\Folder\IMG_100.HEIC.plm.jpg"
-  // After step 2      | "\C\Users\Tomoyuki\Desktop\IMG_100.HEIC"                                    | "\Hostname\Folder\IMG_100.HEIC"
+  //                   | Files in a Drive                                                              | Files in a Network
+  // thumbnailFilePath | "C:\Users\Tomoyuki\.PlmCache\D_C\Users\Tomoyuki\Desktop\IMG_100.HEIC.plm.jpg" | "C:\Users\Tomoyuki\.PlmCache\H_Hostname\Folder\IMG_100.HEIC.plm.jpg"
+  // After step 1      | "\D_C\Users\Tomoyuki\Desktop\IMG_100.HEIC.plm.jpg"                            | "\H_Hostname\Folder\IMG_100.HEIC.plm.jpg"
+  // After step 2      | "\D_C\Users\Tomoyuki\Desktop\IMG_100.HEIC"                                    | "\H_Hostname\Folder\IMG_100.HEIC"
   // ------------------------------------------------------
   // On macOS, assuming that plmThumbnailCacheDir is "/Users/Tomoyuki/.PlmCache",
   //                   | Files in Macintosh HD                                                       | Files in Volumes
@@ -53,18 +62,17 @@ export function getOriginalFilePath(thumbnailFilePath: string): string {
   let originalFilePath = pathAfterStep2;
   if (os.platform() === 'win32') {
     const driveLetterOrHostname = pathAfterStep2.split(pathModule.sep)[1];
-
-    // A single alphabet is assumed to be a drive letter.
-    // Hostname of a single alphabet is not considered, but they should be rare cases,
-    // and there is no way to know that a single alphabet comes from a drive letter or a hostname of a single alphabet...
-    const isDriveLetter = driveLetterOrHostname.length === 1 && isAlphabetical(driveLetterOrHostname);
+    const isDriveLetter = driveLetterOrHostname.startsWith('D_');
 
     if (isDriveLetter) {
-      const driveLetter = driveLetterOrHostname;
-      const pathAfterDriverLetter = pathAfterStep2.replace(`${pathModule.sep}${driveLetter}`, '');
+      const driveLetter = driveLetterOrHostname.substring(2);   // Convert "D_C" to "C"
+      if (driveLetter.length !== 1) {
+        Logger.error(`A drive letter must be a single character, but "${driveLetter}" is observed. Something went wrong.`);
+      }
+      const pathAfterDriverLetter = pathAfterStep2.replace(`\\D_${driveLetter}`, '');
       originalFilePath = `${driveLetter}:${pathAfterDriverLetter}`;
     } else {
-      originalFilePath = `\\${pathAfterStep2}`;
+      originalFilePath = pathAfterStep2.replace(`\\H_`, `\\\\`);    // Convert "\H_Hostname\Folder\File.heic" to "\\Hostname\Folder\File.heic"
     }
   }
 

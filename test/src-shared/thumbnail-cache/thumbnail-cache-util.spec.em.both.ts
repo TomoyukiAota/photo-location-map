@@ -22,13 +22,13 @@ describe('ThumbnailCacheUtil', () => {
       const testCases = [
         {
           originalFilePath: 'C:\\Users\\Tomoyuki\\Desktop\\IMG_100.HEIC',
-          expectedThumbnailFileDir: `${plmThumbnailCacheDir}\\C\\Users\\Tomoyuki\\Desktop`,
-          expectedThumbnailFilePath: `${plmThumbnailCacheDir}\\C\\Users\\Tomoyuki\\Desktop\\IMG_100.HEIC.plm.jpg`
+          expectedThumbnailFileDir: `${plmThumbnailCacheDir}\\D_C\\Users\\Tomoyuki\\Desktop`,
+          expectedThumbnailFilePath: `${plmThumbnailCacheDir}\\D_C\\Users\\Tomoyuki\\Desktop\\IMG_100.HEIC.plm.jpg`
         },
         {
           originalFilePath: '\\\\Hostname\\Folder\\IMG_100.HEIC',
-          expectedThumbnailFileDir: `${plmThumbnailCacheDir}\\Hostname\\Folder`,
-          expectedThumbnailFilePath: `${plmThumbnailCacheDir}\\Hostname\\Folder\\IMG_100.HEIC.plm.jpg`
+          expectedThumbnailFileDir: `${plmThumbnailCacheDir}\\H_Hostname\\Folder`,
+          expectedThumbnailFilePath: `${plmThumbnailCacheDir}\\H_Hostname\\Folder\\IMG_100.HEIC.plm.jpg`
         },
       ];
 
@@ -71,11 +71,11 @@ describe('ThumbnailCacheUtil', () => {
       const testCases = [
         {
           originalFilePath: 'C:\\Users\\Tomoyuki\\Desktop\\IMG_100.HEIC',
-          expectedThumbnailLogFilePath: `${plmThumbnailCacheDir}\\C\\Users\\Tomoyuki\\Desktop\\IMG_100.HEIC.log.json`
+          expectedThumbnailLogFilePath: `${plmThumbnailCacheDir}\\D_C\\Users\\Tomoyuki\\Desktop\\IMG_100.HEIC.log.json`
         },
         {
           originalFilePath: '\\\\Hostname\\Folder\\IMG_100.HEIC',
-          expectedThumbnailLogFilePath: `${plmThumbnailCacheDir}\\Hostname\\Folder\\IMG_100.HEIC.log.json`
+          expectedThumbnailLogFilePath: `${plmThumbnailCacheDir}\\H_Hostname\\Folder\\IMG_100.HEIC.log.json`
         },
       ];
 
@@ -111,11 +111,11 @@ describe('ThumbnailCacheUtil', () => {
     if (os.platform() === 'win32') {
       const testCases = [
         {
-          thumbnailFilePath: `${plmThumbnailCacheDir}\\C\\Users\\Tomoyuki\\Desktop\\IMG_100.HEIC.plm.jpg`,
+          thumbnailFilePath: `${plmThumbnailCacheDir}\\D_C\\Users\\Tomoyuki\\Desktop\\IMG_100.HEIC.plm.jpg`,
           expectedOriginalFilePath: 'C:\\Users\\Tomoyuki\\Desktop\\IMG_100.HEIC'
         },
         {
-          thumbnailFilePath: `${plmThumbnailCacheDir}\\Hostname\\Folder\\IMG_100.HEIC.plm.jpg`,
+          thumbnailFilePath: `${plmThumbnailCacheDir}\\H_Hostname\\Folder\\IMG_100.HEIC.plm.jpg`,
           expectedOriginalFilePath: '\\\\Hostname\\Folder\\IMG_100.HEIC'
         },
       ];
@@ -182,8 +182,8 @@ describe('ThumbnailCacheUtil', () => {
 
     if (os.platform() === 'win32') {
       const testCases = [
-        { expectedThumbnailFilePath: `${plmThumbnailCacheDir}\\C\\Users\\Tomoyuki\\Desktop\\IMG_100.HEIC.plm.jpg` },
-        { expectedThumbnailFilePath: `${plmThumbnailCacheDir}\\Hostname\\Folder\\IMG_100.HEIC.plm.jpg` },
+        { expectedThumbnailFilePath: `${plmThumbnailCacheDir}\\D_C\\Users\\Tomoyuki\\Desktop\\IMG_100.HEIC.plm.jpg` },
+        { expectedThumbnailFilePath: `${plmThumbnailCacheDir}\\H_Hostname\\Folder\\IMG_100.HEIC.plm.jpg` },
       ];
 
       it('on Windows', () => {
