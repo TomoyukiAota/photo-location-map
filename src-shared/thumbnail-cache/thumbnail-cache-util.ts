@@ -36,15 +36,16 @@ export function getOriginalFilePath(thumbnailFilePath: string): string {
   // Converting thumbnailFilePath to pathAfterStep2
   // -----------------------------------------------------
   // On Windows, assuming that plmThumbnailCacheDir is "C:\Users\Tomoyuki\.PlmCache",
-  //                   | Files in a Drive                                                            or Files in a Network
-  // thumbnailFilePath | "C:\Users\Tomoyuki\.PlmCache\C\Users\Tomoyuki\Desktop\IMG_100.HEIC.plm.jpg" or "C:\Users\Tomoyuki\.PlmCache\Hostname\Folder\IMG_100.HEIC.plm.jpg"
-  // After step 1      | "\C\Users\Tomoyuki\Desktop\IMG_100.HEIC.plm.jpg"                            or "\Hostname\Folder\IMG_100.HEIC.plm.jpg"
-  // After step 2      | "\C\Users\Tomoyuki\Desktop\IMG_100.HEIC"                                    or "\Hostname\Folder\IMG_100.HEIC"
+  //                   | Files in a Drive                                                            | Files in a Network
+  // thumbnailFilePath | "C:\Users\Tomoyuki\.PlmCache\C\Users\Tomoyuki\Desktop\IMG_100.HEIC.plm.jpg" | "C:\Users\Tomoyuki\.PlmCache\Hostname\Folder\IMG_100.HEIC.plm.jpg"
+  // After step 1      | "\C\Users\Tomoyuki\Desktop\IMG_100.HEIC.plm.jpg"                            | "\Hostname\Folder\IMG_100.HEIC.plm.jpg"
+  // After step 2      | "\C\Users\Tomoyuki\Desktop\IMG_100.HEIC"                                    | "\Hostname\Folder\IMG_100.HEIC"
   // ------------------------------------------------------
   // On macOS, assuming that plmThumbnailCacheDir is "/Users/Tomoyuki/.PlmCache",
-  // thumbnailFilePath | "/Users/Tomoyuki/.PlmCache/Users/Tomoyuki/Desktop/IMG_100.HEIC.plm.jpg"
-  // After step 1      | "/Users/Tomoyuki/Desktop/IMG_100.HEIC.plm.jpg"
-  // After step 2      | "/Users/Tomoyuki/Desktop/IMG_100.HEIC"
+  //                   | Files in Macintosh HD                                                       | Files in Volumes
+  // thumbnailFilePath | "/Users/Tomoyuki/.PlmCache/Users/Tomoyuki/Desktop/IMG_100.HEIC.plm.jpg"     | "/Users/Tomoyuki/.PlmCache/Volumes/VolumeName/Folder/IMG_100.HEIC.plm.jpg"
+  // After step 1      | "/Users/Tomoyuki/Desktop/IMG_100.HEIC.plm.jpg"                              | "/Volumes/VolumeName/Folder/IMG_100.HEIC.plm.jpg"
+  // After step 2      | "/Users/Tomoyuki/Desktop/IMG_100.HEIC"                                      | "/Volumes/VolumeName/Folder/IMG_100.HEIC"
   const pathAfterStep2 = thumbnailFilePath
     .replace(`${plmThumbnailCacheDir}`, '')    // See step 1 above
     .replace(/(.+)\.plm\.jpg$/, '$1');         // See step 2 above
