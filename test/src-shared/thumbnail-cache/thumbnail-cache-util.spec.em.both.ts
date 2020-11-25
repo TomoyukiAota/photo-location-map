@@ -41,10 +41,22 @@ describe('ThumbnailCacheUtil', () => {
 
     if (os.platform() === 'darwin' || os.platform() === 'linux') {
       it('on macOS or Linux', () => {
-        const originalFilePath = '/Users/Tomoyuki/Desktop/IMG_100.HEIC';
-        const expectedThumbnailFileDir = `${plmThumbnailCacheDir}/Users/Tomoyuki/Desktop`;
-        const expectedThumbnailFilePath = `${plmThumbnailCacheDir}/Users/Tomoyuki/Desktop/IMG_100.HEIC.plm.jpg`;
-        runTest(originalFilePath, expectedThumbnailFileDir, expectedThumbnailFilePath);
+        const testCases = [
+          {
+            originalFilePath: '/Users/Tomoyuki/Desktop/IMG_100.HEIC',
+            expectedThumbnailFileDir: `${plmThumbnailCacheDir}/Users/Tomoyuki/Desktop`,
+            expectedThumbnailFilePath: `${plmThumbnailCacheDir}/Users/Tomoyuki/Desktop/IMG_100.HEIC.plm.jpg`
+          },
+          {
+            originalFilePath: '/Volumes/VolumeName/Folder/IMG_100.HEIC',
+            expectedThumbnailFileDir: `${plmThumbnailCacheDir}/Volumes/VolumeName/Folder`,
+            expectedThumbnailFilePath: `${plmThumbnailCacheDir}/Volumes/VolumeName/Folder/IMG_100.HEIC.plm.jpg`
+          },
+        ];
+
+        testCases.forEach(({originalFilePath, expectedThumbnailFileDir, expectedThumbnailFilePath}) => {
+          runTest(originalFilePath, expectedThumbnailFileDir, expectedThumbnailFilePath);
+        });
       });
     }
   });
@@ -73,10 +85,19 @@ describe('ThumbnailCacheUtil', () => {
     }
 
     if (os.platform() === 'darwin' || os.platform() === 'linux') {
+      const testCases = [
+        {
+          originalFilePath: '/Users/Tomoyuki/Desktop/IMG_100.HEIC',
+          expectedThumbnailLogFilePath: `${plmThumbnailCacheDir}/Users/Tomoyuki/Desktop/IMG_100.HEIC.log.json`
+        },
+        {
+          originalFilePath: '/Volumes/VolumeName/Folder/IMG_100.HEIC',
+          expectedThumbnailLogFilePath: `${plmThumbnailCacheDir}/Volumes/VolumeName/Folder/IMG_100.HEIC.log.json`
+        },
+      ];
+
       it('on macOS or Linux', () => {
-        const originalFilePath = '/Users/Tomoyuki/Desktop/IMG_100.HEIC';
-        const expectedThumbnailLogFilePath = `${plmThumbnailCacheDir}/Users/Tomoyuki/Desktop/IMG_100.HEIC.log.json`;
-        runTest(originalFilePath, expectedThumbnailLogFilePath);
+        testCases.forEach(({originalFilePath, expectedThumbnailLogFilePath}) => runTest(originalFilePath, expectedThumbnailLogFilePath));
       });
     }
   });
@@ -88,27 +109,36 @@ describe('ThumbnailCacheUtil', () => {
     }
 
     if (os.platform() === 'win32') {
-      it('on Windows', () => {
-        const testCases = [
-          {
-            thumbnailFilePath: `${plmThumbnailCacheDir}\\C\\Users\\Tomoyuki\\Desktop\\IMG_100.HEIC.plm.jpg`,
-            expectedOriginalFilePath: 'C:\\Users\\Tomoyuki\\Desktop\\IMG_100.HEIC'
-          },
-          {
-            thumbnailFilePath: `${plmThumbnailCacheDir}\\Hostname\\Folder\\IMG_100.HEIC.plm.jpg`,
-            expectedOriginalFilePath: '\\\\Hostname\\Folder\\IMG_100.HEIC'
-          },
-        ];
+      const testCases = [
+        {
+          thumbnailFilePath: `${plmThumbnailCacheDir}\\C\\Users\\Tomoyuki\\Desktop\\IMG_100.HEIC.plm.jpg`,
+          expectedOriginalFilePath: 'C:\\Users\\Tomoyuki\\Desktop\\IMG_100.HEIC'
+        },
+        {
+          thumbnailFilePath: `${plmThumbnailCacheDir}\\Hostname\\Folder\\IMG_100.HEIC.plm.jpg`,
+          expectedOriginalFilePath: '\\\\Hostname\\Folder\\IMG_100.HEIC'
+        },
+      ];
 
+      it('on Windows', () => {
         testCases.forEach(({thumbnailFilePath, expectedOriginalFilePath}) => runTest(thumbnailFilePath, expectedOriginalFilePath));
       });
     }
 
     if (os.platform() === 'darwin' || os.platform() === 'linux') {
+      const testCases = [
+        {
+          thumbnailFilePath: `${plmThumbnailCacheDir}/Users/Tomoyuki/Desktop/IMG_100.HEIC.plm.jpg`,
+          expectedOriginalFilePath: '/Users/Tomoyuki/Desktop/IMG_100.HEIC'
+        },
+        {
+          thumbnailFilePath: `${plmThumbnailCacheDir}/Volumes/VolumeName/Folder/IMG_100.HEIC.plm.jpg`,
+          expectedOriginalFilePath: '/Volumes/VolumeName/Folder/IMG_100.HEIC'
+        },
+      ];
+
       it('on macOS or Linux', () => {
-        const thumbnailFilePath = `${plmThumbnailCacheDir}/Users/Tomoyuki/Desktop/IMG_100.HEIC.plm.jpg`;
-        const expectedOriginalFilePath = '/Users/Tomoyuki/Desktop/IMG_100.HEIC';
-        runTest(thumbnailFilePath, expectedOriginalFilePath);
+        testCases.forEach(({thumbnailFilePath, expectedOriginalFilePath}) => runTest(thumbnailFilePath, expectedOriginalFilePath));
       });
     }
   });
@@ -121,20 +151,24 @@ describe('ThumbnailCacheUtil', () => {
     }
 
     if (os.platform() === 'win32') {
-      it('on Windows', () => {
-        const testCases = [
-          { expectedOriginalFilePath: 'C:\\Users\\Tomoyuki\\Desktop\\IMG_100.HEIC' },
-          { expectedOriginalFilePath: '\\\\Hostname\\Folder\\IMG_100.HEIC' },
-        ];
+      const testCases = [
+        { expectedOriginalFilePath: 'C:\\Users\\Tomoyuki\\Desktop\\IMG_100.HEIC' },
+        { expectedOriginalFilePath: '\\\\Hostname\\Folder\\IMG_100.HEIC' },
+      ];
 
+      it('on Windows', () => {
         testCases.forEach(({expectedOriginalFilePath}) => runTest(expectedOriginalFilePath));
       });
     }
 
     if (os.platform() === 'darwin' || os.platform() === 'linux') {
+      const testCases = [
+        { expectedOriginalFilePath: '/Users/Tomoyuki/Desktop/IMG_100.HEIC' },
+        { expectedOriginalFilePath: '/Volumes/VolumeName/Folder/IMG_100.HEIC' },
+      ];
+
       it('on macOS or Linux', () => {
-        const expectedOriginalFilePath = '/Users/Tomoyuki/Desktop/IMG_100.HEIC';
-        runTest(expectedOriginalFilePath);
+        testCases.forEach(({expectedOriginalFilePath}) => runTest(expectedOriginalFilePath));
       });
     }
   });
@@ -147,20 +181,24 @@ describe('ThumbnailCacheUtil', () => {
     }
 
     if (os.platform() === 'win32') {
-      it('on Windows', () => {
-        const testCases = [
-          { expectedThumbnailFilePath: `${plmThumbnailCacheDir}\\C\\Users\\Tomoyuki\\Desktop\\IMG_100.HEIC.plm.jpg` },
-          { expectedThumbnailFilePath: `${plmThumbnailCacheDir}\\Hostname\\Folder\\IMG_100.HEIC.plm.jpg` },
-        ];
+      const testCases = [
+        { expectedThumbnailFilePath: `${plmThumbnailCacheDir}\\C\\Users\\Tomoyuki\\Desktop\\IMG_100.HEIC.plm.jpg` },
+        { expectedThumbnailFilePath: `${plmThumbnailCacheDir}\\Hostname\\Folder\\IMG_100.HEIC.plm.jpg` },
+      ];
 
+      it('on Windows', () => {
         testCases.forEach(({expectedThumbnailFilePath}) => runTest(expectedThumbnailFilePath));
       });
     }
 
     if (os.platform() === 'darwin' || os.platform() === 'linux') {
+      const testCases = [
+        { expectedThumbnailFilePath: `${plmThumbnailCacheDir}/Users/Tomoyuki/Desktop/IMG_100.HEIC.plm.jpg` },
+        { expectedThumbnailFilePath: `${plmThumbnailCacheDir}/Volumes/VolumeName/Folder/IMG_100.HEIC.plm.jpg` },
+      ];
+
       it('on macOS or Linux', () => {
-        const expectedThumbnailFilePath = `${plmThumbnailCacheDir}/Users/Tomoyuki/Desktop/IMG_100.HEIC.plm.jpg`;
-        runTest(expectedThumbnailFilePath);
+        testCases.forEach(({expectedThumbnailFilePath}) => runTest(expectedThumbnailFilePath));
       });
     }
   });
