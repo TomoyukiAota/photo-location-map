@@ -43,12 +43,20 @@ expose(async function generateThumbnailFile(args: ThumbnailFileGenerationArgs): 
   // Therefore, importing heic-convert here to be able to track when things go wrong.
   const heicConvert: typeof import('heic-convert') = require('heic-convert');
 
+  // The value of jpegQuality is empirically set so that the generated thumbnail looks good.
+  // When the value is decreased, the file size of generated thumbnails will be decreased,
+  // but the gradation will be more step-like and look ugly.
+  // 0.3 is the least value that the gradation looks okay with a small dimensions for thumbnails (where width and height are 200px at maximum).
+  // 0.5 is the value that the gradation is okay with larger dimensions.
+  // 0.5 is chosen considering the future possibility of implementing user-settable dimensions for thumbnails.
+  const jpegQuality = 0.5;
+
   let outputBuffer: Buffer;
   try {
     outputBuffer = await heicConvert({
-      buffer: inputBuffer, // the HEIC file buffer
-      format: 'JPEG',      // output format
-      quality: 0.1         // the jpeg compression quality, between 0 and 1
+      buffer: inputBuffer,     // the HEIC file buffer
+      format: 'JPEG',          // output format
+      quality: jpegQuality,    // the jpeg compression quality, between 0 and 1
     });
   } catch (error) {
     logger.error(`Failed in heic-convert. error: ${error}`, error);
