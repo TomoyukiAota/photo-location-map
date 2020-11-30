@@ -15,8 +15,8 @@ HP     https://tomoyukiaota.github.io/photo-location-map/
   例えば、旅行中の写真を保存したフォルダを指定すると、写真の撮影位置や日時から、
   旅の思い出を振り返ることができます。
 
-  動作する様子については、次の公式サイトをご覧ください。
-  https://tomoyukiaota.github.io/photo-location-map/
+  動作する様子については、次の動画をご覧ください。
+  https://www.youtube.com/watch?v=n7hv_h1llKo
 
   【対応フォーマット】
   ・JPEG (.jpeg, .jpg, .jpe, .jfif, .jfi, .jif)
