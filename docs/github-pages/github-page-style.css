@@ -1,5 +1,5 @@
 body {
-  font-family: 'Segoe UI', 'Roboto', arial, sans-serif;
+  font-family: "Segoe UI", "Roboto", arial, sans-serif;
 }
 
 .layout-container {
@@ -25,13 +25,13 @@ body {
   margin-bottom: 20px;
 }
 
-@media screen and (max-width:500px) {
+@media screen and (max-width: 500px) {
   .title {
     font-size: 10vw;
   }
 }
 
-@media screen and (min-width:501px) {
+@media screen and (min-width: 501px) {
   .title {
     font-size: 45px;
   }
@@ -47,14 +47,14 @@ body {
   display: flex;
 }
 
-@media screen and (max-width:500px) {
+@media screen and (max-width: 500px) {
   .download-buttons {
     flex-direction: column;
     align-items: center;
   }
 }
 
-@media screen and (min-width:501px) {
+@media screen and (min-width: 501px) {
   .download-buttons {
     flex-direction: row;
     justify-content: center;
@@ -66,14 +66,14 @@ body {
   margin: 10px 20px;
 }
 
-@media screen and (max-width:500px) {
+@media screen and (max-width: 500px) {
   .download-buttons button,
   .download-buttons a {
     width: 200px;
   }
 }
 
-@media screen and (min-width:501px) {
+@media screen and (min-width: 501px) {
   .download-buttons button,
   .download-buttons a {
     width: unset;
@@ -101,13 +101,13 @@ body {
   margin-top: 40px;
 }
 
-@media screen and (max-width:500px) {
+@media screen and (max-width: 500px) {
   .project-description {
     font-size: 14px;
   }
 }
 
-@media screen and (min-width:501px) {
+@media screen and (min-width: 501px) {
   .project-description {
     font-size: 16px;
   }
