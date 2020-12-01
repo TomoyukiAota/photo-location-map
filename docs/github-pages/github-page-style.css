@@ -5,6 +5,7 @@ body {
 .layout-container {
   display: flex;
   flex-direction: column;
+  align-items: center;
   max-width: 820px;
   margin: 20px auto;
   padding: 0 10px;
@@ -37,7 +38,7 @@ body {
   }
 }
 
-.app-description {
+.app-summary {
   text-align: center;
   font-size: 18px;
   margin-bottom: 40px;
@@ -96,19 +97,27 @@ body {
   height: 100%;
 }
 
+@media screen and (max-width: 500px) {
+  .app-description {
+    font-size: 16px;
+  }
+}
+
+@media screen and (min-width: 501px) {
+  .app-description {
+    font-size: 17px;
+  }
+}
+
+.supported-file-format {
+  padding-top: 10px;
+}
+
 .project-description {
   text-align: center;
   margin-top: 40px;
 }
 
-@media screen and (max-width: 500px) {
-  .project-description {
-    font-size: 14px;
-  }
-}
-
-@media screen and (min-width: 501px) {
-  .project-description {
-    font-size: 16px;
-  }
+.project-description {
+  font-size: 14px;
 }
