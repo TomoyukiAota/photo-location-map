@@ -119,5 +119,10 @@ body {
 }
 
 .project-description {
-  font-size: 14px;
+  font-size: 15px;
+}
+
+.google-analytics-notice {
+  font-size: 13px;
+  margin-top: 60px;
 }
