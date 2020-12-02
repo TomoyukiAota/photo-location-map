@@ -4,16 +4,16 @@ import { Analytics } from '../../src-shared/analytics/analytics';
 import { DevOrProd } from '../../src-shared/dev-or-prod/dev-or-prod';
 import { isPrereleaseVersion } from '../../src-shared/version/is-prerelease-version';
 import { mainWindow } from '../electron-main';
-import { AutoUpdateLogger } from './auto-update-logger';
+import { autoUpdateLogger } from './auto-update-logger';
 
-autoUpdater.logger = AutoUpdateLogger;
+autoUpdater.logger = autoUpdateLogger;
 
 autoUpdater.on('download-progress', progress => {
   const progressPercentage = `Download progress: ${progress.percent.toFixed(1)}%`;
   const transferredOutOfTotal = `Downloaded ${progress.transferred} bytes out of ${progress.total} bytes`;
   const downloadSpeed = `Download speed: ${progress.bytesPerSecond} B/s`;
   const message = `${progressPercentage}, ${transferredOutOfTotal}, ${downloadSpeed}.`;
-  AutoUpdateLogger.info(message);
+  autoUpdateLogger.info(message);
 });
 
 const createMessageForMessageBox = (info: UpdateInfo) => {
@@ -33,7 +33,7 @@ autoUpdater.on('update-downloaded', (info: UpdateInfo) => {
     buttons: ['Yes', 'No'],
   }).then(result => {
     const yes = result.response === 0;
-    AutoUpdateLogger.info(`User clicked "${yes ? 'Yes' : 'No'}" on the dialog to restart this application to install a new version ${info.version}.`);
+    autoUpdateLogger.info(`User clicked "${yes ? 'Yes' : 'No'}" on the dialog to restart this application to install a new version ${info.version}.`);
     if (yes) {
       autoUpdater.quitAndInstall(true, true);
     }
@@ -42,16 +42,16 @@ autoUpdater.on('update-downloaded', (info: UpdateInfo) => {
 
 app.on('ready', async () => {
   if (DevOrProd.isDev) {
-    AutoUpdateLogger.info(`Auto-update is disabled in development environment.`);
+    autoUpdateLogger.info(`Auto-update is disabled in development environment.`);
     return;
   }
 
   if (isPrereleaseVersion()) {
-    AutoUpdateLogger.info(`Auto-update is disabled in prerelease versions (i.e. alpha, beta, and rc).`);
+    autoUpdateLogger.info(`Auto-update is disabled in prerelease versions (i.e. alpha, beta, and rc).`);
     return;
   }
 
   await autoUpdater.checkForUpdates().catch(reason => {
-    AutoUpdateLogger.warn(`Promise from autoUpdater.checkForUpdates() is rejected. ${reason}`);
+    autoUpdateLogger.warn(`Promise from autoUpdater.checkForUpdates() is rejected. ${reason}`);
   });
 });
