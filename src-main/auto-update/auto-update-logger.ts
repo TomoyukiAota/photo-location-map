@@ -3,7 +3,8 @@ import { Logger as PlmLogger } from '../../src-shared/log/logger';
 
 // Note that the logger passed to autoUpdater.logger needs to have the following methods:
 // { info(), warn(), error() }
-// It's enforced by implementing ElectronUpdaterLoggerInterface.
+// Also, debug() is actually used for logging "updater cache dir" during downloading the new version.
+// Implementing these methods is enforced by ElectronUpdaterLoggerInterface.
 // See https://www.electron.build/auto-update
 
 class AutoUpdateLogger implements ElectronUpdaterLoggerInterface {
