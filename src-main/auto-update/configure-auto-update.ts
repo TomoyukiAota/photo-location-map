@@ -35,7 +35,7 @@ autoUpdater.on('update-downloaded', (info: UpdateInfo) => {
     buttons: ['Yes', 'No'],
   }).then(result => {
     const yes = result.response === 0;
-    autoUpdateLogger.info(`User clicked "${yes ? 'Yes' : 'No'}" on the dialog to restart this application to install a new version ${info.version}.`);
+    autoUpdateLogger.info(`User clicked "${yes ? 'Yes' : 'No'}" on the dialog to restart this application to install the new version ${info.version}.`);
     if (yes) {
       autoUpdater.quitAndInstall(true, true);
     }
