@@ -1,5 +1,5 @@
 import { DevOrProd } from '../dev-or-prod/dev-or-prod';
-import { isAlphaVersion } from '../version/is-alpha-version';
+import { isPrereleaseVersion } from '../version/is-prerelease-version';
 
 class TrackingId {
   public static dev  = 'UA-143091961-1';
@@ -16,10 +16,7 @@ export class AnalyticsConfig {
     if (DevOrProd.isDev)
       return TrackingId.dev;
 
-    // Regarding the configuration of Google Analytics for packaged application,
-    //  - alpha version uses dev configuration
-    //  - non-alpha version uses prod configuration
-    return isAlphaVersion()
+    return isPrereleaseVersion()
       ? TrackingId.dev
       : TrackingId.prod;
   }
