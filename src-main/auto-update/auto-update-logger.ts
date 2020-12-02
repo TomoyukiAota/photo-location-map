@@ -1,5 +1,5 @@
-import { Logger as PlmLogger } from '../../src-shared/log/logger';
 import { Logger as ElectronUpdaterLoggerInterface } from 'electron-updater';
+import { Logger as PlmLogger } from '../../src-shared/log/logger';
 
 // Note that the logger passed to autoUpdater.logger needs to have the following methods:
 // { info(), warn(), error() }
