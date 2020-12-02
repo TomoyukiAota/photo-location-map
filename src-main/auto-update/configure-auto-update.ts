@@ -1,5 +1,6 @@
 import { app, dialog } from 'electron';
 import { autoUpdater, UpdateInfo } from 'electron-updater';
+import { Analytics } from '../../src-shared/analytics/analytics';
 import { DevOrProd } from '../../src-shared/dev-or-prod/dev-or-prod';
 import { isPrereleaseVersion } from '../../src-shared/version/is-prerelease-version';
 import { mainWindow } from '../electron-main';
@@ -24,6 +25,7 @@ Latest version: ${info.version}`;
 };
 
 autoUpdater.on('update-downloaded', (info: UpdateInfo) => {
+  Analytics.trackEvent('Auto-update', `Updating from ${app.getVersion()} to ${info.version}`);
   dialog.showMessageBox(mainWindow, {
     title: 'A new version of Photo Location Map is available!',
     type: 'info',
