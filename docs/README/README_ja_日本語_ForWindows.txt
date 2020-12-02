@@ -28,6 +28,9 @@ HP     https://tomoyukiaota.github.io/photo-location-map/
   このアプリは、そのような写真について、 地図上に撮影位置のピンを表示します。
   ピンをクリックすると、写真や撮影日時が表示されます。
 
+  【公式サイト】
+  https://tomoyukiaota.github.io/photo-location-map/
+
 --------------------------------------------------------------
 
 ○ 動 作 環 境
