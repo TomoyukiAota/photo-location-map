@@ -1,6 +1,7 @@
 import { app, dialog } from 'electron';
 import { autoUpdater, UpdateInfo } from 'electron-updater';
 import { DevOrProd } from '../../src-shared/dev-or-prod/dev-or-prod';
+import { isPrereleaseVersion } from '../../src-shared/version/is-prerelease-version';
 import { mainWindow } from '../electron-main';
 import { AutoUpdateLogger } from './auto-update-logger';
 
@@ -39,7 +40,12 @@ autoUpdater.on('update-downloaded', (info: UpdateInfo) => {
 
 app.on('ready', async () => {
   if (DevOrProd.isDev) {
-    AutoUpdateLogger.info(`autoUpdater.checkForUpdates() is skipped in development environment.`);
+    AutoUpdateLogger.info(`Auto-update is disabled in development environment.`);
+    return;
+  }
+
+  if (isPrereleaseVersion()) {
+    AutoUpdateLogger.info(`Auto-update is disabled in prerelease versions (i.e. alpha, beta, and rc).`);
     return;
   }
 
