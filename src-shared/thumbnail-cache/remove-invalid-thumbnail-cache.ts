@@ -2,10 +2,10 @@ import * as deleteEmpty from 'delete-empty';
 import * as createDirectoryTree from 'directory-tree';
 import * as fs from 'fs';
 import { convertToFlattenedDirTree } from '../dir-tree/dir-tree-util';
-import { createSpecificLogger } from '../log/create-specific-logger';
+import { createPrependedLogger } from '../log/create-prepended-logger';
 import { getOriginalFilePath, getThumbnailLogFilePath, plmThumbnailCacheDir } from './thumbnail-cache-util';
 
-const logger = createSpecificLogger('[Invalid thumbnail cache removal]');
+const logger = createPrependedLogger('[Invalid thumbnail cache removal]');
 
 export function removeInvalidThumbnailCache(): void {
   try {
