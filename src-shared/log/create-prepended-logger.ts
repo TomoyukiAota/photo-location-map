@@ -1,6 +1,6 @@
 import { Logger } from './logger';
 
-class SpecificLogger {
+class PrependedLogger {
   constructor(private stringToPrepend: string) {
   }
 
@@ -29,6 +29,6 @@ class SpecificLogger {
   }
 }
 
-export function createSpecificLogger(stringToPrepend: string) {
-  return new SpecificLogger(stringToPrepend);
+export function createPrependedLogger(stringToPrepend: string) {
+  return new PrependedLogger(stringToPrepend);
 }
