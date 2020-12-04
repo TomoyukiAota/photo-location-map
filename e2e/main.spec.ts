@@ -1,17 +1,15 @@
-import {expect, assert} from 'chai';
-import {SpectronClient} from 'spectron';
+import { expect } from 'chai';
+import { SpectronClient } from 'spectron';
 
 import commonSetup from './common-setup';
 
 describe('Photo Location Map', function () {
   commonSetup.apply(this);
 
-  let browser: WebdriverIO.Client<void>;
   let client: SpectronClient;
 
   beforeEach(function () {
     client = this.app.client;
-    browser = client;
   });
 
   it('should create the main window', async function () {
@@ -20,7 +18,8 @@ describe('Photo Location Map', function () {
   });
 
   it('should display Select Folder button', async function () {
-    const text = await browser.getText('#select-folder-button > button > span');
+    const element = await client.$('#select-folder-button > button > span');
+    const text = await element.getText();
     expect(text).to.contain('Select Folder');
   });
 });
