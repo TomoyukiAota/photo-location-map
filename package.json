@@ -40,7 +40,7 @@
     "test:unit:ng": "ng test",
     "test:unit:ng:watch": "ng test --watch",
     "test:unit:ng:coverage": "ng test --code-coverage",
-    "test:unit:em:main": "cross-env TS_NODE_TRANSPILE_ONLY=1 electron-mocha --config ./test/electron-mocha-main.mocharc.js",
+    "test:unit:em:main": "cross-env TS_NODE_TRANSPILE_ONLY=1 electron-mocha --main ./test/electron-mocha-main-setup.js --config ./test/electron-mocha-main.mocharc.js",
     "test:unit:em:renderer": "cross-env TS_NODE_TRANSPILE_ONLY=1 electron-mocha --renderer --preload ./test/electron-mocha-renderer-preload.js --window-config ./test/electron-mocha-renderer-window-config.js --config ./test/electron-mocha-renderer.mocharc.js",
     "test:unit:em:all": "npm-run-all test:unit:em:main test:unit:em:renderer",
     "test:unit:em:help": "electron-mocha --help",
