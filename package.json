@@ -103,7 +103,7 @@
     "@types/webdriverio": "5.0.0",
     "@types/webpack": "4.41.22",
     "chai": "4.2.0",
-    "codelyzer": "^6.0.0",
+    "codelyzer": "6.0.1",
     "conventional-changelog-cli": "2.1.0",
     "cross-env": "7.0.2",
     "devtron": "1.4.0",
