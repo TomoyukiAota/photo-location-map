@@ -91,7 +91,7 @@
     "@types/delete-empty": "3.0.0",
     "@types/fs-extra": "9.0.2",
     "@types/is-natural-number": "4.0.0",
-    "@types/jasmine": "~3.6.0",
+    "@types/jasmine": "3.6.2",
     "@types/jasminewd2": "2.0.8",
     "@types/leaflet": "1.5.18",
     "@types/leaflet.markercluster": "1.4.3",
