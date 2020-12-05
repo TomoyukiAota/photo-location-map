@@ -4,11 +4,11 @@ export class EnvironmentDetector {
   }
 
   public static get isElectronMochaMain(): boolean {
-    return typeof __electronMochaMain__ !== 'undefined';
+    return !!process.env.PLM_EM_MAIN;
   }
 
   public static get isElectronMochaRenderer(): boolean {
-    return typeof __electronMochaRenderer__ !== 'undefined';
+    return !!process.env.PLM_EM_RENDERER;
   }
 
   public static get isUnitTest(): boolean {
