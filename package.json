@@ -134,7 +134,7 @@
     "split.js": "1.6.2",
     "tree-kill": "1.2.2",
     "ts-node": "8.3.0",
-    "tslib": "^2.0.0",
+    "tslib": "2.0.3",
     "tslint": "6.1.3",
     "typescript": "4.0.3",
     "wait-on": "5.2.0",
