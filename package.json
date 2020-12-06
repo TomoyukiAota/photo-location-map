@@ -89,7 +89,7 @@
     "@ngx-translate/core": "13.0.0",
     "@ngx-translate/http-loader": "6.0.0",
     "@types/delete-empty": "3.0.0",
-    "@types/fs-extra": "9.0.2",
+    "@types/fs-extra": "9.0.4",
     "@types/is-natural-number": "4.0.0",
     "@types/jasmine": "3.6.2",
     "@types/jasminewd2": "2.0.8",
