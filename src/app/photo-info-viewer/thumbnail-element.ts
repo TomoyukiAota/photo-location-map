@@ -7,7 +7,7 @@ import { getThumbnailFilePath, isThumbnailCacheAvailable } from '../../../src-sh
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { Dimensions } from '../shared/model/dimensions.model';
 import { Photo } from '../shared/model/photo.model';
-import { PhotoViewerLauncher } from '../photo-viewer/photo-viewer-launcher';
+import { PhotoViewerLauncher } from '../photo-viewer-launcher/photo-viewer-launcher';
 
 const app = RequireFromMainProcess.electron.app;
 

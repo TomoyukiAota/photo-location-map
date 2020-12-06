@@ -1,8 +1,8 @@
+import * as os from 'os';
 import { Command } from '../../../src-shared/command/command';
 import { Logger } from '../../../src-shared/log/logger';
 import { isFilePathTooLongOnWindows, maxFilePathLengthOnWindows } from '../../../src-shared/max-file-path-length-on-windows/max-file-path-length-on-windows';
 import { Photo } from '../shared/model/photo.model';
-import { FallbackPhotoViewer } from './fallback-photo-viewer/fallback-photo-viewer';
 
 const child_process = window.require('child_process');
 
@@ -12,7 +12,7 @@ export class PhotoViewerLauncher {
     if (command) {
       this.launchAssociatedApp(command, photo);
     } else {
-      this.launchFallbackPhotoViewer(photo);
+      Logger.warn(`"Open ${photo.name}" is not supported on this platform: ${os.platform()}`);
     }
   }
 
@@ -26,10 +26,5 @@ export class PhotoViewerLauncher {
         + `Maximum: ${maxFilePathLengthOnWindows} characters\n`
         + `Photo path: ${photo.path.length} characters`);
     }
-  }
-
-  private static launchFallbackPhotoViewer(photo: Photo): void {
-    FallbackPhotoViewer.launch(photo);
-    Logger.info(`Launched the fallback photo viewer for ${photo.path}`, photo);
   }
 }
