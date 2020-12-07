@@ -48,8 +48,7 @@
     "test:e2e": "npm run build:prod && mocha --config ./e2e/e2e.mocharc.js",
     "test:package": "cross-env PLM_PACKAGE_TEST=true node ./script/package-test/run-package-test.js",
     "test:all": "npm-run-all lint:all test:unit:all test:e2e test:package",
-    "check": "npm-check --skip-unused --save-exact --update",
-    "version": "conventional-changelog -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md"
+    "check": "npm-check --skip-unused --save-exact --update"
   },
   "dependencies": {
     "delete-empty": "3.0.0",
