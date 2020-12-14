@@ -1,18 +1,20 @@
+import { FocusMonitor } from '@angular/cdk/a11y';
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import { MatMenuTrigger } from '@angular/material/menu';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { Logger } from '../../../src-shared/log/logger';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
+import { ContextMenuData } from './context-menu/context-menu-data';
+import { ContextMenuHelper } from './context-menu/context-menu-helper';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { FlatNode, NestedNode } from './directory-tree-view.model';
 import { DirTreeViewTooltipDisplayLogic } from './dir-tree-view-tooltip-display-logic';
 
-/**
- * @title Directory tree view
- */
+
 @Component({
   selector: 'app-directory-tree-view',
   templateUrl: 'directory-tree-view.component.html',
@@ -59,7 +61,8 @@ export class DirectoryTreeViewComponent {
   constructor(private directoryTreeViewDataService: DirectoryTreeViewDataService,
               private selectedPhotoService: SelectedPhotoService,
               private photoDataService: PhotoDataService,
-              private changeDetectorRef: ChangeDetectorRef) {
+              private changeDetectorRef: ChangeDetectorRef,
+              private focusMonitor: FocusMonitor) {
     this.treeControl = new FlatTreeControl<FlatNode>(this.getLevel, this.isExpandable);
     this.treeFlattener = new MatTreeFlattener(this.transformNodeFromNestedToFlat, this.getLevel, this.isExpandable, this.getChildren);
     this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
@@ -181,4 +184,27 @@ export class DirectoryTreeViewComponent {
 
     return null;
   }
+
+  //#region --- Context Menu ---
+  @ViewChild(MatMenuTrigger) public contextMenu: MatMenuTrigger;
+  public contextMenuPosition = { x: '0px', y: '0px' };
+
+  public onContextMenu(event: MouseEvent, node: FlatNode) {
+    event.preventDefault();
+    this.contextMenuPosition.x = event.clientX + 'px';
+    this.contextMenuPosition.y = event.clientY + 'px';
+    this.contextMenu.menuData = { 'contextMenuData': ContextMenuHelper.createContextMenuData(node) };
+    this.contextMenu.openMenu();
+    ContextMenuHelper.disableFocus(this.focusMonitor);
+    ContextMenuHelper.configureClosingContextMenuWithRightClick(this.contextMenu);
+  }
+
+  public openFile(data: ContextMenuData) {
+    alert(`Click on Action 1 for ${data.name}`);
+  }
+
+  public openContainingFolder(data: ContextMenuData) {
+    alert(`Click on Action 2 for ${data.name}`);
+  }
+  //#endregion --- Context Menu ---
 }

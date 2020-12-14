@@ -5,6 +5,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatTreeModule } from '@angular/material/tree';
 
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
@@ -32,6 +33,7 @@ describe('DirectoryTreeViewComponent', () => {
         MatFormFieldModule,
         MatIconModule,
         MatInputModule,
+        MatMenuModule,
         MatTreeModule
       ],
       providers: [

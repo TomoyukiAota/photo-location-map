@@ -11,6 +11,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTreeModule } from '@angular/material/tree';
@@ -62,30 +63,31 @@ export function HttpLoaderFactory(http: HttpClient) {
     CacheSettingsComponent,
     NoPhotosWithGpsLocationDialogComponent
   ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    HttpClientModule,
-    AppRoutingModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: (HttpLoaderFactory),
-        deps: [HttpClient]
-      }
-    }),
-    BrowserAnimationsModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatListModule,
-    MatProgressBarModule,
-    MatSelectModule,
-    MatTreeModule
-  ],
+    imports: [
+        BrowserModule,
+        FormsModule,
+        HttpClientModule,
+        AppRoutingModule,
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: (HttpLoaderFactory),
+                deps: [HttpClient]
+            }
+        }),
+        BrowserAnimationsModule,
+        MatButtonModule,
+        MatCheckboxModule,
+        MatDialogModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatInputModule,
+        MatListModule,
+        MatMenuModule,
+        MatProgressBarModule,
+        MatSelectModule,
+        MatTreeModule
+    ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
