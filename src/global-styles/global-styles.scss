@@ -27,4 +27,10 @@ body {
   position: relative;
 }
 
+// The ripple effect on checkboxes is disabled because it happens with right click as well as left click.
+// It's confusing to see the ripple with right click whereas right-clicking does nothing to checkbox state.
+.mat-checkbox-ripple {
+  display: none;
+}
+
 @import "photo-info-viewer";
