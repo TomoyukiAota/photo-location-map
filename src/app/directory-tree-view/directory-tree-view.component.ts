@@ -5,7 +5,6 @@ import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { Analytics } from '../../../src-shared/analytics/analytics';
-import { openContainingFolder, openWithAssociatedApp } from '../../../src-shared/command/command';
 import { createPrependedLogger } from '../../../src-shared/log/create-prepended-logger';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
@@ -16,7 +15,6 @@ import { FlatNode, NestedNode } from './directory-tree-view.model';
 import { DirTreeViewTooltipDisplayLogic } from './dir-tree-view-tooltip-display-logic';
 
 const dirTreeViewLogger = createPrependedLogger('[Directory Tree View]');
-const contextMenuLogger = createPrependedLogger('[Directory Tree View] [Context Menu]');
 
 @Component({
   selector: 'app-directory-tree-view',
@@ -202,16 +200,7 @@ export class DirectoryTreeViewComponent {
     ContextMenuHelper.configureClosingWithRightClick(this.contextMenu);
   }
 
-  public openFile(data: ContextMenuData) {
-    contextMenuLogger.info(`Open "${data.path}"`);
-    Analytics.trackEvent('Directory Tree View', `Context Menu: Open File`);
-    openWithAssociatedApp(data.path);
-  }
-
-  public openContainingFolder(data: ContextMenuData) {
-    contextMenuLogger.info(`Open the containing folder of "${data.path}"`);
-    Analytics.trackEvent('Directory Tree View', `Context Menu: Open Containing Folder`);
-    openContainingFolder(data.path);
-  }
+  public openFile(data: ContextMenuData) { ContextMenuHelper.openFile(data); }
+  public openContainingFolder(data: ContextMenuData) { ContextMenuHelper.openContainingFolder(data); }
   //#endregion --- Context Menu ---
 }
