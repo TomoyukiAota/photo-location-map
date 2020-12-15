@@ -1,18 +1,21 @@
+import { FocusMonitor } from '@angular/cdk/a11y';
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import { MatMenuTrigger } from '@angular/material/menu';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { Analytics } from '../../../src-shared/analytics/analytics';
-import { Logger } from '../../../src-shared/log/logger';
+import { createPrependedLogger } from '../../../src-shared/log/create-prepended-logger';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
+import { DirTreeViewContextMenuData as ContextMenuData } from './dir-tree-view-context-menu/dir-tree-view-context-menu-data';
+import { DirTreeViewContextMenuHelper as ContextMenuHelper } from './dir-tree-view-context-menu/dir-tree-view-context-menu-helper';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { FlatNode, NestedNode } from './directory-tree-view.model';
 import { DirTreeViewTooltipDisplayLogic } from './dir-tree-view-tooltip-display-logic';
 
-/**
- * @title Directory tree view
- */
+const dirTreeViewLogger = createPrependedLogger('[Directory Tree View]');
+
 @Component({
   selector: 'app-directory-tree-view',
   templateUrl: 'directory-tree-view.component.html',
@@ -59,7 +62,8 @@ export class DirectoryTreeViewComponent {
   constructor(private directoryTreeViewDataService: DirectoryTreeViewDataService,
               private selectedPhotoService: SelectedPhotoService,
               private photoDataService: PhotoDataService,
-              private changeDetectorRef: ChangeDetectorRef) {
+              private changeDetectorRef: ChangeDetectorRef,
+              private focusMonitor: FocusMonitor) {
     this.treeControl = new FlatTreeControl<FlatNode>(this.getLevel, this.isExpandable);
     this.treeFlattener = new MatTreeFlattener(this.transformNodeFromNestedToFlat, this.getLevel, this.isExpandable, this.getChildren);
     this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
@@ -117,7 +121,7 @@ export class DirectoryTreeViewComponent {
 
   public handleCheckboxChange(flatNode: FlatNode): void {
     const folderOrFile = flatNode.isExpandable ? 'Folder' : 'File';
-    Logger.info(`Toggled Directory Tree View Checkbox (${folderOrFile}): ${flatNode.path}`);
+    dirTreeViewLogger.info(`Toggled Checkbox (${folderOrFile}): ${flatNode.path}`);
     Analytics.trackEvent('Directory Tree View', `Toggle Checkbox (${folderOrFile})`);
     this.toggleNodeSelection(flatNode);
   }
@@ -181,4 +185,22 @@ export class DirectoryTreeViewComponent {
 
     return null;
   }
+
+  //#region --- Context Menu ---
+  @ViewChild(MatMenuTrigger) public contextMenu: MatMenuTrigger;
+  public contextMenuPosition = { x: '0px', y: '0px' };
+
+  public onContextMenu(event: MouseEvent, node: FlatNode) {
+    event.preventDefault();
+    this.contextMenuPosition.x = event.clientX + 'px';
+    this.contextMenuPosition.y = event.clientY + 'px';
+    this.contextMenu.menuData = { 'contextMenuData': ContextMenuHelper.createData(node) };
+    this.contextMenu.openMenu();
+    ContextMenuHelper.disableFocus(this.focusMonitor);
+    ContextMenuHelper.configureClosingWithRightClick(this.contextMenu);
+  }
+
+  public openFile(data: ContextMenuData) { ContextMenuHelper.openFile(data); }
+  public openContainingFolder(data: ContextMenuData) { ContextMenuHelper.openContainingFolder(data); }
+  //#endregion --- Context Menu ---
 }

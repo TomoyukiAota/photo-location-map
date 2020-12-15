@@ -2,7 +2,8 @@
   <mat-tree-node *matTreeNodeDef="let node"
                  matTreeNodeToggle
                  matTreeNodePadding
-                 [matTreeNodePaddingIndent]="indentPerLevel">
+                 [matTreeNodePaddingIndent]="indentPerLevel"
+                 (contextmenu)="onContextMenu($event, node)">
 
     <!-- Adjust space to align with tree expand button (which look like > or v) -->
     <button mat-icon-button disabled></button>
@@ -32,7 +33,8 @@
 
   <mat-tree-node *matTreeNodeDef="let node; when: hasChildren"
                  matTreeNodePadding
-                 [matTreeNodePaddingIndent]="indentPerLevel">
+                 [matTreeNodePaddingIndent]="indentPerLevel"
+                 (contextmenu)="onContextMenu($event, node)">
     <button mat-icon-button matTreeNodeToggle>
       <mat-icon class="mat-icon-rtl-mirror">
         {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
@@ -51,3 +53,17 @@
     </mat-label>
   </mat-tree-node>
 </mat-tree>
+
+<!--#region Context Menu -->
+<div style="visibility: hidden; position: fixed"
+     [style.left]="contextMenuPosition.x"
+     [style.top]="contextMenuPosition.y"
+     [matMenuTriggerFor]="contextMenu">
+</div>
+<mat-menu #contextMenu="matMenu">
+  <ng-template matMenuContent let-data="contextMenuData">
+    <button mat-menu-item (click)="openFile(data)" class="context-menu-button">Open {{ data.name }}</button>
+    <button mat-menu-item (click)="openContainingFolder(data)" class="context-menu-button">Open Folder</button>
+  </ng-template>
+</mat-menu>
+<!--#endregion Context Menu -->
