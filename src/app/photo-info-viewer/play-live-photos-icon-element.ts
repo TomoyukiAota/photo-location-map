@@ -1,19 +1,16 @@
+import * as fs from 'fs';
+import * as pathModule from 'path';
 import { Analytics } from '../../../src-shared/analytics/analytics';
-import { Command } from '../../../src-shared/command/command';
+import { openWithAssociatedApp } from '../../../src-shared/command/command';
 import { Logger } from '../../../src-shared/log/logger';
-import { isFilePathTooLongOnWindows, maxFilePathLengthOnWindows } from '../../../src-shared/max-file-path-length-on-windows/max-file-path-length-on-windows';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { Photo } from '../shared/model/photo.model';
 
-const child_process = window.require('child_process');
-const fs = window.require('fs');
-const os = window.require('os');
-const path = window.require('path');
 
 export class PlayLivePhotosIconElement {
   public static create(photo: Photo): HTMLImageElement {
-    const parsedPath = path.parse(photo.path);
-    const livePhotosFilePath = path.join(parsedPath.dir, parsedPath.name + '.MOV');
+    const parsedPath = pathModule.parse(photo.path);
+    const livePhotosFilePath = pathModule.join(parsedPath.dir, parsedPath.name + '.MOV');
     if (!fs.existsSync(livePhotosFilePath))
       return null;
 
@@ -30,28 +27,6 @@ export class PlayLivePhotosIconElement {
   private static handlePlayLivePhotosIconClick(livePhotosFilePath: string, photo: Photo): void {
     Logger.info(`Photo Info Viewer: Clicked the play live photos icon for ${photo.path}`);
     Analytics.trackEvent('Photo Info Viewer', 'Clicked Play Live Photos Icon');
-    this.playLivePhotos(livePhotosFilePath, photo);
-  }
-
-  private static playLivePhotos(livePhotosFilePath: string, photo: Photo): void {
-    const command = Command.toRunAssociatedApp(livePhotosFilePath);
-    if (command) {
-      this.issueCommandToPlayLivePhotos(command, livePhotosFilePath, photo);
-    } else {
-      Logger.warn(`"Live Photos" is not supported on this platform: ${os.platform()}`);
-    }
-  }
-
-  private static issueCommandToPlayLivePhotos(command: string, livePhotosFilePath: string, photo: Photo): void {
-    child_process.spawn(command, [], { shell: true });
-    Logger.info(`Issued a command: ${command}`);
-    Logger.info(`Played Live Photos by opening ${livePhotosFilePath}`, photo);
-
-
-    if (isFilePathTooLongOnWindows(photo.path)) {
-      Logger.warn(`"Live Photos" might not work because the length of the file path exceeds the maximum on Windows.\n`
-        + `Maximum: ${maxFilePathLengthOnWindows} characters\n`
-        + `Photo path: ${photo.path.length} characters`);
-    }
+    openWithAssociatedApp(livePhotosFilePath);
   }
 }
