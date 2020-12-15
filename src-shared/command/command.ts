@@ -3,10 +3,11 @@ import * as os from 'os';
 import * as pathModule from 'path';
 import { Logger } from '../log/logger';
 import { isFilePathTooLongOnWindows, maxFilePathLengthOnWindows } from '../max-file-path-length-on-windows/max-file-path-length-on-windows';
+import { CommandString } from './command-string';
 
 export function openWithAssociatedApp(path: string): void {
   const fileOrFolderName = pathModule.basename(path);
-  const command = Command.toRunAssociatedApp(path);
+  const command = CommandString.toOpenWithAssociatedApp(path);
   if (command) {
     child_process.spawn(command, [], { shell: true });
     Logger.info(`Issued a command: ${command}`);
@@ -24,7 +25,7 @@ export function openWithAssociatedApp(path: string): void {
 
 export function openContainingFolder(path: string): void {
   const fileOrFolderName = pathModule.basename(path);
-  const command = Command.toOpenContainingFolder(path);
+  const command = CommandString.toOpenContainingFolder(path);
   if (command) {
     child_process.spawn(command, [], { shell: true });
     Logger.info(`Issued a command: ${command}`);
@@ -40,30 +41,3 @@ export function openContainingFolder(path: string): void {
   }
 }
 
-export class Command {
-  public static toRunAssociatedApp(path: string): string {
-    switch (os.platform()) {
-      case 'win32':
-        return `explorer "${path}"`;
-      case 'darwin':
-        return `open "${path}"`;
-      case 'linux':
-        return `xdg-open "${path}"`;
-      default:
-        return null;
-    }
-  }
-
-  public static toOpenContainingFolder(path: string): string {
-    switch (os.platform()) {
-      case 'win32':
-        return `explorer /select,"${path}"`;
-      case 'darwin':
-        return `open -R "${path}"`;
-      case 'linux':
-        return `nautilus "${path}"`;
-      default:
-        return null;
-    }
-  }
-}
