@@ -4,7 +4,7 @@ import { createPrependedLogger } from '../../../../src-shared/log/create-prepend
 import { FlatNode } from '../directory-tree-view.model';
 import { DirTreeViewContextMenuData } from './dir-tree-view-context-menu-data';
 
-const logger = createPrependedLogger('[Directory Tree View]');
+const contextMenuLogger = createPrependedLogger('[Directory Tree View] [Context Menu]');
 
 export class DirTreeViewContextMenuHelper {
   public static createData(node: FlatNode): DirTreeViewContextMenuData {
@@ -20,7 +20,7 @@ export class DirTreeViewContextMenuHelper {
     const buttons = Array.from(document.getElementsByClassName('context-menu-button'));
     buttons.forEach((button: HTMLElement) => focusMonitor.stopMonitoring(button));
     if (buttons.length === 0) {
-      logger.warn(`Context Menu: No buttons are found to configure disabling focus.`);
+      contextMenuLogger.warn(`No buttons are found to configure disabling focus.`);
     }
   }
 

@@ -29,7 +29,7 @@ export function openContainingFolder(path: string): void {
   if (command) {
     child_process.spawn(command, [], { shell: true });
     Logger.info(`Issued a command: ${command}`);
-    Logger.info(`Opened the containing folder of ${path}`);
+    Logger.info(`Opened the containing folder of "${path}"`);
 
     if (isFilePathTooLongOnWindows(path)) {
       Logger.warn(`Opening the containing folder of ${fileOrFolderName} might not work because the length of the file path exceeds the maximum on Windows.\n`
