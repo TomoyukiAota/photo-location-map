@@ -1,11 +1,9 @@
 import assert = require('assert');
-import { ProxyRequire } from '../../../src-shared/require/proxy-require';
-import { Command } from '../../../src-shared/command/command';
+import * as os from 'os';
+import { CommandString } from '../../../src-shared/command/command-string';
 
-const os = ProxyRequire.os;
-
-describe('Command', () => {
-  it('toRunAssociatedApp should create the command', () => {
+describe('CommandString', () => {
+  it('toOpenWithAssociatedApp should return the command string', () => {
     const path = './Path/To/Somewhere';
     let expectedCommand: string = null;
 
@@ -21,12 +19,12 @@ describe('Command', () => {
         break;
     }
 
-    const actualCommand = Command.toRunAssociatedApp(path);
+    const actualCommand = CommandString.toOpenWithAssociatedApp(path);
     assert(actualCommand === expectedCommand);
   });
 
 
-  it('toOpenContainingFolder should create the command', () => {
+  it('toOpenContainingFolder should return the command string', () => {
     const path = './Path/To/Somewhere';
     let expectedCommand: string = null;
 
@@ -42,7 +40,7 @@ describe('Command', () => {
         break;
     }
 
-    const actualCommand = Command.toOpenContainingFolder(path);
+    const actualCommand = CommandString.toOpenContainingFolder(path);
     assert(actualCommand === expectedCommand);
   });
 });
