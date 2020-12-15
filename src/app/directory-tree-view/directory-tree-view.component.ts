@@ -15,7 +15,8 @@ import { DirectoryTreeViewDataService } from './directory-tree-view-data.service
 import { FlatNode, NestedNode } from './directory-tree-view.model';
 import { DirTreeViewTooltipDisplayLogic } from './dir-tree-view-tooltip-display-logic';
 
-const logger = createPrependedLogger('[Directory Tree View]');
+const dirTreeViewLogger = createPrependedLogger('[Directory Tree View]');
+const contextMenuLogger = createPrependedLogger('[Directory Tree View] [Context Menu]');
 
 @Component({
   selector: 'app-directory-tree-view',
@@ -122,7 +123,7 @@ export class DirectoryTreeViewComponent {
 
   public handleCheckboxChange(flatNode: FlatNode): void {
     const folderOrFile = flatNode.isExpandable ? 'Folder' : 'File';
-    logger.info(`Toggled Checkbox (${folderOrFile}): ${flatNode.path}`);
+    dirTreeViewLogger.info(`Toggled Checkbox (${folderOrFile}): ${flatNode.path}`);
     Analytics.trackEvent('Directory Tree View', `Toggle Checkbox (${folderOrFile})`);
     this.toggleNodeSelection(flatNode);
   }
@@ -202,13 +203,13 @@ export class DirectoryTreeViewComponent {
   }
 
   public openFile(data: ContextMenuData) {
-    logger.info(`Context Menu: Open ${data.path}`);
+    contextMenuLogger.info(`Open "${data.path}"`);
     Analytics.trackEvent('Directory Tree View', `Context Menu: Open File`);
     openWithAssociatedApp(data.path);
   }
 
   public openContainingFolder(data: ContextMenuData) {
-    logger.info(`Context Menu: Open the containing folder of ${data.path}`);
+    contextMenuLogger.info(`Open the containing folder of "${data.path}"`);
     Analytics.trackEvent('Directory Tree View', `Context Menu: Open Containing Folder`);
     openContainingFolder(data.path);
   }
