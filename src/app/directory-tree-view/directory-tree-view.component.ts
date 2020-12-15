@@ -5,7 +5,8 @@ import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { Analytics } from '../../../src-shared/analytics/analytics';
-import { Logger } from '../../../src-shared/log/logger';
+import { openContainingFolder, openWithAssociatedApp } from '../../../src-shared/command/command';
+import { createPrependedLogger } from '../../../src-shared/log/create-prepended-logger';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
 import { DirTreeViewContextMenuData as ContextMenuData } from './dir-tree-view-context-menu/dir-tree-view-context-menu-data';
@@ -14,6 +15,7 @@ import { DirectoryTreeViewDataService } from './directory-tree-view-data.service
 import { FlatNode, NestedNode } from './directory-tree-view.model';
 import { DirTreeViewTooltipDisplayLogic } from './dir-tree-view-tooltip-display-logic';
 
+const logger = createPrependedLogger('[Directory Tree View]');
 
 @Component({
   selector: 'app-directory-tree-view',
@@ -120,7 +122,7 @@ export class DirectoryTreeViewComponent {
 
   public handleCheckboxChange(flatNode: FlatNode): void {
     const folderOrFile = flatNode.isExpandable ? 'Folder' : 'File';
-    Logger.info(`Toggled Directory Tree View Checkbox (${folderOrFile}): ${flatNode.path}`);
+    logger.info(`Toggled Checkbox (${folderOrFile}): ${flatNode.path}`);
     Analytics.trackEvent('Directory Tree View', `Toggle Checkbox (${folderOrFile})`);
     this.toggleNodeSelection(flatNode);
   }
@@ -200,11 +202,15 @@ export class DirectoryTreeViewComponent {
   }
 
   public openFile(data: ContextMenuData) {
-    alert(`Click on Action 1 for ${data.name}`);
+    logger.info(`Context Menu: Open ${data.path}`);
+    Analytics.trackEvent('Directory Tree View', `Context Menu: Open File`);
+    openWithAssociatedApp(data.path);
   }
 
   public openContainingFolder(data: ContextMenuData) {
-    alert(`Click on Action 2 for ${data.name}`);
+    logger.info(`Context Menu: Open the containing folder of ${data.path}`);
+    Analytics.trackEvent('Directory Tree View', `Context Menu: Open Containing Folder`);
+    openContainingFolder(data.path);
   }
   //#endregion --- Context Menu ---
 }
