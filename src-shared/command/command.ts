@@ -22,6 +22,24 @@ export function openWithAssociatedApp(path: string): void {
   }
 }
 
+export function openContainingFolder(path: string): void {
+  const fileOrFolderName = pathModule.basename(path);
+  const command = Command.toOpenContainingFolder(path);
+  if (command) {
+    child_process.spawn(command, [], { shell: true });
+    Logger.info(`Issued a command: ${command}`);
+    Logger.info(`Opened the containing folder of ${path}`);
+
+    if (isFilePathTooLongOnWindows(path)) {
+      Logger.warn(`Opening the containing folder of ${fileOrFolderName} might not work because the length of the file path exceeds the maximum on Windows.\n`
+        + `Maximum: ${maxFilePathLengthOnWindows} characters\n`
+        + `File path: ${path.length} characters`);
+    }
+  } else {
+    Logger.warn(`Opening the containing folder of ${fileOrFolderName} is not supported on this platform: ${os.platform()}, file path: ${path}`);
+  }
+}
+
 export class Command {
   public static toRunAssociatedApp(path: string): string {
     switch (os.platform()) {
