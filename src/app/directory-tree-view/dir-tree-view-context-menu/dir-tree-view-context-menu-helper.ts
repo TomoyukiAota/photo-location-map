@@ -1,13 +1,15 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { MatMenuTrigger } from '@angular/material/menu';
+import { Analytics } from '../../../../src-shared/analytics/analytics';
+import { openContainingFolder, openWithAssociatedApp } from '../../../../src-shared/command/command';
 import { createPrependedLogger } from '../../../../src-shared/log/create-prepended-logger';
 import { FlatNode } from '../directory-tree-view.model';
-import { DirTreeViewContextMenuData } from './dir-tree-view-context-menu-data';
+import { DirTreeViewContextMenuData as ContextMenuData } from './dir-tree-view-context-menu-data';
 
 const contextMenuLogger = createPrependedLogger('[Directory Tree View] [Context Menu]');
 
 export class DirTreeViewContextMenuHelper {
-  public static createData(node: FlatNode): DirTreeViewContextMenuData {
+  public static createData(node: FlatNode): ContextMenuData {
     return {
       name: node.name,
       path: node.path
@@ -31,5 +33,17 @@ export class DirTreeViewContextMenuHelper {
       offEvent.preventDefault();
       contextMenu.closeMenu();
     });
+  }
+
+  public static openFile(data: ContextMenuData) {
+    contextMenuLogger.info(`Open "${data.path}"`);
+    Analytics.trackEvent('Directory Tree View', `Context Menu: Open File`);
+    openWithAssociatedApp(data.path);
+  }
+
+  public static openContainingFolder(data: ContextMenuData) {
+    contextMenuLogger.info(`Open the containing folder of "${data.path}"`);
+    Analytics.trackEvent('Directory Tree View', `Context Menu: Open Containing Folder`);
+    openContainingFolder(data.path);
   }
 }
