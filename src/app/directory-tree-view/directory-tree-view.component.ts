@@ -8,8 +8,8 @@ import { Analytics } from '../../../src-shared/analytics/analytics';
 import { Logger } from '../../../src-shared/log/logger';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
-import { ContextMenuData } from './context-menu/context-menu-data';
-import { ContextMenuHelper } from './context-menu/context-menu-helper';
+import { DirTreeViewContextMenuData as ContextMenuData } from './dir-tree-view-context-menu/dir-tree-view-context-menu-data';
+import { DirTreeViewContextMenuHelper as ContextMenuHelper } from './dir-tree-view-context-menu/dir-tree-view-context-menu-helper';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { FlatNode, NestedNode } from './directory-tree-view.model';
 import { DirTreeViewTooltipDisplayLogic } from './dir-tree-view-tooltip-display-logic';
@@ -193,10 +193,10 @@ export class DirectoryTreeViewComponent {
     event.preventDefault();
     this.contextMenuPosition.x = event.clientX + 'px';
     this.contextMenuPosition.y = event.clientY + 'px';
-    this.contextMenu.menuData = { 'contextMenuData': ContextMenuHelper.createContextMenuData(node) };
+    this.contextMenu.menuData = { 'contextMenuData': ContextMenuHelper.createData(node) };
     this.contextMenu.openMenu();
     ContextMenuHelper.disableFocus(this.focusMonitor);
-    ContextMenuHelper.configureClosingContextMenuWithRightClick(this.contextMenu);
+    ContextMenuHelper.configureClosingWithRightClick(this.contextMenu);
   }
 
   public openFile(data: ContextMenuData) {
