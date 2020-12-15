@@ -1,8 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import * as child_process from 'child_process';
 import * as fsExtra from 'fs-extra';
-import * as os from 'os';
-import { Command } from '../../../../src-shared/command/command';
+import { openWithAssociatedApp } from '../../../../src-shared/command/command';
 import { Logger } from '../../../../src-shared/log/logger';
 import { getSizeInStringFormat } from '../../../../src-shared/plm-fs-util/plm-fs-util';
 import { RequireFromMainProcess } from '../../../../src-shared/require/require-from-main-process';
@@ -45,14 +43,8 @@ export class CacheSettingsComponent implements AfterViewInit, OnDestroy, OnInit 
   }
 
   public openThumbnailCacheLocation(): void {
-    const command = Command.toRunAssociatedApp(this.thumbnailCacheLocation);
-    if (command) {
-      child_process.spawn(command, [], { shell: true });
-      Logger.info(`Issued a command: ${command}`);
-      Logger.info(`Opened Thumbnail Cache Location by opening "${this.thumbnailCacheLocation}"`);
-    } else {
-      Logger.warn(`"Open Thumbnail Cache Location" is not supported on this platform: ${os.platform()}`);
-    }
+    Logger.info(`Open Thumbnail Cache Location: ${this.thumbnailCacheLocation}`);
+    openWithAssociatedApp(this.thumbnailCacheLocation);
   }
 
   public handleDeleteThumbnailCacheButtonClicked() {
