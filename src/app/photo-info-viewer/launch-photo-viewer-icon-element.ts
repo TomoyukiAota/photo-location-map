@@ -1,8 +1,8 @@
 import { Analytics } from '../../../src-shared/analytics/analytics';
-import { Logger } from '../../../src-shared/log/logger';
 import { Photo } from '../shared/model/photo.model';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { PhotoViewerLauncher } from '../photo-viewer-launcher/photo-viewer-launcher';
+import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
 
 export class LaunchPhotoViewerIconElement {
   public static create(photo: Photo): HTMLImageElement {
@@ -17,7 +17,7 @@ export class LaunchPhotoViewerIconElement {
   }
 
   private static handleLaunchPhotoViewerIconClick(photo: Photo): void {
-    Logger.info(`Photo Info Viewer: Clicked the launch photo viewer icon for ${photo.path}`);
+    logger.info(`Clicked the launch photo viewer icon for ${photo.path}`);
     Analytics.trackEvent('Photo Info Viewer', 'Clicked Launch Photo Viewer Icon');
     PhotoViewerLauncher.launch(photo);
   }
