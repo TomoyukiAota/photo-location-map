@@ -1,6 +1,5 @@
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { FilenameExtension } from '../../../src-shared/filename-extension/filename-extension';
-import { Logger } from '../../../src-shared/log/logger';
 import { isFilePathTooLongOnWindows, maxFilePathLengthOnWindows } from '../../../src-shared/max-file-path-length-on-windows/max-file-path-length-on-windows';
 import { RequireFromMainProcess } from '../../../src-shared/require/require-from-main-process';
 import { getThumbnailFilePath, isThumbnailCacheAvailable } from '../../../src-shared/thumbnail-cache/thumbnail-cache-util';
@@ -8,6 +7,7 @@ import { IconDataUrl } from '../../assets/icon-data-url';
 import { Dimensions } from '../shared/model/dimensions.model';
 import { Photo } from '../shared/model/photo.model';
 import { PhotoViewerLauncher } from '../photo-viewer-launcher/photo-viewer-launcher';
+import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
 
 const app = RequireFromMainProcess.electron.app;
 
@@ -92,7 +92,7 @@ export class ThumbnailElement {
       thumbnailElement.alt = `Thumbnail cannot be displayed because the length of the file path is ${photo.path.length}. `
         + `Windows restricts the maximum path length to ${maxFilePathLengthOnWindows}. Please change file location to shorten the path of the file. `
         + `For details, press Ctrl+Shift+I and read the console messages.`;
-      Logger.warn(`\n`
+      logger.warn(`\n`
         + `Thumbnail of ${photo.name} cannot be displayed because the length of the file path exceeds the maximum.\n`
         + `Please change the location of ${photo.name} to shorten the path.\n`
         + `-------------------------------\n`
@@ -109,7 +109,7 @@ export class ThumbnailElement {
       thumbnailElement.alt = `Thumbnail cannot be displayed because the length of the file path of the generated thumbnail is ${thumbnailFilePath.length}. `
                            + `Windows restricts the maximum path length to ${maxFilePathLengthOnWindows}. Please change file location to shorten the path of the generated thumbnail. `
                            + `For details, press Ctrl+Shift+I and read the console messages.`;
-      Logger.warn(`\n`
+      logger.warn(`\n`
                 + `Thumbnail of ${photo.name} cannot be displayed because the length of the file path of the generated thumbnail exceeds the maximum.\n`
                 + `Please change the location of ${photo.name} to shorten the path of the generated thumbnail.\n`
                 + `-------------------------------\n`
@@ -166,7 +166,7 @@ export class ThumbnailElement {
   }
 
   private static handleThumbnailClick(photo: Photo): void {
-    Logger.info(`Photo Info Viewer: Clicked the thumbnail of ${photo.path}`);
+    logger.info(`Clicked the thumbnail of ${photo.path}`);
     Analytics.trackEvent('Photo Info Viewer', 'Clicked Thumbnail');
     PhotoViewerLauncher.launch(photo);
   }

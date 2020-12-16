@@ -2,9 +2,9 @@ import * as fs from 'fs';
 import * as pathModule from 'path';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { openWithAssociatedApp } from '../../../src-shared/command/command';
-import { Logger } from '../../../src-shared/log/logger';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { Photo } from '../shared/model/photo.model';
+import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
 
 
 export class PlayLivePhotosIconElement {
@@ -25,7 +25,7 @@ export class PlayLivePhotosIconElement {
   }
 
   private static handlePlayLivePhotosIconClick(livePhotosFilePath: string, photo: Photo): void {
-    Logger.info(`Photo Info Viewer: Clicked the play live photos icon for ${photo.path}`);
+    logger.info(`Clicked the play live photos icon for ${photo.path}`);
     Analytics.trackEvent('Photo Info Viewer', 'Clicked Play Live Photos Icon');
     openWithAssociatedApp(livePhotosFilePath);
   }
