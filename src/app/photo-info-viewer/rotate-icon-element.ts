@@ -1,7 +1,7 @@
 import { Analytics } from '../../../src-shared/analytics/analytics';
-import { Logger } from '../../../src-shared/log/logger';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { Photo } from '../shared/model/photo.model';
+import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
 
 export class RotateIconElement {
   public static create(thumbnailElement: HTMLImageElement, photo: Photo): HTMLImageElement {
@@ -16,7 +16,7 @@ export class RotateIconElement {
   }
 
   private static handleRotateIconClick(thumbnailElement: HTMLImageElement, photo: Photo): void {
-    Logger.info(`Photo Info Viewer: Clicked the rotate icon for ${photo.path}`);
+    logger.info(`Clicked the rotate icon for ${photo.path}`);
     Analytics.trackEvent('Photo Info Viewer', 'Clicked Rotate Icon');
     this.rotateThumbnail(thumbnailElement);
   }
