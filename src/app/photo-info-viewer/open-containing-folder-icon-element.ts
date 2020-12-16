@@ -10,15 +10,15 @@ export class OpenContainingFolderIconElement {
     element.src = IconDataUrl.folder;
     element.width = 25;
     element.height = 25;
-    element.title = 'Open containing folder';
+    element.title = 'Open Folder';
     element.className = 'photo-info-viewer-button';
     element.onclick = () => this.handleOpenContainingFolderIconClick(photo);
     return element;
   }
 
   private static handleOpenContainingFolderIconClick(photo: Photo): void {
-    Logger.info(`Photo Info Viewer: Clicked the open containing folder icon for ${photo.path}`);
-    Analytics.trackEvent('Photo Info Viewer', 'Clicked Open Containing Folder Icon');
+    Logger.info(`Photo Info Viewer: Clicked the open folder icon for ${photo.path}`);
+    Analytics.trackEvent('Photo Info Viewer', 'Clicked Open Folder Icon');
     openContainingFolder(photo.path);
   }
 }
