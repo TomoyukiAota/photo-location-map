@@ -55,7 +55,7 @@
     "electron-unhandled": "3.0.2",
     "electron-updater": "4.3.9",
     "electron-window-state": "5.0.3",
-    "exifr": "6.0.0",
+    "exifr": "7.0.0",
     "fs-extra": "9.0.1",
     "heic-convert": "1.2.4",
     "is-natural-number": "4.0.1",
