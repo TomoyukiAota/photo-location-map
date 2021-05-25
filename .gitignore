@@ -13,6 +13,7 @@ src/**/*.js
 src-shared/**/*.js
 src-main/**/*.js
 !src/karma.conf.js
+!src/karma-electron-main-fixtures.js
 *.js.map
 
 # dependencies
