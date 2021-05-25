@@ -5,6 +5,7 @@
 
 module.exports = {
   webPreferences: {
+    contextIsolation: false,
     enableRemoteModule: true,
     nodeIntegration: true,
     webSecurity: false,
