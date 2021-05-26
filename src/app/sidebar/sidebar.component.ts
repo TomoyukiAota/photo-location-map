@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import * as remote from '@electron/remote';
 import * as createDirectoryTree from 'directory-tree';
 
 import { DirTreeObjectRecorder } from '../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
@@ -14,7 +15,6 @@ import { NoPhotosWithGpsLocationDialogComponent } from '../no-photos-with-gps-lo
 import { ThumbnailGenerationService } from '../thumbnail-generation/service/thumbnail-generation.service';
 import { FolderSelectionRecorder } from './folder-selection-recorder';
 
-const electron = ProxyRequire.electron;
 const path = ProxyRequire.path;
 
 @Component({
@@ -35,8 +35,8 @@ export class SidebarComponent {
   }
 
   public showSelectFolderDialog() {
-    electron.remote.dialog.showOpenDialog(
-      electron.remote.getCurrentWindow(),
+    remote.dialog.showOpenDialog(
+      remote.getCurrentWindow(),
       {
         properties: ['openDirectory'],
       }

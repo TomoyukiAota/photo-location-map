@@ -33,12 +33,14 @@ module.exports = function (config) {
         base: 'Electron',
         browserWindowOptions: {
           webPreferences: {
+            contextIsolation: false,
             enableRemoteModule: true,
             nodeIntegration: true,
             webSecurity: false,
             worldSafeExecuteJavaScript: false
           }
-        }
+        },
+        require: __dirname + '/karma-electron-main-fixtures.js'
       }
     },
     preprocessors: {

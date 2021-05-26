@@ -17,8 +17,8 @@ export class RequireFromMainProcess {
       this.os = require('os');
       this.path = require('path');
     } else {
-      // For Electron renderer process, use window.require('electron').remote.require function.
-      const remote = window.require('electron').remote;
+      // For Electron renderer process, use window.require('@electron/remote').require function.
+      const remote = window.require('@electron/remote');
       this.fsExtra = remote.require('fs-extra');
       this.electron = remote.require('electron');
       this.os = remote.require('os');

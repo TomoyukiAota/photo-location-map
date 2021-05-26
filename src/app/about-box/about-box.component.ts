@@ -1,12 +1,10 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { app } from '@electron/remote';
 
-import { ProxyRequire } from '../../../src-shared/require/proxy-require';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { configureOpeningInOsBrowser } from '../shared/open-url/configure-opening-in-os-browser';
 import { openUrl } from '../shared/open-url/open-url';
-
-const app = ProxyRequire.electron.remote.app;
 
 @Component({
   selector: 'app-about-box',

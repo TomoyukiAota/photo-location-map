@@ -51,10 +51,10 @@ jobs:
       with:
         run: npm run test:unit:em:renderer
 
-    - name: npm run test:e2e
-      uses: GabrielBB/xvfb-action@v1.4
-      with:
-        run: npm run test:e2e
+#    - name: npm run test:e2e
+#      uses: GabrielBB/xvfb-action@v1.4
+#      with:
+#        run: npm run test:e2e
 
     - name: npm run test:package
       uses: GabrielBB/xvfb-action@v1.4

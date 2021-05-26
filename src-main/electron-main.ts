@@ -1,3 +1,5 @@
+require('@electron/remote/main').initialize();
+
 import './configure-electron-unhandled';
 import { app, BrowserWindow, protocol } from 'electron';
 import * as path from 'path';
@@ -27,6 +29,7 @@ const createWindow = () => {
     width: mainWindowState.width,
     height: mainWindowState.height,
     webPreferences: {
+      contextIsolation: false,
       enableRemoteModule: true,
       nodeIntegration: true,
       webSecurity: false,
