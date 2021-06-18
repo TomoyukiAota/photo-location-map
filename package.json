@@ -45,7 +45,6 @@
     "test:unit:em:both": "npm-run-all test:unit:em:main test:unit:em:renderer",
     "test:unit:em:help": "electron-mocha --help",
     "test:unit:all": "npm-run-all test:unit:ng test:unit:em:both",
-    "test:e2e": "npm run build:prod && mocha --config ./e2e/e2e.mocharc.js",
     "test:package": "cross-env PLM_PACKAGE_TEST=true node ./script/package-test/run-package-test.js",
     "test:all": "npm-run-all lint:all test:unit:all test:package",
     "check": "npm-check --skip-unused --save-exact --update"
@@ -94,6 +93,7 @@
     "@types/jasmine": "3.6.11",
     "@types/leaflet": "1.7.0",
     "@types/leaflet.markercluster": "1.4.4",
+    "@types/lodash": "4.14.165",
     "@types/node": "12.20.13",
     "@types/promise.allsettled": "1.0.3",
     "@types/universal-analytics": "0.4.4",
@@ -125,7 +125,6 @@
     "npm-run-all": "4.1.5",
     "power-assert": "1.6.1",
     "rxjs": "6.6.7",
-    "spectron": "13.0.0",
     "split.js": "1.6.4",
     "tree-kill": "1.2.2",
     "ts-node": "8.3.0",

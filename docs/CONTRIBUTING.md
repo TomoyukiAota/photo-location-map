@@ -41,7 +41,7 @@ npm start
 |Command|Description|
 |--|--|
 |`npm start`| Build and run the application for development. |
-|`npm run test:all`| Run all tests. Linting, unit tests, e2e tests, and package creation/smoke tests are included. |
+|`npm run test:all`| Run all tests. Linting, unit tests, and package creation/smoke tests are included. |
 |`npm run package:windows`| Create an installer for Windows. |
 |`npm run package:mac`| Create a `.dmg` file which contains a `.app` file for macOS. |
 |`npm run package:linux`| Create an application for Linux. |
