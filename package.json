@@ -19,7 +19,7 @@
     "build": "npm run electron:serve-tsc && ng build",
     "build:dev": "npm run build -- -c dev",
     "build:prod": "npm run build -- -c production",
-    "ng:serve": "ng serve",
+    "ng:serve": "ng serve -c production",
     "electron:serve-tsc": "tsc -p tsconfig.serve.json",
     "electron:serve": "wait-on http-get://localhost:4200/ && npm run electron:serve-tsc && electron . --serve",
     "electron:local": "npm run build:prod && electron .",
