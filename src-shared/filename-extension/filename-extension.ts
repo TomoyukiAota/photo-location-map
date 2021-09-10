@@ -16,6 +16,8 @@ export class FilenameExtension {
 
   private static readonly extensionsSupportedByExifr: ReadonlyArray<string> = [
     ...FilenameExtension.jpegExtensions,
+    ...FilenameExtension.tiffExtensions,
+    ...FilenameExtension.pngExtensions,
     ...FilenameExtension.heifExtensions,
   ];
 
@@ -24,8 +26,8 @@ export class FilenameExtension {
   ];
 
   private static readonly extensionsDisplayableInBrowser: ReadonlyArray<string> = [
-    ...FilenameExtension.jpegExtensions
-    // TODO: Add PNG and WebP here when supporting them.
+    ...FilenameExtension.jpegExtensions,
+    ...FilenameExtension.pngExtensions,
   ];
 
   public static isSupportedByPlm(extension: string) {
