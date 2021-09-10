@@ -36,9 +36,8 @@
           "configurations": {
             "dev": {
               "optimization": false,
-              "outputHashing": "all",
+              "outputHashing": "none",
               "sourceMap": true,
-              "extractCss": true,
               "namedChunks": false,
               "aot": false,
               "extractLicenses": true,
@@ -53,9 +52,8 @@
             },
             "production": {
               "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "extractCss": true,
+              "outputHashing": "none",
+              "sourceMap": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
