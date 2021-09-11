@@ -44,7 +44,7 @@ export class ThumbnailElement {
   }
 
   private static displayThumbnailFromExif(thumbnailElement: HTMLImageElement, photo: Photo) {
-    thumbnailElement.src = photo.exif.thumbnail.dataUrl;
+    thumbnailElement.src = photo.exif.thumbnail.objectUrl;
     thumbnailElement.width = photo.exif.thumbnail.dimensions.width;
     thumbnailElement.height = photo.exif.thumbnail.dimensions.height;
     thumbnailElement.title = `Click the thumbnail to open ${photo.name}`;

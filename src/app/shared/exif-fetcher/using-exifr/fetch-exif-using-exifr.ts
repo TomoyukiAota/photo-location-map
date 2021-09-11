@@ -7,7 +7,7 @@ import { LatLng } from '../../model/lat-lng.model';
 import { Thumbnail } from '../../model/thumbnail.model';
 import { rotateImage, getRotatedSize } from '../../image-rotation';
 
-// exifr in the main process is used because it runs faster than the one in the renderer process.
+// exifr in the main process is used. With exifr in the renderer process, loading files fails when many files are loaded.
 const exifr: typeof import('exifr') = window.require('@electron/remote').require('exifr');
 
 export function fetchExifUsingExifr(filePath: string): Promise<Exif> {
@@ -38,7 +38,7 @@ async function fetchExifrParseOutput(filePath: string): Promise<ExifrParseOutput
   const exifrParseOutput: ExifrParseOutput = await exifr.parse(filePath, {
     translateValues: false
   });
-  Logger.info(`[using exifr] Fetched EXIF of ${filePath} `, exifrParseOutput);
+  Logger.infoWithoutAppendingFile(`[using exifr] Fetched EXIF of ${filePath} `, exifrParseOutput);
   return exifrParseOutput;
 }
 
@@ -70,7 +70,7 @@ async function createExifFromExifrParseOutput(exifrParseOutput: ExifrParseOutput
     exif.thumbnail = thumbnail;
   }
 
-  Logger.info(`[using exifr] Created Exif class instance of ${filePath} `, exif);
+  Logger.infoWithoutAppendingFile(`[using exifr] Created Exif class instance of ${filePath} `, exif);
 
   return exif;
 }
@@ -79,6 +79,6 @@ async function createThumbnail(thumbnailBuffer: Uint8Array | Buffer, orientation
   const base64String = btoa(String.fromCharCode.apply(null, thumbnailBuffer));
   const dataUrl = `data:image/jpg;base64,${base64String}`;
   const rotatedImage = await rotateImage(dataUrl, orientation);
-  const thumbnail = new Thumbnail(rotatedImage.dataUrl, rotatedImage.dimensions);
+  const thumbnail = new Thumbnail(rotatedImage.objectUrl, rotatedImage.dimensions);
   return thumbnail;
 }
