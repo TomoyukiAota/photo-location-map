@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { LoadingFolderProgressReporterService } from '../progress-reporter/loading-folder-progress-reporter.service';
 
 @Component({
   selector: 'app-loading-folder-dialog',
@@ -6,11 +7,16 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./loading-folder-dialog.component.scss']
 })
 export class LoadingFolderDialogComponent implements OnInit {
+  public numberOfAllFilesToLoad = 0;
+  public numberOfLoadedFiles = 0;
 
-  // TODO: Inject LoadingFolderProgressReporterService and get progress text to display on the dialog.
-  constructor() { }
+  constructor(private progressService: LoadingFolderProgressReporterService) { }
 
   ngOnInit() {
+    this.progressService.progressStatus.subscribe(status => {
+      this.numberOfAllFilesToLoad = status.numberOfAllFilesToLoad;
+      this.numberOfLoadedFiles = status.numberOfLoadedFiles;
+    });
+    this.progressService.startUpdatingProgress();
   }
-
 }

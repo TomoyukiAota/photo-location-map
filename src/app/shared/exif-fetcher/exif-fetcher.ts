@@ -4,6 +4,7 @@ import { Logger } from '../../../../src-shared/log/logger';
 import { Exif } from '../model/exif.model';
 import { fetchExifUsingExifParser } from './using-exif-parser/fetch-exif-using-exif-parser';
 import { fetchExifUsingExifr } from './using-exifr/fetch-exif-using-exifr';
+import { LoadingFolderProgress as progress } from '../loading-folder-progress';
 
 export class PathExifPair {
   constructor(public readonly path: string,
@@ -17,11 +18,14 @@ export class ExifFetcher {
   public static async generatePathExifPairs(directoryTreeObject: DirectoryTree): Promise<PathExifPair[]> {
     Logger.debug(`ExifFetcher.generatePathExifPairs function: Started with `, directoryTreeObject);
     this.pathExifPairPromises.length = 0;
+    progress.reset();
     Logger.debug(`ExifFetcher.generatePathExifPairs function: Before calling updatePathExifPairPromises`);
     this.updatePathExifPairPromises(directoryTreeObject);
     Logger.debug(`ExifFetcher.generatePathExifPairs function: After calling updatePathExifPairPromises`, this.pathExifPairPromises);
+    progress.setNumberOfAllFilesToLoad(this.pathExifPairPromises.length);
+    Logger.debug(`ExifFetcher.generatePathExifPairs function: Before "await Promise.all(this.pathExifPairPromises)"`);
     const pathExifPairs = await Promise.all(this.pathExifPairPromises);
-    Logger.debug(`ExifFetcher.generatePathExifPairs function: After await Promise.all(this.pathExifPairPromises) and gotten pathExifPairs`, pathExifPairs);
+    Logger.debug(`ExifFetcher.generatePathExifPairs function: After "await Promise.all(this.pathExifPairPromises)" and gotten pathExifPairs`, pathExifPairs);
     return pathExifPairs;
   }
 
@@ -56,7 +60,8 @@ export class ExifFetcher {
     }
 
     const pathExifPairPromise = exifPromise
-      .then(exif => new PathExifPair(filePath, exif));
+      .then(exif => new PathExifPair(filePath, exif))
+      .finally(() => progress.incrementNumberOfLoadedFiles());
 
     this.pathExifPairPromises.push(pathExifPairPromise);
   }
