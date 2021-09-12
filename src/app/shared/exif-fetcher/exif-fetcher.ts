@@ -1,3 +1,4 @@
+import PQueue from 'p-queue';
 import { exifFetchLibraryInUse } from '../../../../src-shared/exif-fetch-library-in-use/exif-fetch-library-in-use';
 import { FilenameExtension } from '../../../../src-shared/filename-extension/filename-extension';
 import { Logger } from '../../../../src-shared/log/logger';
@@ -13,30 +14,35 @@ export class PathExifPair {
 }
 
 export class ExifFetcher {
-  private static readonly pathExifPairPromises: Promise<PathExifPair>[] = [];
+  private static readonly queue = new PQueue({concurrency: 10});
+  private static readonly pathExifPairPromiseFuncs: (() => Promise<PathExifPair>)[] = [];
 
   public static async generatePathExifPairs(directoryTreeObject: DirectoryTree): Promise<PathExifPair[]> {
     Logger.debug(`ExifFetcher.generatePathExifPairs function: Started with `, directoryTreeObject);
-    this.pathExifPairPromises.length = 0;
+    this.pathExifPairPromiseFuncs.length = 0;
+    this.queue.clear();
     progress.reset();
-    Logger.debug(`ExifFetcher.generatePathExifPairs function: Before calling updatePathExifPairPromises`);
-    this.updatePathExifPairPromises(directoryTreeObject);
-    Logger.debug(`ExifFetcher.generatePathExifPairs function: After calling updatePathExifPairPromises`, this.pathExifPairPromises);
-    progress.setNumberOfAllFilesToLoad(this.pathExifPairPromises.length);
-    Logger.debug(`ExifFetcher.generatePathExifPairs function: Before "await Promise.all(this.pathExifPairPromises)"`);
-    const pathExifPairs = await Promise.all(this.pathExifPairPromises);
-    Logger.debug(`ExifFetcher.generatePathExifPairs function: After "await Promise.all(this.pathExifPairPromises)" and gotten pathExifPairs`, pathExifPairs);
+
+    Logger.debug(`ExifFetcher.generatePathExifPairs function: Before calling updatePathExifPairPromiseFuncs`);
+    this.updatePathExifPairPromiseFuncs(directoryTreeObject);
+    Logger.debug(`ExifFetcher.generatePathExifPairs function: After calling updatePathExifPairPromiseFuncs`, this.pathExifPairPromiseFuncs);
+    progress.setNumberOfAllFilesToLoad(this.pathExifPairPromiseFuncs.length);
+
+    Logger.debug(`ExifFetcher.generatePathExifPairs function: Before awaiting all PathExifPair promises to be settled.`);
+    const pathExifPairs = await this.queue.addAll(this.pathExifPairPromiseFuncs);
+    Logger.debug(`ExifFetcher.generatePathExifPairs function: After awaiting all PathExifPair promises and gotten pathExifPairs`, pathExifPairs);
+
     return pathExifPairs;
   }
 
-  private static updatePathExifPairPromises(directoryTreeElement: DirectoryTree) {
-    this.addPathExifPairPromiseIfAppropriate(directoryTreeElement);
+  private static updatePathExifPairPromiseFuncs(directoryTreeElement: DirectoryTree) {
+    this.addPathExifPairPromiseFuncIfAppropriate(directoryTreeElement);
     if (directoryTreeElement.children) {
-      directoryTreeElement.children.forEach(child => this.updatePathExifPairPromises(child));
+      directoryTreeElement.children.forEach(child => this.updatePathExifPairPromiseFuncs(child));
     }
   }
 
-  private static addPathExifPairPromiseIfAppropriate(directoryTreeElement: DirectoryTree) {
+  private static addPathExifPairPromiseFuncIfAppropriate(directoryTreeElement: DirectoryTree) {
     const isDirectory = directoryTreeElement.type === 'directory';
     if (isDirectory)
       return;
@@ -45,24 +51,27 @@ export class ExifFetcher {
     if (!isSupportedByPlm)
       return;
 
-    this.addPathExifPairPromise(directoryTreeElement.path);
+    this.addPathExifPairPromiseFunc(directoryTreeElement.path);
   }
 
-  private static addPathExifPairPromise(filePath: string) {
-    let exifPromise: Promise<Exif>;
+  private static addPathExifPairPromiseFunc(filePath: string) {
+    const pathExifPairPromiseFunc = () => {
+      let exifPromise: Promise<Exif>;
 
-    if (exifFetchLibraryInUse === 'exifr') {
-      exifPromise = fetchExifUsingExifr(filePath);
-    } else if (exifFetchLibraryInUse === 'exif-parser') {
-      exifPromise = fetchExifUsingExifParser(filePath);
-    } else {
-      Logger.error(`Something went wrong with exifFetchLibraryInUse. The value of exifFetchLibraryInUse is "${exifFetchLibraryInUse}"`);
-    }
+      if (exifFetchLibraryInUse === 'exifr') {
+        exifPromise = fetchExifUsingExifr(filePath);
+      } else if (exifFetchLibraryInUse === 'exif-parser') {
+        exifPromise = fetchExifUsingExifParser(filePath);
+      } else {
+        Logger.error(`Something went wrong with exifFetchLibraryInUse. The value of exifFetchLibraryInUse is "${exifFetchLibraryInUse}"`);
+      }
 
-    const pathExifPairPromise = exifPromise
-      .then(exif => new PathExifPair(filePath, exif))
-      .finally(() => progress.incrementNumberOfLoadedFiles());
+      const pathExifPairPromise = exifPromise
+        .then(exif => new PathExifPair(filePath, exif))
+        .finally(() => progress.incrementNumberOfLoadedFiles());
+      return pathExifPairPromise;
+    };
 
-    this.pathExifPairPromises.push(pathExifPairPromise);
+    this.pathExifPairPromiseFuncs.push(pathExifPairPromiseFunc);
   }
 }
