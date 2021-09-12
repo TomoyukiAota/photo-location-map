@@ -39,7 +39,7 @@ async function fetchExifrParseOutput(filePath: string): Promise<ExifrParseOutput
   const exifrParseOutput: ExifrParseOutput = await exifr.parse(filePath, {
     translateValues: false
   });
-  Logger.infoWithoutAppendingFile(`[using exifr] Fetched EXIF of ${filePath} `, exifrParseOutput);
+  Logger.info(`[using exifr] Fetched EXIF of ${filePath} `, exifrParseOutput);
   return exifrParseOutput;
 }
 
@@ -71,7 +71,7 @@ async function createExifFromExifrParseOutput(exifrParseOutput: ExifrParseOutput
     exif.thumbnail = thumbnail;
   }
 
-  Logger.infoWithoutAppendingFile(`[using exifr] Created Exif class instance of ${filePath} `, exif);
+  Logger.info(`[using exifr] Created Exif class instance of ${filePath} `, exif);
 
   return exif;
 }
