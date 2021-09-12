@@ -7,7 +7,8 @@ import { LatLng } from '../../model/lat-lng.model';
 import { Thumbnail } from '../../model/thumbnail.model';
 import { rotateImage, getRotatedSize } from '../../image-rotation';
 
-// exifr in the main process is used because it runs faster than the one in the renderer process.
+// exifr in the main process is used.
+// With exifr in the renderer process, 1) it is slower, and 2) loading files fails when many files are loaded.
 const exifr: typeof import('exifr') = window.require('@electron/remote').require('exifr');
 
 export function fetchExifUsingExifr(filePath: string): Promise<Exif> {
@@ -79,6 +80,6 @@ async function createThumbnail(thumbnailBuffer: Uint8Array | Buffer, orientation
   const base64String = btoa(String.fromCharCode.apply(null, thumbnailBuffer));
   const dataUrl = `data:image/jpg;base64,${base64String}`;
   const rotatedImage = await rotateImage(dataUrl, orientation);
-  const thumbnail = new Thumbnail(rotatedImage.dataUrl, rotatedImage.dimensions);
+  const thumbnail = new Thumbnail(rotatedImage.objectUrl, rotatedImage.dimensions);
   return thumbnail;
 }

@@ -1,7 +1,8 @@
 import { Dimensions } from './model/dimensions.model';
+import { ThumbnailObjectUrlStorage } from './thumbnail-object-url-storage';
 
 export class RotatedImage {
-  public dataUrl: string;
+  public objectUrl: string;
   public dimensions: Dimensions;
 }
 
@@ -40,9 +41,13 @@ export function rotateImage(dataUrl: string, orientation: number): Promise<Rotat
       ctx.drawImage(img, 0, 0);
 
       const rotatedImage = new RotatedImage();
-      rotatedImage.dataUrl = canvas.toDataURL();
       rotatedImage.dimensions = new Dimensions(canvas.width, canvas.height);
-      resolve(rotatedImage);
+      canvas.toBlob(blob => {
+        const objectUrl = URL.createObjectURL(blob);
+        rotatedImage.objectUrl = objectUrl;
+        ThumbnailObjectUrlStorage.add(objectUrl);
+        resolve(rotatedImage);
+      });
     };
 
     img.src = dataUrl;

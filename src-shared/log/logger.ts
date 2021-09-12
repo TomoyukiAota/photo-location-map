@@ -38,6 +38,14 @@ export class Logger {
     LoggerImpl.appendToLogFile(text, ...object);
   }
 
+  public static infoWithoutAppendingFile(message: string, ...object: any) {
+    if (EnvironmentDetector.isUnitTest)
+      return;
+
+    const text = LoggerImpl.generateLogText(message, 'info');
+    console.info(text, ...object);
+  }
+
   public static debug(message: string, ...object: any) {
     if (EnvironmentDetector.isUnitTest)
       return;
