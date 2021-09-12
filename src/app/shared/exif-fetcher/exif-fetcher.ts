@@ -3,9 +3,9 @@ import { exifFetchLibraryInUse } from '../../../../src-shared/exif-fetch-library
 import { FilenameExtension } from '../../../../src-shared/filename-extension/filename-extension';
 import { Logger } from '../../../../src-shared/log/logger';
 import { Exif } from '../model/exif.model';
+import { LoadingFolderProgress as progress } from '../loading-folder-progress';
 import { fetchExifUsingExifParser } from './using-exif-parser/fetch-exif-using-exif-parser';
 import { fetchExifUsingExifr } from './using-exifr/fetch-exif-using-exifr';
-import { LoadingFolderProgress as progress } from '../loading-folder-progress';
 
 export class PathExifPair {
   constructor(public readonly path: string,
