@@ -13,6 +13,14 @@ mat-progress-bar {
   left: 5%;
 }
 
-.progress-text {
+.loading {
   margin-top: 15px;
+}
+
+.progress {
+  margin-top: 10px;
+}
+
+.hidden {
+  visibility: hidden;
 }

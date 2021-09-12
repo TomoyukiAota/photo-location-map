@@ -55,8 +55,8 @@ export class SidebarComponent {
     ThumbnailObjectUrlStorage.revokeObjectUrls();
     this.folderSelectionService.folderSelected.next();
     const dialogRef = this.dialog.open(LoadingFolderDialogComponent, {
-      width: '300px',
-      height: '90px',
+      width: '350px',
+      height: '120px',
       panelClass: 'custom-dialog-container',
       disableClose: true,
       autoFocus: false,
