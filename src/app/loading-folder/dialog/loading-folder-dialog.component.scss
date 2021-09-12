@@ -1,26 +1,24 @@
 .progress-indicator {
-  position: absolute;
-  text-align: center;
-  width: 100%;
-  top: 50%;
-  left: 50%;
-  transform: translateY(-50%) translateX(-50%);
+  height: 100%;
+  display: grid;
+  grid: "progress-bar"         38px
+        "loading-and-progress" 1fr
+        /1fr;
+  justify-content: center;
+  mat-progress-bar      { grid-area: progress-bar;         align-self: end;    }
+  .loading-and-progress { grid-area: loading-and-progress; align-self: center; }
 }
 
 mat-progress-bar {
-  margin-top: 10px;
+  // Override width and left of mat-progress-bar so that it is located at the center with appropriate space from left and right.
   width: 90%;
   left: 5%;
 }
 
+.loading-and-progress {
+  text-align: center;
+}
+
 .loading {
-  margin-top: 15px;
-}
-
-.progress {
-  margin-top: 10px;
-}
-
-.hidden {
-  visibility: hidden;
+  margin-bottom: 10px;
 }
