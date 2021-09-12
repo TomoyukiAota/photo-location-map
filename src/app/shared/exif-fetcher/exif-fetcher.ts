@@ -28,7 +28,7 @@ export class ExifFetcher {
     Logger.debug(`ExifFetcher.generatePathExifPairs function: After calling updatePathExifPairPromiseFuncs`, this.pathExifPairPromiseFuncs);
     progress.setNumberOfAllFilesToLoad(this.pathExifPairPromiseFuncs.length);
 
-    Logger.debug(`ExifFetcher.generatePathExifPairs function: Before awaiting all PathExifPair promises to be settled.`);
+    Logger.debug(`ExifFetcher.generatePathExifPairs function: Before awaiting all PathExifPair promises.`);
     const pathExifPairs = await this.queue.addAll(this.pathExifPairPromiseFuncs);
     Logger.debug(`ExifFetcher.generatePathExifPairs function: After awaiting all PathExifPair promises and gotten pathExifPairs`, pathExifPairs);
 
