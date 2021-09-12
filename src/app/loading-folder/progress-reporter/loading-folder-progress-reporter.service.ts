@@ -18,7 +18,7 @@ export class LoadingFolderProgressReporterService {
       const numberOfAllFilesToLoad = progress.numberOfAllFilesToLoad;
       const loadedPercent = numberOfLoadedFiles / numberOfAllFilesToLoad * 100;
       const isValid = numberOfAllFilesToLoad !== 0;
-      Logger.infoWithoutAppendingFile(`[Loading Folder] Loaded ${numberOfLoadedFiles} files out of ${numberOfAllFilesToLoad} files.`);
+      Logger.info(`[Loading Folder] Loaded ${numberOfLoadedFiles} files out of ${numberOfAllFilesToLoad} files.`);
       this.progressStatus.next({
         isValid,
         numberOfLoadedFiles,
