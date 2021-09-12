@@ -9,6 +9,7 @@ import { removeInvalidThumbnailCache } from '../../../src-shared/thumbnail-cache
 
 import { FolderSelectionService } from '../shared/service/folder-selection.service';
 import { PhotoDataService } from '../shared/service/photo-data.service';
+import { ThumbnailObjectUrlStorage } from '../shared/thumbnail-object-url-storage';
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
 import { LoadingFolderDialogComponent } from '../loading-folder/dialog/loading-folder-dialog.component';
 import { NoPhotosWithGpsLocationDialogComponent } from '../no-photos-with-gps-location-dialog/no-photos-with-gps-location-dialog.component';
@@ -51,10 +52,11 @@ export class SidebarComponent {
   }
 
   private readonly handleSelectedFolder = (selectedFolderPath: string) => {
+    ThumbnailObjectUrlStorage.revokeObjectUrls();
     this.folderSelectionService.folderSelected.next();
     const dialogRef = this.dialog.open(LoadingFolderDialogComponent, {
-      width: '300px',
-      height: '90px',
+      width: '350px',
+      height: '120px',
       panelClass: 'custom-dialog-container',
       disableClose: true,
       autoFocus: false,

@@ -10,7 +10,7 @@ export async function createThumbnail(exifParserResult: ExifParserResult): Promi
 
   const dataUrl = createDataUrlFromExif(exifParserResult);
   const rotatedImage = await rotateImage(dataUrl, exifParserResult.tags.Orientation);
-  return new Thumbnail(rotatedImage.dataUrl, rotatedImage.dimensions);
+  return new Thumbnail(rotatedImage.objectUrl, rotatedImage.dimensions);
 }
 
 function createDataUrlFromExif(exifParserResult: ExifParserResult): string {

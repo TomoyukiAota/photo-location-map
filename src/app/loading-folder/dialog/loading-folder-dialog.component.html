@@ -1,6 +1,9 @@
 <div class="progress-indicator">
-  <mat-progress-bar
-    mode="buffer">
-  </mat-progress-bar>
-  <div class="progress-text">Loading Selected Folder...</div>
+  <mat-progress-bar mode="buffer" [value]="progressPercent"></mat-progress-bar>
+  <div class="loading-and-progress">
+    <div class="loading">Loading Selected Folder...</div>
+    <div *ngIf="isProgressValid">
+      Loaded {{ numberOfLoadedFiles }} files out of {{ numberOfAllFilesToLoad }} files.
+    </div>
+  </div>
 </div>
