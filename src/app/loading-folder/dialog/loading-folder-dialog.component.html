@@ -1,6 +1,7 @@
 <div class="progress-indicator">
-  <mat-progress-bar
-    mode="buffer">
-  </mat-progress-bar>
-  <div class="progress-text">Loading Selected Folder... (Loaded {{ numberOfLoadedFiles }} out of {{ numberOfAllFilesToLoad }} files.)</div>
+  <mat-progress-bar mode="buffer" [value]="progressPercent"></mat-progress-bar>
+  <div class="loading">Loading Selected Folder...</div>
+  <div class="progress" [ngClass]="{'hidden': !isProgressValid}">
+    Loaded {{ numberOfLoadedFiles }} files out of {{ numberOfAllFilesToLoad }} files.
+  </div>
 </div>

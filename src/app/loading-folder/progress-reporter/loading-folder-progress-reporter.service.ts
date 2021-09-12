@@ -7,7 +7,7 @@ import { LoadingFolderProgress as progress } from '../../shared/loading-folder-p
   providedIn: 'root'
 })
 export class LoadingFolderProgressReporterService {
-  public progressStatus = new Subject<{numberOfLoadedFiles: number, numberOfAllFilesToLoad: number}>();
+  public progressStatus = new Subject<{numberOfLoadedFiles: number, numberOfAllFilesToLoad: number, loadedPercent: number, isValid: boolean}>();
 
   constructor() { }
 
@@ -16,8 +16,15 @@ export class LoadingFolderProgressReporterService {
     const intervalId = setInterval(() => {
       const numberOfLoadedFiles = progress.numberOfLoadedFiles;
       const numberOfAllFilesToLoad = progress.numberOfAllFilesToLoad;
+      const loadedPercent = numberOfLoadedFiles / numberOfAllFilesToLoad * 100;
+      const isValid = numberOfAllFilesToLoad !== 0;
       Logger.infoWithoutAppendingFile(`[Loading Folder] Loaded ${numberOfLoadedFiles} files out of ${numberOfAllFilesToLoad} files.`);
-      this.progressStatus.next({numberOfLoadedFiles: numberOfLoadedFiles, numberOfAllFilesToLoad: numberOfAllFilesToLoad});
+      this.progressStatus.next({
+        isValid,
+        numberOfLoadedFiles,
+        numberOfAllFilesToLoad,
+        loadedPercent,
+      });
 
       if (numberOfLoadedFiles === numberOfAllFilesToLoad) {
         clearInterval(intervalId);
