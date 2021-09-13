@@ -5,6 +5,7 @@ import * as createDirectoryTree from 'directory-tree';
 
 import { DirTreeObjectRecorder } from '../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
 import { ProxyRequire } from '../../../src-shared/require/proxy-require';
+import { sleep } from '../../../src-shared/sleep/sleep';
 import { removeInvalidThumbnailCache } from '../../../src-shared/thumbnail-cache/remove-invalid-thumbnail-cache';
 
 import { FolderSelectionService } from '../shared/service/folder-selection.service';
@@ -63,7 +64,7 @@ export class SidebarComponent {
       autoFocus: false,
       restoreFocus: false
     });
-    await new Promise(resolve => setTimeout(resolve, 100)); // To display the dialog promptly before starting the intensive work of loading the folder.
+    await sleep(100); // To display the dialog promptly before starting the intensive work of loading the folder.
     FolderSelectionRecorder.start(selectedFolderPath);
     const directoryTreeObject = createDirectoryTree(selectedFolderPath);
     DirTreeObjectRecorder.record(directoryTreeObject);
