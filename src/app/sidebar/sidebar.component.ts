@@ -52,7 +52,7 @@ export class SidebarComponent {
     });
   }
 
-  private readonly handleSelectedFolder = (selectedFolderPath: string) => {
+  private readonly handleSelectedFolder = async (selectedFolderPath: string) => {
     ThumbnailObjectUrlStorage.revokeObjectUrls();
     this.folderSelectionService.folderSelected.next();
     const loadingFolderDialogRef = this.dialog.open(LoadingFolderDialogComponent, {
@@ -63,6 +63,7 @@ export class SidebarComponent {
       autoFocus: false,
       restoreFocus: false
     });
+    await new Promise(resolve => setTimeout(resolve, 100)); // To display the dialog promptly before starting the intensive work of loading the folder.
     FolderSelectionRecorder.start(selectedFolderPath);
     const directoryTreeObject = createDirectoryTree(selectedFolderPath);
     DirTreeObjectRecorder.record(directoryTreeObject);
