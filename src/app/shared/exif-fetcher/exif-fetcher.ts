@@ -3,7 +3,7 @@ import { exifFetchLibraryInUse } from '../../../../src-shared/exif-fetch-library
 import { FilenameExtension } from '../../../../src-shared/filename-extension/filename-extension';
 import { Logger } from '../../../../src-shared/log/logger';
 import { Exif } from '../model/exif.model';
-import { LoadingFolderProgress as progress } from '../loading-folder-progress';
+import { LoadingFolderProgress } from '../loading-folder-progress';
 import { fetchExifUsingExifParser } from './using-exif-parser/fetch-exif-using-exif-parser';
 import { fetchExifUsingExifr } from './using-exifr/fetch-exif-using-exifr';
 
@@ -21,12 +21,11 @@ export class ExifFetcher {
     Logger.debug(`ExifFetcher.generatePathExifPairs function: Started with `, directoryTreeObject);
     this.pathExifPairPromiseFuncs.length = 0;
     this.queue.clear();
-    progress.reset();
 
     Logger.debug(`ExifFetcher.generatePathExifPairs function: Before calling updatePathExifPairPromiseFuncs`);
     this.updatePathExifPairPromiseFuncs(directoryTreeObject);
     Logger.debug(`ExifFetcher.generatePathExifPairs function: After calling updatePathExifPairPromiseFuncs`, this.pathExifPairPromiseFuncs);
-    progress.setNumberOfAllFilesToLoad(this.pathExifPairPromiseFuncs.length);
+    LoadingFolderProgress.setNumberOfAllFilesToLoad(this.pathExifPairPromiseFuncs.length);
 
     Logger.debug(`ExifFetcher.generatePathExifPairs function: Before awaiting all PathExifPair promises.`);
     const pathExifPairs = await this.queue.addAll(this.pathExifPairPromiseFuncs);
@@ -68,7 +67,7 @@ export class ExifFetcher {
 
       const pathExifPairPromise = exifPromise
         .then(exif => new PathExifPair(filePath, exif))
-        .finally(() => progress.incrementNumberOfLoadedFiles());
+        .finally(() => LoadingFolderProgress.incrementNumberOfLoadedFiles());
       return pathExifPairPromise;
     };
 
