@@ -5,10 +5,12 @@ import * as createDirectoryTree from 'directory-tree';
 
 import { DirTreeObjectRecorder } from '../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
 import { ProxyRequire } from '../../../src-shared/require/proxy-require';
+import { sleep } from '../../../src-shared/sleep/sleep';
 import { removeInvalidThumbnailCache } from '../../../src-shared/thumbnail-cache/remove-invalid-thumbnail-cache';
 
 import { FolderSelectionService } from '../shared/service/folder-selection.service';
 import { PhotoDataService } from '../shared/service/photo-data.service';
+import { LoadingFolderProgress } from '../shared/loading-folder-progress';
 import { ThumbnailObjectUrlStorage } from '../shared/thumbnail-object-url-storage';
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
 import { LoadingFolderDialogComponent } from '../loading-folder/dialog/loading-folder-dialog.component';
@@ -35,26 +37,26 @@ export class SidebarComponent {
               public thumbnailGenerationService: ThumbnailGenerationService) {
   }
 
-  public showSelectFolderDialog() {
-    remote.dialog.showOpenDialog(
+  public async showSelectFolderDialog() {
+    const result = await remote.dialog.showOpenDialog(
       remote.getCurrentWindow(),
       {
         properties: ['openDirectory'],
       }
-    ).then(result => {
-      const isCanceled = result.filePaths.length === 0;
-      if (isCanceled)
-        return;
+    );
 
-      const selectedFolderPath = result.filePaths[0];
-      this.handleSelectedFolder(selectedFolderPath);
-    });
+    const isCanceled = result.filePaths.length === 0;
+    if (isCanceled)
+      return;
+
+    const selectedFolderPath = result.filePaths[0];
+    await this.handleSelectedFolder(selectedFolderPath);
   }
 
-  private readonly handleSelectedFolder = (selectedFolderPath: string) => {
+  private async handleSelectedFolder(selectedFolderPath: string) {
     ThumbnailObjectUrlStorage.revokeObjectUrls();
     this.folderSelectionService.folderSelected.next();
-    const dialogRef = this.dialog.open(LoadingFolderDialogComponent, {
+    const loadingFolderDialogRef = this.dialog.open(LoadingFolderDialogComponent, {
       width: '350px',
       height: '120px',
       panelClass: 'custom-dialog-container',
@@ -62,6 +64,7 @@ export class SidebarComponent {
       autoFocus: false,
       restoreFocus: false
     });
+    await sleep(100); // To display the dialog promptly before starting the intensive work of loading the folder.
     FolderSelectionRecorder.start(selectedFolderPath);
     const directoryTreeObject = createDirectoryTree(selectedFolderPath);
     DirTreeObjectRecorder.record(directoryTreeObject);
@@ -77,11 +80,12 @@ export class SidebarComponent {
         FolderSelectionRecorder.fail(reason)
       )
       .finally(() => {
-        dialogRef.close();
+        loadingFolderDialogRef.close();
+        LoadingFolderProgress.reset();
         removeInvalidThumbnailCache();
         this.thumbnailGenerationService.startThumbnailGeneration(directoryTreeObject);
       });
-  };
+  }
 
   private showPhotoWithLocationNotFoundDialogIfApplicable(): void {
     const photoWithLocation = this.photoDataService.getPhotosWithGpsInfo();

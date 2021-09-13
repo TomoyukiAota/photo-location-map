@@ -12,7 +12,7 @@ export class LoadingFolderProgressReporterService {
   constructor() { }
 
   public startUpdatingProgress(): void {
-    const updateMilliseconds = 1000;
+    const updateMilliseconds = 100;
     const intervalId = setInterval(() => {
       const numberOfLoadedFiles = progress.numberOfLoadedFiles;
       const numberOfAllFilesToLoad = progress.numberOfAllFilesToLoad;
