@@ -37,23 +37,23 @@ export class SidebarComponent {
               public thumbnailGenerationService: ThumbnailGenerationService) {
   }
 
-  public showSelectFolderDialog() {
-    remote.dialog.showOpenDialog(
+  public async showSelectFolderDialog() {
+    const result = await remote.dialog.showOpenDialog(
       remote.getCurrentWindow(),
       {
         properties: ['openDirectory'],
       }
-    ).then(result => {
-      const isCanceled = result.filePaths.length === 0;
-      if (isCanceled)
-        return;
+    );
 
-      const selectedFolderPath = result.filePaths[0];
-      this.handleSelectedFolder(selectedFolderPath);
-    });
+    const isCanceled = result.filePaths.length === 0;
+    if (isCanceled)
+      return;
+
+    const selectedFolderPath = result.filePaths[0];
+    await this.handleSelectedFolder(selectedFolderPath);
   }
 
-  private readonly handleSelectedFolder = async (selectedFolderPath: string) => {
+  private async handleSelectedFolder(selectedFolderPath: string) {
     ThumbnailObjectUrlStorage.revokeObjectUrls();
     this.folderSelectionService.folderSelected.next();
     const loadingFolderDialogRef = this.dialog.open(LoadingFolderDialogComponent, {
@@ -85,7 +85,7 @@ export class SidebarComponent {
         removeInvalidThumbnailCache();
         this.thumbnailGenerationService.startThumbnailGeneration(directoryTreeObject);
       });
-  };
+  }
 
   private showPhotoWithLocationNotFoundDialogIfApplicable(): void {
     const photoWithLocation = this.photoDataService.getPhotosWithGpsInfo();
