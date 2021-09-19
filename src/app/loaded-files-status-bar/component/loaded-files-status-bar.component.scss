@@ -1,4 +1,4 @@
-@import "../../../global-styles/status-bar";
+@import "/src/global-styles/status-bar";
 
 :host {
   @include status-bar;
