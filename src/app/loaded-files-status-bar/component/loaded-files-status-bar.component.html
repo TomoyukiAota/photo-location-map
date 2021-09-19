@@ -1,1 +1,9 @@
-<p>loaded-files-status-bar works!</p>
+<div *ngIf="anyFileLoaded" class='message-container'>
+  <span>Loaded {{ numberOfLoadedFiles }} files.</span>
+  <span>{{ numberOfFilesWithExif }} files have Exif data.</span>
+  <span>{{ numberOfFilesWithGpsInfo }} files have GPS data.</span>
+  <span>({{ getDescriptionByFileType() }})</span>
+  <span *ngIf="numberOfTiffFiles >= 1" class="tiff-thumbnail-not-supported-message">
+    Please note that displaying thumbnails of TIFF files is not supported.
+  </span>
+</div>
