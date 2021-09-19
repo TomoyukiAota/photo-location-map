@@ -4,10 +4,12 @@
   display: grid;
   grid: "sidebar-and-map                " minmax(0, 1fr)
         "thumbnail-generation-status-bar" auto
+        "app-loaded-files-status-bar    " auto
         /auto;
 
   .sidebar-and-map-container          { grid-area: sidebar-and-map;                 }
   app-thumbnail-generation-status-bar { grid-area: thumbnail-generation-status-bar; }
+  app-loaded-files-status-bar         { grid-area: app-loaded-files-status-bar;     }
 }
 
 .sidebar-and-map-container {

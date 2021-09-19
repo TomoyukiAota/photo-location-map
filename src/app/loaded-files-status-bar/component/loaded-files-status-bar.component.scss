@@ -1,0 +1,5 @@
+@import "../../../global-styles/status-bar";
+
+:host {
+  @include status-bar;
+}
