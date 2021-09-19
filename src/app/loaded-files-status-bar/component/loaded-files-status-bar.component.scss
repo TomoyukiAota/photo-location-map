@@ -2,4 +2,17 @@
 
 :host {
   @include status-bar;
+
+  line-height: $status-bar-min-height;
+}
+
+.message-container {
+  * + * {
+    margin-left: 8px;
+  }
+
+  .tiff-thumbnail-not-supported-message {
+    margin-left: 20px;
+    color: gray;
+  }
 }

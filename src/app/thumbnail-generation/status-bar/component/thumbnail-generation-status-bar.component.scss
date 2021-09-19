@@ -16,7 +16,7 @@
 }
 
 .summary {
-  line-height: 28px;
+  line-height: $status-bar-min-height;
   white-space: nowrap;
 }
 
@@ -35,7 +35,7 @@
 // lines of texts increase because of the small width of the progress-bar-with-details area
 // caused by small window width.
 .progress-bar-with-details          { transition: max-height 0.4s linear; }
-.shrunk-progress-bar-with-details   { max-height: 28px;                   }
+.shrunk-progress-bar-with-details   { max-height: $status-bar-min-height; }
 .expanded-progress-bar-with-details { max-height: 150px;                  }
 // --------------------------------------------------------------------------
 
