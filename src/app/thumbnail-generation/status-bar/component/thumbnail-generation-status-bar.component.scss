@@ -1,4 +1,8 @@
+@import "~global-styles/status-bar";
+
 :host {
+  @include status-bar;
+
   display: grid;
   align-items: start;
   column-gap: 10px;
@@ -9,12 +13,6 @@
                                justify-self: end;                    }
   .progress-bar-with-details { grid-area: progress-bar-with-details; }
   .close-button              { grid-area: close-button;              }
-
-  padding: 2px 10px 2px 10px;
-  border-top: solid 1px #cccccc;
-  font-size: 14px;
-  background-color: #eeeeee;
-  color: #333333;
 }
 
 .summary {
