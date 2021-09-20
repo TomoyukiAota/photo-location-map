@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
-import { MatCheckboxChange } from '@angular/material/checkbox';
+import { BooleanSetting } from '../../../../src-shared/user-settings/boolean-setting';
 import { LoadedFilesStatusBarService } from '../../loaded-files-status-bar/service/loaded-files-status-bar.service';
+import { SettingsDialogService } from '../service/settings-dialog.service';
+import { AppearanceSettingsChangedParameter } from './appearance-settings-changed-parameter';
+import { currentUserSettings } from '../../../../src-shared/user-settings/user-settings';
 
 @Component({
   selector: 'app-appearance-settings',
@@ -8,9 +11,17 @@ import { LoadedFilesStatusBarService } from '../../loaded-files-status-bar/servi
   styleUrls: ['./appearance-settings.component.scss']
 })
 export class AppearanceSettingsComponent {
-  constructor(private loadedFilesStatusBarService: LoadedFilesStatusBarService) { }
+  public shouldShowStatusBar: boolean;
 
-  public handleShowStatusBarCheckboxChanged(change: MatCheckboxChange) {
-    this.loadedFilesStatusBarService.setVisibility(change.checked);
+  constructor(private settingsDialogService: SettingsDialogService,
+              private loadedFilesStatusBarService: LoadedFilesStatusBarService) {
+    this.shouldShowStatusBar = BooleanSetting.convertToBoolean(currentUserSettings.showStatusBar);
+  }
+
+  public handleShowStatusBarCheckboxChanged() {
+    this.loadedFilesStatusBarService.setVisibility(this.shouldShowStatusBar);
+    const parameter = new AppearanceSettingsChangedParameter();
+    parameter.showStatusBar = BooleanSetting.convertToSettingValue(this.shouldShowStatusBar);
+    this.settingsDialogService.appearanceSettingsChanged.next(parameter);
   }
 }
