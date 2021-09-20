@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { BooleanSetting } from '../../../../src-shared/user-settings/boolean-setting';
+import { currentUserSettings } from '../../../../src-shared/user-settings/user-settings';
 import { LoadedFilesStatusBarService } from '../../loaded-files-status-bar/service/loaded-files-status-bar.service';
 import { SettingsDialogService } from '../service/settings-dialog.service';
 import { AppearanceSettingsChangedParameter } from './appearance-settings-changed-parameter';
-import { currentUserSettings } from '../../../../src-shared/user-settings/user-settings';
 
 @Component({
   selector: 'app-appearance-settings',
