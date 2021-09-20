@@ -39,6 +39,7 @@ import { DateTimeSettingsComponent } from './settings-dialog/date-time-settings/
 import { CacheSettingsComponent } from './settings-dialog/cache-settings/cache-settings.component';
 import { NoPhotosWithGpsLocationDialogComponent } from './no-photos-with-gps-location-dialog/no-photos-with-gps-location-dialog.component';
 import { LoadedFilesStatusBarComponent } from './loaded-files-status-bar/component/loaded-files-status-bar.component';
+import { AppearanceSettingsComponent } from './settings-dialog/appearance-settings/appearance-settings.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -63,7 +64,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     DateTimeSettingsComponent,
     CacheSettingsComponent,
     NoPhotosWithGpsLocationDialogComponent,
-    LoadedFilesStatusBarComponent
+    LoadedFilesStatusBarComponent,
+    AppearanceSettingsComponent
   ],
     imports: [
         BrowserModule,

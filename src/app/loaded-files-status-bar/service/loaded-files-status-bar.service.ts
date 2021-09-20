@@ -5,9 +5,15 @@ import { Subject } from 'rxjs';
   providedIn: 'root'
 })
 export class LoadedFilesStatusBarService {
-  public updateRequested = new Subject();
+  public visibilityUpdated = new Subject<boolean>();
+  public statusUpdateRequested = new Subject();
 
-  public update(): void {
-    this.updateRequested.next();
+  public setVisibility(visible: boolean) {
+    console.log(`Test setVisibility ${visible}`);
+    this.visibilityUpdated.next(visible);
+  }
+
+  public updateStatus(): void {
+    this.statusUpdateRequested.next();
   }
 }

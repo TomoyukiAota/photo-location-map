@@ -75,7 +75,7 @@ export class SidebarComponent {
         this.showPhotoWithLocationNotFoundDialogIfApplicable();
         this.directoryTreeViewDataService.replace(directoryTreeObject);
         this.parentFolderPath = path.dirname(selectedFolderPath) + path.sep;
-        this.loadedFilesStatusBarService.update();
+        this.loadedFilesStatusBarService.updateStatus();
         this.changeDetectorRef.detectChanges();
         FolderSelectionRecorder.complete();
       })
