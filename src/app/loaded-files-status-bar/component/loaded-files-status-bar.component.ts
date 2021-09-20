@@ -24,7 +24,7 @@ export class LoadedFilesStatusBarComponent implements OnInit {
               private photoDataService: PhotoDataService) { }
 
   public ngOnInit(): void {
-    this.loadedFilesStatusBarService.updateRequested.subscribe(() => {
+    this.loadedFilesStatusBarService.statusUpdateRequested.subscribe(() => {
       const allPhotos = this.photoDataService.getAllPhotos();
       this.anyFileLoaded = allPhotos.length >= 1;
       this.numberOfLoadedFiles = allPhotos.length;

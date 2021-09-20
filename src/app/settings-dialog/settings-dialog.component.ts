@@ -7,6 +7,7 @@ import {
 import { SettingsDialogService } from './service/settings-dialog.service';
 
 const settingsTabNames = [
+  'Appearance',
   'Date & Time',
   'Cache'
 ] as const;

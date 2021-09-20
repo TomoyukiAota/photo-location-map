@@ -1,9 +1,11 @@
+@import "../settings-styles";
+
 .setting-title {
-  font-size: 18px;
+  font-size: $setting-title-font-size;
 }
 
 .setting-container {
-  margin: 20px 0 0 20px;
+  padding: $setting-container-padding;
 }
 
 .cache-description {
