@@ -1,7 +1,9 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatListModule } from '@angular/material/list';
-import { MockComponents } from 'ng-mocks';
+import { MockComponents, MockProvider } from 'ng-mocks';
 
+import { AppearanceSettingsComponent } from './appearance-settings/appearance-settings.component';
 import { CacheSettingsComponent } from './cache-settings/cache-settings.component';
 import { DateTimeSettingsComponent } from './date-time-settings/date-time-settings.component';
 
@@ -16,12 +18,17 @@ describe('SettingsDialogComponent', () => {
       declarations: [
         SettingsDialogComponent,
         ...MockComponents(
+          AppearanceSettingsComponent,
           CacheSettingsComponent,
           DateTimeSettingsComponent,
         )
       ],
       imports: [
+        MatDialogModule,
         MatListModule
+      ],
+      providers: [
+        MockProvider(MatDialogRef)
       ]
     })
     .compileComponents();
