@@ -15,6 +15,7 @@ export namespace UserDataStoragePath {
   }
 
   export namespace UserSettings {
+    export const ShowStatusBar: ReadonlyArray<string> = ['UserSettings', 'ShowStatusBar'];
     export const DateFormat: ReadonlyArray<string> = ['UserSettings', 'DateFormat'];
     export const ClockSystemFormat: ReadonlyArray<string> = ['UserSettings', 'ClockSystemFormat'];
   }
