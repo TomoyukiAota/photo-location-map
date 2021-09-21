@@ -12,6 +12,10 @@
   font-size: 14px;
 
   p {
+    margin: 0;
+  }
+
+  p + p {
     margin: 5px 0;
   }
 }
