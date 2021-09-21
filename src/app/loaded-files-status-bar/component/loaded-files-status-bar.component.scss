@@ -2,6 +2,7 @@
 
 :host {
   @include status-bar;
+  padding: 0 10px;
 
   line-height: $status-bar-min-height;
 }
