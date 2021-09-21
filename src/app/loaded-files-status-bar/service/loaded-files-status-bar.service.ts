@@ -11,12 +11,17 @@ export class LoadedFilesStatusBarService {
   public statusUpdateRequested = new Subject();
 
   public setInitialVisibility() {
-    const isLoadedFileStatusBarVisible = BooleanSetting.convertToBoolean(currentUserSettings.showStatusBar);
-    this.setVisibility(isLoadedFileStatusBarVisible);
+    const showStatusBar = BooleanSetting.convertToBoolean(currentUserSettings.showStatusBar);
+    this.setVisibility(showStatusBar);
   }
 
   public setVisibility(visible: boolean) {
     this.visible.next(visible);
+  }
+
+  public restoreVisibilityToSettingValue() {
+    const showStatusBar = BooleanSetting.convertToBoolean(currentUserSettings.showStatusBar);
+    this.setVisibility(showStatusBar);
   }
 
   public updateStatus(): void {
