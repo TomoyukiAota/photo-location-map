@@ -9,12 +9,13 @@
   </mat-list-item>
 </mat-nav-list>
 <div class="settings-content">
-  <app-date-time-settings [style.display]="isSelectedTab('Date & Time') ? 'block' : 'none'"></app-date-time-settings>
-  <app-cache-settings     [style.display]="isSelectedTab('Cache')       ? 'block' : 'none'"></app-cache-settings>
+  <app-appearance-settings [style.display]="isSelectedTab('Appearance')  ? 'block' : 'none'"></app-appearance-settings>
+  <app-date-time-settings  [style.display]="isSelectedTab('Date & Time') ? 'block' : 'none'"></app-date-time-settings>
+  <app-cache-settings      [style.display]="isSelectedTab('Cache')       ? 'block' : 'none'"></app-cache-settings>
 </div>
 <div class="settings-dialog-footer">
   <div class="settings-dialog-footer-description"
-       [style.visibility]="isSaveButtonEnabled ? 'visible' : 'hidden'">
+       [style.visibility]="isAppRestartRequired ? 'visible' : 'hidden'">
     This application will restart after saving settings.
   </div>
   <div class="settings-dialog-footer-buttons">
@@ -25,7 +26,7 @@
       Save
     </button>
     <button mat-button
-            mat-dialog-close
+            (click)="handleCancelClicked()"
             class="settings-dialog-cancel-button">
       Cancel
     </button>

@@ -1,4 +1,9 @@
+@import "/src/styles/status-bar";
+
 :host {
+  @include status-bar;
+  padding: 2px 10px;
+
   display: grid;
   align-items: start;
   column-gap: 10px;
@@ -9,16 +14,10 @@
                                justify-self: end;                    }
   .progress-bar-with-details { grid-area: progress-bar-with-details; }
   .close-button              { grid-area: close-button;              }
-
-  padding: 2px 10px 2px 10px;
-  border-top: solid 1px #cccccc;
-  font-size: 14px;
-  background-color: #eeeeee;
-  color: #333333;
 }
 
 .summary {
-  line-height: 28px;
+  line-height: $status-bar-min-height;
   white-space: nowrap;
 }
 
@@ -37,7 +36,7 @@
 // lines of texts increase because of the small width of the progress-bar-with-details area
 // caused by small window width.
 .progress-bar-with-details          { transition: max-height 0.4s linear; }
-.shrunk-progress-bar-with-details   { max-height: 28px;                   }
+.shrunk-progress-bar-with-details   { max-height: $status-bar-min-height; }
 .expanded-progress-bar-with-details { max-height: 150px;                  }
 // --------------------------------------------------------------------------
 

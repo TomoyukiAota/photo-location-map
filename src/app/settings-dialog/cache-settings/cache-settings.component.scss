@@ -1,15 +1,21 @@
+@import "../settings-styles";
+
 .setting-title {
-  font-size: 18px;
+  font-size: $setting-title-font-size;
 }
 
 .setting-container {
-  margin: 20px 0 0 20px;
+  padding: $setting-container-padding;
 }
 
 .cache-description {
   font-size: 14px;
 
   p {
+    margin: 0;
+  }
+
+  p + p {
     margin: 5px 0;
   }
 }
@@ -40,12 +46,12 @@
   }
 }
 
-.delete-button {
-  margin-top: 40px;
-}
-
 .delete-button-description {
-  margin-top: 15px;
+  margin-top: 30px;
   font-size: 14px;
   color: red;
+}
+
+.delete-button {
+  margin-top: 20px;
 }

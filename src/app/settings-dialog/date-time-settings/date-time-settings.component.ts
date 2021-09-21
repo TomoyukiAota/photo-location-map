@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import * as moment from 'moment-timezone';
 import { DateTimeFormat } from '../../../../src-shared/date-time/date-time-format';
 import { currentUserSettings } from '../../../../src-shared/user-settings/user-settings';
-import { SettingsDialogService } from '../service/settings-dialog.service';
+import { SettingsChangedService } from '../service/settings-changed.service';
 import { DateTimeSettingsChangedParameter } from './date-time-settings-changed-parameter';
 
 @Component({
@@ -16,7 +16,7 @@ export class DateTimeSettingsComponent {
   public selectedDateFormat = currentUserSettings.dateFormat;
   public selectedClockSystemFormat = currentUserSettings.clockSystemFormat;
 
-  constructor(private settingsDialogService: SettingsDialogService) {
+  constructor(private settingsChangedService: SettingsChangedService) {
   }
 
   public getDateTimeNow() {
@@ -29,6 +29,6 @@ export class DateTimeSettingsComponent {
     const parameter = new DateTimeSettingsChangedParameter();
     parameter.dateFormat = this.selectedDateFormat;
     parameter.clockSystemFormat = this.selectedClockSystemFormat;
-    this.settingsDialogService.dateTimeSettingsChanged.next(parameter);
+    this.settingsChangedService.dateTimeSettingsChanged.next(parameter);
   }
 }
