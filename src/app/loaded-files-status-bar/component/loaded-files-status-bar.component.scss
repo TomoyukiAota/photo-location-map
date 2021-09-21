@@ -7,12 +7,23 @@
 }
 
 .message-container {
+  display: grid;
+  column-gap: 10px;
+  grid: "left-message right-message" auto
+        "tiff-message tiff-message"  auto
+        /auto         auto;
+
+  .left-message-container               { grid-area: left-message;  }
+  .right-message-container              { grid-area: right-message;
+                                          justify-self: right;      }
+  .tiff-thumbnail-not-supported-message { grid-area: tiff-message;
+                                          justify-self: right;      }
+
   * + * {
     margin-left: 8px;
   }
 
   .tiff-thumbnail-not-supported-message {
-    margin-left: 20px;
     color: gray;
   }
 }

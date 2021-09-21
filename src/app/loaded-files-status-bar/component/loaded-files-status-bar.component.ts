@@ -40,11 +40,11 @@ export class LoadedFilesStatusBarComponent implements OnInit {
 
   public getDescriptionByFileType(): string {
     const fileTypeAndNumber = new Map<string, number>();
-    fileTypeAndNumber.set('Total', this.numberOfLoadedFiles);
     fileTypeAndNumber.set('JPEG', this.numberOfJpegFiles);
     fileTypeAndNumber.set('HEIF', this.numberOfHeifFiles);
     fileTypeAndNumber.set('PNG', this.numberOfPngFiles);
     fileTypeAndNumber.set('TIFF', this.numberOfTiffFiles);
+    fileTypeAndNumber.set('Total', this.numberOfLoadedFiles);
 
     let description = '';
     let isSeparatorNeeded = false;
