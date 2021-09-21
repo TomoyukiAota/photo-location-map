@@ -51,7 +51,7 @@ export class LoadedFilesStatusBarComponent implements OnInit {
 
     fileTypeAndNumber.forEach((number, fileType) => {
       if (number === 0) { return; }
-      description = description.concat(`${isSeparatorNeeded ? ', ' : ''}${fileType}: ${number}`);
+      description = description.concat(`${isSeparatorNeeded ? ' / ' : ''}${fileType}: ${number}`);
       isSeparatorNeeded = true;
     });
 
