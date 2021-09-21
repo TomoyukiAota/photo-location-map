@@ -2,6 +2,7 @@
 
 :host {
   @include status-bar;
+  padding: 2px 10px;
 
   display: grid;
   align-items: start;
