@@ -19,12 +19,14 @@
                                           justify-self: right;      }
   .tiff-thumbnail-not-supported-message { grid-area: tiff-message;
                                           justify-self: right;      }
+}
 
+.left-message-container {
   * + * {
     margin-left: 8px;
   }
+}
 
-  .tiff-thumbnail-not-supported-message {
-    color: gray;
-  }
+.tiff-thumbnail-not-supported-message {
+  color: gray;
 }
