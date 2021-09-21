@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { SettingsDialogService } from './settings-dialog.service';
+import { SettingsChangedService } from './settings-changed.service';
 
-describe('SettingsDialogService', () => {
-  let service: SettingsDialogService;
+describe('SettingsChangedService', () => {
+  let service: SettingsChangedService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(SettingsDialogService);
+    service = TestBed.inject(SettingsChangedService);
   });
 
   it('should be created', () => {

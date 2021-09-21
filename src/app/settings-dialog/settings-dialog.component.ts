@@ -6,7 +6,7 @@ import {
   saveUserSetting,
   saveUserSettingsAndRestartApp
 } from '../../../src-shared/user-settings/user-settings';
-import { SettingsDialogService } from './service/settings-dialog.service';
+import { SettingsChangedService } from './service/settings-changed.service';
 
 const settingsTabNames = [
   'Appearance',
@@ -26,11 +26,11 @@ export class SettingsDialogComponent {
   public selectedTab: SettingsTabName = settingsTabNames[0];
 
   constructor(private settingsDialogRef: MatDialogRef<SettingsDialogComponent>,
-              private settingsDialogService: SettingsDialogService) {
-    this.settingsDialogService.appearanceSettingsChanged.subscribe(changed => {
+              private settingsChangedService: SettingsChangedService) {
+    this.settingsChangedService.appearanceSettingsChanged.subscribe(changed => {
       this.userSettingsToBeSaved.showStatusBar = changed.showStatusBar;
     });
-    this.settingsDialogService.dateTimeSettingsChanged.subscribe(changed => {
+    this.settingsChangedService.dateTimeSettingsChanged.subscribe(changed => {
       this.userSettingsToBeSaved.dateFormat = changed.dateFormat;
       this.userSettingsToBeSaved.clockSystemFormat = changed.clockSystemFormat;
     });
