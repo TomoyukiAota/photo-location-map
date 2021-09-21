@@ -1,9 +1,9 @@
 <div class="setting-title">HEIF Thumbnail Cache</div>
 <div class="setting-container">
   <div class="cache-description">
-    <p>For <a #heifWikipediaLink href="">HEIF files</a>, generated thumbnails are cached because it takes time to generate thumbnails.</p>
-    <p>The cache will be used from the next time of loading the files by clicking "Select Folder" button</p>
-    <p>in order to immediately display the thumbnails without generating them.</p>
+    <p>Thumbnail generation is required for <a #heifWikipediaLink href="">HEIF files</a>, but it takes time to do so.</p>
+    <p>Therefore, the generated thumbnails are cached.</p>
+    <p>The cache will be used from the next time to skip thumbnail generation.</p>
   </div>
   <div class="location-and-size-table">
     <div class="location-label">Cache location</div>
@@ -11,11 +11,11 @@
     <div class="size-label">Cache size</div>
     <div class="cache-value">{{ thumbnailCacheSize }}</div>
   </div>
+  <div class="delete-button-description">This application will restart after deleting the thumbnail cache.</div>
   <button mat-flat-button
           color="warn"
           class="delete-button"
           (click)="handleDeleteThumbnailCacheButtonClicked()">
     Delete Thumbnail Cache
   </button>
-  <div class="delete-button-description">This application will restart after deleting the thumbnail cache.</div>
 </div>

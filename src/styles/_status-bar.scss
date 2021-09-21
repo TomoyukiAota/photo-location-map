@@ -1,0 +1,9 @@
+$status-bar-min-height: 28px;
+
+@mixin status-bar {
+  border-top: solid 1px #cccccc;
+  font-size: 14px;
+  background-color: #eeeeee;
+  color: #333333;
+  min-height: $status-bar-min-height;
+}

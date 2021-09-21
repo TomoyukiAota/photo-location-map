@@ -13,6 +13,7 @@ import { PhotoDataService } from '../shared/service/photo-data.service';
 import { LoadingFolderProgress } from '../shared/loading-folder-progress';
 import { ThumbnailObjectUrlStorage } from '../shared/thumbnail-object-url-storage';
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
+import { LoadedFilesStatusBarService } from '../loaded-files-status-bar/service/loaded-files-status-bar.service';
 import { LoadingFolderDialogComponent } from '../loading-folder/dialog/loading-folder-dialog.component';
 import { NoPhotosWithGpsLocationDialogComponent } from '../no-photos-with-gps-location-dialog/no-photos-with-gps-location-dialog.component';
 import { ThumbnailGenerationService } from '../thumbnail-generation/service/thumbnail-generation.service';
@@ -34,6 +35,7 @@ export class SidebarComponent {
               private folderSelectionService: FolderSelectionService,
               private photoDataService: PhotoDataService,
               private directoryTreeViewDataService: DirectoryTreeViewDataService,
+              private loadedFilesStatusBarService: LoadedFilesStatusBarService,
               public thumbnailGenerationService: ThumbnailGenerationService) {
   }
 
@@ -73,6 +75,7 @@ export class SidebarComponent {
         this.showPhotoWithLocationNotFoundDialogIfApplicable();
         this.directoryTreeViewDataService.replace(directoryTreeObject);
         this.parentFolderPath = path.dirname(selectedFolderPath) + path.sep;
+        this.loadedFilesStatusBarService.updateStatus();
         this.changeDetectorRef.detectChanges();
         FolderSelectionRecorder.complete();
       })

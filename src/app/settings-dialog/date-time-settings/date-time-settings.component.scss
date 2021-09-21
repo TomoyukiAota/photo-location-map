@@ -1,11 +1,21 @@
+@import "../settings-styles";
+
 .setting-title {
-  font-size: 18px;
+  font-size: $setting-title-font-size;
 }
 
 .setting-container {
+  padding: $setting-container-padding;
+}
+
+.description-row {
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.dropdown-and-example-row {
   display: flex;
   flex-direction: row;
-  padding: 20px 0 0 20px;
 }
 
 .date-format-dropdown {
