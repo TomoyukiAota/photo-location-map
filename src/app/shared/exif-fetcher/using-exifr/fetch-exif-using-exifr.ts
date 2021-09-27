@@ -67,7 +67,7 @@ async function createExifFromExifrParseOutput(exifrParseOutput: ExifrParseOutput
   const thumbnailBuffer = await exifr.thumbnail(filePath);
   if (thumbnailBuffer) {
     const orientation = exifrParseOutput.Orientation ?? 1;   // If orientation is not available, assume 1, and display thumbnail.
-    const thumbnail = await createThumbnail(thumbnailBuffer, orientation);
+    const thumbnail = await createThumbnail(thumbnailBuffer, orientation, filePath);
     exif.thumbnail = thumbnail;
   }
 
@@ -76,10 +76,14 @@ async function createExifFromExifrParseOutput(exifrParseOutput: ExifrParseOutput
   return exif;
 }
 
-async function createThumbnail(thumbnailBuffer: Uint8Array | Buffer, orientation: number) {
+async function createThumbnail(thumbnailBuffer: Uint8Array | Buffer, orientation: number, filePath: string): Promise<Thumbnail> {
   const base64String = btoa(String.fromCharCode.apply(null, thumbnailBuffer));
   const dataUrl = `data:image/jpg;base64,${base64String}`;
-  const rotatedImage = await rotateImage(dataUrl, orientation);
-  const thumbnail = new Thumbnail(rotatedImage.objectUrl, rotatedImage.dimensions);
+  const thumbnail = rotateImage(dataUrl, orientation)
+    .then(rotatedImage => new Thumbnail(rotatedImage.objectUrl, rotatedImage.dimensions))
+    .catch((errorEvent: ErrorEvent) => {
+      Logger.info(`[using exifr] Failed to rotate the thumbnail of "${filePath}". ErrorEvent: `, errorEvent);
+      return null;
+    });
   return thumbnail;
 }

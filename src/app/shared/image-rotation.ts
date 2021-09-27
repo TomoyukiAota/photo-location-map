@@ -13,7 +13,7 @@ export class RotatedImage {
  * @returns {Promise<RotatedImage>} Data URL and dimensions of the rotated image
  */
 export function rotateImage(dataUrl: string, orientation: number): Promise<RotatedImage> {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     const img = new Image();
 
     img.onload = function () {
@@ -49,6 +49,8 @@ export function rotateImage(dataUrl: string, orientation: number): Promise<Rotat
         resolve(rotatedImage);
       });
     };
+
+    img.addEventListener('error', errorEvent => reject(errorEvent));
 
     img.src = dataUrl;
   });
