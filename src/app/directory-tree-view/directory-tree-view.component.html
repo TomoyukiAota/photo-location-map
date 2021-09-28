@@ -62,7 +62,7 @@
 </div>
 <mat-menu #contextMenu="matMenu">
   <ng-template matMenuContent let-data="contextMenuData">
-    <button mat-menu-item (click)="openFile(data)" class="context-menu-button">Open {{ data.name }}</button>
+    <button mat-menu-item (click)="openFile(data)" class="context-menu-button">Open "{{ data.name }}"</button>
     <button mat-menu-item (click)="openContainingFolder(data)" class="context-menu-button">Open Folder</button>
   </ng-template>
 </mat-menu>

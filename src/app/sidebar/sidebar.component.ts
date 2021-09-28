@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import * as remote from '@electron/remote';
 import * as createDirectoryTree from 'directory-tree';
@@ -30,8 +30,7 @@ export class SidebarComponent {
   public readonly messageWhenFolderIsNotSelected = 'Please select a folder to see where photos were taken.';
   public parentFolderPath = '';
 
-  constructor(private changeDetectorRef: ChangeDetectorRef,
-              private dialog: MatDialog,
+  constructor(private dialog: MatDialog,
               private folderSelectionService: FolderSelectionService,
               private photoDataService: PhotoDataService,
               private directoryTreeViewDataService: DirectoryTreeViewDataService,
@@ -56,6 +55,7 @@ export class SidebarComponent {
   }
 
   private async handleSelectedFolder(selectedFolderPath: string) {
+    FolderSelectionRecorder.start(selectedFolderPath);
     ThumbnailObjectUrlStorage.revokeObjectUrls();
     this.folderSelectionService.folderSelected.next();
     const loadingFolderDialogRef = this.dialog.open(LoadingFolderDialogComponent, {
@@ -67,7 +67,6 @@ export class SidebarComponent {
       restoreFocus: false
     });
     await sleep(100); // To display the dialog promptly before starting the intensive work of loading the folder.
-    FolderSelectionRecorder.start(selectedFolderPath);
     const directoryTreeObject = createDirectoryTree(selectedFolderPath);
     DirTreeObjectRecorder.record(directoryTreeObject);
     this.photoDataService.update(directoryTreeObject)
@@ -76,7 +75,8 @@ export class SidebarComponent {
         this.directoryTreeViewDataService.replace(directoryTreeObject);
         this.parentFolderPath = path.dirname(selectedFolderPath) + path.sep;
         this.loadedFilesStatusBarService.updateStatus();
-        this.changeDetectorRef.detectChanges();
+        removeInvalidThumbnailCache();
+        this.thumbnailGenerationService.startThumbnailGeneration(directoryTreeObject);
         FolderSelectionRecorder.complete();
       })
       .catch(reason =>
@@ -85,8 +85,6 @@ export class SidebarComponent {
       .finally(() => {
         loadingFolderDialogRef.close();
         LoadingFolderProgress.reset();
-        removeInvalidThumbnailCache();
-        this.thumbnailGenerationService.startThumbnailGeneration(directoryTreeObject);
       });
   }
 
