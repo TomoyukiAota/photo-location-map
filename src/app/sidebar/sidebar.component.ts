@@ -56,6 +56,7 @@ export class SidebarComponent {
   }
 
   private async handleSelectedFolder(selectedFolderPath: string) {
+    FolderSelectionRecorder.start(selectedFolderPath);
     ThumbnailObjectUrlStorage.revokeObjectUrls();
     this.folderSelectionService.folderSelected.next();
     const loadingFolderDialogRef = this.dialog.open(LoadingFolderDialogComponent, {
@@ -67,7 +68,6 @@ export class SidebarComponent {
       restoreFocus: false
     });
     await sleep(100); // To display the dialog promptly before starting the intensive work of loading the folder.
-    FolderSelectionRecorder.start(selectedFolderPath);
     const directoryTreeObject = createDirectoryTree(selectedFolderPath);
     DirTreeObjectRecorder.record(directoryTreeObject);
     this.photoDataService.update(directoryTreeObject)
@@ -77,6 +77,8 @@ export class SidebarComponent {
         this.parentFolderPath = path.dirname(selectedFolderPath) + path.sep;
         this.loadedFilesStatusBarService.updateStatus();
         this.changeDetectorRef.detectChanges();
+        removeInvalidThumbnailCache();
+        this.thumbnailGenerationService.startThumbnailGeneration(directoryTreeObject);
         FolderSelectionRecorder.complete();
       })
       .catch(reason =>
@@ -85,8 +87,6 @@ export class SidebarComponent {
       .finally(() => {
         loadingFolderDialogRef.close();
         LoadingFolderProgress.reset();
-        removeInvalidThumbnailCache();
-        this.thumbnailGenerationService.startThumbnailGeneration(directoryTreeObject);
       });
   }
 
