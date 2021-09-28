@@ -83,7 +83,7 @@ export class OsmComponent implements OnInit, OnDestroy, AfterViewInit {
 
     photos.forEach(photo => {
       const latLng = [photo.exif.gpsInfo.latLng.latitude, photo.exif.gpsInfo.latLng.longitude];
-      const marker = L.marker(latLng).bindPopup(PhotoInfoViewerContent.generate(photo));
+      const marker = L.marker(latLng).bindPopup(PhotoInfoViewerContent.request('osm', photo));
       markerClusterGroup.addLayer(marker);
     });
 
