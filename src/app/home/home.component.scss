@@ -5,7 +5,7 @@
   grid: "sidebar-and-map                " minmax(0, 1fr)
         "thumbnail-generation-status-bar" auto
         "app-loaded-files-status-bar    " auto
-        /auto;
+        /100%;
 
   .sidebar-and-map-container          { grid-area: sidebar-and-map;                 }
   app-thumbnail-generation-status-bar { grid-area: thumbnail-generation-status-bar; }
