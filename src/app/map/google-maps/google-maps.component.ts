@@ -104,7 +104,7 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
       bounds.extend(marker.position);
       google.maps.event.addListener(marker, 'click', (function (clickedMarker, clickedIndex) {
         return function () {
-          const content = PhotoInfoViewerContent.generate(photos[clickedIndex]);
+          const content = PhotoInfoViewerContent.request('google-maps', photos[clickedIndex]);
           infoWindow.setContent(content);
           infoWindow.open(map, clickedMarker);
         };
