@@ -21,7 +21,7 @@ export class DirTreeViewTooltipComponent implements AfterViewInit, OnInit {
   }
 
   ngAfterViewInit() {
-    const content = PhotoInfoViewerContent.generate(this.photo);
+    const content = PhotoInfoViewerContent.request('dir-tree-view', this.photo);
     this.divElementRef.nativeElement.appendChild(content);
   }
 }
