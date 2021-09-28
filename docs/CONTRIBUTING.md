@@ -31,7 +31,7 @@ This page contains useful information to contribute to this project.
 After cloning this repository, run these commands to start the application: 
 
 ``` bash
-npm install
+npm ci
 npm start
 ```
 
