@@ -64,7 +64,7 @@
     "physical-cpu-count": "2.0.0",
     "prettysize": "2.0.0",
     "promise.allsettled": "1.0.4",
-    "threads": "1.6.5",
+    "threads": "1.7.0",
     "tiny-worker": "2.3.0",
     "universal-analytics": "0.4.23",
     "uuid": "8.3.2"
