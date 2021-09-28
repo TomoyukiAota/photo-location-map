@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import * as remote from '@electron/remote';
 import * as createDirectoryTree from 'directory-tree';
@@ -30,8 +30,7 @@ export class SidebarComponent {
   public readonly messageWhenFolderIsNotSelected = 'Please select a folder to see where photos were taken.';
   public parentFolderPath = '';
 
-  constructor(private changeDetectorRef: ChangeDetectorRef,
-              private dialog: MatDialog,
+  constructor(private dialog: MatDialog,
               private folderSelectionService: FolderSelectionService,
               private photoDataService: PhotoDataService,
               private directoryTreeViewDataService: DirectoryTreeViewDataService,
@@ -76,7 +75,6 @@ export class SidebarComponent {
         this.directoryTreeViewDataService.replace(directoryTreeObject);
         this.parentFolderPath = path.dirname(selectedFolderPath) + path.sep;
         this.loadedFilesStatusBarService.updateStatus();
-        this.changeDetectorRef.detectChanges();
         removeInvalidThumbnailCache();
         this.thumbnailGenerationService.startThumbnailGeneration(directoryTreeObject);
         FolderSelectionRecorder.complete();
