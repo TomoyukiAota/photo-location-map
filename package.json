@@ -70,7 +70,7 @@
     "uuid": "8.3.2"
   },
   "devDependencies": {
-    "@angular-builders/custom-webpack": "12.1.1",
+    "@angular-builders/custom-webpack": "12.1.2",
     "@angular-devkit/build-angular": "12.2.7",
     "@angular/animations": "12.2.7",
     "@angular/cdk": "12.2.7",
