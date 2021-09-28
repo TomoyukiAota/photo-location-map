@@ -1,25 +1,50 @@
 import { Photo } from '../shared/model/photo.model';
 import { LaunchPhotoViewerIconElement } from './launch-photo-viewer-icon-element';
 import { OpenContainingFolderIconElement } from './open-containing-folder-icon-element';
+import { PhotoInfoUnavailableElement } from './photo-info-unavailable-element';
 import { PlayLivePhotosIconElement } from './play-live-photos-icon-element';
 import { RotateIconElement } from './rotate-icon-element';
 import { ThumbnailElement } from './thumbnail-element';
 
+type Requester = 'dir-tree-view' | 'osm' | 'google-maps';
+type PhotoPath = string;
+
 export class PhotoInfoViewerContent {
-  public static generate(photo: Photo) {
-    const rootDivElement = document.createElement('div');
-    rootDivElement.style.textAlign = 'center';
+  private static rootElementCache = new Map<Requester, Map<PhotoPath, HTMLDivElement>>();
 
-    if (photo) {
-      this.appendToRootDivElement(rootDivElement, photo);
-    } else {
-      rootDivElement.innerText = 'Photo information is unavailable.';
-    }
-
-    return rootDivElement;
+  public static clearCache() {
+    this.rootElementCache.clear();
+    this.rootElementCache.set('dir-tree-view', new Map<PhotoPath, HTMLDivElement>());
+    this.rootElementCache.set('osm'          , new Map<PhotoPath, HTMLDivElement>());
+    this.rootElementCache.set('google-maps'  , new Map<PhotoPath, HTMLDivElement>());
   }
 
-  private static appendToRootDivElement(rootDivElement, photo: Photo) {
+  public static generateCache(photos: Photo[]) {
+    photos.forEach(photo => {
+      this.rootElementCache.get('dir-tree-view').set(photo.path, this.generateRootElement(photo));
+      this.rootElementCache.get('osm'          ).set(photo.path, this.generateRootElement(photo));
+      this.rootElementCache.get('google-maps'  ).set(photo.path, this.generateRootElement(photo));
+    });
+  }
+
+  public static request(requester: Requester, photo: Photo): HTMLDivElement {
+    const isPhotoPathAvailable = !!photo?.path;
+    if (!isPhotoPathAvailable) {
+      return PhotoInfoUnavailableElement.get();
+    }
+
+    const cachedElement = this.rootElementCache.get(requester).get(photo.path);
+    return cachedElement;
+  }
+
+  private static generateRootElement(photo: Photo) {
+    const rootElement = document.createElement('div');
+    rootElement.style.textAlign = 'center';
+    this.appendToRootElement(rootElement, photo);
+    return rootElement;
+  }
+
+  private static appendToRootElement(rootDivElement, photo: Photo) {
     const { thumbnailElement, thumbnailContainerElement } = ThumbnailElement.create(photo);
     const nameElement = this.createNameElement(photo);
     const dateTakenElement = this.createDateTimeTakenElement(photo);
