@@ -1,3 +1,5 @@
+import { DevOrProd } from '../../../src-shared/dev-or-prod/dev-or-prod';
+import { Logger } from '../../../src-shared/log/logger';
 import { Photo } from '../shared/model/photo.model';
 import { LaunchPhotoViewerIconElement } from './launch-photo-viewer-icon-element';
 import { OpenContainingFolderIconElement } from './open-containing-folder-icon-element';
@@ -23,11 +25,24 @@ export class PhotoInfoViewerContent {
     photos.forEach(photo => {
       this.rootElementCache.get('dir-tree-view').set(photo.path, this.generateRootElement(photo));
       this.rootElementCache.get('osm'          ).set(photo.path, this.generateRootElement(photo));
-      this.rootElementCache.get('google-maps'  ).set(photo.path, this.generateRootElement(photo));
     });
+
+    // Cache for google-maps is available only in development environment because
+    // 1) google-maps is available only in development environment, and
+    // 2) generating cache takes time.
+    if (DevOrProd.isDev) {
+      photos.forEach(photo => {
+        this.rootElementCache.get('google-maps').set(photo.path, this.generateRootElement(photo));
+      });
+    }
   }
 
   public static request(requester: Requester, photo: Photo): HTMLDivElement {
+    if (requester === 'google-maps' && !DevOrProd.isDev) {
+      Logger.error(`PhotoInfoViewerContent for google-maps is available only in development environment. DevOrProd: ${DevOrProd.toString()}`);
+      return PhotoInfoUnavailableElement.get();
+    }
+
     const isPhotoPathAvailable = !!photo?.path;
     if (!isPhotoPathAvailable) {
       return PhotoInfoUnavailableElement.get();
