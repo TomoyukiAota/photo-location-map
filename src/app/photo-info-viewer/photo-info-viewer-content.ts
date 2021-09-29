@@ -22,6 +22,8 @@ export class PhotoInfoViewerContent {
   }
 
   public static generateCache(photos: Photo[]) {
+    const startTime = performance.now();
+
     photos.forEach(photo => {
       this.rootElementCache.get('dir-tree-view').set(photo.path, this.generateRootElement(photo));
       this.rootElementCache.get('osm'          ).set(photo.path, this.generateRootElement(photo));
@@ -35,6 +37,9 @@ export class PhotoInfoViewerContent {
         this.rootElementCache.get('google-maps').set(photo.path, this.generateRootElement(photo));
       });
     }
+
+    const endTime = performance.now();
+    Logger.info(`PhotoInfoViewerContent::generateCache took ${endTime - startTime} milliseconds.`);
   }
 
   public static request(requester: Requester, photo: Photo): HTMLDivElement {
