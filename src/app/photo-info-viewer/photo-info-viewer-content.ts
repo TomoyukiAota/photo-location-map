@@ -39,17 +39,18 @@ export class PhotoInfoViewerContent {
     }
 
     const endTime = performance.now();
-    Logger.info(`PhotoInfoViewerContent::generateCache took ${endTime - startTime} milliseconds.`);
+    Logger.info(`[PhotoInfoViewerContent] generateCache took ${endTime - startTime} milliseconds.`);
   }
 
   public static request(requester: Requester, photo: Photo): HTMLDivElement {
     if (requester === 'google-maps' && !DevOrProd.isDev) {
-      Logger.error(`PhotoInfoViewerContent for google-maps is available only in development environment. DevOrProd: ${DevOrProd.toString()}`);
+      Logger.error(`[PhotoInfoViewerContent] google-maps is available only in development environment. DevOrProd: ${DevOrProd.toString()}`);
       return PhotoInfoUnavailableElement.get();
     }
 
     const isPhotoPathAvailable = !!photo?.path;
     if (!isPhotoPathAvailable) {
+      Logger.error(`[PhotoInfoViewerContent] photo.path is not available. photo: ${photo}, photo?.name: ${photo?.name}`, photo);
       return PhotoInfoUnavailableElement.get();
     }
 
