@@ -39,7 +39,8 @@ export class PhotoInfoViewerContent {
     }
 
     const endTime = performance.now();
-    Logger.info(`[PhotoInfoViewerContent] generateCache took ${endTime - startTime} milliseconds.`);
+    const duration = endTime - startTime;
+    Logger.info(`[PhotoInfoViewerContent] generateCache took ${duration.toFixed(3)} [ms].`);
   }
 
   public static request(requester: Requester, photo: Photo): HTMLDivElement {
