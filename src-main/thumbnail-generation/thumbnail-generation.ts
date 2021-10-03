@@ -1,18 +1,31 @@
-import { DirectoryTree } from 'directory-tree';
-import { ipcMain } from 'electron';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as pathModule from 'path';
 import * as physicalCpuCount from 'physical-cpu-count';
 import { Pool, spawn, Worker } from 'threads';
 
-import { convertToFlattenedDirTree } from '../../src-shared/dir-tree/dir-tree-util';
-import { FilenameExtension } from '../../src-shared/filename-extension/filename-extension';
-import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { Logger } from '../../src-shared/log/logger';
-import { createFileForLastModified, getThumbnailFilePath, isThumbnailCacheAvailable } from '../../src-shared/thumbnail-cache/thumbnail-cache-util';
+import { removeInvalidThumbnailCache } from '../../src-shared/thumbnail-cache/remove-invalid-thumbnail-cache';
+import { createFileForLastModified, getThumbnailFilePath } from '../../src-shared/thumbnail-cache/thumbnail-cache-util';
 import { ThumbnailFileGenerationArgs } from './generate-thumbnail-file-arg-and-result';
 
+
+export function handleThumbnailGenerationIpcRequest(allHeifFilePaths: string[], heifFilePathsToGenerateThumbnail: string[]): void {
+  if (!allHeifFilePaths || !heifFilePathsToGenerateThumbnail) {
+    Logger.error(`handleThumbnailGenerationIpcRequest should be called with string arrays.`);
+    Logger.error(`allHeifFilePaths: ${allHeifFilePaths}, heifFilePathsToGenerateThumbnail: ${heifFilePathsToGenerateThumbnail}`,
+      allHeifFilePaths, heifFilePathsToGenerateThumbnail);
+    return;
+  }
+
+  checkFileForWorkerThreadExists();
+  removeInvalidThumbnailCache();
+  logAllHeifFiles(allHeifFilePaths);
+  logHeifFilesToGenerateThumbnail(heifFilePathsToGenerateThumbnail);
+
+  // noinspection JSUnusedLocalSymbols
+  const ignoredPromise = generateThumbnails(heifFilePathsToGenerateThumbnail);    // Promise is deliberately ignored.
+}
 
 class FileForWorkerThread {
   // The file path for worker thread needs to be relative to the file for main thread
@@ -32,6 +45,24 @@ function checkFileForWorkerThreadExists(): void {
     Logger.info(`The file for worker thread used during thumbnail generation is found.`);
   } else {
     Logger.error(`The file for worker thread used during thumbnail generation is NOT found.`);
+  }
+}
+
+function logAllHeifFiles(allHeifFilePaths: string[]): void {
+  const numOfAllHeifFiles = allHeifFilePaths.length;
+  Logger.info(`Number of all HEIF files: ${numOfAllHeifFiles}`);
+  if (numOfAllHeifFiles >= 1) {
+    Logger.info(`All HEIF file paths are as follows: `);
+    allHeifFilePaths.forEach(filePath => Logger.info(filePath));
+  }
+}
+
+function logHeifFilesToGenerateThumbnail(heifFilePathsToGenerateThumbnail: string[]): void {
+  const numOfHeifFilesToGenerateThumbnail = heifFilePathsToGenerateThumbnail.length;
+  Logger.info(`Number of HEIF files to generate thumbnails: ${numOfHeifFilesToGenerateThumbnail}`);
+  if (numOfHeifFilesToGenerateThumbnail >= 1) {
+    Logger.info(`HEIF files to generate thumbnails are as follows: `);
+    heifFilePathsToGenerateThumbnail.forEach(filePath => Logger.info(filePath));
   }
 }
 
@@ -69,12 +100,3 @@ async function generateThumbnails(heifFilePaths: string[]) {
   await pool.settled();
   await pool.terminate();
 }
-
-ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Name, (event, heifFilePathsToGenerateThumbnail: string[]) => {
-  checkFileForWorkerThreadExists();
-
-  // noinspection JSUnusedLocalSymbols
-  const ignoredPromise = generateThumbnails(heifFilePathsToGenerateThumbnail);    // Promise is deliberately ignored.
-
-  return;
-});
