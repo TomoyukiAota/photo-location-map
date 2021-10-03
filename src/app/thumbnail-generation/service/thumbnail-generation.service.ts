@@ -30,13 +30,13 @@ export class ThumbnailGenerationService {
 
   public startThumbnailGeneration(dirTreeObj: DirectoryTree): void {
     const flattenedDirTree = convertToFlattenedDirTree(dirTreeObj);
+
     this.allHeifFilePaths = flattenedDirTree
       .filter(element => FilenameExtension.isHeif(element.extension))
       .map(element => element.path);
-    this.logAllHeifFiles();
 
-    this.heifFilePathsToGenerateThumbnail = this.allHeifFilePaths.filter(filePath => !isThumbnailCacheAvailable(filePath));
-    this.logHeifFilesToGenerateThumbnail();
+    this.heifFilePathsToGenerateThumbnail = this.allHeifFilePaths
+      .filter(filePath => !isThumbnailCacheAvailable(filePath));
 
     if (this.numOfHeifFilesToGenerateThumbnail >= 1) {
       this.startGenerationInMainProcess();
@@ -47,27 +47,12 @@ export class ThumbnailGenerationService {
     }
   }
 
-  private logAllHeifFiles(): void {
-    Logger.info(`Number of all HEIF files: ${this.numOfAllHeifFiles}`);
-    if (this.numOfAllHeifFiles >= 1) {
-      Logger.info(`All HEIF file paths are as follows: `);
-      this.allHeifFilePaths.forEach(filePath => Logger.info(filePath));
-    }
-  }
-
-  private logHeifFilesToGenerateThumbnail(): void {
-    Logger.info(`Number of HEIF files to generate thumbnails: ${this.numOfHeifFilesToGenerateThumbnail}`);
-    if (this.numOfHeifFilesToGenerateThumbnail >= 1) {
-      Logger.info(`HEIF files to generate thumbnails are as follows: `);
-      this.heifFilePathsToGenerateThumbnail.forEach(filePath => Logger.info(filePath));
-    }
-  }
-
   private startGenerationInMainProcess() {
     Logger.info(`Thumbnails for HEIF files will be generated in the main process.`);
+    Logger.info(`Sending the IPC invoke request about thumbnail generation to the main process.`);
 
     // noinspection JSIgnoredPromiseFromCall
-    ipcRenderer.invoke(IpcConstants.ThumbnailGenerationInMainProcess.Name, this.heifFilePathsToGenerateThumbnail);
+    ipcRenderer.invoke(IpcConstants.ThumbnailGenerationInMainProcess.Name, this.allHeifFilePaths, this.heifFilePathsToGenerateThumbnail);
   }
 
   private updateGenerationStatusAsStarted() {
