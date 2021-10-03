@@ -73,7 +73,7 @@ export class ThumbnailGenerationService {
     const intervalId = setInterval(() => {
       const numberOfGeneratedThumbnails = this.heifFilePathsToGenerateThumbnail.filter(filePath => isThumbnailCacheAvailable(filePath)).length;
       const progressPercent = (numberOfGeneratedThumbnails / this.numOfGenerationRequiredThumbnails) * 100;
-      Logger.info(`Thumbnail generation progress: ${progressPercent} %, Generated/Generation-required: `
+      Logger.info(`Thumbnail generation progress: ${progressPercent.toFixed(5)} %, Generated/Generation-required: `
         + `${numberOfGeneratedThumbnails}/${this.numOfGenerationRequiredThumbnails}`);
       this.generationProgress.next({numOfGeneratedThumbnails: numberOfGeneratedThumbnails, progressPercent});
 
