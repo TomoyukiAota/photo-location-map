@@ -33,6 +33,24 @@ function checkFileForWorkerThreadExists(): void {
   }
 }
 
+function logAllHeifFiles(allHeifFilePaths: string[]): void {
+  const numOfAllHeifFiles = allHeifFilePaths.length;
+  Logger.info(`Number of all HEIF files: ${numOfAllHeifFiles}`);
+  if (numOfAllHeifFiles >= 1) {
+    Logger.info(`All HEIF file paths are as follows: `);
+    allHeifFilePaths.forEach(filePath => Logger.info(filePath));
+  }
+}
+
+function logHeifFilesToGenerateThumbnail(heifFilePathsToGenerateThumbnail: string[]): void {
+  const numOfHeifFilesToGenerateThumbnail = heifFilePathsToGenerateThumbnail.length;
+  Logger.info(`Number of HEIF files to generate thumbnails: ${numOfHeifFilesToGenerateThumbnail}`);
+  if (numOfHeifFilesToGenerateThumbnail >= 1) {
+    Logger.info(`HEIF files to generate thumbnails are as follows: `);
+    heifFilePathsToGenerateThumbnail.forEach(filePath => Logger.info(filePath));
+  }
+}
+
 function createThumbnailFileGenerationArgs(filePath: string) {
   const args = new ThumbnailFileGenerationArgs();
   args.srcFilePath = filePath;
@@ -68,9 +86,12 @@ async function generateThumbnails(heifFilePaths: string[]) {
   await pool.terminate();
 }
 
-ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Name, (event, heifFilePathsToGenerateThumbnail: string[]) => {
+ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Name, (event, allHeifFilePaths: string[], heifFilePathsToGenerateThumbnail: string[]) => {
+  Logger.info(`Received the IPC invoke request about thumbnail generation in the main process.`);
   checkFileForWorkerThreadExists();
   removeInvalidThumbnailCache();
+  logAllHeifFiles(allHeifFilePaths);
+  logHeifFilesToGenerateThumbnail(heifFilePathsToGenerateThumbnail);
 
   // noinspection JSUnusedLocalSymbols
   const ignoredPromise = generateThumbnails(heifFilePathsToGenerateThumbnail);    // Promise is deliberately ignored.
