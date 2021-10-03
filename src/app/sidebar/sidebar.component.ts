@@ -78,7 +78,6 @@ export class SidebarComponent {
         this.directoryTreeViewDataService.replace(directoryTreeObject);
         this.parentFolderPath = path.dirname(selectedFolderPath) + path.sep;
         this.loadedFilesStatusBarService.updateStatus();
-        removeInvalidThumbnailCache();
         this.thumbnailGenerationService.startThumbnailGeneration(directoryTreeObject);
         FolderSelectionRecorder.complete();
       })
