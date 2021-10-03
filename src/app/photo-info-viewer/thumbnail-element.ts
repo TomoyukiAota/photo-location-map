@@ -59,13 +59,8 @@ export class ThumbnailElement {
     const cssClassAppliedToGeneratingThumbnailImage = 'photo-info-viewer-generating-thumbnail';
     const cssClassToFadeInAfterThumbnailGeneration = 'photo-info-viewer-fade-in-after-thumbnail-generation';
 
-    if (isThumbnailCacheAvailable(photo.path)) {
-      this.displayGeneratedThumbnail(photo, thumbnailElement);
-      return;
-    } else {
-      this.displayGeneratingThumbnailImage(thumbnailElement, photo);
-      thumbnailElement.classList.add(cssClassAppliedToGeneratingThumbnailImage);
-    }
+    this.displayGeneratingThumbnailImage(thumbnailElement, photo);
+    thumbnailElement.classList.add(cssClassAppliedToGeneratingThumbnailImage);
 
     const intervalId = setInterval(() => {
       if (isThumbnailCacheAvailable(photo.path)) {
