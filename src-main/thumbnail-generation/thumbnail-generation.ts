@@ -1,4 +1,3 @@
-import { DirectoryTree } from 'directory-tree';
 import { ipcMain } from 'electron';
 import * as fs from 'fs';
 import * as os from 'os';
@@ -6,11 +5,10 @@ import * as pathModule from 'path';
 import * as physicalCpuCount from 'physical-cpu-count';
 import { Pool, spawn, Worker } from 'threads';
 
-import { convertToFlattenedDirTree } from '../../src-shared/dir-tree/dir-tree-util';
-import { FilenameExtension } from '../../src-shared/filename-extension/filename-extension';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { Logger } from '../../src-shared/log/logger';
-import { createFileForLastModified, getThumbnailFilePath, isThumbnailCacheAvailable } from '../../src-shared/thumbnail-cache/thumbnail-cache-util';
+import { removeInvalidThumbnailCache } from '../../src-shared/thumbnail-cache/remove-invalid-thumbnail-cache';
+import { createFileForLastModified, getThumbnailFilePath } from '../../src-shared/thumbnail-cache/thumbnail-cache-util';
 import { ThumbnailFileGenerationArgs } from './generate-thumbnail-file-arg-and-result';
 
 
@@ -72,6 +70,7 @@ async function generateThumbnails(heifFilePaths: string[]) {
 
 ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Name, (event, heifFilePathsToGenerateThumbnail: string[]) => {
   checkFileForWorkerThreadExists();
+  removeInvalidThumbnailCache();
 
   // noinspection JSUnusedLocalSymbols
   const ignoredPromise = generateThumbnails(heifFilePathsToGenerateThumbnail);    // Promise is deliberately ignored.
