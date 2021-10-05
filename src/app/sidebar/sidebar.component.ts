@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import * as remote from '@electron/remote';
-import * as createDirectoryTree from 'directory-tree';
 
 import { DirTreeObjectRecorder } from '../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
 import { ProxyRequire } from '../../../src-shared/require/proxy-require';
@@ -10,7 +9,9 @@ import { sleep } from '../../../src-shared/sleep/sleep';
 import { FolderSelectionService } from '../shared/service/folder-selection.service';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { LoadingFolderProgress } from '../shared/loading-folder-progress';
+import { SelectedDirectory } from '../shared/selected-directory';
 import { ThumbnailObjectUrlStorage } from '../shared/thumbnail-object-url-storage';
+
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
 import { LoadedFilesStatusBarService } from '../loaded-files-status-bar/service/loaded-files-status-bar.service';
 import { LoadingFolderDialogComponent } from '../loading-folder/dialog/loading-folder-dialog.component';
@@ -68,7 +69,7 @@ export class SidebarComponent {
       restoreFocus: false
     });
     await sleep(100); // To display the dialog promptly before starting the intensive work of loading the folder.
-    const directoryTreeObject = createDirectoryTree(selectedFolderPath);
+    const directoryTreeObject = SelectedDirectory.createDirectoryTree(selectedFolderPath);
     DirTreeObjectRecorder.record(directoryTreeObject);
     this.photoDataService.update(directoryTreeObject)
       .then(() => {
