@@ -11,7 +11,6 @@ export class LoadedFilesStatusBarComponent implements OnInit {
   public anyFileLoaded = false;
 
   public numberOfLoadedFiles: number;
-  public numberOfFilesWithExif: number;
   public numberOfFilesWithGpsInfo: number;
 
   public numberOfJpegFiles: number;
@@ -28,7 +27,6 @@ export class LoadedFilesStatusBarComponent implements OnInit {
       const allPhotos = this.photoDataService.getAllPhotos();
       this.anyFileLoaded = allPhotos.length >= 1;
       this.numberOfLoadedFiles = allPhotos.length;
-      this.numberOfFilesWithExif = allPhotos.filter(photo => photo?.hasExif).length;
       this.numberOfFilesWithGpsInfo = allPhotos.filter(photo => photo?.hasGpsInfo).length;
       this.numberOfJpegFiles = allPhotos.filter(photo => photo?.isJpeg).length;
       this.numberOfHeifFiles = allPhotos.filter(photo => photo?.isHeif).length;
