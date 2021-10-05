@@ -6,7 +6,6 @@ import * as createDirectoryTree from 'directory-tree';
 import { DirTreeObjectRecorder } from '../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
 import { ProxyRequire } from '../../../src-shared/require/proxy-require';
 import { sleep } from '../../../src-shared/sleep/sleep';
-import { removeInvalidThumbnailCache } from '../../../src-shared/thumbnail-cache/remove-invalid-thumbnail-cache';
 
 import { FolderSelectionService } from '../shared/service/folder-selection.service';
 import { PhotoDataService } from '../shared/service/photo-data.service';
