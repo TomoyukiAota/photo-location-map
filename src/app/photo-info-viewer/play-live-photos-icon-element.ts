@@ -1,17 +1,15 @@
-import * as fs from 'fs';
-import * as pathModule from 'path';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { openWithAssociatedApp } from '../../../src-shared/command/command';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { Photo } from '../shared/model/photo.model';
+import { SelectedDirectory } from '../shared/selected-directory';
 import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
 
 
 export class PlayLivePhotosIconElement {
   public static create(photo: Photo): HTMLImageElement {
-    const parsedPath = pathModule.parse(photo.path);
-    const livePhotosFilePath = pathModule.join(parsedPath.dir, parsedPath.name + '.MOV');
-    if (!fs.existsSync(livePhotosFilePath))
+    const {livePhotosAvailable, livePhotosFilePath} = SelectedDirectory.getLivePhotosFilePathIfAvailable(photo.path);
+    if (!livePhotosAvailable)
       return null;
 
     const element = document.createElement('img');
