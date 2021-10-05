@@ -1,7 +1,6 @@
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { FilenameExtension } from '../../../src-shared/filename-extension/filename-extension';
 import { isFilePathTooLongOnWindows, maxFilePathLengthOnWindows } from '../../../src-shared/max-file-path-length-on-windows/max-file-path-length-on-windows';
-import { RequireFromMainProcess } from '../../../src-shared/require/require-from-main-process';
 import { getThumbnailFilePath, isThumbnailCacheAvailable } from '../../../src-shared/thumbnail-cache/thumbnail-cache-util';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { Dimensions } from '../shared/model/dimensions.model';
@@ -9,7 +8,6 @@ import { Photo } from '../shared/model/photo.model';
 import { PhotoViewerLauncher } from '../photo-viewer-launcher/photo-viewer-launcher';
 import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
 
-const app = RequireFromMainProcess.electron.app;
 
 export class ThumbnailElement {
   public static create(photo: Photo): { thumbnailElement: HTMLImageElement; thumbnailContainerElement: HTMLDivElement } {
@@ -122,10 +120,7 @@ export class ThumbnailElement {
   private static minThumbnailContainerSquareSideLength = 200;
 
   private static displayThumbnailUsingFile(thumbnailElement: HTMLImageElement, photo: Photo, thumbnailFilePath: string) {
-    const imgSrcPath = app.isPackaged
-      ? thumbnailFilePath.replace(/#/g, '%23')   // In package app, # needs to be escaped. See https://www.w3schools.com/tags/ref_urlencode.asp for encoding.
-      : thumbnailFilePath;                       // With development server, thumbnail will not be displayed if # is escaped.
-
+    const imgSrcPath = thumbnailFilePath.replace(/#/g, '%23');  // # needs to be escaped. See https://www.w3schools.com/tags/ref_urlencode.asp for encoding.
     const tempImg = new Image();
     tempImg.src = `file://${imgSrcPath}`;
     tempImg.onload = () => {

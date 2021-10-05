@@ -7,12 +7,14 @@ export class FilenameExtension {
   private static readonly pngExtensions:  ReadonlyArray<string> = ['.png'];
   private static readonly heifExtensions: ReadonlyArray<string> = ['.heif', '.heic'];
   private static readonly webpExtensions: ReadonlyArray<string> = ['.webp'];
+  private static readonly movExtensions:  ReadonlyArray<string> = ['.mov'];
 
   public static isJpeg(extension: string) { return this.jpegExtensions.includes(extension); }
   public static isTiff(extension: string) { return this.tiffExtensions.includes(extension); }
   public static isPng (extension: string) { return this.pngExtensions.includes(extension);  }
   public static isHeif(extension: string) { return this.heifExtensions.includes(extension); }
   public static isWebp(extension: string) { return this.webpExtensions.includes(extension); }
+  public static isMov (extension: string) { return this.movExtensions.includes(extension);  }
 
   private static readonly extensionsSupportedByExifr: ReadonlyArray<string> = [
     ...FilenameExtension.jpegExtensions,
