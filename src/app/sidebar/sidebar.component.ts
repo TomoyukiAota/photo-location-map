@@ -15,7 +15,7 @@ import { ThumbnailObjectUrlStorage } from '../shared/thumbnail-object-url-storag
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
 import { LoadedFilesStatusBarService } from '../loaded-files-status-bar/service/loaded-files-status-bar.service';
 import { LoadingFolderDialogComponent } from '../loading-folder/dialog/loading-folder-dialog.component';
-import { NoPhotosWithGpsLocationDialogComponent } from '../no-photos-with-gps-location-dialog/no-photos-with-gps-location-dialog.component';
+import { NoPhotosWithLocationDataDialogComponent } from '../no-photos-with-gps-location-dialog/no-photos-with-location-data-dialog.component';
 import { PhotoInfoViewerContent } from '../photo-info-viewer/photo-info-viewer-content';
 import { ThumbnailGenerationService } from '../thumbnail-generation/service/thumbnail-generation.service';
 import { FolderSelectionRecorder } from './folder-selection-recorder';
@@ -95,7 +95,7 @@ export class SidebarComponent {
     if (photoWithLocation.length >= 1)
       return;
 
-    this.dialog.open(NoPhotosWithGpsLocationDialogComponent, {
+    this.dialog.open(NoPhotosWithLocationDataDialogComponent, {
       width: '500px',
       height: '125px',
       panelClass: 'custom-dialog-container',
