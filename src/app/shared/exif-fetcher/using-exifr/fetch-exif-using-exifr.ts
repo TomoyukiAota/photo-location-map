@@ -28,17 +28,32 @@ export function fetchExifUsingExifr(filePath: string): Promise<Exif> {
 
 interface ExifrParseOutput {
   DateTimeOriginal?: Date;
-  latitude?: number;
-  longitude?: number;
   ExifImageHeight?: number;
   ExifImageWidth?: number;
+  latitude?: number;
+  longitude?: number;
   Orientation?: number;
 }
 
+type ExifrParseParameterType = Parameters<typeof exifr.parse>;
+type ExifrOptionsType = ExifrParseParameterType[1];
+
+const exifrOptions: ExifrOptionsType = {
+  translateValues: false,
+  pick: [
+    'DateTimeOriginal',
+    'ExifImageHeight',
+    'ExifImageWidth',
+    'GPSLatitude',     // Required for exifrParseOutput.latitude
+    'GPSLatitudeRef',  // Required for exifrParseOutput.latitude to be correctly calculated
+    'GPSLongitude',    // Required for exifrParseOutput.longitude
+    'GPSLongitudeRef', // Required for exifrParseOutput.longitude to be correctly calculated
+    'Orientation'
+  ]
+};
+
 async function fetchExifrParseOutput(filePath: string): Promise<ExifrParseOutput> {
-  const exifrParseOutput: ExifrParseOutput = await exifr.parse(filePath, {
-    translateValues: false
-  });
+  const exifrParseOutput: ExifrParseOutput = await exifr.parse(filePath, exifrOptions);
   Logger.info(`[using exifr] Fetched EXIF of ${filePath} `, exifrParseOutput);
   return exifrParseOutput;
 }
