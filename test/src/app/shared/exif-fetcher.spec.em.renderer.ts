@@ -34,7 +34,7 @@ describe('ExifFetcher', () => {
       assert(nearlyEqual(actual_IMG_4676_longitude, expected_IMG_4676_longitude, 1.0e-5));
     });
 
-    // This test is added to check if GPSLongitudeRef ("E" or "W") is correctly taken into account for longitude value
+    // This test is added to check if negative longitude value is gotten when GPSLongitudeRef is "W".
     it('should return GPS info for actual-photos/Apple Park/IMG_5769.JPG', () => {
       const IMG_5769_path = path.join(testResourceDirectory, 'actual-photos', 'Apple Park', 'IMG_5769.JPG');
       const IMG_5769_pathExifPair = pathExifPairs.find(pair => pair.path === IMG_5769_path);
