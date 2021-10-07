@@ -34,7 +34,22 @@ describe('ExifFetcher', () => {
       assert(nearlyEqual(actual_IMG_4676_longitude, expected_IMG_4676_longitude, 1.0e-5));
     });
 
-    // This test is added to check if negative longitude value is gotten when GPSLongitudeRef is "W".
+    // This test is added to check if negative latitude value is gotten when GPSLatitudeRef is "S" (not "N").
+    it('should return GPS info for actual-photos/Gold Coast/IMG_1579.JPG', () => {
+      const IMG_1579_path = path.join(testResourceDirectory, 'actual-photos', 'Gold Coast', 'IMG_1579.JPG');
+      const IMG_1579_pathExifPair = pathExifPairs.find(pair => pair.path === IMG_1579_path);
+      assert(!!IMG_1579_pathExifPair === true);
+
+      const actual_IMG_1579_latitude = IMG_1579_pathExifPair.exif.gpsInfo.latLng.latitude;
+      const expected_IMG_1579_latitude = -28.006441666666667;    // Negative value because GPSLatitudeRef is "S".
+      assert(nearlyEqual(actual_IMG_1579_latitude, expected_IMG_1579_latitude, 1.0e-5));
+
+      const actual_IMG_1579_longitude = IMG_1579_pathExifPair.exif.gpsInfo.latLng.longitude;
+      const expected_IMG_1579_longitude = 153.42967222222222;
+      assert(nearlyEqual(actual_IMG_1579_longitude, expected_IMG_1579_longitude, 1.0e-5));
+    });
+
+    // This test is added to check if negative longitude value is gotten when GPSLongitudeRef is "W" (not "E").
     it('should return GPS info for actual-photos/Apple Park/IMG_5769.JPG', () => {
       const IMG_5769_path = path.join(testResourceDirectory, 'actual-photos', 'Apple Park', 'IMG_5769.JPG');
       const IMG_5769_pathExifPair = pathExifPairs.find(pair => pair.path === IMG_5769_path);
