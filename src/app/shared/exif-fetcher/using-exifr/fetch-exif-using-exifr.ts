@@ -37,7 +37,17 @@ interface ExifrParseOutput {
 
 async function fetchExifrParseOutput(filePath: string): Promise<ExifrParseOutput> {
   const exifrParseOutput: ExifrParseOutput = await exifr.parse(filePath, {
-    translateValues: false
+    translateValues: false,
+    pick: [
+      'DateTimeOriginal',
+      'GPSLatitude',     // Required for exifrParseOutput.latitude
+      'GPSLatitudeRef',  // Required for exifrParseOutput.latitude to be correctly calculated
+      'GPSLongitude',    // Required for exifrParseOutput.longitude
+      'GPSLongitudeRef', // Required for exifrParseOutput.longitude to be correctly calculated
+      'ExifImageHeight',
+      'ExifImageWidth',
+      'Orientation'
+    ]
   });
   Logger.info(`[using exifr] Fetched EXIF of ${filePath} `, exifrParseOutput);
   return exifrParseOutput;
