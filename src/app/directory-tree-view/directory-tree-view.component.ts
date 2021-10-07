@@ -86,11 +86,11 @@ export class DirectoryTreeViewComponent {
     const rootFlatNode = this.nestedToFlatNodeMap.get(rootNestedNode);
 
     if (rootFlatNode.isSelectable) {
-      // When the root node is selectable (i.e. some photos with GPS data exist in the selected folder),
+      // When the root node is selectable (i.e. some photos with location data exist in the selected folder),
       // select the root node in order to select all photos as the map's state after loading the folder.
       this.toggleNodeSelection(rootFlatNode);
     } else {
-      // When the root node is not selectable (i.e. no photos with GPS data exist in the selected folder),
+      // When the root node is not selectable (i.e. no photos with location data exist in the selected folder),
       // update SelectedPhotoService.selectedPhotos with an empty array so that the map will be displayed without photos.
       this.selectedPhotoService.setSelectedPhotosByPaths([]);
     }
