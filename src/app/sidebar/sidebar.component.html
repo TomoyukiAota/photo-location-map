@@ -7,7 +7,7 @@
       {{ 'SIDEBAR.SELECT_FOLDER' | translate }}
     </button>
   </div>
-  <div class="path-or-message">{{ parentFolderPath || messageWhenFolderIsNotSelected }}</div>
+  <div class="path-or-message">{{ (parentFolderPath | async) || messageWhenFolderIsNotSelected }}</div>
   <div class="directory-tree-view-area">
     <app-directory-tree-view></app-directory-tree-view>
   </div>

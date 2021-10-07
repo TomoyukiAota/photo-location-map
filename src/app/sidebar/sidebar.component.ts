@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Subject } from 'rxjs';
 import * as remote from '@electron/remote';
 
 import { DirTreeObjectRecorder } from '../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
@@ -29,7 +30,7 @@ const path = ProxyRequire.path;
 })
 export class SidebarComponent {
   public readonly messageWhenFolderIsNotSelected = 'Please select a folder to see where photos were taken.';
-  public parentFolderPath = '';
+  public parentFolderPath = new Subject<string>();
 
   constructor(private dialog: MatDialog,
               private folderSelectionService: FolderSelectionService,
@@ -73,10 +74,10 @@ export class SidebarComponent {
     DirTreeObjectRecorder.record(directoryTreeObject);
     this.photoDataService.update(directoryTreeObject)
       .then(() => {
+        this.parentFolderPath.next(path.dirname(selectedFolderPath) + path.sep);
         this.showPhotoWithLocationNotFoundDialogIfApplicable();
         PhotoInfoViewerContent.generateCache(this.photoDataService.getAllPhotos());
         this.directoryTreeViewDataService.replace(directoryTreeObject);
-        this.parentFolderPath = path.dirname(selectedFolderPath) + path.sep;
         this.loadedFilesStatusBarService.updateStatus();
         this.thumbnailGenerationService.startThumbnailGeneration(directoryTreeObject);
         FolderSelectionRecorder.complete();
