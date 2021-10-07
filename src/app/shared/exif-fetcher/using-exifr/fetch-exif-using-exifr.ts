@@ -28,10 +28,10 @@ export function fetchExifUsingExifr(filePath: string): Promise<Exif> {
 
 interface ExifrParseOutput {
   DateTimeOriginal?: Date;
-  latitude?: number;
-  longitude?: number;
   ExifImageHeight?: number;
   ExifImageWidth?: number;
+  latitude?: number;
+  longitude?: number;
   Orientation?: number;
 }
 
@@ -40,12 +40,12 @@ async function fetchExifrParseOutput(filePath: string): Promise<ExifrParseOutput
     translateValues: false,
     pick: [
       'DateTimeOriginal',
+      'ExifImageHeight',
+      'ExifImageWidth',
       'GPSLatitude',     // Required for exifrParseOutput.latitude
       'GPSLatitudeRef',  // Required for exifrParseOutput.latitude to be correctly calculated
       'GPSLongitude',    // Required for exifrParseOutput.longitude
       'GPSLongitudeRef', // Required for exifrParseOutput.longitude to be correctly calculated
-      'ExifImageHeight',
-      'ExifImageWidth',
       'Orientation'
     ]
   });
