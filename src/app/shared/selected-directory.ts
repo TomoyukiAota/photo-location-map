@@ -18,7 +18,7 @@ export class SelectedDirectory {
     /[\/\\]Thumbs\.db$/i,
 
     // Mac - Anywhere
-    /[\/\\]\._.*/,
+    /[\/\\]\._.*/i,
     /[\/\\]\.AppleDouble/i,
     /[\/\\]\.DS_Store$/i,
     /[\/\\]\.localized$/i,
