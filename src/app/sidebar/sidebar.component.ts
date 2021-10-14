@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import * as remote from '@electron/remote';
 
@@ -57,38 +57,46 @@ export class SidebarComponent {
   }
 
   private async handleSelectedFolder(selectedFolderPath: string) {
-    FolderSelectionRecorder.start(selectedFolderPath);
-    PhotoInfoViewerContent.clearCache();
-    ThumbnailObjectUrlStorage.revokeObjectUrls();
-    this.folderSelectionService.folderSelected.next();
-    const loadingFolderDialogRef = this.dialog.open(LoadingFolderDialogComponent, {
-      width: '350px',
+    let loadingFolderDialogRef: MatDialogRef<LoadingFolderDialogComponent> = null;
+
+    try {
+      FolderSelectionRecorder.start(selectedFolderPath);
+      PhotoInfoViewerContent.clearCache();
+      ThumbnailObjectUrlStorage.revokeObjectUrls();
+      this.folderSelectionService.folderSelected.next();
+
+      loadingFolderDialogRef = this.showLoadingFolderDialog();
+      await sleep(100); // To display the loading folder dialog before starting intensive work (creating directory tree) which freezes GUI.
+
+      const directoryTreeObject = SelectedDirectory.createDirectoryTree(selectedFolderPath);
+      DirTreeObjectRecorder.record(directoryTreeObject);
+      await this.photoDataService.update(directoryTreeObject); // Photo data is fetched from files. The loading folder dialog displays file loading status.
+      await sleep(100); // To update the loading folder dialog before starting intensive work (PhotoInfoViewerContent.generateCache) which freezes GUI.
+
+      this.parentFolderPath.next(path.dirname(selectedFolderPath) + path.sep);
+      this.showPhotoWithLocationNotFoundDialogIfApplicable();
+      PhotoInfoViewerContent.generateCache(this.photoDataService.getAllPhotos());
+      this.directoryTreeViewDataService.replace(directoryTreeObject);
+      this.loadedFilesStatusBarService.updateStatus();
+      this.thumbnailGenerationService.startThumbnailGeneration(directoryTreeObject);
+      FolderSelectionRecorder.complete();
+    } catch (reason) {
+      FolderSelectionRecorder.fail(reason);
+    } finally {
+      loadingFolderDialogRef?.close();
+      LoadingFolderProgress.reset();
+    }
+  }
+
+  private showLoadingFolderDialog() {
+    return this.dialog.open(LoadingFolderDialogComponent, {
+      width: '400px',
       height: '120px',
       panelClass: 'custom-dialog-container',
       disableClose: true,
       autoFocus: false,
       restoreFocus: false
     });
-    await sleep(100); // To display the dialog promptly before starting the intensive work of loading the folder.
-    const directoryTreeObject = SelectedDirectory.createDirectoryTree(selectedFolderPath);
-    DirTreeObjectRecorder.record(directoryTreeObject);
-    this.photoDataService.update(directoryTreeObject)
-      .then(() => {
-        this.parentFolderPath.next(path.dirname(selectedFolderPath) + path.sep);
-        this.showPhotoWithLocationNotFoundDialogIfApplicable();
-        PhotoInfoViewerContent.generateCache(this.photoDataService.getAllPhotos());
-        this.directoryTreeViewDataService.replace(directoryTreeObject);
-        this.loadedFilesStatusBarService.updateStatus();
-        this.thumbnailGenerationService.startThumbnailGeneration(directoryTreeObject);
-        FolderSelectionRecorder.complete();
-      })
-      .catch(reason =>
-        FolderSelectionRecorder.fail(reason)
-      )
-      .finally(() => {
-        loadingFolderDialogRef.close();
-        LoadingFolderProgress.reset();
-      });
   }
 
   private showPhotoWithLocationNotFoundDialogIfApplicable(): void {

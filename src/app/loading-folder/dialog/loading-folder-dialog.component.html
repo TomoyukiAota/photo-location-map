@@ -1,9 +1,21 @@
 <div class="progress-indicator">
   <mat-progress-bar mode="buffer" [value]="progressPercent"></mat-progress-bar>
   <div class="loading-and-progress">
-    <div class="loading">Loading Selected Folder...</div>
+    <div>
+      <ng-container *ngIf="!isLoadingFilesCompleted">
+        Loading files from the selected folder...
+      </ng-container>
+      <ng-container *ngIf="isLoadingFilesCompleted">
+        Completed loading all files ({{ numberOfLoadedFiles }} files).
+      </ng-container>
+    </div>
     <div [ngClass]="{'hidden': !isProgressValid, 'fade-in': isProgressValid}">
-      Loaded {{ numberOfLoadedFiles }} files out of {{ numberOfAllFilesToLoad }} files.
+      <ng-container *ngIf="!isLoadingFilesCompleted">
+        Loaded {{ numberOfLoadedFiles }} files out of {{ numberOfAllFilesToLoad }} files.
+      </ng-container>
+      <ng-container *ngIf="isLoadingFilesCompleted">
+        Generating the map using the loaded files...
+      </ng-container>
     </div>
   </div>
 </div>

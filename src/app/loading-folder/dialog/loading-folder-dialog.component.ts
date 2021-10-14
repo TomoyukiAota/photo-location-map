@@ -11,16 +11,18 @@ export class LoadingFolderDialogComponent implements OnInit {
   public numberOfAllFilesToLoad = 0;
   public numberOfLoadedFiles = 0;
   public progressPercent = 0;
+  public isLoadingFilesCompleted = false;
 
-  constructor(private progressService: LoadingFolderProgressReporterService) { }
+  constructor(private loadingFolderProgress: LoadingFolderProgressReporterService) { }
 
   ngOnInit() {
-    this.progressService.progressStatus.subscribe(status => {
+    this.loadingFolderProgress.progressStatus.subscribe(status => {
       this.isProgressValid = status.isValid;
       this.numberOfAllFilesToLoad = status.numberOfAllFilesToLoad;
       this.numberOfLoadedFiles = status.numberOfLoadedFiles;
       this.progressPercent = status.isValid ? status.loadedPercent : 0; // when invalid, progressPercent is 0 for display purpose.
+      this.isLoadingFilesCompleted = status.isCompleted;
     });
-    this.progressService.startUpdatingProgress();
+    this.loadingFolderProgress.startUpdatingProgress();
   }
 }
