@@ -1,6 +1,8 @@
 // Karma configuration file, see link for more information
 // https://karma-runner.github.io/1.0/config/configuration-file.html
 
+const electronWebPreferences = require('../electron-web-preferences/electron-web-preferences');
+
 module.exports = function (config) {
   config.set({
     basePath: '',
@@ -32,14 +34,7 @@ module.exports = function (config) {
       CustomElectron: {
         base: 'Electron',
         browserWindowOptions: {
-          webPreferences: {
-            contextIsolation: false,
-            enableRemoteModule: true,
-            nodeIntegration: true,
-            nodeIntegrationInWorker: true,
-            webSecurity: false,
-            worldSafeExecuteJavaScript: false
-          }
+          webPreferences: electronWebPreferences,
         },
         require: __dirname + '/karma-electron-main-fixtures.js'
       }
