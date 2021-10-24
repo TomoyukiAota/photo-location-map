@@ -102,6 +102,7 @@
     "@types/webpack": "5.28.0",
     "chai": "4.3.4",
     "codelyzer": "6.0.2",
+    "comlink": "4.3.1",
     "cross-env": "7.0.3",
     "electron": "13.5.0",
     "electron-builder": "22.11.7",
