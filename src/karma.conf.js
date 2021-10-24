@@ -36,6 +36,7 @@ module.exports = function (config) {
             contextIsolation: false,
             enableRemoteModule: true,
             nodeIntegration: true,
+            nodeIntegrationInWorker: true,
             webSecurity: false,
             worldSafeExecuteJavaScript: false
           }
