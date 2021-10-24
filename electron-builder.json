@@ -5,10 +5,9 @@
   },
   "files": [
     "dist/**/*",
+    "electron-web-preferences/**/*",
     "src-main/**/*",
-    "src-shared/**/*",
-    "!**/*.ts",
-    "!**/*.js.map"
+    "src-shared/**/*"
   ],
   "asar": false,
   "afterSign": "script/notarize/notarize.js",

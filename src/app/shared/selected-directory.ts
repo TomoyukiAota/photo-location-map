@@ -1,3 +1,4 @@
+import { wrap } from 'comlink';
 import * as pathModule from 'path';
 import * as createDirectoryTree from 'directory-tree';
 import { FilenameExtension } from '../../../src-shared/filename-extension/filename-extension';
@@ -37,9 +38,13 @@ export class SelectedDirectory {
 
   private static movFilePaths: string[] = [];
 
-  public static createDirectoryTree(selectedDirPath: string) {
-    const dirTree = createDirectoryTree(selectedDirPath, {exclude: this.excludeRegexArray});
-    const flattenedDirTree = convertToFlattenedDirTree(dirTree);
+  private static worker = wrap<typeof import('./worker/directory-tree.worker').api>(
+    new Worker(new URL('./worker/directory-tree.worker', import.meta.url)),
+  );
+
+  public static async createDirectoryTree(selectedDirPath: string) {
+    const dirTree = await this.worker.createDirectoryTree(selectedDirPath, {exclude: this.excludeRegexArray});
+    const flattenedDirTree = await this.worker.convertToFlattenedDirTree(dirTree);
     this.movFilePaths = flattenedDirTree
       .filter(element => FilenameExtension.isMov(element.extension))
       .map(element => element.path.toLowerCase());
