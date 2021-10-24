@@ -66,10 +66,8 @@ export class SidebarComponent {
       this.folderSelectionService.folderSelected.next();
 
       loadingFolderDialogRef = this.showLoadingFolderDialog();
-      await sleep(100); // To display the loading folder dialog before starting intensive work (creating directory tree) which freezes GUI.
 
-      const directoryTreeObject = SelectedDirectory.createDirectoryTree(selectedFolderPath);
-      DirTreeObjectRecorder.record(directoryTreeObject);
+      const directoryTreeObject = await SelectedDirectory.createDirectoryTree(selectedFolderPath);
       await this.photoDataService.update(directoryTreeObject); // Photo data is fetched from files. The loading folder dialog displays file loading status.
       await sleep(100); // To update the loading folder dialog before starting intensive work (PhotoInfoViewerContent.generateCache) which freezes GUI.
 
@@ -79,6 +77,7 @@ export class SidebarComponent {
       this.directoryTreeViewDataService.replace(directoryTreeObject);
       this.loadedFilesStatusBarService.updateStatus();
       this.thumbnailGenerationService.startThumbnailGeneration(directoryTreeObject);
+      DirTreeObjectRecorder.record(directoryTreeObject);
       FolderSelectionRecorder.complete();
     } catch (reason) {
       FolderSelectionRecorder.fail(reason);
