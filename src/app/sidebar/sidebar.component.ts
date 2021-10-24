@@ -68,7 +68,7 @@ export class SidebarComponent {
       loadingFolderDialogRef = this.showLoadingFolderDialog();
       await sleep(100); // To display the loading folder dialog before starting intensive work (creating directory tree) which freezes GUI.
 
-      const directoryTreeObject = SelectedDirectory.createDirectoryTree(selectedFolderPath);
+      const directoryTreeObject = await SelectedDirectory.createDirectoryTree(selectedFolderPath);
       DirTreeObjectRecorder.record(directoryTreeObject);
       await this.photoDataService.update(directoryTreeObject); // Photo data is fetched from files. The loading folder dialog displays file loading status.
       await sleep(100); // To update the loading folder dialog before starting intensive work (PhotoInfoViewerContent.generateCache) which freezes GUI.

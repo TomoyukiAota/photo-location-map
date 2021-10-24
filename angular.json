@@ -31,7 +31,8 @@
             ],
             "customWebpackConfig": {
               "path": "./angular.webpack.ts"
-            }
+            },
+            "webWorkerTsConfig": "tsconfig.worker.json"
           },
           "configurations": {
             "dev": {
@@ -110,7 +111,8 @@
             ],
             "customWebpackConfig": {
               "path": "./angular.webpack.ts"
-            }
+            },
+            "webWorkerTsConfig": "tsconfig.worker.json"
           }
         },
         "lint": {
