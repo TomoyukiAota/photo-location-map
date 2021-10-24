@@ -66,7 +66,6 @@ export class SidebarComponent {
       this.folderSelectionService.folderSelected.next();
 
       loadingFolderDialogRef = this.showLoadingFolderDialog();
-      await sleep(100); // To display the loading folder dialog before starting intensive work (creating directory tree) which freezes GUI.
 
       const directoryTreeObject = await SelectedDirectory.createDirectoryTree(selectedFolderPath);
       DirTreeObjectRecorder.record(directoryTreeObject);
