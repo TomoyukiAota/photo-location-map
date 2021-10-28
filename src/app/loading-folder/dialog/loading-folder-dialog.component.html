@@ -9,7 +9,7 @@
         Completed loading all files ({{ numberOfLoadedFiles }} files).
       </ng-container>
     </div>
-    <div [ngClass]="{'hidden': !isProgressValid, 'fade-in': isProgressValid}">
+    <div [ngClass]="{'hidden': !isLoadingFilesStarted, 'fade-in': isLoadingFilesStarted}">
       <ng-container *ngIf="!isLoadingFilesCompleted">
         Loaded {{ numberOfLoadedFiles }} files out of {{ numberOfAllFilesToLoad }} files.
       </ng-container>
