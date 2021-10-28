@@ -8,6 +8,7 @@ interface LoadingFolderProgressStatus {
   numberOfAllFilesToLoad: number;
   loadedPercent: number;
   isStarted: boolean;
+  isInProgress: boolean;
   isCompleted: boolean;
 }
 
@@ -24,6 +25,7 @@ export class LoadingFolderProgressReporterService {
       const numberOfAllFilesToLoad = progress.numberOfAllFilesToLoad;
       const loadedPercent = progress.loadedPercent;
       const isStarted = progress.isStarted;
+      const isInProgress = progress.isInProgress;
       const isCompleted = progress.isCompleted;
       Logger.info(`[Loading Folder] Loaded ${numberOfLoadedFiles} files out of ${numberOfAllFilesToLoad} files.`);
       this.progressStatus.next({
@@ -31,6 +33,7 @@ export class LoadingFolderProgressReporterService {
         numberOfAllFilesToLoad,
         loadedPercent,
         isStarted,
+        isInProgress,
         isCompleted,
       });
 
