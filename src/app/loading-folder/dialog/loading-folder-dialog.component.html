@@ -1,16 +1,19 @@
 <div class="progress-indicator">
-  <mat-progress-bar mode="buffer" [value]="progressPercent"></mat-progress-bar>
+  <mat-progress-bar [mode]="progressBarMode" [value]="progressPercent"></mat-progress-bar>
   <div class="loading-and-progress">
     <div>
-      <ng-container *ngIf="!isLoadingFilesCompleted">
+      <ng-container *ngIf="!isLoadingFilesStarted">
+        Collecting files to load from the selected folder...
+      </ng-container>
+      <ng-container *ngIf="isLoadingFilesInProgress">
         Loading files from the selected folder...
       </ng-container>
       <ng-container *ngIf="isLoadingFilesCompleted">
         Completed loading all files ({{ numberOfLoadedFiles }} files).
       </ng-container>
     </div>
-    <div [ngClass]="{'hidden': !isProgressValid, 'fade-in': isProgressValid}">
-      <ng-container *ngIf="!isLoadingFilesCompleted">
+    <div *ngIf="isLoadingFilesStarted">
+      <ng-container *ngIf="isLoadingFilesInProgress">
         Loaded {{ numberOfLoadedFiles }} files out of {{ numberOfAllFilesToLoad }} files.
       </ng-container>
       <ng-container *ngIf="isLoadingFilesCompleted">
