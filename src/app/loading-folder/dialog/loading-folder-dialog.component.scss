@@ -13,8 +13,6 @@ mat-progress-bar {
   // Override width and left of mat-progress-bar so that it is located at the center with appropriate space from left and right.
   width: 90%;
   left: 5%;
-
-  animation: fadeInWithDelay 2s ease;
 }
 
 .loading-and-progress {
@@ -23,18 +21,4 @@ mat-progress-bar {
   * + * {
     margin-top: 10px;
   }
-}
-
-.hidden {
-  visibility: hidden;
-}
-
-.fade-in {
-  animation: fadeInWithDelay 2s ease;
-}
-
-@keyframes fadeInWithDelay {
-  0%   { opacity: 0; }
-  50%  { opacity: 0; }
-  100% { opacity: 1; }
 }

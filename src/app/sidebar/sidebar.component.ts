@@ -89,7 +89,7 @@ export class SidebarComponent {
 
   private showLoadingFolderDialog() {
     return this.dialog.open(LoadingFolderDialogComponent, {
-      width: '400px',
+      width: '440px',
       height: '120px',
       panelClass: 'custom-dialog-container',
       disableClose: true,
