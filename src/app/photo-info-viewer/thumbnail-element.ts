@@ -18,6 +18,12 @@ export class ThumbnailElement {
 
   private static createThumbnailElement(photo: Photo) {
     const thumbnailElement = document.createElement('img');
+    thumbnailElement.loading = 'lazy';
+    thumbnailElement.style.whiteSpace = 'pre-wrap';
+    thumbnailElement.style.fontSize = '12px';
+    thumbnailElement.style.lineHeight = '1.3';
+    thumbnailElement.style.transition = 'transform 0.3s ease-in-out';
+    thumbnailElement.onclick = () => this.handleThumbnailClick(photo);
 
     const isThumbnailAvailableFromExif = !!(photo?.exif?.thumbnail);
     const isPhotoDisplayableInBrowser = FilenameExtension.isDisplayableInBrowser(photo.filenameExtension);
@@ -33,18 +39,13 @@ export class ThumbnailElement {
       this.displayNoThumbnailAvailableImage(thumbnailElement, photo);
     }
 
-    thumbnailElement.style.whiteSpace = 'pre-wrap';
-    thumbnailElement.style.fontSize = '12px';
-    thumbnailElement.style.lineHeight = '1.3';
-    thumbnailElement.style.transition = 'transform 0.3s ease-in-out';
-    thumbnailElement.onclick = () => this.handleThumbnailClick(photo);
     return thumbnailElement;
   }
 
   private static displayThumbnailFromExif(thumbnailElement: HTMLImageElement, photo: Photo) {
-    thumbnailElement.src = photo.exif.thumbnail.objectUrl;
     thumbnailElement.width = photo.exif.thumbnail.dimensions.width;
     thumbnailElement.height = photo.exif.thumbnail.dimensions.height;
+    thumbnailElement.src = photo.exif.thumbnail.objectUrl;
     thumbnailElement.title = `Click the thumbnail to open ${photo.name}`;
   }
 
@@ -122,6 +123,7 @@ export class ThumbnailElement {
   private static displayThumbnailUsingFile(thumbnailElement: HTMLImageElement, photo: Photo, thumbnailFilePath: string) {
     const imgSrcPath = thumbnailFilePath.replace(/#/g, '%23');  // # needs to be escaped. See https://www.w3schools.com/tags/ref_urlencode.asp for encoding.
     const tempImg = new Image();
+    tempImg.loading = 'eager';
     tempImg.src = `file://${imgSrcPath}`;
     tempImg.onload = () => {
       const largerSideLength = this.minThumbnailContainerSquareSideLength;
