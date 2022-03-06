@@ -16,9 +16,9 @@ module.exports = {
         "createDefaultProgram": true
       },
       "extends": [
-        "plugin:@angular-eslint/ng-cli-compat",
-        "plugin:@angular-eslint/ng-cli-compat--formatting-add-on",
-        "plugin:@angular-eslint/template/process-inline-templates"
+        "plugin:@angular-eslint/recommended",
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended"
       ],
       "rules": {
         "@angular-eslint/component-selector": [
@@ -37,7 +37,15 @@ module.exports = {
             "accessibility": "explicit"
           }
         ],
+        "@typescript-eslint/explicit-module-boundary-types": "off",
         "@typescript-eslint/member-ordering": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            "args": "none"
+          }
+        ],
         "brace-style": "off",
         "curly": "off",
         "id-blacklist": "off",
@@ -48,6 +56,7 @@ module.exports = {
             "code": 200
           }
         ],
+        "no-extra-boolean-cast": "off",
         "no-underscore-dangle": "off"
       }
     },

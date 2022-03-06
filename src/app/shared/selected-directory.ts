@@ -1,8 +1,8 @@
+/* eslint-disable no-useless-escape */
+
 import { wrap } from 'comlink';
 import * as pathModule from 'path';
-import * as createDirectoryTree from 'directory-tree';
 import { FilenameExtension } from '../../../src-shared/filename-extension/filename-extension';
-import { convertToFlattenedDirTree } from '../../../src-shared/dir-tree/dir-tree-util';
 
 export class SelectedDirectory {
   private static excludeRegexArray: RegExp[] = [
