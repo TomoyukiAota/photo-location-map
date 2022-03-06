@@ -1,4 +1,4 @@
-/* tslint:disable:max-line-length */
+/* eslint-disable max-len */
 
 export class IconDataUrl {
   // From https://www.flaticon.com/free-icon/github-logo_25231
