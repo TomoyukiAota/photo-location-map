@@ -37,6 +37,7 @@ module.exports = {
             "accessibility": "explicit"
           }
         ],
+        "@typescript-eslint/member-ordering": "off",
         "brace-style": [
           "error",
           "1tbs"
