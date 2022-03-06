@@ -38,10 +38,7 @@ module.exports = {
           }
         ],
         "@typescript-eslint/member-ordering": "off",
-        "brace-style": [
-          "error",
-          "1tbs"
-        ],
+        "brace-style": "off",
         "curly": "off",
         "id-blacklist": "off",
         "id-match": "off",
