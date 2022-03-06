@@ -10,7 +10,7 @@ import { AppComponent } from './app.component';
 
 @Injectable()
 class DummyWelcomeDialogAtAppLaunchService {
-  public showWelcomeDialogIfUserHasNotClickedOk() {}
+  public showWelcomeDialogIfUserHasNotClickedOk() { /* Empty */ }
 }
 
 describe('AppComponent', () => {
