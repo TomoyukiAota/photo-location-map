@@ -35,7 +35,7 @@
     "notarize-history": "node script/notarize/get-notarization-history.js",
     "lint:ng": "ng lint",
     "lint:script": "eslint -c ./script/.eslintrc.script.js ./script/**/*.js",
-    "lint:script:fix": "eslint -c ./script/.eslintrc.script.js --fix ./script/**/*.js",
+    "lint:script:fix": "npm run lint:script -- --fix",
     "lint:all": "npm-run-all lint:ng lint:script",
     "test:unit:ng": "ng test",
     "test:unit:ng:watch": "ng test --watch",
