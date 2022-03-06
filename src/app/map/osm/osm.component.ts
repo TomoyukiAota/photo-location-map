@@ -6,9 +6,9 @@ import { SelectedPhotoService } from '../../shared/service/selected-photo.servic
 import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewer-content';
 import { OsmForceRenderService } from './osm-force-render/osm-force-render.service';
 
-// "declare var L: any;" is defined here (in addition to global scope typing given by type-declaration/index.d.ts)
+// "declare let L: any;" is defined here (in addition to global scope typing given by type-declaration/index.d.ts)
 // in order to avoid the compile errors for the types from leaflet.markercluster
-declare var L: any;
+declare let L: any;
 
 @Component({
   selector: 'app-osm',
