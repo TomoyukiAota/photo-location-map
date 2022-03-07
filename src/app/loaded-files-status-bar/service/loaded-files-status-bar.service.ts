@@ -8,7 +8,7 @@ import { currentUserSettings } from '../../../../src-shared/user-settings/user-s
 })
 export class LoadedFilesStatusBarService {
   public visible = new Subject<boolean>();
-  public statusUpdateRequested = new Subject();
+  public statusUpdateRequested = new Subject<void>();
 
   public setInitialVisibility() {
     const showStatusBar = BooleanSetting.convertToBoolean(currentUserSettings.showStatusBar);
