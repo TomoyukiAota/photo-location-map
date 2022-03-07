@@ -91,7 +91,7 @@
     "@angular/platform-browser": "13.2.5",
     "@angular/platform-browser-dynamic": "13.2.5",
     "@angular/router": "13.2.5",
-    "@ngx-translate/core": "13.0.0",
+    "@ngx-translate/core": "14.0.0",
     "@ngx-translate/http-loader": "6.0.0",
     "@types/delete-empty": "3.0.2",
     "@types/fs-extra": "9.0.13",
