@@ -5,12 +5,12 @@ const testInfo = require('./package-test-info');
 function removePreviousPackageTestOutcomes() {
   logger.info(`Removing the outcomes of the previous run of the package test ("${testInfo.distDirectory}" and "${testInfo.releaseDirectory}" directories) if they exist.`);
 
-  fs.rmdirSync(testInfo.distDirectory, {recursive: true, maxRetries: 10});
+  fs.rmSync(testInfo.distDirectory, {recursive: true, force: true, maxRetries: 10});
   if (fs.existsSync(testInfo.distDirectory)) {
     throw new Error(`"${testInfo.distDirectory}" still exists after trying to remove it. Aborting package test.`);
   }
 
-  fs.rmdirSync(testInfo.releaseDirectory, {recursive: true, maxRetries: 10});
+  fs.rmSync(testInfo.releaseDirectory, {recursive: true, force: true, maxRetries: 10});
   if (fs.existsSync(testInfo.releaseDirectory)) {
     throw new Error(`"${testInfo.releaseDirectory}" still exists after trying to remove it. Aborting package test.`);
   }
