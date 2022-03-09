@@ -1,5 +1,3 @@
-require('@electron/remote/main').initialize();
-
 import './configure-electron-unhandled';
 import { app, BrowserWindow, protocol } from 'electron';
 import * as path from 'path';
@@ -31,6 +29,9 @@ const createWindow = () => {
     height: mainWindowState.height,
     webPreferences: electronWebPreferences,
   });
+
+  require('@electron/remote/main').initialize();
+  require('@electron/remote/main').enable(mainWindow.webContents);
 
   const userAgent = mainWindow.webContents.userAgent;
   setUserAgentForAnalytics(userAgent);
