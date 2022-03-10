@@ -2,7 +2,7 @@ import './configure-electron-unhandled';
 import { app, BrowserWindow, protocol } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import * as electronWebPreferences from '../electron-web-preferences/electron-web-preferences';
+import * as electronWebPreferences from '../electron-util/electron-web-preferences';
 import { setUserAgentForAnalytics } from '../src-shared/analytics/analytics';
 import { Logger } from '../src-shared/log/logger';
 import { LogFileConfig } from '../src-shared/log/log-file-config';
