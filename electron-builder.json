@@ -5,7 +5,7 @@
   },
   "files": [
     "dist/**/*",
-    "electron-web-preferences/**/*",
+    "electron-util/**/*",
     "src-main/**/*",
     "src-shared/**/*"
   ],
