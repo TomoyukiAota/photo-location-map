@@ -1,7 +1,7 @@
 // Karma configuration file, see link for more information
 // https://karma-runner.github.io/1.0/config/configuration-file.html
 
-const electronWebPreferences = require('../electron-web-preferences/electron-web-preferences');
+const electronWebPreferences = require('../electron-util/electron-web-preferences');
 
 module.exports = function (config) {
   config.set({
