@@ -42,6 +42,7 @@ export class HomeComponent implements AfterViewInit, OnInit {
     Split(['#left-sidebar', '#right-map'], {
       sizes: [25, 75],
       minSize: 200,
+      gutterSize: 8, // 8px, which is the same width as the splitter gutter in Photo Data Viewer.
       snapOffset: 0,
     });
 
