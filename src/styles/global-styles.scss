@@ -17,7 +17,7 @@ body {
   cursor: col-resize;
 
   // The same animation as the splitter gutter in Photo Data Viewer.
-  transition: all 1s ease 0.2s;
+  transition: background-color 1s ease 0.2s;
   &:hover {
     background-color: #aaaaaa;
   }
