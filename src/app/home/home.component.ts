@@ -42,6 +42,7 @@ export class HomeComponent implements AfterViewInit, OnInit {
     Split(['#left-sidebar', '#right-map'], {
       sizes: [25, 75],
       minSize: 200,
+      gutterSize: 8,
       snapOffset: 0,
     });
 
