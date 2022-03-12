@@ -9,6 +9,16 @@ export class KebabMenuIconElement {
     element.height = 25;
     element.title = `More Actions`;
     element.className = 'photo-info-viewer-button';
+    element.onmouseenter = (event: MouseEvent) => this.handleOnMouseEnter(event, photo);
+    element.onmouseleave = (event: MouseEvent) => this.handleOnMouseLeave(event, photo);
     return element;
+  }
+
+  private static handleOnMouseEnter(event: MouseEvent, photo: Photo) {
+    console.log(`${photo.name} handleOnMouseEnter, MouseEvent: `, event);
+  }
+
+  private static handleOnMouseLeave(event: MouseEvent, photo: Photo) {
+    console.log(`${photo.name} handleOnMouseLeave, MouseEvent: `, event);
   }
 }
