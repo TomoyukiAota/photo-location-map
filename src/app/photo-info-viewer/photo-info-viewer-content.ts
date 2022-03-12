@@ -1,6 +1,7 @@
 import { DevOrProd } from '../../../src-shared/dev-or-prod/dev-or-prod';
 import { Logger } from '../../../src-shared/log/logger';
 import { Photo } from '../shared/model/photo.model';
+import { KebabMenuIconElement } from './kebab-menu-icon-element';
 import { LaunchPhotoViewerIconElement } from './launch-photo-viewer-icon-element';
 import { OpenContainingFolderIconElement } from './open-containing-folder-icon-element';
 import { PhotoInfoUnavailableElement } from './photo-info-unavailable-element';
@@ -78,6 +79,7 @@ export class PhotoInfoViewerContent {
     this.appendOpenContainingFolderIconElement(rootDivElement, photo);
     this.appendLaunchPhotoViewerIconElement(rootDivElement, photo);
     this.appendPlayLivePhotosIconElement(rootDivElement, photo);
+    this.appendKebabMenuIconElement(rootDivElement, photo);
   }
 
   private static createNameElement(photo: Photo) {
@@ -117,6 +119,13 @@ export class PhotoInfoViewerContent {
 
   private static appendPlayLivePhotosIconElement(rootDivElement: HTMLDivElement, photo: Photo) {
     const element = PlayLivePhotosIconElement.create(photo);
+    if (element) {
+      rootDivElement.appendChild(element);
+    }
+  }
+
+  private static appendKebabMenuIconElement(rootDivElement: HTMLDivElement, photo: Photo) {
+    const element = KebabMenuIconElement.create(photo);
     if (element) {
       rootDivElement.appendChild(element);
     }
