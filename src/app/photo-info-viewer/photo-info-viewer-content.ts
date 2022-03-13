@@ -3,7 +3,6 @@ import { Logger } from '../../../src-shared/log/logger';
 import { Photo } from '../shared/model/photo.model';
 import { MoreOptionsIconElement } from './more-options/more-options-icon-element';
 import { LaunchPhotoViewerIconElement } from './launch-photo-viewer-icon-element';
-import { OpenContainingFolderIconElement } from './open-containing-folder-icon-element';
 import { PhotoInfoUnavailableElement } from './photo-info-unavailable-element';
 import { PlayLivePhotosIconElement } from './play-live-photos-icon-element';
 import { RotateIconElement } from './rotate-icon-element';
@@ -76,7 +75,6 @@ export class PhotoInfoViewerContent {
       .forEach(element => rootDivElement.appendChild(element));
 
     this.appendRotateIconElement(rootDivElement, thumbnailElement, photo);
-    this.appendOpenContainingFolderIconElement(rootDivElement, photo);
     this.appendLaunchPhotoViewerIconElement(rootDivElement, photo);
     this.appendPlayLivePhotosIconElement(rootDivElement, photo);
     this.appendKebabMenuIconElement(rootDivElement, photo);
@@ -105,11 +103,6 @@ export class PhotoInfoViewerContent {
 
     const rotateIconElement = RotateIconElement.create(thumbnailElement, photo);
     rootDivElement.appendChild(rotateIconElement);
-  }
-
-  private static appendOpenContainingFolderIconElement(rootDivElement: HTMLDivElement, photo: Photo): void {
-    const element = OpenContainingFolderIconElement.create(photo);
-    rootDivElement.appendChild(element);
   }
 
   private static appendLaunchPhotoViewerIconElement(rootDivElement: HTMLDivElement, photo: Photo): void {
