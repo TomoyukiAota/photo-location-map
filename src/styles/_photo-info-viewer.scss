@@ -17,18 +17,68 @@
   to   { opacity: 1; }
 }
 
-.photo-info-viewer-button {
+@mixin photo-info-viewer-icon {
   background-color: #888888;
   border-radius: 5px;
   margin: 6px 3px 0 3px;
   padding: 4px;
   transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #555555;
+  }
 }
 
-.photo-info-viewer-button:hover {
-  background-color: #555555;
+.photo-info-viewer-button {
+  @include photo-info-viewer-icon;
+
+  &:active {
+    background-color: #7776d6;
+  }
 }
 
-.photo-info-viewer-button:active {
-  background-color: #7776d6;
+.photo-info-viewer-more-options-icon-wrapper {
+  display: inline-block;
+  position: relative;
+}
+
+.photo-info-viewer-more-options-icon {
+  @include photo-info-viewer-icon;
+}
+
+.photo-info-viewer-more-options-menu {
+  position: absolute;
+  top: 35px;
+
+  background-color: #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px -1px #0003, 0 4px 5px #00000024, 0 1px 10px #0000001f; // Same as the context menu in the directory tree view.
+}
+
+// similar to .mat-menu-item used in the context menu in the directory tree view.
+.photo-info-viewer-more-options-menu-item {
+  user-select: none;
+  cursor: pointer;
+  outline: none;
+  border: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  line-height: 48px;
+  height: 48px;
+  padding: 0 16px;
+  text-align: left;
+  text-decoration: none;
+  max-width: 100%;
+  position: relative;
+
+  font-family: Roboto,Helvetica Neue,sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+
+  // background-color animation
+  transition: background-color 0.2s ease;
+  &:hover  { background: rgba(0,0,0,.04); }
+  &:active { background: rgba(0,0,0,.2);  }
 }
