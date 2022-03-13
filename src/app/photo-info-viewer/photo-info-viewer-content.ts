@@ -77,7 +77,7 @@ export class PhotoInfoViewerContent {
     this.appendRotateIconElement(rootDivElement, thumbnailElement, photo);
     this.appendLaunchPhotoViewerIconElement(rootDivElement, photo);
     this.appendPlayLivePhotosIconElement(rootDivElement, photo);
-    this.appendKebabMenuIconElement(rootDivElement, photo);
+    this.appendMoreOptionsIconElement(rootDivElement, photo);
   }
 
   private static createNameElement(photo: Photo) {
@@ -117,7 +117,7 @@ export class PhotoInfoViewerContent {
     }
   }
 
-  private static appendKebabMenuIconElement(rootDivElement: HTMLDivElement, photo: Photo) {
+  private static appendMoreOptionsIconElement(rootDivElement: HTMLDivElement, photo: Photo) {
     const element = MoreOptionsIconElement.create(photo);
     if (element) {
       rootDivElement.appendChild(element);
