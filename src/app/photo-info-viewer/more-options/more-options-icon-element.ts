@@ -23,7 +23,7 @@ export class MoreOptionsIconElement {
 
   private static handleOnMouseEnter(event: MouseEvent, photo: Photo, parentElement: HTMLElement) {
     console.log(`${photo.name} handleOnMouseEnter, MouseEvent: `, event);
-    const element = MoreOptionsMenuElement.create(photo);
+    const element = MoreOptionsMenuElement.create(photo, event);
     element.id = this.moreOptionsMenuElementId;
     parentElement.appendChild(element);
   }
