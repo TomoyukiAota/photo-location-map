@@ -1,13 +1,12 @@
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { Photo } from '../shared/model/photo.model';
 
-export class KebabMenuIconElement {
+export class MoreOptionsIconElement {
   public static create(photo: Photo): HTMLImageElement {
     const element = document.createElement('img');
     element.src = IconDataUrl.kebabMenu;
     element.width = 25;
     element.height = 25;
-    element.title = `More Actions`;
     element.className = 'photo-info-viewer-button';
     element.onmouseenter = (event: MouseEvent) => this.handleOnMouseEnter(event, photo);
     element.onmouseleave = (event: MouseEvent) => this.handleOnMouseLeave(event, photo);
