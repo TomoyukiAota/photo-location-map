@@ -1,6 +1,7 @@
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { openContainingFolder } from '../../../../src-shared/command/command';
 import { Photo } from '../../shared/model/photo.model';
+import { openUrl } from '../../shared/open-url/open-url';
 import { photoInfoViewerLogger as logger } from '../photo-info-viewer-logger';
 
 interface MoreOptionsMenuItem {
@@ -36,7 +37,8 @@ function handleOpenGoogleMapsMenuItemClicked(photo: Photo) {
   Analytics.trackEvent('Photo Info Viewer', 'Clicked Open Google Maps Menu Item');
   const {latitude, longitude} = photo.exif.gpsInfo.latLng;
   const zoom = 14;
-  window.open(
-    `https://maps.google.com/?q=${latitude},${longitude}&ll=${latitude},${longitude}&z=${zoom}`
-  );
+  openUrl(`https://maps.google.com/?q=${latitude},${longitude}&ll=${latitude},${longitude}&z=${zoom}`,
+          'Open Google Maps Menu Item',
+          'Photo Info Viewer',
+          'https://www.google.com/maps/ with query parameters for latitude, longitude, and zoom');
 }
