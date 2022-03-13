@@ -17,7 +17,7 @@ export class MoreOptionsMenuElement {
   }
 
   private static configureMenuLocation(menuElement: HTMLElement, event: MouseEvent) {
-    menuElement.style.right = '0';
+    menuElement.style.right = '-35px';
 
     const centerHeight = document.documentElement.clientHeight / 2;
     const isMousePositionInUpperHalf = event.clientY < centerHeight;
