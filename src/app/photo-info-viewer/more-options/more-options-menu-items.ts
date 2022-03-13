@@ -9,24 +9,34 @@ interface MoreOptionsMenuItem {
 }
 
 export function getMoreOptionsMenuItems(photo: Photo): MoreOptionsMenuItem[] {
-  return [
-    {
-      text: 'Open Folder',
-      onClick: () => handleOpenFolderMenuItemClicked(photo)
-    },
-    {
+  const menuItems: MoreOptionsMenuItem[] = [];
+  menuItems.push({
+    text: 'Open Folder',
+    onClick: () => handleOpenFolderMenuItemClicked(photo)
+  });
+
+  if (photo.hasGpsInfo) {
+    menuItems.push({
       text: 'Open Google Maps',
-      onClick: handleOpenGoogleMapsMenuItemClicked
-    }
-  ];
+      onClick: () => handleOpenGoogleMapsMenuItemClicked(photo)
+    });
+  }
+
+  return menuItems;
 }
 
 function handleOpenFolderMenuItemClicked(photo: Photo) {
-  logger.info(`Clicked the open folder icon for ${photo.path}`);
-  Analytics.trackEvent('Photo Info Viewer', 'Clicked Open Folder Icon');
+  logger.info(`Clicked "Open Folder" menu item for ${photo.path}`);
+  Analytics.trackEvent('Photo Info Viewer', 'Clicked Open Folder Menu Item');
   openContainingFolder(photo.path);
 }
 
-function handleOpenGoogleMapsMenuItemClicked() {
-  console.log('handleOpenGoogleMapsMenuItemClicked');
+function handleOpenGoogleMapsMenuItemClicked(photo: Photo) {
+  logger.info(`Clicked "Open Google Maps" menu item for ${photo.path}`);
+  Analytics.trackEvent('Photo Info Viewer', 'Clicked Open Google Maps Menu Item');
+  const {latitude, longitude} = photo.exif.gpsInfo.latLng;
+  const zoom = 14;
+  window.open(
+    `https://maps.google.com/?q=${latitude},${longitude}&ll=${latitude},${longitude}&z=${zoom}`
+  );
 }
