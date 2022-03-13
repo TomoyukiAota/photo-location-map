@@ -21,6 +21,10 @@ export function getMoreOptionsMenuItems(photo: Photo): MoreOptionsMenuItem[] {
       text: 'Open Google Maps',
       onClick: () => handleOpenGoogleMapsMenuItemClicked(photo)
     });
+    menuItems.push({
+      text: 'Open Google Street View',
+      onClick: () => handleOpenGoogleStreetViewMenuItemClicked(photo)
+    });
   }
 
   return menuItems;
@@ -34,11 +38,21 @@ function handleOpenFolderMenuItemClicked(photo: Photo) {
 
 function handleOpenGoogleMapsMenuItemClicked(photo: Photo) {
   logger.info(`Clicked "Open Google Maps" menu item for ${photo.path}`);
-  Analytics.trackEvent('Photo Info Viewer', 'Clicked Open Google Maps Menu Item');
+  Analytics.trackEvent('Photo Info Viewer', 'Clicked "Open Google Maps" Menu Item');
   const {latitude, longitude} = photo.exif.gpsInfo.latLng;
   const zoom = 14;
   openUrl(`https://maps.google.com/?q=${latitude},${longitude}&ll=${latitude},${longitude}&z=${zoom}`,
-          'Open Google Maps Menu Item',
+          '"Open Google Maps" Menu Item',
           'Photo Info Viewer',
           'https://www.google.com/maps/ with query parameters for latitude, longitude, and zoom');
+}
+
+function handleOpenGoogleStreetViewMenuItemClicked(photo: Photo) {
+  logger.info(`Clicked "Open Google Street View" menu item for ${photo.path}`);
+  Analytics.trackEvent('Photo Info Viewer', 'Clicked "Open Google Street View" Menu Item');
+  const {latitude, longitude} = photo.exif.gpsInfo.latLng;
+  openUrl(`https://www.google.com/maps/@?api=1&map_action=pano&parameters&viewpoint=${latitude},${longitude}`,
+          '"Open Google Street View" Menu Item',
+          'Photo Info Viewer',
+          'https://www.google.com/maps/ with query parameters for latitude, longitude');
 }
