@@ -64,7 +64,7 @@ export class OsmComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private initializeOsm(): void {
     this.map = L.map('osm').setView([0, 0], 2);
-    const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
       attribution: '© <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
       maxNativeZoom: 19,
       maxZoom: 19
