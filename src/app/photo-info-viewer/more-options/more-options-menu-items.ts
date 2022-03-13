@@ -27,6 +27,11 @@ export function getMoreOptionsMenuItems(photo: Photo): MoreOptionsMenuItem[] {
     });
   }
 
+  menuItems.push({
+    text: 'View Data',
+    onClick: () => handleViewDataMenuItemClicked(photo)
+  })
+
   return menuItems;
 }
 
@@ -55,4 +60,8 @@ function handleOpenGoogleStreetViewMenuItemClicked(photo: Photo) {
           '"Open Google Street View" Menu Item',
           'Photo Info Viewer',
           'https://www.google.com/maps/ with query parameters for latitude, longitude');
+}
+
+function handleViewDataMenuItemClicked(photo: Photo) {
+  console.log('handleViewDataMenuItemClicked for ', photo);
 }
