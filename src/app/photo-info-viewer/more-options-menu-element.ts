@@ -1,37 +1,12 @@
 import { Photo } from '../shared/model/photo.model';
-
-interface MenuItem {
-  text: string;
-  onClick: (event: MouseEvent) => void;
-}
-
-function getMenuItems(photo: Photo): MenuItem[] {
-  return [
-    {
-      text: 'Open Folder',
-      onClick: handleOnOpenFolderMenuItemClicked
-    },
-    {
-      text: 'Open Google Maps',
-      onClick: handleOnOpenGoogleMapsMenuItemClicked
-    }
-  ];
-}
-
-function handleOnOpenFolderMenuItemClicked() {
-  console.log('handleOnOpenFolderMenuItemClicked');
-}
-
-function handleOnOpenGoogleMapsMenuItemClicked() {
-  console.log('handleOnOpenGoogleMapsMenuItemClicked');
-}
+import { getMoreOptionsMenuItems } from './more-options-menu-items';
 
 export class MoreOptionsMenuElement {
   public static create(photo: Photo): HTMLElement {
     const moreOptionsMenuElement = document.createElement('div');
     moreOptionsMenuElement.className = 'photo-info-viewer-more-options-menu';
 
-    const menuItems = getMenuItems(photo);
+    const menuItems = getMoreOptionsMenuItems(photo);
     menuItems.forEach(item => {
       const menuItemElement = this.createMenuItemElement(item.text, item.onClick);
       moreOptionsMenuElement.appendChild(menuItemElement);
