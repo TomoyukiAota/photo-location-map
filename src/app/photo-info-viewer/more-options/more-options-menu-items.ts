@@ -1,4 +1,7 @@
+import { Analytics } from '../../../../src-shared/analytics/analytics';
+import { openContainingFolder } from '../../../../src-shared/command/command';
 import { Photo } from '../../shared/model/photo.model';
+import { photoInfoViewerLogger as logger } from '../photo-info-viewer-logger';
 
 interface MoreOptionsMenuItem {
   text: string;
@@ -9,19 +12,21 @@ export function getMoreOptionsMenuItems(photo: Photo): MoreOptionsMenuItem[] {
   return [
     {
       text: 'Open Folder',
-      onClick: handleOnOpenFolderMenuItemClicked
+      onClick: () => handleOpenFolderMenuItemClicked(photo)
     },
     {
       text: 'Open Google Maps',
-      onClick: handleOnOpenGoogleMapsMenuItemClicked
+      onClick: handleOpenGoogleMapsMenuItemClicked
     }
   ];
 }
 
-function handleOnOpenFolderMenuItemClicked() {
-  console.log('handleOnOpenFolderMenuItemClicked');
+function handleOpenFolderMenuItemClicked(photo: Photo) {
+  logger.info(`Clicked the open folder icon for ${photo.path}`);
+  Analytics.trackEvent('Photo Info Viewer', 'Clicked Open Folder Icon');
+  openContainingFolder(photo.path);
 }
 
-function handleOnOpenGoogleMapsMenuItemClicked() {
-  console.log('handleOnOpenGoogleMapsMenuItemClicked');
+function handleOpenGoogleMapsMenuItemClicked() {
+  console.log('handleOpenGoogleMapsMenuItemClicked');
 }
