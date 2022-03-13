@@ -1,8 +1,8 @@
 import { DevOrProd } from '../../../src-shared/dev-or-prod/dev-or-prod';
 import { Logger } from '../../../src-shared/log/logger';
 import { Photo } from '../shared/model/photo.model';
+import { MoreOptionsIconElement } from './more-options/more-options-icon-element';
 import { LaunchPhotoViewerIconElement } from './launch-photo-viewer-icon-element';
-import { OpenContainingFolderIconElement } from './open-containing-folder-icon-element';
 import { PhotoInfoUnavailableElement } from './photo-info-unavailable-element';
 import { PlayLivePhotosIconElement } from './play-live-photos-icon-element';
 import { RotateIconElement } from './rotate-icon-element';
@@ -75,9 +75,9 @@ export class PhotoInfoViewerContent {
       .forEach(element => rootDivElement.appendChild(element));
 
     this.appendRotateIconElement(rootDivElement, thumbnailElement, photo);
-    this.appendOpenContainingFolderIconElement(rootDivElement, photo);
     this.appendLaunchPhotoViewerIconElement(rootDivElement, photo);
     this.appendPlayLivePhotosIconElement(rootDivElement, photo);
+    this.appendMoreOptionsIconElement(rootDivElement, photo);
   }
 
   private static createNameElement(photo: Photo) {
@@ -105,11 +105,6 @@ export class PhotoInfoViewerContent {
     rootDivElement.appendChild(rotateIconElement);
   }
 
-  private static appendOpenContainingFolderIconElement(rootDivElement: HTMLDivElement, photo: Photo): void {
-    const element = OpenContainingFolderIconElement.create(photo);
-    rootDivElement.appendChild(element);
-  }
-
   private static appendLaunchPhotoViewerIconElement(rootDivElement: HTMLDivElement, photo: Photo): void {
     const element = LaunchPhotoViewerIconElement.create(photo);
     rootDivElement.appendChild(element);
@@ -117,6 +112,13 @@ export class PhotoInfoViewerContent {
 
   private static appendPlayLivePhotosIconElement(rootDivElement: HTMLDivElement, photo: Photo) {
     const element = PlayLivePhotosIconElement.create(photo);
+    if (element) {
+      rootDivElement.appendChild(element);
+    }
+  }
+
+  private static appendMoreOptionsIconElement(rootDivElement: HTMLDivElement, photo: Photo) {
+    const element = MoreOptionsIconElement.create(photo);
     if (element) {
       rootDivElement.appendChild(element);
     }

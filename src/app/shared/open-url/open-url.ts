@@ -2,9 +2,9 @@ import { shell } from 'electron';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { Logger } from '../../../../src-shared/log/logger';
 
-export function openUrl(url: string, urlDescription: string, from: string): void {
+export function openUrl(url: string, urlDescription: string, from: string, labelForAnalytics = url): void {
   // noinspection JSIgnoredPromiseFromCall
   shell.openExternal(url);
   Logger.info(`[${from}] Opened URL for ${urlDescription} - ${url}`);
-  Analytics.trackEvent(`Opened URL`, `[${from}] Opened URL for ${urlDescription}`, url);
+  Analytics.trackEvent(`Opened URL`, `[${from}] Opened URL for ${urlDescription}`, labelForAnalytics);
 }
