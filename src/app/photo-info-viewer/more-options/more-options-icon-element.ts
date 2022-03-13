@@ -4,10 +4,10 @@ import { MoreOptionsMenuElement } from './more-options-menu-element';
 
 export class MoreOptionsIconElement {
   public static create(photo: Photo): HTMLElement {
-    const wrapperElement = document.createElement('div');
-    wrapperElement.className = 'photo-info-viewer-more-options-icon-wrapper';
-    wrapperElement.onmouseenter = (event: MouseEvent) => this.handleOnMouseEnter(event, photo, wrapperElement);
-    wrapperElement.onmouseleave = () => this.handleOnMouseLeave();
+    const containerElement = document.createElement('div');
+    containerElement.className = 'photo-info-viewer-more-options-icon-container';
+    containerElement.onmouseenter = (event: MouseEvent) => this.handleOnMouseEnter(event, photo, containerElement);
+    containerElement.onmouseleave = () => this.handleOnMouseLeave();
 
     const imgElement = document.createElement('img');
     imgElement.src = IconDataUrl.moreOptions;
@@ -15,8 +15,8 @@ export class MoreOptionsIconElement {
     imgElement.height = 25;
     imgElement.className = 'photo-info-viewer-more-options-icon';
 
-    wrapperElement.appendChild(imgElement);
-    return wrapperElement;
+    containerElement.appendChild(imgElement);
+    return containerElement;
   }
 
   private static moreOptionsMenuElementId = 'more-options-menu-element-id';
