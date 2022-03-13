@@ -4,7 +4,7 @@ import { Photo } from '../shared/model/photo.model';
 export class MoreOptionsIconElement {
   public static create(photo: Photo): HTMLImageElement {
     const element = document.createElement('img');
-    element.src = IconDataUrl.kebabMenu;
+    element.src = IconDataUrl.moreOptions;
     element.width = 25;
     element.height = 25;
     element.className = 'photo-info-viewer-button';
