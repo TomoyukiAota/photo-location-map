@@ -1,4 +1,4 @@
-import { Photo } from '../shared/model/photo.model';
+import { Photo } from '../../shared/model/photo.model';
 import { getMoreOptionsMenuItems } from './more-options-menu-items';
 
 export class MoreOptionsMenuElement {

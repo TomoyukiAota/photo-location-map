@@ -1,4 +1,4 @@
-import { Photo } from '../shared/model/photo.model';
+import { Photo } from '../../shared/model/photo.model';
 
 interface MoreOptionsMenuItem {
   text: string;
