@@ -48,14 +48,13 @@
 
 .photo-info-viewer-more-options-menu {
   position: absolute;
-  top: 35px;
-
+  z-index: 1; // With z-index: 0, the map's popup appears in front of the menu.
   background-color: #ffffff;
   border-radius: 4px;
   box-shadow: 0 2px 4px -1px #0003, 0 4px 5px #00000024, 0 1px 10px #0000001f; // Same as the context menu in the directory tree view.
 }
 
-// similar to .mat-menu-item used in the context menu in the directory tree view.
+// Similar to .mat-menu-item used in the context menu in the directory tree view.
 .photo-info-viewer-more-options-menu-item {
   user-select: none;
   cursor: pointer;
