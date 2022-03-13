@@ -1,8 +1,8 @@
 import { DevOrProd } from '../../../src-shared/dev-or-prod/dev-or-prod';
 import { Logger } from '../../../src-shared/log/logger';
 import { Photo } from '../shared/model/photo.model';
+import { MoreOptionsIconElement } from './more-options/more-options-icon-element';
 import { LaunchPhotoViewerIconElement } from './launch-photo-viewer-icon-element';
-import { MoreOptionsIconElement } from './more-options-icon-element';
 import { OpenContainingFolderIconElement } from './open-containing-folder-icon-element';
 import { PhotoInfoUnavailableElement } from './photo-info-unavailable-element';
 import { PlayLivePhotosIconElement } from './play-live-photos-icon-element';

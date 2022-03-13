@@ -1,5 +1,5 @@
-import { IconDataUrl } from '../../assets/icon-data-url';
-import { Photo } from '../shared/model/photo.model';
+import { IconDataUrl } from '../../../assets/icon-data-url';
+import { Photo } from '../../shared/model/photo.model';
 import { MoreOptionsMenuElement } from './more-options-menu-element';
 
 export class MoreOptionsIconElement {
