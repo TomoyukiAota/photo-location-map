@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { Map } from 'leaflet';
+import { LayersControlEvent, Map } from 'leaflet';
 import { Photo } from '../../shared/model/photo.model';
 import { SelectedPhotoService } from '../../shared/service/selected-photo.service';
 import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewer-content';
@@ -25,6 +25,7 @@ export class OsmComponent implements OnInit, OnDestroy, AfterViewInit {
   private selectedPhotoServiceSubscription: Subscription;
   private osmForceRenderServiceSubscription: Subscription;
   private map: Map;
+  private selectedLayerName: string = null;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
               private selectedPhotoService: SelectedPhotoService,
@@ -88,20 +89,28 @@ export class OsmComponent implements OnInit, OnDestroy, AfterViewInit {
       maxZoom: 19,
     });
 
-    bingRoadOnDemandLayer.addTo(this.map); // Set Bing's RoadOnDemand as the default map.
-
-    L.control.layers({
+    const layers = {
       'Bing (Roads)': bingRoadOnDemandLayer,
       'Bing (Aerial)': bingAerialLayer,
       'Bing (Aerial with Labels)': bingAerialWithLabelsOnDemandLayer,
       'OpenStreetMap': osmLayer,
-    }).addTo(this.map);
+    };
+    L.control.layers(layers).addTo(this.map);
+
+    const selectedLayer = this.selectedLayerName
+      ? layers[this.selectedLayerName]  // Keep the previously selected layer, or
+      : bingRoadOnDemandLayer;          // set the default layer
+    selectedLayer.addTo(this.map);
 
     this.map.once('moveend', event => {
       const initialMaxZoomLevel = 13;
       if (this.map.getZoom() > initialMaxZoomLevel) {
         this.map.setZoom(initialMaxZoomLevel);
       }
+    });
+
+    this.map.on('baselayerchange', (event: LayersControlEvent) => {
+      this.selectedLayerName = event.name;
     });
   }
 
