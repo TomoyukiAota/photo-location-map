@@ -94,7 +94,7 @@ export class OsmComponent implements OnInit, OnDestroy, AfterViewInit {
       'Bing (Roads)': bingRoadOnDemandLayer,
       'Bing (Aerial)': bingAerialLayer,
       'Bing (Aerial with Labels)': bingAerialWithLabelsOnDemandLayer,
-      'OpenStreetMaps': osmLayer,
+      'OpenStreetMap': osmLayer,
     }).addTo(this.map);
 
     this.map.once('moveend', event => {
