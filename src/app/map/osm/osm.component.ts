@@ -90,7 +90,7 @@ export class OsmComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     const layers = {
-      'Bing (Roads)': bingRoadOnDemandLayer,
+      'Bing (Road)': bingRoadOnDemandLayer,
       'Bing (Aerial)': bingAerialLayer,
       'Bing (Aerial with Labels)': bingAerialWithLabelsOnDemandLayer,
       'OpenStreetMap': osmLayer,
