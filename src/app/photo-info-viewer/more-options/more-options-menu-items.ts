@@ -27,10 +27,11 @@ export function getMoreOptionsMenuItems(photo: Photo): MoreOptionsMenuItem[] {
     });
   }
 
-  menuItems.push({
-    text: 'View Data',
-    onClick: () => handleViewDataMenuItemClicked(photo)
-  })
+  // TODO: Implement "View Data" menu item
+  // menuItems.push({
+  //   text: 'View Data',
+  //   onClick: () => handleViewDataMenuItemClicked(photo)
+  // })
 
   return menuItems;
 }
@@ -62,6 +63,7 @@ function handleOpenGoogleStreetViewMenuItemClicked(photo: Photo) {
           'https://www.google.com/maps/ with query parameters for latitude, longitude');
 }
 
-function handleViewDataMenuItemClicked(photo: Photo) {
-  console.log('handleViewDataMenuItemClicked for ', photo);
-}
+// TODO: Implement "View Data" menu item
+// function handleViewDataMenuItemClicked(photo: Photo) {
+//   console.log('handleViewDataMenuItemClicked for ', photo);
+// }
