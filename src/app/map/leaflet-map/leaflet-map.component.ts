@@ -84,7 +84,7 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     const bingAerialWithLabelsOnDemandLayer = new L.bingLayer(L.extend({imagerySet: 'AerialWithLabelsOnDemand'}, bingMapsOptions));
 
     const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-      attribution: '© <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+      attribution: '© OpenStreetMap contributors, CC-BY-SA',
       maxNativeZoom: 19,
       maxZoom: 19,
     });
