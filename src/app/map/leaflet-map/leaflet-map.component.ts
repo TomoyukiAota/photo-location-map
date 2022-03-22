@@ -25,6 +25,10 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   private selectedPhotoServiceSubscription: Subscription;
   private forceRenderServiceSubscription: Subscription;
   private map: Map;
+  private readonly commonLayerOptions = {
+    maxNativeZoom: 19,
+    maxZoom: 19,
+  };
   private selectedLayerName: string = null;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
@@ -111,9 +115,8 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     const bingMapsKey = '96S0sLgTrpX5VudevEyg~93qOp_-tPdiBcUw_Q-mpUg~AtbViWkzvmAlU9MB08o4mka92JlnRQnYHrHP8GKZBbl0caebqVS95jsvOKVHvrt3';
     const bingMapsOptions = {
       key: bingMapsKey,
-      maxNativeZoom: 19,
-      maxZoom: 19,
       culture: this.getCultureForBingMaps(),
+      ...this.commonLayerOptions,
     };
     const roadOnDemand = new L.bingLayer(L.extend({imagerySet: 'RoadOnDemand'}, bingMapsOptions));
     const aerial = new L.bingLayer(L.extend({imagerySet: 'Aerial'}, bingMapsOptions));
@@ -134,8 +137,7 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   private getOsmLayer() {
     return L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors, CC-BY-SA',
-      maxNativeZoom: 19,
-      maxZoom: 19,
+      ...this.commonLayerOptions,
     });
   }
 
