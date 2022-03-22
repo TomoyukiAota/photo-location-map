@@ -8,7 +8,7 @@ import { PlayLivePhotosIconElement } from './play-live-photos-icon-element';
 import { RotateIconElement } from './rotate-icon-element';
 import { ThumbnailElement } from './thumbnail-element';
 
-type Requester = 'dir-tree-view' | 'osm' | 'google-maps';
+type Requester = 'dir-tree-view' | 'leaflet-map' | 'google-maps';
 type PhotoPath = string;
 
 export class PhotoInfoViewerContent {
@@ -17,7 +17,7 @@ export class PhotoInfoViewerContent {
   public static clearCache() {
     this.rootElementCache.clear();
     this.rootElementCache.set('dir-tree-view', new Map<PhotoPath, HTMLDivElement>());
-    this.rootElementCache.set('osm'          , new Map<PhotoPath, HTMLDivElement>());
+    this.rootElementCache.set('leaflet-map'  , new Map<PhotoPath, HTMLDivElement>());
     this.rootElementCache.set('google-maps'  , new Map<PhotoPath, HTMLDivElement>());
   }
 
@@ -26,7 +26,7 @@ export class PhotoInfoViewerContent {
 
     photos.forEach(photo => {
       this.rootElementCache.get('dir-tree-view').set(photo.path, this.generateRootElement(photo));
-      this.rootElementCache.get('osm'          ).set(photo.path, this.generateRootElement(photo));
+      this.rootElementCache.get('leaflet-map'  ).set(photo.path, this.generateRootElement(photo));
     });
 
     // Cache for google-maps is available only in development environment because
