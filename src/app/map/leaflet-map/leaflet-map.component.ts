@@ -72,6 +72,11 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   private initializeMap(): void {
     this.map = L.map('leaflet-map').setView([0, 0], 2);
 
+    // Manually set to 'Leaflet' without the URL link.
+    // The default is 'Leaflet' with the link to https://leafletjs.com/
+    // The page will be opened within the application window, which confuses users.
+    this.map.attributionControl.setPrefix('Leaflet');
+
     const bingMapsKey = '96S0sLgTrpX5VudevEyg~93qOp_-tPdiBcUw_Q-mpUg~AtbViWkzvmAlU9MB08o4mka92JlnRQnYHrHP8GKZBbl0caebqVS95jsvOKVHvrt3';
     const bingMapsOptions = {
       key: bingMapsKey,
