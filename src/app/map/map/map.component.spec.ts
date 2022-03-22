@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MockComponents } from 'ng-mocks';
+import { GoogleMapsComponent } from '../google-maps/google-maps.component';
 
 import { MapComponent } from './map.component';
 
-@Component({ selector: 'app-google-maps', template: '' })
-class DummyGoogleMapsComponent {}
-
-@Component({ selector: 'app-osm', template: '' })
-class DummyOsmComponent {}
+// Dummy component of LeafletMapComponent is defined because using ng-mocks results in "ReferenceError: L is not defined".
+@Component({ selector: 'app-leaflet-map', template: '' })
+class DummyLeafletMapComponent {}
 
 describe('MapComponent', () => {
   let component: MapComponent;
@@ -15,7 +15,13 @@ describe('MapComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ MapComponent, DummyGoogleMapsComponent, DummyOsmComponent ]
+      declarations: [
+        MapComponent,
+        DummyLeafletMapComponent,
+        MockComponents(
+          GoogleMapsComponent,
+        ),
+      ]
     })
     .compileComponents();
   }));

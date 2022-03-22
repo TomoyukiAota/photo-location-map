@@ -4,10 +4,10 @@ import { Subject } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class OsmForceRenderService {
+export class LeafletMapForceRenderService {
   public forceRenderWithoutPhotoHappened = new Subject<void>();
 
-  public forceRenderOsmWithoutPhoto(): void {
+  public forceRenderMapWithoutPhoto(): void {
     this.forceRenderWithoutPhotoHappened.next();
   }
 }
