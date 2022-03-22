@@ -113,12 +113,22 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
       key: bingMapsKey,
       maxNativeZoom: 19,
       maxZoom: 19,
-      culture: this.getCultureForMap(),
+      culture: this.getCultureForBingMaps(),
     };
     const roadOnDemand = new L.bingLayer(L.extend({imagerySet: 'RoadOnDemand'}, bingMapsOptions));
     const aerial = new L.bingLayer(L.extend({imagerySet: 'Aerial'}, bingMapsOptions));
     const aerialWithLabelsOnDemand = new L.bingLayer(L.extend({imagerySet: 'AerialWithLabelsOnDemand'}, bingMapsOptions));
     return {roadOnDemand, aerial, aerialWithLabelsOnDemand};
+  }
+
+  private getCultureForBingMaps(): string {
+    // navigator.language is used because it seems to match the supported culture code for Bing Maps.
+    // For Bing Maps, it's still safe in case navigator.language does not match the supported culture code
+    // because passing some random string for the culture option results in the default culture (en-US).
+    // References:
+    //  - navigator.language on MDN: https://developer.mozilla.org/en-US/docs/Web/API/Navigator/language
+    //  - Bing Maps Supported Culture Codes: https://docs.microsoft.com/en-us/bingmaps/rest-services/common-parameters-and-types/supported-culture-codes
+    return navigator.language;
   }
 
   private getOsmLayer() {
@@ -140,14 +150,5 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.map.addLayer(markerClusterGroup);
     this.map.fitBounds(markerClusterGroup.getBounds());
-  }
-
-  private getCultureForMap(): string {
-    // navigator.language is used because it seems to match the supported culture code for Bing Maps.
-    // For Bing Maps, it's still safe in case navigator.language does not match the supported culture code
-    // because passing some random string for the culture option results in the default culture (en-US).
-    // navigator.language on MDN: https://developer.mozilla.org/en-US/docs/Web/API/Navigator/language
-    // Bing Maps Supported Culture Codes: https://docs.microsoft.com/en-us/bingmaps/rest-services/common-parameters-and-types/supported-culture-codes
-    return navigator.language;
   }
 }
