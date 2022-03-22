@@ -71,40 +71,21 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private initializeMap(): void {
     this.map = L.map('leaflet-map').setView([0, 0], 2);
-
-    // Manually set to 'Leaflet' without the URL link.
-    // The default is 'Leaflet' with the link to https://leafletjs.com/
-    // The page will be opened within the application window, which confuses users.
-    this.map.attributionControl.setPrefix('Leaflet');
-
-    const bingMapsKey = '96S0sLgTrpX5VudevEyg~93qOp_-tPdiBcUw_Q-mpUg~AtbViWkzvmAlU9MB08o4mka92JlnRQnYHrHP8GKZBbl0caebqVS95jsvOKVHvrt3';
-    const bingMapsOptions = {
-      key: bingMapsKey,
-      maxNativeZoom: 19,
-      maxZoom: 19,
-      culture: this.getCultureForMap(),
-    };
-    const bingRoadOnDemandLayer = new L.bingLayer(L.extend({imagerySet: 'RoadOnDemand'}, bingMapsOptions));
-    const bingAerialLayer = new L.bingLayer(L.extend({imagerySet: 'Aerial'}, bingMapsOptions));
-    const bingAerialWithLabelsOnDemandLayer = new L.bingLayer(L.extend({imagerySet: 'AerialWithLabelsOnDemand'}, bingMapsOptions));
-
-    const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors, CC-BY-SA',
-      maxNativeZoom: 19,
-      maxZoom: 19,
-    });
+    this.setAttributionPrefix();
+    const bingLayer = this.getBingLayer();
+    const osmLayer = this.getOsmLayer();
 
     const layers = {
-      'Bing (Road)': bingRoadOnDemandLayer,
-      'Bing (Aerial)': bingAerialLayer,
-      'Bing (Aerial with Labels)': bingAerialWithLabelsOnDemandLayer,
+      'Bing (Road)': bingLayer.roadOnDemand,
+      'Bing (Aerial)': bingLayer.aerial,
+      'Bing (Aerial with Labels)': bingLayer.aerialWithLabelsOnDemand,
       'OpenStreetMap': osmLayer,
     };
     L.control.layers(layers).addTo(this.map);
 
     const selectedLayer = this.selectedLayerName
       ? layers[this.selectedLayerName]  // Keep the previously selected layer, or
-      : bingRoadOnDemandLayer;          // set the default layer
+      : bingLayer.roadOnDemand;         // set the default layer
     selectedLayer.addTo(this.map);
 
     this.map.once('moveend', event => {
@@ -116,6 +97,35 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.map.on('baselayerchange', (event: LayersControlEvent) => {
       this.selectedLayerName = event.name;
+    });
+  }
+
+  private setAttributionPrefix(): void {
+    // Manually set to 'Leaflet' without the URL link.
+    // The default is 'Leaflet' with the link to https://leafletjs.com/
+    // The page will be opened within the application window, which confuses users.
+    this.map.attributionControl.setPrefix('Leaflet');
+  }
+
+  private getBingLayer() {
+    const bingMapsKey = '96S0sLgTrpX5VudevEyg~93qOp_-tPdiBcUw_Q-mpUg~AtbViWkzvmAlU9MB08o4mka92JlnRQnYHrHP8GKZBbl0caebqVS95jsvOKVHvrt3';
+    const bingMapsOptions = {
+      key: bingMapsKey,
+      maxNativeZoom: 19,
+      maxZoom: 19,
+      culture: this.getCultureForMap(),
+    };
+    const roadOnDemand = new L.bingLayer(L.extend({imagerySet: 'RoadOnDemand'}, bingMapsOptions));
+    const aerial = new L.bingLayer(L.extend({imagerySet: 'Aerial'}, bingMapsOptions));
+    const aerialWithLabelsOnDemand = new L.bingLayer(L.extend({imagerySet: 'AerialWithLabelsOnDemand'}, bingMapsOptions));
+    return {roadOnDemand, aerial, aerialWithLabelsOnDemand};
+  }
+
+  private getOsmLayer() {
+    return L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors, CC-BY-SA',
+      maxNativeZoom: 19,
+      maxZoom: 19,
     });
   }
 
