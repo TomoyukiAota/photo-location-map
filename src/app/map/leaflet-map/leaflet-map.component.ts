@@ -32,7 +32,7 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
               private forceRenderService: LeafletMapForceRenderService) {
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.selectedPhotoServiceSubscription = this.selectedPhotoService.selectedPhotosChanged.subscribe(
       photos => this.renderMap(photos)
     );
@@ -41,12 +41,12 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     );
   }
 
-  ngOnDestroy(): void {
+  public ngOnDestroy(): void {
     this.selectedPhotoServiceSubscription.unsubscribe();
     this.forceRenderServiceSubscription.unsubscribe();
   }
 
-  ngAfterViewInit(): void {
+  public ngAfterViewInit(): void {
     const photos = this.selectedPhotoService.getSelectedPhotos();
     this.renderMap(photos);
   }
