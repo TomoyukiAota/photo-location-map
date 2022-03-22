@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, AfterViewInit, OnInit, ChangeDetectorRef } from '@angular/core';
 import Split from 'split.js';
-import { OsmForceRenderService } from '../map/osm/osm-force-render/osm-force-render.service';
+import { LeafletMapForceRenderService } from '../map/leaflet-map/leaflet-map-force-render/leaflet-map-force-render.service';
 import { FolderSelectionService } from '../shared/service/folder-selection.service';
 import { LoadedFilesStatusBarService } from '../loaded-files-status-bar/service/loaded-files-status-bar.service';
 import { ThumbnailGenerationService } from '../thumbnail-generation/service/thumbnail-generation.service';
@@ -21,7 +21,7 @@ export class HomeComponent implements AfterViewInit, OnInit {
               private thumbnailGenerationService: ThumbnailGenerationService,
               private thumbnailGenerationStatusBarService: ThumbnailGenerationStatusBarService,
               public loadedFilesStatusBarService: LoadedFilesStatusBarService,
-              private osmForceRenderService: OsmForceRenderService) {}
+              private leafletMapForceRenderService: LeafletMapForceRenderService) {}
 
   ngOnInit() {
     this.folderSelectionService.folderSelected.subscribe(
@@ -46,7 +46,7 @@ export class HomeComponent implements AfterViewInit, OnInit {
       snapOffset: 0,
     });
 
-    // OSM needs to be rendered again after Split.js starts working. Otherwise, OSM is not rendered correctly.
-    this.osmForceRenderService.forceRenderOsmWithoutPhoto();
+    // Leaflet needs to be rendered again after Split.js starts working. Otherwise, the map is not rendered correctly.
+    this.leafletMapForceRenderService.forceRenderMapWithoutPhoto();
   }
 }

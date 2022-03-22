@@ -4,7 +4,7 @@ import { LayersControlEvent, Map } from 'leaflet';
 import { Photo } from '../../shared/model/photo.model';
 import { SelectedPhotoService } from '../../shared/service/selected-photo.service';
 import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewer-content';
-import { OsmForceRenderService } from './osm-force-render/osm-force-render.service';
+import { LeafletMapForceRenderService } from './leaflet-map-force-render/leaflet-map-force-render.service';
 
 // References to implement Bing Maps with leaflet-plugins:
 // - https://github.com/shramov/leaflet-plugins/blob/master/examples/bing.html
@@ -17,43 +17,43 @@ import 'leaflet-plugins/layer/tile/Bing.addon.applyMaxNativeZoom'
 declare let L: any;
 
 @Component({
-  selector: 'app-osm',
-  templateUrl: './osm.component.html',
-  styleUrls: ['./osm.component.scss']
+  selector: 'app-leaflet-map',
+  templateUrl: './leaflet-map.component.html',
+  styleUrls: ['./leaflet-map.component.scss']
 })
-export class OsmComponent implements OnInit, OnDestroy, AfterViewInit {
+export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   private selectedPhotoServiceSubscription: Subscription;
-  private osmForceRenderServiceSubscription: Subscription;
+  private forceRenderServiceSubscription: Subscription;
   private map: Map;
   private selectedLayerName: string = null;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
               private selectedPhotoService: SelectedPhotoService,
-              private osmForceRenderService: OsmForceRenderService) {
+              private forceRenderService: LeafletMapForceRenderService) {
   }
 
   ngOnInit(): void {
     this.selectedPhotoServiceSubscription = this.selectedPhotoService.selectedPhotosChanged.subscribe(
-      photos => this.renderOsm(photos)
+      photos => this.renderMap(photos)
     );
-    this.osmForceRenderServiceSubscription = this.osmForceRenderService.forceRenderWithoutPhotoHappened.subscribe(
-      () => this.renderOsm([])
+    this.forceRenderServiceSubscription = this.forceRenderService.forceRenderWithoutPhotoHappened.subscribe(
+      () => this.renderMap([])
     );
   }
 
   ngOnDestroy(): void {
     this.selectedPhotoServiceSubscription.unsubscribe();
-    this.osmForceRenderServiceSubscription.unsubscribe();
+    this.forceRenderServiceSubscription.unsubscribe();
   }
 
   ngAfterViewInit(): void {
     const photos = this.selectedPhotoService.getSelectedPhotos();
-    this.renderOsm(photos);
+    this.renderMap(photos);
   }
 
-  private renderOsm(photos: Photo[]): void {
-    this.ensureOsmRemoved();
-    this.initializeOsm();
+  private renderMap(photos: Photo[]): void {
+    this.ensureMapRemoved();
+    this.initializeMap();
 
     if (photos.length > 0) {
       this.renderMarkerClusterGroup(photos);
@@ -62,15 +62,15 @@ export class OsmComponent implements OnInit, OnDestroy, AfterViewInit {
     this.changeDetectorRef.detectChanges();
   }
 
-  private ensureOsmRemoved(): void {
+  private ensureMapRemoved(): void {
     if (this.map) {
       this.map.off();
       this.map.remove();
     }
   }
 
-  private initializeOsm(): void {
-    this.map = L.map('osm').setView([0, 0], 2);
+  private initializeMap(): void {
+    this.map = L.map('leaflet-map').setView([0, 0], 2);
 
     const bingMapsKey = '96S0sLgTrpX5VudevEyg~93qOp_-tPdiBcUw_Q-mpUg~AtbViWkzvmAlU9MB08o4mka92JlnRQnYHrHP8GKZBbl0caebqVS95jsvOKVHvrt3';
     const bingMapsOptions = {
@@ -84,7 +84,7 @@ export class OsmComponent implements OnInit, OnDestroy, AfterViewInit {
     const bingAerialWithLabelsOnDemandLayer = new L.bingLayer(L.extend({imagerySet: 'AerialWithLabelsOnDemand'}, bingMapsOptions));
 
     const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-      attribution: '© <a href="http://osm.org/copyright">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+      attribution: '© <a href="http://leaflet-map.org/copyright">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
       maxNativeZoom: 19,
       maxZoom: 19,
     });
@@ -119,7 +119,7 @@ export class OsmComponent implements OnInit, OnDestroy, AfterViewInit {
 
     photos.forEach(photo => {
       const latLng = [photo.exif.gpsInfo.latLng.latitude, photo.exif.gpsInfo.latLng.longitude];
-      const marker = L.marker(latLng).bindPopup(PhotoInfoViewerContent.request('osm', photo));
+      const marker = L.marker(latLng).bindPopup(PhotoInfoViewerContent.request('leaflet-map', photo));
       markerClusterGroup.addLayer(marker);
     });
 
