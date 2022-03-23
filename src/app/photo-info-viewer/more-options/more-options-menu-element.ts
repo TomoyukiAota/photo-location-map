@@ -22,9 +22,9 @@ export class MoreOptionsMenuElement {
     const centerHeight = document.documentElement.clientHeight / 2;
     const isMousePositionInUpperHalf = event.clientY < centerHeight;
     if (isMousePositionInUpperHalf) {
-      menuElement.style.top = '35px';
+      menuElement.style.top = '39px';
     } else {
-      menuElement.style.bottom = '35px';
+      menuElement.style.bottom = '37px';
     }
   }
 
