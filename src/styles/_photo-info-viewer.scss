@@ -1,20 +1,25 @@
-.photo-info-viewer-generating-thumbnail {
-  animation: flickerAnimation 3s infinite;
-}
-
 @keyframes flickerAnimation {
   0%   { opacity: 0.2; }
-  50%  { opacity: 1; }
+  50%  { opacity: 1;   }
   100% { opacity: 0.2; }
-}
-
-.photo-info-viewer-fade-in-after-thumbnail-generation {
-  animation: fadeIn 2s ease 0s;
 }
 
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+.photo-info-viewer-generating-thumbnail {
+  animation: flickerAnimation 3s infinite;
+}
+
+.photo-info-viewer-fade-in-after-thumbnail-generation {
+  animation: fadeIn 2s ease 0s;
 }
 
 @mixin photo-info-viewer-icon {
@@ -54,6 +59,14 @@
   box-shadow: 0 2px 4px -1px #0003, 0 4px 5px #00000024, 0 1px 10px #0000001f; // Same as the context menu in the directory tree view.
 }
 
+.photo-info-viewer-more-options-menu-fade-in {
+  animation: fadeIn 0.4s ease 0s forwards;
+}
+
+.photo-info-viewer-more-options-menu-fade-out {
+  animation: fadeOut 0.4s ease 0s forwards;
+}
+
 // Similar to .mat-menu-item used in the context menu in the directory tree view.
 .photo-info-viewer-more-options-menu-item {
   user-select: none;
@@ -64,8 +77,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   display: block;
-  line-height: 40px;
-  height: 40px;
+  line-height: 35px;
+  height: 35px;
   padding: 0 16px;
   text-align: left;
   text-decoration: none;
@@ -78,6 +91,6 @@
 
   // background-color animation
   transition: background-color 0.2s ease;
-  &:hover  { background: rgba(0,0,0,.04); }
+  &:hover  { background: rgba(0,0,0,.08); }
   &:active { background: rgba(0,0,0,.2);  }
 }
