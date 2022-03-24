@@ -1,6 +1,8 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { LayersControlEvent, Map } from 'leaflet';
+import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
+import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/user-data-stroage-path';
 import { Photo } from '../../shared/model/photo.model';
 import { SelectedPhotoService } from '../../shared/service/selected-photo.service';
 import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewer-content';
@@ -29,7 +31,12 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     maxNativeZoom: 19,
     maxZoom: 19,
   };
-  private selectedLayerName: string = null;
+  private get selectedLayerName(): string {
+    return UserDataStorage.readOrDefault(UserDataStoragePath.LeafletMap.SelectedLayer, null);
+  }
+  private set selectedLayerName(layerName: string) {
+    UserDataStorage.write(UserDataStoragePath.LeafletMap.SelectedLayer, layerName);
+  }
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
               private selectedPhotoService: SelectedPhotoService,
@@ -87,9 +94,9 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     };
     L.control.layers(layers).addTo(this.map);
 
-    const selectedLayer = this.selectedLayerName
-      ? layers[this.selectedLayerName]  // Keep the previously selected layer, or
-      : bingLayer.roadOnDemand;         // set the default layer
+    const previousLayer = layers[this.selectedLayerName];
+    const defaultLayer =  bingLayer.roadOnDemand;
+    const selectedLayer = previousLayer ?? defaultLayer;
     selectedLayer.addTo(this.map);
 
     this.map.once('moveend', event => {
