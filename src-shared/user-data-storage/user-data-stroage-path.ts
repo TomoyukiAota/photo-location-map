@@ -14,6 +14,10 @@ export namespace UserDataStoragePath {
     export const ApiKey: ReadonlyArray<string> = ['GoogleMaps', 'ApiKey'];
   }
 
+  export namespace LeafletMap {
+    export const SelectedLayer: ReadonlyArray<string> = ['LeafletMap', 'SelectedLayer'];
+  }
+
   export namespace UserSettings {
     export const ShowStatusBar: ReadonlyArray<string> = ['UserSettings', 'ShowStatusBar'];
     export const DateFormat: ReadonlyArray<string> = ['UserSettings', 'DateFormat'];

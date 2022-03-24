@@ -5,6 +5,8 @@ import { DateTimeFormat } from '../src-shared/date-time/date-time-format';
 import { Now } from '../src-shared/date-time/now';
 import { DevOrProd } from '../src-shared/dev-or-prod/dev-or-prod';
 import { Logger } from '../src-shared/log/logger';
+import { UserDataStorage } from '../src-shared/user-data-storage/user-data-storage';
+import { UserDataStoragePath } from '../src-shared/user-data-storage/user-data-stroage-path';
 import { currentUserSettings } from '../src-shared/user-settings/user-settings';
 import { LaunchInfo } from './launch-info';
 import { recordWindowState } from './window-config';
@@ -74,6 +76,11 @@ const recordLoadedUserSettings = () => {
   Analytics.trackEvent('Loaded User Settings', `moment.js format: ${momentJsFormatString}`);
 };
 
+const recordLoadedLeafletLayer = () => {
+  const loadedLayerName = UserDataStorage.readOrDefault(UserDataStoragePath.LeafletMap.SelectedLayer, 'Not Loaded');
+  Analytics.trackEvent('Leaflet Map', `Layer at App Launch: "${loadedLayerName}"`);
+}
+
 export const recordAtAppLaunch = () => {
   recordAppLaunch();
   recordLastLaunchDateTime();
@@ -90,4 +97,6 @@ export const recordAtAppLaunch = () => {
   recordWindowState();
 
   recordLoadedUserSettings();
+
+  recordLoadedLeafletLayer();
 };
