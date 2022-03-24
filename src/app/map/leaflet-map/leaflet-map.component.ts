@@ -1,6 +1,7 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { LayersControlEvent, Map } from 'leaflet';
+import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/user-data-stroage-path';
 import { Photo } from '../../shared/model/photo.model';
@@ -36,6 +37,7 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   private set selectedLayerName(layerName: string) {
     UserDataStorage.write(UserDataStoragePath.LeafletMap.SelectedLayer, layerName);
+    Analytics.trackEvent('Leaflet Map', `Changed Layer to "${layerName}"`);
   }
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
