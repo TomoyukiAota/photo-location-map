@@ -6,6 +6,10 @@ export async function launchPhotoDataViewer(photo: Photo) {
     title: `View Data: ${photo.name}`,
     autoHideMenuBar: true,
     useContentSize: true,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
   });
   await browserWindow.loadURL('http://localhost:3000');
   browserWindow.show();
