@@ -18,6 +18,13 @@ export namespace UserDataStoragePath {
     export const SelectedLayer: ReadonlyArray<string> = ['LeafletMap', 'SelectedLayer'];
   }
 
+  export namespace PhotoDataViewer {
+    export const WindowX: ReadonlyArray<string> = ['PhotoDataViewer', 'WindowX'];
+    export const WindowY: ReadonlyArray<string> = ['PhotoDataViewer', 'WindowY'];
+    export const WindowWidth: ReadonlyArray<string> = ['PhotoDataViewer', 'WindowWidth'];
+    export const WindowHeight: ReadonlyArray<string> = ['PhotoDataViewer', 'WindowHeight'];
+  }
+
   export namespace UserSettings {
     export const ShowStatusBar: ReadonlyArray<string> = ['UserSettings', 'ShowStatusBar'];
     export const DateFormat: ReadonlyArray<string> = ['UserSettings', 'DateFormat'];
