@@ -1,6 +1,6 @@
 import isNumber from 'is-number';
-import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
-import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/user-data-stroage-path';
+import { UserDataStorage } from '../../../../../src-shared/user-data-storage/user-data-storage';
+import { UserDataStoragePath } from '../../../../../src-shared/user-data-storage/user-data-stroage-path';
 
 function toNumberOrElse(numStr: string, defaultNum: number): number {
   return isNumber(numStr) ? Number(numStr) : defaultNum;
