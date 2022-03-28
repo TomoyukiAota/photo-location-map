@@ -2,6 +2,13 @@ import isNumber from 'is-number';
 import { UserDataStorage } from '../../../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../../../src-shared/user-data-storage/user-data-stroage-path';
 
+const defaultWindowState = {
+  x: 100,
+  y: 100,
+  width: 500,
+  height: 500,
+};
+
 function toNumberOrElse(numStr: string, defaultNum: number): number {
   return isNumber(numStr) ? Number(numStr) : defaultNum;
 }
@@ -18,10 +25,10 @@ export class PhotoDataViewerWindowState {
     const windowHeight = UserDataStorage.readOrDefault(UserDataStoragePath.PhotoDataViewer.WindowHeight, 'Fail to read');
 
     return {
-      x: toNumberOrElse(windowX, 100),
-      y: toNumberOrElse(windowY, 100),
-      width: toNumberOrElse(windowWidth, 500),
-      height: toNumberOrElse(windowHeight, 500),
+      x: toNumberOrElse(windowX, defaultWindowState.x),
+      y: toNumberOrElse(windowY, defaultWindowState.y),
+      width: toNumberOrElse(windowWidth, defaultWindowState.width),
+      height: toNumberOrElse(windowHeight, defaultWindowState.height),
     }
   }
 
