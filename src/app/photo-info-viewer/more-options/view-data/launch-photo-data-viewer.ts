@@ -1,5 +1,5 @@
 import { BrowserWindow } from '@electron/remote';
-import { Photo } from '../../shared/model/photo.model';
+import { Photo } from '../../../shared/model/photo.model';
 import { PhotoDataViewerWindowState } from './photo-data-viewer-window-state';
 import { getPhotoDataViewerUrl } from './photo-data-viewer-url';
 

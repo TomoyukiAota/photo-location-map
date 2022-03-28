@@ -1,4 +1,4 @@
-import { Photo } from '../../shared/model/photo.model';
+import { Photo } from '../../../shared/model/photo.model';
 
 function getServerUrlStr(): string {
   // Production Server URL

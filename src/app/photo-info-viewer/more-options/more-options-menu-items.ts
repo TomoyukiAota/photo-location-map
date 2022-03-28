@@ -3,7 +3,7 @@ import { openContainingFolder } from '../../../../src-shared/command/command';
 import { Photo } from '../../shared/model/photo.model';
 import { openUrl } from '../../shared/open-url/open-url';
 import { photoInfoViewerLogger as logger } from '../photo-info-viewer-logger';
-import { launchPhotoDataViewer } from './launch-photo-data-viewer';
+import { launchPhotoDataViewer } from './view-data/launch-photo-data-viewer';
 
 interface MoreOptionsMenuItem {
   text: string;
