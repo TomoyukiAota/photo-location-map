@@ -11,7 +11,7 @@ export async function launchPhotoDataViewer(photo: Photo) {
     y: windowState.y,
     width: windowState.width,
     height: windowState.height,
-    title: `View Data: ${photo.name}`,
+    title: `${photo.name} - Photo Location Map`,  // Needs to be the same as document.title in Photo Data Viewer.
     autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,
