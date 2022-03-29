@@ -1,6 +1,7 @@
 import isNumber from 'is-number';
 import { UserDataStorage } from '../../../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../../../src-shared/user-data-storage/user-data-stroage-path';
+import { trackClosingPhotoDataViewer } from './photo-data-viewer-tracker';
 
 const defaultWindowState = {
   x: 100,
@@ -35,7 +36,7 @@ export class PhotoDataViewerWindowState {
   public static manage(browserWindow: Electron.BrowserWindow) {
     browserWindow.on('resized', () => this.saveState(browserWindow));
     browserWindow.on('moved', () => this.saveState(browserWindow));
-    browserWindow.on('close', () => this.saveState(browserWindow));
+    browserWindow.on('close', () => this.handleClose(browserWindow));
     browserWindow.on('closed', () => this.handleClosed(browserWindow));
     this.browserWindowRefHolder.push(browserWindow);
   }
@@ -48,6 +49,11 @@ export class PhotoDataViewerWindowState {
     UserDataStorage.write(UserDataStoragePath.PhotoDataViewer.WindowY, bounds.y.toString());
     UserDataStorage.write(UserDataStoragePath.PhotoDataViewer.WindowWidth, bounds.width.toString());
     UserDataStorage.write(UserDataStoragePath.PhotoDataViewer.WindowHeight, bounds.height.toString());
+  }
+
+  private static handleClose(browserWindow: Electron.BrowserWindow) {
+    trackClosingPhotoDataViewer(browserWindow);
+    this.saveState(browserWindow);
   }
 
   private static handleClosed(browserWindow: Electron.BrowserWindow) {
