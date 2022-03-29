@@ -1,7 +1,14 @@
 import isNumber from 'is-number';
 import { UserDataStorage } from '../../../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../../../src-shared/user-data-storage/user-data-stroage-path';
+import { Photo } from '../../../shared/model/photo.model';
+import { logWindowBounds, photoDataViewerLogger as logger } from './photo-data-viewer-logger';
 import { trackClosingPhotoDataViewer } from './photo-data-viewer-tracker';
+
+interface StateManageParams {
+  browserWindow: Electron.BrowserWindow,
+  photo: Photo,
+}
 
 const defaultWindowState = {
   x: 100,
@@ -17,7 +24,7 @@ function toNumberOrElse(numStr: string, defaultNum: number): number {
 export class PhotoDataViewerWindowState {
   // Hold the reference to browserWindow so that events can be handled by browserWindow.on function.
   // noinspection JSMismatchedCollectionQueryUpdate
-  private static readonly browserWindowRefHolder: Electron.BrowserWindow[] = [];
+  private static readonly browserWindowRefHolder: StateManageParams[] = [];
 
   public static get() {
     const windowX = UserDataStorage.readOrDefault(UserDataStoragePath.PhotoDataViewer.WindowX, 'Fail to read');
@@ -33,30 +40,66 @@ export class PhotoDataViewerWindowState {
     }
   }
 
-  public static manage(browserWindow: Electron.BrowserWindow) {
-    browserWindow.on('resized', () => this.saveState(browserWindow));
-    browserWindow.on('moved', () => this.saveState(browserWindow));
-    browserWindow.on('close', () => this.handleClose(browserWindow));
-    browserWindow.on('closed', () => this.handleClosed(browserWindow));
-    this.browserWindowRefHolder.push(browserWindow);
+  public static manage(params: StateManageParams) {
+    params?.browserWindow.on('resized', () => this.handleResized(params));
+    params?.browserWindow.on('moved', () => this.handleMoved(params));
+    params?.browserWindow.on('close', () => this.handleClose(params));
+    params?.browserWindow.on('closed', () => this.handleClosed(params));
+    this.browserWindowRefHolder.push(params);
   }
 
-  private static saveState(browserWindow: Electron.BrowserWindow) {
-    if (!browserWindow) { return; }
+  private static handleResized(params: StateManageParams) {
+    const bounds = this.getWindowBounds(params);
+    if (!bounds) { return; }
 
-    const bounds = browserWindow.getBounds();
-    UserDataStorage.write(UserDataStoragePath.PhotoDataViewer.WindowX, bounds.x.toString());
-    UserDataStorage.write(UserDataStoragePath.PhotoDataViewer.WindowY, bounds.y.toString());
-    UserDataStorage.write(UserDataStoragePath.PhotoDataViewer.WindowWidth, bounds.width.toString());
-    UserDataStorage.write(UserDataStoragePath.PhotoDataViewer.WindowHeight, bounds.height.toString());
+    this.saveWindowBounds(bounds);
+    logger.info(`Resized Window for ${params?.photo?.path}`);
+    logWindowBounds(bounds, params.photo);
   }
 
-  private static handleClose(browserWindow: Electron.BrowserWindow) {
-    trackClosingPhotoDataViewer(browserWindow);
-    this.saveState(browserWindow);
+  private static handleMoved(params: StateManageParams) {
+    const bounds = this.getWindowBounds(params);
+    if (!bounds) { return; }
+
+    this.saveWindowBounds(bounds);
+    logger.info(`Moved Window for ${params?.photo?.path}`);
+    logWindowBounds(bounds, params.photo);
   }
 
-  private static handleClosed(browserWindow: Electron.BrowserWindow) {
-    browserWindow = null;
+  private static handleClose(params: StateManageParams) {
+    // browserWindow in the main process will be destructed sometime after closing the window, and
+    // remote call of functions in a destructed object in the main process results in an error.
+    // Therefore, in this function, the window bounds are gotten from browserWindow in the first line.
+    // Getting the bounds itself is fragile in the first place, but doing so is a best-effort approach
+    // to save the bounds when the window is closed.
+    // This is to address the issue that the bounds after moving/resizing by Windows logo key + arrow key are not saved
+    // because it does not fire browserWindow's moved/resized events.
+    const bounds = this.getWindowBounds(params);
+    if (!bounds) { return; }
+
+    this.saveWindowBounds(bounds);
+    logger.info(`Close Window for ${params?.photo?.path}`);
+    logWindowBounds(bounds, params.photo);
+    trackClosingPhotoDataViewer(bounds);
+  }
+
+  private static handleClosed(params: StateManageParams) {
+    if (params) {
+      params = null; // Ensure that the reference for browserWindow is removed.
+    }
+  }
+
+  private static getWindowBounds(params: StateManageParams) {
+    return params?.browserWindow?.getBounds?.();
+  }
+
+  private static saveWindowBounds(bounds: Electron.Rectangle) {
+    if (!bounds) { return; }
+
+    const {x, y, width, height} = bounds;
+    UserDataStorage.write(UserDataStoragePath.PhotoDataViewer.WindowX, x.toString());
+    UserDataStorage.write(UserDataStoragePath.PhotoDataViewer.WindowY, y.toString());
+    UserDataStorage.write(UserDataStoragePath.PhotoDataViewer.WindowWidth, width.toString());
+    UserDataStorage.write(UserDataStoragePath.PhotoDataViewer.WindowHeight, height.toString());
   }
 }
