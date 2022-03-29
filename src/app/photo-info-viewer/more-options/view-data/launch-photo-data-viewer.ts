@@ -1,10 +1,12 @@
 import { BrowserWindow } from '@electron/remote';
 import { Photo } from '../../../shared/model/photo.model';
+import { logWindowBounds, photoDataViewerLogger as logger } from './photo-data-viewer-logger';
 import { trackOpeningPhotoDataViewer } from './photo-data-viewer-tracker';
 import { getPhotoDataViewerUrl } from './photo-data-viewer-url';
 import { PhotoDataViewerWindowState } from './photo-data-viewer-window-state';
 
 export async function launchPhotoDataViewer(photo: Photo) {
+  logger.info(`Open Window for ${photo.path}`);
   const windowState = PhotoDataViewerWindowState.get();
 
   const browserWindow = new BrowserWindow({
@@ -20,8 +22,10 @@ export async function launchPhotoDataViewer(photo: Photo) {
     },
   });
 
-  trackOpeningPhotoDataViewer(browserWindow);
-  PhotoDataViewerWindowState.manage(browserWindow);
+  const bounds = browserWindow?.getBounds?.();
+  logWindowBounds(bounds, photo);
+  trackOpeningPhotoDataViewer(bounds);
+  PhotoDataViewerWindowState.manage({browserWindow, photo});
   const photoDataViewerUrl = getPhotoDataViewerUrl(photo);
   await browserWindow.loadURL(photoDataViewerUrl);
   browserWindow.show();
