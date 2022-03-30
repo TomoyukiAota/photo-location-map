@@ -1,4 +1,4 @@
-import { Photo } from '../../../shared/model/photo.model';
+import { PhotoDataViewerIpcPhotoParams } from '../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params';
 
 function getServerUrlStr(): string {
   // Production Server URL
@@ -13,7 +13,7 @@ function getServerUrlStr(): string {
   return serverUrlStr;
 }
 
-export function getPhotoDataViewerUrl(photo: Photo): string {
+export function getPhotoDataViewerUrl(photo: PhotoDataViewerIpcPhotoParams): string {
   const searchParamsObj = {
     photoPath: photo.path,
   };
