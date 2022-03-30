@@ -1,4 +1,4 @@
-import { Analytics } from '../../../../../src-shared/analytics/analytics';
+import { Analytics } from '../../src-shared/analytics/analytics';
 
 export function trackOpeningPhotoDataViewer(bounds: Electron.Rectangle) {
   if (!bounds) { return; }

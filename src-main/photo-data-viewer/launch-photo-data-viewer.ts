@@ -1,12 +1,14 @@
-import { BrowserWindow } from '@electron/remote';
-import { Photo } from '../../../shared/model/photo.model';
-import { logWindowBounds, photoDataViewerLogger as logger } from './photo-data-viewer-logger';
+import { BrowserWindow } from 'electron';
+import { PhotoDataViewerIpcParams } from '../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params';
+import { logWindowBounds, photoDataViewerLogger as logger } from '../../src-shared/photo-data-viewer/photo-data-viewer-logger';
 import { trackOpeningPhotoDataViewer } from './photo-data-viewer-tracker';
 import { getPhotoDataViewerUrl } from './photo-data-viewer-url';
 import { PhotoDataViewerWindowState } from './photo-data-viewer-window-state';
 
-export async function launchPhotoDataViewer(photo: Photo) {
+export async function launchPhotoDataViewer(ipcParams: PhotoDataViewerIpcParams) {
+  const photo = ipcParams.photo;
   logger.info(`Open Window for ${photo.path}`);
+
   const windowState = PhotoDataViewerWindowState.get();
 
   const browserWindow = new BrowserWindow({

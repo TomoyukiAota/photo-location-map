@@ -3,7 +3,7 @@ import { openContainingFolder } from '../../../../src-shared/command/command';
 import { Photo } from '../../shared/model/photo.model';
 import { openUrl } from '../../shared/open-url/open-url';
 import { photoInfoViewerLogger as logger } from '../photo-info-viewer-logger';
-import { launchPhotoDataViewer } from './view-data/launch-photo-data-viewer';
+import { requestMainProcessToLaunchPhotoDataViewer } from './view-data/request-main-process-to-launch-photo-data-viewer';
 
 interface MoreOptionsMenuItem {
   text: string;
@@ -67,6 +67,5 @@ function handleViewDataMenuItemClicked(photo: Photo) {
   logger.info(`Clicked "View Data" menu item for ${photo.path}`);
   Analytics.trackEvent('Photo Info Viewer', 'Clicked "View Data" Menu Item');
 
-  // noinspection JSIgnoredPromiseFromCall
-  launchPhotoDataViewer(photo);
+  requestMainProcessToLaunchPhotoDataViewer(photo);
 }

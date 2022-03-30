@@ -9,6 +9,7 @@ import { Logger } from '../src-shared/log/logger';
 import { LogFileConfig } from '../src-shared/log/log-file-config';
 import './auto-update/configure-auto-update';
 import './menu/menu';
+import './photo-data-viewer/photo-data-viewer-ipc-setup';
 import './thumbnail-generation/thumbnail-generation-ipc-setup';
 import { recordAtAppLaunch } from './record-at-app-launch';
 import { createMainWindowState } from './window-config';
