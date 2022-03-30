@@ -2,7 +2,7 @@ import { BrowserWindow } from 'electron';
 import { PhotoDataViewerIpcParams } from '../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params';
 import { logWindowBounds, photoDataViewerLogger as logger } from '../../src-shared/photo-data-viewer/photo-data-viewer-logger';
 import { trackOpeningPhotoDataViewer } from './photo-data-viewer-tracker';
-import { getPhotoDataViewerUrl } from './photo-data-viewer-url';
+import { createPhotoDataViewerUrl } from './photo-data-viewer-url';
 import { PhotoDataViewerWindowState } from './photo-data-viewer-window-state';
 
 export async function launchPhotoDataViewer(ipcParams: PhotoDataViewerIpcParams) {
@@ -28,7 +28,7 @@ export async function launchPhotoDataViewer(ipcParams: PhotoDataViewerIpcParams)
   logWindowBounds(bounds, photo);
   trackOpeningPhotoDataViewer(bounds);
   PhotoDataViewerWindowState.manage({browserWindow, photo});
-  const photoDataViewerUrl = getPhotoDataViewerUrl(photo);
+  const photoDataViewerUrl = createPhotoDataViewerUrl(photo);
   await browserWindow.loadURL(photoDataViewerUrl);
   browserWindow.show();
 }
