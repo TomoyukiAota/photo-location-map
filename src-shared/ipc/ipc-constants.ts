@@ -25,4 +25,8 @@ export namespace IpcConstants {
   export namespace ThumbnailGenerationInMainProcess {
     export const Name = 'ipc-constants-thumbnail-generation-in-main-process';
   }
+
+  export namespace PhotoDataViewer {
+    export const Name = 'ipc-constants-launch-photo-data-viewer';
+  }
 }
