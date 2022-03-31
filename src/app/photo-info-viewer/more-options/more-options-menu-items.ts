@@ -3,6 +3,7 @@ import { openContainingFolder } from '../../../../src-shared/command/command';
 import { Photo } from '../../shared/model/photo.model';
 import { openUrl } from '../../shared/open-url/open-url';
 import { photoInfoViewerLogger as logger } from '../photo-info-viewer-logger';
+import { requestMainProcessToLaunchPhotoDataViewer } from './view-data/request-main-process-to-launch-photo-data-viewer';
 
 interface MoreOptionsMenuItem {
   text: string;
@@ -27,11 +28,10 @@ export function getMoreOptionsMenuItems(photo: Photo): MoreOptionsMenuItem[] {
     });
   }
 
-  // TODO: Implement "View Data" menu item
-  // menuItems.push({
-  //   text: 'View Data',
-  //   onClick: () => handleViewDataMenuItemClicked(photo)
-  // })
+  menuItems.push({
+    text: 'View Data',
+    onClick: () => handleViewDataMenuItemClicked(photo)
+  })
 
   return menuItems;
 }
@@ -63,7 +63,9 @@ function handleOpenGoogleStreetViewMenuItemClicked(photo: Photo) {
           'https://www.google.com/maps/ with query parameters for latitude, longitude');
 }
 
-// TODO: Implement "View Data" menu item
-// function handleViewDataMenuItemClicked(photo: Photo) {
-//   console.log('handleViewDataMenuItemClicked for ', photo);
-// }
+function handleViewDataMenuItemClicked(photo: Photo) {
+  logger.info(`Clicked "View Data" menu item for ${photo.path}`);
+  Analytics.trackEvent('Photo Info Viewer', 'Clicked "View Data" Menu Item');
+
+  requestMainProcessToLaunchPhotoDataViewer(photo);
+}

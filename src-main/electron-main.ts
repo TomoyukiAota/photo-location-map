@@ -9,6 +9,7 @@ import { Logger } from '../src-shared/log/logger';
 import { LogFileConfig } from '../src-shared/log/log-file-config';
 import './auto-update/configure-auto-update';
 import './menu/menu';
+import './photo-data-viewer/photo-data-viewer-ipc-setup';
 import './thumbnail-generation/thumbnail-generation-ipc-setup';
 import { recordAtAppLaunch } from './record-at-app-launch';
 import { createMainWindowState } from './window-config';
@@ -67,6 +68,10 @@ const createWindow = () => {
 
 
 try {
+  // Disable hardware acceleration to address the error printed
+  // as "Passthrough is not supported, GL is disabled, ANGLE is".
+  app.disableHardwareAcceleration();
+
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
