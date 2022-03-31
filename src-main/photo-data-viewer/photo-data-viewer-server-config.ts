@@ -1,12 +1,12 @@
 export function getPhotoDataViewerServerUrl(): string {
   // Production Server URL
-  // const serverUrlStr = 'https://photo-data-viewer-plm.vercel.app/';
+  const serverUrl = 'https://pdv-in-plm.vercel.app/';
 
-  // Production Preview Server URL
-  const serverUrlStr = 'https://photo-data-viewer-git-feature-photo-locatio-d5bc15-tomoyukiaota.vercel.app/';
+  // Preview Server URL
+  // const serverUrl = 'https://pdv-in-plm-git-plm-tomoyukiaota.vercel.app/';
 
   // Development Server URL
-  // const serverUrlStr = 'http://localhost:3000';
+  // const serverUrl = 'http://localhost:3100';
 
-  return serverUrlStr;
+  return serverUrl;
 }
