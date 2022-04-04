@@ -1,5 +1,5 @@
 import { ElementRef } from '@angular/core';
-import { openUrl } from './open-url';
+import { openUrl } from '../../../../src-shared/url/open-url';
 
 export function configureOpeningInOsBrowser(elementRef: ElementRef<HTMLElement>,
                                             url: string,
