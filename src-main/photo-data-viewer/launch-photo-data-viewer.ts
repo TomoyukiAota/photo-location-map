@@ -1,4 +1,4 @@
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, shell } from 'electron';
 import { PhotoDataViewerIpcParams } from '../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params';
 import { logWindowBounds, photoDataViewerLogger as logger } from '../../src-shared/photo-data-viewer/photo-data-viewer-logger';
 import { trackOpeningPhotoDataViewer } from './photo-data-viewer-tracker';
@@ -23,6 +23,11 @@ export async function launchPhotoDataViewer(ipcParams: PhotoDataViewerIpcParams)
       contextIsolation: false,
     },
   });
+
+  browserWindow.webContents.setWindowOpenHandler(({url}) => {
+    shell.openExternal(url);
+    return { action: 'deny' };
+  })
 
   const bounds = browserWindow?.getBounds?.();
   logWindowBounds(bounds, photo);
