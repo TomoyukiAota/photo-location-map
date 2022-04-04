@@ -4,9 +4,9 @@ import { app } from '@electron/remote';
 
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { Logger } from '../../../src-shared/log/logger';
+import { openUrl } from '../../../src-shared/url/open-url';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { configureOpeningInOsBrowser } from '../shared/open-url/configure-opening-in-os-browser';
-import { openUrl } from '../shared/open-url/open-url';
 import { WelcomeDialogAtAppLaunchService } from './welcome-dialog-at-app-launch/welcome-dialog-at-app-launch.service';
 
 @Component({
