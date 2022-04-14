@@ -111,10 +111,11 @@ body {
 }
 
 .photo-data-viewer {
-  margin-top: 40px;
+  text-align: center;
+  margin-top: 50px;
 }
 
 .google-analytics-notice {
   font-size: 13px;
-  margin-top: 40px;
+  margin-top: 50px;
 }
