@@ -86,7 +86,7 @@ body {
   width: 100%;
   height: 0;
   padding-bottom: 64.7%;
-  margin: 60px auto;
+  margin: 50px auto 60px auto;
 }
 
 .demo-video iframe {
@@ -97,16 +97,8 @@ body {
   height: 100%;
 }
 
-@media screen and (max-width: 500px) {
-  .app-description {
-    font-size: 16px;
-  }
-}
-
-@media screen and (min-width: 501px) {
-  .app-description {
-    font-size: 17px;
-  }
+.app-description {
+  font-size: 17px;
 }
 
 .supported-file-format {
@@ -115,14 +107,15 @@ body {
 
 .project-description {
   text-align: center;
-  margin-top: 40px;
+  margin-top: 30px;
 }
 
-.project-description {
-  font-size: 15px;
+.photo-data-viewer {
+  text-align: center;
+  margin-top: 50px;
 }
 
 .google-analytics-notice {
   font-size: 13px;
-  margin-top: 60px;
+  margin-top: 50px;
 }
