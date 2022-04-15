@@ -1,6 +1,6 @@
 # Photo Location Map
 
-This application displays the locations where your photos are taken on a map.
+This application displays the locations where photos were taken on a map.
 
 [Download the application from here.](https://tomoyukiaota.github.io/photo-location-map/)
 
