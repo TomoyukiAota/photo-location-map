@@ -1,8 +1,5 @@
-import { v4 as uuidv4 } from 'uuid';
 import { Logger } from '../log/logger';
 import { AnalyticsInterface } from './analytics-interface';
-import { UserDataStorage } from '../user-data-storage/user-data-storage';
-import { UserDataStoragePath } from '../user-data-storage/user-data-stroage-path';
 import { AnalyticsConfig } from './analytics-config';
 
 export class AnalyticsMain implements AnalyticsInterface {
@@ -10,26 +7,12 @@ export class AnalyticsMain implements AnalyticsInterface {
   private userAgent: string = null;
 
   constructor() {
-    const trackingId = AnalyticsConfig.trackingId;
-    const userId = this.getUserId();
+    const trackingId = AnalyticsConfig.universalAnalyticsTrackingId;
+    const userId = AnalyticsConfig.userId;
     const ua = require('universal-analytics');
     this.visitor = ua(trackingId, userId);
-    Logger.info(`[Google Analytics] Tracking ID: ${trackingId}`);
-    Logger.info(`[Google Analytics] Property Name: ${AnalyticsConfig.propertyName}`);
+    Logger.info(`[Google Analytics] Universal Analytics Tracking ID: ${trackingId}`);
     Logger.info(`[Google Analytics] User ID: ${userId}`);
-  }
-
-  private getUserId(): string {
-    let userId: string;
-
-    try {
-      userId = UserDataStorage.read(UserDataStoragePath.Analytics.UserId);
-    } catch {
-      userId = uuidv4();
-      UserDataStorage.write(UserDataStoragePath.Analytics.UserId, userId);
-    }
-
-    return userId;
   }
 
   public setUserAgent(userAgent: string) {
