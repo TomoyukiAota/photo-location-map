@@ -1,6 +1,7 @@
 import { Logger } from '../log/logger';
-import { AnalyticsInterface } from './analytics-interface';
 import { AnalyticsConfig } from './analytics-config';
+import { AnalyticsInterface } from './analytics-interface';
+import { GoogleAnalytics4IpcMain } from './analytics-ipc';
 
 export class AnalyticsMain implements AnalyticsInterface {
   private readonly visitor: ReturnType<typeof import('universal-analytics')>;
@@ -24,6 +25,8 @@ export class AnalyticsMain implements AnalyticsInterface {
   public trackEvent(category: string, action: string, label?: string, value?: string | number): void {
     if (!this.userAgent)
       throw new Error('User Agent needs to be set before calling Analytics.trackEvent');
+
+    GoogleAnalytics4IpcMain.sendEventToRenderer(category, action, label, value);
 
     this.visitor
       .event({

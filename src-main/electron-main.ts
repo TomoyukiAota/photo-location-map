@@ -5,6 +5,7 @@ import * as url from 'url';
 import * as electronWebPreferences from '../electron-util/electron-web-preferences';
 import '../electron-util/configure-electron-remote-in-main-process';
 import { setUserAgentForAnalytics } from '../src-shared/analytics/analytics';
+import { GoogleAnalytics4IpcMain } from '../src-shared/analytics/analytics-ipc';
 import { Logger } from '../src-shared/log/logger';
 import { LogFileConfig } from '../src-shared/log/log-file-config';
 import './auto-update/configure-auto-update';
@@ -21,6 +22,13 @@ export let mainWindow: BrowserWindow;
 const args = process.argv.slice(1);
 const isLiveReloadMode = args.some(val => val === '--serve');
 
+function configureAnalytics(mainWindow: BrowserWindow) {
+  const userAgent = mainWindow.webContents.userAgent;
+  setUserAgentForAnalytics(userAgent);
+  GoogleAnalytics4IpcMain.setMainWindow(mainWindow);
+  mainWindow.on('ready-to-show', () => { recordAtAppLaunch(); });
+}
+
 const createWindow = () => {
   const mainWindowState = createMainWindowState();
 
@@ -32,8 +40,9 @@ const createWindow = () => {
     webPreferences: electronWebPreferences,
   });
 
-  const userAgent = mainWindow.webContents.userAgent;
-  setUserAgentForAnalytics(userAgent);
+  configureAnalytics(mainWindow);
+
+  mainWindow.on('closed', () => { mainWindow = null; });
 
   if (isLiveReloadMode) {
     require('electron-reload')(__dirname, {
@@ -52,17 +61,8 @@ const createWindow = () => {
     mainWindow.webContents.openDevTools();
   }
 
-  // Emitted when the window is closed.
-  mainWindow.on('closed', () => {
-    // Dereference the window object, usually you would store window
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null;
-  });
-
   mainWindowState.manage(mainWindow);
 
-  recordAtAppLaunch();
   Logger.info('Launching the main window.');
 };
 
