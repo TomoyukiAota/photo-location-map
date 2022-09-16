@@ -1,7 +1,7 @@
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
-import { initializeGtag } from '../src-shared/analytics/initialize-gtag';
+import { GoogleAnalytics4Helper } from '../src-shared/analytics/google-analytics-4-helper';
 import { Logger } from '../src-shared/log/logger';
 import { LogFileConfig } from '../src-shared/log/log-file-config';
 import { AppModule } from './app/app.module';
@@ -21,4 +21,4 @@ platformBrowserDynamic()
 Logger.info('Content on the main window is loading...');
 Logger.info(`Log File Location: ${LogFileConfig.filePath}`);
 
-initializeGtag();
+GoogleAnalytics4Helper.initializeGtag();

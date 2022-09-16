@@ -1,5 +1,6 @@
 import { BrowserWindow } from 'electron';
 import { ProxyRequire } from '../require/proxy-require';
+import { GoogleAnalytics4Helper } from './google-analytics-4-helper';
 
 export class AnalyticsIpcChannelName {
   public static readonly googleAnalytics4TrackEvent = 'google-analytics-4-track-event';
@@ -25,11 +26,7 @@ export class GoogleAnalytics4IpcRenderer {
     this.ipcRenderer.on(
       AnalyticsIpcChannelName.googleAnalytics4TrackEvent,
       (event, category: string, action: string, label?: string, value?: string | number) => {
-        gtag('event', action, {
-          event_category: category,
-          event_label: label,
-          value,
-        });
+        GoogleAnalytics4Helper.trackEvent(category, action, label, value);
       }
     );
   }
