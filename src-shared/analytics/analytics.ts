@@ -2,9 +2,9 @@ import { EnvironmentDetector } from '../environment/environment-detector';
 import { ProcessIdentifier } from '../process/process-identifier';
 import { ProxyRequire } from '../require/proxy-require';
 import { AnalyticsInterface } from './analytics-interface';
-import { AnalyticsRenderer } from './analytics-renderer';
+import { AnalyticsIpcChannelName, GoogleAnalytics4IpcRenderer } from './analytics-ipc';
 import { AnalyticsMain } from './analytics-main';
-import { AnalyticsIpcChannelName } from './analytics-ipc-channel-name';
+import { AnalyticsRenderer } from './analytics-renderer';
 
 
 let analytics: AnalyticsInterface;
@@ -16,6 +16,7 @@ if (ProcessIdentifier.isElectronMain) {
   });
   analytics = analyticsMain;
 } else {
+  GoogleAnalytics4IpcRenderer.configureIpc();
   analytics = new AnalyticsRenderer();
 }
 
