@@ -11,7 +11,7 @@ let analytics: AnalyticsInterface;
 
 if (ProcessIdentifier.isElectronMain) {
   const analyticsMain = new AnalyticsMain();
-  ProxyRequire.electron.ipcMain.on(AnalyticsIpcChannelName.trackEvent, (event, category, action, label, value) => {
+  ProxyRequire.electron.ipcMain.on(AnalyticsIpcChannelName.universalAnalyticsTrackEvent, (event, category, action, label, value) => {
     analyticsMain.trackEvent(category, action, label, value);
   });
   analytics = analyticsMain;
