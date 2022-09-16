@@ -13,7 +13,7 @@ export class AnalyticsRenderer implements AnalyticsInterface {
 
     // Send an event to Universal Analytics
     ProxyRequire.electron.ipcRenderer.send(
-      AnalyticsIpcChannelName.trackEvent,
+      AnalyticsIpcChannelName.universalAnalyticsTrackEvent,
       category, action, label, value);
   }
 }
