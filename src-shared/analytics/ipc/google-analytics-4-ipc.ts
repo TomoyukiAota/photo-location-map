@@ -1,11 +1,7 @@
 import { BrowserWindow } from 'electron';
-import { ProxyRequire } from '../require/proxy-require';
-import { GtagWrapper } from './gtag-wrapper';
-
-export class AnalyticsIpcChannelName {
-  public static readonly googleAnalytics4TrackEvent = 'google-analytics-4-track-event';
-  public static readonly universalAnalyticsTrackEvent = 'universal-analytics-track-event';
-}
+import { ProxyRequire } from '../../require/proxy-require';
+import { GtagWrapper } from '../gtag-wrapper';
+import { AnalyticsIpcChannelName } from './analytics-ipc-channel-name';
 
 export class GoogleAnalytics4IpcMain {
   private static mainWindow: BrowserWindow;
@@ -31,4 +27,3 @@ export class GoogleAnalytics4IpcRenderer {
     );
   }
 }
-

@@ -1,5 +1,5 @@
 import { AnalyticsInterface } from './analytics-interface';
-import { GoogleAnalytics4IpcMain } from './analytics-ipc';
+import { GoogleAnalytics4IpcMain } from './ipc/google-analytics-4-ipc';
 import { UniversalAnalyticsWrapper } from './universal-analytics-wrapper';
 
 export class AnalyticsMain implements AnalyticsInterface {

@@ -1,8 +1,9 @@
 import { EnvironmentDetector } from '../environment/environment-detector';
 import { ProcessIdentifier } from '../process/process-identifier';
 import { ProxyRequire } from '../require/proxy-require';
+import { AnalyticsIpcChannelName } from './ipc/analytics-ipc-channel-name';
+import { GoogleAnalytics4IpcRenderer } from './ipc/google-analytics-4-ipc'
 import { AnalyticsInterface } from './analytics-interface';
-import { AnalyticsIpcChannelName, GoogleAnalytics4IpcRenderer } from './analytics-ipc';
 import { AnalyticsMain } from './analytics-main';
 import { AnalyticsRenderer } from './analytics-renderer';
 
