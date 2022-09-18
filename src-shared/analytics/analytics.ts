@@ -1,7 +1,5 @@
 import { EnvironmentDetector } from '../environment/environment-detector';
 import { ProcessIdentifier } from '../process/process-identifier';
-import { GoogleAnalytics4IpcRenderer } from './ipc/google-analytics-4-ipc'
-import { UniversalAnalyticsIpcMain } from './ipc/universal-analytics-ipc';
 import { AnalyticsInterface } from './analytics-interface';
 import { AnalyticsMain } from './analytics-main';
 import { AnalyticsRenderer } from './analytics-renderer';
@@ -13,11 +11,8 @@ function initializeAnalytics() {
     return;
 
   if (ProcessIdentifier.isElectronMain) {
-    const analyticsMain = new AnalyticsMain();
-    UniversalAnalyticsIpcMain.configureReceivingIpcFromRenderer();
-    analytics = analyticsMain;
+    analytics = new AnalyticsMain();
   } else {
-    GoogleAnalytics4IpcRenderer.configureReceivingIpcFromMain();
     analytics = new AnalyticsRenderer();
   }
 }
