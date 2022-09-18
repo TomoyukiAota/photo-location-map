@@ -1,5 +1,5 @@
-import { AnalyticsConfig } from './analytics-config';
 import { Logger } from '../log/logger';
+import { AnalyticsConfig } from './analytics-config';
 
 export class GtagWrapper {
   public static initialize() {
