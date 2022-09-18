@@ -20,14 +20,6 @@ if (ProcessIdentifier.isElectronMain) {
   analytics = new AnalyticsRenderer();
 }
 
-export const setUserAgentForAnalytics = (userAgent: string) => {
-  if (analytics instanceof AnalyticsMain) {
-    analytics.setUserAgent(userAgent);
-  } else {
-    throw new Error('setUserAgentForAnalytics cannot be called in renderer process. Call it in main process.');
-  }
-};
-
 export class Analytics {
   public static trackEvent(category: string, action: string, label?: string, value?: string | number): void {
     if (EnvironmentDetector.isUnitTest)

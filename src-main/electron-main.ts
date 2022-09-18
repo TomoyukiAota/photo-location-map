@@ -4,8 +4,8 @@ import * as path from 'path';
 import * as url from 'url';
 import * as electronWebPreferences from '../electron-util/electron-web-preferences';
 import '../electron-util/configure-electron-remote-in-main-process';
-import { setUserAgentForAnalytics } from '../src-shared/analytics/analytics';
 import { GoogleAnalytics4IpcMain } from '../src-shared/analytics/analytics-ipc';
+import { UniversalAnalyticsWrapper } from '../src-shared/analytics/universal-analytics-wrapper';
 import { Logger } from '../src-shared/log/logger';
 import { LogFileConfig } from '../src-shared/log/log-file-config';
 import './auto-update/configure-auto-update';
@@ -24,7 +24,7 @@ const isLiveReloadMode = args.some(val => val === '--serve');
 
 function configureAnalytics(mainWindow: BrowserWindow) {
   const userAgent = mainWindow.webContents.userAgent;
-  setUserAgentForAnalytics(userAgent);
+  UniversalAnalyticsWrapper.setUserAgent(userAgent);
   GoogleAnalytics4IpcMain.setMainWindow(mainWindow);
   mainWindow.on('ready-to-show', () => { recordAtAppLaunch(); });
 }
