@@ -1,6 +1,6 @@
 import { ProxyRequire } from '../require/proxy-require';
+import { AnalyticsIpcChannelName } from './ipc/analytics-ipc-channel-name';
 import { AnalyticsInterface } from './analytics-interface';
-import { AnalyticsIpcChannelName } from './analytics-ipc';
 import { GtagWrapper } from './gtag-wrapper';
 
 export class AnalyticsRenderer implements AnalyticsInterface {
