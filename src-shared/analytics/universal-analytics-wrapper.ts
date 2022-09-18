@@ -18,8 +18,12 @@ export class UniversalAnalyticsWrapper {
   public static setUserAgent(userAgent: string) {
     if (ProcessIdentifier.isElectronMain) {
       this.userAgent = userAgent;
-      this.visitor.set('userAgentOverride', userAgent);
-      Logger.info(`[Universal Analytics] User Agent for Universal Analytics is "${userAgent}"`);
+      if (this.visitor) {
+        this.visitor.set('userAgentOverride', userAgent);
+        Logger.info(`[Universal Analytics] User Agent for Universal Analytics is "${userAgent}"`);
+      } else {
+        throw new Error('UniversalAnalyticsWrapper::initialize needs to be called before calling setUserAgent.');
+      }
     } else {
       throw new Error('setUserAgentForAnalytics cannot be called in renderer process. Call it in main process.');
     }
