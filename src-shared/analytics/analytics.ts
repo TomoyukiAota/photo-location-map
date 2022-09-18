@@ -17,7 +17,7 @@ function initializeAnalytics() {
     UniversalAnalyticsIpcMain.configureReceivingIpcFromRenderer();
     analytics = analyticsMain;
   } else {
-    GoogleAnalytics4IpcRenderer.configureIpc();
+    GoogleAnalytics4IpcRenderer.configureReceivingIpcFromMain();
     analytics = new AnalyticsRenderer();
   }
 }

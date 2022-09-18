@@ -18,7 +18,7 @@ export class GoogleAnalytics4IpcMain {
 export class GoogleAnalytics4IpcRenderer {
   private static ipcRenderer = ProxyRequire.electron.ipcRenderer;
 
-  public static configureIpc() {
+  public static configureReceivingIpcFromMain() {
     this.ipcRenderer.on(
       AnalyticsIpcChannelName.googleAnalytics4TrackEvent,
       (event, category: string, action: string, label?: string, value?: string | number) => {
