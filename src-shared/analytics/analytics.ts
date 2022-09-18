@@ -1,8 +1,7 @@
 import { EnvironmentDetector } from '../environment/environment-detector';
 import { ProcessIdentifier } from '../process/process-identifier';
-import { ProxyRequire } from '../require/proxy-require';
-import { AnalyticsIpcChannelName } from './ipc/analytics-ipc-channel-name';
 import { GoogleAnalytics4IpcRenderer } from './ipc/google-analytics-4-ipc'
+import { UniversalAnalyticsIpcMain } from './ipc/universal-analytics-ipc';
 import { AnalyticsInterface } from './analytics-interface';
 import { AnalyticsMain } from './analytics-main';
 import { AnalyticsRenderer } from './analytics-renderer';
@@ -15,9 +14,7 @@ function initializeAnalytics() {
 
   if (ProcessIdentifier.isElectronMain) {
     const analyticsMain = new AnalyticsMain();
-    ProxyRequire.electron.ipcMain.on(AnalyticsIpcChannelName.universalAnalyticsTrackEvent, (event, category, action, label, value) => {
-      analyticsMain.trackEvent(category, action, label, value);
-    });
+    UniversalAnalyticsIpcMain.configureReceivingIpcFromRenderer();
     analytics = analyticsMain;
   } else {
     GoogleAnalytics4IpcRenderer.configureIpc();
