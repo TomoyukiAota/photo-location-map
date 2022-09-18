@@ -25,7 +25,7 @@ export class UniversalAnalyticsWrapper {
         throw new Error('UniversalAnalyticsWrapper::initialize needs to be called before calling setUserAgent.');
       }
     } else {
-      throw new Error('setUserAgentForAnalytics cannot be called in renderer process. Call it in main process.');
+      throw new Error('UniversalAnalyticsWrapper::setUserAgent cannot be called in renderer process. Call it in main process.');
     }
   }
 
