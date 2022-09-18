@@ -1,5 +1,5 @@
-import { AnalyticsInterface } from './analytics-interface';
 import { ProxyRequire } from '../require/proxy-require';
+import { AnalyticsInterface } from './analytics-interface';
 import { AnalyticsIpcChannelName } from './analytics-ipc';
 import { GtagWrapper } from './gtag-wrapper';
 
