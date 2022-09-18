@@ -6,18 +6,22 @@ import { AnalyticsIpcChannelName, GoogleAnalytics4IpcRenderer } from './analytic
 import { AnalyticsMain } from './analytics-main';
 import { AnalyticsRenderer } from './analytics-renderer';
 
-
 let analytics: AnalyticsInterface;
 
-if (ProcessIdentifier.isElectronMain) {
-  const analyticsMain = new AnalyticsMain();
-  ProxyRequire.electron.ipcMain.on(AnalyticsIpcChannelName.universalAnalyticsTrackEvent, (event, category, action, label, value) => {
-    analyticsMain.trackEvent(category, action, label, value);
-  });
-  analytics = analyticsMain;
-} else {
-  GoogleAnalytics4IpcRenderer.configureIpc();
-  analytics = new AnalyticsRenderer();
+function initializeAnalytics() {
+  if (EnvironmentDetector.isUnitTest)
+    return;
+
+  if (ProcessIdentifier.isElectronMain) {
+    const analyticsMain = new AnalyticsMain();
+    ProxyRequire.electron.ipcMain.on(AnalyticsIpcChannelName.universalAnalyticsTrackEvent, (event, category, action, label, value) => {
+      analyticsMain.trackEvent(category, action, label, value);
+    });
+    analytics = analyticsMain;
+  } else {
+    GoogleAnalytics4IpcRenderer.configureIpc();
+    analytics = new AnalyticsRenderer();
+  }
 }
 
 export class Analytics {
@@ -28,3 +32,5 @@ export class Analytics {
     analytics.trackEvent(category, action, label, value);
   }
 }
+
+initializeAnalytics();
