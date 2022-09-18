@@ -2,7 +2,7 @@ import { AnalyticsConfig } from './analytics-config';
 import { Logger } from '../log/logger';
 
 export class GtagWrapper {
-  public static initializeGtag() {
+  public static initialize() {
     gtag('js', new Date());
     gtag('config', AnalyticsConfig.googleAnalytics4MeasurementId, {
       'user_id': AnalyticsConfig.userId,

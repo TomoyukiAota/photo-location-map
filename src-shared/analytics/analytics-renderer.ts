@@ -4,6 +4,10 @@ import { AnalyticsIpcChannelName } from './analytics-ipc';
 import { GtagWrapper } from './gtag-wrapper';
 
 export class AnalyticsRenderer implements AnalyticsInterface {
+  constructor() {
+    GtagWrapper.initialize();
+  }
+
   trackEvent(category: string, action: string, label?: string, value?: string | number): void {
     GtagWrapper.trackEvent(category, action, label, value);
 
