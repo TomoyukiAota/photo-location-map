@@ -11,7 +11,10 @@ export class GoogleAnalytics4IpcMain {
   }
 
   public static sendEventToRenderer(category: string, action: string, label?: string, value?: string | number) {
-    this.mainWindow.webContents.send(AnalyticsIpcChannelName.googleAnalytics4TrackEvent, category, action, label, value);
+    this.mainWindow.webContents.send(
+      AnalyticsIpcChannelName.googleAnalytics4TrackEvent,
+      category, action, label, value
+    );
   }
 }
 
