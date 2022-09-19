@@ -1,7 +1,7 @@
 import { GoogleAnalytics4IpcRenderer } from './ipc/google-analytics-4-ipc';
 import { UniversalAnalyticsIpcRenderer } from './ipc/universal-analytics-ipc';
+import { GtagWrapper } from './library-wrapper/gtag-wrapper';
 import { AnalyticsInterface } from './analytics-interface';
-import { GtagWrapper } from './gtag-wrapper';
 
 export class AnalyticsRenderer implements AnalyticsInterface {
   constructor() {

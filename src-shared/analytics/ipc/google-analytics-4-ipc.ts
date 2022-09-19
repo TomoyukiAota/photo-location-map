@@ -1,6 +1,6 @@
 import { BrowserWindow } from 'electron';
 import { ProxyRequire } from '../../require/proxy-require';
-import { GtagWrapper } from '../gtag-wrapper';
+import { GtagWrapper } from '../library-wrapper/gtag-wrapper';
 
 class GoogleAnalytics4IpcChannelName {
   public static readonly trackEvent = 'google-analytics-4-track-event';

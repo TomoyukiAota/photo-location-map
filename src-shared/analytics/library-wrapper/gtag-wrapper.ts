@@ -1,6 +1,6 @@
-import { Logger } from '../log/logger';
-import { AnalyticsConfig } from './config/analytics-config';
-import { GoogleAnalytics4Config } from './config/google-analytics-4-config';
+import { Logger } from '../../log/logger';
+import { AnalyticsConfig } from '../config/analytics-config';
+import { GoogleAnalytics4Config } from '../config/google-analytics-4-config';
 
 export class GtagWrapper {
   public static initialize() {
