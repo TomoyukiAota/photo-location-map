@@ -1,7 +1,7 @@
-import { Logger } from '../log/logger';
-import { ProcessIdentifier } from '../process/process-identifier';
-import { AnalyticsConfig } from './config/analytics-config';
-import { UniversalAnalyticsConfig } from './config/universal-analytics-config';
+import { Logger } from '../../log/logger';
+import { ProcessIdentifier } from '../../process/process-identifier';
+import { AnalyticsConfig } from '../config/analytics-config';
+import { UniversalAnalyticsConfig } from '../config/universal-analytics-config';
 
 export class UniversalAnalyticsWrapper {
   private static visitor: ReturnType<typeof import('universal-analytics')>;

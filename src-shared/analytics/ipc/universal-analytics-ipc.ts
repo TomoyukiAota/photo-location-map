@@ -1,5 +1,5 @@
 import { ProxyRequire } from '../../require/proxy-require';
-import { UniversalAnalyticsWrapper } from '../universal-analytics-wrapper';
+import { UniversalAnalyticsWrapper } from '../library-wrapper/universal-analytics-wrapper';
 
 class UniversalAnalyticsIpcChannelName {
   public static readonly trackEvent = 'universal-analytics-track-event';
