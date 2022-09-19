@@ -1,13 +1,14 @@
 import { Logger } from '../log/logger';
 import { ProcessIdentifier } from '../process/process-identifier';
-import { AnalyticsConfig } from './analytics-config';
+import { AnalyticsConfig } from './config/analytics-config';
+import { UniversalAnalyticsConfig } from './config/universal-analytics-config';
 
 export class UniversalAnalyticsWrapper {
   private static visitor: ReturnType<typeof import('universal-analytics')>;
   private static userAgent: string = null;
 
   public static initialize() {
-    const trackingId = AnalyticsConfig.universalAnalyticsTrackingId;
+    const trackingId = UniversalAnalyticsConfig.trackingId;
     const userId = AnalyticsConfig.userId;
     const ua = require('universal-analytics');
     this.visitor = ua(trackingId, userId);

@@ -1,14 +1,17 @@
 import { Logger } from '../log/logger';
-import { AnalyticsConfig } from './analytics-config';
+import { AnalyticsConfig } from './config/analytics-config';
+import { GoogleAnalytics4Config } from './config/google-analytics-4-config';
 
 export class GtagWrapper {
   public static initialize() {
+    const measurementId = GoogleAnalytics4Config.measurementId;
+    const userId = AnalyticsConfig.userId;
     gtag('js', new Date());
-    gtag('config', AnalyticsConfig.googleAnalytics4MeasurementId, {
-      'user_id': AnalyticsConfig.userId,
+    gtag('config', measurementId, {
+      'user_id': userId,
     });
-    Logger.info(`[Google Analytics 4] Measurement ID: ${AnalyticsConfig.googleAnalytics4MeasurementId}`);
-    Logger.info(`[Google Analytics 4] User ID: ${AnalyticsConfig.userId}`);
+    Logger.info(`[Google Analytics 4] Measurement ID: ${measurementId}`);
+    Logger.info(`[Google Analytics 4] User ID: ${userId}`);
   }
 
   public static trackEvent(category: string, action: string, label?: string, value?: string | number) {
