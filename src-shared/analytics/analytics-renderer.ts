@@ -1,11 +1,16 @@
+import { GoogleAnalytics4IpcRenderer } from './ipc/google-analytics-4-ipc';
+import { UniversalAnalyticsIpcRenderer } from './ipc/universal-analytics-ipc';
+import { GtagWrapper } from './library-wrapper/gtag-wrapper';
 import { AnalyticsInterface } from './analytics-interface';
-import { ProxyRequire } from '../require/proxy-require';
-import { AnalyticsIpcChannelName } from './analytics-ipc-channel-name';
 
 export class AnalyticsRenderer implements AnalyticsInterface {
-  trackEvent(category: string, action: string, label?: string, value?: string | number): void {
-    ProxyRequire.electron.ipcRenderer.send(
-      AnalyticsIpcChannelName.trackEvent,
-      category, action, label, value);
+  constructor() {
+    GtagWrapper.initialize();
+    GoogleAnalytics4IpcRenderer.configureReceivingIpcFromMain();
+  }
+
+  public trackEvent(category: string, action: string, label?: string, value?: string | number): void {
+    UniversalAnalyticsIpcRenderer.sendEventToMain(category, action, label, value);
+    GtagWrapper.trackEvent(category, action, label, value);
   }
 }

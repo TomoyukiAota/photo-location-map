@@ -96,6 +96,7 @@
     "@ngx-translate/http-loader": "7.0.0",
     "@types/delete-empty": "3.0.2",
     "@types/fs-extra": "9.0.13",
+    "@types/gtag.js": "0.0.11",
     "@types/is-natural-number": "4.0.1",
     "@types/is-number": "7.0.3",
     "@types/jasmine": "3.10.3",
