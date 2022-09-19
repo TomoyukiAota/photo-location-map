@@ -1,13 +1,16 @@
 import { ProxyRequire } from '../../require/proxy-require';
 import { UniversalAnalyticsWrapper } from '../universal-analytics-wrapper';
-import { AnalyticsIpcChannelName } from './analytics-ipc-channel-name';
+
+class UniversalAnalyticsIpcChannelName {
+  public static readonly trackEvent = 'universal-analytics-track-event';
+}
 
 export class UniversalAnalyticsIpcMain {
   private static ipcMain = ProxyRequire.electron.ipcMain;
 
   public static configureReceivingIpcFromRenderer() {
     this.ipcMain.on(
-      AnalyticsIpcChannelName.universalAnalyticsTrackEvent,
+      UniversalAnalyticsIpcChannelName.trackEvent,
       (event, category, action, label, value) => {
         UniversalAnalyticsWrapper.trackEvent(category, action, label, value);
       }
@@ -20,7 +23,7 @@ export class UniversalAnalyticsIpcRenderer {
 
   public static sendEventToMain(category: string, action: string, label?: string, value?: string | number) {
     this.ipcRenderer.send(
-      AnalyticsIpcChannelName.universalAnalyticsTrackEvent,
+      UniversalAnalyticsIpcChannelName.trackEvent,
       category, action, label, value
     );
   }
