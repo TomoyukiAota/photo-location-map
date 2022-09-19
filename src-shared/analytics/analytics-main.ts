@@ -10,7 +10,7 @@ export class AnalyticsMain implements AnalyticsInterface {
   }
 
   public trackEvent(category: string, action: string, label?: string, value?: string | number): void {
-    GoogleAnalytics4IpcMain.sendEventToRenderer(category, action, label, value);
     UniversalAnalyticsWrapper.trackEvent(category, action, label, value);
+    GoogleAnalytics4IpcMain.sendEventToRenderer(category, action, label, value);
   }
 }
