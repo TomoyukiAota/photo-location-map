@@ -5,6 +5,7 @@ import * as url from 'url';
 import * as electronWebPreferences from '../electron-util/electron-web-preferences';
 import '../electron-util/configure-electron-remote-in-main-process';
 import { GoogleAnalytics4IpcMain } from '../src-shared/analytics/ipc/google-analytics-4-ipc';
+import { MixpanelBrowserIpcMain } from '../src-shared/analytics/ipc/mixpanel-browser-ipc';
 import { UniversalAnalyticsWrapper } from '../src-shared/analytics/library-wrapper/universal-analytics-wrapper';
 import { Logger } from '../src-shared/log/logger';
 import { LogFileConfig } from '../src-shared/log/log-file-config';
@@ -25,6 +26,7 @@ const isLiveReloadMode = args.some(val => val === '--serve');
 function configureAnalytics(mainWindow: BrowserWindow) {
   const userAgent = mainWindow.webContents.userAgent;
   UniversalAnalyticsWrapper.setUserAgent(userAgent);
+  MixpanelBrowserIpcMain.setMainWindow(mainWindow);
   GoogleAnalytics4IpcMain.setMainWindow(mainWindow);
   mainWindow.on('ready-to-show', () => { recordAtAppLaunch(); });
 }
