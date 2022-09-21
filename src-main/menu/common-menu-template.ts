@@ -6,8 +6,8 @@ import { Logger } from '../../src-shared/log/logger';
 import { mainWindow } from '../electron-main';
 
 const handleManageSettingsClicked = () => {
-  Logger.info(`[Menu] Clicked "Manage Settings".`);
-  Analytics.trackEvent('Clicked Menu', 'Manage Settings');
+  Logger.info(`[Main Window Menu] Clicked "Manage Settings".`);
+  Analytics.trackEvent('Main Window Menu', 'Clicked "Manage Settings"');
 
   if (!mainWindow)
     return;
