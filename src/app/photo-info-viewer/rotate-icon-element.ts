@@ -17,7 +17,7 @@ export class RotateIconElement {
 
   private static handleRotateIconClick(thumbnailElement: HTMLImageElement, photo: Photo): void {
     logger.info(`Clicked the rotate icon for ${photo.path}`);
-    Analytics.trackEvent('Photo Info Viewer', 'Clicked Rotate Icon');
+    Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked Rotate Icon');
     this.rotateThumbnail(thumbnailElement);
   }
 
