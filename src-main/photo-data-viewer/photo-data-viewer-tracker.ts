@@ -4,11 +4,11 @@ export function trackOpeningPhotoDataViewer(bounds: Electron.Rectangle) {
   if (!bounds) { return; }
 
   const {x, y, width, height} = bounds;
-  Analytics.trackEvent('Photo Data Viewer', `Window Open`);
-  Analytics.trackEvent('Photo Data Viewer', `Window Open - Position X: ${x}`);
-  Analytics.trackEvent('Photo Data Viewer', `Window Open - Position Y: ${y}`);
-  Analytics.trackEvent('Photo Data Viewer', `Window Open - Width: ${width}`);
-  Analytics.trackEvent('Photo Data Viewer', `Window Open - Height: ${height}`);
+  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Opened`);
+  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Open Position X`, `Position X: ${x}`);
+  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Open Position Y`, `Position Y: ${y}`);
+  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Open Width`, `Width: ${width}`);
+  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Open Height`, `Height: ${height}`);
 }
 
 export function trackClosingPhotoDataViewer(bounds: Electron.Rectangle) {
@@ -19,9 +19,9 @@ export function trackClosingPhotoDataViewer(bounds: Electron.Rectangle) {
   if (!bounds) { return; }
 
   const {x, y, width, height} = bounds;
-  Analytics.trackEvent('Photo Data Viewer', `Window Close`);
-  Analytics.trackEvent('Photo Data Viewer', `Window Close - Position X: ${x}`);
-  Analytics.trackEvent('Photo Data Viewer', `Window Close - Position Y: ${y}`);
-  Analytics.trackEvent('Photo Data Viewer', `Window Close - Width: ${width}`);
-  Analytics.trackEvent('Photo Data Viewer', `Window Close - Height: ${height}`);
+  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Closed`);
+  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Close Position X`, `Position X: ${x}`);
+  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Close Position Y`, `Position Y: ${y}`);
+  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Close Width`, `Width: ${width}`);
+  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Close Height`, `Height: ${height}`);
 }
