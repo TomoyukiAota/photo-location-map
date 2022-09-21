@@ -18,7 +18,7 @@ export class GtagWrapper {
     gtag('event', action, {
       event_category: category,
       event_label: label,
-      value,
+      value: value,
     });
   }
 }
