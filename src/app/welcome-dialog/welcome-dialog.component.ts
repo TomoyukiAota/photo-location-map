@@ -41,7 +41,7 @@ export class WelcomeDialogComponent implements AfterViewInit {
 
   public onOkClicked() {
     Logger.info(`[Welcome Dialog] Clicked OK button`);
-    Analytics.trackEvent(`Welcome Dialog`, 'Clicked OK button');
+    Analytics.trackEvent(`Welcome Dialog`, '[Welcome Dialog] Clicked OK button');
     this.welcomeDialogAtAppLaunchService.saveThatUserClickedOk();
   }
 }
