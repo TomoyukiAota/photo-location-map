@@ -37,7 +37,7 @@ export class FolderSelectionRecorder {
     const duration = perfEntries[0].duration.toFixed(3);
     Logger.info(`Folder Selection Result: ${resultStr}, Performance: ${duration} [ms]`, perfEntries);
     Analytics.trackEvent('Selected Folder Info',
-      `Selected Folder Info: Performance (${resultStr})`,
-      ` Performance (${resultStr}): ${duration} [ms]`);
+      `Selected Folder: Performance (${resultStr})`,
+      `Performance (${resultStr}): ${duration} [ms]`);
   }
 }

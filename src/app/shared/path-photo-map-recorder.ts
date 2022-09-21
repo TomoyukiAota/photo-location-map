@@ -12,9 +12,9 @@ export class PathPhotoMapRecorder {
     Logger.info(`Number of files with EXIF: ${numOfPhotosWithExif}`);
     Logger.info(`Number of files with GPS info: ${numOfPhotosWithGpsInfo}`);
 
-    Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: Files with EXIF',
+    Analytics.trackEvent('Selected Folder Info', 'Selected Folder: Files with EXIF',
       `Files with EXIF: ${numOfPhotosWithExif}`);
-    Analytics.trackEvent('Selected Folder Info', 'Selected Folder Info: Files with GPS Info',
+    Analytics.trackEvent('Selected Folder Info', 'Selected Folder: Files with GPS Info',
       `Files with GPS Info: ${numOfPhotosWithGpsInfo}`);
   }
 }
