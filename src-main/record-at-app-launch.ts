@@ -78,7 +78,7 @@ const recordLoadedUserSettings = () => {
 
 const recordLoadedLeafletLayer = () => {
   const loadedLayerName = UserDataStorage.readOrDefault(UserDataStoragePath.LeafletMap.SelectedLayer, 'Not Loaded');
-  Analytics.trackEvent('Leaflet Map', `Layer at App Launch: "${loadedLayerName}"`);
+  Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Layer at App Launch`, `Layer at App Launch: "${loadedLayerName}"`);
 }
 
 export const recordAtAppLaunch = () => {
