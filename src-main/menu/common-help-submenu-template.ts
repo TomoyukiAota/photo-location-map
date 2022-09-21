@@ -24,7 +24,7 @@ const changeMap = (ipcMapChangeArg: string) => {
 
 const selectMap = (ipcMapChangeArg: string) => {
   Logger.info(`[Main Window Menu] Selected Map: ${ipcMapChangeArg}.`);
-  Analytics.trackEvent('Main Window Menu', `Selected Map`, `Selected Map: ${ipcMapChangeArg}`);
+  Analytics.trackEvent('Main Window Menu', `[Main Window Menu] Selected Map`, `Selected Map: ${ipcMapChangeArg}`);
   changeMap(ipcMapChangeArg);
 };
 
