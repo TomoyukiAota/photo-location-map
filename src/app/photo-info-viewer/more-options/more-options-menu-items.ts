@@ -38,13 +38,13 @@ export function getMoreOptionsMenuItems(photo: Photo): MoreOptionsMenuItem[] {
 
 function handleOpenFolderMenuItemClicked(photo: Photo) {
   logger.info(`Clicked "Open Folder" menu item for ${photo.path}`);
-  Analytics.trackEvent('Photo Info Viewer', 'Clicked Open Folder Menu Item');
+  Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Open Folder"');
   openContainingFolder(photo.path);
 }
 
 function handleOpenGoogleMapsMenuItemClicked(photo: Photo) {
   logger.info(`Clicked "Open Google Maps" menu item for ${photo.path}`);
-  Analytics.trackEvent('Photo Info Viewer', 'Clicked "Open Google Maps" Menu Item');
+  Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Open Google Maps"');
   const {latitude, longitude} = photo.exif.gpsInfo.latLng;
   const zoom = 14;
   openUrl(`https://maps.google.com/?q=${latitude},${longitude}&ll=${latitude},${longitude}&z=${zoom}`,
@@ -55,7 +55,7 @@ function handleOpenGoogleMapsMenuItemClicked(photo: Photo) {
 
 function handleOpenGoogleStreetViewMenuItemClicked(photo: Photo) {
   logger.info(`Clicked "Open Google Street View" menu item for ${photo.path}`);
-  Analytics.trackEvent('Photo Info Viewer', 'Clicked "Open Google Street View" Menu Item');
+  Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Open Google Street View"');
   const {latitude, longitude} = photo.exif.gpsInfo.latLng;
   openUrl(`https://www.google.com/maps/@?api=1&map_action=pano&parameters&viewpoint=${latitude},${longitude}`,
           '"Open Google Street View" Menu Item',
@@ -65,7 +65,7 @@ function handleOpenGoogleStreetViewMenuItemClicked(photo: Photo) {
 
 function handleViewDataMenuItemClicked(photo: Photo) {
   logger.info(`Clicked "View Data" menu item for ${photo.path}`);
-  Analytics.trackEvent('Photo Info Viewer', 'Clicked "View Data" Menu Item');
+  Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "View Data"');
 
   requestMainProcessToLaunchPhotoDataViewer(photo);
 }
