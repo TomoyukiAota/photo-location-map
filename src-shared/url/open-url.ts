@@ -6,5 +6,5 @@ export function openUrl(url: string, urlDescription: string, from: string, urlFo
   // noinspection JSIgnoredPromiseFromCall
   shell.openExternal(url);
   Logger.info(`[${from}] Opened URL for ${urlDescription} - ${url}`);
-  Analytics.trackEvent(`Opened URL`, `[${from}] Opened URL for ${urlDescription}`, urlForAnalytics);
+  Analytics.trackEvent(`Opened URL`, `Opened URL`, `[${from}] Opened URL for ${urlDescription}`, urlForAnalytics);
 }

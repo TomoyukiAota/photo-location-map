@@ -73,7 +73,7 @@ const recordLoadedUserSettings = () => {
   const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsFormatString(settings.dateFormat, settings.clockSystemFormat);
   Analytics.trackEvent('Loaded User Settings', `Date Format: ${settings.dateFormat}`);
   Analytics.trackEvent('Loaded User Settings', `Clock System Format: ${settings.clockSystemFormat}`);
-  Analytics.trackEvent('Loaded User Settings', `moment.js format: ${momentJsFormatString}`);
+  Analytics.trackEvent('Loaded User Settings', `moment.js Format`, `moment.js Format: ${momentJsFormatString}`);
 };
 
 const recordLoadedLeafletLayer = () => {
