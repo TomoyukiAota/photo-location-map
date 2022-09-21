@@ -59,11 +59,11 @@ const recordOs = () => {
 
 const recordDisplays = () => {
   const allDisplays = screen.getAllDisplays();
-  Analytics.trackEvent('Displays', `Number of displays: ${allDisplays.length}`);
+  Analytics.trackEvent('Display', `Number of displays: ${allDisplays.length}`);
   Logger.info(`[Display] Number of displays: ${allDisplays.length}`);
   allDisplays.forEach((display, index) => {
-    Analytics.trackEvent('Displays', `All Displays`, `Width: ${display.size.width}, Height: ${display.size.height}`);
-    Analytics.trackEvent('Displays', `Display ${index + 1}`, `Width: ${display.size.width}, Height: ${display.size.height}`);
+    Analytics.trackEvent('Display', `All Displays`, `Width: ${display.size.width}, Height: ${display.size.height}`);
+    Analytics.trackEvent('Display', `Display ${index + 1}`, `Width: ${display.size.width}, Height: ${display.size.height}`);
     Logger.info(`[Display] Display ${index + 1}, Width: ${display.size.width}, Height: ${display.size.height}`);
   });
 };
