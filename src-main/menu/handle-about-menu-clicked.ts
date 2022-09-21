@@ -4,8 +4,8 @@ import { Logger } from '../../src-shared/log/logger';
 import { mainWindow } from '../electron-main';
 
 export const handleAboutMenuClicked = () => {
-  Logger.info(`[Menu] Clicked "About Photo Location Map".`);
-  Analytics.trackEvent('Clicked Menu', 'About Photo Location Map');
+  Logger.info(`[Main Window Menu] Clicked "About Photo Location Map".`);
+  Analytics.trackEvent('Main Window Menu', 'Clicked "About Photo Location Map"');
 
   if (!mainWindow)
     return;
