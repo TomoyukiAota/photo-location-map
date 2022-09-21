@@ -122,7 +122,7 @@ export class DirectoryTreeViewComponent {
   public handleCheckboxChange(flatNode: FlatNode): void {
     const folderOrFile = flatNode.isExpandable ? 'Folder' : 'File';
     dirTreeViewLogger.info(`Toggled Checkbox (${folderOrFile}): ${flatNode.path}`);
-    Analytics.trackEvent('Directory Tree View', `Toggle Checkbox (${folderOrFile})`);
+    Analytics.trackEvent('Directory Tree View', `[Tree View] Toggle Checkbox (${folderOrFile})`);
     this.toggleNodeSelection(flatNode);
   }
 
