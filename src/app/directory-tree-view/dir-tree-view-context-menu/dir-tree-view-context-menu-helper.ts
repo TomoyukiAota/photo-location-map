@@ -37,13 +37,13 @@ export class DirTreeViewContextMenuHelper {
 
   public static openFile(data: ContextMenuData) {
     contextMenuLogger.info(`Open "${data.path}"`);
-    Analytics.trackEvent('Directory Tree View', `Context Menu: Open File`);
+    Analytics.trackEvent('Directory Tree View', `[Tree View] [Context Menu] Open File`);
     openWithAssociatedApp(data.path);
   }
 
   public static openContainingFolder(data: ContextMenuData) {
     contextMenuLogger.info(`Open the containing folder of "${data.path}"`);
-    Analytics.trackEvent('Directory Tree View', `Context Menu: Open Folder`);
+    Analytics.trackEvent('Directory Tree View', `[Tree View] [Context Menu] Open Folder`);
     openContainingFolder(data.path);
   }
 }
