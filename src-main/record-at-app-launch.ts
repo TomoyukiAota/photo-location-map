@@ -43,27 +43,26 @@ const recordLaunchCount = () => {
 };
 
 const recordAppVer = () => {
-  Analytics.trackEvent('App Ver', `App Ver: ${app.getVersion()}`);
+  Analytics.trackEvent('App Ver', 'App Ver', `App Ver: ${app.getVersion()}`);
   Logger.info(`Application Version: ${app.getVersion()}`);
 };
 
 const recordDevOrProd = () => {
-  Analytics.trackEvent('DevOrProd', `DevOrProd: ${DevOrProd.toString()}`);
+  Analytics.trackEvent('DevOrProd', 'DevOrProd', `DevOrProd: ${DevOrProd.toString()}`);
   Logger.info(`DevOrProd: ${DevOrProd.toString()}`);
 };
 
 const recordOs = () => {
-  Analytics.trackEvent('OS Info', `OS: ${os.platform()}`, `OS Ver: ${os.release()}`);
+  Analytics.trackEvent('OS Info', 'OS Info', `OS: ${os.platform()}`, `OS Ver: ${os.release()}`);
   Logger.info(`OS: ${os.platform()}; OS Ver: ${os.release()}`);
 };
 
 const recordDisplays = () => {
   const allDisplays = screen.getAllDisplays();
-  Analytics.trackEvent('Number of displays', `${allDisplays.length}`);
+  Analytics.trackEvent('Display', `[Display] Number of Displays`, `Number of Displays: ${allDisplays.length}`);
   Logger.info(`[Display] Number of displays: ${allDisplays.length}`);
   allDisplays.forEach((display, index) => {
-    Analytics.trackEvent('Displays', `All Displays`, `Width: ${display.size.width}, Height: ${display.size.height}`);
-    Analytics.trackEvent('Displays', `Display ${index + 1}`, `Width: ${display.size.width}, Height: ${display.size.height}`);
+    Analytics.trackEvent('Display', `[Display] Each Display Info`, `Display ${index + 1}`, `Width: ${display.size.width}, Height: ${display.size.height}`);
     Logger.info(`[Display] Display ${index + 1}, Width: ${display.size.width}, Height: ${display.size.height}`);
   });
 };
@@ -71,14 +70,14 @@ const recordDisplays = () => {
 const recordLoadedUserSettings = () => {
   const settings = currentUserSettings;
   const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsFormatString(settings.dateFormat, settings.clockSystemFormat);
-  Analytics.trackEvent('Loaded User Settings', `Date Format: ${settings.dateFormat}`);
-  Analytics.trackEvent('Loaded User Settings', `Clock System Format: ${settings.clockSystemFormat}`);
-  Analytics.trackEvent('Loaded User Settings', `moment.js format: ${momentJsFormatString}`);
+  Analytics.trackEvent('Loaded User Settings', `Date Format`, `Date Format: ${settings.dateFormat}`);
+  Analytics.trackEvent('Loaded User Settings', `Clock System Format`, `Clock System Format: ${settings.clockSystemFormat}`);
+  Analytics.trackEvent('Loaded User Settings', `moment.js Format`, `moment.js Format: ${momentJsFormatString}`);
 };
 
 const recordLoadedLeafletLayer = () => {
   const loadedLayerName = UserDataStorage.readOrDefault(UserDataStoragePath.LeafletMap.SelectedLayer, 'Not Loaded');
-  Analytics.trackEvent('Leaflet Map', `Layer at App Launch: "${loadedLayerName}"`);
+  Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Layer at App Launch`, `Layer at App Launch: "${loadedLayerName}"`);
 }
 
 export const recordAtAppLaunch = () => {

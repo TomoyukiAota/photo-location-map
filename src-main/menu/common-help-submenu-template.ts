@@ -6,8 +6,8 @@ import { Logger } from '../../src-shared/log/logger';
 import { mainWindow } from '../electron-main';
 
 const handleShowWelcomeDialogClicked = () => {
-  Logger.info(`[Menu] Clicked "Show Welcome Dialog".`);
-  Analytics.trackEvent('Clicked Menu', 'Show Welcome Dialog');
+  Logger.info(`[Main Window Menu] Clicked "Show Welcome Dialog".`);
+  Analytics.trackEvent('Main Window Menu', 'Clicked "Show Welcome Dialog"');
 
   if (!mainWindow)
     return;
@@ -23,8 +23,8 @@ const changeMap = (ipcMapChangeArg: string) => {
 };
 
 const selectMap = (ipcMapChangeArg: string) => {
-  Logger.info(`[Menu] Selected ${ipcMapChangeArg}.`);
-  Analytics.trackEvent('Clicked Menu', `Selected Map: ${ipcMapChangeArg}`);
+  Logger.info(`[Main Window Menu] Selected Map: ${ipcMapChangeArg}.`);
+  Analytics.trackEvent('Main Window Menu', `[Main Window Menu] Selected Map`, `Selected Map: ${ipcMapChangeArg}`);
   changeMap(ipcMapChangeArg);
 };
 

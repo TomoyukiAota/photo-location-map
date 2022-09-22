@@ -26,7 +26,7 @@ Latest version: ${info.version}`;
 
 autoUpdater.on('update-downloaded', (info: UpdateInfo) => {
   autoUpdateLogger.info(`Update downloaded. Updating from ${app.getVersion()} to ${info.version}.`);
-  Analytics.trackEvent('Auto-update', `Updating from ${app.getVersion()} to ${info.version}`);
+  Analytics.trackEvent('Auto-update', `Auto-update`, `Updating from ${app.getVersion()} to ${info.version}`);
 
   dialog.showMessageBox(mainWindow, {
     title: 'A new version of Photo Location Map is available!',

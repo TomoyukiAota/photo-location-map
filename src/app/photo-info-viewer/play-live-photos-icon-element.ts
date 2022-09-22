@@ -24,7 +24,7 @@ export class PlayLivePhotosIconElement {
 
   private static handlePlayLivePhotosIconClick(livePhotosFilePath: string, photo: Photo): void {
     logger.info(`Clicked the play live photos icon for ${photo.path}`);
-    Analytics.trackEvent('Photo Info Viewer', 'Clicked Play Live Photos Icon');
+    Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked Play Live Photos Icon');
     openWithAssociatedApp(livePhotosFilePath);
   }
 }

@@ -18,7 +18,7 @@ export class LaunchPhotoViewerIconElement {
 
   private static handleLaunchPhotoViewerIconClick(photo: Photo): void {
     logger.info(`Clicked the launch photo viewer icon for ${photo.path}`);
-    Analytics.trackEvent('Photo Info Viewer', 'Clicked Launch Photo Viewer Icon');
+    Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked Launch Photo Viewer Icon');
     PhotoViewerLauncher.launch(photo);
   }
 }

@@ -1,4 +1,3 @@
-import { screen } from 'electron';
 import * as windowStateKeeper from 'electron-window-state';
 import { Analytics } from '../src-shared/analytics/analytics';
 import { Logger } from '../src-shared/log/logger';
@@ -19,23 +18,24 @@ export function createMainWindowState() {
 export function recordWindowState(): void {
   const isFirstLaunch = LaunchInfo.isFirstLaunch;
   if (isFirstLaunch) {
-    Analytics.trackEvent('Window at App Launch', 'isFirstLaunch', `${isFirstLaunch}, so width and height are defaulted to ${defaultConfig.defaultWidth}x${defaultConfig.defaultHeight}`);
-    Analytics.trackEvent('Window at App Launch (1st time)', 'Window Dimensions', `${mainWindowState.width}x${mainWindowState.height}`);
-    Analytics.trackEvent('Window at App Launch (1st time)', 'XY coordinates', `(${mainWindowState.x}, ${mainWindowState.y})`);
-    Analytics.trackEvent('Window at App Launch (1st time)', 'isFullScreen', `${mainWindowState.isFullScreen}`);
-    Analytics.trackEvent('Window at App Launch (1st time)', 'isMaximized', `${mainWindowState.isMaximized}`);
-    Logger.info(`[Window at App Launch] This is the first launch, so width and height are defaulted to ${defaultConfig.defaultWidth}x${defaultConfig.defaultHeight}`);
+    // eslint-disable-next-line max-len
+    Analytics.trackEvent('Main Window at App Launch', 'Main Window: isFirstLaunch', `isFirstLaunch: ${isFirstLaunch}, so width and height are defaulted to ${defaultConfig.defaultWidth}x${defaultConfig.defaultHeight}`);
+    Analytics.trackEvent('Main Window at App Launch (1st time)', 'Main Window: Dimensions', `Window Dimensions: ${mainWindowState.width}x${mainWindowState.height}`);
+    Analytics.trackEvent('Main Window at App Launch (1st time)', 'Main Window: XY coordinates', `XY coordinates: (${mainWindowState.x}, ${mainWindowState.y})`);
+    Analytics.trackEvent('Main Window at App Launch (1st time)', 'Main Window: isFullScreen', `isFullScreen: ${mainWindowState.isFullScreen}`);
+    Analytics.trackEvent('Main Window at App Launch (1st time)', 'Main Window: isMaximized', `isMaximized: ${mainWindowState.isMaximized}`);
+    Logger.info(`[Main Window at App Launch] This is the first launch, so width and height are defaulted to ${defaultConfig.defaultWidth}x${defaultConfig.defaultHeight}`);
   } else {
-    Analytics.trackEvent('Window at App Launch', 'isFirstLaunch', `${isFirstLaunch}`);
-    Analytics.trackEvent('Window at App Launch (>= 2nd time)', 'Window Dimensions', `${mainWindowState.width}x${mainWindowState.height}`);
-    Analytics.trackEvent('Window at App Launch (>= 2nd time)', 'XY coordinates', `(${mainWindowState.x}, ${mainWindowState.y})`);
-    Analytics.trackEvent('Window at App Launch (>= 2nd time)', 'isFullScreen', `${mainWindowState.isFullScreen}`);
-    Analytics.trackEvent('Window at App Launch (>= 2nd time)', 'isMaximized', `${mainWindowState.isMaximized}`);
-    Logger.info(`[Window at App Launch] This is not the first launch, so width and height are the ones previously saved.`);
+    Analytics.trackEvent('Main Window at App Launch', 'Main Window: isFirstLaunch', `isFirstLaunch: ${isFirstLaunch}`);
+    Analytics.trackEvent('Main Window at App Launch (>= 2nd time)', 'Main Window: Dimensions', `Window Dimensions: ${mainWindowState.width}x${mainWindowState.height}`);
+    Analytics.trackEvent('Main Window at App Launch (>= 2nd time)', 'Main Window: XY coordinates', `XY coordinates: (${mainWindowState.x}, ${mainWindowState.y})`);
+    Analytics.trackEvent('Main Window at App Launch (>= 2nd time)', 'Main Window: isFullScreen', `isFullScreen: ${mainWindowState.isFullScreen}`);
+    Analytics.trackEvent('Main Window at App Launch (>= 2nd time)', 'Main Window: isMaximized', `isMaximized: ${mainWindowState.isMaximized}`);
+    Logger.info(`[Main Window at App Launch] This is not the first launch, so width and height are the ones previously saved.`);
   }
 
-  Logger.info(`[Window at App Launch] Window Dimensions: ${mainWindowState.width}x${mainWindowState.height}`);
-  Logger.info(`[Window at App Launch] XY coordinates: (${mainWindowState.x}, ${mainWindowState.y})`);
-  Logger.info(`[Window at App Launch] isFullScreen: ${mainWindowState.isFullScreen}`);
-  Logger.info(`[Window at App Launch] isMaximized: ${mainWindowState.isMaximized}`);
+  Logger.info(`[Main Window at App Launch] Window Dimensions: ${mainWindowState.width}x${mainWindowState.height}`);
+  Logger.info(`[Main Window at App Launch] XY coordinates: (${mainWindowState.x}, ${mainWindowState.y})`);
+  Logger.info(`[Main Window at App Launch] isFullScreen: ${mainWindowState.isFullScreen}`);
+  Logger.info(`[Main Window at App Launch] isMaximized: ${mainWindowState.isMaximized}`);
 }
