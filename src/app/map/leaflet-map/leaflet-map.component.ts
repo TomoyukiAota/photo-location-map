@@ -37,7 +37,7 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
   private set selectedLayerName(layerName: string) {
     UserDataStorage.write(UserDataStoragePath.LeafletMap.SelectedLayer, layerName);
-    Analytics.trackEvent('Leaflet Map', `Changed Layer to "${layerName}"`);
+    Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Changed Layer`, `Changed Layer to "${layerName}"`);
   }
 
   constructor(private changeDetectorRef: ChangeDetectorRef,

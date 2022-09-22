@@ -36,8 +36,6 @@ export class FolderSelectionRecorder {
     const perfEntries = performance.getEntriesByName(this.perfMeasureName);
     const duration = perfEntries[0].duration.toFixed(3);
     Logger.info(`Folder Selection Result: ${resultStr}, Performance: ${duration} [ms]`, perfEntries);
-    Analytics.trackEvent('Selected Folder Info',
-      `Selected Folder Info: Performance (${resultStr})`,
-      ` Performance (${resultStr}): ${duration} [ms]`);
+    Analytics.trackEvent('Selected Folder Info', `Selected Folder: Performance`, `Performance (${resultStr}): ${duration} [ms]`);
   }
 }

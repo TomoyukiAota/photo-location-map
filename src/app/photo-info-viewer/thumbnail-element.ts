@@ -159,7 +159,7 @@ export class ThumbnailElement {
 
   private static handleThumbnailClick(photo: Photo): void {
     logger.info(`Clicked the thumbnail of ${photo.path}`);
-    Analytics.trackEvent('Photo Info Viewer', 'Clicked Thumbnail');
+    Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked Thumbnail');
     PhotoViewerLauncher.launch(photo);
   }
 
