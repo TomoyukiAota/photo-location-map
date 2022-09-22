@@ -1,4 +1,3 @@
-import { screen } from 'electron';
 import * as windowStateKeeper from 'electron-window-state';
 import { Analytics } from '../src-shared/analytics/analytics';
 import { Logger } from '../src-shared/log/logger';
@@ -19,6 +18,7 @@ export function createMainWindowState() {
 export function recordWindowState(): void {
   const isFirstLaunch = LaunchInfo.isFirstLaunch;
   if (isFirstLaunch) {
+    // eslint-disable-next-line max-len
     Analytics.trackEvent('Main Window at App Launch', 'Main Window: isFirstLaunch', `isFirstLaunch: ${isFirstLaunch}, so width and height are defaulted to ${defaultConfig.defaultWidth}x${defaultConfig.defaultHeight}`);
     Analytics.trackEvent('Main Window at App Launch (1st time)', 'Main Window: Dimensions', `Window Dimensions: ${mainWindowState.width}x${mainWindowState.height}`);
     Analytics.trackEvent('Main Window at App Launch (1st time)', 'Main Window: XY coordinates', `XY coordinates: (${mainWindowState.x}, ${mainWindowState.y})`);
