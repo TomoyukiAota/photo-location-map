@@ -5,10 +5,10 @@ export function trackOpeningPhotoDataViewer(bounds: Electron.Rectangle) {
 
   const {x, y, width, height} = bounds;
   Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Opened`);
-  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Open Position X`, `Position X: ${x}`);
-  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Open Position Y`, `Position Y: ${y}`);
-  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Open Width`, `Width: ${width}`);
-  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Open Height`, `Height: ${height}`);
+  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Opened Position X`, `Position X: ${x}`);
+  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Opened Position Y`, `Position Y: ${y}`);
+  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Opened Width`, `Width: ${width}`);
+  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Opened Height`, `Height: ${height}`);
 }
 
 export function trackClosingPhotoDataViewer(bounds: Electron.Rectangle) {
@@ -20,8 +20,8 @@ export function trackClosingPhotoDataViewer(bounds: Electron.Rectangle) {
 
   const {x, y, width, height} = bounds;
   Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Closed`);
-  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Close Position X`, `Position X: ${x}`);
-  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Close Position Y`, `Position Y: ${y}`);
-  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Close Width`, `Width: ${width}`);
-  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Close Height`, `Height: ${height}`);
+  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Closed Position X`, `Position X: ${x}`);
+  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Closed Position Y`, `Position Y: ${y}`);
+  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Closed Width`, `Width: ${width}`);
+  Analytics.trackEvent('Photo Data Viewer', `[PDV] Window Closed Height`, `Height: ${height}`);
 }
