@@ -1,38 +1,38 @@
-import { Logger } from '../../log/logger';
-import { ProcessIdentifier } from '../../process/process-identifier';
+import { createPrependedLogger } from '../../log/create-prepended-logger';
 import { AnalyticsConfig } from '../config/analytics-config';
 import { UniversalAnalyticsConfig } from '../config/universal-analytics-config';
 
+const uaLogger = createPrependedLogger('[Universal Analytics]');
+
 export class UniversalAnalyticsWrapper {
   private static visitor: ReturnType<typeof import('universal-analytics')>;
-  private static userAgent: string = null;
+  private static isUserAgentSet = false;
 
   public static initialize() {
     const trackingId = UniversalAnalyticsConfig.trackingId;
     const userId = AnalyticsConfig.userId;
+    uaLogger.info(`Tracking ID: ${trackingId}`);
+    uaLogger.info(`User ID: ${userId}`);
     const ua = require('universal-analytics');
     this.visitor = ua(trackingId, userId);
-    Logger.info(`[Universal Analytics] Tracking ID: ${trackingId}`);
-    Logger.info(`[Universal Analytics] User ID: ${userId}`);
   }
 
   public static setUserAgent(userAgent: string) {
-    if (ProcessIdentifier.isElectronMain) {
-      this.userAgent = userAgent;
-      if (this.visitor) {
-        this.visitor.set('userAgentOverride', userAgent);
-        Logger.info(`[Universal Analytics] User Agent for Universal Analytics is "${userAgent}"`);
-      } else {
-        throw new Error('UniversalAnalyticsWrapper::initialize needs to be called before calling setUserAgent.');
-      }
-    } else {
-      throw new Error('UniversalAnalyticsWrapper::setUserAgent cannot be called in renderer process. Call it in main process.');
+    if (!this.visitor) {
+      uaLogger.error('UniversalAnalyticsWrapper::initialize needs to be called before calling setUserAgent.');
+      return;
     }
+
+    this.visitor.set('userAgentOverride', userAgent);
+    uaLogger.info(`User Agent for Universal Analytics is "${userAgent}"`);
+    this.isUserAgentSet = true;
   }
 
   public static trackEvent(category: string, action: string, label?: string, value?: string | number): void {
-    if (!this.userAgent)
-      throw new Error('User Agent needs to be set before calling Analytics.trackEvent');
+    if (!this.isUserAgentSet) {
+      uaLogger.error('User Agent needs to be set before calling Analytics.trackEvent');
+      return;
+    }
 
     this.visitor
       .event({
