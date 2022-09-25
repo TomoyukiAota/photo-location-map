@@ -28,7 +28,12 @@ export class GtagWrapper {
     const eventName = action;
     if (eventName.length > 40) {
       ga4Logger.warn(`Event name length exceeds the limit (40 characters).`);
-      ga4Logger.warn(`event name (action): ${eventName}, category: ${category}, label: ${label}, value: ${value}`);
+      ga4Logger.warn(`Event Name (Action): ${eventName}, Category: ${category}, Label: ${label}, Value: ${value}`);
+      gtag('event', 'Event Name Length Exceeds GA4 Limit', {
+        event_category: 'Event Name Length Exceeds GA4 Limit',
+        event_label: `Event Name: ${eventName}, Category: ${category}, Label: ${label}, Value: ${value}`,
+        value: `User ID: ${AnalyticsConfig.userId}`,
+      });
     }
 
     gtag('event', eventName, {
