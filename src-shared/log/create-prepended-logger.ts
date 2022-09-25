@@ -1,6 +1,6 @@
 import { Logger } from './logger';
 
-class PrependedLogger {
+export class PrependedLogger {
   constructor(private stringToPrepend: string) {
   }
 
