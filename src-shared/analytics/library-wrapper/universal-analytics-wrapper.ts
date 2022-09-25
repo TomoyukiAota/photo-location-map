@@ -1,6 +1,11 @@
 import { createPrependedLogger } from '../../log/create-prepended-logger';
 import { AnalyticsConfig } from '../config/analytics-config';
 import { UniversalAnalyticsConfig } from '../config/universal-analytics-config';
+import {
+  AnalyticsLibraryWrapperInitialize,
+  AnalyticsLibraryWrapperSetUserAgent,
+  AnalyticsLibraryWrapperTrackEvent
+} from './library-wrapper-decorator';
 
 const uaLogger = createPrependedLogger('[Universal Analytics]');
 
@@ -8,6 +13,7 @@ export class UniversalAnalyticsWrapper {
   private static visitor: ReturnType<typeof import('universal-analytics')>;
   private static isUserAgentSet = false;
 
+  @AnalyticsLibraryWrapperInitialize(uaLogger)
   public static initialize() {
     const trackingId = UniversalAnalyticsConfig.trackingId;
     const userId = AnalyticsConfig.userId;
@@ -17,6 +23,7 @@ export class UniversalAnalyticsWrapper {
     this.visitor = ua(trackingId, userId);
   }
 
+  @AnalyticsLibraryWrapperSetUserAgent(uaLogger)
   public static setUserAgent(userAgent: string) {
     if (!this.visitor) {
       uaLogger.error('UniversalAnalyticsWrapper::initialize needs to be called before calling setUserAgent.');
@@ -28,6 +35,7 @@ export class UniversalAnalyticsWrapper {
     this.isUserAgentSet = true;
   }
 
+  @AnalyticsLibraryWrapperTrackEvent(uaLogger)
   public static trackEvent(category: string, action: string, label?: string, value?: string | number): void {
     if (!this.isUserAgentSet) {
       uaLogger.error('User Agent needs to be set before calling Analytics.trackEvent');

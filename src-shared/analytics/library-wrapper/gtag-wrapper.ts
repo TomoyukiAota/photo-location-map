@@ -1,12 +1,14 @@
 import { createPrependedLogger } from '../../log/create-prepended-logger';
 import { AnalyticsConfig } from '../config/analytics-config';
 import { GoogleAnalytics4Config } from '../config/google-analytics-4-config';
+import { AnalyticsLibraryWrapperInitialize, AnalyticsLibraryWrapperTrackEvent } from './library-wrapper-decorator';
 
 const ga4Logger = createPrependedLogger('[Google Analytics 4]');
 
 export class GtagWrapper {
   private static isInitialized = false;
 
+  @AnalyticsLibraryWrapperInitialize(ga4Logger)
   public static initialize() {
     const measurementId = GoogleAnalytics4Config.measurementId;
     const userId = AnalyticsConfig.userId;
@@ -19,6 +21,7 @@ export class GtagWrapper {
     this.isInitialized = true;
   }
 
+  @AnalyticsLibraryWrapperTrackEvent(ga4Logger)
   public static trackEvent(category: string, action: string, label?: string, value?: string | number) {
     if (!this.isInitialized) {
       ga4Logger.error('GtagWrapper::initialize needs to be called before calling GtagWrapper::trackEvent');
