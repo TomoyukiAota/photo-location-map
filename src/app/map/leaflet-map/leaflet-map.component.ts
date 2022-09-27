@@ -13,7 +13,7 @@ import { LeafletMapForceRenderService } from './leaflet-map-force-render/leaflet
 // - https://github.com/shramov/leaflet-plugins/blob/master/examples/bing.html
 // - https://github.com/shramov/leaflet-plugins/blob/master/layer/tile/Bing.js
 import 'leaflet-plugins/layer/tile/Bing'; // Equivalent to <script src="https://github.com/shramov/leaflet-plugins/blob/master/layer/tile/Bing.js"></script>
-import 'leaflet-plugins/layer/tile/Bing.addon.applyMaxNativeZoom'
+import 'leaflet-plugins/layer/tile/Bing.addon.applyMaxNativeZoom';
 
 // "declare let L: any;" is defined here (in addition to global scope typing given by type-declaration/index.d.ts)
 // in order to avoid the compile errors for the types from leaflet.markercluster

@@ -34,6 +34,7 @@
     "publish:windows": "npm run electron-builder:windows -- --publish always",
     "notarize-history": "node script/notarize/get-notarization-history.js",
     "lint:ng": "ng lint",
+    "lint:ng:fix": "ng lint --fix",
     "lint:script": "eslint -c ./script/.eslintrc.script.js ./script/**/*.js",
     "lint:script:fix": "npm run lint:script -- --fix",
     "lint:all": "npm-run-all lint:ng lint:script",
