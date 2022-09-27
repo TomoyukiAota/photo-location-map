@@ -1,3 +1,4 @@
+import { AmplitudeAnalyticsBrowserIpcMain } from './ipc/amplitude-analytics-browser-ipc';
 import { GoogleAnalytics4IpcMain } from './ipc/google-analytics-4-ipc';
 import { MixpanelBrowserIpcMain } from './ipc/mixpanel-browser-ipc';
 import { UniversalAnalyticsIpcMain } from './ipc/universal-analytics-ipc';
@@ -12,6 +13,7 @@ export class AnalyticsMain implements AnalyticsInterface {
 
   public trackEvent(category: string, action: string, label?: string, value?: string | number): void {
     UniversalAnalyticsWrapper.trackEvent(category, action, label, value);
+    AmplitudeAnalyticsBrowserIpcMain.sendEventToRenderer(category, action, label, value);
     MixpanelBrowserIpcMain.sendEventToRenderer(category, action, label, value);
     GoogleAnalytics4IpcMain.sendEventToRenderer(category, action, label, value);
   }
