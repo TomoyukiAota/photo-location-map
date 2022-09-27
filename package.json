@@ -50,6 +50,7 @@
     "check": "npm-check --skip-unused --save-exact --update"
   },
   "dependencies": {
+    "@amplitude/analytics-browser": "1.5.0",
     "@electron/remote": "2.0.7",
     "delete-empty": "3.0.0",
     "directory-tree": "2.3.1",
