@@ -11,7 +11,7 @@ export class MoreOptionsMenuElement {
     menuItems.forEach(item => {
       const menuItemElement = this.createMenuItemElement(item.text, item.onClick);
       menuElement.appendChild(menuItemElement);
-    })
+    });
 
     return menuElement;
   }

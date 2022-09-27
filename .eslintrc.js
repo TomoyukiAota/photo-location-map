@@ -56,7 +56,12 @@ module.exports = {
           }
         ],
         "no-extra-boolean-cast": "off",
-        "no-underscore-dangle": "off"
+        "no-underscore-dangle": "off",
+
+        // To enable "@typescript-eslint/semi", "semi" needs to be disabled as it can report incorrect errors.
+        // See https://typescript-eslint.io/rules/semi/
+        "semi": "off",
+        "@typescript-eslint/semi": "error",
       }
     },
     {
