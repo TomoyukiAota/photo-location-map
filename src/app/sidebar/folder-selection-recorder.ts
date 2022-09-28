@@ -1,3 +1,5 @@
+import * as moment from 'moment';
+import 'moment-duration-format'; // To use moment.duration().format()
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { Logger } from '../../../src-shared/log/logger';
 
@@ -34,8 +36,8 @@ export class FolderSelectionRecorder {
     performance.mark(this.perfEndMarkName);
     performance.measure(this.perfMeasureName, this.perfStartMarkName, this.perfEndMarkName);
     const perfEntries = performance.getEntriesByName(this.perfMeasureName);
-    const duration = perfEntries[0].duration.toFixed(3);
-    Logger.info(`Folder Selection Result: ${resultStr}, Performance: ${duration} [ms]`, perfEntries);
-    Analytics.trackEvent('Selected Folder Info', `Selected Folder: Performance`, `Performance (${resultStr}): ${duration} [ms]`);
+    const duration = moment.duration(perfEntries[0].duration).format('HH:mm:ss.SSS', { trim: false });
+    Logger.info(`Folder Selection Result: ${resultStr}, Performance: ${duration}`, perfEntries);
+    Analytics.trackEvent('Selected Folder Info', `Selected Folder: Performance`, `Performance (${resultStr}): ${duration}`);
   }
 }
