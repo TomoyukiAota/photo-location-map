@@ -12,7 +12,7 @@ export function requestMainProcessToLaunchPhotoDataViewer(photo: Photo) {
       name: photo.name,
       path: photo.path,
     }
-  }
+  };
   // noinspection JSIgnoredPromiseFromCall
   ipcRenderer.invoke(IpcConstants.PhotoDataViewer.Name, ipcParams);
 }

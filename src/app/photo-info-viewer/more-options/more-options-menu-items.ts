@@ -31,7 +31,7 @@ export function getMoreOptionsMenuItems(photo: Photo): MoreOptionsMenuItem[] {
   menuItems.push({
     text: 'View Data',
     onClick: () => handleViewDataMenuItemClicked(photo)
-  })
+  });
 
   return menuItems;
 }
