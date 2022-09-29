@@ -1,4 +1,5 @@
 import * as moment from 'moment-timezone';
+import { getMomentDiff, getMomentDiffAsIso8601, MomentDiffArgs } from '../src-shared/date-time/moment-diff';
 import { Now } from '../src-shared/date-time/now';
 import { UserDataStoragePath } from '../src-shared/user-data-storage/user-data-stroage-path';
 import { UserDataStorage } from '../src-shared/user-data-storage/user-data-storage';
@@ -11,6 +12,7 @@ export class LaunchInfo {
   public static lastLaunchDateTime: string;
   public static firstLaunchDateTime: string;
   public static periodOfUse: string;
+  public static periodOfUseAsIso8601: string;
   public static launchCount: number;
 
   public static get isFirstLaunch(): boolean {
@@ -42,8 +44,10 @@ export class LaunchInfo {
 
     this.firstLaunchDateTime = firstLaunchDateTime;
 
-    const duration = moment.duration(moment(now).diff(moment(firstLaunchDateTime)));
-    this.periodOfUse = duration.toISOString();
+    const arg: MomentDiffArgs = {start: moment(firstLaunchDateTime), end: moment(now)};
+    const d = getMomentDiff(arg);
+    this.periodOfUse = `${d.years} years ${d.months} months ${d.days} days ${d.hours} hours ${d.minutes} minutes ${d.seconds} seconds`;
+    this.periodOfUseAsIso8601 = getMomentDiffAsIso8601(arg);
   }
 
   private static initializeLaunchCount(): void {

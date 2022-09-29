@@ -34,6 +34,9 @@ const recordPeriodOfUse = () => {
   const periodOfUse = LaunchInfo.periodOfUse;
   Analytics.trackEvent('Launch Info', `Launch Info: Period of Use`, `Period of Use: ${periodOfUse}`);
   Logger.info(`Period of Use: ${periodOfUse}`);
+  const periodOfUseAsIso8601 = LaunchInfo.periodOfUseAsIso8601;
+  Analytics.trackEvent('Launch Info', `Launch Info: Period of Use (ISO 8601)`, `Period of Use (ISO 8601): ${periodOfUseAsIso8601}`);
+  Logger.info(`Period of Use (ISO 8601): ${periodOfUseAsIso8601}`);
 };
 
 const recordLaunchCount = () => {
