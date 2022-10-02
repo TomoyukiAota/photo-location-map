@@ -44,8 +44,8 @@ export class LaunchInfo {
     this.firstLaunchDateTime = firstLaunchDateTime;
 
     const args: MomentDiffArgs = {start: moment(firstLaunchDateTime), end: moment(this.currentLaunchDateTime)};
-    const d = getMomentDiff(args);
-    this.periodOfUse = `${d.years} years ${d.months} months ${d.days} days ${d.hours} hours ${d.minutes} minutes ${d.seconds} seconds`;
+    const diff = getMomentDiff(args);
+    this.periodOfUse = `${diff.years} years ${diff.months} months ${diff.days} days ${diff.hours} hours ${diff.minutes} minutes ${diff.seconds} seconds`;
     this.periodOfUseAsIso8601 = getMomentDiffAsIso8601(args);
   }
 
