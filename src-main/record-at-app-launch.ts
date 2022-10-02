@@ -2,7 +2,6 @@ import * as os from 'os';
 import { app, screen } from 'electron';
 import { Analytics } from '../src-shared/analytics/analytics';
 import { DateTimeFormat } from '../src-shared/date-time/date-time-format';
-import { Now } from '../src-shared/date-time/now';
 import { DevOrProd } from '../src-shared/dev-or-prod/dev-or-prod';
 import { Logger } from '../src-shared/log/logger';
 import { UserDataStorage } from '../src-shared/user-data-storage/user-data-storage';
@@ -11,11 +10,14 @@ import { currentUserSettings } from '../src-shared/user-settings/user-settings';
 import { LaunchInfo } from './launch-info';
 import { recordWindowState } from './window-config';
 
-const now = Now.extendedFormat;
-
 const recordAppLaunch = () => {
-  Analytics.trackEvent('App Launch', `App Launch`, `Launched at ${now}`);
-  Logger.info(`Application is launched at ${now}`);
+  Analytics.trackEvent('App Launch', `App Launch`);
+};
+
+const recordCurrentLaunchDateTime = () => {
+  const currentLaunchDateTime = LaunchInfo.currentLaunchDateTime;
+  Analytics.trackEvent('Launch Info', `Launch Info: Current Launch Date`, `Current Launch Date: ${currentLaunchDateTime}`);
+  Logger.info(`Current Launch Date: ${currentLaunchDateTime}`);
 };
 
 const recordLastLaunchDateTime = () => {
@@ -85,6 +87,7 @@ const recordLoadedLeafletLayer = () => {
 
 export const recordAtAppLaunch = () => {
   recordAppLaunch();
+  recordCurrentLaunchDateTime();
   recordLastLaunchDateTime();
   recordFirstLaunchDateTime();
   recordPeriodOfUse();
