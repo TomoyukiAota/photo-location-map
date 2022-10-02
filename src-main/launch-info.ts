@@ -44,10 +44,10 @@ export class LaunchInfo {
 
     this.firstLaunchDateTime = firstLaunchDateTime;
 
-    const arg: MomentDiffArgs = {start: moment(firstLaunchDateTime), end: moment(now)};
-    const d = getMomentDiff(arg);
+    const args: MomentDiffArgs = {start: moment(firstLaunchDateTime), end: moment(now)};
+    const d = getMomentDiff(args);
     this.periodOfUse = `${d.years} years ${d.months} months ${d.days} days ${d.hours} hours ${d.minutes} minutes ${d.seconds} seconds`;
-    this.periodOfUseAsIso8601 = getMomentDiffAsIso8601(arg);
+    this.periodOfUseAsIso8601 = getMomentDiffAsIso8601(args);
   }
 
   private static initializeLaunchCount(): void {
