@@ -6,9 +6,8 @@ import { UserDataStorage } from '../src-shared/user-data-storage/user-data-stora
 
 const isNaturalNumber = require('is-natural-number');
 
-const now = Now.extendedFormat;
-
 export class LaunchInfo {
+  public static currentLaunchDateTime = Now.extendedFormat;
   public static lastLaunchDateTime: string;
   public static firstLaunchDateTime: string;
   public static periodOfUse: string;
@@ -29,7 +28,7 @@ export class LaunchInfo {
     this.lastLaunchDateTime = UserDataStorage.readOrDefault(
       UserDataStoragePath.History.LastLaunchDateTime,
       '"This is the first launch."');
-    UserDataStorage.write(UserDataStoragePath.History.LastLaunchDateTime, now);
+    UserDataStorage.write(UserDataStoragePath.History.LastLaunchDateTime, this.currentLaunchDateTime);
   }
 
   private static initializeFirstLaunchDateTimeAndPeriodOfUse(): void {
@@ -38,16 +37,16 @@ export class LaunchInfo {
     try {
       firstLaunchDateTime = UserDataStorage.read(UserDataStoragePath.History.FirstLaunchDateTime);
     } catch {
-      firstLaunchDateTime = now;
+      firstLaunchDateTime = this.currentLaunchDateTime;
       UserDataStorage.write(UserDataStoragePath.History.FirstLaunchDateTime, firstLaunchDateTime);
     }
 
     this.firstLaunchDateTime = firstLaunchDateTime;
 
-    const arg: MomentDiffArgs = {start: moment(firstLaunchDateTime), end: moment(now)};
-    const d = getMomentDiff(arg);
-    this.periodOfUse = `${d.years} years ${d.months} months ${d.days} days ${d.hours} hours ${d.minutes} minutes ${d.seconds} seconds`;
-    this.periodOfUseAsIso8601 = getMomentDiffAsIso8601(arg);
+    const args: MomentDiffArgs = {start: moment(firstLaunchDateTime), end: moment(this.currentLaunchDateTime)};
+    const diff = getMomentDiff(args);
+    this.periodOfUse = `${diff.years} years ${diff.months} months ${diff.days} days ${diff.hours} hours ${diff.minutes} minutes ${diff.seconds} seconds`;
+    this.periodOfUseAsIso8601 = getMomentDiffAsIso8601(args);
   }
 
   private static initializeLaunchCount(): void {
