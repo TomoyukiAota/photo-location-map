@@ -14,7 +14,7 @@ const recordAppLaunch = () => {
   Analytics.trackEvent('App Launch', `App Launch`);
 };
 
-const recordCurrentLaunchDate = () => {
+const recordCurrentLaunchDateTime = () => {
   const currentLaunchDateTime = LaunchInfo.currentLaunchDateTime;
   Analytics.trackEvent('Launch Info', `Launch Info: Current Launch Date`, `Current Launch Date: ${currentLaunchDateTime}`);
   Logger.info(`Current Launch Date: ${currentLaunchDateTime}`);
@@ -87,7 +87,7 @@ const recordLoadedLeafletLayer = () => {
 
 export const recordAtAppLaunch = () => {
   recordAppLaunch();
-  recordCurrentLaunchDate();
+  recordCurrentLaunchDateTime();
   recordLastLaunchDateTime();
   recordFirstLaunchDateTime();
   recordPeriodOfUse();
