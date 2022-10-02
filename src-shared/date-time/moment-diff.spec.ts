@@ -19,7 +19,7 @@ describe('getMomentDiff', () => {
     expect(diff).toEqual({years: 8, months: 0, days: 0, hours: 0, minutes: 0, seconds: 0});
   });
 
-  // For this test case, moment's duration gives 2 years 11 months 29 days instead of 3 years.
+  // For this test case, moment.js's duration gives 2 years 11 months 29 days instead of 3 years.
   // See the comment in https://stackoverflow.com/a/34001163/7947548
   // It does not seem correct, but moment.js's duration is used instead of hand-crafted logic because
   // 1) it's very difficult to correctly handle all edge cases with hand-crafted logic, and
