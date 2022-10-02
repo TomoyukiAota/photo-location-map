@@ -21,9 +21,10 @@ describe('getMomentDiff', () => {
 
   // For this test case, moment.js's duration gives 2 years 11 months 29 days instead of 3 years.
   // See the comment in https://stackoverflow.com/a/34001163/7947548
-  // It does not seem correct, but moment.js's duration is used instead of hand-crafted logic because
-  // 1) it's very difficult to correctly handle all edge cases with hand-crafted logic, and
-  // 2) as of October 2022 the use case is analytics which can accept errors to some degree.
+  // It does not seem correct, but moment.js's duration is used instead of hand-crafted logic
+  // because of the following reasons:
+  // 1) It's very difficult to correctly handle all edge cases with hand-crafted logic.
+  // 2) As of October 2022, the use cases are analytics where errors to some degree are acceptable.
   it('Edge case 2: from [2013, 1, 1] to [2016, 1, 1]', () => {
     const start = moment([2013, 1, 1]);
     const end   = moment([2016, 1, 1]);
