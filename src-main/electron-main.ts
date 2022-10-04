@@ -1,7 +1,5 @@
 import './configure-electron-unhandled';
 import { app, BrowserWindow, protocol } from 'electron';
-import * as path from 'path';
-import * as url from 'url';
 import * as electronWebPreferences from '../electron-util/electron-web-preferences';
 import '../electron-util/configure-electron-remote-in-main-process';
 import { AmplitudeAnalyticsBrowserIpcMain } from '../src-shared/analytics/ipc/amplitude-analytics-browser-ipc';
@@ -14,6 +12,7 @@ import './auto-update/configure-auto-update';
 import './menu/menu';
 import './photo-data-viewer/photo-data-viewer-ipc-setup';
 import './thumbnail-generation/thumbnail-generation-ipc-setup';
+import { launchFileServerIfNeeded } from './file-server';
 import { recordAtAppLaunch } from './record-at-app-launch';
 import { createMainWindowState } from './window-config';
 
@@ -33,7 +32,7 @@ function configureAnalytics(mainWindow: BrowserWindow) {
   mainWindow.on('ready-to-show', () => { recordAtAppLaunch(); });
 }
 
-const createWindow = () => {
+const createWindow = async () => {
   const mainWindowState = createMainWindowState();
 
   mainWindow = new BrowserWindow({
@@ -52,14 +51,10 @@ const createWindow = () => {
     require('electron-reload')(__dirname, {
       electron: require(`${__dirname}/../node_modules/electron`)
     });
-    mainWindow.loadURL('http://localhost:4200');
-  } else {
-    mainWindow.loadURL(url.format({
-      pathname: path.join(__dirname, '..', 'dist', 'index.html'),
-      protocol: 'file:',
-      slashes: true
-    }));
   }
+
+  const serverUrl = await launchFileServerIfNeeded(isLiveReloadMode);
+  mainWindow.loadURL(serverUrl);
 
   if (isLiveReloadMode) {
     mainWindow.webContents.openDevTools();
