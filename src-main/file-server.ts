@@ -15,7 +15,8 @@ async function findAvailablePort(): Promise<number> {
   // See https://en.wikipedia.org/wiki/Ephemeral_port
   // -------------------------------------------------------------
   // The app launches faster when the default port can be used.
-  // In case the default port is already used (e.g. launching multiple instances of this app),
+  // In case the default port is already in use
+  // (e.g. some app using the same port, or running multiple instances of this app),
   // it takes a few seconds to launch.
   // Therefore, the default port number is chosen so that
   // 1) other apps do not seem to use, and
