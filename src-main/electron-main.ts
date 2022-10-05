@@ -34,8 +34,8 @@ const createWindow = async () => {
 
   mainWindow.on('ready-to-show', () => {
     // Call recordAtAppLaunch on ready-to-show event so that
-    // IPC setup for analytics is already done in the renderer process.
-    // If IPC is not ready, Analytics.trackEvent will not work.
+    // recordAtAppLaunch is called after IPC setup for analytics in the renderer process is done.
+    // This is because recordAtAppLaunch calls Analytics.trackEvent which requires the IPC setup to be done.
     recordAtAppLaunch();
   });
 
