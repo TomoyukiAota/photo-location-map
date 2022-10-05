@@ -1,19 +1,16 @@
 import './configure-electron-unhandled';
 import { app, BrowserWindow, protocol } from 'electron';
-import * as path from 'path';
-import * as url from 'url';
 import * as electronWebPreferences from '../electron-util/electron-web-preferences';
 import '../electron-util/configure-electron-remote-in-main-process';
-import { AmplitudeAnalyticsBrowserIpcMain } from '../src-shared/analytics/ipc/amplitude-analytics-browser-ipc';
-import { GoogleAnalytics4IpcMain } from '../src-shared/analytics/ipc/google-analytics-4-ipc';
-import { MixpanelBrowserIpcMain } from '../src-shared/analytics/ipc/mixpanel-browser-ipc';
-import { UniversalAnalyticsWrapper } from '../src-shared/analytics/library-wrapper/universal-analytics-wrapper';
 import { Logger } from '../src-shared/log/logger';
 import { LogFileConfig } from '../src-shared/log/log-file-config';
 import './auto-update/configure-auto-update';
+import { launchFileServerIfNeeded } from './file-server/launch-file-server';
 import './menu/menu';
 import './photo-data-viewer/photo-data-viewer-ipc-setup';
 import './thumbnail-generation/thumbnail-generation-ipc-setup';
+import { configureMainWindowForAnalytics } from './configure-main-window-for-analytics';
+import { LiveReload } from './live-reload';
 import { recordAtAppLaunch } from './record-at-app-launch';
 import { createMainWindowState } from './window-config';
 
@@ -21,19 +18,8 @@ import { createMainWindowState } from './window-config';
 Logger.info(`Log File Location: ${LogFileConfig.filePath}`);
 
 export let mainWindow: BrowserWindow;
-const args = process.argv.slice(1);
-const isLiveReloadMode = args.some(val => val === '--serve');
 
-function configureAnalytics(mainWindow: BrowserWindow) {
-  const userAgent = mainWindow.webContents.userAgent;
-  UniversalAnalyticsWrapper.setUserAgent(userAgent);
-  AmplitudeAnalyticsBrowserIpcMain.setMainWindow(mainWindow);
-  MixpanelBrowserIpcMain.setMainWindow(mainWindow);
-  GoogleAnalytics4IpcMain.setMainWindow(mainWindow);
-  mainWindow.on('ready-to-show', () => { recordAtAppLaunch(); });
-}
-
-const createWindow = () => {
+const createWindow = async () => {
   const mainWindowState = createMainWindowState();
 
   mainWindow = new BrowserWindow({
@@ -44,24 +30,27 @@ const createWindow = () => {
     webPreferences: electronWebPreferences,
   });
 
-  configureAnalytics(mainWindow);
+  configureMainWindowForAnalytics(mainWindow);
+
+  mainWindow.on('ready-to-show', () => {
+    // Call recordAtAppLaunch on ready-to-show event so that
+    // recordAtAppLaunch is called after IPC setup for analytics in the renderer process is done.
+    // This is because recordAtAppLaunch calls Analytics.trackEvent which requires the IPC setup to be done.
+    recordAtAppLaunch();
+  });
 
   mainWindow.on('closed', () => { mainWindow = null; });
 
-  if (isLiveReloadMode) {
+  if (LiveReload.enabled) {
     require('electron-reload')(__dirname, {
       electron: require(`${__dirname}/../node_modules/electron`)
     });
-    mainWindow.loadURL('http://localhost:4200');
-  } else {
-    mainWindow.loadURL(url.format({
-      pathname: path.join(__dirname, '..', 'dist', 'index.html'),
-      protocol: 'file:',
-      slashes: true
-    }));
   }
 
-  if (isLiveReloadMode) {
+  const serverUrl = await launchFileServerIfNeeded();
+  mainWindow.loadURL(serverUrl);
+
+  if (LiveReload.enabled) {
     mainWindow.webContents.openDevTools();
   }
 

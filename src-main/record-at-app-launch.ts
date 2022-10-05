@@ -7,7 +7,9 @@ import { Logger } from '../src-shared/log/logger';
 import { UserDataStorage } from '../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../src-shared/user-data-storage/user-data-stroage-path';
 import { currentUserSettings } from '../src-shared/user-settings/user-settings';
+import { FileServerPortNumber } from './file-server/file-server-port-number';
 import { LaunchInfo } from './launch-info';
+import { LiveReload } from './live-reload';
 import { recordWindowState } from './window-config';
 
 const recordAppLaunch = () => {
@@ -83,7 +85,17 @@ const recordLoadedUserSettings = () => {
 const recordLoadedLeafletLayer = () => {
   const loadedLayerName = UserDataStorage.readOrDefault(UserDataStoragePath.LeafletMap.SelectedLayer, 'Not Loaded');
   Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Layer at App Launch`, `Layer at App Launch: "${loadedLayerName}"`);
-}
+};
+
+const recordFileServer = () => {
+  Analytics.trackEvent('Live Reload Mode', 'Live Reload Mode', `Live Reload Mode: ${LiveReload.enabled}`);
+  if (LiveReload.enabled) return;
+
+  Analytics.trackEvent('File Server', '[File Server] Port Search Status', `Port Search Status: ${FileServerPortNumber.searchStatus}`);
+  Analytics.trackEvent('File Server', '[File Server] Found Port Number', `Found Port Number: ${FileServerPortNumber.found}`);
+  Analytics.trackEvent('File Server', '[File Server] Default Port Number', `Default Port Number: ${FileServerPortNumber.default}`);
+  Analytics.trackEvent('File Server', '[File Server] Port: Found - Default', `Port: Found - Default = ${FileServerPortNumber.foundMinusDefault}`);
+};
 
 export const recordAtAppLaunch = () => {
   recordAppLaunch();
@@ -104,4 +116,6 @@ export const recordAtAppLaunch = () => {
   recordLoadedUserSettings();
 
   recordLoadedLeafletLayer();
+
+  recordFileServer();
 };
