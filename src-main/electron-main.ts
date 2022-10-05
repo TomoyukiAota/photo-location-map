@@ -2,16 +2,13 @@ import './configure-electron-unhandled';
 import { app, BrowserWindow, protocol } from 'electron';
 import * as electronWebPreferences from '../electron-util/electron-web-preferences';
 import '../electron-util/configure-electron-remote-in-main-process';
-import { AmplitudeAnalyticsBrowserIpcMain } from '../src-shared/analytics/ipc/amplitude-analytics-browser-ipc';
-import { GoogleAnalytics4IpcMain } from '../src-shared/analytics/ipc/google-analytics-4-ipc';
-import { MixpanelBrowserIpcMain } from '../src-shared/analytics/ipc/mixpanel-browser-ipc';
-import { UniversalAnalyticsWrapper } from '../src-shared/analytics/library-wrapper/universal-analytics-wrapper';
 import { Logger } from '../src-shared/log/logger';
 import { LogFileConfig } from '../src-shared/log/log-file-config';
 import './auto-update/configure-auto-update';
 import './menu/menu';
 import './photo-data-viewer/photo-data-viewer-ipc-setup';
 import './thumbnail-generation/thumbnail-generation-ipc-setup';
+import { configureMainWindowForAnalytics } from './configure-main-window-for-analytics';
 import { launchFileServerIfNeeded } from './file-server';
 import { recordAtAppLaunch } from './record-at-app-launch';
 import { createMainWindowState } from './window-config';
@@ -22,15 +19,6 @@ Logger.info(`Log File Location: ${LogFileConfig.filePath}`);
 export let mainWindow: BrowserWindow;
 const args = process.argv.slice(1);
 const isLiveReloadMode = args.some(val => val === '--serve');
-
-function configureAnalytics(mainWindow: BrowserWindow) {
-  const userAgent = mainWindow.webContents.userAgent;
-  UniversalAnalyticsWrapper.setUserAgent(userAgent);
-  AmplitudeAnalyticsBrowserIpcMain.setMainWindow(mainWindow);
-  MixpanelBrowserIpcMain.setMainWindow(mainWindow);
-  GoogleAnalytics4IpcMain.setMainWindow(mainWindow);
-  mainWindow.on('ready-to-show', () => { recordAtAppLaunch(); });
-}
 
 const createWindow = async () => {
   const mainWindowState = createMainWindowState();
@@ -43,7 +31,14 @@ const createWindow = async () => {
     webPreferences: electronWebPreferences,
   });
 
-  configureAnalytics(mainWindow);
+  configureMainWindowForAnalytics(mainWindow);
+
+  mainWindow.on('ready-to-show', () => {
+    // Call recordAtAppLaunch on ready-to-show event so that
+    // IPC setup for analytics is already done in the renderer process.
+    // If IPC is not ready, Analytics.trackEvent will not work.
+    recordAtAppLaunch();
+  });
 
   mainWindow.on('closed', () => { mainWindow = null; });
 
