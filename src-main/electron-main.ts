@@ -5,11 +5,12 @@ import '../electron-util/configure-electron-remote-in-main-process';
 import { Logger } from '../src-shared/log/logger';
 import { LogFileConfig } from '../src-shared/log/log-file-config';
 import './auto-update/configure-auto-update';
+import { launchFileServerIfNeeded } from './file-server/launch-file-server';
 import './menu/menu';
 import './photo-data-viewer/photo-data-viewer-ipc-setup';
 import './thumbnail-generation/thumbnail-generation-ipc-setup';
 import { configureMainWindowForAnalytics } from './configure-main-window-for-analytics';
-import { launchFileServerIfNeeded } from './file-server';
+import { LiveReload } from './live-reload';
 import { recordAtAppLaunch } from './record-at-app-launch';
 import { createMainWindowState } from './window-config';
 
@@ -17,8 +18,6 @@ import { createMainWindowState } from './window-config';
 Logger.info(`Log File Location: ${LogFileConfig.filePath}`);
 
 export let mainWindow: BrowserWindow;
-const args = process.argv.slice(1);
-const isLiveReloadMode = args.some(val => val === '--serve');
 
 const createWindow = async () => {
   const mainWindowState = createMainWindowState();
@@ -42,16 +41,16 @@ const createWindow = async () => {
 
   mainWindow.on('closed', () => { mainWindow = null; });
 
-  if (isLiveReloadMode) {
+  if (LiveReload.enabled) {
     require('electron-reload')(__dirname, {
       electron: require(`${__dirname}/../node_modules/electron`)
     });
   }
 
-  const serverUrl = await launchFileServerIfNeeded(isLiveReloadMode);
+  const serverUrl = await launchFileServerIfNeeded();
   mainWindow.loadURL(serverUrl);
 
-  if (isLiveReloadMode) {
+  if (LiveReload.enabled) {
     mainWindow.webContents.openDevTools();
   }
 
