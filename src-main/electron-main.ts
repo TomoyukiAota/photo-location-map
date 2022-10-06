@@ -10,6 +10,7 @@ import './menu/menu';
 import './photo-data-viewer/photo-data-viewer-ipc-setup';
 import './thumbnail-generation/thumbnail-generation-ipc-setup';
 import { configureMainWindowForAnalytics } from './configure-main-window-for-analytics';
+import { handleAppQuit } from './handle-app-quit';
 import { LiveReload } from './live-reload';
 import { recordAtAppLaunch } from './record-at-app-launch';
 import { createMainWindowState } from './window-config';
@@ -86,6 +87,8 @@ try {
       createWindow();
     }
   });
+
+  app.on('quit', () => handleAppQuit());
 
   // Below is a workaround for the issue that displaying a file with "file://" protocol
   // on the browser using development server results in an error like
