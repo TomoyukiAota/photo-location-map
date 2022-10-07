@@ -39,25 +39,61 @@ class PackageSmokeTest {
     }
   }
 
+  shouldRetry = false;
+  retryCount = 0;
+  maxRetryCount = 5;
+
+  decideWhetherToRetry(data) {
+    const isMacOs = global.process.platform === 'darwin';
+    if (isMacOs) {
+      const intermittentErrorMessageOnMacOs = 'The application cannot be opened for an unexpected reason, error=Error Domain=NSOSStatusErrorDomain Code=-10827 "kLSNoExecutableErr: The executable is missing"';
+      this.shouldRetry = !!data?.toString?.()?.includes?.(intermittentErrorMessageOnMacOs);
+      if (this.shouldRetry) {
+        logger.warn('The intermittent error message on macOS is observed.');
+      }
+    }
+  }
+
+  handleExecutableProcessStderr(data) {
+    logger.warn(`stderr: ${data}`);
+    this.decideWhetherToRetry(data);
+  }
+
+  handleExecutableProcessError(error) {
+    logger.error(`Failed to start ${testInfo.executableLaunchCommand}`);
+    logger.error(error);
+    throw error;
+  }
+
   async runExecutable() {
     const executionTime = 30000;
     logger.info(`Launch executable and let it run for ${executionTime} ms.`);
     logger.info(`Executable Launch Command: "${testInfo.executableLaunchCommand}"`);
-    const executableProcess = child_process.spawn(testInfo.executableLaunchCommand, [], { shell: true });
 
-    executableProcess.stdout.on('data', data => logger.info(`stdout: ${data}`));
-    executableProcess.stderr.on('data', data => logger.warn(`stderr: ${data}`));
-    executableProcess.on('close', code => logger.info(`"${testInfo.executableLaunchCommand}" is terminated.`));
+    do {
+      this.shouldRetry = false;
 
-    executableProcess.on('error', error => {
-      logger.error(`Failed to start ${testInfo.executableLaunchCommand}`);
-      logger.error(error);
-      throw error;
-    });
+      const executableProcess = child_process.spawn(testInfo.executableLaunchCommand, [], { shell: true });
+      executableProcess.stdout.on('data', data => logger.info(`stdout: ${data}`));
+      executableProcess.stderr.on('data', data => this.handleExecutableProcessStderr(data));
+      executableProcess.on('close', code => logger.info(`"${testInfo.executableLaunchCommand}" is terminated.`));
+      executableProcess.on('error', error => this.handleExecutableProcessError(error));
 
-    await new Promise(resolve => setTimeout(resolve, executionTime));
-    require('tree-kill')(executableProcess.pid);
-    logger.info('Finished running the executable.');
+      await new Promise(resolve => setTimeout(resolve, executionTime));
+      require('tree-kill')(executableProcess.pid);
+
+      if (this.retryCount > this.maxRetryCount) {
+        logger.error('Retry count exceeded the maximum for the executable launch command.');
+        this.shouldRetry = false;
+      }
+      if (this.shouldRetry) {
+        logger.info('Retrying the executable launch command because the intermittent error message on macOS was observed.');
+        this.retryCount++;
+        logger.info(`Executable Launch Command Retry Count: ${this.retryCount}`);
+      }
+    } while (this.shouldRetry);
+
+    logger.info('End of PackageSmokeTest::runExecutable function.');
   }
 
   getLogFileName() {
