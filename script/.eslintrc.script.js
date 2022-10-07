@@ -1,10 +1,10 @@
 module.exports = {
   env: {
     'node': true,
-    'es6': true,
+    'es2022': true,
   },
   parserOptions: {
-    'ecmaVersion': 2017
+    'ecmaVersion': 13,
   },
   rules: {
     semi: ['error', 'always'],
