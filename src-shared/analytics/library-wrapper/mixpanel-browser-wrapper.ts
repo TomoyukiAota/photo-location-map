@@ -1,4 +1,3 @@
-import * as mixpanel from 'mixpanel-browser';
 import { createPrependedLogger } from '../../log/create-prepended-logger';
 import { AnalyticsConfig } from '../config/analytics-config';
 import { AnalyticsLibraryWrapperInitialize, AnalyticsLibraryWrapperTrackEvent } from './library-wrapper-decorator';
@@ -6,6 +5,7 @@ import { AnalyticsLibraryWrapperInitialize, AnalyticsLibraryWrapperTrackEvent } 
 const mixpanelLogger = createPrependedLogger('[Mixpanel]');
 
 export class MixpanelBrowserWrapper {
+  private static mixpanel: typeof import('mixpanel-browser');
   private static isInitialized = false;
 
   @AnalyticsLibraryWrapperInitialize(mixpanelLogger)
@@ -14,8 +14,14 @@ export class MixpanelBrowserWrapper {
     const distinctId = AnalyticsConfig.userId;
     mixpanelLogger.info(`Project Token: ${projectToken}`);
     mixpanelLogger.info(`Distinct ID: ${distinctId}`);
-    mixpanel.init(projectToken);
-    mixpanel.identify(distinctId);
+
+    // Avoid import at the top of the file to avoid loading mixpanel-browser in the main process.
+    // As of Oct 2022, there is no problem in loading mixpanel-browser in the main process,
+    // but this is a preventative measure because mixpanel-browser is designed to be used in web browsers.
+    this.mixpanel = require('mixpanel-browser');
+
+    this.mixpanel.init(projectToken);
+    this.mixpanel.identify(distinctId);
     this.isInitialized = true;
   }
 
@@ -26,7 +32,7 @@ export class MixpanelBrowserWrapper {
       return;
     }
 
-    mixpanel.track(action, {
+    this.mixpanel.track(action, {
       category: category,
       label: label,
       value: value,
