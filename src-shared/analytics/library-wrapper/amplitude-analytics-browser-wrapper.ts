@@ -1,4 +1,3 @@
-import * as amplitude from '@amplitude/analytics-browser';
 import { createPrependedLogger } from '../../log/create-prepended-logger';
 import { AnalyticsConfig } from '../config/analytics-config';
 import { AnalyticsLibraryWrapperInitialize, AnalyticsLibraryWrapperTrackEvent } from './library-wrapper-decorator';
@@ -6,6 +5,7 @@ import { AnalyticsLibraryWrapperInitialize, AnalyticsLibraryWrapperTrackEvent } 
 const amplitudeLogger = createPrependedLogger('[Amplitude]');
 
 export class AmplitudeAnalyticsBrowserWrapper {
+  private static amplitude: typeof import('@amplitude/analytics-browser');
   private static isInitialized = false;
 
   @AnalyticsLibraryWrapperInitialize(amplitudeLogger)
@@ -16,8 +16,14 @@ export class AmplitudeAnalyticsBrowserWrapper {
     amplitudeLogger.info(`API Key: ${apiKey}`);
     amplitudeLogger.info(`User ID: ${userId}`);
     amplitudeLogger.info(`Device ID: ${deviceId}`);
-    amplitude.init(apiKey, userId);
-    amplitude.setDeviceId(deviceId);
+
+    // Avoid import at the top of the file to avoid loading @amplitude/analytics-browser in the main process.
+    // As of Oct 2022, there is no problem in loading @amplitude/analytics-browser in the main process,
+    // but this is a preventative measure because @amplitude/analytics-browser is designed to be used in web browsers.
+    this.amplitude = require('@amplitude/analytics-browser');
+
+    this.amplitude.init(apiKey, userId);
+    this.amplitude.setDeviceId(deviceId);
     this.isInitialized = true;
   }
 
@@ -28,10 +34,10 @@ export class AmplitudeAnalyticsBrowserWrapper {
       return;
     }
 
-    amplitude.track(action, {
+    this.amplitude.track(action, {
       category: category,
       label: label,
       value: value,
-    })
+    });
   }
 }
