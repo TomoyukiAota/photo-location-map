@@ -30,6 +30,6 @@ export class MixpanelBrowserWrapper {
       category: category,
       label: label,
       value: value,
-    })
+    });
   }
 }

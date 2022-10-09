@@ -32,6 +32,6 @@ export class AmplitudeAnalyticsBrowserWrapper {
       category: category,
       label: label,
       value: value,
-    })
+    });
   }
 }
