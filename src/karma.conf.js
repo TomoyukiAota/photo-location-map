@@ -45,5 +45,7 @@ module.exports = function (config) {
     singleRun: true,
     captureTimeout: 180000,             // Increased from 60000 ms (default) to 180000 ms for CI using GitHub Actions.
     browserNoActivityTimeout: 120000,   // Increased from 30000 ms (default) to 120000 ms for CI using GitHub Actions.
+    browserDisconnectTimeout: 10000,    // For the intermittent error "Disconnected reconnect failed before timeout of 2000ms (ping timeout)" on macOS in GitHub Actions.
+    browserDisconnectTolerance: 3,      // For the intermittent error "Disconnected reconnect failed before timeout of 2000ms (ping timeout)" on macOS in GitHub Actions.
   });
 };
