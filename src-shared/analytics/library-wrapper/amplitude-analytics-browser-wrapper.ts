@@ -1,4 +1,5 @@
 import { createPrependedLogger } from '../../log/create-prepended-logger';
+import { AmplitudeConfig } from '../config/amplitude-config';
 import { AnalyticsConfig } from '../config/analytics-config';
 import { AnalyticsLibraryWrapperInitialize, AnalyticsLibraryWrapperTrackEvent } from './library-wrapper-decorator';
 
@@ -10,7 +11,7 @@ export class AmplitudeAnalyticsBrowserWrapper {
 
   @AnalyticsLibraryWrapperInitialize(amplitudeLogger)
   public static initialize() {
-    const apiKey = '62cae04529b44c7ea829e49a64d0e199';
+    const apiKey = AmplitudeConfig.apiKey;
     const userId = AnalyticsConfig.userId;
     const deviceId = userId; // Use the same ID for User ID and Device ID because User ID is generated per device.
     amplitudeLogger.info(`API Key: ${apiKey}`);
