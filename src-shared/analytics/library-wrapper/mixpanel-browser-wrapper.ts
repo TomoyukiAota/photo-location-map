@@ -1,5 +1,6 @@
 import { createPrependedLogger } from '../../log/create-prepended-logger';
 import { AnalyticsConfig } from '../config/analytics-config';
+import { MixpanelConfig } from '../config/mixpanel-config';
 import { AnalyticsLibraryWrapperInitialize, AnalyticsLibraryWrapperTrackEvent } from './library-wrapper-decorator';
 
 const mixpanelLogger = createPrependedLogger('[Mixpanel]');
@@ -10,7 +11,7 @@ export class MixpanelBrowserWrapper {
 
   @AnalyticsLibraryWrapperInitialize(mixpanelLogger)
   public static initialize() {
-    const projectToken = '269bea2bd2dc884b1ec8fac9174acdc4';
+    const projectToken = MixpanelConfig.projectToken;
     const distinctId = AnalyticsConfig.userId;
     mixpanelLogger.info(`Project Token: ${projectToken}`);
     mixpanelLogger.info(`Distinct ID: ${distinctId}`);
