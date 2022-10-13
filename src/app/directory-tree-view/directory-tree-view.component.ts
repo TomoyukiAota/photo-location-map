@@ -11,6 +11,7 @@ import { SelectedPhotoService } from '../shared/service/selected-photo.service';
 import { DirTreeViewContextMenuData as ContextMenuData } from './dir-tree-view-context-menu/dir-tree-view-context-menu-data';
 import { DirTreeViewContextMenuHelper as ContextMenuHelper } from './dir-tree-view-context-menu/dir-tree-view-context-menu-helper';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
+import { DirectoryTreeViewSelectionService } from './directory-tree-view-selection.service';
 import { FlatNode, NestedNode } from './directory-tree-view.model';
 import { DirTreeViewTooltipDisplayLogic } from './dir-tree-view-tooltip-display-logic';
 
@@ -60,6 +61,7 @@ export class DirectoryTreeViewComponent {
   public readonly tooltipDisplayLogic: DirTreeViewTooltipDisplayLogic;
 
   constructor(private directoryTreeViewDataService: DirectoryTreeViewDataService,
+              private directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
               private selectedPhotoService: SelectedPhotoService,
               private photoDataService: PhotoDataService,
               private changeDetectorRef: ChangeDetectorRef,
@@ -70,6 +72,9 @@ export class DirectoryTreeViewComponent {
 
     directoryTreeViewDataService.dataReplaced
       .subscribe(data => this.handleDirectoryTreeViewDataReplaced(data));
+
+    directoryTreeViewSelectionService.selectionRequested
+      .subscribe(photoPaths => this.handleDirectoryTreeViewSelectionRequested(photoPaths));
 
     this.tooltipDisplayLogic = new DirTreeViewTooltipDisplayLogic(this.photoDataService);
   }
@@ -94,6 +99,16 @@ export class DirectoryTreeViewComponent {
       // update SelectedPhotoService.selectedPhotos with an empty array so that the map will be displayed without photos.
       this.selectedPhotoService.setSelectedPhotosByPaths([]);
     }
+  }
+
+  private handleDirectoryTreeViewSelectionRequested(photoPaths: string[]) {
+    if (!photoPaths) return;  // To do nothing for the initial value (null) of DirectoryTreeViewSelectionService::selectionRequested
+    const allFlatNodes = Array.from(this.flatToNestedNodeMap.keys());
+    const selectionRequestedNodes = allFlatNodes.filter(node => photoPaths.includes(node.path));
+    this.flatNodeSelectionModel.deselect(...allFlatNodes);
+    this.flatNodeSelectionModel.select(...selectionRequestedNodes);
+    this.changeDetectorRef.detectChanges(); // To update checkbox in GUI after using flatNodeSelectionModel
+    this.updateSelectedPhotosToReflectSelectedNodes();
   }
 
   public isSelected(flatNode: FlatNode): boolean {
@@ -137,11 +152,7 @@ export class DirectoryTreeViewComponent {
 
     this.updateAllParents(flatNode);
     this.changeDetectorRef.detectChanges();
-    const selectedPaths = this.flatNodeSelectionModel.selected
-      .filter(node => !node.isExpandable)
-      .filter(node => node.isSelectable)
-      .map(node => node.path);
-    this.selectedPhotoService.setSelectedPhotosByPaths(selectedPaths);
+    this.updateSelectedPhotosToReflectSelectedNodes();
   }
 
   private toggleAllDescendants(parent: FlatNode) {
@@ -184,6 +195,14 @@ export class DirectoryTreeViewComponent {
     }
 
     return null;
+  }
+
+  private updateSelectedPhotosToReflectSelectedNodes(): void {
+    const selectedPaths = this.flatNodeSelectionModel.selected
+      .filter(node => !node.isExpandable)
+      .filter(node => node.isSelectable)
+      .map(node => node.path);
+    this.selectedPhotoService.setSelectedPhotosByPaths(selectedPaths);
   }
 
   //#region --- Context Menu ---
