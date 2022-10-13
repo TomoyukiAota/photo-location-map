@@ -5,10 +5,12 @@ import { Logger } from '../../src-shared/log/logger';
 import {
   PlmInternalRenderer,
   PlmInternalRendererAboutBox,
+  PlmInternalRendererPhotoSelection,
   PlmInternalRendererSettingsDialog,
   PlmInternalRendererWelcomeDialog
 } from '../global-variables/global-variable-for-internal-use-in-renderer';
 import { AboutBoxComponent } from './about-box/about-box.component';
+import { DirectoryTreeViewSelectionService } from './directory-tree-view/directory-tree-view-selection.service';
 import { SettingsDialogComponent } from './settings-dialog/settings-dialog.component';
 import { WelcomeDialogComponent } from './welcome-dialog/welcome-dialog.component';
 import { WelcomeDialogAtAppLaunchService } from './welcome-dialog/welcome-dialog-at-app-launch/welcome-dialog-at-app-launch.service';
@@ -21,6 +23,7 @@ import { WelcomeDialogAtAppLaunchService } from './welcome-dialog/welcome-dialog
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(private dialog: MatDialog,
               private ngZone: NgZone,
+              private directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
               private translate: TranslateService,
               private welcomeDialogAtAppLaunchService: WelcomeDialogAtAppLaunchService) {
     translate.setDefaultLang('en');
@@ -37,6 +40,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
     window.plmInternalRenderer.welcomeDialog = window.plmInternalRenderer.welcomeDialog || new PlmInternalRendererWelcomeDialog();
     window.plmInternalRenderer.welcomeDialog.showWelcomeDialog = () => this.showWelcomeDialog();
+
+    window.plmInternalRenderer.photoSelection = window.plmInternalRenderer.photoSelection || new PlmInternalRendererPhotoSelection();
+    window.plmInternalRenderer.photoSelection.selectOnlyThis = (photoPath) => this.selectOnlyThis(photoPath);
   }
 
   public ngAfterViewInit(): void {
@@ -87,6 +93,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         disableClose: true
       });
       Logger.info('Displayed Welcome Dialog.');
+    });
+  }
+
+  private selectOnlyThis(photoPath: string) {
+    this.ngZone.run(() => {
+      this.directoryTreeViewSelectionService.select([photoPath]);
+      Logger.debug(`Called AppComponent::selectOnlyThis for ${photoPath}`);
     });
   }
 }
