@@ -26,6 +26,10 @@ export function getMoreOptionsMenuItems(photo: Photo): MoreOptionsMenuItem[] {
       text: 'Open Google Street View',
       onClick: () => handleOpenGoogleStreetViewMenuItemClicked(photo)
     });
+    menuItems.push({
+      text: 'Select Only This',
+      onClick: () => handleSelectOnlyThisMenuItemClicked(photo)
+    });
   }
 
   menuItems.push({
@@ -61,6 +65,12 @@ function handleOpenGoogleStreetViewMenuItemClicked(photo: Photo) {
           '"Open Google Street View" Menu Item',
           'Photo Info Viewer',
           'https://www.google.com/maps/ with query parameters for latitude, longitude');
+}
+
+function handleSelectOnlyThisMenuItemClicked(photo: Photo) {
+  logger.info(`Clicked "Select Only This" menu item for ${photo.path}`);
+  Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Select Only This"');
+  window.plmInternalRenderer.photoSelection.selectOnlyThis(photo.path);
 }
 
 function handleViewDataMenuItemClicked(photo: Photo) {
