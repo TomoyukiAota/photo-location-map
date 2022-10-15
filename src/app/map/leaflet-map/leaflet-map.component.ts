@@ -188,7 +188,7 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private configureCenteringIncludingPopupAndMarker() {
     // For the code below, see https://stackoverflow.com/a/23960984/7947548
-    // The code below is changed from the Stack Overflow answer to pass {animate: false} to panTo function.
+    // The code below is changed from the Stack Overflow answer to pass {animate: false} to panTo function because animation does not look good.
     this.map.on('popupopen', (e) => {
       const px = this.map.project(e.target._popup._latlng);    // find the pixel location on the map where the popup anchor is
       px.y -= e.target._popup._container.clientHeight/2;       // find the height of the popup container, divide by 2, subtract from the Y axis of marker location
