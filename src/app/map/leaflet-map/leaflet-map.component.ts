@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { LayersControlEvent, Map } from 'leaflet';
+import { LayersControlEvent, Map, Marker } from 'leaflet';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/user-data-stroage-path';
@@ -151,15 +151,48 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private renderMarkerClusterGroup(photos: Photo[]): void {
-    const markerClusterGroup = L.markerClusterGroup();
+    if (photos.length === 1) {
+      this.renderMarkerClusterGroupForSinglePhoto(photos[0]);
+    } else {
+      this.renderMarkerClusterGroupForMultiplePhotos(photos);
+    }
+  }
 
-    photos.forEach(photo => {
-      const latLng = [photo.exif.gpsInfo.latLng.latitude, photo.exif.gpsInfo.latLng.longitude];
-      const marker = L.marker(latLng).bindPopup(PhotoInfoViewerContent.request('leaflet-map', photo));
-      markerClusterGroup.addLayer(marker);
-    });
-
+  private renderMarkerClusterGroupForSinglePhoto(photo: Photo): void {
+    const markerClusterGroup = L.markerClusterGroup({ animate: false }); // { animate: false } because animation does not look good for single photo case.
+    const marker = this.addMarkerToMarkerClusterGroup(markerClusterGroup, photo);
     this.map.addLayer(markerClusterGroup);
     this.map.fitBounds(markerClusterGroup.getBounds());
+
+    // For single photo case, open the popup with centering in the map.
+    this.configureCenteringIncludingPopupAndMarker();
+    marker.openPopup();
+  }
+
+  private renderMarkerClusterGroupForMultiplePhotos(photos: Photo[]): void {
+    const markerClusterGroup = L.markerClusterGroup({ animate: true }); // { animate: true } because animation looks good for multiple photo case.
+    photos.forEach(photo => {
+      this.addMarkerToMarkerClusterGroup(markerClusterGroup, photo);
+    });
+    this.map.addLayer(markerClusterGroup);
+    this.map.fitBounds(markerClusterGroup.getBounds());
+  }
+
+  private addMarkerToMarkerClusterGroup(markerClusterGroup: any, photo: Photo) {
+    const latLng: [number, number] = [photo.exif.gpsInfo.latLng.latitude, photo.exif.gpsInfo.latLng.longitude];
+    const marker: Marker = L.marker(latLng);
+    marker.bindPopup(PhotoInfoViewerContent.request('leaflet-map', photo));
+    markerClusterGroup.addLayer(marker);
+    return marker;
+  }
+
+  private configureCenteringIncludingPopupAndMarker() {
+    // For the code below, see https://stackoverflow.com/a/23960984/7947548
+    // The code below is changed from the Stack Overflow answer to pass {animate: false} to panTo function.
+    this.map.on('popupopen', (e) => {
+      const px = this.map.project(e.target._popup._latlng);    // find the pixel location on the map where the popup anchor is
+      px.y -= e.target._popup._container.clientHeight/2;       // find the height of the popup container, divide by 2, subtract from the Y axis of marker location
+      this.map.panTo(this.map.unproject(px),{animate: false}); // pan to new center
+    });
   }
 }
