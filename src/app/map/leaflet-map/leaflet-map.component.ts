@@ -187,9 +187,14 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private configureCenteringIncludingPopupAndMarker() {
-    // For the code below, see https://stackoverflow.com/a/23960984/7947548
-    // The code below is changed from the Stack Overflow answer to pass {animate: false} to panTo function because animation does not look good.
-    this.map.on('popupopen', (e) => {
+    // The code in this function is based on the Stack Overflow answer in https://stackoverflow.com/a/23960984/7947548
+    // There are 2 major changes from the Stack Overflow answer:
+    // 1) 'popupopen' event is handled only once using map.once (not map.on).
+    //    Centering including the popup and the marker is needed only when the map for the selected photo is initially displayed.
+    //    Using map.on results in centering always happening when the marker is clicked, which does not look good.
+    // 2) {animate: false} is passed to map.panTo function because the animation does not look good.
+    // Other changes are minor changes (e.g. using const instead of var).
+    this.map.once('popupopen', (e) => {
       const px = this.map.project(e.target._popup._latlng);    // find the pixel location on the map where the popup anchor is
       px.y -= e.target._popup._container.clientHeight/2;       // find the height of the popup container, divide by 2, subtract from the Y axis of marker location
       this.map.panTo(this.map.unproject(px),{animate: false}); // pan to new center
