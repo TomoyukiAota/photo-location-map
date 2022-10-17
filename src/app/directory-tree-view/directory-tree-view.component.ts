@@ -105,10 +105,32 @@ export class DirectoryTreeViewComponent {
     if (!photoPaths) return;  // To do nothing for the initial value (null) of DirectoryTreeViewSelectionService::selectionRequested
     const allFlatNodes = Array.from(this.flatToNestedNodeMap.keys());
     const selectionRequestedNodes = allFlatNodes.filter(node => photoPaths.includes(node.path));
+    this.selectNodes(selectionRequestedNodes);
+  }
+
+  // See also DirectoryTreeViewComponent::toggleNodeSelection function because similar steps are performed.
+  private selectNodes(selectionRequestedNodes: FlatNode[]): void {
+    const selectableNodes = selectionRequestedNodes.filter(node => node.isSelectable);
+    if (selectableNodes.length === 0) {
+      dirTreeViewLogger.info('There are no selectable nodes in the selection requested nodes.');
+      dirTreeViewLogger.info('selectionRequestedNodes: ', selectionRequestedNodes);
+      return;
+    }
+
+    const allFlatNodes = Array.from(this.flatToNestedNodeMap.keys());
     this.flatNodeSelectionModel.deselect(...allFlatNodes);
-    this.flatNodeSelectionModel.select(...selectionRequestedNodes);
+    this.flatNodeSelectionModel.select(...selectableNodes);
+
+    selectableNodes.filter(node => node.isExpandable).forEach(node => this.selectAllDescendants(node));
+    selectableNodes.forEach(node => this.updateAllParents(node));
+
     this.changeDetectorRef.detectChanges(); // To update checkbox in GUI after using flatNodeSelectionModel
     this.updateSelectedPhotosToReflectSelectedNodes();
+  }
+
+  private selectAllDescendants(parent: FlatNode): void {
+    const descendants = this.getSelectableDescendants(parent);
+    this.flatNodeSelectionModel.select(...descendants);
   }
 
   public isSelected(flatNode: FlatNode): boolean {
@@ -141,17 +163,18 @@ export class DirectoryTreeViewComponent {
     this.toggleNodeSelection(flatNode);
   }
 
-  private toggleNodeSelection(flatNode: FlatNode) {
-    if (!flatNode.isSelectable)
-      return;
+  // See also DirectoryTreeViewComponent::selectNodes function because similar steps are performed.
+  private toggleNodeSelection(flatNode: FlatNode): void {
+    if (!flatNode.isSelectable) return;
 
     this.flatNodeSelectionModel.toggle(flatNode);
+
     if (flatNode.isExpandable) {
       this.toggleAllDescendants(flatNode);
     }
-
     this.updateAllParents(flatNode);
-    this.changeDetectorRef.detectChanges();
+
+    this.changeDetectorRef.detectChanges();  // To update checkbox in GUI after using flatNodeSelectionModel
     this.updateSelectedPhotosToReflectSelectedNodes();
   }
 
