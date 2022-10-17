@@ -3,7 +3,7 @@
 // For the initial implementation of the file server, the default port was set to 50100
 // because 50100 is within the range of the ephemeral ports (49152-65535).
 // However, Windows Update seems to use this range of ports, and in case Windows Update uses the same port,
-// the code to find the available port results in the error like "Error: listen EACCES: permission denied 0.0.0.0:50100"
+// launching this app results in the error like "Error: listen EACCES: permission denied 0.0.0.0:50100".
 // A similar issue is mentioned in the Stack Overflow thread https://stackoverflow.com/a/63810451/7947548
 // It's difficult to reproduce and investigate the error because Windows Update needs to take place.
 // Therefore, as of Oct 17, 2022, it's set to 40100 hoping that Windows Update does not use this port.
