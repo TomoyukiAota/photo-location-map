@@ -105,6 +105,11 @@ body {
   padding: 10px 0;
 }
 
+.github-issues {
+  text-align: center;
+  margin-top: 40px;
+}
+
 .project-description {
   text-align: center;
   margin-top: 30px;
