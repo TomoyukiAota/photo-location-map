@@ -1,6 +1,11 @@
-// This app finds an available port from ephemeral ports and launches the file server using the found port.
-// The range of ephemeral ports is from 49152 to 65535.
-// See https://en.wikipedia.org/wiki/Ephemeral_port
+// This app finds an available port and launches the file server using the found port.
+// -------------------------------------------------------------
+// At first, the default port is set to 50100 because it's within the range of the ephemeral ports (49152-65535).
+// However, Windows Update seems to use this range of port, and in case Windows Update uses the same port,
+// the code to find the available port results in the error like "Error: listen EACCES: permission denied 0.0.0.0:50100"
+// A similar issue is mentioned in the Stack Overflow thread https://stackoverflow.com/a/63810451/7947548
+// It's difficult to reproduce and investigate the error because Windows Update needs to take place.
+// Therefore, as of Oct 17, 2022, it's set to 40100 hoping that Windows Update does not use this port.
 // -------------------------------------------------------------
 // The app launches faster when the default port can be used.
 // It takes a few seconds to launch if the default port is already in use.
@@ -9,7 +14,7 @@
 // 1) other apps do not seem to use, and
 // 2) it's still easy to read in the log (i.e. not a random number like 52493).
 
-const defaultPortNumber = 50100;
+const defaultPortNumber = 40100;
 
 export class FileServerPortNumber {
   public static readonly default = defaultPortNumber;
