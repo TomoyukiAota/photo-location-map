@@ -27,7 +27,7 @@ export class WelcomeDialogComponent implements AfterViewInit {
   }
 
   public ngAfterViewInit() {
-    configureOpeningInOsBrowser(this.gitHubIssuesLink, 'https://github.com/TomoyukiAota/photo-location-map/issues',
+    configureOpeningInOsBrowser(this.gitHubIssuesLink, 'https://github.com/TomoyukiAota/photo-location-map/issues?q=is%3Aissue',
                                 'GitHub Issues', 'Welcome Dialog');
   }
 
