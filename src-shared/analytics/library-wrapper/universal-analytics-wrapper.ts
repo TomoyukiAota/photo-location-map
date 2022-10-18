@@ -38,7 +38,7 @@ export class UniversalAnalyticsWrapper {
   @AnalyticsLibraryWrapperTrackEvent(uaLogger)
   public static trackEvent(category: string, action: string, label?: string, value?: string | number): void {
     if (!this.isUserAgentSet) {
-      uaLogger.error('User Agent needs to be set before calling Analytics.trackEvent');
+      uaLogger.warn('User Agent needs to be set before calling Analytics.trackEvent');
       return;
     }
 
