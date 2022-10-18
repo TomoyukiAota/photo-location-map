@@ -5,7 +5,7 @@ import '../electron-util/configure-electron-remote-in-main-process';
 import { Logger } from '../src-shared/log/logger';
 import { LogFileConfig } from '../src-shared/log/log-file-config';
 import './auto-update/configure-auto-update';
-import { launchFileServerIfNeeded } from './file-server/launch-file-server';
+import { getUrlForMainWindow } from './file-server/file-server';
 import './menu/menu';
 import './photo-data-viewer/photo-data-viewer-ipc-setup';
 import './thumbnail-generation/thumbnail-generation-ipc-setup';
@@ -48,8 +48,8 @@ const createWindow = async () => {
     });
   }
 
-  const serverUrl = await launchFileServerIfNeeded();
-  mainWindow.loadURL(serverUrl);
+  const url = await getUrlForMainWindow();
+  mainWindow.loadURL(url);
 
   if (LiveReload.enabled) {
     mainWindow.webContents.openDevTools();
