@@ -25,14 +25,6 @@ class NumbersOfLivePhotos {
   public jpeg: number;
   public heif: number;
   public get total(): number { return this.jpeg + this.heif; }
-
-  public get supportedPercentage(): string {
-    if (this.total === 0)
-      return 'N/A (No photos loaded)';
-
-    const supportedRatio = (this.jpeg + this.heif) / this.total;
-    return (supportedRatio * 100).toFixed(3);
-  }
 }
 
 class NumbersToRecordFromDirTreeObject {
@@ -60,8 +52,7 @@ export class DirTreeObjectRecorder {
     Logger.info(`[Photos] Total: ${numberOf.photos.total}, JPEG: ${numberOf.photos.jpeg}, TIFF: ${numberOf.photos.tiff}, `
       + `PNG: ${numberOf.photos.png}, HEIF: ${numberOf.photos.heif}, WebP: ${numberOf.photos.webp}`);
     Logger.info(`[Photos] Supported Percentage: ${numberOf.photos.supportedPercentage} %`);
-    Logger.info(`[Live Photos] Total: ${numberOf.livePhotos.total}, JPEG: ${numberOf.livePhotos.jpeg}, HEIF: ${numberOf.livePhotos.heif}`);
-    Logger.info(`[Live Photos] Supported Percentage: ${numberOf.livePhotos.supportedPercentage} %`);
+    Logger.info(`[Live Photos] JPEG & MOV: ${numberOf.livePhotos.jpeg}, HEIF & MOV: ${numberOf.livePhotos.heif}, (JPEG or HEIF) & MOV: ${numberOf.livePhotos.total}`);
 
     const track = Analytics.trackEvent;
     const category = 'Selected Folder Info';
@@ -77,10 +68,9 @@ export class DirTreeObjectRecorder {
     track(category, `Selected Folder: Photos (Total)`, `Photos (Total): ${numberOf.photos.total}`);
     track(category, `Selected Folder: Photos (Support)`, `Photos (Supported %): ${numberOf.photos.supportedPercentage} %`);
 
-    track(category, `Selected Folder: Live Photos (JPEG)`, `Live Photos (JPEG): ${numberOf.livePhotos.jpeg}`);
-    track(category, `Selected Folder: Live Photos (HEIF)`, `Live Photos (HEIF): ${numberOf.livePhotos.heif}`);
-    track(category, `Selected Folder: Live Photos (Total)`, `Live Photos (Total): ${numberOf.livePhotos.total}`);
-    track(category, `Selected Folder: Live Photos (Support)`, `Live Photos (Supported %): ${numberOf.livePhotos.supportedPercentage} %`);
+    track(category, `Selected Folder: Live Photos JPEG & MOV`, `Live Photos JPEG & MOV: ${numberOf.livePhotos.jpeg}`);
+    track(category, `Selected Folder: Live Photos HEIF & MOV`, `Live Photos HEIF & MOV: ${numberOf.livePhotos.heif}`);
+    track(category, `Selected Folder: Live Photos ANY & MOV`, `Live Photos ANY & MOV: ${numberOf.livePhotos.total}`);
   }
 
   public static getNumbersToRecord(flattenedDirTree: DirectoryTree[]): NumbersToRecordFromDirTreeObject {

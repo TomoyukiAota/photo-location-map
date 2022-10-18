@@ -32,7 +32,6 @@ describe('DirTreeObjectRecorder', () => {
     assert.equal(numberOf.livePhotos.jpeg, 1);
     assert.equal(numberOf.livePhotos.heif, 1);
     assert.equal(numberOf.livePhotos.total, (1 + 1));
-    assert.equal(numberOf.livePhotos.supportedPercentage, '100.000');
   });
 
   it('getNumbersToRecord should handle an empty folder', () => {
@@ -61,6 +60,5 @@ describe('DirTreeObjectRecorder', () => {
     assert.equal(numberOf.livePhotos.jpeg, 0);
     assert.equal(numberOf.livePhotos.heif, 0);
     assert.equal(numberOf.livePhotos.total, 0);
-    assert.equal(numberOf.livePhotos.supportedPercentage, 'N/A (No photos loaded)');
   });
 });
