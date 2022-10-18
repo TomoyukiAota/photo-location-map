@@ -31,7 +31,7 @@ export class AmplitudeAnalyticsBrowserWrapper {
   @AnalyticsLibraryWrapperTrackEvent(amplitudeLogger)
   public static trackEvent(category: string, action: string, label?: string, value?: string | number) {
     if (!this.isInitialized) {
-      amplitudeLogger.error('AmplitudeAnalyticsBrowserWrapper::initialize needs to be called before calling AmplitudeAnalyticsBrowserWrapper::trackEvent');
+      amplitudeLogger.warn('AmplitudeAnalyticsBrowserWrapper::initialize needs to be called before calling AmplitudeAnalyticsBrowserWrapper::trackEvent');
       return;
     }
 

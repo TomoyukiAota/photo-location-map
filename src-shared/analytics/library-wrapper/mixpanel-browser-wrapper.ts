@@ -29,7 +29,7 @@ export class MixpanelBrowserWrapper {
   @AnalyticsLibraryWrapperTrackEvent(mixpanelLogger)
   public static trackEvent(category: string, action: string, label?: string, value?: string | number) {
     if (!this.isInitialized) {
-      mixpanelLogger.error('MixpanelBrowserWrapper::initialize needs to be called before calling MixpanelBrowserWrapper::trackEvent');
+      mixpanelLogger.warn('MixpanelBrowserWrapper::initialize needs to be called before calling MixpanelBrowserWrapper::trackEvent');
       return;
     }
 
