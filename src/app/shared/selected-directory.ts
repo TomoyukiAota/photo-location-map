@@ -36,25 +36,49 @@ export class SelectedDirectory {
     /[\/\\]\.VolumeIcon\.icns/i,
   ];
 
-  private static movFilePaths: string[] = [];
-
   private static worker = wrap<typeof import('./worker/directory-tree.worker').api>(
     new Worker(new URL('./worker/directory-tree.worker', import.meta.url)),
   );
 
   public static async createDirectoryTree(selectedDirPath: string) {
     const dirTree = await this.worker.createDirectoryTree(selectedDirPath, {exclude: this.excludeRegexArray});
-    const flattenedDirTree = await this.worker.convertToFlattenedDirTree(dirTree);
-    this.movFilePaths = flattenedDirTree
-      .filter(element => FilenameExtension.isMov(element.extension))
-      .map(element => element.path.toLowerCase());
+    await this.storeLivePhotosCandidateFilePaths(dirTree);
     return dirTree;
   }
 
+  private static livePhotosCandidateFilePaths: string[] = [];
+
+  private static async storeLivePhotosCandidateFilePaths(dirTree: DirectoryTree) {
+    const flattenedDirTree = await this.worker.convertToFlattenedDirTree(dirTree);
+    this.livePhotosCandidateFilePaths
+      = flattenedDirTree
+        .filter(element => FilenameExtension.isLivePhotos(element.extension))
+        .map(element => element.path.toLowerCase());
+  }
+
   public static getLivePhotosFilePathIfAvailable(photoFilePath: string) {
+    const livePhotosExtensions = FilenameExtension.extensionsForLivePhotos;
+
+    for (const extension of livePhotosExtensions) {
+      const result = this.findLivePhotos(photoFilePath, extension);
+      if (result.livePhotosAvailable) {
+        return {
+          livePhotosAvailable: result.livePhotosAvailable,
+          livePhotosFilePath: result.livePhotosFilePath,
+        };
+      }
+    }
+
+    return {
+      livePhotosAvailable: false,
+      livePhotosFilePath: '',
+    };
+  }
+
+  private static findLivePhotos(photoFilePath: string, extension: string) {
     const parsedPath = pathModule.parse(photoFilePath);
-    const livePhotosFilePath = pathModule.join(parsedPath.dir, parsedPath.name + '.MOV').toLowerCase();
-    const livePhotosAvailable = this.movFilePaths.includes(livePhotosFilePath);
+    const livePhotosFilePath = pathModule.join(parsedPath.dir, parsedPath.name + extension).toLowerCase();
+    const livePhotosAvailable = this.livePhotosCandidateFilePaths.includes(livePhotosFilePath);
     return {livePhotosAvailable, livePhotosFilePath};
   }
 }
