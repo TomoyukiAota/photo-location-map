@@ -17,7 +17,7 @@ import { WelcomeDialogAtAppLaunchService } from './welcome-dialog-at-app-launch/
 export class WelcomeDialogComponent implements AfterViewInit {
   public readonly appVersion = app.getVersion();
 
-  @ViewChild('gitHubIssuesLink') public gitHubIssuesLink: ElementRef<HTMLAnchorElement>;
+  @ViewChild('troubleshootingPageLink') public troubleshootingPageLink: ElementRef<HTMLAnchorElement>;
 
   public get twitterLogoDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.twitterLogo); }
   public get gitHubLogoDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.gitHubLogo); }
@@ -27,8 +27,8 @@ export class WelcomeDialogComponent implements AfterViewInit {
   }
 
   public ngAfterViewInit() {
-    configureOpeningInOsBrowser(this.gitHubIssuesLink, 'https://github.com/TomoyukiAota/photo-location-map/issues?q=is%3Aissue',
-                                'GitHub Issues', 'Welcome Dialog');
+    configureOpeningInOsBrowser(this.troubleshootingPageLink, 'https://github.com/TomoyukiAota/photo-location-map/blob/main/docs/troubleshooting/troubleshooting.md',
+                                'Troubleshooting Page', 'Welcome Dialog');
   }
 
   public handleTwitterProfileIconClicked() {
