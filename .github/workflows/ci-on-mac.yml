@@ -6,7 +6,7 @@ on:
       - '**'    # matches every branch
   pull_request:
     branches:
-      - master
+      - main
 
 jobs:
   test:
