@@ -8,7 +8,7 @@ class LogFileWriterIpcChannelName {
 export class LogFileWriterIpcMain {
   private static ipcMain = ProxyRequire.electron.ipcMain;
 
-  public static configureReceivingIpcFromRenderer() {
+  public static configureReceivingMessageFromRenderer() {
     this.ipcMain.on(
       LogFileWriterIpcChannelName.append,
       async (event, message) => {
@@ -22,7 +22,7 @@ export class LogFileWriterIpcMain {
 export class LogFileWriterIpcRenderer {
   private static ipcRenderer = ProxyRequire.electron.ipcRenderer;
 
-  public static sendEventToMain(message: string) {
+  public static sendMessageToMain(message: string) {
     this.ipcRenderer.send(
       LogFileWriterIpcChannelName.append,
       message,

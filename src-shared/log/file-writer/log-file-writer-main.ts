@@ -29,5 +29,5 @@ export let logFileWriterMain: Promise<LogFileWriterMain>;
 
 if (ProcessIdentifier.isElectronMain) {
   logFileWriterMain = LogFileWriterMain.create();
-  LogFileWriterIpcMain.configureReceivingIpcFromRenderer();
+  LogFileWriterIpcMain.configureReceivingMessageFromRenderer();
 }

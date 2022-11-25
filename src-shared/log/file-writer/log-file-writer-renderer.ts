@@ -4,7 +4,7 @@ import { LogFileWriterIpcRenderer } from './log-file-writer-ipc';
 
 class LogFileWriterRenderer implements LogFileWriterInterface {
   public async append(message: string): Promise<void> {
-    LogFileWriterIpcRenderer.sendEventToMain(message);
+    LogFileWriterIpcRenderer.sendMessageToMain(message);
   }
 }
 
