@@ -81,13 +81,13 @@ async function generateThumbnails(heifFilePaths: string[]) {
   Logger.info(`Number of threads for thumbnail generation: ${numberOfThreadsToUse}`);
 
   const pool = Pool(() => spawn(new Worker(FileForWorkerThread.relativePathWithoutExtension)), numberOfThreadsToUse);
+  const argsArray = heifFilePaths.map(filePath => createThumbnailFileGenerationArgs(filePath));
 
-  heifFilePaths.forEach(filePath => {
-    const args = createThumbnailFileGenerationArgs(filePath);
+  const logLines = argsArray.map(args => `From "${args.srcFilePath}", a thumbnail file "${args.outputFilePath}" will be generated.`);
+  const logText = convertStringArrayToLogText(logLines);
+  Logger.info(`[main thread] Queuing tasks for worker thread to generate thumbnail:${logText}`);
 
-    Logger.info('[main thread] Queuing a task for worker thread to generate thumbnail. ' +
-      `From "${args.srcFilePath}", a thumbnail file "${args.outputFilePath}" will be generated.`);
-
+  argsArray.forEach(args => {
     pool.queue(async generateThumbnailFile => await generateThumbnailFile(args))
       .then(result => {
         Logger.info('[main thread] Observed worker thread completion for thumbnail generation. ' +
