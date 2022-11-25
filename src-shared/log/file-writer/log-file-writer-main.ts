@@ -10,7 +10,7 @@ class LogFileWriterMain implements LogFileWriterInterface {
   private os = RequireFromMainProcess.os;
   private fileHandle: fsExtra.promises.FileHandle;
 
-  private constructor() { /* Empty by design. Call create function instead. */ }
+  private constructor() { /* Private constructor by design. Call create function instead. */ }
 
   public static async create(): Promise<LogFileWriterMain> {
     const logFileWriter = new LogFileWriterMain();
