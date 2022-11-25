@@ -1,6 +1,6 @@
-import { ProxyRequire } from '../require/proxy-require';
-import { Now } from '../date-time/now';
-import { ProcessIdentifier } from '../process/process-identifier';
+import { Now } from '../../date-time/now';
+import { ProcessIdentifier } from '../../process/process-identifier';
+import { ProxyRequire } from '../../require/proxy-require';
 
 const ipcChannelName = 'get-log-file-config-from-main';
 const pathSep = ProxyRequire.path.sep;
