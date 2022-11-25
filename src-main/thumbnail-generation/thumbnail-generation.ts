@@ -5,6 +5,7 @@ import * as physicalCpuCount from 'physical-cpu-count';
 import { Pool, spawn, Worker } from 'threads';
 
 import { Logger } from '../../src-shared/log/logger';
+import { convertStringArrayToLogText } from '../../src-shared/log/multiline-log-text';
 import { removeInvalidThumbnailCache } from '../../src-shared/thumbnail-cache/remove-invalid-thumbnail-cache';
 import { createFileForLastModified, getThumbnailFilePath } from '../../src-shared/thumbnail-cache/thumbnail-cache-util';
 import { ThumbnailFileGenerationArgs } from './generate-thumbnail-file-arg-and-result';
@@ -49,20 +50,18 @@ function checkFileForWorkerThreadExists(): void {
 }
 
 function logAllHeifFiles(allHeifFilePaths: string[]): void {
-  const numOfAllHeifFiles = allHeifFilePaths.length;
-  Logger.info(`Number of all HEIF files: ${numOfAllHeifFiles}`);
-  if (numOfAllHeifFiles >= 1) {
-    Logger.info(`All HEIF file paths are as follows: `);
-    allHeifFilePaths.forEach(filePath => Logger.info(filePath));
+  Logger.info(`Number of all HEIF files: ${allHeifFilePaths.length}`);
+  if (allHeifFilePaths.length >= 1) {
+    const filePathsText = convertStringArrayToLogText(allHeifFilePaths);
+    Logger.info(`All HEIF file paths are as follows:${filePathsText}`);
   }
 }
 
 function logHeifFilesToGenerateThumbnail(heifFilePathsToGenerateThumbnail: string[]): void {
-  const numOfHeifFilesToGenerateThumbnail = heifFilePathsToGenerateThumbnail.length;
-  Logger.info(`Number of HEIF files to generate thumbnails: ${numOfHeifFilesToGenerateThumbnail}`);
-  if (numOfHeifFilesToGenerateThumbnail >= 1) {
-    Logger.info(`HEIF files to generate thumbnails are as follows: `);
-    heifFilePathsToGenerateThumbnail.forEach(filePath => Logger.info(filePath));
+  Logger.info(`Number of HEIF files to generate thumbnails: ${heifFilePathsToGenerateThumbnail.length}`);
+  if (heifFilePathsToGenerateThumbnail.length >= 1) {
+    const filePathsText = convertStringArrayToLogText(heifFilePathsToGenerateThumbnail);
+    Logger.info(`HEIF files to generate thumbnails are as follows:${filePathsText}`);
   }
 }
 
