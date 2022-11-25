@@ -14,6 +14,7 @@ class LogFileWriterMain implements LogFileWriterInterface {
 
   public static async create(): Promise<LogFileWriterMain> {
     const logFileWriter = new LogFileWriterMain();
+    await logFileWriter.fsExtra.ensureDir(LogFileConfig.dirName); // The directory needs to be created before calling fsExtra.promises.open function.
     const fileSystemFlag = 'a'; // 'a' is for "Open file for appending. The file is created if it does not exist." See https://nodejs.org/api/fs.html
     logFileWriter.fileHandle = await logFileWriter.fsExtra.promises.open(LogFileConfig.filePath, fileSystemFlag);
     return logFileWriter;
