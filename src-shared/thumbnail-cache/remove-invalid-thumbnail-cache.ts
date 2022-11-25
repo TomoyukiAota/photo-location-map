@@ -3,6 +3,7 @@ import * as createDirectoryTree from 'directory-tree';
 import * as fs from 'fs';
 import { convertToFlattenedDirTree } from '../dir-tree/dir-tree-util';
 import { createPrependedLogger } from '../log/create-prepended-logger';
+import { convertStringArrayToLogText } from '../log/multiline-log-text';
 import { getOriginalFilePath, getThumbnailLogFilePath, plmThumbnailCacheDir } from './thumbnail-cache-util';
 
 const logger = createPrependedLogger('[Invalid thumbnail cache removal]');
@@ -48,8 +49,7 @@ function tryRemoveInvalidThumbnailCache() {
     return;
   }
 
-  logger.debug('Following thumbnail files exist as cache:');
-  thumbnailFilePaths.forEach(filePath => logger.debug(filePath));
+  logger.debug(`Following thumbnail files exist as cache:${convertStringArrayToLogText(thumbnailFilePaths)}`);
 
   const cacheFilePathsWithoutOriginalFiles = thumbnailFilePaths
     .filter(thumbnailFilePath => {
@@ -62,8 +62,7 @@ function tryRemoveInvalidThumbnailCache() {
     return;
   }
 
-  logger.info('The corresponding original files are not found for the following thumbnail cache files:');
-  cacheFilePathsWithoutOriginalFiles.forEach(filePath => logger.info(filePath));
+  logger.info(`The corresponding original files are not found for the following thumbnail cache files:${convertStringArrayToLogText(cacheFilePathsWithoutOriginalFiles)}`);
   logger.info('The thumbnail cache files without corresponding original files are invalid. Removing the invalid cache...');
   cacheFilePathsWithoutOriginalFiles.forEach(filePath => removeFileInCacheDir(filePath));
 
@@ -87,8 +86,7 @@ function tryRemoveInvalidThumbnailCache() {
     return;
   }
 
-  logger.info('Following log files for the thumbnail cache are invalid since the thumbnail cache file is invalid:');
-  invalidLogFiles.forEach(logFile => logger.info(logFile));
+  logger.info(`Following log files for the thumbnail cache are invalid since the thumbnail cache file is invalid:${convertStringArrayToLogText(invalidLogFiles)}`);
   logger.info('Removing the invalid log files...');
   invalidLogFiles.forEach(logFile => removeFileInCacheDir(logFile));
 
