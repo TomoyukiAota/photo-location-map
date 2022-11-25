@@ -1,5 +1,5 @@
 import assert = require('assert');
-import { LogFileConfig } from '../../../src-shared/log/log-file-config';
+import { LogFileConfig } from '../../../src-shared/log/file-config/log-file-config';
 
 describe('LogFileConfig (in main process)', () => {
   it('dirName should include application name and "logs"', () => {
