@@ -1,5 +1,5 @@
 name: Any Issue
-description: File any issue (not necessarily a bug)
+description: File any issue. (Use "Bug Report" to file a bug.)
 labels: ["needs triage"]
 assignees:
   - TomoyukiAota
