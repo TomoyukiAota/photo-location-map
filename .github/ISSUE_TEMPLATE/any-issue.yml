@@ -9,6 +9,5 @@ body:
     id: issue-description
     attributes:
       label: Issue Description
-      value: ""
     validations:
       required: true
