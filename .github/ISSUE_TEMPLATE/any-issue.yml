@@ -1,6 +1,5 @@
 name: Any Issue
 description: File any issue (not necessarily a bug)
-title: ""
 labels: ["needs triage"]
 assignees:
   - TomoyukiAota
