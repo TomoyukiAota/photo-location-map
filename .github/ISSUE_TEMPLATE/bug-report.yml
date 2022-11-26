@@ -1,0 +1,49 @@
+name: Bug Report
+description: File a bug report
+title: "[Bug]: "
+labels: ["bug", "needs triage"]
+assignees:
+  - TomoyukiAota
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report.
+        To file the bug,
+          - use the latest version of Photo Location Map (at the time of filing the bug), and
+          - find the minimum steps to reproduce the bug.
+  - type: input
+    id: version-of-photo-location-map
+    attributes:
+      label: Version of Photo Location Map
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: OS
+      multiple: true
+      options:
+        - Windows
+        - macOS
+  - type: input
+    id: os-version
+    attributes:
+      label: OS Version
+    validations:
+      required: true
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce the Bug
+      description: Describe the steps to reproduce the bug and the expected/actual behaviors.
+      value: |
+        1. Launch Photo Location Map.
+        2. ...
+        3. ...
+        ...
+        N. ...
+        Expected behavior after step N: ...
+        Actual behavior after step N: ...
+    validations:
+      required: true
