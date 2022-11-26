@@ -13,10 +13,9 @@ body:
           - use the latest version of Photo Location Map (at the time of filing the bug), and
           - find the minimum steps to reproduce the bug.
   - type: input
-    id: app-version
+    id: version-of-photo-location-map
     attributes:
-      label: Application Version
-      description: The version of Photo Location Map
+      label: Version of Photo Location Map
     validations:
       required: true
   - type: dropdown
