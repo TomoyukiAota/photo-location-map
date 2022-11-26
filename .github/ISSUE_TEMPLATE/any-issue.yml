@@ -1,0 +1,14 @@
+name: Any Issue
+description: File any issue (not necessarily a bug)
+title: ""
+labels: ["needs triage"]
+assignees:
+  - TomoyukiAota
+body:
+  - type: textarea
+    id: issue-description
+    attributes:
+      label: Issue Description
+      value: ""
+    validations:
+      required: true
