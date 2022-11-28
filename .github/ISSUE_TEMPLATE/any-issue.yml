@@ -8,7 +8,7 @@ body:
     attributes:
       value: |
         Thanks for taking the time to fill out this issue.
-        To file the issue, please use the latest version of Photo Location Map (at the time of filing the issue).
+        To file the issue, please use the latest version of Photo Location Map at the time of filing the issue.
   - type: input
     id: version-of-photo-location-map
     attributes:
