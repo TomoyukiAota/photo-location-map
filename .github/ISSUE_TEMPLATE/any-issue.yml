@@ -23,6 +23,8 @@ body:
       options:
         - Windows
         - macOS
+    validations:
+      required: true
   - type: input
     id: os-version
     attributes:
