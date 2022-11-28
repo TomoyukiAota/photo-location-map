@@ -9,7 +9,7 @@ body:
       value: |
         Thanks for taking the time to fill out this bug report.
         To file the bug,
-          - use the latest version of Photo Location Map (at the time of filing the bug), and
+          - use the latest version of Photo Location Map at the time of filing the bug, and
           - find the minimum steps to reproduce the bug.
   - type: input
     id: version-of-photo-location-map
