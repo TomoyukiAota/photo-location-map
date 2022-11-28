@@ -4,9 +4,35 @@ labels: ["needs triage"]
 assignees:
   - TomoyukiAota
 body:
-  - type: textarea
-    id: issue-description
+  - type: markdown
     attributes:
-      label: Issue Description
+      value: |
+        Thanks for taking the time to fill out this issue.
+        To file the issue, please use the latest version of Photo Location Map (at the time of filing the issue).
+  - type: input
+    id: version-of-photo-location-map
+    attributes:
+      label: Version of Photo Location Map
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: OS
+      multiple: true
+      options:
+        - Windows
+        - macOS
+  - type: input
+    id: os-version
+    attributes:
+      label: OS Version
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Please describe the issue.
     validations:
       required: true
