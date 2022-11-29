@@ -7,7 +7,7 @@ If you cannot find the relevant one, see [GitHub Issues][github-issues].
 If you still cannot find your issue in [GitHub Issues][github-issues], submit [a new issue][github-issues-new].
 
 [github-issues]: https://github.com/TomoyukiAota/photo-location-map/issues?q=is%3Aissue
-[github-issues-new]: https://github.com/TomoyukiAota/photo-location-map/issues/new
+[github-issues-new]: https://github.com/TomoyukiAota/photo-location-map/issues/new/choose
 
 ## The file does not open after clicking the thumbnail or <img src="./resources/open-file-icon.svg" width=25> button
 
