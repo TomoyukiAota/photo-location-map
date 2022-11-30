@@ -19,7 +19,7 @@ export class MultilineLogText {
   }
 }
 
-export function convertStringArrayToLogText(lines: string[]): string {
+export function stringArrayToLogText(lines: string[]): string {
   const multilineLogText = new MultilineLogText();
   multilineLogText.addLineWithoutIndent(); // Add a line break at the beginning to make the multiline text look better in the log
   multilineLogText.addLines(lines);

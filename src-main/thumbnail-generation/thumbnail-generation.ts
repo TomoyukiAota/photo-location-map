@@ -5,7 +5,7 @@ import * as physicalCpuCount from 'physical-cpu-count';
 import { Pool, spawn, Worker } from 'threads';
 
 import { Logger } from '../../src-shared/log/logger';
-import { convertStringArrayToLogText } from '../../src-shared/log/multiline-log-text';
+import { stringArrayToLogText } from '../../src-shared/log/multiline-log-text';
 import { removeInvalidThumbnailCache } from '../../src-shared/thumbnail-cache/remove-invalid-thumbnail-cache';
 import { createFileForLastModified, getThumbnailFilePath } from '../../src-shared/thumbnail-cache/thumbnail-cache-util';
 import { ThumbnailFileGenerationArgs } from './generate-thumbnail-file-arg-and-result';
@@ -52,7 +52,7 @@ function checkFileForWorkerThreadExists(): void {
 function logAllHeifFiles(allHeifFilePaths: string[]): void {
   Logger.info(`Number of all HEIF files: ${allHeifFilePaths.length}`);
   if (allHeifFilePaths.length >= 1) {
-    const filePathsText = convertStringArrayToLogText(allHeifFilePaths);
+    const filePathsText = stringArrayToLogText(allHeifFilePaths);
     Logger.info(`All HEIF file paths are as follows:${filePathsText}`);
   }
 }
@@ -60,7 +60,7 @@ function logAllHeifFiles(allHeifFilePaths: string[]): void {
 function logHeifFilesToGenerateThumbnail(heifFilePathsToGenerateThumbnail: string[]): void {
   Logger.info(`Number of HEIF files to generate thumbnails: ${heifFilePathsToGenerateThumbnail.length}`);
   if (heifFilePathsToGenerateThumbnail.length >= 1) {
-    const filePathsText = convertStringArrayToLogText(heifFilePathsToGenerateThumbnail);
+    const filePathsText = stringArrayToLogText(heifFilePathsToGenerateThumbnail);
     Logger.info(`HEIF files to generate thumbnails are as follows:${filePathsText}`);
   }
 }
@@ -84,7 +84,7 @@ async function generateThumbnails(heifFilePaths: string[]) {
   const argsArray = heifFilePaths.map(filePath => createThumbnailFileGenerationArgs(filePath));
 
   const logLines = argsArray.map(args => `From "${args.srcFilePath}", a thumbnail file "${args.outputFilePath}" will be generated.`);
-  const logText = convertStringArrayToLogText(logLines);
+  const logText = stringArrayToLogText(logLines);
   Logger.info(`[main thread] Queuing tasks for worker thread to generate thumbnail:${logText}`);
 
   argsArray.forEach(args => {
