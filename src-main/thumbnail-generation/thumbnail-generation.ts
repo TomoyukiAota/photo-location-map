@@ -2,24 +2,24 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as pathModule from 'path';
 import * as physicalCpuCount from 'physical-cpu-count';
-import { Pool, spawn, Worker } from 'threads';
-
-import { Logger } from '../../src-shared/log/logger';
+import * as workerpool from 'workerpool';
+import { createPrependedLogger } from "../../src-shared/log/create-prepended-logger";
 import { stringArrayToLogText } from '../../src-shared/log/multiline-log-text';
 import { removeInvalidThumbnailCache } from '../../src-shared/thumbnail-cache/remove-invalid-thumbnail-cache';
 import { createFileForLastModified, getThumbnailFilePath } from '../../src-shared/thumbnail-cache/thumbnail-cache-util';
 import { ThumbnailFileGenerationArgs } from './generate-thumbnail-file-arg-and-result';
 
+const logger = createPrependedLogger('[Thumbnail Generation]');
 
 export function handleThumbnailGenerationIpcRequest(allHeifFilePaths: string[], heifFilePathsToGenerateThumbnail: string[]): void {
   if (!allHeifFilePaths || !heifFilePathsToGenerateThumbnail) {
-    Logger.error(`handleThumbnailGenerationIpcRequest should be called with string arrays.`);
-    Logger.error(`allHeifFilePaths: ${allHeifFilePaths}, heifFilePathsToGenerateThumbnail: ${heifFilePathsToGenerateThumbnail}`,
+    logger.error(`handleThumbnailGenerationIpcRequest should be called with string arrays.`);
+    logger.error(`allHeifFilePaths: ${allHeifFilePaths}, heifFilePathsToGenerateThumbnail: ${heifFilePathsToGenerateThumbnail}`,
       allHeifFilePaths, heifFilePathsToGenerateThumbnail);
     return;
   }
 
-  checkFileForWorkerThreadExists();
+  checkFileForWorkerExists();
   removeInvalidThumbnailCache();
   logAllHeifFiles(allHeifFilePaths);
   logHeifFilesToGenerateThumbnail(heifFilePathsToGenerateThumbnail);
@@ -28,40 +28,37 @@ export function handleThumbnailGenerationIpcRequest(allHeifFilePaths: string[], 
   const ignoredPromise = generateThumbnails(heifFilePathsToGenerateThumbnail);    // Promise is deliberately ignored.
 }
 
-class FileForWorkerThread {
-  // The file path for worker thread needs to be relative to the file for main thread
-  // (where thread.js's spawn and Worker are called).
-  private static _relativePathWithoutExtension = './generate-thumbnail-file-worker';
-
-  public static get relativePathWithoutExtension() { return this._relativePathWithoutExtension; }
-  public static get relativePathWithExtension() { return `${this._relativePathWithoutExtension}.js`; }
+class FileForWorker {
+  private static _fileName = 'generate-thumbnail-file-worker.js';
+  private static _absoluteFilePath = pathModule.join(__dirname, this._fileName);
+  public static get absoluteFilePath() { return this._absoluteFilePath; }
 }
 
-function checkFileForWorkerThreadExists(): void {
-  const absoluteFilePathForWorkerThread = pathModule.join(__dirname, FileForWorkerThread.relativePathWithExtension);
-  Logger.info(`The expected file path for worker thread used during thumbnail generation is "${absoluteFilePathForWorkerThread}"`);
-  const workerThreadFileExists = fs.existsSync(absoluteFilePathForWorkerThread);
+function checkFileForWorkerExists(): void {
+  const filePath = FileForWorker.absoluteFilePath;
+  logger.info(`The expected file path for worker used during thumbnail generation is "${filePath}"`);
+  const isFileFound = fs.existsSync(filePath);
 
-  if (workerThreadFileExists) {
-    Logger.info(`The file for worker thread used during thumbnail generation is found.`);
+  if (isFileFound) {
+    logger.info(`The file for worker used during thumbnail generation is found.`);
   } else {
-    Logger.error(`The file for worker thread used during thumbnail generation is NOT found.`);
+    logger.error(`The file for worker used during thumbnail generation is NOT found.`);
   }
 }
 
 function logAllHeifFiles(allHeifFilePaths: string[]): void {
-  Logger.info(`Number of all HEIF files: ${allHeifFilePaths.length}`);
+  logger.info(`Number of all HEIF files: ${allHeifFilePaths.length}`);
   if (allHeifFilePaths.length >= 1) {
     const filePathsText = stringArrayToLogText(allHeifFilePaths);
-    Logger.info(`All HEIF file paths are as follows:${filePathsText}`);
+    logger.info(`All HEIF file paths are as follows:${filePathsText}`);
   }
 }
 
 function logHeifFilesToGenerateThumbnail(heifFilePathsToGenerateThumbnail: string[]): void {
-  Logger.info(`Number of HEIF files to generate thumbnails: ${heifFilePathsToGenerateThumbnail.length}`);
+  logger.info(`Number of HEIF files to generate thumbnails: ${heifFilePathsToGenerateThumbnail.length}`);
   if (heifFilePathsToGenerateThumbnail.length >= 1) {
     const filePathsText = stringArrayToLogText(heifFilePathsToGenerateThumbnail);
-    Logger.info(`HEIF files to generate thumbnails are as follows:${filePathsText}`);
+    logger.info(`HEIF files to generate thumbnails are as follows:${filePathsText}`);
   }
 }
 
@@ -76,26 +73,32 @@ function createThumbnailFileGenerationArgs(filePath: string) {
 
 async function generateThumbnails(heifFilePaths: string[]) {
   const logicalCpuCount = os.cpus().length;
-  const numberOfThreadsToUse = physicalCpuCount >= 2 ? physicalCpuCount - 1 : 1;
-  Logger.info(`Number of CPU cores, Physical: ${physicalCpuCount}, Logical: ${logicalCpuCount}`);
-  Logger.info(`Number of threads for thumbnail generation: ${numberOfThreadsToUse}`);
+  const numberOfProcessesToUse = physicalCpuCount >= 2 ? physicalCpuCount - 1 : 1;
+  logger.info(`Number of CPU cores, Physical: ${physicalCpuCount}, Logical: ${logicalCpuCount}`);
+  logger.info(`Number of processes for thumbnail generation: ${numberOfProcessesToUse}`);
 
-  const pool = Pool(() => spawn(new Worker(FileForWorkerThread.relativePathWithoutExtension)), numberOfThreadsToUse);
   const argsArray = heifFilePaths.map(filePath => createThumbnailFileGenerationArgs(filePath));
 
   const logLines = argsArray.map(args => `From "${args.srcFilePath}", a thumbnail file "${args.outputFilePath}" will be generated.`);
   const logText = stringArrayToLogText(logLines);
-  Logger.info(`[main thread] Queuing tasks for worker thread to generate thumbnail:${logText}`);
+  logger.info(`Queuing tasks for worker to generate thumbnail:${logText}`);
 
-  argsArray.forEach(args => {
-    pool.queue(async generateThumbnailFile => await generateThumbnailFile(args))
+  const pool = workerpool.pool(FileForWorker.absoluteFilePath, {
+    maxWorkers: numberOfProcessesToUse,
+    workerType: 'process',
+  });
+
+  const workerPromises = argsArray.map(args => {
+    return pool
+      .proxy()
+      .then(worker => worker.generateThumbnailFile(args))
       .then(result => {
-        Logger.info('[main thread] Observed worker thread completion for thumbnail generation. ' +
+        logger.info('Observed completion of worker for thumbnail generation. ' +
           `From "${args.srcFilePath}", a thumbnail file "${args.outputFilePath}" should have been generated.`);
-        createFileForLastModified(args.srcFilePath, args.outputFileDir);
+        createFileForLastModified(args.srcFilePath, args.outputFileDir, logger);
       });
   });
 
-  await pool.settled();
+  await Promise.allSettled(workerPromises);
   await pool.terminate();
 }

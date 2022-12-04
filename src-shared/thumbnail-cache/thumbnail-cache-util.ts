@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as pathModule from 'path';
+import { PrependedLogger } from "../log/create-prepended-logger";
 import { Logger } from '../log/logger';
 
 export const plmThumbnailCacheDir = pathModule.join(os.homedir(), '.PlmCache');
@@ -81,7 +82,7 @@ export function getOriginalFilePath(thumbnailFilePath: string): string {
 
 const lastModifiedKey = 'LastModified';
 
-export async function createFileForLastModified(srcFilePath: string, thumbnailFileDir: string) {
+export async function createFileForLastModified(srcFilePath: string, thumbnailFileDir: string, logger: PrependedLogger) {
   const srcFileName = pathModule.basename(srcFilePath);
   const lastModified = fs.statSync(srcFilePath).mtime.toISOString();
   const fileContentObj = {};
@@ -92,11 +93,11 @@ export async function createFileForLastModified(srcFilePath: string, thumbnailFi
   try {
     await fs.promises.writeFile(logFilePath, fileContentStr);
   } catch (error) {
-    Logger.error(`[main thread] Failed to write file for last modified "${lastModified}" for "${srcFileName}" in "${logFilePath}". error: ${error}`, error);
+    logger.error(`Failed to write file for last modified "${lastModified}" for "${srcFileName}" in "${logFilePath}". error: ${error}`, error);
     return;
   }
 
-  Logger.info(`[main thread] Wrote a file for last modified "${lastModified}" for "${srcFileName}" in ${logFilePath}`);
+  logger.info(`Wrote a file for last modified "${lastModified}" for "${srcFileName}" in ${logFilePath}`);
 }
 
 export function isThumbnailCacheAvailable(srcFilePath: string): boolean {
