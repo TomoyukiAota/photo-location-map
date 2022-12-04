@@ -1,27 +1,27 @@
 import * as fsExtra from 'fs-extra';
-import { expose } from 'threads/worker';
+import * as workerpool from 'workerpool';
 import { Now } from '../../src-shared/date-time/now';
 import { ThumbnailFileGenerationArgs, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result';
 
 
-class WorkerThreadLogger {
+class WorkerLogger {
   public info(message: string, ...obj: any[]) {
-    console.info(`[${Now.extendedFormat}] [Main] [info] [worker thread] ${message}`, ...obj);
+    console.info(`[${Now.extendedFormat}] [Worker] [info] [Thumbnail Generation] ${message}`, ...obj);
   }
 
   public warn(message: string, ...obj: any[]) {
-    console.warn(`[${Now.extendedFormat}] [Main] [warn] [worker thread] ${message}`, ...obj);
+    console.warn(`[${Now.extendedFormat}] [Worker] [warn] [Thumbnail Generation] ${message}`, ...obj);
   }
 
   public error(message: string, ...obj: any[]) {
-    console.error(`[${Now.extendedFormat}] [Main] [error] [worker thread] ${message}`, ...obj);
+    console.error(`[${Now.extendedFormat}] [Worker] [error] [Thumbnail Generation] ${message}`, ...obj);
   }
 }
 
-const logger = new WorkerThreadLogger();
+const logger = new WorkerLogger();
 
-expose(async function generateThumbnailFile(args: ThumbnailFileGenerationArgs): Promise<ThumbnailFileGenerationResult> {
-  logger.info(`A worker thread is created to generate thumbnail for ${args.srcFilePath}`);
+async function generateThumbnailFile(args: ThumbnailFileGenerationArgs): Promise<ThumbnailFileGenerationResult> {
+  logger.info(`A worker is started to generate thumbnail for ${args.srcFilePath}`);
 
   if (!args) {
     return new ThumbnailFileGenerationResult('null-args');
@@ -79,4 +79,8 @@ expose(async function generateThumbnailFile(args: ThumbnailFileGenerationArgs): 
 
   logger.info(`Created the file for thumbnail in "${args.outputFilePath}".`);
   return new ThumbnailFileGenerationResult('success');
+}
+
+workerpool.worker({
+  generateThumbnailFile: generateThumbnailFile,
 });
