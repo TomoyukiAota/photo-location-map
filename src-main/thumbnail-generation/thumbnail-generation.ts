@@ -3,6 +3,7 @@ import * as os from 'os';
 import * as pathModule from 'path';
 import * as physicalCpuCount from 'physical-cpu-count';
 import * as workerpool from 'workerpool';
+import * as _ from 'lodash';
 import { createPrependedLogger } from "../../src-shared/log/create-prepended-logger";
 import { stringArrayToLogText } from '../../src-shared/log/multiline-log-text';
 import { removeInvalidThumbnailCache } from '../../src-shared/thumbnail-cache/remove-invalid-thumbnail-cache';
@@ -71,14 +72,37 @@ function createThumbnailFileGenerationArg(filePath: string) {
   return arg;
 }
 
+const logicalCpuCount = os.cpus().length;
+const numberOfProcessesToUse = physicalCpuCount >= 2 ? physicalCpuCount - 1 : 1;
+
 async function generateThumbnails(heifFilePaths: string[]) {
-  const logicalCpuCount = os.cpus().length;
-  const numberOfProcessesToUse = physicalCpuCount >= 2 ? physicalCpuCount - 1 : 1;
   logger.info(`Number of CPU cores, Physical: ${physicalCpuCount}, Logical: ${logicalCpuCount}`);
   logger.info(`Number of processes for thumbnail generation: ${numberOfProcessesToUse}`);
 
   const argArray = heifFilePaths.map(filePath => createThumbnailFileGenerationArg(filePath));
 
+  // The worker process needs to be restarted per thumbnail.
+  // If the worker process continues to be used for multiple thumbnails,
+  // the memory consumption of the process increases, and the app will eventually crash.
+  // In the code below, thumbnail generation is split into chunks, and worker processes are restarted by each chunk.
+  // By numberOfFilesInChunk === numberOfProcessesToUse, each worker process will be restarted per thumbnail.
+
+  const numberOfFilesInChunk = numberOfProcessesToUse;
+  const argArrayChunks = _.chunk(argArray, numberOfFilesInChunk);
+  logger.info(`Files are split in ${argArrayChunks.length} chunks.`);
+  logger.info(`Each chunk contains up to ${numberOfFilesInChunk} files.`);
+
+  for (let index = 0; index < argArrayChunks.length; index++){
+    const chunkNumber = `#${index + 1}`;
+    logger.info(`Started chunk ${chunkNumber} out of ${argArrayChunks.length} chunks.`);
+    const chunk = argArrayChunks[index];
+    logger.info(`Chunk ${chunkNumber} contains ${chunk.length} files.`);
+    await runWorkerForThumbnailGeneration(chunk);
+    logger.info(`Finished chunk ${chunkNumber} out of ${argArrayChunks.length} chunks.`);
+  }
+}
+
+async function runWorkerForThumbnailGeneration(argArray: ThumbnailFileGenerationArg[]) {
   const logLines = argArray.map(arg => `From "${arg.srcFilePath}", a thumbnail file "${arg.outputFilePath}" will be generated.`);
   const logText = stringArrayToLogText(logLines);
   logger.info(`Queuing tasks for worker to generate thumbnail:${logText}`);
