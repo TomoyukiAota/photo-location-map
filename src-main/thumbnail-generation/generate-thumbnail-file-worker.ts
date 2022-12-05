@@ -1,7 +1,7 @@
 import * as fsExtra from 'fs-extra';
 import * as workerpool from 'workerpool';
 import { Now } from '../../src-shared/date-time/now';
-import { ThumbnailFileGenerationArgs, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result';
+import { ThumbnailFileGenerationArg, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result';
 
 
 class WorkerLogger {
@@ -20,18 +20,18 @@ class WorkerLogger {
 
 const logger = new WorkerLogger();
 
-async function generateThumbnailFile(args: ThumbnailFileGenerationArgs): Promise<ThumbnailFileGenerationResult> {
-  logger.info(`A worker is started to generate thumbnail for ${args.srcFilePath}`);
+async function generateThumbnailFile(arg: ThumbnailFileGenerationArg): Promise<ThumbnailFileGenerationResult> {
+  logger.info(`A worker is started to generate thumbnail for ${arg.srcFilePath}`);
 
-  if (!args) {
-    return new ThumbnailFileGenerationResult('null-args');
+  if (!arg) {
+    return new ThumbnailFileGenerationResult('null-arg');
   }
 
   let inputBuffer: Buffer;
   try {
-    inputBuffer = await fsExtra.promises.readFile(args.srcFilePath);
+    inputBuffer = await fsExtra.promises.readFile(arg.srcFilePath);
   } catch (error) {
-    logger.error(`Failed to read source file for thumbnail generation. Source file path is "${args.srcFilePath}". error: ${error}`, error);
+    logger.error(`Failed to read source file for thumbnail generation. Source file path is "${arg.srcFilePath}". error: ${error}`, error);
     return new ThumbnailFileGenerationResult('failed-to-read-src-file');
   }
 
@@ -64,20 +64,20 @@ async function generateThumbnailFile(args: ThumbnailFileGenerationArgs): Promise
   }
 
   try {
-    await fsExtra.ensureDir(args.outputFileDir);
+    await fsExtra.ensureDir(arg.outputFileDir);
   } catch (error) {
-    logger.error(`Failed to ensure thumbnail directory exists. Directory path is "${args.outputFileDir}". error: ${error}`, error);
+    logger.error(`Failed to ensure thumbnail directory exists. Directory path is "${arg.outputFileDir}". error: ${error}`, error);
     return new ThumbnailFileGenerationResult('failed-to-ensure-dir');
   }
 
   try {
-    await fsExtra.promises.writeFile(args.outputFilePath, outputBuffer);
+    await fsExtra.promises.writeFile(arg.outputFilePath, outputBuffer);
   } catch (error) {
-    logger.error(`Failed to write the file for thumbnail in "${args.outputFilePath}". error: ${error}`, error);
+    logger.error(`Failed to write the file for thumbnail in "${arg.outputFilePath}". error: ${error}`, error);
     return new ThumbnailFileGenerationResult('failed-to-write-thumbnail-file');
   }
 
-  logger.info(`Created the file for thumbnail in "${args.outputFilePath}".`);
+  logger.info(`Created the file for thumbnail in "${arg.outputFilePath}".`);
   return new ThumbnailFileGenerationResult('success');
 }
 

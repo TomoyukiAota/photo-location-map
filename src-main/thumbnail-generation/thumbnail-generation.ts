@@ -7,7 +7,7 @@ import { createPrependedLogger } from "../../src-shared/log/create-prepended-log
 import { stringArrayToLogText } from '../../src-shared/log/multiline-log-text';
 import { removeInvalidThumbnailCache } from '../../src-shared/thumbnail-cache/remove-invalid-thumbnail-cache';
 import { createFileForLastModified, getThumbnailFilePath } from '../../src-shared/thumbnail-cache/thumbnail-cache-util';
-import { ThumbnailFileGenerationArgs } from './generate-thumbnail-file-arg-and-result';
+import { ThumbnailFileGenerationArg } from './generate-thumbnail-file-arg-and-result';
 
 const logger = createPrependedLogger('[Thumbnail Generation]');
 
@@ -62,13 +62,13 @@ function logHeifFilesToGenerateThumbnail(heifFilePathsToGenerateThumbnail: strin
   }
 }
 
-function createThumbnailFileGenerationArgs(filePath: string) {
-  const args = new ThumbnailFileGenerationArgs();
-  args.srcFilePath = filePath;
-  const {thumbnailFileDir, thumbnailFilePath} = getThumbnailFilePath(args.srcFilePath);
-  args.outputFileDir = thumbnailFileDir;
-  args.outputFilePath = thumbnailFilePath;
-  return args;
+function createThumbnailFileGenerationArg(filePath: string) {
+  const arg = new ThumbnailFileGenerationArg();
+  arg.srcFilePath = filePath;
+  const {thumbnailFileDir, thumbnailFilePath} = getThumbnailFilePath(arg.srcFilePath);
+  arg.outputFileDir = thumbnailFileDir;
+  arg.outputFilePath = thumbnailFilePath;
+  return arg;
 }
 
 async function generateThumbnails(heifFilePaths: string[]) {
@@ -77,9 +77,9 @@ async function generateThumbnails(heifFilePaths: string[]) {
   logger.info(`Number of CPU cores, Physical: ${physicalCpuCount}, Logical: ${logicalCpuCount}`);
   logger.info(`Number of processes for thumbnail generation: ${numberOfProcessesToUse}`);
 
-  const argsArray = heifFilePaths.map(filePath => createThumbnailFileGenerationArgs(filePath));
+  const argArray = heifFilePaths.map(filePath => createThumbnailFileGenerationArg(filePath));
 
-  const logLines = argsArray.map(args => `From "${args.srcFilePath}", a thumbnail file "${args.outputFilePath}" will be generated.`);
+  const logLines = argArray.map(arg => `From "${arg.srcFilePath}", a thumbnail file "${arg.outputFilePath}" will be generated.`);
   const logText = stringArrayToLogText(logLines);
   logger.info(`Queuing tasks for worker to generate thumbnail:${logText}`);
 
@@ -88,14 +88,14 @@ async function generateThumbnails(heifFilePaths: string[]) {
     workerType: 'process',
   });
 
-  const workerPromises = argsArray.map(args => {
+  const workerPromises = argArray.map(arg => {
     return pool
       .proxy()
-      .then(worker => worker.generateThumbnailFile(args))
+      .then(worker => worker.generateThumbnailFile(arg))
       .then(result => {
         logger.info('Observed completion of worker for thumbnail generation. ' +
-          `From "${args.srcFilePath}", a thumbnail file "${args.outputFilePath}" should have been generated.`);
-        createFileForLastModified(args.srcFilePath, args.outputFileDir, logger);
+          `From "${arg.srcFilePath}", a thumbnail file "${arg.outputFilePath}" should have been generated.`);
+        createFileForLastModified(arg.srcFilePath, arg.outputFileDir, logger);
       });
   });
 
