@@ -1,4 +1,6 @@
 import * as fsExtra from 'fs-extra';
+import * as Jimp from 'jimp';
+import * as jpegJs from 'jpeg-js';
 import * as workerpool from 'workerpool';
 import { Now } from '../../src-shared/date-time/now';
 import { ThumbnailFileGenerationArg, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result';
@@ -20,6 +22,73 @@ class WorkerLogger {
 
 const logger = new WorkerLogger();
 
+// The same Bitmap interface defined in Jimp. Wanted import from Jimp but import didn't work for some reason.
+interface Bitmap {data: Buffer, width: number, height: number}
+
+function resizeAndEncode(bitmap: Bitmap, quality: number) {
+  const image = new Jimp(bitmap);
+  const thumbnailWidthHeight = 200; // 200px at most for width/height on the browser
+  const highDpiFactor = 2;          // Multiplying by some factor for high DPI display. 2 is for Retina display.
+  const widthHeight = thumbnailWidthHeight * highDpiFactor;
+  image.scaleToFit(widthHeight, widthHeight);
+  const {data, width, height} = image.bitmap;
+  return jpegJs.encode({data, width, height}, quality);
+}
+
+
+//#region ---------------------- Modified heic-convert ----------------------
+// The code below is the modified version of heic-convert v1.2.4.
+// 2 major modifications:
+// 1. Shrink the bitmap before JPEG encoding.
+//  - Originally, the bitmap with the width/height of the original image is encoded.
+//  - Originally, the generated thumbnail file takes 0.5 to 2 MB.
+//  - The shrunk thumbnail file takes 20 to 100 kB.
+// 2. Stripping out the unused code. e.g. PNG is not used, so it's removed.
+// Also, note that "jpeg-js": "^0.4.1" and "heic-decode": "^1.1.2" are the dependencies of heic-convert v1.2.4.
+
+const decode = require('heic-decode');
+
+const to = {
+  JPEG: ({ data, width, height, quality }) => resizeAndEncode({data, width, height}, quality).data, // Originally jpegJs.encode({ data, width, height }, quality).data,
+};
+
+const convertImage = async ({ image, format, quality }) => {
+  return await to[format]({
+    width: image.width,
+    height: image.height,
+    data: Buffer.from(image.data),
+    quality: Math.floor(quality * 100)
+  });
+};
+
+const convert = async ({ buffer, format, quality, all }) => {
+  if (!to[format]) {
+    throw new Error(`output format needs to be one of [${Object.keys(to)}]`);
+  }
+
+  if (!all) {
+    const image = await decode({ buffer });
+    return await convertImage({ image, format, quality });
+  }
+
+  const images = await decode.all({ buffer });
+
+  return images.map(image => {
+    return {
+      convert: async () => await convertImage({
+        image: await image.decode(),
+        format,
+        quality
+      })
+    };
+  });
+};
+
+const heicConvert = async ({ buffer, format, quality = 0.92 }) => await convert({ buffer, format, quality, all: false });
+
+//#endregion ---------------------- Modified heic-convert ----------------------
+
+
 async function generateThumbnailFile(arg: ThumbnailFileGenerationArg): Promise<ThumbnailFileGenerationResult> {
   logger.info(`A worker is started to generate thumbnail for ${arg.srcFilePath}`);
 
@@ -35,21 +104,22 @@ async function generateThumbnailFile(arg: ThumbnailFileGenerationArg): Promise<T
     return new ThumbnailFileGenerationResult('failed-to-read-src-file');
   }
 
+  // ------------------------
+  // Note as of Oct 21, 2020:
   // Requiring heic-convert here because this module is premature as of Oct 21, 2020.
   // When this module is imported at the top of the file, the application terminates right after launching it.
   // Importing heic-convert appears to enable the option to terminate the application
   // for unhandled promise rejection, and the unhandled promise comes from electron-updater.
   // When this kind of butterfly effect is shown at application launch, it is very difficult to debug.
   // Therefore, importing heic-convert here to be able to track when things go wrong.
-  const heicConvert: typeof import('heic-convert') = require('heic-convert');
+  // ------------------------
+  // Note as of Dec 7, 2022:
+  // The modified version of heic-convert is pasted in this file, so heic-convert is no longer required/imported.
+  // Leaving the commented-out require/import line to indicate that require/import is replaced with the pasted code.
+  // ------------------------
+  // const heicConvert: typeof import('heic-convert') = require('heic-convert');
 
-  // The value of jpegQuality is empirically set so that the generated thumbnail looks good.
-  // When the value is decreased, the file size of generated thumbnails will be decreased,
-  // but the gradation will be more step-like and look ugly.
-  // 0.3 is the least value that the gradation looks okay with a small dimensions for thumbnails (where width and height are 200px at maximum).
-  // 0.5 is the value that the gradation is okay with larger dimensions.
-  // 0.5 is chosen considering the future possibility of implementing user-settable dimensions for thumbnails.
-  const jpegQuality = 0.5;
+  const jpegQuality = 0.92; // Default value of heic-convert. Tested several values but the default is okay as of Dec 7, 2022.
 
   let outputBuffer: Buffer;
   try {
