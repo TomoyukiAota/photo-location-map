@@ -1,8 +1,8 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as pathModule from 'path';
-import { PrependedLogger } from "../log/create-prepended-logger";
-import { Logger } from '../log/logger';
+import { PrependedLogger } from "../../log/create-prepended-logger";
+import { Logger } from '../../log/logger';
 
 export const plmThumbnailCacheDir = pathModule.join(os.homedir(), '.PlmCache');
 

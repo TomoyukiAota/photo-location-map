@@ -6,8 +6,8 @@ import * as workerpool from 'workerpool';
 import * as _ from 'lodash';
 import { createPrependedLogger } from "../../src-shared/log/create-prepended-logger";
 import { stringArrayToLogText } from '../../src-shared/log/multiline-log-text';
-import { removeInvalidThumbnailCache } from '../../src-shared/thumbnail-cache/remove-invalid-thumbnail-cache';
-import { createFileForLastModified, getThumbnailFilePath } from '../../src-shared/thumbnail-cache/thumbnail-cache-util';
+import { removeInvalidThumbnailCache } from '../../src-shared/thumbnail/cache/remove-invalid-thumbnail-cache';
+import { createFileForLastModified, getThumbnailFilePath } from '../../src-shared/thumbnail/cache/thumbnail-cache-util';
 import { ThumbnailFileGenerationArg } from './generate-thumbnail-file-arg-and-result';
 
 const logger = createPrependedLogger('[Thumbnail Generation]');
