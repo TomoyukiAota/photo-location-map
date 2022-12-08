@@ -5,7 +5,7 @@ import {
   getThumbnailFilePath,
   getThumbnailLogFilePath,
   plmThumbnailCacheDir
-} from '../../../src-shared/thumbnail-cache/thumbnail-cache-util';
+} from '../../../src-shared/thumbnail/cache/thumbnail-cache-util';
 
 describe('ThumbnailCacheUtil', () => {
   describe('getThumbnailFilePath should return the thumbnail file path from the original file path', () => {
