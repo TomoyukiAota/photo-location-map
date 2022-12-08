@@ -1,7 +1,7 @@
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { FilenameExtension } from '../../../src-shared/filename-extension/filename-extension';
 import { isFilePathTooLongOnWindows, maxFilePathLengthOnWindows } from '../../../src-shared/max-file-path-length-on-windows/max-file-path-length-on-windows';
-import { getThumbnailFilePath, isThumbnailCacheAvailable } from '../../../src-shared/thumbnail-cache/thumbnail-cache-util';
+import { getThumbnailFilePath, isThumbnailCacheAvailable } from '../../../src-shared/thumbnail/cache/thumbnail-cache-util';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { Photo } from '../shared/model/photo.model';
 import { PhotoViewerLauncher } from '../photo-viewer-launcher/photo-viewer-launcher';

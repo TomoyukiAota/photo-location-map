@@ -5,7 +5,7 @@ import { convertToFlattenedDirTree } from '../../../../src-shared/dir-tree/dir-t
 import { FilenameExtension } from '../../../../src-shared/filename-extension/filename-extension';
 import { IpcConstants } from '../../../../src-shared/ipc/ipc-constants';
 import { Logger } from '../../../../src-shared/log/logger';
-import { isThumbnailCacheAvailable } from '../../../../src-shared/thumbnail-cache/thumbnail-cache-util';
+import { isThumbnailCacheAvailable } from '../../../../src-shared/thumbnail/cache/thumbnail-cache-util';
 
 @Injectable({
   providedIn: 'root'
