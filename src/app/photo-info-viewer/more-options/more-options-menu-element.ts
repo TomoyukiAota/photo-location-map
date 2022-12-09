@@ -32,7 +32,10 @@ export class MoreOptionsMenuElement {
     const element = document.createElement('div');
     element.className = 'photo-info-viewer-more-options-menu-item';
     element.innerText = text;
-    element.onclick = onClick;
+    element.onclick = (event: MouseEvent) => {
+      event.stopPropagation();
+      onClick(event);
+    };
     return element;
   }
 }

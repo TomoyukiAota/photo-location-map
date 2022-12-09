@@ -44,6 +44,9 @@ function handleOpenFolderMenuItemClicked(photo: Photo) {
   logger.info(`Clicked "Open Folder" menu item for ${photo.path}`);
   Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Open Folder"');
   openContainingFolder(photo.path);
+  setTimeout(() => {
+    (document.activeElement as HTMLElement)?.blur?.(); // Remove the focus so that focusout event is triggered to close MoreOptionsMenuElement.
+  }, 400);
 }
 
 function handleOpenGoogleMapsMenuItemClicked(photo: Photo) {
