@@ -43,6 +43,7 @@
 }
 
 .photo-info-viewer-more-options-icon-container {
+  all: unset; // reset button's style
   display: inline-block;
   position: relative;
 }
