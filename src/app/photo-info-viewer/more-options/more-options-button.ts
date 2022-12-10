@@ -2,33 +2,32 @@ import { IconDataUrl } from '../../../assets/icon-data-url';
 import { Photo } from '../../shared/model/photo.model';
 import { MoreOptionsMenuElement } from './more-options-menu-element';
 
-export class MoreOptionsIconElement {
+export class MoreOptionsButton {
   public static create(photo: Photo): HTMLElement {
-    const containerElement = document.createElement('button');
-    containerElement.className = 'photo-info-viewer-more-options-icon-container';
-    containerElement.onclick = (event: MouseEvent) => this.handleOnClick(event, photo, containerElement);
+    const button = document.createElement('button');
+    button.className = 'photo-info-viewer-button';
+    button.onclick = (event: MouseEvent) => this.handleButtonClick(event, photo, button);
+    button.title = 'More Options';
 
-    const imgElement = document.createElement('img');
-    imgElement.src = IconDataUrl.moreOptions;
-    imgElement.width = 25;
-    imgElement.height = 25;
-    imgElement.className = 'photo-info-viewer-more-options-icon';
+    const icon = document.createElement('img');
+    icon.className = 'photo-info-viewer-icon';
+    icon.src = IconDataUrl.moreOptions;
 
-    containerElement.appendChild(imgElement);
-    return containerElement;
+    button.appendChild(icon);
+    return button;
   }
 
   private static fadeInCssClass = 'photo-info-viewer-more-options-menu-fade-in';
   private static fadeOutCssClass = 'photo-info-viewer-more-options-menu-fade-out';
 
-  private static handleOnClick(event: MouseEvent, photo: Photo, containerElement: HTMLElement) {
+  private static handleButtonClick(event: MouseEvent, photo: Photo, button: HTMLElement) {
     const found = this.removeMoreOptionsMenuElementIfFound();
     if (found) return;
 
     const element = MoreOptionsMenuElement.create(photo, event);
     element.classList.add(this.fadeInCssClass);
-    containerElement.appendChild(element);
-    containerElement.addEventListener(
+    button.appendChild(element);
+    button.addEventListener(
       'focusout',
       () => this.removeMoreOptionsMenuElementIfFound(),
       { once: true }

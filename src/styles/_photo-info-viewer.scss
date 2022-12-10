@@ -22,34 +22,33 @@
   animation: fadeIn 2s ease 0s;
 }
 
-@mixin photo-info-viewer-icon {
-  background-color: #888888;
-  border-radius: 5px;
-  margin: 6px 3px 0 3px;
-  padding: 4px;
-  transition: background-color 0.2s ease;
-
-  &:hover {
-    background-color: #555555;
-  }
-}
-
 .photo-info-viewer-button {
-  @include photo-info-viewer-icon;
+  all: unset;      // Remove button's default style
+  cursor: pointer; // Retrieve button's default cursor behavior
 
-  &:active {
-    background-color: #7776d6;
-  }
-}
+  width: 30px;
+  height: 30px;
+  margin: 6px 3px 0 3px;
+  padding: 3px;
+  border-radius: 5px;
 
-.photo-info-viewer-more-options-icon-container {
-  all: unset; // reset button's style
-  display: inline-block;
+  // Button color
+  background-color: #888888;
+  transition: background-color 0.2s ease;
+  &:hover  { background-color: #555555; }
+  &:active { background-color: #7776d6; }
+
+  // Centering the icon within the button
+  display: inline-grid;
+  place-items: center;
+
+  // For the menu displayed after button click
   position: relative;
 }
 
-.photo-info-viewer-more-options-icon {
-  @include photo-info-viewer-icon;
+.photo-info-viewer-icon {
+  width: 25px;
+  height: 25px;
 }
 
 .photo-info-viewer-more-options-menu {
