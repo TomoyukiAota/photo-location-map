@@ -18,14 +18,7 @@ export class ThumbnailElement {
   private static createThumbnailElement(photo: Photo) {
     const thumbnailElement = document.createElement('img');
     thumbnailElement.loading = 'lazy';
-
-    // Style for text of img.alt
-    thumbnailElement.style.whiteSpace = 'pre-wrap';
-    thumbnailElement.style.fontSize = '12px';
-    thumbnailElement.style.lineHeight = '1.3';
-
-    thumbnailElement.style.transition = 'transform 0.3s ease-in-out'; // For animation of thumbnail rotation
-
+    thumbnailElement.className = 'photo-info-viewer-thumbnail';
     thumbnailElement.onclick = () => this.handleThumbnailClick(photo);
 
     const isThumbnailAvailableFromExif = !!(photo?.exif?.thumbnail);
