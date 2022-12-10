@@ -35,8 +35,8 @@
   // Button color
   background-color: #888888;
   transition: background-color 0.2s ease;
-  &:hover  { background-color: #555555; }
-  &:active { background-color: #7776d6; }
+  &:hover  { background-color: #666666; }
+  &:active { background-color: #444444; }
 
   // Centering the icon within the button
   display: inline-grid;
@@ -49,7 +49,7 @@
 .photo-info-viewer-more-options-button {
   @extend .photo-info-viewer-button;
   &:active { background-color: unset; }
-  &:focus  { background-color: #333333; }
+  &:focus  { background-color: #444444; }
 }
 
 .photo-info-viewer-icon {
