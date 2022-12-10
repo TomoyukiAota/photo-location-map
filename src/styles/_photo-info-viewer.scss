@@ -46,6 +46,12 @@
   position: relative;
 }
 
+.photo-info-viewer-more-options-button {
+  @extend .photo-info-viewer-button;
+  &:active { background-color: unset; }
+  &:focus  { background-color: #333333; }
+}
+
 .photo-info-viewer-icon {
   width: 25px;
   height: 25px;

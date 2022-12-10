@@ -5,7 +5,7 @@ import { MoreOptionsMenuElement } from './more-options-menu-element';
 export class MoreOptionsButton {
   public static create(photo: Photo): HTMLElement {
     const button = document.createElement('button');
-    button.className = 'photo-info-viewer-button';
+    button.className = 'photo-info-viewer-more-options-button';
     button.onclick = (event: MouseEvent) => this.handleButtonClick(event, photo, button);
     button.title = 'More Options';
 
@@ -22,7 +22,12 @@ export class MoreOptionsButton {
 
   private static handleButtonClick(event: MouseEvent, photo: Photo, button: HTMLElement) {
     const found = this.removeMoreOptionsMenuElementIfFound();
-    if (found) return;
+    if (found) {
+      setTimeout(() => {
+        (document.activeElement as HTMLElement)?.blur?.(); // Remove the style for focus
+      });
+      return;
+    }
 
     const element = MoreOptionsMenuElement.create(photo, event);
     element.classList.add(this.fadeInCssClass);
