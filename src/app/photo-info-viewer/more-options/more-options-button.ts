@@ -1,5 +1,6 @@
 import { IconDataUrl } from '../../../assets/icon-data-url';
 import { Photo } from '../../shared/model/photo.model';
+import { removeFocus } from "../../shared/remove-focus";
 import { MoreOptionsMenuElement } from './more-options-menu-element';
 
 export class MoreOptionsButton {
@@ -23,7 +24,7 @@ export class MoreOptionsButton {
   private static handleButtonClick(event: MouseEvent, photo: Photo, button: HTMLElement) {
     const found = this.removeMoreOptionsMenuElementIfFound();
     if (found) {
-      (document.activeElement as HTMLElement)?.blur?.(); // Remove the focus to restore the style
+      removeFocus(); // To restore the button's style
       return;
     }
 
