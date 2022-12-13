@@ -23,9 +23,7 @@ export class MoreOptionsButton {
   private static handleButtonClick(event: MouseEvent, photo: Photo, button: HTMLElement) {
     const found = this.removeMoreOptionsMenuElementIfFound();
     if (found) {
-      setTimeout(() => {
-        (document.activeElement as HTMLElement)?.blur?.(); // Remove the style for focus
-      });
+      (document.activeElement as HTMLElement)?.blur?.(); // Remove the focus to restore the style
       return;
     }
 
