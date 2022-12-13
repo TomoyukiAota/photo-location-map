@@ -1,11 +1,11 @@
 import { DevOrProd } from '../../../src-shared/dev-or-prod/dev-or-prod';
 import { Logger } from '../../../src-shared/log/logger';
 import { Photo } from '../shared/model/photo.model';
-import { MoreOptionsIconElement } from './more-options/more-options-icon-element';
-import { LaunchPhotoViewerIconElement } from './launch-photo-viewer-icon-element';
+import { MoreOptionsButton } from './more-options/more-options-button';
+import { LaunchPhotoViewerButton } from './launch-photo-viewer-button';
 import { PhotoInfoUnavailableElement } from './photo-info-unavailable-element';
-import { PlayLivePhotosIconElement } from './play-live-photos-icon-element';
-import { RotateIconElement } from './rotate-icon-element';
+import { PlayLivePhotosButton } from './play-live-photos-button';
+import { RotateButton } from './rotate-button';
 import { ThumbnailElement } from './thumbnail-element';
 
 type Requester = 'dir-tree-view' | 'leaflet-map' | 'google-maps';
@@ -74,10 +74,10 @@ export class PhotoInfoViewerContent {
     [thumbnailContainerElement, nameElement, dateTakenElement]
       .forEach(element => rootDivElement.appendChild(element));
 
-    this.appendRotateIconElement(rootDivElement, thumbnailElement, photo);
-    this.appendLaunchPhotoViewerIconElement(rootDivElement, photo);
-    this.appendPlayLivePhotosIconElement(rootDivElement, photo);
-    this.appendMoreOptionsIconElement(rootDivElement, photo);
+    this.appendRotateButton(rootDivElement, thumbnailElement, photo);
+    this.appendLaunchPhotoViewerButton(rootDivElement, photo);
+    this.appendPlayLivePhotosButton(rootDivElement, photo);
+    this.appendMoreOptionsButton(rootDivElement, photo);
   }
 
   private static createNameElement(photo: Photo) {
@@ -97,30 +97,30 @@ export class PhotoInfoViewerContent {
     return dateTakenElement;
   }
 
-  private static appendRotateIconElement(rootDivElement: HTMLDivElement, thumbnailElement: HTMLImageElement | Text, photo: Photo): void {
+  private static appendRotateButton(rootDivElement: HTMLDivElement, thumbnailElement: HTMLImageElement | Text, photo: Photo): void {
     if (thumbnailElement instanceof Text)
       return;
 
-    const rotateIconElement = RotateIconElement.create(thumbnailElement, photo);
-    rootDivElement.appendChild(rotateIconElement);
+    const button = RotateButton.create(thumbnailElement, photo);
+    rootDivElement.appendChild(button);
   }
 
-  private static appendLaunchPhotoViewerIconElement(rootDivElement: HTMLDivElement, photo: Photo): void {
-    const element = LaunchPhotoViewerIconElement.create(photo);
-    rootDivElement.appendChild(element);
+  private static appendLaunchPhotoViewerButton(rootDivElement: HTMLDivElement, photo: Photo): void {
+    const button = LaunchPhotoViewerButton.create(photo);
+    rootDivElement.appendChild(button);
   }
 
-  private static appendPlayLivePhotosIconElement(rootDivElement: HTMLDivElement, photo: Photo) {
-    const element = PlayLivePhotosIconElement.create(photo);
-    if (element) {
-      rootDivElement.appendChild(element);
+  private static appendPlayLivePhotosButton(rootDivElement: HTMLDivElement, photo: Photo) {
+    const button = PlayLivePhotosButton.create(photo);
+    if (button) {
+      rootDivElement.appendChild(button);
     }
   }
 
-  private static appendMoreOptionsIconElement(rootDivElement: HTMLDivElement, photo: Photo) {
-    const element = MoreOptionsIconElement.create(photo);
-    if (element) {
-      rootDivElement.appendChild(element);
+  private static appendMoreOptionsButton(rootDivElement: HTMLDivElement, photo: Photo) {
+    const button = MoreOptionsButton.create(photo);
+    if (button) {
+      rootDivElement.appendChild(button);
     }
   }
 }
