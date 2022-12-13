@@ -2,6 +2,7 @@ import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { openContainingFolder } from '../../../../src-shared/command/command';
 import { openUrl } from '../../../../src-shared/url/open-url';
 import { Photo } from '../../shared/model/photo.model';
+import { removeFocus } from "../../shared/remove-focus";
 import { photoInfoViewerLogger as logger } from '../photo-info-viewer-logger';
 import { requestMainProcessToLaunchPhotoDataViewer } from './view-data/request-main-process-to-launch-photo-data-viewer';
 
@@ -45,7 +46,7 @@ function handleOpenFolderMenuItemClicked(photo: Photo) {
   Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Open Folder"');
   openContainingFolder(photo.path);
   setTimeout(() => {
-    (document.activeElement as HTMLElement)?.blur?.(); // Remove the focus so that focusout event is triggered to close MoreOptionsMenuElement.
+    removeFocus(); // To trigger focusout event in order to close MoreOptionsMenuElement.
   }, 400);
 }
 

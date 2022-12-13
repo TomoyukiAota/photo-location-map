@@ -3,21 +3,24 @@ import { IconDataUrl } from '../../assets/icon-data-url';
 import { Photo } from '../shared/model/photo.model';
 import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
 
-export class RotateIconElement {
-  public static create(thumbnailElement: HTMLImageElement, photo: Photo): HTMLImageElement {
-    const rotateIconElement = document.createElement('img');
-    rotateIconElement.src = IconDataUrl.rotate;
-    rotateIconElement.width = 25;
-    rotateIconElement.height = 25;
-    rotateIconElement.title = 'Rotate the thumbnail 90 degrees';
-    rotateIconElement.className = 'photo-info-viewer-button';
-    rotateIconElement.onclick = () => this.handleRotateIconClick(thumbnailElement, photo);
-    return rotateIconElement;
+export class RotateButton {
+  public static create(thumbnailElement: HTMLImageElement, photo: Photo): HTMLButtonElement {
+    const button = document.createElement('button');
+    button.className = 'photo-info-viewer-button';
+    button.onclick = () => this.handleButtonClick(thumbnailElement, photo);
+    button.title = 'Rotate the thumbnail 90 degrees';
+
+    const icon = document.createElement('img');
+    icon.className = 'photo-info-viewer-icon';
+    icon.src = IconDataUrl.rotate;
+
+    button.appendChild(icon);
+    return button;
   }
 
-  private static handleRotateIconClick(thumbnailElement: HTMLImageElement, photo: Photo): void {
-    logger.info(`Clicked the rotate icon for ${photo.path}`);
-    Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked Rotate Icon');
+  private static handleButtonClick(thumbnailElement: HTMLImageElement, photo: Photo): void {
+    logger.info(`Clicked the rotate button for ${photo.path}`);
+    Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked Rotate Button');
     this.rotateThumbnail(thumbnailElement);
   }
 
