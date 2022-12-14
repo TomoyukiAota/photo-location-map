@@ -1,11 +1,12 @@
 import { Photo } from '../../shared/model/photo.model';
+import { removeFocus } from "../../shared/remove-focus";
 import { getMoreOptionsMenuItems } from './more-options-menu-items';
 
 export class MoreOptionsMenuElement {
-  public static create(photo: Photo, event: MouseEvent): HTMLElement {
+  public static create(photo: Photo, moreOptionsButton: HTMLElement): HTMLElement {
     const menuElement = document.createElement('div');
     menuElement.className = 'photo-info-viewer-more-options-menu';
-    this.configureMenuLocation(menuElement, event);
+    this.configureMenuPosition(menuElement, moreOptionsButton);
 
     const menuItems = getMoreOptionsMenuItems(photo);
     menuItems.forEach(item => {
@@ -16,12 +17,15 @@ export class MoreOptionsMenuElement {
     return menuElement;
   }
 
-  private static configureMenuLocation(menuElement: HTMLElement, event: MouseEvent) {
+  private static configureMenuPosition(menuElement: HTMLElement, moreOptionsButton: HTMLElement) {
     menuElement.style.right = '-25px';
 
-    const centerHeight = document.documentElement.clientHeight / 2;
-    const isMousePositionInUpperHalf = event.clientY < centerHeight;
-    if (isMousePositionInUpperHalf) {
+    const viewportHeightWithoutScrollbar = document.documentElement.clientHeight;
+    const buttonTop = moreOptionsButton.getBoundingClientRect().top;
+    const valueToDetermineMenuPosition = 260; // Adjust this value if the menu height changes.
+    const shouldShowMenuBelowButton = viewportHeightWithoutScrollbar - buttonTop > valueToDetermineMenuPosition;
+
+    if (shouldShowMenuBelowButton) {
       menuElement.style.top = '39px';
     } else {
       menuElement.style.bottom = '37px';
@@ -35,6 +39,7 @@ export class MoreOptionsMenuElement {
     element.onclick = (event: MouseEvent) => {
       event.stopPropagation();
       onClick(event);
+      removeFocus(); // 1) Trigger focusout event to close MoreOptionsMenuElement, and 2) remove the focus style of MoreOptionsButton.
     };
     return element;
   }
