@@ -6,7 +6,7 @@ export class MoreOptionsMenuElement {
   public static create(photo: Photo, moreOptionsButton: HTMLElement): HTMLElement {
     const menuElement = document.createElement('div');
     menuElement.className = 'photo-info-viewer-more-options-menu';
-    this.configureMenuLocation(menuElement, moreOptionsButton);
+    this.configureMenuPosition(menuElement, moreOptionsButton);
 
     const menuItems = getMoreOptionsMenuItems(photo);
     menuItems.forEach(item => {
@@ -17,7 +17,7 @@ export class MoreOptionsMenuElement {
     return menuElement;
   }
 
-  private static configureMenuLocation(menuElement: HTMLElement, moreOptionsButton: HTMLElement) {
+  private static configureMenuPosition(menuElement: HTMLElement, moreOptionsButton: HTMLElement) {
     menuElement.style.right = '-25px';
 
     const viewportHeightWithoutScrollbar = document.documentElement.clientHeight;
