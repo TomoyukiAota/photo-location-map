@@ -1,4 +1,5 @@
 import { Photo } from '../../shared/model/photo.model';
+import { removeFocus } from "../../shared/remove-focus";
 import { getMoreOptionsMenuItems } from './more-options-menu-items';
 
 export class MoreOptionsMenuElement {
@@ -38,6 +39,7 @@ export class MoreOptionsMenuElement {
     element.onclick = (event: MouseEvent) => {
       event.stopPropagation();
       onClick(event);
+      removeFocus(); // 1) Trigger focusout event to close MoreOptionsMenuElement, and 2) remove the focus style of MoreOptionsButton.
     };
     return element;
   }
