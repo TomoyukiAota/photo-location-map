@@ -68,7 +68,6 @@
 
 .photo-info-viewer-more-options-button {
   @extend .photo-info-viewer-button;
-  &:active { background-color: unset; }
   &:focus  { background-color: #444444; }
 }
 
