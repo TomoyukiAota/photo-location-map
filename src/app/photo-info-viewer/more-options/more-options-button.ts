@@ -7,7 +7,7 @@ export class MoreOptionsButton {
   public static create(photo: Photo): HTMLElement {
     const button = document.createElement('button');
     button.className = 'photo-info-viewer-more-options-button';
-    button.onclick = (event: MouseEvent) => this.handleButtonClick(event, photo, button);
+    button.onclick = () => this.handleButtonClick(photo, button);
     button.title = 'More Options';
 
     const icon = document.createElement('img');
@@ -21,14 +21,14 @@ export class MoreOptionsButton {
   private static fadeInCssClass = 'photo-info-viewer-more-options-menu-fade-in';
   private static fadeOutCssClass = 'photo-info-viewer-more-options-menu-fade-out';
 
-  private static handleButtonClick(event: MouseEvent, photo: Photo, button: HTMLElement) {
+  private static handleButtonClick(photo: Photo, button: HTMLElement) {
     const found = this.removeMoreOptionsMenuElementIfFound();
     if (found) {
       removeFocus(); // To restore the button's style
       return;
     }
 
-    const element = MoreOptionsMenuElement.create(photo, event);
+    const element = MoreOptionsMenuElement.create(photo, button);
     element.classList.add(this.fadeInCssClass);
     button.appendChild(element);
     button.addEventListener(
