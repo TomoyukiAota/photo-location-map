@@ -234,6 +234,7 @@ export class DirectoryTreeViewComponent {
 
   public onContextMenu(event: MouseEvent, node: FlatNode) {
     event.preventDefault();
+    ContextMenuHelper.configureStyleForContextMenuTarget(event, this.contextMenu);
     this.contextMenuPosition.x = event.clientX + 'px';
     this.contextMenuPosition.y = event.clientY + 'px';
     this.contextMenu.menuData = { 'contextMenuData': ContextMenuHelper.createData(node) };
