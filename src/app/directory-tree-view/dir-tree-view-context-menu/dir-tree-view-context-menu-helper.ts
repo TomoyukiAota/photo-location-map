@@ -1,5 +1,6 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { MatMenuTrigger } from '@angular/material/menu';
+import { first } from "rxjs";
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { openContainingFolder, openWithAssociatedApp } from '../../../../src-shared/command/command';
 import { createPrependedLogger } from '../../../../src-shared/log/create-prepended-logger';
@@ -9,6 +10,15 @@ import { DirTreeViewContextMenuData as ContextMenuData } from './dir-tree-view-c
 const contextMenuLogger = createPrependedLogger('[Directory Tree View] [Context Menu]');
 
 export class DirTreeViewContextMenuHelper {
+  public static configureStyleForContextMenuTarget(event: MouseEvent, contextMenu: MatMenuTrigger) {
+    const contextMenuTargetCssClass = 'context-menu-target';
+    const contextMenuTarget = event.currentTarget as HTMLElement;
+    contextMenuTarget?.classList.add(contextMenuTargetCssClass);
+    contextMenu.menuClosed.pipe(first()).subscribe(() => {
+      contextMenuTarget?.classList.remove(contextMenuTargetCssClass);
+    });
+  }
+
   public static createData(node: FlatNode): ContextMenuData {
     return {
       name: node.name,

@@ -14,6 +14,11 @@ mat-tree {
 mat-tree-node {
   min-height: 40px;
   overflow: visible;
+
+  $target-background: rgba(0,0,0,.08);
+  &:hover               { background: $target-background; }
+  &.context-menu-target { background: $target-background; }
+  transition: background-color 0.2s ease;
 }
 
 .mat-icon-button {
