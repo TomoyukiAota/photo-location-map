@@ -1,10 +1,10 @@
+import * as _ from 'lodash';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { FlatNode } from './directory-tree-view.model';
 
 export class DirTreeViewTooltipDisplayLogic {
-  private readonly tooltipContentSelector = '.tooltip-content';
-  private readonly visibleAboveCssClass = 'visible-above';
-  private readonly visibleBelowCssClass = 'visible-below';
+  private readonly tooltipSelector = 'app-dir-tree-view-tooltip';
+  private readonly tooltipVisibleCssClass = 'tooltip-visible';
   private readonly photoDataService: PhotoDataService;
 
   constructor(photoDataService: PhotoDataService) {
@@ -16,28 +16,48 @@ export class DirTreeViewTooltipDisplayLogic {
     return photoExists;
   }
 
-  public onMouseEnter(flatNode: FlatNode, leafNodeDiv: HTMLDivElement, event: MouseEvent) {
+  public onMouseEnter(flatNode: FlatNode, tooltipTarget: HTMLElement) {
     if (!this.tooltipEnabled(flatNode))
       return;
 
-    const centerHeight = document.documentElement.clientHeight / 2;
-    const isMousePositionInUpperHalf = event.clientY < centerHeight;
-    const classToAdd = isMousePositionInUpperHalf ? this.visibleBelowCssClass : this.visibleAboveCssClass;
-
-    const tooltipContent: HTMLElement = leafNodeDiv.querySelector(this.tooltipContentSelector);
-    tooltipContent.classList.add(classToAdd);
-    tooltipContent.style.display = 'block';
+    const tooltip: HTMLElement = tooltipTarget.querySelector(this.tooltipSelector);
+    tooltip.style.display = 'block'; // "display: block" is needed before getBoundingClientRect() used in tooltip position calculation
+    this.configureTooltipPosition(tooltipTarget, tooltip);
+    tooltip.classList.add(this.tooltipVisibleCssClass);
   }
 
-  public onMouseLeave(flatNode: FlatNode, leafNodeDiv: HTMLDivElement) {
+  private configureTooltipPosition(targetElement: HTMLElement, tooltipElement: HTMLElement) {
+    const sidebarElement = document.querySelector('app-sidebar');
+    const sidebar = sidebarElement.getBoundingClientRect();
+    const target = targetElement.getBoundingClientRect();
+    const tooltip = tooltipElement.getBoundingClientRect();
+
+    // Determine tooltip left position based on app-sidebar, not targetElement,
+    // because targetElement can be wider than app-sidebar depending on the splitter gutter position.
+    tooltipElement.style.left = `${sidebar.width - 30}px`;
+
+    const tooltipTop = this.calculateTooltipTop(target, tooltip);
+    tooltipElement.style.top = `${tooltipTop}px`;
+  }
+
+  private calculateTooltipTop(target: DOMRect, tooltip: DOMRect) {
+    const idealTooltipTop = target.top + (target.height / 2) - (tooltip.height / 2);
+    const {height: viewportHeight} = document.documentElement.getBoundingClientRect();
+    const gap = 30; // Put some gap between viewport and tooltip
+    const tooltipTopLowerLimit = gap;
+    const tooltipTopUpperLimit = viewportHeight - gap - tooltip.height;
+    const tooltipTop = _.clamp(idealTooltipTop, tooltipTopLowerLimit, tooltipTopUpperLimit);
+    return tooltipTop;
+  }
+
+  public onMouseLeave(flatNode: FlatNode, tooltipTarget: HTMLElement) {
     if (!this.tooltipEnabled(flatNode))
       return;
 
-    const tooltipContent: HTMLElement = leafNodeDiv.querySelector(this.tooltipContentSelector);
+    const tooltip: HTMLElement = tooltipTarget.querySelector(this.tooltipSelector);
     const fadeOutDuration = 300;  // ms
-    setTimeout(() => tooltipContent.classList.remove(this.visibleAboveCssClass), fadeOutDuration);
-    setTimeout(() => tooltipContent.classList.remove(this.visibleBelowCssClass), fadeOutDuration);
-    this.fadeOut(tooltipContent, fadeOutDuration);
+    setTimeout(() => tooltip.classList.remove(this.tooltipVisibleCssClass), fadeOutDuration);
+    this.fadeOut(tooltip, fadeOutDuration);
   }
 
   // This function is taken from this link:

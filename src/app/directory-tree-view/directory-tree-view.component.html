@@ -3,32 +3,28 @@
                  matTreeNodeToggle
                  matTreeNodePadding
                  [matTreeNodePaddingIndent]="indentPerLevel"
-                 (contextmenu)="onContextMenu($event, node)">
+                 (contextmenu)="onContextMenu($event, node)"
+                 #tooltipTarget
+                 (mouseenter)="tooltipDisplayLogic.onMouseEnter(node, tooltipTarget)"
+                 (mouseleave)="tooltipDisplayLogic.onMouseLeave(node, tooltipTarget)">
 
-    <!-- Adjust space to align with tree expand button (which look like > or v) -->
-    <button mat-icon-button disabled></button>
+      <!-- Adjust space to align with tree expand button (which look like > or v) -->
+      <button mat-icon-button disabled></button>
 
-    <div class="tooltip-container"
-         (mouseenter)="tooltipDisplayLogic.onMouseEnter(node, leafNodeDiv, $event)"
-         (mouseleave)="tooltipDisplayLogic.onMouseLeave(node, leafNodeDiv)"
-         #leafNodeDiv>
       <mat-checkbox *ngIf="node.isSelectable"
-                    class="tooltip-target"
                     [checked]="isSelected(node)"
                     (change)="handleCheckboxChange(node)">
         {{node.name}}
       </mat-checkbox>
       <mat-label *ngIf="!node.isSelectable"
-                 class="tooltip-target non-selectable-node">
+                 class="non-selectable-node">
         <div class="disabled-checkbox-alternative"></div>
         {{node.name}}
       </mat-label>
       <app-dir-tree-view-tooltip *ngIf="tooltipDisplayLogic.tooltipEnabled(node)"
                                  [photoPath]="node.path"
-                                 class="tooltip-content"
                                  style="display: none">
       </app-dir-tree-view-tooltip>
-    </div>
   </mat-tree-node>
 
   <mat-tree-node *matTreeNodeDef="let node; when: hasChildren"
