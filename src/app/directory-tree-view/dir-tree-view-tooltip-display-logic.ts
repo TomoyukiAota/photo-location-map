@@ -42,7 +42,7 @@ export class DirTreeViewTooltipDisplayLogic {
 
   private calculateTooltipTop(sidebar: DOMRect, target: DOMRect, tooltip: DOMRect) {
     const idealTooltipTop = target.top + (target.height / 2) - (tooltip.height / 2);
-    const gap = 5; // Put some gap for better layout
+    const gap = 2; // Put some gap for better layout
     const tooltipTopLowerLimit = gap;
     const tooltipTopUpperLimit = sidebar.height - gap - tooltip.height;
     const tooltipTop = _.clamp(idealTooltipTop, tooltipTopLowerLimit, tooltipTopUpperLimit);
