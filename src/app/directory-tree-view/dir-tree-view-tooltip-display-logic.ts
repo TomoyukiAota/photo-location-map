@@ -65,7 +65,7 @@ export class DirTreeViewTooltipDisplayLogic {
           .querySelectorAll(this.tooltipVisibleSelector)
           .forEach(tooltip => this.removeTooltip(tooltip as HTMLElement));
       }, 10 /* ms */)
-    )
+    );
   }
 
   private removeTooltip(tooltip: HTMLElement) {
