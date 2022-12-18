@@ -27,7 +27,7 @@ export class DirTreeViewTooltipDisplayLogic {
   }
 
   private configureTooltipPosition(targetElement: HTMLElement, tooltipElement: HTMLElement) {
-    const sidebarElement = document.querySelector('#left-sidebar');
+    const sidebarElement = document.querySelector('#home-left-sidebar');
     const sidebar = sidebarElement.getBoundingClientRect();
     const target = targetElement.getBoundingClientRect();
     const tooltip = tooltipElement.getBoundingClientRect();
