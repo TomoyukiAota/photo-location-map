@@ -42,34 +42,16 @@ div.disabled-checkbox-alternative {
   margin-right: 4px;
 }
 
-div.tooltip-container {
-  position: relative;
-}
-
-div.tooltip-container > .tooltip-target {
-  line-height: 40px;
-}
-
-div.tooltip-container > .tooltip-content {
-  position: absolute;
-  left: -50px;
+app-dir-tree-view-tooltip {
+  position: fixed; // Using "position: fixed" (not relative/absolute) so that the tooltip is displayed on top of the map.
+  z-index: 9999; // To display the tooltip on top of the map
   padding: 0.5em;
   color: #000000;
   background: #ebf4fb;
   border: 0.1em solid #b7ddf2;
   border-radius: 0.5em;
-  z-index: 1; // Assuming that z-index of other elements are 0 (default value).
 }
 
-@mixin fade-in-animation {
-  animation: fadeIn 0.5s ease 0s;
-}
-
-div.tooltip-container > .tooltip-content.visible-above {
-  @include fade-in-animation;
-  bottom: 35px;
-}
-
-div.tooltip-container > .tooltip-content.visible-below {
-  @include fade-in-animation;
+.tooltip-visible {
+  animation: fadeIn 0.3s ease 0s;
 }
