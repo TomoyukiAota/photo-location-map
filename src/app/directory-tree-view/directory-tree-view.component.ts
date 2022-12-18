@@ -1,7 +1,7 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { Analytics } from '../../../src-shared/analytics/analytics';
@@ -22,7 +22,7 @@ const dirTreeViewLogger = createPrependedLogger('[Directory Tree View]');
   templateUrl: 'directory-tree-view.component.html',
   styleUrls: ['directory-tree-view.component.scss']
 })
-export class DirectoryTreeViewComponent {
+export class DirectoryTreeViewComponent implements OnInit {
   // padding-left for each tree view node is `level * indentPerLevel` pixels where level is depth of the tree view node.
   public readonly indentPerLevel = 30;
 
@@ -58,7 +58,7 @@ export class DirectoryTreeViewComponent {
     return flatNode;
   };
 
-  public readonly tooltipDisplayLogic: DirTreeViewTooltipDisplayLogic;
+  public tooltipDisplayLogic: DirTreeViewTooltipDisplayLogic;
 
   constructor(private directoryTreeViewDataService: DirectoryTreeViewDataService,
               private directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
@@ -75,7 +75,9 @@ export class DirectoryTreeViewComponent {
 
     directoryTreeViewSelectionService.selectionRequested
       .subscribe(photoPaths => this.handleDirectoryTreeViewSelectionRequested(photoPaths));
+  }
 
+  public ngOnInit() {
     this.tooltipDisplayLogic = new DirTreeViewTooltipDisplayLogic(this.photoDataService);
   }
 
