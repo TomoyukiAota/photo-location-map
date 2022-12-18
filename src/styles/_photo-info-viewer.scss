@@ -62,8 +62,12 @@
   display: inline-grid;
   place-items: center;
 
-  // For the menu displayed after button click
   position: relative;
+
+  &:hover .photo-info-viewer-button-tooltip {
+    opacity: 1;
+    visibility: visible;
+  }
 }
 
 .photo-info-viewer-more-options-button {
@@ -74,6 +78,39 @@
 .photo-info-viewer-icon {
   width: 25px;
   height: 25px;
+}
+
+// Reference for tooltip: https://zenn.dev/catnose99/articles/26bd8dac9ea5268486c8
+.photo-info-viewer-button-tooltip {
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -35px;
+  display: inline-block;
+  padding: 5px;
+  white-space: nowrap;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  background: #333;
+  color: #fff;
+  border-radius: 3px;
+  transition: 0.3s ease-in;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+
+  z-index: 1; // With z-index: 0, the map's popup tail appears in front of the tooltip.
+
+  // Tooltip tail
+  &:before {
+    content: '';
+    position: absolute;
+    top: -13px;
+    left: 50%;
+    margin-left: -7px;
+    border: 7px solid transparent;
+    border-bottom: 7px solid #333;
+  }
 }
 
 .photo-info-viewer-more-options-menu {

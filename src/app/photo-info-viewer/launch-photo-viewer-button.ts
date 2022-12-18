@@ -9,13 +9,17 @@ export class LaunchPhotoViewerButton {
     const button = document.createElement('button');
     button.className = 'photo-info-viewer-button';
     button.onclick = () => this.handleButtonClick(photo);
-    button.title = `Open ${photo.name}`;
 
     const icon = document.createElement('img');
     icon.className = 'photo-info-viewer-icon';
     icon.src = IconDataUrl.launchExternalApp;
 
+    const tooltip = document.createElement('span');
+    tooltip.className = 'photo-info-viewer-button-tooltip';
+    tooltip.innerText = `Open File`;
+
     button.appendChild(icon);
+    button.appendChild(tooltip);
     return button;
   }
 

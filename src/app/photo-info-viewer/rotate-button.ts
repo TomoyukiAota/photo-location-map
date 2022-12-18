@@ -8,13 +8,17 @@ export class RotateButton {
     const button = document.createElement('button');
     button.className = 'photo-info-viewer-button';
     button.onclick = () => this.handleButtonClick(thumbnailElement, photo);
-    button.title = 'Rotate the thumbnail 90 degrees';
 
     const icon = document.createElement('img');
     icon.className = 'photo-info-viewer-icon';
     icon.src = IconDataUrl.rotate;
 
+    const tooltip = document.createElement('span');
+    tooltip.className = 'photo-info-viewer-button-tooltip';
+    tooltip.innerText = 'Rotate Thumbnail';
+
     button.appendChild(icon);
+    button.appendChild(tooltip);
     return button;
   }
 
