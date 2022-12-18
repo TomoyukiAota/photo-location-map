@@ -39,7 +39,7 @@ export class HomeComponent implements AfterViewInit, OnInit {
   }
 
   ngAfterViewInit() {
-    Split(['#left-sidebar', '#right-map'], {
+    Split(['#home-left-sidebar', '#home-right-map'], {
       sizes: [25, 75],
       minSize: 200,
       gutterSize: 8, // 8px, which is the same width as the splitter gutter in Photo Data Viewer.
