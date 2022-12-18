@@ -27,7 +27,7 @@ export class DirTreeViewTooltipDisplayLogic {
   }
 
   private configureTooltipPosition(targetElement: HTMLElement, tooltipElement: HTMLElement) {
-    const sidebarElement = document.querySelector('app-sidebar');
+    const sidebarElement = document.querySelector('#left-sidebar');
     const sidebar = sidebarElement.getBoundingClientRect();
     const target = targetElement.getBoundingClientRect();
     const tooltip = tooltipElement.getBoundingClientRect();
@@ -36,16 +36,15 @@ export class DirTreeViewTooltipDisplayLogic {
     // because targetElement can be wider than app-sidebar depending on the splitter gutter position.
     tooltipElement.style.left = `${sidebar.width - 30}px`;
 
-    const tooltipTop = this.calculateTooltipTop(target, tooltip);
+    const tooltipTop = this.calculateTooltipTop(sidebar, target, tooltip);
     tooltipElement.style.top = `${tooltipTop}px`;
   }
 
-  private calculateTooltipTop(target: DOMRect, tooltip: DOMRect) {
+  private calculateTooltipTop(sidebar: DOMRect, target: DOMRect, tooltip: DOMRect) {
     const idealTooltipTop = target.top + (target.height / 2) - (tooltip.height / 2);
-    const {height: viewportHeight} = document.documentElement.getBoundingClientRect();
-    const gap = 30; // Put some gap between viewport and tooltip
+    const gap = 5; // Put some gap for better layout
     const tooltipTopLowerLimit = gap;
-    const tooltipTopUpperLimit = viewportHeight - gap - tooltip.height;
+    const tooltipTopUpperLimit = sidebar.height - gap - tooltip.height;
     const tooltipTop = _.clamp(idealTooltipTop, tooltipTopLowerLimit, tooltipTopUpperLimit);
     return tooltipTop;
   }
