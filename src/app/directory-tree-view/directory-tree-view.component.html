@@ -8,23 +8,23 @@
                  (mouseenter)="tooltipDisplayLogic.onMouseEnter(node, tooltipTarget)"
                  (mouseleave)="tooltipDisplayLogic.onMouseLeave(node, tooltipTarget)">
 
-      <!-- Adjust space to align with tree expand button (which look like > or v) -->
-      <button mat-icon-button disabled></button>
+    <!-- Adjust space to align with tree expand button (which look like > or v) -->
+    <button mat-icon-button disabled></button>
 
-      <mat-checkbox *ngIf="node.isSelectable"
-                    [checked]="isSelected(node)"
-                    (change)="handleCheckboxChange(node)">
-        {{node.name}}
-      </mat-checkbox>
-      <mat-label *ngIf="!node.isSelectable"
-                 class="non-selectable-node">
-        <div class="disabled-checkbox-alternative"></div>
-        {{node.name}}
-      </mat-label>
-      <app-dir-tree-view-tooltip *ngIf="tooltipDisplayLogic.tooltipEnabled(node)"
-                                 [photoPath]="node.path"
-                                 style="display: none">
-      </app-dir-tree-view-tooltip>
+    <mat-checkbox *ngIf="node.isSelectable"
+                  [checked]="isSelected(node)"
+                  (change)="handleCheckboxChange(node)">
+      {{node.name}}
+    </mat-checkbox>
+    <mat-label *ngIf="!node.isSelectable"
+               class="non-selectable-node">
+      <div class="disabled-checkbox-alternative"></div>
+      {{node.name}}
+    </mat-label>
+    <app-dir-tree-view-tooltip *ngIf="tooltipDisplayLogic.tooltipEnabled(node)"
+                               [photoPath]="node.path"
+                               style="display: none">
+    </app-dir-tree-view-tooltip>
   </mat-tree-node>
 
   <mat-tree-node *matTreeNodeDef="let node; when: hasChildren"
