@@ -41,7 +41,6 @@ export class ThumbnailElement {
   private static displayThumbnailFromExif(thumbnailElement: HTMLImageElement, photo: Photo) {
     this.configureThumbnailToFitWithinContainer(thumbnailElement);
     thumbnailElement.src = photo.exif.thumbnail.objectUrl;
-    thumbnailElement.title = `Click the thumbnail to open ${photo.name}`;
   }
 
   private static displayThumbnailUsingPhotoItself(thumbnailElement: HTMLImageElement, photo: Photo) {
@@ -117,21 +116,18 @@ export class ThumbnailElement {
     this.configureThumbnailToFitWithinContainer(thumbnailElement);
     const imgSrcPath = thumbnailFilePath.replace(/#/g, '%23');  // # needs to be escaped. See https://www.w3schools.com/tags/ref_urlencode.asp for encoding.
     thumbnailElement.src = `file://${imgSrcPath}`;
-    thumbnailElement.title = `Click the thumbnail to open ${photo.name}`;
   }
 
   private static displayGeneratingThumbnailImage(thumbnailElement: HTMLImageElement, photo: Photo) {
     thumbnailElement.style.width = '160px';
     thumbnailElement.style.height = '20px';
     thumbnailElement.src = IconDataUrl.generatingThumbnail;
-    thumbnailElement.title = `Generating thumbnail for ${photo.name}.`;
   }
 
   private static displayNoThumbnailAvailableImage(thumbnailElement: HTMLImageElement, photo: Photo) {
     thumbnailElement.style.width = '150px';
     thumbnailElement.style.height = '15px';
     thumbnailElement.src = IconDataUrl.noThumbnailAvailable;
-    thumbnailElement.title = `Thumbnail is not available for ${photo.name}.`;
   }
 
   private static handleThumbnailClick(photo: Photo): void {
