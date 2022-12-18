@@ -5,10 +5,13 @@ import { FlatNode } from './directory-tree-view.model';
 export class DirTreeViewTooltipDisplayLogic {
   private readonly tooltipSelector = 'app-dir-tree-view-tooltip';
   private readonly tooltipVisibleCssClass = 'tooltip-visible';
+  private readonly tooltipVisibleSelector = `.${this.tooltipVisibleCssClass}`;
+  private readonly sidebarSelector = '#home-left-sidebar';
   private readonly photoDataService: PhotoDataService;
 
   constructor(photoDataService: PhotoDataService) {
     this.photoDataService = photoDataService;
+    this.configureRemovingTooltipOnSidebarScroll();
   }
 
   public tooltipEnabled(flatNode: FlatNode): boolean {
@@ -27,7 +30,7 @@ export class DirTreeViewTooltipDisplayLogic {
   }
 
   private configureTooltipPosition(targetElement: HTMLElement, tooltipElement: HTMLElement) {
-    const sidebarElement = document.querySelector('#home-left-sidebar');
+    const sidebarElement = document.querySelector(this.sidebarSelector);
     const sidebar = sidebarElement.getBoundingClientRect();
     const target = targetElement.getBoundingClientRect();
     const tooltip = tooltipElement.getBoundingClientRect();
@@ -50,6 +53,22 @@ export class DirTreeViewTooltipDisplayLogic {
       return;
 
     const tooltip: HTMLElement = tooltipTarget.querySelector(this.tooltipSelector);
+    this.removeTooltip(tooltip);
+  }
+
+  private configureRemovingTooltipOnSidebarScroll() {
+    const sidebar = document.querySelector(this.sidebarSelector);
+    sidebar.addEventListener(
+      'scroll',
+      _.throttle(() => {
+        document
+          .querySelectorAll(this.tooltipVisibleSelector)
+          .forEach(tooltip => this.removeTooltip(tooltip as HTMLElement));
+      }, 10 /* ms */)
+    );
+  }
+
+  private removeTooltip(tooltip: HTMLElement) {
     const fadeOutDuration = 300;  // ms
     setTimeout(() => tooltip.classList.remove(this.tooltipVisibleCssClass), fadeOutDuration);
     this.fadeOut(tooltip, fadeOutDuration);
