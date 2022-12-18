@@ -15,13 +15,17 @@ export class PlayLivePhotosButton {
     const button = document.createElement('button');
     button.className = 'photo-info-viewer-button';
     button.onclick = () => this.handleButtonClick(livePhotosFilePath, photo);
-    button.title = 'Live Photos';
 
     const icon = document.createElement('img');
     icon.className = 'photo-info-viewer-icon';
     icon.src = IconDataUrl.play;
 
+    const tooltip = document.createElement('span');
+    tooltip.className = 'photo-info-viewer-button-tooltip';
+    tooltip.innerText = 'Live Photos';
+
     button.appendChild(icon);
+    button.appendChild(tooltip);
     return button;
   }
 

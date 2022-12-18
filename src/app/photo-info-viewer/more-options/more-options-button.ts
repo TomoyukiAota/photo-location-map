@@ -8,13 +8,17 @@ export class MoreOptionsButton {
     const button = document.createElement('button');
     button.className = 'photo-info-viewer-more-options-button';
     button.onclick = () => this.handleButtonClick(photo, button);
-    button.title = 'More Options';
 
     const icon = document.createElement('img');
     icon.className = 'photo-info-viewer-icon';
     icon.src = IconDataUrl.moreOptions;
 
+    const tooltip = document.createElement('span');
+    tooltip.className = 'photo-info-viewer-button-tooltip';
+    tooltip.innerText = 'More Options';
+
     button.appendChild(icon);
+    button.appendChild(tooltip);
     return button;
   }
 
