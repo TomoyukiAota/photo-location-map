@@ -31,11 +31,7 @@ export class DirTreeViewTooltipDisplayLogic {
     const sidebar = sidebarElement.getBoundingClientRect();
     const target = targetElement.getBoundingClientRect();
     const tooltip = tooltipElement.getBoundingClientRect();
-
-    // Determine tooltip left position based on app-sidebar, not targetElement,
-    // because targetElement can be wider than app-sidebar depending on the splitter gutter position.
     tooltipElement.style.left = `${sidebar.width - 30}px`;
-
     const tooltipTop = this.calculateTooltipTop(sidebar, target, tooltip);
     tooltipElement.style.top = `${tooltipTop}px`;
   }
