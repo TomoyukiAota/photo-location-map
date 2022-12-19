@@ -1,10 +1,10 @@
-import { Analytics } from '../../../src-shared/analytics/analytics';
-import { openWithAssociatedApp } from '../../../src-shared/command/command';
-import { IconDataUrl } from '../../assets/icon-data-url';
-import { Photo } from '../shared/model/photo.model';
-import { SelectedDirectory } from '../shared/selected-directory';
+import { Analytics } from '../../../../src-shared/analytics/analytics';
+import { openWithAssociatedApp } from '../../../../src-shared/command/command';
+import { IconDataUrl } from '../../../assets/icon-data-url';
+import { Photo } from '../../shared/model/photo.model';
+import { SelectedDirectory } from '../../shared/selected-directory';
+import { photoInfoViewerLogger as logger } from '../photo-info-viewer-logger';
 import { createPhotoInfoViewerButton } from "./photo-info-viewer-button";
-import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
 
 
 export class PlayLivePhotosButton {
