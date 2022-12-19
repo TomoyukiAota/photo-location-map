@@ -1,24 +1,14 @@
 import { IconDataUrl } from '../../../assets/icon-data-url';
 import { Photo } from '../../shared/model/photo.model';
 import { removeFocus } from "../../shared/remove-focus";
+import { createPhotoInfoViewerButton } from "../photo-info-viewer-button";
 import { MoreOptionsMenuElement } from './more-options-menu-element';
 
 export class MoreOptionsButton {
   public static create(photo: Photo): HTMLElement {
-    const button = document.createElement('button');
-    button.className = 'photo-info-viewer-more-options-button';
-    button.onclick = () => this.handleButtonClick(photo, button);
-
-    const icon = document.createElement('img');
-    icon.className = 'photo-info-viewer-icon';
-    icon.src = IconDataUrl.moreOptions;
-
-    const tooltip = document.createElement('span');
-    tooltip.className = 'photo-info-viewer-button-tooltip';
-    tooltip.innerText = 'More Options';
-
-    button.appendChild(icon);
-    button.appendChild(tooltip);
+    const onClick = () => this.handleButtonClick(photo, button);
+    const button = createPhotoInfoViewerButton(onClick, IconDataUrl.moreOptions, 'More Options');
+    button.classList.add('photo-info-viewer-more-options-button');
     return button;
   }
 

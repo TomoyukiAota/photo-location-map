@@ -3,6 +3,7 @@ import { openWithAssociatedApp } from '../../../src-shared/command/command';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { Photo } from '../shared/model/photo.model';
 import { SelectedDirectory } from '../shared/selected-directory';
+import { createPhotoInfoViewerButton } from "./photo-info-viewer-button";
 import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
 
 
@@ -12,20 +13,8 @@ export class PlayLivePhotosButton {
     if (!livePhotosAvailable)
       return null;
 
-    const button = document.createElement('button');
-    button.className = 'photo-info-viewer-button';
-    button.onclick = () => this.handleButtonClick(livePhotosFilePath, photo);
-
-    const icon = document.createElement('img');
-    icon.className = 'photo-info-viewer-icon';
-    icon.src = IconDataUrl.play;
-
-    const tooltip = document.createElement('span');
-    tooltip.className = 'photo-info-viewer-button-tooltip';
-    tooltip.innerText = 'Live Photos';
-
-    button.appendChild(icon);
-    button.appendChild(tooltip);
+    const onClick = () => this.handleButtonClick(livePhotosFilePath, photo);
+    const button = createPhotoInfoViewerButton(onClick, IconDataUrl.play, 'Live Photos');
     return button;
   }
 
