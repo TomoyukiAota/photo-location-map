@@ -13,7 +13,7 @@ export function createPhotoInfoViewerButton(onClick: (event: MouseEvent) => void
 
 function createPhotoInfoViewerButtonIcon(imgSrc) {
   const icon = document.createElement('img');
-  icon.className = 'photo-info-viewer-icon';
+  icon.className = 'photo-info-viewer-button-icon';
   icon.src = imgSrc;
   return icon;
 }
