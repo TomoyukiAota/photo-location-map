@@ -1,11 +1,11 @@
 import { DevOrProd } from '../../../src-shared/dev-or-prod/dev-or-prod';
 import { Logger } from '../../../src-shared/log/logger';
 import { Photo } from '../shared/model/photo.model';
-import { MoreOptionsButton } from './more-options/more-options-button';
-import { LaunchPhotoViewerButton } from './launch-photo-viewer-button';
+import { MoreOptionsButton } from './button/more-options-button';
+import { LaunchPhotoViewerButton } from './button/launch-photo-viewer-button';
+import { PlayLivePhotosButton } from './button/play-live-photos-button';
+import { RotateButton } from './button/rotate-button';
 import { PhotoInfoUnavailableElement } from './photo-info-unavailable-element';
-import { PlayLivePhotosButton } from './play-live-photos-button';
-import { RotateButton } from './rotate-button';
 import { ThumbnailElement } from './thumbnail-element';
 
 type Requester = 'dir-tree-view' | 'leaflet-map' | 'google-maps';

@@ -1,24 +1,13 @@
-import { Analytics } from '../../../src-shared/analytics/analytics';
-import { IconDataUrl } from '../../assets/icon-data-url';
-import { Photo } from '../shared/model/photo.model';
-import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
+import { Analytics } from '../../../../src-shared/analytics/analytics';
+import { IconDataUrl } from '../../../assets/icon-data-url';
+import { Photo } from '../../shared/model/photo.model';
+import { photoInfoViewerLogger as logger } from '../photo-info-viewer-logger';
+import { createPhotoInfoViewerButton } from "./photo-info-viewer-button-util";
 
 export class RotateButton {
   public static create(thumbnailElement: HTMLImageElement, photo: Photo): HTMLButtonElement {
-    const button = document.createElement('button');
-    button.className = 'photo-info-viewer-button';
-    button.onclick = () => this.handleButtonClick(thumbnailElement, photo);
-
-    const icon = document.createElement('img');
-    icon.className = 'photo-info-viewer-icon';
-    icon.src = IconDataUrl.rotate;
-
-    const tooltip = document.createElement('span');
-    tooltip.className = 'photo-info-viewer-button-tooltip';
-    tooltip.innerText = 'Rotate Thumbnail';
-
-    button.appendChild(icon);
-    button.appendChild(tooltip);
+    const onClick = () => this.handleButtonClick(thumbnailElement, photo);
+    const button = createPhotoInfoViewerButton(onClick, IconDataUrl.rotate, 'Rotate Thumbnail');
     return button;
   }
 
