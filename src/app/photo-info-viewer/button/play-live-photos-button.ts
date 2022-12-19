@@ -4,7 +4,7 @@ import { IconDataUrl } from '../../../assets/icon-data-url';
 import { Photo } from '../../shared/model/photo.model';
 import { SelectedDirectory } from '../../shared/selected-directory';
 import { photoInfoViewerLogger as logger } from '../photo-info-viewer-logger';
-import { createPhotoInfoViewerButton } from "./photo-info-viewer-button";
+import { createPhotoInfoViewerButton } from "./photo-info-viewer-button-util";
 
 
 export class PlayLivePhotosButton {
