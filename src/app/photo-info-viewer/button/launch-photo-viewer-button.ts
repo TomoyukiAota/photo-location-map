@@ -1,9 +1,9 @@
-import { Analytics } from '../../../src-shared/analytics/analytics';
-import { Photo } from '../shared/model/photo.model';
-import { IconDataUrl } from '../../assets/icon-data-url';
-import { PhotoViewerLauncher } from '../photo-viewer-launcher/photo-viewer-launcher';
+import { Analytics } from '../../../../src-shared/analytics/analytics';
+import { IconDataUrl } from '../../../assets/icon-data-url';
+import { Photo } from '../../shared/model/photo.model';
+import { PhotoViewerLauncher } from '../../photo-viewer-launcher/photo-viewer-launcher';
+import { photoInfoViewerLogger as logger } from '../photo-info-viewer-logger';
 import { createPhotoInfoViewerButton } from "./photo-info-viewer-button";
-import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
 
 export class LaunchPhotoViewerButton {
   public static create(photo: Photo): HTMLButtonElement {

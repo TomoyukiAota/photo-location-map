@@ -1,8 +1,8 @@
 import { IconDataUrl } from '../../../assets/icon-data-url';
 import { Photo } from '../../shared/model/photo.model';
 import { removeFocus } from "../../shared/remove-focus";
-import { createPhotoInfoViewerButton } from "../photo-info-viewer-button";
-import { MoreOptionsMenuElement } from './more-options-menu-element';
+import { MoreOptionsMenuElement } from '../more-options/more-options-menu-element';
+import { createPhotoInfoViewerButton } from "./photo-info-viewer-button";
 
 export class MoreOptionsButton {
   public static create(photo: Photo): HTMLElement {

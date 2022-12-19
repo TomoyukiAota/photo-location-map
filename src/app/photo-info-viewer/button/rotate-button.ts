@@ -1,8 +1,8 @@
-import { Analytics } from '../../../src-shared/analytics/analytics';
-import { IconDataUrl } from '../../assets/icon-data-url';
-import { Photo } from '../shared/model/photo.model';
+import { Analytics } from '../../../../src-shared/analytics/analytics';
+import { IconDataUrl } from '../../../assets/icon-data-url';
+import { Photo } from '../../shared/model/photo.model';
+import { photoInfoViewerLogger as logger } from '../photo-info-viewer-logger';
 import { createPhotoInfoViewerButton } from "./photo-info-viewer-button";
-import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
 
 export class RotateButton {
   public static create(thumbnailElement: HTMLImageElement, photo: Photo): HTMLButtonElement {
