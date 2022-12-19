@@ -1,0 +1,29 @@
+@import "photo-info-viewer-common";
+
+.photo-info-viewer-thumbnail {
+  cursor: pointer;
+
+  // Style for text of img.alt
+  white-space: pre-wrap;
+  font-size: 12px;
+  line-height: 1.3;
+
+  transition:
+    transform  0.3s ease-in-out,  // Animation for thumbnail rotation
+    box-shadow 0.3s ease-in-out,  // Hover effect
+    filter     0.2s ease-in-out;  // Click effect
+
+  box-shadow: 0 0 3px 2px transparent;
+  &:hover { box-shadow: 0 0 3px 2px rgba(0,0,0,0.4); }
+
+  filter: brightness(1);
+  &:active { filter: brightness(0.8); }
+}
+
+.photo-info-viewer-generating-thumbnail {
+  animation: flickerAnimation 3s infinite;
+}
+
+.photo-info-viewer-fade-in-after-thumbnail-generation {
+  animation: fadeIn 2s ease 0s;
+}

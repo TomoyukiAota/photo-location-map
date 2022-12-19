@@ -1,0 +1,71 @@
+@import "photo-info-viewer-common";
+
+.photo-info-viewer-button {
+  all: unset;      // Remove button's default style
+  cursor: pointer; // Retrieve button's default cursor style
+
+  width: 30px;
+  height: 30px;
+  margin: 6px 3px 0 3px;
+  padding: 3px;
+  border-radius: 5px;
+
+  // Button color
+  background-color: #888888;
+  transition: background-color 0.2s ease;
+  &:hover  { background-color: #666666; }
+  &:active { background-color: #444444; }
+
+  // Centering the icon within the button
+  display: inline-grid;
+  place-items: center;
+
+  position: relative;
+
+  &:hover .photo-info-viewer-button-tooltip {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.photo-info-viewer-more-options-button {
+  &:focus  { background-color: #444444; }
+}
+
+.photo-info-viewer-icon {
+  width: 25px;
+  height: 25px;
+}
+
+// Reference for tooltip: https://zenn.dev/catnose99/articles/26bd8dac9ea5268486c8
+.photo-info-viewer-button-tooltip {
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -35px;
+  display: inline-block;
+  padding: 5px;
+  white-space: nowrap;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  background: #333;
+  color: #fff;
+  border-radius: 3px;
+  transition: 0.3s ease-in;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+
+  z-index: 1; // With z-index: 0, the map's popup tail appears in front of the tooltip.
+
+  // Tooltip tail
+  &:before {
+    content: '';
+    position: absolute;
+    top: -13px;
+    left: 50%;
+    margin-left: -7px;
+    border: 7px solid transparent;
+    border-bottom: 7px solid #333;
+  }
+}
