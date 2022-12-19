@@ -2,24 +2,13 @@ import { Analytics } from '../../../src-shared/analytics/analytics';
 import { Photo } from '../shared/model/photo.model';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { PhotoViewerLauncher } from '../photo-viewer-launcher/photo-viewer-launcher';
+import { createPhotoInfoViewerButton } from "./photo-info-viewer-button";
 import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
 
 export class LaunchPhotoViewerButton {
   public static create(photo: Photo): HTMLButtonElement {
-    const button = document.createElement('button');
-    button.className = 'photo-info-viewer-button';
-    button.onclick = () => this.handleButtonClick(photo);
-
-    const icon = document.createElement('img');
-    icon.className = 'photo-info-viewer-icon';
-    icon.src = IconDataUrl.launchExternalApp;
-
-    const tooltip = document.createElement('span');
-    tooltip.className = 'photo-info-viewer-button-tooltip';
-    tooltip.innerText = `Open File`;
-
-    button.appendChild(icon);
-    button.appendChild(tooltip);
+    const onClick = () => this.handleButtonClick(photo);
+    const button = createPhotoInfoViewerButton(onClick, IconDataUrl.launchExternalApp, 'Open File');
     return button;
   }
 
