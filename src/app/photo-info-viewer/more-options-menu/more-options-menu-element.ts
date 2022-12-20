@@ -18,17 +18,20 @@ export class MoreOptionsMenuElement {
   }
 
   private static configureMenuPosition(menuElement: HTMLElement, moreOptionsButton: HTMLElement) {
-    menuElement.style.right = '-25px';
+    const {clientHeight: viewportHeight, clientWidth: viewportWidth} = document.documentElement;
+    const {bottom: buttonBottom, right: buttonRight} = moreOptionsButton.getBoundingClientRect();
+    const enoughRoomBelowButton = viewportHeight - buttonBottom > 230; // Adjust the value if the menu height changes.
+    const enoughRoomRightToButton = viewportWidth - buttonRight > 200; // Adjust the value if the menu width changes.
 
-    const viewportHeightWithoutScrollbar = document.documentElement.clientHeight;
-    const buttonTop = moreOptionsButton.getBoundingClientRect().top;
-    const valueToDetermineMenuPosition = 260; // Adjust this value if the menu height changes.
-    const shouldShowMenuBelowButton = viewportHeightWithoutScrollbar - buttonTop > valueToDetermineMenuPosition;
-
-    if (shouldShowMenuBelowButton) {
-      menuElement.style.top = '39px';
+    if (enoughRoomBelowButton) {
+      menuElement.style.top = '37px';
+      menuElement.style.right = '-25px';
+    } else if (enoughRoomRightToButton) {
+      menuElement.style.bottom = '0';
+      menuElement.style.left = '37px';
     } else {
       menuElement.style.bottom = '37px';
+      menuElement.style.right = '-25px';
     }
   }
 
