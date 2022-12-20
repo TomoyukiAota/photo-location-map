@@ -101,6 +101,10 @@ export class DirectoryTreeViewComponent implements OnInit {
       // update SelectedPhotoService.selectedPhotos with an empty array so that the map will be displayed without photos.
       this.selectedPhotoService.setSelectedPhotosByPaths([]);
     }
+
+    if (rootFlatNode.isExpandable) {
+      this.treeControl.expand(rootFlatNode);
+    }
   }
 
   private handleDirectoryTreeViewSelectionRequested(photoPaths: string[]) {
