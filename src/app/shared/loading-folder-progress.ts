@@ -10,7 +10,8 @@ export class LoadingFolderProgress {
   public static setNumberOfAllFilesToLoad(number: number): void {
     numberOfAllFilesToLoad = number;
     isStarted = true;
-    isInProgress = true;
+    isInProgress = numberOfAllFilesToLoad >= 1;
+    isCompleted = numberOfAllFilesToLoad === 0;
   }
 
   public static incrementNumberOfLoadedFiles(): void {
