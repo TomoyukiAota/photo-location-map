@@ -1,6 +1,7 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import * as turf from '@turf/turf';
+import { Control, LayersControlEvent, Map, Marker } from 'leaflet';
 import { Subscription } from 'rxjs';
-import { LayersControlEvent, Map, Marker } from 'leaflet';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/user-data-stroage-path';
@@ -19,6 +20,10 @@ import 'leaflet-plugins/layer/tile/Bing.addon.applyMaxNativeZoom';
 // in order to avoid the compile errors for the types from leaflet.markercluster
 declare let L: any;
 
+interface RegionInfo extends Control {
+  updateContent(photos: Set<Photo>): RegionInfo;
+}
+
 @Component({
   selector: 'app-leaflet-map',
   templateUrl: './leaflet-map.component.html',
@@ -32,6 +37,10 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     maxNativeZoom: 19,
     maxZoom: 19,
   };
+  private photos: Photo[] = [];
+  private photosWithinRegion: Set<Photo> = new Set<Photo>();
+  private regionInfo: RegionInfo;
+
   private get selectedLayerName(): string {
     return UserDataStorage.readOrDefault(UserDataStoragePath.LeafletMap.SelectedLayer, null);
   }
@@ -67,6 +76,7 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   private renderMap(photos: Photo[]): void {
     this.ensureMapRemoved();
     this.initializeMap();
+    this.photos = photos;
 
     if (photos.length > 0) {
       this.renderMarkerClusterGroup(photos);
@@ -111,6 +121,8 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.map.on('baselayerchange', (event: LayersControlEvent) => {
       this.selectedLayerName = event.name;
     });
+
+    this.configureRegionSelector();
   }
 
   private setAttributionPrefix(): void {
@@ -199,5 +211,92 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
       px.y -= e.target._popup._container.clientHeight/2;       // find the height of the popup container, divide by 2, subtract from the Y axis of marker location
       this.map.panTo(this.map.unproject(px),{animate: false}); // pan to new center
     });
+  }
+
+  private configureRegionSelector() {
+    this.configureLeafletGeoman();
+    this.configureRegionInfo();
+  }
+
+  private configureLeafletGeoman() {
+    (this.map as any).pm.addControls({
+      position: 'topleft',
+      drawMarker: false,
+      drawCircleMarker: false,
+      drawPolyline: false,
+      drawCircle: false,
+      cutPolygon: false,
+      rotateMode: false,
+    });
+
+    (this.map as any).on('pm:create', (e) => this.onGeomanLayerCreated(e));
+    (this.map as any).on('pm:remove', () => this.onGeomanLayerRemoved());
+
+    const customTranslation = {
+      buttonTitles: {
+        drawRectButton: 'Set Rectangle Region',
+        drawPolyButton: 'Set Polygon Region',
+        drawTextButton: 'Set Text',
+        editButton: 'Edit Region',
+        dragButton: 'Drag Region',
+        deleteButton: 'Remove Region',
+      },
+    };
+    (this.map as any).pm.setLang('customTranslation', customTranslation, 'en');
+  }
+
+  private onGeomanLayerCreated(e) {
+    this.updateRegionInfo();
+    e.layer.on('pm:change', () => this.updateRegionInfo());
+  }
+
+  private onGeomanLayerRemoved() {
+    this.updateRegionInfo();
+  }
+
+  private updateRegionInfo() {
+    console.log('updateRegionInfo');
+    this.updatePhotosWithinRegion();
+    this.regionInfo.updateContent(this.photosWithinRegion);
+  }
+
+  private updatePhotosWithinRegion() {
+    this.photosWithinRegion = new Set<Photo>();
+    const allLayers = L.PM.Utils.findLayers(this.map);
+    const targetLayers = allLayers.filter(layer => layer._drawnByGeoman);
+    targetLayers.forEach(layer => {
+      const geoJsonFeature = layer.toGeoJSON();
+      if (geoJsonFeature.geometry.type !== 'Polygon') return;
+      const photosWithinLayer = this.photos.filter(photo => {
+        const {latitude, longitude} = photo.exif.gpsInfo.latLng;
+        return turf.booleanWithin(turf.point([longitude, latitude]), geoJsonFeature);
+      });
+      photosWithinLayer.forEach(photo => this.photosWithinRegion.add(photo));
+    });
+    console.log('photosWithinRegion', this.photosWithinRegion);
+  }
+
+  private configureRegionInfo() {
+    L.RegionInfo = L.Control.extend({
+      // Control::onAdd required for Leaflet
+      onAdd: function(map) {
+        this._div = L.DomUtil.create('div', 'plm-leaflet-map-region-info leaflet-bar');
+        L.DomEvent.disableClickPropagation(this._div);
+        return this._div;
+      },
+      // RegionInfo::updateContent
+      updateContent: function(photosWithinRegion: Set<Photo>) {
+        this._div.innerHTML = `<div>Number of photos in regions: ${photosWithinRegion.size}</div>`;
+        return this;
+      },
+    });
+
+    L.regionInfo = function(opts) {
+      return new L.RegionInfo(opts);
+    };
+
+    this.regionInfo = (L.regionInfo({ position: 'bottomleft' }) as RegionInfo)
+      .addTo(this.map)
+      .updateContent(this.photosWithinRegion);
   }
 }
