@@ -1,0 +1,8 @@
+// Note that selectors for leaflet-map are prefixed with "plm-leaflet-map-"
+// in order to avoid conflict with the CSS classes from Leaflet which have "leaflet-" prefix.
+// e.g. leaflet-pane, leaflet-layer, leaflet-control, leaflet-bar
+
+.plm-leaflet-map-region-info {
+  background: #ffffff;
+  padding: 5px 10px;
+}
