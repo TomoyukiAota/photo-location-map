@@ -243,8 +243,8 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
 
     const customTranslation = {
       buttonTitles: {
-        drawRectButton: 'Set Rectangle Region',
-        drawPolyButton: 'Set Polygon Region',
+        drawRectButton: 'Set Region by Rectangle',
+        drawPolyButton: 'Set Region by Vertex',
         drawTextButton: 'Set Text',
         editButton: 'Edit Region',
         dragButton: 'Drag Region',
