@@ -43,12 +43,12 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   private photosWithinRegion: Set<Photo> = new Set<Photo>();
   private regionInfo: RegionInfo;
 
-  private get selectedLayerName(): string {
+  private get selectedBaseLayerName(): string {
     return UserDataStorage.readOrDefault(UserDataStoragePath.LeafletMap.SelectedLayer, null);
   }
-  private set selectedLayerName(layerName: string) {
+  private set selectedBaseLayerName(layerName: string) {
     UserDataStorage.write(UserDataStoragePath.LeafletMap.SelectedLayer, layerName);
-    Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Changed Layer`, `Changed Layer to "${layerName}"`);
+    Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Changed Base Layer`, `Changed Base Layer to "${layerName}"`);
   }
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
@@ -100,21 +100,8 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     L.control.zoom({position: 'bottomright'}).addTo(this.map);
     L.control.scale().addTo(this.map);
     this.setAttributionPrefix();
-    const bingLayer = this.getBingLayer();
-    const osmLayer = this.getOsmLayer();
-
-    const layers = {
-      'Bing (Road)': bingLayer.roadOnDemand,
-      'Bing (Aerial)': bingLayer.aerial,
-      'Bing (Aerial with Labels)': bingLayer.aerialWithLabelsOnDemand,
-      'OpenStreetMap': osmLayer,
-    };
-    L.control.layers(layers, null, {position: 'topleft'}).addTo(this.map);
-
-    const previousLayer = layers[this.selectedLayerName];
-    const defaultLayer =  bingLayer.roadOnDemand;
-    const selectedLayer = previousLayer ?? defaultLayer;
-    selectedLayer.addTo(this.map);
+    this.configureBaseLayer();
+    this.configureRegionSelector();
 
     this.map.once('moveend', event => {
       const initialMaxZoomLevel = 13;
@@ -122,12 +109,27 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
         this.map.setZoom(initialMaxZoomLevel);
       }
     });
+  }
+
+  private configureBaseLayer() {
+    const bingLayer = this.getBingLayer();
+    const osmLayer = this.getOsmLayer();
+    const baseLayers = {
+      'Bing (Road)': bingLayer.roadOnDemand,
+      'Bing (Aerial)': bingLayer.aerial,
+      'Bing (Aerial with Labels)': bingLayer.aerialWithLabelsOnDemand,
+      'OpenStreetMap': osmLayer,
+    };
+    L.control.layers(baseLayers, null, {position: 'topleft'}).addTo(this.map);
+
+    const previousLayer = baseLayers[this.selectedBaseLayerName];
+    const defaultLayer = bingLayer.roadOnDemand;
+    const selectedLayer = previousLayer ?? defaultLayer;
+    selectedLayer.addTo(this.map);
 
     this.map.on('baselayerchange', (event: LayersControlEvent) => {
-      this.selectedLayerName = event.name;
+      this.selectedBaseLayerName = event.name;
     });
-
-    this.configureRegionSelector();
   }
 
   private setAttributionPrefix(): void {
