@@ -111,6 +111,13 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  private setAttributionPrefix(): void {
+    // Manually set to 'Leaflet' without the URL link.
+    // The default is 'Leaflet' with the link to https://leafletjs.com/
+    // The page will be opened within the application window, which confuses users.
+    this.map.attributionControl.setPrefix('Leaflet');
+  }
+
   private configureBaseLayer() {
     const bingLayer = this.getBingLayer();
     const osmLayer = this.getOsmLayer();
@@ -130,13 +137,6 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.map.on('baselayerchange', (event: LayersControlEvent) => {
       this.selectedBaseLayerName = event.name;
     });
-  }
-
-  private setAttributionPrefix(): void {
-    // Manually set to 'Leaflet' without the URL link.
-    // The default is 'Leaflet' with the link to https://leafletjs.com/
-    // The page will be opened within the application window, which confuses users.
-    this.map.attributionControl.setPrefix('Leaflet');
   }
 
   private getBingLayer() {
@@ -169,61 +169,50 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  private renderMarkerClusterGroup(photos: Photo[]): void {
-    if (photos.length === 1) {
-      this.renderMarkerClusterGroupForSinglePhoto(photos[0]);
-    } else {
-      this.renderMarkerClusterGroupForMultiplePhotos(photos);
-    }
-  }
-
-  private renderMarkerClusterGroupForSinglePhoto(photo: Photo): void {
-    const markerClusterGroup = L.markerClusterGroup({ animate: false }); // { animate: false } because animation does not look good for single photo case.
-    const marker = this.addMarkerToMarkerClusterGroup(markerClusterGroup, photo);
-    this.map.addLayer(markerClusterGroup);
-    this.map.fitBounds(markerClusterGroup.getBounds());
-
-    // For single photo case, open the popup with centering in the map.
-    this.configureCenteringIncludingPopupAndMarker();
-    marker.openPopup();
-  }
-
-  private renderMarkerClusterGroupForMultiplePhotos(photos: Photo[]): void {
-    const markerClusterGroup = L.markerClusterGroup({ animate: true }); // { animate: true } because animation looks good for multiple photo case.
-    photos.forEach(photo => {
-      this.addMarkerToMarkerClusterGroup(markerClusterGroup, photo);
-    });
-    this.map.addLayer(markerClusterGroup);
-    this.map.fitBounds(markerClusterGroup.getBounds());
-  }
-
-  private addMarkerToMarkerClusterGroup(markerClusterGroup: any, photo: Photo) {
-    const latLng: [number, number] = [photo.exif.gpsInfo.latLng.latitude, photo.exif.gpsInfo.latLng.longitude];
-    const marker: Marker = L.marker(latLng);
-    marker.bindPopup(PhotoInfoViewerContent.request('leaflet-map', photo));
-    markerClusterGroup.addLayer(marker);
-    return marker;
-  }
-
-  private configureCenteringIncludingPopupAndMarker() {
-    // The code in this function is based on the Stack Overflow answer in https://stackoverflow.com/a/23960984/7947548
-    // There are 2 major changes from the Stack Overflow answer:
-    // 1) 'popupopen' event is handled only once using map.once (not map.on).
-    //    Centering including the popup and the marker is needed only when the map for the selected photo is initially displayed.
-    //    Using map.on results in centering always happening when the marker is clicked, which does not look good.
-    // 2) {animate: false} is passed to map.panTo function because the animation does not look good.
-    // Other changes are minor changes (e.g. using const instead of var).
-    this.map.once('popupopen', (e) => {
-      const px = this.map.project(e.target._popup._latlng);    // find the pixel location on the map where the popup anchor is
-      px.y -= e.target._popup._container.clientHeight/2;       // find the height of the popup container, divide by 2, subtract from the Y axis of marker location
-      this.map.panTo(this.map.unproject(px),{animate: false}); // pan to new center
-    });
-  }
-
   private configureRegionSelector() {
     this.configureRegionInfo(() => this.getRegionInfoContent());
     this.configureLeafletGeoman();
     this.updateRegionInfo();
+  }
+
+  private configureRegionInfo(getContent: () => HTMLElement) {
+    L.RegionInfo = L.Control.extend({
+      // Control::onAdd required for Leaflet
+      onAdd: function(map) {
+        this._div = L.DomUtil.create('div', 'plm-leaflet-map-region-info leaflet-bar');
+        L.DomEvent.disableClickPropagation(this._div);
+        return this._div;
+      },
+      // RegionInfo::updateContent
+      updateContent: function() {
+        this._div.replaceChildren(getContent());
+        return this;
+      },
+    });
+
+    L.regionInfo = function(opts) {
+      return new L.RegionInfo(opts);
+    };
+
+    this.regionInfo = L.regionInfo({ position: 'topright' }).addTo(this.map);
+  }
+
+  private getRegionInfoContent(): HTMLElement {
+    const container = document.createElement('div');
+
+    const text = document.createElement('div');
+    text.innerText = `Number of photos in regions: ${this.photosWithinRegion.size}`;
+
+    const button = document.createElement('button');
+    button.innerText = 'Select Photos In Regions';
+    button.disabled = this.photosWithinRegion.size === 0;
+    button.onclick = () => {
+      const photoPaths = Array.from(this.photosWithinRegion).map(photo => photo.path);
+      this.directoryTreeViewSelectionService.select(photoPaths);
+    };
+
+    container.append(text, button);
+    return container;
   }
 
   private configureLeafletGeoman() {
@@ -287,43 +276,54 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     console.log('photosWithinRegion', this.photosWithinRegion);
   }
 
-  private configureRegionInfo(getContent: () => HTMLElement) {
-    L.RegionInfo = L.Control.extend({
-      // Control::onAdd required for Leaflet
-      onAdd: function(map) {
-        this._div = L.DomUtil.create('div', 'plm-leaflet-map-region-info leaflet-bar');
-        L.DomEvent.disableClickPropagation(this._div);
-        return this._div;
-      },
-      // RegionInfo::updateContent
-      updateContent: function() {
-        this._div.replaceChildren(getContent());
-        return this;
-      },
-    });
-
-    L.regionInfo = function(opts) {
-      return new L.RegionInfo(opts);
-    };
-
-    this.regionInfo = L.regionInfo({ position: 'topright' }).addTo(this.map);
+  private renderMarkerClusterGroup(photos: Photo[]): void {
+    if (photos.length === 1) {
+      this.renderMarkerClusterGroupForSinglePhoto(photos[0]);
+    } else {
+      this.renderMarkerClusterGroupForMultiplePhotos(photos);
+    }
   }
 
-  private getRegionInfoContent(): HTMLElement {
-    const container = document.createElement('div');
+  private renderMarkerClusterGroupForSinglePhoto(photo: Photo): void {
+    const markerClusterGroup = L.markerClusterGroup({ animate: false }); // { animate: false } because animation does not look good for single photo case.
+    const marker = this.addMarkerToMarkerClusterGroup(markerClusterGroup, photo);
+    this.map.addLayer(markerClusterGroup);
+    this.map.fitBounds(markerClusterGroup.getBounds());
 
-    const text = document.createElement('div');
-    text.innerText = `Number of photos in regions: ${this.photosWithinRegion.size}`;
+    // For single photo case, open the popup with centering in the map.
+    this.configureCenteringIncludingPopupAndMarker();
+    marker.openPopup();
+  }
 
-    const button = document.createElement('button');
-    button.innerText = 'Select Photos In Regions';
-    button.disabled = this.photosWithinRegion.size === 0;
-    button.onclick = () => {
-      const photoPaths = Array.from(this.photosWithinRegion).map(photo => photo.path);
-      this.directoryTreeViewSelectionService.select(photoPaths);
-    };
+  private renderMarkerClusterGroupForMultiplePhotos(photos: Photo[]): void {
+    const markerClusterGroup = L.markerClusterGroup({ animate: true }); // { animate: true } because animation looks good for multiple photo case.
+    photos.forEach(photo => {
+      this.addMarkerToMarkerClusterGroup(markerClusterGroup, photo);
+    });
+    this.map.addLayer(markerClusterGroup);
+    this.map.fitBounds(markerClusterGroup.getBounds());
+  }
 
-    container.append(text, button);
-    return container;
+  private addMarkerToMarkerClusterGroup(markerClusterGroup: any, photo: Photo) {
+    const latLng: [number, number] = [photo.exif.gpsInfo.latLng.latitude, photo.exif.gpsInfo.latLng.longitude];
+    const marker: Marker = L.marker(latLng);
+    marker.bindPopup(PhotoInfoViewerContent.request('leaflet-map', photo));
+    markerClusterGroup.addLayer(marker);
+    return marker;
+  }
+
+  private configureCenteringIncludingPopupAndMarker() {
+    // The code in this function is based on the Stack Overflow answer in https://stackoverflow.com/a/23960984/7947548
+    // There are 2 major changes from the Stack Overflow answer:
+    // 1) 'popupopen' event is handled only once using map.once (not map.on).
+    //    Centering including the popup and the marker is needed only when the map for the selected photo is initially displayed.
+    //    Using map.on results in centering always happening when the marker is clicked, which does not look good.
+    // 2) {animate: false} is passed to map.panTo function because the animation does not look good.
+    // Other changes are minor changes (e.g. using const instead of var).
+    this.map.once('popupopen', (e) => {
+      const px = this.map.project(e.target._popup._latlng);    // find the pixel location on the map where the popup anchor is
+      px.y -= e.target._popup._container.clientHeight/2;       // find the height of the popup container, divide by 2, subtract from the Y axis of marker location
+      this.map.panTo(this.map.unproject(px),{animate: false}); // pan to new center
+    });
   }
 }
