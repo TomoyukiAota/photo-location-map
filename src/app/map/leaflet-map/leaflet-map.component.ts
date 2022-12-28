@@ -97,12 +97,19 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private initializeMap(): void {
     this.map = L.map('leaflet-map', {zoomControl: false}).setView([0, 0], 2);
-    L.control.zoom({position: 'bottomright'}).addTo(this.map);
+    this.configureZoom();
     L.control.scale().addTo(this.map);
     this.setAttributionPrefix();
     this.configureBaseLayer();
     this.configureRegionSelector();
+  }
 
+  private configureZoom() {
+    L.control.zoom({position: 'bottomright'}).addTo(this.map);
+    this.configureInitialMaxZoomLevel();
+  }
+
+  private configureInitialMaxZoomLevel() {
     this.map.once('moveend', event => {
       const initialMaxZoomLevel = 13;
       if (this.map.getZoom() > initialMaxZoomLevel) {
