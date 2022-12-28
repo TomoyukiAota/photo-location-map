@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/user-data-stroage-path';
+import { DirectoryTreeViewSelectionService } from "../../directory-tree-view/directory-tree-view-selection.service";
 import { Photo } from '../../shared/model/photo.model';
 import { SelectedPhotoService } from '../../shared/service/selected-photo.service';
 import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewer-content';
@@ -22,7 +23,7 @@ import 'leaflet-plugins/layer/tile/Bing.addon.applyMaxNativeZoom';
 declare let L: any;
 
 interface RegionInfo extends Control {
-  updateContent(photos: Set<Photo>): RegionInfo;
+  updateContent(): RegionInfo;
 }
 
 @Component({
@@ -51,8 +52,9 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
-              private selectedPhotoService: SelectedPhotoService,
-              private forceRenderService: LeafletMapForceRenderService) {
+              private directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
+              private forceRenderService: LeafletMapForceRenderService,
+              private selectedPhotoService: SelectedPhotoService) {
   }
 
   public ngOnInit(): void {
@@ -216,7 +218,8 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private configureRegionSelector() {
     this.configureLeafletGeoman();
-    this.configureRegionInfo();
+    this.configureRegionInfo(() => this.getRegionInfoContent());
+    this.updateRegionInfo();
   }
 
   private configureLeafletGeoman() {
@@ -260,7 +263,7 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   private updateRegionInfo() {
     console.log('updateRegionInfo');
     this.updatePhotosWithinRegion();
-    this.regionInfo.updateContent(this.photosWithinRegion);
+    this.regionInfo.updateContent();
   }
 
   private updatePhotosWithinRegion() {
@@ -279,7 +282,7 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     console.log('photosWithinRegion', this.photosWithinRegion);
   }
 
-  private configureRegionInfo() {
+  private configureRegionInfo(getContent: () => HTMLElement) {
     L.RegionInfo = L.Control.extend({
       // Control::onAdd required for Leaflet
       onAdd: function(map) {
@@ -288,8 +291,8 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
         return this._div;
       },
       // RegionInfo::updateContent
-      updateContent: function(photosWithinRegion: Set<Photo>) {
-        this._div.innerHTML = `<div>Number of photos in regions: ${photosWithinRegion.size}</div>`;
+      updateContent: function() {
+        this._div.replaceChildren(getContent());
         return this;
       },
     });
@@ -298,8 +301,24 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
       return new L.RegionInfo(opts);
     };
 
-    this.regionInfo = (L.regionInfo({ position: 'bottomleft' }) as RegionInfo)
-      .addTo(this.map)
-      .updateContent(this.photosWithinRegion);
+    this.regionInfo = L.regionInfo({ position: 'bottomleft' }).addTo(this.map);
+  }
+
+  private getRegionInfoContent(): HTMLElement {
+    const container = document.createElement('div');
+
+    const text = document.createElement('div');
+    text.innerText = `Number of photos in regions: ${this.photosWithinRegion.size}`;
+
+    const button = document.createElement('button');
+    button.innerText = 'Select Photos In Regions';
+    button.disabled = this.photosWithinRegion.size === 0;
+    button.onclick = () => {
+      const photoPaths = Array.from(this.photosWithinRegion).map(photo => photo.path);
+      this.directoryTreeViewSelectionService.select(photoPaths);
+    };
+
+    container.append(text, button);
+    return container;
   }
 }
