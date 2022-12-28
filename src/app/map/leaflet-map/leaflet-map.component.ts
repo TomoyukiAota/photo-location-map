@@ -99,7 +99,7 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.map = L.map('leaflet-map', {zoomControl: false}).setView([0, 0], 2);
     this.configureZoom();
     L.control.scale().addTo(this.map);
-    this.setAttributionPrefix();
+    this.configureAttribution();
     this.configureBaseLayer();
     this.configureRegionSelector();
   }
@@ -118,7 +118,7 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  private setAttributionPrefix(): void {
+  private configureAttribution(): void {
     // Manually set to 'Leaflet' without the URL link.
     // The default is 'Leaflet' with the link to https://leafletjs.com/
     // The page will be opened within the application window, which confuses users.
