@@ -1,6 +1,7 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import * as turf from '@turf/turf';
 import { Control, LayersControlEvent, Map, Marker } from 'leaflet';
+import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
@@ -247,8 +248,10 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private onGeomanLayerCreated(e) {
     this.updateRegionInfo();
-    e.layer.on('pm:change', () => this.updateRegionInfo());
+    e.layer.on('pm:change', () => this.onGeomanLayerChanged());
   }
+
+  private onGeomanLayerChanged = _.throttle(() => this.updateRegionInfo(), 200 /* ms */);
 
   private onGeomanLayerRemoved() {
     this.updateRegionInfo();
