@@ -96,7 +96,9 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private initializeMap(): void {
-    this.map = L.map('leaflet-map').setView([0, 0], 2);
+    this.map = L.map('leaflet-map', {zoomControl: false}).setView([0, 0], 2);
+    L.control.zoom({position: 'bottomright'}).addTo(this.map);
+    L.control.scale().addTo(this.map);
     this.setAttributionPrefix();
     const bingLayer = this.getBingLayer();
     const osmLayer = this.getOsmLayer();
@@ -107,7 +109,7 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
       'Bing (Aerial with Labels)': bingLayer.aerialWithLabelsOnDemand,
       'OpenStreetMap': osmLayer,
     };
-    L.control.layers(layers).addTo(this.map);
+    L.control.layers(layers, null, {position: 'topleft'}).addTo(this.map);
 
     const previousLayer = layers[this.selectedLayerName];
     const defaultLayer =  bingLayer.roadOnDemand;
@@ -217,20 +219,21 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private configureRegionSelector() {
-    this.configureLeafletGeoman();
     this.configureRegionInfo(() => this.getRegionInfoContent());
+    this.configureLeafletGeoman();
     this.updateRegionInfo();
   }
 
   private configureLeafletGeoman() {
     (this.map as any).pm.addControls({
-      position: 'topleft',
+      position: 'topright',
       drawMarker: false,
       drawCircleMarker: false,
       drawPolyline: false,
       drawCircle: false,
       cutPolygon: false,
       rotateMode: false,
+      oneBlock: true,
     });
 
     (this.map as any).on('pm:create', (e) => this.onGeomanLayerCreated(e));
@@ -301,7 +304,7 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
       return new L.RegionInfo(opts);
     };
 
-    this.regionInfo = L.regionInfo({ position: 'bottomleft' }).addTo(this.map);
+    this.regionInfo = L.regionInfo({ position: 'topright' }).addTo(this.map);
   }
 
   private getRegionInfoContent(): HTMLElement {
