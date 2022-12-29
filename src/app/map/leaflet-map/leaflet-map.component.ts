@@ -34,14 +34,14 @@ interface RegionInfo extends Control {
 export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   private selectedPhotoServiceSubscription: Subscription;
   private forceRenderServiceSubscription: Subscription;
-  private map: Map;
   private readonly commonLayerOptions = {
     maxNativeZoom: 19,
     maxZoom: 19,
   };
+  private map: Map;
+  private regionInfo: RegionInfo;
   private photos: Photo[] = [];
   private photosWithinRegion: Set<Photo> = new Set<Photo>();
-  private regionInfo: RegionInfo;
 
   private get selectedBaseLayerName(): string {
     return UserDataStorage.readOrDefault(UserDataStoragePath.LeafletMap.SelectedLayer, null);
@@ -97,20 +97,27 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private initializeMap(): void {
     this.map = L.map('leaflet-map', {zoomControl: false}).setView([0, 0], 2);
-    this.configureZoom();
-    this.configureScale();
     this.configureAttribution();
+    this.configureScale();
+    this.configureZoom();
     this.configureBaseLayer();
     this.configureRegionSelector();
+  }
+
+  private configureAttribution(): void {
+    // Manually set to 'Leaflet' without the URL link.
+    // The default is 'Leaflet' with the link to https://leafletjs.com/
+    // The page will be opened within the application window, which confuses users.
+    this.map.attributionControl.setPrefix('Leaflet');
+  }
+
+  private configureScale() {
+    L.control.scale({position: 'bottomright'}).addTo(this.map);
   }
 
   private configureZoom() {
     L.control.zoom({position: 'bottomright'}).addTo(this.map);
     this.configureInitialMaxZoomLevel();
-  }
-
-  private configureScale() {
-    L.control.scale().addTo(this.map);
   }
 
   private configureInitialMaxZoomLevel() {
@@ -122,13 +129,6 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  private configureAttribution(): void {
-    // Manually set to 'Leaflet' without the URL link.
-    // The default is 'Leaflet' with the link to https://leafletjs.com/
-    // The page will be opened within the application window, which confuses users.
-    this.map.attributionControl.setPrefix('Leaflet');
-  }
-
   private configureBaseLayer() {
     const bingLayer = this.getBingLayer();
     const osmLayer = this.getOsmLayer();
@@ -138,7 +138,7 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
       'Bing (Aerial with Labels)': bingLayer.aerialWithLabelsOnDemand,
       'OpenStreetMap': osmLayer,
     };
-    L.control.layers(baseLayers, null, {position: 'topleft'}).addTo(this.map);
+    L.control.layers(baseLayers, null, {position: 'topright'}).addTo(this.map);
 
     const previousLayer = baseLayers[this.selectedBaseLayerName];
     const defaultLayer = bingLayer.roadOnDemand;
@@ -181,12 +181,13 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private configureRegionSelector() {
-    this.configureRegionInfo(() => this.getRegionInfoContent());
+    this.configureRegionInfo();
     this.configureLeafletGeoman();
     this.updateRegionInfo();
   }
 
-  private configureRegionInfo(getContent: () => HTMLElement) {
+  private configureRegionInfo() {
+    const getContent = () => this.getRegionInfoContent();
     L.RegionInfo = L.Control.extend({
       // Control::onAdd required for Leaflet
       onAdd: function(map) {
@@ -205,7 +206,16 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
       return new L.RegionInfo(opts);
     };
 
-    this.regionInfo = L.regionInfo({ position: 'topright' }).addTo(this.map);
+    this.regionInfo = L.regionInfo({ position: 'bottomleft' }).addTo(this.map);
+    this.hideRegionInfo();
+  }
+
+  private hideRegionInfo() {
+    this.regionInfo.getContainer().style.visibility = 'hidden';
+  }
+
+  private showRegionInfo() {
+    this.regionInfo.getContainer().style.visibility = 'visible';
   }
 
   private getRegionInfoContent(): HTMLElement {
@@ -228,7 +238,7 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private configureLeafletGeoman() {
     (this.map as any).pm.addControls({
-      position: 'topright',
+      position: 'bottomright',
       drawMarker: false,
       drawCircleMarker: false,
       drawPolyline: false,
@@ -255,13 +265,19 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private onGeomanLayerCreated(e) {
-    this.updateRegionInfo();
     e.layer.on('pm:change', () => this.onGeomanLayerChanged());
+    this.updateRegionInfo();
+    if (this.regionExists()) {
+      this.showRegionInfo();
+    }
   }
 
   private onGeomanLayerChanged = _.throttle(() => this.updateRegionInfo(), 200 /* ms */);
 
   private onGeomanLayerRemoved() {
+    if (!this.regionExists()) {
+      this.hideRegionInfo();
+    }
     this.updateRegionInfo();
   }
 
@@ -271,18 +287,31 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.regionInfo.updateContent();
   }
 
+  private regionExists() {
+    return this.getGeoJsonPolygons().length > 0;
+  }
+
+  private getGeoJsonPolygons() {
+    return this.getLayersDrawnByGeoman()
+      .map(layer => layer.toGeoJSON())
+      .filter(geoJson => geoJson.geometry.type === 'Polygon');
+  }
+
+  private getLayersDrawnByGeoman() {
+    const layers = L.PM.Utils.findLayers(this.map);
+    const layersDrawnByGeoman = layers.filter(layer => layer._drawnByGeoman);
+    return layersDrawnByGeoman;
+  }
+
   private updatePhotosWithinRegion() {
     this.photosWithinRegion = new Set<Photo>();
-    const allLayers = L.PM.Utils.findLayers(this.map);
-    const targetLayers = allLayers.filter(layer => layer._drawnByGeoman);
-    targetLayers.forEach(layer => {
-      const geoJsonFeature = layer.toGeoJSON();
-      if (geoJsonFeature.geometry.type !== 'Polygon') return;
-      const photosWithinLayer = this.photos.filter(photo => {
+    const geoJsonPolygons = this.getGeoJsonPolygons();
+    geoJsonPolygons.forEach(geoJsonPolygon => {
+      const photosWithinPolygon = this.photos.filter(photo => {
         const {latitude, longitude} = photo.exif.gpsInfo.latLng;
-        return turf.booleanWithin(turf.point([longitude, latitude]), geoJsonFeature);
+        return turf.booleanWithin(turf.point([longitude, latitude]), geoJsonPolygon);
       });
-      photosWithinLayer.forEach(photo => this.photosWithinRegion.add(photo));
+      photosWithinPolygon.forEach(photo => this.photosWithinRegion.add(photo));
     });
     console.log('photosWithinRegion', this.photosWithinRegion);
   }
