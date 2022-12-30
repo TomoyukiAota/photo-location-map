@@ -15,7 +15,7 @@ export namespace UserDataStoragePath {
   }
 
   export namespace LeafletMap {
-    export const SelectedLayer: ReadonlyArray<string> = ['LeafletMap', 'SelectedLayer'];
+    export const SelectedBaseLayer: ReadonlyArray<string> = ['LeafletMap', 'SelectedBaseLayer'];
   }
 
   export namespace PhotoDataViewer {
