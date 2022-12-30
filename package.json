@@ -100,6 +100,7 @@
     "@angular/router": "13.2.6",
     "@ngx-translate/core": "14.0.0",
     "@ngx-translate/http-loader": "7.0.0",
+    "@turf/turf": "6.5.0",
     "@types/delete-empty": "3.0.2",
     "@types/fs-extra": "9.0.13",
     "@types/is-natural-number": "4.0.1",
