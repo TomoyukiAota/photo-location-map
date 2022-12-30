@@ -285,7 +285,6 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private updateRegionInfo() {
-    console.log('updateRegionInfo');
     this.updatePhotosWithinRegion();
     this.regionInfo.updateContent();
   }
@@ -316,7 +315,6 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
       });
       photosWithinPolygon.forEach(photo => this.photosWithinRegion.add(photo));
     });
-    console.log('photosWithinRegion', this.photosWithinRegion);
   }
 
   private renderMarkerClusterGroup(photos: Photo[]): void {
