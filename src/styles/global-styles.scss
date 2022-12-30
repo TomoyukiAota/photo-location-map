@@ -23,6 +23,11 @@ body {
   }
 }
 
+$max-z-index: 2147483647;
+.cdk-overlay-container {
+  z-index: $max-z-index;  // Override the default z-index (1000) to the maximum number to ensure that the overlay works.
+}
+
 .custom-dialog-container {
   max-width: 95vw !important;   // important! to override the max-width restriction of 80vw given by inline styling
   max-height: 95vh;
@@ -40,3 +45,4 @@ body {
 }
 
 @import "photo-info-viewer/photo-info-viewer";
+@import "plm-leaflet-map";

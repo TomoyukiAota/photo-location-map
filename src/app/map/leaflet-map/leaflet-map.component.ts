@@ -1,13 +1,17 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import * as turf from '@turf/turf';
+import { Control, LayersControlEvent, Map, Marker } from 'leaflet';
+import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { LayersControlEvent, Map, Marker } from 'leaflet';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/user-data-stroage-path';
+import { DirectoryTreeViewSelectionService } from "../../directory-tree-view/directory-tree-view-selection.service";
 import { Photo } from '../../shared/model/photo.model';
 import { SelectedPhotoService } from '../../shared/service/selected-photo.service';
 import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewer-content';
 import { LeafletMapForceRenderService } from './leaflet-map-force-render/leaflet-map-force-render.service';
+import { leafletMapLogger as logger } from "./leaflet-map-logger";
 
 // References to implement Bing Maps with leaflet-plugins:
 // - https://github.com/shramov/leaflet-plugins/blob/master/examples/bing.html
@@ -19,6 +23,10 @@ import 'leaflet-plugins/layer/tile/Bing.addon.applyMaxNativeZoom';
 // in order to avoid the compile errors for the types from leaflet.markercluster
 declare let L: any;
 
+interface RegionInfo extends Control {
+  updateContent(): RegionInfo;
+}
+
 @Component({
   selector: 'app-leaflet-map',
   templateUrl: './leaflet-map.component.html',
@@ -27,22 +35,27 @@ declare let L: any;
 export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   private selectedPhotoServiceSubscription: Subscription;
   private forceRenderServiceSubscription: Subscription;
-  private map: Map;
   private readonly commonLayerOptions = {
     maxNativeZoom: 19,
     maxZoom: 19,
   };
-  private get selectedLayerName(): string {
+  private map: Map;
+  private regionInfo: RegionInfo;
+  private photos: Photo[] = [];
+  private photosWithinRegion: Set<Photo> = new Set<Photo>();
+
+  private get selectedBaseLayerName(): string {
     return UserDataStorage.readOrDefault(UserDataStoragePath.LeafletMap.SelectedLayer, null);
   }
-  private set selectedLayerName(layerName: string) {
+  private set selectedBaseLayerName(layerName: string) {
     UserDataStorage.write(UserDataStoragePath.LeafletMap.SelectedLayer, layerName);
-    Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Changed Layer`, `Changed Layer to "${layerName}"`);
+    Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Changed Base Layer`, `Changed Base Layer to "${layerName}"`);
   }
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
-              private selectedPhotoService: SelectedPhotoService,
-              private forceRenderService: LeafletMapForceRenderService) {
+              private directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
+              private forceRenderService: LeafletMapForceRenderService,
+              private selectedPhotoService: SelectedPhotoService) {
   }
 
   public ngOnInit(): void {
@@ -67,6 +80,7 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   private renderMap(photos: Photo[]): void {
     this.ensureMapRemoved();
     this.initializeMap();
+    this.photos = photos;
 
     if (photos.length > 0) {
       this.renderMarkerClusterGroup(photos);
@@ -83,41 +97,58 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private initializeMap(): void {
-    this.map = L.map('leaflet-map').setView([0, 0], 2);
-    this.setAttributionPrefix();
-    const bingLayer = this.getBingLayer();
-    const osmLayer = this.getOsmLayer();
+    this.map = L.map('leaflet-map', {zoomControl: false}).setView([0, 0], 2);
+    this.configureAttribution();
+    this.configureScale();
+    this.configureZoom();
+    this.configureBaseLayer();
+    this.configureRegionSelector();
+  }
 
-    const layers = {
-      'Bing (Road)': bingLayer.roadOnDemand,
-      'Bing (Aerial)': bingLayer.aerial,
-      'Bing (Aerial with Labels)': bingLayer.aerialWithLabelsOnDemand,
-      'OpenStreetMap': osmLayer,
-    };
-    L.control.layers(layers).addTo(this.map);
+  private configureAttribution(): void {
+    // Manually set to 'Leaflet' without the URL link.
+    // The default is 'Leaflet' with the link to https://leafletjs.com/
+    // The page will be opened within the application window, which confuses users.
+    this.map.attributionControl.setPrefix('Leaflet');
+  }
 
-    const previousLayer = layers[this.selectedLayerName];
-    const defaultLayer =  bingLayer.roadOnDemand;
-    const selectedLayer = previousLayer ?? defaultLayer;
-    selectedLayer.addTo(this.map);
+  private configureScale() {
+    L.control.scale({position: 'bottomright'}).addTo(this.map);
+  }
 
+  private configureZoom() {
+    L.control.zoom({position: 'bottomright'}).addTo(this.map);
+    this.configureInitialMaxZoomLevel();
+  }
+
+  private configureInitialMaxZoomLevel() {
     this.map.once('moveend', event => {
       const initialMaxZoomLevel = 13;
       if (this.map.getZoom() > initialMaxZoomLevel) {
         this.map.setZoom(initialMaxZoomLevel);
       }
     });
-
-    this.map.on('baselayerchange', (event: LayersControlEvent) => {
-      this.selectedLayerName = event.name;
-    });
   }
 
-  private setAttributionPrefix(): void {
-    // Manually set to 'Leaflet' without the URL link.
-    // The default is 'Leaflet' with the link to https://leafletjs.com/
-    // The page will be opened within the application window, which confuses users.
-    this.map.attributionControl.setPrefix('Leaflet');
+  private configureBaseLayer() {
+    const bingLayer = this.getBingLayer();
+    const osmLayer = this.getOsmLayer();
+    const baseLayers = {
+      'Bing (Road)': bingLayer.roadOnDemand,
+      'Bing (Aerial)': bingLayer.aerial,
+      'Bing (Aerial with Labels)': bingLayer.aerialWithLabelsOnDemand,
+      'OpenStreetMap': osmLayer,
+    };
+    L.control.layers(baseLayers, null, {position: 'topright'}).addTo(this.map);
+
+    const previousLayer = baseLayers[this.selectedBaseLayerName];
+    const defaultLayer = bingLayer.roadOnDemand;
+    const selectedLayer = previousLayer ?? defaultLayer;
+    selectedLayer.addTo(this.map);
+
+    this.map.on('baselayerchange', (event: LayersControlEvent) => {
+      this.selectedBaseLayerName = event.name;
+    });
   }
 
   private getBingLayer() {
@@ -147,6 +178,154 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     return L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors, CC-BY-SA',
       ...this.commonLayerOptions,
+    });
+  }
+
+  private configureRegionSelector() {
+    this.configureRegionInfo();
+    this.configureLeafletGeoman();
+    this.updateRegionInfo();
+  }
+
+  private configureRegionInfo() {
+    const getContent = () => this.getRegionInfoContent();
+    L.RegionInfo = L.Control.extend({
+      // Control::onAdd required for Leaflet
+      onAdd: function(map) {
+        this._div = L.DomUtil.create('div', 'leaflet-bar plm-leaflet-map-region-info');
+        L.DomEvent.disableClickPropagation(this._div);
+        return this._div;
+      },
+      // RegionInfo::updateContent
+      updateContent: function() {
+        this._div.replaceChildren(getContent());
+        return this;
+      },
+    });
+
+    L.regionInfo = function(opts) {
+      return new L.RegionInfo(opts);
+    };
+
+    this.regionInfo = L.regionInfo({ position: 'bottomleft' }).addTo(this.map);
+    this.hideRegionInfo();
+  }
+
+  private hideRegionInfo() {
+    this.regionInfo.getContainer().style.visibility = 'hidden';
+  }
+
+  private showRegionInfo() {
+    this.regionInfo.getContainer().style.visibility = 'visible';
+  }
+
+  private getRegionInfoContent(): HTMLElement {
+    const container = document.createElement('div');
+    container.classList.add('plm-leaflet-map-region-info-container');
+
+    const text = document.createElement('div');
+    text.classList.add('plm-leaflet-map-region-info-text');
+    text.innerText = `Photos in Regions: ${this.photosWithinRegion.size}`;
+
+    const button = document.createElement('button');
+    button.classList.add('plm-leaflet-map-region-info-select-photos-button');
+    button.innerText = 'Select Photos';
+    button.disabled = this.photosWithinRegion.size === 0;
+    button.onclick = () => {
+      logger.info(`Select Photos in Regions, Photos: ${this.photosWithinRegion.size}, Regions: ${this.getNumberOfRegions()}`);
+      Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Select Photos in Regions`, `Photos: ${this.photosWithinRegion.size}, Regions: ${this.getNumberOfRegions()}`);
+      const photoPaths = Array.from(this.photosWithinRegion).map(photo => photo.path);
+      this.directoryTreeViewSelectionService.select(photoPaths);
+    };
+
+    container.append(text, button);
+    return container;
+  }
+
+  private configureLeafletGeoman() {
+    (this.map as any).pm.addControls({
+      position: 'bottomright',
+      drawMarker: false,
+      drawCircleMarker: false,
+      drawPolyline: false,
+      drawCircle: false,
+      cutPolygon: false,
+      rotateMode: false,
+      oneBlock: true,
+    });
+
+    (this.map as any).on('pm:create', (e) => this.onGeomanLayerCreated(e));
+    (this.map as any).on('pm:remove', () => this.onGeomanLayerRemoved());
+
+    const customTranslation = {
+      buttonTitles: {
+        drawRectButton: 'Set Region by Rectangle',
+        drawPolyButton: 'Set Region by Vertex',
+        drawTextButton: 'Set Text',
+        editButton: 'Edit Region',
+        dragButton: 'Drag Region',
+        deleteButton: 'Remove Region',
+      },
+    };
+    (this.map as any).pm.setLang('customTranslation', customTranslation, 'en');
+  }
+
+  private onGeomanLayerCreated(e) {
+    e.layer.on('pm:change', () => this.onGeomanLayerChanged());
+    this.updateRegionInfo();
+    if (this.regionExists()) {
+      this.showRegionInfo();
+    }
+    const geometryType = e?.layer?.toGeoJSON?.()?.geometry?.type;
+    logger.info(`Create Geoman Layer, layer.geoJson.geometry.type: ${geometryType}`);
+    Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Create Geoman Layer`, `layer.geoJson.geometry.type: ${geometryType}`);
+  }
+
+  private onGeomanLayerChanged = _.throttle(() => this.updateRegionInfo(), 200 /* ms */);
+
+  private onGeomanLayerRemoved() {
+    if (!this.regionExists()) {
+      this.hideRegionInfo();
+    }
+    this.updateRegionInfo();
+    logger.info(`Remove Geoman Layer`);
+    Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Remove Geoman Layer`);
+  }
+
+  private updateRegionInfo() {
+    this.updatePhotosWithinRegion();
+    this.regionInfo.updateContent();
+  }
+
+  private regionExists(): boolean {
+    return this.getNumberOfRegions() > 0;
+  }
+
+  private getNumberOfRegions(): number {
+    return this.getGeoJsonPolygons().length;
+  }
+
+  private getGeoJsonPolygons() {
+    return this.getLayersDrawnByGeoman()
+      .map(layer => layer.toGeoJSON())
+      .filter(geoJson => geoJson.geometry.type === 'Polygon');
+  }
+
+  private getLayersDrawnByGeoman() {
+    const layers = L.PM.Utils.findLayers(this.map);
+    const layersDrawnByGeoman = layers.filter(layer => layer._drawnByGeoman);
+    return layersDrawnByGeoman;
+  }
+
+  private updatePhotosWithinRegion() {
+    this.photosWithinRegion = new Set<Photo>();
+    const geoJsonPolygons = this.getGeoJsonPolygons();
+    geoJsonPolygons.forEach(geoJsonPolygon => {
+      const photosWithinPolygon = this.photos.filter(photo => {
+        const {latitude, longitude} = photo.exif.gpsInfo.latLng;
+        return turf.booleanWithin(turf.point([longitude, latitude]), geoJsonPolygon);
+      });
+      photosWithinPolygon.forEach(photo => this.photosWithinRegion.add(photo));
     });
   }
 
