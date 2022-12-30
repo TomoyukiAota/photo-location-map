@@ -191,7 +191,7 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     L.RegionInfo = L.Control.extend({
       // Control::onAdd required for Leaflet
       onAdd: function(map) {
-        this._div = L.DomUtil.create('div', 'plm-leaflet-map-region-info leaflet-bar');
+        this._div = L.DomUtil.create('div', 'leaflet-bar plm-leaflet-map-region-info');
         L.DomEvent.disableClickPropagation(this._div);
         return this._div;
       },
@@ -220,12 +220,15 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private getRegionInfoContent(): HTMLElement {
     const container = document.createElement('div');
+    container.classList.add('plm-leaflet-map-region-info-container');
 
     const text = document.createElement('div');
-    text.innerText = `Number of photos in regions: ${this.photosWithinRegion.size}`;
+    text.classList.add('plm-leaflet-map-region-info-text');
+    text.innerText = `Photos in Regions: ${this.photosWithinRegion.size}`;
 
     const button = document.createElement('button');
-    button.innerText = 'Select Photos In Regions';
+    button.classList.add('plm-leaflet-map-region-info-select-photos-button');
+    button.innerText = 'Select Photos';
     button.disabled = this.photosWithinRegion.size === 0;
     button.onclick = () => {
       const photoPaths = Array.from(this.photosWithinRegion).map(photo => photo.path);
