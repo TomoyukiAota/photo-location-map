@@ -11,6 +11,7 @@ import { Photo } from '../../shared/model/photo.model';
 import { SelectedPhotoService } from '../../shared/service/selected-photo.service';
 import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewer-content';
 import { LeafletMapForceRenderService } from './leaflet-map-force-render/leaflet-map-force-render.service';
+import { leafletMapLogger as logger } from "./leaflet-map-logger";
 
 // References to implement Bing Maps with leaflet-plugins:
 // - https://github.com/shramov/leaflet-plugins/blob/master/examples/bing.html
@@ -231,6 +232,8 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     button.innerText = 'Select Photos';
     button.disabled = this.photosWithinRegion.size === 0;
     button.onclick = () => {
+      logger.info(`Select Photos in Regions, Photos: ${this.photosWithinRegion.size}, Regions: ${this.getNumberOfRegions()}`);
+      Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Select Photos in Regions`, `Photos: ${this.photosWithinRegion.size}, Regions: ${this.getNumberOfRegions()}`);
       const photoPaths = Array.from(this.photosWithinRegion).map(photo => photo.path);
       this.directoryTreeViewSelectionService.select(photoPaths);
     };
@@ -273,6 +276,9 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.regionExists()) {
       this.showRegionInfo();
     }
+    const geometryType = e?.layer?.toGeoJSON?.()?.geometry?.type;
+    logger.info(`Create Geoman Layer, layer.geoJson.geometry.type: ${geometryType}`);
+    Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Create Geoman Layer`, `layer.geoJson.geometry.type: ${geometryType}`);
   }
 
   private onGeomanLayerChanged = _.throttle(() => this.updateRegionInfo(), 200 /* ms */);
@@ -282,6 +288,8 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
       this.hideRegionInfo();
     }
     this.updateRegionInfo();
+    logger.info(`Remove Geoman Layer`);
+    Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Remove Geoman Layer`);
   }
 
   private updateRegionInfo() {
@@ -289,8 +297,12 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.regionInfo.updateContent();
   }
 
-  private regionExists() {
-    return this.getGeoJsonPolygons().length > 0;
+  private regionExists(): boolean {
+    return this.getNumberOfRegions() > 0;
+  }
+
+  private getNumberOfRegions(): number {
+    return this.getGeoJsonPolygons().length;
   }
 
   private getGeoJsonPolygons() {
