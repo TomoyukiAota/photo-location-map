@@ -81,9 +81,9 @@ const recordLoadedUserSettings = () => {
   Analytics.trackEvent('Loaded User Settings', `moment.js Format`, `moment.js Format: ${momentJsFormatString}`);
 };
 
-const recordLoadedLeafletLayer = () => {
-  const loadedLayerName = UserDataStorage.readOrDefault(UserDataStoragePath.LeafletMap.SelectedLayer, 'Not Loaded');
-  Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Layer at App Launch`, `Layer at App Launch: "${loadedLayerName}"`);
+const recordLoadedLeafletBaseLayer = () => {
+  const loadedBaseLayer = UserDataStorage.readOrDefault(UserDataStoragePath.LeafletMap.SelectedBaseLayer, 'Not Loaded');
+  Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Base Layer at App Launch`, `Base Layer at App Launch: "${loadedBaseLayer}"`);
 };
 
 export const recordAtAppLaunch = () => {
@@ -104,5 +104,5 @@ export const recordAtAppLaunch = () => {
 
   recordLoadedUserSettings();
 
-  recordLoadedLeafletLayer();
+  recordLoadedLeafletBaseLayer();
 };

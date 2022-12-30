@@ -45,11 +45,11 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   private photosWithinRegion: Set<Photo> = new Set<Photo>();
 
   private get selectedBaseLayerName(): string {
-    return UserDataStorage.readOrDefault(UserDataStoragePath.LeafletMap.SelectedLayer, null);
+    return UserDataStorage.readOrDefault(UserDataStoragePath.LeafletMap.SelectedBaseLayer, null);
   }
-  private set selectedBaseLayerName(layerName: string) {
-    UserDataStorage.write(UserDataStoragePath.LeafletMap.SelectedLayer, layerName);
-    Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Changed Base Layer`, `Changed Base Layer to "${layerName}"`);
+  private set selectedBaseLayerName(baseLayerName: string) {
+    UserDataStorage.write(UserDataStoragePath.LeafletMap.SelectedBaseLayer, baseLayerName);
+    Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Changed Base Layer`, `Changed Base Layer to "${baseLayerName}"`);
   }
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
@@ -141,10 +141,10 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     };
     L.control.layers(baseLayers, null, {position: 'topright'}).addTo(this.map);
 
-    const previousLayer = baseLayers[this.selectedBaseLayerName];
-    const defaultLayer = bingLayer.roadOnDemand;
-    const selectedLayer = previousLayer ?? defaultLayer;
-    selectedLayer.addTo(this.map);
+    const previousBaseLayer = baseLayers[this.selectedBaseLayerName];
+    const defaultBaseLayer = bingLayer.roadOnDemand;
+    const selectedBaseLayer = previousBaseLayer ?? defaultBaseLayer;
+    selectedBaseLayer.addTo(this.map);
 
     this.map.on('baselayerchange', (event: LayersControlEvent) => {
       this.selectedBaseLayerName = event.name;
