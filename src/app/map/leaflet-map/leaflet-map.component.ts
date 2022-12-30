@@ -97,7 +97,7 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private initializeMap(): void {
-    this.map = L.map('leaflet-map', {zoomControl: false}).setView([0, 0], 2);
+    this.map = L.map('plm-leaflet-map', {zoomControl: false}).setView([0, 0], 2);
     this.configureAttribution();
     this.configureScale();
     this.configureZoom();
