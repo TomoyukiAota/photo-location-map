@@ -1,6 +1,5 @@
 // Note that selectors defined in Photo Location Map are prefixed with "plm-leaflet-map-"
 // in order to avoid conflict with the CSS classes from Leaflet which have "leaflet-" prefix.
-// e.g. leaflet-pane, leaflet-layer, leaflet-control, leaflet-bar, leaflet-top, leaflet-right
 // Usages of selectors with "leaflet-" prefix is to deliberately override the Leaflet's default style.
 
 .leaflet-top.leaflet-right {
