@@ -2,7 +2,58 @@
 // in order to avoid conflict with the CSS classes from Leaflet which have "leaflet-" prefix.
 // e.g. leaflet-pane, leaflet-layer, leaflet-control, leaflet-bar
 
+.leaflet-top.leaflet-right {
+  z-index: 1001;  // Override the default z-index (1000) so that div.leaflet-control-layers is displayed on top of Leaflet-Geoman controls.
+}
+
 .plm-leaflet-map-region-info {
   background: #ffffff;
-  padding: 5px 10px;
+  padding: 5px 20px;
+
+  &.leaflet-control {
+    margin-bottom: 20px;  // Override .leaflet-control's margin-bottom so that region info does not cover attribution.
+    margin-left: 20px;    // To align with margin-bottom above.
+  }
+}
+
+.plm-leaflet-map-region-info-container {
+  min-width: 290px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.plm-leaflet-map-region-info-text {
+  line-height: 30px;
+  font-size: 14px;
+}
+
+.plm-leaflet-map-region-info-select-photos-button {
+  display: inline-block;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 10px;
+  outline: none;
+  border: none;
+  border-radius: 4px;
+  line-height: 30px; // Same height as other buttons on the map (e.g. zoom in/out buttons)
+  font-size: 14px;
+  user-select: none;
+  white-space: nowrap;
+  text-decoration: none;
+  vertical-align: baseline;
+  text-align: center;
+  color: #ffffff;
+  background-color: #00000033;
+
+  &:not([disabled]) {
+    cursor: pointer;
+
+    $enabled-button-background-color: rgb(51, 136, 255); // Same color as the region border on the map
+    background-color: $enabled-button-background-color;
+    &:hover {
+      background-color: darken($enabled-button-background-color, 10%);
+    }
+    transition: background-color 0.2s ease;
+  }
 }
