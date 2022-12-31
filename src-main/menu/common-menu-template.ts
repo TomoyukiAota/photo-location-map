@@ -4,6 +4,7 @@ import { DevOrProd } from '../../src-shared/dev-or-prod/dev-or-prod';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { Logger } from '../../src-shared/log/logger';
 import { mainWindow } from '../electron-main';
+import { selectionMenuTemplate } from './selection-menu';
 
 const handleManageSettingsClicked = () => {
   Logger.info(`[Main Window Menu] Clicked "Manage Settings".`);
@@ -34,6 +35,7 @@ export const commonMenuTemplate: MenuItemConstructorOptions[] = [
       { role: 'togglefullscreen' }
     ]
   },
+  selectionMenuTemplate,
   {
     label: 'Settings',
     submenu: [

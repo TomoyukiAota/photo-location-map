@@ -9,6 +9,7 @@ import { sleep } from '../../../src-shared/sleep/sleep';
 
 import { FolderSelectionService } from '../shared/service/folder-selection.service';
 import { PhotoDataService } from '../shared/service/photo-data.service';
+import { PhotoSelectionHistoryService } from '../shared/service/photo-selection-history.service';
 import { LoadingFolderProgress } from '../shared/loading-folder-progress';
 import { SelectedDirectory } from '../shared/selected-directory';
 import { ThumbnailObjectUrlStorage } from '../shared/thumbnail-object-url-storage';
@@ -37,7 +38,8 @@ export class SidebarComponent {
               private photoDataService: PhotoDataService,
               private directoryTreeViewDataService: DirectoryTreeViewDataService,
               private loadedFilesStatusBarService: LoadedFilesStatusBarService,
-              public thumbnailGenerationService: ThumbnailGenerationService) {
+              public thumbnailGenerationService: ThumbnailGenerationService,
+              private photoSelectionHistoryService: PhotoSelectionHistoryService) {
   }
 
   public async showSelectFolderDialog() {
@@ -61,6 +63,7 @@ export class SidebarComponent {
 
     try {
       FolderSelectionRecorder.start(selectedFolderPath);
+      this.photoSelectionHistoryService.reset();
       PhotoInfoViewerContent.clearCache();
       ThumbnailObjectUrlStorage.revokeObjectUrls();
       this.folderSelectionService.folderSelected.next();

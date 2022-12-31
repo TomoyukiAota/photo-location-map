@@ -99,7 +99,7 @@ export class DirectoryTreeViewComponent implements OnInit {
     } else {
       // When the root node is not selectable (i.e. no photos with location data exist in the selected folder),
       // update SelectedPhotoService.selectedPhotos with an empty array so that the map will be displayed without photos.
-      this.selectedPhotoService.setSelectedPhotosByPaths([]);
+      this.selectedPhotoService.setSelectedPhotos([]);
     }
 
     if (rootFlatNode.isExpandable) {
@@ -231,7 +231,8 @@ export class DirectoryTreeViewComponent implements OnInit {
       .filter(node => !node.isExpandable)
       .filter(node => node.isSelectable)
       .map(node => node.path);
-    this.selectedPhotoService.setSelectedPhotosByPaths(selectedPaths);
+    const selectedPhotos = selectedPaths.map(path => this.photoDataService.getPhoto(path));
+    this.selectedPhotoService.setSelectedPhotos(selectedPhotos);
   }
 
   //#region --- Context Menu ---
