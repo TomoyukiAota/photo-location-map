@@ -48,7 +48,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     window.plmInternalRenderer.photoSelection.redo = () => this.redoPhotoSelection();
     window.plmInternalRenderer.photoSelection.selectOnlyThis = (photoPath) => this.selectOnlyThis(photoPath);
 
-    this.photoSelectionHistoryService.reset(); // Disable Undo/Redo menus when the page is reloaded.
+    this.photoSelectionHistoryService.reset(); // Disable Undo/Redo menus after the application frontend is reloaded.
   }
 
   public ngAfterViewInit(): void {
