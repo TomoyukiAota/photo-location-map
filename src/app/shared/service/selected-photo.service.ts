@@ -1,28 +1,26 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { Logger } from '../../../../src-shared/log/logger';
 import { Photo } from '../model/photo.model';
-import { PhotoDataService } from './photo-data.service';
+import { PhotoSelectionHistoryService } from './photo-selection-history.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SelectedPhotoService {
-  private selectedPhotos: Photo[] = [];
-  public selectedPhotosChanged = new Subject<Photo[]>();
+  public selectedPhotos = new BehaviorSubject<Photo[]>([]);
 
-  constructor(private photoDataService: PhotoDataService) {
+  constructor(private photoSelectionHistoryService: PhotoSelectionHistoryService) {
   }
 
-  public setSelectedPhotosByPaths(selectedPhotoPaths: string[]) {
-    const selectedPhotos = selectedPhotoPaths.map(path => this.photoDataService.getPhoto(path));
-    this.selectedPhotos = selectedPhotos;
-    this.selectedPhotosChanged.next(selectedPhotos);
+  public setSelectedPhotos(selectedPhotos: Photo[]) {
+    this.selectedPhotos.next(selectedPhotos);
+    this.photoSelectionHistoryService.add(selectedPhotos);
     Logger.info('Selected Photos: ', selectedPhotos);
   }
 
   public getSelectedPhotos(): Photo[] {
-    const selectedPhotosClone = Array.from(this.selectedPhotos);
+    const selectedPhotosClone = Array.from(this.selectedPhotos.getValue());
     return selectedPhotosClone;
   }
 }

@@ -3,6 +3,7 @@ import { ProxyRequire } from '../../src-shared/require/proxy-require';
 import { Logger } from '../../src-shared/log/logger';
 import { menuTemplateOnWindowsLinux } from './menu-template-on-windows-linux';
 import { menuTemplateOnMac } from './menu-template-on-mac';
+import { configureIpcForSelectionUndoRedoMenus } from './selection-menu';
 
 const os = ProxyRequire.os;
 
@@ -23,3 +24,4 @@ const getMenuTemplate = () => {
 
 const menu = Menu.buildFromTemplate(getMenuTemplate());
 Menu.setApplicationMenu(menu);
+configureIpcForSelectionUndoRedoMenus(menu);

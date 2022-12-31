@@ -12,6 +12,7 @@ import {
 import { AboutBoxComponent } from './about-box/about-box.component';
 import { DirectoryTreeViewSelectionService } from './directory-tree-view/directory-tree-view-selection.service';
 import { SettingsDialogComponent } from './settings-dialog/settings-dialog.component';
+import { PhotoSelectionHistoryService } from './shared/service/photo-selection-history.service';
 import { WelcomeDialogComponent } from './welcome-dialog/welcome-dialog.component';
 import { WelcomeDialogAtAppLaunchService } from './welcome-dialog/welcome-dialog-at-app-launch/welcome-dialog-at-app-launch.service';
 
@@ -22,8 +23,9 @@ import { WelcomeDialogAtAppLaunchService } from './welcome-dialog/welcome-dialog
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(private dialog: MatDialog,
-              private ngZone: NgZone,
               private directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
+              private ngZone: NgZone,
+              private photoSelectionHistoryService: PhotoSelectionHistoryService,
               private translate: TranslateService,
               private welcomeDialogAtAppLaunchService: WelcomeDialogAtAppLaunchService) {
     translate.setDefaultLang('en');
@@ -42,7 +44,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     window.plmInternalRenderer.welcomeDialog.showWelcomeDialog = () => this.showWelcomeDialog();
 
     window.plmInternalRenderer.photoSelection = window.plmInternalRenderer.photoSelection || new PlmInternalRendererPhotoSelection();
+    window.plmInternalRenderer.photoSelection.undo = () => this.undoPhotoSelection();
+    window.plmInternalRenderer.photoSelection.redo = () => this.redoPhotoSelection();
     window.plmInternalRenderer.photoSelection.selectOnlyThis = (photoPath) => this.selectOnlyThis(photoPath);
+
+    this.photoSelectionHistoryService.reset(); // Disable Undo/Redo menus when the page is reloaded.
   }
 
   public ngAfterViewInit(): void {
@@ -53,6 +59,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     window.plmInternalRenderer.aboutBox.showAboutBox = null;
     window.plmInternalRenderer.settingsDialog.showSettingsDialog = null;
     window.plmInternalRenderer.welcomeDialog.showWelcomeDialog = null;
+    window.plmInternalRenderer.photoSelection = null;
   }
 
   public showAboutBox(): void {
@@ -93,6 +100,20 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         disableClose: true
       });
       Logger.info('Displayed Welcome Dialog.');
+    });
+  }
+
+  private undoPhotoSelection() {
+    this.ngZone.run(() => {
+      this.photoSelectionHistoryService.undo();
+      Logger.debug(`Called AppComponent::undoPhotoSelection`);
+    });
+  }
+
+  private redoPhotoSelection() {
+    this.ngZone.run(() => {
+      this.photoSelectionHistoryService.redo();
+      Logger.debug(`Called AppComponent::redoPhotoSelection`);
     });
   }
 
