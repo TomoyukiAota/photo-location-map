@@ -20,7 +20,6 @@ export class SelectedPhotoService {
   }
 
   public getSelectedPhotos(): Photo[] {
-    const selectedPhotosClone = Array.from(this.selectedPhotos.getValue());
-    return selectedPhotosClone;
+    return Array.from(this.selectedPhotos.getValue());
   }
 }
