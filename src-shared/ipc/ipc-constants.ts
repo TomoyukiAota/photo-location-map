@@ -29,4 +29,10 @@ export namespace IpcConstants {
   export namespace PhotoDataViewer {
     export const Name = 'ipc-constants-launch-photo-data-viewer';
   }
+
+  export namespace PhotoSelection {
+    export const Undo = 'ipc-constants-photo-selection-undo';
+    export const Redo = 'ipc-constants-photo-selection-redo';
+    export const UpdateUndoRedoMenus = 'ipc-constants-photo-selection-update-undo-redo-menus';
+  }
 }

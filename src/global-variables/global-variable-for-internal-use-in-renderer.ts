@@ -23,5 +23,7 @@ export class PlmInternalRendererMap implements MapChangeable {
 }
 
 export class PlmInternalRendererPhotoSelection implements IPlmInternalRendererPhotoSelection {
+  public undo: () => void;
+  public redo: () => void;
   public selectOnlyThis: (photoPath: string) => void;
 }

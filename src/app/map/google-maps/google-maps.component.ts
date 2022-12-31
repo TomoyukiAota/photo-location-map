@@ -19,7 +19,7 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.subscription = this.selectedPhotoService.selectedPhotosChanged.subscribe(
+    this.subscription = this.selectedPhotoService.selectedPhotos.subscribe(
       photos => this.handleSelectedPhotosChanged(photos)
     );
   }

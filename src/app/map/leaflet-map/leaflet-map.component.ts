@@ -59,7 +59,7 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public ngOnInit(): void {
-    this.selectedPhotoServiceSubscription = this.selectedPhotoService.selectedPhotosChanged.subscribe(
+    this.selectedPhotoServiceSubscription = this.selectedPhotoService.selectedPhotos.subscribe(
       photos => this.renderMap(photos)
     );
     this.forceRenderServiceSubscription = this.forceRenderService.forceRenderWithoutPhotoHappened.subscribe(
