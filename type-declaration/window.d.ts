@@ -31,5 +31,7 @@ interface MapChangeable {
 }
 
 interface IPlmInternalRendererPhotoSelection {
+  undo(): void;
+  redo(): void;
   selectOnlyThis(photoPath: string): void;
 }

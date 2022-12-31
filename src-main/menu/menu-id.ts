@@ -1,3 +1,6 @@
 export namespace MenuId {
-  // Placeholder for menu IDs.
+  export namespace Selection {
+    export const Undo = 'photo-selection-undo';
+    export const Redo = 'photo-selection-redo';
+  }
 }
