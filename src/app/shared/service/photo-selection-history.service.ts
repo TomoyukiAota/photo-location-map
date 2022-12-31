@@ -34,7 +34,7 @@ export class PhotoSelectionHistoryService {
   }
 
   public undo(): void {
-    if (!this.isUndoable()) return;
+    if (!this.isUndoable) return;
     this.isUndoRedoInProgress = true;
     Logger.info('Undoing Photo Selection.');
     const currentPhotos = this.history.pop();
@@ -46,7 +46,7 @@ export class PhotoSelectionHistoryService {
   }
 
   public redo(): void {
-    if (!this.isRedoable()) return;
+    if (!this.isRedoable) return;
     this.isUndoRedoInProgress = true;
     Logger.info('Redoing Photo Selection.');
     const photos = this.redoableStates.pop();
@@ -58,17 +58,17 @@ export class PhotoSelectionHistoryService {
 
   private updateUndoRedoMenus(): void {
     const ipcParams: IpcParams.PhotoSelection.UpdateUndoRedoMenus = {
-      isUndoMenuEnabled: this.isUndoable(),
-      isRedoMenuEnabled: this.isRedoable(),
+      isUndoMenuEnabled: this.isUndoable,
+      isRedoMenuEnabled: this.isRedoable,
     };
     ipcRenderer.invoke(IpcConstants.PhotoSelection.UpdateUndoRedoMenus, ipcParams);
   }
 
-  private isUndoable(): boolean {
+  private get isUndoable(): boolean {
     return this.history.length >= 2; // Undoable from 2nd state. 1st state cannot be undone since it does not have the previous state.
   }
 
-  private isRedoable(): boolean {
+  private get isRedoable(): boolean {
     return this.redoableStates.length >= 1;
   }
 
