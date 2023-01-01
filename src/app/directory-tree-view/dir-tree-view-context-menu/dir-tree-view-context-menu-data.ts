@@ -1,4 +1,5 @@
+import { FlatNode } from '../directory-tree-view.model';
+
 export interface DirTreeViewContextMenuData {
-  name: string;
-  path: string;
+  node: FlatNode;
 }
