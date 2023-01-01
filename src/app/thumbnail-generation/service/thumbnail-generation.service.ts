@@ -69,7 +69,7 @@ export class ThumbnailGenerationService {
   }
 
   private updateGenerationStatusFromInProgressToDone(): void {
-    const updateMilliseconds = 10000;
+    const updateMilliseconds = 5000;
     const intervalId = setInterval(() => {
       const numberOfGeneratedThumbnails = this.heifFilePathsToGenerateThumbnail.filter(filePath => isThumbnailCacheAvailable(filePath)).length;
       const progressPercent = (numberOfGeneratedThumbnails / this.numOfGenerationRequiredThumbnails) * 100;
