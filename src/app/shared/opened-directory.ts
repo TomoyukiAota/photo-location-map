@@ -4,7 +4,7 @@ import { wrap } from 'comlink';
 import * as pathModule from 'path';
 import { FilenameExtension } from '../../../src-shared/filename-extension/filename-extension';
 
-export class SelectedDirectory {
+export class OpenedDirectory {
   private static excludeRegexArray: RegExp[] = [
     // Notes:
     // - The purpose of regex is to exclude the hidden files/folders.
@@ -40,8 +40,8 @@ export class SelectedDirectory {
     new Worker(new URL('./worker/directory-tree.worker', import.meta.url)),
   );
 
-  public static async createDirectoryTree(selectedDirPath: string) {
-    const dirTree = await this.worker.createDirectoryTree(selectedDirPath, {exclude: this.excludeRegexArray});
+  public static async createDirectoryTree(dirPath: string) {
+    const dirTree = await this.worker.createDirectoryTree(dirPath, {exclude: this.excludeRegexArray});
     await this.storeLivePhotosCandidateFilePaths(dirTree);
     return dirTree;
   }
