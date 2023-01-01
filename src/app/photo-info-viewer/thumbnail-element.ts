@@ -147,7 +147,7 @@ export class ThumbnailElement {
 
   private static createThumbnailContainerElement(thumbnailElement: HTMLImageElement) {
     const thumbnailContainer = document.createElement('div');
-    thumbnailContainer.style.display = 'flex';
+    thumbnailContainer.style.display = 'inline-flex';
     thumbnailContainer.style.justifyContent = 'center';
     thumbnailContainer.style.alignItems = 'center';
     thumbnailContainer.style.width = this.thumbnailContainerWidthHeight;
