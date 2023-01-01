@@ -3,18 +3,18 @@ import 'moment-duration-format'; // To use moment.duration().format()
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { Logger } from '../../../src-shared/log/logger';
 
-export class FolderSelectionRecorder {
-  private static readonly perfMeasureName = 'FolderSelection';
-  private static readonly perfStartMarkName = 'FolderSelection:start';
-  private static readonly perfEndMarkName = 'FolderSelection:end';
+export class OpenFolderRecorder {
+  private static readonly perfMeasureName = 'OpenFolder';
+  private static readonly perfStartMarkName = 'OpenFolder:start';
+  private static readonly perfEndMarkName = 'OpenFolder:end';
 
-  private static selectedFolderPath: string;
+  private static openedFolderPath: string;
 
-  public static start(selectedFolderPath: string): void {
+  public static start(openedFolderPath: string): void {
     this.clearPerf();
-    this.selectedFolderPath = selectedFolderPath;
-    Logger.info(`Selected Folder: ${selectedFolderPath}`);
-    Analytics.trackEvent('Sidebar', 'Selected Folder');
+    this.openedFolderPath = openedFolderPath;
+    Logger.info(`Opened Folder: ${openedFolderPath}`);
+    Analytics.trackEvent('Sidebar', 'Opened Folder');
     performance.mark(this.perfStartMarkName);
   }
 
@@ -23,7 +23,7 @@ export class FolderSelectionRecorder {
   }
 
   public static fail(reason: any): void {
-    Logger.error(`Something went wrong after selecting the folder ${this.selectedFolderPath} : `, reason);
+    Logger.error(`Something went wrong after opening the folder ${this.openedFolderPath} : `, reason);
     this.recordPerf('Fail');
   }
 
@@ -37,7 +37,7 @@ export class FolderSelectionRecorder {
     performance.measure(this.perfMeasureName, this.perfStartMarkName, this.perfEndMarkName);
     const perfEntries = performance.getEntriesByName(this.perfMeasureName);
     const duration = moment.duration(perfEntries[0].duration).format('HH:mm:ss.SSS', { trim: false });
-    Logger.info(`Folder Selection Result: ${resultStr}, Performance: ${duration}`, perfEntries);
-    Analytics.trackEvent('Selected Folder Info', `Selected Folder: Performance`, `Performance (${resultStr}): ${duration}`);
+    Logger.info(`Open Folder Result: ${resultStr}, Performance: ${duration}`, perfEntries);
+    Analytics.trackEvent('Opened Folder Info', `Opened Folder: Performance`, `Performance (${resultStr}): ${duration}`);
   }
 }

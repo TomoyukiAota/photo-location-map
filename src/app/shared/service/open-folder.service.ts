@@ -4,6 +4,6 @@ import { Subject } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class FolderSelectionService {
-  public folderSelected = new Subject<void>();
+export class OpenFolderService {
+  public folderOpened = new Subject<void>();
 }
