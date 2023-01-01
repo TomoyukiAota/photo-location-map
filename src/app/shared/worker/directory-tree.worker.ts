@@ -4,8 +4,8 @@ import { DirectoryTree } from 'directory-tree';
 import { convertToFlattenedDirTree } from '../../../../src-shared/dir-tree/dir-tree-util';
 
 export const api = {
-  async createDirectoryTree(selectedDirPath: string, option?: createDirectoryTree.DirectoryTreeOptions) {
-    return createDirectoryTree(selectedDirPath, option);
+  async createDirectoryTree(dirPath: string, option?: createDirectoryTree.DirectoryTreeOptions) {
+    return createDirectoryTree(dirPath, option);
   },
   async convertToFlattenedDirTree(directoryTree: DirectoryTree) {
     return convertToFlattenedDirTree(directoryTree);

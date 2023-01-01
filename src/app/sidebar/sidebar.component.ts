@@ -7,11 +7,11 @@ import { DirTreeObjectRecorder } from '../../../src-shared/dir-tree-object-recor
 import { ProxyRequire } from '../../../src-shared/require/proxy-require';
 import { sleep } from '../../../src-shared/sleep/sleep';
 
-import { FolderSelectionService } from '../shared/service/folder-selection.service';
+import { OpenFolderService } from '../shared/service/open-folder.service';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { PhotoSelectionHistoryService } from '../shared/service/photo-selection-history.service';
 import { LoadingFolderProgress } from '../shared/loading-folder-progress';
-import { SelectedDirectory } from '../shared/selected-directory';
+import { OpenedDirectory } from '../shared/opened-directory';
 import { ThumbnailObjectUrlStorage } from '../shared/thumbnail-object-url-storage';
 
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
@@ -20,7 +20,7 @@ import { LoadingFolderDialogComponent } from '../loading-folder/dialog/loading-f
 import { NoPhotosWithLocationDataDialogComponent } from '../no-photos-with-location-data-dialog/no-photos-with-location-data-dialog.component';
 import { PhotoInfoViewerContent } from '../photo-info-viewer/photo-info-viewer-content';
 import { ThumbnailGenerationService } from '../thumbnail-generation/service/thumbnail-generation.service';
-import { FolderSelectionRecorder } from './folder-selection-recorder';
+import { OpenFolderRecorder } from './open-folder-recorder';
 
 const path = ProxyRequire.path;
 
@@ -30,11 +30,11 @@ const path = ProxyRequire.path;
   styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent {
-  public readonly messageWhenFolderIsNotSelected = 'Please select a folder to see where photos were taken.';
+  public readonly messageWhenFolderIsNotOpened = 'Please open a folder to see where photos were taken.';
   public parentFolderPath = new Subject<string>();
 
   constructor(private dialog: MatDialog,
-              private folderSelectionService: FolderSelectionService,
+              private openFolderService: OpenFolderService,
               private photoDataService: PhotoDataService,
               private directoryTreeViewDataService: DirectoryTreeViewDataService,
               private loadedFilesStatusBarService: LoadedFilesStatusBarService,
@@ -42,7 +42,7 @@ export class SidebarComponent {
               private photoSelectionHistoryService: PhotoSelectionHistoryService) {
   }
 
-  public async showSelectFolderDialog() {
+  public async showOpenFolderDialog() {
     const result = await remote.dialog.showOpenDialog(
       remote.getCurrentWindow(),
       {
@@ -54,36 +54,36 @@ export class SidebarComponent {
     if (isCanceled)
       return;
 
-    const selectedFolderPath = result.filePaths[0];
-    await this.handleSelectedFolder(selectedFolderPath);
+    const openedFolderPath = result.filePaths[0];
+    await this.handleOpenedFolder(openedFolderPath);
   }
 
-  private async handleSelectedFolder(selectedFolderPath: string) {
+  private async handleOpenedFolder(openedFolderPath: string) {
     let loadingFolderDialogRef: MatDialogRef<LoadingFolderDialogComponent> = null;
 
     try {
-      FolderSelectionRecorder.start(selectedFolderPath);
+      OpenFolderRecorder.start(openedFolderPath);
       this.photoSelectionHistoryService.reset();
       PhotoInfoViewerContent.clearCache();
       ThumbnailObjectUrlStorage.revokeObjectUrls();
-      this.folderSelectionService.folderSelected.next();
+      this.openFolderService.folderOpened.next();
 
       loadingFolderDialogRef = this.showLoadingFolderDialog();
 
-      const directoryTreeObject = await SelectedDirectory.createDirectoryTree(selectedFolderPath);
+      const directoryTreeObject = await OpenedDirectory.createDirectoryTree(openedFolderPath);
       await this.photoDataService.update(directoryTreeObject); // Photo data is fetched from files. The loading folder dialog displays file loading status.
       await sleep(100); // To update the loading folder dialog before starting intensive work (PhotoInfoViewerContent.generateCache) which freezes GUI.
 
-      this.parentFolderPath.next(path.dirname(selectedFolderPath) + path.sep);
+      this.parentFolderPath.next(path.dirname(openedFolderPath) + path.sep);
       this.showPhotoWithLocationNotFoundDialogIfApplicable();
       PhotoInfoViewerContent.generateCache(this.photoDataService.getAllPhotos());
       this.directoryTreeViewDataService.replace(directoryTreeObject);
       this.loadedFilesStatusBarService.updateStatus();
       this.thumbnailGenerationService.startThumbnailGeneration(directoryTreeObject);
       DirTreeObjectRecorder.record(directoryTreeObject);
-      FolderSelectionRecorder.complete();
+      OpenFolderRecorder.complete();
     } catch (reason) {
-      FolderSelectionRecorder.fail(reason);
+      OpenFolderRecorder.fail(reason);
     } finally {
       loadingFolderDialogRef?.close();
       LoadingFolderProgress.reset();

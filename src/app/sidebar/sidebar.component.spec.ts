@@ -43,8 +43,8 @@ describe('SidebarComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render "Select Folder" button', () => {
+  it('should render "Open Folder" button', () => {
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('#select-folder-button>button').textContent).toContain('SIDEBAR.SELECT_FOLDER');
+    expect(compiled.querySelector('#open-folder-button>button').textContent).toContain('SIDEBAR.OPEN_FOLDER');
   });
 });

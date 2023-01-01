@@ -1,13 +1,13 @@
 <div class="sidebar">
-  <div id="select-folder-button">
+  <div id="open-folder-button">
     <button mat-stroked-button
             [disabled]="thumbnailGenerationService.isGenerating | async"
-            [title]="(thumbnailGenerationService.isGenerating | async) ? 'Cannot select a folder when generating thumbnails.' : ''"
-            (click)="showSelectFolderDialog()">
-      {{ 'SIDEBAR.SELECT_FOLDER' | translate }}
+            [title]="(thumbnailGenerationService.isGenerating | async) ? 'Cannot open a folder when generating thumbnails.' : ''"
+            (click)="showOpenFolderDialog()">
+      {{ 'SIDEBAR.OPEN_FOLDER' | translate }}
     </button>
   </div>
-  <div class="path-or-message">{{ (parentFolderPath | async) || messageWhenFolderIsNotSelected }}</div>
+  <div class="path-or-message">{{ (parentFolderPath | async) || messageWhenFolderIsNotOpened }}</div>
   <div class="directory-tree-view-area">
     <app-directory-tree-view></app-directory-tree-view>
   </div>
