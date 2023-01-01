@@ -1,13 +1,10 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { first } from "rxjs";
-import { Analytics } from '../../../../src-shared/analytics/analytics';
-import { openContainingFolder, openWithAssociatedApp } from '../../../../src-shared/command/command';
-import { createPrependedLogger } from '../../../../src-shared/log/create-prepended-logger';
 import { FlatNode } from '../directory-tree-view.model';
 import { DirTreeViewContextMenuData as ContextMenuData } from './dir-tree-view-context-menu-data';
+import { dirTreeViewContextMenuLogger as contextMenuLogger } from './dir-tree-view-context-menu-logger';
 
-const contextMenuLogger = createPrependedLogger('[Directory Tree View] [Context Menu]');
 
 export class DirTreeViewContextMenuHelper {
   public static configureStyleForContextMenuTarget(event: MouseEvent, contextMenu: MatMenuTrigger) {
@@ -21,8 +18,7 @@ export class DirTreeViewContextMenuHelper {
 
   public static createData(node: FlatNode): ContextMenuData {
     return {
-      name: node.name,
-      path: node.path
+      node,
     };
   }
 
@@ -43,17 +39,5 @@ export class DirTreeViewContextMenuHelper {
       offEvent.preventDefault();
       contextMenu.closeMenu();
     });
-  }
-
-  public static openFile(data: ContextMenuData) {
-    contextMenuLogger.info(`Open "${data.path}"`);
-    Analytics.trackEvent('Directory Tree View', `[Tree View] [Context Menu] Open File`);
-    openWithAssociatedApp(data.path);
-  }
-
-  public static openContainingFolder(data: ContextMenuData) {
-    contextMenuLogger.info(`Open the containing folder of "${data.path}"`);
-    Analytics.trackEvent('Directory Tree View', `[Tree View] [Context Menu] Open Folder`);
-    openContainingFolder(data.path);
   }
 }
