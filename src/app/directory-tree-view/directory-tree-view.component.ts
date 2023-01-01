@@ -8,8 +8,8 @@ import { Analytics } from '../../../src-shared/analytics/analytics';
 import { createPrependedLogger } from '../../../src-shared/log/create-prepended-logger';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
-import { DirTreeViewContextMenuData as ContextMenuData } from './dir-tree-view-context-menu/dir-tree-view-context-menu-data';
-import { DirTreeViewContextMenuHelper as ContextMenuHelper } from './dir-tree-view-context-menu/dir-tree-view-context-menu-helper';
+import { DirTreeViewContextMenuHelper } from './dir-tree-view-context-menu/dir-tree-view-context-menu-helper';
+import { dirTreeViewContextMenuItems } from "./dir-tree-view-context-menu/dir-tree-view-context-menu-item";
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { DirectoryTreeViewSelectionService } from './directory-tree-view-selection.service';
 import { FlatNode, NestedNode } from './directory-tree-view.model';
@@ -238,19 +238,18 @@ export class DirectoryTreeViewComponent implements OnInit {
   //#region --- Context Menu ---
   @ViewChild(MatMenuTrigger) public contextMenu: MatMenuTrigger;
   public contextMenuPosition = { x: '0px', y: '0px' };
+  public contextMenuHelper = DirTreeViewContextMenuHelper;
+  public contextMenuItems = dirTreeViewContextMenuItems;
 
   public onContextMenu(event: MouseEvent, node: FlatNode) {
     event.preventDefault();
-    ContextMenuHelper.configureStyleForContextMenuTarget(event, this.contextMenu);
+    this.contextMenuHelper.configureStyleForContextMenuTarget(event, this.contextMenu);
     this.contextMenuPosition.x = event.clientX + 'px';
     this.contextMenuPosition.y = event.clientY + 'px';
-    this.contextMenu.menuData = { 'contextMenuData': ContextMenuHelper.createData(node) };
+    this.contextMenu.menuData = { 'contextMenuData': this.contextMenuHelper.createData(node) };
     this.contextMenu.openMenu();
-    ContextMenuHelper.disableFocus(this.focusMonitor);
-    ContextMenuHelper.configureClosingWithRightClick(this.contextMenu);
+    this.contextMenuHelper.disableFocus(this.focusMonitor);
+    this.contextMenuHelper.configureClosingWithRightClick(this.contextMenu);
   }
-
-  public openFile(data: ContextMenuData) { ContextMenuHelper.openFile(data); }
-  public openContainingFolder(data: ContextMenuData) { ContextMenuHelper.openContainingFolder(data); }
   //#endregion --- Context Menu ---
 }
