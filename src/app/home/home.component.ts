@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, AfterViewInit, OnInit, ChangeDetectorRef } from '@angular/core';
 import Split from 'split.js';
 import { LeafletMapForceRenderService } from '../map/leaflet-map/leaflet-map-force-render/leaflet-map-force-render.service';
-import { FolderSelectionService } from '../shared/service/folder-selection.service';
+import { OpenFolderService } from '../shared/service/open-folder.service';
 import { LoadedFilesStatusBarService } from '../loaded-files-status-bar/service/loaded-files-status-bar.service';
 import { ThumbnailGenerationService } from '../thumbnail-generation/service/thumbnail-generation.service';
 import { ThumbnailGenerationStatusBarService } from '../thumbnail-generation/status-bar/service/thumbnail-generation-status-bar.service';
@@ -17,14 +17,14 @@ export class HomeComponent implements AfterViewInit, OnInit {
   public loadedFilesStatusBarVisible: boolean;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
-              private folderSelectionService: FolderSelectionService,
+              private openFolderService: OpenFolderService,
               private thumbnailGenerationService: ThumbnailGenerationService,
               private thumbnailGenerationStatusBarService: ThumbnailGenerationStatusBarService,
               public loadedFilesStatusBarService: LoadedFilesStatusBarService,
               private leafletMapForceRenderService: LeafletMapForceRenderService) {}
 
   ngOnInit() {
-    this.folderSelectionService.folderSelected.subscribe(
+    this.openFolderService.folderOpened.subscribe(
       () => this.thumbnailGenerationStatusBarVisible = false);
     this.thumbnailGenerationService.generationStarted.subscribe(
       () => this.thumbnailGenerationStatusBarVisible = true);
