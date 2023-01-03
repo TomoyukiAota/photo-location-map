@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import * as turf from '@turf/turf';
 import { Control, LayersControlEvent, Map, Marker } from 'leaflet';
 import * as _ from 'lodash';
@@ -32,8 +32,8 @@ interface RegionInfo extends Control {
   templateUrl: './leaflet-map.component.html',
   styleUrls: ['./leaflet-map.component.scss']
 })
-export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
-  public isUpdateInProgressOverlayVisible = false;
+export class LeafletMapComponent implements OnDestroy, AfterViewInit {
+  @ViewChild('updateInProgressOverlay') public updateInProgressOverlay: ElementRef<HTMLDivElement>;
   private selectedPhotoServiceSubscription: Subscription;
   private forceRenderServiceSubscription: Subscription;
   private readonly commonLayerOptions = {
@@ -59,13 +59,16 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
               private selectedPhotoService: SelectedPhotoService) {
   }
 
-  public ngOnInit(): void {
+  public ngAfterViewInit(): void {
     this.selectedPhotoServiceSubscription = this.selectedPhotoService.selectedPhotos.subscribe(
       photos => this.updateMap(photos)
     );
     this.forceRenderServiceSubscription = this.forceRenderService.forceRenderWithoutPhotoHappened.subscribe(
       () => this.updateMap([])
     );
+
+    const photos = this.selectedPhotoService.getSelectedPhotos();
+    this.updateMap(photos);
   }
 
   public ngOnDestroy(): void {
@@ -73,13 +76,9 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
     this.forceRenderServiceSubscription.unsubscribe();
   }
 
-  public ngAfterViewInit(): void {
-    const photos = this.selectedPhotoService.getSelectedPhotos();
-    this.updateMap(photos);
-  }
-
   private updateMap(photos: Photo[]): void {
-    this.isUpdateInProgressOverlayVisible = true;
+    this.updateInProgressOverlay.nativeElement.style.visibility = 'visible';
+    this.updateInProgressOverlay.nativeElement.style.opacity = '1';
     this.changeDetectorRef.detectChanges(); // To show the overlay. Needed because change detection does not work in case the same photos are selected.
     this.renderMapWithDebouncing(photos);
   }
@@ -90,7 +89,8 @@ export class LeafletMapComponent implements OnInit, OnDestroy, AfterViewInit {
   // and the map becomes empty.
   private renderMapWithDebouncing = _.debounce((photos: Photo[]) => {
     this.renderMap(photos);
-    this.isUpdateInProgressOverlayVisible = false;
+    this.updateInProgressOverlay.nativeElement.style.visibility = 'hidden';
+    this.updateInProgressOverlay.nativeElement.style.opacity = '0';
     this.changeDetectorRef.detectChanges(); // To hide the overlay.
   }, 1000 /* ms */);
 
