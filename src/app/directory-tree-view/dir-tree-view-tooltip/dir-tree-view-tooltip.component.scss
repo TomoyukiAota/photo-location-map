@@ -1,6 +1,6 @@
 :host {
   position: fixed; // Using "position: fixed" (not relative/absolute) so that the tooltip is displayed on top of the map.
-  z-index: 9999;   // To display the tooltip on top of the map
+  z-index: 10001;  // To display the tooltip on top of the map's update-in-progress overlay.
   padding: 0.5em;
   background: #ebf4fb;
   border: 0.1em solid #b7ddf2;
