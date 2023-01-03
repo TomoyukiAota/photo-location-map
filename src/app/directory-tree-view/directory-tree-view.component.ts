@@ -111,20 +111,15 @@ export class DirectoryTreeViewComponent implements OnInit {
     if (!photoPaths) return;  // To do nothing for the initial value (null) of DirectoryTreeViewSelectionService::selectionRequested
     const allFlatNodes = Array.from(this.flatToNestedNodeMap.keys());
     const selectionRequestedNodes = allFlatNodes.filter(node => photoPaths.includes(node.path));
-    this.selectNodes(selectionRequestedNodes);
+    this.selectRequestedNodesAndDeselectOthers(selectionRequestedNodes);
   }
 
   // See also DirectoryTreeViewComponent::toggleNodeSelection function because similar steps are performed.
-  private selectNodes(selectionRequestedNodes: FlatNode[]): void {
-    const selectableNodes = selectionRequestedNodes.filter(node => node.isSelectable);
-    if (selectableNodes.length === 0) {
-      dirTreeViewLogger.info('There are no selectable nodes in the selection requested nodes.');
-      dirTreeViewLogger.info('selectionRequestedNodes: ', selectionRequestedNodes);
-      return;
-    }
-
+  private selectRequestedNodesAndDeselectOthers(selectionRequestedNodes: FlatNode[]): void {
     const allFlatNodes = Array.from(this.flatToNestedNodeMap.keys());
     this.flatNodeSelectionModel.deselect(...allFlatNodes);
+
+    const selectableNodes = selectionRequestedNodes.filter(node => node.isSelectable);
     this.flatNodeSelectionModel.select(...selectableNodes);
 
     selectableNodes.filter(node => node.isExpandable).forEach(node => this.selectAllDescendants(node));
@@ -169,7 +164,7 @@ export class DirectoryTreeViewComponent implements OnInit {
     this.toggleNodeSelection(flatNode);
   }
 
-  // See also DirectoryTreeViewComponent::selectNodes function because similar steps are performed.
+  // See also DirectoryTreeViewComponent::selectRequestedNodesAndDeselectOthers function because similar steps are performed.
   private toggleNodeSelection(flatNode: FlatNode): void {
     if (!flatNode.isSelectable) return;
 
