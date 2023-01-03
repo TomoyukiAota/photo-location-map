@@ -20,19 +20,17 @@
   }
 }
 
-.location-and-size-table {
+.location-table {
   margin-top: 30px;
+  font-size: 14px;
   display: grid;
   grid: "location-label location-value" auto
-        "size-label     size-value    " auto
         /auto           1fr;
   grid-column-gap: 30px;
   grid-row-gap: 10px;
 
   .location-label { grid-area: location-label; }
   .location-value { grid-area: location-value; }
-  .size-label     { grid-area: size-label;     }
-  .size-value     { grid-area: size-value;     }
 }
 
 // anchor-tag-style is to give styles like <a> tag to the specified text without using <a> tag.
