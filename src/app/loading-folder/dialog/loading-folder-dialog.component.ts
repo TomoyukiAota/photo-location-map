@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ProgressBarMode } from '@angular/material/progress-bar';
+import { LegacyProgressBarMode as ProgressBarMode } from '@angular/material/legacy-progress-bar';
 import { LoadingFolderProgressReporterService } from '../progress-reporter/loading-folder-progress-reporter.service';
 
 @Component({

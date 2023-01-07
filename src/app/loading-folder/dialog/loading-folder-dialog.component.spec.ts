@@ -1,4 +1,4 @@
-import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar';
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { LoadingFolderDialogComponent } from './loading-folder-dialog.component';
