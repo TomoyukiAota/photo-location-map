@@ -1,6 +1,6 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatLegacyDialogModule as MatDialogModule, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
-import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatListModule } from '@angular/material/list';
 import { MockComponents, MockProvider } from 'ng-mocks';
 
 import { AppearanceSettingsComponent } from './appearance-settings/appearance-settings.component';

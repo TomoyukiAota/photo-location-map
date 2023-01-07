@@ -21,25 +21,24 @@ mat-tree-node {
   transition: background-color 0.2s ease;
 }
 
-.mat-icon-button {
-  width: 40px;
-  height: 40px;
+.non-selectable-node {
+  display: inline-flex;
+  align-items: center;
+  color: #c0c0c0;
 }
 
-.non-selectable-node {
-  color: #c0c0c0;
-  height: 16px;
-  line-height: 16px;
+.non-selectable-node-name {
+  padding-left: 4px;
 }
 
 div.disabled-checkbox-alternative {
   display: inline-block;
   vertical-align: middle;
   background-color: #e0e0e0;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border-radius: 2px;
-  margin-right: 4px;
+  margin: 11px;
 }
 
 .tooltip-visible {
