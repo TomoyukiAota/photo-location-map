@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import '../polyfills';
 
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NgModule } from '@angular/core';

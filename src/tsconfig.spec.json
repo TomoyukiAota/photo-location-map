@@ -3,10 +3,6 @@
   "compilerOptions": {
     "outDir": "../out-tsc/spec",
   },
-  "files": [
-    "test.ts",
-    "polyfills.ts"
-  ],
   "include": [
     "../**/*.d.ts",
     "../src/**/*.spec.ts",
