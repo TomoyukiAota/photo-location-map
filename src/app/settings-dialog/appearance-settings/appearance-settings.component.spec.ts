@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { AppearanceSettingsComponent } from './appearance-settings.component';
 

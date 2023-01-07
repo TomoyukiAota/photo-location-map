@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatSelectChange } from "@angular/material/select";
 import * as moment from 'moment-timezone';
 import { DateTimeFormat } from '../../../../src-shared/date-time/date-time-format';
 import { currentUserSettings } from '../../../../src-shared/user-settings/user-settings';
@@ -25,10 +26,11 @@ export class DateTimeSettingsComponent {
     return now;
   }
 
-  public notifySettingsChanged() {
+  public notifySettingsChanged(event: MatSelectChange) {
     const parameter = new DateTimeSettingsChangedParameter();
     parameter.dateFormat = this.selectedDateFormat;
     parameter.clockSystemFormat = this.selectedClockSystemFormat;
     this.settingsChangedService.dateTimeSettingsChanged.next(parameter);
+    event.source.close();
   }
 }

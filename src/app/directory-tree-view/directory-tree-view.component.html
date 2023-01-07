@@ -19,7 +19,7 @@
     <mat-label *ngIf="!node.isSelectable"
                class="non-selectable-node">
       <div class="disabled-checkbox-alternative"></div>
-      {{node.name}}
+      <span class="non-selectable-node-name">{{node.name}}</span>
     </mat-label>
     <app-dir-tree-view-tooltip *ngIf="tooltipDisplayLogic.tooltipEnabled(node)"
                                [photoPath]="node.path"
