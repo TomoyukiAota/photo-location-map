@@ -127,7 +127,6 @@
       }
     }
   },
-  "defaultProject": "photo-location-map",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",
@@ -138,6 +137,8 @@
     }
   },
   "cli": {
-    "defaultCollection": "@angular-eslint/schematics"
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }
