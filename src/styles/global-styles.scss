@@ -33,14 +33,12 @@ $max-z-index: 2147483647;
   max-height: 95vh;
 }
 
-.custom-dialog-container .mat-dialog-container {
+.custom-dialog-container .mat-mdc-dialog-container {
   padding: 0;
   position: relative;
 }
 
-// The ripple effect animation on checkboxes is disabled because it happens with right click as well as left click.
-// It's confusing to see the ripple with right click whereas right-clicking does nothing to checkbox state.
-.mat-checkbox-ripple {
+.mdc-checkbox__ripple {
   display: none;
 }
 
