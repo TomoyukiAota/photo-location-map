@@ -21,7 +21,7 @@
     "build:prod": "npm run build -- -c production",
     "build:src-main": "tsc -p tsconfig.src-main.json",
     "ng:serve": "ng serve -c production",
-    "electron:serve": "wait-on http-get://127.0.0.1:4200/ && npm run build:src-main && electron . --serve",
+    "electron:serve": "wait-on http-get://localhost:4200/ && npm run build:src-main && electron . --serve",
     "electron:local": "npm run build:prod && electron .",
     "electron-builder:linux": "npm run build:prod && electron-builder build --linux",
     "electron-builder:mac": "npm run build:prod && electron-builder build --mac",
