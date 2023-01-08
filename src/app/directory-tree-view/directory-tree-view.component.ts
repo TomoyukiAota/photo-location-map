@@ -9,7 +9,7 @@ import { createPrependedLogger } from '../../../src-shared/log/create-prepended-
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
 import { DirTreeViewContextMenuHelper } from './dir-tree-view-context-menu/dir-tree-view-context-menu-helper';
-import { dirTreeViewContextMenuItems } from "./dir-tree-view-context-menu/dir-tree-view-context-menu-item";
+import { dirTreeViewContextMenuItems } from './dir-tree-view-context-menu/dir-tree-view-context-menu-item';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { DirectoryTreeViewSelectionService } from './directory-tree-view-selection.service';
 import { FlatNode, NestedNode } from './directory-tree-view.model';
