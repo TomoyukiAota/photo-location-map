@@ -1,5 +1,5 @@
 import { Photo } from '../../shared/model/photo.model';
-import { removeFocus } from "../../shared/remove-focus";
+import { removeFocus } from '../../shared/remove-focus';
 import { getMoreOptionsMenuItems } from './more-options-menu-items';
 
 export class MoreOptionsMenuElement {
