@@ -21,7 +21,7 @@ This page contains useful information to contribute to this project.
 
 ## Prerequisite
 
- - Node.js (64-bit, version 16.14.0 or greater)
+ - Node.js (64-bit, version 18.13.0 or greater)
  - More than 2GB of RAM
    - Application packaging frequently fails on a PC with 1GB of RAM. Add more RAM depending on the available memory for application packaging on your PC.
 
