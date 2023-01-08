@@ -62,6 +62,18 @@ module.exports = {
         // See https://typescript-eslint.io/rules/semi/
         "semi": "off",
         "@typescript-eslint/semi": "error",
+
+        // To enable "@typescript-eslint/quotes", "quotes" needs to be disabled as it can report incorrect errors.
+        // See https://typescript-eslint.io/rules/quotes/
+        "quotes": "off",
+        "@typescript-eslint/quotes": [
+          "error",
+          "single",
+          {
+            "avoidEscape": true,
+            "allowTemplateLiterals": true,
+          },
+        ],
       }
     },
     {
