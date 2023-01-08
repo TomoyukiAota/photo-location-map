@@ -4,14 +4,9 @@ import { LiveReload } from '../live-reload';
 
 const fileServerLogger = createPrependedLogger('[File Server]');
 
-// Using 127.0.0.1 instead of localhost in order to avoid the case that localhost resolves to IPv6 address.
-// Also, note that portscanner uses 127.0.0.1 instead of localhost for some reason.
-// See https://github.com/baalexander/node-portscanner/pull/14
-const ipv4Localhost = '127.0.0.1';
-
 export async function getUrlForMainWindow(): Promise<string> {
   if (LiveReload.enabled) {
-    const url = `http://${ipv4Localhost}:4200`;
+    const url = `http://localhost:4200`;
     fileServerLogger.info(`isLiveReloadMode === true, so "ng serve" command runs the server for ${url}`);
     return url;
   }
