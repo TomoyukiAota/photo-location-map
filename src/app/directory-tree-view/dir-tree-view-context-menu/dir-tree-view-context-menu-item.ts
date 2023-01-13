@@ -11,6 +11,11 @@ export interface DirTreeViewContextMenuItem {
 
 export const dirTreeViewContextMenuItems: DirTreeViewContextMenuItem[] = [
   {
+    text: 'Select Only This',
+    onClick: (data) => selectOnlyThis(data),
+    visible: (data) => data.node.isSelectable,
+  },
+  {
     text: 'Open',
     onClick: (data) => open(data),
     visible: () => true,
@@ -19,11 +24,6 @@ export const dirTreeViewContextMenuItems: DirTreeViewContextMenuItem[] = [
     text: 'Open Folder',
     onClick: (data) => openFolder(data),
     visible: () => true,
-  },
-  {
-    text: 'Select Only This',
-    onClick: (data) => selectOnlyThis(data),
-    visible: (data) => data.node.isSelectable,
   },
 ];
 
