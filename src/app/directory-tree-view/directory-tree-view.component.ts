@@ -10,10 +10,10 @@ import { PhotoDataService } from '../shared/service/photo-data.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
 import { DirTreeViewContextMenuHelper } from './dir-tree-view-context-menu/dir-tree-view-context-menu-helper';
 import { dirTreeViewContextMenuItems } from './dir-tree-view-context-menu/dir-tree-view-context-menu-item';
+import { DirTreeViewPhotoInfoDisplayLogic } from './dir-tree-view-photo-info/dir-tree-view-photo-info-display-logic';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { DirectoryTreeViewSelectionService } from './directory-tree-view-selection.service';
 import { FlatNode, NestedNode } from './directory-tree-view.model';
-import { DirTreeViewTooltipDisplayLogic } from './dir-tree-view-tooltip-display-logic';
 
 const dirTreeViewLogger = createPrependedLogger('[Directory Tree View]');
 
@@ -58,7 +58,7 @@ export class DirectoryTreeViewComponent implements OnInit {
     return flatNode;
   };
 
-  public tooltipDisplayLogic: DirTreeViewTooltipDisplayLogic;
+  public photoInfoDisplayLogic: DirTreeViewPhotoInfoDisplayLogic;
 
   constructor(private directoryTreeViewDataService: DirectoryTreeViewDataService,
               private directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
@@ -78,7 +78,7 @@ export class DirectoryTreeViewComponent implements OnInit {
   }
 
   public ngOnInit() {
-    this.tooltipDisplayLogic = new DirTreeViewTooltipDisplayLogic(this.photoDataService);
+    this.photoInfoDisplayLogic = new DirTreeViewPhotoInfoDisplayLogic(this.photoDataService);
   }
 
   private handleDirectoryTreeViewDataReplaced(data: NestedNode[]) {

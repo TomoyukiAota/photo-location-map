@@ -4,27 +4,23 @@
                  matTreeNodePadding
                  [matTreeNodePaddingIndent]="indentPerLevel"
                  (contextmenu)="onContextMenu($event, node)"
-                 #tooltipTarget
-                 (mouseenter)="tooltipDisplayLogic.onMouseEnter(node, tooltipTarget)"
-                 (mouseleave)="tooltipDisplayLogic.onMouseLeave(node, tooltipTarget)">
-
-    <!-- Adjust space to align with tree expand button (which look like > or v) -->
-    <button mat-icon-button disabled></button>
-
-    <mat-checkbox *ngIf="node.isSelectable"
-                  [checked]="isSelected(node)"
-                  (change)="handleCheckboxChange(node)">
-      {{node.name}}
-    </mat-checkbox>
-    <mat-label *ngIf="!node.isSelectable"
-               class="non-selectable-node">
-      <div class="disabled-checkbox-alternative"></div>
-      <span class="non-selectable-node-name">{{node.name}}</span>
-    </mat-label>
-    <app-dir-tree-view-tooltip *ngIf="tooltipDisplayLogic.tooltipEnabled(node)"
-                               [photoPath]="node.path"
-                               style="display: none">
-    </app-dir-tree-view-tooltip>
+                 class="leaf-tree-node">
+    <div class="leaf-tree-node-checkbox-and-name">
+      <button mat-icon-button disabled></button> <!-- Adjust space to align with tree expand button (which look like > or v) -->
+      <mat-checkbox *ngIf="node.isSelectable"
+                    [checked]="isSelected(node)"
+                    (change)="handleCheckboxChange(node)">
+        <span>{{node.name}}</span>
+      </mat-checkbox>
+      <mat-label *ngIf="!node.isSelectable"
+                 class="non-selectable-node">
+        <div class="disabled-checkbox-alternative"></div>
+        <span class="non-selectable-node-name">{{node.name}}</span>
+      </mat-label>
+    </div>
+    <app-dir-tree-view-photo-info *ngIf="photoInfoDisplayLogic.isVisible(node)"
+                                  [photoPath]="node.path">
+    </app-dir-tree-view-photo-info>
   </mat-tree-node>
 
   <mat-tree-node *matTreeNodeDef="let node; when: hasChildren"

@@ -13,3 +13,8 @@
   from { opacity: 1; }
   to   { opacity: 0; }
 }
+
+@mixin photo-info-viewer-text {
+  font-size: 14px;
+  font-weight: bold;
+}
