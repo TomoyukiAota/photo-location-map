@@ -21,6 +21,27 @@ mat-tree-node {
   transition: background-color 0.2s ease;
 }
 
+.leaf-tree-node {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.leaf-tree-node-checkbox-and-name {
+  min-width: 83px; // When the width is minimum, the checkbox is shown, and the name is hidden.
+  flex-grow: 1;
+  overflow: hidden;
+  mask-image: linear-gradient(to left, transparent 0%, #000 5px); // fade-out when the name overflows
+  display: flex;
+  align-items: center;
+}
+
+app-dir-tree-view-photo-info {
+  padding: 5px 5px 5px 0;
+  flex-shrink: 0;
+}
+
 .non-selectable-node {
   display: inline-flex;
   align-items: center;
@@ -39,8 +60,4 @@ div.disabled-checkbox-alternative {
   height: 18px;
   border-radius: 2px;
   margin: 11px;
-}
-
-.tooltip-visible {
-  animation: fadeIn 0.3s ease 0s;
 }

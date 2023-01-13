@@ -25,7 +25,7 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { DirectoryTreeViewComponent } from './directory-tree-view/directory-tree-view.component';
-import { DirTreeViewTooltipComponent } from './directory-tree-view/dir-tree-view-tooltip/dir-tree-view-tooltip.component';
+import { DirTreeViewPhotoInfoComponent } from './directory-tree-view/dir-tree-view-photo-info/dir-tree-view-photo-info.component';
 import { LoadingFolderDialogComponent } from './loading-folder/dialog/loading-folder-dialog.component';
 import { MapComponent } from './map/map/map.component';
 import { GoogleMapsComponent } from './map/google-maps/google-maps.component';
@@ -54,7 +54,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     HomeComponent,
     SidebarComponent,
     DirectoryTreeViewComponent,
-    DirTreeViewTooltipComponent,
+    DirTreeViewPhotoInfoComponent,
     LoadingFolderDialogComponent,
     MapComponent,
     GoogleMapsComponent,
@@ -64,7 +64,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     CacheSettingsComponent,
     NoPhotosWithLocationDataDialogComponent,
     LoadedFilesStatusBarComponent,
-    AppearanceSettingsComponent
+    AppearanceSettingsComponent,
   ],
     imports: [
         BrowserModule,
