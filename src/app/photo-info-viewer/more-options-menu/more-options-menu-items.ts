@@ -12,6 +12,13 @@ interface MoreOptionsMenuItem {
 
 export function getMoreOptionsMenuItems(photo: Photo): MoreOptionsMenuItem[] {
   const menuItems: MoreOptionsMenuItem[] = [];
+  if (photo.hasGpsInfo) {
+    menuItems.push({
+      text: 'Select Only This',
+      onClick: () => handleSelectOnlyThisMenuItemClicked(photo)
+    });
+  }
+
   menuItems.push({
     text: 'Open Folder',
     onClick: () => handleOpenFolderMenuItemClicked(photo)
@@ -25,10 +32,6 @@ export function getMoreOptionsMenuItems(photo: Photo): MoreOptionsMenuItem[] {
     menuItems.push({
       text: 'Open Google Street View',
       onClick: () => handleOpenGoogleStreetViewMenuItemClicked(photo)
-    });
-    menuItems.push({
-      text: 'Select Only This',
-      onClick: () => handleSelectOnlyThisMenuItemClicked(photo)
     });
   }
 
