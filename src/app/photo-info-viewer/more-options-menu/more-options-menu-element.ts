@@ -18,20 +18,24 @@ export class MoreOptionsMenuElement {
   }
 
   private static configureMenuPosition(menuElement: HTMLElement, moreOptionsButton: HTMLElement) {
+    const isWithinSidebar = !!moreOptionsButton.closest('app-sidebar');
+
     const {clientHeight: viewportHeight, clientWidth: viewportWidth} = document.documentElement;
     const {bottom: buttonBottom, right: buttonRight} = moreOptionsButton.getBoundingClientRect();
     const enoughRoomBelowButton = viewportHeight - buttonBottom > 230; // Adjust the value if the menu height changes.
-    const enoughRoomRightToButton = viewportWidth - buttonRight > 200; // Adjust the value if the menu width changes.
+    const enoughRoomRightToButton = isWithinSidebar
+      ? false
+      : viewportWidth - buttonRight > 220; // Adjust the value if the menu width changes.
 
     if (enoughRoomBelowButton) {
       menuElement.style.top = '37px';
-      menuElement.style.right = '-25px';
+      menuElement.style.right = isWithinSidebar ? '0' : '-25px';
     } else if (enoughRoomRightToButton) {
       menuElement.style.bottom = '0';
       menuElement.style.left = '37px';
     } else {
       menuElement.style.bottom = '37px';
-      menuElement.style.right = '-25px';
+      menuElement.style.right = isWithinSidebar ? '0' : '-25px';
     }
   }
 

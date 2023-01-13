@@ -66,61 +66,66 @@ export class PhotoInfoViewerContent {
     return rootElement;
   }
 
-  private static appendToRootElement(rootDivElement, photo: Photo) {
+  private static appendToRootElement(rootElement, photo: Photo) {
+    const upperDiv = document.createElement('div');
+    const lowerDiv = document.createElement('div');
+    lowerDiv.className = 'photo-info-viewer-lower-div';
+    rootElement.appendChild(upperDiv);
+    rootElement.appendChild(lowerDiv);
+
     const { thumbnailElement, thumbnailContainerElement } = ThumbnailElement.create(photo);
     const nameElement = this.createNameElement(photo);
-    const dateTakenElement = this.createDateTimeTakenElement(photo);
+    const dateTimeTakenElement = this.createDateTimeTakenElement(photo);
 
-    [thumbnailContainerElement, nameElement, dateTakenElement]
-      .forEach(element => rootDivElement.appendChild(element));
+    upperDiv.appendChild(thumbnailContainerElement);
+    upperDiv.appendChild(nameElement);
+    upperDiv.appendChild(dateTimeTakenElement);
 
-    this.appendRotateButton(rootDivElement, thumbnailElement, photo);
-    this.appendLaunchPhotoViewerButton(rootDivElement, photo);
-    this.appendPlayLivePhotosButton(rootDivElement, photo);
-    this.appendMoreOptionsButton(rootDivElement, photo);
+    this.appendRotateButton(lowerDiv, thumbnailElement, photo);
+    this.appendLaunchPhotoViewerButton(lowerDiv, photo);
+    this.appendPlayLivePhotosButton(lowerDiv, photo);
+    this.appendMoreOptionsButton(lowerDiv, photo);
   }
 
   private static createNameElement(photo: Photo) {
     const nameElement = document.createElement('div');
+    nameElement.className = 'photo-info-viewer-name';
     nameElement.innerText = photo.name;
-    nameElement.style.fontSize = '14px';
-    nameElement.style.fontWeight = 'bold';
     return nameElement;
   }
 
   private static createDateTimeTakenElement(photo: Photo) {
     const dateTimeTaken = photo?.exif?.dateTimeOriginal?.displayString();
-    const dateTakenElement = document.createElement('div');
-    dateTakenElement.innerText = dateTimeTaken || 'Date taken is not available.';
-    dateTakenElement.style.fontSize = '14px';
-    dateTakenElement.style.fontWeight = 'bold';
-    return dateTakenElement;
+    const dateTimeTakenElement = document.createElement('div');
+    dateTimeTakenElement.className = 'photo-info-viewer-date-time-taken';
+    dateTimeTakenElement.innerText = dateTimeTaken || 'Date taken is not available.';
+    return dateTimeTakenElement;
   }
 
-  private static appendRotateButton(rootDivElement: HTMLDivElement, thumbnailElement: HTMLImageElement | Text, photo: Photo): void {
+  private static appendRotateButton(rootElement: HTMLDivElement, thumbnailElement: HTMLImageElement | Text, photo: Photo): void {
     if (thumbnailElement instanceof Text)
       return;
 
     const button = RotateButton.create(thumbnailElement, photo);
-    rootDivElement.appendChild(button);
+    rootElement.appendChild(button);
   }
 
-  private static appendLaunchPhotoViewerButton(rootDivElement: HTMLDivElement, photo: Photo): void {
+  private static appendLaunchPhotoViewerButton(rootElement: HTMLDivElement, photo: Photo): void {
     const button = LaunchPhotoViewerButton.create(photo);
-    rootDivElement.appendChild(button);
+    rootElement.appendChild(button);
   }
 
-  private static appendPlayLivePhotosButton(rootDivElement: HTMLDivElement, photo: Photo) {
+  private static appendPlayLivePhotosButton(rootElement: HTMLDivElement, photo: Photo) {
     const button = PlayLivePhotosButton.create(photo);
     if (button) {
-      rootDivElement.appendChild(button);
+      rootElement.appendChild(button);
     }
   }
 
-  private static appendMoreOptionsButton(rootDivElement: HTMLDivElement, photo: Photo) {
+  private static appendMoreOptionsButton(rootElement: HTMLDivElement, photo: Photo) {
     const button = MoreOptionsButton.create(photo);
     if (button) {
-      rootDivElement.appendChild(button);
+      rootElement.appendChild(button);
     }
   }
 }
