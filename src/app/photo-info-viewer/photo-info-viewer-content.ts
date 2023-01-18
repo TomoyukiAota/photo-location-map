@@ -98,7 +98,7 @@ export class PhotoInfoViewerContent {
     const dateTimeTaken = photo?.exif?.dateTimeOriginal?.displayString();
     const dateTimeTakenElement = document.createElement('div');
     dateTimeTakenElement.className = 'photo-info-viewer-date-time-taken';
-    dateTimeTakenElement.innerText = dateTimeTaken || 'Date taken is not available.';
+    dateTimeTakenElement.innerText = dateTimeTaken || '';
     return dateTimeTakenElement;
   }
 
