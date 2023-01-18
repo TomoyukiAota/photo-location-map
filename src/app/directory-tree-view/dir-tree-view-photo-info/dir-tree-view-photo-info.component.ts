@@ -52,7 +52,8 @@ export class DirTreeViewPhotoInfoComponent implements AfterViewInit {
 
     const dateTimeTaken = (contentRoot.querySelector('.photo-info-viewer-date-time-taken') as HTMLElement);
     if (dateTimeTaken) {
-      dateTimeTaken.style.display = 'none';
+      dateTimeTaken.style.fontWeight = '400'; // The same value specified in .mat-tree-node
+      dateTimeTaken.style.padding = '3px 0';
     }
   }
 }
