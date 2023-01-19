@@ -353,7 +353,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   }
 
   private renderMarkerClusterGroupForSinglePhoto(photo: Photo): void {
-    const markerClusterGroup = L.markerClusterGroup({ animate: false }); // { animate: false } because animation does not look good for single photo case.
+    const markerClusterGroup = L.markerClusterGroup({ animate: false }); // Animation does not look good for single photo case.
     const marker = this.addMarkerToMarkerClusterGroup(markerClusterGroup, photo);
     this.map.addLayer(markerClusterGroup);
     this.map.fitBounds(markerClusterGroup.getBounds());
@@ -364,7 +364,11 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   }
 
   private renderMarkerClusterGroupForMultiplePhotos(photos: Photo[]): void {
-    const markerClusterGroup = L.markerClusterGroup({ animate: true }); // { animate: true } because animation looks good for multiple photo case.
+    const markerClusterGroup = L.markerClusterGroup({
+      animate: true,                    // Animation looks good for multiple photo case.
+      maxClusterRadius: 30,             // Smaller cluster radius to contain less photos in a single cluster.
+      spiderfyDistanceMultiplier: 3.5,  // Increase distance of spiderfy so that markers are placed without overlaps.
+    });
     photos.forEach(photo => {
       this.addMarkerToMarkerClusterGroup(markerClusterGroup, photo);
     });
@@ -374,7 +378,19 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
 
   private addMarkerToMarkerClusterGroup(markerClusterGroup: any, photo: Photo) {
     const latLng: [number, number] = [photo.exif.gpsInfo.latLng.latitude, photo.exif.gpsInfo.latLng.longitude];
-    const marker: Marker = L.marker(latLng);
+    const marker: Marker = L.marker(latLng,
+      {
+        icon: L.divIcon({
+          popupAnchor: [0, -35],
+          className: 'dummy', // Specify dummy to get rid of the default leaflet-div-icon class.
+          html:
+            '<div class="plm-leaflet-map-div-icon">' +
+              '<div class="plm-leaflet-map-div-icon-content">'+ photo.name +'</div>' +
+              '<div class="plm-leaflet-map-div-icon-tail"></div>' +
+            '</div>'
+        })
+      }
+    );
     marker.bindPopup(PhotoInfoViewerContent.request('leaflet-map', photo));
     markerClusterGroup.addLayer(marker);
     return marker;
