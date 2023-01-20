@@ -30,17 +30,25 @@ export namespace DateTimeFormat {
     export type DateFormatType = typeof DateFormat_List[number];
     export type ClockSystemFormatType = typeof ClockSystemFormat_List[number];
 
-    export const getMomentJsFormatString = (dateFormat: DateFormatType, clockSystemFormat: ClockSystemFormatType): string => {
+    export function getMomentJsDateTimeFormat(dateFormat: DateFormatType, clockSystemFormat: ClockSystemFormatType): string {
+      const momentJsDateFormat = getMomentJsDateFormat(dateFormat);
+      const momentJsTimeFormat = getMomentJsTimeFormat(clockSystemFormat);
+      return `${momentJsDateFormat} ${momentJsTimeFormat}`;
+    }
+
+    export function getMomentJsDateFormat(dateFormat: DateFormatType): string {
       const dateFormatMap = new Map<DateFormatType, string>();
       dateFormatMap.set(DateFormat_ISO8601Like, 'YYYY-MM-DD ddd');
       dateFormatMap.set(DateFormat_YYYYMMDD   , 'YYYY/MM/DD ddd');
       dateFormatMap.set(DateFormat_DDMMYYYY   , 'DD/MM/YYYY ddd');
       dateFormatMap.set(DateFormat_MMDDYYYY   , 'MM/DD/YYYY ddd');
-      const momentJsDateFormat = dateFormatMap.get(dateFormat);
-      const momentJsFormat = clockSystemFormat === ClockSystemFormat_24h
-        ? `${momentJsDateFormat} HH:mm:ss`
-        : `${momentJsDateFormat} hh:mm:ss a`;
-      return momentJsFormat;
-    };
+      return dateFormatMap.get(dateFormat);
+    }
+
+    export function getMomentJsTimeFormat(clockSystemFormat: ClockSystemFormatType): string {
+      return clockSystemFormat === ClockSystemFormat_24h
+        ? `HH:mm:ss`
+        : `hh:mm:ss a`;
+    }
   }
 }

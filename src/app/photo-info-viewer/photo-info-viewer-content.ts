@@ -8,7 +8,7 @@ import { RotateButton } from './button/rotate-button';
 import { PhotoInfoUnavailableElement } from './photo-info-unavailable-element';
 import { ThumbnailElement } from './thumbnail-element';
 
-type Requester = 'dir-tree-view' | 'leaflet-map' | 'google-maps';
+type Requester = 'dir-tree-view' | 'leaflet-map-div-icon' | 'leaflet-map-popup' | 'google-maps';
 type PhotoPath = string;
 
 export class PhotoInfoViewerContent {
@@ -16,17 +16,19 @@ export class PhotoInfoViewerContent {
 
   public static clearCache() {
     this.rootElementCache.clear();
-    this.rootElementCache.set('dir-tree-view', new Map<PhotoPath, HTMLDivElement>());
-    this.rootElementCache.set('leaflet-map'  , new Map<PhotoPath, HTMLDivElement>());
-    this.rootElementCache.set('google-maps'  , new Map<PhotoPath, HTMLDivElement>());
+    this.rootElementCache.set('dir-tree-view'       , new Map<PhotoPath, HTMLDivElement>());
+    this.rootElementCache.set('leaflet-map-div-icon', new Map<PhotoPath, HTMLDivElement>());
+    this.rootElementCache.set('leaflet-map-popup'   , new Map<PhotoPath, HTMLDivElement>());
+    this.rootElementCache.set('google-maps'         , new Map<PhotoPath, HTMLDivElement>());
   }
 
   public static generateCache(photos: Photo[]) {
     const startTime = performance.now();
 
     photos.forEach(photo => {
-      this.rootElementCache.get('dir-tree-view').set(photo.path, this.generateRootElement(photo));
-      this.rootElementCache.get('leaflet-map'  ).set(photo.path, this.generateRootElement(photo));
+      this.rootElementCache.get('dir-tree-view'       ).set(photo.path, this.generateRootElement(photo));
+      this.rootElementCache.get('leaflet-map-div-icon').set(photo.path, this.generateRootElement(photo));
+      this.rootElementCache.get('leaflet-map-popup'   ).set(photo.path, this.generateRootElement(photo));
     });
 
     // Cache for google-maps is available only in development environment because
@@ -95,7 +97,7 @@ export class PhotoInfoViewerContent {
   }
 
   private static createDateTimeTakenElement(photo: Photo) {
-    const dateTimeTaken = photo?.exif?.dateTimeOriginal?.displayString();
+    const dateTimeTaken = photo?.exif?.dateTimeOriginal?.toDateTimeString();
     const dateTimeTakenElement = document.createElement('div');
     dateTimeTakenElement.className = 'photo-info-viewer-date-time-taken';
     dateTimeTakenElement.innerText = dateTimeTaken || '';
