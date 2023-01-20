@@ -11,6 +11,7 @@ import { Photo } from '../../shared/model/photo.model';
 import { SelectedPhotoService } from '../../shared/service/selected-photo.service';
 import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewer-content';
 import { LeafletMapForceRenderService } from './leaflet-map-force-render/leaflet-map-force-render.service';
+import { createDivIconHtml } from './div-icon';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
 
 // References to implement Bing Maps with leaflet-plugins:
@@ -365,9 +366,9 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
 
   private renderMarkerClusterGroupForMultiplePhotos(photos: Photo[]): void {
     const markerClusterGroup = L.markerClusterGroup({
-      animate: true,                    // Animation looks good for multiple photo case.
-      maxClusterRadius: 30,             // Smaller cluster radius to contain less photos in a single cluster.
-      spiderfyDistanceMultiplier: 3.5,  // Increase distance of spiderfy so that markers are placed without overlaps.
+      animate: true,                  // Animation looks good for multiple photo case.
+      maxClusterRadius: 120,          // Increase cluster radius so that markers are either clustered or individually placed without overlaps.
+      spiderfyDistanceMultiplier: 6,  // Increase distance of spiderfy so that markers are placed without overlaps.
     });
     photos.forEach(photo => {
       this.addMarkerToMarkerClusterGroup(markerClusterGroup, photo);
@@ -381,17 +382,21 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     const marker: Marker = L.marker(latLng,
       {
         icon: L.divIcon({
-          popupAnchor: [0, -35],
+          popupAnchor: [0, -100],
           className: 'dummy', // Specify dummy to get rid of the default leaflet-div-icon class.
-          html:
-            '<div class="plm-leaflet-map-div-icon">' +
-              '<div class="plm-leaflet-map-div-icon-content">'+ photo.name +'</div>' +
-              '<div class="plm-leaflet-map-div-icon-tail"></div>' +
-            '</div>'
+          html: createDivIconHtml(photo),
         })
       }
     );
-    marker.bindPopup(PhotoInfoViewerContent.request('leaflet-map', photo));
+    marker.bindPopup(PhotoInfoViewerContent.request('leaflet-map-popup', photo));
+    marker.on('popupopen', event => {
+      const divIconHtml: HTMLDivElement = event.target.options.icon.options.html;
+      divIconHtml.style.filter = 'brightness(0.8)';
+    });
+    marker.on('popupclose', event => {
+      const divIconHtml: HTMLDivElement = event.target.options.icon.options.html;
+      divIconHtml.style.filter = 'brightness(1)';
+    });
     markerClusterGroup.addLayer(marker);
     return marker;
   }

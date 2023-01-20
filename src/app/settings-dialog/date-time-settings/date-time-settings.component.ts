@@ -21,7 +21,7 @@ export class DateTimeSettingsComponent {
   }
 
   public getDateTimeNow() {
-    const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsFormatString(this.selectedDateFormat, this.selectedClockSystemFormat);
+    const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsDateTimeFormat(this.selectedDateFormat, this.selectedClockSystemFormat);
     const now = moment('2019-11-25T14:53:29.396Z').utc().format(momentJsFormatString);
     return now;
   }

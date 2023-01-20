@@ -75,7 +75,7 @@ const recordDisplays = () => {
 
 const recordLoadedUserSettings = () => {
   const settings = currentUserSettings;
-  const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsFormatString(settings.dateFormat, settings.clockSystemFormat);
+  const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsDateTimeFormat(settings.dateFormat, settings.clockSystemFormat);
   Analytics.trackEvent('Loaded User Settings', `Date Format`, `Date Format: ${settings.dateFormat}`);
   Analytics.trackEvent('Loaded User Settings', `Clock System Format`, `Clock System Format: ${settings.clockSystemFormat}`);
   Analytics.trackEvent('Loaded User Settings', `moment.js Format`, `moment.js Format: ${momentJsFormatString}`);

@@ -7,6 +7,8 @@
   display: flex;
   flex-direction: column;
   text-align: center;
+  transition: filter 0.2s ease-in-out;  // Click effect
+  pointer-events: none; // Avoid the issue that this element receives click instead of other close elements.
 }
 
 .plm-leaflet-map-div-icon-content {
@@ -18,8 +20,9 @@
   border-width: 2px;
   border-style: solid;
   border-color: #444;
-  padding: 3px;
+  padding: 3px 3px 0 3px;
   white-space: nowrap;
+  pointer-events: auto; // Restore pointer-events which is canceled in the parent element.
 }
 
 .plm-leaflet-map-div-icon-tail {
@@ -31,4 +34,5 @@
   border-color: #444 transparent transparent transparent;
   border-width: 10px 6px 0 6px;
   margin-left: -6px;
+  pointer-events: auto; // Restore pointer-events which is canceled in the parent element.
 }

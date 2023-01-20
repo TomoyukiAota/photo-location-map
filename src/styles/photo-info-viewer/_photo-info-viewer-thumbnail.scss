@@ -1,5 +1,11 @@
 @import "photo-info-viewer-common";
 
+.photo-info-viewer-thumbnail-container {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .photo-info-viewer-thumbnail {
   cursor: pointer;
 
