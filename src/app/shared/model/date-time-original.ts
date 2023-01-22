@@ -16,9 +16,9 @@ export class DateTimeOriginal {
     return this.moment.format(momentJsFormatString);
   }
 
-  public toDateString(): string {
+  public toDateString(option: {dayOfWeek: boolean} = {dayOfWeek: true}): string {
     const dateFormat = currentUserSettings.dateFormat;
-    const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsDateFormat(dateFormat);
+    const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsDateFormat(dateFormat, option);
     return this.moment.format(momentJsFormatString);
   }
 

@@ -36,12 +36,19 @@ export namespace DateTimeFormat {
       return `${momentJsDateFormat} ${momentJsTimeFormat}`;
     }
 
-    export function getMomentJsDateFormat(dateFormat: DateFormatType): string {
+    export function getMomentJsDateFormat(dateFormat: DateFormatType, option: {dayOfWeek: boolean} = {dayOfWeek: true}): string {
       const dateFormatMap = new Map<DateFormatType, string>();
-      dateFormatMap.set(DateFormat_ISO8601Like, 'YYYY-MM-DD ddd');
-      dateFormatMap.set(DateFormat_YYYYMMDD   , 'YYYY/MM/DD ddd');
-      dateFormatMap.set(DateFormat_DDMMYYYY   , 'DD/MM/YYYY ddd');
-      dateFormatMap.set(DateFormat_MMDDYYYY   , 'MM/DD/YYYY ddd');
+      if (option.dayOfWeek) {
+        dateFormatMap.set(DateFormat_ISO8601Like, 'YYYY-MM-DD ddd');
+        dateFormatMap.set(DateFormat_YYYYMMDD   , 'YYYY/MM/DD ddd');
+        dateFormatMap.set(DateFormat_DDMMYYYY   , 'DD/MM/YYYY ddd');
+        dateFormatMap.set(DateFormat_MMDDYYYY   , 'MM/DD/YYYY ddd');
+      } else {
+        dateFormatMap.set(DateFormat_ISO8601Like, 'YYYY-MM-DD');
+        dateFormatMap.set(DateFormat_YYYYMMDD   , 'YYYY/MM/DD');
+        dateFormatMap.set(DateFormat_DDMMYYYY   , 'DD/MM/YYYY');
+        dateFormatMap.set(DateFormat_MMDDYYYY   , 'MM/DD/YYYY');
+      }
       return dateFormatMap.get(dateFormat);
     }
 
