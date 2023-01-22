@@ -383,7 +383,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
       {
         icon: L.divIcon({
           popupAnchor: [0, -100],
-          className: 'dummy', // Specify dummy to get rid of the default leaflet-div-icon class.
+          className: 'plm-leaflet-map-div-icon', // Get rid of the default leaflet-div-icon class.
           html: createDivIconHtml(photo),
         })
       }
