@@ -25,28 +25,41 @@ function createDivIconContent(photo: Photo): HTMLElement {
   minimizeButton.className = 'plm-leaflet-map-div-icon-min-button';
   minimizeButton.innerText = '-';
   minimizeButton.title = 'Minimize';
-  minimizeButton.onclick = event => {
-    event.stopPropagation(); // Avoid the map to receive click so that spiderfy is kept.
-    const content = (event.target as HTMLElement)?.closest('.plm-leaflet-map-div-icon-content') as HTMLElement;
-    const textLengthLimit = 16;
-    const textBeforeTrim = photo?.exif?.dateTimeOriginal?.toDateString({dayOfWeek: false}) || photo.name;
-    const {isTrimmed, output: text} = trimStringWithEllipsis(textBeforeTrim, textLengthLimit);
-    const minimizedInfo = document.createElement('div');
-    minimizedInfo.className = 'plm-leaflet-map-div-icon-minimized-content';
-    minimizedInfo.innerText = text;
-    minimizedInfo.title = isTrimmed ? textBeforeTrim : '';
-    minimizedInfo.onclick = event => {
-      event.stopPropagation(); // Avoid the map to receive click so that spiderfy is kept.
-      content.replaceChildren(createDivIconContent(photo));
-    };
-    content.replaceChildren(minimizedInfo);
-  };
+  minimizeButton.onclick = event => handleMinimizeButtonClicked(event, photo);
 
   const photoInfoViewer = PhotoInfoViewerContent.request('leaflet-map-div-icon', photo);
   adjustPhotoInfoViewerContentForDivIcon(photoInfoViewer, photo);
 
   container.append(minimizeButton, photoInfoViewer);
   return container;
+}
+
+function handleMinimizeButtonClicked(event: MouseEvent, photo: Photo) {
+  event.stopPropagation(); // Avoid the map to receive click so that spiderfy is kept.
+  const content = (event.target as HTMLElement)?.closest('.plm-leaflet-map-div-icon-content') as HTMLElement;
+  const minimizedInfo = document.createElement('div');
+  minimizedInfo.className = 'plm-leaflet-map-div-icon-minimized-content';
+  const dateTimeOriginal = photo?.exif?.dateTimeOriginal;
+  if (dateTimeOriginal) {
+    const date = document.createElement('div');
+    date.innerText = dateTimeOriginal.toDateString({dayOfWeek: false});
+    const time = document.createElement('div');
+    time.innerText = dateTimeOriginal.toTimeString();
+    minimizedInfo.append(date, time);
+  } else {
+    const name = document.createElement('div');
+    name.className = 'plm-leaflet-map-div-icon-minimized-content-name';
+    const textLengthLimit = 16;
+    const {isTrimmed, output: text} = trimStringWithEllipsis(photo.name, textLengthLimit);
+    name.innerText = text;
+    name.title = isTrimmed ? photo.name : '';
+    minimizedInfo.append(name);
+  }
+  minimizedInfo.onclick = event => {
+    event.stopPropagation(); // Avoid the map to receive click so that spiderfy is kept.
+    content.replaceChildren(createDivIconContent(photo));
+  };
+  content.replaceChildren(minimizedInfo);
 }
 
 function adjustPhotoInfoViewerContentForDivIcon(contentRoot: HTMLDivElement, photo: Photo) {
