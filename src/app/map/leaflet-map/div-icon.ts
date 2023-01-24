@@ -78,6 +78,11 @@ function adjustPhotoInfoViewerContentForDivIcon(contentRoot: HTMLDivElement, pho
     thumbnail.style.filter = 'none';
   }
 
+  const rotateButtonInThumbnailContainer = contentRoot.querySelector('.photo-info-viewer-rotate-button-in-thumbnail-container') as HTMLElement;
+  if (rotateButtonInThumbnailContainer) {
+    rotateButtonInThumbnailContainer.style.display = 'inline-grid';
+  }
+
   const name = contentRoot.querySelector('.photo-info-viewer-name') as HTMLElement;
   if (name) {
     name.style.display = 'none';
