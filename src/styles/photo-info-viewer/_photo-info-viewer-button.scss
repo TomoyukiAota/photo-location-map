@@ -1,6 +1,6 @@
 @import "photo-info-viewer-common";
 
-.photo-info-viewer-button {
+@mixin photo-info-viewer-button-default-style {
   all: unset;      // Remove button's default style
   cursor: pointer; // Retrieve button's default cursor style
 
@@ -19,12 +19,39 @@
   // Centering the icon within the button
   display: inline-grid;
   place-items: center;
+}
 
-  position: relative;
+.photo-info-viewer-button {
+  @include photo-info-viewer-button-default-style;
 }
 
 .photo-info-viewer-more-options-button {
+  @include photo-info-viewer-button-default-style;
+  position: relative;
   &:focus  { background-color: #444444; }
+}
+
+.photo-info-viewer-rotate-button-in-thumbnail-container {
+  @include photo-info-viewer-button-default-style;
+
+  display: none;  // Removed from DOM by default. Needs to be restored to "display: inline-grid" where the button is needed.
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  margin: 0;
+  border-radius: 2px;
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    background-color 0.2s ease, // Keep the value specified in photo-info-viewer-button-default-style
+    opacity          0.2s ease;
+
+  > .photo-info-viewer-button-icon {
+    width: 12px;  // Override the default 25px
+    height: 12px; // Override the default 25px
+  }
 }
 
 .photo-info-viewer-button-icon {

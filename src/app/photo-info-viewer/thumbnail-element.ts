@@ -5,6 +5,7 @@ import { getThumbnailFilePath, isThumbnailCacheAvailable } from '../../../src-sh
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { Photo } from '../shared/model/photo.model';
 import { PhotoViewerLauncher } from '../photo-viewer-launcher/photo-viewer-launcher';
+import { RotateButton } from './button/rotate-button';
 import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
 
 
@@ -12,6 +13,7 @@ export class ThumbnailElement {
   public static create(photo: Photo): { thumbnailElement: HTMLImageElement; thumbnailContainerElement: HTMLDivElement } {
     const thumbnailElement = this.createThumbnailElement(photo);
     const thumbnailContainerElement = this.createThumbnailContainerElement(thumbnailElement);
+    this.appendRotateButton(photo, thumbnailElement, thumbnailContainerElement);
     return { thumbnailElement, thumbnailContainerElement };
   }
 
@@ -119,14 +121,18 @@ export class ThumbnailElement {
   }
 
   private static displayGeneratingThumbnailImage(thumbnailElement: HTMLImageElement, photo: Photo) {
-    thumbnailElement.style.width = '160px';
-    thumbnailElement.style.height = '20px';
+    thumbnailElement.style.width = 'auto';
+    thumbnailElement.style.height = 'auto';
+    thumbnailElement.style.setProperty('max-width' , '80%', 'important');  //!important to override CSS from Leaflet
+    thumbnailElement.style.setProperty('max-height', '80%', 'important');  //!important to override CSS from Leaflet
     thumbnailElement.src = IconDataUrl.generatingThumbnail;
   }
 
   private static displayNoThumbnailAvailableImage(thumbnailElement: HTMLImageElement, photo: Photo) {
-    thumbnailElement.style.width = '150px';
-    thumbnailElement.style.height = '15px';
+    thumbnailElement.style.width = 'auto';
+    thumbnailElement.style.height = 'auto';
+    thumbnailElement.style.setProperty('max-width' , '80%', 'important');  //!important to override CSS from Leaflet
+    thumbnailElement.style.setProperty('max-height', '80%', 'important');  //!important to override CSS from Leaflet
     thumbnailElement.src = IconDataUrl.noThumbnailAvailable;
   }
 
@@ -139,20 +145,24 @@ export class ThumbnailElement {
   private static configureThumbnailToFitWithinContainer(thumbnailElement: HTMLImageElement) {
     thumbnailElement.style.width = 'auto';
     thumbnailElement.style.height = 'auto';
-    thumbnailElement.style.maxWidth = '100%';
-    thumbnailElement.style.maxHeight = '100%';
+    thumbnailElement.style.setProperty('max-width' , '100%', 'important');  //!important to override CSS from Leaflet
+    thumbnailElement.style.setProperty('max-height', '100%', 'important');  //!important to override CSS from Leaflet
   }
 
   private static thumbnailContainerWidthHeight = '200px';
 
   private static createThumbnailContainerElement(thumbnailElement: HTMLImageElement) {
     const thumbnailContainer = document.createElement('div');
-    thumbnailContainer.style.display = 'inline-flex';
-    thumbnailContainer.style.justifyContent = 'center';
-    thumbnailContainer.style.alignItems = 'center';
+    thumbnailContainer.className = 'photo-info-viewer-thumbnail-container';
     thumbnailContainer.style.width = this.thumbnailContainerWidthHeight;
     thumbnailContainer.style.height = this.thumbnailContainerWidthHeight;
     thumbnailContainer.appendChild(thumbnailElement);
     return thumbnailContainer;
+  }
+
+  private static appendRotateButton(photo: Photo, thumbnailElement: HTMLImageElement, thumbnailContainerElement: HTMLDivElement) {
+    const button = RotateButton.create(thumbnailElement, photo);
+    button.className = 'photo-info-viewer-rotate-button-in-thumbnail-container';
+    thumbnailContainerElement.append(button);
   }
 }

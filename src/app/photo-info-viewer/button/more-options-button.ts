@@ -8,7 +8,7 @@ export class MoreOptionsButton {
   public static create(photo: Photo): HTMLElement {
     const onClick = () => this.handleButtonClick(photo, button);
     const button = createPhotoInfoViewerButton(onClick, IconDataUrl.moreOptions, 'More Options');
-    button.classList.add('photo-info-viewer-more-options-button');
+    button.className = 'photo-info-viewer-more-options-button';
     return button;
   }
 

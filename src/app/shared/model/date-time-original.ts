@@ -9,10 +9,22 @@ export class DateTimeOriginal {
 
   public readonly moment: ReturnType<typeof import('moment')>;
 
-  public displayString(): string {
+  public toDateTimeString(): string {
     const dateFormat = currentUserSettings.dateFormat;
     const clockSystemFormat = currentUserSettings.clockSystemFormat;
-    const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsFormatString(dateFormat, clockSystemFormat);
+    const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsDateTimeFormat(dateFormat, clockSystemFormat);
+    return this.moment.format(momentJsFormatString);
+  }
+
+  public toDateString(option: {dayOfWeek: boolean} = {dayOfWeek: true}): string {
+    const dateFormat = currentUserSettings.dateFormat;
+    const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsDateFormat(dateFormat, option);
+    return this.moment.format(momentJsFormatString);
+  }
+
+  public toTimeString(): string {
+    const clockSystemFormat = currentUserSettings.clockSystemFormat;
+    const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsTimeFormat(clockSystemFormat);
     return this.moment.format(momentJsFormatString);
   }
 }

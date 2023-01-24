@@ -1,0 +1,92 @@
+// Reference: https://codepen.io/gisminister/pen/JKGLOm
+
+.plm-leaflet-map-div-icon {
+  pointer-events: none !important; // Override "pointer-events: auto" specified in Leaflet.
+}
+
+.plm-leaflet-map-div-icon-content-and-tail {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  transition: filter 0.2s ease-in-out;  // Click effect
+  pointer-events: none; // Avoid the issue that this element receives click instead of other close elements.
+}
+
+.plm-leaflet-map-div-icon-content {
+  order: 1;
+  position: relative;
+  left: -50%;
+  background-color: #fff;
+  border-radius: 5px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #444;
+  white-space: nowrap;
+  pointer-events: auto; // Restore pointer-events which is canceled in the parent element.
+}
+
+.plm-leaflet-map-div-icon-tail {
+  order: 2;
+  width: 0;
+  height: 0;
+  left: 50%;
+  border-style: solid;
+  border-color: #444 transparent transparent transparent;
+  border-width: 10px 6px 0 6px;
+  margin-left: -6px;
+  pointer-events: none;
+}
+
+.plm-leaflet-map-div-icon-piv-container {
+  position: relative;
+
+  &:hover > .plm-leaflet-map-div-icon-min-button {
+    visibility: visible;
+    opacity: 0.6;
+  }
+}
+
+.plm-leaflet-map-div-icon-min-button {
+  all: unset;      // Remove button's default style
+  cursor: pointer; // Retrieve button's default cursor style
+
+  display: block;
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1; // To display minimize button on top of thumbnail container
+  width: 12px;
+  height: 12px;
+  margin: 3px;
+  padding: 3px;
+  border-radius: 2px;
+  font-size: 30px;
+  line-height: 12px;
+  color: #ffffff;
+
+  transition:
+    opacity 0.2s ease,
+    background-color 0.2s ease;
+
+  background-color: #999999;
+  &:hover  { background-color: #666666; }
+  &:active { background-color: #444444; }
+}
+
+.plm-leaflet-map-div-icon-piv {
+  padding: 2px;
+}
+
+.plm-leaflet-map-div-icon-minimized-content {
+  padding: 1px 2px;
+  line-height: 12px;
+}
+
+.plm-leaflet-map-div-icon-minimized-content-name {
+  padding: 2px; // For the underscore character (_) to be clearly displayed. e.g. IMG_0199.JPG
+}
