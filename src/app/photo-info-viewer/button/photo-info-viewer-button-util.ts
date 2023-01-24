@@ -1,7 +1,13 @@
 export function createPhotoInfoViewerButton(onClick: (event: MouseEvent) => void, imgSrc: string, tooltipText: string) {
   const button = document.createElement('button');
   button.classList.add('photo-info-viewer-button');
-  button.onclick = onClick;
+  button.onclick = event => {
+    event.stopPropagation();
+    onClick(event);
+  };
+  button.ondblclick = event => {
+    event.stopPropagation();
+  };
 
   const icon = createPhotoInfoViewerButtonIcon(imgSrc, tooltipText);
 
