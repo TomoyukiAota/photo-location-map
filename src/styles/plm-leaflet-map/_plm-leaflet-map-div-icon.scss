@@ -59,6 +59,7 @@
   position: absolute;
   top: 0;
   right: 0;
+  z-index: 1; // To display minimize button on top of thumbnail container
   width: 12px;
   height: 12px;
   margin: 3px;
@@ -78,7 +79,7 @@
 }
 
 .plm-leaflet-map-div-icon-piv {
-  padding: 3px 3px 0 3px;
+  padding: 2px;
 }
 
 .plm-leaflet-map-div-icon-minimized-content {

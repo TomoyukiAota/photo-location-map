@@ -5,6 +5,7 @@ import { getThumbnailFilePath, isThumbnailCacheAvailable } from '../../../src-sh
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { Photo } from '../shared/model/photo.model';
 import { PhotoViewerLauncher } from '../photo-viewer-launcher/photo-viewer-launcher';
+import { RotateButton } from './button/rotate-button';
 import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
 
 
@@ -12,6 +13,7 @@ export class ThumbnailElement {
   public static create(photo: Photo): { thumbnailElement: HTMLImageElement; thumbnailContainerElement: HTMLDivElement } {
     const thumbnailElement = this.createThumbnailElement(photo);
     const thumbnailContainerElement = this.createThumbnailContainerElement(thumbnailElement);
+    this.appendRotateButton(photo, thumbnailElement, thumbnailContainerElement);
     return { thumbnailElement, thumbnailContainerElement };
   }
 
@@ -156,5 +158,11 @@ export class ThumbnailElement {
     thumbnailContainer.style.height = this.thumbnailContainerWidthHeight;
     thumbnailContainer.appendChild(thumbnailElement);
     return thumbnailContainer;
+  }
+
+  private static appendRotateButton(photo: Photo, thumbnailElement: HTMLImageElement, thumbnailContainerElement: HTMLDivElement) {
+    const button = RotateButton.create(thumbnailElement, photo);
+    button.className = 'photo-info-viewer-rotate-button-in-thumbnail-container';
+    thumbnailContainerElement.append(button);
   }
 }
