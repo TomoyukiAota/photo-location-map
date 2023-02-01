@@ -367,7 +367,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   private renderMarkerClusterGroupForMultiplePhotos(photos: Photo[]): void {
     const markerClusterGroup = L.markerClusterGroup({
       animate: true,                  // Animation looks good for multiple photo case.
-      maxClusterRadius: 180,          // Increase cluster radius so that markers are either clustered or individually placed without overlaps.
+      maxClusterRadius: 250,          // Increase cluster radius so that markers are either clustered or individually placed without overlaps.
       spiderfyDistanceMultiplier: 6,  // Increase distance of spiderfy so that markers are placed without overlaps.
     });
     photos.forEach(photo => {
