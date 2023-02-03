@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import * as turf from '@turf/turf';
-import { Control, LayersControlEvent, Map, Marker } from 'leaflet';
+import { Control, LayersControlEvent, LeafletEvent, Map, Marker } from 'leaflet';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
@@ -9,6 +9,7 @@ import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/us
 import { DirectoryTreeViewSelectionService } from '../../directory-tree-view/directory-tree-view-selection.service';
 import { Photo } from '../../shared/model/photo.model';
 import { SelectedPhotoService } from '../../shared/service/selected-photo.service';
+import { PhotoClusterViewer } from '../../photo-cluster-viewer/photo-cluster-viewer';
 import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewer-content';
 import { LeafletMapForceRenderService } from './leaflet-map-force-render/leaflet-map-force-render.service';
 import { createDivIconHtml } from './div-icon';
@@ -366,15 +367,51 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
 
   private renderMarkerClusterGroupForMultiplePhotos(photos: Photo[]): void {
     const markerClusterGroup = L.markerClusterGroup({
-      animate: true,                  // Animation looks good for multiple photo case.
-      maxClusterRadius: 250,          // Increase cluster radius so that markers are either clustered or individually placed without overlaps.
-      spiderfyDistanceMultiplier: 6,  // Increase distance of spiderfy so that markers are placed without overlaps.
+      animate: true,              // Animation looks good for multiple photo case.
+      maxClusterRadius: 120,      // Increase cluster radius so that markers are either clustered or individually placed without overlaps.
+      spiderfyOnMaxZoom: false,   // Disable spiderfy
+      zoomToBoundsOnClick: false  // Disable Leaflet.MarkerCluster's zoom behavior. Instead, this app controls zoom using cluster.zoomToBounds() with clusterclick event.
     });
     photos.forEach(photo => {
       this.addMarkerToMarkerClusterGroup(markerClusterGroup, photo);
     });
+    markerClusterGroup.on('clusterclick',  e => this.handleClusterClick(e));
     this.map.addLayer(markerClusterGroup);
     this.map.fitBounds(markerClusterGroup.getBounds());
+  }
+
+  // This function shows a popup or zooms to bounds.
+  // The condition to show a popup or to zoom resembles the condition to call
+  // cluster.spiderfy() or cluster.zoomToBounds() in Leaflet.markercluster's source code.
+  // Permalink to Leaflet.markercluster's repo as of Feb 3, 2023:
+  // https://github.com/Leaflet/Leaflet.markercluster/blob/b2512acb4dcf444352ea258472ae05871c12eda7/src/MarkerClusterGroup.js#L856-L886
+  private handleClusterClick(e: LeafletEvent) {
+    const cluster = e.layer;
+    if (cluster._childClusters.length >= 2) {
+      cluster.zoomToBounds();
+      return;
+    }
+    if (cluster._childClusters.length === 1) {
+      let bottomCluster = cluster;
+      while (bottomCluster._childClusters.length === 1) {
+        bottomCluster = bottomCluster._childClusters[0];
+      }
+      // Named as originalSpiderfyCondition because this is the condition when cluster.spiderfy() is called in Leaflet.markercluster
+      const originalSpiderfyCondition = bottomCluster._zoom === this.map.getMaxZoom() && bottomCluster._childCount === cluster._childCount;
+      if (!originalSpiderfyCondition) {
+        cluster.zoomToBounds();
+        return;
+      }
+    }
+    const markers = cluster.getAllChildMarkers();
+    const photos = markers.map(marker => marker.options.photo);
+    const popupContent = PhotoClusterViewer.create(photos);
+    L.popup({
+      maxWidth: 100000,   // Set to some large number so that there is no maxWidth limit.
+      offset: L.point(0, -10),
+    }).setLatLng(cluster.getLatLng())
+      .setContent(popupContent)
+      .openOn(this.map);
   }
 
   private addMarkerToMarkerClusterGroup(markerClusterGroup: any, photo: Photo) {
@@ -382,7 +419,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     const marker: Marker = L.marker(latLng,
       {
         icon: L.divIcon({
-          popupAnchor: [0, -100],
+          popupAnchor: [0, -35],
           className: 'plm-leaflet-map-div-icon', // Get rid of the default leaflet-div-icon class.
           html: createDivIconHtml(photo),
         })
@@ -397,6 +434,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
       const divIconHtml: HTMLDivElement = event.target.options.icon.options.html;
       divIconHtml.style.filter = 'brightness(1)';
     });
+    (marker.options as any).photo = photo;
     markerClusterGroup.addLayer(marker);
     return marker;
   }
