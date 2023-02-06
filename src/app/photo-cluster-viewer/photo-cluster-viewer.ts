@@ -11,17 +11,17 @@ export class PhotoClusterViewer {
     const root = document.createElement('div');
     root.className = 'photo-cluster-viewer-root';
 
-    const rightSide = document.createElement('div');
-    rightSide.className = 'photo-cluster-viewer-root-right-side';
-    rightSide.appendChild(PhotoInfoViewerContent.request('leaflet-map-popup', photos[0]));
+    const rightPane = document.createElement('div');
+    rightPane.className = 'photo-cluster-viewer-right-pane';
+    rightPane.appendChild(PhotoInfoViewerContent.request('leaflet-map-popup', photos[0]));
 
     const onTileClick = (photo: Photo) => {
-      rightSide.replaceChildren(PhotoInfoViewerContent.request('leaflet-map-popup', photo));
+      rightPane.replaceChildren(PhotoInfoViewerContent.request('leaflet-map-popup', photo));
     };
 
-    const leftSide = this.createRootLeftSide(photos, onTileClick);
+    const leftPane = this.createLeftPane(photos, onTileClick);
 
-    root.append(leftSide, rightSide);
+    root.append(leftPane, rightPane);
     return root;
   }
 
@@ -38,15 +38,15 @@ export class PhotoClusterViewer {
     return sortedPhotos;
   }
 
-  private static createRootLeftSide(photos: Photo[], onTileClick: (photo: Photo) => void) {
-    const leftSide = document.createElement('div');
-    leftSide.className = 'photo-cluster-viewer-root-left-side';
+  private static createLeftPane(photos: Photo[], onTileClick: (photo: Photo) => void) {
+    const leftPane = document.createElement('div');
+    leftPane.className = 'photo-cluster-viewer-left-pane';
 
     const tiles = photos.map(photo => {
       const content = PhotoInfoViewerContent.request('leaflet-map-div-icon', photo);
       this.adjustPhotoInfoViewerContentForTile(content, photo);
       content.onclick = () => {
-        const previousSelectedTiles = leftSide.querySelectorAll(selectedTileCssSelector);
+        const previousSelectedTiles = leftPane.querySelectorAll(selectedTileCssSelector);
         previousSelectedTiles.forEach(tile => tile.classList.remove(selectedTileCssClass));
         content.classList.add(selectedTileCssClass);
         onTileClick(photo);
@@ -55,9 +55,9 @@ export class PhotoClusterViewer {
     });
     setTimeout(() => tiles[0].click()); // Select the first tile by default. setTimeout is required for the others to be deselected.
 
-    leftSide.append(...tiles);
+    leftPane.append(...tiles);
 
-    return leftSide;
+    return leftPane;
   }
 
   private static adjustPhotoInfoViewerContentForTile(contentRoot: HTMLDivElement, photo: Photo) {
