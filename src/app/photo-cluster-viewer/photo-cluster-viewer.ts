@@ -61,7 +61,7 @@ export class PhotoClusterViewer {
   }
 
   private static adjustPhotoInfoViewerContentForTile(contentRoot: HTMLDivElement, photo: Photo) {
-    contentRoot.classList.add('plm-leaflet-map-div-icon-piv');
+    contentRoot.classList.add('photo-cluster-viewer-tile');
 
     const thumbnailContainer = contentRoot.querySelector('.photo-info-viewer-thumbnail-container') as HTMLElement;
     if (thumbnailContainer) {
