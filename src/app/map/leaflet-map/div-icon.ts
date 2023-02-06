@@ -18,27 +18,24 @@ export function createDivIconHtml(photo: Photo): HTMLElement {
 
 function createDivIconContent(photo: Photo): HTMLElement {
   const container = document.createElement('div');
+  container.className = 'plm-leaflet-map-div-icon-content-container';
 
-  const dateTimeOrName = document.createElement('div');
-  dateTimeOrName.className = 'plm-leaflet-map-div-icon-minimized-content';
   const dateTimeOriginal = photo?.exif?.dateTimeOriginal;
   if (dateTimeOriginal) {
     const date = document.createElement('div');
     date.innerText = dateTimeOriginal.toDateString({dayOfWeek: false});
     const time = document.createElement('div');
     time.innerText = dateTimeOriginal.toTimeString();
-    dateTimeOrName.append(date, time);
+    container.append(date, time);
   } else {
     const name = document.createElement('div');
-    name.className = 'plm-leaflet-map-div-icon-minimized-content-name';
+    name.className = 'plm-leaflet-map-div-icon-content-name';
     const textLengthLimit = 16;
     const {isTrimmed, output: text} = trimStringWithEllipsis(photo.name, textLengthLimit);
     name.innerText = text;
     name.title = isTrimmed ? photo.name : '';
-    dateTimeOrName.append(name);
+    container.append(name);
   }
-
-  container.append(dateTimeOrName);
 
   return container;
 }
