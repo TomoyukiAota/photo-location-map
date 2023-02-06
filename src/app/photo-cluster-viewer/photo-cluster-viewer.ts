@@ -43,7 +43,7 @@ export class PhotoClusterViewer {
     leftPane.className = 'photo-cluster-viewer-left-pane';
 
     const tiles = photos.map(photo => {
-      const content = PhotoInfoViewerContent.request('leaflet-map-div-icon', photo);
+      const content = PhotoInfoViewerContent.request('leaflet-map-tile', photo);
       this.adjustPhotoInfoViewerContentForTile(content, photo);
       content.onclick = () => {
         const previousSelectedTiles = leftPane.querySelectorAll(selectedTileCssSelector);
