@@ -5,7 +5,8 @@
 }
 
 .photo-cluster-viewer-root-left-side {
-  height: 400px;
+  min-height: 300px;
+  max-height: 400px;
   overflow-y: auto;
   overflow-x: hidden;
   padding-right: 5px;
