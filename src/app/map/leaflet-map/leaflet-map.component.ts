@@ -380,9 +380,10 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     this.map.fitBounds(markerClusterGroup.getBounds());
   }
 
-  // This function shows a popup or zooms to bounds.
-  // The condition to show a popup or to zoom resembles the condition to call
-  // cluster.spiderfy() or cluster.zoomToBounds() in Leaflet.markercluster's source code.
+  // When a marker cluster is clicked, this function is called.
+  // This function zooms or shows a popup.
+  // The condition to zoom or to show a popup corresponds with
+  // the condition to call cluster.zoomToBounds() or cluster.spiderfy() in Leaflet.markercluster's source code.
   // Permalink to Leaflet.markercluster's repo as of Feb 3, 2023:
   // https://github.com/Leaflet/Leaflet.markercluster/blob/b2512acb4dcf444352ea258472ae05871c12eda7/src/MarkerClusterGroup.js#L856-L886
   private handleClusterClick(e: LeafletEvent) {
@@ -404,7 +405,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
       }
     }
     // The code above handles the case to zoom, which is to call cluster.zoomToBounds().
-    // The code below handles the case to show a popup, which is equivalent to calling cluster.spiderfy() in Leaflet.markercluster
+    // The code below handles the case to show a popup, which corresponds with calling cluster.spiderfy() in Leaflet.markercluster.
     this.showPopupForMarkerCluster(cluster);
   }
 
