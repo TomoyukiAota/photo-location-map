@@ -1,0 +1,23 @@
+.photo-cluster-viewer-root {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.photo-cluster-viewer-left-pane {
+  min-height: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 5px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-auto-rows: min-content;
+}
+
+.photo-cluster-viewer-tile {
+  padding: 2px;
+  transition: background-color 0.2s ease;
+  &:hover         { background-color: #ebebeb; }
+  &.selected-tile { background-color: #c2c7e6; }
+}
