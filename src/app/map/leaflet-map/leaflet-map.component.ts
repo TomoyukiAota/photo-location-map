@@ -403,6 +403,12 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
         return;
       }
     }
+    // The code above handles the case to zoom, which is to call cluster.zoomToBounds().
+    // The code below handles the case to show a popup, which is equivalent to calling cluster.spiderfy() in Leaflet.markercluster
+    this.showPopupForMarkerCluster(cluster);
+  }
+
+  private showPopupForMarkerCluster(cluster) {
     const markers = cluster.getAllChildMarkers();
     const photos = markers.map(marker => marker.options.photo);
     const popupContent = PhotoClusterViewer.create(photos);
