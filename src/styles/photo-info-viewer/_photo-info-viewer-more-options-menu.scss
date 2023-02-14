@@ -1,3 +1,4 @@
+@import "../color";
 @import "photo-info-viewer-common";
 
 .photo-info-viewer-more-options-menu {
@@ -40,6 +41,6 @@
 
   // background-color animation
   transition: background-color 0.2s ease;
-  &:hover  { background: rgba(0,0,0,.08); }
-  &:active { background: rgba(0,0,0,.2);  }
+  &:hover  { background: $white-background_hover;  }
+  &:active { background: $white-background_active; }
 }

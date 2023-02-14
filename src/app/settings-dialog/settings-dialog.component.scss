@@ -1,3 +1,5 @@
+@import "../../styles/color";
+
 :host {
   height: 100%;
   display: grid;
@@ -24,11 +26,11 @@
   border-right: solid 1px #7f7f7f;
 
   .selected-tab {
-    background-color: #dee1f0;
+    background-color: $white-background_selected;
   }
 
   .selected-tab:hover {
-    background-color: #c2c7e6;
+    background-color: $white-background_selected-and-hover;
   }
 }
 
