@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import * as turf from '@turf/turf';
-import { Control, LayersControlEvent, LeafletEvent, Map, Marker } from 'leaflet';
+import { Control, LayersControlEvent, LeafletEvent, Map, Marker, PopupEvent } from 'leaflet';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
@@ -433,17 +433,17 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
       }
     );
     marker.bindPopup(PhotoInfoViewerContent.request('leaflet-map-popup', photo));
-    marker.on('popupopen', event => {
-      const divIconHtml: HTMLDivElement = event.target.options.icon.options.html;
-      divIconHtml.style.filter = 'brightness(0.8)';
-    });
-    marker.on('popupclose', event => {
-      const divIconHtml: HTMLDivElement = event.target.options.icon.options.html;
-      divIconHtml.style.filter = 'brightness(1)';
-    });
+    marker.on('popupopen',  event => this.updateDivIconBackgroundColor(event, 'rgba( 63,  81, 181, .15)')); // Same as $white-background_selected in _color.scss
+    marker.on('popupclose', event => this.updateDivIconBackgroundColor(event, 'rgba(255, 255, 255, 1  )'));
     (marker.options as any).photo = photo;
     markerClusterGroup.addLayer(marker);
     return marker;
+  }
+
+  private updateDivIconBackgroundColor(event: PopupEvent, color: string) {
+    const divIconHtml: HTMLDivElement = event.target.options.icon.options.html;
+    const contentContainer = divIconHtml.querySelector('.plm-leaflet-map-div-icon-content-container') as HTMLDivElement;
+    contentContainer.style.backgroundColor = color;
   }
 
   private configureCenteringIncludingPopupAndMarker() {

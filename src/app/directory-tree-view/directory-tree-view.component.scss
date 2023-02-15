@@ -1,3 +1,5 @@
+@import "../../styles/color";
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -15,9 +17,8 @@ mat-tree-node {
   min-height: 40px;
   overflow: visible;
 
-  $target-background: rgba(0,0,0,.08);
-  &:hover               { background: $target-background; }
-  &.context-menu-target { background: $target-background; }
+  &:hover               { background: $white-background_hover; }
+  &.context-menu-target { background: $white-background_hover; } // When context menu is shown, keep the same color as hover.
   transition: background-color 0.2s ease;
 }
 
