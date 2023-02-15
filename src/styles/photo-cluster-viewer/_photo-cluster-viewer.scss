@@ -21,7 +21,6 @@
   padding: 2px;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  &:hover               { background-color: $white-background_hover;              }
-  &.selected-tile       { background-color: $white-background_selected;           }
-  &.selected-tile:hover { background-color: $white-background_selected-and-hover; }
+  &:hover         { background-color: $white-background_hover;    }
+  &.selected-tile { background-color: $white-background_selected; }
 }
