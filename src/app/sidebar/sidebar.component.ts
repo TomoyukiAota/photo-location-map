@@ -1,10 +1,8 @@
 import { Component } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Subject } from 'rxjs';
 import * as remote from '@electron/remote';
 
 import { DirTreeObjectRecorder } from '../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
-import { ProxyRequire } from '../../../src-shared/require/proxy-require';
 import { sleep } from '../../../src-shared/sleep/sleep';
 
 import { OpenFolderService } from '../shared/service/open-folder.service';
@@ -22,16 +20,13 @@ import { PhotoInfoViewerContent } from '../photo-info-viewer/photo-info-viewer-c
 import { ThumbnailGenerationService } from '../thumbnail-generation/service/thumbnail-generation.service';
 import { OpenFolderRecorder } from './open-folder-recorder';
 
-const path = ProxyRequire.path;
-
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent {
-  public readonly messageWhenFolderIsNotOpened = 'Please open a folder to see where photos were taken.';
-  public parentFolderPath = new Subject<string>();
+  public isFolderOpened = false;
 
   constructor(private dialog: MatDialog,
               private openFolderService: OpenFolderService,
@@ -74,7 +69,7 @@ export class SidebarComponent {
       await this.photoDataService.update(directoryTreeObject); // Photo data is fetched from files. The loading folder dialog displays file loading status.
       await sleep(100); // To update the loading folder dialog before starting intensive work (PhotoInfoViewerContent.generateCache) which freezes GUI.
 
-      this.parentFolderPath.next(path.dirname(openedFolderPath) + path.sep);
+      this.isFolderOpened = true;
       this.showPhotoWithLocationNotFoundDialogIfApplicable();
       PhotoInfoViewerContent.generateCache(this.photoDataService.getAllPhotos());
       this.directoryTreeViewDataService.replace(directoryTreeObject);
