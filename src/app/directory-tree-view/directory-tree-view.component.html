@@ -26,7 +26,8 @@
   <mat-tree-node *matTreeNodeDef="let node; when: hasChildren"
                  matTreeNodePadding
                  [matTreeNodePaddingIndent]="indentPerLevel"
-                 (contextmenu)="onContextMenu($event, node)">
+                 (contextmenu)="onContextMenu($event, node)"
+                 [title]="node.level === 0 ? 'Opened Folder - ' + node.path : ''">
     <button mat-icon-button matTreeNodeToggle>
       <mat-icon class="mat-icon-rtl-mirror">
         {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
