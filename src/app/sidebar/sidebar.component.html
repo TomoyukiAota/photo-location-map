@@ -7,7 +7,7 @@
       {{ 'SIDEBAR.OPEN_FOLDER' | translate }}
     </button>
   </div>
-  <div *ngIf="!isFolderOpened" class="message-when-folder-is-not-opened">Please open a folder to see where photos were taken.</div>
+  <div *ngIf="(isFolderOpened$ | async) === false" class="message-when-folder-is-not-opened">Please open a folder to see where photos were taken.</div>
   <div class="directory-tree-view-area">
     <app-directory-tree-view></app-directory-tree-view>
   </div>
