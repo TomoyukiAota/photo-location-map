@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { BehaviorSubject } from 'rxjs';
 import * as remote from '@electron/remote';
 
 import { DirTreeObjectRecorder } from '../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
@@ -26,7 +27,7 @@ import { OpenFolderRecorder } from './open-folder-recorder';
   styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent {
-  public isFolderOpened = false;
+  public isFolderOpened$ = new BehaviorSubject(false);
 
   constructor(private dialog: MatDialog,
               private openFolderService: OpenFolderService,
@@ -69,7 +70,7 @@ export class SidebarComponent {
       await this.photoDataService.update(directoryTreeObject); // Photo data is fetched from files. The loading folder dialog displays file loading status.
       await sleep(100); // To update the loading folder dialog before starting intensive work (PhotoInfoViewerContent.generateCache) which freezes GUI.
 
-      this.isFolderOpened = true;
+      this.isFolderOpened$.next(true);
       this.showPhotoWithLocationNotFoundDialogIfApplicable();
       PhotoInfoViewerContent.generateCache(this.photoDataService.getAllPhotos());
       this.directoryTreeViewDataService.replace(directoryTreeObject);
