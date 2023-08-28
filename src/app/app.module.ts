@@ -19,6 +19,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { NgxEchartsModule } from 'ngx-echarts';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -30,6 +31,7 @@ import { LoadingFolderDialogComponent } from './loading-folder/dialog/loading-fo
 import { MapComponent } from './map/map/map.component';
 import { GoogleMapsComponent } from './map/google-maps/google-maps.component';
 import { LeafletMapComponent } from './map/leaflet-map/leaflet-map.component';
+import { DateTimeTakenChartComponent } from './date-time-taken-chart/date-time-taken-chart.component';
 import { AboutBoxComponent } from './about-box/about-box.component';
 import { WelcomeDialogComponent } from './welcome-dialog/welcome-dialog.component';
 import { SettingsDialogComponent } from './settings-dialog/settings-dialog.component';
@@ -59,6 +61,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MapComponent,
     GoogleMapsComponent,
     LeafletMapComponent,
+    DateTimeTakenChartComponent,
     ThumbnailGenerationStatusBarComponent,
     DateTimeSettingsComponent,
     CacheSettingsComponent,
@@ -89,7 +92,10 @@ export function HttpLoaderFactory(http: HttpClient) {
         MatMenuModule,
         MatProgressBarModule,
         MatSelectModule,
-        MatTreeModule
+        MatTreeModule,
+        NgxEchartsModule.forRoot({
+          echarts: () => import('echarts'),
+        }),
     ],
   bootstrap: [AppComponent]
 })

@@ -11,10 +11,17 @@ body {
 }
 
 // The gutter provided by Split.js
-.gutter.gutter-horizontal {
+.gutter {
   height: 100%;
   background-color: #eeeeee;
-  cursor: col-resize;
+
+  &.gutter-horizontal {
+    cursor: col-resize;
+  }
+
+  &.gutter-vertical {
+    cursor: row-resize;
+  }
 
   // The same animation as the splitter gutter in Photo Data Viewer.
   transition: background-color 1s ease 0.2s;
