@@ -127,7 +127,8 @@ export class DateTimeTakenChartComponent {
     return xValuesWithinZoom;
   }
 
-  public onChartRestore(event: any) {
-    console.log('onChartRestore', event);
+  public onChartRestore() {
+    const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
+    this.pinnedPhotoService.setPinnedPhotos(selectedPhotos);
   }
 }
