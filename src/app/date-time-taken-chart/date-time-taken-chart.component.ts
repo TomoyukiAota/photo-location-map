@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { EChartsOption } from 'echarts';
+import { ECharts, EChartsOption } from 'echarts';
 import { momentToDateString } from '../shared/moment-to-string';
 import { Photo } from '../shared/model/photo.model';
 import { PinnedPhotoService } from '../shared/service/pinned-photo.service';
+import { SelectedPhotoService } from '../shared/service/selected-photo.service';
 
 @Component({
   selector: 'app-date-time-taken-chart',
@@ -11,10 +12,13 @@ import { PinnedPhotoService } from '../shared/service/pinned-photo.service';
 })
 export class DateTimeTakenChartComponent {
   public chartOption: EChartsOption;
+  private echartsInstance: ECharts;
 
-  constructor(private pinnedPhotoService: PinnedPhotoService) {
-    this.pinnedPhotoService.pinnedPhotos.subscribe(photos => {
+  constructor(private pinnedPhotoService: PinnedPhotoService,
+              private selectedPhotoService: SelectedPhotoService) {
+    this.selectedPhotoService.selectedPhotos.subscribe(photos => {
       this.setChartOption(photos);
+      this.pinnedPhotoService.setPinnedPhotos(photos);
     });
   }
 
@@ -102,8 +106,25 @@ export class DateTimeTakenChartComponent {
     this.chartOption = option;
   }
 
-  public onChartDataZoom(event: any) {
-    console.log('onChartDataZoom', event);
+  public onChartInit($event: any) {
+    this.echartsInstance = $event;
+  }
+
+  public onChartDataZoom() {
+    const xValuesWithinZoom = this.getXValuesWithinZoom();
+    const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
+    const pinnedPhotos = selectedPhotos.filter(photo => {
+      const dateString = photo.exif.dateTimeOriginal.toDateString({dayOfWeek: false});
+      return xValuesWithinZoom.includes(dateString);
+    });
+    this.pinnedPhotoService.setPinnedPhotos(pinnedPhotos);
+  }
+
+  private getXValuesWithinZoom(): string[] {
+    // Reference: https://stackoverflow.com/a/76429536/7947548
+    const option = this.echartsInstance.getOption();
+    const xValuesWithinZoom = option.xAxis[0].data.slice(option.dataZoom[0].startValue, option.dataZoom[0].endValue + 1);
+    return xValuesWithinZoom;
   }
 
   public onChartRestore(event: any) {

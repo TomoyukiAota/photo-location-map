@@ -1,6 +1,7 @@
 <div echarts
      [options]="chartOption"
-     (chartDataZoom)="onChartDataZoom($event)"
+     (chartInit)="onChartInit($event)"
+     (chartDataZoom)="onChartDataZoom()"
      (chartRestore)="onChartRestore($event)"
      class="chart">
 </div>
