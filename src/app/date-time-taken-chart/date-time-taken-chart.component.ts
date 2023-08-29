@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { EChartsOption } from 'echarts';
+import { momentToDateString } from '../shared/moment-to-string';
+import { Photo } from '../shared/model/photo.model';
+import { PinnedPhotoService } from '../shared/service/pinned-photo.service';
 
 @Component({
   selector: 'app-date-time-taken-chart',
@@ -9,18 +12,37 @@ import { EChartsOption } from 'echarts';
 export class DateTimeTakenChartComponent {
   public chartOption: EChartsOption;
 
-  constructor() {
-    let base = +new Date(1968, 9, 3);
-    const oneDay = 24 * 3600 * 1000;
-    const date = [];
+  constructor(private pinnedPhotoService: PinnedPhotoService) {
+    this.pinnedPhotoService.pinnedPhotos.subscribe(photos => {
+      this.setChartOption(photos);
+    });
+  }
 
-    const data = [Math.random() * 300];
-
-    for (let i = 1; i < 2000; i++) {
-      const now = new Date((base += oneDay));
-      date.push([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'));
-      data.push(Math.round((Math.random() - 0.5) * 20 + data[i - 1]));
+  public setChartOption(pinnedPhotos: Photo[]): void {
+    const photosWithDateTime = pinnedPhotos.filter(photo => photo?.exif?.dateTimeOriginal);
+    if (photosWithDateTime.length === 0) {
+      return;
     }
+
+    const moments = photosWithDateTime.map(photo => photo.exif.dateTimeOriginal.moment.clone()); // Cloned to be sure of not modifying original ones
+    const sortedMoments = moments.sort((a, b) => a.diff(b));
+    const firstMoment = sortedMoments[0];
+    const lastMoment = sortedMoments[sortedMoments.length - 1];
+    const loopLimitMoment = lastMoment.clone().add(1, 'day');
+    const bins = new Map<string, number>();
+    for(let tempMoment = firstMoment.clone(); tempMoment.isBefore(loopLimitMoment, 'day'); tempMoment.add(1, 'day')) {
+      const dateString = momentToDateString(tempMoment, {dayOfWeek: false});
+      bins.set(dateString, 0);
+    }
+    sortedMoments.forEach(tempMoment => {
+      const dateString = momentToDateString(tempMoment, {dayOfWeek: false});
+      if (bins.has(dateString)) {
+        const previous = bins.get(dateString);
+        bins.set(dateString, previous + 1);
+      }
+    });
+    const date = Array.from(bins.keys());
+    const data = Array.from(bins.values());
 
     const option: EChartsOption = {
       grid: {
@@ -65,7 +87,6 @@ export class DateTimeTakenChartComponent {
       ],
       series: [
         {
-          name: 'Fake Data',
           type: 'bar',
           sampling: 'lttb',
           itemStyle: {
