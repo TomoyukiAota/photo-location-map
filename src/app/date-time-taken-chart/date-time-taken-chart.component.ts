@@ -67,8 +67,10 @@ export class DateTimeTakenChartComponent {
       },
       xAxis: {
         type: 'category',
-        boundaryGap: false,
-        data: date
+        data: date,
+        axisTick: {
+          alignWithLabel: true,
+        }
       },
       yAxis: {
         type: 'value',
