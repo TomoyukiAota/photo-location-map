@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 import { Logger } from '../../../../src-shared/log/logger';
 import { Photo } from '../model/photo.model';
 import { PhotoSelectionHistoryService } from './photo-selection-history.service';
