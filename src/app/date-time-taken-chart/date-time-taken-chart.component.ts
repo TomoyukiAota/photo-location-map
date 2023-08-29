@@ -50,10 +50,10 @@ export class DateTimeTakenChartComponent {
 
     const option: EChartsOption = {
       grid: {
-        top: 30,
+        top: 25,
         bottom: 70,
-        left: 60,
-        right: 40,
+        left: 90,
+        right: 110,
       },
       tooltip: {
         trigger: 'axis',
