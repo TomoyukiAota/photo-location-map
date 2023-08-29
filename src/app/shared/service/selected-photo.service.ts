@@ -3,23 +3,19 @@ import { BehaviorSubject } from 'rxjs';
 import { Logger } from '../../../../src-shared/log/logger';
 import { Photo } from '../model/photo.model';
 import { PhotoSelectionHistoryService } from './photo-selection-history.service';
+import { PinnedPhotoService } from './pinned-photo.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SelectedPhotoService {
-  public selectedPhotos = new BehaviorSubject<Photo[]>([]);
-
-  constructor(private photoSelectionHistoryService: PhotoSelectionHistoryService) {
+  constructor(private photoSelectionHistoryService: PhotoSelectionHistoryService,
+              private pinnedPhotoService: PinnedPhotoService) {
   }
 
   public setSelectedPhotos(selectedPhotos: Photo[]) {
-    this.selectedPhotos.next(selectedPhotos);
     this.photoSelectionHistoryService.add(selectedPhotos);
     Logger.info('Selected Photos: ', selectedPhotos);
-  }
-
-  public getSelectedPhotos(): Photo[] {
-    return Array.from(this.selectedPhotos.getValue());
+    this.pinnedPhotoService.setPinnedPhotos(selectedPhotos);
   }
 }
