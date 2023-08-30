@@ -122,7 +122,9 @@ export class DateTimeTakenChartComponent {
     const xValuesWithinZoom = this.getXValuesWithinZoom();
     const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
     const pinnedPhotos = selectedPhotos.filter(photo => {
-      const dateString = photo.exif.dateTimeOriginal.toDateString({dayOfWeek: false});
+      const dateTimeOriginal = photo.exif?.dateTimeOriginal;
+      if (!dateTimeOriginal) { return false; } // When zoomed, the photos without the date taken are not pinned on the map.
+      const dateString = dateTimeOriginal.toDateString({dayOfWeek: false});
       return xValuesWithinZoom.includes(dateString);
     });
     this.pinnedPhotoService.setPinnedPhotos(pinnedPhotos);
