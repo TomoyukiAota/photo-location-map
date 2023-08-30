@@ -22,10 +22,16 @@ export class DateTimeTakenChartComponent {
     });
   }
 
-  public setChartOption(pinnedPhotos: Photo[]): void {
+  private setChartOption(pinnedPhotos: Photo[]): void {
+    const {xData, yData} = this.createXYData(pinnedPhotos);
+    const option = this.createEChartsOption(xData, yData);
+    this.chartOption = option;
+  }
+
+  private createXYData(pinnedPhotos: Photo[]): {xData: string[], yData: number[]} {
     const photosWithDateTime = pinnedPhotos.filter(photo => photo?.exif?.dateTimeOriginal);
     if (photosWithDateTime.length === 0) {
-      return;
+      return {xData: [], yData: []}; // Results in the chart without data
     }
 
     const moments = photosWithDateTime.map(photo => photo.exif.dateTimeOriginal.moment.clone()); // Cloned to be sure of not modifying original ones
@@ -45,9 +51,12 @@ export class DateTimeTakenChartComponent {
         bins.set(dateString, previous + 1);
       }
     });
-    const date = Array.from(bins.keys());
-    const data = Array.from(bins.values());
+    const xData = Array.from(bins.keys());
+    const yData = Array.from(bins.values());
+    return {xData, yData};
+  }
 
+  private createEChartsOption(xData: string[], yData: number[]) {
     const option: EChartsOption = {
       grid: {
         top: 25,
@@ -71,7 +80,7 @@ export class DateTimeTakenChartComponent {
       },
       xAxis: {
         type: 'category',
-        data: date,
+        data: xData,
         axisTick: {
           alignWithLabel: true,
         }
@@ -98,12 +107,11 @@ export class DateTimeTakenChartComponent {
           itemStyle: {
             color: 'rgb(255, 70, 131)'
           },
-          data: data
+          data: yData
         }
       ]
     };
-
-    this.chartOption = option;
+    return option;
   }
 
   public onChartInit($event: any) {
