@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 
 @Component({
   selector: 'app-date-time-taken-chart-config',
@@ -6,10 +6,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./date-time-taken-chart-config.component.scss']
 })
 export class DateTimeTakenChartConfigComponent {
-  public xAxisUnits: string[] = [ 'Year', 'Month', 'Day' ];
-  public selectedXAxisUnit = this.xAxisUnits[2];
+  public xAxisUnits: string[] = ['Day', 'Month', 'Year'];
+  @Output() xAxisUnitChanged = new EventEmitter<string>;
 
-  public onXAxisUnitChange(event: any) {
-    console.log(event);
+  public onXAxisSelectChange(event: any) {
+    this.xAxisUnitChanged.emit(event.target.value);
   }
 }

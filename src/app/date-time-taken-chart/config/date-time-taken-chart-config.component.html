@@ -1,5 +1,3 @@
-<mat-form-field class="x-axis-unit-dropdown">
-  <mat-select [(value)]="selectedXAxisUnit" (selectionChange)="onXAxisUnitChange($event)">
-    <mat-option [value]="unit" *ngFor="let unit of xAxisUnits">{{ unit }}</mat-option>
-  </mat-select>
-</mat-form-field>
+<select (change)="onXAxisSelectChange($event)">
+  <option *ngFor="let unit of xAxisUnits" [defaultSelected]="unit === 'Day'">{{ unit }}</option>
+</select>

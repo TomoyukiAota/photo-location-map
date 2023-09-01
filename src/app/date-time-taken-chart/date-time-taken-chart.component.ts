@@ -144,4 +144,8 @@ export class DateTimeTakenChartComponent {
     const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
     this.pinnedPhotoService.setPinnedPhotos(selectedPhotos);
   }
+
+  public onXAxisUnitChanged(xAxisUnit: string) {
+    console.log('DateTimeTakenChartComponent::onXAxisUnitChanged', xAxisUnit);
+  }
 }
