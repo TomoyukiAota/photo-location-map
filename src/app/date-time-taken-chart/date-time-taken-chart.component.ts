@@ -73,6 +73,9 @@ export class DateTimeTakenChartComponent {
       toolbox: {
         feature: {
           dataZoom: {
+            icon: {
+              back: 'Invalid path' // Set to invalid path to hide Zoom Reset button. See https://stackoverflow.com/a/74459890/7947548
+            },
             yAxisIndex: 'none'
           },
           restore: {},
