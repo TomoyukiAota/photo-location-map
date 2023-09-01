@@ -11,21 +11,21 @@ import { SelectedPhotoService } from '../shared/service/selected-photo.service';
   styleUrls: ['./date-time-taken-chart.component.scss']
 })
 export class DateTimeTakenChartComponent {
-  public chartOption: EChartsOption;
+  public eChartsOption: EChartsOption;
   private echartsInstance: ECharts;
 
   constructor(private pinnedPhotoService: PinnedPhotoService,
               private selectedPhotoService: SelectedPhotoService) {
     this.selectedPhotoService.selectedPhotos.subscribe(photos => {
-      this.setChartOption(photos);
+      this.setEChartsOption(photos);
       this.pinnedPhotoService.setPinnedPhotos(photos);
     });
   }
 
-  private setChartOption(pinnedPhotos: Photo[]): void {
+  private setEChartsOption(pinnedPhotos: Photo[]): void {
     const {xData, yData} = this.createXYData(pinnedPhotos);
     const option = this.createEChartsOption(xData, yData);
-    this.chartOption = option;
+    this.eChartsOption = option;
   }
 
   private createXYData(pinnedPhotos: Photo[]): {xData: string[], yData: number[]} {
