@@ -4,6 +4,7 @@ import { momentToDateString } from '../shared/moment-to-string';
 import { Photo } from '../shared/model/photo.model';
 import { PinnedPhotoService } from '../shared/service/pinned-photo.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
+import { getXAxisUnitForMomentJs, xAxisUnit } from './config/x-axis-unit';
 
 @Component({
   selector: 'app-date-time-taken-chart',
@@ -13,6 +14,7 @@ import { SelectedPhotoService } from '../shared/service/selected-photo.service';
 export class DateTimeTakenChartComponent {
   public eChartsOption: EChartsOption;
   private echartsInstance: ECharts;
+  private xAxisUnitForMomentJs = xAxisUnit.day.momentJsStr;
 
   constructor(private pinnedPhotoService: PinnedPhotoService,
               private selectedPhotoService: SelectedPhotoService) {
@@ -145,7 +147,11 @@ export class DateTimeTakenChartComponent {
     this.pinnedPhotoService.setPinnedPhotos(selectedPhotos);
   }
 
-  public onXAxisUnitChanged(xAxisUnit: string) {
-    console.log('DateTimeTakenChartComponent::onXAxisUnitChanged', xAxisUnit);
+  public onXAxisUnitChanged(xAxisUnitDisplayStr: string) {
+    this.xAxisUnitForMomentJs = getXAxisUnitForMomentJs(xAxisUnitDisplayStr);
+    console.log('DateTimeTakenChartComponent::onXAxisUnitChanged', this.xAxisUnitForMomentJs);
+    const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
+    this.setEChartsOption(selectedPhotos);
+    this.pinnedPhotoService.setPinnedPhotos(selectedPhotos);
   }
 }
