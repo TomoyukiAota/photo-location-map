@@ -1,3 +1,5 @@
-<select (change)="onXAxisSelectChange($event)">
-  <option *ngFor="let unit of xAxisUnits" [defaultSelected]="unit === 'Day'">{{ unit }}</option>
-</select>
+<div class="x-axis-unit-select">
+  <select (change)="onXAxisSelectChange($event)">
+    <option *ngFor="let unit of xAxisUnits" [defaultSelected]="unit === 'Day'">{{ unit }}</option>
+  </select>
+</div>

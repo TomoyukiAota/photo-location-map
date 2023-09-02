@@ -1,0 +1,32 @@
+:host {
+  padding: 8px;
+}
+
+.x-axis-unit-select {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+}
+
+.x-axis-unit-select::after {
+  position: absolute;
+  right: 10px;
+  width: 10px;
+  height: 7px;
+  background-color: #535353;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  content: '';
+  pointer-events: none;
+}
+
+.x-axis-unit-select select {
+  appearance: none;
+  height: 2em;
+  padding: .4em calc(.8em + 14px) .4em .6em;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  background-color: #fff;
+  color: #333333;
+  font-size: 1em;
+  cursor: pointer;
+}
