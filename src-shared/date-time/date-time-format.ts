@@ -52,6 +52,10 @@ export namespace DateTimeFormat {
       return dateFormatMap.get(dateFormat);
     }
 
+    export function getMomentJsYearFormat(): string {
+      return 'YYYY';
+    }
+
     export function getMomentJsTimeFormat(clockSystemFormat: ClockSystemFormatType): string {
       return clockSystemFormat === ClockSystemFormat_24h
         ? `HH:mm:ss`

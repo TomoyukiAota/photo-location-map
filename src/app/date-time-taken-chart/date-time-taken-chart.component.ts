@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ECharts, EChartsOption } from 'echarts';
-import { momentToDateString } from '../shared/moment-to-string';
+import { Moment } from 'moment';
+import { momentToDateString, momentToYearString } from '../shared/moment-to-string';
 import { Photo } from '../shared/model/photo.model';
 import { PinnedPhotoService } from '../shared/service/pinned-photo.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
@@ -14,7 +15,7 @@ import { getXAxisUnitForMomentJs, xAxisUnit } from './config/x-axis-unit';
 export class DateTimeTakenChartComponent {
   public eChartsOption: EChartsOption;
   private echartsInstance: ECharts;
-  private xAxisUnitForMomentJs = xAxisUnit.day.momentJsStr;
+  private xUnit = xAxisUnit.day.momentJsStr;
 
   constructor(private pinnedPhotoService: PinnedPhotoService,
               private selectedPhotoService: SelectedPhotoService) {
@@ -40,22 +41,32 @@ export class DateTimeTakenChartComponent {
     const sortedMoments = moments.sort((a, b) => a.diff(b));
     const firstMoment = sortedMoments[0];
     const lastMoment = sortedMoments[sortedMoments.length - 1];
-    const loopLimitMoment = lastMoment.clone().add(1, 'day');
-    const bins = new Map<string, number>();
-    for(let tempMoment = firstMoment.clone(); tempMoment.isBefore(loopLimitMoment, 'day'); tempMoment.add(1, 'day')) {
-      const dateString = momentToDateString(tempMoment, {dayOfWeek: false});
-      bins.set(dateString, 0);
+    const loopLimitMoment = lastMoment.clone().add(1, this.xUnit);
+    const bins = new Map<string, number>(); // <string, number> as (x, y) coordinate in the chart.
+    for(let tempMoment = firstMoment.clone(); tempMoment.isBefore(loopLimitMoment, this.xUnit); tempMoment.add(1, this.xUnit)) {
+      const xValue = this.momentToString(tempMoment);
+      bins.set(xValue, 0); // Initialize the bin with (x, y) = (xValue, 0)
     }
-    sortedMoments.forEach(tempMoment => {
-      const dateString = momentToDateString(tempMoment, {dayOfWeek: false});
-      if (bins.has(dateString)) {
-        const previous = bins.get(dateString);
-        bins.set(dateString, previous + 1);
+    sortedMoments.forEach(sortedMoment => {
+      const momentString = this.momentToString(sortedMoment);
+      if (bins.has(momentString)) {
+        const xValue = momentString;
+        let yValue = bins.get(xValue);
+        yValue++;
+        bins.set(xValue, yValue);
       }
     });
     const xData = Array.from(bins.keys());
     const yData = Array.from(bins.values());
     return {xData, yData};
+  }
+
+  private momentToString(moment: Moment): string {
+    if (this.xUnit === 'day') {
+      return momentToDateString(moment, {dayOfWeek: false});
+    } else if (this.xUnit === 'year') {
+      return momentToYearString(moment);
+    }
   }
 
   private createEChartsOption(xData: string[], yData: number[]) {
@@ -129,8 +140,8 @@ export class DateTimeTakenChartComponent {
     const pinnedPhotos = selectedPhotos.filter(photo => {
       const dateTimeOriginal = photo.exif?.dateTimeOriginal;
       if (!dateTimeOriginal) { return false; } // When zoomed, the photos without the date taken are not pinned on the map.
-      const dateString = dateTimeOriginal.toDateString({dayOfWeek: false});
-      return xValuesWithinZoom.includes(dateString);
+      const momentString = this.momentToString(dateTimeOriginal.moment);
+      return xValuesWithinZoom.includes(momentString);
     });
     this.pinnedPhotoService.setPinnedPhotos(pinnedPhotos);
   }
@@ -148,8 +159,8 @@ export class DateTimeTakenChartComponent {
   }
 
   public onXAxisUnitChanged(xAxisUnitDisplayStr: string) {
-    this.xAxisUnitForMomentJs = getXAxisUnitForMomentJs(xAxisUnitDisplayStr);
-    console.log('DateTimeTakenChartComponent::onXAxisUnitChanged', this.xAxisUnitForMomentJs);
+    this.xUnit = getXAxisUnitForMomentJs(xAxisUnitDisplayStr);
+    console.log('DateTimeTakenChartComponent::onXAxisUnitChanged', this.xUnit);
     const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
     this.setEChartsOption(selectedPhotos);
     this.pinnedPhotoService.setPinnedPhotos(selectedPhotos);

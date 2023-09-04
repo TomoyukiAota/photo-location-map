@@ -1,6 +1,8 @@
+import { unitOfTime } from 'moment';
+
 export interface XAxisUnit {
   displayStr: string;
-  momentJsStr: string;
+  momentJsStr: unitOfTime.DurationConstructor;
 }
 
 export const xAxisUnit: {readonly [index: string]: XAxisUnit} = {
@@ -9,12 +11,12 @@ export const xAxisUnit: {readonly [index: string]: XAxisUnit} = {
   year:  {displayStr: 'Year' , momentJsStr: 'year' },
 };
 
-export const displayUnitToMomentJsUnitMap = new Map<string, string>([
+export const displayUnitToMomentJsUnitMap = new Map<string, unitOfTime.DurationConstructor>([
   [xAxisUnit.day.displayStr  , xAxisUnit.day.momentJsStr  ],
   [xAxisUnit.month.displayStr, xAxisUnit.month.momentJsStr],
   [xAxisUnit.year.displayStr , xAxisUnit.year.momentJsStr ],
 ]);
 
-export function getXAxisUnitForMomentJs(displayUnit: string): string {
+export function getXAxisUnitForMomentJs(displayUnit: string): unitOfTime.DurationConstructor {
   return displayUnitToMomentJsUnitMap.get(displayUnit);
 }
