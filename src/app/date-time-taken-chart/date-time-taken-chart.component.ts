@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ECharts, EChartsOption } from 'echarts';
 import { Moment } from 'moment';
-import { momentToDateString, momentToYearString } from '../shared/moment-to-string';
+import { momentToDateString, momentToYearMonthString, momentToYearString } from '../shared/moment-to-string';
 import { Photo } from '../shared/model/photo.model';
 import { PinnedPhotoService } from '../shared/service/pinned-photo.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
@@ -64,6 +64,8 @@ export class DateTimeTakenChartComponent {
   private momentToString(moment: Moment): string {
     if (this.xUnit === 'day') {
       return momentToDateString(moment, {dayOfWeek: false});
+    } else if (this.xUnit === 'month') {
+      return momentToYearMonthString(moment);
     } else if (this.xUnit === 'year') {
       return momentToYearString(moment);
     }

@@ -15,6 +15,12 @@ export function momentToDateString(input: moment.Moment, option: {dayOfWeek: boo
   return input.format(momentJsFormatString);
 }
 
+export function momentToYearMonthString(input: moment.Moment): string {
+  const dateFormat = currentUserSettings.dateFormat;
+  const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsYearMonthFormat(dateFormat);
+  return input.format(momentJsFormatString);
+}
+
 export function momentToYearString(input: moment.Moment): string {
   const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsYearFormat();
   return input.format(momentJsFormatString);

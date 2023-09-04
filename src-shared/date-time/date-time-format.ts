@@ -52,6 +52,18 @@ export namespace DateTimeFormat {
       return dateFormatMap.get(dateFormat);
     }
 
+    export function getMomentJsYearMonthFormat(dateFormat: DateFormatType): string {
+      const yearMonthFormatMap = new Map<DateFormatType, string>(
+        [
+          [DateFormat_ISO8601Like, 'YYYY-MM' ],
+          [DateFormat_YYYYMMDD   , 'YYYY/MM' ],
+          [DateFormat_DDMMYYYY   , 'MM/YYYY' ],
+          [DateFormat_MMDDYYYY   , 'MMM/YYYY'], // e.g. Oct/2012, Apr/2013
+        ]
+      );
+      return yearMonthFormatMap.get(dateFormat);
+    }
+
     export function getMomentJsYearFormat(): string {
       return 'YYYY';
     }
