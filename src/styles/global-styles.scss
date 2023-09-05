@@ -45,6 +45,10 @@ $max-z-index: 2147483647;
   position: relative;
 }
 
+.mat-mdc-menu-panel {
+  max-width: none !important; // important! to override the max-width restriction of 280px given by mat-menu
+}
+
 .mdc-checkbox__ripple {
   display: none;
 }

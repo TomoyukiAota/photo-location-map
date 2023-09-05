@@ -1,9 +1,16 @@
-<picture class="settings-icon">
+<picture class="settings-icon" [matMenuTriggerFor]="settingsMenu">
   <img class="settings-icon-img"
        [src]="settingsIconDataUrl"
-       alt="Settings"
-       (click)="handleSettingsIconClicked()"/>
+       alt="Settings"/>
 </picture>
+<mat-menu #settingsMenu>
+  <div class="settings-menu" (click)="$event.stopPropagation();">
+    <mat-checkbox [checked]="chartConfigService.showDateUnknownPhotos.value"
+                  (change)="onShowDateUnknownPhotosCheckboxChanged($event)">
+      Show date-unknown photos on the map
+    </mat-checkbox>
+  </div>
+</mat-menu>
 <div class="x-axis-unit-select">
   <select (change)="onXAxisSelectChange($event)">
     <option *ngFor="let unit of xAxisUnits" [defaultSelected]="unit === 'Day'">{{ unit }}</option>

@@ -5,6 +5,7 @@ import { momentToDateString, momentToYearMonthString, momentToYearString } from 
 import { Photo } from '../shared/model/photo.model';
 import { PinnedPhotoService } from '../shared/service/pinned-photo.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
+import { DateTimeTakenChartConfigService } from './config/date-time-taken-chart-config.service';
 import { getXAxisUnitForMomentJs, xAxisUnit } from './config/x-axis-unit';
 
 @Component({
@@ -17,12 +18,21 @@ export class DateTimeTakenChartComponent {
   private echartsInstance: ECharts;
   private xUnit = xAxisUnit.day.momentJsStr;
 
-  constructor(private pinnedPhotoService: PinnedPhotoService,
+  constructor(private chartConfigService: DateTimeTakenChartConfigService,
+              private pinnedPhotoService: PinnedPhotoService,
               private selectedPhotoService: SelectedPhotoService) {
-    this.selectedPhotoService.selectedPhotos.subscribe(photos => {
-      this.setEChartsOption(photos);
-      this.pinnedPhotoService.setPinnedPhotos(photos);
+    this.selectedPhotoService.selectedPhotos.subscribe(selectedPhotos => {
+      this.handleSelectedPhotosChanged(selectedPhotos);
     });
+    this.chartConfigService.showDateUnknownPhotos.subscribe(showDateUnknownPhotos => {
+      this.handleShowDateUnknownPhotosChanged(showDateUnknownPhotos);
+    });
+  }
+
+  private handleSelectedPhotosChanged(selectedPhotos: Photo[]) {
+    this.setEChartsOption(selectedPhotos);
+    this.pinnedPhotoService.setPinnedPhotos(selectedPhotos);
+    this.chartConfigService.showDateUnknownPhotos.next(true);
   }
 
   private setEChartsOption(pinnedPhotos: Photo[]): void {
@@ -148,6 +158,7 @@ export class DateTimeTakenChartComponent {
       return xValuesWithinZoom.includes(momentString);
     });
     this.pinnedPhotoService.setPinnedPhotos(pinnedPhotos);
+    this.chartConfigService.showDateUnknownPhotos.next(false);
   }
 
   private getXValuesWithinZoom(): string[] {
@@ -160,6 +171,22 @@ export class DateTimeTakenChartComponent {
   public onChartRestore() {
     const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
     this.pinnedPhotoService.setPinnedPhotos(selectedPhotos);
+    this.chartConfigService.showDateUnknownPhotos.next(true);
+  }
+
+  private handleShowDateUnknownPhotosChanged(showDateUnknownPhotos: boolean) {
+    const previousPinnedPhotos = this.pinnedPhotoService.getPinnedPhotos();
+    if (showDateUnknownPhotos) {
+      const previousPinnedPhotoPaths = previousPinnedPhotos.map(photo => photo.path);
+      const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
+      const dateUnknownPhotos = selectedPhotos.filter(photo => !photo.exif?.dateTimeOriginal);
+      const photosToAdd = dateUnknownPhotos.filter(dateUnknownPhoto => !previousPinnedPhotoPaths.includes(dateUnknownPhoto.path));
+      const nextPinnedPhotos = [...previousPinnedPhotos, ...photosToAdd];
+      this.pinnedPhotoService.setPinnedPhotos(nextPinnedPhotos);
+    } else {
+      const dateKnownPinnedPhotos = previousPinnedPhotos.filter(photo => !!photo.exif?.dateTimeOriginal);
+      this.pinnedPhotoService.setPinnedPhotos(dateKnownPinnedPhotos);
+    }
   }
 
   public onXAxisUnitChanged(xAxisUnitDisplayStr: string) {
@@ -168,5 +195,6 @@ export class DateTimeTakenChartComponent {
     const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
     this.setEChartsOption(selectedPhotos);
     this.pinnedPhotoService.setPinnedPhotos(selectedPhotos);
+    this.chartConfigService.showDateUnknownPhotos.next(true);
   }
 }
