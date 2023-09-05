@@ -1,5 +1,38 @@
 :host {
-  padding: 8px;
+  padding: 5.5px 0 0 0;
+
+  display: grid;
+  justify-items: left;
+  align-items: start;
+  grid: "settings-icon"      auto
+        "x-axis-unit-select" auto
+        /auto;
+  .settings-icon      { grid-area: settings-icon;      }
+  .x-axis-unit-select { grid-area: x-axis-unit-select; }
+}
+
+.settings-icon {
+  position: relative;
+  cursor: pointer;
+
+  &:hover {
+    // The filter value is gotten by giving #3e98c5 to https://codepen.io/sosuke/pen/Pjoqqp
+    // Reference: https://stackoverflow.com/a/50942954/7947548
+    filter: invert(51%) sepia(25%) saturate(1089%) hue-rotate(155deg) brightness(99%) contrast(86%);
+
+    &::after {
+      position: absolute;
+      left: 0;
+      top: 31.6px; // Align horizontally with "Zoom" and "Restore" text below the buttons in the chart.
+      font-size: 13px;
+      content: 'Settings';
+    }
+  }
+}
+
+.settings-icon-img {
+  width: 32px;
+  height: 32px;
 }
 
 .x-axis-unit-select {
@@ -27,6 +60,6 @@
   border-radius: 3px;
   background-color: #fff;
   color: #333333;
-  font-size: 1em;
+  font-size: .9em;
   cursor: pointer;
 }

@@ -86,6 +86,8 @@ export class DateTimeTakenChartComponent {
         }
       },
       toolbox: {
+        itemSize: 20,
+        top: 4,
         feature: {
           dataZoom: {
             icon: {

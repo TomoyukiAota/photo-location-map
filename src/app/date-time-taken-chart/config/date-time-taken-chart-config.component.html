@@ -1,3 +1,9 @@
+<picture class="settings-icon">
+  <img class="settings-icon-img"
+       [src]="settingsIconDataUrl"
+       alt="Settings"
+       (click)="handleSettingsIconClicked()"/>
+</picture>
 <div class="x-axis-unit-select">
   <select (change)="onXAxisSelectChange($event)">
     <option *ngFor="let unit of xAxisUnits" [defaultSelected]="unit === 'Day'">{{ unit }}</option>
