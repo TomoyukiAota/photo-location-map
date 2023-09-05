@@ -123,7 +123,8 @@ export class DateTimeTakenChartComponent {
       },
       yAxis: {
         type: 'value',
-        boundaryGap: [0, '100%']
+        boundaryGap: [0, '100%'],
+        minInterval: 1,   // Make sure Y-axis label is shown as integer.
       },
       dataZoom: [
         {
