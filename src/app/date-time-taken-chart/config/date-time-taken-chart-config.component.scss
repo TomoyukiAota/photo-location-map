@@ -1,5 +1,5 @@
 :host {
-  padding: 5.5px 10px 0 0;
+  padding: 4px 10px 0 0;
 
   display: grid;
   align-items: center;
@@ -22,7 +22,7 @@
     &::after {
       position: absolute;
       right: -8px;
-      top: 32px; // Align horizontally with "Zoom" and "Restore" text below the buttons in the chart.
+      top: 34px; // Align horizontally with "Zoom" and "Restore" text below the buttons in the chart.
       font-size: 13px;
       content: 'Settings';
     }
