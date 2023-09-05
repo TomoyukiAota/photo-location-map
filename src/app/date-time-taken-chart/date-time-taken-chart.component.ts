@@ -90,7 +90,7 @@ export class DateTimeTakenChartComponent {
         top: 25,
         bottom: 70,
         left: 90,
-        right: 110,
+        right: 200,
       },
       tooltip: {
         trigger: 'axis',
@@ -101,14 +101,17 @@ export class DateTimeTakenChartComponent {
       toolbox: {
         itemSize: 20,
         top: 4,
+        right: 114,
         feature: {
           dataZoom: {
             icon: {
-              back: 'Invalid path' // Set to invalid path to hide Zoom Reset button. See https://stackoverflow.com/a/74459890/7947548
+              back: 'Invalid path' // Set to invalid path to hide Zoom Reset button provided by ECharts. See https://stackoverflow.com/a/74459890/7947548
             },
             yAxisIndex: 'none'
           },
-          restore: {},
+          restore: {
+            title: 'Reset\nZoom'  // Show Restore button provided by ECharts as Reset Zoom button.
+          },
         }
       },
       xAxis: {

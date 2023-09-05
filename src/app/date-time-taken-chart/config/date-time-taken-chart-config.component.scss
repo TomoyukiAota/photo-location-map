@@ -1,12 +1,11 @@
 :host {
-  padding: 5.5px 0 0 0;
+  padding: 5.5px 10px 0 0;
 
   display: grid;
-  justify-items: left;
-  align-items: start;
-  grid: "settings-icon"      auto
-        "x-axis-unit-select" auto
-        /auto;
+  align-items: center;
+  grid-column-gap: 4px;
+  grid: "settings-icon x-axis-unit-select" auto
+        /auto          auto;
   .settings-icon      { grid-area: settings-icon;      }
   .x-axis-unit-select { grid-area: x-axis-unit-select; }
 }
@@ -22,17 +21,18 @@
 
     &::after {
       position: absolute;
-      left: 0;
-      top: 31.6px; // Align horizontally with "Zoom" and "Restore" text below the buttons in the chart.
+      right: -8px;
+      top: 32px; // Align horizontally with "Zoom" and "Restore" text below the buttons in the chart.
       font-size: 13px;
       content: 'Settings';
     }
   }
 }
 
+.settings-icon,
 .settings-icon-img {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
 }
 
 .settings-menu {
@@ -47,7 +47,7 @@
 
 .x-axis-unit-select::after {
   position: absolute;
-  right: 10px;
+  right: 6px;
   width: 10px;
   height: 7px;
   background-color: #535353;
@@ -59,7 +59,7 @@
 .x-axis-unit-select select {
   appearance: none;
   height: 2em;
-  padding: .4em calc(.8em + 14px) .4em .6em;
+  padding: .4em calc(.4em + 14px) .4em .4em;
   border: 1px solid #cccccc;
   border-radius: 3px;
   background-color: #fff;
