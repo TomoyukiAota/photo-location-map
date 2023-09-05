@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { ECharts, EChartsOption } from 'echarts';
-import { Moment } from 'moment';
+import { Moment, unitOfTime } from 'moment';
 import { momentToDateString, momentToYearMonthString, momentToYearString } from '../shared/moment-to-string';
 import { Photo } from '../shared/model/photo.model';
 import { PinnedPhotoService } from '../shared/service/pinned-photo.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
 import { DateTimeTakenChartConfigService } from './config/date-time-taken-chart-config.service';
-import { getXAxisUnitForMomentJs, xAxisUnit } from './config/x-axis-unit';
+import { xAxisUnit } from './config/date-time-taken-chart-x-axis-unit';
 
 @Component({
   selector: 'app-date-time-taken-chart',
@@ -26,6 +26,9 @@ export class DateTimeTakenChartComponent {
     });
     this.chartConfigService.showDateUnknownPhotos.subscribe(showDateUnknownPhotos => {
       this.handleShowDateUnknownPhotosChanged(showDateUnknownPhotos);
+    });
+    this.chartConfigService.xAxisUnitMomentJsStr.subscribe(xAxisUnitMomentJsStr => {
+      this.handleXUnitChanged(xAxisUnitMomentJsStr);
     });
   }
 
@@ -189,9 +192,8 @@ export class DateTimeTakenChartComponent {
     }
   }
 
-  public onXAxisUnitChanged(xAxisUnitDisplayStr: string) {
-    this.xUnit = getXAxisUnitForMomentJs(xAxisUnitDisplayStr);
-    console.log('DateTimeTakenChartComponent::onXAxisUnitChanged', this.xUnit);
+  public handleXUnitChanged(xAxisUnitMomentJsStr: unitOfTime.DurationConstructor) {
+    this.xUnit = xAxisUnitMomentJsStr;
     const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
     this.setEChartsOption(selectedPhotos);
     this.pinnedPhotoService.setPinnedPhotos(selectedPhotos);
