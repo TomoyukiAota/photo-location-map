@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
 import { ECharts, EChartsOption } from 'echarts';
 import { Moment, unitOfTime } from 'moment';
+import { Analytics } from '../../../src-shared/analytics/analytics';
 import { momentToDateString, momentToYearMonthString, momentToYearString } from '../shared/moment-to-string';
 import { Photo } from '../shared/model/photo.model';
 import { PinnedPhotoService } from '../shared/service/pinned-photo.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
 import { DateTimeTakenChartConfigService } from './config/date-time-taken-chart-config.service';
 import { xAxisUnit } from './config/date-time-taken-chart-x-axis-unit';
+import { dateTimeTakenChartLogger as logger } from './date-time-taken-chart-logger';
 
 @Component({
   selector: 'app-date-time-taken-chart',
@@ -176,6 +178,9 @@ export class DateTimeTakenChartComponent {
   }
 
   public onChartRestore() {
+    logger.info(`Restore`);
+    Analytics.trackEvent('DTT Chart', `[DTT Chart] Restore`);
+
     const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
     this.pinnedPhotoService.setPinnedPhotos(selectedPhotos);
     this.chartConfigService.showDateUnknownPhotos.next(true);
