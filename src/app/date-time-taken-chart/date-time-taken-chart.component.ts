@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ECharts, EChartsOption } from 'echarts';
+import * as _ from 'lodash';
 import { Moment, unitOfTime } from 'moment';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { momentToDateString, momentToYearMonthString, momentToYearString } from '../shared/moment-to-string';
@@ -157,7 +158,14 @@ export class DateTimeTakenChartComponent {
     this.echartsInstance = $event;
   }
 
+  // onChartDataZoom function needs debouncing because it's called frequently when the user is changing zoom.
   public onChartDataZoom() {
+    this.onChartDataZoomWithDebouncing();
+    this.trackChartDataZoomWithDebouncing();
+  }
+
+  private onChartDataZoomWithDebouncing = _.debounce(() => {
+    logger.info('Chart Data Zoom');
     const xValuesWithinZoom = this.getXValuesWithinZoom();
     const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
     const pinnedPhotos = selectedPhotos.filter(photo => {
@@ -168,7 +176,7 @@ export class DateTimeTakenChartComponent {
     });
     this.pinnedPhotoService.setPinnedPhotos(pinnedPhotos);
     this.chartConfigService.showDateUnknownPhotos.next(false);
-  }
+  }, 300 /* ms */);
 
   private getXValuesWithinZoom(): string[] {
     // Reference: https://stackoverflow.com/a/76429536/7947548
@@ -176,6 +184,10 @@ export class DateTimeTakenChartComponent {
     const xValuesWithinZoom = option.xAxis[0].data.slice(option.dataZoom[0].startValue, option.dataZoom[0].endValue + 1);
     return xValuesWithinZoom;
   }
+
+  private trackChartDataZoomWithDebouncing = _.debounce(() => {
+    Analytics.trackEvent('DTT Chart', `[DTT Chart] Chart Data Zoom`);
+  }, 2000 /* ms */); // Longer duration for debouncing compared to updating pinned photos because tracking data shouldn't be sent too frequently.
 
   public onChartRestore() {
     logger.info(`Restore`);
