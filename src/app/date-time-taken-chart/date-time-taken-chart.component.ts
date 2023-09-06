@@ -3,7 +3,12 @@ import { ECharts, EChartsOption } from 'echarts';
 import * as _ from 'lodash';
 import { Moment, unitOfTime } from 'moment';
 import { Analytics } from '../../../src-shared/analytics/analytics';
-import { momentToDateString, momentToYearMonthString, momentToYearString } from '../shared/moment-to-string';
+import {
+  momentToDateHourString,
+  momentToDateString,
+  momentToYearMonthString,
+  momentToYearString,
+} from '../shared/moment-to-string';
 import { Photo } from '../shared/model/photo.model';
 import { PinnedPhotoService } from '../shared/service/pinned-photo.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
@@ -78,7 +83,9 @@ export class DateTimeTakenChartComponent {
   }
 
   private momentToString(moment: Moment): string {
-    if (this.xUnit === 'day') {
+    if (this.xUnit === 'hour') {
+      return momentToDateHourString(moment);
+    } else if (this.xUnit === 'day') {
       return momentToDateString(moment, {dayOfWeek: false});
     } else if (this.xUnit === 'month') {
       return momentToYearMonthString(moment);
