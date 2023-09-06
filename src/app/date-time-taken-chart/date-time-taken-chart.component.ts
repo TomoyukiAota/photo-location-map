@@ -213,7 +213,7 @@ export class DateTimeTakenChartComponent {
     }
   }
 
-  public handleXUnitChanged(xAxisUnitMomentJsStr: unitOfTime.DurationConstructor) {
+  private handleXUnitChanged(xAxisUnitMomentJsStr: unitOfTime.DurationConstructor) {
     this.xUnit = xAxisUnitMomentJsStr;
     const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
     this.setEChartsOption(selectedPhotos);
