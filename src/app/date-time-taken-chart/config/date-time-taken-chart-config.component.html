@@ -5,7 +5,9 @@
 </picture>
 <mat-menu #settingsMenu>
   <div class="settings-menu" (click)="$event.stopPropagation();">
-    <mat-checkbox [checked]="chartConfigService.showDateUnknownPhotos.value"
+    <div class="date-unknown-photos-count">Date-unknown photos: {{ dateUnknownPhotosCount | async }}</div>
+    <mat-checkbox *ngIf="(dateUnknownPhotosCount | async) >= 1"
+                  [checked]="chartConfigService.showDateUnknownPhotos.value"
                   (change)="onShowDateUnknownPhotosCheckboxChanged($event)">
       Show date-unknown photos on the map
     </mat-checkbox>

@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { DomSanitizer } from '@angular/platform-browser';
+import { map, Observable } from 'rxjs';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { IconDataUrl } from '../../../assets/icon-data-url';
+import { SelectedPhotoService } from '../../shared/service/selected-photo.service';
 import { dateTimeTakenChartLogger as logger } from '../date-time-taken-chart-logger';
 import { DateTimeTakenChartConfigService } from './date-time-taken-chart-config.service';
 import { getXAxisUnitMomentJsStr, xAxisUnit } from './date-time-taken-chart-x-axis-unit';
@@ -14,12 +16,19 @@ import { getXAxisUnitMomentJsStr, xAxisUnit } from './date-time-taken-chart-x-ax
 })
 export class DateTimeTakenChartConfigComponent {
   public xAxisUnits = [xAxisUnit.hour.displayStr, xAxisUnit.day.displayStr, xAxisUnit.month.displayStr, xAxisUnit.year.displayStr];
+  public dateUnknownPhotosCount: Observable<number>;
 
   constructor(public chartConfigService: DateTimeTakenChartConfigService,
-              private sanitizer: DomSanitizer) {
+              private sanitizer: DomSanitizer,
+              private selectedPhotoService: SelectedPhotoService) {
+    this.dateUnknownPhotosCount = selectedPhotoService.selectedPhotos
+      .pipe(map(photos => {
+        const dateUnknownPhotos = photos.filter(photo => !photo.exif?.dateTimeOriginal);
+        return dateUnknownPhotos.length;
+      }));
   }
 
-  public get settingsIconDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.settingsIcon); }
+  public get settingsIconDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.moreOptions); }
 
   public onShowDateUnknownPhotosCheckboxChanged(event: MatCheckboxChange) {
     const showDateUnknownPhotos = event.checked;
