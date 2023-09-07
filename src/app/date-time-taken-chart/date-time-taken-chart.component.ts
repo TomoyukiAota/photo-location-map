@@ -25,6 +25,7 @@ export class DateTimeTakenChartComponent {
   public eChartsOption: EChartsOption;
   private echartsInstance: ECharts;
   private xUnit = xAxisUnit.day.momentJsStr;
+  public isNarrowDownButtonVisible = false;
 
   constructor(private chartConfigService: DateTimeTakenChartConfigService,
               private pinnedPhotoService: PinnedPhotoService,
@@ -44,6 +45,7 @@ export class DateTimeTakenChartComponent {
     this.setEChartsOption(selectedPhotos);
     this.pinnedPhotoService.setPinnedPhotos(selectedPhotos);
     this.chartConfigService.showDateUnknownPhotos.next(true);
+    this.isNarrowDownButtonVisible = false;
   }
 
   private setEChartsOption(pinnedPhotos: Photo[]): void {
@@ -169,6 +171,7 @@ export class DateTimeTakenChartComponent {
   public onChartDataZoom() {
     this.onChartDataZoomWithDebouncing();
     this.trackChartDataZoomWithDebouncing();
+    this.isNarrowDownButtonVisible = true;
   }
 
   private onChartDataZoomWithDebouncing = _.debounce(() => {
@@ -203,6 +206,7 @@ export class DateTimeTakenChartComponent {
     const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
     this.pinnedPhotoService.setPinnedPhotos(selectedPhotos);
     this.chartConfigService.showDateUnknownPhotos.next(true);
+    this.isNarrowDownButtonVisible = false;
   }
 
   private handleShowDateUnknownPhotosChanged(showDateUnknownPhotos: boolean) {
@@ -226,5 +230,6 @@ export class DateTimeTakenChartComponent {
     this.setEChartsOption(selectedPhotos);
     this.pinnedPhotoService.setPinnedPhotos(selectedPhotos);
     this.chartConfigService.showDateUnknownPhotos.next(true);
+    this.isNarrowDownButtonVisible = false;
   }
 }

@@ -6,12 +6,13 @@ button {
   display: inline-block;
   box-sizing: border-box;
   margin: 0;
-  padding: 0 10px;
+  padding: 0 6px;
   outline: none;
   border: 1px solid #cccccc;
   border-radius: 4px;
+  height: 30px;
   line-height: 30px;
-  font-size: 14px;
+  font-size: 13px;
   user-select: none;
   white-space: nowrap;
   text-decoration: none;
