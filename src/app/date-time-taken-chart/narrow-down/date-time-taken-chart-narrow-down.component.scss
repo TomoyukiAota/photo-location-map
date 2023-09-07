@@ -1,0 +1,33 @@
+:host {
+  margin: 0 10px 0 0;
+}
+
+button {
+  display: inline-block;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 10px;
+  outline: none;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  line-height: 30px;
+  font-size: 14px;
+  user-select: none;
+  white-space: nowrap;
+  text-decoration: none;
+  vertical-align: baseline;
+  text-align: center;
+  color: #444444;
+
+  transition: background-color 0.2s ease;
+  $background-color: #ffffff;
+  background-color: $background-color;
+  &:hover {
+    background-color: darken($background-color, 10%);
+  }
+  &:active {
+    background-color: darken($background-color, 20%);
+  }
+
+  cursor: pointer;
+}
