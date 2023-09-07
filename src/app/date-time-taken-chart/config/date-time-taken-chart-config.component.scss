@@ -4,13 +4,13 @@
   display: grid;
   align-items: center;
   grid-column-gap: 6px;
-  grid: "settings-icon x-axis-unit-select" auto
-        /auto          auto;
-  .settings-icon      { grid-area: settings-icon;      }
+  grid: "more-options-icon x-axis-unit-select" auto
+        /auto              auto;
+  .more-options-icon  { grid-area: more-options-icon;  }
   .x-axis-unit-select { grid-area: x-axis-unit-select; }
 }
 
-.settings-icon {
+.more-options-icon {
   position: relative;
   cursor: pointer;
   filter: brightness(50%);
@@ -30,13 +30,13 @@
   }
 }
 
-.settings-icon,
-.settings-icon-img {
+.more-options-icon,
+.more-options-icon-img {
   width: 34px;
   height: 34px;
 }
 
-.settings-menu {
+.more-options-menu {
   padding-right: 20px;
 }
 

@@ -28,7 +28,7 @@ export class DateTimeTakenChartConfigComponent {
       }));
   }
 
-  public get settingsIconDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.moreOptions); }
+  public get moreOptionsIconDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.moreOptions); }
 
   public onShowDateUnknownPhotosCheckboxChanged(event: MatCheckboxChange) {
     const showDateUnknownPhotos = event.checked;

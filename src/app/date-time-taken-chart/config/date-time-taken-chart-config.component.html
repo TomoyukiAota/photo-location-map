@@ -1,10 +1,10 @@
-<picture class="settings-icon" [matMenuTriggerFor]="settingsMenu">
-  <img class="settings-icon-img"
-       [src]="settingsIconDataUrl"
-       alt="Settings"/>
+<picture class="more-options-icon" [matMenuTriggerFor]="moreOptionsMenu">
+  <img class="more-options-icon-img"
+       [src]="moreOptionsIconDataUrl"
+       alt="More"/>
 </picture>
-<mat-menu #settingsMenu>
-  <div class="settings-menu" (click)="$event.stopPropagation();">
+<mat-menu #moreOptionsMenu>
+  <div class="more-options-menu" (click)="$event.stopPropagation();">
     <div class="date-unknown-photos-count">Date-unknown photos: {{ dateUnknownPhotosCount | async }}</div>
     <mat-checkbox *ngIf="(dateUnknownPhotosCount | async) >= 1"
                   [checked]="chartConfigService.showDateUnknownPhotos.value"
