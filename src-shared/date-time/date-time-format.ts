@@ -35,6 +35,13 @@ export namespace DateTimeFormat {
       const momentJsTimeFormat = getMomentJsTimeFormat(clockSystemFormat);
       return `${momentJsDateFormat} ${momentJsTimeFormat}`;
     }
+
+    export function getMomentJsDateHourMinuteFormat(dateFormat: DateFormatType, clockSystemFormat: ClockSystemFormatType): string {
+      const momentJsDateFormat = getMomentJsDateFormat(dateFormat, {dayOfWeek: false});
+      const momentJsHourMinuteFormat = getMomentJsHourMinuteFormat(clockSystemFormat);
+      return `${momentJsDateFormat} ${momentJsHourMinuteFormat}`;
+    }
+
     export function getMomentJsDateHourFormat(dateFormat: DateFormatType, clockSystemFormat: ClockSystemFormatType): string {
       const momentJsDateFormat = getMomentJsDateFormat(dateFormat, {dayOfWeek: false});
       const momentJsHourFormat = getMomentJsHourFormat(clockSystemFormat);
@@ -77,6 +84,12 @@ export namespace DateTimeFormat {
       return clockSystemFormat === ClockSystemFormat_24h
         ? `HH:mm:ss`
         : `hh:mm:ss a`;
+    }
+
+    export function getMomentJsHourMinuteFormat(clockSystemFormat: ClockSystemFormatType): string {
+      return clockSystemFormat === ClockSystemFormat_24h
+        ? `HH:mm`
+        : `hh:mm a`;
     }
 
     export function getMomentJsHourFormat(clockSystemFormat: ClockSystemFormatType): string {

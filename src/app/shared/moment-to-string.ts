@@ -9,6 +9,13 @@ export function momentToDateTimeString(input: moment.Moment): string {
   return input.format(momentJsFormatString);
 }
 
+export function momentToDateHourMinuteString(input: moment.Moment): string {
+  const dateFormat = currentUserSettings.dateFormat;
+  const clockSystemFormat = currentUserSettings.clockSystemFormat;
+  const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsDateHourMinuteFormat(dateFormat, clockSystemFormat);
+  return input.format(momentJsFormatString);
+}
+
 export function momentToDateHourString(input: moment.Moment): string {
   const dateFormat = currentUserSettings.dateFormat;
   const clockSystemFormat = currentUserSettings.clockSystemFormat;

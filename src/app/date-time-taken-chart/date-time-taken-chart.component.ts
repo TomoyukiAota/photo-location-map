@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { Moment, unitOfTime } from 'moment';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import {
+  momentToDateHourMinuteString,
   momentToDateHourString,
   momentToDateString,
   momentToYearMonthString,
@@ -85,7 +86,9 @@ export class DateTimeTakenChartComponent {
   }
 
   private momentToString(moment: Moment): string {
-    if (this.xUnit === 'hour') {
+    if (this.xUnit === 'minute') {
+      return momentToDateHourMinuteString(moment);
+    } else if (this.xUnit === 'hour') {
       return momentToDateHourString(moment);
     } else if (this.xUnit === 'day') {
       return momentToDateString(moment, {dayOfWeek: false});
