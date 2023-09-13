@@ -5,5 +5,11 @@
      (chartRestore)="onChartRestore()"
      class="chart">
 </div>
+<div *ngIf="!isSupportedDuration" class="unsupported-overlay">
+  <div class="unsupported-message">
+    For Hour/Minute, this chart does not support showing more than 30 days.<br>
+    Please use Day/Month/Year, or select photos so that the duration is less than 30 days.
+  </div>
+</div>
 <app-date-time-taken-chart-config class="config"></app-date-time-taken-chart-config>
 <app-date-time-taken-chart-narrow-down class="narrow-down" *ngIf="isNarrowDownButtonVisible"></app-date-time-taken-chart-narrow-down>

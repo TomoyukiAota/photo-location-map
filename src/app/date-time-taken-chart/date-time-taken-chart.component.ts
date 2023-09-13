@@ -26,6 +26,7 @@ export class DateTimeTakenChartComponent {
   public eChartsOption: EChartsOption;
   private echartsInstance: ECharts;
   private xUnit = xAxisUnit.day.momentJsStr;
+  public isSupportedDuration = true;
   public isNarrowDownButtonVisible = false;
 
   constructor(private chartConfigService: DateTimeTakenChartConfigService,
@@ -58,13 +59,20 @@ export class DateTimeTakenChartComponent {
   private createXYData(pinnedPhotos: Photo[]): {xData: string[], yData: number[]} {
     const photosWithDateTime = pinnedPhotos.filter(photo => photo?.exif?.dateTimeOriginal);
     if (photosWithDateTime.length === 0) {
-      return {xData: [], yData: []}; // Results in the chart without data
+      this.isSupportedDuration = true; // Remove the unsupported duration message
+      return {xData: [], yData: []};   // Results in the chart without data
     }
 
     const moments = photosWithDateTime.map(photo => photo.exif.dateTimeOriginal.moment.clone()); // Cloned to be sure of not modifying original ones
     const sortedMoments = moments.sort((a, b) => a.diff(b));
     const firstMoment = sortedMoments[0];
     const lastMoment = sortedMoments[sortedMoments.length - 1];
+
+    this.isSupportedDuration = this.testIfSupportedDuration(firstMoment, lastMoment);
+    if(!this.isSupportedDuration) {
+      return {xData: [], yData: []}; // Results in the chart without data
+    }
+
     const loopLimitMoment = lastMoment.clone().add(1, this.xUnit);
     const bins = new Map<string, number>(); // <string, number> as (x, y) coordinate in the chart.
     for(let tempMoment = firstMoment.clone(); tempMoment.isBefore(loopLimitMoment, this.xUnit); tempMoment.add(1, this.xUnit)) {
@@ -83,6 +91,13 @@ export class DateTimeTakenChartComponent {
     const xData = Array.from(bins.keys());
     const yData = Array.from(bins.values());
     return {xData, yData};
+  }
+
+  private testIfSupportedDuration(firstMoment: Moment, lastMoment: Moment): boolean {
+    if (this.xUnit === xAxisUnit.hour.momentJsStr || this.xUnit === xAxisUnit.minute.momentJsStr) {
+      return lastMoment.diff(firstMoment, 'day') <= 30;
+    }
+    return true;
   }
 
   private momentToString(moment: Moment): string {
