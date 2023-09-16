@@ -7,6 +7,7 @@ import {
   momentToDateHourMinuteString,
   momentToDateHourString,
   momentToDateString,
+  momentToDateTimeString,
   momentToYearMonthString,
   momentToYearString,
 } from '../shared/moment-to-string';
@@ -94,14 +95,19 @@ export class DateTimeTakenChartComponent {
   }
 
   private testIfSupportedDuration(firstMoment: Moment, lastMoment: Moment): boolean {
-    if (this.xUnit === xAxisUnit.hour.momentJsStr || this.xUnit === xAxisUnit.minute.momentJsStr) {
+    if (this.xUnit === xAxisUnit.second.momentJsStr) {
+      return lastMoment.diff(firstMoment, 'hour') <= 1;
+    }
+    if (this.xUnit === xAxisUnit.minute.momentJsStr || this.xUnit === xAxisUnit.hour.momentJsStr) {
       return lastMoment.diff(firstMoment, 'day') <= 30;
     }
     return true;
   }
 
   private momentToString(moment: Moment): string {
-    if (this.xUnit === 'minute') {
+    if (this.xUnit === 'second') {
+      return momentToDateTimeString(moment, {dayOfWeek: false});
+    } else if (this.xUnit === 'minute') {
       return momentToDateHourMinuteString(moment);
     } else if (this.xUnit === 'hour') {
       return momentToDateHourString(moment);

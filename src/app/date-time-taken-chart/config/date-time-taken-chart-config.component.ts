@@ -16,6 +16,7 @@ import { getXAxisUnitMomentJsStr, xAxisUnit } from './date-time-taken-chart-x-ax
 })
 export class DateTimeTakenChartConfigComponent {
   public xAxisUnits = [
+    xAxisUnit.second.displayStr,
     xAxisUnit.minute.displayStr,
     xAxisUnit.hour.displayStr,
     xAxisUnit.day.displayStr,

@@ -6,14 +6,16 @@ export interface DateTimeTakenChartXAxisUnit {
 }
 
 export const xAxisUnit: {readonly [index: string]: DateTimeTakenChartXAxisUnit} = {
-  minute: {displayStr: 'Minute' , momentJsStr: 'minute'},
-  hour:   {displayStr: 'Hour'   , momentJsStr: 'hour'  },
-  day:    {displayStr: 'Day'    , momentJsStr: 'day'   },
-  month:  {displayStr: 'Month'  , momentJsStr: 'month' },
-  year:   {displayStr: 'Year'   , momentJsStr: 'year'  },
+  second: {displayStr: 'Second', momentJsStr: 'second'},
+  minute: {displayStr: 'Minute', momentJsStr: 'minute'},
+  hour:   {displayStr: 'Hour'  , momentJsStr: 'hour'  },
+  day:    {displayStr: 'Day'   , momentJsStr: 'day'   },
+  month:  {displayStr: 'Month' , momentJsStr: 'month' },
+  year:   {displayStr: 'Year'  , momentJsStr: 'year'  },
 };
 
 const displayStrToMomentJsStrMap = new Map<string, unitOfTime.DurationConstructor>([
+  [xAxisUnit.second.displayStr, xAxisUnit.second.momentJsStr],
   [xAxisUnit.minute.displayStr, xAxisUnit.minute.momentJsStr],
   [xAxisUnit.hour.displayStr  , xAxisUnit.hour.momentJsStr  ],
   [xAxisUnit.day.displayStr   , xAxisUnit.day.momentJsStr   ],

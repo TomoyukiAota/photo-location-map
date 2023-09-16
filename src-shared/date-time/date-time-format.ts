@@ -30,8 +30,8 @@ export namespace DateTimeFormat {
     export type DateFormatType = typeof DateFormat_List[number];
     export type ClockSystemFormatType = typeof ClockSystemFormat_List[number];
 
-    export function getMomentJsDateTimeFormat(dateFormat: DateFormatType, clockSystemFormat: ClockSystemFormatType): string {
-      const momentJsDateFormat = getMomentJsDateFormat(dateFormat);
+    export function getMomentJsDateTimeFormat(dateFormat: DateFormatType, clockSystemFormat: ClockSystemFormatType, option: {dayOfWeek: boolean} = {dayOfWeek: true}): string {
+      const momentJsDateFormat = getMomentJsDateFormat(dateFormat, option);
       const momentJsTimeFormat = getMomentJsTimeFormat(clockSystemFormat);
       return `${momentJsDateFormat} ${momentJsTimeFormat}`;
     }

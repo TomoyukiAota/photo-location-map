@@ -2,10 +2,10 @@ import * as moment from 'moment';
 import { DateTimeFormat } from '../../../src-shared/date-time/date-time-format';
 import { currentUserSettings } from '../../../src-shared/user-settings/user-settings';
 
-export function momentToDateTimeString(input: moment.Moment): string {
+export function momentToDateTimeString(input: moment.Moment, option: {dayOfWeek: boolean} = {dayOfWeek: true}): string {
   const dateFormat = currentUserSettings.dateFormat;
   const clockSystemFormat = currentUserSettings.clockSystemFormat;
-  const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsDateTimeFormat(dateFormat, clockSystemFormat);
+  const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsDateTimeFormat(dateFormat, clockSystemFormat, option);
   return input.format(momentJsFormatString);
 }
 
