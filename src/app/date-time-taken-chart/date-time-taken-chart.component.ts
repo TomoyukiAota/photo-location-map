@@ -137,7 +137,7 @@ export class DateTimeTakenChartComponent {
       toolbox: {
         itemSize: 20,
         top: 4,
-        right: 124,
+        right: 128,
         feature: {
           dataZoom: {
             icon: {
