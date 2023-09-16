@@ -3,7 +3,7 @@
 
   display: grid;
   align-items: center;
-  grid-column-gap: 6px;
+  grid-column-gap: 8px;
   grid: "more-options-icon x-axis-unit-select" auto
         /auto              auto;
   .more-options-icon  { grid-area: more-options-icon;  }
