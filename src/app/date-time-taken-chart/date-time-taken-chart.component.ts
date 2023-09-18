@@ -3,20 +3,13 @@ import { ECharts, EChartsOption } from 'echarts';
 import * as _ from 'lodash';
 import { Moment, unitOfTime } from 'moment';
 import { Analytics } from '../../../src-shared/analytics/analytics';
-import {
-  momentToDateHourMinuteString,
-  momentToDateHourString,
-  momentToDateString,
-  momentToDateTimeString,
-  momentToYearMonthString,
-  momentToYearString,
-} from '../shared/moment-to-string';
 import { Photo } from '../shared/model/photo.model';
 import { PinnedPhotoService } from '../shared/service/pinned-photo.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
 import { DateTimeTakenChartConfigService } from './config/date-time-taken-chart-config.service';
 import { xAxisUnit } from './config/date-time-taken-chart-x-axis-unit';
 import { dateTimeTakenChartLogger as logger } from './date-time-taken-chart-logger';
+import { momentToStringMap } from './moment-to-string-map';
 
 @Component({
   selector: 'app-date-time-taken-chart',
@@ -28,6 +21,7 @@ export class DateTimeTakenChartComponent {
   private echartsInstance: ECharts;
   private xUnit = xAxisUnit.day.momentJsStr;
   public isSupportedDuration = true;
+  private momentToString = momentToStringMap.get('day');
   public isNarrowDownButtonVisible = false;
 
   constructor(private chartConfigService: DateTimeTakenChartConfigService,
@@ -105,22 +99,6 @@ export class DateTimeTakenChartComponent {
       return lastMoment.diff(firstMoment, 'hour') <= 1;
     }
     return true;
-  }
-
-  private momentToString(moment: Moment): string {
-    if (this.xUnit === 'second') {
-      return momentToDateTimeString(moment, {dayOfWeek: false});
-    } else if (this.xUnit === 'minute') {
-      return momentToDateHourMinuteString(moment);
-    } else if (this.xUnit === 'hour') {
-      return momentToDateHourString(moment);
-    } else if (this.xUnit === 'day') {
-      return momentToDateString(moment, {dayOfWeek: false});
-    } else if (this.xUnit === 'month') {
-      return momentToYearMonthString(moment);
-    } else if (this.xUnit === 'year') {
-      return momentToYearString(moment);
-    }
   }
 
   private createEChartsOption(xData: string[], yData: number[]) {
@@ -253,6 +231,7 @@ export class DateTimeTakenChartComponent {
 
   private handleXUnitChanged(xAxisUnitMomentJsStr: unitOfTime.DurationConstructor) {
     this.xUnit = xAxisUnitMomentJsStr;
+    this.momentToString = momentToStringMap.get(this.xUnit);
     const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
     this.setEChartsOption(selectedPhotos);
     this.pinnedPhotoService.setPinnedPhotos(selectedPhotos);
