@@ -19,7 +19,7 @@ import { momentToStringMap } from './moment-to-string-map';
 export class DateTimeTakenChartComponent {
   public eChartsOption: EChartsOption;
   private echartsInstance: ECharts;
-  private xUnit = xAxisUnit.day.momentJsStr;
+  private xAxisUnit = xAxisUnit.day.momentJsStr;
   public isSupportedDuration = true;
   private momentToString = momentToStringMap.get('day');
   public isNarrowDownButtonVisible = false;
@@ -68,9 +68,9 @@ export class DateTimeTakenChartComponent {
       return {xData: [], yData: []}; // Results in the chart without data
     }
 
-    const loopLimitMoment = lastMoment.clone().add(1, this.xUnit);
+    const loopLimitMoment = lastMoment.clone().add(1, this.xAxisUnit);
     const bins = new Map<string, number>(); // <string, number> as (x, y) coordinate in the chart.
-    for(let tempMoment = firstMoment.clone(); tempMoment.isBefore(loopLimitMoment, this.xUnit); tempMoment.add(1, this.xUnit)) {
+    for(let tempMoment = firstMoment.clone(); tempMoment.isBefore(loopLimitMoment, this.xAxisUnit); tempMoment.add(1, this.xAxisUnit)) {
       const xValue = this.momentToString(tempMoment);
       bins.set(xValue, 0); // Initialize the bin with (x, y) = (xValue, 0)
     }
@@ -89,13 +89,13 @@ export class DateTimeTakenChartComponent {
   }
 
   private testIfSupportedDuration(firstMoment: Moment, lastMoment: Moment): boolean {
-    if (this.xUnit === xAxisUnit.hour.momentJsStr) {
+    if (this.xAxisUnit === xAxisUnit.hour.momentJsStr) {
       return lastMoment.diff(firstMoment, 'day') <= 30;
     }
-    if (this.xUnit === xAxisUnit.minute.momentJsStr) {
+    if (this.xAxisUnit === xAxisUnit.minute.momentJsStr) {
       return lastMoment.diff(firstMoment, 'day') <= 3;
     }
-    if (this.xUnit === xAxisUnit.second.momentJsStr) {
+    if (this.xAxisUnit === xAxisUnit.second.momentJsStr) {
       return lastMoment.diff(firstMoment, 'hour') <= 1;
     }
     return true;
@@ -230,8 +230,8 @@ export class DateTimeTakenChartComponent {
   }
 
   private handleXUnitChanged(xAxisUnitMomentJsStr: unitOfTime.DurationConstructor) {
-    this.xUnit = xAxisUnitMomentJsStr;
-    this.momentToString = momentToStringMap.get(this.xUnit);
+    this.xAxisUnit = xAxisUnitMomentJsStr;
+    this.momentToString = momentToStringMap.get(this.xAxisUnit);
     const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
     this.setEChartsOption(selectedPhotos);
     this.pinnedPhotoService.setPinnedPhotos(selectedPhotos);
