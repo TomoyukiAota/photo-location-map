@@ -95,11 +95,14 @@ export class DateTimeTakenChartComponent {
   }
 
   private testIfSupportedDuration(firstMoment: Moment, lastMoment: Moment): boolean {
+    if (this.xUnit === xAxisUnit.hour.momentJsStr) {
+      return lastMoment.diff(firstMoment, 'day') <= 30;
+    }
+    if (this.xUnit === xAxisUnit.minute.momentJsStr) {
+      return lastMoment.diff(firstMoment, 'day') <= 3;
+    }
     if (this.xUnit === xAxisUnit.second.momentJsStr) {
       return lastMoment.diff(firstMoment, 'hour') <= 1;
-    }
-    if (this.xUnit === xAxisUnit.minute.momentJsStr || this.xUnit === xAxisUnit.hour.momentJsStr) {
-      return lastMoment.diff(firstMoment, 'day') <= 30;
     }
     return true;
   }
