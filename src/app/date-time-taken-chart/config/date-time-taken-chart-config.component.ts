@@ -40,7 +40,7 @@ export class DateTimeTakenChartConfigComponent {
 
   public onShowDateUnknownPhotosCheckboxChanged(event: MatCheckboxChange) {
     const showDateUnknownPhotos = event.checked;
-    logger.info(`Clicked "Show date-unknown photos". Changed to "${showDateUnknownPhotos}"`);
+    logger.info(`Clicked "Show date-unknown photos" checkbox. Changed to "${showDateUnknownPhotos}"`);
     Analytics.trackEvent('DTT Chart', `[DTT Chart] Clicked "Show date-unknown"`, `Changed "Show date-unknown photos" to "${showDateUnknownPhotos}"`);
     this.chartConfigService.showDateUnknownPhotos.next(showDateUnknownPhotos);
   }
