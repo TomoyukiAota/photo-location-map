@@ -16,12 +16,12 @@ import { getXAxisUnitMomentJsStr, xAxisUnit } from './date-time-taken-chart-x-ax
 })
 export class DateTimeTakenChartConfigComponent {
   public xAxisUnits = [
-    xAxisUnit.second.displayStr,
-    xAxisUnit.minute.displayStr,
-    xAxisUnit.hour.displayStr,
-    xAxisUnit.day.displayStr,
-    xAxisUnit.month.displayStr,
     xAxisUnit.year.displayStr,
+    xAxisUnit.month.displayStr,
+    xAxisUnit.day.displayStr,
+    xAxisUnit.hour.displayStr,
+    xAxisUnit.minute.displayStr,
+    xAxisUnit.second.displayStr,
   ];
 
   public dateUnknownPhotosCount: Observable<number>;
