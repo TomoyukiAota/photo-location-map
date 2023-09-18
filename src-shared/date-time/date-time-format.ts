@@ -70,7 +70,8 @@ export namespace DateTimeFormat {
           [DateFormat_ISO8601Like, 'YYYY-MM' ],
           [DateFormat_YYYYMMDD   , 'YYYY/MM' ],
           [DateFormat_DDMMYYYY   , 'MM/YYYY' ],
-          [DateFormat_MMDDYYYY   , 'MMM/YYYY'], // e.g. Oct/2012, Apr/2013
+          // eslint-disable-next-line max-len
+          [DateFormat_MMDDYYYY   , 'MMM/YYYY'], // e.g. Oct/2012, Apr/2013. Months in English are used because 1) it's confusing to see MM/YYYY as the short form of MM/DD/YYYY and 2) MM/DD/YYYY format is mostly used in the USA.
         ]
       );
       return yearMonthFormatMap.get(dateFormat);
