@@ -70,8 +70,14 @@
   padding: .4em calc(.4em + 14px) .4em .4em;
   border: 1px solid #cccccc;
   border-radius: 3px;
-  background-color: #fff;
   color: #333333;
   font-size: .9em;
   cursor: pointer;
+
+  transition: background-color 0.2s ease;
+  $background-color: #fff;
+  background-color: $background-color;
+  &:hover {
+    background-color: darken($background-color, 3%);
+  }
 }
