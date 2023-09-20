@@ -6,7 +6,7 @@ import {
   momentToDateTimeString,
   momentToYearMonthString,
   momentToYearString,
-} from '../shared/moment-to-string';
+} from './moment-to-string';
 
 export type MomentToString = (moment: Moment) => string;
 

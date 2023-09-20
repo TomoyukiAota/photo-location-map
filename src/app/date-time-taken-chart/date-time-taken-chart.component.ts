@@ -6,10 +6,10 @@ import { Analytics } from '../../../src-shared/analytics/analytics';
 import { Photo } from '../shared/model/photo.model';
 import { PinnedPhotoService } from '../shared/service/pinned-photo.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
+import { momentToStringMap } from '../shared/moment-to-string-map';
 import { DateTimeTakenChartConfigService } from './config/date-time-taken-chart-config.service';
 import { xAxisUnit } from './config/date-time-taken-chart-x-axis-unit';
 import { dateTimeTakenChartLogger as logger } from './date-time-taken-chart-logger';
-import { momentToStringMap } from './moment-to-string-map';
 
 @Component({
   selector: 'app-date-time-taken-chart',
