@@ -1,4 +1,5 @@
 import * as moment from 'moment';
+import { DateFormatOption } from '../../../../src-shared/date-time/date-time-format';
 import { momentToDateString, momentToDateTimeString, momentToTimeString } from '../moment-to-string';
 
 export class DateTimeOriginal {
@@ -8,11 +9,11 @@ export class DateTimeOriginal {
 
   public readonly moment: ReturnType<typeof import('moment')>;
 
-  public toDateTimeString(option: {dayOfWeek: boolean} = {dayOfWeek: false}): string {
+  public toDateTimeString(option = new DateFormatOption()): string {
     return momentToDateTimeString(this.moment, option);
   }
 
-  public toDateString(option: {dayOfWeek: boolean} = {dayOfWeek: false}): string {
+  public toDateString(option = new DateFormatOption()): string {
     return momentToDateString(this.moment, option);
   }
 
