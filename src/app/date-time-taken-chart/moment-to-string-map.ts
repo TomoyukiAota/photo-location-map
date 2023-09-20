@@ -14,9 +14,9 @@ export const momentToStringMap = new Map<unitOfTime.DurationConstructor, MomentT
   [
     ['year'  , moment => momentToYearString(moment)],
     ['month' , moment => momentToYearMonthString(moment)],
-    ['day'   , moment => momentToDateString(moment, {dayOfWeek: false})],
+    ['day'   , moment => momentToDateString(moment)],
     ['hour'  , moment => momentToDateHourString(moment)],
     ['minute', moment => momentToDateHourMinuteString(moment)],
-    ['second', moment => momentToDateTimeString(moment, {dayOfWeek: false})],
+    ['second', moment => momentToDateTimeString(moment)],
   ]
 );

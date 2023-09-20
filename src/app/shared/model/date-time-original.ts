@@ -8,11 +8,11 @@ export class DateTimeOriginal {
 
   public readonly moment: ReturnType<typeof import('moment')>;
 
-  public toDateTimeString(): string {
-    return momentToDateTimeString(this.moment);
+  public toDateTimeString(option: {dayOfWeek: boolean} = {dayOfWeek: false}): string {
+    return momentToDateTimeString(this.moment, option);
   }
 
-  public toDateString(option: {dayOfWeek: boolean} = {dayOfWeek: true}): string {
+  public toDateString(option: {dayOfWeek: boolean} = {dayOfWeek: false}): string {
     return momentToDateString(this.moment, option);
   }
 

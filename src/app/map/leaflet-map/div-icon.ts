@@ -23,7 +23,7 @@ function createDivIconContent(photo: Photo): HTMLElement {
   const dateTimeOriginal = photo?.exif?.dateTimeOriginal;
   if (dateTimeOriginal) {
     const date = document.createElement('div');
-    date.innerText = dateTimeOriginal.toDateString({dayOfWeek: false});
+    date.innerText = dateTimeOriginal.toDateString();
     const time = document.createElement('div');
     time.innerText = dateTimeOriginal.toTimeString();
     container.append(date, time);

@@ -97,7 +97,7 @@ export class PhotoInfoViewerContent {
   }
 
   private static createDateTimeTakenElement(photo: Photo) {
-    const dateTimeTaken = photo?.exif?.dateTimeOriginal?.toDateTimeString();
+    const dateTimeTaken = photo?.exif?.dateTimeOriginal?.toDateTimeString({dayOfWeek: true});
     const dateTimeTakenElement = document.createElement('div');
     dateTimeTakenElement.className = 'photo-info-viewer-date-time-taken';
     dateTimeTakenElement.innerText = dateTimeTaken || '';
