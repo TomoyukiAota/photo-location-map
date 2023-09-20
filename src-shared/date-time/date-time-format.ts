@@ -30,10 +30,22 @@ export namespace DateTimeFormat {
     export type DateFormatType = typeof DateFormat_List[number];
     export type ClockSystemFormatType = typeof ClockSystemFormat_List[number];
 
-    export function getMomentJsDateTimeFormat(dateFormat: DateFormatType, clockSystemFormat: ClockSystemFormatType): string {
-      const momentJsDateFormat = getMomentJsDateFormat(dateFormat);
+    export function getMomentJsDateTimeFormat(dateFormat: DateFormatType, clockSystemFormat: ClockSystemFormatType, option: {dayOfWeek: boolean} = {dayOfWeek: true}): string {
+      const momentJsDateFormat = getMomentJsDateFormat(dateFormat, option);
       const momentJsTimeFormat = getMomentJsTimeFormat(clockSystemFormat);
       return `${momentJsDateFormat} ${momentJsTimeFormat}`;
+    }
+
+    export function getMomentJsDateHourMinuteFormat(dateFormat: DateFormatType, clockSystemFormat: ClockSystemFormatType): string {
+      const momentJsDateFormat = getMomentJsDateFormat(dateFormat, {dayOfWeek: false});
+      const momentJsHourMinuteFormat = getMomentJsHourMinuteFormat(clockSystemFormat);
+      return `${momentJsDateFormat} ${momentJsHourMinuteFormat}`;
+    }
+
+    export function getMomentJsDateHourFormat(dateFormat: DateFormatType, clockSystemFormat: ClockSystemFormatType): string {
+      const momentJsDateFormat = getMomentJsDateFormat(dateFormat, {dayOfWeek: false});
+      const momentJsHourFormat = getMomentJsHourFormat(clockSystemFormat);
+      return `${momentJsDateFormat} ${momentJsHourFormat}`;
     }
 
     export function getMomentJsDateFormat(dateFormat: DateFormatType, option: {dayOfWeek: boolean} = {dayOfWeek: true}): string {
@@ -52,10 +64,39 @@ export namespace DateTimeFormat {
       return dateFormatMap.get(dateFormat);
     }
 
+    export function getMomentJsYearMonthFormat(dateFormat: DateFormatType): string {
+      const yearMonthFormatMap = new Map<DateFormatType, string>(
+        [
+          [DateFormat_ISO8601Like, 'YYYY-MM' ],
+          [DateFormat_YYYYMMDD   , 'YYYY/MM' ],
+          [DateFormat_DDMMYYYY   , 'MM/YYYY' ],
+          // eslint-disable-next-line max-len
+          [DateFormat_MMDDYYYY   , 'MMM/YYYY'], // e.g. Oct/2012, Apr/2013. Months in English are used because 1) it's confusing to use MM/YYYY as the short form of MM/DD/YYYY and 2) MM/DD/YYYY format is mostly used in English-speaking countries.
+        ]
+      );
+      return yearMonthFormatMap.get(dateFormat);
+    }
+
+    export function getMomentJsYearFormat(): string {
+      return 'YYYY';
+    }
+
     export function getMomentJsTimeFormat(clockSystemFormat: ClockSystemFormatType): string {
       return clockSystemFormat === ClockSystemFormat_24h
         ? `HH:mm:ss`
         : `hh:mm:ss a`;
+    }
+
+    export function getMomentJsHourMinuteFormat(clockSystemFormat: ClockSystemFormatType): string {
+      return clockSystemFormat === ClockSystemFormat_24h
+        ? `HH:mm`
+        : `hh:mm a`;
+    }
+
+    export function getMomentJsHourFormat(clockSystemFormat: ClockSystemFormatType): string {
+      return clockSystemFormat === ClockSystemFormat_24h
+        ? `HH`
+        : `hh a`;
     }
   }
 }

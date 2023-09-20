@@ -1,0 +1,15 @@
+<div echarts
+     [options]="eChartsOption"
+     (chartInit)="onChartInit($event)"
+     (chartDataZoom)="onChartDataZoom()"
+     (chartRestore)="onChartRestore()"
+     class="chart">
+</div>
+<div *ngIf="!isSupportedDuration" class="unsupported-overlay">
+  <div class="unsupported-message">
+    This chart does not support showing more than 30 days when Hour is selected, 3 days when Minute is selected, and 1 hour when Second is selected.<br>
+    Please change Year/Month/Day/Hour/Minute/Second, or select photos so that the duration is decreased.
+  </div>
+</div>
+<app-date-time-taken-chart-config class="config"></app-date-time-taken-chart-config>
+<app-select-photos-within-zoom class="select-photos-within-zoom" *ngIf="isSelectPhotosWithinZoomButtonVisible"></app-select-photos-within-zoom>

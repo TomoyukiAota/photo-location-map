@@ -8,7 +8,7 @@ import { PhotoSelectionHistoryService } from './photo-selection-history.service'
   providedIn: 'root'
 })
 export class SelectedPhotoService {
-  public selectedPhotos = new BehaviorSubject<Photo[]>([]);
+  public selectedPhotos = new BehaviorSubject<Photo[]>([]);    // Represents the photos selected in the directory tree view
 
   constructor(private photoSelectionHistoryService: PhotoSelectionHistoryService) {
   }

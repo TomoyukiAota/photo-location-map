@@ -8,7 +8,7 @@ import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-d
 import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/user-data-stroage-path';
 import { DirectoryTreeViewSelectionService } from '../../directory-tree-view/directory-tree-view-selection.service';
 import { Photo } from '../../shared/model/photo.model';
-import { SelectedPhotoService } from '../../shared/service/selected-photo.service';
+import { PinnedPhotoService } from '../../shared/service/pinned-photo.service';
 import { PhotoClusterViewer } from '../../photo-cluster-viewer/photo-cluster-viewer';
 import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewer-content';
 import { LeafletMapForceRenderService } from './leaflet-map-force-render/leaflet-map-force-render.service';
@@ -36,7 +36,7 @@ interface RegionInfo extends Control {
 })
 export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   @ViewChild('updateInProgressOverlay') public updateInProgressOverlay: ElementRef<HTMLDivElement>;
-  private selectedPhotoServiceSubscription: Subscription;
+  private pinnedPhotoServiceSubscription: Subscription;
   private forceRenderServiceSubscription: Subscription;
   private readonly commonLayerOptions = {
     maxNativeZoom: 19,
@@ -58,35 +58,35 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   constructor(private changeDetectorRef: ChangeDetectorRef,
               private directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
               private forceRenderService: LeafletMapForceRenderService,
-              private selectedPhotoService: SelectedPhotoService) {
+              private pinnedPhotoService: PinnedPhotoService) {
   }
 
   public ngAfterViewInit(): void {
-    this.selectedPhotoServiceSubscription = this.selectedPhotoService.selectedPhotos.subscribe(
+    this.pinnedPhotoServiceSubscription = this.pinnedPhotoService.pinnedPhotos.subscribe(
       photos => this.updateMap(photos)
     );
     this.forceRenderServiceSubscription = this.forceRenderService.forceRenderWithoutPhotoHappened.subscribe(
       () => this.updateMap([])
     );
 
-    const photos = this.selectedPhotoService.getSelectedPhotos();
+    const photos = this.pinnedPhotoService.getPinnedPhotos();
     this.updateMap(photos);
   }
 
   public ngOnDestroy(): void {
-    this.selectedPhotoServiceSubscription.unsubscribe();
+    this.pinnedPhotoServiceSubscription.unsubscribe();
     this.forceRenderServiceSubscription.unsubscribe();
   }
 
   private updateMap(photos: Photo[]): void {
     this.updateInProgressOverlay.nativeElement.style.visibility = 'visible';
     this.updateInProgressOverlay.nativeElement.style.opacity = '1';
-    this.changeDetectorRef.detectChanges(); // To show the overlay. Needed because change detection does not work in case the same photos are selected.
+    this.changeDetectorRef.detectChanges(); // To show the overlay. Needed because change detection does not work in case the same photos are pinned.
     this.renderMapWithDebouncing(photos);
   }
 
   // renderMap function needs debouncing.
-  // Otherwise, changing selected photos in a short time results in sending frequent requests to Bing Maps.
+  // Otherwise, changing pinned photos in a short time results in sending frequent requests to Bing Maps.
   // In that case, Bing.js emits the "Your request could not be completed because of too many requests." error,
   // and the map becomes empty.
   private renderMapWithDebouncing = _.debounce((photos: Photo[]) => {
@@ -450,7 +450,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     // The code in this function is based on the Stack Overflow answer in https://stackoverflow.com/a/23960984/7947548
     // There are 2 major changes from the Stack Overflow answer:
     // 1) 'popupopen' event is handled only once using map.once (not map.on).
-    //    Centering including the popup and the marker is needed only when the map for the selected photo is initially displayed.
+    //    Centering including the popup and the marker is needed only when the map is initially displayed.
     //    Using map.on results in centering always happening when the marker is clicked, which does not look good.
     // 2) {animate: false} is passed to map.panTo function because the animation does not look good.
     // Other changes are minor changes (e.g. using const instead of var).

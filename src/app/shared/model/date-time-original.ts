@@ -1,6 +1,5 @@
 import * as moment from 'moment';
-import { DateTimeFormat } from '../../../../src-shared/date-time/date-time-format';
-import { currentUserSettings } from '../../../../src-shared/user-settings/user-settings';
+import { momentToDateString, momentToDateTimeString, momentToTimeString } from '../moment-to-string';
 
 export class DateTimeOriginal {
   constructor(dateOrMoment: Date | ReturnType<typeof import('moment')>) {
@@ -10,21 +9,14 @@ export class DateTimeOriginal {
   public readonly moment: ReturnType<typeof import('moment')>;
 
   public toDateTimeString(): string {
-    const dateFormat = currentUserSettings.dateFormat;
-    const clockSystemFormat = currentUserSettings.clockSystemFormat;
-    const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsDateTimeFormat(dateFormat, clockSystemFormat);
-    return this.moment.format(momentJsFormatString);
+    return momentToDateTimeString(this.moment);
   }
 
   public toDateString(option: {dayOfWeek: boolean} = {dayOfWeek: true}): string {
-    const dateFormat = currentUserSettings.dateFormat;
-    const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsDateFormat(dateFormat, option);
-    return this.moment.format(momentJsFormatString);
+    return momentToDateString(this.moment, option);
   }
 
   public toTimeString(): string {
-    const clockSystemFormat = currentUserSettings.clockSystemFormat;
-    const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsTimeFormat(clockSystemFormat);
-    return this.moment.format(momentJsFormatString);
+    return momentToTimeString(this.moment);
   }
 }

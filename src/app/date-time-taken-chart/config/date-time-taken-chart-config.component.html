@@ -1,0 +1,20 @@
+<picture class="more-options-icon" [matMenuTriggerFor]="moreOptionsMenu">
+  <img class="more-options-icon-img"
+       [src]="moreOptionsIconDataUrl"
+       alt="More"/>
+</picture>
+<mat-menu #moreOptionsMenu>
+  <div class="more-options-menu" (click)="$event.stopPropagation();">
+    <div class="date-unknown-photos-count">Date-unknown photos: {{ dateUnknownPhotosCount | async }}</div>
+    <mat-checkbox *ngIf="(dateUnknownPhotosCount | async) >= 1"
+                  [checked]="chartConfigService.showDateUnknownPhotos.value"
+                  (change)="onShowDateUnknownPhotosCheckboxChanged($event)">
+      Show date-unknown photos on the map
+    </mat-checkbox>
+  </div>
+</mat-menu>
+<div class="x-axis-unit-select">
+  <select (change)="onXAxisSelectChange($event)">
+    <option *ngFor="let unit of xAxisUnits" [defaultSelected]="unit === 'Day'">{{ unit }}</option>
+  </select>
+</div>

@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { SelectedPhotoService } from '../../shared/service/selected-photo.service';
+import { PinnedPhotoService } from '../../shared/service/pinned-photo.service';
 import { Photo } from '../../shared/model/photo.model';
 import { GoogleMapsApiKeyHandler } from './google-maps-api-key-handler';
 import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewer-content';
@@ -15,12 +15,12 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
   private subscription: Subscription;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
-              private selectedPhotoService: SelectedPhotoService) {
+              private pinnedPhotoService: PinnedPhotoService) {
   }
 
   ngOnInit(): void {
-    this.subscription = this.selectedPhotoService.selectedPhotos.subscribe(
-      photos => this.handleSelectedPhotosChanged(photos)
+    this.subscription = this.pinnedPhotoService.pinnedPhotos.subscribe(
+      photos => this.handlePinnedPhotosChanged(photos)
     );
   }
 
@@ -31,14 +31,14 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {
     const isGoogleMapsApiLoaded = typeof google !== 'undefined';
     if (isGoogleMapsApiLoaded) {
-      this.getSelectedPhotosAndRenderGoogleMaps();
+      this.getPinnedPhotosAndRenderGoogleMaps();
     } else {
       this.initializeGoogleMaps();
     }
   }
 
-  private getSelectedPhotosAndRenderGoogleMaps() {
-    const photos = this.selectedPhotoService.getSelectedPhotos();
+  private getPinnedPhotosAndRenderGoogleMaps() {
+    const photos = this.pinnedPhotoService.getPinnedPhotos();
     this.renderGoogleMaps(photos);
   }
 
@@ -54,7 +54,7 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
     divElementForGoogleMaps.parentNode.insertBefore(scriptElement, null);
 
     GoogleMapsApiLoader.waitUntilLoaded()
-      .then(() => this.getSelectedPhotosAndRenderGoogleMaps())
+      .then(() => this.getPinnedPhotosAndRenderGoogleMaps())
       .catch(() => this.displayGoogleMapsLoadFailureMessage());
   }
 
@@ -62,7 +62,7 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
     document.getElementById('google-map').innerText = 'Failed to load Google Maps. Please check Internet connection to Google Maps.';
   }
 
-  private handleSelectedPhotosChanged(photos: Photo[]) {
+  private handlePinnedPhotosChanged(photos: Photo[]) {
     this.renderGoogleMaps(photos);
   }
 

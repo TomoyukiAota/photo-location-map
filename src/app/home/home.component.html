@@ -2,8 +2,13 @@
   <div id="home-left-sidebar">
     <app-sidebar></app-sidebar>
   </div>
-  <div id="home-right-map">
-    <app-map></app-map>
+  <div id="home-right">
+    <div id="home-map">
+      <app-map></app-map>
+    </div>
+    <div id="home-chart">
+      <app-date-time-taken-chart></app-date-time-taken-chart>
+    </div>
   </div>
 </div>
 <app-thumbnail-generation-status-bar [ngClass]="{'hidden': !thumbnailGenerationStatusBarVisible}">

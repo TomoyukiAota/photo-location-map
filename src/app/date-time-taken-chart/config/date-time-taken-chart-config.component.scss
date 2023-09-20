@@ -1,0 +1,84 @@
+:host {
+  padding: 4px 10px 0 0;
+
+  display: grid;
+  align-items: center;
+  grid-column-gap: 8px;
+  grid: "more-options-icon x-axis-unit-select" auto
+        /auto              auto;
+  .more-options-icon  { grid-area: more-options-icon;  }
+  .x-axis-unit-select { grid-area: x-axis-unit-select; }
+}
+
+.more-options-icon {
+  position: relative;
+  cursor: pointer;
+  filter: brightness(50%);
+
+  &:hover {
+    // The filter value is gotten by giving #3e98c5 to https://codepen.io/sosuke/pen/Pjoqqp
+    // Reference: https://stackoverflow.com/a/50942954/7947548
+    filter: invert(51%) sepia(25%) saturate(1089%) hue-rotate(155deg) brightness(99%) contrast(86%);
+
+    &::after {
+      position: absolute;
+      right: 2px;
+      top: 34px; // Align horizontally with the text below the buttons (e.g. Zoom) in the chart.
+      font-size: 13px;
+      content: 'More';
+    }
+  }
+}
+
+.more-options-icon,
+.more-options-icon-img {
+  width: 34px;
+  height: 34px;
+}
+
+.more-options-menu {
+  padding-right: 20px;
+}
+
+.date-unknown-photos-count {
+  height: 40px;
+  line-height: 40px;
+  padding-left: 10px;
+  font-size: 14px;
+}
+
+.x-axis-unit-select {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+}
+
+.x-axis-unit-select::after {
+  position: absolute;
+  right: 6px;
+  width: 10px;
+  height: 7px;
+  background-color: #535353;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  content: '';
+  pointer-events: none;
+}
+
+.x-axis-unit-select select {
+  appearance: none;
+  height: 2em;
+  padding: .4em calc(.4em + 14px) .4em .4em;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  outline: none;
+  color: #333333;
+  font-size: .9em;
+  cursor: pointer;
+
+  transition: background-color 0.2s ease;
+  $background-color: #fff;
+  background-color: $background-color;
+  &:hover {
+    background-color: darken($background-color, 3%);
+  }
+}
