@@ -94,7 +94,7 @@ export class PhotoClusterViewer {
       dateTimeTaken.style.lineHeight = '12px';
       dateTimeTaken.innerText = '';
       const date = document.createElement('div');
-      date.innerText = photo?.exif?.dateTimeOriginal?.toDateString() || '';
+      date.innerText = photo?.exif?.dateTimeOriginal?.toDateString({dayOfWeek: true}) || '';
       const time = document.createElement('div');
       time.innerText = photo?.exif?.dateTimeOriginal?.toTimeString() || '';
       dateTimeTaken.append(date, time);

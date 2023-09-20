@@ -1,3 +1,7 @@
+export class DateFormatOption {
+  public dayOfWeek = false;
+}
+
 export namespace DateTimeFormat {
   export namespace ForLogging {
     export const basicFormat    = 'YYYYMMDDTHHmmss.SSS[Z]';      // Not very human-readable format, but this can be used in path.
@@ -30,25 +34,25 @@ export namespace DateTimeFormat {
     export type DateFormatType = typeof DateFormat_List[number];
     export type ClockSystemFormatType = typeof ClockSystemFormat_List[number];
 
-    export function getMomentJsDateTimeFormat(dateFormat: DateFormatType, clockSystemFormat: ClockSystemFormatType, option: {dayOfWeek: boolean} = {dayOfWeek: true}): string {
+    export function getMomentJsDateTimeFormat(dateFormat: DateFormatType, clockSystemFormat: ClockSystemFormatType, option = new DateFormatOption()): string {
       const momentJsDateFormat = getMomentJsDateFormat(dateFormat, option);
       const momentJsTimeFormat = getMomentJsTimeFormat(clockSystemFormat);
       return `${momentJsDateFormat} ${momentJsTimeFormat}`;
     }
 
     export function getMomentJsDateHourMinuteFormat(dateFormat: DateFormatType, clockSystemFormat: ClockSystemFormatType): string {
-      const momentJsDateFormat = getMomentJsDateFormat(dateFormat, {dayOfWeek: false});
+      const momentJsDateFormat = getMomentJsDateFormat(dateFormat);
       const momentJsHourMinuteFormat = getMomentJsHourMinuteFormat(clockSystemFormat);
       return `${momentJsDateFormat} ${momentJsHourMinuteFormat}`;
     }
 
     export function getMomentJsDateHourFormat(dateFormat: DateFormatType, clockSystemFormat: ClockSystemFormatType): string {
-      const momentJsDateFormat = getMomentJsDateFormat(dateFormat, {dayOfWeek: false});
+      const momentJsDateFormat = getMomentJsDateFormat(dateFormat);
       const momentJsHourFormat = getMomentJsHourFormat(clockSystemFormat);
       return `${momentJsDateFormat} ${momentJsHourFormat}`;
     }
 
-    export function getMomentJsDateFormat(dateFormat: DateFormatType, option: {dayOfWeek: boolean} = {dayOfWeek: true}): string {
+    export function getMomentJsDateFormat(dateFormat: DateFormatType, option = new DateFormatOption()): string {
       const dateFormatMap = new Map<DateFormatType, string>();
       if (option.dayOfWeek) {
         dateFormatMap.set(DateFormat_ISO8601Like, 'YYYY-MM-DD ddd');
