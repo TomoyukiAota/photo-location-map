@@ -40,7 +40,7 @@ export class DateTimeTakenChartConfigComponent {
 
   public onShowDateUnknownPhotosCheckboxChanged(event: MatCheckboxChange) {
     const showDateUnknownPhotos = event.checked;
-    logger.info(`Clicked "Show date-unknown photos" checkbox. Changed to "${showDateUnknownPhotos}"`);
+    logger.info(`Clicked "Show date-unknown photos" checkbox. Changed to "${showDateUnknownPhotos}".`);
     Analytics.trackEvent('DTT Chart', `[DTT Chart] Clicked "Show date-unknown"`, `Changed "Show date-unknown photos" to "${showDateUnknownPhotos}"`);
     this.chartConfigService.showDateUnknownPhotos.next(showDateUnknownPhotos);
   }
@@ -48,7 +48,7 @@ export class DateTimeTakenChartConfigComponent {
   public onXAxisSelectChange(event: any) {
     const xAxisUnitDisplayStr = event.target.value;
     const xAxisUnitMomentJsStr = getXAxisUnitMomentJsStr(xAxisUnitDisplayStr);
-    logger.info(`Changed DTT Chart X-axis unit to "${xAxisUnitMomentJsStr}"`);
+    logger.info(`Changed DTT Chart X-axis unit to "${xAxisUnitMomentJsStr}".`);
     Analytics.trackEvent('DTT Chart', `[DTT Chart] Changed X-axis unit`, `Changed DTT Chart X-axis unit to "${xAxisUnitMomentJsStr}"`);
     this.chartConfigService.xAxisUnitMomentJsStr.next(xAxisUnitMomentJsStr);
   }
