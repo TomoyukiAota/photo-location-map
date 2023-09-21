@@ -135,7 +135,9 @@ export class DateTimeTakenChartComponent {
         type: 'category',
         data: xData,
         axisLabel: {
-          formatter: (value: string) => value.replace(' ', '\n'),
+          formatter: (value: string) => {
+            return value.replace(' ', '\n'); // Add a line break between date and time.
+          },
         },
         axisTick: {
           alignWithLabel: true,
@@ -156,7 +158,9 @@ export class DateTimeTakenChartComponent {
           type: 'slider',
           start: 0,
           end: 100,
-          labelFormatter: (_, valueStr) => valueStr.replace(' ', '\n'),
+          labelFormatter: (_, valueStr) => {
+            return valueStr.replace(' ', '\n'); // Add a line break between date and time.
+          },
         }
       ],
       series: [
