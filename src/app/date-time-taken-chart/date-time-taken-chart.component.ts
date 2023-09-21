@@ -105,7 +105,7 @@ export class DateTimeTakenChartComponent {
     const option: EChartsOption = {
       grid: {
         top: 25,
-        bottom: 70,
+        bottom: 80,
         left: 90,
         right: 200,
       },
@@ -134,6 +134,11 @@ export class DateTimeTakenChartComponent {
       xAxis: {
         type: 'category',
         data: xData,
+        axisLabel: {
+          formatter: (value: string) => {
+            return value.replace(' ', '\n'); // Add a line break between date and time.
+          },
+        },
         axisTick: {
           alignWithLabel: true,
         }
@@ -154,7 +159,7 @@ export class DateTimeTakenChartComponent {
           start: 0,
           end: 100,
           labelFormatter: (_, valueStr) => {
-            return valueStr.replace(' ', '\n');
+            return valueStr.replace(' ', '\n'); // Add a line break between date and time.
           },
         }
       ],
