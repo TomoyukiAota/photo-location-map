@@ -156,9 +156,7 @@ export class DateTimeTakenChartComponent {
           type: 'slider',
           start: 0,
           end: 100,
-          labelFormatter: (_, valueStr) => {
-            return valueStr.replace(' ', '\n');
-          },
+          labelFormatter: (_, valueStr) => valueStr.replace(' ', '\n'),
         }
       ],
       series: [
