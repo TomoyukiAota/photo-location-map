@@ -150,8 +150,12 @@ export class DateTimeTakenChartComponent {
           end: 100
         },
         {
+          type: 'slider',
           start: 0,
-          end: 100
+          end: 100,
+          labelFormatter: (_, valueStr) => {
+            return valueStr.replace(' ', '\n');
+          },
         }
       ],
       series: [
