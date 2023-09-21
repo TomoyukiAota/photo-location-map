@@ -105,7 +105,7 @@ export class DateTimeTakenChartComponent {
     const option: EChartsOption = {
       grid: {
         top: 25,
-        bottom: 70,
+        bottom: 80,
         left: 90,
         right: 200,
       },
@@ -134,6 +134,9 @@ export class DateTimeTakenChartComponent {
       xAxis: {
         type: 'category',
         data: xData,
+        axisLabel: {
+          formatter: (value: string) => value.replace(' ', '\n'),
+        },
         axisTick: {
           alignWithLabel: true,
         }
