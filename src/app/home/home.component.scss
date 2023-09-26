@@ -30,6 +30,13 @@
   height: 100%;
 }
 
+app-thumbnail-generation-status-bar,
+app-loaded-files-status-bar
+{
+  z-index: 10;        // To hide app-date-time-taken-chart when its height is decreased by dragging the splitter.
+  position: relative; // For z-index above to take effect.
+}
+
 .hidden {
   display: none;
 }

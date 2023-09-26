@@ -48,7 +48,7 @@ export class HomeComponent implements AfterViewInit, OnInit {
 
     Split(['#home-map', '#home-chart'], {
       direction: 'vertical',
-      sizes: [80, 20],
+      sizes: [70, 30],
       minSize: 0,
       gutterSize: 8, // 8px, which is the same width as the splitter gutter in Photo Data Viewer.
       snapOffset: 0,
