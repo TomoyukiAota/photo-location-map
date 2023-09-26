@@ -107,7 +107,7 @@ export class DateTimeTakenChartComponent {
         top: 25,
         bottom: 80,
         left: 90,
-        right: 200,
+        right: 90,
       },
       tooltip: {
         trigger: 'axis',
@@ -118,7 +118,7 @@ export class DateTimeTakenChartComponent {
       toolbox: {
         itemSize: 20,
         top: 4,
-        right: 128,
+        right: 0,
         feature: {
           dataZoom: {
             icon: {

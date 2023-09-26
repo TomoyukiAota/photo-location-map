@@ -1,6 +1,14 @@
 :host {
   width: 100%;
   height: 100%;
+  display: flex; // If CSS grid is used, there is an intermittent issue that the chart does not properly render when its width/height is changed by dragging the splitter.
+}
+
+$sidebar-width: 130px;
+
+.chart-container {
+  height: 100%;
+  width: calc(100% - $sidebar-width); // If "flex-grow: 1" is used instead, there is an intermittent issue that the chart does not properly render when its width/height is changed by dragging the splitter.
   position: relative;
 }
 
@@ -13,7 +21,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: calc(100% - 130px);
+  width: 100%;
   height: 100%;
   background-color: rgba(128,128,128,0.3);
   display: grid;
@@ -27,14 +35,14 @@
   font-size: 15px;
 }
 
-.config {
-  position: absolute;
-  top: 0;
-  right: 0;
+.sidebar {
+  width: $sidebar-width;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: end;
 }
 
 .select-photos-within-zoom {
-  position: absolute;
-  bottom: 7px;
-  right: 0;
+  margin: 0 10px 7px 0;
 }
