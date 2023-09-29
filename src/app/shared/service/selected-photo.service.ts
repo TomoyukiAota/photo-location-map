@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import * as _ from 'lodash';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from '../../../../src-shared/log/logger';
 import { Photo } from '../model/photo.model';
@@ -13,10 +14,15 @@ export class SelectedPhotoService {
   constructor(private photoSelectionHistoryService: PhotoSelectionHistoryService) {
   }
 
-  public setSelectedPhotos(selectedPhotos: Photo[]) {
-    this.selectedPhotos.next(selectedPhotos);
-    this.photoSelectionHistoryService.add(selectedPhotos);
-    Logger.info('Selected Photos: ', selectedPhotos);
+  public setSelectedPhotos(desiredSelectedPhotos: Photo[]) {
+    const desiredSelectedPhotoPaths = desiredSelectedPhotos.map(photo => photo.path);
+    const currentSelectedPhotoPaths = this.getSelectedPhotos().map(photo => photo.path);
+    const isDesiredSameAsCurrent = _.isEqual(desiredSelectedPhotoPaths.sort(), currentSelectedPhotoPaths.sort());
+    if (isDesiredSameAsCurrent) { return; } // If same, skip updating selected photos to avoid adding selection history. e.g. Avoid adding history when repeating "Select Only This".
+
+    this.selectedPhotos.next(desiredSelectedPhotos);
+    this.photoSelectionHistoryService.add(desiredSelectedPhotos);
+    Logger.info('Selected Photos: ', desiredSelectedPhotos);
   }
 
   public getSelectedPhotos(): Photo[] {
