@@ -28,10 +28,10 @@ export class MoreOptionsMenuElement {
     const {clientWidth: viewportWidth} = document.documentElement;
     const {bottom: buttonBottom, right: buttonRight} = moreOptionsButton.getBoundingClientRect();
 
-    const enoughRoomBelowButton = areaHeight - buttonBottom > 230; // Adjust the value if the menu height changes.
+    const enoughRoomBelowButton = areaHeight - buttonBottom > 195; // Adjust the value if the menu height changes.
     const enoughRoomRightToButton = isWithinSidebar
       ? false
-      : viewportWidth - buttonRight > 220; // Adjust the value if the menu width changes.
+      : viewportWidth - buttonRight > 230; // Adjust the value if the menu width changes.
 
     if (enoughRoomBelowButton) {
       menuElement.style.top = '37px';
