@@ -18,7 +18,7 @@ export class SelectedPhotoService {
     const desiredSelectedPhotoPaths = desiredSelectedPhotos.map(photo => photo.path);
     const currentSelectedPhotoPaths = this.getSelectedPhotos().map(photo => photo.path);
     const isDesiredSameAsCurrent = _.isEqual(desiredSelectedPhotoPaths.sort(), currentSelectedPhotoPaths.sort());
-    if (isDesiredSameAsCurrent) { return; } // If same, skip updating selected photos to avoid adding selection history. e.g. Avoid adding history when repeating "Select Only This".
+    if (isDesiredSameAsCurrent) { return; } // If same, avoid adding selection history. e.g. Avoid adding history when repeating "Select Only This" for the same photo(s).
 
     this.selectedPhotos.next(desiredSelectedPhotos);
     this.photoSelectionHistoryService.add(desiredSelectedPhotos);
