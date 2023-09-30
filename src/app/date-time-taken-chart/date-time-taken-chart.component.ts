@@ -166,6 +166,7 @@ export class DateTimeTakenChartComponent {
         {
           type: 'bar',
           sampling: 'lttb',
+          cursor: 'default',
           itemStyle: {
             color: 'rgb(255, 70, 131)'
           },
