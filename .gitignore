@@ -17,7 +17,8 @@ src-main/**/*.js
 *.js.map
 
 # dependencies
-/node_modules
+/node_modules/*
+!/node_modules/.keep
 
 # IDEs and editors
 /.idea
