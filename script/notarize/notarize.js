@@ -19,10 +19,11 @@ exports.default = async function notarizing(context) {
 
   logger.info('Started notarization.');
   await notarize({
-    appBundleId: 'com.TomoyukiAota.PhotoLocationMap',
+    tool:'notarytool',
     appPath: `${appOutDir}/${appName}.app`,
     appleId: process.env.APPLE_ID,
     appleIdPassword: process.env.APPLE_APP_SPECIFIC_PASSWORD,
+    teamId: process.env.APPLE_TEAM_ID,
   });
   logger.info('Finished notarization.');
 };
