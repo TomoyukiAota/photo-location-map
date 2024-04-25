@@ -37,6 +37,7 @@ src-main/**/*.js
 
 # misc
 /.angular/cache
+/.nx/cache
 /.sass-cache
 /connect.lock
 /coverage
