@@ -3,7 +3,7 @@ pull_request_rules:
     conditions:
       - status-success=test (ubuntu-20.04)
       - status-success=test (windows-latest)
-      - status-success=test (macOS-latest)
+      - status-success=test (macos-13)
       - label=automerge
       - author=TomoyukiAota
     actions:

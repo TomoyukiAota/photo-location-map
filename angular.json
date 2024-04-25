@@ -74,21 +74,21 @@
         "serve": {
           "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
-            "browserTarget": "photo-location-map:build"
+            "buildTarget": "photo-location-map:build"
           },
           "configurations": {
             "dev": {
-              "browserTarget": "photo-location-map:build:dev"
+              "buildTarget": "photo-location-map:build:dev"
             },
             "production": {
-              "browserTarget": "photo-location-map:build:production"
+              "buildTarget": "photo-location-map:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "photo-location-map:build"
+            "buildTarget": "photo-location-map:build"
           }
         },
         "test": {

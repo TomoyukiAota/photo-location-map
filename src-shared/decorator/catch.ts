@@ -2,6 +2,11 @@
 // Ideally, catch-decorator-ts should simply be installed and used, but there are some compile errors.
 // Therefore, the content of catch-decorator-ts exists in photo-location-map repo with some modification.
 
+// Further modification as of April 24, 2024:
+// "if (!descriptor) return;" is added in order to guard the case where descriptor is undefined during "npm run test:unit:em:renderer".
+// Without this, "ERROR: Cannot read properties of undefined (reading 'value')" occurs.
+// This started occurring after updating Angular version from 15 to 16.
+
 /* eslint-disable @typescript-eslint/ban-types */ // Suppress the lint error "Don't use `Function` as a type."
 
 function isPromise(object: any): object is Promise<any> {
@@ -19,6 +24,8 @@ const Factory = (
   handler?: Handler,
 ) => {
   return (target: any, key: string, descriptor: PropertyDescriptor) => {
+    if (!descriptor) return;
+
     const { value } = descriptor;
 
     if (!handler) {
