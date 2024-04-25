@@ -76,7 +76,7 @@
   },
   "devDependencies": {
     "@amplitude/analytics-browser": "1.6.7",
-    "@angular-builders/custom-webpack": "16.0.1",
+    "@angular-builders/custom-webpack": "17.0.2",
     "@angular-devkit/build-angular": "17.3.5",
     "@angular-eslint/builder": "17.3.0",
     "@angular-eslint/eslint-plugin": "17.3.0",
