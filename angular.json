@@ -88,7 +88,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "photo-location-map:build"
+            "buildTarget": "photo-location-map:build"
           }
         },
         "test": {
