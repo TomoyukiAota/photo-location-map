@@ -1,4 +1,4 @@
-import { MenuItemConstructorOptions } from 'electron';
+import { BrowserWindow, MenuItemConstructorOptions } from 'electron';
 import { Analytics } from '../../src-shared/analytics/analytics';
 import { DevOrProd } from '../../src-shared/dev-or-prod/dev-or-prod';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
@@ -25,7 +25,9 @@ export const commonMenuTemplate: MenuItemConstructorOptions[] = [
         visible: DevOrProd.isDev,
         accelerator: DevOrProd.isDev ? 'CmdOrCtrl+R' : '',
         click(item, focusedWindow) {
-          if (focusedWindow) focusedWindow.reload();
+          if (focusedWindow instanceof BrowserWindow) {
+            focusedWindow.reload();
+          }
         },
       },
       { role: 'resetZoom' },
