@@ -3,6 +3,9 @@ module.exports = {
   "ignorePatterns": [
     "projects/**/*"
   ],
+  "plugins": [
+    "@stylistic"
+  ],
   "overrides": [
     {
       "files": [
@@ -57,16 +60,8 @@ module.exports = {
         ],
         "no-extra-boolean-cast": "off",
         "no-underscore-dangle": "off",
-
-        // To enable "@typescript-eslint/semi", "semi" needs to be disabled as it can report incorrect errors.
-        // See https://typescript-eslint.io/rules/semi/
-        "semi": "off",
-        "@typescript-eslint/semi": "error",
-
-        // To enable "@typescript-eslint/quotes", "quotes" needs to be disabled as it can report incorrect errors.
-        // See https://typescript-eslint.io/rules/quotes/
-        "quotes": "off",
-        "@typescript-eslint/quotes": [
+        "@stylistic/semi": "error",
+        "@stylistic/quotes": [
           "error",
           "single",
           {
