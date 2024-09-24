@@ -1,6 +1,9 @@
+import { Stats } from 'fs';
+
 class DirectoryTreeViewNode {
   name: string;
   path: string;
+  fsStats: Stats;
   isSelectable: boolean;
 }
 

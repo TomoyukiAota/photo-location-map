@@ -85,11 +85,13 @@ export class DirectoryTreeViewComponent implements OnInit {
     this.flatNodeSelectionModel.clear();
     this.flatToNestedNodeMap.clear();
     this.nestedToFlatNodeMap.clear();
-    this.dataSource.data = data;
-    if (data.length === 0)
+
+    const sortedData = this.sortNestedNodes(data);
+    this.dataSource.data = sortedData;
+    if (sortedData.length === 0)
       return;
 
-    const rootNestedNode = data[0];
+    const rootNestedNode = sortedData[0];
     const rootFlatNode = this.nestedToFlatNodeMap.get(rootNestedNode);
 
     if (rootFlatNode.isSelectable) {
@@ -105,6 +107,11 @@ export class DirectoryTreeViewComponent implements OnInit {
     if (rootFlatNode.isExpandable) {
       this.treeControl.expand(rootFlatNode);
     }
+  }
+
+  private sortNestedNodes(nodes: NestedNode[]) {
+    console.log('sortNestedNodes', nodes);
+    return nodes;
   }
 
   private handleDirectoryTreeViewSelectionRequested(photoPaths: string[]) {
