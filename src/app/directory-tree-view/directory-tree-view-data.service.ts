@@ -81,7 +81,7 @@ export class DirectoryTreeViewDataService {
     } else { // if TimeTaken
       if (a.type === 'directory') {
         return this.compareNodesUsingSortConfig(a, b, 'Alphabetical', sortOrder);
-      } else {
+      } else { // if a.type === 'file'
         return this.compareNodesUsingSortConfig(a, b, 'TimeTaken', sortOrder);
       }
     }
