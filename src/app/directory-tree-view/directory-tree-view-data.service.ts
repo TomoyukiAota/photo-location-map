@@ -17,7 +17,9 @@ export class DirectoryTreeViewDataService {
 
   public replace(directoryTreeObject: DirectoryTree): void {
     const nestedNodeArray = this.convertToNestedNodeArray([directoryTreeObject]);
-    this.sortNestedNodeRecursively(nestedNodeArray[0]);
+    if (nestedNodeArray.length > 0) {
+      this.sortNestedNodeRecursively(nestedNodeArray[0]);
+    }
     this.dataReplaced.next(nestedNodeArray);
   }
 
