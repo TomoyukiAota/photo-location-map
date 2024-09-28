@@ -85,12 +85,11 @@ export class DirectoryTreeViewComponent implements OnInit {
     this.flatNodeSelectionModel.clear();
     this.flatToNestedNodeMap.clear();
     this.nestedToFlatNodeMap.clear();
-
-    const rootNestedNode = data[0];
     this.dataSource.data = data;
     if (data.length === 0)
       return;
 
+    const rootNestedNode = data[0];
     const rootFlatNode = this.nestedToFlatNodeMap.get(rootNestedNode);
 
     if (rootFlatNode.isSelectable) {
