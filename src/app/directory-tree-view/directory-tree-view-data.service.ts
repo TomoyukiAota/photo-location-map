@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import * as moment from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { NestedNode } from './directory-tree-view.model';
@@ -60,29 +61,58 @@ export class DirectoryTreeViewDataService {
         this.sortNestedNodeRecursively(child);
       }
     });
-    node.children.sort((a, b) => {
-      if (a.type === b.type) {
-        return this.compareNodesOfSameTypeForSort(a, b);
-      }
-      return a.type > b.type ? 1 : -1; // Directories are listed first, and then files are listed second.
-    });
+    node.children.sort((a, b) => this.compareNodes(a, b));
   }
 
-  private compareNodesOfSameTypeForSort(a: NestedNode, b: NestedNode): number {
-    const sortType: 'Alphabetical' | 'TimeTaken' = 'Alphabetical';
-    const sortOrder: 'Ascending' | 'Descending' = 'Ascending';
+  private compareNodes(a: NestedNode, b: NestedNode) {
+    if (a.type === b.type) { // if both a and b are directories or files
+      return this.compareNodesOfSameType(a, b);
+    }
+    return a.type > b.type ? 1 : -1; // Directories are listed first, and then files are listed second.
+  }
 
+  private compareNodesOfSameType(a: NestedNode, b: NestedNode) {
+    const sortType: 'Alphabetical' | 'TimeTaken' = 'TimeTaken';
+    const sortOrder: 'Ascending' | 'Descending' = 'Ascending';
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     if (sortType === 'Alphabetical') {
+      return this.compareNodesUsingSortConfig(a, b, 'Alphabetical', sortOrder);
+    } else { // if TimeTaken
+      if (a.type === 'directory') {
+        return this.compareNodesUsingSortConfig(a, b, 'Alphabetical', sortOrder);
+      } else {
+        return this.compareNodesUsingSortConfig(a, b, 'TimeTaken', sortOrder);
+      }
+    }
+  }
+
+  private compareNodesUsingSortConfig(a: NestedNode, b: NestedNode, sortType: 'Alphabetical' | 'TimeTaken', sortOrder: 'Ascending' | 'Descending'): number {
+    if (sortType === 'Alphabetical') {
+      const nameA = a.name.toUpperCase();
+      const nameB = b.name.toUpperCase();
       if (sortOrder === 'Ascending') {
-        return a.name.toUpperCase() < b.name.toUpperCase() ? -1 : 1;
+        return nameA < nameB ? -1 : 1;
       } else { // if Descending
-        return a.name.toUpperCase() < b.name.toUpperCase() ? 1 : -1;
+        return nameA < nameB ? 1 : -1;
       }
     } else if (sortType === 'TimeTaken') {
-      return 0; // TODO
+      const momentA = this.getMoment(a);
+      const momentB = this.getMoment(b);
+      if (sortOrder === 'Ascending') {
+        return momentA < momentB ? -1 : 1;
+      } else { // if Descending
+        return momentA < momentB ? 1 : -1;
+      }
     }
 
     console.error('Something went wrong. This line should not run.');
     return 0;
+  }
+
+  private getMoment(node: NestedNode) {
+    const momentOfDateTimeOriginal = this.photoDataService.getPhoto(node.path)?.exif?.dateTimeOriginal?.moment;
+    const momentForThisNode = momentOfDateTimeOriginal ?? moment(node.fsStats.mtime);
+    return momentForThisNode;
   }
 }
