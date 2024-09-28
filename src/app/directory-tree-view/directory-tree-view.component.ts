@@ -87,7 +87,6 @@ export class DirectoryTreeViewComponent implements OnInit {
     this.nestedToFlatNodeMap.clear();
 
     const rootNestedNode = data[0];
-    this.sortNestedNode(rootNestedNode);
     this.dataSource.data = data;
     if (data.length === 0)
       return;
@@ -107,45 +106,6 @@ export class DirectoryTreeViewComponent implements OnInit {
     if (rootFlatNode.isExpandable) {
       this.treeControl.expand(rootFlatNode);
     }
-  }
-
-  private sortNestedNode(node: NestedNode) {
-    this.sortNestedNodeRecursively(node);
-    return node;
-  }
-
-  private sortNestedNodeRecursively(node: NestedNode) {
-    if (!node?.children) { return; }
-
-    node.children.forEach(child => {
-      if (child.children) {
-        this.sortNestedNodeRecursively(child);
-      }
-    });
-    node.children.sort((a, b) => {
-      if (a.type === b.type) {
-        return this.compareNodesOfSameTypeForSort(a, b);
-      }
-      return a.type > b.type ? 1 : -1; // Directories are listed first, and then files are listed second.
-    });
-  }
-
-  private compareNodesOfSameTypeForSort(a: NestedNode, b: NestedNode): number {
-    const sortType: 'Alphabetical' | 'TimeTaken' = 'Alphabetical';
-    const sortOrder: 'Ascending' | 'Descending' = 'Ascending';
-
-    if (sortType === 'Alphabetical') {
-      if (sortOrder === 'Ascending') {
-        return a.name.toUpperCase() < b.name.toUpperCase() ? -1 : 1;
-      } else { // if Descending
-        return a.name.toUpperCase() < b.name.toUpperCase() ? 1 : -1;
-      }
-    } else if (sortType === 'TimeTaken') {
-      return 0; // TODO
-    }
-
-    console.error('Something went wrong. This line should not run.');
-    return 0;
   }
 
   private handleDirectoryTreeViewSelectionRequested(photoPaths: string[]) {
