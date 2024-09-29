@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DomSanitizer } from '@angular/platform-browser';
 import { BehaviorSubject } from 'rxjs';
 import * as remote from '@electron/remote';
 
 import { DirTreeObjectRecorder } from '../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
 import { sleep } from '../../../src-shared/sleep/sleep';
+import { IconDataUrl } from '../../assets/icon-data-url';
 
 import { OpenFolderService } from '../shared/service/open-folder.service';
 import { PhotoDataService } from '../shared/service/photo-data.service';
@@ -35,7 +37,9 @@ export class SidebarComponent {
               private directoryTreeViewDataService: DirectoryTreeViewDataService,
               private loadedFilesStatusBarService: LoadedFilesStatusBarService,
               public thumbnailGenerationService: ThumbnailGenerationService,
-              private photoSelectionHistoryService: PhotoSelectionHistoryService) {
+              private photoSelectionHistoryService: PhotoSelectionHistoryService,
+              private sanitizer: DomSanitizer,
+  ) {
   }
 
   public async showOpenFolderDialog() {
@@ -110,5 +114,15 @@ export class SidebarComponent {
       autoFocus: false,
       restoreFocus: false
     });
+  }
+
+  public get moreOptionsIconDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.moreOptions); }
+
+  public sortDirectoryTreeViewByName() {
+    this.directoryTreeViewDataService.requestSortingData({key: 'Name', direction: 'Ascending'});
+  }
+
+  public sortDirectoryTreeViewByShootingTime() {
+    this.directoryTreeViewDataService.requestSortingData({key: 'ShootingDateTime', direction: 'Ascending'});
   }
 }

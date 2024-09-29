@@ -73,6 +73,12 @@ export class DirectoryTreeViewComponent implements OnInit {
     directoryTreeViewDataService.dataReplaced
       .subscribe(data => this.handleDirectoryTreeViewDataReplaced(data));
 
+    directoryTreeViewDataService.sortRequested
+      .subscribe(sortConfig => {
+        const sortedData = this.directoryTreeViewDataService.sortData(this.dataSource.data, sortConfig);
+        this.dataSource.data = sortedData;
+      });
+
     directoryTreeViewSelectionService.selectionRequested
       .subscribe(photoPaths => this.handleDirectoryTreeViewSelectionRequested(photoPaths));
   }

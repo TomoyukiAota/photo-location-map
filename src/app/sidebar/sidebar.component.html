@@ -1,11 +1,23 @@
 <div class="sidebar">
-  <div class="open-folder-button">
-    <button mat-stroked-button
-            [disabled]="thumbnailGenerationService.isGenerating | async"
-            [title]="(thumbnailGenerationService.isGenerating | async) ? 'Cannot open a folder when generating thumbnails.' : ''"
-            (click)="showOpenFolderDialog()">
-      {{ 'SIDEBAR.OPEN_FOLDER' | translate }}
-    </button>
+  <div class="top-bar">
+    <div class="open-folder-button">
+      <button mat-stroked-button
+              [disabled]="thumbnailGenerationService.isGenerating | async"
+              [title]="(thumbnailGenerationService.isGenerating | async) ? 'Cannot open a folder when generating thumbnails.' : ''"
+              (click)="showOpenFolderDialog()">
+        {{ 'SIDEBAR.OPEN_FOLDER' | translate }}
+      </button>
+    </div>
+    <picture class="more-options-icon" [matMenuTriggerFor]="moreOptionsMenu">
+      <img class="more-options-icon-img"
+           [src]="moreOptionsIconDataUrl">
+    </picture>
+    <mat-menu #moreOptionsMenu>
+      <div class="more-options-menu" (click)="$event.stopPropagation();">
+        <button (click)="this.sortDirectoryTreeViewByName()">Sort Photos By Name</button>
+        <button (click)="this.sortDirectoryTreeViewByShootingTime()">Sort Photos By Shooting Time</button>
+      </div>
+    </mat-menu>
   </div>
   <div *ngIf="(isFolderOpened$ | async) === false" class="message-when-folder-is-not-opened">Please open a folder to see where photos were taken.</div>
   <div class="directory-tree-view-area">
