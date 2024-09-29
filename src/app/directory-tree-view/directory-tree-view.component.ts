@@ -13,6 +13,7 @@ import { dirTreeViewContextMenuItems } from './dir-tree-view-context-menu/dir-tr
 import { DirTreeViewPhotoInfoDisplayLogic } from './dir-tree-view-photo-info/dir-tree-view-photo-info-display-logic';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { DirectoryTreeViewSelectionService } from './directory-tree-view-selection.service';
+import { DirectoryTreeViewSortService } from './directory-tree-view-sort.service';
 import { FlatNode, NestedNode } from './directory-tree-view.model';
 
 const dirTreeViewLogger = createPrependedLogger('[Directory Tree View]');
@@ -60,8 +61,9 @@ export class DirectoryTreeViewComponent implements OnInit {
 
   public photoInfoDisplayLogic: DirTreeViewPhotoInfoDisplayLogic;
 
-  constructor(private directoryTreeViewDataService: DirectoryTreeViewDataService,
-              private directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
+  constructor(directoryTreeViewDataService: DirectoryTreeViewDataService,
+              directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
+              directoryTreeViewSortService: DirectoryTreeViewSortService,
               private selectedPhotoService: SelectedPhotoService,
               private photoDataService: PhotoDataService,
               private changeDetectorRef: ChangeDetectorRef,
@@ -73,14 +75,14 @@ export class DirectoryTreeViewComponent implements OnInit {
     directoryTreeViewDataService.dataReplaced
       .subscribe(data => this.handleDirectoryTreeViewDataReplaced(data));
 
-    directoryTreeViewDataService.sortRequested
-      .subscribe(sortConfig => {
-        const sortedData = this.directoryTreeViewDataService.sortData(this.dataSource.data, sortConfig);
-        this.dataSource.data = sortedData;
-      });
-
     directoryTreeViewSelectionService.selectionRequested
       .subscribe(photoPaths => this.handleDirectoryTreeViewSelectionRequested(photoPaths));
+
+    directoryTreeViewSortService.sortRequested
+      .subscribe(sortConfig => {
+        const sortedData = directoryTreeViewSortService.sortData(this.dataSource.data, sortConfig);
+        this.dataSource.data = sortedData;
+      });
   }
 
   public ngOnInit() {

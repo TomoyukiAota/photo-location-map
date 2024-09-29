@@ -16,6 +16,7 @@ import { OpenedDirectory } from '../shared/opened-directory';
 import { ThumbnailObjectUrlStorage } from '../shared/thumbnail-object-url-storage';
 
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
+import { DirectoryTreeViewSortService } from '../directory-tree-view/directory-tree-view-sort.service';
 import { LoadedFilesStatusBarService } from '../loaded-files-status-bar/service/loaded-files-status-bar.service';
 import { LoadingFolderDialogComponent } from '../loading-folder/dialog/loading-folder-dialog.component';
 import { NoPhotosWithLocationDataDialogComponent } from '../no-photos-with-location-data-dialog/no-photos-with-location-data-dialog.component';
@@ -35,6 +36,7 @@ export class SidebarComponent {
               private openFolderService: OpenFolderService,
               private photoDataService: PhotoDataService,
               private directoryTreeViewDataService: DirectoryTreeViewDataService,
+              private directoryTreeViewSortService: DirectoryTreeViewSortService,
               private loadedFilesStatusBarService: LoadedFilesStatusBarService,
               public thumbnailGenerationService: ThumbnailGenerationService,
               private photoSelectionHistoryService: PhotoSelectionHistoryService,
@@ -119,10 +121,10 @@ export class SidebarComponent {
   public get moreOptionsIconDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.moreOptions); }
 
   public sortDirectoryTreeViewByName() {
-    this.directoryTreeViewDataService.requestSortingData({key: 'Name', direction: 'Ascending'});
+    this.directoryTreeViewSortService.requestSortingData({key: 'Name', direction: 'Ascending'});
   }
 
   public sortDirectoryTreeViewByShootingTime() {
-    this.directoryTreeViewDataService.requestSortingData({key: 'ShootingDateTime', direction: 'Ascending'});
+    this.directoryTreeViewSortService.requestSortingData({key: 'ShootingDateTime', direction: 'Ascending'});
   }
 }
