@@ -45,6 +45,6 @@ describe('SidebarComponent', () => {
 
   it('should render "Open Folder" button', () => {
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('#open-folder-button>button').textContent).toContain('SIDEBAR.OPEN_FOLDER');
+    expect(compiled.querySelector('.open-folder-button > button').textContent).toContain('SIDEBAR.OPEN_FOLDER');
   });
 });

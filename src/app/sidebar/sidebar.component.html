@@ -1,5 +1,5 @@
 <div class="sidebar">
-  <div id="open-folder-button">
+  <div class="open-folder-button">
     <button mat-stroked-button
             [disabled]="thumbnailGenerationService.isGenerating | async"
             [title]="(thumbnailGenerationService.isGenerating | async) ? 'Cannot open a folder when generating thumbnails.' : ''"
