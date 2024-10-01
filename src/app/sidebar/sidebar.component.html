@@ -13,10 +13,14 @@
            [src]="moreOptionsIconDataUrl">
     </picture>
     <mat-menu #moreOptionsMenu>
-      <div class="more-options-menu" (click)="$event.stopPropagation();">
-        <button (click)="this.sortDirectoryTreeViewByName()">Sort Photos By Name</button>
-        <button (click)="this.sortDirectoryTreeViewByShootingTime()">Sort Photos By Shooting Time</button>
-      </div>
+      <button mat-menu-item [matMenuTriggerFor]="sortMenu">Sort Photos</button>
+    </mat-menu>
+    <mat-menu #sortMenu >
+      <button mat-menu-item (click)="this.sortDirectoryTreeViewByName()">By Name</button>
+      <button mat-menu-item (click)="this.sortDirectoryTreeViewByShootingTime()">By Shooting Time</button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item>Ascending</button>
+      <button mat-menu-item>Descending</button>
     </mat-menu>
   </div>
   <div *ngIf="(isFolderOpened$ | async) === false" class="message-when-folder-is-not-opened">Please open a folder to see where photos were taken.</div>
