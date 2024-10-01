@@ -15,7 +15,7 @@
     <mat-menu #moreOptionsMenu>
       <button mat-menu-item [matMenuTriggerFor]="sortMenu">Sort Photos</button>
     </mat-menu>
-    <mat-menu #sortMenu >
+    <mat-menu #sortMenu>
       <button mat-menu-item (click)="this.sortDirectoryTreeViewByName()">By Name</button>
       <button mat-menu-item (click)="this.sortDirectoryTreeViewByShootingTime()">By Shooting Time</button>
       <mat-divider></mat-divider>
