@@ -21,7 +21,7 @@ import { LoadingFolderDialogComponent } from '../../loading-folder/dialog/loadin
 import { NoPhotosWithLocationDataDialogComponent } from '../../no-photos-with-location-data-dialog/no-photos-with-location-data-dialog.component';
 import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewer-content';
 import { ThumbnailGenerationService } from '../../thumbnail-generation/service/thumbnail-generation.service';
-import { OpenFolderRecorder } from '../open-folder-recorder';
+import { OpenFolderRecorder } from './open-folder-recorder';
 
 @Component({
   selector: 'app-sidebar-upper-pane',

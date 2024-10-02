@@ -1,7 +1,7 @@
 import * as moment from 'moment';
 import 'moment-duration-format'; // To use moment.duration().format()
-import { Analytics } from '../../../src-shared/analytics/analytics';
-import { Logger } from '../../../src-shared/log/logger';
+import { Analytics } from '../../../../src-shared/analytics/analytics';
+import { Logger } from '../../../../src-shared/log/logger';
 
 export class OpenFolderRecorder {
   private static readonly perfMeasureName = 'OpenFolder';
