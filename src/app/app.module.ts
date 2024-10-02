@@ -24,7 +24,6 @@ import { NgxEchartsModule } from 'ngx-echarts';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
-import { SidebarComponent } from './sidebar/sidebar.component';
 import { SidebarUpperPaneComponent } from './sidebar/upper-pane/sidebar-upper-pane.component';
 import { SidebarLowerPaneComponent } from './sidebar/lower-pane/sidebar-lower-pane.component';
 import { DirectoryTreeViewComponent } from './directory-tree-view/directory-tree-view.component';
@@ -58,7 +57,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     SettingsDialogComponent,
     WelcomeDialogComponent,
     HomeComponent,
-    SidebarComponent,
     SidebarUpperPaneComponent,
     SidebarLowerPaneComponent,
     DirectoryTreeViewComponent,
