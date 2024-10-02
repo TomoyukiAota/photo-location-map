@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OpenFolderService {
-  public folderOpened = new Subject<void>();
+  public isFolderOpened$ = new BehaviorSubject(false);
 }

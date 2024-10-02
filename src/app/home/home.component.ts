@@ -24,7 +24,7 @@ export class HomeComponent implements AfterViewInit, OnInit {
               private leafletMapForceRenderService: LeafletMapForceRenderService) {}
 
   ngOnInit() {
-    this.openFolderService.folderOpened.subscribe(
+    this.openFolderService.isFolderOpened$.subscribe(
       () => this.thumbnailGenerationStatusBarVisible = false);
     this.thumbnailGenerationService.generationStarted.subscribe(
       () => this.thumbnailGenerationStatusBarVisible = true);
