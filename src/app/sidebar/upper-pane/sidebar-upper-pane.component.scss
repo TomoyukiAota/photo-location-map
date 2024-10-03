@@ -7,25 +7,3 @@
 .open-folder-button {
   text-align: center;
 }
-
-.more-options-icon {
-  position: relative;
-  cursor: pointer;
-  filter: brightness(50%);
-
-  &:hover {
-    // The filter value is gotten by giving #3e98c5 to https://codepen.io/sosuke/pen/Pjoqqp
-    // Reference: https://stackoverflow.com/a/50942954/7947548
-    filter: invert(51%) sepia(25%) saturate(1089%) hue-rotate(155deg) brightness(99%) contrast(86%);
-  }
-}
-
-.more-options-icon,
-.more-options-icon-img {
-  width: 34px;
-  height: 34px;
-}
-
-.more-options-menu {
-  padding-right: 20px;
-}

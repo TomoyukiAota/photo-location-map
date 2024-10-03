@@ -25,6 +25,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { SidebarUpperPaneComponent } from './sidebar/upper-pane/sidebar-upper-pane.component';
+import { SidebarUpperPaneMoreOptionsComponent } from './sidebar/upper-pane/more-options/sidebar-upper-pane-more-options.component';
 import { SidebarLowerPaneComponent } from './sidebar/lower-pane/sidebar-lower-pane.component';
 import { DirectoryTreeViewComponent } from './directory-tree-view/directory-tree-view.component';
 import { DirTreeViewPhotoInfoComponent } from './directory-tree-view/dir-tree-view-photo-info/dir-tree-view-photo-info.component';
@@ -58,6 +59,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     WelcomeDialogComponent,
     HomeComponent,
     SidebarUpperPaneComponent,
+    SidebarUpperPaneMoreOptionsComponent,
     SidebarLowerPaneComponent,
     DirectoryTreeViewComponent,
     DirTreeViewPhotoInfoComponent,

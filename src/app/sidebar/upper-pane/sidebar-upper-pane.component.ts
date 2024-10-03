@@ -1,11 +1,9 @@
 import { Component } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { DomSanitizer } from '@angular/platform-browser';
 import * as remote from '@electron/remote';
 
 import { DirTreeObjectRecorder } from '../../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
 import { sleep } from '../../../../src-shared/sleep/sleep';
-import { IconDataUrl } from '../../../assets/icon-data-url';
 
 import { OpenFolderService } from '../../shared/service/open-folder.service';
 import { PhotoDataService } from '../../shared/service/photo-data.service';
@@ -15,7 +13,6 @@ import { OpenedDirectory } from '../../shared/opened-directory';
 import { ThumbnailObjectUrlStorage } from '../../shared/thumbnail-object-url-storage';
 
 import { DirectoryTreeViewDataService } from '../../directory-tree-view/directory-tree-view-data.service';
-import { DirectoryTreeViewSortService } from '../../directory-tree-view/directory-tree-view-sort.service';
 import { LoadedFilesStatusBarService } from '../../loaded-files-status-bar/service/loaded-files-status-bar.service';
 import { LoadingFolderDialogComponent } from '../../loading-folder/dialog/loading-folder-dialog.component';
 import { NoPhotosWithLocationDataDialogComponent } from '../../no-photos-with-location-data-dialog/no-photos-with-location-data-dialog.component';
@@ -33,11 +30,9 @@ export class SidebarUpperPaneComponent {
               private openFolderService: OpenFolderService,
               private photoDataService: PhotoDataService,
               private directoryTreeViewDataService: DirectoryTreeViewDataService,
-              private directoryTreeViewSortService: DirectoryTreeViewSortService,
               private loadedFilesStatusBarService: LoadedFilesStatusBarService,
               public thumbnailGenerationService: ThumbnailGenerationService,
               private photoSelectionHistoryService: PhotoSelectionHistoryService,
-              private sanitizer: DomSanitizer,
   ) {
   }
 
@@ -112,15 +107,5 @@ export class SidebarUpperPaneComponent {
       autoFocus: false,
       restoreFocus: false
     });
-  }
-
-  public get moreOptionsIconDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.moreOptions); }
-
-  public sortDirectoryTreeViewByName() {
-    this.directoryTreeViewSortService.requestSortingData({key: 'Name', direction: 'Ascending'});
-  }
-
-  public sortDirectoryTreeViewByShootingTime() {
-    this.directoryTreeViewSortService.requestSortingData({key: 'ShootingDateTime', direction: 'Ascending'});
   }
 }
