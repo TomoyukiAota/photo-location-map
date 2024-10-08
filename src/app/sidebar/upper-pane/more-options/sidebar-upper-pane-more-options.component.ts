@@ -1,7 +1,11 @@
 import { Component } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { IconDataUrl } from '../../../../assets/icon-data-url';
-import { DirectoryTreeViewSortService } from '../../../directory-tree-view/directory-tree-view-sort.service';
+import {
+  DirectoryTreeViewSortDirection,
+  DirectoryTreeViewSortKey,
+  DirectoryTreeViewSortService
+} from '../../../directory-tree-view/directory-tree-view-sort.service';
 
 @Component({
   selector: 'app-sidebar-upper-pane-more-options',
@@ -9,18 +13,18 @@ import { DirectoryTreeViewSortService } from '../../../directory-tree-view/direc
   styleUrl: './sidebar-upper-pane-more-options.component.scss'
 })
 export class SidebarUpperPaneMoreOptionsComponent {
-  constructor(private directoryTreeViewSortService: DirectoryTreeViewSortService,
+  constructor(public sortService: DirectoryTreeViewSortService,
               private sanitizer: DomSanitizer,
   ) {
   }
 
   public get moreOptionsIconDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.moreOptions); }
 
-  public sortDirectoryTreeViewByName() {
-    this.directoryTreeViewSortService.requestSortingData({key: 'Name', direction: 'Ascending'});
+  public handleSortKeyMenuItemClicked(sortKey: DirectoryTreeViewSortKey) {
+    this.sortService.sortKey$.next(sortKey);
   }
 
-  public sortDirectoryTreeViewByShootingTime() {
-    this.directoryTreeViewSortService.requestSortingData({key: 'ShootingDateTime', direction: 'Ascending'});
+  public handleSortDirectionMenuItemClicked(sortDirection: DirectoryTreeViewSortDirection) {
+    this.sortService.sortDirection$.next(sortDirection);
   }
 }

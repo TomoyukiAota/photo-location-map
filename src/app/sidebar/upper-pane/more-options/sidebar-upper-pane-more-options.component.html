@@ -6,9 +6,21 @@
   <button mat-menu-item [matMenuTriggerFor]="sortMenu">Sort Photos</button>
 </mat-menu>
 <mat-menu #sortMenu>
-  <button mat-menu-item (click)="this.sortDirectoryTreeViewByName()">By Name</button>
-  <button mat-menu-item (click)="this.sortDirectoryTreeViewByShootingTime()">By Shooting Time</button>
+  <button mat-menu-item (click)="handleSortKeyMenuItemClicked('Name')">
+    <mat-icon fontIcon="check" [style.visibility]="sortService.sortKey$.value === 'Name' ? 'visible' : 'hidden'"></mat-icon>
+    <label>By Name</label>
+  </button>
+  <button mat-menu-item (click)="handleSortKeyMenuItemClicked('ShootingDateTime')">
+    <mat-icon fontIcon="check" [style.visibility]="sortService.sortKey$.value === 'ShootingDateTime' ? 'visible' : 'hidden'"></mat-icon>
+    <label>By Shooting Time</label>
+  </button>
   <mat-divider></mat-divider>
-  <button mat-menu-item>Ascending</button>
-  <button mat-menu-item>Descending</button>
+  <button mat-menu-item (click)="handleSortDirectionMenuItemClicked('Ascending')">
+    <mat-icon fontIcon="check" [style.visibility]="sortService.sortDirection$.value === 'Ascending' ? 'visible' : 'hidden'"></mat-icon>
+    <label>Ascending</label>
+  </button>
+  <button mat-menu-item (click)="handleSortDirectionMenuItemClicked('Descending')">
+    <mat-icon fontIcon="check" [style.visibility]="sortService.sortDirection$.value === 'Descending' ? 'visible' : 'hidden'"></mat-icon>
+    <label>Descending</label>
+  </button>
 </mat-menu>

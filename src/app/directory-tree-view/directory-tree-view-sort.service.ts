@@ -1,27 +1,31 @@
 import { Injectable } from '@angular/core';
 import * as moment from 'moment/moment';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, combineLatest, map } from 'rxjs';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { NestedNode } from './directory-tree-view.model';
 
+export type DirectoryTreeViewSortKey = 'Name' | 'ShootingDateTime';
+export type DirectoryTreeViewSortDirection = 'Ascending' | 'Descending';
 export class DirectoryTreeViewSortConfig {
-  public key: 'Name' | 'ShootingDateTime';
-  public direction: 'Ascending' | 'Descending';
+  public key: DirectoryTreeViewSortKey;
+  public direction: DirectoryTreeViewSortDirection;
 }
 
+type SortKey = DirectoryTreeViewSortKey;
+type SortDirection = DirectoryTreeViewSortDirection;
 type SortConfig = DirectoryTreeViewSortConfig;
 
 @Injectable({
   providedIn: 'root'
 })
 export class DirectoryTreeViewSortService {
-  public readonly sortRequested = new BehaviorSubject<SortConfig>({key: 'Name', direction: 'Ascending'});
+  public readonly sortKey$ = new BehaviorSubject<SortKey>('Name');
+  public readonly sortDirection$ = new BehaviorSubject<SortDirection>('Ascending');
+  public readonly sortRequested$ = combineLatest([this.sortKey$, this.sortDirection$]).pipe(map(([key, direction]) => {
+    return {key, direction};
+  }));
 
   constructor(private photoDataService: PhotoDataService) { }
-
-  public requestSortingData(sortConfig: SortConfig) {
-    this.sortRequested.next(sortConfig);
-  }
 
   public sortData(data: NestedNode[], sortConfig: SortConfig): NestedNode[] {
     if (data.length === 0) { return data; }
