@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { IconDataUrl } from '../../../../assets/icon-data-url';
+import { DirectoryTreeViewSortService } from '../../../directory-tree-view/directory-tree-view-sort.service';
 import {
   DirectoryTreeViewSortDirection,
   DirectoryTreeViewSortKey,
-  DirectoryTreeViewSortService
-} from '../../../directory-tree-view/directory-tree-view-sort.service';
+} from '../../../directory-tree-view/directory-tree-view-sort-config';
 
 @Component({
   selector: 'app-sidebar-upper-pane-more-options',

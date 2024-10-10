@@ -10,6 +10,11 @@ export namespace UserDataStoragePath {
     export const ClickedOkOnWelcomeDialog: ReadonlyArray<string> = ['History', 'ClickedOkOnWelcomeDialog'];
   }
 
+  export namespace DirectoryTreeView {
+    export const SortKey: ReadonlyArray<string> = ['DirectoryTreeView', 'SortKey'];
+    export const SortDirection: ReadonlyArray<string> = ['DirectoryTreeView', 'SortDirection'];
+  }
+
   export namespace GoogleMaps {
     export const ApiKey: ReadonlyArray<string> = ['GoogleMaps', 'ApiKey'];
   }

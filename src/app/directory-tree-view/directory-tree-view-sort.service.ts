@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
 import * as moment from 'moment/moment';
 import { BehaviorSubject, combineLatest, map } from 'rxjs';
+import { Analytics } from '../../../src-shared/analytics/analytics';
+import { UserDataStorage } from '../../../src-shared/user-data-storage/user-data-storage';
+import { UserDataStoragePath } from '../../../src-shared/user-data-storage/user-data-stroage-path';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { NestedNode } from './directory-tree-view.model';
-
-export type DirectoryTreeViewSortKey = 'Name' | 'ShootingDateTime';
-export type DirectoryTreeViewSortDirection = 'Ascending' | 'Descending';
-export class DirectoryTreeViewSortConfig {
-  public key: DirectoryTreeViewSortKey;
-  public direction: DirectoryTreeViewSortDirection;
-}
+import {
+  DirectoryTreeViewSortConfig,
+  DirectoryTreeViewSortDirection,
+  DirectoryTreeViewSortDirection_Ascending,
+  DirectoryTreeViewSortKey,
+  DirectoryTreeViewSortKey_Name
+} from './directory-tree-view-sort-config';
 
 type SortKey = DirectoryTreeViewSortKey;
 type SortDirection = DirectoryTreeViewSortDirection;
@@ -19,13 +22,51 @@ type SortConfig = DirectoryTreeViewSortConfig;
   providedIn: 'root'
 })
 export class DirectoryTreeViewSortService {
-  public readonly sortKey$ = new BehaviorSubject<SortKey>('Name');
-  public readonly sortDirection$ = new BehaviorSubject<SortDirection>('Ascending');
+  public readonly sortKey$ = new BehaviorSubject<SortKey>(DirectoryTreeViewSortKey_Name);
+  public readonly sortDirection$ = new BehaviorSubject<SortDirection>(DirectoryTreeViewSortDirection_Ascending);
   public readonly sortRequested$ = combineLatest([this.sortKey$, this.sortDirection$]).pipe(map(([key, direction]) => {
     return {key, direction};
   }));
 
-  constructor(private photoDataService: PhotoDataService) { }
+  constructor(private photoDataService: PhotoDataService) {
+    this.loadSortKeyFromUserDataStorage();
+    this.configureSavingSortKeyWhenChanged();
+
+    this.loadSortDirectionFromUserDataStorage();
+    this.configureSavingSortDirectionWhenChanged();
+  }
+
+  private loadSortKeyFromUserDataStorage() {
+    const sortKey = UserDataStorage.readOrDefault(
+      UserDataStoragePath.DirectoryTreeView.SortKey,
+      DirectoryTreeViewSortKey_Name,
+    ) as SortKey;
+    this.sortKey$.next(sortKey);
+  }
+
+  private configureSavingSortKeyWhenChanged() {
+    // No need of unsubscribing since sortKey$ exists for the entire application lifetime.
+    this.sortKey$.subscribe(sortKey => {
+      UserDataStorage.write(UserDataStoragePath.DirectoryTreeView.SortKey, sortKey);
+      Analytics.trackEvent('Directory Tree View', `[Tree View] Sort Key`, `Changed Sort Key to ${sortKey}`);
+    });
+  }
+
+  private loadSortDirectionFromUserDataStorage() {
+    const sortDirection = UserDataStorage.readOrDefault(
+      UserDataStoragePath.DirectoryTreeView.SortDirection,
+      DirectoryTreeViewSortDirection_Ascending,
+    ) as SortDirection;
+    this.sortDirection$.next(sortDirection);
+  }
+
+  private configureSavingSortDirectionWhenChanged() {
+    // No need of unsubscribing since sortDirection$ exists for the entire application lifetime.
+    this.sortDirection$.subscribe(sortDirection => {
+      UserDataStorage.write(UserDataStoragePath.DirectoryTreeView.SortDirection, sortDirection);
+      Analytics.trackEvent('Directory Tree View', `[Tree View] Sort Direction`, `Changed Sort Direction to ${sortDirection}`);
+    });
+  }
 
   public sortData(data: NestedNode[], sortConfig: SortConfig): NestedNode[] {
     if (data.length === 0) { return data; }
