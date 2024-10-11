@@ -13,6 +13,7 @@ import { dirTreeViewContextMenuItems } from './dir-tree-view-context-menu/dir-tr
 import { DirTreeViewPhotoInfoDisplayLogic } from './dir-tree-view-photo-info/dir-tree-view-photo-info-display-logic';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { DirectoryTreeViewSelectionService } from './directory-tree-view-selection.service';
+import { DirectoryTreeViewSortConfig } from './directory-tree-view-sort-config';
 import { DirectoryTreeViewSortService } from './directory-tree-view-sort.service';
 import { FlatNode, NestedNode } from './directory-tree-view.model';
 
@@ -63,7 +64,7 @@ export class DirectoryTreeViewComponent implements OnInit {
 
   constructor(directoryTreeViewDataService: DirectoryTreeViewDataService,
               directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
-              directoryTreeViewSortService: DirectoryTreeViewSortService,
+              private directoryTreeViewSortService: DirectoryTreeViewSortService,
               private selectedPhotoService: SelectedPhotoService,
               private photoDataService: PhotoDataService,
               private changeDetectorRef: ChangeDetectorRef,
@@ -75,14 +76,11 @@ export class DirectoryTreeViewComponent implements OnInit {
     directoryTreeViewDataService.dataReplaced
       .subscribe(data => this.handleDirectoryTreeViewDataReplaced(data));
 
+    directoryTreeViewSortService.sortConfig$
+      .subscribe(sortConfig => this.sortData(sortConfig));
+
     directoryTreeViewSelectionService.selectionRequested
       .subscribe(photoPaths => this.handleDirectoryTreeViewSelectionRequested(photoPaths));
-
-    directoryTreeViewSortService.sortRequested$
-      .subscribe(sortConfig => {
-        const sortedData = directoryTreeViewSortService.sortData(this.dataSource.data, sortConfig);
-        this.dataSource.data = sortedData;
-      });
   }
 
   public ngOnInit() {
@@ -100,6 +98,9 @@ export class DirectoryTreeViewComponent implements OnInit {
     const rootNestedNode = data[0];
     const rootFlatNode = this.nestedToFlatNodeMap.get(rootNestedNode);
 
+    const sortConfig = this.directoryTreeViewSortService.sortConfig$.value;
+    this.sortData(sortConfig);
+
     if (rootFlatNode.isSelectable) {
       // When the root node is selectable (i.e. some photos with location data exist in the opened folder),
       // select the root node in order to select all photos as the map's state after loading the folder.
@@ -113,6 +114,11 @@ export class DirectoryTreeViewComponent implements OnInit {
     if (rootFlatNode.isExpandable) {
       this.treeControl.expand(rootFlatNode);
     }
+  }
+
+  private sortData(sortConfig: DirectoryTreeViewSortConfig) {
+    const sortedData = this.directoryTreeViewSortService.sortData(this.dataSource.data, sortConfig);
+    this.dataSource.data = sortedData;
   }
 
   private handleDirectoryTreeViewSelectionRequested(photoPaths: string[]) {

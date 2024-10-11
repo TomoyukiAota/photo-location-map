@@ -23,6 +23,10 @@ export const DirectoryTreeViewSortDirection_List = [
 export type DirectoryTreeViewSortDirection = typeof DirectoryTreeViewSortDirection_List[number];
 
 export class DirectoryTreeViewSortConfig {
-  public key: DirectoryTreeViewSortKey;
-  public direction: DirectoryTreeViewSortDirection;
+  constructor(public readonly key: DirectoryTreeViewSortKey,
+              public readonly direction: DirectoryTreeViewSortDirection,
+  ) {
+  }
 }
+
+export const defaultDirectoryTreeViewSortConfig = new DirectoryTreeViewSortConfig(DirectoryTreeViewSortKey_Name, DirectoryTreeViewSortDirection_Ascending);

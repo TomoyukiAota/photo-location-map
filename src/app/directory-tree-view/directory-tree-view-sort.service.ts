@@ -7,26 +7,24 @@ import { UserDataStoragePath } from '../../../src-shared/user-data-storage/user-
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { NestedNode } from './directory-tree-view.model';
 import {
+  defaultDirectoryTreeViewSortConfig,
   DirectoryTreeViewSortConfig,
   DirectoryTreeViewSortDirection,
-  DirectoryTreeViewSortDirection_Ascending,
   DirectoryTreeViewSortKey,
-  DirectoryTreeViewSortKey_Name
 } from './directory-tree-view-sort-config';
 
 type SortKey = DirectoryTreeViewSortKey;
 type SortDirection = DirectoryTreeViewSortDirection;
 type SortConfig = DirectoryTreeViewSortConfig;
+const defaultSortConfig = defaultDirectoryTreeViewSortConfig;
 
 @Injectable({
   providedIn: 'root'
 })
 export class DirectoryTreeViewSortService {
-  public readonly sortKey$ = new BehaviorSubject<SortKey>(DirectoryTreeViewSortKey_Name);
-  public readonly sortDirection$ = new BehaviorSubject<SortDirection>(DirectoryTreeViewSortDirection_Ascending);
-  public readonly sortRequested$ = combineLatest([this.sortKey$, this.sortDirection$]).pipe(map(([key, direction]) => {
-    return {key, direction};
-  }));
+  public readonly sortKey$ = new BehaviorSubject<SortKey>(defaultSortConfig.key);
+  public readonly sortDirection$ = new BehaviorSubject<SortDirection>(defaultSortConfig.direction);
+  public readonly sortConfig$ = new BehaviorSubject<SortConfig>(defaultSortConfig);
 
   constructor(private photoDataService: PhotoDataService) {
     this.loadSortKeyFromUserDataStorage();
@@ -34,12 +32,14 @@ export class DirectoryTreeViewSortService {
 
     this.loadSortDirectionFromUserDataStorage();
     this.configureSavingSortDirectionWhenChanged();
+
+    this.configureSortConfig();
   }
 
   private loadSortKeyFromUserDataStorage() {
     const sortKey = UserDataStorage.readOrDefault(
       UserDataStoragePath.DirectoryTreeView.SortKey,
-      DirectoryTreeViewSortKey_Name,
+      defaultSortConfig.key,
     ) as SortKey;
     this.sortKey$.next(sortKey);
   }
@@ -55,7 +55,7 @@ export class DirectoryTreeViewSortService {
   private loadSortDirectionFromUserDataStorage() {
     const sortDirection = UserDataStorage.readOrDefault(
       UserDataStoragePath.DirectoryTreeView.SortDirection,
-      DirectoryTreeViewSortDirection_Ascending,
+      defaultSortConfig.direction,
     ) as SortDirection;
     this.sortDirection$.next(sortDirection);
   }
@@ -66,6 +66,13 @@ export class DirectoryTreeViewSortService {
       UserDataStorage.write(UserDataStoragePath.DirectoryTreeView.SortDirection, sortDirection);
       Analytics.trackEvent('Directory Tree View', `[Tree View] Sort Direction`, `Changed Sort Direction to ${sortDirection}`);
     });
+  }
+
+  private configureSortConfig() {
+    const sortConfigObservable$ = combineLatest([this.sortKey$, this.sortDirection$]).pipe(map(([key, direction]) => {
+      return {key, direction};
+    }));
+    sortConfigObservable$.subscribe(this.sortConfig$); // No need of unsubscribing since sortKey$ and sortDirection$ exist for the entire application lifetime.
   }
 
   public sortData(data: NestedNode[], sortConfig: SortConfig): NestedNode[] {
