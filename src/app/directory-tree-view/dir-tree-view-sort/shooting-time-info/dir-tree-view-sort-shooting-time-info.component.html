@@ -1,1 +1,24 @@
-<div>Placeholder for DirTreeViewSortShootingTimeInfoComponent</div>
+<div class="message">
+  <div class="message-main">
+    When "By Shooting Time" is selected, in order to sort files, this application
+    <ol>
+      <li>tries to use DateTimeOriginal in EXIF, and if it is not available,</li>
+      <li>use the modified time of the file.</li>
+    </ol>
+    Note that folders are still sorted by their names since there is no concept of "Shooting Time" of folders.
+  </div>
+  <hr>
+  <div class="message-details">
+    <p>Below are details for reference:</p>
+    <p>DateTimeOriginal in EXIF is the most trustworthy information about the time when the photo is taken.</p>
+    <p>DateTimeOriginal is written by the most cameras for the most JPEG/HEIF/TIFF files, but sometime it is missing.</p>
+    <p>It is sure that the modified time always exists for files, and the modified time is likely the time when the photo is taken,
+      so the modified time is used when DateTimeOriginal is not available.</p>
+    <p>Also, files other than JPEG/HEIF/TIFF do not have EXIF in the first place, so the modified time is used for such files.</p>
+  </div>
+</div>
+<button mat-stroked-button
+        mat-dialog-close
+        class="close-button">
+  Close
+</button>
