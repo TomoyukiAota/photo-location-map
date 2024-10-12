@@ -1,4 +1,5 @@
-<button mat-icon-button [matMenuTriggerFor]="moreOptionsMenu">
+<button mat-icon-button [matMenuTriggerFor]="moreOptionsMenu" #matMenuTrigger="matMenuTrigger"
+        class="more-options-button" [ngClass]="{'menu-open': matMenuTrigger.menuOpen}">
   <mat-icon fontIcon="more_horiz" class="more-options-icon"></mat-icon>
 </button>
 <mat-menu #moreOptionsMenu>
