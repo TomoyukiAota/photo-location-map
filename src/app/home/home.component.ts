@@ -49,7 +49,8 @@ export class HomeComponent implements AfterViewInit, OnInit {
   }
 
   ngAfterViewInit() {
-    const gutterSize = 8; // 8px, which is the same width as the splitter gutter in Photo Data Viewer.
+    const gutterSize = 8;              // 8px, which is the same width as the splitter gutter in Photo Data Viewer.
+    const gutterSizeWithinSidebar = 4; // Smaller compared to the other gutters, but this is for esthetic of GUI.
 
     Split(['#home-left-sidebar', '#home-right'], {
       sizes: [25, 75],
@@ -58,7 +59,7 @@ export class HomeComponent implements AfterViewInit, OnInit {
       snapOffset: 0,
     });
 
-    this.configureSplitWithinSidebar(gutterSize);
+    this.configureSplitWithinSidebar(gutterSizeWithinSidebar);
 
     Split(['#home-map', '#home-chart'], {
       direction: 'vertical',
