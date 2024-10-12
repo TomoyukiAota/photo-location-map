@@ -29,6 +29,7 @@ import { SidebarUpperPaneMoreOptionsComponent } from './sidebar/upper-pane/more-
 import { SidebarLowerPaneComponent } from './sidebar/lower-pane/sidebar-lower-pane.component';
 import { DirectoryTreeViewComponent } from './directory-tree-view/directory-tree-view.component';
 import { DirTreeViewPhotoInfoComponent } from './directory-tree-view/dir-tree-view-photo-info/dir-tree-view-photo-info.component';
+import { DirTreeViewSortShootingTimeInfoComponent } from './directory-tree-view/dir-tree-view-sort/shooting-time-info/dir-tree-view-sort-shooting-time-info.component';
 import { LoadingFolderDialogComponent } from './loading-folder/dialog/loading-folder-dialog.component';
 import { MapComponent } from './map/map/map.component';
 import { GoogleMapsComponent } from './map/google-maps/google-maps.component';
@@ -63,6 +64,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     SidebarLowerPaneComponent,
     DirectoryTreeViewComponent,
     DirTreeViewPhotoInfoComponent,
+    DirTreeViewSortShootingTimeInfoComponent,
     LoadingFolderDialogComponent,
     MapComponent,
     GoogleMapsComponent,

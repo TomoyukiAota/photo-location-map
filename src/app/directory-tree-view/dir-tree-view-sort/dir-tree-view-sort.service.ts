@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import * as moment from 'moment/moment';
 import { BehaviorSubject, combineLatest, map } from 'rxjs';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
@@ -12,6 +13,9 @@ import {
   DirTreeViewSortDirection,
   DirTreeViewSortKey,
 } from './dir-tree-view-sort-config';
+import {
+  DirTreeViewSortShootingTimeInfoComponent
+} from './shooting-time-info/dir-tree-view-sort-shooting-time-info.component';
 
 type SortKey = DirTreeViewSortKey;
 type SortDirection = DirTreeViewSortDirection;
@@ -26,7 +30,9 @@ export class DirTreeViewSortService {
   public readonly sortDirection$ = new BehaviorSubject<SortDirection>(defaultSortConfig.direction);
   public readonly sortConfig$ = new BehaviorSubject<SortConfig>(defaultSortConfig);
 
-  constructor(private photoDataService: PhotoDataService) {
+  constructor(private dialog: MatDialog,
+              private photoDataService: PhotoDataService,
+  ) {
     this.loadSortKeyFromUserDataStorage();
     this.configureSavingSortKeyWhenChanged();
 
@@ -141,5 +147,16 @@ export class DirTreeViewSortService {
     const momentOfDateTimeOriginal = this.photoDataService.getPhoto(node.path)?.exif?.dateTimeOriginal?.moment;
     const momentForThisNode = momentOfDateTimeOriginal ?? moment(node.fsStats.mtime);
     return momentForThisNode;
+  }
+
+  public showShootingTimeInfoDialog() {
+    this.dialog.open(DirTreeViewSortShootingTimeInfoComponent, {
+      width: '500px',
+      height: '125px',
+      panelClass: 'custom-dialog-container',
+      disableClose: false,
+      autoFocus: false,
+      restoreFocus: false
+    });
   }
 }

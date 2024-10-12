@@ -12,7 +12,12 @@
   </button>
   <button mat-menu-item (click)="handleSortKeyMenuItemClicked('ShootingDateTime')">
     <mat-icon fontIcon="check" [style.visibility]="sortService.sortKey$.value === 'ShootingDateTime' ? 'visible' : 'hidden'"></mat-icon>
-    <label>By Shooting Time</label>
+    <div class="shooting-time-label-and-info-button">
+      <label>By Shooting Time</label>
+      <button mat-icon-button (click)="handleShootingTimeInfoButtonClicked($event)">
+        <mat-icon fontIcon="info"></mat-icon>
+      </button>
+    </div>
   </button>
   <mat-divider></mat-divider>
   <button mat-menu-item (click)="handleSortDirectionMenuItemClicked('Ascending')">

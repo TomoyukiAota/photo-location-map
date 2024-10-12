@@ -24,6 +24,11 @@ export class SidebarUpperPaneMoreOptionsComponent {
     this.sortService.sortKey$.next(sortKey);
   }
 
+  public handleShootingTimeInfoButtonClicked(event: MouseEvent) {
+    event.stopPropagation();
+    this.sortService.showShootingTimeInfoDialog();
+  }
+
   public handleSortDirectionMenuItemClicked(sortDirection: DirTreeViewSortDirection) {
     this.sortService.sortDirection$.next(sortDirection);
   }
