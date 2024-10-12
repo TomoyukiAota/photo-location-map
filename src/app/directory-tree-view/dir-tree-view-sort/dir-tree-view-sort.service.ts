@@ -111,11 +111,11 @@ export class DirTreeViewSortService {
     const direction = sortConfig.direction;
     if (sortConfig.key === 'Name') {
       return this.compareNodesUsingSortConfig(a, b, {key: 'Name', direction});
-    } else { // if ShootingDateTime
+    } else { // if ShootingTime
       if (a.type === 'directory') {
         return this.compareNodesUsingSortConfig(a, b, {key: 'Name', direction});
       } else { // if a.type === 'file'
-        return this.compareNodesUsingSortConfig(a, b, {key: 'ShootingDateTime', direction});
+        return this.compareNodesUsingSortConfig(a, b, {key: 'ShootingTime', direction});
       }
     }
   }
@@ -129,7 +129,7 @@ export class DirTreeViewSortService {
       } else { // if Descending
         return nameA < nameB ? 1 : -1;
       }
-    } else if (sortConfig.key === 'ShootingDateTime') {
+    } else if (sortConfig.key === 'ShootingTime') {
       const momentA = this.getMoment(a);
       const momentB = this.getMoment(b);
       if (sortConfig.direction === 'Ascending') {

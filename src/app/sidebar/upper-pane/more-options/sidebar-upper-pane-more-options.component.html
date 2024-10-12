@@ -10,8 +10,8 @@
     <mat-icon fontIcon="check" [style.visibility]="sortService.sortKey$.value === 'Name' ? 'visible' : 'hidden'"></mat-icon>
     <label>By Name</label>
   </button>
-  <button mat-menu-item (click)="handleSortKeyMenuItemClicked('ShootingDateTime')">
-    <mat-icon fontIcon="check" [style.visibility]="sortService.sortKey$.value === 'ShootingDateTime' ? 'visible' : 'hidden'"></mat-icon>
+  <button mat-menu-item (click)="handleSortKeyMenuItemClicked('ShootingTime')">
+    <mat-icon fontIcon="check" [style.visibility]="sortService.sortKey$.value === 'ShootingTime' ? 'visible' : 'hidden'"></mat-icon>
     <div class="shooting-time-label-and-info-button">
       <label>By Shooting Time</label>
       <button mat-icon-button (click)="handleShootingTimeInfoButtonClicked($event)">
