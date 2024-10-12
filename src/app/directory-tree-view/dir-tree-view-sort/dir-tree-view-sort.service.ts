@@ -1,27 +1,27 @@
 import { Injectable } from '@angular/core';
 import * as moment from 'moment/moment';
 import { BehaviorSubject, combineLatest, map } from 'rxjs';
-import { Analytics } from '../../../src-shared/analytics/analytics';
-import { UserDataStorage } from '../../../src-shared/user-data-storage/user-data-storage';
-import { UserDataStoragePath } from '../../../src-shared/user-data-storage/user-data-stroage-path';
-import { PhotoDataService } from '../shared/service/photo-data.service';
-import { NestedNode } from './directory-tree-view.model';
+import { Analytics } from '../../../../src-shared/analytics/analytics';
+import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
+import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/user-data-stroage-path';
+import { PhotoDataService } from '../../shared/service/photo-data.service';
+import { NestedNode } from '../directory-tree-view.model';
 import {
-  defaultDirectoryTreeViewSortConfig,
-  DirectoryTreeViewSortConfig,
-  DirectoryTreeViewSortDirection,
-  DirectoryTreeViewSortKey,
-} from './directory-tree-view-sort-config';
+  defaultDirTreeViewSortConfig,
+  DirTreeViewSortConfig,
+  DirTreeViewSortDirection,
+  DirTreeViewSortKey,
+} from './dir-tree-view-sort-config';
 
-type SortKey = DirectoryTreeViewSortKey;
-type SortDirection = DirectoryTreeViewSortDirection;
-type SortConfig = DirectoryTreeViewSortConfig;
-const defaultSortConfig = defaultDirectoryTreeViewSortConfig;
+type SortKey = DirTreeViewSortKey;
+type SortDirection = DirTreeViewSortDirection;
+type SortConfig = DirTreeViewSortConfig;
+const defaultSortConfig = defaultDirTreeViewSortConfig;
 
 @Injectable({
   providedIn: 'root'
 })
-export class DirectoryTreeViewSortService {
+export class DirTreeViewSortService {
   public readonly sortKey$ = new BehaviorSubject<SortKey>(defaultSortConfig.key);
   public readonly sortDirection$ = new BehaviorSubject<SortDirection>(defaultSortConfig.direction);
   public readonly sortConfig$ = new BehaviorSubject<SortConfig>(defaultSortConfig);

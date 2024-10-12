@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { PhotoDataService } from '../shared/service/photo-data.service';
-import { DirectoryTreeViewSortService } from './directory-tree-view-sort.service';
+import { DirTreeViewSortService } from './dir-tree-view-sort/dir-tree-view-sort.service';
 import { NestedNode } from './directory-tree-view.model';
 
 /**
@@ -14,7 +14,7 @@ export class DirectoryTreeViewDataService {
   public readonly dataReplaced = new BehaviorSubject<NestedNode[]>([]);
 
   constructor(private photoDataService: PhotoDataService,
-              private sortService: DirectoryTreeViewSortService,
+              private sortService: DirTreeViewSortService,
   ) {
   }
 

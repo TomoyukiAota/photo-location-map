@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { IconDataUrl } from '../../../../assets/icon-data-url';
-import { DirectoryTreeViewSortService } from '../../../directory-tree-view/directory-tree-view-sort.service';
+import { DirTreeViewSortService } from '../../../directory-tree-view/dir-tree-view-sort/dir-tree-view-sort.service';
 import {
-  DirectoryTreeViewSortDirection,
-  DirectoryTreeViewSortKey,
-} from '../../../directory-tree-view/directory-tree-view-sort-config';
+  DirTreeViewSortDirection,
+  DirTreeViewSortKey,
+} from '../../../directory-tree-view/dir-tree-view-sort/dir-tree-view-sort-config';
 
 @Component({
   selector: 'app-sidebar-upper-pane-more-options',
@@ -13,18 +13,18 @@ import {
   styleUrl: './sidebar-upper-pane-more-options.component.scss'
 })
 export class SidebarUpperPaneMoreOptionsComponent {
-  constructor(public sortService: DirectoryTreeViewSortService,
+  constructor(public sortService: DirTreeViewSortService,
               private sanitizer: DomSanitizer,
   ) {
   }
 
   public get moreOptionsIconDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.moreOptions); }
 
-  public handleSortKeyMenuItemClicked(sortKey: DirectoryTreeViewSortKey) {
+  public handleSortKeyMenuItemClicked(sortKey: DirTreeViewSortKey) {
     this.sortService.sortKey$.next(sortKey);
   }
 
-  public handleSortDirectionMenuItemClicked(sortDirection: DirectoryTreeViewSortDirection) {
+  public handleSortDirectionMenuItemClicked(sortDirection: DirTreeViewSortDirection) {
     this.sortService.sortDirection$.next(sortDirection);
   }
 }

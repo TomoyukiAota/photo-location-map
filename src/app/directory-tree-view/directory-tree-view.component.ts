@@ -13,8 +13,8 @@ import { dirTreeViewContextMenuItems } from './dir-tree-view-context-menu/dir-tr
 import { DirTreeViewPhotoInfoDisplayLogic } from './dir-tree-view-photo-info/dir-tree-view-photo-info-display-logic';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { DirectoryTreeViewSelectionService } from './directory-tree-view-selection.service';
-import { DirectoryTreeViewSortConfig } from './directory-tree-view-sort-config';
-import { DirectoryTreeViewSortService } from './directory-tree-view-sort.service';
+import { DirTreeViewSortConfig } from './dir-tree-view-sort/dir-tree-view-sort-config';
+import { DirTreeViewSortService } from './dir-tree-view-sort/dir-tree-view-sort.service';
 import { FlatNode, NestedNode } from './directory-tree-view.model';
 
 const dirTreeViewLogger = createPrependedLogger('[Directory Tree View]');
@@ -64,7 +64,7 @@ export class DirectoryTreeViewComponent implements OnInit {
 
   constructor(directoryTreeViewDataService: DirectoryTreeViewDataService,
               directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
-              private directoryTreeViewSortService: DirectoryTreeViewSortService,
+              private sortService: DirTreeViewSortService,
               private selectedPhotoService: SelectedPhotoService,
               private photoDataService: PhotoDataService,
               private changeDetectorRef: ChangeDetectorRef,
@@ -76,7 +76,7 @@ export class DirectoryTreeViewComponent implements OnInit {
     directoryTreeViewDataService.dataReplaced
       .subscribe(data => this.handleDirectoryTreeViewDataReplaced(data));
 
-    directoryTreeViewSortService.sortConfig$
+    sortService.sortConfig$
       .subscribe(sortConfig => this.sortData(sortConfig));
 
     directoryTreeViewSelectionService.selectionRequested
@@ -98,7 +98,7 @@ export class DirectoryTreeViewComponent implements OnInit {
     const rootNestedNode = data[0];
     const rootFlatNode = this.nestedToFlatNodeMap.get(rootNestedNode);
 
-    const sortConfig = this.directoryTreeViewSortService.sortConfig$.value;
+    const sortConfig = this.sortService.sortConfig$.value;
     this.sortData(sortConfig);
 
     if (rootFlatNode.isSelectable) {
@@ -116,8 +116,8 @@ export class DirectoryTreeViewComponent implements OnInit {
     }
   }
 
-  private sortData(sortConfig: DirectoryTreeViewSortConfig) {
-    const sortedData = this.directoryTreeViewSortService.sortData(this.dataSource.data, sortConfig);
+  private sortData(sortConfig: DirTreeViewSortConfig) {
+    const sortedData = this.sortService.sortData(this.dataSource.data, sortConfig);
     this.dataSource.data = sortedData;
   }
 
