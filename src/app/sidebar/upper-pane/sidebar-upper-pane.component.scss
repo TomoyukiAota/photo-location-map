@@ -1,7 +1,8 @@
 .container {
-  margin: 15px 20px;
+  margin: 10px 20px;
   display: grid;
   grid-template-columns: 1fr auto;
+  align-items: center;
 }
 
 .open-folder-button {

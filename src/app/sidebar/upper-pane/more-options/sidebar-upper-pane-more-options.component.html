@@ -1,7 +1,6 @@
-<picture class="more-options-icon" [matMenuTriggerFor]="moreOptionsMenu">
-  <img class="more-options-icon-img"
-       [src]="moreOptionsIconDataUrl">
-</picture>
+<button mat-icon-button [matMenuTriggerFor]="moreOptionsMenu">
+  <mat-icon fontIcon="more_horiz" class="more-options-icon"></mat-icon>
+</button>
 <mat-menu #moreOptionsMenu>
   <button mat-menu-item [matMenuTriggerFor]="sortMenu">Sort Photos</button>
 </mat-menu>

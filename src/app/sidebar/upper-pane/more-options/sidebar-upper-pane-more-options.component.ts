@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
-import { IconDataUrl } from '../../../../assets/icon-data-url';
 import { DirTreeViewSortService } from '../../../directory-tree-view/dir-tree-view-sort/dir-tree-view-sort.service';
 import {
   DirTreeViewSortDirection,
@@ -14,11 +12,8 @@ import {
 })
 export class SidebarUpperPaneMoreOptionsComponent {
   constructor(public sortService: DirTreeViewSortService,
-              private sanitizer: DomSanitizer,
   ) {
   }
-
-  public get moreOptionsIconDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.moreOptions); }
 
   public handleSortKeyMenuItemClicked(sortKey: DirTreeViewSortKey) {
     this.sortService.sortKey$.next(sortKey);
