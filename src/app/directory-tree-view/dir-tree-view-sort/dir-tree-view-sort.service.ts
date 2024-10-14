@@ -54,7 +54,6 @@ export class DirTreeViewSortService {
     // No need of unsubscribing since sortKey$ exists for the entire application lifetime.
     this.sortKey$.subscribe(sortKey => {
       UserDataStorage.write(UserDataStoragePath.DirectoryTreeView.SortKey, sortKey);
-      Analytics.trackEvent('Directory Tree View', `[Tree View] Sort Key`, `Changed Sort Key to ${sortKey}`);
     });
   }
 
@@ -70,7 +69,6 @@ export class DirTreeViewSortService {
     // No need of unsubscribing since sortDirection$ exists for the entire application lifetime.
     this.sortDirection$.subscribe(sortDirection => {
       UserDataStorage.write(UserDataStoragePath.DirectoryTreeView.SortDirection, sortDirection);
-      Analytics.trackEvent('Directory Tree View', `[Tree View] Sort Direction`, `Changed Sort Direction to ${sortDirection}`);
     });
   }
 

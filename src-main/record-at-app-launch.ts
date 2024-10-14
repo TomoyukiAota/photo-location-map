@@ -86,6 +86,16 @@ const recordLoadedLeafletBaseLayer = () => {
   Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Base Layer at App Launch`, `Base Layer at App Launch: "${loadedBaseLayer}"`);
 };
 
+const recordSidebarMenuSortKey = () => {
+  const sortKey = UserDataStorage.readOrDefault(UserDataStoragePath.DirectoryTreeView.SortKey, 'Not Loaded');
+  Analytics.trackEvent('Sidebar Menu', `[Sort] Key at App Launch`, `Sort Key at App Launch: ${sortKey}`);
+};
+
+const recordSideBarMenuSortDirection = () => {
+  const sortDirection = UserDataStorage.readOrDefault(UserDataStoragePath.DirectoryTreeView.SortDirection, 'Not Loaded');
+  Analytics.trackEvent('Sidebar Menu', `[Sort] Direction at App Launch`, `Sort Direction at App Launch: ${sortDirection}`);
+};
+
 export const recordAtAppLaunch = () => {
   recordAppLaunch();
   recordCurrentLaunchDateTime();
@@ -105,4 +115,7 @@ export const recordAtAppLaunch = () => {
   recordLoadedUserSettings();
 
   recordLoadedLeafletBaseLayer();
+
+  recordSidebarMenuSortKey();
+  recordSideBarMenuSortDirection();
 };
