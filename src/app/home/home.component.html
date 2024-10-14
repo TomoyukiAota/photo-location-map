@@ -1,6 +1,11 @@
 <div class="sidebar-and-map-container">
-  <div id="home-left-sidebar">
-    <app-sidebar></app-sidebar>
+  <div id="home-left-sidebar" #sidebar>
+    <div id="home-sidebar-upper-pane">
+      <app-sidebar-upper-pane></app-sidebar-upper-pane>
+    </div>
+    <div id="home-sidebar-lower-pane">
+      <app-sidebar-lower-pane></app-sidebar-lower-pane>
+    </div>
   </div>
   <div id="home-right">
     <div id="home-map">

@@ -1,0 +1,35 @@
+:host {
+  padding: 30px 30px 0 30px;
+
+  display: grid;
+  grid: "message"      auto
+        "close-button" auto
+        /auto;
+  justify-items: center;
+  .message      { grid-area: message;      }
+  .close-button { grid-area: close-button; }
+}
+
+.message {
+  margin-bottom: 20px;
+
+  .message-main {
+    margin-bottom: 20px;
+
+    ol > li::marker {
+      content:counter(list-item) ")\2003"; // To use brackets for <li>. e.g. 1) 2) 3) instead of 1. 2. 3.
+    }
+  }
+
+  .message-details {
+    margin-top: 15px;
+
+    p {
+      margin: 5px 0;
+    }
+  }
+}
+
+.close-button {
+  width: 80px;
+}

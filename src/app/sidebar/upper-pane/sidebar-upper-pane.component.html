@@ -1,5 +1,5 @@
-<div class="sidebar">
-  <div id="open-folder-button">
+<div class="container">
+  <div class="open-folder-button">
     <button mat-stroked-button
             [disabled]="thumbnailGenerationService.isGenerating | async"
             [title]="(thumbnailGenerationService.isGenerating | async) ? 'Cannot open a folder when generating thumbnails.' : ''"
@@ -7,8 +7,5 @@
       {{ 'SIDEBAR.OPEN_FOLDER' | translate }}
     </button>
   </div>
-  <div *ngIf="(isFolderOpened$ | async) === false" class="message-when-folder-is-not-opened">Please open a folder to see where photos were taken.</div>
-  <div class="directory-tree-view-area">
-    <app-directory-tree-view></app-directory-tree-view>
-  </div>
+  <app-sidebar-upper-pane-more-options></app-sidebar-upper-pane-more-options>
 </div>

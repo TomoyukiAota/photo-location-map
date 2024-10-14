@@ -1,0 +1,17 @@
+.more-options-button {
+  border-radius: 50%;
+
+  &:hover, &.menu-open {
+    backdrop-filter: brightness(90%);
+  }
+}
+
+.more-options-icon {
+  transform: scale(1.8);
+}
+
+.shooting-time-label-and-info-button {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}

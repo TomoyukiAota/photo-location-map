@@ -1,0 +1,31 @@
+<button mat-icon-button [matMenuTriggerFor]="moreOptionsMenu" #matMenuTrigger="matMenuTrigger"
+        class="more-options-button" [ngClass]="{'menu-open': matMenuTrigger.menuOpen}">
+  <mat-icon fontIcon="more_horiz" class="more-options-icon"></mat-icon>
+</button>
+<mat-menu #moreOptionsMenu>
+  <button mat-menu-item [matMenuTriggerFor]="sortMenu">Sort</button>
+</mat-menu>
+<mat-menu #sortMenu>
+  <button mat-menu-item (click)="handleSortKeyMenuItemClicked('Name')">
+    <mat-icon fontIcon="check" [style.visibility]="(sortService.sortKey$ | async) === 'Name' ? 'visible' : 'hidden'"></mat-icon>
+    <label>By Name</label>
+  </button>
+  <button mat-menu-item (click)="handleSortKeyMenuItemClicked('ShootingTime')">
+    <mat-icon fontIcon="check" [style.visibility]="(sortService.sortKey$ | async) === 'ShootingTime' ? 'visible' : 'hidden'"></mat-icon>
+    <div class="shooting-time-label-and-info-button">
+      <label>By Shooting Time</label>
+      <button mat-icon-button (click)="handleShootingTimeInfoButtonClicked($event)">
+        <mat-icon fontIcon="info"></mat-icon>
+      </button>
+    </div>
+  </button>
+  <mat-divider></mat-divider>
+  <button mat-menu-item (click)="handleSortDirectionMenuItemClicked('Ascending')">
+    <mat-icon fontIcon="check" [style.visibility]="(sortService.sortDirection$ | async) === 'Ascending' ? 'visible' : 'hidden'"></mat-icon>
+    <label>Ascending</label>
+  </button>
+  <button mat-menu-item (click)="handleSortDirectionMenuItemClicked('Descending')">
+    <mat-icon fontIcon="check" [style.visibility]="(sortService.sortDirection$ | async) === 'Descending' ? 'visible' : 'hidden'"></mat-icon>
+    <label>Descending</label>
+  </button>
+</mat-menu>

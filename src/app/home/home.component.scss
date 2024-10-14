@@ -20,6 +20,15 @@
 
 #home-left-sidebar {
   height: 100%;
+}
+
+#home-sidebar-upper-pane {
+  height: 100%;
+  overflow-y: hidden;
+}
+
+#home-sidebar-lower-pane {
+  height: 100%;
   overflow-y: auto;
 }
 

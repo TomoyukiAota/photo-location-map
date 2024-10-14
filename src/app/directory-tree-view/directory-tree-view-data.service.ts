@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { PhotoDataService } from '../shared/service/photo-data.service';
+import { DirTreeViewSortService } from './dir-tree-view-sort/dir-tree-view-sort.service';
 import { NestedNode } from './directory-tree-view.model';
 
 /**
@@ -12,12 +13,15 @@ import { NestedNode } from './directory-tree-view.model';
 export class DirectoryTreeViewDataService {
   public readonly dataReplaced = new BehaviorSubject<NestedNode[]>([]);
 
-  constructor(private photoDataService: PhotoDataService) {
+  constructor(private photoDataService: PhotoDataService,
+              private sortService: DirTreeViewSortService,
+  ) {
   }
 
   public replace(directoryTreeObject: DirectoryTree): void {
     const nestedNodeArray = this.convertToNestedNodeArray([directoryTreeObject]);
-    this.dataReplaced.next(nestedNodeArray);
+    const sorted = this.sortService.sortData(nestedNodeArray, {key: 'Name', direction: 'Ascending'});
+    this.dataReplaced.next(sorted);
   }
 
   private convertToNestedNodeArray(directoryTreeArray: DirectoryTree[]): NestedNode[] {
@@ -25,6 +29,8 @@ export class DirectoryTreeViewDataService {
       const nestedNode = new NestedNode();
       nestedNode.name = directoryTree.name;
       nestedNode.path = directoryTree.path;
+      nestedNode.type = directoryTree.type;
+      nestedNode.fsStats = directoryTree['fsStats'];
       nestedNode.isSelectable = this.isSelectableNode(directoryTree);
       nestedNode.children = !!directoryTree.children
         ? this.convertToNestedNodeArray(directoryTree.children)

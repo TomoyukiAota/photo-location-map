@@ -1,0 +1,10 @@
+.container {
+  margin: 10px 20px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+}
+
+.open-folder-button {
+  text-align: center;
+}
