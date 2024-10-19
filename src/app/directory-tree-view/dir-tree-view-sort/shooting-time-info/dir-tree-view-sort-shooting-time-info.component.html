@@ -11,8 +11,8 @@
     Note that folders are sorted by their names since there is no concept of "Shooting Time" of folders.
   </div>
 
-  <button mat-stroked-button (click)="detailsOpenState.set(!detailsOpenState())">
-    <div class="expand-button-content">
+  <button mat-stroked-button class="details-button" (click)="detailsOpenState.set(!detailsOpenState())">
+    <div class="details-button-content">
       <span>
         @if (detailsOpenState()) {
           Hide details for reference

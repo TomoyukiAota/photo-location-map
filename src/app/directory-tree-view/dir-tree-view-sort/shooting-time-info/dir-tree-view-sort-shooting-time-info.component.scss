@@ -1,5 +1,4 @@
 :host {
-  box-sizing: border-box;
   height: 100%;
 
   display: grid;
@@ -7,7 +6,6 @@
         "dialog-body"   1fr
         "dialog-footer" auto
         /1fr;
-  justify-items: center;
 
   .dialog-header { grid-area: dialog-header; }
   .dialog-body   { grid-area: dialog-body;   }
@@ -15,8 +13,6 @@
 }
 
 .dialog-header {
-  width: 100%;
-  box-sizing: border-box;
   padding: 10px 20px;
   border-bottom: 1px solid #7f7f7f;
   background-color: #eeeeee;
@@ -24,9 +20,6 @@
 }
 
 .dialog-body {
-  width: 100%;
-  box-sizing: border-box;
-
   overflow: auto;
   padding: 24px;
 
@@ -51,7 +44,11 @@
   }
 }
 
-.expand-button-content {
+.details-button {
+  width: 255px;
+}
+
+.details-button-content {
   display: flex;
   gap: 5px;
   align-items: center;
@@ -63,8 +60,6 @@
 }
 
 .dialog-footer {
-  width: 100%;
-  box-sizing: border-box;
   padding: 10px 20px;
   border-top: 1px solid #7f7f7f;
   background-color: #eeeeee;
@@ -74,6 +69,6 @@
 
 .close-button {
   width: 80px;
-  background-color: #7f7f7f;
+  background-color: #999999;
   color: whitesmoke;
 }
