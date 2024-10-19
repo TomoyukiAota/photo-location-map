@@ -55,7 +55,7 @@
   display: flex;
   gap: 5px;
   align-items: center;
-  font-weight: normal; // Restore "font-weight: 500" given by mat-button to the default value
+  font-weight: normal; // Restore "font-weight: 500" given by mat-button to the browser's default value
 }
 
 .expanded-expand-icon {
