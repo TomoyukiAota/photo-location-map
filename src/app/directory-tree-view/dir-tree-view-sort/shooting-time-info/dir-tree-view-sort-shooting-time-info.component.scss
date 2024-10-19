@@ -1,8 +1,15 @@
 :host {
-  padding: 30px 30px 0 30px;
+  box-sizing: border-box;
+
+  $dialog-width: 800px;
+  $scroll-bar-area-width: 20px;  // The area for the scrollbar to appear without corrupting the layout
+  width: calc($dialog-width - $scroll-bar-area-width);
+
+  height: 100%;
+  padding: 30px;
 
   display: grid;
-  grid: "message"      auto
+  grid: "message"      1fr
         "close-button" auto
         /auto;
   justify-items: center;
@@ -11,19 +18,21 @@
 }
 
 .message {
-  margin-bottom: 20px;
+  margin: 10px 0 20px 0;
 
   .message-main {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 
-    ol > li::marker {
-      content:counter(list-item) ")\2003"; // To use brackets for <li>. e.g. 1) 2) 3) instead of 1. 2. 3.
+    li {
+      margin-bottom: 10px;
+
+      &::marker {
+        content:counter(list-item) ")\2003"; // To use brackets for <li>. e.g. 1) 2) 3) instead of 1. 2. 3.
+      }
     }
   }
 
   .message-details {
-    margin-top: 15px;
-
     p {
       margin: 5px 0;
     }

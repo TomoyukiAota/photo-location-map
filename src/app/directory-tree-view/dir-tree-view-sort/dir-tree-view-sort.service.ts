@@ -148,8 +148,8 @@ export class DirTreeViewSortService {
 
   public showShootingTimeInfoDialog() {
     this.dialog.open(DirTreeViewSortShootingTimeInfoComponent, {
-      width: '600px',
-      height: '490px',
+      width: '800px',
+      height: '350px',
       panelClass: 'custom-dialog-container',
       disableClose: false,
       autoFocus: false,

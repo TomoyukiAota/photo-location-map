@@ -7,15 +7,22 @@
     </ol>
     Note that folders are sorted by their names since there is no concept of "Shooting Time" of folders.
   </div>
-  <hr>
-  <div class="message-details">
-    <p>Below are details for reference:</p>
+  <mat-expansion-panel (opened)="panelOpenState.set(true)" (closed)="panelOpenState.set(false)">
+    <mat-expansion-panel-header>
+      <mat-panel-description>
+        @if (panelOpenState()) {
+          Below are details for reference:
+        } @else {
+          Click here to read details...
+        }
+      </mat-panel-description>
+    </mat-expansion-panel-header>
     <p>DateTimeOriginal in EXIF is the most trustworthy information about the time when the photo was taken.</p>
     <p>DateTimeOriginal is written in most JPEG/HEIF/TIFF files by most cameras, but sometime it is missing.</p>
-    <p>The modified time always exists for files, and the modified time is often the time when the photo was taken,
-      so the modified time is used when DateTimeOriginal is not available.</p>
-    <p>Also, files other than JPEG/HEIF/TIFF do not have EXIF in the first place, so the modified time is used for such files.</p>
-  </div>
+    <p>The modified time of the file is often the time when the photo was taken,
+      so the modified time is used as an alternative when DateTimeOriginal is missing.</p>
+    <p>Also, files other than JPEG/HEIF/TIFF do not have EXIF  in the first place, so the modified time is always used for such files.</p>
+  </mat-expansion-panel>
 </div>
 <button mat-stroked-button
         mat-dialog-close

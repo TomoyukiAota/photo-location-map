@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 @Component({
   selector: 'app-dir-tree-view-sort-shooting-time-info',
@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrl: './dir-tree-view-sort-shooting-time-info.component.scss'
 })
 export class DirTreeViewSortShootingTimeInfoComponent {
-
+  readonly panelOpenState = signal(false);
 }
