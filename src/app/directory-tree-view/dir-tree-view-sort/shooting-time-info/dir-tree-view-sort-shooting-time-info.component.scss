@@ -21,10 +21,10 @@
 
 .dialog-body {
   overflow: auto;
-  padding: 24px;
+  padding: 25px 10px;
 
   .message-main {
-    margin-bottom: 30px;
+    padding: 0 0 20px 15px;
 
     li {
       margin-bottom: 10px;
@@ -36,16 +36,14 @@
   }
 
   .message-details {
-    margin-top: 20px;
+    margin-left: 20px;
+    padding: 5px 20px;
+    border-left: black 1px solid;
 
     p {
       margin: 10px 0;
     }
   }
-}
-
-.details-button {
-  width: 255px;
 }
 
 .details-button-content {
@@ -55,8 +53,8 @@
   font-weight: normal; // Restore "font-weight: 500" given by mat-button to the browser's default value
 }
 
-.expanded-expand-icon {
-  transform: rotate(180deg);
+.details-opened-icon {
+  transform: rotate(90deg);
 }
 
 .dialog-footer {
