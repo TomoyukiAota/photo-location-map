@@ -1,4 +1,7 @@
-<div class="message">
+<div class="dialog-header">
+  Sort By Shooting Time
+</div>
+<div class="dialog-body">
   <div class="message-main">
     When "By Shooting Time" is selected, in order to sort files, this application
     <ol>
@@ -7,25 +10,37 @@
     </ol>
     Note that folders are sorted by their names since there is no concept of "Shooting Time" of folders.
   </div>
-  <mat-expansion-panel (opened)="panelOpenState.set(true)" (closed)="panelOpenState.set(false)">
-    <mat-expansion-panel-header>
-      <mat-panel-description>
-        @if (panelOpenState()) {
-          Below are details for reference:
+
+  <button mat-stroked-button (click)="detailsOpenState.set(!detailsOpenState())">
+    <div class="expand-button-content">
+      <span>
+        @if (detailsOpenState()) {
+          Hide details for reference
         } @else {
           Read details for reference
         }
-      </mat-panel-description>
-    </mat-expansion-panel-header>
-    <p>DateTimeOriginal in EXIF is the most trustworthy information about the time when the photo was taken.</p>
-    <p>DateTimeOriginal is written in most JPEG/HEIF/TIFF files by most cameras, but sometime it is missing.</p>
-    <p>The modified time of the file is often the time when the photo was taken,
-      so the modified time is used as an alternative when DateTimeOriginal is missing.</p>
-    <p>Also, files other than JPEG/HEIF/TIFF do not have EXIF  in the first place, so the modified time is always used for such files.</p>
-  </mat-expansion-panel>
+      </span>
+      <mat-icon [ngClass]="{'expanded-expand-icon': detailsOpenState()}">
+        expand_more
+      </mat-icon>
+    </div>
+  </button>
+
+  @if (detailsOpenState()) {
+    <div class="message-details">
+      <p>Below are details for reference:</p>
+      <p>DateTimeOriginal in EXIF is the most trustworthy information about the time when the photo was taken.</p>
+      <p>DateTimeOriginal is written in most JPEG/HEIF/TIFF files by most cameras, but sometime it is missing.</p>
+      <p>The modified time of the file is often the time when the photo was taken,
+        so the modified time is used as an alternative when DateTimeOriginal is missing.</p>
+      <p>Also, files other than JPEG/HEIF/TIFF do not have EXIF  in the first place, so the modified time is always used for such files.</p>
+    </div>
+  }
 </div>
-<button mat-stroked-button
-        mat-dialog-close
-        class="close-button">
-  Close
-</button>
+<div class="dialog-footer">
+  <button mat-button
+          mat-dialog-close
+          class="close-button">
+    Close
+  </button>
+</div>

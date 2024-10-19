@@ -1,35 +1,37 @@
 :host {
   box-sizing: border-box;
-
-  $dialog-width: 840px;          // Need to be the same value used in DirTreeViewSortService::showShootingTimeInfoDialog function
-  $scroll-bar-area-width: 20px;  // The area for the scrollbar to appear without corrupting the layout
-  width: calc($dialog-width - $scroll-bar-area-width);
-
   height: 100%;
-  padding: 20px 30px;
 
   display: grid;
-  grid: "message"      1fr
-        "close-button" auto
-        /auto;
+  grid: "dialog-header" auto
+        "dialog-body"   1fr
+        "dialog-footer" auto
+        /1fr;
   justify-items: center;
-  .message      { grid-area: message;      }
-  .close-button { grid-area: close-button; }
+
+  .dialog-header { grid-area: dialog-header; }
+  .dialog-body   { grid-area: dialog-body;   }
+  .dialog-footer { grid-area: dialog-footer; }
 }
 
-// Copied from <mat-expansion-panel> using DevTools
-@mixin mat-expansion-panel-like-style {
-  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
-  border-radius: 4px;
+.dialog-header {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 20px;
+  border-bottom: 1px solid #7f7f7f;
+  background-color: #eeeeee;
+  font-size: 20px;
 }
 
-.message {
-  margin: 10px 0 20px 0;
+.dialog-body {
+  width: 100%;
+  box-sizing: border-box;
+
+  overflow: auto;
+  padding: 24px;
 
   .message-main {
     margin-bottom: 30px;
-    padding: 24px; // Align with the padding of the content within <mat-expansion-panel>
-    @include mat-expansion-panel-like-style;
 
     li {
       margin-bottom: 10px;
@@ -41,12 +43,37 @@
   }
 
   .message-details {
+    margin-top: 20px;
+
     p {
-      margin: 5px 0;
+      margin: 10px 0;
     }
   }
 }
 
+.expand-button-content {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  font-weight: normal; // Restore "font-weight: 500" given by mat-button to the default value
+}
+
+.expanded-expand-icon {
+  transform: rotate(180deg);
+}
+
+.dialog-footer {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 20px;
+  border-top: 1px solid #7f7f7f;
+  background-color: #eeeeee;
+  display: flex;
+  justify-content: end;
+}
+
 .close-button {
   width: 80px;
+  background-color: #7f7f7f;
+  color: whitesmoke;
 }

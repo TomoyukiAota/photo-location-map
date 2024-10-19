@@ -6,5 +6,5 @@ import { Component, signal } from '@angular/core';
   styleUrl: './dir-tree-view-sort-shooting-time-info.component.scss'
 })
 export class DirTreeViewSortShootingTimeInfoComponent {
-  public readonly panelOpenState = signal(false);
+  public readonly detailsOpenState = signal(false);
 }
