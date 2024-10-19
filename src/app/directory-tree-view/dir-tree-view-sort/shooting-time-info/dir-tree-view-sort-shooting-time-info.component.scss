@@ -1,35 +1,74 @@
 :host {
-  padding: 30px 30px 0 30px;
+  height: 100%;
 
   display: grid;
-  grid: "message"      auto
-        "close-button" auto
-        /auto;
-  justify-items: center;
-  .message      { grid-area: message;      }
-  .close-button { grid-area: close-button; }
+  grid: "dialog-header" auto
+        "dialog-body"   1fr
+        "dialog-footer" auto
+        /1fr;
+
+  .dialog-header { grid-area: dialog-header; }
+  .dialog-body   { grid-area: dialog-body;   }
+  .dialog-footer { grid-area: dialog-footer; }
 }
 
-.message {
-  margin-bottom: 20px;
+.dialog-header {
+  padding: 10px 20px;
+  border-bottom: 1px solid #7f7f7f;
+  background-color: #eeeeee;
+  font-size: 20px;
+}
+
+.dialog-body {
+  overflow: auto;
+  padding: 24px;
 
   .message-main {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 
-    ol > li::marker {
-      content:counter(list-item) ")\2003"; // To use brackets for <li>. e.g. 1) 2) 3) instead of 1. 2. 3.
+    li {
+      margin-bottom: 10px;
+
+      &::marker {
+        content:counter(list-item) ")\2003"; // To use brackets for <li>. e.g. 1) 2) 3) instead of 1. 2. 3.
+      }
     }
   }
 
   .message-details {
-    margin-top: 15px;
+    margin-top: 20px;
 
     p {
-      margin: 5px 0;
+      margin: 10px 0;
     }
   }
 }
 
+.details-button {
+  width: 255px;
+}
+
+.details-button-content {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  font-weight: normal; // Restore "font-weight: 500" given by mat-button to the browser's default value
+}
+
+.expanded-expand-icon {
+  transform: rotate(180deg);
+}
+
+.dialog-footer {
+  padding: 10px 20px;
+  border-top: 1px solid #7f7f7f;
+  background-color: #eeeeee;
+  display: flex;
+  justify-content: end;
+}
+
 .close-button {
   width: 80px;
+  background-color: #999999;
+  color: whitesmoke;
 }
