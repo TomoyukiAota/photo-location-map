@@ -11,18 +11,12 @@
     Note that folders are sorted by their names since there is no concept of "Shooting Time" of folders.
   </div>
 
-  <button mat-stroked-button class="details-button" (click)="detailsOpenState.set(!detailsOpenState())">
+  <button mat-button (click)="detailsOpenState.set(!detailsOpenState())">
     <div class="details-button-content">
-      <span>
-        @if (detailsOpenState()) {
-          Hide details for reference
-        } @else {
-          Read details for reference
-        }
-      </span>
-      <mat-icon fontIcon="expand_more"
-                [ngClass]="{'expanded-expand-icon': detailsOpenState()}">
+      <mat-icon fontIcon="chevron_right"
+                [ngClass]="{'details-opened-icon': detailsOpenState()}">
       </mat-icon>
+      <span>More details for reference</span>
     </div>
   </button>
 
