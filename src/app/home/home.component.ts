@@ -8,6 +8,8 @@ import {
   ViewChild,
 } from '@angular/core';
 import Split from 'split.js';
+import { Analytics } from '../../../src-shared/analytics/analytics';
+import { Logger } from '../../../src-shared/log/logger';
 import { LeafletMapForceRenderService } from '../map/leaflet-map/leaflet-map-force-render/leaflet-map-force-render.service';
 import { OpenFolderService } from '../shared/service/open-folder.service';
 import { LoadedFilesStatusBarService } from '../loaded-files-status-bar/service/loaded-files-status-bar.service';
@@ -23,8 +25,11 @@ import { ThumbnailGenerationStatusBarService } from '../thumbnail-generation/sta
 export class HomeComponent implements AfterViewInit, OnInit {
   public thumbnailGenerationStatusBarVisible = false;
   public loadedFilesStatusBarVisible: boolean;
+  private sidebarSplitInstance: Split.Instance;
+  private currentSidebarUpperPaneHeightPx: number;
 
   @ViewChild('sidebar') private sidebarDiv: ElementRef;
+  @ViewChild('sidebarUpperPane') private sidebarUpperPaneDiv: ElementRef;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
               private openFolderService: OpenFolderService,
@@ -74,22 +79,46 @@ export class HomeComponent implements AfterViewInit, OnInit {
   }
 
   private configureSplitWithinSidebar(gutterSize: number) {
-    const sidebarRect: DOMRect = this.sidebarDiv.nativeElement.getBoundingClientRect();
-    const sidebarHeightPx = sidebarRect.height;
     const upperPaneMaxHeightPx = 66;
-
-    // Taking gutter into account so that the actual initial height rendered on the browser becomes the same as the max height.
-    const upperPaneInitialHeightPx = upperPaneMaxHeightPx + (gutterSize / 2);
-
-    const upperPaneInitialHeightPercent = (upperPaneInitialHeightPx / sidebarHeightPx) * 100;
-    const lowerPaneInitialHeightPercent = 100 - upperPaneInitialHeightPercent;
-    Split(['#home-sidebar-upper-pane', '#home-sidebar-lower-pane'], {
+    const panesHeight = this.calculateSidebarPanesHeightPercent(upperPaneMaxHeightPx, gutterSize);
+    this.sidebarSplitInstance = Split(['#home-sidebar-upper-pane', '#home-sidebar-lower-pane'], {
       direction: 'vertical',
-      sizes: [upperPaneInitialHeightPercent, lowerPaneInitialHeightPercent],
+      sizes: panesHeight,
       minSize: [0, 0],
       maxSize: [upperPaneMaxHeightPx, Infinity],
       gutterSize: gutterSize,
       snapOffset: 0,
+      onDragEnd: () => {
+        this.currentSidebarUpperPaneHeightPx = this.getHeightPx(this.sidebarUpperPaneDiv);
+        Logger.info(`Changed sidebar upper pane height to ${this.currentSidebarUpperPaneHeightPx}px`);
+        Analytics.trackEvent('Sidebar', 'Changed Sidebar Upper Pane Height', `${this.currentSidebarUpperPaneHeightPx}px`);
+      }
     });
+    this.currentSidebarUpperPaneHeightPx = upperPaneMaxHeightPx;
+    this.handleWindowResize(gutterSize);
+  }
+
+  private calculateSidebarPanesHeightPercent(desiredUpperPaneHeightPx: number, gutterSize: number) {
+    const sidebarHeightPx = this.getHeightPx(this.sidebarDiv);
+
+    // Taking the gutter into account so that the actual height rendered on the browser becomes the same as the desired height.
+    const upperPaneHeightPxForSplitJs = desiredUpperPaneHeightPx + (gutterSize / 2);
+
+    const upperPaneHeightPercent = (upperPaneHeightPxForSplitJs / sidebarHeightPx) * 100;
+    const lowerPaneHeightPercent = 100 - upperPaneHeightPercent;
+
+    return [upperPaneHeightPercent, lowerPaneHeightPercent];
+  }
+
+  private getHeightPx(elementRef: ElementRef) {
+    const sidebarUpperPaneRect: DOMRect = elementRef.nativeElement.getBoundingClientRect();
+    return sidebarUpperPaneRect.height;
+  }
+
+  private handleWindowResize(gutterSize: number) {
+    window.onresize = () => {
+      const panesHeight = this.calculateSidebarPanesHeightPercent(this.currentSidebarUpperPaneHeightPx, gutterSize);
+      this.sidebarSplitInstance.setSizes(panesHeight);
+    };
   }
 }
