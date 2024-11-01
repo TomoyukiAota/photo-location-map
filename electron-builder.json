@@ -14,11 +14,15 @@
   "win": {
     "icon": "dist",
     "target": [
-      "nsis"
+      "nsis",
+      "portable"
     ]
   },
   "nsis": {
     "oneClick": false
+  },
+  "portable": {
+    "artifactName": "${productName} Portable ${version}.${ext}"
   },
   "mac": {
     "icon": "dist",
