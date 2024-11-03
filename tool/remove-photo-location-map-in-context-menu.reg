@@ -1,0 +1,13 @@
+Windows Registry Editor Version 5.00
+
+; Below is for removing the context menu item that appears when a file is right-clicked.
+[-HKEY_CURRENT_USER\Software\Classes\*\shell\OpenWithPhotoLocationMap]
+[-HKEY_CURRENT_USER\Software\Classes\*\shell\OpenWithPhotoLocationMap\command]
+
+; Below is for removing the context menu item that appears when a directory is right-clicked.
+[-HKEY_CURRENT_USER\Software\Classes\Directory\shell\OpenWithPhotoLocationMap]
+[-HKEY_CURRENT_USER\Software\Classes\Directory\shell\OpenWithPhotoLocationMap\command]
+
+; Below is for removing the context menu item that appears when the background (neither a file nor a directory) is right-clicked.
+[-HKEY_CURRENT_USER\Software\Classes\Directory\Background\shell\OpenWithPhotoLocationMap]
+[-HKEY_CURRENT_USER\Software\Classes\Directory\Background\shell\OpenWithPhotoLocationMap\command]
