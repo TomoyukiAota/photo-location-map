@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import * as os from 'os';
 import {
   currentUserSettings,
   getUserSettingsToBeSaved,
@@ -17,6 +18,11 @@ const settingsTabNames = [
 ] as const;
 type SettingsTabName = typeof settingsTabNames[number];
 
+// Show OS tab only on Windows
+const availableSettingTabNames = os.platform() === 'win32'
+  ? settingsTabNames
+  : settingsTabNames.filter(tabName => tabName !== 'OS');
+
 @Component({
   selector: 'app-settings-dialog',
   templateUrl: './settings-dialog.component.html',
@@ -24,8 +30,8 @@ type SettingsTabName = typeof settingsTabNames[number];
 })
 export class SettingsDialogComponent {
   public userSettingsToBeSaved = getUserSettingsToBeSaved();
-  public tabNames = settingsTabNames;
-  public selectedTab: SettingsTabName = settingsTabNames[0];
+  public tabNames = availableSettingTabNames;
+  public selectedTab: SettingsTabName = availableSettingTabNames[0];
 
   constructor(private settingsDialogRef: MatDialogRef<SettingsDialogComponent>,
               private settingsChangedService: SettingsChangedService,
