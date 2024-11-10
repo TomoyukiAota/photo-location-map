@@ -41,11 +41,12 @@ import { AboutBoxComponent } from './about-box/about-box.component';
 import { WelcomeDialogComponent } from './welcome-dialog/welcome-dialog.component';
 import { SettingsDialogComponent } from './settings-dialog/settings-dialog.component';
 import { ThumbnailGenerationStatusBarComponent } from './thumbnail-generation/status-bar/component/thumbnail-generation-status-bar.component';
+import { AppearanceSettingsComponent } from './settings-dialog/appearance-settings/appearance-settings.component';
 import { DateTimeSettingsComponent } from './settings-dialog/date-time-settings/date-time-settings.component';
+import { OsSettingsComponent } from './settings-dialog/os-settings/os-settings.component';
 import { CacheSettingsComponent } from './settings-dialog/cache-settings/cache-settings.component';
 import { NoPhotosWithLocationDataDialogComponent } from './no-photos-with-location-data-dialog/no-photos-with-location-data-dialog.component';
 import { LoadedFilesStatusBarComponent } from './loaded-files-status-bar/component/loaded-files-status-bar.component';
-import { AppearanceSettingsComponent } from './settings-dialog/appearance-settings/appearance-settings.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -73,11 +74,12 @@ export function HttpLoaderFactory(http: HttpClient) {
     DateTimeTakenChartConfigComponent,
     SelectPhotosWithinZoomComponent,
     ThumbnailGenerationStatusBarComponent,
+    AppearanceSettingsComponent,
     DateTimeSettingsComponent,
+    OsSettingsComponent,
     CacheSettingsComponent,
     NoPhotosWithLocationDataDialogComponent,
     LoadedFilesStatusBarComponent,
-    AppearanceSettingsComponent,
   ],
   imports: [
     BrowserModule,

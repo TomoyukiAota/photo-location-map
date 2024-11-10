@@ -12,6 +12,7 @@ import { SettingsChangedService } from './service/settings-changed.service';
 const settingsTabNames = [
   'Appearance',
   'Date & Time',
+  'OS',
   'Cache'
 ] as const;
 type SettingsTabName = typeof settingsTabNames[number];
