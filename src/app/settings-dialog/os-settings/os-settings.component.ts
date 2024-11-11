@@ -6,5 +6,11 @@ import { Component } from '@angular/core';
   styleUrl: './os-settings.component.scss'
 })
 export class OsSettingsComponent {
+  public handleAddButtonClicked() {
+    // TODO
+  }
 
+  public handleRemoveButtonClicked() {
+    // TODO
+  }
 }
