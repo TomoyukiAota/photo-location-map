@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { addRegistryForExplorerContextMenu } from './add-registry-for-explorer-context-menu';
+import { deleteRegistryForExplorerContextMenu } from './delete-registry-for-explorer-context-menu';
 
 @Component({
   selector: 'app-os-settings',
@@ -6,11 +8,11 @@ import { Component } from '@angular/core';
   styleUrl: './os-settings.component.scss'
 })
 export class OsSettingsComponent {
-  public handleAddButtonClicked() {
-    // TODO
+  public async handleAddButtonClicked() {
+    await addRegistryForExplorerContextMenu();
   }
 
-  public handleRemoveButtonClicked() {
-    // TODO
+  public async handleRemoveButtonClicked() {
+    await deleteRegistryForExplorerContextMenu();
   }
 }

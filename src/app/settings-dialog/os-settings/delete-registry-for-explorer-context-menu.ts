@@ -1,0 +1,17 @@
+import { Registry } from 'rage-edit';
+
+export async function deleteRegistryForExplorerContextMenu() {
+  // Remove the context menu item for files
+  await Registry.delete('HKEY_CURRENT_USER\\Software\\Classes\\*\\shell\\OpenWithPhotoLocationMap');
+  await Registry.delete('HKEY_CURRENT_USER\\Software\\Classes\\*\\shell\\OpenWithPhotoLocationMap\\command');
+
+  // Remove the context menu item for directories
+  // await Registry.delete('HKEY_CURRENT_USER\\Software\\Classes\\Directory\\shell\\OpenWithPhotoLocationMap');
+  // await Registry.delete('HKEY_CURRENT_USER\\Software\\Classes\\Directory\\shell\\OpenWithPhotoLocationMap\\command');
+
+  // Remove the context menu item for the background
+  // await Registry.delete('HKEY_CURRENT_USER\\Software\\Classes\\Directory\\Background\\shell\\OpenWithPhotoLocationMap');
+  // await Registry.delete('HKEY_CURRENT_USER\\Software\\Classes\\Directory\\Background\\shell\\OpenWithPhotoLocationMap\\command');
+
+  // TODO: Add logging and analytics
+}
