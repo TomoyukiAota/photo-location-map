@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "@electron/remote": "2.1.2",
+    "commander": "12.1.0",
     "delete-empty": "3.0.0",
     "directory-tree": "2.3.1",
     "electron-unhandled": "4.0.1",
