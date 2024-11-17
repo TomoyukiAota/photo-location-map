@@ -11,6 +11,7 @@ import {
 } from '../global-variables/global-variable-for-internal-use-in-renderer';
 import { AboutBoxComponent } from './about-box/about-box.component';
 import { DirectoryTreeViewSelectionService } from './directory-tree-view/directory-tree-view-selection.service';
+import { openAfterLaunchIfNeeded } from './open-after-launch/open-after-launch-if-needed';
 import { SettingsDialogComponent } from './settings-dialog/settings-dialog.component';
 import { PhotoSelectionHistoryService } from './shared/service/photo-selection-history.service';
 import { WelcomeDialogComponent } from './welcome-dialog/welcome-dialog.component';
@@ -53,6 +54,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public ngAfterViewInit(): void {
     this.welcomeDialogAtAppLaunchService.showWelcomeDialogIfUserHasNotClickedOk();
+    openAfterLaunchIfNeeded();
   }
 
   public ngOnDestroy(): void {

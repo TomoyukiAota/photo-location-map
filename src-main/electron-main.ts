@@ -1,5 +1,5 @@
 import './configure-electron-unhandled';
-import './configure-command-line-options';
+import './command-line-options/configure-command-line-options';
 import { app, BrowserWindow, protocol } from 'electron';
 import * as electronWebPreferences from '../electron-util/electron-web-preferences';
 import '../electron-util/configure-electron-remote-in-main-process';
