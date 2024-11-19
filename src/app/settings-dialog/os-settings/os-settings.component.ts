@@ -8,11 +8,21 @@ import { deleteRegistryForExplorerContextMenu } from './delete-registry-for-expl
   styleUrl: './os-settings.component.scss'
 })
 export class OsSettingsComponent {
+  public messageLinesAfterButtonClicked: string[] = [];
+
   public async handleAddButtonClicked() {
     await addRegistryForExplorerContextMenu();
+    this.messageLinesAfterButtonClicked = [
+      'Added "Open with Photo Location Map" in the context menu of Explorer.',
+      'Please open Explorer and right-click on a file/folder to confirm.',
+    ];
   }
 
   public async handleRemoveButtonClicked() {
     await deleteRegistryForExplorerContextMenu();
+    this.messageLinesAfterButtonClicked = [
+      'Removed "Open with Photo Location Map" in the context menu of Explorer.',
+      'Please open Explorer and right-click on a file/folder to confirm.',
+    ];
   }
 }
