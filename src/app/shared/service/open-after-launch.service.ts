@@ -8,6 +8,7 @@ import { Logger } from '../../../../src-shared/log/logger';
 import { DirectoryTreeViewSelectionService } from '../../directory-tree-view/directory-tree-view-selection.service';
 import { OpenPathService } from './open-path.service';
 import { PhotoDataService } from './photo-data.service';
+import { PhotoSelectionHistoryService } from './photo-selection-history.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class OpenAfterLaunchService {
   constructor(private directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
               private openPathService: OpenPathService,
               private photoDataService: PhotoDataService,
+              private photoSelectionHistoryService: PhotoSelectionHistoryService,
   ) { }
 
   public async openAfterLaunchIfNeeded() {
@@ -27,6 +29,7 @@ export class OpenAfterLaunchService {
       if (stats.isFile()) {
         const parentFolderPath = pathModule.dirname(specifiedPath);
         await this.openPathService.open(parentFolderPath);
+        this.photoSelectionHistoryService.reset(); // Remove the unnecessary history of selecting all photos as a result of opening the parent folder.
         const gpsInfoExistsInSpecifiedFile = this.photoDataService.getPhotoPathsWithGpsInfo().includes(specifiedPath);
         if (gpsInfoExistsInSpecifiedFile) {
           this.directoryTreeViewSelectionService.select([specifiedPath]);
