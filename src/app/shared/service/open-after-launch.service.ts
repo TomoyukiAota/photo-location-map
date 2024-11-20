@@ -22,7 +22,6 @@ export class OpenAfterLaunchService {
 
   public async openAfterLaunchIfNeeded() {
     const commandLineOptions = await this.getCommandLineOptionsFromMainProcess();
-    console.log('commandLineOptions', commandLineOptions);
     const specifiedPath = commandLineOptions.open;
     if (!specifiedPath) { return; }
 
