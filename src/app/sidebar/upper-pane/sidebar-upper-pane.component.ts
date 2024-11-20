@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import * as remote from '@electron/remote';
-import { OpenPathService } from '../../shared/service/open-path.service';
+import { OpenFolderService } from '../../shared/service/open-folder.service';
 import { ThumbnailGenerationService } from '../../thumbnail-generation/service/thumbnail-generation.service';
 
 @Component({
@@ -9,8 +9,8 @@ import { ThumbnailGenerationService } from '../../thumbnail-generation/service/t
   styleUrl: './sidebar-upper-pane.component.scss'
 })
 export class SidebarUpperPaneComponent {
-  constructor(private openPathService: OpenPathService,
-             public thumbnailGenerationService: ThumbnailGenerationService,
+  constructor(private openFolderService: OpenFolderService,
+              public thumbnailGenerationService: ThumbnailGenerationService,
   ) {
   }
 
@@ -27,6 +27,6 @@ export class SidebarUpperPaneComponent {
       return;
 
     const openedFolderPath = result.filePaths[0];
-    await this.openPathService.open(openedFolderPath);
+    await this.openFolderService.open(openedFolderPath);
   }
 }
