@@ -1,9 +1,9 @@
 import { ipcMain } from 'electron';
-import { CommandLineOptions } from '../../src-shared/command-line-options/command-line-options';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
+import { commandLineOptionsValue } from './command-line-options-value';
 
-export function setupIpcMainForCommandLineOptions(commandLineOptions: CommandLineOptions) {
+export function setupIpcMainForCommandLineOptions() {
   ipcMain.handle(IpcConstants.CommandLineOptions.Get, async () => {
-    return commandLineOptions;
+    return commandLineOptionsValue.get();
   });
 }
