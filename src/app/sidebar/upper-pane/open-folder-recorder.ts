@@ -14,7 +14,7 @@ export class OpenFolderRecorder {
     this.clearPerf();
     this.openedFolderPath = openedFolderPath;
     Logger.info(`Opened Folder: ${openedFolderPath}`);
-    Analytics.trackEvent('Sidebar', 'Opened Folder');
+    Analytics.trackEvent('Opened Folder Info', 'Opened Folder');
     performance.mark(this.perfStartMarkName);
   }
 
