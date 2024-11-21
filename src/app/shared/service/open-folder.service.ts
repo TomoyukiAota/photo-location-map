@@ -33,11 +33,11 @@ export class OpenFolderService {
   ) {
   }
 
-  public async open(openedFolderPath: string) {
+  public async open(folderPath: string) {
     let loadingFolderDialogRef: MatDialogRef<LoadingFolderDialogComponent> = null;
 
     try {
-      OpenFolderRecorder.start(openedFolderPath);
+      OpenFolderRecorder.start(folderPath);
       this.photoSelectionHistoryService.reset();
       PhotoInfoViewerContent.clearCache();
       ThumbnailObjectUrlStorage.revokeObjectUrls();
@@ -45,7 +45,7 @@ export class OpenFolderService {
 
       loadingFolderDialogRef = this.showLoadingFolderDialog();
 
-      const directoryTreeObject = await OpenedDirectory.createDirectoryTree(openedFolderPath);
+      const directoryTreeObject = await OpenedDirectory.createDirectoryTree(folderPath);
       await this.photoDataService.update(directoryTreeObject); // Photo data is fetched from files. The loading folder dialog displays file loading status.
       await sleep(100); // To update the loading folder dialog before starting intensive work (PhotoInfoViewerContent.generateCache) which freezes GUI.
 
