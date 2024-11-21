@@ -26,7 +26,7 @@ export class SidebarUpperPaneComponent {
     if (isCanceled)
       return;
 
-    const openedFolderPath = result.filePaths[0];
-    await this.openFolderService.open(openedFolderPath);
+    const selectedFolderPath = result.filePaths[0];
+    await this.openFolderService.open(selectedFolderPath);
   }
 }
