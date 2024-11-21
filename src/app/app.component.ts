@@ -12,6 +12,7 @@ import {
 import { AboutBoxComponent } from './about-box/about-box.component';
 import { DirectoryTreeViewSelectionService } from './directory-tree-view/directory-tree-view-selection.service';
 import { SettingsDialogComponent } from './settings-dialog/settings-dialog.component';
+import { OpenAfterLaunchService } from './shared/service/open-after-launch.service';
 import { PhotoSelectionHistoryService } from './shared/service/photo-selection-history.service';
 import { WelcomeDialogComponent } from './welcome-dialog/welcome-dialog.component';
 import { WelcomeDialogAtAppLaunchService } from './welcome-dialog/welcome-dialog-at-app-launch/welcome-dialog-at-app-launch.service';
@@ -25,6 +26,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(private dialog: MatDialog,
               private directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
               private ngZone: NgZone,
+              private openAfterLaunchService: OpenAfterLaunchService,
               private photoSelectionHistoryService: PhotoSelectionHistoryService,
               private translate: TranslateService,
               private welcomeDialogAtAppLaunchService: WelcomeDialogAtAppLaunchService) {
@@ -53,6 +55,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public ngAfterViewInit(): void {
     this.welcomeDialogAtAppLaunchService.showWelcomeDialogIfUserHasNotClickedOk();
+
+    // noinspection JSIgnoredPromiseFromCall
+    this.openAfterLaunchService.openAfterLaunchIfNeeded();
   }
 
   public ngOnDestroy(): void {

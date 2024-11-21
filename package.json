@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "@electron/remote": "2.1.2",
+    "commander": "12.1.0",
     "delete-empty": "3.0.0",
     "directory-tree": "2.3.1",
     "electron-unhandled": "4.0.1",
@@ -69,6 +70,7 @@
     "moment-timezone": "0.5.40",
     "physical-cpu-count": "2.0.0",
     "promise.allsettled": "1.0.6",
+    "rage-edit": "1.2.0",
     "tiny-worker": "2.3.0",
     "universal-analytics": "0.5.3",
     "uuid": "9.0.0",

@@ -1,4 +1,8 @@
 export namespace IpcConstants {
+  export namespace CommandLineOptions {
+    export const Get = 'ipc-constants-get-command-line-options';
+  }
+
   export namespace AboutBox {
     export const Name = 'ipc-constants-show-about-box';
   }

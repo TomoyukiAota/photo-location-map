@@ -4,15 +4,24 @@ import { Analytics } from '../src-shared/analytics/analytics';
 import { DateTimeFormat } from '../src-shared/date-time/date-time-format';
 import { DevOrProd } from '../src-shared/dev-or-prod/dev-or-prod';
 import { Logger } from '../src-shared/log/logger';
+import { toLoggableString } from '../src-shared/log/to-loggable-string';
 import { UserDataStorage } from '../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../src-shared/user-data-storage/user-data-stroage-path';
 import { currentUserSettings } from '../src-shared/user-settings/user-settings';
+import { commandLineOptionsValue } from './command-line-options/command-line-options-value';
 import { LaunchInfo } from './launch-info';
-import { LiveReload } from './live-reload';
 import { recordWindowState } from './window-config';
 
 const recordAppLaunch = () => {
   Analytics.trackEvent('App Launch', `App Launch`);
+};
+
+const recordCommandLineOptions = () => {
+  Logger.info(`process.argv:\n${toLoggableString(process.argv)}`);
+  const options = commandLineOptionsValue.get();
+  Logger.info(`Parsed command line options:\n${toLoggableString(options)}`);
+  Analytics.trackEvent('Command Line Options', 'Command Line Options: "--serve"', `Is "--serve" set? -> ${!!options.serve}`);
+  Analytics.trackEvent('Command Line Options', 'Command Line Options: "--open <path>"', `Is "--open <path>" set? -> ${!!options.open}`);
 };
 
 const recordCurrentLaunchDateTime = () => {
@@ -98,6 +107,7 @@ const recordSideBarMenuSortDirection = () => {
 
 export const recordAtAppLaunch = () => {
   recordAppLaunch();
+  recordCommandLineOptions();
   recordCurrentLaunchDateTime();
   recordLastLaunchDateTime();
   recordFirstLaunchDateTime();

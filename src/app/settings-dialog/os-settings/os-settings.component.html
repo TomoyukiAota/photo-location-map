@@ -1,0 +1,19 @@
+<div class="setting-title">Explorer Context Menu</div>
+<div class="setting-container">
+  <div class="description">
+    Add/Remove "Open with Photo Location Map" in the context menu of Explorer.
+  </div>
+  <div class="buttons">
+    <button mat-stroked-button (click)="handleAddButtonClicked()">
+      Add
+    </button>
+    <button mat-stroked-button (click)="handleRemoveButtonClicked()">
+      Remove
+    </button>
+  </div>
+  <div class="message-after-button-clicked">
+    @for (line of messageLinesAfterButtonClicked; track line) {
+        <div>{{ line }}</div>
+    }
+  </div>
+</div>

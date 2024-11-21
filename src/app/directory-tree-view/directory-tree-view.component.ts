@@ -122,7 +122,7 @@ export class DirectoryTreeViewComponent implements OnInit {
   }
 
   private handleDirectoryTreeViewSelectionRequested(photoPaths: string[]) {
-    if (!photoPaths) return;  // To do nothing for the initial value (null) of DirectoryTreeViewSelectionService::selectionRequested
+    if (photoPaths === null || photoPaths === undefined) return;  // To do nothing for the initial value (null) of DirectoryTreeViewSelectionService::selectionRequested
     const allFlatNodes = Array.from(this.flatToNestedNodeMap.keys());
     const selectionRequestedNodes = allFlatNodes.filter(node => photoPaths.includes(node.path));
     this.selectRequestedNodesAndDeselectOthers(selectionRequestedNodes);
@@ -134,10 +134,11 @@ export class DirectoryTreeViewComponent implements OnInit {
     this.flatNodeSelectionModel.deselect(...allFlatNodes);
 
     const selectableNodes = selectionRequestedNodes.filter(node => node.isSelectable);
-    this.flatNodeSelectionModel.select(...selectableNodes);
-
-    selectableNodes.filter(node => node.isExpandable).forEach(node => this.selectAllDescendants(node));
-    selectableNodes.forEach(node => this.updateAllParents(node));
+    if (selectableNodes.length >= 1) {
+      this.flatNodeSelectionModel.select(...selectableNodes);
+      selectableNodes.filter(node => node.isExpandable).forEach(node => this.selectAllDescendants(node));
+      selectableNodes.forEach(node => this.updateAllParents(node));
+    }
 
     this.changeDetectorRef.detectChanges(); // To update checkbox in GUI after using flatNodeSelectionModel
     this.updateSelectedPhotosToReflectSelectedNodes();

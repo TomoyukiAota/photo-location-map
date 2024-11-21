@@ -33,4 +33,8 @@ export class PhotoDataService {
   public getPhotosWithGpsInfo(): Photo[] {
     return this.getAllPhotos().filter(photo => !!this.getGpsInfo(photo.path));
   }
+
+  public getPhotoPathsWithGpsInfo(): string[] {
+    return this.getPhotosWithGpsInfo().map(photo => photo.path);
+  }
 }

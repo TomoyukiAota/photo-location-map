@@ -1,0 +1,33 @@
+@import "../settings-styles";
+
+.setting-title {
+  font-size: $setting-title-font-size;
+}
+
+.setting-container {
+  padding: $setting-container-padding;
+}
+
+.description {
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.buttons {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 20px;
+
+  button {
+     width: 100px;
+  }
+}
+
+.message-after-button-clicked {
+  font-size: 14px;
+  color: red;
+
+  > * {
+    margin: 5px 0;
+  }
+}
