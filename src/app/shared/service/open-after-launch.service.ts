@@ -2,6 +2,7 @@ import * as fsExtra from 'fs-extra';
 import * as pathModule from 'path';
 import { Injectable } from '@angular/core';
 import { ipcRenderer } from 'electron';
+import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { CommandLineOptions } from '../../../../src-shared/command-line-options/command-line-options';
 import { IpcConstants } from '../../../../src-shared/ipc/ipc-constants';
 import { Logger } from '../../../../src-shared/log/logger';
@@ -24,9 +25,16 @@ export class OpenAfterLaunchService {
     const commandLineOptions = await this.getCommandLineOptionsFromMainProcess();
     const specifiedPath = commandLineOptions.open;
     if (!specifiedPath) { return; }
+    await this.openAfterLaunch(specifiedPath);
+  }
 
+  private async openAfterLaunch(specifiedPath: string) {
+    Logger.info(`[Open After Launch] Opening "${specifiedPath}"`);
+    Analytics.trackEvent('Open After Launch', 'Open After Launch', 'Opening Item');
     const stats = await fsExtra.stat(specifiedPath);
     if (stats.isFile()) {
+      Logger.info(`[Open After Launch] The specified item is a file. Opening the parent folder and then selecting the file.`);
+      Analytics.trackEvent('Open After Launch', 'Open After Launch: File', 'Item Type: File');
       const parentFolderPath = pathModule.dirname(specifiedPath);
       await this.openFolderService.open(parentFolderPath);
       this.photoSelectionHistoryService.reset(); // Remove the unnecessary history of selecting all photos as a result of opening the parent folder.
@@ -37,9 +45,12 @@ export class OpenAfterLaunchService {
         this.directoryTreeViewSelectionService.select([]); // Deselect all photos if the specified file does not have GPS info.
       }
     } else if (stats.isDirectory()) {
+      Logger.info(`[Open After Launch] The specified item is a directory. Opening the directory.`);
+      Analytics.trackEvent('Open After Launch', 'Open After Launch: Directory', 'Item Type: Directory');
       await this.openFolderService.open(specifiedPath);
     } else {
-      Logger.error(`The specified item is neither a file nor a directory, which is unexpected. Path: "${specifiedPath}"`);
+      Logger.error(`[Open After Launch] The specified item is neither a file nor a directory, which is unexpected.`);
+      Analytics.trackEvent('Open After Launch', 'Open After Launch: Unexpected', 'Item Type: Unexpected');
     }
   }
 

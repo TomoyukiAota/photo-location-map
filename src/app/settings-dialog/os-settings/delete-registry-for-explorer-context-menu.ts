@@ -1,4 +1,6 @@
 import { Registry } from 'rage-edit';
+import { Analytics } from '../../../../src-shared/analytics/analytics';
+import { Logger } from '../../../../src-shared/log/logger';
 
 export async function deleteRegistryForExplorerContextMenu() {
   // Remove the Explorer's context menu item for files
@@ -10,5 +12,6 @@ export async function deleteRegistryForExplorerContextMenu() {
   // Remove the Explorer's context menu item for the background
   await Registry.delete('HKEY_CURRENT_USER\\Software\\Classes\\Directory\\Background\\shell\\OpenWithPhotoLocationMap');
 
-  // TODO: Add logging and analytics
+  Logger.info('[Registry] Deleted the registry keys for the Explorer\'s context menu.');
+  Analytics.trackEvent('Registry', '[Registry] Remove Explorer Context Menu');
 }
