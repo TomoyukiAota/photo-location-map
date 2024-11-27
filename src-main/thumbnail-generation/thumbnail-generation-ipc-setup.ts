@@ -4,6 +4,6 @@ import { thumbnailGenerationLogger as logger } from '../../src-shared/thumbnail/
 import { handleThumbnailGenerationIpcRequest } from './thumbnail-generation';
 
 ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Name, (event, allHeifFilePaths: string[], heifFilePathsToGenerateThumbnail: string[]) => {
-  logger.info(`Received the IPC invoke request about thumbnail generation in the main process.`);
+  logger.debug(`[IPC Main Received] ${IpcConstants.ThumbnailGenerationInMainProcess.Name}`);
   handleThumbnailGenerationIpcRequest(allHeifFilePaths, heifFilePathsToGenerateThumbnail);
 });

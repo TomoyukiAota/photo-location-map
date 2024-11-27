@@ -5,7 +5,7 @@ import { commandLineOptionsValue } from './command-line-options-value';
 
 export function setupIpcMainForCommandLineOptions() {
   ipcMain.handle(IpcConstants.CommandLineOptions.Get, () => {
-    Logger.info(`Received the IPC invoke request about getting commang line options.`);
+    Logger.debug(`[IPC Main Received] ${IpcConstants.CommandLineOptions.Get}`);
     return commandLineOptionsValue.get();
   });
 }
