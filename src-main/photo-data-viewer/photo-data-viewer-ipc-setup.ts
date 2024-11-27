@@ -5,7 +5,7 @@ import { PhotoDataViewerIpcParams } from '../../src-shared/photo-data-viewer/pho
 import { launchPhotoDataViewer } from './launch-photo-data-viewer';
 
 ipcMain.handle(IpcConstants.PhotoDataViewer.Name, (event, ipcParams: PhotoDataViewerIpcParams) => {
-  Logger.info(`Received the IPC invoke request about launching Photo Data Viewer.`);
+  Logger.debug(`[IPC Main Received] ${IpcConstants.PhotoDataViewer.Name}`);
   // noinspection JSIgnoredPromiseFromCall
   launchPhotoDataViewer(ipcParams);
 });

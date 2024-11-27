@@ -40,7 +40,7 @@ export const selectionMenuTemplate: MenuItemConstructorOptions = {
 
 export function configureIpcForSelectionUndoRedoMenus(menu: Electron.Menu) {
   ipcMain.handle(IpcConstants.PhotoSelection.UpdateUndoRedoMenus, (event, ipcParams: IpcParams.PhotoSelection.UpdateUndoRedoMenus) => {
-    Logger.info(`Received the IPC invoke request about updating Undo/Redo menus.`);
+    Logger.debug(`[IPC Main Received] ${IpcConstants.PhotoSelection.UpdateUndoRedoMenus}`);
     const undoMenu = menu.getMenuItemById(MenuId.Selection.Undo);
     const redoMenu = menu.getMenuItemById(MenuId.Selection.Redo);
     undoMenu.enabled = ipcParams.isUndoMenuEnabled;
