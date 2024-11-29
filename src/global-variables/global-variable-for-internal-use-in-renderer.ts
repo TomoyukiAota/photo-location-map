@@ -1,9 +1,14 @@
 export class PlmInternalRenderer implements IPlmInternalRenderer {
+  public recordAtAppLaunch: PlmInternalRendererRecordAtAppLaunch;
   public aboutBox: PlmInternalRendererAboutBox;
   public settingsDialog: PlmInternalRendererSettingsDialog;
   public welcomeDialog: PlmInternalRendererWelcomeDialog;
   public map: PlmInternalRendererMap;
   public photoSelection: IPlmInternalRendererPhotoSelection;
+}
+
+export class PlmInternalRendererRecordAtAppLaunch implements IPlmInternalRendererRecordAtAppLaunch {
+  public handleRecordAtAppLaunchFinished: () => void;
 }
 
 export class PlmInternalRendererAboutBox implements AboutBoxShowable {

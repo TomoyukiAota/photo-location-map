@@ -3,12 +3,14 @@ import { app, screen } from 'electron';
 import { Analytics } from '../src-shared/analytics/analytics';
 import { DateTimeFormat } from '../src-shared/date-time/date-time-format';
 import { DevOrProd } from '../src-shared/dev-or-prod/dev-or-prod';
+import { IpcConstants } from '../src-shared/ipc/ipc-constants';
 import { Logger } from '../src-shared/log/logger';
 import { toLoggableString } from '../src-shared/log/to-loggable-string';
 import { UserDataStorage } from '../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../src-shared/user-data-storage/user-data-stroage-path';
 import { currentUserSettings } from '../src-shared/user-settings/user-settings';
 import { commandLineOptionsValue } from './command-line-options/command-line-options-value';
+import { mainWindow } from './electron-main';
 import { LaunchInfo } from './launch-info';
 import { recordWindowState } from './window-config';
 
@@ -105,6 +107,10 @@ const recordSideBarMenuSortDirection = () => {
   Analytics.trackEvent('Sidebar Menu', `[Sort] Direction at App Launch`, `Sort Direction at App Launch: ${sortDirection}`);
 };
 
+const finishRecordAtAppLaunch = () => {
+  mainWindow.webContents.send(IpcConstants.RecordAtAppLaunch.Finished);
+};
+
 export const recordAtAppLaunch = () => {
   recordAppLaunch();
   recordCommandLineOptions();
@@ -128,4 +134,6 @@ export const recordAtAppLaunch = () => {
 
   recordSidebarMenuSortKey();
   recordSideBarMenuSortDirection();
+
+  finishRecordAtAppLaunch();
 };

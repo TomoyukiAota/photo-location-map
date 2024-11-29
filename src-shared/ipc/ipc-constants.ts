@@ -3,6 +3,10 @@ export namespace IpcConstants {
     export const Get = 'ipc-constants-get-command-line-options';
   }
 
+  export namespace RecordAtAppLaunch {
+    export const Finished = 'ipc-constants-record-at-app-launch-finished';
+  }
+
   export namespace AboutBox {
     export const Name = 'ipc-constants-show-about-box';
   }
