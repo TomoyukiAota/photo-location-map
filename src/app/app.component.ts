@@ -10,8 +10,8 @@ import { WelcomeDialogAtAppLaunchService } from './welcome-dialog/welcome-dialog
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
-  constructor(private plmInternalRendererService: PlmInternalRendererService,
-              private photoSelectionHistoryService: PhotoSelectionHistoryService,
+  constructor(private photoSelectionHistoryService: PhotoSelectionHistoryService,
+              private plmInternalRendererService: PlmInternalRendererService,
               private translate: TranslateService,
               private welcomeDialogAtAppLaunchService: WelcomeDialogAtAppLaunchService) {
     translate.setDefaultLang('en');
