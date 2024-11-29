@@ -7,11 +7,16 @@ interface Window {
 }
 
 interface IPlmInternalRenderer {
+  recordAtAppLaunch: IPlmInternalRendererRecordAtAppLaunch;
   aboutBox: AboutBoxShowable;
   settingsDialog: SettingsDialogShowable;
   welcomeDialog: WelcomeDialogShowable;
   map: MapChangeable;
   photoSelection: IPlmInternalRendererPhotoSelection;
+}
+
+interface IPlmInternalRendererRecordAtAppLaunch {
+  handleRecordAtAppLaunchFinished(): void;
 }
 
 interface AboutBoxShowable {

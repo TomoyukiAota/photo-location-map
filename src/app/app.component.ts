@@ -6,6 +6,7 @@ import {
   PlmInternalRenderer,
   PlmInternalRendererAboutBox,
   PlmInternalRendererPhotoSelection,
+  PlmInternalRendererRecordAtAppLaunch,
   PlmInternalRendererSettingsDialog,
   PlmInternalRendererWelcomeDialog
 } from '../global-variables/global-variable-for-internal-use-in-renderer';
@@ -36,6 +37,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public ngOnInit(): void {
     window.plmInternalRenderer = window.plmInternalRenderer || new PlmInternalRenderer();
 
+    window.plmInternalRenderer.recordAtAppLaunch = window.plmInternalRenderer.recordAtAppLaunch || new PlmInternalRendererRecordAtAppLaunch();
+    window.plmInternalRenderer.recordAtAppLaunch.handleRecordAtAppLaunchFinished = () => this.handleRecordAtAppLaunchFinished();
+
     window.plmInternalRenderer.aboutBox = window.plmInternalRenderer.aboutBox || new PlmInternalRendererAboutBox();
     window.plmInternalRenderer.aboutBox.showAboutBox = () => this.showAboutBox();
 
@@ -55,16 +59,19 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public ngAfterViewInit(): void {
     this.welcomeDialogAtAppLaunchService.showWelcomeDialogIfUserHasNotClickedOk();
-
-    // noinspection JSIgnoredPromiseFromCall
-    this.openAfterLaunchService.openAfterLaunchIfNeeded();
   }
 
   public ngOnDestroy(): void {
+    window.plmInternalRenderer.recordAtAppLaunch.handleRecordAtAppLaunchFinished = null;
     window.plmInternalRenderer.aboutBox.showAboutBox = null;
     window.plmInternalRenderer.settingsDialog.showSettingsDialog = null;
     window.plmInternalRenderer.welcomeDialog.showWelcomeDialog = null;
     window.plmInternalRenderer.photoSelection = null;
+  }
+
+  private handleRecordAtAppLaunchFinished() {
+    // noinspection JSIgnoredPromiseFromCall
+    this.openAfterLaunchService.openAfterLaunchIfNeeded();
   }
 
   public showAboutBox(): void {
