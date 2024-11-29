@@ -107,21 +107,21 @@ export class PlmInternalRendererService {
   private undoPhotoSelection() {
     this.ngZone.run(() => {
       this.photoSelectionHistoryService.undo();
-      Logger.debug(`Called AppComponent::undoPhotoSelection`);
+      Logger.debug(`Called PlmInternalRendererService::undoPhotoSelection`);
     });
   }
 
   private redoPhotoSelection() {
     this.ngZone.run(() => {
       this.photoSelectionHistoryService.redo();
-      Logger.debug(`Called AppComponent::redoPhotoSelection`);
+      Logger.debug(`Called PlmInternalRendererService::redoPhotoSelection`);
     });
   }
 
   private selectOnlyThis(photoPath: string) {
     this.ngZone.run(() => {
       this.directoryTreeViewSelectionService.select([photoPath]);
-      Logger.debug(`Called AppComponent::selectOnlyThis for ${photoPath}`);
+      Logger.debug(`Called PlmInternalRendererService::selectOnlyThis for ${photoPath}`);
     });
   }
 }
