@@ -1,4 +1,4 @@
 export interface CommandLineOptions {
-  serve?: boolean;
+  liveReload?: boolean;
   open?: string;
 }
