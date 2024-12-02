@@ -22,7 +22,7 @@ const recordCommandLineOptions = () => {
   Logger.info(`process.argv:\n${toLoggableString(process.argv)}`);
   const options = commandLineOptionsValue.get();
   Logger.info(`Parsed command line options:\n${toLoggableString(options)}`);
-  Analytics.trackEvent('Command Line Options', 'Command Line Options: "--serve"', `Is "--serve" set? -> ${!!options.serve}`);
+  Analytics.trackEvent('Command Line Options', 'Command Line Options: "--live-reload"', `Is "--live-reload" set? -> ${!!options.liveReload}`);
   Analytics.trackEvent('Command Line Options', 'Command Line Options: "--open <path>"', `Is "--open <path>" set? -> ${!!options.open}`);
 };
 
