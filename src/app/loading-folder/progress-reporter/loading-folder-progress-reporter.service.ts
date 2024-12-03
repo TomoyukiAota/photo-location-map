@@ -19,6 +19,7 @@ export class LoadingFolderProgressReporterService {
   public progressStatus = new Subject<LoadingFolderProgressStatus>();
 
   public startUpdatingProgress(): void {
+    Logger.info('[Loading Folder] Collecting files to load from the opened folder...');
     const updateMilliseconds = 100;
     const intervalId = setInterval(() => {
       const numberOfLoadedFiles = progress.numberOfLoadedFiles;
@@ -27,7 +28,11 @@ export class LoadingFolderProgressReporterService {
       const isStarted = progress.isStarted;
       const isInProgress = progress.isInProgress;
       const isCompleted = progress.isCompleted;
-      Logger.info(`[Loading Folder] Loaded ${numberOfLoadedFiles} files out of ${numberOfAllFilesToLoad} files.`);
+
+      if (isStarted) {
+        Logger.info(`[Loading Folder] Loaded ${numberOfLoadedFiles} files out of ${numberOfAllFilesToLoad} files.`);
+      }
+
       this.progressStatus.next({
         numberOfLoadedFiles,
         numberOfAllFilesToLoad,
