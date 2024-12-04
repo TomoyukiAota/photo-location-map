@@ -8,7 +8,7 @@ import { stringArrayToLogText } from '../../src-shared/log/multiline-log-text';
 import { removeInvalidThumbnailCache } from '../../src-shared/thumbnail/cache/remove-invalid-thumbnail-cache';
 import { createFileForLastModified, getThumbnailFilePath } from '../../src-shared/thumbnail/cache/thumbnail-cache-util';
 import { thumbnailGenerationLogger as logger } from '../../src-shared/thumbnail/generation/thumbnail-generation-logger';
-import { ThumbnailFileGenerationArg } from './generate-thumbnail-file-arg-and-result';
+import { ThumbnailFileGenerationArg, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result';
 
 export function handleThumbnailGenerationIpcRequest(allHeifFilePaths: string[], heifFilePathsToGenerateThumbnail: string[]): void {
   if (!allHeifFilePaths || !heifFilePathsToGenerateThumbnail) {
@@ -115,8 +115,9 @@ async function runWorkerForThumbnailGeneration(argArray: ThumbnailFileGeneration
       .proxy()
       .then(worker => worker.generateThumbnailFile(arg))
       .then(result => {
-        logger.info('Observed completion of worker for thumbnail generation. ' +
-          `From "${arg.srcFilePath}", a thumbnail file "${arg.outputFilePath}" should have been generated.`);
+        const status = (result as unknown as ThumbnailFileGenerationResult)?.status; // Cast is necessary to avoid the TypeScript compilation error TS2352.
+        logger.info(`Observed completion of worker for thumbnail generation. Status: ${status}`);
+        logger.info(`From "${arg.srcFilePath}", a thumbnail file "${arg.outputFilePath}" should have been generated.`);
         createFileForLastModified(arg.srcFilePath, arg.outputFileDir, logger);
       });
   });
