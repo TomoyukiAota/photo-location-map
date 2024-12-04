@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { ThumbnailGenerationService } from '../../service/thumbnail-generation.service';
+import { ThumbnailGenerationResult, ThumbnailGenerationService } from '../../service/thumbnail-generation.service';
 import { ThumbnailGenerationStatusBarService } from '../service/thumbnail-generation-status-bar.service';
 
 @Component({
@@ -9,10 +9,11 @@ import { ThumbnailGenerationStatusBarService } from '../service/thumbnail-genera
 })
 export class ThumbnailGenerationStatusBarComponent implements OnInit {
   public isThumbnailGenerationDone: boolean;
+  public thumbnailGenerationResult: ThumbnailGenerationResult;
   public numberOfTotalHeifFiles: number;
   public numberOfThumbnailsUsingCache: number;
   public numberOfThumbnailsGenerationRequired: number;
-  public numberOfGeneratedThumbnails: number;
+  public numberOfProcessedThumbnails: number;
   public progressPercent: number;
   public detailsVisible: boolean;
 
@@ -27,19 +28,20 @@ export class ThumbnailGenerationStatusBarComponent implements OnInit {
       this.numberOfTotalHeifFiles = status.numOfAllHeifFiles;
       this.numberOfThumbnailsUsingCache = status.numOfCacheAvailableThumbnails;
       this.numberOfThumbnailsGenerationRequired = status.numOfGenerationRequiredThumbnails;
-      this.numberOfGeneratedThumbnails = 0;
+      this.numberOfProcessedThumbnails = 0;
       this.progressPercent = 0;
       this.detailsVisible = false;
     });
 
     this.thumbnailGenerationService.generationProgress.subscribe(status => {
-      this.numberOfGeneratedThumbnails = status.numOfGeneratedThumbnails;
+      this.numberOfProcessedThumbnails = status.numOfProcessedThumbnails;
       this.progressPercent = status.progressPercent;
       this.changeDetectorRef.detectChanges();
     });
 
-    this.thumbnailGenerationService.generationDone.subscribe(() => {
+    this.thumbnailGenerationService.generationDone.subscribe(result => {
       this.isThumbnailGenerationDone = true;
+      this.thumbnailGenerationResult = result;
       this.changeDetectorRef.detectChanges();
     });
   }

@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import * as fsExtra from 'fs-extra';
 import * as os from 'os';
 import * as pathModule from 'path';
 import * as physicalCpuCount from 'physical-cpu-count';
@@ -6,7 +6,7 @@ import * as workerpool from 'workerpool';
 import * as _ from 'lodash';
 import { stringArrayToLogText } from '../../src-shared/log/multiline-log-text';
 import { removeInvalidThumbnailCache } from '../../src-shared/thumbnail/cache/remove-invalid-thumbnail-cache';
-import { createFileForLastModified, getThumbnailFilePath } from '../../src-shared/thumbnail/cache/thumbnail-cache-util';
+import { createThumbnailGenerationLogFile, getThumbnailFilePath } from '../../src-shared/thumbnail/cache/thumbnail-cache-util';
 import { thumbnailGenerationLogger as logger } from '../../src-shared/thumbnail/generation/thumbnail-generation-logger';
 import { ThumbnailFileGenerationArg, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result';
 
@@ -36,7 +36,7 @@ class FileForWorker {
 function checkFileForWorkerExists(): void {
   const filePath = FileForWorker.absoluteFilePath;
   logger.info(`The expected file path for worker used during thumbnail generation is "${filePath}"`);
-  const isFileFound = fs.existsSync(filePath);
+  const isFileFound = fsExtra.existsSync(filePath);
 
   if (isFileFound) {
     logger.info(`The file for worker used during thumbnail generation is found.`);
@@ -114,11 +114,17 @@ async function runWorkerForThumbnailGeneration(argArray: ThumbnailFileGeneration
     return pool
       .proxy()
       .then(worker => worker.generateThumbnailFile(arg))
-      .then(result => {
+      .then(async result => {
         const status = (result as unknown as ThumbnailFileGenerationResult)?.status; // Cast is necessary to avoid the TypeScript compilation error TS2352.
         logger.info(`Observed completion of worker for thumbnail generation. Status: ${status}`);
-        logger.info(`From "${arg.srcFilePath}", a thumbnail file "${arg.outputFilePath}" should have been generated.`);
-        createFileForLastModified(arg.srcFilePath, arg.outputFileDir, logger);
+        logger.info(`Finished attempting to create a thumbnail file "${arg.outputFilePath}" from "${arg.srcFilePath}".`);
+        const isThumbnailFileCreated = await fsExtra.pathExists(arg.outputFilePath);
+        logger.info(`Does the thumbnail file exist? -> ${isThumbnailFileCreated}`);
+        if(!isThumbnailFileCreated) {
+          logger.warn(`Failed to create a thumbnail file since it does not exist after an attempt to create it.` +
+            ` Attempted to create a thumbnail file "${arg.outputFilePath}" from "${arg.srcFilePath}".`);
+        }
+        await createThumbnailGenerationLogFile(arg.srcFilePath, arg.outputFileDir, isThumbnailFileCreated, logger);
       });
   });
 

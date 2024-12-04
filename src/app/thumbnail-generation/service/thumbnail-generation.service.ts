@@ -4,16 +4,24 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { convertToFlattenedDirTree } from '../../../../src-shared/dir-tree/dir-tree-util';
 import { FilenameExtension } from '../../../../src-shared/filename-extension/filename-extension';
 import { IpcConstants } from '../../../../src-shared/ipc/ipc-constants';
-import { isThumbnailCacheAvailable } from '../../../../src-shared/thumbnail/cache/thumbnail-cache-util';
+import {
+  isAttemptToGenerateThumbnailFinished,
+  isThumbnailCacheAvailable
+} from '../../../../src-shared/thumbnail/cache/thumbnail-cache-util';
 import { thumbnailGenerationLogger as logger } from '../../../../src-shared/thumbnail/generation/thumbnail-generation-logger';
+
+export interface ThumbnailGenerationResult {
+  errorOccurred: boolean,
+  filePathsWithoutThumbnail: string[],
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class ThumbnailGenerationService {
   public generationStarted = new Subject<{numOfAllHeifFiles: number, numOfCacheAvailableThumbnails: number, numOfGenerationRequiredThumbnails: number}>();
-  public generationProgress = new Subject<{numOfGeneratedThumbnails: number, progressPercent: number}>();
-  public generationDone = new Subject<void>();
+  public generationProgress = new Subject<{numOfProcessedThumbnails: number, progressPercent: number}>();
+  public generationDone = new Subject<ThumbnailGenerationResult>();
   public isGenerating = new BehaviorSubject<boolean>(false);
 
   constructor() {
@@ -71,15 +79,19 @@ export class ThumbnailGenerationService {
   private updateGenerationStatusFromInProgressToDone(): void {
     const updateMilliseconds = 5000;
     const intervalId = setInterval(() => {
-      const numberOfGeneratedThumbnails = this.heifFilePathsToGenerateThumbnail.filter(filePath => isThumbnailCacheAvailable(filePath)).length;
-      const progressPercent = (numberOfGeneratedThumbnails / this.numOfGenerationRequiredThumbnails) * 100;
-      logger.info(`Thumbnail generation progress: ${progressPercent.toFixed(5)} %, Generated/Generation-required: `
-        + `${numberOfGeneratedThumbnails}/${this.numOfGenerationRequiredThumbnails}`);
-      this.generationProgress.next({numOfGeneratedThumbnails: numberOfGeneratedThumbnails, progressPercent});
+      const numberOfProcessedThumbnails = this.heifFilePathsToGenerateThumbnail.filter(filePath => isAttemptToGenerateThumbnailFinished(filePath)).length;
+      const progressPercent = (numberOfProcessedThumbnails / this.numOfGenerationRequiredThumbnails) * 100;
+      logger.info(`Thumbnail generation progress: ${progressPercent.toFixed(5)} %, Processed/Generation-required: `
+        + `${numberOfProcessedThumbnails}/${this.numOfGenerationRequiredThumbnails}`);
+      this.generationProgress.next({numOfProcessedThumbnails: numberOfProcessedThumbnails, progressPercent});
 
-      if (numberOfGeneratedThumbnails === this.numOfGenerationRequiredThumbnails) {
-        this.generationDone.next();
-        logger.info(`Completed thumbnail generation.`);
+      if (numberOfProcessedThumbnails === this.numOfGenerationRequiredThumbnails) {
+        const heifFilePathsWithoutThumbnail = this.heifFilePathsToGenerateThumbnail.filter(filePath => !isThumbnailCacheAvailable(filePath));
+        this.generationDone.next({
+          errorOccurred: heifFilePathsWithoutThumbnail.length >= 1,
+          filePathsWithoutThumbnail: heifFilePathsWithoutThumbnail,
+        });
+        logger.info(`Finished thumbnail generation.`);
         clearInterval(intervalId);
       }
     }, updateMilliseconds);

@@ -1,6 +1,9 @@
 <div class="summary">
   <ng-container *ngIf="isThumbnailGenerationDone; else thumbnailGenerationInProgress">
-    <span>Completed generating thumbnails for HEIF files.</span>
+    <span *ngIf="thumbnailGenerationResult.errorOccurred; else noErrorDuringThumbnailGeneration">Finished generating thumbnails for HEIF files with error(s).</span>
+    <ng-template #noErrorDuringThumbnailGeneration>
+      <span>Completed generating thumbnails for HEIF files.</span>
+    </ng-template>
   </ng-container>
   <ng-template #thumbnailGenerationInProgress>
     <span>Generating thumbnails for HEIF files...</span>
@@ -19,7 +22,7 @@
   </div>
   <div class="details">
     <div>
-      Generated {{ numberOfGeneratedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} thumbnails.
+      Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} thumbnails.
     </div>
     <div class="generation-required-files-description">
       {{ numberOfThumbnailsGenerationRequired }} thumbnails need generation, which is given by "HEIF files ({{ numberOfTotalHeifFiles }} files)

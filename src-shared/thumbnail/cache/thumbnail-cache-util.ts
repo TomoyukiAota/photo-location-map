@@ -1,7 +1,7 @@
-import * as fs from 'fs';
+import * as fsExtra from 'fs-extra';
 import * as os from 'os';
 import * as pathModule from 'path';
-import { PrependedLogger } from "../../log/create-prepended-logger";
+import { PrependedLogger } from '../../log/create-prepended-logger';
 import { Logger } from '../../log/logger';
 
 export const plmThumbnailCacheDir = pathModule.join(os.homedir(), '.PlmCache');
@@ -81,46 +81,60 @@ export function getOriginalFilePath(thumbnailFilePath: string): string {
 }
 
 const lastModifiedKey = 'LastModified';
+const isThumbnailFileCreatedKey = 'IsThumbnailFileCreated';
 
-export async function createFileForLastModified(srcFilePath: string, thumbnailFileDir: string, logger: PrependedLogger) {
+export async function createThumbnailGenerationLogFile(srcFilePath: string, thumbnailFileDir: string, isThumbnailFileCreated: boolean, logger: PrependedLogger) {
   const srcFileName = pathModule.basename(srcFilePath);
-  const lastModified = fs.statSync(srcFilePath).mtime.toISOString();
+  const lastModified = fsExtra.statSync(srcFilePath).mtime.toISOString();
   const fileContentObj = {};
   fileContentObj[lastModifiedKey] = lastModified;
+  fileContentObj[isThumbnailFileCreatedKey] = isThumbnailFileCreated;
   const fileContentStr = JSON.stringify(fileContentObj, null, 2);
   const logFilePath = pathModule.join(thumbnailFileDir, `${srcFileName}.log.json`);
 
   try {
-    await fs.promises.writeFile(logFilePath, fileContentStr);
+    await fsExtra.ensureFile(logFilePath);
+    await fsExtra.promises.writeFile(logFilePath, fileContentStr);
   } catch (error) {
-    logger.error(`Failed to write file for last modified "${lastModified}" for "${srcFileName}" in "${logFilePath}". error: ${error}`, error);
+    logger.error(`Failed to write the file in "${logFilePath}" which is the thumbnail generation result for "${srcFilePath}". error: ${error}`, error);
     return;
   }
 
-  logger.info(`Wrote a file for last modified "${lastModified}" for "${srcFileName}" in ${logFilePath}`);
+  logger.info(`Wrote the file in "${logFilePath}" which is the thumbnail generation result for "${srcFilePath}".`);
+}
+
+export function isAttemptToGenerateThumbnailFinished(srcFilePath: string): boolean {
+  const lastModifiedMatch = lastModifiedMatchBetweenSrcFileAndThumbnailGenerationLogFile(srcFilePath);
+  return lastModifiedMatch;
 }
 
 export function isThumbnailCacheAvailable(srcFilePath: string): boolean {
   if (!srcFilePath)
     return false;
 
-  const srcFileName = pathModule.basename(srcFilePath);
-
   const { thumbnailFilePath } = getThumbnailFilePath(srcFilePath);
-  const thumbnailFileExists = fs.existsSync(thumbnailFilePath);
+  const thumbnailFileExists = fsExtra.existsSync(thumbnailFilePath);
   if (!thumbnailFileExists)
     return false;
 
+  const lastModifiedMatch = lastModifiedMatchBetweenSrcFileAndThumbnailGenerationLogFile(srcFilePath);
+  return lastModifiedMatch;
+}
+
+export function lastModifiedMatchBetweenSrcFileAndThumbnailGenerationLogFile(srcFilePath: string): boolean {
+  if (!srcFilePath)
+    return false;
+
   const logFilePath = getThumbnailLogFilePath(srcFilePath);
-  const logFileExists = fs.existsSync(logFilePath);
+  const logFileExists = fsExtra.existsSync(logFilePath);
   if (!logFileExists)
     return false;
 
   let fileContentStr;
   try {
-    fileContentStr = fs.readFileSync(logFilePath, 'utf8');
+    fileContentStr = fsExtra.readFileSync(logFilePath, 'utf8');
   } catch (error) {
-    Logger.error(`Failed to read log file for ${srcFileName}. Log file location is "${logFilePath}". error: ${error}`, error);
+    Logger.error(`Failed to read the log file "${logFilePath}" which is the thumbnail generation result for "${srcFilePath}". error: ${error}`, error);
     return false;
   }
 
@@ -129,7 +143,7 @@ export function isThumbnailCacheAvailable(srcFilePath: string): boolean {
   if (!lastModifiedFromLogFile)
     return false;
 
-  const lastModifiedFromSrcFile = fs.statSync(srcFilePath).mtime.toISOString();
+  const lastModifiedFromSrcFile = fsExtra.statSync(srcFilePath).mtime.toISOString();
   const lastModifiedMatch = lastModifiedFromLogFile === lastModifiedFromSrcFile;
   return lastModifiedMatch;
 }
