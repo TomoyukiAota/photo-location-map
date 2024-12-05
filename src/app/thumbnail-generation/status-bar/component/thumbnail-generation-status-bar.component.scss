@@ -1,3 +1,4 @@
+@import "/src/styles/anchor-tag-like-text";
 @import "/src/styles/status-bar";
 
 :host {
@@ -19,6 +20,10 @@
 .summary {
   line-height: $status-bar-min-height;
   white-space: nowrap;
+}
+
+.anchor-tag-like-text {
+  @include anchor-tag-like-text;
 }
 
 .progress-bar-with-details {

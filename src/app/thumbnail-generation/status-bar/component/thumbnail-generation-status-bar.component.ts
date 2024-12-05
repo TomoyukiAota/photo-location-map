@@ -1,4 +1,8 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import {
+  ThumbnailGenerationErrorDialogComponent
+} from '../../error-dialog/thumbnail-generation-error-dialog.component';
 import { ThumbnailGenerationResult, ThumbnailGenerationService } from '../../service/thumbnail-generation.service';
 import { ThumbnailGenerationStatusBarService } from '../service/thumbnail-generation-status-bar.service';
 
@@ -18,11 +22,12 @@ export class ThumbnailGenerationStatusBarComponent implements OnInit {
   public detailsVisible: boolean;
 
   constructor(private changeDetectorRef: ChangeDetectorRef,
+              private dialog: MatDialog,
               private thumbnailGenerationService: ThumbnailGenerationService,
               private thumbnailGenerationStatusBarService: ThumbnailGenerationStatusBarService) {
   }
 
-  ngOnInit() {
+  public ngOnInit() {
     this.thumbnailGenerationService.generationStarted.subscribe(status => {
       this.isThumbnailGenerationDone = false;
       this.numberOfTotalHeifFiles = status.numOfAllHeifFiles;
@@ -43,6 +48,18 @@ export class ThumbnailGenerationStatusBarComponent implements OnInit {
       this.isThumbnailGenerationDone = true;
       this.thumbnailGenerationResult = result;
       this.changeDetectorRef.detectChanges();
+    });
+  }
+
+  public handleErrorTextClicked(event: MouseEvent) {
+    event.stopPropagation();
+    this.dialog.open(ThumbnailGenerationErrorDialogComponent, {
+      width: '800px',
+      height: '360px',
+      panelClass: 'custom-dialog-container',
+      disableClose: false,
+      autoFocus: false,
+      restoreFocus: false
     });
   }
 

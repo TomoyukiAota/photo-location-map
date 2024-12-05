@@ -41,6 +41,7 @@ import { AboutBoxComponent } from './about-box/about-box.component';
 import { WelcomeDialogComponent } from './welcome-dialog/welcome-dialog.component';
 import { SettingsDialogComponent } from './settings-dialog/settings-dialog.component';
 import { ThumbnailGenerationStatusBarComponent } from './thumbnail-generation/status-bar/component/thumbnail-generation-status-bar.component';
+import { ThumbnailGenerationErrorDialogComponent } from './thumbnail-generation/error-dialog/thumbnail-generation-error-dialog.component';
 import { AppearanceSettingsComponent } from './settings-dialog/appearance-settings/appearance-settings.component';
 import { DateTimeSettingsComponent } from './settings-dialog/date-time-settings/date-time-settings.component';
 import { OsSettingsComponent } from './settings-dialog/os-settings/os-settings.component';
@@ -74,6 +75,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     DateTimeTakenChartConfigComponent,
     SelectPhotosWithinZoomComponent,
     ThumbnailGenerationStatusBarComponent,
+    ThumbnailGenerationErrorDialogComponent,
     AppearanceSettingsComponent,
     DateTimeSettingsComponent,
     OsSettingsComponent,

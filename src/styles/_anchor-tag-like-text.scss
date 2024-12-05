@@ -1,0 +1,10 @@
+// anchor-tag-like-text is to give styles like <a> tag to the specified text without using <a> tag.
+@mixin anchor-tag-like-text {
+  color: -webkit-link;
+  cursor: pointer;
+  text-decoration: underline;
+
+  &:active{
+    color: -webkit-activelink;
+  }
+}

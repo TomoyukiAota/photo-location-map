@@ -1,11 +1,11 @@
 <div class="summary">
-  <ng-container *ngIf="isThumbnailGenerationDone; else thumbnailGenerationInProgress">
-    <span *ngIf="thumbnailGenerationResult.errorOccurred; else noErrorDuringThumbnailGeneration">Finished generating thumbnails for HEIF files with error(s).</span>
-    <ng-template #noErrorDuringThumbnailGeneration>
+  <ng-container *ngIf="isThumbnailGenerationDone; else summaryForThumbnailGenerationInProgress">
+    <span *ngIf="thumbnailGenerationResult.errorOccurred; else summaryForNoErrorDuringThumbnailGeneration">Finished generating thumbnails for HEIF files with error(s).</span>
+    <ng-template #summaryForNoErrorDuringThumbnailGeneration>
       <span>Completed generating thumbnails for HEIF files.</span>
     </ng-template>
   </ng-container>
-  <ng-template #thumbnailGenerationInProgress>
+  <ng-template #summaryForThumbnailGenerationInProgress>
     <span>Generating thumbnails for HEIF files...</span>
   </ng-template>
 </div>
@@ -22,7 +22,18 @@
   </div>
   <div class="details">
     <div>
-      Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} thumbnails.
+      <ng-container *ngIf="isThumbnailGenerationDone; else detailsForThumbnailGenerationInProgress">
+        <span *ngIf="thumbnailGenerationResult.errorOccurred; else detailsForNoErrorDuringThumbnailGeneration">
+          <span>Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} thumbnails with error(s). </span>
+          <span class="anchor-tag-like-text" (click)="handleErrorTextClicked($event)">Click here to see the error(s).</span>
+        </span>
+        <ng-template #detailsForNoErrorDuringThumbnailGeneration>
+          <span>Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} thumbnails.</span>
+        </ng-template>
+      </ng-container>
+      <ng-template #detailsForThumbnailGenerationInProgress>
+        <span>Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} thumbnails.</span>
+      </ng-template>
     </div>
     <div class="generation-required-files-description">
       {{ numberOfThumbnailsGenerationRequired }} thumbnails need generation, which is given by "HEIF files ({{ numberOfTotalHeifFiles }} files)

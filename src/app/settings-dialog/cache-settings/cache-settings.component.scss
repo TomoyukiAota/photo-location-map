@@ -1,3 +1,4 @@
+@import "/src/styles/anchor-tag-like-text";
 @import "../settings-styles";
 
 .setting-title {
@@ -33,15 +34,8 @@
   .location-value { grid-area: location-value; }
 }
 
-// anchor-tag-style is to give styles like <a> tag to the specified text without using <a> tag.
-.anchor-tag-style {
-  color: -webkit-link;
-  cursor: pointer;
-  text-decoration: underline;
-
-  &:active{
-    color: -webkit-activelink;
-  }
+.anchor-tag-like-text {
+  @include anchor-tag-like-text;
 }
 
 .delete-button-description {
