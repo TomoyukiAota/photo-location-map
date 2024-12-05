@@ -51,7 +51,7 @@ export class ThumbnailGenerationStatusBarComponent implements OnInit {
     });
   }
 
-  public handleErrorTextClicked(event: MouseEvent) {
+  public handleClickHereTextClicked(event: MouseEvent) {
     event.stopPropagation();
     this.dialog.open(ThumbnailGenerationErrorDialogComponent, {
       width: '800px',

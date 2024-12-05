@@ -1,6 +1,6 @@
 <div class="summary">
   <ng-container *ngIf="isThumbnailGenerationDone; else summaryForThumbnailGenerationInProgress">
-    <span *ngIf="thumbnailGenerationResult.errorOccurred; else summaryForNoErrorDuringThumbnailGeneration">Finished generating thumbnails for HEIF files with error(s).</span>
+    <span *ngIf="thumbnailGenerationResult.errorOccurred; else summaryForNoErrorDuringThumbnailGeneration">Finished generating thumbnails for HEIF files with errors.</span>
     <ng-template #summaryForNoErrorDuringThumbnailGeneration>
       <span>Completed generating thumbnails for HEIF files.</span>
     </ng-template>
@@ -24,15 +24,15 @@
     <div>
       <ng-container *ngIf="isThumbnailGenerationDone; else detailsForThumbnailGenerationInProgress">
         <span *ngIf="thumbnailGenerationResult.errorOccurred; else detailsForNoErrorDuringThumbnailGeneration">
-          <span>Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} thumbnails with error(s). </span>
-          <span class="anchor-tag-like-text" (click)="handleErrorTextClicked($event)">Click here to see the error(s).</span>
+          <span>Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} files with errors. </span>
+          <span class="anchor-tag-like-text" (click)="handleClickHereTextClicked($event)">Click here to see the files with errors.</span>
         </span>
         <ng-template #detailsForNoErrorDuringThumbnailGeneration>
-          <span>Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} thumbnails.</span>
+          <span>Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} files.</span>
         </ng-template>
       </ng-container>
       <ng-template #detailsForThumbnailGenerationInProgress>
-        <span>Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} thumbnails.</span>
+        <span>Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} files.</span>
       </ng-template>
     </div>
     <div class="generation-required-files-description">
