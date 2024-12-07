@@ -21,7 +21,25 @@
     <!-- File Column -->
     <ng-container matColumnDef="filePath">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> File </th>
-      <td mat-cell *matCellDef="let element"> {{element.filePath}} </td>
+      <td mat-cell *matCellDef="let element">
+        <div class="file-path-and-icons"
+             (mouseenter)="icons.style.opacity = '1'"
+             (mouseleave)="icons.style.opacity = '0'">
+          <div>{{ element.filePath }}</div>
+          <div class="icons" #icons>
+            <img class="open-file-icon"
+                 [src]="launchExternalAppIconDataUrl"
+                 alt="Open File"
+                 title="Open File"
+                 (click)="handleOpenFileIconClicked(element.filePath)">
+            <img class="open-folder-icon"
+                 [src]="folderIconDataUrl"
+                 alt="Open Folder"
+                 title="Open Folder"
+                 (click)="handleOpenFolderIconClicked(element.filePath)">
+          </div>
+        </div>
+      </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>

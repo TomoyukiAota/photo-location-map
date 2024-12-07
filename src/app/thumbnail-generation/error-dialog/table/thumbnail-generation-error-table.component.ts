@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
+import { DomSanitizer } from '@angular/platform-browser';
 import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
+import { IconDataUrl } from '../../../../assets/icon-data-url';
 import { ThumbnailGenerationService } from '../../service/thumbnail-generation.service';
 
 interface TableRow {
@@ -17,9 +19,14 @@ export class ThumbnailGenerationErrorTableComponent implements OnInit {
   public displayedColumns: string[] = ['position', 'filePath'];
   public dataSource = new TableVirtualScrollDataSource<TableRow>();
 
+  public get launchExternalAppIconDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.launchExternalApp); }
+  public get folderIconDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.folder); }
+
   @ViewChild(MatSort, { static: true }) private sort: MatSort;
 
-  constructor(private thumbnailGenerationService: ThumbnailGenerationService) {
+  constructor(private sanitizer: DomSanitizer,
+              private thumbnailGenerationService: ThumbnailGenerationService,
+  ) {
   }
 
   public ngOnInit() {
@@ -34,5 +41,15 @@ export class ThumbnailGenerationErrorTableComponent implements OnInit {
 
   public applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  public handleOpenFileIconClicked(filePath: string) {
+    console.log('handleOpenFileIconClicked', filePath);
+    // TODO
+  }
+
+  public handleOpenFolderIconClicked(filePath: string) {
+    console.log('handleOpenFolderIconClicked', filePath);
+    // TODO
   }
 }

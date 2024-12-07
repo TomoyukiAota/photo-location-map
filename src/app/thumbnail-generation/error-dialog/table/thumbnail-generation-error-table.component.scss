@@ -16,3 +16,28 @@ table {
 .col-sm {
   width: 70px;
 }
+
+.action-column-header-cell, .action-column-cell {
+  width: 70px;
+}
+
+.file-path-and-icons {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+}
+
+.icons {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  gap: 10px;
+
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.open-file-icon, .open-folder-icon {
+  width: 30px;
+  height: 30px;
+}
