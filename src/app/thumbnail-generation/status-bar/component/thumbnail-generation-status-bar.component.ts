@@ -54,7 +54,7 @@ export class ThumbnailGenerationStatusBarComponent implements OnInit {
   public handleClickHereTextClicked(event: MouseEvent) {
     event.stopPropagation();
     this.dialog.open(ThumbnailGenerationErrorDialogComponent, {
-      width: '800px',
+      width: '1000px',
       height: '600px',
       panelClass: 'custom-dialog-container',
       disableClose: false,
