@@ -46,7 +46,7 @@ import { WelcomeDialogComponent } from './welcome-dialog/welcome-dialog.componen
 import { SettingsDialogComponent } from './settings-dialog/settings-dialog.component';
 import { ThumbnailGenerationStatusBarComponent } from './thumbnail-generation/status-bar/component/thumbnail-generation-status-bar.component';
 import { ThumbnailGenerationErrorDialogComponent } from './thumbnail-generation/error-dialog/thumbnail-generation-error-dialog.component';
-import { FilterSortSelectExampleComponent } from './thumbnail-generation/error-dialog/filter-sort-select-example/filter-sort-select-example.component';
+import { ThumbnailGenerationErrorTableComponent } from './thumbnail-generation/error-dialog/table/thumbnail-generation-error-table.component';
 import { AppearanceSettingsComponent } from './settings-dialog/appearance-settings/appearance-settings.component';
 import { DateTimeSettingsComponent } from './settings-dialog/date-time-settings/date-time-settings.component';
 import { OsSettingsComponent } from './settings-dialog/os-settings/os-settings.component';
@@ -81,7 +81,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     SelectPhotosWithinZoomComponent,
     ThumbnailGenerationStatusBarComponent,
     ThumbnailGenerationErrorDialogComponent,
-    FilterSortSelectExampleComponent,
+    ThumbnailGenerationErrorTableComponent,
     AppearanceSettingsComponent,
     DateTimeSettingsComponent,
     OsSettingsComponent,

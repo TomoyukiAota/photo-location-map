@@ -133,11 +133,11 @@ const ELEMENT_DATA: PeriodicElement[] = [
 ];
 
 @Component({
-  selector: 'app-filter-sort-select-example',
-  templateUrl: './filter-sort-select-example.component.html',
-  styleUrls: ['./filter-sort-select-example.component.scss']
+  selector: 'app-thumbnail-generation-error-table',
+  templateUrl: './thumbnail-generation-error-table.component.html',
+  styleUrls: ['./thumbnail-generation-error-table.component.scss']
 })
-export class FilterSortSelectExampleComponent implements OnInit {
+export class ThumbnailGenerationErrorTableComponent implements OnInit {
 
   displayedColumns: string[] = ['select', 'position', 'name', 'weight', 'symbol'];
   dataSource = new TableVirtualScrollDataSource<PeriodicElement>(ELEMENT_DATA);
