@@ -22,6 +22,7 @@ export class ThumbnailGenerationService {
   public generationStarted = new Subject<{numOfAllHeifFiles: number, numOfCacheAvailableThumbnails: number, numOfGenerationRequiredThumbnails: number}>();
   public generationProgress = new Subject<{numOfProcessedThumbnails: number, progressPercent: number}>();
   public generationDone = new Subject<ThumbnailGenerationResult>();
+  public thumbnailGenerationResult: ThumbnailGenerationResult;
   public isGenerating = new BehaviorSubject<boolean>(false);
 
   constructor() {
@@ -87,10 +88,11 @@ export class ThumbnailGenerationService {
 
       if (numberOfProcessedThumbnails === this.numOfGenerationRequiredThumbnails) {
         const heifFilePathsWithoutThumbnail = this.heifFilePathsToGenerateThumbnail.filter(filePath => !isThumbnailCacheAvailable(filePath));
-        this.generationDone.next({
+        this.thumbnailGenerationResult = {
           errorOccurred: heifFilePathsWithoutThumbnail.length >= 1,
           filePathsWithoutThumbnail: heifFilePathsWithoutThumbnail,
-        });
+        };
+        this.generationDone.next(this.thumbnailGenerationResult);
         logger.info(`Finished thumbnail generation.`);
         clearInterval(intervalId);
       }
