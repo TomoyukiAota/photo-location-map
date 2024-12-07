@@ -55,7 +55,7 @@ export class ThumbnailGenerationStatusBarComponent implements OnInit {
     event.stopPropagation();
     this.dialog.open(ThumbnailGenerationErrorDialogComponent, {
       width: '800px',
-      height: '360px',
+      height: '600px',
       panelClass: 'custom-dialog-container',
       disableClose: false,
       autoFocus: false,

@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -13,6 +14,8 @@ import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
 import { MatTreeModule } from '@angular/material/tree';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -20,6 +23,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgxEchartsModule } from 'ngx-echarts';
+import { TableVirtualScrollModule } from 'ng-table-virtual-scroll';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -42,6 +46,7 @@ import { WelcomeDialogComponent } from './welcome-dialog/welcome-dialog.componen
 import { SettingsDialogComponent } from './settings-dialog/settings-dialog.component';
 import { ThumbnailGenerationStatusBarComponent } from './thumbnail-generation/status-bar/component/thumbnail-generation-status-bar.component';
 import { ThumbnailGenerationErrorDialogComponent } from './thumbnail-generation/error-dialog/thumbnail-generation-error-dialog.component';
+import { FilterSortSelectExampleComponent } from './thumbnail-generation/error-dialog/filter-sort-select-example/filter-sort-select-example.component';
 import { AppearanceSettingsComponent } from './settings-dialog/appearance-settings/appearance-settings.component';
 import { DateTimeSettingsComponent } from './settings-dialog/date-time-settings/date-time-settings.component';
 import { OsSettingsComponent } from './settings-dialog/os-settings/os-settings.component';
@@ -76,6 +81,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     SelectPhotosWithinZoomComponent,
     ThumbnailGenerationStatusBarComponent,
     ThumbnailGenerationErrorDialogComponent,
+    FilterSortSelectExampleComponent,
     AppearanceSettingsComponent,
     DateTimeSettingsComponent,
     OsSettingsComponent,
@@ -105,10 +111,14 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatMenuModule,
     MatProgressBarModule,
     MatSelectModule,
+    MatSortModule,
+    MatTableModule,
     MatTreeModule,
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts'),
     }),
+    ScrollingModule,
+    TableVirtualScrollModule,
   ],
   providers: [
     provideHttpClient(withInterceptorsFromDi())

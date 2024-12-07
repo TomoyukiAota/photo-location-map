@@ -1,0 +1,18 @@
+:host {
+  display: grid;
+  grid-template-rows: auto 400px;
+}
+
+mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.col-sm {
+  width: 70px;
+}

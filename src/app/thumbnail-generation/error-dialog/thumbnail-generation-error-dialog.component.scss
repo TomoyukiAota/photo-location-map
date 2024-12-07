@@ -3,10 +3,12 @@
   padding: 10px;
 
   display: grid;
-  grid: "message"      1fr
+  grid: "message"      auto
+        "table"        1fr
         "close-button" auto
         /auto;
   .message      { grid-area: message;      }
+  .table        { grid-area: table;        }
   .close-button { grid-area: close-button; }
 }
 
