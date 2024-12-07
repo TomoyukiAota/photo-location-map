@@ -14,15 +14,15 @@ interface TableRow {
   styleUrls: ['./thumbnail-generation-error-table.component.scss']
 })
 export class ThumbnailGenerationErrorTableComponent implements OnInit {
+  public displayedColumns: string[] = ['position', 'filePath'];
+  public dataSource = new TableVirtualScrollDataSource<TableRow>();
+
+  @ViewChild(MatSort, { static: true }) private sort: MatSort;
+
   constructor(private thumbnailGenerationService: ThumbnailGenerationService) {
   }
 
-  displayedColumns: string[] = ['position', 'filePath'];
-  dataSource = new TableVirtualScrollDataSource<TableRow>();
-
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
-
-  ngOnInit() {
+  public ngOnInit() {
     this.dataSource.data = this.thumbnailGenerationService.thumbnailGenerationResult.filePathsWithoutThumbnail.map((filePath, index) => {
       return {
         position: index + 1,
@@ -32,7 +32,7 @@ export class ThumbnailGenerationErrorTableComponent implements OnInit {
     this.dataSource.sort = this.sort;
   }
 
-  applyFilter(filterValue: string) {
+  public applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 }
