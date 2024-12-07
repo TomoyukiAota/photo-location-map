@@ -137,7 +137,7 @@ const ELEMENT_DATA: PeriodicElement[] = [
   styleUrls: ['./thumbnail-generation-error-table.component.scss']
 })
 export class ThumbnailGenerationErrorTableComponent implements OnInit {
-  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
+  displayedColumns: string[] = ['position', 'name'];
   dataSource = new TableVirtualScrollDataSource<PeriodicElement>(ELEMENT_DATA);
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
