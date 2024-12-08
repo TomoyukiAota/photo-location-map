@@ -1,3 +1,5 @@
+@import "/src/styles/icon-button";
+
 :host {
   display: grid;
   grid-template-rows: auto 400px;
@@ -21,23 +23,22 @@ table {
   width: 70px;
 }
 
-.file-path-and-icons {
+.file-path-and-buttons {
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
 }
 
-.icons {
+.buttons {
   display: grid;
   grid-template-columns: auto auto;
   align-items: center;
-  gap: 10px;
+  gap: 2px;
 
-  opacity: 0;
+  opacity: 0; // Set to "opacity: 1" when the filePath cell is hovered over.
   transition: opacity 0.2s ease-in-out;
-}
 
-.open-file-icon, .open-folder-icon {
-  width: 30px;
-  height: 30px;
+  > button {
+    @include icon-button;
+  }
 }

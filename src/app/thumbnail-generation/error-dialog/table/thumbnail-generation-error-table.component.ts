@@ -43,12 +43,12 @@ export class ThumbnailGenerationErrorTableComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  public handleOpenFileIconClicked(filePath: string) {
+  public handleOpenFileButtonClicked(filePath: string) {
     console.log('handleOpenFileIconClicked', filePath);
     // TODO
   }
 
-  public handleOpenFolderIconClicked(filePath: string) {
+  public handleOpenFolderButtonClicked(filePath: string) {
     console.log('handleOpenFolderIconClicked', filePath);
     // TODO
   }
