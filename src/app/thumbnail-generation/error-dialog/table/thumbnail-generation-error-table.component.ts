@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
+import { openContainingFolder, openWithAssociatedApp } from '../../../../../src-shared/command/command';
 import { IconDataUrl } from '../../../../assets/icon-data-url';
 import { ThumbnailGenerationService } from '../../service/thumbnail-generation.service';
 
@@ -45,11 +46,11 @@ export class ThumbnailGenerationErrorTableComponent implements OnInit {
 
   public handleOpenFileButtonClicked(filePath: string) {
     console.log('handleOpenFileIconClicked', filePath);
-    // TODO
+    openWithAssociatedApp(filePath);
   }
 
   public handleOpenFolderButtonClicked(filePath: string) {
     console.log('handleOpenFolderIconClicked', filePath);
-    // TODO
+    openContainingFolder(filePath);
   }
 }
