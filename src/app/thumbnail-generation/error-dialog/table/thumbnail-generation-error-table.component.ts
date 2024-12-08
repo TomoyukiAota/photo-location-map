@@ -2,9 +2,13 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
+import { Analytics } from '../../../../../src-shared/analytics/analytics';
 import { openContainingFolder, openWithAssociatedApp } from '../../../../../src-shared/command/command';
+import { createPrependedLogger } from '../../../../../src-shared/log/create-prepended-logger';
 import { IconDataUrl } from '../../../../assets/icon-data-url';
 import { ThumbnailGenerationService } from '../../service/thumbnail-generation.service';
+
+const logger = createPrependedLogger('[Thumbnail Generation Error Table]');
 
 interface TableRow {
   position: number;
@@ -45,12 +49,14 @@ export class ThumbnailGenerationErrorTableComponent implements OnInit {
   }
 
   public handleOpenFileButtonClicked(filePath: string) {
-    console.log('handleOpenFileIconClicked', filePath);
     openWithAssociatedApp(filePath);
+    logger.info(`Opened the file with its associated app. File Path: "${filePath}"`);
+    Analytics.trackEvent('Thumbnail Generation Error Table', '[ThumbGen Error Table] Open File');
   }
 
   public handleOpenFolderButtonClicked(filePath: string) {
-    console.log('handleOpenFolderIconClicked', filePath);
     openContainingFolder(filePath);
+    logger.info(`Opened the containing folder of the file. File Path: "${filePath}"`);
+    Analytics.trackEvent('Thumbnail Generation Error Table', '[ThumbGen Error Table] Open Folder');
   }
 }

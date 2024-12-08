@@ -1,5 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Analytics } from '../../../../../src-shared/analytics/analytics';
+import { Logger } from '../../../../../src-shared/log/logger';
 import {
   ThumbnailGenerationErrorDialogComponent
 } from '../../error-dialog/thumbnail-generation-error-dialog.component';
@@ -61,6 +63,8 @@ export class ThumbnailGenerationStatusBarComponent implements OnInit {
       autoFocus: false,
       restoreFocus: false
     });
+    Logger.info('[Thumbnail Generation Status Bar] The text "Click here to see the files with errors." is clicked.');
+    Analytics.trackEvent('Thumbnail Generation Status Bar', '[ThumbGen Status Bar] Open Error Dialog');
   }
 
   public toggleDetailsVisibility() {
