@@ -25,6 +25,10 @@ table {
   align-items: center;
 }
 
+.file-path {
+  overflow-wrap: anywhere; // Insert line break(s) in a long file path so that it fits within the table cell.
+}
+
 .buttons {
   display: grid;
   grid-template-columns: auto auto;

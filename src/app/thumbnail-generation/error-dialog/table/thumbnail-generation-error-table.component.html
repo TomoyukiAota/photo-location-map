@@ -29,7 +29,7 @@
         <div class="file-path-and-buttons"
              (mouseenter)="buttons.style.opacity = '1'"
              (mouseleave)="buttons.style.opacity = '0'">
-          <div>{{ element.filePath }}</div>
+          <div class="file-path">{{ element.filePath }}</div>
           <div class="buttons" #buttons>
             <button (click)="handleOpenFileButtonClicked(element.filePath)">
               <img [src]="launchExternalAppIconDataUrl"
