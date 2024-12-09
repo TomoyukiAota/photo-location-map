@@ -138,7 +138,14 @@ export function lastModifiedMatchBetweenSrcFileAndThumbnailGenerationLogFile(src
     return false;
   }
 
-  const fileContentObj = JSON.parse(fileContentStr);
+  let fileContentObj;
+  try {
+    fileContentObj = JSON.parse(fileContentStr);
+  } catch (error) {
+    Logger.error(`Failed to parse the content of the log file "${logFilePath}" as JSON format. The log file is for thumbnail generation result of "${srcFilePath}". error: ${error}`, error);
+    return false;
+  }
+
   const lastModifiedFromLogFile = fileContentObj[lastModifiedKey];
   if (!lastModifiedFromLogFile)
     return false;
