@@ -1,19 +1,30 @@
 import { Injectable } from '@angular/core';
 import { ipcRenderer } from 'electron';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { convertToFlattenedDirTree } from '../../../../src-shared/dir-tree/dir-tree-util';
 import { FilenameExtension } from '../../../../src-shared/filename-extension/filename-extension';
 import { IpcConstants } from '../../../../src-shared/ipc/ipc-constants';
-import { isThumbnailCacheAvailable } from '../../../../src-shared/thumbnail/cache/thumbnail-cache-util';
+import { stringArrayToLogText } from '../../../../src-shared/log/multiline-log-text';
+import {
+  isAttemptToGenerateThumbnailFinished,
+  isThumbnailCacheAvailable
+} from '../../../../src-shared/thumbnail/cache/thumbnail-cache-util';
 import { thumbnailGenerationLogger as logger } from '../../../../src-shared/thumbnail/generation/thumbnail-generation-logger';
+
+export interface ThumbnailGenerationResult {
+  errorOccurred: boolean,
+  filePathsWithoutThumbnail: string[],
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class ThumbnailGenerationService {
   public generationStarted = new Subject<{numOfAllHeifFiles: number, numOfCacheAvailableThumbnails: number, numOfGenerationRequiredThumbnails: number}>();
-  public generationProgress = new Subject<{numOfGeneratedThumbnails: number, progressPercent: number}>();
-  public generationDone = new Subject<void>();
+  public generationProgress = new Subject<{numOfProcessedThumbnails: number, progressPercent: number}>();
+  public generationDone = new Subject<ThumbnailGenerationResult>();
+  public thumbnailGenerationResult: ThumbnailGenerationResult;
   public isGenerating = new BehaviorSubject<boolean>(false);
 
   constructor() {
@@ -57,31 +68,62 @@ export class ThumbnailGenerationService {
 
   private updateGenerationStatusAsStarted() {
     const numOfCacheAvailableThumbnails = this.numOfAllHeifFiles - this.numOfGenerationRequiredThumbnails;
-
     this.generationStarted.next({
       numOfAllHeifFiles: this.numOfAllHeifFiles,
       numOfCacheAvailableThumbnails: numOfCacheAvailableThumbnails,
       numOfGenerationRequiredThumbnails: this.numOfGenerationRequiredThumbnails,
     });
+    this.recordAtThumbnailGenerationStart(numOfCacheAvailableThumbnails);
+  }
 
+  private recordAtThumbnailGenerationStart(numOfCacheAvailableThumbnails: number) {
     logger.info(`Total HEIF files: ${this.numOfAllHeifFiles}, Cache-available: ${numOfCacheAvailableThumbnails}, `
       + `Generation-required: ${this.numOfGenerationRequiredThumbnails}`);
+    Analytics.trackEvent('Thumbnail Generation', 'Thumbnail Generation Started',
+      `Total: ${this.numOfAllHeifFiles}, Cache-available: ${numOfCacheAvailableThumbnails}, Generation-required: ${this.numOfGenerationRequiredThumbnails}`);
+    Analytics.trackEvent('Thumbnail Generation', 'Thumbnail Generation: Total', `Total HEIF files: ${this.numOfAllHeifFiles}`);
+    Analytics.trackEvent('Thumbnail Generation', 'Thumbnail Generation: Cache-available', `Cache-available: ${numOfCacheAvailableThumbnails}`);
+    Analytics.trackEvent('Thumbnail Generation', 'Thumbnail Generation: Gen-required', `Generation-required: ${this.numOfGenerationRequiredThumbnails}`);
   }
 
   private updateGenerationStatusFromInProgressToDone(): void {
     const updateMilliseconds = 5000;
     const intervalId = setInterval(() => {
-      const numberOfGeneratedThumbnails = this.heifFilePathsToGenerateThumbnail.filter(filePath => isThumbnailCacheAvailable(filePath)).length;
-      const progressPercent = (numberOfGeneratedThumbnails / this.numOfGenerationRequiredThumbnails) * 100;
-      logger.info(`Thumbnail generation progress: ${progressPercent.toFixed(5)} %, Generated/Generation-required: `
-        + `${numberOfGeneratedThumbnails}/${this.numOfGenerationRequiredThumbnails}`);
-      this.generationProgress.next({numOfGeneratedThumbnails: numberOfGeneratedThumbnails, progressPercent});
-
-      if (numberOfGeneratedThumbnails === this.numOfGenerationRequiredThumbnails) {
-        this.generationDone.next();
-        logger.info(`Completed thumbnail generation.`);
+      const numberOfProcessedThumbnails = this.heifFilePathsToGenerateThumbnail.filter(filePath => isAttemptToGenerateThumbnailFinished(filePath)).length;
+      this.updateGenerationProgress(numberOfProcessedThumbnails);
+      if (numberOfProcessedThumbnails === this.numOfGenerationRequiredThumbnails) {
+        this.updateGenerationStatusToDone();
+        this.recordThumbnailGenerationResult();
         clearInterval(intervalId);
       }
     }, updateMilliseconds);
+  }
+
+  private updateGenerationProgress(numberOfProcessedThumbnails: number) {
+    const progressPercent = (numberOfProcessedThumbnails / this.numOfGenerationRequiredThumbnails) * 100;
+    logger.info(`Thumbnail generation progress: ${progressPercent.toFixed(5)} %, Processed/Generation-required: `
+      + `${numberOfProcessedThumbnails}/${this.numOfGenerationRequiredThumbnails}`);
+    this.generationProgress.next({numOfProcessedThumbnails: numberOfProcessedThumbnails, progressPercent});
+  }
+
+  private updateGenerationStatusToDone() {
+    const heifFilePathsWithoutThumbnail = this.heifFilePathsToGenerateThumbnail.filter(filePath => !isThumbnailCacheAvailable(filePath));
+    const errorOccurred = heifFilePathsWithoutThumbnail.length >= 1;
+    this.thumbnailGenerationResult = {
+      errorOccurred: errorOccurred,
+      filePathsWithoutThumbnail: heifFilePathsWithoutThumbnail,
+    };
+    this.generationDone.next(this.thumbnailGenerationResult);
+  }
+
+  private recordThumbnailGenerationResult() {
+    logger.info(`Finished thumbnail generation.`);
+    const { errorOccurred, filePathsWithoutThumbnail } = this.thumbnailGenerationResult;
+    if (errorOccurred) {
+      logger.warn(`Error(s) occurred during thumbnail generation.`);
+      const filePathsText = stringArrayToLogText(filePathsWithoutThumbnail);
+      logger.warn(`Thumbnails could not be generated for the following ${filePathsWithoutThumbnail.length} files: ${filePathsText}`);
+    }
+    Analytics.trackEvent('Thumbnail Generation', 'Thumbnail Generation Finished', `Number of thumbnails failed to generate: ${filePathsWithoutThumbnail.length}`);
   }
 }

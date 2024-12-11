@@ -1,14 +1,17 @@
 <div class="summary">
-  <ng-container *ngIf="isThumbnailGenerationDone; else thumbnailGenerationInProgress">
-    <span>Completed generating thumbnails for HEIF files.</span>
+  <ng-container *ngIf="isThumbnailGenerationDone; else summaryForThumbnailGenerationInProgress">
+    <span *ngIf="thumbnailGenerationResult.errorOccurred; else summaryForNoErrorDuringThumbnailGeneration">Finished generating thumbnails for HEIF files with errors.</span>
+    <ng-template #summaryForNoErrorDuringThumbnailGeneration>
+      <span>Completed generating thumbnails for HEIF files.</span>
+    </ng-template>
   </ng-container>
-  <ng-template #thumbnailGenerationInProgress>
+  <ng-template #summaryForThumbnailGenerationInProgress>
     <span>Generating thumbnails for HEIF files...</span>
   </ng-template>
 </div>
 <div class="progress-bar-with-details"
      [class]="detailsVisible ? 'expanded-progress-bar-with-details' : 'shrunk-progress-bar-with-details'"
-     [title]="detailsVisible ? 'Hide Details' : 'Show Details'"
+     [title]="detailsVisible ? '' : 'Show Details'"
      (click)="toggleDetailsVisibility()">
   <div class="progress-bar-and-expand-icon">
     <mat-progress-bar mode="buffer" [value]="progressPercent"></mat-progress-bar>
@@ -19,7 +22,22 @@
   </div>
   <div class="details">
     <div>
-      Generated {{ numberOfGeneratedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} thumbnails.
+      <ng-container *ngIf="isThumbnailGenerationDone; else detailsForThumbnailGenerationInProgress">
+        <span *ngIf="thumbnailGenerationResult.errorOccurred; else detailsForNoErrorDuringThumbnailGeneration">
+          <span>Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} files with errors. </span>
+          <span class="anchor-tag-like-text"
+                title="See the files with errors"
+                (click)="handleClickHereTextClicked($event)">
+            Click here to see the files with errors.
+          </span>
+        </span>
+        <ng-template #detailsForNoErrorDuringThumbnailGeneration>
+          <span>Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} files.</span>
+        </ng-template>
+      </ng-container>
+      <ng-template #detailsForThumbnailGenerationInProgress>
+        <span>Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} files.</span>
+      </ng-template>
     </div>
     <div class="generation-required-files-description">
       {{ numberOfThumbnailsGenerationRequired }} thumbnails need generation, which is given by "HEIF files ({{ numberOfTotalHeifFiles }} files)

@@ -1,0 +1,26 @@
+@mixin icon-button {
+  all: unset;      // Remove button's default style
+  cursor: pointer; // Retrieve button's default cursor style
+
+  width: 30px;
+  height: 30px;
+  margin: 3px;
+  padding: 3px;
+  border-radius: 5px;
+
+  // Button color
+  background-color: #999999;
+  transition: background-color 0.2s ease;
+  &:hover  { background-color: #666666; }
+  &:active { background-color: #444444; }
+
+  // Centering the icon within the button
+  display: inline-grid;
+  place-items: center;
+
+  // Style for the icon within the button
+  > img {
+    width: 25px;
+    height: 25px;
+  }
+}

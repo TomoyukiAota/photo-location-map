@@ -1,0 +1,54 @@
+<mat-form-field>
+  <input matInput (keyup)="applyFilter($any($event.target).value)" placeholder="Filter">
+</mat-form-field>
+
+<cdk-virtual-scroll-viewport tvsItemSize="48"
+                             class="mat-elevation-z2">
+
+  <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+
+    <!-- Position Column -->
+    <ng-container matColumnDef="position">
+      <th mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          class="position-column-header-cell">
+        No.
+      </th>
+      <td mat-cell
+          *matCellDef="let element"
+          class="position-column-cell">
+        {{ element.position }}
+      </td>
+    </ng-container>
+
+    <!-- File Column -->
+    <ng-container matColumnDef="filePath">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>File</th>
+      <td mat-cell *matCellDef="let element">
+        <div class="file-path-and-buttons"
+             (mouseenter)="buttons.style.opacity = '1'"
+             (mouseleave)="buttons.style.opacity = '0'">
+          <div class="file-path">{{ element.filePath }}</div>
+          <div class="buttons" #buttons>
+            <button (click)="handleOpenFileButtonClicked(element.filePath)">
+              <img [src]="launchExternalAppIconDataUrl"
+                   alt="Open File"
+                   title="Open File">
+            </button>
+            <button (click)="handleOpenFolderButtonClicked(element.filePath)">
+              <img [src]="folderIconDataUrl"
+                   alt="Open Folder"
+                   title="Open Folder">
+            </button>
+          </div>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+  </table>
+
+</cdk-virtual-scroll-viewport>

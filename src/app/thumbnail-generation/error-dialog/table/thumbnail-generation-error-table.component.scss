@@ -1,0 +1,46 @@
+@import "/src/styles/icon-button";
+
+:host {
+  display: grid;
+  grid-template-rows: auto 405px;
+}
+
+mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.position-column-header-cell, .position-column-cell {
+  width: 70px;
+}
+
+.file-path-and-buttons {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px; // Same as the padding defined by .mdc-data-table__cell and .mdc-data-table__header-cell.
+  align-items: center;
+}
+
+.file-path {
+  padding: 8px 0; // Increase spaces between cells for the case when file paths are long and displayed on multiple lines.
+  overflow-wrap: anywhere; // Insert line break(s) in a long file path so that it fits within the table cell.
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  gap: 2px;
+
+  opacity: 0; // Set to "opacity: 1" when the filePath cell is hovered over.
+  transition: opacity 0.2s ease-in-out;
+
+  > button {
+    @include icon-button;
+  }
+}
