@@ -4,6 +4,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { convertToFlattenedDirTree } from '../../../../src-shared/dir-tree/dir-tree-util';
 import { FilenameExtension } from '../../../../src-shared/filename-extension/filename-extension';
 import { IpcConstants } from '../../../../src-shared/ipc/ipc-constants';
+import { stringArrayToLogText } from '../../../../src-shared/log/multiline-log-text';
 import {
   isAttemptToGenerateThumbnailFinished,
   isThumbnailCacheAvailable
@@ -88,12 +89,18 @@ export class ThumbnailGenerationService {
 
       if (numberOfProcessedThumbnails === this.numOfGenerationRequiredThumbnails) {
         const heifFilePathsWithoutThumbnail = this.heifFilePathsToGenerateThumbnail.filter(filePath => !isThumbnailCacheAvailable(filePath));
+        const errorOccurred = heifFilePathsWithoutThumbnail.length >= 1;
         this.thumbnailGenerationResult = {
-          errorOccurred: heifFilePathsWithoutThumbnail.length >= 1,
+          errorOccurred: errorOccurred,
           filePathsWithoutThumbnail: heifFilePathsWithoutThumbnail,
         };
         this.generationDone.next(this.thumbnailGenerationResult);
         logger.info(`Finished thumbnail generation.`);
+        if (errorOccurred) {
+          logger.info(`Error(s) occurred during thumbnail generation.`);
+          const filePathsText = stringArrayToLogText(heifFilePathsWithoutThumbnail);
+          logger.info(`Thumbnails could not be generated for the following files: ${filePathsText}`);
+        }
         clearInterval(intervalId);
       }
     }, updateMilliseconds);
