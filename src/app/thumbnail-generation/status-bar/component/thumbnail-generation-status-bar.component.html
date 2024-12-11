@@ -11,7 +11,7 @@
 </div>
 <div class="progress-bar-with-details"
      [class]="detailsVisible ? 'expanded-progress-bar-with-details' : 'shrunk-progress-bar-with-details'"
-     [title]="detailsVisible ? 'Hide Details' : 'Show Details'"
+     [title]="detailsVisible ? '' : 'Show Details'"
      (click)="toggleDetailsVisibility()">
   <div class="progress-bar-and-expand-icon">
     <mat-progress-bar mode="buffer" [value]="progressPercent"></mat-progress-bar>
