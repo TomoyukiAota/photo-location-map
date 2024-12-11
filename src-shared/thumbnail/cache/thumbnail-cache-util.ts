@@ -134,7 +134,7 @@ export function lastModifiedMatchBetweenSrcFileAndThumbnailGenerationLogFile(src
   try {
     fileContentStr = fsExtra.readFileSync(logFilePath, 'utf8');
   } catch (error) {
-    Logger.error(`Failed to read the log file "${logFilePath}" which is the thumbnail generation result for "${srcFilePath}". error: ${error}`, error);
+    Logger.warn(`Failed to read the log file "${logFilePath}" which is the thumbnail generation result for "${srcFilePath}". error: ${error}`, error);
     return false;
   }
 
@@ -142,7 +142,7 @@ export function lastModifiedMatchBetweenSrcFileAndThumbnailGenerationLogFile(src
   try {
     fileContentObj = JSON.parse(fileContentStr);
   } catch (error) {
-    Logger.error(`Failed to parse the content of the log file "${logFilePath}" as JSON format. The log file is for thumbnail generation result of "${srcFilePath}". error: ${error}`, error);
+    Logger.warn(`Failed to parse the content of the log file "${logFilePath}" as JSON format. The log file is for thumbnail generation result of "${srcFilePath}". error: ${error}`, error);
     return false;
   }
 
