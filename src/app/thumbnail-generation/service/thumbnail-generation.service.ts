@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ipcRenderer } from 'electron';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { convertToFlattenedDirTree } from '../../../../src-shared/dir-tree/dir-tree-util';
 import { FilenameExtension } from '../../../../src-shared/filename-extension/filename-extension';
 import { IpcConstants } from '../../../../src-shared/ipc/ipc-constants';
@@ -101,6 +102,7 @@ export class ThumbnailGenerationService {
           const filePathsText = stringArrayToLogText(heifFilePathsWithoutThumbnail);
           logger.info(`Thumbnails could not be generated for the following files: ${filePathsText}`);
         }
+        Analytics.trackEvent('Thumbnail Generation', 'Thumbnail Generation Finished', `Number of thumbnails failed to generate: ${heifFilePathsWithoutThumbnail.length}`);
         clearInterval(intervalId);
       }
     }, updateMilliseconds);
