@@ -27,6 +27,7 @@ table {
 }
 
 .file-path {
+  padding: 8px 0; // Increase spaces between cells for the case when file paths are long and displayed on multiple lines.
   overflow-wrap: anywhere; // Insert line break(s) in a long file path so that it fits within the table cell.
 }
 
