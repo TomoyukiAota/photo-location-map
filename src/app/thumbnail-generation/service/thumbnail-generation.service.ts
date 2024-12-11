@@ -68,15 +68,22 @@ export class ThumbnailGenerationService {
 
   private updateGenerationStatusAsStarted() {
     const numOfCacheAvailableThumbnails = this.numOfAllHeifFiles - this.numOfGenerationRequiredThumbnails;
-
     this.generationStarted.next({
       numOfAllHeifFiles: this.numOfAllHeifFiles,
       numOfCacheAvailableThumbnails: numOfCacheAvailableThumbnails,
       numOfGenerationRequiredThumbnails: this.numOfGenerationRequiredThumbnails,
     });
+    this.recordAtThumbnailGenerationStart(numOfCacheAvailableThumbnails);
+  }
 
+  private recordAtThumbnailGenerationStart(numOfCacheAvailableThumbnails: number) {
     logger.info(`Total HEIF files: ${this.numOfAllHeifFiles}, Cache-available: ${numOfCacheAvailableThumbnails}, `
       + `Generation-required: ${this.numOfGenerationRequiredThumbnails}`);
+    Analytics.trackEvent('Thumbnail Generation', 'Thumbnail Generation Started',
+      `Total: ${this.numOfAllHeifFiles}, Cache-available: ${numOfCacheAvailableThumbnails}, Generation-required: ${this.numOfGenerationRequiredThumbnails}`);
+    Analytics.trackEvent('Thumbnail Generation', 'Thumbnail Generation: Total', `Total HEIF files: ${this.numOfAllHeifFiles}`);
+    Analytics.trackEvent('Thumbnail Generation', 'Thumbnail Generation: Cache-available', `Cache-available: ${numOfCacheAvailableThumbnails}`);
+    Analytics.trackEvent('Thumbnail Generation', 'Thumbnail Generation: Gen-required', `Generation-required: ${this.numOfGenerationRequiredThumbnails}`);
   }
 
   private updateGenerationStatusFromInProgressToDone(): void {
