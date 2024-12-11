@@ -83,28 +83,40 @@ export class ThumbnailGenerationService {
     const updateMilliseconds = 5000;
     const intervalId = setInterval(() => {
       const numberOfProcessedThumbnails = this.heifFilePathsToGenerateThumbnail.filter(filePath => isAttemptToGenerateThumbnailFinished(filePath)).length;
-      const progressPercent = (numberOfProcessedThumbnails / this.numOfGenerationRequiredThumbnails) * 100;
-      logger.info(`Thumbnail generation progress: ${progressPercent.toFixed(5)} %, Processed/Generation-required: `
-        + `${numberOfProcessedThumbnails}/${this.numOfGenerationRequiredThumbnails}`);
-      this.generationProgress.next({numOfProcessedThumbnails: numberOfProcessedThumbnails, progressPercent});
-
+      this.updateGenerationProgress(numberOfProcessedThumbnails);
       if (numberOfProcessedThumbnails === this.numOfGenerationRequiredThumbnails) {
-        const heifFilePathsWithoutThumbnail = this.heifFilePathsToGenerateThumbnail.filter(filePath => !isThumbnailCacheAvailable(filePath));
-        const errorOccurred = heifFilePathsWithoutThumbnail.length >= 1;
-        this.thumbnailGenerationResult = {
-          errorOccurred: errorOccurred,
-          filePathsWithoutThumbnail: heifFilePathsWithoutThumbnail,
-        };
-        this.generationDone.next(this.thumbnailGenerationResult);
-        logger.info(`Finished thumbnail generation.`);
-        if (errorOccurred) {
-          logger.info(`Error(s) occurred during thumbnail generation.`);
-          const filePathsText = stringArrayToLogText(heifFilePathsWithoutThumbnail);
-          logger.info(`Thumbnails could not be generated for the following files: ${filePathsText}`);
-        }
-        Analytics.trackEvent('Thumbnail Generation', 'Thumbnail Generation Finished', `Number of thumbnails failed to generate: ${heifFilePathsWithoutThumbnail.length}`);
+        this.updateGenerationStatusToDone();
+        this.recordThumbnailGenerationResult();
         clearInterval(intervalId);
       }
     }, updateMilliseconds);
+  }
+
+  private updateGenerationProgress(numberOfProcessedThumbnails: number) {
+    const progressPercent = (numberOfProcessedThumbnails / this.numOfGenerationRequiredThumbnails) * 100;
+    logger.info(`Thumbnail generation progress: ${progressPercent.toFixed(5)} %, Processed/Generation-required: `
+      + `${numberOfProcessedThumbnails}/${this.numOfGenerationRequiredThumbnails}`);
+    this.generationProgress.next({numOfProcessedThumbnails: numberOfProcessedThumbnails, progressPercent});
+  }
+
+  private updateGenerationStatusToDone() {
+    const heifFilePathsWithoutThumbnail = this.heifFilePathsToGenerateThumbnail.filter(filePath => !isThumbnailCacheAvailable(filePath));
+    const errorOccurred = heifFilePathsWithoutThumbnail.length >= 1;
+    this.thumbnailGenerationResult = {
+      errorOccurred: errorOccurred,
+      filePathsWithoutThumbnail: heifFilePathsWithoutThumbnail,
+    };
+    this.generationDone.next(this.thumbnailGenerationResult);
+  }
+
+  private recordThumbnailGenerationResult() {
+    logger.info(`Finished thumbnail generation.`);
+    const { errorOccurred, filePathsWithoutThumbnail } = this.thumbnailGenerationResult;
+    if (errorOccurred) {
+      logger.info(`Error(s) occurred during thumbnail generation.`);
+      const filePathsText = stringArrayToLogText(filePathsWithoutThumbnail);
+      logger.info(`Thumbnails could not be generated for the following files: ${filePathsText}`);
+    }
+    Analytics.trackEvent('Thumbnail Generation', 'Thumbnail Generation Finished', `Number of thumbnails failed to generate: ${filePathsWithoutThumbnail.length}`);
   }
 }
