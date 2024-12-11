@@ -25,7 +25,11 @@
       <ng-container *ngIf="isThumbnailGenerationDone; else detailsForThumbnailGenerationInProgress">
         <span *ngIf="thumbnailGenerationResult.errorOccurred; else detailsForNoErrorDuringThumbnailGeneration">
           <span>Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} files with errors. </span>
-          <span class="anchor-tag-like-text" (click)="handleClickHereTextClicked($event)">Click here to see the files with errors.</span>
+          <span class="anchor-tag-like-text"
+                title="See the files with errors"
+                (click)="handleClickHereTextClicked($event)">
+            Click here to see the files with errors.
+          </span>
         </span>
         <ng-template #detailsForNoErrorDuringThumbnailGeneration>
           <span>Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} files.</span>

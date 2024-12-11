@@ -24,6 +24,9 @@
 
 .anchor-tag-like-text {
   @include anchor-tag-like-text;
+  &:hover {
+    filter: brightness(50%); // To indicate that the text is clickable. Usually, changing the mouse cursor to "pointer" serves the purpose, but it's fixed to "pointer" due to .progress-bar-with-details.
+  }
 }
 
 .progress-bar-with-details {
