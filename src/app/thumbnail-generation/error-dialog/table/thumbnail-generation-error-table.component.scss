@@ -22,6 +22,7 @@ table {
 .file-path-and-buttons {
   display: grid;
   grid-template-columns: 1fr auto;
+  gap: 16px; // Same as the padding defined by .mdc-data-table__cell and .mdc-data-table__header-cell.
   align-items: center;
 }
 
