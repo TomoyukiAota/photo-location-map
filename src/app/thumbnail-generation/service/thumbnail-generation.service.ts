@@ -115,7 +115,7 @@ export class ThumbnailGenerationService {
     if (errorOccurred) {
       logger.warn(`Error(s) occurred during thumbnail generation.`);
       const filePathsText = stringArrayToLogText(filePathsWithoutThumbnail);
-      logger.warn(`Thumbnails could not be generated for the following files: ${filePathsText}`);
+      logger.warn(`Thumbnails could not be generated for the following ${filePathsWithoutThumbnail.length} files: ${filePathsText}`);
     }
     Analytics.trackEvent('Thumbnail Generation', 'Thumbnail Generation Finished', `Number of thumbnails failed to generate: ${filePathsWithoutThumbnail.length}`);
   }
