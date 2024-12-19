@@ -14,6 +14,7 @@ import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewe
 import { LeafletMapForceRenderService } from './leaflet-map-force-render/leaflet-map-force-render.service';
 import { createDivIconHtml } from './div-icon';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
+import { tileServerConfig } from './tile-server-config';
 
 // References to implement Bing Maps with leaflet-plugins:
 // - https://github.com/shramov/leaflet-plugins/blob/master/examples/bing.html
@@ -192,8 +193,16 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   }
 
   private getOsmLayer() {
-    return L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors, CC-BY-SA',
+    const tileProviderName = tileServerConfig.RasterTileProvidersInUse[0];
+    if (!tileProviderName) {
+      throw new Error(`RasterTileProvidersInUse[0] is invalid. tileProviderName: ${tileProviderName}`);
+    }
+    const tileProvider = tileServerConfig.RasterTileProvidersDefinition.find(provider => provider.Name === tileProviderName);
+    if (!tileProvider) {
+      throw new Error(`tileProvider is not found for tileProviderName "${tileProviderName}"`);
+    }
+    return L.tileLayer(tileProvider.Url, {
+      attribution: tileProvider.Attribution,
       ...this.commonLayerOptions,
     });
   }
