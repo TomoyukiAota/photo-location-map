@@ -11,9 +11,22 @@ interface RasterTileProviderDefinition {
 }
 
 interface TileServerConfig {
+  version: string;
   rasterTileProvidersInUse: string[];
   rasterTileProvidersDefinition: RasterTileProviderDefinition[];
 }
+
+const tileServerConfigFallback: TileServerConfig = {
+  version: '1',
+  rasterTileProvidersInUse: ['StandardTileLayer'],
+  rasterTileProvidersDefinition: [
+    {
+      name: 'StandardTileLayer',
+      url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+      attribution: '© OpenStreetMap contributors'
+    }
+  ],
+};
 
 async function fetchTileServerConfig(): Promise<TileServerConfig> {
   const response = await fetch(configFileUrl);
@@ -22,6 +35,21 @@ async function fetchTileServerConfig(): Promise<TileServerConfig> {
   return json as TileServerConfig;
 }
 
-export const tileServerConfig = await fetchTileServerConfig();
+async function fetchTileServerConfigWithFallback(): Promise<TileServerConfig> {
+  try {
+    const config = await fetchTileServerConfig();
+    if (!config) {
+      return tileServerConfigFallback;
+    }
+    return config;
+  } catch (error) {
+    console.error('Failed to fetch tile server config. Using fallback config.', error);
+    return tileServerConfigFallback;
+  }
+}
+
+console.log(`Fetching tile server config from ${configFileUrl}`);
+
+export const tileServerConfig = await fetchTileServerConfigWithFallback();
 
 console.log('tileServerConfig:', tileServerConfig);
