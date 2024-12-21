@@ -4,6 +4,7 @@ import { Control, LayersControlEvent, LeafletEvent, Map, Marker, PopupEvent } fr
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
+import { toLoggableString } from '../../../../src-shared/log/to-loggable-string';
 import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/user-data-stroage-path';
 import { DirectoryTreeViewSelectionService } from '../../directory-tree-view/directory-tree-view-selection.service';
@@ -14,7 +15,7 @@ import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewe
 import { LeafletMapForceRenderService } from './leaflet-map-force-render/leaflet-map-force-render.service';
 import { createDivIconHtml } from './div-icon';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
-import { tileServerConfig } from './tile-server-config';
+import { tileServerConfig, tileServerConfigFallback } from './tile-server-config';
 
 // References to implement Bing Maps with leaflet-plugins:
 // - https://github.com/shramov/leaflet-plugins/blob/master/examples/bing.html
@@ -195,16 +196,33 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   private getOsmLayer() {
     const tileProviderName = tileServerConfig.rasterTileProvidersInUse[0];
     if (!tileProviderName) {
-      throw new Error(`RasterTileProvidersInUse[0] is invalid. tileProviderName: ${tileProviderName}`);
+      logger.error(`RasterTileProvidersInUse[0] is invalid. tileProviderName: ${tileProviderName}`);
+      logger.error(`Using the fallback for tileProvider:\n${this.getTileProviderFallback()}`);
+      return this.getOsmLayerFallback();
     }
     const tileProvider = tileServerConfig.rasterTileProvidersDefinition.find(provider => provider.name === tileProviderName);
     if (!tileProvider) {
-      throw new Error(`tileProvider is not found for tileProviderName "${tileProviderName}"`);
+      logger.error(`tileProvider is not found for tileProviderName "${tileProviderName}"`);
+      logger.error(`Using the fallback for tileProvider:\n${this.getTileProviderFallback()}`);
+      return this.getOsmLayerFallback();
     }
+    logger.info(`Successfully determined tileProvider:\n${toLoggableString(tileProvider)}`);
     return L.tileLayer(tileProvider.url, {
       attribution: tileProvider.attribution,
       ...this.commonLayerOptions,
     });
+  }
+
+  private getOsmLayerFallback() {
+    const tileProviderFallback = this.getTileProviderFallback();
+    return L.tileLayer(tileProviderFallback.url, {
+      attribution: tileProviderFallback.attribution,
+      ...this.commonLayerOptions,
+    });
+  }
+
+  private getTileProviderFallback() {
+    return tileServerConfigFallback.rasterTileProvidersDefinition[0];
   }
 
   private configureRegionSelector() {

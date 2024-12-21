@@ -1,4 +1,6 @@
 import { parse as parseJsonc } from 'jsonc-parser';
+import { toLoggableString } from '../../../../src-shared/log/to-loggable-string';
+import { leafletMapLogger as logger } from './leaflet-map-logger';
 
 // The latest content of main branch in photo-location-map-resources repo is used.
 const configFileUrl
@@ -16,7 +18,7 @@ interface TileServerConfig {
   rasterTileProvidersDefinition: RasterTileProviderDefinition[];
 }
 
-const tileServerConfigFallback: TileServerConfig = {
+export const tileServerConfigFallback: TileServerConfig = {
   version: '1',
   rasterTileProvidersInUse: ['StandardTileLayer'],
   rasterTileProvidersDefinition: [
@@ -43,13 +45,13 @@ async function fetchTileServerConfigWithFallback(): Promise<TileServerConfig> {
     }
     return config;
   } catch (error) {
-    console.error('Failed to fetch tile server config. Using fallback config.', error);
+    logger.error('Failed to fetch tile server config. Using fallback config.', error);
     return tileServerConfigFallback;
   }
 }
 
-console.log(`Fetching tile server config from ${configFileUrl}`);
+logger.info(`Fetching tileServerConfig from ${configFileUrl}`);
 
 export const tileServerConfig = await fetchTileServerConfigWithFallback();
 
-console.log('tileServerConfig:', tileServerConfig);
+logger.info(`Fetched tileServerConfig:\n${toLoggableString(tileServerConfig)}`);
