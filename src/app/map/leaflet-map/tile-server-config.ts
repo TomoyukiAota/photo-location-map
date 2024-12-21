@@ -5,14 +5,14 @@ const configFileUrl
   = 'https://cdn.jsdelivr.net/gh/TomoyukiAota/photo-location-map-resources@main/map-config/osm-tile-server-config-version-1.jsonc';
 
 interface RasterTileProviderDefinition {
-  Name: string;
-  Url: string;
-  Attribution: string;
+  name: string;
+  url: string;
+  attribution: string;
 }
 
 interface TileServerConfig {
-  RasterTileProvidersInUse: string[];
-  RasterTileProvidersDefinition: RasterTileProviderDefinition[];
+  rasterTileProvidersInUse: string[];
+  rasterTileProvidersDefinition: RasterTileProviderDefinition[];
 }
 
 async function fetchTileServerConfig(): Promise<TileServerConfig> {

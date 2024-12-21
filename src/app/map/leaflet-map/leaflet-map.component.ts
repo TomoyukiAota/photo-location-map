@@ -193,16 +193,16 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   }
 
   private getOsmLayer() {
-    const tileProviderName = tileServerConfig.RasterTileProvidersInUse[0];
+    const tileProviderName = tileServerConfig.rasterTileProvidersInUse[0];
     if (!tileProviderName) {
       throw new Error(`RasterTileProvidersInUse[0] is invalid. tileProviderName: ${tileProviderName}`);
     }
-    const tileProvider = tileServerConfig.RasterTileProvidersDefinition.find(provider => provider.Name === tileProviderName);
+    const tileProvider = tileServerConfig.rasterTileProvidersDefinition.find(provider => provider.name === tileProviderName);
     if (!tileProvider) {
       throw new Error(`tileProvider is not found for tileProviderName "${tileProviderName}"`);
     }
-    return L.tileLayer(tileProvider.Url, {
-      attribution: tileProvider.Attribution,
+    return L.tileLayer(tileProvider.url, {
+      attribution: tileProvider.attribution,
       ...this.commonLayerOptions,
     });
   }
