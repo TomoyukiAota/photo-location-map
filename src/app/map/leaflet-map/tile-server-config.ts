@@ -1,7 +1,8 @@
 import { parse as parseJsonc } from 'jsonc-parser';
 
+// The latest content of main branch in photo-location-map-resources repo is used.
 const configFileUrl
-  = 'https://cdn.jsdelivr.net/gh/TomoyukiAota/photo-location-map-resources@6ad4277b2488695b3daba3ea66996f39dd97f7bb/map-config/osm-tile-server-config-version-1.jsonc';
+  = 'https://cdn.jsdelivr.net/gh/TomoyukiAota/photo-location-map-resources@main/map-config/osm-tile-server-config-version-1.jsonc';
 
 interface RasterTileProviderDefinition {
   Name: string;
