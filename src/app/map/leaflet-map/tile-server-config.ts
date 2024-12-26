@@ -40,13 +40,13 @@ async function fetchTileServerConfig(): Promise<TileServerConfig> {
 async function fetchTileServerConfigWithFallback(): Promise<TileServerConfig> {
   try {
     const config = await fetchTileServerConfig();
-    if (!config) {
-      logger.error('Failed to fetch the tile server config. The config object is invalid. Using fallback config.');
+    if (!config?.rasterTileProviders?.length) {
+      logger.error('Failed to fetch the tile server config. The config object is invalid. Using the fallback config.');
       return tileServerConfigFallback;
     }
     return config;
   } catch (error) {
-    logger.error('Failed to fetch the tile server config with some error. Using fallback config.', error);
+    logger.error('Failed to fetch the tile server config with some error. Using the fallback config.', error);
     return tileServerConfigFallback;
   }
 }
