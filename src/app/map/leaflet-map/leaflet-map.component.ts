@@ -4,7 +4,6 @@ import { Control, LayersControlEvent, LeafletEvent, Map, Marker, PopupEvent } fr
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
-import { toLoggableString } from '../../../../src-shared/log/to-loggable-string';
 import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/user-data-stroage-path';
 import { DirectoryTreeViewSelectionService } from '../../directory-tree-view/directory-tree-view-selection.service';
@@ -15,7 +14,7 @@ import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewe
 import { LeafletMapForceRenderService } from './leaflet-map-force-render/leaflet-map-force-render.service';
 import { createDivIconHtml } from './div-icon';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
-import { tileServerConfig, tileServerConfigFallback } from './tile-server-config';
+import { tileServerConfig } from './tile-server-config';
 
 // References to implement Bing Maps with leaflet-plugins:
 // - https://github.com/shramov/leaflet-plugins/blob/master/examples/bing.html
