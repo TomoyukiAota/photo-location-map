@@ -6,24 +6,24 @@ import { leafletMapLogger as logger } from './leaflet-map-logger';
 const configFileUrl
   = 'https://cdn.jsdelivr.net/gh/TomoyukiAota/photo-location-map-resources@main/map-config/osm-tile-server-config-version-1.jsonc';
 
-interface RasterTileProviderDefinition {
-  name: string;
+interface RasterTileProvider {
+  uniqueName: string;
+  displayName: string;
   url: string;
   attribution: string;
 }
 
 interface TileServerConfig {
   version: string;
-  rasterTileProvidersInUse: string[];
-  rasterTileProvidersDefinition: RasterTileProviderDefinition[];
+  rasterTileProviders: RasterTileProvider[];
 }
 
 export const tileServerConfigFallback: TileServerConfig = {
   version: '1',
-  rasterTileProvidersInUse: ['StandardTileLayer'],
-  rasterTileProvidersDefinition: [
+  rasterTileProviders: [
     {
-      name: 'StandardTileLayer',
+      uniqueName: 'StandardTileLayer',
+      displayName: 'OpenStreetMap',
       url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
       attribution: '© OpenStreetMap contributors'
     }

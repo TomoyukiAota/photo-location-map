@@ -194,15 +194,9 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   }
 
   private getOsmLayer() {
-    const tileProviderName = tileServerConfig.rasterTileProvidersInUse[0];
-    if (!tileProviderName) {
-      logger.error(`RasterTileProvidersInUse[0] is invalid. tileProviderName: ${tileProviderName}`);
-      logger.error(`Using the fallback for tileProvider:\n${this.getTileProviderFallback()}`);
-      return this.getOsmLayerFallback();
-    }
-    const tileProvider = tileServerConfig.rasterTileProvidersDefinition.find(provider => provider.name === tileProviderName);
+    const tileProvider = tileServerConfig.rasterTileProviders[0];
     if (!tileProvider) {
-      logger.error(`tileProvider is not found for tileProviderName "${tileProviderName}"`);
+      logger.error(`rasterTileProviders[0] is invalid. uniqueName: ${tileProvider.uniqueName}, displayName: ${tileProvider.displayName}`);
       logger.error(`Using the fallback for tileProvider:\n${this.getTileProviderFallback()}`);
       return this.getOsmLayerFallback();
     }
@@ -222,7 +216,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   }
 
   private getTileProviderFallback() {
-    return tileServerConfigFallback.rasterTileProvidersDefinition[0];
+    return tileServerConfigFallback.rasterTileProviders[0];
   }
 
   private configureRegionSelector() {
