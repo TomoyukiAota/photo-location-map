@@ -174,7 +174,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
         attribution: tileProvider.attribution,
         ...this.commonLayerOptions,
       });
-      layers[tileProvider.displayName] = tileLayer;
+      layers[tileProvider.name] = tileLayer;
     });
     return layers;
   }

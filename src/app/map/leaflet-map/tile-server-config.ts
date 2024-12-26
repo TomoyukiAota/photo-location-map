@@ -7,8 +7,7 @@ const configFileUrl
   = 'https://cdn.jsdelivr.net/gh/TomoyukiAota/photo-location-map-resources@main/map-config/osm-tile-server-config-version-1.jsonc';
 
 interface RasterTileProvider {
-  uniqueName: string;
-  displayName: string;
+  name: string;
   url: string;
   attribution: string;
 }
@@ -22,8 +21,7 @@ export const tileServerConfigFallback: TileServerConfig = {
   version: '1',
   rasterTileProviders: [
     {
-      uniqueName: 'StandardTileLayer',
-      displayName: 'OpenStreetMap',
+      name: 'OpenStreetMap',
       url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
       attribution: '© OpenStreetMap contributors'
     }
