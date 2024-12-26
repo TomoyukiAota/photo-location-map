@@ -150,18 +150,16 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   }
 
   private configureBaseLayer() {
-    const bingLayer = this.getBingLayer();
-    const osmLayer = this.getOsmLayer();
+    const osmLayers = this.getOsmLayers();
+    const bingLayers = this.getBingLayers();
     const baseLayers = {
-      'Bing (Road)': bingLayer.roadOnDemand,
-      'Bing (Aerial)': bingLayer.aerial,
-      'Bing (Aerial with Labels)': bingLayer.aerialWithLabelsOnDemand,
-      'OpenStreetMap': osmLayer,
+      ...osmLayers,
+      ...bingLayers,
     };
     L.control.layers(baseLayers, null, {position: 'topright'}).addTo(this.map);
 
     const previousBaseLayer = baseLayers[this.selectedBaseLayerName];
-    const defaultBaseLayer = bingLayer.roadOnDemand;
+    const defaultBaseLayer = baseLayers[Object.keys(baseLayers)[0]];
     const selectedBaseLayer = previousBaseLayer ?? defaultBaseLayer;
     selectedBaseLayer.addTo(this.map);
 
@@ -170,7 +168,19 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     });
   }
 
-  private getBingLayer() {
+  private getOsmLayers() {
+    const layers = {};
+    tileServerConfig.rasterTileProviders.forEach(tileProvider => {
+      const tileLayer = L.tileLayer(tileProvider.url, {
+        attribution: tileProvider.attribution,
+        ...this.commonLayerOptions,
+      });
+      layers[tileProvider.displayName] = tileLayer;
+    });
+    return layers;
+  }
+
+  private getBingLayers() {
     const bingMapsKey = '96S0sLgTrpX5VudevEyg~93qOp_-tPdiBcUw_Q-mpUg~AtbViWkzvmAlU9MB08o4mka92JlnRQnYHrHP8GKZBbl0caebqVS95jsvOKVHvrt3';
     const bingMapsOptions = {
       key: bingMapsKey,
@@ -180,7 +190,11 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     const roadOnDemand = new L.bingLayer(L.extend({imagerySet: 'RoadOnDemand'}, bingMapsOptions));
     const aerial = new L.bingLayer(L.extend({imagerySet: 'Aerial'}, bingMapsOptions));
     const aerialWithLabelsOnDemand = new L.bingLayer(L.extend({imagerySet: 'AerialWithLabelsOnDemand'}, bingMapsOptions));
-    return {roadOnDemand, aerial, aerialWithLabelsOnDemand};
+    return {
+      'Bing (Road)': roadOnDemand,
+      'Bing (Aerial)': aerial,
+      'Bing (Aerial with Labels)': aerialWithLabelsOnDemand,
+    };
   }
 
   private getCultureForBingMaps(): string {
@@ -191,32 +205,6 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     //  - navigator.language on MDN: https://developer.mozilla.org/en-US/docs/Web/API/Navigator/language
     //  - Bing Maps Supported Culture Codes: https://docs.microsoft.com/en-us/bingmaps/rest-services/common-parameters-and-types/supported-culture-codes
     return navigator.language;
-  }
-
-  private getOsmLayer() {
-    const tileProvider = tileServerConfig.rasterTileProviders[0];
-    if (!tileProvider) {
-      logger.error(`rasterTileProviders[0] is invalid. uniqueName: ${tileProvider.uniqueName}, displayName: ${tileProvider.displayName}`);
-      logger.error(`Using the fallback for tileProvider:\n${this.getTileProviderFallback()}`);
-      return this.getOsmLayerFallback();
-    }
-    logger.info(`Successfully determined tileProvider:\n${toLoggableString(tileProvider)}`);
-    return L.tileLayer(tileProvider.url, {
-      attribution: tileProvider.attribution,
-      ...this.commonLayerOptions,
-    });
-  }
-
-  private getOsmLayerFallback() {
-    const tileProviderFallback = this.getTileProviderFallback();
-    return L.tileLayer(tileProviderFallback.url, {
-      attribution: tileProviderFallback.attribution,
-      ...this.commonLayerOptions,
-    });
-  }
-
-  private getTileProviderFallback() {
-    return tileServerConfigFallback.rasterTileProviders[0];
   }
 
   private configureRegionSelector() {
