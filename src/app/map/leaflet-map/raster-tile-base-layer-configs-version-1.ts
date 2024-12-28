@@ -54,6 +54,12 @@ async function fetchRasterTileBaseLayerConfigsVersion1(): Promise<RasterTileBase
   return json as RasterTileBaseLayerConfigsVersion1;
 }
 
+function recordErrorAndGetFallback(message: string): RasterTileBaseLayerConfigsVersion1 {
+  logger.error(message);
+  Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Fallback BaseLayerConfigs`, message);
+  return rasterTileBaseLayerConfigsVersion1Fallback;
+}
+
 async function fetchRasterTileBaseLayerConfigsVersion1WithFallback(): Promise<RasterTileBaseLayerConfigsVersion1> {
   const fetchingMessage = `Fetching RasterTileBaseLayerConfigsVersion1 from ${configFileUrl}`;
   logger.info(fetchingMessage);
@@ -63,9 +69,7 @@ async function fetchRasterTileBaseLayerConfigsVersion1WithFallback(): Promise<Ra
     const configs = await fetchRasterTileBaseLayerConfigsVersion1();
     if (!configs?.rasterTileBaseLayerConfigs?.length) {
       const message = `Failed to fetch RasterTileBaseLayerConfigsVersion1. The configs object is invalid. Using the fallback configs.`;
-      logger.error(message);
-      Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Fallback BaseLayerConfigs`, message);
-      return rasterTileBaseLayerConfigsVersion1Fallback;
+      return recordErrorAndGetFallback(message);
     }
 
     const fetchedMessage = `Fetched RasterTileBaseLayerConfigsVersion1:\n${toLoggableString(configs)}`;
@@ -74,12 +78,8 @@ async function fetchRasterTileBaseLayerConfigsVersion1WithFallback(): Promise<Ra
     return configs;
   } catch (error) {
     const message = `Failed to fetch RasterTileBaseLayerConfigsVersion1 with some error. Using the fallback configs. error.message: "${error.message}"`;
-    logger.error(message);
-    Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Fallback BaseLayerConfigs`, message);
-    return rasterTileBaseLayerConfigsVersion1Fallback;
+    return recordErrorAndGetFallback(message);
   }
 }
 
-
 export const rasterTileBaseLayerConfigsVersion1 = await fetchRasterTileBaseLayerConfigsVersion1WithFallback();
-
