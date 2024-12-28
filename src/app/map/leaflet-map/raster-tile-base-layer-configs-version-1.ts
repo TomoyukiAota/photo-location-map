@@ -46,11 +46,11 @@ export const rasterTileBaseLayerConfigsVersion1Fallback: RasterTileBaseLayerConf
 
 // In the production environment, the content of main branch in photo-location-map-resources repo is used.
 // In the development environment, the content of the feature branch can be used as needed.
-const configFileUrl
+const configsFileUrl
   = 'https://cdn.jsdelivr.net/gh/TomoyukiAota/photo-location-map-resources@main/map-configs/raster-tile-base-layer-configs-version-1.jsonc';
 
 async function fetchRasterTileBaseLayerConfigsVersion1(): Promise<RasterTileBaseLayerConfigsVersion1> {
-  const response = await fetch(configFileUrl);
+  const response = await fetch(configsFileUrl);
   const jsonc = await response.text();
   const json = parseJsonc(jsonc);
   return json as RasterTileBaseLayerConfigsVersion1;
@@ -63,7 +63,7 @@ function recordErrorAndGetFallback(message: string): RasterTileBaseLayerConfigsV
 }
 
 async function fetchRasterTileBaseLayerConfigsVersion1WithFallback(): Promise<RasterTileBaseLayerConfigsVersion1> {
-  const fetchingMessage = `Fetching RasterTileBaseLayerConfigsVersion1 from ${configFileUrl}`;
+  const fetchingMessage = `Fetching RasterTileBaseLayerConfigsVersion1 from ${configsFileUrl}`;
   logger.info(fetchingMessage);
   Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Fetching BaseLayerConfigs`, fetchingMessage);
 
