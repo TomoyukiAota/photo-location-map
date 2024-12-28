@@ -14,7 +14,7 @@ import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewe
 import { LeafletMapForceRenderService } from './leaflet-map-force-render/leaflet-map-force-render.service';
 import { createDivIconHtml } from './div-icon';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
-import { rasterTileBaseLayerConfigsVersion1 } from './raster-tile-base-layer-configs-version1';
+import { rasterTileBaseLayerConfigsVersion1 } from './raster-tile-base-layer-configs-version-1';
 
 // References to implement Bing Maps with leaflet-plugins:
 // - https://github.com/shramov/leaflet-plugins/blob/master/examples/bing.html
