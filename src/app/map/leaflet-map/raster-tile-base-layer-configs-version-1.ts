@@ -1,4 +1,5 @@
 import { parse as parseJsonc } from 'jsonc-parser';
+import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { toLoggableString } from '../../../../src-shared/log/to-loggable-string';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
 
@@ -54,21 +55,31 @@ async function fetchRasterTileBaseLayerConfigsVersion1(): Promise<RasterTileBase
 }
 
 async function fetchRasterTileBaseLayerConfigsVersion1WithFallback(): Promise<RasterTileBaseLayerConfigsVersion1> {
+  const fetchingMessage = `Fetching RasterTileBaseLayerConfigsVersion1 from ${configFileUrl}`;
+  logger.info(fetchingMessage);
+  Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Fetching BaseLayerConfigs`, fetchingMessage);
+
   try {
     const configs = await fetchRasterTileBaseLayerConfigsVersion1();
     if (!configs?.rasterTileBaseLayerConfigs?.length) {
-      logger.error('Failed to fetch RasterTileBaseLayerConfigsVersion1. The configs object is invalid. Using the fallback configs.');
+      const message = `Failed to fetch RasterTileBaseLayerConfigsVersion1. The configs object is invalid. Using the fallback configs.`;
+      logger.error(message);
+      Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Fallback BaseLayerConfigs`, message);
       return rasterTileBaseLayerConfigsVersion1Fallback;
     }
+
+    const fetchedMessage = `Fetched RasterTileBaseLayerConfigsVersion1:\n${toLoggableString(configs)}`;
+    logger.info(fetchedMessage);
+    Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Fetched BaseLayerConfigs`, fetchedMessage);
     return configs;
   } catch (error) {
-    logger.error('Failed to fetch RasterTileBaseLayerConfigsVersion1 with some error. Using the fallback configs.', error);
+    const message = `Failed to fetch RasterTileBaseLayerConfigsVersion1 with some error. Using the fallback configs. error.message: "${error.message}"`;
+    logger.error(message);
+    Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Fallback BaseLayerConfigs`, message);
     return rasterTileBaseLayerConfigsVersion1Fallback;
   }
 }
 
-logger.info(`Fetching RasterTileBaseLayerConfigsVersion1 from ${configFileUrl}`);
 
 export const rasterTileBaseLayerConfigsVersion1 = await fetchRasterTileBaseLayerConfigsVersion1WithFallback();
 
-logger.info(`Fetched RasterTileBaseLayerConfigsVersion1:\n${toLoggableString(rasterTileBaseLayerConfigsVersion1)}`);
