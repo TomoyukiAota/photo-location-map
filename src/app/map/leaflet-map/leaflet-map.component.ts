@@ -14,7 +14,7 @@ import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewe
 import { LeafletMapForceRenderService } from './leaflet-map-force-render/leaflet-map-force-render.service';
 import { createDivIconHtml } from './div-icon';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
-import { tileLayerConfigsVersion1 } from './tile-layer-configs-version-1';
+import { rasterTileBaseLayerConfigsVersion1 } from './raster-tile-base-layer-configs-version1';
 
 // References to implement Bing Maps with leaflet-plugins:
 // - https://github.com/shramov/leaflet-plugins/blob/master/examples/bing.html
@@ -149,10 +149,10 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   }
 
   private configureBaseLayer() {
-    const tileLayers = this.getTileLayers();
+    const rasterTileBaseLayers = this.getRasterTileBaseLayers();
     const bingLayers = this.getBingLayers();
     const baseLayers = {
-      ...tileLayers,
+      ...rasterTileBaseLayers,
       ...bingLayers,
     };
     L.control.layers(baseLayers, null, {position: 'topright'}).addTo(this.map);
@@ -167,11 +167,11 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     });
   }
 
-  private getTileLayers() {
+  private getRasterTileBaseLayers() {
     const tileLayers = {};
-    tileLayerConfigsVersion1.tileLayerConfigs.forEach(tileLayerConfig => {
-      const tileLayer = L.tileLayer(tileLayerConfig.url, tileLayerConfig.options);
-      tileLayers[tileLayerConfig.name] = tileLayer;
+    rasterTileBaseLayerConfigsVersion1.rasterTileBaseLayerConfigs.forEach(config => {
+      const tileLayer = L.tileLayer(config.url, config.options);
+      tileLayers[config.name] = tileLayer;
     });
     return tileLayers;
   }
