@@ -158,7 +158,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     L.control.layers(baseLayers, null, {position: 'topright'}).addTo(this.map);
 
     const previousBaseLayer = baseLayers[this.selectedBaseLayerName];
-    const defaultBaseLayer = baseLayers[Object.keys(baseLayers)[0]];
+    const defaultBaseLayer = Object.values(baseLayers)[0];
     const selectedBaseLayer = previousBaseLayer ?? defaultBaseLayer;
     selectedBaseLayer.addTo(this.map);
 
