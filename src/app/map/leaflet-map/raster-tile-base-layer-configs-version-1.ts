@@ -51,6 +51,9 @@ const configsFileUrl
 
 async function fetchRasterTileBaseLayerConfigsVersion1(): Promise<RasterTileBaseLayerConfigsVersion1> {
   const response = await fetch(configsFileUrl);
+  if (!response.ok) {
+    throw new Error(`response.status: ${response.status}, response.statusText: ${response.statusText}`);
+  }
   const jsonc = await response.text();
   const json = parseJsonc(jsonc);
   return json as RasterTileBaseLayerConfigsVersion1;
@@ -63,7 +66,7 @@ function recordErrorAndGetFallback(message: string): RasterTileBaseLayerConfigsV
 }
 
 async function fetchRasterTileBaseLayerConfigsVersion1WithFallback(): Promise<RasterTileBaseLayerConfigsVersion1> {
-  const fetchingMessage = `Fetching RasterTileBaseLayerConfigsVersion1 from ${configsFileUrl}`;
+  const fetchingMessage = `Fetching ${configsFileUrl}`;
   logger.info(fetchingMessage);
   Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Fetching BaseLayerConfigs`, fetchingMessage);
 
@@ -71,16 +74,16 @@ async function fetchRasterTileBaseLayerConfigsVersion1WithFallback(): Promise<Ra
   try {
     configs = await fetchRasterTileBaseLayerConfigsVersion1();
   } catch (error) {
-    const message = `Failed to fetch RasterTileBaseLayerConfigsVersion1 from ${configsFileUrl} with some error. Using the fallback configs. error.message: "${error.message}"`;
+    const message = `Failed to fetch ${configsFileUrl}. Using the fallback configs. ${error.message}`;
     return recordErrorAndGetFallback(message);
   }
 
   if (!configs?.rasterTileBaseLayerConfigs?.length) {
-    const message = `Failed to fetch RasterTileBaseLayerConfigsVersion1 from ${configsFileUrl}. The configs object is invalid. Using the fallback configs.`;
+    const message = `Invalid configs object is fetched from ${configsFileUrl}. Using the fallback configs.`;
     return recordErrorAndGetFallback(message);
   }
 
-  const fetchedMessage = `Fetched RasterTileBaseLayerConfigsVersion1 from ${configsFileUrl} \n${toLoggableString(configs)}`;
+  const fetchedMessage = `Fetched ${configsFileUrl}\n${toLoggableString(configs)}`;
   logger.info(fetchedMessage);
   Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Fetched BaseLayerConfigs`, fetchedMessage);
   return configs;
