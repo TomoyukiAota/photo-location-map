@@ -40,8 +40,8 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   private pinnedPhotoServiceSubscription: Subscription;
   private forceRenderServiceSubscription: Subscription;
   private readonly commonLayerOptions = {
-    maxNativeZoom: 19,
-    maxZoom: 19,
+    maxNativeZoom: 18,
+    maxZoom: 18, // To prevent the issue that marker cluster does not work at zoom level 19.
   };
   private map: Map;
   private regionInfo: RegionInfo;
@@ -170,7 +170,10 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   private getRasterTileBaseLayers() {
     const tileLayers = {};
     rasterTileBaseLayerConfigsVersion1.rasterTileBaseLayerConfigs.forEach(config => {
-      const tileLayer = L.tileLayer(config.url, config.options);
+      const tileLayer = L.tileLayer(config.url, {
+        ...config.options,
+        maxZoom: 18, // To prevent the issue that marker cluster does not work at zoom level 19.
+      });
       tileLayers[config.name] = tileLayer;
     });
     return tileLayers;
