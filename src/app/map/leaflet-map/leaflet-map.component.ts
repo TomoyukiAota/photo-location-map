@@ -14,6 +14,7 @@ import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewe
 import { LeafletMapForceRenderService } from './leaflet-map-force-render/leaflet-map-force-render.service';
 import { createDivIconHtml } from './div-icon';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
+import { rasterTileBaseLayerConfigsVersion1 } from './raster-tile-base-layer-configs-version-1';
 
 // References to implement Bing Maps with leaflet-plugins:
 // - https://github.com/shramov/leaflet-plugins/blob/master/examples/bing.html
@@ -39,8 +40,8 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   private pinnedPhotoServiceSubscription: Subscription;
   private forceRenderServiceSubscription: Subscription;
   private readonly commonLayerOptions = {
-    maxNativeZoom: 19,
-    maxZoom: 19,
+    maxNativeZoom: 18,
+    maxZoom: 18, // To prevent the issue that marker cluster does not work at zoom level 19.
   };
   private map: Map;
   private regionInfo: RegionInfo;
@@ -148,18 +149,16 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   }
 
   private configureBaseLayer() {
-    const bingLayer = this.getBingLayer();
-    const osmLayer = this.getOsmLayer();
+    const rasterTileBaseLayers = this.getRasterTileBaseLayers();
+    const bingLayers = this.getBingLayers();
     const baseLayers = {
-      'Bing (Road)': bingLayer.roadOnDemand,
-      'Bing (Aerial)': bingLayer.aerial,
-      'Bing (Aerial with Labels)': bingLayer.aerialWithLabelsOnDemand,
-      'OpenStreetMap': osmLayer,
+      ...rasterTileBaseLayers,
+      ...bingLayers,
     };
     L.control.layers(baseLayers, null, {position: 'topright'}).addTo(this.map);
 
     const previousBaseLayer = baseLayers[this.selectedBaseLayerName];
-    const defaultBaseLayer = bingLayer.roadOnDemand;
+    const defaultBaseLayer = Object.values(baseLayers)[0];
     const selectedBaseLayer = previousBaseLayer ?? defaultBaseLayer;
     selectedBaseLayer.addTo(this.map);
 
@@ -168,7 +167,19 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     });
   }
 
-  private getBingLayer() {
+  private getRasterTileBaseLayers() {
+    const tileLayers = {};
+    rasterTileBaseLayerConfigsVersion1.rasterTileBaseLayerConfigs.forEach(config => {
+      const tileLayer = L.tileLayer(config.url, {
+        ...config.options,
+        maxZoom: 18, // To prevent the issue that marker cluster does not work at zoom level 19.
+      });
+      tileLayers[config.name] = tileLayer;
+    });
+    return tileLayers;
+  }
+
+  private getBingLayers() {
     const bingMapsKey = '96S0sLgTrpX5VudevEyg~93qOp_-tPdiBcUw_Q-mpUg~AtbViWkzvmAlU9MB08o4mka92JlnRQnYHrHP8GKZBbl0caebqVS95jsvOKVHvrt3';
     const bingMapsOptions = {
       key: bingMapsKey,
@@ -178,7 +189,11 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     const roadOnDemand = new L.bingLayer(L.extend({imagerySet: 'RoadOnDemand'}, bingMapsOptions));
     const aerial = new L.bingLayer(L.extend({imagerySet: 'Aerial'}, bingMapsOptions));
     const aerialWithLabelsOnDemand = new L.bingLayer(L.extend({imagerySet: 'AerialWithLabelsOnDemand'}, bingMapsOptions));
-    return {roadOnDemand, aerial, aerialWithLabelsOnDemand};
+    return {
+      'Bing (Road)': roadOnDemand,
+      'Bing (Aerial)': aerial,
+      'Bing (Aerial with Labels)': aerialWithLabelsOnDemand,
+    };
   }
 
   private getCultureForBingMaps(): string {
@@ -189,13 +204,6 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     //  - navigator.language on MDN: https://developer.mozilla.org/en-US/docs/Web/API/Navigator/language
     //  - Bing Maps Supported Culture Codes: https://docs.microsoft.com/en-us/bingmaps/rest-services/common-parameters-and-types/supported-culture-codes
     return navigator.language;
-  }
-
-  private getOsmLayer() {
-    return L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors, CC-BY-SA',
-      ...this.commonLayerOptions,
-    });
   }
 
   private configureRegionSelector() {
