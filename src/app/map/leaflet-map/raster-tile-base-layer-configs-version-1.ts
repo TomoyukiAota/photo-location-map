@@ -3,10 +3,11 @@ import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { toLoggableString } from '../../../../src-shared/log/to-loggable-string';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
 
-// In the production environment, the content of main branch in photo-location-map-resources repo is used.
-// In the development environment, the content of the feature branch can be used as needed.
-const configFileUrl
-  = 'https://cdn.jsdelivr.net/gh/TomoyukiAota/photo-location-map-resources@main/map-configs/raster-tile-base-layer-configs-version-1.jsonc';
+// Represents the content of raster-tile-base-layer-configs-version-1.jsonc in photo-location-map-resources repo.
+interface RasterTileBaseLayerConfigsVersion1 {
+  version: string;
+  rasterTileBaseLayerConfigs: RasterTileBaseLayerConfigs[];
+}
 
 interface RasterTileBaseLayerConfigs {
   name: string;
@@ -14,11 +15,7 @@ interface RasterTileBaseLayerConfigs {
   options?: any;
 }
 
-interface RasterTileBaseLayerConfigsVersion1 {
-  version: string;
-  rasterTileBaseLayerConfigs: RasterTileBaseLayerConfigs[];
-}
-
+// The fallback configs used in case of failing to fetch the configs from photo-location-map-resources repo.
 export const rasterTileBaseLayerConfigsVersion1Fallback: RasterTileBaseLayerConfigsVersion1 = {
   version: '1',
   rasterTileBaseLayerConfigs: [
@@ -46,6 +43,11 @@ export const rasterTileBaseLayerConfigsVersion1Fallback: RasterTileBaseLayerConf
     }
   ],
 };
+
+// In the production environment, the content of main branch in photo-location-map-resources repo is used.
+// In the development environment, the content of the feature branch can be used as needed.
+const configFileUrl
+  = 'https://cdn.jsdelivr.net/gh/TomoyukiAota/photo-location-map-resources@main/map-configs/raster-tile-base-layer-configs-version-1.jsonc';
 
 async function fetchRasterTileBaseLayerConfigsVersion1(): Promise<RasterTileBaseLayerConfigsVersion1> {
   const response = await fetch(configFileUrl);
