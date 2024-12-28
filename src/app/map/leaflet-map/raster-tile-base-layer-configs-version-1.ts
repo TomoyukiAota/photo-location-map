@@ -79,7 +79,7 @@ async function fetchRasterTileBaseLayerConfigsVersion1WithFallback(): Promise<Ra
   }
 
   if (!configs?.rasterTileBaseLayerConfigs?.length) {
-    const message = `Invalid configs object is fetched from ${configsFileUrl}. Using the fallback configs.`;
+    const message = `Invalid configs object is fetched from ${configsFileUrl}. Using the fallback configs.\n${toLoggableString(configs)}`;
     return recordErrorAndGetFallback(message);
   }
 
