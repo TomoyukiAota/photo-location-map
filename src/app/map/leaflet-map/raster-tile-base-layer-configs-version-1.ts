@@ -23,8 +23,7 @@ export const rasterTileBaseLayerConfigsVersion1Fallback: RasterTileBaseLayerConf
       name: 'OpenStreetMap',
       url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
       options: {
-        attribution: '© OpenStreetMap contributors',
-        maxZoom: 19
+        attribution: '© OpenStreetMap contributors'
       }
     },
     {
