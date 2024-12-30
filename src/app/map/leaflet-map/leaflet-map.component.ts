@@ -16,12 +16,6 @@ import { createDivIconHtml } from './div-icon';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
 import { rasterTileBaseLayerConfigsVersion1 } from './raster-tile-base-layer-configs-version-1';
 
-// References to implement Bing Maps with leaflet-plugins:
-// - https://github.com/shramov/leaflet-plugins/blob/master/examples/bing.html
-// - https://github.com/shramov/leaflet-plugins/blob/master/layer/tile/Bing.js
-import 'leaflet-plugins/layer/tile/Bing'; // Equivalent to <script src="https://github.com/shramov/leaflet-plugins/blob/master/layer/tile/Bing.js"></script>
-import 'leaflet-plugins/layer/tile/Bing.addon.applyMaxNativeZoom';
-
 // "declare let L: any;" is defined here (in addition to global scope typing given by type-declaration/index.d.ts)
 // in order to avoid the compile errors for the types from leaflet.markercluster
 declare let L: any;
@@ -39,10 +33,19 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   @ViewChild('updateInProgressOverlay') public updateInProgressOverlay: ElementRef<HTMLDivElement>;
   private pinnedPhotoServiceSubscription: Subscription;
   private forceRenderServiceSubscription: Subscription;
-  private readonly commonLayerOptions = {
-    maxNativeZoom: 18,
-    maxZoom: 18, // To prevent the issue that marker cluster does not work at zoom level 19.
+
+  private readonly commonBaseLayerOptions = {
+    // Set the common max zoom level for all base layers.
+    // Otherwise, as of Dec 31, 2024, switching base layers breaks marker cluster functionalities as follows:
+    // Issue A:
+    // Step 1) Using OpenStreetMap which has "maxZoom: 19", clicking a marker cluster shows a popup.
+    // Step 2) Zoom out, switch to Esri World Imagery which has "maxZoom: 18", and then clicking the marker cluster does not show the popup.
+    // Issue B:
+    // Step 1) Using Esri World Imagery which has "maxZoom: 18", clicking a marker cluster shows a popup.
+    // Step 2) Switch to OpenStreetMap which has "maxZoom: 19", and then zooming in results in showing markers (pins) for individual photos without clusters.
+    maxZoom: 19,
   };
+
   private map: Map;
   private regionInfo: RegionInfo;
   private photos: Photo[] = [];
@@ -87,9 +90,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   }
 
   // renderMap function needs debouncing.
-  // Otherwise, changing pinned photos in a short time results in sending frequent requests to Bing Maps.
-  // In that case, Bing.js emits the "Your request could not be completed because of too many requests." error,
-  // and the map becomes empty.
+  // Otherwise, changing pinned photos in a short time results in sending frequent requests to the tile server.
   private renderMapWithDebouncing = _.debounce((photos: Photo[]) => {
     this.renderMap(photos);
     this.updateInProgressOverlay.nativeElement.style.visibility = 'hidden';
@@ -150,10 +151,8 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
 
   private configureBaseLayer() {
     const rasterTileBaseLayers = this.getRasterTileBaseLayers();
-    const bingLayers = this.getBingLayers();
     const baseLayers = {
       ...rasterTileBaseLayers,
-      ...bingLayers,
     };
     L.control.layers(baseLayers, null, {position: 'topright'}).addTo(this.map);
 
@@ -172,38 +171,11 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     rasterTileBaseLayerConfigsVersion1.rasterTileBaseLayerConfigs.forEach(config => {
       const tileLayer = L.tileLayer(config.url, {
         ...config.options,
-        maxZoom: 18, // To prevent the issue that marker cluster does not work at zoom level 19.
+        ...this.commonBaseLayerOptions,
       });
       tileLayers[config.name] = tileLayer;
     });
     return tileLayers;
-  }
-
-  private getBingLayers() {
-    const bingMapsKey = '96S0sLgTrpX5VudevEyg~93qOp_-tPdiBcUw_Q-mpUg~AtbViWkzvmAlU9MB08o4mka92JlnRQnYHrHP8GKZBbl0caebqVS95jsvOKVHvrt3';
-    const bingMapsOptions = {
-      key: bingMapsKey,
-      culture: this.getCultureForBingMaps(),
-      ...this.commonLayerOptions,
-    };
-    const roadOnDemand = new L.bingLayer(L.extend({imagerySet: 'RoadOnDemand'}, bingMapsOptions));
-    const aerial = new L.bingLayer(L.extend({imagerySet: 'Aerial'}, bingMapsOptions));
-    const aerialWithLabelsOnDemand = new L.bingLayer(L.extend({imagerySet: 'AerialWithLabelsOnDemand'}, bingMapsOptions));
-    return {
-      'Bing (Road)': roadOnDemand,
-      'Bing (Aerial)': aerial,
-      'Bing (Aerial with Labels)': aerialWithLabelsOnDemand,
-    };
-  }
-
-  private getCultureForBingMaps(): string {
-    // navigator.language is used because it seems to match the supported culture code for Bing Maps.
-    // For Bing Maps, it's still safe in case navigator.language does not match the supported culture code
-    // because passing some random string for the culture option results in the default culture (en-US).
-    // References:
-    //  - navigator.language on MDN: https://developer.mozilla.org/en-US/docs/Web/API/Navigator/language
-    //  - Bing Maps Supported Culture Codes: https://docs.microsoft.com/en-us/bingmaps/rest-services/common-parameters-and-types/supported-culture-codes
-    return navigator.language;
   }
 
   private configureRegionSelector() {
