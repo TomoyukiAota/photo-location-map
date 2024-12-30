@@ -140,7 +140,6 @@
     "karma-jasmine": "5.1.0",
     "karma-jasmine-html-reporter": "2.1.0",
     "karma-mocha-reporter": "2.2.5",
-    "leaflet-plugins": "3.4.0",
     "mixpanel-browser": "2.45.0",
     "ng-mocks": "14.13.1",
     "ng-table-virtual-scroll": "1.6.1",
