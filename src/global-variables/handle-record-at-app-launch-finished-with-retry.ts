@@ -8,13 +8,16 @@ const logger = createPrependedLogger('[handleRecordAtAppLaunchFinishedWithRetry]
 // - https://caolan.github.io/async/v3/docs.html#retry
 // - https://stackoverflow.com/a/49810502/7947548
 export function handleRecordAtAppLaunchFinishedWithRetry() {
+  let retryCount = 0;
+
   const apiMethod = callback => {
+    retryCount++;
     const handleRecordAtAppLaunchFinished = window?.plmInternalRenderer?.recordAtAppLaunch?.handleRecordAtAppLaunchFinished;
 
     // Retry in case of window.plmInternalRenderer being undefined since it will eventually be set.
     if (!handleRecordAtAppLaunchFinished) {
-      logger.debug(`Retrying apiMethod in handleRecordAtAppLaunchFinishedWithRetry since window.plmInternalRenderer is undefined.`);
-      Analytics.trackEvent('handleRecordAtAppLaunchFinishedWithRetry', 'Retrying apiMethod');
+      logger.debug(`Retrying apiMethod since window.plmInternalRenderer is undefined. Retry count: ${retryCount}`);
+      Analytics.trackEvent('handleRecordAtAppLaunchFinishedWithRetry', `Retrying apiMethod. Retry count: ${retryCount}`);
       callback(new Error('window.plmInternalRenderer is undefined.'));
       return;
     }
