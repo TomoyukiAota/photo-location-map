@@ -26,8 +26,8 @@ export function handleRecordAtAppLaunchFinishedWithRetry() {
       handleRecordAtAppLaunchFinished();
     } catch (error) {
       // Cases of errors other than window.plmInternalRenderer being undefined are not retried.
-      logger.error(`Error occurred but ignored in handleRecordAtAppLaunchFinishedWithRetry: "${error}"`);
-      Analytics.trackEvent('handleRecordAtAppLaunchFinishedWithRetry', 'Error occurred but ignored in apiMethod', error);
+      logger.error(`Error occurred but ignored in handleRecordAtAppLaunchFinishedWithRetry: "${error.toString()}"`);
+      Analytics.trackEvent('handleRecordAtAppLaunchFinishedWithRetry', 'Error occurred but ignored in apiMethod', error.toString());
     }
     callback(null, true);
   };
@@ -46,8 +46,8 @@ export function handleRecordAtAppLaunchFinishedWithRetry() {
 
   async.retry(retryOptions, apiMethod, error => {
     if (error) {
-      logger.error(`Exceeded the limit of retrying apiMethod in handleRecordAtAppLaunchFinishedWithRetry with the error: "${error}"`);
-      Analytics.trackEvent('handleRecordAtAppLaunchFinishedWithRetry', 'Exceeded retry limit of apiMethod', error);
+      logger.error(`Exceeded the limit of retrying apiMethod in handleRecordAtAppLaunchFinishedWithRetry with the error: "${error.toString()}"`);
+      Analytics.trackEvent('handleRecordAtAppLaunchFinishedWithRetry', 'Exceeded retry limit of apiMethod', error.toString());
     } else {
       logger.debug(`Finished calling handleRecordAtAppLaunchFinishedWithRetry within the limit of retrying apiMethod.`);
       Analytics.trackEvent('handleRecordAtAppLaunchFinishedWithRetry', 'Finished within retry limit of apiMethod');
