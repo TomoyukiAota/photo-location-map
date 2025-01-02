@@ -52,6 +52,7 @@
   },
   "dependencies": {
     "@electron/remote": "2.1.2",
+    "async": "3.2.6",
     "commander": "12.1.0",
     "delete-empty": "3.0.0",
     "directory-tree": "2.3.1",
@@ -103,6 +104,7 @@
     "@ngx-translate/http-loader": "7.0.0",
     "@stylistic/eslint-plugin": "2.8.0",
     "@turf/turf": "6.5.0",
+    "@types/async": "3.2.24",
     "@types/delete-empty": "3.0.2",
     "@types/fs-extra": "9.0.13",
     "@types/is-natural-number": "4.0.1",
