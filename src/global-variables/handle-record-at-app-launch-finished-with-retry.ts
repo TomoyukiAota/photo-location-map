@@ -29,9 +29,13 @@ export function handleRecordAtAppLaunchFinishedWithRetry() {
     callback(null, true);
   };
 
+  // (100 ms of interval) * (1000 times) = 100 seconds of total retry duration.
+  // Stop retrying after this duration since
+  // 1) something must have gone wrong so that it's unlikely that continueing to retry will be helpful, and
+  // 2) retrying too many times messes up the log and analytic.
   const retryOptions: async.RetryOptions<any> = {
-    interval: 100, // 100 ms
-    times: 10000,  // (100 ms of interval) * (10000 times) = 16.67 minutes. Something must went wrong if retrying exceeds 16.67 minutes.
+    interval: 100, // ms
+    times: 1000,
   };
 
   logger.debug(`Calling handleRecordAtAppLaunchFinishedWithRetry with the limit of retrying apiMethod (${retryOptions.times} times with the interval of ${retryOptions.interval} ms).`);
