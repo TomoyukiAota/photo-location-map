@@ -16,9 +16,10 @@ export function handleRecordAtAppLaunchFinishedWithRetry() {
 
     // Retry in case of window.plmInternalRenderer being undefined since it will eventually be set.
     if (!handleRecordAtAppLaunchFinished) {
-      logger.debug(`Retrying apiMethod since window.plmInternalRenderer is undefined. Retry count: ${retryCount}`);
+      const message = `Retrying apiMethod since window.plmInternalRenderer is undefined. Retry count: ${retryCount}`;
+      logger.debug(message);
       Analytics.trackEvent('handleRecordAtAppLaunchFinishedWithRetry', `Retrying apiMethod. Retry count: ${retryCount}`);
-      callback(new Error('window.plmInternalRenderer is undefined.'));
+      callback(new Error(message)); // Passing an error to callback results in retrying apiMethod.
       return;
     }
 
@@ -29,7 +30,8 @@ export function handleRecordAtAppLaunchFinishedWithRetry() {
       logger.error(`Error occurred but ignored in handleRecordAtAppLaunchFinishedWithRetry: "${error.toString()}"`);
       Analytics.trackEvent('handleRecordAtAppLaunchFinishedWithRetry', 'Error occurred but ignored in apiMethod', error.toString());
     }
-    callback(null, true);
+
+    callback(null, true); // Passing null as the first argument to callback results in not retrying apiMethod.
   };
 
   // (100 ms of interval) * (1000 times) = 100 seconds of total retry duration.
