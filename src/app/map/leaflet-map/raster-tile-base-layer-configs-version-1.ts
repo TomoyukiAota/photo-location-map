@@ -49,7 +49,11 @@ const configsFileUrl
   = 'https://cdn.jsdelivr.net/gh/TomoyukiAota/photo-location-map-resources@main/map-configs/raster-tile-base-layer-configs-version-1.jsonc';
 
 async function fetchRasterTileBaseLayerConfigsVersion1(): Promise<RasterTileBaseLayerConfigsVersion1> {
-  const response = await fetch(configsFileUrl);
+  const timeoutMilliseconds = 10000;
+  const response = await fetch(configsFileUrl, {
+    cache: 'no-store',
+    signal: AbortSignal.timeout(timeoutMilliseconds),
+  });
   if (!response.ok) {
     throw new Error(`response.status: ${response.status}, response.statusText: ${response.statusText}`);
   }
@@ -73,7 +77,7 @@ async function fetchRasterTileBaseLayerConfigsVersion1WithFallback(): Promise<Ra
   try {
     configs = await fetchRasterTileBaseLayerConfigsVersion1();
   } catch (error) {
-    const message = `Failed to fetch ${configsFileUrl}. Using the fallback configs. ${error.message}`;
+    const message = `Failed to fetch ${configsFileUrl}. Using the fallback configs. error.message: "${error.message}"`;
     return recordErrorAndGetFallback(message);
   }
 
