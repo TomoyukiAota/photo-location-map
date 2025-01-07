@@ -5,6 +5,8 @@ $loading-indicator-color: #888888;
 .app-loading-indicator-container {
   height: 100%;
   display: grid;
+  gap: 10px;
+  place-content: center;
   place-items: center;
 
   opacity: 0;
@@ -17,33 +19,21 @@ $loading-indicator-color: #888888;
 }
 
 .app-loading-indicator {
-  color: $loading-indicator-color;
+  width: 48px;
+  height: 48px;
+  border: 5px solid $loading-indicator-color;
+  border-bottom-color: transparent;
+  border-radius: 50%;
   display: inline-block;
-  position: relative;
-  font-size: 28px;
   box-sizing: border-box;
+  animation: rotation 1s linear infinite;
 }
 
-.app-loading-indicator::after {
-  content: '';
-  width: 4px;
-  height: 4px;
-  background: currentColor;
-  position: absolute;
-  bottom: 8px;
-  right: -8px;
-  box-sizing: border-box;
-  animation: appLoadingAnimation 1s linear infinite;
-}
-
-@keyframes appLoadingAnimation {
+@keyframes rotation {
   0% {
-    box-shadow: 10px 0 rgba(255, 255, 255, 0), 20px 0 rgba(255, 255, 255, 0);
-  }
-  50% {
-    box-shadow: 10px 0 $loading-indicator-color, 20px 0 rgba(255, 255, 255, 0);
+    transform: rotate(0deg);
   }
   100% {
-    box-shadow: 10px 0 $loading-indicator-color, 20px 0 $loading-indicator-color;
+    transform: rotate(360deg);
   }
 }
