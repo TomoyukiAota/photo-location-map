@@ -1,0 +1,41 @@
+// Reference: https://cssloaders.github.io/
+
+$loading-indicator-color: #888888;
+
+.app-loading-indicator-container {
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.app-loading-indicator {
+  color: $loading-indicator-color;
+  display: inline-block;
+  position: relative;
+  font-size: 28px;
+  box-sizing: border-box;
+}
+
+.app-loading-indicator::after {
+  content: '';
+  width: 4px;
+  height: 4px;
+  background: currentColor;
+  position: absolute;
+  bottom: 8px;
+  right: -8px;
+  box-sizing: border-box;
+  animation: appLoadingAnimation 1s linear infinite;
+}
+
+@keyframes appLoadingAnimation {
+  0% {
+    box-shadow: 10px 0 rgba(255, 255, 255, 0), 20px 0 rgba(255, 255, 255, 0);
+  }
+  50% {
+    box-shadow: 10px 0 $loading-indicator-color, 20px 0 rgba(255, 255, 255, 0);
+  }
+  100% {
+    box-shadow: 10px 0 $loading-indicator-color, 20px 0 $loading-indicator-color;
+  }
+}
