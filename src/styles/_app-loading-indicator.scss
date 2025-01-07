@@ -27,10 +27,10 @@ $loading-indicator-color: #888888;
   border-radius: 50%;
   display: inline-block;
   box-sizing: border-box;
-  animation: rotation 1s linear infinite;
+  animation: rotateAppLoadingIndicator 1s linear infinite;
 }
 
-@keyframes rotation {
+@keyframes rotateAppLoadingIndicator {
   0% {
     transform: rotate(0deg);
   }
