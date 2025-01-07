@@ -6,6 +6,14 @@ $loading-indicator-color: #888888;
   height: 100%;
   display: grid;
   place-items: center;
+
+  opacity: 0;
+  animation: fadeInAppLoadingIndicator 2s ease 0.5s forwards;
+}
+
+@keyframes fadeInAppLoadingIndicator {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 .app-loading-indicator {
