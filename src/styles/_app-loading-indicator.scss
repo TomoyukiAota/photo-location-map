@@ -8,6 +8,7 @@ $loading-indicator-color: #888888;
   gap: 10px;
   place-content: center;
   place-items: center;
+  color: $loading-indicator-color;
 
   opacity: 0;
   animation: fadeInAppLoadingIndicator 2s ease 0.5s forwards;
