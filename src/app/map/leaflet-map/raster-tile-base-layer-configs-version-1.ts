@@ -97,8 +97,9 @@ function recordFetchFailed(url: string, error: Error): void {
 }
 
 function recordFetchFailedForAllUrls(): void {
-  logger.error(`Failed to fetch the configs from all the URLs. Using the fallback configs.`);
-  Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Fallback BaseLayerConfigs`);
+  const message = `Failed to fetch the configs from all the possible URLs. Using the fallback configs.`;
+  logger.error(message);
+  Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Fallback BaseLayerConfigs`, message);
 }
 
 async function fetchRasterTileBaseLayerConfigsVersion1WithRetry(): Promise<RasterTileBaseLayerConfigsVersion1> {
