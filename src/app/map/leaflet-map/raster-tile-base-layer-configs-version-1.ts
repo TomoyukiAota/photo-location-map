@@ -62,14 +62,14 @@ const configsFileFetchArguments: Array<{ url: string, options: RequestInit }> = 
   },
 ];
 
-async function fetchRasterTileBaseLayerConfigsVersion1(url: string, options: RequestInit): Promise<RasterTileBaseLayerConfigsVersion1> {
+async function fetchRasterTileBaseLayerConfigsVersion1(url: string, options: RequestInit): Promise<{configs: RasterTileBaseLayerConfigsVersion1, responseText: string}> {
   const response = await fetch(url, options);
   if (!response.ok) {
     throw new Error(`response.status: ${response.status}, response.statusText: ${response.statusText}`);
   }
-  const jsonc = await response.text();
-  const json = parseJsonc(jsonc);
-  return json as RasterTileBaseLayerConfigsVersion1;
+  const responseText = await response.text();
+  const configs = parseJsonc(responseText) as RasterTileBaseLayerConfigsVersion1;
+  return {configs, responseText};
 }
 
 function recordFetchingConfigs(url: string): void {
@@ -78,14 +78,14 @@ function recordFetchingConfigs(url: string): void {
   Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Fetching BaseLayerConfigs`, message);
 }
 
-function recordInvalidConfigsObjectError(url: string): void {
-  const message = `Invalid configs object is fetched from ${url}.`;
+function recordInvalidConfigsObjectError(url: string, configs: any, responseText: string): void {
+  const message = `Invalid configs object is fetched from ${url}.\n----------\nconfigs:\n${toLoggableString(configs)}\n----------\nresponseText:\n${responseText}`;
   logger.error(message);
   Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Invalid BaseLayerConfigs`, message);
 }
 
-function recordFetchSuccess(url: string, configs: RasterTileBaseLayerConfigsVersion1): void {
-  const message = `Fetched ${url}\n${toLoggableString(configs)}`;
+function recordFetchSuccess(url: string, configs: RasterTileBaseLayerConfigsVersion1, responseText: string): void {
+  const message = `Fetched ${url}\n----------\nconfigs:\n${toLoggableString(configs)}\n----------\nresponseText:\n${responseText}`;
   logger.info(message);
   Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Fetched BaseLayerConfigs`, message);
 }
@@ -105,12 +105,12 @@ async function fetchRasterTileBaseLayerConfigsVersion1WithRetry(): Promise<Raste
   for (const {url, options} of configsFileFetchArguments) {
     try {
       recordFetchingConfigs(url);
-      const configs = await fetchRasterTileBaseLayerConfigsVersion1(url, options);
+      const {configs, responseText} = await fetchRasterTileBaseLayerConfigsVersion1(url, options);
       if (!configs?.rasterTileBaseLayerConfigs?.length) {
-        recordInvalidConfigsObjectError(url);
+        recordInvalidConfigsObjectError(url, configs, responseText);
         continue;
       }
-      recordFetchSuccess(url, configs);
+      recordFetchSuccess(url, configs, responseText);
       return configs;
     } catch (error) {
       recordFetchFailed(url, error);
