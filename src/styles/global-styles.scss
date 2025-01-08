@@ -53,6 +53,7 @@ $max-z-index: 2147483647;
   display: none;
 }
 
+@import "app-loading-indicator";
 @import "photo-cluster-viewer/photo-cluster-viewer";
 @import "photo-info-viewer/photo-info-viewer";
 @import "plm-leaflet-map/plm-leaflet-map";

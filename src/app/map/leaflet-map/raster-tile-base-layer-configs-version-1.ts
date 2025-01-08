@@ -45,47 +45,81 @@ export const rasterTileBaseLayerConfigsVersion1Fallback: RasterTileBaseLayerConf
 
 // In the production environment, the content of main branch in photo-location-map-resources repo is used.
 // In the development environment, the content of the feature branch can be used as needed.
-const configsFileUrl
-  = 'https://cdn.jsdelivr.net/gh/TomoyukiAota/photo-location-map-resources@main/map-configs/raster-tile-base-layer-configs-version-1.jsonc';
+const configsFileFetchArguments: Array<{ url: string, options: RequestInit }> = [
+  {
+    url: 'https://cdn.jsdelivr.net/gh/TomoyukiAota/photo-location-map-resources@main/map-configs/raster-tile-base-layer-configs-version-1.jsonc',
+    options: {
+      cache: 'no-store',
+      signal: AbortSignal.timeout(10000 /* milliseconds */),
+    },
+  },
+  {
+    url: 'https://raw.githubusercontent.com/TomoyukiAota/photo-location-map-resources/refs/heads/main/map-configs/raster-tile-base-layer-configs-version-1.jsonc',
+    options: {
+      cache: 'no-store',
+      // No timeout for the last attempt.
+    },
+  },
+];
 
-async function fetchRasterTileBaseLayerConfigsVersion1(): Promise<RasterTileBaseLayerConfigsVersion1> {
-  const response = await fetch(configsFileUrl);
+async function fetchRasterTileBaseLayerConfigsVersion1(url: string, options: RequestInit): Promise<{configs: RasterTileBaseLayerConfigsVersion1, responseText: string}> {
+  const response = await fetch(url, options);
   if (!response.ok) {
     throw new Error(`response.status: ${response.status}, response.statusText: ${response.statusText}`);
   }
-  const jsonc = await response.text();
-  const json = parseJsonc(jsonc);
-  return json as RasterTileBaseLayerConfigsVersion1;
+  const responseText = await response.text();
+  const configs = parseJsonc(responseText) as RasterTileBaseLayerConfigsVersion1;
+  return {configs, responseText};
 }
 
-function recordErrorAndGetFallback(message: string): RasterTileBaseLayerConfigsVersion1 {
+function recordFetchingConfigs(url: string): void {
+  const message = `Fetching ${url}`;
+  logger.info(message);
+  Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Fetching BaseLayerConfigs`, message);
+}
+
+function recordInvalidConfigsObjectError(url: string, configs: any, responseText: string): void {
+  const message = `Invalid configs object is fetched from ${url}.\n----------\nconfigs:\n${toLoggableString(configs)}\n----------\nresponseText:\n${responseText}`;
+  logger.error(message);
+  Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Invalid BaseLayerConfigs`, message);
+}
+
+function recordFetchSuccess(url: string, configs: RasterTileBaseLayerConfigsVersion1, responseText: string): void {
+  const message = `Fetched ${url}\n----------\nconfigs:\n${toLoggableString(configs)}\n----------\nresponseText:\n${responseText}`;
+  logger.info(message);
+  Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Fetched BaseLayerConfigs`, message);
+}
+
+function recordFetchFailed(url: string, error: Error): void {
+  const message = `Failed to fetch ${url}. error.message: "${error.message}"`;
+  logger.error(message);
+  Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Failed to fetch configs`, message);
+}
+
+function recordFetchFailedForAllUrls(): void {
+  const message = `Failed to fetch the configs from all the possible URLs. Using the fallback configs.`;
   logger.error(message);
   Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Fallback BaseLayerConfigs`, message);
+}
+
+async function fetchRasterTileBaseLayerConfigsVersion1WithRetry(): Promise<RasterTileBaseLayerConfigsVersion1> {
+  for (const {url, options} of configsFileFetchArguments) {
+    try {
+      recordFetchingConfigs(url);
+      const {configs, responseText} = await fetchRasterTileBaseLayerConfigsVersion1(url, options);
+      if (!configs?.rasterTileBaseLayerConfigs?.length) {
+        recordInvalidConfigsObjectError(url, configs, responseText);
+        continue;
+      }
+      recordFetchSuccess(url, configs, responseText);
+      return configs;
+    } catch (error) {
+      recordFetchFailed(url, error);
+    }
+  }
+
+  recordFetchFailedForAllUrls();
   return rasterTileBaseLayerConfigsVersion1Fallback;
 }
 
-async function fetchRasterTileBaseLayerConfigsVersion1WithFallback(): Promise<RasterTileBaseLayerConfigsVersion1> {
-  const fetchingMessage = `Fetching ${configsFileUrl}`;
-  logger.info(fetchingMessage);
-  Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Fetching BaseLayerConfigs`, fetchingMessage);
-
-  let configs: RasterTileBaseLayerConfigsVersion1;
-  try {
-    configs = await fetchRasterTileBaseLayerConfigsVersion1();
-  } catch (error) {
-    const message = `Failed to fetch ${configsFileUrl}. Using the fallback configs. ${error.message}`;
-    return recordErrorAndGetFallback(message);
-  }
-
-  if (!configs?.rasterTileBaseLayerConfigs?.length) {
-    const message = `Invalid configs object is fetched from ${configsFileUrl}. Using the fallback configs.\n${toLoggableString(configs)}`;
-    return recordErrorAndGetFallback(message);
-  }
-
-  const fetchedMessage = `Fetched ${configsFileUrl}\n${toLoggableString(configs)}`;
-  logger.info(fetchedMessage);
-  Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Fetched BaseLayerConfigs`, fetchedMessage);
-  return configs;
-}
-
-export const rasterTileBaseLayerConfigsVersion1 = await fetchRasterTileBaseLayerConfigsVersion1WithFallback();
+export const rasterTileBaseLayerConfigsVersion1 = await fetchRasterTileBaseLayerConfigsVersion1WithRetry();

@@ -1,0 +1,40 @@
+// Reference: https://cssloaders.github.io/
+
+$loading-indicator-color: #888888;
+
+.app-loading-indicator-container {
+  height: 100%;
+  display: grid;
+  gap: 10px;
+  place-content: center;
+  place-items: center;
+  color: $loading-indicator-color;
+
+  opacity: 0;
+  animation: fadeInAppLoadingIndicator 2s ease 0.5s forwards;
+}
+
+@keyframes fadeInAppLoadingIndicator {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.app-loading-indicator {
+  width: 48px;
+  height: 48px;
+  border: 5px solid $loading-indicator-color;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotateAppLoadingIndicator 1s linear infinite;
+}
+
+@keyframes rotateAppLoadingIndicator {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
