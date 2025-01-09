@@ -1,7 +1,7 @@
 {
   "name": "photo-location-map",
   "productName": "Photo Location Map",
-  "version": "1.10.1-alpha",
+  "version": "1.11.0-rc.1",
   "description": "Display the locations where photos were taken on a map.",
   "homepage": "https://github.com/TomoyukiAota/photo-location-map",
   "author": {
