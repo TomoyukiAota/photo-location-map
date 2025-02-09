@@ -33,6 +33,7 @@
     "publish:mac": "npm run electron-builder:mac -- --publish always",
     "publish:windows": "npm run electron-builder:windows -- --publish always",
     "notarytool:history": "node script/notarize/xcrun-notarytool-history.js",
+    "notarytool:log": "node script/notarize/xcrun-notarytool-log.js",
     "lint:ng": "ng lint",
     "lint:ng:fix": "ng lint --fix",
     "lint:script": "eslint -c ./script/.eslintrc.script.js ./script/**/*.js",
