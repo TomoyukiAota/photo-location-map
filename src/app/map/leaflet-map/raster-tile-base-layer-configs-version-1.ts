@@ -1,3 +1,5 @@
+/* eslint-disable max-len */ // For rasterTileBaseLayerConfigsVersion1Fallback
+
 import { parse as parseJsonc } from 'jsonc-parser';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { toLoggableString } from '../../../../src-shared/log/to-loggable-string';
