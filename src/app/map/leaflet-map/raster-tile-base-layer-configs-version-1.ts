@@ -1,3 +1,5 @@
+/* eslint-disable max-len */ // For rasterTileBaseLayerConfigsVersion1Fallback
+
 import { parse as parseJsonc } from 'jsonc-parser';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { toLoggableString } from '../../../../src-shared/log/to-loggable-string';
@@ -31,6 +33,13 @@ export const rasterTileBaseLayerConfigsVersion1Fallback: RasterTileBaseLayerConf
       url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
       options: {
         attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
+      }
+    },
+    {
+      name: 'Esri World Topo Map',
+      url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+      options: {
+        attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
       }
     },
     {
