@@ -34,7 +34,7 @@ HP     https://tomoyukiaota.github.io/photo-location-map/
 
 ○ 動 作 環 境
 
-  Windows 10
+  Windows 11
 
 --------------------------------------------------------------
 
