@@ -14,10 +14,11 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-20.04]
+        os: [ubuntu-24.04]
 
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # for electron-builder
+      ELECTRON_DISABLE_SANDBOX: '1'
 
     steps:
     - uses: actions/checkout@v2
@@ -50,6 +51,11 @@ jobs:
       uses: GabrielBB/xvfb-action@v1.4
       with:
         run: npm run test:unit:em:renderer
+
+    - name: Install FUSE (Required to launch AppImage during "npm run test:package")
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libfuse2
 
     - name: npm run test:package
       uses: GabrielBB/xvfb-action@v1.4
