@@ -52,6 +52,11 @@ jobs:
       with:
         run: npm run test:unit:em:renderer
 
+    - name: Install FUSE (Required to launch AppImage during "npm run test:package")
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libfuse2
+
     - name: npm run test:package
       uses: GabrielBB/xvfb-action@v1.4
       with:
