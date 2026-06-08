@@ -18,6 +18,7 @@ jobs:
 
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # for electron-builder
+      ELECTRON_DISABLE_SANDBOX: '1'
 
     steps:
     - uses: actions/checkout@v2
