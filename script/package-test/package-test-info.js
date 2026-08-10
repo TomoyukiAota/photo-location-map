@@ -2,6 +2,10 @@ const path = require('path');
 const { version } = require('../../package.json');
 const getLogDirectory = require('./get-log-directory');
 
+// electron-builder appends the arch to the package name, except when the target arch is the default arch (x64).
+// Note that this assumes x64 or arm64. electron-builder can use different names for other arches (e.g. ia32, armv7l).
+const archSuffix = global.process.arch === 'x64' ? '' : `-${global.process.arch}`;
+
 class PackageTestInfo {
   constructor() {
     this.distDirectory = `.${path.sep}dist`;
@@ -20,14 +24,14 @@ class PackageTestInfo {
         break;
       case 'darwin':
         this.packageCreationCommand = 'npm run package:mac';
-        this.expectedPackageLocation = `${this.releaseDirectory}/Photo Location Map-${version}.dmg`;
-        this.executablePrelaunchCommand = `hdiutil attach "${this.releaseDirectory}/Photo Location Map-${version}.dmg"`;
-        this.executableLaunchCommand = `open -W "/Volumes/Photo Location Map ${version}/Photo Location Map.app"`;
+        this.expectedPackageLocation = `${this.releaseDirectory}/Photo Location Map-${version}${archSuffix}.dmg`;
+        this.executablePrelaunchCommand = `hdiutil attach "${this.releaseDirectory}/Photo Location Map-${version}${archSuffix}.dmg"`;
+        this.executableLaunchCommand = `open -W "/Volumes/Photo Location Map ${version}${archSuffix}/Photo Location Map.app"`;
         break;
       case 'linux':
         this.packageCreationCommand = 'npm run package:linux';
-        this.expectedPackageLocation = `${this.releaseDirectory}/Photo Location Map-${version}.AppImage`;
-        this.executableLaunchCommand = `"${this.releaseDirectory}/Photo Location Map-${version}.AppImage"`;
+        this.expectedPackageLocation = `${this.releaseDirectory}/Photo Location Map-${version}${archSuffix}.AppImage`;
+        this.executableLaunchCommand = `"${this.releaseDirectory}/Photo Location Map-${version}${archSuffix}.AppImage"`;
         break;
       default:
         throw new Error(`Unsupported platform for "${__filename}"`);
