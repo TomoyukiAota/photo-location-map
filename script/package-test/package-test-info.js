@@ -2,10 +2,6 @@ const path = require('path');
 const { version } = require('../../package.json');
 const getLogDirectory = require('./get-log-directory');
 
-// electron-builder appends the arch to the package name, except when the target arch is the default arch (x64).
-// Note that this assumes x64 or arm64. electron-builder can use different names for other arches (e.g. ia32, armv7l).
-const archSuffix = global.process.arch === 'x64' ? '' : `-${global.process.arch}`;
-
 class PackageTestInfo {
   constructor() {
     this.distDirectory = `.${path.sep}dist`;
@@ -15,6 +11,10 @@ class PackageTestInfo {
   }
 
   addMiscPlatformDependentProperties() {
+    // electron-builder appends the arch to the package name, except when the target arch is the default arch (x64).
+    // Note that this assumes x64 or arm64. electron-builder can use different names for other arches (e.g. ia32, armv7l).
+    const archSuffix = global.process.arch === 'x64' ? '' : `-${global.process.arch}`;
+
     switch(global.process.platform) {
       case 'win32':
         this.packageCreationCommand = 'npm run package:windows';
