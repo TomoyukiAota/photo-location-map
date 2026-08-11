@@ -1,2 +1,2 @@
 [tools]
-node = "20.16.0"   # The single source of truth of the Node.js version. CI installs this version with jdx/mise-action.
+node = "20.16.0"   # The single source of truth for the Node.js version. CI installs this version with jdx/mise-action.
