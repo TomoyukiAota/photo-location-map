@@ -11,10 +11,6 @@ class PackageTestInfo {
   }
 
   addMiscPlatformDependentProperties() {
-    // electron-builder appends the arch to the package name, except when the target arch is the default arch (x64).
-    // Note that this assumes x64 or arm64. electron-builder can use different names for other arches (e.g. ia32, armv7l).
-    const archSuffix = global.process.arch === 'x64' ? '' : `-${global.process.arch}`;
-
     switch(global.process.platform) {
       case 'win32':
         this.packageCreationCommand = 'npm run package:windows';
@@ -24,15 +20,19 @@ class PackageTestInfo {
         break;
       case 'darwin':
         this.packageCreationCommand = 'npm run package:mac';
-        this.expectedPackageLocation = `${this.releaseDirectory}/Photo Location Map-${version}${archSuffix}.dmg`;
-        this.executablePrelaunchCommand = `hdiutil attach "${this.releaseDirectory}/Photo Location Map-${version}${archSuffix}.dmg"`;
-        this.executableLaunchCommand = `open -W "/Volumes/Photo Location Map ${version}${archSuffix}/Photo Location Map.app"`;
+        this.expectedPackageLocation = `${this.releaseDirectory}/Photo Location Map-${version}-universal.dmg`;
+        this.executablePrelaunchCommand = `hdiutil attach "${this.releaseDirectory}/Photo Location Map-${version}-universal.dmg"`;
+        this.executableLaunchCommand = `open -W "/Volumes/Photo Location Map ${version}-universal/Photo Location Map.app"`;
         break;
-      case 'linux':
+      case 'linux': {
+        // electron-builder appends the arch to the package name, except when the target arch is the default arch (x64).
+        // Note that this assumes x64 or arm64. electron-builder can use different names for other arches (e.g. ia32, armv7l).
+        const archSuffix = global.process.arch === 'x64' ? '' : `-${global.process.arch}`;
         this.packageCreationCommand = 'npm run package:linux';
         this.expectedPackageLocation = `${this.releaseDirectory}/Photo Location Map-${version}${archSuffix}.AppImage`;
         this.executableLaunchCommand = `"${this.releaseDirectory}/Photo Location Map-${version}${archSuffix}.AppImage"`;
         break;
+      }
       default:
         throw new Error(`Unsupported platform for "${__filename}"`);
     }
