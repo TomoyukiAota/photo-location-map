@@ -13,8 +13,9 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     strategy:
+      fail-fast: false    # To see the result on both architectures even when one of them fails
       matrix:
-        os: [macos-26-intel]
+        os: [macos-26, macos-26-intel]    # macos-26 is arm64 (Apple Silicon), and macos-26-intel is x64.
 
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # for electron-builder

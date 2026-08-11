@@ -1,0 +1,2 @@
+[tools]
+node = "20.16.0"   # Keep in sync with the Node.js version in .github/workflows/ci-on-*.yml
