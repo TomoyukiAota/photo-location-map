@@ -21,7 +21,9 @@ This page contains useful information to contribute to this project.
 
 ## Prerequisite
 
- - Node.js (64-bit, version 20.16.0 or greater)
+ - Node.js (64-bit), with the version specified in [`mise.toml`](../mise.toml)
+   - [mise](https://mise.jdx.dev/) is the recommended way to install it. `mise.toml` is the single source of truth for the Node.js version, and CI installs the same version from it.
+   - Node.js can also be installed however you prefer, as long as the version matches.
  - More than 2GB of RAM
    - Application packaging frequently fails on a PC with 1GB of RAM. Add more RAM depending on the available memory for application packaging on your PC.
 
@@ -31,9 +33,13 @@ This page contains useful information to contribute to this project.
 After cloning this repository, run these commands to start the application: 
 
 ``` bash
+mise trust    # Only needed once per clone, to allow mise to read mise.toml
+mise install  # Install Node.js with the version in mise.toml
 npm ci
 npm start
 ```
+
+Without mise, install Node.js however you prefer, and then run `npm ci` and `npm start`.
 
 
 ## Frequently Used Commands
