@@ -20,12 +20,10 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # for electron-builder
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v7
 
-    - name: Use Node.js 20.16.0
-      uses: actions/setup-node@v1
-      with:
-        node-version: 20.16.0
+    - name: Install Node.js with the version in mise.toml
+      uses: jdx/mise-action@v4
 
     - name: npm ci
       run: npm ci
