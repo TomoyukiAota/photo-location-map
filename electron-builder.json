@@ -23,7 +23,12 @@
   "mac": {
     "icon": "dist",
     "target": [
-      "dmg"
+      {
+        "target": "dmg",
+        "arch": [
+          "universal"
+        ]
+      }
     ],
     "notarize": false,
     "hardenedRuntime": true,
