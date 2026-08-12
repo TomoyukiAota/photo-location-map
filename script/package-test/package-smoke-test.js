@@ -26,18 +26,18 @@ class PackageSmokeTest {
     }
   }
 
-  printWindowsApplicationErrorEvents() {
-    const scriptPath = path.join(__dirname, 'print-windows-application-error-events.ps1');
-    const command = `powershell -NoProfile -ExecutionPolicy Bypass -File "${scriptPath}"`;
+  printWindowsCrashDiagnostics() {
+    const scriptPath = path.join(__dirname, 'print-windows-crash-diagnostics.ps1');
+    const command = `powershell -NoProfile -ExecutionPolicy Bypass -File "${scriptPath}" -InstallerPath "${testInfo.installerLocation}"`;
     try {
       runCommandSync(
         command,
-        'Printing the recent events of the Windows application log to investigate the failure above.',
-        'End of printing the recent events of the Windows application log.'
+        'Printing the information to investigate the failure above.',
+        'End of printing the information to investigate the failure above.'
       );
     } catch (error) {
       // Failing to collect the information for the investigation must not hide the failure which is investigated.
-      logger.warn(`Failed to print the recent events of the Windows application log. ${error}`);
+      logger.warn(`Failed to print the information to investigate the failure. ${error}`);
     }
   }
 
@@ -57,9 +57,9 @@ class PackageSmokeTest {
           logger.error(`Searching the installation directory "${testInfo.installationDirectory}" to investigate the failure above.`);
           testUtil.printItemsInDirectory(testInfo.installationDirectory);
         }
-        // The installer crashes rather than returns an error, so the reason is expected to be in the Windows application log.
+        // The installer crashes rather than returns an error, so the information about the crash is collected.
         if (global.process.platform === 'win32') {
-          this.printWindowsApplicationErrorEvents();
+          this.printWindowsCrashDiagnostics();
         }
         throw error;
       }

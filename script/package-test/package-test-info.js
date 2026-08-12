@@ -16,9 +16,11 @@ class PackageTestInfo {
         // The installation directory is printed when the silent installation fails, so that it can be seen
         // whether the installation took place in spite of the failure.
         const installationDirectory = `${process.env.APPDATA}\\..\\Local\\Programs\\Photo Location Map`;
+        const installerLocation = `${this.releaseDirectory}\\Photo Location Map Setup ${version}.exe`;
         this.packageCreationCommand = 'npm run package:windows';
-        this.expectedPackageLocations = [`${this.releaseDirectory}\\Photo Location Map Setup ${version}.exe`];
-        this.executablePrelaunchCommand = `"${this.releaseDirectory}\\Photo Location Map Setup ${version}.exe" /S`;
+        this.expectedPackageLocations = [installerLocation];
+        this.installerLocation = installerLocation;
+        this.executablePrelaunchCommand = `"${installerLocation}" /S`;
         this.installationDirectory = installationDirectory;
         this.executableLaunchCommand = `"${installationDirectory}\\Photo Location Map.exe"`;
         break;
