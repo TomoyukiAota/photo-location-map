@@ -13,22 +13,24 @@ class PackageCreationTest {
     );
   }
 
-  testIfPackageExists() {
+  testIfPackagesExist() {
     testUtil.printItemsInDirectory(testInfo.releaseDirectory);
-    logger.info(`Expected Package Location: "${testInfo.expectedPackageLocation}"`);
-    if (fs.existsSync(testInfo.expectedPackageLocation)) {
-      logger.info('Package exists in the expected location.');
-    } else {
-      const errorMessage = 'Package does NOT exist in the expected location.';
-      logger.error(errorMessage);
-      throw new Error(errorMessage);
-    }
+    testInfo.expectedPackageLocations.forEach(expectedPackageLocation => {
+      logger.info(`Expected Package Location: "${expectedPackageLocation}"`);
+      if (fs.existsSync(expectedPackageLocation)) {
+        logger.info('Package exists in the expected location.');
+      } else {
+        const errorMessage = `Package does NOT exist in the expected location "${expectedPackageLocation}".`;
+        logger.error(errorMessage);
+        throw new Error(errorMessage);
+      }
+    });
   }
 
   run() {
     logger.info('Start of package creation test.');
     this.createPackage();
-    this.testIfPackageExists();
+    this.testIfPackagesExist();
     logger.info('End of package creation test.');
   }
 }

@@ -14,22 +14,27 @@ class PackageTestInfo {
     switch(global.process.platform) {
       case 'win32':
         this.packageCreationCommand = 'npm run package:windows';
-        this.expectedPackageLocation = `${this.releaseDirectory}\\Photo Location Map Setup ${version}.exe`;
+        this.expectedPackageLocations = [`${this.releaseDirectory}\\Photo Location Map Setup ${version}.exe`];
         this.executablePrelaunchCommand = `"${this.releaseDirectory}\\Photo Location Map Setup ${version}.exe" /S`;
         this.executableLaunchCommand = `"${process.env.APPDATA}\\..\\Local\\Programs\\Photo Location Map\\Photo Location Map.exe"`;
         break;
-      case 'darwin':
+      case 'darwin': {
+        // The dmg is the package to install the application manually, and the zip is the package which electron-updater
+        // requires in the release to auto-update on macOS. Both of them need to be created.
+        const dmgLocation = `${this.releaseDirectory}/Photo Location Map-${version}-universal.dmg`;
+        const zipLocation = `${this.releaseDirectory}/Photo Location Map-${version}-universal-mac.zip`;
         this.packageCreationCommand = 'npm run package:mac';
-        this.expectedPackageLocation = `${this.releaseDirectory}/Photo Location Map-${version}-universal.dmg`;
-        this.executablePrelaunchCommand = `hdiutil attach "${this.releaseDirectory}/Photo Location Map-${version}-universal.dmg"`;
+        this.expectedPackageLocations = [dmgLocation, zipLocation];
+        this.executablePrelaunchCommand = `hdiutil attach "${dmgLocation}"`;
         this.executableLaunchCommand = `open -W "/Volumes/Photo Location Map ${version}-universal/Photo Location Map.app"`;
         break;
+      }
       case 'linux': {
         // electron-builder appends the arch to the package name, except when the target arch is the default arch (x64).
         // Note that this assumes x64 or arm64. electron-builder can use different names for other arches (e.g. ia32, armv7l).
         const archSuffix = global.process.arch === 'x64' ? '' : `-${global.process.arch}`;
         this.packageCreationCommand = 'npm run package:linux';
-        this.expectedPackageLocation = `${this.releaseDirectory}/Photo Location Map-${version}${archSuffix}.AppImage`;
+        this.expectedPackageLocations = [`${this.releaseDirectory}/Photo Location Map-${version}${archSuffix}.AppImage`];
         this.executableLaunchCommand = `"${this.releaseDirectory}/Photo Location Map-${version}${archSuffix}.AppImage"`;
         break;
       }
