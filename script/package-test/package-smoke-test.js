@@ -41,18 +41,44 @@ class PackageSmokeTest {
     }
   }
 
+  // The silent installation on Windows intermittently exits with this code, which is 0xC0000005
+  // (STATUS_ACCESS_VIOLATION). The installer crashes in System.dll, the plugin of NSIS which electron-builder
+  // uses, while it resolves the per-user installation directory. This is a known problem of electron-builder
+  // (https://github.com/electron-userland/electron-builder/issues/7921), and it happens on a fresh installation,
+  // which is what this test does on a clean runner every time. Retrying is the workaround until the problem is
+  // fixed in electron-builder, because the NSIS binary is chosen by electron-builder and pinning an older one
+  // does not fix it either.
+  windowsInstallerCrashExitCode = 3221225477;
+  maxPrelaunchRetryCount = 5;
+
+  isCrashOfWindowsInstaller(error) {
+    return global.process.platform === 'win32'
+        && error?.status === this.windowsInstallerCrashExitCode;
+  }
+
   runExecutablePrelaunchCommand() {
     const command = testInfo.executablePrelaunchCommand;
-    if(command) {
+    if(!command) {
+      logger.info('No executable prelaunch command on this platform.');
+      return;
+    }
+
+    for (let retryCount = 0; retryCount <= this.maxPrelaunchRetryCount; retryCount++) {
       try {
         runCommandSync(
           command,
           `Start of executable prelaunch command: "${command}"`,
           `End of executable prelaunch command: "${command}"`
         );
+        return;
       } catch (error) {
-        // The silent installation on Windows fails intermittently, and the installer prints nothing about the reason.
-        // The items in the installation directory are printed to see whether the installation took place regardless.
+        if (this.isCrashOfWindowsInstaller(error) && retryCount < this.maxPrelaunchRetryCount) {
+          logger.warn(`The installer crashed. Retrying the executable prelaunch command. Retry count: ${retryCount + 1}`);
+          continue;
+        }
+
+        // The items in the installation directory are printed to see whether the installation took place
+        // in spite of the failure.
         if (testInfo.installationDirectory) {
           logger.error(`Searching the installation directory "${testInfo.installationDirectory}" to investigate the failure above.`);
           testUtil.printItemsInDirectory(testInfo.installationDirectory);
@@ -63,8 +89,6 @@ class PackageSmokeTest {
         }
         throw error;
       }
-    } else {
-      logger.info('No executable prelaunch command on this platform.');
     }
   }
 
