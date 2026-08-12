@@ -19,7 +19,6 @@ class PackageTestInfo {
         const installerLocation = `${this.releaseDirectory}\\Photo Location Map Setup ${version}.exe`;
         this.packageCreationCommand = 'npm run package:windows';
         this.expectedPackageLocations = [installerLocation];
-        this.installerLocation = installerLocation;
         this.executablePrelaunchCommand = `"${installerLocation}" /S`;
         this.installationDirectory = installationDirectory;
         this.executableLaunchCommand = `"${installationDirectory}\\Photo Location Map.exe"`;

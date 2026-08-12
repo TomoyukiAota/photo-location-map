@@ -26,21 +26,6 @@ class PackageSmokeTest {
     }
   }
 
-  printWindowsCrashDiagnostics() {
-    const scriptPath = path.join(__dirname, 'print-windows-crash-diagnostics.ps1');
-    const command = `powershell -NoProfile -ExecutionPolicy Bypass -File "${scriptPath}" -InstallerPath "${testInfo.installerLocation}"`;
-    try {
-      runCommandSync(
-        command,
-        'Printing the information to investigate the failure above.',
-        'End of printing the information to investigate the failure above.'
-      );
-    } catch (error) {
-      // Failing to collect the information for the investigation must not hide the failure which is investigated.
-      logger.warn(`Failed to print the information to investigate the failure. ${error}`);
-    }
-  }
-
   // The silent installation on Windows intermittently exits with this code, which is 0xC0000005
   // (STATUS_ACCESS_VIOLATION). The installer crashes in System.dll, the plugin of NSIS which electron-builder
   // uses, while it resolves the per-user installation directory. This is a known problem of electron-builder
@@ -82,10 +67,6 @@ class PackageSmokeTest {
         if (testInfo.installationDirectory) {
           logger.error(`Searching the installation directory "${testInfo.installationDirectory}" to investigate the failure above.`);
           testUtil.printItemsInDirectory(testInfo.installationDirectory);
-        }
-        // The installer crashes rather than returns an error, so the information about the crash is collected.
-        if (global.process.platform === 'win32') {
-          this.printWindowsCrashDiagnostics();
         }
         throw error;
       }
