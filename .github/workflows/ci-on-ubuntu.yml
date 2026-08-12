@@ -12,6 +12,11 @@ jobs:
   test:
     runs-on: ${{ matrix.os }}
 
+    # "npm run test:package" runs commands without a timeout, and it hangs when one of them does not return.
+    # Without the setting below, such a job keeps running until the default timeout of GitHub Actions, which is 6 hours.
+    # This job takes about 7 minutes, so the timeout below has enough margin.
+    timeout-minutes: 30
+
     strategy:
       matrix:
         os: [ubuntu-24.04]
