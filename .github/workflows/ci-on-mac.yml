@@ -12,6 +12,11 @@ jobs:
   test:
     runs-on: ${{ matrix.os }}
 
+    # The timeout below is to bound the duration of a hung job.
+    # This job once hung in "npm run test:package" and kept running for more than 40 minutes until it was cancelled manually.
+    # This job takes about 20 minutes at the longest on macos-26-intel, so the timeout below has enough margin.
+    timeout-minutes: 45
+
     strategy:
       fail-fast: false    # To see the result on both architectures even when one of them fails
       matrix:
