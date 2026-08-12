@@ -12,10 +12,8 @@ jobs:
   test:
     runs-on: ${{ matrix.os }}
 
-    # Without the setting below, a hung job keeps running until the default timeout of GitHub Actions, which is 6 hours.
-    # A job has hung on macOS, and the setting below is to bound the duration of a hung job on this OS as well.
-    # This job takes about 9 minutes including the publish step, so the timeout below has enough margin.
-    # Note that the retry of the publish step below can take longer than this timeout in theory, but it takes about 2 minutes in practice.
+    # The timeout below is a preventative measure to bound the duration of a hung job.
+    # This job usually takes about 10 minutes, so the timeout below has enough margin.
     timeout-minutes: 30
 
     strategy:
