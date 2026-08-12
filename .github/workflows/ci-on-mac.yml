@@ -12,8 +12,8 @@ jobs:
   test:
     runs-on: ${{ matrix.os }}
 
-    # "npm run test:package" runs commands such as hdiutil without a timeout, and it hangs when one of them does not return.
-    # Without the setting below, such a job keeps running until the default timeout of GitHub Actions, which is 6 hours.
+    # This job once hung in "npm run test:package" and kept running for about 40 minutes until it was cancelled manually.
+    # Without the setting below, a hung job keeps running until the default timeout of GitHub Actions, which is 6 hours.
     # This job takes about 20 minutes at the longest on macos-26-intel, so the timeout below has enough margin.
     timeout-minutes: 45
 
