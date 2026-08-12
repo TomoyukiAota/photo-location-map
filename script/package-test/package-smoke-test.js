@@ -29,11 +29,21 @@ class PackageSmokeTest {
   runExecutablePrelaunchCommand() {
     const command = testInfo.executablePrelaunchCommand;
     if(command) {
-      runCommandSync(
-        command,
-        `Start of executable prelaunch command: "${command}"`,
-        `End of executable prelaunch command: "${command}"`
-      );
+      try {
+        runCommandSync(
+          command,
+          `Start of executable prelaunch command: "${command}"`,
+          `End of executable prelaunch command: "${command}"`
+        );
+      } catch (error) {
+        // The silent installation on Windows fails intermittently, and the installer prints nothing about the reason.
+        // The items in the installation directory are printed to see whether the installation took place regardless.
+        if (testInfo.installationDirectory) {
+          logger.error(`Searching the installation directory "${testInfo.installationDirectory}" to investigate the failure above.`);
+          testUtil.printItemsInDirectory(testInfo.installationDirectory);
+        }
+        throw error;
+      }
     } else {
       logger.info('No executable prelaunch command on this platform.');
     }
