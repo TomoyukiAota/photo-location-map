@@ -15,6 +15,16 @@ function Write-Section($title) {
   Write-Output "===== $title ====="
 }
 
+function Write-FileInfo($path) {
+  if (-not (Test-Path -LiteralPath $path)) {
+    Write-Output "$path does not exist."
+    return
+  }
+  $item = Get-Item -LiteralPath $path
+  $hash = (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash
+  Write-Output ("length={0}  sha256={1}  {2}" -f $item.Length, $hash, $item.FullName)
+}
+
 function Write-Events($providerName, $maxEvents) {
   Write-Section "Events of ""$providerName"" in the Windows application log"
   # "SilentlyContinue" is necessary because Get-WinEvent reports an error when no event matches the filter.
@@ -39,9 +49,9 @@ if ($null -eq $nsisTempDirectories) {
 } else {
   foreach ($directory in $nsisTempDirectories) {
     Write-Output "--- $($directory.FullName) (created $($directory.CreationTimeUtc.ToString('u')))"
-    Get-ChildItem -Path $directory.FullName -File -ErrorAction SilentlyContinue |
-      Select-Object Name, Length, @{Name = 'SHA256'; Expression = {(Get-FileHash -Path $_.FullName -Algorithm SHA256 -ErrorAction SilentlyContinue).Hash}} |
-      Format-Table -AutoSize
+    foreach ($file in (Get-ChildItem -Path $directory.FullName -File -ErrorAction SilentlyContinue)) {
+      Write-FileInfo $file.FullName
+    }
   }
 }
 
@@ -52,19 +62,22 @@ $cachedSystemDlls = Get-ChildItem -Path $cacheDirectory -Filter 'System.dll' -Re
 if ($null -eq $cachedSystemDlls) {
   Write-Output "No System.dll is found under ""$cacheDirectory""."
 } else {
-  $cachedSystemDlls |
-    Select-Object FullName, Length, @{Name = 'SHA256'; Expression = {(Get-FileHash -Path $_.FullName -Algorithm SHA256 -ErrorAction SilentlyContinue).Hash}} |
-    Format-List
+  foreach ($file in $cachedSystemDlls) {
+    Write-FileInfo $file.FullName
+  }
 }
 
 Write-Section 'Installer'
 # A broken installer would mean that the package creation, rather than the installation, is the problem.
 if ([string]::IsNullOrEmpty($InstallerPath)) {
   Write-Output 'The path of the installer is not given.'
-} elseif (-not (Test-Path -Path $InstallerPath)) {
-  Write-Output "The installer ""$InstallerPath"" does not exist."
 } else {
-  Get-Item -Path $InstallerPath |
-    Select-Object FullName, Length, LastWriteTimeUtc, @{Name = 'SHA256'; Expression = {(Get-FileHash -Path $_.FullName -Algorithm SHA256).Hash}} |
-    Format-List
+  Write-FileInfo $InstallerPath
 }
+
+Write-Section 'Environment'
+# The version of the runner image is recorded to see whether the crash is tied to a certain image.
+$operatingSystem = Get-CimInstance Win32_OperatingSystem -ErrorAction SilentlyContinue
+Write-Output "OS: $($operatingSystem.Caption), version $($operatingSystem.Version)"
+Write-Output "Windows Defender real-time monitoring disabled: $((Get-MpPreference -ErrorAction SilentlyContinue).DisableRealtimeMonitoring)"
+Write-Output "TEMP: $env:TEMP"
