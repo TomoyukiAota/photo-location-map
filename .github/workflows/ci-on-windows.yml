@@ -12,6 +12,10 @@ jobs:
   test:
     runs-on: ${{ matrix.os }}
 
+    # The timeout below is a preventative measure to bound the duration of a hung job.
+    # This job usually takes about 10 minutes, so the timeout below has enough margin.
+    timeout-minutes: 30
+
     strategy:
       matrix:
         os: [windows-latest]
