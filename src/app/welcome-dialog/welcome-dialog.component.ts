@@ -19,7 +19,7 @@ export class WelcomeDialogComponent implements AfterViewInit {
 
   @ViewChild('troubleshootingPageLink') public troubleshootingPageLink: ElementRef<HTMLAnchorElement>;
 
-  public get twitterLogoDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.twitterLogo); }
+  public get xFormerlyTwitterLogoDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.xFormerlyTwitterLogo); }
   public get gitHubLogoDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.gitHubLogo); }
 
   constructor(private sanitizer: DomSanitizer,
@@ -31,8 +31,8 @@ export class WelcomeDialogComponent implements AfterViewInit {
                                 'Troubleshooting Page', 'Welcome Dialog');
   }
 
-  public handleTwitterProfileIconClicked() {
-    openUrl('https://twitter.com/TomoyukiAota', 'Twitter Profile of Tomoyuki Aota', 'Welcome Dialog');
+  public handleXFormerlyTwitterProfileIconClicked() {
+    openUrl('https://x.com/TomoyukiAota', 'X (Formerly Twitter) Profile of Tomoyuki Aota', 'Welcome Dialog');
   }
 
   public handleGitHubProfileIconClicked() {

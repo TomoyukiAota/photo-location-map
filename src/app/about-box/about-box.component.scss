@@ -29,13 +29,13 @@
   font-size: 14px;
 
   display: grid;
-  grid: "message     twitter-logo github-logo" auto
-        /max-content min-content  min-content;
+  grid: "message     x-formerly-twitter-logo github-logo" auto
+        /max-content min-content             min-content;
   justify-content: center;
   align-items: center;
   column-gap: 5px;
   .developed-by-message { grid-area: message; }
-  .twitter-profile-icon { grid-area: twitter-logo; }
+  .x-formerly-twitter-profile-icon { grid-area: x-formerly-twitter-logo; }
   .github-profile-icon { grid-area: github-logo; }
 
   > img {
@@ -52,9 +52,10 @@
   }
 }
 
-.twitter-profile-icon {
-  width: 40px;
-  height: 40px;
+.x-formerly-twitter-profile-icon {
+  padding: 7px;
+  width: 26px;
+  height: 26px;
 }
 
 .github-profile-icon {
