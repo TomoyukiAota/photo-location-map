@@ -16,7 +16,7 @@ import { createDivIconHtml } from './div-icon';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
 import { rasterTileBaseLayerConfigsVersion1 } from './raster-tile-base-layer-configs-version-1';
 
-// "declare let L: any;" is defined here (in addition to global scope typing given by type-declaration/index.d.ts)
+// "declare let L: any;" is defined here (in addition to global scope typing given by types/index.d.ts)
 // in order to avoid the compile errors for the types from leaflet.markercluster
 declare let L: any;
 
