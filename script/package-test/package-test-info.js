@@ -13,8 +13,8 @@ class PackageTestInfo {
   addMiscPlatformDependentProperties() {
     switch(global.process.platform) {
       case 'win32': {
-        // The installation directory is printed when the silent installation fails, so that it can be seen
-        // whether the installation took place in spite of the failure.
+        // The installation directory is printed when the silent installation fails,
+        // so that it can be seen whether the installation took place in spite of the failure.
         const installationDirectory = `${process.env.APPDATA}\\..\\Local\\Programs\\Photo Location Map`;
         const installerLocation = `${this.releaseDirectory}\\Photo Location Map Setup ${version}.exe`;
         this.packageCreationCommand = 'npm run package:windows';

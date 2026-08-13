@@ -26,13 +26,25 @@ class PackageSmokeTest {
     }
   }
 
-  // The silent installation on Windows intermittently exits with this code, which is 0xC0000005
-  // (STATUS_ACCESS_VIOLATION). The installer crashes in System.dll, the plugin of NSIS which electron-builder
-  // uses, while it resolves the per-user installation directory. This is a known problem of electron-builder
-  // (https://github.com/electron-userland/electron-builder/issues/7921), and it happens on a fresh installation,
-  // which is what this test does on a clean runner every time. Retrying is the workaround until the problem is
-  // fixed in electron-builder, because the NSIS binary is chosen by electron-builder and pinning an older one
-  // does not fix it either.
+  // TL;DR:
+  // There is a known issue in electron-builder (https://github.com/electron-userland/electron-builder/issues/7921)
+  // that the silent installation on Windows intermittently exits with 0xC0000005 (STATUS_ACCESS_VIOLATION),
+  // which is 3221225477.
+  // Retrying is the workaround until the problem is fixed in electron-builder.
+  // ----------------------------
+  // Details:
+  // The installer crashes in System.dll, which is the plugin of NSIS which electron-builder uses. According to
+  // the issue above, it crashes while it resolves the per-user installation directory, which is why it happens
+  // on a fresh installation. This test does a fresh installation on a clean runner every time.
+  // It was observed about 20-25% of the time, and the Windows application log recorded the same faulting module
+  // and the same fault offset every time, which means that it is not random memory corruption. The installation
+  // directory was not created at all, so the installer does nothing before it crashes.
+  // The following were ruled out by the log of the runner: Windows Defender (its real-time monitoring is
+  // disabled on the runner), a leftover of a previous run in the temporary directory of NSIS plugins (only one
+  // exists), and a broken System.dll (its size is the same as the one in the cache of electron-builder).
+  // Updating electron-builder does not fix this, because it still uses NSIS 3.0.4.1 as of 26.15.3. Pinning a
+  // newer NSIS with "customNsisBinary" does not help either, because the newest one which this version of
+  // electron-builder can use is 3.0.5.0, released in 2020, before the issue above was reported.
   windowsInstallerCrashExitCode = 3221225477;
   maxPrelaunchRetryCount = 5;
 
