@@ -1,89 +1,110 @@
 # CLAUDE.md
 
-アプリの内容と貢献方法は [`README.md`](README.md) と
-[`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) にある。ここには
-**セッションの入口でだけ必要なこと**を書く。
+What this app does and how to contribute is in [`README.md`](README.md) and
+[`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md). This file holds only what is
+needed at the start of a session.
 
-## このリポジトリは公開されている
+## Write in English
 
-`TomoyukiAota/photo-location-map` は **public**。ここに残るもの——PR のタイトルと
-本文、issue、**コミットメッセージ**、ブランチ名、コード中のコメント——は誰でも読める。
+This repository is written in English — code, comments, `README.md`, docs, commit
+messages, branch names, pull request titles and descriptions, and this file.
+Keep it that way.
 
-**非公開のもの（非公開リポジトリの名前、私的に使っている外部サービス、個人の写真など）
-を書かない。** 参照が要る作業でも、出典を示さずに**内容だけ**転記する。
-迷ったら書かずに確認する。
+## This repository is public
 
-## 知識はこのリポジトリに置く（memory を使わない）
+`TomoyukiAota/photo-location-map` is a **public** repository. Everything that
+lands here is readable by anyone: pull request titles and descriptions, issues,
+**commit messages**, branch names, and comments in the code.
 
-memory（`~/.claude/projects/…/memory/`）は **clone ごと・マシンごとに別**で、
-持ち歩けない。複数の PC で作業するので、memory に置くと別の PC では
-最初から無い。だから**このリポジトリに関わることは全部リポジトリに置く**。
+**Do not put private things here** — names of private repositories, third-party
+services used privately, photos which reveal personal information. When such a source is needed, carry over
+**the content only**, without naming where it came from. When in doubt, leave it
+out and ask.
 
-お願いではなく、[`.claude/settings.json`](.claude/settings.json) で
-`"autoMemoryEnabled": false` にして**機能ごと切ってある**（読み書きとも止まる）。
-追跡されている設定なので clone しても PC を変えても効く。
+## Knowledge about this repo lives in this repo
 
-## mac の署名付きビルドは自分で走らせてよい
+Do not use Claude's memory (`~/.claude/projects/…/memory/`) as the place to keep
+knowledge about this repository. Memory is **per clone and per machine**, so it
+does not travel: work on another computer and it is simply not there.
 
-`npm run package:mac`（および他の packaging スクリプト）は**そのまま実行してよい**。
-署名と notarize の認証はマシンに用意してあることが前提なので、対話は要らない。
+Put it in the repository instead. Git carries it to every clone and every machine,
+and a pull request makes it reviewable.
 
-- Developer ID Application 証明書はログインキーチェーンに在るので
-  `CSC_LINK` / `CSC_KEY_PASSWORD` は不要
-- `APPLE_ID` / `APPLE_APP_SPECIFIC_PASSWORD` / `APPLE_TEAM_ID` はシェルの
-  プロファイルで export 済み。`afterSign` フックの `script/notarize/notarize.js`
-  がこれを読む
+This is not a promise to remember: [`.claude/settings.json`](.claude/settings.json)
+sets `"autoMemoryEnabled": false`, which turns memory off entirely (both reading
+and writing). That file is tracked, so the switch travels with the repository.
 
-所要はおおむね 5 分（Angular の production ビルド 1 分＋universal packaging 数分＋
-Apple 側の notarize 待ち 2 分ほど）。**バックグラウンドで走らせてログを読む**。
+## You can run the signed mac build yourself
 
-`PLM_PACKAGE_TEST=true`（`npm run test:package` が設定する）は notarize を飛ばすので、
-**notarize 済みの成果物が要る場面では package test は代用にならない**。
+Run `npm run package:mac` (and the other packaging scripts) directly. The macOS
+signing and notarization credentials are expected to be already set up on the machine and need
+no interaction:
 
-成果物を GitHub へ publish するのは外向きの別作業なので、そこは必ず確認を取る。
+- The Developer ID Application certificate is in the login keychain, so `CSC_LINK`
+  and `CSC_KEY_PASSWORD` are not needed.
+- `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD` and `APPLE_TEAM_ID` are exported from
+  the shell profile, which is what the `afterSign` hook
+  `script/notarize/notarize.js` reads.
 
-## 上流のバグには、狭い回避策を選ぶ
+Budget about five minutes end to end: roughly a minute for the Angular production
+build, a couple more for universal packaging, and about two waiting on Apple's
+notarization service. **Run it in the background and read the log** rather than
+blocking on it.
 
-間欠的な失敗が上流の既知バグだと分かったとき、**特殊なビルド構成や major 版の
-アップグレードではなく、狭い回避策（リトライ・ガード）を提案する**。
+Note that `PLM_PACKAGE_TEST=true` (set by `npm run test:package`) skips
+notarization, so the package test is **not** a substitute when a notarized
+artifact is actually needed.
 
-**なぜ**: このリポジトリのビルドとリリースの経路（electron-builder・NSIS・
-notarize・auto-update）は**利用者に届く部分**。beta のツールや 2 メジャー飛ばしの
-更新は、CI でしか現れない利益のためにリリースを壊しかねない。
+Publishing the result to GitHub is a separate, outward-facing step — confirm
+before uploading.
 
-回避策は**証拠が許すだけ狭く**する。例: Windows インストーラのリトライは
-win32 かつ終了コード 3221225477 のときだけに絞ってあるので、本物の失敗は今も表に出る。
-調査の記録（証拠・棄却した仮説・他の直し方を選ばなかった理由）は issue ではなく
-**回避策の隣のコメント**に、`TL;DR:` / `Details:` の形で書く。
+## Prefer a narrow workaround over a risky upgrade
 
-## CI の失敗は、再実行する前に分類する
+When an intermittent failure turns out to be a known upstream bug, propose a
+**narrow workaround** (a retry, a guard) rather than pinning unusual binaries or
+bumping a major dependency version.
 
-PR を緑に保つよう頼まれたら、**失敗したジョブのログを読んで原因を分類してから**
-再実行する。push と pull_request の両トリガが同じコミットをビルドするので、
-**重複した実行と見比べる**——同じコミットで片方が通っているなら環境要因。
+**Why:** the build and release pipeline here — electron-builder, NSIS,
+notarization, auto-update — is the part that ships to users. A beta toolset or a
+two-major-version jump risks breaking releases for a benefit that only shows up
+in CI.
 
-**なぜ**: 何も見ない再実行は本物の欠陥を隠す。このリポジトリでは Windows の
-間欠的な失敗が数週間 flake に見えていたが、ちゃんと読んだらインストーラが
-`0xC0000005` で落ちて**インストール自体されていなかった**。
+Scope the workaround as tightly as the evidence allows. The Windows installer
+retry, for example, keys on exit code 3221225477 on win32 only, so a real
+installer failure is still surfaced. Record the investigation — the evidence, the
+hypotheses ruled out, why other fixes were rejected — in a comment next to the
+workaround rather than in an issue, using a `TL;DR:` / `Details:` structure.
 
-自動で再実行してよいのは**インフラ起因と分かったものだけ**（GitHub Releases の
-ダウンロード失敗は `socket hang up`・`Get "https://github.com/...": EOF`・
-`status code 5xx` として出る）。それ以外は止めて報告する。
+## Classify a CI failure before rerunning it
 
-**失敗したチェックはその都度扱う**。全チェックの完了を待たないこと——
-`macos-26-intel` のジョブは 15〜28 分かかるので、待つと Windows の失敗が
-そのあいだ放置される。
+When asked to keep a pull request green, **read the failed job's log and classify
+the cause before rerunning**. The push and pull_request triggers build the same
+commit, so compare the two runs: if one passed on the same commit, the failure is
+environmental.
 
-## Windows の CI が publish するのは意図的
+**Why:** blind reruns hide real defects. An intermittent Windows failure here
+looked like a flake for weeks; reading it properly showed the installer was
+crashing with `0xC0000005` and not installing at all.
 
-`.github/workflows/ci-on-windows.yml` は `[Publish to GitHub Releases]` の手順
-（`npm run publish:windows`）を**すべてのブランチのすべての push で**走らせる。
-これは意図的で、**publish が今も動くことをリリース当日ではなく普段から確かめる**ため。
-結果として現れる draft リリース（`1.12.1-alpha` など）は**予期された副産物**であって、
-消し忘れのゴミではない。
+Only rerun automatically for causes identified as infrastructure — GitHub Releases
+download failures appear as `socket hang up`, `Get "https://github.com/...": EOF`,
+or `status code 5xx`. Stop and report anything else.
 
-**この手順を消す・条件を付ける提案をしない。draft リリースを片付け作業として扱わない。**
+**Handle each failed check as soon as it fails.** Do not wait for all checks to
+finish: the `macos-26-intel` job takes 15–28 minutes, and a failed Windows job
+would sit unattended that long.
 
-なおこの形で確かめられているのは Windows の publish 経路だけ。
-`ci-on-ubuntu.yml` の同等手順はコメントアウトされており、macOS の publish は
-CI に無い（署名と notarize の認証が要るため。上の節を参照）。
+## The Windows CI publishes on purpose
+
+`.github/workflows/ci-on-windows.yml` runs the `[Publish to GitHub Releases]`
+steps (`npm run publish:windows`) on every push to every branch. This is
+deliberate: it verifies that publishing still works, rather than finding out on
+release day. The draft GitHub release that appears as a result (`1.12.1-alpha`,
+for example) is an **expected byproduct, not leftover junk**.
+
+**Do not propose removing or gating these steps, and do not treat the draft
+releases as cleanup work.**
+
+Only the Windows publish path is exercised this way. The equivalent steps in
+`ci-on-ubuntu.yml` are commented out, and macOS publishing is not in CI at all
+because it needs the signing and notarization credentials described above.
