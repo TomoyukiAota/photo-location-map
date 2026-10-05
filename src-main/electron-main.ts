@@ -15,6 +15,7 @@ import { handleAppQuit } from './handle-app-quit';
 import { LiveReload } from './live-reload';
 import { recordAtAppLaunch } from './record-at-app-launch';
 import { configureRecordAtAppQuit } from './record-at-app-quit';
+import { configureRecordProcessGone } from './record-process-gone';
 import { StartupTime } from './startup-time';
 import { createMainWindowState } from './window-config';
 
@@ -93,6 +94,7 @@ try {
   });
 
   configureRecordAtAppQuit();
+  configureRecordProcessGone();
 
   app.on('quit', () => handleAppQuit());
 
