@@ -1,4 +1,5 @@
 import { AmplitudeAnalyticsBrowserIpcRenderer } from './ipc/amplitude-analytics-browser-ipc';
+import { AnalyticsBackendIpcRenderer } from './ipc/analytics-backend-ipc';
 import { MixpanelBrowserIpcRenderer } from './ipc/mixpanel-browser-ipc';
 import { UniversalAnalyticsIpcRenderer } from './ipc/universal-analytics-ipc';
 import { AmplitudeAnalyticsBrowserWrapper } from './library-wrapper/amplitude-analytics-browser-wrapper';
@@ -18,5 +19,6 @@ export class AnalyticsRenderer implements AnalyticsInterface {
     UniversalAnalyticsIpcRenderer.sendEventToMain(category, action, label, value);
     AmplitudeAnalyticsBrowserWrapper.trackEvent(category, action, label, value);
     MixpanelBrowserWrapper.trackEvent(category, action, label, value);
+    AnalyticsBackendIpcRenderer.sendEventToMain(category, action, label, value);
   }
 }
