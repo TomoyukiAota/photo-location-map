@@ -14,6 +14,8 @@ import { configureMainWindowForAnalytics } from './configure-main-window-for-ana
 import { handleAppQuit } from './handle-app-quit';
 import { LiveReload } from './live-reload';
 import { recordAtAppLaunch } from './record-at-app-launch';
+import { configureRecordAtAppQuit } from './record-at-app-quit';
+import { StartupTime } from './startup-time';
 import { createMainWindowState } from './window-config';
 
 
@@ -22,6 +24,7 @@ Logger.info(`Log File Location: ${LogFileConfig.filePath}`);
 export let mainWindow: BrowserWindow;
 
 const createWindow = async () => {
+  StartupTime.markAppReady();
   const mainWindowState = createMainWindowState();
 
   mainWindow = new BrowserWindow({
@@ -88,6 +91,8 @@ try {
       createWindow();
     }
   });
+
+  configureRecordAtAppQuit();
 
   app.on('quit', () => handleAppQuit());
 

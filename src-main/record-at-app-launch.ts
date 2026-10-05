@@ -12,6 +12,7 @@ import { currentUserSettings } from '../src-shared/user-settings/user-settings';
 import { commandLineOptionsValue } from './command-line-options/command-line-options-value';
 import { mainWindow } from './electron-main';
 import { LaunchInfo } from './launch-info';
+import { StartupTime } from './startup-time';
 import { recordWindowState } from './window-config';
 
 const recordAppLaunch = () => {
@@ -74,13 +75,50 @@ const recordOs = () => {
   Logger.info(`OS: ${os.platform()}; OS Ver: ${os.release()}`);
 };
 
+const recordSystemInfo = () => {
+  const category = 'System Info';
+  Analytics.trackEvent(category, 'System Info: CPU Architecture', `CPU Architecture: ${process.arch}`);
+  // True when an x64 build runs on an arm64 machine through emulation (Windows on ARM, or Rosetta on macOS).
+  const translated = app.runningUnderARM64Translation;
+  Analytics.trackEvent(category, 'System Info: Running under ARM64 Translation', `Running under ARM64 Translation: ${translated}`);
+  const cpuCores = os.cpus().length;
+  Analytics.trackEvent(category, 'System Info: CPU Cores', `CPU Cores: ${cpuCores}`, cpuCores);
+  const memoryGiB = Math.round(os.totalmem() / 2 ** 30 * 10) / 10;
+  Analytics.trackEvent(category, 'System Info: Memory', `Memory (GiB): ${memoryGiB}`, memoryGiB);
+  Logger.info(`[System Info] CPU architecture: ${process.arch}, running under ARM64 translation: ${translated}, `
+    + `CPU cores: ${cpuCores}, memory: ${memoryGiB} GiB`);
+};
+
+const recordLanguages = () => {
+  const category = 'System Info';
+  // Which translations of the app, which is English only, would be worth adding.
+  const preferredLanguages = app.getPreferredSystemLanguages().join(', ');
+  Analytics.trackEvent(category, 'System Info: Preferred Languages', `Preferred Languages: ${preferredLanguages}`);
+  const systemLocale = app.getSystemLocale();
+  Analytics.trackEvent(category, 'System Info: System Locale', `System Locale: ${systemLocale}`);
+  Logger.info(`[System Info] Preferred languages: ${preferredLanguages}, system locale: ${systemLocale}`);
+};
+
+const recordStartupTime = () => {
+  const times = StartupTime.takeOnce();
+  if (!times)
+    return;
+
+  const category = 'Startup Time';
+  Analytics.trackEvent(category, 'Startup Time: App Ready', `App Ready (ms): ${times.appReadyMs}`, times.appReadyMs);
+  Analytics.trackEvent(category, 'Startup Time: Main Window Ready to Show',
+    `Main Window Ready to Show (ms): ${times.mainWindowReadyToShowMs}`, times.mainWindowReadyToShowMs);
+  Logger.info(`[Startup Time] App ready: ${times.appReadyMs} ms, main window ready to show: ${times.mainWindowReadyToShowMs} ms`);
+};
+
 const recordDisplays = () => {
   const allDisplays = screen.getAllDisplays();
   Analytics.trackEvent('Display', `[Display] Number of Displays`, `Number of Displays: ${allDisplays.length}`);
   Logger.info(`[Display] Number of displays: ${allDisplays.length}`);
   allDisplays.forEach((display, index) => {
     Analytics.trackEvent('Display', `[Display] Each Display Info`, `Display ${index + 1}`, `Width: ${display.size.width}, Height: ${display.size.height}`);
-    Logger.info(`[Display] Display ${index + 1}, Width: ${display.size.width}, Height: ${display.size.height}`);
+    Analytics.trackEvent('Display', `[Display] Each Display Scale Factor`, `Display ${index + 1}`, `Scale Factor: ${display.scaleFactor}`);
+    Logger.info(`[Display] Display ${index + 1}, Width: ${display.size.width}, Height: ${display.size.height}, Scale Factor: ${display.scaleFactor}`);
   });
 };
 
@@ -113,6 +151,7 @@ const finishRecordAtAppLaunch = () => {
 
 export const recordAtAppLaunch = () => {
   recordAppLaunch();
+  recordStartupTime();
   recordCommandLineOptions();
   recordCurrentLaunchDateTime();
   recordLastLaunchDateTime();
@@ -124,6 +163,8 @@ export const recordAtAppLaunch = () => {
   recordDevOrProd();
 
   recordOs();
+  recordSystemInfo();
+  recordLanguages();
 
   recordDisplays();
   recordWindowState();
