@@ -8,4 +8,5 @@ export class Exif {
   gpsInfo?: GpsInfo;
   imageDimensions?: Dimensions;
   thumbnail?: Thumbnail;
+  cameraMake?: string;
 }

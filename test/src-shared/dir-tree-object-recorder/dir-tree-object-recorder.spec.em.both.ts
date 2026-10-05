@@ -61,4 +61,23 @@ describe('DirTreeObjectRecorder', () => {
     assert.equal(numberOf.livePhotos.heif, 0);
     assert.equal(numberOf.livePhotos.total, 0);
   });
+
+  it('getFileCountsByExtension should count every file by its extension as written', () => {
+    // Arrange
+    const testResourceDirectory = path.join(__dirname, '..', '..', 'test-resources', 'dir-tree-object-recorder-test-resource');
+    const flattenedDirTree = convertToFlattenedDirTree(createDirectoryTree(testResourceDirectory));
+
+    // Act
+    const counts = DirTreeObjectRecorder.getFileCountsByExtension(flattenedDirTree);
+
+    // Assert
+    const total = Array.from(counts.values()).reduce((sum, count) => sum + count, 0);
+    assert.equal(total, 17);  // Every file, as in numberOf.files above.
+    assert.ok(Array.from(counts.keys()).every(extension => !extension.startsWith('.')));
+    assert.equal(counts.get('webp'), 1);
+    assert.equal(counts.get('MOV'), 2);  // Case is kept: "Live Photos.MOV".
+    assert.equal(counts.get('JPG'), 1);
+    assert.equal(counts.get('jpg'), 1);
+    assert.equal(counts.get('mov'), undefined);
+  });
 });

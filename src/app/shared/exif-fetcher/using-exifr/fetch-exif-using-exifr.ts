@@ -33,6 +33,7 @@ interface ExifrParseOutput {
   latitude?: number;
   longitude?: number;
   Orientation?: number;
+  Make?: string;
 }
 
 type ExifrParseParameterType = Parameters<typeof exifr.parse>;
@@ -48,7 +49,8 @@ const exifrOptions: ExifrOptionsType = {
     'GPSLatitudeRef',  // Required for exifrParseOutput.latitude to be correctly calculated
     'GPSLongitude',    // Required for exifrParseOutput.longitude
     'GPSLongitudeRef', // Required for exifrParseOutput.longitude to be correctly calculated
-    'Orientation'
+    'Orientation',
+    'Make',            // For analytics: which cameras users shoot with.
   ]
 };
 
@@ -77,6 +79,10 @@ async function createExifFromExifrParseOutput(exifrParseOutput: ExifrParseOutput
     const gpsInfo = new GpsInfo();
     gpsInfo.latLng = new LatLng(exifrParseOutput.latitude, exifrParseOutput.longitude);
     exif.gpsInfo = gpsInfo;
+  }
+
+  if (typeof exifrParseOutput.Make === 'string' && exifrParseOutput.Make.trim()) {
+    exif.cameraMake = exifrParseOutput.Make.trim();
   }
 
   const thumbnailBuffer = await exifr.thumbnail(filePath);
