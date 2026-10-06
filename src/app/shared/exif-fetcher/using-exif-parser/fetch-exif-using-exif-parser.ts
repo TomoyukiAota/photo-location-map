@@ -80,6 +80,11 @@ async function createExifFromExifParserResult(exifParserResult: ExifParserResult
     exif.gpsInfo = gpsInfo;
   }
 
+  const make = exifParserResult.tags?.Make;
+  if (typeof make === 'string' && make.trim()) {
+    exif.cameraMake = make.trim();  // For analytics: which cameras users shoot with.
+  }
+
   exif.thumbnail = await createThumbnail(exifParserResult);
 
   return exif;

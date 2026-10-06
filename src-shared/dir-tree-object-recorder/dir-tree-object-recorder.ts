@@ -1,5 +1,6 @@
 import { DirectoryTree } from 'directory-tree';
 import { Analytics } from '../analytics/analytics';
+import { countBy, countsLabel } from '../analytics/counts-label';
 import { convertToFlattenedDirTree } from '../dir-tree/dir-tree-util';
 import { FilenameExtension } from '../filename-extension/filename-extension';
 import { Logger } from '../log/logger';
@@ -71,6 +72,20 @@ export class DirTreeObjectRecorder {
     track(category, `Opened Folder: Live Photos JPEG & MOV`, `Live Photos JPEG & MOV: ${numberOf.livePhotos.jpeg}`);
     track(category, `Opened Folder: Live Photos HEIF & MOV`, `Live Photos HEIF & MOV: ${numberOf.livePhotos.heif}`);
     track(category, `Opened Folder: Live Photos ANY & MOV`, `Live Photos ANY & MOV: ${numberOf.livePhotos.total}`);
+
+    // Every extension, not only the supported ones, to see which formats would be worth supporting.
+    const fileCountsByExtension = this.getFileCountsByExtension(flattenedDirTree);
+    Logger.info(`Files by extension: `, fileCountsByExtension);
+    track(category, `Opened Folder: Files by Extension`, countsLabel(fileCountsByExtension));
+  }
+
+  /** The number of files per extension, as written (e.g. "JPG", "jpg", "cr3"); files without one count as "(none)". */
+  public static getFileCountsByExtension(flattenedDirTree: DirectoryTree[]): Map<string, number> {
+    // From the name rather than element.extension, which directory-tree lower-cases.
+    const extensions = flattenedDirTree
+      .filter(element => element.type === 'file')
+      .map(element => extensionAsWritten(element.name) || '(none)');
+    return countBy(extensions);
   }
 
   public static getNumbersToRecord(flattenedDirTree: DirectoryTree[]): NumbersToRecordFromDirTreeObject {
@@ -111,4 +126,10 @@ export class DirTreeObjectRecorder {
   private static removeExtension(path: string): string {
     return path.replace(/\.[^/.]+$/, '');
   }
+}
+
+/** The text after the last dot, like path.extname without the dot, but keeping its case. */
+function extensionAsWritten(fileName: string): string {
+  const dot = fileName.lastIndexOf('.');
+  return dot > 0 ? fileName.slice(dot + 1) : '';
 }
