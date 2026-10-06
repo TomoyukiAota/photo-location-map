@@ -49,12 +49,13 @@ export class AnalyticsBackendWrapper {
     });
 
     // Sending on quit may not finish, so keep what is left and send it on the next launch.
+    // On will-quit rather than before-quit, so that events tracked on before-quit (such as the quit event) are kept.
     // One file per endpoint: the app launched with npm scripts and prerelease versions share the user data folder
     // with the released app, and their events must not be sent to the other endpoint.
     const unsentEventsFile = new UnsentEventsFile(path.join(this.electron.app.getPath('userData'),
       `analytics-backend-unsent-events-${AnalyticsBackendEndpoint.nameOf(this.endpoint)}.json`));
     const unsentEvents = this.loadUnsentEvents(unsentEventsFile);
-    this.electron.app.on('before-quit', () => this.saveUnsentEvents(unsentEventsFile));
+    this.electron.app.on('will-quit', () => this.saveUnsentEvents(unsentEventsFile));
     this.isInitialized = true;
     this.sender.add(...unsentEvents);
   }
