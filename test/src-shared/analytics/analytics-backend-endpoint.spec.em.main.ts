@@ -20,4 +20,10 @@ describe('AnalyticsBackendEndpoint', () => {
     assert.ok(AnalyticsBackendEndpoint.dev.startsWith('https://'));
     assert.ok(AnalyticsBackendEndpoint.prod.startsWith('https://'));
   });
+
+  it('nameOf should return prod only for the prod endpoint', () => {
+    assert.equal(AnalyticsBackendEndpoint.nameOf(AnalyticsBackendEndpoint.prod), 'prod');
+    assert.equal(AnalyticsBackendEndpoint.nameOf(AnalyticsBackendEndpoint.dev), 'dev');
+    assert.equal(AnalyticsBackendEndpoint.nameOf('http://localhost:8080/v1/events'), 'dev');
+  });
 });

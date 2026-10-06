@@ -7,4 +7,9 @@ export class AnalyticsBackendEndpoint {
   public static select(isDev: boolean, isPrerelease: boolean): string {
     return (isDev || isPrerelease) ? this.dev : this.prod;
   }
+
+  /** 'prod' for the prod endpoint and 'dev' for any other, for names that must differ between the two. */
+  public static nameOf(endpoint: string): 'dev' | 'prod' {
+    return endpoint === this.prod ? 'prod' : 'dev';
+  }
 }

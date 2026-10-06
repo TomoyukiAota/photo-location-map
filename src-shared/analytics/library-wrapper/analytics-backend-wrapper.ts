@@ -4,6 +4,7 @@ import { AnalyticsBackendEvent } from '../analytics-backend/analytics-backend-ev
 import { AnalyticsBackendSender } from '../analytics-backend/analytics-backend-sender';
 import { UnsentEventsFile } from '../analytics-backend/unsent-events-file';
 import { AnalyticsBackendConfig } from '../config/analytics-backend-config';
+import { AnalyticsBackendEndpoint } from '../config/analytics-backend-endpoint';
 import { AnalyticsConfig } from '../config/analytics-config';
 import { AnalyticsLibraryWrapperInitialize, AnalyticsLibraryWrapperTrackEvent } from './library-wrapper-decorator';
 
@@ -48,8 +49,10 @@ export class AnalyticsBackendWrapper {
     });
 
     // Sending on quit may not finish, so keep what is left and send it on the next launch.
-    const unsentEventsFile = new UnsentEventsFile(
-      path.join(this.electron.app.getPath('userData'), 'analytics-backend-unsent-events.json'));
+    // One file per endpoint: the app launched with npm scripts and prerelease versions share the user data folder
+    // with the released app, and their events must not be sent to the other endpoint.
+    const unsentEventsFile = new UnsentEventsFile(path.join(this.electron.app.getPath('userData'),
+      `analytics-backend-unsent-events-${AnalyticsBackendEndpoint.nameOf(this.endpoint)}.json`));
     const unsentEvents = this.loadUnsentEvents(unsentEventsFile);
     this.electron.app.on('before-quit', () => this.saveUnsentEvents(unsentEventsFile));
     this.isInitialized = true;

@@ -61,14 +61,19 @@ class FakeBackend {
 const silentLogger = { info: () => {}, warn: () => {} };
 
 let eventCount = 0;
-function events(count: number): AnalyticsBackendEvent[] {
+function events(count: number, label: string = null): AnalyticsBackendEvent[] {
   return Array.from({ length: count }, () => {
     const id = `e${eventCount++}`;
     return {
       event_id: id, user_id: 'u', session_id: 's', seq: 0, client_ts: '2026-10-06T00:00:00.000Z',
-      app_version: '0.0.0', os: 'darwin', os_release: '0', category: 'Test', action: id, label: null, value: null,
+      app_version: '0.0.0', os: 'darwin', os_release: '0', category: 'Test', action: id, label, value: null,
     };
   });
+}
+
+function jsonBytes(batch: string[], all: AnalyticsBackendEvent[]): number {
+  const ids = new Set(batch);
+  return Buffer.byteLength(JSON.stringify(all.filter(e => ids.has(e.event_id))));
 }
 
 function createSender(backend: FakeBackend, timers: FakeTimers): AnalyticsBackendSender {
@@ -96,7 +101,7 @@ describe('AnalyticsBackendSender', () => {
     assert.deepEqual(sender.unsentEvents, []);
   });
 
-  it('sends at once when a full batch is queued, and the rest 1 second later', async () => {
+  it('sends at once when a full batch is queued, and the rest right after it', async () => {
     const backend = new FakeBackend();
     const timers = new FakeTimers();
     const sender = createSender(backend, timers);
@@ -104,12 +109,62 @@ describe('AnalyticsBackendSender', () => {
     const all = events(AnalyticsBackendSender.maxBatchSize + 1);
     sender.add(...all);
     await settle();
-    assert.equal(backend.batches.length, 1);
-    assert.equal(backend.batches[0].length, AnalyticsBackendSender.maxBatchSize);
-
-    await timers.advance(1000);
+    await settle();
     assert.equal(backend.batches.length, 2);
+    assert.equal(backend.batches[0].length, AnalyticsBackendSender.maxBatchSize);
     assert.deepEqual(backend.batches[1], [all[AnalyticsBackendSender.maxBatchSize].event_id]);
+    assert.deepEqual(timers.pendingDelays, []);
+  });
+
+  it('keeps a batch under 200 KiB, as the backend refuses a request over 256 KiB, and sends the rest right after it', async () => {
+    const backend = new FakeBackend();
+    const timers = new FakeTimers();
+    const sender = createSender(backend, timers);
+
+    // Like a backlog after some time offline: launches each send a label of about 3.5 KB.
+    const all = events(150, 'x'.repeat(3500));
+    sender.add(...all);
+    for (let i = 0; i < 5; i++) {
+      await timers.advance(1000);
+      await settle();
+    }
+
+    assert.ok(backend.batches.length >= 3);
+    assert.ok(backend.batches.every(b => jsonBytes(b, all) <= AnalyticsBackendSender.maxBatchBytes));
+    assert.deepEqual([].concat(...backend.batches), all.map(e => e.event_id));
+    assert.deepEqual(timers.pendingDelays, []);
+  });
+
+  it('counts the size in UTF-8 bytes', async () => {
+    const backend = new FakeBackend();
+    const timers = new FakeTimers();
+    const sender = createSender(backend, timers);
+
+    // 3 bytes a character: 60 events are about 3 x 200 KiB in UTF-8, though only about 200 KiB in characters.
+    const all = events(60, 'あ'.repeat(10000));
+    sender.add(...all);
+    for (let i = 0; i < 5; i++) {
+      await timers.advance(1000);
+      await settle();
+    }
+
+    assert.ok(backend.batches.length >= 3);
+    assert.ok(backend.batches.every(b => jsonBytes(b, all) <= AnalyticsBackendSender.maxBatchBytes));
+  });
+
+  it('sends an event larger than a batch on its own', async () => {
+    const backend = new FakeBackend();
+    const timers = new FakeTimers();
+    const sender = createSender(backend, timers);
+
+    const all = [...events(1), ...events(1, 'x'.repeat(AnalyticsBackendSender.maxBatchBytes)), ...events(1)];
+    sender.add(...all);
+    for (let i = 0; i < 3; i++) {
+      await timers.advance(1000);
+      await settle();
+    }
+
+    assert.deepEqual(backend.batches, all.map(e => [e.event_id]));
   });
 
   it('sends events added during a request in the next one', async () => {
@@ -170,8 +225,8 @@ describe('AnalyticsBackendSender', () => {
     await settle();
     assert.equal(backend.batches.length, 1);  // A full batch waits for the retry too.
 
-    await timers.advance(5000);  // 200 for the first 500, then the last one 1 second later gets 503.
-    await timers.advance(1000);
+    await timers.advance(5000);  // 200 for the first 500, then the last one right after it gets 503.
+    await settle();
     assert.equal(backend.batches.length, 3);
     assert.deepEqual(timers.pendingDelays, [5000]);
   });
