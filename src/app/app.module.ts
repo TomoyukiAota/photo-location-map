@@ -2,7 +2,7 @@ import 'reflect-metadata';
 
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -53,6 +53,7 @@ import { OsSettingsComponent } from './settings-dialog/os-settings/os-settings.c
 import { CacheSettingsComponent } from './settings-dialog/cache-settings/cache-settings.component';
 import { NoPhotosWithLocationDataDialogComponent } from './no-photos-with-location-data-dialog/no-photos-with-location-data-dialog.component';
 import { LoadedFilesStatusBarComponent } from './loaded-files-status-bar/component/loaded-files-status-bar.component';
+import { AnalyticsErrorHandler } from './shared/error/analytics-error-handler';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -121,7 +122,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     TableVirtualScrollModule,
   ],
   providers: [
-    provideHttpClient(withInterceptorsFromDi())
+    provideHttpClient(withInterceptorsFromDi()),
+    { provide: ErrorHandler, useClass: AnalyticsErrorHandler },
   ],
   bootstrap: [AppComponent]
 })

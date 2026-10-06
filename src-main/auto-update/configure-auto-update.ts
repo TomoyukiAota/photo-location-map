@@ -1,12 +1,19 @@
 import { app, dialog } from 'electron';
 import { autoUpdater, UpdateInfo } from 'electron-updater';
 import { Analytics } from '../../src-shared/analytics/analytics';
+import { scrubbedErrorLabel } from '../../src-shared/analytics/record-error';
 import { DevOrProd } from '../../src-shared/dev-or-prod/dev-or-prod';
 import { isPrereleaseVersion } from '../../src-shared/version/is-prerelease-version';
 import { mainWindow } from '../electron-main';
 import { autoUpdateLogger } from './auto-update-logger';
 
 autoUpdater.logger = autoUpdateLogger;
+
+// Whether some users never receive updates. The message can contain paths, which are removed.
+autoUpdater.on('error', error => {
+  autoUpdateLogger.warn(`Auto-update failed: ${error}`);
+  Analytics.trackEvent('Auto-update', 'Auto-update: Error', scrubbedErrorLabel(error));
+});
 
 autoUpdater.on('download-progress', progress => {
   const progressPercentage = `Download progress: ${progress.percent.toFixed(1)}%`;

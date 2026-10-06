@@ -4,12 +4,15 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { LogFileConfig } from '../src-shared/log/file-config/log-file-config';
 import { Logger } from '../src-shared/log/logger';
 import { AppModule } from './app/app.module';
+import { recordErrorsOutsideAngular } from './app/shared/error/analytics-error-handler';
 import { AppConfig } from './environments/environment';
 import './ipc-renderer-setup/ipc-renderer-all-setup';
 
 if (AppConfig.production) {
   enableProdMode();
 }
+
+recordErrorsOutsideAngular();
 
 platformBrowserDynamic()
   .bootstrapModule(AppModule, {
