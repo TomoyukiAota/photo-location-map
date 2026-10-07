@@ -112,7 +112,20 @@ class PackageSmokeTest {
   }
 
   async runExecutable() {
-    const executionTime = 30000;
+    // TL;DR: On macOS, the app is given 60 seconds instead of 30, because the macos-26-intel runner can take
+    // about 25 seconds before the app's code even starts, and then the renderer misses the 30-second window.
+    //
+    // Details:
+    //  - The test passes when both "[Main]" and "[Renderer]" are in the log file when the time is up.
+    //  - In 15 recent runs on macos-26-intel (October 2026), the app's first log line came 10 to 22 seconds after
+    //    "open -W", and the renderer's about 1 to 10 seconds after that. Twice in a row on the same commit
+    //    (TomoyukiAota/photo-location-map#614, pull_request), it came after 24 to 25 seconds, the main window
+    //    was launched 3 to 4 seconds later, and the renderer had not logged when the 30 seconds were up. The
+    //    push run of the same commit took 9 seconds and passed.
+    //  - The delay is before any of the app's code runs (the first log line is written while the first modules
+    //    load), so it is the runner, not the app; the app itself started normally every time.
+    //  - Only macOS is changed: no such failure has been seen on Windows or Ubuntu.
+    const executionTime = process.platform === 'darwin' ? 60000 : 30000;
     logger.info(`Launch executable and let it run for ${executionTime} ms.`);
     logger.info(`Executable Launch Command: "${testInfo.executableLaunchCommand}"`);
 
