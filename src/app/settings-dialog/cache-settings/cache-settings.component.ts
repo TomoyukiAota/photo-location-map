@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angula
 import * as fsExtra from 'fs-extra';
 import { openWithAssociatedApp } from '../../../../src-shared/command/command';
 import { Logger } from '../../../../src-shared/log/logger';
-import { RequireFromMainProcess } from '../../../../src-shared/require/require-from-main-process';
+import { restartApp } from '../../../../src-shared/process/restart-app';
 import { plmThumbnailCacheDir } from '../../../../src-shared/thumbnail/cache/thumbnail-cache-util';
 import { configureOpeningInOsBrowser } from '../../shared/open-url/configure-opening-in-os-browser';
 
@@ -37,7 +37,6 @@ export class CacheSettingsComponent implements AfterViewInit, OnInit {
 
     fsExtra.emptyDirSync(this.thumbnailCacheLocation);
     Logger.info(`Thumbnail cache is deleted, so the application will restart.`);
-    RequireFromMainProcess.electron.app.relaunch();
-    RequireFromMainProcess.electron.app.exit(0);
+    restartApp();
   }
 }

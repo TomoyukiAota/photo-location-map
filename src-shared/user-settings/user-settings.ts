@@ -1,6 +1,6 @@
 import { DateTimeFormat } from '../date-time/date-time-format';
 import { Logger } from '../log/logger';
-import { RequireFromMainProcess } from '../require/require-from-main-process';
+import { restartApp } from '../process/restart-app';
 import { UserDataStorage } from '../user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../user-data-storage/user-data-stroage-path';
 import { BooleanSetting, BooleanSettingType } from './boolean-setting';
@@ -92,6 +92,5 @@ export const saveUserSetting:  ((UserSettingsToBeSaved) => void) = (settings: Us
 export const saveUserSettingsAndRestartApp: ((UserSettingsToBeSaved) => void) = (settings: UserSettingsToBeSaved) => {
   saveUserSetting(settings);
   Logger.info(`User settings are saved, so the application will restart.`);
-  RequireFromMainProcess.electron.app.relaunch();
-  RequireFromMainProcess.electron.app.exit(0);
+  restartApp();
 };
