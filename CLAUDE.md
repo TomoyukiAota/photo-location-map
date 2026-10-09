@@ -86,9 +86,21 @@ environmental.
 looked like a flake for weeks; reading it properly showed the installer was
 crashing with `0xC0000005` and not installing at all.
 
-Only rerun automatically for causes identified as infrastructure — GitHub Releases
-download failures appear as `socket hang up`, `Get "https://github.com/...": EOF`,
-or `status code 5xx`. Stop and report anything else.
+**Rerun without asking when the cause is in the CI environment, not in this
+repository's code**, and a rerun is likely to pass. The owner prefers a rerun
+whenever one can be expected to pass. Examples:
+
+- GitHub Releases download failures: `socket hang up`,
+  `Get "https://github.com/...": EOF`, or `status code 5xx`.
+- The runner's disk images: `hdiutil: couldn't eject "diskN" - Resource busy`
+  while electron-builder makes the macOS DMG, before any test runs.
+- Any other failure whose log points at the runner rather than the code, when
+  the other trigger passed on the same commit.
+
+Tell the owner what was rerun and why. Stop and report anything that may be a
+real defect: a failure both triggers share, or one in the app's own tests or
+behavior. If the same environmental cause keeps coming back, propose a narrow
+workaround (see above) instead of rerunning indefinitely.
 
 **Handle each failed check as soon as it fails.** Do not wait for all checks to
 finish: the `macos-26-intel` job takes 15–28 minutes, and a failed Windows job
