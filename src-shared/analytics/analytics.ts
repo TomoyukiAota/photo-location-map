@@ -1,7 +1,6 @@
 import { EnvironmentDetector } from '../environment/environment-detector';
 import { ProcessIdentifier } from '../process/process-identifier';
 import { AnalyticsInterface } from './analytics-interface';
-import { recordIfEventNameLengthExceedsLimit } from './analytics-logger';
 import { AnalyticsMain } from './analytics-main';
 import { AnalyticsRenderer } from './analytics-renderer';
 
@@ -24,7 +23,6 @@ export class Analytics {
       return;
 
     analytics.trackEvent(category, action, label, value);
-    recordIfEventNameLengthExceedsLimit(analytics, category, action, label, value);
   }
 }
 
