@@ -8,14 +8,6 @@ export const AnalyticsLibraryWrapperInitialize = (logger: PrependedLogger) => {
   });
 };
 
-export const AnalyticsLibraryWrapperSetUserAgent = (logger: PrependedLogger) => {
-  return DefaultCatch((error: any, ctx: any, userAgent: string) => {
-    logger.warn('An unhandled exception occurred in analytics setUserAgent.');
-    logger.warn(`error: ${error}`, error);
-    logger.warn(`userAgent: ${userAgent}`);
-  });
-};
-
 export const AnalyticsLibraryWrapperTrackEvent = (logger: PrependedLogger) => {
   return DefaultCatch((error: any, ctx: any, category: string, action: string, label?: string, value?: string | number) => {
     logger.warn('An unhandled exception occurred in analytics trackEvent.');
