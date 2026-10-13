@@ -1,7 +1,8 @@
 // Counts of things such as file extensions, as a JSON object for an event label, most common first.
 // One event carries the whole list, so that a folder with many kinds of files does not produce many events.
-// A label must fit the analytics backend's limit of 16 KiB: if the counts do not, the most common are kept and
-// the rest are added up as "(other)".
+// A label is kept within 16,000 characters: if the counts do not fit, the most common are kept and the rest are
+// added up as "(other)". The analytics backend kept labels up to 16 KiB when this was written; it now keeps up to
+// 256 KiB, so the limit here is not a constraint of the backend any more.
 export const otherKey = '(other)';
 
 export function countsLabel(counts: ReadonlyMap<string, number>, maxLength = 16000): string {
