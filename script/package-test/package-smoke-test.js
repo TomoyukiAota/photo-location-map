@@ -217,12 +217,87 @@ class PackageSmokeTest {
     this.testLogFileContent(content);
   }
 
+  // TL;DR: On macOS, the app is quit and the dmg detached after the test. Otherwise both are left behind, because
+  // stopping "open -W" does not stop the app.
+  //
+  // Details:
+  //  - "open -W" asks Launch Services to launch the app, so the app is not a child process of "open". tree-kill in
+  //    runExecutable stops "open" only. The app went on running, and the dmg stayed attached because the app was
+  //    using it (seen when running the test locally in October 2026). CI runners are discarded after the job, so
+  //    it did not show there.
+  //  - The app is sent SIGTERM, which Electron handles as a normal quit, as when the user quits it. Then the dmg is
+  //    detached. Detaching is retried, as the volume can stay busy for a moment after the app exits.
+  //  - Nothing here throws: whether the smoke test passed is decided before this, and a failure here is logged
+  //    only.
+  appQuitTimeoutMs = 30000;
+  maxDetachAttemptCount = 5;
+
+  sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  isAppRunningOnMacOs() {
+    return child_process.spawnSync('pgrep', ['-f', testInfo.appExecutablePath]).status === 0;
+  }
+
+  async quitAppOnMacOs() {
+    if (!this.isAppRunningOnMacOs()) {
+      logger.info('The app is not running.');
+      return;
+    }
+
+    logger.info('Quitting the app with SIGTERM.');
+    child_process.spawnSync('pkill', ['-TERM', '-f', testInfo.appExecutablePath]);
+    for (let waitedMs = 0; waitedMs < this.appQuitTimeoutMs && this.isAppRunningOnMacOs(); waitedMs += 1000) {
+      await this.sleep(1000);
+    }
+
+    if (this.isAppRunningOnMacOs()) {
+      logger.warn(`The app is still running ${this.appQuitTimeoutMs} ms after SIGTERM.`);
+    } else {
+      logger.info('The app has quit.');
+    }
+  }
+
+  async detachDmgOnMacOs() {
+    for (let attempt = 1; attempt <= this.maxDetachAttemptCount; attempt++) {
+      if (!fs.existsSync(testInfo.dmgVolume)) {
+        logger.info(`"${testInfo.dmgVolume}" is not attached.`);
+        return;
+      }
+
+      const result = child_process.spawnSync('hdiutil', ['detach', testInfo.dmgVolume], { encoding: 'utf8' });
+      if (result.status === 0) {
+        logger.info(`Detached "${testInfo.dmgVolume}".`);
+        return;
+      }
+
+      logger.warn(`Failed to detach "${testInfo.dmgVolume}" (attempt ${attempt} of ${this.maxDetachAttemptCount}): ${result.stderr?.trim()}`);
+      await this.sleep(2000);
+    }
+
+    logger.warn(`"${testInfo.dmgVolume}" is still attached.`);
+  }
+
+  async cleanUpOnMacOs() {
+    if (global.process.platform !== 'darwin') {
+      return;
+    }
+
+    await this.quitAppOnMacOs();
+    await this.detachDmgOnMacOs();
+  }
+
   async run() {
     logger.info('Start of package smoke test.');
     this.emptyLogDirectory();
     this.runExecutablePrelaunchCommand();
-    await this.runExecutable();
-    this.testLog();
+    try {
+      await this.runExecutable();
+      this.testLog();
+    } finally {
+      await this.cleanUpOnMacOs();
+    }
     logger.info('End of package smoke test.');
   }
 }
