@@ -29,10 +29,14 @@ class PackageTestInfo {
         // requires in the release to auto-update on macOS. Both of them need to be created.
         const dmgLocation = `${this.releaseDirectory}/Photo Location Map-${version}-universal.dmg`;
         const zipLocation = `${this.releaseDirectory}/Photo Location Map-${version}-universal-mac.zip`;
+        const dmgVolume = `/Volumes/Photo Location Map ${version}-universal`;
         this.packageCreationCommand = 'npm run package:mac';
         this.expectedPackageLocations = [dmgLocation, zipLocation];
         this.executablePrelaunchCommand = `hdiutil attach "${dmgLocation}"`;
-        this.executableLaunchCommand = `open -W "/Volumes/Photo Location Map ${version}-universal/Photo Location Map.app"`;
+        this.executableLaunchCommand = `open -W "${dmgVolume}/Photo Location Map.app"`;
+        // Used to quit the app and detach the dmg after the smoke test (PackageSmokeTest::cleanUpOnMacOs).
+        this.dmgVolume = dmgVolume;
+        this.appExecutablePath = `${dmgVolume}/Photo Location Map.app/Contents/MacOS/Photo Location Map`;
         break;
       }
       case 'linux': {
