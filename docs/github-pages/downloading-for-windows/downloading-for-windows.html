@@ -24,7 +24,7 @@
 <body>
   <div class="layout-container">
     <div>
-      Download of Photo Location Map will start shortly. If it does not start, please click <a href="#" onClick="downloadForWindows()">here</a>.
+      Download of Photo Location Map will start shortly. If it does not start, please click <a href="#" onClick="downloadForWindows('link')">here</a>.
     </div>
     <div class="how-to-install-section">
       <h1>How to install</h1>
@@ -49,12 +49,16 @@
         </div>
       </div>
     </div>
+    <div class="analytics-notice">
+      This website uses analytics services to collect usage information.
+    </div>
   </div>
 
   <script src="../download.js"></script>
+  <script src="../analytics.js" data-page="downloading-for-windows"></script>
   <script>
       // Download Windows installer when this pages is loaded.
-      downloadForWindows()
+      downloadForWindows('page')
   </script>
 </body>
 </html>

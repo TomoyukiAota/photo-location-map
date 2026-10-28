@@ -30,8 +30,8 @@
     <div class="title">Photo Location Map</div>
     <div class="app-summary">Display the locations where photos were taken on a map.</div>
     <div class="download-buttons">
-      <a href="github-pages/downloading-for-windows/downloading-for-windows.html" class="btn btn-dark" >Download for Windows</a>
-      <button type="button" class="btn btn-dark" onClick="downloadForMacos()">Download for macOS</button>
+      <a href="github-pages/downloading-for-windows/downloading-for-windows.html" class="btn btn-dark" data-analytics-download="windows">Download for Windows</a>
+      <button type="button" class="btn btn-dark" onClick="downloadForMacos('button')" data-analytics-download="macos">Download for macOS</button>
     </div>
     <div class="demo-video">
       <iframe width="560" height="315" src="https://www.youtube.com/embed/n7hv_h1llKo?autoplay=1&autohide=2&rel=0" frameborder="0"></iframe>
@@ -50,18 +50,18 @@
       </div>
     </div>
     <div class="troubleshooting">
-      If you encounter issues with this application, please see <a href="https://github.com/TomoyukiAota/photo-location-map/blob/main/docs/troubleshooting/troubleshooting.md" target="_blank" rel="noopener">the troubleshooting page</a>.
+      If you encounter issues with this application, please see <a href="https://github.com/TomoyukiAota/photo-location-map/blob/main/docs/troubleshooting/troubleshooting.md" target="_blank" rel="noopener" data-analytics-link="troubleshooting">the troubleshooting page</a>.
     </div>
     <div class="project-description">
-      The source code of Photo Location Map is <a href="https://github.com/TomoyukiAota/photo-location-map" target="_blank" rel="noopener">hosted on GitHub</a>.<br>
-      Photo Location Map is developed by <a href="https://github.com/tomoyukiaota" target="_blank" rel="noopener">Tomoyuki Aota</a>.
+      The source code of Photo Location Map is <a href="https://github.com/TomoyukiAota/photo-location-map" target="_blank" rel="noopener" data-analytics-link="source">hosted on GitHub</a>.<br>
+      Photo Location Map is developed by <a href="https://github.com/tomoyukiaota" target="_blank" rel="noopener" data-analytics-link="author">Tomoyuki Aota</a>.
     </div>
     <div class="photo-data-viewer">
       Want to check EXIF data?<br>
-      <a href="https://photo-data-viewer.vercel.app/" target="_blank" rel="noopener">Photo Data Viewer</a> is also available.
+      <a href="https://photo-data-viewer.vercel.app/" target="_blank" rel="noopener" data-analytics-link="photo-data-viewer">Photo Data Viewer</a> is also available.
     </div>
-    <div class="google-analytics-notice">
-      This website uses Google Analytics to collect anonymous usage information using cookies.
+    <div class="analytics-notice">
+      This website uses analytics services to collect usage information.
     </div>
   </div>
 
@@ -71,5 +71,6 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
   <script src="github-pages/download.js"></script>
+  <script src="github-pages/analytics.js" data-page="landing"></script>
 </body>
 </html>
