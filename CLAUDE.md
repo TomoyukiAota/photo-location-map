@@ -91,7 +91,8 @@ repository's code**, and a rerun is likely to pass. The owner prefers a rerun
 whenever one can be expected to pass. Examples:
 
 - GitHub Releases download failures: `socket hang up`,
-  `Get "https://github.com/...": EOF`, or `status code 5xx`.
+  `Get "https://github.com/...": EOF`, `status code 5xx`, or
+  `getaddrinfo ENOTFOUND github.com` while `npm ci` downloads Electron.
 - The runner's disk images: `hdiutil: couldn't eject "diskN" - Resource busy`
   while electron-builder makes the macOS DMG, before any test runs.
 - Any other failure whose log points at the runner rather than the code, when
