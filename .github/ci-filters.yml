@@ -8,4 +8,3 @@ app:
   - '!CLAUDE.md'
   - '!LICENSE'
   - '!.github/ISSUE_TEMPLATE/**'
-  - '!**'    # TEMPORARY: treats every file as a document, to test the skipped path. Not to be merged.
