@@ -120,10 +120,11 @@ pull request does not wait for the tests.
 `ng lint` covers `src/`, and the app's package does not contain `docs/`), yet
 every push ran the tests on three OSes for about 10 minutes.
 
-Keep anything that the app or CI uses out of `.github/ci-filters.yml`. The
-`test` jobs are named directly rather than through a matrix, because a job
-skipped before its matrix expands reports no `test (<os>)` check, which leaves
-the required check pending. If the `changes` job fails, the tests run.
+Keep anything that the app or CI uses out of `.github/ci-filters.yml`. Write
+out the `test` jobs' names rather than giving them by a matrix or an
+expression: a skipped job neither expands its matrix nor evaluates its name, so
+it would report no `test (<os>)` check and leave the required check pending.
+If the `changes` job fails, the tests run.
 
 ## The Windows CI publishes on purpose
 
@@ -145,8 +146,9 @@ because it needs the signing and notarization credentials described above.
 
 `.github/workflows/ci-on-mac.yml` runs on `macos-26` (Apple Silicon) for every
 push and pull request. The `macos-26-intel` (x64) job runs only when the
-workflow is run manually: **Run workflow** on the "CI on macOS" page of the
-Actions tab, or `gh workflow run ci-on-mac.yml --ref <branch>`.
+workflow is run manually, together with `macos-26`: **Run workflow** on the
+"CI on macOS" page of the Actions tab, or
+`gh workflow run ci-on-mac.yml --ref <branch>`.
 
 **Run it before merging a pull request that can break the x64 half of the
 universal app** — a new Electron or electron-builder version, a change to the

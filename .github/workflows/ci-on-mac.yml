@@ -7,7 +7,7 @@ on:
   pull_request:
     branches:
       - main
-  workflow_dispatch:    # to run on macos-26-intel on demand (see the test job below)
+  workflow_dispatch:    # to run on macos-26-intel on demand (see the test-intel job below)
 
 jobs:
   changes:
@@ -28,15 +28,14 @@ jobs:
         filters: .github/ci-filters.yml
 
   test:
-    # macos-26 is arm64 (Apple Silicon), and runs on every push and pull request.
-    # macos-26-intel is x64, and runs only when this workflow is run manually, because it took twice as long as macos-26
-    # and its failures were caused by the runner, not the app. See CLAUDE.md for when to run it.
-    # The name is given here rather than by a matrix, so that the required check is reported even when the job is skipped.
-    name: ${{ github.event_name == 'workflow_dispatch' && 'test (macos-26-intel)' || 'test (macos-26)' }}
-    runs-on: ${{ github.event_name == 'workflow_dispatch' && 'macos-26-intel' || 'macos-26' }}
+    # macos-26 is arm64 (Apple Silicon).
+    # The name is written out rather than given by a matrix or an expression, so that the required check is reported
+    # even when the job is skipped: a skipped job's name expression is not evaluated.
+    name: test (macos-26)
+    runs-on: macos-26
 
-    # Skipped when only documents changed, which passes the required check, unless this workflow is run manually.
-    # If "changes" fails, the tests run.
+    # Skipped when only documents changed, which passes the required check. If "changes" fails, the tests run.
+    # A manual run runs this job too, so that it does not add a skipped "test (macos-26)" to the commit.
     needs: changes
     if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || needs.changes.outputs.app != 'false') }}
 
@@ -45,10 +44,10 @@ jobs:
     # This job takes about 20 minutes at the longest on macos-26-intel, so the timeout below has enough margin.
     timeout-minutes: 45
 
-    env:
+    env: &env
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # for electron-builder
 
-    steps:
+    steps: &steps
     - uses: actions/checkout@v7
 
     - name: Install Node.js with the version in mise.toml
@@ -74,3 +73,13 @@ jobs:
 
     - name: npm run test:package
       run: npm run test:package
+
+  test-intel:
+    # macos-26-intel is x64, and runs only when this workflow is run manually, because it took twice as long as macos-26
+    # and its failures were caused by the runner, not the app. See CLAUDE.md for when to run it.
+    name: test (macos-26-intel)
+    runs-on: macos-26-intel
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    timeout-minutes: 45    # See the test job above.
+    env: *env
+    steps: *steps
