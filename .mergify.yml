@@ -1,9 +1,16 @@
 pull_request_rules:
   - name: automatic merge on CI success
     conditions:
-      - status-success=test (ubuntu-24.04)
-      - status-success=test (windows-latest)
-      - status-success=test (macos-26)
+      # Each test job is skipped when only documents changed (see .github/ci-filters.yml).
+      - or:
+        - check-success=test (ubuntu-24.04)
+        - check-skipped=test (ubuntu-24.04)
+      - or:
+        - check-success=test (windows-latest)
+        - check-skipped=test (windows-latest)
+      - or:
+        - check-success=test (macos-26)
+        - check-skipped=test (macos-26)
       - label=automerge
       - author=TomoyukiAota
     actions:

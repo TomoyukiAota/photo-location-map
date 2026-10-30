@@ -9,16 +9,36 @@ on:
       - main
 
 jobs:
+  changes:
+    # Finds out whether anything other than documents changed (see .github/ci-filters.yml).
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      app: ${{ steps.filter.outputs.app }}
+    steps:
+    - uses: actions/checkout@v7
+
+    - uses: dorny/paths-filter@v4
+      id: filter
+      with:
+        predicate-quantifier: every
+        filters: .github/ci-filters.yml
+
   test:
-    runs-on: ${{ matrix.os }}
+    # The name is given here rather than by a matrix, so that the required check is reported even when the job is skipped.
+    name: test (windows-latest)
+    runs-on: windows-latest
+
+    # Skipped when only documents changed, which passes the required check. If "changes" fails, the tests run.
+    # The publish steps below are skipped with it, since documents cannot break publishing.
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.app != 'false' }}
 
     # The timeout below is a preventative measure to bound the duration of a hung job.
     # This job usually takes about 10 minutes, so the timeout below has enough margin.
     timeout-minutes: 30
-
-    strategy:
-      matrix:
-        os: [windows-latest]
 
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # for electron-builder
