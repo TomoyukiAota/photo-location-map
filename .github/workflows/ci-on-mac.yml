@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:    # to run on macos-26-intel on demand (see the matrix below)
 
 jobs:
   test:
@@ -18,9 +19,11 @@ jobs:
     timeout-minutes: 45
 
     strategy:
-      fail-fast: false    # To see the result on both architectures even when one of them fails
       matrix:
-        os: [macos-26, macos-26-intel]    # macos-26 is arm64 (Apple Silicon), and macos-26-intel is x64.
+        # macos-26 is arm64 (Apple Silicon), and runs on every push and pull request.
+        # macos-26-intel is x64, and runs only when this workflow is run manually, because it took twice as long as macos-26
+        # and its failures were caused by the runner, not the app. See CLAUDE.md for when to run it.
+        os: ${{ fromJSON(github.event_name == 'workflow_dispatch' && '["macos-26-intel"]' || '["macos-26"]') }}
 
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # for electron-builder

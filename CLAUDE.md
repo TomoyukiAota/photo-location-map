@@ -103,8 +103,8 @@ behavior. If the same environmental cause keeps coming back, propose a narrow
 workaround (see above) instead of rerunning indefinitely.
 
 **Handle each failed check as soon as it fails.** Do not wait for all checks to
-finish: the `macos-26-intel` job takes 15–28 minutes, and a failed Windows job
-would sit unattended that long.
+finish: the slowest job takes about 10 minutes (15–28 for `macos-26-intel` when
+it is run on demand), and a failed job would sit unattended that long.
 
 ## The Windows CI publishes on purpose
 
@@ -120,3 +120,25 @@ releases as cleanup work.**
 Only the Windows publish path is exercised this way. The equivalent steps in
 `ci-on-ubuntu.yml` are commented out, and macOS publishing is not in CI at all
 because it needs the signing and notarization credentials described above.
+
+## The Intel macOS CI runs only on demand
+
+`.github/workflows/ci-on-mac.yml` runs on `macos-26` (Apple Silicon) for every
+push and pull request. The `macos-26-intel` (x64) job runs only when the
+workflow is run manually: **Run workflow** on the "CI on macOS" page of the
+Actions tab, or `gh workflow run ci-on-mac.yml --ref <branch>`.
+
+**Run it before merging a pull request that can break the x64 half of the
+universal app** — a new Electron or electron-builder version, a change to the
+macOS settings in `electron-builder.json`, or a dependency with native code —
+and report the result to the owner. If it fails, classify the failure as above
+before rerunning.
+
+**Why:** run on every push, the Intel job took about twice as long as
+`macos-26` (19–25 minutes against about 10) and accounted for every macOS
+failure in the 100 runs from August to October 2026: 12, none of them caused by
+the app. The app's own code is the same on x64 and arm64, so the job is worth
+its cost only when something that differs between them changes.
+
+Remove the manual trigger when GitHub retires the Intel runner (expected around
+2028).
