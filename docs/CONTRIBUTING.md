@@ -20,6 +20,8 @@ This page contains useful information to contribute to this project.
 
 The macOS CI runs on Apple Silicon (`macos-26`). To run it on Intel (`macos-26-intel`), run the "CI on macOS" workflow manually: **Run workflow** in the Actions tab, or `gh workflow run ci-on-mac.yml --ref <branch>`. Do this before merging changes related to Intel Mac support, such as updating Electron and electron-builder.
 
+A push or pull request that changes only documents (`docs/`, `README.md`, `CLAUDE.md`, `LICENSE` and `.github/ISSUE_TEMPLATE/`, as listed in [`.github/ci-filters.yml`](../.github/ci-filters.yml)) skips the tests.
+
 
 ## Prerequisite
 

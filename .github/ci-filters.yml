@@ -1,0 +1,10 @@
+# Used by the "changes" job of each CI workflow (.github/workflows/ci-on-*.yml) through dorny/paths-filter with
+# predicate-quantifier "every": "app" is true when a push or pull request changes a file that is not a document.
+# When only documents change, the "test" job is skipped, because nothing in CI checks these files and the app's
+# package does not contain them. Keep anything that the app or CI uses out of this list.
+app:
+  - '!docs/**'
+  - '!README.md'
+  - '!CLAUDE.md'
+  - '!LICENSE'
+  - '!.github/ISSUE_TEMPLATE/**'

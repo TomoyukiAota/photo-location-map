@@ -106,16 +106,36 @@ workaround (see above) instead of rerunning indefinitely.
 finish: the slowest job takes about 10 minutes (15–28 for `macos-26-intel` when
 it is run on demand), and a failed job would sit unattended that long.
 
+## CI skips pushes that change only documents
+
+Each CI workflow first runs a `changes` job, which finds the files the push or
+pull request changes with [dorny/paths-filter](https://github.com/dorny/paths-filter)
+and `.github/ci-filters.yml`. When every one of them is a document — `docs/`
+(including the landing page), `README.md`, `CLAUDE.md`, `LICENSE` or
+`.github/ISSUE_TEMPLATE/` — the `test` job is skipped. A skipped job passes
+GitHub's required checks, and `.mergify.yml` accepts `check-skipped`, so such a
+pull request does not wait for the tests.
+
+**Why:** nothing in CI checks these files (`lint:script` covers `script/`,
+`ng lint` covers `src/`, and the app's package does not contain `docs/`), yet
+every push ran the tests on three OSes for about 10 minutes.
+
+Keep anything that the app or CI uses out of `.github/ci-filters.yml`. The
+`test` jobs are named directly rather than through a matrix, because a job
+skipped before its matrix expands reports no `test (<os>)` check, which leaves
+the required check pending. If the `changes` job fails, the tests run.
+
 ## The Windows CI publishes on purpose
 
 `.github/workflows/ci-on-windows.yml` runs the `[Publish to GitHub Releases]`
-steps (`npm run publish:windows`) on every push to every branch. This is
-deliberate: it verifies that publishing still works, rather than finding out on
-release day. The draft GitHub release that appears as a result (`1.12.1-alpha`,
-for example) is an **expected byproduct, not leftover junk**.
+steps (`npm run publish:windows`) on every push to every branch, unless the
+push changes only documents (see above). This is deliberate: it verifies that
+publishing still works, rather than finding out on release day. The draft
+GitHub release that appears as a result (`1.12.1-alpha`, for example) is an
+**expected byproduct, not leftover junk**.
 
-**Do not propose removing or gating these steps, and do not treat the draft
-releases as cleanup work.**
+**Do not propose removing or gating these steps any further, and do not treat
+the draft releases as cleanup work.**
 
 Only the Windows publish path is exercised this way. The equivalent steps in
 `ci-on-ubuntu.yml` are commented out, and macOS publishing is not in CI at all
