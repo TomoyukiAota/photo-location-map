@@ -31,7 +31,7 @@ Updated: 2026-11-01 (Asia/Tokyo).
 5. Inspect actual branch/HEAD/diff, task-related commits, existing processes and
    any newer user instructions. Reconcile records before executing commands.
 
-Active task: U04a. Baseline and Node 22 bridge checks are captured.
+Active task: U04b. Baseline and Node 22 bridge checks are captured.
 Upgrade Angular one major at a time. See BASELINE.md
 for the original Karma shutdown issue; do not claim it is a clean pass.
 Do not begin with a bulk package update or by running Angular 18 under Node 26.
@@ -45,8 +45,8 @@ Do not begin with a bulk package update or by running Angular 18 under Node 26.
 | U01 | Complete | Original install/lint/build and Mac universal package smoke pass; Karma shutdown issue recorded. |
 | U02 | Complete | Seven real Electron/website cases, original screenshots, HEIC pixel reference and restart persistence. |
 | U03 | Verified locally | Node 22.23.4/npm 10.9.9; clean install, full graph and 7 visual/functional cases pass. CI actions updated; remote CI pending. |
-| U04a | In progress | Updating to the final Angular 18 patches and aligned adapters. |
-| U04b | Not started | Angular 19 checkpoint. |
+| U04a | Verified locally | Angular 18.2.14 / CLI 18.2.21; graph/lint/build, 172 assertions and 7 regression cases. Karma shutdown issue remains. |
+| U04b | In progress | Angular 19 migrations, then the same verification gates. |
 | U04c | Not started | Angular 20 checkpoint. |
 | U04d | Not started | Angular 21 intermediate checkpoint on the Node 22 bridge. |
 | U05 | Not started | Selected Angular 22 + Node 26 / bundled npm destination. |
@@ -142,3 +142,14 @@ configuration experiment was reverted. No check was disabled.
 Next: restore the patched-Angular-18 manifest pair from
 `.upgrade-artifacts/angular18-patched-manifest/`, reinstall, rebuild and compare
 against these original-app references.
+
+### Angular 18 patch checkpoint
+
+Core/Material 18.2.14, CLI/build-angular 18.2.21, angular-eslint 18.4.3,
+ngx-echarts 18.0.0 and ng-mocks 14.18.4. Full graph/lint/build pass,
+57+74+41 test assertions pass (old Karma teardown error remains), and all
+seven refined visual/functional cases pass unchanged, including HEIC pixels.
+Logs: `angular18-{update,graph,lint,build,unit,e2e}.log`. The temporary original
+manifest restoration is complete; actual files now contain patched Angular 18.
+Next: run the complete coupled Angular 19 ng-update group, inspect migrations,
+then verify before committing. No processes remain from U04a.
