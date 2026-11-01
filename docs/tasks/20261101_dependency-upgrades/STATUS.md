@@ -33,9 +33,8 @@ Updated: 2026-11-01 (Asia/Tokyo).
 5. Inspect actual branch/HEAD/diff, task-related commits, existing processes and
    any newer user instructions. Reconcile records before executing commands.
 
-Active task: U07. File-tree/date/module/queue updates have passed locally.
-Next is the image/worker group, followed by analytics and map/chart/translation
-updates. Node 26 / bundled npm 11.20 and Electron 45 clean installation work;
+Active task: U08. File-tree/date/module/queue, image/worker and analytics
+updates have passed locally. Next are map resources, charting and translations. Node 26 / bundled npm 11.20 and Electron 45 clean installation work;
 the old extractor caveat is resolved. Retain `ng test --watch=false` and never
 regenerate the original screenshots or HEIC pixel reference.
 
@@ -54,8 +53,8 @@ regenerate the original screenshots or HEIC pixel reference.
 | U04d | Verified locally | Graph/runtime/lint/build, 172 tests and all 7 unchanged regression cases. |
 | U05 | Verified locally, install caveat | Angular 22/TS 6/Node 26 build, 172 assertions and 7 unchanged visual/functional cases. Electron 32 installer needs the bridge; U06 must resolve final clean installation. |
 | U06 | Verified locally; native chooser item open | Clean install/runtime/lint/build, 172 tests, 8 visual/functional cases and signed universal DMG/ZIP smoke pass with original icon. Windows/Linux/Intel CI and native chooser history remain. |
-| U07 | In progress | Update file-tree/module/queue/date group, then images/workers and analytics in separate verified checkpoints. |
-| U08 | Not started | Map/chart/translation updates verified visually. |
+| U07 | Verified locally | File/date/module, image/worker and analytics groups pass; compatibility exceptions are recorded. |
+| U08 | In progress | Update CDN map resources/geometry, charting and translations separately against unchanged references. |
 | U09 | Verified locally | Bootstrap 5.3.8 with unchanged screenshots, focus/hover colors, both download URL requests and 390px layout; unused JS removed. Deployment remains gated by main. |
 | U10 | Not started | Final graph, audit disposition and version exceptions. |
 | U11 | Not started | Full platform/distribution verification. |
@@ -469,3 +468,45 @@ cases. The HEIC pixel reference is unchanged with the reviewed decoder pin.
 All four independent Jimp bitmap and encoded JPEG comparisons match original
 0.16.2, including upscaling and nonzero buffer offsets.
 Next: analytics SDKs; inspect original defaults before adopting their new APIs.
+
+### U07c analytics working tree
+
+Installed Amplitude browser 2.49.0 and Mixpanel 2.84.0; removed the obsolete
+Mixpanel types and adapted its default/CJS export. Amplitude keeps attribution
+(the previous SDK did this) while explicitly disabling new page/session, form,
+file, interaction, performance and URL-enrichment capture. Remote configuration
+and diagnostics are disabled because the original SDK had neither. Mixpanel
+explicitly keeps autocapture/page-view/session-recording disabled. Existing
+project selection, IDs, custom event names/properties and batching defaults remain.
+
+Graph/lint/production build pass. A new real-app check sends a fixed main-process
+event through both actual renderer SDKs, captures outgoing payloads without
+sending them, checks properties and rejects new automatic event families. Test
+transport retries are deduplicated by the SDK ingestion ID, not by action name.
+The initial test fixture assumed every Mixpanel data field was base64; it now
+accepts JSON and base64 forms. Current targeted verification is in
+analytics-events-e2e.log. Full unit/visual gate is pending. No owner action needed.
+
+### Analytics integration check refinement
+
+The real transport check passes for both SDKs with exact fixed properties and
+no automatic event families. The initial predicate incorrectly used the first
+ElectronApplication.evaluate argument for the test service; that first argument
+is Electron's namespace. Correcting the callback's second argument resolved the
+false empty-result assertion. A diagnostic run confirms both services receive
+the event, parsing succeeds and unit-test flags are absent.
+
+The negative control enables a separate SDK instance with its new defaults under
+the isolated test profile. It fails specifically on session_start and
+[Amplitude] Page Viewed, proving the test detects the behavior the app disables.
+Raw evidence: analytics-negative-control.log. No product defaults were changed
+for that control. Full 176-assertion/9-case validation is now running.
+
+### U07c completed
+
+Graph/lint/production build, 176 unit assertions and all nine visual/functional
+cases pass. The actual SDK payload check verifies both destinations receive one
+fixed application event with unchanged category/label/value and no automatic
+page/session/interaction events. Its deliberate default-SDK negative control
+fails on the expected new events. Logs: analytics-{graph,lint,build,unit,e2e}.log.
+Next: update Leaflet/Geoman/Turf, retaining existing controls and region selection.

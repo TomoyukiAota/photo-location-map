@@ -148,6 +148,33 @@ test('window bounds survive restart and the Windows fullscreen menu stays visibl
   const restored = await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].getBounds());
   expect(restored).toEqual(saved);
 });
+test('analytics keeps explicit event properties and adds no automatic interaction events', async () => {
+  await dismissWelcome();
+  if (process.env.PLM_ANALYTICS_NEGATIVE_CONTROL === '1') {
+    await page.evaluate(async () => {
+      const sdk = window.require('@amplitude/analytics-browser').createInstance();
+      await sdk.init('00000000000000000000000000000000', 'compatibility-user', {
+        fetchRemoteConfig: false, enableDiagnostics: false
+      }).promise;
+      sdk.flush();
+    });
+  }
+  await app.evaluate(({ app }) => {
+    const require = globalThis.__plmTestRequire;
+    const { Analytics } = require(require('node:path').join(app.getAppPath(), 'src-shared/analytics/analytics.js'));
+    Analytics.trackEvent('Compatibility', 'Dependency Upgrade Check', 'fixed label', 17);
+  });
+  await settings();
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+  for (const service of ['amplitude', 'mixpanel']) {
+    await expect.poll(() => app.evaluate((_electron, service) => globalThis.__plmAnalyticsEvents.filter(event =>
+      event.service === service && event.action === 'Dependency Upgrade Check'), service), { timeout: 20000 }).toEqual([
+      { service, action: 'Dependency Upgrade Check', category: 'Compatibility', label: 'fixed label', value: 17 }
+    ]);
+  }
+  const actions = await app.evaluate(() => globalThis.__plmAnalyticsEvents.map(event => event.action));
+  expect(actions.filter(action => /^\[Amplitude\]|^\$mp_|^session_(start|end)$/.test(action))).toEqual([]);
+});
 test('HEIC worker generates the same bounded JPEG and reports corrupt input', async () => {
   const result = await app.evaluate(async ({ app }, { root, profile }) => {
     const require = globalThis.__plmTestRequire;

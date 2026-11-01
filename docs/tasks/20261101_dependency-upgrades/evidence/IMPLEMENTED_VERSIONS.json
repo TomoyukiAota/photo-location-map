@@ -1,7 +1,7 @@
 {
   "observedDate": "2026-11-01",
-  "state": "U07a runtime-core checkpoint verified locally; image/worker updates next",
-  "verifiedApplicationCommit": "dcf95ce58e9f64a74371bd257ad8473a6958775d",
+  "state": "U07b image/worker checkpoint verified locally; analytics next",
+  "verifiedApplicationCommit": "85c6fdfe5a95443754c0bb18060649aaea82cfa4",
   "hostNode": "26.13.0",
   "bundledNpm": "11.20.0",
   "lockfileVersion": 2,
@@ -73,7 +73,7 @@
     },
     {
       "name": "jimp",
-      "version": "0.16.2",
+      "version": "1.6.1",
       "section": "dependencies"
     },
     {
@@ -128,7 +128,7 @@
     },
     {
       "name": "workerpool",
-      "version": "6.3.1",
+      "version": "10.0.3",
       "section": "dependencies"
     },
     {
@@ -337,11 +337,6 @@
       "section": "devDependencies"
     },
     {
-      "name": "@types/workerpool",
-      "version": "6.1.1",
-      "section": "devDependencies"
-    },
-    {
       "name": "@typescript-eslint/eslint-plugin",
       "version": "8.72.1",
       "section": "devDependencies"
@@ -537,5 +532,5 @@
       "section": "devDependencies"
     }
   ],
-  "lockfileSha256": "774107f9c2aa9efc5ea4fced77e16f1ca674c9aa0158a6b79deb85dd058ec177"
+  "lockfileSha256": "8dbdd40f9aae6c3804a2d0cd5a0d08f35d15543f135b9ca747cfabee6490c2d4"
 }

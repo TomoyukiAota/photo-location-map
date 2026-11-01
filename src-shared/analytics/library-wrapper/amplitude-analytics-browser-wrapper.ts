@@ -23,7 +23,24 @@ export class AmplitudeAnalyticsBrowserWrapper {
     // but this is a preventative measure because @amplitude/analytics-browser is designed to be used in web browsers.
     this.amplitude = require('@amplitude/analytics-browser');
 
-    this.amplitude.init(apiKey, userId);
+    this.amplitude.init(apiKey, userId, {
+      // Version 1 tracked attribution, but none of the newer automatic events.
+      autocapture: {
+        attribution: true,
+        fileDownloads: false,
+        formInteractions: false,
+        pageViews: false,
+        sessions: false,
+        elementInteractions: false,
+        frustrationInteractions: false,
+        networkTracking: false,
+        webVitals: false,
+        performanceTracking: false,
+        pageUrlEnrichment: false,
+      },
+      fetchRemoteConfig: false,
+      enableDiagnostics: false,
+    });
     this.amplitude.setDeviceId(deviceId);
     this.isInitialized = true;
   }

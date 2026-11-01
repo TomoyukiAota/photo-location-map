@@ -83,7 +83,7 @@
     "workerpool": "10.0.3"
   },
   "devDependencies": {
-    "@amplitude/analytics-browser": "1.6.7",
+    "@amplitude/analytics-browser": "2.49.0",
     "@angular-builders/custom-webpack": "22.0.1",
     "@angular-devkit/build-angular": "22.2.5",
     "@angular-eslint/builder": "22.6.0",
@@ -119,7 +119,6 @@
     "@types/leaflet": "1.9.0",
     "@types/leaflet.markercluster": "1.5.1",
     "@types/lodash": "4.17.27",
-    "@types/mixpanel-browser": "2.38.0",
     "@types/moment-duration-format": "2.2.7",
     "@types/node": "24.19.2",
     "@types/promise.allsettled": "1.0.3",
@@ -146,7 +145,7 @@
     "karma-jasmine": "5.1.0",
     "karma-jasmine-html-reporter": "2.1.0",
     "karma-mocha-reporter": "2.2.5",
-    "mixpanel-browser": "2.45.0",
+    "mixpanel-browser": "2.84.0",
     "ng-mocks": "14.18.4",
     "ng-table-virtual-scroll": "1.6.1",
     "ngx-echarts": "22.0.0",
