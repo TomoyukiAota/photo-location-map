@@ -1,5 +1,6 @@
 module.exports = {
   require: [
+    './electron-util/isolated-test-profile.js',
     'espower-typescript/guess'
   ],
   spec: 'test/**/*.spec.em.@(main|both).ts',

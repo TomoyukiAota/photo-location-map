@@ -6,6 +6,9 @@ function parsePathWithWindowsEnvironmentVariable(path) {
 }
 
 function getAppDataDirectory() {
+  if (process.env.PLM_TEST_ROOT) {
+    return path.resolve(process.env.PLM_TEST_ROOT, 'appData');
+  }
   switch(global.process.platform) {
     case 'win32':
       return parsePathWithWindowsEnvironmentVariable('%APPDATA%');

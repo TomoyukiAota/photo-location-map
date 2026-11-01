@@ -11,13 +11,15 @@ Updated: 2026-11-01 (Asia/Tokyo).
   26.13.0 and its bundled npm 11.20.0, matching Photo Data Viewer; Electron 45.2.1.
 - Application baseline: `911dd91bf8de231a40be55f80e0255f053bbc4e3`, branch `main`.
 - Initial working tree: clean. This task adds planning/evidence documents only.
-- No application/configuration/dependency/lockfile change, install, migration,
-  application test, packaging, commit, push or publication in this task.
+- The planning phase changed documents only. Execution now adds profile isolation
+  and regression tests with Playwright; application dependency upgrades start at U03.
+  No push or publication has occurred.
 - Source inspection, official release/registry reads, historical PR review and a
   read-only lockfile audit were performed. No external comments or edits.
-- **No upgraded application checkpoint is verified.** Candidate versions in
-  VERSIONS are research results, not implemented or tested versions.
-- Agent-owned long-running commands: none at completion of planning.
+- The original app is verified with the new test harness. No upgraded framework
+  or Electron checkpoint is verified yet.
+- No long-running baseline app or packaging process remains. Local command logs
+  are under `.upgrade-artifacts`; test output is in its `e2e-results` directory.
 
 ## Read order on resume
 
@@ -29,9 +31,9 @@ Updated: 2026-11-01 (Asia/Tokyo).
 5. Inspect actual branch/HEAD/diff, task-related commits, existing processes and
    any newer user instructions. Reconcile records before executing commands.
 
-Active task: U01. U00 inspected the checkout and preserved the planning records
-on branch `codex/dependency-upgrades`. Capture the original app baseline under
-its original toolchain before changing dependencies.
+Active task: U03. Baseline checks and regression references are captured. Switch
+to the Node 22 bridge, then upgrade Angular one major at a time. See BASELINE.md
+for the original Karma shutdown issue; do not claim it is a clean pass.
 Do not begin with a bulk package update or by running Angular 18 under Node 26.
 
 ## Work queue
@@ -40,9 +42,9 @@ Do not begin with a bulk package update or by running Angular 18 under Node 26.
 | --- | --- | --- |
 | Research | Complete | Refresh time-sensitive candidates at implementation start. |
 | U00 | Complete | Existing checkout inspected; only the task documents were uncommitted. |
-| U01 | In progress | Clean install, existing checks, isolated test profiles and original UI evidence. |
-| U02 | Not started | Regression suite passing against original app. |
-| U03 | Not started | Node 22 bridge and CI/tooling checkpoint. |
+| U01 | Complete | Original install/lint/build and Mac universal package smoke pass; Karma shutdown issue recorded. |
+| U02 | Complete | Seven real Electron/website cases, original screenshots, HEIC pixel reference and restart persistence. |
+| U03 | In progress | Node 22.23.4 installed with bundled npm 10.9.9; switch project and verify. |
 | U04a | Not started | Last Angular 18 patches verified. |
 | U04b | Not started | Angular 19 checkpoint. |
 | U04c | Not started | Angular 20 checkpoint. |
