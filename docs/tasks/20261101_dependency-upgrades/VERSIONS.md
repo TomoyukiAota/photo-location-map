@@ -2,7 +2,10 @@
 
 Research date: 2026-11-01 (Asia/Tokyo). Baseline: `911dd91bf8de231a40be55f80e0255f053bbc4e3`.
 
-**Candidates only: none has been installed or validated by this planning task.**
+**Dated research inventory.** Implementation has since started; see
+[STATUS.md](./STATUS.md) and
+[evidence/IMPLEMENTED_VERSIONS.json](./evidence/IMPLEMENTED_VERSIONS.json) for
+actual verified checkpoints. This table retains the original candidate decisions.
 On 2026-11-01 the user selected Angular 22 and accepted macOS 13+ as the minimum.
 The selected targets below match Photo Data Viewer's Node/npm (the original
 Path M). Angular 21 is an intermediate migration checkpoint only. The registry

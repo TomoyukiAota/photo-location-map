@@ -16,8 +16,8 @@ Updated: 2026-11-01 (Asia/Tokyo).
   No push or publication has occurred.
 - Source inspection, official release/registry reads, historical PR review and a
   read-only lockfile audit were performed. No external comments or edits.
-- Angular 21 is verified locally at `5d508f2`; Angular 22 / Node 26 is the
-  active uncommitted checkpoint. Electron remains 32.0.2 until U06.
+- Angular 22 behavior is verified locally at `19ffc6f`; the installer
+  boundary is documented below. Electron remains 32.0.2 until U06.
 - No long-running baseline app or packaging process remains. Local command logs
   are under `.upgrade-artifacts`; test output is in its `e2e-results` directory.
 
@@ -53,7 +53,7 @@ mode in U04b; retain `ng test --watch=false`. Do not regenerate original snapsho
 | U06 | In progress | Electron/packaging checkpoint; resolve the intermediate installer limitation and verify macOS 13+ minimum. |
 | U07 | Not started | Runtime library groups verified. |
 | U08 | Not started | Map/chart/translation updates verified visually. |
-| U09 | Not started | Static website candidates verified locally. |
+| U09 | Verified locally | Bootstrap 5.3.8 with unchanged screenshots, focus/hover colors, both download URL requests and 390px layout; unused JS removed. Deployment remains gated by main. |
 | U10 | Not started | Final graph, audit disposition and version exceptions. |
 | U11 | Not started | Full platform/distribution verification. |
 | U12 | Not started | One concrete final decision/action packet. |
@@ -285,3 +285,77 @@ downloads the binary. U06 will verify that path with a fresh Node 26 install.
 Next smallest action: install the coupled Electron 45 / builder 26 group, inspect
 new lifecycle scripts, then validate clean installation, real runtime versions,
 all unit/visual tests and the macOS package. No user decision is needed.
+
+### Electron 45 working tree
+
+Node 26 clean npm ci and the maintained Electron binary download now work.
+The runtime probe reports Electron 45.2.1 / Node 24.22.1 / Chromium
+156.0.8078.75. Builder 26.18.1, updater 6.8.12, notarize 3.1.2, remote
+2.1.3, electron-mocha 13.1.0 and Node types 24.19.2 are installed.
+mac.minimumSystemVersion is explicitly 13.0. Required CI jobs now probe the
+actual Electron runtime as well as the host Node/npm identity.
+
+Reviewed all intervening breaking-change headings (33–45) and the relevant
+implementation/docs. Electron 45's bootstrap becomes the root of the CommonJS
+parent chain. remote.require consequently resolved app packages from a synthetic
+module and failed for fs-extra/exifr. A supported remote-require event handler
+now resolves the five existing imports from the app's helper module. No IPC
+architecture change or global module-path mutation. Temporary Karma diagnostic
+instrumentation was removed. The first fix covered four imports; the remaining
+exifr import was identified by a diagnostic run and included before verification.
+
+All 57+74+41 tests and seven original visual/functional cases pass on Electron
+45, including actual JPEG/HEIC companion loading and unchanged worker pixels.
+Additional checks now cover restored window geometry, the original splitter
+reset on restart (this app never persisted split ratios), and Windows fullscreen
+menu visibility. Electron 34's new fullscreen menu default has a narrow Windows
+compatibility listener. That branch still requires Windows CI. Package smoke
+verification is running in `electron45-package.log` after the expanded suite.
+
+Install-script policy: Electron 45 no longer has a postinstall hook; its obsolete
+32 approval was removed. The Squirrel-only electron-winstaller 5.4.0 architecture
+copy script is explicitly denied because this repository ships NSIS, never
+Squirrel. Required native build tools remain version-approved. No blanket bypass
+is used for actual clean installations.
+
+Open compatibility item: Electron 43+ explicitly starts an unspecified native
+file chooser in Downloads instead of letting the OS restore its last location.
+The app's folder chooser supplies no defaultPath. Exact native history migration
+requires further investigation; do not claim this native behavior is unchanged.
+Windows 10+ x64/arm64 and supported 64-bit Linux distributions remain the upstream
+platforms. This repo already targets x64 Windows and no removed 32-bit platforms.
+Next: inspect expanded tests and package smoke, then commit the verified group
+and move to runtime-library adapters. Final notarized artifacts wait until U11.
+
+### Static website U09 (independent while Mac packaging runs)
+
+Bootstrap CSS is now 5.3.8 with a freshly computed SHA-384 SRI. Explicit
+compatibility CSS preserves Bootstrap 4 colors, corners, link decoration and
+list indentation. Existing desktop/600px references pass unchanged. Both page
+scripts use browser APIs only; unused jQuery, Popper and Bootstrap JS were
+removed. Download targets and analytics scripts are unchanged. GitHub Pages
+settings read confirms legacy deployment from main:/docs, so this feature branch
+will not deploy the website. Actual Mac/Windows download URL assertions and a
+390px responsive check are being added; test downloads are intercepted and
+cancelled before any real installer is saved. Logs: website-bootstrap5-e2e.log.
+
+Mac package gate detected a builder 26 icon-resolution change: the previous
+directory value now selects electron.icns. The source icon files are unchanged;
+mac/win config now names their existing favicon.icns/favicon.ico explicitly.
+The first package run started with the old value and cannot verify this fix.
+Rebuild the package with the corrected config before claiming icon equivalence.
+
+### Website U09 verified
+
+Original desktop/600px snapshots, 390px stacked buttons, original dark-button
+focus/hover styles, Mac DMG request and automatic Windows EXE request all pass.
+The focused checks use the original Bootstrap 4 CSS values; tolerances and
+references are unchanged. The fixture cancels installer requests at Electron's
+webRequest boundary, preserving real download.js execution without saving files.
+Playwright page.route was tried, but interfered with a file:// icon request; that
+test interception was removed, not worked around in the product.
+
+The first Electron 45 universal package creation/mount/60-second launch/quit and
+detach passed. Its default Electron icon was correctly rejected by the new bundle
+assertion. A fresh package run with explicit original icon paths is now active in
+electron45-package-fixed-icon.log; do not treat the first artifact as final.
