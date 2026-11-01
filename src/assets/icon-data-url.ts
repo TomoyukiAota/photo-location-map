@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+/* eslint-disable @stylistic/max-len */
 
 export class IconDataUrl {
   // From https://www.flaticon.com/free-icon/github-logo_25231

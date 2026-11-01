@@ -31,7 +31,7 @@ Updated: 2026-11-01 (Asia/Tokyo).
 5. Inspect actual branch/HEAD/diff, task-related commits, existing processes and
    any newer user instructions. Reconcile records before executing commands.
 
-Active task: U04c. Baseline and Node 22 bridge checks are captured.
+Active task: U04d. Baseline and Node 22 bridge checks are captured.
 Upgrade Angular one major at a time. See BASELINE.md
 for the original Karma shutdown issue; do not claim it is a clean pass.
 Do not begin with a bulk package update or by running Angular 18 under Node 26.
@@ -47,8 +47,8 @@ Do not begin with a bulk package update or by running Angular 18 under Node 26.
 | U03 | Verified locally | Node 22.23.4/npm 10.9.9; clean install, full graph and 7 visual/functional cases pass. CI actions updated; remote CI pending. |
 | U04a | Verified locally | Angular 18.2.14 / CLI 18.2.21; graph/lint/build, 172 assertions and 7 regression cases. Karma shutdown issue remains. |
 | U04b | Verified locally | Graph/lint/build, 57+74+41 assertions and all 7 visual/functional cases pass. Explicit single-run also verifies failure exit code. |
-| U04c | In progress | Apply Angular 20 coupled migrations, inspect and verify. |
-| U04d | Not started | Angular 21 intermediate checkpoint on the Node 22 bridge. |
+| U04c | Verified locally | Graph/lint/build, clean 57+74+41 tests and 7 unchanged regression cases. |
+| U04d | In progress | Angular 21 migrations on the Node 22 bridge. |
 | U05 | Not started | Selected Angular 22 + Node 26 / bundled npm destination. |
 | U06 | Not started | Electron/packaging checkpoint with accepted macOS 13+ minimum. |
 | U07 | Not started | Runtime library groups verified. |
@@ -178,3 +178,30 @@ sets watch=false; the separate watch command retains its original purpose.
 Logs: `angular19-single-run.log`, `karma-negative-single-run.log` and its result
 JSON (local). No failure or navigation check was disabled.
 Next: Angular 20; no temporary negative-control spec or running test remains.
+
+### Angular 20 working tree
+
+Core 20.3.34, CLI/build-angular 20.3.42, Material/CDK 20.2.14, custom-webpack
+20.0.0, angular-eslint 20.7.0, ngx-echarts 20.0.2, TypeScript 5.9.3.
+The schematic raised ESLint to 9 and typescript-eslint to 8.72.1; migrated root
+and script lint configurations to native flat config, preserving rules, NgModules
+and constructor injection. Legacy max-len exceptions now name @stylistic/max-len.
+ESLint and its JS config are pinned to 9.39.5 for this intermediate framework;
+target ESLint 10 still requires the final compatible Angular lint group.
+Old @types/node 22.5.5 conflicted with TS 5.9 generic typed arrays. Use updated
+20.19.43 temporarily to match current Electron's embedded Node 20; move to
+24.19.2 when Electron 45 is installed. No runtime buffer copy was introduced.
+CLI changed Angular module resolution to bundler; application webpack architecture
+remains in place. Material's schematic also visited ignored dist/release outputs;
+those scratch outputs/signatures are not release evidence and must be rebuilt.
+Validation logs: `angular20-*.log`; changes are not a verified checkpoint yet.
+Last verified application/framework checkpoint: `6cfcea4`.
+
+### Angular 20 completed
+
+All validation now passes: lint without warnings, production/main build,
+57 Angular + 74 main + 41 renderer tests with clean termination, and all seven
+visual/functional comparisons including the original HEIC pixel hash. Logs are
+`angular20-{graph,lint,build,unit,e2e}.log`. The flat-config migration retained
+old rule intent and removed three now-unused lint directives.
+Next: apply Angular 21 as an intermediate stage; preserve Zone-based behavior.

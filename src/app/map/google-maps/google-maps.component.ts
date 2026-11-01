@@ -81,7 +81,6 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
     // "new" for google.maps.Map is required although the reference to the instantiated object is not required.
     // Without "new", the map is not rendered.
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     new google.maps.Map(document.getElementById('google-map'), {
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       center: { lat: 0.0, lng: 0.0 },

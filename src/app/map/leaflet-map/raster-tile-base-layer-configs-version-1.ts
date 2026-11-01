@@ -1,4 +1,4 @@
-/* eslint-disable max-len */ // For rasterTileBaseLayerConfigsVersion1Fallback
+/* eslint-disable @stylistic/max-len */ // For rasterTileBaseLayerConfigsVersion1Fallback
 
 import { parse as parseJsonc } from 'jsonc-parser';
 import { Analytics } from '../../../../src-shared/analytics/analytics';

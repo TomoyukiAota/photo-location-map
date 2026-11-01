@@ -3,6 +3,7 @@ import { createRequire } from 'node:module';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 const require = createRequire(import.meta.url);
 const root = path.resolve(import.meta.dirname, '../..');
 const visual = process.env.PLM_VISUAL === '1';
@@ -166,7 +167,7 @@ for (const [name, fixture] of [
   });
 }
 test('download website keeps desktop and narrow layouts and Windows navigation', async () => {
-  await page.goto(new URL(`file://${path.join(root, 'docs/index.html')}`).href);
+  await page.goto(pathToFileURL(path.join(root, 'docs/index.html')).href);
   await expect(page.locator('.title')).toHaveText('Photo Location Map');
   await expect(page.getByRole('link', { name: 'Download for Windows' })).toHaveAttribute('href', 'github-pages/downloading-for-windows/downloading-for-windows.html');
   await shot('website-desktop', [page.locator('iframe')]);
