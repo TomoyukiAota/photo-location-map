@@ -1,0 +1,5000 @@
+{
+  "observedDate": "2026-11-01",
+  "method": "Read npm registry metadata; no packages installed. Candidates unverified in the app. Selected versions only, not full registry history.",
+  "packages": [
+    {
+      "name": "@electron/remote",
+      "current": "2.1.2",
+      "section": "dependencies",
+      "latest": "2.1.3",
+      "released": "2025-07-07T17:59:41.320Z",
+      "engines": null,
+      "peers": {
+        "electron": ">= 13.0.0"
+      },
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/electron/remote.git"
+      },
+      "source": "https://registry.npmjs.org/%40electron%2Fremote",
+      "distTags": {
+        "latest": "2.1.3"
+      },
+      "selectedVersions": {
+        "2.1.2": {
+          "peerDependencies": {
+            "electron": ">= 13.0.0"
+          }
+        },
+        "2.1.3": {
+          "peerDependencies": {
+            "electron": ">= 13.0.0"
+          }
+        }
+      },
+      "pathL": "2.1.3",
+      "pathM": "2.1.3",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "async",
+      "current": "3.2.6",
+      "section": "dependencies",
+      "latest": "3.2.6",
+      "released": "2024-08-19T23:24:23.363Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "git+https://github.com/caolan/async.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/async",
+      "distTags": {
+        "next": "3.1.0",
+        "latest": "3.2.6"
+      },
+      "selectedVersions": {
+        "3.2.6": {}
+      },
+      "pathL": "3.2.6",
+      "pathM": "3.2.6",
+      "decisionNote": "Already latest stable; retain unless a demonstrated blocker requires replacement."
+    },
+    {
+      "name": "commander",
+      "current": "12.1.0",
+      "section": "dependencies",
+      "latest": "15.0.0",
+      "released": "2026-05-29T09:16:23.076Z",
+      "engines": {
+        "node": ">=22.12.0"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "url": "git+https://github.com/tj/commander.js.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/commander",
+      "distTags": {
+        "next": "15.0.0-0",
+        "latest": "15.0.0"
+      },
+      "selectedVersions": {
+        "12.1.0": {
+          "engines": {
+            "node": ">=18"
+          },
+          "type": "commonjs"
+        },
+        "15.0.0": {
+          "engines": {
+            "node": ">=22.12.0"
+          },
+          "type": "module"
+        }
+      },
+      "pathL": "15.0.0",
+      "pathM": "15.0.0",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "delete-empty",
+      "current": "3.0.0",
+      "section": "dependencies",
+      "latest": "3.0.0",
+      "released": "2019-07-02T05:47:05.985Z",
+      "engines": {
+        "node": ">=10"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/jonschlinkert/delete-empty.git"
+      },
+      "source": "https://registry.npmjs.org/delete-empty",
+      "distTags": {
+        "latest": "3.0.0"
+      },
+      "selectedVersions": {
+        "3.0.0": {
+          "engines": {
+            "node": ">=10"
+          }
+        }
+      },
+      "pathL": "3.0.0",
+      "pathM": "3.0.0",
+      "decisionNote": "Already latest stable; retain unless a demonstrated blocker requires replacement."
+    },
+    {
+      "name": "directory-tree",
+      "current": "2.3.1",
+      "section": "dependencies",
+      "latest": "3.6.0",
+      "released": "2026-01-24T11:41:22.569Z",
+      "engines": {
+        "node": ">=10.0"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mihneadb/node-directory-tree.git"
+      },
+      "source": "https://registry.npmjs.org/directory-tree",
+      "distTags": {
+        "latest": "3.6.0"
+      },
+      "selectedVersions": {
+        "2.3.1": {
+          "engines": {
+            "node": ">=10.0"
+          }
+        },
+        "3.6.0": {
+          "engines": {
+            "node": ">=10.0"
+          }
+        }
+      },
+      "pathL": "3.6.0",
+      "pathM": "3.6.0",
+      "decisionNote": "Check returned object shape, ordering, recursion, permissions and large trees."
+    },
+    {
+      "name": "electron-unhandled",
+      "current": "4.0.1",
+      "section": "dependencies",
+      "latest": "6.0.0",
+      "released": "2026-09-20T14:25:31.431Z",
+      "engines": {
+        "node": ">=22"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "url": "git+https://github.com/sindresorhus/electron-unhandled.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/electron-unhandled",
+      "distTags": {
+        "latest": "6.0.0"
+      },
+      "selectedVersions": {
+        "4.0.1": {},
+        "6.0.0": {
+          "engines": {
+            "node": ">=22"
+          },
+          "type": "module"
+        }
+      },
+      "pathL": "6.0.0",
+      "pathM": "6.0.0",
+      "decisionNote": "ESM/initialization and process-specific loading must be verified."
+    },
+    {
+      "name": "electron-updater",
+      "current": "6.3.4",
+      "section": "dependencies",
+      "latest": "6.8.11",
+      "released": "2026-10-20T21:25:16.751Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "git+https://github.com/electron-userland/electron-builder.git",
+        "type": "git",
+        "directory": "packages/electron-updater"
+      },
+      "source": "https://registry.npmjs.org/electron-updater",
+      "distTags": {
+        "latest": "6.8.11",
+        "v26": "6.8.12",
+        "next": "7.0.0-alpha.13"
+      },
+      "selectedVersions": {
+        "6.3.4": {},
+        "6.8.11": {},
+        "6.8.12": {}
+      },
+      "pathL": "6.8.12",
+      "pathM": "6.8.12",
+      "decisionNote": "Stable v26 channel is ahead of latest dist-tag; use exact version, verify distribution."
+    },
+    {
+      "name": "electron-window-state",
+      "current": "5.0.3",
+      "section": "dependencies",
+      "latest": "5.0.3",
+      "released": "2018-11-25T16:09:42.729Z",
+      "engines": {
+        "node": ">=8.0.0"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mawie81/electron-window-state.git"
+      },
+      "source": "https://registry.npmjs.org/electron-window-state",
+      "distTags": {
+        "latest": "5.0.3"
+      },
+      "selectedVersions": {
+        "5.0.3": {
+          "engines": {
+            "node": ">=8.0.0"
+          }
+        }
+      },
+      "pathL": "5.0.3",
+      "pathM": "5.0.3",
+      "decisionNote": "Already latest stable; retain unless a demonstrated blocker requires replacement."
+    },
+    {
+      "name": "exifr",
+      "current": "7.1.3",
+      "section": "dependencies",
+      "latest": "7.1.3",
+      "released": "2021-08-05T08:00:59.676Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/MikeKovarik/exifr.git"
+      },
+      "source": "https://registry.npmjs.org/exifr",
+      "distTags": {
+        "latest": "7.1.3"
+      },
+      "selectedVersions": {
+        "7.1.3": {}
+      },
+      "pathL": "7.1.3",
+      "pathM": "7.1.3",
+      "decisionNote": "Already latest stable; retain unless a demonstrated blocker requires replacement."
+    },
+    {
+      "name": "fs-extra",
+      "current": "11.1.0",
+      "section": "dependencies",
+      "latest": "11.4.1",
+      "released": "2026-09-22T16:20:08.500Z",
+      "engines": {
+        "node": ">=14.14"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "git+https://github.com/jprichardson/node-fs-extra.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/fs-extra",
+      "distTags": {
+        "latest": "11.4.1"
+      },
+      "selectedVersions": {
+        "11.1.0": {
+          "engines": {
+            "node": ">=14.14"
+          }
+        },
+        "11.4.1": {
+          "engines": {
+            "node": ">=14.14"
+          }
+        }
+      },
+      "pathL": "11.4.1",
+      "pathM": "11.4.1",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "heic-decode",
+      "current": "2.0.0",
+      "section": "dependencies",
+      "latest": "2.1.0",
+      "released": "2025-07-04T13:43:16.944Z",
+      "engines": {
+        "node": ">=8.0.0"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/catdad-experiments/heic-decode.git"
+      },
+      "source": "https://registry.npmjs.org/heic-decode",
+      "distTags": {
+        "latest": "2.1.0"
+      },
+      "selectedVersions": {
+        "2.0.0": {
+          "engines": {
+            "node": ">=8.0.0"
+          }
+        },
+        "2.1.0": {
+          "engines": {
+            "node": ">=8.0.0"
+          }
+        }
+      },
+      "pathL": "2.1.0",
+      "pathM": "2.1.0",
+      "decisionNote": "Resolve libheif-js 1.23.5 through compatible ^1.19.8 range; HEIC regression gate."
+    },
+    {
+      "name": "is-natural-number",
+      "current": "4.0.1",
+      "section": "dependencies",
+      "latest": "4.0.1",
+      "released": "2016-05-16T11:42:48.135Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/shinnn/is-natural-number.js.git"
+      },
+      "source": "https://registry.npmjs.org/is-natural-number",
+      "distTags": {
+        "latest": "4.0.1"
+      },
+      "selectedVersions": {
+        "4.0.1": {}
+      },
+      "pathL": "4.0.1",
+      "pathM": "4.0.1",
+      "decisionNote": "Already latest stable; retain unless a demonstrated blocker requires replacement."
+    },
+    {
+      "name": "is-number",
+      "current": "7.0.0",
+      "section": "dependencies",
+      "latest": "7.0.0",
+      "released": "2018-07-04T15:08:58.238Z",
+      "engines": {
+        "node": ">=0.12.0"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/jonschlinkert/is-number.git"
+      },
+      "source": "https://registry.npmjs.org/is-number",
+      "distTags": {
+        "latest": "7.0.0"
+      },
+      "selectedVersions": {
+        "7.0.0": {
+          "engines": {
+            "node": ">=0.12.0"
+          }
+        }
+      },
+      "pathL": "7.0.0",
+      "pathM": "7.0.0",
+      "decisionNote": "Already latest stable; retain unless a demonstrated blocker requires replacement."
+    },
+    {
+      "name": "jimp",
+      "current": "0.16.2",
+      "section": "dependencies",
+      "latest": "1.6.1",
+      "released": "2026-04-07T17:54:56.712Z",
+      "engines": {
+        "node": ">=18"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/jimp-dev/jimp.git"
+      },
+      "source": "https://registry.npmjs.org/jimp",
+      "distTags": {
+        "latest": "1.6.1"
+      },
+      "selectedVersions": {
+        "0.16.2": {},
+        "1.6.1": {
+          "engines": {
+            "node": ">=18"
+          },
+          "type": "module"
+        }
+      },
+      "pathL": "1.6.1",
+      "pathM": "1.6.1",
+      "decisionNote": "New export/constructor/resize API; preserve thumbnail pixels and quality."
+    },
+    {
+      "name": "jpeg-js",
+      "current": "0.4.4",
+      "section": "dependencies",
+      "latest": "0.4.4",
+      "released": "2022-06-07T14:18:01.740Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/eugeneware/jpeg-js.git"
+      },
+      "source": "https://registry.npmjs.org/jpeg-js",
+      "distTags": {
+        "latest": "0.4.4"
+      },
+      "selectedVersions": {
+        "0.4.4": {}
+      },
+      "pathL": "0.4.4",
+      "pathM": "0.4.4",
+      "decisionNote": "Already latest stable; retain unless a demonstrated blocker requires replacement."
+    },
+    {
+      "name": "lodash",
+      "current": "4.17.21",
+      "section": "dependencies",
+      "latest": "4.18.1",
+      "released": "2026-04-01T21:01:20.458Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "git+https://github.com/lodash/lodash.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/lodash",
+      "distTags": {
+        "latest": "4.18.1"
+      },
+      "selectedVersions": {
+        "4.17.21": {},
+        "4.18.1": {}
+      },
+      "pathL": "4.18.1",
+      "pathM": "4.18.1",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "moment-duration-format",
+      "current": "2.3.2",
+      "section": "dependencies",
+      "latest": "2.3.2",
+      "released": "2019-06-05T14:07:11.317Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/jsmreese/moment-duration-format.git"
+      },
+      "source": "https://registry.npmjs.org/moment-duration-format",
+      "distTags": {
+        "latest": "2.3.2"
+      },
+      "selectedVersions": {
+        "2.3.2": {}
+      },
+      "pathL": "2.3.2",
+      "pathM": "2.3.2",
+      "decisionNote": "Already latest stable; retain unless a demonstrated blocker requires replacement."
+    },
+    {
+      "name": "moment-timezone",
+      "current": "0.5.40",
+      "section": "dependencies",
+      "latest": "0.6.6",
+      "released": "2026-10-29T10:30:59.667Z",
+      "engines": {
+        "node": "*"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "git+https://github.com/moment/moment-timezone.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/moment-timezone",
+      "distTags": {
+        "latest": "0.6.6"
+      },
+      "selectedVersions": {
+        "0.5.40": {
+          "engines": {
+            "node": "*"
+          }
+        },
+        "0.6.6": {
+          "engines": {
+            "node": "*"
+          }
+        }
+      },
+      "pathL": "0.6.6",
+      "pathM": "0.6.6",
+      "decisionNote": "Timezone data changes can change historical timestamps; compare outputs."
+    },
+    {
+      "name": "physical-cpu-count",
+      "current": "2.0.0",
+      "section": "dependencies",
+      "latest": "2.0.0",
+      "released": "2016-12-07T06:32:51.627Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": null,
+      "source": "https://registry.npmjs.org/physical-cpu-count",
+      "distTags": {
+        "latest": "2.0.0"
+      },
+      "selectedVersions": {
+        "2.0.0": {}
+      },
+      "pathL": "2.0.0",
+      "pathM": "2.0.0",
+      "decisionNote": "Already latest stable; retain unless a demonstrated blocker requires replacement."
+    },
+    {
+      "name": "promise.allsettled",
+      "current": "1.0.6",
+      "section": "dependencies",
+      "latest": "1.0.7",
+      "released": "2023-09-03T19:34:13.601Z",
+      "engines": {
+        "node": ">= 0.4"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/es-shims/Promise.allSettled.git"
+      },
+      "source": "https://registry.npmjs.org/promise.allsettled",
+      "distTags": {
+        "latest": "1.0.7"
+      },
+      "selectedVersions": {
+        "1.0.6": {
+          "engines": {
+            "node": ">= 0.4"
+          }
+        },
+        "1.0.7": {
+          "engines": {
+            "node": ">= 0.4"
+          }
+        }
+      },
+      "pathL": "1.0.7",
+      "pathM": "1.0.7",
+      "decisionNote": "No obvious active reference initially; check reachability before optional removal."
+    },
+    {
+      "name": "rage-edit",
+      "current": "1.2.0",
+      "section": "dependencies",
+      "latest": "1.2.0",
+      "released": "2018-11-03T15:18:48.910Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/MikeKovarik/rage-edit.git"
+      },
+      "source": "https://registry.npmjs.org/rage-edit",
+      "distTags": {
+        "latest": "1.2.0"
+      },
+      "selectedVersions": {
+        "1.2.0": {}
+      },
+      "pathL": "1.2.0",
+      "pathM": "1.2.0",
+      "decisionNote": "Already latest stable; retain unless a demonstrated blocker requires replacement."
+    },
+    {
+      "name": "tiny-worker",
+      "current": "2.3.0",
+      "section": "dependencies",
+      "latest": "2.3.0",
+      "released": "2019-09-20T17:30:30.678Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/avoidwork/tiny-worker.git"
+      },
+      "source": "https://registry.npmjs.org/tiny-worker",
+      "distTags": {
+        "latest": "2.3.0"
+      },
+      "selectedVersions": {
+        "2.3.0": {}
+      },
+      "pathL": "2.3.0",
+      "pathM": "2.3.0",
+      "decisionNote": "No obvious active reference initially; check reachability before optional removal."
+    },
+    {
+      "name": "uuid",
+      "current": "9.0.0",
+      "section": "dependencies",
+      "latest": "14.0.3",
+      "released": "2026-10-10T00:30:19.423Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "url": "git+https://github.com/uuidjs/uuid.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/uuid",
+      "distTags": {
+        "latest": "14.0.3"
+      },
+      "selectedVersions": {
+        "14.0.3": {
+          "type": "module"
+        },
+        "9.0.0": {
+          "deprecated": "uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028)."
+        }
+      },
+      "pathL": "14.0.3",
+      "pathM": "14.0.3",
+      "decisionNote": "ESM/initialization and process-specific loading must be verified."
+    },
+    {
+      "name": "workerpool",
+      "current": "6.3.1",
+      "section": "dependencies",
+      "latest": "10.0.3",
+      "released": "2026-07-01T08:31:33.947Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/josdejong/workerpool.git"
+      },
+      "source": "https://registry.npmjs.org/workerpool",
+      "distTags": {
+        "latest": "10.0.3"
+      },
+      "selectedVersions": {
+        "10.0.3": {},
+        "6.3.1": {}
+      },
+      "pathL": "10.0.3",
+      "pathM": "10.0.3",
+      "decisionNote": "Worker mode, paths, concurrency, failures and shutdown must stay equivalent."
+    },
+    {
+      "name": "@amplitude/analytics-browser",
+      "current": "1.6.7",
+      "section": "devDependencies",
+      "latest": "2.49.0",
+      "released": "2026-10-30T23:50:26.294Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "git+https://github.com/amplitude/Amplitude-TypeScript.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/%40amplitude%2Fanalytics-browser",
+      "distTags": {
+        "beta": "2.6.3-beta.0",
+        "latest": "2.49.0"
+      },
+      "selectedVersions": {
+        "1.6.7": {},
+        "2.49.0": {}
+      },
+      "pathL": "2.49.0",
+      "pathM": "2.49.0",
+      "decisionNote": "Preserve events, batching, disabled state; reject new default autocapture/session behavior."
+    },
+    {
+      "name": "@angular-builders/custom-webpack",
+      "current": "18.0.0",
+      "section": "devDependencies",
+      "latest": "22.0.1",
+      "released": "2026-06-23T10:08:22.343Z",
+      "engines": {
+        "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+      },
+      "peers": {
+        "rxjs": ">=7.0.0",
+        "@angular/compiler-cli": "^22.0.0"
+      },
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "git+https://github.com/just-jeb/angular-builders.git",
+        "type": "git",
+        "directory": "packages/custom-webpack"
+      },
+      "source": "https://registry.npmjs.org/%40angular-builders%2Fcustom-webpack",
+      "distTags": {
+        "latest": "22.0.1",
+        "next": "22.0.2-beta.3"
+      },
+      "selectedVersions": {
+        "18.0.0": {
+          "engines": {
+            "node": "^14.20.0 || ^16.13.0 || >=18.10.0"
+          },
+          "peerDependencies": {
+            "@angular/compiler-cli": "^18.0.0"
+          }
+        },
+        "19.0.1": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "@angular/compiler-cli": "^19.0.0"
+          }
+        },
+        "20.0.0": {
+          "engines": {
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+          },
+          "peerDependencies": {
+            "@angular/compiler-cli": "^20.0.0"
+          }
+        },
+        "21.1.0": {
+          "engines": {
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": ">=7.0.0",
+            "@angular/compiler-cli": "^21.0.0"
+          }
+        },
+        "22.0.1": {
+          "engines": {
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": ">=7.0.0",
+            "@angular/compiler-cli": "^22.0.0"
+          }
+        }
+      },
+      "pathL": "21.1.0",
+      "pathM": "22.0.1",
+      "decisionNote": "Coupled framework/build/lint group; see staged matrix."
+    },
+    {
+      "name": "@angular-devkit/build-angular",
+      "current": "18.2.4",
+      "section": "devDependencies",
+      "latest": "22.2.5",
+      "released": "2026-10-28T10:02:42.790Z",
+      "engines": {
+        "npm": "^6.11.0 || ^7.5.6 || >=8.0.0",
+        "node": "^22.22.3 || ^24.15.0 || >=26.0.0",
+        "yarn": ">= 1.13.0"
+      },
+      "peers": {
+        "karma": "^6.3.0",
+        "ng-packagr": "^22.0.0",
+        "typescript": ">=6.0 <6.1",
+        "tailwindcss": "^2.0.0 || ^3.0.0 || ^4.0.0",
+        "@angular/ssr": "^22.2.5",
+        "browser-sync": "^3.0.2",
+        "@angular/core": "^22.0.0",
+        "@angular/localize": "^22.0.0",
+        "@angular/compiler-cli": "^22.0.0",
+        "@angular/service-worker": "^22.0.0",
+        "@angular/platform-server": "^22.0.0",
+        "@angular/platform-browser": "^22.0.0"
+      },
+      "deprecated": "Angular's Webpack support is deprecated. Use the esbuild and Vite-based \"@angular/build\" package instead.",
+      "type": null,
+      "repository": {
+        "url": "git+https://github.com/angular/angular-cli.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/%40angular-devkit%2Fbuild-angular",
+      "distTags": {
+        "next": "22.3.0-next.4",
+        "latest": "22.2.5"
+      },
+      "selectedVersions": {
+        "18.2.21": {
+          "engines": {
+            "npm": "^6.11.0 || ^7.5.6 || >=8.0.0",
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0",
+            "yarn": ">= 1.13.0"
+          },
+          "peerDependencies": {
+            "jest": "^29.5.0",
+            "karma": "^6.3.0",
+            "ng-packagr": "^18.0.0",
+            "protractor": "^7.0.0",
+            "typescript": ">=5.4 <5.6",
+            "tailwindcss": "^2.0.0 || ^3.0.0",
+            "browser-sync": "^3.0.2",
+            "@web/test-runner": "^0.18.0",
+            "@angular/localize": "^18.0.0",
+            "@angular/compiler-cli": "^18.0.0",
+            "jest-environment-jsdom": "^29.5.0",
+            "@angular/service-worker": "^18.0.0",
+            "@angular/platform-server": "^18.0.0"
+          }
+        },
+        "18.2.4": {
+          "engines": {
+            "npm": "^6.11.0 || ^7.5.6 || >=8.0.0",
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0",
+            "yarn": ">= 1.13.0"
+          },
+          "peerDependencies": {
+            "jest": "^29.5.0",
+            "karma": "^6.3.0",
+            "ng-packagr": "^18.0.0",
+            "protractor": "^7.0.0",
+            "typescript": ">=5.4 <5.6",
+            "tailwindcss": "^2.0.0 || ^3.0.0",
+            "browser-sync": "^3.0.2",
+            "@web/test-runner": "^0.18.0",
+            "@angular/localize": "^18.0.0",
+            "@angular/compiler-cli": "^18.0.0",
+            "jest-environment-jsdom": "^29.5.0",
+            "@angular/service-worker": "^18.0.0",
+            "@angular/platform-server": "^18.0.0"
+          }
+        },
+        "19.2.27": {
+          "engines": {
+            "npm": "^6.11.0 || ^7.5.6 || >=8.0.0",
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0",
+            "yarn": ">= 1.13.0"
+          },
+          "peerDependencies": {
+            "jest": "^29.5.0",
+            "karma": "^6.3.0",
+            "ng-packagr": "^19.0.0 || ^19.2.0-next.0",
+            "protractor": "^7.0.0",
+            "typescript": ">=5.5 <5.9",
+            "tailwindcss": "^2.0.0 || ^3.0.0 || ^4.0.0",
+            "@angular/ssr": "^19.2.27",
+            "browser-sync": "^3.0.2",
+            "@web/test-runner": "^0.20.0",
+            "@angular/localize": "^19.0.0 || ^19.2.0-next.0",
+            "@angular/compiler-cli": "^19.0.0 || ^19.2.0-next.0",
+            "jest-environment-jsdom": "^29.5.0",
+            "@angular/service-worker": "^19.0.0 || ^19.2.0-next.0",
+            "@angular/platform-server": "^19.0.0 || ^19.2.0-next.0"
+          }
+        },
+        "20.3.42": {
+          "engines": {
+            "npm": "^6.11.0 || ^7.5.6 || >=8.0.0",
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
+            "yarn": ">= 1.13.0"
+          },
+          "peerDependencies": {
+            "jest": "^29.5.0 || ^30.2.0",
+            "karma": "^6.3.0",
+            "ng-packagr": "^20.0.0",
+            "protractor": "^7.0.0",
+            "typescript": ">=5.8 <6.0",
+            "tailwindcss": "^2.0.0 || ^3.0.0 || ^4.0.0",
+            "@angular/ssr": "^20.3.42",
+            "browser-sync": "^3.0.2",
+            "@angular/core": "^20.0.0",
+            "@web/test-runner": "^0.20.0",
+            "@angular/localize": "^20.0.0",
+            "@angular/compiler-cli": "^20.0.0",
+            "jest-environment-jsdom": "^29.5.0 || ^30.2.0",
+            "@angular/service-worker": "^20.0.0",
+            "@angular/platform-server": "^20.0.0",
+            "@angular/platform-browser": "^20.0.0"
+          }
+        },
+        "21.2.29": {
+          "engines": {
+            "npm": "^6.11.0 || ^7.5.6 || >=8.0.0",
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
+            "yarn": ">= 1.13.0"
+          },
+          "peerDependencies": {
+            "jest": "^30.2.0",
+            "karma": "^6.3.0",
+            "ng-packagr": "^21.0.0",
+            "protractor": "^7.0.0",
+            "typescript": ">=5.9 <6.0",
+            "tailwindcss": "^2.0.0 || ^3.0.0 || ^4.0.0",
+            "@angular/ssr": "^21.2.29",
+            "browser-sync": "^3.0.2",
+            "@angular/core": "^21.0.0",
+            "@web/test-runner": "^0.20.0",
+            "@angular/localize": "^21.0.0",
+            "@angular/compiler-cli": "^21.0.0",
+            "jest-environment-jsdom": "^30.2.0",
+            "@angular/service-worker": "^21.0.0",
+            "@angular/platform-server": "^21.0.0",
+            "@angular/platform-browser": "^21.0.0"
+          }
+        },
+        "22.2.5": {
+          "engines": {
+            "npm": "^6.11.0 || ^7.5.6 || >=8.0.0",
+            "node": "^22.22.3 || ^24.15.0 || >=26.0.0",
+            "yarn": ">= 1.13.0"
+          },
+          "peerDependencies": {
+            "karma": "^6.3.0",
+            "ng-packagr": "^22.0.0",
+            "typescript": ">=6.0 <6.1",
+            "tailwindcss": "^2.0.0 || ^3.0.0 || ^4.0.0",
+            "@angular/ssr": "^22.2.5",
+            "browser-sync": "^3.0.2",
+            "@angular/core": "^22.0.0",
+            "@angular/localize": "^22.0.0",
+            "@angular/compiler-cli": "^22.0.0",
+            "@angular/service-worker": "^22.0.0",
+            "@angular/platform-server": "^22.0.0",
+            "@angular/platform-browser": "^22.0.0"
+          },
+          "deprecated": "Angular's Webpack support is deprecated. Use the esbuild and Vite-based \"@angular/build\" package instead."
+        }
+      },
+      "pathL": "21.2.29",
+      "pathM": "22.2.5",
+      "decisionNote": "Coupled framework/build/lint group; see staged matrix."
+    },
+    {
+      "name": "@angular-eslint/builder",
+      "current": "18.3.1",
+      "section": "devDependencies",
+      "latest": "22.6.0",
+      "released": "2026-10-11T13:02:11.565Z",
+      "engines": null,
+      "peers": {
+        "eslint": "^9.0.0 || ^10.0.0",
+        "typescript": "*"
+      },
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "https://github.com/angular-eslint/angular-eslint.git",
+        "type": "git",
+        "directory": "packages/builder"
+      },
+      "source": "https://registry.npmjs.org/%40angular-eslint%2Fbuilder",
+      "distTags": {
+        "next": "17.0.0-alpha.0",
+        "latest": "22.6.0"
+      },
+      "selectedVersions": {
+        "18.3.1": {
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0",
+            "typescript": "*"
+          }
+        },
+        "18.4.3": {
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0",
+            "typescript": "*"
+          }
+        },
+        "19.8.1": {
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0",
+            "typescript": "*"
+          }
+        },
+        "20.7.0": {
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0",
+            "typescript": "*"
+          }
+        },
+        "21.4.0": {
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
+            "typescript": "*",
+            "@angular/cli": ">= 21.0.0 < 22.0.0"
+          }
+        },
+        "22.6.0": {
+          "peerDependencies": {
+            "eslint": "^9.0.0 || ^10.0.0",
+            "typescript": "*"
+          }
+        }
+      },
+      "pathL": "21.4.0",
+      "pathM": "22.6.0",
+      "decisionNote": "Coupled framework/build/lint group; see staged matrix."
+    },
+    {
+      "name": "@angular-eslint/eslint-plugin",
+      "current": "18.3.1",
+      "section": "devDependencies",
+      "latest": "22.6.0",
+      "released": "2026-10-11T13:03:11.726Z",
+      "engines": null,
+      "peers": {
+        "eslint": "^9.0.0 || ^10.0.0",
+        "typescript": "*",
+        "@typescript-eslint/utils": "^8.0.0"
+      },
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "https://github.com/angular-eslint/angular-eslint.git",
+        "type": "git",
+        "directory": "packages/eslint-plugin"
+      },
+      "source": "https://registry.npmjs.org/%40angular-eslint%2Feslint-plugin",
+      "distTags": {
+        "next": "17.0.0-alpha.0",
+        "latest": "22.6.0"
+      },
+      "selectedVersions": {
+        "18.3.1": {
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0",
+            "typescript": "*",
+            "@typescript-eslint/utils": "^7.11.0 || ^8.0.0"
+          }
+        },
+        "18.4.3": {
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0",
+            "typescript": "*",
+            "@typescript-eslint/utils": "^7.11.0 || ^8.0.0"
+          }
+        },
+        "19.8.1": {
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0",
+            "typescript": "*",
+            "@typescript-eslint/utils": "^7.11.0 || ^8.0.0"
+          }
+        },
+        "20.7.0": {
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0",
+            "typescript": "*",
+            "@typescript-eslint/utils": "^7.11.0 || ^8.0.0"
+          }
+        },
+        "21.4.0": {
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
+            "typescript": "*",
+            "@typescript-eslint/utils": "^7.11.0 || ^8.0.0"
+          }
+        },
+        "22.6.0": {
+          "peerDependencies": {
+            "eslint": "^9.0.0 || ^10.0.0",
+            "typescript": "*",
+            "@typescript-eslint/utils": "^8.0.0"
+          }
+        }
+      },
+      "pathL": "21.4.0",
+      "pathM": "22.6.0",
+      "decisionNote": "Coupled framework/build/lint group; see staged matrix."
+    },
+    {
+      "name": "@angular-eslint/eslint-plugin-template",
+      "current": "18.3.1",
+      "section": "devDependencies",
+      "latest": "22.6.0",
+      "released": "2026-10-11T13:02:31.529Z",
+      "engines": null,
+      "peers": {
+        "eslint": "^9.0.0 || ^10.0.0",
+        "typescript": "*",
+        "@typescript-eslint/types": "^8.0.0",
+        "@typescript-eslint/utils": "^8.0.0",
+        "@angular-eslint/template-parser": "22.6.0"
+      },
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "https://github.com/angular-eslint/angular-eslint.git",
+        "type": "git",
+        "directory": "packages/eslint-plugin-template"
+      },
+      "source": "https://registry.npmjs.org/%40angular-eslint%2Feslint-plugin-template",
+      "distTags": {
+        "next": "17.0.0-alpha.0",
+        "latest": "22.6.0"
+      },
+      "selectedVersions": {
+        "18.3.1": {
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0",
+            "typescript": "*",
+            "@typescript-eslint/utils": "^7.11.0 || ^8.0.0"
+          }
+        },
+        "18.4.3": {
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0",
+            "typescript": "*",
+            "@typescript-eslint/types": "^7.11.0 || ^8.0.0",
+            "@typescript-eslint/utils": "^7.11.0 || ^8.0.0"
+          }
+        },
+        "19.8.1": {
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0",
+            "typescript": "*",
+            "@typescript-eslint/types": "^7.11.0 || ^8.0.0",
+            "@typescript-eslint/utils": "^7.11.0 || ^8.0.0",
+            "@angular-eslint/template-parser": "19.8.1"
+          }
+        },
+        "20.7.0": {
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0",
+            "typescript": "*",
+            "@typescript-eslint/types": "^7.11.0 || ^8.0.0",
+            "@typescript-eslint/utils": "^7.11.0 || ^8.0.0",
+            "@angular-eslint/template-parser": "20.7.0"
+          }
+        },
+        "21.4.0": {
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
+            "typescript": "*",
+            "@typescript-eslint/types": "^7.11.0 || ^8.0.0",
+            "@typescript-eslint/utils": "^7.11.0 || ^8.0.0",
+            "@angular-eslint/template-parser": "21.4.0"
+          }
+        },
+        "22.6.0": {
+          "peerDependencies": {
+            "eslint": "^9.0.0 || ^10.0.0",
+            "typescript": "*",
+            "@typescript-eslint/types": "^8.0.0",
+            "@typescript-eslint/utils": "^8.0.0",
+            "@angular-eslint/template-parser": "22.6.0"
+          }
+        }
+      },
+      "pathL": "21.4.0",
+      "pathM": "22.6.0",
+      "decisionNote": "Coupled framework/build/lint group; see staged matrix."
+    },
+    {
+      "name": "@angular-eslint/schematics",
+      "current": "18.3.1",
+      "section": "devDependencies",
+      "latest": "22.6.0",
+      "released": "2026-10-11T13:02:37.893Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "https://github.com/angular-eslint/angular-eslint.git",
+        "type": "git",
+        "directory": "packages/schematics"
+      },
+      "source": "https://registry.npmjs.org/%40angular-eslint%2Fschematics",
+      "distTags": {
+        "next": "17.0.0-alpha.0",
+        "latest": "22.6.0"
+      },
+      "selectedVersions": {
+        "18.3.1": {
+          "peerDependencies": {
+            "@angular-devkit/core": ">= 18.0.0 < 19.0.0",
+            "@angular-devkit/schematics": ">= 18.0.0 < 19.0.0"
+          }
+        },
+        "18.4.3": {},
+        "19.8.1": {},
+        "20.7.0": {},
+        "21.4.0": {
+          "peerDependencies": {
+            "@angular/cli": ">= 21.0.0 < 22.0.0"
+          }
+        },
+        "22.6.0": {}
+      },
+      "pathL": "21.4.0",
+      "pathM": "22.6.0",
+      "decisionNote": "Coupled framework/build/lint group; see staged matrix."
+    },
+    {
+      "name": "@angular-eslint/template-parser",
+      "current": "18.3.1",
+      "section": "devDependencies",
+      "latest": "22.6.0",
+      "released": "2026-10-11T13:02:58.132Z",
+      "engines": null,
+      "peers": {
+        "eslint": "^9.0.0 || ^10.0.0",
+        "typescript": "*"
+      },
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "https://github.com/angular-eslint/angular-eslint.git",
+        "type": "git",
+        "directory": "packages/template-parser"
+      },
+      "source": "https://registry.npmjs.org/%40angular-eslint%2Ftemplate-parser",
+      "distTags": {
+        "next": "17.0.0-alpha.0",
+        "latest": "22.6.0"
+      },
+      "selectedVersions": {
+        "18.3.1": {
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0",
+            "typescript": "*"
+          }
+        },
+        "18.4.3": {
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0",
+            "typescript": "*"
+          }
+        },
+        "19.8.1": {
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0",
+            "typescript": "*"
+          }
+        },
+        "20.7.0": {
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0",
+            "typescript": "*"
+          }
+        },
+        "21.4.0": {
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
+            "typescript": "*"
+          }
+        },
+        "22.6.0": {
+          "peerDependencies": {
+            "eslint": "^9.0.0 || ^10.0.0",
+            "typescript": "*"
+          }
+        }
+      },
+      "pathL": "21.4.0",
+      "pathM": "22.6.0",
+      "decisionNote": "Coupled framework/build/lint group; see staged matrix."
+    },
+    {
+      "name": "@angular/animations",
+      "current": "18.2.4",
+      "section": "devDependencies",
+      "latest": "22.2.4",
+      "released": "2026-10-29T17:43:06.567Z",
+      "engines": {
+        "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+      },
+      "peers": {
+        "@angular/core": "22.2.4"
+      },
+      "deprecated": "@angular/animations is deprecated. Use `animate.enter` and `animate.leave` instead. For more information see: https://v22.angular.dev/guide/animations.",
+      "type": "module",
+      "repository": {
+        "url": "git+https://github.com/angular/angular.git",
+        "type": "git",
+        "directory": "packages/animations"
+      },
+      "source": "https://registry.npmjs.org/%40angular%2Fanimations",
+      "distTags": {
+        "next": "22.3.0-next.3",
+        "latest": "22.2.4"
+      },
+      "selectedVersions": {
+        "18.2.14": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "@angular/core": "18.2.14"
+          },
+          "type": "module"
+        },
+        "18.2.4": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "@angular/core": "18.2.4"
+          },
+          "type": "module"
+        },
+        "19.2.25": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "@angular/core": "19.2.25",
+            "@angular/common": "19.2.25"
+          },
+          "type": "module"
+        },
+        "20.3.34": {
+          "engines": {
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+          },
+          "peerDependencies": {
+            "@angular/core": "20.3.34"
+          },
+          "deprecated": "@angular/animations is deprecated. Use `animate.enter` and `animate.leave` instead. For more information see: https://v22.angular.dev/guide/animations.",
+          "type": "module"
+        },
+        "21.2.25": {
+          "engines": {
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+          },
+          "peerDependencies": {
+            "@angular/core": "21.2.25"
+          },
+          "deprecated": "@angular/animations is deprecated. Use `animate.enter` and `animate.leave` instead. For more information see: https://v22.angular.dev/guide/animations.",
+          "type": "module"
+        },
+        "22.2.4": {
+          "engines": {
+            "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+          },
+          "peerDependencies": {
+            "@angular/core": "22.2.4"
+          },
+          "deprecated": "@angular/animations is deprecated. Use `animate.enter` and `animate.leave` instead. For more information see: https://v22.angular.dev/guide/animations.",
+          "type": "module"
+        }
+      },
+      "pathL": "21.2.25",
+      "pathM": "22.2.4",
+      "decisionNote": "Coupled framework/build/lint group; see staged matrix."
+    },
+    {
+      "name": "@angular/cdk",
+      "current": "18.2.4",
+      "section": "devDependencies",
+      "latest": "22.2.5",
+      "released": "2026-10-28T17:39:34.366Z",
+      "engines": null,
+      "peers": {
+        "rxjs": "^6.5.3 || ^7.4.0",
+        "@angular/core": "^22.0.0 || ^23.0.0",
+        "@angular/forms": "^22.0.0 || ^23.0.0",
+        "@angular/common": "^22.0.0 || ^23.0.0",
+        "@angular/platform-browser": "^22.0.0 || ^23.0.0"
+      },
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "url": "git+https://github.com/angular/components.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/%40angular%2Fcdk",
+      "distTags": {
+        "next": "22.3.0-next.4",
+        "latest": "22.2.5"
+      },
+      "selectedVersions": {
+        "18.2.14": {
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "^18.0.0 || ^19.0.0",
+            "@angular/common": "^18.0.0 || ^19.0.0"
+          },
+          "type": "module"
+        },
+        "18.2.4": {
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "^18.0.0 || ^19.0.0",
+            "@angular/common": "^18.0.0 || ^19.0.0"
+          },
+          "type": "module"
+        },
+        "19.2.19": {
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "^19.0.0 || ^20.0.0",
+            "@angular/common": "^19.0.0 || ^20.0.0"
+          },
+          "type": "module"
+        },
+        "20.2.14": {
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "^20.0.0 || ^21.0.0",
+            "@angular/common": "^20.0.0 || ^21.0.0"
+          },
+          "type": "module"
+        },
+        "21.2.14": {
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "^21.0.0 || ^22.0.0",
+            "@angular/common": "^21.0.0 || ^22.0.0",
+            "@angular/platform-browser": "^21.0.0 || ^22.0.0"
+          },
+          "type": "module"
+        },
+        "22.2.5": {
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "^22.0.0 || ^23.0.0",
+            "@angular/forms": "^22.0.0 || ^23.0.0",
+            "@angular/common": "^22.0.0 || ^23.0.0",
+            "@angular/platform-browser": "^22.0.0 || ^23.0.0"
+          },
+          "type": "module"
+        }
+      },
+      "pathL": "21.2.14",
+      "pathM": "22.2.5",
+      "decisionNote": "Coupled framework/build/lint group; see staged matrix."
+    },
+    {
+      "name": "@angular/cli",
+      "current": "18.2.4",
+      "section": "devDependencies",
+      "latest": "22.2.5",
+      "released": "2026-10-28T10:01:39.241Z",
+      "engines": {
+        "npm": "^6.11.0 || ^7.5.6 || >=8.0.0",
+        "node": "^22.22.3 || ^24.15.0 || >=26.0.0",
+        "yarn": ">= 1.13.0"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "git+https://github.com/angular/angular-cli.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/%40angular%2Fcli",
+      "distTags": {
+        "next": "22.3.0-next.4",
+        "latest": "22.2.5"
+      },
+      "selectedVersions": {
+        "18.2.21": {
+          "engines": {
+            "npm": "^6.11.0 || ^7.5.6 || >=8.0.0",
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0",
+            "yarn": ">= 1.13.0"
+          }
+        },
+        "18.2.4": {
+          "engines": {
+            "npm": "^6.11.0 || ^7.5.6 || >=8.0.0",
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0",
+            "yarn": ">= 1.13.0"
+          }
+        },
+        "19.2.27": {
+          "engines": {
+            "npm": "^6.11.0 || ^7.5.6 || >=8.0.0",
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0",
+            "yarn": ">= 1.13.0"
+          }
+        },
+        "20.3.42": {
+          "engines": {
+            "npm": "^6.11.0 || ^7.5.6 || >=8.0.0",
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
+            "yarn": ">= 1.13.0"
+          }
+        },
+        "21.2.29": {
+          "engines": {
+            "npm": "^6.11.0 || ^7.5.6 || >=8.0.0",
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
+            "yarn": ">= 1.13.0"
+          }
+        },
+        "22.2.5": {
+          "engines": {
+            "npm": "^6.11.0 || ^7.5.6 || >=8.0.0",
+            "node": "^22.22.3 || ^24.15.0 || >=26.0.0",
+            "yarn": ">= 1.13.0"
+          }
+        }
+      },
+      "pathL": "21.2.29",
+      "pathM": "22.2.5",
+      "decisionNote": "Coupled framework/build/lint group; see staged matrix."
+    },
+    {
+      "name": "@angular/common",
+      "current": "18.2.4",
+      "section": "devDependencies",
+      "latest": "22.2.4",
+      "released": "2026-10-29T17:45:43.931Z",
+      "engines": {
+        "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+      },
+      "peers": {
+        "rxjs": "^6.5.3 || ^7.4.0",
+        "@angular/core": "22.2.4"
+      },
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "url": "git+https://github.com/angular/angular.git",
+        "type": "git",
+        "directory": "packages/common"
+      },
+      "source": "https://registry.npmjs.org/%40angular%2Fcommon",
+      "distTags": {
+        "next": "22.3.0-next.3",
+        "latest": "22.2.4"
+      },
+      "selectedVersions": {
+        "18.2.14": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "18.2.14"
+          },
+          "type": "module"
+        },
+        "18.2.4": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "18.2.4"
+          },
+          "type": "module"
+        },
+        "19.2.25": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "19.2.25"
+          },
+          "type": "module"
+        },
+        "20.3.34": {
+          "engines": {
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "20.3.34"
+          },
+          "type": "module"
+        },
+        "21.2.25": {
+          "engines": {
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "21.2.25"
+          },
+          "type": "module"
+        },
+        "22.2.4": {
+          "engines": {
+            "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "22.2.4"
+          },
+          "type": "module"
+        }
+      },
+      "pathL": "21.2.25",
+      "pathM": "22.2.4",
+      "decisionNote": "Coupled framework/build/lint group; see staged matrix."
+    },
+    {
+      "name": "@angular/compiler",
+      "current": "18.2.4",
+      "section": "devDependencies",
+      "latest": "22.2.4",
+      "released": "2026-10-29T17:45:48.868Z",
+      "engines": {
+        "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "url": "git+https://github.com/angular/angular.git",
+        "type": "git",
+        "directory": "packages/compiler"
+      },
+      "source": "https://registry.npmjs.org/%40angular%2Fcompiler",
+      "distTags": {
+        "next": "22.3.0-next.3",
+        "latest": "22.2.4"
+      },
+      "selectedVersions": {
+        "18.2.14": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "@angular/core": "18.2.14"
+          },
+          "type": "module"
+        },
+        "18.2.4": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "@angular/core": "18.2.4"
+          },
+          "type": "module"
+        },
+        "19.2.25": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "type": "module"
+        },
+        "20.3.34": {
+          "engines": {
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+          },
+          "type": "module"
+        },
+        "21.2.25": {
+          "engines": {
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+          },
+          "type": "module"
+        },
+        "22.2.4": {
+          "engines": {
+            "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+          },
+          "type": "module"
+        }
+      },
+      "pathL": "21.2.25",
+      "pathM": "22.2.4",
+      "decisionNote": "Coupled framework/build/lint group; see staged matrix."
+    },
+    {
+      "name": "@angular/compiler-cli",
+      "current": "18.2.4",
+      "section": "devDependencies",
+      "latest": "22.2.4",
+      "released": "2026-10-29T17:44:23.727Z",
+      "engines": {
+        "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+      },
+      "peers": {
+        "typescript": ">=6.0 <6.1",
+        "@angular/compiler": "22.2.4"
+      },
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "url": "git+https://github.com/angular/angular.git",
+        "type": "git",
+        "directory": "packages/compiler-cli"
+      },
+      "source": "https://registry.npmjs.org/%40angular%2Fcompiler-cli",
+      "distTags": {
+        "next": "22.3.0-next.3",
+        "latest": "22.2.4"
+      },
+      "selectedVersions": {
+        "18.2.14": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "typescript": ">=5.4 <5.6",
+            "@angular/compiler": "18.2.14"
+          },
+          "type": "module"
+        },
+        "18.2.4": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "typescript": ">=5.4 <5.6",
+            "@angular/compiler": "18.2.4"
+          },
+          "type": "module"
+        },
+        "19.2.25": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "typescript": ">=5.5 <5.9",
+            "@angular/compiler": "19.2.25"
+          },
+          "type": "module"
+        },
+        "20.3.34": {
+          "engines": {
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+          },
+          "peerDependencies": {
+            "typescript": ">=5.8 <6.0",
+            "@angular/compiler": "20.3.34"
+          },
+          "type": "module"
+        },
+        "21.2.25": {
+          "engines": {
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+          },
+          "peerDependencies": {
+            "typescript": ">=5.9 <6.1",
+            "@angular/compiler": "21.2.25"
+          },
+          "type": "module"
+        },
+        "22.2.4": {
+          "engines": {
+            "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+          },
+          "peerDependencies": {
+            "typescript": ">=6.0 <6.1",
+            "@angular/compiler": "22.2.4"
+          },
+          "type": "module"
+        }
+      },
+      "pathL": "21.2.25",
+      "pathM": "22.2.4",
+      "decisionNote": "Coupled framework/build/lint group; see staged matrix."
+    },
+    {
+      "name": "@angular/core",
+      "current": "18.2.4",
+      "section": "devDependencies",
+      "latest": "22.2.4",
+      "released": "2026-10-29T17:44:29.279Z",
+      "engines": {
+        "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+      },
+      "peers": {
+        "rxjs": "^6.5.3 || ^7.4.0",
+        "zone.js": "~0.15.0 || ~0.16.0",
+        "@angular/compiler": "22.2.4"
+      },
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "url": "git+https://github.com/angular/angular.git",
+        "type": "git",
+        "directory": "packages/core"
+      },
+      "source": "https://registry.npmjs.org/%40angular%2Fcore",
+      "distTags": {
+        "next": "22.3.0-next.3",
+        "latest": "22.2.4"
+      },
+      "selectedVersions": {
+        "18.2.14": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "zone.js": "~0.14.10"
+          },
+          "type": "module"
+        },
+        "18.2.4": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "zone.js": "~0.14.10"
+          },
+          "type": "module"
+        },
+        "19.2.25": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "zone.js": "~0.15.0"
+          },
+          "type": "module"
+        },
+        "20.3.34": {
+          "engines": {
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "zone.js": "~0.15.0",
+            "@angular/compiler": "20.3.34"
+          },
+          "type": "module"
+        },
+        "21.2.25": {
+          "engines": {
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "zone.js": "~0.15.0 || ~0.16.0",
+            "@angular/compiler": "21.2.25"
+          },
+          "type": "module"
+        },
+        "22.2.4": {
+          "engines": {
+            "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "zone.js": "~0.15.0 || ~0.16.0",
+            "@angular/compiler": "22.2.4"
+          },
+          "type": "module"
+        }
+      },
+      "pathL": "21.2.25",
+      "pathM": "22.2.4",
+      "decisionNote": "Coupled framework/build/lint group; see staged matrix."
+    },
+    {
+      "name": "@angular/forms",
+      "current": "18.2.4",
+      "section": "devDependencies",
+      "latest": "22.2.4",
+      "released": "2026-10-29T17:42:55.743Z",
+      "engines": {
+        "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+      },
+      "peers": {
+        "rxjs": "^6.5.3 || ^7.4.0",
+        "@angular/core": "22.2.4",
+        "@angular/common": "22.2.4",
+        "@angular/platform-browser": "22.2.4"
+      },
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "url": "git+https://github.com/angular/angular.git",
+        "type": "git",
+        "directory": "packages/forms"
+      },
+      "source": "https://registry.npmjs.org/%40angular%2Fforms",
+      "distTags": {
+        "next": "22.3.0-next.3",
+        "latest": "22.2.4"
+      },
+      "selectedVersions": {
+        "18.2.14": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "18.2.14",
+            "@angular/common": "18.2.14",
+            "@angular/platform-browser": "18.2.14"
+          },
+          "type": "module"
+        },
+        "18.2.4": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "18.2.4",
+            "@angular/common": "18.2.4",
+            "@angular/platform-browser": "18.2.4"
+          },
+          "type": "module"
+        },
+        "19.2.25": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "19.2.25",
+            "@angular/common": "19.2.25",
+            "@angular/platform-browser": "19.2.25"
+          },
+          "type": "module"
+        },
+        "20.3.34": {
+          "engines": {
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "20.3.34",
+            "@angular/common": "20.3.34",
+            "@angular/platform-browser": "20.3.34"
+          },
+          "type": "module"
+        },
+        "21.2.25": {
+          "engines": {
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "21.2.25",
+            "@angular/common": "21.2.25",
+            "@angular/platform-browser": "21.2.25"
+          },
+          "type": "module"
+        },
+        "22.2.4": {
+          "engines": {
+            "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "22.2.4",
+            "@angular/common": "22.2.4",
+            "@angular/platform-browser": "22.2.4"
+          },
+          "type": "module"
+        }
+      },
+      "pathL": "21.2.25",
+      "pathM": "22.2.4",
+      "decisionNote": "Coupled framework/build/lint group; see staged matrix."
+    },
+    {
+      "name": "@angular/language-service",
+      "current": "18.2.4",
+      "section": "devDependencies",
+      "latest": "22.2.4",
+      "released": "2026-10-29T17:46:14.137Z",
+      "engines": {
+        "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "git+https://github.com/angular/angular.git",
+        "type": "git",
+        "directory": "packages/language-service"
+      },
+      "source": "https://registry.npmjs.org/%40angular%2Flanguage-service",
+      "distTags": {
+        "next": "22.3.0-next.3",
+        "latest": "22.2.4"
+      },
+      "selectedVersions": {
+        "18.2.14": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          }
+        },
+        "18.2.4": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          }
+        },
+        "19.2.25": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          }
+        },
+        "20.3.34": {
+          "engines": {
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+          }
+        },
+        "21.2.25": {
+          "engines": {
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+          }
+        },
+        "22.2.4": {
+          "engines": {
+            "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+          }
+        }
+      },
+      "pathL": "21.2.25",
+      "pathM": "22.2.4",
+      "decisionNote": "Coupled framework/build/lint group; see staged matrix."
+    },
+    {
+      "name": "@angular/material",
+      "current": "18.2.4",
+      "section": "devDependencies",
+      "latest": "22.2.5",
+      "released": "2026-10-28T17:41:03.479Z",
+      "engines": null,
+      "peers": {
+        "rxjs": "^6.5.3 || ^7.4.0",
+        "@angular/cdk": "22.2.5",
+        "@angular/core": "^22.0.0 || ^23.0.0",
+        "@angular/forms": "^22.0.0 || ^23.0.0",
+        "@angular/common": "^22.0.0 || ^23.0.0",
+        "@angular/platform-browser": "^22.0.0 || ^23.0.0"
+      },
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "url": "git+https://github.com/angular/components.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/%40angular%2Fmaterial",
+      "distTags": {
+        "next": "22.3.0-next.4",
+        "latest": "22.2.5"
+      },
+      "selectedVersions": {
+        "18.2.14": {
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/cdk": "18.2.14",
+            "@angular/core": "^18.0.0 || ^19.0.0",
+            "@angular/forms": "^18.0.0 || ^19.0.0",
+            "@angular/common": "^18.0.0 || ^19.0.0",
+            "@angular/animations": "^18.0.0 || ^19.0.0",
+            "@angular/platform-browser": "^18.0.0 || ^19.0.0"
+          },
+          "type": "module"
+        },
+        "18.2.4": {
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/cdk": "18.2.4",
+            "@angular/core": "^18.0.0 || ^19.0.0",
+            "@angular/forms": "^18.0.0 || ^19.0.0",
+            "@angular/common": "^18.0.0 || ^19.0.0",
+            "@angular/animations": "^18.0.0 || ^19.0.0",
+            "@angular/platform-browser": "^18.0.0 || ^19.0.0"
+          },
+          "type": "module"
+        },
+        "19.2.19": {
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/cdk": "19.2.19",
+            "@angular/core": "^19.0.0 || ^20.0.0",
+            "@angular/forms": "^19.0.0 || ^20.0.0",
+            "@angular/common": "^19.0.0 || ^20.0.0",
+            "@angular/platform-browser": "^19.0.0 || ^20.0.0"
+          },
+          "type": "module"
+        },
+        "20.2.14": {
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/cdk": "20.2.14",
+            "@angular/core": "^20.0.0 || ^21.0.0",
+            "@angular/forms": "^20.0.0 || ^21.0.0",
+            "@angular/common": "^20.0.0 || ^21.0.0",
+            "@angular/platform-browser": "^20.0.0 || ^21.0.0"
+          },
+          "type": "module"
+        },
+        "21.2.14": {
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/cdk": "21.2.14",
+            "@angular/core": "^21.0.0 || ^22.0.0",
+            "@angular/forms": "^21.0.0 || ^22.0.0",
+            "@angular/common": "^21.0.0 || ^22.0.0",
+            "@angular/platform-browser": "^21.0.0 || ^22.0.0"
+          },
+          "type": "module"
+        },
+        "22.2.5": {
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/cdk": "22.2.5",
+            "@angular/core": "^22.0.0 || ^23.0.0",
+            "@angular/forms": "^22.0.0 || ^23.0.0",
+            "@angular/common": "^22.0.0 || ^23.0.0",
+            "@angular/platform-browser": "^22.0.0 || ^23.0.0"
+          },
+          "type": "module"
+        }
+      },
+      "pathL": "21.2.14",
+      "pathM": "22.2.5",
+      "decisionNote": "Coupled framework/build/lint group; see staged matrix."
+    },
+    {
+      "name": "@angular/platform-browser",
+      "current": "18.2.4",
+      "section": "devDependencies",
+      "latest": "22.2.4",
+      "released": "2026-10-29T17:44:53.144Z",
+      "engines": {
+        "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+      },
+      "peers": {
+        "@angular/core": "22.2.4",
+        "@angular/common": "22.2.4",
+        "@angular/animations": "22.2.4"
+      },
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "url": "git+https://github.com/angular/angular.git",
+        "type": "git",
+        "directory": "packages/platform-browser"
+      },
+      "source": "https://registry.npmjs.org/%40angular%2Fplatform-browser",
+      "distTags": {
+        "next": "22.3.0-next.3",
+        "latest": "22.2.4"
+      },
+      "selectedVersions": {
+        "18.2.14": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "@angular/core": "18.2.14",
+            "@angular/common": "18.2.14",
+            "@angular/animations": "18.2.14"
+          },
+          "type": "module"
+        },
+        "18.2.4": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "@angular/core": "18.2.4",
+            "@angular/common": "18.2.4",
+            "@angular/animations": "18.2.4"
+          },
+          "type": "module"
+        },
+        "19.2.25": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "@angular/core": "19.2.25",
+            "@angular/common": "19.2.25",
+            "@angular/animations": "19.2.25"
+          },
+          "type": "module"
+        },
+        "20.3.34": {
+          "engines": {
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+          },
+          "peerDependencies": {
+            "@angular/core": "20.3.34",
+            "@angular/common": "20.3.34",
+            "@angular/animations": "20.3.34"
+          },
+          "type": "module"
+        },
+        "21.2.25": {
+          "engines": {
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+          },
+          "peerDependencies": {
+            "@angular/core": "21.2.25",
+            "@angular/common": "21.2.25",
+            "@angular/animations": "21.2.25"
+          },
+          "type": "module"
+        },
+        "22.2.4": {
+          "engines": {
+            "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+          },
+          "peerDependencies": {
+            "@angular/core": "22.2.4",
+            "@angular/common": "22.2.4",
+            "@angular/animations": "22.2.4"
+          },
+          "type": "module"
+        }
+      },
+      "pathL": "21.2.25",
+      "pathM": "22.2.4",
+      "decisionNote": "Coupled framework/build/lint group; see staged matrix."
+    },
+    {
+      "name": "@angular/platform-browser-dynamic",
+      "current": "18.2.4",
+      "section": "devDependencies",
+      "latest": "22.2.4",
+      "released": "2026-10-29T17:43:14.584Z",
+      "engines": {
+        "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+      },
+      "peers": {
+        "@angular/core": "22.2.4",
+        "@angular/common": "22.2.4",
+        "@angular/compiler": "22.2.4",
+        "@angular/platform-browser": "22.2.4"
+      },
+      "deprecated": "@angular/platform-browser-dynamic is deprecated. Use `@angular/platform-browser` instead.",
+      "type": "module",
+      "repository": {
+        "url": "git+https://github.com/angular/angular.git",
+        "type": "git",
+        "directory": "packages/platform-browser-dynamic"
+      },
+      "source": "https://registry.npmjs.org/%40angular%2Fplatform-browser-dynamic",
+      "distTags": {
+        "next": "22.3.0-next.3",
+        "latest": "22.2.4"
+      },
+      "selectedVersions": {
+        "18.2.14": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "@angular/core": "18.2.14",
+            "@angular/common": "18.2.14",
+            "@angular/compiler": "18.2.14",
+            "@angular/platform-browser": "18.2.14"
+          },
+          "type": "module"
+        },
+        "18.2.4": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "@angular/core": "18.2.4",
+            "@angular/common": "18.2.4",
+            "@angular/compiler": "18.2.4",
+            "@angular/platform-browser": "18.2.4"
+          },
+          "type": "module"
+        },
+        "19.2.25": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "@angular/core": "19.2.25",
+            "@angular/common": "19.2.25",
+            "@angular/compiler": "19.2.25",
+            "@angular/platform-browser": "19.2.25"
+          },
+          "type": "module"
+        },
+        "20.3.34": {
+          "engines": {
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+          },
+          "peerDependencies": {
+            "@angular/core": "20.3.34",
+            "@angular/common": "20.3.34",
+            "@angular/compiler": "20.3.34",
+            "@angular/platform-browser": "20.3.34"
+          },
+          "deprecated": "@angular/platform-browser-dynamic is deprecated. Use `@angular/platform-browser` instead.",
+          "type": "module"
+        },
+        "21.2.25": {
+          "engines": {
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+          },
+          "peerDependencies": {
+            "@angular/core": "21.2.25",
+            "@angular/common": "21.2.25",
+            "@angular/compiler": "21.2.25",
+            "@angular/platform-browser": "21.2.25"
+          },
+          "deprecated": "@angular/platform-browser-dynamic is deprecated. Use `@angular/platform-browser` instead.",
+          "type": "module"
+        },
+        "22.2.4": {
+          "engines": {
+            "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+          },
+          "peerDependencies": {
+            "@angular/core": "22.2.4",
+            "@angular/common": "22.2.4",
+            "@angular/compiler": "22.2.4",
+            "@angular/platform-browser": "22.2.4"
+          },
+          "deprecated": "@angular/platform-browser-dynamic is deprecated. Use `@angular/platform-browser` instead.",
+          "type": "module"
+        }
+      },
+      "pathL": "21.2.25",
+      "pathM": "22.2.4",
+      "decisionNote": "Coupled framework/build/lint group; see staged matrix."
+    },
+    {
+      "name": "@angular/router",
+      "current": "18.2.4",
+      "section": "devDependencies",
+      "latest": "22.2.4",
+      "released": "2026-10-29T17:45:04.705Z",
+      "engines": {
+        "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+      },
+      "peers": {
+        "rxjs": "^6.5.3 || ^7.4.0",
+        "@angular/core": "22.2.4",
+        "@angular/common": "22.2.4",
+        "@angular/platform-browser": "22.2.4"
+      },
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "url": "git+https://github.com/angular/angular.git",
+        "type": "git",
+        "directory": "packages/router"
+      },
+      "source": "https://registry.npmjs.org/%40angular%2Frouter",
+      "distTags": {
+        "next": "22.3.0-next.3",
+        "latest": "22.2.4"
+      },
+      "selectedVersions": {
+        "18.2.14": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "18.2.14",
+            "@angular/common": "18.2.14",
+            "@angular/platform-browser": "18.2.14"
+          },
+          "type": "module"
+        },
+        "18.2.4": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "18.2.4",
+            "@angular/common": "18.2.4",
+            "@angular/platform-browser": "18.2.4"
+          },
+          "type": "module"
+        },
+        "19.2.25": {
+          "engines": {
+            "node": "^18.19.1 || ^20.11.1 || >=22.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "19.2.25",
+            "@angular/common": "19.2.25",
+            "@angular/platform-browser": "19.2.25"
+          },
+          "type": "module"
+        },
+        "20.3.34": {
+          "engines": {
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "20.3.34",
+            "@angular/common": "20.3.34",
+            "@angular/platform-browser": "20.3.34"
+          },
+          "type": "module"
+        },
+        "21.2.25": {
+          "engines": {
+            "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "21.2.25",
+            "@angular/common": "21.2.25",
+            "@angular/platform-browser": "21.2.25"
+          },
+          "type": "module"
+        },
+        "22.2.4": {
+          "engines": {
+            "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+          },
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": "22.2.4",
+            "@angular/common": "22.2.4",
+            "@angular/platform-browser": "22.2.4"
+          },
+          "type": "module"
+        }
+      },
+      "pathL": "21.2.25",
+      "pathM": "22.2.4",
+      "decisionNote": "Coupled framework/build/lint group; see staged matrix."
+    },
+    {
+      "name": "@electron/notarize",
+      "current": "2.4.0",
+      "section": "devDependencies",
+      "latest": "3.1.2",
+      "released": "2026-10-09T05:04:57.818Z",
+      "engines": {
+        "node": ">= 22.12.0"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "url": "git+https://github.com/electron/notarize.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/%40electron%2Fnotarize",
+      "distTags": {
+        "latest": "3.1.2"
+      },
+      "selectedVersions": {
+        "2.4.0": {
+          "engines": {
+            "node": ">= 10.0.0"
+          }
+        },
+        "3.1.2": {
+          "engines": {
+            "node": ">= 22.12.0"
+          },
+          "type": "module"
+        }
+      },
+      "pathL": "3.1.2",
+      "pathM": "3.1.2",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "@ngx-translate/core",
+      "current": "14.0.0",
+      "section": "devDependencies",
+      "latest": "18.1.0",
+      "released": "2026-10-27T15:19:01.169Z",
+      "engines": null,
+      "peers": {
+        "rxjs": ">=7",
+        "@angular/core": ">=18",
+        "@angular/common": ">=18"
+      },
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "url": "git+https://github.com/ngx-translate/core.git"
+      },
+      "source": "https://registry.npmjs.org/%40ngx-translate%2Fcore",
+      "distTags": {
+        "latest": "18.1.0",
+        "next": "18.1.0-rc.4"
+      },
+      "selectedVersions": {
+        "14.0.0": {
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/core": ">=13.0.0"
+          }
+        },
+        "18.1.0": {
+          "peerDependencies": {
+            "rxjs": ">=7",
+            "@angular/core": ">=18",
+            "@angular/common": ">=18"
+          },
+          "type": "module"
+        }
+      },
+      "pathL": "18.1.0",
+      "pathM": "18.1.0",
+      "decisionNote": "Update together; loader/provider API and text/fallback timing checks."
+    },
+    {
+      "name": "@ngx-translate/http-loader",
+      "current": "7.0.0",
+      "section": "devDependencies",
+      "latest": "18.1.0",
+      "released": "2026-10-27T15:19:04.198Z",
+      "engines": null,
+      "peers": {
+        "@angular/core": ">=18",
+        "@angular/common": ">=18",
+        "@ngx-translate/core": ">=18.1.0"
+      },
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "url": "git+https://github.com/ngx-translate/core.git"
+      },
+      "source": "https://registry.npmjs.org/%40ngx-translate%2Fhttp-loader",
+      "distTags": {
+        "latest": "18.1.0",
+        "next": "18.1.0-rc.4"
+      },
+      "selectedVersions": {
+        "18.1.0": {
+          "peerDependencies": {
+            "@angular/core": ">=18",
+            "@angular/common": ">=18",
+            "@ngx-translate/core": ">=18.1.0"
+          },
+          "type": "module"
+        },
+        "7.0.0": {
+          "peerDependencies": {
+            "rxjs": "^6.5.3 || ^7.4.0",
+            "@angular/common": ">=13.0.0",
+            "@ngx-translate/core": ">=14.0.0"
+          }
+        }
+      },
+      "pathL": "18.1.0",
+      "pathM": "18.1.0",
+      "decisionNote": "Update together; loader/provider API and text/fallback timing checks."
+    },
+    {
+      "name": "@stylistic/eslint-plugin",
+      "current": "2.8.0",
+      "section": "devDependencies",
+      "latest": "5.10.0",
+      "released": "2026-03-06T04:00:09.407Z",
+      "engines": {
+        "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+      },
+      "peers": {
+        "eslint": "^9.0.0 || ^10.0.0"
+      },
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "url": "git+https://github.com/eslint-stylistic/eslint-stylistic.git",
+        "type": "git",
+        "directory": "packages/eslint-plugin"
+      },
+      "source": "https://registry.npmjs.org/%40stylistic%2Feslint-plugin",
+      "distTags": {
+        "latest": "5.10.0",
+        "beta": "6.0.0-beta.6"
+      },
+      "selectedVersions": {
+        "2.8.0": {
+          "engines": {
+            "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+          },
+          "peerDependencies": {
+            "eslint": ">=8.40.0"
+          },
+          "type": "commonjs"
+        },
+        "5.10.0": {
+          "engines": {
+            "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+          },
+          "peerDependencies": {
+            "eslint": "^9.0.0 || ^10.0.0"
+          },
+          "type": "module"
+        }
+      },
+      "pathL": "5.10.0",
+      "pathM": "5.10.0",
+      "decisionNote": "Migrate both lint configs; preserve rules. Plugin peers admit ESLint 10 here."
+    },
+    {
+      "name": "@turf/turf",
+      "current": "6.5.0",
+      "section": "devDependencies",
+      "latest": "7.4.0",
+      "released": "2026-08-03T15:36:58.910Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "url": "git://github.com/Turfjs/turf.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/%40turf%2Fturf",
+      "distTags": {
+        "latest": "7.4.0"
+      },
+      "selectedVersions": {
+        "6.5.0": {},
+        "7.4.0": {
+          "type": "module"
+        }
+      },
+      "pathL": "7.4.0",
+      "pathM": "7.4.0",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "@types/async",
+      "current": "3.2.24",
+      "section": "devDependencies",
+      "latest": "3.2.26",
+      "released": "2026-09-09T17:36:47.147Z",
+      "engines": null,
+      "peers": {},
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "type": "git",
+        "directory": "types/async"
+      },
+      "source": "https://registry.npmjs.org/%40types%2Fasync",
+      "distTags": {
+        "latest": "3.2.26"
+      },
+      "selectedVersions": {
+        "3.2.24": {},
+        "3.2.26": {
+          "peerDependencies": {}
+        }
+      },
+      "pathL": "3.2.26",
+      "pathM": "3.2.26",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "@types/delete-empty",
+      "current": "3.0.2",
+      "section": "devDependencies",
+      "latest": "3.0.5",
+      "released": "2024-11-18T02:09:20.852Z",
+      "engines": null,
+      "peers": {},
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "type": "git",
+        "directory": "types/delete-empty"
+      },
+      "source": "https://registry.npmjs.org/%40types%2Fdelete-empty",
+      "distTags": {
+        "latest": "3.0.5"
+      },
+      "selectedVersions": {
+        "3.0.2": {},
+        "3.0.5": {
+          "peerDependencies": {}
+        }
+      },
+      "pathL": "3.0.5",
+      "pathM": "3.0.5",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "@types/fs-extra",
+      "current": "9.0.13",
+      "section": "devDependencies",
+      "latest": "11.0.4",
+      "released": "2023-11-07T20:15:59.748Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "type": "git",
+        "directory": "types/fs-extra"
+      },
+      "source": "https://registry.npmjs.org/%40types%2Ffs-extra",
+      "distTags": {
+        "latest": "11.0.4"
+      },
+      "selectedVersions": {
+        "11.0.4": {},
+        "9.0.13": {}
+      },
+      "pathL": "11.0.4",
+      "pathM": "11.0.4",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "@types/is-natural-number",
+      "current": "4.0.1",
+      "section": "devDependencies",
+      "latest": "4.0.4",
+      "released": "2023-11-07T08:04:55.801Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "type": "git",
+        "directory": "types/is-natural-number"
+      },
+      "source": "https://registry.npmjs.org/%40types%2Fis-natural-number",
+      "distTags": {
+        "latest": "4.0.4"
+      },
+      "selectedVersions": {
+        "4.0.1": {},
+        "4.0.4": {}
+      },
+      "pathL": "4.0.4",
+      "pathM": "4.0.4",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "@types/is-number",
+      "current": "7.0.3",
+      "section": "devDependencies",
+      "latest": "7.0.5",
+      "released": "2023-11-07T08:05:14.807Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "type": "git",
+        "directory": "types/is-number"
+      },
+      "source": "https://registry.npmjs.org/%40types%2Fis-number",
+      "distTags": {
+        "latest": "7.0.5"
+      },
+      "selectedVersions": {
+        "7.0.3": {},
+        "7.0.5": {}
+      },
+      "pathL": "7.0.5",
+      "pathM": "7.0.5",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "@types/jasmine",
+      "current": "5.1.4",
+      "section": "devDependencies",
+      "latest": "7.0.0",
+      "released": "2026-09-29T08:08:49.725Z",
+      "engines": null,
+      "peers": {},
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "type": "git",
+        "directory": "types/jasmine"
+      },
+      "source": "https://registry.npmjs.org/%40types%2Fjasmine",
+      "distTags": {
+        "latest": "7.0.0"
+      },
+      "selectedVersions": {
+        "5.1.4": {},
+        "7.0.0": {
+          "peerDependencies": {}
+        }
+      },
+      "pathL": "7.0.0",
+      "pathM": "7.0.0",
+      "decisionNote": "Test runner group; verify assertions/adapters before selecting final maximum."
+    },
+    {
+      "name": "@types/leaflet",
+      "current": "1.9.0",
+      "section": "devDependencies",
+      "latest": "1.9.22",
+      "released": "2026-08-01T03:44:18.071Z",
+      "engines": null,
+      "peers": {},
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "type": "git",
+        "directory": "types/leaflet"
+      },
+      "source": "https://registry.npmjs.org/%40types%2Fleaflet",
+      "distTags": {
+        "latest": "1.9.22"
+      },
+      "selectedVersions": {
+        "1.9.0": {},
+        "1.9.22": {
+          "peerDependencies": {}
+        }
+      },
+      "pathL": "1.9.22",
+      "pathM": "1.9.22",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "@types/leaflet.markercluster",
+      "current": "1.5.1",
+      "section": "devDependencies",
+      "latest": "1.5.6",
+      "released": "2025-09-03T08:06:27.573Z",
+      "engines": null,
+      "peers": {},
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "type": "git",
+        "directory": "types/leaflet.markercluster"
+      },
+      "source": "https://registry.npmjs.org/%40types%2Fleaflet.markercluster",
+      "distTags": {
+        "latest": "1.5.6"
+      },
+      "selectedVersions": {
+        "1.5.1": {},
+        "1.5.6": {
+          "peerDependencies": {}
+        }
+      },
+      "pathL": "1.5.6",
+      "pathM": "1.5.6",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "@types/lodash",
+      "current": "4.14.191",
+      "section": "devDependencies",
+      "latest": "4.17.27",
+      "released": "2026-10-21T15:41:18.542Z",
+      "engines": null,
+      "peers": {},
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "type": "git",
+        "directory": "types/lodash"
+      },
+      "source": "https://registry.npmjs.org/%40types%2Flodash",
+      "distTags": {
+        "latest": "4.17.27"
+      },
+      "selectedVersions": {
+        "4.14.191": {},
+        "4.17.27": {
+          "peerDependencies": {}
+        }
+      },
+      "pathL": "4.17.27",
+      "pathM": "4.17.27",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "@types/mixpanel-browser",
+      "current": "2.38.0",
+      "section": "devDependencies",
+      "latest": "2.66.0",
+      "released": "2025-07-18T21:35:20.579Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": "This is a stub types definition. mixpanel-browser provides its own type definitions, so you do not need this installed.",
+      "type": null,
+      "repository": null,
+      "source": "https://registry.npmjs.org/%40types%2Fmixpanel-browser",
+      "distTags": {
+        "latest": "2.66.0"
+      },
+      "selectedVersions": {
+        "2.38.0": {},
+        "2.66.0": {
+          "deprecated": "This is a stub types definition. mixpanel-browser provides its own type definitions, so you do not need this installed."
+        }
+      },
+      "pathL": "Remove after verification",
+      "pathM": "Remove after verification",
+      "decisionNote": "Latest package is a stub; updated library supplies types."
+    },
+    {
+      "name": "@types/moment-duration-format",
+      "current": "2.2.3",
+      "section": "devDependencies",
+      "latest": "2.2.7",
+      "released": "2025-10-24T04:22:16.037Z",
+      "engines": null,
+      "peers": {},
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "type": "git",
+        "directory": "types/moment-duration-format"
+      },
+      "source": "https://registry.npmjs.org/%40types%2Fmoment-duration-format",
+      "distTags": {
+        "latest": "2.2.7"
+      },
+      "selectedVersions": {
+        "2.2.3": {},
+        "2.2.7": {
+          "peerDependencies": {}
+        }
+      },
+      "pathL": "2.2.7",
+      "pathM": "2.2.7",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "@types/node",
+      "current": "22.5.5",
+      "section": "devDependencies",
+      "latest": "26.6.6",
+      "released": "2026-10-28T18:36:36.455Z",
+      "engines": null,
+      "peers": {},
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "type": "git",
+        "directory": "types/node"
+      },
+      "source": "https://registry.npmjs.org/%40types%2Fnode",
+      "distTags": {
+        "latest": "26.6.6"
+      },
+      "selectedVersions": {
+        "22.5.5": {},
+        "24.19.2": {
+          "peerDependencies": {}
+        },
+        "26.6.6": {
+          "peerDependencies": {}
+        }
+      },
+      "pathL": "24.19.2",
+      "pathM": "24.19.2",
+      "decisionNote": "Match target Electron Node 24 APIs; 26.6.6 is not the app-runtime target."
+    },
+    {
+      "name": "@types/promise.allsettled",
+      "current": "1.0.3",
+      "section": "devDependencies",
+      "latest": "1.0.6",
+      "released": "2023-11-07T13:29:12.096Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "type": "git",
+        "directory": "types/promise.allsettled"
+      },
+      "source": "https://registry.npmjs.org/%40types%2Fpromise.allsettled",
+      "distTags": {
+        "latest": "1.0.6"
+      },
+      "selectedVersions": {
+        "1.0.3": {},
+        "1.0.6": {}
+      },
+      "pathL": "1.0.6",
+      "pathM": "1.0.6",
+      "decisionNote": "No obvious active reference initially; check reachability before optional removal."
+    },
+    {
+      "name": "@types/uuid",
+      "current": "9.0.0",
+      "section": "devDependencies",
+      "latest": "11.0.0",
+      "released": "2025-09-16T21:33:15.821Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": "This is a stub types definition. uuid provides its own type definitions, so you do not need this installed.",
+      "type": null,
+      "repository": null,
+      "source": "https://registry.npmjs.org/%40types%2Fuuid",
+      "distTags": {
+        "latest": "11.0.0"
+      },
+      "selectedVersions": {
+        "11.0.0": {
+          "deprecated": "This is a stub types definition. uuid provides its own type definitions, so you do not need this installed."
+        },
+        "9.0.0": {}
+      },
+      "pathL": "Remove after verification",
+      "pathM": "Remove after verification",
+      "decisionNote": "Latest package is a stub; updated library supplies types."
+    },
+    {
+      "name": "@types/webpack",
+      "current": "5.28.0",
+      "section": "devDependencies",
+      "latest": "5.28.5",
+      "released": "2023-11-07T20:50:24.090Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "type": "git",
+        "directory": "types/webpack"
+      },
+      "source": "https://registry.npmjs.org/%40types%2Fwebpack",
+      "distTags": {
+        "latest": "5.28.5"
+      },
+      "selectedVersions": {
+        "5.28.0": {},
+        "5.28.5": {}
+      },
+      "pathL": "5.28.5",
+      "pathM": "5.28.5",
+      "decisionNote": "5.28.5 if retained; remove if webpack bundled types fully replace it."
+    },
+    {
+      "name": "@types/workerpool",
+      "current": "6.1.1",
+      "section": "devDependencies",
+      "latest": "9.0.0",
+      "released": "2025-04-01T17:35:14.663Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": "This is a stub types definition. workerpool provides its own type definitions, so you do not need this installed.",
+      "type": null,
+      "repository": null,
+      "source": "https://registry.npmjs.org/%40types%2Fworkerpool",
+      "distTags": {
+        "latest": "9.0.0"
+      },
+      "selectedVersions": {
+        "6.1.1": {},
+        "9.0.0": {
+          "deprecated": "This is a stub types definition. workerpool provides its own type definitions, so you do not need this installed."
+        }
+      },
+      "pathL": "Remove after verification",
+      "pathM": "Remove after verification",
+      "decisionNote": "Latest package is a stub; updated library supplies types."
+    },
+    {
+      "name": "@typescript-eslint/eslint-plugin",
+      "current": "8.6.0",
+      "section": "devDependencies",
+      "latest": "8.72.1",
+      "released": "2026-10-26T17:10:26.925Z",
+      "engines": {
+        "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+      },
+      "peers": {
+        "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
+        "typescript": ">=4.8.4 <6.1.0",
+        "@typescript-eslint/parser": "^8.72.1"
+      },
+      "deprecated": null,
+      "type": "commonjs",
+      "repository": {
+        "url": "https://github.com/typescript-eslint/typescript-eslint.git",
+        "type": "git",
+        "directory": "packages/eslint-plugin"
+      },
+      "source": "https://registry.npmjs.org/%40typescript-eslint%2Feslint-plugin",
+      "distTags": {
+        "latest": "8.72.1"
+      },
+      "selectedVersions": {
+        "8.6.0": {
+          "engines": {
+            "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+          },
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0",
+            "@typescript-eslint/parser": "^8.0.0 || ^8.0.0-alpha.0"
+          },
+          "type": "commonjs"
+        },
+        "8.72.1": {
+          "engines": {
+            "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+          },
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
+            "typescript": ">=4.8.4 <6.1.0",
+            "@typescript-eslint/parser": "^8.72.1"
+          },
+          "type": "commonjs"
+        }
+      },
+      "pathL": "8.72.1",
+      "pathM": "8.72.1",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "@typescript-eslint/parser",
+      "current": "8.6.0",
+      "section": "devDependencies",
+      "latest": "8.72.1",
+      "released": "2026-10-26T17:09:27.302Z",
+      "engines": {
+        "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+      },
+      "peers": {
+        "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
+        "typescript": ">=4.8.4 <6.1.0"
+      },
+      "deprecated": null,
+      "type": "commonjs",
+      "repository": {
+        "url": "https://github.com/typescript-eslint/typescript-eslint.git",
+        "type": "git",
+        "directory": "packages/parser"
+      },
+      "source": "https://registry.npmjs.org/%40typescript-eslint%2Fparser",
+      "distTags": {
+        "latest": "8.72.1"
+      },
+      "selectedVersions": {
+        "8.6.0": {
+          "engines": {
+            "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+          },
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0"
+          },
+          "type": "commonjs"
+        },
+        "8.72.1": {
+          "engines": {
+            "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+          },
+          "peerDependencies": {
+            "eslint": "^8.57.0 || ^9.0.0 || ^10.0.0",
+            "typescript": ">=4.8.4 <6.1.0"
+          },
+          "type": "commonjs"
+        }
+      },
+      "pathL": "8.72.1",
+      "pathM": "8.72.1",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "chai",
+      "current": "4.3.7",
+      "section": "devDependencies",
+      "latest": "6.3.0",
+      "released": "2026-09-30T19:18:04.368Z",
+      "engines": {
+        "node": ">=18"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "url": "git+https://github.com/chaijs/chai.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/chai",
+      "distTags": {
+        "latest": "6.3.0"
+      },
+      "selectedVersions": {
+        "4.3.7": {
+          "engines": {
+            "node": ">=4"
+          }
+        },
+        "6.3.0": {
+          "engines": {
+            "node": ">=18"
+          },
+          "type": "module"
+        }
+      },
+      "pathL": "6.3.0",
+      "pathM": "6.3.0",
+      "decisionNote": "ESM/initialization and process-specific loading must be verified. No active reference found initially; removal may be preferable after reachability check."
+    },
+    {
+      "name": "comlink",
+      "current": "4.3.1",
+      "section": "devDependencies",
+      "latest": "4.4.2",
+      "released": "2024-11-07T12:34:03.224Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/GoogleChromeLabs/comlink.git"
+      },
+      "source": "https://registry.npmjs.org/comlink",
+      "distTags": {
+        "alpha": "4.0.0-alpha.10",
+        "next": "4.0.0-alpha.10",
+        "latest": "4.4.2"
+      },
+      "selectedVersions": {
+        "4.3.1": {},
+        "4.4.2": {}
+      },
+      "pathL": "4.4.2",
+      "pathM": "4.4.2",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "cross-env",
+      "current": "7.0.3",
+      "section": "devDependencies",
+      "latest": "10.1.0",
+      "released": "2025-09-29T17:34:12.232Z",
+      "engines": {
+        "node": ">=20"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/kentcdodds/cross-env.git"
+      },
+      "source": "https://registry.npmjs.org/cross-env",
+      "distTags": {
+        "beta": "5.0.0-beta.0",
+        "latest": "10.1.0"
+      },
+      "selectedVersions": {
+        "10.1.0": {
+          "engines": {
+            "node": ">=20"
+          },
+          "type": "module"
+        },
+        "7.0.3": {
+          "engines": {
+            "npm": ">=6",
+            "node": ">=10.14",
+            "yarn": ">=1"
+          }
+        }
+      },
+      "pathL": "10.1.0",
+      "pathM": "10.1.0",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "echarts",
+      "current": "5.4.3",
+      "section": "devDependencies",
+      "latest": "6.1.0",
+      "released": "2026-05-19T17:52:11.076Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/apache/echarts.git"
+      },
+      "source": "https://registry.npmjs.org/echarts",
+      "distTags": {
+        "alpha": "5.0.0-alpha.2",
+        "beta": "6.0.0-beta.1",
+        "latest": "6.1.0"
+      },
+      "selectedVersions": {
+        "5.4.3": {},
+        "6.1.0": {
+          "type": "module"
+        }
+      },
+      "pathL": "6.1.0",
+      "pathM": "6.1.0",
+      "decisionNote": "v6 changes appearance; v5 theme + explicit compatibility settings + visual comparison."
+    },
+    {
+      "name": "electron",
+      "current": "32.0.2",
+      "section": "devDependencies",
+      "latest": "45.2.1",
+      "released": "2026-10-31T01:03:15.875Z",
+      "engines": {
+        "node": ">= 22.12.0"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "git+https://github.com/electron/electron.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/electron",
+      "distTags": {
+        "beta": "45.0.0-beta.7",
+        "latest": "45.2.1",
+        "alpha": "46.0.0-alpha.4"
+      },
+      "selectedVersions": {
+        "32.0.2": {
+          "engines": {
+            "node": ">= 12.20.55"
+          }
+        },
+        "45.2.1": {
+          "engines": {
+            "node": ">= 22.12.0"
+          }
+        }
+      },
+      "pathL": "45.2.1",
+      "pathM": "45.2.1",
+      "decisionNote": "macOS 13+ release gate; embedded Node 24.22.1 / Chromium 156."
+    },
+    {
+      "name": "electron-builder",
+      "current": "24.13.3",
+      "section": "devDependencies",
+      "latest": "26.18.0",
+      "released": "2026-10-20T21:24:08.041Z",
+      "engines": {
+        "node": ">=14.0.0"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "git+https://github.com/electron-userland/electron-builder.git",
+        "type": "git",
+        "directory": "packages/electron-builder"
+      },
+      "source": "https://registry.npmjs.org/electron-builder",
+      "distTags": {
+        "latest": "26.18.0",
+        "v26": "26.18.1",
+        "next": "27.0.0-alpha.14"
+      },
+      "selectedVersions": {
+        "24.13.3": {
+          "engines": {
+            "node": ">=14.0.0"
+          }
+        },
+        "26.18.0": {
+          "engines": {
+            "node": ">=14.0.0"
+          }
+        },
+        "26.18.1": {
+          "engines": {
+            "node": ">=14.0.0"
+          }
+        }
+      },
+      "pathL": "26.18.1",
+      "pathM": "26.18.1",
+      "decisionNote": "Stable v26 channel is ahead of latest dist-tag; use exact version, verify distribution."
+    },
+    {
+      "name": "electron-mocha",
+      "current": "12.3.1",
+      "section": "devDependencies",
+      "latest": "13.1.0",
+      "released": "2025-01-16T12:22:12.905Z",
+      "engines": {
+        "node": ">= 16.0.0"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/jprichardson/electron-mocha.git"
+      },
+      "source": "https://registry.npmjs.org/electron-mocha",
+      "distTags": {
+        "latest": "13.1.0"
+      },
+      "selectedVersions": {
+        "12.3.1": {
+          "engines": {
+            "node": ">= 16.0.0"
+          }
+        },
+        "13.1.0": {
+          "engines": {
+            "node": ">= 16.0.0"
+          }
+        }
+      },
+      "pathL": "13.1.0",
+      "pathM": "13.1.0",
+      "decisionNote": "Test runner group; verify assertions/adapters before selecting final maximum."
+    },
+    {
+      "name": "electron-reload",
+      "current": "1.5.0",
+      "section": "devDependencies",
+      "latest": "2.0.0-alpha.1",
+      "released": "2021-07-25T19:55:03.697Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/yan-foto/electron-reload.git"
+      },
+      "source": "https://registry.npmjs.org/electron-reload",
+      "distTags": {
+        "latest": "2.0.0-alpha.1"
+      },
+      "selectedVersions": {
+        "1.5.0": {}
+      },
+      "pathL": "1.5.0",
+      "pathM": "1.5.0",
+      "decisionNote": "Latest dist-tag is 2.0.0-alpha.1; stable policy excludes it."
+    },
+    {
+      "name": "eslint",
+      "current": "8.57.0",
+      "section": "devDependencies",
+      "latest": "10.14.0",
+      "released": "2026-10-30T14:12:27.179Z",
+      "engines": {
+        "node": "^20.19.0 || ^22.13.0 || >=24"
+      },
+      "peers": {
+        "jiti": "*"
+      },
+      "deprecated": null,
+      "type": "commonjs",
+      "repository": {
+        "url": "git+https://github.com/eslint/eslint.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/eslint",
+      "distTags": {
+        "next": "10.0.0-rc.2",
+        "latest": "10.14.0"
+      },
+      "selectedVersions": {
+        "10.14.0": {
+          "engines": {
+            "node": "^20.19.0 || ^22.13.0 || >=24"
+          },
+          "peerDependencies": {
+            "jiti": "*"
+          },
+          "type": "commonjs"
+        },
+        "8.57.0": {
+          "engines": {
+            "node": "^12.22.0 || ^14.17.0 || >=16.0.0"
+          },
+          "deprecated": "This version is no longer supported. Please see https://eslint.org/version-support for other options."
+        }
+      },
+      "pathL": "10.14.0",
+      "pathM": "10.14.0",
+      "decisionNote": "Migrate both lint configs; preserve rules. Plugin peers admit ESLint 10 here."
+    },
+    {
+      "name": "espower-typescript",
+      "current": "10.0.1",
+      "section": "devDependencies",
+      "latest": "10.0.1",
+      "released": "2022-08-01T16:18:50.956Z",
+      "engines": {
+        "node": ">=10.17"
+      },
+      "peers": {
+        "typescript": ">= 2.7"
+      },
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/power-assert-js/espower-typescript.git"
+      },
+      "source": "https://registry.npmjs.org/espower-typescript",
+      "distTags": {
+        "latest": "10.0.1",
+        "next": "9.0.0-beta.0"
+      },
+      "selectedVersions": {
+        "10.0.1": {
+          "engines": {
+            "node": ">=10.17"
+          },
+          "peerDependencies": {
+            "typescript": ">= 2.7"
+          }
+        }
+      },
+      "pathL": "10.0.1",
+      "pathM": "10.0.1",
+      "decisionNote": "No newer stable release; test compatibility and assess maintenance/transitive issues."
+    },
+    {
+      "name": "exif-parser",
+      "current": "0.1.12",
+      "section": "devDependencies",
+      "latest": "0.1.12",
+      "released": "2017-07-19T17:31:05.431Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git+ssh://git@github.com/bwindels/exif-parser.git"
+      },
+      "source": "https://registry.npmjs.org/exif-parser",
+      "distTags": {
+        "latest": "0.1.12"
+      },
+      "selectedVersions": {
+        "0.1.12": {}
+      },
+      "pathL": "0.1.12",
+      "pathM": "0.1.12",
+      "decisionNote": "Already latest stable; retain unless a demonstrated blocker requires replacement."
+    },
+    {
+      "name": "jasmine-core",
+      "current": "5.2.0",
+      "section": "devDependencies",
+      "latest": "7.0.2",
+      "released": "2026-08-20T00:34:23.573Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "git+https://github.com/jasmine/jasmine.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/jasmine-core",
+      "distTags": {
+        "next": "7.0.0-pre.2",
+        "latest": "7.0.2"
+      },
+      "selectedVersions": {
+        "5.2.0": {},
+        "7.0.2": {}
+      },
+      "pathL": "7.0.2",
+      "pathM": "7.0.2",
+      "decisionNote": "Test runner group; verify assertions/adapters before selecting final maximum."
+    },
+    {
+      "name": "jsonc-parser",
+      "current": "3.3.1",
+      "section": "devDependencies",
+      "latest": "3.3.1",
+      "released": "2024-06-24T21:12:45.445Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "git+https://github.com/microsoft/node-jsonc-parser.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/jsonc-parser",
+      "distTags": {
+        "latest": "3.3.1",
+        "next": "4.0.0-next.2"
+      },
+      "selectedVersions": {
+        "3.3.1": {}
+      },
+      "pathL": "3.3.1",
+      "pathM": "3.3.1",
+      "decisionNote": "Already latest stable; retain unless a demonstrated blocker requires replacement."
+    },
+    {
+      "name": "karma",
+      "current": "6.4.4",
+      "section": "devDependencies",
+      "latest": "6.4.4",
+      "released": "2024-07-29T17:42:15.520Z",
+      "engines": {
+        "node": ">= 10"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "git://github.com/karma-runner/karma.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/karma",
+      "distTags": {
+        "latest": "6.4.4"
+      },
+      "selectedVersions": {
+        "6.4.4": {
+          "engines": {
+            "node": ">= 10"
+          }
+        }
+      },
+      "pathL": "6.4.4",
+      "pathM": "6.4.4",
+      "decisionNote": "No newer stable release; test compatibility and assess maintenance/transitive issues."
+    },
+    {
+      "name": "karma-coverage-istanbul-reporter",
+      "current": "3.0.3",
+      "section": "devDependencies",
+      "latest": "3.0.3",
+      "released": "2020-05-28T19:08:03.779Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mattlewis92/karma-coverage-istanbul-reporter.git"
+      },
+      "source": "https://registry.npmjs.org/karma-coverage-istanbul-reporter",
+      "distTags": {
+        "latest": "3.0.3",
+        "next": "3.0.1"
+      },
+      "selectedVersions": {
+        "3.0.3": {}
+      },
+      "pathL": "3.0.3",
+      "pathM": "3.0.3",
+      "decisionNote": "No newer stable release; test compatibility and assess maintenance/transitive issues."
+    },
+    {
+      "name": "karma-electron",
+      "current": "7.3.0",
+      "section": "devDependencies",
+      "latest": "7.3.0",
+      "released": "2022-08-15T03:02:16.202Z",
+      "engines": {
+        "node": ">= 8.0.0"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/twolfson/karma-electron.git"
+      },
+      "source": "https://registry.npmjs.org/karma-electron",
+      "distTags": {
+        "latest": "7.3.0"
+      },
+      "selectedVersions": {
+        "7.3.0": {
+          "engines": {
+            "node": ">= 8.0.0"
+          }
+        }
+      },
+      "pathL": "7.3.0",
+      "pathM": "7.3.0",
+      "decisionNote": "No newer stable release; test compatibility and assess maintenance/transitive issues."
+    },
+    {
+      "name": "karma-jasmine",
+      "current": "5.1.0",
+      "section": "devDependencies",
+      "latest": "5.1.0",
+      "released": "2022-06-16T02:44:40.545Z",
+      "engines": {
+        "node": ">=12"
+      },
+      "peers": {
+        "karma": "^6.0.0"
+      },
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "git://github.com/karma-runner/karma-jasmine.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/karma-jasmine",
+      "distTags": {
+        "latest": "5.1.0"
+      },
+      "selectedVersions": {
+        "5.1.0": {
+          "engines": {
+            "node": ">=12"
+          },
+          "peerDependencies": {
+            "karma": "^6.0.0"
+          }
+        }
+      },
+      "pathL": "5.1.0",
+      "pathM": "5.1.0",
+      "decisionNote": "No newer stable release; test compatibility and assess maintenance/transitive issues."
+    },
+    {
+      "name": "karma-jasmine-html-reporter",
+      "current": "2.1.0",
+      "section": "devDependencies",
+      "latest": "2.3.0",
+      "released": "2026-08-18T23:01:30.019Z",
+      "engines": null,
+      "peers": {
+        "karma": "^6.0.0",
+        "jasmine-core": "^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0",
+        "karma-jasmine": "^5.0.0"
+      },
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "git+https://github.com/dfederm/karma-jasmine-html-reporter.git"
+      },
+      "source": "https://registry.npmjs.org/karma-jasmine-html-reporter",
+      "distTags": {
+        "latest": "2.3.0"
+      },
+      "selectedVersions": {
+        "2.1.0": {
+          "peerDependencies": {
+            "karma": "^6.0.0",
+            "jasmine-core": "^4.0.0 || ^5.0.0",
+            "karma-jasmine": "^5.0.0"
+          }
+        },
+        "2.3.0": {
+          "peerDependencies": {
+            "karma": "^6.0.0",
+            "jasmine-core": "^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0",
+            "karma-jasmine": "^5.0.0"
+          }
+        }
+      },
+      "pathL": "2.3.0",
+      "pathM": "2.3.0",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "karma-mocha-reporter",
+      "current": "2.2.5",
+      "section": "devDependencies",
+      "latest": "2.2.5",
+      "released": "2017-10-17T08:22:15.786Z",
+      "engines": null,
+      "peers": {
+        "karma": ">=0.13"
+      },
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/litixsoft/karma-mocha-reporter.git"
+      },
+      "source": "https://registry.npmjs.org/karma-mocha-reporter",
+      "distTags": {
+        "latest": "2.2.5"
+      },
+      "selectedVersions": {
+        "2.2.5": {
+          "peerDependencies": {
+            "karma": ">=0.13"
+          }
+        }
+      },
+      "pathL": "2.2.5",
+      "pathM": "2.2.5",
+      "decisionNote": "No newer stable release; test compatibility and assess maintenance/transitive issues."
+    },
+    {
+      "name": "mixpanel-browser",
+      "current": "2.45.0",
+      "section": "devDependencies",
+      "latest": "2.84.0",
+      "released": "2026-10-06T14:46:29.722Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "git+https://github.com/mixpanel/mixpanel-js.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/mixpanel-browser",
+      "distTags": {
+        "beta": "2.23.0-beta",
+        "latest": "2.84.0"
+      },
+      "selectedVersions": {
+        "2.45.0": {},
+        "2.84.0": {}
+      },
+      "pathL": "2.84.0",
+      "pathM": "2.84.0",
+      "decisionNote": "Preserve events, batching, disabled state; reject new default autocapture/session behavior."
+    },
+    {
+      "name": "ng-mocks",
+      "current": "14.13.1",
+      "section": "devDependencies",
+      "latest": "14.18.4",
+      "released": "2026-10-18T05:25:21.289Z",
+      "engines": null,
+      "peers": {
+        "@angular/core": "5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18 || 19.0.0-alpha - 19 || 20.0.0-alpha - 20 || 21.0.0-alpha - 21 || 22.0.0-alpha - 22",
+        "@angular/forms": "5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18 || 19.0.0-alpha - 19 || 20.0.0-alpha - 20 || 21.0.0-alpha - 21 || 22.0.0-alpha - 22",
+        "@angular/common": "5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18 || 19.0.0-alpha - 19 || 20.0.0-alpha - 20 || 21.0.0-alpha - 21 || 22.0.0-alpha - 22",
+        "@angular/platform-browser": "5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18 || 19.0.0-alpha - 19 || 20.0.0-alpha - 20 || 21.0.0-alpha - 21 || 22.0.0-alpha - 22"
+      },
+      "deprecated": null,
+      "type": "commonjs",
+      "repository": {
+        "url": "git+https://github.com/help-me-mom/ng-mocks.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/ng-mocks",
+      "distTags": {
+        "latest": "14.18.4"
+      },
+      "selectedVersions": {
+        "14.13.1": {
+          "peerDependencies": {
+            "@angular/core": "5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18",
+            "@angular/forms": "5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18",
+            "@angular/common": "5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18",
+            "@angular/platform-browser": "5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18"
+          },
+          "type": "commonjs"
+        },
+        "14.18.4": {
+          "peerDependencies": {
+            "@angular/core": "5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18 || 19.0.0-alpha - 19 || 20.0.0-alpha - 20 || 21.0.0-alpha - 21 || 22.0.0-alpha - 22",
+            "@angular/forms": "5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18 || 19.0.0-alpha - 19 || 20.0.0-alpha - 20 || 21.0.0-alpha - 21 || 22.0.0-alpha - 22",
+            "@angular/common": "5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18 || 19.0.0-alpha - 19 || 20.0.0-alpha - 20 || 21.0.0-alpha - 21 || 22.0.0-alpha - 22",
+            "@angular/platform-browser": "5.0.0-alpha - 5 || 6.0.0-alpha - 6 || 7.0.0-alpha - 7 || 8.0.0-alpha - 8 || 9.0.0-alpha - 9 || 10.0.0-alpha - 10 || 11.0.0-alpha - 11 || 12.0.0-alpha - 12 || 13.0.0-alpha - 13 || 14.0.0-alpha - 14 || 15.0.0-alpha - 15 || 16.0.0-alpha - 16 || 17.0.0-alpha - 17 || 18.0.0-alpha - 18 || 19.0.0-alpha - 19 || 20.0.0-alpha - 20 || 21.0.0-alpha - 21 || 22.0.0-alpha - 22"
+          },
+          "type": "commonjs"
+        }
+      },
+      "pathL": "14.18.4",
+      "pathM": "14.18.4",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "ng-table-virtual-scroll",
+      "current": "1.6.1",
+      "section": "devDependencies",
+      "latest": "1.6.1",
+      "released": "2024-03-31T10:28:51.540Z",
+      "engines": null,
+      "peers": {
+        "@angular/common": ">=15.0.0",
+        "@angular/core": ">=15.0.0",
+        "@angular/cdk": ">=15.0.0",
+        "@angular/material": ">=15.0.0"
+      },
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/diprokon/ng-table-virtual-scroll.git"
+      },
+      "source": "https://registry.npmjs.org/ng-table-virtual-scroll",
+      "distTags": {
+        "latest": "1.6.1"
+      },
+      "selectedVersions": {
+        "1.6.1": {
+          "peerDependencies": {
+            "@angular/common": ">=15.0.0",
+            "@angular/core": ">=15.0.0",
+            "@angular/cdk": ">=15.0.0",
+            "@angular/material": ">=15.0.0"
+          }
+        }
+      },
+      "pathL": "1.6.1",
+      "pathM": "1.6.1",
+      "decisionNote": "No newer published version; open peers do not prove 21/22 behavior. Test actual table."
+    },
+    {
+      "name": "ngx-echarts",
+      "current": "15.0.3",
+      "section": "devDependencies",
+      "latest": "22.0.0",
+      "released": "2026-06-11T06:05:46.942Z",
+      "engines": null,
+      "peers": {
+        "@angular/core": ">=22.0.0",
+        "echarts": ">=5.0.0"
+      },
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/xieziyu/ngx-echarts.git"
+      },
+      "source": "https://registry.npmjs.org/ngx-echarts",
+      "distTags": {
+        "alpha": "16.1.1-alpha.1",
+        "latest": "22.0.0"
+      },
+      "selectedVersions": {
+        "15.0.3": {
+          "peerDependencies": {
+            "echarts": ">=5.0.0"
+          }
+        },
+        "18.0.0": {
+          "peerDependencies": {
+            "echarts": ">=5.0.0"
+          }
+        },
+        "19.0.0": {
+          "peerDependencies": {
+            "echarts": ">=5.0.0"
+          }
+        },
+        "20.0.2": {
+          "peerDependencies": {
+            "echarts": ">=5.0.0",
+            "@angular/core": ">=20.0.0"
+          }
+        },
+        "21.0.0": {
+          "peerDependencies": {
+            "echarts": ">=5.0.0",
+            "@angular/core": ">=21.0.0"
+          }
+        },
+        "22.0.0": {
+          "peerDependencies": {
+            "@angular/core": ">=22.0.0",
+            "echarts": ">=5.0.0"
+          },
+          "type": "module"
+        }
+      },
+      "pathL": "21.0.0",
+      "pathM": "22.0.0",
+      "decisionNote": "Match Angular major; chart behavior and rendering gate."
+    },
+    {
+      "name": "npm-check",
+      "current": "6.0.1",
+      "section": "devDependencies",
+      "latest": "6.0.1",
+      "released": "2022-07-16T17:46:12.104Z",
+      "engines": {
+        "node": ">=10.9.0"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "git+https://github.com/dylang/npm-check.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/npm-check",
+      "distTags": {
+        "latest": "6.0.1"
+      },
+      "selectedVersions": {
+        "6.0.1": {
+          "engines": {
+            "node": ">=10.9.0"
+          }
+        }
+      },
+      "pathL": "6.0.1",
+      "pathM": "6.0.1",
+      "decisionNote": "No newer stable release; test compatibility and assess maintenance/transitive issues."
+    },
+    {
+      "name": "npm-run-all",
+      "current": "4.1.5",
+      "section": "devDependencies",
+      "latest": "4.1.5",
+      "released": "2018-11-24T13:52:41.635Z",
+      "engines": {
+        "node": ">= 4"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "git+https://github.com/mysticatea/npm-run-all.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/npm-run-all",
+      "distTags": {
+        "next": "1.5.3-0",
+        "latest": "4.1.5"
+      },
+      "selectedVersions": {
+        "4.1.5": {
+          "engines": {
+            "node": ">= 4"
+          }
+        }
+      },
+      "pathL": "4.1.5",
+      "pathM": "4.1.5",
+      "decisionNote": "No newer stable release; test compatibility and assess maintenance/transitive issues."
+    },
+    {
+      "name": "p-queue",
+      "current": "6.6.2",
+      "section": "devDependencies",
+      "latest": "10.0.0",
+      "released": "2026-10-12T17:58:22.996Z",
+      "engines": {
+        "node": ">=22"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "url": "git+https://github.com/sindresorhus/p-queue.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/p-queue",
+      "distTags": {
+        "latest": "10.0.0"
+      },
+      "selectedVersions": {
+        "10.0.0": {
+          "engines": {
+            "node": ">=22"
+          },
+          "type": "module"
+        },
+        "6.6.2": {
+          "engines": {
+            "node": ">=8"
+          }
+        }
+      },
+      "pathL": "10.0.0",
+      "pathM": "10.0.0",
+      "decisionNote": "ESM/initialization and process-specific loading must be verified."
+    },
+    {
+      "name": "power-assert",
+      "current": "1.6.1",
+      "section": "devDependencies",
+      "latest": "1.6.1",
+      "released": "2018-09-08T09:47:34.284Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/power-assert-js/power-assert.git"
+      },
+      "source": "https://registry.npmjs.org/power-assert",
+      "distTags": {
+        "latest": "1.6.1"
+      },
+      "selectedVersions": {
+        "1.6.1": {}
+      },
+      "pathL": "1.6.1",
+      "pathM": "1.6.1",
+      "decisionNote": "No newer stable release; test compatibility and assess maintenance/transitive issues."
+    },
+    {
+      "name": "rxjs",
+      "current": "7.8.1",
+      "section": "devDependencies",
+      "latest": "7.8.2",
+      "released": "2025-02-22T03:00:42.711Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "git+https://github.com/reactivex/rxjs.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/rxjs",
+      "distTags": {
+        "latest": "7.8.2",
+        "next": "9.0.0-beta.1"
+      },
+      "selectedVersions": {
+        "7.8.1": {},
+        "7.8.2": {}
+      },
+      "pathL": "7.8.2",
+      "pathM": "7.8.2",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "split.js",
+      "current": "1.6.5",
+      "section": "devDependencies",
+      "latest": "1.6.5",
+      "released": "2022-01-07T00:06:27.022Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "git+https://github.com/nathancahill/split.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/split.js",
+      "distTags": {
+        "latest": "1.6.5"
+      },
+      "selectedVersions": {
+        "1.6.5": {}
+      },
+      "pathL": "1.6.5",
+      "pathM": "1.6.5",
+      "decisionNote": "Already latest stable; retain unless a demonstrated blocker requires replacement."
+    },
+    {
+      "name": "tree-kill",
+      "current": "1.2.2",
+      "section": "devDependencies",
+      "latest": "1.2.2",
+      "released": "2019-12-11T18:34:21.876Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "type": "git",
+        "url": "git://github.com/pkrumins/node-tree-kill.git"
+      },
+      "source": "https://registry.npmjs.org/tree-kill",
+      "distTags": {
+        "latest": "1.2.2"
+      },
+      "selectedVersions": {
+        "1.2.2": {}
+      },
+      "pathL": "1.2.2",
+      "pathM": "1.2.2",
+      "decisionNote": "Already latest stable; retain unless a demonstrated blocker requires replacement."
+    },
+    {
+      "name": "tslib",
+      "current": "2.7.0",
+      "section": "devDependencies",
+      "latest": "2.9.1",
+      "released": "2026-10-30T20:20:28.741Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "git+https://github.com/Microsoft/tslib.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/tslib",
+      "distTags": {
+        "latest": "2.9.1"
+      },
+      "selectedVersions": {
+        "2.7.0": {},
+        "2.9.1": {}
+      },
+      "pathL": "2.9.1",
+      "pathM": "2.9.1",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "typescript",
+      "current": "5.5.4",
+      "section": "devDependencies",
+      "latest": "7.0.2",
+      "released": "2026-07-08T15:55:18.431Z",
+      "engines": {
+        "node": ">=16.20.0"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": "module",
+      "repository": {
+        "url": "git+https://github.com/microsoft/TypeScript.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/typescript",
+      "distTags": {
+        "latest": "7.0.2",
+        "beta": "7.1.0-beta",
+        "next": "7.1.0-dev.20261031.1"
+      },
+      "selectedVersions": {
+        "5.5.4": {
+          "engines": {
+            "node": ">=14.17"
+          }
+        },
+        "5.8.3": {
+          "engines": {
+            "node": ">=14.17"
+          }
+        },
+        "5.9.3": {
+          "engines": {
+            "node": ">=14.17"
+          }
+        },
+        "6.0.3": {
+          "engines": {
+            "node": ">=14.17"
+          }
+        },
+        "7.0.2": {
+          "engines": {
+            "node": ">=16.20.0"
+          },
+          "type": "module"
+        }
+      },
+      "pathL": "5.9.3",
+      "pathM": "6.0.3",
+      "decisionNote": "Registry latest 7.0.2 is outside Angular and typescript-eslint peer ranges."
+    },
+    {
+      "name": "wait-on",
+      "current": "7.0.1",
+      "section": "devDependencies",
+      "latest": "9.5.1",
+      "released": "2026-09-29T15:33:22.495Z",
+      "engines": {
+        "node": ">=20.0.0"
+      },
+      "peers": null,
+      "deprecated": null,
+      "type": "commonjs",
+      "repository": {
+        "url": "git+https://github.com/jeffbski/wait-on.git",
+        "type": "git"
+      },
+      "source": "https://registry.npmjs.org/wait-on",
+      "distTags": {
+        "latest": "9.5.1",
+        "next": "10.0.0-rc.1"
+      },
+      "selectedVersions": {
+        "7.0.1": {
+          "engines": {
+            "node": ">=12.0.0"
+          }
+        },
+        "9.5.1": {
+          "engines": {
+            "node": ">=20.0.0"
+          },
+          "type": "commonjs"
+        }
+      },
+      "pathL": "9.5.1",
+      "pathM": "9.5.1",
+      "decisionNote": "Candidate; verify relevant usage."
+    },
+    {
+      "name": "zone.js",
+      "current": "0.14.10",
+      "section": "devDependencies",
+      "latest": "0.16.3",
+      "released": "2026-09-02T21:25:07.717Z",
+      "engines": null,
+      "peers": null,
+      "deprecated": null,
+      "type": null,
+      "repository": {
+        "url": "git://github.com/angular/angular.git",
+        "type": "git",
+        "directory": "packages/zone.js"
+      },
+      "source": "https://registry.npmjs.org/zone.js",
+      "distTags": {
+        "latest": "0.16.3"
+      },
+      "selectedVersions": {
+        "0.14.10": {},
+        "0.16.3": {}
+      },
+      "pathL": "0.16.3",
+      "pathM": "0.16.3",
+      "decisionNote": "Candidate; verify relevant usage."
+    }
+  ],
+  "extraPackages": [
+    {
+      "name": "leaflet",
+      "latest": "1.9.4",
+      "tags": {
+        "beta": "1.8.0-beta.3",
+        "latest": "1.9.4",
+        "alpha": "2.0.0-alpha.1"
+      },
+      "engines": null,
+      "peers": null,
+      "type": null,
+      "deprecated": null,
+      "source": "https://registry.npmjs.org/leaflet"
+    },
+    {
+      "name": "leaflet.markercluster",
+      "latest": "1.5.3",
+      "tags": {
+        "latest": "1.5.3",
+        "prerelease": "1.0.0-rc.1.0"
+      },
+      "engines": null,
+      "peers": {
+        "leaflet": "^1.3.1"
+      },
+      "type": null,
+      "deprecated": null,
+      "source": "https://registry.npmjs.org/leaflet.markercluster"
+    },
+    {
+      "name": "@geoman-io/leaflet-geoman-free",
+      "latest": "2.20.4",
+      "tags": {
+        "latest": "2.20.4"
+      },
+      "engines": {
+        "node": ">=20.0.0"
+      },
+      "peers": {
+        "leaflet": "^1.2.0"
+      },
+      "type": null,
+      "deprecated": null,
+      "source": "https://registry.npmjs.org/%40geoman-io%2Fleaflet-geoman-free"
+    },
+    {
+      "name": "bootstrap",
+      "latest": "5.3.8",
+      "tags": {
+        "latest-3": "3.4.1",
+        "latest-4": "4.6.2",
+        "latest": "5.3.8",
+        "next": "6.0.0-alpha.1"
+      },
+      "engines": null,
+      "peers": {
+        "@popperjs/core": "^2.11.8"
+      },
+      "type": null,
+      "deprecated": null,
+      "source": "https://registry.npmjs.org/bootstrap"
+    },
+    {
+      "name": "jquery",
+      "latest": "4.0.0",
+      "tags": {
+        "beta": "4.0.0-rc.2",
+        "latest": "4.0.0"
+      },
+      "engines": null,
+      "peers": null,
+      "type": "module",
+      "deprecated": null,
+      "source": "https://registry.npmjs.org/jquery"
+    },
+    {
+      "name": "popper.js",
+      "latest": "1.16.1",
+      "tags": {
+        "latest": "1.16.1",
+        "alpha": "1.0.0-alpha.8",
+        "beta": "1.0.0-beta.5",
+        "next": "2.0.0-next.4",
+        "lts": "1.16.1-lts"
+      },
+      "engines": null,
+      "peers": null,
+      "type": null,
+      "deprecated": "You can find the new Popper v2 at @popperjs/core, this package is dedicated to the legacy v1",
+      "source": "https://registry.npmjs.org/popper.js"
+    },
+    {
+      "name": "@popperjs/core",
+      "latest": "2.11.8",
+      "tags": {
+        "latest": "2.11.8"
+      },
+      "engines": null,
+      "peers": null,
+      "type": null,
+      "deprecated": null,
+      "source": "https://registry.npmjs.org/%40popperjs%2Fcore"
+    },
+    {
+      "name": "libheif-js",
+      "latest": "1.23.5",
+      "tags": {
+        "latest": "1.23.5"
+      },
+      "engines": {
+        "node": ">=8.0.0"
+      },
+      "peers": null,
+      "type": null,
+      "deprecated": null,
+      "source": "https://registry.npmjs.org/libheif-js"
+    },
+    {
+      "name": "moment",
+      "latest": "2.31.0",
+      "tags": {
+        "latest": "2.31.0"
+      },
+      "engines": {
+        "node": "*"
+      },
+      "peers": null,
+      "type": null,
+      "deprecated": null,
+      "source": "https://registry.npmjs.org/moment"
+    },
+    {
+      "name": "webpack",
+      "latest": "5.112.2",
+      "tags": {
+        "legacy": "1.15.0",
+        "webpack-2": "2.7.0",
+        "webpack-3": "3.12.0",
+        "next": "5.0.0-rc.6",
+        "webpack-4": "4.47.0",
+        "latest": "5.112.2"
+      },
+      "engines": {
+        "node": ">=10.13.0"
+      },
+      "peers": null,
+      "type": null,
+      "deprecated": null,
+      "source": "https://registry.npmjs.org/webpack"
+    },
+    {
+      "name": "sass",
+      "latest": "1.107.1",
+      "tags": {
+        "test": "1.26.0-test.3",
+        "rc": "1.45.0-rc.2",
+        "latest": "1.107.1"
+      },
+      "engines": {
+        "node": ">=20.19.0"
+      },
+      "peers": null,
+      "type": null,
+      "deprecated": null,
+      "source": "https://registry.npmjs.org/sass"
+    },
+    {
+      "name": "ts-node",
+      "latest": "10.9.2",
+      "tags": {
+        "beta": "11.0.0-beta.1",
+        "latest": "10.9.2"
+      },
+      "engines": null,
+      "peers": {
+        "@swc/core": ">=1.2.50",
+        "@swc/wasm": ">=1.2.50",
+        "typescript": ">=2.7",
+        "@types/node": "*"
+      },
+      "type": null,
+      "deprecated": null,
+      "source": "https://registry.npmjs.org/ts-node"
+    },
+    {
+      "name": "@electron/rebuild",
+      "latest": "4.2.1",
+      "tags": {
+        "latest": "4.2.1"
+      },
+      "engines": {
+        "node": ">=22.12.0"
+      },
+      "peers": null,
+      "type": "module",
+      "deprecated": null,
+      "source": "https://registry.npmjs.org/%40electron%2Frebuild"
+    },
+    {
+      "name": "@electron/universal",
+      "latest": "3.0.6",
+      "tags": {
+        "latest": "3.0.6"
+      },
+      "engines": {
+        "node": ">=22.12.0"
+      },
+      "peers": null,
+      "type": "module",
+      "deprecated": null,
+      "source": "https://registry.npmjs.org/%40electron%2Funiversal"
+    },
+    {
+      "name": "app-builder-lib",
+      "latest": "26.18.0",
+      "tags": {
+        "latest": "26.18.0",
+        "v26": "26.18.1",
+        "next": "27.0.0-alpha.14"
+      },
+      "engines": {
+        "node": ">=14.0.0"
+      },
+      "peers": {
+        "dmg-builder": "26.18.0",
+        "electron-builder-squirrel-windows": "26.18.0"
+      },
+      "type": null,
+      "deprecated": null,
+      "source": "https://registry.npmjs.org/app-builder-lib"
+    },
+    {
+      "name": "builder-util",
+      "latest": "26.16.0",
+      "tags": {
+        "latest": "26.16.0",
+        "v26": "26.18.1",
+        "next": "27.0.0-alpha.14"
+      },
+      "engines": {
+        "node": ">=14.0.0"
+      },
+      "peers": null,
+      "type": null,
+      "deprecated": null,
+      "source": "https://registry.npmjs.org/builder-util"
+    },
+    {
+      "name": "dmg-builder",
+      "latest": "26.18.0",
+      "tags": {
+        "latest": "26.18.0",
+        "v26": "26.18.1",
+        "next": "27.0.0-alpha.14"
+      },
+      "engines": null,
+      "peers": null,
+      "type": null,
+      "deprecated": null,
+      "source": "https://registry.npmjs.org/dmg-builder"
+    },
+    {
+      "name": "playwright",
+      "latest": "1.64.1",
+      "tags": {
+        "rc": "1.18.0-rc1",
+        "latest": "1.64.1",
+        "next": "1.65.0-alpha-2026-11-01",
+        "beta": "1.64.1-beta-1793483565000"
+      },
+      "engines": {
+        "node": ">=20"
+      },
+      "peers": null,
+      "type": null,
+      "deprecated": null,
+      "source": "https://registry.npmjs.org/playwright"
+    },
+    {
+      "name": "karma-coverage",
+      "latest": "2.2.1",
+      "tags": {
+        "latest": "2.2.1"
+      },
+      "engines": {
+        "node": ">=10.0.0"
+      },
+      "peers": null,
+      "type": null,
+      "deprecated": null,
+      "source": "https://registry.npmjs.org/karma-coverage"
+    }
+  ],
+  "exactPackageMetadata": [
+    {
+      "name": "electron-builder",
+      "requested": "26.18.1",
+      "version": "26.18.1",
+      "source": "https://registry.npmjs.org/electron-builder/26.18.1",
+      "engines": {
+        "node": ">=14.0.0"
+      },
+      "dependencies": {
+        "chalk": "^4.1.2",
+        "yargs": "^17.6.2",
+        "ci-info": "^4.2.0",
+        "fs-extra": "^10.1.0",
+        "lazy-val": "^1.0.5",
+        "dmg-builder": "26.18.1",
+        "builder-util": "26.18.1",
+        "app-builder-lib": "26.18.1",
+        "builder-util-runtime": "9.7.1",
+        "simple-update-notifier": "2.0.0"
+      },
+      "peerDependencies": null,
+      "exports": null,
+      "main": "out/index.js",
+      "type": null,
+      "types": null
+    },
+    {
+      "name": "electron-updater",
+      "requested": "6.8.12",
+      "version": "6.8.12",
+      "source": "https://registry.npmjs.org/electron-updater/6.8.12",
+      "engines": null,
+      "dependencies": {
+        "semver": "~7.7.3",
+        "js-yaml": "^4.1.0",
+        "fs-extra": "^10.1.0",
+        "lazy-val": "^1.0.5",
+        "lodash.isequal": "^4.5.0",
+        "tiny-typed-emitter": "^2.1.0",
+        "lodash.escaperegexp": "^4.1.2",
+        "builder-util-runtime": "9.7.1"
+      },
+      "peerDependencies": null,
+      "exports": null,
+      "main": "out/main.js",
+      "type": null,
+      "types": null
+    },
+    {
+      "name": "app-builder-lib",
+      "requested": "26.18.1",
+      "version": "26.18.1",
+      "source": "https://registry.npmjs.org/app-builder-lib/26.18.1",
+      "engines": {
+        "node": ">=14.0.0"
+      },
+      "dependencies": {
+        "ajv": "^8.18.0",
+        "ejs": "^3.1.8",
+        "tar": "^7.5.7",
+        "jiti": "^2.4.2",
+        "debug": "^4.3.4",
+        "json5": "^2.2.3",
+        "pkijs": "^3.4.0",
+        "plist": "3.1.0",
+        "which": "^5.0.0",
+        "asn1js": "^3.0.10",
+        "dotenv": "^16.4.5",
+        "semver": "~7.7.3",
+        "ci-info": "4.3.1",
+        "js-yaml": "^4.1.0",
+        "resedit": "^1.7.0",
+        "fs-extra": "^10.1.0",
+        "lazy-val": "^1.0.5",
+        "unzipper": "^0.12.3",
+        "minimatch": "^10.2.5",
+        "temp-file": "^3.4.0",
+        "builder-util": "26.18.1",
+        "isbinaryfile": "^5.0.0",
+        "@electron/get": "^3.0.0",
+        "@noble/hashes": "^1.8.0",
+        "dotenv-expand": "^11.0.6",
+        "@electron/asar": "3.4.1",
+        "@electron/fuses": "^1.8.0",
+        "@types/fs-extra": "9.0.13",
+        "async-exit-hook": "^2.0.1",
+        "hosted-git-info": "^4.1.0",
+        "proper-lockfile": "^4.1.2",
+        "tiny-async-pool": "1.3.0",
+        "electron-publish": "26.18.1",
+        "@electron/rebuild": "^4.2.1",
+        "@electron/notarize": "2.5.0",
+        "@electron/osx-sign": "1.3.3",
+        "chromium-pickle-js": "^0.2.0",
+        "@electron/universal": "2.0.3",
+        "@peculiar/webcrypto": "^1.7.1",
+        "builder-util-runtime": "9.7.1",
+        "@malept/flatpak-bundler": "^0.4.0"
+      },
+      "peerDependencies": {
+        "dmg-builder": "26.18.1",
+        "electron-builder-squirrel-windows": "26.18.1"
+      },
+      "exports": null,
+      "main": "out/index.js",
+      "type": null,
+      "types": null
+    },
+    {
+      "name": "heic-decode",
+      "requested": "2.1.0",
+      "version": "2.1.0",
+      "source": "https://registry.npmjs.org/heic-decode/2.1.0",
+      "engines": {
+        "node": ">=8.0.0"
+      },
+      "dependencies": {
+        "libheif-js": "^1.19.8"
+      },
+      "peerDependencies": null,
+      "exports": null,
+      "main": "index.js",
+      "type": null,
+      "types": null
+    },
+    {
+      "name": "reflect-metadata",
+      "requested": "latest",
+      "version": "0.2.2",
+      "source": "https://registry.npmjs.org/reflect-metadata/latest",
+      "engines": null,
+      "dependencies": {},
+      "peerDependencies": null,
+      "exports": {
+        ".": {
+          "types": "./index.d.ts",
+          "default": "./Reflect.js"
+        },
+        "./lite": {
+          "types": "./index.d.ts",
+          "default": "./ReflectLite.js"
+        },
+        "./Reflect": "./Reflect.js",
+        "./Reflect.js": "./Reflect.js",
+        "./no-conflict": {
+          "types": "./no-conflict.d.ts",
+          "default": "./ReflectNoConflict.js"
+        }
+      },
+      "main": "Reflect.js",
+      "type": "commonjs",
+      "types": "index.d.ts"
+    },
+    {
+      "name": "jimp",
+      "requested": "1.6.1",
+      "version": "1.6.1",
+      "source": "https://registry.npmjs.org/jimp/1.6.1",
+      "engines": {
+        "node": ">=18"
+      },
+      "dependencies": {
+        "@jimp/core": "1.6.1",
+        "@jimp/diff": "1.6.1",
+        "@jimp/types": "1.6.1",
+        "@jimp/utils": "1.6.1",
+        "@jimp/js-bmp": "1.6.1",
+        "@jimp/js-gif": "1.6.1",
+        "@jimp/js-png": "1.6.1",
+        "@jimp/js-jpeg": "1.6.1",
+        "@jimp/js-tiff": "1.6.1",
+        "@jimp/plugin-blit": "1.6.1",
+        "@jimp/plugin-blur": "1.6.1",
+        "@jimp/plugin-crop": "1.6.1",
+        "@jimp/plugin-flip": "1.6.1",
+        "@jimp/plugin-hash": "1.6.1",
+        "@jimp/plugin-mask": "1.6.1",
+        "@jimp/plugin-color": "1.6.1",
+        "@jimp/plugin-cover": "1.6.1",
+        "@jimp/plugin-print": "1.6.1",
+        "@jimp/plugin-circle": "1.6.1",
+        "@jimp/plugin-dither": "1.6.1",
+        "@jimp/plugin-resize": "1.6.1",
+        "@jimp/plugin-rotate": "1.6.1",
+        "@jimp/plugin-contain": "1.6.1",
+        "@jimp/plugin-fisheye": "1.6.1",
+        "@jimp/plugin-displace": "1.6.1",
+        "@jimp/plugin-quantize": "1.6.1",
+        "@jimp/plugin-threshold": "1.6.1"
+      },
+      "peerDependencies": null,
+      "exports": {
+        ".": {
+          "import": {
+            "types": "./dist/esm/index.d.ts",
+            "default": "./dist/esm/index.js"
+          },
+          "browser": {
+            "types": "./dist/browser/index.d.ts",
+            "default": "./dist/browser/index.js"
+          },
+          "require": {
+            "types": "./dist/commonjs/index.d.ts",
+            "default": "./dist/commonjs/index.js"
+          }
+        },
+        "./fonts": {
+          "import": {
+            "types": "./dist/esm/fonts.d.ts",
+            "default": "./dist/esm/fonts.js"
+          },
+          "browser": {
+            "types": "./dist/browser/fonts.d.ts",
+            "default": "./dist/browser/fonts.js"
+          },
+          "require": {
+            "types": "./dist/commonjs/fonts.d.ts",
+            "default": "./dist/commonjs/fonts.js"
+          }
+        },
+        "./package.json": "./package.json"
+      },
+      "main": "./dist/commonjs/index.js",
+      "type": "module",
+      "types": "./dist/commonjs/index.d.ts"
+    },
+    {
+      "name": "electron-unhandled",
+      "requested": "6.0.0",
+      "version": "6.0.0",
+      "source": "https://registry.npmjs.org/electron-unhandled/6.0.0",
+      "engines": {
+        "node": ">=22"
+      },
+      "dependencies": {
+        "clean-stack": "^6.0.0",
+        "ensure-error": "^5.0.0",
+        "electron-is-dev": "^3.0.1",
+        "lodash.debounce": "^4.0.8",
+        "serialize-error": "^13.0.1"
+      },
+      "peerDependencies": null,
+      "exports": {
+        "types": "./index.d.ts",
+        "default": "./index.js"
+      },
+      "main": null,
+      "type": "module",
+      "types": "./index.d.ts"
+    },
+    {
+      "name": "uuid",
+      "requested": "14.0.3",
+      "version": "14.0.3",
+      "source": "https://registry.npmjs.org/uuid/14.0.3",
+      "engines": null,
+      "dependencies": null,
+      "peerDependencies": null,
+      "exports": {
+        ".": {
+          "node": {
+            "types": "./dist/index.d.ts",
+            "default": "./dist-node/index.js"
+          },
+          "default": "./dist/index.js"
+        },
+        "./package.json": "./package.json"
+      },
+      "main": null,
+      "type": "module",
+      "types": "./dist/index.d.ts"
+    },
+    {
+      "name": "chai",
+      "requested": "6.3.0",
+      "version": "6.3.0",
+      "source": "https://registry.npmjs.org/chai/6.3.0",
+      "engines": {
+        "node": ">=18"
+      },
+      "dependencies": null,
+      "peerDependencies": null,
+      "exports": null,
+      "main": "./index.js",
+      "type": "module",
+      "types": null
+    },
+    {
+      "name": "p-queue",
+      "requested": "10.0.0",
+      "version": "10.0.0",
+      "source": "https://registry.npmjs.org/p-queue/10.0.0",
+      "engines": {
+        "node": ">=22"
+      },
+      "dependencies": null,
+      "peerDependencies": null,
+      "exports": {
+        ".": {
+          "types": "./dist/index.d.ts",
+          "default": "./dist/index.js"
+        }
+      },
+      "main": null,
+      "type": "module",
+      "types": null
+    }
+  ]
+}

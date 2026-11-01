@@ -1,0 +1,59 @@
+{
+  "observedDate": "2026-11-01",
+  "releases": [
+    {
+      "repo": "actions/checkout",
+      "tag": "v7.0.1",
+      "url": "https://github.com/actions/checkout/releases/tag/v7.0.1",
+      "published": "2026-07-20T15:10:05Z"
+    },
+    {
+      "repo": "dorny/paths-filter",
+      "tag": "v4.0.3",
+      "url": "https://github.com/dorny/paths-filter/releases/tag/v4.0.3",
+      "published": "2026-08-05T12:17:06Z"
+    },
+    {
+      "repo": "jdx/mise-action",
+      "tag": "v5.2.5",
+      "url": "https://github.com/jdx/mise-action/releases/tag/v5.2.5",
+      "published": "2026-10-31T10:04:11Z"
+    },
+    {
+      "repo": "GabrielBB/xvfb-action",
+      "tag": "v1.7",
+      "url": "https://github.com/GabrielBB/xvfb-action/releases/tag/v1.7",
+      "published": "2024-12-05T21:01:48Z"
+    },
+    {
+      "repo": "nick-fields/retry",
+      "tag": "v4.0.0",
+      "url": "https://github.com/nick-fields/retry/releases/tag/v4.0.0",
+      "published": "2026-03-20T02:24:57Z"
+    },
+    {
+      "repo": "nick-invision/retry",
+      "tag": "v4.0.0",
+      "url": "https://github.com/nick-fields/retry/releases/tag/v4.0.0",
+      "published": "2026-03-20T02:24:57Z"
+    },
+    {
+      "repo": "jdx/mise",
+      "tag": "v2026.10.25",
+      "url": "https://github.com/jdx/mise/releases/tag/v2026.10.25",
+      "published": "2026-10-31T10:24:21Z"
+    },
+    {
+      "repo": "electron/electron",
+      "tag": "v45.2.1",
+      "url": "https://github.com/electron/electron/releases/tag/v45.2.1",
+      "published": "2026-10-31T00:44:03Z"
+    },
+    {
+      "repo": "electron-userland/electron-builder",
+      "tag": "electron-updater@6.8.12",
+      "url": "https://github.com/electron-userland/electron-builder/releases/tag/electron-updater%406.8.12",
+      "published": "2026-10-26T12:33:30Z"
+    }
+  ]
+}
