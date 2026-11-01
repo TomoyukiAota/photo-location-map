@@ -1,0 +1,13 @@
+{
+  "source": "test/e2e/snapshots/empty-home.png",
+  "sourceApplication": "Angular 18.2.4 / Electron 32.0.2",
+  "sourceSha256": "ea3128e38fa8e6a371dbc5734c91c42044de2ea61d5781a9aa2386a1135d0977",
+  "clip": {
+    "x": 1155,
+    "y": 210,
+    "width": 36,
+    "height": 185
+  },
+  "method": "Copied original screenshot pixels without resampling; not captured from upgraded dependencies.",
+  "cropSha256": "20373c0d37218145dfd5e7fcc96a718ddf9729f927ddf140e70810140f5ea84c"
+}

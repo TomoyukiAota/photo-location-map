@@ -1,6 +1,6 @@
 # Dependency upgrade status
 
-Updated: 2026-11-01 (Asia/Tokyo).
+Updated: 2026-11-02 (Asia/Tokyo).
 
 ## Authorization and actual state
 
@@ -17,8 +17,9 @@ Updated: 2026-11-01 (Asia/Tokyo).
   No push or publication has occurred.
 - Source inspection, official release/registry reads, historical PR review and a
   read-only lockfile audit were performed. No external comments or edits.
-- Electron 45 / Angular 22 is verified locally at `d75efc0`, including the
-  signed universal package. The U07a working tree has also passed its gate;
+- Electron 45 / Angular 22 packaging is verified locally at `d75efc0`, including
+  the signed universal package. Runtime/analytics updates through `f133a27`
+  and the U08a map working tree have passed their local gates;
   final remote CI, notarization and the native chooser item remain.
 - No long-running baseline app or packaging process remains. Local command logs
   are under `.upgrade-artifacts`; test output is in its `e2e-results` directory.
@@ -34,7 +35,8 @@ Updated: 2026-11-01 (Asia/Tokyo).
    any newer user instructions. Reconcile records before executing commands.
 
 Active task: U08. File-tree/date/module/queue, image/worker and analytics
-updates have passed locally. Next are map resources, charting and translations. Node 26 / bundled npm 11.20 and Electron 45 clean installation work;
+updates and map resources have passed locally. Next are charting and translations.
+Node 26 / bundled npm 11.20 and Electron 45 clean installation work;
 the old extractor caveat is resolved. Retain `ng test --watch=false` and never
 regenerate the original screenshots or HEIC pixel reference.
 
@@ -510,3 +512,30 @@ fixed application event with unchanged category/label/value and no automatic
 page/session/interaction events. Its deliberate default-SDK negative control
 fails on the expected new events. Logs: analytics-{graph,lint,build,unit,e2e}.log.
 Next: update Leaflet/Geoman/Turf, retaining existing controls and region selection.
+
+### U08a maps completed
+
+Leaflet 1.9.4, Geoman 2.20.4, Turf 7.4.0 and the current Leaflet/cluster types
+pass graph, lint, production build, all 176 unit assertions and all ten E2E
+cases. Markercluster remains its latest stable 1.5.3. All seven CDN resources
+now have SHA-384 integrity values computed from the fetched bytes; see
+[MAP_RESOURCES.json](./evidence/MAP_RESOURCES.json).
+
+The six original primary toolbar controls and their pixels remain unchanged.
+The focused toolbar reference copies pixels from the immutable Angular 18 /
+Electron 32 screenshot, without resampling or capturing an upgraded app.
+[MAP_TOOLBAR_REFERENCE.json](./evidence/MAP_TOOLBAR_REFERENCE.json) records the
+source hash, crop and output hash. A deliberate 3px toolbar displacement fails
+this comparison (map-toolbar-negative-control.log).
+
+The new real-pointer case first passed against the original CDN libraries, then
+against the updated ones. It draws overlapping rectangles/polygons, confirms
+the union counts two photos once, removes each region, and selects the same
+Kobe/Unga photos while excluding Apple Park/Gold Coast. The original behavior
+clears drawings when a selection rebuilds the map. Unga's directory checkbox
+counts its locatable children, so it is checked even though another file there
+has no GPS. Drawing points avoid toolbar action menus and photo markers.
+
+Logs: maps-{graph,lint,build,unit,e2e}.log; the pre-update interaction check is
+maps-original-controls-baseline.log. Next: ECharts 6 with the official v5 theme,
+then the translation loader/provider migration.

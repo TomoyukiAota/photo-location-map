@@ -1,7 +1,7 @@
 {
   "observedDate": "2026-11-01",
-  "state": "U07b image/worker checkpoint verified locally; analytics next",
-  "verifiedApplicationCommit": "85c6fdfe5a95443754c0bb18060649aaea82cfa4",
+  "state": "U07c analytics checkpoint verified locally; map resources next",
+  "verifiedApplicationCommit": "f133a276c4d0caca0a221d9a10c5478bbe05d1cc",
   "hostNode": "26.13.0",
   "bundledNpm": "11.20.0",
   "lockfileVersion": 2,
@@ -133,7 +133,7 @@
     },
     {
       "name": "@amplitude/analytics-browser",
-      "version": "1.6.7",
+      "version": "2.49.0",
       "section": "devDependencies"
     },
     {
@@ -312,11 +312,6 @@
       "section": "devDependencies"
     },
     {
-      "name": "@types/mixpanel-browser",
-      "version": "2.38.0",
-      "section": "devDependencies"
-    },
-    {
       "name": "@types/moment-duration-format",
       "version": "2.2.7",
       "section": "devDependencies"
@@ -448,7 +443,7 @@
     },
     {
       "name": "mixpanel-browser",
-      "version": "2.45.0",
+      "version": "2.84.0",
       "section": "devDependencies"
     },
     {
@@ -532,5 +527,5 @@
       "section": "devDependencies"
     }
   ],
-  "lockfileSha256": "8dbdd40f9aae6c3804a2d0cd5a0d08f35d15543f135b9ca747cfabee6490c2d4"
+  "lockfileSha256": "2886e31c37e232bfaf95102776f9446070a04d43f3ec9f3019f91391370337a9"
 }

@@ -1,0 +1,46 @@
+{
+  "registryLatest": [
+    {
+      "name": "leaflet",
+      "version": "1.9.4"
+    },
+    {
+      "name": "@geoman-io/leaflet-geoman-free",
+      "version": "2.20.4"
+    },
+    {
+      "name": "leaflet.markercluster",
+      "version": "1.5.3"
+    }
+  ],
+  "resources": [
+    {
+      "url": "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css",
+      "integrity": "sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H"
+    },
+    {
+      "url": "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",
+      "integrity": "sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH"
+    },
+    {
+      "url": "https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css",
+      "integrity": "sha384-pmjIAcz2bAn0xukfxADbZIb3t8oRT9Sv0rvO+BR5Csr6Dhqq+nZs59P0pPKQJkEV"
+    },
+    {
+      "url": "https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css",
+      "integrity": "sha384-wgw+aLYNQ7dlhK47ZPK7FRACiq7ROZwgFNg0m04avm4CaXS+Z9Y7nMu8yNjBKYC+"
+    },
+    {
+      "url": "https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js",
+      "integrity": "sha384-eXVCORTRlv4FUUgS/xmOyr66XBVraen8ATNLMESp92FKXLAMiKkerixTiBvXriZr"
+    },
+    {
+      "url": "https://unpkg.com/@geoman-io/leaflet-geoman-free@2.20.4/dist/leaflet-geoman.css",
+      "integrity": "sha384-++juJE6hRzkkV4Ri9H2C+3yjCTdEk4PaZxptm3cpgKKjuMcAHErn35Q/0sGitZCR"
+    },
+    {
+      "url": "https://unpkg.com/@geoman-io/leaflet-geoman-free@2.20.4/dist/leaflet-geoman.min.js",
+      "integrity": "sha384-fMQXt1CL8OiAVJb4+5aNorSlDZtUphmsAnZ0H3OPrJWLK1M1YhV7xZ25w5PZ3X4g"
+    }
+  ]
+}

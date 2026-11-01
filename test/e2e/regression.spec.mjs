@@ -28,8 +28,13 @@ async function shot(name, mask = []) {
   if (process.env.PLM_NEGATIVE_CONTROL === '1' && name === 'empty-home') {
     await page.locator('.open-folder-button').evaluate(el => el.style.transform = 'translateX(20px)');
   }
+  if (process.env.PLM_MAP_NEGATIVE_CONTROL === '1' && name === 'empty-home') {
+    await page.locator('.leaflet-pm-toolbar').first().evaluate(el => el.style.transform = 'translateX(-3px)');
+  }
   if (name === 'empty-home') {
     await expect(page.locator('app-sidebar-upper-pane')).toHaveScreenshot('toolbar.png', { animations: 'disabled' });
+    // Reference pixels are cropped from the original full-page screenshot.
+    await expect(page).toHaveScreenshot('map-toolbar.png', { clip: { x: 1155, y: 210, width: 36, height: 185 } });
   }
   const dialog = name === 'welcome' || name === 'about' || name.startsWith('settings-')
     ? page.locator('mat-dialog-container') : page;
@@ -76,6 +81,82 @@ test('welcome, about and every available settings tab keep their appearance', as
   await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Cache' }).click();
   await shot('settings-cache', [page.locator('.location-value')]);
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+});
+test('map regions preserve drawing, removal and real photo selection', async () => {
+  await page.addInitScript(() => {
+    let leaflet;
+    Object.defineProperty(window, 'L', {
+      configurable: true, enumerable: true,
+      get: () => leaflet,
+      set: lib => {
+        leaflet = lib;
+        lib?.Map?.addInitHook(function () {
+          if (this.getContainer().id !== 'plm-leaflet-map') return;
+          window.__plmLeafletMap = this;
+          this.on('movestart', () => window.__plmMapMoving = true);
+          this.on('moveend', () => window.__plmMapMoving = false);
+        });
+      }
+    });
+  });
+  await page.reload();
+  await page.waitForFunction(() => !!window.__plmLeafletMap?.pm);
+  await dismissWelcome();
+  await app.evaluate(({ dialog }, folder) => {
+    dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [folder] });
+  }, photoFolder);
+  await page.getByRole('button', { name: 'Open Folder', exact: true }).click();
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
+  await expect(page.locator('.plm-leaflet-map-div-icon')).toHaveCount(2);
+  await page.waitForFunction(() => !window.__plmMapMoving);
+  const titles = await page.locator('.leaflet-pm-toolbar .button-container[title]').evaluateAll(nodes => nodes.map(n => n.title).sort());
+  expect(titles).toEqual(['Set Region by Rectangle', 'Set Region by Vertex', 'Set Text', 'Edit Region', 'Drag Region', 'Remove Region'].sort());
+  const mapBox = await page.locator('#plm-leaflet-map').boundingBox();
+  const corners = await page.evaluate(() => [[-10, 110], [40, 160]].map(latlng => {
+    const p = window.__plmLeafletMap.latLngToContainerPoint(latlng);
+    return { x: p.x, y: p.y };
+  }));
+  async function drawRectangle() {
+    await page.getByTitle('Set Region by Rectangle', { exact: true }).click();
+    await page.mouse.click(mapBox.x + corners[0].x, mapBox.y + corners[0].y);
+    await page.mouse.move(mapBox.x + corners[1].x, mapBox.y + corners[1].y, { steps: 5 });
+    await page.mouse.click(mapBox.x + corners[1].x, mapBox.y + corners[1].y);
+    await expect(page.locator('.plm-leaflet-map-region-info-text')).toHaveText('Photos in Regions: 2');
+  }
+  async function drawPolygon() {
+    await page.getByTitle('Set Region by Vertex', { exact: true }).click();
+    for (const point of [corners[0], { x: corners[0].x, y: corners[1].y }, corners[1], corners[0]]) {
+      await page.mouse.move(mapBox.x + point.x, mapBox.y + point.y, { steps: 5 });
+      await page.mouse.click(mapBox.x + point.x, mapBox.y + point.y);
+    }
+    await expect(page.locator('.plm-leaflet-map-region-info-text')).toHaveText('Photos in Regions: 2');
+  }
+  await drawRectangle();
+  await drawPolygon();
+  const shapes = page.locator('#plm-leaflet-map path.leaflet-interactive');
+  await expect(shapes).toHaveCount(2);
+  await page.getByTitle('Remove Region', { exact: true }).click();
+  for (const [index, latlng] of [[-5, 135], [32, 115]].entries()) {
+    const inside = await page.evaluate(latlng => {
+      const p = window.__plmLeafletMap.latLngToContainerPoint(latlng);
+      return { x: p.x, y: p.y };
+    }, latlng);
+    await page.mouse.click(mapBox.x + inside.x, mapBox.y + inside.y);
+    await expect(shapes).toHaveCount(1 - index);
+  }
+  await expect(page.locator('.plm-leaflet-map-region-info-text')).toBeHidden();
+  await expect(page.locator('mat-tree-node').filter({ hasText: 'Gold Coast' }).getByRole('checkbox')).toBeChecked();
+  await page.getByTitle('Remove Region', { exact: true }).click();
+  await drawPolygon();
+  await page.getByRole('button', { name: 'Select Photos', exact: true }).click();
+  await expect(page.locator('mat-tree-node').filter({ hasText: 'Kobe' }).getByRole('checkbox')).toBeChecked();
+  await expect(page.locator('mat-tree-node').filter({ hasText: 'Unga' }).getByRole('checkbox')).toBeChecked();
+  await expect(page.locator('mat-tree-node').filter({ hasText: 'Gold Coast' }).getByRole('checkbox')).not.toBeChecked();
+  await expect(page.locator('mat-tree-node').filter({ hasText: 'Apple Park' }).getByRole('checkbox')).not.toBeChecked();
+  await expect(page.locator('.plm-leaflet-map-div-icon')).toHaveCount(2);
+  await expect(page.locator('app-leaflet-map .update-in-progress-overlay')).toBeHidden();
+  await expect(page.locator('.marker-cluster')).toHaveCount(0);
+  await expect(page.locator('.plm-leaflet-map-region-info-text')).toBeHidden();
 });
 test('appearance setting saves, affects layout, and survives a real app restart', async () => {
   await dismissWelcome();
