@@ -1,4 +1,4 @@
-import { enableProdMode } from '@angular/core';
+import { enableProdMode, provideZoneChangeDetection } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
 import { LogFileConfig } from '../src-shared/log/file-config/log-file-config';
@@ -16,6 +16,7 @@ recordErrorsOutsideAngular();
 
 platformBrowserDynamic()
   .bootstrapModule(AppModule, {
+    applicationProviders: [provideZoneChangeDetection()],
     preserveWhitespaces: false
   })
   .catch(err => Logger.error(err));

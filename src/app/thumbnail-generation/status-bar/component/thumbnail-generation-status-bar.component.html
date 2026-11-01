@@ -1,43 +1,43 @@
 <div class="summary">
-  <ng-container *ngIf="isThumbnailGenerationDone; else summaryForThumbnailGenerationInProgress">
-    <span *ngIf="thumbnailGenerationResult.errorOccurred; else summaryForNoErrorDuringThumbnailGeneration">Finished generating thumbnails for HEIF files with errors.</span>
-    <ng-template #summaryForNoErrorDuringThumbnailGeneration>
+  @if (isThumbnailGenerationDone) {
+    @if (thumbnailGenerationResult.errorOccurred) {
+      <span>Finished generating thumbnails for HEIF files with errors.</span>
+    } @else {
       <span>Completed generating thumbnails for HEIF files.</span>
-    </ng-template>
-  </ng-container>
-  <ng-template #summaryForThumbnailGenerationInProgress>
+    }
+  } @else {
     <span>Generating thumbnails for HEIF files...</span>
-  </ng-template>
+  }
 </div>
 <div class="progress-bar-with-details"
-     [class]="detailsVisible ? 'expanded-progress-bar-with-details' : 'shrunk-progress-bar-with-details'"
-     [title]="detailsVisible ? '' : 'Show Details'"
-     (click)="toggleDetailsVisibility()">
+  [class]="detailsVisible ? 'expanded-progress-bar-with-details' : 'shrunk-progress-bar-with-details'"
+  [title]="detailsVisible ? '' : 'Show Details'"
+  (click)="toggleDetailsVisibility()">
   <div class="progress-bar-and-expand-icon">
     <mat-progress-bar mode="buffer" [value]="progressPercent"></mat-progress-bar>
     <mat-icon class="expand-icon"
-              [ngClass]="{'expanded-expand-icon': detailsVisible}">
+      [ngClass]="{'expanded-expand-icon': detailsVisible}">
       expand_more
     </mat-icon>
   </div>
   <div class="details">
     <div>
-      <ng-container *ngIf="isThumbnailGenerationDone; else detailsForThumbnailGenerationInProgress">
-        <span *ngIf="thumbnailGenerationResult.errorOccurred; else detailsForNoErrorDuringThumbnailGeneration">
-          <span>Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} files with errors. </span>
-          <span class="anchor-tag-like-text"
-                title="See the files with errors"
-                (click)="handleClickHereTextClicked($event)">
-            Click here to see the files with errors.
+      @if (isThumbnailGenerationDone) {
+        @if (thumbnailGenerationResult.errorOccurred) {
+          <span>
+            <span>Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} files with errors. </span>
+            <span class="anchor-tag-like-text"
+              title="See the files with errors"
+              (click)="handleClickHereTextClicked($event)">
+              Click here to see the files with errors.
+            </span>
           </span>
-        </span>
-        <ng-template #detailsForNoErrorDuringThumbnailGeneration>
+        } @else {
           <span>Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} files.</span>
-        </ng-template>
-      </ng-container>
-      <ng-template #detailsForThumbnailGenerationInProgress>
+        }
+      } @else {
         <span>Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} files.</span>
-      </ng-template>
+      }
     </div>
     <div class="generation-required-files-description">
       {{ numberOfThumbnailsGenerationRequired }} thumbnails need generation, which is given by "HEIF files ({{ numberOfTotalHeifFiles }} files)
@@ -46,8 +46,8 @@
   </div>
 </div>
 <span class="close-button"
-      title="Close Thumbnail Generation Status Bar"
-      [ngClass]="{'hidden': !isThumbnailGenerationDone, 'fade-in-close-button': isThumbnailGenerationDone}"
-      (click)="handleCloseButtonClicked()">
+  title="Close Thumbnail Generation Status Bar"
+  [ngClass]="{'hidden': !isThumbnailGenerationDone, 'fade-in-close-button': isThumbnailGenerationDone}"
+  (click)="handleCloseButtonClicked()">
   ×
 </span>

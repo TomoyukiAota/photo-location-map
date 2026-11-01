@@ -49,6 +49,9 @@ jobs:
     - name: Install Node.js with the version in mise.toml
       uses: jdx/mise-action@v5.2.5
 
+    - name: Verify Node and its bundled npm
+      run: npm run verify:runtime
+
     - name: npm ci
       run: npm ci
 

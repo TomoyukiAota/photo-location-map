@@ -4,10 +4,6 @@
   "compilerOptions": {
     "module": "esnext",
     "target": "ES2022",
-    "lib": [
-      "es2020",
-      "dom"
-    ],
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,

@@ -31,7 +31,7 @@ Updated: 2026-11-01 (Asia/Tokyo).
 5. Inspect actual branch/HEAD/diff, task-related commits, existing processes and
    any newer user instructions. Reconcile records before executing commands.
 
-Active task: U04d. Baseline and Node 22 bridge checks are captured.
+Active task: U05. Baseline and Node 22 bridge checks are captured.
 Upgrade Angular one major at a time. See BASELINE.md
 for the original Karma shutdown issue; do not claim it is a clean pass.
 Do not begin with a bulk package update or by running Angular 18 under Node 26.
@@ -48,8 +48,8 @@ Do not begin with a bulk package update or by running Angular 18 under Node 26.
 | U04a | Verified locally | Angular 18.2.14 / CLI 18.2.21; graph/lint/build, 172 assertions and 7 regression cases. Karma shutdown issue remains. |
 | U04b | Verified locally | Graph/lint/build, 57+74+41 assertions and all 7 visual/functional cases pass. Explicit single-run also verifies failure exit code. |
 | U04c | Verified locally | Graph/lint/build, clean 57+74+41 tests and 7 unchanged regression cases. |
-| U04d | In progress | Angular 21 migrations on the Node 22 bridge. |
-| U05 | Not started | Selected Angular 22 + Node 26 / bundled npm destination. |
+| U04d | Verified locally | Graph/runtime/lint/build, 172 tests and all 7 unchanged regression cases. |
+| U05 | In progress | Apply Angular 22 migrations, then select Node 26/bundled npm and verify. |
 | U06 | Not started | Electron/packaging checkpoint with accepted macOS 13+ minimum. |
 | U07 | Not started | Runtime library groups verified. |
 | U08 | Not started | Map/chart/translation updates verified visually. |
@@ -205,3 +205,25 @@ visual/functional comparisons including the original HEIC pixel hash. Logs are
 `angular20-{graph,lint,build,unit,e2e}.log`. The flat-config migration retained
 old rule intent and removed three now-unused lint directives.
 Next: apply Angular 21 as an intermediate stage; preserve Zone-based behavior.
+
+### Angular 21 working tree
+
+Core 21.2.25, CLI 21.2.29, Material/CDK 21.2.14, custom-webpack 21.1.0,
+angular-eslint 21.4.0 and ngx-echarts 21.0.0. The required core migration converted
+legacy structural template control flow and made Zone-based bootstrap explicit
+with provideZoneChangeDetection. NgModules and existing change-detection choices
+remain. The optional application-builder migration was not run.
+Added a runtime check that reads Node's version from mise.toml and verifies that
+the active npm CLI is inside that same Node installation. Every CI OS calls it
+before installation. Its local Node 22.23.4 / bundled npm 10.9.9 check passes.
+Validation is running in `angular21-*.log`; source is uncommitted until the gate
+completes. Last verified framework checkpoint: `541f134` (Angular 20).
+
+### Angular 21 completed
+
+Runtime check, complete dependency graph, lint, production/main build, clean
+57+74+41 unit tests and all seven visual/functional comparisons pass, with
+unchanged references and HEIC pixels. Required control-flow conversion preserves
+the original rendered layouts and interactions in these checks.
+Next: Angular 22 migration on the compatible Node 22 bridge. Select Node
+26.13.0 and bundled npm 11.20.0 only after the framework permits it.

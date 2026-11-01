@@ -7,17 +7,21 @@
     <mat-form-field class="date-format-dropdown">
       <mat-label>Date Format</mat-label>
       <mat-select [(value)]="selectedDateFormat" (selectionChange)="notifySettingsChanged($event)">
-        <mat-option *ngFor="let dateFormat of dateFormatList" [value]="dateFormat">
-          {{dateFormat}}
-        </mat-option>
+        @for (dateFormat of dateFormatList; track dateFormat) {
+          <mat-option [value]="dateFormat">
+            {{dateFormat}}
+          </mat-option>
+        }
       </mat-select>
     </mat-form-field>
     <mat-form-field class="clock-system-format-dropdown">
       <mat-label>12- or 24-hour</mat-label>
       <mat-select [(value)]="selectedClockSystemFormat" (selectionChange)="notifySettingsChanged($event)">
-        <mat-option *ngFor="let clockSystemFormat of clockSystemFormatList" [value]="clockSystemFormat">
-          {{clockSystemFormat}}
-        </mat-option>
+        @for (clockSystemFormat of clockSystemFormatList; track clockSystemFormat) {
+          <mat-option [value]="clockSystemFormat">
+            {{clockSystemFormat}}
+          </mat-option>
+        }
       </mat-select>
     </mat-form-field>
     <div class="date-time-example">
