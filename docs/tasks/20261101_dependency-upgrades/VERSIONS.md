@@ -239,6 +239,9 @@ action at the final gate; never leave required checks permanently pending.
 
 ## Acceptance of exceptions
 
+Implemented exceptions and actual runtime evidence are maintained in
+[EXCEPTIONS.md](./EXCEPTIONS.md).
+
 Maintain an implemented-version snapshot during execution, separate from this dated
 research. For each package below its candidate, record the attempted version, exact
 failure/peer constraint, last verified fallback, risk and revisit condition. Preserve

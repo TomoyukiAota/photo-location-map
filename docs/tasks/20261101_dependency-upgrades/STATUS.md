@@ -10,14 +10,16 @@ Updated: 2026-11-01 (Asia/Tokyo).
 - Final target: Angular 22.2.4, CLI/Material 22.2.5, TypeScript 6.0.3, Node
   26.13.0 and its bundled npm 11.20.0, matching Photo Data Viewer; Electron 45.2.1.
 - Application baseline: `911dd91bf8de231a40be55f80e0255f053bbc4e3`, branch `main`.
-- Initial working tree: clean. This task adds planning/evidence documents only.
+- The planning phase began with a clean working tree and added planning/evidence
+  documents; implementation is now progressing through the checkpoints below.
 - The planning phase changed documents only. Execution now adds profile isolation
   and regression tests with Playwright; application dependency upgrades start at U03.
   No push or publication has occurred.
 - Source inspection, official release/registry reads, historical PR review and a
   read-only lockfile audit were performed. No external comments or edits.
-- Angular 22 behavior is verified locally at `19ffc6f`; the installer
-  boundary is documented below. Electron remains 32.0.2 until U06.
+- Electron 45 / Angular 22 is verified locally at `d75efc0`, including the
+  signed universal package. The U07a working tree has also passed its gate;
+  final remote CI, notarization and the native chooser item remain.
 - No long-running baseline app or packaging process remains. Local command logs
   are under `.upgrade-artifacts`; test output is in its `e2e-results` directory.
 
@@ -31,10 +33,11 @@ Updated: 2026-11-01 (Asia/Tokyo).
 5. Inspect actual branch/HEAD/diff, task-related commits, existing processes and
    any newer user instructions. Reconcile records before executing commands.
 
-Active task: U07. Angular 22 behavior is verified against the original
-references on Electron 32. Final Node 26 clean installation needs Electron 45
-because the old Electron zip extractor exits early on Node 26. The old Karma shutdown issue was resolved with explicit single-run
-mode in U04b; retain `ng test --watch=false`. Do not regenerate original snapshots.
+Active task: U07. File-tree/date/module/queue updates have passed locally.
+Next is the image/worker group, followed by analytics and map/chart/translation
+updates. Node 26 / bundled npm 11.20 and Electron 45 clean installation work;
+the old extractor caveat is resolved. Retain `ng test --watch=false` and never
+regenerate the original screenshots or HEIC pixel reference.
 
 ## Work queue
 
@@ -382,3 +385,53 @@ owner change. All workflow YAML parses. Remote CI is not yet run.
 Remaining U06 item: unspecified native file choosers start in Downloads in
 Electron 43+. Investigate preservation of the OS's old remembered directory.
 Continue U07 independently; no user-only action is needed yet.
+
+### U07a file-tree/dates/module/queue group in progress
+
+Last verified application checkpoint: d75efc0. Installed commander 15.0.0,
+directory-tree 3.6.0, fs-extra 11.4.1, lodash 4.18.1, moment 2.31.0,
+moment-timezone 0.6.6, uuid 14.0.3, comlink 4.4.2 and updated related types.
+Declared directly imported moment and reflect-metadata; removed obsolete uuid
+types after the library supplied its own. A shared directory-tree adapter
+explicitly requests the old size/type/extension fields because v3 omits them by
+default. All production callers and existing fixture tests use that adapter.
+
+Two latest candidates failed actual Electron probes:
+- electron-unhandled 6.0.0 cannot load through the synchronous main entry
+  (ERR_REQUIRE_ASYNC_MODULE, top-level await). Version 5 source has the same
+  asynchronous main initialization. Version 6 also adds renderer crash and hang
+  dialogs without a configuration switch, changing the old error policy. Keep
+  4.0.1 while preserving synchronous startup and that UI; no whole-app ESM change,
+  copied dependency fork or listener suppression was introduced. Revisit if the
+  upstream API permits preserving the old policy with bounded initialization.
+- p-queue 10.0.0 combines a DOM EventTarget with Node's setMaxListeners in an
+  Electron renderer. Both the bundled Karma and native Electron Mocha renderer
+  fail before tests start. No global process/EventTarget mutation or dependency
+  source patch. Version 9 is the compatible candidate. The current pipeline uses
+  9.3.0; registry inspection subsequently found 9.3.5 as the highest stable 9,
+  which must be selected and verified before the final snapshot.
+
+Failure evidence: runtime-core-unit.log (initial failing run was overwritten by
+the compatible rerun), runtime-core-native-pqueue.log, unhandled6-probe.log;
+source inspection notes are retained here. Current validation is in
+runtime-core-{graph,lint,build,unit,e2e}.log. No unresolved issue requires owner
+action at this stage.
+
+Timezone data changed from 2022g. Twelve public synthetic timestamp samples
+include two expected data corrections: Almaty +06 becomes +05 and Cairo's summer
++02 becomes +03. Tokyo and the sampled US DST boundaries are unchanged. Exact
+before/after outputs and data version are in TIMEZONE_CHANGES.json. Do not
+misrepresent timezone database corrections as byte-identical date results.
+
+### U07a completed
+
+The final compatible queue is 9.3.5. Graph, lint, production/main/config build,
+57+74+41 assertions and all eight unchanged visual/functional comparisons pass.
+Commander 15 explicitly retains the old tolerance for excess positional arguments.
+Native synchronous loading of uuid 14 succeeds in actual Electron processes.
+Directory metadata, real EXIF/GPS extraction and directory selection remain
+covered by existing unit/integration assertions. Logs: runtime-core-*.log.
+
+Next: Jimp 1 / heic-decode 2.1 / workerpool 10. Preserve scale-to-fit behavior,
+400px bound, jpeg-js encoder, 0.92 quality and original decoded output hash.
+Do not update image references to accommodate a changed algorithm.

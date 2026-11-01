@@ -1,8 +1,7 @@
 import { expose } from 'comlink';
-import createDirectoryTree from 'directory-tree';
 import { DirectoryTree, DirectoryTreeCallback, DirectoryTreeOptions } from 'directory-tree';
 import { Stats } from 'fs';
-import { convertToFlattenedDirTree } from '../../../../src-shared/dir-tree/dir-tree-util';
+import { createDirectoryTree, convertToFlattenedDirTree } from '../../../../src-shared/dir-tree/dir-tree-util';
 
 export const api = {
   async createDirectoryTree(dirPath: string, option?: DirectoryTreeOptions) {

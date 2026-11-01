@@ -1,14 +1,14 @@
 {
   "observedDate": "2026-11-01",
-  "state": "Angular 22 behavior verified on Electron 32; final clean installation pending U06",
-  "verifiedApplicationCommit": "19ffc6ffc61dd32f13ee97919dc74fec46647c3a",
+  "state": "Electron 45 / Angular 22 local checkpoint; remote CI and native chooser compatibility pending",
+  "verifiedApplicationCommit": "d75efc0df23b30344220213e9fac9b478b3f0020",
   "hostNode": "26.13.0",
   "bundledNpm": "11.20.0",
   "lockfileVersion": 2,
   "packages": [
     {
       "name": "@electron/remote",
-      "version": "2.1.2",
+      "version": "2.1.3",
       "section": "dependencies"
     },
     {
@@ -38,7 +38,7 @@
     },
     {
       "name": "electron-updater",
-      "version": "6.3.4",
+      "version": "6.8.12",
       "section": "dependencies"
     },
     {
@@ -233,7 +233,7 @@
     },
     {
       "name": "@electron/notarize",
-      "version": "2.4.0",
+      "version": "3.1.2",
       "section": "devDependencies"
     },
     {
@@ -318,7 +318,7 @@
     },
     {
       "name": "@types/node",
-      "version": "20.19.43",
+      "version": "24.19.2",
       "section": "devDependencies"
     },
     {
@@ -378,17 +378,17 @@
     },
     {
       "name": "electron",
-      "version": "32.0.2",
+      "version": "45.2.1",
       "section": "devDependencies"
     },
     {
       "name": "electron-builder",
-      "version": "24.13.3",
+      "version": "26.18.1",
       "section": "devDependencies"
     },
     {
       "name": "electron-mocha",
-      "version": "12.3.1",
+      "version": "13.1.0",
       "section": "devDependencies"
     },
     {
@@ -532,5 +532,5 @@
       "section": "devDependencies"
     }
   ],
-  "lockfileSha256": "6375af22796d11db3c4f51290b2529c70160f26cca38b135b103f1cfd4b4d519"
+  "lockfileSha256": "1bfba7c6b32082858ffbb29cb847404092248c9b662163b0230a0de26d5dfdea"
 }

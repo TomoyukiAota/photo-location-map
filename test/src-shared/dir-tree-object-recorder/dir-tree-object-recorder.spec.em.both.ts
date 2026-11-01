@@ -1,9 +1,8 @@
 import assert = require('assert');
-import createDirectoryTree from 'directory-tree';
 import * as fsExtra from 'fs-extra';
 import * as path from 'path';
 import { DirTreeObjectRecorder } from '../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
-import { convertToFlattenedDirTree } from '../../../src-shared/dir-tree/dir-tree-util';
+import { createDirectoryTree, convertToFlattenedDirTree } from '../../../src-shared/dir-tree/dir-tree-util';
 
 
 describe('DirTreeObjectRecorder', () => {

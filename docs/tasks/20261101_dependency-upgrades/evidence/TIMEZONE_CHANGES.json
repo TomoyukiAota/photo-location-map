@@ -1,0 +1,152 @@
+{
+  "observedDate": "2026-11-01",
+  "before": {
+    "moment": "2.29.4",
+    "momentTimezone": "0.5.40",
+    "data": "2022g",
+    "samples": [
+      {
+        "zone": "Asia/Tokyo",
+        "utc": "2026-07-01T12:00:00Z",
+        "local": "2026-07-01 21:00:00 +09:00"
+      },
+      {
+        "zone": "Asia/Almaty",
+        "utc": "2026-07-01T12:00:00Z",
+        "local": "2026-07-01 18:00:00 +06:00"
+      },
+      {
+        "zone": "Europe/London",
+        "utc": "2026-07-01T12:00:00Z",
+        "local": "2026-07-01 13:00:00 +01:00"
+      },
+      {
+        "zone": "America/New_York",
+        "utc": "2026-07-01T12:00:00Z",
+        "local": "2026-07-01 08:00:00 -04:00"
+      },
+      {
+        "zone": "Africa/Cairo",
+        "utc": "2026-07-01T12:00:00Z",
+        "local": "2026-07-01 14:00:00 +02:00"
+      },
+      {
+        "zone": "America/Mexico_City",
+        "utc": "2026-07-01T12:00:00Z",
+        "local": "2026-07-01 06:00:00 -06:00"
+      },
+      {
+        "zone": "Asia/Gaza",
+        "utc": "2026-07-01T12:00:00Z",
+        "local": "2026-07-01 15:00:00 +03:00"
+      },
+      {
+        "zone": "Europe/Kyiv",
+        "utc": "2026-07-01T12:00:00Z",
+        "local": "2026-07-01 15:00:00 +03:00"
+      },
+      {
+        "zone": "America/New_York",
+        "utc": "2026-03-08T06:59:59Z",
+        "local": "2026-03-08 01:59:59 -05:00"
+      },
+      {
+        "zone": "America/New_York",
+        "utc": "2026-03-08T07:00:00Z",
+        "local": "2026-03-08 03:00:00 -04:00"
+      },
+      {
+        "zone": "America/New_York",
+        "utc": "2026-11-01T05:59:59Z",
+        "local": "2026-11-01 01:59:59 -04:00"
+      },
+      {
+        "zone": "America/New_York",
+        "utc": "2026-11-01T06:00:00Z",
+        "local": "2026-11-01 01:00:00 -05:00"
+      }
+    ]
+  },
+  "after": {
+    "moment": "2.31.0",
+    "momentTimezone": "0.6.6",
+    "data": "2026f",
+    "samples": [
+      {
+        "zone": "Asia/Tokyo",
+        "utc": "2026-07-01T12:00:00Z",
+        "local": "2026-07-01 21:00:00 +09:00"
+      },
+      {
+        "zone": "Asia/Almaty",
+        "utc": "2026-07-01T12:00:00Z",
+        "local": "2026-07-01 17:00:00 +05:00"
+      },
+      {
+        "zone": "Europe/London",
+        "utc": "2026-07-01T12:00:00Z",
+        "local": "2026-07-01 13:00:00 +01:00"
+      },
+      {
+        "zone": "America/New_York",
+        "utc": "2026-07-01T12:00:00Z",
+        "local": "2026-07-01 08:00:00 -04:00"
+      },
+      {
+        "zone": "Africa/Cairo",
+        "utc": "2026-07-01T12:00:00Z",
+        "local": "2026-07-01 15:00:00 +03:00"
+      },
+      {
+        "zone": "America/Mexico_City",
+        "utc": "2026-07-01T12:00:00Z",
+        "local": "2026-07-01 06:00:00 -06:00"
+      },
+      {
+        "zone": "Asia/Gaza",
+        "utc": "2026-07-01T12:00:00Z",
+        "local": "2026-07-01 15:00:00 +03:00"
+      },
+      {
+        "zone": "Europe/Kyiv",
+        "utc": "2026-07-01T12:00:00Z",
+        "local": "2026-07-01 15:00:00 +03:00"
+      },
+      {
+        "zone": "America/New_York",
+        "utc": "2026-03-08T06:59:59Z",
+        "local": "2026-03-08 01:59:59 -05:00"
+      },
+      {
+        "zone": "America/New_York",
+        "utc": "2026-03-08T07:00:00Z",
+        "local": "2026-03-08 03:00:00 -04:00"
+      },
+      {
+        "zone": "America/New_York",
+        "utc": "2026-11-01T05:59:59Z",
+        "local": "2026-11-01 01:59:59 -04:00"
+      },
+      {
+        "zone": "America/New_York",
+        "utc": "2026-11-01T06:00:00Z",
+        "local": "2026-11-01 01:00:00 -05:00"
+      }
+    ]
+  },
+  "changes": [
+    {
+      "zone": "Asia/Almaty",
+      "utc": "2026-07-01T12:00:00Z",
+      "before": "2026-07-01 18:00:00 +06:00",
+      "after": "2026-07-01 17:00:00 +05:00"
+    },
+    {
+      "zone": "Africa/Cairo",
+      "utc": "2026-07-01T12:00:00Z",
+      "before": "2026-07-01 14:00:00 +02:00",
+      "after": "2026-07-01 15:00:00 +03:00"
+    }
+  ],
+  "interpretation": "Timezone database corrections can change offsets; application formatting and selection logic are unchanged."
+}

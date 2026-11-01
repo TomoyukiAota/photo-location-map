@@ -1,7 +1,6 @@
 import deleteEmpty from 'delete-empty';
-import createDirectoryTree from 'directory-tree';
 import * as fs from 'fs';
-import { convertToFlattenedDirTree } from '../../dir-tree/dir-tree-util';
+import { createDirectoryTree, convertToFlattenedDirTree } from '../../dir-tree/dir-tree-util';
 import { createPrependedLogger } from '../../log/create-prepended-logger';
 import { stringArrayToLogText } from '../../log/multiline-log-text';
 import { getOriginalFilePath, getThumbnailLogFilePath, plmThumbnailCacheDir } from './thumbnail-cache-util';
