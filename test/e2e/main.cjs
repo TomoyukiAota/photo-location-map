@@ -13,6 +13,7 @@ require('../../electron-util/isolated-test-profile');
 app.on('ready', () => {
   session.defaultSession.webRequest.onBeforeRequest({ urls: [
     '*://*.analytics.photo-location-map.tomoyukiaota.com/*',
+    '*://*.analytics.photo-data-viewer.tomoyukiaota.com/*',
     '*://*.mixpanel.com/*', '*://*.amplitude.com/*',
     '*://*.google-analytics.com/*', '*://www.googletagmanager.com/*',
   ] }, (_, callback) => callback({ cancel: true }));

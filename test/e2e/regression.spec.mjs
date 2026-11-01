@@ -15,6 +15,11 @@ async function launch() {
   await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setContentSize(1200, 800));
   await page.waitForSelector('app-root app-home');
   await page.waitForFunction(() => !!window.plmInternalRenderer?.settingsDialog?.showSettingsDialog);
+  await expect(page.locator('.leaflet-pm-toolbar').first()).toBeVisible();
+  await page.waitForFunction(() => {
+    const tiles = [...document.querySelectorAll('img.leaflet-tile')];
+    return tiles.length > 0 && tiles.every(img => img.complete);
+  });
 }
 async function shot(name, mask = []) {
   if (!visual) return;
@@ -25,7 +30,9 @@ async function shot(name, mask = []) {
   if (name === 'empty-home') {
     await expect(page.locator('app-sidebar-upper-pane')).toHaveScreenshot('toolbar.png', { animations: 'disabled' });
   }
-  await expect(page).toHaveScreenshot(`${name}.png`, { mask });
+  const dialog = name === 'welcome' || name === 'about' || name.startsWith('settings-')
+    ? page.locator('mat-dialog-container') : page;
+  await expect(dialog).toHaveScreenshot(`${name}.png`, { mask });
 }
 async function dismissWelcome() {
   if (await page.locator('app-welcome-dialog').count()) {

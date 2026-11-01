@@ -129,3 +129,16 @@ mise.toml, angular.json and electron-builder.json still match the baseline.
   regression cases pass. CI action versions refreshed and the regression command
   added after package tests on all platforms. Remote CI has not run yet.
 - Focused negative control fails on the toolbar snapshot as intended.
+
+### Reference stabilization result
+
+The original Angular 18.2.4/Electron 32.0.2 dependency pair was reinstalled from
+`926a777`. Dialog snapshots now use the real dialog container (component hosts
+use display:contents), and launch waits for Geoman and map tiles. Capture and
+all seven visual/functional comparisons pass on the original app. The original
+HEIC pixel reference is unchanged. Raw logs: `baseline-stable-*.log`.
+Trying Karma clearContext=true did not resolve the old shutdown error; that
+configuration experiment was reverted. No check was disabled.
+Next: restore the patched-Angular-18 manifest pair from
+`.upgrade-artifacts/angular18-patched-manifest/`, reinstall, rebuild and compare
+against these original-app references.

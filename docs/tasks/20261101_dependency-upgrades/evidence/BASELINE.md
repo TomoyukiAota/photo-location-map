@@ -39,3 +39,11 @@ The focused toolbar negative control fails at `toolbar.png` after the deliberate
 20px movement (see local `visual-negative-control-focused.log`). This establishes
 that the comparison catches that concrete UI regression. Baseline application
 and test harness checkpoint: `926a777`.
+
+Reference refinement: the first settings-date reference had captured the loading
+map behind the dialog. Reinstalled the exact original Angular 18.2.4/Electron
+32.0.2 lockfile pair from `926a777`, waited for map readiness and captured dialog
+containers directly. All seven comparisons pass; tolerance was not increased.
+Original screenshot history remains in `926a777`; current references are also
+from the original dependencies. `clearContext=true` did not cure the existing
+Karma shutdown error and was reverted rather than retained as an ineffective fix.
