@@ -34,3 +34,8 @@ Completed baseline results:
   but was below the whole-page pixel threshold; a focused toolbar snapshot was
   added to make this regression observable. The focused control result is
   recorded after running it.
+
+The focused toolbar negative control fails at `toolbar.png` after the deliberate
+20px movement (see local `visual-negative-control-focused.log`). This establishes
+that the comparison catches that concrete UI regression. Baseline application
+and test harness checkpoint: `926a777`.

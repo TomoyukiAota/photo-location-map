@@ -31,8 +31,8 @@ Updated: 2026-11-01 (Asia/Tokyo).
 5. Inspect actual branch/HEAD/diff, task-related commits, existing processes and
    any newer user instructions. Reconcile records before executing commands.
 
-Active task: U03. Baseline checks and regression references are captured. Switch
-to the Node 22 bridge, then upgrade Angular one major at a time. See BASELINE.md
+Active task: U04a. Baseline and Node 22 bridge checks are captured.
+Upgrade Angular one major at a time. See BASELINE.md
 for the original Karma shutdown issue; do not claim it is a clean pass.
 Do not begin with a bulk package update or by running Angular 18 under Node 26.
 
@@ -44,8 +44,8 @@ Do not begin with a bulk package update or by running Angular 18 under Node 26.
 | U00 | Complete | Existing checkout inspected; only the task documents were uncommitted. |
 | U01 | Complete | Original install/lint/build and Mac universal package smoke pass; Karma shutdown issue recorded. |
 | U02 | Complete | Seven real Electron/website cases, original screenshots, HEIC pixel reference and restart persistence. |
-| U03 | In progress | Node 22.23.4 installed with bundled npm 10.9.9; switch project and verify. |
-| U04a | Not started | Last Angular 18 patches verified. |
+| U03 | Verified locally | Node 22.23.4/npm 10.9.9; clean install, full graph and 7 visual/functional cases pass. CI actions updated; remote CI pending. |
+| U04a | In progress | Updating to the final Angular 18 patches and aligned adapters. |
 | U04b | Not started | Angular 19 checkpoint. |
 | U04c | Not started | Angular 20 checkpoint. |
 | U04d | Not started | Angular 21 intermediate checkpoint on the Node 22 bridge. |
@@ -121,3 +121,11 @@ runtime and 78 development dependencies; all local Markdown links resolve; all
 JSON evidence parses; recorded hashes of package.json, package-lock.json,
 mise.toml, angular.json and electron-builder.json still match the baseline.
 `git diff --check` is clean. Only this task-document directory was added.
+
+## Execution checkpoints
+
+- `926a777`: original application with isolated profiles and regression harness.
+- Node 22 bridge: clean `npm ci`, `npm ls --all`, all seven visual/functional
+  regression cases pass. CI action versions refreshed and the regression command
+  added after package tests on all platforms. Remote CI has not run yet.
+- Focused negative control fails on the toolbar snapshot as intended.

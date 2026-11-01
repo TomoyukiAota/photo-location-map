@@ -18,9 +18,9 @@ jobs:
     outputs:
       app: ${{ steps.filter.outputs.app }}
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@v7.0.1
 
-    - uses: dorny/paths-filter@v4
+    - uses: dorny/paths-filter@v4.0.3
       id: filter
       with:
         predicate-quantifier: every
@@ -44,10 +44,10 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # for electron-builder
 
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@v7.0.1
 
     - name: Install Node.js with the version in mise.toml
-      uses: jdx/mise-action@v4
+      uses: jdx/mise-action@v5.2.5
 
     - name: npm ci
       run: npm ci
@@ -70,6 +70,9 @@ jobs:
     - name: npm run test:package
       run: npm run test:package
 
+    - name: npm run test:e2e
+      run: npm run test:e2e
+
     - name: '[Publish to GitHub Releases] Clean-up by "git clean -fdx" (1st time)'
       run: git clean -fdx
 
@@ -80,7 +83,7 @@ jobs:
       run: npm ci
 
     - name: '[Publish to GitHub Releases] Create and publish Windows package'
-      uses: nick-invision/retry@v2.2.0
+      uses: nick-fields/retry@v4.0.0
       with:
         timeout_minutes: 60
         max_attempts: 10

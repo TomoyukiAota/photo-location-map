@@ -18,9 +18,9 @@ jobs:
     outputs:
       app: ${{ steps.filter.outputs.app }}
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@v7.0.1
 
-    - uses: dorny/paths-filter@v4
+    - uses: dorny/paths-filter@v4.0.3
       id: filter
       with:
         predicate-quantifier: every
@@ -44,10 +44,10 @@ jobs:
       ELECTRON_DISABLE_SANDBOX: '1'
 
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@v7.0.1
 
     - name: Install Node.js with the version in mise.toml
-      uses: jdx/mise-action@v4
+      uses: jdx/mise-action@v5.2.5
 
     - name: npm ci
       run: npm ci
@@ -59,17 +59,17 @@ jobs:
       run: npm run lint:script
 
     - name: npm run test:unit:ng
-      uses: GabrielBB/xvfb-action@v1.4
+      uses: GabrielBB/xvfb-action@v1.7
       with:
         run: npm run test:unit:ng
 
     - name: npm run test:unit:em:main
-      uses: GabrielBB/xvfb-action@v1.4
+      uses: GabrielBB/xvfb-action@v1.7
       with:
         run: npm run test:unit:em:main
 
     - name: npm run test:unit:em:renderer
-      uses: GabrielBB/xvfb-action@v1.4
+      uses: GabrielBB/xvfb-action@v1.7
       with:
         run: npm run test:unit:em:renderer
 
@@ -79,9 +79,14 @@ jobs:
         sudo apt-get install -y libfuse2
 
     - name: npm run test:package
-      uses: GabrielBB/xvfb-action@v1.4
+      uses: GabrielBB/xvfb-action@v1.7
       with:
         run: npm run test:package
+
+    - name: npm run test:e2e
+      uses: GabrielBB/xvfb-action@v1.7
+      with:
+        run: npm run test:e2e
 
 # Uncomment the lines below to publish Linux package to GitHub Releases.
 #
@@ -95,7 +100,7 @@ jobs:
 #      run: npm ci
 #
 #    - name: '[Publish to GitHub Releases] Create and publish Linux package'
-#      uses: nick-invision/retry@v2.2.0
+#      uses: nick-fields/retry@v4.0.0
 #      with:
 #        timeout_minutes: 60
 #        max_attempts: 10
