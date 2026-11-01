@@ -9,11 +9,11 @@ const root = path.resolve(import.meta.dirname, '../..');
 const visual = process.env.PLM_VISUAL === '1';
 const photoFolder = path.join(root, 'test/test-resources/actual-photos');
 let app, page, profile;
-async function launch() {
+async function launch({ resize = true } = {}) {
   app = await _electron.launch({ executablePath: require('electron'), args: ['test/e2e/main.cjs'],
     cwd: root, env: { ...process.env, PLM_TEST_ROOT: profile }, timeout: 30000 });
   page = await app.firstWindow();
-  await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setContentSize(1200, 800));
+  if (resize) await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setContentSize(1200, 800));
   await page.waitForSelector('app-root app-home');
   await page.waitForFunction(() => !!window.plmInternalRenderer?.settingsDialog?.showSettingsDialog);
   await expect(page.locator('.leaflet-pm-toolbar').first()).toBeVisible();
@@ -123,6 +123,30 @@ test('folder picker loads real photo data, markers, tree selection and chart', a
   const after = await page.locator('#home-left-sidebar').boundingBox();
   expect(after.width - before.width).toBeGreaterThan(50);
   await shot('resized-home');
+  await app.close();
+  await launch();
+  // The original app resets Split.js to 25/75 on restart; keep that behavior.
+  const restarted = await page.locator('#home-left-sidebar').boundingBox();
+  expect(Math.abs(restarted.width - before.width)).toBeLessThan(1);
+});
+test('window bounds survive restart and the Windows fullscreen menu stays visible', async () => {
+  await dismissWelcome();
+  if (process.platform === 'win32') {
+    await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setFullScreen(true));
+    await expect.poll(() => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isFullScreen())).toBe(true);
+    expect(await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isMenuBarVisible())).toBe(true);
+    await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setFullScreen(false));
+    await expect.poll(() => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isFullScreen())).toBe(false);
+  }
+  const saved = await app.evaluate(({ BrowserWindow }) => {
+    const win = BrowserWindow.getAllWindows()[0];
+    win.setBounds({ x: 100, y: 100, width: 1080, height: 720 });
+    return win.getBounds();
+  });
+  await app.close();
+  await launch({ resize: false });
+  const restored = await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].getBounds());
+  expect(restored).toEqual(saved);
 });
 test('HEIC worker generates the same bounded JPEG and reports corrupt input', async () => {
   const result = await app.evaluate(async ({ app }, { root, profile }) => {
@@ -173,6 +197,17 @@ test('download website keeps desktop and narrow layouts and Windows navigation',
   await shot('website-desktop', [page.locator('iframe')]);
   await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setContentSize(600, 800));
   await shot('website-narrow', [page.locator('iframe')]);
+  const macDownload = page.getByRole('button', { name: 'Download for macOS' });
+  await macDownload.focus();
+  await expect(macDownload).toHaveCSS('background-color', 'rgb(52, 58, 64)');
+  await expect(macDownload).toHaveCSS('box-shadow', 'rgba(82, 88, 93, 0.5) 0px 0px 0px 3.2px');
+  await macDownload.hover();
+  await expect(macDownload).toHaveCSS('background-color', 'rgb(35, 39, 43)');
+  await macDownload.click();
+  await expect.poll(() => app.evaluate(() => globalThis.__plmDownloads.some(url => url.endsWith('-universal.dmg')))).toBe(true);
+  await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setContentSize(390, 800));
+  expect(await page.locator('.download-buttons').evaluate(el => getComputedStyle(el).flexDirection)).toBe('column');
   await page.getByRole('link', { name: 'Download for Windows' }).click();
   await expect(page).toHaveURL(/downloading-for-windows\.html$/);
+  await expect.poll(() => app.evaluate(() => globalThis.__plmDownloads.some(url => url.endsWith('.exe')))).toBe(true);
 });

@@ -39,6 +39,11 @@ const createWindow = async () => {
 
   configureMainWindowForAnalytics(mainWindow);
 
+  if (process.platform === 'win32') {
+    // Electron 34+ hides this menu in fullscreen; retain Electron 32's UI.
+    mainWindow.on('enter-full-screen', () => mainWindow.setMenuBarVisibility(true));
+  }
+
   mainWindow.on('ready-to-show', () => {
     // Call recordAtAppLaunch on ready-to-show event so that
     // recordAtAppLaunch is called after IPC setup for analytics in the renderer process is done.

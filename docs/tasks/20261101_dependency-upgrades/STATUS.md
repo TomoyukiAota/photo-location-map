@@ -31,7 +31,7 @@ Updated: 2026-11-01 (Asia/Tokyo).
 5. Inspect actual branch/HEAD/diff, task-related commits, existing processes and
    any newer user instructions. Reconcile records before executing commands.
 
-Active task: U06. Angular 22 behavior is verified against the original
+Active task: U07. Angular 22 behavior is verified against the original
 references on Electron 32. Final Node 26 clean installation needs Electron 45
 because the old Electron zip extractor exits early on Node 26. The old Karma shutdown issue was resolved with explicit single-run
 mode in U04b; retain `ng test --watch=false`. Do not regenerate original snapshots.
@@ -50,8 +50,8 @@ mode in U04b; retain `ng test --watch=false`. Do not regenerate original snapsho
 | U04c | Verified locally | Graph/lint/build, clean 57+74+41 tests and 7 unchanged regression cases. |
 | U04d | Verified locally | Graph/runtime/lint/build, 172 tests and all 7 unchanged regression cases. |
 | U05 | Verified locally, install caveat | Angular 22/TS 6/Node 26 build, 172 assertions and 7 unchanged visual/functional cases. Electron 32 installer needs the bridge; U06 must resolve final clean installation. |
-| U06 | In progress | Electron/packaging checkpoint; resolve the intermediate installer limitation and verify macOS 13+ minimum. |
-| U07 | Not started | Runtime library groups verified. |
+| U06 | Verified locally; native chooser item open | Clean install/runtime/lint/build, 172 tests, 8 visual/functional cases and signed universal DMG/ZIP smoke pass with original icon. Windows/Linux/Intel CI and native chooser history remain. |
+| U07 | In progress | Update file-tree/module/queue/date group, then images/workers and analytics in separate verified checkpoints. |
 | U08 | Not started | Map/chart/translation updates verified visually. |
 | U09 | Verified locally | Bootstrap 5.3.8 with unchanged screenshots, focus/hover colors, both download URL requests and 390px layout; unused JS removed. Deployment remains gated by main. |
 | U10 | Not started | Final graph, audit disposition and version exceptions. |
@@ -359,3 +359,26 @@ The first Electron 45 universal package creation/mount/60-second launch/quit and
 detach passed. Its default Electron icon was correctly rejected by the new bundle
 assertion. A fresh package run with explicit original icon paths is now active in
 electron45-package-fixed-icon.log; do not treat the first artifact as final.
+
+### Electron/packaging U06 local gate passed
+
+The corrected icon package passes creation, bundle assertions, mount, actual
+60-second launch, main/renderer logs, quit and detach. Strict/deep codesign
+verification passes. The original ICNS SHA-256 matches exactly; both executable
+and Electron framework contain x86_64 and arm64; LSMinimumSystemVersion is 13.0.
+Evidence: ELECTRON45_MAC_CHECKPOINT.json and local electron45-package-fixed-icon.log.
+This package deliberately skips notarization. U11 must rebuild and notarize the
+final dependency set; do not distribute this intermediate artifact.
+
+Lint/build, 57+74+41 unit tests and all eight current visual/functional cases
+pass. The new geometry case checks real restored bounds and the splitter's
+original reset behavior. Windows fullscreen menu preservation awaits CI.
+
+CI runner labels now select Ubuntu 26.04 LTS, confirmed in the official runner
+image inventory. FUSE uses libfuse2t64. The historical required-check name
+`test (ubuntu-24.04)` remains explicit, so protection/Mergify settings need no
+owner change. All workflow YAML parses. Remote CI is not yet run.
+
+Remaining U06 item: unspecified native file choosers start in Downloads in
+Electron 43+. Investigate preservation of the OS's old remembered directory.
+Continue U07 independently; no user-only action is needed yet.

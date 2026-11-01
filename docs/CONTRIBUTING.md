@@ -18,6 +18,8 @@ This page contains useful information to contribute to this project.
 [ci-on-ubuntu-image]: https://github.com/TomoyukiAota/photo-location-map/workflows/CI%20on%20Ubuntu/badge.svg
 [ci-on-ubuntu-link]: https://github.com/TomoyukiAota/photo-location-map/actions?query=workflow%3A%22CI+on+Ubuntu%22
 
+Ubuntu CI uses Ubuntu 26.04 LTS; its historical `test (ubuntu-24.04)` required-check name is retained for branch-protection compatibility.
+
 The macOS CI runs on Apple Silicon (`macos-26`). To run it on Intel (`macos-26-intel`), run the "CI on macOS" workflow manually: **Run workflow** in the Actions tab, or `gh workflow run ci-on-mac.yml --ref <branch>`. Do this before merging changes related to Intel Mac support, such as updating Electron and electron-builder.
 
 A push or pull request that changes only documents (`docs/`, `README.md`, `CLAUDE.md`, `LICENSE` and `.github/ISSUE_TEMPLATE/`, as listed in [`.github/ci-filters.yml`](../.github/ci-filters.yml)) skips the tests.
@@ -28,6 +30,8 @@ A push or pull request that changes only documents (`docs/`, `README.md`, `CLAUD
  - Node.js (64-bit), with the version specified in [`mise.toml`](../mise.toml)
    - [mise](https://mise.jdx.dev/) is the recommended way to install it. `mise.toml` is the single source of truth for the Node.js version, and CI installs the same version from it.
    - Node.js can also be installed however you prefer, as long as the version matches.
+   - Use the npm bundled with that Node installation; do not upgrade npm separately.
+     `npm run verify:runtime` checks the version and executable identity.
  - More than 2GB of RAM
    - Application packaging frequently fails on a PC with 1GB of RAM. Add more RAM depending on the available memory for application packaging on your PC.
 
@@ -43,7 +47,13 @@ npm ci
 npm start
 ```
 
-Without mise, install Node.js however you prefer, and then run `npm ci` and `npm start`.
+Without mise, install the specified Node.js and its bundled npm, then run `npm ci` and `npm start`.
+
+Dependency install scripts are reviewed in `allowScripts` in `package.json`.
+When upgrading a package with an install script, inspect that script and update
+its exact-version entry. `.npmrc` rejects unreviewed scripts during installation.
+Electron downloads its binary on its first invocation; `npm run verify:electron`
+checks that binary and the Node types used to compile for it.
 
 
 ## Frequently Used Commands

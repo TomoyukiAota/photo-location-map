@@ -11,7 +11,7 @@ on:
 jobs:
   changes:
     # Finds out whether anything other than documents changed (see .github/ci-filters.yml).
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
       pull-requests: read
@@ -28,8 +28,9 @@ jobs:
 
   test:
     # The name is given here rather than by a matrix, so that the required check is reported even when the job is skipped.
+    # Keep the historical required-check name; the runner itself is Ubuntu 26.04 LTS.
     name: test (ubuntu-24.04)
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
 
     # Skipped when only documents changed, which passes the required check. If "changes" fails, the tests run.
     needs: changes
@@ -55,6 +56,9 @@ jobs:
     - name: npm ci
       run: npm ci
 
+    - name: Verify Electron and embedded Node
+      run: npm run verify:electron
+
     - name: npm run lint:ng
       run: npm run lint:ng
 
@@ -79,7 +83,7 @@ jobs:
     - name: Install FUSE (Required to launch AppImage during "npm run test:package")
       run: |
         sudo apt-get update
-        sudo apt-get install -y libfuse2
+        sudo apt-get install -y libfuse2t64
 
     - name: npm run test:package
       uses: GabrielBB/xvfb-action@v1.7

@@ -12,7 +12,7 @@
   "asar": false,
   "afterSign": "script/notarize/notarize.js",
   "win": {
-    "icon": "dist",
+    "icon": "dist/favicon.ico",
     "target": [
       "nsis"
     ]
@@ -21,7 +21,7 @@
     "oneClick": false
   },
   "mac": {
-    "icon": "dist",
+    "icon": "dist/favicon.icns",
     "target": [
       {
         "target": "dmg",
@@ -40,7 +40,8 @@
     "hardenedRuntime": true,
     "gatekeeperAssess": false,
     "entitlements": "script/notarize/entitlements.mac.plist",
-    "entitlementsInherit": "script/notarize/entitlements.mac.plist"
+    "entitlementsInherit": "script/notarize/entitlements.mac.plist",
+    "minimumSystemVersion": "13.0"
   },
   "linux": {
     "icon": "dist",

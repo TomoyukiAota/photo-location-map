@@ -1,7 +1,7 @@
 {
   "observedDate": "2026-11-01",
   "state": "Angular 22 behavior verified on Electron 32; final clean installation pending U06",
-  "verifiedApplicationCommit": null,
+  "verifiedApplicationCommit": "19ffc6ffc61dd32f13ee97919dc74fec46647c3a",
   "hostNode": "26.13.0",
   "bundledNpm": "11.20.0",
   "lockfileVersion": 2,
@@ -532,6 +532,5 @@
       "section": "devDependencies"
     }
   ],
-  "verifiedWorkingTreeBaseCommit": "5d508f2",
   "lockfileSha256": "6375af22796d11db3c4f51290b2529c70160f26cca38b135b103f1cfd4b4d519"
 }

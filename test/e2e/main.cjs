@@ -11,11 +11,22 @@ process.argv = [process.execPath, root,
   ...(process.env.PLM_E2E_OPEN ? ['--open', process.env.PLM_E2E_OPEN] : [])];
 require('../../electron-util/isolated-test-profile');
 app.on('ready', () => {
+  globalThis.__plmDownloads = [];
+  session.defaultSession.on('will-download', (event, item) => {
+    globalThis.__plmDownloads.push(item.getURL());
+    event.preventDefault();
+  });
   session.defaultSession.webRequest.onBeforeRequest({ urls: [
     '*://*.analytics.photo-location-map.tomoyukiaota.com/*',
     '*://*.analytics.photo-data-viewer.tomoyukiaota.com/*',
     '*://*.mixpanel.com/*', '*://*.amplitude.com/*',
     '*://*.google-analytics.com/*', '*://www.googletagmanager.com/*',
-  ] }, (_, callback) => callback({ cancel: true }));
+    'https://github.com/TomoyukiAota/photo-location-map/releases/download/*',
+  ] }, (details, callback) => {
+    if (details.url.includes('github.com/TomoyukiAota/photo-location-map/releases/download/')) {
+      globalThis.__plmDownloads.push(details.url);
+    }
+    callback({ cancel: true });
+  });
 });
 require('../../src-main/electron-main.js');

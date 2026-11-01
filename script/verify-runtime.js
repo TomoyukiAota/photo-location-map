@@ -22,3 +22,19 @@ if (expectedNpm && npmVersion !== expectedNpm) {
 console.info(`Node ${process.versions.node}; bundled npm ${npmVersion}`);
 console.info(`Node executable: ${process.execPath}`);
 console.info(`npm CLI: ${npmCli}`);
+
+if (process.argv.includes('--electron')) {
+  const { spawnSync } = require('child_process');
+  const result = spawnSync(require('electron'), ['-e', 'console.log(JSON.stringify(process.versions))'], {
+    env: { ...process.env, ELECTRON_RUN_AS_NODE: '1' }, encoding: 'utf8'
+  });
+  if (result.status !== 0) throw new Error(`Electron runtime probe failed: ${result.stderr}`);
+  const versions = JSON.parse(result.stdout.trim());
+  const expected = require('../package.json').devDependencies.electron;
+  if (versions.electron !== expected) throw new Error(`Expected Electron ${expected}; got ${versions.electron}.`);
+  const nodeTypes = require('@types/node/package.json').version;
+  if (versions.node.split('.')[0] !== nodeTypes.split('.')[0]) {
+    throw new Error(`Node types ${nodeTypes} do not match Electron's Node ${versions.node}.`);
+  }
+  console.info(`Electron ${versions.electron}; embedded Node ${versions.node}; Chromium ${versions.chrome}`);
+}
