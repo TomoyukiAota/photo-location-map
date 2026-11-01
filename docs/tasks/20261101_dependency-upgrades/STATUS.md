@@ -35,7 +35,7 @@ Updated: 2026-11-02 (Asia/Tokyo).
    any newer user instructions. Reconcile records before executing commands.
 
 Active task: U08. File-tree/date/module/queue, image/worker and analytics
-updates and map resources have passed locally. Next are charting and translations.
+updates, map resources and charting have passed locally. Next are translations.
 Node 26 / bundled npm 11.20 and Electron 45 clean installation work;
 the old extractor caveat is resolved. Retain `ng test --watch=false` and never
 regenerate the original screenshots or HEIC pixel reference.
@@ -539,3 +539,35 @@ has no GPS. Drawing points avoid toolbar action menus and photo markers.
 Logs: maps-{graph,lint,build,unit,e2e}.log; the pre-update interaction check is
 maps-original-controls-baseline.log. Next: ECharts 6 with the official v5 theme,
 then the translation loader/provider migration.
+
+### U08b charts and chooser compatibility completed
+
+ECharts 6.1.0 is installed with the official v5 compatibility theme. Additional
+supported toolbox/slider options preserve 5.4.3 colors and positions; the theme
+alone did not. A new real-pointer Year/zoom/reset/filter case first passed
+against compiled 5.4.3. Graph, lint, production build, 194 unit assertions and all
+12 visual/functional cases pass. Slider positioning uses public top/bottom
+options, with no private layout properties. Do not regenerate references or
+weaken tolerances. Logs: chart-{graph,unit}.log and
+chart-agent6-{build,lint,e2e}.log.
+
+The resize reference contains the hovered gutter color. An intermittent failure
+had identical geometry but a neutral gutter; its existing 1s CSS transition was
+not complete. The test now performs a real hover and waits for the original
+hover color before comparison. Product CSS and references remain unchanged.
+
+The folder-chooser history adapter and nine tests are also implemented. The
+actual Electron option-capture E2E passes across cancellation and a real app
+restart; its nine helper cases also pass in both Electron contexts. Its
+supported-API limitations are recorded in
+[NATIVE_CHOOSER_COMPATIBILITY.md](./evidence/NATIVE_CHOOSER_COMPATIBILITY.md).
+The signed package still represents d75efc0, not this checkpoint.
+
+U10 research found that Jasmine 7 explicitly drops Karma and Zone compatibility.
+Use the highest compatible 6 line with the officially recommended scoped
+karma-jasmine override, verify which core Karma actually resolves, and preserve
+the failing-test exit check. Do not accept npm outdated's older Angular values:
+its manifest picker prefers nondeprecated historical versions even though the
+published current releases are 22.2.x. Other tooling/audit changes have not yet
+been installed. A local-feed updater harness is being prepared separately;
+it must isolate the updater cache as well as userData and prohibit native install.

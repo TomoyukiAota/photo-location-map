@@ -203,12 +203,85 @@ test('folder picker loads real photo data, markers, tree selection and chart', a
   await page.mouse.down(); await page.mouse.move(box.x + 80, box.y + 100, { steps: 8 }); await page.mouse.up();
   const after = await page.locator('#home-left-sidebar').boundingBox();
   expect(after.width - before.width).toBeGreaterThan(50);
+  // The original reference includes the hovered gutter after the drag.
+  await gutter.hover();
+  await expect(gutter).toHaveCSS('background-color', 'rgb(170, 170, 170)');
   await shot('resized-home');
   await app.close();
   await launch();
   // The original app resets Split.js to 25/75 on restart; keep that behavior.
   const restarted = await page.locator('#home-left-sidebar').boundingBox();
   expect(Math.abs(restarted.width - before.width)).toBeLessThan(1);
+});
+test('folder picker restores confirmed history after cancellation and a real restart', async () => {
+  await dismissWelcome();
+  async function capturePicker(canceled) {
+    await app.evaluate(({ dialog }, args) => {
+      global.__plmFolderOptions = [];
+      dialog.showOpenDialog = async (_parent, options) => {
+        global.__plmFolderOptions.push({ defaultPath: options.defaultPath ?? null, properties: options.properties });
+        return { canceled: args.canceled, filePaths: args.canceled ? [] : [args.folder] };
+      };
+    }, { canceled, folder: photoFolder });
+  }
+  await capturePicker(false);
+  await page.getByRole('button', { name: 'Open Folder', exact: true }).click();
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
+  expect(await app.evaluate(() => global.__plmFolderOptions)).toEqual([{ defaultPath: null, properties: ['openDirectory'] }]);
+  await capturePicker(true);
+  await page.getByRole('button', { name: 'Open Folder', exact: true }).click();
+  await expect.poll(() => app.evaluate(() => global.__plmFolderOptions)).toEqual([{ defaultPath: photoFolder, properties: ['openDirectory'] }]);
+  await app.close();
+  await launch();
+  await capturePicker(true);
+  await page.getByRole('button', { name: 'Open Folder', exact: true }).click();
+  await expect.poll(() => app.evaluate(() => global.__plmFolderOptions)).toEqual([{ defaultPath: photoFolder, properties: ['openDirectory'] }]);
+  // Remembering a picker directory does not automatically reopen its photos.
+  await expect(page.getByRole('treeitem')).toHaveCount(0);
+});
+test('chart grouping, zoom, reset and photo selection keep their real data behavior', async () => {
+  await dismissWelcome();
+  await app.evaluate(({ dialog }, folder) => {
+    dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [folder] });
+  }, photoFolder);
+  await page.getByRole('button', { name: 'Open Folder', exact: true }).click();
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
+  await expect(page.locator('.plm-leaflet-map-div-icon')).toHaveCount(2);
+  const chart = page.locator('app-date-time-taken-chart .chart');
+  await expect(chart.locator('canvas')).toBeVisible();
+  const unit = page.locator('app-date-time-taken-chart-config select');
+  await expect(unit).toHaveValue('Day');
+  await unit.selectOption('Year');
+  await expect(unit).toHaveValue('Year');
+  const choose = page.getByRole('button', { name: 'Select Photos within Zoom', exact: true });
+  async function zoomToLastYear() {
+    const box = await chart.boundingBox();
+    // Drag the visible slider's left handle to the final year, keeping its right handle at 100%.
+    const plotWidth = box.width - 180;
+    const y = box.y + box.height - 23;
+    await page.mouse.move(box.x + 94, y);
+    await page.mouse.down();
+    await page.mouse.move(box.x + 90 + plotWidth * 0.92, y, { steps: 12 });
+    await page.mouse.up();
+    await expect(choose).toBeVisible();
+    await expect(page.locator('.plm-leaflet-map-div-icon')).toHaveCount(1);
+  }
+  await zoomToLastYear();
+  await expect(page.locator('mat-tree-node').filter({ hasText: 'Gold Coast' }).getByRole('checkbox')).toBeChecked();
+  const box = await chart.boundingBox();
+  // ECharts' rightmost toolbox control is the existing Reset Zoom canvas icon.
+  await page.mouse.click(box.x + box.width - 11, box.y + 14);
+  await expect(choose).toBeHidden();
+  await expect(page.locator('.plm-leaflet-map-div-icon')).toHaveCount(2);
+  await expect(page.locator('.marker-cluster')).toHaveCount(1);
+  await zoomToLastYear();
+  await choose.click();
+  await expect(choose).toBeHidden();
+  await expect(page.locator('mat-tree-node').filter({ hasText: 'Apple Park' }).getByRole('checkbox')).toBeChecked();
+  for (const name of ['Gold Coast', 'Kobe', 'Unga']) {
+    await expect(page.locator('mat-tree-node').filter({ hasText: name }).getByRole('checkbox')).not.toBeChecked();
+  }
+  await expect(page.locator('.plm-leaflet-map-div-icon')).toHaveCount(1);
 });
 test('window bounds survive restart and the Windows fullscreen menu stays visible', async () => {
   await dismissWelcome();

@@ -106,6 +106,7 @@ export class DateTimeTakenChartComponent {
   private createEChartsOption(xData: string[], yData: number[]) {
     const option: EChartsOption = {
       grid: {
+        outerBoundsMode: 'none', // Preserve the v5 layout rather than moving axes to prevent overflow.
         top: 25,
         bottom: 80,
         left: 90,
@@ -121,6 +122,10 @@ export class DateTimeTakenChartComponent {
         itemSize: 20,
         top: 4,
         right: 0,
+        padding: 5,
+        itemGap: 8,
+        iconStyle: { borderColor: '#666', color: 'none' },
+        emphasis: { iconStyle: { borderColor: '#3E98C5' } },
         feature: {
           dataZoom: {
             icon: {
@@ -135,6 +140,7 @@ export class DateTimeTakenChartComponent {
       },
       xAxis: {
         type: 'category',
+        nameMoveOverlap: false,
         data: xData,
         axisLabel: {
           formatter: (value: string) => {
@@ -147,6 +153,7 @@ export class DateTimeTakenChartComponent {
       },
       yAxis: {
         type: 'value',
+        nameMoveOverlap: false,
         minInterval: 1,   // Make sure Y-axis label is shown as integer.
       },
       dataZoom: [
@@ -159,6 +166,28 @@ export class DateTimeTakenChartComponent {
           type: 'slider',
           start: 0,
           end: 100,
+          // Pin the component defaults that changed with the v6 style tokens.
+          top: 'auto',
+          bottom: 14, // The v5 7px edge gap plus its 7px move handle.
+          borderColor: '#d2dbee',
+          borderRadius: 3,
+          backgroundColor: 'rgba(47,69,84,0)',
+          dataBackground: {
+            lineStyle: { color: '#d2dbee', width: 0.5 },
+            areaStyle: { color: '#d2dbee', opacity: 0.2 },
+          },
+          selectedDataBackground: {
+            lineStyle: { color: '#8fb0f7', width: 0.5 },
+            areaStyle: { color: '#8fb0f7', opacity: 0.2 },
+          },
+          handleStyle: { color: '#fff', borderColor: '#ACB8D1' },
+          moveHandleStyle: { color: '#D2DBEE', opacity: 0.7 },
+          textStyle: { color: '#6E7079' },
+          brushStyle: { color: 'rgba(135,175,274,0.15)', opacity: 1 },
+          emphasis: {
+            handleStyle: { borderColor: '#8FB0F7' },
+            moveHandleStyle: { color: '#8FB0F7', opacity: 0.7 },
+          },
           labelFormatter: (_, valueStr) => {
             return valueStr.replace(' ', '\n'); // Add a line break between date and time.
           },

@@ -15,6 +15,10 @@ export namespace UserDataStoragePath {
     export const SortDirection: ReadonlyArray<string> = ['DirectoryTreeView', 'SortDirection'];
   }
 
+  export namespace FolderDialog {
+    export const LastConfirmedDirectory: ReadonlyArray<string> = ['FolderDialog', 'LastConfirmedDirectory'];
+  }
+
   export namespace GoogleMaps {
     export const ApiKey: ReadonlyArray<string> = ['GoogleMaps', 'ApiKey'];
   }

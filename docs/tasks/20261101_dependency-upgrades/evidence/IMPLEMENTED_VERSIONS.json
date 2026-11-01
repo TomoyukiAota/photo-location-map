@@ -1,7 +1,7 @@
 {
-  "observedDate": "2026-11-01",
-  "state": "U07c analytics checkpoint verified locally; map resources next",
-  "verifiedApplicationCommit": "f133a276c4d0caca0a221d9a10c5478bbe05d1cc",
+  "observedDate": "2026-11-02",
+  "state": "U08a map checkpoint verified locally; charting and translations next",
+  "verifiedApplicationCommit": "168222e126494cf389ba932fb5fb3dc01fe15cdb",
   "hostNode": "26.13.0",
   "bundledNpm": "11.20.0",
   "lockfileVersion": 2,
@@ -263,7 +263,7 @@
     },
     {
       "name": "@turf/turf",
-      "version": "6.5.0",
+      "version": "7.4.0",
       "section": "devDependencies"
     },
     {
@@ -298,12 +298,12 @@
     },
     {
       "name": "@types/leaflet",
-      "version": "1.9.0",
+      "version": "1.9.22",
       "section": "devDependencies"
     },
     {
       "name": "@types/leaflet.markercluster",
-      "version": "1.5.1",
+      "version": "1.5.6",
       "section": "devDependencies"
     },
     {
@@ -527,5 +527,5 @@
       "section": "devDependencies"
     }
   ],
-  "lockfileSha256": "2886e31c37e232bfaf95102776f9446070a04d43f3ec9f3019f91391370337a9"
+  "lockfileSha256": "f140295923b8d3c9adcabf2f8e25f0e9422ea441c9445af86405d529d8f74e60"
 }

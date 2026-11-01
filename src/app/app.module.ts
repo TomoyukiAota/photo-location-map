@@ -116,7 +116,11 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatTableModule,
     MatTreeModule,
     NgxEchartsModule.forRoot({
-      echarts: () => import('echarts'),
+      echarts: async () => {
+        const echarts = await import('echarts');
+        await import('echarts/theme/v5.js');
+        return echarts;
+      },
     }),
     ScrollingModule,
     TableVirtualScrollModule,
