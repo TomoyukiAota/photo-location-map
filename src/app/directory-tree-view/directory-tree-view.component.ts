@@ -22,7 +22,8 @@ const dirTreeViewLogger = createPrependedLogger('[Directory Tree View]');
 @Component({
   selector: 'app-directory-tree-view',
   templateUrl: 'directory-tree-view.component.html',
-  styleUrls: ['directory-tree-view.component.scss']
+  styleUrls: ['directory-tree-view.component.scss'],
+  standalone: false
 })
 export class DirectoryTreeViewComponent implements OnInit {
   // padding-left for each tree view node is `level * indentPerLevel` pixels where level is depth of the tree view node.

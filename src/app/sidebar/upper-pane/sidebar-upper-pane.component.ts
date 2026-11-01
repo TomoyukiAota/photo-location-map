@@ -6,7 +6,8 @@ import { ThumbnailGenerationService } from '../../thumbnail-generation/service/t
 @Component({
   selector: 'app-sidebar-upper-pane',
   templateUrl: './sidebar-upper-pane.component.html',
-  styleUrl: './sidebar-upper-pane.component.scss'
+  styleUrl: './sidebar-upper-pane.component.scss',
+  standalone: false
 })
 export class SidebarUpperPaneComponent {
   constructor(private openFolderService: OpenFolderService,

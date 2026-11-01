@@ -18,7 +18,8 @@ interface TableRow {
 @Component({
   selector: 'app-thumbnail-generation-error-table',
   templateUrl: './thumbnail-generation-error-table.component.html',
-  styleUrls: ['./thumbnail-generation-error-table.component.scss']
+  styleUrls: ['./thumbnail-generation-error-table.component.scss'],
+  standalone: false
 })
 export class ThumbnailGenerationErrorTableComponent implements OnInit {
   public displayedColumns: string[] = ['position', 'filePath'];

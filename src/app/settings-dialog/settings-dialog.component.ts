@@ -26,7 +26,8 @@ const availableSettingTabNames = os.platform() === 'win32'
 @Component({
   selector: 'app-settings-dialog',
   templateUrl: './settings-dialog.component.html',
-  styleUrls: ['./settings-dialog.component.scss']
+  styleUrls: ['./settings-dialog.component.scss'],
+  standalone: false
 })
 export class SettingsDialogComponent {
   public userSettingsToBeSaved = getUserSettingsToBeSaved();

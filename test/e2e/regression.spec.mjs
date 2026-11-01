@@ -101,7 +101,8 @@ test('folder picker loads real photo data, markers, tree selection and chart', a
     dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [folder] });
   }, photoFolder);
   await page.getByRole('button', { name: 'Open Folder', exact: true }).click();
-  await expect(page.locator('app-loaded-files-status-bar')).toContainText('files have location data.');
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('Loaded 5 files.');
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
   await expect(page.locator('mat-tree-node').filter({ hasText: 'actual-photos' })).toBeVisible();
   await expect(page.locator('.plm-leaflet-map-div-icon')).not.toHaveCount(0);
   await expect(page.locator('app-date-time-taken-chart canvas')).toBeVisible();

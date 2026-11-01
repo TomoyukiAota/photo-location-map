@@ -11,7 +11,8 @@ import { ThumbnailGenerationStatusBarService } from '../service/thumbnail-genera
 @Component({
   selector: 'app-thumbnail-generation-status-bar',
   templateUrl: './thumbnail-generation-status-bar.component.html',
-  styleUrls: ['./thumbnail-generation-status-bar.component.scss']
+  styleUrls: ['./thumbnail-generation-status-bar.component.scss'],
+  standalone: false
 })
 export class ThumbnailGenerationStatusBarComponent implements OnInit {
   public isThumbnailGenerationDone: boolean;

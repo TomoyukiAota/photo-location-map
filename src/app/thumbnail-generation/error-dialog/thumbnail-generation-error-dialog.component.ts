@@ -4,7 +4,8 @@ import { ThumbnailGenerationService } from '../service/thumbnail-generation.serv
 @Component({
   selector: 'app-thumbnail-generation-error-dialog',
   templateUrl: './thumbnail-generation-error-dialog.component.html',
-  styleUrl: './thumbnail-generation-error-dialog.component.scss'
+  styleUrl: './thumbnail-generation-error-dialog.component.scss',
+  standalone: false
 })
 export class ThumbnailGenerationErrorDialogComponent implements OnInit {
   public numberOfFilesWithoutThumbnail: number;

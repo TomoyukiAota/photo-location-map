@@ -5,7 +5,8 @@ import { LoadingFolderProgressReporterService } from '../progress-reporter/loadi
 @Component({
   selector: 'app-loading-folder-dialog',
   templateUrl: './loading-folder-dialog.component.html',
-  styleUrls: ['./loading-folder-dialog.component.scss']
+  styleUrls: ['./loading-folder-dialog.component.scss'],
+  standalone: false
 })
 export class LoadingFolderDialogComponent implements OnInit {
   public progressBarMode: ProgressBarMode = 'query';

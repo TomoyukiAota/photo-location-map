@@ -9,7 +9,8 @@ import { configureOpeningInOsBrowser } from '../shared/open-url/configure-openin
 @Component({
   selector: 'app-about-box',
   templateUrl: './about-box.component.html',
-  styleUrls: ['./about-box.component.scss']
+  styleUrls: ['./about-box.component.scss'],
+  standalone: false
 })
 export class AboutBoxComponent implements AfterViewInit {
   public readonly appVersion = app.getVersion();

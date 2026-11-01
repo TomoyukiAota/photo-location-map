@@ -6,7 +6,8 @@ import { getMapType, MapType } from './map-type';
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
-  styleUrls: ['./map.component.scss']
+  styleUrls: ['./map.component.scss'],
+  standalone: false
 })
 export class MapComponent implements OnInit, OnDestroy {
   public mapType = MapType;

@@ -5,7 +5,8 @@ import { LoadedFilesStatusBarService } from '../service/loaded-files-status-bar.
 @Component({
   selector: 'app-loaded-files-status-bar',
   templateUrl: './loaded-files-status-bar.component.html',
-  styleUrls: ['./loaded-files-status-bar.component.scss']
+  styleUrls: ['./loaded-files-status-bar.component.scss'],
+  standalone: false
 })
 export class LoadedFilesStatusBarComponent implements OnInit {
   public anyFileLoaded = false;

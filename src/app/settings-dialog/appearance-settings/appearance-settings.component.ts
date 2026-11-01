@@ -8,7 +8,8 @@ import { AppearanceSettingsChangedParameter } from './appearance-settings-change
 @Component({
   selector: 'app-appearance-settings',
   templateUrl: './appearance-settings.component.html',
-  styleUrls: ['./appearance-settings.component.scss']
+  styleUrls: ['./appearance-settings.component.scss'],
+  standalone: false
 })
 export class AppearanceSettingsComponent {
   public shouldShowStatusBar: boolean;

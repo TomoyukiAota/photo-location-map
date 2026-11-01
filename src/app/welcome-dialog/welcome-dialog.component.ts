@@ -12,7 +12,8 @@ import { WelcomeDialogAtAppLaunchService } from './welcome-dialog-at-app-launch/
 @Component({
   selector: 'app-welcome-dialog',
   templateUrl: './welcome-dialog.component.html',
-  styleUrls: ['./welcome-dialog.component.scss']
+  styleUrls: ['./welcome-dialog.component.scss'],
+  standalone: false
 })
 export class WelcomeDialogComponent implements AfterViewInit {
   public readonly appVersion = app.getVersion();

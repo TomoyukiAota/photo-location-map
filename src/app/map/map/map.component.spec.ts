@@ -6,7 +6,10 @@ import { GoogleMapsComponent } from '../google-maps/google-maps.component';
 import { MapComponent } from './map.component';
 
 // Dummy component of LeafletMapComponent is defined because using ng-mocks results in "ReferenceError: L is not defined".
-@Component({ selector: 'app-leaflet-map', template: '' })
+@Component({
+  selector: 'app-leaflet-map', template: '',
+  standalone: false
+})
 class DummyLeafletMapComponent {}
 
 describe('MapComponent', () => {

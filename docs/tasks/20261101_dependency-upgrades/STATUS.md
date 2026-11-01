@@ -31,7 +31,7 @@ Updated: 2026-11-01 (Asia/Tokyo).
 5. Inspect actual branch/HEAD/diff, task-related commits, existing processes and
    any newer user instructions. Reconcile records before executing commands.
 
-Active task: U04b. Baseline and Node 22 bridge checks are captured.
+Active task: U04c. Baseline and Node 22 bridge checks are captured.
 Upgrade Angular one major at a time. See BASELINE.md
 for the original Karma shutdown issue; do not claim it is a clean pass.
 Do not begin with a bulk package update or by running Angular 18 under Node 26.
@@ -46,8 +46,8 @@ Do not begin with a bulk package update or by running Angular 18 under Node 26.
 | U02 | Complete | Seven real Electron/website cases, original screenshots, HEIC pixel reference and restart persistence. |
 | U03 | Verified locally | Node 22.23.4/npm 10.9.9; clean install, full graph and 7 visual/functional cases pass. CI actions updated; remote CI pending. |
 | U04a | Verified locally | Angular 18.2.14 / CLI 18.2.21; graph/lint/build, 172 assertions and 7 regression cases. Karma shutdown issue remains. |
-| U04b | In progress | Angular 19 migrations, then the same verification gates. |
-| U04c | Not started | Angular 20 checkpoint. |
+| U04b | Verified locally | Graph/lint/build, 57+74+41 assertions and all 7 visual/functional cases pass. Explicit single-run also verifies failure exit code. |
+| U04c | In progress | Apply Angular 20 coupled migrations, inspect and verify. |
 | U04d | Not started | Angular 21 intermediate checkpoint on the Node 22 bridge. |
 | U05 | Not started | Selected Angular 22 + Node 26 / bundled npm destination. |
 | U06 | Not started | Electron/packaging checkpoint with accepted macOS 13+ minimum. |
@@ -153,3 +153,28 @@ Logs: `angular18-{update,graph,lint,build,unit,e2e}.log`. The temporary original
 manifest restoration is complete; actual files now contain patched Angular 18.
 Next: run the complete coupled Angular 19 ng-update group, inspect migrations,
 then verify before committing. No processes remain from U04a.
+
+### Angular 19 working tree
+
+`ng update` applied core 19.2.25, CLI 19.2.27, Material/CDK 19.2.19,
+custom-webpack 19.0.1, angular-eslint 19.8.1, ngx-echarts 19.0.0 and Zone 0.15.1.
+The required migration adds `standalone: false` to existing NgModule components.
+The newly introduced prefer-standalone lint rule is off to retain that selected
+architecture; original rules remain enabled. Graph, lint and production build
+pass. Unit/regression validation is running under `angular19-*.log`; the source
+changes are uncommitted until the gate completes. Last verified framework
+checkpoint is `775aebd` (patched 18); baseline references are `5944433`.
+
+### Angular 19 completed
+
+Graph, lint, production build, 57 Angular + 74 main + 41 renderer assertions,
+and all seven visual/functional comparisons pass. Dialog/tree/chart references
+and the HEIC decoded-pixel hash are unchanged.
+The old Karma problem was caused by the CLI watch default: explicitly passing
+`--watch=false` makes the 57-test suite exit cleanly with code 0. An isolated
+intentional assertion failure exits with code 1. The watch-mode negative probe
+hung and was terminated; its temporary spec was removed. The normal script now
+sets watch=false; the separate watch command retains its original purpose.
+Logs: `angular19-single-run.log`, `karma-negative-single-run.log` and its result
+JSON (local). No failure or navigation check was disabled.
+Next: Angular 20; no temporary negative-control spec or running test remains.

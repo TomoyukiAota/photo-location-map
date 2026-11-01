@@ -12,7 +12,8 @@ import { getXAxisUnitMomentJsStr, xAxisUnit } from './date-time-taken-chart-x-ax
 @Component({
   selector: 'app-date-time-taken-chart-config',
   templateUrl: './date-time-taken-chart-config.component.html',
-  styleUrls: ['./date-time-taken-chart-config.component.scss']
+  styleUrls: ['./date-time-taken-chart-config.component.scss'],
+  standalone: false
 })
 export class DateTimeTakenChartConfigComponent {
   public xAxisUnits = [

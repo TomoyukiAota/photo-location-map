@@ -14,7 +14,8 @@ import { dateTimeTakenChartLogger as logger } from './date-time-taken-chart-logg
 @Component({
   selector: 'app-date-time-taken-chart',
   templateUrl: './date-time-taken-chart.component.html',
-  styleUrls: ['./date-time-taken-chart.component.scss']
+  styleUrls: ['./date-time-taken-chart.component.scss'],
+  standalone: false
 })
 export class DateTimeTakenChartComponent {
   public eChartsOption: EChartsOption;

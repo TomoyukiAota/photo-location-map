@@ -10,7 +10,8 @@ import {
 @Component({
   selector: 'app-sidebar-upper-pane-more-options',
   templateUrl: './sidebar-upper-pane-more-options.component.html',
-  styleUrl: './sidebar-upper-pane-more-options.component.scss'
+  styleUrl: './sidebar-upper-pane-more-options.component.scss',
+  standalone: false
 })
 export class SidebarUpperPaneMoreOptionsComponent {
   constructor(public sortService: DirTreeViewSortService,

@@ -27,7 +27,8 @@ interface RegionInfo extends Control {
 @Component({
   selector: 'app-leaflet-map',
   templateUrl: './leaflet-map.component.html',
-  styleUrls: ['./leaflet-map.component.scss']
+  styleUrls: ['./leaflet-map.component.scss'],
+  standalone: false
 })
 export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   @ViewChild('updateInProgressOverlay') public updateInProgressOverlay: ElementRef<HTMLDivElement>;

@@ -9,7 +9,8 @@ import { configureOpeningInOsBrowser } from '../../shared/open-url/configure-ope
 @Component({
   selector: 'app-cache-settings',
   templateUrl: './cache-settings.component.html',
-  styleUrls: ['./cache-settings.component.scss']
+  styleUrls: ['./cache-settings.component.scss'],
+  standalone: false
 })
 export class CacheSettingsComponent implements AfterViewInit, OnInit {
   public thumbnailCacheLocation = plmThumbnailCacheDir;

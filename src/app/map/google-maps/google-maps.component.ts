@@ -9,7 +9,8 @@ import { GoogleMapsApiLoader } from './google-maps-api-loader';
 @Component({
   selector: 'app-google-maps',
   templateUrl: './google-maps.component.html',
-  styleUrls: ['./google-maps.component.scss']
+  styleUrls: ['./google-maps.component.scss'],
+  standalone: false
 })
 export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
   private subscription: Subscription;

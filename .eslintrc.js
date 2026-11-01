@@ -23,6 +23,8 @@ module.exports = {
         "plugin:@typescript-eslint/recommended"
       ],
       "rules": {
+        // Keep the existing NgModule architecture during the version upgrade.
+        "@angular-eslint/prefer-standalone": "off",
         "@angular-eslint/component-selector": [
           "error",
           {

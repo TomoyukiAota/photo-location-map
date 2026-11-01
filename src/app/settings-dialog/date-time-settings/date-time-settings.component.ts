@@ -9,7 +9,8 @@ import { DateTimeSettingsChangedParameter } from './date-time-settings-changed-p
 @Component({
   selector: 'app-date-time-settings',
   templateUrl: './date-time-settings.component.html',
-  styleUrls: ['./date-time-settings.component.scss']
+  styleUrls: ['./date-time-settings.component.scss'],
+  standalone: false
 })
 export class DateTimeSettingsComponent {
   public dateFormatList = DateTimeFormat.ForUser.DateFormat_List;

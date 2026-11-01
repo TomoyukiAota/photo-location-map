@@ -7,7 +7,8 @@ import { WelcomeDialogAtAppLaunchService } from './welcome-dialog/welcome-dialog
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  standalone: false
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(private photoSelectionHistoryService: PhotoSelectionHistoryService,
