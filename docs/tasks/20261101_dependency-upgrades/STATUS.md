@@ -59,7 +59,7 @@ regenerate the original screenshots or HEIC pixel reference.
 | U08 | In progress | Update CDN map resources/geometry, charting and translations separately against unchanged references. |
 | U09 | Verified locally | Bootstrap 5.3.8 with unchanged screenshots, focus/hover colors, both download URL requests and 390px layout; unused JS removed. Deployment remains gated by main. |
 | U10 | Not started | Final graph, audit disposition and version exceptions. |
-| U11 | Not started | Full platform/distribution verification. |
+| U11 | In progress | Isolated updater transport passes; final clean platform/package verification remains. |
 | U12 | Not started | One concrete final decision/action packet. |
 | U13 | Not authorized | Publication and post-release verification. |
 
@@ -571,3 +571,16 @@ its manifest picker prefers nondeprecated historical versions even though the
 published current releases are 22.2.x. Other tooling/audit changes have not yet
 been installed. A local-feed updater harness is being prepared separately;
 it must isolate the updater cache as well as userData and prohibit native install.
+
+### U11 local updater transport preflight
+
+The new `test/updater/run.cjs` harness passes with its synthetic ZIP. It executes
+the compiled application startup/version guard and real MacUpdater 6.8.12
+metadata, availability, checksum, cache reuse and corrupt-download cleanup.
+Both userData and the independent updater cache are isolated. Non-loopback
+traffic is blocked; native feed setup is intercepted, and native check/install,
+quit and relaunch calls are prohibited. No installation or rollback was performed.
+See [UPDATER_TRANSPORT_CHECKPOINT.json](./evidence/UPDATER_TRANSPORT_CHECKPOINT.json)
+and `test/updater/README.md` for the exact limits and final real-ZIP command.
+Repeat against the final signed ZIP after all dependency changes; this preflight
+does not replace notarization, Gatekeeper, installed-app or public-feed checks.

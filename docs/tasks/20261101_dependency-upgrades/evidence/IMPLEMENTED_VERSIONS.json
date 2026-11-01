@@ -1,7 +1,7 @@
 {
   "observedDate": "2026-11-02",
-  "state": "U08a map checkpoint verified locally; charting and translations next",
-  "verifiedApplicationCommit": "168222e126494cf389ba932fb5fb3dc01fe15cdb",
+  "state": "U08b charts and folder chooser checkpoint verified locally; translations next",
+  "verifiedApplicationCommit": "b5e1027b67aee5bb1740194bc1c04d2ed1bb02f8",
   "hostNode": "26.13.0",
   "bundledNpm": "11.20.0",
   "lockfileVersion": 2,
@@ -363,7 +363,7 @@
     },
     {
       "name": "echarts",
-      "version": "5.4.3",
+      "version": "6.1.0",
       "section": "devDependencies"
     },
     {
@@ -527,5 +527,5 @@
       "section": "devDependencies"
     }
   ],
-  "lockfileSha256": "f140295923b8d3c9adcabf2f8e25f0e9422ea441c9445af86405d529d8f74e60"
+  "lockfileSha256": "645458b2ffbd7ae29b1de493d4886444e57c209efde73a4255391e12876ca8df"
 }
