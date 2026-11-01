@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ProgressBarMode } from '@angular/material/progress-bar';
 import { LoadingFolderProgressReporterService } from '../progress-reporter/loading-folder-progress-reporter.service';
 
@@ -6,6 +6,7 @@ import { LoadingFolderProgressReporterService } from '../progress-reporter/loadi
   selector: 'app-loading-folder-dialog',
   templateUrl: './loading-folder-dialog.component.html',
   styleUrls: ['./loading-folder-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class LoadingFolderDialogComponent implements OnInit {

@@ -1,5 +1,5 @@
 import * as fsExtra from 'fs-extra';
-import * as Jimp from 'jimp';
+import Jimp from 'jimp';
 import * as jpegJs from 'jpeg-js';
 import * as workerpool from 'workerpool';
 import { Now } from '../../src-shared/date-time/now';

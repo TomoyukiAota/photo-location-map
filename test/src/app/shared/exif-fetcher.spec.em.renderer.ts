@@ -1,6 +1,6 @@
 import assert = require('assert');
 import * as path from 'path';
-import * as createDirectoryTree from 'directory-tree';
+import createDirectoryTree from 'directory-tree';
 import { nearlyEqual } from '../../../test-util/number-comparison';
 import { ExifFetcher, PathExifPair } from '../../../../src/app/shared/exif-fetcher/exif-fetcher';
 

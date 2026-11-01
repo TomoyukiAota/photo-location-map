@@ -1,4 +1,4 @@
-import * as moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import { getMomentDiff, getMomentDiffAsIso8601, MomentDiffArgs } from '../src-shared/date-time/moment-diff';
 import { Now } from '../src-shared/date-time/now';
 import { UserDataStoragePath } from '../src-shared/user-data-storage/user-data-stroage-path';

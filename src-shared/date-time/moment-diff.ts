@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 
 // Note for using moment.js's duration:
 // moment.js's duration does not always return good results regarding the diff of two moments,

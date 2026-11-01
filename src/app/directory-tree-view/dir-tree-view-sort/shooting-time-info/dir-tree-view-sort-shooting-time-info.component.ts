@@ -1,9 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-dir-tree-view-sort-shooting-time-info',
   templateUrl: './dir-tree-view-sort-shooting-time-info.component.html',
   styleUrl: './dir-tree-view-sort-shooting-time-info.component.scss',
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class DirTreeViewSortShootingTimeInfoComponent {

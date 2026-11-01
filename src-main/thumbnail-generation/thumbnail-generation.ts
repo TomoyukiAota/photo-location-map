@@ -1,7 +1,7 @@
 import * as fsExtra from 'fs-extra';
 import * as os from 'os';
 import * as pathModule from 'path';
-import * as physicalCpuCount from 'physical-cpu-count';
+import physicalCpuCount from 'physical-cpu-count';
 import * as workerpool from 'workerpool';
 import * as _ from 'lodash';
 import { stringArrayToLogText } from '../../src-shared/log/multiline-log-text';

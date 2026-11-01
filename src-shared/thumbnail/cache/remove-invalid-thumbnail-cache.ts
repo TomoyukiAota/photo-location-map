@@ -1,5 +1,5 @@
-import * as deleteEmpty from 'delete-empty';
-import * as createDirectoryTree from 'directory-tree';
+import deleteEmpty from 'delete-empty';
+import createDirectoryTree from 'directory-tree';
 import * as fs from 'fs';
 import { convertToFlattenedDirTree } from '../../dir-tree/dir-tree-util';
 import { createPrependedLogger } from '../../log/create-prepended-logger';

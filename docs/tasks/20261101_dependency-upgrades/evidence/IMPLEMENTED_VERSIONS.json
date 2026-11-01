@@ -1,9 +1,9 @@
 {
   "observedDate": "2026-11-01",
-  "state": "Intermediate verified checkpoint; implementation ongoing",
-  "verifiedApplicationCommit": "541f134",
-  "hostNode": "22.23.4",
-  "bundledNpm": "10.9.9",
+  "state": "Angular 22 behavior verified on Electron 32; final clean installation pending U06",
+  "verifiedApplicationCommit": null,
+  "hostNode": "26.13.0",
+  "bundledNpm": "11.20.0",
   "lockfileVersion": 2,
   "packages": [
     {
@@ -133,102 +133,102 @@
     },
     {
       "name": "@angular-builders/custom-webpack",
-      "version": "20.0.0",
+      "version": "22.0.1",
       "section": "devDependencies"
     },
     {
       "name": "@angular-devkit/build-angular",
-      "version": "20.3.42",
+      "version": "22.2.5",
       "section": "devDependencies"
     },
     {
       "name": "@angular-eslint/builder",
-      "version": "20.7.0",
+      "version": "22.6.0",
       "section": "devDependencies"
     },
     {
       "name": "@angular-eslint/eslint-plugin",
-      "version": "20.7.0",
+      "version": "22.6.0",
       "section": "devDependencies"
     },
     {
       "name": "@angular-eslint/eslint-plugin-template",
-      "version": "20.7.0",
+      "version": "22.6.0",
       "section": "devDependencies"
     },
     {
       "name": "@angular-eslint/schematics",
-      "version": "20.7.0",
+      "version": "22.6.0",
       "section": "devDependencies"
     },
     {
       "name": "@angular-eslint/template-parser",
-      "version": "20.7.0",
+      "version": "22.6.0",
       "section": "devDependencies"
     },
     {
       "name": "@angular/animations",
-      "version": "20.3.34",
+      "version": "22.2.4",
       "section": "devDependencies"
     },
     {
       "name": "@angular/cdk",
-      "version": "20.2.14",
+      "version": "22.2.5",
       "section": "devDependencies"
     },
     {
       "name": "@angular/cli",
-      "version": "20.3.42",
+      "version": "22.2.5",
       "section": "devDependencies"
     },
     {
       "name": "@angular/common",
-      "version": "20.3.34",
+      "version": "22.2.4",
       "section": "devDependencies"
     },
     {
       "name": "@angular/compiler",
-      "version": "20.3.34",
+      "version": "22.2.4",
       "section": "devDependencies"
     },
     {
       "name": "@angular/compiler-cli",
-      "version": "20.3.34",
+      "version": "22.2.4",
       "section": "devDependencies"
     },
     {
       "name": "@angular/core",
-      "version": "20.3.34",
+      "version": "22.2.4",
       "section": "devDependencies"
     },
     {
       "name": "@angular/forms",
-      "version": "20.3.34",
+      "version": "22.2.4",
       "section": "devDependencies"
     },
     {
       "name": "@angular/language-service",
-      "version": "20.3.34",
+      "version": "22.2.4",
       "section": "devDependencies"
     },
     {
       "name": "@angular/material",
-      "version": "20.2.14",
+      "version": "22.2.5",
       "section": "devDependencies"
     },
     {
       "name": "@angular/platform-browser",
-      "version": "20.3.34",
+      "version": "22.2.4",
       "section": "devDependencies"
     },
     {
       "name": "@angular/platform-browser-dynamic",
-      "version": "20.3.34",
+      "version": "22.2.4",
       "section": "devDependencies"
     },
     {
       "name": "@angular/router",
-      "version": "20.3.34",
+      "version": "22.2.4",
       "section": "devDependencies"
     },
     {
@@ -352,6 +352,11 @@
       "section": "devDependencies"
     },
     {
+      "name": "angular-eslint",
+      "version": "22.6.0",
+      "section": "devDependencies"
+    },
+    {
       "name": "chai",
       "version": "4.3.7",
       "section": "devDependencies"
@@ -463,7 +468,7 @@
     },
     {
       "name": "ngx-echarts",
-      "version": "20.0.2",
+      "version": "22.0.0",
       "section": "devDependencies"
     },
     {
@@ -513,7 +518,7 @@
     },
     {
       "name": "typescript",
-      "version": "5.9.3",
+      "version": "6.0.3",
       "section": "devDependencies"
     },
     {
@@ -523,8 +528,10 @@
     },
     {
       "name": "zone.js",
-      "version": "0.15.1",
+      "version": "0.16.3",
       "section": "devDependencies"
     }
-  ]
+  ],
+  "verifiedWorkingTreeBaseCommit": "5d508f2",
+  "lockfileSha256": "6375af22796d11db3c4f51290b2529c70160f26cca38b135b103f1cfd4b4d519"
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import * as remote from '@electron/remote';
 import { OpenFolderService } from '../../shared/service/open-folder.service';
 import { ThumbnailGenerationService } from '../../thumbnail-generation/service/thumbnail-generation.service';
@@ -7,6 +7,7 @@ import { ThumbnailGenerationService } from '../../thumbnail-generation/service/t
   selector: 'app-sidebar-upper-pane',
   templateUrl: './sidebar-upper-pane.component.html',
   styleUrl: './sidebar-upper-pane.component.scss',
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class SidebarUpperPaneComponent {

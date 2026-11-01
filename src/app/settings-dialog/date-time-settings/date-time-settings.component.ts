@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
-import * as moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import { DateTimeFormat } from '../../../../src-shared/date-time/date-time-format';
 import { currentUserSettings } from '../../../../src-shared/user-settings/user-settings';
 import { SettingsChangedService } from '../service/settings-changed.service';
@@ -10,6 +10,7 @@ import { DateTimeSettingsChangedParameter } from './date-time-settings-changed-p
   selector: 'app-date-time-settings',
   templateUrl: './date-time-settings.component.html',
   styleUrls: ['./date-time-settings.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class DateTimeSettingsComponent {

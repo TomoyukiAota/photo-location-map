@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Analytics } from '../../../../../src-shared/analytics/analytics';
 import { Logger } from '../../../../../src-shared/log/logger';
@@ -12,6 +12,7 @@ import { ThumbnailGenerationStatusBarService } from '../service/thumbnail-genera
   selector: 'app-thumbnail-generation-status-bar',
   templateUrl: './thumbnail-generation-status-bar.component.html',
   styleUrls: ['./thumbnail-generation-status-bar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class ThumbnailGenerationStatusBarComponent implements OnInit {

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Analytics } from '../../../../../src-shared/analytics/analytics';
 import { Logger } from '../../../../../src-shared/log/logger';
 import { DirTreeViewSortService } from '../../../directory-tree-view/dir-tree-view-sort/dir-tree-view-sort.service';
@@ -11,6 +11,7 @@ import {
   selector: 'app-sidebar-upper-pane-more-options',
   templateUrl: './sidebar-upper-pane-more-options.component.html',
   styleUrl: './sidebar-upper-pane-more-options.component.scss',
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class SidebarUpperPaneMoreOptionsComponent {

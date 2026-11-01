@@ -1,5 +1,5 @@
 import { expose } from 'comlink';
-import * as createDirectoryTree from 'directory-tree';
+import createDirectoryTree from 'directory-tree';
 import { DirectoryTree, DirectoryTreeCallback, DirectoryTreeOptions } from 'directory-tree';
 import { Stats } from 'fs';
 import { convertToFlattenedDirTree } from '../../../../src-shared/dir-tree/dir-tree-util';

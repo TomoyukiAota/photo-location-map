@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { PinnedPhotoService } from '../../shared/service/pinned-photo.service';
 import { Photo } from '../../shared/model/photo.model';
@@ -10,6 +10,7 @@ import { GoogleMapsApiLoader } from './google-maps-api-loader';
   selector: 'app-google-maps',
   templateUrl: './google-maps.component.html',
   styleUrls: ['./google-maps.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {

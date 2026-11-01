@@ -16,8 +16,8 @@ Updated: 2026-11-01 (Asia/Tokyo).
   No push or publication has occurred.
 - Source inspection, official release/registry reads, historical PR review and a
   read-only lockfile audit were performed. No external comments or edits.
-- The original app is verified with the new test harness. No upgraded framework
-  or Electron checkpoint is verified yet.
+- Angular 21 is verified locally at `5d508f2`; Angular 22 / Node 26 is the
+  active uncommitted checkpoint. Electron remains 32.0.2 until U06.
 - No long-running baseline app or packaging process remains. Local command logs
   are under `.upgrade-artifacts`; test output is in its `e2e-results` directory.
 
@@ -31,10 +31,10 @@ Updated: 2026-11-01 (Asia/Tokyo).
 5. Inspect actual branch/HEAD/diff, task-related commits, existing processes and
    any newer user instructions. Reconcile records before executing commands.
 
-Active task: U05. Baseline and Node 22 bridge checks are captured.
-Upgrade Angular one major at a time. See BASELINE.md
-for the original Karma shutdown issue; do not claim it is a clean pass.
-Do not begin with a bulk package update or by running Angular 18 under Node 26.
+Active task: U06. Angular 22 behavior is verified against the original
+references on Electron 32. Final Node 26 clean installation needs Electron 45
+because the old Electron zip extractor exits early on Node 26. The old Karma shutdown issue was resolved with explicit single-run
+mode in U04b; retain `ng test --watch=false`. Do not regenerate original snapshots.
 
 ## Work queue
 
@@ -49,8 +49,8 @@ Do not begin with a bulk package update or by running Angular 18 under Node 26.
 | U04b | Verified locally | Graph/lint/build, 57+74+41 assertions and all 7 visual/functional cases pass. Explicit single-run also verifies failure exit code. |
 | U04c | Verified locally | Graph/lint/build, clean 57+74+41 tests and 7 unchanged regression cases. |
 | U04d | Verified locally | Graph/runtime/lint/build, 172 tests and all 7 unchanged regression cases. |
-| U05 | In progress | Apply Angular 22 migrations, then select Node 26/bundled npm and verify. |
-| U06 | Not started | Electron/packaging checkpoint with accepted macOS 13+ minimum. |
+| U05 | Verified locally, install caveat | Angular 22/TS 6/Node 26 build, 172 assertions and 7 unchanged visual/functional cases. Electron 32 installer needs the bridge; U06 must resolve final clean installation. |
+| U06 | In progress | Electron/packaging checkpoint; resolve the intermediate installer limitation and verify macOS 13+ minimum. |
 | U07 | Not started | Runtime library groups verified. |
 | U08 | Not started | Map/chart/translation updates verified visually. |
 | U09 | Not started | Static website candidates verified locally. |
@@ -74,10 +74,9 @@ Do not begin with a bulk package update or by running Angular 18 under Node 26.
 - On 2026-11-01 the user stated a preference for Sol, rather than Astra, to carry
   out implementation. Preserve that preference when execution is started; no
   model switch or implementation has been performed by this planning task.
-- No further user decision is currently required before starting implementation.
-  The next user action is to select the intended execution model and request
-  implementation. U00 must inspect and preserve these currently uncommitted task
-  documents before creating implementation checkpoints.
+- No further user decision is currently required. The user selected Sol and
+  authorized execution; U00 and the framework migration checkpoints are underway.
+  Continue independent work and collect only user-only final decisions at U12.
 - The executing agent should read the files in the order above, follow the same
   behavior-preservation gates, and keep STATUS current. The model choice does not
   change acceptance criteria or reopen the resolved Angular/macOS decisions.
@@ -227,3 +226,62 @@ unchanged references and HEIC pixels. Required control-flow conversion preserves
 the original rendered layouts and interactions in these checks.
 Next: Angular 22 migration on the compatible Node 22 bridge. Select Node
 26.13.0 and bundled npm 11.20.0 only after the framework permits it.
+
+### Angular 22 working tree
+
+Last verified framework commit: `5d508f2` (Angular 21). Core 22.2.4,
+CLI/Material 22.2.5, custom-webpack 22.0.1, angular-eslint 22.6.0 and
+TypeScript 6.0.3 are installed. Node 26.13.0 and its bundled npm 11.20.0
+pass the runtime identity guard. Zone 0.16.3 remains explicitly enabled.
+The official migration preserves previous default components with Eager change
+detection and the previous HTTP backend with withXhr().
+
+The inherited lock had optional chokidar/yaml peers resolving to incompatible
+ancestors. A supported `npm dedupe` resolved the graph without overrides, force,
+legacy-peer flags or extra pins; `npm ls --all` passes. Lock format remains 2.
+angular-eslint 22 moved recommended configs to the umbrella angular-eslint
+package; the native config now reads those official configs and preserves
+existing eager/NgModule choices rather than enforcing the new OnPush preference.
+
+TypeScript 6 requires explicit preservation of the previous non-strict mode and
+ambient Node/Jasmine types. Removed an unused baseUrl and incompatible generated
+extendedDiagnostics with strictTemplates=false. Main code uses NodeNext
+resolution with CommonJS output. esModuleInterop=false is now deprecated, so
+callable/scalar CommonJS imports use supported default imports instead. This
+includes physical-cpu-count, avoiding a silent numeric namespace regression.
+The webpack config now has a separate tsc check in every build because the new
+custom-webpack loader no longer typechecks it. No deprecation error was hidden.
+
+Validation process: npm script pipeline; logs `angular22-*.log` under ignored
+`.upgrade-artifacts`. Final lint/build/unit/e2e results are pending.
+No user-only action has arisen. Next: inspect the pipeline, fix any actual
+compatibility failures, clean-install and verify before committing U05.
+
+### Angular 22 behavior verified; Electron install boundary
+
+Production/main/config builds and lint pass. Angular's 57 assertions pass;
+Electron Mocha's 74 main + 41 renderer assertions pass after selecting the
+existing per-process tsconfig explicitly and setting rootDir for TypeScript 6.
+All seven unchanged original screenshot/functional cases and the HEIC pixel hash
+pass. Logs: `angular22-{runtime,graph,lint,build,unit,em-unit,e2e}.log`.
+
+npm 11 blocks uncovered dependency scripts even in non-strict warning mode.
+Reviewed the eight script-bearing packages and added exact-version approvals
+for the Electron download, esbuild validation and optional build-tool native
+loaders. Explicitly denied the core-js/es5-ext informational scripts and the
+fsevents lifecycle entry (its prebuilt binary is shipped). All native build
+tools, including fsevents, load successfully. Project .npmrc makes unreviewed
+scripts fail clearly; no machine-global setting was changed.
+
+**Installation caveat, not a final pass:** clean npm ci completes but the old
+Electron 32 extractor (extract-zip 2 / yauzl 2) exits successfully after only the
+first archive file under Node 26. Explicit rebuild behaves the same. Running only
+that extractor once with the Node 22 bridge installs the same Electron 32 binary
+and enables the successful behavior comparison above. This temporary bridge is
+not the final installation procedure. Electron 45 uses the maintained internal
+extractor and no longer has a postinstall download; its first require/CLI call
+downloads the binary. U06 will verify that path with a fresh Node 26 install.
+
+Next smallest action: install the coupled Electron 45 / builder 26 group, inspect
+new lifecycle scripts, then validate clean installation, real runtime versions,
+all unit/visual tests and the macOS package. No user decision is needed.

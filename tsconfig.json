@@ -2,9 +2,12 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "strict": false,
+    "types": ["node"],
     "module": "esnext",
     "target": "ES2022",
     "outDir": "./dist/out-tsc",
+    "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "bundler",

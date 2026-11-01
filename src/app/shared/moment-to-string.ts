@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 import { DateFormatOption, DateTimeFormat } from '../../../src-shared/date-time/date-time-format';
 import { currentUserSettings } from '../../../src-shared/user-settings/user-settings';
 

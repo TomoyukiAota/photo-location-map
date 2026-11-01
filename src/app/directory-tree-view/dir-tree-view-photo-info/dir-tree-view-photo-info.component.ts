@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewer-content';
 import { PhotoDataService } from '../../shared/service/photo-data.service';
 
@@ -6,6 +6,7 @@ import { PhotoDataService } from '../../shared/service/photo-data.service';
   selector: 'app-dir-tree-view-photo-info',
   templateUrl: './dir-tree-view-photo-info.component.html',
   styleUrls: ['./dir-tree-view-photo-info.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class DirTreeViewPhotoInfoComponent implements AfterViewInit {

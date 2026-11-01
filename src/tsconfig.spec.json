@@ -2,10 +2,14 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "outDir": "../out-tsc/spec",
+    "types": ["node", "jasmine"]
   },
   "include": [
     "../**/*.d.ts",
     "../src/**/*.spec.ts",
     "../src-shared/**/*.spec.ts"
-  ]
+  ],
+  "angularCompilerOptions": {
+    "strictTemplates": false
+  }
 }

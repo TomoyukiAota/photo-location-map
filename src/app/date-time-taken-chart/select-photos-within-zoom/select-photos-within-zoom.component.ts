@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { DirectoryTreeViewSelectionService } from '../../directory-tree-view/directory-tree-view-selection.service';
 import { PinnedPhotoService } from '../../shared/service/pinned-photo.service';
@@ -8,6 +8,7 @@ import { dateTimeTakenChartLogger as logger } from '../date-time-taken-chart-log
   selector: 'app-select-photos-within-zoom',
   templateUrl: './select-photos-within-zoom.component.html',
   styleUrls: ['./select-photos-within-zoom.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class SelectPhotosWithinZoomComponent {

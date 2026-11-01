@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -122,7 +122,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     TableVirtualScrollModule,
   ],
   providers: [
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withXhr(), withInterceptorsFromDi()),
     { provide: ErrorHandler, useClass: AnalyticsErrorHandler },
   ],
   bootstrap: [AppComponent]
