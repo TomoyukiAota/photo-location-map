@@ -435,3 +435,37 @@ covered by existing unit/integration assertions. Logs: runtime-core-*.log.
 Next: Jimp 1 / heic-decode 2.1 / workerpool 10. Preserve scale-to-fit behavior,
 400px bound, jpeg-js encoder, 0.92 quality and original decoded output hash.
 Do not update image references to accommodate a changed algorithm.
+
+### U07b image/worker working tree
+
+Installed Jimp 1.6.1 and workerpool 10.0.3; removed the obsolete workerpool
+types. Named Jimp construction and object resize options retain the original
+algorithm and jpeg-js quality 92. Independent comparisons against original Jimp
+0.16.2 in the signed intermediate package produce identical bitmap/JPEG hashes
+for four synthetic sizes and for the actual HEIC decode. A pure resize helper
+and four original-output unit cases also cover nonzero Buffer byte offsets;
+Jimp.fromBitmap 1.6 incorrectly includes the entire backing buffer in that case,
+so the supported bitmap constructor is used.
+
+The latest HEIC stack initially failed the immutable thumbnail hash. Isolated
+comparisons prove this is libheif's raw decode, not Jimp or workerpool. All three
+published versions allowed by heic-decode 2.1 (1.19.8, 1.23.2, 1.23.5) give the
+same changed result. A reviewed child-only override retains libheif-js 1.18.2
+inside heic-decode 2.0's allowed range. This deliberately preserves image output
+rather than replacing the original reference. Detailed metrics and candidate
+outputs are in HEIC_DECODER_COMPARISON.json; initial failure log is retained as
+images-e2e-initial-pixel-failure.log.
+
+Final compatible image validation is running in images-{graph,lint,build,unit,e2e}.log.
+The four new resize assertions make the intended total 176 if all pass.
+Next: inspect results, commit only after the original HEIC hash passes, then
+update analytics libraries while explicitly preserving collection defaults.
+
+### U07b completed
+
+Jimp 1.6.1 and workerpool 10.0.3 pass graph/lint/build, all 176 assertions
+(57 Angular + 78 main + 41 renderer), and all eight original visual/functional
+cases. The HEIC pixel reference is unchanged with the reviewed decoder pin.
+All four independent Jimp bitmap and encoded JPEG comparisons match original
+0.16.2, including upscaling and nonzero buffer offsets.
+Next: analytics SDKs; inspect original defaults before adopting their new APIs.

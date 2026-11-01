@@ -1,8 +1,7 @@
 import * as fsExtra from 'fs-extra';
-import Jimp from 'jimp';
-import * as jpegJs from 'jpeg-js';
 import * as workerpool from 'workerpool';
 import { Now } from '../../src-shared/date-time/now';
+import { resizeAndEncode } from './resize-and-encode';
 import { ThumbnailFileGenerationArg, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result';
 
 
@@ -21,20 +20,6 @@ class WorkerLogger {
 }
 
 const logger = new WorkerLogger();
-
-// The same Bitmap interface defined in Jimp. Wanted import from Jimp but import didn't work for some reason.
-interface Bitmap {data: Buffer, width: number, height: number}
-
-function resizeAndEncode(bitmap: Bitmap, quality: number) {
-  const image = new Jimp(bitmap);
-  const thumbnailWidthHeight = 200; // 200px at most for width/height on the browser
-  const highDpiFactor = 2;          // Multiplying by some factor for high DPI display. 2 is for Retina display.
-  const widthHeight = thumbnailWidthHeight * highDpiFactor;
-  image.scaleToFit(widthHeight, widthHeight);
-  const {data, width, height} = image.bitmap;
-  return jpegJs.encode({data, width, height}, quality);
-}
-
 
 //#region ---------------------- Modified heic-convert ----------------------
 // The code below is the modified version of heic-convert v1.2.4.

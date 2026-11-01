@@ -1,7 +1,7 @@
 {
   "observedDate": "2026-11-01",
-  "state": "Electron 45 / Angular 22 local checkpoint; remote CI and native chooser compatibility pending",
-  "verifiedApplicationCommit": "d75efc0df23b30344220213e9fac9b478b3f0020",
+  "state": "U07a runtime-core checkpoint verified locally; image/worker updates next",
+  "verifiedApplicationCommit": "dcf95ce58e9f64a74371bd257ad8473a6958775d",
   "hostNode": "26.13.0",
   "bundledNpm": "11.20.0",
   "lockfileVersion": 2,
@@ -18,7 +18,7 @@
     },
     {
       "name": "commander",
-      "version": "12.1.0",
+      "version": "15.0.0",
       "section": "dependencies"
     },
     {
@@ -28,7 +28,7 @@
     },
     {
       "name": "directory-tree",
-      "version": "2.3.1",
+      "version": "3.6.0",
       "section": "dependencies"
     },
     {
@@ -53,7 +53,7 @@
     },
     {
       "name": "fs-extra",
-      "version": "11.1.0",
+      "version": "11.4.1",
       "section": "dependencies"
     },
     {
@@ -83,7 +83,12 @@
     },
     {
       "name": "lodash",
-      "version": "4.17.21",
+      "version": "4.18.1",
+      "section": "dependencies"
+    },
+    {
+      "name": "moment",
+      "version": "2.31.0",
       "section": "dependencies"
     },
     {
@@ -93,7 +98,7 @@
     },
     {
       "name": "moment-timezone",
-      "version": "0.5.40",
+      "version": "0.6.6",
       "section": "dependencies"
     },
     {
@@ -118,7 +123,7 @@
     },
     {
       "name": "uuid",
-      "version": "9.0.0",
+      "version": "14.0.3",
       "section": "dependencies"
     },
     {
@@ -263,27 +268,27 @@
     },
     {
       "name": "@types/async",
-      "version": "3.2.24",
+      "version": "3.2.26",
       "section": "devDependencies"
     },
     {
       "name": "@types/delete-empty",
-      "version": "3.0.2",
+      "version": "3.0.5",
       "section": "devDependencies"
     },
     {
       "name": "@types/fs-extra",
-      "version": "9.0.13",
+      "version": "11.0.4",
       "section": "devDependencies"
     },
     {
       "name": "@types/is-natural-number",
-      "version": "4.0.1",
+      "version": "4.0.4",
       "section": "devDependencies"
     },
     {
       "name": "@types/is-number",
-      "version": "7.0.3",
+      "version": "7.0.5",
       "section": "devDependencies"
     },
     {
@@ -303,7 +308,7 @@
     },
     {
       "name": "@types/lodash",
-      "version": "4.14.191",
+      "version": "4.17.27",
       "section": "devDependencies"
     },
     {
@@ -313,7 +318,7 @@
     },
     {
       "name": "@types/moment-duration-format",
-      "version": "2.2.3",
+      "version": "2.2.7",
       "section": "devDependencies"
     },
     {
@@ -324,11 +329,6 @@
     {
       "name": "@types/promise.allsettled",
       "version": "1.0.3",
-      "section": "devDependencies"
-    },
-    {
-      "name": "@types/uuid",
-      "version": "9.0.0",
       "section": "devDependencies"
     },
     {
@@ -363,7 +363,7 @@
     },
     {
       "name": "comlink",
-      "version": "4.3.1",
+      "version": "4.4.2",
       "section": "devDependencies"
     },
     {
@@ -483,7 +483,7 @@
     },
     {
       "name": "p-queue",
-      "version": "6.6.2",
+      "version": "9.3.5",
       "section": "devDependencies"
     },
     {
@@ -494,6 +494,11 @@
     {
       "name": "power-assert",
       "version": "1.6.1",
+      "section": "devDependencies"
+    },
+    {
+      "name": "reflect-metadata",
+      "version": "0.2.2",
       "section": "devDependencies"
     },
     {
@@ -532,5 +537,5 @@
       "section": "devDependencies"
     }
   ],
-  "lockfileSha256": "1bfba7c6b32082858ffbb29cb847404092248c9b662163b0230a0de26d5dfdea"
+  "lockfileSha256": "774107f9c2aa9efc5ea4fced77e16f1ca674c9aa0158a6b79deb85dd058ec177"
 }
