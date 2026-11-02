@@ -42,13 +42,17 @@ const existingRules = {
   "id-match": "off",
   "no-extra-boolean-cast": "off",
   "no-underscore-dangle": "off",
+  // ESLint 10 adds recommended checks; retain the existing lint policy.
+  "no-unassigned-vars": "off",
+  "no-useless-assignment": "off",
+  "preserve-caught-error": "off",
   "@stylistic/semi": "error",
   "@stylistic/quotes": [
     "error",
     "single",
     {
       "avoidEscape": true,
-      "allowTemplateLiterals": true
+      "allowTemplateLiterals": "always"
     }
   ],
   "@angular-eslint/prefer-inject": "off",

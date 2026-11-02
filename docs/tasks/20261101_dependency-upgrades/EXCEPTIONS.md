@@ -21,3 +21,25 @@ Time-zone data corrections are recorded separately in
 [evidence/TIMEZONE_CHANGES.json](./evidence/TIMEZONE_CHANGES.json). They update
 historical/political rules while keeping application formatting and selection
 logic. See STATUS for the still-open native file-chooser default-directory item.
+
+## Decoder security review (2026-11-02)
+
+The pixel-preserving libheif 1.18.2 pin is **not approved for publication** by
+this investigation. Its native source falls within the affected range of
+[CVE-2026-32814](https://github.com/strukturag/libheif/security/advisories/GHSA-4m8r-34pg-rvwc),
+where failed grid tiles can expose decoder heap contents as pixels; the fix is
+1.22.0. That decoding path is relevant to thumbnails. A separate
+[critical native memory-corruption advisory](https://github.com/strukturag/libheif/security/advisories/GHSA-2jg2-4ch7-h545)
+affects versions through 1.23.1 and is fixed in 1.23.2. A working host escape
+against this particular WASM build was not established or tested.
+
+Latest npm libheif-js 1.23.5 includes those fixes but still predates native
+1.23.7's [HEVC CPU-exhaustion fix](https://github.com/strukturag/libheif/security/advisories/GHSA-2g6j-vhr6-6wrj).
+Neither available codec candidate can be described as security-clean. Per-file
+worker restarts do not fix decoder defects or impose a decoding timeout.
+
+The final owner packet must present the newer decoder's measured pixel change
+alongside these security improvements and remaining limitation. Do not silently
+approve changed image output, publish the old pin as safe, or introduce an
+unsupported decoder fork to hide this choice. Continue independent upgrades and
+validation before requesting that decision.

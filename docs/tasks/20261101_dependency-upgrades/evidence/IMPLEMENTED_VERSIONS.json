@@ -1,7 +1,7 @@
 {
   "observedDate": "2026-11-02",
-  "state": "U08b charts and folder chooser checkpoint verified locally; translations next",
-  "verifiedApplicationCommit": "b5e1027b67aee5bb1740194bc1c04d2ed1bb02f8",
+  "state": "U08c translation and packaged-test adapter verified in checkout; U10 tooling next",
+  "verifiedApplicationCommit": "a5b0a21f54c5fc2719426e97540b6adeed1812c6",
   "hostNode": "26.13.0",
   "bundledNpm": "11.20.0",
   "lockfileVersion": 2,
@@ -248,12 +248,12 @@
     },
     {
       "name": "@ngx-translate/core",
-      "version": "14.0.0",
+      "version": "18.1.0",
       "section": "devDependencies"
     },
     {
       "name": "@ngx-translate/http-loader",
-      "version": "7.0.0",
+      "version": "18.1.0",
       "section": "devDependencies"
     },
     {
@@ -527,5 +527,5 @@
       "section": "devDependencies"
     }
   ],
-  "lockfileSha256": "645458b2ffbd7ae29b1de493d4886444e57c209efde73a4255391e12876ca8df"
+  "lockfileSha256": "cb02f24275367062b2f5fae15cc840998628dcb106087f722f57d66291f0ad05"
 }

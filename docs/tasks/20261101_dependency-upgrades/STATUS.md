@@ -59,7 +59,7 @@ regenerate the original screenshots or HEIC pixel reference.
 | U07 | Verified locally | File/date/module, image/worker and analytics groups pass; compatibility exceptions are recorded. |
 | U08 | Complete | Maps, charting and translations pass unchanged visual and actual interaction checks. |
 | U09 | Verified locally | Bootstrap 5.3.8 with unchanged screenshots, focus/hover colors, both download URL requests and 390px layout; unused JS removed. Deployment remains gated by main. |
-| U10 | Not started | Final graph, audit disposition and version exceptions. |
+| U10 | In progress | ESLint 10 passes; Jasmine/coverage and script/graph cleanup next. |
 | U11 | In progress | Isolated updater transport passes; final clean platform/package verification remains. |
 | U12 | Not started | One concrete final decision/action packet. |
 | U13 | Not authorized | Publication and post-release verification. |
@@ -600,8 +600,7 @@ at runtime. `mise exec -- npx --no-install ng cache clean` plus a production
 rebuild fixes it; no custom pipe or library patch is needed. Original welcome,
 settings, map and loaded/resized screens pass in targeted checks. The gutter
 test now checks actual hover and completion of its transition, rather than
-accepting a stale color during the 0.2s transition delay. Full E2E is pending
-completion of the packaged-test entry adapter. The final rebuilt checkout now
+accepting a stale color during the 0.2s transition delay. The final rebuilt checkout
 passes all 12 cases, including the adapter, and all 194 unit assertions. Logs:
 translate-{graph,unit}, translate-final-{build,lint,e2e},
 translate-clean-{build,e2e}, translate-gutter-stable.
@@ -615,3 +614,15 @@ normal/guarded lifecycle checks plus the full checkout suite. Actual packaged
 and Rosetta checks remain until the final bundle exists. Commands and limits
 are in `test/e2e/README.md`. Normal startup remains inert; test-profile launches
 also block telemetry for package smoke tests without suppressing logging.
+
+### U10a lint completed
+
+ESLint 10.14.0, @eslint/js 10.0.1 and Stylistic 5.10.0 pass the complete lint
+and dependency graph checks. The three newly recommended core rules are
+explicitly disabled to retain the existing policy; template-literal allowance
+uses Stylistic's supported `always` value. No autofix or app source changes.
+Log: tooling-lint10.log. Next: supported Jasmine 6 and working coverage.
+
+The separate decoder security review now documents real upstream advisories in
+EXCEPTIONS.md. The old pixel-preserving pin is not publication-approved. Keep
+that final owner choice visible while completing independent work.

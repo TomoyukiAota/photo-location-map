@@ -35,3 +35,19 @@ supplements the required native Intel CI run.
 Visual comparisons use the committed original references. Snapshot updates are
 rejected unless the original Angular 18.2.4 / Electron 32.0.2 pair is installed.
 Do not broaden tolerances or replace references with upgraded output.
+
+The visual references are macOS arm64 at a 1200x800 content size. Keep the same
+display scaling, locale and fonts. OpenStreetMap tiles can vary independently;
+inspect any difference. Date examples and temporary cache paths are masked.
+Nonvisual checks and the original HEIC decoded-pixel comparison run on every OS.
+
+The negative controls `PLM_NEGATIVE_CONTROL=1` and `PLM_MAP_NEGATIVE_CONTROL=1`,
+combined with `PLM_VISUAL=1`, deliberately move the Open Folder button by 20px
+or the map toolbar by 3px and must fail the welcome/empty-home case.
+
+Coverage includes welcome/about/settings, recursive folder loading, map regions,
+photo selection, grouping/zoom/reset, splitters, chooser/window/settings restart
+behavior, analytics payloads, the actual HEIC worker and corrupt input, public
+embedded JPEG/HEIC viewing and the download website. Map/embedded viewer checks
+need network access. Further platform/packaging results belong in task STATUS;
+they are not implied by a checkout run.
