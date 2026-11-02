@@ -1,7 +1,7 @@
 {
   "observedDate": "2026-11-02",
-  "state": "U08c translation and packaged-test adapter verified in checkout; U10 tooling next",
-  "verifiedApplicationCommit": "a5b0a21f54c5fc2719426e97540b6adeed1812c6",
+  "state": "U10a ESLint checkpoint verified; Jasmine/coverage next",
+  "verifiedApplicationCommit": "12fbf928d17411c1c3d4c1cf31f98cc6a89aad3d",
   "hostNode": "26.13.0",
   "bundledNpm": "11.20.0",
   "lockfileVersion": 2,
@@ -243,7 +243,7 @@
     },
     {
       "name": "@eslint/js",
-      "version": "9.39.5",
+      "version": "10.0.1",
       "section": "devDependencies"
     },
     {
@@ -258,7 +258,7 @@
     },
     {
       "name": "@stylistic/eslint-plugin",
-      "version": "2.8.0",
+      "version": "5.10.0",
       "section": "devDependencies"
     },
     {
@@ -388,7 +388,7 @@
     },
     {
       "name": "eslint",
-      "version": "9.39.5",
+      "version": "10.14.0",
       "section": "devDependencies"
     },
     {
@@ -527,5 +527,5 @@
       "section": "devDependencies"
     }
   ],
-  "lockfileSha256": "cb02f24275367062b2f5fae15cc840998628dcb106087f722f57d66291f0ad05"
+  "lockfileSha256": "49bd7be9e713748d2735e25c75a05ee988e27a0495d4769775c1ccb740bed91d"
 }

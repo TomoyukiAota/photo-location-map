@@ -1,0 +1,18 @@
+{
+  "observedDate": "2026-11-02",
+  "rootJasmine": "6.3.0",
+  "karmaResolvedJasmine": "6.3.0",
+  "coveragePlugin": "2.2.1",
+  "unitCounts": {
+    "angular": 57,
+    "electronMain": 87,
+    "electronRenderer": 50
+  },
+  "negativeAssertionExit": 1,
+  "coverage": {
+    "htmlBytes": 53218,
+    "lcovBytes": 65086,
+    "sourceFiles": 124
+  },
+  "knownWarning": "Jasmine 6 warns about the existing Zone monkey patch; Jasmine 7 removes compatibility."
+}

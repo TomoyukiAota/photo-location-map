@@ -34,7 +34,7 @@ Updated: 2026-11-02 (Asia/Tokyo).
 5. Inspect actual branch/HEAD/diff, task-related commits, existing processes and
    any newer user instructions. Reconcile records before executing commands.
 
-Active task: U08. File-tree/date/module/queue, image/worker and analytics
+Active task: U10. File-tree/date/module/queue, image/worker and analytics
 updates, maps, charting and translations have passed locally. Next is U10 tooling
 and final dependency-graph cleanup.
 Node 26 / bundled npm 11.20 and Electron 45 clean installation work;
@@ -626,3 +626,19 @@ Log: tooling-lint10.log. Next: supported Jasmine 6 and working coverage.
 The separate decoder security review now documents real upstream advisories in
 EXCEPTIONS.md. The old pixel-preserving pin is not publication-approved. Keep
 that final owner choice visible while completing independent work.
+
+### U10b Jasmine and coverage completed
+
+Jasmine 6.3.0, its 6.0.0 types, HTML reporter 2.3.0 and karma-coverage 2.2.1
+pass all 194 unit assertions. Both root and karma-jasmine resolve 6.3.0 using
+the scoped override recommended by Jasmine's official 6 migration guide.
+The former nested runner was 4.6.1 despite the root 5.2.0 declaration.
+Jasmine 6 emits its expected Zone monkey-patching deprecation; no warning or
+failure detection is suppressed. Version 7 is incompatible with this test stack.
+
+Coverage now runs once and writes real HTML/LCOV reports for 124 source files.
+A temporary failing assertion returns exit 1 with its TypeScript location;
+the temporary spec has been removed. See
+[JASMINE6_CHECKPOINT.json](./evidence/JASMINE6_CHECKPOINT.json).
+Logs: jasmine6-{unit,coverage,negative,graph}.log. Next: script-tool replacement,
+direct ts-node registration, unused dependencies and compatible transitive refresh.

@@ -41,7 +41,7 @@
     "lint:all": "npm-run-all lint:ng lint:script",
     "test:unit:ng": "ng test --watch=false",
     "test:unit:ng:watch": "ng test --watch",
-    "test:unit:ng:coverage": "ng test --code-coverage",
+    "test:unit:ng:coverage": "ng test --watch=false --code-coverage",
     "test:unit:em:main": "cross-env TS_NODE_TRANSPILE_ONLY=1 TS_NODE_PROJECT=./test/em-main.tsconfig.json PLM_EM_MAIN=true electron-mocha --config ./test/em-main.mocharc.js",
     "test:unit:em:renderer": "cross-env TS_NODE_TRANSPILE_ONLY=1 TS_NODE_PROJECT=./test/em-renderer.tsconfig.json PLM_EM_RENDERER=true electron-mocha --renderer --require-main ./test/em-renderer-require-in-main-process.js --window-config ./test/em-renderer-window-config.js --config ./test/em-renderer.mocharc.js",
     "test:unit:em:both": "npm-run-all test:unit:em:main test:unit:em:renderer",
@@ -115,7 +115,7 @@
     "@types/fs-extra": "11.0.4",
     "@types/is-natural-number": "4.0.4",
     "@types/is-number": "7.0.5",
-    "@types/jasmine": "5.1.4",
+    "@types/jasmine": "6.0.0",
     "@types/leaflet": "1.9.22",
     "@types/leaflet.markercluster": "1.5.6",
     "@types/lodash": "4.17.27",
@@ -137,13 +137,12 @@
     "eslint": "10.14.0",
     "espower-typescript": "10.0.1",
     "exif-parser": "0.1.12",
-    "jasmine-core": "5.2.0",
+    "jasmine-core": "6.3.0",
     "jsonc-parser": "3.3.1",
     "karma": "6.4.4",
-    "karma-coverage-istanbul-reporter": "3.0.3",
     "karma-electron": "7.3.0",
     "karma-jasmine": "5.1.0",
-    "karma-jasmine-html-reporter": "2.1.0",
+    "karma-jasmine-html-reporter": "2.3.0",
     "karma-mocha-reporter": "2.2.5",
     "mixpanel-browser": "2.84.0",
     "ng-mocks": "14.18.4",
@@ -161,7 +160,8 @@
     "tslib": "2.7.0",
     "typescript": "6.0.3",
     "wait-on": "7.0.1",
-    "zone.js": "0.16.3"
+    "zone.js": "0.16.3",
+    "karma-coverage": "2.2.1"
   },
   "browser": {
     "fs": false,
@@ -185,6 +185,9 @@
   "overrides": {
     "heic-decode": {
       "libheif-js": "1.18.2"
+    },
+    "karma-jasmine": {
+      "jasmine-core": "$jasmine-core"
     }
   }
 }
