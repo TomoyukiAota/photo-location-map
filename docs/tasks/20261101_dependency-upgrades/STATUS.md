@@ -707,3 +707,28 @@ Final local notarization is independently running with real credentials; its
 raw output is `.upgrade-artifacts/mac-final-package.log`. Do not run package
 creation tests that overwrite the signed bundle. Next: final packaged arm64 and
 Rosetta E2E, signature/Gatekeeper checks, real-ZIP updater transport, and CI.
+
+### U11 final Mac artifacts and Linux runtime argument
+
+The final `2b7b0d7` runtime bundle is signed and notarized. Deep strict codesign,
+stapler, Gatekeeper, original icon, macOS 13 minimum and both universal slices
+pass. The final DMG runs main and renderer for 60 seconds with an owned profile,
+then quits and detaches. All 14 packaged arm64 visual/functional cases pass;
+the separate website case is intentionally skipped. Runtime dependencies and
+110 packaged runtime-source files match the checkout. ZIP/DMG metadata sizes and
+SHA-512 match, and every blockmap chunk verifies (11,349 ZIP / 11,671 DMG).
+The real final ZIP also passes isolated updater transport/cache/corruption checks.
+
+Rosetta is absent on this machine: even `arch -x86_64 /usr/bin/true` fails with
+Bad CPU type and no Rosetta receipt is installed. Do not install OS software
+solely for redundant coverage. Native Intel CI is the x64 execution gate.
+
+The `0c72971` build-order correction passes watcher lifecycle on remote runners.
+Both Ubuntu triggers then fail at AppImage startup: its launcher supplies
+`--no-sandbox`, which Commander rejects before application logging. Logs for
+jobs 125063886387 and 125063902228 confirm the same repository compatibility
+defect. A hidden option now accepts that existing Electron flag; it does not
+add the flag, alter help, or accept arbitrary unknown options. Targeted checks
+preserve Unicode/special-character --open values and unknown-option exit 1.
+The previous signed artifacts are evidence for the pre-argument-fix source;
+rebuild and notarize the final source before reporting final artifact readiness.
