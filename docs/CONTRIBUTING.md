@@ -61,9 +61,11 @@ checks that binary and the Node types used to compile for it.
 |Command|Description|
 |--|--|
 |`npm start`| Build and run the application for development. |
-|`npm run test:all`| Run all tests. Linting, unit tests, and package creation/smoke tests are included. |
+|`npm run test:all`| Run lint, unit tests, development watcher lifecycle checks, and package creation/smoke tests. |
+|`npm run test:live-reload`| Build the main process and check watcher quit, reload, and relaunch. |
+|`npm run test:e2e`| Run application regressions after a production build; see [test/e2e/README.md](../test/e2e/README.md). |
 |`npm run package:windows`| Create an installer for Windows. |
-|`npm run package:mac`| Create a `.dmg` file which contains a `.app` file for macOS. |
+|`npm run package:mac`| Create signed/notarized universal macOS `.dmg` and update `.zip` artifacts. |
 |`npm run package:linux`| Create an application for Linux. |
 
 

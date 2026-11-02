@@ -84,6 +84,8 @@ jobs:
       run: npm run test:package
 
     - name: npm run test:e2e
+      env:
+        PLM_PACKAGED_EXECUTABLE: ${{ github.workspace }}/release/mac-universal/Photo Location Map.app/Contents/MacOS/Photo Location Map
       run: npm run test:e2e
 
   test-intel:

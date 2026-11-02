@@ -95,6 +95,10 @@ jobs:
       with:
         run: npm run test:package
 
+    - name: Locate packaged AppImage for E2E
+      run: |
+        node -e 'const fs = require("node:fs"); const path = require("node:path"); const version = require("./package.json").version; fs.appendFileSync(process.env.GITHUB_ENV, "PLM_PACKAGED_EXECUTABLE=" + path.resolve("release", "Photo Location Map-" + version + ".AppImage") + "\n");'
+
     - name: npm run test:e2e
       uses: GabrielBB/xvfb-action@v1.7
       with:

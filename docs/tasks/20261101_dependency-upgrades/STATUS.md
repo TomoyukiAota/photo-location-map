@@ -741,3 +741,12 @@ the old failure and verifies Windows drive paths plus Unicode, spaces, # and %
 round-trip correctly. The superseded local package process was stopped before
 signing; restart packaging after the URL correction. Remote checks must verify
 the actual Windows installer/renderer and the full special-path suite.
+
+CI's final regression step now targets the actual installed NSIS executable,
+created AppImage, or universal macOS bundle through `PLM_PACKAGED_EXECUTABLE`.
+The existing harness asserts packaged/Prod mode, exact runtime/dependencies,
+owned profile paths and the launched executable before exercising the flows.
+Both Mac architectures share this step. Checkout/development validation remains
+separately recorded. The Ubuntu environment-writing command is executed locally
+and all three workflow YAMLs parse, including the Mac YAML alias. No publication
+step or required-check name is changed.
