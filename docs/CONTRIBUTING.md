@@ -43,8 +43,8 @@ After cloning this repository, run these commands to start the application:
 ``` bash
 mise trust    # Only needed once per clone, to allow mise to read mise.toml
 mise install  # Install Node.js with the version in mise.toml
-npm ci
-npm start
+mise exec -- npm ci
+mise exec -- npm start
 ```
 
 Without mise, install the specified Node.js and its bundled npm, then run `npm ci` and `npm start`.
