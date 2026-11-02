@@ -77,6 +77,9 @@ jobs:
     - name: npm run test:unit:em:renderer
       run: npm run test:unit:em:renderer
 
+    - name: npm run test:live-reload
+      run: npm run test:live-reload
+
     - name: npm run test:package
       run: npm run test:package
 

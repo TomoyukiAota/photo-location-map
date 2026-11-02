@@ -59,7 +59,7 @@ regenerate the original screenshots or HEIC pixel reference.
 | U07 | Verified locally | File/date/module, image/worker and analytics groups pass; compatibility exceptions are recorded. |
 | U08 | Complete | Maps, charting and translations pass unchanged visual and actual interaction checks. |
 | U09 | Verified locally | Bootstrap 5.3.8 with unchanged screenshots, focus/hover colors, both download URL requests and 390px layout; unused JS removed. Deployment remains gated by main. |
-| U10 | In progress | ESLint 10 passes; Jasmine/coverage and script/graph cleanup next. |
+| U10 | Complete | Clean install, graph, tooling, audit disposition and all local regression gates pass. |
 | U11 | In progress | Isolated updater transport passes; final clean platform/package verification remains. |
 | U12 | Not started | One concrete final decision/action packet. |
 | U13 | Not authorized | Publication and post-release verification. |
@@ -642,3 +642,50 @@ the temporary spec has been removed. See
 [JASMINE6_CHECKPOINT.json](./evidence/JASMINE6_CHECKPOINT.json).
 Logs: jasmine6-{unit,coverage,negative,graph}.log. Next: script-tool replacement,
 direct ts-node registration, unused dependencies and compatible transitive refresh.
+
+### U10c working tree and final local gate
+
+The maintained npm-run-all2 9.0.4 and npm-check-updates 23.1.1 replace the old
+script tools. Cross-env, wait-on, RxJS and tslib are updated; native Webpack
+types replace the stub, aligned with the builder's exact Webpack 5.112.0.
+Direct ts-node 10.9.2 replaces Espower/Power Assert instrumentation. Assertion
+pass/fail semantics remain, with standard Node diagnostics instead of expression
+trees. Both intentional Electron failures return exit 1 and TypeScript stacks.
+Unused Chai/tiny-worker/allSettled packages and obsolete install approvals are
+removed. Lockfile format 3 and compatible transitive refresh pass clean npm ci.
+
+The first clean gate passed all 194 assertions and 15 unchanged-reference E2E
+cases, including Unicode/space/#/% CLI and viewer paths. Script-runner probes
+verify Dev profile inheritance, sequential failure propagation and parallel
+child shutdown. npm-check-updates help is verified without updating manifests.
+
+Development verification found electron-reload's unclosed watchers prevent
+process exit on Electron 45. It is replaced by a small lifecycle adapter using
+current Chokidar 6.0.0. Real quit/reload/relaunch checks pass, as does the actual
+HTTP photo flow and npm start/stop. See
+[DEV_FLOW_CHECKPOINT.md](./evidence/DEV_FLOW_CHECKPOINT.md). CI now includes the
+watcher lifecycle check. Test-only DevTools target handling is explicit.
+
+A final clean install/build/unit/watcher gate passes after this compatibility
+fix. All 15 visual/functional cases pass in final-e2e-stable.log. Native capture
+can clear hover after it has been verified, so the screenshot holds only that
+existing pseudo-state through the supported CDP API; no style, mask, reference
+or tolerance change. Real hover/transition/color checks still run first.
+
+Angular core has an optional Chokidar ^5 peer. Development's latest Chokidar 6
+uses the npm alias `chokidar6`, allowing the peer to resolve supported 5.0.0;
+the complete graph is valid without overriding that peer. A final registry
+refresh also updates ng-mocks to 14.18.5; all 194 assertions pass with it.
+The HEIC child override is restricted to parent 2.0.0 so it cannot accidentally
+follow a future approved parent update. The obsolete notarize `tool` option is
+removed for the current API.
+
+See [LOCAL_FINAL_CHECKPOINT.json](./evidence/LOCAL_FINAL_CHECKPOINT.json) and
+[AUDIT_DISPOSITION.json](./evidence/AUDIT_DISPOSITION.json). npm audit reports
+75 propagated entries across five leaf packages; no compatible fixes remain
+inside the supported parent ranges. The native decoder advisories are separate.
+Logs use final-{clean-install,runtime,build,unit,watcher}.log, ready-{graph,audit},
+latest-mocks-unit.log and alias-watcher.log. No development server or old test
+Electron process remains. Signed artifacts still represent d75efc0; final
+signing/notarization and remote CI are next. Google Maps credentials were not
+available in the task environment; live key-backed validation remains separate.

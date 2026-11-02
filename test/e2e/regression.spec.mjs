@@ -1,6 +1,6 @@
 import { test, expect, _electron } from 'playwright/test';
 import { createRequire } from 'node:module';
-import { mkdtemp, realpath, rm } from 'node:fs/promises';
+import { copyFile, mkdir, mkdtemp, realpath, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -10,6 +10,8 @@ const manifest = require('../../package.json');
 const visual = process.env.PLM_VISUAL === '1';
 const packagedExecutable = process.env.PLM_PACKAGED_EXECUTABLE;
 const packagedLauncher = process.env.PLM_E2E_LAUNCHER;
+const liveReload = process.env.PLM_E2E_LIVE_RELOAD === '1';
+if (liveReload && packagedExecutable) throw new Error('Live reload is verified with the checkout, not a packaged executable.');
 const expectedArch = process.env.PLM_E2E_EXPECTED_ARCH || process.arch;
 if (packagedExecutable && !path.isAbsolute(packagedExecutable)) throw new Error('PLM_PACKAGED_EXECUTABLE must be absolute.');
 if (packagedLauncher && (!packagedExecutable || !path.isAbsolute(packagedLauncher))) {
@@ -22,7 +24,10 @@ async function launch({ resize = true } = {}) {
   for (const key of ['PLM_EM_MAIN', 'PLM_EM_RENDERER', 'ELECTRON_RUN_AS_NODE', 'NODE_OPTIONS']) delete env[key];
   // A publicly launched package has no npm development-profile override.
   if (packagedExecutable) delete env.npm_package_config_devOrProd;
-  const openArgs = process.env.PLM_E2E_OPEN ? ['--open', process.env.PLM_E2E_OPEN] : [];
+  const openArgs = [
+    ...(liveReload ? ['--live-reload'] : []),
+    ...(process.env.PLM_E2E_OPEN ? ['--open', process.env.PLM_E2E_OPEN] : []),
+  ];
   app = await _electron.launch({ executablePath: packagedLauncher || packagedExecutable || require('electron'),
     args: packagedExecutable ? openArgs : ['test/e2e/main.cjs', ...openArgs],
     cwd: packagedExecutable ? profile : root, env, timeout: packagedExecutable ? 90000 : 30000 });
@@ -61,8 +66,21 @@ async function launch({ resize = true } = {}) {
     }, null, 2)) });
   }
   page = await app.firstWindow();
-  if (resize) await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setContentSize(1200, 800));
+  if (liveReload) {
+    // Select the HTTP application page in development mode.
+    await expect.poll(() => {
+      const main = app.windows().find(candidate => candidate.url().startsWith('http://localhost:4200'));
+      if (main) page = main;
+      return !!main;
+    }, { timeout: 30000 }).toBe(true);
+  }
+  const mainWindow = await app.browserWindow(page);
+  if (liveReload) {
+    expect(await mainWindow.evaluate(window => window.webContents.isDevToolsOpened())).toBe(false);
+  }
+  if (resize) await mainWindow.evaluate(window => window.setContentSize(1200, 800));
   await page.waitForSelector('app-root app-home');
+  if (liveReload) expect(new URL(page.url()).origin).toBe('http://localhost:4200');
   await page.waitForFunction(() => !!window.plmInternalRenderer?.settingsDialog?.showSettingsDialog);
   await expect(page.locator('.leaflet-pm-toolbar').first()).toBeVisible();
   await page.waitForFunction(() => {
@@ -108,8 +126,22 @@ test.beforeEach(async () => {
   await launch();
 });
 test.afterEach(async () => {
-  await app?.close();
-  await rm(profile, { recursive: true, force: true });
+  const child = app?.process();
+  let timer;
+  try {
+    if (app) await Promise.race([
+      app.close(),
+      new Promise((_, reject) => timer = setTimeout(() => reject(new Error('Test application did not quit within 10 seconds.')), 10000)),
+    ]);
+  } finally {
+    clearTimeout(timer);
+    if (child && child.exitCode === null && child.signalCode === null) {
+      const stopped = new Promise(resolve => child.once('exit', resolve));
+      child.kill('SIGKILL');
+      await stopped;
+    }
+    await rm(profile, { recursive: true, force: true });
+  }
 });
 test('welcome, about and every available settings tab keep their appearance', async () => {
   await expect(page.locator('app-welcome-dialog')).toContainText('Version 1.12.2-alpha');
@@ -258,7 +290,26 @@ test('folder picker loads real photo data, markers, tree selection and chart', a
   await expect.poll(() => gutter.evaluate(el => el.matches(':hover') &&
     el.getAnimations().every(animation => animation.playState === 'finished'))).toBe(true);
   await expect(gutter).toHaveCSS('background-color', 'rgb(170, 170, 170)');
-  await shot('resized-home');
+  // Keep the reference's verified hover state while native screen capture changes focus.
+  const cdp = visual ? await page.context().newCDPSession(page) : undefined;
+  let gutterNode;
+  try {
+    if (cdp) {
+      await cdp.send('DOM.enable');
+      await cdp.send('CSS.enable');
+      const { root } = await cdp.send('DOM.getDocument');
+      ({ nodeId: gutterNode } = await cdp.send('DOM.querySelector', {
+        nodeId: root.nodeId, selector: '.sidebar-and-map-container > .gutter-horizontal',
+      }));
+      await cdp.send('CSS.forcePseudoState', { nodeId: gutterNode, forcedPseudoClasses: ['hover'] });
+    }
+    await shot('resized-home');
+  } finally {
+    if (cdp) {
+      if (gutterNode) await cdp.send('CSS.forcePseudoState', { nodeId: gutterNode, forcedPseudoClasses: [] });
+      await cdp.detach();
+    }
+  }
   await app.close();
   await launch();
   // The original app resets Split.js to 25/75 on restart; keep that behavior.
@@ -335,6 +386,30 @@ test('chart grouping, zoom, reset and photo selection keep their real data behav
   }
   await expect(page.locator('.plm-leaflet-map-div-icon')).toHaveCount(1);
 });
+test('--open loads a directory with Unicode, spaces, # and % without restoring photos on an ordinary restart', async () => {
+  const folder = path.join(profile, '写真 folder # 100%');
+  await mkdir(folder);
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, '神戸 # 50% photo.JPG'));
+  const previousOpen = process.env.PLM_E2E_OPEN;
+  try {
+    process.env.PLM_E2E_OPEN = folder;
+    await app.close();
+    await launch();
+    await dismissWelcome();
+    await expect(page.locator('app-loaded-files-status-bar')).toContainText('Loaded 1 files.');
+    await expect(page.locator('app-loaded-files-status-bar')).toContainText('1 files have location data.');
+    await expect(page.locator('mat-tree-node').filter({ hasText: path.basename(folder) })).toBeVisible();
+    await expect(page.locator('.plm-leaflet-map-div-icon')).toHaveCount(1);
+    delete process.env.PLM_E2E_OPEN;
+    await app.close();
+    await launch();
+    await expect(page.locator('app-loaded-files-status-bar .message-container')).toHaveCount(0);
+    await expect(page.locator('.plm-leaflet-map-div-icon')).toHaveCount(0);
+  } finally {
+    if (previousOpen === undefined) delete process.env.PLM_E2E_OPEN;
+    else process.env.PLM_E2E_OPEN = previousOpen;
+  }
+});
 test('window bounds survive restart and the Windows fullscreen menu stays visible', async () => {
   await dismissWelcome();
   if (process.platform === 'win32') {
@@ -407,13 +482,22 @@ test('HEIC worker generates the same bounded JPEG and reports corrupt input', as
   // Keep a pixel-level reference independently of the renderer screenshots.
   expect(JSON.stringify({ width: result.width, height: result.height, pixels: result.pixels }, null, 2)).toMatchSnapshot('heic-thumbnail.json');
 });
-for (const [name, fixture] of [
+for (const [name, fixture, specialPath] of [
   ['JPEG', 'actual-photos/Kobe/IMG_4676.JPG'],
   ['HEIC', '../../e2e/fixtures/demo.heic'],
+  ['JPEG', 'actual-photos/Kobe/IMG_4676.JPG', true],
+  ['HEIC', '../../e2e/fixtures/demo.heic', true],
 ]) {
-  test(`embedded Photo Data Viewer loads a real local ${name} through the app`, async () => {
+  test(`embedded Photo Data Viewer loads a real local ${name} through the app${specialPath ? ' with Unicode, spaces, # and % in its path' : ''}`, async () => {
     await dismissWelcome();
-    const photo = name === 'HEIC' ? path.join(root, 'test/e2e/fixtures/demo.heic') : path.join(root, 'test/test-resources', fixture);
+    let photo = name === 'HEIC' ? path.join(root, 'test/e2e/fixtures/demo.heic') : path.join(root, 'test/test-resources', fixture);
+    if (specialPath) {
+      const folder = path.join(profile, 'viewer 写真 # 100%');
+      await mkdir(folder);
+      const copiedPhoto = path.join(folder, `画像 # 50% ${name}${path.extname(photo)}`);
+      await copyFile(photo, copiedPhoto);
+      photo = copiedPhoto;
+    }
     const newWindow = app.waitForEvent('window');
     await page.evaluate(({ name, photo }) => window.require('electron').ipcRenderer.invoke(
       'ipc-constants-launch-photo-data-viewer', { photo: { name, path: photo } }), { name: path.basename(photo), photo });

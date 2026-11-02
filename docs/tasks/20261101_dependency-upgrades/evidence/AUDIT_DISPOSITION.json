@@ -1,0 +1,81 @@
+{
+  "observedDate": "2026-11-02",
+  "scope": "package-lock.json after clean npm ci",
+  "counts": {
+    "info": 0,
+    "low": 1,
+    "moderate": 44,
+    "high": 30,
+    "critical": 0,
+    "total": 75
+  },
+  "distinctLeafPackages": [
+    "diff",
+    "glob",
+    "minimatch",
+    "serialize-javascript",
+    "zod"
+  ],
+  "remainingCompatibleFixesIdentified": [],
+  "dispositions": [
+    {
+      "name": "diff",
+      "installed": "7.0.0",
+      "parent": "mocha 11.8.0 requires ^7.0.0",
+      "patched": ">=8.0.3",
+      "scope": "Test runner; not found in active renderer imports."
+    },
+    {
+      "name": "glob",
+      "installed": [
+        "7.2.3",
+        "10.5.0"
+      ],
+      "patched": ">=14.0.2 for AbortSignal advisory",
+      "scope": "Mocha uses10.5.0. Runtime delete-empty -> rimraf -> glob7 is also shipped, but delete-empty passes glob:false to rimraf; the AbortSignal leaf advisory itself starts at9."
+    },
+    {
+      "name": "minimatch",
+      "installed": [
+        "3.1.5",
+        "5.1.9",
+        "9.0.9",
+        "10.2.6"
+      ],
+      "patched": ">=11.0.1",
+      "scope": "Parent-constrained build/test tools; runtime copy through delete-empty has glob processing disabled."
+    },
+    {
+      "name": "serialize-javascript",
+      "installed": "6.0.2",
+      "parent": "mocha11.8.0 requires ^6.0.2",
+      "patched": ">=7.1.3",
+      "scope": "Test runner. Build copy-webpack-plugin permits7 and resolves patched7.1.4."
+    },
+    {
+      "name": "zod",
+      "installed": "3.25.76",
+      "parent": "Jimp1.6.1 plugins/types require ^3.23.8",
+      "patched": ">=4.6.6",
+      "scope": "Shipped worker. Application calls scaleToFit with fixed numeric w/h400; the active scale schema is an object of numeric scalar fields, not an attacker-provided array schema."
+    }
+  ],
+  "codec": {
+    "selectedNativePin": "1.18.2",
+    "latestNpmNativePin": "1.23.5",
+    "latestUpstreamNative": "1.23.7",
+    "nativePinEvidence": [
+      "https://raw.githubusercontent.com/catdad-experiments/libheif-js/841cf2ac5ae0fc4c52aad9571e8a73de65896c8a/scripts/install.js",
+      "https://raw.githubusercontent.com/catdad-experiments/libheif-js/d8ec4bc3bc5bf8055975577bccbbc7e1d7313c2d/scripts/install.js"
+    ],
+    "sources": [
+      "https://github.com/strukturag/libheif/security/advisories/GHSA-4m8r-34pg-rvwc",
+      "https://github.com/strukturag/libheif/security/advisories/GHSA-2jg2-4ch7-h545",
+      "https://github.com/strukturag/libheif/security/advisories/GHSA-2g6j-vhr6-6wrj",
+      "https://github.com/strukturag/libheif/security"
+    ],
+    "limits": "No malicious-file or WASM exploit reproduction was performed. Native RCE advisories do not establish a host escape against this exact WASM build. Neither selected nor latest npm codec is security-clean."
+  },
+  "lockfileVersion": 3,
+  "lockfileSha256": "c44f1cbd3241e1ccda894d1755bd46998a0d86e0cf7f4928065ec6677a9a730c"
+}

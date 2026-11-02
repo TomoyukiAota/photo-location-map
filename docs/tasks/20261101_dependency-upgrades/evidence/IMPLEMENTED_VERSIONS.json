@@ -1,7 +1,7 @@
 {
   "observedDate": "2026-11-02",
-  "state": "U10a ESLint checkpoint verified; Jasmine/coverage next",
-  "verifiedApplicationCommit": "12fbf928d17411c1c3d4c1cf31f98cc6a89aad3d",
+  "state": "U10b Jasmine/coverage checkpoint verified; script tooling and transitive refresh next",
+  "verifiedApplicationCommit": "bcd3378ed94444b06afacb4f02fbfe2c6a7d48a8",
   "hostNode": "26.13.0",
   "bundledNpm": "11.20.0",
   "lockfileVersion": 2,
@@ -293,7 +293,7 @@
     },
     {
       "name": "@types/jasmine",
-      "version": "5.1.4",
+      "version": "6.0.0",
       "section": "devDependencies"
     },
     {
@@ -403,7 +403,7 @@
     },
     {
       "name": "jasmine-core",
-      "version": "5.2.0",
+      "version": "6.3.0",
       "section": "devDependencies"
     },
     {
@@ -417,8 +417,8 @@
       "section": "devDependencies"
     },
     {
-      "name": "karma-coverage-istanbul-reporter",
-      "version": "3.0.3",
+      "name": "karma-coverage",
+      "version": "2.2.1",
       "section": "devDependencies"
     },
     {
@@ -433,7 +433,7 @@
     },
     {
       "name": "karma-jasmine-html-reporter",
-      "version": "2.1.0",
+      "version": "2.3.0",
       "section": "devDependencies"
     },
     {
@@ -527,5 +527,5 @@
       "section": "devDependencies"
     }
   ],
-  "lockfileSha256": "49bd7be9e713748d2735e25c75a05ee988e27a0495d4769775c1ccb740bed91d"
+  "lockfileSha256": "d22c2460bf378a105cf6000734123ef8d7a4207e2310d34c16bb4c452c9570db"
 }

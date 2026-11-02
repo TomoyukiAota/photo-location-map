@@ -80,6 +80,11 @@ jobs:
       with:
         run: npm run test:unit:em:renderer
 
+    - name: npm run test:live-reload
+      uses: GabrielBB/xvfb-action@v1.7
+      with:
+        run: npm run test:live-reload
+
     - name: Install FUSE (Required to launch AppImage during "npm run test:package")
       run: |
         sudo apt-get update
