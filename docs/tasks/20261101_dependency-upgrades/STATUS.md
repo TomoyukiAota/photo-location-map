@@ -732,3 +732,12 @@ add the flag, alter help, or accept arbitrary unknown options. Targeted checks
 preserve Unicode/special-character --open values and unknown-option exit 1.
 The previous signed artifacts are evidence for the pre-argument-fix source;
 rebuild and notarize the final source before reporting final artifact readiness.
+
+Windows push job 125063891239 also reaches the installed app, then rejects the
+main-window URL: concatenating `file:` with a Windows filesystem path produces
+an invalid URL. Replace that construction with Node's supported `pathToFileURL`;
+the file protocol and existing window flow remain. A targeted probe reproduces
+the old failure and verifies Windows drive paths plus Unicode, spaces, # and %
+round-trip correctly. The superseded local package process was stopped before
+signing; restart packaging after the URL correction. Remote checks must verify
+the actual Windows installer/renderer and the full special-path suite.
