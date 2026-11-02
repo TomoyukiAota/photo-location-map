@@ -14,15 +14,15 @@ Updated: 2026-11-02 (Asia/Tokyo).
   documents; implementation is now progressing through the checkpoints below.
 - The planning phase changed documents only. Execution now adds profile isolation
   and regression tests with Playwright; application dependency upgrades start at U03.
-  No push or publication has occurred.
+  The branch is pushed and Draft PR #630 is open. No public release was published.
 - Source inspection, official release/registry reads, historical PR review and a
   read-only lockfile audit were performed. No external comments or edits.
 - The final local code checkpoint is `2b7b0d7`: clean install, valid graph,
   production build, lint, 194 unit assertions, watcher lifecycle and 15 actual
   visual/functional cases pass. The exact versions are in IMPLEMENTED_VERSIONS.
-  The signed universal package remains the intermediate `d75efc0` build;
-  final remote CI, notarization and owner compatibility decisions remain.
-- No long-running baseline app or packaging process remains. Local command logs
+  Final signing/notarization and remote CI are in progress; owner compatibility
+  decisions remain. Do not treat the intermediate `d75efc0` package as final.
+- No long-running baseline app remains. Final macOS packaging is running. Local command logs
   are under `.upgrade-artifacts`; test output is in its `e2e-results` directory.
 
 ## Read order on resume
@@ -688,5 +688,22 @@ inside the supported parent ranges. The native decoder advisories are separate.
 Logs use final-{clean-install,runtime,build,unit,watcher}.log, ready-{graph,audit},
 latest-mocks-unit.log and alias-watcher.log. No development server or old test
 Electron process remains. Signed artifacts still represent d75efc0; final
-signing/notarization and remote CI are next. Google Maps credentials were not
+signing/notarization and remote CI are now running. Google Maps credentials were not
 available in the task environment; live key-backed validation remains separate.
+
+### U11 first remote checks and build-order correction
+
+Draft PR: https://github.com/TomoyukiAota/photo-location-map/pull/630.
+Head `9a56cd5` started push/PR checks on all three OSes, plus manual macOS
+Intel verification (run 41378002739). macOS push job 125062227644 and Ubuntu
+push job 125062212941 fail before watcher execution: the fresh checkout has no
+compiled `src-main/configure-live-reload.js`. Logs were read before any retry.
+This is a repository test-command ordering defect, not an environmental failure.
+The watcher test command now builds src-main itself, making it independently
+repeatable on a clean checkout. No checks, Windows draft publishing, or installer
+retry behavior are removed. Push the validated fix and rerun Intel at the new head.
+
+Final local notarization is independently running with real credentials; its
+raw output is `.upgrade-artifacts/mac-final-package.log`. Do not run package
+creation tests that overwrite the signed bundle. Next: final packaged arm64 and
+Rosetta E2E, signature/Gatekeeper checks, real-ZIP updater transport, and CI.

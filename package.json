@@ -54,7 +54,7 @@
     "verify:runtime": "node script/verify-runtime.js",
     "typecheck:build-config": "tsc -p tsconfig.build-config.json",
     "verify:electron": "node script/verify-runtime.js --electron",
-    "test:live-reload": "node ./test/live-reload/run.cjs"
+    "test:live-reload": "npm run build:src-main && node ./test/live-reload/run.cjs"
   },
   "dependencies": {
     "@electron/remote": "2.1.3",
