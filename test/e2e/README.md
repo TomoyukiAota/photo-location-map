@@ -49,6 +49,9 @@ Nonvisual runs fit the physical work area so native pointer events stay on scree
 count represented photos across marker clusters; clustering can change with size.
 The HEIC JSON comparison uses its parsed dimensions/hash, independent of Git's
 Windows line-ending conversion, with the original reference unchanged.
+The owner-approved decoder update uses a separate strict version-labelled
+reference in `approved-references/`; the original HEIC baseline is retained.
+The real shipped heic-decode/libheif-js versions are asserted with the output.
 Nonvisual checks and the original HEIC decoded-pixel comparison run on every OS.
 The resized reference includes a hovered gutter. The test performs a real hover
 and checks its color/transition first, then holds that pseudo-state through CDP

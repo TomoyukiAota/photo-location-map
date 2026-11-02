@@ -26,7 +26,8 @@ Updated: 2026-11-02 (Asia/Tokyo).
   Native Intel also passes at `872699e`; the only later application change is
   the win32-only menu correction. Final f1f0ee5 Mac signing/notarization, visual
   checks, DMG/ZIP verification and isolated native update/rollback all pass.
-  Only the owner-dependent compatibility/publication decisions remain.
+  These are the pre-follow-up results. The owner-approved newer HEIC decoder
+  is now being revalidated; these old artifact checks do not verify that change.
 - No baseline app remains. See the latest execution record for active processes. Local command logs
   are under `.upgrade-artifacts`; test output is in its `e2e-results` directory.
 
@@ -40,13 +41,51 @@ Updated: 2026-11-02 (Asia/Tokyo).
 5. Inspect actual branch/HEAD/diff, task-related commits, existing processes and
    any newer user instructions. Reconcile records before executing commands.
 
-Active task: U12 owner review. Independent implementation and verification are
-complete. Read [FINAL_REVIEW.md](./FINAL_REVIEW.md) for the two required output/
-behavior decisions, optional experimental Dev-only Google Maps coverage, and
-the separate publication gate. U13 remains unauthorized.
+Active task: approved HEIC follow-up implementation/revalidation. On 2026-11-02
+the owner selected the newer HEIC output and authorized updating/revalidating it,
+without publication approval. The chooser response was a question, not acceptance;
+the history-policy distinction remains unresolved. The previous fully verified application source
+is f1f0ee5. Do not treat its old-decoder artifact checks as proof of the follow-up.
+Read [FINAL_REVIEW.md](./FINAL_REVIEW.md) for scope and pending decisions.
+U13 remains unauthorized.
 Node 26 / bundled npm 11.20 and Electron 45 clean installation work;
 the old extractor caveat is resolved. Retain `ng test --watch=false` and never
 regenerate the original screenshots or HEIC pixel reference.
+
+The approved HEIC output has a separate strict reference under
+`test/e2e/approved-references`; the historical HEIC reference remains immutable.
+
+### Owner response and HEIC follow-up (2026-11-02)
+
+- Approved: adopt the newer HEIC pixel output, update and revalidate; no public
+  release approval. Latest registry still selects heic-decode 2.1.0 and
+  libheif-js 1.23.5. The old parent-scoped decoder override is removed.
+- Not approved: native chooser history limitations. The owner asked what the
+  old/new PLM history difference means. Explain only the OS dialog's starting
+  directory, not photo/settings migration. Baseline PLM stored no folder-history
+  key; the adapter stores only confirmed folders. OS history is not deleted.
+- Original screenshots and `snapshots/heic-thumbnail.json` remain unchanged.
+  The previously measured, explicitly accepted 6b17ef... output is recorded in a
+  separate version-labelled reference. Real worker checks now also assert the
+  shipped decoder/child versions; an older child with the same sample pixels
+  must not silently pass.
+- Current work: clean graph/install, build/lint/unit and full visual/functional
+  verification, then fresh signed artifacts, transport/native handoff checks
+  and all applicable platform CI. Collect exact results before updating final
+  artifact reports. Native 1.23.7's CPU-exhaustion fix is still absent from the
+  latest npm WASM, so the security limitation remains visible.
+
+Local follow-up checkpoint (2026-11-02 21:39 JST): clean `npm ci`, complete
+dependency graph, host/bundled-npm and Electron runtime checks, production build,
+lint, 57 Angular + 87 main + 50 renderer assertions and all 15 visual/functional
+cases pass with the new decoder. The actual worker asserts 2.1.0/1.23.5 and
+matches the approved 300x400 pixel hash; corrupt input and embedded HEIC viewer
+paths also pass. Original snapshot files are byte-unchanged from f1f0ee5.
+Fresh npm audit still reports 75 entries (30 high, 44 moderate, one low).
+The signed/notarized Mac rebuild is running; fresh platform/distribution and
+native fixture results remain pending. Resume logs use the `heic-approved-`
+prefix under the ignored artifact directory. Do not run package-test over the
+final signed bundle after notarization.
 
 ## Work queue
 
@@ -67,8 +106,8 @@ regenerate the original screenshots or HEIC pixel reference.
 | U08 | Complete | Maps, charting and translations pass unchanged visual and actual interaction checks. |
 | U09 | Verified locally | Bootstrap 5.3.8 with unchanged screenshots, focus/hover colors, both download URL requests and 390px layout; unused JS removed. Deployment remains gated by main. |
 | U10 | Complete | Clean install, graph, tooling, audit disposition and all local regression gates pass. |
-| U11 | Complete with documented coverage limits | All platform/artifact/native fixture gates pass; public-feed installation remains U13. Exact source/checkpoint distinctions are recorded. |
-| U12 | Ready for owner decisions | Final packet and comparison images are complete; independent work is done. |
+| U11 | HEIC follow-up in progress | Previous gates pass at their recorded sources; repeat affected local/platform/artifact/native fixture gates with the approved decoder. Public-feed installation remains U13. |
+| U12 | Refresh after HEIC revalidation | New output approved; chooser history clarification and publication remain pending. Update the packet with fresh exact source/artifact records. |
 | U13 | Not authorized | Publication and post-release verification. |
 
 ## Resolved decisions

@@ -7,7 +7,7 @@ These are specific compatibility decisions, not permission for blanket overrides
 | --- | --- | --- | --- |
 | electron-unhandled | 6.0.0 | 4.0.1 | An actual Electron 45 main-process probe fails with ERR_REQUIRE_ASYNC_MODULE: 5/6 have top-level asynchronous initialization. Version 6 additionally installs renderer-crash/unresponsive dialogs with no opt-out switch. Keep synchronous startup and the original error UI; revisit when the public API supports that policy without a listener/source patch or broader startup change. |
 | p-queue | 10.0.0 | 9.3.5 | Both bundled Karma and native Electron Mocha renderers reject the queue's DOM EventTarget in Node setMaxListeners before assertions start. The 9 line uses a compatible emitter. Revisit a release fixing the hybrid renderer check; do not mutate global process/EventTarget or patch dependency sources. |
-| heic-decode / libheif-js | 2.1.0 / 1.23.5 | 2.0.0 / 1.18.2 | Every published decoder satisfying 2.1's range (1.19.8, 1.23.2, 1.23.5) changes the original decoded thumbnail pixels. Independent old/new Jimp comparisons identify the decoder, not resizing or JPEG quality. A reviewed child-only pin within 2.0's supported range preserves pixels; revisit after an explicit image-output decision. |
+| heic-decode / libheif-js | 2.1.0 / 1.23.5 | 2.1.0 / 1.23.5 | The owner approved the newer pixel output on 2026-11-02. The old pixel-preserving child override is removed. A separate strict approved reference retains the original baseline. Fresh verification is in progress; latest npm WASM still lacks upstream native 1.23.7's CPU fixes. See the approved-update evidence. |
 | TypeScript | 7.0.2 | 6.0.3 | Angular 22 and typescript-eslint peers exclude 7. Use their supported compiler range. |
 | @types/node | 26.6.6 | 24.19.2 | Application code runs on Electron's embedded Node 24.22.1, independently of host Node 26. Keep the latest 24 declarations so compilation does not authorize unavailable application APIs. |
 | Webpack | 5.112.2 | 5.112.0 | build-angular 22.2.5 selects exact 5.112.0. Declare that existing runtime directly for native config types, replacing the deprecated types stub. This keeps the builder/plugins on one implementation; revisit with the parent rather than forcing its dependency. |
@@ -27,8 +27,9 @@ logic. See STATUS for the still-open native file-chooser default-directory item.
 
 ## Decoder security review (2026-11-02)
 
-The pixel-preserving libheif 1.18.2 pin is **not approved for publication** by
-this investigation. Its native source falls within the affected range of
+The historical pixel-preserving libheif 1.18.2 pin was **not approved for
+publication** by this investigation and has now been removed following the
+owner's newer-output approval. Its native source falls within the affected range of
 [CVE-2026-32814](https://github.com/strukturag/libheif/security/advisories/GHSA-4m8r-34pg-rvwc),
 where failed grid tiles can expose decoder heap contents as pixels; the fix is
 1.22.0. That decoding path is relevant to thumbnails. A separate
@@ -41,8 +42,9 @@ Latest npm libheif-js 1.23.5 includes those fixes but still predates native
 Neither available codec candidate can be described as security-clean. Per-file
 worker restarts do not fix decoder defects or impose a decoding timeout.
 
-The final owner packet must present the newer decoder's measured pixel change
-alongside these security improvements and remaining limitation. Do not silently
-approve changed image output, publish the old pin as safe, or introduce an
-unsupported decoder fork to hide this choice. Continue independent upgrades and
-validation before requesting that decision.
+The owner approved the measured newer pixel output and authorized the update
+and revalidation on 2026-11-02; publication remains unauthorized. Complete the
+fresh checks and artifacts before updating the final packet. Do not describe
+the new codec as security-clean or introduce an unsupported fork or new timeout
+policy. Source provenance and remaining advisories are in
+[HEIC_APPROVED_UPDATE.md](./evidence/HEIC_APPROVED_UPDATE.md).

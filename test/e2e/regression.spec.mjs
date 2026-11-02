@@ -484,12 +484,17 @@ test('analytics keeps explicit event properties and adds no automatic interactio
   const actions = await app.evaluate(() => globalThis.__plmAnalyticsEvents.map(event => event.action));
   expect(actions.filter(action => /^\[Amplitude\]|^\$mp_|^session_(start|end)$/.test(action))).toEqual([]);
 });
-test('HEIC worker generates the same bounded JPEG and reports corrupt input', async () => {
+test('HEIC worker generates the approved bounded JPEG and reports corrupt input', async () => {
   const result = await app.evaluate(async ({ app }, { root, profile }) => {
     const require = globalThis.__plmTestRequire;
     const path = require('node:path');
     const fs = require('node:fs');
     const appRoot = app.getAppPath();
+    const decoderRequire = require('node:module').createRequire(path.join(appRoot, 'node_modules/heic-decode/package.json'));
+    const decoderVersions = {
+      heicDecode: decoderRequire('./package.json').version,
+      libheifJs: decoderRequire('libheif-js/package.json').version,
+    };
     const pool = require(path.join(appRoot, 'node_modules/workerpool')).pool(
       path.join(appRoot, 'src-main/thumbnail-generation/generate-thumbnail-file-worker.js'),
       { workerType: 'process', maxWorkers: 1 });
@@ -499,7 +504,7 @@ test('HEIC worker generates the same bounded JPEG and reports corrupt input', as
       const good = await pool.exec('generateThumbnailFile', [{ srcFilePath: source, outputFileDir: profile, outputFilePath: output }]);
       const jpeg = require(path.join(appRoot, 'node_modules/jpeg-js')).decode(fs.readFileSync(output));
       const bad = await pool.exec('generateThumbnailFile', [{ srcFilePath: path.join(root, 'test/test-resources/unsupported-files/Invalid Photo.JPG'), outputFileDir: profile, outputFilePath: output }]);
-      return { good, bad, width: jpeg.width, height: jpeg.height,
+      return { good, bad, decoderVersions, width: jpeg.width, height: jpeg.height,
         pixels: require('node:crypto').createHash('sha256').update(jpeg.data).digest('hex') };
     } finally { await pool.terminate(); }
   }, { root, profile });
@@ -507,9 +512,11 @@ test('HEIC worker generates the same bounded JPEG and reports corrupt input', as
   expect(result.bad.status).toBe('failed-in-heic-convert');
   expect(Math.max(result.width, result.height)).toBe(400);
   expect(result.width).toBeGreaterThan(0);
-  // Keep a pixel-level reference independently of the renderer screenshots.
-  // Git's Windows CRLF conversion must not affect the strict decoded-pixel check.
-  expect({ width: result.width, height: result.height, pixels: result.pixels }).toEqual(require('./snapshots/heic-thumbnail.json'));
+  expect(result.decoderVersions).toEqual({ heicDecode: '2.1.0', libheifJs: '1.23.5' });
+  // The owner-approved decoder output has its own strict reference. The original
+  // baseline remains unchanged; parsed JSON also avoids Git's Windows CRLF effect.
+  expect({ width: result.width, height: result.height, pixels: result.pixels })
+    .toEqual(require('./approved-references/heic-thumbnail-libheif-1.23.5.json'));
 });
 for (const [name, fixture, specialPath] of [
   ['JPEG', 'actual-photos/Kobe/IMG_4676.JPG'],
