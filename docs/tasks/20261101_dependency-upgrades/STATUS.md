@@ -808,3 +808,43 @@ cluster membership at every viewport size. No product behavior is changed.
 The ae9e2fe Intel runner was canceled during npm ci without reaching app tests;
 the job log is unavailable (GitHub BlobNotFound). A fresh manual run at the
 corrected harness head remains required. No Intel test pass is inferred.
+
+Current harness/CI head is `872699e`; runtime and signed artifact source remain
+`d24da89`. Push runs: Windows 41403158081, Ubuntu 41403158101, macOS 41403158074.
+PR runs: Windows 41403166863, Ubuntu 41403166901, macOS 41403166916.
+Explicit macOS/Intel run: 41403163570. Both Ubuntu jobs now pass all 194 units,
+watcher lifecycle, actual AppImage smoke and 14 packaged E2E cases. Windows is
+in installed-app E2E; all Mac jobs, including Intel, have passed install and
+unit/watcher gates and are packaging. The old Intel check's annotation confirms
+its 45-minute job timeout during install; no dependency fallback was needed.
+
+After test portability corrections, the compact suite passes 13 cases and its
+corrected chart case passes separately, with the four affected packaged visual
+cases also passing. Chart filtering now waits for the exact represented-photo
+total, including clusters, before selecting; this preserves the original 300ms
+debounce. Original image references and screenshot tolerances are unchanged.
+
+Final ZIP and DMG extraction checks also pass strict signature/staple/Gatekeeper
+validation; all 4,754 files and all symlinks/directory entries match the tested
+signed bundle. The verification DMG is detached. See
+[FINAL_DISTRIBUTION_BUNDLES.json](./evidence/FINAL_DISTRIBUTION_BUNDLES.json).
+The remaining Google Maps credential item concerns the explicitly experimental
+Dev-only menu; it is optional additional developer coverage, not an unavailable
+packaged-Prod feature or an automatic publication blocker.
+
+### U11 Windows fullscreen native call ordering
+
+At 872699e both Windows triggers pass 13 actual installed-app cases, including
+HEIC pixels and all special paths, but the menu remains hidden for the full
+10s poll after entering fullscreen. Logs for jobs 125139240830 and 125139278973
+were read before retrying. This is a real compatibility defect, not test timing
+alone. Two independent source reviews confirm the cause in Electron 45.2.1
+`NativeWindowViews::SetFullScreen`: Windows notifies observers, then hides the
+menu later in the same native call. The synchronous listener is overwritten.
+
+The Windows-only listener now uses `setImmediate` after that native call,
+guarded against a destroyed window or a completed fullscreen exit. The public
+menu setter remains supported; no native patch, polling timer or altered menu
+layout is introduced. Build/lint and actual Windows CI must verify the fix.
+All existing d24da89 Mac artifacts remain valid evidence for their own source;
+final artifacts must be rebuilt after this source correction is verified.

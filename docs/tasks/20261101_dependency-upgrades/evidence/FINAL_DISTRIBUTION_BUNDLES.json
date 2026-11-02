@@ -1,0 +1,20 @@
+{
+  "observedDate": "2026-11-02",
+  "applicationCommit": "d24da891ebc6d8cef1b1f392e651c65df47689b4",
+  "zip": {
+    "strictDeepSignature": true,
+    "stapled": true,
+    "gatekeeper": "accepted",
+    "allRegularFilesMatchFinalSignedBundle": 4754,
+    "allSymlinksAndDirectoryEntriesMatch": true
+  },
+  "dmg": {
+    "strictDeepSignature": true,
+    "stapled": true,
+    "gatekeeper": "accepted",
+    "allRegularFilesMatchFinalSignedBundle": 4754,
+    "allSymlinksAndDirectoryEntriesMatch": true
+  },
+  "dmgDetached": true,
+  "productionBundleUnmodified": true
+}

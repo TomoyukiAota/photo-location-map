@@ -42,8 +42,15 @@ const createWindow = async () => {
   configureMainWindowForAnalytics(mainWindow);
 
   if (process.platform === 'win32') {
-    // Electron 34+ hides this menu in fullscreen; retain Electron 32's UI.
-    mainWindow.on('enter-full-screen', () => mainWindow.setMenuBarVisibility(true));
+    // TL;DR: Restore the original Windows fullscreen menu on the next event-loop turn.
+    // Details: Electron 45 emits enter-full-screen before its native SetFullScreen
+    // hides the menu, overwriting a synchronous setter. setImmediate runs after
+    // that native call; the guards also handle a quick exit or window close.
+    // https://github.com/electron/electron/blob/v45.2.1/shell/browser/native_window_views.cc
+    const window = mainWindow;
+    window.on('enter-full-screen', () => setImmediate(() => {
+      if (!window.isDestroyed() && window.isFullScreen()) window.setMenuBarVisibility(true);
+    }));
   }
 
   mainWindow.on('ready-to-show', () => {

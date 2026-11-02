@@ -13,7 +13,7 @@ together. No public release has been published.
 | --- | --- |
 | Application version | `1.12.2-alpha`; no release-version bump is included. |
 | Application source | [`d24da891ebc6d8cef1b1f392e651c65df47689b4`](https://github.com/TomoyukiAota/photo-location-map/commit/d24da891ebc6d8cef1b1f392e651c65df47689b4) |
-| Remote workflow head | [`ae9e2fe3dbfb941cb578306d308f299293676c5f`](https://github.com/TomoyukiAota/photo-location-map/commit/ae9e2fe3dbfb941cb578306d308f299293676c5f) |
+| Code/test workflow head | [`872699eab2b7c80c6cdf3c33e036923eb6f71bf0`](https://github.com/TomoyukiAota/photo-location-map/commit/872699eab2b7c80c6cdf3c33e036923eb6f71bf0) |
 | Review | [Draft PR #630](https://github.com/TomoyukiAota/photo-location-map/pull/630) |
 | Framework | Angular core 22.2.4; CLI/Material 22.2.5; TypeScript 6.0.3. |
 | Development runtime | Node 26.13.0 with its bundled npm 11.20.0, matching Photo Data Viewer. |
@@ -40,16 +40,16 @@ Replace pending evidence fields only after inspecting the actual result.
 | Gate | Current status | Evidence and limit |
 | --- | --- | --- |
 | Dependency/framework local checkpoint | **PASS at its recorded checkpoint** | [LOCAL_FINAL_CHECKPOINT.json](./evidence/LOCAL_FINAL_CHECKPOINT.json): clean installation, valid graph, build/lint, 194 unit assertions, 15 visual/functional cases and watcher/development checks. It identifies its own application commit. |
-| Final universal Mac build and real notarization | **PASS for d24da89** | Deep strict codesign, stapler and Gatekeeper pass; [artifact identity/checksums](./evidence/FINAL_MAC_CHECKPOINT.json). |
+| Final universal Mac build and real notarization | **PASS for d24da89** | Deep strict codesign, stapler and Gatekeeper pass; [artifact identity/checksums](./evidence/FINAL_MAC_CHECKPOINT.json). Both [extracted distributions](./evidence/FINAL_DISTRIBUTION_BUNDLES.json) match all 4,754 source-bundle files and symlinks and retain valid signatures/tickets. |
 | Actual final packaged Mac app | **PASS for d24da89** | 14 visual/functional cases pass; the website-only case is skipped. Packaged/Prod mode, executable/resources, dependencies, runtime and isolated profile are verified in the [Mac checkpoint](./evidence/FINAL_MAC_CHECKPOINT.json). |
 | Final signed ZIP updater transport | **PASS for d24da89** | [Final ZIP report](./evidence/FINAL_ZIP_TRANSPORT_CHECKPOINT.json): download/cache/checksum handling; see the [harness limits](../../../test/updater/README.md). |
 | Final DMG launch, smoke and cleanup | **PASS for d24da89** | Main/renderer log through 60 seconds, followed by normal quit and detach; [report](./evidence/FINAL_MAC_CHECKPOINT.json). |
 | Isolated native updater fixture | **PASS for d24da89 candidate runtime** | [Actual signed native install/relaunch/rollback and settings](./evidence/NATIVE_UPDATE_FIXTURE_CHECKPOINT.json). Separate test identity and 99.0.1/99.0.2 versions; production bundle unchanged. Exact native caches/jobs/preferences cleaned. |
-| Windows installed NSIS application | **CORRECTIVE CI PENDING** | ae9e2fe installs/launches successfully; fullscreen transition timing and CRLF-only reference comparison need the corrected harness gate. |
-| Ubuntu created AppImage | **PASS at ae9e2fe** | [Push](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41379683664) and [PR](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41379688348) pass. Required-check name remains `test (ubuntu-24.04)`; the runner is 26.04. |
-| macOS arm64 created universal app | **CORRECTIVE CI PENDING** | ae9e2fe packages/launches successfully; small-display pointer/window test assumptions need the corrected harness gate. |
-| Native macOS Intel created universal app | **PENDING FRESH DISPATCH** | Previous runner canceled during npm ci; no app result. Rosetta is unavailable locally. |
-| Live Google Maps with a valid key | **NOT VERIFIED — owner input unavailable** | See the owner-dependent item below. |
+| Windows installed NSIS application | **RUNNING at 872699e** | Package/install smoke passes; corrected installed-app E2E and draft publishing remain. |
+| Ubuntu created AppImage | **PASS at 872699e** | [Push](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41403158101) and [PR](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41403166901) pass 194 units and 14 packaged E2E cases. Required-check name remains `test (ubuntu-24.04)`; the runner is 26.04. |
+| macOS arm64 created universal app | **RUNNING at 872699e** | Install/unit/watcher gates pass; package and corrected actual-app E2E remain. |
+| Native macOS Intel created universal app | **RUNNING at 872699e** | Fresh [manual run](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41403163570) passes install/units/watcher and is packaging. Rosetta is unavailable locally. |
+| Experimental Dev-only Google Maps with a valid key | **OPTIONAL ADDITIONAL DEVELOPER COVERAGE — key unavailable** | Hidden in packaged Prod mode; see the owner-dependent item below. |
 | Production public-feed upgrade and post-release downloads | **NOT RUN — publication not authorized** | Perform the controlled post-publication checks after authorization; isolated transport/native fixtures do not prove this gate. |
 
 CI targets actual created/installed applications, while checkout/development
@@ -133,8 +133,12 @@ for the original behavior change, adapter contract and verification scope.
 
 ### 3. Google Maps credentials or owner-run confirmation
 
-The task environment has no usable Google Maps API key, so live key-backed
-behavior has not been verified. Owner-dependent input is a valid test key in a
+The Google Maps menu is explicitly experimental and visible only in Dev mode;
+the normal packaged Prod application does not expose it. The task environment
+has no usable Google Maps API key, so this additional key-backed developer
+coverage has not been verified. It is not an unverified packaged-Prod feature
+or an automatic publication blocker. If this coverage is desired,
+owner-dependent input is a valid test key in a
 secure local test configuration. The agent should then perform the remaining
 verification. If that access cannot be provided, record an owner-run check of
 the existing Google Maps mode and its exact result instead. Do not place a key
