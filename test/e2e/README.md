@@ -1,27 +1,37 @@
-# Electron regression checks
+# Application regression checks
 
-Build with `npm run build:prod`, then run `npm run test:e2e`. Tests launch the
-repository's actual Electron executable with the app's compiled main process.
-Each test uses a temporary profile, session, logs and thumbnail cache. Analytics
-requests are canceled by the test entry before the application starts.
+Build first, then run against the checkout:
 
-`PLM_VISUAL=1 npm run test:e2e` also compares the committed macOS arm64 screenshots.
-Use the same OS, 1200x800 content size, display scaling, locale and fonts as the
-baseline. The live OpenStreetMap background may vary independently of the app;
-inspect differences rather than regenerating references. Date examples and test
-cache paths are masked because they change between runs. Nonvisual functional
-checks and the HEIC decoded-pixel reference run on every platform.
+```sh
+mise exec -- npm run build:prod
+PLM_VISUAL=1 mise exec -- npm run test:e2e
+```
 
-References were captured before dependency upgrades (Angular 18.2.4 / Electron
-32.0.2). The suite rejects snapshot-update mode on any other dependency versions.
-Do not accept new screenshots to make an upgrade pass. The opt-in diagnostic
-`PLM_VISUAL=1 PLM_NEGATIVE_CONTROL=1 npm run test:e2e -- --grep welcome` deliberately
-moves the Open Folder button 20px and must fail the empty-home comparison.
+On macOS, run the same application flows against the actual final signed bundle:
 
-Tests cover welcome/about/settings, picker-based recursive photo loading,
-marker/selection behavior, chart creation, splitter movement, persisted settings
-and cancellation after a full app restart, the actual HEIC worker, corrupt
-input, and public embedded Photo Data Viewer integration for JPEG and HEIC.
-The embedded integration and map library loading need network access. Further
-platform/packaging checks are recorded in the task STATUS rather than implied
-by this suite.
+```sh
+PLM_PACKAGED_EXECUTABLE="$PWD/release/mac-universal/Photo Location Map.app/Contents/MacOS/Photo Location Map" \
+  PLM_VISUAL=1 mise exec -- npm run test:e2e
+```
+
+This mode asserts the real executable/resources, packaged flag, production
+profile, dependency manifest, Electron/Node versions and architecture. Worker
+and JPEG dependencies come from the bundle, while public photo fixtures stay
+in the checkout. The separate website case is skipped. The bundle must include
+the fixed test helper **before signing**; never modify it after signing.
+
+The controller creates its own temporary profile. `PLM_E2E=1` requires an
+absolute `PLM_TEST_ROOT`; only known injected debugger flags are removed.
+Normal startup is unaffected. Test-profile launches intercept analytics and
+release downloads without disabling SDK initialization or application logging.
+
+For the x64 half of a universal app on Apple Silicon, create an external shell
+launcher that executes `/usr/bin/arch -x86_64` with the same verified binary and
+forwards `"$@"`. Set its absolute path as `PLM_E2E_LAUNCHER`, retain
+`PLM_PACKAGED_EXECUTABLE`, and set `PLM_E2E_EXPECTED_ARCH=x64`. The suite checks
+Rosetta translation. Verify bundle signatures before and afterward. This
+supplements the required native Intel CI run.
+
+Visual comparisons use the committed original references. Snapshot updates are
+rejected unless the original Angular 18.2.4 / Electron 32.0.2 pair is installed.
+Do not broaden tolerances or replace references with upgraded output.

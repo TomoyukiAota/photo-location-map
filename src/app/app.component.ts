@@ -16,7 +16,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               private plmInternalRendererService: PlmInternalRendererService,
               private translate: TranslateService,
               private welcomeDialogAtAppLaunchService: WelcomeDialogAtAppLaunchService) {
-    translate.setDefaultLang('en');
+    translate.setFallbackLang('en');
   }
 
   public ngOnInit(): void {

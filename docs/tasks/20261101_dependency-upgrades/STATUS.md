@@ -35,7 +35,8 @@ Updated: 2026-11-02 (Asia/Tokyo).
    any newer user instructions. Reconcile records before executing commands.
 
 Active task: U08. File-tree/date/module/queue, image/worker and analytics
-updates, map resources and charting have passed locally. Next are translations.
+updates, maps, charting and translations have passed locally. Next is U10 tooling
+and final dependency-graph cleanup.
 Node 26 / bundled npm 11.20 and Electron 45 clean installation work;
 the old extractor caveat is resolved. Retain `ng test --watch=false` and never
 regenerate the original screenshots or HEIC pixel reference.
@@ -56,7 +57,7 @@ regenerate the original screenshots or HEIC pixel reference.
 | U05 | Verified locally, install caveat | Angular 22/TS 6/Node 26 build, 172 assertions and 7 unchanged visual/functional cases. Electron 32 installer needs the bridge; U06 must resolve final clean installation. |
 | U06 | Verified locally; native chooser item open | Clean install/runtime/lint/build, 172 tests, 8 visual/functional cases and signed universal DMG/ZIP smoke pass with original icon. Windows/Linux/Intel CI and native chooser history remain. |
 | U07 | Verified locally | File/date/module, image/worker and analytics groups pass; compatibility exceptions are recorded. |
-| U08 | In progress | Update CDN map resources/geometry, charting and translations separately against unchanged references. |
+| U08 | Complete | Maps, charting and translations pass unchanged visual and actual interaction checks. |
 | U09 | Verified locally | Bootstrap 5.3.8 with unchanged screenshots, focus/hover colors, both download URL requests and 390px layout; unused JS removed. Deployment remains gated by main. |
 | U10 | Not started | Final graph, audit disposition and version exceptions. |
 | U11 | In progress | Isolated updater transport passes; final clean platform/package verification remains. |
@@ -584,3 +585,33 @@ See [UPDATER_TRANSPORT_CHECKPOINT.json](./evidence/UPDATER_TRANSPORT_CHECKPOINT.
 and `test/updater/README.md` for the exact limits and final real-ZIP command.
 Repeat against the final signed ZIP after all dependency changes; this preflight
 does not replace notarization, Gatekeeper, installed-app or public-feed checks.
+
+### U08c translation completed
+
+Core/HTTP loader 18.1.0 remove TranslateModule and the old loader constructor.
+The app keeps its NgModule architecture, imports the supported standalone
+translation pipe/directive, and registers the new provider functions. The asset
+path remains `./assets/i18n/` plus `.json`, English remains the fallback, and
+`failOnError: true` preserves the old loader's error propagation.
+
+Graph, lint, production build and 194 unit assertions pass. The initial build
+after the module/provider change retained a stale Angular pipe scope and failed
+at runtime. `mise exec -- npx --no-install ng cache clean` plus a production
+rebuild fixes it; no custom pipe or library patch is needed. Original welcome,
+settings, map and loaded/resized screens pass in targeted checks. The gutter
+test now checks actual hover and completion of its transition, rather than
+accepting a stale color during the 0.2s transition delay. Full E2E is pending
+completion of the packaged-test entry adapter. The final rebuilt checkout now
+passes all 12 cases, including the adapter, and all 194 unit assertions. Logs:
+translate-{graph,unit}, translate-final-{build,lint,e2e},
+translate-clean-{build,e2e}, translate-gutter-stable.
+
+U11 packaged tests need a fixed early test hook, gated by an absolute test
+profile and explicit E2E flag, to remove known debugger arguments and intercept
+test telemetry without disabling production logging or SDK initialization.
+The adapter uses the signed app's own resources and worker dependencies and
+must not modify a bundle after signing. It is implemented and passes static
+normal/guarded lifecycle checks plus the full checkout suite. Actual packaged
+and Rosetta checks remain until the final bundle exists. Commands and limits
+are in `test/e2e/README.md`. Normal startup remains inert; test-profile launches
+also block telemetry for package smoke tests without suppressing logging.
