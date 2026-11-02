@@ -44,6 +44,11 @@ Do not broaden tolerances or replace references with upgraded output.
 The visual references are macOS arm64 at a 1200x800 content size. Keep the same
 display scaling, locale and fonts. OpenStreetMap tiles can vary independently;
 inspect any difference. Date examples and temporary cache paths are masked.
+Nonvisual runs fit the physical work area so native pointer events stay on screen.
+`PLM_E2E_COMPACT=1` exercises a 960x600 maximum content area locally. Map checks
+count represented photos across marker clusters; clustering can change with size.
+The HEIC JSON comparison uses its parsed dimensions/hash, independent of Git's
+Windows line-ending conversion, with the original reference unchanged.
 Nonvisual checks and the original HEIC decoded-pixel comparison run on every OS.
 The resized reference includes a hovered gutter. The test performs a real hover
 and checks its color/transition first, then holds that pseudo-state through CDP

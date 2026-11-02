@@ -16,13 +16,16 @@ Updated: 2026-11-02 (Asia/Tokyo).
   and regression tests with Playwright; application dependency upgrades start at U03.
   The branch is pushed and Draft PR #630 is open. No public release was published.
 - Source inspection, official release/registry reads, historical PR review and a
-  read-only lockfile audit were performed. No external comments or edits.
-- The final local code checkpoint is `2b7b0d7`: clean install, valid graph,
+  read-only lockfile audit were performed. Research sources remain read-only;
+  authorized source/Draft PR/CI preparation is now in progress.
+- The complete local dependency checkpoint is `2b7b0d7`: clean install, valid graph,
   production build, lint, 194 unit assertions, watcher lifecycle and 15 actual
   visual/functional cases pass. The exact versions are in IMPLEMENTED_VERSIONS.
-  Final signing/notarization and remote CI are in progress; owner compatibility
-  decisions remain. Do not treat the intermediate `d75efc0` package as final.
-- No long-running baseline app remains. Final macOS packaging is running. Local command logs
+  Runtime compatibility fixes end at `d24da89`; its signed/notarized universal
+  package passes 14 actual packaged visual/functional cases and DMG smoke.
+  Real native fixture upgrade/relaunch/rollback also pass. Final cross-platform
+  test portability corrections and remote CI remain, alongside owner decisions.
+- No baseline app remains. See the latest execution record for active processes. Local command logs
   are under `.upgrade-artifacts`; test output is in its `e2e-results` directory.
 
 ## Read order on resume
@@ -62,7 +65,7 @@ regenerate the original screenshots or HEIC pixel reference.
 | U09 | Verified locally | Bootstrap 5.3.8 with unchanged screenshots, focus/hover colors, both download URL requests and 390px layout; unused JS removed. Deployment remains gated by main. |
 | U10 | Complete | Clean install, graph, tooling, audit disposition and all local regression gates pass. |
 | U11 | In progress | Isolated updater transport passes; final clean platform/package verification remains. |
-| U12 | Not started | One concrete final decision/action packet. |
+| U12 | Draft prepared | Final decision/action packet exists; complete independent verification before presenting it. |
 | U13 | Not authorized | Publication and post-release verification. |
 
 ## Resolved decisions
@@ -750,3 +753,58 @@ Both Mac architectures share this step. Checkout/development validation remains
 separately recorded. The Ubuntu environment-writing command is executed locally
 and all three workflow YAMLs parse, including the Mac YAML alias. No publication
 step or required-check name is changed.
+
+Current remote head: `ae9e2fe`; current runtime source: `d24da89`. Latest push
+runs: Windows 41379683639, Ubuntu 41379683664, macOS 41379683765. PR runs:
+Windows 41379688319, Ubuntu 41379688348, macOS 41379688356. Manual macOS/Intel:
+41379700727. Superseded incomplete runs were canceled to free runners after the
+failures above were classified; the earlier d24da89 Ubuntu push and PR both pass.
+
+The final d24da89 macOS build finished real notarization at 2026-11-02 11:49 JST.
+Its log is `mac-final-package-portable-url.log`; signing/stapler/Gatekeeper checks
+pass and packaged visual regressions are running in
+`portable-final-packaged-arm64-e2e.log`. The independently reviewed local native
+updater fixture is prepared under `.upgrade-artifacts/native-updater` and has
+not run yet. It uses a unique signed identity and hardcoded owned profile in
+both test bundles. Execute only after packaged visual testing ends, then record
+actual candidate-runtime handoff/rollback results and limits; keep the final
+production bundle unchanged. Raw evidence and cleanup commands are local.
+
+### U11 native handoffs and CI test portability
+
+The final d24da89 universal bundle passes all 14 packaged visual/functional
+cases again after the portable file-URL correction. Its real DMG 60s smoke,
+signature, stapler, Gatekeeper, both universal slices and original icon pass.
+Final metadata and every blockmap chunk verify (11,373 ZIP / 11,711 DMG).
+See [FINAL_MAC_CHECKPOINT.json](./evidence/FINAL_MAC_CHECKPOINT.json) and
+[FINAL_ZIP_TRANSPORT_CHECKPOINT.json](./evidence/FINAL_ZIP_TRANSPORT_CHECKPOINT.json).
+
+The isolated native fixture passes actual signed install/relaunch and explicit
+downgrade rollback, with the production update prompt's Yes branch and saved
+checkbox setting verified through all four app starts. These are candidate-runtime
+99.0.1 → 99.0.2 → 99.0.1 fixtures, not historical public binaries or the exact
+production-identity ZIP. The first attempt's renamed CFBundleName broke helper
+lookup before JS; retaining the helper-compatible name fixes the fixture only.
+Production source signature and full fingerprint are unchanged after both runs.
+Native cache/job/preference cleanup is complete; only exact nonce paths/domains
+were removed after saving evidence. Source integrity is verified again after
+cleanup. See
+[NATIVE_UPDATE_FIXTURE_CHECKPOINT.json](./evidence/NATIVE_UPDATE_FIXTURE_CHECKPOINT.json).
+
+At ae9e2fe both Ubuntu AppImage push/PR jobs pass. Windows and macOS reach the
+packaged E2E step and expose test portability assumptions. Their failed logs
+were inspected before any retry: Windows' HEIC dimensions/hash are identical;
+only Git's CRLF conversion breaks the JSON text snapshot. Compare parsed JSON
+values against the unchanged reference. Fullscreen-menu visibility must wait
+for the native transition callback. Mac runners have a 1000px-wide display,
+so off-screen window bounds are correctly reset by the existing state helper,
+and map pointer coordinates can fall outside the physical screen. Nonvisual
+tests now fit the real work area and draw the same geographic region in view;
+the persisted test window is wholly inside that area. Visual references retain
+their original 1200x800 size and tolerance. Compact checks also count photos
+inside clusters, keeping the exact photo total rather than assuming a fixed
+cluster membership at every viewport size. No product behavior is changed.
+
+The ae9e2fe Intel runner was canceled during npm ci without reaching app tests;
+the job log is unavailable (GitHub BlobNotFound). A fresh manual run at the
+corrected harness head remains required. No Intel test pass is inferred.

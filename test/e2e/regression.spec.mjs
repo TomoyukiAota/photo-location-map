@@ -78,7 +78,22 @@ async function launch({ resize = true } = {}) {
   if (liveReload) {
     expect(await mainWindow.evaluate(window => window.webContents.isDevToolsOpened())).toBe(false);
   }
-  if (resize) await mainWindow.evaluate(window => window.setContentSize(1200, 800));
+  if (resize) await mainWindow.evaluate((window, { visual, compact }) => {
+    if (visual) {
+      window.setContentSize(1200, 800);
+      return;
+    }
+    const { screen } = globalThis.__plmTestRequire('electron');
+    const area = screen.getDisplayMatching(window.getBounds()).workArea;
+    const [outerWidth, outerHeight] = window.getSize();
+    const [contentWidth, contentHeight] = window.getContentSize();
+    const frameWidth = outerWidth - contentWidth;
+    const frameHeight = outerHeight - contentHeight;
+    // Native pointer events must remain inside the runner's physical display.
+    window.setBounds({ x: area.x + 20, y: area.y + 20,
+      width: Math.min((compact ? 960 : 1200) + frameWidth, area.width - 40),
+      height: Math.min((compact ? 600 : 800) + frameHeight, area.height - 40) });
+  }, { visual, compact: process.env.PLM_E2E_COMPACT === '1' });
   await page.waitForSelector('app-root app-home');
   if (liveReload) expect(new URL(page.url()).origin).toBe('http://localhost:4200');
   await page.waitForFunction(() => !!window.plmInternalRenderer?.settingsDialog?.showSettingsDialog);
@@ -111,6 +126,11 @@ async function dismissWelcome() {
     await page.getByRole('button', { name: 'OK', exact: true }).click();
     await expect(page.locator('app-welcome-dialog')).toHaveCount(0);
   }
+}
+async function expectRepresentedPhotos(count) {
+  // Cluster membership changes with available map space; the photo total must not.
+  await expect.poll(async () => await page.locator('.plm-leaflet-map-div-icon').count() +
+    await page.locator('.marker-cluster span').evaluateAll(nodes => nodes.reduce((sum, node) => sum + Number(node.textContent), 0))).toBe(count);
 }
 async function settings() {
   await page.evaluate(() => window.plmInternalRenderer.settingsDialog.showSettingsDialog());
@@ -188,10 +208,13 @@ test('map regions preserve drawing, removal and real photo selection', async () 
   }, photoFolder);
   await page.getByRole('button', { name: 'Open Folder', exact: true }).click();
   await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
-  await expect(page.locator('.plm-leaflet-map-div-icon')).toHaveCount(2);
+  await expectRepresentedPhotos(4);
   await page.waitForFunction(() => !window.__plmMapMoving);
   const titles = await page.locator('.leaflet-pm-toolbar .button-container[title]').evaluateAll(nodes => nodes.map(n => n.title).sort());
   expect(titles).toEqual(['Set Region by Rectangle', 'Set Region by Vertex', 'Set Text', 'Edit Region', 'Drag Region', 'Remove Region'].sort());
+  // Focus the same geographic drawing area on small CI displays as well.
+  await page.evaluate(() => window.__plmLeafletMap.fitBounds([[-15, 105], [45, 165]], { padding: [80, 80], animate: false }));
+  await page.waitForFunction(() => !window.__plmMapMoving);
   const mapBox = await page.locator('#plm-leaflet-map').boundingBox();
   const corners = await page.evaluate(() => [[-10, 110], [40, 160]].map(latlng => {
     const p = window.__plmLeafletMap.latLngToContainerPoint(latlng);
@@ -349,7 +372,7 @@ test('chart grouping, zoom, reset and photo selection keep their real data behav
   }, photoFolder);
   await page.getByRole('button', { name: 'Open Folder', exact: true }).click();
   await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
-  await expect(page.locator('.plm-leaflet-map-div-icon')).toHaveCount(2);
+  await expectRepresentedPhotos(4);
   const chart = page.locator('app-date-time-taken-chart .chart');
   await expect(chart.locator('canvas')).toBeVisible();
   const unit = page.locator('app-date-time-taken-chart-config select');
@@ -367,7 +390,8 @@ test('chart grouping, zoom, reset and photo selection keep their real data behav
     await page.mouse.move(box.x + 90 + plotWidth * 0.92, y, { steps: 12 });
     await page.mouse.up();
     await expect(choose).toBeVisible();
-    await expect(page.locator('.plm-leaflet-map-div-icon')).toHaveCount(1);
+    // Wait for the debounced filter, including removal of clustered photos.
+    await expectRepresentedPhotos(1);
   }
   await zoomToLastYear();
   await expect(page.locator('mat-tree-node').filter({ hasText: 'Gold Coast' }).getByRole('checkbox')).toBeChecked();
@@ -375,7 +399,7 @@ test('chart grouping, zoom, reset and photo selection keep their real data behav
   // ECharts' rightmost toolbox control is the existing Reset Zoom canvas icon.
   await page.mouse.click(box.x + box.width - 11, box.y + 14);
   await expect(choose).toBeHidden();
-  await expect(page.locator('.plm-leaflet-map-div-icon')).toHaveCount(2);
+  await expectRepresentedPhotos(4);
   await expect(page.locator('.marker-cluster')).toHaveCount(1);
   await zoomToLastYear();
   await choose.click();
@@ -415,15 +439,19 @@ test('window bounds survive restart and the Windows fullscreen menu stays visibl
   if (process.platform === 'win32') {
     await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setFullScreen(true));
     await expect.poll(() => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isFullScreen())).toBe(true);
-    expect(await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isMenuBarVisible())).toBe(true);
+    await expect.poll(() => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isMenuBarVisible())).toBe(true);
     await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setFullScreen(false));
     await expect.poll(() => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isFullScreen())).toBe(false);
   }
-  const saved = await app.evaluate(({ BrowserWindow }) => {
+  const saved = await app.evaluate(({ BrowserWindow, screen }) => {
     const win = BrowserWindow.getAllWindows()[0];
-    win.setBounds({ x: 100, y: 100, width: 1080, height: 720 });
-    return win.getBounds();
+    const area = screen.getDisplayMatching(win.getBounds()).workArea;
+    const bounds = { x: area.x + 40, y: area.y + 40,
+      width: Math.min(1080, area.width - 80), height: Math.min(720, area.height - 80) };
+    win.setBounds(bounds);
+    return bounds;
   });
+  await expect.poll(() => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].getBounds())).toEqual(saved);
   await app.close();
   await launch({ resize: false });
   const restored = await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].getBounds());
@@ -480,7 +508,8 @@ test('HEIC worker generates the same bounded JPEG and reports corrupt input', as
   expect(Math.max(result.width, result.height)).toBe(400);
   expect(result.width).toBeGreaterThan(0);
   // Keep a pixel-level reference independently of the renderer screenshots.
-  expect(JSON.stringify({ width: result.width, height: result.height, pixels: result.pixels }, null, 2)).toMatchSnapshot('heic-thumbnail.json');
+  // Git's Windows CRLF conversion must not affect the strict decoded-pixel check.
+  expect({ width: result.width, height: result.height, pixels: result.pixels }).toEqual(require('./snapshots/heic-thumbnail.json'));
 });
 for (const [name, fixture, specialPath] of [
   ['JPEG', 'actual-photos/Kobe/IMG_4676.JPG'],

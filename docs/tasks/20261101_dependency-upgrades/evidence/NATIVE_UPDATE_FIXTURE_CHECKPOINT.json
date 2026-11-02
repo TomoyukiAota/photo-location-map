@@ -1,0 +1,47 @@
+{
+  "status": "passed",
+  "candidateRuntimeFixtureVersions": [
+    "99.0.1",
+    "99.0.2"
+  ],
+  "originalPublicReleaseTested": false,
+  "nativeInstall": true,
+  "nativeRelaunch": true,
+  "nativeRollbackWithExplicitDowngrade": true,
+  "settingsPreserved": true,
+  "profileHardcodedInBothSignedFixtures": true,
+  "originalSignedBundleUnchanged": true,
+  "loopbackOnlyDuringAppExecution": true,
+  "verifiedCdnResourcesProxied": 7,
+  "mapTilesAndExternalFontsTested": false,
+  "publicFeedTested": false,
+  "notarizedFixture": false,
+  "requestCounts": {
+    "/latest-mac.yml": 6,
+    "/cdn/2.css": 4,
+    "/cdn/0.css": 4,
+    "/cdn/6.js": 4,
+    "/cdn/3.css": 4,
+    "/cdn/5.css": 4,
+    "/cdn/1.js": 4,
+    "/cdn/4.js": 4,
+    "/fixture-99.0.2.zip": 1,
+    "/cdn/images/layers-2x.png": 2,
+    "/fixture-99.0.1.zip": 1
+  },
+  "observedDate": "2026-11-02",
+  "applicationCommit": "d24da891ebc6d8cef1b1f392e651c65df47689b4",
+  "fixtureIdentity": "unique nonce ID, separate from production",
+  "sourceSignatureVerifiedAfter": true,
+  "sourceFingerprintUnchangedAfter": true,
+  "cleanup": {
+    "status": "passed",
+    "noRelevantProcesses": true,
+    "noNativeCacheOrJobRemains": true,
+    "noFixturePreferenceValuesOrFilesRemain": true,
+    "nativeLogsAndEmptyPreferenceFilesSavedBeforeDeletion": true,
+    "onlyExactNoncePathsAndDomainsTouched": true,
+    "productionSourceSignatureAndFingerprintVerifiedAfterCleanup": true
+  },
+  "initialAttempt": "Fixture CFBundleName rename prevented Electron helper lookup before JS; corrected by keeping helper-compatible CFBundleName. Production bundle unchanged."
+}

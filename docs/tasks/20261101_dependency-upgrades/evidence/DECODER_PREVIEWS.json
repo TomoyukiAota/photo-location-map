@@ -1,0 +1,22 @@
+{
+  "observedDate": "2026-11-02",
+  "fixture": "test/e2e/fixtures/demo.heic",
+  "images": [
+    {
+      "name": "decoder-before.jpg",
+      "size": 31650,
+      "sha256": "ab38dc730e7e877f7bddf4c2fdf7ac50ac1063315eb95aaa2c993be6b3d1c0eb",
+      "width": 300,
+      "height": 400,
+      "decodedRgbaSha256": "4a50fa9dd154fcb8358ed56c09478c792f0fe148f57d445211920db8fd545351"
+    },
+    {
+      "name": "decoder-candidate.jpg",
+      "size": 31644,
+      "sha256": "bca69225efbb980275fdd53dd80957f0c26b7cf8a0bcc2016ec946aaf1b7cc82",
+      "width": 300,
+      "height": 400,
+      "decodedRgbaSha256": "6b17ef757e234a67822cd264da6dd68f9694666f4d0f811599f734197ff328dc"
+    }
+  ]
+}
