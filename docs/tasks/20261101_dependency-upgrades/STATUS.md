@@ -17,10 +17,11 @@ Updated: 2026-11-02 (Asia/Tokyo).
   No push or publication has occurred.
 - Source inspection, official release/registry reads, historical PR review and a
   read-only lockfile audit were performed. No external comments or edits.
-- Electron 45 / Angular 22 packaging is verified locally at `d75efc0`, including
-  the signed universal package. Runtime/analytics updates through `f133a27`
-  and the U08a map working tree have passed their local gates;
-  final remote CI, notarization and the native chooser item remain.
+- The final local code checkpoint is `2b7b0d7`: clean install, valid graph,
+  production build, lint, 194 unit assertions, watcher lifecycle and 15 actual
+  visual/functional cases pass. The exact versions are in IMPLEMENTED_VERSIONS.
+  The signed universal package remains the intermediate `d75efc0` build;
+  final remote CI, notarization and owner compatibility decisions remain.
 - No long-running baseline app or packaging process remains. Local command logs
   are under `.upgrade-artifacts`; test output is in its `e2e-results` directory.
 
@@ -34,9 +35,9 @@ Updated: 2026-11-02 (Asia/Tokyo).
 5. Inspect actual branch/HEAD/diff, task-related commits, existing processes and
    any newer user instructions. Reconcile records before executing commands.
 
-Active task: U10. File-tree/date/module/queue, image/worker and analytics
-updates, maps, charting and translations have passed locally. Next is U10 tooling
-and final dependency-graph cleanup.
+Active task: U11. File-tree/date/module/queue, image/worker and analytics
+updates, maps, charting, translations and tooling have passed locally. Next is
+final platform/distribution verification.
 Node 26 / bundled npm 11.20 and Electron 45 clean installation work;
 the old extractor caveat is resolved. Retain `ng test --watch=false` and never
 regenerate the original screenshots or HEIC pixel reference.

@@ -1,10 +1,10 @@
 {
   "observedDate": "2026-11-02",
-  "state": "U10b Jasmine/coverage checkpoint verified; script tooling and transitive refresh next",
-  "verifiedApplicationCommit": "bcd3378ed94444b06afacb4f02fbfe2c6a7d48a8",
+  "state": "U10 complete; final local gates passed; platform/signature verification next",
+  "verifiedApplicationCommit": "2b7b0d7ce4eccc8caf979740d0f663be3e2ef3ab",
   "hostNode": "26.13.0",
   "bundledNpm": "11.20.0",
-  "lockfileVersion": 2,
+  "lockfileVersion": 3,
   "packages": [
     {
       "name": "@electron/remote",
@@ -107,18 +107,8 @@
       "section": "dependencies"
     },
     {
-      "name": "promise.allsettled",
-      "version": "1.0.6",
-      "section": "dependencies"
-    },
-    {
       "name": "rage-edit",
       "version": "1.2.0",
-      "section": "dependencies"
-    },
-    {
-      "name": "tiny-worker",
-      "version": "2.3.0",
       "section": "dependencies"
     },
     {
@@ -322,16 +312,6 @@
       "section": "devDependencies"
     },
     {
-      "name": "@types/promise.allsettled",
-      "version": "1.0.3",
-      "section": "devDependencies"
-    },
-    {
-      "name": "@types/webpack",
-      "version": "5.28.0",
-      "section": "devDependencies"
-    },
-    {
       "name": "@typescript-eslint/eslint-plugin",
       "version": "8.72.1",
       "section": "devDependencies"
@@ -347,9 +327,10 @@
       "section": "devDependencies"
     },
     {
-      "name": "chai",
-      "version": "4.3.7",
-      "section": "devDependencies"
+      "name": "chokidar6",
+      "version": "6.0.0",
+      "section": "devDependencies",
+      "alias": "npm:chokidar@6.0.0"
     },
     {
       "name": "comlink",
@@ -358,7 +339,7 @@
     },
     {
       "name": "cross-env",
-      "version": "7.0.3",
+      "version": "10.1.0",
       "section": "devDependencies"
     },
     {
@@ -382,18 +363,8 @@
       "section": "devDependencies"
     },
     {
-      "name": "electron-reload",
-      "version": "1.5.0",
-      "section": "devDependencies"
-    },
-    {
       "name": "eslint",
       "version": "10.14.0",
-      "section": "devDependencies"
-    },
-    {
-      "name": "espower-typescript",
-      "version": "10.0.1",
       "section": "devDependencies"
     },
     {
@@ -448,7 +419,7 @@
     },
     {
       "name": "ng-mocks",
-      "version": "14.18.4",
+      "version": "14.18.5",
       "section": "devDependencies"
     },
     {
@@ -462,13 +433,13 @@
       "section": "devDependencies"
     },
     {
-      "name": "npm-check",
-      "version": "6.0.1",
+      "name": "npm-check-updates",
+      "version": "23.1.1",
       "section": "devDependencies"
     },
     {
-      "name": "npm-run-all",
-      "version": "4.1.5",
+      "name": "npm-run-all2",
+      "version": "9.0.4",
       "section": "devDependencies"
     },
     {
@@ -482,18 +453,13 @@
       "section": "devDependencies"
     },
     {
-      "name": "power-assert",
-      "version": "1.6.1",
-      "section": "devDependencies"
-    },
-    {
       "name": "reflect-metadata",
       "version": "0.2.2",
       "section": "devDependencies"
     },
     {
       "name": "rxjs",
-      "version": "7.8.1",
+      "version": "7.8.2",
       "section": "devDependencies"
     },
     {
@@ -507,8 +473,13 @@
       "section": "devDependencies"
     },
     {
+      "name": "ts-node",
+      "version": "10.9.2",
+      "section": "devDependencies"
+    },
+    {
       "name": "tslib",
-      "version": "2.7.0",
+      "version": "2.9.1",
       "section": "devDependencies"
     },
     {
@@ -518,7 +489,12 @@
     },
     {
       "name": "wait-on",
-      "version": "7.0.1",
+      "version": "9.5.1",
+      "section": "devDependencies"
+    },
+    {
+      "name": "webpack",
+      "version": "5.112.0",
       "section": "devDependencies"
     },
     {
@@ -527,5 +503,5 @@
       "section": "devDependencies"
     }
   ],
-  "lockfileSha256": "d22c2460bf378a105cf6000734123ef8d7a4207e2310d34c16bb4c452c9570db"
+  "lockfileSha256": "c44f1cbd3241e1ccda894d1755bd46998a0d86e0cf7f4928065ec6677a9a730c"
 }

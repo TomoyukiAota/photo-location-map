@@ -66,5 +66,6 @@
     "critical": 0,
     "total": 75
   },
-  "nativeCodecReview": "Separate upstream advisories remain; see EXCEPTIONS.md; not approved for publication."
+  "nativeCodecReview": "Separate upstream advisories remain; see EXCEPTIONS.md; not approved for publication.",
+  "applicationCommit": "2b7b0d7ce4eccc8caf979740d0f663be3e2ef3ab"
 }
