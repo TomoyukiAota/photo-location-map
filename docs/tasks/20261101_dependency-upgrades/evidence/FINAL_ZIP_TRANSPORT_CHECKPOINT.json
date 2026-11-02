@@ -39,8 +39,8 @@
   ],
   "artifact": {
     "name": "Photo Location Map-1.12.2-alpha-universal-mac.zip",
-    "size": 237519898,
-    "sha512": "bgjZhlH+pCVHHUwbGf7cHi/UdlBw7tz1QyRGA+drQnPv6UJ8NCVdq2MrgJFiGGtlGJwRyU39Pq3+XdlFHZYFdQ=="
+    "size": 237520171,
+    "sha512": "HhzsHMF4x+EGvTnTBM2aswnk/8I7VMrhjSAaDUQHCqmZlWLiQDb6VTLA6+2efBykl+yjThbF58Uk1xLwuI7hbg=="
   },
   "availability": {
     "newer": true,
@@ -71,5 +71,5 @@
   "rollbackExercised": false,
   "codeSignatureValidationExercised": false,
   "observedDate": "2026-11-02",
-  "applicationCommit": "d24da891ebc6d8cef1b1f392e651c65df47689b4"
+  "applicationCommit": "f1f0ee575f1890948a31d815f8d8bf85e464e4a7"
 }

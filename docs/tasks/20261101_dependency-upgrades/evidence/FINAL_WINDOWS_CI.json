@@ -1,0 +1,148 @@
+{
+  "observedAt": "2026-11-02T07:22:18Z",
+  "testedCommit": "f1f0ee575f1890948a31d815f8d8bf85e464e4a7",
+  "status": "passed",
+  "reruns": 0,
+  "runs": [
+    {
+      "event": "push",
+      "runId": 41404336589,
+      "jobId": 125142904283,
+      "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41404336589",
+      "jobUrl": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41404336589/job/125142904283",
+      "checkedOutCommit": "f1f0ee575f1890948a31d815f8d8bf85e464e4a7",
+      "runAttempt": 1,
+      "conclusion": "success",
+      "angularUnitAssertions": 57,
+      "mainUnitAssertions": 87,
+      "rendererUnitAssertions": 50,
+      "installedNsisAppE2EPassed": 14,
+      "websiteCaseSkipped": 1,
+      "packageTestAngularBuildHash": "b8f16f44bbe4e037",
+      "publishAngularBuildHash": "b8f16f44bbe4e037",
+      "publishCommandSucceeded": true,
+      "actualDraftUpload": true,
+      "publishCommandCompletedAt": "2026-11-02T07:20:05Z",
+      "uploadEvidence": "electron-builder logged uploads and replacement of the existing EXE, EXE blockmap and latest.yml assets."
+    },
+    {
+      "event": "pull_request",
+      "runId": 41404343425,
+      "jobId": 125142978478,
+      "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41404343425",
+      "jobUrl": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41404343425/job/125142978478",
+      "checkedOutCommit": "3c8cd0d76f6f34a9b50f5b8166bbbcba5282166f",
+      "checkoutDescription": "GitHub's temporary merge of the tested head into the pull request base.",
+      "runAttempt": 1,
+      "conclusion": "success",
+      "angularUnitAssertions": 57,
+      "mainUnitAssertions": 87,
+      "rendererUnitAssertions": 50,
+      "installedNsisAppE2EPassed": 14,
+      "websiteCaseSkipped": 1,
+      "packageTestAngularBuildHash": "1c601ff14b082adb",
+      "publishAngularBuildHash": "b8f16f44bbe4e037",
+      "publishCommandSucceeded": true,
+      "actualDraftUpload": false,
+      "publishCommandCompletedAt": "2026-11-02T07:19:42Z",
+      "uploadSkipReason": "electron-builder detected pull request context and skipped publishing. PUBLISH_FOR_PULL_REQUEST was not enabled."
+    }
+  ],
+  "verifiedInBothJobs": {
+    "cleanNpmCi": true,
+    "hostAndElectronRuntimeChecks": true,
+    "angularAndScriptLint": true,
+    "totalUnitAssertions": 194,
+    "realWatcherQuitReloadRelaunch": true,
+    "watcherModesExitedZeroWithoutForcedTermination": true,
+    "watcherQuitHooksRan": true,
+    "productionBuild": true,
+    "nsisInstallerCreation": true,
+    "nsisInstallAndLaunchSmokeMainAndRendererLogs": true,
+    "e2eMode": "actual-per-user-nsis-installed-app",
+    "e2eArchitecture": "x64",
+    "e2eVisualScreenshotComparisons": false,
+    "windowBoundsRestartAndFullscreenMenuCasePassed": true
+  },
+  "runtime": {
+    "node": "26.13.0",
+    "bundledNpm": "11.20.0",
+    "electron": "45.2.1",
+    "embeddedNode": "24.22.1",
+    "chromium": "156.0.8078.75"
+  },
+  "runner": {
+    "requiredCheckName": "test (windows-latest)",
+    "actualOperatingSystem": "Microsoft Windows Server 2025 Datacenter",
+    "operatingSystemVersion": "10.0.26100",
+    "image": "windows-2025-vs2026",
+    "imageVersion": "20261021.278.1",
+    "actionsRunner": "2.338.2",
+    "imageProvisioner": "20261021.618",
+    "architecture": "x64",
+    "inventoryUrl": "https://github.com/actions/runner-images/blob/win25-vs2026/20261021.278/images/windows/Windows2025-VS2026-Readme.md",
+    "imageReleaseUrl": "https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20261021.278"
+  },
+  "loggedBuildTools": {
+    "mise": "2026.10.25",
+    "git": "2.56.0.windows.2",
+    "karma": "6.4.4",
+    "electronBuilder": "26.18.1",
+    "watcher": "6.0.0",
+    "downloadedNsisBundle": "nsis-3.0.4.1.7z",
+    "downloadedNsisResourcesBundle": "nsis-resources-3.4.1.7z",
+    "windowsSigningCertificateConfigured": false
+  },
+  "draftCheckpoint": {
+    "observedAt": "2026-11-02T07:22:18Z",
+    "releaseId": 407095377,
+    "tagName": "v1.12.2-alpha",
+    "apiUrl": "https://api.github.com/repos/TomoyukiAota/photo-location-map/releases/407095377",
+    "draft": true,
+    "prerelease": false,
+    "publishedAt": null,
+    "uploadingRunId": 41404336589,
+    "uploadingCommit": "f1f0ee575f1890948a31d815f8d8bf85e464e4a7",
+    "assetByteVerification": "Passed in the separate FINAL_WINDOWS_DRAFT_BYTES.json checkpoint for the listed observed assets.",
+    "assets": [
+      {
+        "id": 700881021,
+        "name": "latest.yml",
+        "size": 386,
+        "updatedAt": "2026-11-02T07:19:12Z",
+        "githubReportedDigest": "sha256:d291867290fd6412b10e3a5f3d7f5473c6472501b6cc9a6ef2403e13d429a885"
+      },
+      {
+        "id": 700880804,
+        "name": "Photo-Location-Map-Setup-1.12.2-alpha.exe",
+        "size": 138586802,
+        "updatedAt": "2026-11-02T07:19:10Z",
+        "githubReportedDigest": "sha256:5d2c0a0213cf619661b39369d02a00f39a553802b09d0ecb5fe4c25500ee3d98"
+      },
+      {
+        "id": 700880806,
+        "name": "Photo-Location-Map-Setup-1.12.2-alpha.exe.blockmap",
+        "size": 144638,
+        "updatedAt": "2026-11-02T07:19:06Z",
+        "githubReportedDigest": "sha256:3685df631d2c7bdb803cc1716dcaeea902f115e59ef273aef018565152e06f66"
+      }
+    ]
+  },
+  "evidenceLimits": [
+    "The push run verifies actual draft uploading. A successful publish command in the PR run does not verify uploading because electron-builder skipped it in PR context.",
+    "The installed-app E2E suite exercised the first package-test build. The publish step cleaned the checkout, reinstalled dependencies and rebuilt the installer before uploading it; the remote EXE was not downloaded or executed by this checkpoint.",
+    "Angular build hashes identify compiler output and are not installer checksums. The PR package-test build hash differs from the publishing build hash; no byte identity is inferred.",
+    "GitHub-reported asset digests and sizes are metadata observations, not independently recomputed checksums. Draft assets may later be replaced; this evidence applies only to the listed IDs and observation time.",
+    "Subsequent document-only push jobs can skip testing and publishing. PR-context builds can succeed while skipping uploads, as observed here; neither implies a new remote artifact.",
+    "These Windows jobs performed functional E2E checks. Original-baseline screenshot comparisons are recorded separately on macOS.",
+    "This checkpoint does not claim native auto-update installation, rollback, Authenticode signing, publication of the draft, or verification of a future final release."
+  ],
+  "independentDraftByteVerification": {
+    "status": "passed",
+    "evidence": "FINAL_WINDOWS_DRAFT_BYTES.json",
+    "manifestAndAllBlockmapChunksMatch": true,
+    "compiledMainAndPortableUrlAndArgumentSourcesMatch": true,
+    "runtimeManifestMatches": true,
+    "scope": "Observed f1f0ee5 CI draft bytes only; installer execution is covered by Windows CI, not this local inspection."
+  }
+}

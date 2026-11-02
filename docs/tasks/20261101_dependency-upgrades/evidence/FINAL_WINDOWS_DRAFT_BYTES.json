@@ -1,0 +1,32 @@
+{
+  "observedDate": "2026-11-02",
+  "applicationCommit": "f1f0ee575f1890948a31d815f8d8bf85e464e4a7",
+  "releaseId": 407095377,
+  "releaseTag": "v1.12.2-alpha",
+  "draft": true,
+  "published": false,
+  "assetId": 700880804,
+  "name": "Photo-Location-Map-Setup-1.12.2-alpha.exe",
+  "size": 138586802,
+  "sha256": "5d2c0a0213cf619661b39369d02a00f39a553802b09d0ecb5fe4c25500ee3d98",
+  "sha512": "Lez9e8qg1ti5M70+1Q6lIwDHNUOsY2pa4T03FT6U8eGnohkTx/m+M985MWhufRjAChHqCptUT69iWLWOwZ4gRg==",
+  "manifestMatches": true,
+  "blockmapVersion": "2",
+  "verifiedChunks": 6607,
+  "blockmapCoversWholeArtifact": true,
+  "scope": "Read-only download of the CI draft artifact; no installer execution or public publication on this machine.",
+  "installerFormat": "NSIS",
+  "embeddedPayload": "app-64.7z",
+  "extractedSourceFilesMatch": [
+    "src-main/electron-main.js",
+    "src-main/file-server/file-server.js",
+    "src-main/command-line-options/parse-command-line-options.js"
+  ],
+  "sourceComparison": "Exact UTF-8 text after CRLF-to-LF normalization only",
+  "runtimeManifestMatches": true,
+  "installerNotExecutedLocally": true,
+  "archiveInspector": {
+    "toolset": "7zip@1.0.0",
+    "version": "7-Zip (z) 24.09 (arm64) : Copyright (c) 1999-2024 Igor Pavlov : 2024-11-28"
+  }
+}

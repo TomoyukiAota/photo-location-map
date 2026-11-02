@@ -1,13 +1,15 @@
 {
   "observedDate": "2026-11-02",
-  "applicationCommit": "d24da891ebc6d8cef1b1f392e651c65df47689b4",
-  "workflowCommit": "ae9e2fe3dbfb941cb578306d308f299293676c5f",
+  "applicationCommit": "f1f0ee575f1890948a31d815f8d8bf85e464e4a7",
+  "workflowCommit": "f1f0ee575f1890948a31d815f8d8bf85e464e4a7",
   "applicationVersion": "1.12.2-alpha",
   "signed": true,
   "realNotarization": true,
   "stapled": true,
   "gatekeeper": "accepted: Notarized Developer ID",
   "strictDeepSignatureBefore": true,
+  "strictDeepSignatureAfterNativeFixtureCleanup": true,
+  "productionBundleFingerprintUnchangedAfterNativeFixtureCleanup": true,
   "structure": {
     "status": "passed",
     "sourceFilesEqual": 110,
@@ -45,29 +47,29 @@
     {
       "name": "Photo Location Map-1.12.2-alpha-universal-mac.zip",
       "publishName": "Photo-Location-Map-1.12.2-alpha-universal-mac.zip",
-      "size": 237519898,
-      "sha256": "240a0fda05450c25e6ffaf35f1a9b8eeb6a9b6530d2a159304b55aadbb5a6292",
-      "sha512": "bgjZhlH+pCVHHUwbGf7cHi/UdlBw7tz1QyRGA+drQnPv6UJ8NCVdq2MrgJFiGGtlGJwRyU39Pq3+XdlFHZYFdQ==",
+      "size": 237520171,
+      "sha256": "64d2eeb6559df76630b574a2fb90f414e19a29d558ef5f50c2f68cb148ac6901",
+      "sha512": "HhzsHMF4x+EGvTnTBM2aswnk/8I7VMrhjSAaDUQHCqmZlWLiQDb6VTLA6+2efBykl+yjThbF58Uk1xLwuI7hbg==",
       "manifestMatches": true,
       "blockmapVersion": "2",
-      "verifiedChunks": 11373,
+      "verifiedChunks": 11357,
       "blockmapCoversWholeArtifact": true
     },
     {
       "name": "Photo Location Map-1.12.2-alpha-universal.dmg",
       "publishName": "Photo-Location-Map-1.12.2-alpha-universal.dmg",
-      "size": 243429748,
-      "sha256": "dabcfb33f86ede22b235978b6845cbef508f93d5527e55465e6e7354d79a6426",
-      "sha512": "8IE4NdOjaMWGjyh3Ai3/nikGUbygOVlyfcueQ4ym7Gi194kS9Y+yLlbZoqJsXXcg0yedUFvm0bUwMS23pmj/TQ==",
+      "size": 243432264,
+      "sha256": "a9bd560c1fe637a153d6b048e85dfbdedabd802bf13fb14297a6233acc2b5d67",
+      "sha512": "/999HoL/VpK0WXfoUYA8gh+Uo/PV1d6/blNw5TFoMJoRbAmhAhQgvAV8NIPkd8pWN9phhX9DG9lmReA4Io3sMw==",
       "manifestMatches": true,
       "blockmapVersion": "2",
-      "verifiedChunks": 11711,
+      "verifiedChunks": 11689,
       "blockmapCoversWholeArtifact": true
     }
   ],
   "localRosetta": {
     "status": "unavailable",
-    "reason": "Rosetta is not installed; native Intel CI is required"
+    "reason": "Rosetta is not installed; see separate native Intel CI checkpoint"
   },
   "publicUpload": false
 }

@@ -1,34 +1,34 @@
 {
   "observedDate": "2026-11-02",
-  "testedCommit": "872699eab2b7c80c6cdf3c33e036923eb6f71bf0",
+  "testedCommit": "f1f0ee575f1890948a31d815f8d8bf85e464e4a7",
   "status": "passed",
   "reruns": 0,
   "runs": [
     {
       "event": "push",
-      "runId": 41403158101,
-      "jobId": 125139294604,
-      "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41403158101",
+      "runId": 41404336540,
+      "jobId": 125142900277,
+      "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41404336540",
       "conclusion": "success",
       "angularUnitAssertions": 57,
       "mainUnitAssertions": 87,
       "rendererUnitAssertions": 50,
       "packagedAppImageE2EPassed": 14,
       "websiteCaseSkipped": 1,
-      "angularBuildHash": "0db9a44ae6a858a4"
+      "angularBuildHash": "012a37088d901f98"
     },
     {
       "event": "pull_request",
-      "runId": 41403166901,
-      "jobId": 125139278119,
-      "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41403166901",
+      "runId": 41404343471,
+      "jobId": 125142911634,
+      "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41404343471",
       "conclusion": "success",
       "angularUnitAssertions": 57,
       "mainUnitAssertions": 87,
       "rendererUnitAssertions": 50,
       "packagedAppImageE2EPassed": 14,
       "websiteCaseSkipped": 1,
-      "angularBuildHash": "0db9a44ae6a858a4"
+      "angularBuildHash": "012a37088d901f98"
     }
   ],
   "verifiedInBothJobs": {
@@ -77,5 +77,40 @@
     "The jobs created and executed their local AppImages. No remote Linux artifact download or Linux publication is claimed.",
     "Visual comparisons against the original macOS screenshots are recorded separately; these Linux jobs ran functional checks.",
     "The historical required-check name is retained even though the actual runner is Ubuntu 26.04 LTS."
+  ],
+  "priorCheckpoints": [
+    {
+      "testedCommit": "872699eab2b7c80c6cdf3c33e036923eb6f71bf0",
+      "status": "passed",
+      "reruns": 0,
+      "runs": [
+        {
+          "event": "push",
+          "runId": 41403158101,
+          "jobId": 125139294604,
+          "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41403158101",
+          "conclusion": "success",
+          "angularUnitAssertions": 57,
+          "mainUnitAssertions": 87,
+          "rendererUnitAssertions": 50,
+          "packagedAppImageE2EPassed": 14,
+          "websiteCaseSkipped": 1,
+          "angularBuildHash": "0db9a44ae6a858a4"
+        },
+        {
+          "event": "pull_request",
+          "runId": 41403166901,
+          "jobId": 125139278119,
+          "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41403166901",
+          "conclusion": "success",
+          "angularUnitAssertions": 57,
+          "mainUnitAssertions": 87,
+          "rendererUnitAssertions": 50,
+          "packagedAppImageE2EPassed": 14,
+          "websiteCaseSkipped": 1,
+          "angularBuildHash": "0db9a44ae6a858a4"
+        }
+      ]
+    }
   ]
 }

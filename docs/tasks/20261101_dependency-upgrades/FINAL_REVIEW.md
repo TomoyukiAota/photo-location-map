@@ -2,18 +2,18 @@
 
 Updated: 2026-11-02 (Asia/Tokyo).
 
-**Draft decision record: verification is still in progress. This document does
-not request or record publication approval.** Complete the pending gates and
-attach their final evidence before presenting the remaining owner items
-together. No public release has been published.
+**Independent implementation and verification are complete.** This is the
+owner decision packet; it does not record merge or publication approval. The
+HEIC output/security and native chooser choices remain unresolved. The tested
+artifacts are review candidates, not publication-approved releases.
 
 ## Candidate and scope
 
 | Item | Selected candidate |
 | --- | --- |
 | Application version | `1.12.2-alpha`; no release-version bump is included. |
-| Application source | [`d24da891ebc6d8cef1b1f392e651c65df47689b4`](https://github.com/TomoyukiAota/photo-location-map/commit/d24da891ebc6d8cef1b1f392e651c65df47689b4) |
-| Code/test workflow head | [`872699eab2b7c80c6cdf3c33e036923eb6f71bf0`](https://github.com/TomoyukiAota/photo-location-map/commit/872699eab2b7c80c6cdf3c33e036923eb6f71bf0) |
+| Application source | [`f1f0ee575f1890948a31d815f8d8bf85e464e4a7`](https://github.com/TomoyukiAota/photo-location-map/commit/f1f0ee575f1890948a31d815f8d8bf85e464e4a7) |
+| Code/test workflow head | [`f1f0ee575f1890948a31d815f8d8bf85e464e4a7`](https://github.com/TomoyukiAota/photo-location-map/commit/f1f0ee575f1890948a31d815f8d8bf85e464e4a7) |
 | Review | [Draft PR #630](https://github.com/TomoyukiAota/photo-location-map/pull/630) |
 | Framework | Angular core 22.2.4; CLI/Material 22.2.5; TypeScript 6.0.3. |
 | Development runtime | Node 26.13.0 with its bundled npm 11.20.0, matching Photo Data Viewer. |
@@ -30,25 +30,25 @@ are recorded separately so CI-only changes do not obscure artifact provenance.
 The work preserves the app's existing architecture, controls and interactions,
 with original screenshot references retained. It does **not** claim that every
 output or native-dialog detail is identical: the chooser limits and time-zone
-corrections below remain material, and live Google Maps validation is incomplete.
+corrections below remain material, and the optional experimental Dev-only Google Maps check lacks a valid key.
 
 ## Verification gates
 
-Statuses below describe the recorded state, not an expected future result.
-Replace pending evidence fields only after inspecting the actual result.
+Statuses below describe completed verification at the exact recorded sources.
+The native Intel checkpoint is distinguished from the later Windows-only fix.
 
 | Gate | Current status | Evidence and limit |
 | --- | --- | --- |
 | Dependency/framework local checkpoint | **PASS at its recorded checkpoint** | [LOCAL_FINAL_CHECKPOINT.json](./evidence/LOCAL_FINAL_CHECKPOINT.json): clean installation, valid graph, build/lint, 194 unit assertions, 15 visual/functional cases and watcher/development checks. It identifies its own application commit. |
-| Final universal Mac build and real notarization | **PASS for d24da89** | Deep strict codesign, stapler and Gatekeeper pass; [artifact identity/checksums](./evidence/FINAL_MAC_CHECKPOINT.json). Both [extracted distributions](./evidence/FINAL_DISTRIBUTION_BUNDLES.json) match all 4,754 source-bundle files and symlinks and retain valid signatures/tickets. |
-| Actual final packaged Mac app | **PASS for d24da89** | 14 visual/functional cases pass; the website-only case is skipped. Packaged/Prod mode, executable/resources, dependencies, runtime and isolated profile are verified in the [Mac checkpoint](./evidence/FINAL_MAC_CHECKPOINT.json). |
-| Final signed ZIP updater transport | **PASS for d24da89** | [Final ZIP report](./evidence/FINAL_ZIP_TRANSPORT_CHECKPOINT.json): download/cache/checksum handling; see the [harness limits](../../../test/updater/README.md). |
-| Final DMG launch, smoke and cleanup | **PASS for d24da89** | Main/renderer log through 60 seconds, followed by normal quit and detach; [report](./evidence/FINAL_MAC_CHECKPOINT.json). |
-| Isolated native updater fixture | **PASS for d24da89 candidate runtime** | [Actual signed native install/relaunch/rollback and settings](./evidence/NATIVE_UPDATE_FIXTURE_CHECKPOINT.json). Separate test identity and 99.0.1/99.0.2 versions; production bundle unchanged. Exact native caches/jobs/preferences cleaned. |
-| Windows installed NSIS application | **RUNNING at 872699e** | Package/install smoke passes; corrected installed-app E2E and draft publishing remain. |
-| Ubuntu created AppImage | **PASS at 872699e** | [Push](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41403158101) and [PR](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41403166901) pass 194 units and 14 packaged E2E cases. Required-check name remains `test (ubuntu-24.04)`; the runner is 26.04. |
-| macOS arm64 created universal app | **RUNNING at 872699e** | Install/unit/watcher gates pass; package and corrected actual-app E2E remain. |
-| Native macOS Intel created universal app | **RUNNING at 872699e** | Fresh [manual run](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41403163570) passes install/units/watcher and is packaging. Rosetta is unavailable locally. |
+| Final universal Mac build and real notarization | **PASS for f1f0ee5** | Deep strict codesign, stapler and Gatekeeper pass; [artifact identity/checksums](./evidence/FINAL_MAC_CHECKPOINT.json). Both [extracted distributions](./evidence/FINAL_DISTRIBUTION_BUNDLES.json) match all 4,754 source-bundle files and symlinks and retain valid signatures/tickets. |
+| Actual final packaged Mac app | **PASS for f1f0ee5** | 14 visual/functional cases pass; the website-only case is skipped. Packaged/Prod mode, executable/resources, dependencies, runtime and isolated profile are verified in the [Mac checkpoint](./evidence/FINAL_MAC_CHECKPOINT.json). |
+| Final signed ZIP updater transport | **PASS for f1f0ee5** | [Final ZIP report](./evidence/FINAL_ZIP_TRANSPORT_CHECKPOINT.json): download/cache/checksum handling; see the [harness limits](../../../test/updater/README.md). |
+| Final DMG launch, smoke and cleanup | **PASS for f1f0ee5** | Main/renderer log through 60 seconds, followed by normal quit and detach; [report](./evidence/FINAL_MAC_CHECKPOINT.json). |
+| Isolated native updater fixture | **PASS for f1f0ee5 candidate runtime** | [Actual signed native install/relaunch/rollback and settings](./evidence/NATIVE_UPDATE_FIXTURE_CHECKPOINT.json). Separate test identity and 99.0.1/99.0.2 versions; production bundle unchanged. Exact native caches/jobs/preferences cleaned. |
+| Windows installed NSIS application | **PASS at f1f0ee5** | [CI](./evidence/FINAL_WINDOWS_CI.json): both triggers pass 194 units, install smoke and 14 E2E cases. Actual push draft upload and [downloaded bytes](./evidence/FINAL_WINDOWS_DRAFT_BYTES.json) are verified. |
+| Ubuntu created AppImage | **PASS at f1f0ee5** | [Both CI runs](./evidence/FINAL_UBUNTU_CI.json) pass 194 units, AppImage smoke and 14 packaged E2E cases. Required-check name remains test (ubuntu-24.04); runner is 26.04. |
+| macOS arm64 created universal app | **PASS at f1f0ee5** | [Push and PR](./evidence/FINAL_MAC_CI.json) pass 194 units, universal smoke and 14 actual packaged cases. |
+| Native macOS Intel created universal app | **PASS at 872699e** | [Explicit native Intel run](./evidence/FINAL_MAC_CI.json) passes the same gates. The only later app-source change is guarded to win32; no exact-f1 Intel execution is claimed. Local Rosetta is unavailable. |
 | Experimental Dev-only Google Maps with a valid key | **OPTIONAL ADDITIONAL DEVELOPER COVERAGE — key unavailable** | Hidden in packaged Prod mode; see the owner-dependent item below. |
 | Production public-feed upgrade and post-release downloads | **NOT RUN — publication not authorized** | Perform the controlled post-publication checks after authorization; isolated transport/native fixtures do not prove this gate. |
 
@@ -59,14 +59,14 @@ that deliberately skip notarization. Consult [STATUS.md](./STATUS.md) and the
 [PR checks](https://github.com/TomoyukiAota/photo-location-map/pull/630/checks)
 for progress; do not infer success from a running or superseded job.
 
-### Final artifact inventory to complete
+### Final artifact inventory
 
 | Artifact/evidence | State |
 | --- | --- |
 | `Photo Location Map-1.12.2-alpha-universal.dmg` | [Final checksums/signature/smoke](./evidence/FINAL_MAC_CHECKPOINT.json). |
 | `Photo Location Map-1.12.2-alpha-universal-mac.zip` | [Final checksums](./evidence/FINAL_MAC_CHECKPOINT.json) and [transport](./evidence/FINAL_ZIP_TRANSPORT_CHECKPOINT.json). |
-| Windows installer/draft artifact | Final CI result, exact artifact identity and evidence link pending. |
-| Linux AppImage | Final CI result, exact artifact identity and available evidence link pending. |
+| Windows installer/draft artifact | [CI](./evidence/FINAL_WINDOWS_CI.json) and [observed draft asset/checksums/payload](./evidence/FINAL_WINDOWS_DRAFT_BYTES.json). Unpublished. |
+| Linux AppImage | [Actual packaged CI results](./evidence/FINAL_UBUNTU_CI.json). No remote Linux artifact upload/download or persisted AppImage checksum is claimed. |
 | Native fixture report and cleanup | [Passed; scope and cleanup](./evidence/NATIVE_UPDATE_FIXTURE_CHECKPOINT.json). |
 
 Keep the final production bundle unchanged during verification. Any later
@@ -76,7 +76,8 @@ and reverified; an earlier signature/checksum record does not transfer to it.
 ## Remaining owner-dependent items
 
 These are the items to present together **after independent verification**.
-They are recorded now so work can stop and resume without losing the decisions.
+The comparison images, exact versions, artifacts and validation records are now
+concrete, so these choices can be handled together without preliminary work.
 
 ### 1. HEIC output and decoder security
 
@@ -152,7 +153,9 @@ publication request must identify the final source, artifact checksums and
 release/tag treatment, including the existing prerelease updater guard. No
 stable-version bump is inferred from this implementation.
 
-The Windows workflow's deliberate draft uploads are already authorized and are
+The existing v1.12.2-alpha draft is still unpublished and has prerelease=false;
+review that channel/tag treatment explicitly before any publication. The
+Windows workflow's deliberate draft uploads are already authorized and are
 not a new approval item. Angular 22, macOS 13+, the matching Node/bundled-npm
 pair and implementation with Sol are settled choices, not questions to reopen.
 
@@ -179,11 +182,11 @@ decision; they are not 75 separate owner approvals.
 
 1. Reconcile the actual app source, workflow head and artifact identities with
    this record and STATUS before continuing. Classify failures before reruns.
-2. Finish the running independent gates, insert sanitized final evidence and
-   checksum links, and provide the public-fixture image comparison.
-3. Present the four owner-dependent items together only when that result is
-   concrete and reviewable. Keep dependent publication actions pending while
-   continuing any independent work; silence is not approval.
+2. Independent gates and the public-fixture comparison are complete. Apply no
+   changed image-output or native-history policy without the owner's decision.
+3. Obtain the HEIC output/security and chooser decisions together; optional
+   Dev-only credentials are separate from packaged-Prod validation. Keep merge
+   and publication pending; silence is not approval.
 4. Apply an accepted codec choice and repeat its affected verification/artifact
    gates autonomously. After explicit publication authorization, complete the
    public-download/feed checks and record their actual results and limits.

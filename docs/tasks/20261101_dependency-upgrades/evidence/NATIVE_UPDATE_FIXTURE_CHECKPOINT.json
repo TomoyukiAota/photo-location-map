@@ -18,20 +18,29 @@
   "notarizedFixture": false,
   "requestCounts": {
     "/latest-mac.yml": 6,
-    "/cdn/2.css": 4,
     "/cdn/0.css": 4,
-    "/cdn/6.js": 4,
-    "/cdn/3.css": 4,
-    "/cdn/5.css": 4,
     "/cdn/1.js": 4,
+    "/cdn/2.css": 4,
+    "/cdn/3.css": 4,
     "/cdn/4.js": 4,
+    "/cdn/5.css": 4,
+    "/cdn/6.js": 4,
     "/fixture-99.0.2.zip": 1,
     "/cdn/images/layers-2x.png": 2,
     "/fixture-99.0.1.zip": 1
   },
   "observedDate": "2026-11-02",
-  "applicationCommit": "d24da891ebc6d8cef1b1f392e651c65df47689b4",
+  "applicationCommit": "f1f0ee575f1890948a31d815f8d8bf85e464e4a7",
+  "electron": "45.2.1",
+  "updater": "6.8.12",
   "fixtureIdentity": "unique nonce ID, separate from production",
+  "actualApplicationSettingsUiStarts": 4,
+  "fixtureVersionSequence": [
+    "99.0.1",
+    "99.0.2",
+    "99.0.2",
+    "99.0.1"
+  ],
   "sourceSignatureVerifiedAfter": true,
   "sourceFingerprintUnchangedAfter": true,
   "cleanup": {
@@ -43,5 +52,11 @@
     "onlyExactNoncePathsAndDomainsTouched": true,
     "productionSourceSignatureAndFingerprintVerifiedAfterCleanup": true
   },
-  "initialAttempt": "Fixture CFBundleName rename prevented Electron helper lookup before JS; corrected by keeping helper-compatible CFBundleName. Production bundle unchanged."
+  "historicalHarnessIssue": "An earlier fixture CFBundleName rename prevented Electron helper lookup before JavaScript. Keeping the helper-compatible CFBundleName resolved that harness defect. The production bundle was unchanged.",
+  "scopeLimits": [
+    "Both numeric-version fixtures use this candidate application source and runtime; this is not a historical public release upgrade.",
+    "The production update prompt Yes handler, native signed ZIP installation, relaunch, explicit downgrade and stored setting are exercised in an owned writable fixture directory.",
+    "The exact final notarized production ZIP, public feed selection, privileged installation and a fresh-machine Gatekeeper installation are not exercised by this fixture.",
+    "Seven existing CDN script/style resources are SRI-verified and proxied locally. External fonts and map tiles remain blocked; visual and map-network verification is recorded separately."
+  ]
 }

@@ -17,14 +17,16 @@ Updated: 2026-11-02 (Asia/Tokyo).
   The branch is pushed and Draft PR #630 is open. No public release was published.
 - Source inspection, official release/registry reads, historical PR review and a
   read-only lockfile audit were performed. Research sources remain read-only;
-  authorized source/Draft PR/CI preparation is now in progress.
+  authorized source/Draft PR/CI preparation is complete; the PR remains draft.
 - The complete local dependency checkpoint is `2b7b0d7`: clean install, valid graph,
   production build, lint, 194 unit assertions, watcher lifecycle and 15 actual
   visual/functional cases pass. The exact versions are in IMPLEMENTED_VERSIONS.
-  Runtime compatibility fixes end at `d24da89`; its signed/notarized universal
-  package passes 14 actual packaged visual/functional cases and DMG smoke.
-  Real native fixture upgrade/relaunch/rollback also pass. Final cross-platform
-  test portability corrections and remote CI remain, alongside owner decisions.
+  Final application source is `f1f0ee5`: Windows, Ubuntu and Mac arm64 push/PR
+  checks all pass, including 194 assertions and 14 actual packaged E2E cases.
+  Native Intel also passes at `872699e`; the only later application change is
+  the win32-only menu correction. Final f1f0ee5 Mac signing/notarization, visual
+  checks, DMG/ZIP verification and isolated native update/rollback all pass.
+  Only the owner-dependent compatibility/publication decisions remain.
 - No baseline app remains. See the latest execution record for active processes. Local command logs
   are under `.upgrade-artifacts`; test output is in its `e2e-results` directory.
 
@@ -38,9 +40,10 @@ Updated: 2026-11-02 (Asia/Tokyo).
 5. Inspect actual branch/HEAD/diff, task-related commits, existing processes and
    any newer user instructions. Reconcile records before executing commands.
 
-Active task: U11. File-tree/date/module/queue, image/worker and analytics
-updates, maps, charting, translations and tooling have passed locally. Next is
-final platform/distribution verification.
+Active task: U12 owner review. Independent implementation and verification are
+complete. Read [FINAL_REVIEW.md](./FINAL_REVIEW.md) for the two required output/
+behavior decisions, optional experimental Dev-only Google Maps coverage, and
+the separate publication gate. U13 remains unauthorized.
 Node 26 / bundled npm 11.20 and Electron 45 clean installation work;
 the old extractor caveat is resolved. Retain `ng test --watch=false` and never
 regenerate the original screenshots or HEIC pixel reference.
@@ -53,19 +56,19 @@ regenerate the original screenshots or HEIC pixel reference.
 | U00 | Complete | Existing checkout inspected; only the task documents were uncommitted. |
 | U01 | Complete | Original install/lint/build and Mac universal package smoke pass; Karma shutdown issue recorded. |
 | U02 | Complete | Seven real Electron/website cases, original screenshots, HEIC pixel reference and restart persistence. |
-| U03 | Verified locally | Node 22.23.4/npm 10.9.9; clean install, full graph and 7 visual/functional cases pass. CI actions updated; remote CI pending. |
+| U03 | Complete bridge checkpoint | Node 22.23.4/npm 10.9.9 locally verified. Final supported Node 26 destination is verified in current CI. |
 | U04a | Verified locally | Angular 18.2.14 / CLI 18.2.21; graph/lint/build, 172 assertions and 7 regression cases. Karma shutdown issue remains. |
 | U04b | Verified locally | Graph/lint/build, 57+74+41 assertions and all 7 visual/functional cases pass. Explicit single-run also verifies failure exit code. |
 | U04c | Verified locally | Graph/lint/build, clean 57+74+41 tests and 7 unchanged regression cases. |
 | U04d | Verified locally | Graph/runtime/lint/build, 172 tests and all 7 unchanged regression cases. |
-| U05 | Verified locally, install caveat | Angular 22/TS 6/Node 26 build, 172 assertions and 7 unchanged visual/functional cases. Electron 32 installer needs the bridge; U06 must resolve final clean installation. |
-| U06 | Verified locally; native chooser item open | Clean install/runtime/lint/build, 172 tests, 8 visual/functional cases and signed universal DMG/ZIP smoke pass with original icon. Windows/Linux/Intel CI and native chooser history remain. |
+| U05 | Complete | Angular 22/TS 6/Node 26 locally verified; the intermediate Electron 32 install caveat is resolved by U06 and final clean CI. |
+| U06 | Verified; owner chooser decision open | Final Windows/Linux/Mac arm64/Intel and signed universal artifacts pass; native chooser limits await owner acceptance. |
 | U07 | Verified locally | File/date/module, image/worker and analytics groups pass; compatibility exceptions are recorded. |
 | U08 | Complete | Maps, charting and translations pass unchanged visual and actual interaction checks. |
 | U09 | Verified locally | Bootstrap 5.3.8 with unchanged screenshots, focus/hover colors, both download URL requests and 390px layout; unused JS removed. Deployment remains gated by main. |
 | U10 | Complete | Clean install, graph, tooling, audit disposition and all local regression gates pass. |
-| U11 | In progress | Isolated updater transport passes; final clean platform/package verification remains. |
-| U12 | Draft prepared | Final decision/action packet exists; complete independent verification before presenting it. |
+| U11 | Complete with documented coverage limits | All platform/artifact/native fixture gates pass; public-feed installation remains U13. Exact source/checkpoint distinctions are recorded. |
+| U12 | Ready for owner decisions | Final packet and comparison images are complete; independent work is done. |
 | U13 | Not authorized | Publication and post-release verification. |
 
 ## Resolved decisions
@@ -848,3 +851,73 @@ menu setter remains supported; no native patch, polling timer or altered menu
 layout is introduced. Build/lint and actual Windows CI must verify the fix.
 All existing d24da89 Mac artifacts remain valid evidence for their own source;
 final artifacts must be rebuilt after this source correction is verified.
+
+Runtime/source head is now `f1f0ee5`. Both Windows triggers pass all 14 installed
+app E2E cases after the deferred setter and are exercising draft publication.
+Both Ubuntu triggers also pass all 14 packaged cases. Current runs:
+Windows push/PR 41404336589 / 41404343425; Ubuntu 41404336540 / 41404343471;
+macOS push/PR 41404336505 / 41404343407. The required native Intel run
+41403163570 is still packaging at 872699e; the only later app change is guarded
+to win32. Both arm64 872699e push/PR and the manual run's arm64 job pass.
+
+The final f1f0ee5 local universal build completes real signing/notarization,
+strict signature, stapler and Gatekeeper checks, and all 14 actual packaged
+visual/functional cases pass. Log: `mac-final-package-fullscreen.log`,
+`fullscreen-final-packaged-e2e.log`. Completed ZIP transport matches the exact
+final metadata size/hash. All final blockmap chunks verify (11,357 ZIP / 11,689
+DMG); details are in local `fullscreen-final-artifact-integrity.json`.
+Fresh f1f0ee5 native handoffs and 60s DMG smoke are running in
+`native-updater/execute-final-fullscreen.log` and `fullscreen-final-dmg-smoke.log`.
+Do not overlap a second DMG attach until that smoke detaches. Next: finish these
+checks and exact native cleanup, revalidate extracted archives, refresh public
+artifact reports to f1f0ee5, verify the final Windows draft bytes, and finish CI.
+No publication/merge or manual Mac upload is authorized.
+
+
+### U11 completed / U12 handoff
+
+Final application source: `f1f0ee575f1890948a31d815f8d8bf85e464e4a7`.
+Windows, Ubuntu and Mac arm64 push/PR checks pass at this source. Native Intel
+passes the explicit manual run at `872699e`; the only subsequent application
+change is guarded to win32 (menu restoration), with no Electron, builder, native
+module or Mac packaging change. Do not claim exact-f1 Intel execution.
+
+Final local f1f0ee5 evidence passes: 14 actual packaged visual/functional cases;
+real Developer ID signing/notarization/stapling/Gatekeeper; universal architectures,
+original icon and minimum macOS 13; 60s mounted-DMG smoke and cleanup; final ZIP
+transport/cache/corruption; all metadata and blockmap chunks; both extracted
+archives' 4,754 files and symlinks match the signed app. Actual signed native
+fixture upgrade/relaunch/downgrade and settings through four starts pass, with
+exact native caches/jobs/preferences removed and production signature/fingerprint
+verified afterward. Original regression references and tolerances are unchanged.
+
+Windows' push additionally uploads the intended unpublished draft artifacts;
+PR-context publishing correctly skips uploads. The downloaded draft EXE matches
+its metadata/GitHub SHA-256, all 6,607 blockmap chunks, the final compiled main/
+URL/argument code (CRLF-normalized text) and runtime manifest. It is NSIS with
+an app-64.7z payload. This is a read-only byte check, not local Windows execution.
+The draft remains draft=true, published_at=null, prerelease=false; review release
+channel/version treatment before publishing. No Mac artifact was uploaded.
+
+Evidence: [Mac artifacts](./evidence/FINAL_MAC_CHECKPOINT.json),
+[extracted archives](./evidence/FINAL_DISTRIBUTION_BUNDLES.json),
+[ZIP transport](./evidence/FINAL_ZIP_TRANSPORT_CHECKPOINT.json),
+[native handoffs](./evidence/NATIVE_UPDATE_FIXTURE_CHECKPOINT.json),
+[Windows CI](./evidence/FINAL_WINDOWS_CI.json),
+[draft bytes](./evidence/FINAL_WINDOWS_DRAFT_BYTES.json),
+[Ubuntu CI](./evidence/FINAL_UBUNTU_CI.json), and
+[Mac/Intel CI](./evidence/FINAL_MAC_CI.json).
+
+No implementation, packaging, test app or owned test service remains running.
+Task profiles and mounted images are cleaned; ignored raw logs/artifacts remain
+for audit. The current working tree's final changes are evidence/documents only.
+After committing them, report the verified application source separately from
+that documentation commit. Routine document-triggered CI does not imply a new
+application or new publish-approved artifact.
+
+Next owner-dependent action: the final packet's HEIC output/security choice and
+native chooser history acceptance. Experimental Dev-only Google Maps can be
+checked if the owner wants that additional coverage and supplies secure test
+credentials; it is not a packaged-Prod blocker. Merge, version/channel changes,
+public publication and controlled post-release checks remain U13, separately
+authorized after the selected artifacts are concrete and reviewed.
