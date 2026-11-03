@@ -2,19 +2,60 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
+const vm = require('node:vm');
+const { EventEmitter } = require('node:events');
 const { spawn } = require('node:child_process');
+
+function checkRelaunchBurst(helper) {
+  const watcher = new EventEmitter();
+  let closed = false, quits = 0, reloads = 0;
+  const relaunches = [];
+  watcher.close = async () => { closed = true; };
+  const app = new EventEmitter();
+  app.relaunch = options => relaunches.push(options);
+  // Model a quit still in progress while a compiler emits more file changes.
+  app.quit = () => { quits++; };
+  const argv = ['electron', 'main.cjs', '--live-reload', '--probe-token', 'kept-value'];
+  const exported = {};
+  vm.runInNewContext(fs.readFileSync(helper, 'utf8'), {
+    exports: exported,
+    process: { argv },
+    require: name => {
+      if (name === 'electron') return { app, BrowserWindow: { getAllWindows: () => [
+        { webContents: { reloadIgnoringCache: () => { reloads++; } } },
+      ] } };
+      if (name === 'path') return path;
+      if (name === 'chokidar6') return { watch: () => watcher };
+      if (name === '../src-shared/log/logger') return { Logger: { error: error => { throw error; } } };
+      throw new Error('Unexpected watcher dependency: ' + name);
+    },
+  });
+  const mainFile = path.resolve('watcher-burst/main.cjs');
+  exported.configureLiveReload(mainFile);
+  for (const name of ['asset.txt', 'module.js', 'worker.cjs', 'module.mjs'])
+    watcher.emit('change', path.join(path.dirname(mainFile), name));
+  assert.equal(reloads, 1, 'Non-code changes must still reload the renderer.');
+  assert.equal(relaunches.length, 1, 'A compilation burst must request exactly one relaunch.');
+  assert.equal(quits, 1);
+  assert.deepEqual(relaunches[0].args, argv.slice(1));
+  app.emit('will-quit');
+  assert.equal(closed, true);
+  return { queuedRelaunches: relaunches.length, quitRequests: quits, watcherClosed: closed };
+}
 
 async function main() {
   const helper = path.resolve(__dirname, '../../src-main/configure-live-reload.js');
   assert.ok(fs.existsSync(helper), 'Build src-main before running the watcher lifecycle check.');
+  const compilationBurst = checkRelaunchBurst(helper);
   const results = [];
-  for (const mode of ['quit', 'soft', 'relaunch']) {
+  for (const mode of ['quit', 'soft', 'relaunch', 'module-relaunch']) {
     const root = fs.mkdtempSync(path.join(os.tmpdir(), 'plm-watch-check-'));
     const source = path.join(root, 'source');
     fs.mkdirSync(source);
     for (const name of ['appData', 'userData', 'sessionData']) fs.mkdirSync(path.join(root, name));
     const entry = path.join(source, 'main.cjs');
     fs.writeFileSync(path.join(source, 'other.txt'), 'before');
+    fs.writeFileSync(path.join(source, 'module.js'), 'module.exports = "before";\n');
     fs.writeFileSync(entry, `
 const { app, BrowserWindow } = require('electron');
 app.disableHardwareAcceleration();
@@ -24,6 +65,7 @@ for (const name of ['appData','userData','sessionData']) app.setPath(name, path.
 const second = fs.existsSync(path.join(root, 'started'));
 fs.writeFileSync(path.join(root, 'started'), 'yes');
 if (second) fs.writeFileSync(path.join(root, 'second.pid'), String(process.pid));
+fs.writeFileSync(path.join(root, second ? 'module-second-value' : 'module-first-value'), require('./module.js'));
 const watcher = require(${JSON.stringify(helper)}).configureLiveReload(__filename);
 const ready = new Promise(resolve => watcher.once('ready', resolve));
 app.on('quit', () => fs.writeFileSync(path.join(root, second ? 'second-quit' : 'first-quit'), 'yes'));
@@ -41,6 +83,7 @@ app.whenReady().then(async () => {
   await ready;
   if (mode === 'soft') fs.writeFileSync(path.join(__dirname, 'other.txt'), 'after');
   else if (mode === 'relaunch' && !second) fs.appendFileSync(__filename, '\\n// trigger restart\\n');
+  else if (mode === 'module-relaunch' && !second) fs.writeFileSync(path.join(__dirname, 'module.js'), 'module.exports = "after";\\n');
   else {
     if (second) fs.writeFileSync(path.join(root, 'arguments.json'), JSON.stringify({
       liveReload: process.argv.includes('--live-reload'), token: process.argv.includes('kept-value')
@@ -67,13 +110,18 @@ app.whenReady().then(async () => {
       assert.equal(exit.code, 0);
       assert.ok(fs.existsSync(path.join(root, 'first-quit')));
       if (mode === 'soft') assert.ok(fs.existsSync(path.join(root, 'soft-reloaded')));
-      if (mode === 'relaunch') {
+      if (mode === 'relaunch' || mode === 'module-relaunch') {
         for (let attempt = 0; attempt < 100 && !fs.existsSync(path.join(root, 'second-quit')); attempt++) {
           await new Promise(resolve => setTimeout(resolve, 100));
         }
         assert.ok(fs.existsSync(path.join(root, 'second-quit')), 'The relaunched process must quit too.');
         secondPid = Number(fs.readFileSync(path.join(root, 'second.pid'), 'utf8'));
         assert.deepEqual(JSON.parse(fs.readFileSync(path.join(root, 'arguments.json'))), { liveReload: true, token: true });
+        if (mode === 'module-relaunch') {
+          assert.equal(fs.readFileSync(path.join(root, 'module-first-value'), 'utf8'), 'before');
+          assert.equal(fs.readFileSync(path.join(root, 'module-second-value'), 'utf8'), 'after',
+            'The relaunched main process must observe the changed module instead of its cached value.');
+        }
         let alive = true;
         for (let attempt = 0; attempt < 50 && alive; attempt++) {
           try {
@@ -86,7 +134,8 @@ app.whenReady().then(async () => {
         }
         assert.equal(alive, false, 'The relaunched process must exit without forced termination.');
       }
-      results.push({ mode, exit: exit.code, forcedTermination: false, quitHooksRan: true });
+      results.push({ mode, exit: exit.code, forcedTermination: false, quitHooksRan: true,
+        ...(mode === 'module-relaunch' ? { moduleValueAfterRelaunch: 'after' } : {}) });
     } finally {
       clearTimeout(timer);
       if (child.exitCode === null && child.signalCode === null) child.kill('SIGKILL');
@@ -96,7 +145,7 @@ app.whenReady().then(async () => {
     }
   }
   const metadata = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../node_modules/chokidar6/package.json')));
-  process.stdout.write(JSON.stringify({ watcher: metadata.version, results }, null, 2) + '\n');
+  process.stdout.write(JSON.stringify({ watcher: metadata.version, compilationBurst, results }, null, 2) + '\n');
 }
 
 main().catch(error => { console.error(error); process.exitCode = 1; });

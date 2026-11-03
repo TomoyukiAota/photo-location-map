@@ -164,7 +164,7 @@ test.afterEach(async () => {
   }
 });
 test('welcome, about and every available settings tab keep their appearance', async () => {
-  await expect(page.locator('app-welcome-dialog')).toContainText('Version 1.12.2-alpha');
+  await expect(page.locator('app-welcome-dialog')).toContainText(`Version ${manifest.version}`);
   const paths = await app.evaluate(({ app }) => [app.getPath('appData'), app.getPath('userData')]);
   expect(paths.every(p => p.startsWith(profile + path.sep))).toBe(true);
   await shot('welcome');

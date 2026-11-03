@@ -14,10 +14,10 @@ Updated: 2026-11-03 (Asia/Tokyo).
   documents; implementation is now progressing through the checkpoints below.
 - The planning phase changed documents only. Execution now adds profile isolation
   and regression tests with Playwright; application dependency upgrades start at U03.
-  The branch is pushed and Draft PR #630 is open. No public release was published.
+  The branch is pushed and PR #630 is ready for review. No application release was published.
 - Source inspection, official release/registry reads, historical PR review and a
   read-only lockfile audit were performed. Research sources remain read-only;
-  authorized source/Draft PR/CI preparation is complete; the PR remains draft.
+  authorized source/PR/CI preparation is complete; CodeRabbit review is now in progress.
 - Latest verified application source is
   `79d547fa884658be9266f03ae3d20ea05899b34a`, including the approved HEIC update.
   Clean install/graph/runtime/build/lint, 194 unit assertions and 15 local
@@ -26,6 +26,11 @@ Updated: 2026-11-03 (Asia/Tokyo).
   per job. Fresh signed/notarized Mac artifacts, archive/transport/native fixture
   gates and actual Windows draft bytes also pass. See the three HEIC checkpoint
   records below. Earlier 2b7b0d7/f1f0ee5/872699e records remain historical.
+- CodeRabbit's six initial findings are addressed in a new local follow-up.
+  Build/lint, 204 unit assertions, four actual watcher lifecycle cases and
+  all 15 visual/functional cases pass. The new production-source changes need
+  fresh signed artifacts and platform CI; 79d547f remains the previous fully
+  verified source. See [CODERABBIT_REVIEW.md](./CODERABBIT_REVIEW.md).
 - No baseline app remains. See the latest execution record for active processes. Local command logs
   are under `.upgrade-artifacts`; test output is in its `e2e-results` directory.
 
@@ -39,8 +44,9 @@ Updated: 2026-11-03 (Asia/Tokyo).
 5. Inspect actual branch/HEAD/diff, task-related commits, existing processes and
    any newer user instructions. Reconcile records before executing commands.
 
-Active task: owner review after completed independent implementation and approved
-HEIC revalidation. The owner selected the newer HEIC output on 2026-11-02,
+Active task: CodeRabbit review and response/fix cycle, authorized on 2026-11-03.
+The PR is ready for review and a complete CodeRabbit review has been requested.
+Independent implementation and approved HEIC revalidation are complete. The owner selected the newer HEIC output on 2026-11-02,
 then explicitly accepted the confirmed-folder chooser policy on 2026-11-03 after
 clarification. Both implementation choices are resolved; merge/publication remains
 unauthorized. The fully verified application
@@ -1024,3 +1030,36 @@ coverage remains optional. Update the public review/PR and verify document
 consistency; any automatically triggered documentation-head CI must be classified
 on its actual result. Earlier dated entries describing this choice as pending
 are historical, superseded by this explicit acceptance.
+
+
+### CodeRabbit review started (2026-11-03)
+
+The owner authorized marking PR #630 ready and addressing CodeRabbit comments.
+The PR is no longer draft at head `7e2722d715cc392d875b94b0831b808f99c3cd62`.
+No automerge label or native auto-merge request is enabled. The owner did not
+authorize merging or publishing the application.
+
+Full review requested with top-level comment
+[6593570952](https://github.com/TomoyukiAota/photo-location-map/pull/630#issuecomment-6593570952).
+CodeRabbit acknowledged processing 171 selected files; initial review is running.
+Current work: collect findings, verify each against the actual source and
+accepted compatibility choices, fix valid issues in a batch, run affected checks,
+and reply with concrete evidence. Do not blindly adopt suggestions that undo
+intentional Windows draft uploads, change UI/features, regenerate original image
+references, or imply release/security approval. Preserve historical artifact
+identities; a production-source change requires fresh affected artifact gates.
+
+The working tree may contain this resume/review-state update while the initial
+review runs. Keep it local until batching the actual review responses/fixes to
+avoid restarting the scan solely for a status change. Ignored review inbox:
+`.upgrade-artifacts/coderabbit-review-inbox.json`. Merge/application release
+remains unauthorized.
+
+Initial review subsequently completed with six actionable inline findings.
+All six were validated and implemented; local build/lint, 57 Angular + 92 main +
+55 renderer assertions, 15 unchanged-reference visual/functional cases and four
+actual watcher lifecycle cases pass. Pending-directory checks now return within
+one second and share outstanding per-path I/O, while module edits relaunch once
+per compilation burst. Minimum-OS and updater-collision negative controls pass.
+Next: commit/push this batch, reply with concrete evidence, collect incremental
+review/CI and rebuild/reverify signed artifacts for the changed production source.

@@ -250,7 +250,7 @@
           "conclusion": "success",
           "checkedOutCommit": "e26cb0ecdd724463b3adec5f259b7904f9145715",
           "runner": {
-            "requestedLabel": "ubuntu-24.04",
+            "requestedLabel": "ubuntu-26.04",
             "actualOperatingSystem": [
               "Ubuntu",
               "26.04.1",
@@ -742,7 +742,7 @@
           "conclusion": "success",
           "checkedOutCommit": "79d547fa884658be9266f03ae3d20ea05899b34a",
           "runner": {
-            "requestedLabel": "ubuntu-24.04",
+            "requestedLabel": "ubuntu-26.04",
             "actualOperatingSystem": [
               "Ubuntu",
               "26.04.1",
@@ -904,5 +904,14 @@
   "sourceUrls": {
     "packagedAndArchitectureAssertions": "https://github.com/TomoyukiAota/photo-location-map/blob/79d547fa884658be9266f03ae3d20ea05899b34a/test/e2e/regression.spec.mjs#L47",
     "approvedHeicReference": "https://github.com/TomoyukiAota/photo-location-map/blob/79d547fa884658be9266f03ae3d20ea05899b34a/test/e2e/approved-references/heic-thumbnail-libheif-1.23.5.json"
-  }
+  },
+  "evidenceCorrections": [
+    {
+      "date": "2026-11-03",
+      "reviewComment": 4450217554,
+      "field": "Ubuntu runner.requestedLabel",
+      "correctedValue": "ubuntu-26.04",
+      "reason": "The workflow runs-on label is ubuntu-26.04; test (ubuntu-24.04) is only the retained required-check name. Original job identities, OS observations and conclusions are unchanged."
+    }
+  ]
 }

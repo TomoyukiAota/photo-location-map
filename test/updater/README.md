@@ -19,7 +19,9 @@ mise exec -- node test/updater/run.cjs \
 
 `PLM_UPDATER_ARTIFACT` is an alternative to `--artifact`. Explicit artifacts must
 be inside this checkout's `release/` or `.upgrade-artifacts/`. Reports are limited
-to `.upgrade-artifacts/`. The launcher creates and removes its own temporary
+to `.upgrade-artifacts/` and must not refer to the supplied artifact, including
+through a symlink, hard link or case-insensitive alias. The launcher rejects
+such collisions before starting the test. It creates and removes its own temporary
 profile, and passes no signing or publishing credentials to Electron.
 
 The test executes the actual compiled application version/startup guards in a

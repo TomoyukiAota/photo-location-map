@@ -3,6 +3,12 @@
 Updated: 2026-11-03 (Asia/Tokyo). Verification observations below were recorded
 on 2026-11-02 UTC; this review refresh does not represent new test executions.
 
+**CodeRabbit follow-up is being verified.** The PR is ready for review, and six
+initial findings have been addressed locally. Production-source fixes require
+fresh distribution/platform verification; the source-79d547f artifact records
+below remain historical until that follow-up completes. See
+[CODERABBIT_REVIEW.md](./CODERABBIT_REVIEW.md) and STATUS for current progress.
+
 **The approved HEIC follow-up and independent verification are complete.** The
 candidate uses `heic-decode` 2.1.0 with `libheif-js` 1.23.5 and the explicitly
 approved newer pixel output. The owner explicitly accepted the confirmed-folder
@@ -17,7 +23,7 @@ unauthorized. The verified artifacts are review candidates.
 | Verified application source | [`79d547fa884658be9266f03ae3d20ea05899b34a`](https://github.com/TomoyukiAota/photo-location-map/commit/79d547fa884658be9266f03ae3d20ea05899b34a) |
 | CI application head | `79d547fa884658be9266f03ae3d20ea05899b34a`; the [CI record](./evidence/HEIC_CI_CHECKPOINT.json) separately identifies each checked-out commit, including PR merge commits. |
 | Approved HEIC selection | `heic-decode` 2.1.0; resolved `libheif-js` 1.23.5; old parent-scoped pin removed. Actual packaged metadata and selected decoder payload bytes are verified. |
-| Review | [Draft PR #630](https://github.com/TomoyukiAota/photo-location-map/pull/630) |
+| Review | [PR #630 — ready for review](https://github.com/TomoyukiAota/photo-location-map/pull/630) |
 | Framework | Angular core 22.2.4; CLI/Material 22.2.5; TypeScript 6.0.3. |
 | Development runtime | Node 26.13.0 with its bundled npm 11.20.0, matching Photo Data Viewer. |
 | Application runtime | Electron 45.2.1, embedded Node 24.22.1 and Chromium 156.0.8078.75. |

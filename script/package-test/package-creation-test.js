@@ -38,15 +38,15 @@ class PackageCreationTest {
     const bundledIcon = fs.readFileSync(path.join(contents, 'Resources', icon));
     const originalIcon = fs.readFileSync(path.join(__dirname, '../../src/favicon.icns'));
     if (!bundledIcon.equals(originalIcon)) throw new Error('The packaged macOS icon differs from the original app icon.');
-    if (readPlist('LSMinimumSystemVersion').split('.')[0] !== '13') {
-      throw new Error('The packaged macOS minimum must be 13.');
+    if (readPlist('LSMinimumSystemVersion') !== '13.0') {
+      throw new Error('The packaged macOS minimum must be 13.0.');
     }
     for (const binary of [path.join(contents, 'MacOS', readPlist('CFBundleExecutable')),
       path.join(contents, 'Frameworks/Electron Framework.framework/Electron Framework')]) {
       const archs = execFileSync('/usr/bin/lipo', ['-archs', binary], { encoding: 'utf8' }).trim().split(/\s+/).sort();
       if (archs.join(',') !== 'arm64,x86_64') throw new Error(`Unexpected universal architectures: ${archs}`);
     }
-    logger.info('Mac bundle retains the original icon, macOS 13 minimum and both universal architectures.');
+    logger.info('Mac bundle retains the original icon, macOS 13.0 minimum and both universal architectures.');
   }
 
   run() {

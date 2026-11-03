@@ -31,6 +31,13 @@ async function main() {
     assert.ok(path.relative(path.join(repository, '.upgrade-artifacts'), reportPath).split(path.sep)[0] !== '..',
       'Reports must stay inside the ignored .upgrade-artifacts directory.');
     assert.notEqual(reportPath, path.join(repository, '.upgrade-artifacts'));
+    if (artifact) {
+      const artifactStat = fs.statSync(artifact, { bigint: true });
+      const reportStat = fs.statSync(reportPath, { bigint: true, throwIfNoEntry: false });
+      // File identity also catches symlinks, hard links and case-insensitive aliases.
+      assert.ok(!reportStat || reportStat.dev !== artifactStat.dev || reportStat.ino !== artifactStat.ino,
+        'The report destination must not refer to the supplied ZIP artifact.');
+    }
   }
 
   const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'plm-updater-')));
