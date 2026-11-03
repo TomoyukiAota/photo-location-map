@@ -190,3 +190,17 @@ the owner in the Codex chat when the stable Ubuntu protected-check replacement
 is ready. The owner reserved that setting; no other implementation decision
 needs reopening. Revalidate mutable selected release artifacts before any
 separately authorized publication.
+
+
+### Final CI-record consistency correction
+
+[4455204139](https://github.com/TomoyukiAota/photo-location-map/pull/630#discussion_r4455204139)
+identified three stale provisional fields for completed Intel job 125899705853.
+Its final logs had already been read and its exact source, 209 units, five runner
+cases, five watcher modes and 14 packaged E2E passes were recorded correctly.
+Set logsVerified=true and clear activeStep in both detailed job and run summary.
+A complete consistency check now confirms all eight detailed jobs and every run
+summary are completed, with no active step and the expected verified counts.
+The original run/checkout/artifact identities and observation time remain intact.
+This correction changes documentation only; current-head checks/review must still
+be inspected separately. No new application build or artifact identity is implied.

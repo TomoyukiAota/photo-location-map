@@ -29,7 +29,7 @@
           "name": "test (macos-26-intel)",
           "status": "completed",
           "conclusion": "success",
-          "activeStep": "npm run test:package"
+          "activeStep": null
         },
         {
           "id": 125899798022,
@@ -221,8 +221,8 @@
       "jobName": "test (macos-26-intel)",
       "status": "completed",
       "conclusion": "success",
-      "logsVerified": false,
-      "activeStep": "npm run test:package",
+      "logsVerified": true,
+      "activeStep": null,
       "checkedOutCommit": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
       "operatingSystem": "macOS\n26.6.1\n25G76",
       "runnerImage": "Image: macos-26\nVersion: 20260824.0517.1\nIncluded Software: https://github.com/actions/runner-images/blob/macos-26/20260824.0517/images/macos/macos-26-Readme.md\nImage Release: https://github.com/actions/runner-images/releases/tag/macos-26%2F20260824.0517",
