@@ -375,6 +375,14 @@ test('chart grouping, zoom, reset and photo selection keep their real data behav
   await expectRepresentedPhotos(4);
   const chart = page.locator('app-date-time-taken-chart .chart');
   await expect(chart.locator('canvas')).toBeVisible();
+  const readChartTheme = () => chart.evaluate(element => {
+    if (typeof window.__plmReadChartTheme !== 'function') throw new Error('The fixed E2E chart-theme hook is unavailable.');
+    return window.__plmReadChartTheme(element);
+  });
+  const chartTheme = await readChartTheme();
+  console.info('Resolved chart theme:', JSON.stringify(chartTheme));
+  expect(chartTheme.api).toEqual({ init: 'function', getInstanceByDom: 'function', registerTheme: 'function' });
+  await expect.poll(async () => (await readChartTheme()).palette?.[0]).toBe('#5470c6');
   const unit = page.locator('app-date-time-taken-chart-config select');
   await expect(unit).toHaveValue('Day');
   await unit.selectOption('Year');
@@ -457,7 +465,7 @@ test('window bounds survive restart and the Windows fullscreen menu stays visibl
   const restored = await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].getBounds());
   expect(restored).toEqual(saved);
 });
-test('analytics keeps explicit event properties and adds no automatic interaction events', async () => {
+test('analytics preserves explicit events and identity while allowing Amplitude defaults', async () => {
   await dismissWelcome();
   if (process.env.PLM_ANALYTICS_NEGATIVE_CONTROL === '1') {
     await page.evaluate(async () => {
@@ -468,21 +476,32 @@ test('analytics keeps explicit event properties and adds no automatic interactio
       sdk.flush();
     });
   }
-  await app.evaluate(({ app }) => {
+  const userId = await app.evaluate(({ app }) => {
     const require = globalThis.__plmTestRequire;
-    const { Analytics } = require(require('node:path').join(app.getAppPath(), 'src-shared/analytics/analytics.js'));
+    const path = require('node:path');
+    const { Analytics } = require(path.join(app.getAppPath(), 'src-shared/analytics/analytics.js'));
+    const { AnalyticsConfig } = require(path.join(app.getAppPath(), 'src-shared/analytics/config/analytics-config.js'));
     Analytics.trackEvent('Compatibility', 'Dependency Upgrade Check', 'fixed label', 17);
+    return AnalyticsConfig.userId;
   });
   await settings();
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
   for (const service of ['amplitude', 'mixpanel']) {
     await expect.poll(() => app.evaluate((_electron, service) => globalThis.__plmAnalyticsEvents.filter(event =>
       event.service === service && event.action === 'Dependency Upgrade Check'), service), { timeout: 20000 }).toEqual([
-      { service, action: 'Dependency Upgrade Check', category: 'Compatibility', label: 'fixed label', value: 17 }
+      { service, action: 'Dependency Upgrade Check', category: 'Compatibility', label: 'fixed label', value: 17,
+        ...(service === 'amplitude' ? { userId, deviceId: userId } : { distinctId: userId }) }
     ]);
   }
-  const actions = await app.evaluate(() => globalThis.__plmAnalyticsEvents.map(event => event.action));
-  expect(actions.filter(action => /^\[Amplitude\]|^\$mp_|^session_(start|end)$/.test(action))).toEqual([]);
+  await expect.poll(() => app.evaluate(() => globalThis.__plmAnalyticsEvents
+    .filter(event => event.service === 'amplitude').map(event => event.action)), { timeout: 20000 })
+    .toEqual(expect.arrayContaining(['[Amplitude] Page Viewed', 'session_start']));
+  const events = await app.evaluate(() => globalThis.__plmAnalyticsEvents);
+  const amplitudeEvents = events.filter(event => event.service === 'amplitude');
+  for (const event of amplitudeEvents)
+    expect({ userId: event.userId, deviceId: event.deviceId }).toEqual({ userId, deviceId: userId });
+  expect(amplitudeEvents.filter(event => /^\[Amplitude\] Element (Clicked|Changed)$/.test(event.action))).toEqual([]);
+  expect(events.filter(event => event.service === 'mixpanel' && /^\$mp_/.test(event.action))).toEqual([]);
 });
 test('HEIC worker generates the approved bounded JPEG and reports corrupt input', async () => {
   const result = await app.evaluate(async ({ app }, { root, profile }) => {

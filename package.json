@@ -48,13 +48,13 @@
     "test:unit:em:help": "electron-mocha --help",
     "test:unit:all": "npm-run-all test:unit:ng test:unit:em:both",
     "test:package": "cross-env PLM_PACKAGE_TEST=true node ./script/package-test/run-package-test.js",
+    "test:e2e": "playwright test -c test/e2e/playwright.config.mjs",
+    "test:live-reload": "npm run build:src-main && node ./test/live-reload/run.cjs",
     "test:all": "npm-run-all lint:all test:unit:all test:live-reload test:package",
     "check": "ncu --interactive --install always",
-    "test:e2e": "playwright test -c test/e2e/playwright.config.mjs",
     "verify:runtime": "node script/verify-runtime.js",
     "typecheck:build-config": "tsc -p tsconfig.build-config.json",
-    "verify:electron": "node script/verify-runtime.js --electron",
-    "test:live-reload": "npm run build:src-main && node ./test/live-reload/run.cjs"
+    "verify:electron": "node script/verify-runtime.js --electron"
   },
   "dependencies": {
     "@electron/remote": "2.1.3",

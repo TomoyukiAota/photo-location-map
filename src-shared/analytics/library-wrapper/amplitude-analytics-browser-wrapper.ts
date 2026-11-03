@@ -24,20 +24,9 @@ export class AmplitudeAnalyticsBrowserWrapper {
     this.amplitude = require('@amplitude/analytics-browser');
 
     this.amplitude.init(apiKey, userId, {
-      // Version 1 tracked attribution, but none of the newer automatic events.
-      autocapture: {
-        attribution: true,
-        fileDownloads: false,
-        formInteractions: false,
-        pageViews: false,
-        sessions: false,
-        elementInteractions: false,
-        frustrationInteractions: false,
-        networkTracking: false,
-        webVitals: false,
-        performanceTracking: false,
-        pageUrlEnrichment: false,
-      },
+      // Keep PLM's identity on the SDK's new default events as well as manual events.
+      deviceId,
+      // Use the SDK's local defaults; remote overrides and SDK diagnostics are separate.
       fetchRemoteConfig: false,
       enableDiagnostics: false,
     });

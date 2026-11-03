@@ -107,8 +107,21 @@ import { AnalyticsErrorHandler } from './shared/error/analytics-error-handler';
     MatTreeModule,
     NgxEchartsModule.forRoot({
       echarts: async () => {
-        const echarts = await import('echarts');
+        // The official v5 UMD theme depends on ECharts' CommonJS build. Load the
+        // same build here so its theme registration reaches ngx-echarts' instance.
+        const echarts = await import('echarts/dist/echarts');
         await import('echarts/theme/v5.js');
+        if (typeof process !== 'undefined' && process.env.PLM_E2E === '1') {
+          // Read the real chart through the same namespace that ngx-echarts receives.
+          (window as Window & { __plmReadChartTheme?: (element: HTMLElement) => unknown }).__plmReadChartTheme = element => ({
+            palette: echarts.getInstanceByDom(element)?.getOption().color,
+            api: {
+              init: typeof echarts.init,
+              getInstanceByDom: typeof echarts.getInstanceByDom,
+              registerTheme: typeof echarts.registerTheme,
+            },
+          });
+        }
         return echarts;
       },
     }),

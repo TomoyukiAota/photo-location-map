@@ -3,8 +3,8 @@
 Updated: 2026-11-03 (Asia/Tokyo). Verification observations below were recorded
 on 2026-11-02 UTC; this review refresh does not represent new test executions.
 
-**CodeRabbit follow-up is being verified.** The PR is ready for review, and six
-initial findings have been addressed locally. Production-source fixes require
+**CodeRabbit follow-up is being verified.** The PR is ready for review, and eight
+findings plus the owner's additional preferences are addressed. Production-source fixes require
 fresh distribution/platform verification; the source-79d547f artifact records
 below remain historical until that follow-up completes. See
 [CODERABBIT_REVIEW.md](./CODERABBIT_REVIEW.md) and STATUS for current progress.
@@ -47,7 +47,8 @@ optional experimental Dev-only Google Maps check lacks a valid key.
 ## Verification gates
 
 All completed follow-up gates below use application source `79d547f`. Seven
-workflows and eight actual platform test jobs pass without failures or reruns.
+workflow runs across three workflows and eight actual platform test jobs pass
+without failures or reruns.
 The CI record distinguishes branch heads from checked-out PR merge commits.
 
 | Gate | Status | Evidence and limit |

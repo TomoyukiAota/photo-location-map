@@ -39,8 +39,11 @@ if (testRoot) {
         const id = event.insert_id ?? properties.$insert_id;
         if (id && globalThis.__plmAnalyticsEventIds.has(`${service}:${id}`)) continue;
         if (id) globalThis.__plmAnalyticsEventIds.add(`${service}:${id}`);
+        const identity = service === 'amplitude'
+          ? { userId: event.user_id, deviceId: event.device_id }
+          : { distinctId: properties.distinct_id };
         globalThis.__plmAnalyticsEvents.push({ service, action, category: properties.category,
-          label: properties.label, value: properties.value });
+          label: properties.label, value: properties.value, ...identity });
       }
     } catch {
       globalThis.__plmAnalyticsParseErrors++;

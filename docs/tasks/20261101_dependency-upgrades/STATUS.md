@@ -21,12 +21,13 @@ Updated: 2026-11-03 (Asia/Tokyo).
 - Latest verified application source is
   `79d547fa884658be9266f03ae3d20ea05899b34a`, including the approved HEIC update.
   Clean install/graph/runtime/build/lint, 194 unit assertions and 15 local
-  visual/functional cases pass. All eight platform test jobs in seven workflows
-  pass at this same source, including native Intel and 14 actual packaged cases
-  per job. Fresh signed/notarized Mac artifacts, archive/transport/native fixture
-  gates and actual Windows draft bytes also pass. See the three HEIC checkpoint
-  records below. Earlier 2b7b0d7/f1f0ee5/872699e records remain historical.
-- CodeRabbit's six initial findings are addressed in a new local follow-up.
+  visual/functional cases pass. All eight platform test jobs in seven workflow
+  runs across three workflows pass at this same source, including native Intel
+  and 14 actual packaged cases per job. Fresh signed/notarized Mac artifacts,
+  archive/transport/native fixture gates and actual Windows draft bytes also pass.
+  See the three HEIC checkpoint records below. Earlier 2b7b0d7/f1f0ee5/872699e
+  records remain historical.
+- CodeRabbit's eight findings and the owner's additional preferences are addressed.
   Build/lint, 204 unit assertions, four actual watcher lifecycle cases and
   all 15 visual/functional cases pass. The new production-source changes need
   fresh signed artifacts and platform CI; 79d547f remains the previous fully
@@ -104,7 +105,7 @@ both archive payloads and all blockmap chunks, mounted-DMG launch/log/quit/detac
 final ZIP transport and isolated native install/relaunch/rollback/settings.
 All exact fixture native caches/jobs/preferences are cleaned and the production
 bundle fingerprint/signature remain unchanged. No local app/test process remains.
-The six push/PR workflows and manual ARM job pass; manual Intel is still running.
+The six push/PR workflow runs and manual ARM job pass; manual Intel is still running.
 Windows uploaded draft bytes are being checked independently. The two recovered
 inspection issues were a wrong collector plist key and a transient owned DMG
 unmount failure; their fixes/results are recorded in the new Mac checkpoint.
@@ -992,7 +993,7 @@ authorized after the selected artifacts are concrete and reviewed.
 
 Application source: `79d547fa884658be9266f03ae3d20ea05899b34a`. The verification
 records carry their actual November 2 UTC observation timestamps; this status
-was reconciled on November 3. All seven workflow runs
+was reconciled on November 3. All seven workflow runs across three workflows
 and eight actual test jobs succeeded without failures or reruns, including
 native Intel at the same application source. Each job passed 194 unit assertions
 and 14 packaged cases. The new signed Mac and Windows draft-byte proofs are
@@ -1063,3 +1064,30 @@ one second and share outstanding per-path I/O, while module edits relaunch once
 per compilation burst. Minimum-OS and updater-collision negative controls pass.
 Next: commit/push this batch, reply with concrete evidence, collect incremental
 review/CI and rebuild/reverify signed artifacts for the changed production source.
+
+### Additional review and owner preferences (2026-11-03)
+
+The initial six fixes were committed as
+`a059f34709f901c4128e46813dc5152587fc2820`. All seven workflow runs/eight actual
+test jobs pass at that source, including native Intel. CodeRabbit acknowledged
+the replies and resolved all six initial threads. That candidate was also
+signed/notarized, but subsequent findings/preferences below supersede it before
+final artifact verification.
+
+Two additional CodeRabbit findings are implemented locally: precise workflow-run
+wording and ECharts v5 registration on the actual loader instance. A new real
+runtime assertion exposed the old v6 palette (#5070dd) despite the previous
+screenshot passes; the corrected official-theme instance resolves #5470c6 and
+removes the duplicate ESM/CJS core. No image reference or tolerance was changed.
+
+The owner's additional PR comments request grouped test scripts, the earlier
+template attribute alignment, and additive Amplitude v2 default events while
+preserving the existing event contract. Those changes are implemented locally.
+Mixpanel defaults/guards, Bootstrap CSS versus JS and the optional coordinated
+branch-check rename have been explained in replies; no repository protection
+settings were changed. The new Amplitude test verifies default page/session
+events plus unchanged manual fields/identity, and its foreign-identity negative
+control fails as expected. The combined production build/lint, 204 unit
+assertions and all 15 visual/functional cases pass before the next source
+checkpoint. See CODERABBIT_REVIEW.md for per-thread status. Fresh platform and
+signed-artifact checks remain required for this second batch.

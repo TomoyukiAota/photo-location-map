@@ -1,55 +1,50 @@
 <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
   <mat-tree-node *matTreeNodeDef="let node"
-    matTreeNodeToggle
-    matTreeNodePadding
-    [matTreeNodePaddingIndent]="indentPerLevel"
-    (contextmenu)="onContextMenu($event, node)"
-    class="leaf-tree-node">
+                 matTreeNodeToggle
+                 matTreeNodePadding
+                 [matTreeNodePaddingIndent]="indentPerLevel"
+                 (contextmenu)="onContextMenu($event, node)"
+                 class="leaf-tree-node">
     <div class="leaf-tree-node-checkbox-and-name">
       <button mat-icon-button disabled></button> <!-- Adjust space to align with tree expand button (which look like > or v) -->
       @if (node.isSelectable) {
-        <mat-checkbox
-          [checked]="isSelected(node)"
-          (change)="handleCheckboxChange(node)">
+        <mat-checkbox [checked]="isSelected(node)"
+                      (change)="handleCheckboxChange(node)">
           <span>{{node.name}}</span>
         </mat-checkbox>
       }
       @if (!node.isSelectable) {
-        <mat-label
-          class="non-selectable-node">
+        <mat-label class="non-selectable-node">
           <div class="disabled-checkbox-alternative"></div>
           <span class="non-selectable-node-name">{{node.name}}</span>
         </mat-label>
       }
     </div>
     @if (photoInfoDisplayLogic.isVisible(node)) {
-      <app-dir-tree-view-photo-info
-        [photoPath]="node.path">
+      <app-dir-tree-view-photo-info [photoPath]="node.path">
       </app-dir-tree-view-photo-info>
     }
   </mat-tree-node>
 
   <mat-tree-node *matTreeNodeDef="let node; when: hasChildren"
-    matTreeNodePadding
-    [matTreeNodePaddingIndent]="indentPerLevel"
-    (contextmenu)="onContextMenu($event, node)"
-    [title]="node.level === 0 ? 'Opened Folder - ' + node.path : ''">
+                 matTreeNodePadding
+                 [matTreeNodePaddingIndent]="indentPerLevel"
+                 (contextmenu)="onContextMenu($event, node)"
+                 [title]="node.level === 0 ? 'Opened Folder - ' + node.path : ''">
     <button mat-icon-button matTreeNodeToggle>
       <mat-icon class="mat-icon-rtl-mirror">
         {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
       </mat-icon>
     </button>
     @if (node.isSelectable) {
-      <mat-checkbox
-        [checked]="allDescendantsSelected(node)"
-        [indeterminate]="partOfDescendantsSelected(node)"
-        (change)="handleCheckboxChange(node)">
+      <mat-checkbox [checked]="allDescendantsSelected(node)"
+                    [indeterminate]="partOfDescendantsSelected(node)"
+                    (change)="handleCheckboxChange(node)">
         {{node.name}}
       </mat-checkbox>
     }
     @if (!node.isSelectable) {
-      <mat-label
-        class="non-selectable-node">
+      <mat-label class="non-selectable-node">
         <div class="disabled-checkbox-alternative"></div>
         {{node.name}}
       </mat-label>
@@ -59,9 +54,9 @@
 
 <!--#region Context Menu -->
 <div style="visibility: hidden; position: fixed"
-  [style.left]="contextMenuPosition.x"
-  [style.top]="contextMenuPosition.y"
-  [matMenuTriggerFor]="contextMenu">
+     [style.left]="contextMenuPosition.x"
+     [style.top]="contextMenuPosition.y"
+     [matMenuTriggerFor]="contextMenu">
 </div>
 <mat-menu #contextMenu="matMenu">
   <ng-template matMenuContent let-data="contextMenuData">
