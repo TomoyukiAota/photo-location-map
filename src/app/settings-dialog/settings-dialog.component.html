@@ -3,9 +3,8 @@
 </div>
 <mat-nav-list class="settings-tab">
   @for (tabName of tabNames; track tabName) {
-    <mat-list-item
-      (click)="selectTab(tabName)"
-      [ngClass]="{'selected-tab': isSelectedTab(tabName)}">
+    <mat-list-item (click)="selectTab(tabName)"
+                   [ngClass]="{'selected-tab': isSelectedTab(tabName)}">
       {{ tabName }}
     </mat-list-item>
   }
@@ -18,19 +17,19 @@
 </div>
 <div class="settings-dialog-footer">
   <div class="settings-dialog-footer-description"
-    [style.visibility]="isAppRestartRequired ? 'visible' : 'hidden'">
+       [style.visibility]="isAppRestartRequired ? 'visible' : 'hidden'">
     This application will restart after saving settings.
   </div>
   <div class="settings-dialog-footer-buttons">
     <button mat-flat-button
-      color="primary"
-      [disabled]="!isSaveButtonEnabled"
-      (click)="saveSettings()">
+            color="primary"
+            [disabled]="!isSaveButtonEnabled"
+            (click)="saveSettings()">
       Save
     </button>
     <button mat-button
-      (click)="handleCancelClicked()"
-      class="settings-dialog-cancel-button">
+            (click)="handleCancelClicked()"
+            class="settings-dialog-cancel-button">
       Cancel
     </button>
   </div>

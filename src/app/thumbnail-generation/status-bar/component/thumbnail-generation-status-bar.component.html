@@ -10,13 +10,13 @@
   }
 </div>
 <div class="progress-bar-with-details"
-  [class]="detailsVisible ? 'expanded-progress-bar-with-details' : 'shrunk-progress-bar-with-details'"
-  [title]="detailsVisible ? '' : 'Show Details'"
-  (click)="toggleDetailsVisibility()">
+     [class]="detailsVisible ? 'expanded-progress-bar-with-details' : 'shrunk-progress-bar-with-details'"
+     [title]="detailsVisible ? '' : 'Show Details'"
+     (click)="toggleDetailsVisibility()">
   <div class="progress-bar-and-expand-icon">
     <mat-progress-bar mode="buffer" [value]="progressPercent"></mat-progress-bar>
     <mat-icon class="expand-icon"
-      [ngClass]="{'expanded-expand-icon': detailsVisible}">
+              [ngClass]="{'expanded-expand-icon': detailsVisible}">
       expand_more
     </mat-icon>
   </div>
@@ -27,8 +27,8 @@
           <span>
             <span>Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} files with errors. </span>
             <span class="anchor-tag-like-text"
-              title="See the files with errors"
-              (click)="handleClickHereTextClicked($event)">
+                  title="See the files with errors"
+                  (click)="handleClickHereTextClicked($event)">
               Click here to see the files with errors.
             </span>
           </span>
@@ -46,8 +46,8 @@
   </div>
 </div>
 <span class="close-button"
-  title="Close Thumbnail Generation Status Bar"
-  [ngClass]="{'hidden': !isThumbnailGenerationDone, 'fade-in-close-button': isThumbnailGenerationDone}"
-  (click)="handleCloseButtonClicked()">
+      title="Close Thumbnail Generation Status Bar"
+      [ngClass]="{'hidden': !isThumbnailGenerationDone, 'fade-in-close-button': isThumbnailGenerationDone}"
+      (click)="handleCloseButtonClicked()">
   ×
 </span>

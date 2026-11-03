@@ -1,11 +1,11 @@
 <div class="chart-container">
   <div echarts
-    [theme]="'v5'"
-    [options]="eChartsOption"
-    (chartInit)="onChartInit($event)"
-    (chartDataZoom)="onChartDataZoom()"
-    (chartRestore)="onChartRestore()"
-    class="chart">
+       [theme]="'v5'"
+       [options]="eChartsOption"
+       (chartInit)="onChartInit($event)"
+       (chartDataZoom)="onChartDataZoom()"
+       (chartRestore)="onChartRestore()"
+       class="chart">
   </div>
   @if (!isSupportedDuration) {
     <div class="unsupported-overlay">

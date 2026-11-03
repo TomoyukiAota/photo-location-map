@@ -1,6 +1,6 @@
 # Dependency upgrade status
 
-Updated: 2026-11-03 (Asia/Tokyo).
+Updated: 2026-11-04 (Asia/Tokyo).
 
 ## Authorization and actual state
 
@@ -18,7 +18,7 @@ Updated: 2026-11-03 (Asia/Tokyo).
 - Source inspection, official release/registry reads, historical PR review and a
   read-only lockfile audit were performed. Research sources remain read-only;
   authorized source/PR/CI preparation is complete; CodeRabbit review is now in progress.
-- Current application source is `c0f0dc97f1b7dfd687462c318fea88e585c1a94f`,
+- Verified runtime/artifact source is `c0f0dc97f1b7dfd687462c318fea88e585c1a94f`,
   committed and pushed. This includes the third review batch; earlier entries
   describing it as uncommitted or ready to push are dated historical states.
 - Current local gates pass: build/lint, complete dependency graph and runtime
@@ -40,13 +40,18 @@ Updated: 2026-11-03 (Asia/Tokyo).
   [historical](./evidence/REVIEW_HISTORICAL_CI.json), now with actual checked-out
   PR merge identities separate from head_sha. The two final documentation-only
   findings are corrected; application source remains unchanged.
-- Current follow-up: the owner confirmed and saved Ubuntu's stable required check;
-  read-only API verification confirms `test (ubuntu)` with strict mode and the
-  Windows/Mac requirements preserved. The Ubuntu discussion is resolved.
-  The owner also authorized stable macOS check names: `test (macos-arm64)` and
-  manual `test (macos-x64)`. Workflow/Mergify/docs now use these literal names;
-  runner labels, job conditions, test commands and application source are unchanged.
-  New-head CI/review must pass before announcing the owner's Mac protection step.
+- Current follow-up (2026-11-04): the owner saved both Ubuntu and Mac protected
+  contexts. API verification confirms test (ubuntu), test (macos-arm64) and
+  test (windows-latest), all bound to GitHub Actions, with strict mode retained;
+  manual x64 is not required. Both protection conversations are resolved.
+- The owner requested the remaining four-template indentation fix and prefers
+  deferring other review items unless serious. Attribute alignment is restored;
+  all non-whitespace bytes and semantic Angular ASTs are identical, build/lint
+  pass, and all eight emitted runtime JS/HTML/CSS files match both the previous
+  build and signed c0 bundle byte-for-byte. Existing artifacts keep c0 provenance.
+  The other five findings have no demonstrated serious current bug and are
+  deferred with their specific conditions. See
+  [CLAUDE_REVIEW_FOLLOWUP.json](./evidence/CLAUDE_REVIEW_FOLLOWUP.json).
 - No baseline app remains. See the latest execution record for active processes. Local command logs
   are under `.upgrade-artifacts`; test output is in its `e2e-results` directory.
 
@@ -1246,3 +1251,38 @@ Ubuntu/Windows requirements. Do not add manual test (macos-x64) as a required
 check or edit remote protection settings. Merge/publication remain unauthorized.
 This record intentionally keeps the application source separate from the new
 CI-name checkpoint; actual completion evidence belongs to the exact remote head.
+
+
+### Claude Code review and formatting-only follow-up (2026-11-04)
+
+The saved main protection now requires test (ubuntu), test (macos-arm64) and
+test (windows-latest), all from GitHub Actions, with strict mode preserved.
+Manual test (macos-x64) is non-required. Conversation 4456013937 is verified and
+resolved; no owner protection action remains. The source-f8 check-name follow-up
+passed all six automatic runs on the first attempt and its CodeRabbit check
+succeeded. Historical entries asking for those protection edits are superseded.
+
+The owner asks to fix indentation and defer other issues unless they are serious.
+The remaining four template files now align continuation attributes with the
+first attribute; mat-list-item/mat-checkbox put that first attribute back on
+the opening line. Only whitespace changes. Semantic Angular ASTs match after
+removing source spans/locations, production build/lint pass, and all eight emitted
+JS/HTML/CSS files match both the previous build and the signed source-c0 bundle
+byte-for-byte. Original references, dependencies and behavior are unchanged.
+Do not relabel the existing signed artifacts or recreate them for this format
+change; source maps can contain changed source formatting/locations.
+
+Independent source reviews find the five other suggestions non-blocking under
+the requested threshold: ECharts dev checks are a valid optimization concern;
+Amplitude form/download URL capture has no present DOM trigger and must be
+revisited before adding matching markup; Pages task content is a publication
+choice; CDN/viewer availability is a CI reliability concern; every current remote
+require is already handled. No runtime, analytics policy, Pages or CI-rerun rule
+is changed for these suggestions. Full dispositions and local proof are in
+CLAUDE_REVIEW_FOLLOWUP.json. This is a deliberate deferral, not a claim that each
+suggestion was implemented or that future code cannot make it relevant.
+
+Resume by inspecting the actual branch/head, the four whitespace diffs, and the
+current PR review/checks. Verify the exact remote head after this follow-up;
+classify failures before reruns and resolve only addressed discussions. No
+merge, public release, stable-version change or manual Mac upload is authorized.

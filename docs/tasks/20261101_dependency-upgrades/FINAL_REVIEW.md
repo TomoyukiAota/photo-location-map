@@ -1,6 +1,6 @@
 # Final pre-publication review
 
-Updated: 2026-11-03 (Asia/Tokyo). Each checkpoint carries its actual UTC
+Updated: 2026-11-04 (Asia/Tokyo). Each checkpoint carries its actual UTC
 observation time and exact tested source; later document heads are separate.
 
 **The implementation and review fixes are verified at c0f0dc9.** All seven
@@ -15,6 +15,15 @@ The HEIC output, confirmed-folder chooser policy and older-macOS update risk are
 accepted decisions. Merge, a stable-version/channel change and application
 publication remain unauthorized. The owner reserved the coordinated required-check
 replacement described below; no other implementation choice needs reopening.
+
+The November 4 owner review requests indentation fixes and otherwise limits
+changes to serious current bugs. The four remaining template attribute layouts
+are restored with identical Angular semantics and all eight emitted runtime
+JS/HTML/CSS files byte-identical to the previous build and signed c0 bundle.
+The other five suggestions are deliberately deferred; see the
+[assessment and local proof](./evidence/CLAUDE_REVIEW_FOLLOWUP.json). This does not
+relabel the signed artifacts as a later source; source maps can record different
+source formatting/locations. Inspect the actual follow-up head's CI/review.
 
 ## Candidate and scope
 
@@ -194,15 +203,11 @@ The owner completed the stable `test (ubuntu)` replacement in main's branch
 protection; API verification confirms the new context and preserved strict mode
 and GitHub Actions bindings. That migration is complete.
 
-The owner subsequently approved `test (macos-arm64)` for regular macOS CI and
-`test (macos-x64)` for manual Intel. Workflow names and the regular Mergify
-success/skipped conditions are updated together; pinned runner versions and
-all test behavior are unchanged. Check the actual new-head CI/review before
-announcing readiness in the Codex chat. The owner will then replace only
-`test (macos-26)` with `test (macos-arm64)` in main's required checks, preserving
-the Ubuntu/Windows checks, strict mode and GitHub Actions binding. Manual x64
-is not a required check. No remote setting was changed by the agent.
-This is the remaining owner action in the current task; merge/publication is separate.
+The stable macOS rename is also complete. The owner saved main's required
+`test (macos-arm64)` context; read-only API verification confirms the GitHub
+Actions binding, strict mode and Ubuntu/Windows requirements are preserved.
+Manual `test (macos-x64)` is not required. All six f8d9b4c automatic runs pass,
+and the related review conversation is resolved. No owner protection action remains.
 
 The owner also explicitly accepted the older-macOS auto-update risk in
 [4454038799](https://github.com/TomoyukiAota/photo-location-map/pull/630#discussion_r4454038799).

@@ -1,6 +1,6 @@
 # CodeRabbit review follow-up
 
-Updated: 2026-11-03 (Asia/Tokyo).
+Updated: 2026-11-04 (Asia/Tokyo).
 
 The owner authorized marking PR #630 ready for review and addressing CodeRabbit
 findings. The PR is ready, with no automerge label or native auto-merge request.
@@ -12,7 +12,8 @@ actual jobs, including native Intel, pass. Fresh local/signed/distribution/updat
 and Windows-byte evidence is complete in the three REVIEW checkpoint records.
 All thirteen known CodeRabbit findings are addressed. The f37956c documentation
 head passes six automatic runs and its latest review has no new actionable comments.
-The current follow-up changes macOS check names only, as described below. Earlier
+The current follow-up restores template attribute indentation and deliberately
+defers noncritical owner-review suggestions, as described below. Earlier
 sections describe the sequence of source checkpoints, not pending implementation.
 
 The initial [review](https://github.com/TomoyukiAota/photo-location-map/pull/630#pullrequestreview-5746382588)
@@ -225,3 +226,24 @@ remain c0f0dc9. Preserve all historical job names in earlier CI evidence. Inspec
 the new automatic checks and incremental CodeRabbit review before reporting
 readiness for the owner's test (macos-26) → test (macos-arm64) protection edit.
 No remote protection change, merge or public release is delegated to the agent.
+
+
+## Subsequent owner/Claude Code review (2026-11-04)
+
+The owner saved the Mac protection replacement. API verification confirms the
+three intended GitHub Actions contexts with strict mode and non-required x64;
+conversation 4456013937 is resolved. All six f8d9b4c runs pass with the stable
+Mac names. No owner protection edit remains.
+
+For the six new owner comments, the requested scope is indentation plus serious
+current bugs only. Comment 4456185841 is fixed in the remaining four templates.
+Angular AST/non-whitespace equivalence, production build/lint and byte equality
+of all eight runtime JS/HTML/CSS files against the prior build and signed c0
+bundle pass. No original reference or runtime policy changes.
+
+The other five findings are valid observations or future improvements, with no
+demonstrated serious current defect. Their deliberate deferrals and conditions
+are recorded in [CLAUDE_REVIEW_FOLLOWUP.json](./evidence/CLAUDE_REVIEW_FOLLOWUP.json).
+No new task/issue, ECharts alias, analytics option, remote-require policy, Pages
+exclusion or rerun rule is introduced. Current-head CI/review is checked on the
+actual PR; older source/artifact results retain their own provenance.
