@@ -27,11 +27,12 @@ Updated: 2026-11-03 (Asia/Tokyo).
   archive/transport/native fixture gates and actual Windows draft bytes also pass.
   See the three HEIC checkpoint records below. Earlier 2b7b0d7/f1f0ee5/872699e
   records remain historical.
-- CodeRabbit's eight findings and the owner's additional preferences are addressed.
-  Build/lint, 204 unit assertions, four actual watcher lifecycle cases and
-  all 15 visual/functional cases pass. The new production-source changes need
-  fresh signed artifacts and platform CI; 79d547f remains the previous fully
-  verified source. See [CODERABBIT_REVIEW.md](./CODERABBIT_REVIEW.md).
+- The first eight CodeRabbit findings and initial owner preferences were fixed
+  in a059f34/f7afae2. Both sources pass seven workflow runs/eight test jobs,
+  including native Intel; see [REVIEW_HISTORICAL_CI.json](./evidence/REVIEW_HISTORICAL_CI.json).
+  Further owner comments and two later bot findings are being addressed in a
+  third batch. Fresh source/artifact verification remains required. See
+  [CODERABBIT_REVIEW.md](./CODERABBIT_REVIEW.md).
 - No baseline app remains. See the latest execution record for active processes. Local command logs
   are under `.upgrade-artifacts`; test output is in its `e2e-results` directory.
 
@@ -1069,7 +1070,8 @@ review/CI and rebuild/reverify signed artifacts for the changed production sourc
 
 The initial six fixes were committed as
 `a059f34709f901c4128e46813dc5152587fc2820`. All seven workflow runs/eight actual
-test jobs pass at that source, including native Intel. CodeRabbit acknowledged
+test jobs pass at that source, including native Intel, as recorded separately
+in [REVIEW_HISTORICAL_CI.json](./evidence/REVIEW_HISTORICAL_CI.json). CodeRabbit acknowledged
 the replies and resolved all six initial threads. That candidate was also
 signed/notarized, but subsequent findings/preferences below supersede it before
 final artifact verification.
@@ -1091,3 +1093,46 @@ control fails as expected. The combined production build/lint, 204 unit
 assertions and all 15 visual/functional cases pass before the next source
 checkpoint. See CODERABBIT_REVIEW.md for per-thread status. Fresh platform and
 signed-artifact checks remain required for this second batch.
+
+
+### Third review batch in progress (2026-11-03)
+
+Current committed source is f7afae2; subsequent fixes are uncommitted. The full
+review inbox includes owner followups for NSIS --updated, hidden-ancestor watcher
+paths, future snapshot updates, owned package-test profile cleanup, ordinary
+Mixpanel defaults, a coordinated stable Ubuntu check name and formatter support.
+The owner also asks to remove new Amplitude local-URL capture if absent in 1.6.7;
+published-source comparison confirms it is new. Disable pageViews and
+pageUrlEnrichment only, without adding a replacement event. Preserve the other
+ordinary defaults and original manual-event contract. See the per-comment table
+in CODERABBIT_REVIEW.md. The older-macOS auto-update risk was explicitly accepted
+in owner comment 4454038799; no guard is requested and no release is authorized.
+
+The f7 source's signed/notarized Mac build, 14 packaged cases, full archive
+identity and ZIP transport pass. Its native updater fixture also passes install,
+relaunch, explicit downgrade and settings over four starts. Exact nonce-owned
+cache/job/preference cleanup is complete and production fingerprint/signature
+remain unchanged afterward. The f7 Windows draft-byte inspection also passes (read-only; no EXE execution).
+The f7 DMG dwell was not completed before the new fixes superseded this candidate. Do not infer
+a complete final artifact checkpoint from the partial f7 results. Retain its
+ignored review-followup logs for audit; new source needs rebuilt affected gates.
+
+Next: finish the third batch, run targeted negative/positive controls and full
+local gates, commit/push once, reply on the actual threads, and watch incremental
+review/platform CI while rebuilding signed Mac artifacts. Only after the new
+`test (ubuntu)` check succeeds should the owner be told in the Codex chat that
+the required-check replacement is ready. The owner reserved that remote
+branch-protection edit; do not perform it. No merge, public release or manual
+Mac upload is authorized. Original image references and tolerances stay intact.
+
+Third-batch local gates now pass: build/lint; 57 Angular + 97 main + 55 renderer
+assertions (209); five durable package-runner checks wired into CI package tests;
+five real watcher lifecycle cases; 15 unchanged-reference visual/functional
+cases. The final focused analytics check also passes after adding a zero-parser-
+error assertion. Separate page-view and URL-enrichment negative controls fail
+where intended. Default future snapshot updates succeed for a nonvisual case,
+protected updates fail before launch, protected comparison passes, and all 15
+reference hashes remain unchanged. The parser accepts only the specific hidden
+--updated compatibility flag; installed Windows E2E now includes and asserts it.
+Ready to commit/push this source checkpoint, then run the new stable Ubuntu
+check, remaining platform gates and rebuilt signed artifact verification.

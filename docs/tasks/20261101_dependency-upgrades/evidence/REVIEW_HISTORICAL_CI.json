@@ -1,0 +1,627 @@
+{
+  "status": "passed",
+  "observedAt": "2026-11-03T11:43:04.386550+00:00",
+  "scope": "Dated CI provenance for the first two CodeRabbit source checkpoints; later source requires new checks.",
+  "checkpoints": [
+    {
+      "applicationCommit": "a059f34709f901c4128e46813dc5152587fc2820",
+      "workflowRuns": 7,
+      "actualSuccessfulTestJobs": 8,
+      "nativeIntelAtSameSource": true,
+      "runs": [
+        {
+          "id": 41592566137,
+          "name": "CI on macOS",
+          "event": "workflow_dispatch",
+          "head_sha": "a059f34709f901c4128e46813dc5152587fc2820",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41592566137",
+          "run_attempt": 1,
+          "created_at": "2026-11-03T06:51:49Z",
+          "updated_at": "2026-11-03T07:13:12Z",
+          "testJobs": [
+            {
+              "id": 125772415759,
+              "name": "test (macos-26-intel)",
+              "conclusion": "success",
+              "successfulSteps": [
+                "Set up job",
+                "Run actions/checkout@v7.0.1",
+                "Install Node.js with the version in mise.toml",
+                "Verify Node and its bundled npm",
+                "npm ci",
+                "Verify Electron and embedded Node",
+                "npm run lint:ng",
+                "npm run lint:script",
+                "npm run test:unit:ng",
+                "npm run test:unit:em:main",
+                "npm run test:unit:em:renderer",
+                "npm run test:live-reload",
+                "npm run test:package",
+                "npm run test:e2e",
+                "Post Install Node.js with the version in mise.toml",
+                "Post Run actions/checkout@v7.0.1",
+                "Complete job"
+              ]
+            },
+            {
+              "id": 125772457449,
+              "name": "test (macos-26)",
+              "conclusion": "success",
+              "successfulSteps": [
+                "Set up job",
+                "Run actions/checkout@v7.0.1",
+                "Install Node.js with the version in mise.toml",
+                "Verify Node and its bundled npm",
+                "npm ci",
+                "Verify Electron and embedded Node",
+                "npm run lint:ng",
+                "npm run lint:script",
+                "npm run test:unit:ng",
+                "npm run test:unit:em:main",
+                "npm run test:unit:em:renderer",
+                "npm run test:live-reload",
+                "npm run test:package",
+                "npm run test:e2e",
+                "Post Install Node.js with the version in mise.toml",
+                "Post Run actions/checkout@v7.0.1",
+                "Complete job"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 41592521198,
+          "name": "CI on Ubuntu",
+          "event": "pull_request",
+          "head_sha": "a059f34709f901c4128e46813dc5152587fc2820",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41592521198",
+          "run_attempt": 1,
+          "created_at": "2026-11-03T06:51:22Z",
+          "updated_at": "2026-11-03T06:58:00Z",
+          "testJobs": [
+            {
+              "id": 125772326139,
+              "name": "test (ubuntu-24.04)",
+              "conclusion": "success",
+              "successfulSteps": [
+                "Set up job",
+                "Run actions/checkout@v7.0.1",
+                "Install Node.js with the version in mise.toml",
+                "Verify Node and its bundled npm",
+                "npm ci",
+                "Verify Electron and embedded Node",
+                "npm run lint:ng",
+                "npm run lint:script",
+                "npm run test:unit:ng",
+                "npm run test:unit:em:main",
+                "npm run test:unit:em:renderer",
+                "npm run test:live-reload",
+                "Install FUSE (Required to launch AppImage during \"npm run test:package\")",
+                "npm run test:package",
+                "Locate packaged AppImage for E2E",
+                "npm run test:e2e",
+                "Post Install Node.js with the version in mise.toml",
+                "Post Run actions/checkout@v7.0.1",
+                "Complete job"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 41592521183,
+          "name": "CI on Windows",
+          "event": "pull_request",
+          "head_sha": "a059f34709f901c4128e46813dc5152587fc2820",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41592521183",
+          "run_attempt": 1,
+          "created_at": "2026-11-03T06:51:22Z",
+          "updated_at": "2026-11-03T07:03:15Z",
+          "testJobs": [
+            {
+              "id": 125772314378,
+              "name": "test (windows-latest)",
+              "conclusion": "success",
+              "successfulSteps": [
+                "Set up job",
+                "Run actions/checkout@v7.0.1",
+                "Install Node.js with the version in mise.toml",
+                "Verify Node and its bundled npm",
+                "npm ci",
+                "Verify Electron and embedded Node",
+                "npm run lint:ng",
+                "npm run lint:script",
+                "npm run test:unit:ng",
+                "npm run test:unit:em:main",
+                "npm run test:unit:em:renderer",
+                "npm run test:live-reload",
+                "npm run test:package",
+                "npm run test:e2e",
+                "[Publish to GitHub Releases] Clean-up by \"git clean -fdx\" (1st time)",
+                "[Publish to GitHub Releases] Clean-up by \"git clean -fdx\" (2nd time to be sure)",
+                "[Publish to GitHub Releases] npm ci",
+                "[Publish to GitHub Releases] Create and publish Windows package",
+                "Post Install Node.js with the version in mise.toml",
+                "Post Run actions/checkout@v7.0.1",
+                "Complete job"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 41592521102,
+          "name": "CI on macOS",
+          "event": "pull_request",
+          "head_sha": "a059f34709f901c4128e46813dc5152587fc2820",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41592521102",
+          "run_attempt": 1,
+          "created_at": "2026-11-03T06:51:22Z",
+          "updated_at": "2026-11-03T07:05:48Z",
+          "testJobs": [
+            {
+              "id": 125772309829,
+              "name": "test (macos-26)",
+              "conclusion": "success",
+              "successfulSteps": [
+                "Set up job",
+                "Run actions/checkout@v7.0.1",
+                "Install Node.js with the version in mise.toml",
+                "Verify Node and its bundled npm",
+                "npm ci",
+                "Verify Electron and embedded Node",
+                "npm run lint:ng",
+                "npm run lint:script",
+                "npm run test:unit:ng",
+                "npm run test:unit:em:main",
+                "npm run test:unit:em:renderer",
+                "npm run test:live-reload",
+                "npm run test:package",
+                "npm run test:e2e",
+                "Post Install Node.js with the version in mise.toml",
+                "Post Run actions/checkout@v7.0.1",
+                "Complete job"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 41592514133,
+          "name": "CI on Ubuntu",
+          "event": "push",
+          "head_sha": "a059f34709f901c4128e46813dc5152587fc2820",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41592514133",
+          "run_attempt": 1,
+          "created_at": "2026-11-03T06:51:18Z",
+          "updated_at": "2026-11-03T06:57:08Z",
+          "testJobs": [
+            {
+              "id": 125772304629,
+              "name": "test (ubuntu-24.04)",
+              "conclusion": "success",
+              "successfulSteps": [
+                "Set up job",
+                "Run actions/checkout@v7.0.1",
+                "Install Node.js with the version in mise.toml",
+                "Verify Node and its bundled npm",
+                "npm ci",
+                "Verify Electron and embedded Node",
+                "npm run lint:ng",
+                "npm run lint:script",
+                "npm run test:unit:ng",
+                "npm run test:unit:em:main",
+                "npm run test:unit:em:renderer",
+                "npm run test:live-reload",
+                "Install FUSE (Required to launch AppImage during \"npm run test:package\")",
+                "npm run test:package",
+                "Locate packaged AppImage for E2E",
+                "npm run test:e2e",
+                "Post Install Node.js with the version in mise.toml",
+                "Post Run actions/checkout@v7.0.1",
+                "Complete job"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 41592514113,
+          "name": "CI on macOS",
+          "event": "push",
+          "head_sha": "a059f34709f901c4128e46813dc5152587fc2820",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41592514113",
+          "run_attempt": 1,
+          "created_at": "2026-11-03T06:51:18Z",
+          "updated_at": "2026-11-03T07:05:27Z",
+          "testJobs": [
+            {
+              "id": 125772295412,
+              "name": "test (macos-26)",
+              "conclusion": "success",
+              "successfulSteps": [
+                "Set up job",
+                "Run actions/checkout@v7.0.1",
+                "Install Node.js with the version in mise.toml",
+                "Verify Node and its bundled npm",
+                "npm ci",
+                "Verify Electron and embedded Node",
+                "npm run lint:ng",
+                "npm run lint:script",
+                "npm run test:unit:ng",
+                "npm run test:unit:em:main",
+                "npm run test:unit:em:renderer",
+                "npm run test:live-reload",
+                "npm run test:package",
+                "npm run test:e2e",
+                "Post Install Node.js with the version in mise.toml",
+                "Post Run actions/checkout@v7.0.1",
+                "Complete job"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 41592514155,
+          "name": "CI on Windows",
+          "event": "push",
+          "head_sha": "a059f34709f901c4128e46813dc5152587fc2820",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41592514155",
+          "run_attempt": 1,
+          "created_at": "2026-11-03T06:51:18Z",
+          "updated_at": "2026-11-03T07:06:21Z",
+          "testJobs": [
+            {
+              "id": 125772302047,
+              "name": "test (windows-latest)",
+              "conclusion": "success",
+              "successfulSteps": [
+                "Set up job",
+                "Run actions/checkout@v7.0.1",
+                "Install Node.js with the version in mise.toml",
+                "Verify Node and its bundled npm",
+                "npm ci",
+                "Verify Electron and embedded Node",
+                "npm run lint:ng",
+                "npm run lint:script",
+                "npm run test:unit:ng",
+                "npm run test:unit:em:main",
+                "npm run test:unit:em:renderer",
+                "npm run test:live-reload",
+                "npm run test:package",
+                "npm run test:e2e",
+                "[Publish to GitHub Releases] Clean-up by \"git clean -fdx\" (1st time)",
+                "[Publish to GitHub Releases] Clean-up by \"git clean -fdx\" (2nd time to be sure)",
+                "[Publish to GitHub Releases] npm ci",
+                "[Publish to GitHub Releases] Create and publish Windows package",
+                "Post Install Node.js with the version in mise.toml",
+                "Post Run actions/checkout@v7.0.1",
+                "Complete job"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "applicationCommit": "f7afae2c43660058fd8c9cb51f3d432299382e98",
+      "workflowRuns": 7,
+      "actualSuccessfulTestJobs": 8,
+      "nativeIntelAtSameSource": true,
+      "runs": [
+        {
+          "id": 41597283734,
+          "name": "CI on macOS",
+          "event": "push",
+          "head_sha": "f7afae2c43660058fd8c9cb51f3d432299382e98",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41597283734",
+          "run_attempt": 1,
+          "created_at": "2026-11-03T07:35:06Z",
+          "updated_at": "2026-11-03T07:48:11Z",
+          "testJobs": [
+            {
+              "id": 125787550211,
+              "name": "test (macos-26)",
+              "conclusion": "success",
+              "successfulSteps": [
+                "Set up job",
+                "Run actions/checkout@v7.0.1",
+                "Install Node.js with the version in mise.toml",
+                "Verify Node and its bundled npm",
+                "npm ci",
+                "Verify Electron and embedded Node",
+                "npm run lint:ng",
+                "npm run lint:script",
+                "npm run test:unit:ng",
+                "npm run test:unit:em:main",
+                "npm run test:unit:em:renderer",
+                "npm run test:live-reload",
+                "npm run test:package",
+                "npm run test:e2e",
+                "Post Install Node.js with the version in mise.toml",
+                "Post Run actions/checkout@v7.0.1",
+                "Complete job"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 41597283667,
+          "name": "CI on Windows",
+          "event": "push",
+          "head_sha": "f7afae2c43660058fd8c9cb51f3d432299382e98",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41597283667",
+          "run_attempt": 1,
+          "created_at": "2026-11-03T07:35:06Z",
+          "updated_at": "2026-11-03T07:48:24Z",
+          "testJobs": [
+            {
+              "id": 125787537837,
+              "name": "test (windows-latest)",
+              "conclusion": "success",
+              "successfulSteps": [
+                "Set up job",
+                "Run actions/checkout@v7.0.1",
+                "Install Node.js with the version in mise.toml",
+                "Verify Node and its bundled npm",
+                "npm ci",
+                "Verify Electron and embedded Node",
+                "npm run lint:ng",
+                "npm run lint:script",
+                "npm run test:unit:ng",
+                "npm run test:unit:em:main",
+                "npm run test:unit:em:renderer",
+                "npm run test:live-reload",
+                "npm run test:package",
+                "npm run test:e2e",
+                "[Publish to GitHub Releases] Clean-up by \"git clean -fdx\" (1st time)",
+                "[Publish to GitHub Releases] Clean-up by \"git clean -fdx\" (2nd time to be sure)",
+                "[Publish to GitHub Releases] npm ci",
+                "[Publish to GitHub Releases] Create and publish Windows package",
+                "Post Install Node.js with the version in mise.toml",
+                "Post Run actions/checkout@v7.0.1",
+                "Complete job"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 41597283737,
+          "name": "CI on Ubuntu",
+          "event": "push",
+          "head_sha": "f7afae2c43660058fd8c9cb51f3d432299382e98",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41597283737",
+          "run_attempt": 1,
+          "created_at": "2026-11-03T07:35:06Z",
+          "updated_at": "2026-11-03T07:41:31Z",
+          "testJobs": [
+            {
+              "id": 125787551395,
+              "name": "test (ubuntu-24.04)",
+              "conclusion": "success",
+              "successfulSteps": [
+                "Set up job",
+                "Run actions/checkout@v7.0.1",
+                "Install Node.js with the version in mise.toml",
+                "Verify Node and its bundled npm",
+                "npm ci",
+                "Verify Electron and embedded Node",
+                "npm run lint:ng",
+                "npm run lint:script",
+                "npm run test:unit:ng",
+                "npm run test:unit:em:main",
+                "npm run test:unit:em:renderer",
+                "npm run test:live-reload",
+                "Install FUSE (Required to launch AppImage during \"npm run test:package\")",
+                "npm run test:package",
+                "Locate packaged AppImage for E2E",
+                "npm run test:e2e",
+                "Post Install Node.js with the version in mise.toml",
+                "Post Run actions/checkout@v7.0.1",
+                "Complete job"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 41597291988,
+          "name": "CI on macOS",
+          "event": "pull_request",
+          "head_sha": "f7afae2c43660058fd8c9cb51f3d432299382e98",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41597291988",
+          "run_attempt": 1,
+          "created_at": "2026-11-03T07:35:10Z",
+          "updated_at": "2026-11-03T07:47:27Z",
+          "testJobs": [
+            {
+              "id": 125787569196,
+              "name": "test (macos-26)",
+              "conclusion": "success",
+              "successfulSteps": [
+                "Set up job",
+                "Run actions/checkout@v7.0.1",
+                "Install Node.js with the version in mise.toml",
+                "Verify Node and its bundled npm",
+                "npm ci",
+                "Verify Electron and embedded Node",
+                "npm run lint:ng",
+                "npm run lint:script",
+                "npm run test:unit:ng",
+                "npm run test:unit:em:main",
+                "npm run test:unit:em:renderer",
+                "npm run test:live-reload",
+                "npm run test:package",
+                "npm run test:e2e",
+                "Post Install Node.js with the version in mise.toml",
+                "Post Run actions/checkout@v7.0.1",
+                "Complete job"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 41597291980,
+          "name": "CI on Windows",
+          "event": "pull_request",
+          "head_sha": "f7afae2c43660058fd8c9cb51f3d432299382e98",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41597291980",
+          "run_attempt": 1,
+          "created_at": "2026-11-03T07:35:10Z",
+          "updated_at": "2026-11-03T07:46:54Z",
+          "testJobs": [
+            {
+              "id": 125787580002,
+              "name": "test (windows-latest)",
+              "conclusion": "success",
+              "successfulSteps": [
+                "Set up job",
+                "Run actions/checkout@v7.0.1",
+                "Install Node.js with the version in mise.toml",
+                "Verify Node and its bundled npm",
+                "npm ci",
+                "Verify Electron and embedded Node",
+                "npm run lint:ng",
+                "npm run lint:script",
+                "npm run test:unit:ng",
+                "npm run test:unit:em:main",
+                "npm run test:unit:em:renderer",
+                "npm run test:live-reload",
+                "npm run test:package",
+                "npm run test:e2e",
+                "[Publish to GitHub Releases] Clean-up by \"git clean -fdx\" (1st time)",
+                "[Publish to GitHub Releases] Clean-up by \"git clean -fdx\" (2nd time to be sure)",
+                "[Publish to GitHub Releases] npm ci",
+                "[Publish to GitHub Releases] Create and publish Windows package",
+                "Post Install Node.js with the version in mise.toml",
+                "Post Run actions/checkout@v7.0.1",
+                "Complete job"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 41597291973,
+          "name": "CI on Ubuntu",
+          "event": "pull_request",
+          "head_sha": "f7afae2c43660058fd8c9cb51f3d432299382e98",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41597291973",
+          "run_attempt": 1,
+          "created_at": "2026-11-03T07:35:10Z",
+          "updated_at": "2026-11-03T07:41:38Z",
+          "testJobs": [
+            {
+              "id": 125787574122,
+              "name": "test (ubuntu-24.04)",
+              "conclusion": "success",
+              "successfulSteps": [
+                "Set up job",
+                "Run actions/checkout@v7.0.1",
+                "Install Node.js with the version in mise.toml",
+                "Verify Node and its bundled npm",
+                "npm ci",
+                "Verify Electron and embedded Node",
+                "npm run lint:ng",
+                "npm run lint:script",
+                "npm run test:unit:ng",
+                "npm run test:unit:em:main",
+                "npm run test:unit:em:renderer",
+                "npm run test:live-reload",
+                "Install FUSE (Required to launch AppImage during \"npm run test:package\")",
+                "npm run test:package",
+                "Locate packaged AppImage for E2E",
+                "npm run test:e2e",
+                "Post Install Node.js with the version in mise.toml",
+                "Post Run actions/checkout@v7.0.1",
+                "Complete job"
+              ]
+            }
+          ]
+        },
+        {
+          "id": 41597381925,
+          "name": "CI on macOS",
+          "event": "workflow_dispatch",
+          "head_sha": "f7afae2c43660058fd8c9cb51f3d432299382e98",
+          "status": "completed",
+          "conclusion": "success",
+          "html_url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41597381925",
+          "run_attempt": 1,
+          "created_at": "2026-11-03T07:35:56Z",
+          "updated_at": "2026-11-03T07:52:29Z",
+          "testJobs": [
+            {
+              "id": 125787800890,
+              "name": "test (macos-26-intel)",
+              "conclusion": "success",
+              "successfulSteps": [
+                "Set up job",
+                "Run actions/checkout@v7.0.1",
+                "Install Node.js with the version in mise.toml",
+                "Verify Node and its bundled npm",
+                "npm ci",
+                "Verify Electron and embedded Node",
+                "npm run lint:ng",
+                "npm run lint:script",
+                "npm run test:unit:ng",
+                "npm run test:unit:em:main",
+                "npm run test:unit:em:renderer",
+                "npm run test:live-reload",
+                "npm run test:package",
+                "npm run test:e2e",
+                "Post Install Node.js with the version in mise.toml",
+                "Post Run actions/checkout@v7.0.1",
+                "Complete job"
+              ]
+            },
+            {
+              "id": 125787863247,
+              "name": "test (macos-26)",
+              "conclusion": "success",
+              "successfulSteps": [
+                "Set up job",
+                "Run actions/checkout@v7.0.1",
+                "Install Node.js with the version in mise.toml",
+                "Verify Node and its bundled npm",
+                "npm ci",
+                "Verify Electron and embedded Node",
+                "npm run lint:ng",
+                "npm run lint:script",
+                "npm run test:unit:ng",
+                "npm run test:unit:em:main",
+                "npm run test:unit:em:renderer",
+                "npm run test:live-reload",
+                "npm run test:package",
+                "npm run test:e2e",
+                "Post Install Node.js with the version in mise.toml",
+                "Post Run actions/checkout@v7.0.1",
+                "Complete job"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

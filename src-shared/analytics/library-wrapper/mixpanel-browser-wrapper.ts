@@ -22,11 +22,7 @@ export class MixpanelBrowserWrapper {
     const module = require('mixpanel-browser');
     this.mixpanel = module.default ?? module;
 
-    this.mixpanel.init(projectToken, {
-      autocapture: false,
-      track_pageview: false,
-      record_sessions_percent: 0,
-    });
+    this.mixpanel.init(projectToken);
     this.mixpanel.identify(distinctId);
     this.isInitialized = true;
   }

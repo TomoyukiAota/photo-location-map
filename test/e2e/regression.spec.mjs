@@ -25,6 +25,8 @@ async function launch({ resize = true } = {}) {
   // A publicly launched package has no npm development-profile override.
   if (packagedExecutable) delete env.npm_package_config_devOrProd;
   const openArgs = [
+    // Exercise the NSIS post-update argv on the actual installed Windows app.
+    ...(packagedExecutable && process.platform === 'win32' ? ['--updated'] : []),
     ...(liveReload ? ['--live-reload'] : []),
     ...(process.env.PLM_E2E_OPEN ? ['--open', process.env.PLM_E2E_OPEN] : []),
   ];
@@ -38,6 +40,7 @@ async function launch({ resize = true } = {}) {
     const appRoot = app.getAppPath();
     return { packaged: app.isPackaged, appRoot, resources: process.resourcesPath, executable: process.execPath,
       appImage: process.env.APPIMAGE, version: app.getVersion(), versions: process.versions,
+      updated: process.argv.includes('--updated'),
       arch: process.arch, translated: app.runningUnderARM64Translation,
       paths: ['appData', 'userData', 'sessionData'].map(name => app.getPath(name)),
       prod: require(path.join(appRoot, 'src-shared/dev-or-prod/dev-or-prod.js')).DevOrProd.isProd,
@@ -48,6 +51,7 @@ async function launch({ resize = true } = {}) {
   expect(runtime.arch).toBe(expectedArch);
   for (const directory of runtime.paths) expect((await realpath(directory)).startsWith((await realpath(profile)) + path.sep)).toBe(true);
   if (packagedExecutable) {
+    if (process.platform === 'win32') expect(runtime.updated).toBe(true);
     expect(runtime.packaged).toBe(true);
     expect(runtime.prod).toBe(true);
     expect(runtime.version).toBe(manifest.version);
@@ -138,7 +142,7 @@ async function settings() {
 }
 test.beforeEach(async () => {
   if (packagedExecutable) test.setTimeout(120000);
-  if (test.info().config.updateSnapshots !== 'none') {
+  if (process.env.PLM_REQUIRE_ORIGINAL_STACK === '1' && test.info().config.updateSnapshots !== 'none') {
     expect(require('../../node_modules/@angular/core/package.json').version).toBe('18.2.4');
     expect(require('../../node_modules/electron/package.json').version).toBe('32.0.2');
   }
@@ -160,7 +164,7 @@ test.afterEach(async () => {
       child.kill('SIGKILL');
       await stopped;
     }
-    await rm(profile, { recursive: true, force: true });
+    if (profile) await rm(profile, { recursive: true, force: true });
   }
 });
 test('welcome, about and every available settings tab keep their appearance', async () => {
@@ -465,7 +469,7 @@ test('window bounds survive restart and the Windows fullscreen menu stays visibl
   const restored = await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].getBounds());
   expect(restored).toEqual(saved);
 });
-test('analytics preserves explicit events and identity while allowing Amplitude defaults', async () => {
+test('analytics preserves events and identity without new Amplitude local URLs', async () => {
   await dismissWelcome();
   if (process.env.PLM_ANALYTICS_NEGATIVE_CONTROL === '1') {
     await page.evaluate(async () => {
@@ -484,6 +488,16 @@ test('analytics preserves explicit events and identity while allowing Amplitude 
     Analytics.trackEvent('Compatibility', 'Dependency Upgrade Check', 'fixed label', 17);
     return AnalyticsConfig.userId;
   });
+  if (process.env.PLM_ANALYTICS_URL_NEGATIVE_CONTROL) {
+    await page.evaluate(async ({ userId, enrichmentOnly }) => {
+      const sdk = window.require('@amplitude/analytics-browser').createInstance();
+      await sdk.init('00000000000000000000000000000000', userId, {
+        deviceId: userId, fetchRemoteConfig: false, enableDiagnostics: false,
+        ...(enrichmentOnly ? { autocapture: { pageViews: false } } : {}),
+      }).promise;
+      sdk.flush();
+    }, { userId, enrichmentOnly: process.env.PLM_ANALYTICS_URL_NEGATIVE_CONTROL === 'enrichment' });
+  }
   await settings();
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
   for (const service of ['amplitude', 'mixpanel']) {
@@ -495,11 +509,19 @@ test('analytics preserves explicit events and identity while allowing Amplitude 
   }
   await expect.poll(() => app.evaluate(() => globalThis.__plmAnalyticsEvents
     .filter(event => event.service === 'amplitude').map(event => event.action)), { timeout: 20000 })
-    .toEqual(expect.arrayContaining(['[Amplitude] Page Viewed', 'session_start']));
+    .toContain('session_start');
   const events = await app.evaluate(() => globalThis.__plmAnalyticsEvents);
+  expect(await app.evaluate(() => globalThis.__plmAnalyticsParseErrors)).toBe(0);
   const amplitudeEvents = events.filter(event => event.service === 'amplitude');
   for (const event of amplitudeEvents)
     expect({ userId: event.userId, deviceId: event.deviceId }).toEqual({ userId, deviceId: userId });
+  expect(amplitudeEvents.filter(event => event.action === '[Amplitude] Page Viewed')).toEqual([]);
+  const urlChecks = await app.evaluate(() => globalThis.__plmAmplitudeUrlProperties);
+  expect(urlChecks.length).toBeGreaterThan(0);
+  for (const event of urlChecks) {
+    expect(event.keys).toEqual([]);
+    expect(event.hasLocalFileUrl).toBe(false);
+  }
   expect(amplitudeEvents.filter(event => /^\[Amplitude\] Element (Clicked|Changed)$/.test(event.action))).toEqual([]);
   expect(events.filter(event => event.service === 'mixpanel' && /^\$mp_/.test(event.action))).toEqual([]);
 });

@@ -20,6 +20,9 @@ out-of-diff or nitpick findings.
 All six findings were verified, implemented in a059f34 and replied to with
 concrete validation. All seven workflow runs/eight actual test jobs pass at that
 source, including native Intel. CodeRabbit explicitly resolved all six threads.
+The separate [review CI checkpoint](./evidence/REVIEW_HISTORICAL_CI.json)
+records the actual a059f34 and f7afae2 runs and job identities. The older
+HEIC_CI_CHECKPOINT.json remains evidence only for source 79d547f.
 Later findings/preferences below require a new final artifact checkpoint.
 
 | Comment | Change | Local verification |
@@ -102,3 +105,55 @@ visual/functional cases now pass. Original snapshots/tolerances and dependency
 versions/lockfile are unchanged; the manifest change only reorders scripts.
 The second source checkpoint will be pushed for incremental review, full
 platform CI and rebuilt signed artifacts before closing this cycle.
+
+## Subsequent owner review (2026-11-03)
+
+The preceding additive-default description records the earlier preference.
+The owner subsequently excluded the newly introduced Amplitude local-URL
+behavior after its privacy implications were identified. Published 1.6.7 source
+installs Context, IdentityEventSender and Destination; it installs neither page
+views nor page URL enrichment. Installed 2.49.0 enables both when unset.
+Disable only `autocapture.pageViews` and `autocapture.pageUrlEnrichment`, without
+adding a replacement page-view event. Preserve other ordinary defaults and the
+existing manual events/identity. The real-SDK regression now examines captured
+payloads for the URL-bearing property keys and file URLs, as well as requiring
+session_start and unchanged manual fields. A separate opt-in negative control
+initializes an unprotected SDK instance to prove the URL regression is detected.
+Sources: [Amplitude configuration](https://amplitude.com/docs/sdks/analytics/browser/browser-sdk-2/instrument-and-configure),
+published [1.6.7 package](https://registry.npmjs.org/@amplitude/analytics-browser/-/analytics-browser-1.6.7.tgz)
+and [2.49.0 package](https://registry.npmjs.org/@amplitude/analytics-browser/-/analytics-browser-2.49.0.tgz).
+
+| Comment | Disposition / remaining gate |
+| --- | --- |
+| [4452060880](https://github.com/TomoyukiAota/photo-location-map/pull/630#discussion_r4452060880) | Added separate exact-source CI evidence for a059f34 and f7afae2; retain the earlier HEIC evidence as historical. |
+| [4452060887](https://github.com/TomoyukiAota/photo-location-map/pull/630#discussion_r4452060887), owner 4452354099 | Remove the newly introduced automatic page views and page URL enrichment; no replacement page-view event. Real-SDK positive check passes; independent page-view and enrichment-only negative controls fail as intended. Manual fields/IDs and session_start pass; intercepted payload parse errors are zero. |
+| [4452093473](https://github.com/TomoyukiAota/photo-location-map/pull/630#discussion_r4452093473) | Omit the three redundant Mixpanel options as requested. Installed 2.84 defaults remain autocapture=false, track_pageview=false and record_sessions_percent=0; existing explicit-event regression still applies. |
+| [4452279175](https://github.com/TomoyukiAota/photo-location-map/pull/630#discussion_r4452279175) | Prepare the stable literal test (ubuntu) job name and matching Mergify conditions. The owner will replace the protected context after the new check succeeds and readiness is reported in the Codex chat. Do not modify remote protection settings. |
+| [4452321488](https://github.com/TomoyukiAota/photo-location-map/pull/630#discussion_r4452321488) | Configure VS Code HTML preserve-aligned. Actual vscode-html-languageservice 5.6.2 restores deliberately misindented continuation attributes to the original column 17; aligned-multiple repacks lines. Document opening-tag Format Selection because whole-document formatting changes Angular block indentation. No template, forced formatter or format-on-save change. |
+| [4453834855](https://github.com/TomoyukiAota/photo-location-map/pull/630#discussion_r4453834855) | Accept the specific hidden NSIS --updated option; keep unrelated unknown options rejected. Five real-parser checks and an actual --updated/--open launch pass; unrelated unknown options and hidden help are checked. Installed Windows E2E now supplies and asserts --updated. |
+| [4453835285](https://github.com/TomoyukiAota/photo-location-map/pull/630#discussion_r4453835285) | Ignore hidden/node_modules components only below the watched directory; hidden ancestors must not disable live reload. Five actual lifecycle cases pass, including hidden checkout ancestors, ignored descendants and fresh sibling-module values. |
+| [4453835453](https://github.com/TomoyukiAota/photo-location-map/pull/630#discussion_r4453835453) | Make the original-stack snapshot guard explicitly opt-in for the migration, allowing intentional future UI changes to update references. Do not update references in this PR. |
+| [4453835632](https://github.com/TomoyukiAota/photo-location-map/pull/630#discussion_r4453835632) | Clean up only the package runner's own newly created temporary profile after it settles; never remove a caller-supplied profile. Five durable success/failure/ownership/cleanup-error checks pass and run before every CI package test. |
+
+The owner explicitly accepted the older-macOS auto-update risk in
+[4454038799](https://github.com/TomoyukiAota/photo-location-map/pull/630#discussion_r4454038799).
+Keep minimumSystemVersion at 13.0 without an auto-update guard. This resolves
+that compatibility decision; it does not authorize application publication.
+
+The f7afae2 source passes all seven CI runs/eight actual jobs, including native
+Intel. Its signed/notarized bundle and 14 packaged cases pass; native fixture
+upgrade/relaunch/downgrade/settings also pass, followed by exact native cleanup
+and unchanged production fingerprint/signature. These dated results do not
+transfer to the new production changes above. New source requires fresh affected
+gates before reporting final readiness.
+
+Third-batch local validation passes: production build/lint, 209 unit assertions
+(57 Angular, 97 main, 55 renderer), five separate package-runner cases, five
+real watcher lifecycle cases, all 15 checkout visual/functional cases, and the
+final focused analytics check after asserting zero payload-parse errors. The
+page-view and enrichment-only negative controls each fail at their intended
+assertion. Default future snapshot updates succeed on a nonvisual case; the
+opt-in original-stack guard rejects updates before launch and permits comparison.
+All 15 original/approved reference files remain byte-identical. No dependency
+version or lockfile change is included in this batch. Platform/signed-artifact
+checks must still be repeated for the committed third source checkpoint.

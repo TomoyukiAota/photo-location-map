@@ -28,8 +28,8 @@ jobs:
 
   test:
     # The name is given here rather than by a matrix, so that the required check is reported even when the job is skipped.
-    # Keep the historical required-check name; the runner itself is Ubuntu 26.04 LTS.
-    name: test (ubuntu-24.04)
+    # Keep the required-check name stable when the Ubuntu runner version changes.
+    name: test (ubuntu)
     runs-on: ubuntu-26.04
 
     # Skipped when only documents changed, which passes the required check. If "changes" fails, the tests run.

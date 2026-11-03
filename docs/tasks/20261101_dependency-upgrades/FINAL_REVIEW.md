@@ -1,13 +1,20 @@
 # Final pre-publication review
 
-Updated: 2026-11-03 (Asia/Tokyo). Verification observations below were recorded
-on 2026-11-02 UTC; this review refresh does not represent new test executions.
+Updated: 2026-11-03 (Asia/Tokyo). The historical HEIC artifact observations below
+were recorded on 2026-11-02 UTC. Later review results are identified separately.
 
-**CodeRabbit follow-up is being verified.** The PR is ready for review, and eight
-findings plus the owner's additional preferences are addressed. Production-source fixes require
+**CodeRabbit follow-up is being verified.** The first eight findings and initial
+owner preferences are fixed in a059f34/f7afae2; both exact-source CI checkpoints
+are in [REVIEW_HISTORICAL_CI.json](./evidence/REVIEW_HISTORICAL_CI.json).
+Later owner followups and two bot findings require another batch. Production-source fixes require
 fresh distribution/platform verification; the source-79d547f artifact records
 below remain historical until that follow-up completes. See
 [CODERABBIT_REVIEW.md](./CODERABBIT_REVIEW.md) and STATUS for current progress.
+
+The owner accepted the older-macOS auto-update risk and retained minimum 13.0
+without a guard. The stable Ubuntu check rename is now requested: after the new
+`test (ubuntu)` check passes, the owner will replace the old protected context.
+Report that readiness in the Codex chat; no remote protection edit is delegated.
 
 **The approved HEIC follow-up and independent verification are complete.** The
 candidate uses `heic-decode` 2.1.0 with `libheif-js` 1.23.5 and the explicitly

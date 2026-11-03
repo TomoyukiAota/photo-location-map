@@ -18,7 +18,11 @@ This page contains useful information to contribute to this project.
 [ci-on-ubuntu-image]: https://github.com/TomoyukiAota/photo-location-map/workflows/CI%20on%20Ubuntu/badge.svg
 [ci-on-ubuntu-link]: https://github.com/TomoyukiAota/photo-location-map/actions?query=workflow%3A%22CI+on+Ubuntu%22
 
-Ubuntu CI uses Ubuntu 26.04 LTS; its historical `test (ubuntu-24.04)` required-check name is retained for branch-protection compatibility.
+Ubuntu CI uses Ubuntu 26.04 LTS and reports the stable `test (ubuntu)` check name.
+When this rename first reaches the pull request, the repository owner must replace
+the old `test (ubuntu-24.04)` required check with `test (ubuntu)` in branch protection,
+after confirming that the new check passes. The workflow and Mergify conditions
+change together; the remote branch-protection setting is a separate owner action.
 
 The macOS CI runs on Apple Silicon (`macos-26`). To run it on Intel (`macos-26-intel`), run the "CI on macOS" workflow manually: **Run workflow** in the Actions tab, or `gh workflow run ci-on-mac.yml --ref <branch>`. Do this before merging changes related to Intel Mac support, such as updating Electron and electron-builder.
 
@@ -67,6 +71,21 @@ checks that binary and the Node types used to compile for it.
 |`npm run package:windows`| Create an installer for Windows. |
 |`npm run package:mac`| Create signed/notarized universal macOS `.dmg` and update `.zip` artifacts. |
 |`npm run package:linux`| Create an application for Linux. |
+
+
+## HTML template formatting
+
+The workspace sets VS Code's built-in HTML formatter to
+[`preserve-aligned`](https://code.visualstudio.com/docs/languages/html#_formatting).
+It keeps existing attribute line breaks and realigns incorrectly indented
+continuation attributes with the first attribute. For a local alignment fix, select the opening tag and use
+**Format Selection** with the built-in HTML formatter. Other formatters may not
+use this HTML-specific setting.
+
+The built-in formatter does not preserve Angular `@if`/`@for` block indentation
+when formatting a whole document. The workspace therefore does not force a
+default formatter or enable format-on-save. Do not reformat the whole repository
+to make an attribute-alignment change.
 
 
 ## Using npm modules

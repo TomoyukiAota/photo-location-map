@@ -9,6 +9,7 @@ const { spawn } = require('node:child_process');
 function checkRelaunchBurst(helper) {
   const watcher = new EventEmitter();
   let closed = false, quits = 0, reloads = 0;
+  let watchRoot, ignored;
   const relaunches = [];
   watcher.close = async () => { closed = true; };
   const app = new EventEmitter();
@@ -25,13 +26,26 @@ function checkRelaunchBurst(helper) {
         { webContents: { reloadIgnoringCache: () => { reloads++; } } },
       ] } };
       if (name === 'path') return path;
-      if (name === 'chokidar6') return { watch: () => watcher };
+      if (name === 'chokidar6') return { watch: (directory, options) => {
+        watchRoot = directory;
+        ignored = options.ignored;
+        return watcher;
+      } };
       if (name === '../src-shared/log/logger') return { Logger: { error: error => { throw error; } } };
       throw new Error('Unexpected watcher dependency: ' + name);
     },
   });
-  const mainFile = path.resolve('watcher-burst/main.cjs');
+  const mainFile = path.resolve('watcher-burst/.hidden-checkout/source/main.cjs');
   exported.configureLiveReload(mainFile);
+  assert.equal(watchRoot, path.dirname(mainFile));
+  for (const candidate of [watchRoot, path.dirname(watchRoot), mainFile,
+    path.join(watchRoot, 'node_modules-not-ignored', 'module.js')]) {
+    assert.equal(ignored(candidate), false, 'Visible files and hidden checkout ancestors must remain watchable.');
+  }
+  for (const candidate of ['.hidden.js', '.cache/module.js', 'nested/.cache/module.js', 'node_modules/module.js',
+    'nested/node_modules/module.js']) {
+    assert.equal(ignored(path.join(watchRoot, candidate)), true, 'Hidden descendants and dependency folders must stay ignored.');
+  }
   for (const name of ['asset.txt', 'module.js', 'worker.cjs', 'module.mjs'])
     watcher.emit('change', path.join(path.dirname(mainFile), name));
   assert.equal(reloads, 1, 'Non-code changes must still reload the renderer.');
@@ -40,7 +54,7 @@ function checkRelaunchBurst(helper) {
   assert.deepEqual(relaunches[0].args, argv.slice(1));
   app.emit('will-quit');
   assert.equal(closed, true);
-  return { queuedRelaunches: relaunches.length, quitRequests: quits, watcherClosed: closed };
+  return { ignoredPathPredicatePassed: true, queuedRelaunches: relaunches.length, quitRequests: quits, watcherClosed: closed };
 }
 
 async function main() {
@@ -48,19 +62,23 @@ async function main() {
   assert.ok(fs.existsSync(helper), 'Build src-main before running the watcher lifecycle check.');
   const compilationBurst = checkRelaunchBurst(helper);
   const results = [];
-  for (const mode of ['quit', 'soft', 'relaunch', 'module-relaunch']) {
+  for (const mode of ['quit', 'soft', 'relaunch', 'module-relaunch', 'hidden-root']) {
     const root = fs.mkdtempSync(path.join(os.tmpdir(), 'plm-watch-check-'));
-    const source = path.join(root, 'source');
-    fs.mkdirSync(source);
+    const source = path.join(root, ...(mode === 'hidden-root' ? ['.hidden-checkout'] : []), 'source');
+    fs.mkdirSync(source, { recursive: true });
     for (const name of ['appData', 'userData', 'sessionData']) fs.mkdirSync(path.join(root, name));
     const entry = path.join(source, 'main.cjs');
     fs.writeFileSync(path.join(source, 'other.txt'), 'before');
     fs.writeFileSync(path.join(source, 'module.js'), 'module.exports = "before";\n');
+    for (const file of ['.hidden.js', '.cache/module.js', 'node_modules/dependency/module.js']) {
+      fs.mkdirSync(path.dirname(path.join(source, file)), { recursive: true });
+      fs.writeFileSync(path.join(source, file), '// before\n');
+    }
     fs.writeFileSync(entry, `
 const { app, BrowserWindow } = require('electron');
 app.disableHardwareAcceleration();
 const fs = require('node:fs'), path = require('node:path');
-const root = path.dirname(__dirname), mode = ${JSON.stringify(mode)};
+const root = ${JSON.stringify(root)}, mode = ${JSON.stringify(mode)};
 for (const name of ['appData','userData','sessionData']) app.setPath(name, path.join(root, name));
 const second = fs.existsSync(path.join(root, 'started'));
 fs.writeFileSync(path.join(root, 'started'), 'yes');
@@ -84,6 +102,12 @@ app.whenReady().then(async () => {
   if (mode === 'soft') fs.writeFileSync(path.join(__dirname, 'other.txt'), 'after');
   else if (mode === 'relaunch' && !second) fs.appendFileSync(__filename, '\\n// trigger restart\\n');
   else if (mode === 'module-relaunch' && !second) fs.writeFileSync(path.join(__dirname, 'module.js'), 'module.exports = "after";\\n');
+  else if (mode === 'hidden-root' && !second) {
+    for (const file of ['.hidden.js', '.cache/module.js', 'node_modules/dependency/module.js'])
+      fs.appendFileSync(path.join(__dirname, file), '// ignored change\\n');
+    await new Promise(resolve => setTimeout(resolve, 300));
+    fs.writeFileSync(path.join(__dirname, 'module.js'), 'module.exports = "after";\\n');
+  }
   else {
     if (second) fs.writeFileSync(path.join(root, 'arguments.json'), JSON.stringify({
       liveReload: process.argv.includes('--live-reload'), token: process.argv.includes('kept-value')
@@ -110,14 +134,14 @@ app.whenReady().then(async () => {
       assert.equal(exit.code, 0);
       assert.ok(fs.existsSync(path.join(root, 'first-quit')));
       if (mode === 'soft') assert.ok(fs.existsSync(path.join(root, 'soft-reloaded')));
-      if (mode === 'relaunch' || mode === 'module-relaunch') {
+      if (mode === 'relaunch' || mode === 'module-relaunch' || mode === 'hidden-root') {
         for (let attempt = 0; attempt < 100 && !fs.existsSync(path.join(root, 'second-quit')); attempt++) {
           await new Promise(resolve => setTimeout(resolve, 100));
         }
         assert.ok(fs.existsSync(path.join(root, 'second-quit')), 'The relaunched process must quit too.');
         secondPid = Number(fs.readFileSync(path.join(root, 'second.pid'), 'utf8'));
         assert.deepEqual(JSON.parse(fs.readFileSync(path.join(root, 'arguments.json'))), { liveReload: true, token: true });
-        if (mode === 'module-relaunch') {
+        if (mode === 'module-relaunch' || mode === 'hidden-root') {
           assert.equal(fs.readFileSync(path.join(root, 'module-first-value'), 'utf8'), 'before');
           assert.equal(fs.readFileSync(path.join(root, 'module-second-value'), 'utf8'), 'after',
             'The relaunched main process must observe the changed module instead of its cached value.');
@@ -135,7 +159,7 @@ app.whenReady().then(async () => {
         assert.equal(alive, false, 'The relaunched process must exit without forced termination.');
       }
       results.push({ mode, exit: exit.code, forcedTermination: false, quitHooksRan: true,
-        ...(mode === 'module-relaunch' ? { moduleValueAfterRelaunch: 'after' } : {}) });
+        ...(['module-relaunch', 'hidden-root'].includes(mode) ? { moduleValueAfterRelaunch: 'after' } : {}) });
     } finally {
       clearTimeout(timer);
       if (child.exitCode === null && child.signalCode === null) child.kill('SIGKILL');

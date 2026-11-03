@@ -11,8 +11,14 @@ export function configureLiveReload(mainFile: string): FSWatcher {
 
   // Loaded only in development; packaged applications do not need this tool.
   const { watch } = require('chokidar6') as typeof import('chokidar6');
-  watcher = watch(path.dirname(mainFile), {
-    ignored: /node_modules|[/\\]\./,
+  const watchRoot = path.dirname(path.resolve(mainFile));
+  watcher = watch(watchRoot, {
+    ignored: candidate => {
+      const relative = path.relative(watchRoot, candidate);
+      // Check descendants only: a checkout itself may have hidden ancestors.
+      if (!relative || relative === '..' || relative.startsWith('..' + path.sep) || path.isAbsolute(relative)) return false;
+      return relative.split(path.sep).some(segment => segment === 'node_modules' || segment.startsWith('.'));
+    },
     ignoreInitial: true,
   });
   watcher.on('error', error => Logger.error('Development file watcher failed.', error));

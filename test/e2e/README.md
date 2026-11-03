@@ -37,9 +37,12 @@ forwards `"$@"`. Set its absolute path as `PLM_E2E_LAUNCHER`, retain
 Rosetta translation. Verify bundle signatures before and afterward. This
 supplements the required native Intel CI run.
 
-Visual comparisons use the committed original references. Snapshot updates are
-rejected unless the original Angular 18.2.4 / Electron 32.0.2 pair is installed.
-Do not broaden tolerances or replace references with upgraded output.
+Visual comparisons use the committed original references. During this migration,
+set `PLM_REQUIRE_ORIGINAL_STACK=1` to reject `--update-snapshots` unless the
+original Angular 18.2.4 / Electron 32.0.2 pair is installed. Do not broaden
+tolerances or replace references with upgraded output. Future intentional UI
+changes can update references normally with Playwright's `--update-snapshots`
+option when the migration guard is unset.
 
 The visual references are macOS arm64 at a 1200x800 content size. Keep the same
 display scaling, locale and fonts. OpenStreetMap tiles can vary independently;

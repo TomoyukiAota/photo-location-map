@@ -35,6 +35,13 @@ if (testRoot) {
         const action = event.event_type ?? event.event;
         if (!action) continue;
         const properties = event.event_properties ?? event.properties ?? {};
+        if (service === 'amplitude') {
+          // Keep only the detection result, never a local path from the payload.
+          globalThis.__plmAmplitudeUrlProperties.push({ action,
+            keys: Object.keys(properties).filter(key => /^\[Amplitude\] (?:Previous )?Page (?:Domain|Location|Path|Title|URL|Type)$/.test(key)),
+            hasLocalFileUrl: /file:\/\//i.test(JSON.stringify(event)),
+          });
+        }
         // Cancelled requests retry with the same ingestion ID; count events once.
         const id = event.insert_id ?? properties.$insert_id;
         if (id && globalThis.__plmAnalyticsEventIds.has(`${service}:${id}`)) continue;
@@ -53,6 +60,7 @@ if (testRoot) {
   function interceptTestTraffic() {
     globalThis.__plmDownloads = [];
     globalThis.__plmAnalyticsEvents = [];
+    globalThis.__plmAmplitudeUrlProperties = [];
     globalThis.__plmAnalyticsEventIds = new Set();
     globalThis.__plmAnalyticsParseErrors = 0;
     session.defaultSession.on('will-download', (event, item) => {
