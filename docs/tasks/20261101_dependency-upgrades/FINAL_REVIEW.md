@@ -1,105 +1,102 @@
 # Final pre-publication review
 
-Updated: 2026-11-02 (Asia/Tokyo).
+Updated: 2026-11-03 (Asia/Tokyo). Verification observations below were recorded
+on 2026-11-02 UTC; this review refresh does not represent new test executions.
 
-**The approved HEIC follow-up is in progress.** On 2026-11-02 the owner approved
-adopting the newer decoder's pixel output and proceeding with the update and
-fresh verification. This did **not** authorize publication. The chooser policy
-still awaits acceptance; the owner's clarification question was not approval.
-The completed gates and artifacts below are historical pre-follow-up evidence,
-not verification of the newly selected decoder or publication-approved releases.
+**The approved HEIC follow-up and independent verification are complete.** The
+candidate uses `heic-decode` 2.1.0 with `libheif-js` 1.23.5 and the explicitly
+approved newer pixel output. The chooser policy still awaits acceptance; the
+owner's clarification question was not approval. Merge and publication remain
+unauthorized. The verified artifacts are review candidates.
 
 ## Candidate and scope
 
 | Item | Selected candidate |
 | --- | --- |
 | Application version | `1.12.2-alpha`; no release-version bump is included. |
-| Pre-follow-up verified application source | [`f1f0ee575f1890948a31d815f8d8bf85e464e4a7`](https://github.com/TomoyukiAota/photo-location-map/commit/f1f0ee575f1890948a31d815f8d8bf85e464e4a7), with the pixel-preserving decoder. |
-| Pre-follow-up code/test workflow head | [`f1f0ee575f1890948a31d815f8d8bf85e464e4a7`](https://github.com/TomoyukiAota/photo-location-map/commit/f1f0ee575f1890948a31d815f8d8bf85e464e4a7) |
-| Approved HEIC follow-up | Current manifest: `heic-decode` 2.1.0; resolved `libheif-js` 1.23.5; old parent-scoped pin removed. New verified source/artifact identities are pending. |
+| Verified application source | [`79d547fa884658be9266f03ae3d20ea05899b34a`](https://github.com/TomoyukiAota/photo-location-map/commit/79d547fa884658be9266f03ae3d20ea05899b34a) |
+| CI application head | `79d547fa884658be9266f03ae3d20ea05899b34a`; the [CI record](./evidence/HEIC_CI_CHECKPOINT.json) separately identifies each checked-out commit, including PR merge commits. |
+| Approved HEIC selection | `heic-decode` 2.1.0; resolved `libheif-js` 1.23.5; old parent-scoped pin removed. Actual packaged metadata and selected decoder payload bytes are verified. |
 | Review | [Draft PR #630](https://github.com/TomoyukiAota/photo-location-map/pull/630) |
 | Framework | Angular core 22.2.4; CLI/Material 22.2.5; TypeScript 6.0.3. |
 | Development runtime | Node 26.13.0 with its bundled npm 11.20.0, matching Photo Data Viewer. |
 | Application runtime | Electron 45.2.1, embedded Node 24.22.1 and Chromium 156.0.8078.75. |
 | Minimum macOS | 13, already accepted by the owner. |
 
-The recorded package inventory is in
+The complete package inventory is in
 [IMPLEMENTED_VERSIONS.json](./evidence/IMPLEMENTED_VERSIONS.json), with retained
-versions explained in [EXCEPTIONS.md](./EXCEPTIONS.md). The approved decoder
-change and its verification progress belong in
-[HEIC_APPROVED_UPDATE.md](./evidence/HEIC_APPROVED_UPDATE.md); refresh the final
-inventory and identities after that work passes. Each evidence record
-identifies its verified source/checkpoint; an earlier checkpoint must not be
-presented as proof of a later artifact. The workflow head and application source
-are recorded separately so CI-only changes do not obscure artifact provenance.
+versions explained in [EXCEPTIONS.md](./EXCEPTIONS.md). The approved decoder's
+source chain, references and security limits are in
+[HEIC_APPROVED_UPDATE.md](./evidence/HEIC_APPROVED_UPDATE.md). Each record
+identifies its verified source and artifact identity. Earlier `f1f0ee5` reports
+remain historical pre-follow-up evidence and do not verify this decoder.
+Later documentation heads must not be substituted for the recorded application
+source or checked-out CI commits.
 
 The work preserves the app's existing architecture, controls and interactions,
-with original screenshot references retained. It does **not** claim that every
-output or native-dialog detail is identical: the approved HEIC output change,
+with original screenshot references retained. The approved HEIC output change,
 pending chooser policy and time-zone corrections below remain material. The
 optional experimental Dev-only Google Maps check lacks a valid key.
 
 ## Verification gates
 
-The recorded passes below precede the approved HEIC update and describe only
-their exact sources. They do not establish that `heic-decode` 2.1.0 /
-`libheif-js` 1.23.5 passes these gates. Fresh affected verification and artifacts
-remain required. The native Intel record is additionally an earlier checkpoint.
+All completed follow-up gates below use application source `79d547f`. Seven
+workflows and eight actual platform test jobs pass without failures or reruns.
+The CI record distinguishes branch heads from checked-out PR merge commits.
 
-| Gate | Recorded status | Evidence and limit |
+| Gate | Status | Evidence and limit |
 | --- | --- | --- |
-| Approved HEIC follow-up | **IN PROGRESS — fresh passes not yet recorded here** | [Approved update record](./evidence/HEIC_APPROVED_UPDATE.md); continue implementation, regression and distribution verification. |
-| Dependency/framework local checkpoint | **PASS at its recorded checkpoint** | [LOCAL_FINAL_CHECKPOINT.json](./evidence/LOCAL_FINAL_CHECKPOINT.json): clean installation, valid graph, build/lint, 194 unit assertions, 15 visual/functional cases and watcher/development checks. It identifies its own application commit. |
-| Final universal Mac build and real notarization | **PASS for f1f0ee5** | Deep strict codesign, stapler and Gatekeeper pass; [artifact identity/checksums](./evidence/FINAL_MAC_CHECKPOINT.json). Both [extracted distributions](./evidence/FINAL_DISTRIBUTION_BUNDLES.json) match all 4,754 source-bundle files and symlinks and retain valid signatures/tickets. |
-| Actual final packaged Mac app | **PASS for f1f0ee5** | 14 visual/functional cases pass; the website-only case is skipped. Packaged/Prod mode, executable/resources, dependencies, runtime and isolated profile are verified in the [Mac checkpoint](./evidence/FINAL_MAC_CHECKPOINT.json). |
-| Final signed ZIP updater transport | **PASS for f1f0ee5** | [Final ZIP report](./evidence/FINAL_ZIP_TRANSPORT_CHECKPOINT.json): download/cache/checksum handling; see the [harness limits](../../../test/updater/README.md). |
-| Final DMG launch, smoke and cleanup | **PASS for f1f0ee5** | Main/renderer log through 60 seconds, followed by normal quit and detach; [report](./evidence/FINAL_MAC_CHECKPOINT.json). |
-| Isolated native updater fixture | **PASS for f1f0ee5 candidate runtime** | [Actual signed native install/relaunch/rollback and settings](./evidence/NATIVE_UPDATE_FIXTURE_CHECKPOINT.json). Separate test identity and 99.0.1/99.0.2 versions; production bundle unchanged. Exact native caches/jobs/preferences cleaned. |
-| Windows installed NSIS application | **PASS at f1f0ee5** | [CI](./evidence/FINAL_WINDOWS_CI.json): both triggers pass 194 units, install smoke and 14 E2E cases. Actual push draft upload and [downloaded bytes](./evidence/FINAL_WINDOWS_DRAFT_BYTES.json) are verified. |
-| Ubuntu created AppImage | **PASS at f1f0ee5** | [Both CI runs](./evidence/FINAL_UBUNTU_CI.json) pass 194 units, AppImage smoke and 14 packaged E2E cases. Required-check name remains test (ubuntu-24.04); runner is 26.04. |
-| macOS arm64 created universal app | **PASS at f1f0ee5** | [Push and PR](./evidence/FINAL_MAC_CI.json) pass 194 units, universal smoke and 14 actual packaged cases. |
-| Native macOS Intel created universal app | **PASS at 872699e** | [Explicit native Intel run](./evidence/FINAL_MAC_CI.json) passes the same gates. The only later app-source change is guarded to win32; no exact-f1 Intel execution is claimed. Local Rosetta is unavailable. |
+| Clean installation, runtime and local regression | **PASS** | [HEIC_MAC_CHECKPOINT.json](./evidence/HEIC_MAC_CHECKPOINT.json): complete graph, host/bundled-npm and Electron runtime checks, production build, lint, 194 unit tests and 15 checkout visual/functional cases. Original snapshots/tolerances remain unchanged. |
+| Final universal Mac build and real notarization | **PASS** | [Mac identity and artifacts](./evidence/HEIC_MAC_CHECKPOINT.json): strict deep codesign, staple and Gatekeeper; original icon, macOS 13 minimum and both executable/framework architectures. Both extracted distributions match all 4,754 regular files plus symlink/directory entries of the signed bundle. Metadata and every ZIP/DMG blockmap chunk match. |
+| Actual final packaged Mac app | **PASS** | 14 local visual/functional cases pass; the website-only case is skipped. Actual decoder 2.1.0/1.23.5, exact approved 300x400 pixel hash, corrupt-input behavior and embedded HEIC paths pass in the [Mac checkpoint](./evidence/HEIC_MAC_CHECKPOINT.json). |
+| Final signed ZIP updater transport | **PASS** | [Mac checkpoint](./evidence/HEIC_MAC_CHECKPOINT.json): actual final ZIP download/cache/checksum handling; native setup is intercepted in this transport test. See the [harness limits](../../../test/updater/README.md). |
+| Final DMG launch, smoke and cleanup | **PASS** | [Mac checkpoint](./evidence/HEIC_MAC_CHECKPOINT.json): mounted-DMG direct launch with a test-owned profile, main/renderer logs within the 60-second launch observation window, quit and detach. The app reports a 55-second session; this is not 60 seconds after readiness. |
+| Isolated native updater fixture | **PASS** | [Mac checkpoint](./evidence/HEIC_MAC_CHECKPOINT.json): actual signed native install/relaunch/explicit downgrade rollback and settings through four starts. Separate test identity and candidate-runtime versions 99.0.1/99.0.2; this is not a public old-release or final-production-ZIP native installation. Exact caches/jobs/preferences are cleaned; the production bundle signature/fingerprint remains unchanged. |
+| Windows installed NSIS application | **PASS** | [Both CI triggers](./evidence/HEIC_CI_CHECKPOINT.json): 194 units, install smoke and 14 packaged E2E cases per job. Actual push draft upload and [downloaded bytes](./evidence/HEIC_WINDOWS_DRAFT_BYTES.json) verified; PR-context uploading is skipped as intended. |
+| Ubuntu created AppImage | **PASS** | [Both CI triggers](./evidence/HEIC_CI_CHECKPOINT.json): 194 units, AppImage smoke and 14 packaged E2E cases per job. Required-check name remains test (ubuntu-24.04); runner is 26.04. |
+| macOS arm64 created universal app | **PASS** | [Push, PR and manual jobs](./evidence/HEIC_CI_CHECKPOINT.json): 194 units, universal smoke and 14 packaged E2E cases per job. |
+| Native macOS Intel created universal app | **PASS** | [Manual run 41446524256, job 125280892676](./evidence/HEIC_CI_CHECKPOINT.json): same application head, 194 units, universal smoke and 14 packaged E2E cases. Native x64 runner/architecture assertions pass; local Rosetta is unavailable. |
 | Experimental Dev-only Google Maps with a valid key | **OPTIONAL ADDITIONAL DEVELOPER COVERAGE — key unavailable** | Hidden in packaged Prod mode; see the owner-dependent item below. |
-| Production public-feed upgrade and post-release downloads | **NOT RUN — publication not authorized** | Perform the controlled post-publication checks after authorization; isolated transport/native fixtures do not prove this gate. |
+| Production public-feed upgrade and post-release downloads | **NOT RUN — publication not authorized** | Perform controlled post-publication checks after authorization; isolated transport/native fixtures do not prove this gate. |
 
-CI targets actual created/installed applications, while checkout/development
-verification is recorded separately. Cross-OS CI does not compare macOS pixel
-references. Local signed/notarized verification is separate from CI package tests
-that deliberately skip notarization. Consult [STATUS.md](./STATUS.md) and the
+CI tests actual created/installed applications. Its packaged runs are functional
+checks with `PLM_VISUAL` disabled; they do not compare macOS pixel references.
+The local signed/notarized Mac app has separate visual verification. Mac CI
+package tests deliberately skip notarization. Passing decoder assertions do not
+establish absence of security defects. Consult [STATUS.md](./STATUS.md) and the
 [PR checks](https://github.com/TomoyukiAota/photo-location-map/pull/630/checks)
-for progress; do not infer success from a running or superseded job.
+for any later documentation-head checks; do not infer success from a running or
+superseded job.
 
-### Pre-follow-up artifact inventory
-
-These artifacts contain the old decoder. Their identities remain evidence for
-that checkpoint; they must not be relabeled as artifacts of the approved update.
+### Verified artifact inventory
 
 | Artifact/evidence | State |
 | --- | --- |
-| `Photo Location Map-1.12.2-alpha-universal.dmg` | [Final checksums/signature/smoke](./evidence/FINAL_MAC_CHECKPOINT.json). |
-| `Photo Location Map-1.12.2-alpha-universal-mac.zip` | [Final checksums](./evidence/FINAL_MAC_CHECKPOINT.json) and [transport](./evidence/FINAL_ZIP_TRANSPORT_CHECKPOINT.json). |
-| Windows installer/draft artifact | [CI](./evidence/FINAL_WINDOWS_CI.json) and [observed draft asset/checksums/payload](./evidence/FINAL_WINDOWS_DRAFT_BYTES.json). Unpublished. |
-| Linux AppImage | [Actual packaged CI results](./evidence/FINAL_UBUNTU_CI.json). No remote Linux artifact upload/download or persisted AppImage checksum is claimed. |
-| Native fixture report and cleanup | [Passed; scope and cleanup](./evidence/NATIVE_UPDATE_FIXTURE_CHECKPOINT.json). |
+| `Photo Location Map-1.12.2-alpha-universal.dmg` | [Current checksums, identity, signature and smoke](./evidence/HEIC_MAC_CHECKPOINT.json); no manual upload performed. |
+| `Photo Location Map-1.12.2-alpha-universal-mac.zip` | [Current checksums, identity and transport](./evidence/HEIC_MAC_CHECKPOINT.json); no manual upload performed. |
+| Windows installer/draft artifact | [Observed draft asset IDs/checksums/payload](./evidence/HEIC_WINDOWS_DRAFT_BYTES.json): all three GitHub digests, metadata and 6,641 blockmap chunks match. Actual decoder metadata and five selected payload files match the approved Mac build. The draft is unpublished and mutable; this dated observation is not a future release identity. |
+| Linux AppImage | [Actual packaged CI results](./evidence/HEIC_CI_CHECKPOINT.json). No remote Linux artifact upload/download or persisted AppImage checksum is claimed. |
+| Native fixture report and cleanup | [Passed; scope and exact cleanup](./evidence/HEIC_MAC_CHECKPOINT.json). |
 
-Keep each built bundle unchanged while verifying it. The approved decoder
-change requires a fresh build, affected tests, signing/notarization and new
-artifact identities; an earlier signature/checksum record does not transfer.
+Keep the verified production bundle unchanged. Any later runtime/source change
+requires affected tests and artifacts to be rebuilt and reverified; an earlier
+signature/checksum record does not transfer. A later Windows draft upload may
+replace asset IDs and bytes, so recheck the actual assets before publication.
 
 ## Approved follow-up and remaining owner-dependent items
 
-Complete the approved HEIC implementation and independent verification before
-presenting the remaining chooser/publication choices together. The HEIC output
-choice is resolved and must not be asked again. Updated artifacts and their
-actual results are still the agent's work.
+The approved HEIC implementation and independent verification are complete.
+The remaining chooser and publication choices can now be reviewed with concrete
+source/artifact evidence. The HEIC output choice is resolved and must not be
+asked again.
 
 ### 1. HEIC output and decoder security
 
-**Output change approved; fresh verification pending.** On 2026-11-02 the owner
+**Output change approved and revalidated.** On 2026-11-02 the owner
 selected the newer pixel output and authorized updating and revalidating it,
 without authorizing publication. The current manifest uses `heic-decode` 2.1.0
 and resolves `libheif-js` 1.23.5; the old parent-scoped override is removed.
-Track the actual follow-up results in
+Actual follow-up results and exact evidence are linked from
 [HEIC_APPROVED_UPDATE.md](./evidence/HEIC_APPROVED_UPDATE.md).
 
 The pre-follow-up `f1f0ee5` checkpoint preserved the original thumbnail pixels
@@ -109,8 +106,8 @@ the affected ranges of the heap-pixel disclosure and memory-corruption
 advisories documented in [EXCEPTIONS.md](./EXCEPTIONS.md#decoder-security-review-2026-11-02).
 A host escape against this exact WASM build was not established or tested.
 
-The earlier decoder comparison found that `heic-decode` 2.1.0 with
-`libheif-js` 1.23.5 includes those fixes but changes the decoded pixels. The
+The approved `heic-decode` 2.1.0 / `libheif-js` 1.23.5 selection includes the
+reviewed fixes and changes the decoded pixels. In the earlier comparison, the
 public 300×400 sample has a
 mean absolute RGB-channel difference of approximately 0.135/255 and a maximum
 of 12/255. This is one sample, not a bound over all HEIC files. Decoder isolation
@@ -120,26 +117,26 @@ The previews below come from that same public fixture; provenance is in the
 [fixture README](../../../test/e2e/fixtures/README.md), and dimensions/pixel/file
 hashes are in [DECODER_PREVIEWS.json](./evidence/DECODER_PREVIEWS.json).
 These previews and comparison hashes preserve the decision's historical
-evidence. The approved output/reference update requires its own recorded
-verification; the historical comparison is not a fresh application pass.
+evidence. Fresh worker assertions now match the separately approved reference
+and actual shipped decoder versions; original references remain unchanged.
 
 | Historical pixel-preserving decoder 1.18.2 | Approved decoder 1.23.5 comparison |
 | --- | --- |
 | ![Existing thumbnail](./evidence/decoder-before.jpg) | ![Candidate thumbnail](./evidence/decoder-candidate.jpg) |
 
-The owner has accepted the measured output difference; implementation,
-regression checks and fresh packaging should continue autonomously. This
-approval does not establish that 1.23.5 is security-clean: the latest npm codec
-still predates native 1.23.7's
+The owner accepted the measured output difference, and implementation,
+regression checks and fresh packaging are complete. This approval and the
+passing tests do not establish that 1.23.5 is security-clean: the latest npm
+codec still predates native 1.23.7's
 HEVC CPU-exhaustion fix, and current per-file worker restarts impose no decode
 timeout. The remaining defect stays disclosed for the later publication decision.
 Holding publication while awaiting a suitable upstream fix remains an option;
 no unsupported decoder fork or unreviewed timeout policy is included.
 
-The signed artifacts recorded for `f1f0ee5` still contain the pixel-preserving
-pin. They do not verify the newly approved decoder. New verification, signing
-and artifact checksums are pending work for the agent, not a reason to reopen
-the approved output choice.
+The signed artifacts recorded for `f1f0ee5` remain the historical
+pixel-preserving checkpoint. The current `79d547f` records identify newly
+verified and signed artifacts with the approved decoder; the old records must
+not be relabeled as evidence for those bytes.
 
 ### 2. Native folder-chooser history
 
@@ -214,27 +211,28 @@ affected regions/dates. Include this correction in the final change summary;
 do not claim every displayed date/time remains numerically identical. See
 [TIMEZONE_CHANGES.json](./evidence/TIMEZONE_CHANGES.json).
 
-The pre-follow-up clean npm graph reports 75 propagated advisory entries across five leaf
-packages: 30 high, 44 moderate and one low. Supported parent ranges have no
-remaining compatible fix identified. Parent constraints and investigated
+The refreshed clean npm graph reports 75 propagated advisory entries across
+five leaf packages: 30 high, 44 moderate and one low. Supported parent ranges
+have no remaining compatible fix identified. Parent constraints and investigated
 runtime reachability are recorded in
 [AUDIT_DISPOSITION.json](./evidence/AUDIT_DISPOSITION.json). Its zero npm-critical
 count does not describe the separate native codec advisories or prove an
 absence of exploitable defects. These findings accompany the publication
-decision; they are not 75 separate owner approvals. Refresh the audit for the
-approved decoder update rather than assuming the historical count is current.
+decision; they are not 75 separate owner approvals. The audit record identifies
+the approved decoder's current lockfile hash and the removed historical pin.
 
 ## Resume and completion rule
 
 1. Reconcile the actual app source, workflow head and artifact identities with
    this record and STATUS before continuing. Classify failures before reruns.
-2. Continue the approved `heic-decode` 2.1.0 / `libheif-js` 1.23.5 update and
-   affected local, platform and distribution verification autonomously. The
-   owner approved its newer pixel output on 2026-11-02; do not ask that question
-   again. Record new source/artifact identities only after actual verification.
+2. The approved `heic-decode` 2.1.0 / `libheif-js` 1.23.5 follow-up is verified
+   at `79d547f`. Do not repeat the approved output question or redo completed
+   gates without a new change or unresolved concern. Any later application
+   change requires fresh affected tests and artifact identities.
 3. Keep chooser acceptance pending: the owner's follow-up was a question, not
    approval. Optional Dev-only credentials are separate from packaged-Prod
-   validation. Collect remaining owner-only choices after independent work.
+   validation. Independent work is complete; collect the remaining owner-only
+   choices with this evidence packet.
 4. Keep merge and publication pending; the HEIC implementation approval does
    not authorize them. After explicit publication authorization, complete the
    public-download/feed checks and record their actual results and limits.

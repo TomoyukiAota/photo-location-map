@@ -1,0 +1,908 @@
+{
+  "status": "passed",
+  "observedAt": "2026-11-02T13:04:00Z",
+  "applicationCommit": "79d547fa884658be9266f03ae3d20ea05899b34a",
+  "applicationVersion": "1.12.2-alpha",
+  "pullRequest": 630,
+  "counts": {
+    "workflowRuns": 7,
+    "actualTestJobs": 8,
+    "successfulWorkflowRuns": 7,
+    "successfulTestJobs": 8,
+    "unitTestsPerJob": 194,
+    "totalUnitTestExecutions": 1552,
+    "packagedE2EPassesPerJob": 14,
+    "totalPackagedE2EPasses": 112,
+    "websiteSkipsPerJob": 1,
+    "totalWebsiteSkips": 8
+  },
+  "failures": [],
+  "failureClassifications": [],
+  "rerunsPerformedByMonitor": 0,
+  "runs": [
+    {
+      "runId": 41446528861,
+      "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41446528861",
+      "workflow": "CI on Windows",
+      "event": "pull_request",
+      "headSha": "79d547fa884658be9266f03ae3d20ea05899b34a",
+      "status": "completed",
+      "conclusion": "success",
+      "runAttempt": 1,
+      "createdAt": "2026-11-02T12:39:48Z",
+      "updatedAt": "2026-11-02T12:51:43Z",
+      "testJobs": [
+        {
+          "jobId": 125280972750,
+          "jobUrl": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41446528861/job/125280972750",
+          "name": "test (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "checkedOutCommit": "e26cb0ecdd724463b3adec5f259b7904f9145715",
+          "runner": {
+            "requestedLabel": "windows-latest",
+            "actualOperatingSystem": [
+              "Microsoft Windows Server 2025",
+              "10.0.26100",
+              "Datacenter"
+            ],
+            "image": "windows-2025-vs2026",
+            "imageVersion": "20261021.278.1",
+            "actionsRunner": "2.338.2",
+            "imageProvisioner": "20261021.618",
+            "inventoryUrl": "https://github.com/actions/runner-images/blob/win25-vs2026/20261021.278/images/windows/Windows2025-VS2026-Readme.md",
+            "imageReleaseUrl": "https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20261021.278",
+            "hostArchitecture": "x64",
+            "architectureEvidence": "Logged mise binary target; packaged-app launch asserts process.arch against the host's expected architecture."
+          },
+          "runtime": {
+            "node": "26.13.0",
+            "bundledNpm": "11.20.0",
+            "electron": "45.2.1",
+            "embeddedNode": "24.22.1",
+            "chromium": "156.0.8078.75"
+          },
+          "loggedBuildTools": {
+            "mise": "2026.10.25",
+            "git": "2.56.0.windows.2",
+            "electronBuilder": "26.18.1",
+            "karma": "6.4.4",
+            "downloadedNsisBundle": "nsis-3.0.4.1.7z",
+            "downloadedNsisResourcesBundle": "nsis-resources-3.4.1.7z"
+          },
+          "tests": {
+            "angularUnit": 57,
+            "mainUnit": 87,
+            "rendererUnit": 50,
+            "unitTotal": 194,
+            "packagedE2EPassed": 14,
+            "websiteSkipped": 1
+          },
+          "checks": {
+            "cleanNpmCi": "success",
+            "hostRuntime": "success",
+            "electronRuntime": "success",
+            "angularLint": "success",
+            "scriptLint": "success",
+            "realWatcherQuitReloadRelaunch": "success",
+            "packageCreationAndLaunchSmoke": "success",
+            "packagedE2E": "success"
+          },
+          "packagedMode": "actual-per-user-nsis-installed-app",
+          "packagedRuntimeChecks": {
+            "packagedAndProduction": true,
+            "executableMatchesConfiguredArtifact": true,
+            "profilePathsIsolated": true,
+            "runtimeDependenciesMatchManifest": true,
+            "expectedArchitecture": "x64",
+            "screenshotComparisons": false
+          },
+          "heicCoverage": {
+            "testTitle": "HEIC worker generates the approved bounded JPEG and reports corrupt input",
+            "conclusion": "passed",
+            "evidenceKind": "passed strict assertions in the shipped-worker test",
+            "heicDecode": "2.1.0",
+            "libheifJs": "1.23.5",
+            "width": 300,
+            "height": 400,
+            "decodedThumbnailPixelsSha256": "6b17ef757e234a67822cd264da6dd68f9694666f4d0f811599f734197ff328dc",
+            "malformedInputFailureAsserted": true,
+            "sourceUrl": "https://github.com/TomoyukiAota/photo-location-map/blob/79d547fa884658be9266f03ae3d20ea05899b34a/test/e2e/regression.spec.mjs#L487",
+            "versionEvidenceLimit": "The named test passed and asserts exact resolved versions; its log pass line is not printed decoder-version telemetry."
+          },
+          "angularBuildHashes": [
+            "b8f16f44bbe4e037",
+            "1c601ff14b082adb"
+          ],
+          "publication": {
+            "commandConclusion": "success",
+            "actualDraftUpload": false,
+            "prContextUploadSkipped": true,
+            "completedAt": "2026-11-02T12:51:37Z"
+          }
+        }
+      ],
+      "intentionallySkippedJobs": []
+    },
+    {
+      "runId": 41446528896,
+      "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41446528896",
+      "workflow": "CI on macOS",
+      "event": "pull_request",
+      "headSha": "79d547fa884658be9266f03ae3d20ea05899b34a",
+      "status": "completed",
+      "conclusion": "success",
+      "runAttempt": 1,
+      "createdAt": "2026-11-02T12:39:48Z",
+      "updatedAt": "2026-11-02T12:54:14Z",
+      "testJobs": [
+        {
+          "jobId": 125281116846,
+          "jobUrl": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41446528896/job/125281116846",
+          "name": "test (macos-26)",
+          "status": "completed",
+          "conclusion": "success",
+          "checkedOutCommit": "e26cb0ecdd724463b3adec5f259b7904f9145715",
+          "runner": {
+            "requestedLabel": "macos-26",
+            "actualOperatingSystem": [
+              "macOS",
+              "26.6.2",
+              "25G83"
+            ],
+            "image": "macos-26-arm64",
+            "imageVersion": "20261021.0445.8",
+            "actionsRunner": "2.338.0",
+            "imageProvisioner": "20261021.618",
+            "inventoryUrl": "https://github.com/actions/runner-images/blob/macos-26-arm64/20261021.0445/images/macos/macos-26-arm64-Readme.md",
+            "imageReleaseUrl": "https://github.com/actions/runner-images/releases/tag/macos-26-arm64%2F20261021.0445",
+            "hostArchitecture": "arm64",
+            "architectureEvidence": "Logged mise binary target; packaged-app launch asserts process.arch against the host's expected architecture."
+          },
+          "runtime": {
+            "node": "26.13.0",
+            "bundledNpm": "11.20.0",
+            "electron": "45.2.1",
+            "embeddedNode": "24.22.1",
+            "chromium": "156.0.8078.75"
+          },
+          "loggedBuildTools": {
+            "mise": "2026.10.25",
+            "git": "2.56.0",
+            "electronBuilder": "26.18.1",
+            "karma": "6.4.4"
+          },
+          "tests": {
+            "angularUnit": 57,
+            "mainUnit": 87,
+            "rendererUnit": 50,
+            "unitTotal": 194,
+            "packagedE2EPassed": 14,
+            "websiteSkipped": 1
+          },
+          "checks": {
+            "cleanNpmCi": "success",
+            "hostRuntime": "success",
+            "electronRuntime": "success",
+            "angularLint": "success",
+            "scriptLint": "success",
+            "realWatcherQuitReloadRelaunch": "success",
+            "packageCreationAndLaunchSmoke": "success",
+            "packagedE2E": "success"
+          },
+          "packagedMode": "actual-packaged-universal-macos-bundle",
+          "packagedRuntimeChecks": {
+            "packagedAndProduction": true,
+            "executableMatchesConfiguredArtifact": true,
+            "profilePathsIsolated": true,
+            "runtimeDependenciesMatchManifest": true,
+            "expectedArchitecture": "arm64",
+            "screenshotComparisons": false
+          },
+          "heicCoverage": {
+            "testTitle": "HEIC worker generates the approved bounded JPEG and reports corrupt input",
+            "conclusion": "passed",
+            "evidenceKind": "passed strict assertions in the shipped-worker test",
+            "heicDecode": "2.1.0",
+            "libheifJs": "1.23.5",
+            "width": 300,
+            "height": 400,
+            "decodedThumbnailPixelsSha256": "6b17ef757e234a67822cd264da6dd68f9694666f4d0f811599f734197ff328dc",
+            "malformedInputFailureAsserted": true,
+            "sourceUrl": "https://github.com/TomoyukiAota/photo-location-map/blob/79d547fa884658be9266f03ae3d20ea05899b34a/test/e2e/regression.spec.mjs#L487",
+            "versionEvidenceLimit": "The named test passed and asserts exact resolved versions; its log pass line is not printed decoder-version telemetry."
+          },
+          "angularBuildHashes": [
+            "ac0bf30358b6b690"
+          ],
+          "publication": {
+            "configuredInWorkflow": false,
+            "actualDraftUpload": false
+          }
+        }
+      ],
+      "intentionallySkippedJobs": [
+        {
+          "jobId": 125280906308,
+          "name": "test (macos-26-intel)",
+          "conclusion": "skipped",
+          "reason": "Native Intel is enabled only for workflow_dispatch."
+        }
+      ]
+    },
+    {
+      "runId": 41446528773,
+      "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41446528773",
+      "workflow": "CI on Ubuntu",
+      "event": "pull_request",
+      "headSha": "79d547fa884658be9266f03ae3d20ea05899b34a",
+      "status": "completed",
+      "conclusion": "success",
+      "runAttempt": 1,
+      "createdAt": "2026-11-02T12:39:48Z",
+      "updatedAt": "2026-11-02T12:44:55Z",
+      "testJobs": [
+        {
+          "jobId": 125280963983,
+          "jobUrl": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41446528773/job/125280963983",
+          "name": "test (ubuntu-24.04)",
+          "status": "completed",
+          "conclusion": "success",
+          "checkedOutCommit": "e26cb0ecdd724463b3adec5f259b7904f9145715",
+          "runner": {
+            "requestedLabel": "ubuntu-24.04",
+            "actualOperatingSystem": [
+              "Ubuntu",
+              "26.04.1",
+              "LTS"
+            ],
+            "image": "ubuntu-26.04",
+            "imageVersion": "20261025.179.1",
+            "actionsRunner": "2.338.2",
+            "imageProvisioner": "20261021.618",
+            "inventoryUrl": "https://github.com/actions/runner-images/blob/ubuntu26/20261025.179/images/ubuntu/Ubuntu2604-Readme.md",
+            "imageReleaseUrl": "https://github.com/actions/runner-images/releases/tag/ubuntu26%2F20261025.179",
+            "hostArchitecture": "x64",
+            "architectureEvidence": "Logged mise binary target; packaged-app launch asserts process.arch against the host's expected architecture."
+          },
+          "runtime": {
+            "node": "26.13.0",
+            "bundledNpm": "11.20.0",
+            "electron": "45.2.1",
+            "embeddedNode": "24.22.1",
+            "chromium": "156.0.8078.75"
+          },
+          "loggedBuildTools": {
+            "mise": "2026.10.25",
+            "git": "2.56.0",
+            "electronBuilder": "26.18.1",
+            "karma": "6.4.4"
+          },
+          "tests": {
+            "angularUnit": 57,
+            "mainUnit": 87,
+            "rendererUnit": 50,
+            "unitTotal": 194,
+            "packagedE2EPassed": 14,
+            "websiteSkipped": 1
+          },
+          "checks": {
+            "cleanNpmCi": "success",
+            "hostRuntime": "success",
+            "electronRuntime": "success",
+            "angularLint": "success",
+            "scriptLint": "success",
+            "realWatcherQuitReloadRelaunch": "success",
+            "packageCreationAndLaunchSmoke": "success",
+            "packagedE2E": "success"
+          },
+          "packagedMode": "actual-packaged-appimage",
+          "packagedRuntimeChecks": {
+            "packagedAndProduction": true,
+            "executableMatchesConfiguredArtifact": true,
+            "profilePathsIsolated": true,
+            "runtimeDependenciesMatchManifest": true,
+            "expectedArchitecture": "x64",
+            "screenshotComparisons": false
+          },
+          "heicCoverage": {
+            "testTitle": "HEIC worker generates the approved bounded JPEG and reports corrupt input",
+            "conclusion": "passed",
+            "evidenceKind": "passed strict assertions in the shipped-worker test",
+            "heicDecode": "2.1.0",
+            "libheifJs": "1.23.5",
+            "width": 300,
+            "height": 400,
+            "decodedThumbnailPixelsSha256": "6b17ef757e234a67822cd264da6dd68f9694666f4d0f811599f734197ff328dc",
+            "malformedInputFailureAsserted": true,
+            "sourceUrl": "https://github.com/TomoyukiAota/photo-location-map/blob/79d547fa884658be9266f03ae3d20ea05899b34a/test/e2e/regression.spec.mjs#L487",
+            "versionEvidenceLimit": "The named test passed and asserts exact resolved versions; its log pass line is not printed decoder-version telemetry."
+          },
+          "angularBuildHashes": [
+            "0db9a44ae6a858a4"
+          ],
+          "publication": {
+            "configuredInWorkflow": false,
+            "actualDraftUpload": false
+          }
+        }
+      ],
+      "intentionallySkippedJobs": []
+    },
+    {
+      "runId": 41446524256,
+      "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41446524256",
+      "workflow": "CI on macOS",
+      "event": "workflow_dispatch",
+      "headSha": "79d547fa884658be9266f03ae3d20ea05899b34a",
+      "status": "completed",
+      "conclusion": "success",
+      "runAttempt": 1,
+      "createdAt": "2026-11-02T12:39:46Z",
+      "updatedAt": "2026-11-02T13:00:24Z",
+      "testJobs": [
+        {
+          "jobId": 125280892676,
+          "jobUrl": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41446524256/job/125280892676",
+          "name": "test (macos-26-intel)",
+          "status": "completed",
+          "conclusion": "success",
+          "checkedOutCommit": "79d547fa884658be9266f03ae3d20ea05899b34a",
+          "runner": {
+            "requestedLabel": "macos-26-intel",
+            "actualOperatingSystem": [
+              "macOS",
+              "26.6.1",
+              "25G76"
+            ],
+            "image": "macos-26",
+            "imageVersion": "20260824.0517.1",
+            "actionsRunner": "2.338.2",
+            "imageProvisioner": "20260819.586",
+            "inventoryUrl": "https://github.com/actions/runner-images/blob/macos-26/20260824.0517/images/macos/macos-26-Readme.md",
+            "imageReleaseUrl": "https://github.com/actions/runner-images/releases/tag/macos-26%2F20260824.0517",
+            "hostArchitecture": "x64",
+            "architectureEvidence": "Logged mise binary target; packaged-app launch asserts process.arch against the host's expected architecture."
+          },
+          "runtime": {
+            "node": "26.13.0",
+            "bundledNpm": "11.20.0",
+            "electron": "45.2.1",
+            "embeddedNode": "24.22.1",
+            "chromium": "156.0.8078.75"
+          },
+          "loggedBuildTools": {
+            "mise": "2026.10.25",
+            "git": "2.55.0",
+            "electronBuilder": "26.18.1",
+            "karma": "6.4.4"
+          },
+          "tests": {
+            "angularUnit": 57,
+            "mainUnit": 87,
+            "rendererUnit": 50,
+            "unitTotal": 194,
+            "packagedE2EPassed": 14,
+            "websiteSkipped": 1
+          },
+          "checks": {
+            "cleanNpmCi": "success",
+            "hostRuntime": "success",
+            "electronRuntime": "success",
+            "angularLint": "success",
+            "scriptLint": "success",
+            "realWatcherQuitReloadRelaunch": "success",
+            "packageCreationAndLaunchSmoke": "success",
+            "packagedE2E": "success"
+          },
+          "packagedMode": "actual-packaged-universal-macos-bundle",
+          "packagedRuntimeChecks": {
+            "packagedAndProduction": true,
+            "executableMatchesConfiguredArtifact": true,
+            "profilePathsIsolated": true,
+            "runtimeDependenciesMatchManifest": true,
+            "expectedArchitecture": "x64",
+            "screenshotComparisons": false
+          },
+          "heicCoverage": {
+            "testTitle": "HEIC worker generates the approved bounded JPEG and reports corrupt input",
+            "conclusion": "passed",
+            "evidenceKind": "passed strict assertions in the shipped-worker test",
+            "heicDecode": "2.1.0",
+            "libheifJs": "1.23.5",
+            "width": 300,
+            "height": 400,
+            "decodedThumbnailPixelsSha256": "6b17ef757e234a67822cd264da6dd68f9694666f4d0f811599f734197ff328dc",
+            "malformedInputFailureAsserted": true,
+            "sourceUrl": "https://github.com/TomoyukiAota/photo-location-map/blob/79d547fa884658be9266f03ae3d20ea05899b34a/test/e2e/regression.spec.mjs#L487",
+            "versionEvidenceLimit": "The named test passed and asserts exact resolved versions; its log pass line is not printed decoder-version telemetry."
+          },
+          "angularBuildHashes": [
+            "b9efac6f93563ea8"
+          ],
+          "publication": {
+            "configuredInWorkflow": false,
+            "actualDraftUpload": false
+          }
+        },
+        {
+          "jobId": 125280946462,
+          "jobUrl": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41446524256/job/125280946462",
+          "name": "test (macos-26)",
+          "status": "completed",
+          "conclusion": "success",
+          "checkedOutCommit": "79d547fa884658be9266f03ae3d20ea05899b34a",
+          "runner": {
+            "requestedLabel": "macos-26",
+            "actualOperatingSystem": [
+              "macOS",
+              "26.6.2",
+              "25G83"
+            ],
+            "image": "macos-26-arm64",
+            "imageVersion": "20261021.0445.8",
+            "actionsRunner": "2.338.0",
+            "imageProvisioner": "20261021.618",
+            "inventoryUrl": "https://github.com/actions/runner-images/blob/macos-26-arm64/20261021.0445/images/macos/macos-26-arm64-Readme.md",
+            "imageReleaseUrl": "https://github.com/actions/runner-images/releases/tag/macos-26-arm64%2F20261021.0445",
+            "hostArchitecture": "arm64",
+            "architectureEvidence": "Logged mise binary target; packaged-app launch asserts process.arch against the host's expected architecture."
+          },
+          "runtime": {
+            "node": "26.13.0",
+            "bundledNpm": "11.20.0",
+            "electron": "45.2.1",
+            "embeddedNode": "24.22.1",
+            "chromium": "156.0.8078.75"
+          },
+          "loggedBuildTools": {
+            "mise": "2026.10.25",
+            "git": "2.56.0",
+            "electronBuilder": "26.18.1",
+            "karma": "6.4.4"
+          },
+          "tests": {
+            "angularUnit": 57,
+            "mainUnit": 87,
+            "rendererUnit": 50,
+            "unitTotal": 194,
+            "packagedE2EPassed": 14,
+            "websiteSkipped": 1
+          },
+          "checks": {
+            "cleanNpmCi": "success",
+            "hostRuntime": "success",
+            "electronRuntime": "success",
+            "angularLint": "success",
+            "scriptLint": "success",
+            "realWatcherQuitReloadRelaunch": "success",
+            "packageCreationAndLaunchSmoke": "success",
+            "packagedE2E": "success"
+          },
+          "packagedMode": "actual-packaged-universal-macos-bundle",
+          "packagedRuntimeChecks": {
+            "packagedAndProduction": true,
+            "executableMatchesConfiguredArtifact": true,
+            "profilePathsIsolated": true,
+            "runtimeDependenciesMatchManifest": true,
+            "expectedArchitecture": "arm64",
+            "screenshotComparisons": false
+          },
+          "heicCoverage": {
+            "testTitle": "HEIC worker generates the approved bounded JPEG and reports corrupt input",
+            "conclusion": "passed",
+            "evidenceKind": "passed strict assertions in the shipped-worker test",
+            "heicDecode": "2.1.0",
+            "libheifJs": "1.23.5",
+            "width": 300,
+            "height": 400,
+            "decodedThumbnailPixelsSha256": "6b17ef757e234a67822cd264da6dd68f9694666f4d0f811599f734197ff328dc",
+            "malformedInputFailureAsserted": true,
+            "sourceUrl": "https://github.com/TomoyukiAota/photo-location-map/blob/79d547fa884658be9266f03ae3d20ea05899b34a/test/e2e/regression.spec.mjs#L487",
+            "versionEvidenceLimit": "The named test passed and asserts exact resolved versions; its log pass line is not printed decoder-version telemetry."
+          },
+          "angularBuildHashes": [
+            "b9efac6f93563ea8"
+          ],
+          "publication": {
+            "configuredInWorkflow": false,
+            "actualDraftUpload": false
+          }
+        }
+      ],
+      "intentionallySkippedJobs": []
+    },
+    {
+      "runId": 41446519098,
+      "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41446519098",
+      "workflow": "CI on macOS",
+      "event": "push",
+      "headSha": "79d547fa884658be9266f03ae3d20ea05899b34a",
+      "status": "completed",
+      "conclusion": "success",
+      "runAttempt": 1,
+      "createdAt": "2026-11-02T12:39:43Z",
+      "updatedAt": "2026-11-02T12:53:47Z",
+      "testJobs": [
+        {
+          "jobId": 125281008687,
+          "jobUrl": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41446519098/job/125281008687",
+          "name": "test (macos-26)",
+          "status": "completed",
+          "conclusion": "success",
+          "checkedOutCommit": "79d547fa884658be9266f03ae3d20ea05899b34a",
+          "runner": {
+            "requestedLabel": "macos-26",
+            "actualOperatingSystem": [
+              "macOS",
+              "26.6.2",
+              "25G83"
+            ],
+            "image": "macos-26-arm64",
+            "imageVersion": "20261026.0455.2",
+            "actionsRunner": "2.338.2",
+            "imageProvisioner": "20261021.618",
+            "inventoryUrl": "https://github.com/actions/runner-images/blob/macos-26-arm64/20261026.0455/images/macos/macos-26-arm64-Readme.md",
+            "imageReleaseUrl": "https://github.com/actions/runner-images/releases/tag/macos-26-arm64%2F20261026.0455",
+            "hostArchitecture": "arm64",
+            "architectureEvidence": "Logged mise binary target; packaged-app launch asserts process.arch against the host's expected architecture."
+          },
+          "runtime": {
+            "node": "26.13.0",
+            "bundledNpm": "11.20.0",
+            "electron": "45.2.1",
+            "embeddedNode": "24.22.1",
+            "chromium": "156.0.8078.75"
+          },
+          "loggedBuildTools": {
+            "mise": "2026.10.25",
+            "git": "2.56.0",
+            "electronBuilder": "26.18.1",
+            "karma": "6.4.4"
+          },
+          "tests": {
+            "angularUnit": 57,
+            "mainUnit": 87,
+            "rendererUnit": 50,
+            "unitTotal": 194,
+            "packagedE2EPassed": 14,
+            "websiteSkipped": 1
+          },
+          "checks": {
+            "cleanNpmCi": "success",
+            "hostRuntime": "success",
+            "electronRuntime": "success",
+            "angularLint": "success",
+            "scriptLint": "success",
+            "realWatcherQuitReloadRelaunch": "success",
+            "packageCreationAndLaunchSmoke": "success",
+            "packagedE2E": "success"
+          },
+          "packagedMode": "actual-packaged-universal-macos-bundle",
+          "packagedRuntimeChecks": {
+            "packagedAndProduction": true,
+            "executableMatchesConfiguredArtifact": true,
+            "profilePathsIsolated": true,
+            "runtimeDependenciesMatchManifest": true,
+            "expectedArchitecture": "arm64",
+            "screenshotComparisons": false
+          },
+          "heicCoverage": {
+            "testTitle": "HEIC worker generates the approved bounded JPEG and reports corrupt input",
+            "conclusion": "passed",
+            "evidenceKind": "passed strict assertions in the shipped-worker test",
+            "heicDecode": "2.1.0",
+            "libheifJs": "1.23.5",
+            "width": 300,
+            "height": 400,
+            "decodedThumbnailPixelsSha256": "6b17ef757e234a67822cd264da6dd68f9694666f4d0f811599f734197ff328dc",
+            "malformedInputFailureAsserted": true,
+            "sourceUrl": "https://github.com/TomoyukiAota/photo-location-map/blob/79d547fa884658be9266f03ae3d20ea05899b34a/test/e2e/regression.spec.mjs#L487",
+            "versionEvidenceLimit": "The named test passed and asserts exact resolved versions; its log pass line is not printed decoder-version telemetry."
+          },
+          "angularBuildHashes": [
+            "ac0bf30358b6b690"
+          ],
+          "publication": {
+            "configuredInWorkflow": false,
+            "actualDraftUpload": false
+          }
+        }
+      ],
+      "intentionallySkippedJobs": [
+        {
+          "jobId": 125280870557,
+          "name": "test (macos-26-intel)",
+          "conclusion": "skipped",
+          "reason": "Native Intel is enabled only for workflow_dispatch."
+        }
+      ]
+    },
+    {
+      "runId": 41446519136,
+      "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41446519136",
+      "workflow": "CI on Windows",
+      "event": "push",
+      "headSha": "79d547fa884658be9266f03ae3d20ea05899b34a",
+      "status": "completed",
+      "conclusion": "success",
+      "runAttempt": 1,
+      "createdAt": "2026-11-02T12:39:43Z",
+      "updatedAt": "2026-11-02T12:52:42Z",
+      "testJobs": [
+        {
+          "jobId": 125280951878,
+          "jobUrl": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41446519136/job/125280951878",
+          "name": "test (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "checkedOutCommit": "79d547fa884658be9266f03ae3d20ea05899b34a",
+          "runner": {
+            "requestedLabel": "windows-latest",
+            "actualOperatingSystem": [
+              "Microsoft Windows Server 2025",
+              "10.0.26100",
+              "Datacenter"
+            ],
+            "image": "windows-2025-vs2026",
+            "imageVersion": "20261021.278.1",
+            "actionsRunner": "2.338.2",
+            "imageProvisioner": "20261021.618",
+            "inventoryUrl": "https://github.com/actions/runner-images/blob/win25-vs2026/20261021.278/images/windows/Windows2025-VS2026-Readme.md",
+            "imageReleaseUrl": "https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20261021.278",
+            "hostArchitecture": "x64",
+            "architectureEvidence": "Logged mise binary target; packaged-app launch asserts process.arch against the host's expected architecture."
+          },
+          "runtime": {
+            "node": "26.13.0",
+            "bundledNpm": "11.20.0",
+            "electron": "45.2.1",
+            "embeddedNode": "24.22.1",
+            "chromium": "156.0.8078.75"
+          },
+          "loggedBuildTools": {
+            "mise": "2026.10.25",
+            "git": "2.56.0.windows.2",
+            "electronBuilder": "26.18.1",
+            "karma": "6.4.4",
+            "downloadedNsisBundle": "nsis-3.0.4.1.7z",
+            "downloadedNsisResourcesBundle": "nsis-resources-3.4.1.7z"
+          },
+          "tests": {
+            "angularUnit": 57,
+            "mainUnit": 87,
+            "rendererUnit": 50,
+            "unitTotal": 194,
+            "packagedE2EPassed": 14,
+            "websiteSkipped": 1
+          },
+          "checks": {
+            "cleanNpmCi": "success",
+            "hostRuntime": "success",
+            "electronRuntime": "success",
+            "angularLint": "success",
+            "scriptLint": "success",
+            "realWatcherQuitReloadRelaunch": "success",
+            "packageCreationAndLaunchSmoke": "success",
+            "packagedE2E": "success"
+          },
+          "packagedMode": "actual-per-user-nsis-installed-app",
+          "packagedRuntimeChecks": {
+            "packagedAndProduction": true,
+            "executableMatchesConfiguredArtifact": true,
+            "profilePathsIsolated": true,
+            "runtimeDependenciesMatchManifest": true,
+            "expectedArchitecture": "x64",
+            "screenshotComparisons": false
+          },
+          "heicCoverage": {
+            "testTitle": "HEIC worker generates the approved bounded JPEG and reports corrupt input",
+            "conclusion": "passed",
+            "evidenceKind": "passed strict assertions in the shipped-worker test",
+            "heicDecode": "2.1.0",
+            "libheifJs": "1.23.5",
+            "width": 300,
+            "height": 400,
+            "decodedThumbnailPixelsSha256": "6b17ef757e234a67822cd264da6dd68f9694666f4d0f811599f734197ff328dc",
+            "malformedInputFailureAsserted": true,
+            "sourceUrl": "https://github.com/TomoyukiAota/photo-location-map/blob/79d547fa884658be9266f03ae3d20ea05899b34a/test/e2e/regression.spec.mjs#L487",
+            "versionEvidenceLimit": "The named test passed and asserts exact resolved versions; its log pass line is not printed decoder-version telemetry."
+          },
+          "angularBuildHashes": [
+            "1c601ff14b082adb",
+            "b8f16f44bbe4e037"
+          ],
+          "publication": {
+            "commandConclusion": "success",
+            "actualDraftUpload": true,
+            "prContextUploadSkipped": false,
+            "completedAt": "2026-11-02T12:52:37Z"
+          }
+        }
+      ],
+      "intentionallySkippedJobs": []
+    },
+    {
+      "runId": 41446519104,
+      "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41446519104",
+      "workflow": "CI on Ubuntu",
+      "event": "push",
+      "headSha": "79d547fa884658be9266f03ae3d20ea05899b34a",
+      "status": "completed",
+      "conclusion": "success",
+      "runAttempt": 1,
+      "createdAt": "2026-11-02T12:39:43Z",
+      "updatedAt": "2026-11-02T12:46:25Z",
+      "testJobs": [
+        {
+          "jobId": 125280945081,
+          "jobUrl": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41446519104/job/125280945081",
+          "name": "test (ubuntu-24.04)",
+          "status": "completed",
+          "conclusion": "success",
+          "checkedOutCommit": "79d547fa884658be9266f03ae3d20ea05899b34a",
+          "runner": {
+            "requestedLabel": "ubuntu-24.04",
+            "actualOperatingSystem": [
+              "Ubuntu",
+              "26.04.1",
+              "LTS"
+            ],
+            "image": "ubuntu-26.04",
+            "imageVersion": "20261025.179.1",
+            "actionsRunner": "2.338.2",
+            "imageProvisioner": "20261021.618",
+            "inventoryUrl": "https://github.com/actions/runner-images/blob/ubuntu26/20261025.179/images/ubuntu/Ubuntu2604-Readme.md",
+            "imageReleaseUrl": "https://github.com/actions/runner-images/releases/tag/ubuntu26%2F20261025.179",
+            "hostArchitecture": "x64",
+            "architectureEvidence": "Logged mise binary target; packaged-app launch asserts process.arch against the host's expected architecture."
+          },
+          "runtime": {
+            "node": "26.13.0",
+            "bundledNpm": "11.20.0",
+            "electron": "45.2.1",
+            "embeddedNode": "24.22.1",
+            "chromium": "156.0.8078.75"
+          },
+          "loggedBuildTools": {
+            "mise": "2026.10.25",
+            "git": "2.56.0",
+            "electronBuilder": "26.18.1",
+            "karma": "6.4.4"
+          },
+          "tests": {
+            "angularUnit": 57,
+            "mainUnit": 87,
+            "rendererUnit": 50,
+            "unitTotal": 194,
+            "packagedE2EPassed": 14,
+            "websiteSkipped": 1
+          },
+          "checks": {
+            "cleanNpmCi": "success",
+            "hostRuntime": "success",
+            "electronRuntime": "success",
+            "angularLint": "success",
+            "scriptLint": "success",
+            "realWatcherQuitReloadRelaunch": "success",
+            "packageCreationAndLaunchSmoke": "success",
+            "packagedE2E": "success"
+          },
+          "packagedMode": "actual-packaged-appimage",
+          "packagedRuntimeChecks": {
+            "packagedAndProduction": true,
+            "executableMatchesConfiguredArtifact": true,
+            "profilePathsIsolated": true,
+            "runtimeDependenciesMatchManifest": true,
+            "expectedArchitecture": "x64",
+            "screenshotComparisons": false
+          },
+          "heicCoverage": {
+            "testTitle": "HEIC worker generates the approved bounded JPEG and reports corrupt input",
+            "conclusion": "passed",
+            "evidenceKind": "passed strict assertions in the shipped-worker test",
+            "heicDecode": "2.1.0",
+            "libheifJs": "1.23.5",
+            "width": 300,
+            "height": 400,
+            "decodedThumbnailPixelsSha256": "6b17ef757e234a67822cd264da6dd68f9694666f4d0f811599f734197ff328dc",
+            "malformedInputFailureAsserted": true,
+            "sourceUrl": "https://github.com/TomoyukiAota/photo-location-map/blob/79d547fa884658be9266f03ae3d20ea05899b34a/test/e2e/regression.spec.mjs#L487",
+            "versionEvidenceLimit": "The named test passed and asserts exact resolved versions; its log pass line is not printed decoder-version telemetry."
+          },
+          "angularBuildHashes": [
+            "0db9a44ae6a858a4"
+          ],
+          "publication": {
+            "configuredInWorkflow": false,
+            "actualDraftUpload": false
+          }
+        }
+      ],
+      "intentionallySkippedJobs": []
+    }
+  ],
+  "nativeIntel": {
+    "runId": 41446524256,
+    "jobId": 125280892676,
+    "conclusion": "success",
+    "requestedRunner": "macos-26-intel",
+    "hostArchitecture": "x64",
+    "packagedAppExpectedArchitecture": "x64",
+    "architectureAssertionPassed": true,
+    "translationFlagValueCollected": false,
+    "environment": {
+      "requestedLabel": "macos-26-intel",
+      "actualOperatingSystem": [
+        "macOS",
+        "26.6.1",
+        "25G76"
+      ],
+      "image": "macos-26",
+      "imageVersion": "20260824.0517.1",
+      "actionsRunner": "2.338.2",
+      "imageProvisioner": "20260819.586",
+      "inventoryUrl": "https://github.com/actions/runner-images/blob/macos-26/20260824.0517/images/macos/macos-26-Readme.md",
+      "imageReleaseUrl": "https://github.com/actions/runner-images/releases/tag/macos-26%2F20260824.0517",
+      "hostArchitecture": "x64",
+      "architectureEvidence": "Logged mise binary target; packaged-app launch asserts process.arch against the host's expected architecture."
+    },
+    "tests": {
+      "angularUnit": 57,
+      "mainUnit": 87,
+      "rendererUnit": 50,
+      "unitTotal": 194,
+      "packagedE2EPassed": 14,
+      "websiteSkipped": 1
+    }
+  },
+  "draftMetadataCheckpoint": {
+    "observedAt": "2026-11-02T13:04:00Z",
+    "releaseId": 407095377,
+    "tagName": "v1.12.2-alpha",
+    "draft": true,
+    "prerelease": false,
+    "publishedAt": null,
+    "uploadingRunId": 41446519136,
+    "uploadingCommit": "79d547fa884658be9266f03ae3d20ea05899b34a",
+    "assets": [
+      {
+        "id": 701752016,
+        "name": "latest.yml",
+        "size": 386,
+        "updatedAt": "2026-11-02T12:51:49Z",
+        "githubReportedDigest": "sha256:6cb8054db465f611a5bba28db85b2d366f4dd688cd697499888567647239bd46"
+      },
+      {
+        "id": 701751387,
+        "name": "Photo-Location-Map-Setup-1.12.2-alpha.exe",
+        "size": 139203782,
+        "updatedAt": "2026-11-02T12:51:47Z",
+        "githubReportedDigest": "sha256:dfd6afbb9dd6f1a545fc737148b24a06e70039417883ef617377032fc72464f9"
+      },
+      {
+        "id": 701751364,
+        "name": "Photo-Location-Map-Setup-1.12.2-alpha.exe.blockmap",
+        "size": 145464,
+        "updatedAt": "2026-11-02T12:51:38Z",
+        "githubReportedDigest": "sha256:fc8cd0f3f811e9fdf93a77cbe6ebdce9ce776fcabef6d56cade3002a16e9fad4"
+      }
+    ],
+    "byteVerification": "Separate evidence verifies downloaded draft bytes; this CI consolidation records log and release-metadata observations only."
+  },
+  "evidenceLimits": [
+    "Unit totals count passing tests reported by the three unit suites, not the number of individual expect/assert calls.",
+    "All packaged CI runs performed functional checks; PLM_VISUAL was not enabled. Local final-artifact visual verification is separate.",
+    "HEIC versions and the approved hash are covered by passing strict worker assertions; no printed decoder-version telemetry is claimed.",
+    "Native Intel used the provider's macos-26-intel runner, logged a macos-x64 mise target and passed packaged process.arch assertions. Its translated flag was not collected in this summary.",
+    "CI package-test artifacts and the Windows publishing rebuild are separate builds. Angular build hashes are compiler identifiers, not artifact checksums.",
+    "Mac CI package tests skip notarization. This report does not verify the separately signed/notarized final Mac distribution or native updater installation.",
+    "The Windows push uploaded draft assets; the Windows PR completed its publish command while electron-builder skipped uploading in PR context.",
+    "Draft metadata and asset IDs are an observed mutable checkpoint, not verification of a future final release. The draft remained unpublished.",
+    "A passing HEIC regression suite does not establish absence of security vulnerabilities; remaining upstream native-code advisories are documented separately."
+  ],
+  "sourceUrls": {
+    "packagedAndArchitectureAssertions": "https://github.com/TomoyukiAota/photo-location-map/blob/79d547fa884658be9266f03ae3d20ea05899b34a/test/e2e/regression.spec.mjs#L47",
+    "approvedHeicReference": "https://github.com/TomoyukiAota/photo-location-map/blob/79d547fa884658be9266f03ae3d20ea05899b34a/test/e2e/approved-references/heic-thumbnail-libheif-1.23.5.json"
+  }
+}

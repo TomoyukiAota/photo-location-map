@@ -1,6 +1,6 @@
 # Dependency upgrade status
 
-Updated: 2026-11-02 (Asia/Tokyo).
+Updated: 2026-11-03 (Asia/Tokyo).
 
 ## Authorization and actual state
 
@@ -18,16 +18,14 @@ Updated: 2026-11-02 (Asia/Tokyo).
 - Source inspection, official release/registry reads, historical PR review and a
   read-only lockfile audit were performed. Research sources remain read-only;
   authorized source/Draft PR/CI preparation is complete; the PR remains draft.
-- The complete local dependency checkpoint is `2b7b0d7`: clean install, valid graph,
-  production build, lint, 194 unit assertions, watcher lifecycle and 15 actual
-  visual/functional cases pass. The exact versions are in IMPLEMENTED_VERSIONS.
-  Final application source is `f1f0ee5`: Windows, Ubuntu and Mac arm64 push/PR
-  checks all pass, including 194 assertions and 14 actual packaged E2E cases.
-  Native Intel also passes at `872699e`; the only later application change is
-  the win32-only menu correction. Final f1f0ee5 Mac signing/notarization, visual
-  checks, DMG/ZIP verification and isolated native update/rollback all pass.
-  These are the pre-follow-up results. The owner-approved newer HEIC decoder
-  is now being revalidated; these old artifact checks do not verify that change.
+- Latest verified application source is
+  `79d547fa884658be9266f03ae3d20ea05899b34a`, including the approved HEIC update.
+  Clean install/graph/runtime/build/lint, 194 unit assertions and 15 local
+  visual/functional cases pass. All eight platform test jobs in seven workflows
+  pass at this same source, including native Intel and 14 actual packaged cases
+  per job. Fresh signed/notarized Mac artifacts, archive/transport/native fixture
+  gates and actual Windows draft bytes also pass. See the three HEIC checkpoint
+  records below. Earlier 2b7b0d7/f1f0ee5/872699e records remain historical.
 - No baseline app remains. See the latest execution record for active processes. Local command logs
   are under `.upgrade-artifacts`; test output is in its `e2e-results` directory.
 
@@ -41,11 +39,14 @@ Updated: 2026-11-02 (Asia/Tokyo).
 5. Inspect actual branch/HEAD/diff, task-related commits, existing processes and
    any newer user instructions. Reconcile records before executing commands.
 
-Active task: approved HEIC follow-up implementation/revalidation. On 2026-11-02
-the owner selected the newer HEIC output and authorized updating/revalidating it,
+Active task: owner review after completed independent implementation and approved
+HEIC revalidation. The owner selected the newer HEIC output on 2026-11-02,
 without publication approval. The chooser response was a question, not acceptance;
-the history-policy distinction remains unresolved. The previous fully verified application source
-is f1f0ee5. Do not treat its old-decoder artifact checks as proof of the follow-up.
+the history-policy distinction remains unresolved. The fully verified application
+source is 79d547f. Fresh proof is in
+[HEIC_MAC_CHECKPOINT.json](./evidence/HEIC_MAC_CHECKPOINT.json),
+[HEIC_CI_CHECKPOINT.json](./evidence/HEIC_CI_CHECKPOINT.json) and
+[HEIC_WINDOWS_DRAFT_BYTES.json](./evidence/HEIC_WINDOWS_DRAFT_BYTES.json).
 Read [FINAL_REVIEW.md](./FINAL_REVIEW.md) for scope and pending decisions.
 U13 remains unauthorized.
 Node 26 / bundled npm 11.20 and Electron 45 clean installation work;
@@ -69,10 +70,10 @@ The approved HEIC output has a separate strict reference under
   separate version-labelled reference. Real worker checks now also assert the
   shipped decoder/child versions; an older child with the same sample pixels
   must not silently pass.
-- Current work: clean graph/install, build/lint/unit and full visual/functional
-  verification, then fresh signed artifacts, transport/native handoff checks
-  and all applicable platform CI. Collect exact results before updating final
-  artifact reports. Native 1.23.7's CPU-exhaustion fix is still absent from the
+- Completed: clean graph/install, build/lint/unit and full visual/functional
+  verification, fresh signed artifacts, transport/native handoff checks and
+  all applicable platform CI. New reports identify the exact source and bytes.
+  Native 1.23.7's CPU-exhaustion fix is still absent from the
   latest npm WASM, so the security limitation remains visible.
 
 Local follow-up checkpoint (2026-11-02 21:39 JST): clean `npm ci`, complete
@@ -86,6 +87,19 @@ The signed/notarized Mac rebuild is running; fresh platform/distribution and
 native fixture results remain pending. Resume logs use the `heic-approved-`
 prefix under the ignored artifact directory. Do not run package-test over the
 final signed bundle after notarization.
+
+21:55 JST follow-up: application source is now
+`79d547fa884658be9266f03ae3d20ea05899b34a`, pushed to Draft PR #630. The fresh
+Mac gates are complete in [HEIC_MAC_CHECKPOINT.json](./evidence/HEIC_MAC_CHECKPOINT.json):
+real signing/notarization/staple/Gatekeeper, 14 packaged visual/functional cases,
+both archive payloads and all blockmap chunks, mounted-DMG launch/log/quit/detach,
+final ZIP transport and isolated native install/relaunch/rollback/settings.
+All exact fixture native caches/jobs/preferences are cleaned and the production
+bundle fingerprint/signature remain unchanged. No local app/test process remains.
+The six push/PR workflows and manual ARM job pass; manual Intel is still running.
+Windows uploaded draft bytes are being checked independently. The two recovered
+inspection issues were a wrong collector plist key and a transient owned DMG
+unmount failure; their fixes/results are recorded in the new Mac checkpoint.
 
 ## Work queue
 
@@ -101,13 +115,13 @@ final signed bundle after notarization.
 | U04c | Verified locally | Graph/lint/build, clean 57+74+41 tests and 7 unchanged regression cases. |
 | U04d | Verified locally | Graph/runtime/lint/build, 172 tests and all 7 unchanged regression cases. |
 | U05 | Complete | Angular 22/TS 6/Node 26 locally verified; the intermediate Electron 32 install caveat is resolved by U06 and final clean CI. |
-| U06 | Verified; owner chooser decision open | Final Windows/Linux/Mac arm64/Intel and signed universal artifacts pass; native chooser limits await owner acceptance. |
+| U06 | Verified; owner chooser decision open | Windows/Linux/Mac arm64/Intel and signed universal artifacts pass at the current 79d547f source. Chooser policy still awaits acceptance. |
 | U07 | Verified locally | File/date/module, image/worker and analytics groups pass; compatibility exceptions are recorded. |
 | U08 | Complete | Maps, charting and translations pass unchanged visual and actual interaction checks. |
 | U09 | Verified locally | Bootstrap 5.3.8 with unchanged screenshots, focus/hover colors, both download URL requests and 390px layout; unused JS removed. Deployment remains gated by main. |
 | U10 | Complete | Clean install, graph, tooling, audit disposition and all local regression gates pass. |
-| U11 | HEIC follow-up in progress | Previous gates pass at their recorded sources; repeat affected local/platform/artifact/native fixture gates with the approved decoder. Public-feed installation remains U13. |
-| U12 | Refresh after HEIC revalidation | New output approved; chooser history clarification and publication remain pending. Update the packet with fresh exact source/artifact records. |
+| U11 | Complete with recorded coverage limits | All affected local/platform/artifact/native fixture gates pass at 79d547f with the approved decoder. Public-feed installation remains U13. |
+| U12 | Ready for remaining owner decisions | New HEIC output approved and revalidated; current exact source/artifact records are complete. Chooser policy acceptance and merge/publication remain pending. |
 | U13 | Not authorized | Publication and post-release verification. |
 
 ## Resolved decisions
@@ -119,15 +133,18 @@ final signed bundle after notarization.
 - Angular 21 remains only an intermediate migration checkpoint. Do not spend
   work preparing a separate Angular 21 / Node 24 release candidate.
 - Implementation was subsequently authorized on 2026-11-01. Publication remains a final gate.
+- New HEIC pixel output and updating/revalidating heic-decode 2.1.0 /
+  libheif-js 1.23.5 were approved on 2026-11-02 and are now verified.
 
 ## Implementation handoff
 
-- On 2026-11-01 the user stated a preference for Sol, rather than Astra, to carry
-  out implementation. Preserve that preference when execution is started; no
-  model switch or implementation has been performed by this planning task.
-- No further user decision is currently required. The user selected Sol and
-  authorized execution; U00 and the framework migration checkpoints are underway.
-  Continue independent work and collect only user-only final decisions at U12.
+- The user selected Sol and authorized implementation on 2026-11-01. Sol has
+  completed the framework/runtime migration and approved HEIC follow-up.
+  Preserve that model preference.
+- Chooser policy acceptance and merge/publication remain pending. They do not
+  require additional independent HEIC work: its verification is complete.
+  Collect remaining owner-only decisions at U12; do not reopen the approved
+  pixel-output choice.
 - The executing agent should read the files in the order above, follow the same
   behavior-preservation gates, and keep STATUS current. The model choice does not
   change acceptance criteria or reopen the resolved Angular/macOS decisions.
@@ -140,7 +157,7 @@ final signed bundle after notarization.
   vulnerability or unavailable signing/device check must include evidence and a
   fallback before being presented at U12.
 - Publishing is separate from preparation. Preserve the repository's intentional
-  Windows CI draft publication behavior when implementation eventually pushes.
+  Windows CI draft publication behavior on subsequent pushes.
 
 ## Per-work-unit record template
 
@@ -960,3 +977,28 @@ checked if the owner wants that additional coverage and supplies secure test
 credentials; it is not a packaged-Prod blocker. Merge, version/channel changes,
 public publication and controlled post-release checks remain U13, separately
 authorized after the selected artifacts are concrete and reviewed.
+
+
+### Approved HEIC follow-up — completed verification
+
+Application source: `79d547fa884658be9266f03ae3d20ea05899b34a`. The verification
+records carry their actual November 2 UTC observation timestamps; this status
+was reconciled on November 3. All seven workflow runs
+and eight actual test jobs succeeded without failures or reruns, including
+native Intel at the same application source. Each job passed 194 unit assertions
+and 14 packaged cases. The new signed Mac and Windows draft-byte proofs are
+linked in the active task above. The original references/tolerances are intact;
+the separately approved HEIC reference and actual 2.1.0/1.23.5 payload checks pass.
+
+No application/runtime/assertion source changed after 79d547f. This follow-up
+updates evidence, resume/review text and one E2E README sentence. No owned app-test or
+fixture process, mounted test volume or owned native cache/job/preference remains active.
+Retained raw logs and artifacts are ignored. Inspect the actual branch/PR checks
+for any later documentation-head CI; do not infer their state from source-79d
+results. Draft Windows assets are mutable on each push; their record is a dated
+byte observation rather than a promise that the latest draft hash is unchanged.
+
+Next smallest action: reconcile the actual branch and current PR checks, then
+present the chooser starting-location policy for owner judgment. Do not repeat the resolved
+HEIC output choice. Merge/public release remains unauthorized; existing npm and
+native-code security limitations remain disclosed.

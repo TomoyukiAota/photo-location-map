@@ -1,6 +1,6 @@
 {
   "observedDate": "2026-11-02",
-  "scope": "package-lock.json after clean npm ci",
+  "scope": "Approved HEIC update; package-lock.json after clean npm ci; npm audit refreshed at 2026-11-02T12:39Z",
   "counts": {
     "info": 0,
     "low": 1,
@@ -61,7 +61,7 @@
     }
   ],
   "codec": {
-    "selectedNativePin": "1.18.2",
+    "selectedNativePin": "1.23.5",
     "latestNpmNativePin": "1.23.5",
     "latestUpstreamNative": "1.23.7",
     "nativePinEvidence": [
@@ -74,8 +74,13 @@
       "https://github.com/strukturag/libheif/security/advisories/GHSA-2g6j-vhr6-6wrj",
       "https://github.com/strukturag/libheif/security"
     ],
-    "limits": "No malicious-file or WASM exploit reproduction was performed. Native RCE advisories do not establish a host escape against this exact WASM build. Neither selected nor latest npm codec is security-clean."
+    "limits": "No malicious-file or WASM exploit reproduction was performed. Native RCE advisories do not establish a host escape against this exact WASM build. The selected latest npm codec still lacks native 1.23.7 CPU-exhaustion fixes; it is not security-clean.",
+    "previousNativePin": "1.18.2",
+    "selectedDecoder": "heic-decode@2.1.0",
+    "oldOverrideRemoved": true,
+    "ownerDecision": "New pixel output and update/reverification approved 2026-11-02; publication not authorized."
   },
   "lockfileVersion": 3,
-  "lockfileSha256": "c44f1cbd3241e1ccda894d1755bd46998a0d86e0cf7f4928065ec6677a9a730c"
+  "lockfileSha256": "d847edf7465bbce394d8528f3ae6cd72b88ad0f9a10c35ee22ba1612f6a6081a",
+  "applicationCommit": "79d547fa884658be9266f03ae3d20ea05899b34a"
 }

@@ -1,7 +1,7 @@
 # Owner-approved HEIC decoder update
 
 Decision date: 2026-11-02. Primary-source research checked at
-2026-11-02T12:32Z. **Local verification passed; distribution/CI pending.**
+2026-11-02T12:32Z. **Independent local, distribution and platform verification passed.**
 
 The owner approved adopting the newer HEIC pixel output, updating the decoder,
 and repeating verification. This approval supersedes the pixel-preservation
@@ -9,10 +9,10 @@ decision in the historical `HEIC_DECODER_COMPARISON.json` checkpoint. That
 historical evidence and the original reference remain intact. The approval
 does not authorize release publication.
 
-## Prepared dependency selection
+## Implemented dependency selection
 
-The prepared manifest selects `heic-decode` **2.1.0**. Its supported child range
-is `libheif-js ^1.19.8`; the prepared lockfile selects **1.23.5**. The former
+The manifest selects `heic-decode` **2.1.0**. Its supported child range
+is `libheif-js ^1.19.8`; the lockfile selects **1.23.5**. The former
 `heic-decode@2.0.0` child override to `libheif-js 1.18.2` has been removed.
 No replacement HEIC override is needed. These are manifest/lockfile observations,
 not proof that an installed or packaged runtime contains the selected versions.
@@ -103,9 +103,12 @@ provides no maintained LTS security branch.
 
 ## Post-update verification record
 
-The new local gate passed at 2026-11-02T12:39Z. Earlier artifact checks used
-the former decoder and do not verify this selection. Record exact follow-up
-source/artifact identities when the remaining gates finish.
+All affected gates pass at application source
+`79d547fa884658be9266f03ae3d20ea05899b34a`. Earlier artifact checks used the
+former decoder and remain historical. Fresh exact evidence is in
+[HEIC_MAC_CHECKPOINT.json](./HEIC_MAC_CHECKPOINT.json),
+[HEIC_CI_CHECKPOINT.json](./HEIC_CI_CHECKPOINT.json) and
+[HEIC_WINDOWS_DRAFT_BYTES.json](./HEIC_WINDOWS_DRAFT_BYTES.json).
 
 | Check | Status |
 | --- | --- |
@@ -114,10 +117,10 @@ source/artifact identities when the remaining gates finish.
 | Strict sample dimensions/new hash and actual decoder versions through the real worker; malformed-image failure behavior | PASS in the real checkout application: exact 300x400 approved hash and 2.1.0/1.23.5 resolution; corrupt input returns failed-in-heic-convert. |
 | Original HEIC reference and unrelated screenshot references remain unchanged | PASS: snapshot tree byte-unchanged from f1f0ee5; original tolerances retained. |
 | Functional and visual app regression checks after the update | PASS: all 15 cases, including embedded JPEG/HEIC viewer and special-character paths. |
-| Rebuilt final signed/notarized universal macOS artifacts, artifact integrity, launch and packaged-app regression checks | Pending |
-| Windows installed NSIS app and Linux packaged AppImage CI on the updated code | Pending |
-| Required Intel macOS CI on the updated code | Pending |
-| Final-artifact updater transport verification and any additional packaging/update checks required by the task plan | Pending |
+| Rebuilt final signed/notarized universal macOS artifacts, artifact integrity, launch and packaged-app regression checks | PASS: real signing/notarization/staple/Gatekeeper; 14 packaged visual/functional cases; both archives match all 4,754 files and link/directory entries; full metadata/blockmaps; mounted-DMG launch/log/quit/detach. The smoke uses a 60-second launch observation window, not 60 seconds after readiness. |
+| Windows installed NSIS app and Linux packaged AppImage CI on the updated code | PASS: both triggers on each OS, 194 units and 14 packaged E2E cases per job. Actual Windows draft bytes, decoder metadata and selected WASM payload bytes verified independently. |
+| Required Intel macOS CI on the updated code | PASS: native Intel manual job 125280892676 at the same 79d547f source; 194 units and 14 actual packaged E2E cases. All eight test jobs in seven workflows pass without failures/reruns. |
+| Final-artifact updater transport verification and any additional packaging/update checks required by the task plan | PASS: final ZIP transport/cache/corruption checks plus separate signed native fixture install/relaunch/explicit downgrade rollback and settings through four starts; exact cleanup and unchanged production source signature/fingerprint. Fixture/public-feed coverage limits remain explicit. |
 
 Release publication remains outside this approval and outside the verification
 results recorded here.
