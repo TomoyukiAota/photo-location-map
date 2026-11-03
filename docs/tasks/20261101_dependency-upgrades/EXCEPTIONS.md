@@ -24,7 +24,8 @@ selected versions have completed their gates.
 Time-zone data corrections are recorded separately in
 [evidence/TIMEZONE_CHANGES.json](./evidence/TIMEZONE_CHANGES.json). They update
 historical/political rules while keeping application formatting and selection
-logic. See STATUS for the still-open native file-chooser default-directory item.
+logic. The owner accepted the confirmed-folder chooser policy on 2026-11-03;
+its starting-location distinctions and technical limits remain documented in STATUS.
 
 ## Decoder security review (2026-11-02)
 

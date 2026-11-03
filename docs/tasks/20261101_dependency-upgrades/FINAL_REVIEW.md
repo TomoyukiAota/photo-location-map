@@ -5,8 +5,8 @@ on 2026-11-02 UTC; this review refresh does not represent new test executions.
 
 **The approved HEIC follow-up and independent verification are complete.** The
 candidate uses `heic-decode` 2.1.0 with `libheif-js` 1.23.5 and the explicitly
-approved newer pixel output. The chooser policy still awaits acceptance; the
-owner's clarification question was not approval. Merge and publication remain
+approved newer pixel output. The owner explicitly accepted the confirmed-folder
+chooser policy on 2026-11-03 after clarification. Merge and publication remain
 unauthorized. The verified artifacts are review candidates.
 
 ## Candidate and scope
@@ -35,7 +35,7 @@ source or checked-out CI commits.
 
 The work preserves the app's existing architecture, controls and interactions,
 with original screenshot references retained. The approved HEIC output change,
-pending chooser policy and time-zone corrections below remain material. The
+accepted chooser policy and time-zone corrections below remain material. The
 optional experimental Dev-only Google Maps check lacks a valid key.
 
 ## Verification gates
@@ -86,9 +86,9 @@ replace asset IDs and bytes, so recheck the actual assets before publication.
 ## Approved follow-up and remaining owner-dependent items
 
 The approved HEIC implementation and independent verification are complete.
-The remaining chooser and publication choices can now be reviewed with concrete
-source/artifact evidence. The HEIC output choice is resolved and must not be
-asked again.
+The HEIC output and confirmed-folder chooser choices are resolved and must not
+be asked again. Merge/publication can be reviewed separately with the concrete
+source/artifact evidence; neither compatibility choice authorizes release.
 
 ### 1. HEIC output and decoder security
 
@@ -140,8 +140,11 @@ not be relabeled as evidence for those bytes.
 
 ### 2. Native folder-chooser history
 
-**Pending, not approved.** The owner's response asked for clarification and
-must not be recorded as acceptance.
+**Accepted on 2026-11-03.** After clarification, the owner explicitly selected
+the confirmed-folder policy and accepted its starting-location differences.
+The earlier clarification question alone was not approval. This subsequent
+choice resolves the policy decision, without authorizing merge/publication or
+claiming exact native MRU restoration.
 
 The original app let the OS choose the picker's starting location, typically
 its last **viewed or navigated** directory. The adapter instead requests the
@@ -168,8 +171,8 @@ version 4 can ignore `defaultPath`, so actual native behavior depends on the
 backend. The E2E checks a stubbed dialog's options, real storage and restart;
 it does not establish the actual native panel's MRU behavior.
 
-**Recommendation:** retain the confirmed-folder policy subject to the owner's
-acceptance of this distinction. No preference heuristic, custom native dialog
+**Selected policy:** retain the confirmed-folder implementation as explicitly
+accepted by the owner. No preference heuristic, custom native dialog
 or Electron fork is included.
 See [NATIVE_CHOOSER_COMPATIBILITY.md](./evidence/NATIVE_CHOOSER_COMPATIBILITY.md)
 for the original behavior change, adapter contract and verification scope.
@@ -229,10 +232,11 @@ the approved decoder's current lockfile hash and the removed historical pin.
    at `79d547f`. Do not repeat the approved output question or redo completed
    gates without a new change or unresolved concern. Any later application
    change requires fresh affected tests and artifact identities.
-3. Keep chooser acceptance pending: the owner's follow-up was a question, not
-   approval. Optional Dev-only credentials are separate from packaged-Prod
-   validation. Independent work is complete; collect the remaining owner-only
-   choices with this evidence packet.
+3. The confirmed-folder chooser policy was explicitly accepted on 2026-11-03
+   after clarification; do not reopen it. Optional Dev-only credentials remain
+   separate from packaged-Prod validation. Independent work and implementation
+   compatibility decisions are complete.
 4. Keep merge and publication pending; the HEIC implementation approval does
-   not authorize them. After explicit publication authorization, complete the
+   not authorize them; neither does chooser acceptance. After explicit
+   publication authorization, complete the
    public-download/feed checks and record their actual results and limits.

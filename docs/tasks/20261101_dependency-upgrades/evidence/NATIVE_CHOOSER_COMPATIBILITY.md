@@ -2,8 +2,11 @@
 
 Observed: 2026-11-02. Selected runtime: Electron 45.2.1.
 
-**Owner acceptance is pending.** The owner's follow-up requested clarification;
-it did not approve the policy described below. Publication is not authorized.
+**Owner accepted this policy on 2026-11-03.** After clarification, the owner
+explicitly selected the confirmed-folder policy, accepting its starting-location
+differences from OS-managed history. The earlier clarification alone was not
+approval; the subsequent explicit choice resolves that decision. This does not
+authorize merge or publication or expand the technical guarantees below.
 
 The original application, using Electron 32, omitted `defaultPath` and stored
 no application-managed folder-picker history. The OS chose the starting

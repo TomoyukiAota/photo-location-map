@@ -1,6 +1,6 @@
 {
   "observedDate": "2026-11-02",
-  "state": "Approved HEIC follow-up complete: local, platform and signed-distribution gates passed at the recorded source; chooser acceptance and publication remain pending",
+  "state": "Approved HEIC follow-up complete; local, platform and signed-distribution gates passed; confirmed-folder chooser policy accepted 2026-11-03; merge/publication remains unauthorized",
   "verifiedApplicationCommit": "79d547fa884658be9266f03ae3d20ea05899b34a",
   "hostNode": "26.13.0",
   "bundledNpm": "11.20.0",

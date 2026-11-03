@@ -41,8 +41,9 @@ Updated: 2026-11-03 (Asia/Tokyo).
 
 Active task: owner review after completed independent implementation and approved
 HEIC revalidation. The owner selected the newer HEIC output on 2026-11-02,
-without publication approval. The chooser response was a question, not acceptance;
-the history-policy distinction remains unresolved. The fully verified application
+then explicitly accepted the confirmed-folder chooser policy on 2026-11-03 after
+clarification. Both implementation choices are resolved; merge/publication remains
+unauthorized. The fully verified application
 source is 79d547f. Fresh proof is in
 [HEIC_MAC_CHECKPOINT.json](./evidence/HEIC_MAC_CHECKPOINT.json),
 [HEIC_CI_CHECKPOINT.json](./evidence/HEIC_CI_CHECKPOINT.json) and
@@ -61,10 +62,11 @@ The approved HEIC output has a separate strict reference under
 - Approved: adopt the newer HEIC pixel output, update and revalidate; no public
   release approval. Latest registry still selects heic-decode 2.1.0 and
   libheif-js 1.23.5. The old parent-scoped decoder override is removed.
-- Not approved: native chooser history limitations. The owner asked what the
-  old/new PLM history difference means. Explain only the OS dialog's starting
-  directory, not photo/settings migration. Baseline PLM stored no folder-history
-  key; the adapter stores only confirmed folders. OS history is not deleted.
+- Initially the owner asked for clarification about native chooser history;
+  that question was not acceptance. On 2026-11-03 the owner subsequently
+  explicitly accepted the confirmed-folder policy and its starting-location
+  differences. Baseline PLM stored no folder-history key; the adapter stores
+  only confirmed folders. OS history, photos and existing settings are not deleted.
 - Original screenshots and `snapshots/heic-thumbnail.json` remain unchanged.
   The previously measured, explicitly accepted 6b17ef... output is recorded in a
   separate version-labelled reference. Real worker checks now also assert the
@@ -115,13 +117,13 @@ unmount failure; their fixes/results are recorded in the new Mac checkpoint.
 | U04c | Verified locally | Graph/lint/build, clean 57+74+41 tests and 7 unchanged regression cases. |
 | U04d | Verified locally | Graph/runtime/lint/build, 172 tests and all 7 unchanged regression cases. |
 | U05 | Complete | Angular 22/TS 6/Node 26 locally verified; the intermediate Electron 32 install caveat is resolved by U06 and final clean CI. |
-| U06 | Verified; owner chooser decision open | Windows/Linux/Mac arm64/Intel and signed universal artifacts pass at the current 79d547f source. Chooser policy still awaits acceptance. |
+| U06 | Verified; chooser policy accepted | Windows/Linux/Mac arm64/Intel and signed universal artifacts pass at the current 79d547f source. Owner accepted confirmed-folder history on 2026-11-03. |
 | U07 | Verified locally | File/date/module, image/worker and analytics groups pass; compatibility exceptions are recorded. |
 | U08 | Complete | Maps, charting and translations pass unchanged visual and actual interaction checks. |
 | U09 | Verified locally | Bootstrap 5.3.8 with unchanged screenshots, focus/hover colors, both download URL requests and 390px layout; unused JS removed. Deployment remains gated by main. |
 | U10 | Complete | Clean install, graph, tooling, audit disposition and all local regression gates pass. |
 | U11 | Complete with recorded coverage limits | All affected local/platform/artifact/native fixture gates pass at 79d547f with the approved decoder. Public-feed installation remains U13. |
-| U12 | Ready for remaining owner decisions | New HEIC output approved and revalidated; current exact source/artifact records are complete. Chooser policy acceptance and merge/publication remain pending. |
+| U12 | Implementation decisions resolved | HEIC output approved/revalidated and chooser policy accepted; exact source/artifact records are complete. Merge/publication remains separate and unauthorized. |
 | U13 | Not authorized | Publication and post-release verification. |
 
 ## Resolved decisions
@@ -135,16 +137,17 @@ unmount failure; their fixes/results are recorded in the new Mac checkpoint.
 - Implementation was subsequently authorized on 2026-11-01. Publication remains a final gate.
 - New HEIC pixel output and updating/revalidating heic-decode 2.1.0 /
   libheif-js 1.23.5 were approved on 2026-11-02 and are now verified.
+- Confirmed-folder chooser history and its starting-location differences from
+  OS-managed history were explicitly accepted on 2026-11-03 after clarification.
 
 ## Implementation handoff
 
 - The user selected Sol and authorized implementation on 2026-11-01. Sol has
   completed the framework/runtime migration and approved HEIC follow-up.
   Preserve that model preference.
-- Chooser policy acceptance and merge/publication remain pending. They do not
-  require additional independent HEIC work: its verification is complete.
-  Collect remaining owner-only decisions at U12; do not reopen the approved
-  pixel-output choice.
+- The HEIC output and confirmed-folder chooser choices are explicitly accepted.
+  Independent implementation verification is complete. Do not reopen either
+  choice; merge/publication remains a separate unauthorized step.
 - The executing agent should read the files in the order above, follow the same
   behavior-preservation gates, and keep STATUS current. The model choice does not
   change acceptance criteria or reopen the resolved Angular/macOS decisions.
@@ -998,7 +1001,26 @@ for any later documentation-head CI; do not infer their state from source-79d
 results. Draft Windows assets are mutable on each push; their record is a dated
 byte observation rather than a promise that the latest draft hash is unchanged.
 
-Next smallest action: reconcile the actual branch and current PR checks, then
-present the chooser starting-location policy for owner judgment. Do not repeat the resolved
-HEIC output choice. Merge/public release remains unauthorized; existing npm and
-native-code security limitations remain disclosed.
+Next smallest action: reconcile the actual branch and current PR checks.
+The owner subsequently accepted the chooser policy as recorded below; do not
+repeat that question or the resolved HEIC output choice. Merge/public release
+remains unauthorized; existing npm and native-code security limitations remain disclosed.
+
+
+### Confirmed-folder policy accepted (2026-11-03)
+
+After clarification, the owner explicitly selected acceptance of the policy that
+requests the last folder confirmed in the picker. The first-upgrade and ordinary
+use differences from OS-managed history, including navigation followed by
+cancellation, are accepted. The implementation and its verified application
+source remain 79d547f; no app, runtime, assertion or image-reference changes are
+needed. Backend/API limits and test coverage remain as documented in
+[NATIVE_CHOOSER_COMPATIBILITY.md](./evidence/NATIVE_CHOOSER_COMPATIBILITY.md).
+
+This resolves the remaining implementation compatibility decision. It does not
+authorize merge, public release, a version/channel change, or treatment of the
+remaining native/npm security issues as fixed. Optional Dev-only Google Maps
+coverage remains optional. Update the public review/PR and verify document
+consistency; any automatically triggered documentation-head CI must be classified
+on its actual result. Earlier dated entries describing this choice as pending
+are historical, superseded by this explicit acceptance.
