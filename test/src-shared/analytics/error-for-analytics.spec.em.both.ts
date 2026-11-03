@@ -1,4 +1,3 @@
-// power-assert's parser in this test setup does not accept newer syntax such as `??` or `1_000`.
 import assert = require('assert');
 import { errorForAnalytics, scrubMessage, scrubStack } from '../../../src-shared/analytics/error-for-analytics';
 

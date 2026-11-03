@@ -124,3 +124,49 @@ body {
   font-size: 13px;
   margin-top: 50px;
 }
+
+/* Keep the original Bootstrap 4 appearance with Bootstrap 5's supported CSS. */
+a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+ul, ol {
+  padding-left: 40px;
+}
+
+.btn {
+  --bs-btn-border-radius: 0.25rem;
+  --bs-btn-focus-box-shadow: 0 0 0 0.2rem rgba(var(--bs-btn-focus-shadow-rgb), 0.5);
+}
+
+.btn:hover {
+  text-decoration: none;
+}
+
+.btn:focus {
+  outline: 0;
+  box-shadow: var(--bs-btn-focus-box-shadow);
+}
+
+.btn-dark:focus-visible:not(:hover):not(:active) {
+  background-color: var(--bs-btn-bg);
+  border-color: var(--bs-btn-border-color);
+}
+
+.btn-dark {
+  --bs-btn-bg: #343a40;
+  --bs-btn-border-color: #343a40;
+  --bs-btn-hover-bg: #23272b;
+  --bs-btn-hover-border-color: #1d2124;
+  --bs-btn-focus-shadow-rgb: 82, 88, 93;
+  --bs-btn-active-bg: #1d2124;
+  --bs-btn-active-border-color: #171a1d;
+  --bs-btn-disabled-bg: #343a40;
+  --bs-btn-disabled-border-color: #343a40;
+}

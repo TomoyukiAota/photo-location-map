@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 
 import { ScrollingModule } from '@angular/cdk/scrolling';
-import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,8 +20,8 @@ import { MatTreeModule } from '@angular/material/tree';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { provideTranslateService, TranslateDirective, TranslatePipe } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { TableVirtualScrollModule } from 'ng-table-virtual-scroll';
 
@@ -54,11 +54,6 @@ import { CacheSettingsComponent } from './settings-dialog/cache-settings/cache-s
 import { NoPhotosWithLocationDataDialogComponent } from './no-photos-with-location-data-dialog/no-photos-with-location-data-dialog.component';
 import { LoadedFilesStatusBarComponent } from './loaded-files-status-bar/component/loaded-files-status-bar.component';
 import { AnalyticsErrorHandler } from './shared/error/analytics-error-handler';
-
-// AoT requires an exported function for factories
-export function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
-}
 
 @NgModule({
   declarations: [
@@ -94,13 +89,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     BrowserModule,
     FormsModule,
     AppRoutingModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: (HttpLoaderFactory),
-        deps: [HttpClient]
-      }
-    }),
+    TranslatePipe,
+    TranslateDirective,
     BrowserAnimationsModule,
     MatButtonModule,
     MatCheckboxModule,
@@ -116,13 +106,37 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatTableModule,
     MatTreeModule,
     NgxEchartsModule.forRoot({
-      echarts: () => import('echarts'),
+      echarts: async () => {
+        // The official v5 UMD theme depends on ECharts' CommonJS build. Load the
+        // same build here so its theme registration reaches ngx-echarts' instance.
+        const echarts = await import('echarts/dist/echarts');
+        await import('echarts/theme/v5.js');
+        if (typeof process !== 'undefined' && process.env.PLM_E2E === '1') {
+          // Read the real chart through the same namespace that ngx-echarts receives.
+          (window as Window & { __plmReadChartTheme?: (element: HTMLElement) => unknown }).__plmReadChartTheme = element => ({
+            palette: echarts.getInstanceByDom(element)?.getOption().color,
+            api: {
+              init: typeof echarts.init,
+              getInstanceByDom: typeof echarts.getInstanceByDom,
+              registerTheme: typeof echarts.registerTheme,
+            },
+          });
+        }
+        return echarts;
+      },
     }),
     ScrollingModule,
     TableVirtualScrollModule,
   ],
   providers: [
-    provideHttpClient(withInterceptorsFromDi()),
+    provideTranslateService({
+      loader: provideTranslateHttpLoader({
+        prefix: './assets/i18n/',
+        suffix: '.json',
+        failOnError: true, // Preserve the original loader's HTTP error propagation.
+      }),
+    }),
+    provideHttpClient(withXhr(), withInterceptorsFromDi()),
     { provide: ErrorHandler, useClass: AnalyticsErrorHandler },
   ],
   bootstrap: [AppComponent]

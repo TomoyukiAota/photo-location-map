@@ -1,4 +1,5 @@
 import * as path from 'path';
+import { pathToFileURL } from 'url';
 import { createPrependedLogger } from '../../src-shared/log/create-prepended-logger';
 import { LiveReload } from '../live-reload';
 
@@ -17,7 +18,7 @@ export async function getUrlForMainWindow(): Promise<string> {
   //  - https://stackoverflow.com/a/63810451/7947548
   //  - https://stackoverflow.com/q/48478869/7947548
   // Therefore, the file server implementation is removed, and file protocol continues to be used.
-  const urlObj = new URL(path.join('file:', __dirname, '..', '..', 'dist', 'index.html'));
+  const urlObj = pathToFileURL(path.join(__dirname, '..', '..', 'dist', 'index.html'));
   const url = urlObj.href;
   fileServerLogger.info(`isLiveReloadMode === false, so the file URL is used. ${url}`);
   return url;

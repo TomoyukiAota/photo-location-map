@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { BooleanSetting } from '../../../../src-shared/user-settings/boolean-setting';
 import { currentUserSettings } from '../../../../src-shared/user-settings/user-settings';
 import { LoadedFilesStatusBarService } from '../../loaded-files-status-bar/service/loaded-files-status-bar.service';
@@ -8,7 +8,9 @@ import { AppearanceSettingsChangedParameter } from './appearance-settings-change
 @Component({
   selector: 'app-appearance-settings',
   templateUrl: './appearance-settings.component.html',
-  styleUrls: ['./appearance-settings.component.scss']
+  styleUrls: ['./appearance-settings.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false
 })
 export class AppearanceSettingsComponent {
   public shouldShowStatusBar: boolean;

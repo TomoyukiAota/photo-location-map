@@ -1,0 +1,16 @@
+{
+  "url": "https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css",
+  "integrity": "sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB",
+  "bytes": 232111,
+  "observedDate": "2026-11-01",
+  "verification": "Original desktop and 600px screenshots; 390px layout; focus/hover values; Mac/Windows download requests",
+  "removedUnusedScripts": [
+    "jquery@3.3.1",
+    "popper.js@1.14.7",
+    "bootstrap@4.3.1 JS"
+  ],
+  "pagesSource": {
+    "branch": "main",
+    "path": "/docs"
+  }
+}

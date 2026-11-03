@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
@@ -18,7 +18,9 @@ interface TableRow {
 @Component({
   selector: 'app-thumbnail-generation-error-table',
   templateUrl: './thumbnail-generation-error-table.component.html',
-  styleUrls: ['./thumbnail-generation-error-table.component.scss']
+  styleUrls: ['./thumbnail-generation-error-table.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false
 })
 export class ThumbnailGenerationErrorTableComponent implements OnInit {
   public displayedColumns: string[] = ['position', 'filePath'];

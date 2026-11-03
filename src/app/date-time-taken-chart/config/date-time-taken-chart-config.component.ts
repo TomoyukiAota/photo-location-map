@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { DomSanitizer } from '@angular/platform-browser';
 import { map, Observable } from 'rxjs';
@@ -12,7 +12,9 @@ import { getXAxisUnitMomentJsStr, xAxisUnit } from './date-time-taken-chart-x-ax
 @Component({
   selector: 'app-date-time-taken-chart-config',
   templateUrl: './date-time-taken-chart-config.component.html',
-  styleUrls: ['./date-time-taken-chart-config.component.scss']
+  styleUrls: ['./date-time-taken-chart-config.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false
 })
 export class DateTimeTakenChartConfigComponent {
   public xAxisUnits = [

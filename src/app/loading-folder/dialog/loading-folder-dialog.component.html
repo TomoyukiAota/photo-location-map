@@ -2,23 +2,25 @@
   <mat-progress-bar [mode]="progressBarMode" [value]="progressPercent"></mat-progress-bar>
   <div class="loading-and-progress">
     <div>
-      <ng-container *ngIf="!isLoadingFilesStarted">
+      @if (!isLoadingFilesStarted) {
         Collecting files to load from the opened folder...
-      </ng-container>
-      <ng-container *ngIf="isLoadingFilesInProgress">
+      }
+      @if (isLoadingFilesInProgress) {
         Loading files from the opened folder...
-      </ng-container>
-      <ng-container *ngIf="isLoadingFilesCompleted">
+      }
+      @if (isLoadingFilesCompleted) {
         Completed loading all files ({{ numberOfLoadedFiles }} files).
-      </ng-container>
+      }
     </div>
-    <div *ngIf="isLoadingFilesStarted">
-      <ng-container *ngIf="isLoadingFilesInProgress">
-        Loaded {{ numberOfLoadedFiles }} files out of {{ numberOfAllFilesToLoad }} files.
-      </ng-container>
-      <ng-container *ngIf="isLoadingFilesCompleted">
-        Generating the map using the loaded files...
-      </ng-container>
-    </div>
+    @if (isLoadingFilesStarted) {
+      <div>
+        @if (isLoadingFilesInProgress) {
+          Loaded {{ numberOfLoadedFiles }} files out of {{ numberOfAllFilesToLoad }} files.
+        }
+        @if (isLoadingFilesCompleted) {
+          Generating the map using the loaded files...
+        }
+      </div>
+    }
   </div>
 </div>

@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "nodenext",
+    "rootDir": ".",
     "target": "ES2022",
     "lib": [
       "es2020"
     ],
     "sourceMap": true,
     "declaration": false,
-    "moduleResolution": "node",
+    "moduleResolution": "nodenext",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "typeRoots": [
@@ -15,7 +16,9 @@
     ],
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "esModuleInterop": true,
+    "strict": false
   },
   "files": [
     "src-main/electron-main.ts",

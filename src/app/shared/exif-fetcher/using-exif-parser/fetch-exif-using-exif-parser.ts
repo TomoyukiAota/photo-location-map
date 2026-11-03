@@ -1,5 +1,5 @@
 import * as exifParser from 'exif-parser';
-import * as moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import { Exif } from '../../model/exif.model';
 import { Logger } from '../../../../../src-shared/log/logger';
 import { DateTimeOriginal } from '../../model/date-time-original';

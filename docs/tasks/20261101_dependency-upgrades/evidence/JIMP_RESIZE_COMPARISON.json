@@ -1,0 +1,47 @@
+{
+  "oldJimp": "0.16.2",
+  "newJimp": "1.6.1",
+  "quality": 92,
+  "cases": [
+    {
+      "inputWidth": 800,
+      "inputHeight": 600,
+      "width": 400,
+      "height": 300,
+      "oldBitmap": "8076ef5625c1f739e33ce7223e082a27f66dd39efb317ba8ba9b13d057e1ee67",
+      "newBitmap": "8076ef5625c1f739e33ce7223e082a27f66dd39efb317ba8ba9b13d057e1ee67",
+      "oldJpeg": "a826a0b0fc565f61d46a7a30510d9adfa3d152f6c83d74705f3b1d98b8f12ec6",
+      "newJpeg": "a826a0b0fc565f61d46a7a30510d9adfa3d152f6c83d74705f3b1d98b8f12ec6"
+    },
+    {
+      "inputWidth": 3,
+      "inputHeight": 7,
+      "width": 171,
+      "height": 400,
+      "oldBitmap": "231b078a7521d33920b33567f25309ff0fb7f26efa5b8cf9053bd780e653e613",
+      "newBitmap": "231b078a7521d33920b33567f25309ff0fb7f26efa5b8cf9053bd780e653e613",
+      "oldJpeg": "4bc79d81f80c42767812a48902043eeee9be6d192b10571ea52604423b55dbc5",
+      "newJpeg": "4bc79d81f80c42767812a48902043eeee9be6d192b10571ea52604423b55dbc5"
+    },
+    {
+      "inputWidth": 127,
+      "inputHeight": 91,
+      "width": 400,
+      "height": 287,
+      "oldBitmap": "bb7e9fa5b1a74868926b122cc748874928570fa6eb69d7650d1c32c6cc2c52ec",
+      "newBitmap": "bb7e9fa5b1a74868926b122cc748874928570fa6eb69d7650d1c32c6cc2c52ec",
+      "oldJpeg": "eb1a9a81cdef910cd40f0fe2cc0ddca27481fd7e76ebe49a23df209c45d2db6c",
+      "newJpeg": "eb1a9a81cdef910cd40f0fe2cc0ddca27481fd7e76ebe49a23df209c45d2db6c"
+    },
+    {
+      "inputWidth": 400,
+      "inputHeight": 400,
+      "width": 400,
+      "height": 400,
+      "oldBitmap": "e6364ca58ae197e654db4d62e78f081febb0a7fee6d6283b11d9f6266a79fe52",
+      "newBitmap": "e6364ca58ae197e654db4d62e78f081febb0a7fee6d6283b11d9f6266a79fe52",
+      "oldJpeg": "1090d89084da3d03ac957fe65271837bf3d66cbfd2e163452debaf45b044628c",
+      "newJpeg": "1090d89084da3d03ac957fe65271837bf3d66cbfd2e163452debaf45b044628c"
+    }
+  ]
+}

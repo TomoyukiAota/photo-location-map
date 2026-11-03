@@ -18,7 +18,14 @@ This page contains useful information to contribute to this project.
 [ci-on-ubuntu-image]: https://github.com/TomoyukiAota/photo-location-map/workflows/CI%20on%20Ubuntu/badge.svg
 [ci-on-ubuntu-link]: https://github.com/TomoyukiAota/photo-location-map/actions?query=workflow%3A%22CI+on+Ubuntu%22
 
-The macOS CI runs on Apple Silicon (`macos-26`). To run it on Intel (`macos-26-intel`), run the "CI on macOS" workflow manually: **Run workflow** in the Actions tab, or `gh workflow run ci-on-mac.yml --ref <branch>`. Do this before merging changes related to Intel Mac support, such as updating Electron and electron-builder.
+Ubuntu CI uses Ubuntu 26.04 LTS and reports `test (ubuntu)`. The regular macOS
+check is `test (macos-arm64)`; the manual Intel check is `test (macos-x64)`.
+These check names stay stable when runner versions change. Keep branch protection
+and Mergify aligned with the regular check names. When renaming a required check,
+first make the workflow and Mergify changes and confirm the new check passes,
+then replace the old context in branch protection.
+
+The macOS CI runs on Apple Silicon (`macos-26`). To run it on Intel (`macos-26-intel`), run the "CI on macOS" workflow manually: **Run workflow** in the Actions tab, or `gh workflow run ci-on-mac.yml --ref <branch>`. Do this before merging changes related to Intel Mac support, such as updating Electron and electron-builder. The manual `test (macos-x64)` check is not a required branch-protection check.
 
 A push or pull request that changes only documents (`docs/`, `README.md`, `CLAUDE.md`, `LICENSE` and `.github/ISSUE_TEMPLATE/`, as listed in [`.github/ci-filters.yml`](../.github/ci-filters.yml)) skips the tests.
 
@@ -28,6 +35,8 @@ A push or pull request that changes only documents (`docs/`, `README.md`, `CLAUD
  - Node.js (64-bit), with the version specified in [`mise.toml`](../mise.toml)
    - [mise](https://mise.jdx.dev/) is the recommended way to install it. `mise.toml` is the single source of truth for the Node.js version, and CI installs the same version from it.
    - Node.js can also be installed however you prefer, as long as the version matches.
+   - Use the npm bundled with that Node installation; do not upgrade npm separately.
+     `npm run verify:runtime` checks the version and executable identity.
  - More than 2GB of RAM
    - Application packaging frequently fails on a PC with 1GB of RAM. Add more RAM depending on the available memory for application packaging on your PC.
 
@@ -39,11 +48,17 @@ After cloning this repository, run these commands to start the application:
 ``` bash
 mise trust    # Only needed once per clone, to allow mise to read mise.toml
 mise install  # Install Node.js with the version in mise.toml
-npm ci
-npm start
+mise exec -- npm ci
+mise exec -- npm start
 ```
 
-Without mise, install Node.js however you prefer, and then run `npm ci` and `npm start`.
+Without mise, install the specified Node.js and its bundled npm, then run `npm ci` and `npm start`.
+
+Dependency install scripts are reviewed in `allowScripts` in `package.json`.
+When upgrading a package with an install script, inspect that script and update
+its exact-version entry. `.npmrc` rejects unreviewed scripts during installation.
+Electron downloads its binary on its first invocation; `npm run verify:electron`
+checks that binary and the Node types used to compile for it.
 
 
 ## Frequently Used Commands
@@ -51,10 +66,27 @@ Without mise, install Node.js however you prefer, and then run `npm ci` and `npm
 |Command|Description|
 |--|--|
 |`npm start`| Build and run the application for development. |
-|`npm run test:all`| Run all tests. Linting, unit tests, and package creation/smoke tests are included. |
+|`npm run test:all`| Run lint, unit tests, development watcher lifecycle checks, and package creation/smoke tests. |
+|`npm run test:live-reload`| Build the main process and check watcher quit, reload, and relaunch. |
+|`npm run test:e2e`| Run application regressions after a production build; see [test/e2e/README.md](../test/e2e/README.md). |
 |`npm run package:windows`| Create an installer for Windows. |
-|`npm run package:mac`| Create a `.dmg` file which contains a `.app` file for macOS. |
+|`npm run package:mac`| Create signed/notarized universal macOS `.dmg` and update `.zip` artifacts. |
 |`npm run package:linux`| Create an application for Linux. |
+
+
+## HTML template formatting
+
+The workspace sets VS Code's built-in HTML formatter to
+[`preserve-aligned`](https://code.visualstudio.com/docs/languages/html#_formatting).
+It keeps existing attribute line breaks and realigns incorrectly indented
+continuation attributes with the first attribute. For a local alignment fix, select the opening tag and use
+**Format Selection** with the built-in HTML formatter. Other formatters may not
+use this HTML-specific setting.
+
+The built-in formatter does not preserve Angular `@if`/`@for` block indentation
+when formatting a whole document. The workspace therefore does not force a
+default formatter or enable format-on-save. Do not reformat the whole repository
+to make an attribute-alignment change.
 
 
 ## Using npm modules

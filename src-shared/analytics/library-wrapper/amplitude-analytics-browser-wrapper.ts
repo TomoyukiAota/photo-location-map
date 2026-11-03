@@ -23,7 +23,19 @@ export class AmplitudeAnalyticsBrowserWrapper {
     // but this is a preventative measure because @amplitude/analytics-browser is designed to be used in web browsers.
     this.amplitude = require('@amplitude/analytics-browser');
 
-    this.amplitude.init(apiKey, userId);
+    this.amplitude.init(apiKey, userId, {
+      // Keep PLM's identity on the SDK's new default events as well as manual events.
+      deviceId,
+      // These v2 additions expose the desktop window's local installation URL.
+      // The previous SDK did not emit them; retain the other ordinary defaults.
+      autocapture: {
+        pageViews: false,
+        pageUrlEnrichment: false,
+      },
+      // Use the SDK's local defaults; remote overrides and SDK diagnostics are separate.
+      fetchRemoteConfig: false,
+      enableDiagnostics: false,
+    });
     this.amplitude.setDeviceId(deviceId);
     this.isInitialized = true;
   }

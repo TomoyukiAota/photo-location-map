@@ -1,0 +1,34 @@
+{
+  "observedDate": "2026-11-01",
+  "amplitude": {
+    "before": "1.6.7",
+    "after": "2.49.0",
+    "attributionRetained": true,
+    "newAutomaticCaptureDisabled": true,
+    "remoteConfigDisabled": true,
+    "diagnosticsDisabled": true
+  },
+  "mixpanel": {
+    "before": "2.45.0",
+    "after": "2.84.0",
+    "autocapture": false,
+    "track_pageview": false,
+    "record_sessions_percent": 0
+  },
+  "actualTransportCheck": {
+    "services": [
+      "amplitude",
+      "mixpanel"
+    ],
+    "event": "Dependency Upgrade Check",
+    "category": "Compatibility",
+    "label": "fixed label",
+    "value": 17,
+    "ingestionIdsDeduplicateRetries": true,
+    "outgoingRequestsCancelled": true
+  },
+  "negativeControlDetected": [
+    "session_start",
+    "[Amplitude] Page Viewed"
+  ]
+}

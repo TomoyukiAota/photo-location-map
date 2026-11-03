@@ -20,7 +20,8 @@ import { ThumbnailGenerationStatusBarService } from '../thumbnail-generation/sta
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-home',
   styleUrls: ['./home.component.scss'],
-  templateUrl: './home.component.html'
+  templateUrl: './home.component.html',
+  standalone: false
 })
 export class HomeComponent implements AfterViewInit, OnInit {
   public thumbnailGenerationStatusBarVisible = false;

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import * as fsExtra from 'fs-extra';
 import { openWithAssociatedApp } from '../../../../src-shared/command/command';
 import { Logger } from '../../../../src-shared/log/logger';
@@ -9,7 +9,9 @@ import { configureOpeningInOsBrowser } from '../../shared/open-url/configure-ope
 @Component({
   selector: 'app-cache-settings',
   templateUrl: './cache-settings.component.html',
-  styleUrls: ['./cache-settings.component.scss']
+  styleUrls: ['./cache-settings.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false
 })
 export class CacheSettingsComponent implements AfterViewInit, OnInit {
   public thumbnailCacheLocation = plmThumbnailCacheDir;

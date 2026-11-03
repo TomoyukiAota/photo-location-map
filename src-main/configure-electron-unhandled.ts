@@ -1,4 +1,4 @@
-import * as electronUnhandled from 'electron-unhandled';
+import electronUnhandled from 'electron-unhandled';
 import { recordUnhandledError } from '../src-shared/analytics/record-error';
 import { Logger } from '../src-shared/log/logger';
 

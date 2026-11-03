@@ -1,0 +1,45 @@
+{
+  "observedDate": "2026-11-01",
+  "timezone": "Asia/Tokyo",
+  "baselineCommit": "911dd91bf8de231a40be55f80e0255f053bbc4e3",
+  "applicationVersion": "1.12.2-alpha",
+  "node": "20.16.0",
+  "npm": "10.8.1",
+  "lockfileVersion": 2,
+  "directDependencies": 102,
+  "lockfilePackageEntriesExcludingRoot": 2130,
+  "baselineFileHashes": {
+    "package.json": "89b378d6c2505f3baa26a59c77e4983cde81bec0b297d6defe9a2d9fc31a257f",
+    "package-lock.json": "319341e771d5ad758a677c200c27206a2414b8bb29d1253aac440713898f1eff",
+    "mise.toml": "1d1b998f83e2f1bbbd8e146d8a952d07a41572307c73bc3bb3d0094fcdc4a49e",
+    "angular.json": "1debabd4fb134658747c9184d61064c9dfd52dcf3fb9119f94b6f688fc5cb42c",
+    "electron-builder.json": "3cd9c186b0b4a277f15eb17e6c2ec7117ef0a0ac17ab90807e7d7e1a3a9d823e"
+  },
+  "audit": {
+    "command": "npm audit --package-lock-only --json",
+    "node": "20.16.0",
+    "npm": "10.8.1",
+    "exitCode": 1,
+    "metadata": {
+      "vulnerabilities": {
+        "info": 0,
+        "low": 14,
+        "moderate": 51,
+        "high": 69,
+        "critical": 6,
+        "total": 140
+      },
+      "dependencies": {
+        "prod": 244,
+        "dev": 1876,
+        "optional": 170,
+        "peer": 63,
+        "peerOptional": 0,
+        "total": 2130
+      }
+    },
+    "note": "Affected package entries; not a count of independent exploitable app flaws. devDependencies can ship in renderer bundles. CDN assets not covered."
+  },
+  "implementationPerformed": false,
+  "applicationValidationPerformed": false
+}

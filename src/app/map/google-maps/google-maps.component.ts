@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { PinnedPhotoService } from '../../shared/service/pinned-photo.service';
 import { Photo } from '../../shared/model/photo.model';
@@ -9,7 +9,9 @@ import { GoogleMapsApiLoader } from './google-maps-api-loader';
 @Component({
   selector: 'app-google-maps',
   templateUrl: './google-maps.component.html',
-  styleUrls: ['./google-maps.component.scss']
+  styleUrls: ['./google-maps.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false
 })
 export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
   private subscription: Subscription;
@@ -80,7 +82,6 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
     // "new" for google.maps.Map is required although the reference to the instantiated object is not required.
     // Without "new", the map is not rendered.
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     new google.maps.Map(document.getElementById('google-map'), {
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       center: { lat: 0.0, lng: 0.0 },

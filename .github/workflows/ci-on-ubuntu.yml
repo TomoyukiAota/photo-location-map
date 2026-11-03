@@ -11,16 +11,16 @@ on:
 jobs:
   changes:
     # Finds out whether anything other than documents changed (see .github/ci-filters.yml).
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
       pull-requests: read
     outputs:
       app: ${{ steps.filter.outputs.app }}
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@v7.0.1
 
-    - uses: dorny/paths-filter@v4
+    - uses: dorny/paths-filter@v4.0.3
       id: filter
       with:
         predicate-quantifier: every
@@ -28,8 +28,9 @@ jobs:
 
   test:
     # The name is given here rather than by a matrix, so that the required check is reported even when the job is skipped.
-    name: test (ubuntu-24.04)
-    runs-on: ubuntu-24.04
+    # Keep the required-check name stable when the Ubuntu runner version changes.
+    name: test (ubuntu)
+    runs-on: ubuntu-26.04
 
     # Skipped when only documents changed, which passes the required check. If "changes" fails, the tests run.
     needs: changes
@@ -44,13 +45,19 @@ jobs:
       ELECTRON_DISABLE_SANDBOX: '1'
 
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@v7.0.1
 
     - name: Install Node.js with the version in mise.toml
-      uses: jdx/mise-action@v4
+      uses: jdx/mise-action@v5.2.5
+
+    - name: Verify Node and its bundled npm
+      run: npm run verify:runtime
 
     - name: npm ci
       run: npm ci
+
+    - name: Verify Electron and embedded Node
+      run: npm run verify:electron
 
     - name: npm run lint:ng
       run: npm run lint:ng
@@ -59,29 +66,43 @@ jobs:
       run: npm run lint:script
 
     - name: npm run test:unit:ng
-      uses: GabrielBB/xvfb-action@v1.4
+      uses: GabrielBB/xvfb-action@v1.7
       with:
         run: npm run test:unit:ng
 
     - name: npm run test:unit:em:main
-      uses: GabrielBB/xvfb-action@v1.4
+      uses: GabrielBB/xvfb-action@v1.7
       with:
         run: npm run test:unit:em:main
 
     - name: npm run test:unit:em:renderer
-      uses: GabrielBB/xvfb-action@v1.4
+      uses: GabrielBB/xvfb-action@v1.7
       with:
         run: npm run test:unit:em:renderer
+
+    - name: npm run test:live-reload
+      uses: GabrielBB/xvfb-action@v1.7
+      with:
+        run: npm run test:live-reload
 
     - name: Install FUSE (Required to launch AppImage during "npm run test:package")
       run: |
         sudo apt-get update
-        sudo apt-get install -y libfuse2
+        sudo apt-get install -y libfuse2t64
 
     - name: npm run test:package
-      uses: GabrielBB/xvfb-action@v1.4
+      uses: GabrielBB/xvfb-action@v1.7
       with:
         run: npm run test:package
+
+    - name: Locate packaged AppImage for E2E
+      run: |
+        node -e 'const fs = require("node:fs"); const path = require("node:path"); const version = require("./package.json").version; fs.appendFileSync(process.env.GITHUB_ENV, "PLM_PACKAGED_EXECUTABLE=" + path.resolve("release", "Photo Location Map-" + version + ".AppImage") + "\n");'
+
+    - name: npm run test:e2e
+      uses: GabrielBB/xvfb-action@v1.7
+      with:
+        run: npm run test:e2e
 
 # Uncomment the lines below to publish Linux package to GitHub Releases.
 #
@@ -95,7 +116,7 @@ jobs:
 #      run: npm ci
 #
 #    - name: '[Publish to GitHub Releases] Create and publish Linux package'
-#      uses: nick-invision/retry@v2.2.0
+#      uses: nick-fields/retry@v4.0.0
 #      with:
 #        timeout_minutes: 60
 #        max_attempts: 10

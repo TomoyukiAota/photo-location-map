@@ -4,7 +4,9 @@ import * as pathModule from 'path';
 import { PrependedLogger } from '../../log/create-prepended-logger';
 import { Logger } from '../../log/logger';
 
-export const plmThumbnailCacheDir = pathModule.join(os.homedir(), '.PlmCache');
+export const plmThumbnailCacheDir = process.env.PLM_TEST_ROOT
+  ? pathModule.resolve(process.env.PLM_TEST_ROOT, 'thumbnail-cache')
+  : pathModule.join(os.homedir(), '.PlmCache');
 
 function getThumbnailIntermediateDirOnWindows(originalFilePath: string) {
   let intermediateDir: string;

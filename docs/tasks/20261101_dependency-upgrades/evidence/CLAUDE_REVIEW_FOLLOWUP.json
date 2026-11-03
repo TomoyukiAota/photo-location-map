@@ -1,0 +1,118 @@
+{
+  "observedAt": "2026-11-03T15:05:07.744803+00:00",
+  "decisionDate": "2026-11-04 (Asia/Tokyo)",
+  "parentHead": "f8d9b4ca5a5387e41fe59d2c8b416eb0b9ac67fc",
+  "verifiedSignedArtifactSource": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
+  "ownerScope": "Fix indentation; change other findings only for a serious current bug.",
+  "assessments": [
+    {
+      "comment": 4456185841,
+      "topic": "Attribute alignment",
+      "disposition": "Fixed in four templates; first attribute restored to the opening line where needed.",
+      "severity": "formatting"
+    },
+    {
+      "comment": 4456185857,
+      "topic": "ECharts development bundle",
+      "disposition": "Defer under the owner serious-bugs-only scope. Extra diagnostics, checks and bundle weight are real, but no current security, data-loss or demonstrated chart-flow defect was found. Changing the bundle/alias needs separate same-instance v5-theme verification.",
+      "severity": "non-blocking optimization"
+    },
+    {
+      "comment": 4456185869,
+      "topic": "Amplitude forms and download URL capture",
+      "disposition": "Defer. The defaults and URL fields are real, but current templates/vendor DOM have no forms or eligible download links. Revisit before adding such markup; do not claim protection against arbitrary future DOM.",
+      "severity": "future privacy hardening"
+    },
+    {
+      "comment": 4456185910,
+      "topic": "Task records served by Pages",
+      "disposition": "Defer as a publication-policy choice. The records already reside in the public repository; this finding identifies no new concrete secret leak or site break.",
+      "severity": "publication policy"
+    },
+    {
+      "comment": 4456185927,
+      "topic": "External CDN/viewer dependence in E2E",
+      "disposition": "Defer as reliability guidance. Dependencies predate this PR and current checks pass. A future rerun example should require confirmed external outage, because a wait timeout may also indicate a code/SRI regression.",
+      "severity": "test reliability"
+    },
+    {
+      "comment": 4456185939,
+      "topic": "Remote require allowlist",
+      "disposition": "Defer. Every current caller requests fs-extra, electron, os, path or exifr, all already handled. Generalizing the handler is future maintenance rather than a current missing-module/security fix.",
+      "severity": "maintainability"
+    }
+  ],
+  "localValidation": {
+    "angularTemplateComparison": {
+      "base": "f8d9b4ca5a5387e41fe59d2c8b416eb0b9ac67fc",
+      "templates": [
+        "src/app/settings-dialog/settings-dialog.component.html",
+        "src/app/thumbnail-generation/status-bar/component/thumbnail-generation-status-bar.component.html",
+        "src/app/date-time-taken-chart/date-time-taken-chart.component.html",
+        "src/app/date-time-taken-chart/config/date-time-taken-chart-config.component.html"
+      ],
+      "nonWhitespaceBytesEqual": true,
+      "angularTemplateAstEqual": true,
+      "ignoredMetadata": "source spans and source locations only"
+    },
+    "runtimeByteComparison": {
+      "status": "passed",
+      "runtimeFiles": 8,
+      "compiledJsHtmlCssByteIdenticalToBefore": true,
+      "compiledJsHtmlCssByteIdenticalToSignedC0Bundle": true,
+      "signedArtifactSource": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
+      "limit": "Source maps may record the changed formatting/locations; signed source-c0 artifacts retain their original source/identity."
+    },
+    "emittedRuntimeManifest": [
+      {
+        "file": "29.js",
+        "sha256": "9d0614b4eb4787df974fce062913f8203346aaf0814ed552c6d56f01c39ce067"
+      },
+      {
+        "file": "838.js",
+        "sha256": "4ad04070a1194cfb4f57cdd8f680a892e839c77fd6c3d05b0793fc13d530d8d7"
+      },
+      {
+        "file": "927.js",
+        "sha256": "4324a9ab390063778ad699112e019728ec5b89e3c0f2aee3727995cc21a94450"
+      },
+      {
+        "file": "index.html",
+        "sha256": "292e12f48d660359ef0fedd837a291e3f6d6f5b5d6e1482bd677a69820a5f28b"
+      },
+      {
+        "file": "main.js",
+        "sha256": "de8ec79fedd4c4b220224b9c33cfa279a98ae0de37ee0546cda448353b587f85"
+      },
+      {
+        "file": "polyfills.js",
+        "sha256": "a9d29e43c244772216888d1e168786b9dd74aba7b2813a01017a4807d99a3cff"
+      },
+      {
+        "file": "runtime.js",
+        "sha256": "19409c61d4a71ec20a5158be0a36e508989388cdb5a949176070e61f56c1a2dd"
+      },
+      {
+        "file": "styles.css",
+        "sha256": "c217c1aba103087a7e6a9938694c875075ea3614056a7eccc1aee76c470b4cb3"
+      }
+    ],
+    "productionBuild": "passed",
+    "lint": "passed"
+  },
+  "protectionVerified": {
+    "strict": true,
+    "githubActionsAppId": 15368,
+    "requiredChecks": [
+      "test (windows-latest)",
+      "test (ubuntu)",
+      "test (macos-arm64)"
+    ],
+    "manualX64Required": false
+  },
+  "limits": [
+    "Review assessment concerns current reachable code paths, not a proof that arbitrary future markup or data can never expose defects.",
+    "Existing signed artifacts retain their c0 source and identities. This formatting-only follow-up leaves all eight emitted runtime JS/HTML/CSS files identical; source maps may record different formatting/source locations.",
+    "Final exact-head CI/review is observed separately on the PR; this record contains pre-commit local verification, not later remote results."
+  ]
+}

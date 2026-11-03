@@ -1,0 +1,75 @@
+{
+  "observedDate": "2026-11-02",
+  "applicationCommit": "f1f0ee575f1890948a31d815f8d8bf85e464e4a7",
+  "workflowCommit": "f1f0ee575f1890948a31d815f8d8bf85e464e4a7",
+  "applicationVersion": "1.12.2-alpha",
+  "signed": true,
+  "realNotarization": true,
+  "stapled": true,
+  "gatekeeper": "accepted: Notarized Developer ID",
+  "strictDeepSignatureBefore": true,
+  "strictDeepSignatureAfterNativeFixtureCleanup": true,
+  "productionBundleFingerprintUnchangedAfterNativeFixtureCleanup": true,
+  "structure": {
+    "status": "passed",
+    "sourceFilesEqual": 110,
+    "runtimeDependenciesMatch": true,
+    "originalIcon": true,
+    "minimumMacOS": 13,
+    "executableArchitectures": [
+      "x86_64",
+      "arm64"
+    ],
+    "frameworkArchitectures": [
+      "x86_64",
+      "arm64"
+    ],
+    "fusesVersion": "1",
+    "runAsNodeEnabled": true,
+    "nodeCliInspectEnabled": true
+  },
+  "packagedArm64": {
+    "status": "passed",
+    "visualFunctionalCases": 14,
+    "websiteCaseSkipped": true,
+    "originalReferencesUnchanged": true
+  },
+  "dmgSmoke": {
+    "status": "passed",
+    "source": "mounted-final-notarized-dmg",
+    "launch": "direct-executable",
+    "testOwnedProfile": true,
+    "mainAndRendererLogged": true,
+    "dwellSeconds": 60,
+    "volumeDetached": true
+  },
+  "artifacts": [
+    {
+      "name": "Photo Location Map-1.12.2-alpha-universal-mac.zip",
+      "publishName": "Photo-Location-Map-1.12.2-alpha-universal-mac.zip",
+      "size": 237520171,
+      "sha256": "64d2eeb6559df76630b574a2fb90f414e19a29d558ef5f50c2f68cb148ac6901",
+      "sha512": "HhzsHMF4x+EGvTnTBM2aswnk/8I7VMrhjSAaDUQHCqmZlWLiQDb6VTLA6+2efBykl+yjThbF58Uk1xLwuI7hbg==",
+      "manifestMatches": true,
+      "blockmapVersion": "2",
+      "verifiedChunks": 11357,
+      "blockmapCoversWholeArtifact": true
+    },
+    {
+      "name": "Photo Location Map-1.12.2-alpha-universal.dmg",
+      "publishName": "Photo-Location-Map-1.12.2-alpha-universal.dmg",
+      "size": 243432264,
+      "sha256": "a9bd560c1fe637a153d6b048e85dfbdedabd802bf13fb14297a6233acc2b5d67",
+      "sha512": "/999HoL/VpK0WXfoUYA8gh+Uo/PV1d6/blNw5TFoMJoRbAmhAhQgvAV8NIPkd8pWN9phhX9DG9lmReA4Io3sMw==",
+      "manifestMatches": true,
+      "blockmapVersion": "2",
+      "verifiedChunks": 11689,
+      "blockmapCoversWholeArtifact": true
+    }
+  ],
+  "localRosetta": {
+    "status": "unavailable",
+    "reason": "Rosetta is not installed; see separate native Intel CI checkpoint"
+  },
+  "publicUpload": false
+}

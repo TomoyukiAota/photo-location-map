@@ -1,0 +1,1288 @@
+# Dependency upgrade status
+
+Updated: 2026-11-04 (Asia/Tokyo).
+
+## Authorization and actual state
+
+- **Implementation authorized on 2026-11-01 and started with Sol.**
+- On 2026-11-01 the user selected Angular 22 and explicitly accepted macOS 13+
+  as the minimum OS. These are resolved choices, not pending release approvals.
+- Final target: Angular 22.2.4, CLI/Material 22.2.5, TypeScript 6.0.3, Node
+  26.13.0 and its bundled npm 11.20.0, matching Photo Data Viewer; Electron 45.2.1.
+- Application baseline: `911dd91bf8de231a40be55f80e0255f053bbc4e3`, branch `main`.
+- The planning phase began with a clean working tree and added planning/evidence
+  documents; implementation is now progressing through the checkpoints below.
+- The planning phase changed documents only. Execution now adds profile isolation
+  and regression tests with Playwright; application dependency upgrades start at U03.
+  The branch is pushed and PR #630 is ready for review. No application release was published.
+- Source inspection, official release/registry reads, historical PR review and a
+  read-only lockfile audit were performed. Research sources remain read-only;
+  authorized source/PR/CI preparation is complete; CodeRabbit review is now in progress.
+- Verified runtime/artifact source is `c0f0dc97f1b7dfd687462c318fea88e585c1a94f`,
+  committed and pushed. This includes the third review batch; earlier entries
+  describing it as uncommitted or ready to push are dated historical states.
+- Current local gates pass: build/lint, complete dependency graph and runtime
+  checks, 209 unit assertions, five package-runner cases, five actual watcher
+  lifecycle cases, 15 checkout visual/functional cases and 14 actual signed-app
+  cases. All original/approved reference bytes and tolerances are unchanged.
+- Fresh signed/notarized Mac, ZIP/DMG content and blockmap identity, mounted-DMG
+  smoke, final-ZIP transport and real isolated native upgrade/relaunch/downgrade/
+  settings checks pass. Exact native cleanup and unchanged source fingerprint/
+  signature pass afterward. See [REVIEW_MAC_CHECKPOINT.json](./evidence/REVIEW_MAC_CHECKPOINT.json).
+- Actual c0 Windows draft bytes also pass all three digests, metadata, all 6,564
+  blockmap chunks and selected runtime/decoder/compiled-source checks. The draft
+  remains unpublished and mutable. See [REVIEW_WINDOWS_DRAFT_BYTES.json](./evidence/REVIEW_WINDOWS_DRAFT_BYTES.json).
+- All seven current workflow runs/eight actual test jobs pass at c0f0dc9,
+  including native Intel, with 209 units, five runner checks, five watcher modes
+  and 14 packaged cases per job. No failure or rerun. See
+  [REVIEW_CI_CHECKPOINT.json](./evidence/REVIEW_CI_CHECKPOINT.json).
+  The first two review-source CI checkpoints remain
+  [historical](./evidence/REVIEW_HISTORICAL_CI.json), now with actual checked-out
+  PR merge identities separate from head_sha. The two final documentation-only
+  findings are corrected; application source remains unchanged.
+- Current follow-up (2026-11-04): the owner saved both Ubuntu and Mac protected
+  contexts. API verification confirms test (ubuntu), test (macos-arm64) and
+  test (windows-latest), all bound to GitHub Actions, with strict mode retained;
+  manual x64 is not required. Both protection conversations are resolved.
+- The owner requested the remaining four-template indentation fix and prefers
+  deferring other review items unless serious. Attribute alignment is restored;
+  all non-whitespace bytes and semantic Angular ASTs are identical, build/lint
+  pass, and all eight emitted runtime JS/HTML/CSS files match both the previous
+  build and signed c0 bundle byte-for-byte. Existing artifacts keep c0 provenance.
+  The other five findings have no demonstrated serious current bug and are
+  deferred with their specific conditions. See
+  [CLAUDE_REVIEW_FOLLOWUP.json](./evidence/CLAUDE_REVIEW_FOLLOWUP.json).
+- No baseline app remains. See the latest execution record for active processes. Local command logs
+  are under `.upgrade-artifacts`; test output is in its `e2e-results` directory.
+
+## Read order on resume
+
+1. Repository instructions, then this file.
+2. [PLAN.md](./PLAN.md) for scope, gates and recovery procedure.
+3. [VERSIONS.md](./VERSIONS.md) for the complete candidate inventory.
+4. [evidence/research-summary.json](./evidence/research-summary.json) and
+   [evidence/registry-snapshot.json](./evidence/registry-snapshot.json) for dated facts.
+5. Inspect actual branch/HEAD/diff, task-related commits, existing processes and
+   any newer user instructions. Reconcile records before executing commands.
+
+Active task: CodeRabbit review and response/fix cycle, authorized on 2026-11-03.
+The PR is ready for review and a complete CodeRabbit review has been requested.
+Independent implementation and approved HEIC revalidation are complete. The owner selected the newer HEIC output on 2026-11-02,
+then explicitly accepted the confirmed-folder chooser policy on 2026-11-03 after
+clarification. Both implementation choices are resolved; merge/publication remains
+unauthorized. The current application source is c0f0dc9. Fresh Mac, dated Windows-byte proof and all eight successful platform jobs
+are linked above at this exact source. The older HEIC records identify 79d547f only and remain historical.
+Read [FINAL_REVIEW.md](./FINAL_REVIEW.md) for scope and pending decisions.
+U13 remains unauthorized.
+Node 26 / bundled npm 11.20 and Electron 45 clean installation work;
+the old extractor caveat is resolved. Retain `ng test --watch=false` and never
+regenerate the original screenshots or HEIC pixel reference.
+
+The approved HEIC output has a separate strict reference under
+`test/e2e/approved-references`; the historical HEIC reference remains immutable.
+
+### Owner response and HEIC follow-up (2026-11-02)
+
+- Approved: adopt the newer HEIC pixel output, update and revalidate; no public
+  release approval. Latest registry still selects heic-decode 2.1.0 and
+  libheif-js 1.23.5. The old parent-scoped decoder override is removed.
+- Initially the owner asked for clarification about native chooser history;
+  that question was not acceptance. On 2026-11-03 the owner subsequently
+  explicitly accepted the confirmed-folder policy and its starting-location
+  differences. Baseline PLM stored no folder-history key; the adapter stores
+  only confirmed folders. OS history, photos and existing settings are not deleted.
+- Original screenshots and `snapshots/heic-thumbnail.json` remain unchanged.
+  The previously measured, explicitly accepted 6b17ef... output is recorded in a
+  separate version-labelled reference. Real worker checks now also assert the
+  shipped decoder/child versions; an older child with the same sample pixels
+  must not silently pass.
+- Completed: clean graph/install, build/lint/unit and full visual/functional
+  verification, fresh signed artifacts, transport/native handoff checks and
+  all applicable platform CI. New reports identify the exact source and bytes.
+  Native 1.23.7's CPU-exhaustion fix is still absent from the
+  latest npm WASM, so the security limitation remains visible.
+
+Local follow-up checkpoint (2026-11-02 21:39 JST): clean `npm ci`, complete
+dependency graph, host/bundled-npm and Electron runtime checks, production build,
+lint, 57 Angular + 87 main + 50 renderer assertions and all 15 visual/functional
+cases pass with the new decoder. The actual worker asserts 2.1.0/1.23.5 and
+matches the approved 300x400 pixel hash; corrupt input and embedded HEIC viewer
+paths also pass. Original snapshot files are byte-unchanged from f1f0ee5.
+Fresh npm audit still reports 75 entries (30 high, 44 moderate, one low).
+The signed/notarized Mac rebuild is running; fresh platform/distribution and
+native fixture results remain pending. Resume logs use the `heic-approved-`
+prefix under the ignored artifact directory. Do not run package-test over the
+final signed bundle after notarization.
+
+21:55 JST follow-up: application source is now
+`79d547fa884658be9266f03ae3d20ea05899b34a`, pushed to Draft PR #630. The fresh
+Mac gates are complete in [HEIC_MAC_CHECKPOINT.json](./evidence/HEIC_MAC_CHECKPOINT.json):
+real signing/notarization/staple/Gatekeeper, 14 packaged visual/functional cases,
+both archive payloads and all blockmap chunks, mounted-DMG launch/log/quit/detach,
+final ZIP transport and isolated native install/relaunch/rollback/settings.
+All exact fixture native caches/jobs/preferences are cleaned and the production
+bundle fingerprint/signature remain unchanged. No local app/test process remains.
+The six push/PR workflow runs and manual ARM job pass; manual Intel is still running.
+Windows uploaded draft bytes are being checked independently. The two recovered
+inspection issues were a wrong collector plist key and a transient owned DMG
+unmount failure; their fixes/results are recorded in the new Mac checkpoint.
+
+## Work queue
+
+| ID | State | Next result needed |
+| --- | --- | --- |
+| Research | Complete | Refresh time-sensitive candidates at implementation start. |
+| U00 | Complete | Existing checkout inspected; only the task documents were uncommitted. |
+| U01 | Complete | Original install/lint/build and Mac universal package smoke pass; Karma shutdown issue recorded. |
+| U02 | Complete | Seven real Electron/website cases, original screenshots, HEIC pixel reference and restart persistence. |
+| U03 | Complete bridge checkpoint | Node 22.23.4/npm 10.9.9 locally verified. Final supported Node 26 destination is verified in current CI. |
+| U04a | Verified locally | Angular 18.2.14 / CLI 18.2.21; graph/lint/build, 172 assertions and 7 regression cases. Karma shutdown issue remains. |
+| U04b | Verified locally | Graph/lint/build, 57+74+41 assertions and all 7 visual/functional cases pass. Explicit single-run also verifies failure exit code. |
+| U04c | Verified locally | Graph/lint/build, clean 57+74+41 tests and 7 unchanged regression cases. |
+| U04d | Verified locally | Graph/runtime/lint/build, 172 tests and all 7 unchanged regression cases. |
+| U05 | Complete | Angular 22/TS 6/Node 26 locally verified; the intermediate Electron 32 install caveat is resolved by U06 and final clean CI. |
+| U06 | Verified; chooser policy accepted | Windows/Linux/Mac arm64/Intel and signed universal artifacts pass at the current 79d547f source. Owner accepted confirmed-folder history on 2026-11-03. |
+| U07 | Verified locally | File/date/module, image/worker and analytics groups pass; compatibility exceptions are recorded. |
+| U08 | Complete | Maps, charting and translations pass unchanged visual and actual interaction checks. |
+| U09 | Verified locally | Bootstrap 5.3.8 with unchanged screenshots, focus/hover colors, both download URL requests and 390px layout; unused JS removed. Deployment remains gated by main. |
+| U10 | Complete | Clean install, graph, tooling, audit disposition and all local regression gates pass. |
+| U11 | Complete with recorded coverage limits | All affected local/platform/artifact/native fixture gates pass at 79d547f with the approved decoder. Public-feed installation remains U13. |
+| U12 | Implementation decisions resolved | HEIC output approved/revalidated and chooser policy accepted; exact source/artifact records are complete. Merge/publication remains separate and unauthorized. |
+| U13 | Not authorized | Publication and post-release verification. |
+
+## Resolved decisions
+
+- Angular 22 is selected despite currently being in Active rather than LTS-phase
+  support. Use Node 26.13.0 / bundled npm 11.20.0 as the final runtime target.
+- macOS 13+ is accepted. The user cited the end of security updates for older OS
+  releases. No older-macOS release alternative or repeated approval is needed.
+- Angular 21 remains only an intermediate migration checkpoint. Do not spend
+  work preparing a separate Angular 21 / Node 24 release candidate.
+- Implementation was subsequently authorized on 2026-11-01. Publication remains a final gate.
+- New HEIC pixel output and updating/revalidating heic-decode 2.1.0 /
+  libheif-js 1.23.5 were approved on 2026-11-02 and are now verified.
+- Confirmed-folder chooser history and its starting-location differences from
+  OS-managed history were explicitly accepted on 2026-11-03 after clarification.
+
+## Implementation handoff
+
+- The user selected Sol and authorized implementation on 2026-11-01. Sol has
+  completed the framework/runtime migration and approved HEIC follow-up.
+  Preserve that model preference.
+- The HEIC output and confirmed-folder chooser choices are explicitly accepted.
+  Independent implementation verification is complete. Do not reopen either
+  choice; merge/publication remains a separate unauthorized step.
+- The executing agent should read the files in the order above, follow the same
+  behavior-preservation gates, and keep STATUS current. The model choice does not
+  change acceptance criteria or reopen the resolved Angular/macOS decisions.
+- Any genuinely user-only issue discovered during implementation belongs in the
+  final packet after independent work has been completed, as described in PLAN.
+
+## Remaining items to prepare, not ask for prematurely
+
+- Any UI/behavior mismatch that cannot be repaired, maintained fork, unresolved
+  vulnerability or unavailable signing/device check must include evidence and a
+  fallback before being presented at U12.
+- Publishing is separate from preparation. Preserve the repository's intentional
+  Windows CI draft publication behavior on subsequent pushes.
+
+## Per-work-unit record template
+
+Copy this for each meaningful checkpoint; do not overwrite the only record of a
+failed approach or a verified baseline.
+
+```text
+Task ID / state:
+Date/time (Asia/Tokyo):
+Branch / HEAD:
+Last verified application SHA:
+Uncommitted files and purpose:
+Node / bundled npm / Electron / embedded Node / framework:
+Lockfile hash / format:
+Commands and actual results:
+Evidence paths / artifact checksums / CI URLs:
+Failure classification and retained alternatives:
+Processes started (ID, owner, log, stop command):
+User-only decision/action, if genuinely needed:
+Next smallest unblocked action:
+```
+
+No tests have been marked passed based on this planning task. Document consistency
+checks are separate from application validation.
+
+Planning validation completed: the inventory covers exactly the manifest's 24
+runtime and 78 development dependencies; all local Markdown links resolve; all
+JSON evidence parses; recorded hashes of package.json, package-lock.json,
+mise.toml, angular.json and electron-builder.json still match the baseline.
+`git diff --check` is clean. Only this task-document directory was added.
+
+## Execution checkpoints
+
+- `926a777`: original application with isolated profiles and regression harness.
+- Node 22 bridge: clean `npm ci`, `npm ls --all`, all seven visual/functional
+  regression cases pass. CI action versions refreshed and the regression command
+  added after package tests on all platforms. Remote CI has not run yet.
+- Focused negative control fails on the toolbar snapshot as intended.
+
+### Reference stabilization result
+
+The original Angular 18.2.4/Electron 32.0.2 dependency pair was reinstalled from
+`926a777`. Dialog snapshots now use the real dialog container (component hosts
+use display:contents), and launch waits for Geoman and map tiles. Capture and
+all seven visual/functional comparisons pass on the original app. The original
+HEIC pixel reference is unchanged. Raw logs: `baseline-stable-*.log`.
+Trying Karma clearContext=true did not resolve the old shutdown error; that
+configuration experiment was reverted. No check was disabled.
+Next: restore the patched-Angular-18 manifest pair from
+`.upgrade-artifacts/angular18-patched-manifest/`, reinstall, rebuild and compare
+against these original-app references.
+
+### Angular 18 patch checkpoint
+
+Core/Material 18.2.14, CLI/build-angular 18.2.21, angular-eslint 18.4.3,
+ngx-echarts 18.0.0 and ng-mocks 14.18.4. Full graph/lint/build pass,
+57+74+41 test assertions pass (old Karma teardown error remains), and all
+seven refined visual/functional cases pass unchanged, including HEIC pixels.
+Logs: `angular18-{update,graph,lint,build,unit,e2e}.log`. The temporary original
+manifest restoration is complete; actual files now contain patched Angular 18.
+Next: run the complete coupled Angular 19 ng-update group, inspect migrations,
+then verify before committing. No processes remain from U04a.
+
+### Angular 19 working tree
+
+`ng update` applied core 19.2.25, CLI 19.2.27, Material/CDK 19.2.19,
+custom-webpack 19.0.1, angular-eslint 19.8.1, ngx-echarts 19.0.0 and Zone 0.15.1.
+The required migration adds `standalone: false` to existing NgModule components.
+The newly introduced prefer-standalone lint rule is off to retain that selected
+architecture; original rules remain enabled. Graph, lint and production build
+pass. Unit/regression validation is running under `angular19-*.log`; the source
+changes are uncommitted until the gate completes. Last verified framework
+checkpoint is `775aebd` (patched 18); baseline references are `5944433`.
+
+### Angular 19 completed
+
+Graph, lint, production build, 57 Angular + 74 main + 41 renderer assertions,
+and all seven visual/functional comparisons pass. Dialog/tree/chart references
+and the HEIC decoded-pixel hash are unchanged.
+The old Karma problem was caused by the CLI watch default: explicitly passing
+`--watch=false` makes the 57-test suite exit cleanly with code 0. An isolated
+intentional assertion failure exits with code 1. The watch-mode negative probe
+hung and was terminated; its temporary spec was removed. The normal script now
+sets watch=false; the separate watch command retains its original purpose.
+Logs: `angular19-single-run.log`, `karma-negative-single-run.log` and its result
+JSON (local). No failure or navigation check was disabled.
+Next: Angular 20; no temporary negative-control spec or running test remains.
+
+### Angular 20 working tree
+
+Core 20.3.34, CLI/build-angular 20.3.42, Material/CDK 20.2.14, custom-webpack
+20.0.0, angular-eslint 20.7.0, ngx-echarts 20.0.2, TypeScript 5.9.3.
+The schematic raised ESLint to 9 and typescript-eslint to 8.72.1; migrated root
+and script lint configurations to native flat config, preserving rules, NgModules
+and constructor injection. Legacy max-len exceptions now name @stylistic/max-len.
+ESLint and its JS config are pinned to 9.39.5 for this intermediate framework;
+target ESLint 10 still requires the final compatible Angular lint group.
+Old @types/node 22.5.5 conflicted with TS 5.9 generic typed arrays. Use updated
+20.19.43 temporarily to match current Electron's embedded Node 20; move to
+24.19.2 when Electron 45 is installed. No runtime buffer copy was introduced.
+CLI changed Angular module resolution to bundler; application webpack architecture
+remains in place. Material's schematic also visited ignored dist/release outputs;
+those scratch outputs/signatures are not release evidence and must be rebuilt.
+Validation logs: `angular20-*.log`; changes are not a verified checkpoint yet.
+Last verified application/framework checkpoint: `6cfcea4`.
+
+### Angular 20 completed
+
+All validation now passes: lint without warnings, production/main build,
+57 Angular + 74 main + 41 renderer tests with clean termination, and all seven
+visual/functional comparisons including the original HEIC pixel hash. Logs are
+`angular20-{graph,lint,build,unit,e2e}.log`. The flat-config migration retained
+old rule intent and removed three now-unused lint directives.
+Next: apply Angular 21 as an intermediate stage; preserve Zone-based behavior.
+
+### Angular 21 working tree
+
+Core 21.2.25, CLI 21.2.29, Material/CDK 21.2.14, custom-webpack 21.1.0,
+angular-eslint 21.4.0 and ngx-echarts 21.0.0. The required core migration converted
+legacy structural template control flow and made Zone-based bootstrap explicit
+with provideZoneChangeDetection. NgModules and existing change-detection choices
+remain. The optional application-builder migration was not run.
+Added a runtime check that reads Node's version from mise.toml and verifies that
+the active npm CLI is inside that same Node installation. Every CI OS calls it
+before installation. Its local Node 22.23.4 / bundled npm 10.9.9 check passes.
+Validation is running in `angular21-*.log`; source is uncommitted until the gate
+completes. Last verified framework checkpoint: `541f134` (Angular 20).
+
+### Angular 21 completed
+
+Runtime check, complete dependency graph, lint, production/main build, clean
+57+74+41 unit tests and all seven visual/functional comparisons pass, with
+unchanged references and HEIC pixels. Required control-flow conversion preserves
+the original rendered layouts and interactions in these checks.
+Next: Angular 22 migration on the compatible Node 22 bridge. Select Node
+26.13.0 and bundled npm 11.20.0 only after the framework permits it.
+
+### Angular 22 working tree
+
+Last verified framework commit: `5d508f2` (Angular 21). Core 22.2.4,
+CLI/Material 22.2.5, custom-webpack 22.0.1, angular-eslint 22.6.0 and
+TypeScript 6.0.3 are installed. Node 26.13.0 and its bundled npm 11.20.0
+pass the runtime identity guard. Zone 0.16.3 remains explicitly enabled.
+The official migration preserves previous default components with Eager change
+detection and the previous HTTP backend with withXhr().
+
+The inherited lock had optional chokidar/yaml peers resolving to incompatible
+ancestors. A supported `npm dedupe` resolved the graph without overrides, force,
+legacy-peer flags or extra pins; `npm ls --all` passes. Lock format remains 2.
+angular-eslint 22 moved recommended configs to the umbrella angular-eslint
+package; the native config now reads those official configs and preserves
+existing eager/NgModule choices rather than enforcing the new OnPush preference.
+
+TypeScript 6 requires explicit preservation of the previous non-strict mode and
+ambient Node/Jasmine types. Removed an unused baseUrl and incompatible generated
+extendedDiagnostics with strictTemplates=false. Main code uses NodeNext
+resolution with CommonJS output. esModuleInterop=false is now deprecated, so
+callable/scalar CommonJS imports use supported default imports instead. This
+includes physical-cpu-count, avoiding a silent numeric namespace regression.
+The webpack config now has a separate tsc check in every build because the new
+custom-webpack loader no longer typechecks it. No deprecation error was hidden.
+
+Validation process: npm script pipeline; logs `angular22-*.log` under ignored
+`.upgrade-artifacts`. Final lint/build/unit/e2e results are pending.
+No user-only action has arisen. Next: inspect the pipeline, fix any actual
+compatibility failures, clean-install and verify before committing U05.
+
+### Angular 22 behavior verified; Electron install boundary
+
+Production/main/config builds and lint pass. Angular's 57 assertions pass;
+Electron Mocha's 74 main + 41 renderer assertions pass after selecting the
+existing per-process tsconfig explicitly and setting rootDir for TypeScript 6.
+All seven unchanged original screenshot/functional cases and the HEIC pixel hash
+pass. Logs: `angular22-{runtime,graph,lint,build,unit,em-unit,e2e}.log`.
+
+npm 11 blocks uncovered dependency scripts even in non-strict warning mode.
+Reviewed the eight script-bearing packages and added exact-version approvals
+for the Electron download, esbuild validation and optional build-tool native
+loaders. Explicitly denied the core-js/es5-ext informational scripts and the
+fsevents lifecycle entry (its prebuilt binary is shipped). All native build
+tools, including fsevents, load successfully. Project .npmrc makes unreviewed
+scripts fail clearly; no machine-global setting was changed.
+
+**Installation caveat, not a final pass:** clean npm ci completes but the old
+Electron 32 extractor (extract-zip 2 / yauzl 2) exits successfully after only the
+first archive file under Node 26. Explicit rebuild behaves the same. Running only
+that extractor once with the Node 22 bridge installs the same Electron 32 binary
+and enables the successful behavior comparison above. This temporary bridge is
+not the final installation procedure. Electron 45 uses the maintained internal
+extractor and no longer has a postinstall download; its first require/CLI call
+downloads the binary. U06 will verify that path with a fresh Node 26 install.
+
+Next smallest action: install the coupled Electron 45 / builder 26 group, inspect
+new lifecycle scripts, then validate clean installation, real runtime versions,
+all unit/visual tests and the macOS package. No user decision is needed.
+
+### Electron 45 working tree
+
+Node 26 clean npm ci and the maintained Electron binary download now work.
+The runtime probe reports Electron 45.2.1 / Node 24.22.1 / Chromium
+156.0.8078.75. Builder 26.18.1, updater 6.8.12, notarize 3.1.2, remote
+2.1.3, electron-mocha 13.1.0 and Node types 24.19.2 are installed.
+mac.minimumSystemVersion is explicitly 13.0. Required CI jobs now probe the
+actual Electron runtime as well as the host Node/npm identity.
+
+Reviewed all intervening breaking-change headings (33–45) and the relevant
+implementation/docs. Electron 45's bootstrap becomes the root of the CommonJS
+parent chain. remote.require consequently resolved app packages from a synthetic
+module and failed for fs-extra/exifr. A supported remote-require event handler
+now resolves the five existing imports from the app's helper module. No IPC
+architecture change or global module-path mutation. Temporary Karma diagnostic
+instrumentation was removed. The first fix covered four imports; the remaining
+exifr import was identified by a diagnostic run and included before verification.
+
+All 57+74+41 tests and seven original visual/functional cases pass on Electron
+45, including actual JPEG/HEIC companion loading and unchanged worker pixels.
+Additional checks now cover restored window geometry, the original splitter
+reset on restart (this app never persisted split ratios), and Windows fullscreen
+menu visibility. Electron 34's new fullscreen menu default has a narrow Windows
+compatibility listener. That branch still requires Windows CI. Package smoke
+verification is running in `electron45-package.log` after the expanded suite.
+
+Install-script policy: Electron 45 no longer has a postinstall hook; its obsolete
+32 approval was removed. The Squirrel-only electron-winstaller 5.4.0 architecture
+copy script is explicitly denied because this repository ships NSIS, never
+Squirrel. Required native build tools remain version-approved. No blanket bypass
+is used for actual clean installations.
+
+Open compatibility item: Electron 43+ explicitly starts an unspecified native
+file chooser in Downloads instead of letting the OS restore its last location.
+The app's folder chooser supplies no defaultPath. Exact native history migration
+requires further investigation; do not claim this native behavior is unchanged.
+Windows 10+ x64/arm64 and supported 64-bit Linux distributions remain the upstream
+platforms. This repo already targets x64 Windows and no removed 32-bit platforms.
+Next: inspect expanded tests and package smoke, then commit the verified group
+and move to runtime-library adapters. Final notarized artifacts wait until U11.
+
+### Static website U09 (independent while Mac packaging runs)
+
+Bootstrap CSS is now 5.3.8 with a freshly computed SHA-384 SRI. Explicit
+compatibility CSS preserves Bootstrap 4 colors, corners, link decoration and
+list indentation. Existing desktop/600px references pass unchanged. Both page
+scripts use browser APIs only; unused jQuery, Popper and Bootstrap JS were
+removed. Download targets and analytics scripts are unchanged. GitHub Pages
+settings read confirms legacy deployment from main:/docs, so this feature branch
+will not deploy the website. Actual Mac/Windows download URL assertions and a
+390px responsive check are being added; test downloads are intercepted and
+cancelled before any real installer is saved. Logs: website-bootstrap5-e2e.log.
+
+Mac package gate detected a builder 26 icon-resolution change: the previous
+directory value now selects electron.icns. The source icon files are unchanged;
+mac/win config now names their existing favicon.icns/favicon.ico explicitly.
+The first package run started with the old value and cannot verify this fix.
+Rebuild the package with the corrected config before claiming icon equivalence.
+
+### Website U09 verified
+
+Original desktop/600px snapshots, 390px stacked buttons, original dark-button
+focus/hover styles, Mac DMG request and automatic Windows EXE request all pass.
+The focused checks use the original Bootstrap 4 CSS values; tolerances and
+references are unchanged. The fixture cancels installer requests at Electron's
+webRequest boundary, preserving real download.js execution without saving files.
+Playwright page.route was tried, but interfered with a file:// icon request; that
+test interception was removed, not worked around in the product.
+
+The first Electron 45 universal package creation/mount/60-second launch/quit and
+detach passed. Its default Electron icon was correctly rejected by the new bundle
+assertion. A fresh package run with explicit original icon paths is now active in
+electron45-package-fixed-icon.log; do not treat the first artifact as final.
+
+### Electron/packaging U06 local gate passed
+
+The corrected icon package passes creation, bundle assertions, mount, actual
+60-second launch, main/renderer logs, quit and detach. Strict/deep codesign
+verification passes. The original ICNS SHA-256 matches exactly; both executable
+and Electron framework contain x86_64 and arm64; LSMinimumSystemVersion is 13.0.
+Evidence: ELECTRON45_MAC_CHECKPOINT.json and local electron45-package-fixed-icon.log.
+This package deliberately skips notarization. U11 must rebuild and notarize the
+final dependency set; do not distribute this intermediate artifact.
+
+Lint/build, 57+74+41 unit tests and all eight current visual/functional cases
+pass. The new geometry case checks real restored bounds and the splitter's
+original reset behavior. Windows fullscreen menu preservation awaits CI.
+
+CI runner labels now select Ubuntu 26.04 LTS, confirmed in the official runner
+image inventory. FUSE uses libfuse2t64. The historical required-check name
+`test (ubuntu-24.04)` remains explicit, so protection/Mergify settings need no
+owner change. All workflow YAML parses. Remote CI is not yet run.
+
+Remaining U06 item: unspecified native file choosers start in Downloads in
+Electron 43+. Investigate preservation of the OS's old remembered directory.
+Continue U07 independently; no user-only action is needed yet.
+
+### U07a file-tree/dates/module/queue group in progress
+
+Last verified application checkpoint: d75efc0. Installed commander 15.0.0,
+directory-tree 3.6.0, fs-extra 11.4.1, lodash 4.18.1, moment 2.31.0,
+moment-timezone 0.6.6, uuid 14.0.3, comlink 4.4.2 and updated related types.
+Declared directly imported moment and reflect-metadata; removed obsolete uuid
+types after the library supplied its own. A shared directory-tree adapter
+explicitly requests the old size/type/extension fields because v3 omits them by
+default. All production callers and existing fixture tests use that adapter.
+
+Two latest candidates failed actual Electron probes:
+- electron-unhandled 6.0.0 cannot load through the synchronous main entry
+  (ERR_REQUIRE_ASYNC_MODULE, top-level await). Version 5 source has the same
+  asynchronous main initialization. Version 6 also adds renderer crash and hang
+  dialogs without a configuration switch, changing the old error policy. Keep
+  4.0.1 while preserving synchronous startup and that UI; no whole-app ESM change,
+  copied dependency fork or listener suppression was introduced. Revisit if the
+  upstream API permits preserving the old policy with bounded initialization.
+- p-queue 10.0.0 combines a DOM EventTarget with Node's setMaxListeners in an
+  Electron renderer. Both the bundled Karma and native Electron Mocha renderer
+  fail before tests start. No global process/EventTarget mutation or dependency
+  source patch. Version 9 is the compatible candidate. The current pipeline uses
+  9.3.0; registry inspection subsequently found 9.3.5 as the highest stable 9,
+  which must be selected and verified before the final snapshot.
+
+Failure evidence: runtime-core-unit.log (initial failing run was overwritten by
+the compatible rerun), runtime-core-native-pqueue.log, unhandled6-probe.log;
+source inspection notes are retained here. Current validation is in
+runtime-core-{graph,lint,build,unit,e2e}.log. No unresolved issue requires owner
+action at this stage.
+
+Timezone data changed from 2022g. Twelve public synthetic timestamp samples
+include two expected data corrections: Almaty +06 becomes +05 and Cairo's summer
++02 becomes +03. Tokyo and the sampled US DST boundaries are unchanged. Exact
+before/after outputs and data version are in TIMEZONE_CHANGES.json. Do not
+misrepresent timezone database corrections as byte-identical date results.
+
+### U07a completed
+
+The final compatible queue is 9.3.5. Graph, lint, production/main/config build,
+57+74+41 assertions and all eight unchanged visual/functional comparisons pass.
+Commander 15 explicitly retains the old tolerance for excess positional arguments.
+Native synchronous loading of uuid 14 succeeds in actual Electron processes.
+Directory metadata, real EXIF/GPS extraction and directory selection remain
+covered by existing unit/integration assertions. Logs: runtime-core-*.log.
+
+Next: Jimp 1 / heic-decode 2.1 / workerpool 10. Preserve scale-to-fit behavior,
+400px bound, jpeg-js encoder, 0.92 quality and original decoded output hash.
+Do not update image references to accommodate a changed algorithm.
+
+### U07b image/worker working tree
+
+Installed Jimp 1.6.1 and workerpool 10.0.3; removed the obsolete workerpool
+types. Named Jimp construction and object resize options retain the original
+algorithm and jpeg-js quality 92. Independent comparisons against original Jimp
+0.16.2 in the signed intermediate package produce identical bitmap/JPEG hashes
+for four synthetic sizes and for the actual HEIC decode. A pure resize helper
+and four original-output unit cases also cover nonzero Buffer byte offsets;
+Jimp.fromBitmap 1.6 incorrectly includes the entire backing buffer in that case,
+so the supported bitmap constructor is used.
+
+The latest HEIC stack initially failed the immutable thumbnail hash. Isolated
+comparisons prove this is libheif's raw decode, not Jimp or workerpool. All three
+published versions allowed by heic-decode 2.1 (1.19.8, 1.23.2, 1.23.5) give the
+same changed result. A reviewed child-only override retains libheif-js 1.18.2
+inside heic-decode 2.0's allowed range. This deliberately preserves image output
+rather than replacing the original reference. Detailed metrics and candidate
+outputs are in HEIC_DECODER_COMPARISON.json; initial failure log is retained as
+images-e2e-initial-pixel-failure.log.
+
+Final compatible image validation is running in images-{graph,lint,build,unit,e2e}.log.
+The four new resize assertions make the intended total 176 if all pass.
+Next: inspect results, commit only after the original HEIC hash passes, then
+update analytics libraries while explicitly preserving collection defaults.
+
+### U07b completed
+
+Jimp 1.6.1 and workerpool 10.0.3 pass graph/lint/build, all 176 assertions
+(57 Angular + 78 main + 41 renderer), and all eight original visual/functional
+cases. The HEIC pixel reference is unchanged with the reviewed decoder pin.
+All four independent Jimp bitmap and encoded JPEG comparisons match original
+0.16.2, including upscaling and nonzero buffer offsets.
+Next: analytics SDKs; inspect original defaults before adopting their new APIs.
+
+### U07c analytics working tree
+
+Installed Amplitude browser 2.49.0 and Mixpanel 2.84.0; removed the obsolete
+Mixpanel types and adapted its default/CJS export. Amplitude keeps attribution
+(the previous SDK did this) while explicitly disabling new page/session, form,
+file, interaction, performance and URL-enrichment capture. Remote configuration
+and diagnostics are disabled because the original SDK had neither. Mixpanel
+explicitly keeps autocapture/page-view/session-recording disabled. Existing
+project selection, IDs, custom event names/properties and batching defaults remain.
+
+Graph/lint/production build pass. A new real-app check sends a fixed main-process
+event through both actual renderer SDKs, captures outgoing payloads without
+sending them, checks properties and rejects new automatic event families. Test
+transport retries are deduplicated by the SDK ingestion ID, not by action name.
+The initial test fixture assumed every Mixpanel data field was base64; it now
+accepts JSON and base64 forms. Current targeted verification is in
+analytics-events-e2e.log. Full unit/visual gate is pending. No owner action needed.
+
+### Analytics integration check refinement
+
+The real transport check passes for both SDKs with exact fixed properties and
+no automatic event families. The initial predicate incorrectly used the first
+ElectronApplication.evaluate argument for the test service; that first argument
+is Electron's namespace. Correcting the callback's second argument resolved the
+false empty-result assertion. A diagnostic run confirms both services receive
+the event, parsing succeeds and unit-test flags are absent.
+
+The negative control enables a separate SDK instance with its new defaults under
+the isolated test profile. It fails specifically on session_start and
+[Amplitude] Page Viewed, proving the test detects the behavior the app disables.
+Raw evidence: analytics-negative-control.log. No product defaults were changed
+for that control. Full 176-assertion/9-case validation is now running.
+
+### U07c completed
+
+Graph/lint/production build, 176 unit assertions and all nine visual/functional
+cases pass. The actual SDK payload check verifies both destinations receive one
+fixed application event with unchanged category/label/value and no automatic
+page/session/interaction events. Its deliberate default-SDK negative control
+fails on the expected new events. Logs: analytics-{graph,lint,build,unit,e2e}.log.
+Next: update Leaflet/Geoman/Turf, retaining existing controls and region selection.
+
+### U08a maps completed
+
+Leaflet 1.9.4, Geoman 2.20.4, Turf 7.4.0 and the current Leaflet/cluster types
+pass graph, lint, production build, all 176 unit assertions and all ten E2E
+cases. Markercluster remains its latest stable 1.5.3. All seven CDN resources
+now have SHA-384 integrity values computed from the fetched bytes; see
+[MAP_RESOURCES.json](./evidence/MAP_RESOURCES.json).
+
+The six original primary toolbar controls and their pixels remain unchanged.
+The focused toolbar reference copies pixels from the immutable Angular 18 /
+Electron 32 screenshot, without resampling or capturing an upgraded app.
+[MAP_TOOLBAR_REFERENCE.json](./evidence/MAP_TOOLBAR_REFERENCE.json) records the
+source hash, crop and output hash. A deliberate 3px toolbar displacement fails
+this comparison (map-toolbar-negative-control.log).
+
+The new real-pointer case first passed against the original CDN libraries, then
+against the updated ones. It draws overlapping rectangles/polygons, confirms
+the union counts two photos once, removes each region, and selects the same
+Kobe/Unga photos while excluding Apple Park/Gold Coast. The original behavior
+clears drawings when a selection rebuilds the map. Unga's directory checkbox
+counts its locatable children, so it is checked even though another file there
+has no GPS. Drawing points avoid toolbar action menus and photo markers.
+
+Logs: maps-{graph,lint,build,unit,e2e}.log; the pre-update interaction check is
+maps-original-controls-baseline.log. Next: ECharts 6 with the official v5 theme,
+then the translation loader/provider migration.
+
+### U08b charts and chooser compatibility completed
+
+ECharts 6.1.0 is installed with the official v5 compatibility theme. Additional
+supported toolbox/slider options preserve 5.4.3 colors and positions; the theme
+alone did not. A new real-pointer Year/zoom/reset/filter case first passed
+against compiled 5.4.3. Graph, lint, production build, 194 unit assertions and all
+12 visual/functional cases pass. Slider positioning uses public top/bottom
+options, with no private layout properties. Do not regenerate references or
+weaken tolerances. Logs: chart-{graph,unit}.log and
+chart-agent6-{build,lint,e2e}.log.
+
+The resize reference contains the hovered gutter color. An intermittent failure
+had identical geometry but a neutral gutter; its existing 1s CSS transition was
+not complete. The test now performs a real hover and waits for the original
+hover color before comparison. Product CSS and references remain unchanged.
+
+The folder-chooser history adapter and nine tests are also implemented. The
+actual Electron option-capture E2E passes across cancellation and a real app
+restart; its nine helper cases also pass in both Electron contexts. Its
+supported-API limitations are recorded in
+[NATIVE_CHOOSER_COMPATIBILITY.md](./evidence/NATIVE_CHOOSER_COMPATIBILITY.md).
+The signed package still represents d75efc0, not this checkpoint.
+
+U10 research found that Jasmine 7 explicitly drops Karma and Zone compatibility.
+Use the highest compatible 6 line with the officially recommended scoped
+karma-jasmine override, verify which core Karma actually resolves, and preserve
+the failing-test exit check. Do not accept npm outdated's older Angular values:
+its manifest picker prefers nondeprecated historical versions even though the
+published current releases are 22.2.x. Other tooling/audit changes have not yet
+been installed. A local-feed updater harness is being prepared separately;
+it must isolate the updater cache as well as userData and prohibit native install.
+
+### U11 local updater transport preflight
+
+The new `test/updater/run.cjs` harness passes with its synthetic ZIP. It executes
+the compiled application startup/version guard and real MacUpdater 6.8.12
+metadata, availability, checksum, cache reuse and corrupt-download cleanup.
+Both userData and the independent updater cache are isolated. Non-loopback
+traffic is blocked; native feed setup is intercepted, and native check/install,
+quit and relaunch calls are prohibited. No installation or rollback was performed.
+See [UPDATER_TRANSPORT_CHECKPOINT.json](./evidence/UPDATER_TRANSPORT_CHECKPOINT.json)
+and `test/updater/README.md` for the exact limits and final real-ZIP command.
+Repeat against the final signed ZIP after all dependency changes; this preflight
+does not replace notarization, Gatekeeper, installed-app or public-feed checks.
+
+### U08c translation completed
+
+Core/HTTP loader 18.1.0 remove TranslateModule and the old loader constructor.
+The app keeps its NgModule architecture, imports the supported standalone
+translation pipe/directive, and registers the new provider functions. The asset
+path remains `./assets/i18n/` plus `.json`, English remains the fallback, and
+`failOnError: true` preserves the old loader's error propagation.
+
+Graph, lint, production build and 194 unit assertions pass. The initial build
+after the module/provider change retained a stale Angular pipe scope and failed
+at runtime. `mise exec -- npx --no-install ng cache clean` plus a production
+rebuild fixes it; no custom pipe or library patch is needed. Original welcome,
+settings, map and loaded/resized screens pass in targeted checks. The gutter
+test now checks actual hover and completion of its transition, rather than
+accepting a stale color during the 0.2s transition delay. The final rebuilt checkout
+passes all 12 cases, including the adapter, and all 194 unit assertions. Logs:
+translate-{graph,unit}, translate-final-{build,lint,e2e},
+translate-clean-{build,e2e}, translate-gutter-stable.
+
+U11 packaged tests need a fixed early test hook, gated by an absolute test
+profile and explicit E2E flag, to remove known debugger arguments and intercept
+test telemetry without disabling production logging or SDK initialization.
+The adapter uses the signed app's own resources and worker dependencies and
+must not modify a bundle after signing. It is implemented and passes static
+normal/guarded lifecycle checks plus the full checkout suite. Actual packaged
+and Rosetta checks remain until the final bundle exists. Commands and limits
+are in `test/e2e/README.md`. Normal startup remains inert; test-profile launches
+also block telemetry for package smoke tests without suppressing logging.
+
+### U10a lint completed
+
+ESLint 10.14.0, @eslint/js 10.0.1 and Stylistic 5.10.0 pass the complete lint
+and dependency graph checks. The three newly recommended core rules are
+explicitly disabled to retain the existing policy; template-literal allowance
+uses Stylistic's supported `always` value. No autofix or app source changes.
+Log: tooling-lint10.log. Next: supported Jasmine 6 and working coverage.
+
+The separate decoder security review now documents real upstream advisories in
+EXCEPTIONS.md. The old pixel-preserving pin is not publication-approved. Keep
+that final owner choice visible while completing independent work.
+
+### U10b Jasmine and coverage completed
+
+Jasmine 6.3.0, its 6.0.0 types, HTML reporter 2.3.0 and karma-coverage 2.2.1
+pass all 194 unit assertions. Both root and karma-jasmine resolve 6.3.0 using
+the scoped override recommended by Jasmine's official 6 migration guide.
+The former nested runner was 4.6.1 despite the root 5.2.0 declaration.
+Jasmine 6 emits its expected Zone monkey-patching deprecation; no warning or
+failure detection is suppressed. Version 7 is incompatible with this test stack.
+
+Coverage now runs once and writes real HTML/LCOV reports for 124 source files.
+A temporary failing assertion returns exit 1 with its TypeScript location;
+the temporary spec has been removed. See
+[JASMINE6_CHECKPOINT.json](./evidence/JASMINE6_CHECKPOINT.json).
+Logs: jasmine6-{unit,coverage,negative,graph}.log. Next: script-tool replacement,
+direct ts-node registration, unused dependencies and compatible transitive refresh.
+
+### U10c working tree and final local gate
+
+The maintained npm-run-all2 9.0.4 and npm-check-updates 23.1.1 replace the old
+script tools. Cross-env, wait-on, RxJS and tslib are updated; native Webpack
+types replace the stub, aligned with the builder's exact Webpack 5.112.0.
+Direct ts-node 10.9.2 replaces Espower/Power Assert instrumentation. Assertion
+pass/fail semantics remain, with standard Node diagnostics instead of expression
+trees. Both intentional Electron failures return exit 1 and TypeScript stacks.
+Unused Chai/tiny-worker/allSettled packages and obsolete install approvals are
+removed. Lockfile format 3 and compatible transitive refresh pass clean npm ci.
+
+The first clean gate passed all 194 assertions and 15 unchanged-reference E2E
+cases, including Unicode/space/#/% CLI and viewer paths. Script-runner probes
+verify Dev profile inheritance, sequential failure propagation and parallel
+child shutdown. npm-check-updates help is verified without updating manifests.
+
+Development verification found electron-reload's unclosed watchers prevent
+process exit on Electron 45. It is replaced by a small lifecycle adapter using
+current Chokidar 6.0.0. Real quit/reload/relaunch checks pass, as does the actual
+HTTP photo flow and npm start/stop. See
+[DEV_FLOW_CHECKPOINT.md](./evidence/DEV_FLOW_CHECKPOINT.md). CI now includes the
+watcher lifecycle check. Test-only DevTools target handling is explicit.
+
+A final clean install/build/unit/watcher gate passes after this compatibility
+fix. All 15 visual/functional cases pass in final-e2e-stable.log. Native capture
+can clear hover after it has been verified, so the screenshot holds only that
+existing pseudo-state through the supported CDP API; no style, mask, reference
+or tolerance change. Real hover/transition/color checks still run first.
+
+Angular core has an optional Chokidar ^5 peer. Development's latest Chokidar 6
+uses the npm alias `chokidar6`, allowing the peer to resolve supported 5.0.0;
+the complete graph is valid without overriding that peer. A final registry
+refresh also updates ng-mocks to 14.18.5; all 194 assertions pass with it.
+The HEIC child override is restricted to parent 2.0.0 so it cannot accidentally
+follow a future approved parent update. The obsolete notarize `tool` option is
+removed for the current API.
+
+See [LOCAL_FINAL_CHECKPOINT.json](./evidence/LOCAL_FINAL_CHECKPOINT.json) and
+[AUDIT_DISPOSITION.json](./evidence/AUDIT_DISPOSITION.json). npm audit reports
+75 propagated entries across five leaf packages; no compatible fixes remain
+inside the supported parent ranges. The native decoder advisories are separate.
+Logs use final-{clean-install,runtime,build,unit,watcher}.log, ready-{graph,audit},
+latest-mocks-unit.log and alias-watcher.log. No development server or old test
+Electron process remains. Signed artifacts still represent d75efc0; final
+signing/notarization and remote CI are now running. Google Maps credentials were not
+available in the task environment; live key-backed validation remains separate.
+
+### U11 first remote checks and build-order correction
+
+Draft PR: https://github.com/TomoyukiAota/photo-location-map/pull/630.
+Head `9a56cd5` started push/PR checks on all three OSes, plus manual macOS
+Intel verification (run 41378002739). macOS push job 125062227644 and Ubuntu
+push job 125062212941 fail before watcher execution: the fresh checkout has no
+compiled `src-main/configure-live-reload.js`. Logs were read before any retry.
+This is a repository test-command ordering defect, not an environmental failure.
+The watcher test command now builds src-main itself, making it independently
+repeatable on a clean checkout. No checks, Windows draft publishing, or installer
+retry behavior are removed. Push the validated fix and rerun Intel at the new head.
+
+Final local notarization is independently running with real credentials; its
+raw output is `.upgrade-artifacts/mac-final-package.log`. Do not run package
+creation tests that overwrite the signed bundle. Next: final packaged arm64 and
+Rosetta E2E, signature/Gatekeeper checks, real-ZIP updater transport, and CI.
+
+### U11 final Mac artifacts and Linux runtime argument
+
+The final `2b7b0d7` runtime bundle is signed and notarized. Deep strict codesign,
+stapler, Gatekeeper, original icon, macOS 13 minimum and both universal slices
+pass. The final DMG runs main and renderer for 60 seconds with an owned profile,
+then quits and detaches. All 14 packaged arm64 visual/functional cases pass;
+the separate website case is intentionally skipped. Runtime dependencies and
+110 packaged runtime-source files match the checkout. ZIP/DMG metadata sizes and
+SHA-512 match, and every blockmap chunk verifies (11,349 ZIP / 11,671 DMG).
+The real final ZIP also passes isolated updater transport/cache/corruption checks.
+
+Rosetta is absent on this machine: even `arch -x86_64 /usr/bin/true` fails with
+Bad CPU type and no Rosetta receipt is installed. Do not install OS software
+solely for redundant coverage. Native Intel CI is the x64 execution gate.
+
+The `0c72971` build-order correction passes watcher lifecycle on remote runners.
+Both Ubuntu triggers then fail at AppImage startup: its launcher supplies
+`--no-sandbox`, which Commander rejects before application logging. Logs for
+jobs 125063886387 and 125063902228 confirm the same repository compatibility
+defect. A hidden option now accepts that existing Electron flag; it does not
+add the flag, alter help, or accept arbitrary unknown options. Targeted checks
+preserve Unicode/special-character --open values and unknown-option exit 1.
+The previous signed artifacts are evidence for the pre-argument-fix source;
+rebuild and notarize the final source before reporting final artifact readiness.
+
+Windows push job 125063891239 also reaches the installed app, then rejects the
+main-window URL: concatenating `file:` with a Windows filesystem path produces
+an invalid URL. Replace that construction with Node's supported `pathToFileURL`;
+the file protocol and existing window flow remain. A targeted probe reproduces
+the old failure and verifies Windows drive paths plus Unicode, spaces, # and %
+round-trip correctly. The superseded local package process was stopped before
+signing; restart packaging after the URL correction. Remote checks must verify
+the actual Windows installer/renderer and the full special-path suite.
+
+CI's final regression step now targets the actual installed NSIS executable,
+created AppImage, or universal macOS bundle through `PLM_PACKAGED_EXECUTABLE`.
+The existing harness asserts packaged/Prod mode, exact runtime/dependencies,
+owned profile paths and the launched executable before exercising the flows.
+Both Mac architectures share this step. Checkout/development validation remains
+separately recorded. The Ubuntu environment-writing command is executed locally
+and all three workflow YAMLs parse, including the Mac YAML alias. No publication
+step or required-check name is changed.
+
+Current remote head: `ae9e2fe`; current runtime source: `d24da89`. Latest push
+runs: Windows 41379683639, Ubuntu 41379683664, macOS 41379683765. PR runs:
+Windows 41379688319, Ubuntu 41379688348, macOS 41379688356. Manual macOS/Intel:
+41379700727. Superseded incomplete runs were canceled to free runners after the
+failures above were classified; the earlier d24da89 Ubuntu push and PR both pass.
+
+The final d24da89 macOS build finished real notarization at 2026-11-02 11:49 JST.
+Its log is `mac-final-package-portable-url.log`; signing/stapler/Gatekeeper checks
+pass and packaged visual regressions are running in
+`portable-final-packaged-arm64-e2e.log`. The independently reviewed local native
+updater fixture is prepared under `.upgrade-artifacts/native-updater` and has
+not run yet. It uses a unique signed identity and hardcoded owned profile in
+both test bundles. Execute only after packaged visual testing ends, then record
+actual candidate-runtime handoff/rollback results and limits; keep the final
+production bundle unchanged. Raw evidence and cleanup commands are local.
+
+### U11 native handoffs and CI test portability
+
+The final d24da89 universal bundle passes all 14 packaged visual/functional
+cases again after the portable file-URL correction. Its real DMG 60s smoke,
+signature, stapler, Gatekeeper, both universal slices and original icon pass.
+Final metadata and every blockmap chunk verify (11,373 ZIP / 11,711 DMG).
+See [FINAL_MAC_CHECKPOINT.json](./evidence/FINAL_MAC_CHECKPOINT.json) and
+[FINAL_ZIP_TRANSPORT_CHECKPOINT.json](./evidence/FINAL_ZIP_TRANSPORT_CHECKPOINT.json).
+
+The isolated native fixture passes actual signed install/relaunch and explicit
+downgrade rollback, with the production update prompt's Yes branch and saved
+checkbox setting verified through all four app starts. These are candidate-runtime
+99.0.1 → 99.0.2 → 99.0.1 fixtures, not historical public binaries or the exact
+production-identity ZIP. The first attempt's renamed CFBundleName broke helper
+lookup before JS; retaining the helper-compatible name fixes the fixture only.
+Production source signature and full fingerprint are unchanged after both runs.
+Native cache/job/preference cleanup is complete; only exact nonce paths/domains
+were removed after saving evidence. Source integrity is verified again after
+cleanup. See
+[NATIVE_UPDATE_FIXTURE_CHECKPOINT.json](./evidence/NATIVE_UPDATE_FIXTURE_CHECKPOINT.json).
+
+At ae9e2fe both Ubuntu AppImage push/PR jobs pass. Windows and macOS reach the
+packaged E2E step and expose test portability assumptions. Their failed logs
+were inspected before any retry: Windows' HEIC dimensions/hash are identical;
+only Git's CRLF conversion breaks the JSON text snapshot. Compare parsed JSON
+values against the unchanged reference. Fullscreen-menu visibility must wait
+for the native transition callback. Mac runners have a 1000px-wide display,
+so off-screen window bounds are correctly reset by the existing state helper,
+and map pointer coordinates can fall outside the physical screen. Nonvisual
+tests now fit the real work area and draw the same geographic region in view;
+the persisted test window is wholly inside that area. Visual references retain
+their original 1200x800 size and tolerance. Compact checks also count photos
+inside clusters, keeping the exact photo total rather than assuming a fixed
+cluster membership at every viewport size. No product behavior is changed.
+
+The ae9e2fe Intel runner was canceled during npm ci without reaching app tests;
+the job log is unavailable (GitHub BlobNotFound). A fresh manual run at the
+corrected harness head remains required. No Intel test pass is inferred.
+
+Current harness/CI head is `872699e`; runtime and signed artifact source remain
+`d24da89`. Push runs: Windows 41403158081, Ubuntu 41403158101, macOS 41403158074.
+PR runs: Windows 41403166863, Ubuntu 41403166901, macOS 41403166916.
+Explicit macOS/Intel run: 41403163570. Both Ubuntu jobs now pass all 194 units,
+watcher lifecycle, actual AppImage smoke and 14 packaged E2E cases. Windows is
+in installed-app E2E; all Mac jobs, including Intel, have passed install and
+unit/watcher gates and are packaging. The old Intel check's annotation confirms
+its 45-minute job timeout during install; no dependency fallback was needed.
+
+After test portability corrections, the compact suite passes 13 cases and its
+corrected chart case passes separately, with the four affected packaged visual
+cases also passing. Chart filtering now waits for the exact represented-photo
+total, including clusters, before selecting; this preserves the original 300ms
+debounce. Original image references and screenshot tolerances are unchanged.
+
+Final ZIP and DMG extraction checks also pass strict signature/staple/Gatekeeper
+validation; all 4,754 files and all symlinks/directory entries match the tested
+signed bundle. The verification DMG is detached. See
+[FINAL_DISTRIBUTION_BUNDLES.json](./evidence/FINAL_DISTRIBUTION_BUNDLES.json).
+The remaining Google Maps credential item concerns the explicitly experimental
+Dev-only menu; it is optional additional developer coverage, not an unavailable
+packaged-Prod feature or an automatic publication blocker.
+
+### U11 Windows fullscreen native call ordering
+
+At 872699e both Windows triggers pass 13 actual installed-app cases, including
+HEIC pixels and all special paths, but the menu remains hidden for the full
+10s poll after entering fullscreen. Logs for jobs 125139240830 and 125139278973
+were read before retrying. This is a real compatibility defect, not test timing
+alone. Two independent source reviews confirm the cause in Electron 45.2.1
+`NativeWindowViews::SetFullScreen`: Windows notifies observers, then hides the
+menu later in the same native call. The synchronous listener is overwritten.
+
+The Windows-only listener now uses `setImmediate` after that native call,
+guarded against a destroyed window or a completed fullscreen exit. The public
+menu setter remains supported; no native patch, polling timer or altered menu
+layout is introduced. Build/lint and actual Windows CI must verify the fix.
+All existing d24da89 Mac artifacts remain valid evidence for their own source;
+final artifacts must be rebuilt after this source correction is verified.
+
+Runtime/source head is now `f1f0ee5`. Both Windows triggers pass all 14 installed
+app E2E cases after the deferred setter and are exercising draft publication.
+Both Ubuntu triggers also pass all 14 packaged cases. Current runs:
+Windows push/PR 41404336589 / 41404343425; Ubuntu 41404336540 / 41404343471;
+macOS push/PR 41404336505 / 41404343407. The required native Intel run
+41403163570 is still packaging at 872699e; the only later app change is guarded
+to win32. Both arm64 872699e push/PR and the manual run's arm64 job pass.
+
+The final f1f0ee5 local universal build completes real signing/notarization,
+strict signature, stapler and Gatekeeper checks, and all 14 actual packaged
+visual/functional cases pass. Log: `mac-final-package-fullscreen.log`,
+`fullscreen-final-packaged-e2e.log`. Completed ZIP transport matches the exact
+final metadata size/hash. All final blockmap chunks verify (11,357 ZIP / 11,689
+DMG); details are in local `fullscreen-final-artifact-integrity.json`.
+Fresh f1f0ee5 native handoffs and 60s DMG smoke are running in
+`native-updater/execute-final-fullscreen.log` and `fullscreen-final-dmg-smoke.log`.
+Do not overlap a second DMG attach until that smoke detaches. Next: finish these
+checks and exact native cleanup, revalidate extracted archives, refresh public
+artifact reports to f1f0ee5, verify the final Windows draft bytes, and finish CI.
+No publication/merge or manual Mac upload is authorized.
+
+
+### U11 completed / U12 handoff
+
+Final application source: `f1f0ee575f1890948a31d815f8d8bf85e464e4a7`.
+Windows, Ubuntu and Mac arm64 push/PR checks pass at this source. Native Intel
+passes the explicit manual run at `872699e`; the only subsequent application
+change is guarded to win32 (menu restoration), with no Electron, builder, native
+module or Mac packaging change. Do not claim exact-f1 Intel execution.
+
+Final local f1f0ee5 evidence passes: 14 actual packaged visual/functional cases;
+real Developer ID signing/notarization/stapling/Gatekeeper; universal architectures,
+original icon and minimum macOS 13; 60s mounted-DMG smoke and cleanup; final ZIP
+transport/cache/corruption; all metadata and blockmap chunks; both extracted
+archives' 4,754 files and symlinks match the signed app. Actual signed native
+fixture upgrade/relaunch/downgrade and settings through four starts pass, with
+exact native caches/jobs/preferences removed and production signature/fingerprint
+verified afterward. Original regression references and tolerances are unchanged.
+
+Windows' push additionally uploads the intended unpublished draft artifacts;
+PR-context publishing correctly skips uploads. The downloaded draft EXE matches
+its metadata/GitHub SHA-256, all 6,607 blockmap chunks, the final compiled main/
+URL/argument code (CRLF-normalized text) and runtime manifest. It is NSIS with
+an app-64.7z payload. This is a read-only byte check, not local Windows execution.
+The draft remains draft=true, published_at=null, prerelease=false; review release
+channel/version treatment before publishing. No Mac artifact was uploaded.
+
+Evidence: [Mac artifacts](./evidence/FINAL_MAC_CHECKPOINT.json),
+[extracted archives](./evidence/FINAL_DISTRIBUTION_BUNDLES.json),
+[ZIP transport](./evidence/FINAL_ZIP_TRANSPORT_CHECKPOINT.json),
+[native handoffs](./evidence/NATIVE_UPDATE_FIXTURE_CHECKPOINT.json),
+[Windows CI](./evidence/FINAL_WINDOWS_CI.json),
+[draft bytes](./evidence/FINAL_WINDOWS_DRAFT_BYTES.json),
+[Ubuntu CI](./evidence/FINAL_UBUNTU_CI.json), and
+[Mac/Intel CI](./evidence/FINAL_MAC_CI.json).
+
+No implementation, packaging, test app or owned test service remains running.
+Task profiles and mounted images are cleaned; ignored raw logs/artifacts remain
+for audit. The current working tree's final changes are evidence/documents only.
+After committing them, report the verified application source separately from
+that documentation commit. Routine document-triggered CI does not imply a new
+application or new publish-approved artifact.
+
+Next owner-dependent action: the final packet's HEIC output/security choice and
+native chooser history acceptance. Experimental Dev-only Google Maps can be
+checked if the owner wants that additional coverage and supplies secure test
+credentials; it is not a packaged-Prod blocker. Merge, version/channel changes,
+public publication and controlled post-release checks remain U13, separately
+authorized after the selected artifacts are concrete and reviewed.
+
+
+### Approved HEIC follow-up — completed verification
+
+Application source: `79d547fa884658be9266f03ae3d20ea05899b34a`. The verification
+records carry their actual November 2 UTC observation timestamps; this status
+was reconciled on November 3. All seven workflow runs across three workflows
+and eight actual test jobs succeeded without failures or reruns, including
+native Intel at the same application source. Each job passed 194 unit assertions
+and 14 packaged cases. The new signed Mac and Windows draft-byte proofs are
+linked in the active task above. The original references/tolerances are intact;
+the separately approved HEIC reference and actual 2.1.0/1.23.5 payload checks pass.
+
+No application/runtime/assertion source changed after 79d547f. This follow-up
+updates evidence, resume/review text and one E2E README sentence. No owned app-test or
+fixture process, mounted test volume or owned native cache/job/preference remains active.
+Retained raw logs and artifacts are ignored. Inspect the actual branch/PR checks
+for any later documentation-head CI; do not infer their state from source-79d
+results. Draft Windows assets are mutable on each push; their record is a dated
+byte observation rather than a promise that the latest draft hash is unchanged.
+
+Next smallest action: reconcile the actual branch and current PR checks.
+The owner subsequently accepted the chooser policy as recorded below; do not
+repeat that question or the resolved HEIC output choice. Merge/public release
+remains unauthorized; existing npm and native-code security limitations remain disclosed.
+
+
+### Confirmed-folder policy accepted (2026-11-03)
+
+After clarification, the owner explicitly selected acceptance of the policy that
+requests the last folder confirmed in the picker. The first-upgrade and ordinary
+use differences from OS-managed history, including navigation followed by
+cancellation, are accepted. The implementation and its verified application
+source remain 79d547f; no app, runtime, assertion or image-reference changes are
+needed. Backend/API limits and test coverage remain as documented in
+[NATIVE_CHOOSER_COMPATIBILITY.md](./evidence/NATIVE_CHOOSER_COMPATIBILITY.md).
+
+This resolves the remaining implementation compatibility decision. It does not
+authorize merge, public release, a version/channel change, or treatment of the
+remaining native/npm security issues as fixed. Optional Dev-only Google Maps
+coverage remains optional. Update the public review/PR and verify document
+consistency; any automatically triggered documentation-head CI must be classified
+on its actual result. Earlier dated entries describing this choice as pending
+are historical, superseded by this explicit acceptance.
+
+
+### CodeRabbit review started (2026-11-03)
+
+The owner authorized marking PR #630 ready and addressing CodeRabbit comments.
+The PR is no longer draft at head `7e2722d715cc392d875b94b0831b808f99c3cd62`.
+No automerge label or native auto-merge request is enabled. The owner did not
+authorize merging or publishing the application.
+
+Full review requested with top-level comment
+[6593570952](https://github.com/TomoyukiAota/photo-location-map/pull/630#issuecomment-6593570952).
+CodeRabbit acknowledged processing 171 selected files; initial review is running.
+Current work: collect findings, verify each against the actual source and
+accepted compatibility choices, fix valid issues in a batch, run affected checks,
+and reply with concrete evidence. Do not blindly adopt suggestions that undo
+intentional Windows draft uploads, change UI/features, regenerate original image
+references, or imply release/security approval. Preserve historical artifact
+identities; a production-source change requires fresh affected artifact gates.
+
+The working tree may contain this resume/review-state update while the initial
+review runs. Keep it local until batching the actual review responses/fixes to
+avoid restarting the scan solely for a status change. Ignored review inbox:
+`.upgrade-artifacts/coderabbit-review-inbox.json`. Merge/application release
+remains unauthorized.
+
+Initial review subsequently completed with six actionable inline findings.
+All six were validated and implemented; local build/lint, 57 Angular + 92 main +
+55 renderer assertions, 15 unchanged-reference visual/functional cases and four
+actual watcher lifecycle cases pass. Pending-directory checks now return within
+one second and share outstanding per-path I/O, while module edits relaunch once
+per compilation burst. Minimum-OS and updater-collision negative controls pass.
+Next: commit/push this batch, reply with concrete evidence, collect incremental
+review/CI and rebuild/reverify signed artifacts for the changed production source.
+
+### Additional review and owner preferences (2026-11-03)
+
+The initial six fixes were committed as
+`a059f34709f901c4128e46813dc5152587fc2820`. All seven workflow runs/eight actual
+test jobs pass at that source, including native Intel, as recorded separately
+in [REVIEW_HISTORICAL_CI.json](./evidence/REVIEW_HISTORICAL_CI.json). CodeRabbit acknowledged
+the replies and resolved all six initial threads. That candidate was also
+signed/notarized, but subsequent findings/preferences below supersede it before
+final artifact verification.
+
+Two additional CodeRabbit findings are implemented locally: precise workflow-run
+wording and ECharts v5 registration on the actual loader instance. A new real
+runtime assertion exposed the old v6 palette (#5070dd) despite the previous
+screenshot passes; the corrected official-theme instance resolves #5470c6 and
+removes the duplicate ESM/CJS core. No image reference or tolerance was changed.
+
+The owner's additional PR comments request grouped test scripts, the earlier
+template attribute alignment, and additive Amplitude v2 default events while
+preserving the existing event contract. Those changes are implemented locally.
+Mixpanel defaults/guards, Bootstrap CSS versus JS and the optional coordinated
+branch-check rename have been explained in replies; no repository protection
+settings were changed. The new Amplitude test verifies default page/session
+events plus unchanged manual fields/identity, and its foreign-identity negative
+control fails as expected. The combined production build/lint, 204 unit
+assertions and all 15 visual/functional cases pass before the next source
+checkpoint. See CODERABBIT_REVIEW.md for per-thread status. Fresh platform and
+signed-artifact checks remain required for this second batch.
+
+
+### Historical checkpoint — third review batch before c0 push (2026-11-03)
+
+Current committed source is f7afae2; subsequent fixes are uncommitted. The full
+review inbox includes owner followups for NSIS --updated, hidden-ancestor watcher
+paths, future snapshot updates, owned package-test profile cleanup, ordinary
+Mixpanel defaults, a coordinated stable Ubuntu check name and formatter support.
+The owner also asks to remove new Amplitude local-URL capture if absent in 1.6.7;
+published-source comparison confirms it is new. Disable pageViews and
+pageUrlEnrichment only, without adding a replacement event. Preserve the other
+ordinary defaults and original manual-event contract. See the per-comment table
+in CODERABBIT_REVIEW.md. The older-macOS auto-update risk was explicitly accepted
+in owner comment 4454038799; no guard is requested and no release is authorized.
+
+The f7 source's signed/notarized Mac build, 14 packaged cases, full archive
+identity and ZIP transport pass. Its native updater fixture also passes install,
+relaunch, explicit downgrade and settings over four starts. Exact nonce-owned
+cache/job/preference cleanup is complete and production fingerprint/signature
+remain unchanged afterward. The f7 Windows draft-byte inspection also passes (read-only; no EXE execution).
+The f7 DMG dwell was not completed before the new fixes superseded this candidate. Do not infer
+a complete final artifact checkpoint from the partial f7 results. Retain its
+ignored review-followup logs for audit; new source needs rebuilt affected gates.
+
+Next: finish the third batch, run targeted negative/positive controls and full
+local gates, commit/push once, reply on the actual threads, and watch incremental
+review/platform CI while rebuilding signed Mac artifacts. Only after the new
+`test (ubuntu)` check succeeds should the owner be told in the Codex chat that
+the required-check replacement is ready. The owner reserved that remote
+branch-protection edit; do not perform it. No merge, public release or manual
+Mac upload is authorized. Original image references and tolerances stay intact.
+
+Third-batch local gates now pass: build/lint; 57 Angular + 97 main + 55 renderer
+assertions (209); five durable package-runner checks wired into CI package tests;
+five real watcher lifecycle cases; 15 unchanged-reference visual/functional
+cases. The final focused analytics check also passes after adding a zero-parser-
+error assertion. Separate page-view and URL-enrichment negative controls fail
+where intended. Default future snapshot updates succeed for a nonvisual case,
+protected updates fail before launch, protected comparison passes, and all 15
+reference hashes remain unchanged. The parser accepts only the specific hidden
+--updated compatibility flag; installed Windows E2E now includes and asserts it.
+Ready to commit/push this source checkpoint, then run the new stable Ubuntu
+check, remaining platform gates and rebuilt signed artifact verification.
+
+
+### Current handoff after third source push (2026-11-03)
+
+Application source c0f0dc97f1b7dfd687462c318fea88e585c1a94f is committed and
+pushed. It supersedes the earlier f7/current/uncommitted descriptions. All nine
+then-pending owner/bot threads received concrete responses after this commit.
+The new incremental review adds two documentation-only findings: record actual
+checked-out PR merge commits separately from head_sha (4454360799), and reconcile
+this stale handoff text (4454360814). Both belong in the final evidence/docs batch;
+no application change or artifact rebuild is implied by these corrections.
+
+Fresh c0 Mac validation is complete in REVIEW_MAC_CHECKPOINT.json, including
+14 signed-app cases, all archive bytes/links, signature/notarization/Gatekeeper,
+60-second mounted-DMG launch observation (55-second reported app session), final
+ZIP transport and native fixture install/relaunch/explicit downgrade/settings over
+four starts. Native caches/jobs/preferences are cleaned and the full production
+fingerprint and strict signature remain unchanged afterward. Fresh Windows draft
+bytes are complete in REVIEW_WINDOWS_DRAFT_BYTES.json; its asset identities are a
+dated mutable observation. No local test application or mounted test image remains.
+Raw logs and fixture copies remain ignored; active/resume pointers are in
+`.upgrade-artifacts/review-third-active.json`. Do not run test:package over these
+final notarized artifacts.
+
+Exact-c0 CI is now complete: seven successful workflow runs/eight actual test
+jobs, including manual native Intel run 41630843941, with complete log evidence.
+The CodeRabbit c0 check succeeded and explicitly resolved the earlier CI-evidence
+and Amplitude threads. The final two documentation findings are implemented.
+Next smallest step: commit/push only this sanitized evidence/docs checkpoint,
+reply to those two threads, and inspect the actual new-head checks/review. Any automatic
+documentation-head checks must be classified by their actual results; source c0
+artifacts do not acquire a later documentation SHA. After all verification, tell
+the owner in the Codex chat that replacing protected test (ubuntu-24.04) with
+test (ubuntu) is ready. The owner reserved that remote setting; do not edit it.
+Merge, stable version/channel changes, public release and manual Mac upload remain
+unauthorized. The accepted HEIC, chooser and older-macOS risk choices stay resolved.
+
+
+### Source verification complete; final evidence handoff (2026-11-03)
+
+Verified application source is c0f0dc97f1b7dfd687462c318fea88e585c1a94f. All local,
+signed-artifact, native-update and eight platform test jobs pass with no CI
+failures or reruns. REVIEW_MAC_CHECKPOINT.json, REVIEW_CI_CHECKPOINT.json and
+REVIEW_WINDOWS_DRAFT_BYTES.json carry their actual source, observation times,
+identities and limits. The CI record separately identifies PR merge checkouts;
+REVIEW_HISTORICAL_CI.json now records all sixteen older job checkout SHAs from
+freshly read exact job logs. No previous artifact identity was relabeled.
+
+CodeRabbit's exact-c0 check completed successfully. Its two final minor findings
+4454360799/4454360814 are fixed in this documentation-only checkpoint. The earlier
+CI-evidence and Amplitude threads are explicitly resolved by CodeRabbit. No new
+runtime or owner request was present at that observation. Reply after this
+checkpoint is committed and verify the actual documentation-head review/CI.
+A new document-triggered Windows upload may replace draft bytes; the checked-in
+Windows record deliberately remains a dated source-c0 observation.
+
+Only the owner-reserved required-check replacement remains in the current task:
+replace test (ubuntu-24.04) with test (ubuntu), preserving GitHub Actions binding,
+strict mode and the Windows/Mac checks, after readiness is reported in the Codex
+chat. Source-c0 Ubuntu push/PR checks already pass. Do not change remote protection
+settings, enable automerge, merge or publish. Optional Dev-only Google Maps is
+not a packaged-Prod blocker. No owned local app/fixture or mounted test volume
+remains; ignored raw artifacts are retained for audit. Any later documentation
+head must be distinguished from the verified c0 application/artifact source.
+
+
+### Stable macOS check names (2026-11-03)
+
+The owner saved the Ubuntu required-context replacement; API verification now
+shows test (ubuntu), test (windows-latest) and test (macos-26), all bound to
+GitHub Actions, with strict mode retained. The completed Ubuntu conversation
+4451183542 is resolved. Earlier pending-Ubuntu instructions are historical.
+
+The owner approved the recommended version-independent macOS names. The regular
+job is now the literal test (macos-arm64), and manual Intel is test (macos-x64).
+The pinned runners remain macos-26 and macos-26-intel; the Intel job remains
+workflow_dispatch-only and is not added to Mergify or required checks. Both
+Mergify success/skipped conditions use the regular arm64 name. CONTRIBUTING
+describes the stable names and the coordinated rename sequence.
+
+Local validation compares parsed workflow data against the previous committed
+workflow: removing just the two name fields makes them identical. Parsed Mergify
+data differs only in the two arm64 context strings. Both new names are literal
+so skipped jobs still report their check contexts. No application, dependency,
+build command, packaging option, artifact or original reference changes here.
+The verified application/artifact source remains c0f0dc9; all older CI job-name
+records retain their actual historical names and sources. No new native Intel
+execution is needed for this metadata-only rename; the new x64 skipped context
+and unchanged manual condition must be checked on the automatic Mac runs.
+
+Resume: inspect the actual branch/head and this small CI/docs diff, then collect
+its automatic push/PR runs and incremental CodeRabbit review. Classify any failure
+before rerunning. Only after the new test (macos-arm64) check succeeds should the
+owner be told in the Codex chat to replace protected test (macos-26) with
+test (macos-arm64), retaining GitHub Actions binding, strict mode and the existing
+Ubuntu/Windows requirements. Do not add manual test (macos-x64) as a required
+check or edit remote protection settings. Merge/publication remain unauthorized.
+This record intentionally keeps the application source separate from the new
+CI-name checkpoint; actual completion evidence belongs to the exact remote head.
+
+
+### Claude Code review and formatting-only follow-up (2026-11-04)
+
+The saved main protection now requires test (ubuntu), test (macos-arm64) and
+test (windows-latest), all from GitHub Actions, with strict mode preserved.
+Manual test (macos-x64) is non-required. Conversation 4456013937 is verified and
+resolved; no owner protection action remains. The source-f8 check-name follow-up
+passed all six automatic runs on the first attempt and its CodeRabbit check
+succeeded. Historical entries asking for those protection edits are superseded.
+
+The owner asks to fix indentation and defer other issues unless they are serious.
+The remaining four template files now align continuation attributes with the
+first attribute; mat-list-item/mat-checkbox put that first attribute back on
+the opening line. Only whitespace changes. Semantic Angular ASTs match after
+removing source spans/locations, production build/lint pass, and all eight emitted
+JS/HTML/CSS files match both the previous build and the signed source-c0 bundle
+byte-for-byte. Original references, dependencies and behavior are unchanged.
+Do not relabel the existing signed artifacts or recreate them for this format
+change; source maps can contain changed source formatting/locations.
+
+Independent source reviews find the five other suggestions non-blocking under
+the requested threshold: ECharts dev checks are a valid optimization concern;
+Amplitude form/download URL capture has no present DOM trigger and must be
+revisited before adding matching markup; Pages task content is a publication
+choice; CDN/viewer availability is a CI reliability concern; every current remote
+require is already handled. No runtime, analytics policy, Pages or CI-rerun rule
+is changed for these suggestions. Full dispositions and local proof are in
+CLAUDE_REVIEW_FOLLOWUP.json. This is a deliberate deferral, not a claim that each
+suggestion was implemented or that future code cannot make it relevant.
+
+Resume by inspecting the actual branch/head, the four whitespace diffs, and the
+current PR review/checks. Verify the exact remote head after this follow-up;
+classify failures before reruns and resolve only addressed discussions. No
+merge, public release, stable-version change or manual Mac upload is authorized.

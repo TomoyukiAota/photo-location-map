@@ -1,0 +1,116 @@
+{
+  "observedDate": "2026-11-02",
+  "testedCommit": "f1f0ee575f1890948a31d815f8d8bf85e464e4a7",
+  "status": "passed",
+  "reruns": 0,
+  "runs": [
+    {
+      "event": "push",
+      "runId": 41404336540,
+      "jobId": 125142900277,
+      "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41404336540",
+      "conclusion": "success",
+      "angularUnitAssertions": 57,
+      "mainUnitAssertions": 87,
+      "rendererUnitAssertions": 50,
+      "packagedAppImageE2EPassed": 14,
+      "websiteCaseSkipped": 1,
+      "angularBuildHash": "012a37088d901f98"
+    },
+    {
+      "event": "pull_request",
+      "runId": 41404343471,
+      "jobId": 125142911634,
+      "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41404343471",
+      "conclusion": "success",
+      "angularUnitAssertions": 57,
+      "mainUnitAssertions": 87,
+      "rendererUnitAssertions": 50,
+      "packagedAppImageE2EPassed": 14,
+      "websiteCaseSkipped": 1,
+      "angularBuildHash": "012a37088d901f98"
+    }
+  ],
+  "verifiedInBothJobs": {
+    "cleanNpmCi": true,
+    "hostAndElectronRuntimeChecks": true,
+    "angularAndScriptLint": true,
+    "totalUnitAssertions": 194,
+    "realWatcherQuitReloadRelaunch": true,
+    "productionBuild": true,
+    "appImageCreation": true,
+    "appImageLaunchSmokeMainAndRendererLogs": true,
+    "e2eExecutable": "release/Photo Location Map-1.12.2-alpha.AppImage",
+    "e2eMode": "actual-packaged-appimage",
+    "e2eArchitecture": "x64",
+    "e2eVisualScreenshotComparisons": false
+  },
+  "runtime": {
+    "node": "26.13.0",
+    "bundledNpm": "11.20.0",
+    "electron": "45.2.1",
+    "embeddedNode": "24.22.1",
+    "chromium": "156.0.8078.75"
+  },
+  "runner": {
+    "requiredCheckName": "test (ubuntu-24.04)",
+    "actualOperatingSystem": "Ubuntu 26.04.1 LTS",
+    "image": "ubuntu-26.04",
+    "imageVersion": "20261025.179.1",
+    "actionsRunner": "2.338.2",
+    "kernel": "7.0.0-1017-azure",
+    "glibc": "2.43",
+    "glibcUbuntuVersion": "2.43-2ubuntu2.4",
+    "inventoryUrl": "https://github.com/actions/runner-images/blob/ubuntu26/20261025.179/images/ubuntu/Ubuntu2604-Readme.md"
+  },
+  "loggedBuildTools": {
+    "libfuse2t64": "2.9.9-9build1",
+    "xvfb": "2:21.1.22-1ubuntu1.3",
+    "x11XserverUtils": "7.7+11build1",
+    "electronBuilder": "26.18.1",
+    "downloadedAppImageToolBundle": "appimage-12.0.1.7z",
+    "pythonVersionEmitted": false,
+    "standaloneSquashfsToolVersionEmitted": false
+  },
+  "evidenceLimits": [
+    "The identical Angular build hashes are compiler output identifiers, not AppImage artifact checksums.",
+    "The jobs created and executed their local AppImages. No remote Linux artifact download or Linux publication is claimed.",
+    "Visual comparisons against the original macOS screenshots are recorded separately; these Linux jobs ran functional checks.",
+    "The historical required-check name is retained even though the actual runner is Ubuntu 26.04 LTS."
+  ],
+  "priorCheckpoints": [
+    {
+      "testedCommit": "872699eab2b7c80c6cdf3c33e036923eb6f71bf0",
+      "status": "passed",
+      "reruns": 0,
+      "runs": [
+        {
+          "event": "push",
+          "runId": 41403158101,
+          "jobId": 125139294604,
+          "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41403158101",
+          "conclusion": "success",
+          "angularUnitAssertions": 57,
+          "mainUnitAssertions": 87,
+          "rendererUnitAssertions": 50,
+          "packagedAppImageE2EPassed": 14,
+          "websiteCaseSkipped": 1,
+          "angularBuildHash": "0db9a44ae6a858a4"
+        },
+        {
+          "event": "pull_request",
+          "runId": 41403166901,
+          "jobId": 125139278119,
+          "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41403166901",
+          "conclusion": "success",
+          "angularUnitAssertions": 57,
+          "mainUnitAssertions": 87,
+          "rendererUnitAssertions": 50,
+          "packagedAppImageE2EPassed": 14,
+          "websiteCaseSkipped": 1,
+          "angularBuildHash": "0db9a44ae6a858a4"
+        }
+      ]
+    }
+  ]
+}

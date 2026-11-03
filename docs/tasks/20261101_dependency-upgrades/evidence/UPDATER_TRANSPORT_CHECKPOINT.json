@@ -1,0 +1,75 @@
+{
+  "observedDate": "2026-11-02",
+  "applicationCommit": "b5e1027b67aee5bb1740194bc1c04d2ed1bb02f8",
+  "status": "passed",
+  "mode": "synthetic-zip-transport-only",
+  "electron": "45.2.1",
+  "embeddedNode": "24.22.1",
+  "updater": "6.8.12",
+  "applicationVersion": "1.12.2-alpha",
+  "applicationPolicy": [
+    {
+      "version": "1.12.1",
+      "development": false,
+      "updateChecks": 1
+    },
+    {
+      "version": "1.12.1",
+      "development": true,
+      "updateChecks": 0
+    },
+    {
+      "version": "1.12.2-alpha",
+      "development": false,
+      "updateChecks": 0
+    },
+    {
+      "version": "1.12.2-beta.1",
+      "development": false,
+      "updateChecks": 0
+    },
+    {
+      "version": "1.12.2-rc.1",
+      "development": false,
+      "updateChecks": 0
+    },
+    {
+      "version": "1.12.2-ALPHA.1",
+      "development": false,
+      "updateChecks": 0
+    }
+  ],
+  "artifact": {
+    "name": "synthetic-fixture.zip",
+    "size": 4808,
+    "sha512": "yKzOIwWvEIxePh/LAKC6DPcjFaAc13BiV8QKtCxjV/L/3fgwKYk9kobaSaWbbNWyQoE4KwP4xrkgk8OL1D1VHg=="
+  },
+  "availability": {
+    "newer": true,
+    "sameVersion": false,
+    "downgradeDefault": false,
+    "downgradeOptIn": true
+  },
+  "persistentCacheReuse": true,
+  "corruptChecksumRejected": true,
+  "rejectedPendingFileRemoved": true,
+  "isolatedAppData": true,
+  "isolatedUserData": true,
+  "isolatedSessionData": true,
+  "isolatedUpdaterCache": true,
+  "externalRequests": 0,
+  "guardedSessionCount": 2,
+  "requests": {
+    "metadata": 7,
+    "artifact": 2
+  },
+  "nativeCalls": {
+    "setFeedURL": 2,
+    "checkForUpdates": 0,
+    "quitAndInstall": 0
+  },
+  "nativeFeedSetupIntercepted": true,
+  "installationExercised": false,
+  "rollbackExercised": false,
+  "codeSignatureValidationExercised": false
+}

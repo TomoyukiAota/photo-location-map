@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 import { getMomentDiff, getMomentDiffAsIso8601 } from './moment-diff';
 
 describe('getMomentDiff', () => {

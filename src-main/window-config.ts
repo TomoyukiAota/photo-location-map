@@ -1,4 +1,4 @@
-import * as windowStateKeeper from 'electron-window-state';
+import windowStateKeeper from 'electron-window-state';
 import { Analytics } from '../src-shared/analytics/analytics';
 import { Logger } from '../src-shared/log/logger';
 import { LaunchInfo } from './launch-info';

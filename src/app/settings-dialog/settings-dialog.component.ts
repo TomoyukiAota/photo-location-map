@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import * as os from 'os';
 import {
@@ -26,7 +26,9 @@ const availableSettingTabNames = os.platform() === 'win32'
 @Component({
   selector: 'app-settings-dialog',
   templateUrl: './settings-dialog.component.html',
-  styleUrls: ['./settings-dialog.component.scss']
+  styleUrls: ['./settings-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false
 })
 export class SettingsDialogComponent {
   public userSettingsToBeSaved = getUserSettingsToBeSaved();

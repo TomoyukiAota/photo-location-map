@@ -2,11 +2,12 @@
   Settings
 </div>
 <mat-nav-list class="settings-tab">
-  <mat-list-item *ngFor="let tabName of tabNames"
-                 (click)="selectTab(tabName)"
-                 [ngClass]="{'selected-tab': isSelectedTab(tabName)}">
-    {{ tabName }}
-  </mat-list-item>
+  @for (tabName of tabNames; track tabName) {
+    <mat-list-item (click)="selectTab(tabName)"
+                   [ngClass]="{'selected-tab': isSelectedTab(tabName)}">
+      {{ tabName }}
+    </mat-list-item>
+  }
 </mat-nav-list>
 <div class="settings-content">
   <app-appearance-settings [style.display]="isSelectedTab('Appearance')  ? 'block' : 'none'"></app-appearance-settings>

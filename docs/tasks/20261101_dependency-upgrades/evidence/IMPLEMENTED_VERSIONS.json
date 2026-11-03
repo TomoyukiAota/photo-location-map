@@ -1,0 +1,514 @@
+{
+  "observedDate": "2026-11-03",
+  "state": "Verified runtime/artifact source remains c0f0dc9; dependency versions and lockfile unchanged. All six f8d9b4c check-name runs pass, and both owner protection replacements are saved. November4 indentation-only follow-up preserves Angular semantics and byte-identical emitted runtime JS/HTML/CSS; the five noncritical owner-review suggestions are deliberately deferred. Exact follow-up CI/review is observed separately; merge/application release unauthorized.",
+  "verifiedApplicationCommit": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
+  "hostNode": "26.13.0",
+  "bundledNpm": "11.20.0",
+  "lockfileVersion": 3,
+  "packages": [
+    {
+      "name": "@electron/remote",
+      "version": "2.1.3",
+      "section": "dependencies"
+    },
+    {
+      "name": "async",
+      "version": "3.2.6",
+      "section": "dependencies"
+    },
+    {
+      "name": "commander",
+      "version": "15.0.0",
+      "section": "dependencies"
+    },
+    {
+      "name": "delete-empty",
+      "version": "3.0.0",
+      "section": "dependencies"
+    },
+    {
+      "name": "directory-tree",
+      "version": "3.6.0",
+      "section": "dependencies"
+    },
+    {
+      "name": "electron-unhandled",
+      "version": "4.0.1",
+      "section": "dependencies"
+    },
+    {
+      "name": "electron-updater",
+      "version": "6.8.12",
+      "section": "dependencies"
+    },
+    {
+      "name": "electron-window-state",
+      "version": "5.0.3",
+      "section": "dependencies"
+    },
+    {
+      "name": "exifr",
+      "version": "7.1.3",
+      "section": "dependencies"
+    },
+    {
+      "name": "fs-extra",
+      "version": "11.4.1",
+      "section": "dependencies"
+    },
+    {
+      "name": "heic-decode",
+      "version": "2.1.0",
+      "section": "dependencies"
+    },
+    {
+      "name": "is-natural-number",
+      "version": "4.0.1",
+      "section": "dependencies"
+    },
+    {
+      "name": "is-number",
+      "version": "7.0.0",
+      "section": "dependencies"
+    },
+    {
+      "name": "jimp",
+      "version": "1.6.1",
+      "section": "dependencies"
+    },
+    {
+      "name": "jpeg-js",
+      "version": "0.4.4",
+      "section": "dependencies"
+    },
+    {
+      "name": "lodash",
+      "version": "4.18.1",
+      "section": "dependencies"
+    },
+    {
+      "name": "moment",
+      "version": "2.31.0",
+      "section": "dependencies"
+    },
+    {
+      "name": "moment-duration-format",
+      "version": "2.3.2",
+      "section": "dependencies"
+    },
+    {
+      "name": "moment-timezone",
+      "version": "0.6.6",
+      "section": "dependencies"
+    },
+    {
+      "name": "physical-cpu-count",
+      "version": "2.0.0",
+      "section": "dependencies"
+    },
+    {
+      "name": "rage-edit",
+      "version": "1.2.0",
+      "section": "dependencies"
+    },
+    {
+      "name": "uuid",
+      "version": "14.0.3",
+      "section": "dependencies"
+    },
+    {
+      "name": "workerpool",
+      "version": "10.0.3",
+      "section": "dependencies"
+    },
+    {
+      "name": "@amplitude/analytics-browser",
+      "version": "2.49.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@angular-builders/custom-webpack",
+      "version": "22.0.1",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@angular-devkit/build-angular",
+      "version": "22.2.5",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@angular-eslint/builder",
+      "version": "22.6.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@angular-eslint/eslint-plugin",
+      "version": "22.6.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@angular-eslint/eslint-plugin-template",
+      "version": "22.6.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@angular-eslint/schematics",
+      "version": "22.6.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@angular-eslint/template-parser",
+      "version": "22.6.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@angular/animations",
+      "version": "22.2.4",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@angular/cdk",
+      "version": "22.2.5",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@angular/cli",
+      "version": "22.2.5",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@angular/common",
+      "version": "22.2.4",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@angular/compiler",
+      "version": "22.2.4",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@angular/compiler-cli",
+      "version": "22.2.4",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@angular/core",
+      "version": "22.2.4",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@angular/forms",
+      "version": "22.2.4",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@angular/language-service",
+      "version": "22.2.4",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@angular/material",
+      "version": "22.2.5",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@angular/platform-browser",
+      "version": "22.2.4",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@angular/platform-browser-dynamic",
+      "version": "22.2.4",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@angular/router",
+      "version": "22.2.4",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@electron/notarize",
+      "version": "3.1.2",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@eslint/js",
+      "version": "10.0.1",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@ngx-translate/core",
+      "version": "18.1.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@ngx-translate/http-loader",
+      "version": "18.1.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@stylistic/eslint-plugin",
+      "version": "5.10.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@turf/turf",
+      "version": "7.4.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@types/async",
+      "version": "3.2.26",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@types/delete-empty",
+      "version": "3.0.5",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@types/fs-extra",
+      "version": "11.0.4",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@types/is-natural-number",
+      "version": "4.0.4",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@types/is-number",
+      "version": "7.0.5",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@types/jasmine",
+      "version": "6.0.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@types/leaflet",
+      "version": "1.9.22",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@types/leaflet.markercluster",
+      "version": "1.5.6",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@types/lodash",
+      "version": "4.17.27",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@types/moment-duration-format",
+      "version": "2.2.7",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@types/node",
+      "version": "24.19.2",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@typescript-eslint/eslint-plugin",
+      "version": "8.72.1",
+      "section": "devDependencies"
+    },
+    {
+      "name": "@typescript-eslint/parser",
+      "version": "8.72.1",
+      "section": "devDependencies"
+    },
+    {
+      "name": "angular-eslint",
+      "version": "22.6.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "chokidar6",
+      "version": "npm:chokidar@6.0.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "comlink",
+      "version": "4.4.2",
+      "section": "devDependencies"
+    },
+    {
+      "name": "cross-env",
+      "version": "10.1.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "echarts",
+      "version": "6.1.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "electron",
+      "version": "45.2.1",
+      "section": "devDependencies"
+    },
+    {
+      "name": "electron-builder",
+      "version": "26.18.1",
+      "section": "devDependencies"
+    },
+    {
+      "name": "electron-mocha",
+      "version": "13.1.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "eslint",
+      "version": "10.14.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "exif-parser",
+      "version": "0.1.12",
+      "section": "devDependencies"
+    },
+    {
+      "name": "jasmine-core",
+      "version": "6.3.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "jsonc-parser",
+      "version": "3.3.1",
+      "section": "devDependencies"
+    },
+    {
+      "name": "karma",
+      "version": "6.4.4",
+      "section": "devDependencies"
+    },
+    {
+      "name": "karma-coverage",
+      "version": "2.2.1",
+      "section": "devDependencies"
+    },
+    {
+      "name": "karma-electron",
+      "version": "7.3.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "karma-jasmine",
+      "version": "5.1.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "karma-jasmine-html-reporter",
+      "version": "2.3.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "karma-mocha-reporter",
+      "version": "2.2.5",
+      "section": "devDependencies"
+    },
+    {
+      "name": "mixpanel-browser",
+      "version": "2.84.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "ng-mocks",
+      "version": "14.18.5",
+      "section": "devDependencies"
+    },
+    {
+      "name": "ng-table-virtual-scroll",
+      "version": "1.6.1",
+      "section": "devDependencies"
+    },
+    {
+      "name": "ngx-echarts",
+      "version": "22.0.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "npm-check-updates",
+      "version": "23.1.1",
+      "section": "devDependencies"
+    },
+    {
+      "name": "npm-run-all2",
+      "version": "9.0.4",
+      "section": "devDependencies"
+    },
+    {
+      "name": "p-queue",
+      "version": "9.3.5",
+      "section": "devDependencies"
+    },
+    {
+      "name": "playwright",
+      "version": "1.64.1",
+      "section": "devDependencies"
+    },
+    {
+      "name": "reflect-metadata",
+      "version": "0.2.2",
+      "section": "devDependencies"
+    },
+    {
+      "name": "rxjs",
+      "version": "7.8.2",
+      "section": "devDependencies"
+    },
+    {
+      "name": "split.js",
+      "version": "1.6.5",
+      "section": "devDependencies"
+    },
+    {
+      "name": "tree-kill",
+      "version": "1.2.2",
+      "section": "devDependencies"
+    },
+    {
+      "name": "ts-node",
+      "version": "10.9.2",
+      "section": "devDependencies"
+    },
+    {
+      "name": "tslib",
+      "version": "2.9.1",
+      "section": "devDependencies"
+    },
+    {
+      "name": "typescript",
+      "version": "6.0.3",
+      "section": "devDependencies"
+    },
+    {
+      "name": "wait-on",
+      "version": "9.5.1",
+      "section": "devDependencies"
+    },
+    {
+      "name": "webpack",
+      "version": "5.112.0",
+      "section": "devDependencies"
+    },
+    {
+      "name": "zone.js",
+      "version": "0.16.3",
+      "section": "devDependencies"
+    }
+  ],
+  "lockfileSha256": "d847edf7465bbce394d8528f3ae6cd72b88ad0f9a10c35ee22ba1612f6a6081a",
+  "previousInventoryApplicationCommit": "2b7b0d7ce4eccc8caf979740d0f663be3e2ef3ab",
+  "decoderChild": {
+    "name": "libheif-js",
+    "version": "1.23.5",
+    "override": false,
+    "parent": "heic-decode@2.1.0"
+  },
+  "previousVerifiedApplicationCommit": "79d547fa884658be9266f03ae3d20ea05899b34a"
+}

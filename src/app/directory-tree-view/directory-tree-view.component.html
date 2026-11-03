@@ -7,20 +7,23 @@
                  class="leaf-tree-node">
     <div class="leaf-tree-node-checkbox-and-name">
       <button mat-icon-button disabled></button> <!-- Adjust space to align with tree expand button (which look like > or v) -->
-      <mat-checkbox *ngIf="node.isSelectable"
-                    [checked]="isSelected(node)"
-                    (change)="handleCheckboxChange(node)">
-        <span>{{node.name}}</span>
-      </mat-checkbox>
-      <mat-label *ngIf="!node.isSelectable"
-                 class="non-selectable-node">
-        <div class="disabled-checkbox-alternative"></div>
-        <span class="non-selectable-node-name">{{node.name}}</span>
-      </mat-label>
+      @if (node.isSelectable) {
+        <mat-checkbox [checked]="isSelected(node)"
+                      (change)="handleCheckboxChange(node)">
+          <span>{{node.name}}</span>
+        </mat-checkbox>
+      }
+      @if (!node.isSelectable) {
+        <mat-label class="non-selectable-node">
+          <div class="disabled-checkbox-alternative"></div>
+          <span class="non-selectable-node-name">{{node.name}}</span>
+        </mat-label>
+      }
     </div>
-    <app-dir-tree-view-photo-info *ngIf="photoInfoDisplayLogic.isVisible(node)"
-                                  [photoPath]="node.path">
-    </app-dir-tree-view-photo-info>
+    @if (photoInfoDisplayLogic.isVisible(node)) {
+      <app-dir-tree-view-photo-info [photoPath]="node.path">
+      </app-dir-tree-view-photo-info>
+    }
   </mat-tree-node>
 
   <mat-tree-node *matTreeNodeDef="let node; when: hasChildren"
@@ -33,17 +36,19 @@
         {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
       </mat-icon>
     </button>
-    <mat-checkbox *ngIf="node.isSelectable"
-                  [checked]="allDescendantsSelected(node)"
-                  [indeterminate]="partOfDescendantsSelected(node)"
-                  (change)="handleCheckboxChange(node)">
-      {{node.name}}
-    </mat-checkbox>
-    <mat-label *ngIf="!node.isSelectable"
-               class="non-selectable-node">
-      <div class="disabled-checkbox-alternative"></div>
-      {{node.name}}
-    </mat-label>
+    @if (node.isSelectable) {
+      <mat-checkbox [checked]="allDescendantsSelected(node)"
+                    [indeterminate]="partOfDescendantsSelected(node)"
+                    (change)="handleCheckboxChange(node)">
+        {{node.name}}
+      </mat-checkbox>
+    }
+    @if (!node.isSelectable) {
+      <mat-label class="non-selectable-node">
+        <div class="disabled-checkbox-alternative"></div>
+        {{node.name}}
+      </mat-label>
+    }
   </mat-tree-node>
 </mat-tree>
 
@@ -55,9 +60,11 @@
 </div>
 <mat-menu #contextMenu="matMenu">
   <ng-template matMenuContent let-data="contextMenuData">
-    <ng-container *ngFor="let menuItem of contextMenuItems">
-      <button mat-menu-item class="context-menu-button" (click)="menuItem.onClick(data)" *ngIf="menuItem.visible(data)">{{ menuItem.text }}</button>
-    </ng-container>
+    @for (menuItem of contextMenuItems; track menuItem) {
+      @if (menuItem.visible(data)) {
+        <button mat-menu-item class="context-menu-button" (click)="menuItem.onClick(data)">{{ menuItem.text }}</button>
+      }
+    }
   </ng-template>
 </mat-menu>
 <!--#endregion Context Menu -->

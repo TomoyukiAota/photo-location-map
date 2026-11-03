@@ -1,0 +1,336 @@
+{
+  "observedDate": "2026-11-02",
+  "applicationCommit": "79d547fa884658be9266f03ae3d20ea05899b34a",
+  "applicationVersion": "1.12.2-alpha",
+  "approvedOutputOnly": true,
+  "publicationAuthorized": false,
+  "local": {
+    "cleanInstall": true,
+    "validCompleteGraph": true,
+    "hostRuntimeVerified": true,
+    "electronRuntimeVerified": true,
+    "productionBuild": true,
+    "lint": true,
+    "unitAssertions": {
+      "angular": 57,
+      "main": 87,
+      "renderer": 50
+    },
+    "checkoutVisualFunctionalCases": 15,
+    "packagedVisualFunctionalCases": 14,
+    "packagedWebsiteCaseSkipped": true,
+    "originalSnapshotTreeUnchangedFrom": "f1f0ee575f1890948a31d815f8d8bf85e464e4a7",
+    "approvedReference": {
+      "width": 300,
+      "height": 400,
+      "pixels": "6b17ef757e234a67822cd264da6dd68f9694666f4d0f811599f734197ff328dc"
+    },
+    "actualRuntimeDecoderVersionAssertions": {
+      "heicDecode": "2.1.0",
+      "libheifJs": "1.23.5"
+    },
+    "corruptInputFailureVerified": true,
+    "embeddedHeicStandardAndSpecialPathsVerified": true,
+    "lockfileSha256": "d847edf7465bbce394d8528f3ae6cd72b88ad0f9a10c35ee22ba1612f6a6081a",
+    "npmAuditCounts": {
+      "info": 0,
+      "low": 1,
+      "moderate": 44,
+      "high": 30,
+      "critical": 0,
+      "total": 75
+    }
+  },
+  "macIdentityAndArtifacts": {
+    "status": "passed",
+    "observedTime": "2026-11-02T12:51:05.337Z",
+    "applicationCommit": "79d547fa884658be9266f03ae3d20ea05899b34a",
+    "applicationVersion": "1.12.2-alpha",
+    "hostNode": "26.13.0",
+    "hostBundledNpm": "11.20.0",
+    "frameworkVersionReadFromBundle": "45.2.1",
+    "frameworkVersionMetadataKey": "CFBundleVersion",
+    "expectedElectronRuntime": {
+      "electron": "45.2.1",
+      "embeddedNode": "24.22.1",
+      "chromium": "156.0.8078.75",
+      "executedByThisInspection": false
+    },
+    "structure": {
+      "status": "passed",
+      "sourceFilesEqual": 110,
+      "perDirectory": {
+        "src-main": 38,
+        "src-shared": 60,
+        "electron-util": 4,
+        "dist": 8
+      },
+      "typesCompared": [
+        "JavaScript",
+        "HTML",
+        "CSS"
+      ],
+      "runtimeDependenciesMatch": true,
+      "originalIcon": true,
+      "originalIconSha256": "49088899b78a0028160aad8fa8c0180a8fa0fd1cd7ea5ecd31e4ea1cac65c565",
+      "minimumMacOS": "13.0",
+      "executableArchitectures": [
+        "arm64",
+        "x86_64"
+      ],
+      "frameworkArchitectures": [
+        "arm64",
+        "x86_64"
+      ]
+    },
+    "decoder": {
+      "heicDecode": "2.1.0",
+      "libheifJs": "1.23.5",
+      "supportedChildRange": "^1.19.8",
+      "metadataReadFromPackagedResolution": true,
+      "selectedRuntimeFilesMatchCheckout": true,
+      "files": [
+        {
+          "name": "heic-decode/index.js",
+          "size": 152,
+          "sha256": "b859430727d74d6f956a6ea5e6c1a1b2be7f6d0e9135afc2116bc93d19269003"
+        },
+        {
+          "name": "heic-decode/lib.js",
+          "size": 2518,
+          "sha256": "5d9225ef0a8c55622f54d4a805c641ce355626bb3242dc67b5d8decc4ec94f0e"
+        },
+        {
+          "name": "libheif-js/wasm-bundle.js",
+          "size": 64,
+          "sha256": "fcdbade1f2f599a0eb6d718d43c44004bca3363e4a532a3c7019a24537f06e89"
+        },
+        {
+          "name": "libheif-js/libheif-wasm/libheif-bundle.js",
+          "size": 2044206,
+          "sha256": "074b2b55ef3de477ba9f794ca381f3f0324c1cba8c91b4af07395f39c22d54cc"
+        },
+        {
+          "name": "libheif-js/libheif-wasm/libheif.wasm",
+          "size": 1463506,
+          "sha256": "184d3d20f8323877f13e9f5254f9c6a0ce272c9a3a2f823b0b2bcd2ee9f73f80"
+        }
+      ],
+      "decoderExecuted": false,
+      "nativeSourceMappingEvidence": "docs/tasks/20261101_dependency-upgrades/evidence/HEIC_APPROVED_UPDATE.md"
+    },
+    "strictDeepSignatureBefore": true,
+    "strictDeepSignatureAfter": true,
+    "stapled": true,
+    "gatekeeper": "accepted: Notarized Developer ID",
+    "gatekeeperAssessmentPassed": true,
+    "sourceBundleFingerprint": {
+      "algorithm": "SHA-512 over sorted relative entries, modes, types and file bytes/link targets",
+      "sha512": "013a15db24425ed2d3ee167c6491281a7a84bee13f7af9424d05011b2755eac607b3c351abc70df6bc7479b0e9802942e90bc065d4c42b8aeb9d2ba4cd00bcdf",
+      "files": 4754,
+      "symlinks": 14
+    },
+    "sourceBundleUnchangedDuringInspection": true,
+    "artifacts": [
+      {
+        "name": "Photo Location Map-1.12.2-alpha-universal-mac.zip",
+        "publishName": "Photo-Location-Map-1.12.2-alpha-universal-mac.zip",
+        "size": 238475513,
+        "sha256": "f3536efc1bb4054cd76da0d47d9600ef857dcf4e9c948ec63dcf250e8a479ebd",
+        "sha512": "E+Qr2qOjefNA0YmwXUTVwJBCAja7Sta/ARmptqNQwhpd3KoOd1XFNojUY/O/IBORtyItHWszWjaPBho8I0E7lA==",
+        "manifestMatches": true,
+        "notOlderThanSourceSignature": true,
+        "blockmapVersion": "2",
+        "blockmapSha256": "0732526427d5bbc4d6f1504e088922bb0cb66b04c5ee2f8b583835dc78b30230",
+        "verifiedChunks": 11392,
+        "blockmapCoversWholeArtifact": true
+      },
+      {
+        "name": "Photo Location Map-1.12.2-alpha-universal.dmg",
+        "publishName": "Photo-Location-Map-1.12.2-alpha-universal.dmg",
+        "size": 244419401,
+        "sha256": "ed465824103a1cc5a807372606f13be9dcf83891bf4790c364db20eca69b5609",
+        "sha512": "p2lkS1NtjuRn/9dJ2n3VHopRy5b1NyK9ALoUoH2wiU6X+3TEC0mA/c+nPibC76MJxL8Sofrkl47TfrzuUWsQ/Q==",
+        "manifestMatches": true,
+        "notOlderThanSourceSignature": true,
+        "blockmapVersion": "2",
+        "blockmapSha256": "79dd3c19527823d00bc9a8048ebb8b8a5a7a206881bda7a46ca651c40579bc57",
+        "verifiedChunks": 11597,
+        "blockmapCoversWholeArtifact": true
+      }
+    ],
+    "limits": [
+      "No application or decoder was launched.",
+      "Distribution contents were not extracted or mounted for source-bundle comparison.",
+      "This inspection does not establish packaged functional/UI behavior, native installation, updater transport or public-feed publication."
+    ],
+    "publicUpload": false
+  },
+  "distributionContents": {
+    "observedDate": "2026-11-02",
+    "applicationCommit": "79d547fa884658be9266f03ae3d20ea05899b34a",
+    "zip": {
+      "strictDeepSignature": true,
+      "stapled": true,
+      "gatekeeper": "accepted",
+      "allRegularFilesMatchFinalSignedBundle": 4754,
+      "allSymlinksAndDirectoryEntriesMatch": true
+    },
+    "dmg": {
+      "strictDeepSignature": true,
+      "stapled": true,
+      "gatekeeper": "accepted",
+      "allRegularFilesMatchFinalSignedBundle": 4754,
+      "allSymlinksAndDirectoryEntriesMatch": true
+    },
+    "dmgDetached": true,
+    "productionBundleUnmodified": true
+  },
+  "dmgSmoke": {
+    "status": "passed",
+    "source": "mounted-final-notarized-dmg",
+    "launch": "direct-executable",
+    "testOwnedProfile": true,
+    "volumeDetached": true,
+    "launchObservationWindowSeconds": 60,
+    "reportedAppSessionSeconds": 55,
+    "mainAndRendererLoggedWithinWindow": true
+  },
+  "zipTransport": {
+    "status": "passed",
+    "mode": "provided-artifact-download-only",
+    "electron": "45.2.1",
+    "embeddedNode": "24.22.1",
+    "updater": "6.8.12",
+    "applicationVersion": "1.12.2-alpha",
+    "applicationPolicy": [
+      {
+        "version": "1.12.1",
+        "development": false,
+        "updateChecks": 1
+      },
+      {
+        "version": "1.12.1",
+        "development": true,
+        "updateChecks": 0
+      },
+      {
+        "version": "1.12.2-alpha",
+        "development": false,
+        "updateChecks": 0
+      },
+      {
+        "version": "1.12.2-beta.1",
+        "development": false,
+        "updateChecks": 0
+      },
+      {
+        "version": "1.12.2-rc.1",
+        "development": false,
+        "updateChecks": 0
+      },
+      {
+        "version": "1.12.2-ALPHA.1",
+        "development": false,
+        "updateChecks": 0
+      }
+    ],
+    "artifact": {
+      "name": "Photo Location Map-1.12.2-alpha-universal-mac.zip",
+      "size": 238475513,
+      "sha512": "E+Qr2qOjefNA0YmwXUTVwJBCAja7Sta/ARmptqNQwhpd3KoOd1XFNojUY/O/IBORtyItHWszWjaPBho8I0E7lA=="
+    },
+    "availability": {
+      "newer": true,
+      "sameVersion": false,
+      "downgradeDefault": false,
+      "downgradeOptIn": true
+    },
+    "persistentCacheReuse": true,
+    "corruptChecksumRejected": true,
+    "rejectedPendingFileRemoved": true,
+    "isolatedAppData": true,
+    "isolatedUserData": true,
+    "isolatedSessionData": true,
+    "isolatedUpdaterCache": true,
+    "externalRequests": 0,
+    "guardedSessionCount": 2,
+    "requests": {
+      "metadata": 7,
+      "artifact": 2
+    },
+    "nativeCalls": {
+      "setFeedURL": 2,
+      "checkForUpdates": 0,
+      "quitAndInstall": 0
+    },
+    "nativeFeedSetupIntercepted": true,
+    "installationExercised": false,
+    "rollbackExercised": false,
+    "codeSignatureValidationExercised": false
+  },
+  "nativeFixture": {
+    "status": "passed",
+    "candidateRuntimeFixtureVersions": [
+      "99.0.1",
+      "99.0.2"
+    ],
+    "originalPublicReleaseTested": false,
+    "nativeInstall": true,
+    "nativeRelaunch": true,
+    "nativeRollbackWithExplicitDowngrade": true,
+    "settingsPreserved": true,
+    "profileHardcodedInBothSignedFixtures": true,
+    "originalSignedBundleUnchanged": true,
+    "loopbackOnlyDuringAppExecution": true,
+    "verifiedCdnResourcesProxied": 7,
+    "mapTilesAndExternalFontsTested": false,
+    "publicFeedTested": false,
+    "notarizedFixture": false,
+    "requestCounts": {
+      "/latest-mac.yml": 6,
+      "/cdn/0.css": 4,
+      "/cdn/2.css": 4,
+      "/cdn/3.css": 4,
+      "/cdn/5.css": 4,
+      "/cdn/1.js": 4,
+      "/cdn/4.js": 4,
+      "/cdn/6.js": 4,
+      "/fixture-99.0.2.zip": 1,
+      "/cdn/images/layers-2x.png": 2,
+      "/fixture-99.0.1.zip": 1
+    },
+    "actualApplicationStarts": 4,
+    "productionUpdatePromptYesBranches": 2,
+    "cleanup": {
+      "status": "passed",
+      "noRelevantProcesses": true,
+      "exactNativeCachesAbsent": true,
+      "exactPreferenceFilesAbsent": true,
+      "exactPreferenceValuesAbsent": true,
+      "nativeJobAbsent": true,
+      "retainedIgnoredEvidence": true
+    },
+    "sourceFingerprintMatchesBeforeFixtureAndAfterCleanup": true,
+    "sourceFingerprintSha512": "013a15db24425ed2d3ee167c6491281a7a84bee13f7af9424d05011b2755eac607b3c351abc70df6bc7479b0e9802942e90bc065d4c42b8aeb9d2ba4cd00bcdf",
+    "strictDeepSignatureRecheckedAfterCleanup": true
+  },
+  "recoveredInspectionFailures": [
+    {
+      "cause": "Collector used absent framework CFBundleShortVersionString; actual framework version is CFBundleVersion.",
+      "classification": "inspection harness metadata-key assumption",
+      "resolution": "Corrected read-only helper, then full identity checks passed."
+    },
+    {
+      "cause": "Read-only test DMG detach returned resource busy.",
+      "classification": "transient local macOS image-unmount state",
+      "resolution": "Exact owned volume detached on retry; complete extraction/comparison rerun passed and detached."
+    }
+  ],
+  "limits": [
+    "Native fixture uses candidate-runtime versions 99.0.1/99.0.2 and a unique signed identity, not public old-release binaries or the final production ZIP through native installation.",
+    "Transport test intercepts native setup; actual native installation is covered separately by the fixture.",
+    "No fresh-machine Gatekeeper or public-provider/post-publication verification.",
+    "Native libheif 1.23.7 CPU fixes remain absent from latest published npm WASM."
+  ]
+}

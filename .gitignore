@@ -52,3 +52,6 @@ Thumbs.db
 
 # Application Log File
 **/log/*log.txt
+
+# Local dependency-upgrade evidence
+/.upgrade-artifacts/

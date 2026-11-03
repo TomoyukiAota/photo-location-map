@@ -1,0 +1,75 @@
+{
+  "status": "passed",
+  "mode": "provided-artifact-download-only",
+  "electron": "45.2.1",
+  "embeddedNode": "24.22.1",
+  "updater": "6.8.12",
+  "applicationVersion": "1.12.2-alpha",
+  "applicationPolicy": [
+    {
+      "version": "1.12.1",
+      "development": false,
+      "updateChecks": 1
+    },
+    {
+      "version": "1.12.1",
+      "development": true,
+      "updateChecks": 0
+    },
+    {
+      "version": "1.12.2-alpha",
+      "development": false,
+      "updateChecks": 0
+    },
+    {
+      "version": "1.12.2-beta.1",
+      "development": false,
+      "updateChecks": 0
+    },
+    {
+      "version": "1.12.2-rc.1",
+      "development": false,
+      "updateChecks": 0
+    },
+    {
+      "version": "1.12.2-ALPHA.1",
+      "development": false,
+      "updateChecks": 0
+    }
+  ],
+  "artifact": {
+    "name": "Photo Location Map-1.12.2-alpha-universal-mac.zip",
+    "size": 237520171,
+    "sha512": "HhzsHMF4x+EGvTnTBM2aswnk/8I7VMrhjSAaDUQHCqmZlWLiQDb6VTLA6+2efBykl+yjThbF58Uk1xLwuI7hbg=="
+  },
+  "availability": {
+    "newer": true,
+    "sameVersion": false,
+    "downgradeDefault": false,
+    "downgradeOptIn": true
+  },
+  "persistentCacheReuse": true,
+  "corruptChecksumRejected": true,
+  "rejectedPendingFileRemoved": true,
+  "isolatedAppData": true,
+  "isolatedUserData": true,
+  "isolatedSessionData": true,
+  "isolatedUpdaterCache": true,
+  "externalRequests": 0,
+  "guardedSessionCount": 2,
+  "requests": {
+    "metadata": 7,
+    "artifact": 2
+  },
+  "nativeCalls": {
+    "setFeedURL": 2,
+    "checkForUpdates": 0,
+    "quitAndInstall": 0
+  },
+  "nativeFeedSetupIntercepted": true,
+  "installationExercised": false,
+  "rollbackExercised": false,
+  "codeSignatureValidationExercised": false,
+  "observedDate": "2026-11-02",
+  "applicationCommit": "f1f0ee575f1890948a31d815f8d8bf85e464e4a7"
+}

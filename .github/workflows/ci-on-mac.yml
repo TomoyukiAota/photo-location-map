@@ -12,16 +12,16 @@ on:
 jobs:
   changes:
     # Finds out whether anything other than documents changed (see .github/ci-filters.yml).
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
       pull-requests: read
     outputs:
       app: ${{ steps.filter.outputs.app }}
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@v7.0.1
 
-    - uses: dorny/paths-filter@v4
+    - uses: dorny/paths-filter@v4.0.3
       id: filter
       with:
         predicate-quantifier: every
@@ -31,11 +31,12 @@ jobs:
     # macos-26 is arm64 (Apple Silicon).
     # The name is written out rather than given by a matrix or an expression, so that the required check is reported
     # even when the job is skipped: a skipped job's name expression is not evaluated.
-    name: test (macos-26)
+    # Keep architecture-specific check names stable when runner versions change.
+    name: test (macos-arm64)
     runs-on: macos-26
 
     # Skipped when only documents changed, which passes the required check. If "changes" fails, the tests run.
-    # A manual run runs this job too, so that it does not add a skipped "test (macos-26)" to the commit.
+    # A manual run runs this job too, so that it does not add a skipped "test (macos-arm64)" to the commit.
     needs: changes
     if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || needs.changes.outputs.app != 'false') }}
 
@@ -48,13 +49,19 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # for electron-builder
 
     steps: &steps
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@v7.0.1
 
     - name: Install Node.js with the version in mise.toml
-      uses: jdx/mise-action@v4
+      uses: jdx/mise-action@v5.2.5
+
+    - name: Verify Node and its bundled npm
+      run: npm run verify:runtime
 
     - name: npm ci
       run: npm ci
+
+    - name: Verify Electron and embedded Node
+      run: npm run verify:electron
 
     - name: npm run lint:ng
       run: npm run lint:ng
@@ -71,13 +78,21 @@ jobs:
     - name: npm run test:unit:em:renderer
       run: npm run test:unit:em:renderer
 
+    - name: npm run test:live-reload
+      run: npm run test:live-reload
+
     - name: npm run test:package
       run: npm run test:package
+
+    - name: npm run test:e2e
+      env:
+        PLM_PACKAGED_EXECUTABLE: ${{ github.workspace }}/release/mac-universal/Photo Location Map.app/Contents/MacOS/Photo Location Map
+      run: npm run test:e2e
 
   test-intel:
     # macos-26-intel is x64, and runs only when this workflow is run manually, because it took twice as long as macos-26
     # and its failures were caused by the runner, not the app. See CLAUDE.md for when to run it.
-    name: test (macos-26-intel)
+    name: test (macos-x64)
     runs-on: macos-26-intel
     if: ${{ github.event_name == 'workflow_dispatch' }}
     timeout-minutes: 45    # See the test job above.

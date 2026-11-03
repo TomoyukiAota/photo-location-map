@@ -1,3 +1,5 @@
+import '../electron-util/isolated-test-profile';
+import '../electron-util/e2e-test-hooks';
 import './configure-electron-unhandled';
 import './command-line-options/configure-command-line-options';
 import { app, BrowserWindow, protocol } from 'electron';
@@ -13,6 +15,7 @@ import './thumbnail-generation/thumbnail-generation-ipc-setup';
 import { configureMainWindowForAnalytics } from './configure-main-window-for-analytics';
 import { handleAppQuit } from './handle-app-quit';
 import { LiveReload } from './live-reload';
+import { configureLiveReload } from './configure-live-reload';
 import { recordAtAppLaunch } from './record-at-app-launch';
 import { configureRecordAtAppQuit } from './record-at-app-quit';
 import { configureRecordProcessGone } from './record-process-gone';
@@ -38,6 +41,18 @@ const createWindow = async () => {
 
   configureMainWindowForAnalytics(mainWindow);
 
+  if (process.platform === 'win32') {
+    // TL;DR: Restore the original Windows fullscreen menu on the next event-loop turn.
+    // Details: Electron 45 emits enter-full-screen before its native SetFullScreen
+    // hides the menu, overwriting a synchronous setter. setImmediate runs after
+    // that native call; the guards also handle a quick exit or window close.
+    // https://github.com/electron/electron/blob/v45.2.1/shell/browser/native_window_views.cc
+    const window = mainWindow;
+    window.on('enter-full-screen', () => setImmediate(() => {
+      if (!window.isDestroyed() && window.isFullScreen()) window.setMenuBarVisibility(true);
+    }));
+  }
+
   mainWindow.on('ready-to-show', () => {
     // Call recordAtAppLaunch on ready-to-show event so that
     // recordAtAppLaunch is called after IPC setup for analytics in the renderer process is done.
@@ -48,15 +63,14 @@ const createWindow = async () => {
   mainWindow.on('closed', () => { mainWindow = null; });
 
   if (LiveReload.enabled) {
-    require('electron-reload')(__dirname, {
-      electron: require(`${__dirname}/../node_modules/electron`)
-    });
+    configureLiveReload(__filename);
   }
 
   const url = await getUrlForMainWindow();
   mainWindow.loadURL(url);
 
-  if (LiveReload.enabled) {
+  // Keep automated development checks on the application's CDP target.
+  if (LiveReload.enabled && process.env.PLM_E2E !== '1') {
     mainWindow.webContents.openDevTools();
   }
 

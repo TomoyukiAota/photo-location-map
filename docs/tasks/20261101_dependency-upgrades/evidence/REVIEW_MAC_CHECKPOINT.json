@@ -1,0 +1,891 @@
+{
+  "observedAt": "2026-11-03T12:04:19.453912+00:00",
+  "applicationCommit": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
+  "applicationVersion": "1.12.2-alpha",
+  "publicationAuthorized": false,
+  "local": {
+    "productionBuild": "passed",
+    "lint": "passed",
+    "completeDependencyGraph": "passed",
+    "hostRuntimeVerified": "26.13.0 / bundled npm 11.20.0",
+    "electronRuntimeVerified": "45.2.1 / Node 24.22.1 / Chromium 156.0.8078.75",
+    "unitAssertions": {
+      "Angular": 57,
+      "main": 97,
+      "renderer": 55,
+      "total": 209
+    },
+    "separatePackageRunnerCases": 5,
+    "actualWatcherLifecycleCases": 5,
+    "checkoutVisualFunctionalCases": 15,
+    "packagedVisualFunctionalCases": 14,
+    "packagedWebsiteCaseSkipped": 1,
+    "referenceFilesByteUnchanged": 15,
+    "originalSnapshotTreeUnchangedFrom": "79d547fa884658be9266f03ae3d20ea05899b34a",
+    "approvedReference": "test/e2e/approved-references/heic-thumbnail-libheif-1.23.5.json",
+    "amplitudePageViewAndEnrichmentNegativeControls": "each fails at its intended assertion",
+    "amplitudePositiveWithZeroCapturedPayloadParseErrors": "passed",
+    "snapshotGuardControls": "default intentional update passes on nonvisual case; opt-in protected update fails before launch; protected comparison passes",
+    "lockfileSha256": "d847edf7465bbce394d8528f3ae6cd72b88ad0f9a10c35ee22ba1612f6a6081a",
+    "localCleanInstallRepeated": false,
+    "cleanInstallLimit": "Dependency versions and lockfile are unchanged; each current platform CI job performs clean npm ci, recorded separately."
+  },
+  "macIdentityAndArtifacts": {
+    "status": "passed",
+    "observedTime": "2026-11-03T12:03:29.911Z",
+    "applicationCommit": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
+    "applicationVersion": "1.12.2-alpha",
+    "hostNode": "26.13.0",
+    "hostBundledNpm": "11.20.0",
+    "frameworkVersionReadFromBundle": "45.2.1",
+    "frameworkVersionMetadataKey": "CFBundleVersion",
+    "expectedElectronRuntime": {
+      "electron": "45.2.1",
+      "embeddedNode": "24.22.1",
+      "chromium": "156.0.8078.75",
+      "executedByThisInspection": false
+    },
+    "structure": {
+      "status": "passed",
+      "sourceFilesEqual": 110,
+      "perDirectory": {
+        "src-main": 38,
+        "src-shared": 60,
+        "electron-util": 4,
+        "dist": 8
+      },
+      "perDirectoryTypes": {
+        "src-main": {
+          "JavaScript": 38,
+          "HTML": 0,
+          "CSS": 0
+        },
+        "src-shared": {
+          "JavaScript": 60,
+          "HTML": 0,
+          "CSS": 0
+        },
+        "electron-util": {
+          "JavaScript": 4,
+          "HTML": 0,
+          "CSS": 0
+        },
+        "dist": {
+          "JavaScript": 6,
+          "HTML": 1,
+          "CSS": 1
+        }
+      },
+      "typesCompared": [
+        "JavaScript",
+        "HTML",
+        "CSS"
+      ],
+      "compiledManifestMatches": true,
+      "compiledManifestSha256": "7faba51c82fcb48a9511f89ec7699d69efcda8cdcadaa89dfbd35a4ad5eaeeb0",
+      "countBasis": "Actual sorted checkout and packaged JavaScript/HTML/CSS manifests; renderer chunk count is not fixed.",
+      "compiledManifest": [
+        {
+          "file": "src-main/auto-update/auto-update-logger.js",
+          "size": 1228,
+          "sha256": "234d4202dfec8d948bf73db7b6532f1b7cdad6d322b4ef19ab65d4854b779dd6"
+        },
+        {
+          "file": "src-main/auto-update/configure-auto-update.js",
+          "size": 3416,
+          "sha256": "607cb969c2ca9b421b562385877061af76b0e184c283f42b4f22708d2122729f"
+        },
+        {
+          "file": "src-main/command-line-options/command-line-options-value.js",
+          "size": 346,
+          "sha256": "c02f2df4bd7c11679ac8c14be8e9ef3b9d50394132a3341ecbc12ae33592d419"
+        },
+        {
+          "file": "src-main/command-line-options/configure-command-line-options.js",
+          "size": 462,
+          "sha256": "74dce4433106505ffbc5f81fbf943f93635af7df1565abe5db61876eda8d4529"
+        },
+        {
+          "file": "src-main/command-line-options/parse-command-line-options.js",
+          "size": 1160,
+          "sha256": "515efecdf93e3328157018bbeedc8bd780fe1a7572006bac484f42df9b1ffdd6"
+        },
+        {
+          "file": "src-main/command-line-options/setup-ipc-main-for-command-line-options.js",
+          "size": 801,
+          "sha256": "9744e43eba23ad58f975dfd033286eb3a3ef00c832c2dee22c7f3eb67125cf7f"
+        },
+        {
+          "file": "src-main/configure-electron-unhandled.js",
+          "size": 794,
+          "sha256": "e06aba205d9974d10362bad988938202574c305f79b30029add509012541e211"
+        },
+        {
+          "file": "src-main/configure-live-reload.js",
+          "size": 3644,
+          "sha256": "25f1b720b781736e37cb7f3cfcdbb8a5f89f441ffedbdfda5eb99c7f389c2adc"
+        },
+        {
+          "file": "src-main/configure-main-window-for-analytics.js",
+          "size": 653,
+          "sha256": "5b2c1b635a5117cfd104a99dc0a4ce7eacdfa3fc88d2183cc437c76e59af07f7"
+        },
+        {
+          "file": "src-main/electron-main.js",
+          "size": 7339,
+          "sha256": "7e8a6c4d7878133f6240c80e8299493276065f9c4156f5f2992f80b04c6b9a36"
+        },
+        {
+          "file": "src-main/file-server/file-server.js",
+          "size": 2779,
+          "sha256": "a494269045de5bbba19676814ead6b6fedf6d38e884740bad58eadaba472c63d"
+        },
+        {
+          "file": "src-main/handle-app-quit.js",
+          "size": 1007,
+          "sha256": "4020c893bd03525ae6539abc705faf6c97480bf9943a2319f65cb71551c2bf24"
+        },
+        {
+          "file": "src-main/launch-info.js",
+          "size": 3116,
+          "sha256": "d7d68dcebd00aaff3f26a5680464b2c90c18e7a728023d16df3135ca26cb6d02"
+        },
+        {
+          "file": "src-main/live-reload.js",
+          "size": 405,
+          "sha256": "125e951077505a2090935a3625b628b75719ddd99de016d528897e88a48b463a"
+        },
+        {
+          "file": "src-main/menu/common-help-submenu-template.js",
+          "size": 4550,
+          "sha256": "57b2e2e9fbfdb14d4d0307491d29b287fad3a121ac25e12d70d7dbcc096c9e91"
+        },
+        {
+          "file": "src-main/menu/common-menu-template.js",
+          "size": 1868,
+          "sha256": "f19cb1d727366ec0b3b2bcdf818013f34bde4b4370359a83f3f920f675f17640"
+        },
+        {
+          "file": "src-main/menu/handle-about-menu-clicked.js",
+          "size": 846,
+          "sha256": "dd15284a51489b53caa600e455c0571466e6ba0fcb38f44c82b61cbf7f86e274"
+        },
+        {
+          "file": "src-main/menu/menu-id.js",
+          "size": 426,
+          "sha256": "913fbbbad685ae8279d5a7a5a42ff164e7a7a48ee87b305aea1999244f02d17e"
+        },
+        {
+          "file": "src-main/menu/menu-template-on-mac.js",
+          "size": 1162,
+          "sha256": "a5eeea4787a9da426f4d6e434f5d4b8d98158997149a30786a19f72188ed09d1"
+        },
+        {
+          "file": "src-main/menu/menu-template-on-windows-linux.js",
+          "size": 799,
+          "sha256": "669098e9abfe1c349bf726eb760bc6d8a5a1fad47768d25c68889cba6e12f721"
+        },
+        {
+          "file": "src-main/menu/menu.js",
+          "size": 1238,
+          "sha256": "121fcc2c6066c7c86fd87aafd6b6f01eab721e630f86221f03b124fe065f4a48"
+        },
+        {
+          "file": "src-main/menu/selection-menu.js",
+          "size": 2263,
+          "sha256": "4180ec126d397682a7dffdd2ff5baea2868f8d37ca91dd5f86a394f63850f5cb"
+        },
+        {
+          "file": "src-main/photo-data-viewer/launch-photo-data-viewer.js",
+          "size": 2709,
+          "sha256": "e72afa05d7816d10f60235806ec3c5bbd61d91254805602b12272bdc3bfb70b3"
+        },
+        {
+          "file": "src-main/photo-data-viewer/photo-data-viewer-ipc-setup.js",
+          "size": 697,
+          "sha256": "c6c2dc454b589eed544323938a84c5053a06f082b2befa5ac5c74c7e8fad7679"
+        },
+        {
+          "file": "src-main/photo-data-viewer/photo-data-viewer-server-config.js",
+          "size": 539,
+          "sha256": "b7147e36dba0bf97868e7a5de352d72ea6107b039125b0bf8dbe1a980c88ef6b"
+        },
+        {
+          "file": "src-main/photo-data-viewer/photo-data-viewer-tracker.js",
+          "size": 1865,
+          "sha256": "9a85b7f968baa1220375d168f84546504ef4f87fdc2ee6c812f42b245bdc779b"
+        },
+        {
+          "file": "src-main/photo-data-viewer/photo-data-viewer-url.js",
+          "size": 879,
+          "sha256": "e5e4413f0bc45f8d8f389af257254c7128f156ea6f181ed048c3437aaedd07a6"
+        },
+        {
+          "file": "src-main/photo-data-viewer/photo-data-viewer-window-state.js",
+          "size": 5859,
+          "sha256": "3626992480b8fa437dda94c509278e0ed0ebd0a3b02110dbd778d3fd51a10af7"
+        },
+        {
+          "file": "src-main/record-at-app-launch.js",
+          "size": 11484,
+          "sha256": "9bd3d657ccacc4975dc643518acd65f4986a17151a1a0c79216901c89e3d42b2"
+        },
+        {
+          "file": "src-main/record-at-app-quit.js",
+          "size": 1111,
+          "sha256": "6a60f23a4d077ac954439f6d4766166663d60996b3b2cf1953faeb1086504663"
+        },
+        {
+          "file": "src-main/record-process-gone.js",
+          "size": 1412,
+          "sha256": "bfb90e33a2e61b993921f4a2fccc56c317747d59d126eb6d9dd1ff868d528b20"
+        },
+        {
+          "file": "src-main/startup-time.js",
+          "size": 992,
+          "sha256": "541e1b37603802642265d7c8166525161944d583e02e66cfad1f2a90b99be9e9"
+        },
+        {
+          "file": "src-main/thumbnail-generation/generate-thumbnail-file-arg-and-result.js",
+          "size": 503,
+          "sha256": "206533251c5a6666713e854b34e34e9a432ccbda5d679537da6514256748cc73"
+        },
+        {
+          "file": "src-main/thumbnail-generation/generate-thumbnail-file-worker.js",
+          "size": 7496,
+          "sha256": "e899bef632b64ee5c78b98dd437323c7afb3476678eb599b1fa9dac2d9b466f4"
+        },
+        {
+          "file": "src-main/thumbnail-generation/resize-and-encode.js",
+          "size": 2077,
+          "sha256": "ff2408b965bcb33e1fc37e1f763b0eb5f5d02646a07dedfba386f6b2e3736444"
+        },
+        {
+          "file": "src-main/thumbnail-generation/thumbnail-generation-ipc-setup.js",
+          "size": 872,
+          "sha256": "68eb43d5f00b5d5ae6eb1fb5269d69f89402d473a4474db9d9c19e41bdb3ce03"
+        },
+        {
+          "file": "src-main/thumbnail-generation/thumbnail-generation.js",
+          "size": 9827,
+          "sha256": "c0ce0154ac0587951cfd4f16f843747f32795961c496d1cfbbd0dec9fdc37bc5"
+        },
+        {
+          "file": "src-main/window-config.js",
+          "size": 3612,
+          "sha256": "dc21fb3633ac60f636186343807b20b54448b9dc314b2f4ef358601c89dda400"
+        },
+        {
+          "file": "src-shared/analytics/analytics-backend/analytics-backend-event.js",
+          "size": 128,
+          "sha256": "e9f1171a0604355a548af7dcfbb8c44c5227ceefd73bd9f2fe6f3ee63ce25ee7"
+        },
+        {
+          "file": "src-shared/analytics/analytics-backend/analytics-backend-sender.js",
+          "size": 5755,
+          "sha256": "8bc2dbfb0f09a8a03435b119176a306d3a88e0de38017251332bafb4a7d93e3f"
+        },
+        {
+          "file": "src-shared/analytics/analytics-backend/unsent-events-file.js",
+          "size": 1682,
+          "sha256": "b1989efae9aa769a6e93018361fb9f5c9ba98a0444f2ea77345e5f0c4696b99c"
+        },
+        {
+          "file": "src-shared/analytics/analytics-interface.js",
+          "size": 124,
+          "sha256": "8a88bf4a70503bbb4cb41830b255fa306b1bfddeedbdab8c176d5207dc562fb8"
+        },
+        {
+          "file": "src-shared/analytics/analytics-main.js",
+          "size": 1127,
+          "sha256": "ec4808417ac75d8a266db92fc057f02a22460abe4636203df182a57b1a404357"
+        },
+        {
+          "file": "src-shared/analytics/analytics-renderer.js",
+          "size": 1453,
+          "sha256": "6ea2c0091e867348103880fa40d61151518b03041dc6d4e88b86c768afa9ded7"
+        },
+        {
+          "file": "src-shared/analytics/analytics.js",
+          "size": 1034,
+          "sha256": "dc23fa944f7c97309ee587b1e0929bdf18208894dca333c1331c2ea250a11343"
+        },
+        {
+          "file": "src-shared/analytics/config/amplitude-config.js",
+          "size": 770,
+          "sha256": "286c3be53dedb586f554821517a30293096f28ba71dc515243f3d5bb379b95f5"
+        },
+        {
+          "file": "src-shared/analytics/config/analytics-backend-config.js",
+          "size": 676,
+          "sha256": "5429b81cf4054230800b08a34b81fe94ba8b8113025c98b2bf56966dfeb61f79"
+        },
+        {
+          "file": "src-shared/analytics/config/analytics-backend-endpoint.js",
+          "size": 989,
+          "sha256": "79cd8a758de9d88a912482cf84b947b313707c9c3de399ba97b95dea6454aa40"
+        },
+        {
+          "file": "src-shared/analytics/config/analytics-config.js",
+          "size": 846,
+          "sha256": "c8429d1a08712134bfe7d53a673f9c5304d407c8cb29e35b8765e08c65a6745d"
+        },
+        {
+          "file": "src-shared/analytics/config/mixpanel-config.js",
+          "size": 791,
+          "sha256": "b39805db8dece05552809215cf72450a0121564b4c013e14e274953bd4099339"
+        },
+        {
+          "file": "src-shared/analytics/error-for-analytics.js",
+          "size": 4369,
+          "sha256": "29d2993b0c492afbce30ae95314a1c271f8d4578c2215babd71ce76f18113ec1"
+        },
+        {
+          "file": "src-shared/analytics/ipc/amplitude-analytics-browser-ipc.js",
+          "size": 1933,
+          "sha256": "98efa72e908c5104e6cdea986eeb7ddf484b4e33581e975b89ad937ca4913fc5"
+        },
+        {
+          "file": "src-shared/analytics/ipc/analytics-backend-ipc.js",
+          "size": 1724,
+          "sha256": "b2939450440edf6c48eb238a1b7b19e67a35faecbfd80909e01fbbaedbd44bff"
+        },
+        {
+          "file": "src-shared/analytics/ipc/mixpanel-browser-ipc.js",
+          "size": 1758,
+          "sha256": "c048366c5f2d429d8555bdde744542d510b1ab08f9a9ff60f08b7c05a6b7f5cc"
+        },
+        {
+          "file": "src-shared/analytics/library-wrapper/amplitude-analytics-browser-wrapper.js",
+          "size": 4080,
+          "sha256": "1fbe359522a8040213ac7b2a24f398559623e8de8dbf987489e2944f54988a25"
+        },
+        {
+          "file": "src-shared/analytics/library-wrapper/analytics-backend-wrapper.js",
+          "size": 6985,
+          "sha256": "f7997c004665d068fea856ff9d61f7dcfa0fb5ae1fb56d8d17b58f418877a9f6"
+        },
+        {
+          "file": "src-shared/analytics/library-wrapper/library-wrapper-decorator.js",
+          "size": 1071,
+          "sha256": "bc18132a4306b172621dfaf8f0e94393a1609790edbd41e5a771fa9a8c50e3bd"
+        },
+        {
+          "file": "src-shared/analytics/library-wrapper/mixpanel-browser-wrapper.js",
+          "size": 3242,
+          "sha256": "9ab00ac5c68722e535b53fd083eeebf65e8571036706a428f82d3573e61efbf3"
+        },
+        {
+          "file": "src-shared/analytics/record-error.js",
+          "size": 3135,
+          "sha256": "b62adc0cf0d348671861798cc884586f0c50bbee50cf2b91ef61e1b4c58601d7"
+        },
+        {
+          "file": "src-shared/command-line-options/command-line-options.js",
+          "size": 125,
+          "sha256": "b3b759d25739c801dd49297bb84fb948f94b0f0fed86f1b91ccc1ac18afce198"
+        },
+        {
+          "file": "src-shared/command/command-string.js",
+          "size": 2327,
+          "sha256": "20a87ba635218154f85361569bec2aa2e4ad2897c2d3bc2945247f440c75cb78"
+        },
+        {
+          "file": "src-shared/command/command.js",
+          "size": 3959,
+          "sha256": "15af8b983d74b8e8d0ccf74440c3b4cc709c2caebf5aa951edb3496a5448991d"
+        },
+        {
+          "file": "src-shared/date-time/date-time-format.js",
+          "size": 5586,
+          "sha256": "3e2110092a32ffae126c16bb8f95d69e3c2b03468bcc893c98f760108372910a"
+        },
+        {
+          "file": "src-shared/date-time/moment-diff.js",
+          "size": 1068,
+          "sha256": "a9b30aec94d10543872e58d298ab571bfa3681d204a6a72a9b3bec1fc6b031f8"
+        },
+        {
+          "file": "src-shared/date-time/now.js",
+          "size": 737,
+          "sha256": "dc2b7f3f3ead5ebfcce75a1be60822507240e4066f77e973bd12443bb24ad5f2"
+        },
+        {
+          "file": "src-shared/decorator/catch.js",
+          "size": 2235,
+          "sha256": "56059552d723396c0a0a7f63dd5e9d293e739b8700e421276d05ad071063af74"
+        },
+        {
+          "file": "src-shared/dev-or-prod/dev-or-prod.js",
+          "size": 1680,
+          "sha256": "aca7a396b1cfcfc1263c0e7ee504607f021bb9dd097cafe8791c7fdf69246726"
+        },
+        {
+          "file": "src-shared/dir-tree/dir-tree-util.js",
+          "size": 1202,
+          "sha256": "a1d5e9e171261dc178f4ba20461e8e26d649249f6ece4234da8ed9fd4e3e0309"
+        },
+        {
+          "file": "src-shared/environment/environment-detector.js",
+          "size": 633,
+          "sha256": "16bb04147b0f2cc7084b393e24f8ef3a55bd532e4e572c43462570a9d42932a8"
+        },
+        {
+          "file": "src-shared/ipc/ipc-constants.js",
+          "size": 2798,
+          "sha256": "ee3197a489dc5bba44664e907240ce029a1535b38f187f37d32c7e8074691f16"
+        },
+        {
+          "file": "src-shared/ipc/ipc-params.js",
+          "size": 115,
+          "sha256": "6644e3c87e50db6a75b40b690e80f0a06636952a3e32dd7b9e1ded066478d9fe"
+        },
+        {
+          "file": "src-shared/log/create-prepended-logger.js",
+          "size": 1187,
+          "sha256": "a840ba5707eb6440594edaaaf0b880b9c1cdd9af57f8b3c0b6a6361c2234f992"
+        },
+        {
+          "file": "src-shared/log/file-config/log-file-config.js",
+          "size": 4457,
+          "sha256": "ed340f64f31895a30218290177ac096764503d50496736e8dd0cca11314b8fb3"
+        },
+        {
+          "file": "src-shared/log/file-writer/log-file-writer-interface.js",
+          "size": 130,
+          "sha256": "9d2d62bd8ac3b19b5ccd955b036a987e55ef1e7f9a4e943a2f237ebb035ed7a2"
+        },
+        {
+          "file": "src-shared/log/file-writer/log-file-writer-ipc.js",
+          "size": 1169,
+          "sha256": "96c53b6d725ae4bede9347a263073a82351b2d75fecbbeb747853b094e113941"
+        },
+        {
+          "file": "src-shared/log/file-writer/log-file-writer-main.js",
+          "size": 1552,
+          "sha256": "2ab43613dfa1e1ee40b0cac3f1fc6551444db0b1d1cac9d8abd9cbcd3597cfec"
+        },
+        {
+          "file": "src-shared/log/file-writer/log-file-writer-renderer.js",
+          "size": 605,
+          "sha256": "9a517effa6926f68dcab362b82e68209095f1e84ece46351e8b01692f1743a3c"
+        },
+        {
+          "file": "src-shared/log/file-writer/log-file-writer.js",
+          "size": 1121,
+          "sha256": "c1afdbc7f86e9f4028849e21193c5b71da4df377c8875d4d663c88011305a086"
+        },
+        {
+          "file": "src-shared/log/logger.js",
+          "size": 1979,
+          "sha256": "e9e19e1de44e86be2be780504549fb34d81ebd800d44da4678e4fe09f108e021"
+        },
+        {
+          "file": "src-shared/log/multiline-log-text.js",
+          "size": 1110,
+          "sha256": "f8c74293768f647526a95772b6cb0ca9746737edbf089900f347476fc2df4474"
+        },
+        {
+          "file": "src-shared/log/to-loggable-string.js",
+          "size": 1857,
+          "sha256": "ef92669340cabf4a046f2fecf554c823b8a2005f4edb59cc31f7ca736374eef7"
+        },
+        {
+          "file": "src-shared/max-file-path-length-on-windows/max-file-path-length-on-windows.js",
+          "size": 1991,
+          "sha256": "87d4eed282f13a7030df925f16db3009d682ad8f9b337f87fc780d284d094afa"
+        },
+        {
+          "file": "src-shared/photo-data-viewer/photo-data-viewer-ipc-params.js",
+          "size": 133,
+          "sha256": "ce0e0cfe9e162164190181c3a35593caf33c929f96c2c47af23b4f457cd9e5cc"
+        },
+        {
+          "file": "src-shared/photo-data-viewer/photo-data-viewer-logger.js",
+          "size": 660,
+          "sha256": "675af6248032242823951a03eb9cdcccceba42ae3203a3a6bb30942df7bff3c6"
+        },
+        {
+          "file": "src-shared/process/process-accessor.js",
+          "size": 1209,
+          "sha256": "ac0a40632ea456e41a0d7c117498b0180f91da9df377ee90f1d3f8e88fbdfaf0"
+        },
+        {
+          "file": "src-shared/process/process-identifier.js",
+          "size": 1489,
+          "sha256": "c4f714bddc8817695eaf5ce673aa506e37fc6c53e4e97de35c18af3f4b6c0c43"
+        },
+        {
+          "file": "src-shared/process/restart-app.js",
+          "size": 734,
+          "sha256": "7047925280337de37f24eabe5a47a59e4c7d962c1434fc1bf929d741c7a7d28c"
+        },
+        {
+          "file": "src-shared/require/proxy-require.js",
+          "size": 1049,
+          "sha256": "b5b520d0057f6e69c13f7f0410a31ad3051eef6d9a55a6b414f79e442fe65967"
+        },
+        {
+          "file": "src-shared/require/require-from-main-process.js",
+          "size": 1341,
+          "sha256": "5a639c64e782c097cab6f7f723baf44d9063e3f71e46526573842a73b791014e"
+        },
+        {
+          "file": "src-shared/thumbnail/cache/remove-invalid-thumbnail-cache.js",
+          "size": 7110,
+          "sha256": "81fc3a917dd02656ce64bb211bd0d669bab953d3377bf4fdc9fb0b27a3709627"
+        },
+        {
+          "file": "src-shared/thumbnail/cache/thumbnail-cache-util.js",
+          "size": 9852,
+          "sha256": "124aef6b2edcf4b791c53c54b6fb9e58b28cca3f8c537e2e0f05c7f16db586da"
+        },
+        {
+          "file": "src-shared/thumbnail/generation/thumbnail-generation-logger.js",
+          "size": 372,
+          "sha256": "6379bd11a48e4827a2c864c1845ea5fb0a5a97c1274f38427b36f5907c037915"
+        },
+        {
+          "file": "src-shared/url/open-url.js",
+          "size": 644,
+          "sha256": "eb68e3a5c6fc74aab28b7e2bd300140652a3c6e611d8084e37a28e83b4ca856c"
+        },
+        {
+          "file": "src-shared/user-data-storage/user-data-storage.js",
+          "size": 3111,
+          "sha256": "7c8a6de9993b82be2b4b6344b36acf18fa86f2511313bc2e51304cf7419a9130"
+        },
+        {
+          "file": "src-shared/user-data-storage/user-data-stroage-path.js",
+          "size": 2725,
+          "sha256": "b76b31b4af6a2f6771c5f202d368a67bf26f9c4d6abc64cd9cd32f2c4fb9ba5a"
+        },
+        {
+          "file": "src-shared/user-settings/boolean-setting.js",
+          "size": 674,
+          "sha256": "dc537b0421ca5a0d233f679965ce8ba6d2c8f04cbccf84ebe0bcfdd0755512b0"
+        },
+        {
+          "file": "src-shared/user-settings/user-settings.js",
+          "size": 4260,
+          "sha256": "bcd1bd984a98ccbee461587e29b04774ecb6f8749a028ec734c8cbf4095ea57b"
+        },
+        {
+          "file": "src-shared/version/is-prerelease-version.js",
+          "size": 984,
+          "sha256": "382fc33f937d595285200ef7ab738a6dc2e36b932bb94965249d0e698c968ba2"
+        },
+        {
+          "file": "electron-util/configure-electron-remote-in-main-process.js",
+          "size": 636,
+          "sha256": "b2c0c7a99e5d4a253ca8ae29ee1d576fc42953a202f380e40675e925de50473e"
+        },
+        {
+          "file": "electron-util/e2e-test-hooks.js",
+          "size": 4329,
+          "sha256": "7ea5834df86e68e9dc127ada581569db039bded4803650d60be8e847a9bdbecb"
+        },
+        {
+          "file": "electron-util/electron-web-preferences.js",
+          "size": 293,
+          "sha256": "a0d5b801c6fd04b936ec3d7721f505d857b83359694bebe0b4da9a2df75c69be"
+        },
+        {
+          "file": "electron-util/isolated-test-profile.js",
+          "size": 451,
+          "sha256": "131477797d04ce2896106d0a1837fe69afcc2aab03404e7ced6cf3be4a139432"
+        },
+        {
+          "file": "dist/29.js",
+          "size": 1147378,
+          "sha256": "9d0614b4eb4787df974fce062913f8203346aaf0814ed552c6d56f01c39ce067"
+        },
+        {
+          "file": "dist/838.js",
+          "size": 6846,
+          "sha256": "4ad04070a1194cfb4f57cdd8f680a892e839c77fd6c3d05b0793fc13d530d8d7"
+        },
+        {
+          "file": "dist/927.js",
+          "size": 7481,
+          "sha256": "4324a9ab390063778ad699112e019728ec5b89e3c0f2aee3727995cc21a94450"
+        },
+        {
+          "file": "dist/index.html",
+          "size": 72531,
+          "sha256": "292e12f48d660359ef0fedd837a291e3f6d6f5b5d6e1482bd677a69820a5f28b"
+        },
+        {
+          "file": "dist/main.js",
+          "size": 3620436,
+          "sha256": "de8ec79fedd4c4b220224b9c33cfa279a98ae0de37ee0546cda448353b587f85"
+        },
+        {
+          "file": "dist/polyfills.js",
+          "size": 35761,
+          "sha256": "a9d29e43c244772216888d1e168786b9dd74aba7b2813a01017a4807d99a3cff"
+        },
+        {
+          "file": "dist/runtime.js",
+          "size": 4403,
+          "sha256": "19409c61d4a71ec20a5158be0a36e508989388cdb5a949176070e61f56c1a2dd"
+        },
+        {
+          "file": "dist/styles.css",
+          "size": 111105,
+          "sha256": "c217c1aba103087a7e6a9938694c875075ea3614056a7eccc1aee76c470b4cb3"
+        }
+      ],
+      "runtimeDependenciesMatch": true,
+      "originalIcon": true,
+      "originalIconSha256": "49088899b78a0028160aad8fa8c0180a8fa0fd1cd7ea5ecd31e4ea1cac65c565",
+      "minimumMacOS": "13.0",
+      "executableArchitectures": [
+        "arm64",
+        "x86_64"
+      ],
+      "frameworkArchitectures": [
+        "arm64",
+        "x86_64"
+      ]
+    },
+    "decoder": {
+      "heicDecode": "2.1.0",
+      "libheifJs": "1.23.5",
+      "supportedChildRange": "^1.19.8",
+      "metadataReadFromPackagedResolution": true,
+      "selectedRuntimeFilesMatchCheckout": true,
+      "files": [
+        {
+          "name": "heic-decode/index.js",
+          "size": 152,
+          "sha256": "b859430727d74d6f956a6ea5e6c1a1b2be7f6d0e9135afc2116bc93d19269003"
+        },
+        {
+          "name": "heic-decode/lib.js",
+          "size": 2518,
+          "sha256": "5d9225ef0a8c55622f54d4a805c641ce355626bb3242dc67b5d8decc4ec94f0e"
+        },
+        {
+          "name": "libheif-js/wasm-bundle.js",
+          "size": 64,
+          "sha256": "fcdbade1f2f599a0eb6d718d43c44004bca3363e4a532a3c7019a24537f06e89"
+        },
+        {
+          "name": "libheif-js/libheif-wasm/libheif-bundle.js",
+          "size": 2044206,
+          "sha256": "074b2b55ef3de477ba9f794ca381f3f0324c1cba8c91b4af07395f39c22d54cc"
+        },
+        {
+          "name": "libheif-js/libheif-wasm/libheif.wasm",
+          "size": 1463506,
+          "sha256": "184d3d20f8323877f13e9f5254f9c6a0ce272c9a3a2f823b0b2bcd2ee9f73f80"
+        }
+      ],
+      "decoderExecuted": false,
+      "nativeSourceMappingEvidence": "docs/tasks/20261101_dependency-upgrades/evidence/HEIC_APPROVED_UPDATE.md"
+    },
+    "strictDeepSignatureBefore": true,
+    "strictDeepSignatureAfter": true,
+    "stapled": true,
+    "gatekeeper": "accepted: Notarized Developer ID",
+    "gatekeeperAssessmentPassed": true,
+    "sourceBundleFingerprint": {
+      "algorithm": "SHA-512 over sorted relative entries, modes, types and file bytes/link targets",
+      "sha512": "2c948c22445bcdcfdbfa1bd38ca00f45c849a7800ebb92d15a82d4458d10de18429b03011473bdfff524829ed3448f80e178f896303bb33ae77c80958ca2e673",
+      "files": 4754,
+      "symlinks": 14
+    },
+    "sourceBundleUnchangedDuringInspection": true,
+    "artifacts": [
+      {
+        "name": "Photo Location Map-1.12.2-alpha-universal-mac.zip",
+        "publishName": "Photo-Location-Map-1.12.2-alpha-universal-mac.zip",
+        "size": 236560765,
+        "sha256": "111b20b898ff21231d564d5de98879472bcfc46ebb8b4e16533cedb5c7259bca",
+        "sha512": "QTEO8tNJlJ1/7xHH8pH8QcLzdtxRfIp5/wkpz2S6LKQFQIyEJDqVp1L1cWELgDOPy2c6fePVE8RWguWF7S0lvw==",
+        "manifestMatches": true,
+        "notOlderThanSourceSignature": true,
+        "blockmapVersion": "2",
+        "blockmapSha256": "45b45115b6b27ccf6a3f22bc9e8194354e8fd1d95775c6de11df144a1293a0fa",
+        "verifiedChunks": 11316,
+        "blockmapCoversWholeArtifact": true
+      },
+      {
+        "name": "Photo Location Map-1.12.2-alpha-universal.dmg",
+        "publishName": "Photo-Location-Map-1.12.2-alpha-universal.dmg",
+        "size": 242456163,
+        "sha256": "c4c1740374cb707d29c65073b3ba657cad32c65de5ebc7bb38f3ea890a231a66",
+        "sha512": "babgLFqfUCx79kmt9hcO0nZZ29I5HkCn/+qhEdUPd4L4zb3pZLf43R2CjMLED+EH6DY9LpQ+W5CPn5sfEvfXng==",
+        "manifestMatches": true,
+        "notOlderThanSourceSignature": true,
+        "blockmapVersion": "2",
+        "blockmapSha256": "bf31d673766b41c6e6c097c90ff4e61214f7449f25665c037b8149d48e946e5c",
+        "verifiedChunks": 11625,
+        "blockmapCoversWholeArtifact": true
+      }
+    ],
+    "limits": [
+      "No application or decoder was launched.",
+      "Distribution contents were not extracted or mounted for source-bundle comparison.",
+      "This inspection does not establish packaged functional/UI behavior, native installation, updater transport or public-feed publication."
+    ],
+    "publicUpload": false
+  },
+  "distributionContents": {
+    "observedAt": "2026-11-03T12:01:14.885957+00:00",
+    "applicationCommit": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
+    "zip": {
+      "strictDeepSignature": true,
+      "stapled": true,
+      "gatekeeper": "accepted",
+      "allRegularFilesMatchFinalSignedBundle": 4754,
+      "allSymlinksAndDirectoryEntriesMatch": true
+    },
+    "dmg": {
+      "strictDeepSignature": true,
+      "stapled": true,
+      "gatekeeper": "accepted",
+      "allRegularFilesMatchFinalSignedBundle": 4754,
+      "allSymlinksAndDirectoryEntriesMatch": true
+    },
+    "dmgDetached": true,
+    "productionBundleUnmodified": true
+  },
+  "dmgSmoke": {
+    "status": "passed",
+    "source": "mounted-final-notarized-dmg",
+    "launch": "direct-executable",
+    "testOwnedProfile": true,
+    "launchObservationWindowSeconds": 60,
+    "observedAt": "2026-11-03T12:02:54.760Z",
+    "volumeDetached": true,
+    "reportedAppSessionSeconds": 55,
+    "mainAndRendererLoggedWithinWindow": true
+  },
+  "zipTransport": {
+    "status": "passed",
+    "mode": "provided-artifact-download-only",
+    "electron": "45.2.1",
+    "embeddedNode": "24.22.1",
+    "updater": "6.8.12",
+    "applicationVersion": "1.12.2-alpha",
+    "applicationPolicy": [
+      {
+        "version": "1.12.1",
+        "development": false,
+        "updateChecks": 1
+      },
+      {
+        "version": "1.12.1",
+        "development": true,
+        "updateChecks": 0
+      },
+      {
+        "version": "1.12.2-alpha",
+        "development": false,
+        "updateChecks": 0
+      },
+      {
+        "version": "1.12.2-beta.1",
+        "development": false,
+        "updateChecks": 0
+      },
+      {
+        "version": "1.12.2-rc.1",
+        "development": false,
+        "updateChecks": 0
+      },
+      {
+        "version": "1.12.2-ALPHA.1",
+        "development": false,
+        "updateChecks": 0
+      }
+    ],
+    "artifact": {
+      "name": "Photo Location Map-1.12.2-alpha-universal-mac.zip",
+      "size": 236560765,
+      "sha512": "QTEO8tNJlJ1/7xHH8pH8QcLzdtxRfIp5/wkpz2S6LKQFQIyEJDqVp1L1cWELgDOPy2c6fePVE8RWguWF7S0lvw=="
+    },
+    "availability": {
+      "newer": true,
+      "sameVersion": false,
+      "downgradeDefault": false,
+      "downgradeOptIn": true
+    },
+    "persistentCacheReuse": true,
+    "corruptChecksumRejected": true,
+    "rejectedPendingFileRemoved": true,
+    "isolatedAppData": true,
+    "isolatedUserData": true,
+    "isolatedSessionData": true,
+    "isolatedUpdaterCache": true,
+    "externalRequests": 0,
+    "guardedSessionCount": 2,
+    "requests": {
+      "metadata": 7,
+      "artifact": 2
+    },
+    "nativeCalls": {
+      "setFeedURL": 2,
+      "checkForUpdates": 0,
+      "quitAndInstall": 0
+    },
+    "nativeFeedSetupIntercepted": true,
+    "installationExercised": false,
+    "rollbackExercised": false,
+    "codeSignatureValidationExercised": false
+  },
+  "nativeFixture": {
+    "status": "passed",
+    "candidateRuntimeFixtureVersions": [
+      "99.0.1",
+      "99.0.2"
+    ],
+    "originalPublicReleaseTested": false,
+    "nativeInstall": true,
+    "nativeRelaunch": true,
+    "nativeRollbackWithExplicitDowngrade": true,
+    "settingsPreserved": true,
+    "profileHardcodedInBothSignedFixtures": true,
+    "originalSignedBundleUnchanged": true,
+    "loopbackOnlyDuringAppExecution": true,
+    "verifiedCdnResourcesProxied": 7,
+    "mapTilesAndExternalFontsTested": false,
+    "publicFeedTested": false,
+    "notarizedFixture": false,
+    "requestCounts": {
+      "/latest-mac.yml": 6,
+      "/cdn/2.css": 4,
+      "/cdn/3.css": 4,
+      "/cdn/6.js": 4,
+      "/cdn/0.css": 4,
+      "/cdn/5.css": 4,
+      "/cdn/1.js": 4,
+      "/cdn/4.js": 4,
+      "/fixture-99.0.2.zip": 1,
+      "/cdn/images/layers-2x.png": 2,
+      "/fixture-99.0.1.zip": 1
+    },
+    "actualApplicationStarts": 4,
+    "productionUpdatePromptYesBranches": 2,
+    "cleanup": {
+      "status": "passed",
+      "noRelevantProcesses": true,
+      "exactNonceCachesAndJobsRemoved": true,
+      "exactPreferenceFilesAbsent": true,
+      "exactPreferenceValuesAbsent": true,
+      "onlyOwnedNonceIdentityAffected": true,
+      "retainedIgnoredRunArtifacts": true
+    },
+    "sourceFingerprintMatchesBeforeFixtureAndAfterCleanup": true,
+    "sourceFingerprintSha512": "2c948c22445bcdcfdbfa1bd38ca00f45c849a7800ebb92d15a82d4458d10de18429b03011473bdfff524829ed3448f80e178f896303bb33ae77c80958ca2e673",
+    "strictDeepSignatureRecheckedAfterCleanup": true
+  },
+  "limits": [
+    "Native fixtures use candidate-runtime versions 99.0.1/99.0.2 and an isolated identity; no historical public application or production-identity final ZIP native install is claimed.",
+    "The signed fixtures are not notarized. The unmodified final app has separate real notarization, archive and visual verification.",
+    "Public-feed/public-download tests require separately authorized publication.",
+    "Native Intel execution is recorded in the separate CI checkpoint; local Rosetta is unavailable."
+  ]
+}

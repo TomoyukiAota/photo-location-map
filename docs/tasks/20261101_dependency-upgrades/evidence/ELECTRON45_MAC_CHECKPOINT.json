@@ -1,0 +1,17 @@
+{
+  "observedDate": "2026-11-01",
+  "electron": "45.2.1",
+  "embeddedNode": "24.22.1",
+  "chromium": "156.0.8078.75",
+  "builder": "26.18.1",
+  "minimumMacOS": "13.0",
+  "iconMatchesOriginal": true,
+  "iconSha256": "49088899b78a0028160aad8fa8c0180a8fa0fd1cd7ea5ecd31e4ea1cac65c565",
+  "mainArchitectures": [
+    "x86_64",
+    "arm64"
+  ],
+  "notarized": false,
+  "note": "Intermediate package test skips notarization; final artifacts must be rebuilt after all runtime library upgrades.",
+  "codesignVerified": true
+}

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { Logger } from '../../../../src-shared/log/logger';
 import { addRegistryForExplorerContextMenu } from './add-registry-for-explorer-context-menu';
@@ -7,7 +7,9 @@ import { deleteRegistryForExplorerContextMenu } from './delete-registry-for-expl
 @Component({
   selector: 'app-os-settings',
   templateUrl: './os-settings.component.html',
-  styleUrl: './os-settings.component.scss'
+  styleUrl: './os-settings.component.scss',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false
 })
 export class OsSettingsComponent {
   public messageLinesAfterButtonClicked: string[] = [];
