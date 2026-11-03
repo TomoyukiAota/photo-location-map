@@ -1,0 +1,121 @@
+{
+  "status": "passed",
+  "observedTime": "2026-11-03T12:04:17.228Z",
+  "applicationCommit": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
+  "workflowCommit": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
+  "applicationSource": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
+  "pushWorkflowRun": 41630776056,
+  "pushWorkflowJob": 125899533932,
+  "releaseId": 407095377,
+  "releaseTag": "v1.12.2-alpha",
+  "draft": true,
+  "prerelease": false,
+  "published": false,
+  "releaseUpdatedAt": "2026-11-03T12:02:24Z",
+  "mutableDraftObservation": true,
+  "assetIdentityStableAcrossInspection": true,
+  "assets": [
+    {
+      "id": 705454543,
+      "name": "Photo-Location-Map-Setup-1.12.2-alpha.exe",
+      "size": 137603471,
+      "sha256": "1593def6c08e9f48b9e3441beba9be3581e12b7cb3f2c3616192cd1880cd1bd5",
+      "githubDigest": "sha256:1593def6c08e9f48b9e3441beba9be3581e12b7cb3f2c3616192cd1880cd1bd5",
+      "githubDigestMatches": true,
+      "createdAt": "2026-11-03T12:02:16Z",
+      "updatedAt": "2026-11-03T12:02:21Z"
+    },
+    {
+      "id": 705454541,
+      "name": "Photo-Location-Map-Setup-1.12.2-alpha.exe.blockmap",
+      "size": 143598,
+      "sha256": "cf1c4c1ee5e1c3e5bb11be4bb0a5fae2b655bc75b1019f749a7e108c72be575a",
+      "githubDigest": "sha256:cf1c4c1ee5e1c3e5bb11be4bb0a5fae2b655bc75b1019f749a7e108c72be575a",
+      "githubDigestMatches": true,
+      "createdAt": "2026-11-03T12:02:16Z",
+      "updatedAt": "2026-11-03T12:02:16Z"
+    },
+    {
+      "id": 705455061,
+      "name": "latest.yml",
+      "size": 386,
+      "sha256": "a32a6645b8e380eea02535dc6c5ae2147d7f0985288653b0a48ed0af83c6a509",
+      "githubDigest": "sha256:a32a6645b8e380eea02535dc6c5ae2147d7f0985288653b0a48ed0af83c6a509",
+      "githubDigestMatches": true,
+      "createdAt": "2026-11-03T12:02:23Z",
+      "updatedAt": "2026-11-03T12:02:24Z"
+    }
+  ],
+  "installer": {
+    "name": "Photo-Location-Map-Setup-1.12.2-alpha.exe",
+    "size": 137603471,
+    "sha512": "qxWb3yYMYjAVW3VVV3y0un5UFvUKmu+uO7qtYmly7WeKAKC5VgaC5O92u9jONRFE1Hd4/nAOFMW3Tj8gwurPYg==",
+    "manifestMatches": true,
+    "blockmapVersion": "2",
+    "verifiedChunks": 6564,
+    "blockmapCoversWholeArtifact": true,
+    "installerFormat": "NSIS",
+    "embeddedPayload": "app-64.7z"
+  },
+  "runtimeManifestMatches": true,
+  "extractedSourceFilesMatch": [
+    "src-main/electron-main.js",
+    "src-main/file-server/file-server.js",
+    "src-main/command-line-options/parse-command-line-options.js",
+    "src-main/configure-live-reload.js",
+    "src-shared/analytics/library-wrapper/amplitude-analytics-browser-wrapper.js",
+    "src-shared/analytics/library-wrapper/mixpanel-browser-wrapper.js",
+    "electron-util/e2e-test-hooks.js"
+  ],
+  "sourceReference": "Retained signed c0 Mac bundle, matching recorded fingerprint and strict deep signature",
+  "checkoutCompiledFilesUsedAsReference": false,
+  "sourceReferenceFingerprintSha512": "2c948c22445bcdcfdbfa1bd38ca00f45c849a7800ebb92d15a82d4458d10de18429b03011473bdfff524829ed3448f80e178f896303bb33ae77c80958ca2e673",
+  "sourceComparison": "Exact UTF-8 text after CRLF-to-LF normalization only",
+  "decoder": {
+    "heicDecode": "2.1.0",
+    "libheifJs": "1.23.5",
+    "supportedChildRange": "^1.19.8",
+    "metadataReadFromArchive": true,
+    "nodeLookupPathVerified": true,
+    "selectedPayloadMatchesVerifiedMac": true,
+    "files": [
+      {
+        "name": "heic-decode/index.js",
+        "size": 152,
+        "sha256": "b859430727d74d6f956a6ea5e6c1a1b2be7f6d0e9135afc2116bc93d19269003",
+        "matchesVerifiedMacBytes": true
+      },
+      {
+        "name": "heic-decode/lib.js",
+        "size": 2518,
+        "sha256": "5d9225ef0a8c55622f54d4a805c641ce355626bb3242dc67b5d8decc4ec94f0e",
+        "matchesVerifiedMacBytes": true
+      },
+      {
+        "name": "libheif-js/wasm-bundle.js",
+        "size": 64,
+        "sha256": "fcdbade1f2f599a0eb6d718d43c44004bca3363e4a532a3c7019a24537f06e89",
+        "matchesVerifiedMacBytes": true
+      },
+      {
+        "name": "libheif-js/libheif-wasm/libheif-bundle.js",
+        "size": 2044206,
+        "sha256": "074b2b55ef3de477ba9f794ca381f3f0324c1cba8c91b4af07395f39c22d54cc",
+        "matchesVerifiedMacBytes": true
+      },
+      {
+        "name": "libheif-js/libheif-wasm/libheif.wasm",
+        "size": 1463506,
+        "sha256": "184d3d20f8323877f13e9f5254f9c6a0ce272c9a3a2f823b0b2bcd2ee9f73f80",
+        "matchesVerifiedMacBytes": true
+      }
+    ]
+  },
+  "archiveInspector": {
+    "toolset": "7zip@1.0.0",
+    "version": "7-Zip (z) 24.09 (arm64) : Copyright (c) 1999-2024 Igor Pavlov : 2024-11-28"
+  },
+  "installerNotExecutedLocally": true,
+  "uploadOrReleaseMutationPerformed": false,
+  "scope": "Read-only download and selected archive extraction of the completed CI draft upload. Asset IDs and hashes describe a mutable dated draft observation, not a public release or cryptographic source attestation."
+}

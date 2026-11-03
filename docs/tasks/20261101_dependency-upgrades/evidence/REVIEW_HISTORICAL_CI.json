@@ -43,7 +43,9 @@
                 "Post Install Node.js with the version in mise.toml",
                 "Post Run actions/checkout@v7.0.1",
                 "Complete job"
-              ]
+              ],
+              "checkedOutCommit": "a059f34709f901c4128e46813dc5152587fc2820",
+              "checkoutLogUrl": "https://api.github.com/repos/TomoyukiAota/photo-location-map/actions/jobs/125772415759/logs"
             },
             {
               "id": 125772457449,
@@ -67,7 +69,9 @@
                 "Post Install Node.js with the version in mise.toml",
                 "Post Run actions/checkout@v7.0.1",
                 "Complete job"
-              ]
+              ],
+              "checkedOutCommit": "a059f34709f901c4128e46813dc5152587fc2820",
+              "checkoutLogUrl": "https://api.github.com/repos/TomoyukiAota/photo-location-map/actions/jobs/125772457449/logs"
             }
           ]
         },
@@ -107,7 +111,9 @@
                 "Post Install Node.js with the version in mise.toml",
                 "Post Run actions/checkout@v7.0.1",
                 "Complete job"
-              ]
+              ],
+              "checkedOutCommit": "bab4304dae5595cf9e186e315dabb094c402b5e3",
+              "checkoutLogUrl": "https://api.github.com/repos/TomoyukiAota/photo-location-map/actions/jobs/125772326139/logs"
             }
           ]
         },
@@ -149,7 +155,9 @@
                 "Post Install Node.js with the version in mise.toml",
                 "Post Run actions/checkout@v7.0.1",
                 "Complete job"
-              ]
+              ],
+              "checkedOutCommit": "bab4304dae5595cf9e186e315dabb094c402b5e3",
+              "checkoutLogUrl": "https://api.github.com/repos/TomoyukiAota/photo-location-map/actions/jobs/125772314378/logs"
             }
           ]
         },
@@ -187,7 +195,9 @@
                 "Post Install Node.js with the version in mise.toml",
                 "Post Run actions/checkout@v7.0.1",
                 "Complete job"
-              ]
+              ],
+              "checkedOutCommit": "bab4304dae5595cf9e186e315dabb094c402b5e3",
+              "checkoutLogUrl": "https://api.github.com/repos/TomoyukiAota/photo-location-map/actions/jobs/125772309829/logs"
             }
           ]
         },
@@ -227,7 +237,9 @@
                 "Post Install Node.js with the version in mise.toml",
                 "Post Run actions/checkout@v7.0.1",
                 "Complete job"
-              ]
+              ],
+              "checkedOutCommit": "a059f34709f901c4128e46813dc5152587fc2820",
+              "checkoutLogUrl": "https://api.github.com/repos/TomoyukiAota/photo-location-map/actions/jobs/125772304629/logs"
             }
           ]
         },
@@ -265,7 +277,9 @@
                 "Post Install Node.js with the version in mise.toml",
                 "Post Run actions/checkout@v7.0.1",
                 "Complete job"
-              ]
+              ],
+              "checkedOutCommit": "a059f34709f901c4128e46813dc5152587fc2820",
+              "checkoutLogUrl": "https://api.github.com/repos/TomoyukiAota/photo-location-map/actions/jobs/125772295412/logs"
             }
           ]
         },
@@ -307,7 +321,9 @@
                 "Post Install Node.js with the version in mise.toml",
                 "Post Run actions/checkout@v7.0.1",
                 "Complete job"
-              ]
+              ],
+              "checkedOutCommit": "a059f34709f901c4128e46813dc5152587fc2820",
+              "checkoutLogUrl": "https://api.github.com/repos/TomoyukiAota/photo-location-map/actions/jobs/125772302047/logs"
             }
           ]
         }
@@ -353,7 +369,9 @@
                 "Post Install Node.js with the version in mise.toml",
                 "Post Run actions/checkout@v7.0.1",
                 "Complete job"
-              ]
+              ],
+              "checkedOutCommit": "f7afae2c43660058fd8c9cb51f3d432299382e98",
+              "checkoutLogUrl": "https://api.github.com/repos/TomoyukiAota/photo-location-map/actions/jobs/125787550211/logs"
             }
           ]
         },
@@ -395,7 +413,9 @@
                 "Post Install Node.js with the version in mise.toml",
                 "Post Run actions/checkout@v7.0.1",
                 "Complete job"
-              ]
+              ],
+              "checkedOutCommit": "f7afae2c43660058fd8c9cb51f3d432299382e98",
+              "checkoutLogUrl": "https://api.github.com/repos/TomoyukiAota/photo-location-map/actions/jobs/125787537837/logs"
             }
           ]
         },
@@ -435,7 +455,9 @@
                 "Post Install Node.js with the version in mise.toml",
                 "Post Run actions/checkout@v7.0.1",
                 "Complete job"
-              ]
+              ],
+              "checkedOutCommit": "f7afae2c43660058fd8c9cb51f3d432299382e98",
+              "checkoutLogUrl": "https://api.github.com/repos/TomoyukiAota/photo-location-map/actions/jobs/125787551395/logs"
             }
           ]
         },
@@ -473,7 +495,9 @@
                 "Post Install Node.js with the version in mise.toml",
                 "Post Run actions/checkout@v7.0.1",
                 "Complete job"
-              ]
+              ],
+              "checkedOutCommit": "84262a909fcd8086b8d3de20cd2f42fbee21d0ea",
+              "checkoutLogUrl": "https://api.github.com/repos/TomoyukiAota/photo-location-map/actions/jobs/125787569196/logs"
             }
           ]
         },
@@ -515,7 +539,9 @@
                 "Post Install Node.js with the version in mise.toml",
                 "Post Run actions/checkout@v7.0.1",
                 "Complete job"
-              ]
+              ],
+              "checkedOutCommit": "84262a909fcd8086b8d3de20cd2f42fbee21d0ea",
+              "checkoutLogUrl": "https://api.github.com/repos/TomoyukiAota/photo-location-map/actions/jobs/125787580002/logs"
             }
           ]
         },
@@ -555,7 +581,9 @@
                 "Post Install Node.js with the version in mise.toml",
                 "Post Run actions/checkout@v7.0.1",
                 "Complete job"
-              ]
+              ],
+              "checkedOutCommit": "84262a909fcd8086b8d3de20cd2f42fbee21d0ea",
+              "checkoutLogUrl": "https://api.github.com/repos/TomoyukiAota/photo-location-map/actions/jobs/125787574122/logs"
             }
           ]
         },
@@ -593,7 +621,9 @@
                 "Post Install Node.js with the version in mise.toml",
                 "Post Run actions/checkout@v7.0.1",
                 "Complete job"
-              ]
+              ],
+              "checkedOutCommit": "f7afae2c43660058fd8c9cb51f3d432299382e98",
+              "checkoutLogUrl": "https://api.github.com/repos/TomoyukiAota/photo-location-map/actions/jobs/125787800890/logs"
             },
             {
               "id": 125787863247,
@@ -617,11 +647,25 @@
                 "Post Install Node.js with the version in mise.toml",
                 "Post Run actions/checkout@v7.0.1",
                 "Complete job"
-              ]
+              ],
+              "checkedOutCommit": "f7afae2c43660058fd8c9cb51f3d432299382e98",
+              "checkoutLogUrl": "https://api.github.com/repos/TomoyukiAota/photo-location-map/actions/jobs/125787863247/logs"
             }
           ]
         }
       ]
     }
-  ]
+  ],
+  "checkoutCommitEvidence": {
+    "observedAt": "2026-11-03T12:04:53.262Z",
+    "source": "Completed test-job logs from the GitHub Actions jobs/logs REST endpoint; each test job links its exact log URL.",
+    "parser": "Within the initial Run actions/checkout@v7.0.1 step, select its unique [command] git log -1 --format=%H invocation and the immediately following timestamped 40-hex output; stop at the next Run step.",
+    "jobsVerified": 16,
+    "headShaMeaning": "applicationCommit identifies the candidate source and run head_sha retains GitHub run metadata. checkedOutCommit is the initial checkout observed in that test job's own log.",
+    "pullRequestCheckoutMeaning": "The six pull_request jobs checked out synthetic merge commits. The ten push/manual test jobs checked out their recorded candidate head exactly.",
+    "limits": [
+      "Initial checkout SHAs were read from retained logs, not inferred from current branch or pull-request refs.",
+      "This identifies the initial checked-out commit; it does not assert that every later build step left its worktree unchanged."
+    ]
+  }
 }

@@ -1,7 +1,7 @@
 {
-  "observedDate": "2026-11-02",
-  "state": "Previous HEIC/artifact checkpoint verified at 79d547f; dependency versions unchanged; CodeRabbit production-source follow-up passed local gates and awaits fresh platform/distribution validation. Chooser policy accepted; merge/application release unauthorized.",
-  "verifiedApplicationCommit": "79d547fa884658be9266f03ae3d20ea05899b34a",
+  "observedDate": "2026-11-03",
+  "state": "Review source c0f0dc9 verified locally, on all eight platform jobs including native Intel, and through fresh signed/distribution/updater/Windows-byte gates. Dependency versions and lockfile unchanged; HEIC, chooser and older-macOS risk choices accepted. Final documentation-head checks and owner-required-check replacement remain; merge/application release unauthorized.",
+  "verifiedApplicationCommit": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
   "hostNode": "26.13.0",
   "bundledNpm": "11.20.0",
   "lockfileVersion": 3,
@@ -509,5 +509,6 @@
     "version": "1.23.5",
     "override": false,
     "parent": "heic-decode@2.1.0"
-  }
+  },
+  "previousVerifiedApplicationCommit": "79d547fa884658be9266f03ae3d20ea05899b34a"
 }

@@ -1,0 +1,1820 @@
+{
+  "observedAt": "2026-11-03T13:11:57.891645+00:00",
+  "repository": "TomoyukiAota/photo-location-map",
+  "pullRequest": 630,
+  "sourceCommit": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
+  "complete": true,
+  "workflowDefinitionCount": 3,
+  "workflowRunCount": 7,
+  "actualTestJobCount": 8,
+  "logVerifiedJobCount": 8,
+  "workflowRuns": [
+    {
+      "id": 41630843941,
+      "event": "workflow_dispatch",
+      "workflowName": "CI on macOS",
+      "headSha": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 125899705588,
+          "name": "changes",
+          "status": "completed",
+          "conclusion": "success",
+          "activeStep": null
+        },
+        {
+          "id": 125899705853,
+          "name": "test (macos-26-intel)",
+          "status": "completed",
+          "conclusion": "success",
+          "activeStep": "npm run test:package"
+        },
+        {
+          "id": 125899798022,
+          "name": "test (macos-26)",
+          "status": "completed",
+          "conclusion": "success",
+          "activeStep": null
+        }
+      ],
+      "updatedAt": "2026-11-03T12:13:53Z",
+      "runAttempt": 1
+    },
+    {
+      "id": 41630781164,
+      "event": "pull_request",
+      "workflowName": "CI on macOS",
+      "headSha": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 125899485552,
+          "name": "changes",
+          "status": "completed",
+          "conclusion": "success",
+          "activeStep": null
+        },
+        {
+          "id": 125899487413,
+          "name": "test (macos-26-intel)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "activeStep": null
+        },
+        {
+          "id": 125899559383,
+          "name": "test (macos-26)",
+          "status": "completed",
+          "conclusion": "success",
+          "activeStep": null
+        }
+      ],
+      "updatedAt": "2026-11-03T12:05:38Z",
+      "runAttempt": 1
+    },
+    {
+      "id": 41630781162,
+      "event": "pull_request",
+      "workflowName": "CI on Windows",
+      "headSha": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 125899486082,
+          "name": "changes",
+          "status": "completed",
+          "conclusion": "success",
+          "activeStep": null
+        },
+        {
+          "id": 125899544514,
+          "name": "test (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "activeStep": null
+        }
+      ],
+      "updatedAt": "2026-11-03T12:02:01Z",
+      "runAttempt": 1
+    },
+    {
+      "id": 41630781179,
+      "event": "pull_request",
+      "workflowName": "CI on Ubuntu",
+      "headSha": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 125899485836,
+          "name": "changes",
+          "status": "completed",
+          "conclusion": "success",
+          "activeStep": null
+        },
+        {
+          "id": 125899572658,
+          "name": "test (ubuntu)",
+          "status": "completed",
+          "conclusion": "success",
+          "activeStep": null
+        }
+      ],
+      "updatedAt": "2026-11-03T11:57:20Z",
+      "runAttempt": 1
+    },
+    {
+      "id": 41630775518,
+      "event": "push",
+      "workflowName": "CI on Ubuntu",
+      "headSha": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 125899466626,
+          "name": "changes",
+          "status": "completed",
+          "conclusion": "success",
+          "activeStep": null
+        },
+        {
+          "id": 125899529976,
+          "name": "test (ubuntu)",
+          "status": "completed",
+          "conclusion": "success",
+          "activeStep": null
+        }
+      ],
+      "updatedAt": "2026-11-03T11:56:56Z",
+      "runAttempt": 1
+    },
+    {
+      "id": 41630776056,
+      "event": "push",
+      "workflowName": "CI on Windows",
+      "headSha": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 125899468465,
+          "name": "changes",
+          "status": "completed",
+          "conclusion": "success",
+          "activeStep": null
+        },
+        {
+          "id": 125899533932,
+          "name": "test (windows-latest)",
+          "status": "completed",
+          "conclusion": "success",
+          "activeStep": null
+        }
+      ],
+      "updatedAt": "2026-11-03T12:03:22Z",
+      "runAttempt": 1
+    },
+    {
+      "id": 41630775715,
+      "event": "push",
+      "workflowName": "CI on macOS",
+      "headSha": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 125899466845,
+          "name": "changes",
+          "status": "completed",
+          "conclusion": "success",
+          "activeStep": null
+        },
+        {
+          "id": 125899468547,
+          "name": "test (macos-26-intel)",
+          "status": "completed",
+          "conclusion": "skipped",
+          "activeStep": null
+        },
+        {
+          "id": 125899530536,
+          "name": "test (macos-26)",
+          "status": "completed",
+          "conclusion": "success",
+          "activeStep": null
+        }
+      ],
+      "updatedAt": "2026-11-03T12:07:44Z",
+      "runAttempt": 1
+    }
+  ],
+  "jobs": [
+    {
+      "jobId": 125899705853,
+      "runId": 41630843941,
+      "event": "workflow_dispatch",
+      "jobName": "test (macos-26-intel)",
+      "status": "completed",
+      "conclusion": "success",
+      "logsVerified": false,
+      "activeStep": "npm run test:package",
+      "checkedOutCommit": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
+      "operatingSystem": "macOS\n26.6.1\n25G76",
+      "runnerImage": "Image: macos-26\nVersion: 20260824.0517.1\nIncluded Software: https://github.com/actions/runner-images/blob/macos-26/20260824.0517/images/macos/macos-26-Readme.md\nImage Release: https://github.com/actions/runner-images/releases/tag/macos-26%2F20260824.0517",
+      "architecture": "x64",
+      "xcodeVersion": null,
+      "commandLineToolsVersion": null,
+      "runtime": {
+        "node": "26.13.0",
+        "npm": "11.20.0",
+        "electron": "45.2.1",
+        "embeddedNode": "24.22.1",
+        "chromium": "156.0.8078.75"
+      },
+      "unitTests": {
+        "angular": 57,
+        "main": 97,
+        "renderer": 55,
+        "total": 209
+      },
+      "packageRunner": {
+        "tests": 5,
+        "passed": 5
+      },
+      "liveReload": {
+        "watcher": "6.0.0",
+        "compilationBurst": {
+          "ignoredPathPredicatePassed": true,
+          "queuedRelaunches": 1,
+          "quitRequests": 1,
+          "watcherClosed": true
+        },
+        "results": [
+          {
+            "mode": "quit",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "soft",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "relaunch",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "module-relaunch",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true,
+            "moduleValueAfterRelaunch": "after"
+          },
+          {
+            "mode": "hidden-root",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true,
+            "moduleValueAfterRelaunch": "after"
+          }
+        ]
+      },
+      "packagedE2E": {
+        "passed": 14,
+        "skipped": 1
+      },
+      "notableE2ECases": [
+        "  \u2713   4 test/e2e/regression.spec.mjs:288:1 \u203a folder picker loads real photo data, markers, tree selection and chart (14.4s)",
+        "  \u2713   6 test/e2e/regression.spec.mjs:372:1 \u203a chart grouping, zoom, reset and photo selection keep their real data behavior (12.5s)",
+        "  \u2713   9 test/e2e/regression.spec.mjs:472:1 \u203a analytics preserves events and identity without new Amplitude local URLs (8.1s)"
+      ],
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@v7.0.1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Install Node.js with the version in mise.toml",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Verify Node and its bundled npm",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "npm ci",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Verify Electron and embedded Node",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "npm run lint:ng",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "npm run lint:script",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "npm run test:unit:ng",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "npm run test:unit:em:main",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "npm run test:unit:em:renderer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "npm run test:live-reload",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "npm run test:package",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "npm run test:e2e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "Post Install Node.js with the version in mise.toml",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27
+        },
+        {
+          "name": "Post Run actions/checkout@v7.0.1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29
+        }
+      ]
+    },
+    {
+      "jobId": 125899798022,
+      "runId": 41630843941,
+      "event": "workflow_dispatch",
+      "workflowName": "CI on macOS",
+      "jobName": "test (macos-26)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41630843941/job/125899798022",
+      "checkedOutCommit": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
+      "operatingSystem": "macOS\n26.6.2\n25G83",
+      "runnerImage": "Image: macos-26-arm64\nVersion: 20261026.0455.2\nIncluded Software: https://github.com/actions/runner-images/blob/macos-26-arm64/20261026.0455/images/macos/macos-26-arm64-Readme.md\nImage Release: https://github.com/actions/runner-images/releases/tag/macos-26-arm64%2F20261026.0455",
+      "architecture": "arm64",
+      "xcodeVersion": null,
+      "commandLineToolsVersion": null,
+      "runtime": {
+        "node": "26.13.0",
+        "npm": "11.20.0",
+        "electron": "45.2.1",
+        "embeddedNode": "24.22.1",
+        "chromium": "156.0.8078.75"
+      },
+      "unitTests": {
+        "angular": 57,
+        "main": 97,
+        "renderer": 55,
+        "total": 209
+      },
+      "packageRunner": {
+        "tests": 5,
+        "passed": 5
+      },
+      "liveReload": {
+        "watcher": "6.0.0",
+        "compilationBurst": {
+          "ignoredPathPredicatePassed": true,
+          "queuedRelaunches": 1,
+          "quitRequests": 1,
+          "watcherClosed": true
+        },
+        "results": [
+          {
+            "mode": "quit",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "soft",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "relaunch",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "module-relaunch",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true,
+            "moduleValueAfterRelaunch": "after"
+          },
+          {
+            "mode": "hidden-root",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true,
+            "moduleValueAfterRelaunch": "after"
+          }
+        ]
+      },
+      "packagedE2E": {
+        "passed": 14,
+        "skipped": 1
+      },
+      "notableE2ECases": [
+        "  \u2713   4 test/e2e/regression.spec.mjs:288:1 \u203a folder picker loads real photo data, markers, tree selection and chart (12.6s)",
+        "  \u2713   6 test/e2e/regression.spec.mjs:372:1 \u203a chart grouping, zoom, reset and photo selection keep their real data behavior (11.8s)",
+        "  \u2713   9 test/e2e/regression.spec.mjs:472:1 \u203a analytics preserves events and identity without new Amplitude local URLs (6.5s)"
+      ],
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@v7.0.1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Install Node.js with the version in mise.toml",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Verify Node and its bundled npm",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "npm ci",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Verify Electron and embedded Node",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "npm run lint:ng",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "npm run lint:script",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "npm run test:unit:ng",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "npm run test:unit:em:main",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "npm run test:unit:em:renderer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "npm run test:live-reload",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "npm run test:package",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "npm run test:e2e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "Post Install Node.js with the version in mise.toml",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27
+        },
+        {
+          "name": "Post Run actions/checkout@v7.0.1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29
+        }
+      ]
+    },
+    {
+      "jobId": 125899559383,
+      "runId": 41630781164,
+      "event": "pull_request",
+      "workflowName": "CI on macOS",
+      "jobName": "test (macos-26)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41630781164/job/125899559383",
+      "checkedOutCommit": "7756ca606035f924a24a31cd3a6c15a980baf6fe",
+      "operatingSystem": "macOS\n26.6.2\n25G83",
+      "runnerImage": "Image: macos-26-arm64\nVersion: 20261026.0455.2\nIncluded Software: https://github.com/actions/runner-images/blob/macos-26-arm64/20261026.0455/images/macos/macos-26-arm64-Readme.md\nImage Release: https://github.com/actions/runner-images/releases/tag/macos-26-arm64%2F20261026.0455",
+      "architecture": "arm64",
+      "xcodeVersion": null,
+      "commandLineToolsVersion": null,
+      "runtime": {
+        "node": "26.13.0",
+        "npm": "11.20.0",
+        "electron": "45.2.1",
+        "embeddedNode": "24.22.1",
+        "chromium": "156.0.8078.75"
+      },
+      "unitTests": {
+        "angular": 57,
+        "main": 97,
+        "renderer": 55,
+        "total": 209
+      },
+      "packageRunner": {
+        "tests": 5,
+        "passed": 5
+      },
+      "liveReload": {
+        "watcher": "6.0.0",
+        "compilationBurst": {
+          "ignoredPathPredicatePassed": true,
+          "queuedRelaunches": 1,
+          "quitRequests": 1,
+          "watcherClosed": true
+        },
+        "results": [
+          {
+            "mode": "quit",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "soft",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "relaunch",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "module-relaunch",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true,
+            "moduleValueAfterRelaunch": "after"
+          },
+          {
+            "mode": "hidden-root",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true,
+            "moduleValueAfterRelaunch": "after"
+          }
+        ]
+      },
+      "packagedE2E": {
+        "passed": 14,
+        "skipped": 1
+      },
+      "notableE2ECases": [
+        "  \u2713   4 test/e2e/regression.spec.mjs:288:1 \u203a folder picker loads real photo data, markers, tree selection and chart (14.6s)",
+        "  \u2713   6 test/e2e/regression.spec.mjs:372:1 \u203a chart grouping, zoom, reset and photo selection keep their real data behavior (12.6s)",
+        "  \u2713   9 test/e2e/regression.spec.mjs:472:1 \u203a analytics preserves events and identity without new Amplitude local URLs (7.5s)"
+      ],
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@v7.0.1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Install Node.js with the version in mise.toml",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Verify Node and its bundled npm",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "npm ci",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Verify Electron and embedded Node",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "npm run lint:ng",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "npm run lint:script",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "npm run test:unit:ng",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "npm run test:unit:em:main",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "npm run test:unit:em:renderer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "npm run test:live-reload",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "npm run test:package",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "npm run test:e2e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "Post Install Node.js with the version in mise.toml",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27
+        },
+        {
+          "name": "Post Run actions/checkout@v7.0.1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29
+        }
+      ]
+    },
+    {
+      "jobId": 125899544514,
+      "runId": 41630781162,
+      "event": "pull_request",
+      "workflowName": "CI on Windows",
+      "jobName": "test (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41630781162/job/125899544514",
+      "checkedOutCommit": "7756ca606035f924a24a31cd3a6c15a980baf6fe",
+      "operatingSystem": "Microsoft Windows Server 2025\n10.0.26100\nDatacenter",
+      "runnerImage": "Image: windows-2025-vs2026\nVersion: 20261030.294.1\nIncluded Software: https://github.com/actions/runner-images/blob/win25-vs2026/20261030.294/images/windows/Windows2025-VS2026-Readme.md\nImage Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20261030.294",
+      "architecture": "x64",
+      "xcodeVersion": null,
+      "commandLineToolsVersion": null,
+      "runtime": {
+        "node": "26.13.0",
+        "npm": "11.20.0",
+        "electron": "45.2.1",
+        "embeddedNode": "24.22.1",
+        "chromium": "156.0.8078.75"
+      },
+      "unitTests": {
+        "angular": 57,
+        "main": 97,
+        "renderer": 55,
+        "total": 209
+      },
+      "packageRunner": {
+        "tests": 5,
+        "passed": 5
+      },
+      "liveReload": {
+        "watcher": "6.0.0",
+        "compilationBurst": {
+          "ignoredPathPredicatePassed": true,
+          "queuedRelaunches": 1,
+          "quitRequests": 1,
+          "watcherClosed": true
+        },
+        "results": [
+          {
+            "mode": "quit",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "soft",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "relaunch",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "module-relaunch",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true,
+            "moduleValueAfterRelaunch": "after"
+          },
+          {
+            "mode": "hidden-root",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true,
+            "moduleValueAfterRelaunch": "after"
+          }
+        ]
+      },
+      "packagedE2E": {
+        "passed": 14,
+        "skipped": 1
+      },
+      "notableE2ECases": [
+        "  ok  4 test\\e2e\\regression.spec.mjs:288:1 \u203a folder picker loads real photo data, markers, tree selection and chart (12.5s)",
+        "  ok  6 test\\e2e\\regression.spec.mjs:372:1 \u203a chart grouping, zoom, reset and photo selection keep their real data behavior (10.8s)",
+        "  ok  9 test\\e2e\\regression.spec.mjs:472:1 \u203a analytics preserves events and identity without new Amplitude local URLs (6.4s)"
+      ],
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@v7.0.1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Install Node.js with the version in mise.toml",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Verify Node and its bundled npm",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "npm ci",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Verify Electron and embedded Node",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "npm run lint:ng",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "npm run lint:script",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "npm run test:unit:ng",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "npm run test:unit:em:main",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "npm run test:unit:em:renderer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "npm run test:live-reload",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "npm run test:package",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "npm run test:e2e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "[Publish to GitHub Releases] Clean-up by \"git clean -fdx\" (1st time)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15
+        },
+        {
+          "name": "[Publish to GitHub Releases] Clean-up by \"git clean -fdx\" (2nd time to be sure)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16
+        },
+        {
+          "name": "[Publish to GitHub Releases] npm ci",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17
+        },
+        {
+          "name": "[Publish to GitHub Releases] Create and publish Windows package",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18
+        },
+        {
+          "name": "Post Install Node.js with the version in mise.toml",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 35
+        },
+        {
+          "name": "Post Run actions/checkout@v7.0.1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 36
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 37
+        }
+      ]
+    },
+    {
+      "jobId": 125899572658,
+      "runId": 41630781179,
+      "event": "pull_request",
+      "workflowName": "CI on Ubuntu",
+      "jobName": "test (ubuntu)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41630781179/job/125899572658",
+      "checkedOutCommit": "7756ca606035f924a24a31cd3a6c15a980baf6fe",
+      "operatingSystem": "Ubuntu\n26.04.1\nLTS",
+      "runnerImage": "Image: ubuntu-26.04\nVersion: 20261025.179.1\nIncluded Software: https://github.com/actions/runner-images/blob/ubuntu26/20261025.179/images/ubuntu/Ubuntu2604-Readme.md\nImage Release: https://github.com/actions/runner-images/releases/tag/ubuntu26%2F20261025.179",
+      "architecture": "x64",
+      "xcodeVersion": null,
+      "commandLineToolsVersion": null,
+      "runtime": {
+        "node": "26.13.0",
+        "npm": "11.20.0",
+        "electron": "45.2.1",
+        "embeddedNode": "24.22.1",
+        "chromium": "156.0.8078.75"
+      },
+      "unitTests": {
+        "angular": 57,
+        "main": 97,
+        "renderer": 55,
+        "total": 209
+      },
+      "packageRunner": {
+        "tests": 5,
+        "passed": 5
+      },
+      "liveReload": {
+        "watcher": "6.0.0",
+        "compilationBurst": {
+          "ignoredPathPredicatePassed": true,
+          "queuedRelaunches": 1,
+          "quitRequests": 1,
+          "watcherClosed": true
+        },
+        "results": [
+          {
+            "mode": "quit",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "soft",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "relaunch",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "module-relaunch",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true,
+            "moduleValueAfterRelaunch": "after"
+          },
+          {
+            "mode": "hidden-root",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true,
+            "moduleValueAfterRelaunch": "after"
+          }
+        ]
+      },
+      "packagedE2E": {
+        "passed": 14,
+        "skipped": 1
+      },
+      "notableE2ECases": [
+        "  \u2713   4 test/e2e/regression.spec.mjs:288:1 \u203a folder picker loads real photo data, markers, tree selection and chart (15.4s)",
+        "  \u2713   6 test/e2e/regression.spec.mjs:372:1 \u203a chart grouping, zoom, reset and photo selection keep their real data behavior (12.0s)",
+        "  \u2713   9 test/e2e/regression.spec.mjs:472:1 \u203a analytics preserves events and identity without new Amplitude local URLs (8.9s)"
+      ],
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@v7.0.1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Install Node.js with the version in mise.toml",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Verify Node and its bundled npm",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "npm ci",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Verify Electron and embedded Node",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "npm run lint:ng",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "npm run lint:script",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "npm run test:unit:ng",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "npm run test:unit:em:main",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "npm run test:unit:em:renderer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "npm run test:live-reload",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Install FUSE (Required to launch AppImage during \"npm run test:package\")",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "npm run test:package",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "Locate packaged AppImage for E2E",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15
+        },
+        {
+          "name": "npm run test:e2e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16
+        },
+        {
+          "name": "Post Install Node.js with the version in mise.toml",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 31
+        },
+        {
+          "name": "Post Run actions/checkout@v7.0.1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 32
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 33
+        }
+      ]
+    },
+    {
+      "jobId": 125899529976,
+      "runId": 41630775518,
+      "event": "push",
+      "workflowName": "CI on Ubuntu",
+      "jobName": "test (ubuntu)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41630775518/job/125899529976",
+      "checkedOutCommit": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
+      "operatingSystem": "Ubuntu\n26.04.1\nLTS",
+      "runnerImage": "Image: ubuntu-26.04\nVersion: 20261025.179.1\nIncluded Software: https://github.com/actions/runner-images/blob/ubuntu26/20261025.179/images/ubuntu/Ubuntu2604-Readme.md\nImage Release: https://github.com/actions/runner-images/releases/tag/ubuntu26%2F20261025.179",
+      "architecture": "x64",
+      "xcodeVersion": null,
+      "commandLineToolsVersion": null,
+      "runtime": {
+        "node": "26.13.0",
+        "npm": "11.20.0",
+        "electron": "45.2.1",
+        "embeddedNode": "24.22.1",
+        "chromium": "156.0.8078.75"
+      },
+      "unitTests": {
+        "angular": 57,
+        "main": 97,
+        "renderer": 55,
+        "total": 209
+      },
+      "packageRunner": {
+        "tests": 5,
+        "passed": 5
+      },
+      "liveReload": {
+        "watcher": "6.0.0",
+        "compilationBurst": {
+          "ignoredPathPredicatePassed": true,
+          "queuedRelaunches": 1,
+          "quitRequests": 1,
+          "watcherClosed": true
+        },
+        "results": [
+          {
+            "mode": "quit",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "soft",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "relaunch",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "module-relaunch",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true,
+            "moduleValueAfterRelaunch": "after"
+          },
+          {
+            "mode": "hidden-root",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true,
+            "moduleValueAfterRelaunch": "after"
+          }
+        ]
+      },
+      "packagedE2E": {
+        "passed": 14,
+        "skipped": 1
+      },
+      "notableE2ECases": [
+        "  \u2713   4 test/e2e/regression.spec.mjs:288:1 \u203a folder picker loads real photo data, markers, tree selection and chart (15.4s)",
+        "  \u2713   6 test/e2e/regression.spec.mjs:372:1 \u203a chart grouping, zoom, reset and photo selection keep their real data behavior (11.9s)",
+        "  \u2713   9 test/e2e/regression.spec.mjs:472:1 \u203a analytics preserves events and identity without new Amplitude local URLs (8.4s)"
+      ],
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@v7.0.1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Install Node.js with the version in mise.toml",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Verify Node and its bundled npm",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "npm ci",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Verify Electron and embedded Node",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "npm run lint:ng",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "npm run lint:script",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "npm run test:unit:ng",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "npm run test:unit:em:main",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "npm run test:unit:em:renderer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "npm run test:live-reload",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "Install FUSE (Required to launch AppImage during \"npm run test:package\")",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "npm run test:package",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "Locate packaged AppImage for E2E",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15
+        },
+        {
+          "name": "npm run test:e2e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16
+        },
+        {
+          "name": "Post Install Node.js with the version in mise.toml",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 31
+        },
+        {
+          "name": "Post Run actions/checkout@v7.0.1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 32
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 33
+        }
+      ]
+    },
+    {
+      "jobId": 125899533932,
+      "runId": 41630776056,
+      "event": "push",
+      "workflowName": "CI on Windows",
+      "jobName": "test (windows-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41630776056/job/125899533932",
+      "checkedOutCommit": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
+      "operatingSystem": "Microsoft Windows Server 2025\n10.0.26100\nDatacenter",
+      "runnerImage": "Image: windows-2025-vs2026\nVersion: 20261030.294.1\nIncluded Software: https://github.com/actions/runner-images/blob/win25-vs2026/20261030.294/images/windows/Windows2025-VS2026-Readme.md\nImage Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20261030.294",
+      "architecture": "x64",
+      "xcodeVersion": null,
+      "commandLineToolsVersion": null,
+      "runtime": {
+        "node": "26.13.0",
+        "npm": "11.20.0",
+        "electron": "45.2.1",
+        "embeddedNode": "24.22.1",
+        "chromium": "156.0.8078.75"
+      },
+      "unitTests": {
+        "angular": 57,
+        "main": 97,
+        "renderer": 55,
+        "total": 209
+      },
+      "packageRunner": {
+        "tests": 5,
+        "passed": 5
+      },
+      "liveReload": {
+        "watcher": "6.0.0",
+        "compilationBurst": {
+          "ignoredPathPredicatePassed": true,
+          "queuedRelaunches": 1,
+          "quitRequests": 1,
+          "watcherClosed": true
+        },
+        "results": [
+          {
+            "mode": "quit",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "soft",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "relaunch",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "module-relaunch",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true,
+            "moduleValueAfterRelaunch": "after"
+          },
+          {
+            "mode": "hidden-root",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true,
+            "moduleValueAfterRelaunch": "after"
+          }
+        ]
+      },
+      "packagedE2E": {
+        "passed": 14,
+        "skipped": 1
+      },
+      "notableE2ECases": [
+        "  ok  4 test\\e2e\\regression.spec.mjs:288:1 \u203a folder picker loads real photo data, markers, tree selection and chart (12.2s)",
+        "  ok  6 test\\e2e\\regression.spec.mjs:372:1 \u203a chart grouping, zoom, reset and photo selection keep their real data behavior (10.7s)",
+        "  ok  9 test\\e2e\\regression.spec.mjs:472:1 \u203a analytics preserves events and identity without new Amplitude local URLs (6.5s)"
+      ],
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@v7.0.1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Install Node.js with the version in mise.toml",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Verify Node and its bundled npm",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "npm ci",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Verify Electron and embedded Node",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "npm run lint:ng",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "npm run lint:script",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "npm run test:unit:ng",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "npm run test:unit:em:main",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "npm run test:unit:em:renderer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "npm run test:live-reload",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "npm run test:package",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "npm run test:e2e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "[Publish to GitHub Releases] Clean-up by \"git clean -fdx\" (1st time)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15
+        },
+        {
+          "name": "[Publish to GitHub Releases] Clean-up by \"git clean -fdx\" (2nd time to be sure)",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16
+        },
+        {
+          "name": "[Publish to GitHub Releases] npm ci",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17
+        },
+        {
+          "name": "[Publish to GitHub Releases] Create and publish Windows package",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18
+        },
+        {
+          "name": "Post Install Node.js with the version in mise.toml",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 35
+        },
+        {
+          "name": "Post Run actions/checkout@v7.0.1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 36
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 37
+        }
+      ],
+      "actualWindowsUpload": {
+        "confirmed": true,
+        "assets": [
+          "Photo-Location-Map-Setup-1.12.2-alpha.exe",
+          "Photo-Location-Map-Setup-1.12.2-alpha.exe.blockmap"
+        ],
+        "timestampUtc": "2026-11-03T12:02:14Z"
+      }
+    },
+    {
+      "jobId": 125899530536,
+      "runId": 41630775715,
+      "event": "push",
+      "workflowName": "CI on macOS",
+      "jobName": "test (macos-26)",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/TomoyukiAota/photo-location-map/actions/runs/41630775715/job/125899530536",
+      "checkedOutCommit": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
+      "operatingSystem": "macOS\n26.6.2\n25G83",
+      "runnerImage": "Image: macos-26-arm64\nVersion: 20261026.0455.2\nIncluded Software: https://github.com/actions/runner-images/blob/macos-26-arm64/20261026.0455/images/macos/macos-26-arm64-Readme.md\nImage Release: https://github.com/actions/runner-images/releases/tag/macos-26-arm64%2F20261026.0455",
+      "architecture": "arm64",
+      "xcodeVersion": null,
+      "commandLineToolsVersion": null,
+      "runtime": {
+        "node": "26.13.0",
+        "npm": "11.20.0",
+        "electron": "45.2.1",
+        "embeddedNode": "24.22.1",
+        "chromium": "156.0.8078.75"
+      },
+      "unitTests": {
+        "angular": 57,
+        "main": 97,
+        "renderer": 55,
+        "total": 209
+      },
+      "packageRunner": {
+        "tests": 5,
+        "passed": 5
+      },
+      "liveReload": {
+        "watcher": "6.0.0",
+        "compilationBurst": {
+          "ignoredPathPredicatePassed": true,
+          "queuedRelaunches": 1,
+          "quitRequests": 1,
+          "watcherClosed": true
+        },
+        "results": [
+          {
+            "mode": "quit",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "soft",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "relaunch",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true
+          },
+          {
+            "mode": "module-relaunch",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true,
+            "moduleValueAfterRelaunch": "after"
+          },
+          {
+            "mode": "hidden-root",
+            "exit": 0,
+            "forcedTermination": false,
+            "quitHooksRan": true,
+            "moduleValueAfterRelaunch": "after"
+          }
+        ]
+      },
+      "packagedE2E": {
+        "passed": 14,
+        "skipped": 1
+      },
+      "notableE2ECases": [
+        "  \u2713   4 test/e2e/regression.spec.mjs:288:1 \u203a folder picker loads real photo data, markers, tree selection and chart (13.9s)",
+        "  \u2713   6 test/e2e/regression.spec.mjs:372:1 \u203a chart grouping, zoom, reset and photo selection keep their real data behavior (12.9s)",
+        "  \u2713   9 test/e2e/regression.spec.mjs:472:1 \u203a analytics preserves events and identity without new Amplitude local URLs (7.3s)"
+      ],
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@v7.0.1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Install Node.js with the version in mise.toml",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Verify Node and its bundled npm",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "npm ci",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Verify Electron and embedded Node",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "npm run lint:ng",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7
+        },
+        {
+          "name": "npm run lint:script",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8
+        },
+        {
+          "name": "npm run test:unit:ng",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9
+        },
+        {
+          "name": "npm run test:unit:em:main",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10
+        },
+        {
+          "name": "npm run test:unit:em:renderer",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11
+        },
+        {
+          "name": "npm run test:live-reload",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12
+        },
+        {
+          "name": "npm run test:package",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13
+        },
+        {
+          "name": "npm run test:e2e",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14
+        },
+        {
+          "name": "Post Install Node.js with the version in mise.toml",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27
+        },
+        {
+          "name": "Post Run actions/checkout@v7.0.1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29
+        }
+      ]
+    }
+  ],
+  "failuresClassified": [],
+  "rerunsPerformed": [],
+  "limits": [
+    "This evidence covers only the exact source commit named above.",
+    "These CI packaged E2E runs are nonvisual; the separate website case is skipped.",
+    "CI macOS packaging skips notarization and does not prove Developer ID signing.",
+    "Minimum supported macOS13 and consumer Windows versions were not exercised by hosted runners.",
+    "Selected Xcode and Command Line Tools versions are not inferred when absent from job logs.",
+    "The Windows pull_request publish-command step completes but electron-builder skips outward publishing; only the push job exercises actual upload."
+  ]
+}

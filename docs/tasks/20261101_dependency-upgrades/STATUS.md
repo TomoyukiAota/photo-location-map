@@ -18,21 +18,28 @@ Updated: 2026-11-03 (Asia/Tokyo).
 - Source inspection, official release/registry reads, historical PR review and a
   read-only lockfile audit were performed. Research sources remain read-only;
   authorized source/PR/CI preparation is complete; CodeRabbit review is now in progress.
-- Latest verified application source is
-  `79d547fa884658be9266f03ae3d20ea05899b34a`, including the approved HEIC update.
-  Clean install/graph/runtime/build/lint, 194 unit assertions and 15 local
-  visual/functional cases pass. All eight platform test jobs in seven workflow
-  runs across three workflows pass at this same source, including native Intel
-  and 14 actual packaged cases per job. Fresh signed/notarized Mac artifacts,
-  archive/transport/native fixture gates and actual Windows draft bytes also pass.
-  See the three HEIC checkpoint records below. Earlier 2b7b0d7/f1f0ee5/872699e
-  records remain historical.
-- The first eight CodeRabbit findings and initial owner preferences were fixed
-  in a059f34/f7afae2. Both sources pass seven workflow runs/eight test jobs,
-  including native Intel; see [REVIEW_HISTORICAL_CI.json](./evidence/REVIEW_HISTORICAL_CI.json).
-  Further owner comments and two later bot findings are being addressed in a
-  third batch. Fresh source/artifact verification remains required. See
-  [CODERABBIT_REVIEW.md](./CODERABBIT_REVIEW.md).
+- Current application source is `c0f0dc97f1b7dfd687462c318fea88e585c1a94f`,
+  committed and pushed. This includes the third review batch; earlier entries
+  describing it as uncommitted or ready to push are dated historical states.
+- Current local gates pass: build/lint, complete dependency graph and runtime
+  checks, 209 unit assertions, five package-runner cases, five actual watcher
+  lifecycle cases, 15 checkout visual/functional cases and 14 actual signed-app
+  cases. All original/approved reference bytes and tolerances are unchanged.
+- Fresh signed/notarized Mac, ZIP/DMG content and blockmap identity, mounted-DMG
+  smoke, final-ZIP transport and real isolated native upgrade/relaunch/downgrade/
+  settings checks pass. Exact native cleanup and unchanged source fingerprint/
+  signature pass afterward. See [REVIEW_MAC_CHECKPOINT.json](./evidence/REVIEW_MAC_CHECKPOINT.json).
+- Actual c0 Windows draft bytes also pass all three digests, metadata, all 6,564
+  blockmap chunks and selected runtime/decoder/compiled-source checks. The draft
+  remains unpublished and mutable. See [REVIEW_WINDOWS_DRAFT_BYTES.json](./evidence/REVIEW_WINDOWS_DRAFT_BYTES.json).
+- All seven current workflow runs/eight actual test jobs pass at c0f0dc9,
+  including native Intel, with 209 units, five runner checks, five watcher modes
+  and 14 packaged cases per job. No failure or rerun. See
+  [REVIEW_CI_CHECKPOINT.json](./evidence/REVIEW_CI_CHECKPOINT.json).
+  The first two review-source CI checkpoints remain
+  [historical](./evidence/REVIEW_HISTORICAL_CI.json), now with actual checked-out
+  PR merge identities separate from head_sha. The two final documentation-only
+  findings are corrected; application source remains unchanged.
 - No baseline app remains. See the latest execution record for active processes. Local command logs
   are under `.upgrade-artifacts`; test output is in its `e2e-results` directory.
 
@@ -51,11 +58,8 @@ The PR is ready for review and a complete CodeRabbit review has been requested.
 Independent implementation and approved HEIC revalidation are complete. The owner selected the newer HEIC output on 2026-11-02,
 then explicitly accepted the confirmed-folder chooser policy on 2026-11-03 after
 clarification. Both implementation choices are resolved; merge/publication remains
-unauthorized. The fully verified application
-source is 79d547f. Fresh proof is in
-[HEIC_MAC_CHECKPOINT.json](./evidence/HEIC_MAC_CHECKPOINT.json),
-[HEIC_CI_CHECKPOINT.json](./evidence/HEIC_CI_CHECKPOINT.json) and
-[HEIC_WINDOWS_DRAFT_BYTES.json](./evidence/HEIC_WINDOWS_DRAFT_BYTES.json).
+unauthorized. The current application source is c0f0dc9. Fresh Mac, dated Windows-byte proof and all eight successful platform jobs
+are linked above at this exact source. The older HEIC records identify 79d547f only and remain historical.
 Read [FINAL_REVIEW.md](./FINAL_REVIEW.md) for scope and pending decisions.
 U13 remains unauthorized.
 Node 26 / bundled npm 11.20 and Electron 45 clean installation work;
@@ -1095,7 +1099,7 @@ checkpoint. See CODERABBIT_REVIEW.md for per-thread status. Fresh platform and
 signed-artifact checks remain required for this second batch.
 
 
-### Third review batch in progress (2026-11-03)
+### Historical checkpoint — third review batch before c0 push (2026-11-03)
 
 Current committed source is f7afae2; subsequent fixes are uncommitted. The full
 review inbox includes owner followups for NSIS --updated, hidden-ancestor watcher
@@ -1136,3 +1140,67 @@ reference hashes remain unchanged. The parser accepts only the specific hidden
 --updated compatibility flag; installed Windows E2E now includes and asserts it.
 Ready to commit/push this source checkpoint, then run the new stable Ubuntu
 check, remaining platform gates and rebuilt signed artifact verification.
+
+
+### Current handoff after third source push (2026-11-03)
+
+Application source c0f0dc97f1b7dfd687462c318fea88e585c1a94f is committed and
+pushed. It supersedes the earlier f7/current/uncommitted descriptions. All nine
+then-pending owner/bot threads received concrete responses after this commit.
+The new incremental review adds two documentation-only findings: record actual
+checked-out PR merge commits separately from head_sha (4454360799), and reconcile
+this stale handoff text (4454360814). Both belong in the final evidence/docs batch;
+no application change or artifact rebuild is implied by these corrections.
+
+Fresh c0 Mac validation is complete in REVIEW_MAC_CHECKPOINT.json, including
+14 signed-app cases, all archive bytes/links, signature/notarization/Gatekeeper,
+60-second mounted-DMG launch observation (55-second reported app session), final
+ZIP transport and native fixture install/relaunch/explicit downgrade/settings over
+four starts. Native caches/jobs/preferences are cleaned and the full production
+fingerprint and strict signature remain unchanged afterward. Fresh Windows draft
+bytes are complete in REVIEW_WINDOWS_DRAFT_BYTES.json; its asset identities are a
+dated mutable observation. No local test application or mounted test image remains.
+Raw logs and fixture copies remain ignored; active/resume pointers are in
+`.upgrade-artifacts/review-third-active.json`. Do not run test:package over these
+final notarized artifacts.
+
+Exact-c0 CI is now complete: seven successful workflow runs/eight actual test
+jobs, including manual native Intel run 41630843941, with complete log evidence.
+The CodeRabbit c0 check succeeded and explicitly resolved the earlier CI-evidence
+and Amplitude threads. The final two documentation findings are implemented.
+Next smallest step: commit/push only this sanitized evidence/docs checkpoint,
+reply to those two threads, and inspect the actual new-head checks/review. Any automatic
+documentation-head checks must be classified by their actual results; source c0
+artifacts do not acquire a later documentation SHA. After all verification, tell
+the owner in the Codex chat that replacing protected test (ubuntu-24.04) with
+test (ubuntu) is ready. The owner reserved that remote setting; do not edit it.
+Merge, stable version/channel changes, public release and manual Mac upload remain
+unauthorized. The accepted HEIC, chooser and older-macOS risk choices stay resolved.
+
+
+### Source verification complete; final evidence handoff (2026-11-03)
+
+Verified application source is c0f0dc97f1b7dfd687462c318fea88e585c1a94f. All local,
+signed-artifact, native-update and eight platform test jobs pass with no CI
+failures or reruns. REVIEW_MAC_CHECKPOINT.json, REVIEW_CI_CHECKPOINT.json and
+REVIEW_WINDOWS_DRAFT_BYTES.json carry their actual source, observation times,
+identities and limits. The CI record separately identifies PR merge checkouts;
+REVIEW_HISTORICAL_CI.json now records all sixteen older job checkout SHAs from
+freshly read exact job logs. No previous artifact identity was relabeled.
+
+CodeRabbit's exact-c0 check completed successfully. Its two final minor findings
+4454360799/4454360814 are fixed in this documentation-only checkpoint. The earlier
+CI-evidence and Amplitude threads are explicitly resolved by CodeRabbit. No new
+runtime or owner request was present at that observation. Reply after this
+checkpoint is committed and verify the actual documentation-head review/CI.
+A new document-triggered Windows upload may replace draft bytes; the checked-in
+Windows record deliberately remains a dated source-c0 observation.
+
+Only the owner-reserved required-check replacement remains in the current task:
+replace test (ubuntu-24.04) with test (ubuntu), preserving GitHub Actions binding,
+strict mode and the Windows/Mac checks, after readiness is reported in the Codex
+chat. Source-c0 Ubuntu push/PR checks already pass. Do not change remote protection
+settings, enable automerge, merge or publish. Optional Dev-only Google Maps is
+not a packaged-Prod blocker. No owned local app/fixture or mounted test volume
+remains; ignored raw artifacts are retained for audit. Any later documentation
+head must be distinguished from the verified c0 application/artifact source.

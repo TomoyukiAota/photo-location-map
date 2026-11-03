@@ -1,101 +1,85 @@
 # Final pre-publication review
 
-Updated: 2026-11-03 (Asia/Tokyo). The historical HEIC artifact observations below
-were recorded on 2026-11-02 UTC. Later review results are identified separately.
+Updated: 2026-11-03 (Asia/Tokyo). Each checkpoint carries its actual UTC
+observation time and exact tested source; later document heads are separate.
 
-**CodeRabbit follow-up is being verified.** The first eight findings and initial
-owner preferences are fixed in a059f34/f7afae2; both exact-source CI checkpoints
-are in [REVIEW_HISTORICAL_CI.json](./evidence/REVIEW_HISTORICAL_CI.json).
-Later owner followups and two bot findings require another batch. Production-source fixes require
-fresh distribution/platform verification; the source-79d547f artifact records
-below remain historical until that follow-up completes. See
-[CODERABBIT_REVIEW.md](./CODERABBIT_REVIEW.md) and STATUS for current progress.
+**The implementation and review fixes are verified at c0f0dc9.** All seven
+workflow runs across three workflows and eight actual test jobs pass, including
+native Intel. Fresh signed/notarized Mac, distribution, updater and Windows-byte
+evidence is complete. The last two CodeRabbit documentation findings are fixed:
+actual checked-out PR merge identities are separate from head_sha, and STATUS
+identifies the committed source and completed/pending work correctly. A final
+documentation push still requires its actual checks/review to be reconciled.
 
-The owner accepted the older-macOS auto-update risk and retained minimum 13.0
-without a guard. The stable Ubuntu check rename is now requested: after the new
-`test (ubuntu)` check passes, the owner will replace the old protected context.
-Report that readiness in the Codex chat; no remote protection edit is delegated.
-
-**The approved HEIC follow-up and independent verification are complete.** The
-candidate uses `heic-decode` 2.1.0 with `libheif-js` 1.23.5 and the explicitly
-approved newer pixel output. The owner explicitly accepted the confirmed-folder
-chooser policy on 2026-11-03 after clarification. Merge and publication remain
-unauthorized. The verified artifacts are review candidates.
+The HEIC output, confirmed-folder chooser policy and older-macOS update risk are
+accepted decisions. Merge, a stable-version/channel change and application
+publication remain unauthorized. The owner reserved the coordinated required-check
+replacement described below; no other implementation choice needs reopening.
 
 ## Candidate and scope
 
 | Item | Selected candidate |
 | --- | --- |
-| Application version | `1.12.2-alpha`; no release-version bump is included. |
-| Verified application source | [`79d547fa884658be9266f03ae3d20ea05899b34a`](https://github.com/TomoyukiAota/photo-location-map/commit/79d547fa884658be9266f03ae3d20ea05899b34a) |
-| CI application head | `79d547fa884658be9266f03ae3d20ea05899b34a`; the [CI record](./evidence/HEIC_CI_CHECKPOINT.json) separately identifies each checked-out commit, including PR merge commits. |
-| Approved HEIC selection | `heic-decode` 2.1.0; resolved `libheif-js` 1.23.5; old parent-scoped pin removed. Actual packaged metadata and selected decoder payload bytes are verified. |
-| Review | [PR #630 — ready for review](https://github.com/TomoyukiAota/photo-location-map/pull/630) |
+| Application version | `1.12.2-alpha`; no release-version bump. |
+| Verified application source | [`c0f0dc97f1b7dfd687462c318fea88e585c1a94f`](https://github.com/TomoyukiAota/photo-location-map/commit/c0f0dc97f1b7dfd687462c318fea88e585c1a94f) |
+| Platform CI | [REVIEW_CI_CHECKPOINT.json](./evidence/REVIEW_CI_CHECKPOINT.json): head and actual checked-out commit are recorded separately for each job, including PR merge commits. |
+| Review | [PR #630 — ready](https://github.com/TomoyukiAota/photo-location-map/pull/630), with no automerge label or native auto-merge request. |
 | Framework | Angular core 22.2.4; CLI/Material 22.2.5; TypeScript 6.0.3. |
-| Development runtime | Node 26.13.0 with its bundled npm 11.20.0, matching Photo Data Viewer. |
-| Application runtime | Electron 45.2.1, embedded Node 24.22.1 and Chromium 156.0.8078.75. |
-| Minimum macOS | 13, already accepted by the owner. |
+| Development runtime | Node 26.13.0 with bundled npm 11.20.0, matching Photo Data Viewer. |
+| Application runtime | Electron 45.2.1; embedded Node 24.22.1; Chromium 156.0.8078.75. |
+| Minimum macOS | 13.0; no older-OS auto-update guard, as explicitly accepted. |
+| Approved HEIC | heic-decode 2.1.0 / libheif-js 1.23.5, actual packaged versions/payloads and separately approved pixels asserted. |
 
-The complete package inventory is in
-[IMPLEMENTED_VERSIONS.json](./evidence/IMPLEMENTED_VERSIONS.json), with retained
-versions explained in [EXCEPTIONS.md](./EXCEPTIONS.md). The approved decoder's
-source chain, references and security limits are in
-[HEIC_APPROVED_UPDATE.md](./evidence/HEIC_APPROVED_UPDATE.md). Each record
-identifies its verified source and artifact identity. Earlier `f1f0ee5` reports
-remain historical pre-follow-up evidence and do not verify this decoder.
-Later documentation heads must not be substituted for the recorded application
-source or checked-out CI commits.
-
-The work preserves the app's existing architecture, controls and interactions,
-with original screenshot references retained. The approved HEIC output change,
-accepted chooser policy and time-zone corrections below remain material. The
-optional experimental Dev-only Google Maps check lacks a valid key.
+The [complete 99-entry inventory](./evidence/IMPLEMENTED_VERSIONS.json),
+[retained-version constraints](./EXCEPTIONS.md) and
+[HEIC source/security limits](./evidence/HEIC_APPROVED_UPDATE.md) remain available.
+NgModules, webpack/CommonJS, Material appearance, map controls and ECharts v5
+styling are retained. The actual chart palette now has a direct runtime assertion
+in addition to the original screenshot comparisons. Approved HEIC/chooser changes
+and time-zone corrections remain material. Optional Dev-only Google Maps lacks a key.
 
 ## Verification gates
 
-All completed follow-up gates below use application source `79d547f`. Seven
-workflow runs across three workflows and eight actual platform test jobs pass
-without failures or reruns.
-The CI record distinguishes branch heads from checked-out PR merge commits.
+All current records below identify application source c0f0dc9. Earlier HEIC,
+a059f34 and f7afae2 records remain historical and are not relabeled.
 
-| Gate | Status | Evidence and limit |
-| --- | --- | --- |
-| Clean installation, runtime and local regression | **PASS** | [HEIC_MAC_CHECKPOINT.json](./evidence/HEIC_MAC_CHECKPOINT.json): complete graph, host/bundled-npm and Electron runtime checks, production build, lint, 194 unit tests and 15 checkout visual/functional cases. Original snapshots/tolerances remain unchanged. |
-| Final universal Mac build and real notarization | **PASS** | [Mac identity and artifacts](./evidence/HEIC_MAC_CHECKPOINT.json): strict deep codesign, staple and Gatekeeper; original icon, macOS 13 minimum and both executable/framework architectures. Both extracted distributions match all 4,754 regular files plus symlink/directory entries of the signed bundle. Metadata and every ZIP/DMG blockmap chunk match. |
-| Actual final packaged Mac app | **PASS** | 14 local visual/functional cases pass; the website-only case is skipped. Actual decoder 2.1.0/1.23.5, exact approved 300x400 pixel hash, corrupt-input behavior and embedded HEIC paths pass in the [Mac checkpoint](./evidence/HEIC_MAC_CHECKPOINT.json). |
-| Final signed ZIP updater transport | **PASS** | [Mac checkpoint](./evidence/HEIC_MAC_CHECKPOINT.json): actual final ZIP download/cache/checksum handling; native setup is intercepted in this transport test. See the [harness limits](../../../test/updater/README.md). |
-| Final DMG launch, smoke and cleanup | **PASS** | [Mac checkpoint](./evidence/HEIC_MAC_CHECKPOINT.json): mounted-DMG direct launch with a test-owned profile, main/renderer logs within the 60-second launch observation window, quit and detach. The app reports a 55-second session; this is not 60 seconds after readiness. |
-| Isolated native updater fixture | **PASS** | [Mac checkpoint](./evidence/HEIC_MAC_CHECKPOINT.json): actual signed native install/relaunch/explicit downgrade rollback and settings through four starts. Separate test identity and candidate-runtime versions 99.0.1/99.0.2; this is not a public old-release or final-production-ZIP native installation. Exact caches/jobs/preferences are cleaned; the production bundle signature/fingerprint remains unchanged. |
-| Windows installed NSIS application | **PASS** | [Both CI triggers](./evidence/HEIC_CI_CHECKPOINT.json): 194 units, install smoke and 14 packaged E2E cases per job. Actual push draft upload and [downloaded bytes](./evidence/HEIC_WINDOWS_DRAFT_BYTES.json) verified; PR-context uploading is skipped as intended. |
-| Ubuntu created AppImage | **PASS** | [Both CI triggers](./evidence/HEIC_CI_CHECKPOINT.json): 194 units, AppImage smoke and 14 packaged E2E cases per job. Required-check name remains test (ubuntu-24.04); runner is 26.04. |
-| macOS arm64 created universal app | **PASS** | [Push, PR and manual jobs](./evidence/HEIC_CI_CHECKPOINT.json): 194 units, universal smoke and 14 packaged E2E cases per job. |
-| Native macOS Intel created universal app | **PASS** | [Manual run 41446524256, job 125280892676](./evidence/HEIC_CI_CHECKPOINT.json): same application head, 194 units, universal smoke and 14 packaged E2E cases. Native x64 runner/architecture assertions pass; local Rosetta is unavailable. |
-| Experimental Dev-only Google Maps with a valid key | **OPTIONAL ADDITIONAL DEVELOPER COVERAGE — key unavailable** | Hidden in packaged Prod mode; see the owner-dependent item below. |
-| Production public-feed upgrade and post-release downloads | **NOT RUN — publication not authorized** | Perform controlled post-publication checks after authorization; isolated transport/native fixtures do not prove this gate. |
-
-CI tests actual created/installed applications. Its packaged runs are functional
-checks with `PLM_VISUAL` disabled; they do not compare macOS pixel references.
-The local signed/notarized Mac app has separate visual verification. Mac CI
-package tests deliberately skip notarization. Passing decoder assertions do not
-establish absence of security defects. Consult [STATUS.md](./STATUS.md) and the
-[PR checks](https://github.com/TomoyukiAota/photo-location-map/pull/630/checks)
-for any later documentation-head checks; do not infer success from a running or
-superseded job.
-
-### Verified artifact inventory
-
-| Artifact/evidence | State |
+| Gate | Status and evidence |
 | --- | --- |
-| `Photo Location Map-1.12.2-alpha-universal.dmg` | [Current checksums, identity, signature and smoke](./evidence/HEIC_MAC_CHECKPOINT.json); no manual upload performed. |
-| `Photo Location Map-1.12.2-alpha-universal-mac.zip` | [Current checksums, identity and transport](./evidence/HEIC_MAC_CHECKPOINT.json); no manual upload performed. |
-| Windows installer/draft artifact | [Observed draft asset IDs/checksums/payload](./evidence/HEIC_WINDOWS_DRAFT_BYTES.json): all three GitHub digests, metadata and 6,641 blockmap chunks match. Actual decoder metadata and five selected payload files match the approved Mac build. The draft is unpublished and mutable; this dated observation is not a future release identity. |
-| Linux AppImage | [Actual packaged CI results](./evidence/HEIC_CI_CHECKPOINT.json). No remote Linux artifact upload/download or persisted AppImage checksum is claimed. |
-| Native fixture report and cleanup | [Passed; scope and exact cleanup](./evidence/HEIC_MAC_CHECKPOINT.json). |
+| Local runtime, graph, build and lint | **PASS** — [Mac/local checkpoint](./evidence/REVIEW_MAC_CHECKPOINT.json). Dependency versions/lockfile are unchanged; clean npm ci is repeated in each platform CI job. |
+| Local unit and lifecycle checks | **PASS** — 209 unit assertions (57 Angular/97 main/55 renderer), five package-runner cases and five actual watcher lifecycle cases. |
+| Local visual/functional behavior | **PASS** — all 15 checkout cases and 14 actual signed-app cases; packaged website case intentionally skipped. All 15 original/approved reference files and comparison tolerances are unchanged. |
+| Amplitude and snapshot controls | **PASS** — real-SDK manual events/identity and sessions retained, no new page views/URL enrichment, zero captured-payload parse errors. Page-view and enrichment-only negative controls fail independently. Future snapshot updates work; opt-in migration protection rejects updates before launch. |
+| Real universal Mac signing/notarization | **PASS** — [fresh identity](./evidence/REVIEW_MAC_CHECKPOINT.json): strict signature, staple, Gatekeeper, exact minimum 13.0, both executable/framework slices and original icon. |
+| ZIP/DMG content, metadata and blockmaps | **PASS** — both archives match all 4,754 files and links; metadata hashes/sizes and every chunk verify (11,316 ZIP / 11,625 DMG). |
+| Mounted-DMG smoke | **PASS** — 60-second launch observation, main/renderer logging, reported 55-second app session, normal quit, owned-profile cleanup and detach. This is not 60 seconds after readiness. |
+| Final ZIP updater transport | **PASS** — exact ZIP download/hash, cache reuse, corrupt-checksum rejection and isolated paths; native installation/signature checks are separate. |
+| Native Mac updater fixture | **PASS** — signed candidate-runtime 99.0.1 → 99.0.2 → 99.0.1 install/relaunch/explicit downgrade; production prompt Yes twice and saved setting through four starts. Exact native caches/jobs/preferences cleaned; production signature/fingerprint unchanged afterward. Fixtures have an isolated identity and are not notarized/public old releases or the production-identity ZIP. |
+| Windows installed NSIS app | **PASS** — both [CI triggers](./evidence/REVIEW_CI_CHECKPOINT.json), 209 units + five runner + five watcher + 14 packaged cases per job, including actual installed startup with --updated. |
+| Windows draft bytes | **PASS** — [dated download](./evidence/REVIEW_WINDOWS_DRAFT_BYTES.json), all three GitHub digests, update metadata, all 6,564 chunks, seven compiled files and five decoder payloads. Read-only inspection; no local EXE execution. |
+| Ubuntu AppImage | **PASS** — both triggers, same complete counts; stable check name test (ubuntu), actual Ubuntu 26.04.1. |
+| macOS arm64 universal app | **PASS** — push/PR/manual jobs, same complete counts. CI deliberately skips notarization; local real notarization is separate. |
+| Native macOS Intel universal app | **PASS** — manual run 41630843941 / job 125899705853 at the same source, same complete counts. No local Rosetta execution is inferred. |
+| Experimental Dev-only Google Maps | **OPTIONAL / key unavailable** — not a packaged-Prod blocker. |
+| Public-feed/post-release downloads | **NOT RUN / publication unauthorized** — isolated transport/native tests do not prove public release behavior. |
 
-Keep the verified production bundle unchanged. Any later runtime/source change
-requires affected tests and artifacts to be rebuilt and reverified; an earlier
-signature/checksum record does not transfer. A later Windows draft upload may
-replace asset IDs and bytes, so recheck the actual assets before publication.
+The seven CI runs have no failures or reruns. Hosted CI E2E is nonvisual and skips
+the website case; local signed Mac verification performs visual comparisons.
+Minimum supported consumer OS versions are not hosted-runner execution targets.
+The actual OS/image/architecture, checkout source and counts are recorded per job.
+Passing tests do not establish that native/npm security defects are absent.
+
+### Artifact identities and mutable draft
+
+Mac ZIP SHA-256: `111b20b898ff21231d564d5de98879472bcfc46ebb8b4e16533cedb5c7259bca`.
+DMG SHA-256: `c4c1740374cb707d29c65073b3ba657cad32c65de5ebc7bb38f3ea890a231a66`.
+Full sizes, SHA-512, blockmaps, source fingerprint and exact observations are in
+the Mac checkpoint. No manual Mac artifact upload occurred.
+
+The source-c0 Windows draft EXE observation is asset 705454543, SHA-256
+`1593def6c08e9f48b9e3441beba9be3581e12b7cb3f2c3616192cd1880cd1bd5`.
+The draft is unpublished and mutable. Each later branch push may replace its
+assets; this is a dated byte observation, not a promise about later latest-draft
+hashes. Revalidate selected source/artifacts before a separately authorized release.
 
 ## Approved follow-up and remaining owner-dependent items
 
@@ -148,9 +132,9 @@ Holding publication while awaiting a suitable upstream fix remains an option;
 no unsupported decoder fork or unreviewed timeout policy is included.
 
 The signed artifacts recorded for `f1f0ee5` remain the historical
-pixel-preserving checkpoint. The current `79d547f` records identify newly
-verified and signed artifacts with the approved decoder; the old records must
-not be relabeled as evidence for those bytes.
+pixel-preserving checkpoint. The `79d547f` records remain the historical first approved-decoder checkpoint.
+The current review records identify freshly verified source `c0f0dc9`; old
+records must not be relabeled as evidence for new bytes.
 
 ### 2. Native folder-chooser history
 
@@ -204,7 +188,22 @@ verification. If that access cannot be provided, record an owner-run check of
 the existing Google Maps mode and its exact result instead. Do not place a key
 in this public decision record. Other independent checks must finish first.
 
-### 4. Merge and public release
+### 4. Coordinated required-check rename
+
+The owner requested the stable `test (ubuntu)` name and reserved the remote
+branch-protection edit. Both new Ubuntu checks pass at c0f0dc9. The workflow and
+both Mergify success/skipped conditions already use this name. After the final
+documentation-head checks, report readiness in the Codex chat and ask the owner
+to replace only `test (ubuntu-24.04)` with `test (ubuntu)` (GitHub Actions) in
+main's required checks. Keep strict mode and the Windows/Mac required checks.
+No protection setting was changed by this task. This is the only remaining
+owner action in the current review task; merge/publication is separate.
+
+The owner also explicitly accepted the older-macOS auto-update risk in
+[4454038799](https://github.com/TomoyukiAota/photo-location-map/pull/630#discussion_r4454038799).
+Minimum macOS remains 13.0 without an auto-update guard. Do not reopen that choice.
+
+### 5. Merge and public release
 
 Merge/public release remains a separate authorization gate under
 [PLAN.md](./PLAN.md) and [CLAUDE.md](../../../CLAUDE.md). A later concrete
@@ -243,7 +242,7 @@ the approved decoder's current lockfile hash and the removed historical pin.
 1. Reconcile the actual app source, workflow head and artifact identities with
    this record and STATUS before continuing. Classify failures before reruns.
 2. The approved `heic-decode` 2.1.0 / `libheif-js` 1.23.5 follow-up is verified
-   at `79d547f`. Do not repeat the approved output question or redo completed
+   at `c0f0dc9` with fresh review/platform/artifact evidence. Do not repeat the approved output question or redo completed
    gates without a new change or unresolved concern. Any later application
    change requires fresh affected tests and artifact identities.
 3. The confirmed-folder chooser policy was explicitly accepted on 2026-11-03

@@ -7,6 +7,13 @@ findings. The PR is ready, with no automerge label or native auto-merge request.
 Merge and application release remain unauthorized. The accepted HEIC output
 and confirmed-folder policy are unchanged.
 
+Current verified application source is **c0f0dc9**. All seven workflow runs/eight
+actual jobs, including native Intel, pass. Fresh local/signed/distribution/updater
+and Windows-byte evidence is complete in the three REVIEW checkpoint records.
+The final two minor documentation findings below are fixed; the documentation
+head's actual checks/review still need reconciliation after its push. Earlier
+sections describe the sequence of source checkpoints, not pending implementation.
+
 The initial [review](https://github.com/TomoyukiAota/photo-location-map/pull/630#pullrequestreview-5746382588)
 covered the diff from 911dd91 to 7e2722d and posted six actionable findings.
 CodeRabbit selected 171 files, filtered 15 paths and reported three unavailable
@@ -157,3 +164,29 @@ opt-in original-stack guard rejects updates before launch and permits comparison
 All 15 original/approved reference files remain byte-identical. No dependency
 version or lockfile change is included in this batch. Platform/signed-artifact
 checks must still be repeated for the committed third source checkpoint.
+
+
+## Final documentation findings and verified handoff
+
+| Comment | Correction and verification |
+| --- | --- |
+| [4454360799](https://github.com/TomoyukiAota/photo-location-map/pull/630#discussion_r4454360799) | Freshly fetched all sixteen exact a059/f7 test-job logs. Record checkedOutCommit and checkoutLogUrl per job separately from head_sha. Observed PR merge SHAs are bab4304dae5595cf9e186e315dabb094c402b5e3 and 84262a909fcd8086b8d3de20cd2f42fbee21d0ea; push/manual jobs check out their heads. Original identities/counts remain unchanged. |
+| [4454360814](https://github.com/TomoyukiAota/photo-location-map/pull/630#discussion_r4454360814) | STATUS now identifies committed/pushed c0f0dc9, completed platform/artifact gates, and the remaining documentation-head review plus owner-reserved required-check replacement. Pre-push paragraphs are explicitly historical. |
+
+Exact-c0 CodeRabbit check 125899564703 succeeded. CodeRabbit explicitly resolved
+the earlier CI-evidence and Amplitude threads (acknowledgments 4454426380 and
+4454424366); it reported no new runtime finding. All seven CI runs/eight test
+jobs pass with no failure/rerun, each with 209 units, five runner cases, five
+watcher modes and 14 packaged E2E passes/one website skip. Native Intel is exact
+source c0. The signed Mac, all local visual/functional checks, archive identity,
+DMG smoke, final ZIP transport, isolated native install/relaunch/downgrade/settings
+and exact cleanup pass. Current Mac and dated Windows byte records identify c0;
+older identities remain historical. Original references/tolerances and lockfile
+are unchanged. No merge, application publication or protection edit occurred.
+
+After this documentation-only push, reply to the two findings and inspect the
+new review/checks rather than treating the old c0 result as their result. Tell
+the owner in the Codex chat when the stable Ubuntu protected-check replacement
+is ready. The owner reserved that setting; no other implementation decision
+needs reopening. Revalidate mutable selected release artifacts before any
+separately authorized publication.
