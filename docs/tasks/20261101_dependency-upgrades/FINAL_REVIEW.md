@@ -6,10 +6,10 @@ observation time and exact tested source; later document heads are separate.
 **The implementation and review fixes are verified at c0f0dc9.** All seven
 workflow runs across three workflows and eight actual test jobs pass, including
 native Intel. Fresh signed/notarized Mac, distribution, updater and Windows-byte
-evidence is complete. The last two CodeRabbit documentation findings are fixed:
-actual checked-out PR merge identities are separate from head_sha, and STATUS
-identifies the committed source and completed/pending work correctly. A final
-documentation push still requires its actual checks/review to be reconciled.
+evidence is complete. The documentation corrections are complete at f37956c: all six automatic runs
+pass and the latest CodeRabbit review has no new actionable comments. The current
+follow-up introduces stable macOS check names; its exact-head checks/review and
+owner migration are described below, separately from the verified application source.
 
 The HEIC output, confirmed-folder chooser policy and older-macOS update risk are
 accepted decisions. Merge, a stable-version/channel change and application
@@ -190,14 +190,19 @@ in this public decision record. Other independent checks must finish first.
 
 ### 4. Coordinated required-check rename
 
-The owner requested the stable `test (ubuntu)` name and reserved the remote
-branch-protection edit. Both new Ubuntu checks pass at c0f0dc9. The workflow and
-both Mergify success/skipped conditions already use this name. After the final
-documentation-head checks, report readiness in the Codex chat and ask the owner
-to replace only `test (ubuntu-24.04)` with `test (ubuntu)` (GitHub Actions) in
-main's required checks. Keep strict mode and the Windows/Mac required checks.
-No protection setting was changed by this task. This is the only remaining
-owner action in the current review task; merge/publication is separate.
+The owner completed the stable `test (ubuntu)` replacement in main's branch
+protection; API verification confirms the new context and preserved strict mode
+and GitHub Actions bindings. That migration is complete.
+
+The owner subsequently approved `test (macos-arm64)` for regular macOS CI and
+`test (macos-x64)` for manual Intel. Workflow names and the regular Mergify
+success/skipped conditions are updated together; pinned runner versions and
+all test behavior are unchanged. Check the actual new-head CI/review before
+announcing readiness in the Codex chat. The owner will then replace only
+`test (macos-26)` with `test (macos-arm64)` in main's required checks, preserving
+the Ubuntu/Windows checks, strict mode and GitHub Actions binding. Manual x64
+is not a required check. No remote setting was changed by the agent.
+This is the remaining owner action in the current task; merge/publication is separate.
 
 The owner also explicitly accepted the older-macOS auto-update risk in
 [4454038799](https://github.com/TomoyukiAota/photo-location-map/pull/630#discussion_r4454038799).

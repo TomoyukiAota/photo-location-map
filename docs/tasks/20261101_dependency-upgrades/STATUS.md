@@ -40,6 +40,13 @@ Updated: 2026-11-03 (Asia/Tokyo).
   [historical](./evidence/REVIEW_HISTORICAL_CI.json), now with actual checked-out
   PR merge identities separate from head_sha. The two final documentation-only
   findings are corrected; application source remains unchanged.
+- Current follow-up: the owner confirmed and saved Ubuntu's stable required check;
+  read-only API verification confirms `test (ubuntu)` with strict mode and the
+  Windows/Mac requirements preserved. The Ubuntu discussion is resolved.
+  The owner also authorized stable macOS check names: `test (macos-arm64)` and
+  manual `test (macos-x64)`. Workflow/Mergify/docs now use these literal names;
+  runner labels, job conditions, test commands and application source are unchanged.
+  New-head CI/review must pass before announcing the owner's Mac protection step.
 - No baseline app remains. See the latest execution record for active processes. Local command logs
   are under `.upgrade-artifacts`; test output is in its `e2e-results` directory.
 
@@ -1204,3 +1211,38 @@ settings, enable automerge, merge or publish. Optional Dev-only Google Maps is
 not a packaged-Prod blocker. No owned local app/fixture or mounted test volume
 remains; ignored raw artifacts are retained for audit. Any later documentation
 head must be distinguished from the verified c0 application/artifact source.
+
+
+### Stable macOS check names (2026-11-03)
+
+The owner saved the Ubuntu required-context replacement; API verification now
+shows test (ubuntu), test (windows-latest) and test (macos-26), all bound to
+GitHub Actions, with strict mode retained. The completed Ubuntu conversation
+4451183542 is resolved. Earlier pending-Ubuntu instructions are historical.
+
+The owner approved the recommended version-independent macOS names. The regular
+job is now the literal test (macos-arm64), and manual Intel is test (macos-x64).
+The pinned runners remain macos-26 and macos-26-intel; the Intel job remains
+workflow_dispatch-only and is not added to Mergify or required checks. Both
+Mergify success/skipped conditions use the regular arm64 name. CONTRIBUTING
+describes the stable names and the coordinated rename sequence.
+
+Local validation compares parsed workflow data against the previous committed
+workflow: removing just the two name fields makes them identical. Parsed Mergify
+data differs only in the two arm64 context strings. Both new names are literal
+so skipped jobs still report their check contexts. No application, dependency,
+build command, packaging option, artifact or original reference changes here.
+The verified application/artifact source remains c0f0dc9; all older CI job-name
+records retain their actual historical names and sources. No new native Intel
+execution is needed for this metadata-only rename; the new x64 skipped context
+and unchanged manual condition must be checked on the automatic Mac runs.
+
+Resume: inspect the actual branch/head and this small CI/docs diff, then collect
+its automatic push/PR runs and incremental CodeRabbit review. Classify any failure
+before rerunning. Only after the new test (macos-arm64) check succeeds should the
+owner be told in the Codex chat to replace protected test (macos-26) with
+test (macos-arm64), retaining GitHub Actions binding, strict mode and the existing
+Ubuntu/Windows requirements. Do not add manual test (macos-x64) as a required
+check or edit remote protection settings. Merge/publication remain unauthorized.
+This record intentionally keeps the application source separate from the new
+CI-name checkpoint; actual completion evidence belongs to the exact remote head.

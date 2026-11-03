@@ -31,11 +31,12 @@ jobs:
     # macos-26 is arm64 (Apple Silicon).
     # The name is written out rather than given by a matrix or an expression, so that the required check is reported
     # even when the job is skipped: a skipped job's name expression is not evaluated.
-    name: test (macos-26)
+    # Keep architecture-specific check names stable when runner versions change.
+    name: test (macos-arm64)
     runs-on: macos-26
 
     # Skipped when only documents changed, which passes the required check. If "changes" fails, the tests run.
-    # A manual run runs this job too, so that it does not add a skipped "test (macos-26)" to the commit.
+    # A manual run runs this job too, so that it does not add a skipped "test (macos-arm64)" to the commit.
     needs: changes
     if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || needs.changes.outputs.app != 'false') }}
 
@@ -91,7 +92,7 @@ jobs:
   test-intel:
     # macos-26-intel is x64, and runs only when this workflow is run manually, because it took twice as long as macos-26
     # and its failures were caused by the runner, not the app. See CLAUDE.md for when to run it.
-    name: test (macos-26-intel)
+    name: test (macos-x64)
     runs-on: macos-26-intel
     if: ${{ github.event_name == 'workflow_dispatch' }}
     timeout-minutes: 45    # See the test job above.

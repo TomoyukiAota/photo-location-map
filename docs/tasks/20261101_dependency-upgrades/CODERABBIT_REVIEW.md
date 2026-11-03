@@ -10,8 +10,9 @@ and confirmed-folder policy are unchanged.
 Current verified application source is **c0f0dc9**. All seven workflow runs/eight
 actual jobs, including native Intel, pass. Fresh local/signed/distribution/updater
 and Windows-byte evidence is complete in the three REVIEW checkpoint records.
-The final two minor documentation findings below are fixed; the documentation
-head's actual checks/review still need reconciliation after its push. Earlier
+All thirteen known CodeRabbit findings are addressed. The f37956c documentation
+head passes six automatic runs and its latest review has no new actionable comments.
+The current follow-up changes macOS check names only, as described below. Earlier
 sections describe the sequence of source checkpoints, not pending implementation.
 
 The initial [review](https://github.com/TomoyukiAota/photo-location-map/pull/630#pullrequestreview-5746382588)
@@ -204,3 +205,23 @@ summary are completed, with no active step and the expected verified counts.
 The original run/checkout/artifact identities and observation time remain intact.
 This correction changes documentation only; current-head checks/review must still
 be inspected separately. No new application build or artifact identity is implied.
+
+
+## Stable macOS check-name follow-up
+
+After the owner confirmed saving Ubuntu's required-context replacement, read-only
+API verification confirms main requires test (ubuntu) with GitHub Actions binding
+and strict mode retained. Ubuntu conversation 4451183542 is now resolved.
+
+The owner approved test (macos-arm64) and manual test (macos-x64). Both workflow
+names remain literal and the regular Mergify success/skipped contexts match.
+Parsed workflow comparison confirms only the two name values change: runner
+labels, events, conditions, test commands, timeouts and anchors are identical.
+Parsed Mergify comparison confirms only the two arm64 context strings change;
+x64 is still manual and not required. An independent read-only review agrees.
+
+Application source, dependencies, original references and artifact identities
+remain c0f0dc9. Preserve all historical job names in earlier CI evidence. Inspect
+the new automatic checks and incremental CodeRabbit review before reporting
+readiness for the owner's test (macos-26) → test (macos-arm64) protection edit.
+No remote protection change, merge or public release is delegated to the agent.

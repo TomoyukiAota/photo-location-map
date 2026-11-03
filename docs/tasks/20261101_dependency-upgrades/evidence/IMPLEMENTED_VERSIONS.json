@@ -1,6 +1,6 @@
 {
   "observedDate": "2026-11-03",
-  "state": "Review source c0f0dc9 verified locally, on all eight platform jobs including native Intel, and through fresh signed/distribution/updater/Windows-byte gates. Dependency versions and lockfile unchanged; HEIC, chooser and older-macOS risk choices accepted. Final documentation-head checks and owner-required-check replacement remain; merge/application release unauthorized.",
+  "state": "Application source c0f0dc9 verified locally, on all eight platform jobs including native Intel, and through fresh signed/distribution/updater/Windows-byte gates. Dependency versions and lockfile unchanged; all thirteen review findings addressed and f37956c documentation checks pass. Ubuntu required-context replacement is saved. Stable macOS check-name follow-up requires its exact-head CI/review before the owner replaces the Mac protected context; merge/application release unauthorized.",
   "verifiedApplicationCommit": "c0f0dc97f1b7dfd687462c318fea88e585c1a94f",
   "hostNode": "26.13.0",
   "bundledNpm": "11.20.0",
