@@ -7,9 +7,13 @@ needed at the start of a session.
 ## This is the only instruction file for agents
 
 Claude Code, Codex and other coding agents all read this file. There is no
-`CLAUDE.md` on purpose: Claude Code reads `AGENTS.md` from v2.1.277 on, but
+`CLAUDE.md` on purpose: Claude Code v2.1.281 and later reads `AGENTS.md`, but
 skips it when a `CLAUDE.md`, `.claude/CLAUDE.md` or `CLAUDE.local.md` exists in
 the working directory or above it. Do not add one; put instructions here instead.
+
+To check, start an interactive Claude Code session here: it says
+`no CLAUDE.md found; AGENTS.md loaded: …`. If it does not, update Claude Code, or
+turn its built-in plugin that reads `AGENTS.md` back on with `/plugin`.
 
 ## Write in English
 
