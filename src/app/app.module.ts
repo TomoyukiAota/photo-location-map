@@ -107,9 +107,9 @@ import { AnalyticsErrorHandler } from './shared/error/analytics-error-handler';
     MatTreeModule,
     NgxEchartsModule.forRoot({
       echarts: async () => {
-        // The official v5 UMD theme depends on ECharts' CommonJS build. Load the
-        // same build here so its theme registration reaches ngx-echarts' instance.
-        const echarts = await import('echarts/dist/echarts');
+        // angular.webpack.ts resolves 'echarts' to ECharts' production build, both here
+        // and in the official v5 theme, so the theme registers on ngx-echarts' instance.
+        const echarts = await import('echarts');
         await import('echarts/theme/v5.js');
         if (typeof process !== 'undefined' && process.env.PLM_E2E === '1') {
           // Read the real chart through the same namespace that ngx-echarts receives.
