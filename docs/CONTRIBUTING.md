@@ -23,11 +23,8 @@ See also [ci.md](ci.md).
 
 ## Prerequisite
 
- - Node.js (64-bit), with the version specified in [`mise.toml`](../mise.toml)
-   - [mise](https://mise.jdx.dev/) is the recommended way to install it. `mise.toml` is the single source of truth for the Node.js version, and CI installs the same version from it.
-   - Node.js can also be installed however you prefer, as long as the version matches.
-   - Use the npm bundled with that Node installation; do not upgrade npm separately.
-     `npm run verify:runtime` checks the version and executable identity.
+ - [mise](https://mise.jdx.dev/)
+   - It installs the Node.js version in [`mise.toml`](../mise.toml) and the npm bundled with it. Do not upgrade npm separately.
  - More than 2GB of RAM
    - Application packaging frequently fails on a PC with 1GB of RAM. Add more RAM depending on the available memory for application packaging on your PC.
 
@@ -42,8 +39,6 @@ mise install  # Install Node.js with the version in mise.toml
 mise exec -- npm ci
 mise exec -- npm start
 ```
-
-Without mise, install the specified Node.js and its bundled npm, then run `npm ci` and `npm start`.
 
 Dependency install scripts are reviewed in `allowScripts` in `package.json`.
 When upgrading a package with an install script, inspect that script and update
