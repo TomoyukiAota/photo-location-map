@@ -43,6 +43,8 @@ mise exec -- npm start
 
 ## Frequently Used Commands
 
+Prefix these with `mise exec --`, as above, unless your shell activates mise with `mise activate`.
+
 |Command|Description|
 |--|--|
 |`npm start`| Build and run the application for development. |
