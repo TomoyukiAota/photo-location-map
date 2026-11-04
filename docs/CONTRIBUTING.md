@@ -3,7 +3,7 @@
 This page contains useful information to contribute to this project.
 
 
-## CI Status
+## CI
 
 | OS      | Status                                       |
 |:-------:|:--------------------------------------------:|
