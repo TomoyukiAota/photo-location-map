@@ -1,0 +1,9 @@
+{
+  "name": "@photo-location-map/legacy-rimraf",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.cjs",
+  "dependencies": {
+    "glob-modern": "npm:glob@13.0.6"
+  }
+}

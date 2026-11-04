@@ -64,9 +64,9 @@ sources, links, credentials, screenshots, and personal data.
 - [x] Create this plan before beginning investigation or implementation.
 - [x] Baseline complete and warning inventory recorded.
 - [x] Compatible replacement design recorded.
-- [ ] Build tooling migration implemented and validated.
-- [ ] Deprecated app/test APIs replaced and validated.
-- [ ] npm configuration and dependency paths resolved.
+- [x] Build tooling migration implemented and validated.
+- [x] Deprecated app/test APIs replaced and validated.
+- [x] npm configuration and dependency paths resolved.
 - [ ] Final clean installation and full relevant regression checks complete.
 - [ ] Independent review addressed and final report recorded.
 
@@ -127,6 +127,18 @@ feature/security changes in this task.
   confirmed resource-leak paths, cleanup guarantees, and explicit upstream limit.
 - Add explicit `typecheck:worker` before Angular builds: the application builder
   does not retain webpack's worker type-checking behavior automatically.
+- Continued the four residual dependency paths with bounded repository-owned
+  adapters in `compat/glob` and `compat/rimraf`. They translate only inspected
+  Karma/ASAR/Temp APIs onto maintained glob 13 and native `fs.rm`; no published
+  deprecation metadata or warning output is altered. See `DEPENDENCIES.md` and
+  each package README for exact support limits and removal criteria.
+- Isolated fresh installation and ten actual-consumer checks passed with zero
+  deprecated entries. `install-links=true`, private file-package dependencies,
+  and scoped `$` override references are required for portable packed copies.
+  A moved-copy clean-install check also passed. Existing-lock integration retained
+  stale modules, however; installed-source identity tests exposed this instead
+  of allowing a false zero-warning result. Full-manifest lock regeneration and
+  integrated acceptance remain in progress. Run `npm ci` after adapter edits.
 
 ## Validation record
 
@@ -152,6 +164,8 @@ feature/security changes in this task.
 | Isolated-profile `mise exec -- npm start` | PASS, app launched in Dev profile on Vite; no npm config, builder, Sass, or Node deprecation warnings. Owned process stopped. |
 | `PLM_E2E_LIVE_RELOAD=1 PLM_VISUAL=1 mise exec -- npm run test:e2e -- --grep 'welcome, about\|folder picker loads\|map regions preserve'` with `ng:serve` | PASS, 3 tests; real HTTP origin, module worker, Node access, photo/chart/map behavior and original visual comparisons. Server stopped. |
 | `PLM_VISUAL=1 mise exec -- npm run test:e2e` (first attempt) | First two visual/settings/map tests PASS. Interrupted after later startup timeouts: remote hook was edited concurrently before its new TS helper was compiled. Correct integration by making adapter tracked CommonJS, then rerun against a stable tree. |
+| Isolated adapter package fresh `npm install` and `npm ci` | PASS, zero deprecated entries/messages; ten actual-consumer tests pass. This is isolated feasibility evidence, not full-repository acceptance. |
+| Repository adapter installation using existing lockfile | Stale graph detected: four deprecated entries remain. Targeted `npm update glob rimraf --package-lock-only` failed with consumer-relative `ENOENT`; coordinator is regenerating the complete lock in isolation and comparing versions before adoption. |
 
 ## Resume instructions
 
@@ -171,18 +185,50 @@ feature/security changes in this task.
 
 ## Latest status
 
-Validated checkpoint: Angular/build/Sass/npm-profile/exifr/cache changes pass
-unit tests, full checkout visual E2E (15), actual `npm start`, and Vite-origin
-visual/photo/map E2E (3). The universal package test/smoke passed; the subsequently
-fixed disk-image commands pass capability and real mount/eject checks. No owned
-watcher, application, or mounted volume remains. Four deprecated install
-package/version pairs remain in dev/packaging dependencies; production graph has
-none. Final signed/notarized packaging and bundle E2E still remain.
+The complete repository now installs with zero deprecation warnings and zero
+locked deprecated packages. `npm ls --all` exits zero. All 18 dependency tests
+pass, including six installed-source checks (root adapters and actual consumers),
+packed-directory/lock guards, Karma file-list/watch behavior, ASAR archives,
+Temp cleanup, native path-separator cases, and POSIX escapes. `checkJs` covers both adapters.
+Final-tree lint, Angular 57 tests, Electron main 117 and renderer 55 tests,
+live-reload lifecycle, and package-runner 19 tests all pass.
 
-Remaining-warning investigation continues before accepting a partial cleanup:
-small repository-owned legacy-API adapters over supported glob and native fs.rm
-are being proven in isolated packages against the actual Karma/ASAR/temp callers.
-Initial clean-install override mechanics and consumer checks pass. No adapter
-manifest/runtime changes have been applied to this checkout yet. Acceptance
-requires explicit API support boundaries, actual-consumer regressions, clean
-zero-warning installation, full unit tests, and release packaging checks.
+The final signed/notarized `npm run package:mac` is running in the background.
+Local log: `.upgrade-artifacts/deprecation-warnings/final-signed-mac.log`.
+Do not start another build/install until it finishes. No app or watcher is
+running. Next: verify signatures/notarization, run original visual E2E against
+that packaged executable, run the 60-second DMG smoke using the new mount tool,
+check x64 execution if available, complete final review, and save a local commit.
+No feature/UI change was necessary. Nothing has been pushed or published.
+
+Earlier validated checkpoint: `74a2cf8`. It already passed full checkout visual
+E2E (15), dev/JIT visual startup, actual `npm start`, and Vite-origin photo/map/
+chart visual E2E (3). The adapter follow-up is saved as the next local checkpoint; inspect git log for its commit.
+
+Lock migration was resolved without unrelated upgrades: generate the adapter
+graph in isolation, seed retained registry entries from `74a2cf8`, and let npm
+regenerate/prune. Reject the unconstrained graph (it updated unrelated Babel and
+native dependencies). Explicitly reinstall the two direct adapters with npm
+`--save-dev ... --install-links=true` to replace stale direct symlinks; ordinary
+`npm install` did not repair them. Then root `npm ci`, `npm ls --all`, and the
+installed-source tests all passed. The only shared package-path version change
+from the checkpoint is the genuine glob 7 replacement with the private adapter
+1.0.0. Native msgpackr-extract remains 3.0.4; the repository's install-script policy
+is unchanged. `compat/glob/README.md` contains the exact reinstall command.
+
+For a final signed-bundle E2E run:
+
+```sh
+PLM_PACKAGED_EXECUTABLE="$PWD/release/mac-universal/Photo Location Map.app/Contents/MacOS/Photo Location Map" \
+PLM_VISUAL=1 mise exec -- npm run test:e2e
+```
+
+For smoke without rebuilding, set an absolute isolated `PLM_TEST_ROOT` before
+requiring `script/package-test/package-smoke-test.js`, then call its exported
+`run()` and propagate any rejection as exit code 1. Never run it against the
+owner's normal profile: it clears the profile's log directory.
+
+Windows/Linux CI has not run; pushing would trigger the repository's deliberate
+Windows draft-release publishing. Preserve the publishing steps. Confirm the
+outward publishing step before uploading artifacts. The manual Intel CI policy
+in AGENTS.md still applies before merging changes within its stated scope.

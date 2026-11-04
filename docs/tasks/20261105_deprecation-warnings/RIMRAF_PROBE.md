@@ -1,5 +1,11 @@
 # Narrow legacy removal adapter proof
 
+This records the initial isolated proof. The adapter and durable tests have since
+been integrated into `compat/rimraf` and
+`test/deprecation-warnings/legacy-rimraf.cjs`; consult `DEPENDENCIES.md` and
+`PLAN.md` for current installation/validation status. Resume from tracked files,
+not the temporary prototype paths below.
+
 This is an isolated feasibility result, not an installed production change.
 The prototype and executable probe live only in `/tmp/plm-rimraf-probe/`.
 No repository runtime code, package manifest, lockfile, or installed dependency

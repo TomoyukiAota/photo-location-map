@@ -8,13 +8,13 @@ Angular build and application API migrations are tracked separately.
 
 | Deprecated package | Actual dependency path(s) | Disposition |
 | --- | --- | --- |
-| `glob@7.2.3`, `inflight@1.0.6` | `karma@6.4.4`; `@electron/asar@3.4.1`; old `rimraf` copies | Modern glob is not a drop-in replacement for these callers. See blockers below. |
-| `rimraf@3.0.2` | `karma@6.4.4` | Karma expects the old callback API. |
+| `glob@7.2.3`, `inflight@1.0.6` | `karma@6.4.4`; `@electron/asar@3.4.1`; old `rimraf` copies | Bounded repository-owned glob adapter implemented; installed full-graph acceptance pending. |
+| `rimraf@3.0.2` | `karma@6.4.4` | Bounded callback/sync removal adapter implemented; installed full-graph acceptance pending. |
 | `rimraf@2.7.1` | `delete-empty@3.0.0` | Replace the application's sole `delete-empty.sync` call, then remove package/types. |
-| `rimraf@2.6.3` | `electron-builder-squirrel-windows@26.18.1` → `electron-winstaller@5.4.0` → `temp@0.9.4` | Release dependency; native removal/modern rimraf would need a callback compatibility change upstream. |
-| `boolean@3.2.0` | builder's `@electron/get@3.1.0` → `global-agent@3.0.0`, and its `roarr@2.15.4` | Candidate: scope `global-agent@4.1.6` override to `@electron/get`. |
-| `lodash.isequal@4.5.0` | `electron-updater@6.8.12` | Candidate: updater-only alias to `lodash.isequalwith@4.4.0`, preserving two-argument comparison. |
-| `glob@10.5.0` | `electron-mocha@13.1.0` → `mocha@11.7.5` | Candidate: Mocha-only override to `glob@13.0.6`; do not upgrade Mocha itself to 12. |
+| `rimraf@2.6.3` | `electron-builder-squirrel-windows@26.18.1` → `electron-winstaller@5.4.0` → `temp@0.9.4` | Scope the same bounded removal adapter to Temp; retain release-tooling versions. |
+| `boolean@3.2.0` | builder's `@electron/get@3.1.0` → `global-agent@3.0.0`, and its `roarr@2.15.4` | Applied scoped `global-agent@4.1.6` replacement; installed behavioral checks pass. |
+| `lodash.isequal@4.5.0` | `electron-updater@6.8.12` | Applied updater-only alias to `lodash.isequalwith@4.4.0`; installed behavioral checks pass. |
+| `glob@10.5.0` | `electron-mocha@13.1.0` → `mocha@11.7.5` | Applied Mocha-only override to `glob@13.0.6`; installed behavioral checks pass. |
 
 `@electron/asar@3.4.1` is used by `app-builder-lib@26.18.1`,
 `@electron/universal@2.0.3`, and `electron-winstaller@5.4.0`. The Squirrel builder
@@ -23,7 +23,7 @@ that can safely be omitted using `--omit=optional`. Its install script is alread
 disabled by the repository's reviewed install-script policy. Removing Windows
 publishing is outside scope and contrary to repository guidance.
 
-## Candidate replacements and evidence
+## Accepted replacements and evidence
 
 ### Mocha's glob dependency
 
@@ -89,7 +89,7 @@ include the cache root itself. Preserve these details when replacing it with
 native filesystem operations. A simplistic zero-entry-only `rmdir` traversal
 would change behavior. Avoid following directory symlinks outside the cache.
 
-## Remaining upstream constraints
+## Upstream constraints and replacement boundaries
 
 - **Karma:** published latest is still 6.4.4. `lib/file-list.js` constructs
   `new Glob(pattern, { sync: true, follow: true, nodir: true })`, then reads
@@ -119,12 +119,88 @@ would change behavior. Avoid following directory symlinks outside the cache.
   [Karma](https://registry.npmjs.org/karma/6.4.4), and
   [Electron Mocha](https://registry.npmjs.org/electron-mocha/13.1.0).
 
+## Bounded legacy API adapters
+
+The constraints above rule out a direct major-version override. Investigation
+continued with a narrow API replacement rather than accepting four remaining
+warnings or upgrading the release toolchain. Implemented source now lives in
+[`compat/glob`](../../../compat/glob/README.md) and
+[`compat/rimraf`](../../../compat/rimraf/README.md). These are private packages
+with their own scoped names and version 1.0.0; they do not pretend to be a
+published legacy version or remove its deprecation metadata.
+
+- **Glob:** maintained `glob@13.0.6` performs traversal/matching. A wrapper restores
+  the exact callback, synchronous `Glob.found`, and `statCache` interfaces used by
+  Karma/ASAR. Results retain English-locale sorting and legacy directory-symlink
+  marking/exclusion. Supported options are explicitly enumerated. Unknown options
+  or asynchronous `new Glob` fail rather than silently changing future callers.
+- **Removal:** maintained Node `fs.rm` supplies the callback/sync deletion
+  implementation. Existing paths containing glob characters are treated
+  literally; supported glob handles missing-pattern expansion. Temp's explicit
+  retry count is preserved. Node's retry timing replaces old rimraf's internal
+  Windows/descriptor-exhaustion policy; neither installed caller configures that
+  old policy. Unknown/custom filesystem options fail visibly.
+- **Scope:** only Karma/ASAR get legacy glob, and only Karma/Temp get legacy
+  removal. Mocha retains modern glob directly. Keep the alias `glob-modern`
+  inside the adapters to avoid overriding their maintained implementation.
+  Reinspect consumers on upgrades and remove adapters when upstream packages no
+  longer require these APIs.
+
+An isolated package containing actual Karma 6.4.4, ASAR 3.4.1, and Temp 0.9.4
+completed fresh install and clean `npm ci` with zero deprecated entries/messages.
+All ten initial consumer tests passed: original glob-7 result parity, actual
+Karma refresh/exclusions/deduplication/stat timestamps/watch updates, byte-identical
+ASAR archives with hidden/symlink/unpacked files and extraction, actual Karma/Temp
+callback/synchronous cleanup, literal magic paths, missing patterns, and errors.
+The repository tests use captured fixture expectations rather than requiring a
+deprecated baseline dependency to remain installed. An additional test checks
+that an I/O error during async directory marking reaches the callback exactly
+once. Transformation failures must be part of the Promise chain's error path.
+
+### Installation and lockfile acceptance
+
+Use the root directory as npm's working directory. The repository needs
+`install-links=true` in `.npmrc` and direct private file dependencies such as
+`"@photo-location-map/legacy-glob": "file:./compat/glob"`. Consumer overrides
+refer to those specs using `$@photo-location-map/legacy-glob` (and the removal
+equivalent). Packing local file dependencies avoids npm's broken
+consumer-relative symlinks. A separate moved-copy proof passed clean `npm ci`
+without absolute paths or preinstalled dependencies. Run `npm ci` after editing
+adapter source; `npm install` can keep stale packed copies.
+
+Full-repository acceptance now passes: clean `npm ci` emits zero deprecation
+warnings, the lock contains zero deprecated packages, `npm ls --all` exits zero,
+and all 18 actual-consumer/installation tests pass. Final-tree Angular (57),
+Electron main (117), renderer (55), lint, watcher lifecycle, and package-runner
+(19) checks pass. Signed universal packaging is in progress; final bundle tests
+are tracked in `PLAN.md`. Windows/Linux CI has not run locally.
+
+Migration pitfalls and resolution:
+
+- Plain install against the old lock retained four stale deprecated entries;
+  targeted npm update instead failed on a consumer-relative local path. The
+  installed-source/graph tests exposed this instead of accepting quiet output.
+- A fresh full-manifest resolution introduced unrelated Babel/native upgrades.
+  It was rejected. Seed the generated adapter graph with the checkpoint's
+  retained registry artifacts, then let npm regenerate/prune. All prior shared
+  package versions remain unchanged except the actual glob replacement.
+- npm retained direct adapter symlinks until explicitly reinstalling both direct
+  file dependencies with `npm install --save-dev ... --install-links=true`.
+  `compat/glob/README.md` contains the exact command. Direct entries are now
+  packed and `npm ci` plus `npm ls --all` both pass. Tests check physical package
+  directories and lock entries so that this regression fails visibly.
+- Scope Windows separator handling to Windows. POSIX escapes and native Windows
+  pattern separators have dedicated tests. The Windows glob/Karma tests use
+  junctions without requiring symbolic-link privileges. ASAR's relative-link
+  roundtrip is tested on POSIX; its existing absolute-junction limitation is not
+  changed. No broad ASAR/toolchain upgrade or metadata filtering was introduced.
+
 ## Durable compatibility checks
 
 Run after any scoped overrides are installed:
 
 ```sh
-mise exec -- node --test test/deprecation-warnings/dependency-compat.cjs
+mise exec -- npm run test:dependency-compat
 ```
 
 The tests check actual updater cache reuse/rejection when metadata or artifacts
@@ -132,6 +208,9 @@ change, discovery of main/renderer/shared Electron test patterns, and downloader
 proxy bootstrap with a real local HTTP proxy and `NO_PROXY` bypass. Proxy patches
 run in a separate process. These are required in addition to existing full unit,
 packaging, and application regressions.
+The suite also includes `legacy-glob.cjs`, `legacy-rimraf.cjs`, and
+`installed-tree.cjs`, which check actual legacy consumers and ensure the installed
+adapter source matches the tracked package source and has no deprecated entries.
 
 Baseline on the original dependency tree: all three passed on 2026-11-05.
 After installing the three scoped replacements, the coordinating agent reran
