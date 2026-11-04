@@ -172,8 +172,8 @@ Full-repository acceptance now passes: clean `npm ci` emits zero deprecation
 warnings, the lock contains zero deprecated packages, `npm ls --all` exits zero,
 and all 18 actual-consumer/installation tests pass. Final-tree Angular (57),
 Electron main (117), renderer (55), lint, watcher lifecycle, and package-runner
-(19) checks pass. Signed universal packaging is in progress; final bundle tests
-are tracked in `PLAN.md`. Windows/Linux CI has not run locally.
+(19) checks pass. Signed/notarized universal packaging, final signed-bundle visual E2E (14), and
+60-second DMG smoke also pass; details are tracked in `PLAN.md`. Windows/Linux CI has not run locally.
 
 Migration pitfalls and resolution:
 

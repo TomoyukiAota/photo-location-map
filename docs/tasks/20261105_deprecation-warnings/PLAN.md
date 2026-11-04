@@ -67,8 +67,8 @@ sources, links, credentials, screenshots, and personal data.
 - [x] Build tooling migration implemented and validated.
 - [x] Deprecated app/test APIs replaced and validated.
 - [x] npm configuration and dependency paths resolved.
-- [ ] Final clean installation and full relevant regression checks complete.
-- [ ] Independent review addressed and final report recorded.
+- [x] Final clean installation and full local regression checks complete.
+- [x] Independent review addressed and final report recorded.
 
 ## Warning inventory
 
@@ -109,16 +109,16 @@ feature/security changes in this task.
   metadata-only trees, retained thumbnails/logs, external links, and absent roots.
 - Removed direct delete-empty/type dependencies and deprecated Angular packages;
   replace custom-webpack/build-angular/webpack with `@angular/build` 22.2.5.
-  Lockfile regeneration completed; integrated build validation is in progress.
+  Lockfile regeneration and integrated build validation passed.
 - Applied narrowly scoped replacements: Mocha's glob 10 → 13.0.6 (same APIs used
   by Mocha 11), updater's two-argument comparator → lodash.isequalwith 4.4.0,
   and downloader's global-agent 3 → 4.1.6. All three behavioral compatibility
   checks passed against installed replacements. Added `test:dependency-compat`
   to `test:all` so dependency upgrades recheck these assumptions. See
   `DEPENDENCIES.md` for primary source/API evidence and rejected blanket changes.
-- Lockfile currently has four deprecated package/version pairs: glob 7.2.3,
+- At the first validated checkpoint, the lockfile still had four deprecated pairs: glob 7.2.3,
   inflight 1.0.6, rimraf 3.0.2 (Karma), and rimraf 2.6.3 (temp/Squirrel).
-  Do not describe this as zero-warning installation. Karma's Glob constructor,
+  That intermediate checkpoint was not a zero-warning installation. Karma's Glob constructor,
   ASAR's promisified callback glob, and temp's callback rimraf prevent simple
   modern-version overrides. Stable release-tooling constraints remain in force.
 - The final exifr adapter is tracked `electron-util/managed-exifr.cjs`, checked
@@ -137,8 +137,8 @@ feature/security changes in this task.
   and scoped `$` override references are required for portable packed copies.
   A moved-copy clean-install check also passed. Existing-lock integration retained
   stale modules, however; installed-source identity tests exposed this instead
-  of allowing a false zero-warning result. Full-manifest lock regeneration and
-  integrated acceptance remain in progress. Run `npm ci` after adapter edits.
+  of allowing a false zero-warning result. Full-manifest lock migration and integrated acceptance subsequently passed;
+  see the latest status. Run `npm ci` after adapter edits.
 
 ## Validation record
 
@@ -153,7 +153,7 @@ feature/security changes in this task.
 | `mise exec -- npm run build:prod` (official builder) | PASS, no deprecation warnings; CommonJS optimization notices remain visible. |
 | `mise exec -- npm run test:unit:ng` (first migrated attempt) | FAIL, generated ESM specs are wrapped by legacy karma-electron JS preprocessor; fixing configuration, not retrying unchanged. |
 | `mise exec -- npm run test:unit:ng` (preprocessor removed) | PASS, 57 tests. |
-| Final `mise exec -- npm ci` | PASS, 1,230 packages; exactly four deprecated package/version warnings, down from 12. |
+| Intermediate `mise exec -- npm ci` | PASS, 1,230 packages; exactly four deprecated package/version warnings, down from 12. |
 | `mise exec -- npm run build:dev` | PASS, no deprecation warnings. |
 | `PLM_VISUAL=1 mise exec -- npm run test:e2e -- --grep 'welcome, about'` against dev build | PASS, JIT bootstrap and unchanged welcome/about/settings screenshots. |
 | `mise exec -- npm run test:all` | PASS: lint, 3 dependency checks, Angular 57, Electron main 114, renderer 55, live-reload lifecycle, package runner tests, universal package creation and 60-second DMG smoke. No DEP0137; macOS 27 mounting warning newly discovered. Read-stage cleanup and mount-command follow-ups require targeted rechecks below. |
@@ -165,7 +165,17 @@ feature/security changes in this task.
 | `PLM_E2E_LIVE_RELOAD=1 PLM_VISUAL=1 mise exec -- npm run test:e2e -- --grep 'welcome, about\|folder picker loads\|map regions preserve'` with `ng:serve` | PASS, 3 tests; real HTTP origin, module worker, Node access, photo/chart/map behavior and original visual comparisons. Server stopped. |
 | `PLM_VISUAL=1 mise exec -- npm run test:e2e` (first attempt) | First two visual/settings/map tests PASS. Interrupted after later startup timeouts: remote hook was edited concurrently before its new TS helper was compiled. Correct integration by making adapter tracked CommonJS, then rerun against a stable tree. |
 | Isolated adapter package fresh `npm install` and `npm ci` | PASS, zero deprecated entries/messages; ten actual-consumer tests pass. This is isolated feasibility evidence, not full-repository acceptance. |
-| Repository adapter installation using existing lockfile | Stale graph detected: four deprecated entries remain. Targeted `npm update glob rimraf --package-lock-only` failed with consumer-relative `ENOENT`; coordinator is regenerating the complete lock in isolation and comparing versions before adoption. |
+| Repository adapter installation using existing lockfile | Stale graph detected: four deprecated entries remain. Targeted `npm update glob rimraf --package-lock-only` failed with consumer-relative `ENOENT`; resolved by isolated regeneration, retained-version seeding, explicit direct-adapter packing, and clean-install validation. |
+
+
+| Final root `mise exec -- npm ci` and `npm ls --all` | PASS, zero deprecation warnings, zero deprecated lock entries, valid complete dependency tree. |
+| Final `mise exec -- npm run test:dependency-compat` | PASS, 18 tests including direct packing, actual consumer source hashes, archive/discovery/cleanup behavior, and path/error cases. |
+| Final-tree lint, Angular/Electron unit, live-reload, package-runner commands | PASS: Angular 57, main 117, renderer 55, package runner 19; no deprecation warnings. |
+| `mise exec -- npm run package:mac` | PASS, signed/notarized universal DMG and update ZIP; zero deprecation warnings. |
+| `codesign --verify --deep --strict`, `xcrun stapler validate`, `spctl --assess` | PASS, Gatekeeper accepted Notarized Developer ID. |
+| Original visual E2E against final signed bundle | PASS, 14 application tests; website skipped as designed. |
+| Final isolated-profile DMG smoke | PASS, 60 seconds, main/renderer logs, app quit and diskutil eject; zero deprecation warnings. |
+| x64 execution on this host | Unavailable: both binary slices exist but x64 spawn returns Bad CPU type; no system changes attempted. |
 
 ## Resume instructions
 
@@ -193,17 +203,22 @@ Temp cleanup, native path-separator cases, and POSIX escapes. `checkJs` covers b
 Final-tree lint, Angular 57 tests, Electron main 117 and renderer 55 tests,
 live-reload lifecycle, and package-runner 19 tests all pass.
 
-The final signed/notarized `npm run package:mac` is running in the background.
-Local log: `.upgrade-artifacts/deprecation-warnings/final-signed-mac.log`.
-Do not start another build/install until it finishes. No app or watcher is
-running. Next: verify signatures/notarization, run original visual E2E against
-that packaged executable, run the 60-second DMG smoke using the new mount tool,
-check x64 execution if available, complete final review, and save a local commit.
-No feature/UI change was necessary. Nothing has been pushed or published.
+Final `npm run package:mac` passed. Codesign deep/strict verification, stapled
+ticket validation, and Gatekeeper assessment all pass (`Notarized Developer ID`).
+Signed-bundle visual E2E passed all 14 application cases (website intentionally
+skipped). Final 60-second DMG smoke passed with zero deprecations, main/renderer
+logs present, clean application exit, and successful diskutil eject. Final review
+is recorded in `FINAL_REVIEW.md`; the validation checkpoint follows the source commits. The binary contains both x86_64 and
+arm64 slices; actual x64 execution fails with `Bad CPU type in executable` on this
+host, so Rosetta/x64 E2E is unavailable here. Do not install system components
+to work around this; Windows/Linux/native Intel results remain CI follow-ups.
+No feature/UI change was necessary. No owned app, watcher, build, or mounted
+volume remains. Nothing has been pushed or published. Local work is complete;
+branch publication/PR and cross-platform CI await the owner's confirmation.
 
 Earlier validated checkpoint: `74a2cf8`. It already passed full checkout visual
 E2E (15), dev/JIT visual startup, actual `npm start`, and Vite-origin photo/map/
-chart visual E2E (3). The adapter follow-up is saved as the next local checkpoint; inspect git log for its commit.
+chart visual E2E (3). The adapter follow-up is saved in local commit `33a6d6f`.
 
 Lock migration was resolved without unrelated upgrades: generate the adapter
 graph in isolation, seed retained registry entries from `74a2cf8`, and let npm
