@@ -1,3 +1,5 @@
+@use "sass:meta";
+
 // Note that selectors defined in Photo Location Map are prefixed with "plm-leaflet-map-"
 // in order to avoid conflict with the CSS classes from Leaflet which have "leaflet-" prefix.
 // Usages of selectors with "leaflet-" prefix are to deliberately override the Leaflet's default style.
@@ -6,5 +8,5 @@
   z-index: 1001;  // Override the default z-index (1000) so that div.leaflet-control-layers is displayed on top of Leaflet-Geoman controls.
 }
 
-@import "plm-leaflet-map-div-icon";
-@import "plm-leaflet-map-region-info";
+@include meta.load-css("plm-leaflet-map-div-icon");
+@include meta.load-css("plm-leaflet-map-region-info");

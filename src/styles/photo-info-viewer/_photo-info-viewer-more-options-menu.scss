@@ -1,5 +1,5 @@
-@import "../color";
-@import "photo-info-viewer-common";
+@use "../color" as *;
+@use "photo-info-viewer-common" as *;
 
 .photo-info-viewer-more-options-menu {
   position: absolute;

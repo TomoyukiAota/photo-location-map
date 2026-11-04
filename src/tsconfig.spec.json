@@ -1,8 +1,12 @@
 {
-  "extends": "../tsconfig.json",
+  "extends": "../tsconfig.renderer.json",
   "compilerOptions": {
     "outDir": "../out-tsc/spec",
-    "types": ["node", "jasmine"]
+    "types": [
+      "node",
+      "jasmine",
+      "electron"
+    ]
   },
   "include": [
     "../**/*.d.ts",

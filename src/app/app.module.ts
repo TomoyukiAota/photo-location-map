@@ -18,7 +18,6 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTreeModule } from '@angular/material/tree';
 import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { provideTranslateService, TranslateDirective, TranslatePipe } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -91,7 +90,6 @@ import { AnalyticsErrorHandler } from './shared/error/analytics-error-handler';
     AppRoutingModule,
     TranslatePipe,
     TranslateDirective,
-    BrowserAnimationsModule,
     MatButtonModule,
     MatCheckboxModule,
     MatDialogModule,
@@ -107,8 +105,8 @@ import { AnalyticsErrorHandler } from './shared/error/analytics-error-handler';
     MatTreeModule,
     NgxEchartsModule.forRoot({
       echarts: async () => {
-        // angular.webpack.ts resolves 'echarts' to ECharts' production build, both here
-        // and in the official v5 theme, so the theme registers on ngx-echarts' instance.
+        // ECharts and its official v5 theme share the same core in the ESM bundle,
+        // so the theme registers on the instance passed to ngx-echarts.
         const echarts = await import('echarts');
         await import('echarts/theme/v5.js');
         if (typeof process !== 'undefined' && process.env.PLM_E2E === '1') {

@@ -1,5 +1,5 @@
-@import "/src/styles/icon-button";
-@import "photo-info-viewer-common";
+@use "../icon-button" as *;
+@use "photo-info-viewer-common" as *;
 
 .photo-info-viewer-button {
   @include icon-button;

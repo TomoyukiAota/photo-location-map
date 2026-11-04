@@ -1,5 +1,5 @@
-@import "/src/styles/anchor-tag-like-text";
-@import "/src/styles/status-bar";
+@use "../../../../styles/anchor-tag-like-text" as *;
+@use "../../../../styles/status-bar" as *;
 
 :host {
   @include status-bar;

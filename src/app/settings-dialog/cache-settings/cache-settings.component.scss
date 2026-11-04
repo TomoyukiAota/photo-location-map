@@ -1,5 +1,5 @@
-@import "/src/styles/anchor-tag-like-text";
-@import "../settings-styles";
+@use "../../../styles/anchor-tag-like-text" as *;
+@use "../settings-styles" as *;
 
 .setting-title {
   font-size: $setting-title-font-size;

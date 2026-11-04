@@ -131,4 +131,12 @@ async function fetchRasterTileBaseLayerConfigsVersion1WithRetry(): Promise<Raste
   return rasterTileBaseLayerConfigsVersion1Fallback;
 }
 
-export const rasterTileBaseLayerConfigsVersion1 = await fetchRasterTileBaseLayerConfigsVersion1WithRetry();
+export let rasterTileBaseLayerConfigsVersion1: RasterTileBaseLayerConfigsVersion1;
+
+const configsReady = fetchRasterTileBaseLayerConfigsVersion1WithRetry().then(configs => {
+  rasterTileBaseLayerConfigsVersion1 = configs;
+});
+
+export async function initializeRasterTileBaseLayerConfigs(): Promise<void> {
+  await configsReady;
+}

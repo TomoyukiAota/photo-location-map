@@ -4,7 +4,9 @@ require('@electron/remote/main').initialize();
 // the app's existing remote imports here rather than from that synthetic module.
 require('electron').app.on('remote-require', (event, _contents, name) => {
   if (['fs-extra', 'electron', 'os', 'path', 'exifr'].includes(name)) {
-    event.returnValue = require(name);
+    event.returnValue = name === 'exifr'
+      ? require('./managed-exifr.cjs').managedExifr
+      : require(name);
   }
 });
 

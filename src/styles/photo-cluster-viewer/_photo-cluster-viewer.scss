@@ -1,4 +1,4 @@
-@import "../color";
+@use "../color" as *;
 
 .photo-cluster-viewer-root {
   display: flex;

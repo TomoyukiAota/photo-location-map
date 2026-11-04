@@ -1,3 +1,5 @@
+@use "sass:color";
+
 button {
   display: inline-block;
   box-sizing: border-box;
@@ -21,10 +23,10 @@ button {
   $background-color: #ffffff;
   background-color: $background-color;
   &:hover {
-    background-color: darken($background-color, 10%);
+    background-color: color.adjust($background-color, $lightness: -10%, $space: hsl);
   }
   &:active {
-    background-color: darken($background-color, 20%);
+    background-color: color.adjust($background-color, $lightness: -20%, $space: hsl);
   }
 
   cursor: pointer;

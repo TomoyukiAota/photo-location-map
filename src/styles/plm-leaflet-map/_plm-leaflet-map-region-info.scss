@@ -1,3 +1,5 @@
+@use "sass:color";
+
 .plm-leaflet-map-region-info {
   background: #ffffff;
   padding: 5px 10px;
@@ -44,7 +46,7 @@
     $enabled-button-background-color: rgb(51, 136, 255); // Same color as the region border on the map
     background-color: $enabled-button-background-color;
     &:hover {
-      background-color: darken($enabled-button-background-color, 10%);
+      background-color: color.adjust($enabled-button-background-color, $lightness: -10%, $space: hsl);
     }
     transition: background-color 0.2s ease;
   }

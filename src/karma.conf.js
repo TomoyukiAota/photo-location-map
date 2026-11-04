@@ -6,12 +6,11 @@ const electronWebPreferences = require('../electron-util/electron-web-preference
 module.exports = function (config) {
   config.set({
     basePath: '',
-    frameworks: ['jasmine', '@angular-devkit/build-angular'],
+    frameworks: ['jasmine'],
     plugins: [
       require('karma-jasmine'),
       require('karma-jasmine-html-reporter'),
       require('karma-coverage'),
-      require('@angular-devkit/build-angular/plugins/karma'),
       require('karma-electron'),
       require('karma-mocha-reporter')
     ],
@@ -39,9 +38,9 @@ module.exports = function (config) {
         require: __dirname + '/karma-electron-main-fixtures.js'
       }
     },
-    preprocessors: {
-      '**/*.js': ['electron']
-    },
+    // The application builder emits native ES modules. karma-electron's
+    // CommonJS preprocessor wraps scripts in a function, which makes their
+    // import/export statements invalid. The launcher already enables Node.js.
     singleRun: true,
     captureTimeout: 180000,             // Increased from 60000 ms (default) to 180000 ms for CI using GitHub Actions.
     browserNoActivityTimeout: 120000,   // Increased from 30000 ms (default) to 120000 ms for CI using GitHub Actions.
