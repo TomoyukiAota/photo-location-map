@@ -7,7 +7,7 @@ Electron follows Chromium in dropping old OS versions: Electron 23 needs
 Windows 10, and Electron 45 needs macOS 13.0. Before downloading an update,
 auto-update compares the minimum declared for the release with the computer's
 OS version, and skips an update that the computer cannot run
-([`configure-auto-update.ts`](../src-main/auto-update/configure-auto-update.ts)).
+([`configure-auto-update.ts`](../../src-main/auto-update/configure-auto-update.ts)).
 That computer stays on the version it has, and analytics records
 `Auto-update: Skipped for OS version`. Neither electron-updater nor the NSIS
 installer checks the OS version otherwise.
@@ -15,7 +15,7 @@ installer checks the OS version otherwise.
 
 ## Where the minimums are declared
 
-[`electron-builder.json`](../electron-builder.json) declares the minimums:
+[`electron-builder.json`](../../electron-builder.json) declares the minimums:
 
 - macOS: `mac.minimumSystemVersion` becomes `LSMinimumSystemVersion` in
   `Info.plist`, which macOS checks when the app is opened.

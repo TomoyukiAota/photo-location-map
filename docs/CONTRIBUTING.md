@@ -18,7 +18,7 @@ This page contains useful information to contribute to this project.
 [ci-on-ubuntu-image]: https://github.com/TomoyukiAota/photo-location-map/workflows/CI%20on%20Ubuntu/badge.svg
 [ci-on-ubuntu-link]: https://github.com/TomoyukiAota/photo-location-map/actions?query=workflow%3A%22CI+on+Ubuntu%22
 
-See also [ci.md](ci.md).
+See also [ci.md](contributing/ci.md).
 
 
 ## Prerequisite
@@ -56,7 +56,7 @@ mise exec -- npm start
 
 ## Dependencies
 
-See [dependencies.md](dependencies.md).
+See [dependencies.md](contributing/dependencies.md).
 
 
 ## Sidenote
