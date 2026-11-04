@@ -1,8 +1,15 @@
-# CLAUDE.md
+# AGENTS.md
 
 What this app does and how to contribute is in [`README.md`](README.md) and
 [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md). This file holds only what is
 needed at the start of a session.
+
+## This is the only instruction file for agents
+
+Claude Code, Codex and other coding agents all read this file. There is no
+`CLAUDE.md` on purpose: Claude Code reads `AGENTS.md` from v2.1.277 on, but
+skips it when a `CLAUDE.md`, `.claude/CLAUDE.md` or `CLAUDE.local.md` exists in
+the working directory or above it. Do not add one; put instructions here instead.
 
 ## Write in English
 
@@ -23,16 +30,36 @@ out and ask.
 
 ## Knowledge about this repo lives in this repo
 
-Do not use Claude's memory (`~/.claude/projects/…/memory/`) as the place to keep
-knowledge about this repository. Memory is **per clone and per machine**, so it
-does not travel: work on another computer and it is simply not there.
+Do not use an agent's own memory, such as Claude Code's
+(`~/.claude/projects/…/memory/`), as the place to keep knowledge about this
+repository. Memory is **per clone and per machine**, so it does not travel: work
+on another computer and it is simply not there.
 
 Put it in the repository instead. Git carries it to every clone and every machine,
 and a pull request makes it reviewable.
 
-This is not a promise to remember: [`.claude/settings.json`](.claude/settings.json)
-sets `"autoMemoryEnabled": false`, which turns memory off entirely (both reading
-and writing). That file is tracked, so the switch travels with the repository.
+For Claude Code, this is not a promise to remember:
+[`.claude/settings.json`](.claude/settings.json) sets `"autoMemoryEnabled": false`,
+which turns its memory off entirely (both reading and writing). That file is
+tracked, so the switch travels with the repository.
+
+## Keep CONTRIBUTING.md short
+
+[`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) is the introduction that a human
+developer new to this repository reads first. Before adding to it, decide where
+the text belongs:
+
+- **Needed in most development work**: a short section in CONTRIBUTING.md that
+  links to a page in `docs/contributing/`, like "Dependencies".
+- **Needed only in a particular situation**: a page in `docs/contributing/`,
+  linked from where that situation shows up (a test's failure message, a
+  comment in the code) rather than from CONTRIBUTING.md, like
+  `minimum-os-versions.md`.
+- **About a single setting**: a comment next to that setting, like the one in
+  `.vscode/settings.json`.
+
+**Why:** agents added details to CONTRIBUTING.md as they worked, until it was
+too long to read as an introduction.
 
 ## You can run the signed mac build yourself
 
@@ -112,7 +139,7 @@ it is run on demand), and a failed job would sit unattended that long.
 Each CI workflow first runs a `changes` job, which finds the files the push or
 pull request changes with [dorny/paths-filter](https://github.com/dorny/paths-filter)
 and `.github/ci-filters.yml`. When every one of them is a document — `docs/`
-(including the landing page), `README.md`, `CLAUDE.md`, `LICENSE` or
+(including the landing page), `README.md`, `AGENTS.md`, `LICENSE` or
 `.github/ISSUE_TEMPLATE/` — the `test` job is skipped. A skipped job passes
 GitHub's required checks, and `.mergify.yml` accepts `check-skipped`, so such a
 pull request does not wait for the tests.

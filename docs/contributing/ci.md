@@ -27,5 +27,5 @@ branch-protection check.
 ## Changes that skip the tests
 
 A push or pull request that changes only documents (`docs/`, `README.md`,
-`CLAUDE.md`, `LICENSE` and `.github/ISSUE_TEMPLATE/`, as listed in
+`AGENTS.md`, `LICENSE` and `.github/ISSUE_TEMPLATE/`, as listed in
 [`.github/ci-filters.yml`](../../.github/ci-filters.yml)) skips the tests.
