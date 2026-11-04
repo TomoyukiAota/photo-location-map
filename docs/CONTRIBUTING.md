@@ -40,12 +40,6 @@ mise exec -- npm ci
 mise exec -- npm start
 ```
 
-Dependency install scripts are reviewed in `allowScripts` in `package.json`.
-When upgrading a package with an install script, inspect that script and update
-its exact-version entry. `.npmrc` rejects unreviewed scripts during installation.
-Electron downloads its binary on its first invocation; `npm run verify:electron`
-checks that binary and the Node types used to compile for it.
-
 
 ## Frequently Used Commands
 
@@ -58,6 +52,11 @@ checks that binary and the Node types used to compile for it.
 |`npm run package:windows`| Create an installer for Windows. |
 |`npm run package:mac`| Create signed/notarized universal macOS `.dmg` and update `.zip` artifacts. |
 |`npm run package:linux`| Create an application for Linux. |
+
+
+## Dependencies
+
+See [dependencies.md](dependencies.md).
 
 
 ## HTML template formatting
@@ -73,21 +72,6 @@ The built-in formatter does not preserve Angular `@if`/`@for` block indentation
 when formatting a whole document. The workspace therefore does not force a
 default formatter or enable format-on-save. Do not reformat the whole repository
 to make an attribute-alignment change.
-
-
-## Using npm modules
-
-### Electron renderer process
-
-npm modules which are 1) used only in Electron renderer process and 2) imported by `import` (not `require`) should be configured in `devDependencies` (not `dependencies`) in `package.json`.
-
-Angular build system creates a bundle file from `.ts` files. The bundle file will have the copy of `import`ed (not `require` d) npm module, and the copy is used at run time. Also, electron-builder will copy npm modules listed in `dependencies` (not `devDependencies`) to create an application package. Therefore, configuring `import`ed (again, not `require`d) npm modules used only in Electron renderer process with `devDependencies` saves the size of application package.
-
-
-
-### Electron main process
-
-npm modules used in Electron main process need to be configured in `dependencies` in `package.json`. 
 
 
 ## Sidenote
