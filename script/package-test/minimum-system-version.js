@@ -1,6 +1,6 @@
 // The oldest OS version that the app runs on is declared in electron-builder.json, and auto-update compares it with the
-// computer's before downloading an update (src-main/auto-update/configure-auto-update.ts). See "Raising the minimum macOS
-// or Windows" in docs/CONTRIBUTING.md.
+// computer's before downloading an update (src-main/auto-update/configure-auto-update.ts). See
+// docs/minimum-os-versions.md.
 //  - macOS: mac.minimumSystemVersion becomes LSMinimumSystemVersion in Info.plist, which macOS checks when the app is
 //    opened, and mac.releaseInfo.vendor.minimumSystemVersion goes into latest-mac.yml. Both have to be the same, and
 //    neither may be older than the macOS that Electron is built for, which an Electron upgrade can raise.
@@ -59,7 +59,7 @@ function checkMacMinimumSystemVersion({ configured, vendor, plist, feed, electro
   if (compareVersions(configured, electronMinimum) < 0) {
     throw new Error(`Electron is built for macOS ${electronMinimum} or later, but electron-builder.json declares ${configured}. `
       + `Raise mac.minimumSystemVersion and mac.releaseInfo.vendor.minimumSystemVersion to at least ${electronMinimum}; `
-      + 'see "Raising the minimum macOS or Windows" in docs/CONTRIBUTING.md.');
+      + 'see docs/minimum-os-versions.md.');
   }
   return electronMinimum;
 }

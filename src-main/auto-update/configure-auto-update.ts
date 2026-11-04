@@ -17,8 +17,7 @@ autoUpdater.logger = autoUpdateLogger;
 // minimumSystemVersion, which electron-builder cannot write and which is compared with os.release(), the Darwin version on
 // macOS (21.x for macOS 12). electron-builder.json therefore declares the minimum for latest-mac.yml and latest.yml
 // (mac.releaseInfo.vendor and win.releaseInfo.vendor), and electron-updater calls isUpdateSupported with it before
-// downloading anything. This protects only installs that already have this check; see "Raising the minimum macOS or
-// Windows" in docs/CONTRIBUTING.md.
+// downloading anything. This protects only installs that already have this check; see docs/minimum-os-versions.md.
 const isUpdateSupportedByDefault = autoUpdater.isUpdateSupported;
 autoUpdater.isUpdateSupported = async updateInfo => {
   if (!await isUpdateSupportedByDefault(updateInfo))
