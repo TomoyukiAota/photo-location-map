@@ -3,6 +3,10 @@ const path = require('path');
 const { execFileSync } = require('child_process');
 const logger = require('../util/logger');
 const runCommandSync = require('../util/run-command-sync');
+const builderConfig = require('../../electron-builder.json');
+const {
+  buildMinimumsOf, checkMacMinimumSystemVersion, checkWindowsMinimumSystemVersion, feedMinimumOf,
+} = require('./minimum-system-version');
 const testInfo = require('./package-test-info');
 const testUtil = require('./package-test-util');
 
@@ -38,15 +42,33 @@ class PackageCreationTest {
     const bundledIcon = fs.readFileSync(path.join(contents, 'Resources', icon));
     const originalIcon = fs.readFileSync(path.join(__dirname, '../../src/favicon.icns'));
     if (!bundledIcon.equals(originalIcon)) throw new Error('The packaged macOS icon differs from the original app icon.');
-    if (readPlist('LSMinimumSystemVersion') !== '13.0') {
-      throw new Error('The packaged macOS minimum must be 13.0.');
-    }
-    for (const binary of [path.join(contents, 'MacOS', readPlist('CFBundleExecutable')),
-      path.join(contents, 'Frameworks/Electron Framework.framework/Electron Framework')]) {
+    const binaries = [path.join(contents, 'MacOS', readPlist('CFBundleExecutable')),
+      path.join(contents, 'Frameworks/Electron Framework.framework/Electron Framework')];
+    const minimum = builderConfig.mac.minimumSystemVersion;
+    const electronMinimum = checkMacMinimumSystemVersion({
+      configured: minimum,
+      vendor: builderConfig.mac.releaseInfo?.vendor?.minimumSystemVersion,
+      plist: readPlist('LSMinimumSystemVersion'),
+      feed: feedMinimumOf(fs.readFileSync(path.join(testInfo.releaseDirectory, 'latest-mac.yml'), 'utf8')),
+      electron: binaries.flatMap(binary => buildMinimumsOf(
+        execFileSync('/usr/bin/otool', ['-arch', 'all', '-l', binary], { encoding: 'utf8' }))),
+    });
+    for (const binary of binaries) {
       const archs = execFileSync('/usr/bin/lipo', ['-archs', binary], { encoding: 'utf8' }).trim().split(/\s+/).sort();
       if (archs.join(',') !== 'arm64,x86_64') throw new Error(`Unexpected universal architectures: ${archs}`);
     }
-    logger.info('Mac bundle retains the original icon, macOS 13.0 minimum and both universal architectures.');
+    logger.info(`Mac bundle retains the original icon and both universal architectures, and declares macOS ${minimum} `
+      + `as its minimum in Info.plist and latest-mac.yml (Electron needs ${electronMinimum}).`);
+  }
+
+  testWindowsUpdateInfo() {
+    if (process.platform !== 'win32') return;
+    const minimum = builderConfig.win.releaseInfo?.vendor?.minimumSystemVersion;
+    checkWindowsMinimumSystemVersion({
+      configured: minimum,
+      feed: feedMinimumOf(fs.readFileSync(path.join(testInfo.releaseDirectory, 'latest.yml'), 'utf8')),
+    });
+    logger.info(`latest.yml declares Windows ${minimum} as the minimum.`);
   }
 
   run() {
@@ -54,6 +76,7 @@ class PackageCreationTest {
     this.createPackage();
     this.testIfPackagesExist();
     this.testMacBundle();
+    this.testWindowsUpdateInfo();
     logger.info('End of package creation test.');
   }
 }

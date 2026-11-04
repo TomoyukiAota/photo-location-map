@@ -6,8 +6,40 @@ import { DevOrProd } from '../../src-shared/dev-or-prod/dev-or-prod';
 import { isPrereleaseVersion } from '../../src-shared/version/is-prerelease-version';
 import { mainWindow } from '../electron-main';
 import { autoUpdateLogger } from './auto-update-logger';
+import { currentSystemVersion, isVersionAtLeast, minimumSystemVersionOf } from './minimum-system-version';
 
 autoUpdater.logger = autoUpdateLogger;
+
+// TL;DR: Skip an update that needs a newer macOS or Windows than this computer has, instead of installing an app that
+// cannot start.
+// Details: Electron follows Chromium in dropping old OS versions: Electron 23 needs Windows 10, and Electron 45 needs
+// macOS 13. The NSIS installer does not check the Windows version, and electron-updater checks only a top-level
+// minimumSystemVersion, which electron-builder cannot write and which is compared with os.release(), the Darwin version on
+// macOS (21.x for macOS 12). electron-builder.json therefore declares the minimum for latest-mac.yml and latest.yml
+// (mac.releaseInfo.vendor and win.releaseInfo.vendor), and electron-updater calls isUpdateSupported with it before
+// downloading anything. This protects only installs that already have this check; see docs/minimum-os-versions.md.
+const isUpdateSupportedByDefault = autoUpdater.isUpdateSupported;
+autoUpdater.isUpdateSupported = async updateInfo => {
+  if (!await isUpdateSupportedByDefault(updateInfo))
+    return false;
+
+  const minimumVersion = minimumSystemVersionOf(updateInfo);
+  const system = currentSystemVersion();
+  if (minimumVersion === undefined || system === undefined)
+    return true;
+
+  const supported = isVersionAtLeast(system.version, minimumVersion);
+  if (supported === undefined) {
+    autoUpdateLogger.warn(`Cannot compare ${system.name} ${system.version} with ${minimumVersion}, the minimum of ${updateInfo.version}, so the update is not skipped.`);
+    return true;
+  }
+
+  if (!supported) {
+    autoUpdateLogger.info(`Skipping ${updateInfo.version}, which requires ${system.name} ${minimumVersion}. This computer has ${system.name} ${system.version}.`);
+    Analytics.trackEvent('Auto-update', 'Auto-update: Skipped for OS version', `Skipped ${updateInfo.version}, which requires ${system.name} ${minimumVersion}, on ${system.name} ${system.version}`);
+  }
+  return supported;
+};
 
 // Whether some users never receive updates. The message can contain paths, which are removed.
 autoUpdater.on('error', error => {

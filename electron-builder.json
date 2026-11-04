@@ -15,7 +15,12 @@
     "icon": "dist/favicon.ico",
     "target": [
       "nsis"
-    ]
+    ],
+    "releaseInfo": {
+      "vendor": {
+        "minimumSystemVersion": "10.0"
+      }
+    }
   },
   "nsis": {
     "oneClick": false
@@ -41,7 +46,12 @@
     "gatekeeperAssess": false,
     "entitlements": "script/notarize/entitlements.mac.plist",
     "entitlementsInherit": "script/notarize/entitlements.mac.plist",
-    "minimumSystemVersion": "13.0"
+    "minimumSystemVersion": "13.0",
+    "releaseInfo": {
+      "vendor": {
+        "minimumSystemVersion": "13.0"
+      }
+    }
   },
   "linux": {
     "icon": "dist",

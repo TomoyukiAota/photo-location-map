@@ -31,6 +31,10 @@ full ZIP download, SHA-512 verification, persistent cache reuse and corrupt
 checksum rejection. The generic provider does not apply GitHub's prerelease
 filter; application prerelease gating is checked separately.
 
+The application's own `isUpdateSupported` is also put on a real `MacUpdater`:
+a feed whose `vendor.minimumSystemVersion` is newer than this Mac's macOS must
+not offer the update, and a feed with this Mac's version or no minimum must.
+
 App data, user data, session data, logs, crash dumps, temporary files and the
 updater's independent cache all stay in the test-owned directory. Non-loopback
 updater traffic is blocked. Native feed initialization is captured in memory;

@@ -76,6 +76,34 @@ function runCompiled(relative, imports) {
   return module.exports;
 }
 
+// The compiled auto-update setup, run against the given app and updater with its other dependencies controlled.
+function runConfigureAutoUpdate({ application, updater, isDev = false, prerelease, trackEvent = () => {} }) {
+  runCompiled('src-main/auto-update/configure-auto-update.js', {
+    electron: { app: application, dialog: { showMessageBox: async () => ({ response: 1 }) } },
+    'electron-updater': { autoUpdater: updater },
+    '../../src-shared/analytics/analytics': { Analytics: { trackEvent } },
+    '../../src-shared/analytics/record-error': { scrubbedErrorLabel: () => '' },
+    '../../src-shared/dev-or-prod/dev-or-prod': { DevOrProd: { isDev } },
+    '../../src-shared/version/is-prerelease-version': prerelease,
+    '../electron-main': { mainWindow: null },
+    './auto-update-logger': { autoUpdateLogger: logger },
+    // Has no dependencies, and reads the OS version of this computer.
+    './minimum-system-version': require(path.join(repository, 'src-main/auto-update/minimum-system-version.js')),
+  });
+}
+
+// Puts the application's own isUpdateSupported on a real updater. The setup runs against a stand-in that holds the real
+// updater's default check, and the check that the setup puts in its place moves to the real updater.
+function useApplicationUpdateSupport(realUpdater, trackEvent) {
+  const application = new EventEmitter();
+  application.getVersion = () => '1.12.1';
+  const standIn = new EventEmitter();
+  standIn.isUpdateSupported = realUpdater.isUpdateSupported;
+  runConfigureAutoUpdate({ application, updater: standIn, prerelease: { isPrereleaseVersion: () => false }, trackEvent });
+  assert.notEqual(standIn.isUpdateSupported, realUpdater.isUpdateSupported, 'The application must replace isUpdateSupported.');
+  realUpdater.isUpdateSupported = standIn.isUpdateSupported;
+}
+
 async function verifyApplicationPolicy() {
   const actualVersion = require(path.join(repository, 'package.json')).version;
   const cases = [
@@ -96,16 +124,7 @@ async function verifyApplicationPolicy() {
     let checks = 0;
     updater.checkForUpdates = async () => { checks++; };
     updater.quitAndInstall = () => { throw new Error('The policy check must not install an update.'); };
-    runCompiled('src-main/auto-update/configure-auto-update.js', {
-      electron: { app: application, dialog: { showMessageBox: async () => ({ response: 1 }) } },
-      'electron-updater': { autoUpdater: updater },
-      '../../src-shared/analytics/analytics': { Analytics: { trackEvent() {} } },
-      '../../src-shared/analytics/record-error': { scrubbedErrorLabel: () => '' },
-      '../../src-shared/dev-or-prod/dev-or-prod': { DevOrProd: { isDev: item.dev } },
-      '../../src-shared/version/is-prerelease-version': prerelease,
-      '../electron-main': { mainWindow: null },
-      './auto-update-logger': { autoUpdateLogger: logger },
-    });
+    runConfigureAutoUpdate({ application, updater, isDev: item.dev, prerelease });
     const handlers = application.listeners('ready');
     assert.equal(handlers.length, 1);
     await handlers[0]();
@@ -160,6 +179,8 @@ async function main() {
   const candidateVersion = require(path.join(repository, 'package.json')).version;
   let feedVersion = candidateVersion;
   let expectedHash = sha512;
+  // What electron-builder writes from mac.releaseInfo.vendor of electron-builder.json, when set.
+  let feedVendor;
   const requests = { metadata: 0, artifact: 0 };
   const server = http.createServer((request, response) => {
     const pathname = new URL(request.url, 'http://127.0.0.1').pathname;
@@ -167,7 +188,7 @@ async function main() {
       requests.metadata++;
       const metadata = JSON.stringify({ version: feedVersion,
         files: [{ url: publishedName, sha512: expectedHash, size }], path: publishedName,
-        sha512: expectedHash, releaseDate: '2026-11-01T00:00:00.000Z' });
+        sha512: expectedHash, releaseDate: '2026-11-01T00:00:00.000Z', ...(feedVendor && { vendor: feedVendor }) });
       response.writeHead(200, { 'Content-Type': 'application/yaml', 'Content-Length': Buffer.byteLength(metadata) });
       response.end(metadata);
     } else if (decodeURIComponent(pathname) === '/' + publishedName) {
@@ -215,6 +236,20 @@ async function main() {
     return updater;
   }
   try {
+    // A release whose vendor.minimumSystemVersion is newer than this Mac's macOS is not offered; the application's check
+    // reads it from latest-mac.yml as the real MacUpdater parses it.
+    const skippedForMacOs = [];
+    const supportChecked = makeUpdater('1.12.1');
+    useApplicationUpdateSupport(supportChecked, (category, action, label) => skippedForMacOs.push({ category, action, label }));
+    feedVendor = { minimumSystemVersion: '999.0' };
+    assert.equal((await supportChecked.checkForUpdates()).isUpdateAvailable, false, 'A release for a newer macOS must not be offered.');
+    assert.deepEqual(skippedForMacOs.map(event => event.action), ['Auto-update: Skipped for OS version']);
+    feedVendor = { minimumSystemVersion: process.getSystemVersion() };
+    assert.equal((await supportChecked.checkForUpdates()).isUpdateAvailable, true, 'A release for this macOS must be offered.');
+    feedVendor = undefined;
+    assert.equal((await supportChecked.checkForUpdates()).isUpdateAvailable, true, 'A release without a minimum must be offered.');
+    assert.equal(skippedForMacOs.length, 1);
+
     const updater = makeUpdater('1.12.1');
     assert.equal(updater.allowPrerelease, false);
     assert.equal(updater.allowDowngrade, false);
@@ -268,6 +303,7 @@ async function main() {
       applicationVersion: candidateVersion, applicationPolicy,
       artifact: { name: path.basename(artifact), size, sha512 },
       availability: { newer: true, sameVersion: false, downgradeDefault: false, downgradeOptIn: true },
+      macOsMinimum: { newerMacOsSkipped: true, thisMacOsOffered: true, noMinimumOffered: true },
       persistentCacheReuse: true, corruptChecksumRejected: true, rejectedPendingFileRemoved: true,
       isolatedAppData: true, isolatedUserData: true, isolatedSessionData: true, isolatedUpdaterCache: true,
       externalRequests: unexpectedRequests.length, guardedSessionCount: guardedSessions.size, requests, nativeCalls,
