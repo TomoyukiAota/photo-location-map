@@ -47,7 +47,7 @@ POSIX escapes, and Windows separators. Findings were addressed and tested.
 | --- | --- |
 | Clean installation / locked deprecated entries | PASS / 0 |
 | Complete npm dependency validation | PASS |
-| Dependency compatibility and packed-source checks | PASS, 18 tests |
+| Dependency compatibility and packed-source checks | PASS, 20 tests |
 | Lint / bridge+adapter checkJs / worker typing | PASS |
 | Angular unit tests | PASS, 57 |
 | Electron main / renderer unit tests | PASS, 117 / 55; no DEP0137 |
@@ -69,9 +69,10 @@ Windows/Linux/native Intel CI results are not implied by local macOS tests.
 
 Read `PLAN.md` for the current checkpoint and exact continuation steps. Source
 checkpoints are `74a2cf8` and `33a6d6f`; subsequent validation documentation is
-saved separately. Nothing has been pushed or published.
+saved separately. The owner authorized branch publication, PR creation, and
+cross-platform CI on 2026-11-05 (JST); results are tracked in `PLAN.md`.
 
-The remaining outward step is a branch push/PR and cross-platform CI. A push
+The active outward step is a branch push/PR and cross-platform CI. A push
 deliberately triggers Windows draft-release publishing under repository policy;
-retain that workflow. Confirm publication before uploading artifacts. Review
+retain that workflow. This publication is authorized; merging is not. Review
 the manual Intel policy in `AGENTS.md` before merging relevant release changes.

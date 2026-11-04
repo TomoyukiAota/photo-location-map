@@ -196,7 +196,7 @@ feature/security changes in this task.
 ## Latest status
 
 The complete repository now installs with zero deprecation warnings and zero
-locked deprecated packages. `npm ls --all` exits zero. All 18 dependency tests
+locked deprecated packages. `npm ls --all` exits zero. All 20 dependency tests
 pass, including six installed-source checks (root adapters and actual consumers),
 packed-directory/lock guards, Karma file-list/watch behavior, ASAR archives,
 Temp cleanup, native path-separator cases, and POSIX escapes. `checkJs` covers both adapters.
@@ -212,9 +212,17 @@ is recorded in `FINAL_REVIEW.md`; the validation checkpoint follows the source c
 arm64 slices; actual x64 execution fails with `Bad CPU type in executable` on this
 host, so Rosetta/x64 E2E is unavailable here. Do not install system components
 to work around this; Windows/Linux/native Intel results remain CI follow-ups.
-No feature/UI change was necessary. No owned app, watcher, build, or mounted
-volume remains. Nothing has been pushed or published. Local work is complete;
-branch publication/PR and cross-platform CI await the owner's confirmation.
+No feature/UI change was necessary. The owner approved branch publication, PR
+creation, and all-platform CI (including Intel Mac) on 2026-11-05 (JST).
+Publication and CI verification are the active phase; merging is not authorized.
+
+The final portability preflight restored two additional glob 7 contracts:
+case-sensitive matching by default on every OS (including removal-pattern
+expansion), and forward-slash results on Windows. Added case-discriminating
+tests; all 20 compatibility checks and bridge/adapter type checking pass after
+a clean installation. The Angular suite was rechecked after these changes.
+The adapters remain development-only; application files and the signed bundle's
+runtime source were unchanged by these preflight fixes.
 
 Earlier validated checkpoint: `74a2cf8`. It already passed full checkout visual
 E2E (15), dev/JIT visual startup, actual `npm start`, and Vite-origin photo/map/

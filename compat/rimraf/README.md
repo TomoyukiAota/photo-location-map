@@ -6,7 +6,8 @@ interfaces use maintained Node filesystem removal and supported glob 13.
 **Details:** Karma passes a temporary path and callback. Temp additionally sets
 `maxBusyTries: 6` and uses synchronous cleanup on exit. The adapter preserves
 recursive removal, absent-path success, literal existing paths containing glob
-characters, and missing-pattern expansion. Supported options are `maxBusyTries`,
+characters, and missing-pattern expansion with case-sensitive matching by
+default on every OS. Supported options are `maxBusyTries`,
 `glob` (including `false`), and `disableGlob`; unknown options fail visibly.
 There is no CLI or custom-filesystem-hook support.
 

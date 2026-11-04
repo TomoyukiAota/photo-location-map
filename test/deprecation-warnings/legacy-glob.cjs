@@ -80,6 +80,18 @@ test('POSIX escaped metacharacters select literal filenames', { skip: process.pl
   assert.deepEqual(await promisify(adapter)(pattern), expected);
 });
 
+test('matching stays case-sensitive by default on every platform', async t => {
+  const directory = fixture(t);
+  const uppercase = `${directory}/case.JS`;
+  fs.writeFileSync(uppercase, 'uppercase extension');
+  assert.deepEqual(adapter.sync(`${directory}/*.JS`), [uppercase]);
+  assert.deepEqual(await promisify(adapter)(`${directory}/*.JS`), [uppercase]);
+  assert(!adapter.sync(`${directory}/*.js`).includes(uppercase));
+  const insensitive = adapter.sync(`${directory}/*.JS`, { nocase: true });
+  assert(insensitive.includes(uppercase));
+  assert(insensitive.includes(`${directory}/a.js`));
+});
+
 test('actual ASAR3 callback glob preserves archive order, hidden files, symlinks and unpacked data', async t => {
   // ASAR 3 misinterprets absolute Windows junction targets; its implementation
   // is unchanged. Windows junction discovery is covered by the glob/Karma cases.

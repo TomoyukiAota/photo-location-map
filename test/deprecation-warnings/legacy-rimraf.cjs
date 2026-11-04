@@ -112,3 +112,19 @@ test('native path separators work in callback and synchronous patterns', async t
   rimraf.sync(pattern);
   assert.equal(fs.existsSync(target), false);
 });
+
+test('missing-pattern expansion keeps the legacy case-sensitive default', async t => {
+  const base = directory(t);
+  const lower = path.join(base, 'lower.tmp');
+  const upper = path.join(base, 'upper.TMP');
+  const pattern = path.join(base, '*.TMP');
+  fs.writeFileSync(lower, 'keep');
+  fs.writeFileSync(upper, 'remove');
+  await promisify(rimraf)(pattern);
+  assert.equal(fs.existsSync(upper), false);
+  assert.equal(fs.existsSync(lower), true);
+  fs.writeFileSync(upper, 'remove');
+  rimraf.sync(pattern);
+  assert.equal(fs.existsSync(upper), false);
+  assert.equal(fs.existsSync(lower), true);
+});

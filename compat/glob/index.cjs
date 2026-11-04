@@ -25,11 +25,14 @@ function normalize(options = {}) {
   }
   const { sync, nosort, mark, ...rest } = options;
   // glob 7 treats Windows separators as separators rather than pattern escapes.
-  return { ...rest, windowsPathsNoEscape: process.platform === 'win32' };
+  // glob 7 defaults to case-sensitive matching even on Darwin and Windows.
+  return { ...rest, nocase: !!options.nocase, windowsPathsNoEscape: process.platform === 'win32' };
 }
 
 /** @param {string[]} files @param {LegacyOptions} [options] */
 function finish(files, options = {}) {
+  // glob 7 returns forward slashes; glob 13 defaults to native Windows output.
+  if (process.platform === 'win32') files = files.map(filename => filename.replaceAll('\\', '/'));
   if (!options.nosort) files.sort((a, b) => a.localeCompare(b, 'en'));
   // glob 7 marks/excludes symlinks to directories too; modern glob does not.
   if (options.mark || options.nodir) {

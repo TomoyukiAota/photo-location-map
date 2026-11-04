@@ -19,7 +19,7 @@ function optionsFor(options) {
 }
 
 function globOptions(options) {
-  return { ...(typeof options.glob === 'object' ? options.glob : {}), windowsPathsNoEscape: process.platform === 'win32' };
+  return { nocase: false, ...(typeof options.glob === 'object' ? options.glob : {}), windowsPathsNoEscape: process.platform === 'win32' };
 }
 
 function shouldExpand(target, options) {

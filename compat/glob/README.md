@@ -13,7 +13,9 @@ The adapter supports only these methods and the documented option whitelist in
 
 Legacy results sort with the English locale before directory marking. Directory
 symlinks receive a trailing slash with `mark` and are excluded with `nodir`,
-matching glob 7. Windows separators remain separators, while POSIX backslash
+matching glob 7. Matching is case-sensitive by default on every platform;
+completion's explicit `nocase: true` is retained. Returned Windows paths use
+forward slashes, as glob 7 did. Windows input separators remain separators, while POSIX backslash
 escapes retain their literal-matching meaning. The filesystem traversal
 and pattern matching are performed by maintained glob, not a copied legacy
 implementation. Arbitrary glob 7 extensions, internal caches, events other than
