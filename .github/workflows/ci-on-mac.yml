@@ -91,7 +91,7 @@ jobs:
 
   test-intel:
     # macos-26-intel is x64, and runs only when this workflow is run manually, because it took twice as long as macos-26
-    # and its failures were caused by the runner, not the app. See CLAUDE.md for when to run it.
+    # and its failures were caused by the runner, not the app. See AGENTS.md for when to run it.
     name: test (macos-x64)
     runs-on: macos-26-intel
     if: ${{ github.event_name == 'workflow_dispatch' }}

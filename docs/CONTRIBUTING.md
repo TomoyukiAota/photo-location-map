@@ -3,7 +3,7 @@
 This page contains useful information to contribute to this project.
 
 
-## CI Status
+## CI
 
 | OS      | Status                                       |
 |:-------:|:--------------------------------------------:|
@@ -18,25 +18,13 @@ This page contains useful information to contribute to this project.
 [ci-on-ubuntu-image]: https://github.com/TomoyukiAota/photo-location-map/workflows/CI%20on%20Ubuntu/badge.svg
 [ci-on-ubuntu-link]: https://github.com/TomoyukiAota/photo-location-map/actions?query=workflow%3A%22CI+on+Ubuntu%22
 
-Ubuntu CI uses Ubuntu 26.04 LTS and reports `test (ubuntu)`. The regular macOS
-check is `test (macos-arm64)`; the manual Intel check is `test (macos-x64)`.
-These check names stay stable when runner versions change. Keep branch protection
-and Mergify aligned with the regular check names. When renaming a required check,
-first make the workflow and Mergify changes and confirm the new check passes,
-then replace the old context in branch protection.
-
-The macOS CI runs on Apple Silicon (`macos-26`). To run it on Intel (`macos-26-intel`), run the "CI on macOS" workflow manually: **Run workflow** in the Actions tab, or `gh workflow run ci-on-mac.yml --ref <branch>`. Do this before merging changes related to Intel Mac support, such as updating Electron and electron-builder. The manual `test (macos-x64)` check is not a required branch-protection check.
-
-A push or pull request that changes only documents (`docs/`, `README.md`, `CLAUDE.md`, `LICENSE` and `.github/ISSUE_TEMPLATE/`, as listed in [`.github/ci-filters.yml`](../.github/ci-filters.yml)) skips the tests.
+See also [ci.md](contributing/ci.md).
 
 
 ## Prerequisite
 
- - Node.js (64-bit), with the version specified in [`mise.toml`](../mise.toml)
-   - [mise](https://mise.jdx.dev/) is the recommended way to install it. `mise.toml` is the single source of truth for the Node.js version, and CI installs the same version from it.
-   - Node.js can also be installed however you prefer, as long as the version matches.
-   - Use the npm bundled with that Node installation; do not upgrade npm separately.
-     `npm run verify:runtime` checks the version and executable identity.
+ - [mise](https://mise.jdx.dev/)
+   - It installs the Node.js version in [`mise.toml`](../mise.toml) and the npm bundled with it. Do not upgrade npm separately.
  - More than 2GB of RAM
    - Application packaging frequently fails on a PC with 1GB of RAM. Add more RAM depending on the available memory for application packaging on your PC.
 
@@ -52,16 +40,10 @@ mise exec -- npm ci
 mise exec -- npm start
 ```
 
-Without mise, install the specified Node.js and its bundled npm, then run `npm ci` and `npm start`.
-
-Dependency install scripts are reviewed in `allowScripts` in `package.json`.
-When upgrading a package with an install script, inspect that script and update
-its exact-version entry. `.npmrc` rejects unreviewed scripts during installation.
-Electron downloads its binary on its first invocation; `npm run verify:electron`
-checks that binary and the Node types used to compile for it.
-
 
 ## Frequently Used Commands
+
+Prefix these with `mise exec --`, as above, unless your shell activates mise with `mise activate`.
 
 |Command|Description|
 |--|--|
@@ -74,34 +56,9 @@ checks that binary and the Node types used to compile for it.
 |`npm run package:linux`| Create an application for Linux. |
 
 
-## HTML template formatting
+## Dependencies
 
-The workspace sets VS Code's built-in HTML formatter to
-[`preserve-aligned`](https://code.visualstudio.com/docs/languages/html#_formatting).
-It keeps existing attribute line breaks and realigns incorrectly indented
-continuation attributes with the first attribute. For a local alignment fix, select the opening tag and use
-**Format Selection** with the built-in HTML formatter. Other formatters may not
-use this HTML-specific setting.
-
-The built-in formatter does not preserve Angular `@if`/`@for` block indentation
-when formatting a whole document. The workspace therefore does not force a
-default formatter or enable format-on-save. Do not reformat the whole repository
-to make an attribute-alignment change.
-
-
-## Using npm modules
-
-### Electron renderer process
-
-npm modules which are 1) used only in Electron renderer process and 2) imported by `import` (not `require`) should be configured in `devDependencies` (not `dependencies`) in `package.json`.
-
-Angular build system creates a bundle file from `.ts` files. The bundle file will have the copy of `import`ed (not `require` d) npm module, and the copy is used at run time. Also, electron-builder will copy npm modules listed in `dependencies` (not `devDependencies`) to create an application package. Therefore, configuring `import`ed (again, not `require`d) npm modules used only in Electron renderer process with `devDependencies` saves the size of application package.
-
-
-
-### Electron main process
-
-npm modules used in Electron main process need to be configured in `dependencies` in `package.json`. 
+See [dependencies.md](contributing/dependencies.md).
 
 
 ## Sidenote

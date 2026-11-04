@@ -5,6 +5,6 @@
 app:
   - '!docs/**'
   - '!README.md'
-  - '!CLAUDE.md'
+  - '!AGENTS.md'
   - '!LICENSE'
   - '!.github/ISSUE_TEMPLATE/**'

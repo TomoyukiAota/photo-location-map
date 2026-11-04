@@ -1,3 +1,14 @@
 {
+  // preserve-aligned keeps existing attribute line breaks and realigns
+  // incorrectly indented continuation attributes with the first attribute.
+  // For a local alignment fix, select the opening tag and use Format
+  // Selection with the built-in HTML formatter. Other formatters may not
+  // use this HTML-specific setting.
+  // https://code.visualstudio.com/docs/languages/html#_formatting
+  //
+  // The built-in formatter does not preserve Angular @if/@for block
+  // indentation when formatting a whole document, so this workspace does
+  // not force a default formatter or enable format-on-save. Do not
+  // reformat the whole repository to make an attribute-alignment change.
   "html.format.wrapAttributes": "preserve-aligned"
 }

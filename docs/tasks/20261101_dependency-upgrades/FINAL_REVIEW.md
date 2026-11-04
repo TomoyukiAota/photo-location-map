@@ -216,7 +216,7 @@ Minimum macOS remains 13.0 without an auto-update guard. Do not reopen that choi
 ### 5. Merge and public release
 
 Merge/public release remains a separate authorization gate under
-[PLAN.md](./PLAN.md) and [CLAUDE.md](../../../CLAUDE.md). A later concrete
+[PLAN.md](./PLAN.md) and [AGENTS.md](../../../AGENTS.md). A later concrete
 publication request must identify the final source, artifact checksums and
 release/tag treatment, including the existing prerelease updater guard. No
 stable-version bump is inferred from this implementation.
