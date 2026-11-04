@@ -59,21 +59,6 @@ mise exec -- npm start
 See [dependencies.md](dependencies.md).
 
 
-## HTML template formatting
-
-The workspace sets VS Code's built-in HTML formatter to
-[`preserve-aligned`](https://code.visualstudio.com/docs/languages/html#_formatting).
-It keeps existing attribute line breaks and realigns incorrectly indented
-continuation attributes with the first attribute. For a local alignment fix, select the opening tag and use
-**Format Selection** with the built-in HTML formatter. Other formatters may not
-use this HTML-specific setting.
-
-The built-in formatter does not preserve Angular `@if`/`@for` block indentation
-when formatting a whole document. The workspace therefore does not force a
-default formatter or enable format-on-save. Do not reformat the whole repository
-to make an attribute-alignment change.
-
-
 ## Sidenote
 
 Development of this application is started by using [maximegris/angular-electron](https://github.com/maximegris/angular-electron). [The contents of the respository as of commit 7618abcea496a26656be11f31542713b728919e9 (on Dec 31, 2018)](https://github.com/maximegris/angular-electron/tree/7618abcea496a26656be11f31542713b728919e9) are used with some modification and removal.
