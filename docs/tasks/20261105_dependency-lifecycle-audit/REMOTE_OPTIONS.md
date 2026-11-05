@@ -186,14 +186,19 @@ Two migration scopes are possible:
 | Isolate the main Angular window first, retain viewer settings | Keep the existing served viewer and Node/analytics contract. This is a viable first stage, subject to real JPEG/HEIC tests, but is not whole-application renderer isolation. |
 | Isolate both main and viewer windows | Add a viewer-specific preload bridge and adapt the served viewer before disabling its Node integration. Preserve the current photo/metadata UI, window state and display settings. |
 
-For the second scope, main binds the selected photo to that viewer window. A
-narrow readCurrentPhoto operation returns only that photo's bytes and metadata
-(name, MIME/display information), rather than exposing arbitrary filesystem
-reads. The viewer constructs its browser File from those bytes and retains its
-photo display/decoding flow. Replace its Node buffer/path helpers as needed,
-process.type mode detection with bridge capability detection, and raw analytics
-IPC with a dedicated bridge method. Preload uses contextBridge and IPC; do not
-expose fs or unrestricted ipcRenderer to the page.
+For the second scope, main binds the selected photo to that viewer window.
+The initial byte-returning readCurrentPhoto proposal is one possible transport,
+but it adds whole-image allocation/copy costs and is not a requirement of Node
+isolation. Prefer evaluating an authorized resource URL plus small metadata
+rather than making full-image invoke/contextBridge results the default. The
+viewer can fetch that resource and construct its browser File, preserving the
+photo display/decoding flow. The resource transport is detailed below.
+
+Replace Node buffer/path helpers as needed, process.type mode detection with
+bridge capability detection, and raw analytics IPC with a dedicated bridge
+method. Do not expose fs, arbitrary filesystem URLs or unrestricted ipcRenderer
+access to the page. These are unimplemented design candidates, not a measured
+transport selection.
 
 The served viewer and desktop app have independent deployments. Publish a
 bridge-capable viewer that also supports the legacy entry path for released app
@@ -223,7 +228,7 @@ likewise calls for profiling the actual application.
 | Settings/UI responsiveness | Local synchronous filesystem work still pauses the renderer. Removing IPC does not remove disk latency. | Cached reads and asynchronous persistence can avoid UI blocking, provided handlers do not perform heavy synchronous work in main. Existing currentUserSettings is already loaded once at startup; do not imply all current renders reread disk. | Can retain B's responsiveness. The extra bridge boundary is not automatically a visible slowdown, but must be measured. |
 | Bulk EXIF/thumbnail loading | Shared opportunity to remove remote proxy calls while retaining current parsing/rotation placement. | Same opportunity, with explicit batching/backpressure. Async invoke does not parallelize parsing CPU work. | Same opportunity plus bridge serialization/copying and worker relocation considerations. No automatic throughput advantage over B. |
 | Directory traversal | Existing Node-enabled Web Worker stays off the UI thread. | That worker can remain under B's stated scope. | Replace it with an off-thread/main-owned worker design, preserving concurrency/progress. Do not move synchronous traversal onto the main event loop. |
-| View Data | Current separate viewer file-loading path remains. | Same if viewer privileges/settings remain. | Changing viewer-local reads into IPC of entire images adds transfer/allocation costs; this deserves explicit latency/peak-memory measurement. |
+| View Data | Current separate viewer file-loading path remains. | Same if viewer privileges/settings remain. | Whole-image invoke/bridge results add transfer/allocation costs. An authorized resource URL is another transport; full-image JavaScript IPC is not mandatory. Measure first-image latency and process memory. |
 | Memory | Fewer proxy objects may help; local fs execution changes ownership. Net reduction is unmeasured. | Bounded queues/caches can control memory; new caches and pending requests can also increase it. | Node removal may remove some allocations, while bridges, byte copies and replacement workers add others. Net process memory is unknown. |
 
 The most concrete shared optimization opportunity is EXIF transport. The
@@ -252,10 +257,47 @@ Keep these existing constraints when assessing all options:
 - Existing HEIC thumbnail workers and deliberate pool recycling are separate
   memory/performance decisions; removal of remote does not require changing them.
 - View Data opening already sends only name/path, not the whole Photo/EXIF
-  object. C introduces photo-byte delivery only when the viewer itself is
-  isolated. Avoid repeated full-image copies through bridge APIs. Assess a
-  selected-photo-only URL/stream delivery design if large-image transfer is a
-  bottleneck; do not promise zero-copy or an automatic improvement.
+  object. When isolating the viewer, choose its file-delivery transport explicitly;
+  Node removal does not mandate a full-image invoke/bridge result. Compare an
+  authorized resource URL against byte delivery before selecting it. Do not
+  promise zero-copy, zero main memory growth or an automatic improvement.
+
+### Node isolation does not require whole-file JavaScript IPC
+
+The owner's memory/copy concern applies directly to the initial proposal:
+main readFile -> complete Buffer -> invoke/bridge -> renderer File. That design
+adds full-image allocation and transfer costs. It cannot be recommended as
+performance-equivalent to the current local read without measurements.
+
+Node integration controls the page's use of Node APIs; Chromium can still load
+permitted resource URLs for images or fetch. The current host's original and
+generated-thumbnail images already use file URLs in thumbnail-element.ts; EXIF
+already executes in main and returns data through remote. Do not model C as
+introducing a new whole-file copy for every existing image operation.
+
+A stable alternative in the installed Electron 45.2.1 is an authorized custom
+resource scheme handled by protocol.handle, returning the original
+net.fetch(pathToFileURL(selectedPath)) Response. The [versioned documentation](https://github.com/electron/electron/blob/v45.2.1/docs/api/protocol.md)
+shows this pattern. Application code need not read the complete image into a
+Buffer or call Response.arrayBuffer in main before returning it.
+
+The [versioned implementation](https://github.com/electron/electron/blob/v45.2.1/lib/browser/api/protocol.ts)
+can relay an untouched fetch Response through its native loader; otherwise it
+uses the Response body stream. It may collect already-buffered chunks, even the
+complete body if fetching finished early. Thus this is not proof of zero-copy,
+zero main-process RSS or a guaranteed bounded peak-memory value. The handler
+still runs in main, and Chromium/decoder buffering remains. Avoid consuming,
+locking, cloning or replacing the response body merely to forward the file.
+Do not adopt experimental registerSource or deprecated register*Protocol APIs
+as a shortcut for this proposal.
+
+For the remotely served viewer, scheme registration, the window's actual session,
+fetch/CORS/CSP behavior and a selected-photo-only authorization/lifetime must be
+implemented and tested. The viewer may still require the complete image in its
+own memory for HEIC decoding. Compare total main/renderer/network/worker memory
+and first-image latency against the current direct Node file-read path. The URL
+route avoids mandating an application-level whole-file JS IPC payload; it does
+not prove identical performance to direct fs access.
 
 Before implementation, record a baseline and compare the chosen design using
 the same representative JPEG/HEIC/mixed-folder inputs, machine and versions.
