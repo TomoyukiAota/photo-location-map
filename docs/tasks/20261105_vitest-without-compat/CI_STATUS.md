@@ -1,60 +1,83 @@
 # Vitest migration CI validation
 
-PR634 remains open and unmerged. Branch codex/remove-deprecation-warnings.
-The migration source is e4ed6ba4fef014620a5f998d24972890b38ba1ad.
-All-platform CI and native Intel were explicitly authorized earlier in this task.
-Preserve intentional Windows push draft publishing; do not merge or add automerge.
+PR634 remains open and unmerged, without automerge. Branch:
+codex/remove-deprecation-warnings. All-platform CI and native Intel were
+explicitly authorized earlier in this task. Intentional Windows push draft
+publishing is preserved and succeeded.
 
-## Initial migration runs (snapshot)
+## Accepted source and current runs
 
-| Workflow / trigger | Run | Dispatch/inspection status |
+Migration: e4ed6ba4fef014620a5f998d24972890b38ba1ad.
+Windows test-only portability correction: 5ee46302ee2eb08eed5bdc951ba79d021ecc450f.
+Current regular runs use the latter source.
+
+| Workflow / trigger | Run | Result |
 | --- | --- | --- |
-| CI on macOS / workflow_dispatch | [41993533367](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41993533367) | Inspect live status |
-| CI on macOS / pull_request | [41993376642](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41993376642) | Inspect live status |
-| CI on Ubuntu / pull_request | [41993376869](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41993376869) | Inspect live status |
-| CI on Windows / pull_request | [41993376783](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41993376783) | Failed: new ASAR test portability |
-| CI on macOS / push | [41993366355](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41993366355) | Inspect live status |
-| CI on Ubuntu / push | [41993366290](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41993366290) | Inspect live status |
-| CI on Windows / push | [41993366467](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41993366467) | Failed: new ASAR test portability |
+| Ubuntu / pull_request | [41994324085](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41994324085) | Success |
+| Ubuntu / push | [41994317284](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41994317284) | Success |
+| Windows / pull_request | [41994323912](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41994323912) | Success |
+| Windows / push | [41994317302](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41994317302) | Success, including draft publication |
+| macOS ARM / push | [41994317244](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41994317244) | Success |
+| macOS ARM / pull_request | [41994323804](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41994323804) | Success |
+| macOS Intel + ARM / manual | [41993533367](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41993533367) | Both success, release-equivalent e4ed6ba |
 
-Inspect live run/job status before continuing; this table is not final acceptance.
+All successful test jobs and changes jobs above have complete-log
+case-insensitive audits with zero deprecation messages. Check annotations have
+no deprecations; ARM jobs have only the GitHub macOS capacity notice, and other
+jobs have none. All six regular workflows and both manual test jobs pass.
+
+Each platform test job passes Vitest37, Electron main117/renderer69,
+package-runner19, real platform packaging/smoke and14 packaged-app E2E cases.
+Dependency checks:19 on current Mac;18 pass plus1 native-Mac-only skip elsewhere.
+The retained manual run has the original18-check shape, including the same Mac
+integrity and merge assertions before they were split into separate tests.
 
 ## Windows test portability correction
 
-Both Windows runs failed in dependency tests at the same source, jobs127130713012
-(PR) and127130694649 (push). Complete logs were read before taking action:
+Initial migration runs [41993376783](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41993376783)
+(PR, job127130713012) and [41993366467](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41993366467)
+(push, job127130694649) failed new ASAR tests at the same source. Complete logs
+were read before action:
 
 - ASAR listPackage returns native Windows separators. The new hidden-file
-  assertion assumed POSIX output; normalize the assertion's display paths.
-- The macOS universal archive merger assumes POSIX archive paths and uses lipo.
-  The new test invoked it on Windows and failed looking up a leading-backslash
-  archive entry. Keep integrity validation on every OS; run actual Mac archive
-  merging on its native macOS hosts, including Intel.
+  assertion assumed POSIX output; normalize only the assertion's display paths.
+- The macOS universal merger assumes POSIX archive paths and uses lipo. The new
+  test invoked it on Windows and failed looking up a leading-backslash entry.
+  Integrity stays on every OS; actual archive merging runs on native Mac hosts.
 
-These are repository test defects, not runner flakes. No unchanged-code rerun
-was requested. Temp's six tests and the builder's archive-entrypoint checks
-already pass in both Windows logs. The corrected local dependency suite has19
-tests on Mac; other OSes have18 pass and1 explicitly Mac-only skip.
+These were repository test defects, not runner flakes. No unchanged-code rerun
+was requested. Temp's six tests and actual builder entrypoint checks already
+passed in both failed logs. The correction preserves extraction, literal names,
+unpacked data, integrity and missing-entry rejection coverage.
 
-The correction changes tests/documents only. Retain the initial manual Intel
-run: application, dependency, release and workflow inputs are byte-identical.
-No new native Intel dispatch is needed for only assertion normalization and
-splitting the same native-Mac archive assertions. If release/runtime inputs
-change, reassess and dispatch Intel for that source.
+The correction changes only test/deprecation-warnings/packaging-asar.cjs and
+documents. Application, dependency, release and workflow inputs are byte-identical
+to the successful manual Intel source. No redundant native dispatch is needed
+for this correction or later documentation-only commits. Reassess Intel if any
+release/runtime input changes.
 
 ## Local verification
 
-Clean npm ci/npm ls pass with no deprecated packages or compatibility packages.
+Clean npm ci/npm ls pass with no deprecated or compatibility packages.
 Vitest37 with coverage/watch, Electron117/69, live reload, package-runner19,
-lint/types pass with zero deprecations. Independent review findings were fixed.
-Actual signed/notarized universal packaging passes; codesign/stapler checks pass,
-and Gatekeeper/signed-app E2E/smoke are being verified. See PLAN.md and raw optional
-logs under .upgrade-artifacts/vitest-migration/.
+dependency19, lint and type/worker checks pass. Independent review findings were
+fixed and re-reviewed. All final local logs have zero deprecation messages.
 
-## Continue
+Actual signed/notarized universal packaging, codesign deep/strict, stapler and
+Gatekeeper pass. The signed app passes14 application/visual E2E cases with
+unchanged reference images; the website-only case is intentionally skipped.
+Isolated-profile DMG smoke passes after60 seconds, including main/renderer logs,
+app termination and detach. PLAN.md records one initial E2E teardown timeout,
+its successful283ms diagnostic and full successful recheck without app/timeout
+changes. The isolated delay's exact trigger remains unproven.
 
-Publish the test correction, record its new run IDs, and handle any failures
-immediately. Audit every completed current push/PR job's full log
-case-insensitively for deprecation messages plus check annotations; green checks
-alone are insufficient. Retain the code-equivalent native Intel evidence above.
-Update final evidence and PR body, keep the PR open, and do not merge.
+## Documentation-only follow-up
+
+After final evidence is committed, check the resulting head's workflows and
+annotations before reporting completion. The code-bearing runs pinned above
+remain the release evidence: only task documents change after5ee4630.
+Record the final head/check outcome in the PR body, avoiding an endless sequence
+of status-only commits. Preserve the open PR and do not merge.
+
+Raw optional logs: .upgrade-artifacts/vitest-migration/ (ignored, not required to
+understand or resume this work).

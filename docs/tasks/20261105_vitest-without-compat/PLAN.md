@@ -71,9 +71,9 @@ create CLAUDE.md or use machine-local agent memory as durable documentation.
 - [x] Maintained packaging dependency path assessed with isolated probes.
 - [x] Vitest migration implemented, real Electron checks preserved.
 - [x] compat/ removed, or exact supported blocker/alternatives documented.
-- [ ] Clean installation and local behavioral/release validation complete.
-- [ ] Independent review and all-platform CI/log/annotation audit complete.
-- [ ] Final evidence and open PR updated; no merge performed.
+- [x] Clean installation and local behavioral/release validation complete.
+- [x] Independent review and all-platform CI/log/annotation audit complete.
+- [x] Final evidence and open PR updated; no merge performed.
 
 ## Resume procedure
 
@@ -96,41 +96,69 @@ create CLAUDE.md or use machine-local agent memory as durable documentation.
 
 ## Latest status
 
-Implementation is in the working tree on the existing open PR634 branch,
-with separate migration commits planned. Vitest5.1.0/jsdom30.1.3 and official
-unit-test builder are configured; genuine Electron assertions moved without
-spoofing renderer identity. Initial Vitest36 and Electron main117/renderer69
-pass. A further native-process invariant raises the final Vitest target to37.
-Read TEST_ENVIRONMENTS.md and VITEST_DESIGN.md for intent mapping and the JIT/
-platform-boundary decisions. EnvironmentDetector now recognizes actual Vitest;
-normal application features/UI remain unchanged.
+Migration implementation is committed as e4ed6ba, with the Windows test-only
+portability correction in 5ee4630, on the existing open PR634 branch. Vitest5.1.0,
+jsdom30.1.3 and the official unit-test builder replace Karma/Jasmine/ng-mocks.
+Final Vitest37 and Electron main117/renderer69 pass; genuine Electron assertions
+are retained without spoofing renderer identity. Read TEST_ENVIRONMENTS.md and
+VITEST_DESIGN.md for intent mapping and the dedicated JIT test configuration.
+EnvironmentDetector recognizes actual Vitest; application features/UI remain
+unchanged. Original visual references and tolerances are unchanged.
 
-Karma/Jasmine/ng-mocks and both local compatibility packages are uninstalled;
-compat/ and Karma-specific configs/tests are deleted. Stable ASAR4 replaces
-ASAR3/glob7. Temp uses maintained rimraf6 plus a source-guarded four-call-site
-postinstall migration, preserving async/sync APIs and retries. This removes the
-adapters, not all upstream source workarounds. PACKAGING.md records the stable
-version choice, genuine probes, rejected plain override and remaining patch.
-Temp's six integrated checks pass. Archive tests had fixture/error-wording
-issues now corrected; rerun the complete18-check dependency suite.
+Both repository-owned compatibility packages and compat/ are deleted. Stable
+ASAR4 uses maintained glob. Temp uses maintained rimraf6 plus a narrow guarded
+postinstall call-site migration, preserving async/sync cleanup and retries.
+This removes the legacy adapters; it does not remove every upstream workaround.
+PACKAGING.md records the stable release-tool choice, genuine consumer probes,
+rejected plain override and remaining Temp patch. The existing Electron-Mocha
+Windows spawn patch remains. Neither patch nor Temp ships in the app.
 
 Root npm ci and npm ls --all pass. Installation adds1123 packages with zero
 deprecated entries/messages; strict install-script policy and retained native
-versions are unchanged. All18 dependency checks pass. Vitest37 passes with v8
-coverage; watch initially passes37 and a changed/restored cache component spec
-rebuilds and passes twice. Watch stopped intentionally with Ctrl-C. Electron
-main117/renderer69, live-reload lifecycle, package-runner19, lint and types pass.
-Case-insensitive scans find zero deprecations in all these final local logs.
+versions are unchanged. Dependency19 passes on Mac; Windows/Linux have18 pass
+and1 explicitly Mac-only merge skip. Vitest37 passes with v8 coverage; watch
+passes37, then rebuilds and passes the changed/restored cache spec twice before
+intentional Ctrl-C. Electron main117/renderer69, live reload, package-runner19,
+lint, and type/worker checks pass. Complete final local logs contain zero
+deprecation messages in case-insensitive scans.
 
-Independent review caught the retired --code-coverage flag and an existing
-native cache path outside the new test isolation. Fixed to --coverage and setup
-PLM_TEST_ROOT before app imports, with a cache containment assertion; re-review
-found no further defect. Read VITEST_DESIGN.md for the tested boundary model.
+Independent review caught the retired --code-coverage flag and a native cache
+path outside the new test isolation. Fixed to --coverage and PLM_TEST_ROOT set
+before app imports, with a cache containment assertion. Re-review found no
+further defect. A separate review of 5ee4630 confirmed the Windows assertion
+normalization and native Mac merge coverage preserve meaningful checks.
 
-Actual npm run package:mac is running in the background, log package-mac.log
-(session2202 at this checkpoint). It has built production and reached universal
-signing; inspect actual current status before starting another build. Next finish
-signed/notarized output verification, packaged visual E2E and isolated DMG smoke.
-Publish the reviewed migration as a separate commit on open PR634 and run
-all-platform CI plus native Intel. Do not merge. Current source is not yet pushed.
-Raw logs: .upgrade-artifacts/vitest-migration/.
+Actual npm run package:mac passed, including signing and Apple notarization.
+codesign deep/strict, stapler and Gatekeeper exit0 checks pass. Artifact audit
+found no test/compatibility packages or source patches shipped in the app.
+The signed app passes14 visual/application E2E cases; the website-only case is
+intentionally skipped. An isolated-profile DMG smoke passes after60 seconds,
+with both main/renderer logs, graceful termination and successful detach.
+
+Preserve the first signed-app E2E failure evidence:13 cases passed and the
+normal-path HEIC viewer passed its assertions but app.close exceeded the
+existing10-second teardown bound. A traced single-case diagnostic subsequently
+exited0 and closed in283ms; the complete recheck passed14. No app/quit change,
+timeout relaxation or visual reference update was made. The exact trigger of
+that isolated teardown delay is unproven; investigate before further retries if
+it recurs. Raw logs: signed-app-e2e.log, heic-shutdown-diagnostic.log and
+signed-app-e2e-final.log under the optional ignored artifact directory.
+
+Both initial Windows runs failed new ASAR test portability assumptions. Their
+complete logs were classified before changing tests, with no unchanged reruns.
+Fix5ee4630 normalizes listing separators and separates all-platform integrity
+from native Mac universal merge. All six current Windows/Ubuntu/Mac push and PR workflows pass. Complete logs
+and check annotations have zero deprecations; only GitHub ARM capacity notices
+remain. Native Intel and manual ARM also pass on e4ed6ba: release,
+runtime, dependency and workflow inputs are byte-identical in 5ee4630 (only the
+archive test and documents changed). Do not dispatch redundant Intel jobs for
+only these assertion/document changes.
+
+Implementation, independent review and local/all-platform release validation
+are complete. PR634 records the result and remaining narrow upstream patches.
+Commit/push this final evidence, then follow the documentation-only head checks
+to completion; record their outcome in the PR body without another status-only
+commit. If resuming, inspect that final head before repeating any work. No
+unresolved owner decision requires a feature/UI change. Keep the PR open; do
+not merge.
+Raw optional logs/probes: .upgrade-artifacts/vitest-migration/.
