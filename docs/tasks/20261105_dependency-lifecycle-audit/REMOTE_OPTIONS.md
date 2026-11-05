@@ -209,6 +209,72 @@ and HEIC, orientation, Unicode/spaces/#/% paths, date/time settings, titles,
 window bounds, external links and analytics, plus compatibility with a released
 desktop version using the legacy viewer entry path.
 
+## Performance expectations and measurement
+
+Added 2026-11-06. No option has been implemented or benchmarked. There is no
+measured overall speed/memory ranking. Option B is recommended for the ownership
+boundary and feature-development foundation, not because it is proven fastest.
+[Electron's performance guidance](https://www.electronjs.org/docs/latest/tutorial/performance)
+likewise calls for profiling the actual application.
+
+| Area | A: focused replacement | B: main-owned services | C: isolated renderer |
+| --- | --- | --- | --- |
+| Startup | Fewer remote initialization calls may help, but synchronous local storage reads remain. | A consolidated snapshot may reduce round trips; explicit initialization/import ordering also adds work. Net change is unknown. | B's tradeoffs plus preload/bridge setup and changed module loading. Node removal does not establish an overall startup improvement. |
+| Settings/UI responsiveness | Local synchronous filesystem work still pauses the renderer. Removing IPC does not remove disk latency. | Cached reads and asynchronous persistence can avoid UI blocking, provided handlers do not perform heavy synchronous work in main. Existing currentUserSettings is already loaded once at startup; do not imply all current renders reread disk. | Can retain B's responsiveness. The extra bridge boundary is not automatically a visible slowdown, but must be measured. |
+| Bulk EXIF/thumbnail loading | Shared opportunity to remove remote proxy calls while retaining current parsing/rotation placement. | Same opportunity, with explicit batching/backpressure. Async invoke does not parallelize parsing CPU work. | Same opportunity plus bridge serialization/copying and worker relocation considerations. No automatic throughput advantage over B. |
+| Directory traversal | Existing Node-enabled Web Worker stays off the UI thread. | That worker can remain under B's stated scope. | Replace it with an off-thread/main-owned worker design, preserving concurrency/progress. Do not move synchronous traversal onto the main event loop. |
+| View Data | Current separate viewer file-loading path remains. | Same if viewer privileges/settings remain. | Changing viewer-local reads into IPC of entire images adds transfer/allocation costs; this deserves explicit latency/peak-memory measurement. |
+| Memory | Fewer proxy objects may help; local fs execution changes ownership. Net reduction is unmeasured. | Bounded queues/caches can control memory; new caches and pending requests can also increase it. | Node removal may remove some allocations, while bridges, byte copies and replacement workers add others. Net process memory is unknown. |
+
+The most concrete shared optimization opportunity is EXIF transport. The
+[remote object model](https://github.com/electron/remote#remote-objects) and the
+installed implementation use synchronous method/property IPC, including the
+ordinary fields of the parse result. A per-file operation returning selected
+metadata plus embedded thumbnail bytes can avoid repeated proxy traffic.
+However, Buffer is already special-cased as a binary payload; it is not sent
+through per-byte property IPC. Plain data is not automatically smaller or
+zero-copy. [IPC](https://www.electronjs.org/docs/latest/api/ipc-renderer) and
+[contextBridge](https://www.electronjs.org/docs/latest/api/context-bridge) have
+serialization/copying behavior that must be included in the comparison.
+
+Keep these existing constraints when assessing all options:
+
+- EXIF's PQueue concurrency of ten currently covers parse, thumbnail extraction,
+  renderer rotation and model construction. Keep an equivalent end-to-end
+  bound, not just ten simultaneous main parse requests. Releasing slots before
+  renderer work finishes can accumulate byte arrays/canvases and increase memory.
+- Keep managed-exifr's chunked reads and handle cleanup. Send a file identity to
+  the service and return selected metadata/embedded thumbnail, rather than
+  copying every original photo into main through renderer IPC.
+- Async IPC changes waiting behavior, not the CPU cost or execution thread of
+  a handler. Heavy parsing/scanning needs appropriate off-thread work if
+  measurements show main contention. Do not create a new process per photo.
+- Existing HEIC thumbnail workers and deliberate pool recycling are separate
+  memory/performance decisions; removal of remote does not require changing them.
+- View Data opening already sends only name/path, not the whole Photo/EXIF
+  object. C introduces photo-byte delivery only when the viewer itself is
+  isolated. Avoid repeated full-image copies through bridge APIs. Assess a
+  selected-photo-only URL/stream delivery design if large-image transfer is a
+  bottleneck; do not promise zero-copy or an automatic improvement.
+
+Before implementation, record a baseline and compare the chosen design using
+the same representative JPEG/HEIC/mixed-folder inputs, machine and versions.
+Separate cold/warm caches and repeat enough to assess variance. Measure:
+
+1. Startup to usable UI, first photo ready and folder fully loaded.
+2. Main/renderer event-loop stalls and input responsiveness during loading,
+   separately from total folder processing time.
+3. EXIF/parsing, rotation and UI/DOM construction time; sync IPC count/time and
+   bytes transferred across each boundary.
+4. Total process peak memory and outstanding file handles, including worker and
+   preload changes, not only renderer heap.
+5. View Data first JPEG/HEIC display and peak memory for large files, plus
+   settings-save acknowledgement and actual restart behavior.
+
+Preserve the existing visual/metadata results while measuring. Performance
+claims remain hypotheses until the selected implementation passes these checks;
+no artificial percentage improvement or ranking is asserted here.
+
 ## Implementation sequence after selection
 
 1. Freeze the chosen scope and inventory main-only operations, startup values,
