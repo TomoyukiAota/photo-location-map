@@ -12,7 +12,8 @@ test('Karma refresh keeps Jasmine classic while compiled Angular tests remain mo
     const fixture = name => {
       const file = path.join(fixtureRoot, name);
       fs.writeFileSync(file, '');
-      return { pattern: file, included: true, served: true, watched: false, type: 'module' };
+      // Angular's builder uses POSIX-normalized Karma patterns on every OS.
+      return { pattern: file.replaceAll('\\', '/'), included: true, served: true, watched: false, type: 'module' };
     };
     const main = fixture('test_main.js');
     const spec = fixture('spec-example.js');

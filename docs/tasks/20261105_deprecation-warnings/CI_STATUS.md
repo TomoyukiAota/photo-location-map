@@ -74,3 +74,35 @@ Local compatibility/lifecycle checks (21), lint, and Angular tests (57) pass; a
 case-insensitive scan including DEPRECATION prefixes finds zero warning messages.
 Next: push the follow-up and redispatch native Intel for its source. Record the
 new run IDs below and inspect logs/annotations as well as conclusions.
+
+## Final-source runs
+
+Source `b9de3d041dc983b51abc9b6e4f814776c86b00cc` is pushed and the PR is updated.
+All runs below belong to that source. Native Intel was dispatched explicitly.
+
+| Workflow / trigger | Run | Result |
+| --- | --- | --- |
+| CI on macOS / workflow_dispatch | [41955610483](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41955610483) | In progress |
+| CI on Windows / pull_request | [41955595086](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41955595086) | In progress |
+| CI on macOS / pull_request | [41955594840](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41955594840) | In progress |
+| CI on Ubuntu / pull_request | [41955594772](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41955594772) | In progress |
+| CI on Ubuntu / push | [41955587505](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41955587505) | In progress |
+| CI on macOS / push | [41955587529](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41955587529) | In progress |
+| CI on Windows / push | [41955587476](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41955587476) | In progress |
+
+The owner-approved monitoring phase is active. Inspect each completed job's log
+with a case-insensitive deprecation scan; a green conclusion alone is not enough.
+No merging is authorized. No environmental reruns have been needed so far.
+
+### Windows fixture correction
+
+Both Windows runs for `b9de3d0` failed in the new Karma lifecycle regression,
+jobs `127009670619` (PR) and `127009643419` (push), with the same first error:
+`Could not find test entrypoint file.` The real Angular polyfill plugin matches
+the builder's POSIX-normalized `/test_main.js` pattern. The synthetic fixture
+used native Windows backslashes instead. This is a test defect, not a runner
+failure; unchanged reruns were not requested. Normalize the fixture pattern just
+as Angular does, retaining actual native filesystem paths when creating files.
+All 21 local compatibility tests pass after correction. Republish and repeat
+the final-source checks; the prior manual Mac run is superseded after its unit
+checks passed, so cancel it before dispatching Intel for the corrected source.
