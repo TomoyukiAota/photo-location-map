@@ -5,10 +5,10 @@ The owner authorized branch publication, PR creation, and all-platform CI on
 
 - PR: https://github.com/TomoyukiAota/photo-location-map/pull/634
 - Branch: `codex/remove-deprecation-warnings`.
-- Source head: `01c1e7f99fb63f568afc772d413fa4f5fb83ee44`.
+- Latest published source: `e10e1b98446a26e11f09e45acf0330dcb00063c9`;
+  executable-spawn follow-up ready for publication (see the last section).
 - Base: `abf208623c60219292310d74a84490f13b3ac59b`.
-- The publication includes the final case-sensitivity/Windows-output preflight
-  fixes, 20 passing local compatibility checks, and 57 passing Angular tests.
+- Current local validation: compatibility25, Angular57, main117 and renderer55.
 
 ## First source runs (superseded)
 
@@ -106,3 +106,46 @@ as Angular does, retaining actual native filesystem paths when creating files.
 All 21 local compatibility tests pass after correction. Republish and repeat
 the final-source checks; the prior manual Mac run is superseded after its unit
 checks passed, so cancel it before dispatching Intel for the corrected source.
+
+## Corrected final source
+
+Source `e10e1b98446a26e11f09e45acf0330dcb00063c9` is now pushed. The prior manual
+run was cancelled as superseded, and the corrected source was dispatched for
+native Intel. No unchanged-code rerun was used to conceal the Windows failure.
+
+| Workflow / trigger | Run | Result |
+| --- | --- | --- |
+| CI on Ubuntu / pull_request | [41956182026](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41956182026) | In progress |
+| CI on Windows / pull_request | [41956182040](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41956182040) | In progress |
+| CI on macOS / pull_request | [41956182034](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41956182034) | In progress |
+| CI on Ubuntu / push | [41956175993](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41956175993) | In progress |
+| CI on Windows / push | [41956176148](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41956176148) | In progress |
+| CI on macOS / push | [41956176212](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41956176212) | In progress |
+| CI on macOS / workflow_dispatch | [41956175246](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41956175246) | In progress |
+
+The Jasmine-remediated Ubuntu push on prior source `b9de3d0` also completed with
+21 compatibility tests, Angular57, main117, renderer55, package-runner19, and
+packaged AppImage E2E14 all passing; its complete job log has zero deprecation
+messages under the corrected case-insensitive scan. Final acceptance still
+requires the corrected source's Windows and all other requested runs.
+
+### Electron-Mocha follow-up (current work)
+
+The corrected Ubuntu push/PR logs each contain zero deprecation messages and
+have no check annotations. Corrected Windows push/PR both pass all tests and
+the push successfully publishes the intended draft assets, but each complete
+log exposes four DEP0190 warnings from Electron-Mocha's executable spawn calls.
+Classify this as an upstream development-tool defect, not a runner failure; do
+not rerun the unchanged source to conceal it. Mac push/manual ARM logs scanned
+so far have zero deprecations. Prior-source platform runs remain historical
+evidence; a new source commit is required for final acceptance.
+
+All seven `e10e1b9` workflows now completed successfully, including native Intel.
+Every non-Windows job's complete log has zero deprecations; both Windows logs
+have the four warnings described above. This is not final zero-warning acceptance.
+
+The guarded two-site patch and four installed-source/lifecycle tests are ready;
+see `ELECTRON_MOCHA.md`. Fresh installation, compatibility25, script lint, and
+serialized main117/renderer55 recheck pass with zero deprecations. Commit/push and dispatch
+native Intel for the new source. Update the final run table and inspect complete
+job logs case-insensitively plus check annotations. Keep the PR open, unmerged.

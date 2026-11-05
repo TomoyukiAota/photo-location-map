@@ -196,9 +196,9 @@ feature/security changes in this task.
 ## Latest status
 
 The complete repository now installs with zero deprecation warnings and zero
-locked deprecated packages. `npm ls --all` exits zero. All 21 dependency tests
+locked deprecated packages. `npm ls --all` exits zero. All 25 dependency tests
 pass, including six installed-source checks (root adapters and actual consumers),
-packed-directory/lock guards, Karma file-list/watch behavior, ASAR archives,
+packed-directory/lock guards, executable-spawn lifecycle, Karma file-list/watch behavior, ASAR archives,
 Temp cleanup, native path-separator cases, and POSIX escapes. `checkJs` covers both adapters.
 Final-tree lint, Angular 57 tests, Electron main 117 and renderer 55 tests,
 live-reload lifecycle, and package-runner 19 tests all pass.
@@ -211,13 +211,16 @@ logs present, clean application exit, and successful diskutil eject. Final revie
 is recorded in `FINAL_REVIEW.md`; the validation checkpoint follows the source commits. The binary contains both x86_64 and
 arm64 slices; actual x64 execution fails with `Bad CPU type in executable` on this
 host, so Rosetta/x64 E2E is unavailable here. Do not install system components
-to work around this; Windows/Linux/native Intel results remain CI follow-ups.
+to work around this; native Intel and the other CI platforms have since passed.
 No feature/UI change was necessary. The owner approved branch publication, PR
 creation, and all-platform CI (including Intel Mac) on 2026-11-05 (JST).
 Publication and CI verification are the active phase; merging is not authorized.
-PR #634 is open and source `01c1e7f` has been pushed. See `CI_STATUS.md` for the
-seven active workflow runs, including the manually dispatched native Intel job,
-and the exact failure-handling/resume procedure. Do not start duplicate runs.
+PR #634 is open. All seven workflows for `e10e1b9` passed, including native Intel,
+but full Windows logs exposed DEP0190. The reviewed spawn workaround is now
+implemented; fresh install, compatibility25, lint, and main117/renderer55 pass
+locally with zero deprecations. Publish this follow-up and run all-platform CI.
+See `CI_STATUS.md` for current run links and the exact failure-handling/resume
+procedure. Do not start duplicate runs or accept green checks without log review.
 
 The final portability preflight restored two additional glob 7 contracts:
 case-sensitive matching by default on every OS (including removal-pattern
@@ -254,10 +257,11 @@ requiring `script/package-test/package-smoke-test.js`, then call its exported
 `run()` and propagate any rejection as exit code 1. Never run it against the
 owner's normal profile: it clears the profile's log directory.
 
-Windows/Linux CI has not run; pushing would trigger the repository's deliberate
-Windows draft-release publishing. Preserve the publishing steps. Confirm the
-outward publishing step before uploading artifacts. The manual Intel CI policy
-in AGENTS.md still applies before merging changes within its stated scope.
+The owner subsequently approved pushing this branch, creating the PR, and
+running all-platform CI, including native Intel and intentional Windows draft
+release publishing. PR #634 is open; merging is not authorized. Preserve the
+publishing steps. Current source/run evidence and remaining work are recorded
+in `CI_STATUS.md`; older local-only checkpoints above are historical.
 
 ### CI warning follow-up
 
@@ -271,3 +275,15 @@ uses the same native Xvfb command instead of a deprecated Node20 action. Local
 21 compatibility checks, lint, and Angular57 tests pass with a case-insensitive
 warning scan. The new source must be published and all-platform CI repeated;
 use `CI_STATUS.md` and current GitHub runs rather than the old green conclusions.
+
+### Windows executable-spawn follow-up
+
+The complete corrected Windows logs exposed four DEP0190 warnings per job in
+Electron-Mocha's launcher/cleanup calls. `ELECTRON_MOCHA.md` records the evidence,
+the pinned two-site postinstall workaround, four regression checks, and removal
+criteria. Fresh installation, all 25 compatibility checks, and script lint pass.
+The serialized Electron recheck passes (117 main / 55 renderer), with zero
+deprecation messages after re-extracting the local binary once. Push the reviewed source, dispatch
+native Intel for that commit, and inspect every requested job's complete log and
+annotations. Green conclusions alone are insufficient. No application feature
+or UI change has been needed. Keep current progress in `CI_STATUS.md`.

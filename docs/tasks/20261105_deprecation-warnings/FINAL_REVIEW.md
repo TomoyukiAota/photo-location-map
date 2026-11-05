@@ -36,6 +36,10 @@ shared CSS differs only in whitespace and identical keyframe deduplication.
   existing native packages and their install-script policy were retained.
 - Package smoke tests use supported disk-image tools when detected, with the
   existing legacy fallback on older tools. Real attachment failures still fail.
+- Jasmine runs as classic framework code with native async setup; obsolete
+  Zone testing patches and the Ubuntu Node20 action were replaced. Electron-Mocha
+  receives a version/source-guarded two-site executable-spawn patch in postinstall
+  to fix Windows DEP0190. See `JASMINE.md` and `ELECTRON_MOCHA.md`.
 
 Independent reviews covered dependency APIs, bootstrap/JIT, Electron bridges,
 Sass equivalence, resource ownership, callback errors, portable installation,
@@ -47,7 +51,7 @@ POSIX escapes, and Windows separators. Findings were addressed and tested.
 | --- | --- |
 | Clean installation / locked deprecated entries | PASS / 0 |
 | Complete npm dependency validation | PASS |
-| Dependency compatibility and packed-source checks | PASS, 21 tests |
+| Dependency compatibility and packed-source checks | PASS, 25 tests |
 | Lint / bridge+adapter checkJs / worker typing | PASS |
 | Angular unit tests | PASS, 57 |
 | Electron main / renderer unit tests | PASS, 117 / 55; no DEP0137 |
@@ -67,12 +71,13 @@ Windows/Linux/native Intel CI results are not implied by local macOS tests.
 
 ## Handoff and publication
 
-Read `PLAN.md` for the current checkpoint and exact continuation steps. Source
-checkpoints are `74a2cf8` and `33a6d6f`; subsequent validation documentation is
-saved separately. The owner authorized branch publication, PR creation, and
-cross-platform CI on 2026-11-05 (JST); results are tracked in `PLAN.md`.
+Read `PLAN.md` for the current checkpoint and exact continuation steps.
+The owner authorized branch publication, PR creation, and cross-platform CI on
+2026-11-05 (JST). PR #634 is open. Source commits and current run evidence are
+tracked in `CI_STATUS.md`; signed-bundle validation above predates the final
+development-tool-only fixes and still covers the unchanged application runtime.
 
-The active outward step is a branch push/PR and cross-platform CI. A push
+The active step is final cross-platform warning verification. A push
 deliberately triggers Windows draft-release publishing under repository policy;
 retain that workflow. This publication is authorized; merging is not. Review
 the manual Intel policy in `AGENTS.md` before merging relevant release changes.
@@ -80,5 +85,9 @@ the manual Intel policy in `AGENTS.md` before merging relevant release changes.
 The first published CI source passed on every requested platform, but log review
 found Jasmine warnings missed by the original case-sensitive scan. The final
 test-only fix and native Ubuntu display command are documented in JASMINE.md.
-Local21 checks and Angular57 pass without those warnings; follow-up CI results
-are recorded separately in CI_STATUS.md and supersede the first-source result.
+Subsequent source `e10e1b9` also passed all platforms, but full Windows logs
+exposed four Electron-Mocha DEP0190 warnings per job. The guarded follow-up
+patch passes fresh installation, compatibility25, script lint and local
+main117/renderer55 with zero deprecations. Final all-platform CI logs and check
+annotations must confirm warning removal before declaring this work complete;
+their status is recorded separately in `CI_STATUS.md`.

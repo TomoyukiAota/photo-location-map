@@ -16,7 +16,7 @@
     "nodeRun": true
   },
   "scripts": {
-    "postinstall": "electron-builder install-app-deps",
+    "postinstall": "node script/patch-electron-mocha.js && electron-builder install-app-deps",
     "ng": "ng",
     "start": "npm-run-all -p ng:serve electron:live-reload",
     "build": "npm run build:src-main && npm run typecheck:build-config && npm run typecheck:worker && ng build",
@@ -54,7 +54,7 @@
     "test:package": "npm run test:package-runner && cross-env PLM_PACKAGE_TEST=true node ./script/package-test/run-package-test.js",
     "test:e2e": "playwright test -c test/e2e/playwright.config.mjs",
     "test:live-reload": "npm run build:src-main && node ./test/live-reload/run.cjs",
-    "test:dependency-compat": "node --test test/deprecation-warnings/dependency-compat.cjs test/deprecation-warnings/installed-tree.cjs test/deprecation-warnings/karma-jasmine.cjs test/deprecation-warnings/legacy-glob.cjs test/deprecation-warnings/legacy-rimraf.cjs",
+    "test:dependency-compat": "node --test test/deprecation-warnings/dependency-compat.cjs test/deprecation-warnings/electron-mocha.cjs test/deprecation-warnings/installed-tree.cjs test/deprecation-warnings/karma-jasmine.cjs test/deprecation-warnings/legacy-glob.cjs test/deprecation-warnings/legacy-rimraf.cjs",
     "test:all": "npm-run-all lint:all test:dependency-compat test:unit:all test:live-reload test:package",
     "check": "ncu --interactive --install always",
     "verify:runtime": "node script/verify-runtime.js",
