@@ -170,6 +170,45 @@ not runtime proof or a guarantee about future deployments. C needs coordinated
 viewer adaptation for file delivery, environment detection and analytics; the
 host cannot merely disable Node and expect current served code to keep working.
 
+### Option C and the View Data feature
+
+Clarified on 2026-11-06: View Data remains a required feature with its existing
+UI. Its separate BrowserWindow has its own inline webPreferences; changing only
+the main Angular window's preferences does not change that viewer window.
+Opening View Data already uses renderer-to-main IPC and main creates the window.
+The Angular caller's direct ipcRenderer import becomes an application bridge
+method; the feature does not need to be removed or replaced with another viewer.
+
+Two migration scopes are possible:
+
+| Scope | View Data behavior and remaining work |
+| --- | --- |
+| Isolate the main Angular window first, retain viewer settings | Keep the existing served viewer and Node/analytics contract. This is a viable first stage, subject to real JPEG/HEIC tests, but is not whole-application renderer isolation. |
+| Isolate both main and viewer windows | Add a viewer-specific preload bridge and adapt the served viewer before disabling its Node integration. Preserve the current photo/metadata UI, window state and display settings. |
+
+For the second scope, main binds the selected photo to that viewer window. A
+narrow readCurrentPhoto operation returns only that photo's bytes and metadata
+(name, MIME/display information), rather than exposing arbitrary filesystem
+reads. The viewer constructs its browser File from those bytes and retains its
+photo display/decoding flow. Replace its Node buffer/path helpers as needed,
+process.type mode detection with bridge capability detection, and raw analytics
+IPC with a dedicated bridge method. Preload uses contextBridge and IPC; do not
+expose fs or unrestricted ipcRenderer to the page.
+
+The served viewer and desktop app have independent deployments. Publish a
+bridge-capable viewer that also supports the legacy entry path for released app
+versions, then ship the desktop preload/window-setting changes. Do not remove
+the legacy viewer path merely because the new desktop build supports the bridge.
+The new isolated window must receive its bridge reliably; a legacy fallback
+cannot restore missing Node privileges there.
+
+Fresh GET-only inspection on 2026-11-06 confirmed the same viewer application
+build/hash as the previous source review. No photo path/query/data was sent.
+The runtime migration is still unimplemented. Acceptance must cover local JPEG
+and HEIC, orientation, Unicode/spaces/#/% paths, date/time settings, titles,
+window bounds, external links and analytics, plus compatibility with a released
+desktop version using the legacy viewer entry path.
+
 ## Implementation sequence after selection
 
 1. Freeze the chosen scope and inventory main-only operations, startup values,
