@@ -69,6 +69,9 @@ sources, links, credentials, screenshots, and personal data.
 - [x] npm configuration and dependency paths resolved.
 - [x] Final clean installation and full local regression checks complete.
 - [x] Independent review addressed and final report recorded.
+- [x] Final source passes Windows, Ubuntu, Mac ARM and native Intel CI, with
+      complete-log deprecation and check-annotation audit.
+- [x] Publish final validation/handoff documentation and update the open PR.
 
 ## Warning inventory
 
@@ -214,13 +217,15 @@ host, so Rosetta/x64 E2E is unavailable here. Do not install system components
 to work around this; native Intel and the other CI platforms have since passed.
 No feature/UI change was necessary. The owner approved branch publication, PR
 creation, and all-platform CI (including Intel Mac) on 2026-11-05 (JST).
-Publication and CI verification are the active phase; merging is not authorized.
-PR #634 is open. All seven workflows for `e10e1b9` passed, including native Intel,
-but full Windows logs exposed DEP0190. The reviewed spawn workaround is now
-implemented; fresh install, compatibility25, lint, and main117/renderer55 pass
-locally with zero deprecations. Publish this follow-up and run all-platform CI.
-See `CI_STATUS.md` for current run links and the exact failure-handling/resume
-procedure. Do not start duplicate runs or accept green checks without log review.
+Implementation and all-platform verification are complete; merging is not authorized.
+PR #634 is open. Accepted code source `1998112` passes all seven workflows,
+including all eight test jobs and native Intel. Every full test/change-detection
+log has zero deprecations under the corrected case-insensitive scan. Check
+annotations have no deprecations; ARM has only a runner-capacity notice.
+`CI_STATUS.md` records the run links, superseded failures and dispositions.
+Final evidence-only documentation publication may start fresh PR checks; confirm
+their live status before handing off. No feature/UI changes or owner decisions
+remain. Keep the PR open for owner review and do not merge it.
 
 The final portability preflight restored two additional glob 7 contracts:
 case-sensitive matching by default on every OS (including removal-pattern
@@ -273,8 +278,8 @@ and a supported Karma file-list hook keeps Jasmine classic while compiled
 modules remain ESM. A real plugin/FileList refresh regression was added. Ubuntu
 uses the same native Xvfb command instead of a deprecated Node20 action. Local
 21 compatibility checks, lint, and Angular57 tests pass with a case-insensitive
-warning scan. The new source must be published and all-platform CI repeated;
-use `CI_STATUS.md` and current GitHub runs rather than the old green conclusions.
+warning scan. These findings were subsequently published and verified;
+use the accepted source in `CI_STATUS.md` rather than the old green conclusions.
 
 ### Windows executable-spawn follow-up
 
@@ -283,7 +288,15 @@ Electron-Mocha's launcher/cleanup calls. `ELECTRON_MOCHA.md` records the evidenc
 the pinned two-site postinstall workaround, four regression checks, and removal
 criteria. Fresh installation, all 25 compatibility checks, and script lint pass.
 The serialized Electron recheck passes (117 main / 55 renderer), with zero
-deprecation messages after re-extracting the local binary once. Push the reviewed source, dispatch
-native Intel for that commit, and inspect every requested job's complete log and
-annotations. Green conclusions alone are insufficient. No application feature
-or UI change has been needed. Keep current progress in `CI_STATUS.md`.
+deprecation messages after re-extracting the local binary once. Source `1998112`
+then passed Windows, Ubuntu, Mac ARM and native Intel, including all complete
+logs and annotation review. Green conclusions alone were not used for acceptance.
+No application feature or UI change was needed.
+
+Current continuation: implementation and all-platform warning cleanup are
+complete. Source/run evidence is in `CI_STATUS.md`; the final evidence-only
+commit changes documents. Confirm any checks triggered by its publication, then
+hand off the open PR for review. Merging requires a separate owner instruction.
+If new work is needed, inspect git status/diff first and follow the resume and
+failure-classification procedure above. After a fresh npm ci, serialize
+`npm run verify:electron` before parallel checks that may lazily extract Electron.

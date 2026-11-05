@@ -67,7 +67,8 @@ POSIX escapes, and Windows separators. Findings were addressed and tested.
 
 Both arm64 and x86_64 slices are present. This host rejects x64 execution with
 `Bad CPU type in executable`; no Rosetta/system installation was attempted.
-Windows/Linux/native Intel CI results are not implied by local macOS tests.
+Windows/Linux/native Intel were verified separately by the final-source CI
+runs recorded in `CI_STATUS.md`.
 
 ## Handoff and publication
 
@@ -77,7 +78,7 @@ The owner authorized branch publication, PR creation, and cross-platform CI on
 tracked in `CI_STATUS.md`; signed-bundle validation above predates the final
 development-tool-only fixes and still covers the unchanged application runtime.
 
-The active step is final cross-platform warning verification. A push
+All-platform warning verification is complete for source `1998112`. A push
 deliberately triggers Windows draft-release publishing under repository policy;
 retain that workflow. This publication is authorized; merging is not. Review
 the manual Intel policy in `AGENTS.md` before merging relevant release changes.
@@ -88,6 +89,9 @@ test-only fix and native Ubuntu display command are documented in JASMINE.md.
 Subsequent source `e10e1b9` also passed all platforms, but full Windows logs
 exposed four Electron-Mocha DEP0190 warnings per job. The guarded follow-up
 patch passes fresh installation, compatibility25, script lint and local
-main117/renderer55 with zero deprecations. Final all-platform CI logs and check
-annotations must confirm warning removal before declaring this work complete;
-their status is recorded separately in `CI_STATUS.md`.
+main117/renderer55 with zero deprecations. All seven final-source workflows (eight test jobs) pass, including native Intel,
+and every complete test/change-detection log contains zero deprecation messages.
+Check annotations contain no deprecations; ARM has only GitHub's capacity notice.
+`CI_STATUS.md` records exact runs and superseded failure dispositions. Later
+commits publish evidence only; confirm the live PR checks before owner handoff.
+The PR remains open and unmerged. No feature/UI decision remains for the owner.

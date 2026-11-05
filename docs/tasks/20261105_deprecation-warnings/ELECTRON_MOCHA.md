@@ -50,6 +50,8 @@ both spawn sites, after repeating Windows main/renderer validation.
 - Serially re-extracted the generated Electron binary and repeated the actual
   main/renderer suites: 117/55 pass with zero deprecation messages. No application
   code or persistent system settings were changed for the local recovery.
-- Fresh Windows CI remains the platform acceptance check. See `CI_STATUS.md`
-  for current source, run links, log/annotation audit,
-  and the next action. Do not declare zero warnings until that audit completes.
+- Final Windows push and PR CI both pass main117/renderer55, compatibility25,
+  package/smoke/E2E and expected publishing behavior. Both full logs have zero
+  deprecation warnings, including DEP0190, and empty check annotations. Other
+  platforms including native Intel pass too. See `CI_STATUS.md` for accepted
+  source, exact runs and the complete log/annotation audit.
