@@ -34,7 +34,7 @@ but does not establish that every upstream package or release line is supported.
 | `moment@2.31.0` | Legacy, maintenance mode. The [2026-08-17 policy update](https://momentjs.com/news/) keeps established behavior and avoids new user features, while permitting maintainer-led technical modernization. It does not promise permanent technical freeze or abandonment. | Production dependency across photo timestamps, sorting, charts and logging. A broad migration needs a separate behavioral plan for timezone, parsing, formatting and mutability. |
 | `moment-timezone@0.6.6` | Legacy, maintenance mode; [contribution policy](https://github.com/moment/moment-timezone/blob/develop/contributing.md) and [changelog](https://github.com/moment/moment-timezone/blob/develop/changelog.md) retain fixes and IANA data updates. | Active imports in `src-shared/date-time/now.ts`, `src-main/launch-info.ts`, date/time settings and the alternative EXIF parser. The only `.tz(...)` call is UTC conversion in that unselected parser. Core Moment UTC handling may remove this add-on after checking all imports and exact behavior. It is not simply unused. |
 | `zone.js@0.16.3` | [Current Angular monorepo policy](https://github.com/angular/angular/blob/main/packages/zone.js/README.md): no new features or low-priority fixes; Angular-critical fixes still accepted. Supported for Angular. | Bundled at runtime despite its devDependency classification: `angular.json` polyfills and `provideZoneChangeDetection()` in `src/main.ts`. [Zoneless Angular](https://angular.dev/guide/zoneless) is now the default for Angular 21+. Removing Zone requires a separate change-detection migration and real callback/UI verification. The old standalone archive is a repository move, not package retirement. |
-| `@electron/remote@2.1.3` | Maintained, but its [README](https://github.com/electron/remote#readme) strongly discourages the architecture and recommends explicit IPC. [Release 2.1.4](https://github.com/electron/remote/releases/tag/v2.1.4) is current maintenance evidence. | Production dependency for main-process modules, dialogs, application paths/version and EXIF. Assess whether explicit IPC offers concrete benefits before selecting a migration. The removed built-in `electron.remote` and the maintained `@electron/remote` package are different; do not call the whole package deprecated or assert an unproven vulnerability. |
+| `@electron/remote@2.1.3` | Maintained, but its [README](https://github.com/electron/remote#readme) strongly discourages the architecture and recommends explicit IPC. [Release 2.1.4](https://github.com/electron/remote/releases/tag/v2.1.4) is current maintenance evidence. | Production dependency for main-process modules, dialogs, application paths/version and EXIF. The owner now requests removal; compare the concrete rewrite options in [REMOTE_OPTIONS.md](REMOTE_OPTIONS.md) before selecting implementation. The removed built-in `electron.remote` and the maintained `@electron/remote` package are different; do not call the whole package deprecated or assert an unproven vulnerability. |
 
 `moment-duration-format@2.3.2` is an additional stale but not formally deprecated
 or archived dependency ([upstream](https://github.com/jsmreese/moment-duration-format)).
@@ -116,11 +116,12 @@ supersede the initial audit's dependency-reduction recommendations.
   chooses to revisit date/time handling.
 - **Keep Zone.js work separate.** Zoneless Angular already has a dedicated task;
   it is outside this dependency follow-up.
-- **Assess @electron/remote's production impact.** It is the remaining direct
-  dependency candidate in this discussion, used for main-process module access,
-  dialogs, application paths/version and EXIF. It is maintained but discouraged,
-  not retired. Establish the benefit and scope of explicit IPC, and how the work
-  interacts with planned features, before proposing implementation.
+- **Design @electron/remote removal.** The owner now requests removal and a
+  comparison of rewrite options before implementation. Its main-process module
+  access, dialogs, application paths/version, storage and EXIF require explicit
+  contracts. It is maintained but discouraged, not retired. Read
+  [REMOTE_OPTIONS.md](REMOTE_OPTIONS.md) for three approaches, pros/cons, the
+  recommended main-owned service boundary and required regression coverage.
 
 The audit's indirect-dependency, CDN and API findings remain recorded above.
 They are not a commitment to migrate all of them. Consider actual execution,

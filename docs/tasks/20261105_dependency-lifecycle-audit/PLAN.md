@@ -86,9 +86,21 @@ The owner deferred Moment and moment-timezone migration until evaluating Tempora
 with the required stable specification/runtime support. Zone.js belongs to a
 separate zoneless Angular task and is outside this follow-up.
 
-The remaining direct-dependency candidate for assessment is @electron/remote,
-which touches production module access, dialogs, paths and EXIF. It is maintained
-but discouraged, not formally retired. Assess the concrete benefit, scope and
-interaction with planned features before proposing an IPC migration. No runtime
-migration has been requested yet. Preserve features/UI; consult the owner about
-any unavoidable behavior or appearance change.
+The owner now wants to remove @electron/remote and requested concrete rewrite
+options with pros/cons before choosing an implementation. It touches production
+module access, dialogs, paths, storage and EXIF. The package is maintained but
+discouraged, not formally retired. This step is design/investigation only;
+implementation has not been selected. Preserve features/UI; consult the owner
+about any unavoidable behavior or appearance change.
+
+## Remote removal design checkpoint
+
+Read REMOTE_OPTIONS.md. Inventory direct imports, indirect storage
+and startup dependencies, current Electron privileges, and the separate photo
+viewer contract. Compare focused IPC removal, main-owned domain services and a
+full preload/contextBridge/isolation migration. Explicitly account for import-time
+settings/version reads, main-owned EXIF reader cleanup, persistence-before-restart,
+structured-clone boundaries and existing Node-enabled workers. Do not assume
+removing the package also removes all renderer Node privileges. The proposal and independent review are complete; the separate viewer was
+checked statically and implementation still requires runtime regression tests.
+Read the comparison and wait for the chosen scope before implementing any option.
