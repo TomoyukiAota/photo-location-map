@@ -30,7 +30,7 @@ test('maintained ASAR preserves archive data, hidden/literal filenames and unpac
   fs.writeFileSync(path.join(source, 'fixture.node'), 'unpacked bytes');
   if (process.platform !== 'win32') fs.symlinkSync('index.js', path.join(source, 'link'));
   await asar.createPackageWithOptions(source, archive, { unpack: '*.node' });
-  assert(asar.listPackage(archive).includes('/.hidden'));
+  assert(asar.listPackage(archive).map(filename => filename.replaceAll('\\', '/')).includes('/.hidden'));
   assert.equal(asar.extractFile(archive, 'file [one].txt').toString(), 'literal');
   assert.equal(asar.statFile(archive, 'fixture.node', false).unpacked, true);
   const extracted = path.join(root, 'extracted');
@@ -50,17 +50,25 @@ test('actual builder entrypoint checks accept valid archives and reject missing 
   await assert.rejects(checker.checkFileInArchive(archive, 'missing.js', 'Fixture'), /"missing\.js" was not found in this archive/);
 });
 
-test('actual universal builder integrity and archive merge work with ASAR4', async t => {
+test('actual universal builder integrity works with ASAR4', async t => {
+  const { root, source } = fixture(t);
+  const archive = path.join(root, 'app.asar');
+  await asar.createPackage(source, archive);
+  assert.deepEqual(universalAsar.generateAsarIntegrity(archive), {
+    algorithm: 'SHA256',
+    hash: createHash('sha256').update(asar.getRawHeader(archive).headerString).digest('hex'),
+  });
+});
+
+// The universal merger targets macOS and uses POSIX archive paths/lipo. Run
+// its native integration on both Mac architectures, not on Windows hosts.
+test('actual macOS universal builder archive merge works with ASAR4', { skip: process.platform !== 'darwin' }, async t => {
   const { root, source } = fixture(t);
   const x64 = path.join(root, 'x64.asar');
   const arm64 = path.join(root, 'arm64.asar');
   const merged = path.join(root, 'merged.asar');
   await asar.createPackage(source, x64);
   await asar.createPackage(source, arm64);
-  assert.deepEqual(universalAsar.generateAsarIntegrity(x64), {
-    algorithm: 'SHA256',
-    hash: createHash('sha256').update(asar.getRawHeader(x64).headerString).digest('hex'),
-  });
   await universalAsar.mergeASARs({ x64AsarPath: x64, arm64AsarPath: arm64, outputAsarPath: merged });
   assert.equal(asar.extractFile(merged, 'index.js').toString(), 'module.exports = 42');
   assert.equal(JSON.parse(asar.extractFile(merged, 'package.json').toString()).main, 'index.js');
