@@ -2,12 +2,21 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "outDir": "../out-tsc/spec",
-    "types": ["node", "jasmine"]
+    "types": [
+      "node",
+      "electron",
+      "vitest/globals"
+    ],
+    "typeRoots": [
+      "../node_modules/@types",
+      "../node_modules"
+    ]
   },
   "include": [
     "../**/*.d.ts",
     "../src/**/*.spec.ts",
-    "../src-shared/**/*.spec.ts"
+    "../src-shared/**/*.spec.ts",
+    "../test/angular/**/*.ts"
   ],
   "angularCompilerOptions": {
     "strictTemplates": false

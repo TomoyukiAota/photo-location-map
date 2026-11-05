@@ -1,8 +1,12 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "noEmit": true
+    "noEmit": true,
+    "allowJs": true,
+    "checkJs": true
   },
-  "files": ["angular.webpack.ts"],
-  "include": []
+  "include": [
+    "electron-util/managed-exifr.cjs",
+    "electron-util/renderer-modules/*.cjs"
+  ]
 }

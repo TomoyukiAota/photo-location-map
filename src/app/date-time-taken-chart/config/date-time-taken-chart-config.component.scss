@@ -1,3 +1,5 @@
+@use "sass:color";
+
 :host {
   display: grid;
   align-items: center;
@@ -77,6 +79,6 @@
   $background-color: #fff;
   background-color: $background-color;
   &:hover {
-    background-color: darken($background-color, 3%);
+    background-color: color.adjust($background-color, $lightness: -3%, $space: hsl);
   }
 }

@@ -1,4 +1,4 @@
-@import "photo-info-viewer-common";
+@use "photo-info-viewer-common" as *;
 
 .photo-info-viewer-thumbnail-container {
   display: inline-flex;

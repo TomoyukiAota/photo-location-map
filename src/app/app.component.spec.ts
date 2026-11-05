@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { TestBed, waitForAsync, ComponentFixture } from '@angular/core/testing';
+import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { provideTranslateService } from '@ngx-translate/core';
@@ -17,8 +17,8 @@ describe('AppComponent', () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       declarations: [
         AppComponent
       ],
@@ -34,7 +34,7 @@ describe('AppComponent', () => {
         RouterTestingModule,
       ]
     }).compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AppComponent);

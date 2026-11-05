@@ -9,11 +9,13 @@
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-builders/custom-webpack:browser",
+          "builder": "@angular/build:application",
           "options": {
-            "outputPath": "dist",
+            "outputPath": {
+              "base": "dist",
+              "browser": ""
+            },
             "index": "src/index.html",
-            "main": "src/main.ts",
             "polyfills": [
               "zone.js"
             ],
@@ -31,10 +33,7 @@
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles/global-styles.scss"
             ],
-            "customWebpackConfig": {
-              "path": "./angular.webpack.ts"
-            },
-            "webWorkerTsConfig": "tsconfig.worker.json"
+            "browser": "src/main.ts"
           },
           "configurations": {
             "dev": {
@@ -44,8 +43,6 @@
               "namedChunks": false,
               "aot": false,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": false,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -60,21 +57,48 @@
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.prod.ts"
                 }
               ]
+            },
+            "testing": {
+              "optimization": false,
+              "polyfills": [],
+              "fileReplacements": [
+                {
+                  "replace": "src-shared/require/proxy-require.ts",
+                  "with": "test/angular/require-doubles.ts"
+                },
+                {
+                  "replace": "src-shared/require/require-from-main-process.ts",
+                  "with": "test/angular/require-doubles.ts"
+                },
+                {
+                  "replace": "src-shared/user-data-storage/user-data-storage.ts",
+                  "with": "test/angular/storage-double.ts"
+                },
+                {
+                  "replace": "src/app/shared/exif-fetcher/using-exifr/fetch-exif-using-exifr.ts",
+                  "with": "test/angular/exif-double.ts"
+                },
+                {
+                  "replace": "src/app/shared/opened-directory.ts",
+                  "with": "test/angular/directory-double.ts"
+                }
+              ],
+              "aot": false
             }
           }
         },
         "serve": {
-          "builder": "@angular-builders/custom-webpack:dev-server",
+          "builder": "@angular/build:dev-server",
           "options": {
-            "buildTarget": "photo-location-map:build"
+            "buildTarget": "photo-location-map:build",
+            "prebundle": false,
+            "hmr": false
           },
           "configurations": {
             "dev": {
@@ -86,41 +110,28 @@
           }
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "builder": "@angular/build:extract-i18n",
           "options": {
             "buildTarget": "photo-location-map:build"
           }
         },
         "test": {
-          "builder": "@angular-builders/custom-webpack:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "include": [
-              "src/**/*.spec.ts",
-              "src/../src-shared/**/*.spec.ts"
-            ],
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "runner": "vitest",
+            "buildTarget": "photo-location-map:build:testing",
             "tsConfig": "src/tsconfig.spec.json",
-            "karmaConfig": "src/karma.conf.js",
-            "assets": [
-              "src/assets",
-              "src/favicon.ico",
-              "src/favicon.png",
-              "src/favicon.icns",
-              "src/favicon.256x256.png",
-              "src/favicon.512x512.png",
-              "src/favicon.svg"
+            "include": [
+              "**/*.spec.ts",
+              "../src-shared/**/*.spec.ts"
             ],
-            "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-              "src/styles/global-styles.scss"
+            "setupFiles": [
+              "test/angular/setup.ts"
             ],
-            "customWebpackConfig": {
-              "path": "./angular.webpack.ts"
-            },
-            "webWorkerTsConfig": "tsconfig.worker.json"
+            "coverageReporters": [
+              "html",
+              "lcov"
+            ]
           }
         },
         "lint": {

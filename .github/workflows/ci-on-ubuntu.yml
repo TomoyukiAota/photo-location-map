@@ -59,6 +59,14 @@ jobs:
     - name: Verify Electron and embedded Node
       run: npm run verify:electron
 
+    - name: npm run test:dependency-compat
+      run: npm run test:dependency-compat
+
+    - name: Install virtual display dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y xvfb x11-xserver-utils
+
     - name: npm run lint:ng
       run: npm run lint:ng
 
@@ -66,24 +74,16 @@ jobs:
       run: npm run lint:script
 
     - name: npm run test:unit:ng
-      uses: GabrielBB/xvfb-action@v1.7
-      with:
-        run: npm run test:unit:ng
+      run: xvfb-run --auto-servernum npm run test:unit:ng
 
     - name: npm run test:unit:em:main
-      uses: GabrielBB/xvfb-action@v1.7
-      with:
-        run: npm run test:unit:em:main
+      run: xvfb-run --auto-servernum npm run test:unit:em:main
 
     - name: npm run test:unit:em:renderer
-      uses: GabrielBB/xvfb-action@v1.7
-      with:
-        run: npm run test:unit:em:renderer
+      run: xvfb-run --auto-servernum npm run test:unit:em:renderer
 
     - name: npm run test:live-reload
-      uses: GabrielBB/xvfb-action@v1.7
-      with:
-        run: npm run test:live-reload
+      run: xvfb-run --auto-servernum npm run test:live-reload
 
     - name: Install FUSE (Required to launch AppImage during "npm run test:package")
       run: |
@@ -91,18 +91,14 @@ jobs:
         sudo apt-get install -y libfuse2t64
 
     - name: npm run test:package
-      uses: GabrielBB/xvfb-action@v1.7
-      with:
-        run: npm run test:package
+      run: xvfb-run --auto-servernum npm run test:package
 
     - name: Locate packaged AppImage for E2E
       run: |
         node -e 'const fs = require("node:fs"); const path = require("node:path"); const version = require("./package.json").version; fs.appendFileSync(process.env.GITHUB_ENV, "PLM_PACKAGED_EXECUTABLE=" + path.resolve("release", "Photo Location Map-" + version + ".AppImage") + "\n");'
 
     - name: npm run test:e2e
-      uses: GabrielBB/xvfb-action@v1.7
-      with:
-        run: npm run test:e2e
+      run: xvfb-run --auto-servernum npm run test:e2e
 
 # Uncomment the lines below to publish Linux package to GitHub Releases.
 #

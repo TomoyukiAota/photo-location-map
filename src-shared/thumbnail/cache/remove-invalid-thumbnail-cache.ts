@@ -1,9 +1,9 @@
-import deleteEmpty from 'delete-empty';
 import * as fs from 'fs';
 import { createDirectoryTree, convertToFlattenedDirTree } from '../../dir-tree/dir-tree-util';
 import { createPrependedLogger } from '../../log/create-prepended-logger';
 import { stringArrayToLogText } from '../../log/multiline-log-text';
 import { getOriginalFilePath, getThumbnailLogFilePath, plmThumbnailCacheDir } from './thumbnail-cache-util';
+import { removeEmptyCacheDirectories } from './remove-empty-cache-directories';
 
 const logger = createPrependedLogger('[Invalid thumbnail cache removal]');
 
@@ -100,7 +100,7 @@ function tryRemoveInvalidThumbnailCache() {
   logger.info('Removing empty directories (if any) after removal of invalid thumbnail cache...');
 
   try {
-    deleteEmpty.sync(plmThumbnailCacheDir);
+    removeEmptyCacheDirectories(plmThumbnailCacheDir);
     logger.info('Successfully removed empty directories for thumbnail cache (if any).');
   } catch (error) {
     logger.warn(`Error occurred during removing empty directories for thumbnail cache. Error: ${error}`, error);

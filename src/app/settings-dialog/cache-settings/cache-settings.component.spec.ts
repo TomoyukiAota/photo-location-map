@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import * as path from 'node:path';
 
 import { CacheSettingsComponent } from './cache-settings.component';
 
@@ -19,7 +20,11 @@ describe('CacheSettingsComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create with an isolated cache directory', () => {
     expect(component).toBeTruthy();
+    expect(process.env.PLM_TEST_ROOT).toBeTruthy();
+    const relativeCachePath = path.relative(process.env.PLM_TEST_ROOT, component.thumbnailCacheLocation);
+    expect(path.isAbsolute(relativeCachePath)).toBe(false);
+    expect(relativeCachePath.startsWith('..')).toBe(false);
   });
 });

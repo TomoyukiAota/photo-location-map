@@ -1,8 +1,16 @@
 import { EnvironmentDetector } from './environment-detector';
+import { ProcessIdentifier } from '../process/process-identifier';
 
-describe('EnvironmentDetector (in renderer process in Karma)', () => {
-  it('isKarma should be true', () => {
-    expect(EnvironmentDetector.isKarma).toEqual(true);
+describe('EnvironmentDetector (in Vitest)', () => {
+  it('isVitest should be true', () => {
+    expect(EnvironmentDetector.isVitest).toEqual(true);
+  });
+
+  it('uses genuine Node/jsdom without impersonating an Electron renderer', () => {
+    expect(ProcessIdentifier.isNode).toBe(true);
+    expect(ProcessIdentifier.isElectron).toBe(false);
+    expect(ProcessIdentifier.processType).toBe('Node');
+    expect(window.require).toBeUndefined();
   });
 
   it('isElectronMochaMain should be false', () => {

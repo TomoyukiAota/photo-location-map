@@ -2,8 +2,8 @@ import assert = require('assert');
 import { EnvironmentDetector } from '../../../src-shared/environment/environment-detector';
 
 describe('EnvironmentDetector (in renderer process in electron-mocha)', () => {
-  it('isKarma should be false', () => {
-    assert(EnvironmentDetector.isKarma === false);
+  it('isVitest should be false', () => {
+    assert(EnvironmentDetector.isVitest === false);
   });
 
   it('isElectronMochaMain should be false', () => {

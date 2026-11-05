@@ -1,11 +1,10 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
-import { MockComponents } from 'ng-mocks';
-import { GoogleMapsComponent } from '../google-maps/google-maps.component';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MapComponent } from './map.component';
 
-// Dummy component of LeafletMapComponent is defined because using ng-mocks results in "ReferenceError: L is not defined".
+// Child map rendering is covered by the application E2E suite. Keep this
+// construction test independent of native map and worker initialization.
 @Component({
   selector: 'app-leaflet-map', template: '',
   changeDetection: ChangeDetectionStrategy.Eager,
@@ -13,22 +12,27 @@ import { MapComponent } from './map.component';
 })
 class DummyLeafletMapComponent {}
 
+@Component({
+  selector: 'app-google-maps', template: '',
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false
+})
+class DummyGoogleMapsComponent {}
+
 describe('MapComponent', () => {
   let component: MapComponent;
   let fixture: ComponentFixture<MapComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       declarations: [
         MapComponent,
         DummyLeafletMapComponent,
-        MockComponents(
-          GoogleMapsComponent,
-        ),
+        DummyGoogleMapsComponent,
       ]
     })
     .compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(MapComponent);

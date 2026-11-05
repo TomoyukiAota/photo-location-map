@@ -1,3 +1,5 @@
+@use "sass:meta";
+
 /* You can add global styles to this file, and also import other style files */
 
 html, body {
@@ -53,7 +55,7 @@ $max-z-index: 2147483647;
   display: none;
 }
 
-@import "app-loading-indicator";
-@import "photo-cluster-viewer/photo-cluster-viewer";
-@import "photo-info-viewer/photo-info-viewer";
-@import "plm-leaflet-map/plm-leaflet-map";
+@include meta.load-css("app-loading-indicator");
+@include meta.load-css("photo-cluster-viewer/photo-cluster-viewer");
+@include meta.load-css("photo-info-viewer/photo-info-viewer");
+@include meta.load-css("plm-leaflet-map/plm-leaflet-map");

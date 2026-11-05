@@ -266,7 +266,8 @@ class PackageSmokeTest {
         return;
       }
 
-      const result = child_process.spawnSync('hdiutil', ['detach', testInfo.dmgVolume], { encoding: 'utf8' });
+      const result = child_process.spawnSync(testInfo.diskImageTools.detach,
+        [testInfo.diskImageTools.detachVerb, testInfo.dmgVolume], { encoding: 'utf8' });
       if (result.status === 0) {
         logger.info(`Detached "${testInfo.dmgVolume}".`);
         return;

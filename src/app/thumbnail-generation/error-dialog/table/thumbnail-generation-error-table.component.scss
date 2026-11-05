@@ -1,4 +1,4 @@
-@import "/src/styles/icon-button";
+@use "../../../../styles/icon-button" as *;
 
 :host {
   display: grid;

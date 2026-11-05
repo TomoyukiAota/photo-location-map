@@ -1,4 +1,4 @@
-@import "../settings-styles";
+@use "../settings-styles" as *;
 
 .setting-title {
   font-size: $setting-title-font-size;

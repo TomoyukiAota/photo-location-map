@@ -14,4 +14,16 @@ describe('ProcessAccessor (in renderer process in electron-mocha)', () => {
     // process.type === 'renderer' means renderer process.
     assert(process.type === 'renderer');
   });
+
+  it('process and window.process should refer to the same object', () => {
+    assert.equal(process, window.process);
+  });
+
+  it('getProcess() and window.process should refer to the same object', () => {
+    assert.equal(ProcessAccessor.getProcess(), window.process);
+  });
+
+  it('window.process.type should be "renderer"', () => {
+    assert.equal(window.process.type, 'renderer');
+  });
 });

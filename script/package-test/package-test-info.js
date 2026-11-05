@@ -1,6 +1,7 @@
 const path = require('path');
 const { version } = require('../../package.json');
 const getLogDirectory = require('./get-log-directory');
+const getDiskImageTools = require('./disk-image-tools');
 
 class PackageTestInfo {
   constructor() {
@@ -32,7 +33,8 @@ class PackageTestInfo {
         const dmgVolume = `/Volumes/Photo Location Map ${version}-universal`;
         this.packageCreationCommand = 'npm run package:mac';
         this.expectedPackageLocations = [dmgLocation, zipLocation];
-        this.executablePrelaunchCommand = `hdiutil attach "${dmgLocation}"`;
+        this.diskImageTools = getDiskImageTools();
+        this.executablePrelaunchCommand = `${this.diskImageTools.attach} "${dmgLocation}"`;
         this.executableLaunchCommand = `open -W "${dmgVolume}/Photo Location Map.app"`;
         // Used to quit the app and detach the dmg after the smoke test (PackageSmokeTest::cleanUpOnMacOs).
         this.dmgVolume = dmgVolume;
