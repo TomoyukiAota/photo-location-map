@@ -78,7 +78,7 @@ The owner authorized branch publication, PR creation, and cross-platform CI on
 tracked in `CI_STATUS.md`; signed-bundle validation above predates the final
 development-tool-only fixes and still covers the unchanged application runtime.
 
-All-platform warning verification is complete for source `1998112`. A push
+All-platform warning verification is complete for source `56d659d`. A push
 deliberately triggers Windows draft-release publishing under repository policy;
 retain that workflow. This publication is authorized; merging is not. Review
 the manual Intel policy in `AGENTS.md` before merging relevant release changes.
@@ -94,9 +94,9 @@ and every complete test/change-detection log contains zero deprecation messages.
 Check annotations contain no deprecations; ARM has only GitHub's capacity notice.
 `CI_STATUS.md` records exact runs and superseded failure dispositions. Later
 commits publish evidence only; confirm the live PR checks before owner handoff.
-The PR remains open and unmerged. No feature/UI decision is needed to complete
-warning cleanup. `EDGE_REVIEW.md` records the subsequently verified dangling-link
-regression fix (27 compatibility checks and Angular57 pass locally) requiring
-fresh all-platform CI. It also records a pre-existing cache-policy weakness,
-left unchanged and reserved for a separate owner decision. Read the current
-continuation at the end of `PLAN.md` before relying on the earlier source result.
+The PR remains open and unmerged. No feature/UI change is needed for warning
+cleanup. The final dangling-link/stat-cache adapter fix matches genuine glob7
+behavior; all-platform CI passes compatibility27, Angular57, main117, renderer55,
+package-runner19 and packaged E2E14 with zero deprecations. `CI_STATUS.md` records
+the source and exact final runs. `EDGE_REVIEW.md` also records a pre-existing
+cache-policy weakness, left unchanged for a separate optional owner decision.

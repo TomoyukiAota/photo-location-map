@@ -20,8 +20,11 @@ latter also checks that an unrelated I/O error remains visible. Windows uses a
 junction to avoid requiring symlink privileges.
 
 Fresh installation refreshes packed adapter sources. All 27 compatibility tests
-pass locally, as do Angular57 and build/bridge/adapter type checking. Repeat all-platform CI for the new
-adapter source; the application runtime and signed bundle source are unchanged.
+pass locally, as do Angular57 and build/bridge/adapter type checking. Final
+source `56d659d` passes all eight platform test jobs, including native Intel,
+with zero deprecations in every complete job log and no deprecation annotations.
+The application runtime and signed-bundle source are unchanged. `CI_STATUS.md`
+records the exact runs and audit.
 
 ## Metadata-suffixed cache directories: existing behavior, left unchanged
 

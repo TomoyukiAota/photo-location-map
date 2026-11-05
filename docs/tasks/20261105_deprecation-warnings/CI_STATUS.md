@@ -1,60 +1,57 @@
 # Cross-platform CI validation
 
-## Current follow-up
+## Accepted source
 
-The final edge review found and fixed a development-adapter regression involving
-dangling links and disappearing files. Fresh installation, compatibility27,
-Angular57 and build/bridge/adapter typing pass locally. Publish the reviewed fix,
-dispatch native Intel for its source, and audit all-platform logs/annotations.
-The accepted-source runs below predate this adapter fix; preserve their evidence
-but do not substitute them for the new source's checks. `EDGE_REVIEW.md` records
-the genuine glob7 comparison and the separate pre-existing cache-policy finding
-that remains unchanged. Application runtime/signed-bundle source is unchanged.
-
-## Earlier accepted application source
-
-The implementation is complete and all requested platforms pass. The owner
+Implementation and all requested platform checks are complete. The owner
 approved branch publication, PR creation, all-platform CI and intentional Windows
 draft-release publishing on 2026-11-05 (Asia/Tokyo). Merging is not authorized.
 
 - PR: https://github.com/TomoyukiAota/photo-location-map/pull/634 (open, unmerged).
 - Branch: `codex/remove-deprecation-warnings`.
-- Accepted code source: `199811285127c54df4e6bcc65706045cfb2bd2e1`.
+- Accepted code source: `56d659d65df828cbaf00353b83fefe2f27e01b16`.
 - Base: `abf208623c60219292310d74a84490f13b3ac59b`.
 - Later evidence-only commits change documents, not application, tests,
   dependencies, build/release configuration or CI workflows.
 
 All seven workflows below completed successfully. Their eight test jobs each
-pass compatibility25, Angular57, Electron main117, renderer55, package-runner19,
+pass compatibility27, Angular57, Electron main117, renderer55, package-runner19,
 package creation/smoke and packaged-app E2E14. Lint, runtime verification and
 live-reload checks also pass. The manual macOS workflow includes native Intel;
 regular push/PR workflows intentionally skip that optional job.
 
 Every complete test-job log and every change-detection-job log was scanned
 case-insensitively for DEPRECATION prefixes, DeprecationWarning, npm warn deprecated
-and other warning/deprecated messages: **zero deprecation warnings**. Check
-annotations were inspected too: Windows, Ubuntu, Intel and change-detection
-annotations are empty. The three ARM test jobs have only GitHub's informational
-runner-capacity/queue notice, with no deprecation annotation.
+and other warning/deprecated messages: **zero deprecation warnings**. All 15
+executed jobs were audited. Check annotations were inspected too: Windows,
+Ubuntu, Intel and change-detection annotations are empty. The three ARM test
+jobs have only GitHub's informational runner-capacity/queue notice, with no
+deprecation annotation.
 
 | Workflow / trigger | Run | Result |
 | --- | --- | --- |
-| macOS / manual ARM + native Intel | [41958397248](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41958397248) | Success; both logs 0 deprecations |
-| macOS / PR | [41958396398](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41958396398) | Success; log 0 deprecations |
-| Windows / PR | [41958396459](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41958396459) | Success; log 0 deprecations; publishing skipped as intended |
-| Ubuntu / PR | [41958396359](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41958396359) | Success; log 0 deprecations |
-| Windows / push | [41958389663](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41958389663) | Success; log 0 deprecations; draft publishing passed |
-| macOS / push | [41958389666](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41958389666) | Success; log 0 deprecations |
-| Ubuntu / push | [41958389662](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41958389662) | Success; log 0 deprecations |
+| macOS / manual ARM + native Intel | [41961252503](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41961252503) | Success; both logs 0 deprecations |
+| macOS / PR | [41961240576](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41961240576) | Success; log 0 deprecations |
+| Windows / PR | [41961240607](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41961240607) | Success; log 0 deprecations; publishing skipped as intended |
+| Ubuntu / PR | [41961240611](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41961240611) | Success; log 0 deprecations |
+| Windows / push | [41961234837](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41961234837) | Success; log 0 deprecations; draft publishing passed |
+| macOS / push | [41961234784](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41961234784) | Success; log 0 deprecations |
+| Ubuntu / push | [41961234823](https://github.com/TomoyukiAota/photo-location-map/actions/runs/41961234823) | Success; log 0 deprecations |
 
 The Windows push uploaded the expected installer, blockmap and update metadata.
 The PR run correctly skipped actual publication. Preserve both existing paths;
 the draft release is an intentional CI artifact, not cleanup work.
 
+The final edge fix restores genuine glob7 behavior for dangling links and files
+removed during stat caching. The actual-consumer regression tests pass on every
+platform. No application runtime code changed after the signed/notarized bundle
+validation. A separately reproduced cache-policy weakness exists in the original
+implementation as well and was left unchanged under the requested scope; see
+`EDGE_REVIEW.md` for the evidence and optional owner decision.
+
 ## Continuation and failure handling
 
 Implementation and platform acceptance are complete. Final documentation updates
-can start another PR check cycle; inspect the live PR checks before handing off.
+can start another check cycle; inspect the live PR checks before handing off.
 A documents-only update needs no repeated native Intel dispatch: the accepted
 code source above and its Intel run remain unchanged. Keep the PR open for the
 owner's review; do not merge or add the `automerge` label.
@@ -82,7 +79,7 @@ gh api repos/TomoyukiAota/photo-location-map/actions/runs/<run-id>/jobs
 
 Each job's metadata gives `check_run_url`; fetch its `/annotations` as well as
 reading the log. A green conclusion alone does not establish zero warnings.
-No environmental reruns were needed during this task.
+No environmental CI reruns were needed during this task.
 
 ## Superseded runs and dispositions
 
@@ -126,3 +123,14 @@ postinstall workaround and four lifecycle/source tests resolve it; see
 
 Runs: Ubuntu PR 41956182026 / push 41956175993; Windows PR 41956182040 /
 push 41956176148; macOS PR 41956182034 / push 41956176212; manual 41956175246.
+
+
+### Earlier zero-warning source: `1998112`
+
+All eight test jobs and seven change-detection jobs passed with zero deprecations
+and no deprecation annotations. Runs: manual 41958397248; macOS PR 41958396398 /
+push 41958389666; Windows PR 41958396459 / push 41958389663; Ubuntu PR 41958396359 /
+push 41958389662. The evidence-only source `a2d374b` also passed its six workflows.
+Subsequent review identified the adapter's dangling-link regression, verified it
+against genuine glob7.2.3, and fixed it in the accepted source above. These earlier
+runs remain historical evidence; they do not replace final-source validation.

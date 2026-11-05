@@ -69,9 +69,9 @@ sources, links, credentials, screenshots, and personal data.
 - [x] npm configuration and dependency paths resolved.
 - [x] Final clean installation and full local regression checks complete.
 - [x] Independent review addressed and final report recorded.
-- [ ] Final source passes Windows, Ubuntu, Mac ARM and native Intel CI, with
+- [x] Final source passes Windows, Ubuntu, Mac ARM and native Intel CI, with
       complete-log deprecation and check-annotation audit.
-- [ ] Publish final validation/handoff documentation and update the open PR.
+- [x] Publish final validation/handoff documentation and update the open PR.
 
 ## Warning inventory
 
@@ -199,7 +199,7 @@ feature/security changes in this task.
 ## Latest status
 
 The complete repository now installs with zero deprecation warnings and zero
-locked deprecated packages. `npm ls --all` exits zero. All 25 dependency tests
+locked deprecated packages. `npm ls --all` exits zero. All 27 dependency tests
 pass, including six installed-source checks (root adapters and actual consumers),
 packed-directory/lock guards, executable-spawn lifecycle, Karma file-list/watch behavior, ASAR archives,
 Temp cleanup, native path-separator cases, and POSIX escapes. `checkJs` covers both adapters.
@@ -218,14 +218,15 @@ to work around this; native Intel and the other CI platforms have since passed.
 No feature/UI change was necessary. The owner approved branch publication, PR
 creation, and all-platform CI (including Intel Mac) on 2026-11-05 (JST).
 Implementation and all-platform verification are complete; merging is not authorized.
-PR #634 is open. Accepted code source `1998112` passes all seven workflows,
+PR #634 is open. Accepted code source `56d659d` passes all seven workflows,
 including all eight test jobs and native Intel. Every full test/change-detection
 log has zero deprecations under the corrected case-insensitive scan. Check
 annotations have no deprecations; ARM has only a runner-capacity notice.
 `CI_STATUS.md` records the run links, superseded failures and dispositions.
 Final evidence-only documentation publication may start fresh PR checks; confirm
-their live status before handing off. No feature/UI changes or owner decisions
-remain. Keep the PR open for owner review and do not merge it.
+their live status before handing off. No feature/UI change was needed for
+warning cleanup. A separate pre-existing cache-policy weakness is recorded in
+`EDGE_REVIEW.md` and left unchanged for an optional owner decision. Keep the PR open for owner review and do not merge it.
 
 The final portability preflight restored two additional glob 7 contracts:
 case-sensitive matching by default on every OS (including removal-pattern
@@ -301,19 +302,23 @@ If new work is needed, inspect git status/diff first and follow the resume and
 failure-classification procedure above. After a fresh npm ci, serialize
 `npm run verify:electron` before parallel checks that may lazily extract Electron.
 
-### Post-validation edge review (current work; supersedes completion above)
+### Completed edge review
 
-The published `a2d374b` evidence update is being checked in CI (live PR checks
-are authoritative). PR review also identified two edge cases needing independent
-verification: dangling links / entries removed during Glob stat-cache creation,
-and metadata-suffixed directories in cache cleanup. The first reproduces ENOENT
-in the installed adapter. A narrow stat/lstat fallback and missing-entry filter,
-plus two regressions, are implemented. Fresh installation and all 27 compatibility
-tests pass. The second was independently reproduced in the genuine original
-delete-empty3.0.0 too, so it is a pre-existing cache-policy weakness; leave it
-unchanged under the owner's behavior-preservation constraint. `EDGE_REVIEW.md`
-records the evidence and separate follow-up decision. No application runtime
-code changed; signed-bundle validation remains applicable. Finish the targeted
-Angular/build checks, publish the adapter fix and repeat all-platform CI/log
-auditing. Preserve this working tree on resume; earlier source acceptance does
-not substitute for testing the updated adapter.
+PR review identified a genuine development-adapter regression with dangling links
+and entries removed during stat caching. An isolated comparison against genuine
+glob7.2.3 confirmed the expected lstat/mtime behavior. The narrow fix and two
+regressions pass fresh installation, all 27 compatibility checks, Angular57 and
+build/bridge/adapter typing. Source `56d659d` then passed all seven workflows and
+eight test jobs, including native Intel; all 15 executed job logs have zero
+deprecations, with no deprecation annotations. See `CI_STATUS.md` for exact runs.
+
+A second cache-policy finding also exists in genuine delete-empty3.0.0. It was
+left unchanged under the owner's behavior-preservation constraint, documented in
+`EDGE_REVIEW.md` for a separate optional decision. No application runtime code
+changed during this review; signed-bundle validation remains applicable.
+
+Current continuation: implementation and all-platform warning cleanup are
+complete. The final evidence-only commit changes documents. Confirm any checks
+triggered by its publication, then hand off the open PR for owner review. Do not
+merge it or add an automerge label. If new work is requested, inspect git status
+and current checks first and follow the resume/failure-classification steps.
