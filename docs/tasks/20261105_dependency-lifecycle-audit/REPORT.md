@@ -30,11 +30,11 @@ but does not establish that every upstream package or release line is supported.
 
 | Dependency | Accurate classification and primary source | Repository exposure and implications |
 | --- | --- | --- |
-| `cross-env@10.1.0` | [Repository](https://github.com/kentcdodds/cross-env) archived on 2025-11-19; [README](https://github.com/kentcdodds/cross-env#readme) calls the tool complete, with no new features needed. No npm deprecation notice. | Three npm scripts: Electron main tests, renderer tests and package tests. Not shipped. A small platform-neutral script/configuration change could remove it, but Windows environment and signal handling must be preserved. An archived completed utility is not evidence of a present defect. |
+| `cross-env@10.1.0` | [Repository](https://github.com/kentcdodds/cross-env) archived on 2025-11-19; [README](https://github.com/kentcdodds/cross-env#readme) calls the tool complete, with no new features needed. No npm deprecation notice. | Three npm scripts: Electron main tests, renderer tests and package tests. Not shipped. Retain it: no relevant defect or clearly better alternative has been established. Its archive status alone does not justify migration; see the follow-up scope below. |
 | `moment@2.31.0` | Legacy, maintenance mode. The [2026-08-17 policy update](https://momentjs.com/news/) keeps established behavior and avoids new user features, while permitting maintainer-led technical modernization. It does not promise permanent technical freeze or abandonment. | Production dependency across photo timestamps, sorting, charts and logging. A broad migration needs a separate behavioral plan for timezone, parsing, formatting and mutability. |
 | `moment-timezone@0.6.6` | Legacy, maintenance mode; [contribution policy](https://github.com/moment/moment-timezone/blob/develop/contributing.md) and [changelog](https://github.com/moment/moment-timezone/blob/develop/changelog.md) retain fixes and IANA data updates. | Active imports in `src-shared/date-time/now.ts`, `src-main/launch-info.ts`, date/time settings and the alternative EXIF parser. The only `.tz(...)` call is UTC conversion in that unselected parser. Core Moment UTC handling may remove this add-on after checking all imports and exact behavior. It is not simply unused. |
 | `zone.js@0.16.3` | [Current Angular monorepo policy](https://github.com/angular/angular/blob/main/packages/zone.js/README.md): no new features or low-priority fixes; Angular-critical fixes still accepted. Supported for Angular. | Bundled at runtime despite its devDependency classification: `angular.json` polyfills and `provideZoneChangeDetection()` in `src/main.ts`. [Zoneless Angular](https://angular.dev/guide/zoneless) is now the default for Angular 21+. Removing Zone requires a separate change-detection migration and real callback/UI verification. The old standalone archive is a repository move, not package retirement. |
-| `@electron/remote@2.1.3` | Maintained, but its [README](https://github.com/electron/remote#readme) strongly discourages the architecture and recommends explicit IPC. [Release 2.1.4](https://github.com/electron/remote/releases/tag/v2.1.4) is current maintenance evidence. | Production dependency for main-process modules, dialogs, application paths/version and EXIF. Prefer gradual explicit IPC replacement. The removed built-in `electron.remote` and the maintained `@electron/remote` package are different; do not call the whole package deprecated or assert an unproven vulnerability. |
+| `@electron/remote@2.1.3` | Maintained, but its [README](https://github.com/electron/remote#readme) strongly discourages the architecture and recommends explicit IPC. [Release 2.1.4](https://github.com/electron/remote/releases/tag/v2.1.4) is current maintenance evidence. | Production dependency for main-process modules, dialogs, application paths/version and EXIF. Assess whether explicit IPC offers concrete benefits before selecting a migration. The removed built-in `electron.remote` and the maintained `@electron/remote` package are different; do not call the whole package deprecated or assert an unproven vulnerability. |
 
 `moment-duration-format@2.3.2` is an additional stale but not formally deprecated
 or archived dependency ([upstream](https://github.com/jsmreese/moment-duration-format)).
@@ -98,58 +98,36 @@ All four destinations currently report not archived. Continued project activity
 does not guarantee support for every installed historical release. Likewise,
 newer major versions are not automatically safe substitutes for indirect APIs.
 
-## Follow-up scope and cross-env options
+## Follow-up scope and priorities
 
-After this audit, the owner chose to retain Moment and moment-timezone while
-considering Temporal once the required stable specification/runtime support is
-established. Zone.js migration is assigned to a separate zoneless Angular task.
-Those migrations are outside the present direct-dependency discussion, which
-concerns cross-env and @electron/remote. The lifecycle findings above remain the
-historical audit results, not instructions to migrate every listed project.
+The owner clarified that the purpose is to assess substantial library changes
+that affect production code, and complete necessary migrations before developing
+features on top of the affected areas. Exhaustively removing archived packages
+or rewriting development-only utilities is not the objective. Priorities here
+supersede the initial audit's dependency-reduction recommendations.
 
-There is no need for a general replacement library for the current three
-cross-env uses. The initial preference is to evaluate a small test-specific
-Node bootstrap that sets string-valued process.env entries before invoking the
-existing Electron-Mocha JS CLI or package-test runner. This is an implementation
-recommendation from source inspection, not a validated change.
+- **Retain cross-env.** It is used only for development/test commands, with no
+  relevant defect or clearly superior alternative established. The earlier
+  env-cmd/Node-bootstrap replacement recommendation is withdrawn. A release date
+  or the existence of another package does not establish a maintenance advantage
+  or a reason to change. Do not create replacement work for cross-env now.
+- **Retain Moment and moment-timezone for now.** Evaluate Temporal later, when
+  the required stable specification/runtime support is established and the owner
+  chooses to revisit date/time handling.
+- **Keep Zone.js work separate.** Zoneless Angular already has a dedicated task;
+  it is outside this dependency follow-up.
+- **Assess @electron/remote's production impact.** It is the remaining direct
+  dependency candidate in this discussion, used for main-process module access,
+  dialogs, application paths/version and EXIF. It is maintained but discouraged,
+  not retired. Establish the benefit and scope of explicit IPC, and how the work
+  interacts with planned features, before proposing implementation.
 
-| Option | Fit and constraints |
-| --- | --- |
-| Node process.env / child-process environment | No added package. Explicit assignments preserve cross-env's override of the named variables. Set them before Electron launches; preserve CLI arguments, exit codes and signal behavior. Use the declared JS CLI, avoiding Windows .cmd shell execution. |
-| Node --env-file | [Stable in the project's Node 26](https://nodejs.org/api/cli.html#--env-filefile). Standard per-command env files are viable, but inherited environment values take precedence, unlike the current cross-env assignments. |
-| env-cmd | [Official README](https://github.com/toddbluhm/env-cmd) describes per-file/named environment configurations and default overwriting; --no-override opts out. A package alternative, with a different interface rather than an inline-assignment drop-in replacement. |
-
-[Node process.env](https://nodejs.org/api/process.html#processenv) and the
-[child-process environment defaults](https://nodejs.org/api/child_process.html#child_processspawncommand-args-options)
-support the dependency-free approach. However, .mocharc files load inside
-Electron, and post-start environment changes may fail to reach Linux renderers
-([upstream issue](https://github.com/electron/electron/issues/5224)). A bootstrap
-must set values before Electron-Mocha's launcher spawns Electron. Reusing the
-launcher alone does not prove exact cross-env signal/exit-code parity.
-
-For package tests, keep the flag in a separate bootstrap if direct invocation
-of run-package-test.js must retain its current notarization behavior. Moving
-PLM_PACKAGE_TEST=true into the existing runner unconditionally would alter that
-distinction. No launcher or dependency change was made during this discussion.
-The archived completed utility has no established defect requiring urgent
-replacement; removal is a dependency-maintenance choice.
-
-## Suggested next work (original audit assessment)
-
-Start with tightly scoped dependency reduction: unused Turf umbrella modules,
-`directory-tree`'s CLI-only dependency chain, cross-platform environment setup,
-then the single duration formatter and timezone add-on. These are candidates for
-investigation, not pre-approved replacements or a promise of trivial migration.
-
-Track stable packaging-tool updates for Got v11, node-int64 and the archived
-build helpers. Keep the existing stable release toolchain and signed packaging
-checks; do not adopt beta tooling or generic compatibility adapters solely to
-make the dependency inventory look newer.
-
-Plan remote IPC, zoneless Angular, full Moment replacement and Google advanced
-markers as separate behavioral migrations. Preserve features/UI and consult the
-owner if the marker or another migration cannot preserve appearance/behavior.
-Leaflet 2.x should wait for a suitable stable release and plugin support.
+The audit's indirect-dependency, CDN and API findings remain recorded above.
+They are not a commitment to migrate all of them. Consider actual execution,
+production behavior, supported upstream paths and the feature-development
+sequence when selecting further work. Preserve features/UI, and consult the
+owner about any unavoidable behavior or appearance change. No dependency,
+launcher, production or release configuration was changed in this discussion.
 
 ## Method, coverage and limits
 

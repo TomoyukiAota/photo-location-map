@@ -70,22 +70,25 @@ the upstream evidence rather than assuming these statuses persist.
 
 ## Follow-up scope
 
+The purpose of this work is to assess substantial dependency migrations that
+could affect production code, so they can be completed before feature work
+builds on the affected areas. Removing every archived utility is not a goal.
+Lifecycle status informs that decision; it does not by itself justify a rewrite.
+
+Keep cross-env. It is used only by development/test commands, no relevant defect
+has been established, and no clearly better replacement has been identified.
+Neither env-cmd nor a new Node bootstrap is selected. The earlier replacement
+recommendation is withdrawn; do not implement or schedule it solely because
+cross-env is archived or because an alternative exists. Release age alone does
+not establish that env-cmd is better maintained.
+
 The owner deferred Moment and moment-timezone migration until evaluating Temporal
-with the required stable specification/runtime support. Keep both in maintenance
-use for now. Zone.js belongs to a separate zoneless Angular migration and is
-outside this follow-up. Current direct-dependency discussion concerns cross-env
-and @electron/remote; no implementation has been requested yet.
+with the required stable specification/runtime support. Zone.js belongs to a
+separate zoneless Angular task and is outside this follow-up.
 
-For cross-env, prefer assessing a small Node-only test bootstrap before adding a
-replacement package. The three uses set fixed variables before Electron-Mocha
-main/renderer tests and package tests. Set them before launching Electron, and
-preserve assignment precedence, arguments, child inheritance, exit status and
-Windows/Linux signal behavior. Do not move them only into .mocharc files loaded
-inside Electron. A separate package-test bootstrap preserves the distinction
-between the npm test command and direct runner invocation/notarization.
-
-Node's stable --env-file is another option, but existing environment values win;
-cross-env currently overwrites the named values. env-cmd is a file-based package
-alternative with default overwrite behavior. REPORT.md records the primary
-references and tradeoffs. These are recommendations to evaluate, not a tested
-migration or permission to change the runtime/release pipeline.
+The remaining direct-dependency candidate for assessment is @electron/remote,
+which touches production module access, dialogs, paths and EXIF. It is maintained
+but discouraged, not formally retired. Assess the concrete benefit, scope and
+interaction with planned features before proposing an IPC migration. No runtime
+migration has been requested yet. Preserve features/UI; consult the owner about
+any unavoidable behavior or appearance change.
