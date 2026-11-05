@@ -51,7 +51,7 @@ POSIX escapes, and Windows separators. Findings were addressed and tested.
 | --- | --- |
 | Clean installation / locked deprecated entries | PASS / 0 |
 | Complete npm dependency validation | PASS |
-| Dependency compatibility and packed-source checks | PASS, 25 tests |
+| Dependency compatibility and packed-source checks | PASS, 27 tests (including the final edge review) |
 | Lint / bridge+adapter checkJs / worker typing | PASS |
 | Angular unit tests | PASS, 57 |
 | Electron main / renderer unit tests | PASS, 117 / 55; no DEP0137 |
@@ -94,4 +94,9 @@ and every complete test/change-detection log contains zero deprecation messages.
 Check annotations contain no deprecations; ARM has only GitHub's capacity notice.
 `CI_STATUS.md` records exact runs and superseded failure dispositions. Later
 commits publish evidence only; confirm the live PR checks before owner handoff.
-The PR remains open and unmerged. No feature/UI decision remains for the owner.
+The PR remains open and unmerged. No feature/UI decision is needed to complete
+warning cleanup. `EDGE_REVIEW.md` records the subsequently verified dangling-link
+regression fix (27 compatibility checks and Angular57 pass locally) requiring
+fresh all-platform CI. It also records a pre-existing cache-policy weakness,
+left unchanged and reserved for a separate owner decision. Read the current
+continuation at the end of `PLAN.md` before relying on the earlier source result.

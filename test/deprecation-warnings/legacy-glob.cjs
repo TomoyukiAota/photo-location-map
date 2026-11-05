@@ -72,6 +72,54 @@ test('actual Karma file-list refresh, excludes, deduplication, mtime and watch u
   assert(!list.files.included.some(file => file.path === `${directory}/new.js`));
 });
 
+test('legacy Glob retains dangling-link stats for Karma instead of throwing', async t => {
+  const directory = fixture(t, false);
+  const target = path.join(directory, 'link-target');
+  const link = `${directory}/broken.js`;
+  fs.mkdirSync(target);
+  fs.symlinkSync(target, link, process.platform === 'win32' ? 'junction' : 'dir');
+  fs.rmdirSync(target);
+  const glob = new adapter.Glob(`${directory}/*.js`, { cwd: '/', follow: true, nodir: true, sync: true });
+  assert(glob.found.includes(link));
+  assert(glob.statCache[link].isSymbolicLink());
+  const FileList = require('karma/lib/file-list');
+  const { createPatternObject } = require('karma/lib/config');
+  const list = new FileList([createPatternObject(link)], [], new EventEmitter(), async () => {}, 0);
+  const files = await list.refresh();
+  assert.equal(files.included[0].mtime.getTime(), fs.lstatSync(link).mtime.getTime());
+});
+
+test('legacy Glob skips files removed after matching but preserves other stat failures', t => {
+  const directory = fixture(t, false);
+  const filename = `${directory}/a.js`;
+  const modern = createRequire(karmaRequire.resolve('glob'))('glob-modern');
+  const originalGlob = modern.globSync;
+  modern.globSync = (...args) => {
+    const found = originalGlob(...args);
+    fs.unlinkSync(filename);
+    return found;
+  };
+  try {
+    const glob = new adapter.Glob(filename, { follow: true, nodir: true, sync: true });
+    assert.deepEqual(glob.found, []);
+    assert.equal(Object.keys(glob.statCache).length, 0);
+  } finally {
+    modern.globSync = originalGlob;
+  }
+  fs.writeFileSync(filename, 'file');
+  const failure = Object.assign(new Error('Injected stat I/O failure'), { code: 'EIO' });
+  const originalStat = fs.statSync;
+  fs.statSync = (target, ...args) => {
+    if (path.resolve(target) === path.resolve(filename)) throw failure;
+    return originalStat(target, ...args);
+  };
+  try {
+    assert.throws(() => new adapter.Glob(filename, { sync: true }), error => error === failure);
+  } finally {
+    fs.statSync = originalStat;
+  }
+});
+
 test('POSIX escaped metacharacters select literal filenames', { skip: process.platform === 'win32' }, async t => {
   const directory = fixture(t);
   const pattern = `${directory}/file \\[one\\].js`;

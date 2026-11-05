@@ -1,6 +1,17 @@
 # Cross-platform CI validation
 
-## Accepted application source
+## Current follow-up
+
+The final edge review found and fixed a development-adapter regression involving
+dangling links and disappearing files. Fresh installation, compatibility27,
+Angular57 and build/bridge/adapter typing pass locally. Publish the reviewed fix,
+dispatch native Intel for its source, and audit all-platform logs/annotations.
+The accepted-source runs below predate this adapter fix; preserve their evidence
+but do not substitute them for the new source's checks. `EDGE_REVIEW.md` records
+the genuine glob7 comparison and the separate pre-existing cache-policy finding
+that remains unchanged. Application runtime/signed-bundle source is unchanged.
+
+## Earlier accepted application source
 
 The implementation is complete and all requested platforms pass. The owner
 approved branch publication, PR creation, all-platform CI and intentional Windows

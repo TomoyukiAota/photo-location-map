@@ -69,9 +69,9 @@ sources, links, credentials, screenshots, and personal data.
 - [x] npm configuration and dependency paths resolved.
 - [x] Final clean installation and full local regression checks complete.
 - [x] Independent review addressed and final report recorded.
-- [x] Final source passes Windows, Ubuntu, Mac ARM and native Intel CI, with
+- [ ] Final source passes Windows, Ubuntu, Mac ARM and native Intel CI, with
       complete-log deprecation and check-annotation audit.
-- [x] Publish final validation/handoff documentation and update the open PR.
+- [ ] Publish final validation/handoff documentation and update the open PR.
 
 ## Warning inventory
 
@@ -300,3 +300,20 @@ hand off the open PR for review. Merging requires a separate owner instruction.
 If new work is needed, inspect git status/diff first and follow the resume and
 failure-classification procedure above. After a fresh npm ci, serialize
 `npm run verify:electron` before parallel checks that may lazily extract Electron.
+
+### Post-validation edge review (current work; supersedes completion above)
+
+The published `a2d374b` evidence update is being checked in CI (live PR checks
+are authoritative). PR review also identified two edge cases needing independent
+verification: dangling links / entries removed during Glob stat-cache creation,
+and metadata-suffixed directories in cache cleanup. The first reproduces ENOENT
+in the installed adapter. A narrow stat/lstat fallback and missing-entry filter,
+plus two regressions, are implemented. Fresh installation and all 27 compatibility
+tests pass. The second was independently reproduced in the genuine original
+delete-empty3.0.0 too, so it is a pre-existing cache-policy weakness; leave it
+unchanged under the owner's behavior-preservation constraint. `EDGE_REVIEW.md`
+records the evidence and separate follow-up decision. No application runtime
+code changed; signed-bundle validation remains applicable. Finish the targeted
+Angular/build checks, publish the adapter fix and repeat all-platform CI/log
+auditing. Preserve this working tree on resume; earlier source acceptance does
+not substitute for testing the updated adapter.

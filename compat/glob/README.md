@@ -48,6 +48,11 @@ comparison against glob 7 and ASAR 3 produced identical results and archive byte
 Cross-platform CI and package smoke tests remain necessary, particularly for
 Windows path and symlink behavior.
 
+The legacy Glob stat cache retains lstat information for dangling links and
+omits files removed during discovery; unrelated I/O errors still fail visibly.
+Actual Karma refresh and deterministic removal tests cover these edge cases.
+See `docs/tasks/20261105_deprecation-warnings/EDGE_REVIEW.md` for the regression.
+
 Remove this package and its overrides when the supported Karma/ASAR versions no
 longer require legacy glob. Do not extend the supported API automatically when
 upgrading a caller; inspect its new calls and update behavioral tests first.

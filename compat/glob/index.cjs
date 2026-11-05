@@ -83,10 +83,17 @@ class Glob {
   /** @param {string} pattern @param {LegacyOptions} options */
   constructor(pattern, options) {
     if (!options?.sync) throw new Error('Only synchronous legacy Glob construction is supported');
-    this.found = sync(pattern, options);
+    const found = sync(pattern, options);
     this.statCache = Object.create(null);
-    for (const filename of this.found)
-      this.statCache[filename] = fs.statSync(path.resolve(options.cwd || '.', filename));
+    // glob 7 keeps lstat information for dangling links and skips entries that
+    // disappear during discovery. Karma reads every found entry's mtime.
+    this.found = found.filter(filename => {
+      const absolute = path.resolve(options.cwd || '.', filename);
+      const stat = fs.statSync(absolute, { throwIfNoEntry: false }) ??
+        fs.lstatSync(absolute, { throwIfNoEntry: false });
+      if (stat) this.statCache[filename] = stat;
+      return !!stat;
+    });
   }
 }
 
