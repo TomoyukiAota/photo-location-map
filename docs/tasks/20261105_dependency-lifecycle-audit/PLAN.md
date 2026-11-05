@@ -67,3 +67,25 @@ performed for this audit, and no long-running audit process remains.
 Continue from REPORT.md when implementation is requested, writing a scoped
 plan and preserving feature/UI behavior before changing dependencies. Refresh
 the upstream evidence rather than assuming these statuses persist.
+
+## Follow-up scope
+
+The owner deferred Moment and moment-timezone migration until evaluating Temporal
+with the required stable specification/runtime support. Keep both in maintenance
+use for now. Zone.js belongs to a separate zoneless Angular migration and is
+outside this follow-up. Current direct-dependency discussion concerns cross-env
+and @electron/remote; no implementation has been requested yet.
+
+For cross-env, prefer assessing a small Node-only test bootstrap before adding a
+replacement package. The three uses set fixed variables before Electron-Mocha
+main/renderer tests and package tests. Set them before launching Electron, and
+preserve assignment precedence, arguments, child inheritance, exit status and
+Windows/Linux signal behavior. Do not move them only into .mocharc files loaded
+inside Electron. A separate package-test bootstrap preserves the distinction
+between the npm test command and direct runner invocation/notarization.
+
+Node's stable --env-file is another option, but existing environment values win;
+cross-env currently overwrites the named values. env-cmd is a file-based package
+alternative with default overwrite behavior. REPORT.md records the primary
+references and tradeoffs. These are recommendations to evaluate, not a tested
+migration or permission to change the runtime/release pipeline.

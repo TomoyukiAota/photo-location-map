@@ -98,7 +98,43 @@ All four destinations currently report not archived. Continued project activity
 does not guarantee support for every installed historical release. Likewise,
 newer major versions are not automatically safe substitutes for indirect APIs.
 
-## Suggested next work
+## Follow-up scope and cross-env options
+
+After this audit, the owner chose to retain Moment and moment-timezone while
+considering Temporal once the required stable specification/runtime support is
+established. Zone.js migration is assigned to a separate zoneless Angular task.
+Those migrations are outside the present direct-dependency discussion, which
+concerns cross-env and @electron/remote. The lifecycle findings above remain the
+historical audit results, not instructions to migrate every listed project.
+
+There is no need for a general replacement library for the current three
+cross-env uses. The initial preference is to evaluate a small test-specific
+Node bootstrap that sets string-valued process.env entries before invoking the
+existing Electron-Mocha JS CLI or package-test runner. This is an implementation
+recommendation from source inspection, not a validated change.
+
+| Option | Fit and constraints |
+| --- | --- |
+| Node process.env / child-process environment | No added package. Explicit assignments preserve cross-env's override of the named variables. Set them before Electron launches; preserve CLI arguments, exit codes and signal behavior. Use the declared JS CLI, avoiding Windows .cmd shell execution. |
+| Node --env-file | [Stable in the project's Node 26](https://nodejs.org/api/cli.html#--env-filefile). Standard per-command env files are viable, but inherited environment values take precedence, unlike the current cross-env assignments. |
+| env-cmd | [Official README](https://github.com/toddbluhm/env-cmd) describes per-file/named environment configurations and default overwriting; --no-override opts out. A package alternative, with a different interface rather than an inline-assignment drop-in replacement. |
+
+[Node process.env](https://nodejs.org/api/process.html#processenv) and the
+[child-process environment defaults](https://nodejs.org/api/child_process.html#child_processspawncommand-args-options)
+support the dependency-free approach. However, .mocharc files load inside
+Electron, and post-start environment changes may fail to reach Linux renderers
+([upstream issue](https://github.com/electron/electron/issues/5224)). A bootstrap
+must set values before Electron-Mocha's launcher spawns Electron. Reusing the
+launcher alone does not prove exact cross-env signal/exit-code parity.
+
+For package tests, keep the flag in a separate bootstrap if direct invocation
+of run-package-test.js must retain its current notarization behavior. Moving
+PLM_PACKAGE_TEST=true into the existing runner unconditionally would alter that
+distinction. No launcher or dependency change was made during this discussion.
+The archived completed utility has no established defect requiring urgent
+replacement; removal is a dependency-maintenance choice.
+
+## Suggested next work (original audit assessment)
 
 Start with tightly scoped dependency reduction: unused Turf umbrella modules,
 `directory-tree`'s CLI-only dependency chain, cross-platform environment setup,
