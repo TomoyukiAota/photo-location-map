@@ -63,6 +63,33 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ]
+            },
+            "testing": {
+              "optimization": false,
+              "polyfills": [],
+              "fileReplacements": [
+                {
+                  "replace": "src-shared/require/proxy-require.ts",
+                  "with": "test/angular/require-doubles.ts"
+                },
+                {
+                  "replace": "src-shared/require/require-from-main-process.ts",
+                  "with": "test/angular/require-doubles.ts"
+                },
+                {
+                  "replace": "src-shared/user-data-storage/user-data-storage.ts",
+                  "with": "test/angular/storage-double.ts"
+                },
+                {
+                  "replace": "src/app/shared/exif-fetcher/using-exifr/fetch-exif-using-exifr.ts",
+                  "with": "test/angular/exif-double.ts"
+                },
+                {
+                  "replace": "src/app/shared/opened-directory.ts",
+                  "with": "test/angular/directory-double.ts"
+                }
+              ],
+              "aot": false
             }
           }
         },
@@ -89,29 +116,21 @@
           }
         },
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "include": [
-              "src/**/*.spec.ts",
-              "src/../src-shared/**/*.spec.ts"
-            ],
-            "polyfills": [
-              "zone.js"
-            ],
+            "runner": "vitest",
+            "buildTarget": "photo-location-map:build:testing",
             "tsConfig": "src/tsconfig.spec.json",
-            "karmaConfig": "src/karma.conf.js",
-            "assets": [
-              "src/assets",
-              "src/favicon.ico",
-              "src/favicon.png",
-              "src/favicon.icns",
-              "src/favicon.256x256.png",
-              "src/favicon.512x512.png",
-              "src/favicon.svg"
+            "include": [
+              "**/*.spec.ts",
+              "../src-shared/**/*.spec.ts"
             ],
-            "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-              "src/styles/global-styles.scss"
+            "setupFiles": [
+              "test/angular/setup.ts"
+            ],
+            "coverageReporters": [
+              "html",
+              "lcov"
             ]
           }
         },

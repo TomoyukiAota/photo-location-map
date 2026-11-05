@@ -1,6 +1,6 @@
 export class EnvironmentDetector {
-  public static get isKarma(): boolean {
-    return typeof __karma__ !== 'undefined';
+  public static get isVitest(): boolean {
+    return process.env.VITEST === 'true';
   }
 
   public static get isElectronMochaMain(): boolean {
@@ -12,6 +12,6 @@ export class EnvironmentDetector {
   }
 
   public static get isUnitTest(): boolean {
-    return this.isKarma || this.isElectronMochaMain || this.isElectronMochaRenderer;
+    return this.isVitest || this.isElectronMochaMain || this.isElectronMochaRenderer;
   }
 }

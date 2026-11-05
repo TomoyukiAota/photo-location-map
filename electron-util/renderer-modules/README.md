@@ -1,7 +1,7 @@
 # Node modules in renderer bundles
 
 `tsconfig.renderer.json` maps Electron/Node imports to the CommonJS bridges in
-this directory. Angular's application and Karma builders emit browser ES
+this directory. Angular's application builder emits browser ES
 modules. Chromium cannot resolve a bare `import 'fs'` or `import 'electron'` at
 runtime, whereas Electron's existing `globalThis.require` can load them.
 Keeping that call as a property access also prevents esbuild from bundling
@@ -18,8 +18,9 @@ are loaded explicitly in the renderer tsconfig. The main-process tsconfig does
 not inherit these mappings and continues to resolve Node modules directly.
 `npm run typecheck:build-config` checks the bridge implementations.
 
-Use the existing Angular/Electron unit tests and photo-loading E2E regressions
-when changing these bridges. A browser build alone cannot prove that Node APIs,
+Use the genuine Electron unit tests and photo-loading E2E regressions when
+changing these bridges. Angular's Vitest/jsdom tests isolate platform boundaries
+and do not validate the production bridges. A browser build alone cannot prove that Node APIs,
 workers, or installed production dependencies can be loaded by Electron.
 
 References: [Electron ESM loading](https://www.electronjs.org/docs/latest/tutorial/esm),

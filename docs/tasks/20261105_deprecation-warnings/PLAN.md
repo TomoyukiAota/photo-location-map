@@ -1,5 +1,10 @@
 # Remove deprecation warnings
 
+This document records the completed warning-cleanup checkpoint. The subsequent
+Vitest migration and complete compat/ removal continue in
+[the migration plan](../20261105_vitest-without-compat/PLAN.md). Read that plan
+for the latest source, dependencies and validation state.
+
 ## Objective and boundaries
 
 Remove deprecation warnings from a clean dependency installation, development

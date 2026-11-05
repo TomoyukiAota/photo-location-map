@@ -6,7 +6,6 @@
     "checkJs": true
   },
   "include": [
-    "compat/*/index.cjs",
     "electron-util/managed-exifr.cjs",
     "electron-util/renderer-modules/*.cjs"
   ]

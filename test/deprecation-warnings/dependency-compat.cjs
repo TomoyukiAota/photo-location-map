@@ -1,5 +1,6 @@
 // Guard the API assumptions behind package.json's scoped dependency overrides.
-// See docs/tasks/20261105_deprecation-warnings/DEPENDENCIES.md before updating them.
+// See docs/tasks/20261105_deprecation-warnings/DEPENDENCIES.md for updater/download APIs
+// and docs/tasks/20261105_vitest-without-compat/PACKAGING.md for packaging APIs.
 const assert = require('node:assert/strict');
 const { execFile } = require('node:child_process');
 const fs = require('node:fs');
