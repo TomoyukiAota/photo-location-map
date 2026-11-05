@@ -196,7 +196,7 @@ feature/security changes in this task.
 ## Latest status
 
 The complete repository now installs with zero deprecation warnings and zero
-locked deprecated packages. `npm ls --all` exits zero. All 20 dependency tests
+locked deprecated packages. `npm ls --all` exits zero. All 21 dependency tests
 pass, including six installed-source checks (root adapters and actual consumers),
 packed-directory/lock guards, Karma file-list/watch behavior, ASAR archives,
 Temp cleanup, native path-separator cases, and POSIX escapes. `checkJs` covers both adapters.
@@ -215,11 +215,14 @@ to work around this; Windows/Linux/native Intel results remain CI follow-ups.
 No feature/UI change was necessary. The owner approved branch publication, PR
 creation, and all-platform CI (including Intel Mac) on 2026-11-05 (JST).
 Publication and CI verification are the active phase; merging is not authorized.
+PR #634 is open and source `01c1e7f` has been pushed. See `CI_STATUS.md` for the
+seven active workflow runs, including the manually dispatched native Intel job,
+and the exact failure-handling/resume procedure. Do not start duplicate runs.
 
 The final portability preflight restored two additional glob 7 contracts:
 case-sensitive matching by default on every OS (including removal-pattern
 expansion), and forward-slash results on Windows. Added case-discriminating
-tests; all 20 compatibility checks and bridge/adapter type checking pass after
+tests; all 21 compatibility checks and bridge/adapter type checking pass after
 a clean installation. The Angular suite was rechecked after these changes.
 The adapters remain development-only; application files and the signed bundle's
 runtime source were unchanged by these preflight fixes.
@@ -255,3 +258,16 @@ Windows/Linux CI has not run; pushing would trigger the repository's deliberate
 Windows draft-release publishing. Preserve the publishing steps. Confirm the
 outward publishing step before uploading artifacts. The manual Intel CI policy
 in AGENTS.md still applies before merging changes within its stated scope.
+
+### CI warning follow-up
+
+All seven first-source workflows passed, including Intel, but logs exposed two
+Jasmine deprecations also present in earlier local logs. The earlier scan missed
+uppercase DEPRECATION prefixes. `JASMINE.md` records the cause and narrow fix:
+native async setup replaces five Zone testing wrappers, base zone.js remains,
+and a supported Karma file-list hook keeps Jasmine classic while compiled
+modules remain ESM. A real plugin/FileList refresh regression was added. Ubuntu
+uses the same native Xvfb command instead of a deprecated Node20 action. Local
+21 compatibility checks, lint, and Angular57 tests pass with a case-insensitive
+warning scan. The new source must be published and all-platform CI repeated;
+use `CI_STATUS.md` and current GitHub runs rather than the old green conclusions.

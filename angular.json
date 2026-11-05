@@ -96,8 +96,7 @@
               "src/../src-shared/**/*.spec.ts"
             ],
             "polyfills": [
-              "zone.js",
-              "zone.js/testing"
+              "zone.js"
             ],
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",

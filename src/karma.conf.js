@@ -3,11 +3,28 @@
 
 const electronWebPreferences = require('../electron-util/electron-web-preferences');
 
+// TL;DR: Load Jasmine as classic scripts; compiled tests/polyfills stay ES modules.
+// Details: Angular's application Karma builder changes every included .js file to
+// type=module to order Zone.js/testing after Jasmine. Jasmine 6 detects that as
+// unsupported. These tests use native async setup without the Jasmine Zone patch,
+// so its browser runtime/boot files can run first as classic scripts. Restore
+// their types after Angular configures them, whenever Karma refreshes its files.
+function classicJasmineScripts(emitter) {
+  const jasmineScript = /[\\/](?:jasmine-core[\\/]lib[\\/]jasmine-core|karma-jasmine[\\/]lib|karma-jasmine-html-reporter[\\/]src)[\\/][^\\/]+\.js$/;
+  emitter.on('file_list_modified', files => {
+    for (const file of files.included) {
+      if (jasmineScript.test(file.originalPath)) file.type = 'js';
+    }
+  });
+}
+classicJasmineScripts.$inject = ['emitter'];
+
 module.exports = function (config) {
   config.set({
     basePath: '',
-    frameworks: ['jasmine'],
+    frameworks: ['jasmine', 'plm-classic-jasmine'],
     plugins: [
+      { 'framework:plm-classic-jasmine': ['factory', classicJasmineScripts] },
       require('karma-jasmine'),
       require('karma-jasmine-html-reporter'),
       require('karma-coverage'),

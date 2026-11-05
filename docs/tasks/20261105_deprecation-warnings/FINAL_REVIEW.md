@@ -47,7 +47,7 @@ POSIX escapes, and Windows separators. Findings were addressed and tested.
 | --- | --- |
 | Clean installation / locked deprecated entries | PASS / 0 |
 | Complete npm dependency validation | PASS |
-| Dependency compatibility and packed-source checks | PASS, 20 tests |
+| Dependency compatibility and packed-source checks | PASS, 21 tests |
 | Lint / bridge+adapter checkJs / worker typing | PASS |
 | Angular unit tests | PASS, 57 |
 | Electron main / renderer unit tests | PASS, 117 / 55; no DEP0137 |
@@ -76,3 +76,9 @@ The active outward step is a branch push/PR and cross-platform CI. A push
 deliberately triggers Windows draft-release publishing under repository policy;
 retain that workflow. This publication is authorized; merging is not. Review
 the manual Intel policy in `AGENTS.md` before merging relevant release changes.
+
+The first published CI source passed on every requested platform, but log review
+found Jasmine warnings missed by the original case-sensitive scan. The final
+test-only fix and native Ubuntu display command are documented in JASMINE.md.
+Local21 checks and Angular57 pass without those warnings; follow-up CI results
+are recorded separately in CI_STATUS.md and supersede the first-source result.
