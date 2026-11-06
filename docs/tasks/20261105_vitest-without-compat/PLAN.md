@@ -1,5 +1,10 @@
 # Angular Vitest migration and compatibility-adapter removal
 
+> **Update, 2026-11-07:** the npm `overrides` and `script/patch-temp.js` that
+> this migration kept have been removed, and a clean install now prints the
+> deprecation warnings they removed. See the
+> [override removal record](../20261107_remove-dependency-overrides/STATUS.md).
+
 ## Objective and boundaries
 
 Migrate Angular unit tests to the current Angular CLI default (Vitest and jsdom),

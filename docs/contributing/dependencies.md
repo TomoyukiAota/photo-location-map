@@ -33,6 +33,36 @@ When upgrading a package with an install script, inspect that script and update
 its exact-version entry. `.npmrc` rejects unreviewed scripts during installation.
 
 
+## Stay on the documented setup
+
+Use each tool the way its documentation sets it up, such as electron-builder with
+the dependency versions it requires, and Angular's unit-test builder with
+Vitest. Depart from that setup — with npm `overrides`, a patch to an installed
+package or a custom environment — only for a specific reason: a feature that
+cannot be built otherwise, or avoiding a serious security vulnerability.
+
+Removing a deprecation warning is not such a reason. Upstream updates to the
+standard setup resolve it over time, and it is not urgent. Record the warning in
+the next section instead.
+
+
+### Known deprecation warnings
+
+A clean `npm ci` prints these deprecation warnings. Each comes from the latest
+stable release of a package in the standard setup.
+
+| Warning | Comes from | Revisit when |
+|:--|:--|:--|
+| `glob@7.2.3`, `inflight@1.0.6`, `rimraf@2.6.3`, `boolean@3.2.0` | electron-builder 26: `@electron/asar` 3.4.1, `@electron/get` 3 → `global-agent` 3, and the Squirrel.Windows tooling's `electron-winstaller` 5.4.0 → `temp` 0.9.4 → `rimraf` 2.6.3. | electron-builder 27 is released as stable. Its prereleases use `@electron/asar` 4 and `@electron/get` 5 and drop `electron-winstaller`; the maintainer does not plan to backport the `electron-winstaller` removal to 26 ([upstream issue](https://github.com/electron-userland/electron-builder/issues/10016)). |
+| `lodash.isequal@4.5.0` | `electron-updater` 6.8.12 | An `electron-updater` 6 release includes the [backported replacement](https://github.com/electron-userland/electron-builder/pull/10502). |
+| `glob@10.5.0` | `electron-mocha` 13.1.0 → Mocha 11 | `electron-mocha` supports Mocha 12, which [moved to glob 13](https://github.com/mochajs/mocha/pull/5546). |
+
+After dependency changes, check that a clean `npm ci` prints no other
+`npm warn deprecated` lines. The
+[override removal record](../tasks/20261107_remove-dependency-overrides/STATUS.md)
+describes how these were checked.
+
+
 ## Electron binary
 
 Electron downloads its binary on its first invocation; `npm run verify:electron`
