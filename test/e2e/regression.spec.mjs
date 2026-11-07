@@ -343,6 +343,30 @@ test('folder picker loads real photo data, markers, tree selection and chart', a
   const restarted = await page.locator('#home-left-sidebar').boundingBox();
   expect(Math.abs(restarted.width - before.width)).toBeLessThan(1);
 });
+test('the map starts and shows photos while the network cannot be reached', async () => {
+  // Leaflet and its plugins once came from a CDN, so a launch without the network (offline, no DNS, or a firewall
+  // blocking the app) had no map: rendering it threw "ReferenceError: L is not defined". Only the tiles need it now.
+  const blockedHosts = new Set();
+  await page.route(url => /^https?:$/.test(url.protocol) && url.hostname !== 'localhost', route => {
+    blockedHosts.add(new URL(route.request().url()).hostname);
+    return route.abort('internetdisconnected');
+  });
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.reload();
+  await page.waitForSelector('app-root app-home');
+  await expect(page.locator('.leaflet-pm-toolbar').first()).toBeVisible();
+  await dismissWelcome();
+  await app.evaluate(({ dialog }, folder) => {
+    dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [folder] });
+  }, photoFolder);
+  await page.getByRole('button', { name: 'Open Folder', exact: true }).click();
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
+  await expectRepresentedPhotos(4);
+  expect(errors).toEqual([]);
+  // The tiles were asked for and refused, so the network was really out of reach.
+  expect(blockedHosts.size).toBeGreaterThan(0);
+});
 test('folder picker restores confirmed history after cancellation and a real restart', async () => {
   await dismissWelcome();
   async function capturePicker(canceled) {
