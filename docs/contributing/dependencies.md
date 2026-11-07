@@ -75,13 +75,16 @@ Node passes the Electron path to that shell unquoted, so the path splits at the
 space. The patch makes both spawn calls start Electron directly. It also avoids
 Node's DEP0190 warnings, which alone would not justify it.
 
-Remove the patch when an Electron-Mocha release starts Electron without a shell.
-Until then, the patch checks Electron-Mocha's version and source before writing,
+Remove the patch when an Electron-Mocha release stops using a Windows shell at
+both sites the patch changes: the Electron launch, and the quit hook that starts
+a separate process to remove the temporary profile. Until then, the patch checks Electron-Mocha's version and source before writing,
 so an upgrade fails installation until the patch is reviewed.
 `npm run test:dependency-compat` checks the patched spawn calls with simulated
 Windows paths that contain spaces, and the Windows CI job runs both suites from a
 second checkout whose path contains a space. Keep that CI step after removing the
-patch.
+patch. It checks only the launch: the quit hook's process is detached and its
+output discarded, so a failure there would only leave the temporary profile
+behind. Check that site in the release's source.
 
 
 ## Electron binary

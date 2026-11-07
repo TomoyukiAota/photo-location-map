@@ -118,13 +118,15 @@ Electron path unquoted, so without the patch the Electron-Mocha suites cannot
 start from a checkout path that contains a space.
 
 On 2026-11-07 the owner decided that working from such a path is needed, so the
-patch is kept for that reason, and is to be removed when Electron-Mocha is
-fixed.
+patch is kept for that reason, and is to be removed when an Electron-Mocha
+release stops using a Windows shell at both spawn sites: the Electron launch and
+the quit hook's profile cleanup.
 [dependencies.md](../../contributing/dependencies.md#departures-kept-for-a-needed-feature)
 lists it with that reason and the removal condition, and the patch's own comment
 now leads with the same reason. The Windows CI step that runs both suites from a
-checkout path with a space checks the reason itself, and stays after the patch
-is removed. Electron-Mocha already starts Electron without a
+checkout path with a space checks the launch, and stays after the patch is
+removed. The quit hook's cleanup runs detached with its output discarded, so
+that site has to be checked in the release's source. Electron-Mocha already starts Electron without a
 shell on macOS and Linux, so the patch changes only Windows.
 
 ## Resuming
@@ -132,6 +134,8 @@ shell on macOS and Linux, so the patch changes only Windows.
 Nothing is pending in this record. When upgrading electron-builder,
 `electron-updater` or `electron-mocha`, check the revisit conditions in
 [dependencies.md](../../contributing/dependencies.md#known-deprecation-warnings)
-and update the list. When an Electron-Mocha release starts Electron without a
-shell, remove `script/patch-electron-mocha.js`, its test,
-`test:dependency-compat` and its CI steps.
+and update the list. When an Electron-Mocha release fixes both spawn sites, the
+launch and the quit-hook cleanup, so that neither uses a Windows shell, remove
+`script/patch-electron-mocha.js`, its test, `test:dependency-compat` and its CI
+steps. Keep the Windows CI step that runs the suites from a checkout path with a
+space.

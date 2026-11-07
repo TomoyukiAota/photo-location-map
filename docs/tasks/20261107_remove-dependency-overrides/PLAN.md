@@ -30,7 +30,7 @@ The owner set this rule on 2026-11-07; see
   It was added for a Windows DEP0190 warning, which is not a reason, but it also
   lets the Electron-Mocha suites start from a Windows checkout path that
   contains a space. The owner decided on 2026-11-07 that this is needed. Remove
-  the patch when Electron-Mocha is fixed.
+  the patch when an Electron-Mocha release fixes both of its spawn sites.
 
 ## Checks
 
