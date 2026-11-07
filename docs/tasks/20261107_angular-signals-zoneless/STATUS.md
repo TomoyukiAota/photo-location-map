@@ -6,7 +6,7 @@ the existence of the plan or from an agent's earlier messages.
 
 ## Current checkpoint
 
-- State: STAGE 0 IN REVIEW, on the branch `claude/signals-zoneless-stage-0`
+- State: SLICE 1A IN REVIEW, on the branch `claude/signals-zoneless-1a-sort`
   (stage ledger below).
 - Authorized (owner, 2026-11-08): carry out the whole plan once the
   prerequisite is met, one pull request per stage or slice; address the
@@ -27,13 +27,13 @@ the existence of the plan or from an agent's earlier messages.
 - Investigation: complete on 2026-11-07 (REPORT.md, INVENTORY.md, MCP.md).
   The Angular unit tests passed under the zoneless TestBed default that day:
   25 files, 37 tests.
-- Last accepted slice: none. Baseline (stage 0.4): recorded under "Baseline"
-  below.
-- Runtime, dependency, test or build changes made by this plan: stage 0 adds
-  e2e cases, the MCP configuration and lint policy comments; the application
-  code is unchanged until stage 1.
-- Processes or CI runs owned by this work: the CI of the stage 0 pull
-  request.
+- Last accepted slice: stage 0, #643, merged on 2026-11-08 as c448beb.
+  Baseline (stage 0.4): recorded under "Baseline" below.
+- Runtime, dependency, test or build changes made by this plan: stage 0 added
+  e2e cases, the MCP configuration and lint policy comments. 1A keeps the
+  tree's sort settings in signals and fixes the storage reset of the unit
+  tests (see "Findings while executing").
+- Processes or CI runs owned by this work: the CI of the 1A pull request.
 - Order relative to the `@electron/remote` removal (PLAN.md, "Boundaries"),
   decided by the owner on 2026-11-08: this plan goes first, and that removal
   comes after it.
@@ -69,8 +69,8 @@ continue from "Next action" in the ledger below.
 
 | Stage / slice | State | Branch / PR | Accepted commit | Tests | Manual checks | Next action |
 | --- | --- | --- | --- | --- | --- | --- |
-| 0 preparation | IN REVIEW | `claude/signals-zoneless-stage-0` | | 2026-11-08, macOS: lint, unit (Vitest 46, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 25 cases in 2.1 min, all pass | none needed: no application change | merge the pull request after its review, then start 1A from main |
-| 1A sort settings | NOT STARTED | | | NOT RUN | | wait for accepted 0 |
+| 0 preparation | ACCEPTED | #643 | c448beb | 2026-11-08, macOS: lint, unit (Vitest 46, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 25 cases in 2.1 min, all pass; CI green; CodeRabbit: no actionable comments | none needed: no application change | none |
+| 1A sort settings | IN REVIEW | `claude/signals-zoneless-1a-sort` | | 2026-11-08, macOS: lint, unit (Vitest 49, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 26 cases in 2.2 min, all pass | headless e2e "the sort menu orders the tree, shows its choice, and keeps it across a restart" | merge the pull request after its review, then 1B from main |
 | 1B folder-open state, loaded-files status bar, home | NOT STARTED | | | NOT RUN | | wait for accepted 1A |
 | 1C loading-folder progress | NOT STARTED | | | NOT RUN | | wait for accepted 1B |
 | 1D thumbnail generation | NOT STARTED | | | NOT RUN | | wait for accepted 1C |
@@ -121,6 +121,11 @@ the `NgZone.run` calls, stays until stage 4.
 Counted again on 2026-11-08 on main (ba7b832) with #638, #639, #640 and #642
 merged locally, and on main at cd5bdf8 after they were merged: every number is
 the same.
+
+| After | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| baseline, stage 0 | 11 | 10 | 26 | 9 | 26 | 10 | 11 | 8 | 1 + 1 |
+| 1A | 8 | 10 | 22 | 5 | 26 | 10 | 11 | 8 | 1 + 1 |
 
 ## Baseline (stage 0.4)
 
@@ -173,7 +178,7 @@ mark a row from memory.
 | Chart x-axis unit | change the unit | chart re-bins; unsupported-duration message when applicable | |
 | Date-unknown photos | checkbox in the chart menu | count shown; map adds/removes date-unknown photos | |
 | Undo / redo | Selection menu and shortcuts | selection steps back and forward; menu items enable/disable | |
-| Sort menu | name / shooting time, ascending / descending | tree order and checkmarks; persists across restart; info dialog details toggle | |
+| Sort menu | name / shooting time, ascending / descending | tree order and checkmarks; persists across restart; info dialog details toggle | 2026-11-08, 1A, macOS: headless e2e "the sort menu orders the tree, shows its choice, and keeps it across a restart" |
 | Settings: Appearance | toggle Show Status Bar; Cancel; Save | live toggle; Cancel restores; Save persists | |
 | Settings: Date & Time | change a format | restart notice; Save restarts | |
 | Settings: Cache | open location; delete cache | opens; confirm then restart | |
@@ -182,6 +187,16 @@ mark a row from memory.
 | Map switch | menu; the owner checks Google Maps with an API key after the merge | OpenStreetMap and Google Maps render the pinned photos | |
 | `--open` | launch with a file and with a folder | parent folder opens and the file is selected; folder opens | |
 | Window resize and splitters | drag; resize window | panes keep proportions; map re-renders | |
+
+## Findings while executing
+
+- 2026-11-08, 1A: `test/angular/setup.ts` reset the in-memory
+  `UserDataStorage` double before each unit test through `./storage-double`,
+  a second instance of that file. The application gets the double through
+  "fileReplacements" in `angular.json`, built as the module of the
+  application's path, so that reset never reached it; no unit test had
+  depended on storage before. The setup now imports it through the
+  application's path.
 
 ## Questions for the owner
 

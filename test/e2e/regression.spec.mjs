@@ -525,6 +525,60 @@ test('undo and redo step through the photo selection as the Selection menu does'
   await expect(treeCheckbox('Unga')).not.toBeChecked();
   await expectRepresentedPhotos(2);
 });
+test('the sort menu orders the tree, shows its choice, and keeps it across a restart', async () => {
+  const treeNames = () => page.locator('mat-tree-node')
+    .evaluateAll(nodes => nodes.map(node => node.querySelector('mat-checkbox, .non-selectable-node')?.textContent.trim()));
+  const sortMenuItem = name => page.locator('button[mat-menu-item]').filter({ hasText: name });
+  async function chooseInSortMenu(name) {
+    await page.locator('.more-options-button').click();
+    await sortMenuItem('Sort').click();
+    await sortMenuItem(name).click();
+    await expect(page.locator('.mat-mdc-menu-panel')).toHaveCount(0);
+  }
+  async function expectChecked(checkedItems, uncheckedItems) {
+    await page.locator('.more-options-button').click();
+    await sortMenuItem('Sort').click();
+    for (const name of checkedItems) await expect(sortMenuItem(name).locator('mat-icon').first()).toHaveCSS('visibility', 'visible');
+    for (const name of uncheckedItems) await expect(sortMenuItem(name).locator('mat-icon').first()).toHaveCSS('visibility', 'hidden');
+    // A click outside closes the menu together with its submenu.
+    await page.locator('.cdk-overlay-backdrop').first().click({ position: { x: 5, y: 5 } });
+    await expect(page.locator('.mat-mdc-menu-panel')).toHaveCount(0);
+  }
+  await dismissWelcome();
+  await openFolderWithPicker(photoFolder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
+  await expect.poll(treeNames).toEqual(['actual-photos', 'Apple Park', 'Gold Coast', 'Kobe', 'Unga']);
+  await expectChecked(['By Name', 'Ascending'], ['By Shooting Time', 'Descending']);
+  await chooseInSortMenu('Descending');
+  await expect.poll(treeNames).toEqual(['actual-photos', 'Unga', 'Kobe', 'Gold Coast', 'Apple Park']);
+  await chooseInSortMenu('By Shooting Time');
+  // Folders keep sorting by name; shooting time orders the photos within each folder.
+  await expect.poll(treeNames).toEqual(['actual-photos', 'Unga', 'Kobe', 'Gold Coast', 'Apple Park']);
+  await expectChecked(['By Shooting Time', 'Descending'], ['By Name', 'Ascending']);
+  // The info button beside "By Shooting Time" explains it, with details that open and close.
+  await page.locator('.more-options-button').click();
+  await sortMenuItem('Sort').click();
+  await sortMenuItem('By Shooting Time').locator('button').click();
+  const info = page.locator('app-dir-tree-view-sort-shooting-time-info');
+  await expect(info).toContainText('Sort By Shooting Time');
+  const detailsButton = info.getByRole('button', { name: 'More details for reference' });
+  await detailsButton.click();
+  await expect(info.locator('.message-details')).toBeVisible();
+  await detailsButton.click();
+  await expect(info.locator('.message-details')).toHaveCount(0);
+  await info.getByRole('button', { name: 'Close', exact: true }).click();
+  await expect(info).toHaveCount(0);
+  if (await page.locator('.mat-mdc-menu-panel').count())
+    await page.locator('.cdk-overlay-backdrop').first().click({ position: { x: 5, y: 5 } });
+  await expect(page.locator('.mat-mdc-menu-panel')).toHaveCount(0);
+  await app.close();
+  await launch();
+  await dismissWelcome();
+  await openFolderWithPicker(photoFolder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
+  await expect.poll(treeNames).toEqual(['actual-photos', 'Unga', 'Kobe', 'Gold Coast', 'Apple Park']);
+  await expectChecked(['By Shooting Time', 'Descending'], ['By Name', 'Ascending']);
+});
 test('--open loads a directory with Unicode, spaces, # and % without restoring photos on an ordinary restart', async () => {
   const folder = path.join(profile, '写真 folder # 100%');
   await mkdir(folder);
