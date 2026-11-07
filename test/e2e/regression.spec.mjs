@@ -25,12 +25,15 @@ let app, page, profile, headless;
 // Details: With hidden windows, the suite took 3.7 minutes instead of 1.6 on Windows CI and 4.8 instead of
 // 2.1 on Ubuntu CI, against 1.7 instead of 1.6 on macOS. The cases with many Playwright actions, which wait
 // for animation frames, slowed down the most, and on Windows the map case failed: the app's zoom to the
-// photos, which Leaflet starts in the next animation frame, began only at the next click.
-test.beforeAll(({ headless: headlessOption }) => { headless = headlessOption; });
+// photos, which Leaflet starts in the next animation frame, began only at the next click. Windows' transparent
+// windows do not help on Linux: Electron applies their opacity to the window's content layer, which is then not
+// drawn either. On Ubuntu CI, the main window got 1 animation frame per second, and the suite took 5.0 minutes
+// instead of 2.1 (#642). Linux CI runs under Xvfb, so the windows shown there are not on anyone's screen.
+test.beforeAll(({ headless: headlessOption }) => { headless = headlessOption && process.platform !== 'linux'; });
 async function expectWindowOffScreenOnlyIfHeadless(window) {
   const state = await window.evaluate(window => ({ visible: window.isVisible(), opacity: window.getOpacity(), focused: window.isFocused() }));
   if (!headless) expect(state.visible, 'The window must be shown.').toBe(true);
-  else if (process.platform !== 'darwin') {
+  else if (process.platform === 'win32') {
     expect(state, 'A headless run on Windows must show the window only fully transparent and inactive.')
       .toEqual({ visible: true, opacity: 0, focused: false });
   } else expect(state.visible, 'A headless run must keep the window hidden.').toBe(false);

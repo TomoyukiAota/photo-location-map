@@ -34,7 +34,10 @@ its page changes, rather than about one per second.
 
 On Linux, the windows are still shown. There, a hidden window gets animation
 frames far less often, too: the suite took 4.8 minutes instead of 2.1 on Ubuntu
-CI. Linux CI runs under Xvfb, so its windows are not on anyone's screen.
+CI. Transparent windows, as on Windows, do not help: Electron applies their
+opacity to the window's content, which is then not drawn either, and the suite
+took 5.0 minutes. Linux CI runs under Xvfb, so its windows are not on anyone's
+screen.
 
 To exercise the existing development-server flow, start `mise exec -- npm run
 ng:serve`, wait for `http://localhost:4200/`, then set

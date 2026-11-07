@@ -16,8 +16,9 @@ if (automated && (!testRoot || !require('node:path').isAbsolute(testRoot))) {
 // - Electron has no headless mode. A window created with show: false is never put on screen,
 //   and the app is never brought to the front. backgroundThrottling: false keeps such a window
 //   painting: https://www.electronjs.org/docs/latest/api/structures/web-preferences On macOS
-//   it then behaves as a shown one does. On Linux, the e2e suite shows the windows instead
-//   (see test/e2e/README.md).
+//   it then behaves as a shown one does. On Linux, a hidden window is as slow as on Windows,
+//   and the transparent one below too, so the e2e suite shows the windows there
+//   (see test/e2e/regression.spec.mjs).
 // - On Windows (Electron 45.2.1), the page of a hidden window got 143.5 animation frames per
 //   second on a 144 Hz display while nothing on it changed, but 1.3 once it changed every
 //   frame, with or without hardware acceleration. Its frames reach no display, and Chromium
@@ -42,12 +43,10 @@ if (automated && (!testRoot || !require('node:path').isAbsolute(testRoot))) {
 //   background; --disable-frame-rate-limit gave about 4,000, unpaced. Offscreen rendering
 //   (webPreferences.offscreen) gave 60, but renders differently from the app as shipped.
 const headless = !!testRoot && process.env.PLM_TEST_HEADLESS === '1';
-// Experiment: does the same approach keep Linux at the speed of shown windows?
-const transparent = headless && process.platform !== 'darwin';
+const transparent = headless && process.platform === 'win32';
 exports.isHeadlessTest = headless;
 exports.withHeadlessTestOptions = options => headless ? {
-  ...options, show: false, ...(transparent ? { opacity: 0 } : {}),
-  ...(transparent && process.platform === 'win32' ? { type: 'toolbar', focusable: false } : {}),
+  ...options, show: false, ...(transparent ? { opacity: 0, type: 'toolbar', focusable: false } : {}),
   webPreferences: { ...options.webPreferences, backgroundThrottling: false },
 } : options;
 
