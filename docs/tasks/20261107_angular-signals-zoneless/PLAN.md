@@ -383,8 +383,13 @@ block typed linting (typescript-eslint's `parserOptions.projectService`, or
   as required signal queries.
 - **2.2** Add `provideCheckNoChangesConfig({exhaustive: true, interval: 1000})`
   to the bootstrap for development builds only (`AppConfig.production` is
-  false), so that a binding that changes without a notification throws
-  `ExpressionChangedAfterItHasBeenCheckedError` during the manual checks.
+  false), so that a binding that changes without a notification raises
+  `ExpressionChangedAfterItHasBeenCheckedError` (`NG0100`). A production build
+  has no such check, so run the Playwright scripts of the manual checks also
+  against `mise exec -- npm run build:dev`. Angular passes the error to the
+  `ErrorHandler`, which logs it rather than failing anything, so the scripts
+  collect console errors and page errors (`page.on('console')`,
+  `page.on('pageerror')`) and fail on `NG0100`.
 - **2.3** Delete `changeDetection: ChangeDetectionStrategy.Eager` and the then
   unused import in groups: dialogs and static components first, then sidebar
   and status bars, then tree, maps and chart; run the checkpoint and the manual
@@ -399,7 +404,8 @@ block typed linting (typescript-eslint's `parserOptions.projectService`, or
 
 Stage 2 exit: `grep -rn "ChangeDetectionStrategy" src --include='*.ts'` finds
 nothing outside spec doubles that need a host; the `detectChanges()` count is
-0; the exhaustive check raised nothing during the manual list.
+0; the Playwright scripts of the manual list, run against a development
+build, saw no `NG0100`.
 
 ## Stage 3: remove Zone.js (one pull request)
 

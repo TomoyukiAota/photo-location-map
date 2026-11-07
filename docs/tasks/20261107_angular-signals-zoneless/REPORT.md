@@ -109,8 +109,12 @@ writes plain fields.
 ## How a change reaches the screen today, and without Zone.js
 
 With Zone.js, every patched callback (timer, promise, DOM event, IPC event
-arriving through `NgZone.run`) ends with an application tick that checks every
-`Eager` component. Without it, Angular ticks only after one of these
+arriving through `NgZone.run`) ends with a global application tick, which
+checks every `Eager` component that is not below an unmarked `OnPush` view.
+`HomeComponent`, which holds most of the application, is `OnPush`, so even
+today such a tick refreshes an `Eager` component under it only when a
+notification marked `HomeComponent` or that component. Without Zone.js,
+Angular ticks only after one of these
 notifications: a signal read by a template changed; a template or host listener
 ran; `markForCheck()` was called (the `async` pipe does this, and it marks all
 ancestors); `ComponentRef.setInput` ran; a view was attached. `detectChanges()`
@@ -157,9 +161,11 @@ tomorrow's, yet one refactor of an unrelated `async` pipe would break them.
 ## Tests and verification
 
 - **Unit (Vitest)**: already zoneless. After the component changes, a spec
-  that mutates a plain field and then calls `fixture.detectChanges()` throws
-  `ExpressionChangedAfterItHasBeenCheckedError`; `fixture.whenStable()` does
-  not wait for timers. The 21 specs under `src/` are construction checks, so
+  that mutates a plain field and then calls `fixture.detectChanges()` gets
+  `ExpressionChangedAfterItHasBeenCheckedError` for an `Eager` component, but
+  for an `OnPush` one the call can return with no error and a stale DOM, so
+  specs assert on the DOM (PLAN.md, "Patterns to apply"); `fixture.whenStable()`
+  does not wait for timers. The 21 specs under `src/` are construction checks, so
   the exposure is small.
 - **Playwright (`npm run test:e2e`)**: the main regression net. It already
   asserts the welcome, about and settings dialogs, the loaded-files status bar
@@ -218,13 +224,15 @@ Option B, staged as in [PLAN.md](PLAN.md). Design notes:
 - **Keep RxJS** as a dependency; Material needs it, and the remaining
   `Subject`s are a reasonable fit for events.
 - **Do not add `@ngrx/signals`** now.
-- **Lint**: after the signals work, enable `prefer-signals` and
-  `no-uncalled-signals`; leave `prefer-inject` and `prefer-standalone` for the
-  cleanup stage.
-- **Sequencing with the remote-removal plan**: do this migration before that
-  plan's stage 0 measurements or after its final stage is accepted. Both touch
-  `PlmInternalRendererService`, `OpenFolderService`, the sidebar and the
-  settings dialog, and Zone.js removal changes the timings that plan freezes.
+- **Lint**: after the signals work, enable `no-uncalled-signals`, with typed
+  linting; enable `prefer-signals` after the signal inputs and queries of
+  stage 2; leave `prefer-inject` and `prefer-standalone` for the cleanup
+  stage.
+- **Sequencing with the remote-removal plan**: the owner decided on
+  2026-11-08 that this migration goes first and the removal of
+  `@electron/remote` comes after it. Both touch `PlmInternalRendererService`,
+  `OpenFolderService`, the sidebar and the settings dialog, and Zone.js
+  removal changes the timings that plan measures.
 
 ## Risks and limits
 
