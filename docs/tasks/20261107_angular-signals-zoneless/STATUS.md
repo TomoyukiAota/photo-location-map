@@ -6,8 +6,8 @@ the existence of the plan or from an agent's earlier messages.
 
 ## Current checkpoint
 
-- State: PLANNING COMPLETE; IMPLEMENTATION NOT STARTED, waiting for the
-  prerequisite below.
+- State: STAGE 0 IN REVIEW, on the branch `claude/signals-zoneless-stage-0`
+  (stage ledger below).
 - Authorized (owner, 2026-11-08): carry out the whole plan once the
   prerequisite is met, one pull request per stage or slice; address the
   CodeRabbit review of each pull request, then merge it (the `automerge`
@@ -17,8 +17,9 @@ the existence of the plan or from an agent's earlier messages.
 - Prerequisite (owner's decision, 2026-11-08): all four pull requests open on
   that day, #638, #639, #640 and #642, are merged before stage 0 starts.
   Checked by merging them into main locally: no conflicts; the counters below
-  are unchanged (PLAN.md, "Boundaries", names what each one changes). #642 was
-  merged on 2026-11-08 (4f8a496); #638, #639 and #640 were still open.
+  are unchanged (PLAN.md, "Boundaries", names what each one changes). Met on
+  2026-11-08: the check under "Resume first action" reported all four merged,
+  and stage 0 started from main at cd5bdf8.
 - Branch of these documents: `claude/angular-signals-zoneless`, rebased on
   main at ba7b832d552920a1dfcd73c428e88d47343e1368. The investigation used
   45e0415720984d3f72e28f3c140c33a457b8a3f1; the commits in between (headless
@@ -26,9 +27,13 @@ the existence of the plan or from an agent's earlier messages.
 - Investigation: complete on 2026-11-07 (REPORT.md, INVENTORY.md, MCP.md).
   The Angular unit tests passed under the zoneless TestBed default that day:
   25 files, 37 tests.
-- Last accepted slice: none. Baseline (stage 0.4): NOT RUN.
-- Runtime, dependency, test or build changes made by this plan: none.
-- Processes or CI runs owned by this work: none.
+- Last accepted slice: none. Baseline (stage 0.4): recorded under "Baseline"
+  below.
+- Runtime, dependency, test or build changes made by this plan: stage 0 adds
+  e2e cases, the MCP configuration and lint policy comments; the application
+  code is unchanged until stage 1.
+- Processes or CI runs owned by this work: the CI of the stage 0 pull
+  request.
 - Order relative to the `@electron/remote` removal (PLAN.md, "Boundaries"),
   decided by the owner on 2026-11-08: this plan goes first, and that removal
   comes after it.
@@ -64,7 +69,7 @@ continue from "Next action" in the ledger below.
 
 | Stage / slice | State | Branch / PR | Accepted commit | Tests | Manual checks | Next action |
 | --- | --- | --- | --- | --- | --- | --- |
-| 0 preparation | NOT STARTED | | | NOT RUN | | 0.1 MCP configuration |
+| 0 preparation | IN REVIEW | `claude/signals-zoneless-stage-0` | | 2026-11-08, macOS: lint, unit (Vitest 46, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 25 cases in 2.1 min, all pass | none needed: no application change | merge the pull request after its review, then start 1A from main |
 | 1A sort settings | NOT STARTED | | | NOT RUN | | wait for accepted 0 |
 | 1B folder-open state, loaded-files status bar, home | NOT STARTED | | | NOT RUN | | wait for accepted 1A |
 | 1C loading-folder progress | NOT STARTED | | | NOT RUN | | wait for accepted 1B |
@@ -114,7 +119,35 @@ the `NgZone.run` calls, stays until stage 4.
 | 9 | `zone.js` in `package.json` and `angular.json` | 1 + 1 |
 
 Counted again on 2026-11-08 on main (ba7b832) with #638, #639, #640 and #642
-merged locally: every number is the same.
+merged locally, and on main at cd5bdf8 after they were merged: every number is
+the same.
+
+## Baseline (stage 0.4)
+
+2026-11-08 (Asia/Tokyo), main at cd5bdf8 with the four prerequisite pull
+requests merged, the application code unchanged; macOS on Apple silicon, with
+the windows of the e2e suite off the screen. Resolved versions: Node.js
+26.13.0, `@angular/core` 22.2.4, `@angular/cli` 22.2.5, `@angular/material`
+22.2.5, TypeScript 6.0.3, Vitest 5.1.0, Electron 45.2.1, zone.js 0.16.3,
+angular-eslint 22.6.0, Playwright 1.64.1.
+
+| Command | Result | Duration |
+| --- | --- | ---: |
+| `mise exec -- npm run lint:all` | pass | 2 s |
+| `mise exec -- npm run test:unit:all` | pass: Vitest 27 files and 46 tests, Electron-Mocha main 121, renderer 70 | 11 s |
+| `mise exec -- npm run test:live-reload` | pass | 3 s |
+| `mise exec -- npm run build:prod` | pass | 7 s |
+| `PLM_VISUAL=1 mise exec -- npm run test:e2e` | 20 passed | 1.5 min |
+
+Stage 0.2 adds five e2e cases, which pass on this baseline: the loading-folder
+dialog, undo and redo, `--open` with a photo, the thumbnail status bar, and the
+thumbnail error dialog. With them, `PLM_VISUAL=1 mise exec -- npm run test:e2e`
+runs 25 cases, all passing, in 2.1 minutes. As a negative control, a local build in which only
+`provideZonelessChangeDetection()` replaced `provideZoneChangeDetection()`
+(not committed) failed the loading-folder dialog case, whose text stayed at
+"Collecting files to load from the opened folder...", as INVENTORY.md
+predicts. The other new cases, and the folder, chart and region cases, still
+passed, as the flows that INVENTORY.md calls incidental still render then.
 
 ## Manual check list
 
@@ -160,6 +193,7 @@ changes if the answer differs; keep answered rows, with the answer.
 | ---: | --- | --- | --- |
 | 1 | Does this plan go before the `@electron/remote` removal? | Owner, 2026-11-08: yes; that removal comes after this plan. | all |
 | 2 | Checks that need a person or another platform: the OS tab on Windows, Google Maps with an API key. | Owner, 2026-11-08: the owner checks both after the merges. | 1F, 3 |
+| 3 | In a git worktree, mise does not trust the worktree's `mise.toml`, as trust is kept per path, so `mise exec` fails there. Should AGENTS.md say what agents do then? | This work passed `MISE_TRUSTED_CONFIG_PATHS=<worktree>/mise.toml` to each command rather than running `mise trust`; nothing in the repository depends on it. | all |
 
 ## Required update fields while executing
 
