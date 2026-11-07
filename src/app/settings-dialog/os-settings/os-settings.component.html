@@ -12,7 +12,7 @@
     </button>
   </div>
   <div class="message-after-button-clicked">
-    @for (line of messageLinesAfterButtonClicked; track line) {
+    @for (line of messageLinesAfterButtonClicked(); track line) {
         <div>{{ line }}</div>
     }
   </div>

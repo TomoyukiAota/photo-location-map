@@ -333,6 +333,115 @@ test('Show Status Bar shows and hides the loaded-files status bar while it is ch
   await expect(page.locator('app-settings-dialog')).toHaveCount(0);
   await expect(statusBar).toBeHidden();
 });
+test('Save is enabled only while a setting differs, and a new date format asks before the restart that saving it needs', async () => {
+  await dismissWelcome();
+  await settings();
+  const save = page.getByRole('button', { name: 'Save', exact: true });
+  const restartNotice = page.locator('app-settings-dialog').getByText('This application will restart after saving settings.');
+  const showStatusBar = page.getByRole('checkbox', { name: 'Show Status Bar' });
+  await expect(save).toBeDisabled();
+  await expect(restartNotice).toBeHidden();
+  await showStatusBar.uncheck();
+  await expect(save).toBeEnabled();
+  await expect(restartNotice).toBeHidden();
+  await showStatusBar.check();
+  await expect(save).toBeDisabled();
+
+  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Date & Time' }).click();
+  const dateFormat = page.getByRole('combobox', { name: 'Date Format' });
+  const example = page.locator('.date-time-example');
+  await expect(dateFormat).toContainText('YYYY-MM-DD');
+  await expect(example).toContainText('2019-11-25 14:53');
+  async function chooseDateFormat(name) {
+    await dateFormat.click();
+    await page.getByRole('option', { name, exact: true }).click();
+    // A click on the select while its panel is still closing would not open it again.
+    await expect(page.getByRole('listbox')).toHaveCount(0);
+    await expect(dateFormat).toContainText(name);
+  }
+  await chooseDateFormat('DD/MM/YYYY');
+  await expect(example).toContainText('25/11/2019 14:53');
+  await expect(save).toBeEnabled();
+  await expect(restartNotice).toBeVisible();
+  await chooseDateFormat('YYYY-MM-DD');
+  await expect(save).toBeDisabled();
+  await expect(restartNotice).toBeHidden();
+
+  // Saving asks first. Declined, nothing is saved and the dialog stays. window.confirm is replaced, as Electron would
+  // show it in a window of its own.
+  await chooseDateFormat('DD/MM/YYYY');
+  await page.evaluate(() => {
+    window.__plmConfirmMessages = [];
+    window.confirm = message => { window.__plmConfirmMessages.push(message); return false; };
+  });
+  await save.click();
+  expect(await page.evaluate(() => window.__plmConfirmMessages))
+    .toEqual(['This application will restart after saving settings.\nDo you want to continue?']);
+  await expect(page.locator('app-settings-dialog')).toBeVisible();
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await expect(page.locator('app-settings-dialog')).toHaveCount(0);
+  await settings();
+  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Date & Time' }).click();
+  await expect(dateFormat).toContainText('YYYY-MM-DD');
+  await expect(save).toBeDisabled();
+});
+test('the Map menu switches to Google Maps, which draws the selected photos, and back to OpenStreetMap', async () => {
+  // Google Maps needs an API key and Google's servers, so a stand-in for its API counts the markers of each map drawn.
+  await page.route(url => url.hostname === 'maps.google.com', route => route.fulfill({
+    contentType: 'text/javascript',
+    // In a function, so that its classes do not hide the page's own Map.
+    body: `(() => {
+      const markerCounts = window.__plmGoogleMapsMarkerCounts = [];
+      window.google = { maps: {
+        Map: class {
+          constructor() { this.index = markerCounts.push(0) - 1; }
+          fitBounds() {}
+          getZoom() { return 10; }
+          setZoom() {}
+        },
+        Marker: class {
+          constructor({ position, map }) { this.position = position; markerCounts[map.index]++; }
+        },
+        MapTypeId: { ROADMAP: 'roadmap' },
+        LatLng: class { constructor(lat, lng) { this.lat = lat; this.lng = lng; } },
+        LatLngBounds: class { extend() {} },
+        InfoWindow: class { setContent() {} open() {} },
+        event: { addListener() {}, addListenerOnce() {} },
+      } };
+    })();`,
+  }));
+  // The Map menu is shown in development only, so its items are clicked from the main process.
+  async function chooseMap(label) {
+    await app.evaluate(({ Menu }, label) => {
+      const find = items => items.reduce((found, item) =>
+        found ?? (item.label.startsWith(label) ? item : item.submenu && find(item.submenu.items)), undefined);
+      find(Menu.getApplicationMenu().items).click();
+    }, label);
+  }
+  const lastGoogleMapsMarkerCount = () => page.evaluate(() => window.__plmGoogleMapsMarkerCounts?.at(-1));
+  await dismissWelcome();
+  await openFolderWithPicker(photoFolder);
+  await expectRepresentedPhotos(4);
+
+  await chooseMap('[Experimental] Google Maps');
+  await expect(page.locator('app-google-maps #google-map')).toBeAttached();
+  await expect(page.locator('app-leaflet-map')).toHaveCount(0);
+  await expect.poll(lastGoogleMapsMarkerCount).toBe(4);
+  await treeCheckbox('Kobe').uncheck();
+  await expect.poll(lastGoogleMapsMarkerCount).toBe(3);
+
+  await chooseMap('OpenStreetMap');
+  await expect(page.locator('app-leaflet-map')).toBeVisible();
+  await expect(page.locator('app-google-maps')).toHaveCount(0);
+  await expectRepresentedPhotos(3);
+
+  // The API has loaded by the second switch, which creates one map for the pinned photos, not two: each map created
+  // uses the API's quota.
+  const mapsBefore = await page.evaluate(() => window.__plmGoogleMapsMarkerCounts.length);
+  await chooseMap('[Experimental] Google Maps');
+  await expect.poll(lastGoogleMapsMarkerCount).toBe(3);
+  expect(await page.evaluate(() => window.__plmGoogleMapsMarkerCounts.length)).toBe(mapsBefore + 1);
+});
 test('folder picker loads real photo data, markers, tree selection and chart', async () => {
   await dismissWelcome();
   await app.evaluate(({ dialog }, folder) => {

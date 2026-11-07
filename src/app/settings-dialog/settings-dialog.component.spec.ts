@@ -1,0 +1,163 @@
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogRef } from '@angular/material/dialog';
+import { MatListModule } from '@angular/material/list';
+import { DateTimeFormat } from '../../../src-shared/date-time/date-time-format';
+import { UserDataStorage } from '../../../src-shared/user-data-storage/user-data-storage';
+import { UserDataStoragePath } from '../../../src-shared/user-data-storage/user-data-stroage-path';
+import { BooleanSetting } from '../../../src-shared/user-settings/boolean-setting';
+import { currentUserSettings } from '../../../src-shared/user-settings/user-settings';
+import { RestoreSettingsService } from './service/restore-settings.service';
+import { SettingsChangedService } from './service/settings-changed.service';
+import { SettingsDialogComponent } from './settings-dialog.component';
+
+// The tabs are left out: they tell the dialog about their changes through SettingsChangedService, as the tests do.
+@Component({ selector: 'app-appearance-settings', template: '', changeDetection: ChangeDetectionStrategy.Eager, standalone: false })
+class DummyAppearanceSettingsComponent {}
+
+@Component({ selector: 'app-date-time-settings', template: '', changeDetection: ChangeDetectionStrategy.Eager, standalone: false })
+class DummyDateTimeSettingsComponent {}
+
+@Component({ selector: 'app-os-settings', template: '', changeDetection: ChangeDetectionStrategy.Eager, standalone: false })
+class DummyOsSettingsComponent {}
+
+@Component({ selector: 'app-cache-settings', template: '', changeDetection: ChangeDetectionStrategy.Eager, standalone: false })
+class DummyCacheSettingsComponent {}
+
+describe('SettingsDialogComponent', () => {
+  const close = vi.fn();
+  const restore = vi.fn();
+  const settingsInUse = { ...currentUserSettings };
+  const otherShowStatusBar = settingsInUse.showStatusBar === BooleanSetting.TrueValue ? BooleanSetting.FalseValue : BooleanSetting.TrueValue;
+  const otherDateFormat = DateTimeFormat.ForUser.DateFormat_List.find(format => format !== settingsInUse.dateFormat);
+  const otherClockSystemFormat = DateTimeFormat.ForUser.ClockSystemFormat_List.find(format => format !== settingsInUse.clockSystemFormat);
+  let fixture: ComponentFixture<SettingsDialogComponent>;
+  let settingsChanged: SettingsChangedService;
+
+  beforeEach(async () => {
+    close.mockClear();
+    restore.mockClear();
+    await TestBed.configureTestingModule({
+      declarations: [
+        SettingsDialogComponent,
+        DummyAppearanceSettingsComponent,
+        DummyDateTimeSettingsComponent,
+        DummyOsSettingsComponent,
+        DummyCacheSettingsComponent,
+      ],
+      imports: [MatButtonModule, MatListModule],
+      providers: [
+        { provide: MatDialogRef, useValue: { close } },
+        { provide: RestoreSettingsService, useValue: { restore } },
+      ],
+    }).compileComponents();
+    fixture = TestBed.createComponent(SettingsDialogComponent);
+    settingsChanged = TestBed.inject(SettingsChangedService);
+    await fixture.whenStable();
+  });
+
+  afterEach(() => {
+    Object.assign(currentUserSettings, settingsInUse); // Save changes the settings in use.
+    vi.restoreAllMocks();
+  });
+
+  function saveButton(): HTMLButtonElement {
+    return fixture.nativeElement.querySelector('.settings-dialog-footer-buttons button');
+  }
+
+  function isRestartNoticeShown(): boolean {
+    const notice: HTMLElement = fixture.nativeElement.querySelector('.settings-dialog-footer-description');
+    return notice.style.visibility === 'visible';
+  }
+
+  function tab(name: string): HTMLElement {
+    const tabs = Array.from(fixture.nativeElement.querySelectorAll('mat-list-item') as NodeListOf<HTMLElement>);
+    return tabs.find(item => item.textContent.trim() === name);
+  }
+
+  it('enables Save only while a setting differs from the one in use', async () => {
+    expect(saveButton().disabled).toBe(true);
+
+    settingsChanged.appearanceSettingsChanged.next({ showStatusBar: otherShowStatusBar });
+    await fixture.whenStable();
+    expect(saveButton().disabled).toBe(false);
+    expect(isRestartNoticeShown()).toBe(false);
+
+    settingsChanged.appearanceSettingsChanged.next({ showStatusBar: settingsInUse.showStatusBar });
+    await fixture.whenStable();
+    expect(saveButton().disabled).toBe(true);
+  });
+
+  it('says that saving restarts the app while the date or the clock format differs', async () => {
+    expect(isRestartNoticeShown()).toBe(false);
+
+    settingsChanged.dateTimeSettingsChanged.next({ dateFormat: otherDateFormat, clockSystemFormat: settingsInUse.clockSystemFormat });
+    await fixture.whenStable();
+    expect(isRestartNoticeShown()).toBe(true);
+    expect(saveButton().disabled).toBe(false);
+
+    settingsChanged.dateTimeSettingsChanged.next({ dateFormat: settingsInUse.dateFormat, clockSystemFormat: otherClockSystemFormat });
+    await fixture.whenStable();
+    expect(isRestartNoticeShown()).toBe(true);
+
+    settingsChanged.dateTimeSettingsChanged.next({ dateFormat: settingsInUse.dateFormat, clockSystemFormat: settingsInUse.clockSystemFormat });
+    await fixture.whenStable();
+    expect(isRestartNoticeShown()).toBe(false);
+    expect(saveButton().disabled).toBe(true);
+  });
+
+  it('saves a new status bar setting without a restart and closes', async () => {
+    settingsChanged.appearanceSettingsChanged.next({ showStatusBar: otherShowStatusBar });
+    await fixture.whenStable();
+
+    saveButton().click();
+
+    expect(currentUserSettings.showStatusBar).toBe(otherShowStatusBar);
+    expect(UserDataStorage.read(UserDataStoragePath.UserSettings.ShowStatusBar)).toBe(otherShowStatusBar);
+    expect(close).toHaveBeenCalledTimes(1);
+  });
+
+  it('asks before the restart, and saves nothing when it is declined', async () => {
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    settingsChanged.dateTimeSettingsChanged.next({ dateFormat: otherDateFormat, clockSystemFormat: settingsInUse.clockSystemFormat });
+    await fixture.whenStable();
+
+    saveButton().click();
+
+    expect(confirm).toHaveBeenCalledWith('This application will restart after saving settings.\nDo you want to continue?');
+    expect(currentUserSettings.dateFormat).toBe(settingsInUse.dateFormat);
+    expect(close).not.toHaveBeenCalled();
+  });
+
+  it('shows the tab chosen in the list', async () => {
+    expect(tab('Appearance').classList).toContain('selected-tab');
+
+    tab('Cache').click();
+    await fixture.whenStable();
+
+    expect(tab('Cache').classList).toContain('selected-tab');
+    expect(tab('Appearance').classList).not.toContain('selected-tab');
+    const host: HTMLElement = fixture.nativeElement;
+    expect((host.querySelector('app-cache-settings') as HTMLElement).style.display).toBe('block');
+    expect((host.querySelector('app-appearance-settings') as HTMLElement).style.display).toBe('none');
+  });
+
+  it('restores the settings in use and closes on Cancel', () => {
+    const cancelButton: HTMLButtonElement = fixture.nativeElement.querySelector('.settings-dialog-cancel-button');
+    cancelButton.click();
+
+    expect(restore).toHaveBeenCalledTimes(1);
+    expect(close).toHaveBeenCalledTimes(1);
+  });
+
+  it('stops listening to the tabs once it is closed', () => {
+    expect(settingsChanged.appearanceSettingsChanged.observed).toBe(true);
+    expect(settingsChanged.dateTimeSettingsChanged.observed).toBe(true);
+
+    fixture.destroy();
+
+    expect(settingsChanged.appearanceSettingsChanged.observed).toBe(false);
+    expect(settingsChanged.dateTimeSettingsChanged.observed).toBe(false);
+  });
+});
