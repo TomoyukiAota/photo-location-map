@@ -6,7 +6,7 @@ the existence of the plan or from an agent's earlier messages.
 
 ## Current checkpoint
 
-- State: STAGE 2 IN REVIEW, on the branch `claude/signals-zoneless-2-onpush`
+- State: STAGE 3 IN REVIEW, on the branch `claude/signals-zoneless-3-zoneless`
   (stage ledger below).
 - Authorized (owner, 2026-11-08): carry out the whole plan once the
   prerequisite is met, one pull request per stage or slice; address the
@@ -27,7 +27,7 @@ the existence of the plan or from an agent's earlier messages.
 - Investigation: complete on 2026-11-07 (REPORT.md, INVENTORY.md, MCP.md).
   The Angular unit tests passed under the zoneless TestBed default that day:
   25 files, 37 tests.
-- Last accepted slice: 1F, #650, merged on 2026-11-08 as 0180df5.
+- Last accepted slice: stage 2, #651, merged on 2026-11-08 as 9393451.
   Baseline (stage 0.4): recorded under "Baseline" below.
 - Runtime, dependency, test or build changes made by this plan: stage 0 added
   e2e cases, the MCP configuration and lint policy comments. 1A keeps the
@@ -40,8 +40,8 @@ the existence of the plan or from an agent's earlier messages.
   `@angular-eslint/no-uncalled-signals`. Stage 2 makes every component
   OnPush, uses signal queries and a signal input, and adds to development
   builds a check for bindings changed without notification, on which the e2e
-  suite fails (NG0100).
-- Processes or CI runs owned by this work: the CI of the stage 2 pull request.
+  suite fails (NG0100). Stage 3 removes Zone.js.
+- Processes or CI runs owned by this work: the CI of the stage 3 pull request.
 - Order relative to the `@electron/remote` removal (PLAN.md, "Boundaries"),
   decided by the owner on 2026-11-08: this plan goes first, and that removal
   comes after it.
@@ -85,8 +85,8 @@ continue from "Next action" in the ledger below.
 | 1E-1 pinned photos, tree selection, maps | ACCEPTED | #648 | 9e9ff5c | 2026-11-08, macOS, on the slice's changes before the 1A review fixes: lint, unit (Vitest 62, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 31 cases in 2.7 min, all pass; with only `provideZonelessChangeDetection()` swapped in, the nine selection, map and chart cases pass; CI green; CodeRabbit: a second Google map for the same photos when the API had loaded before, the caller's array kept as the pinned photos, and a Leaflet render left waiting after the map is destroyed, all fixed, then no actionable comments | headless e2e, see "Tree checkboxes" to "Cluster popup" and "Undo / redo" below | none |
 | 1E-2 selected photos, chart | ACCEPTED | #649 | 21f0b47 | 2026-11-08, macOS: lint, unit (Vitest 68, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 32 cases in 2.8 min, all pass; with only `provideZonelessChangeDetection()` swapped in, the whole e2e suite passes; the chart's case then also checked the message for a span its unit cannot show; CI green; CodeRabbit: docstrings, added, then no actionable comments | headless e2e, see "Chart zoom" to "Date-unknown photos" and "`--open`" below | none |
 | 1F settings dialog, OS settings, map switch | ACCEPTED | #650 | 0180df5 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod`, and e2e with 34 cases in 3.0 min, all pass; before the rebase onto main, live-reload and `PLM_VISUAL=1` e2e passed too, and with only `provideZonelessChangeDetection()` swapped in, the whole e2e suite passed; CI green; CodeRabbit: no actionable comments | headless e2e, see "Settings: Date & Time" and "Map switch" below; the OS tab on Windows and Google Maps with an API key are the owner's | none |
-| 2 OnPush everywhere | IN REVIEW | `claude/signals-zoneless-2-onpush` | | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 37 cases in 3.1 min, all pass; `build:dev` and e2e, 37 cases in 3.3 min, no NG0100; before the rebase onto main, live-reload and `PLM_VISUAL=1` e2e passed too; with only `provideZonelessChangeDetection()` swapped in, the whole suite passed on both builds before the cases for the manual list were added, 34 cases each | headless e2e of every row below against a development build after each group of 2.3, without NG0100; the rows' remaining gaps are named in them | merge the pull request after its review, then stage 3 from main |
-| 3 remove Zone.js | NOT STARTED | | | NOT RUN | | wait for stage 2 exit |
+| 2 OnPush everywhere | ACCEPTED | #651 | 9393451 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 37 cases in 3.1 min, all pass; `build:dev` and e2e, 37 cases in 3.3 min, no NG0100; before the rebase onto main, live-reload and `PLM_VISUAL=1` e2e passed too; with only `provideZonelessChangeDetection()` swapped in, the whole suite passed on both builds before the cases for the manual list were added, 34 cases each; CI green; CodeRabbit: NG0100 now listened for from the launch on, one more check before the application closes, and docstrings, all fixed, and the title, which it took Eager's removal not to mean OnPush, explained, then no actionable comments | headless e2e of every row below against a development build after each group of 2.3, without NG0100; the rows' remaining gaps are named in them | none |
+| 3 remove Zone.js | IN REVIEW | `claude/signals-zoneless-3-zoneless` | | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 38 cases in 3.3 min, all pass; `build:dev` and e2e, 38 cases in 4.1 min, no NG0100; before the rebases onto main, live-reload and `PLM_VISUAL=1` e2e passed too, and the signed universal bundle of the package build (`PLM_PACKAGE_TEST`, so not notarized), with `PLM_VISUAL=1`: 37 passed and the website case skipped, as designed, and `codesign --verify --deep --strict` passed before and after; `dist/` has no `polyfills.js` and no zone.js code, the only "zone.js" left being the text of an Angular error message; `npm ls zone.js` is empty; `test:package`: see "Findings while executing"; on 18b6a07, CI on the three OSes passed, `test:package` included, and so did the on-demand Intel macOS job, `test (macos-x64)` in 17 min | every row below, by its e2e cases: see the note above the list | merge the pull request after its review, then stage 4 |
 | 4 cleanup | NOT STARTED | one PR per item | | NOT RUN | | optional, after 3 |
 
 ## Progress counters
@@ -142,6 +142,7 @@ the same.
 | 1E-2 | 0 | 5 | 6 | 0 | 26 | 1 | 11 | 8 | 1 + 1 |
 | 1F | 0 | 5 | 6 | 0 | 26 | 0 | 11 | 8 | 1 + 1 |
 | 2 | 0 | 5 | 6 | 0 | 0 | 0 | 0 | 8 | 1 + 1 |
+| 3 | 0 | 5 | 6 | 0 | 0 | 0 | 0 | 8 | 0 + 0 |
 
 Stage 1 exit, met at 1F on 2026-11-08: counters 1 and 4 are 0; the five
 `Subject`s left are events that the plan keeps (`appearanceSettingsChanged`
@@ -183,6 +184,12 @@ the two the owner checks after the merges (the OS tab on Windows, and Google
 Maps with an API key in "Map switch"), which stay open until the owner reports
 the result. Record date, commit, platform and how in the last column; do not
 mark a row from memory.
+
+Stage 3, 2026-11-08, macOS on Apple silicon: every row below was checked
+again by the e2e cases it names, without Zone.js, against a production build,
+a development build (no NG0100) and the signed universal bundle. The gaps that
+the rows name remain: restarts, the OS's shortcuts, steps of a thumbnail
+generation between its start and its end, and the two rows left to the owner.
 
 | Flow | How | Expected | Checked |
 | --- | --- | --- | --- |
@@ -247,6 +254,23 @@ mark a row from memory.
   is the dialog's backdrop, so a right-click outside the menu then does not
   close it. This was so before this plan; the e2e case waits for the dialog
   to close, and question 4 below asks whether to fix it.
+- 2026-11-08, 3: with Zone.js, an unhandled promise rejection made outside
+  Angular's zone, such as one from `page.evaluate`, reached no
+  `unhandledrejection` listener: zone.js only logged it, and it was not
+  recorded. One made inside the zone reached Angular's `ErrorHandler`,
+  wrapped as "Uncaught (in promise)", and was recorded once with the label
+  `Error: <message>` (checked with a temporary e2e case on the stage 2
+  build). Without Zone.js, every one reaches the window's listener, unwrapped,
+  and is recorded once with that same label, which the new e2e case "an
+  unhandled promise rejection in the renderer is recorded once, with its
+  message" checks.
+- 2026-11-08, 3: in a git worktree, `npm run test:package` cannot pass its
+  last check, which reads `release/latest-mac.yml`. electron-builder writes
+  that file only for a publisher, which it detects from `GH_TOKEN` (CI sets
+  it) and the repository in `.git/config`, a file rather than a folder in a
+  worktree: without `GH_TOKEN` there is no file, and with one the build fails
+  with "Cannot detect repository by .git/config". The package itself was
+  built and signed, and the macOS CI job runs the whole test.
 
 ## Questions for the owner
 
@@ -260,6 +284,7 @@ changes if the answer differs; keep answered rows, with the answer.
 | 2 | Checks that need a person or another platform: the OS tab on Windows, Google Maps with an API key. | Owner, 2026-11-08: the owner checks both after the merges. | 1F, 3 |
 | 3 | In a git worktree, mise does not trust the worktree's `mise.toml`, as trust is kept per path, so `mise exec` fails there. Should AGENTS.md say what agents do then? | This work passed `MISE_TRUSTED_CONFIG_PATHS=<worktree>/mise.toml` to each command rather than running `mise trust`; nothing in the repository depends on it. | all |
 | 4 | The tree's context menu does not close on a right-click outside it while the loading dialog is still closing (see "Findings while executing"). Fix it, by listening to the menu's own backdrop, the last one? | Assumed: not fixed in this plan, which changes no behavior; the e2e case waits for the dialog to close. | 2 |
+| 5 | In a git worktree, `npm run test:package` fails its check of `latest-mac.yml` (see "Findings while executing"). Should AGENTS.md say so, with question 3? | Assumed: the macOS CI job, which runs it in a clone, is the check. | 3 |
 
 ## Required update fields while executing
 
