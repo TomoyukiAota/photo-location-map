@@ -19,6 +19,9 @@ if (packagedLauncher && (!packagedExecutable || !path.isAbsolute(packagedLaunche
 }
 const photoFolder = path.join(root, 'test/test-resources/actual-photos');
 let app, page, profile, headless;
+// What a development build reported as NG0100: a binding that changed without telling Angular, which OnPush
+// components and zoneless change detection would not render (see src/main.ts). A production build checks nothing.
+let changedWithoutNotification = [];
 // TL;DR: On macOS and Windows, the windows stay off the screen, as Playwright's browsers do, unless --headed
 // is given: hidden on macOS, and on Windows shown but transparent, click-through and never activated
 // (see electron-util/e2e-test-hooks.js). On Linux, they are shown; Linux CI runs under Xvfb.
@@ -97,6 +100,12 @@ async function launch({ resize = true } = {}) {
       return !!main;
     }, { timeout: 30000 }).toBe(true);
   }
+  page.on('console', message => {
+    if (message.type() === 'error' && message.text().includes('NG0100')) changedWithoutNotification.push(message.text());
+  });
+  page.on('pageerror', error => {
+    if (error.message.includes('NG0100')) changedWithoutNotification.push(error.message);
+  });
   const mainWindow = await app.browserWindow(page);
   await expectWindowOffScreenOnlyIfHeadless(mainWindow);
   if (liveReload) {
@@ -176,6 +185,7 @@ test.beforeEach(async () => {
     expect(require('../../node_modules/electron/package.json').version).toBe('32.0.2');
   }
   profile = await mkdtemp(path.join(tmpdir(), 'plm-e2e-'));
+  changedWithoutNotification = [];
   await launch();
 });
 test.afterEach(async () => {
@@ -195,6 +205,7 @@ test.afterEach(async () => {
     }
     if (profile) await rm(profile, { recursive: true, force: true });
   }
+  expect(changedWithoutNotification, 'Bindings changed without telling Angular').toEqual([]);
 });
 test('welcome, about and every available settings tab keep their appearance', async () => {
   await expect(page.locator('app-welcome-dialog')).toContainText(`Version ${manifest.version}`);
