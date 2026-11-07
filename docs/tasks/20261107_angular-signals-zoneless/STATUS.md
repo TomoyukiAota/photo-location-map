@@ -6,8 +6,8 @@ the existence of the plan or from an agent's earlier messages.
 
 ## Current checkpoint
 
-- State: SLICE 1F IN REVIEW, on the branch
-  `claude/signals-zoneless-1f-settings-map` (stage ledger below).
+- State: STAGE 2 IN REVIEW, on the branch `claude/signals-zoneless-2-onpush`
+  (stage ledger below).
 - Authorized (owner, 2026-11-08): carry out the whole plan once the
   prerequisite is met, one pull request per stage or slice; address the
   CodeRabbit review of each pull request, then merge it (the `automerge`
@@ -27,7 +27,7 @@ the existence of the plan or from an agent's earlier messages.
 - Investigation: complete on 2026-11-07 (REPORT.md, INVENTORY.md, MCP.md).
   The Angular unit tests passed under the zoneless TestBed default that day:
   25 files, 37 tests.
-- Last accepted slice: 1E-2, #649, merged on 2026-11-08 as 21f0b47.
+- Last accepted slice: 1F, #650, merged on 2026-11-08 as 0180df5.
   Baseline (stage 0.4): recorded under "Baseline" below.
 - Runtime, dependency, test or build changes made by this plan: stage 0 added
   e2e cases, the MCP configuration and lint policy comments. 1A keeps the
@@ -37,8 +37,11 @@ the existence of the plan or from an agent's earlier messages.
   1D the thumbnail generation, 1E-1 the pinned photos and the tree's
   selection, 1E-2 the selected photos and the chart, and 1F the settings
   dialog and the map switch; 1F also gives `src/**/*.ts` typed linting for
-  `@angular-eslint/no-uncalled-signals`.
-- Processes or CI runs owned by this work: the CI of the 1F pull request.
+  `@angular-eslint/no-uncalled-signals`. Stage 2 makes every component
+  OnPush, uses signal queries and a signal input, and adds to development
+  builds a check for bindings changed without notification, on which the e2e
+  suite fails (NG0100).
+- Processes or CI runs owned by this work: the CI of the stage 2 pull request.
 - Order relative to the `@electron/remote` removal (PLAN.md, "Boundaries"),
   decided by the owner on 2026-11-08: this plan goes first, and that removal
   comes after it.
@@ -81,8 +84,8 @@ continue from "Next action" in the ledger below.
 | 1D thumbnail generation | ACCEPTED | #647 | 80f5676 | 2026-11-08, macOS, on the slice's changes before the 1A review fixes: lint, unit (Vitest 60, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 28 cases in 2.4 min, all pass; with only `provideZonelessChangeDetection()` swapped in, the thumbnail and status bar cases pass; CI green; CodeRabbit: one remark on this ledger's own practice, answered, then no actionable comments | headless e2e, see "Thumbnail status bar" and "Thumbnail error dialog" below | none |
 | 1E-1 pinned photos, tree selection, maps | ACCEPTED | #648 | 9e9ff5c | 2026-11-08, macOS, on the slice's changes before the 1A review fixes: lint, unit (Vitest 62, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 31 cases in 2.7 min, all pass; with only `provideZonelessChangeDetection()` swapped in, the nine selection, map and chart cases pass; CI green; CodeRabbit: a second Google map for the same photos when the API had loaded before, the caller's array kept as the pinned photos, and a Leaflet render left waiting after the map is destroyed, all fixed, then no actionable comments | headless e2e, see "Tree checkboxes" to "Cluster popup" and "Undo / redo" below | none |
 | 1E-2 selected photos, chart | ACCEPTED | #649 | 21f0b47 | 2026-11-08, macOS: lint, unit (Vitest 68, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 32 cases in 2.8 min, all pass; with only `provideZonelessChangeDetection()` swapped in, the whole e2e suite passes; the chart's case then also checked the message for a span its unit cannot show; CI green; CodeRabbit: docstrings, added, then no actionable comments | headless e2e, see "Chart zoom" to "Date-unknown photos" and "`--open`" below | none |
-| 1F settings dialog, OS settings, map switch | IN REVIEW | `claude/signals-zoneless-1f-settings-map` | | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod`, and e2e with 34 cases in 3.0 min, all pass; before the rebase onto main, live-reload and `PLM_VISUAL=1` e2e passed too, and with only `provideZonelessChangeDetection()` swapped in, the whole e2e suite passed | headless e2e, see "Settings: Date & Time" and "Map switch" below; the OS tab on Windows and Google Maps with an API key are the owner's | merge the pull request after its review, then stage 2 from main |
-| 2 OnPush everywhere | NOT STARTED | | | NOT RUN | | wait for accepted 1F |
+| 1F settings dialog, OS settings, map switch | ACCEPTED | #650 | 0180df5 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod`, and e2e with 34 cases in 3.0 min, all pass; before the rebase onto main, live-reload and `PLM_VISUAL=1` e2e passed too, and with only `provideZonelessChangeDetection()` swapped in, the whole e2e suite passed; CI green; CodeRabbit: no actionable comments | headless e2e, see "Settings: Date & Time" and "Map switch" below; the OS tab on Windows and Google Maps with an API key are the owner's | none |
+| 2 OnPush everywhere | IN REVIEW | `claude/signals-zoneless-2-onpush` | | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 37 cases in 3.1 min, all pass; `build:dev` and e2e, 37 cases in 3.3 min, no NG0100; before the rebase onto main, live-reload and `PLM_VISUAL=1` e2e passed too; with only `provideZonelessChangeDetection()` swapped in, the whole suite passed on both builds before the cases for the manual list were added, 34 cases each | headless e2e of every row below against a development build after each group of 2.3, without NG0100; the rows' remaining gaps are named in them | merge the pull request after its review, then stage 3 from main |
 | 3 remove Zone.js | NOT STARTED | | | NOT RUN | | wait for stage 2 exit |
 | 4 cleanup | NOT STARTED | one PR per item | | NOT RUN | | optional, after 3 |
 
@@ -138,6 +141,7 @@ the same.
 | 1E-1 | 3 | 5 | 9 | 2 | 26 | 1 | 11 | 8 | 1 + 1 |
 | 1E-2 | 0 | 5 | 6 | 0 | 26 | 1 | 11 | 8 | 1 + 1 |
 | 1F | 0 | 5 | 6 | 0 | 26 | 0 | 11 | 8 | 1 + 1 |
+| 2 | 0 | 5 | 6 | 0 | 0 | 0 | 0 | 8 | 1 + 1 |
 
 Stage 1 exit, met at 1F on 2026-11-08: counters 1 and 4 are 0; the five
 `Subject`s left are events that the plan keeps (`appearanceSettingsChanged`
@@ -186,22 +190,22 @@ mark a row from memory.
 | Open a second folder | with the thumbnail status bar shown, open another folder | the thumbnail status bar hides | 2026-11-08, 1B, macOS: headless e2e "opening another folder hides the thumbnail status bar of the previous one" |
 | Loading dialog progress | large folder | text changes after "Collecting files..." and ends with "Completed loading all files" | 2026-11-08, 1C, macOS: headless e2e "the loading-folder dialog follows the loading of the files to the end", on the e2e photo folder rather than a large one: the dialog starts at "Collecting files..." and shows "Completed loading all files" before it closes |
 | Thumbnail status bar | HEIC folder, empty cache | appears, progresses, completes; details toggle; close button; Open Folder disabled while generating | 2026-11-08, 1D, macOS: headless e2e "the thumbnail status bar follows the generation of HEIF thumbnails from start to end": it appears, completes, disables Open Folder while generating, and closes; with one file, no step between the start and the end shows; the details toggle in the error dialog case |
-| Thumbnail error dialog | corrupt HEIC | "Click here..." link; dialog table sorts, filters, opens file/folder | 2026-11-08, 1D, macOS: headless e2e "the thumbnail error dialog lists, sorts and filters the HEIF files without a thumbnail"; opening the file or the folder from the table is not covered |
+| Thumbnail error dialog | corrupt HEIC | "Click here..." link; dialog table sorts, filters, opens file/folder | 2026-11-08, 2, macOS: headless e2e "the thumbnail error dialog lists, sorts and filters the HEIF files without a thumbnail", which also opens a file and its folder, with the command replaced |
 | Tree checkboxes | click file and folder nodes | checked/indeterminate states; map and chart follow | 2026-11-08, 1E-1, macOS: headless e2e "the tree shows partly selected folders, and Select Only This from its menu selects one folder" and "folder picker loads real photo data, markers, tree selection and chart" |
-| Context menu | right-click a node | items act; menu closes on right-click outside | 2026-11-08, 1E-1, macOS: headless e2e "the tree shows partly selected folders, and Select Only This from its menu selects one folder"; closing it with a right-click outside is not covered |
+| Context menu | right-click a node | items act; menu closes on right-click outside | 2026-11-08, 1E-1, macOS: headless e2e "the tree shows partly selected folders, and Select Only This from its menu selects one folder"; 2026-11-08, 2, macOS: headless e2e "a right-click outside the tree's context menu closes it" (see "Findings while executing" for the loading dialog) |
 | Popup "Select only this" | marker popup menu | tree, map and chart follow | 2026-11-08, 1E-1, macOS: headless e2e "Select Only This from a marker popup selects that photo in the tree and on the map" |
 | Region selection | draw a rectangle/polygon, "Select Photos" | count in the region info; tree, map and chart follow; remove region | 2026-11-08, 1E-1, macOS: headless e2e "map regions preserve drawing, removal and real photo selection" |
 | Cluster popup | click a cluster at max zoom | popup with the photos | 2026-11-08, 1E-1, macOS: headless e2e "a cluster of photos taken at one place opens a popup with each of them" |
 | Chart zoom | drag the slider; "Select Photos within Zoom" | map shows only photos in the window; button appears; Reset Zoom restores | 2026-11-08, 1E-2, macOS: headless e2e "chart grouping, zoom, reset and photo selection keep their real data behavior" |
 | Chart x-axis unit | change the unit | chart re-bins; unsupported-duration message when applicable | 2026-11-08, 1E-2, macOS: headless e2e "chart grouping, zoom, reset and photo selection keep their real data behavior", which also shows the message for Hour and hides it again for Year; the bins themselves in the unit tests of `createDateTimeTakenChartData` |
 | Date-unknown photos | checkbox in the chart menu | count shown; map adds/removes date-unknown photos | 2026-11-08, 1E-2, macOS: headless e2e "the chart menu counts the photos without a shooting time, and its checkbox shows or hides them on the map" |
-| Undo / redo | Selection menu and shortcuts | selection steps back and forward; menu items enable/disable | 2026-11-08, 1E-1, macOS: headless e2e "undo and redo step through the photo selection as the Selection menu does", through the functions the menu calls; the shortcuts and the menu items' enabled state are not covered |
+| Undo / redo | Selection menu and shortcuts | selection steps back and forward; menu items enable/disable | 2026-11-08, 2, macOS: headless e2e "undo and redo step through the photo selection from the Selection menu, which enables them when they apply", through the menu's items; the shortcuts, which the OS's menu handles, are not covered |
 | Sort menu | name / shooting time, ascending / descending | tree order and checkmarks; persists across restart; info dialog details toggle | 2026-11-08, 1A, macOS: headless e2e "the sort menu orders the tree by name and by shooting time, shows its choice, and keeps it across a restart" |
 | Settings: Appearance | toggle Show Status Bar; Cancel; Save | live toggle; Cancel restores; Save persists | 2026-11-08, 1B, macOS: headless e2e "Show Status Bar shows and hides the loaded-files status bar while it is changed, and Cancel restores it" and "appearance setting saves, affects layout, and survives a real app restart" |
 | Settings: Date & Time | change a format | restart notice; Save restarts | 2026-11-08, 1F, macOS: headless e2e "Save is enabled only while a setting differs, and a new date format asks before the restart that saving it needs": the notice, the example, and the question before the restart, declined; the restart itself is not covered |
-| Settings: Cache | open location; delete cache | opens; confirm then restart | |
+| Settings: Cache | open location; delete cache | opens; confirm then restart | 2026-11-08, 2, macOS: headless e2e "the cache settings open the cache folder, and ask before deleting the cache", with the command replaced and the question declined; the restart is not covered |
 | Settings: OS (Windows) | Add / Remove; the owner checks it after the merge | confirmation lines appear | |
-| Welcome / About | Help menu | dialogs open; links open in the OS browser | |
+| Welcome / About | Help menu | dialogs open; links open in the OS browser | 2026-11-08, 2, macOS: headless e2e "welcome, about and every available settings tab keep their appearance" and "the links of the welcome dialog, the about box and the cache settings open in the OS browser", with the browser replaced |
 | Map switch | menu; the owner checks Google Maps with an API key after the merge | OpenStreetMap and Google Maps render the pinned photos | 2026-11-08, 1F, macOS: headless e2e "the Map menu switches to Google Maps, which draws the selected photos, and back to OpenStreetMap", with a stand-in for the Google Maps API, and a second switch that creates one map; Google Maps itself is the owner's to check |
 | `--open` | launch with a file and with a folder | parent folder opens and the file is selected; folder opens | 2026-11-08, 1E-2, macOS: headless e2e "--open loads a directory with Unicode, spaces, # and % without restoring photos on an ordinary restart" and "--open with a photo opens its folder with only that photo selected" |
 | Window resize and splitters | drag; resize window | panes keep proportions; map re-renders | |
@@ -226,6 +230,23 @@ mark a row from memory.
   it, which the code before this plan did too: the component's effect and
   `ngAfterViewInit` each rendered, and each map uses the API's quota. The
   effect now renders alone, once an `isApiLoaded` signal is true.
+- 2026-11-08, 2: `ng generate @angular/core:signals` wrote the import and the
+  migrated declarations twice in the files that both `src/tsconfig.app.json`
+  and `src/tsconfig.spec.json` compile (about box, welcome dialog, cache
+  settings); they were written once by hand.
+- 2026-11-08, 2: the development-build check (2.2) found one binding that
+  changed without notification. Opening a second folder replaced the photos
+  about 100 ms before the tree, whose nodes show a photo's information while
+  `PhotoDataService.getPhoto()` finds the photo; Home was already OnPush, so
+  the tree did not render in between. The map of photos by path is a signal
+  now, which `getPhoto()` reads.
+- 2026-11-08, 2: the tree's context menu closes on a right-click outside it
+  by listening to the first overlay backdrop
+  (`DirTreeViewContextMenuHelper.configureClosingWithRightClick`). Right
+  after a folder has loaded, while the loading dialog is still closing, that
+  is the dialog's backdrop, so a right-click outside the menu then does not
+  close it. This was so before this plan; the e2e case waits for the dialog
+  to close, and question 4 below asks whether to fix it.
 
 ## Questions for the owner
 
@@ -238,6 +259,7 @@ changes if the answer differs; keep answered rows, with the answer.
 | 1 | Does this plan go before the `@electron/remote` removal? | Owner, 2026-11-08: yes; that removal comes after this plan. | all |
 | 2 | Checks that need a person or another platform: the OS tab on Windows, Google Maps with an API key. | Owner, 2026-11-08: the owner checks both after the merges. | 1F, 3 |
 | 3 | In a git worktree, mise does not trust the worktree's `mise.toml`, as trust is kept per path, so `mise exec` fails there. Should AGENTS.md say what agents do then? | This work passed `MISE_TRUSTED_CONFIG_PATHS=<worktree>/mise.toml` to each command rather than running `mise trust`; nothing in the repository depends on it. | all |
+| 4 | The tree's context menu does not close on a right-click outside it while the loading dialog is still closing (see "Findings while executing"). Fix it, by listening to the menu's own backdrop, the last one? | Assumed: not fixed in this plan, which changes no behavior; the e2e case waits for the dialog to close. | 2 |
 
 ## Required update fields while executing
 
