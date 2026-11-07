@@ -1,11 +1,13 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialogRef } from '@angular/material/dialog';
 import * as os from 'os';
 import {
   currentUserSettings,
   getUserSettingsToBeSaved,
   saveUserSetting,
-  saveUserSettingsAndRestartApp
+  saveUserSettingsAndRestartApp,
+  UserSettingsToBeSaved
 } from '../../../src-shared/user-settings/user-settings';
 import { RestoreSettingsService } from './service/restore-settings.service';
 import { SettingsChangedService } from './service/settings-changed.service';
@@ -31,54 +33,61 @@ const availableSettingTabNames = os.platform() === 'win32'
   standalone: false
 })
 export class SettingsDialogComponent {
-  public userSettingsToBeSaved = getUserSettingsToBeSaved();
-  public tabNames = availableSettingTabNames;
-  public selectedTab: SettingsTabName = availableSettingTabNames[0];
+  public readonly tabNames = availableSettingTabNames;
+  public readonly selectedTab = signal<SettingsTabName>(availableSettingTabNames[0]);
+  /** The settings as the tabs have changed them, which Save saves. Each change makes a new object. */
+  private readonly userSettingsToBeSaved = signal<UserSettingsToBeSaved>(getUserSettingsToBeSaved());
+
+  /** Whether saving restarts the app: a new date or clock format takes effect only then. */
+  public readonly isAppRestartRequired = computed(() => {
+    const settings = this.userSettingsToBeSaved();
+    const isDateFormatChanged = settings.dateFormat !== currentUserSettings.dateFormat;
+    const isClockSystemFormatChanged = settings.clockSystemFormat !== currentUserSettings.clockSystemFormat;
+    return isDateFormatChanged || isClockSystemFormatChanged;
+  });
+
+  /** Whether any setting differs from the one in use. */
+  public readonly isSaveButtonEnabled = computed(() => {
+    const settings = this.userSettingsToBeSaved();
+    const showStatusBarChanged = settings.showStatusBar !== currentUserSettings.showStatusBar;
+    const isDateFormatChanged = settings.dateFormat !== currentUserSettings.dateFormat;
+    const isClockSystemFormatChanged = settings.clockSystemFormat !== currentUserSettings.clockSystemFormat;
+    return showStatusBarChanged || isDateFormatChanged || isClockSystemFormatChanged;
+  });
 
   constructor(private settingsDialogRef: MatDialogRef<SettingsDialogComponent>,
-              private settingsChangedService: SettingsChangedService,
+              settingsChangedService: SettingsChangedService,
               private restoreSettingsService: RestoreSettingsService) {
-    this.settingsChangedService.appearanceSettingsChanged.subscribe(changed => {
-      this.userSettingsToBeSaved.showStatusBar = changed.showStatusBar;
+    // The service outlives the dialog, so each dialog stops listening when it closes.
+    settingsChangedService.appearanceSettingsChanged.pipe(takeUntilDestroyed()).subscribe(changed => {
+      this.userSettingsToBeSaved.update(settings => ({ ...settings, showStatusBar: changed.showStatusBar }));
     });
-    this.settingsChangedService.dateTimeSettingsChanged.subscribe(changed => {
-      this.userSettingsToBeSaved.dateFormat = changed.dateFormat;
-      this.userSettingsToBeSaved.clockSystemFormat = changed.clockSystemFormat;
+    settingsChangedService.dateTimeSettingsChanged.pipe(takeUntilDestroyed()).subscribe(changed => {
+      this.userSettingsToBeSaved.update(settings => ({
+        ...settings,
+        dateFormat: changed.dateFormat,
+        clockSystemFormat: changed.clockSystemFormat
+      }));
     });
   }
 
   public selectTab(tabName: SettingsTabName) {
-    this.selectedTab = tabName;
+    this.selectedTab.set(tabName);
   }
 
   public isSelectedTab(tabName: SettingsTabName) {
-    return this.selectedTab === tabName;
-  }
-
-  public get isAppRestartRequired(): boolean {
-    const isDateFormatChanged = this.userSettingsToBeSaved.dateFormat !== currentUserSettings.dateFormat;
-    const isClockSystemFormatChanged = this.userSettingsToBeSaved.clockSystemFormat !== currentUserSettings.clockSystemFormat;
-    const isAppRestartRequired = isDateFormatChanged || isClockSystemFormatChanged;
-    return isAppRestartRequired;
-  }
-
-  public get isSaveButtonEnabled(): boolean {
-    const showStatusBarChanged = this.userSettingsToBeSaved.showStatusBar !== currentUserSettings.showStatusBar;
-    const isDateFormatChanged = this.userSettingsToBeSaved.dateFormat !== currentUserSettings.dateFormat;
-    const isClockSystemFormatChanged = this.userSettingsToBeSaved.clockSystemFormat !== currentUserSettings.clockSystemFormat;
-    const changedFromCurrentUserSettings = showStatusBarChanged || isDateFormatChanged || isClockSystemFormatChanged;
-    return changedFromCurrentUserSettings;
+    return this.selectedTab() === tabName;
   }
 
   public saveSettings() {
-    if (this.isAppRestartRequired) {
+    if (this.isAppRestartRequired()) {
       const isOkPressed = window.confirm('This application will restart after saving settings.\nDo you want to continue?');
       if (!isOkPressed)
         return;
 
-      saveUserSettingsAndRestartApp(this.userSettingsToBeSaved);
+      saveUserSettingsAndRestartApp(this.userSettingsToBeSaved());
     } else {
-      saveUserSetting(this.userSettingsToBeSaved);
+      saveUserSetting(this.userSettingsToBeSaved());
       this.settingsDialogRef.close();
     }
   }

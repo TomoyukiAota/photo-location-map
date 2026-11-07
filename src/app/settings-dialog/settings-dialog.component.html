@@ -17,13 +17,13 @@
 </div>
 <div class="settings-dialog-footer">
   <div class="settings-dialog-footer-description"
-       [style.visibility]="isAppRestartRequired ? 'visible' : 'hidden'">
+       [style.visibility]="isAppRestartRequired() ? 'visible' : 'hidden'">
     This application will restart after saving settings.
   </div>
   <div class="settings-dialog-footer-buttons">
     <button mat-flat-button
             color="primary"
-            [disabled]="!isSaveButtonEnabled"
+            [disabled]="!isSaveButtonEnabled()"
             (click)="saveSettings()">
       Save
     </button>
