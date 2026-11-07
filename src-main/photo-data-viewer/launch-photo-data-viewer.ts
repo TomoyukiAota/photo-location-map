@@ -1,4 +1,5 @@
 import { BrowserWindow } from 'electron';
+import { isHeadlessTest, withHeadlessTestOptions } from '../../electron-util/e2e-test-hooks';
 import { PhotoDataViewerIpcParams } from '../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params';
 import { logWindowBounds, photoDataViewerLogger as logger } from '../../src-shared/photo-data-viewer/photo-data-viewer-logger';
 import { openUrl } from '../../src-shared/url/open-url';
@@ -12,7 +13,7 @@ export async function launchPhotoDataViewer(ipcParams: PhotoDataViewerIpcParams)
 
   const windowState = PhotoDataViewerWindowState.get();
 
-  const browserWindow = new BrowserWindow({
+  const browserWindow = new BrowserWindow(withHeadlessTestOptions({
     x: windowState.x,
     y: windowState.y,
     width: windowState.width,
@@ -23,7 +24,7 @@ export async function launchPhotoDataViewer(ipcParams: PhotoDataViewerIpcParams)
       nodeIntegration: true,
       contextIsolation: false,
     },
-  });
+  }));
 
   browserWindow.webContents.setWindowOpenHandler(({url}) => {
     const urlForAnalytics = modifyUrlForAnalyticsIfNeeded(url);
@@ -37,7 +38,8 @@ export async function launchPhotoDataViewer(ipcParams: PhotoDataViewerIpcParams)
   PhotoDataViewerWindowState.manage({browserWindow, photo});
   const photoDataViewerUrl = createPhotoDataViewerUrl(photo);
   await browserWindow.loadURL(photoDataViewerUrl);
-  browserWindow.show();
+  // A headless test keeps the window off the screen instead (electron-util/e2e-test-hooks.js).
+  if (!isHeadlessTest) browserWindow.show();
 }
 
 function modifyUrlForAnalyticsIfNeeded(originalUrl: string): string {
