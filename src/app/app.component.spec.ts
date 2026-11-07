@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { RouterModule } from '@angular/router';
 import { MatDialogModule } from '@angular/material/dialog';
 import { provideTranslateService } from '@ngx-translate/core';
 
@@ -31,7 +31,7 @@ describe('AppComponent', () => {
       ],
       imports: [
         MatDialogModule,
-        RouterTestingModule,
+        RouterModule,
       ]
     }).compileComponents();
   });
