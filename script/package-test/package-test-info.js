@@ -35,7 +35,9 @@ class PackageTestInfo {
         this.expectedPackageLocations = [dmgLocation, zipLocation];
         this.diskImageTools = getDiskImageTools();
         this.executablePrelaunchCommand = `${this.diskImageTools.attach} "${dmgLocation}"`;
-        this.executableLaunchCommand = `open -W "${dmgVolume}/Photo Location Map.app"`;
+        // -g leaves the app in the background, so that it does not take the focus from the developer's work.
+        // Its window stays hidden as well: see PackageSmokeTest::runExecutable.
+        this.executableLaunchCommand = `open -g -W "${dmgVolume}/Photo Location Map.app"`;
         // Used to quit the app and detach the dmg after the smoke test (PackageSmokeTest::cleanUpOnMacOs).
         this.dmgVolume = dmgVolume;
         this.appExecutablePath = `${dmgVolume}/Photo Location Map.app/Contents/MacOS/Photo Location Map`;

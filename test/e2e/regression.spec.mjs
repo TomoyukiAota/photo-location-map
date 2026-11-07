@@ -1,6 +1,6 @@
 import { test, expect, _electron } from 'playwright/test';
 import { createRequire } from 'node:module';
-import { copyFile, mkdir, mkdtemp, realpath, rm } from 'node:fs/promises';
+import { copyFile, mkdir, mkdtemp, readFile, realpath, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -18,9 +18,20 @@ if (packagedLauncher && (!packagedExecutable || !path.isAbsolute(packagedLaunche
   throw new Error('PLM_E2E_LAUNCHER requires a packaged executable and an absolute launcher path.');
 }
 const photoFolder = path.join(root, 'test/test-resources/actual-photos');
-let app, page, profile;
+let app, page, profile, headless;
+// TL;DR: On macOS, the windows stay hidden, as Playwright's browsers do, unless --headed is given.
+// Details: With hidden windows, the suite took 3.7 minutes instead of 1.6 on Windows CI and 4.8 instead of
+// 2.1 on Ubuntu CI, against 1.7 instead of 1.6 on macOS. The cases with many Playwright actions, which wait
+// for animation frames, slowed down the most, and on Windows the map case failed: the app's zoom to the
+// photos, which Leaflet starts in the next animation frame, began only at the next click. So the windows
+// are shown on Windows and Linux, as before; Linux CI runs under Xvfb.
+test.beforeAll(({ headless: headlessOption }) => { headless = headlessOption && process.platform === 'darwin'; });
+async function expectWindowHiddenOnlyIfHeadless(window) {
+  expect(await window.evaluate(window => window.isVisible()),
+    headless ? 'A headless run must keep the window off the screen.' : 'The window must be shown.').toBe(!headless);
+}
 async function launch({ resize = true } = {}) {
-  const env = { ...process.env, PLM_TEST_ROOT: profile, PLM_E2E: '1' };
+  const env = { ...process.env, PLM_TEST_ROOT: profile, PLM_E2E: '1', PLM_TEST_HEADLESS: headless ? '1' : '0' };
   for (const key of ['PLM_EM_MAIN', 'PLM_EM_RENDERER', 'ELECTRON_RUN_AS_NODE', 'NODE_OPTIONS']) delete env[key];
   // A publicly launched package has no npm development-profile override.
   if (packagedExecutable) delete env.npm_package_config_devOrProd;
@@ -79,6 +90,7 @@ async function launch({ resize = true } = {}) {
     }, { timeout: 30000 }).toBe(true);
   }
   const mainWindow = await app.browserWindow(page);
+  await expectWindowHiddenOnlyIfHeadless(mainWindow);
   if (liveReload) {
     expect(await mainWindow.evaluate(window => window.webContents.isDevToolsOpened())).toBe(false);
   }
@@ -493,6 +505,22 @@ test('window bounds survive restart and the Windows fullscreen menu stays visibl
   const restored = await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].getBounds());
   expect(restored).toEqual(saved);
 });
+test('a saved maximized or full-screen main window stays hidden in a headless run', async () => {
+  test.skip(!headless, 'Only a headless run, on macOS, hides the window.');
+  await app.close();
+  // electron-window-state saved the main window's state in the profile when the app quit.
+  const stateFile = path.join(profile, 'userData', 'window-state.json');
+  const state = JSON.parse(await readFile(stateFile, 'utf8'));
+  await writeFile(stateFile, JSON.stringify({ ...state, isMaximized: true, isFullScreen: true }));
+  await launch({ resize: false });
+  // The app restores the saved state when it starts loading the page, which can be after launch()
+  // first checks the window, so check again now that the page has loaded.
+  const mainWindow = await app.browserWindow(page);
+  await expectWindowHiddenOnlyIfHeadless(mainWindow);
+  expect(await mainWindow.evaluate(window => [window.isMaximized(), window.isFullScreen()])).toEqual([false, false]);
+  // On macOS, a window becomes full screen only after a transition, so check that none was asked for.
+  expect(await app.evaluate(() => globalThis.__plmWindowStateCalls)).toEqual([]);
+});
 test('analytics preserves events and identity without new Amplitude local URLs', async () => {
   await dismissWelcome();
   if (process.env.PLM_ANALYTICS_NEGATIVE_CONTROL === '1') {
@@ -606,6 +634,8 @@ for (const [name, fixture, specialPath] of [
     await expect(viewer.locator('img[alt]').filter({ hasNotText: 'dummy' }).first()).toBeVisible({ timeout: 30000 });
     await viewer.waitForFunction(() => [...document.querySelectorAll('img')].some(img => img.naturalWidth > 100), { timeout: 30000 });
     await expect(viewer).toHaveTitle(`${path.basename(photo)} - Photo Location Map`);
+    // The viewer calls show() once loaded; its window, too, must stay hidden in a headless run.
+    await expectWindowHiddenOnlyIfHeadless(await app.browserWindow(viewer));
     expect(new URL(viewer.url()).searchParams.get('photoPath')).toBe(photo);
   });
 }

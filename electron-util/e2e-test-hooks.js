@@ -7,14 +7,39 @@ if (automated && (!testRoot || !require('node:path').isAbsolute(testRoot))) {
   throw new Error('PLM_E2E requires an absolute PLM_TEST_ROOT.');
 }
 
+// TL;DR: Test runners set PLM_TEST_HEADLESS=1 to keep every window hidden, so that a
+// test run does not take over the screen of the developer working on the same machine.
+// Pass the options of every BrowserWindow through withHeadlessTestOptions.
+// Details: Electron has no headless mode. A window created with show: false is never put
+// on screen, and the app is never brought to the front. backgroundThrottling: false keeps
+// such a window painting: https://www.electronjs.org/docs/latest/api/structures/web-preferences
+// On macOS it then behaves as a shown one does. On Windows and Linux it gets animation frames
+// far less often, so the e2e suite hides windows only on macOS (see test/e2e/README.md).
+const headless = !!testRoot && process.env.PLM_TEST_HEADLESS === '1';
+exports.isHeadlessTest = headless;
+exports.withHeadlessTestOptions = options => headless
+  ? { ...options, show: false, webPreferences: { ...options.webPreferences, backgroundThrottling: false } }
+  : options;
+
 if (testRoot) {
-  const { app, session } = require('electron');
+  const { app, BrowserWindow, session } = require('electron');
   if (automated) {
     // Preserve Electron/Commander argument conventions and ordinary CLI options.
     // These exact flags are added by Playwright, including its Linux default.
     const debuggingFlags = new Set(['--inspect=0', '--remote-debugging-port=0', '--no-sandbox']);
     process.argv = process.argv.filter((arg, index) => index === 0 || !debuggingFlags.has(arg));
     globalThis.__plmTestRequire = require;
+    // Record the calls that would show a hidden window by restoring a maximized or full-screen
+    // state, for the e2e suite to check that none is made: on macOS, a window becomes full screen
+    // only after a transition, which can still be under way when the suite looks at it.
+    globalThis.__plmWindowStateCalls = [];
+    for (const name of ['maximize', 'setFullScreen']) {
+      const original = BrowserWindow.prototype[name];
+      BrowserWindow.prototype[name] = function (...args) {
+        globalThis.__plmWindowStateCalls.push([name, ...args]);
+        return original.apply(this, args);
+      };
+    }
   }
 
   function captureAnalytics(details) {

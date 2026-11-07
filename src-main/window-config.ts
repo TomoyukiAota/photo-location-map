@@ -1,4 +1,5 @@
 import windowStateKeeper from 'electron-window-state';
+import { isHeadlessTest } from '../electron-util/e2e-test-hooks';
 import { Analytics } from '../src-shared/analytics/analytics';
 import { Logger } from '../src-shared/log/logger';
 import { LaunchInfo } from './launch-info';
@@ -11,7 +12,9 @@ const defaultConfig = {
 let mainWindowState: ReturnType<typeof import('electron-window-state')>;
 
 export function createMainWindowState() {
-  mainWindowState = windowStateKeeper(defaultConfig);   // Load the previous main window state with fallback to defaults
+  // Load the previous main window state with fallback to defaults. A headless test does not restore
+  // a maximized or full-screen window, because maximize() and setFullScreen(true) would show it.
+  mainWindowState = windowStateKeeper({ ...defaultConfig, maximize: !isHeadlessTest, fullScreen: !isHeadlessTest });
   return mainWindowState;
 }
 
