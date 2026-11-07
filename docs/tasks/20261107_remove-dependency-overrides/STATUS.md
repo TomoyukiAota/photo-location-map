@@ -111,8 +111,14 @@ The owner decided on 2026-11-07, after the overrides were removed, to remove
 `script/patch-electron-mocha.js` under the same rule. It changed Electron-Mocha
 13.1.0's two spawn calls from `shell: process.platform === 'win32'` to
 `shell: false`, to avoid DEP0190 warnings on Windows. Electron-Mocha already
-starts Electron without a shell on macOS and Linux, so only the Windows output
-changes.
+starts Electron without a shell on macOS and Linux, so only Windows changes.
+
+On Windows, the shell also receives the Electron path unquoted, so without the
+patch these suites cannot start from a checkout path that contains a space. A
+review pointed this out after the decision. This was also the state before the
+deprecation warning cleanup, and CI's checkout path has no spaces. It is
+recorded as a revisit condition in
+[dependencies.md](../../contributing/dependencies.md#known-deprecation-warnings).
 
 ## Resuming
 

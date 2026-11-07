@@ -62,8 +62,11 @@ On Windows, the Electron-Mocha suites (`npm run test:unit:em:main` and
 Electron-Mocha 13.1.0 starts Electron through a shell on Windows, which it added
 for a Node security change
 ([upstream pull request](https://github.com/jprichardson/electron-mocha/pull/213)).
-Revisit it when an Electron-Mocha release starts Electron without a shell, or
-if a Node release turns DEP0190 into an error, which would stop these suites on
+Node passes the Electron path to that shell unquoted, so these suites also
+cannot start from a Windows checkout whose path contains a space; CI's checkout
+path has none. Revisit this when an Electron-Mocha release starts Electron
+without a shell, when a Windows checkout path with a space is needed, or if a
+Node release turns DEP0190 into an error, which would stop these suites on
 Windows.
 
 After dependency changes, check that a clean `npm ci` prints no other
