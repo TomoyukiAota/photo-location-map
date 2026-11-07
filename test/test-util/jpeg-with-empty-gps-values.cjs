@@ -28,6 +28,11 @@ function jpegWithEmptyGpsValues(sourceJpeg) {
     tiff.writeUInt16LE(type, offset + 2);
     tiff.writeUInt32LE(count, offset + 4);
   });
+  return withExifReplaced(sourceJpeg, tiff);
+}
+
+/** The source JPEG with its APP1 segments (EXIF and XMP) replaced by one EXIF APP1 of this TIFF data. */
+function withExifReplaced(sourceJpeg, tiff) {
   const payload = Buffer.concat([Buffer.from('Exif\0\0', 'latin1'), tiff]);
   const app1 = Buffer.concat([Buffer.from([0xff, 0xe1, 0, 0]), payload]);
   app1.writeUInt16BE(payload.length + 2, 2);
@@ -44,4 +49,4 @@ function jpegWithEmptyGpsValues(sourceJpeg) {
   return Buffer.concat(segments);
 }
 
-module.exports = { jpegWithEmptyGpsValues };
+module.exports = { jpegWithEmptyGpsValues, withExifReplaced };

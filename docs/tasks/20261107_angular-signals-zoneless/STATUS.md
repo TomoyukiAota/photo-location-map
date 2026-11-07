@@ -6,8 +6,8 @@ the existence of the plan or from an agent's earlier messages.
 
 ## Current checkpoint
 
-- State: SLICE 1E-1 IN REVIEW, on the branch
-  `claude/signals-zoneless-1e-selection` (stage ledger below).
+- State: SLICE 1E-2 IN REVIEW, on the branch
+  `claude/signals-zoneless-1e2-chart` (stage ledger below).
 - Authorized (owner, 2026-11-08): carry out the whole plan once the
   prerequisite is met, one pull request per stage or slice; address the
   CodeRabbit review of each pull request, then merge it (the `automerge`
@@ -27,16 +27,16 @@ the existence of the plan or from an agent's earlier messages.
 - Investigation: complete on 2026-11-07 (REPORT.md, INVENTORY.md, MCP.md).
   The Angular unit tests passed under the zoneless TestBed default that day:
   25 files, 37 tests.
-- Last accepted slice: 1D, #647, merged on 2026-11-08 as 80f5676.
+- Last accepted slice: 1E-1, #648, merged on 2026-11-08 as 9e9ff5c.
   Baseline (stage 0.4): recorded under "Baseline" below.
 - Runtime, dependency, test or build changes made by this plan: stage 0 added
   e2e cases, the MCP configuration and lint policy comments. 1A keeps the
   tree's sort settings in signals and fixes the storage reset of the unit
   tests (see "Findings while executing"). 1B keeps the opened folder, its
   photos and the loaded-files status bar in signals, 1C the loading progress,
-  1D the thumbnail generation, and 1E-1 the pinned photos and the tree's
-  selection.
-- Processes or CI runs owned by this work: the CI of the 1E-1 pull request.
+  1D the thumbnail generation, 1E-1 the pinned photos and the tree's
+  selection, and 1E-2 the selected photos and the chart.
+- Processes or CI runs owned by this work: the CI of the 1E-2 pull request.
 - Order relative to the `@electron/remote` removal (PLAN.md, "Boundaries"),
   decided by the owner on 2026-11-08: this plan goes first, and that removal
   comes after it.
@@ -77,8 +77,8 @@ continue from "Next action" in the ledger below.
 | 1B folder-open state, loaded-files status bar, home | ACCEPTED | #645 | 171a830 | 2026-11-08, macOS, on the slice's changes before the 1A review fixes: lint, unit (Vitest 54, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 28 cases in 2.4 min, all pass; CI green; CodeRabbit: optional chaining kept from the old status bar, and docstrings, both addressed, then no actionable comments | headless e2e, see "Open a folder", "Open a second folder" and "Settings: Appearance" below | none |
 | 1C loading-folder progress | ACCEPTED | #646 | 08910f5 | 2026-11-08, macOS, on the slice's changes before the 1A review fixes: lint, unit (Vitest 56, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 28 cases in 2.4 min, all pass; with only `provideZonelessChangeDetection()` swapped in, the loading-folder dialog case passes; CI green; CodeRabbit: a test of a new folder while the previous one is still loading, and docstrings, both addressed, then no actionable comments | headless e2e, see "Loading dialog progress" below | none |
 | 1D thumbnail generation | ACCEPTED | #647 | 80f5676 | 2026-11-08, macOS, on the slice's changes before the 1A review fixes: lint, unit (Vitest 60, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 28 cases in 2.4 min, all pass; with only `provideZonelessChangeDetection()` swapped in, the thumbnail and status bar cases pass; CI green; CodeRabbit: one remark on this ledger's own practice, answered, then no actionable comments | headless e2e, see "Thumbnail status bar" and "Thumbnail error dialog" below | none |
-| 1E-1 pinned photos, tree selection, maps | IN REVIEW | `claude/signals-zoneless-1e-selection` | | 2026-11-08, macOS, on the slice's changes before the 1A review fixes: lint, unit (Vitest 62, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 31 cases in 2.7 min, all pass; with only `provideZonelessChangeDetection()` swapped in, the nine selection, map and chart cases pass | headless e2e, see "Tree checkboxes" to "Cluster popup" and "Undo / redo" below | merge the pull request after its review, then 1E-2 from main |
-| 1E-2 selected photos, chart | NOT STARTED | | | NOT RUN | | wait for accepted 1E-1 |
+| 1E-1 pinned photos, tree selection, maps | ACCEPTED | #648 | 9e9ff5c | 2026-11-08, macOS, on the slice's changes before the 1A review fixes: lint, unit (Vitest 62, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 31 cases in 2.7 min, all pass; with only `provideZonelessChangeDetection()` swapped in, the nine selection, map and chart cases pass; CI green; CodeRabbit: a second Google map for the same photos when the API had loaded before, the caller's array kept as the pinned photos, and a Leaflet render left waiting after the map is destroyed, all fixed, then no actionable comments | headless e2e, see "Tree checkboxes" to "Cluster popup" and "Undo / redo" below | none |
+| 1E-2 selected photos, chart | IN REVIEW | `claude/signals-zoneless-1e2-chart` | | 2026-11-08, macOS: lint, unit (Vitest 68, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 32 cases in 2.8 min, all pass; with only `provideZonelessChangeDetection()` swapped in, the whole e2e suite passes | headless e2e, see "Chart zoom" to "Date-unknown photos" and "`--open`" below | merge the pull request after its review, then 1F from main |
 | 1F settings dialog, OS settings, map switch | NOT STARTED | | | NOT RUN | | wait for accepted 1E |
 | 2 OnPush everywhere | NOT STARTED | | | NOT RUN | | wait for stage 1 exit |
 | 3 remove Zone.js | NOT STARTED | | | NOT RUN | | wait for stage 2 exit |
@@ -134,6 +134,7 @@ the same.
 | 1C | 7 | 8 | 19 | 4 | 26 | 8 | 11 | 8 | 1 + 1 |
 | 1D | 6 | 3 | 11 | 2 | 26 | 6 | 11 | 8 | 1 + 1 |
 | 1E-1 | 3 | 5 | 9 | 2 | 26 | 1 | 11 | 8 | 1 + 1 |
+| 1E-2 | 0 | 5 | 6 | 0 | 26 | 1 | 11 | 8 | 1 + 1 |
 
 ## Baseline (stage 0.4)
 
@@ -182,9 +183,9 @@ mark a row from memory.
 | Popup "Select only this" | marker popup menu | tree, map and chart follow | 2026-11-08, 1E-1, macOS: headless e2e "Select Only This from a marker popup selects that photo in the tree and on the map" |
 | Region selection | draw a rectangle/polygon, "Select Photos" | count in the region info; tree, map and chart follow; remove region | 2026-11-08, 1E-1, macOS: headless e2e "map regions preserve drawing, removal and real photo selection" |
 | Cluster popup | click a cluster at max zoom | popup with the photos | 2026-11-08, 1E-1, macOS: headless e2e "a cluster of photos taken at one place opens a popup with each of them" |
-| Chart zoom | drag the slider; "Select Photos within Zoom" | map shows only photos in the window; button appears; Reset Zoom restores | |
-| Chart x-axis unit | change the unit | chart re-bins; unsupported-duration message when applicable | |
-| Date-unknown photos | checkbox in the chart menu | count shown; map adds/removes date-unknown photos | |
+| Chart zoom | drag the slider; "Select Photos within Zoom" | map shows only photos in the window; button appears; Reset Zoom restores | 2026-11-08, 1E-2, macOS: headless e2e "chart grouping, zoom, reset and photo selection keep their real data behavior" |
+| Chart x-axis unit | change the unit | chart re-bins; unsupported-duration message when applicable | 2026-11-08, 1E-2, macOS: headless e2e "chart grouping, zoom, reset and photo selection keep their real data behavior", which also shows the message for Hour and hides it again for Year; the bins themselves in the unit tests of `createDateTimeTakenChartData` |
+| Date-unknown photos | checkbox in the chart menu | count shown; map adds/removes date-unknown photos | 2026-11-08, 1E-2, macOS: headless e2e "the chart menu counts the photos without a shooting time, and its checkbox shows or hides them on the map" |
 | Undo / redo | Selection menu and shortcuts | selection steps back and forward; menu items enable/disable | 2026-11-08, 1E-1, macOS: headless e2e "undo and redo step through the photo selection as the Selection menu does", through the functions the menu calls; the shortcuts and the menu items' enabled state are not covered |
 | Sort menu | name / shooting time, ascending / descending | tree order and checkmarks; persists across restart; info dialog details toggle | 2026-11-08, 1A, macOS: headless e2e "the sort menu orders the tree by name and by shooting time, shows its choice, and keeps it across a restart" |
 | Settings: Appearance | toggle Show Status Bar; Cancel; Save | live toggle; Cancel restores; Save persists | 2026-11-08, 1B, macOS: headless e2e "Show Status Bar shows and hides the loaded-files status bar while it is changed, and Cancel restores it" and "appearance setting saves, affects layout, and survives a real app restart" |
@@ -193,7 +194,7 @@ mark a row from memory.
 | Settings: OS (Windows) | Add / Remove; the owner checks it after the merge | confirmation lines appear | |
 | Welcome / About | Help menu | dialogs open; links open in the OS browser | |
 | Map switch | menu; the owner checks Google Maps with an API key after the merge | OpenStreetMap and Google Maps render the pinned photos | |
-| `--open` | launch with a file and with a folder | parent folder opens and the file is selected; folder opens | |
+| `--open` | launch with a file and with a folder | parent folder opens and the file is selected; folder opens | 2026-11-08, 1E-2, macOS: headless e2e "--open loads a directory with Unicode, spaces, # and % without restoring photos on an ordinary restart" and "--open with a photo opens its folder with only that photo selected" |
 | Window resize and splitters | drag; resize window | panes keep proportions; map re-renders | |
 
 ## Findings while executing
@@ -211,6 +212,11 @@ mark a row from memory.
   folder, cannot follow it; 1B raises a `folderOpened` event for that. The
   e2e case "opening another folder hides the thumbnail status bar of the
   previous one" guards it.
+- 2026-11-08, 1E-1: the review found that Google Maps created two maps for
+  the same photos when its API had loaded before, as on a second switch to
+  it, which the code before this plan did too: the component's effect and
+  `ngAfterViewInit` each rendered, and each map uses the API's quota. The
+  effect now renders alone, once an `isApiLoaded` signal is true.
 
 ## Questions for the owner
 

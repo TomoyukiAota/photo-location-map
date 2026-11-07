@@ -1,11 +1,22 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { unitOfTime } from 'moment';
-import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DateTimeTakenChartConfigService {
-  public readonly showDateUnknownPhotos = new BehaviorSubject<boolean>(true);
-  public readonly xAxisUnitMomentJsStr = new BehaviorSubject<unitOfTime.DurationConstructor>('day');
+  private readonly showDateUnknownPhotosState = signal(true);
+  private readonly xAxisUnitState = signal<unitOfTime.DurationConstructor>('day');
+  /** Whether the photos without a shooting time are pinned on the map, which the chart menu's checkbox shows. */
+  public readonly showDateUnknownPhotos = this.showDateUnknownPhotosState.asReadonly();
+  /** The unit of time of the chart's x-axis. */
+  public readonly xAxisUnit = this.xAxisUnitState.asReadonly();
+
+  public setShowDateUnknownPhotos(showDateUnknownPhotos: boolean): void {
+    this.showDateUnknownPhotosState.set(showDateUnknownPhotos);
+  }
+
+  public setXAxisUnit(xAxisUnit: unitOfTime.DurationConstructor): void {
+    this.xAxisUnitState.set(xAxisUnit);
+  }
 }

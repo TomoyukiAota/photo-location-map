@@ -461,8 +461,14 @@ test('chart grouping, zoom, reset and photo selection keep their real data behav
   await expect.poll(async () => (await readChartTheme()).palette?.[0]).toBe('#5470c6');
   const unit = page.locator('app-date-time-taken-chart-config select');
   await expect(unit).toHaveValue('Day');
+  // Hours cannot show photos taken years apart: the chart says so, until a unit that can is chosen.
+  const unsupported = page.locator('app-date-time-taken-chart .unsupported-message');
+  await expect(unsupported).toBeHidden();
+  await unit.selectOption('Hour');
+  await expect(unsupported).toContainText('does not support showing more than 30 days when Hour is selected');
   await unit.selectOption('Year');
   await expect(unit).toHaveValue('Year');
+  await expect(unsupported).toBeHidden();
   const choose = page.getByRole('button', { name: 'Select Photos within Zoom', exact: true });
   async function zoomToLastYear() {
     const box = await chart.boundingBox();
@@ -493,6 +499,26 @@ test('chart grouping, zoom, reset and photo selection keep their real data behav
     await expect(page.locator('mat-tree-node').filter({ hasText: name }).getByRole('checkbox')).not.toBeChecked();
   }
   await expect(page.locator('.plm-leaflet-map-div-icon')).toHaveCount(1);
+});
+test('the chart menu counts the photos without a shooting time, and its checkbox shows or hides them on the map', async () => {
+  const { jpegWithLocationOnly } = require('../test-util/jpeg-with-location-only.cjs');
+  const folder = path.join(profile, 'a photo without a shooting time');
+  await mkdir(folder);
+  await writeFile(path.join(folder, 'no shooting time.JPG'),
+    jpegWithLocationOnly(await readFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG')), 34.688075, 135.195861));
+  await copyFile(path.join(photoFolder, 'Gold Coast/IMG_1579.JPG'), path.join(folder, 'Gold Coast.JPG'));
+  await dismissWelcome();
+  await openFolderWithPicker(folder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('2 files have location data.');
+  await expectRepresentedPhotos(2);
+  await page.locator('app-date-time-taken-chart-config .more-options-icon').click();
+  await expect(page.locator('.date-unknown-photos-count')).toHaveText('Date-unknown photos: 1');
+  const checkbox = page.getByRole('checkbox', { name: 'Show date-unknown photos on the map' });
+  await expect(checkbox).toBeChecked();
+  await checkbox.uncheck();
+  await expectRepresentedPhotos(1);
+  await checkbox.check();
+  await expectRepresentedPhotos(2);
 });
 // The next cases cover what a change to signals and zoneless change detection can break: views that show state written
 // outside any template event, such as by a timer or an IPC message from the main process. With Zone.js they render
