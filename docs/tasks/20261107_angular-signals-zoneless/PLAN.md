@@ -134,7 +134,9 @@ slice from an unmerged one unless STATUS.md says why.
   whose binding changed without a notification. It does not catch every case:
   that pass skips `OnPush` views that nothing marked, unless the exhaustive
   check is on, and a view refreshed for another reason renders the change
-  silently. `whenStable()` throws nothing, and the view after it can be stale.
+  silently. `whenStable()` rejects when an application error happens while it
+  waits, but it does not report an unnotified change, and the view after it
+  can be stale.
   So assert on the DOM. `whenStable()` does not wait for timers, and the tests load no `zone.js/testing` (the `testing`
   build configuration in `angular.json` has no polyfills), so `fakeAsync` and
   `tick` throw: use `vi.useFakeTimers()` or poll.
