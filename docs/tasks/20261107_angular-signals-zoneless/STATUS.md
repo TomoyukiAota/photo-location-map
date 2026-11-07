@@ -6,8 +6,8 @@ the existence of the plan or from an agent's earlier messages.
 
 ## Current checkpoint
 
-- State: STAGE 3 IN REVIEW, on the branch `claude/signals-zoneless-3-zoneless`
-  (stage ledger below).
+- State: STAGE 4, the NgZone cleanup IN REVIEW, on the branch
+  `claude/signals-zoneless-4-ngzone` (stage ledger below).
 - Authorized (owner, 2026-11-08): carry out the whole plan once the
   prerequisite is met, one pull request per stage or slice; address the
   CodeRabbit review of each pull request, then merge it (the `automerge`
@@ -27,7 +27,7 @@ the existence of the plan or from an agent's earlier messages.
 - Investigation: complete on 2026-11-07 (REPORT.md, INVENTORY.md, MCP.md).
   The Angular unit tests passed under the zoneless TestBed default that day:
   25 files, 37 tests.
-- Last accepted slice: stage 2, #651, merged on 2026-11-08 as 9393451.
+- Last accepted slice: stage 3, #652, merged on 2026-11-08 as b2de8f6.
   Baseline (stage 0.4): recorded under "Baseline" below.
 - Runtime, dependency, test or build changes made by this plan: stage 0 added
   e2e cases, the MCP configuration and lint policy comments. 1A keeps the
@@ -40,8 +40,10 @@ the existence of the plan or from an agent's earlier messages.
   `@angular-eslint/no-uncalled-signals`. Stage 2 makes every component
   OnPush, uses signal queries and a signal input, and adds to development
   builds a check for bindings changed without notification, on which the e2e
-  suite fails (NG0100). Stage 3 removes Zone.js.
-- Processes or CI runs owned by this work: the CI of the stage 3 pull request.
+  suite fails (NG0100). Stage 3 removes Zone.js. Stage 4 removes the
+  `NgZone.run` wrappers and `RouterTestingModule`, and checks the templates
+  strictly.
+- Processes or CI runs owned by this work: the CI of the stage 4 pull requests.
 - Order relative to the `@electron/remote` removal (PLAN.md, "Boundaries"),
   decided by the owner on 2026-11-08: this plan goes first, and that removal
   comes after it.
@@ -86,8 +88,11 @@ continue from "Next action" in the ledger below.
 | 1E-2 selected photos, chart | ACCEPTED | #649 | 21f0b47 | 2026-11-08, macOS: lint, unit (Vitest 68, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 32 cases in 2.8 min, all pass; with only `provideZonelessChangeDetection()` swapped in, the whole e2e suite passes; the chart's case then also checked the message for a span its unit cannot show; CI green; CodeRabbit: docstrings, added, then no actionable comments | headless e2e, see "Chart zoom" to "Date-unknown photos" and "`--open`" below | none |
 | 1F settings dialog, OS settings, map switch | ACCEPTED | #650 | 0180df5 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod`, and e2e with 34 cases in 3.0 min, all pass; before the rebase onto main, live-reload and `PLM_VISUAL=1` e2e passed too, and with only `provideZonelessChangeDetection()` swapped in, the whole e2e suite passed; CI green; CodeRabbit: no actionable comments | headless e2e, see "Settings: Date & Time" and "Map switch" below; the OS tab on Windows and Google Maps with an API key are the owner's | none |
 | 2 OnPush everywhere | ACCEPTED | #651 | 9393451 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 37 cases in 3.1 min, all pass; `build:dev` and e2e, 37 cases in 3.3 min, no NG0100; before the rebase onto main, live-reload and `PLM_VISUAL=1` e2e passed too; with only `provideZonelessChangeDetection()` swapped in, the whole suite passed on both builds before the cases for the manual list were added, 34 cases each; CI green; CodeRabbit: NG0100 now listened for from the launch on, one more check before the application closes, and docstrings, all fixed, and the title, which it took Eager's removal not to mean OnPush, explained, then no actionable comments | headless e2e of every row below against a development build after each group of 2.3, without NG0100; the rows' remaining gaps are named in them | none |
-| 3 remove Zone.js | IN REVIEW | `claude/signals-zoneless-3-zoneless` | | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 38 cases in 3.3 min, all pass; `build:dev` and e2e, 38 cases in 4.1 min, no NG0100; before the rebases onto main, live-reload and `PLM_VISUAL=1` e2e passed too, and the signed universal bundle of the package build (`PLM_PACKAGE_TEST`, so not notarized), with `PLM_VISUAL=1`: 37 passed and the website case skipped, as designed, and `codesign --verify --deep --strict` passed before and after; `dist/` has no `polyfills.js` and no zone.js code, the only "zone.js" left being the text of an Angular error message; `npm ls zone.js` is empty; `test:package`: see "Findings while executing"; on 18b6a07, CI on the three OSes passed, `test:package` included, and so did the on-demand Intel macOS job, `test (macos-x64)` in 17 min | every row below, by its e2e cases: see the note above the list | merge the pull request after its review, then stage 4 |
-| 4 cleanup | NOT STARTED | one PR per item | | NOT RUN | | optional, after 3 |
+| 3 remove Zone.js | ACCEPTED | #652 | b2de8f6 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 38 cases in 3.3 min, all pass; `build:dev` and e2e, 38 cases in 4.1 min, no NG0100; before the rebases onto main, live-reload and `PLM_VISUAL=1` e2e passed too, and the signed universal bundle of the package build (`PLM_PACKAGE_TEST`, so not notarized), with `PLM_VISUAL=1`: 37 passed and the website case skipped, as designed, and `codesign --verify --deep --strict` passed before and after; `dist/` has no `polyfills.js` and no zone.js code, the only "zone.js" left being the text of an Angular error message; `npm ls zone.js` is empty; `test:package`: see "Findings while executing"; on 18b6a07, CI on the three OSes passed, `test:package` included, and so did the on-demand Intel macOS job, `test (macos-x64)` in 17 min; CI green; CodeRabbit: the check list's row for a window resize, completed with a new e2e case, then no actionable comments | every row below, by its e2e cases: see the note above the list | none |
+| 4 `NgZone.run` wrappers | IN REVIEW | `claude/signals-zoneless-4-ngzone` | | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 39 cases in 3.4 min, all pass; `build:dev` and e2e, 39 cases in 4.2 min, no NG0100 | headless e2e of what goes through `window.plmInternalRenderer` and the menus | merge the pull request after its review, then the next item |
+| 4 `RouterTestingModule` | NOT STARTED | | | NOT RUN | | wait for the item above |
+| 4 `strictTemplates` | NOT STARTED | | | NOT RUN | | wait for the item above |
+| 4 other items | NOT STARTED | | | NOT RUN | | the owner decides: question 6 below |
 
 ## Progress counters
 
@@ -143,6 +148,7 @@ the same.
 | 1F | 0 | 5 | 6 | 0 | 26 | 0 | 11 | 8 | 1 + 1 |
 | 2 | 0 | 5 | 6 | 0 | 0 | 0 | 0 | 8 | 1 + 1 |
 | 3 | 0 | 5 | 6 | 0 | 0 | 0 | 0 | 8 | 0 + 0 |
+| 4, `NgZone` | 0 | 5 | 6 | 0 | 0 | 0 | 0 | 0 | 0 + 0 |
 
 Stage 1 exit, met at 1F on 2026-11-08: counters 1 and 4 are 0; the five
 `Subject`s left are events that the plan keeps (`appearanceSettingsChanged`
@@ -285,6 +291,7 @@ changes if the answer differs; keep answered rows, with the answer.
 | 3 | In a git worktree, mise does not trust the worktree's `mise.toml`, as trust is kept per path, so `mise exec` fails there. Should AGENTS.md say what agents do then? | This work passed `MISE_TRUSTED_CONFIG_PATHS=<worktree>/mise.toml` to each command rather than running `mise trust`; nothing in the repository depends on it. | all |
 | 4 | The tree's context menu does not close on a right-click outside it while the loading dialog is still closing (see "Findings while executing"). Fix it, by listening to the menu's own backdrop, the last one? | Assumed: not fixed in this plan, which changes no behavior; the e2e case waits for the dialog to close. | 2 |
 | 5 | In a git worktree, `npm run test:package` fails its check of `latest-mac.yml` (see "Findings while executing"). Should AGENTS.md say so, with question 3? | Assumed: the macOS CI job, which runs it in a clone, is the check. | 3 |
+| 6 | Which of the other stage 4 items should follow: `inject()` with `prefer-inject`, `@Service`, the Material tree's `childrenAccessor`/`levelAccessor`, the standalone migration with `prefer-standalone`, `ngclass-to-class` (2.4), and pinned photos as a `computed`? They change the code's style throughout rather than its behavior. | Assumed: none until the owner says; the three small items (`NgZone.run`, `RouterTestingModule`, `strictTemplates`) are done. | 4 |
 
 ## Required update fields while executing
 
