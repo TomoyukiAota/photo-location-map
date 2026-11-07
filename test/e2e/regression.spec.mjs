@@ -231,12 +231,39 @@ test('map regions preserve drawing, removal and real photo selection', async () 
     const p = window.__plmLeafletMap.latLngToContainerPoint(latlng);
     return { x: p.x, y: p.y };
   }));
+  // TEMPORARY: diagnostics for this case's headless failure on Windows CI; to be removed.
+  await page.evaluate(() => {
+    window.__plmDiagEvents = [];
+    const map = window.__plmLeafletMap;
+    for (const type of ['mousedown', 'mouseup', 'click', 'mousemove']) map.on(type, e => window.__plmDiagEvents.push(
+      ['map', type, Math.round(e.containerPoint.x), Math.round(e.containerPoint.y), +e.latlng.lat.toFixed(2), +e.latlng.lng.toFixed(2)]));
+    for (const type of ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'click']) document.addEventListener(type, e => window.__plmDiagEvents.push(
+      ['dom', type, e.clientX, e.clientY, e.target.id || String(e.target.className).slice(0, 40)]), true);
+  });
+  async function diagnose(label) {
+    const state = await page.evaluate(() => {
+      const map = window.__plmLeafletMap, rect = map.getContainer().getBoundingClientRect();
+      return { inner: [innerWidth, innerHeight], dpr: devicePixelRatio, visibility: document.visibilityState, focus: document.hasFocus(),
+        mapRect: [rect.x, rect.y, rect.width, rect.height].map(Math.round), size: map.getSize(), center: map.getCenter(),
+        zoom: map.getZoom(), regions: map.pm.getGeomanLayers().map(layer => layer.getBounds?.().toBBoxString()),
+        events: window.__plmDiagEvents };
+    });
+    const win = await app.evaluate(({ BrowserWindow, screen }) => {
+      const win = BrowserWindow.getAllWindows()[0], display = screen.getDisplayMatching(win.getBounds());
+      return { bounds: win.getBounds(), content: win.getContentBounds(), visible: win.isVisible(),
+        workArea: display.workArea, scale: display.scaleFactor };
+    });
+    console.info(`PLM-DIAG ${label} ${JSON.stringify({ state, win, mapBox, corners })}`);
+  }
+  await diagnose('before drawing');
   async function drawRectangle() {
     await page.getByTitle('Set Region by Rectangle', { exact: true }).click();
     await page.mouse.click(mapBox.x + corners[0].x, mapBox.y + corners[0].y);
     await page.mouse.move(mapBox.x + corners[1].x, mapBox.y + corners[1].y, { steps: 5 });
     await page.mouse.click(mapBox.x + corners[1].x, mapBox.y + corners[1].y);
-    await expect(page.locator('.plm-leaflet-map-region-info-text')).toHaveText('Photos in Regions: 2');
+    await diagnose('after the rectangle');
+    await expect(page.locator('.plm-leaflet-map-region-info-text')).toHaveText('Photos in Regions: 2')
+      .catch(async error => { await diagnose('after the failed expectation'); throw error; });
   }
   async function drawPolygon() {
     await page.getByTitle('Set Region by Vertex', { exact: true }).click();
