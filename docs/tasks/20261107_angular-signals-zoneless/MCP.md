@@ -58,9 +58,14 @@ args = ["exec", "--", "npx", "ng", "mcp"]
 tool_timeout_sec = 300
 ```
 
-Equivalent user-level commands: `claude mcp add --transport stdio --scope project angular-cli -- mise exec -- npx ng mcp`
-and `codex mcp add angular-cli -- mise exec -- npx ng mcp`. Add
-`--read-only` or `--local-only` after `mcp` to restrict the tool set. The
+From the command line instead: `claude mcp add --transport stdio --scope project angular-cli -- mise exec -- npx ng mcp`
+writes the same `.mcp.json`; with `--scope user` instead, the server is
+available in every project of that user and nothing is written to the
+repository. `codex mcp add angular-cli -- mise exec -- npx ng mcp` has no
+scope option and writes to Codex's default configuration,
+`~/.codex/config.toml`, for every project; the project file above is edited
+by hand. Add `--read-only` or `--local-only` after `mcp` to restrict the tool
+set. The
 Claude Code reference is [code.claude.com/docs/en/mcp](https://code.claude.com/docs/en/mcp);
 the Codex reference is [developers.openai.com/codex/mcp](https://developers.openai.com/codex/mcp).
 
@@ -129,4 +134,6 @@ Transcribed from `prompts.js` so it is usable without the tool:
   properties to signals, and expect `ExpressionChangedAfterItHasBeenCheckedError`
   wherever a value changed without a notification. `fixture.whenStable()` no
   longer waits for timers: poll, use `fakeAsync`/`tick`, or a mock clock.
-  (This repository's TestBed is already zoneless; see REPORT.md.)
+  (This repository's TestBed is already zoneless; see REPORT.md. Its tests
+  load no `zone.js/testing`, so `fakeAsync` and `tick` throw here: poll, or
+  use Vitest's fake timers, `vi.useFakeTimers()`.)

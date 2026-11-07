@@ -167,15 +167,19 @@ Option B, staged as in [PLAN.md](PLAN.md). Design notes:
 - **Services**: `selectedPhotos` and `pinnedPhotos` become `signal<Photo[]>`
   with the existing equality guards, history call and copy-returning getters;
   `isFolderOpened`, `isGenerating`, `showDateUnknownPhotos`, the axis unit and
-  the sort key/direction become signals; `sortConfig` becomes a `computed`;
+  the sort key/direction become signals (a signal set to the value it already
+  has notifies no one, so "a folder was opened" also stays an event);
+  `sortConfig` becomes a `computed`;
   persistence of the sort settings moves into setter methods instead of the
   service subscribing to itself. One-off events (settings changed, close
   requested, force render, status update requested, generation started/done)
   may stay `Subject`s; their subscribers write signals.
 - **Components**: state that the template reads and that is written anywhere
   other than a template event becomes a signal; derived values become
-  `computed`; imperative rendering (Leaflet, Google Maps, `MatTree`
-  `dataSource.data`) moves into `effect`s. Remove the 10 `detectChanges()`
+  `computed`; imperative rendering (Leaflet, Google Maps) moves into
+  `effect`s. The `MatTree` data stays assigned synchronously when a folder
+  opens: `--open` with a file selects that file right after `open()` resolves,
+  which an `effect` would undo. Remove the 10 `detectChanges()`
   calls as each component converts. Then delete the `changeDetection` property
   (OnPush by default; the bundled guide says not to write `OnPush` explicitly)
   and enable `prefer-on-push-component-change-detection`, which flags any

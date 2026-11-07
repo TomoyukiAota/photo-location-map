@@ -6,13 +6,19 @@ the existence of the plan or from an agent's earlier messages.
 
 ## Current checkpoint
 
-- State: PLANNING COMPLETE; IMPLEMENTATION NOT STARTED.
-- Authorized action now: documents only. Wait for the owner's explicit
-  instruction before starting stage 0.
-- Prerequisite (owner's decision, 2026-11-08): the pull requests open on that
-  day, #638, #639, #640 and #642, are merged before stage 0 starts. Checked by
-  merging them into main locally: no conflicts; the counters below are
-  unchanged (PLAN.md, "Boundaries", names what each one changes).
+- State: PLANNING COMPLETE; IMPLEMENTATION NOT STARTED, waiting for the
+  prerequisite below.
+- Authorized (owner, 2026-11-08): carry out the whole plan once the
+  prerequisite is met, one pull request per stage or slice; address the
+  CodeRabbit review of each pull request, then merge it (the `automerge`
+  label, which Mergify merges once CI passes). Keep going to the end of the
+  plan, and collect what needs the owner's judgment under "Questions for the
+  owner" below, to be asked together at the end.
+- Prerequisite (owner's decision, 2026-11-08): all four pull requests open on
+  that day, #638, #639, #640 and #642, are merged before stage 0 starts.
+  Checked by merging them into main locally: no conflicts; the counters below
+  are unchanged (PLAN.md, "Boundaries", names what each one changes). #642 was
+  merged on 2026-11-08 (4f8a496); #638, #639 and #640 were still open.
 - Branch of these documents: `claude/angular-signals-zoneless`, rebased on
   main at ba7b832d552920a1dfcd73c428e88d47343e1368. The investigation used
   45e0415720984d3f72e28f3c140c33a457b8a3f1; the commits in between (headless
@@ -23,16 +29,33 @@ the existence of the plan or from an agent's earlier messages.
 - Last accepted slice: none. Baseline (stage 0.4): NOT RUN.
 - Runtime, dependency, test or build changes made by this plan: none.
 - Processes or CI runs owned by this work: none.
-- Blocking owner decisions: the order relative to the `@electron/remote`
-  removal work (PLAN.md, "Boundaries"; no open pull request for it as of
-  2026-11-08), before stage 0 starts.
+- Order relative to the `@electron/remote` removal (PLAN.md, "Boundaries"):
+  this plan goes first, as that work has no pull request and has not started
+  as of 2026-11-08. Listed under "Questions for the owner" for confirmation.
 
 ## Resume first action
 
-When the owner starts implementation: read AGENTS.md, PLAN.md and this file;
-`git fetch`; `gh pr list --state open` must list none of #638, #639, #640 and
-#642 (otherwise stop and tell the owner); branch from main for stage 0;
-`mise exec -- npm ci`; begin with PLAN.md step 0.1. If a slice is in progress, open its pull request and
+Read AGENTS.md, PLAN.md and this file. Before stage 0, check the prerequisite:
+each of the four pull requests must be `MERGED`, with its merge commit on
+`origin/main`. A pull request closed without being merged is not merged; ask
+the owner then.
+
+```sh
+git fetch origin
+for n in 638 639 640 642; do
+  state=$(gh pr view "$n" --repo TomoyukiAota/photo-location-map --json state --jq .state)
+  oid=$(gh pr view "$n" --repo TomoyukiAota/photo-location-map --json mergeCommit --jq '.mergeCommit.oid // ""')
+  if [ "$state" = MERGED ] && git merge-base --is-ancestor "$oid" origin/main; then
+    echo "#$n merged into main"
+  else
+    echo "#$n NOT merged into main ($state)"
+  fi
+done
+```
+
+Branch from the fetched main, not from a local `main` that may be behind:
+`git switch -c <branch> origin/main`. Run `mise exec -- npm ci` and begin with
+PLAN.md step 0.1. If a slice is in progress, open its pull request and
 continue from "Next action" in the ledger below.
 
 ## Stage ledger
@@ -53,20 +76,40 @@ continue from "Next action" in the ledger below.
 ## Progress counters
 
 Run from the repository root and record the numbers with every slice. Spec
-files are excluded. Targets: stage 1 exit brings the first four to 0; stage 2
-exit brings the next four to 0; stage 3 brings the last to 0.
+files are excluded. The patterns are fixed strings (`-F`), which GNU grep, BSD
+grep and ugrep read alike, and the commands stay out of the table, where `|`
+would have to be escaped.
 
-| Counter | Command | 2026-11-07 (baseline) |
-| --- | --- | ---: |
-| `BehaviorSubject` declarations | `grep -rn "new BehaviorSubject" src --include='*.ts' \| grep -v '\.spec\.ts' \| wc -l` | 11 |
-| `Subject` declarations | `grep -rn "new Subject" src --include='*.ts' \| grep -v '\.spec\.ts' \| wc -l` | 10 |
-| `.subscribe(` calls | `grep -rn "\.subscribe(" src --include='*.ts' \| grep -v '\.spec\.ts' \| wc -l` | 26 |
-| `\| async` reads | `grep -rn "\| async" src --include='*.html' \| wc -l` | 9 |
-| `ChangeDetectionStrategy.Eager` | `grep -rn "ChangeDetectionStrategy.Eager" src --include='*.ts' \| grep -v '\.spec\.ts' \| wc -l` | 26 |
-| `detectChanges()` calls | `grep -rn "detectChanges()" src --include='*.ts' \| grep -v '\.spec\.ts' \| wc -l` | 10 |
-| `@ViewChild` + `@Input` | `grep -rn "@ViewChild\|@Input" src --include='*.ts' \| grep -v '\.spec\.ts' \| wc -l` | 11 |
-| `NgZone.run(` calls | `grep -rn "ngZone.run(" src --include='*.ts' \| grep -v '\.spec\.ts' \| wc -l` | 8 |
-| `zone.js` in `package.json` and `angular.json` | `grep -c "zone.js" package.json angular.json` | 1 + 1 |
+```sh
+grep -rnF "new BehaviorSubject" src --include='*.ts' | grep -vF '.spec.ts' | wc -l
+grep -rnF "new Subject" src --include='*.ts' | grep -vF '.spec.ts' | wc -l
+grep -rnF ".subscribe(" src --include='*.ts' | grep -vF '.spec.ts' | wc -l
+grep -rnF "| async" src --include='*.html' | wc -l
+grep -rnF "ChangeDetectionStrategy.Eager" src --include='*.ts' | grep -vF '.spec.ts' | wc -l
+grep -rnF "detectChanges()" src --include='*.ts' | grep -vF '.spec.ts' | wc -l
+grep -rnF -e "@ViewChild" -e "@Input" src --include='*.ts' | grep -vF '.spec.ts' | wc -l
+grep -rnF "ngZone.run(" src --include='*.ts' | grep -vF '.spec.ts' | wc -l
+grep -cF "zone.js" package.json angular.json
+```
+
+Targets: stage 1 exit brings counters 1 and 4 to 0, while the event
+`Subject`s that the plan keeps (`folderOpened`, `dataReplaced`,
+`selectionRequested`, `forceRenderWithoutPhotoHappened`, settings changed and
+the like) and their subscriptions remain in counters 2 and 3. Stage 2 exit
+brings counters 5, 6 and 7 to 0. Stage 3 brings counter 9 to 0. Counter 8,
+the `NgZone.run` calls, stays until stage 4.
+
+| # | Counter | 2026-11-07 (baseline) |
+| ---: | --- | ---: |
+| 1 | `BehaviorSubject` declarations | 11 |
+| 2 | `Subject` declarations | 10 |
+| 3 | `.subscribe(` calls | 26 |
+| 4 | `async` pipe reads | 9 |
+| 5 | `ChangeDetectionStrategy.Eager` | 26 |
+| 6 | `detectChanges()` calls | 10 |
+| 7 | `@ViewChild` and `@Input` | 11 |
+| 8 | `ngZone.run(` calls | 8 |
+| 9 | `zone.js` in `package.json` and `angular.json` | 1 + 1 |
 
 Counted again on 2026-11-08 on main (ba7b832) with #638, #639, #640 and #642
 merged locally: every number is the same.
@@ -79,6 +122,7 @@ date, commit and platform in the last column; do not mark a row from memory.
 | Flow | How | Expected | Checked |
 | --- | --- | --- | --- |
 | Open a folder (JPEG + HEIC) | Open Folder button | loading dialog phases; tree; markers; chart; status bar counts | |
+| Open a second folder | with the thumbnail status bar shown, open another folder | the thumbnail status bar hides | |
 | Loading dialog progress | large folder | text changes after "Collecting files..." and ends with "Completed loading all files" | |
 | Thumbnail status bar | HEIC folder, empty cache | appears, progresses, completes; details toggle; close button; Open Folder disabled while generating | |
 | Thumbnail error dialog | corrupt HEIC | "Click here..." link; dialog table sorts, filters, opens file/folder | |
@@ -100,6 +144,17 @@ date, commit and platform in the last column; do not mark a row from memory.
 | Map switch | menu | OpenStreetMap and Google Maps (API key) render the pinned photos | |
 | `--open` | launch with a file and with a folder | parent folder opens and the file is selected; folder opens | |
 | Window resize and splitters | drag; resize window | panes keep proportions; map re-renders | |
+
+## Questions for the owner
+
+Collected while executing, to be asked together at the end (owner's
+instruction, 2026-11-08). Record each with what was assumed meanwhile and what
+changes if the answer differs.
+
+| # | Question | Assumed meanwhile | Slice |
+| ---: | --- | --- | --- |
+| 1 | Does this plan go before the `@electron/remote` removal? | Yes: that work has not started. | all |
+| 2 | Checks that need a person or another platform: the OS tab on Windows, Google Maps with an API key. | Left for the owner; not driven headless. | 1F, 3 |
 
 ## Required update fields while executing
 

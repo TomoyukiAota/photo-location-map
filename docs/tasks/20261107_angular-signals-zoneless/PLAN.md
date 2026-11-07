@@ -12,14 +12,17 @@ The investigation behind it is complete: [REPORT.md](REPORT.md) has the
 findings and the recommendation, [INVENTORY.md](INVENTORY.md) lists every
 service, component and outside-Angular change source with its expected
 behavior without Zone.js, and [MCP.md](MCP.md) covers the Angular CLI MCP
-server. **Implementation starts only when the owner says so.** Until then the
-plan and the ledger are the only deliverables of this branch.
+server. **The owner authorized the whole plan on 2026-11-08, to start once
+the four pull requests named under "Boundaries" are merged** (STATUS.md,
+"Current checkpoint"). Until then the plan and the ledger are the only
+deliverables.
 
 Before any implementation step: read AGENTS.md, this file and STATUS.md; run
-`git status` and `gh pr list --state open`, and stop if any of #638, #639,
-#640 or #642 is still open (see "Boundaries"); make sure `mise exec -- npm ci`
-has run in the checkout you work in. Keep everything in English and public-safe. Do not add a
-CLAUDE.md or keep knowledge in agent memory.
+`git status`; check that each of #638, #639, #640 and #642 is merged into
+main, with the commands in STATUS.md ("Resume first action"), and stop if one
+is not; make sure `mise exec -- npm ci` has run in the checkout you work in.
+Keep everything in English and public-safe. Do not add a CLAUDE.md or keep
+knowledge in agent memory.
 
 ## Boundaries and starting snapshot
 
@@ -28,17 +31,21 @@ CLAUDE.md or keep knowledge in agent memory.
   ba7b832d552920a1dfcd73c428e88d47343e1368. In between, main gained a headless
   e2e suite and Leaflet bundled from `node_modules`, neither of which changes
   this plan.
-- Starting point: main **after the pull requests open on 2026-11-08 are
-  merged**: #638 (a photo whose coordinates are not numbers in range stays off
-  the map; `addEachMarker`; the Leaflet overlay hidden in a `finally`), #639
-  (photo content made when it is first shown; `generateCache` gone from
-  `OpenFolderService.open`), #640 (why HEIF thumbnails failed; main process
-  and e2e only) and #642 (e2e windows off the screen on Windows too). The
-  owner wants this work to start after them. Checked on 2026-11-08 by merging
-  the four into main locally: no conflicts, the progress counters in STATUS.md
-  are unchanged, and the slices below name the differences where they touch a
-  changed file. If one of them is closed instead of merged, re-check the files
-  it touches before the slice that names them.
+- Starting point: main **after all four pull requests open on 2026-11-08 are
+  merged, #642 included**: #638 (a photo whose coordinates are not numbers in
+  range stays off the map; `addEachMarker`; the Leaflet overlay hidden in a
+  `finally`), #639 (photo content made when it is first shown;
+  `generateCache` gone from `OpenFolderService.open`), #640 (why HEIF
+  thumbnails failed; main process and e2e only) and #642 (e2e windows off the
+  screen on Windows too). The owner wants this work to start after them.
+  Checked on 2026-11-08 by merging the four into main locally: no conflicts,
+  the progress counters in STATUS.md are unchanged, and the slices below name
+  the differences where they touch a changed file. #642 was merged on
+  2026-11-08 (4f8a496) with its Linux attempt reverted, so on Linux the
+  windows are still shown. The other three can still change before they are
+  merged, so stage 0.4 recounts the counters on main, and each slice re-reads
+  the files it names that they changed. If one of them is closed without
+  being merged, ask the owner before stage 0.
 - Angular 22.2.4 (CLI 22.2.5), Angular Material/CDK 22.2.5, TypeScript 6.0.3,
   Vitest 5.1.0, Electron 45.2.1, zone.js 0.16.3, angular-eslint 22.6.0. Record
   the actually resolved versions in STATUS.md when implementation starts.
@@ -71,11 +78,13 @@ Before the pull request of a slice is opened:
    `PLM_VISUAL=1 mise exec -- npm run test:e2e` passes on macOS with the
    committed references unchanged.
 3. The manual checks listed with the slice were done and are recorded in
-   STATUS.md with date and commit. They need a visible app window, which
-   AGENTS.md ("Keep windows off the owner's screen") reserves for the owner:
-   ask before launching the app for them, or hand the list to the owner.
-   Step 2 needs no such permission: `npm run test:e2e` keeps the windows off
-   the screen on macOS and, with #642, on Windows; on Linux it shows them.
+   STATUS.md with date, commit and how. A visible app window is for the owner
+   (AGENTS.md, "Keep windows off the owner's screen"), so drive the checks
+   with a Playwright script against the app, as the e2e suite does, which
+   keeps the windows off the screen on macOS and, with #642, on Windows (see
+   `test/e2e/README.md` for Linux). A check that needs a person or another
+   platform (the OS tab on Windows, Google Maps with an API key) goes under
+   "Questions for the owner" in STATUS.md.
 4. STATUS.md is updated: slice state, commit, pull request link, test results,
    progress counters, and the next executable action. When stopping in the
    middle of a slice, record the exact next action and which files are half
@@ -105,6 +114,10 @@ slice from an unmerged one unless STATUS.md says why.
   templates with `foo()`, and `.value`/`.getValue()` with `()`.
 - `Subject`s that carry one-off events (settings changed, close requested,
   force render) may stay; their subscribers write signals.
+- A signal notifies only when its value changes (`Object.is`): `set(true)` on
+  a signal that is already `true` reaches no one. A write that must reach its
+  consumers every time, even with the same value, such as "a folder was
+  opened", is an event: keep a `Subject` or an explicit call.
 - Delete `changeDetection: ChangeDetectionStrategy.Eager` from a component once
   its template reads only signals, inputs, `computed` values, results of
   template events, or constants. `OnPush` is the default; do not write it
@@ -115,7 +128,9 @@ slice from an unmerged one unless STATUS.md says why.
   `fixture.detectChanges()` or `await fixture.whenStable()`; a plain field
   changed without a notification throws
   `ExpressionChangedAfterItHasBeenCheckedError`. `whenStable()` does not wait
-  for timers.
+  for timers, and the tests load no `zone.js/testing` (the `testing` build
+  configuration in `angular.json` has no polyfills), so `fakeAsync` and
+  `tick` throw: use `vi.useFakeTimers()` or poll.
 - Use the Angular CLI MCP server (`get_best_practices`, `search_documentation`)
   when in doubt about an API. Its `onpush_zoneless_migration` tool does not
   apply to this repository (MCP.md).
@@ -148,7 +163,10 @@ Goal: the safety net and the tooling exist before any state changes.
     `.HEIC` (a copy of `test/test-resources/unsupported-files/Invalid Photo.JPG`,
     as the thumbnail-failure case from #640 builds its folder), the status bar
     shows "Click here to see the files with errors.", the dialog opens, and
-    sorting and filtering work.
+    sorting and filtering work;
+  - e. `--open` given a photo file: its parent folder opens, and the tree and
+    the map have only that photo selected (the order that 1E has to keep; the
+    existing `--open` case opens a folder only).
 - **0.3 Lint policy** as comments in `eslint.config.mjs`, no rule changes yet:
   `prefer-signals` and `no-uncalled-signals` turn on at the end of stage 1,
   `prefer-on-push-component-change-detection` at the end of stage 2,
@@ -195,7 +213,11 @@ Files: `src/app/shared/service/open-folder.service.ts`,
 `src/app/loaded-files-status-bar/component/loaded-files-status-bar.component.{ts,html}`,
 `src/app/shared/service/photo-data.service.ts`.
 
-- `isFolderOpened$` becomes `isFolderOpened = signal(false)`.
+- `isFolderOpened$` becomes `isFolderOpened = signal(false)`, which the lower
+  pane reads. Home also hides the thumbnail status bar on every open, the
+  second one included, and `set(true)` again notifies no one (see "Patterns
+  to apply"): `open()` raises a `folderOpened` event (`Subject<void>`) where
+  it sets the signal, and Home subscribes to that.
 - `LoadedFilesStatusBarService.visible` becomes a `signal<boolean>` initialized
   from the setting; keep `setVisibility` and `restoreVisibilityToSettingValue`;
   `setInitialVisibility` goes away if the initial value comes from the signal.
@@ -209,12 +231,14 @@ Files: `src/app/shared/service/open-folder.service.ts`,
   dialog repaint stays.
 - Home: `loadedFilesStatusBarVisible` reads the service signal in the template;
   `thumbnailGenerationStatusBarVisible` becomes a signal written by the same
-  three handlers until 1D moves it to a service.
+  three handlers (the folder-open one now from `folderOpened`) until 1D moves
+  it to a service.
 - Remove `detectChanges()` in `HomeComponent` and `LoadedFilesStatusBarComponent`.
 
 Manual checks: status bar text after opening a folder; "Show Status Bar" in
 Settings toggles it live, Cancel restores it, Save keeps it, and it survives a
-restart.
+restart; opening a second folder hides the thumbnail status bar left from the
+first.
 
 ### 1C: loading-folder progress
 
@@ -245,8 +269,10 @@ Files: `src/app/thumbnail-generation/service/thumbnail-generation.service.ts`,
 - The status bar reads the signal; `detailsVisible` becomes a signal; remove
   its two `detectChanges()` calls.
 - Visibility: a `visible` signal in `ThumbnailGenerationStatusBarService`, set
-  true when generation starts and false on close and on folder open; Home reads
-  it (replacing the interim signal from 1B) and `closeRequested` goes away.
+  true when generation starts and false on close and on every folder open, by
+  explicit calls or the `folderOpened` event from 1B rather than derived from
+  `isFolderOpened`; Home reads it (replacing the interim signal from 1B), and
+  `closeRequested` goes away, as does `folderOpened` if nothing else uses it.
 - Sidebar: `isGenerating | async` becomes `isGenerating()`.
 
 Manual checks: open a folder with HEIC files on an empty cache; progress,
@@ -274,8 +300,13 @@ Files: `src/app/shared/service/selected-photo.service.ts`,
   returning a copy.
 - `selectionRequested` becomes a `Subject<string[]>` (drop the `null` initial
   value and the consumer's null check); no late subscriber needs the last value.
-- `dataReplaced` becomes `data = signal<NestedNode[]>([])`; the tree view does
-  what `handleDirectoryTreeViewDataReplaced` does today inside an `effect`.
+- `dataReplaced` stays a synchronous event, as a `Subject<NestedNode[]>` (the
+  tree view is rendered from the start, so it needs no initial value), and the
+  tree view keeps handling it in its subscription. When `open()` resolves, the
+  tree must be built and all photos selected: `OpenAfterLaunchService` then
+  resets the history and selects the file given with `--open` (stage 0.2 e).
+  An `effect` would build the tree only after that, so the file would be
+  looked up in the previous tree, and the effect would then select all photos.
 - Tree selection: keep the `SelectionModel` but expose a signal the template
   depends on (a `Set` of selected paths, or a version counter bumped after
   every model change) so that `isSelected`, `allDescendantsSelected` and
@@ -320,9 +351,10 @@ Files: `src/app/settings-dialog/settings-dialog.component.{ts,html}`,
 Manual checks: Save enabled only after a change; the restart notice; Cancel
 restores the status bar; the OS tab on Windows; the map switch from the menu.
 
-Stage 1 exit: `grep -rn "new BehaviorSubject" src --include='*.ts'` and
-`grep -rn "| async" src --include='*.html'` return nothing; `prefer-signals`
-and `no-uncalled-signals` are enabled in `eslint.config.mjs` and pass.
+Stage 1 exit: `grep -rnF "new BehaviorSubject" src --include='*.ts'` and
+`grep -rnF "| async" src --include='*.html'` return nothing; the event
+`Subject`s that remain are the ones this plan keeps; `prefer-signals` and
+`no-uncalled-signals` are enabled in `eslint.config.mjs` and pass.
 
 ## Stage 2: OnPush everywhere (one or two pull requests)
 
