@@ -63,9 +63,16 @@ never safe.
 because the `async` pipes of views below it mark it at the same moments. What
 makes rendering independent of who triggers the tick is that every state
 change notifies Angular, with a signal or a `markForCheck()` right after the
-write: that is what the plan converts, and what the exhaustive no-changes
-check of stage 2 verifies. `OnPush`, the default in Angular 22, then limits
-incidental refreshes to a view's ancestors. Converting the component's state
+write. That is what the plan converts, and it is checked component by
+component by reading the code: a component loses `Eager` only once its
+template reads nothing but signals, inputs, `computed` values, template events
+and constants (PLAN.md, "Patterns to apply"). The exhaustive no-changes check
+of stage 2 is a safety net, not a proof: it misses a change that another
+notification rendered before the check ran. While `Eager` components remain,
+a refreshed ancestor also refreshes its `Eager` descendants, such as the lower
+sidebar under `HomeComponent` when the upper sidebar marks it; once all are
+`OnPush`, the default in Angular 22, an incidental refresh reaches only the
+notifying view's ancestors. Converting the component's state
 to signals first is what makes the switch to `OnPush` safe, because a plain
 field mutated outside a template event silently stops rendering under
 `OnPush`. This repository already has that trap:
