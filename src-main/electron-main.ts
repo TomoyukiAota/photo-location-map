@@ -1,5 +1,5 @@
 import '../electron-util/isolated-test-profile';
-import '../electron-util/e2e-test-hooks';
+import { withHeadlessTestOptions } from '../electron-util/e2e-test-hooks';
 import './configure-electron-unhandled';
 import './command-line-options/configure-command-line-options';
 import { app, BrowserWindow, protocol } from 'electron';
@@ -31,13 +31,13 @@ const createWindow = async () => {
   StartupTime.markAppReady();
   const mainWindowState = createMainWindowState();
 
-  mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow(withHeadlessTestOptions({
     x: mainWindowState.x,
     y: mainWindowState.y,
     width: mainWindowState.width,
     height: mainWindowState.height,
     webPreferences: electronWebPreferences,
-  });
+  }));
 
   configureMainWindowForAnalytics(mainWindow);
 
