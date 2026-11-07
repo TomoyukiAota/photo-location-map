@@ -14,11 +14,13 @@ describe('PinnedPhotoService', () => {
     service = TestBed.inject(PinnedPhotoService);
   });
 
-  it('pins the photos it is given, and gives a copy of them', () => {
+  it('pins a copy of the photos it is given, and gives a copy of them', () => {
     const photos = [photo('/photos/a.jpg'), photo('/photos/b.jpg')];
     service.setPinnedPhotos(photos);
 
     expect(service.pinnedPhotos()).toEqual(photos);
+    photos.pop();
+    expect(service.pinnedPhotos()).toHaveLength(2);
     const copy = service.getPinnedPhotos();
     copy.pop();
     expect(service.pinnedPhotos()).toHaveLength(2);

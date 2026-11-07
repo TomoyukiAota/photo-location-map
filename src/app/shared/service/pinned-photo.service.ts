@@ -16,7 +16,7 @@ export class PinnedPhotoService {
     const isDesiredSameAsCurrent = _.isEqual(desiredPinnedPhotoPaths.sort(), currentPinnedPhotoPaths.sort());
     if (isDesiredSameAsCurrent) { return; } // If same, skip updating pinned photos to avoid 1) resetting the map for usability and 2) consuming the quota of the map.
 
-    this.pinnedPhotosState.set(desiredPinnedPhotos);
+    this.pinnedPhotosState.set([...desiredPinnedPhotos]); // A copy, so that the caller's array cannot change it.
   }
 
   public getPinnedPhotos(): Photo[] {

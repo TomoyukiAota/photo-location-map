@@ -82,6 +82,8 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
 
   public ngOnDestroy(): void {
     this.forceRenderServiceSubscription.unsubscribe();
+    // A render still waiting would draw into the removed view, such as when the map is switched to Google Maps.
+    this.renderMapWithDebouncing.cancel();
   }
 
   // The overlay is shown and hidden through its style rather than a binding, so it needs no change detection.
