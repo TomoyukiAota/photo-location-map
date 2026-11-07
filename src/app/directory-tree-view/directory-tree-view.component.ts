@@ -1,7 +1,7 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, OnInit, ChangeDetectionStrategy, effect, signal, untracked, viewChild } from '@angular/core';
+import { Component, OnInit, effect, signal, untracked, viewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { Analytics } from '../../../src-shared/analytics/analytics';
@@ -23,7 +23,6 @@ const dirTreeViewLogger = createPrependedLogger('[Directory Tree View]');
   selector: 'app-directory-tree-view',
   templateUrl: 'directory-tree-view.component.html',
   styleUrls: ['directory-tree-view.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class DirectoryTreeViewComponent implements OnInit {

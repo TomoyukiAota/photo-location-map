@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -13,16 +13,16 @@ import { SettingsChangedService } from './service/settings-changed.service';
 import { SettingsDialogComponent } from './settings-dialog.component';
 
 // The tabs are left out: they tell the dialog about their changes through SettingsChangedService, as the tests do.
-@Component({ selector: 'app-appearance-settings', template: '', changeDetection: ChangeDetectionStrategy.Eager, standalone: false })
+@Component({ selector: 'app-appearance-settings', template: '', standalone: false })
 class DummyAppearanceSettingsComponent {}
 
-@Component({ selector: 'app-date-time-settings', template: '', changeDetection: ChangeDetectionStrategy.Eager, standalone: false })
+@Component({ selector: 'app-date-time-settings', template: '', standalone: false })
 class DummyDateTimeSettingsComponent {}
 
-@Component({ selector: 'app-os-settings', template: '', changeDetection: ChangeDetectionStrategy.Eager, standalone: false })
+@Component({ selector: 'app-os-settings', template: '', standalone: false })
 class DummyOsSettingsComponent {}
 
-@Component({ selector: 'app-cache-settings', template: '', changeDetection: ChangeDetectionStrategy.Eager, standalone: false })
+@Component({ selector: 'app-cache-settings', template: '', standalone: false })
 class DummyCacheSettingsComponent {}
 
 describe('SettingsDialogComponent', () => {

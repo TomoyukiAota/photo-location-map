@@ -1,6 +1,5 @@
 import {
   Component,
-  ChangeDetectionStrategy,
   AfterViewInit,
   ElementRef,
   viewChild,
@@ -13,7 +12,6 @@ import { LoadedFilesStatusBarService } from '../loaded-files-status-bar/service/
 import { ThumbnailGenerationStatusBarService } from '../thumbnail-generation/status-bar/service/thumbnail-generation-status-bar.service';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-home',
   styleUrls: ['./home.component.scss'],
   templateUrl: './home.component.html',

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Injector, OnDestroy, ChangeDetectionStrategy, effect, untracked, viewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Injector, OnDestroy, effect, untracked, viewChild } from '@angular/core';
 import * as turf from '@turf/turf';
 import { Control, LayersControlEvent, LeafletEvent, Map, Marker, PopupEvent } from 'leaflet';
 import * as _ from 'lodash';
@@ -30,7 +30,6 @@ interface RegionInfo extends Control {
   selector: 'app-leaflet-map',
   templateUrl: './leaflet-map.component.html',
   styleUrls: ['./leaflet-map.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class LeafletMapComponent implements OnDestroy, AfterViewInit {
