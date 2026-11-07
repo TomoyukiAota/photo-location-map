@@ -18,8 +18,7 @@ export function recordUnhandledError(error: unknown, processName: 'Main' | 'Rend
 
   isRecording = true;
   try {
-    // In the renderer, an unhandled promise rejection reaches both Angular's ErrorHandler (wrapped by zone.js)
-    // and the window's unhandledrejection listener, so the same error is recorded once.
+    // The same error object is recorded once, however many handlers report it.
     const original = unwrapPromiseRejection(error);
     if (typeof original === 'object' && original !== null) {
       if (recordedErrorObjects.has(original))
@@ -55,7 +54,10 @@ export function scrubbedErrorText(text: string): string {
   return scrubMessage(text, scrubbingContext()).slice(0, maxLabelLength);
 }
 
-/** zone.js wraps an unhandled promise rejection in an Error "Uncaught (in promise): …" with the reason in `rejection`. */
+/**
+ * An error "Uncaught (in promise): …" with the reason in `rejection`, as zone.js made of an unhandled promise rejection,
+ * stands for its reason. The renderer no longer loads zone.js, so its rejections reach recordUnhandledError unwrapped.
+ */
 function unwrapPromiseRejection(error: unknown): unknown {
   return error instanceof Error && 'rejection' in error ? (error as Error & { rejection: unknown }).rejection : error;
 }

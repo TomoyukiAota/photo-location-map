@@ -712,9 +712,9 @@ test('the chart menu counts the photos without a shooting time, and its checkbox
   await expectRepresentedPhotos(2);
 });
 // The next cases cover what a change to signals and zoneless change detection can break: views that show state written
-// outside any template event, such as by a timer or an IPC message from the main process. With Zone.js they render
-// because a tick follows every callback, or because another view happens to ask for change detection at the same moment
-// (docs/tasks/20261107_angular-signals-zoneless/INVENTORY.md).
+// outside any template event, such as by a timer or an IPC message from the main process. With Zone.js they rendered
+// because a tick followed every callback, or because another view happened to ask for change detection at the same
+// moment (docs/tasks/20261107_angular-signals-zoneless/INVENTORY.md).
 test('the loading-folder dialog follows the loading of the files to the end', async () => {
   // A 100 ms interval writes the dialog's fields, so without a notification the dialog would keep its first text.
   await dismissWelcome();
@@ -1037,6 +1037,33 @@ test('the main window gets animation frames while its page changes', async () =>
   const refreshRate = await app.evaluate(({ screen }) => screen.getPrimaryDisplay().displayFrequency);
   console.info(`Animation frames in 1 second: ${frames} (display refresh rate: ${refreshRate} Hz)`);
   expect(frames, 'The window must keep getting animation frames, not about 1 per second.').toBeGreaterThan(20);
+});
+test('an unhandled promise rejection in the renderer is recorded once, with its message', async () => {
+  // Without Zone.js, the window's unhandledrejection listener gets every one. With it, Angular's ErrorHandler got one
+  // made in Angular's zone, wrapped as "Uncaught (in promise)", and recorded it once with its message as here, while
+  // zone.js only logged one made outside, such as this one.
+  await dismissWelcome();
+  const message = 'Rejected on purpose by the e2e suite';
+  await page.evaluate(message => { Promise.reject(new Error(message)); }, message);
+  const recorded = service => app.evaluate((_electron, service) => globalThis.__plmAnalyticsEvents
+    .filter(event => event.service === service && event.action === 'Unhandled Error (Renderer)')
+    .map(event => ({ category: event.category, label: event.label })), service);
+  for (const service of ['amplitude', 'mixpanel']) {
+    await expect.poll(() => recorded(service), { timeout: 20000 })
+      .toEqual([{ category: 'Unhandled Error', label: `Error: ${message}` }]);
+  }
+  // A second report of the same error would be sent before an event tracked after it, so wait for one.
+  await app.evaluate(({ app }) => {
+    const require = globalThis.__plmTestRequire;
+    const { Analytics } = require(require('node:path').join(app.getAppPath(), 'src-shared/analytics/analytics.js'));
+    Analytics.trackEvent('E2E', 'After the rejection');
+  });
+  for (const service of ['amplitude', 'mixpanel']) {
+    await expect.poll(() => app.evaluate((_electron, service) => globalThis.__plmAnalyticsEvents
+      .filter(event => event.service === service && event.action === 'After the rejection').length, service),
+    { timeout: 20000 }).toBe(1);
+    expect(await recorded(service)).toHaveLength(1);
+  }
 });
 test('analytics preserves events and identity without new Amplitude local URLs', async () => {
   await dismissWelcome();
