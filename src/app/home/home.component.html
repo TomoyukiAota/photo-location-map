@@ -16,7 +16,7 @@
     </div>
   </div>
 </div>
-<app-thumbnail-generation-status-bar [ngClass]="{'hidden': !thumbnailGenerationStatusBarVisible}">
+<app-thumbnail-generation-status-bar [ngClass]="{'hidden': !thumbnailGenerationStatusBarVisible()}">
 </app-thumbnail-generation-status-bar>
-<app-loaded-files-status-bar [ngClass]="{'hidden': !loadedFilesStatusBarVisible}">
+<app-loaded-files-status-bar [ngClass]="{'hidden': !loadedFilesStatusBarService.visible()}">
 </app-loaded-files-status-bar>
