@@ -24,6 +24,15 @@ on `main` before the overrides were added:
 
 `electron-updater` is the only one of these that ships in the application.
 
+**Existing clones need a clean `mise exec -- npm ci` after pulling this change.**
+`npm install` keeps the patched `node_modules/temp/lib/temp.js` and
+Electron-Mocha's two patched files, because both packages keep their locked
+versions. Checked by installing `main` with `npm ci`, then this branch with
+`npm install`: the patched Temp remained, and its asynchronous cleanup threw at
+`rimraf.rimraf(...)`, which rimraf 2.6.3 does not export. `npm ci` removes
+`node_modules` first, so it installs the published sources.
+[CONTRIBUTING.md](../../CONTRIBUTING.md) already installs with `npm ci`.
+
 ## Deprecation warnings
 
 A clean `npm ci` prints these deprecated versions again: `glob@7.2.3` (two
@@ -51,9 +60,12 @@ such as Babel, undici and postcss.
 ## Security
 
 `npm audit` reports the same advisories as on `main`, in 54 entries instead of
-56, because ASAR 3.4.1 and `electron-winstaller` are no longer flagged. Production
-dependencies are unchanged: 29 high entries from the existing `jimp` → `zod`
-chain. No override was needed to avoid a vulnerability.
+56, because ASAR 3.4.1 and `electron-winstaller` are no longer flagged. The
+production audit is unchanged: 29 high entries from the existing `jimp` → `zod`
+chain. The production tree itself changed in one place: `electron-updater` now
+resolves the top-level `lodash.isequal` 4.5.0 instead of the nested
+`lodash.isequalwith` 4.4.0 alias, so the packaged app includes 4.5.0. No
+override was needed to avoid a vulnerability.
 
 ## Verification
 
