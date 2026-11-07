@@ -6,8 +6,10 @@ the existence of the plan or from an agent's earlier messages.
 
 ## Current checkpoint
 
-- State: STAGE 4, `strictTemplates` IN REVIEW, on the branch
-  `claude/signals-zoneless-4-strict-templates` (stage ledger below).
+- State: COMPLETE, stages 0 to 3 and three stage 4 items. What is left is the
+  owner's: the checks after the merges (the OS tab on Windows, Google Maps
+  with an API key), and the questions below, among them the other stage 4
+  items.
 - Authorized (owner, 2026-11-08): carry out the whole plan once the
   prerequisite is met, one pull request per stage or slice; address the
   CodeRabbit review of each pull request, then merge it (the `automerge`
@@ -27,8 +29,8 @@ the existence of the plan or from an agent's earlier messages.
 - Investigation: complete on 2026-11-07 (REPORT.md, INVENTORY.md, MCP.md).
   The Angular unit tests passed under the zoneless TestBed default that day:
   25 files, 37 tests.
-- Last accepted slice: the stage 4 item `RouterTestingModule`, #654, merged on
-  2026-11-08 as 1b8907e.
+- Last accepted slice: the stage 4 item `strictTemplates`, #655, merged on
+  2026-11-08 as 3b9064c.
   Baseline (stage 0.4): recorded under "Baseline" below.
 - Runtime, dependency, test or build changes made by this plan: stage 0 added
   e2e cases, the MCP configuration and lint policy comments. 1A keeps the
@@ -44,7 +46,10 @@ the existence of the plan or from an agent's earlier messages.
   suite fails (NG0100). Stage 3 removes Zone.js. Stage 4 removes the
   `NgZone.run` wrappers and `RouterTestingModule`, and checks the templates
   strictly.
-- Processes or CI runs owned by this work: the CI of the stage 4 pull requests.
+- Processes or CI runs owned by this work: none.
+- `provideCheckNoChangesConfig` (PLAN.md, 3.5) stays in development builds:
+  the e2e suite run against one relies on it to find bindings changed
+  without notification (`test/e2e/README.md`).
 - Order relative to the `@electron/remote` removal (PLAN.md, "Boundaries"),
   decided by the owner on 2026-11-08: this plan goes first, and that removal
   comes after it.
@@ -92,7 +97,7 @@ continue from "Next action" in the ledger below.
 | 3 remove Zone.js | ACCEPTED | #652 | b2de8f6 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 38 cases in 3.3 min, all pass; `build:dev` and e2e, 38 cases in 4.1 min, no NG0100; before the rebases onto main, live-reload and `PLM_VISUAL=1` e2e passed too, and the signed universal bundle of the package build (`PLM_PACKAGE_TEST`, so not notarized), with `PLM_VISUAL=1`: 37 passed and the website case skipped, as designed, and `codesign --verify --deep --strict` passed before and after; `dist/` has no `polyfills.js` and no zone.js code, the only "zone.js" left being the text of an Angular error message; `npm ls zone.js` is empty; `test:package`: see "Findings while executing"; on 18b6a07, CI on the three OSes passed, `test:package` included, and so did the on-demand Intel macOS job, `test (macos-x64)` in 17 min; CI green; CodeRabbit: the check list's row for a window resize, completed with a new e2e case, then no actionable comments | every row below, by its e2e cases: see the note above the list | none |
 | 4 `NgZone.run` wrappers | ACCEPTED | #653 | e8f63d9 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 39 cases in 3.4 min, all pass; `build:dev` and e2e, 39 cases in 4.2 min, no NG0100; CI green; CodeRabbit: question 6's assumption, which said the small items were done, corrected, then no actionable comments | headless e2e of what goes through `window.plmInternalRenderer` and the menus | none |
 | 4 `RouterTestingModule` | ACCEPTED | #654 | 1b8907e | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70) and `build:prod` pass; before the rebase onto main, `PLM_VISUAL=1` e2e with 38 cases passed too; CI green; CodeRabbit: no actionable comments | none needed: a spec only | none |
-| 4 `strictTemplates` | IN REVIEW | `claude/signals-zoneless-4-strict-templates` | | 2026-11-08, macOS, on this branch's head: `build:dev`, `build:prod`, unit (Vitest 81, Electron-Mocha 121 and 70) and lint pass; binding 123 to the string input `photoPath` failed `build:prod`, as it should; `build:dev`, which compiles just in time, checks no templates | none needed: compile-time checks only | merge the pull request after its review, then record the end of the plan |
+| 4 `strictTemplates` | ACCEPTED | #655 | 3b9064c | 2026-11-08, macOS, on this branch's head: `build:dev`, `build:prod`, unit (Vitest 81, Electron-Mocha 121 and 70) and lint pass; binding 123 to the string input `photoPath` failed `build:prod`, as it should; `build:dev`, which compiles just in time, checks no templates; CI green; CodeRabbit: that `ng test` and `build:dev`, which compile just in time, check no templates, now said next to the setting and in this row, then no actionable comments | none needed: compile-time checks only | none |
 | 4 other items | NOT STARTED | | | NOT RUN | | the owner decides: question 6 below |
 
 ## Progress counters
@@ -292,7 +297,7 @@ changes if the answer differs; keep answered rows, with the answer.
 | 3 | In a git worktree, mise does not trust the worktree's `mise.toml`, as trust is kept per path, so `mise exec` fails there. Should AGENTS.md say what agents do then? | This work passed `MISE_TRUSTED_CONFIG_PATHS=<worktree>/mise.toml` to each command rather than running `mise trust`; nothing in the repository depends on it. | all |
 | 4 | The tree's context menu does not close on a right-click outside it while the loading dialog is still closing (see "Findings while executing"). Fix it, by listening to the menu's own backdrop, the last one? | Assumed: not fixed in this plan, which changes no behavior; the e2e case waits for the dialog to close. | 2 |
 | 5 | In a git worktree, `npm run test:package` fails its check of `latest-mac.yml` (see "Findings while executing"). Should AGENTS.md say so, with question 3? | Assumed: the macOS CI job, which runs it in a clone, is the check. | 3 |
-| 6 | Which of the other stage 4 items should follow: `inject()` with `prefer-inject`, `@Service`, the Material tree's `childrenAccessor`/`levelAccessor`, the standalone migration with `prefer-standalone`, `ngclass-to-class` (2.4), and pinned photos as a `computed`? They change the code's style throughout rather than its behavior. | Assumed: none until the owner says. The three small items, `NgZone.run`, `RouterTestingModule` and `strictTemplates`, come first, one pull request each, as the stage ledger shows. | 4 |
+| 6 | Which of the other stage 4 items should follow: `inject()` with `prefer-inject`, `@Service`, the Material tree's `childrenAccessor`/`levelAccessor`, the standalone migration with `prefer-standalone`, `ngclass-to-class` (2.4), and pinned photos as a `computed`? They change the code's style throughout rather than its behavior. | Assumed: none until the owner says. The three small items, `NgZone.run`, `RouterTestingModule` and `strictTemplates`, are done, one pull request each. | 4 |
 
 ## Required update fields while executing
 
