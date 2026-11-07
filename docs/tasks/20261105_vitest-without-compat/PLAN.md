@@ -1,8 +1,8 @@
 # Angular Vitest migration and compatibility-adapter removal
 
-> **Update, 2026-11-07:** the npm `overrides` and `script/patch-temp.js` that
-> this migration kept have been removed, and a clean install now prints the
-> deprecation warnings they removed. See the
+> **Update, 2026-11-07:** the npm `overrides`, `script/patch-temp.js` and
+> `script/patch-electron-mocha.js` that this migration kept have been removed,
+> and the deprecation warnings they removed appear again. See the
 > [override removal record](../20261107_remove-dependency-overrides/STATUS.md).
 
 ## Objective and boundaries

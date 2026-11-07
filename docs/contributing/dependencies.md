@@ -57,6 +57,15 @@ stable release of a package in the standard setup.
 | `lodash.isequal@4.5.0` | `electron-updater` 6.8.12 | An `electron-updater` 6 release includes the [backported replacement](https://github.com/electron-userland/electron-builder/pull/10502). |
 | `glob@10.5.0` | `electron-mocha` 13.1.0 → Mocha 11 | `electron-mocha` supports Mocha 12, which [moved to glob 13](https://github.com/mochajs/mocha/pull/5546). |
 
+On Windows, the Electron-Mocha suites (`npm run test:unit:em:main` and
+`test:unit:em:renderer`) also print Node's DEP0190 warning, twice each.
+Electron-Mocha 13.1.0 starts Electron through a shell on Windows, which it added
+for a Node security change
+([upstream pull request](https://github.com/jprichardson/electron-mocha/pull/213)).
+Revisit it when an Electron-Mocha release starts Electron without a shell, or
+if a Node release turns DEP0190 into an error, which would stop these suites on
+Windows.
+
 After dependency changes, check that a clean `npm ci` prints no other
 `npm warn deprecated` lines. The
 [override removal record](../tasks/20261107_remove-dependency-overrides/STATUS.md)

@@ -1,5 +1,10 @@
 # Electron-Mocha executable spawning
 
+> **Update, 2026-11-07:** `script/patch-electron-mocha.js` has been removed,
+> and the Windows DEP0190 warnings are accepted until an Electron-Mocha
+> release removes them. See the
+> [override removal record](../20261107_remove-dependency-overrides/STATUS.md).
+
 ## Evidence and scope
 
 The complete Windows push and PR job logs for source `e10e1b9` each contain

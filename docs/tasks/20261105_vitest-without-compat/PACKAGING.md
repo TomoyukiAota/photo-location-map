@@ -1,8 +1,8 @@
 # Packaging without repository-owned compatibility packages
 
-> **Update, 2026-11-07:** the ASAR and Temp overrides and `script/patch-temp.js`
-> described here have been removed, and their deprecation warnings are accepted
-> until upstream releases remove them. See the
+> **Update, 2026-11-07:** the ASAR and Temp overrides, `script/patch-temp.js`
+> and the Electron-Mocha patch described here have been removed, and their
+> deprecation warnings are accepted until upstream releases remove them. See the
 > [override removal record](../20261107_remove-dependency-overrides/STATUS.md).
 
 ## Decision
