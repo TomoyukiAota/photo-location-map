@@ -1,4 +1,4 @@
-import { Component, NgZone, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { Logger } from '../../../../src-shared/log/logger';
 import { PlmInternalRenderer, PlmInternalRendererMap } from '../../../global-variables/global-variable-for-internal-use-in-renderer';
 import { getMapType, MapType } from './map-type';
@@ -14,9 +14,6 @@ export class MapComponent implements OnInit, OnDestroy {
   /** The map that is shown, which the Help menu of the main process changes. */
   public readonly selectedMap = signal(MapType.OpenStreetMap);
 
-  constructor(private ngZone: NgZone) {
-  }
-
   public ngOnInit(): void {
     window.plmInternalRenderer = window.plmInternalRenderer || new PlmInternalRenderer();
     window.plmInternalRenderer.map = window.plmInternalRenderer.map || new PlmInternalRendererMap();
@@ -28,9 +25,7 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   public changeMap(ipcMapChangeArg: string) {
-    this.ngZone.run(() => {
-      this.selectedMap.set(getMapType(ipcMapChangeArg));
-      Logger.info(`Changed Map: ${ipcMapChangeArg}`);
-    });
+    this.selectedMap.set(getMapType(ipcMapChangeArg));
+    Logger.info(`Changed Map: ${ipcMapChangeArg}`);
   }
 }
