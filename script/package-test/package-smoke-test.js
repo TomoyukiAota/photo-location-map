@@ -132,7 +132,11 @@ class PackageSmokeTest {
     do {
       this.shouldRetry = false;
 
-      const executableProcess = child_process.spawn(testInfo.executableLaunchCommand, [], { shell: true });
+      // The test reads only the log, so the app keeps its window hidden (electron-util/e2e-test-hooks.js) rather
+      // than covering the developer's screen. "open" on macOS passes this environment to the app as well.
+      const executableProcess = child_process.spawn(testInfo.executableLaunchCommand, [], {
+        shell: true, env: { ...process.env, PLM_TEST_HEADLESS: '1' },
+      });
       executableProcess.stdout.on('data', data => logger.info(`stdout: ${data}`));
       executableProcess.stderr.on('data', data => this.handleExecutableProcessStderr(data));
       executableProcess.on('close', code => logger.info(`"${testInfo.executableLaunchCommand}" is terminated.`));
