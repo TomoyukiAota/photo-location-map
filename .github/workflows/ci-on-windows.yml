@@ -58,6 +58,9 @@ jobs:
     - name: Verify Electron and embedded Node
       run: npm run verify:electron
 
+    - name: npm run test:dependency-compat
+      run: npm run test:dependency-compat
+
     - name: npm run lint:ng
       run: npm run lint:ng
 

@@ -93,7 +93,8 @@ needed feature or a serious security vulnerability requires it. A deprecation
 warning is not such a reason, and it is not the kind of failure the narrow
 workaround below is for: record it in
 [`docs/contributing/dependencies.md`](docs/contributing/dependencies.md#known-deprecation-warnings)
-instead.
+instead. Departures kept for such a reason are listed on the same page, each
+with its reason and when to remove it.
 
 **Why:** upstream updates to the standard setup remove these warnings over
 time, and they are not urgent. An earlier pull request removed every warning by

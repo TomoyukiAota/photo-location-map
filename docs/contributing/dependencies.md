@@ -57,22 +57,29 @@ stable release of a package in the standard setup.
 | `lodash.isequal@4.5.0` | `electron-updater` 6.8.12 | An `electron-updater` 6 release includes the [backported replacement](https://github.com/electron-userland/electron-builder/pull/10502). |
 | `glob@10.5.0` | `electron-mocha` 13.1.0 → Mocha 11 | `electron-mocha` supports Mocha 12, which [moved to glob 13](https://github.com/mochajs/mocha/pull/5546). |
 
-On Windows, the Electron-Mocha suites (`npm run test:unit:em:main` and
-`test:unit:em:renderer`) also print Node's DEP0190 warning, twice each.
-Electron-Mocha 13.1.0 starts Electron through a shell on Windows, which it added
-for a Node security change
-([upstream pull request](https://github.com/jprichardson/electron-mocha/pull/213)).
-Node passes the Electron path to that shell unquoted, so these suites also
-cannot start from a Windows checkout whose path contains a space; CI's checkout
-path has none. Revisit this when an Electron-Mocha release starts Electron
-without a shell, when a Windows checkout path with a space is needed, or if a
-Node release turns DEP0190 into an error, which would stop these suites on
-Windows.
-
 After dependency changes, check that a clean `npm ci` prints no other
 `npm warn deprecated` lines. The
 [override removal record](../tasks/20261107_remove-dependency-overrides/STATUS.md)
 describes how these were checked.
+
+
+### Departures kept for a needed feature
+
+**`script/patch-electron-mocha.js`**, run by `postinstall`, lets the
+Electron-Mocha suites (`npm run test:unit:em:main` and `test:unit:em:renderer`)
+start on Windows from a checkout whose path contains a space. Electron-Mocha
+13.1.0 starts Electron through a shell on Windows, which it added for a Node
+security change
+([upstream pull request](https://github.com/jprichardson/electron-mocha/pull/213)).
+Node passes the Electron path to that shell unquoted, so the path splits at the
+space. The patch makes both spawn calls start Electron directly. It also avoids
+Node's DEP0190 warnings, which alone would not justify it.
+
+Remove the patch when an Electron-Mocha release starts Electron without a shell.
+Until then, the patch checks Electron-Mocha's version and source before writing,
+so an upgrade fails installation until the patch is reviewed, and
+`npm run test:dependency-compat` checks the patched behavior with Windows paths
+that contain spaces.
 
 
 ## Electron binary

@@ -26,10 +26,11 @@ The owner set this rule on 2026-11-07; see
 - Remove `script/patch-temp.js`. It adapts Temp to the rimraf 6 override, and
   would break Temp with the rimraf 2.6.3 that Temp declares.
 - Remove the tests that guard only these overrides and that patch.
-- Remove `script/patch-electron-mocha.js` too, with its test, the
-  `test:dependency-compat` script and its CI steps. It is a source patch for a
-  Windows DEP0190 warning, so the same rule applies; the owner decided on this
-  on 2026-11-07, after the overrides had been removed.
+- Keep `script/patch-electron-mocha.js`, its test and `test:dependency-compat`.
+  It was added for a Windows DEP0190 warning, which is not a reason, but it also
+  lets the Electron-Mocha suites start from a Windows checkout path that
+  contains a space. The owner decided on 2026-11-07 that this is needed. Remove
+  the patch when Electron-Mocha is fixed.
 
 ## Checks
 
@@ -41,4 +42,3 @@ The owner set this rule on 2026-11-07; see
 - `npm run test:all`, a production build and the checkout end-to-end suite.
 - CI on all three operating systems, and the on-demand Intel macOS job, because
   `@electron/universal` merges the x64 and arm64 archives with ASAR.
-- On Windows CI, the Electron-Mocha suites pass without the patch.

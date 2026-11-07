@@ -59,6 +59,9 @@ jobs:
     - name: Verify Electron and embedded Node
       run: npm run verify:electron
 
+    - name: npm run test:dependency-compat
+      run: npm run test:dependency-compat
+
     - name: Install virtual display dependencies
       run: |
         sudo apt-get update

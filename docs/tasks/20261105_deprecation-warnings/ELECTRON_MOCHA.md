@@ -1,9 +1,10 @@
 # Electron-Mocha executable spawning
 
-> **Update, 2026-11-07:** `script/patch-electron-mocha.js` has been removed,
-> and the Windows DEP0190 warnings are accepted until an Electron-Mocha
-> release removes them. See the
-> [override removal record](../20261107_remove-dependency-overrides/STATUS.md).
+> **Update, 2026-11-07:** this patch is kept for a different reason: it lets the
+> Electron-Mocha suites start on Windows from a checkout path that contains a
+> space. Avoiding DEP0190 alone would not justify it. See
+> [dependencies.md](../../contributing/dependencies.md#departures-kept-for-a-needed-feature)
+> and the [override removal record](../20261107_remove-dependency-overrides/STATUS.md).
 
 ## Evidence and scope
 

@@ -4,11 +4,9 @@ Started on 2026-11-07. See the [plan](./PLAN.md).
 
 ## Current state
 
-The five overrides, both install-time source patches (`script/patch-temp.js`
-and `script/patch-electron-mocha.js`) and the tests that guarded them are
-removed. `postinstall`, `test:all` and the macOS and Windows CI workflows are
-back to what they were before the
-[deprecation warning cleanup](../20261105_deprecation-warnings/PLAN.md). Checked
+The five overrides, `script/patch-temp.js` and the tests that guarded them are
+removed. `script/patch-electron-mocha.js` stays, for a different reason than the
+one it was added for; see [Electron-Mocha patch](#electron-mocha-patch). Checked
 on macOS with Node 26.13.0 and npm 11.20.0, against `main` at `d57cbfd`.
 
 Each consumer now resolves the version it declares, which is also the version
@@ -25,21 +23,19 @@ on `main` before the overrides were added:
 `electron-updater` is the only one of these that ships in the application.
 
 **Existing clones need a clean `mise exec -- npm ci` after pulling this change.**
-`npm install` keeps the patched `node_modules/temp/lib/temp.js` and
-Electron-Mocha's two patched files, because both packages keep their locked
-versions. Checked by installing `main` with `npm ci`, then this branch with
-`npm install`: the patched Temp remained, and its asynchronous cleanup threw at
-`rimraf.rimraf(...)`, which rimraf 2.6.3 does not export. `npm ci` removes
-`node_modules` first, so it installs the published sources.
+`npm install` keeps the patched `node_modules/temp/lib/temp.js`, because Temp
+keeps its locked version. Checked by installing `main` with `npm ci`, then this
+branch with `npm install`: the patched Temp remained, and its asynchronous
+cleanup threw at `rimraf.rimraf(...)`, which rimraf 2.6.3 does not export.
+`npm ci` removes `node_modules` first, so it installs Temp's published source.
 [CONTRIBUTING.md](../../CONTRIBUTING.md) already installs with `npm ci`.
 
 ## Deprecation warnings
 
 A clean `npm ci` prints these deprecated versions again: `glob@7.2.3` (two
 copies), `inflight@1.0.6`, `rimraf@2.6.3`, `boolean@3.2.0`,
-`lodash.isequal@4.5.0` and `glob@10.5.0`. On Windows, the Electron-Mocha
-suites print Node's DEP0190 warning again, twice each. Where each warning comes
-from and when to revisit it is in
+`lodash.isequal@4.5.0` and `glob@10.5.0`. Where each comes from and when to
+revisit it is in
 [dependencies.md](../../contributing/dependencies.md#known-deprecation-warnings).
 
 ## Lockfile
@@ -70,7 +66,8 @@ override was needed to avoid a vulnerability.
 ## Verification
 
 On macOS (Apple Silicon), in a linked Git worktree. These checks ran with the
-overrides and the Temp patch removed, before the Electron-Mocha patch was:
+overrides and the Temp patch removed and the Electron-Mocha patch in place, as
+in the final state:
 
 - A clean `npm ci` passes and leaves the lockfile unchanged. `npm ls --all`
   reports no problems.
@@ -96,34 +93,37 @@ overrides and the Temp patch removed, before the Electron-Mocha patch was:
 - No log of these runs contains a deprecation message, apart from the
   `npm ci` warnings listed above.
 
-After the Electron-Mocha patch was removed as well, a clean `npm ci` installs
-Electron-Mocha's published source and leaves the lockfile and its deprecation
-warnings unchanged. `npm ls --all`, `lint:all`, and the Electron-Mocha main
-(117) and renderer (69) suites pass. The rest of `test:all` does not use
-Electron-Mocha, so it was not rerun.
+The Electron-Mocha patch was then removed and restored (see below). After it
+was restored, a clean `npm ci` applies it again and leaves the lockfile and
+its deprecation warnings unchanged. `npm ls --all`, the patch's test (4),
+`lint:all`, and the Electron-Mocha main (117) and renderer (69) suites pass.
 
 CI and the on-demand Intel macOS job run on the pull request, whose description
 records their results.
 
 ## Electron-Mocha patch
 
-The owner decided on 2026-11-07, after the overrides were removed, to remove
-`script/patch-electron-mocha.js` under the same rule. It changed Electron-Mocha
-13.1.0's two spawn calls from `shell: process.platform === 'win32'` to
-`shell: false`, to avoid DEP0190 warnings on Windows. Electron-Mocha already
-starts Electron without a shell on macOS and Linux, so only Windows changes.
+`script/patch-electron-mocha.js` changes Electron-Mocha 13.1.0's two spawn calls
+from `shell: process.platform === 'win32'` to `shell: false`. The deprecation
+warning cleanup added it to avoid DEP0190 warnings on Windows, and this pull
+request first removed it, because that is not a reason to patch an installed
+package. A review then pointed out that on Windows the shell receives the
+Electron path unquoted, so without the patch the Electron-Mocha suites cannot
+start from a checkout path that contains a space.
 
-On Windows, the shell also receives the Electron path unquoted, so without the
-patch these suites cannot start from a checkout path that contains a space. A
-review pointed this out after the decision. This was also the state before the
-deprecation warning cleanup, and CI's checkout path has no spaces. It is
-recorded as a revisit condition in
-[dependencies.md](../../contributing/dependencies.md#known-deprecation-warnings).
+On 2026-11-07 the owner decided that working from such a path is needed, so the
+patch is kept for that reason, and is to be removed when Electron-Mocha is
+fixed.
+[dependencies.md](../../contributing/dependencies.md#departures-kept-for-a-needed-feature)
+lists it with that reason and the removal condition, and the patch's own comment
+now leads with the same reason. Electron-Mocha already starts Electron without a
+shell on macOS and Linux, so the patch changes only Windows.
 
 ## Resuming
 
 Nothing is pending in this record. When upgrading electron-builder,
-`electron-updater` or `electron-mocha`,
-check the revisit conditions in
+`electron-updater` or `electron-mocha`, check the revisit conditions in
 [dependencies.md](../../contributing/dependencies.md#known-deprecation-warnings)
-and update the list.
+and update the list. When an Electron-Mocha release starts Electron without a
+shell, remove `script/patch-electron-mocha.js`, its test,
+`test:dependency-compat` and its CI steps.
