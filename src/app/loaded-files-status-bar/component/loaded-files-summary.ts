@@ -10,8 +10,8 @@ export interface LoadedFilesSummary {
 /** What the loaded-files status bar shows about the photos of the opened folder. */
 export function summarizeLoadedFiles(photos: readonly Photo[]): LoadedFilesSummary {
   const fileTypeAndNumber = new Map<string, number>([
-    ['JPEG', photos.filter(photo => photo?.isJpeg).length],
-    ['HEIF', photos.filter(photo => photo?.isHeif).length],
+    ['JPEG', photos.filter(photo => photo.isJpeg).length],
+    ['HEIF', photos.filter(photo => photo.isHeif).length],
     ['PNG', photos.filter(photo => photo.isPng).length],
     ['TIFF', photos.filter(photo => photo.isTiff).length],
     ['Total', photos.length],
@@ -23,7 +23,7 @@ export function summarizeLoadedFiles(photos: readonly Photo[]): LoadedFilesSumma
 
   return {
     numberOfLoadedFiles: photos.length,
-    numberOfFilesWithGpsInfo: photos.filter(photo => photo?.hasGpsInfo).length,
+    numberOfFilesWithGpsInfo: photos.filter(photo => photo.hasGpsInfo).length,
     descriptionByFileType,
   };
 }

@@ -10,10 +10,12 @@ export class LoadedFilesStatusBarService {
   /** Whether the status bar is shown: the "Show Status Bar" setting, or the value being tried in the settings dialog. */
   public readonly visible = this.visibleState.asReadonly();
 
+  /** Shows or hides the status bar, as the settings dialog does while its checkbox is changed. */
   public setVisibility(visible: boolean) {
     this.visibleState.set(visible);
   }
 
+  /** Goes back to the "Show Status Bar" setting, as Cancel in the settings dialog does. */
   public restoreVisibilityToSettingValue() {
     this.setVisibility(LoadedFilesStatusBarService.readSetting());
   }

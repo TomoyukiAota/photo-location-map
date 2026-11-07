@@ -38,6 +38,10 @@ export class OpenFolderService {
   ) {
   }
 
+  /**
+   * Opens a folder: reads its photos while the loading dialog is shown, then shows its tree, which pins its photos on
+   * the map and the chart, and starts making the thumbnails of its HEIF files.
+   */
   public async open(folderPath: string) {
     let loadingFolderDialogRef: MatDialogRef<LoadingFolderDialogComponent> = null;
 
