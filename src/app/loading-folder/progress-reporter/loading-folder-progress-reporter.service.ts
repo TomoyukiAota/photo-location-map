@@ -20,6 +20,7 @@ export const notStartedLoadingFolderProgressStatus: LoadingFolderProgressStatus 
   isCompleted: false,
 };
 
+/** Whether two statuses show the same progress: the status signal's equality, so that an update to the same one notifies no one. */
 function isSameStatus(a: LoadingFolderProgressStatus, b: LoadingFolderProgressStatus): boolean {
   return a.numberOfLoadedFiles === b.numberOfLoadedFiles && a.numberOfAllFilesToLoad === b.numberOfAllFilesToLoad
     && Object.is(a.loadedPercent, b.loadedPercent)
@@ -36,6 +37,10 @@ export class LoadingFolderProgressReporterService {
   public readonly status = this.statusState.asReadonly();
   private intervalId: ReturnType<typeof setInterval> | undefined;
 
+  /**
+   * Starts reporting the progress of the folder being opened from the start, every 100 ms until it has loaded, and
+   * stops reporting that of the previous folder if it never finished.
+   */
   public startUpdatingProgress(): void {
     Logger.info('[Loading Folder] Collecting files to load from the opened folder...');
     // The dialog of a new folder starts from collecting the files, not from where the previous folder ended.

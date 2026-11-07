@@ -46,4 +46,20 @@ describe('LoadingFolderProgressReporterService', () => {
     expect(service.status()).toEqual(notStartedLoadingFolderProgressStatus);
     expect(vi.getTimerCount()).toBe(1);
   });
+
+  it('stops reporting a folder that did not finish loading when the next one starts', () => {
+    service.startUpdatingProgress();
+    LoadingFolderProgress.setNumberOfAllFilesToLoad(2);
+    LoadingFolderProgress.incrementNumberOfLoadedFiles();
+    vi.advanceTimersByTime(100);
+    expect(service.status()).toMatchObject({ numberOfLoadedFiles: 1, isInProgress: true });
+    expect(vi.getTimerCount()).toBe(1);
+
+    LoadingFolderProgress.reset();
+    service.startUpdatingProgress();
+    expect(service.status()).toEqual(notStartedLoadingFolderProgressStatus);
+    expect(vi.getTimerCount()).toBe(1);
+    vi.advanceTimersByTime(100);
+    expect(service.status()).toEqual(notStartedLoadingFolderProgressStatus);
+  });
 });
