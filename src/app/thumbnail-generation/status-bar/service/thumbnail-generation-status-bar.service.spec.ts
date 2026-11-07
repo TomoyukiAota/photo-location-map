@@ -10,7 +10,22 @@ describe('ThumbnailGenerationStatusBarService', () => {
     service = TestBed.inject(ThumbnailGenerationStatusBarService);
   });
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
+  it('is hidden until a generation starts', () => {
+    expect(service.visible()).toBe(false);
+    expect(service.detailsVisible()).toBe(false);
+  });
+
+  it('shows each new generation with its details closed, until it is hidden', () => {
+    service.showForNewGeneration();
+    expect(service.visible()).toBe(true);
+    service.toggleDetails();
+    expect(service.detailsVisible()).toBe(true);
+
+    service.hide();
+    expect(service.visible()).toBe(false);
+
+    service.showForNewGeneration();
+    expect(service.visible()).toBe(true);
+    expect(service.detailsVisible()).toBe(false);
   });
 });

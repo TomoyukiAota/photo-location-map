@@ -1,6 +1,5 @@
-import { Injectable } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { ipcRenderer } from 'electron';
-import { BehaviorSubject, Subject } from 'rxjs';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { convertToFlattenedDirTree } from '../../../../src-shared/dir-tree/dir-tree-util';
 import { FilenameExtension } from '../../../../src-shared/filename-extension/filename-extension';
@@ -17,20 +16,36 @@ export interface ThumbnailGenerationResult {
   filePathsWithoutThumbnail: string[],
 }
 
+/** Where the generation of the opened folder's HEIF thumbnails is, which the status bar shows. */
+export interface ThumbnailGenerationStatus {
+  /** 'idle' until the first generation starts. */
+  readonly phase: 'idle' | 'generating' | 'done';
+  readonly numOfAllHeifFiles: number;
+  readonly numOfCacheAvailableThumbnails: number;
+  readonly numOfGenerationRequiredThumbnails: number;
+  readonly numOfProcessedThumbnails: number;
+  readonly progressPercent: number;
+  /** Set once the phase is 'done'. */
+  readonly result: ThumbnailGenerationResult | null;
+}
+
+export const idleThumbnailGenerationStatus: ThumbnailGenerationStatus = {
+  phase: 'idle',
+  numOfAllHeifFiles: 0,
+  numOfCacheAvailableThumbnails: 0,
+  numOfGenerationRequiredThumbnails: 0,
+  numOfProcessedThumbnails: 0,
+  progressPercent: 0,
+  result: null,
+};
+
 @Injectable({
   providedIn: 'root'
 })
 export class ThumbnailGenerationService {
-  public generationStarted = new Subject<{numOfAllHeifFiles: number, numOfCacheAvailableThumbnails: number, numOfGenerationRequiredThumbnails: number}>();
-  public generationProgress = new Subject<{numOfProcessedThumbnails: number, progressPercent: number}>();
-  public generationDone = new Subject<ThumbnailGenerationResult>();
-  public thumbnailGenerationResult: ThumbnailGenerationResult;
-  public isGenerating = new BehaviorSubject<boolean>(false);
-
-  constructor() {
-    this.generationStarted.subscribe(() => this.isGenerating.next(true));
-    this.generationDone.subscribe(() => this.isGenerating.next(false));
-  }
+  private readonly statusState = signal<ThumbnailGenerationStatus>(idleThumbnailGenerationStatus);
+  public readonly status = this.statusState.asReadonly();
+  public readonly isGenerating = computed(() => this.status().phase === 'generating');
 
   private allHeifFilePaths: string[];
   private get numOfAllHeifFiles(): number { return this.allHeifFilePaths.length; }
@@ -39,7 +54,8 @@ export class ThumbnailGenerationService {
   private get numOfHeifFilesToGenerateThumbnail(): number { return this.heifFilePathsToGenerateThumbnail.length; }
   private get numOfGenerationRequiredThumbnails(): number { return this.numOfHeifFilesToGenerateThumbnail; }
 
-  public startThumbnailGeneration(dirTreeObj: DirectoryTree): void {
+  /** @returns Whether a generation started, which it does when a HEIF file has no thumbnail in the cache. */
+  public startThumbnailGeneration(dirTreeObj: DirectoryTree): boolean {
     const flattenedDirTree = convertToFlattenedDirTree(dirTreeObj);
 
     this.allHeifFilePaths = flattenedDirTree
@@ -53,8 +69,10 @@ export class ThumbnailGenerationService {
       this.startGenerationInMainProcess();
       this.updateGenerationStatusAsStarted();
       this.updateGenerationStatusFromInProgressToDone();
+      return true;
     } else {
       logger.info(`Cached thumbnails are available for all HEIF files. Thumbnail generation is skipped.`);
+      return false;
     }
   }
 
@@ -68,10 +86,14 @@ export class ThumbnailGenerationService {
 
   private updateGenerationStatusAsStarted() {
     const numOfCacheAvailableThumbnails = this.numOfAllHeifFiles - this.numOfGenerationRequiredThumbnails;
-    this.generationStarted.next({
+    this.statusState.set({
+      phase: 'generating',
       numOfAllHeifFiles: this.numOfAllHeifFiles,
       numOfCacheAvailableThumbnails: numOfCacheAvailableThumbnails,
       numOfGenerationRequiredThumbnails: this.numOfGenerationRequiredThumbnails,
+      numOfProcessedThumbnails: 0,
+      progressPercent: 0,
+      result: null,
     });
     this.recordAtThumbnailGenerationStart(numOfCacheAvailableThumbnails);
   }
@@ -103,22 +125,22 @@ export class ThumbnailGenerationService {
     const progressPercent = (numberOfProcessedThumbnails / this.numOfGenerationRequiredThumbnails) * 100;
     logger.info(`Thumbnail generation progress: ${progressPercent.toFixed(5)} %, Processed/Generation-required: `
       + `${numberOfProcessedThumbnails}/${this.numOfGenerationRequiredThumbnails}`);
-    this.generationProgress.next({numOfProcessedThumbnails: numberOfProcessedThumbnails, progressPercent});
+    this.statusState.update(status => ({...status, numOfProcessedThumbnails: numberOfProcessedThumbnails, progressPercent}));
   }
 
   private updateGenerationStatusToDone() {
     const heifFilePathsWithoutThumbnail = this.heifFilePathsToGenerateThumbnail.filter(filePath => !isThumbnailCacheAvailable(filePath));
     const errorOccurred = heifFilePathsWithoutThumbnail.length >= 1;
-    this.thumbnailGenerationResult = {
+    const result: ThumbnailGenerationResult = {
       errorOccurred: errorOccurred,
       filePathsWithoutThumbnail: heifFilePathsWithoutThumbnail,
     };
-    this.generationDone.next(this.thumbnailGenerationResult);
+    this.statusState.update(status => ({...status, phase: 'done', result}));
   }
 
   private recordThumbnailGenerationResult() {
     logger.info(`Finished thumbnail generation.`);
-    const { errorOccurred, filePathsWithoutThumbnail } = this.thumbnailGenerationResult;
+    const { errorOccurred, filePathsWithoutThumbnail } = this.status().result;
     if (errorOccurred) {
       logger.warn(`Error(s) occurred during thumbnail generation.`);
       const filePathsText = stringArrayToLogText(filePathsWithoutThumbnail);

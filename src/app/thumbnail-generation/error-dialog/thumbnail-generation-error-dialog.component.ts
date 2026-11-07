@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed } from '@angular/core';
 import { ThumbnailGenerationService } from '../service/thumbnail-generation.service';
 
 @Component({
@@ -8,13 +8,10 @@ import { ThumbnailGenerationService } from '../service/thumbnail-generation.serv
   changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
-export class ThumbnailGenerationErrorDialogComponent implements OnInit {
-  public numberOfFilesWithoutThumbnail: number;
+export class ThumbnailGenerationErrorDialogComponent {
+  public readonly numberOfFilesWithoutThumbnail = computed(() =>
+    this.thumbnailGenerationService.status().result?.filePathsWithoutThumbnail.length ?? 0);
 
   constructor(private thumbnailGenerationService: ThumbnailGenerationService) {
-  }
-
-  public ngOnInit() {
-    this.numberOfFilesWithoutThumbnail = this.thumbnailGenerationService.thumbnailGenerationResult.filePathsWithoutThumbnail.length;
   }
 }

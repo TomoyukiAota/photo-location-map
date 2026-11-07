@@ -2,18 +2,14 @@ import {
   Component,
   ChangeDetectionStrategy,
   AfterViewInit,
-  OnInit,
   ElementRef,
   ViewChild,
-  signal,
 } from '@angular/core';
 import Split from 'split.js';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { Logger } from '../../../src-shared/log/logger';
 import { LeafletMapForceRenderService } from '../map/leaflet-map/leaflet-map-force-render/leaflet-map-force-render.service';
-import { OpenFolderService } from '../shared/service/open-folder.service';
 import { LoadedFilesStatusBarService } from '../loaded-files-status-bar/service/loaded-files-status-bar.service';
-import { ThumbnailGenerationService } from '../thumbnail-generation/service/thumbnail-generation.service';
 import { ThumbnailGenerationStatusBarService } from '../thumbnail-generation/status-bar/service/thumbnail-generation-status-bar.service';
 
 @Component({
@@ -23,28 +19,16 @@ import { ThumbnailGenerationStatusBarService } from '../thumbnail-generation/sta
   templateUrl: './home.component.html',
   standalone: false
 })
-export class HomeComponent implements AfterViewInit, OnInit {
-  public readonly thumbnailGenerationStatusBarVisible = signal(false);
+export class HomeComponent implements AfterViewInit {
   private sidebarSplitInstance: Split.Instance;
   private currentSidebarUpperPaneHeightPx: number;
 
   @ViewChild('sidebar') private sidebarDiv: ElementRef;
   @ViewChild('sidebarUpperPane') private sidebarUpperPaneDiv: ElementRef;
 
-  constructor(private openFolderService: OpenFolderService,
-              private thumbnailGenerationService: ThumbnailGenerationService,
-              private thumbnailGenerationStatusBarService: ThumbnailGenerationStatusBarService,
+  constructor(public thumbnailGenerationStatusBarService: ThumbnailGenerationStatusBarService,
               public loadedFilesStatusBarService: LoadedFilesStatusBarService,
               private leafletMapForceRenderService: LeafletMapForceRenderService) {}
-
-  ngOnInit() {
-    this.openFolderService.folderOpened.subscribe(
-      () => this.thumbnailGenerationStatusBarVisible.set(false));
-    this.thumbnailGenerationService.generationStarted.subscribe(
-      () => this.thumbnailGenerationStatusBarVisible.set(true));
-    this.thumbnailGenerationStatusBarService.closeRequested.subscribe(
-      () => this.thumbnailGenerationStatusBarVisible.set(false));
-  }
 
   ngAfterViewInit() {
     const gutterSize = 8;              // 8px, which is the same width as the splitter gutter in Photo Data Viewer.
