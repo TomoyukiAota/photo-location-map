@@ -22,13 +22,24 @@ exports.withHeadlessTestOptions = options => headless
   : options;
 
 if (testRoot) {
-  const { app, session } = require('electron');
+  const { app, BrowserWindow, session } = require('electron');
   if (automated) {
     // Preserve Electron/Commander argument conventions and ordinary CLI options.
     // These exact flags are added by Playwright, including its Linux default.
     const debuggingFlags = new Set(['--inspect=0', '--remote-debugging-port=0', '--no-sandbox']);
     process.argv = process.argv.filter((arg, index) => index === 0 || !debuggingFlags.has(arg));
     globalThis.__plmTestRequire = require;
+    // Record the calls that would show a hidden window by restoring a maximized or full-screen
+    // state, for the e2e suite to check that none is made: on macOS, a window becomes full screen
+    // only after a transition, which can still be under way when the suite looks at it.
+    globalThis.__plmWindowStateCalls = [];
+    for (const name of ['maximize', 'setFullScreen']) {
+      const original = BrowserWindow.prototype[name];
+      BrowserWindow.prototype[name] = function (...args) {
+        globalThis.__plmWindowStateCalls.push([name, ...args]);
+        return original.apply(this, args);
+      };
+    }
   }
 
   function captureAnalytics(details) {

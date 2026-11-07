@@ -518,6 +518,8 @@ test('a saved maximized or full-screen main window stays hidden in a headless ru
   const mainWindow = await app.browserWindow(page);
   await expectWindowHiddenOnlyIfHeadless(mainWindow);
   expect(await mainWindow.evaluate(window => [window.isMaximized(), window.isFullScreen()])).toEqual([false, false]);
+  // On macOS, a window becomes full screen only after a transition, so check that none was asked for.
+  expect(await app.evaluate(() => globalThis.__plmWindowStateCalls)).toEqual([]);
 });
 test('analytics preserves events and identity without new Amplitude local URLs', async () => {
   await dismissWelcome();
