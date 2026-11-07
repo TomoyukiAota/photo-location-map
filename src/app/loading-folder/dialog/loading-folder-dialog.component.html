@@ -1,23 +1,24 @@
+@let progress = status();
 <div class="progress-indicator">
-  <mat-progress-bar [mode]="progressBarMode" [value]="progressPercent"></mat-progress-bar>
+  <mat-progress-bar [mode]="progressBarMode()" [value]="progress.loadedPercent"></mat-progress-bar>
   <div class="loading-and-progress">
     <div>
-      @if (!isLoadingFilesStarted) {
+      @if (!progress.isStarted) {
         Collecting files to load from the opened folder...
       }
-      @if (isLoadingFilesInProgress) {
+      @if (progress.isInProgress) {
         Loading files from the opened folder...
       }
-      @if (isLoadingFilesCompleted) {
-        Completed loading all files ({{ numberOfLoadedFiles }} files).
+      @if (progress.isCompleted) {
+        Completed loading all files ({{ progress.numberOfLoadedFiles }} files).
       }
     </div>
-    @if (isLoadingFilesStarted) {
+    @if (progress.isStarted) {
       <div>
-        @if (isLoadingFilesInProgress) {
-          Loaded {{ numberOfLoadedFiles }} files out of {{ numberOfAllFilesToLoad }} files.
+        @if (progress.isInProgress) {
+          Loaded {{ progress.numberOfLoadedFiles }} files out of {{ progress.numberOfAllFilesToLoad }} files.
         }
-        @if (isLoadingFilesCompleted) {
+        @if (progress.isCompleted) {
           Generating the map using the loaded files...
         }
       </div>
