@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, viewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { app } from '@electron/remote';
 
@@ -10,14 +10,13 @@ import { configureOpeningInOsBrowser } from '../shared/open-url/configure-openin
   selector: 'app-about-box',
   templateUrl: './about-box.component.html',
   styleUrls: ['./about-box.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class AboutBoxComponent implements AfterViewInit {
   public readonly appVersion = app.getVersion();
 
-  @ViewChild('releasesLink') public releasesLink: ElementRef<HTMLAnchorElement>;
-  @ViewChild('troubleshootingPageLink') public troubleshootingPageLink: ElementRef<HTMLAnchorElement>;
+  public readonly releasesLink = viewChild.required<ElementRef<HTMLAnchorElement>>('releasesLink');
+  public readonly troubleshootingPageLink = viewChild.required<ElementRef<HTMLAnchorElement>>('troubleshootingPageLink');
 
   public get xFormerlyTwitterLogoDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.xFormerlyTwitterLogo); }
   public get gitHubLogoDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.gitHubLogo); }
@@ -26,9 +25,9 @@ export class AboutBoxComponent implements AfterViewInit {
   }
 
   public ngAfterViewInit() {
-    configureOpeningInOsBrowser(this.releasesLink, 'https://github.com/TomoyukiAota/photo-location-map/releases',
+    configureOpeningInOsBrowser(this.releasesLink(), 'https://github.com/TomoyukiAota/photo-location-map/releases',
                                 'GitHub Releases', 'About Box');
-    configureOpeningInOsBrowser(this.troubleshootingPageLink, 'https://github.com/TomoyukiAota/photo-location-map/blob/main/docs/troubleshooting/troubleshooting.md',
+    configureOpeningInOsBrowser(this.troubleshootingPageLink(), 'https://github.com/TomoyukiAota/photo-location-map/blob/main/docs/troubleshooting/troubleshooting.md',
                                 'Troubleshooting Page', 'About Box');
   }
 

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ChangeDetectionStrategy, effect, signal, untracked } from '@angular/core';
+import { AfterViewInit, Component, effect, signal, untracked } from '@angular/core';
 import { PinnedPhotoService } from '../../shared/service/pinned-photo.service';
 import { Photo } from '../../shared/model/photo.model';
 import { GoogleMapsApiKeyHandler } from './google-maps-api-key-handler';
@@ -9,7 +9,6 @@ import { GoogleMapsApiLoader } from './google-maps-api-loader';
   selector: 'app-google-maps',
   templateUrl: './google-maps.component.html',
   styleUrls: ['./google-maps.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class GoogleMapsComponent implements AfterViewInit {

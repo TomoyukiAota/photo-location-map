@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, viewChild } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
@@ -19,7 +19,6 @@ interface TableRow {
   selector: 'app-thumbnail-generation-error-table',
   templateUrl: './thumbnail-generation-error-table.component.html',
   styleUrls: ['./thumbnail-generation-error-table.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class ThumbnailGenerationErrorTableComponent implements OnInit {
@@ -29,7 +28,7 @@ export class ThumbnailGenerationErrorTableComponent implements OnInit {
   public get launchExternalAppIconDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.launchExternalApp); }
   public get folderIconDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.folder); }
 
-  @ViewChild(MatSort, { static: true }) private sort: MatSort;
+  private readonly sort = viewChild.required(MatSort);
 
   constructor(private sanitizer: DomSanitizer,
               private thumbnailGenerationService: ThumbnailGenerationService,
@@ -44,7 +43,7 @@ export class ThumbnailGenerationErrorTableComponent implements OnInit {
         filePath: filePath
       };
     });
-    this.dataSource.sort = this.sort;
+    this.dataSource.sort = this.sort();
   }
 
   public applyFilter(filterValue: string) {

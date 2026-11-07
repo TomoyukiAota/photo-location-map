@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, viewChild } from '@angular/core';
 import * as fsExtra from 'fs-extra';
 import { openWithAssociatedApp } from '../../../../src-shared/command/command';
 import { Logger } from '../../../../src-shared/log/logger';
@@ -10,20 +10,19 @@ import { configureOpeningInOsBrowser } from '../../shared/open-url/configure-ope
   selector: 'app-cache-settings',
   templateUrl: './cache-settings.component.html',
   styleUrls: ['./cache-settings.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class CacheSettingsComponent implements AfterViewInit, OnInit {
   public thumbnailCacheLocation = plmThumbnailCacheDir;
 
-  @ViewChild('heifWikipediaLink') public heifWikipediaLink: ElementRef<HTMLAnchorElement>;
+  public readonly heifWikipediaLink = viewChild.required<ElementRef<HTMLAnchorElement>>('heifWikipediaLink');
 
   ngOnInit(): void {
     fsExtra.ensureDirSync(this.thumbnailCacheLocation);
   }
 
   ngAfterViewInit() {
-    configureOpeningInOsBrowser(this.heifWikipediaLink, 'https://en.wikipedia.org/wiki/High_Efficiency_Image_File_Format',
+    configureOpeningInOsBrowser(this.heifWikipediaLink(), 'https://en.wikipedia.org/wiki/High_Efficiency_Image_File_Format',
                                 'HEIF page in Wikipedia', 'Settings Dialog] [Cache');
   }
 

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, computed, effect, signal, untracked } from '@angular/core';
+import { Component, computed, effect, signal, untracked } from '@angular/core';
 import { ECharts, EChartsOption } from 'echarts';
 import * as _ from 'lodash';
 import { unitOfTime } from 'moment';
@@ -15,7 +15,6 @@ import { dateTimeTakenChartLogger as logger } from './date-time-taken-chart-logg
   selector: 'app-date-time-taken-chart',
   templateUrl: './date-time-taken-chart.component.html',
   styleUrls: ['./date-time-taken-chart.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class DateTimeTakenChartComponent {

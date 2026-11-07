@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, computed, output } from '@angular/core';
+import { Component, computed, output } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { DomSanitizer } from '@angular/platform-browser';
 import { unitOfTime } from 'moment';
@@ -13,7 +13,6 @@ import { getXAxisUnitMomentJsStr, xAxisUnit } from './date-time-taken-chart-x-ax
   selector: 'app-date-time-taken-chart-config',
   templateUrl: './date-time-taken-chart-config.component.html',
   styleUrls: ['./date-time-taken-chart-config.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class DateTimeTakenChartConfigComponent {

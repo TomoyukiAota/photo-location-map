@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 import * as remote from '@electron/remote';
 import { Logger } from '../../../../src-shared/log/logger';
 import { RequireFromMainProcess } from '../../../../src-shared/require/require-from-main-process';
@@ -12,7 +12,6 @@ import { OpenFolderDialogHistory } from './open-folder-dialog-history';
   selector: 'app-sidebar-upper-pane',
   templateUrl: './sidebar-upper-pane.component.html',
   styleUrl: './sidebar-upper-pane.component.scss',
-  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class SidebarUpperPaneComponent {

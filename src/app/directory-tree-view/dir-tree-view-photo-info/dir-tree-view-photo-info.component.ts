@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, input, viewChild } from '@angular/core';
 import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewer-content';
 import { PhotoDataService } from '../../shared/service/photo-data.service';
 
@@ -6,21 +6,20 @@ import { PhotoDataService } from '../../shared/service/photo-data.service';
   selector: 'app-dir-tree-view-photo-info',
   templateUrl: './dir-tree-view-photo-info.component.html',
   styleUrls: ['./dir-tree-view-photo-info.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class DirTreeViewPhotoInfoComponent implements AfterViewInit {
-  @Input() public photoPath: string;
-  @ViewChild('dirTreeViewPhotoInfo', { static: true }) public divElementRef: ElementRef<HTMLDivElement>;
+  public readonly photoPath = input.required<string>();
+  public readonly divElementRef = viewChild.required<ElementRef<HTMLDivElement>>('dirTreeViewPhotoInfo');
 
   constructor(private photoDataService: PhotoDataService) {
   }
 
   public ngAfterViewInit() {
-    const photo = this.photoDataService.getPhoto(this.photoPath);
+    const photo = this.photoDataService.getPhoto(this.photoPath());
     const contentRoot = PhotoInfoViewerContent.request('dir-tree-view', photo);
     this.adjustPhotoInfoViewerContentForDirTreeView(contentRoot);
-    this.divElementRef.nativeElement.appendChild(contentRoot);
+    this.divElementRef().nativeElement.appendChild(contentRoot);
   }
 
   private adjustPhotoInfoViewerContentForDirTreeView(contentRoot: HTMLDivElement) {

@@ -1,9 +1,8 @@
 import {
   Component,
-  ChangeDetectionStrategy,
   AfterViewInit,
   ElementRef,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 import Split from 'split.js';
 import { Analytics } from '../../../src-shared/analytics/analytics';
@@ -13,7 +12,6 @@ import { LoadedFilesStatusBarService } from '../loaded-files-status-bar/service/
 import { ThumbnailGenerationStatusBarService } from '../thumbnail-generation/status-bar/service/thumbnail-generation-status-bar.service';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-home',
   styleUrls: ['./home.component.scss'],
   templateUrl: './home.component.html',
@@ -23,8 +21,8 @@ export class HomeComponent implements AfterViewInit {
   private sidebarSplitInstance: Split.Instance;
   private currentSidebarUpperPaneHeightPx: number;
 
-  @ViewChild('sidebar') private sidebarDiv: ElementRef;
-  @ViewChild('sidebarUpperPane') private sidebarUpperPaneDiv: ElementRef;
+  private readonly sidebarDiv = viewChild.required<ElementRef>('sidebar');
+  private readonly sidebarUpperPaneDiv = viewChild.required<ElementRef>('sidebarUpperPane');
 
   constructor(public thumbnailGenerationStatusBarService: ThumbnailGenerationStatusBarService,
               public loadedFilesStatusBarService: LoadedFilesStatusBarService,
@@ -66,7 +64,7 @@ export class HomeComponent implements AfterViewInit {
       gutterSize: gutterSize,
       snapOffset: 0,
       onDragEnd: () => {
-        this.currentSidebarUpperPaneHeightPx = this.getHeightPx(this.sidebarUpperPaneDiv);
+        this.currentSidebarUpperPaneHeightPx = this.getHeightPx(this.sidebarUpperPaneDiv());
         Logger.info(`Changed sidebar upper pane height to ${this.currentSidebarUpperPaneHeightPx}px`);
         Analytics.trackEvent('Sidebar', 'Changed Sidebar Upper Pane Height', `${this.currentSidebarUpperPaneHeightPx}px`);
       }
@@ -76,7 +74,7 @@ export class HomeComponent implements AfterViewInit {
   }
 
   private calculateSidebarPanesHeightPercent(desiredUpperPaneHeightPx: number, gutterSize: number) {
-    const sidebarHeightPx = this.getHeightPx(this.sidebarDiv);
+    const sidebarHeightPx = this.getHeightPx(this.sidebarDiv());
 
     // Taking the gutter into account so that the actual height rendered on the browser becomes the same as the desired height.
     const upperPaneHeightPxForSplitJs = desiredUpperPaneHeightPx + (gutterSize / 2);

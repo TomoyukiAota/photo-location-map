@@ -1,7 +1,7 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, OnInit, ViewChild, ChangeDetectionStrategy, effect, signal, untracked } from '@angular/core';
+import { Component, OnInit, effect, signal, untracked, viewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { Analytics } from '../../../src-shared/analytics/analytics';
@@ -23,7 +23,6 @@ const dirTreeViewLogger = createPrependedLogger('[Directory Tree View]');
   selector: 'app-directory-tree-view',
   templateUrl: 'directory-tree-view.component.html',
   styleUrls: ['directory-tree-view.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class DirectoryTreeViewComponent implements OnInit {
@@ -263,20 +262,21 @@ export class DirectoryTreeViewComponent implements OnInit {
   }
 
   //#region --- Context Menu ---
-  @ViewChild(MatMenuTrigger) public contextMenu: MatMenuTrigger;
+  public readonly contextMenu = viewChild.required(MatMenuTrigger);
   public contextMenuPosition = { x: '0px', y: '0px' };
   public contextMenuHelper = DirTreeViewContextMenuHelper;
   public contextMenuItems = dirTreeViewContextMenuItems;
 
   public onContextMenu(event: MouseEvent, node: FlatNode) {
     event.preventDefault();
-    this.contextMenuHelper.configureStyleForContextMenuTarget(event, this.contextMenu);
+    const contextMenu = this.contextMenu();
+    this.contextMenuHelper.configureStyleForContextMenuTarget(event, contextMenu);
     this.contextMenuPosition.x = event.clientX + 'px';
     this.contextMenuPosition.y = event.clientY + 'px';
-    this.contextMenu.menuData = { 'contextMenuData': this.contextMenuHelper.createData(node) };
-    this.contextMenu.openMenu();
+    contextMenu.menuData = { 'contextMenuData': this.contextMenuHelper.createData(node) };
+    contextMenu.openMenu();
     this.contextMenuHelper.disableFocus(this.focusMonitor);
-    this.contextMenuHelper.configureClosingWithRightClick(this.contextMenu);
+    this.contextMenuHelper.configureClosingWithRightClick(contextMenu);
   }
   //#endregion --- Context Menu ---
 }

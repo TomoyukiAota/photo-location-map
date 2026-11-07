@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { IpcConstants } from '../../../../src-shared/ipc/ipc-constants';
 
@@ -8,14 +8,12 @@ import { MapComponent } from './map.component';
 // construction test independent of native map and worker initialization.
 @Component({
   selector: 'app-leaflet-map', template: '',
-  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 class DummyLeafletMapComponent {}
 
 @Component({
   selector: 'app-google-maps', template: '',
-  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 class DummyGoogleMapsComponent {}
