@@ -82,10 +82,12 @@ Before the pull request of a slice is opened:
    (AGENTS.md, "Keep windows off the owner's screen"), so drive the checks
    with a Playwright script against the app, as the e2e suite does, which
    keeps the windows off the screen on macOS and, with #642, on Windows (see
-   `test/e2e/README.md` for Linux). The owner checks the OS tab on Windows and
-   Google Maps with an API key after the merges (decided on 2026-11-08); any
-   other check that needs a person or another platform goes under "Questions
-   for the owner" in STATUS.md.
+   `test/e2e/README.md` for Linux). Two checks are exempt from this step: the
+   owner checks the OS tab on Windows and Google Maps with an API key after
+   the merges (decided on 2026-11-08). Their rows in STATUS.md stay open,
+   marked as the owner's, until the owner reports the result. Any other check
+   that needs a person or another platform goes under "Questions for the
+   owner" in STATUS.md.
 4. STATUS.md is updated: slice state, commit, pull request link, test results,
    progress counters, and the next executable action. When stopping in the
    middle of a slice, record the exact next action and which files are half

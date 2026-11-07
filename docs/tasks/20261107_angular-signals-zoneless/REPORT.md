@@ -52,13 +52,23 @@ Zoneless does not require `OnPush`, but without Zone.js an `Eager` component
 is not checked on every tick either. With zoneless change detection,
 `ApplicationRef` always traverses in targeted mode: a tick refreshes the views
 that a notification marked (`markForCheck()` marks the view and its
-ancestors), and below each refreshed view its `Eager` descendants. An `Eager`
-view in another root, such as an open dialog, that nothing marked is not
-checked, so state changed without a notification is never safe. `OnPush` is
-what makes a component's correctness independent of who triggers the tick,
-and it is the only way to be sure no component still relies on Zone.js. Converting the component's state to signals first is what makes the
-switch to `OnPush` safe, because a plain field mutated outside a template event
-silently stops rendering under `OnPush`. This repository already has that trap:
+ancestors), and below each refreshed view its `Eager` descendants, down to the
+first `OnPush` view that nothing marked; below that, only marked views are
+refreshed. An `Eager` view in another root, such as an open dialog, that
+nothing marked is not checked, so state changed without a notification is
+never safe.
+
+`OnPush` alone does not make a component independent of other views either.
+`HomeComponent` is already `OnPush`, yet its thumbnail status bar appears only
+because the `async` pipes of views below it mark it at the same moments. What
+makes rendering independent of who triggers the tick is that every state
+change notifies Angular, with a signal or a `markForCheck()` right after the
+write: that is what the plan converts, and what the exhaustive no-changes
+check of stage 2 verifies. `OnPush`, the default in Angular 22, then limits
+incidental refreshes to a view's ancestors. Converting the component's state
+to signals first is what makes the switch to `OnPush` safe, because a plain
+field mutated outside a template event silently stops rendering under
+`OnPush`. This repository already has that trap:
 every newly generated component is `OnPush` while the existing code style
 writes plain fields.
 
@@ -97,7 +107,10 @@ arriving through `NgZone.run`) ends with an application tick that checks every
 notifications: a signal read by a template changed; a template or host listener
 ran; `markForCheck()` was called (the `async` pipe does this, and it marks all
 ancestors); `ComponentRef.setInput` ran; a view was attached. `detectChanges()`
-still works but refreshes only that view. Each such tick is targeted (see
+still works: it refreshes that view and the views below it that are eligible
+(its `Eager` descendants and marked `OnPush` ones, down to the first `OnPush`
+view that nothing marked), not the rest of the application, so removing a
+parent's call can leave its children stale too. Each such tick is targeted (see
 above), so it does not check every `Eager` view. `NgZone.run` and `runOutsideAngular`
 become no-ops that the guide says may stay.
 

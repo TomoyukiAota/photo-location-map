@@ -118,8 +118,11 @@ merged locally: every number is the same.
 
 ## Manual check list
 
-Do every row for the slice that names it, all rows for stages 2 and 3. Record
-date, commit and platform in the last column; do not mark a row from memory.
+Do every row for the slice that names it, all rows for stages 2 and 3, except
+the two the owner checks after the merges (the OS tab on Windows, and Google
+Maps with an API key in "Map switch"), which stay open until the owner reports
+the result. Record date, commit, platform and how in the last column; do not
+mark a row from memory.
 
 | Flow | How | Expected | Checked |
 | --- | --- | --- | --- |
