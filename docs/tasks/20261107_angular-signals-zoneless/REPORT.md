@@ -1,7 +1,9 @@
 # Angular signals, OnPush and zoneless: investigation results
 
 Checked on 2026-11-07 against commit 45e0415720984d3f72e28f3c140c33a457b8a3f1
-(main). No application, dependency, test or release configuration was changed.
+(main), and again on 2026-11-08 with the pull requests then open (#638, #639,
+#640 and #642) merged into main locally: the findings hold. No application,
+dependency, test or release configuration was changed.
 Facts about Angular were verified in the installed packages (`@angular/core`
 22.2.4, `@angular/cli` 22.2.5) and the official release notes; the articles
 that prompted the investigation are listed under Sources.
@@ -124,7 +126,7 @@ tomorrow's, yet one refactor of an unrelated `async` pipe would break them.
 | `@ngx-translate/core` | 18.1.0 | Rebuilt on signals in v18 per its [migration guide](https://ngx-translate.org/getting-started/migration-guide/); the pipe and directive call `markForCheck()`. | Keep. |
 | `ng-table-virtual-scroll` | 1.6.1 | Last published 2024-03-31, compiled against Angular 15.1.4 (partial compilation), peer `>=15`. It feeds `CdkTable` from CDK viewport streams, and `CdkTable` marks for check. No zoneless statement upstream. | Expected to work; verify the thumbnail error table dialog (scroll, sort, filter). Fallback: CDK virtual scroll directly, or a plain table, since this dialog is the only use. |
 | Leaflet 1.9.4, markercluster, Geoman, Split.js, ECharts 6, Google Maps JS | Bundled from `node_modules` (Leaflet and its plugins through `scripts` and `styles` in `angular.json` since main ba7b832); Google Maps JS loads at runtime | Not Angular code. | Unaffected; their callbacks must write signals instead of plain fields. |
-| `zone.js` | 0.16.3 (devDependency, bundled through polyfills) | Maintenance mode upstream (recorded by the dependency lifecycle audit, which is in a separate pull request). | Removed in the zoneless stage. |
+| `zone.js` | 0.16.3 (devDependency, bundled through polyfills) | Maintenance mode upstream (recorded by the dependency lifecycle audit on the branch `codex/dependency-lifecycle-audit`, which is not on main). | Removed in the zoneless stage. |
 
 ## Tests and verification
 

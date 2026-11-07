@@ -1,6 +1,9 @@
 # Inventory: how state reaches the screen today
 
-Baseline: commit 45e0415720984d3f72e28f3c140c33a457b8a3f1 (main, 2026-11-07).
+Baseline: commit 45e0415720984d3f72e28f3c140c33a457b8a3f1 (main, 2026-11-07),
+checked again on 2026-11-08 with the open pull requests #638, #639, #640 and
+#642 merged into main locally: the rows hold, with the differences noted in
+them.
 Paths are under `src/`. The "Without Zone.js" column is the expected behavior
 if only `provideZonelessChangeDetection()` replaced
 `provideZoneChangeDetection()` and nothing else changed. It comes from reading
@@ -76,7 +79,7 @@ template-bound state. `PlmInternalRendererService` is in the last table.
 | `LoadingFolderDialogComponent` (Eager) | seven fields written from `progressStatus`, which a 100 ms `setInterval` feeds | Zone.js ticks after every interval callback | **breaks**: the text and progress bar would stay at "Collecting files..." | signals (or `toSignal`) |
 | `MapComponent` (Eager) | `selectedMap` written from an IPC callback inside `NgZone.run`, then `detectChanges()` | manual | manual | signal; drop `NgZone` |
 | `GoogleMapsComponent` (Eager) | template is static; `detectChanges()` after each render has no bound state to refresh | | unaffected | remove `detectChanges()`; render in an `effect` |
-| `LeafletMapComponent` (Eager) | template is static; the overlay is toggled by direct style writes; two `detectChanges()` calls refresh nothing bound | | unaffected | remove `detectChanges()`; render in an `effect` |
+| `LeafletMapComponent` (Eager) | template is static; the overlay is toggled by direct style writes; two `detectChanges()` calls refresh nothing bound (with #638, one of them in a `finally` that hides the overlay even when rendering throws; with #639, Leaflet makes a popup's content when the popup opens) | | unaffected | remove `detectChanges()`; render in an `effect` |
 | `DateTimeTakenChartComponent` (Eager) | `eChartsOption`, `isSupportedDuration`, `isSelectPhotosWithinZoomButtonVisible` written in three subscriptions and in the chart's output handlers | output handlers are template listeners; after a programmatic selection (region button, popup menu, undo/redo, `--open`) the view refreshes only because the child config's `dateUnknownPhotosCount \| async` marks the ancestors | by design for user zoom/restore; incidental otherwise | signals; `eChartsOption` as a `computed` of selected photos and the axis unit |
 | `DateTimeTakenChartConfigComponent` (Eager) | `dateUnknownPhotosCount \| async`; `showDateUnknownPhotos.value` read directly by `[checked]` | the checkbox is refreshed by the next tick, not when the chart's debounced zoom handler changes the value | by design / stale until the next event (minor: the menu is closed at that time) | read the signal |
 | `SelectPhotosWithinZoomComponent` (Eager) | static | | unaffected | drop `Eager` |
@@ -101,5 +104,5 @@ template-bound state. `PlmInternalRendererService` is in the last table.
 | Vanilla-DOM popups and controls | photo-info-viewer "Select only this" (`selectOnlyThis`), region info "Select Photos" button (`DirectoryTreeViewSelectionService.select`) | photo selection | same as the tree selection flow: tree refreshes manually, chart refreshes incidentally |
 | Leaflet, Geoman, markercluster, Google Maps events | `LeafletMapComponent`, `GoogleMapsComponent` | map state and the vanilla-DOM region info only | unaffected |
 | Timers | 100 ms loading progress interval; 5 s thumbnail progress interval; 1 ms Google Maps API poll; lodash `debounce`/`throttle` in map rendering, chart zoom and region changes | progress fields, pinned photos after zoom, region info | the loading dialog breaks; the thumbnail progress has `detectChanges()`; the chart config checkbox goes stale until the next event |
-| Workers and awaited promises | directory tree worker, EXIF reading inside `OpenFolderService.open` | photo data, tree data, status bar, thumbnail generation start | consumers are the flows above |
+| Workers and awaited promises | directory tree worker, EXIF reading inside `OpenFolderService.open`, the HEIF thumbnail workers of the main process (with #640, a worker that fails still gets its log file written, so the 5 s poll ends) | photo data, tree data, status bar, thumbnail generation start | consumers are the flows above |
 | `window.onresize`, Split.js | `HomeComponent` | DOM only | unaffected |

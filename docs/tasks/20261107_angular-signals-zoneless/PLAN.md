@@ -16,8 +16,9 @@ server. **Implementation starts only when the owner says so.** Until then the
 plan and the ledger are the only deliverables of this branch.
 
 Before any implementation step: read AGENTS.md, this file and STATUS.md; run
-`git status` and `gh pr list`; make sure `mise exec -- npm ci` has run in the
-checkout you work in. Keep everything in English and public-safe. Do not add a
+`git status` and `gh pr list --state open`, and stop if any of #638, #639,
+#640 or #642 is still open (see "Boundaries"); make sure `mise exec -- npm ci`
+has run in the checkout you work in. Keep everything in English and public-safe. Do not add a
 CLAUDE.md or keep knowledge in agent memory.
 
 ## Boundaries and starting snapshot
@@ -27,6 +28,17 @@ CLAUDE.md or keep knowledge in agent memory.
   ba7b832d552920a1dfcd73c428e88d47343e1368. In between, main gained a headless
   e2e suite and Leaflet bundled from `node_modules`, neither of which changes
   this plan.
+- Starting point: main **after the pull requests open on 2026-11-08 are
+  merged**: #638 (a photo whose coordinates are not numbers in range stays off
+  the map; `addEachMarker`; the Leaflet overlay hidden in a `finally`), #639
+  (photo content made when it is first shown; `generateCache` gone from
+  `OpenFolderService.open`), #640 (why HEIF thumbnails failed; main process
+  and e2e only) and #642 (e2e windows off the screen on Windows too). The
+  owner wants this work to start after them. Checked on 2026-11-08 by merging
+  the four into main locally: no conflicts, the progress counters in STATUS.md
+  are unchanged, and the slices below name the differences where they touch a
+  changed file. If one of them is closed instead of merged, re-check the files
+  it touches before the slice that names them.
 - Angular 22.2.4 (CLI 22.2.5), Angular Material/CDK 22.2.5, TypeScript 6.0.3,
   Vitest 5.1.0, Electron 45.2.1, zone.js 0.16.3, angular-eslint 22.6.0. Record
   the actually resolved versions in STATUS.md when implementation starts.
@@ -38,8 +50,9 @@ CLAUDE.md or keep knowledge in agent memory.
   and declined, see REPORT.md); no standalone conversion before stage 4; no
   change to the Electron main process, the IPC contract or the separate Photo
   Data Viewer.
-- The removal of `@electron/remote` (planned in a separate pull request's
-  documents) touches the same renderer services. Do not run the two in
+- The removal of `@electron/remote` (its plan is written separately and is
+  not on main or in an open pull request as of 2026-11-08) touches the same
+  renderer services. Do not run the two in
   parallel on overlapping files; the owner decides which goes first. Removing
   Zone.js changes timings, so finish this plan before that plan freezes its
   performance baseline, or start after its final stage is accepted.
@@ -61,8 +74,8 @@ Before the pull request of a slice is opened:
    STATUS.md with date and commit. They need a visible app window, which
    AGENTS.md ("Keep windows off the owner's screen") reserves for the owner:
    ask before launching the app for them, or hand the list to the owner.
-   Step 2 needs no such permission, since `npm run test:e2e` keeps the
-   windows hidden on macOS.
+   Step 2 needs no such permission: `npm run test:e2e` keeps the windows off
+   the screen on macOS and, with #642, on Windows; on Linux it shows them.
 4. STATUS.md is updated: slice state, commit, pull request link, test results,
    progress counters, and the next executable action. When stopping in the
    middle of a slice, record the exact next action and which files are half
@@ -117,7 +130,9 @@ Goal: the safety net and the tooling exist before any state changes.
   or nothing.
 - **0.2 Playwright coverage** for the flows INVENTORY.md marks as incidental
   or breaking, in `test/e2e/regression.spec.mjs`, following its helpers and
-  style, non-visual, with platform limits marked the way the file already does:
+  style, non-visual, with platform limits marked the way the file already does
+  (#638, #640 and #642 add three cases; the two that open a folder of their
+  own through `PLM_E2E_OPEN` and `launch()` are the pattern for a and b):
   - a. loading-folder dialog: its text changes after "Collecting files..." and
     reaches "Completed loading all files" before the dialog closes (use a
     temporary folder with enough copies of the fixtures if the real one loads
@@ -129,9 +144,11 @@ Goal: the safety net and the tooling exist before any state changes.
   - c. undo/redo through `window.plmInternalRenderer.photoSelection.undo()`
     and `.redo()` after two different tree selections: checkbox states and the
     marker count follow;
-  - d. thumbnail error table dialog: with a corrupt HEIC (see how the existing
-    HEIC worker test produces one), the status bar shows "Click here to see
-    the files with errors.", the dialog opens, and sorting and filtering work.
+  - d. thumbnail error table dialog: with a file that is not a HEIF named
+    `.HEIC` (a copy of `test/test-resources/unsupported-files/Invalid Photo.JPG`,
+    as the thumbnail-failure case from #640 builds its folder), the status bar
+    shows "Click here to see the files with errors.", the dialog opens, and
+    sorting and filtering work.
 - **0.3 Lint policy** as comments in `eslint.config.mjs`, no rule changes yet:
   `prefer-signals` and `no-uncalled-signals` turn on at the end of stage 1,
   `prefer-on-push-component-change-detection` at the end of stage 2,
@@ -187,6 +204,9 @@ Files: `src/app/shared/service/open-folder.service.ts`,
   `statusUpdateRequested` and `updateStatus()` go away. (The counts then
   appear slightly earlier, while the modal loading dialog is still open, which
   is not visible.)
+- With #639 merged, `open()` no longer calls
+  `PhotoInfoViewerContent.generateCache`; the `sleep(100)` that lets the modal
+  dialog repaint stays.
 - Home: `loadedFilesStatusBarVisible` reads the service signal in the template;
   `thumbnailGenerationStatusBarVisible` becomes a signal written by the same
   three handlers until 1D moves it to a service.
@@ -265,7 +285,11 @@ Files: `src/app/shared/service/selected-photo.service.ts`,
 - Maps: the `pinnedPhotos` subscriptions become `effect`s created in
   `ngAfterViewInit` with `{injector}` (the overlay element and the map
   container must exist); remove the four `detectChanges()` calls;
-  `forceRenderWithoutPhotoHappened` stays a `Subject`.
+  `forceRenderWithoutPhotoHappened` stays a `Subject`. With #638,
+  `renderMapWithDebouncing` hides the overlay in a `finally` and
+  `addEachMarker` keeps one bad photo from emptying the map: keep both. With
+  #639, Leaflet makes a popup's content when the popup opens, outside Angular:
+  nothing to convert.
 - Chart: extract the x/y binning into a pure function with unit tests;
   `eChartsOption` and `isSupportedDuration` become `computed` from
   `selectedPhotos()` and the x-axis unit; `isSelectPhotosWithinZoomButtonVisible`
@@ -344,6 +368,14 @@ nothing outside spec doubles that need a host; the `detectChanges()` count is
   signed macOS bundle (`PLM_PACKAGED_EXECUTABLE`, see `test/e2e/README.md`).
   The on-demand Intel macOS CI job is not required by the AGENTS.md rule (no
   native code or Electron change) but is cheap insurance before merging.
+- **3.4b Error recording.** With Zone.js, an unhandled promise rejection in
+  the renderer reaches `AnalyticsErrorHandler` wrapped as "Uncaught (in
+  promise)" and the window's `unhandledrejection` listener
+  (`recordErrorsOutsideAngular`), and `recordUnhandledError` records it once.
+  Without Zone.js only the listener sees it, unwrapped, and
+  `unwrapPromiseRejection` in `src-shared/analytics/record-error.ts` passes it
+  through. Verify that such an error is still recorded once with the same
+  label, and update the comments in those two files that describe Zone.js.
 - **3.5** Keep `provideCheckNoChangesConfig` in development builds; decide in
   stage 4 whether it stays permanently.
 

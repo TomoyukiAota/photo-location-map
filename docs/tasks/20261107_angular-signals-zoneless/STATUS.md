@@ -1,6 +1,6 @@
 # Execution status and handoff
 
-Updated 2026-11-07 (Asia/Tokyo). This file is the execution ledger: update it
+Updated 2026-11-08 (Asia/Tokyo). This file is the execution ledger: update it
 after every meaningful result and before stopping. Do not infer completion from
 the existence of the plan or from an agent's earlier messages.
 
@@ -9,6 +9,10 @@ the existence of the plan or from an agent's earlier messages.
 - State: PLANNING COMPLETE; IMPLEMENTATION NOT STARTED.
 - Authorized action now: documents only. Wait for the owner's explicit
   instruction before starting stage 0.
+- Prerequisite (owner's decision, 2026-11-08): the pull requests open on that
+  day, #638, #639, #640 and #642, are merged before stage 0 starts. Checked by
+  merging them into main locally: no conflicts; the counters below are
+  unchanged (PLAN.md, "Boundaries", names what each one changes).
 - Branch of these documents: `claude/angular-signals-zoneless`, rebased on
   main at ba7b832d552920a1dfcd73c428e88d47343e1368. The investigation used
   45e0415720984d3f72e28f3c140c33a457b8a3f1; the commits in between (headless
@@ -20,13 +24,15 @@ the existence of the plan or from an agent's earlier messages.
 - Runtime, dependency, test or build changes made by this plan: none.
 - Processes or CI runs owned by this work: none.
 - Blocking owner decisions: the order relative to the `@electron/remote`
-  removal work (PLAN.md, "Boundaries"), before stage 0 starts.
+  removal work (PLAN.md, "Boundaries"; no open pull request for it as of
+  2026-11-08), before stage 0 starts.
 
 ## Resume first action
 
 When the owner starts implementation: read AGENTS.md, PLAN.md and this file;
-`git fetch`; branch from main for stage 0; `mise exec -- npm ci`; begin with
-PLAN.md step 0.1. If a slice is in progress, open its pull request and
+`git fetch`; `gh pr list --state open` must list none of #638, #639, #640 and
+#642 (otherwise stop and tell the owner); branch from main for stage 0;
+`mise exec -- npm ci`; begin with PLAN.md step 0.1. If a slice is in progress, open its pull request and
 continue from "Next action" in the ledger below.
 
 ## Stage ledger
@@ -61,6 +67,9 @@ exit brings the next four to 0; stage 3 brings the last to 0.
 | `@ViewChild` + `@Input` | `grep -rn "@ViewChild\|@Input" src --include='*.ts' \| grep -v '\.spec\.ts' \| wc -l` | 11 |
 | `NgZone.run(` calls | `grep -rn "ngZone.run(" src --include='*.ts' \| grep -v '\.spec\.ts' \| wc -l` | 8 |
 | `zone.js` in `package.json` and `angular.json` | `grep -c "zone.js" package.json angular.json` | 1 + 1 |
+
+Counted again on 2026-11-08 on main (ba7b832) with #638, #639, #640 and #642
+merged locally: every number is the same.
 
 ## Manual check list
 
