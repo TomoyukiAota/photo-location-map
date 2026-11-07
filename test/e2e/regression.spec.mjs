@@ -178,6 +178,22 @@ async function openFolderWithPicker(folder) {
 function treeCheckbox(name) {
   return page.locator('mat-tree-node').filter({ hasText: name }).getByRole('checkbox');
 }
+/** Records the URLs that the app opens in the OS browser, instead of opening them. */
+async function recordOpenedUrls() {
+  await page.evaluate(() => {
+    window.__plmOpenedUrls = [];
+    window.require('electron').shell.openExternal = async url => { window.__plmOpenedUrls.push(url); };
+  });
+  return () => page.evaluate(() => window.__plmOpenedUrls);
+}
+/** Records the commands that open files and folders with the OS, such as `open "<path>"`, instead of running them. */
+async function recordOpenCommands() {
+  await page.evaluate(() => {
+    window.__plmOpenCommands = [];
+    window.require('child_process').spawn = command => { window.__plmOpenCommands.push(command); return { on() {} }; };
+  });
+  return () => page.evaluate(() => window.__plmOpenCommands);
+}
 test.beforeEach(async () => {
   if (packagedExecutable) test.setTimeout(120000);
   if (process.env.PLM_REQUIRE_ORIGINAL_STACK === '1' && test.info().config.updateSnapshots !== 'none') {
@@ -305,6 +321,55 @@ test('map regions preserve drawing, removal and real photo selection', async () 
   await expect(page.locator('app-leaflet-map .update-in-progress-overlay')).toBeHidden();
   await expect(page.locator('.marker-cluster')).toHaveCount(0);
   await expect(page.locator('.plm-leaflet-map-region-info-text')).toBeHidden();
+});
+test('the links of the welcome dialog, the about box and the cache settings open in the OS browser', async () => {
+  // Some of them are elements that the components query, with signal queries since stage 2. Nothing opens here.
+  const openedUrls = await recordOpenedUrls();
+  const welcome = page.locator('app-welcome-dialog');
+  await welcome.getByText('the troubleshooting page').click();
+  await welcome.getByTitle('Open X (Formerly Twitter) Profile').click();
+  await welcome.getByTitle('Open GitHub Profile').click();
+  await dismissWelcome();
+  await page.evaluate(() => window.plmInternalRenderer.aboutBox.showAboutBox());
+  const about = page.locator('app-about-box');
+  for (const title of ['Open Downloads and Release Notes', 'Open X (Formerly Twitter) Profile', 'Open GitHub Profile',
+    'Open the troubleshooting page', 'Open Home Page', 'View Source Code in GitHub']) {
+    await about.getByTitle(title, { exact: true }).click();
+  }
+  await page.keyboard.press('Escape');
+  await expect(about).toHaveCount(0);
+  await settings();
+  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Cache' }).click();
+  await page.locator('app-cache-settings').getByText('HEIF files').click();
+  const troubleshooting = 'https://github.com/TomoyukiAota/photo-location-map/blob/main/docs/troubleshooting/troubleshooting.md';
+  await expect.poll(openedUrls).toEqual([
+    troubleshooting, 'https://x.com/TomoyukiAota', 'https://github.com/TomoyukiAota',
+    'https://github.com/TomoyukiAota/photo-location-map/releases', 'https://x.com/TomoyukiAota',
+    'https://github.com/TomoyukiAota', troubleshooting, 'https://tomoyukiaota.github.io/photo-location-map/',
+    'https://github.com/TomoyukiAota/photo-location-map',
+    'https://en.wikipedia.org/wiki/High_Efficiency_Image_File_Format',
+  ]);
+});
+test('the cache settings open the cache folder, and ask before deleting the cache', async () => {
+  // Deleting restarts the app once confirmed, so the question is declined. window.confirm is replaced, as Electron
+  // would show it in a window of its own.
+  await dismissWelcome();
+  const openCommands = await recordOpenCommands();
+  await page.evaluate(() => {
+    window.__plmConfirmMessages = [];
+    window.confirm = message => { window.__plmConfirmMessages.push(message); return false; };
+  });
+  await settings();
+  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Cache' }).click();
+  const location = page.locator('app-cache-settings .location-value');
+  const cacheFolder = (await location.textContent()).trim();
+  expect(cacheFolder.startsWith(profile)).toBe(true);
+  await location.click();
+  await expect.poll(openCommands).toEqual([expect.stringContaining(`"${cacheFolder}"`)]);
+  await page.getByRole('button', { name: 'Delete Thumbnail Cache', exact: true }).click();
+  expect(await page.evaluate(() => window.__plmConfirmMessages))
+    .toEqual(['This application will restart after deleting the thumbnail cache.\nDo you want to continue?']);
+  await expect(page.locator('app-settings-dialog')).toBeVisible();
 });
 test('appearance setting saves, affects layout, and survives a real app restart', async () => {
   await dismissWelcome();
@@ -678,6 +743,19 @@ test('the tree shows partly selected folders, and Select Only This from its menu
   await expect(treeCheckbox('actual-photos')).toBeChecked({ indeterminate: true });
   await expectRepresentedPhotos(1);
 });
+test('a right-click outside the tree\'s context menu closes it', async () => {
+  await dismissWelcome();
+  await openFolderWithPicker(photoFolder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
+  // The menu listens to the first overlay backdrop, which is the loading dialog's until that has closed.
+  await expect(page.locator('.cdk-overlay-backdrop')).toHaveCount(0);
+  const selectOnlyThis = page.getByRole('menuitem', { name: 'Select Only This' });
+  await page.locator('mat-tree-node').filter({ hasText: 'Kobe' }).click({ button: 'right' });
+  await expect(selectOnlyThis).toBeVisible();
+  await page.locator('.cdk-overlay-backdrop').click({ button: 'right', position: { x: 5, y: 5 } });
+  await expect(selectOnlyThis).toHaveCount(0);
+  await expect(treeCheckbox('Kobe')).toBeChecked();
+});
 test('Select Only This from a marker popup selects that photo in the tree and on the map', async () => {
   // The popup and its menu are plain DOM that Leaflet shows, outside Angular.
   await dismissWelcome();
@@ -712,32 +790,43 @@ test('a cluster of photos taken at one place opens a popup with each of them', a
     return page.locator('.photo-cluster-viewer-tile').count();
   }, { timeout: 20000 }).toBe(2);
 });
-test('undo and redo step through the photo selection as the Selection menu does', async () => {
-  // The menu reaches the renderer through IPC, outside any template event, and the tree selects programmatically.
+test('undo and redo step through the photo selection from the Selection menu, which enables them when they apply', async () => {
+  // The menu reaches the renderer through IPC, outside any template event, and the tree selects programmatically. The
+  // renderer tells the main process which of the two items apply. Their accelerators come from the OS's menu.
+  const menuItem = id => ({
+    click: () => app.evaluate(({ Menu }, id) => Menu.getApplicationMenu().getMenuItemById(id).click(), id),
+    enabled: () => app.evaluate(({ Menu }, id) => Menu.getApplicationMenu().getMenuItemById(id).enabled, id),
+  });
+  const undo = menuItem('photo-selection-undo');
+  const redo = menuItem('photo-selection-redo');
+  const enabled = async () => ({ undo: await undo.enabled(), redo: await redo.enabled() });
   await dismissWelcome();
   await openFolderWithPicker(photoFolder);
   await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
   await expectRepresentedPhotos(4);
+  await expect.poll(enabled).toEqual({ undo: false, redo: false });
   await treeCheckbox('Kobe').uncheck();
   await expectRepresentedPhotos(3);
   await treeCheckbox('Unga').uncheck();
   await expectRepresentedPhotos(2);
-  const undo = () => page.evaluate(() => window.plmInternalRenderer.photoSelection.undo());
-  const redo = () => page.evaluate(() => window.plmInternalRenderer.photoSelection.redo());
-  await undo();
+  await expect.poll(enabled).toEqual({ undo: true, redo: false });
+  await undo.click();
   await expect(treeCheckbox('Unga')).toBeChecked();
   await expect(treeCheckbox('Kobe')).not.toBeChecked();
   await expectRepresentedPhotos(3);
-  await undo();
+  await expect.poll(enabled).toEqual({ undo: true, redo: true });
+  await undo.click();
   await expect(treeCheckbox('Kobe')).toBeChecked();
   await expectRepresentedPhotos(4);
-  await redo();
+  await expect.poll(enabled).toEqual({ undo: false, redo: true });
+  await redo.click();
   await expect(treeCheckbox('Kobe')).not.toBeChecked();
   await expect(treeCheckbox('Unga')).toBeChecked();
   await expectRepresentedPhotos(3);
-  await redo();
+  await redo.click();
   await expect(treeCheckbox('Unga')).not.toBeChecked();
   await expectRepresentedPhotos(2);
+  await expect.poll(enabled).toEqual({ undo: true, redo: false });
 });
 test('the sort menu orders the tree by name and by shooting time, shows its choice, and keeps it across a restart', async () => {
   // Photos named against the order they were taken in (Apple Park 2019, Kobe 2017, Unga 2015, Gold Coast 2013), so
@@ -1126,6 +1215,15 @@ test('the thumbnail error dialog lists, sorts and filters the HEIF files without
   await expect.poll(fileNames).toEqual(['B broken.HEIC', 'A broken.HEIC']);
   await dialog.getByPlaceholder('Filter').pressSequentially('A broken');
   await expect.poll(fileNames).toEqual(['A broken.HEIC']);
+  // Its buttons open the file and its folder with the OS, which nothing does here.
+  const openCommands = await recordOpenCommands();
+  const row = dialog.locator('tr[mat-row]').filter({ hasText: 'A broken.HEIC' });
+  await row.getByRole('button', { name: 'Open File', exact: true }).click();
+  await row.getByRole('button', { name: 'Open Folder', exact: true }).click();
+  const brokenFile = `"${path.join(folder, 'A broken.HEIC')}"`;
+  await expect.poll(openCommands).toEqual([expect.stringContaining(brokenFile), expect.stringContaining(brokenFile)]);
+  const [openFile, openFolder] = await openCommands();
+  expect(openFile).not.toBe(openFolder);
   await dialog.getByRole('button', { name: 'Close', exact: true }).click();
   await expect(dialog).toHaveCount(0);
 });
