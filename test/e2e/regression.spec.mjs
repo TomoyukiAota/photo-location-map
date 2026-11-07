@@ -1,6 +1,6 @@
 import { test, expect, _electron } from 'playwright/test';
 import { createRequire } from 'node:module';
-import { copyFile, mkdir, mkdtemp, realpath, rm } from 'node:fs/promises';
+import { copyFile, mkdir, mkdtemp, readFile, realpath, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -18,9 +18,28 @@ if (packagedLauncher && (!packagedExecutable || !path.isAbsolute(packagedLaunche
   throw new Error('PLM_E2E_LAUNCHER requires a packaged executable and an absolute launcher path.');
 }
 const photoFolder = path.join(root, 'test/test-resources/actual-photos');
-let app, page, profile;
+let app, page, profile, headless;
+// TL;DR: On macOS and Windows, the windows stay off the screen, as Playwright's browsers do, unless --headed
+// is given: hidden on macOS, and on Windows shown but transparent, click-through and never activated
+// (see electron-util/e2e-test-hooks.js). On Linux, they are shown; Linux CI runs under Xvfb.
+// Details: With hidden windows, the suite took 3.7 minutes instead of 1.6 on Windows CI and 4.8 instead of
+// 2.1 on Ubuntu CI, against 1.7 instead of 1.6 on macOS. The cases with many Playwright actions, which wait
+// for animation frames, slowed down the most, and on Windows the map case failed: the app's zoom to the
+// photos, which Leaflet starts in the next animation frame, began only at the next click. Windows' transparent
+// windows do not help on Linux: Electron applies their opacity to the window's content layer, which is then not
+// drawn either. On Ubuntu CI, the main window got 1 animation frame per second, and the suite took 5.0 minutes
+// instead of 2.1 (#642). Linux CI runs under Xvfb, so the windows shown there are not on anyone's screen.
+test.beforeAll(({ headless: headlessOption }) => { headless = headlessOption && process.platform !== 'linux'; });
+async function expectWindowOffScreenOnlyIfHeadless(window) {
+  const state = await window.evaluate(window => ({ visible: window.isVisible(), opacity: window.getOpacity(), focused: window.isFocused() }));
+  if (!headless) expect(state.visible, 'The window must be shown.').toBe(true);
+  else if (process.platform === 'win32') {
+    expect(state, 'A headless run on Windows must show the window only fully transparent and inactive.')
+      .toEqual({ visible: true, opacity: 0, focused: false });
+  } else expect(state.visible, 'A headless run must keep the window hidden.').toBe(false);
+}
 async function launch({ resize = true } = {}) {
-  const env = { ...process.env, PLM_TEST_ROOT: profile, PLM_E2E: '1' };
+  const env = { ...process.env, PLM_TEST_ROOT: profile, PLM_E2E: '1', PLM_TEST_HEADLESS: headless ? '1' : '0' };
   for (const key of ['PLM_EM_MAIN', 'PLM_EM_RENDERER', 'ELECTRON_RUN_AS_NODE', 'NODE_OPTIONS']) delete env[key];
   // A publicly launched package has no npm development-profile override.
   if (packagedExecutable) delete env.npm_package_config_devOrProd;
@@ -79,6 +98,7 @@ async function launch({ resize = true } = {}) {
     }, { timeout: 30000 }).toBe(true);
   }
   const mainWindow = await app.browserWindow(page);
+  await expectWindowOffScreenOnlyIfHeadless(mainWindow);
   if (liveReload) {
     expect(await mainWindow.evaluate(window => window.webContents.isDevToolsOpened())).toBe(false);
   }
@@ -470,6 +490,34 @@ test('--open loads a directory with Unicode, spaces, # and % without restoring p
     else process.env.PLM_E2E_OPEN = previousOpen;
   }
 });
+test('a photo whose GPS values are empty leaves the other photos on the map', async () => {
+  // exifr gives such a photo's latitude and longitude as the text "NaNNaN", and Leaflet threw on its marker. The
+  // error ended the loop that added the markers, so the folder had no markers at all, and the map kept its progress
+  // bar. The photo sorts first, so that the loop would end before any marker.
+  const { jpegWithEmptyGpsValues } = require('../test-util/jpeg-with-empty-gps-values.cjs');
+  const folder = path.join(profile, 'empty GPS values');
+  await mkdir(folder);
+  await writeFile(path.join(folder, '1 empty GPS values.JPG'),
+    jpegWithEmptyGpsValues(await readFile(path.join(photoFolder, 'Gold Coast/IMG_1579.JPG'))));
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, '2 Kobe.JPG'));
+  const previousOpen = process.env.PLM_E2E_OPEN;
+  try {
+    process.env.PLM_E2E_OPEN = folder;
+    await app.close();
+    await launch();
+    const errors = [];
+    page.on('pageerror', error => errors.push(error.message));
+    await dismissWelcome();
+    await expect(page.locator('app-loaded-files-status-bar')).toContainText('Loaded 2 files.');
+    await expect(page.locator('app-loaded-files-status-bar')).toContainText('1 files have location data.');
+    await expect(page.locator('.plm-leaflet-map-div-icon')).toHaveCount(1);
+    await expect(page.locator('.update-in-progress-overlay')).toHaveCSS('visibility', 'hidden');
+    expect(errors).toEqual([]);
+  } finally {
+    if (previousOpen === undefined) delete process.env.PLM_E2E_OPEN;
+    else process.env.PLM_E2E_OPEN = previousOpen;
+  }
+});
 test('window bounds survive restart and the Windows fullscreen menu stays visible', async () => {
   await dismissWelcome();
   if (process.platform === 'win32') {
@@ -492,6 +540,41 @@ test('window bounds survive restart and the Windows fullscreen menu stays visibl
   await launch({ resize: false });
   const restored = await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].getBounds());
   expect(restored).toEqual(saved);
+});
+test('a saved maximized or full-screen main window stays off the screen in a headless run', async () => {
+  test.skip(!headless, 'Only a headless run, on macOS or Windows, keeps the window off the screen.');
+  await app.close();
+  // electron-window-state saved the main window's state in the profile when the app quit.
+  const stateFile = path.join(profile, 'userData', 'window-state.json');
+  const state = JSON.parse(await readFile(stateFile, 'utf8'));
+  await writeFile(stateFile, JSON.stringify({ ...state, isMaximized: true, isFullScreen: true }));
+  await launch({ resize: false });
+  // The app restores the saved state when it starts loading the page, which can be after launch()
+  // first checks the window, so check again now that the page has loaded.
+  const mainWindow = await app.browserWindow(page);
+  await expectWindowOffScreenOnlyIfHeadless(mainWindow);
+  expect(await mainWindow.evaluate(window => [window.isMaximized(), window.isFullScreen()])).toEqual([false, false]);
+  // On macOS, a window becomes full screen only after a transition, so check that none was asked for.
+  expect(await app.evaluate(() => globalThis.__plmWindowStateCalls)).toEqual([]);
+});
+test('the main window gets animation frames while its page changes', async () => {
+  // A hidden window on Windows gets about 1 frame per second once its page changes (see
+  // electron-util/e2e-test-hooks.js), so check the rate that the run's own window gets.
+  const frames = await page.evaluate(() => new Promise(resolve => {
+    const box = document.body.appendChild(document.createElement('div'));
+    box.style.cssText = 'position: fixed; left: 0; top: 0; width: 10px; height: 10px; background: red; z-index: 2147483647';
+    let count = 0, running = true;
+    const tick = () => {
+      if (!running) return;
+      box.style.transform = `translateX(${++count % 2}px)`;
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+    setTimeout(() => { running = false; box.remove(); resolve(count); }, 1000);
+  }));
+  const refreshRate = await app.evaluate(({ screen }) => screen.getPrimaryDisplay().displayFrequency);
+  console.info(`Animation frames in 1 second: ${frames} (display refresh rate: ${refreshRate} Hz)`);
+  expect(frames, 'The window must keep getting animation frames, not about 1 per second.').toBeGreaterThan(20);
 });
 test('analytics preserves events and identity without new Amplitude local URLs', async () => {
   await dismissWelcome();
@@ -635,6 +718,8 @@ for (const [name, fixture, specialPath] of [
     await expect(viewer.locator('img[alt]').filter({ hasNotText: 'dummy' }).first()).toBeVisible({ timeout: 30000 });
     await viewer.waitForFunction(() => [...document.querySelectorAll('img')].some(img => img.naturalWidth > 100), { timeout: 30000 });
     await expect(viewer).toHaveTitle(`${path.basename(photo)} - Photo Location Map`);
+    // The viewer calls show() once loaded; its window, too, must stay off the screen in a headless run.
+    await expectWindowOffScreenOnlyIfHeadless(await app.browserWindow(viewer));
     expect(new URL(viewer.url()).searchParams.get('photoPath')).toBe(photo);
   });
 }

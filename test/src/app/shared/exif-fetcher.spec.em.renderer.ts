@@ -1,10 +1,38 @@
 import { createDirectoryTree } from '../../../../src-shared/dir-tree/dir-tree-util';
 import assert = require('assert');
+import * as fs from 'fs';
+import * as os from 'os';
 import * as path from 'path';
 import { nearlyEqual } from '../../../test-util/number-comparison';
 import { ExifFetcher, PathExifPair } from '../../../../src/app/shared/exif-fetcher/exif-fetcher';
+import { fetchExifUsingExifr } from '../../../../src/app/shared/exif-fetcher/using-exifr/fetch-exif-using-exifr';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { jpegWithEmptyGpsValues } = require('../../../test-util/jpeg-with-empty-gps-values.cjs');
 
 const testResourceDirectory = path.join(__dirname, '..', '..', '..', 'test-resources');
+
+describe('fetchExifUsingExifr', () => {
+  let directory: string;
+
+  beforeEach(() => {
+    directory = fs.mkdtempSync(path.join(os.tmpdir(), 'plm-exif-fetcher-'));
+  });
+
+  afterEach(() => {
+    fs.rmSync(directory, { recursive: true, force: true });
+  });
+
+  // exifr gives the text "NaNNaN" for such a file, which Leaflet throws on.
+  it('should give no GPS info for a GPS block whose values are empty', async () => {
+    const filePath = path.join(directory, 'empty-gps.JPG');
+    const source = fs.readFileSync(path.join(testResourceDirectory, 'actual-photos', 'Kobe', 'IMG_4676.JPG'));
+    fs.writeFileSync(filePath, jpegWithEmptyGpsValues(source));
+
+    const exif = await fetchExifUsingExifr(filePath);
+    assert(exif !== null);
+    assert.strictEqual(exif.gpsInfo, undefined);
+  });
+});
 
 describe('ExifFetcher', () => {
   describe('generatePathExifPairs', () => {
