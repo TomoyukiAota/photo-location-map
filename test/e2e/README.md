@@ -16,10 +16,11 @@ mise exec -- npm run test:e2e -- --headed
 ```
 
 The suite passes `PLM_TEST_HEADLESS=1` to the application unless `--headed` is
-given; the application reads it only with a `PLM_TEST_ROOT` test profile. The
-suite checks that the main and Photo Data Viewer windows are shown only with
-`--headed`. Hidden windows render as shown ones do: the visual comparisons use
-the same references.
+given; the application reads it only with a `PLM_TEST_ROOT` test profile. Then
+it does not restore a saved maximized or full-screen main window either, as that
+would show the window. The suite checks that the main and Photo Data Viewer
+windows are shown only with `--headed`. Hidden windows render as shown ones do:
+the visual comparisons use the same references.
 
 To exercise the existing development-server flow, start `mise exec -- npm run
 ng:serve`, wait for `http://localhost:4200/`, then set

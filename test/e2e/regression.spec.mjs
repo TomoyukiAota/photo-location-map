@@ -1,6 +1,6 @@
 import { test, expect, _electron } from 'playwright/test';
 import { createRequire } from 'node:module';
-import { copyFile, mkdir, mkdtemp, realpath, rm } from 'node:fs/promises';
+import { copyFile, mkdir, mkdtemp, readFile, realpath, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -459,14 +459,19 @@ test('window bounds survive restart and the Windows fullscreen menu stays visibl
     await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setFullScreen(true));
     await expect.poll(() => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isFullScreen())).toBe(true);
     await expect.poll(() => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isMenuBarVisible())).toBe(true);
-    await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setFullScreen(false));
-    await expect.poll(() => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isFullScreen())).toBe(false);
-    // TL;DR: Hide the window again, as Electron shows a hidden window when it leaves fullscreen on Windows.
+    // TL;DR: In a headless run, hide the window in the same call that leaves fullscreen, as Electron shows
+    // a hidden window when it leaves fullscreen on Windows.
     // Details: NativeWindowViews::SetFullScreen sets WS_VISIBLE on a hidden window leaving fullscreen, so
-    // that a window started in fullscreen is not left as an unresponsive shell. The menu check above runs
-    // before it, and takes the same path whether or not the window is visible.
-    // https://github.com/electron/electron/blob/v45.2.1/shell/browser/native_window_views.cc
-    if (headless) await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].hide());
+    // that a window started in fullscreen is not left as an unresponsive shell. Hiding it in the same task
+    // hides it again before the main process handles another message, rather than after a round trip from
+    // the test. The menu check above runs before this, and takes the same path whether or not the window
+    // is visible. https://github.com/electron/electron/blob/v45.2.1/shell/browser/native_window_views.cc
+    await app.evaluate(({ BrowserWindow }, headless) => {
+      const window = BrowserWindow.getAllWindows()[0];
+      window.setFullScreen(false);
+      if (headless) window.hide();
+    }, headless);
+    await expect.poll(() => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isFullScreen())).toBe(false);
   }
   await expectWindowShownOnlyIfHeaded(await app.browserWindow(page));
   const saved = await app.evaluate(({ BrowserWindow, screen }) => {
@@ -482,6 +487,20 @@ test('window bounds survive restart and the Windows fullscreen menu stays visibl
   await launch({ resize: false });
   const restored = await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].getBounds());
   expect(restored).toEqual(saved);
+});
+test('a saved maximized or full-screen main window stays hidden unless --headed is given', async () => {
+  test.skip(!headless, 'With --headed, the window is shown anyway.');
+  await app.close();
+  // electron-window-state saved the main window's state in the profile when the app quit.
+  const stateFile = path.join(profile, 'userData', 'window-state.json');
+  const state = JSON.parse(await readFile(stateFile, 'utf8'));
+  await writeFile(stateFile, JSON.stringify({ ...state, isMaximized: true, isFullScreen: true }));
+  await launch({ resize: false });
+  // The app restores the saved state when it starts loading the page, which can be after launch()
+  // first checks the window, so check again now that the page has loaded.
+  const mainWindow = await app.browserWindow(page);
+  await expectWindowShownOnlyIfHeaded(mainWindow);
+  expect(await mainWindow.evaluate(window => [window.isMaximized(), window.isFullScreen()])).toEqual([false, false]);
 });
 test('analytics preserves events and identity without new Amplitude local URLs', async () => {
   await dismissWelcome();
