@@ -6,8 +6,8 @@ the existence of the plan or from an agent's earlier messages.
 
 ## Current checkpoint
 
-- State: STAGE 4, the `RouterTestingModule` cleanup IN REVIEW, on the branch
-  `claude/signals-zoneless-4-router-testing` (stage ledger below).
+- State: STAGE 4, `strictTemplates` IN REVIEW, on the branch
+  `claude/signals-zoneless-4-strict-templates` (stage ledger below).
 - Authorized (owner, 2026-11-08): carry out the whole plan once the
   prerequisite is met, one pull request per stage or slice; address the
   CodeRabbit review of each pull request, then merge it (the `automerge`
@@ -27,8 +27,8 @@ the existence of the plan or from an agent's earlier messages.
 - Investigation: complete on 2026-11-07 (REPORT.md, INVENTORY.md, MCP.md).
   The Angular unit tests passed under the zoneless TestBed default that day:
   25 files, 37 tests.
-- Last accepted slice: the stage 4 item `NgZone.run` wrappers, #653, merged on
-  2026-11-08 as e8f63d9.
+- Last accepted slice: the stage 4 item `RouterTestingModule`, #654, merged on
+  2026-11-08 as 1b8907e.
   Baseline (stage 0.4): recorded under "Baseline" below.
 - Runtime, dependency, test or build changes made by this plan: stage 0 added
   e2e cases, the MCP configuration and lint policy comments. 1A keeps the
@@ -91,8 +91,8 @@ continue from "Next action" in the ledger below.
 | 2 OnPush everywhere | ACCEPTED | #651 | 9393451 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 37 cases in 3.1 min, all pass; `build:dev` and e2e, 37 cases in 3.3 min, no NG0100; before the rebase onto main, live-reload and `PLM_VISUAL=1` e2e passed too; with only `provideZonelessChangeDetection()` swapped in, the whole suite passed on both builds before the cases for the manual list were added, 34 cases each; CI green; CodeRabbit: NG0100 now listened for from the launch on, one more check before the application closes, and docstrings, all fixed, and the title, which it took Eager's removal not to mean OnPush, explained, then no actionable comments | headless e2e of every row below against a development build after each group of 2.3, without NG0100; the rows' remaining gaps are named in them | none |
 | 3 remove Zone.js | ACCEPTED | #652 | b2de8f6 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 38 cases in 3.3 min, all pass; `build:dev` and e2e, 38 cases in 4.1 min, no NG0100; before the rebases onto main, live-reload and `PLM_VISUAL=1` e2e passed too, and the signed universal bundle of the package build (`PLM_PACKAGE_TEST`, so not notarized), with `PLM_VISUAL=1`: 37 passed and the website case skipped, as designed, and `codesign --verify --deep --strict` passed before and after; `dist/` has no `polyfills.js` and no zone.js code, the only "zone.js" left being the text of an Angular error message; `npm ls zone.js` is empty; `test:package`: see "Findings while executing"; on 18b6a07, CI on the three OSes passed, `test:package` included, and so did the on-demand Intel macOS job, `test (macos-x64)` in 17 min; CI green; CodeRabbit: the check list's row for a window resize, completed with a new e2e case, then no actionable comments | every row below, by its e2e cases: see the note above the list | none |
 | 4 `NgZone.run` wrappers | ACCEPTED | #653 | e8f63d9 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 39 cases in 3.4 min, all pass; `build:dev` and e2e, 39 cases in 4.2 min, no NG0100; CI green; CodeRabbit: question 6's assumption, which said the small items were done, corrected, then no actionable comments | headless e2e of what goes through `window.plmInternalRenderer` and the menus | none |
-| 4 `RouterTestingModule` | IN REVIEW | `claude/signals-zoneless-4-router-testing` | | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70) and `build:prod` pass; before the rebase onto main, `PLM_VISUAL=1` e2e with 38 cases passed too | none needed: a spec only | merge the pull request after its review, then the next item |
-| 4 `strictTemplates` | NOT STARTED | | | NOT RUN | | wait for the item above |
+| 4 `RouterTestingModule` | ACCEPTED | #654 | 1b8907e | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70) and `build:prod` pass; before the rebase onto main, `PLM_VISUAL=1` e2e with 38 cases passed too; CI green; CodeRabbit: no actionable comments | none needed: a spec only | none |
+| 4 `strictTemplates` | IN REVIEW | `claude/signals-zoneless-4-strict-templates` | | 2026-11-08, macOS, on this branch's head: `build:dev`, `build:prod`, unit (Vitest 81, Electron-Mocha 121 and 70) and lint pass; binding 123 to the string input `photoPath` failed the build, as it should | none needed: compile-time checks only | merge the pull request after its review, then record the end of the plan |
 | 4 other items | NOT STARTED | | | NOT RUN | | the owner decides: question 6 below |
 
 ## Progress counters
