@@ -6,8 +6,8 @@ the existence of the plan or from an agent's earlier messages.
 
 ## Current checkpoint
 
-- State: SLICE 1C IN REVIEW, on the branch
-  `claude/signals-zoneless-1c-loading-progress` (stage ledger below).
+- State: SLICE 1D IN REVIEW, on the branch
+  `claude/signals-zoneless-1d-thumbnails` (stage ledger below).
 - Authorized (owner, 2026-11-08): carry out the whole plan once the
   prerequisite is met, one pull request per stage or slice; address the
   CodeRabbit review of each pull request, then merge it (the `automerge`
@@ -27,15 +27,15 @@ the existence of the plan or from an agent's earlier messages.
 - Investigation: complete on 2026-11-07 (REPORT.md, INVENTORY.md, MCP.md).
   The Angular unit tests passed under the zoneless TestBed default that day:
   25 files, 37 tests.
-- Last accepted slice: 1B, #645, merged on 2026-11-08 as 171a830.
+- Last accepted slice: 1C, #646, merged on 2026-11-08 as 08910f5.
   Baseline (stage 0.4): recorded under "Baseline" below.
 - Runtime, dependency, test or build changes made by this plan: stage 0 added
   e2e cases, the MCP configuration and lint policy comments. 1A keeps the
   tree's sort settings in signals and fixes the storage reset of the unit
   tests (see "Findings while executing"). 1B keeps the opened folder, its
-  photos and the loaded-files status bar in signals, and 1C the loading
-  progress.
-- Processes or CI runs owned by this work: the CI of the 1C pull request.
+  photos and the loaded-files status bar in signals, 1C the loading progress,
+  and 1D the thumbnail generation.
+- Processes or CI runs owned by this work: the CI of the 1D pull request.
 - Order relative to the `@electron/remote` removal (PLAN.md, "Boundaries"),
   decided by the owner on 2026-11-08: this plan goes first, and that removal
   comes after it.
@@ -74,8 +74,8 @@ continue from "Next action" in the ledger below.
 | 0 preparation | ACCEPTED | #643 | c448beb | 2026-11-08, macOS: lint, unit (Vitest 46, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 25 cases in 2.1 min, all pass; CI green; CodeRabbit: no actionable comments | none needed: no application change | none |
 | 1A sort settings | ACCEPTED | #644 | 62f01d0 | 2026-11-08, macOS: lint, unit (Vitest 49, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 26 cases in 2.2 min, all pass; CI green; CodeRabbit: a docstring and the photo order in the sort case, both addressed, then no actionable comments | headless e2e "the sort menu orders the tree by name and by shooting time, shows its choice, and keeps it across a restart" | none |
 | 1B folder-open state, loaded-files status bar, home | ACCEPTED | #645 | 171a830 | 2026-11-08, macOS, on the slice's changes before the 1A review fixes: lint, unit (Vitest 54, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 28 cases in 2.4 min, all pass; CI green; CodeRabbit: optional chaining kept from the old status bar, and docstrings, both addressed, then no actionable comments | headless e2e, see "Open a folder", "Open a second folder" and "Settings: Appearance" below | none |
-| 1C loading-folder progress | IN REVIEW | `claude/signals-zoneless-1c-loading-progress` | | 2026-11-08, macOS, on the slice's changes before the 1A review fixes: lint, unit (Vitest 56, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 28 cases in 2.4 min, all pass; with only `provideZonelessChangeDetection()` swapped in, the loading-folder dialog case passes | headless e2e, see "Loading dialog progress" below | merge the pull request after its review, then 1D from main |
-| 1D thumbnail generation | NOT STARTED | | | NOT RUN | | wait for accepted 1C |
+| 1C loading-folder progress | ACCEPTED | #646 | 08910f5 | 2026-11-08, macOS, on the slice's changes before the 1A review fixes: lint, unit (Vitest 56, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 28 cases in 2.4 min, all pass; with only `provideZonelessChangeDetection()` swapped in, the loading-folder dialog case passes; CI green; CodeRabbit: a test of a new folder while the previous one is still loading, and docstrings, both addressed, then no actionable comments | headless e2e, see "Loading dialog progress" below | none |
+| 1D thumbnail generation | IN REVIEW | `claude/signals-zoneless-1d-thumbnails` | | 2026-11-08, macOS, on the slice's changes before the 1A review fixes: lint, unit (Vitest 60, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 28 cases in 2.4 min, all pass; with only `provideZonelessChangeDetection()` swapped in, the thumbnail and status bar cases pass | headless e2e, see "Thumbnail status bar" and "Thumbnail error dialog" below | merge the pull request after its review, then 1E-1 from main |
 | 1E selection, pinned photos, chart, maps | NOT STARTED | | | NOT RUN | | wait for accepted 1D; decide on the 1E-1/1E-2 split |
 | 1F settings dialog, OS settings, map switch | NOT STARTED | | | NOT RUN | | wait for accepted 1E |
 | 2 OnPush everywhere | NOT STARTED | | | NOT RUN | | wait for stage 1 exit |
@@ -130,6 +130,7 @@ the same.
 | 1A | 8 | 10 | 22 | 5 | 26 | 10 | 11 | 8 | 1 + 1 |
 | 1B | 7 | 9 | 20 | 4 | 26 | 8 | 11 | 8 | 1 + 1 |
 | 1C | 7 | 8 | 19 | 4 | 26 | 8 | 11 | 8 | 1 + 1 |
+| 1D | 6 | 3 | 11 | 2 | 26 | 6 | 11 | 8 | 1 + 1 |
 
 ## Baseline (stage 0.4)
 
@@ -171,8 +172,8 @@ mark a row from memory.
 | Open a folder (JPEG + HEIC) | Open Folder button | loading dialog phases; tree; markers; chart; status bar counts | 2026-11-08, 1B, macOS: the status bar counts, headless e2e "folder picker loads real photo data, markers, tree selection and chart" |
 | Open a second folder | with the thumbnail status bar shown, open another folder | the thumbnail status bar hides | 2026-11-08, 1B, macOS: headless e2e "opening another folder hides the thumbnail status bar of the previous one" |
 | Loading dialog progress | large folder | text changes after "Collecting files..." and ends with "Completed loading all files" | 2026-11-08, 1C, macOS: headless e2e "the loading-folder dialog follows the loading of the files to the end", on the e2e photo folder rather than a large one: the dialog starts at "Collecting files..." and shows "Completed loading all files" before it closes |
-| Thumbnail status bar | HEIC folder, empty cache | appears, progresses, completes; details toggle; close button; Open Folder disabled while generating | |
-| Thumbnail error dialog | corrupt HEIC | "Click here..." link; dialog table sorts, filters, opens file/folder | |
+| Thumbnail status bar | HEIC folder, empty cache | appears, progresses, completes; details toggle; close button; Open Folder disabled while generating | 2026-11-08, 1D, macOS: headless e2e "the thumbnail status bar follows the generation of HEIF thumbnails from start to end": it appears, completes, disables Open Folder while generating, and closes; with one file, no step between the start and the end shows; the details toggle in the error dialog case |
+| Thumbnail error dialog | corrupt HEIC | "Click here..." link; dialog table sorts, filters, opens file/folder | 2026-11-08, 1D, macOS: headless e2e "the thumbnail error dialog lists, sorts and filters the HEIF files without a thumbnail"; opening the file or the folder from the table is not covered |
 | Tree checkboxes | click file and folder nodes | checked/indeterminate states; map and chart follow | |
 | Context menu | right-click a node | items act; menu closes on right-click outside | |
 | Popup "Select only this" | marker popup menu | tree, map and chart follow | |
