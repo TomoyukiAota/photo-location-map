@@ -9,6 +9,7 @@ import { recordErrorsOutsideAngular } from './app/shared/error/analytics-error-h
 import { AppConfig } from './environments/environment';
 import './ipc-renderer-setup/ipc-renderer-all-setup';
 
+/** Starts the renderer: the map's base layers, the error listeners, then Angular. */
 async function bootstrap(): Promise<void> {
   // Load map choices before Angular creates the map, as the former module await did.
   await initializeRasterTileBaseLayerConfigs();

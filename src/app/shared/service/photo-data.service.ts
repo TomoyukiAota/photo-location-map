@@ -17,11 +17,13 @@ export class PhotoDataService {
     this.pathPhotoMap.set(await PathPhotoMapCreator.create(directoryTreeObject));
   }
 
+  /** The opened folder's photo at the path, or null. A template that calls this renders again with new photos. */
   public getPhoto(path: string): Photo {
     const photo = this.pathPhotoMap().get(path);
     return !!photo ? photo : null;
   }
 
+  /** The location of the opened folder's photo at the path, or null when there is no such photo or location. */
   public getGpsInfo(path: string): GpsInfo {
     const photo = this.pathPhotoMap().get(path);
     if (!photo || !photo.exif || !photo.exif.gpsInfo)
