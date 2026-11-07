@@ -1,8 +1,8 @@
 <div class="container">
   <div class="open-folder-button">
     <button mat-stroked-button
-            [disabled]="thumbnailGenerationService.isGenerating | async"
-            [title]="(thumbnailGenerationService.isGenerating | async) ? 'Cannot open a folder when generating thumbnails.' : ''"
+            [disabled]="thumbnailGenerationService.isGenerating()"
+            [title]="thumbnailGenerationService.isGenerating() ? 'Cannot open a folder when generating thumbnails.' : ''"
             (click)="showOpenFolderDialog()">
       {{ 'SIDEBAR.OPEN_FOLDER' | translate }}
     </button>

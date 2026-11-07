@@ -37,7 +37,8 @@ export class ThumbnailGenerationErrorTableComponent implements OnInit {
   }
 
   public ngOnInit() {
-    this.dataSource.data = this.thumbnailGenerationService.thumbnailGenerationResult.filePathsWithoutThumbnail.map((filePath, index) => {
+    const filePathsWithoutThumbnail = this.thumbnailGenerationService.status().result?.filePathsWithoutThumbnail ?? [];
+    this.dataSource.data = filePathsWithoutThumbnail.map((filePath, index) => {
       return {
         position: index + 1,
         filePath: filePath

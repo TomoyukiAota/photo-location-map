@@ -1,11 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Analytics } from '../../../../../src-shared/analytics/analytics';
 import { Logger } from '../../../../../src-shared/log/logger';
 import {
   ThumbnailGenerationErrorDialogComponent
 } from '../../error-dialog/thumbnail-generation-error-dialog.component';
-import { ThumbnailGenerationResult, ThumbnailGenerationService } from '../../service/thumbnail-generation.service';
+import { ThumbnailGenerationService } from '../../service/thumbnail-generation.service';
 import { ThumbnailGenerationStatusBarService } from '../service/thumbnail-generation-status-bar.service';
 
 @Component({
@@ -15,44 +15,13 @@ import { ThumbnailGenerationStatusBarService } from '../service/thumbnail-genera
   changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
-export class ThumbnailGenerationStatusBarComponent implements OnInit {
-  public isThumbnailGenerationDone: boolean;
-  public thumbnailGenerationResult: ThumbnailGenerationResult;
-  public numberOfTotalHeifFiles: number;
-  public numberOfThumbnailsUsingCache: number;
-  public numberOfThumbnailsGenerationRequired: number;
-  public numberOfProcessedThumbnails: number;
-  public progressPercent: number;
-  public detailsVisible: boolean;
+export class ThumbnailGenerationStatusBarComponent {
+  public readonly status = this.thumbnailGenerationService.status;
+  public readonly detailsVisible = this.thumbnailGenerationStatusBarService.detailsVisible;
 
-  constructor(private changeDetectorRef: ChangeDetectorRef,
-              private dialog: MatDialog,
+  constructor(private dialog: MatDialog,
               private thumbnailGenerationService: ThumbnailGenerationService,
               private thumbnailGenerationStatusBarService: ThumbnailGenerationStatusBarService) {
-  }
-
-  public ngOnInit() {
-    this.thumbnailGenerationService.generationStarted.subscribe(status => {
-      this.isThumbnailGenerationDone = false;
-      this.numberOfTotalHeifFiles = status.numOfAllHeifFiles;
-      this.numberOfThumbnailsUsingCache = status.numOfCacheAvailableThumbnails;
-      this.numberOfThumbnailsGenerationRequired = status.numOfGenerationRequiredThumbnails;
-      this.numberOfProcessedThumbnails = 0;
-      this.progressPercent = 0;
-      this.detailsVisible = false;
-    });
-
-    this.thumbnailGenerationService.generationProgress.subscribe(status => {
-      this.numberOfProcessedThumbnails = status.numOfProcessedThumbnails;
-      this.progressPercent = status.progressPercent;
-      this.changeDetectorRef.detectChanges();
-    });
-
-    this.thumbnailGenerationService.generationDone.subscribe(result => {
-      this.isThumbnailGenerationDone = true;
-      this.thumbnailGenerationResult = result;
-      this.changeDetectorRef.detectChanges();
-    });
   }
 
   public handleClickHereTextClicked(event: MouseEvent) {
@@ -70,10 +39,10 @@ export class ThumbnailGenerationStatusBarComponent implements OnInit {
   }
 
   public toggleDetailsVisibility() {
-    this.detailsVisible = !this.detailsVisible;
+    this.thumbnailGenerationStatusBarService.toggleDetails();
   }
 
   public handleCloseButtonClicked() {
-    this.thumbnailGenerationStatusBarService.closeRequested.next();
+    this.thumbnailGenerationStatusBarService.hide();
   }
 }

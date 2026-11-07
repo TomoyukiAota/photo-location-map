@@ -1,6 +1,5 @@
 import { Injectable, signal } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Subject } from 'rxjs';
 import { DirTreeObjectRecorder } from '../../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
 import { sleep } from '../../../../src-shared/sleep/sleep';
 import { DirectoryTreeViewDataService } from '../../directory-tree-view/directory-tree-view-data.service';
@@ -11,6 +10,7 @@ import {
 import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewer-content';
 import { OpenFolderRecorder } from '../../sidebar/upper-pane/open-folder-recorder';
 import { ThumbnailGenerationService } from '../../thumbnail-generation/service/thumbnail-generation.service';
+import { ThumbnailGenerationStatusBarService } from '../../thumbnail-generation/status-bar/service/thumbnail-generation-status-bar.service';
 import { LoadingFolderProgress } from '../loading-folder-progress';
 import { OpenedDirectory } from '../opened-directory';
 import { ThumbnailObjectUrlStorage } from '../thumbnail-object-url-storage';
@@ -24,16 +24,12 @@ export class OpenFolderService {
   private readonly isFolderOpenedState = signal(false);
   /** Whether a folder has been opened since the application started. */
   public readonly isFolderOpened = this.isFolderOpenedState.asReadonly();
-  /**
-   * Raised each time a folder starts opening, the second time included. isFolderOpened is already true by then, and a
-   * signal set to the value it has notifies no one, so what has to happen on every open listens to this.
-   */
-  public readonly folderOpened = new Subject<void>();
 
   constructor(private dialog: MatDialog,
               private photoDataService: PhotoDataService,
               private directoryTreeViewDataService: DirectoryTreeViewDataService,
               public thumbnailGenerationService: ThumbnailGenerationService,
+              private thumbnailGenerationStatusBarService: ThumbnailGenerationStatusBarService,
               private photoSelectionHistoryService: PhotoSelectionHistoryService,
   ) {
   }
@@ -51,7 +47,9 @@ export class OpenFolderService {
       PhotoInfoViewerContent.clearCache();
       ThumbnailObjectUrlStorage.revokeObjectUrls();
       this.isFolderOpenedState.set(true);
-      this.folderOpened.next();
+      // Every open hides the thumbnail status bar of the previous folder, the second open too. This is a call rather
+      // than something derived from isFolderOpened: a signal set to the value it already has notifies no one.
+      this.thumbnailGenerationStatusBarService.hide();
 
       loadingFolderDialogRef = this.showLoadingFolderDialog();
 
@@ -61,7 +59,8 @@ export class OpenFolderService {
 
       this.showPhotoWithLocationNotFoundDialogIfApplicable();
       this.directoryTreeViewDataService.replace(directoryTreeObject);
-      this.thumbnailGenerationService.startThumbnailGeneration(directoryTreeObject);
+      if (this.thumbnailGenerationService.startThumbnailGeneration(directoryTreeObject))
+        this.thumbnailGenerationStatusBarService.showForNewGeneration();
       DirTreeObjectRecorder.record(directoryTreeObject);
       OpenFolderRecorder.complete();
     } catch (reason) {
