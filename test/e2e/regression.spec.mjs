@@ -980,6 +980,46 @@ test('a photo whose GPS values are empty leaves the other photos on the map', as
     else process.env.PLM_E2E_OPEN = previousOpen;
   }
 });
+test('a window resize keeps the sidebar\'s upper pane, and Leaflet fits the map to its pane', async () => {
+  // Home sets the sidebar's split again on a resize, keeping its upper pane's height, and Leaflet, which tracks the
+  // window's size, takes its pane's new size. Neither goes through change detection.
+  await page.addInitScript(() => {
+    let leaflet;
+    Object.defineProperty(window, 'L', {
+      configurable: true, enumerable: true,
+      get: () => leaflet,
+      set: lib => {
+        leaflet = lib;
+        lib?.Map?.addInitHook(function () {
+          if (this.getContainer().id === 'plm-leaflet-map') window.__plmLeafletMap = this;
+        });
+      }
+    });
+  });
+  await page.reload();
+  await page.waitForFunction(() => !!window.__plmLeafletMap);
+  await dismissWelcome();
+  await openFolderWithPicker(photoFolder);
+  await expectRepresentedPhotos(4);
+  const upperPane = page.locator('#home-sidebar-upper-pane');
+  const upperPaneHeight = (await upperPane.boundingBox()).height;
+  const mapSizes = () => page.evaluate(() => {
+    const size = window.__plmLeafletMap.getSize();
+    const container = window.__plmLeafletMap.getContainer();
+    return { leaflet: [size.x, size.y], pane: [container.clientWidth, container.clientHeight] };
+  });
+  const before = await mapSizes();
+  expect(before.leaflet).toEqual(before.pane);
+  await app.evaluate(({ BrowserWindow }) => {
+    const window = BrowserWindow.getAllWindows()[0];
+    const [width, height] = window.getContentSize();
+    window.setContentSize(width - 200, height - 120);
+  });
+  await expect.poll(async () => (await mapSizes()).pane[0]).toBeLessThan(before.pane[0] - 100);
+  await expect.poll(async () => { const sizes = await mapSizes(); return sizes.leaflet.join() === sizes.pane.join(); }).toBe(true);
+  await expect.poll(async () => Math.round((await upperPane.boundingBox()).height)).toBe(Math.round(upperPaneHeight));
+  await expectRepresentedPhotos(4);
+});
 test('window bounds survive restart and the Windows fullscreen menu stays visible', async () => {
   await dismissWelcome();
   if (process.platform === 'win32') {

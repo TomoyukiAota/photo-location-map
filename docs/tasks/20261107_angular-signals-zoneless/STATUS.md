@@ -215,7 +215,7 @@ generation between its start and its end, and the two rows left to the owner.
 | Welcome / About | Help menu | dialogs open; links open in the OS browser | 2026-11-08, 2, macOS: headless e2e "welcome, about and every available settings tab keep their appearance" and "the links of the welcome dialog, the about box and the cache settings open in the OS browser", with the browser replaced |
 | Map switch | menu; the owner checks Google Maps with an API key after the merge | OpenStreetMap and Google Maps render the pinned photos | 2026-11-08, 1F, macOS: headless e2e "the Map menu switches to Google Maps, which draws the selected photos, and back to OpenStreetMap", with a stand-in for the Google Maps API, and a second switch that creates one map; Google Maps itself is the owner's to check |
 | `--open` | launch with a file and with a folder | parent folder opens and the file is selected; folder opens | 2026-11-08, 1E-2, macOS: headless e2e "--open loads a directory with Unicode, spaces, # and % without restoring photos on an ordinary restart" and "--open with a photo opens its folder with only that photo selected" |
-| Window resize and splitters | drag; resize window | panes keep proportions; map re-renders | |
+| Window resize and splitters | drag; resize window | panes keep proportions; map re-renders | 2026-11-08, 3, macOS: headless e2e "folder picker loads real photo data, markers, tree selection and chart" (a splitter drag, and the panes after a restart) and "a window resize keeps the sidebar's upper pane, and Leaflet fits the map to its pane", which failed with Home's resize handling taken out |
 
 ## Findings while executing
 
