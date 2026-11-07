@@ -6,8 +6,8 @@ the existence of the plan or from an agent's earlier messages.
 
 ## Current checkpoint
 
-- State: SLICE 1E-2 IN REVIEW, on the branch
-  `claude/signals-zoneless-1e2-chart` (stage ledger below).
+- State: SLICE 1F IN REVIEW, on the branch
+  `claude/signals-zoneless-1f-settings-map` (stage ledger below).
 - Authorized (owner, 2026-11-08): carry out the whole plan once the
   prerequisite is met, one pull request per stage or slice; address the
   CodeRabbit review of each pull request, then merge it (the `automerge`
@@ -27,7 +27,7 @@ the existence of the plan or from an agent's earlier messages.
 - Investigation: complete on 2026-11-07 (REPORT.md, INVENTORY.md, MCP.md).
   The Angular unit tests passed under the zoneless TestBed default that day:
   25 files, 37 tests.
-- Last accepted slice: 1E-1, #648, merged on 2026-11-08 as 9e9ff5c.
+- Last accepted slice: 1E-2, #649, merged on 2026-11-08 as 21f0b47.
   Baseline (stage 0.4): recorded under "Baseline" below.
 - Runtime, dependency, test or build changes made by this plan: stage 0 added
   e2e cases, the MCP configuration and lint policy comments. 1A keeps the
@@ -35,8 +35,10 @@ the existence of the plan or from an agent's earlier messages.
   tests (see "Findings while executing"). 1B keeps the opened folder, its
   photos and the loaded-files status bar in signals, 1C the loading progress,
   1D the thumbnail generation, 1E-1 the pinned photos and the tree's
-  selection, and 1E-2 the selected photos and the chart.
-- Processes or CI runs owned by this work: the CI of the 1E-2 pull request.
+  selection, 1E-2 the selected photos and the chart, and 1F the settings
+  dialog and the map switch; 1F also gives `src/**/*.ts` typed linting for
+  `@angular-eslint/no-uncalled-signals`.
+- Processes or CI runs owned by this work: the CI of the 1F pull request.
 - Order relative to the `@electron/remote` removal (PLAN.md, "Boundaries"),
   decided by the owner on 2026-11-08: this plan goes first, and that removal
   comes after it.
@@ -78,9 +80,9 @@ continue from "Next action" in the ledger below.
 | 1C loading-folder progress | ACCEPTED | #646 | 08910f5 | 2026-11-08, macOS, on the slice's changes before the 1A review fixes: lint, unit (Vitest 56, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 28 cases in 2.4 min, all pass; with only `provideZonelessChangeDetection()` swapped in, the loading-folder dialog case passes; CI green; CodeRabbit: a test of a new folder while the previous one is still loading, and docstrings, both addressed, then no actionable comments | headless e2e, see "Loading dialog progress" below | none |
 | 1D thumbnail generation | ACCEPTED | #647 | 80f5676 | 2026-11-08, macOS, on the slice's changes before the 1A review fixes: lint, unit (Vitest 60, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 28 cases in 2.4 min, all pass; with only `provideZonelessChangeDetection()` swapped in, the thumbnail and status bar cases pass; CI green; CodeRabbit: one remark on this ledger's own practice, answered, then no actionable comments | headless e2e, see "Thumbnail status bar" and "Thumbnail error dialog" below | none |
 | 1E-1 pinned photos, tree selection, maps | ACCEPTED | #648 | 9e9ff5c | 2026-11-08, macOS, on the slice's changes before the 1A review fixes: lint, unit (Vitest 62, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 31 cases in 2.7 min, all pass; with only `provideZonelessChangeDetection()` swapped in, the nine selection, map and chart cases pass; CI green; CodeRabbit: a second Google map for the same photos when the API had loaded before, the caller's array kept as the pinned photos, and a Leaflet render left waiting after the map is destroyed, all fixed, then no actionable comments | headless e2e, see "Tree checkboxes" to "Cluster popup" and "Undo / redo" below | none |
-| 1E-2 selected photos, chart | IN REVIEW | `claude/signals-zoneless-1e2-chart` | | 2026-11-08, macOS: lint, unit (Vitest 68, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 32 cases in 2.8 min, all pass; with only `provideZonelessChangeDetection()` swapped in, the whole e2e suite passes | headless e2e, see "Chart zoom" to "Date-unknown photos" and "`--open`" below | merge the pull request after its review, then 1F from main |
-| 1F settings dialog, OS settings, map switch | NOT STARTED | | | NOT RUN | | wait for accepted 1E |
-| 2 OnPush everywhere | NOT STARTED | | | NOT RUN | | wait for stage 1 exit |
+| 1E-2 selected photos, chart | ACCEPTED | #649 | 21f0b47 | 2026-11-08, macOS: lint, unit (Vitest 68, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 32 cases in 2.8 min, all pass; with only `provideZonelessChangeDetection()` swapped in, the whole e2e suite passes; the chart's case then also checked the message for a span its unit cannot show; CI green; CodeRabbit: docstrings, added, then no actionable comments | headless e2e, see "Chart zoom" to "Date-unknown photos" and "`--open`" below | none |
+| 1F settings dialog, OS settings, map switch | IN REVIEW | `claude/signals-zoneless-1f-settings-map` | | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod`, and e2e with 34 cases in 3.0 min, all pass; before the rebase onto main, live-reload and `PLM_VISUAL=1` e2e passed too, and with only `provideZonelessChangeDetection()` swapped in, the whole e2e suite passed | headless e2e, see "Settings: Date & Time" and "Map switch" below; the OS tab on Windows and Google Maps with an API key are the owner's | merge the pull request after its review, then stage 2 from main |
+| 2 OnPush everywhere | NOT STARTED | | | NOT RUN | | wait for accepted 1F |
 | 3 remove Zone.js | NOT STARTED | | | NOT RUN | | wait for stage 2 exit |
 | 4 cleanup | NOT STARTED | one PR per item | | NOT RUN | | optional, after 3 |
 
@@ -135,6 +137,13 @@ the same.
 | 1D | 6 | 3 | 11 | 2 | 26 | 6 | 11 | 8 | 1 + 1 |
 | 1E-1 | 3 | 5 | 9 | 2 | 26 | 1 | 11 | 8 | 1 + 1 |
 | 1E-2 | 0 | 5 | 6 | 0 | 26 | 1 | 11 | 8 | 1 + 1 |
+| 1F | 0 | 5 | 6 | 0 | 26 | 0 | 11 | 8 | 1 + 1 |
+
+Stage 1 exit, met at 1F on 2026-11-08: counters 1 and 4 are 0; the five
+`Subject`s left are events that the plan keeps (`appearanceSettingsChanged`
+and `dateTimeSettingsChanged`, `forceRenderWithoutPhotoHappened`,
+`selectionRequested`, `dataReplaced`); `no-uncalled-signals` is on, with
+typed linting through `projectService`, and `ng lint` reports nothing.
 
 ## Baseline (stage 0.4)
 
@@ -189,11 +198,11 @@ mark a row from memory.
 | Undo / redo | Selection menu and shortcuts | selection steps back and forward; menu items enable/disable | 2026-11-08, 1E-1, macOS: headless e2e "undo and redo step through the photo selection as the Selection menu does", through the functions the menu calls; the shortcuts and the menu items' enabled state are not covered |
 | Sort menu | name / shooting time, ascending / descending | tree order and checkmarks; persists across restart; info dialog details toggle | 2026-11-08, 1A, macOS: headless e2e "the sort menu orders the tree by name and by shooting time, shows its choice, and keeps it across a restart" |
 | Settings: Appearance | toggle Show Status Bar; Cancel; Save | live toggle; Cancel restores; Save persists | 2026-11-08, 1B, macOS: headless e2e "Show Status Bar shows and hides the loaded-files status bar while it is changed, and Cancel restores it" and "appearance setting saves, affects layout, and survives a real app restart" |
-| Settings: Date & Time | change a format | restart notice; Save restarts | |
+| Settings: Date & Time | change a format | restart notice; Save restarts | 2026-11-08, 1F, macOS: headless e2e "Save is enabled only while a setting differs, and a new date format asks before the restart that saving it needs": the notice, the example, and the question before the restart, declined; the restart itself is not covered |
 | Settings: Cache | open location; delete cache | opens; confirm then restart | |
 | Settings: OS (Windows) | Add / Remove; the owner checks it after the merge | confirmation lines appear | |
 | Welcome / About | Help menu | dialogs open; links open in the OS browser | |
-| Map switch | menu; the owner checks Google Maps with an API key after the merge | OpenStreetMap and Google Maps render the pinned photos | |
+| Map switch | menu; the owner checks Google Maps with an API key after the merge | OpenStreetMap and Google Maps render the pinned photos | 2026-11-08, 1F, macOS: headless e2e "the Map menu switches to Google Maps, which draws the selected photos, and back to OpenStreetMap", with a stand-in for the Google Maps API, and a second switch that creates one map; Google Maps itself is the owner's to check |
 | `--open` | launch with a file and with a folder | parent folder opens and the file is selected; folder opens | 2026-11-08, 1E-2, macOS: headless e2e "--open loads a directory with Unicode, spaces, # and % without restoring photos on an ordinary restart" and "--open with a photo opens its folder with only that photo selected" |
 | Window resize and splitters | drag; resize window | panes keep proportions; map re-renders | |
 
