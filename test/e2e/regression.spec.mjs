@@ -461,8 +461,14 @@ test('chart grouping, zoom, reset and photo selection keep their real data behav
   await expect.poll(async () => (await readChartTheme()).palette?.[0]).toBe('#5470c6');
   const unit = page.locator('app-date-time-taken-chart-config select');
   await expect(unit).toHaveValue('Day');
+  // Hours cannot show photos taken years apart: the chart says so, until a unit that can is chosen.
+  const unsupported = page.locator('app-date-time-taken-chart .unsupported-message');
+  await expect(unsupported).toBeHidden();
+  await unit.selectOption('Hour');
+  await expect(unsupported).toContainText('does not support showing more than 30 days when Hour is selected');
   await unit.selectOption('Year');
   await expect(unit).toHaveValue('Year');
+  await expect(unsupported).toBeHidden();
   const choose = page.getByRole('button', { name: 'Select Photos within Zoom', exact: true });
   async function zoomToLastYear() {
     const box = await chart.boundingBox();
