@@ -61,6 +61,23 @@ the text belongs:
 **Why:** agents added details to CONTRIBUTING.md as they worked, until it was
 too long to read as an introduction.
 
+## Keep windows off the owner's screen
+
+Run anything that opens a browser or an app window **headless**, unless you are
+asking the owner to check the UI. The owner keeps working on the same machine
+while you run things.
+
+- `npm run test:e2e` keeps the app's windows hidden. Add `-- --headed` only when
+  the owner is to watch.
+- `npm run test:package` launches the packaged app hidden and in the background.
+- Anything else that starts a browser, such as a Playwright script, has a
+  headless mode: use it.
+
+If something cannot run headless, say so and ask before starting it.
+
+**Why:** the e2e tests used to bring a window to the front at every launch of
+the app, in the way of the owner's own work.
+
 ## You can run the signed mac build yourself
 
 Run `npm run package:mac` (and the other packaging scripts) directly. The macOS
