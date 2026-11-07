@@ -60,8 +60,9 @@ tool_timeout_sec = 300
 
 From the command line instead: `claude mcp add --transport stdio --scope project angular-cli -- mise exec -- npx ng mcp`
 writes the same `.mcp.json`; with `--scope user` instead, the server is
-available in every project of that user and nothing is written to the
-repository. `codex mcp add angular-cli -- mise exec -- npx ng mcp` has no
+registered for every project of that user and nothing is written to the
+repository, but it starts only in projects where `npx ng` finds an Angular
+CLI, since it runs the CLI of the project that is open. `codex mcp add angular-cli -- mise exec -- npx ng mcp` has no
 scope option and writes to Codex's default configuration,
 `~/.codex/config.toml`, for every project; the project file above is edited
 by hand. Add `--read-only` or `--local-only` after `mcp` to restrict the tool
@@ -132,8 +133,11 @@ Transcribed from `prompts.js` so it is usable without the tool:
 - In tests, add `provideZonelessChangeDetection()` once in the top-level
   `beforeEach`, remove every `provideZoneChangeDetection()`, convert test host
   properties to signals, and expect `ExpressionChangedAfterItHasBeenCheckedError`
-  wherever a value changed without a notification. `fixture.whenStable()` no
-  longer waits for timers: poll, use `fakeAsync`/`tick`, or a mock clock.
+  from `fixture.detectChanges()` wherever a template value changed without a
+  notification. A test that only awaits `fixture.whenStable()` gets no error:
+  the view just stays stale, so assert on the DOM, or use the exhaustive
+  no-changes check. `fixture.whenStable()` no longer waits for timers: poll,
+  use `fakeAsync`/`tick`, or a mock clock.
   (This repository's TestBed is already zoneless; see REPORT.md. Its tests
   load no `zone.js/testing`, so `fakeAsync` and `tick` throw here: poll, or
   use Vitest's fake timers, `vi.useFakeTimers()`.)

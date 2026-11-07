@@ -59,10 +59,10 @@ knowledge in agent memory.
   Data Viewer.
 - The removal of `@electron/remote` (its plan is written separately and is
   not on main or in an open pull request as of 2026-11-08) touches the same
-  renderer services. Do not run the two in
-  parallel on overlapping files; the owner decides which goes first. Removing
-  Zone.js changes timings, so finish this plan before that plan freezes its
-  performance baseline, or start after its final stage is accepted.
+  renderer services. The owner decided on 2026-11-08 that this plan goes
+  first and that removal comes after it. Removing Zone.js changes timings, so
+  that plan takes its performance baseline after this one is finished. Do not
+  start the two in parallel on overlapping files.
 - Branches: this plan lives on `claude/angular-signals-zoneless` and reaches
   main as a documents-only pull request (CI skips the tests for it). Each
   slice below is its own branch from main and its own pull request, which also
@@ -82,9 +82,10 @@ Before the pull request of a slice is opened:
    (AGENTS.md, "Keep windows off the owner's screen"), so drive the checks
    with a Playwright script against the app, as the e2e suite does, which
    keeps the windows off the screen on macOS and, with #642, on Windows (see
-   `test/e2e/README.md` for Linux). A check that needs a person or another
-   platform (the OS tab on Windows, Google Maps with an API key) goes under
-   "Questions for the owner" in STATUS.md.
+   `test/e2e/README.md` for Linux). The owner checks the OS tab on Windows and
+   Google Maps with an API key after the merges (decided on 2026-11-08); any
+   other check that needs a person or another platform goes under "Questions
+   for the owner" in STATUS.md.
 4. STATUS.md is updated: slice state, commit, pull request link, test results,
    progress counters, and the next executable action. When stopping in the
    middle of a slice, record the exact next action and which files are half
@@ -125,12 +126,15 @@ slice from an unmerged one unless STATUS.md says why.
 - `NgZone.run` wrappers stay until stage 4; they are harmless with and without
   Zone.js.
 - Tests (Vitest; the TestBed is already zoneless): set signals, then
-  `fixture.detectChanges()` or `await fixture.whenStable()`; a plain field
-  changed without a notification throws
-  `ExpressionChangedAfterItHasBeenCheckedError`. `whenStable()` does not wait
-  for timers, and the tests load no `zone.js/testing` (the `testing` build
-  configuration in `angular.json` has no polyfills), so `fakeAsync` and
+  `fixture.detectChanges()` or `await fixture.whenStable()`.
+  `fixture.detectChanges()` throws `ExpressionChangedAfterItHasBeenCheckedError`
+  when a template value changed without a notification; `whenStable()` does
+  not, and leaves the view stale, so assert on the DOM. `whenStable()` does not
+  wait for timers, and the tests load no `zone.js/testing` (the `testing`
+  build configuration in `angular.json` has no polyfills), so `fakeAsync` and
   `tick` throw: use `vi.useFakeTimers()` or poll.
+- Declare signal properties `readonly`: `prefer-signals`, enabled in stage 2,
+  asks for it.
 - Use the Angular CLI MCP server (`get_best_practices`, `search_documentation`)
   when in doubt about an API. Its `onpush_zoneless_migration` tool does not
   apply to this repository (MCP.md).
@@ -168,8 +172,9 @@ Goal: the safety net and the tooling exist before any state changes.
     the map have only that photo selected (the order that 1E has to keep; the
     existing `--open` case opens a folder only).
 - **0.3 Lint policy** as comments in `eslint.config.mjs`, no rule changes yet:
-  `prefer-signals` and `no-uncalled-signals` turn on at the end of stage 1,
-  `prefer-on-push-component-change-detection` at the end of stage 2,
+  `no-uncalled-signals` turns on at the end of stage 1; `prefer-signals`,
+  which also reports `@Input` and `@ViewChild` until 2.1 converts them, and
+  `prefer-on-push-component-change-detection` at the end of stage 2;
   `prefer-inject` and `prefer-standalone` in stage 4.
 - **0.4 Baseline.** Record in STATUS.md the results of the checkpoint commands
   on the unchanged application: date, commit, counts, durations, and the
@@ -349,12 +354,17 @@ Files: `src/app/settings-dialog/settings-dialog.component.{ts,html}`,
   `computed`, `selectedTab` a signal. Optional here, required before stage 2.
 
 Manual checks: Save enabled only after a change; the restart notice; Cancel
-restores the status bar; the OS tab on Windows; the map switch from the menu.
+restores the status bar; the map switch from the menu. The OS tab on Windows
+is the owner's to check after the merge.
 
 Stage 1 exit: `grep -rnF "new BehaviorSubject" src --include='*.ts'` and
 `grep -rnF "| async" src --include='*.html'` return nothing; the event
-`Subject`s that remain are the ones this plan keeps; `prefer-signals` and
-`no-uncalled-signals` are enabled in `eslint.config.mjs` and pass.
+`Subject`s that remain are the ones this plan keeps; `no-uncalled-signals` is
+enabled in `eslint.config.mjs` and passes. That rule needs type information
+(it calls `getParserServices`), so the same change gives the `src/**/*.ts`
+block typed linting (typescript-eslint's `parserOptions.projectService`, or
+`project` with the tsconfig files that cover `src/**/*.ts`) and checks that
+`ng lint` reports nothing new from the other rules.
 
 ## Stage 2: OnPush everywhere (one or two pull requests)
 
@@ -375,8 +385,9 @@ Stage 1 exit: `grep -rnF "new BehaviorSubject" src --include='*.ts'` and
 - **2.4** Optional: `ng generate @angular/core:ngclass-to-class` for the seven
   `[ngClass]`/`[ngStyle]` bindings.
 - **2.5** Enable `@angular-eslint/prefer-on-push-component-change-detection`
-  (its default `allowExplicitOnPush` is fine) and remove the comment-only
-  policy from 0.3.
+  (its default `allowExplicitOnPush` is fine) and `@angular-eslint/prefer-signals`,
+  now that 2.1 has converted `@Input` and `@ViewChild`, and update the policy
+  comments from 0.3.
 
 Stage 2 exit: `grep -rn "ChangeDetectionStrategy" src --include='*.ts'` finds
 nothing outside spec doubles that need a host; the `detectChanges()` count is
@@ -395,9 +406,10 @@ nothing outside spec doubles that need a host; the `detectChanges()` count is
   must be empty.
 - **3.4** Verify: the checkpoint commands; `grep -rl "zone.js" dist/*.js`
   lists nothing after `npm run build:prod`; the complete manual list in
-  STATUS.md on macOS, and on Windows for the OS tab; Google Maps with an API
-  key; `mise exec -- npm run test:package`; the Playwright run against the
-  signed macOS bundle (`PLM_PACKAGED_EXECUTABLE`, see `test/e2e/README.md`).
+  STATUS.md on macOS; `mise exec -- npm run test:package`; the Playwright run
+  against the signed macOS bundle (`PLM_PACKAGED_EXECUTABLE`, see
+  `test/e2e/README.md`). The OS tab on Windows and Google Maps with an API key
+  are the owner's to check after the merge (decided on 2026-11-08).
   The on-demand Intel macOS CI job is not required by the AGENTS.md rule (no
   native code or Electron change) but is cheap insurance before merging.
 - **3.4b Error recording.** With Zone.js, an unhandled promise rejection in

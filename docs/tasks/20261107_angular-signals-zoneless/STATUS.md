@@ -29,9 +29,11 @@ the existence of the plan or from an agent's earlier messages.
 - Last accepted slice: none. Baseline (stage 0.4): NOT RUN.
 - Runtime, dependency, test or build changes made by this plan: none.
 - Processes or CI runs owned by this work: none.
-- Order relative to the `@electron/remote` removal (PLAN.md, "Boundaries"):
-  this plan goes first, as that work has no pull request and has not started
-  as of 2026-11-08. Listed under "Questions for the owner" for confirmation.
+- Order relative to the `@electron/remote` removal (PLAN.md, "Boundaries"),
+  decided by the owner on 2026-11-08: this plan goes first, and that removal
+  comes after it.
+- Checks left to the owner, decided on 2026-11-08: the OS tab on Windows and
+  Google Maps with an API key, after the merges.
 
 ## Resume first action
 
@@ -139,9 +141,9 @@ date, commit and platform in the last column; do not mark a row from memory.
 | Settings: Appearance | toggle Show Status Bar; Cancel; Save | live toggle; Cancel restores; Save persists | |
 | Settings: Date & Time | change a format | restart notice; Save restarts | |
 | Settings: Cache | open location; delete cache | opens; confirm then restart | |
-| Settings: OS (Windows) | Add / Remove | confirmation lines appear | |
+| Settings: OS (Windows) | Add / Remove; the owner checks it after the merge | confirmation lines appear | |
 | Welcome / About | Help menu | dialogs open; links open in the OS browser | |
-| Map switch | menu | OpenStreetMap and Google Maps (API key) render the pinned photos | |
+| Map switch | menu; the owner checks Google Maps with an API key after the merge | OpenStreetMap and Google Maps render the pinned photos | |
 | `--open` | launch with a file and with a folder | parent folder opens and the file is selected; folder opens | |
 | Window resize and splitters | drag; resize window | panes keep proportions; map re-renders | |
 
@@ -149,12 +151,12 @@ date, commit and platform in the last column; do not mark a row from memory.
 
 Collected while executing, to be asked together at the end (owner's
 instruction, 2026-11-08). Record each with what was assumed meanwhile and what
-changes if the answer differs.
+changes if the answer differs; keep answered rows, with the answer.
 
-| # | Question | Assumed meanwhile | Slice |
+| # | Question | Answer, or what is assumed meanwhile | Slice |
 | ---: | --- | --- | --- |
-| 1 | Does this plan go before the `@electron/remote` removal? | Yes: that work has not started. | all |
-| 2 | Checks that need a person or another platform: the OS tab on Windows, Google Maps with an API key. | Left for the owner; not driven headless. | 1F, 3 |
+| 1 | Does this plan go before the `@electron/remote` removal? | Owner, 2026-11-08: yes; that removal comes after this plan. | all |
+| 2 | Checks that need a person or another platform: the OS tab on Windows, Google Maps with an API key. | Owner, 2026-11-08: the owner checks both after the merges. | 1F, 3 |
 
 ## Required update fields while executing
 
