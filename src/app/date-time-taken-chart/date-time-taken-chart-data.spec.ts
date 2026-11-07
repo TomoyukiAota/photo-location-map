@@ -4,6 +4,7 @@ import { Exif } from '../shared/model/exif.model';
 import { Photo } from '../shared/model/photo.model';
 import { createDateTimeTakenChartData } from './date-time-taken-chart-data';
 
+/** A photo taken at the moment given, or with no shooting time when it is null. */
 function photo(takenAt: string | null): Photo {
   const exif = Object.assign(new Exif(), takenAt ? { dateTimeOriginal: new DateTimeOriginal(moment(takenAt)) } : {});
   return Object.assign(new Photo(), { name: 'photo.jpg', path: `/photos/${takenAt}.jpg`, filenameExtension: '.jpg', exif });

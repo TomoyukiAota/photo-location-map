@@ -43,6 +43,7 @@ export function createDateTimeTakenChartData(photos: readonly Photo[], unit: uni
   return { xData: Array.from(bins.keys()), yData: Array.from(bins.values()), isSupportedDuration: true };
 }
 
+/** Whether the unit can show the photos taken from the first moment to the last: see `DateTimeTakenChartData`. */
 function isSupportedDuration(firstMoment: Moment, lastMoment: Moment, unit: unitOfTime.DurationConstructor): boolean {
   if (unit === xAxisUnit.hour.momentJsStr) {
     return lastMoment.diff(firstMoment, 'day') <= 30;

@@ -159,6 +159,7 @@ export class DateTimeTakenChartComponent {
     this.isSelectPhotosWithinZoomButtonVisible.set(true);
   }
 
+  /** Pins the selected photos taken within the zoom window, without the photos that have no shooting time. */
   private onChartDataZoomWithDebouncing = _.debounce(() => {
     logger.info('Chart Data Zoom');
     const xValuesWithinZoom = this.getXValuesWithinZoom();

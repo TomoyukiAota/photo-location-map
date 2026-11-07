@@ -15,6 +15,7 @@ export class SelectedPhotoService {
   constructor(private photoSelectionHistoryService: PhotoSelectionHistoryService) {
   }
 
+  /** Selects the photos and adds them to the selection history, unless the same paths are selected already. */
   public setSelectedPhotos(desiredSelectedPhotos: Photo[]) {
     const desiredSelectedPhotoPaths = desiredSelectedPhotos.map(photo => photo.path);
     const currentSelectedPhotoPaths = this.getSelectedPhotos().map(photo => photo.path);
