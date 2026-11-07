@@ -136,6 +136,7 @@ Nothing is pending in this record. When upgrading electron-builder,
 [dependencies.md](../../contributing/dependencies.md#known-deprecation-warnings)
 and update the list. When an Electron-Mocha release fixes both spawn sites, the
 launch and the quit-hook cleanup, so that neither uses a Windows shell, remove
-`script/patch-electron-mocha.js`, its test, `test:dependency-compat` and its CI
-steps. Keep the Windows CI step that runs the suites from a checkout path with a
-space.
+`script/patch-electron-mocha.js` and its test; in `package.json`, its call in
+`postinstall`, the `test:dependency-compat` script and its entry in `test:all`;
+and the `test:dependency-compat` steps in the three CI workflows. Keep the
+Windows CI step that runs the suites from a checkout path with a space.
