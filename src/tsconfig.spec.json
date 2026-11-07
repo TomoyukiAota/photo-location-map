@@ -19,6 +19,6 @@
     "../test/angular/**/*.ts"
   ],
   "angularCompilerOptions": {
-    "strictTemplates": false
+    "strictTemplates": true
   }
 }
