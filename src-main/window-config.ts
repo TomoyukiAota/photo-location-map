@@ -12,8 +12,8 @@ const defaultConfig = {
 let mainWindowState: ReturnType<typeof import('electron-window-state')>;
 
 export function createMainWindowState() {
-  // Load the previous main window state with fallback to defaults. A headless test does not restore
-  // a maximized or full-screen window, because maximize() and setFullScreen(true) would show it.
+  // Load the previous main window state with fallback to defaults. A headless test does not restore a maximized
+  // or full-screen window, because maximize() and setFullScreen(true) would show it or bring it to the front.
   mainWindowState = windowStateKeeper({ ...defaultConfig, maximize: !isHeadlessTest, fullScreen: !isHeadlessTest });
   return mainWindowState;
 }

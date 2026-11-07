@@ -7,25 +7,34 @@ mise exec -- npm run build:prod
 PLM_VISUAL=1 mise exec -- npm run test:e2e
 ```
 
-On macOS, the application's windows stay hidden, as Playwright's own browsers
-do, so that a run does not take over the screen. To watch them, add Playwright's
-`--headed` option:
+On macOS and Windows, the application's windows stay off the screen, as
+Playwright's own browsers do, so that a run does not take over the screen. To
+watch them, add Playwright's `--headed` option:
 
 ```sh
 mise exec -- npm run test:e2e -- --headed
 ```
 
 In such a headless run, the suite passes `PLM_TEST_HEADLESS=1` to the
-application, which reads it only with a `PLM_TEST_ROOT` test profile. Then it does not restore a saved
-maximized or full-screen main window either, as that would show the window. The
-suite checks that the main and Photo Data Viewer windows are hidden only in a
-headless run. On macOS, hidden windows render as shown ones do: the visual
-comparisons use the same references, and the run takes as long.
+application, which reads it only with a `PLM_TEST_ROOT` test profile:
 
-On Windows and Linux, the windows are still shown. There, a hidden window gets
-animation frames far less often: on CI, the suite took 3.7 minutes instead of 1.6
-on Windows and 4.8 instead of 2.1 on Ubuntu, and the map case failed on Windows.
-Linux CI runs under Xvfb, so its windows are not on anyone's screen.
+- On macOS, the windows are hidden. Hidden windows render as shown ones do: the
+  visual comparisons use the same references, and the run takes as long.
+- On Windows, a hidden window gets about one animation frame per second once its
+  page changes: the suite took 3.7 minutes instead of 1.6 on CI, and the map case
+  failed. So the windows are shown, but fully transparent, click-through and never
+  activated, and they are left out of the taskbar and Alt+Tab. The measurements
+  are in `electron-util/e2e-test-hooks.js`.
+
+Either way, the application does not restore a saved maximized or full-screen
+main window, as that would show the window or bring it to the front. The suite
+checks that the main and Photo Data Viewer windows are kept off the screen only
+in a headless run, and that the main window gets animation frames at about the
+display's refresh rate.
+
+On Linux, the windows are still shown. There, a hidden window gets animation
+frames far less often, too: the suite took 4.8 minutes instead of 2.1 on Ubuntu
+CI. Linux CI runs under Xvfb, so its windows are not on anyone's screen.
 
 To exercise the existing development-server flow, start `mise exec -- npm run
 ng:serve`, wait for `http://localhost:4200/`, then set

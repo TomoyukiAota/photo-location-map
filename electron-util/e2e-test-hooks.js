@@ -7,22 +7,60 @@ if (automated && (!testRoot || !require('node:path').isAbsolute(testRoot))) {
   throw new Error('PLM_E2E requires an absolute PLM_TEST_ROOT.');
 }
 
-// TL;DR: Test runners set PLM_TEST_HEADLESS=1 to keep every window hidden, so that a
+// TL;DR: Test runners set PLM_TEST_HEADLESS=1 to keep every window off the screen, so that a
 // test run does not take over the screen of the developer working on the same machine.
-// Pass the options of every BrowserWindow through withHeadlessTestOptions.
-// Details: Electron has no headless mode. A window created with show: false is never put
-// on screen, and the app is never brought to the front. backgroundThrottling: false keeps
-// such a window painting: https://www.electronjs.org/docs/latest/api/structures/web-preferences
-// On macOS it then behaves as a shown one does. On Windows and Linux it gets animation frames
-// far less often, so the e2e suite hides windows only on macOS (see test/e2e/README.md).
+// Pass the options of every BrowserWindow through withHeadlessTestOptions. The windows are
+// hidden, except on Windows: a hidden window there gets about one animation frame per second,
+// so it is shown instead, but fully transparent, click-through and never activated.
+// Details:
+// - Electron has no headless mode. A window created with show: false is never put on screen,
+//   and the app is never brought to the front. backgroundThrottling: false keeps such a window
+//   painting: https://www.electronjs.org/docs/latest/api/structures/web-preferences On macOS
+//   it then behaves as a shown one does. On Linux, the e2e suite shows the windows instead
+//   (see test/e2e/README.md).
+// - On Windows (Electron 45.2.1), the page of a hidden window got 143.5 animation frames per
+//   second on a 144 Hz display while nothing on it changed, but 1.3 once it changed every
+//   frame, with or without hardware acceleration. Its frames reach no display, and Chromium
+//   sends at most one frame per second to a page that has more than three frames not drawn
+//   (kUndrawnFrameLimit in components/viz/service/frame_sinks/compositor_frame_sink_support.cc).
+//   That made the e2e suite take 3.7 minutes instead of 1.6 on Windows CI (#636).
+// - A window shown with opacity 0, which Windows makes a layered window with alpha 0 and does
+//   not draw, with showInactive() and setIgnoreMouseEvents(true), got 144 frames per second.
+//   type: 'toolbar' (WS_EX_TOOLWINDOW) keeps it out of the taskbar and Alt+Tab, and
+//   focusable: false (WS_EX_NOACTIVATE) keeps Windows from activating it when the developer
+//   closes or minimizes the active window. While the e2e suite ran, a monitor read the windows
+//   every 60 ms: none was ever on screen or active.
+// - --disable-backgrounding-occluded-windows: when other windows covered such a window from
+//   its first frame, its page got no animation frame at all in 4 of 20 runs, and in none of 24
+//   with the switch. Chromium shows a page only once its window is first visible, and the
+//   switch counts an occluded window as visible (WebContentsImpl::UpdateWebContentsVisibility).
+//   Playwright gives the same switch to its own browsers. It is appended here rather than
+//   passed on the command line, so that the app's own options in process.argv are unchanged.
+// - Rejected: on a hidden window, Playwright's other switches (--disable-renderer-backgrounding,
+//   --disable-background-timer-throttling) and --disable-features=CalculateNativeWinOcclusion
+//   left 1.3 frames per second, since the window is hidden rather than occluded or in the
+//   background; --disable-frame-rate-limit gave about 4,000, unpaced. Offscreen rendering
+//   (webPreferences.offscreen) gave 60, but renders differently from the app as shipped.
 const headless = !!testRoot && process.env.PLM_TEST_HEADLESS === '1';
+const transparent = headless && process.platform === 'win32';
 exports.isHeadlessTest = headless;
-exports.withHeadlessTestOptions = options => headless
-  ? { ...options, show: false, webPreferences: { ...options.webPreferences, backgroundThrottling: false } }
-  : options;
+exports.withHeadlessTestOptions = options => headless ? {
+  ...options, show: false, ...(transparent ? { opacity: 0, type: 'toolbar', focusable: false } : {}),
+  webPreferences: { ...options.webPreferences, backgroundThrottling: false },
+} : options;
 
 if (testRoot) {
   const { app, BrowserWindow, session } = require('electron');
+  if (transparent) {
+    app.commandLine.appendSwitch('disable-backgrounding-occluded-windows');
+    // Show each window that withHeadlessTestOptions created. Electron emits this event before the
+    // window takes its options, so wait until the constructor has made the window transparent.
+    app.on('browser-window-created', (_event, window) => setImmediate(() => {
+      if (window.isDestroyed() || window.isVisible() || window.getOpacity() !== 0) return;
+      window.setIgnoreMouseEvents(true);
+      window.showInactive();
+    }));
+  }
   if (automated) {
     // Preserve Electron/Commander argument conventions and ordinary CLI options.
     // These exact flags are added by Playwright, including its Linux default.
