@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DirectoryTreeViewSelectionService {
-  public readonly selectionRequested = new BehaviorSubject<string[]>(null); // string for photoPath
+  /**
+   * Requests to select the photos of these paths in the tree and to deselect the others. An event, not state: the tree
+   * view handles each request when it is made, and the tree view exists from the start, so no request is missed.
+   */
+  public readonly selectionRequested = new Subject<string[]>(); // string for photoPath
 
   public select(photoPaths: string[]) {
     this.selectionRequested.next(photoPaths);

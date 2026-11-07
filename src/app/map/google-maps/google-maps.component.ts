@@ -1,5 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { AfterViewInit, Component, ChangeDetectionStrategy, effect, untracked } from '@angular/core';
 import { PinnedPhotoService } from '../../shared/service/pinned-photo.service';
 import { Photo } from '../../shared/model/photo.model';
 import { GoogleMapsApiKeyHandler } from './google-maps-api-key-handler';
@@ -13,21 +12,16 @@ import { GoogleMapsApiLoader } from './google-maps-api-loader';
   changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
-export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
-  private subscription: Subscription;
-
-  constructor(private changeDetectorRef: ChangeDetectorRef,
-              private pinnedPhotoService: PinnedPhotoService) {
-  }
-
-  ngOnInit(): void {
-    this.subscription = this.pinnedPhotoService.pinnedPhotos.subscribe(
-      photos => this.handlePinnedPhotosChanged(photos)
-    );
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+export class GoogleMapsComponent implements AfterViewInit {
+  constructor(private pinnedPhotoService: PinnedPhotoService) {
+    // Render again whenever other photos are pinned, once the Google Maps API has loaded. Until then there is nothing
+    // to render with: ngAfterViewInit loads the API and then renders the photos pinned by that time.
+    effect(() => {
+      const photos = [...this.pinnedPhotoService.pinnedPhotos()];
+      untracked(() => {
+        if (typeof google !== 'undefined') this.renderGoogleMaps(photos);
+      });
+    });
   }
 
   ngAfterViewInit(): void {
@@ -64,18 +58,12 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
     document.getElementById('google-map').innerText = 'Failed to load Google Maps. Please check Internet connection to Google Maps.';
   }
 
-  private handlePinnedPhotosChanged(photos: Photo[]) {
-    this.renderGoogleMaps(photos);
-  }
-
   private renderGoogleMaps(photos: Photo[]) {
     if (photos.length === 0) {
       this.renderInitialGoogleMapsState();
     } else {
       this.renderGoogleMapsWithPhotos(photos);
     }
-
-    this.changeDetectorRef.detectChanges();
   }
 
   private renderInitialGoogleMapsState(): void {

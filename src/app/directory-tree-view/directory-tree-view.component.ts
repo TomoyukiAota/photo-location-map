@@ -1,7 +1,7 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { ChangeDetectorRef, Component, OnInit, ViewChild, ChangeDetectionStrategy, effect, untracked } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy, effect, signal, untracked } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { Analytics } from '../../../src-shared/analytics/analytics';
@@ -34,6 +34,10 @@ export class DirectoryTreeViewComponent implements OnInit {
   public readonly dataSource: MatTreeFlatDataSource<NestedNode, FlatNode>;
   private readonly treeFlattener: MatTreeFlattener<NestedNode, FlatNode>;
   private readonly flatNodeSelectionModel = new SelectionModel<FlatNode>(true /* multiple */);
+  // Bumped after each change of flatNodeSelectionModel. isSelected() reads it, so the checkboxes, which read the selection
+  // through isSelected(), render a change made outside a template event too, such as a selection that the map, the
+  // chart or the Selection menu requests.
+  private readonly selectionVersion = signal(0);
   private readonly flatToNestedNodeMap = new Map<FlatNode, NestedNode>();
   private readonly nestedToFlatNodeMap = new Map<NestedNode, FlatNode>();
   private readonly getLevel = (flatNode: FlatNode) => flatNode.level;
@@ -69,7 +73,6 @@ export class DirectoryTreeViewComponent implements OnInit {
               private sortService: DirTreeViewSortService,
               private selectedPhotoService: SelectedPhotoService,
               private photoDataService: PhotoDataService,
-              private changeDetectorRef: ChangeDetectorRef,
               private focusMonitor: FocusMonitor) {
     this.treeControl = new FlatTreeControl<FlatNode>(this.getLevel, this.isExpandable);
     this.treeFlattener = new MatTreeFlattener(this.transformNodeFromNestedToFlat, this.getLevel, this.isExpandable, this.getChildren);
@@ -132,7 +135,6 @@ export class DirectoryTreeViewComponent implements OnInit {
   }
 
   private handleDirectoryTreeViewSelectionRequested(photoPaths: string[]) {
-    if (photoPaths === null || photoPaths === undefined) return;  // To do nothing for the initial value (null) of DirectoryTreeViewSelectionService::selectionRequested
     const allFlatNodes = Array.from(this.flatToNestedNodeMap.keys());
     const selectionRequestedNodes = allFlatNodes.filter(node => photoPaths.includes(node.path));
     this.selectRequestedNodesAndDeselectOthers(selectionRequestedNodes);
@@ -150,7 +152,7 @@ export class DirectoryTreeViewComponent implements OnInit {
       selectableNodes.forEach(node => this.updateAllParents(node));
     }
 
-    this.changeDetectorRef.detectChanges(); // To update checkbox in GUI after using flatNodeSelectionModel
+    this.notifySelectionChanged();
     this.updateSelectedPhotosToReflectSelectedNodes();
   }
 
@@ -160,7 +162,12 @@ export class DirectoryTreeViewComponent implements OnInit {
   }
 
   public isSelected(flatNode: FlatNode): boolean {
+    this.selectionVersion(); // A dependency of the template's checkboxes.
     return this.flatNodeSelectionModel.isSelected(flatNode);
+  }
+
+  private notifySelectionChanged(): void {
+    this.selectionVersion.update(version => version + 1);
   }
 
   public allDescendantsSelected(flatNode: FlatNode): boolean {
@@ -200,7 +207,7 @@ export class DirectoryTreeViewComponent implements OnInit {
     }
     this.updateAllParents(flatNode);
 
-    this.changeDetectorRef.detectChanges();  // To update checkbox in GUI after using flatNodeSelectionModel
+    this.notifySelectionChanged();
     this.updateSelectedPhotosToReflectSelectedNodes();
   }
 

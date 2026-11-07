@@ -517,6 +517,55 @@ test('the loading-folder dialog follows the loading of the files to the end', as
   expect(texts.some(text => /Completed loading all files \(\d+ files\)\./.test(text)),
     `The dialog must show that loading completed before it closes; it showed ${JSON.stringify(texts)}`).toBe(true);
 });
+test('the tree shows partly selected folders, and Select Only This from its menu selects one folder', async () => {
+  // The menu reaches the selection through window.plmInternalRenderer, as the Selection menu does.
+  await dismissWelcome();
+  await openFolderWithPicker(photoFolder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
+  await treeCheckbox('Kobe').uncheck();
+  await expect(treeCheckbox('actual-photos')).toBeChecked({ indeterminate: true });
+  await expectRepresentedPhotos(3);
+  await page.locator('mat-tree-node').filter({ hasText: 'Gold Coast' }).click({ button: 'right' });
+  await page.getByRole('menuitem', { name: 'Select Only This' }).click();
+  await expect(treeCheckbox('Gold Coast')).toBeChecked();
+  for (const name of ['Apple Park', 'Kobe', 'Unga']) await expect(treeCheckbox(name)).not.toBeChecked();
+  await expect(treeCheckbox('actual-photos')).toBeChecked({ indeterminate: true });
+  await expectRepresentedPhotos(1);
+});
+test('Select Only This from a marker popup selects that photo in the tree and on the map', async () => {
+  // The popup and its menu are plain DOM that Leaflet shows, outside Angular.
+  await dismissWelcome();
+  await openFolderWithPicker(photoFolder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
+  await expectRepresentedPhotos(4);
+  // A click event on the marker itself, as a marker can lie under the edge of the map at this zoom.
+  await page.locator('.plm-leaflet-map-div-icon').first().dispatchEvent('click');
+  const popup = page.locator('.leaflet-popup');
+  await expect(popup.locator('.photo-info-viewer-name')).toBeVisible();
+  const photoName = (await popup.locator('.photo-info-viewer-name').textContent()).trim();
+  await popup.locator('.photo-info-viewer-more-options-button').click();
+  await page.locator('.photo-info-viewer-more-options-menu-item').filter({ hasText: 'Select Only This' }).click();
+  await expectRepresentedPhotos(1);
+  const folders = { 'IMG_5769.JPG': 'Apple Park', 'IMG_1579.JPG': 'Gold Coast', 'IMG_4676.JPG': 'Kobe', 'IMG_2581.JPG': 'Unga' };
+  expect(Object.keys(folders)).toContain(photoName);
+  for (const [name, folder] of Object.entries(folders))
+    await expect(treeCheckbox(folder)).toBeChecked({ checked: name === photoName });
+});
+test('a cluster of photos taken at one place opens a popup with each of them', async () => {
+  const folder = path.join(profile, 'photos taken at one place');
+  await mkdir(folder);
+  for (const name of ['Kobe 1.JPG', 'Kobe 2.JPG']) await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, name));
+  await dismissWelcome();
+  await openFolderWithPicker(folder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('2 files have location data.');
+  const cluster = page.locator('.marker-cluster');
+  await expect(cluster).toHaveCount(1);
+  // At the map's last zoom level the cluster cannot split, so a click shows its photos; before that, it zooms in.
+  await expect.poll(async () => {
+    if (await page.locator('.photo-cluster-viewer-tile').count() === 0 && await cluster.count() === 1) await cluster.click();
+    return page.locator('.photo-cluster-viewer-tile').count();
+  }, { timeout: 20000 }).toBe(2);
+});
 test('undo and redo step through the photo selection as the Selection menu does', async () => {
   // The menu reaches the renderer through IPC, outside any template event, and the tree selects programmatically.
   await dismissWelcome();

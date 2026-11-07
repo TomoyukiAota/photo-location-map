@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Injector, OnDestroy, ViewChild, ChangeDetectionStrategy, effect, untracked } from '@angular/core';
 import * as turf from '@turf/turf';
 import { Control, LayersControlEvent, LeafletEvent, Map, Marker, PopupEvent } from 'leaflet';
 import * as _ from 'lodash';
@@ -35,7 +35,6 @@ interface RegionInfo extends Control {
 })
 export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   @ViewChild('updateInProgressOverlay') public updateInProgressOverlay: ElementRef<HTMLDivElement>;
-  private pinnedPhotoServiceSubscription: Subscription;
   private forceRenderServiceSubscription: Subscription;
 
   private readonly commonBaseLayerOptions = {
@@ -63,33 +62,32 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Changed Base Layer`, `Changed Base Layer to "${baseLayerName}"`);
   }
 
-  constructor(private changeDetectorRef: ChangeDetectorRef,
-              private directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
+  constructor(private directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
               private forceRenderService: LeafletMapForceRenderService,
+              private injector: Injector,
               private pinnedPhotoService: PinnedPhotoService) {
   }
 
   public ngAfterViewInit(): void {
-    this.pinnedPhotoServiceSubscription = this.pinnedPhotoService.pinnedPhotos.subscribe(
-      photos => this.updateMap(photos)
-    );
+    // Render again whenever other photos are pinned; the first run renders the photos pinned now. Created here because
+    // rendering needs the overlay and the map's container.
+    effect(() => {
+      const photos = [...this.pinnedPhotoService.pinnedPhotos()];
+      untracked(() => this.updateMap(photos));
+    }, { injector: this.injector });
     this.forceRenderServiceSubscription = this.forceRenderService.forceRenderWithoutPhotoHappened.subscribe(
       () => this.updateMap([])
     );
-
-    const photos = this.pinnedPhotoService.getPinnedPhotos();
-    this.updateMap(photos);
   }
 
   public ngOnDestroy(): void {
-    this.pinnedPhotoServiceSubscription.unsubscribe();
     this.forceRenderServiceSubscription.unsubscribe();
   }
 
+  // The overlay is shown and hidden through its style rather than a binding, so it needs no change detection.
   private updateMap(photos: Photo[]): void {
     this.updateInProgressOverlay.nativeElement.style.visibility = 'visible';
     this.updateInProgressOverlay.nativeElement.style.opacity = '1';
-    this.changeDetectorRef.detectChanges(); // To show the overlay. Needed because change detection does not work in case the same photos are pinned.
     this.renderMapWithDebouncing(photos);
   }
 
@@ -102,7 +100,6 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
       // Hidden even when rendering threw: the error is recorded as any other, and the overlay would stay over the map.
       this.updateInProgressOverlay.nativeElement.style.visibility = 'hidden';
       this.updateInProgressOverlay.nativeElement.style.opacity = '0';
-      this.changeDetectorRef.detectChanges(); // To hide the overlay.
     }
   }, 1000 /* ms */);
 
