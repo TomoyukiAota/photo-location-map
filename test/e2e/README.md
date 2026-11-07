@@ -7,6 +7,20 @@ mise exec -- npm run build:prod
 PLM_VISUAL=1 mise exec -- npm run test:e2e
 ```
 
+The application's windows stay hidden, as Playwright's own browsers do, so that a
+run does not take over the screen. To watch them, add Playwright's `--headed`
+option:
+
+```sh
+mise exec -- npm run test:e2e -- --headed
+```
+
+The suite passes `PLM_TEST_HEADLESS=1` to the application unless `--headed` is
+given; the application reads it only with a `PLM_TEST_ROOT` test profile. The
+suite checks that the main and Photo Data Viewer windows are shown only with
+`--headed`. Hidden windows render as shown ones do: the visual comparisons use
+the same references.
+
 To exercise the existing development-server flow, start `mise exec -- npm run
 ng:serve`, wait for `http://localhost:4200/`, then set
 `PLM_E2E_LIVE_RELOAD=1` for the checkout tests. This uses the application's real

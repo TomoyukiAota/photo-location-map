@@ -7,6 +7,19 @@ if (automated && (!testRoot || !require('node:path').isAbsolute(testRoot))) {
   throw new Error('PLM_E2E requires an absolute PLM_TEST_ROOT.');
 }
 
+// TL;DR: Test runners set PLM_TEST_HEADLESS=1 to keep every window hidden, so that a
+// test run does not take over the screen of the developer working on the same machine.
+// Pass the options of every BrowserWindow through withHeadlessTestOptions.
+// Details: Electron has no headless mode. A window created with show: false is never put
+// on screen, and the app is never brought to the front. backgroundThrottling: false keeps
+// such a window painting, with timers and requestAnimationFrame running as if visible:
+// https://www.electronjs.org/docs/latest/api/structures/web-preferences
+const headless = !!testRoot && process.env.PLM_TEST_HEADLESS === '1';
+exports.isHeadlessTest = headless;
+exports.withHeadlessTestOptions = options => headless
+  ? { ...options, show: false, webPreferences: { ...options.webPreferences, backgroundThrottling: false } }
+  : options;
+
 if (testRoot) {
   const { app, session } = require('electron');
   if (automated) {

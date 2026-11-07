@@ -18,9 +18,15 @@ if (packagedLauncher && (!packagedExecutable || !path.isAbsolute(packagedLaunche
   throw new Error('PLM_E2E_LAUNCHER requires a packaged executable and an absolute launcher path.');
 }
 const photoFolder = path.join(root, 'test/test-resources/actual-photos');
-let app, page, profile;
+let app, page, profile, headless;
+// The windows stay hidden, as Playwright's browsers do, unless --headed is given.
+test.beforeAll(({ headless: headlessOption }) => { headless = headlessOption; });
+async function expectWindowShownOnlyIfHeaded(window) {
+  expect(await window.evaluate(window => window.isVisible()),
+    'A window must stay off the screen unless --headed is given.').toBe(!headless);
+}
 async function launch({ resize = true } = {}) {
-  const env = { ...process.env, PLM_TEST_ROOT: profile, PLM_E2E: '1' };
+  const env = { ...process.env, PLM_TEST_ROOT: profile, PLM_E2E: '1', PLM_TEST_HEADLESS: headless ? '1' : '0' };
   for (const key of ['PLM_EM_MAIN', 'PLM_EM_RENDERER', 'ELECTRON_RUN_AS_NODE', 'NODE_OPTIONS']) delete env[key];
   // A publicly launched package has no npm development-profile override.
   if (packagedExecutable) delete env.npm_package_config_devOrProd;
@@ -79,6 +85,7 @@ async function launch({ resize = true } = {}) {
     }, { timeout: 30000 }).toBe(true);
   }
   const mainWindow = await app.browserWindow(page);
+  await expectWindowShownOnlyIfHeaded(mainWindow);
   if (liveReload) {
     expect(await mainWindow.evaluate(window => window.webContents.isDevToolsOpened())).toBe(false);
   }
@@ -454,7 +461,14 @@ test('window bounds survive restart and the Windows fullscreen menu stays visibl
     await expect.poll(() => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isMenuBarVisible())).toBe(true);
     await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setFullScreen(false));
     await expect.poll(() => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isFullScreen())).toBe(false);
+    // TL;DR: Hide the window again, as Electron shows a hidden window when it leaves fullscreen on Windows.
+    // Details: NativeWindowViews::SetFullScreen sets WS_VISIBLE on a hidden window leaving fullscreen, so
+    // that a window started in fullscreen is not left as an unresponsive shell. The menu check above runs
+    // before it, and takes the same path whether or not the window is visible.
+    // https://github.com/electron/electron/blob/v45.2.1/shell/browser/native_window_views.cc
+    if (headless) await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].hide());
   }
+  await expectWindowShownOnlyIfHeaded(await app.browserWindow(page));
   const saved = await app.evaluate(({ BrowserWindow, screen }) => {
     const win = BrowserWindow.getAllWindows()[0];
     const area = screen.getDisplayMatching(win.getBounds()).workArea;
@@ -582,6 +596,8 @@ for (const [name, fixture, specialPath] of [
     await expect(viewer.locator('img[alt]').filter({ hasNotText: 'dummy' }).first()).toBeVisible({ timeout: 30000 });
     await viewer.waitForFunction(() => [...document.querySelectorAll('img')].some(img => img.naturalWidth > 100), { timeout: 30000 });
     await expect(viewer).toHaveTitle(`${path.basename(photo)} - Photo Location Map`);
+    // The viewer calls show() once loaded; its window, too, must stay hidden unless --headed is given.
+    await expectWindowShownOnlyIfHeaded(await app.browserWindow(viewer));
     expect(new URL(viewer.url()).searchParams.get('photoPath')).toBe(photo);
   });
 }
