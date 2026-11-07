@@ -42,10 +42,12 @@ if (automated && (!testRoot || !require('node:path').isAbsolute(testRoot))) {
 //   background; --disable-frame-rate-limit gave about 4,000, unpaced. Offscreen rendering
 //   (webPreferences.offscreen) gave 60, but renders differently from the app as shipped.
 const headless = !!testRoot && process.env.PLM_TEST_HEADLESS === '1';
-const transparent = headless && process.platform === 'win32';
+// Experiment: does the same approach keep Linux at the speed of shown windows?
+const transparent = headless && process.platform !== 'darwin';
 exports.isHeadlessTest = headless;
 exports.withHeadlessTestOptions = options => headless ? {
-  ...options, show: false, ...(transparent ? { opacity: 0, type: 'toolbar', focusable: false } : {}),
+  ...options, show: false, ...(transparent ? { opacity: 0 } : {}),
+  ...(transparent && process.platform === 'win32' ? { type: 'toolbar', focusable: false } : {}),
   webPreferences: { ...options.webPreferences, backgroundThrottling: false },
 } : options;
 

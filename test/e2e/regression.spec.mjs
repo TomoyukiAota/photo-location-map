@@ -26,11 +26,11 @@ let app, page, profile, headless;
 // 2.1 on Ubuntu CI, against 1.7 instead of 1.6 on macOS. The cases with many Playwright actions, which wait
 // for animation frames, slowed down the most, and on Windows the map case failed: the app's zoom to the
 // photos, which Leaflet starts in the next animation frame, began only at the next click.
-test.beforeAll(({ headless: headlessOption }) => { headless = headlessOption && process.platform !== 'linux'; });
+test.beforeAll(({ headless: headlessOption }) => { headless = headlessOption; });
 async function expectWindowOffScreenOnlyIfHeadless(window) {
   const state = await window.evaluate(window => ({ visible: window.isVisible(), opacity: window.getOpacity(), focused: window.isFocused() }));
   if (!headless) expect(state.visible, 'The window must be shown.').toBe(true);
-  else if (process.platform === 'win32') {
+  else if (process.platform !== 'darwin') {
     expect(state, 'A headless run on Windows must show the window only fully transparent and inactive.')
       .toEqual({ visible: true, opacity: 0, focused: false });
   } else expect(state.visible, 'A headless run must keep the window hidden.').toBe(false);
