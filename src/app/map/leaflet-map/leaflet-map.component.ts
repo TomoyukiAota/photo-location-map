@@ -4,6 +4,7 @@ import { Control, LayersControlEvent, LeafletEvent, Map, Marker, PopupEvent } fr
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
+import { recordUnhandledError } from '../../../../src-shared/analytics/record-error';
 import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/user-data-stroage-path';
 import { DirectoryTreeViewSelectionService } from '../../directory-tree-view/directory-tree-view-selection.service';
@@ -12,6 +13,7 @@ import { PinnedPhotoService } from '../../shared/service/pinned-photo.service';
 import { PhotoClusterViewer } from '../../photo-cluster-viewer/photo-cluster-viewer';
 import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewer-content';
 import { LeafletMapForceRenderService } from './leaflet-map-force-render/leaflet-map-force-render.service';
+import { addEachMarker } from './add-each-marker';
 import { createDivIconHtml } from './div-icon';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
 import { rasterTileBaseLayerConfigsVersion1 } from './raster-tile-base-layer-configs-version-1';
@@ -94,10 +96,14 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   // renderMap function needs debouncing.
   // Otherwise, changing pinned photos in a short time results in sending frequent requests to the tile server.
   private renderMapWithDebouncing = _.debounce((photos: Photo[]) => {
-    this.renderMap(photos);
-    this.updateInProgressOverlay.nativeElement.style.visibility = 'hidden';
-    this.updateInProgressOverlay.nativeElement.style.opacity = '0';
-    this.changeDetectorRef.detectChanges(); // To hide the overlay.
+    try {
+      this.renderMap(photos);
+    } finally {
+      // Hidden even when rendering threw: the error is recorded as any other, and the overlay would stay over the map.
+      this.updateInProgressOverlay.nativeElement.style.visibility = 'hidden';
+      this.updateInProgressOverlay.nativeElement.style.opacity = '0';
+      this.changeDetectorRef.detectChanges(); // To hide the overlay.
+    }
   }, 1000 /* ms */);
 
   private renderMap(photos: Photo[]): void {
@@ -354,9 +360,12 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
       spiderfyOnMaxZoom: false,   // Disable spiderfy
       zoomToBoundsOnClick: false  // Disable Leaflet.MarkerCluster's zoom behavior. Instead, this app controls zoom using cluster.zoomToBounds() with clusterclick event.
     });
-    photos.forEach(photo => {
-      this.addMarkerToMarkerClusterGroup(markerClusterGroup, photo);
-    });
+    addEachMarker(photos,
+      photo => this.addMarkerToMarkerClusterGroup(markerClusterGroup, photo),
+      (error, photo) => {
+        logger.error(`Failed to add the marker of ${photo.path}`, error);
+        recordUnhandledError(error, 'Renderer'); // Without its path, as any error nothing else handled.
+      });
     markerClusterGroup.on('clusterclick',  e => this.handleClusterClick(e));
     this.map.addLayer(markerClusterGroup);
     this.map.fitBounds(markerClusterGroup.getBounds());
