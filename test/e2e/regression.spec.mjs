@@ -490,6 +490,34 @@ test('--open loads a directory with Unicode, spaces, # and % without restoring p
     else process.env.PLM_E2E_OPEN = previousOpen;
   }
 });
+test('a photo whose GPS values are empty leaves the other photos on the map', async () => {
+  // exifr gives such a photo's latitude and longitude as the text "NaNNaN", and Leaflet threw on its marker. The
+  // error ended the loop that added the markers, so the folder had no markers at all, and the map kept its progress
+  // bar. The photo sorts first, so that the loop would end before any marker.
+  const { jpegWithEmptyGpsValues } = require('../test-util/jpeg-with-empty-gps-values.cjs');
+  const folder = path.join(profile, 'empty GPS values');
+  await mkdir(folder);
+  await writeFile(path.join(folder, '1 empty GPS values.JPG'),
+    jpegWithEmptyGpsValues(await readFile(path.join(photoFolder, 'Gold Coast/IMG_1579.JPG'))));
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, '2 Kobe.JPG'));
+  const previousOpen = process.env.PLM_E2E_OPEN;
+  try {
+    process.env.PLM_E2E_OPEN = folder;
+    await app.close();
+    await launch();
+    const errors = [];
+    page.on('pageerror', error => errors.push(error.message));
+    await dismissWelcome();
+    await expect(page.locator('app-loaded-files-status-bar')).toContainText('Loaded 2 files.');
+    await expect(page.locator('app-loaded-files-status-bar')).toContainText('1 files have location data.');
+    await expect(page.locator('.plm-leaflet-map-div-icon')).toHaveCount(1);
+    await expect(page.locator('.update-in-progress-overlay')).toHaveCSS('visibility', 'hidden');
+    expect(errors).toEqual([]);
+  } finally {
+    if (previousOpen === undefined) delete process.env.PLM_E2E_OPEN;
+    else process.env.PLM_E2E_OPEN = previousOpen;
+  }
+});
 test('window bounds survive restart and the Windows fullscreen menu stays visible', async () => {
   await dismissWelcome();
   if (process.platform === 'win32') {

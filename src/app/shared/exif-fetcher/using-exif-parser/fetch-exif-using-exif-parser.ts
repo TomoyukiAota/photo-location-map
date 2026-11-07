@@ -74,7 +74,7 @@ async function createExifFromExifParserResult(exifParserResult: ExifParserResult
     exif.imageDimensions = new Dimensions(exifParserResult.imageSize.width, exifParserResult.imageSize.height);
   }
 
-  if (exifParserResult.tags && exifParserResult.tags.GPSLatitude && exifParserResult.tags.GPSLongitude) {
+  if (LatLng.isLocation(exifParserResult.tags?.GPSLatitude, exifParserResult.tags?.GPSLongitude)) {
     const gpsInfo = new GpsInfo();
     gpsInfo.latLng = new LatLng(exifParserResult.tags.GPSLatitude, exifParserResult.tags.GPSLongitude);
     exif.gpsInfo = gpsInfo;
