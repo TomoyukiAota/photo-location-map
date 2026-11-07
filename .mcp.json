@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "angular-cli": {
+      "type": "stdio",
+      "command": "mise",
+      "args": ["exec", "--", "npx", "ng", "mcp"]
+    }
+  }
+}

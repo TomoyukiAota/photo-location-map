@@ -160,6 +160,15 @@ async function settings() {
   await page.evaluate(() => window.plmInternalRenderer.settingsDialog.showSettingsDialog());
   await expect(page.locator('app-settings-dialog')).toBeVisible();
 }
+async function openFolderWithPicker(folder) {
+  await app.evaluate(({ dialog }, folder) => {
+    dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [folder] });
+  }, folder);
+  await page.getByRole('button', { name: 'Open Folder', exact: true }).click();
+}
+function treeCheckbox(name) {
+  return page.locator('mat-tree-node').filter({ hasText: name }).getByRole('checkbox');
+}
 test.beforeEach(async () => {
   if (packagedExecutable) test.setTimeout(120000);
   if (process.env.PLM_REQUIRE_ORIGINAL_STACK === '1' && test.info().config.updateSnapshots !== 'none') {
@@ -466,6 +475,56 @@ test('chart grouping, zoom, reset and photo selection keep their real data behav
   }
   await expect(page.locator('.plm-leaflet-map-div-icon')).toHaveCount(1);
 });
+// The next cases cover what a change to signals and zoneless change detection can break: views that show state written
+// outside any template event, such as by a timer or an IPC message from the main process. With Zone.js they render
+// because a tick follows every callback, or because another view happens to ask for change detection at the same moment
+// (docs/tasks/20261107_angular-signals-zoneless/INVENTORY.md).
+test('the loading-folder dialog follows the loading of the files to the end', async () => {
+  // A 100 ms interval writes the dialog's fields, so without a notification the dialog would keep its first text.
+  await dismissWelcome();
+  await page.evaluate(() => {
+    window.__plmLoadingDialogTexts = [];
+    new MutationObserver(() => {
+      const text = document.querySelector('app-loading-folder-dialog')?.textContent.replace(/\s+/g, ' ').trim();
+      if (text && window.__plmLoadingDialogTexts.at(-1) !== text) window.__plmLoadingDialogTexts.push(text);
+    }).observe(document.body, { subtree: true, childList: true, characterData: true });
+  });
+  await openFolderWithPicker(photoFolder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
+  await expect(page.locator('app-loading-folder-dialog')).toHaveCount(0);
+  const texts = await page.evaluate(() => window.__plmLoadingDialogTexts);
+  expect(texts.some(text => text.includes('Collecting files to load from the opened folder...')),
+    `The dialog must start by collecting the files; it showed ${JSON.stringify(texts)}`).toBe(true);
+  expect(texts.some(text => /Completed loading all files \(\d+ files\)\./.test(text)),
+    `The dialog must show that loading completed before it closes; it showed ${JSON.stringify(texts)}`).toBe(true);
+});
+test('undo and redo step through the photo selection as the Selection menu does', async () => {
+  // The menu reaches the renderer through IPC, outside any template event, and the tree selects programmatically.
+  await dismissWelcome();
+  await openFolderWithPicker(photoFolder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
+  await expectRepresentedPhotos(4);
+  await treeCheckbox('Kobe').uncheck();
+  await expectRepresentedPhotos(3);
+  await treeCheckbox('Unga').uncheck();
+  await expectRepresentedPhotos(2);
+  const undo = () => page.evaluate(() => window.plmInternalRenderer.photoSelection.undo());
+  const redo = () => page.evaluate(() => window.plmInternalRenderer.photoSelection.redo());
+  await undo();
+  await expect(treeCheckbox('Unga')).toBeChecked();
+  await expect(treeCheckbox('Kobe')).not.toBeChecked();
+  await expectRepresentedPhotos(3);
+  await undo();
+  await expect(treeCheckbox('Kobe')).toBeChecked();
+  await expectRepresentedPhotos(4);
+  await redo();
+  await expect(treeCheckbox('Kobe')).not.toBeChecked();
+  await expect(treeCheckbox('Unga')).toBeChecked();
+  await expectRepresentedPhotos(3);
+  await redo();
+  await expect(treeCheckbox('Unga')).not.toBeChecked();
+  await expectRepresentedPhotos(2);
+});
 test('--open loads a directory with Unicode, spaces, # and % without restoring photos on an ordinary restart', async () => {
   const folder = path.join(profile, '写真 folder # 100%');
   await mkdir(folder);
@@ -485,6 +544,28 @@ test('--open loads a directory with Unicode, spaces, # and % without restoring p
     await launch();
     await expect(page.locator('app-loaded-files-status-bar .message-container')).toHaveCount(0);
     await expect(page.locator('.plm-leaflet-map-div-icon')).toHaveCount(0);
+  } finally {
+    if (previousOpen === undefined) delete process.env.PLM_E2E_OPEN;
+    else process.env.PLM_E2E_OPEN = previousOpen;
+  }
+});
+test('--open with a photo opens its folder with only that photo selected', async () => {
+  // Opening the folder builds the tree and selects every photo before it resolves; only then is the photo selected.
+  // Building the tree later, as an effect would, would leave every photo selected.
+  const folder = path.join(profile, 'opened through a photo');
+  await mkdir(folder);
+  await copyFile(path.join(photoFolder, 'Gold Coast/IMG_1579.JPG'), path.join(folder, 'Gold Coast.JPG'));
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'Kobe.JPG'));
+  const previousOpen = process.env.PLM_E2E_OPEN;
+  try {
+    process.env.PLM_E2E_OPEN = path.join(folder, 'Kobe.JPG');
+    await app.close();
+    await launch();
+    await dismissWelcome();
+    await expect(page.locator('app-loaded-files-status-bar')).toContainText('2 files have location data.');
+    await expect(treeCheckbox('Kobe.JPG')).toBeChecked();
+    await expect(treeCheckbox('Gold Coast.JPG')).not.toBeChecked();
+    await expectRepresentedPhotos(1);
   } finally {
     if (previousOpen === undefined) delete process.env.PLM_E2E_OPEN;
     else process.env.PLM_E2E_OPEN = previousOpen;
@@ -694,6 +775,58 @@ test('a HEIF thumbnail that cannot be made is recorded with why, without paths',
     if (previousOpen === undefined) delete process.env.PLM_E2E_OPEN;
     else process.env.PLM_E2E_OPEN = previousOpen;
   }
+});
+test('the thumbnail status bar follows the generation of HEIF thumbnails from start to end', async () => {
+  // The main process makes the thumbnails, and the status bar learns of them from a poll every 5 seconds.
+  const folder = path.join(profile, 'HEIF to make thumbnails of');
+  await mkdir(folder);
+  await copyFile(path.join(root, 'test/e2e/fixtures/demo.heic'), path.join(folder, 'demo.heic'));
+  // A photo with location data, or a dialog saying there is none covers the window.
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'Kobe.JPG'));
+  await dismissWelcome();
+  const statusBar = page.locator('app-thumbnail-generation-status-bar');
+  await expect(statusBar).toBeHidden();
+  await openFolderWithPicker(folder);
+  await expect(statusBar).toBeVisible();
+  await expect(statusBar).toContainText('Generating thumbnails for HEIF files...');
+  const openFolderButton = page.getByRole('button', { name: 'Open Folder', exact: true });
+  await expect(openFolderButton).toBeDisabled();
+  await expect(statusBar).toContainText('Completed generating thumbnails for HEIF files.', { timeout: 30000 });
+  await expect(statusBar).toContainText('Processed 1 out of 1 files.');
+  await expect(openFolderButton).toBeEnabled();
+  await statusBar.getByTitle('Close Thumbnail Generation Status Bar').click();
+  await expect(statusBar).toBeHidden();
+});
+test('the thumbnail error dialog lists, sorts and filters the HEIF files without a thumbnail', async () => {
+  // Its table gets its rows from ng-table-virtual-scroll, which says nothing about zoneless Angular.
+  const folder = path.join(profile, 'HEIF without thumbnails');
+  await mkdir(folder);
+  for (const name of ['A broken.HEIC', 'B broken.HEIC'])
+    await copyFile(path.join(root, 'test/test-resources/unsupported-files/Invalid Photo.JPG'), path.join(folder, name));
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'Kobe.JPG'));
+  await dismissWelcome();
+  await openFolderWithPicker(folder);
+  const statusBar = page.locator('app-thumbnail-generation-status-bar');
+  await expect(statusBar).toContainText('Finished generating thumbnails for HEIF files with errors.', { timeout: 30000 });
+  // The link is in the details, which a click on the progress bar opens.
+  const details = statusBar.locator('.progress-bar-with-details');
+  await details.click();
+  await expect(details).toHaveClass(/expanded-progress-bar-with-details/);
+  await statusBar.getByText('Click here to see the files with errors.').click();
+  const dialog = page.locator('app-thumbnail-generation-error-dialog');
+  await expect(dialog).toContainText('Failed to generate thumbnails for the following 2 files:');
+  const fileNames = async () => (await dialog.locator('tr[mat-row] .file-path').allTextContents())
+    .map(text => path.basename(text.trim()));
+  await expect.poll(fileNames).toHaveLength(2);
+  const fileHeader = dialog.locator('th').filter({ hasText: 'File' });
+  await fileHeader.click();
+  await expect.poll(fileNames).toEqual(['A broken.HEIC', 'B broken.HEIC']);
+  await fileHeader.click();
+  await expect.poll(fileNames).toEqual(['B broken.HEIC', 'A broken.HEIC']);
+  await dialog.getByPlaceholder('Filter').pressSequentially('A broken');
+  await expect.poll(fileNames).toEqual(['A broken.HEIC']);
+  await dialog.getByRole('button', { name: 'Close', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
 });
 for (const [name, fixture, specialPath] of [
   ['JPEG', 'actual-photos/Kobe/IMG_4676.JPG'],
