@@ -574,7 +574,10 @@ test('HEIC worker generates the approved bounded JPEG and reports corrupt input'
     } finally { await pool.terminate(); }
   }, { root, profile });
   expect(result.good.status).toBe('success');
+  expect(result.good.error).toBeUndefined();
   expect(result.bad.status).toBe('failed-in-heic-convert');
+  // What was thrown comes back as "Name: message", for the main process to record without paths.
+  expect(result.bad.error).toMatch(/^\w*Error: \S/);
   expect(Math.max(result.width, result.height)).toBe(400);
   expect(result.width).toBeGreaterThan(0);
   expect(result.decoderVersions).toEqual({ heicDecode: '2.1.0', libheifJs: '1.23.5' });
@@ -582,6 +585,32 @@ test('HEIC worker generates the approved bounded JPEG and reports corrupt input'
   // baseline remains unchanged; parsed JSON also avoids Git's Windows CRLF effect.
   expect({ width: result.width, height: result.height, pixels: result.pixels })
     .toEqual(require('./approved-references/heic-thumbnail-libheif-1.23.5.json'));
+});
+test('a HEIF thumbnail that cannot be made is recorded with why, without paths', async () => {
+  // "Thumbnail Generation Finished" says only how many failed; this says why, once per reason.
+  const folder = path.join(profile, 'thumbnails that fail');
+  await mkdir(folder);
+  await copyFile(path.join(root, 'test/test-resources/unsupported-files/Invalid Photo.JPG'), path.join(folder, 'Not a HEIF.HEIC'));
+  // A photo with location data, or a dialog saying there is none covers the welcome dialog.
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'Kobe.JPG'));
+  const previousOpen = process.env.PLM_E2E_OPEN;
+  try {
+    process.env.PLM_E2E_OPEN = folder;
+    await app.close();
+    await launch();
+    await dismissWelcome();
+    const failures = () => app.evaluate(() => globalThis.__plmAnalyticsEvents.filter(event =>
+      event.service === 'amplitude' && event.action === 'Thumbnail Generation Failed'));
+    await expect.poll(failures, { timeout: 30000 }).toHaveLength(1);
+    const [failure] = await failures();
+    expect(failure).toMatchObject({ category: 'Thumbnail Generation', value: 'Files: 1' });
+    expect(failure.label).toMatch(/^failed-in-heic-convert: \w*Error: \S/);
+    expect(failure.label).not.toContain(profile);
+    expect(failure.label).not.toContain('Not a HEIF');
+  } finally {
+    if (previousOpen === undefined) delete process.env.PLM_E2E_OPEN;
+    else process.env.PLM_E2E_OPEN = previousOpen;
+  }
 });
 for (const [name, fixture, specialPath] of [
   ['JPEG', 'actual-photos/Kobe/IMG_4676.JPG'],

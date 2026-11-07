@@ -9,6 +9,7 @@ import { removeInvalidThumbnailCache } from '../../src-shared/thumbnail/cache/re
 import { createThumbnailGenerationLogFile, getThumbnailFilePath } from '../../src-shared/thumbnail/cache/thumbnail-cache-util';
 import { thumbnailGenerationLogger as logger } from '../../src-shared/thumbnail/generation/thumbnail-generation-logger';
 import { ThumbnailFileGenerationArg, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result';
+import { ThumbnailFailures } from './thumbnail-failures';
 
 export function handleThumbnailGenerationIpcRequest(allHeifFilePaths: string[], heifFilePathsToGenerateThumbnail: string[]): void {
   if (!allHeifFilePaths || !heifFilePathsToGenerateThumbnail) {
@@ -90,17 +91,19 @@ async function generateThumbnails(heifFilePaths: string[]) {
   logger.info(`Files are split in ${argArrayChunks.length} chunks.`);
   logger.info(`Each chunk contains up to ${numberOfFilesInChunk} files.`);
 
+  const failures = new ThumbnailFailures();
   for (let index = 0; index < argArrayChunks.length; index++){
     const chunkNumber = `#${index + 1}`;
     logger.info(`Started chunk ${chunkNumber} out of ${argArrayChunks.length} chunks.`);
     const chunk = argArrayChunks[index];
     logger.info(`Chunk ${chunkNumber} contains ${chunk.length} files.`);
-    await runWorkerForThumbnailGeneration(chunk);
+    await runWorkerForThumbnailGeneration(chunk, failures);
     logger.info(`Finished chunk ${chunkNumber} out of ${argArrayChunks.length} chunks.`);
   }
+  failures.record();
 }
 
-async function runWorkerForThumbnailGeneration(argArray: ThumbnailFileGenerationArg[]) {
+async function runWorkerForThumbnailGeneration(argArray: ThumbnailFileGenerationArg[], failures: ThumbnailFailures) {
   const logLines = argArray.map(arg => `From "${arg.srcFilePath}", a thumbnail file "${arg.outputFilePath}" will be generated.`);
   const logText = stringArrayToLogText(logLines);
   logger.info(`Queuing tasks for worker to generate thumbnail:${logText}`);
@@ -115,16 +118,27 @@ async function runWorkerForThumbnailGeneration(argArray: ThumbnailFileGeneration
       .proxy()
       .then(worker => worker.generateThumbnailFile(arg))
       .then(async result => {
-        const status = (result as unknown as ThumbnailFileGenerationResult)?.status; // Cast is necessary to avoid the TypeScript compilation error TS2352.
+        const { status, error } = (result as unknown as ThumbnailFileGenerationResult) ?? {}; // Cast is necessary to avoid the TypeScript compilation error TS2352.
         logger.info(`Observed completion of worker for thumbnail generation. Status: ${status}`);
         logger.info(`Finished attempting to create a thumbnail file "${arg.outputFilePath}" from "${arg.srcFilePath}".`);
         const isThumbnailFileCreated = await fsExtra.pathExists(arg.outputFilePath);
         logger.info(`Does the thumbnail file exist? -> ${isThumbnailFileCreated}`);
         if(!isThumbnailFileCreated) {
           logger.warn(`Failed to create a thumbnail file since it does not exist after an attempt to create it.` +
-            ` Attempted to create a thumbnail file "${arg.outputFilePath}" from "${arg.srcFilePath}".`);
+            ` Attempted to create a thumbnail file "${arg.outputFilePath}" from "${arg.srcFilePath}". Error: ${error}`);
+          failures.add(status ?? 'unknown', error);
         }
         await createThumbnailGenerationLogFile(arg.srcFilePath, arg.outputFileDir, isThumbnailFileCreated, logger);
+      }, async error => {
+        // The worker process failed and sent nothing back, such as when it crashed. The generation log file is still
+        // written: the window counts a thumbnail as done by it, and without it would wait for this one for ever.
+        logger.error(`The worker for thumbnail generation failed for "${arg.srcFilePath}". error: ${error}`, error);
+        failures.add('worker-failed', error);
+        try {
+          await createThumbnailGenerationLogFile(arg.srcFilePath, arg.outputFileDir, false, logger);
+        } catch (logFileError) {
+          logger.error(`Failed to write the thumbnail generation log file for "${arg.srcFilePath}".`, logFileError);
+        }
       });
   });
 

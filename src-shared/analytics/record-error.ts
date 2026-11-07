@@ -1,5 +1,5 @@
 import { ProxyRequire } from '../require/proxy-require';
-import { ErrorScrubbingContext, errorForAnalytics } from './error-for-analytics';
+import { ErrorScrubbingContext, errorForAnalytics, maxLabelLength, scrubMessage } from './error-for-analytics';
 
 // Records errors that nothing handled, without the user's file paths (see errorForAnalytics).
 // An error in a loop must not flood analytics, so each process sends at most 20 errors per launch, and at most 3
@@ -48,6 +48,11 @@ export function recordUnhandledError(error: unknown, processName: 'Main' | 'Rend
 /** Records an error message that is not an exception, such as an auto-update failure, without paths. */
 export function scrubbedErrorLabel(error: unknown): string {
   return errorForAnalytics(error, scrubbingContext()).label;
+}
+
+/** Text that describes an error, such as one a worker process sent as text, without paths. */
+export function scrubbedErrorText(text: string): string {
+  return scrubMessage(text, scrubbingContext()).slice(0, maxLabelLength);
 }
 
 /** zone.js wraps an unhandled promise rejection in an Error "Uncaught (in promise): …" with the reason in `rejection`. */
