@@ -92,6 +92,11 @@ export class DirectoryTreeViewComponent implements OnInit {
     this.photoInfoDisplayLogic = new DirTreeViewPhotoInfoDisplayLogic(this.photoDataService);
   }
 
+  /**
+   * Shows the tree of a newly opened folder: sorted by the current sort settings, with its root expanded, and with every
+   * photo selected when any has location data (otherwise with none, so that the map shows no photos). This runs
+   * synchronously while the folder opens, which --open with a photo relies on: it selects the photo right after.
+   */
   private handleDirectoryTreeViewDataReplaced(data: NestedNode[]) {
     this.flatNodeSelectionModel.clear();
     this.flatToNestedNodeMap.clear();
