@@ -127,10 +127,13 @@ slice from an unmerged one unless STATUS.md says why.
   Zone.js.
 - Tests (Vitest; the TestBed is already zoneless): set signals, then
   `fixture.detectChanges()` or `await fixture.whenStable()`.
-  `fixture.detectChanges()` throws `ExpressionChangedAfterItHasBeenCheckedError`
-  when a template value changed without a notification; `whenStable()` does
-  not, and leaves the view stale, so assert on the DOM. `whenStable()` does not
-  wait for timers, and the tests load no `zone.js/testing` (the `testing`
+  `fixture.detectChanges()` ticks the application, and its no-changes pass
+  throws `ExpressionChangedAfterItHasBeenCheckedError` for an `Eager` view
+  whose binding changed without a notification. It does not catch every case:
+  that pass skips `OnPush` views that nothing marked, unless the exhaustive
+  check is on, and a view refreshed for another reason renders the change
+  silently. `whenStable()` throws nothing, and the view after it can be stale.
+  So assert on the DOM. `whenStable()` does not wait for timers, and the tests load no `zone.js/testing` (the `testing`
   build configuration in `angular.json` has no polyfills), so `fakeAsync` and
   `tick` throw: use `vi.useFakeTimers()` or poll.
 - Declare signal properties `readonly`: `prefer-signals`, enabled in stage 2,

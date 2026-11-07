@@ -133,10 +133,12 @@ Transcribed from `prompts.js` so it is usable without the tool:
 - In tests, add `provideZonelessChangeDetection()` once in the top-level
   `beforeEach`, remove every `provideZoneChangeDetection()`, convert test host
   properties to signals, and expect `ExpressionChangedAfterItHasBeenCheckedError`
-  from `fixture.detectChanges()` wherever a template value changed without a
-  notification. A test that only awaits `fixture.whenStable()` gets no error:
-  the view just stays stale, so assert on the DOM, or use the exhaustive
-  no-changes check. `fixture.whenStable()` no longer waits for timers: poll,
+  from `fixture.detectChanges()` where a template value changed without a
+  notification. Only its no-changes pass raises it, and that pass checks
+  `Eager` views but skips unmarked `OnPush` ones unless the exhaustive check is
+  on; a view refreshed for another reason renders the change silently. A test
+  that only awaits `fixture.whenStable()` gets no error, and the view after it
+  can be stale. So assert on the DOM. `fixture.whenStable()` no longer waits for timers: poll,
   use `fakeAsync`/`tick`, or a mock clock.
   (This repository's TestBed is already zoneless; see REPORT.md. Its tests
   load no `zone.js/testing`, so `fakeAsync` and `tick` throw here: poll, or
