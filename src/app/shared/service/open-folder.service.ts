@@ -47,10 +47,9 @@ export class OpenFolderService {
 
       const directoryTreeObject = await OpenedDirectory.createDirectoryTree(folderPath);
       await this.photoDataService.update(directoryTreeObject); // Photo data is fetched from files. The loading folder dialog displays file loading status.
-      await sleep(100); // To update the loading folder dialog before starting intensive work (PhotoInfoViewerContent.generateCache) which freezes GUI.
+      await sleep(100); // To update the loading folder dialog before the work below, which freezes the GUI for a large folder.
 
       this.showPhotoWithLocationNotFoundDialogIfApplicable();
-      PhotoInfoViewerContent.generateCache(this.photoDataService.getAllPhotos());
       this.directoryTreeViewDataService.replace(directoryTreeObject);
       this.loadedFilesStatusBarService.updateStatus();
       this.thumbnailGenerationService.startThumbnailGeneration(directoryTreeObject);
