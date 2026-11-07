@@ -38,6 +38,7 @@ export async function launchPhotoDataViewer(ipcParams: PhotoDataViewerIpcParams)
   PhotoDataViewerWindowState.manage({browserWindow, photo});
   const photoDataViewerUrl = createPhotoDataViewerUrl(photo);
   await browserWindow.loadURL(photoDataViewerUrl);
+  // A headless test keeps the window off the screen instead (electron-util/e2e-test-hooks.js).
   if (!isHeadlessTest) browserWindow.show();
 }
 
