@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, ChangeDetectionStrategy, viewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, viewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { app } from '@electron/remote';
 
@@ -13,7 +13,6 @@ import { WelcomeDialogAtAppLaunchService } from './welcome-dialog-at-app-launch/
   selector: 'app-welcome-dialog',
   templateUrl: './welcome-dialog.component.html',
   styleUrls: ['./welcome-dialog.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class WelcomeDialogComponent implements AfterViewInit {

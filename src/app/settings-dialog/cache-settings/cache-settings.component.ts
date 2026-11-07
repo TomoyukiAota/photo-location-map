@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ChangeDetectionStrategy, viewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, viewChild } from '@angular/core';
 import * as fsExtra from 'fs-extra';
 import { openWithAssociatedApp } from '../../../../src-shared/command/command';
 import { Logger } from '../../../../src-shared/log/logger';
@@ -10,7 +10,6 @@ import { configureOpeningInOsBrowser } from '../../shared/open-url/configure-ope
   selector: 'app-cache-settings',
   templateUrl: './cache-settings.component.html',
   styleUrls: ['./cache-settings.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class CacheSettingsComponent implements AfterViewInit, OnInit {

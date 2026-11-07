@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { PlmInternalRendererService } from '../global-variables/plm-internal-renderer.service';
 import { PhotoSelectionHistoryService } from './shared/service/photo-selection-history.service';
@@ -8,7 +8,6 @@ import { WelcomeDialogAtAppLaunchService } from './welcome-dialog/welcome-dialog
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {

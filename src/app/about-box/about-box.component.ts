@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, ChangeDetectionStrategy, viewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, viewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { app } from '@electron/remote';
 
@@ -10,7 +10,6 @@ import { configureOpeningInOsBrowser } from '../shared/open-url/configure-openin
   selector: 'app-about-box',
   templateUrl: './about-box.component.html',
   styleUrls: ['./about-box.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
 export class AboutBoxComponent implements AfterViewInit {
