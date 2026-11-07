@@ -70,7 +70,7 @@ continue from "Next action" in the ledger below.
 | Stage / slice | State | Branch / PR | Accepted commit | Tests | Manual checks | Next action |
 | --- | --- | --- | --- | --- | --- | --- |
 | 0 preparation | ACCEPTED | #643 | c448beb | 2026-11-08, macOS: lint, unit (Vitest 46, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 25 cases in 2.1 min, all pass; CI green; CodeRabbit: no actionable comments | none needed: no application change | none |
-| 1A sort settings | IN REVIEW | `claude/signals-zoneless-1a-sort` | | 2026-11-08, macOS: lint, unit (Vitest 49, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 26 cases in 2.2 min, all pass | headless e2e "the sort menu orders the tree, shows its choice, and keeps it across a restart" | merge the pull request after its review, then 1B from main |
+| 1A sort settings | IN REVIEW | `claude/signals-zoneless-1a-sort` | | 2026-11-08, macOS: lint, unit (Vitest 49, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 26 cases in 2.2 min, all pass | headless e2e "the sort menu orders the tree by name and by shooting time, shows its choice, and keeps it across a restart" | merge the pull request after its review, then 1B from main |
 | 1B folder-open state, loaded-files status bar, home | NOT STARTED | | | NOT RUN | | wait for accepted 1A |
 | 1C loading-folder progress | NOT STARTED | | | NOT RUN | | wait for accepted 1B |
 | 1D thumbnail generation | NOT STARTED | | | NOT RUN | | wait for accepted 1C |
@@ -178,7 +178,7 @@ mark a row from memory.
 | Chart x-axis unit | change the unit | chart re-bins; unsupported-duration message when applicable | |
 | Date-unknown photos | checkbox in the chart menu | count shown; map adds/removes date-unknown photos | |
 | Undo / redo | Selection menu and shortcuts | selection steps back and forward; menu items enable/disable | |
-| Sort menu | name / shooting time, ascending / descending | tree order and checkmarks; persists across restart; info dialog details toggle | 2026-11-08, 1A, macOS: headless e2e "the sort menu orders the tree, shows its choice, and keeps it across a restart" |
+| Sort menu | name / shooting time, ascending / descending | tree order and checkmarks; persists across restart; info dialog details toggle | 2026-11-08, 1A, macOS: headless e2e "the sort menu orders the tree by name and by shooting time, shows its choice, and keeps it across a restart" |
 | Settings: Appearance | toggle Show Status Bar; Cancel; Save | live toggle; Cancel restores; Save persists | |
 | Settings: Date & Time | change a format | restart notice; Save restarts | |
 | Settings: Cache | open location; delete cache | opens; confirm then restart | |
