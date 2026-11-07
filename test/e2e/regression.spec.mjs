@@ -41,6 +41,7 @@ async function expectWindowOffScreenOnlyIfHeadless(window) {
       .toEqual({ visible: true, opacity: 0, focused: false });
   } else expect(state.visible, 'A headless run must keep the window hidden.').toBe(false);
 }
+/** Launches the application on the test profile, finds its main window as `page`, and checks how it runs. */
 async function launch({ resize = true } = {}) {
   const env = { ...process.env, PLM_TEST_ROOT: profile, PLM_E2E: '1', PLM_TEST_HEADLESS: headless ? '1' : '0' };
   for (const key of ['PLM_EM_MAIN', 'PLM_EM_RENDERER', 'ELECTRON_RUN_AS_NODE', 'NODE_OPTIONS']) delete env[key];
@@ -55,6 +56,13 @@ async function launch({ resize = true } = {}) {
   app = await _electron.launch({ executablePath: packagedLauncher || packagedExecutable || require('electron'),
     args: packagedExecutable ? openArgs : ['test/e2e/main.cjs', ...openArgs],
     cwd: packagedExecutable ? profile : root, env, timeout: packagedExecutable ? 90000 : 30000 });
+  // Listened to for every page from the launch on, so that what the first change detection reports is not missed.
+  app.context().on('console', message => {
+    if (message.type() === 'error' && message.text().includes('NG0100')) changedWithoutNotification.push(message.text());
+  });
+  app.context().on('weberror', webError => {
+    if (webError.error().message.includes('NG0100')) changedWithoutNotification.push(webError.error().message);
+  });
   const runtime = await app.evaluate(({ app }) => {
     const require = globalThis.__plmTestRequire;
     if (typeof require !== 'function') throw new Error('The application is missing its gated E2E hooks; rebuild it before testing.');
@@ -100,12 +108,6 @@ async function launch({ resize = true } = {}) {
       return !!main;
     }, { timeout: 30000 }).toBe(true);
   }
-  page.on('console', message => {
-    if (message.type() === 'error' && message.text().includes('NG0100')) changedWithoutNotification.push(message.text());
-  });
-  page.on('pageerror', error => {
-    if (error.message.includes('NG0100')) changedWithoutNotification.push(error.message);
-  });
   const mainWindow = await app.browserWindow(page);
   await expectWindowOffScreenOnlyIfHeadless(mainWindow);
   if (liveReload) {
@@ -208,6 +210,10 @@ test.afterEach(async () => {
   const child = app?.process();
   let timer;
   try {
+    // A development build checks every view each second (src/main.ts): let one more check run, after the case's last
+    // step, before the application closes.
+    if (page && !page.isClosed() && await page.evaluate(() => !!globalThis.ngDevMode).catch(() => false))
+      await page.waitForTimeout(1100);
     if (app) await Promise.race([
       app.close(),
       new Promise((_, reject) => timer = setTimeout(() => reject(new Error('Test application did not quit within 10 seconds.')), 10000)),
