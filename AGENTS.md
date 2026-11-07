@@ -67,9 +67,9 @@ Run anything that opens a browser or an app window **headless**, unless you are
 asking the owner to check the UI. The owner keeps working on the same machine
 while you run things.
 
-- `npm run test:e2e` keeps the app's windows hidden on macOS. Add `-- --headed`
-  only when the owner is to watch. On Windows and Linux it still shows them (see
-  `test/e2e/README.md`), so ask before running it there.
+- `npm run test:e2e` keeps the app's windows off the screen on macOS and Windows.
+  Add `-- --headed` only when the owner is to watch. On Linux it still shows them
+  (see `test/e2e/README.md`), so ask before running it there.
 - `npm run test:package` launches the packaged app hidden and in the background.
 - Anything else that starts a browser, such as a Playwright script, has a
   headless mode: use it.
