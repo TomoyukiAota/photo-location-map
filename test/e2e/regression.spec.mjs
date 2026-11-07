@@ -434,6 +434,13 @@ test('the Map menu switches to Google Maps, which draws the selected photos, and
   await expect(page.locator('app-leaflet-map')).toBeVisible();
   await expect(page.locator('app-google-maps')).toHaveCount(0);
   await expectRepresentedPhotos(3);
+
+  // The API has loaded by the second switch, which creates one map for the pinned photos, not two: each map created
+  // uses the API's quota.
+  const mapsBefore = await page.evaluate(() => window.__plmGoogleMapsMarkerCounts.length);
+  await chooseMap('[Experimental] Google Maps');
+  await expect.poll(lastGoogleMapsMarkerCount).toBe(3);
+  expect(await page.evaluate(() => window.__plmGoogleMapsMarkerCounts.length)).toBe(mapsBefore + 1);
 });
 test('folder picker loads real photo data, markers, tree selection and chart', async () => {
   await dismissWelcome();
