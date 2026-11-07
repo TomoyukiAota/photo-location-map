@@ -494,6 +494,26 @@ test('chart grouping, zoom, reset and photo selection keep their real data behav
   }
   await expect(page.locator('.plm-leaflet-map-div-icon')).toHaveCount(1);
 });
+test('the chart menu counts the photos without a shooting time, and its checkbox shows or hides them on the map', async () => {
+  const { jpegWithLocationOnly } = require('../test-util/jpeg-with-location-only.cjs');
+  const folder = path.join(profile, 'a photo without a shooting time');
+  await mkdir(folder);
+  await writeFile(path.join(folder, 'no shooting time.JPG'),
+    jpegWithLocationOnly(await readFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG')), 34.688075, 135.195861));
+  await copyFile(path.join(photoFolder, 'Gold Coast/IMG_1579.JPG'), path.join(folder, 'Gold Coast.JPG'));
+  await dismissWelcome();
+  await openFolderWithPicker(folder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('2 files have location data.');
+  await expectRepresentedPhotos(2);
+  await page.locator('app-date-time-taken-chart-config .more-options-icon').click();
+  await expect(page.locator('.date-unknown-photos-count')).toHaveText('Date-unknown photos: 1');
+  const checkbox = page.getByRole('checkbox', { name: 'Show date-unknown photos on the map' });
+  await expect(checkbox).toBeChecked();
+  await checkbox.uncheck();
+  await expectRepresentedPhotos(1);
+  await checkbox.check();
+  await expectRepresentedPhotos(2);
+});
 // The next cases cover what a change to signals and zoneless change detection can break: views that show state written
 // outside any template event, such as by a timer or an IPC message from the main process. With Zone.js they render
 // because a tick follows every callback, or because another view happens to ask for change detection at the same moment
