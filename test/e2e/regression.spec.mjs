@@ -543,7 +543,7 @@ test('the main window gets animation frames while its page changes', async () =>
   }));
   const refreshRate = await app.evaluate(({ screen }) => screen.getPrimaryDisplay().displayFrequency);
   console.info(`Animation frames in 1 second: ${frames} (display refresh rate: ${refreshRate} Hz)`);
-  expect(frames, 'The window must get animation frames at about the display refresh rate.').toBeGreaterThan(20);
+  expect(frames, 'The window must keep getting animation frames, not about 1 per second.').toBeGreaterThan(20);
 });
 test('analytics preserves events and identity without new Amplitude local URLs', async () => {
   await dismissWelcome();

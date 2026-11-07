@@ -29,8 +29,8 @@ application, which reads it only with a `PLM_TEST_ROOT` test profile:
 Either way, the application does not restore a saved maximized or full-screen
 main window, as that would show the window or bring it to the front. The suite
 checks that the main and Photo Data Viewer windows are kept off the screen only
-in a headless run, and that the main window gets animation frames at about the
-display's refresh rate.
+in a headless run, and that the main window keeps getting animation frames while
+its page changes, rather than about one per second.
 
 On Linux, the windows are still shown. There, a hidden window gets animation
 frames far less often, too: the suite took 4.8 minutes instead of 2.1 on Ubuntu
