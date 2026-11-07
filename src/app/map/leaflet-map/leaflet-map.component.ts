@@ -414,7 +414,8 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
         })
       }
     );
-    marker.bindPopup(PhotoInfoViewerContent.request('leaflet-map-popup', photo));
+    // A function, which Leaflet calls when the popup opens, so that the content is made only for the photos shown.
+    marker.bindPopup(() => PhotoInfoViewerContent.request('leaflet-map-popup', photo));
     marker.on('popupopen',  event => this.updateDivIconBackgroundColor(event, 'rgba( 63,  81, 181, .15)')); // Same as $white-background_selected in _color.scss
     marker.on('popupclose', event => this.updateDivIconBackgroundColor(event, 'rgba(255, 255, 255, 1  )'));
     (marker.options as any).photo = photo;

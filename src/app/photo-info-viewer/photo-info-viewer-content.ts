@@ -5,44 +5,24 @@ import { MoreOptionsButton } from './button/more-options-button';
 import { LaunchPhotoViewerButton } from './button/launch-photo-viewer-button';
 import { PlayLivePhotosButton } from './button/play-live-photos-button';
 import { RotateButton } from './button/rotate-button';
+import { ElementCache } from './element-cache';
 import { PhotoInfoUnavailableElement } from './photo-info-unavailable-element';
 import { ThumbnailElement } from './thumbnail-element';
 
 type Requester = 'dir-tree-view' | 'leaflet-map-tile' | 'leaflet-map-popup' | 'google-maps';
-type PhotoPath = string;
 
+// The content showing a photo: its thumbnail, name, date and buttons. Each place that shows it gets an element of
+// its own per photo, made the first time that place asks for it and then kept, so that the same element, with its
+// rotation, is shown again until another folder is opened.
+//
+// They were made for every photo when a folder was opened, three per photo: for 40,000 photos, 2.4 million DOM nodes
+// and 1.1 million event listeners, about half of the renderer's memory, of which a few are ever shown. Renderers
+// ran out of memory seconds to minutes after folders of 13,000 to 49,000 photos were opened.
 export class PhotoInfoViewerContent {
-  private static rootElementCache = new Map<Requester, Map<PhotoPath, HTMLDivElement>>();
+  private static readonly rootElementCache = new ElementCache<Requester, HTMLDivElement>();
 
   public static clearCache() {
     this.rootElementCache.clear();
-    this.rootElementCache.set('dir-tree-view'       , new Map<PhotoPath, HTMLDivElement>());
-    this.rootElementCache.set('leaflet-map-tile', new Map<PhotoPath, HTMLDivElement>());
-    this.rootElementCache.set('leaflet-map-popup'   , new Map<PhotoPath, HTMLDivElement>());
-    this.rootElementCache.set('google-maps'         , new Map<PhotoPath, HTMLDivElement>());
-  }
-
-  public static generateCache(photos: Photo[]) {
-    const startTime = performance.now();
-
-    photos.forEach(photo => {
-      this.rootElementCache.get('dir-tree-view'       ).set(photo.path, this.generateRootElement(photo));
-      this.rootElementCache.get('leaflet-map-tile').set(photo.path, this.generateRootElement(photo));
-      this.rootElementCache.get('leaflet-map-popup'   ).set(photo.path, this.generateRootElement(photo));
-    });
-
-    // Cache for google-maps is available only in development environment because
-    // 1) google-maps is available only in development environment, and
-    // 2) generating cache takes time.
-    if (DevOrProd.isDev) {
-      photos.forEach(photo => {
-        this.rootElementCache.get('google-maps').set(photo.path, this.generateRootElement(photo));
-      });
-    }
-
-    const endTime = performance.now();
-    const duration = endTime - startTime;
-    Logger.info(`[PhotoInfoViewerContent] generateCache took ${duration.toFixed(3)} [ms].`);
   }
 
   public static request(requester: Requester, photo: Photo): HTMLDivElement {
@@ -57,8 +37,7 @@ export class PhotoInfoViewerContent {
       return PhotoInfoUnavailableElement.get();
     }
 
-    const cachedElement = this.rootElementCache.get(requester).get(photo.path);
-    return cachedElement;
+    return this.rootElementCache.get(requester, photo.path, () => this.generateRootElement(photo));
   }
 
   private static generateRootElement(photo: Photo) {
