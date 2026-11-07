@@ -1,5 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { AfterViewInit, Component, ChangeDetectionStrategy, effect, signal, untracked } from '@angular/core';
 import { PinnedPhotoService } from '../../shared/service/pinned-photo.service';
 import { Photo } from '../../shared/model/photo.model';
 import { GoogleMapsApiKeyHandler } from './google-maps-api-key-handler';
@@ -13,35 +12,24 @@ import { GoogleMapsApiLoader } from './google-maps-api-loader';
   changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false
 })
-export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
-  private subscription: Subscription;
+export class GoogleMapsComponent implements AfterViewInit {
+  // Whether the Google Maps API has loaded; ngAfterViewInit loads it for the first Google map of a launch.
+  private readonly isApiLoaded = signal(typeof google !== 'undefined');
 
-  constructor(private changeDetectorRef: ChangeDetectorRef,
-              private pinnedPhotoService: PinnedPhotoService) {
-  }
-
-  ngOnInit(): void {
-    this.subscription = this.pinnedPhotoService.pinnedPhotos.subscribe(
-      photos => this.handlePinnedPhotosChanged(photos)
-    );
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+  constructor(private pinnedPhotoService: PinnedPhotoService) {
+    // The one place that renders: once the API has loaded, and again whenever other photos are pinned. Every render
+    // creates a map, which uses the API's quota, so a map is not created twice for the same photos.
+    effect(() => {
+      const photos = [...this.pinnedPhotoService.pinnedPhotos()];
+      if (!this.isApiLoaded()) return;
+      untracked(() => this.renderGoogleMaps(photos));
+    });
   }
 
   ngAfterViewInit(): void {
-    const isGoogleMapsApiLoaded = typeof google !== 'undefined';
-    if (isGoogleMapsApiLoaded) {
-      this.getPinnedPhotosAndRenderGoogleMaps();
-    } else {
+    if (!this.isApiLoaded()) {
       this.initializeGoogleMaps();
     }
-  }
-
-  private getPinnedPhotosAndRenderGoogleMaps() {
-    const photos = this.pinnedPhotoService.getPinnedPhotos();
-    this.renderGoogleMaps(photos);
   }
 
   private initializeGoogleMaps(): void {
@@ -56,16 +44,12 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
     divElementForGoogleMaps.parentNode.insertBefore(scriptElement, null);
 
     GoogleMapsApiLoader.waitUntilLoaded()
-      .then(() => this.getPinnedPhotosAndRenderGoogleMaps())
+      .then(() => this.isApiLoaded.set(true))
       .catch(() => this.displayGoogleMapsLoadFailureMessage());
   }
 
   private displayGoogleMapsLoadFailureMessage(): void {
     document.getElementById('google-map').innerText = 'Failed to load Google Maps. Please check Internet connection to Google Maps.';
-  }
-
-  private handlePinnedPhotosChanged(photos: Photo[]) {
-    this.renderGoogleMaps(photos);
   }
 
   private renderGoogleMaps(photos: Photo[]) {
@@ -74,8 +58,6 @@ export class GoogleMapsComponent implements OnInit, OnDestroy, AfterViewInit {
     } else {
       this.renderGoogleMapsWithPhotos(photos);
     }
-
-    this.changeDetectorRef.detectChanges();
   }
 
   private renderInitialGoogleMapsState(): void {
