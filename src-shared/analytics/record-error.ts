@@ -12,6 +12,7 @@ const recordedLabels = new Map<string, number>();
 const recordedErrorObjects = new WeakSet<object>();
 let isRecording = false;
 
+/** Records an error that nothing handled, once for each error object and within the limits above. */
 export function recordUnhandledError(error: unknown, processName: 'Main' | 'Renderer'): void {
   if (isRecording || recordedErrors >= maxErrorsPerLaunch)
     return;
