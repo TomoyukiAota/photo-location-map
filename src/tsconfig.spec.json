@@ -19,6 +19,10 @@
     "../test/angular/**/*.ts"
   ],
   "angularCompilerOptions": {
-    "strictTemplates": false
+    // Checks the specs' templates only when they are compiled ahead of time. `ng test` compiles them just in time
+    // ("aot": false in the "testing" configuration of angular.json), so it does not check the templates of the
+    // components that specs declare. This matches src/tsconfig.app.json, whose templates `npm run build:prod` checks;
+    // `npm run build:dev` compiles just in time too ("aot": false in the "dev" configuration).
+    "strictTemplates": true
   }
 }
