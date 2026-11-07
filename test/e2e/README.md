@@ -7,20 +7,25 @@ mise exec -- npm run build:prod
 PLM_VISUAL=1 mise exec -- npm run test:e2e
 ```
 
-The application's windows stay hidden, as Playwright's own browsers do, so that a
-run does not take over the screen. To watch them, add Playwright's `--headed`
-option:
+On macOS, the application's windows stay hidden, as Playwright's own browsers
+do, so that a run does not take over the screen. To watch them, add Playwright's
+`--headed` option:
 
 ```sh
 mise exec -- npm run test:e2e -- --headed
 ```
 
-The suite passes `PLM_TEST_HEADLESS=1` to the application unless `--headed` is
-given; the application reads it only with a `PLM_TEST_ROOT` test profile. Then
-it does not restore a saved maximized or full-screen main window either, as that
-would show the window. The suite checks that the main and Photo Data Viewer
-windows are shown only with `--headed`. Hidden windows render as shown ones do:
-the visual comparisons use the same references.
+In such a headless run, the suite passes `PLM_TEST_HEADLESS=1` to the
+application, which reads it only with a `PLM_TEST_ROOT` test profile. Then it does not restore a saved
+maximized or full-screen main window either, as that would show the window. The
+suite checks that the main and Photo Data Viewer windows are hidden only in a
+headless run. On macOS, hidden windows render as shown ones do: the visual
+comparisons use the same references, and the run takes as long.
+
+On Windows and Linux, the windows are still shown. There, a hidden window gets
+animation frames far less often: on CI, the suite took 3.7 minutes instead of 1.6
+on Windows and 4.8 instead of 2.1 on Ubuntu, and the map case failed on Windows.
+Linux CI runs under Xvfb, so its windows are not on anyone's screen.
 
 To exercise the existing development-server flow, start `mise exec -- npm run
 ng:serve`, wait for `http://localhost:4200/`, then set

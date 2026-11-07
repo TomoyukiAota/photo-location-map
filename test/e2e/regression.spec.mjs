@@ -19,11 +19,16 @@ if (packagedLauncher && (!packagedExecutable || !path.isAbsolute(packagedLaunche
 }
 const photoFolder = path.join(root, 'test/test-resources/actual-photos');
 let app, page, profile, headless;
-// The windows stay hidden, as Playwright's browsers do, unless --headed is given.
-test.beforeAll(({ headless: headlessOption }) => { headless = headlessOption; });
-async function expectWindowShownOnlyIfHeaded(window) {
+// TL;DR: On macOS, the windows stay hidden, as Playwright's browsers do, unless --headed is given.
+// Details: With hidden windows, the suite took 3.7 minutes instead of 1.6 on Windows CI and 4.8 instead of
+// 2.1 on Ubuntu CI, against 1.7 instead of 1.6 on macOS. The cases with many Playwright actions, which wait
+// for animation frames, slowed down the most, and on Windows the map case failed: the app's zoom to the
+// photos, which Leaflet starts in the next animation frame, began only at the next click. So the windows
+// are shown on Windows and Linux, as before; Linux CI runs under Xvfb.
+test.beforeAll(({ headless: headlessOption }) => { headless = headlessOption && process.platform === 'darwin'; });
+async function expectWindowHiddenOnlyIfHeadless(window) {
   expect(await window.evaluate(window => window.isVisible()),
-    'A window must stay off the screen unless --headed is given.').toBe(!headless);
+    headless ? 'A headless run must keep the window off the screen.' : 'The window must be shown.').toBe(!headless);
 }
 async function launch({ resize = true } = {}) {
   const env = { ...process.env, PLM_TEST_ROOT: profile, PLM_E2E: '1', PLM_TEST_HEADLESS: headless ? '1' : '0' };
@@ -85,7 +90,7 @@ async function launch({ resize = true } = {}) {
     }, { timeout: 30000 }).toBe(true);
   }
   const mainWindow = await app.browserWindow(page);
-  await expectWindowShownOnlyIfHeaded(mainWindow);
+  await expectWindowHiddenOnlyIfHeadless(mainWindow);
   if (liveReload) {
     expect(await mainWindow.evaluate(window => window.webContents.isDevToolsOpened())).toBe(false);
   }
@@ -231,39 +236,12 @@ test('map regions preserve drawing, removal and real photo selection', async () 
     const p = window.__plmLeafletMap.latLngToContainerPoint(latlng);
     return { x: p.x, y: p.y };
   }));
-  // TEMPORARY: diagnostics for this case's headless failure on Windows CI; to be removed.
-  await page.evaluate(() => {
-    window.__plmDiagEvents = [];
-    const map = window.__plmLeafletMap;
-    for (const type of ['mousedown', 'mouseup', 'click', 'mousemove']) map.on(type, e => window.__plmDiagEvents.push(
-      ['map', type, Math.round(e.containerPoint.x), Math.round(e.containerPoint.y), +e.latlng.lat.toFixed(2), +e.latlng.lng.toFixed(2)]));
-    for (const type of ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'click']) document.addEventListener(type, e => window.__plmDiagEvents.push(
-      ['dom', type, e.clientX, e.clientY, e.target.id || String(e.target.className).slice(0, 40)]), true);
-  });
-  async function diagnose(label) {
-    const state = await page.evaluate(() => {
-      const map = window.__plmLeafletMap, rect = map.getContainer().getBoundingClientRect();
-      return { inner: [innerWidth, innerHeight], dpr: devicePixelRatio, visibility: document.visibilityState, focus: document.hasFocus(),
-        mapRect: [rect.x, rect.y, rect.width, rect.height].map(Math.round), size: map.getSize(), center: map.getCenter(),
-        zoom: map.getZoom(), regions: map.pm.getGeomanLayers().map(layer => layer.getBounds?.().toBBoxString()),
-        events: window.__plmDiagEvents };
-    });
-    const win = await app.evaluate(({ BrowserWindow, screen }) => {
-      const win = BrowserWindow.getAllWindows()[0], display = screen.getDisplayMatching(win.getBounds());
-      return { bounds: win.getBounds(), content: win.getContentBounds(), visible: win.isVisible(),
-        workArea: display.workArea, scale: display.scaleFactor };
-    });
-    console.info(`PLM-DIAG ${label} ${JSON.stringify({ state, win, mapBox, corners })}`);
-  }
-  await diagnose('before drawing');
   async function drawRectangle() {
     await page.getByTitle('Set Region by Rectangle', { exact: true }).click();
     await page.mouse.click(mapBox.x + corners[0].x, mapBox.y + corners[0].y);
     await page.mouse.move(mapBox.x + corners[1].x, mapBox.y + corners[1].y, { steps: 5 });
     await page.mouse.click(mapBox.x + corners[1].x, mapBox.y + corners[1].y);
-    await diagnose('after the rectangle');
-    await expect(page.locator('.plm-leaflet-map-region-info-text')).toHaveText('Photos in Regions: 2')
-      .catch(async error => { await diagnose('after the failed expectation'); throw error; });
+    await expect(page.locator('.plm-leaflet-map-region-info-text')).toHaveText('Photos in Regions: 2');
   }
   async function drawPolygon() {
     await page.getByTitle('Set Region by Vertex', { exact: true }).click();
@@ -486,21 +464,9 @@ test('window bounds survive restart and the Windows fullscreen menu stays visibl
     await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setFullScreen(true));
     await expect.poll(() => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isFullScreen())).toBe(true);
     await expect.poll(() => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isMenuBarVisible())).toBe(true);
-    // TL;DR: In a headless run, hide the window in the same call that leaves fullscreen, as Electron shows
-    // a hidden window when it leaves fullscreen on Windows.
-    // Details: NativeWindowViews::SetFullScreen sets WS_VISIBLE on a hidden window leaving fullscreen, so
-    // that a window started in fullscreen is not left as an unresponsive shell. Hiding it in the same task
-    // hides it again before the main process handles another message, rather than after a round trip from
-    // the test. The menu check above runs before this, and takes the same path whether or not the window
-    // is visible. https://github.com/electron/electron/blob/v45.2.1/shell/browser/native_window_views.cc
-    await app.evaluate(({ BrowserWindow }, headless) => {
-      const window = BrowserWindow.getAllWindows()[0];
-      window.setFullScreen(false);
-      if (headless) window.hide();
-    }, headless);
+    await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setFullScreen(false));
     await expect.poll(() => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isFullScreen())).toBe(false);
   }
-  await expectWindowShownOnlyIfHeaded(await app.browserWindow(page));
   const saved = await app.evaluate(({ BrowserWindow, screen }) => {
     const win = BrowserWindow.getAllWindows()[0];
     const area = screen.getDisplayMatching(win.getBounds()).workArea;
@@ -515,8 +481,8 @@ test('window bounds survive restart and the Windows fullscreen menu stays visibl
   const restored = await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].getBounds());
   expect(restored).toEqual(saved);
 });
-test('a saved maximized or full-screen main window stays hidden unless --headed is given', async () => {
-  test.skip(!headless, 'With --headed, the window is shown anyway.');
+test('a saved maximized or full-screen main window stays hidden in a headless run', async () => {
+  test.skip(!headless, 'Only a headless run, on macOS, hides the window.');
   await app.close();
   // electron-window-state saved the main window's state in the profile when the app quit.
   const stateFile = path.join(profile, 'userData', 'window-state.json');
@@ -526,7 +492,7 @@ test('a saved maximized or full-screen main window stays hidden unless --headed 
   // The app restores the saved state when it starts loading the page, which can be after launch()
   // first checks the window, so check again now that the page has loaded.
   const mainWindow = await app.browserWindow(page);
-  await expectWindowShownOnlyIfHeaded(mainWindow);
+  await expectWindowHiddenOnlyIfHeadless(mainWindow);
   expect(await mainWindow.evaluate(window => [window.isMaximized(), window.isFullScreen()])).toEqual([false, false]);
 });
 test('analytics preserves events and identity without new Amplitude local URLs', async () => {
@@ -642,8 +608,8 @@ for (const [name, fixture, specialPath] of [
     await expect(viewer.locator('img[alt]').filter({ hasNotText: 'dummy' }).first()).toBeVisible({ timeout: 30000 });
     await viewer.waitForFunction(() => [...document.querySelectorAll('img')].some(img => img.naturalWidth > 100), { timeout: 30000 });
     await expect(viewer).toHaveTitle(`${path.basename(photo)} - Photo Location Map`);
-    // The viewer calls show() once loaded; its window, too, must stay hidden unless --headed is given.
-    await expectWindowShownOnlyIfHeaded(await app.browserWindow(viewer));
+    // The viewer calls show() once loaded; its window, too, must stay hidden in a headless run.
+    await expectWindowHiddenOnlyIfHeadless(await app.browserWindow(viewer));
     expect(new URL(viewer.url()).searchParams.get('photoPath')).toBe(photo);
   });
 }

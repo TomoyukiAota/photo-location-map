@@ -12,8 +12,9 @@ if (automated && (!testRoot || !require('node:path').isAbsolute(testRoot))) {
 // Pass the options of every BrowserWindow through withHeadlessTestOptions.
 // Details: Electron has no headless mode. A window created with show: false is never put
 // on screen, and the app is never brought to the front. backgroundThrottling: false keeps
-// such a window painting, with timers and requestAnimationFrame running as if visible:
-// https://www.electronjs.org/docs/latest/api/structures/web-preferences
+// such a window painting: https://www.electronjs.org/docs/latest/api/structures/web-preferences
+// On macOS it then behaves as a shown one does. On Windows and Linux it gets animation frames
+// far less often, so the e2e suite hides windows only on macOS (see test/e2e/README.md).
 const headless = !!testRoot && process.env.PLM_TEST_HEADLESS === '1';
 exports.isHeadlessTest = headless;
 exports.withHeadlessTestOptions = options => headless
