@@ -314,6 +314,25 @@ test('appearance setting saves, affects layout, and survives a real app restart'
   await settings();
   await expect(page.getByRole('checkbox', { name: 'Show Status Bar' })).toBeChecked({ checked: !before });
 });
+test('Show Status Bar shows and hides the loaded-files status bar while it is changed, and Cancel restores it', async () => {
+  await dismissWelcome();
+  await openFolderWithPicker(photoFolder);
+  const statusBar = page.locator('app-loaded-files-status-bar');
+  await expect(statusBar).toContainText('4 files have location data.');
+  await expect(statusBar).toBeVisible();
+  const showStatusBar = page.getByRole('checkbox', { name: 'Show Status Bar' });
+  await settings();
+  await showStatusBar.uncheck();
+  await expect(statusBar).toBeHidden();
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await expect(page.locator('app-settings-dialog')).toHaveCount(0);
+  await expect(statusBar).toBeVisible();
+  await settings();
+  await showStatusBar.uncheck();
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(page.locator('app-settings-dialog')).toHaveCount(0);
+  await expect(statusBar).toBeHidden();
+});
 test('folder picker loads real photo data, markers, tree selection and chart', async () => {
   await dismissWelcome();
   await app.evaluate(({ dialog }, folder) => {
@@ -867,6 +886,21 @@ test('the thumbnail status bar follows the generation of HEIF thumbnails from st
   await expect(statusBar).toContainText('Processed 1 out of 1 files.');
   await expect(openFolderButton).toBeEnabled();
   await statusBar.getByTitle('Close Thumbnail Generation Status Bar').click();
+  await expect(statusBar).toBeHidden();
+});
+test('opening another folder hides the thumbnail status bar of the previous one', async () => {
+  // Every open hides it, the second one too, although the application then already has a folder open.
+  const folder = path.join(profile, 'HEIF before another folder');
+  await mkdir(folder);
+  await copyFile(path.join(root, 'test/e2e/fixtures/demo.heic'), path.join(folder, 'demo.heic'));
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'Kobe.JPG'));
+  await dismissWelcome();
+  await openFolderWithPicker(folder);
+  const statusBar = page.locator('app-thumbnail-generation-status-bar');
+  await expect(statusBar).toContainText('Completed generating thumbnails for HEIF files.', { timeout: 30000 });
+  await expect(statusBar).toBeVisible();
+  await openFolderWithPicker(photoFolder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
   await expect(statusBar).toBeHidden();
 });
 test('the thumbnail error dialog lists, sorts and filters the HEIF files without a thumbnail', async () => {

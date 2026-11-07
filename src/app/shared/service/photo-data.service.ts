@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { GpsInfo } from '../model/gps-info.model';
 import { Photo } from '../model/photo.model';
 import { PathPhotoMapCreator } from '../path-photo-map-creator';
@@ -8,9 +8,13 @@ import { PathPhotoMapCreator } from '../path-photo-map-creator';
 })
 export class PhotoDataService {
   private pathPhotoMap: Map<string, Photo> = new Map<string, Photo>();
+  private readonly photosState = signal<readonly Photo[]>([]);
+  /** The photos of the opened folder, for views that derive what they show from them. */
+  public readonly photos = this.photosState.asReadonly();
 
   public async update(directoryTreeObject: DirectoryTree): Promise<void> {
     this.pathPhotoMap = await PathPhotoMapCreator.create(directoryTreeObject);
+    this.photosState.set(Array.from(this.pathPhotoMap.values()));
   }
 
   public getPhoto(path: string): Photo {

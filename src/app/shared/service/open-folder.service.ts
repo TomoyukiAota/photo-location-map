@@ -1,10 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { BehaviorSubject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { DirTreeObjectRecorder } from '../../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
 import { sleep } from '../../../../src-shared/sleep/sleep';
 import { DirectoryTreeViewDataService } from '../../directory-tree-view/directory-tree-view-data.service';
-import { LoadedFilesStatusBarService } from '../../loaded-files-status-bar/service/loaded-files-status-bar.service';
 import { LoadingFolderDialogComponent } from '../../loading-folder/dialog/loading-folder-dialog.component';
 import {
   NoPhotosWithLocationDataDialogComponent
@@ -22,17 +21,27 @@ import { PhotoSelectionHistoryService } from './photo-selection-history.service'
   providedIn: 'root'
 })
 export class OpenFolderService {
-  public isFolderOpened$ = new BehaviorSubject(false);
+  private readonly isFolderOpenedState = signal(false);
+  /** Whether a folder has been opened since the application started. */
+  public readonly isFolderOpened = this.isFolderOpenedState.asReadonly();
+  /**
+   * Raised each time a folder starts opening, the second time included. isFolderOpened is already true by then, and a
+   * signal set to the value it has notifies no one, so what has to happen on every open listens to this.
+   */
+  public readonly folderOpened = new Subject<void>();
 
   constructor(private dialog: MatDialog,
               private photoDataService: PhotoDataService,
               private directoryTreeViewDataService: DirectoryTreeViewDataService,
-              private loadedFilesStatusBarService: LoadedFilesStatusBarService,
               public thumbnailGenerationService: ThumbnailGenerationService,
               private photoSelectionHistoryService: PhotoSelectionHistoryService,
   ) {
   }
 
+  /**
+   * Opens a folder: reads its photos while the loading dialog is shown, then shows its tree, which pins its photos on
+   * the map and the chart, and starts making the thumbnails of its HEIF files.
+   */
   public async open(folderPath: string) {
     let loadingFolderDialogRef: MatDialogRef<LoadingFolderDialogComponent> = null;
 
@@ -41,7 +50,8 @@ export class OpenFolderService {
       this.photoSelectionHistoryService.reset();
       PhotoInfoViewerContent.clearCache();
       ThumbnailObjectUrlStorage.revokeObjectUrls();
-      this.isFolderOpened$.next(true);
+      this.isFolderOpenedState.set(true);
+      this.folderOpened.next();
 
       loadingFolderDialogRef = this.showLoadingFolderDialog();
 
@@ -51,7 +61,6 @@ export class OpenFolderService {
 
       this.showPhotoWithLocationNotFoundDialogIfApplicable();
       this.directoryTreeViewDataService.replace(directoryTreeObject);
-      this.loadedFilesStatusBarService.updateStatus();
       this.thumbnailGenerationService.startThumbnailGeneration(directoryTreeObject);
       DirTreeObjectRecorder.record(directoryTreeObject);
       OpenFolderRecorder.complete();

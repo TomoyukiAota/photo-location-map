@@ -6,8 +6,8 @@ the existence of the plan or from an agent's earlier messages.
 
 ## Current checkpoint
 
-- State: SLICE 1A IN REVIEW, on the branch `claude/signals-zoneless-1a-sort`
-  (stage ledger below).
+- State: SLICE 1B IN REVIEW, on the branch
+  `claude/signals-zoneless-1b-folder-state` (stage ledger below).
 - Authorized (owner, 2026-11-08): carry out the whole plan once the
   prerequisite is met, one pull request per stage or slice; address the
   CodeRabbit review of each pull request, then merge it (the `automerge`
@@ -27,13 +27,14 @@ the existence of the plan or from an agent's earlier messages.
 - Investigation: complete on 2026-11-07 (REPORT.md, INVENTORY.md, MCP.md).
   The Angular unit tests passed under the zoneless TestBed default that day:
   25 files, 37 tests.
-- Last accepted slice: stage 0, #643, merged on 2026-11-08 as c448beb.
+- Last accepted slice: 1A, #644, merged on 2026-11-08 as 62f01d0.
   Baseline (stage 0.4): recorded under "Baseline" below.
 - Runtime, dependency, test or build changes made by this plan: stage 0 added
   e2e cases, the MCP configuration and lint policy comments. 1A keeps the
   tree's sort settings in signals and fixes the storage reset of the unit
-  tests (see "Findings while executing").
-- Processes or CI runs owned by this work: the CI of the 1A pull request.
+  tests (see "Findings while executing"). 1B keeps the opened folder, its
+  photos and the loaded-files status bar in signals.
+- Processes or CI runs owned by this work: the CI of the 1B pull request.
 - Order relative to the `@electron/remote` removal (PLAN.md, "Boundaries"),
   decided by the owner on 2026-11-08: this plan goes first, and that removal
   comes after it.
@@ -70,8 +71,8 @@ continue from "Next action" in the ledger below.
 | Stage / slice | State | Branch / PR | Accepted commit | Tests | Manual checks | Next action |
 | --- | --- | --- | --- | --- | --- | --- |
 | 0 preparation | ACCEPTED | #643 | c448beb | 2026-11-08, macOS: lint, unit (Vitest 46, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 25 cases in 2.1 min, all pass; CI green; CodeRabbit: no actionable comments | none needed: no application change | none |
-| 1A sort settings | IN REVIEW | `claude/signals-zoneless-1a-sort` | | 2026-11-08, macOS: lint, unit (Vitest 49, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 26 cases in 2.2 min, all pass | headless e2e "the sort menu orders the tree by name and by shooting time, shows its choice, and keeps it across a restart" | merge the pull request after its review, then 1B from main |
-| 1B folder-open state, loaded-files status bar, home | NOT STARTED | | | NOT RUN | | wait for accepted 1A |
+| 1A sort settings | ACCEPTED | #644 | 62f01d0 | 2026-11-08, macOS: lint, unit (Vitest 49, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 26 cases in 2.2 min, all pass; CI green; CodeRabbit: a docstring and the photo order in the sort case, both addressed, then no actionable comments | headless e2e "the sort menu orders the tree by name and by shooting time, shows its choice, and keeps it across a restart" | none |
+| 1B folder-open state, loaded-files status bar, home | IN REVIEW | `claude/signals-zoneless-1b-folder-state` | | 2026-11-08, macOS, on the slice's changes before the 1A review fixes: lint, unit (Vitest 54, Electron-Mocha 121 and 70), live-reload, `build:prod`, and `PLM_VISUAL=1` e2e with 28 cases in 2.4 min, all pass | headless e2e, see "Open a folder", "Open a second folder" and "Settings: Appearance" below | merge the pull request after its review, then 1C from main |
 | 1C loading-folder progress | NOT STARTED | | | NOT RUN | | wait for accepted 1B |
 | 1D thumbnail generation | NOT STARTED | | | NOT RUN | | wait for accepted 1C |
 | 1E selection, pinned photos, chart, maps | NOT STARTED | | | NOT RUN | | wait for accepted 1D; decide on the 1E-1/1E-2 split |
@@ -126,6 +127,7 @@ the same.
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
 | baseline, stage 0 | 11 | 10 | 26 | 9 | 26 | 10 | 11 | 8 | 1 + 1 |
 | 1A | 8 | 10 | 22 | 5 | 26 | 10 | 11 | 8 | 1 + 1 |
+| 1B | 7 | 9 | 20 | 4 | 26 | 8 | 11 | 8 | 1 + 1 |
 
 ## Baseline (stage 0.4)
 
@@ -164,8 +166,8 @@ mark a row from memory.
 
 | Flow | How | Expected | Checked |
 | --- | --- | --- | --- |
-| Open a folder (JPEG + HEIC) | Open Folder button | loading dialog phases; tree; markers; chart; status bar counts | |
-| Open a second folder | with the thumbnail status bar shown, open another folder | the thumbnail status bar hides | |
+| Open a folder (JPEG + HEIC) | Open Folder button | loading dialog phases; tree; markers; chart; status bar counts | 2026-11-08, 1B, macOS: the status bar counts, headless e2e "folder picker loads real photo data, markers, tree selection and chart" |
+| Open a second folder | with the thumbnail status bar shown, open another folder | the thumbnail status bar hides | 2026-11-08, 1B, macOS: headless e2e "opening another folder hides the thumbnail status bar of the previous one" |
 | Loading dialog progress | large folder | text changes after "Collecting files..." and ends with "Completed loading all files" | |
 | Thumbnail status bar | HEIC folder, empty cache | appears, progresses, completes; details toggle; close button; Open Folder disabled while generating | |
 | Thumbnail error dialog | corrupt HEIC | "Click here..." link; dialog table sorts, filters, opens file/folder | |
@@ -179,7 +181,7 @@ mark a row from memory.
 | Date-unknown photos | checkbox in the chart menu | count shown; map adds/removes date-unknown photos | |
 | Undo / redo | Selection menu and shortcuts | selection steps back and forward; menu items enable/disable | |
 | Sort menu | name / shooting time, ascending / descending | tree order and checkmarks; persists across restart; info dialog details toggle | 2026-11-08, 1A, macOS: headless e2e "the sort menu orders the tree by name and by shooting time, shows its choice, and keeps it across a restart" |
-| Settings: Appearance | toggle Show Status Bar; Cancel; Save | live toggle; Cancel restores; Save persists | |
+| Settings: Appearance | toggle Show Status Bar; Cancel; Save | live toggle; Cancel restores; Save persists | 2026-11-08, 1B, macOS: headless e2e "Show Status Bar shows and hides the loaded-files status bar while it is changed, and Cancel restores it" and "appearance setting saves, affects layout, and survives a real app restart" |
 | Settings: Date & Time | change a format | restart notice; Save restarts | |
 | Settings: Cache | open location; delete cache | opens; confirm then restart | |
 | Settings: OS (Windows) | Add / Remove; the owner checks it after the merge | confirmation lines appear | |
@@ -197,6 +199,12 @@ mark a row from memory.
   application's path, so that reset never reached it; no unit test had
   depended on storage before. The setup now imports it through the
   application's path.
+- 2026-11-08, 1B: a signal set to the value it already has notifies no one.
+  `isFolderOpened` stays true from the second folder on, so what has to happen
+  on every open, such as hiding the thumbnail status bar of the previous
+  folder, cannot follow it; 1B raises a `folderOpened` event for that. The
+  e2e case "opening another folder hides the thumbnail status bar of the
+  previous one" guards it.
 
 ## Questions for the owner
 

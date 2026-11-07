@@ -3,9 +3,9 @@ import {
   ChangeDetectionStrategy,
   AfterViewInit,
   OnInit,
-  ChangeDetectorRef,
   ElementRef,
   ViewChild,
+  signal,
 } from '@angular/core';
 import Split from 'split.js';
 import { Analytics } from '../../../src-shared/analytics/analytics';
@@ -24,34 +24,26 @@ import { ThumbnailGenerationStatusBarService } from '../thumbnail-generation/sta
   standalone: false
 })
 export class HomeComponent implements AfterViewInit, OnInit {
-  public thumbnailGenerationStatusBarVisible = false;
-  public loadedFilesStatusBarVisible: boolean;
+  public readonly thumbnailGenerationStatusBarVisible = signal(false);
   private sidebarSplitInstance: Split.Instance;
   private currentSidebarUpperPaneHeightPx: number;
 
   @ViewChild('sidebar') private sidebarDiv: ElementRef;
   @ViewChild('sidebarUpperPane') private sidebarUpperPaneDiv: ElementRef;
 
-  constructor(private changeDetectorRef: ChangeDetectorRef,
-              private openFolderService: OpenFolderService,
+  constructor(private openFolderService: OpenFolderService,
               private thumbnailGenerationService: ThumbnailGenerationService,
               private thumbnailGenerationStatusBarService: ThumbnailGenerationStatusBarService,
               public loadedFilesStatusBarService: LoadedFilesStatusBarService,
               private leafletMapForceRenderService: LeafletMapForceRenderService) {}
 
   ngOnInit() {
-    this.openFolderService.isFolderOpened$.subscribe(
-      () => this.thumbnailGenerationStatusBarVisible = false);
+    this.openFolderService.folderOpened.subscribe(
+      () => this.thumbnailGenerationStatusBarVisible.set(false));
     this.thumbnailGenerationService.generationStarted.subscribe(
-      () => this.thumbnailGenerationStatusBarVisible = true);
+      () => this.thumbnailGenerationStatusBarVisible.set(true));
     this.thumbnailGenerationStatusBarService.closeRequested.subscribe(
-      () => this.thumbnailGenerationStatusBarVisible = false);
-
-    this.loadedFilesStatusBarService.visible.subscribe(visible => {
-      this.loadedFilesStatusBarVisible = visible;
-      this.changeDetectorRef.detectChanges();
-    });
-    this.loadedFilesStatusBarService.setInitialVisibility(); // Initial visibility needs to be set after subscription.
+      () => this.thumbnailGenerationStatusBarVisible.set(false));
   }
 
   ngAfterViewInit() {

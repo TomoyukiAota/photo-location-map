@@ -1,11 +1,12 @@
-@if (anyFileLoaded) {
+@let loaded = summary();
+@if (loaded.numberOfLoadedFiles >= 1) {
   <div class='message-container'>
     <div class="left-message-container">
-      <span>Loaded {{ numberOfLoadedFiles }} files.</span>
-      <span>{{ numberOfFilesWithGpsInfo }} files have location data.</span>
+      <span>Loaded {{ loaded.numberOfLoadedFiles }} files.</span>
+      <span>{{ loaded.numberOfFilesWithGpsInfo }} files have location data.</span>
     </div>
     <div class="right-message-container">
-      <span>{{ getDescriptionByFileType() }}</span>
+      <span>{{ loaded.descriptionByFileType }}</span>
     </div>
   </div>
 }

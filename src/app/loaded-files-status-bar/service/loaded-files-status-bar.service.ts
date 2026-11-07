@@ -1,5 +1,4 @@
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Injectable, signal } from '@angular/core';
 import { BooleanSetting } from '../../../../src-shared/user-settings/boolean-setting';
 import { currentUserSettings } from '../../../../src-shared/user-settings/user-settings';
 
@@ -7,24 +6,21 @@ import { currentUserSettings } from '../../../../src-shared/user-settings/user-s
   providedIn: 'root'
 })
 export class LoadedFilesStatusBarService {
-  public visible = new Subject<boolean>();
-  public statusUpdateRequested = new Subject<void>();
+  private readonly visibleState = signal(LoadedFilesStatusBarService.readSetting());
+  /** Whether the status bar is shown: the "Show Status Bar" setting, or the value being tried in the settings dialog. */
+  public readonly visible = this.visibleState.asReadonly();
 
-  public setInitialVisibility() {
-    const showStatusBar = BooleanSetting.convertToBoolean(currentUserSettings.showStatusBar);
-    this.setVisibility(showStatusBar);
-  }
-
+  /** Shows or hides the status bar, as the settings dialog does while its checkbox is changed. */
   public setVisibility(visible: boolean) {
-    this.visible.next(visible);
+    this.visibleState.set(visible);
   }
 
+  /** Goes back to the "Show Status Bar" setting, as Cancel in the settings dialog does. */
   public restoreVisibilityToSettingValue() {
-    const showStatusBar = BooleanSetting.convertToBoolean(currentUserSettings.showStatusBar);
-    this.setVisibility(showStatusBar);
+    this.setVisibility(LoadedFilesStatusBarService.readSetting());
   }
 
-  public updateStatus(): void {
-    this.statusUpdateRequested.next();
+  private static readSetting(): boolean {
+    return BooleanSetting.convertToBoolean(currentUserSettings.showStatusBar);
   }
 }
