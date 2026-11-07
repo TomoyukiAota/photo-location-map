@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, computed, signal } from '@angular/core';
 import { GpsInfo } from '../model/gps-info.model';
 import { Photo } from '../model/photo.model';
 import { PathPhotoMapCreator } from '../path-photo-map-creator';
@@ -7,23 +7,23 @@ import { PathPhotoMapCreator } from '../path-photo-map-creator';
   providedIn: 'root'
 })
 export class PhotoDataService {
-  private pathPhotoMap: Map<string, Photo> = new Map<string, Photo>();
-  private readonly photosState = signal<readonly Photo[]>([]);
+  // The photos of the opened folder by path, in a signal: a template that looks a photo up, such as a node of the
+  // tree, renders again when another folder replaces them, before the tree itself is replaced.
+  private readonly pathPhotoMap = signal(new Map<string, Photo>());
   /** The photos of the opened folder, for views that derive what they show from them. */
-  public readonly photos = this.photosState.asReadonly();
+  public readonly photos = computed<readonly Photo[]>(() => Array.from(this.pathPhotoMap().values()));
 
   public async update(directoryTreeObject: DirectoryTree): Promise<void> {
-    this.pathPhotoMap = await PathPhotoMapCreator.create(directoryTreeObject);
-    this.photosState.set(Array.from(this.pathPhotoMap.values()));
+    this.pathPhotoMap.set(await PathPhotoMapCreator.create(directoryTreeObject));
   }
 
   public getPhoto(path: string): Photo {
-    const photo = this.pathPhotoMap.get(path);
+    const photo = this.pathPhotoMap().get(path);
     return !!photo ? photo : null;
   }
 
   public getGpsInfo(path: string): GpsInfo {
-    const photo = this.pathPhotoMap.get(path);
+    const photo = this.pathPhotoMap().get(path);
     if (!photo || !photo.exif || !photo.exif.gpsInfo)
       return null;
 
@@ -31,7 +31,7 @@ export class PhotoDataService {
   }
 
   public getAllPhotos(): Photo[] {
-    return Array.from(this.pathPhotoMap.values());
+    return Array.from(this.pathPhotoMap().values());
   }
 
   public getPhotosWithGpsInfo(): Photo[] {
