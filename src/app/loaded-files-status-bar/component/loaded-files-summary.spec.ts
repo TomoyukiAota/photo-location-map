@@ -3,6 +3,7 @@ import { GpsInfo } from '../../shared/model/gps-info.model';
 import { Photo } from '../../shared/model/photo.model';
 import { summarizeLoadedFiles } from './loaded-files-summary';
 
+/** A photo of the given file name in /photos, with location data when withLocation is true. */
 function photo(name: string, withLocation = false): Photo {
   const exif = withLocation ? Object.assign(new Exif(), { gpsInfo: new GpsInfo() }) : null;
   const filenameExtension = name.slice(name.lastIndexOf('.')).toLowerCase();

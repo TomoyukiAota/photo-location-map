@@ -6,6 +6,7 @@ import { Photo } from '../../shared/model/photo.model';
 import { PhotoDataService } from '../../shared/service/photo-data.service';
 import { LoadedFilesStatusBarComponent } from './loaded-files-status-bar.component';
 
+/** A photo of the given file name in /photos, with location data when withLocation is true. */
 function photo(name: string, withLocation = false): Photo {
   const exif = withLocation ? Object.assign(new Exif(), { gpsInfo: new GpsInfo() }) : null;
   return Object.assign(new Photo(), { name, path: `/photos/${name}`, filenameExtension: name.slice(name.lastIndexOf('.')), exif });
