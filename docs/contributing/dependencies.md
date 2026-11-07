@@ -77,9 +77,11 @@ Node's DEP0190 warnings, which alone would not justify it.
 
 Remove the patch when an Electron-Mocha release starts Electron without a shell.
 Until then, the patch checks Electron-Mocha's version and source before writing,
-so an upgrade fails installation until the patch is reviewed, and
-`npm run test:dependency-compat` checks the patched behavior with Windows paths
-that contain spaces.
+so an upgrade fails installation until the patch is reviewed.
+`npm run test:dependency-compat` checks the patched spawn calls with simulated
+Windows paths that contain spaces, and the Windows CI job runs both suites from a
+second checkout whose path contains a space. Keep that CI step after removing the
+patch.
 
 
 ## Electron binary

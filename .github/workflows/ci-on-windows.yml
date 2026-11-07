@@ -76,6 +76,24 @@ jobs:
     - name: npm run test:unit:em:renderer
       run: npm run test:unit:em:renderer
 
+    # TL;DR: Check that the Electron-Mocha suites start from a checkout whose path contains a space, which
+    # script/patch-electron-mocha.js makes possible. This job's own checkout path has no space.
+    # Details: Electron-Mocha 13.1.0 starts Electron through cmd.exe on Windows, and Node passes the Electron path
+    # to it unquoted, so without the patch the path splits at the space. A second checkout at such a path is
+    # installed with a clean "npm ci", as a developer would. When an Electron-Mocha release starts Electron
+    # without a shell, remove the patch and keep this step to confirm that the suites still start
+    # (see "Departures kept for a needed feature" in docs/contributing/dependencies.md).
+    - name: npm run test:unit:em:main and test:unit:em:renderer from a checkout path with a space
+      run: |
+        $PSNativeCommandUseErrorActionPreference = $true
+        $checkout = Join-Path $env:RUNNER_TEMP 'checkout with spaces'
+        git worktree add --detach $checkout HEAD
+        Set-Location $checkout
+        npm ci
+        npm run verify:electron
+        npm run test:unit:em:main
+        npm run test:unit:em:renderer
+
     - name: npm run test:live-reload
       run: npm run test:live-reload
 

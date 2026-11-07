@@ -42,3 +42,5 @@ The owner set this rule on 2026-11-07; see
 - `npm run test:all`, a production build and the checkout end-to-end suite.
 - CI on all three operating systems, and the on-demand Intel macOS job, because
   `@electron/universal` merges the x64 and arm64 archives with ASAR.
+- On Windows CI, both Electron-Mocha suites start from a checkout whose path
+  contains a space, after a clean `npm ci` there.

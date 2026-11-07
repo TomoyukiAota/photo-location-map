@@ -98,6 +98,12 @@ was restored, a clean `npm ci` applies it again and leaves the lockfile and
 its deprecation warnings unchanged. `npm ls --all`, the patch's test (4),
 `lint:all`, and the Electron-Mocha main (117) and renderer (69) suites pass.
 
+The patch's purpose can only be checked on Windows. Node's shell launch is the
+same on macOS apart from the shell: with `shell: true`, a script at a path with
+a space failed with status 127, and with `shell: false` it ran. The Windows CI
+job now also makes a second checkout under `checkout with spaces`, installs it
+with a clean `npm ci`, and runs both Electron-Mocha suites there.
+
 CI and the on-demand Intel macOS job run on the pull request, whose description
 records their results.
 
@@ -116,7 +122,9 @@ patch is kept for that reason, and is to be removed when Electron-Mocha is
 fixed.
 [dependencies.md](../../contributing/dependencies.md#departures-kept-for-a-needed-feature)
 lists it with that reason and the removal condition, and the patch's own comment
-now leads with the same reason. Electron-Mocha already starts Electron without a
+now leads with the same reason. The Windows CI step that runs both suites from a
+checkout path with a space checks the reason itself, and stays after the patch
+is removed. Electron-Mocha already starts Electron without a
 shell on macOS and Linux, so the patch changes only Windows.
 
 ## Resuming
