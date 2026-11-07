@@ -79,6 +79,7 @@ export class SettingsDialogComponent {
     return this.selectedTab() === tabName;
   }
 
+  /** Saves the settings and closes, after asking first when a new date or clock format needs a restart. */
   public saveSettings() {
     if (this.isAppRestartRequired()) {
       const isOkPressed = window.confirm('This application will restart after saving settings.\nDo you want to continue?');
