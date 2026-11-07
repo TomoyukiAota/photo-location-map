@@ -1,7 +1,7 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { ChangeDetectorRef, Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild, ChangeDetectionStrategy, effect, untracked } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { Analytics } from '../../../src-shared/analytics/analytics';
@@ -78,8 +78,11 @@ export class DirectoryTreeViewComponent implements OnInit {
     directoryTreeViewDataService.dataReplaced
       .subscribe(data => this.handleDirectoryTreeViewDataReplaced(data));
 
-    sortService.sortConfig$
-      .subscribe(sortConfig => this.sortData(sortConfig));
+    // Sort the tree again when the sort settings change. Sorting reads photo data, which must not become a dependency.
+    effect(() => {
+      const sortConfig = sortService.sortConfig();
+      untracked(() => this.sortData(sortConfig));
+    });
 
     directoryTreeViewSelectionService.selectionRequested
       .subscribe(photoPaths => this.handleDirectoryTreeViewSelectionRequested(photoPaths));
@@ -89,6 +92,11 @@ export class DirectoryTreeViewComponent implements OnInit {
     this.photoInfoDisplayLogic = new DirTreeViewPhotoInfoDisplayLogic(this.photoDataService);
   }
 
+  /**
+   * Shows the tree of a newly opened folder: sorted by the current sort settings, with its root expanded, and with every
+   * photo selected when any has location data (otherwise with none, so that the map shows no photos). This runs
+   * synchronously while the folder opens, which --open with a photo relies on: it selects the photo right after.
+   */
   private handleDirectoryTreeViewDataReplaced(data: NestedNode[]) {
     this.flatNodeSelectionModel.clear();
     this.flatToNestedNodeMap.clear();
@@ -100,7 +108,7 @@ export class DirectoryTreeViewComponent implements OnInit {
     const rootNestedNode = data[0];
     const rootFlatNode = this.nestedToFlatNodeMap.get(rootNestedNode);
 
-    const sortConfig = this.sortService.sortConfig$.value;
+    const sortConfig = this.sortService.sortConfig();
     this.sortData(sortConfig);
 
     if (rootFlatNode.isSelectable) {

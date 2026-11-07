@@ -22,7 +22,7 @@ export class SidebarUpperPaneMoreOptionsComponent {
   public handleSortKeyMenuItemClicked(sortKey: DirTreeViewSortKey) {
     Logger.info(`[Sidebar] [Menu] [Sort] Clicked "By ${sortKey}"`);
     Analytics.trackEvent('Sidebar Menu', `[Sort] Clicked "By ${sortKey}"`);
-    this.sortService.sortKey$.next(sortKey);
+    this.sortService.setSortKey(sortKey);
   }
 
   public handleShootingTimeInfoButtonClicked(event: MouseEvent) {
@@ -35,6 +35,6 @@ export class SidebarUpperPaneMoreOptionsComponent {
   public handleSortDirectionMenuItemClicked(sortDirection: DirTreeViewSortDirection) {
     Logger.info(`[Sidebar] [Menu] [Sort] Clicked "${sortDirection}"`);
     Analytics.trackEvent('Sidebar Menu', `[Sort] Clicked "${sortDirection}"`);
-    this.sortService.sortDirection$.next(sortDirection);
+    this.sortService.setSortDirection(sortDirection);
   }
 }
