@@ -4,17 +4,23 @@ const { createHash } = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 
-// TL;DR: Electron-Mocha 13.1.0 unnecessarily launches Electron through cmd.exe
-// on Windows, producing DEP0190 twice per suite. Spawn the executable directly.
+// TL;DR: Let the Electron-Mocha suites start on Windows from a checkout whose
+// path contains a space. Electron-Mocha 13.1.0 launches Electron through cmd.exe
+// there, and Node passes the Electron path to that shell unquoted, so the path
+// splits at the space. Spawn the executable directly. Remove this patch when an
+// Electron-Mocha release stops using a Windows shell at both sites below: the
+// Electron launch and the quit hook's profile cleanup.
 // Details: both the CLI and detached profile cleanup pass a real Electron binary
 // and a separate argv array, so neither requires shell expansion. Direct spawn
-// also preserves spaces and shell metacharacters in paths/arguments. Keep the
+// preserves spaces and shell metacharacters in paths/arguments. It also avoids
+// Node's DEP0190 warnings, but that alone would not justify a patch (see "Stay
+// on the documented setup" in docs/contributing/dependencies.md). Keep the
 // upstream stdio, signal/exit forwarding and detached cleanup unchanged. Version
 // and complete-source hashes make dependency drift fail before either file is
-// written; repeated installs accept only the exact patched sources. Remove this
-// workaround when upstream fixes both sites. This changes a development tool,
-// not the packaged application. ELECTRON_PATH must identify an executable, as
-// the installed Electron package does; command scripts are not supported here.
+// written; repeated installs accept only the exact patched sources. This changes
+// a development tool, not the packaged application. ELECTRON_PATH must identify
+// an executable, as the installed Electron package does; command scripts are not
+// supported here.
 const patches = [
   {
     file: 'bin/electron-mocha',

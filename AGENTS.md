@@ -85,6 +85,22 @@ artifact is actually needed.
 Publishing the result to GitHub is a separate, outward-facing step — confirm
 before uploading.
 
+## Stay on the documented setup
+
+Use each tool the way its documentation sets it up. Do not depart from that with
+npm `overrides`, patches to installed packages or custom environments unless a
+needed feature or a serious security vulnerability requires it. A deprecation
+warning is not such a reason, and it is not the kind of failure the narrow
+workaround below is for: record it in
+[`docs/contributing/dependencies.md`](docs/contributing/dependencies.md#known-deprecation-warnings)
+instead. Departures kept for such a reason are listed on the same page, each
+with its reason and when to remove it.
+
+**Why:** upstream updates to the standard setup remove these warnings over
+time, and they are not urgent. An earlier pull request removed every warning by
+adding five overrides and two install-time source patches, each pinned to exact
+versions that every later upgrade had to review again.
+
 ## Prefer a narrow workaround over a risky upgrade
 
 When an intermittent failure turns out to be a known upstream bug, propose a
