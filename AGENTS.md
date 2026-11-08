@@ -79,6 +79,23 @@ If something cannot run headless, say so and ask before starting it.
 **Why:** the e2e tests used to bring a window to the front at every launch of
 the app, in the way of the owner's own work.
 
+## In a git worktree
+
+Two things work differently in a git worktree, such as one that Claude Code
+makes under `.claude/worktrees/`:
+
+- **mise does not trust the worktree's `mise.toml`**, as mise keeps its trust
+  per path, so `mise exec` fails there. Pass the file to each command rather
+  than running `mise trust`, which would change mise's own settings:
+  `MISE_TRUSTED_CONFIG_PATHS="$PWD/mise.toml" mise exec -- npm ci`.
+- **`npm run test:package` cannot pass its last check**, which reads
+  `release/latest-mac.yml`. electron-builder writes that file only for a
+  publisher, which it detects from `GH_TOKEN` and the repository in
+  `.git/config`, a file rather than a folder in a worktree: without `GH_TOKEN`
+  there is no file, and with one the build fails with "Cannot detect
+  repository by .git/config". The package itself is built and signed, and the
+  macOS CI job, which works in a clone, runs the whole test.
+
 ## You can run the signed mac build yourself
 
 Run `npm run package:mac` (and the other packaging scripts) directly. The macOS
