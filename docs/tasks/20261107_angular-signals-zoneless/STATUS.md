@@ -6,11 +6,13 @@ the existence of the plan or from an agent's earlier messages.
 
 ## Current checkpoint
 
-- State: COMPLETE: stages 0 to 3, every stage 4 item and the fix of
-  question 4 (stage ledger); pinned photos as a `computed`, which the owner
-  chose afterwards, is in review. What is left is the owner's: the checks
-  after the merges (the OS tab on Windows, Google Maps with an API key), and
-  the questions below.
+- State: COMPLETE: stages 0 to 3, every stage 4 item, the fix of question 4,
+  and what the owner chose afterwards: pinned photos as a `computed`, and the
+  e2e suite in CI against a development build and with its screenshots
+  (questions 8 and 9), which also got `settings-appearance.png` compared at
+  last (stage ledger). What is left is the owner's: the checks after the
+  merges (the OS tab on Windows, Google Maps with an API key), and question 7
+  below.
 - Authorized (owner, 2026-11-08): carry out the whole plan once the
   prerequisite is met, one pull request per stage or slice; address the
   CodeRabbit review of each pull request, then merge it (the `automerge`
@@ -30,8 +32,8 @@ the existence of the plan or from an agent's earlier messages.
 - Investigation: complete on 2026-11-07 (REPORT.md, INVENTORY.md, MCP.md).
   The Angular unit tests passed under the zoneless TestBed default that day:
   25 files, 37 tests.
-- Last accepted slice: the stage 4 item standalone, #662, merged on 2026-11-08
-  as 7bf8755.
+- Last accepted slice: `settings-appearance.png` compared at last, #667,
+  merged on 2026-11-08 as a191b0d.
   Baseline (stage 0.4): recorded under "Baseline" below.
 - Runtime, dependency, test or build changes made by this plan: stage 0 added
   e2e cases, the MCP configuration and lint policy comments. 1A keeps the
@@ -53,7 +55,12 @@ the existence of the plan or from an agent's earlier messages.
   `[class.name]` rather than `[ngClass]`. The components are standalone, and
   `src/app/app.config.ts` holds the application's providers. The pinned
   photos are a `computed` of the selected photos and the chart's zoom and
-  checkbox, which `DateTimeTakenChartConfigService` keeps.
+  checkbox, which `DateTimeTakenChartConfigService` keeps. CI's Ubuntu job
+  also runs the e2e suite against a development build, and its macOS arm64
+  job compares the screenshots, against references of its own in
+  `test/e2e/snapshots-ci/macos-26-arm64/`. A dialog's screenshot waits until
+  no other dialog is left, and `settings-appearance.png` is the dialog's part
+  of the original application's screenshot.
 - Processes or CI runs owned by this work: none.
 - `provideCheckNoChangesConfig` (PLAN.md, 3.5) stays in development builds:
   the e2e suite run against one relies on it to find bindings changed
@@ -68,9 +75,9 @@ the existence of the plan or from an agent's earlier messages.
 
 The plan is complete ("Current checkpoint" above), so do not begin it again.
 The next action is the owner's: the checks left to the owner and the open
-questions under "Questions for the owner" below. If the owner chooses another
-item, branch from the fetched main as below, follow PLAN.md's "Checkpoint
-discipline", and give the item a row in the stage ledger.
+question under "Questions for the owner" below, question 7. If the owner
+chooses another item, branch from the fetched main as below, follow PLAN.md's
+"Checkpoint discipline", and give the item a row in the stage ledger.
 
 How the plan was started: read AGENTS.md, PLAN.md and this file. Before stage
 0, check the prerequisite:
@@ -119,8 +126,10 @@ and continue from "Next action" in the ledger below.
 | 4 `@Service` | ACCEPTED | #660 | bf13966 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 82, Electron-Mocha 121 and 70), live-reload, `build:prod` and `PLM_VISUAL=1` e2e with 40 cases in 3.5 min, all pass, the committed references unchanged; `build:dev` and e2e, 40 cases in 4.4 min, no NG0100; 19 services are `@Service()`, the error handler and a spec's stand-in `@Service({ autoProvided: false })`, and no `@Injectable` is left; CI green; CodeRabbit: the checkpoint's live-reload and `PLM_VISUAL=1` e2e, which it asked for, run on this branch's head and recorded, for #657 to #659 too, then no actionable comments | headless e2e: the whole suite | none |
 | 4 `ngclass-to-class` | ACCEPTED | #661 | 646e4ed | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 82, Electron-Mocha 121 and 70), live-reload, `build:prod` and `PLM_VISUAL=1` e2e with 40 cases in 3.5 min, all pass, the committed references unchanged; `build:dev` and e2e, 40 cases in 4.4 min, no NG0100; no `ngClass` is left; CI green; CodeRabbit: no actionable comments | headless e2e of what the 7 bindings show: the two status bars, the thumbnail status bar's details and close button, the settings dialog's tabs, the menu button and the sort's information | none |
 | 4 standalone | ACCEPTED | #662 | 7bf8755 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 82, Electron-Mocha 121 and 70), live-reload, `build:prod` and `PLM_VISUAL=1` e2e with 40 cases in 3.5 min, all pass, the committed references unchanged; `build:dev` and e2e, 40 cases in 4.3 min, no NG0100; no NgModule is left, and `build:prod`, which checks every template strictly, fails for a component that misses an import; with a binding of the loaded-files status bar changed without notification, a development build failed an e2e case with NG0100, as it should; CI green; CodeRabbit: no actionable comments | headless e2e: the whole suite | none |
-| 4 pinned photos as a `computed` | IN REVIEW | `claude/pinned-photos-computed` | | 2026-11-08, macOS, before the rebase onto main, which brought documents only: lint, unit (Vitest 91, Electron-Mocha 121 and 70), live-reload, `build:prod` and `PLM_VISUAL=1` e2e with 41 cases in 3.6 min, all pass, the committed references unchanged; `build:dev` and e2e, 41 cases in 4.6 min, no NG0100; with plain signals for the zoom and the checkbox, which do not go back when the chart draws again, 2 unit tests and the new e2e case failed (3 photos pinned expected, 2 received), as they should | headless e2e "while the chart is zoomed, its checkbox adds the photos without a shooting time, and a new selection ends the zoom", and the chart's other cases | merge |
-| question 8, the e2e suite against a development build in CI | IN REVIEW | `claude/ci-e2e-dev-build` | | 2026-11-08: the same steps passed in CI on Ubuntu on c82d11b, in 12 minutes rather than about 8: against the development build, 39 cases passed and 1 was skipped, without NG0100; the Windows job took 14 minutes; that commit also compared the screenshots on macOS (question 9) | none needed: CI only | merge |
+| 4 pinned photos as a `computed` | ACCEPTED | #666 | 5a71515 | 2026-11-08, macOS, before the rebase onto main, which brought documents only: lint, unit (Vitest 91, Electron-Mocha 121 and 70), live-reload, `build:prod` and `PLM_VISUAL=1` e2e with 41 cases in 3.6 min, all pass, the committed references unchanged; `build:dev` and e2e, 41 cases in 4.6 min, no NG0100; with plain signals for the zoom and the checkbox, which do not go back when the chart draws again, 2 unit tests and the new e2e case failed (3 photos pinned expected, 2 received), as they should; CI green; CodeRabbit: no actionable comments | headless e2e "while the chart is zoomed, its checkbox adds the photos without a shooting time, and a new selection ends the zoom", and the chart's other cases | none |
+| question 8, the e2e suite against a development build in CI | ACCEPTED | #665 | 7e980e6 | 2026-11-08: the same steps passed in CI on Ubuntu on c82d11b, in 12 minutes rather than about 8: against the development build, 39 cases passed and 1 was skipped, without NG0100; the Windows job took 14 minutes; that commit also compared the screenshots on macOS (question 9); CI green; CodeRabbit: no actionable comments | none needed: CI only | none |
+| question 9, the screenshot comparisons in CI | ACCEPTED | #668 | c53ff47 | 2026-11-08: the references come from run 42448047499 of "CI on macOS" with `update_screenshots`, on the application with the fix of #667, which passed (39 cases, 1 skipped); against them, CI failed the negative controls, each from a temporary commit, as it should: `PLM_NEGATIVE_CONTROL=1` at `toolbar.png`, 397 pixels (a ratio of 0.03), in run 42449962267, and `PLM_MAP_NEGATIVE_CONTROL=1` at `map-toolbar.png`, 1,437 pixels (0.22), in run 42449975790, the other 39 cases passing in both; locally, the case of the dialogs wrote its references into an empty folder and passed against them; CI green after a rerun of the Windows job of the push, which had failed in a case that this does not touch: the application did not launch in time for the Photo Data Viewer case, and then Playwright's worker could not close in time; the pull_request trigger had passed on the same commit; CodeRabbit: no actionable comments | none needed: CI only | none |
+| `settings-appearance.png`, compared at last | ACCEPTED | #667 | a191b0d | 2026-11-08, macOS, after `build:prod`: with the dialog's part of the original application's screenshot as the reference, the case passes; with the welcome dialog's image instead, it fails, and so did the old reference, the whole window; `PLM_VISUAL=1` e2e with 40 cases in 3.4 min, all pass; with `--update-snapshots=changed`, the case writes all 8 of its references into an empty folder; on its head, which brought #668, CI on macOS arm64 passed, comparing the screenshots against its own references; CI green; CodeRabbit: a docstring for `shot()`, added, then no actionable comments | none needed: tests only | none |
 
 ## Progress counters
 
@@ -361,6 +370,26 @@ generation between its start and its end, and the two rows left to the owner.
   2014-10-19). Each case stops at its first difference, so the screenshots
   after it were not compared. GitHub has no macOS 27 runner yet:
   `macos-latest` is macOS 26.
+- 2026-11-08, question 9: the runner's saturated colors differ too. The
+  references in `test/e2e/snapshots/` have them converted as the Mac's
+  display color profile does, and the runner's are plain sRGB: Material's red
+  #F44336 is (225, 82, 65) in `snapshots/` and (244, 67, 54) on the runner. So
+  CI compares against references made on the runner, which
+  `test/e2e/README.md` says are not the original application's.
+- 2026-11-08, question 9: with `PLM_VISUAL=1`, `settings-appearance.png` had
+  never been compared. Its screenshot is taken right after the settings
+  dialog opens, while the about box is still closing, so the locator
+  `mat-dialog-container` matched both dialogs; Playwright 1.64.1 then took no
+  screenshot, lost the strict mode violation and reported a pass. Without a
+  reference, the same screenshot failed with a TypeError, which is how it
+  turned up, while references were written into another folder for CI. A
+  dialog's screenshot now waits until the locator matches one dialog. The
+  reference had never matched either: it was the whole window of the original
+  application, while the case takes the dialog alone. It is now the dialog's
+  part of that screenshot, without resampling
+  (`docs/tasks/20261101_dependency-upgrades/evidence/SETTINGS_APPEARANCE_REFERENCE.json`),
+  and no pixel of the current dialog differs from it beyond Playwright's
+  threshold for a pixel.
 
 ## Questions for the owner
 
@@ -376,9 +405,9 @@ changes if the answer differs; keep answered rows, with the answer.
 | 4 | The tree's context menu does not close on a right-click outside it while the loading dialog is still closing (see "Findings while executing"). Fix it, by listening to the menu's own backdrop, the last one? | Owner, 2026-11-08: fix it. Fixed on the branch `claude/tree-context-menu-backdrop` (stage ledger). | 2 |
 | 5 | In a git worktree on macOS, `npm run test:package` fails its check of `latest-mac.yml` (see "Findings while executing"). Should AGENTS.md say so, with question 3? | Owner, 2026-11-08: write it in AGENTS.md, with question 3. Written there under "In a git worktree": the macOS CI job, which works in a clone, runs the whole test. | 3 |
 | 6 | Which of the other stage 4 items should follow: `inject()` with `prefer-inject`, `@Service`, the Material tree's `childrenAccessor`/`levelAccessor`, the standalone migration with `prefer-standalone`, `ngclass-to-class` (2.4), and pinned photos as a `computed`? They change the code's style throughout rather than its behavior. | Owner, 2026-11-08: all of them but pinned photos as a `computed`, which the owner has had explained and has not chosen: the Material tree's accessors, then `inject()`, `@Service` (after `inject()`, as the service migration leaves a class that takes its dependencies in its constructor as it is), `ngclass-to-class` and the standalone migration, one pull request each: #658 to #662. The three small items, `NgZone.run`, `RouterTestingModule` and `strictTemplates`, are done, one pull request each. Then, on the same day, the owner chose pinned photos as a `computed` too (stage ledger). | 4 |
-| 7 | Report upstream what the migrations here showed? The Angular CLI's MCP tool `onpush_zoneless_migration` fails with ENOTDIR on a spec file (MCP.md); `ng generate @angular/core:signals` writes twice in files that two tsconfigs compile; and the bootstrap step of `ng generate @angular/core:standalone` drops what `bootstrapModule()` was given (both under "Findings while executing"). | Assumed: not reported, as a report is outward-facing and the owner's to decide. | 2, 4 |
+| 7 | Report upstream what the migrations here showed? The Angular CLI's MCP tool `onpush_zoneless_migration` fails with ENOTDIR on a spec file (MCP.md); `ng generate @angular/core:signals` writes twice in files that two tsconfigs compile; the bootstrap step of `ng generate @angular/core:standalone` drops what `bootstrapModule()` was given; and Playwright 1.64.1's `toHaveScreenshot` passes without comparing when its locator matches two elements (the last three under "Findings while executing"). | Assumed: not reported, as a report is outward-facing and the owner's to decide. | 2, 4, CI |
 | 8 | Run the e2e suite against a development build in CI too, on one OS? CI runs it against the production build only, so the check for bindings changed without notification (NG0100) runs only when someone runs it locally. | Owner, 2026-11-08: yes, and the screenshot comparisons too. The Ubuntu job runs the suite against a development build after the AppImage (stage ledger); the screenshots are question 9. | 2, 3 |
-| 9 | CI's macOS runner draws two screenshots differently from the references, by more than the comparisons allow (see "Findings while executing"). Compare the screenshots in CI against a second set of references, made on the runner, or only locally, as before? | Assumed: only locally until the owner decides; the second set is prepared on the branch `claude/ci-e2e-dev-build-and-screenshots`. | CI |
+| 9 | CI's macOS runner draws two screenshots differently from the references, by more than the comparisons allow (see "Findings while executing"). Compare the screenshots in CI against a second set of references, made on the runner, or only locally, as before? | Owner, 2026-11-08: keep a second set for CI. CI's macOS arm64 job compares the screenshots against `test/e2e/snapshots-ci/macos-26-arm64/`, made on the runner (#668); the Intel job compares none. | CI |
 
 ## Required update fields while executing
 
