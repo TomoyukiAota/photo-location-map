@@ -20,7 +20,8 @@ if (packagedLauncher && (!packagedExecutable || !path.isAbsolute(packagedLaunche
 const photoFolder = path.join(root, 'test/test-resources/actual-photos');
 let app, page, profile, headless;
 // What a development build reported as NG0100: a binding that changed without telling Angular, which OnPush
-// components and zoneless change detection would not render (see src/main.ts). A production build checks nothing.
+// components and zoneless change detection would not render (see src/app/app.config.ts). A production build checks
+// nothing.
 let changedWithoutNotification = [];
 // TL;DR: On macOS and Windows, the windows stay off the screen, as Playwright's browsers do, unless --headed
 // is given: hidden on macOS, and on Windows shown but transparent, click-through and never activated
@@ -210,8 +211,8 @@ test.afterEach(async () => {
   const child = app?.process();
   let timer;
   try {
-    // A development build checks every view each second (src/main.ts): let one more check run, after the case's last
-    // step, before the application closes.
+    // A development build checks every view each second (src/app/app.config.ts): let one more check run, after the
+    // case's last step, before the application closes.
     if (page && !page.isClosed() && await page.evaluate(() => !!globalThis.ngDevMode).catch(() => false))
       await page.waitForTimeout(1100);
     if (app) await Promise.race([
