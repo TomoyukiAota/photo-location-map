@@ -5,6 +5,7 @@ import {
   addExplorerContextMenu, afterPreviousChange, explorerContextMenuKeys, explorerContextMenuValues, regExePath,
   RegFailure, removeExplorerContextMenu, runReg,
 } from '../../../src-main/explorer-context-menu/explorer-context-menu';
+import { Logger } from '../../../src-shared/log/logger';
 
 const exePath = 'C:\\Users\\Someone\\AppData\\Local\\Programs\\Photo Location Map\\Photo Location Map.exe';
 const fileKey = 'HKCU\\Software\\Classes\\*\\shell\\OpenWithPhotoLocationMap';
@@ -97,6 +98,46 @@ describe('Explorer context menu (in main process)', () => {
     assert.equal(await afterPreviousChange(async () => 'the next change'), 'the next change');
   });
 
+  it('writes to the log what failed, on which key, with what reg.exe wrote', async () => {
+    const logged: string[] = [];
+    const original = Logger.error;
+    const failOn = (key: string) => async (args: readonly string[]) => {
+      if (args[1] === key) throw Object.assign(new Error(`reg.exe ${args[0]} failed (exit code 1)`), { key, output: 'ERROR: Access is denied.' });
+    };
+    try {
+      (Logger as { error: unknown }).error = (message: string) => logged.push(message);
+      await assert.rejects(addExplorerContextMenu(exePath, failOn(folderKey)));
+      // The key is still there, as the query that follows the failed delete finds.
+      await assert.rejects(removeExplorerContextMenu(args => args[0] === 'delete' ? failOn(backgroundKey)(args) : Promise.resolve()));
+    } finally {
+      (Logger as { error: unknown }).error = original;
+    }
+    assert.deepEqual(logged, [
+      `[Registry] Failed to add the registry keys for the Explorer's context menu: Error: reg.exe add failed (exit code 1): ${folderKey}: ERROR: Access is denied.`,
+      `[Registry] Failed to delete the registry keys for the Explorer's context menu: Error: reg.exe delete failed (exit code 1): ${backgroundKey}: ERROR: Access is denied.`,
+    ]);
+  });
+
+  it('keeps what reg.exe wrote, as text when it is UTF-8, and in hex otherwise, as in the code page of Japanese Windows', async () => {
+    const original = childProcess.execFile;
+    const failures: RegFailure[] = [];
+    // "エラー" in Shift_JIS, which is not UTF-8.
+    for (const stderr of [Buffer.from('ERROR: Access is denied.\r\n'), Buffer.from([0x83, 0x47, 0x83, 0x89, 0x81, 0x5b])]) {
+      try {
+        (childProcess as { execFile: unknown }).execFile = (_file: string, _args: readonly string[], _options: unknown,
+          callback: (error: Error | null, stdout: Buffer, stderr: Buffer) => void) =>
+          callback(Object.assign(new Error('Command failed'), { code: 1 }), Buffer.alloc(0), stderr);
+        await runReg(['delete', folderKey, '/f']).catch((error: RegFailure) => failures.push(error));
+      } finally {
+        (childProcess as { execFile: unknown }).execFile = original;
+      }
+    }
+    assert.deepEqual(failures.map(failure => [failure.message, failure.key, failure.output]), [
+      ['reg.exe delete failed (exit code 1)', folderKey, 'ERROR: Access is denied.'],
+      ['reg.exe delete failed (exit code 1)', folderKey, '(not UTF-8, in hex) 83478389815b'],
+    ]);
+  });
+
   it('runs the reg.exe of Windows by its full path, without a console window', async () => {
     assert.ok(path.win32.isAbsolute(regExePath), regExePath);
     assert.match(regExePath, /\\System32\\reg\.exe$/);
@@ -137,6 +178,7 @@ describe('Explorer context menu (in main process)', () => {
     it('fails both to delete and to query a key that is not there, with what reg.exe wrote, and queries one that is', async () => {
       await assert.rejects(runReg(['delete', `${testKey}\\Missing`, '/f']), (error: RegFailure) => {
         assert.equal(error.message, 'reg.exe delete failed (exit code 1)');
+        assert.equal(error.key, `${testKey}\\Missing`);
         assert.ok(error.output, 'what reg.exe wrote');
         return true;
       });

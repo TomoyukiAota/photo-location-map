@@ -395,24 +395,35 @@ test('the cache settings open the cache folder, and ask before deleting the cach
 });
 test('the OS tab has the main process add and remove the Explorer context menu with reg.exe, its console window hidden', async () => {
   test.skip(process.platform !== 'win32', 'The OS tab is shown on Windows only.');
-  // reg.exe is replaced in the main process, as the real one would change the registry of the computer running this:
-  // the stand-in records each run, with whether it hides the console window, and answers it, failing those that
-  // __plmRegFails picks. The application starts reg.exe by its full path, not from the current folder.
-  await app.evaluate(() => {
+  // reg.exe never runs here, as it would change the registry of the computer running the suite. In the main process, a
+  // stand-in answers execFile of any reg.exe, wherever it would be looked for, recording it with whether it hides its
+  // console window, and fails the runs that __plmRegFails picks. Starting reg.exe any other way throws.
+  const regExePath = await app.evaluate(() => {
     const childProcess = globalThis.__plmTestRequire('child_process');
-    const execFile = childProcess.execFile;
+    const isRegExe = file => /(^|[\\/])reg(\.exe)?$/i.test(String(file));
     globalThis.__plmRegRuns = [];
     globalThis.__plmRegFails = () => false;
+    const execFile = childProcess.execFile;
     childProcess.execFile = function (file, args, options, callback) {
-      if (!/^[A-Z]:\\.*\\System32\\reg\.exe$/i.test(file)) return execFile.apply(this, arguments);
-      globalThis.__plmRegRuns.push({ args: [...args], windowsHide: options?.windowsHide === true });
+      if (!isRegExe(file)) return execFile.apply(this, arguments);
+      globalThis.__plmRegRuns.push({ file, args: [...args], windowsHide: options?.windowsHide === true });
       const failed = globalThis.__plmRegFails(args);
       setImmediate(() => failed
-        ? callback(Object.assign(new Error('Failed on purpose'), { code: 1 }), '', 'Failed on purpose by the e2e suite')
-        : callback(null, '', ''));
+        ? callback(Object.assign(new Error('Failed on purpose'), { code: 1 }), Buffer.alloc(0), Buffer.from('Failed on purpose by the e2e suite'))
+        : callback(null, Buffer.alloc(0), Buffer.alloc(0)));
     };
+    for (const name of ['spawn', 'spawnSync', 'execFileSync', 'exec', 'execSync']) {
+      const original = childProcess[name];
+      childProcess[name] = function (fileOrCommand) {
+        const startsRegExe = name === 'exec' || name === 'execSync'
+          ? /(^|[\s"\\/])reg(\.exe)?("|\s|$)/i.test(String(fileOrCommand)) : isRegExe(fileOrCommand);
+        if (startsRegExe) throw new Error(`The e2e suite lets reg.exe start with execFile only, not with ${name}.`);
+        return original.apply(this, arguments);
+      };
+    }
+    return globalThis.__plmTestRequire('path').win32.join(process.env.SystemRoot, 'System32', 'reg.exe');
   });
-  /** The runs of reg.exe since the last call, each with its arguments and whether it hid its console window. */
+  /** The runs of reg.exe since the last call, each with its file, its arguments and whether it hid its console window. */
   const regRuns = () => app.evaluate(() => globalThis.__plmRegRuns.splice(0));
   /** The labels of the analytics events with `action`, one for each analytics service. */
   const events = action => app.evaluate((_electron, action) =>
@@ -437,6 +448,8 @@ test('the OS tab has the main process add and remove the Explorer context menu w
     ['add', `${key}\\command`, '/ve', '/t', 'REG_SZ', '/d', `"${exe}" --open "${index === 2 ? '%V' : '%1'}"`, '/f'],
   ]));
   expect(addRuns.every(run => run.windowsHide), 'Every reg.exe must hide its console window.').toBe(true);
+  // By its full path: by its name alone, reg.exe would be looked for in the current folder first.
+  expect(addRuns.every(run => run.file === regExePath), `Every run must start ${regExePath}.`).toBe(true);
 
   await osSettings.getByRole('button', { name: 'Remove', exact: true }).click();
   await expect(lines).toHaveText(['Removed "Open with Photo Location Map" in the context menu of Explorer.',
@@ -444,6 +457,7 @@ test('the OS tab has the main process add and remove the Explorer context menu w
   const removeRuns = await regRuns();
   expect(removeRuns.map(run => run.args)).toEqual(keys.map(key => ['delete', key, '/f']));
   expect(removeRuns.every(run => run.windowsHide), 'Every reg.exe must hide its console window.').toBe(true);
+  expect(removeRuns.every(run => run.file === regExePath), `Every run must start ${regExePath}.`).toBe(true);
 
   // A failure is said in the tab, and recorded with its reason, without paths.
   await app.evaluate(() => { globalThis.__plmRegFails = args => args[0] === 'add'; });

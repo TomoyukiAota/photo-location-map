@@ -14,8 +14,11 @@ export interface RegistryValue {
 /** Runs reg.exe with the arguments, and rejects when it fails. */
 export type RunReg = (args: readonly string[]) => Promise<void>;
 
-/** A failure of reg.exe: what failed and how in `message`, and what reg.exe wrote, in the language of Windows. */
+/** A failure of reg.exe: what failed and how in `message`, which goes to analytics, and the rest for the log only. */
 export interface RegFailure extends Error {
+  /** The key that reg.exe was run on. */
+  key?: string;
+  /** What reg.exe wrote, in the language of Windows: as text when it is UTF-8, else its bytes in hex. */
   output?: string;
 }
 
@@ -55,17 +58,28 @@ export function explorerContextMenuValues(exePath: string): RegistryValue[] {
  * otherwise; that is what `windowsHide` prevents.
  */
 export const runReg: RunReg = args => new Promise((resolve, reject) => {
-  childProcess.execFile(regExePath, args, { windowsHide: true }, (error, _stdout, stderr) => {
+  childProcess.execFile(regExePath, args, { windowsHide: true, encoding: 'buffer' }, (error, _stdout, stderr) => {
     if (error) {
-      // Not reg.exe's text in the message, which goes to analytics: it is in the language of Windows, and likely in a
-      // code page other than UTF-8, in which Node reads it.
-      const how = typeof error.code === 'number' ? `exit code ${error.code}` : error.code ?? error.message;
-      reject(Object.assign(new Error(`reg.exe ${args[0]} failed (${how})`), { output: String(stderr).trim() }));
+      // The message goes to analytics, so it has neither the command line, with the user's paths, nor reg.exe's text.
+      const how = typeof error.code === 'number' ? `exit code ${error.code}` : error.code ?? error.signal ?? 'no exit code';
+      reject(Object.assign(new Error(`reg.exe ${args[0]} failed (${how})`), { key: args[1], output: textOf(stderr) }));
     } else {
       resolve();
     }
   });
 });
+
+/**
+ * What reg.exe wrote, as text when it is UTF-8. Windows in some languages, such as Japanese, writes it in another code
+ * page, which Node cannot tell, so the bytes are kept in hex then, to be read later.
+ */
+function textOf(bytes: Buffer): string {
+  try {
+    return new TextDecoder('utf-8', { fatal: true }).decode(bytes).trim();
+  } catch {
+    return `(not UTF-8, in hex) ${bytes.toString('hex')}`;
+  }
+}
 
 let previousChange: Promise<unknown> = Promise.resolve();
 
@@ -131,8 +145,8 @@ async function succeeds(args: readonly string[], run: RunReg): Promise<boolean> 
   }
 }
 
-/** The message of an error with what reg.exe wrote, for the log file, which stays on the user's computer. */
+/** The message of an error, with the key and what reg.exe wrote, for the log file, which stays on the user's computer. */
 function failureText(error: unknown): string {
-  const output = (error as RegFailure)?.output;
-  return `${error}${output ? `: ${output}` : ''}`;
+  const { key, output } = (error ?? {}) as RegFailure;
+  return [String(error), key, output].filter(Boolean).join(': ');
 }
