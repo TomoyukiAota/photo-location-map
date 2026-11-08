@@ -20,13 +20,14 @@ add CLAUDE.md or store handoff knowledge only in agent memory.
 
 ## Boundaries and starting snapshot
 
-- Planning date: 2026-11-06, Asia/Tokyo. Revised 2026-11-08 for the changes on
-  main listed under "Changes on main since the plan was written" below.
+- Planning date: 2026-11-06, Asia/Tokyo. Revised 2026-11-08 and 2026-11-09 for
+  the changes on main listed under "Changes on main since the plan was written".
 - Current documentation branch: codex/dependency-lifecycle-audit. Its difference
   from main is task documents only.
-- Runtime described: main at 4ade12687fd7f365d14ab65538d4aacdd2906c6a (the merge of
-  PR 672, 2026-11-08), merged into the documentation branch. Refresh main again
-  at implementation kickoff and repeat the inventory if runtime code changed.
+- Runtime described: main at b7c9bfe641d35330c5324dd49c464c8589ab2ff6 (the merge of
+  PR 673, 2026-11-08), merged into the documentation branch on 2026-11-09.
+  Refresh main again at implementation kickoff and repeat the inventory if
+  runtime code changed.
 - Node 26.13.0 / bundled npm 11.20.0 via mise; Electron 45.2.1, Angular 22.2.4,
   electron-builder 26.18.1; no npm overrides, and the departures from the
   documented setup that remain are listed in docs/contributing/dependencies.md.
@@ -53,8 +54,9 @@ add CLAUDE.md or store handoff knowledge only in agent memory.
 ### Changes on main since the plan was written
 
 Main moved from d57cbfdf (the merge of PR 634, which the 2026-11-06 text
-described) to 4ade1268 on 2026-11-08. The plan was revised for the changes
-below; the remote usage sites themselves are unchanged except where noted.
+described) to 4ade1268 on 2026-11-08, and to b7c9bfe6 on 2026-11-09. The plan
+was revised for the changes below; the remote usage sites themselves are
+unchanged except where noted.
 
 - **The Google Maps view was removed** (PR 670,
   [report](../20261108_remove-google-maps/REPORT.md)): its component, API key
@@ -89,14 +91,25 @@ below; the remote usage sites themselves are unchanged except where noted.
   documented setup", "Keep windows off the owner's screen" and "In a git
   worktree" (`MISE_TRUSTED_CONFIG_PATHS` with each command there, and
   `npm run test:package` stops before its smoke test in a worktree).
+- **The Explorer context-menu registration moved into main** (PR 673,
+  2026-11-08). The OS tab now calls `ipcRenderer.invoke` with
+  `IpcConstants.ExplorerContextMenu.Add` and `.Remove`; main runs `reg.exe`
+  by its full path with `windowsHide`, takes `app.getPath('exe')` itself,
+  serializes Add and Remove, and rejects on failure, which the tab shows as
+  one line. `add-registry-for-explorer-context-menu.ts`,
+  `delete-registry-for-explorer-context-menu.ts`, rage-edit and its renderer
+  bridge are gone, so the renderer has nine module bridges. This is one of
+  stage A's five IPC operations, done ahead of the plan, with tests at the
+  e2e (Windows), Vitest and Electron-Mocha levels; use it as the pattern for
+  the other four.
 - Unchanged: the remote usage sites (`require-from-main-process.ts` and its
   consumers `user-data-storage.ts`, `user-settings.ts`,
   `is-prerelease-version.ts`, `restart-app.ts` and `log-file-writer-main.ts`;
   `sidebar-upper-pane.component.ts`, `about-box.component.ts`,
-  `welcome-dialog.component.ts`, `add-registry-for-explorer-context-menu.ts`
-  and `fetch-exif-using-exifr.ts`; `configure-electron-remote-in-main-process.js`
-  in main), both windows' `webPreferences`, the ten renderer module bridges,
-  the Node-enabled directory Worker, the EXIF queue bound of ten, the HEIC
+  `welcome-dialog.component.ts` and `fetch-exif-using-exifr.ts`;
+  `configure-electron-remote-in-main-process.js` in main), both windows'
+  `webPreferences`, the nine remaining renderer module bridges, the
+  Node-enabled directory Worker, the EXIF queue bound of ten, the HEIC
   thumbnail worker pool, `file://` thumbnails and the separately served viewer.
 
 ## Checkpoint discipline
@@ -143,8 +156,11 @@ exist yet. Last known suite counts are historical evidence, not new stage-0 runs
 ## 1 / A: Remove remote with the existing renderer privileges
 
 1. Introduce typed, purpose-specific IPC for startup metadata, native folder
-   selection, main-owned EXIF, restart and fixed Windows context-menu operations.
-   Derive the dialog parent from the caller; do not pass BrowserWindow objects.
+   selection, main-owned EXIF and restart. The fixed Windows context-menu
+   operations are already in main since PR 673 (invoke/handle, main owns the
+   OS work and the exe path, plain results, failures as rejections, tests at
+   three levels): follow that pattern. Derive the dialog parent from the
+   caller; do not pass BrowserWindow objects.
 2. Make version/userData/executable metadata available before the static imports
    of src/main.ts (AppComponent, appConfig and the IPC renderer setup) and what
    they pull in: currentUserSettings, prerelease detection and analytics. A
@@ -288,8 +304,9 @@ mise exec -- npm run test:e2e
 
 Preserve meaningful assertions rather than fixed test counts. Add coverage for
 IPC/data/error boundaries, bootstrap, normal-quit persistence, real relaunch,
-folder parent/cancel/history and network-check timeout, Windows registration,
-EXIF handles, preload isolation and viewer capabilities/lifetimes.
+folder parent/cancel/history and network-check timeout, Windows registration
+(covered since PR 673; keep those tests green), EXIF handles, preload
+isolation and viewer capabilities/lifetimes.
 Use test/e2e/README.md for the visual comparisons (the local references and CI's
 own under test/e2e/snapshots-ci/) and the signed-bundle commands.
 Do not regenerate screenshots or relax tolerances to pass a migration.

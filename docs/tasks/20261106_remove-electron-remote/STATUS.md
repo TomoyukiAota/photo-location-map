@@ -1,6 +1,6 @@
 # Execution status and handoff
 
-Updated 2026-11-08 (Asia/Tokyo). This file is the execution ledger; keep it current
+Updated 2026-11-09 (Asia/Tokyo). This file is the execution ledger; keep it current
 after every meaningful result and before stopping. Do not infer completion from
 the existence of a plan or from an agent's previous messages.
 
@@ -11,7 +11,8 @@ the existence of a plan or from an agent's previous messages.
   start implementation. No harness, baseline or migration was executed.
 - Final target: C, via measured 0 -> A -> B -> C1 -> C2. C1 alone is incomplete C.
 - Documentation branch: codex/dependency-lifecycle-audit, with main merged in at
-  4ade12687fd7f365d14ab65538d4aacdd2906c6a (2026-11-08). Its difference
+  4ade12687fd7f365d14ab65538d4aacdd2906c6a (2026-11-08) and at
+  b7c9bfe641d35330c5324dd49c464c8589ab2ff6 (2026-11-09). Its difference
   from main is task documents only.
 - Source snapshot before these documents:
   cf4fa9b796e3789654cd34c408c7a980967877d5, based on main d57cbfdf. On
@@ -19,7 +20,10 @@ the existence of a plan or from an agent's previous messages.
   Google Maps view removed, the signals/zoneless/standalone migration complete,
   headless e2e window options, bundled Leaflet, removed npm overrides and the
   new AGENTS.md sections (PLAN.md, "Changes on main since the plan was
-  written"). The remote usage sites are unchanged.
+  written"). The remote usage sites were unchanged then. On 2026-11-09, PR 673
+  (merged 2026-11-08) was recorded: the Explorer context-menu registration now
+  runs in main over IPC, so one of stage A's five operations is done ahead of
+  the plan, and rage-edit is gone.
 - Last accepted IMPLEMENTATION stage: none. Baseline 0 is NOT RUN.
 - Runtime/dependency/test/build/deployment changes in this planning task: none.
 - Task-owned running processes/CI/benchmark sessions: none started by this task.
@@ -85,4 +89,8 @@ execution replaces this paragraph with dated checkpoint results as it proceeds.
 2026-11-08: the plan was revised for the changes on main (PLAN.md, "Changes on
 main since the plan was written"). Links, whitespace and cross-document
 consistency were checked again, and the diff against main 4ade1268 is task
+documents only. Still no functional test, measurement or viewer change.
+
+2026-11-09: main b7c9bfe6 (PR 673) merged into the branch and recorded in
+PLAN.md; the same checks were repeated, and the diff against main is task
 documents only. Still no functional test, measurement or viewer change.

@@ -65,8 +65,8 @@ package-lock.json and all application/test/release files remain unchanged.
 This investigation is complete and implementation is deferred. PR634 was merged
 separately as d57cbfdff69daa5b81635547d2eec585aa3cd277. The audit documents live
 on codex/dependency-lifecycle-audit, based on that merged main and brought up to
-main 4ade1268 on 2026-11-08. The initial audit added PLAN.md and REPORT.md;
-later design/execution documents extend that work.
+main 4ade1268 on 2026-11-08 and b7c9bfe6 on 2026-11-09. The initial audit added
+PLAN.md and REPORT.md; later design/execution documents extend that work.
 No dependency migration or manual CI dispatch was
 performed for this audit, and no long-running audit process remains.
 
