@@ -1,6 +1,6 @@
 # Execution status and handoff
 
-Updated 2026-11-06 (Asia/Tokyo). This file is the execution ledger; keep it current
+Updated 2026-11-08 (Asia/Tokyo). This file is the execution ledger; keep it current
 after every meaningful result and before stopping. Do not infer completion from
 the existence of a plan or from an agent's previous messages.
 
@@ -10,9 +10,16 @@ the existence of a plan or from an agent's previous messages.
 - Authorized action now: documentation only. Await an explicit instruction to
   start implementation. No harness, baseline or migration was executed.
 - Final target: C, via measured 0 -> A -> B -> C1 -> C2. C1 alone is incomplete C.
-- Documentation branch: codex/dependency-lifecycle-audit.
+- Documentation branch: codex/dependency-lifecycle-audit, with main merged in at
+  4ade12687fd7f365d14ab65538d4aacdd2906c6a (2026-11-08). Its difference
+  from main is task documents only.
 - Source snapshot before these documents:
-  cf4fa9b796e3789654cd34c408c7a980967877d5.
+  cf4fa9b796e3789654cd34c408c7a980967877d5, based on main d57cbfdf. On
+  2026-11-08 the plan was revised for the changes on main since then: the
+  Google Maps view removed, the signals/zoneless/standalone migration complete,
+  headless e2e window options, bundled Leaflet, removed npm overrides and the
+  new AGENTS.md sections (PLAN.md, "Changes on main since the plan was
+  written"). The remote usage sites are unchanged.
 - Last accepted IMPLEMENTATION stage: none. Baseline 0 is NOT RUN.
 - Runtime/dependency/test/build/deployment changes in this planning task: none.
 - Task-owned running processes/CI/benchmark sessions: none started by this task.
@@ -28,7 +35,8 @@ PERFORMANCE.md, inspect git status/log and live processes/CI, and begin stage 0
 step 1. Refresh the actual code base before selecting its baseline. Do not run a
 nonexistent performance command: implement/document the reusable harness first.
 
-Keep cross-env, Moment/timezone and zoneless Angular out of this work. Preserve
+Keep cross-env and Moment/timezone out of this work; the zoneless Angular migration
+is already on main and this removal follows it (owner, 2026-11-08). Preserve
 features/UI and original visual references. No instruction here authorizes
 merging a future PR or publishing the separate viewer without applicable approval.
 
@@ -73,3 +81,8 @@ stage/scope consistency, plus a git diff proving only task documents changed.
 It must not claim functional tests, performance measurements or independent
 viewer deployment. Record any subsequent planning edits in git history; actual
 execution replaces this paragraph with dated checkpoint results as it proceeds.
+
+2026-11-08: the plan was revised for the changes on main (PLAN.md, "Changes on
+main since the plan was written"). Links, whitespace and cross-document
+consistency were checked again, and the diff against main 4ade1268 is task
+documents only. Still no functional test, measurement or viewer change.

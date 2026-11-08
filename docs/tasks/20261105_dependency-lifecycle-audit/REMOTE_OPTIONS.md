@@ -4,13 +4,17 @@ The owner selected final option C with measured A/B intermediate checkpoints.
 Use the [execution plan](../20261106_remove-electron-remote/PLAN.md) and its STATUS
 and PERFORMANCE documents to implement after explicit kickoff. This file retains
 the design reasoning and alternatives; implementation and measurements have not
-started.
+started. It describes the code of 2026-11-05. The execution plan's "Changes on
+main since the plan was written" lists what has moved since, notably that the
+Google Maps view is gone and that the application is zoneless and standalone,
+and the plan governs where the two differ.
 
 Design investigation against 46d854e, 2026-11-05. The owner wants to remove the
 dependency and requested alternative rewrites with pros/cons before selecting
 implementation. No application/dependency changes, installs or tests are part
 of this proposal. Preserve features, UI, persisted data and release behavior.
-Cross-env stays; Moment/Temporal and zoneless Angular remain separate work.
+Cross-env stays; Moment/Temporal remain separate work; the zoneless Angular
+migration, separate work at the time, has since landed on main.
 
 ## Actual responsibilities
 
@@ -18,7 +22,7 @@ Cross-env stays; Moment/Temporal and zoneless Angular remain separate work.
 | --- | --- |
 | About/welcome version and import-time prerelease classification | Immutable startup metadata from main, available before application imports. |
 | app.getPath(userData), synchronous UserDataStorage | Option A retains local synchronous file access using startup paths; B/C move ownership into main with an initialized renderer cache and acknowledged writes. Preserve the current files/keys and failure fallbacks. |
-| Google Maps key lookup | Read fresh on demand, preserving a key file created/edited after startup, its path guidance and missing/invalid fallbacks. Do not put this externally edited file in a stale startup cache. |
+| Google Maps key lookup | Read fresh on demand, preserving a key file created/edited after startup, its path guidance and missing/invalid fallbacks. Do not put this externally edited file in a stale startup cache. **Moot since 2026-11-08:** the Google Maps view and its key file were [removed](../20261108_remove-google-maps/REPORT.md). |
 | Folder dialog, current BrowserWindow and directory-history stat | Main opens the native dialog for the requesting window; return selection/cancellation data. Preserve confirmed history, the one-second directory-check timeout and pending-check deduplication. |
 | app.getPath(exe) for Windows Explorer menu registration | A fixed main operation registers the same three targets and command arguments; no arbitrary registry/path API. |
 | restartApp() | A main operation waits for required persistence/cache work, then calls app.relaunch() and app.quit(), retaining quit hooks. |
@@ -50,7 +54,8 @@ These are the API design requirements, not claims of an established exploit.
 UserDataStorage captures paths/modules at class initialization;
 currentUserSettings loads from disk at module evaluation; prerelease detection
 captures app.getVersion() at module evaluation. src/main.ts statically imports
-AppModule and Logger before its bootstrap function runs. Awaiting an IPC request
+the application (AppModule then; AppComponent and appConfig since the standalone
+migration) and Logger before its bootstrap function runs. Awaiting an IPC request
 inside the current bootstrap body is too late.
 
 Options are a bounded synchronous startup metadata snapshot before those imports,
@@ -327,7 +332,7 @@ no artificial percentage improvement or ranking is asserted here.
 
 1. Freeze the chosen scope and inventory main-only operations, startup values,
    allowed settings keys and per-window capabilities. Do not mix in cross-env,
-   Temporal, zoneless Angular or release-tool upgrades.
+   Temporal or release-tool upgrades.
 2. Establish initialization and IPC contracts, then migrate one responsibility
    at a time while retaining the current on-disk state and UI behavior.
 3. Preserve the EXIF managed-reader regressions and add genuine IPC round trips
@@ -335,7 +340,6 @@ no artificial percentage improvement or ranking is asserted here.
    stubs alone.
 4. Test startup/prerelease values, settings save/failure/restart, folder history
    and cancellation, Windows menu registration, logging and real viewer JPEG/HEIC.
-   Verify Maps key files created/edited after startup and missing/invalid guidance.
    Include actual renderer-triggered date/time/cache relaunch; current E2E often
    closes/relaunches manually and is insufficient for that flow alone.
 5. Remove package/lock entries, initialization, per-window enable hooks, bridges

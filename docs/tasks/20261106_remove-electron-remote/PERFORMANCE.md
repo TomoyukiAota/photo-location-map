@@ -1,7 +1,8 @@
 # Reproducible performance comparisons
 
-This protocol is a plan. No harness, samples, budgets or performance result exists
-yet. Implement it only after the owner starts the work in PLAN.md.
+This protocol is a plan, revised on 2026-11-08 together with PLAN.md. No harness,
+samples, budgets or performance result exists yet. Implement it only after the
+owner starts the work in PLAN.md.
 
 ## Comparison series
 
@@ -10,6 +11,11 @@ its last accepted predecessor. C2 should additionally compare resource URL and
 full-byte delivery variants before transport selection. Architectural milestones
 change several things: use spans and targeted variants to attribute regressions,
 not an unsupported claim that a stage label alone caused every observed delta.
+
+Baseline 0 is measured on the zoneless application: main at or after 4ade1268
+(2026-11-08). The owner sequenced this work after the signals and zoneless
+migration because removing Zone.js changes the timings measured here, so no
+build or figure from before that migration is a valid 0.
 
 Freeze a protocol ID, harness source hash, input manifest, run counts, warm-up,
 cache/profile definitions and regression rules before examining A results.
@@ -32,6 +38,13 @@ structured results. This path is planned, not currently executable. It must:
 
 - Launch a fresh app/process and owned absolute PLM_TEST_ROOT for each trial;
   preserve required profile state within that trial. No owner profile is used.
+- Run headless by default (PLM_TEST_HEADLESS=1; AGENTS.md, "Keep windows off
+  the owner's screen"). electron-util/e2e-test-hooks.js then creates hidden
+  windows with backgroundThrottling disabled, or transparent click-through
+  windows on Windows, which is not the configuration users see. Record the
+  window mode of every series, keep it identical across the stages compared,
+  and treat a visible-window series as its own protocol that needs the owner's
+  go-ahead before it takes over the screen.
 - Work in checkout and packaged builds, and across current/isolated renderers.
   Do not depend on production window.require remaining available under C.
 - Start the startup clock externally BEFORE spawning the application. Async

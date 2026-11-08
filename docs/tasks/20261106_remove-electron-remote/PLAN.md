@@ -20,13 +20,17 @@ add CLAUDE.md or store handoff knowledge only in agent memory.
 
 ## Boundaries and starting snapshot
 
-- Planning date: 2026-11-06, Asia/Tokyo.
-- Current documentation branch: codex/dependency-lifecycle-audit.
-- Snapshot: cf4fa9b796e3789654cd34c408c7a980967877d5. Its changes after the
-  merged runtime are task documents only. The last locally fetched main is
-  d57cbfdff69daa5b81635547d2eec585aa3cd277; refresh it at implementation kickoff.
-- Node 26.13.0 / bundled npm 11.20.0 via mise; Electron 45.2.1, Angular 22.2.x,
-  electron-builder 26.18.1. Record actual resolved versions before measurements.
+- Planning date: 2026-11-06, Asia/Tokyo. Revised 2026-11-08 for the changes on
+  main listed under "Changes on main since the plan was written" below.
+- Current documentation branch: codex/dependency-lifecycle-audit. Its difference
+  from main is task documents only.
+- Runtime described: main at 4ade12687fd7f365d14ab65538d4aacdd2906c6a (the merge of
+  PR 672, 2026-11-08), merged into the documentation branch. Refresh main again
+  at implementation kickoff and repeat the inventory if runtime code changed.
+- Node 26.13.0 / bundled npm 11.20.0 via mise; Electron 45.2.1, Angular 22.2.4,
+  electron-builder 26.18.1; no npm overrides, and the departures from the
+  documented setup that remain are listed in docs/contributing/dependencies.md.
+  Record actual resolved versions before measurements.
 - Final target: both windows have contextIsolation:true, nodeIntegration:false,
   nodeIntegrationInWorker:false and sandbox:true, with narrow preload APIs.
   Sandbox/preload/module changes are part of the staged design, not a flag-only
@@ -34,13 +38,66 @@ add CLAUDE.md or store handoff knowledge only in agent memory.
 - Preserve features, UI, existing screenshot references/tolerances, photo metadata,
   EXIF orientation, settings paths/schema/defaults, analytics/quit behavior,
   auto-update and NSIS/DMG/ZIP/AppImage signing/notarization/release behavior.
-- Retain cross-env. Moment/moment-timezone/Temporal and zoneless Angular remain
-  outside this work. Do not upgrade unrelated dependencies or adopt prerelease
-  release tools. Do not introduce a generic replacement remote/RPC proxy.
+- Retain cross-env. Moment/moment-timezone/Temporal remain outside this work.
+  The signals and zoneless Angular migration is already on main
+  ([its ledger](../20261107_angular-signals-zoneless/STATUS.md)); the owner
+  decided on 2026-11-08 that this removal comes after it, so every stage here
+  builds on the zoneless application. Do not upgrade unrelated dependencies or
+  adopt prerelease release tools. Do not introduce a generic replacement
+  remote/RPC proxy.
 - Record webSecurity/CSP/resource-origin settings separately from Node isolation.
   Assess restoring browser defaults deliberately with provider/local-photo tests;
   do not silently expand the scope, preserve permissive settings as a new
   workaround, or claim a complete security audit merely from Node removal.
+
+### Changes on main since the plan was written
+
+Main moved from d57cbfdf (the merge of PR 634, which the 2026-11-06 text
+described) to 4ade1268 on 2026-11-08. The plan was revised for the changes
+below; the remote usage sites themselves are unchanged except where noted.
+
+- **The Google Maps view was removed** (PR 670,
+  [report](../20261108_remove-google-maps/REPORT.md)): its component, API key
+  handler, `UserDataStoragePath.GoogleMaps`, the Map IPC message and the
+  renderer's listener are gone. The key file was the one setting read fresh on
+  demand, so this plan carries no Maps-key requirement any more, and the
+  inventory loses `google-maps-api-key-handler.ts`.
+- **Signals, zoneless and standalone Angular landed** (the pull requests in
+  [its ledger](../20261107_angular-signals-zoneless/STATUS.md)). `src/main.ts`
+  now calls `bootstrapApplication(AppComponent, appConfig)`; there is no
+  `AppModule`, components use `inject()`, and the `NgZone.run` wrappers are
+  gone. Development builds add `provideCheckNoChangesConfig` (exhaustive, every
+  second), which the e2e suite relies on to catch bindings changed without
+  notification. Stage A's "before the static imports" rule therefore refers to
+  the imports of `src/main.ts`: `AppComponent`, `appConfig`, the IPC renderer
+  setup, and the `currentUserSettings`, prerelease and analytics modules they
+  pull in.
+- **Headless e2e** (PR 636, 642, 665, 667 and 668): the options of both
+  `BrowserWindow`s pass through `withHeadlessTestOptions` in
+  `electron-util/e2e-test-hooks.js`. Under `PLM_TEST_HEADLESS=1` it sets
+  `show: false` and `webPreferences.backgroundThrottling: false` (on Windows, a
+  transparent, click-through toolbar window instead), and the viewer calls
+  `show()` only outside headless tests. Keep that wrapper around the new
+  preload/webPreferences at C1 and C2. CI's Ubuntu job runs the e2e suite
+  against a development build, and its macOS job compares screenshots against
+  its own references under `test/e2e/snapshots-ci/`.
+- **Leaflet, Leaflet.markercluster and Leaflet-Geoman are bundled from npm**
+  (PR 637) instead of loaded from a CDN; `src/index.html` loads only Google
+  Fonts externally. This matters for the separate webSecurity/CSP assessment,
+  not for Node isolation.
+- **npm overrides were removed** (PR 635), and AGENTS.md gained "Stay on the
+  documented setup", "Keep windows off the owner's screen" and "In a git
+  worktree" (`MISE_TRUSTED_CONFIG_PATHS` with each command there, and
+  `npm run test:package` stops before its smoke test in a worktree).
+- Unchanged: the remote usage sites (`require-from-main-process.ts` and its
+  consumers `user-data-storage.ts`, `user-settings.ts`,
+  `is-prerelease-version.ts`, `restart-app.ts` and `log-file-writer-main.ts`;
+  `sidebar-upper-pane.component.ts`, `about-box.component.ts`,
+  `welcome-dialog.component.ts`, `add-registry-for-explorer-context-menu.ts`
+  and `fetch-exif-using-exifr.ts`; `configure-electron-remote-in-main-process.js`
+  in main), both windows' `webPreferences`, the ten renderer module bridges,
+  the Node-enabled directory Worker, the EXIF queue bound of ten, the HEIC
+  thumbnail worker pool, `file://` thumbnails and the separately served viewer.
 
 ## Checkpoint discipline
 
@@ -63,8 +120,9 @@ acceptance criteria or ask for routine confirmation at every checkpoint.
 ## 0: Establish the baseline and reusable measurement harness
 
 1. Inspect git status/remotes and any running builds/CI; preserve unrelated
-   changes. Refresh main and choose the exact implementation base. If runtime
-   code changed since this plan, refresh the inventory and baseline accordingly.
+   changes. Refresh main and choose the exact implementation base, at or after
+   4ade1268 so that it includes the zoneless application. If runtime code
+   changed since this plan, refresh the inventory and baseline accordingly.
 2. Record platform/architecture, Node/npm/Electron versions, main/viewer settings,
    resolved dependencies, fixture hashes and the current served viewer build.
    Inventory main-only calls and renderer Node consumers against current code.
@@ -87,9 +145,11 @@ exist yet. Last known suite counts are historical evidence, not new stage-0 runs
 1. Introduce typed, purpose-specific IPC for startup metadata, native folder
    selection, main-owned EXIF, restart and fixed Windows context-menu operations.
    Derive the dialog parent from the caller; do not pass BrowserWindow objects.
-2. Make version/userData/executable metadata available before imports of AppModule,
-   currentUserSettings, prerelease detection and analytics. A promise awaited only
-   inside the existing bootstrap body is too late for its static imports.
+2. Make version/userData/executable metadata available before the static imports
+   of src/main.ts (AppComponent, appConfig and the IPC renderer setup) and what
+   they pull in: currentUserSettings, prerelease detection and analytics. A
+   promise awaited only inside the existing bootstrap function is too late for
+   those static imports.
 3. Use renderer-local fs-extra/path/os for the existing synchronous settings
    adapter. Keep existing files, keys, errors and call signatures. This is A's
    measured architecture; do not quietly implement B's main-owned settings cache.
@@ -117,8 +177,8 @@ tests, but do not skip or retrospectively relabel this measured checkpoint.
    Keep startup metadata/settings ready before consumer imports and first paint.
 2. Maintain file layout/defaults/validation. Update intended keys only; do not
    overwrite main-owned UUID, launch/history or viewer state from a stale snapshot.
-   Google Maps key files remain fresh-on-demand, including external edits after
-   startup, missing/invalid-file guidance and the existing failure fallback.
+   The Google Maps key file, formerly the one setting read fresh on demand, went
+   with the Google Maps view, so no fresh-on-demand read remains to preserve.
 3. Define ordered writes, failure propagation and flushing on normal quit, covering
    rapid base-layer/sort/welcome updates as well as the settings Save button.
    Preserve when date/time settings take effect; do not add unintended live updates.
@@ -147,15 +207,19 @@ performance is accepted. Renderer Node removal has not yet been claimed.
    local helpers or fs; produce self-contained/bundled CommonJS entries. Verify
    actual loading from checkout, Vite localhost and installed production paths.
 3. Move remaining renderer Node operations behind browser-compatible helpers or
-   explicit services. Replace process/platform/test-mode assumptions and existing
-   raw IPC subscriptions with narrow calls/events that return unsubscribe handles.
+   explicit services. Replace process/platform/test-mode assumptions (such as the
+   PLM_E2E check in src/app/app.config.ts) and the raw IPC subscriptions in
+   src/ipc-renderer-setup/ with narrow calls/events that return unsubscribe
+   handles.
 4. Replace the Node-enabled directory Worker with main-owned off-thread execution.
    Retain filtering, tree/sort timestamps, progress, error handling and concurrency.
    Do not run synchronous directory scanning on the main event loop. Leave
    browser decoding/rotation where appropriate and preserve HEIC worker recycling.
 5. Remove unused production renderer Node bridges/mappings, then set the main
-   window's target isolation/Node/worker/sandbox flags. Validate runtime absence
-   of require/Node access and the actual preferences, not just compilation.
+   window's target isolation/Node/worker/sandbox flags, still passing the options
+   through withHeadlessTestOptions so headless tests keep the window off screen.
+   Validate runtime absence of require/Node access and the actual preferences,
+   not just compilation.
 6. Validate IPC sender/window/frame and input schemas; do not expose generic
    invoke/send/fs/process/shell access through contextBridge. Adapt test drivers
    that previously used window.require without weakening production isolation.
@@ -189,8 +253,9 @@ performance is accepted. Renderer Node removal has not yet been claimed.
    authorization. A local/immutable preview may validate integration first; if
    rollout cannot finish, record the exact external action and keep C2 incomplete.
 7. Enable the viewer's target isolation/Node/sandbox settings only with a compatible
-   viewer. Verify legacy-host compatibility and new-host behavior, using pinned
-   viewer build IDs/hashes for measurements. Measure C2 versus C1 and 0.
+   viewer, keeping the withHeadlessTestOptions wrapper and the headless-only
+   show() rule. Verify legacy-host compatibility and new-host behavior, using
+   pinned viewer build IDs/hashes for measurements. Measure C2 versus C1 and 0.
 
 Gate: C1 and C2 pass, no production remote dependency or renderer Node access
 remains, viewer rollout/compatibility is verified, final functionality and
@@ -198,10 +263,14 @@ performance evidence are accepted. Intermediate legacy exceptions are resolved.
 
 ## Verification and final delivery
 
-Use mise exec -- for commands. After npm ci, run npm run verify:electron serially
-before concurrent Electron consumers. Do not run performance work concurrently
-with other tests/builds. Commands available now, to run only after implementation
-is started and as appropriate to the stage:
+Use mise exec -- for commands; in a git worktree, prefix each with
+MISE_TRUSTED_CONFIG_PATHS="$PWD/mise.toml" (AGENTS.md, "In a git worktree").
+Run everything that opens a window headless (AGENTS.md, "Keep windows off the
+owner's screen"): npm run test:e2e is headless by default on macOS and Windows,
+and -- --headed is only for when the owner is to watch. After npm ci, run
+npm run verify:electron serially before concurrent Electron consumers. Do not run
+performance work concurrently with other tests/builds. Commands available now,
+to run only after implementation is started and as appropriate to the stage:
 
 ```sh
 mise exec -- npm ci
@@ -220,8 +289,9 @@ mise exec -- npm run test:e2e
 Preserve meaningful assertions rather than fixed test counts. Add coverage for
 IPC/data/error boundaries, bootstrap, normal-quit persistence, real relaunch,
 folder parent/cancel/history and network-check timeout, Windows registration,
-Maps key edits, EXIF handles, preload isolation and viewer capabilities/lifetimes.
-Use test/e2e/README.md for original visual comparisons and signed-bundle commands.
+EXIF handles, preload isolation and viewer capabilities/lifetimes.
+Use test/e2e/README.md for the visual comparisons (the local references and CI's
+own under test/e2e/snapshots-ci/) and the signed-bundle commands.
 Do not regenerate screenshots or relax tolerances to pass a migration.
 
 Run platform package/smoke and all-OS functional CI for accepted implementation
@@ -232,7 +302,8 @@ ephemeral GitHub runner durations are not interchangeable benchmarks.
 
 At final C, run actual npm run package:mac in the background and inspect its log;
 verify signing, notarization, Gatekeeper, packaged visual E2E and isolated DMG
-smoke. npm run test:package skips notarization and does not replace this evidence.
+smoke. npm run test:package skips notarization, and in a git worktree stops before
+its smoke test, so it does not replace this evidence.
 Verify Windows/Linux packaging and unchanged update feeds. Preserve intentional
 Windows push draft publishing and classify failed logs before any rerun. Do not
 blindly rerun a failure or merge a future PR on the strength of PR634's old approval.

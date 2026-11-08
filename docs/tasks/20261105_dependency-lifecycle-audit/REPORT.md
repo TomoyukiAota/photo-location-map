@@ -4,6 +4,22 @@ For the selected staged remote-removal work, start with the
 [execution plan](../20261106_remove-electron-remote/PLAN.md). This report remains
 the historical dependency audit and is not proof of implementation or benchmarks.
 
+Main has moved since this audit (checked on 2026-11-08 at 4ade1268). The findings
+below are kept as they were made; these have since been resolved or changed:
+
+- `google.maps.Marker` and the Google Maps API key file: the Google Maps view
+  was [removed](../20261108_remove-google-maps/REPORT.md) on 2026-11-08.
+- `zone.js`: removed from the application by the
+  [signals and zoneless migration](../20261107_angular-signals-zoneless/REPORT.md).
+- Leaflet, Leaflet.markercluster and Leaflet-Geoman: npm devDependencies bundled
+  by Angular since PR 637, at the same versions, no longer CDN scripts;
+  `src/index.html` loads only Google Fonts externally. The landing page still
+  loads Bootstrap from a CDN.
+- npm `overrides` and the install-time patch of Temp were
+  [removed](../20261107_remove-dependency-overrides/PLAN.md); the departures that
+  remain are listed in [the dependency guide](../../contributing/dependencies.md).
+- `@electron/remote`: the execution plan linked above was revised the same day.
+
 Checked on 2026-11-05 against commit
 28f3b9aac550823b63706ef4ce47bbd9e1ee24b5. No application, dependency, lockfile,
 test or release configuration was changed for this investigation.
