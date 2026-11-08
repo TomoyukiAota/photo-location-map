@@ -22,10 +22,12 @@ have since been resolved or changed:
 - npm `overrides` and the install-time patch of Temp were
   [removed](../20261107_remove-dependency-overrides/PLAN.md); the departures that
   remain are listed in [the dependency guide](../../contributing/dependencies.md).
-  Removing them brought back npm's deprecation warnings for the latest stable
-  releases (`glob@7.2.3`, `inflight`, `rimraf@2.6.3`, `boolean`,
-  `lodash.isequal@4.5.0`, `glob@10.5.0`), which the guide records with when to
-  revisit each, so the zero-warning state below describes the baseline, not main.
+  Removing them brought back the deprecation warnings that the latest stable
+  releases of the consumers (electron-builder 26, electron-updater 6,
+  electron-mocha 13) still pull in through old dependency versions
+  (`glob@7.2.3`, `inflight`, `rimraf@2.6.3`, `boolean`, `lodash.isequal@4.5.0`,
+  `glob@10.5.0`); the guide records each with when to revisit it, so the
+  zero-warning state below describes the baseline, not main.
 - `@electron/remote`: the execution plan linked above was revised the same day.
 
 Checked on 2026-11-05 against commit
