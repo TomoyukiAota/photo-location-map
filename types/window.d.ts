@@ -11,7 +11,6 @@ interface IPlmInternalRenderer {
   aboutBox: AboutBoxShowable;
   settingsDialog: SettingsDialogShowable;
   welcomeDialog: WelcomeDialogShowable;
-  map: MapChangeable;
   photoSelection: IPlmInternalRendererPhotoSelection;
 }
 
@@ -29,10 +28,6 @@ interface SettingsDialogShowable {
 
 interface WelcomeDialogShowable {
   showWelcomeDialog(): void;
-}
-
-interface MapChangeable {
-  changeMap(ipcMapChangeArg: string): void;
 }
 
 interface IPlmInternalRendererPhotoSelection {
