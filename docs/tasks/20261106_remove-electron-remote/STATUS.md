@@ -6,8 +6,8 @@ the existence of a plan or from an agent's previous messages.
 
 ## Current checkpoint
 
-- State: EXECUTING. Stages 0, A and B accepted; stage C1 (the main window's isolation) implemented in the
-  working tree, under verification.
+- State: EXECUTING. Stages 0, A, B and C1 accepted. Stage C2 (Photo Data Viewer's isolation) next, on a branch
+  of its own from this one, from the work in progress in `git stash` ("stage C2 work in progress").
 - Authorization: on 2026-11-09 the owner started the implementation, to run until
   the plan is complete, with questions for the owner collected for the end
   (section "Questions for the owner" below). Merging and publishing the separate
@@ -15,7 +15,7 @@ the existence of a plan or from an agent's previous messages.
 - Final target: C, via measured 0 -> A -> B -> C1 -> C2. C1 alone is incomplete C.
 - Implementation branch: `claude/remove-electron-remote`, from main 449f30f3
   (the merge of PR 674, which includes b7c9bfe6 and PR 673). Not pushed yet.
-- Last accepted IMPLEMENTATION stage: B (f5b5f7b1).
+- Last accepted IMPLEMENTATION stage: C1 (0aefe3fc).
 - Task-owned processes: the pinned Photo Data Viewer server, `next start -p 3130
   -H 127.0.0.1` in `.upgrade-artifacts/remove-electron-remote/viewer/1ff7a50/`
   (log `logs/viewer-1ff7a50-server.log`). Stop it when no series or test needs it;
@@ -109,8 +109,62 @@ data only in windows wider than 1200 pixels.
 | 0 | ACCEPTED | Instrumentation fb581a26, harness 50670795, protocol c67935b4; packaged app `artifacts/0/` (code e6a1d1e7c0b2) | Lint, unit (Vitest 89; Electron-Mocha 136 main, 70 renderer) and headless e2e (40 passed, 1 Windows-only skipped) pass on fb581a26's build | Pilot (12/12 ok) set rer-1; baseline rer-1-0 40/40 ok, viewer unchanged (RESULTS.md); rer-2 retimes two metrics in the page, and its series rerun 0 beside each stage | Done |
 | A / 1 | ACCEPTED | 235d6172; packaged app `artifacts/A/` | Build, lint, unit (Vitest 89; Electron-Mocha 144 main, 66 renderer), dependency-compat (4), package-runner (19), headless e2e (40 passed, 1 Windows-only skipped) and live reload pass; packaged tree has no @electron/remote | rer-2-A: 88/88 ok; folder opening 12 % faster, 101 within budget, one frame-quantized driver latency (RESULTS.md) | Done |
 | B / 2 | ACCEPTED | f5b5f7b1; packaged app `artifacts/B/` | Build, lint, unit (Vitest 89; Electron-Mocha 147 main and 2 pending, 69 renderer), dependency-compat (4), package-runner (19), headless e2e (43 passed, 1 Windows-only skipped) and live reload pass | rer-2-B: 132/132 ok; against 0, A's folder-opening gains (6 improvements) and 102 within budget; against A, all 108 within budget (RESULTS.md) | Done |
-| C1 / 3 main window | IN PROGRESS | Working tree on B | Not run yet | Not measured yet | Build, test, commit, package `artifacts/C1/`, run rer-2-C1 (0, B, C1) |
+| C1 / 3 main window | ACCEPTED | 0aefe3fc; packaged app `artifacts/C1/` (earlier ones in `artifacts/C1-ac6a51ad/`, `artifacts/C1-f3cabca8/`) | Build, lint, unit (Vitest 96; Electron-Mocha 181 main and 2 pending, 62 renderer, now with the real preload), dependency-compat (4), package-runner (19) and live reload pass; headless e2e passes on the checkout (44, 1 Windows-only skipped), and passed on `ng serve` (44) and the package (43, 2 skipped) at ac6a51ad; 100 harness launches of f3cabca8 all started; see "Stage C1 notes" | rer-2-C1 (ac6a51ad) found 3 regressions, fixed; rer-2-C1b (f3cabca8) 132/132 ok and rer-2-C1c (0aefe3fc, open-folder) 33/33 ok: home view 6 to 8 % earlier than B, folder opening as B, two explained moves of work (RESULTS.md) | Done |
 | C2 / 3 viewer | NOT STARTED | None | NOT RUN | NOT RUN | Compatible viewer preview may be prepared during C1; no host release before rollout gate |
+
+## Stage C1 notes
+
+What changed, in short (commit ac6a51ad): the main window's page runs with `contextIsolation: true`,
+`nodeIntegration: false`, `nodeIntegrationInWorker: false` and `sandbox: true`, through
+`withHeadlessTestOptions`; its preload `electron-util/preload/main-window.cjs` gives it `window.plm`
+(`src-shared/bridge/plm-bridge.ts`). Every main-process handler checks the sender (`src-main/ipc/ipc-sender.ts`:
+the main window's top frame on the app's own page) and its input; paths must be in a folder that the user chose
+(`src-main/ipc/user-chosen-folders.ts`). The directory tree runs in a worker thread of the main process; the
+thumbnail cache checks are asynchronous in the main process; the OS open commands run without a shell (a file name
+with `$(...)` would have run as a command before); the renderer's nine Node.js module bridges, `ProxyRequire`, the
+unused exif-parser path and the `comlink` and `exif-parser` devDependencies are gone. Verified at run time, not only
+by the build: the e2e case "the main window's page runs isolated" reads the applied web preferences, finds no
+`require`, `process`, `module`, `Buffer` or `global` in the page or a worker, and checks the refusals of the main
+process, also for a request from another window.
+
+Found by series rer-2-C1 (of ac6a51ad), and fixed before rer-2-C1b:
+
+- The first attempt stopped in its warm-up round: a View Data trial failed before the harness awaited the viewer's
+  window, and that wait's rejection, unhandled, ended run.mjs. The harness now handles it (b1f5733d); the second
+  attempt ran whole.
+- `startup.*.renderer-modules-ms` +14 to +17 % against 0 (REGRESSION): the page loads the app once it has its
+  bridge, so the app's chunk was fetched after the entry ran. A post-build step now preloads it
+  (`script/build/preload-app-chunk.js`); six startups of the checkout took 120 ms to the bootstrap instead of 140.
+- `open-folder.cold.finish-ms` +31 % against 0 (REGRESSION): first taken for the asynchronous cache checks, which
+  were made synchronous again (b1f5733d) without changing it in rer-2-C1b. The trials' marks then showed the cause:
+  the page asked for the cache's state after showing the tree, and rendered the tree while it waited. The check now
+  starts with the tree's reading (0aefe3fc), and the span is B's again in rer-2-C1c.
+- One open-folder trial of C1 never rendered its home view. The e2e suite's new diagnostic then showed why, in one
+  launch: the startup metadata was refused. The sender check also took the frame's URL, which, at the preload's
+  synchronous request, could still be the previous one. The check now takes the main window's top frame without its
+  URL, and the window never leaves the app's page (`src-main/ipc/main-window-pages.ts`, f3cabca8); 100 launches of
+  the harness then all started. b3689bc8 had compared the URLs' paths decoded, which the page check keeps.
+
+Found while testing, and fixed:
+
+- Under Playwright's debugger, Electron 45.2.1 ran the sandboxed preload after the page's module in 6 of 16
+  launches (70 to 77 ms against DOMContentLoaded at 64 to 69 ms); plain launches, 35, never did. The page
+  (`src/main.ts`) now waits for the bridge before it loads the app (`src/start-app.ts`), and the preload keeps
+  what the main process sends before the page listens (the end of the launch's records, which opens `--open`,
+  and the launch's analytics events). The evidence is in the comments next to both.
+- One full e2e run, between those fixes and the last runs, had one relaunch that did not render, without
+  diagnostics; 36 repeats of the launch-heavy cases and three later full runs (checkout, `ng serve`, package)
+  passed. The launch helper now says, when the home view does not render, whether the page had its bridge and
+  what it threw.
+
+Exceptions that remain after C1 (PLAN.md, C1 step 7):
+
+- Photo Data Viewer's window keeps `nodeIntegration: true` and `contextIsolation: false`, named explicitly as
+  `legacyPhotoDataViewerWebPreferences`; its page reads the photo by path with Node.js. Stage C2 isolates it.
+- The photo path that the main window asks Photo Data Viewer to open is checked for its shape only; binding it
+  to a folder that the user chose comes with C2's capability.
+- The main window keeps `webSecurity: false` (and with it insecure content) and has no Content Security Policy,
+  out of this plan's scope (tracked separately). Its navigation is restricted to the app's page since f3cabca8.
 
 ## Required update fields while executing
 

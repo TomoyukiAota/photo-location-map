@@ -27,6 +27,9 @@ The comparisons of [PERFORMANCE.md](PERFORMANCE.md), made with the harness in
 | [rer-1-0](results/rer-1-0.md) | rer-1 | 0 | 10 + 1 each, all ok | The stage 0 baseline under rer-1. A Time Machine backup started at round 2; the settings dialog's closing, timed with Playwright's polls, then read about 210 ms instead of 110. Superseded by rer-2 for that and the viewer's metadata; the other times are kept as the record of stage 0. |
 | [rer-2-A](results/rer-2-A.md) | rer-2 | 0, A (235d6172) | 10 + 1 each, all 88 ok | Builds alternated by round; viewer unchanged; load average 3.0 at the start, 2.2 at the end. |
 | [rer-2-B](results/rer-2-B.md) | rer-2 | 0, A, B (f5b5f7b1) | 10 + 1 each, all 132 ok | 0 and A rerun beside B, alternated by round; viewer unchanged; load average 1.9 at the end. |
+| [rer-2-C1](results/rer-2-C1.md) | rer-2 | 0, B, C1 (ac6a51ad) | 10 + 1 each; C1's open-folder 9 ok, 1 failed | Its first attempt ended in the warm-up round on a harness error (fixed, not kept). Found three regressions and one launch that never rendered; all fixed before rer-2-C1b (STATUS.md, "Stage C1 notes"). |
+| [rer-2-C1b](results/rer-2-C1b.md) | rer-2 | 0, B, C1 (f3cabca8) | 10 + 1 each, all 132 ok | Every launch of C1 rendered its home view. |
+| [rer-2-C1c](results/rer-2-C1c.md) | rer-2 | 0, B, C1 (0aefe3fc) | open-folder only, 10 + 1 each, all 33 ok | After the last fix, which touches folder opening only. |
 
 ### Stage 0 (rer-1-0), the main metrics
 
@@ -115,4 +118,63 @@ regression. Moving the settings to the main process, with the renderer's writes 
 measurable: saving a setting and the restart that follows are unchanged, and so is reading the settings at startup.
 A's one regression verdict, `view-data.jpeg.menu-to-request-ms`, did not recur: 24.4 ms for 0, 25.3 for A and 24.7
 for B here, which bears out its reading as the frame quantization of the driver's click.
+
+### Stage C1 against 0 and B (rer-2-C1b, rer-2-C1c)
+
+Medians in milliseconds, of 10 trials each, 0 and B measured again beside C1. Series rer-2-C1b, with C1 at f3cabca8:
+
+| Scenario | Metric | 0 | B | C1 | C1 vs 0 | C1 vs B |
+| --- | --- | ---: | ---: | ---: | --- | --- |
+| Startup, new profile | Spawn to the home view | 402.3 | 397.7 | 372.3 | -7.4 %, within budget | -6.4 %, within budget |
+|  | Navigation to the app's bootstrap (the renderer's modules) | 121.7 | 117.0 | 123.8 | +1.7 %, within budget | +5.9 %, within budget |
+| Startup, used profile | Spawn to the home view | 374.6 | 365.6 | 337.3 | -9.9 %, within budget | -7.7 %, within budget |
+|  | Navigation to the app's bootstrap | 91.9 | 86.3 | 92.1 | +0.2 %, within budget | +6.7 %, within budget |
+| Open the large folder, first | Start to complete | 737.2 | 644.9 | 677.9 | -8.0 %, within budget | +5.1 %, within budget |
+|  | Reading the folder's tree | 15.2 | 17.2 | 9.2 | -38.9 %, improvement | -46.2 %, improvement |
+|  | Reading the photos' data | 610.8 | 516.6 | 524.5 | -14.1 %, improvement | +1.5 %, within budget |
+|  | Photo data to complete | 110.8 | 111.3 | 144.5 | +30.4 %, REGRESSION | +29.8 %, REGRESSION |
+|  | Start to the markers on the map | 1750.8 | 1664.5 | 1649.1 | -5.8 %, within budget | -0.9 %, within budget |
+|  | Start to the HEIC thumbnails done | 5735.7 | 5644.3 | 5676.5 | -1.0 %, within budget | +0.6 %, within budget |
+|  | Longest gap between frames | 50.8 | 58.4 | 33.4 | -34.4 %, within budget | -42.9 %, improvement |
+|  | Process tree, peak (MB) | 3271.6 | 3476.6 | 3059.7 | -6.5 %, within budget | -12.0 %, within budget |
+| Open it again | Start to complete | 733.7 | 660.0 | 648.6 | -11.6 %, improvement | -1.7 %, within budget |
+| View Data, JPEG, first | Request to the photo shown | 650.2 | 663.3 | 664.3 | +2.2 %, within budget | +0.2 %, within budget |
+| View Data, JPEG | Request to the photo shown | 631.5 | 630.8 | 631.3 | -0.0 %, within budget | +0.1 %, within budget |
+| View Data, HEIC | Request to the photo shown | 564.1 | 556.7 | 564.1 | -0.0 %, within budget | +1.3 %, within budget |
+| Settings | Save to the dialog closed | 108.5 | 108.3 | 109.3 | +0.7 %, within budget | +0.8 %, within budget |
+|  | Save to the restarted app's home view | 484.5 | 477.6 | 425.2 | -12.2 %, improvement | -11.0 %, improvement |
+
+Folder opening after 0aefe3fc, which checks the thumbnail cache while the photos' data load (series rer-2-C1c):
+
+| Scenario | Metric | 0 | B | C1 | C1 vs 0 | C1 vs B |
+| --- | --- | ---: | ---: | ---: | --- | --- |
+| Open the large folder, first | Start to complete | 733.8 | 643.7 | 644.0 | -12.2 %, improvement | +0.0 %, within budget |
+|  | Reading the folder's tree | 15.1 | 17.0 | 9.0 | -39.9 %, improvement | -46.8 %, improvement |
+|  | Reading the photos' data | 608.8 | 516.5 | 524.3 | -13.9 %, improvement | +1.5 %, within budget |
+|  | Photo data to complete | 110.3 | 110.4 | 111.0 | +0.5 %, within budget | +0.5 %, within budget |
+|  | Start to the markers on the map | 1745.7 | 1664.3 | 1660.6 | -4.9 %, within budget | -0.2 %, within budget |
+|  | Start to the HEIC thumbnails done | 5730.2 | 5643.6 | 5642.1 | -1.5 %, within budget | -0.0 %, within budget |
+|  | Longest gap between frames | 48.8 | 61.1 | 33.4 | -31.7 %, within budget | -45.4 %, improvement |
+|  | Process tree, peak (MB) | 3749.1 | 3712.1 | 3703.9 | -1.2 %, within budget | -0.2 %, within budget |
+| Open it again | Start to complete | 733.3 | 659.8 | 644.9 | -12.1 %, improvement | -2.2 %, within budget |
+
+The isolated main window starts sooner and opens folders as fast as B: the home view renders 6 to 8 % earlier
+than in B (7 to 10 % than in 0), the folder's tree, now read in a worker thread of the main process, takes 9 ms
+instead of 17, and the longest gap between frames while a folder opens falls by about 45 %. Restarting after a
+setting is saved takes 11 % less.
+
+Two verdicts against B remain regressions, both moves of work that the design makes, and neither is worse for
+the user:
+
+- `startup.cold.renderer-bootstrap-ms`, 15.4 to 23.5 ms: the renderer's start, from navigation to the bootstrap's
+  end, takes longer, as the page asks for its startup metadata through the preload and loads the app once it has its
+  bridge; the window navigates 36 ms earlier, so the home view renders 25 ms earlier than in B. Starting the main
+  process's tree worker later did not change it (23.1 ms either way in six startups each). Against 0, within budget.
+- `open-folder.warm.settled-main-ws-kb`, +33 MB (rer-2-C1c): the tree's worker moved from the renderer, as a Web
+  Worker, to the main process, as a worker thread (PLAN.md, C1 step 4). The renderer's settled working set fell by
+  21 MB, and the process tree's total is within 1.1 % of B's and 4 % below 0's.
+
+`open-folder.cold.finish-ms` (+30 % in rer-2-C1b) was a regression, and is fixed: the cache check, asked after the
+tree was shown, let the page render the tree before the folder completed, which kept the loading dialog open 34 ms
+longer. Started with the tree's reading, it ends with the photos' data, and the span is B's again (111 ms).
 
