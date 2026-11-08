@@ -1,6 +1,6 @@
 import * as fsExtra from 'fs-extra';
 import * as pathModule from 'path';
-import { Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { ipcRenderer } from 'electron';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { CommandLineOptions } from '../../../../src-shared/command-line-options/command-line-options';
@@ -11,15 +11,12 @@ import { OpenFolderService } from './open-folder.service';
 import { PhotoDataService } from './photo-data.service';
 import { PhotoSelectionHistoryService } from './photo-selection-history.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class OpenAfterLaunchService {
-  constructor(private directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
-              private openFolderService: OpenFolderService,
-              private photoDataService: PhotoDataService,
-              private photoSelectionHistoryService: PhotoSelectionHistoryService,
-  ) { }
+  private directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);
+  private openFolderService = inject(OpenFolderService);
+  private photoDataService = inject(PhotoDataService);
+  private photoSelectionHistoryService = inject(PhotoSelectionHistoryService);
 
   public async openAfterLaunchIfNeeded() {
     const commandLineOptions = await this.getCommandLineOptionsFromMainProcess();

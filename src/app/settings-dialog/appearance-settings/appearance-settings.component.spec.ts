@@ -1,6 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule } from '@angular/forms';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { AppearanceSettingsComponent } from './appearance-settings.component';
 
@@ -10,11 +8,7 @@ describe('AppearanceSettingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AppearanceSettingsComponent ],
-      imports: [
-        FormsModule,
-        MatCheckboxModule
-      ]
+      imports: [AppearanceSettingsComponent],
     })
     .compileComponents();
   });

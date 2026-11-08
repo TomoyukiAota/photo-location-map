@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Analytics } from '../../../../../src-shared/analytics/analytics';
 import { Logger } from '../../../../../src-shared/log/logger';
 import { DirTreeViewSortService } from '../../../directory-tree-view/dir-tree-view-sort/dir-tree-view-sort.service';
@@ -6,23 +6,24 @@ import {
   DirTreeViewSortDirection,
   DirTreeViewSortKey,
 } from '../../../directory-tree-view/dir-tree-view-sort/dir-tree-view-sort-config';
+import { MatIconButton } from '@angular/material/button';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatIcon } from '@angular/material/icon';
+import { MatDivider } from '@angular/material/list';
 
 @Component({
   selector: 'app-sidebar-upper-pane-more-options',
   templateUrl: './sidebar-upper-pane-more-options.component.html',
   styleUrl: './sidebar-upper-pane-more-options.component.scss',
-  changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false
+  imports: [MatIconButton, MatMenuTrigger, MatIcon, MatMenu, MatMenuItem, MatDivider]
 })
 export class SidebarUpperPaneMoreOptionsComponent {
-  constructor(public sortService: DirTreeViewSortService,
-  ) {
-  }
+  public sortService = inject(DirTreeViewSortService);
 
   public handleSortKeyMenuItemClicked(sortKey: DirTreeViewSortKey) {
     Logger.info(`[Sidebar] [Menu] [Sort] Clicked "By ${sortKey}"`);
     Analytics.trackEvent('Sidebar Menu', `[Sort] Clicked "By ${sortKey}"`);
-    this.sortService.sortKey$.next(sortKey);
+    this.sortService.setSortKey(sortKey);
   }
 
   public handleShootingTimeInfoButtonClicked(event: MouseEvent) {
@@ -35,6 +36,6 @@ export class SidebarUpperPaneMoreOptionsComponent {
   public handleSortDirectionMenuItemClicked(sortDirection: DirTreeViewSortDirection) {
     Logger.info(`[Sidebar] [Menu] [Sort] Clicked "${sortDirection}"`);
     Analytics.trackEvent('Sidebar Menu', `[Sort] Clicked "${sortDirection}"`);
-    this.sortService.sortDirection$.next(sortDirection);
+    this.sortService.setSortDirection(sortDirection);
   }
 }

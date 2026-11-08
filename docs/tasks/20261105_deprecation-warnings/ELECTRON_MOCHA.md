@@ -1,5 +1,11 @@
 # Electron-Mocha executable spawning
 
+> **Update, 2026-11-07:** this patch is kept for a different reason: it lets the
+> Electron-Mocha suites start on Windows from a checkout path that contains a
+> space. Avoiding DEP0190 alone would not justify it. See
+> [dependencies.md](../../contributing/dependencies.md#departures-kept-for-a-needed-feature)
+> and the [override removal record](../20261107_remove-dependency-overrides/STATUS.md).
+
 ## Evidence and scope
 
 The complete Windows push and PR job logs for source `e10e1b9` each contain

@@ -1,7 +1,7 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { first } from 'rxjs';
-import { FlatNode } from '../directory-tree-view.model';
+import { NestedNode } from '../directory-tree-view.model';
 import { DirTreeViewContextMenuData as ContextMenuData } from './dir-tree-view-context-menu-data';
 import { dirTreeViewContextMenuLogger as contextMenuLogger } from './dir-tree-view-context-menu-logger';
 
@@ -16,7 +16,7 @@ export class DirTreeViewContextMenuHelper {
     });
   }
 
-  public static createData(node: FlatNode): ContextMenuData {
+  public static createData(node: NestedNode): ContextMenuData {
     return {
       node,
     };
@@ -32,10 +32,20 @@ export class DirTreeViewContextMenuHelper {
     }
   }
 
-  // Close the context menu when the overlay receives right click.
+  // Close the context menu when its backdrop receives right click.
   // See https://github.com/angular/components/issues/5007#issuecomment-362944793
+  // The menu's backdrop is the last one in the document. openMenu() has just attached the menu's overlay, whose host
+  // the CDK puts at the end of the overlay container, with the backdrop inside it (a popover, where the browser supports
+  // popovers) or just before it. An earlier backdrop can still be there: right after a folder has loaded, the loading
+  // dialog's fades out for a moment. Listening to the first one, the menu then stayed open on a right click outside.
   public static configureClosingWithRightClick(contextMenu: MatMenuTrigger): void {
-    document.getElementsByClassName('cdk-overlay-backdrop')[0].addEventListener('contextmenu', (offEvent: MouseEvent) => {
+    const backdrops = document.getElementsByClassName('cdk-overlay-backdrop');
+    const menuBackdrop = backdrops[backdrops.length - 1];
+    if (!menuBackdrop) {
+      contextMenuLogger.warn(`No backdrop is found to configure closing with right click.`);
+      return;
+    }
+    menuBackdrop.addEventListener('contextmenu', (offEvent: MouseEvent) => {
       offEvent.preventDefault();
       contextMenu.closeMenu();
     });

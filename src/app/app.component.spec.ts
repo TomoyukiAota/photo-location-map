@@ -1,14 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
-import { MatDialogModule } from '@angular/material/dialog';
 import { provideTranslateService } from '@ngx-translate/core';
 
 import { WelcomeDialogAtAppLaunchService } from './welcome-dialog/welcome-dialog-at-app-launch/welcome-dialog-at-app-launch.service';
 
 import { AppComponent } from './app.component';
 
-@Injectable()
+@Service({ autoProvided: false })
 class DummyWelcomeDialogAtAppLaunchService {
   public showWelcomeDialogIfUserHasNotClickedOk() { /* Empty */ }
 }
@@ -19,9 +17,7 @@ describe('AppComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        AppComponent
-      ],
+      imports: [AppComponent],
       providers: [
         provideTranslateService(),
         {
@@ -29,10 +25,6 @@ describe('AppComponent', () => {
           useClass: DummyWelcomeDialogAtAppLaunchService
         }
       ],
-      imports: [
-        MatDialogModule,
-        RouterTestingModule,
-      ]
     }).compileComponents();
   });
 

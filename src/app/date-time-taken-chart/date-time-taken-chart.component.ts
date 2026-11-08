@@ -1,107 +1,36 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, inject, linkedSignal } from '@angular/core';
 import { ECharts, EChartsOption } from 'echarts';
 import * as _ from 'lodash';
-import { Moment, unitOfTime } from 'moment';
+import { unitOfTime } from 'moment';
 import { Analytics } from '../../../src-shared/analytics/analytics';
-import { Photo } from '../shared/model/photo.model';
-import { PinnedPhotoService } from '../shared/service/pinned-photo.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
-import { momentToStringMap } from '../shared/moment-to-string-map';
 import { DateTimeTakenChartConfigService } from './config/date-time-taken-chart-config.service';
-import { xAxisUnit } from './config/date-time-taken-chart-x-axis-unit';
+import { createDateTimeTakenChartData } from './date-time-taken-chart-data';
 import { dateTimeTakenChartLogger as logger } from './date-time-taken-chart-logger';
+import { NgxEchartsDirective } from 'ngx-echarts';
+import { DateTimeTakenChartConfigComponent } from './config/date-time-taken-chart-config.component';
+import { SelectPhotosWithinZoomComponent } from './select-photos-within-zoom/select-photos-within-zoom.component';
 
 @Component({
   selector: 'app-date-time-taken-chart',
   templateUrl: './date-time-taken-chart.component.html',
   styleUrls: ['./date-time-taken-chart.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false
+  imports: [NgxEchartsDirective, DateTimeTakenChartConfigComponent, SelectPhotosWithinZoomComponent]
 })
 export class DateTimeTakenChartComponent {
-  public eChartsOption: EChartsOption;
+  private chartConfigService = inject(DateTimeTakenChartConfigService);
+  private selectedPhotoService = inject(SelectedPhotoService);
+
+  private readonly chartData = computed(() =>
+    createDateTimeTakenChartData(this.selectedPhotoService.selectedPhotos(), this.chartConfigService.xAxisUnit()));
+  public readonly eChartsOption = computed(() => this.createEChartsOption(this.chartData().xData, this.chartData().yData));
+  public readonly isSupportedDuration = computed(() => this.chartData().isSupportedDuration);
+  // Shown from a zoom on, until its reset or until the chart draws again, which ends the zoom.
+  public readonly isSelectPhotosWithinZoomButtonVisible = linkedSignal({
+    source: this.chartConfigService.chartRedrawn,
+    computation: () => false,
+  });
   private echartsInstance: ECharts;
-  private xAxisUnit = xAxisUnit.day.momentJsStr;
-  public isSupportedDuration = true;
-  private momentToString = momentToStringMap.get('day');
-  public isSelectPhotosWithinZoomButtonVisible = false;
-
-  constructor(private chartConfigService: DateTimeTakenChartConfigService,
-              private pinnedPhotoService: PinnedPhotoService,
-              private selectedPhotoService: SelectedPhotoService) {
-    this.selectedPhotoService.selectedPhotos.subscribe(selectedPhotos => {
-      this.handleSelectedPhotosChanged(selectedPhotos);
-    });
-    this.chartConfigService.showDateUnknownPhotos.subscribe(showDateUnknownPhotos => {
-      this.handleShowDateUnknownPhotosChanged(showDateUnknownPhotos);
-    });
-    this.chartConfigService.xAxisUnitMomentJsStr.subscribe(xAxisUnitMomentJsStr => {
-      this.handleXUnitChanged(xAxisUnitMomentJsStr);
-    });
-  }
-
-  private handleSelectedPhotosChanged(selectedPhotos: Photo[]) {
-    this.setEChartsOption(selectedPhotos);
-    this.pinnedPhotoService.setPinnedPhotos(selectedPhotos);
-    this.chartConfigService.showDateUnknownPhotos.next(true);
-    this.isSelectPhotosWithinZoomButtonVisible = false;
-  }
-
-  private setEChartsOption(pinnedPhotos: Photo[]): void {
-    const {xData, yData} = this.createXYData(pinnedPhotos);
-    const option = this.createEChartsOption(xData, yData);
-    this.eChartsOption = option;
-  }
-
-  private createXYData(pinnedPhotos: Photo[]): {xData: string[], yData: number[]} {
-    const photosWithDateTime = pinnedPhotos.filter(photo => photo?.exif?.dateTimeOriginal);
-    if (photosWithDateTime.length === 0) {
-      this.isSupportedDuration = true; // Remove the unsupported duration message
-      return {xData: [], yData: []};   // Results in the chart without data
-    }
-
-    const moments = photosWithDateTime.map(photo => photo.exif.dateTimeOriginal.moment.clone()); // Cloned to be sure of not modifying original ones
-    const sortedMoments = moments.sort((a, b) => a.diff(b));
-    const firstMoment = sortedMoments[0];
-    const lastMoment = sortedMoments[sortedMoments.length - 1];
-
-    this.isSupportedDuration = this.testIfSupportedDuration(firstMoment, lastMoment);
-    if(!this.isSupportedDuration) {
-      return {xData: [], yData: []}; // Results in the chart without data
-    }
-
-    const loopLimitMoment = lastMoment.clone().add(1, this.xAxisUnit);
-    const bins = new Map<string, number>(); // <string, number> as (x, y) coordinate in the chart.
-    for(let tempMoment = firstMoment.clone(); tempMoment.isBefore(loopLimitMoment, this.xAxisUnit); tempMoment.add(1, this.xAxisUnit)) {
-      const xValue = this.momentToString(tempMoment);
-      bins.set(xValue, 0); // Initialize the bin with (x, y) = (xValue, 0)
-    }
-    sortedMoments.forEach(sortedMoment => {
-      const momentString = this.momentToString(sortedMoment);
-      if (bins.has(momentString)) {
-        const xValue = momentString;
-        let yValue = bins.get(xValue);
-        yValue++;
-        bins.set(xValue, yValue);
-      }
-    });
-    const xData = Array.from(bins.keys());
-    const yData = Array.from(bins.values());
-    return {xData, yData};
-  }
-
-  private testIfSupportedDuration(firstMoment: Moment, lastMoment: Moment): boolean {
-    if (this.xAxisUnit === xAxisUnit.hour.momentJsStr) {
-      return lastMoment.diff(firstMoment, 'day') <= 30;
-    }
-    if (this.xAxisUnit === xAxisUnit.minute.momentJsStr) {
-      return lastMoment.diff(firstMoment, 'day') <= 3;
-    }
-    if (this.xAxisUnit === xAxisUnit.second.momentJsStr) {
-      return lastMoment.diff(firstMoment, 'hour') <= 1;
-    }
-    return true;
-  }
 
   private createEChartsOption(xData: string[], yData: number[]) {
     const option: EChartsOption = {
@@ -216,21 +145,13 @@ export class DateTimeTakenChartComponent {
   public onChartDataZoom() {
     this.onChartDataZoomWithDebouncing();
     this.trackChartDataZoomWithDebouncing();
-    this.isSelectPhotosWithinZoomButtonVisible = true;
+    this.isSelectPhotosWithinZoomButtonVisible.set(true);
   }
 
+  /** Pins the selected photos taken within the zoom window, without the photos that have no shooting time. */
   private onChartDataZoomWithDebouncing = _.debounce(() => {
     logger.info('Chart Data Zoom');
-    const xValuesWithinZoom = this.getXValuesWithinZoom();
-    const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
-    const pinnedPhotos = selectedPhotos.filter(photo => {
-      const dateTimeOriginal = photo.exif?.dateTimeOriginal;
-      if (!dateTimeOriginal) { return false; } // When zoomed, the photos without the date taken are not pinned on the map.
-      const momentString = this.momentToString(dateTimeOriginal.moment);
-      return xValuesWithinZoom.includes(momentString);
-    });
-    this.pinnedPhotoService.setPinnedPhotos(pinnedPhotos);
-    this.chartConfigService.showDateUnknownPhotos.next(false);
+    this.chartConfigService.zoom(this.getXValuesWithinZoom());
   }, 300 /* ms */);
 
   private getXValuesWithinZoom(): string[] {
@@ -248,34 +169,20 @@ export class DateTimeTakenChartComponent {
     logger.info(`Restore`);
     Analytics.trackEvent('DTT Chart', `[DTT Chart] Restore`);
 
-    const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
-    this.pinnedPhotoService.setPinnedPhotos(selectedPhotos);
-    this.chartConfigService.showDateUnknownPhotos.next(true);
-    this.isSelectPhotosWithinZoomButtonVisible = false;
+    this.chartConfigService.resetZoom();
+    this.isSelectPhotosWithinZoomButtonVisible.set(false);
   }
 
-  private handleShowDateUnknownPhotosChanged(showDateUnknownPhotos: boolean) {
-    const previousPinnedPhotos = this.pinnedPhotoService.getPinnedPhotos();
-    if (showDateUnknownPhotos) {
-      const previousPinnedPhotoPaths = previousPinnedPhotos.map(photo => photo.path);
-      const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
-      const dateUnknownPhotos = selectedPhotos.filter(photo => !photo.exif?.dateTimeOriginal);
-      const photosToAdd = dateUnknownPhotos.filter(dateUnknownPhoto => !previousPinnedPhotoPaths.includes(dateUnknownPhoto.path));
-      const nextPinnedPhotos = [...previousPinnedPhotos, ...photosToAdd];
-      this.pinnedPhotoService.setPinnedPhotos(nextPinnedPhotos);
-    } else {
-      const dateKnownPinnedPhotos = previousPinnedPhotos.filter(photo => !!photo.exif?.dateTimeOriginal);
-      this.pinnedPhotoService.setPinnedPhotos(dateKnownPinnedPhotos);
-    }
+  /** The chart menu's checkbox for the photos without a shooting time changed: they are pinned, or no longer. */
+  public onShowDateUnknownPhotosChanged(showDateUnknownPhotos: boolean) {
+    this.chartConfigService.setShowDateUnknownPhotos(showDateUnknownPhotos);
   }
 
-  private handleXUnitChanged(xAxisUnitMomentJsStr: unitOfTime.DurationConstructor) {
-    this.xAxisUnit = xAxisUnitMomentJsStr;
-    this.momentToString = momentToStringMap.get(this.xAxisUnit);
-    const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
-    this.setEChartsOption(selectedPhotos);
-    this.pinnedPhotoService.setPinnedPhotos(selectedPhotos);
-    this.chartConfigService.showDateUnknownPhotos.next(true);
-    this.isSelectPhotosWithinZoomButtonVisible = false;
+  /**
+   * The unit of the chart's x-axis changed: the chart draws again with it, which ends the zoom, and every selected photo
+   * is pinned (DateTimeTakenChartConfigService.chartRedrawn).
+   */
+  public onXAxisUnitChanged(xAxisUnit: unitOfTime.DurationConstructor) {
+    this.chartConfigService.setXAxisUnit(xAxisUnit);
   }
 }

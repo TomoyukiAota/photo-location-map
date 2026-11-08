@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { ipcRenderer } from 'electron';
 import { IpcConstants } from '../../../../src-shared/ipc/ipc-constants';
 import { IpcParams } from '../../../../src-shared/ipc/ipc-params';
@@ -6,16 +6,13 @@ import { Logger } from '../../../../src-shared/log/logger';
 import { DirectoryTreeViewSelectionService } from '../../directory-tree-view/directory-tree-view-selection.service';
 import { Photo } from '../model/photo.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class PhotoSelectionHistoryService {
+  private directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);
+
   private history: Photo[][] = [];
   private redoableStates: Photo[][] = [];
   private isUndoRedoInProgress = false;
-
-  constructor(private directoryTreeViewSelectionService: DirectoryTreeViewSelectionService) {
-  }
 
   public reset() {
     this.history.length = 0;

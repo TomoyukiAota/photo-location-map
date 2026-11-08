@@ -1,22 +1,25 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { BooleanSetting } from '../../../../src-shared/user-settings/boolean-setting';
 import { currentUserSettings } from '../../../../src-shared/user-settings/user-settings';
 import { LoadedFilesStatusBarService } from '../../loaded-files-status-bar/service/loaded-files-status-bar.service';
 import { SettingsChangedService } from '../service/settings-changed.service';
 import { AppearanceSettingsChangedParameter } from './appearance-settings-changed-parameter';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-appearance-settings',
   templateUrl: './appearance-settings.component.html',
   styleUrls: ['./appearance-settings.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false
+  imports: [MatCheckbox, FormsModule]
 })
 export class AppearanceSettingsComponent {
+  private settingsChangedService = inject(SettingsChangedService);
+  private loadedFilesStatusBarService = inject(LoadedFilesStatusBarService);
+
   public shouldShowStatusBar: boolean;
 
-  constructor(private settingsChangedService: SettingsChangedService,
-              private loadedFilesStatusBarService: LoadedFilesStatusBarService) {
+  constructor() {
     this.shouldShowStatusBar = BooleanSetting.convertToBoolean(currentUserSettings.showStatusBar);
   }
 

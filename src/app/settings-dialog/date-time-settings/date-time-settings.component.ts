@@ -1,26 +1,25 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { MatSelectChange } from '@angular/material/select';
+import { Component, inject } from '@angular/core';
+import { MatSelectChange, MatSelect, MatOption } from '@angular/material/select';
 import moment from 'moment-timezone';
 import { DateTimeFormat } from '../../../../src-shared/date-time/date-time-format';
 import { currentUserSettings } from '../../../../src-shared/user-settings/user-settings';
 import { SettingsChangedService } from '../service/settings-changed.service';
 import { DateTimeSettingsChangedParameter } from './date-time-settings-changed-parameter';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-date-time-settings',
   templateUrl: './date-time-settings.component.html',
   styleUrls: ['./date-time-settings.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false
+  imports: [MatFormField, MatLabel, MatSelect, MatOption]
 })
 export class DateTimeSettingsComponent {
+  private settingsChangedService = inject(SettingsChangedService);
+
   public dateFormatList = DateTimeFormat.ForUser.DateFormat_List;
   public clockSystemFormatList = DateTimeFormat.ForUser.ClockSystemFormat_List;
   public selectedDateFormat = currentUserSettings.dateFormat;
   public selectedClockSystemFormat = currentUserSettings.clockSystemFormat;
-
-  constructor(private settingsChangedService: SettingsChangedService) {
-  }
 
   public getDateTimeNow() {
     const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsDateTimeFormat(this.selectedDateFormat, this.selectedClockSystemFormat);

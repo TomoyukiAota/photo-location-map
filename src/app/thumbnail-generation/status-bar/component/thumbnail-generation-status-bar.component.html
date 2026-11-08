@@ -1,6 +1,7 @@
+@let generation = status();
 <div class="summary">
-  @if (isThumbnailGenerationDone) {
-    @if (thumbnailGenerationResult.errorOccurred) {
+  @if (generation.phase === 'done') {
+    @if (generation.result?.errorOccurred) {
       <span>Finished generating thumbnails for HEIF files with errors.</span>
     } @else {
       <span>Completed generating thumbnails for HEIF files.</span>
@@ -10,22 +11,22 @@
   }
 </div>
 <div class="progress-bar-with-details"
-     [class]="detailsVisible ? 'expanded-progress-bar-with-details' : 'shrunk-progress-bar-with-details'"
-     [title]="detailsVisible ? '' : 'Show Details'"
+     [class]="detailsVisible() ? 'expanded-progress-bar-with-details' : 'shrunk-progress-bar-with-details'"
+     [title]="detailsVisible() ? '' : 'Show Details'"
      (click)="toggleDetailsVisibility()">
   <div class="progress-bar-and-expand-icon">
-    <mat-progress-bar mode="buffer" [value]="progressPercent"></mat-progress-bar>
+    <mat-progress-bar mode="buffer" [value]="generation.progressPercent"></mat-progress-bar>
     <mat-icon class="expand-icon"
-              [ngClass]="{'expanded-expand-icon': detailsVisible}">
+              [class.expanded-expand-icon]="detailsVisible()">
       expand_more
     </mat-icon>
   </div>
   <div class="details">
     <div>
-      @if (isThumbnailGenerationDone) {
-        @if (thumbnailGenerationResult.errorOccurred) {
+      @if (generation.phase === 'done') {
+        @if (generation.result?.errorOccurred) {
           <span>
-            <span>Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} files with errors. </span>
+            <span>Processed {{ generation.numOfProcessedThumbnails }} out of {{ generation.numOfGenerationRequiredThumbnails }} files with errors. </span>
             <span class="anchor-tag-like-text"
                   title="See the files with errors"
                   (click)="handleClickHereTextClicked($event)">
@@ -33,21 +34,22 @@
             </span>
           </span>
         } @else {
-          <span>Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} files.</span>
+          <span>Processed {{ generation.numOfProcessedThumbnails }} out of {{ generation.numOfGenerationRequiredThumbnails }} files.</span>
         }
       } @else {
-        <span>Processed {{ numberOfProcessedThumbnails }} out of {{ numberOfThumbnailsGenerationRequired }} files.</span>
+        <span>Processed {{ generation.numOfProcessedThumbnails }} out of {{ generation.numOfGenerationRequiredThumbnails }} files.</span>
       }
     </div>
     <div class="generation-required-files-description">
-      {{ numberOfThumbnailsGenerationRequired }} thumbnails need generation, which is given by "HEIF files ({{ numberOfTotalHeifFiles }} files)
-      − Cache-available files ({{ numberOfThumbnailsUsingCache }} files)".
+      {{ generation.numOfGenerationRequiredThumbnails }} thumbnails need generation, which is given by "HEIF files ({{ generation.numOfAllHeifFiles }} files)
+      − Cache-available files ({{ generation.numOfCacheAvailableThumbnails }} files)".
     </div>
   </div>
 </div>
 <span class="close-button"
       title="Close Thumbnail Generation Status Bar"
-      [ngClass]="{'hidden': !isThumbnailGenerationDone, 'fade-in-close-button': isThumbnailGenerationDone}"
+      [class.hidden]="generation.phase !== 'done'"
+      [class.fade-in-close-button]="generation.phase === 'done'"
       (click)="handleCloseButtonClicked()">
   ×
 </span>

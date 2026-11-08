@@ -9,7 +9,7 @@ describe('CacheSettingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CacheSettingsComponent ]
+      imports: [CacheSettingsComponent],
     })
     .compileComponents();
   });

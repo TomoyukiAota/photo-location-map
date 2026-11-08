@@ -1,10 +1,8 @@
-import { Injectable } from '@angular/core';
+import { signal, inject, Service } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { BehaviorSubject } from 'rxjs';
 import { DirTreeObjectRecorder } from '../../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
 import { sleep } from '../../../../src-shared/sleep/sleep';
 import { DirectoryTreeViewDataService } from '../../directory-tree-view/directory-tree-view-data.service';
-import { LoadedFilesStatusBarService } from '../../loaded-files-status-bar/service/loaded-files-status-bar.service';
 import { LoadingFolderDialogComponent } from '../../loading-folder/dialog/loading-folder-dialog.component';
 import {
   NoPhotosWithLocationDataDialogComponent
@@ -12,27 +10,30 @@ import {
 import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewer-content';
 import { OpenFolderRecorder } from '../../sidebar/upper-pane/open-folder-recorder';
 import { ThumbnailGenerationService } from '../../thumbnail-generation/service/thumbnail-generation.service';
+import { ThumbnailGenerationStatusBarService } from '../../thumbnail-generation/status-bar/service/thumbnail-generation-status-bar.service';
 import { LoadingFolderProgress } from '../loading-folder-progress';
 import { OpenedDirectory } from '../opened-directory';
 import { ThumbnailObjectUrlStorage } from '../thumbnail-object-url-storage';
 import { PhotoDataService } from './photo-data.service';
 import { PhotoSelectionHistoryService } from './photo-selection-history.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class OpenFolderService {
-  public isFolderOpened$ = new BehaviorSubject(false);
+  private dialog = inject(MatDialog);
+  private photoDataService = inject(PhotoDataService);
+  private directoryTreeViewDataService = inject(DirectoryTreeViewDataService);
+  public thumbnailGenerationService = inject(ThumbnailGenerationService);
+  private thumbnailGenerationStatusBarService = inject(ThumbnailGenerationStatusBarService);
+  private photoSelectionHistoryService = inject(PhotoSelectionHistoryService);
 
-  constructor(private dialog: MatDialog,
-              private photoDataService: PhotoDataService,
-              private directoryTreeViewDataService: DirectoryTreeViewDataService,
-              private loadedFilesStatusBarService: LoadedFilesStatusBarService,
-              public thumbnailGenerationService: ThumbnailGenerationService,
-              private photoSelectionHistoryService: PhotoSelectionHistoryService,
-  ) {
-  }
+  private readonly isFolderOpenedState = signal(false);
+  /** Whether a folder has been opened since the application started. */
+  public readonly isFolderOpened = this.isFolderOpenedState.asReadonly();
 
+  /**
+   * Opens a folder: reads its photos while the loading dialog is shown, then shows its tree, which pins its photos on
+   * the map and the chart, and starts making the thumbnails of its HEIF files.
+   */
   public async open(folderPath: string) {
     let loadingFolderDialogRef: MatDialogRef<LoadingFolderDialogComponent> = null;
 
@@ -41,19 +42,21 @@ export class OpenFolderService {
       this.photoSelectionHistoryService.reset();
       PhotoInfoViewerContent.clearCache();
       ThumbnailObjectUrlStorage.revokeObjectUrls();
-      this.isFolderOpened$.next(true);
+      this.isFolderOpenedState.set(true);
+      // Every open hides the thumbnail status bar of the previous folder, the second open too. This is a call rather
+      // than something derived from isFolderOpened: a signal set to the value it already has notifies no one.
+      this.thumbnailGenerationStatusBarService.hide();
 
       loadingFolderDialogRef = this.showLoadingFolderDialog();
 
       const directoryTreeObject = await OpenedDirectory.createDirectoryTree(folderPath);
       await this.photoDataService.update(directoryTreeObject); // Photo data is fetched from files. The loading folder dialog displays file loading status.
-      await sleep(100); // To update the loading folder dialog before starting intensive work (PhotoInfoViewerContent.generateCache) which freezes GUI.
+      await sleep(100); // To update the loading folder dialog before the work below, which freezes the GUI for a large folder.
 
       this.showPhotoWithLocationNotFoundDialogIfApplicable();
-      PhotoInfoViewerContent.generateCache(this.photoDataService.getAllPhotos());
       this.directoryTreeViewDataService.replace(directoryTreeObject);
-      this.loadedFilesStatusBarService.updateStatus();
-      this.thumbnailGenerationService.startThumbnailGeneration(directoryTreeObject);
+      if (this.thumbnailGenerationService.startThumbnailGeneration(directoryTreeObject))
+        this.thumbnailGenerationStatusBarService.showForNewGeneration();
       DirTreeObjectRecorder.record(directoryTreeObject);
       OpenFolderRecorder.complete();
     } catch (reason) {

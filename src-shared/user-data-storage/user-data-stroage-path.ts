@@ -19,10 +19,6 @@ export namespace UserDataStoragePath {
     export const LastConfirmedDirectory: ReadonlyArray<string> = ['FolderDialog', 'LastConfirmedDirectory'];
   }
 
-  export namespace GoogleMaps {
-    export const ApiKey: ReadonlyArray<string> = ['GoogleMaps', 'ApiKey'];
-  }
-
   export namespace LeafletMap {
     export const SelectedBaseLayer: ReadonlyArray<string> = ['LeafletMap', 'SelectedBaseLayer'];
   }

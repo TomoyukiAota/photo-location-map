@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { DirectoryTreeViewSelectionService } from '../../directory-tree-view/directory-tree-view-selection.service';
 import { PinnedPhotoService } from '../../shared/service/pinned-photo.service';
@@ -7,14 +7,11 @@ import { dateTimeTakenChartLogger as logger } from '../date-time-taken-chart-log
 @Component({
   selector: 'app-select-photos-within-zoom',
   templateUrl: './select-photos-within-zoom.component.html',
-  styleUrls: ['./select-photos-within-zoom.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false
+  styleUrls: ['./select-photos-within-zoom.component.scss']
 })
 export class SelectPhotosWithinZoomComponent {
-  constructor(private directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
-              private pinnedPhotoService: PinnedPhotoService) {
-  }
+  private directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);
+  private pinnedPhotoService = inject(PinnedPhotoService);
 
   public onButtonClicked() {
     logger.info('Clicked "Select Photos within Zoom" button.');

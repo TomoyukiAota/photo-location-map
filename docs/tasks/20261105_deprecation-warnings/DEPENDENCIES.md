@@ -1,5 +1,9 @@
 # Deprecated dependency investigation
 
+> **Update, 2026-11-07:** the npm `overrides` described here have been removed,
+> and their deprecation warnings are accepted until upstream releases remove
+> them. See the [override removal record](../20261107_remove-dependency-overrides/STATUS.md).
+
 Checked the lockfile, published package manifests/source, and primary upstream
 documentation on 2026-11-05. This document covers transitive dependencies;
 Angular build and application API migrations are tracked separately.

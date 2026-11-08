@@ -1,5 +1,11 @@
 # Packaging without repository-owned compatibility packages
 
+> **Update, 2026-11-07:** the ASAR and Temp overrides and `script/patch-temp.js`
+> described here have been removed, and their deprecation warnings are accepted
+> until upstream releases remove them. The Electron-Mocha patch remains, now for
+> Windows checkout paths that contain a space. See the
+> [override removal record](../20261107_remove-dependency-overrides/STATUS.md).
+
 ## Decision
 
 Keep stable electron-builder26.18.1 and existing NSIS/DMG/ZIP/AppImage settings.

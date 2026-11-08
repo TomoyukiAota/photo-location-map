@@ -14,7 +14,7 @@
   <button mat-button (click)="detailsOpenState.set(!detailsOpenState())">
     <div class="details-button-content">
       <mat-icon fontIcon="chevron_right"
-                [ngClass]="{'details-opened-icon': detailsOpenState()}">
+                [class.details-opened-icon]="detailsOpenState()">
       </mat-icon>
       <span>More details for reference</span>
     </div>

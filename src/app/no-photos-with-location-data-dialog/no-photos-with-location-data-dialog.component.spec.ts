@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatButtonModule } from '@angular/material/button';
 
 import { NoPhotosWithLocationDataDialogComponent } from './no-photos-with-location-data-dialog.component';
 
@@ -9,8 +8,7 @@ describe('NoPhotosWithLocationDataDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ NoPhotosWithLocationDataDialogComponent ],
-      imports: [ MatButtonModule ]
+      imports: [NoPhotosWithLocationDataDialogComponent],
     })
     .compileComponents();
   });

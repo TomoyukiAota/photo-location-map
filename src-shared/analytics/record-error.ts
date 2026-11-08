@@ -1,5 +1,5 @@
 import { ProxyRequire } from '../require/proxy-require';
-import { ErrorScrubbingContext, errorForAnalytics } from './error-for-analytics';
+import { ErrorScrubbingContext, errorForAnalytics, maxLabelLength, scrubMessage } from './error-for-analytics';
 
 // Records errors that nothing handled, without the user's file paths (see errorForAnalytics).
 // An error in a loop must not flood analytics, so each process sends at most 20 errors per launch, and at most 3
@@ -12,14 +12,14 @@ const recordedLabels = new Map<string, number>();
 const recordedErrorObjects = new WeakSet<object>();
 let isRecording = false;
 
+/** Records an error that nothing handled, once for each error object and within the limits above. */
 export function recordUnhandledError(error: unknown, processName: 'Main' | 'Renderer'): void {
   if (isRecording || recordedErrors >= maxErrorsPerLaunch)
     return;
 
   isRecording = true;
   try {
-    // In the renderer, an unhandled promise rejection reaches both Angular's ErrorHandler (wrapped by zone.js)
-    // and the window's unhandledrejection listener, so the same error is recorded once.
+    // The same error object is recorded once, however many handlers report it.
     const original = unwrapPromiseRejection(error);
     if (typeof original === 'object' && original !== null) {
       if (recordedErrorObjects.has(original))
@@ -50,7 +50,15 @@ export function scrubbedErrorLabel(error: unknown): string {
   return errorForAnalytics(error, scrubbingContext()).label;
 }
 
-/** zone.js wraps an unhandled promise rejection in an Error "Uncaught (in promise): …" with the reason in `rejection`. */
+/** Text that describes an error, such as one a worker process sent as text, without paths. */
+export function scrubbedErrorText(text: string): string {
+  return scrubMessage(text, scrubbingContext()).slice(0, maxLabelLength);
+}
+
+/**
+ * An error "Uncaught (in promise): …" with the reason in `rejection`, as zone.js made of an unhandled promise rejection,
+ * stands for its reason. The renderer no longer loads zone.js, so its rejections reach recordUnhandledError unwrapped.
+ */
 function unwrapPromiseRejection(error: unknown): unknown {
   return error instanceof Error && 'rejection' in error ? (error as Error & { rejection: unknown }).rejection : error;
 }

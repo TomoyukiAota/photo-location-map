@@ -7,7 +7,13 @@ on:
   pull_request:
     branches:
       - main
-  workflow_dispatch:    # to run on macos-26-intel on demand (see the test-intel job below)
+  # On demand: to run on macos-26-intel (see the test-intel job below), or to write the screenshot references anew.
+  workflow_dispatch:
+    inputs:
+      update_screenshots:
+        description: Write anew the screenshot references of macos-26 that differ, and upload them (test/e2e/README.md)
+        type: boolean
+        default: false
 
 jobs:
   changes:
@@ -90,14 +96,38 @@ jobs:
     - name: npm run test:e2e
       env:
         PLM_PACKAGED_EXECUTABLE: ${{ github.workspace }}/release/mac-universal/Photo Location Map.app/Contents/MacOS/Photo Location Map
-      run: npm run test:e2e
+        # The screenshot comparisons too, on arm64 only, against the references that CI keeps for its runner, whose
+        # macOS sets text differently from the Mac that snapshots/ matches (test/e2e/README.md). test-intel runs these
+        # steps as well.
+        PLM_VISUAL: ${{ runner.arch == 'ARM64' && '1' || '' }}
+        PLM_VISUAL_REFERENCES: ${{ runner.arch == 'ARM64' && 'snapshots-ci/macos-26-arm64' || '' }}
+      # With update_screenshots, the references that differ are written anew rather than failed on.
+      run: npm run test:e2e ${{ inputs.update_screenshots && '-- --update-snapshots=changed' || '' }}
+
+    - name: Upload the screenshot references written anew
+      if: ${{ !cancelled() && inputs.update_screenshots && runner.arch == 'ARM64' }}
+      uses: actions/upload-artifact@v7.0.2
+      with:
+        name: screenshots-macos-26-arm64
+        path: test/e2e/snapshots-ci/macos-26-arm64
+        if-no-files-found: error
+
+    - name: Upload the e2e results of a failure
+      # Playwright writes there what a failed case saw, such as a screenshot and its difference from the reference.
+      if: ${{ failure() }}
+      uses: actions/upload-artifact@v7.0.2
+      with:
+        name: e2e-results-macos-${{ runner.arch }}
+        path: .upgrade-artifacts/e2e-results
+        if-no-files-found: ignore
 
   test-intel:
     # macos-26-intel is x64, and runs only when this workflow is run manually, because it took twice as long as macos-26
-    # and its failures were caused by the runner, not the app. See AGENTS.md for when to run it.
+    # and its failures were caused by the runner, not the app. See AGENTS.md for when to run it. A manual run that
+    # writes the screenshot references anew leaves it out.
     name: test (macos-x64)
     runs-on: macos-26-intel
-    if: ${{ github.event_name == 'workflow_dispatch' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && !inputs.update_screenshots }}
     timeout-minutes: 45    # See the test job above.
     env: *env
     steps: *steps

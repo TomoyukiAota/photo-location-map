@@ -16,7 +16,7 @@
     "nodeRun": true
   },
   "scripts": {
-    "postinstall": "node script/patch-electron-mocha.js && node script/patch-temp.js && electron-builder install-app-deps",
+    "postinstall": "node script/patch-electron-mocha.js && electron-builder install-app-deps",
     "ng": "ng",
     "start": "npm-run-all -p ng:serve electron:live-reload",
     "build": "npm run build:src-main && npm run typecheck:build-config && npm run typecheck:worker && ng build",
@@ -54,7 +54,7 @@
     "test:package": "npm run test:package-runner && cross-env PLM_PACKAGE_TEST=true node ./script/package-test/run-package-test.js",
     "test:e2e": "playwright test -c test/e2e/playwright.config.mjs",
     "test:live-reload": "npm run build:src-main && node ./test/live-reload/run.cjs",
-    "test:dependency-compat": "node --test test/deprecation-warnings/dependency-compat.cjs test/deprecation-warnings/electron-mocha.cjs test/deprecation-warnings/installed-tree.cjs test/deprecation-warnings/packaging-asar.cjs test/deprecation-warnings/temp.cjs",
+    "test:dependency-compat": "node --test test/deprecation-warnings/electron-mocha.cjs",
     "test:all": "npm-run-all lint:all test:dependency-compat test:unit:all test:live-reload test:package",
     "check": "ncu --interactive --install always",
     "verify:runtime": "node script/verify-runtime.js",
@@ -107,6 +107,7 @@
     "@angular/router": "22.2.4",
     "@electron/notarize": "3.1.2",
     "@eslint/js": "10.0.1",
+    "@geoman-io/leaflet-geoman-free": "2.20.4",
     "@ngx-translate/core": "18.1.0",
     "@ngx-translate/http-loader": "18.1.0",
     "@stylistic/eslint-plugin": "5.10.0",
@@ -135,6 +136,8 @@
     "exif-parser": "0.1.12",
     "jsdom": "30.1.3",
     "jsonc-parser": "3.3.1",
+    "leaflet": "1.9.4",
+    "leaflet.markercluster": "1.5.3",
     "mixpanel-browser": "2.84.0",
     "ng-table-virtual-scroll": "1.6.1",
     "ngx-echarts": "22.0.0",
@@ -150,8 +153,7 @@
     "tslib": "2.9.1",
     "typescript": "6.0.3",
     "vitest": "5.1.0",
-    "wait-on": "9.5.1",
-    "zone.js": "0.16.3"
+    "wait-on": "9.5.1"
   },
   "browser": {
     "fs": false,
@@ -169,20 +171,5 @@
     "lmdb@3.5.6": true,
     "msgpackr-extract@3.0.4": true,
     "electron-winstaller@5.4.0": false
-  },
-  "overrides": {
-    "mocha": {
-      "glob": "13.0.6"
-    },
-    "electron-updater": {
-      "lodash.isequal": "npm:lodash.isequalwith@4.4.0"
-    },
-    "@electron/get": {
-      "global-agent": "4.1.6"
-    },
-    "@electron/asar": "4.3.1",
-    "temp": {
-      "rimraf": "6.1.4"
-    }
   }
 }

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import * as remote from '@electron/remote';
 import { Logger } from '../../../../src-shared/log/logger';
 import { RequireFromMainProcess } from '../../../../src-shared/require/require-from-main-process';
@@ -7,26 +7,26 @@ import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/us
 import { OpenFolderService } from '../../shared/service/open-folder.service';
 import { ThumbnailGenerationService } from '../../thumbnail-generation/service/thumbnail-generation.service';
 import { OpenFolderDialogHistory } from './open-folder-dialog-history';
+import { MatButton } from '@angular/material/button';
+import { SidebarUpperPaneMoreOptionsComponent } from './more-options/sidebar-upper-pane-more-options.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-sidebar-upper-pane',
   templateUrl: './sidebar-upper-pane.component.html',
   styleUrl: './sidebar-upper-pane.component.scss',
-  changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false
+  imports: [MatButton, SidebarUpperPaneMoreOptionsComponent, TranslatePipe]
 })
 export class SidebarUpperPaneComponent {
+  private openFolderService = inject(OpenFolderService);
+  public thumbnailGenerationService = inject(ThumbnailGenerationService);
+
   private readonly folderDialogHistory = new OpenFolderDialogHistory({
     read: () => UserDataStorage.readOrDefault(UserDataStoragePath.FolderDialog.LastConfirmedDirectory, null),
     write: directoryPath => UserDataStorage.write(UserDataStoragePath.FolderDialog.LastConfirmedDirectory, directoryPath),
     isDirectory: async directoryPath => (await RequireFromMainProcess.fsExtra.stat(directoryPath)).isDirectory(),
     reportFailure: error => Logger.warn('Could not restore or persist folder dialog history.', error),
   });
-
-  constructor(private openFolderService: OpenFolderService,
-              public thumbnailGenerationService: ThumbnailGenerationService,
-  ) {
-  }
 
   public async showOpenFolderDialog() {
     const result = await remote.dialog.showOpenDialog(

@@ -1,7 +1,6 @@
-import { Injectable } from '@angular/core';
+import { computed, signal, inject, Service } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import moment from 'moment/moment';
-import { BehaviorSubject, combineLatest, map } from 'rxjs';
 import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/user-data-stroage-path';
 import { PhotoDataService } from '../../shared/service/photo-data.service';
@@ -21,61 +20,34 @@ type SortDirection = DirTreeViewSortDirection;
 type SortConfig = DirTreeViewSortConfig;
 const defaultSortConfig = defaultDirTreeViewSortConfig;
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class DirTreeViewSortService {
-  public readonly sortKey$ = new BehaviorSubject<SortKey>(defaultSortConfig.key);
-  public readonly sortDirection$ = new BehaviorSubject<SortDirection>(defaultSortConfig.direction);
-  public readonly sortConfig$ = new BehaviorSubject<SortConfig>(defaultSortConfig);
+  private dialog = inject(MatDialog);
+  private photoDataService = inject(PhotoDataService);
 
-  constructor(private dialog: MatDialog,
-              private photoDataService: PhotoDataService,
-  ) {
-    this.loadSortKeyFromUserDataStorage();
-    this.configureSavingSortKeyWhenChanged();
+  private readonly sortKeyState = signal<SortKey>(DirTreeViewSortService.readSortKey());
+  private readonly sortDirectionState = signal<SortDirection>(DirTreeViewSortService.readSortDirection());
+  public readonly sortKey = this.sortKeyState.asReadonly();
+  public readonly sortDirection = this.sortDirectionState.asReadonly();
+  public readonly sortConfig = computed<SortConfig>(() => new DirTreeViewSortConfig(this.sortKey(), this.sortDirection()));
 
-    this.loadSortDirectionFromUserDataStorage();
-    this.configureSavingSortDirectionWhenChanged();
-
-    this.configureSortConfig();
+  // The setters save what is chosen. Reading the saved values at startup writes nothing back.
+  public setSortKey(sortKey: SortKey): void {
+    this.sortKeyState.set(sortKey);
+    UserDataStorage.write(UserDataStoragePath.DirectoryTreeView.SortKey, sortKey);
   }
 
-  private loadSortKeyFromUserDataStorage() {
-    const sortKey = UserDataStorage.readOrDefault(
-      UserDataStoragePath.DirectoryTreeView.SortKey,
-      defaultSortConfig.key,
-    ) as SortKey;
-    this.sortKey$.next(sortKey);
+  public setSortDirection(sortDirection: SortDirection): void {
+    this.sortDirectionState.set(sortDirection);
+    UserDataStorage.write(UserDataStoragePath.DirectoryTreeView.SortDirection, sortDirection);
   }
 
-  private configureSavingSortKeyWhenChanged() {
-    // No need of unsubscribing since sortKey$ exists for the entire application lifetime.
-    this.sortKey$.subscribe(sortKey => {
-      UserDataStorage.write(UserDataStoragePath.DirectoryTreeView.SortKey, sortKey);
-    });
+  private static readSortKey(): SortKey {
+    return UserDataStorage.readOrDefault(UserDataStoragePath.DirectoryTreeView.SortKey, defaultSortConfig.key) as SortKey;
   }
 
-  private loadSortDirectionFromUserDataStorage() {
-    const sortDirection = UserDataStorage.readOrDefault(
-      UserDataStoragePath.DirectoryTreeView.SortDirection,
-      defaultSortConfig.direction,
-    ) as SortDirection;
-    this.sortDirection$.next(sortDirection);
-  }
-
-  private configureSavingSortDirectionWhenChanged() {
-    // No need of unsubscribing since sortDirection$ exists for the entire application lifetime.
-    this.sortDirection$.subscribe(sortDirection => {
-      UserDataStorage.write(UserDataStoragePath.DirectoryTreeView.SortDirection, sortDirection);
-    });
-  }
-
-  private configureSortConfig() {
-    const sortConfigObservable$ = combineLatest([this.sortKey$, this.sortDirection$]).pipe(map(([key, direction]) => {
-      return {key, direction};
-    }));
-    sortConfigObservable$.subscribe(this.sortConfig$); // No need of unsubscribing since sortKey$ and sortDirection$ exist for the entire application lifetime.
+  private static readSortDirection(): SortDirection {
+    return UserDataStorage.readOrDefault(UserDataStoragePath.DirectoryTreeView.SortDirection, defaultSortConfig.direction) as SortDirection;
   }
 
   public sortData(data: NestedNode[], sortConfig: SortConfig): NestedNode[] {

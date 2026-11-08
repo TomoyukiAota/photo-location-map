@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, viewChild, inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { app } from '@electron/remote';
 
@@ -8,28 +8,28 @@ import { openUrl } from '../../../src-shared/url/open-url';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { configureOpeningInOsBrowser } from '../shared/open-url/configure-opening-in-os-browser';
 import { WelcomeDialogAtAppLaunchService } from './welcome-dialog-at-app-launch/welcome-dialog-at-app-launch.service';
+import { MatButton } from '@angular/material/button';
+import { MatDialogClose } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-welcome-dialog',
   templateUrl: './welcome-dialog.component.html',
   styleUrls: ['./welcome-dialog.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false
+  imports: [MatButton, MatDialogClose]
 })
 export class WelcomeDialogComponent implements AfterViewInit {
+  private sanitizer = inject(DomSanitizer);
+  private welcomeDialogAtAppLaunchService = inject(WelcomeDialogAtAppLaunchService);
+
   public readonly appVersion = app.getVersion();
 
-  @ViewChild('troubleshootingPageLink') public troubleshootingPageLink: ElementRef<HTMLAnchorElement>;
+  public readonly troubleshootingPageLink = viewChild.required<ElementRef<HTMLAnchorElement>>('troubleshootingPageLink');
 
   public get xFormerlyTwitterLogoDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.xFormerlyTwitterLogo); }
   public get gitHubLogoDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.gitHubLogo); }
 
-  constructor(private sanitizer: DomSanitizer,
-              private welcomeDialogAtAppLaunchService: WelcomeDialogAtAppLaunchService) {
-  }
-
   public ngAfterViewInit() {
-    configureOpeningInOsBrowser(this.troubleshootingPageLink, 'https://github.com/TomoyukiAota/photo-location-map/blob/main/docs/troubleshooting/troubleshooting.md',
+    configureOpeningInOsBrowser(this.troubleshootingPageLink(), 'https://github.com/TomoyukiAota/photo-location-map/blob/main/docs/troubleshooting/troubleshooting.md',
                                 'Troubleshooting Page', 'Welcome Dialog');
   }
 

@@ -61,6 +61,45 @@ the text belongs:
 **Why:** agents added details to CONTRIBUTING.md as they worked, until it was
 too long to read as an introduction.
 
+## Keep windows off the owner's screen
+
+Run anything that opens a browser or an app window **headless**, unless you are
+asking the owner to check the UI. The owner keeps working on the same machine
+while you run things.
+
+- `npm run test:e2e` keeps the app's windows off the screen on macOS and Windows.
+  Add `-- --headed` only when the owner is to watch. On Linux it still shows them
+  (see `test/e2e/README.md`), so ask before running it there.
+- `npm run test:package` launches the packaged app hidden and in the background.
+- Anything else that starts a browser, such as a Playwright script, has a
+  headless mode: use it.
+
+If something cannot run headless, say so and ask before starting it.
+
+**Why:** the e2e tests used to bring a window to the front at every launch of
+the app, in the way of the owner's own work.
+
+## In a git worktree
+
+Two things work differently in a git worktree, such as one that Claude Code
+makes under `.claude/worktrees/`:
+
+- **mise does not trust the worktree's `mise.toml`**, as mise keeps its trust
+  per path, so `mise exec` fails there. Pass the file to each command rather
+  than running `mise trust`, which would change mise's own settings:
+  `MISE_TRUSTED_CONFIG_PATHS="$PWD/mise.toml" mise exec -- npm ci`.
+- **`npm run test:package` stops before its smoke test on macOS**, and would
+  on Windows. electron-builder writes the update feed (`release/latest-mac.yml`,
+  `release/latest.yml` on Windows) for the GitHub repository that it finds in
+  `package.json` or `.git/config`, and `.git` is a file in a worktree, so it
+  finds none there. Without `GH_TOKEN` or `GITHUB_TOKEN`, the
+  package is built and signed, but the test's check of the feed fails, so the
+  smoke test of the packaged app does not run (nor, on macOS, the checks of
+  the bundle's architectures). With either token, the build fails with
+  "Cannot detect repository by .git/config". This was seen on macOS; Windows
+  checks its feed the same way, and Linux checks none. The CI jobs, which work
+  in a clone, run the whole test.
+
 ## You can run the signed mac build yourself
 
 Run `npm run package:mac` (and the other packaging scripts) directly. The macOS
@@ -84,6 +123,22 @@ artifact is actually needed.
 
 Publishing the result to GitHub is a separate, outward-facing step — confirm
 before uploading.
+
+## Stay on the documented setup
+
+Use each tool the way its documentation sets it up. Do not depart from that with
+npm `overrides`, patches to installed packages or custom environments unless a
+needed feature or a serious security vulnerability requires it. A deprecation
+warning is not such a reason, and it is not the kind of failure the narrow
+workaround below is for: record it in
+[`docs/contributing/dependencies.md`](docs/contributing/dependencies.md#known-deprecation-warnings)
+instead. Departures kept for such a reason are listed on the same page, each
+with its reason and when to remove it.
+
+**Why:** upstream updates to the standard setup remove these warnings over
+time, and they are not urgent. An earlier pull request removed every warning by
+adding five overrides and two install-time source patches, each pinned to exact
+versions that every later upgrade had to review again.
 
 ## Prefer a narrow workaround over a risky upgrade
 

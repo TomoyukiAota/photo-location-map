@@ -1,0 +1,8 @@
+# The Angular CLI MCP server, through the workspace's own CLI and the Node.js that mise.toml pins. Codex applies
+# this file only in a trusted project. tool_timeout_sec is raised from its default of 60 so that run_target can
+# finish a production build. What the server offers here, and what it does not (its onpush_zoneless_migration
+# tool skips every component with an explicit strategy): docs/tasks/20261107_angular-signals-zoneless/MCP.md.
+[mcp_servers.angular-cli]
+command = "mise"
+args = ["exec", "--", "npx", "ng", "mcp"]
+tool_timeout_sec = 300

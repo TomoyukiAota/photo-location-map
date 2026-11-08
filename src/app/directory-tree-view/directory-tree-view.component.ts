@@ -1,9 +1,8 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { SelectionModel } from '@angular/cdk/collections';
-import { FlatTreeControl } from '@angular/cdk/tree';
-import { ChangeDetectorRef, Component, OnInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
-import { MatMenuTrigger } from '@angular/material/menu';
-import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
+import { Component, OnInit, effect, signal, untracked, viewChild, inject } from '@angular/core';
+import { MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem } from '@angular/material/menu';
+import { MatTree, MatTreeNodeDef, MatTreeNode, MatTreeNodeToggle, MatTreeNodePadding } from '@angular/material/tree';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { createPrependedLogger } from '../../../src-shared/log/create-prepended-logger';
 import { PhotoDataService } from '../shared/service/photo-data.service';
@@ -15,7 +14,12 @@ import { DirectoryTreeViewDataService } from './directory-tree-view-data.service
 import { DirectoryTreeViewSelectionService } from './directory-tree-view-selection.service';
 import { DirTreeViewSortConfig } from './dir-tree-view-sort/dir-tree-view-sort-config';
 import { DirTreeViewSortService } from './dir-tree-view-sort/dir-tree-view-sort.service';
-import { FlatNode, NestedNode } from './directory-tree-view.model';
+import { NestedNode } from './directory-tree-view.model';
+import { MatIconButton } from '@angular/material/button';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatLabel } from '@angular/material/form-field';
+import { DirTreeViewPhotoInfoComponent } from './dir-tree-view-photo-info/dir-tree-view-photo-info.component';
+import { MatIcon } from '@angular/material/icon';
 
 const dirTreeViewLogger = createPrependedLogger('[Directory Tree View]');
 
@@ -23,63 +27,52 @@ const dirTreeViewLogger = createPrependedLogger('[Directory Tree View]');
   selector: 'app-directory-tree-view',
   templateUrl: 'directory-tree-view.component.html',
   styleUrls: ['directory-tree-view.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false
+  imports: [
+    MatTree, MatTreeNodeDef, MatTreeNode, MatTreeNodeToggle, MatTreeNodePadding, MatIconButton, MatCheckbox,
+    MatLabel, DirTreeViewPhotoInfoComponent, MatIcon, MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem,
+  ]
 })
 export class DirectoryTreeViewComponent implements OnInit {
+  private sortService = inject(DirTreeViewSortService);
+  private selectedPhotoService = inject(SelectedPhotoService);
+  private photoDataService = inject(PhotoDataService);
+  private focusMonitor = inject(FocusMonitor);
+
   // padding-left for each tree view node is `level * indentPerLevel` pixels where level is depth of the tree view node.
   public readonly indentPerLevel = 30;
 
-  public readonly treeControl: FlatTreeControl<FlatNode>;
-  public readonly dataSource: MatTreeFlatDataSource<NestedNode, FlatNode>;
-  private readonly treeFlattener: MatTreeFlattener<NestedNode, FlatNode>;
-  private readonly flatNodeSelectionModel = new SelectionModel<FlatNode>(true /* multiple */);
-  private readonly flatToNestedNodeMap = new Map<FlatNode, NestedNode>();
-  private readonly nestedToFlatNodeMap = new Map<NestedNode, FlatNode>();
-  private readonly getLevel = (flatNode: FlatNode) => flatNode.level;
-  private readonly isExpandable = (flatNode: FlatNode) => flatNode.isExpandable;
-  private readonly getChildren = (nestedNode: NestedNode): NestedNode[] => nestedNode.children;
-  public readonly hasChildren = (_: number, flatNode: FlatNode) => flatNode.isExpandable;
-
-  private readonly createFlatNode = (nestedNode: NestedNode, level: number) => {
-    const flatNode =  new FlatNode();
-    flatNode.name = nestedNode.name;
-    flatNode.path = nestedNode.path;
-    flatNode.isSelectable = nestedNode.isSelectable;
-    flatNode.level = level;
-    flatNode.isExpandable = nestedNode.children.length > 0;
-    return flatNode;
-  };
-
-  private readonly transformNodeFromNestedToFlat = (nestedNode: NestedNode, level: number) => {
-    const existingFlatNode = this.nestedToFlatNodeMap.get(nestedNode);
-    if (existingFlatNode)
-      return existingFlatNode;
-
-    const flatNode =  this.createFlatNode(nestedNode, level);
-    this.flatToNestedNodeMap.set(flatNode, nestedNode);
-    this.nestedToFlatNodeMap.set(nestedNode, flatNode);
-    return flatNode;
-  };
+  // The tree's root nodes: the opened folder, or none before a folder is opened. The tree shows a node when every
+  // folder above it is expanded, and renders the nodes again when this array is replaced, which a sort does, as
+  // sorting reorders the children in place.
+  public readonly treeData = signal<NestedNode[]>([]);
+  // The tree goes through the nodes that this returns, all the way down, whenever its data or what is expanded
+  // changes. It returns the children of an expanded node only, which are the only ones that the tree shows, so that a
+  // large folder costs no more than what is shown of it.
+  public readonly childrenAccessor = (node: NestedNode): NestedNode[] => this.tree().isExpanded(node) ? node.children : [];
+  public readonly hasChildren = (_: number, node: NestedNode) => this.isExpandable(node);
+  private readonly tree = viewChild.required<MatTree<NestedNode>>('tree');
+  private readonly nodeSelectionModel = new SelectionModel<NestedNode>(true /* multiple */);
+  // Bumped after each change of nodeSelectionModel. isSelected() reads it, so the checkboxes, which read the selection
+  // through isSelected(), render a change made outside a template event too, such as a selection that the map, the
+  // chart or the Selection menu requests.
+  private readonly selectionVersion = signal(0);
+  // The parent of every node of the tree, shown or not, and null for the root. Its keys are all the nodes.
+  private readonly parentNodes = new Map<NestedNode, NestedNode | null>();
 
   public photoInfoDisplayLogic: DirTreeViewPhotoInfoDisplayLogic;
 
-  constructor(directoryTreeViewDataService: DirectoryTreeViewDataService,
-              directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
-              private sortService: DirTreeViewSortService,
-              private selectedPhotoService: SelectedPhotoService,
-              private photoDataService: PhotoDataService,
-              private changeDetectorRef: ChangeDetectorRef,
-              private focusMonitor: FocusMonitor) {
-    this.treeControl = new FlatTreeControl<FlatNode>(this.getLevel, this.isExpandable);
-    this.treeFlattener = new MatTreeFlattener(this.transformNodeFromNestedToFlat, this.getLevel, this.isExpandable, this.getChildren);
-    this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+  constructor() {
+    const directoryTreeViewDataService = inject(DirectoryTreeViewDataService);
+    const directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);
 
     directoryTreeViewDataService.dataReplaced
       .subscribe(data => this.handleDirectoryTreeViewDataReplaced(data));
 
-    sortService.sortConfig$
-      .subscribe(sortConfig => this.sortData(sortConfig));
+    // Sort the tree again when the sort settings change. Sorting reads photo data, which must not become a dependency.
+    effect(() => {
+      const sortConfig = this.sortService.sortConfig();
+      untracked(() => this.sortData(sortConfig));
+    });
 
     directoryTreeViewSelectionService.selectionRequested
       .subscribe(photoPaths => this.handleDirectoryTreeViewSelectionRequested(photoPaths));
@@ -89,158 +82,200 @@ export class DirectoryTreeViewComponent implements OnInit {
     this.photoInfoDisplayLogic = new DirTreeViewPhotoInfoDisplayLogic(this.photoDataService);
   }
 
+  /** Whether the node is a folder with something in it, which the tree can expand. */
+  public isExpandable(node: NestedNode): boolean {
+    return node.children.length > 0;
+  }
+
+  /** Whether the node is the tree's root, the opened folder. */
+  public isOpenedFolder(node: NestedNode): boolean {
+    return this.parentNodes.get(node) === null;
+  }
+
+  /**
+   * Shows the tree of a newly opened folder: sorted by the current sort settings, with its root expanded, and with every
+   * photo selected when any has location data (otherwise with none, so that the map shows no photos). This runs
+   * synchronously while the folder opens, which --open with a photo relies on: it selects the photo right after.
+   */
   private handleDirectoryTreeViewDataReplaced(data: NestedNode[]) {
-    this.flatNodeSelectionModel.clear();
-    this.flatToNestedNodeMap.clear();
-    this.nestedToFlatNodeMap.clear();
-    this.dataSource.data = data;
+    this.collapsePreviousFolder();
+    this.nodeSelectionModel.clear();
+    this.parentNodes.clear();
+    this.addParentNodes(data, null);
+    this.treeData.set(data);
     if (data.length === 0)
       return;
 
-    const rootNestedNode = data[0];
-    const rootFlatNode = this.nestedToFlatNodeMap.get(rootNestedNode);
+    const rootNode = data[0];
 
-    const sortConfig = this.sortService.sortConfig$.value;
+    const sortConfig = this.sortService.sortConfig();
     this.sortData(sortConfig);
 
-    if (rootFlatNode.isSelectable) {
+    if (rootNode.isSelectable) {
       // When the root node is selectable (i.e. some photos with location data exist in the opened folder),
       // select the root node in order to select all photos as the map's state after loading the folder.
-      this.toggleNodeSelection(rootFlatNode);
+      this.toggleNodeSelection(rootNode);
     } else {
       // When the root node is not selectable (i.e. no photos with location data exist in the opened folder),
       // update SelectedPhotoService.selectedPhotos with an empty array so that the map will be displayed without photos.
       this.selectedPhotoService.setSelectedPhotos([]);
     }
 
-    if (rootFlatNode.isExpandable) {
-      this.treeControl.expand(rootFlatNode);
+    if (this.isExpandable(rootNode)) {
+      this.tree().expand(rootNode);
+    }
+  }
+
+  // The tree keeps the nodes that it has expanded, each holding what is below it. Collapsing those of the previous
+  // folder leaves it none of that folder to hold in memory. The root goes first, as the nodes are in the order that
+  // the tree shows them, so that the tree has only the root to show again after each of the others.
+  private collapsePreviousFolder() {
+    const tree = this.tree();
+    for (const node of this.parentNodes.keys()) {
+      if (tree.isExpanded(node))
+        tree.collapse(node);
+    }
+  }
+
+  private addParentNodes(nodes: NestedNode[], parent: NestedNode | null) {
+    for (const node of nodes) {
+      this.parentNodes.set(node, parent);
+      this.addParentNodes(node.children, node);
     }
   }
 
   private sortData(sortConfig: DirTreeViewSortConfig) {
-    const sortedData = this.sortService.sortData(this.dataSource.data, sortConfig);
-    this.dataSource.data = sortedData;
+    const sortedData = this.sortService.sortData(this.treeData(), sortConfig);
+    this.treeData.set([...sortedData]); // A new array, as sortData() sorts the children of the same nodes in place.
   }
 
   private handleDirectoryTreeViewSelectionRequested(photoPaths: string[]) {
-    if (photoPaths === null || photoPaths === undefined) return;  // To do nothing for the initial value (null) of DirectoryTreeViewSelectionService::selectionRequested
-    const allFlatNodes = Array.from(this.flatToNestedNodeMap.keys());
-    const selectionRequestedNodes = allFlatNodes.filter(node => photoPaths.includes(node.path));
+    const requestedPaths = new Set(photoPaths);
+    const selectionRequestedNodes = Array.from(this.parentNodes.keys()).filter(node => requestedPaths.has(node.path));
     this.selectRequestedNodesAndDeselectOthers(selectionRequestedNodes);
   }
 
   // See also DirectoryTreeViewComponent::toggleNodeSelection function because similar steps are performed.
-  private selectRequestedNodesAndDeselectOthers(selectionRequestedNodes: FlatNode[]): void {
-    const allFlatNodes = Array.from(this.flatToNestedNodeMap.keys());
-    this.flatNodeSelectionModel.deselect(...allFlatNodes);
+  private selectRequestedNodesAndDeselectOthers(selectionRequestedNodes: NestedNode[]): void {
+    this.nodeSelectionModel.clear();
 
     const selectableNodes = selectionRequestedNodes.filter(node => node.isSelectable);
     if (selectableNodes.length >= 1) {
-      this.flatNodeSelectionModel.select(...selectableNodes);
-      selectableNodes.filter(node => node.isExpandable).forEach(node => this.selectAllDescendants(node));
+      this.selectNodes(selectableNodes);
+      selectableNodes.filter(node => this.isExpandable(node)).forEach(node => this.selectAllDescendants(node));
       selectableNodes.forEach(node => this.updateAllParents(node));
     }
 
-    this.changeDetectorRef.detectChanges(); // To update checkbox in GUI after using flatNodeSelectionModel
+    this.notifySelectionChanged();
     this.updateSelectedPhotosToReflectSelectedNodes();
   }
 
-  private selectAllDescendants(parent: FlatNode): void {
+  private selectAllDescendants(parent: NestedNode): void {
     const descendants = this.getSelectableDescendants(parent);
-    this.flatNodeSelectionModel.select(...descendants);
+    this.selectNodes(descendants);
   }
 
-  public isSelected(flatNode: FlatNode): boolean {
-    return this.flatNodeSelectionModel.isSelected(flatNode);
+  // SelectionModel's select() and deselect() take the nodes as arguments, which one call cannot take as many of as a
+  // large folder has: past about 150,000, the engine throws a RangeError. One node at a time instead.
+  private selectNodes(nodes: NestedNode[]): void {
+    for (const node of nodes)
+      this.nodeSelectionModel.select(node);
   }
 
-  public allDescendantsSelected(flatNode: FlatNode): boolean {
-    const descendants = this.getSelectableDescendants(flatNode);
+  private deselectNodes(nodes: NestedNode[]): void {
+    for (const node of nodes)
+      this.nodeSelectionModel.deselect(node);
+  }
+
+  public isSelected(node: NestedNode): boolean {
+    this.selectionVersion(); // A dependency of the template's checkboxes.
+    return this.nodeSelectionModel.isSelected(node);
+  }
+
+  private notifySelectionChanged(): void {
+    this.selectionVersion.update(version => version + 1);
+  }
+
+  public allDescendantsSelected(node: NestedNode): boolean {
+    const descendants = this.getSelectableDescendants(node);
     const allDescendantsSelected = descendants
       .every(child => this.isSelected(child));
     return allDescendantsSelected;
   }
 
-  public partOfDescendantsSelected(flatNode: FlatNode): boolean {
-    const descendants = this.getSelectableDescendants(flatNode);
+  public partOfDescendantsSelected(node: NestedNode): boolean {
+    const descendants = this.getSelectableDescendants(node);
     const moreThanOneDescendantsSelected = descendants
       .some(child => this.isSelected(child));
-    return moreThanOneDescendantsSelected && !this.allDescendantsSelected(flatNode);
+    return moreThanOneDescendantsSelected && !this.allDescendantsSelected(node);
   }
 
-  private getSelectableDescendants(parent: FlatNode) {
-    return this.treeControl.getDescendants(parent)
+  private getSelectableDescendants(parent: NestedNode): NestedNode[] {
+    return this.getDescendants(parent)
       .filter(child => child.isSelectable);
   }
 
-  public handleCheckboxChange(flatNode: FlatNode): void {
-    const folderOrFile = flatNode.isExpandable ? 'Folder' : 'File';
-    dirTreeViewLogger.info(`Toggled Checkbox (${folderOrFile}): ${flatNode.path}`);
+  /** The nodes below the given one, each folder followed by what is in it, in the order that the tree shows them. */
+  private getDescendants(parent: NestedNode): NestedNode[] {
+    return parent.children.flatMap(child => [child, ...this.getDescendants(child)]);
+  }
+
+  public handleCheckboxChange(node: NestedNode): void {
+    const folderOrFile = this.isExpandable(node) ? 'Folder' : 'File';
+    dirTreeViewLogger.info(`Toggled Checkbox (${folderOrFile}): ${node.path}`);
     Analytics.trackEvent('Directory Tree View', `[Tree View] Toggle Checkbox`, `Toggle Checkbox for ${folderOrFile}`);
-    this.toggleNodeSelection(flatNode);
+    this.toggleNodeSelection(node);
   }
 
   // See also DirectoryTreeViewComponent::selectRequestedNodesAndDeselectOthers function because similar steps are performed.
-  private toggleNodeSelection(flatNode: FlatNode): void {
-    if (!flatNode.isSelectable) return;
+  private toggleNodeSelection(node: NestedNode): void {
+    if (!node.isSelectable) return;
 
-    this.flatNodeSelectionModel.toggle(flatNode);
+    this.nodeSelectionModel.toggle(node);
 
-    if (flatNode.isExpandable) {
-      this.toggleAllDescendants(flatNode);
+    if (this.isExpandable(node)) {
+      this.toggleAllDescendants(node);
     }
-    this.updateAllParents(flatNode);
+    this.updateAllParents(node);
 
-    this.changeDetectorRef.detectChanges();  // To update checkbox in GUI after using flatNodeSelectionModel
+    this.notifySelectionChanged();
     this.updateSelectedPhotosToReflectSelectedNodes();
   }
 
-  private toggleAllDescendants(parent: FlatNode) {
+  private toggleAllDescendants(parent: NestedNode) {
     const descendants = this.getSelectableDescendants(parent);
     if (this.isSelected(parent)) {
-      this.flatNodeSelectionModel.select(...descendants);
+      this.selectNodes(descendants);
     } else {
-      this.flatNodeSelectionModel.deselect(...descendants);
+      this.deselectNodes(descendants);
     }
   }
 
-  private updateAllParents(flatNode: FlatNode): void {
-    let parent: FlatNode | null = this.getParentNode(flatNode);
+  private updateAllParents(node: NestedNode): void {
+    let parent: NestedNode | null = this.getParentNode(node);
     while (parent) {
       this.updateSelectionAccordingToDescendants(parent);
       parent = this.getParentNode(parent);
     }
   }
 
-  private updateSelectionAccordingToDescendants(flatNode: FlatNode): void {
-    const isSelected = this.isSelected(flatNode);
-    const allDescendantsSelected = this.allDescendantsSelected(flatNode);
+  private updateSelectionAccordingToDescendants(node: NestedNode): void {
+    const isSelected = this.isSelected(node);
+    const allDescendantsSelected = this.allDescendantsSelected(node);
     if (isSelected && !allDescendantsSelected) {
-      this.flatNodeSelectionModel.deselect(flatNode);
+      this.nodeSelectionModel.deselect(node);
     } else if (!isSelected && allDescendantsSelected) {
-      this.flatNodeSelectionModel.select(flatNode);
+      this.nodeSelectionModel.select(node);
     }
   }
 
-  private getParentNode(flatNode: FlatNode): FlatNode | null {
-    const currentLevel = this.getLevel(flatNode);
-    if (currentLevel < 1)
-      return null;
-
-    const startIndex = this.treeControl.dataNodes.indexOf(flatNode) - 1;
-    for (let i = startIndex; i >= 0; i--) {
-      const currentNode = this.treeControl.dataNodes[i];
-      if (this.getLevel(currentNode) < currentLevel)
-        return currentNode;
-    }
-
-    return null;
+  private getParentNode(node: NestedNode): NestedNode | null {
+    return this.parentNodes.get(node) ?? null;
   }
 
   private updateSelectedPhotosToReflectSelectedNodes(): void {
-    const selectedPaths = this.flatNodeSelectionModel.selected
-      .filter(node => !node.isExpandable)
+    const selectedPaths = this.nodeSelectionModel.selected
+      .filter(node => !this.isExpandable(node))
       .filter(node => node.isSelectable)
       .map(node => node.path);
     const selectedPhotos = selectedPaths.map(path => this.photoDataService.getPhoto(path));
@@ -248,20 +283,21 @@ export class DirectoryTreeViewComponent implements OnInit {
   }
 
   //#region --- Context Menu ---
-  @ViewChild(MatMenuTrigger) public contextMenu: MatMenuTrigger;
+  public readonly contextMenu = viewChild.required(MatMenuTrigger);
   public contextMenuPosition = { x: '0px', y: '0px' };
   public contextMenuHelper = DirTreeViewContextMenuHelper;
   public contextMenuItems = dirTreeViewContextMenuItems;
 
-  public onContextMenu(event: MouseEvent, node: FlatNode) {
+  public onContextMenu(event: MouseEvent, node: NestedNode) {
     event.preventDefault();
-    this.contextMenuHelper.configureStyleForContextMenuTarget(event, this.contextMenu);
+    const contextMenu = this.contextMenu();
+    this.contextMenuHelper.configureStyleForContextMenuTarget(event, contextMenu);
     this.contextMenuPosition.x = event.clientX + 'px';
     this.contextMenuPosition.y = event.clientY + 'px';
-    this.contextMenu.menuData = { 'contextMenuData': this.contextMenuHelper.createData(node) };
-    this.contextMenu.openMenu();
+    contextMenu.menuData = { 'contextMenuData': this.contextMenuHelper.createData(node) };
+    contextMenu.openMenu();
     this.contextMenuHelper.disableFocus(this.focusMonitor);
-    this.contextMenuHelper.configureClosingWithRightClick(this.contextMenu);
+    this.contextMenuHelper.configureClosingWithRightClick(contextMenu);
   }
   //#endregion --- Context Menu ---
 }

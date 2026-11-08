@@ -2,7 +2,7 @@ import * as fsExtra from 'fs-extra';
 import * as workerpool from 'workerpool';
 import { Now } from '../../src-shared/date-time/now';
 import { resizeAndEncode } from './resize-and-encode';
-import { ThumbnailFileGenerationArg, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result';
+import { describeThumbnailError, ThumbnailFileGenerationArg, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result';
 
 
 class WorkerLogger {
@@ -86,7 +86,7 @@ async function generateThumbnailFile(arg: ThumbnailFileGenerationArg): Promise<T
     inputBuffer = await fsExtra.promises.readFile(arg.srcFilePath);
   } catch (error) {
     logger.error(`Failed to read source file for thumbnail generation. Source file path is "${arg.srcFilePath}". error: ${error}`, error);
-    return new ThumbnailFileGenerationResult('failed-to-read-src-file');
+    return new ThumbnailFileGenerationResult('failed-to-read-src-file', describeThumbnailError(error));
   }
 
   // ------------------------
@@ -115,21 +115,21 @@ async function generateThumbnailFile(arg: ThumbnailFileGenerationArg): Promise<T
     });
   } catch (error) {
     logger.error(`Failed in heic-convert. error: ${error}`, error);
-    return new ThumbnailFileGenerationResult('failed-in-heic-convert');
+    return new ThumbnailFileGenerationResult('failed-in-heic-convert', describeThumbnailError(error));
   }
 
   try {
     await fsExtra.ensureDir(arg.outputFileDir);
   } catch (error) {
     logger.error(`Failed to ensure thumbnail directory exists. Directory path is "${arg.outputFileDir}". error: ${error}`, error);
-    return new ThumbnailFileGenerationResult('failed-to-ensure-dir');
+    return new ThumbnailFileGenerationResult('failed-to-ensure-dir', describeThumbnailError(error));
   }
 
   try {
     await fsExtra.promises.writeFile(arg.outputFilePath, outputBuffer);
   } catch (error) {
     logger.error(`Failed to write the file for thumbnail in "${arg.outputFilePath}". error: ${error}`, error);
-    return new ThumbnailFileGenerationResult('failed-to-write-thumbnail-file');
+    return new ThumbnailFileGenerationResult('failed-to-write-thumbnail-file', describeThumbnailError(error));
   }
 
   logger.info(`Created the file for thumbnail in "${arg.outputFilePath}".`);

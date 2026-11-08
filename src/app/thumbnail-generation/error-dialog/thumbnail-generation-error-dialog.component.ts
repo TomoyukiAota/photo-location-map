@@ -1,20 +1,18 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { ThumbnailGenerationService } from '../service/thumbnail-generation.service';
+import { ThumbnailGenerationErrorTableComponent } from './table/thumbnail-generation-error-table.component';
+import { MatButton } from '@angular/material/button';
+import { MatDialogClose } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-thumbnail-generation-error-dialog',
   templateUrl: './thumbnail-generation-error-dialog.component.html',
   styleUrl: './thumbnail-generation-error-dialog.component.scss',
-  changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false
+  imports: [ThumbnailGenerationErrorTableComponent, MatButton, MatDialogClose]
 })
-export class ThumbnailGenerationErrorDialogComponent implements OnInit {
-  public numberOfFilesWithoutThumbnail: number;
+export class ThumbnailGenerationErrorDialogComponent {
+  private thumbnailGenerationService = inject(ThumbnailGenerationService);
 
-  constructor(private thumbnailGenerationService: ThumbnailGenerationService) {
-  }
-
-  public ngOnInit() {
-    this.numberOfFilesWithoutThumbnail = this.thumbnailGenerationService.thumbnailGenerationResult.filePathsWithoutThumbnail.length;
-  }
+  public readonly numberOfFilesWithoutThumbnail = computed(() =>
+    this.thumbnailGenerationService.status().result?.filePathsWithoutThumbnail.length ?? 0);
 }

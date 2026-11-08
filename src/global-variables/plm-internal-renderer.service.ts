@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Logger } from '../../src-shared/log/logger';
 import { AboutBoxComponent } from '../app/about-box/about-box.component';
@@ -16,16 +16,12 @@ import {
   PlmInternalRendererWelcomeDialog
 } from './global-variable-for-internal-use-in-renderer';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class PlmInternalRendererService {
-  constructor(private dialog: MatDialog,
-              private directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
-              private ngZone: NgZone,
-              private openAfterLaunchService: OpenAfterLaunchService,
-              private photoSelectionHistoryService: PhotoSelectionHistoryService) {
-  }
+  private dialog = inject(MatDialog);
+  private directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);
+  private openAfterLaunchService = inject(OpenAfterLaunchService);
+  private photoSelectionHistoryService = inject(PhotoSelectionHistoryService);
 
   public initialize(): void {
     window.plmInternalRenderer = window.plmInternalRenderer || new PlmInternalRenderer();
@@ -57,71 +53,57 @@ export class PlmInternalRendererService {
   }
 
   private handleRecordAtAppLaunchFinished() {
-    this.ngZone.run(() => {
-      // noinspection JSIgnoredPromiseFromCall
-      this.openAfterLaunchService.openAfterLaunchIfNeeded();
-    });
+    // noinspection JSIgnoredPromiseFromCall
+    this.openAfterLaunchService.openAfterLaunchIfNeeded();
   }
 
   private showAboutBox(): void {
-    this.ngZone.run(() => {
-      this.dialog.open(AboutBoxComponent, {
-        width: '600px',
-        height: '420px',
-        panelClass: 'custom-dialog-container',
-        autoFocus: false,
-        restoreFocus: false
-      });
-      Logger.info('Displayed About Box.');
+    this.dialog.open(AboutBoxComponent, {
+      width: '600px',
+      height: '420px',
+      panelClass: 'custom-dialog-container',
+      autoFocus: false,
+      restoreFocus: false
     });
+    Logger.info('Displayed About Box.');
   }
 
   private showSettingsDialog() {
-    this.ngZone.run(() => {
-      this.dialog.open(SettingsDialogComponent, {
-        width: '1000px',
-        height: '600px',
-        panelClass: 'custom-dialog-container',
-        autoFocus: false,
-        restoreFocus: false,
-        disableClose: true
-      });
-      Logger.info('Displayed Settings Dialog.');
+    this.dialog.open(SettingsDialogComponent, {
+      width: '1000px',
+      height: '600px',
+      panelClass: 'custom-dialog-container',
+      autoFocus: false,
+      restoreFocus: false,
+      disableClose: true
     });
+    Logger.info('Displayed Settings Dialog.');
   }
 
   private showWelcomeDialog(): void {
-    this.ngZone.run(() => {
-      this.dialog.open(WelcomeDialogComponent, {
-        width: '620px',
-        height: '495px',
-        panelClass: 'custom-dialog-container',
-        autoFocus: false,
-        restoreFocus: false,
-        disableClose: true
-      });
-      Logger.info('Displayed Welcome Dialog.');
+    this.dialog.open(WelcomeDialogComponent, {
+      width: '620px',
+      height: '495px',
+      panelClass: 'custom-dialog-container',
+      autoFocus: false,
+      restoreFocus: false,
+      disableClose: true
     });
+    Logger.info('Displayed Welcome Dialog.');
   }
 
   private undoPhotoSelection() {
-    this.ngZone.run(() => {
-      this.photoSelectionHistoryService.undo();
-      Logger.debug(`Called PlmInternalRendererService::undoPhotoSelection`);
-    });
+    this.photoSelectionHistoryService.undo();
+    Logger.debug(`Called PlmInternalRendererService::undoPhotoSelection`);
   }
 
   private redoPhotoSelection() {
-    this.ngZone.run(() => {
-      this.photoSelectionHistoryService.redo();
-      Logger.debug(`Called PlmInternalRendererService::redoPhotoSelection`);
-    });
+    this.photoSelectionHistoryService.redo();
+    Logger.debug(`Called PlmInternalRendererService::redoPhotoSelection`);
   }
 
   private selectOnlyThis(photoPath: string) {
-    this.ngZone.run(() => {
-      this.directoryTreeViewSelectionService.select([photoPath]);
-      Logger.debug(`Called PlmInternalRendererService::selectOnlyThis for ${photoPath}`);
-    });
+    this.directoryTreeViewSelectionService.select([photoPath]);
+    Logger.debug(`Called PlmInternalRendererService::selectOnlyThis for ${photoPath}`);
   }
 }

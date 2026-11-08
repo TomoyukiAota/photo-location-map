@@ -1,9 +1,10 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Injector, OnDestroy, effect, untracked, viewChild, inject } from '@angular/core';
 import * as turf from '@turf/turf';
 import { Control, LayersControlEvent, LeafletEvent, Map, Marker, PopupEvent } from 'leaflet';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
+import { recordUnhandledError } from '../../../../src-shared/analytics/record-error';
 import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/user-data-stroage-path';
 import { DirectoryTreeViewSelectionService } from '../../directory-tree-view/directory-tree-view-selection.service';
@@ -12,9 +13,11 @@ import { PinnedPhotoService } from '../../shared/service/pinned-photo.service';
 import { PhotoClusterViewer } from '../../photo-cluster-viewer/photo-cluster-viewer';
 import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewer-content';
 import { LeafletMapForceRenderService } from './leaflet-map-force-render/leaflet-map-force-render.service';
+import { addEachMarker } from './add-each-marker';
 import { createDivIconHtml } from './div-icon';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
 import { rasterTileBaseLayerConfigsVersion1 } from './raster-tile-base-layer-configs-version-1';
+import { MatProgressBar } from '@angular/material/progress-bar';
 
 // "declare let L: any;" is defined here (in addition to global scope typing given by types/index.d.ts)
 // in order to avoid the compile errors for the types from leaflet.markercluster
@@ -28,12 +31,15 @@ interface RegionInfo extends Control {
   selector: 'app-leaflet-map',
   templateUrl: './leaflet-map.component.html',
   styleUrls: ['./leaflet-map.component.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false
+  imports: [MatProgressBar]
 })
 export class LeafletMapComponent implements OnDestroy, AfterViewInit {
-  @ViewChild('updateInProgressOverlay') public updateInProgressOverlay: ElementRef<HTMLDivElement>;
-  private pinnedPhotoServiceSubscription: Subscription;
+  private directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);
+  private forceRenderService = inject(LeafletMapForceRenderService);
+  private injector = inject(Injector);
+  private pinnedPhotoService = inject(PinnedPhotoService);
+
+  public readonly updateInProgressOverlay = viewChild.required<ElementRef<HTMLDivElement>>('updateInProgressOverlay');
   private forceRenderServiceSubscription: Subscription;
 
   private readonly commonBaseLayerOptions = {
@@ -61,43 +67,43 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Changed Base Layer`, `Changed Base Layer to "${baseLayerName}"`);
   }
 
-  constructor(private changeDetectorRef: ChangeDetectorRef,
-              private directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
-              private forceRenderService: LeafletMapForceRenderService,
-              private pinnedPhotoService: PinnedPhotoService) {
-  }
-
   public ngAfterViewInit(): void {
-    this.pinnedPhotoServiceSubscription = this.pinnedPhotoService.pinnedPhotos.subscribe(
-      photos => this.updateMap(photos)
-    );
+    // Render again whenever other photos are pinned; the first run renders the photos pinned now. Created here because
+    // rendering needs the overlay and the map's container.
+    effect(() => {
+      const photos = [...this.pinnedPhotoService.pinnedPhotos()];
+      untracked(() => this.updateMap(photos));
+    }, { injector: this.injector });
     this.forceRenderServiceSubscription = this.forceRenderService.forceRenderWithoutPhotoHappened.subscribe(
       () => this.updateMap([])
     );
-
-    const photos = this.pinnedPhotoService.getPinnedPhotos();
-    this.updateMap(photos);
   }
 
   public ngOnDestroy(): void {
-    this.pinnedPhotoServiceSubscription.unsubscribe();
     this.forceRenderServiceSubscription.unsubscribe();
+    // A render still waiting would draw into the removed view.
+    this.renderMapWithDebouncing.cancel();
   }
 
+  // The overlay is shown and hidden through its style rather than a binding, so it needs no change detection.
   private updateMap(photos: Photo[]): void {
-    this.updateInProgressOverlay.nativeElement.style.visibility = 'visible';
-    this.updateInProgressOverlay.nativeElement.style.opacity = '1';
-    this.changeDetectorRef.detectChanges(); // To show the overlay. Needed because change detection does not work in case the same photos are pinned.
+    const updateInProgressOverlay = this.updateInProgressOverlay();
+    updateInProgressOverlay.nativeElement.style.visibility = 'visible';
+    updateInProgressOverlay.nativeElement.style.opacity = '1';
     this.renderMapWithDebouncing(photos);
   }
 
   // renderMap function needs debouncing.
   // Otherwise, changing pinned photos in a short time results in sending frequent requests to the tile server.
   private renderMapWithDebouncing = _.debounce((photos: Photo[]) => {
-    this.renderMap(photos);
-    this.updateInProgressOverlay.nativeElement.style.visibility = 'hidden';
-    this.updateInProgressOverlay.nativeElement.style.opacity = '0';
-    this.changeDetectorRef.detectChanges(); // To hide the overlay.
+    try {
+      this.renderMap(photos);
+    } finally {
+      // Hidden even when rendering threw: the error is recorded as any other, and the overlay would stay over the map.
+      const updateInProgressOverlay = this.updateInProgressOverlay();
+      updateInProgressOverlay.nativeElement.style.visibility = 'hidden';
+      updateInProgressOverlay.nativeElement.style.opacity = '0';
+    }
   }, 1000 /* ms */);
 
   private renderMap(photos: Photo[]): void {
@@ -354,9 +360,12 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
       spiderfyOnMaxZoom: false,   // Disable spiderfy
       zoomToBoundsOnClick: false  // Disable Leaflet.MarkerCluster's zoom behavior. Instead, this app controls zoom using cluster.zoomToBounds() with clusterclick event.
     });
-    photos.forEach(photo => {
-      this.addMarkerToMarkerClusterGroup(markerClusterGroup, photo);
-    });
+    addEachMarker(photos,
+      photo => this.addMarkerToMarkerClusterGroup(markerClusterGroup, photo),
+      (error, photo) => {
+        logger.error(`Failed to add the marker of ${photo.path}`, error);
+        recordUnhandledError(error, 'Renderer'); // Without its path, as any error nothing else handled.
+      });
     markerClusterGroup.on('clusterclick',  e => this.handleClusterClick(e));
     this.map.addLayer(markerClusterGroup);
     this.map.fitBounds(markerClusterGroup.getBounds());
@@ -414,7 +423,8 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
         })
       }
     );
-    marker.bindPopup(PhotoInfoViewerContent.request('leaflet-map-popup', photo));
+    // A function, which Leaflet calls when the popup opens, so that the content is made only for the photos shown.
+    marker.bindPopup(() => PhotoInfoViewerContent.request('leaflet-map-popup', photo));
     marker.on('popupopen',  event => this.updateDivIconBackgroundColor(event, 'rgba( 63,  81, 181, .15)')); // Same as $white-background_selected in _color.scss
     marker.on('popupclose', event => this.updateDivIconBackgroundColor(event, 'rgba(255, 255, 255, 1  )'));
     (marker.options as any).photo = photo;

@@ -9,14 +9,14 @@
   </div>
   <div id="home-right">
     <div id="home-map">
-      <app-map></app-map>
+      <app-leaflet-map></app-leaflet-map>
     </div>
     <div id="home-chart">
       <app-date-time-taken-chart></app-date-time-taken-chart>
     </div>
   </div>
 </div>
-<app-thumbnail-generation-status-bar [ngClass]="{'hidden': !thumbnailGenerationStatusBarVisible}">
+<app-thumbnail-generation-status-bar [class.hidden]="!thumbnailGenerationStatusBarService.visible()">
 </app-thumbnail-generation-status-bar>
-<app-loaded-files-status-bar [ngClass]="{'hidden': !loadedFilesStatusBarVisible}">
+<app-loaded-files-status-bar [class.hidden]="!loadedFilesStatusBarService.visible()">
 </app-loaded-files-status-bar>

@@ -1,14 +1,13 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { OpenFolderService } from '../../shared/service/open-folder.service';
+import { DirectoryTreeViewComponent } from '../../directory-tree-view/directory-tree-view.component';
 
 @Component({
   selector: 'app-sidebar-lower-pane',
   templateUrl: './sidebar-lower-pane.component.html',
   styleUrl: './sidebar-lower-pane.component.scss',
-  changeDetection: ChangeDetectionStrategy.Eager,
-  standalone: false
+  imports: [DirectoryTreeViewComponent]
 })
 export class SidebarLowerPaneComponent {
-  constructor(public openFolderService: OpenFolderService) {
-  }
+  public openFolderService = inject(OpenFolderService);
 }
