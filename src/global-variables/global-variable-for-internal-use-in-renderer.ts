@@ -3,7 +3,6 @@ export class PlmInternalRenderer implements IPlmInternalRenderer {
   public aboutBox: PlmInternalRendererAboutBox;
   public settingsDialog: PlmInternalRendererSettingsDialog;
   public welcomeDialog: PlmInternalRendererWelcomeDialog;
-  public map: PlmInternalRendererMap;
   public photoSelection: IPlmInternalRendererPhotoSelection;
 }
 
@@ -21,10 +20,6 @@ export class PlmInternalRendererSettingsDialog implements SettingsDialogShowable
 
 export class PlmInternalRendererWelcomeDialog implements WelcomeDialogShowable {
   public showWelcomeDialog: () => void;
-}
-
-export class PlmInternalRendererMap implements MapChangeable {
-  public changeMap: (ipcMapChangeArg: string) => void;
 }
 
 export class PlmInternalRendererPhotoSelection implements IPlmInternalRendererPhotoSelection {

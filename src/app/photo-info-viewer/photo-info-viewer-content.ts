@@ -1,4 +1,3 @@
-import { DevOrProd } from '../../../src-shared/dev-or-prod/dev-or-prod';
 import { Logger } from '../../../src-shared/log/logger';
 import { Photo } from '../shared/model/photo.model';
 import { MoreOptionsButton } from './button/more-options-button';
@@ -9,7 +8,7 @@ import { ElementCache } from './element-cache';
 import { PhotoInfoUnavailableElement } from './photo-info-unavailable-element';
 import { ThumbnailElement } from './thumbnail-element';
 
-type Requester = 'dir-tree-view' | 'leaflet-map-tile' | 'leaflet-map-popup' | 'google-maps';
+type Requester = 'dir-tree-view' | 'leaflet-map-tile' | 'leaflet-map-popup';
 
 // The content showing a photo: its thumbnail, name, date and buttons. Each place that shows it gets an element of
 // its own per photo, made the first time that place asks for it and then kept, so that the same element, with its
@@ -26,11 +25,6 @@ export class PhotoInfoViewerContent {
   }
 
   public static request(requester: Requester, photo: Photo): HTMLDivElement {
-    if (requester === 'google-maps' && !DevOrProd.isDev) {
-      Logger.error(`[PhotoInfoViewerContent] google-maps is available only in development environment. DevOrProd: ${DevOrProd.toString()}`);
-      return PhotoInfoUnavailableElement.get();
-    }
-
     const isPhotoPathAvailable = !!photo?.path;
     if (!isPhotoPathAvailable) {
       Logger.error(`[PhotoInfoViewerContent] photo.path is not available. photo: ${photo}, photo?.name: ${photo?.name}`, photo);

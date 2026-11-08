@@ -19,17 +19,6 @@ export namespace IpcConstants {
     export const Name = 'ipc-constants-show-welcome-dialog';
   }
 
-  export namespace Map {
-    export namespace ChangeEvent {
-      export const Name = 'ipc-constants-map-change';
-
-      export namespace Arg {
-        export const GoogleMaps = 'GoogleMaps';
-        export const OpenStreetMap = 'OpenStreetMap';
-      }
-    }
-  }
-
   export namespace ThumbnailGenerationInMainProcess {
     export const Name = 'ipc-constants-thumbnail-generation-in-main-process';
   }
