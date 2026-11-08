@@ -19,6 +19,15 @@ export function setMainWindow(contents: WebContents | undefined, pageUrl?: strin
   mainWindowPageUrl = pageUrl;
 }
 
+/**
+ * The path of a file URL, decoded, so that Node.js's pathToFileURL and Chromium, which may escape a character
+ * differently, give the same; on Windows without regard to case, as its file system has none.
+ */
+function filePathOf(url: URL): string {
+  const decoded = decodeURIComponent(url.pathname);
+  return process.platform === 'win32' ? decoded.toLowerCase() : decoded;
+}
+
 /** The app's page, where the page is served from a file, or from `ng serve` for live reload. */
 function isAppPage(frameUrl: string): boolean {
   if (mainWindowPageUrl === undefined)
@@ -27,7 +36,7 @@ function isAppPage(frameUrl: string): boolean {
     const page = new URL(mainWindowPageUrl);
     const frame = new URL(frameUrl);
     return page.protocol === 'file:'
-      ? frame.protocol === 'file:' && frame.pathname === page.pathname
+      ? frame.protocol === 'file:' && filePathOf(frame) === filePathOf(page)
       : frame.origin === page.origin;
   } catch {
     return false;

@@ -42,6 +42,16 @@ describe('ipc-sender (in main process)', () => {
     assert.strictEqual(isFromMainWindow(from(main, topFrame('file:///app/dist/index.html'))), false);
   });
 
+  it('takes the app\'s file however its path is escaped, as Node.js and Chromium escape some characters differently', () => {
+    const main = contents();
+    setMainWindow(asWebContents(main), 'file:///Users/a%20b/%E5%86%99%E7%9C%9F/app/dist/index.html');
+    assert.strictEqual(isFromMainWindow(from(main, topFrame('file:///Users/a%20b/写真/app/dist/index.html#/'))), true);
+    setMainWindow(asWebContents(main), 'file:///C:/Program%20Files/app%5E1/dist/index.html');
+    assert.strictEqual(isFromMainWindow(from(main, topFrame('file:///C:/Program%20Files/app^1/dist/index.html'))), true);
+    assert.strictEqual(isFromMainWindow(from(main, topFrame('file:///C:/Program%20Files/app%5E2/dist/index.html'))), false);
+    assert.strictEqual(isFromMainWindow(from(main, topFrame('file:///c:/program%20files/app%5E1/dist/index.html'))), process.platform === 'win32');
+  });
+
   it('takes the origin of ng serve for live reload, and no other origin', () => {
     const main = contents();
     setMainWindow(asWebContents(main), 'http://localhost:4200');
