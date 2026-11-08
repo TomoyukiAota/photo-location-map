@@ -9,14 +9,17 @@ PLM_VISUAL=1 mise exec -- npm run test:e2e
 
 A development build also checks every second for a binding that changed
 without telling Angular, which an OnPush component or zoneless change detection
-would not render (`src/main.ts`). Angular only logs it, as NG0100, so the suite
-fails a case that logged one. Run the suite against such a build after changing
-what a view shows:
+would not render (`src/app/app.config.ts`). Angular only logs it, as NG0100, so
+the suite fails a case that logged one. Run the suite against such a build after
+changing what a view shows:
 
 ```sh
 mise exec -- npm run build:dev
 mise exec -- npm run test:e2e
 ```
+
+CI does so on Ubuntu, after its run against the AppImage, which is a production
+build (`.github/workflows/ci-on-ubuntu.yml`).
 
 On macOS and Windows, the application's windows stay off the screen, as
 Playwright's own browsers do, so that a run does not take over the screen. To

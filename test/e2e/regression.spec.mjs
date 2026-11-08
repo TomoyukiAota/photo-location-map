@@ -20,7 +20,8 @@ if (packagedLauncher && (!packagedExecutable || !path.isAbsolute(packagedLaunche
 const photoFolder = path.join(root, 'test/test-resources/actual-photos');
 let app, page, profile, headless;
 // What a development build reported as NG0100: a binding that changed without telling Angular, which OnPush
-// components and zoneless change detection would not render (see src/main.ts). A production build checks nothing.
+// components and zoneless change detection would not render (see src/app/app.config.ts). A production build checks
+// nothing.
 let changedWithoutNotification = [];
 // TL;DR: On macOS and Windows, the windows stay off the screen, as Playwright's browsers do, unless --headed
 // is given: hidden on macOS, and on Windows shown but transparent, click-through and never activated
@@ -223,8 +224,8 @@ test.afterEach(async () => {
   const child = app?.process();
   let timer;
   try {
-    // A development build checks every view each second (src/main.ts): let one more check run, after the case's last
-    // step, before the application closes.
+    // A development build checks every view each second (src/app/app.config.ts): let one more check run, after the
+    // case's last step, before the application closes.
     if (page && !page.isClosed() && await page.evaluate(() => !!globalThis.ngDevMode).catch(() => false))
       await page.waitForTimeout(1100);
     if (app) await Promise.race([
@@ -725,6 +726,50 @@ test('the chart menu counts the photos without a shooting time, and its checkbox
   await expectRepresentedPhotos(1);
   await checkbox.check();
   await expectRepresentedPhotos(2);
+});
+test('while the chart is zoomed, its checkbox adds the photos without a shooting time, and a new selection ends the zoom', async () => {
+  const { jpegWithLocationOnly } = require('../test-util/jpeg-with-location-only.cjs');
+  const folder = path.join(profile, 'photos with and without a shooting time');
+  await mkdir(folder);
+  await writeFile(path.join(folder, 'no shooting time.JPG'),
+    jpegWithLocationOnly(await readFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG')), 34.688075, 135.195861));
+  await copyFile(path.join(photoFolder, 'Gold Coast/IMG_1579.JPG'), path.join(folder, 'Gold Coast.JPG'));
+  await copyFile(path.join(photoFolder, 'Apple Park/IMG_5769.JPG'), path.join(folder, 'Apple Park.JPG'));
+  await dismissWelcome();
+  await openFolderWithPicker(folder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('3 files have location data.');
+  await expectRepresentedPhotos(3);
+  const chart = page.locator('app-date-time-taken-chart .chart');
+  await expect(chart.locator('canvas')).toBeVisible();
+  await page.locator('app-date-time-taken-chart-config select').selectOption('Year');
+  // As the chart case does, drag the slider's left handle to the final year, 2019, which has only the Apple Park photo:
+  // the photos were taken from 2013 to 2019, as there.
+  const box = await chart.boundingBox();
+  const y = box.y + box.height - 23;
+  await page.mouse.move(box.x + 94, y);
+  await page.mouse.down();
+  await page.mouse.move(box.x + 90 + (box.width - 180) * 0.92, y, { steps: 12 });
+  await page.mouse.up();
+  const choose = page.getByRole('button', { name: 'Select Photos within Zoom', exact: true });
+  await expect(choose).toBeVisible();
+  // The zoom leaves out the photo without a shooting time, and unchecks the menu's checkbox for such photos.
+  await expectRepresentedPhotos(1);
+  const menuIcon = page.locator('app-date-time-taken-chart-config .more-options-icon');
+  const checkbox = page.getByRole('checkbox', { name: 'Show date-unknown photos on the map' });
+  await menuIcon.click();
+  await expect(checkbox).not.toBeChecked();
+  await checkbox.check();
+  await expectRepresentedPhotos(2); // The photo in the zoom, and the one without a shooting time.
+  await page.keyboard.press('Escape');
+  await expect(checkbox).toHaveCount(0);
+  // A new selection ends the zoom and checks the checkbox again. Gold Coast, from 2013, shows only if the zoom ended.
+  await treeCheckbox('Apple Park.JPG').uncheck();
+  await expect(choose).toBeHidden();
+  await expectRepresentedPhotos(2);
+  await treeCheckbox('Apple Park.JPG').check();
+  await expectRepresentedPhotos(3);
+  await menuIcon.click();
+  await expect(checkbox).toBeChecked();
 });
 // The next cases cover what a change to signals and zoneless change detection can break: views that show state written
 // outside any template event, such as by a timer or an IPC message from the main process. With Zone.js they rendered

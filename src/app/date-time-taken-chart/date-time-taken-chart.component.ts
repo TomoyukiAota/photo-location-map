@@ -1,12 +1,9 @@
-import { Component, computed, effect, signal, untracked, inject } from '@angular/core';
+import { Component, computed, inject, linkedSignal } from '@angular/core';
 import { ECharts, EChartsOption } from 'echarts';
 import * as _ from 'lodash';
 import { unitOfTime } from 'moment';
 import { Analytics } from '../../../src-shared/analytics/analytics';
-import { Photo } from '../shared/model/photo.model';
-import { PinnedPhotoService } from '../shared/service/pinned-photo.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
-import { momentToStringMap } from '../shared/moment-to-string-map';
 import { DateTimeTakenChartConfigService } from './config/date-time-taken-chart-config.service';
 import { createDateTimeTakenChartData } from './date-time-taken-chart-data';
 import { dateTimeTakenChartLogger as logger } from './date-time-taken-chart-logger';
@@ -22,30 +19,18 @@ import { SelectPhotosWithinZoomComponent } from './select-photos-within-zoom/sel
 })
 export class DateTimeTakenChartComponent {
   private chartConfigService = inject(DateTimeTakenChartConfigService);
-  private pinnedPhotoService = inject(PinnedPhotoService);
   private selectedPhotoService = inject(SelectedPhotoService);
 
   private readonly chartData = computed(() =>
     createDateTimeTakenChartData(this.selectedPhotoService.selectedPhotos(), this.chartConfigService.xAxisUnit()));
   public readonly eChartsOption = computed(() => this.createEChartsOption(this.chartData().xData, this.chartData().yData));
   public readonly isSupportedDuration = computed(() => this.chartData().isSupportedDuration);
-  public readonly isSelectPhotosWithinZoomButtonVisible = signal(false);
+  // Shown from a zoom on, until its reset or until the chart draws again, which ends the zoom.
+  public readonly isSelectPhotosWithinZoomButtonVisible = linkedSignal({
+    source: this.chartConfigService.chartRedrawn,
+    computation: () => false,
+  });
   private echartsInstance: ECharts;
-
-  constructor() {
-    // A new selection pins all of its photos and ends the zoom. An effect rather than a computed, as the pinned photos
-    // also follow the chart's zoom window, which ECharts keeps, and the menu's checkbox for photos without a date.
-    effect(() => {
-      const selectedPhotos = [...this.selectedPhotoService.selectedPhotos()];
-      untracked(() => this.handleSelectedPhotosChanged(selectedPhotos));
-    });
-  }
-
-  private handleSelectedPhotosChanged(selectedPhotos: Photo[]) {
-    this.pinnedPhotoService.setPinnedPhotos(selectedPhotos);
-    this.chartConfigService.setShowDateUnknownPhotos(true);
-    this.isSelectPhotosWithinZoomButtonVisible.set(false);
-  }
 
   private createEChartsOption(xData: string[], yData: number[]) {
     const option: EChartsOption = {
@@ -166,17 +151,7 @@ export class DateTimeTakenChartComponent {
   /** Pins the selected photos taken within the zoom window, without the photos that have no shooting time. */
   private onChartDataZoomWithDebouncing = _.debounce(() => {
     logger.info('Chart Data Zoom');
-    const xValuesWithinZoom = this.getXValuesWithinZoom();
-    const momentToString = momentToStringMap.get(this.chartConfigService.xAxisUnit());
-    const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
-    const pinnedPhotos = selectedPhotos.filter(photo => {
-      const dateTimeOriginal = photo.exif?.dateTimeOriginal;
-      if (!dateTimeOriginal) { return false; } // When zoomed, the photos without the date taken are not pinned on the map.
-      const momentString = momentToString(dateTimeOriginal.moment);
-      return xValuesWithinZoom.includes(momentString);
-    });
-    this.pinnedPhotoService.setPinnedPhotos(pinnedPhotos);
-    this.chartConfigService.setShowDateUnknownPhotos(false);
+    this.chartConfigService.zoom(this.getXValuesWithinZoom());
   }, 300 /* ms */);
 
   private getXValuesWithinZoom(): string[] {
@@ -194,35 +169,20 @@ export class DateTimeTakenChartComponent {
     logger.info(`Restore`);
     Analytics.trackEvent('DTT Chart', `[DTT Chart] Restore`);
 
-    const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
-    this.pinnedPhotoService.setPinnedPhotos(selectedPhotos);
-    this.chartConfigService.setShowDateUnknownPhotos(true);
+    this.chartConfigService.resetZoom();
     this.isSelectPhotosWithinZoomButtonVisible.set(false);
   }
 
-  /** The chart menu's checkbox for the photos without a shooting time changed: pin or unpin those photos. */
+  /** The chart menu's checkbox for the photos without a shooting time changed: they are pinned, or no longer. */
   public onShowDateUnknownPhotosChanged(showDateUnknownPhotos: boolean) {
     this.chartConfigService.setShowDateUnknownPhotos(showDateUnknownPhotos);
-    const previousPinnedPhotos = this.pinnedPhotoService.getPinnedPhotos();
-    if (showDateUnknownPhotos) {
-      const previousPinnedPhotoPaths = previousPinnedPhotos.map(photo => photo.path);
-      const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
-      const dateUnknownPhotos = selectedPhotos.filter(photo => !photo.exif?.dateTimeOriginal);
-      const photosToAdd = dateUnknownPhotos.filter(dateUnknownPhoto => !previousPinnedPhotoPaths.includes(dateUnknownPhoto.path));
-      const nextPinnedPhotos = [...previousPinnedPhotos, ...photosToAdd];
-      this.pinnedPhotoService.setPinnedPhotos(nextPinnedPhotos);
-    } else {
-      const dateKnownPinnedPhotos = previousPinnedPhotos.filter(photo => !!photo.exif?.dateTimeOriginal);
-      this.pinnedPhotoService.setPinnedPhotos(dateKnownPinnedPhotos);
-    }
   }
 
-  /** The unit of the chart's x-axis changed: the chart draws again with it, and every selected photo is pinned. */
+  /**
+   * The unit of the chart's x-axis changed: the chart draws again with it, which ends the zoom, and every selected photo
+   * is pinned (DateTimeTakenChartConfigService.chartRedrawn).
+   */
   public onXAxisUnitChanged(xAxisUnit: unitOfTime.DurationConstructor) {
     this.chartConfigService.setXAxisUnit(xAxisUnit);
-    const selectedPhotos = this.selectedPhotoService.getSelectedPhotos();
-    this.pinnedPhotoService.setPinnedPhotos(selectedPhotos);
-    this.chartConfigService.setShowDateUnknownPhotos(true);
-    this.isSelectPhotosWithinZoomButtonVisible.set(false);
   }
 }

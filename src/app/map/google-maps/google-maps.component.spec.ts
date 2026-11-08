@@ -3,7 +3,7 @@ import { Exif } from '../../shared/model/exif.model';
 import { GpsInfo } from '../../shared/model/gps-info.model';
 import { LatLng } from '../../shared/model/lat-lng.model';
 import { Photo } from '../../shared/model/photo.model';
-import { PinnedPhotoService } from '../../shared/service/pinned-photo.service';
+import { SelectedPhotoService } from '../../shared/service/selected-photo.service';
 import { GoogleMapsComponent } from './google-maps.component';
 
 function photo(name: string, latitude: number, longitude: number): Photo {
@@ -14,7 +14,8 @@ function photo(name: string, latitude: number, longitude: number): Photo {
 describe('GoogleMapsComponent', () => {
   // A stand-in for the Google Maps API, which counts the markers of each map created: each one uses the API's quota.
   let markerCountsOfMaps: number[];
-  let pinnedPhotoService: PinnedPhotoService;
+  // The photos have no shooting time, which a selection pins (PinnedPhotoService).
+  let selectedPhotoService: SelectedPhotoService;
 
   function loadGoogleMapsApi(): void {
     const markerCounts = markerCountsOfMaps;
@@ -43,7 +44,7 @@ describe('GoogleMapsComponent', () => {
   beforeEach(async () => {
     markerCountsOfMaps = [];
     await TestBed.configureTestingModule({ imports: [GoogleMapsComponent] }).compileComponents();
-    pinnedPhotoService = TestBed.inject(PinnedPhotoService);
+    selectedPhotoService = TestBed.inject(SelectedPhotoService);
   });
 
   afterEach(() => {
@@ -52,21 +53,21 @@ describe('GoogleMapsComponent', () => {
 
   it('creates one map for the pinned photos when the API has loaded before, and one more when others are pinned', async () => {
     loadGoogleMapsApi();
-    pinnedPhotoService.setPinnedPhotos([photo('a.jpg', 35, 135), photo('b.jpg', 36, 136)]);
+    selectedPhotoService.setSelectedPhotos([photo('a.jpg', 35, 135), photo('b.jpg', 36, 136)]);
     const fixture = TestBed.createComponent(GoogleMapsComponent);
     await fixture.whenStable();
     expect(markerCountsOfMaps).toEqual([2]);
 
-    pinnedPhotoService.setPinnedPhotos([photo('a.jpg', 35, 135)]);
+    selectedPhotoService.setSelectedPhotos([photo('a.jpg', 35, 135)]);
     await fixture.whenStable();
     expect(markerCountsOfMaps).toEqual([2, 1]);
   });
 
   it('creates one map once the API loads, for the photos pinned by then', async () => {
-    pinnedPhotoService.setPinnedPhotos([photo('a.jpg', 35, 135)]);
+    selectedPhotoService.setSelectedPhotos([photo('a.jpg', 35, 135)]);
     const fixture = TestBed.createComponent(GoogleMapsComponent);
     await fixture.whenStable();
-    pinnedPhotoService.setPinnedPhotos([photo('a.jpg', 35, 135), photo('b.jpg', 36, 136)]);
+    selectedPhotoService.setSelectedPhotos([photo('a.jpg', 35, 135), photo('b.jpg', 36, 136)]);
     await fixture.whenStable();
     expect(markerCountsOfMaps).toEqual([]);
 

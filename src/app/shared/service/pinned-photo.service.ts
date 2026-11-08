@@ -1,21 +1,30 @@
-import { signal, Service } from '@angular/core';
+import { computed, inject, Service } from '@angular/core';
 import * as _ from 'lodash';
+import { DateTimeTakenChartConfigService } from '../../date-time-taken-chart/config/date-time-taken-chart-config.service';
+import { photosToPin } from '../../date-time-taken-chart/photos-to-pin';
 import { Photo } from '../model/photo.model';
+import { SelectedPhotoService } from './selected-photo.service';
+
+/** Whether the photos are the same, whatever their order. */
+function haveSamePaths(a: readonly Photo[], b: readonly Photo[]): boolean {
+  return _.isEqual(a.map(photo => photo.path).sort(), b.map(photo => photo.path).sort());
+}
 
 @Service()
 export class PinnedPhotoService {
-  private readonly pinnedPhotosState = signal<readonly Photo[]>([]);
-  /** The photos pinned on the map. */
-  public readonly pinnedPhotos = this.pinnedPhotosState.asReadonly();
+  private readonly selectedPhotoService = inject(SelectedPhotoService);
+  private readonly chartConfigService = inject(DateTimeTakenChartConfigService);
 
-  public setPinnedPhotos(desiredPinnedPhotos: Photo[]) {
-    const desiredPinnedPhotoPaths = desiredPinnedPhotos.map(photo => photo.path);
-    const currentPinnedPhotoPaths = this.getPinnedPhotos().map(photo => photo.path);
-    const isDesiredSameAsCurrent = _.isEqual(desiredPinnedPhotoPaths.sort(), currentPinnedPhotoPaths.sort());
-    if (isDesiredSameAsCurrent) { return; } // If same, skip updating pinned photos to avoid 1) resetting the map for usability and 2) consuming the quota of the map.
-
-    this.pinnedPhotosState.set([...desiredPinnedPhotos]); // A copy, so that the caller's array cannot change it.
-  }
+  /**
+   * The photos pinned on the map: the selected photos that the chart's zoom and its menu's checkbox let through
+   * (photosToPin). While the same photos are pinned, in any order, it keeps the photos that it has, so that the maps,
+   * which render again whenever it changes, are not reset and do not use their quota again.
+   */
+  public readonly pinnedPhotos = computed<readonly Photo[]>(() => photosToPin(this.selectedPhotoService.selectedPhotos(), {
+    xValuesWithinZoom: this.chartConfigService.xValuesWithinZoom(),
+    xAxisUnit: this.chartConfigService.xAxisUnit(),
+    showDateUnknownPhotos: this.chartConfigService.showDateUnknownPhotos(),
+  }), { equal: haveSamePaths });
 
   public getPinnedPhotos(): Photo[] {
     return Array.from(this.pinnedPhotos());
