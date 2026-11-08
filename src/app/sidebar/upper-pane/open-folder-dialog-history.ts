@@ -1,5 +1,6 @@
 import type { OpenDialogReturnValue } from 'electron';
-import * as path from 'path';
+import { isAbsolutePath } from '../../../../src-shared/path/is-absolute-path';
+import { currentPlatform } from '../../../../src-shared/startup/startup-metadata';
 
 export interface OpenFolderDialogHistoryDependencies {
   read(): unknown;
@@ -21,7 +22,7 @@ export class OpenFolderDialogHistory {
   public async getDefaultPath(): Promise<string | undefined> {
     try {
       const directoryPath = this.lastConfirmedDirectory ?? this.dependencies.read();
-      if (typeof directoryPath !== 'string' || !path.isAbsolute(directoryPath))
+      if (typeof directoryPath !== 'string' || !isAbsolutePath(directoryPath, currentPlatform()))
         return undefined;
 
       return await this.checkDirectory(directoryPath) ? directoryPath : undefined;

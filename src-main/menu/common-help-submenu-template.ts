@@ -1,7 +1,7 @@
 import { MenuItemConstructorOptions } from 'electron';
 import * as fsExtra from 'fs-extra';
 import { Analytics } from '../../src-shared/analytics/analytics';
-import { openWithAssociatedApp } from '../../src-shared/command/command';
+import { openWithAssociatedApp } from '../shell/open-with-os';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { LogFileConfig } from '../../src-shared/log/file-config/log-file-config';
 import { Logger } from '../../src-shared/log/logger';

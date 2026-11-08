@@ -4,6 +4,7 @@ import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { IpcParams } from '../../src-shared/ipc/ipc-params';
 import { Logger } from '../../src-shared/log/logger';
 import { mainWindow } from '../electron-main';
+import { assertFromMainWindow } from '../ipc/ipc-sender';
 import { MenuId } from './menu-id';
 
 const handleUndoClicked = () => {
@@ -41,6 +42,9 @@ export const selectionMenuTemplate: MenuItemConstructorOptions = {
 export function configureIpcForSelectionUndoRedoMenus(menu: Electron.Menu) {
   ipcMain.handle(IpcConstants.PhotoSelection.UpdateUndoRedoMenus, (event, ipcParams: IpcParams.PhotoSelection.UpdateUndoRedoMenus) => {
     Logger.debug(`[IPC Main Received] ${IpcConstants.PhotoSelection.UpdateUndoRedoMenus}`);
+    assertFromMainWindow(event, 'Updating the Selection menu');
+    if (typeof ipcParams?.isUndoMenuEnabled !== 'boolean' || typeof ipcParams?.isRedoMenuEnabled !== 'boolean')
+      throw new Error('Updating the Selection menu needs whether Undo and Redo are enabled.');
     const undoMenu = menu.getMenuItemById(MenuId.Selection.Undo);
     const redoMenu = menu.getMenuItemById(MenuId.Selection.Redo);
     undoMenu.enabled = ipcParams.isUndoMenuEnabled;

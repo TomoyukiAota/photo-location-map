@@ -61,7 +61,9 @@ async function launch({ resize = true, env: extraEnv = {} } = {}) {
   app.context().on('console', message => {
     if (message.type() === 'error' && message.text().includes('NG0100')) changedWithoutNotification.push(message.text());
   });
+  const pageErrors = [];
   app.context().on('weberror', webError => {
+    pageErrors.push(webError.error().message);
     if (webError.error().message.includes('NG0100')) changedWithoutNotification.push(webError.error().message);
   });
   const runtime = await app.evaluate(({ app }) => {
@@ -130,7 +132,12 @@ async function launch({ resize = true, env: extraEnv = {} } = {}) {
       width: Math.min((compact ? 960 : 1200) + frameWidth, area.width - 40),
       height: Math.min((compact ? 600 : 800) + frameHeight, area.height - 40) });
   }, { visual, compact: process.env.PLM_E2E_COMPACT === '1' });
-  await page.waitForSelector('app-root app-home');
+  await page.waitForSelector('app-root app-home').catch(async error => {
+    // Says why the app did not start: whether its page got its bridge to the main process, and what it threw.
+    const bridge = await page.evaluate(() => !window.plm ? 'no bridge' : window.plm.startup === null
+      ? 'the startup metadata was refused' : 'a bridge').catch(() => 'unknown');
+    throw new Error(`The home view did not render, with ${bridge}; page errors: ${JSON.stringify(pageErrors)}.`, { cause: error });
+  });
   if (liveReload) expect(new URL(page.url()).origin).toBe('http://localhost:4200');
   await page.waitForFunction(() => !!window.plmInternalRenderer?.settingsDialog?.showSettingsDialog);
   await expect(page.locator('.leaflet-pm-toolbar').first()).toBeVisible();
@@ -194,21 +201,30 @@ async function openFolderWithPicker(folder) {
 function treeCheckbox(name) {
   return page.locator('mat-tree-node').filter({ hasText: name }).getByRole('checkbox');
 }
-/** Records the URLs that the app opens in the OS browser, instead of opening them. */
+/** Records the URLs that the main process opens in the OS browser for the page, instead of opening them. */
 async function recordOpenedUrls() {
-  await page.evaluate(() => {
-    window.__plmOpenedUrls = [];
-    window.require('electron').shell.openExternal = async url => { window.__plmOpenedUrls.push(url); };
+  await app.evaluate(({ shell }) => {
+    globalThis.__plmOpenedUrls = [];
+    shell.openExternal = async url => { globalThis.__plmOpenedUrls.push(url); };
   });
-  return () => page.evaluate(() => window.__plmOpenedUrls);
+  return () => app.evaluate(() => globalThis.__plmOpenedUrls);
 }
-/** Records the commands that open files and folders with the OS, such as `open "<path>"`, instead of running them. */
+/** Records the commands that the main process runs to open files and folders with the OS, instead of running them. */
 async function recordOpenCommands() {
-  await page.evaluate(() => {
-    window.__plmOpenCommands = [];
-    window.require('child_process').spawn = command => { window.__plmOpenCommands.push(command); return { on() {} }; };
+  await app.evaluate(() => {
+    globalThis.__plmOpenCommands = [];
+    globalThis.__plmTestRequire('child_process').spawn = (file, args) => {
+      globalThis.__plmOpenCommands.push({ file, args });
+      return { on() {} };
+    };
   });
-  return () => page.evaluate(() => window.__plmOpenCommands);
+  return () => app.evaluate(() => globalThis.__plmOpenCommands);
+}
+/** The command that opens `filePath`, or its folder, with the OS: without a shell (src-main/shell/open-with-os.ts). */
+function osOpenCommand(filePath, { containingFolder = false } = {}) {
+  if (process.platform === 'win32') return { file: 'explorer', args: [containingFolder ? `/select,"${filePath}"` : `"${filePath}"`] };
+  if (process.platform === 'darwin') return { file: 'open', args: containingFolder ? ['-R', filePath] : [filePath] };
+  return { file: containingFolder ? 'nautilus' : 'xdg-open', args: [filePath] };
 }
 test.beforeEach(async () => {
   if (packagedExecutable) test.setTimeout(120000);
@@ -387,7 +403,7 @@ test('the cache settings open the cache folder, and ask before deleting the cach
   const cacheFolder = (await location.textContent()).trim();
   expect(cacheFolder.startsWith(profile)).toBe(true);
   await location.click();
-  await expect.poll(openCommands).toEqual([expect.stringContaining(`"${cacheFolder}"`)]);
+  await expect.poll(openCommands).toEqual([osOpenCommand(cacheFolder)]);
   await page.getByRole('button', { name: 'Delete Thumbnail Cache', exact: true }).click();
   expect(await page.evaluate(() => window.__plmConfirmMessages))
     .toEqual(['This application will restart after deleting the thumbnail cache.\nDo you want to continue?']);
@@ -1185,6 +1201,60 @@ test('a saved maximized or full-screen main window stays off the screen in a hea
   // On macOS, a window becomes full screen only after a transition, so check that none was asked for.
   expect(await app.evaluate(() => globalThis.__plmWindowStateCalls)).toEqual([]);
 });
+test('the main window\'s page runs isolated, without Node.js, and reaches the main process only through its bridge', async () => {
+  // The preferences that Electron applied to the window, not only those that the code asked for.
+  const preferences = await app.evaluate(({ BrowserWindow }) => {
+    const applied = BrowserWindow.getAllWindows()[0].webContents.getLastWebPreferences();
+    return { contextIsolation: applied.contextIsolation, nodeIntegration: applied.nodeIntegration,
+      nodeIntegrationInWorker: applied.nodeIntegrationInWorker, sandbox: applied.sandbox };
+  });
+  expect(preferences).toEqual({ contextIsolation: true, nodeIntegration: false, nodeIntegrationInWorker: false, sandbox: true });
+  // Neither the page nor a worker of it has Node.js; the bridge is frozen and has no generic way to the main process.
+  const inPage = await page.evaluate(async () => ({
+    globals: ['require', 'process', 'module', 'Buffer', 'global', 'setImmediate'].map(name => [name, typeof window[name]]),
+    worker: await new Promise(resolve => {
+      const worker = new Worker(URL.createObjectURL(new Blob(['postMessage([typeof require, typeof process])'])));
+      worker.onmessage = message => { resolve(message.data); worker.terminate(); };
+    }),
+    frozen: Object.isFrozen(window.plm) && Object.isFrozen(window.plm.shell) && Object.isFrozen(window.plm.startup),
+    members: Object.values(window.plm).flatMap(member => typeof member === 'object' && member ? Object.keys(member) : []),
+  }));
+  expect(inPage.globals).toEqual(['require', 'process', 'module', 'Buffer', 'global', 'setImmediate'].map(name => [name, 'undefined']));
+  expect(inPage.worker).toEqual(['undefined', 'undefined']);
+  expect(inPage.frozen).toBe(true);
+  for (const generic of ['send', 'sendSync', 'invoke', 'on', 'ipcRenderer']) expect(inPage.members).not.toContain(generic);
+  // The main process answers the page only what it may ask for.
+  const refused = await page.evaluate(async root => {
+    const failure = async request => { try { await request(); return 'answered'; } catch (error) { return error.message; } };
+    return {
+      tree: await failure(() => window.plm.directoryTree.create(root)),
+      file: await failure(() => window.plm.shell.openWithAssociatedApp(`${root}/package.json`)),
+      url: await failure(() => window.plm.shell.openExternal('file:///etc/hosts')),
+      isDirectory: await window.plm.folderDialog.isDirectory(root),
+    };
+  }, root);
+  expect(refused.tree).toContain('Only a folder that the user chose can be read.');
+  expect(refused.file).toContain('Only a file or folder in a folder that the user opened can be opened with the OS.');
+  expect(refused.url).toContain('Only an http or https URL can be opened in the OS browser.');
+  expect(refused.isDirectory).toBe(false);
+  // Another window's page, even one with Node.js as Photo Data Viewer's still has, gets nothing of the main window's.
+  const fromAnotherWindow = await app.evaluate(async ({ BrowserWindow }) => {
+    const other = new BrowserWindow({ show: false, webPreferences: { nodeIntegration: true, contextIsolation: false } });
+    try {
+      await other.loadURL('data:text/html,<title>Another window</title>');
+      return await other.webContents.executeJavaScript(`(async () => {
+        const { ipcRenderer } = require('electron');
+        let exif;
+        try { await ipcRenderer.invoke('ipc-constants-read-exif', '/photo.jpg'); exif = 'answered'; } catch (error) { exif = error.message; }
+        return { startup: ipcRenderer.sendSync('ipc-constants-get-startup-metadata'),
+          settings: ipcRenderer.sendSync('ipc-constants-user-data-storage-snapshot'), exif };
+      })()`);
+    } finally {
+      other.destroy();
+    }
+  });
+  expect(fromAnotherWindow).toEqual({ startup: null, settings: null, exif: expect.stringContaining('Reading EXIF is only for the main window.') });
+});
 test('the main window gets animation frames while its page changes', async () => {
   // A hidden window on Windows gets about 1 frame per second once its page changes (see
   // electron-util/e2e-test-hooks.js), so check the rate that the run's own window gets.
@@ -1235,7 +1305,7 @@ test('analytics preserves events and identity without new Amplitude local URLs',
   await dismissWelcome();
   if (process.env.PLM_ANALYTICS_NEGATIVE_CONTROL === '1') {
     await page.evaluate(async () => {
-      const sdk = window.require('@amplitude/analytics-browser').createInstance();
+      const sdk = window.__plmCreateAmplitudeInstance();
       await sdk.init('00000000000000000000000000000000', 'compatibility-user', {
         fetchRemoteConfig: false, enableDiagnostics: false
       }).promise;
@@ -1252,7 +1322,7 @@ test('analytics preserves events and identity without new Amplitude local URLs',
   });
   if (process.env.PLM_ANALYTICS_URL_NEGATIVE_CONTROL) {
     await page.evaluate(async ({ userId, enrichmentOnly }) => {
-      const sdk = window.require('@amplitude/analytics-browser').createInstance();
+      const sdk = window.__plmCreateAmplitudeInstance();
       await sdk.init('00000000000000000000000000000000', userId, {
         deviceId: userId, fetchRemoteConfig: false, enableDiagnostics: false,
         ...(enrichmentOnly ? { autocapture: { pageViews: false } } : {}),
@@ -1419,10 +1489,8 @@ test('the thumbnail error dialog lists, sorts and filters the HEIF files without
   const row = dialog.locator('tr[mat-row]').filter({ hasText: 'A broken.HEIC' });
   await row.getByRole('button', { name: 'Open File', exact: true }).click();
   await row.getByRole('button', { name: 'Open Folder', exact: true }).click();
-  const brokenFile = `"${path.join(folder, 'A broken.HEIC')}"`;
-  await expect.poll(openCommands).toEqual([expect.stringContaining(brokenFile), expect.stringContaining(brokenFile)]);
-  const [openFile, openFolder] = await openCommands();
-  expect(openFile).not.toBe(openFolder);
+  const brokenFile = path.join(folder, 'A broken.HEIC');
+  await expect.poll(openCommands).toEqual([osOpenCommand(brokenFile), osOpenCommand(brokenFile, { containingFolder: true })]);
   await dialog.getByRole('button', { name: 'Close', exact: true }).click();
   await expect(dialog).toHaveCount(0);
 });
@@ -1527,8 +1595,8 @@ for (const [name, fixture, specialPath] of [
       photo = copiedPhoto;
     }
     const newWindow = app.waitForEvent('window');
-    await page.evaluate(({ name, photo }) => window.require('electron').ipcRenderer.invoke(
-      'ipc-constants-launch-photo-data-viewer', { photo: { name, path: photo } }), { name: path.basename(photo), photo });
+    await page.evaluate(({ name, photo }) => window.plm.photoDataViewer.open({ photo: { name, path: photo } }),
+      { name: path.basename(photo), photo });
     const viewer = await newWindow;
     await expect(viewer.locator('img[alt]').filter({ hasNotText: 'dummy' }).first()).toBeVisible({ timeout: 30000 });
     await viewer.waitForFunction(() => [...document.querySelectorAll('img')].some(img => img.naturalWidth > 100), { timeout: 30000 });

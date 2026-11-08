@@ -1,4 +1,4 @@
-import { openWithAssociatedApp } from '../../../src-shared/command/command';
+import { openWithAssociatedApp } from '../shared/open-with-os';
 import { Photo } from '../shared/model/photo.model';
 import { Logger } from '../../../src-shared/log/logger';
 

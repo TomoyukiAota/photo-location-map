@@ -143,7 +143,7 @@ if (testRoot) {
     ];
     // TL;DR: PLM_TEST_OFFLINE=1 also cancels every other request that leaves the computer, so that a measurement does
     // not wait on the network: the map's base-layer list then falls back to its built-in copy, and tiles stay blank.
-    // Details: The renderer awaits that list before Angular starts (src/main.ts), so its download is part of every
+    // Details: The renderer awaits that list before Angular starts (src/start-app.ts), so its download is part of every
     // startup. Electron keeps one onBeforeRequest listener per session, so this listener does both.
     const offline = process.env.PLM_TEST_OFFLINE === '1';
     globalThis.__plmOfflineCancelled = [];

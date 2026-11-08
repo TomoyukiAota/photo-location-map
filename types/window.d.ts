@@ -1,9 +1,8 @@
 declare var window: Window;
 
+// The main window's page has no Node.js: no window.process or window.require (src-shared/bridge/plm-bridge.ts).
 interface Window {
   plmInternalRenderer: IPlmInternalRenderer;
-  process: NodeJS.Process;
-  require: NodeRequire;
 }
 
 interface IPlmInternalRenderer {

@@ -42,8 +42,9 @@ async function measureLaunch(context, profile, { welcome }) {
       'did-finish-load-ms': at(main, 'main:did-finish-load') - spawnMs,
       'ready-to-show-ms': at(main, 'main:ready-to-show') - spawnMs,
       'home-rendered-ms': usable.epochMs - spawnMs,
-      // From the page's navigation to src/main.ts running: loading and evaluating the application's modules, with
-      // what they read from the main process while they are evaluated.
+      // From the page's navigation to the app's bootstrap (src/main.ts until stage C1 of the remote removal,
+      // src/start-app.ts since): loading and evaluating the application's modules, with what they read from the main
+      // process while they are evaluated.
       'renderer-modules-ms': at(renderer, 'renderer:bootstrap-start') - pageOrigin,
       'renderer-bootstrap-ms': at(renderer, 'renderer:bootstrap-done') - at(renderer, 'renderer:bootstrap-start'),
     };

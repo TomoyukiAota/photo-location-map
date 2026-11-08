@@ -1,6 +1,5 @@
 import { inject, Service } from '@angular/core';
-import { ipcRenderer } from 'electron';
-import { IpcConstants } from '../../../../src-shared/ipc/ipc-constants';
+import { bridge } from '../../../../src-shared/bridge/plm-bridge';
 import { IpcParams } from '../../../../src-shared/ipc/ipc-params';
 import { Logger } from '../../../../src-shared/log/logger';
 import { DirectoryTreeViewSelectionService } from '../../directory-tree-view/directory-tree-view-selection.service';
@@ -58,7 +57,8 @@ export class PhotoSelectionHistoryService {
       isUndoMenuEnabled: this.isUndoable,
       isRedoMenuEnabled: this.isRedoable,
     };
-    ipcRenderer.invoke(IpcConstants.PhotoSelection.UpdateUndoRedoMenus, ipcParams);
+    bridge().menus.updateUndoRedo(ipcParams)
+      .catch(error => Logger.error('Failed to update the Undo and Redo menus.', error));
   }
 
   private get isUndoable(): boolean {

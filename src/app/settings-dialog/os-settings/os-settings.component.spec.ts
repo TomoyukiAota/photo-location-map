@@ -1,6 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ipcRenderer } from 'electron';
-import { IpcConstants } from '../../../../src-shared/ipc/ipc-constants';
 import { OsSettingsComponent } from './os-settings.component';
 
 describe('OsSettingsComponent', () => {
@@ -15,7 +13,8 @@ describe('OsSettingsComponent', () => {
       answerFromMainProcess = resolve;
       failInMainProcess = reject;
     });
-    vi.spyOn(ipcRenderer, 'invoke').mockReturnValue(mainProcessAnswer);
+    vi.spyOn(window.plm.explorerContextMenu, 'add').mockReturnValue(mainProcessAnswer);
+    vi.spyOn(window.plm.explorerContextMenu, 'remove').mockReturnValue(mainProcessAnswer);
     await TestBed.configureTestingModule({ imports: [OsSettingsComponent] }).compileComponents();
     fixture = TestBed.createComponent(OsSettingsComponent);
     await fixture.whenStable();
@@ -32,16 +31,19 @@ describe('OsSettingsComponent', () => {
   }
 
   /** Clicks the button, which asks the main process; nothing is said until the main process answers. */
-  async function click(buttonText: string, expectedChannel: string): Promise<void> {
+  async function click(buttonText: 'Add' | 'Remove'): Promise<void> {
     const buttons = Array.from(fixture.nativeElement.querySelectorAll('button') as NodeListOf<HTMLButtonElement>);
     buttons.find(button => button.textContent.trim() === buttonText).click();
     await fixture.whenStable();
-    expect(ipcRenderer.invoke).toHaveBeenCalledExactlyOnceWith(expectedChannel);
+    const asked = buttonText === 'Add' ? window.plm.explorerContextMenu.add : window.plm.explorerContextMenu.remove;
+    const notAsked = buttonText === 'Add' ? window.plm.explorerContextMenu.remove : window.plm.explorerContextMenu.add;
+    expect(asked).toHaveBeenCalledExactlyOnceWith();
+    expect(notAsked).not.toHaveBeenCalled();
     expect(messageLines()).toEqual([]);
   }
 
   it('says what Add did once the main process has changed the registry', async () => {
-    await click('Add', IpcConstants.ExplorerContextMenu.Add);
+    await click('Add');
     answerFromMainProcess();
 
     await vi.waitFor(() => expect(messageLines()).toEqual([
@@ -51,7 +53,7 @@ describe('OsSettingsComponent', () => {
   });
 
   it('says what Remove did once the main process has changed the registry', async () => {
-    await click('Remove', IpcConstants.ExplorerContextMenu.Remove);
+    await click('Remove');
     answerFromMainProcess();
 
     await vi.waitFor(() => expect(messageLines()).toEqual([
@@ -61,7 +63,7 @@ describe('OsSettingsComponent', () => {
   });
 
   it('says that Add failed when the main process could not change the registry', async () => {
-    await click('Add', IpcConstants.ExplorerContextMenu.Add);
+    await click('Add');
     failInMainProcess(new Error('reg.exe add failed'));
 
     await vi.waitFor(() => expect(messageLines()).toEqual([
@@ -70,7 +72,7 @@ describe('OsSettingsComponent', () => {
   });
 
   it('says that Remove failed when the main process could not change the registry', async () => {
-    await click('Remove', IpcConstants.ExplorerContextMenu.Remove);
+    await click('Remove');
     failInMainProcess(new Error('reg.exe delete failed'));
 
     await vi.waitFor(() => expect(messageLines()).toEqual([

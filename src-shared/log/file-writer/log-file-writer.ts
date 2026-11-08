@@ -1,30 +1,27 @@
+import { plmBridge } from '../../bridge/plm-bridge';
 import { EnvironmentDetector } from '../../environment/environment-detector';
 import { ProcessIdentifier } from '../../process/process-identifier';
 import { LogFileWriterInterface } from './log-file-writer-interface';
-import { logFileWriterMain } from './log-file-writer-main';
-import { logFileWriterRenderer } from './log-file-writer-renderer';
 
-let logFileWriter: Promise<LogFileWriterInterface>;
+let logFileWriter: LogFileWriterInterface | undefined;
 
-function initializeLogFileWriter() {
-  if (EnvironmentDetector.isUnitTest)
-    return;
-
-  if (ProcessIdentifier.isElectronMain) {
-    logFileWriter = logFileWriterMain;
-  } else {
-    logFileWriter = logFileWriterRenderer;
-  }
+/** Sets the writer of the main process, which writes the file itself (src-main/log/). */
+export function useLogFileWriter(writer: LogFileWriterInterface): void {
+  logFileWriter = writer;
 }
+
+/** A renderer's writer, which sends each line to the main process through its preload's bridge. */
+const rendererWriter: LogFileWriterInterface = {
+  append: async message => plmBridge()?.log.append(message),
+};
 
 export class LogFileWriter {
   public static async append(message: string): Promise<void> {
     if (EnvironmentDetector.isUnitTest)
       return;
 
-    const fileWriter = await logFileWriter;
-    await fileWriter.append(message);
+    if (!logFileWriter && ProcessIdentifier.isElectronRenderer)
+      logFileWriter = rendererWriter;
+    await logFileWriter?.append(message);
   }
 }
-
-initializeLogFileWriter();

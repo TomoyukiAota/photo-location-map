@@ -4,11 +4,12 @@ import { provideRouter, withHashLocation } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { provideEchartsCore } from 'ngx-echarts';
+import { startupMetadata } from '../../src-shared/startup/startup-metadata';
 import { AppConfig } from '../environments/environment';
 import { routes } from './app.routes';
 import { AnalyticsErrorHandler } from './shared/error/analytics-error-handler';
 
-/** The providers of the whole application, which src/main.ts starts with. */
+/** The providers of the whole application, which src/start-app.ts starts with. */
 export const appConfig: ApplicationConfig = {
   providers: [
     // Without Zone.js, Angular renders what signals, template events, markForCheck() and the like tell it about.
@@ -32,7 +33,7 @@ export const appConfig: ApplicationConfig = {
         // so the theme registers on the instance passed to ngx-echarts.
         const echarts = await import('echarts');
         await import('echarts/theme/v5.js');
-        if (typeof process !== 'undefined' && process.env.PLM_E2E === '1') {
+        if (startupMetadata().isE2e) {
           // Read the real chart through the same namespace that ngx-echarts receives.
           (window as Window & { __plmReadChartTheme?: (element: HTMLElement) => unknown }).__plmReadChartTheme = element => ({
             palette: echarts.getInstanceByDom(element)?.getOption().color,

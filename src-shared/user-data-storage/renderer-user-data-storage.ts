@@ -1,7 +1,6 @@
 import { recordUnhandledError } from '../analytics/record-error';
-import { IpcConstants } from '../ipc/ipc-constants';
+import { bridge } from '../bridge/plm-bridge';
 import { Logger } from '../log/logger';
-import { ProxyRequire } from '../require/proxy-require';
 import { storageKeyOf } from './renderer-storage-access';
 import type { UserDataStorageBackend } from './user-data-storage';
 
@@ -18,7 +17,9 @@ export class RendererUserDataStorage implements UserDataStorageBackend {
 
   private get values(): Map<string, string> {
     if (!this.copy) {
-      const entries: Record<string, string> = ProxyRequire.electron.ipcRenderer.sendSync(IpcConstants.UserDataStorage.Snapshot);
+      const entries = bridge().storage.snapshot();
+      if (!entries)
+        throw new Error('The main process refused the settings to this page.');
       this.copy = new Map(Object.entries(entries));
     }
     return this.copy;
@@ -33,7 +34,7 @@ export class RendererUserDataStorage implements UserDataStorageBackend {
 
   public write(storagePath: ReadonlyArray<string>, value: string): Promise<void> {
     this.values.set(storageKeyOf(storagePath), value);
-    const written: Promise<void> = ProxyRequire.electron.ipcRenderer.invoke(IpcConstants.UserDataStorage.Write, storagePath, value);
+    const written = bridge().storage.write(storagePath, value);
     written.catch(error => {
       Logger.error(`[UserDataStorage] Failed to write "${value}" for "${storagePath.join(',')}".`, error);
       recordUnhandledError(error, 'Renderer');

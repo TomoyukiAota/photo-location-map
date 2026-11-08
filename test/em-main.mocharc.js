@@ -2,7 +2,11 @@ module.exports = {
   require: [
     './electron-util/isolated-test-profile.js',
     'ts-node/register',
-    // The main process's settings are its files, as in the app (src-main/electron-main.ts).
+    // The first setups of the app's main process, in its order (src-main/electron-main.ts): the log's location, the
+    // startup metadata, and the settings, which are files.
+    './src-main/analytics/error-scrubbing-setup.ts',
+    './src-main/log/log-setup.ts',
+    './src-main/startup/startup-metadata-setup.ts',
     './src-main/user-data-storage/user-data-storage-setup.ts'
   ],
   spec: 'test/**/*.spec.em.@(main|both).ts',

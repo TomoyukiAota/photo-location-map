@@ -1,32 +1,6 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "paths": {
-      "child_process": [
-        "./electron-util/renderer-modules/child_process.cjs"
-      ],
-      "crypto": [
-        "./electron-util/renderer-modules/crypto.cjs"
-      ],
-      "fs": [
-        "./electron-util/renderer-modules/fs.cjs"
-      ],
-      "os": [
-        "./electron-util/renderer-modules/os.cjs"
-      ],
-      "path": [
-        "./electron-util/renderer-modules/path.cjs"
-      ],
-      "electron": [
-        "./electron-util/renderer-modules/electron.cjs"
-      ],
-      "fs-extra": [
-        "./electron-util/renderer-modules/fs-extra.cjs"
-      ],
-      "directory-tree": [
-        "./electron-util/renderer-modules/directory-tree.cjs"
-      ]
-    },
     "types": [
       "node",
       "electron"

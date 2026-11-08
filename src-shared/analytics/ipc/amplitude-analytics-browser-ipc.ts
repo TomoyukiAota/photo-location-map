@@ -1,8 +1,9 @@
-import { BrowserWindow } from 'electron';
-import { ProxyRequire } from '../../require/proxy-require';
-import { AmplitudeAnalyticsBrowserWrapper } from '../library-wrapper/amplitude-analytics-browser-wrapper';
+import type { BrowserWindow } from 'electron';
 
-class AmplitudeAnalyticsBrowserIpcChannelName {
+// The main process sends its events to the renderer, whose SDK records them; the renderer listens through its
+// preload (electron-util/preload/main-window.cjs), which keeps a copy of the channel's name.
+
+export class AmplitudeAnalyticsBrowserIpcChannelName {
   public static readonly trackEvent = 'amplitude-analytics-browser-track-event';
 }
 
@@ -23,19 +24,6 @@ export class AmplitudeAnalyticsBrowserIpcMain {
     this.mainWindow.webContents.send(
       AmplitudeAnalyticsBrowserIpcChannelName.trackEvent,
       category, action, label, value
-    );
-  }
-}
-
-export class AmplitudeAnalyticsBrowserIpcRenderer {
-  private static ipcRenderer = ProxyRequire.electron.ipcRenderer;
-
-  public static configureReceivingIpcFromMain() {
-    this.ipcRenderer.on(
-      AmplitudeAnalyticsBrowserIpcChannelName.trackEvent,
-      (event, category: string, action: string, label?: string, value?: string | number) => {
-        AmplitudeAnalyticsBrowserWrapper.trackEvent(category, action, label, value);
-      }
     );
   }
 }

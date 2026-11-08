@@ -75,10 +75,6 @@
               "polyfills": [],
               "fileReplacements": [
                 {
-                  "replace": "src-shared/require/proxy-require.ts",
-                  "with": "test/angular/require-doubles.ts"
-                },
-                {
                   "replace": "src-shared/user-data-storage/user-data-storage.ts",
                   "with": "test/angular/storage-double.ts"
                 },

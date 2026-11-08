@@ -1,5 +1,5 @@
 import { Analytics } from '../../../../src-shared/analytics/analytics';
-import { openContainingFolder, openWithAssociatedApp} from '../../../../src-shared/command/command';
+import { openContainingFolder, openWithAssociatedApp} from '../../shared/open-with-os';
 import { DirTreeViewContextMenuData as ContextMenuData } from './dir-tree-view-context-menu-data';
 import { dirTreeViewContextMenuLogger as contextMenuLogger } from './dir-tree-view-context-menu-logger';
 

@@ -1,123 +1,47 @@
-import { Now } from '../../date-time/now';
 import { ProcessIdentifier } from '../../process/process-identifier';
-import { ProxyRequire } from '../../require/proxy-require';
+import { startupMetadata } from '../../startup/startup-metadata';
 
-const ipcChannelName = 'get-log-file-config-from-main';
-const pathSep = ProxyRequire.path.sep;
-
-class LogFileConfigState {
-  public dirName: string;
-  public fileName: string;
-  public filePath: string;
-
-  constructor(dirName: string, fileName: string) {
-    this.dirName = dirName;
-    this.fileName = fileName;
-    this.filePath = `${dirName}${pathSep}${fileName}`;
-  }
+interface LogFileConfigState {
+  dirName: string;
+  fileName: string;
+  filePath: string;
 }
 
 /**
- * Handler of LogFileConfigState to ensure that
- *  - LogFileConfigState is initialized only once.
- *  - LogFileConfigState can be gotten after initialization.
+ * Where the log file is. The main process decides at its start (src-main/log/); a renderer gets it with the startup
+ * metadata (src-shared/startup/).
  */
-class LogFileConfigStateHandler {
-  private logFileConfigState: LogFileConfigState | 'uninitialized' = 'uninitialized';
-
-  public isInitialized(): boolean {
-    return this.logFileConfigState !== 'uninitialized';
-  }
-
-  public initialize(logFileConfigState: LogFileConfigState) {
-    if (this.logFileConfigState === 'uninitialized') {
-      this.logFileConfigState = logFileConfigState;
-    } else {
-      throw new Error('LogFileConfigStateHandler is already initalized and cannot be initialized more than once.');
-    }
-  }
-
-  public get(): LogFileConfigState {
-    if (this.logFileConfigState === 'uninitialized') {
-      throw new Error('LogFileConfigStateHandler is NOT initialized yet and cannot be gotten before initialization.');
-    } else {
-      return this.logFileConfigState;
-    }
-  }
-}
-
 export class LogFileConfig {
-  public static config = new LogFileConfigStateHandler();
-  public static configCacheForRenderer = new LogFileConfigStateHandler();
+  private static config: LogFileConfigState | undefined;
 
-  public static setup(dirName: string, fileName: string) {
-    if (ProcessIdentifier.isElectronMain) {
-      this.config.initialize(new LogFileConfigState(dirName, fileName));
-    } else {
+  public static setup(dirName: string, fileName: string, pathSeparator: string) {
+    if (!ProcessIdentifier.isElectronMain)
       throw new Error('LogFileConfig can be set up from Electron main process only.');
-    }
+    if (this.config)
+      throw new Error('LogFileConfig is already set up and cannot be set up more than once.');
+    this.config = { dirName, fileName, filePath: `${dirName}${pathSeparator}${fileName}` };
   }
 
-  private static ensureCacheForRenderer() {
-    if (!this.configCacheForRenderer.isInitialized()) {
-      const configFromMain: LogFileConfigState = ProxyRequire.electron.ipcRenderer.sendSync(ipcChannelName);
-      this.configCacheForRenderer.initialize(configFromMain);
+  private static get state(): LogFileConfigState {
+    if (!ProcessIdentifier.isElectron)
+      throw new Error('Use of this method from non-Electron process is not expected.');
+    if (ProcessIdentifier.isElectronMain) {
+      if (!this.config)
+        throw new Error('LogFileConfig is NOT set up yet and cannot be read before it is (src-main/log/).');
+      return this.config;
     }
-  }
-
-  private static getConfigCacheForRenderer(): LogFileConfigState {
-    this.ensureCacheForRenderer();
-    return this.configCacheForRenderer.get();
+    return startupMetadata().logFile;
   }
 
   public static get dirName(): string {
-    if (!ProcessIdentifier.isElectron)
-      throw new Error('Use of this method from non-Electron process is not expected.');
-
-    return ProcessIdentifier.isElectronMain
-      ? this.config.get().dirName
-      : this.getConfigCacheForRenderer().dirName;
+    return this.state.dirName;
   }
 
   public static get fileName(): string {
-    if (!ProcessIdentifier.isElectron)
-      throw new Error('Use of this method from non-Electron process is not expected.');
-
-    return ProcessIdentifier.isElectronMain
-      ? this.config.get().fileName
-      : this.getConfigCacheForRenderer().fileName;
+    return this.state.fileName;
   }
 
   public static get filePath(): string {
-    if (!ProcessIdentifier.isElectron)
-      throw new Error('Use of this method from non-Electron process is not expected.');
-
-    return ProcessIdentifier.isElectronMain
-      ? this.config.get().filePath
-      : this.getConfigCacheForRenderer().filePath;
+    return this.state.filePath;
   }
-}
-
-class LogFileConfigSetup {
-  private static setupIpcChannelListnerInMainProcess() {
-    ProxyRequire.electron.ipcMain.on(ipcChannelName, (event, arg) => {
-      event.returnValue = LogFileConfig.config.get();
-    });
-  }
-
-  private static setupLogFileConfig() {
-    const appDataDirectory = ProxyRequire.electron.app.getPath('appData');
-    const logDirectory = `${appDataDirectory}${pathSep}Photo Location Map${pathSep}logs`;
-    const fileName = `${Now.basicFormat}_photo-location-map_log.txt`;
-    LogFileConfig.setup(logDirectory, fileName);
-  }
-
-  public static setup() {
-    this.setupIpcChannelListnerInMainProcess();
-    this.setupLogFileConfig();
-  }
-}
-
-if (ProcessIdentifier.isElectronMain) {
-  LogFileConfigSetup.setup();
 }

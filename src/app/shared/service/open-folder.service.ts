@@ -59,7 +59,7 @@ export class OpenFolderService {
 
       this.showPhotoWithLocationNotFoundDialogIfApplicable();
       this.directoryTreeViewDataService.replace(directoryTreeObject);
-      if (this.thumbnailGenerationService.startThumbnailGeneration(directoryTreeObject))
+      if (await this.thumbnailGenerationService.startThumbnailGeneration(directoryTreeObject))
         this.thumbnailGenerationStatusBarService.showForNewGeneration();
       DirTreeObjectRecorder.record(directoryTreeObject);
       OpenFolderRecorder.complete();

@@ -1,0 +1,44 @@
+import { app, ipcMain } from 'electron';
+import * as fsExtra from 'fs-extra';
+import * as os from 'os';
+import * as path from 'path';
+import { Now } from '../../src-shared/date-time/now';
+import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
+import { LogFileConfig } from '../../src-shared/log/file-config/log-file-config';
+import { LogFileWriterInterface } from '../../src-shared/log/file-writer/log-file-writer-interface';
+import { useLogFileWriter } from '../../src-shared/log/file-writer/log-file-writer';
+import { isFromMainWindow } from '../ipc/ipc-sender';
+
+// TL;DR: The log file, set up before anything else logs (src-main/electron-main.ts).
+// Details: A renderer sends its lines through its preload (electron-util/preload/main-window.cjs). The file is opened
+// at the first line, which the app writes as it starts; unit tests, which write none, leave no file.
+
+class LogFileWriterMain implements LogFileWriterInterface {
+  private fileHandle: Promise<fsExtra.promises.FileHandle> | undefined;
+
+  constructor(private readonly dirName: string, private readonly filePath: string) {
+  }
+
+  private opened(): Promise<fsExtra.promises.FileHandle> {
+    this.fileHandle ??= (async () => {
+      await fsExtra.ensureDir(this.dirName); // The directory needs to be created before calling fsExtra.promises.open function.
+      const fileSystemFlag = 'a'; // 'a' is for "Open file for appending. The file is created if it does not exist." See https://nodejs.org/api/fs.html
+      return fsExtra.promises.open(this.filePath, fileSystemFlag);
+    })();
+    return this.fileHandle;
+  }
+
+  public async append(message: string): Promise<void> {
+    await (await this.opened()).appendFile(message + os.EOL);
+  }
+}
+
+const logDirectory = path.join(app.getPath('appData'), 'Photo Location Map', 'logs');
+LogFileConfig.setup(logDirectory, `${Now.basicFormat}_photo-location-map_log.txt`, path.sep);
+const writer = new LogFileWriterMain(LogFileConfig.dirName, LogFileConfig.filePath);
+useLogFileWriter(writer);
+
+ipcMain.on(IpcConstants.Log.Append, (event, message: unknown) => {
+  if (isFromMainWindow(event) && typeof message === 'string')
+    void writer.append(message);
+});

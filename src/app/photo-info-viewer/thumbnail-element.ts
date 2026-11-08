@@ -1,7 +1,7 @@
 import { Analytics } from '../../../src-shared/analytics/analytics';
+import { bridge } from '../../../src-shared/bridge/plm-bridge';
 import { FilenameExtension } from '../../../src-shared/filename-extension/filename-extension';
 import { isFilePathTooLongOnWindows, maxFilePathLengthOnWindows } from '../../../src-shared/max-file-path-length-on-windows/max-file-path-length-on-windows';
-import { getThumbnailFilePath, isAttemptToGenerateThumbnailFinished } from '../../../src-shared/thumbnail/cache/thumbnail-cache-util';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { Photo } from '../shared/model/photo.model';
 import { PhotoViewerLauncher } from '../photo-viewer-launcher/photo-viewer-launcher';
@@ -57,22 +57,33 @@ export class ThumbnailElement {
     this.displayGeneratingThumbnailImage(thumbnailElement, photo);
     thumbnailElement.classList.add(cssClassAppliedToGeneratingThumbnailImage);
 
-    const intervalId = setInterval(() => {
-      if (isAttemptToGenerateThumbnailFinished(photo.path)) {
-        thumbnailElement.classList.remove(cssClassAppliedToGeneratingThumbnailImage);
+    // The main process checks the cache (src-main/thumbnail-generation/thumbnail-state.ts). A check that takes longer
+    // than the interval is not overlapped by the next.
+    let isChecking = false;
+    const intervalId = setInterval(async () => {
+      if (isChecking) return;
+      isChecking = true;
+      try {
+        const [state] = await bridge().thumbnails.state([photo.path]);
+        if (state.attemptFinished) {
+          clearInterval(intervalId);
+          thumbnailElement.classList.remove(cssClassAppliedToGeneratingThumbnailImage);
 
-        // Apply and remove the CSS class in order for thumbnail to fade in just once after its generation is done.
-        thumbnailElement.classList.add(cssClassToFadeInAfterThumbnailGeneration);
-        setTimeout(() => thumbnailElement.classList.remove(cssClassToFadeInAfterThumbnailGeneration), 2500); // 2000 ms for animation definition plus 500 ms for processing lag.
+          // Apply and remove the CSS class in order for thumbnail to fade in just once after its generation is done.
+          thumbnailElement.classList.add(cssClassToFadeInAfterThumbnailGeneration);
+          setTimeout(() => thumbnailElement.classList.remove(cssClassToFadeInAfterThumbnailGeneration), 2500); // 2000 ms for animation definition plus 500 ms for processing lag.
 
-        this.displayGeneratedThumbnail(photo, thumbnailElement);
-        clearInterval(intervalId);
+          this.displayGeneratedThumbnail(photo, thumbnailElement, state.thumbnailFilePath);
+        }
+      } catch (error) {
+        logger.error(`Failed to check the thumbnail of ${photo.path}`, error);
+      } finally {
+        isChecking = false;
       }
     }, 1000);
   }
 
-  private static displayGeneratedThumbnail(photo: Photo, thumbnailElement: HTMLImageElement) {
-    const { thumbnailFilePath } = getThumbnailFilePath(photo.path);
+  private static displayGeneratedThumbnail(photo: Photo, thumbnailElement: HTMLImageElement, thumbnailFilePath: string) {
     this.displayThumbnailUsingFile(thumbnailElement, photo, thumbnailFilePath);
     this.handlePathTooLongCaseOnWindowsForGeneratedThumbnail(thumbnailElement, photo, thumbnailFilePath);
   }

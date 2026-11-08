@@ -1,10 +1,17 @@
+// TL;DR: The order of the first imports matters: each sets up what the next ones use while they are evaluated.
+// Details: The test profile moves the app's folders; errors are scrubbed and logged from the start; the startup metadata
+// needs the log's location; the settings hold the analytics user ID; analytics then sends what was tracked before.
 import '../electron-util/isolated-test-profile';
+import './analytics/error-scrubbing-setup';
+import './log/log-setup';
+import './startup/startup-metadata-setup';
 import './user-data-storage/user-data-storage-setup';
 import { withHeadlessTestOptions } from '../electron-util/e2e-test-hooks';
 import './configure-electron-unhandled';
 import './command-line-options/configure-command-line-options';
+import './analytics/analytics-setup';
 import { app, BrowserWindow, protocol } from 'electron';
-import * as electronWebPreferences from '../electron-util/electron-web-preferences';
+import { mainWindowWebPreferences } from '../electron-util/electron-web-preferences';
 import { LogFileConfig } from '../src-shared/log/file-config/log-file-config';
 import { Logger } from '../src-shared/log/logger';
 import { perfMark } from '../src-shared/perf/perf-mark';
@@ -13,11 +20,15 @@ import { getUrlForMainWindow } from './file-server/file-server';
 import './menu/menu';
 import './explorer-context-menu/explorer-context-menu-ipc-setup';
 import './photo-data-viewer/photo-data-viewer-ipc-setup';
-import './startup/startup-metadata-ipc-setup';
 import './exif/exif-ipc-setup';
 import './folder-dialog/folder-dialog-ipc-setup';
+import './directory-tree/directory-tree-ipc-setup';
 import './restart-ipc-setup';
+import './shell/shell-ipc-setup';
 import './thumbnail-generation/thumbnail-generation-ipc-setup';
+import './thumbnail-generation/thumbnail-cache-ipc-setup';
+import { startDirectoryTreeWorker } from './directory-tree/directory-tree-requests';
+import { setMainWindow } from './ipc/ipc-sender';
 import { configureMainWindowForAnalytics } from './configure-main-window-for-analytics';
 import { handleAppQuit } from './handle-app-quit';
 import { LiveReload } from './live-reload';
@@ -43,7 +54,7 @@ const createWindow = async () => {
     y: mainWindowState.y,
     width: mainWindowState.width,
     height: mainWindowState.height,
-    webPreferences: electronWebPreferences,
+    webPreferences: mainWindowWebPreferences(app.getAppPath()),
   }));
 
   perfMark('main:window-created');
@@ -61,7 +72,11 @@ const createWindow = async () => {
     }));
   }
 
-  mainWindow.webContents.once('did-finish-load', () => perfMark('main:did-finish-load'));
+  mainWindow.webContents.once('did-finish-load', () => {
+    perfMark('main:did-finish-load');
+    // For the first folder that the user opens not to wait for the worker to start (src-main/directory-tree/).
+    startDirectoryTreeWorker();
+  });
   mainWindow.on('ready-to-show', () => {
     perfMark('main:ready-to-show');
     // Call recordAtAppLaunch on ready-to-show event so that
@@ -77,6 +92,8 @@ const createWindow = async () => {
   }
 
   const url = await getUrlForMainWindow();
+  // Before the page loads: its preload asks for the startup metadata at once (src-main/ipc/ipc-sender.ts).
+  setMainWindow(mainWindow.webContents, url);
   mainWindow.loadURL(url);
 
   // Keep automated development checks on the application's CDP target.

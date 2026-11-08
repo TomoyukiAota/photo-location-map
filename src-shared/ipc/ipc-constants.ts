@@ -1,6 +1,7 @@
 export namespace IpcConstants {
+  /** What `--open` asks the app to open after it launches, checked by the main process (src-main/command-line-options/). */
   export namespace CommandLineOptions {
-    export const Get = 'ipc-constants-get-command-line-options';
+    export const OpenTarget = 'ipc-constants-get-open-target';
   }
 
   export namespace RecordAtAppLaunch {
@@ -46,6 +47,33 @@ export namespace IpcConstants {
   /** The folder picker for Open Folder, shown by the main process for the window that asks. */
   export namespace FolderDialog {
     export const Show = 'ipc-constants-show-folder-dialog';
+    /** Whether the folder that the picker would start in is still a folder (open-folder-dialog-history.ts). */
+    export const IsDirectory = 'ipc-constants-folder-dialog-is-directory';
+  }
+
+  /** The tree of a folder that the user opens, made off the main thread by the main process (src-main/directory-tree/). */
+  export namespace DirectoryTree {
+    export const Create = 'ipc-constants-create-directory-tree';
+  }
+
+  /** The cache of HEIF thumbnails (src-main/thumbnail-generation/). */
+  export namespace ThumbnailCache {
+    /** Whether each file's thumbnail was attempted and is in the cache, and where it is. */
+    export const State = 'ipc-constants-thumbnail-state';
+    export const Open = 'ipc-constants-open-thumbnail-cache';
+    export const DeleteAndRestart = 'ipc-constants-delete-thumbnail-cache-and-restart';
+  }
+
+  /** Opening a web page in the OS browser, and a file or folder with the OS (src-main/shell/). */
+  export namespace Shell {
+    export const OpenExternal = 'ipc-constants-open-external-url';
+    export const OpenWithAssociatedApp = 'ipc-constants-open-with-associated-app';
+    export const OpenContainingFolder = 'ipc-constants-open-containing-folder';
+  }
+
+  /** A line of a renderer's log, which the main process writes to the log file (src-main/log/). */
+  export namespace Log {
+    export const Append = 'log-file-writer-append';
   }
 
   /** EXIF and the embedded thumbnail of one photo, read in the main process (src-main/exif/). */

@@ -1,7 +1,7 @@
 import { Component, computed, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialogRef } from '@angular/material/dialog';
-import * as os from 'os';
+import { currentPlatform } from '../../../src-shared/startup/startup-metadata';
 import {
   currentUserSettings,
   getUserSettingsToBeSaved,
@@ -27,7 +27,7 @@ const settingsTabNames = [
 type SettingsTabName = typeof settingsTabNames[number];
 
 // Show OS tab only on Windows
-const availableSettingTabNames = os.platform() === 'win32'
+const availableSettingTabNames = currentPlatform() === 'win32'
   ? settingsTabNames
   : settingsTabNames.filter(tabName => tabName !== 'OS');
 

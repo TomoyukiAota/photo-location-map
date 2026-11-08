@@ -1,5 +1,3 @@
-import { exifFetchLibraryInUse } from '../exif-fetch-library-in-use/exif-fetch-library-in-use';
-import { Logger } from '../log/logger';
 
 export class FilenameExtension {
   private static readonly jpegExtensions: ReadonlyArray<string> = ['.jpeg', '.jpg', '.jpe', '.jfif', '.jfi', '.jif'];
@@ -25,9 +23,6 @@ export class FilenameExtension {
     ...FilenameExtension.heifExtensions,
   ];
 
-  private static readonly extensionsSupportedByExifParser: ReadonlyArray<string> = [
-    ...FilenameExtension.jpegExtensions,
-  ];
 
   private static readonly extensionsDisplayableInBrowser: ReadonlyArray<string> = [
     ...FilenameExtension.jpegExtensions,
@@ -42,18 +37,9 @@ export class FilenameExtension {
     ...FilenameExtension.mp4Extensions,
   ];
 
+  /** The photos whose EXIF the app reads, with exifr in the main process (src-main/exif/). */
   public static isSupportedByPlm(extension: string) {
-    let supportedExtensions: ReadonlyArray<string>;
-
-    if (exifFetchLibraryInUse === 'exifr') {
-      supportedExtensions = this.extensionsSupportedByExifr;
-    } else if (exifFetchLibraryInUse === 'exif-parser') {
-      supportedExtensions = this.extensionsSupportedByExifParser;
-    } else {
-      Logger.error(`Specified value of exifFetchLibraryInUse is incorrect. The value is "${exifFetchLibraryInUse}"`);
-    }
-
-    return supportedExtensions.includes(extension);
+    return this.extensionsSupportedByExifr.includes(extension);
   }
 
   public static isDisplayableInBrowser(extension: string) {

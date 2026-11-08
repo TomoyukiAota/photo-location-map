@@ -1,5 +1,5 @@
 import { Analytics } from '../../../../src-shared/analytics/analytics';
-import { openWithAssociatedApp } from '../../../../src-shared/command/command';
+import { openWithAssociatedApp } from '../../shared/open-with-os';
 import { IconDataUrl } from '../../../assets/icon-data-url';
 import { Photo } from '../../shared/model/photo.model';
 import { OpenedDirectory } from '../../shared/opened-directory';

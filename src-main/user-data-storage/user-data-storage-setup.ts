@@ -1,6 +1,7 @@
 import { app, ipcMain } from 'electron';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { UserDataStorage } from '../../src-shared/user-data-storage/user-data-storage';
+import { assertFromMainWindow, isFromMainWindow } from '../ipc/ipc-sender';
 import { FileUserDataStorage } from './file-user-data-storage';
 import { rendererStorageSnapshot, writeFromRenderer } from './renderer-storage-requests';
 
@@ -10,10 +11,13 @@ import { rendererStorageSnapshot, writeFromRenderer } from './renderer-storage-r
 const files = new FileUserDataStorage(app);
 UserDataStorage.useBackend(files);
 
-// A renderer asks for its copy synchronously, when it first reads a setting (renderer-user-data-storage.ts).
+// The main window's page asks for its copy synchronously, when it first reads a setting (renderer-user-data-storage.ts).
 ipcMain.on(IpcConstants.UserDataStorage.Snapshot, event => {
-  event.returnValue = rendererStorageSnapshot(files);
+  event.returnValue = isFromMainWindow(event) ? rendererStorageSnapshot(files) : null;
 });
 
 // A write is handled at once and in the order sent: a renderer's later reads and a quit come after it.
-ipcMain.handle(IpcConstants.UserDataStorage.Write, (_event, storagePath: unknown, value: unknown) => writeFromRenderer(storagePath, value));
+ipcMain.handle(IpcConstants.UserDataStorage.Write, (event, storagePath: unknown, value: unknown) => {
+  assertFromMainWindow(event, 'Writing a setting');
+  return writeFromRenderer(storagePath, value);
+});

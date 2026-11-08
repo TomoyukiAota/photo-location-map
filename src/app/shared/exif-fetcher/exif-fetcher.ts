@@ -1,12 +1,10 @@
 import PQueue from 'p-queue';
-import { exifFetchLibraryInUse } from '../../../../src-shared/exif-fetch-library-in-use/exif-fetch-library-in-use';
 import { FilenameExtension } from '../../../../src-shared/filename-extension/filename-extension';
 import { Logger } from '../../../../src-shared/log/logger';
 import { perfMark } from '../../../../src-shared/perf/perf-mark';
 import { exifPerfStats, resetExifPerfStats } from './exif-perf-stats';
 import { Exif } from '../model/exif.model';
 import { LoadingFolderProgress } from '../loading-folder-progress';
-import { fetchExifUsingExifParser } from './using-exif-parser/fetch-exif-using-exif-parser';
 import { fetchExifUsingExifr } from './using-exifr/fetch-exif-using-exifr';
 
 export class PathExifPair {
@@ -59,17 +57,8 @@ export class ExifFetcher {
 
   private static addPathExifPairPromiseFunc(filePath: string) {
     const pathExifPairPromiseFunc = () => {
-      let exifPromise: Promise<Exif>;
-
-      if (exifFetchLibraryInUse === 'exifr') {
-        exifPromise = fetchExifUsingExifr(filePath);
-      } else if (exifFetchLibraryInUse === 'exif-parser') {
-        exifPromise = fetchExifUsingExifParser(filePath);
-      } else {
-        Logger.error(`Something went wrong with exifFetchLibraryInUse. The value of exifFetchLibraryInUse is "${exifFetchLibraryInUse}"`);
-      }
-
-      const pathExifPairPromise = exifPromise
+      // The main process reads EXIF with exifr (src-main/exif/).
+      const pathExifPairPromise = fetchExifUsingExifr(filePath)
         .then(exif => new PathExifPair(filePath, exif))
         .finally(() => LoadingFolderProgress.incrementNumberOfLoadedFiles());
       return pathExifPairPromise;

@@ -7,17 +7,19 @@ Read this before adding or upgrading a dependency.
 
 ### Electron renderer process
 
-npm modules which are 1) used only in Electron renderer process and 2) imported
-by `import` (not `require`) should be configured in `devDependencies` (not
-`dependencies`) in `package.json`.
+npm modules used only in Electron renderer process should be configured in
+`devDependencies` (not `dependencies`) in `package.json`.
 
-Angular build system creates a bundle file from `.ts` files. The bundle file
-will have the copy of `import`ed (not `require`d) npm module, and the copy is
-used at run time. Also, electron-builder will copy npm modules listed in
-`dependencies` (not `devDependencies`) to create an application package.
-Therefore, configuring `import`ed (again, not `require`d) npm modules used only
-in Electron renderer process with `devDependencies` saves the size of
-application package.
+Angular build system creates a bundle file from `.ts` files, with a copy of each
+npm module that they import, and the copy is used at run time. The main window's
+page has no Node.js, so it cannot `require` a module from the package at run
+time: it reaches the main process only through its preload's bridge
+(`src-shared/bridge/plm-bridge.ts`). electron-builder copies the npm modules
+listed in `dependencies` (not `devDependencies`) to create an application
+package, so configuring the renderer's modules in `devDependencies` saves the
+size of application package. A Node.js module, such as `fs` or `electron`,
+cannot be used in the renderer: use it in the main process, and add to the bridge
+the narrow operation that the page needs.
 
 
 ### Electron main process

@@ -1,84 +1,26 @@
-/* eslint-disable no-useless-escape */
+import { bridge } from '../../../src-shared/bridge/plm-bridge';
 
-import { wrap } from 'comlink';
-import * as pathModule from 'path';
-import { FilenameExtension } from '../../../src-shared/filename-extension/filename-extension';
-
+/** The folder that the user opened: its tree, which the main process reads (src-main/directory-tree/). */
 export class OpenedDirectory {
-  private static excludeRegexArray: RegExp[] = [
-    // Notes:
-    // - The purpose of regex is to exclude the hidden files/folders.
-    // - Regex should be as specific as possible in order not to accidentally exclude visible files/folders.
-    // - Regex begins from [\/\\] (/ or \ for path separator) to be sure of the beginning of a file/folder name.
-    // - For files, $ is placed at the end to be sure of specifying file paths.
-    // - Using i flag to ignore case. e.g. both $RECYCLE.BIN and $Recycle.Bin exist.
+  private static livePhotos: Record<string, string> = {};
 
-    // Windows
-    /[\/\\]\$Recycle\.Bin/i,
-    /[\/\\]desktop\.ini$/i,
-    /[\/\\]Thumbs\.db$/i,
-
-    // Mac - Anywhere
-    /[\/\\]\._.*/i,
-    /[\/\\]\.AppleDouble/i,
-    /[\/\\]\.DS_Store$/i,
-    /[\/\\]\.localized$/i,
-    /[\/\\]__MACOSX/i,
-
-    // Mac - Root of a Volume
-    /[\/\\]\.apdisk$/i,
-    /[\/\\]\.com\.apple\.timemachine\.donotpresent$/i,
-    /[\/\\]\.DocumentRevisions-V100/i,
-    /[\/\\]\.fseventsd/i,
-    /[\/\\]\.Spotlight-V100/i,
-    /[\/\\]\.TemporaryItems/i,
-    /[\/\\]\.Trashes/i,
-    /[\/\\]\.VolumeIcon\.icns/i,
-  ];
-
-  private static worker = wrap<typeof import('./worker/directory-tree.worker').api>(
-    new Worker(new URL('./worker/directory-tree.worker', import.meta.url)),
-  );
-
-  public static async createDirectoryTree(dirPath: string) {
-    const dirTree = await this.worker.createDirectoryTree(dirPath, {exclude: this.excludeRegexArray});
-    await this.storeLivePhotosCandidateFilePaths(dirTree);
-    return dirTree;
+  /** The tree of the folder at `dirPath`, without its hidden files; each item has `fsStats` with its `mtime`. */
+  public static async createDirectoryTree(dirPath: string): Promise<DirectoryTree> {
+    const result = await bridge().directoryTree.create(dirPath);
+    if (result.kind === 'failed')
+      throw new Error(result.message);
+    if (!result.tree)
+      throw new Error(`The folder "${dirPath}" could not be read.`);
+    this.livePhotos = result.livePhotos;
+    return result.tree;
   }
 
-  private static livePhotosCandidateFilePaths: string[] = [];
-
-  private static async storeLivePhotosCandidateFilePaths(dirTree: DirectoryTree) {
-    const flattenedDirTree = await this.worker.convertToFlattenedDirTree(dirTree);
-    this.livePhotosCandidateFilePaths
-      = flattenedDirTree
-        .filter(element => FilenameExtension.isLivePhotos(element.extension))
-        .map(element => element.path.toLowerCase());
-  }
-
+  /** The Live Photos movie next to a photo, which the main process matched when it read the folder. */
   public static getLivePhotosFilePathIfAvailable(photoFilePath: string) {
-    const livePhotosExtensions = FilenameExtension.extensionsForLivePhotos;
-
-    for (const extension of livePhotosExtensions) {
-      const result = this.findLivePhotos(photoFilePath, extension);
-      if (result.livePhotosAvailable) {
-        return {
-          livePhotosAvailable: result.livePhotosAvailable,
-          livePhotosFilePath: result.livePhotosFilePath,
-        };
-      }
-    }
-
+    const livePhotosFilePath = Object.hasOwn(this.livePhotos, photoFilePath) ? this.livePhotos[photoFilePath] : '';
     return {
-      livePhotosAvailable: false,
-      livePhotosFilePath: '',
+      livePhotosAvailable: !!livePhotosFilePath,
+      livePhotosFilePath,
     };
-  }
-
-  private static findLivePhotos(photoFilePath: string, extension: string) {
-    const parsedPath = pathModule.parse(photoFilePath);
-    const livePhotosFilePath = pathModule.join(parsedPath.dir, parsedPath.name + extension).toLowerCase();
-    const livePhotosAvailable = this.livePhotosCandidateFilePaths.includes(livePhotosFilePath);
-    return {livePhotosAvailable, livePhotosFilePath};
   }
 }

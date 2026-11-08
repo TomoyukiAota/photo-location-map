@@ -1,6 +1,5 @@
-import { ipcRenderer } from 'electron';
+import { bridge } from '../../../../../src-shared/bridge/plm-bridge';
 import { ExifReadOutput, ExifReadResult } from '../../../../../src-shared/exif/exif-read-result';
-import { IpcConstants } from '../../../../../src-shared/ipc/ipc-constants';
 import { Logger } from '../../../../../src-shared/log/logger';
 import { DateTimeOriginal } from '../../model/date-time-original';
 import { Dimensions } from '../../model/dimensions.model';
@@ -16,7 +15,7 @@ import { exifPerfStats } from '../exif-perf-stats';
 // One request per photo: the parse and the thumbnail together.
 async function readExifInMainProcess(filePath: string): Promise<ExifReadResult> {
   const startMs = performance.now();
-  const result: ExifReadResult = await ipcRenderer.invoke(IpcConstants.Exif.Read, filePath);
+  const result: ExifReadResult = await bridge().exif.read(filePath);
   exifPerfStats.readMs += performance.now() - startMs;
   if (result.parse === 'ok') {
     exifPerfStats.parseMs += result.parseMs;

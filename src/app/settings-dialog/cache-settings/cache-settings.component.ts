@@ -1,9 +1,7 @@
-import { AfterViewInit, Component, ElementRef, OnInit, viewChild } from '@angular/core';
-import * as fsExtra from 'fs-extra';
-import { openWithAssociatedApp } from '../../../../src-shared/command/command';
+import { AfterViewInit, Component, ElementRef, viewChild } from '@angular/core';
+import { bridge } from '../../../../src-shared/bridge/plm-bridge';
 import { Logger } from '../../../../src-shared/log/logger';
-import { restartApp } from '../../../../src-shared/process/restart-app';
-import { plmThumbnailCacheDir } from '../../../../src-shared/thumbnail/cache/thumbnail-cache-util';
+import { startupMetadata } from '../../../../src-shared/startup/startup-metadata';
 import { configureOpeningInOsBrowser } from '../../shared/open-url/configure-opening-in-os-browser';
 import { MatButton } from '@angular/material/button';
 
@@ -13,23 +11,21 @@ import { MatButton } from '@angular/material/button';
   styleUrls: ['./cache-settings.component.scss'],
   imports: [MatButton]
 })
-export class CacheSettingsComponent implements AfterViewInit, OnInit {
-  public thumbnailCacheLocation = plmThumbnailCacheDir;
+export class CacheSettingsComponent implements AfterViewInit {
+  public thumbnailCacheLocation = startupMetadata().thumbnailCacheDir;
 
   public readonly heifWikipediaLink = viewChild.required<ElementRef<HTMLAnchorElement>>('heifWikipediaLink');
-
-  ngOnInit(): void {
-    fsExtra.ensureDirSync(this.thumbnailCacheLocation);
-  }
 
   ngAfterViewInit() {
     configureOpeningInOsBrowser(this.heifWikipediaLink(), 'https://en.wikipedia.org/wiki/High_Efficiency_Image_File_Format',
                                 'HEIF page in Wikipedia', 'Settings Dialog] [Cache');
   }
 
+  /** The main process makes the folder if it is not there, then opens it with the OS. */
   public openThumbnailCacheLocation(): void {
     Logger.info(`Open Thumbnail Cache Location: ${this.thumbnailCacheLocation}`);
-    openWithAssociatedApp(this.thumbnailCacheLocation);
+    bridge().thumbnailCache.open()
+      .catch(error => Logger.error(`Failed to open the thumbnail cache location.`, error));
   }
 
   public handleDeleteThumbnailCacheButtonClicked() {
@@ -37,8 +33,8 @@ export class CacheSettingsComponent implements AfterViewInit, OnInit {
     if (!isOkPressed)
       return;
 
-    fsExtra.emptyDirSync(this.thumbnailCacheLocation);
-    Logger.info(`Thumbnail cache is deleted, so the application will restart.`);
-    restartApp();
+    // The main process empties the cache, then restarts the app, which ends this page.
+    bridge().thumbnailCache.deleteAndRestart()
+      .catch(error => Logger.error(`Failed to delete the thumbnail cache.`, error));
   }
 }

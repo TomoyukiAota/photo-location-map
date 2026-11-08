@@ -1,4 +1,4 @@
-import { DirectoryTree } from 'directory-tree';
+import type { DirectoryTree } from 'directory-tree';
 import { Analytics } from '../analytics/analytics';
 import { countBy, countsLabel } from '../analytics/counts-label';
 import { convertToFlattenedDirTree } from '../dir-tree/dir-tree-util';

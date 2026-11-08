@@ -1,19 +1,22 @@
 import { app, ipcMain } from 'electron';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { Logger } from '../../src-shared/log/logger';
+import { assertFromMainWindow } from '../ipc/ipc-sender';
 import { addExplorerContextMenu, afterPreviousChange, removeExplorerContextMenu } from './explorer-context-menu';
 
 // The OS tab of the settings dialog, shown on Windows only, asks for these. A rejection reaches the renderer's invoke.
 
 /** Adds "Open with Photo Location Map" in the context menu of Explorer, for this application's exe. */
-function handleAdd(): Promise<void> {
+function handleAdd(event: Electron.IpcMainInvokeEvent): Promise<void> {
   Logger.debug(`[IPC Main Received] ${IpcConstants.ExplorerContextMenu.Add}`);
+  assertFromMainWindow(event, 'Adding to the context menu of Explorer');
   return afterPreviousChange(() => addExplorerContextMenu(app.getPath('exe')));
 }
 
 /** Removes "Open with Photo Location Map" from the context menu of Explorer. */
-function handleRemove(): Promise<void> {
+function handleRemove(event: Electron.IpcMainInvokeEvent): Promise<void> {
   Logger.debug(`[IPC Main Received] ${IpcConstants.ExplorerContextMenu.Remove}`);
+  assertFromMainWindow(event, 'Removing from the context menu of Explorer');
   return afterPreviousChange(() => removeExplorerContextMenu());
 }
 

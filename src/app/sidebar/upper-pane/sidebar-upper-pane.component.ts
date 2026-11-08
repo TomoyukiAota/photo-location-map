@@ -1,7 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { ipcRenderer } from 'electron';
-import * as fsExtra from 'fs-extra';
-import { IpcConstants } from '../../../../src-shared/ipc/ipc-constants';
+import { bridge } from '../../../../src-shared/bridge/plm-bridge';
 import { Logger } from '../../../../src-shared/log/logger';
 import { perfMark } from '../../../../src-shared/perf/perf-mark';
 import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
@@ -26,14 +24,15 @@ export class SidebarUpperPaneComponent {
   private readonly folderDialogHistory = new OpenFolderDialogHistory({
     read: () => UserDataStorage.readOrDefault(UserDataStoragePath.FolderDialog.LastConfirmedDirectory, null),
     write: directoryPath => UserDataStorage.write(UserDataStoragePath.FolderDialog.LastConfirmedDirectory, directoryPath),
-    isDirectory: async directoryPath => (await fsExtra.stat(directoryPath)).isDirectory(),
+    // The main process checks the folder that the picker would start in (src-main/folder-dialog/).
+    isDirectory: directoryPath => bridge().folderDialog.isDirectory(directoryPath),
     reportFailure: error => Logger.warn('Could not restore or persist folder dialog history.', error),
   });
 
   public async showOpenFolderDialog() {
     perfMark('open-folder:dialog-requested');
     // The main process shows the picker for this window (src-main/folder-dialog/).
-    const result: { canceled: boolean, filePaths: string[] } = await ipcRenderer.invoke(IpcConstants.FolderDialog.Show, {
+    const result = await bridge().folderDialog.show({
       defaultPath: await this.folderDialogHistory.getDefaultPath(),
     });
 
