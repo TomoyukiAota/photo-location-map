@@ -7,11 +7,13 @@ the existence of the plan or from an agent's earlier messages.
 ## Current checkpoint
 
 - State: COMPLETE, stages 0 to 3 and three stage 4 items, with follow-ups that
-  the owner asked for on 2026-11-08 (stage ledger): the fix of question 4, IN
-  REVIEW on the branch `claude/tree-context-menu-backdrop`, then the Material
-  tree's accessors (question 6). What is left besides is the owner's: the
-  checks after the merges (the OS tab on Windows, Google Maps with an API
-  key), and the questions below.
+  the owner asked for on 2026-11-08 (stage ledger): the fix of question 4,
+  accepted; the Material tree's accessors, IN REVIEW on the branch
+  `claude/material-tree-accessors`; then `inject()`, `@Service`,
+  `ngclass-to-class` and the standalone migration, one pull request each, in
+  that order (question 6). What is left besides is the owner's: the checks
+  after the merges (the OS tab on Windows, Google Maps with an API key), and
+  the questions below.
 - Authorized (owner, 2026-11-08): carry out the whole plan once the
   prerequisite is met, one pull request per stage or slice; address the
   CodeRabbit review of each pull request, then merge it (the `automerge`
@@ -31,8 +33,8 @@ the existence of the plan or from an agent's earlier messages.
 - Investigation: complete on 2026-11-07 (REPORT.md, INVENTORY.md, MCP.md).
   The Angular unit tests passed under the zoneless TestBed default that day:
   25 files, 37 tests.
-- Last accepted slice: the stage 4 item `strictTemplates`, #655, merged on
-  2026-11-08 as 3b9064c.
+- Last accepted slice: the fix of question 4, #657, merged on 2026-11-08 as
+  b8163d7.
   Baseline (stage 0.4): recorded under "Baseline" below.
 - Runtime, dependency, test or build changes made by this plan: stage 0 added
   e2e cases, the MCP configuration and lint policy comments. 1A keeps the
@@ -48,7 +50,8 @@ the existence of the plan or from an agent's earlier messages.
   suite fails (NG0100). Stage 3 removes Zone.js. Stage 4 removes the
   `NgZone.run` wrappers and `RouterTestingModule`, and checks the templates
   strictly. The fix of question 4 makes the tree's context menu listen to its
-  own backdrop.
+  own backdrop. The Material tree's accessors replace the deprecated flat tree
+  classes in the directory tree.
 - Processes or CI runs owned by this work: the CI of the follow-up pull
   requests.
 - `provideCheckNoChangesConfig` (PLAN.md, 3.5) stays in development builds:
@@ -102,8 +105,9 @@ continue from "Next action" in the ledger below.
 | 4 `NgZone.run` wrappers | ACCEPTED | #653 | e8f63d9 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 39 cases in 3.4 min, all pass; `build:dev` and e2e, 39 cases in 4.2 min, no NG0100; CI green; CodeRabbit: question 6's assumption, which said the small items were done, corrected, then no actionable comments | headless e2e of what goes through `window.plmInternalRenderer` and the menus | none |
 | 4 `RouterTestingModule` | ACCEPTED | #654 | 1b8907e | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70) and `build:prod` pass; before the rebase onto main, `PLM_VISUAL=1` e2e with 38 cases passed too; CI green; CodeRabbit: no actionable comments | none needed: a spec only | none |
 | 4 `strictTemplates` | ACCEPTED | #655 | 3b9064c | 2026-11-08, macOS, on this branch's head: `build:dev`, `build:prod`, unit (Vitest 81, Electron-Mocha 121 and 70) and lint pass; binding 123 to the string input `photoPath` failed `build:prod`, as it should; `build:dev`, which compiles just in time, checks no templates; CI green; CodeRabbit: that `ng test` and `build:dev`, which compile just in time, check no templates, now said next to the setting and in this row, then no actionable comments | none needed: compile-time checks only | none |
-| question 4, the tree's context menu | IN REVIEW | `claude/tree-context-menu-backdrop` | | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 39 cases in 3.4 min, all pass; `build:dev` and e2e, 39 cases in 4.3 min, no NG0100; the context menu's case, with a backdrop before the menu's, failed with the helper of main, as it should | headless e2e "a right-click outside the tree's context menu closes it" | merge the pull request after its review |
-| 4 other items | NOT STARTED | | | NOT RUN | | the Material tree's accessors next, which the owner asked for on 2026-11-08; the others: question 6 below |
+| question 4, the tree's context menu | ACCEPTED | #657 | b8163d7 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 39 cases in 3.4 min, all pass; `build:dev` and e2e, 39 cases in 4.3 min, no NG0100; the context menu's case, with a backdrop before the menu's, failed with the helper of main, as it should; CI green after a rerun of the Windows job of the push, which had failed in a case that the fix does not touch: Playwright's worker could not close the application in time, and then could not remove the test profile's temporary folder (EBUSY); the pull_request trigger had passed on the same commit; CodeRabbit: no actionable comments | headless e2e "a right-click outside the tree's context menu closes it" | none |
+| 4 Material tree accessors | IN REVIEW | `claude/material-tree-accessors` | | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 40 cases in 3.5 min, all pass; `build:dev` and e2e, 40 cases in 4.3 min, no NG0100; the new case passed with main's tree too; on synthetic folders of 20,000 and 100,000 files, opening, expanding and collapsing took as long as with main's tree (see "Findings while executing") | headless e2e "a folder of the tree expands and collapses, and keeps the selection of its photos", and the other cases of the tree | merge the pull request after its review |
+| 4 other items | NOT STARTED | | | NOT RUN | | `inject()`, `@Service`, `ngclass-to-class` and the standalone migration, which the owner asked for on 2026-11-08, one pull request each in that order; pinned photos as a `computed`: question 6 below |
 
 ## Progress counters
 
@@ -215,7 +219,7 @@ generation between its start and its end, and the two rows left to the owner.
 | Loading dialog progress | large folder | text changes after "Collecting files..." and ends with "Completed loading all files" | 2026-11-08, 1C, macOS: headless e2e "the loading-folder dialog follows the loading of the files to the end", on the e2e photo folder rather than a large one: the dialog starts at "Collecting files..." and shows "Completed loading all files" before it closes |
 | Thumbnail status bar | HEIC folder, empty cache | appears, progresses, completes; details toggle; close button; Open Folder disabled while generating | 2026-11-08, 1D, macOS: headless e2e "the thumbnail status bar follows the generation of HEIF thumbnails from start to end": it appears, completes, disables Open Folder while generating, and closes; with one file, no step between the start and the end shows; the details toggle in the error dialog case |
 | Thumbnail error dialog | corrupt HEIC | "Click here..." link; dialog table sorts, filters, opens file/folder | 2026-11-08, 2, macOS: headless e2e "the thumbnail error dialog lists, sorts and filters the HEIF files without a thumbnail", which also opens a file and its folder, with the command replaced |
-| Tree checkboxes | click file and folder nodes | checked/indeterminate states; map and chart follow | 2026-11-08, 1E-1, macOS: headless e2e "the tree shows partly selected folders, and Select Only This from its menu selects one folder" and "folder picker loads real photo data, markers, tree selection and chart" |
+| Tree checkboxes | click file and folder nodes | checked/indeterminate states; map and chart follow | 2026-11-08, 1E-1, macOS: headless e2e "the tree shows partly selected folders, and Select Only This from its menu selects one folder" and "folder picker loads real photo data, markers, tree selection and chart"; 2026-11-08, Material tree, macOS: the same cases, and "a folder of the tree expands and collapses, and keeps the selection of its photos" |
 | Context menu | right-click a node | items act; menu closes on right-click outside | 2026-11-08, 1E-1, macOS: headless e2e "the tree shows partly selected folders, and Select Only This from its menu selects one folder"; 2026-11-08, 2, macOS: headless e2e "a right-click outside the tree's context menu closes it" (see "Findings while executing" for the loading dialog); 2026-11-08, question 4, macOS: the same case, with a stand-in for the dialog's backdrop before the menu's |
 | Popup "Select only this" | marker popup menu | tree, map and chart follow | 2026-11-08, 1E-1, macOS: headless e2e "Select Only This from a marker popup selects that photo in the tree and on the map" |
 | Region selection | draw a rectangle/polygon, "Select Photos" | count in the region info; tree, map and chart follow; remove region | 2026-11-08, 1E-1, macOS: headless e2e "map regions preserve drawing, removal and real photo selection" |
@@ -290,6 +294,15 @@ generation between its start and its end, and the two rows left to the owner.
   worktree: without `GH_TOKEN` there is no file, and with one the build fails
   with "Cannot detect repository by .git/config". The package itself was
   built and signed, and the macOS CI job runs the whole test.
+- 2026-11-08, Material tree: with `childrenAccessor`, the CDK tree goes
+  through every node that the accessor returns, all the way down, whenever its
+  data or what is expanded changes, with an rxjs chain per node. Returning
+  every child, expanding or collapsing a folder took 30 to 50 ms on a
+  synthetic folder of 20,000 files, against 2 to 20 ms with the deprecated
+  data source, and opening a folder went through the previous one too. The
+  accessor returns the children of expanded nodes only, the ones that the tree
+  shows: on 20,000 and 100,000 files, opening, expanding and collapsing then
+  took as long as with the data source, 3 to 40 ms.
 
 ## Questions for the owner
 
@@ -304,7 +317,7 @@ changes if the answer differs; keep answered rows, with the answer.
 | 3 | In a git worktree, mise does not trust the worktree's `mise.toml`, as trust is kept per path, so `mise exec` fails there. Should AGENTS.md say what agents do then? | This work passed `MISE_TRUSTED_CONFIG_PATHS=<worktree>/mise.toml` to each command rather than running `mise trust`; nothing in the repository depends on it. | all |
 | 4 | The tree's context menu does not close on a right-click outside it while the loading dialog is still closing (see "Findings while executing"). Fix it, by listening to the menu's own backdrop, the last one? | Owner, 2026-11-08: fix it. Fixed on the branch `claude/tree-context-menu-backdrop` (stage ledger). | 2 |
 | 5 | In a git worktree, `npm run test:package` fails its check of `latest-mac.yml` (see "Findings while executing"). Should AGENTS.md say so, with question 3? | Assumed: the macOS CI job, which runs it in a clone, is the check. | 3 |
-| 6 | Which of the other stage 4 items should follow: `inject()` with `prefer-inject`, `@Service`, the Material tree's `childrenAccessor`/`levelAccessor`, the standalone migration with `prefer-standalone`, `ngclass-to-class` (2.4), and pinned photos as a `computed`? They change the code's style throughout rather than its behavior. | Owner, 2026-11-08: the Material tree's accessors. The owner has the others explained and has not chosen among them yet. The three small items, `NgZone.run`, `RouterTestingModule` and `strictTemplates`, are done, one pull request each. | 4 |
+| 6 | Which of the other stage 4 items should follow: `inject()` with `prefer-inject`, `@Service`, the Material tree's `childrenAccessor`/`levelAccessor`, the standalone migration with `prefer-standalone`, `ngclass-to-class` (2.4), and pinned photos as a `computed`? They change the code's style throughout rather than its behavior. | Owner, 2026-11-08: all of them but pinned photos as a `computed`, which the owner has had explained and has not chosen: the Material tree's accessors, then `inject()`, `@Service` (after `inject()`, as the service migration leaves a class that takes its dependencies in its constructor as it is), `ngclass-to-class` and the standalone migration, one pull request each. The three small items, `NgZone.run`, `RouterTestingModule` and `strictTemplates`, are done, one pull request each. | 4 |
 
 ## Required update fields while executing
 
