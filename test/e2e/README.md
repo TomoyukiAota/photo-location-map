@@ -91,8 +91,9 @@ changes can update references normally with Playwright's `--update-snapshots`
 option when the migration guard is unset.
 
 The visual references are macOS arm64 at a 1200x800 content size. Keep the same
-display scaling, locale and fonts. OpenStreetMap tiles can vary independently;
-inspect any difference. Date examples and temporary cache paths are masked.
+display scaling and color profile, locale and fonts. OpenStreetMap tiles can
+vary independently; inspect any difference. Date examples and temporary cache
+paths are masked.
 Nonvisual runs fit the physical work area so native pointer events stay on screen.
 `PLM_E2E_COMPACT=1` exercises a 960x600 maximum content area locally. Map checks
 count represented photos across marker clusters; clustering can change with size.
@@ -106,6 +107,28 @@ The resized reference includes a hovered gutter. The test performs a real hover
 and checks its color/transition first, then holds that pseudo-state through CDP
 only during capture so native focus changes cannot clear it. Product styles and
 comparison tolerance are unchanged.
+
+CI compares the screenshots on macOS arm64 too, against references of its own
+in `snapshots-ci/macos-26-arm64/`, which `PLM_VISUAL_REFERENCES` selects. The
+runner draws them differently from the Mac that `snapshots/` matches, by more
+than the comparisons allow. Its macOS sets text differently: some lines move by
+a pixel, and the chart's axis labels, drawn in the system's sans-serif font,
+are narrower, so the axis shows other dates. Its saturated colors are plain
+sRGB, while the Mac converted them, as a display's color profile does:
+Material's red #F44336 is (225, 82, 65) in `snapshots/`. CI's set is not the
+original one: the runner wrote it from an application whose screenshots matched
+`snapshots/` locally. CI runs the packaged application, so it has no
+screenshots of the website case. To write the set anew, after an intentional
+change or when the runner's fonts change, run "CI on macOS" by hand with
+`update_screenshots`:
+
+```sh
+gh workflow run ci-on-mac.yml --ref <branch> -f update_screenshots=true
+```
+
+Its artifact `screenshots-macos-26-arm64` holds the folder, with the references
+that differed written anew. Compare them with `snapshots/` before committing
+them: they should differ only in how text is set and in saturated colors.
 
 The negative controls `PLM_NEGATIVE_CONTROL=1` and `PLM_MAP_NEGATIVE_CONTROL=1`,
 combined with `PLM_VISUAL=1`, deliberately move the Open Folder button by 20px
