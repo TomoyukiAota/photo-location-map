@@ -120,6 +120,7 @@ and continue from "Next action" in the ledger below.
 | 4 `ngclass-to-class` | ACCEPTED | #661 | 646e4ed | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 82, Electron-Mocha 121 and 70), live-reload, `build:prod` and `PLM_VISUAL=1` e2e with 40 cases in 3.5 min, all pass, the committed references unchanged; `build:dev` and e2e, 40 cases in 4.4 min, no NG0100; no `ngClass` is left; CI green; CodeRabbit: no actionable comments | headless e2e of what the 7 bindings show: the two status bars, the thumbnail status bar's details and close button, the settings dialog's tabs, the menu button and the sort's information | none |
 | 4 standalone | ACCEPTED | #662 | 7bf8755 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 82, Electron-Mocha 121 and 70), live-reload, `build:prod` and `PLM_VISUAL=1` e2e with 40 cases in 3.5 min, all pass, the committed references unchanged; `build:dev` and e2e, 40 cases in 4.3 min, no NG0100; no NgModule is left, and `build:prod`, which checks every template strictly, fails for a component that misses an import; with a binding of the loaded-files status bar changed without notification, a development build failed an e2e case with NG0100, as it should; CI green; CodeRabbit: no actionable comments | headless e2e: the whole suite | none |
 | 4 pinned photos as a `computed` | IN REVIEW | `claude/pinned-photos-computed` | | 2026-11-08, macOS, before the rebase onto main, which brought documents only: lint, unit (Vitest 91, Electron-Mocha 121 and 70), live-reload, `build:prod` and `PLM_VISUAL=1` e2e with 41 cases in 3.6 min, all pass, the committed references unchanged; `build:dev` and e2e, 41 cases in 4.6 min, no NG0100; with plain signals for the zoom and the checkbox, which do not go back when the chart draws again, 2 unit tests and the new e2e case failed (3 photos pinned expected, 2 received), as they should | headless e2e "while the chart is zoomed, its checkbox adds the photos without a shooting time, and a new selection ends the zoom", and the chart's other cases | merge |
+| question 8, the e2e suite against a development build in CI | IN REVIEW | `claude/ci-e2e-dev-build` | | 2026-11-08: the same steps passed in CI on Ubuntu on c82d11b, in 12 minutes rather than about 8: against the development build, 39 cases passed and 1 was skipped, without NG0100; the Windows job took 14 minutes; that commit also compared the screenshots on macOS (question 9) | none needed: CI only | merge |
 
 ## Progress counters
 
@@ -348,6 +349,18 @@ generation between its start and its end, and the two rows left to the owner.
   is zoomed puts the photos without a shooting time where they are in the
   selection, rather than after the others. The same photos are pinned, and
   the map's cluster popup sorts its photos itself (`PhotoClusterViewer`).
+- 2026-11-08, question 8: on CI's macOS runner (`macos-26`, macOS 26.7.2),
+  the screenshot comparisons failed in two cases: `welcome.png` differed in
+  2,089 pixels and `loaded-home.png` in 3,765, a ratio of 0.01 where 0.001 is
+  allowed. The references pass locally on macOS 27.0.1, and the differences
+  are in how the runner's macOS sets text. In the welcome dialog, two lines,
+  the OK button and the logo are a pixel higher or lower. In the main window,
+  the map's labels, scale and attribution are a pixel higher, and the chart's
+  axis labels, which ECharts draws on a canvas in the system's sans-serif
+  font, are narrower, so the axis shows other dates (2014-09-05 rather than
+  2014-10-19). Each case stops at its first difference, so the screenshots
+  after it were not compared. GitHub has no macOS 27 runner yet:
+  `macos-latest` is macOS 26.
 
 ## Questions for the owner
 
@@ -364,7 +377,8 @@ changes if the answer differs; keep answered rows, with the answer.
 | 5 | In a git worktree on macOS, `npm run test:package` fails its check of `latest-mac.yml` (see "Findings while executing"). Should AGENTS.md say so, with question 3? | Owner, 2026-11-08: write it in AGENTS.md, with question 3. Written there under "In a git worktree": the macOS CI job, which works in a clone, runs the whole test. | 3 |
 | 6 | Which of the other stage 4 items should follow: `inject()` with `prefer-inject`, `@Service`, the Material tree's `childrenAccessor`/`levelAccessor`, the standalone migration with `prefer-standalone`, `ngclass-to-class` (2.4), and pinned photos as a `computed`? They change the code's style throughout rather than its behavior. | Owner, 2026-11-08: all of them but pinned photos as a `computed`, which the owner has had explained and has not chosen: the Material tree's accessors, then `inject()`, `@Service` (after `inject()`, as the service migration leaves a class that takes its dependencies in its constructor as it is), `ngclass-to-class` and the standalone migration, one pull request each: #658 to #662. The three small items, `NgZone.run`, `RouterTestingModule` and `strictTemplates`, are done, one pull request each. Then, on the same day, the owner chose pinned photos as a `computed` too (stage ledger). | 4 |
 | 7 | Report upstream what the migrations here showed? The Angular CLI's MCP tool `onpush_zoneless_migration` fails with ENOTDIR on a spec file (MCP.md); `ng generate @angular/core:signals` writes twice in files that two tsconfigs compile; and the bootstrap step of `ng generate @angular/core:standalone` drops what `bootstrapModule()` was given (both under "Findings while executing"). | Assumed: not reported, as a report is outward-facing and the owner's to decide. | 2, 4 |
-| 8 | Run the e2e suite against a development build in CI too, on one OS? CI runs it against the production build only, so the check for bindings changed without notification (NG0100) runs only when someone runs it locally. | Assumed: not done; it would add about 4.5 minutes to one job. | 2, 3 |
+| 8 | Run the e2e suite against a development build in CI too, on one OS? CI runs it against the production build only, so the check for bindings changed without notification (NG0100) runs only when someone runs it locally. | Owner, 2026-11-08: yes, and the screenshot comparisons too. The Ubuntu job runs the suite against a development build after the AppImage (stage ledger); the screenshots are question 9. | 2, 3 |
+| 9 | CI's macOS runner draws two screenshots differently from the references, by more than the comparisons allow (see "Findings while executing"). Compare the screenshots in CI against a second set of references, made on the runner, or only locally, as before? | Assumed: only locally until the owner decides; the second set is prepared on the branch `claude/ci-e2e-dev-build-and-screenshots`. | CI |
 
 ## Required update fields while executing
 
