@@ -1,4 +1,5 @@
 import '../electron-util/isolated-test-profile';
+import './user-data-storage/user-data-storage-setup';
 import { withHeadlessTestOptions } from '../electron-util/e2e-test-hooks';
 import './configure-electron-unhandled';
 import './command-line-options/configure-command-line-options';

@@ -43,8 +43,8 @@ async function expectWindowOffScreenOnlyIfHeadless(window) {
   } else expect(state.visible, 'A headless run must keep the window hidden.').toBe(false);
 }
 /** Launches the application on the test profile, finds its main window as `page`, and checks how it runs. */
-async function launch({ resize = true } = {}) {
-  const env = { ...process.env, PLM_TEST_ROOT: profile, PLM_E2E: '1', PLM_TEST_HEADLESS: headless ? '1' : '0' };
+async function launch({ resize = true, env: extraEnv = {} } = {}) {
+  const env = { ...process.env, PLM_TEST_ROOT: profile, PLM_E2E: '1', PLM_TEST_HEADLESS: headless ? '1' : '0', ...extraEnv };
   for (const key of ['PLM_EM_MAIN', 'PLM_EM_RENDERER', 'ELECTRON_RUN_AS_NODE', 'NODE_OPTIONS']) delete env[key];
   // A publicly launched package has no npm development-profile override.
   if (packagedExecutable) delete env.npm_package_config_devOrProd;
@@ -1425,6 +1425,90 @@ test('the thumbnail error dialog lists, sorts and filters the HEIF files without
   expect(openFile).not.toBe(openFolder);
   await dialog.getByRole('button', { name: 'Close', exact: true }).click();
   await expect(dialog).toHaveCount(0);
+});
+/** The value of a setting in the test profile's files, or undefined. */
+async function savedSetting(userData, storagePath) {
+  const file = path.join(userData, 'PhotoLocationMapStorage', ...storagePath.slice(0, -1), `${storagePath.at(-1)}.json`);
+  try {
+    return JSON.parse(await readFile(file, 'utf8'))[storagePath.at(-1)];
+  } catch {
+    return undefined;
+  }
+}
+/**
+ * Waits until the application, asked to restart, has quit and launched again by itself, and returns the relaunched
+ * process's line of the launch report (PLM_TEST_LAUNCH_REPORT, electron-util/e2e-test-hooks.js), once its home view
+ * has rendered. The relaunched process is not under the test's control, so it is stopped here.
+ */
+async function waitForRealRelaunch(report, exited, pid) {
+  await exited;
+  let relaunched;
+  await expect.poll(async () => {
+    const lines = (await readFile(report, 'utf8').catch(() => '')).split('\n').filter(Boolean).map(line => JSON.parse(line));
+    relaunched = lines.find(line => line.pid !== pid);
+    return !!relaunched;
+  }, { timeout: 60000, message: 'The app did not launch again by itself.' }).toBe(true);
+  process.kill(relaunched.pid, 'SIGTERM');
+  await expect.poll(() => { try { process.kill(relaunched.pid, 0); return true; } catch { return false; } }, { timeout: 15000 }).toBe(false);
+  return relaunched;
+}
+test('settings changed just before quitting are saved', async () => {
+  // A renderer's writes go to the main process, which writes the files: one sent before the quit is written.
+  const userData = await app.evaluate(({ app }) => app.getPath('userData'));
+  await dismissWelcome();
+  await page.locator('.more-options-button').click();
+  await page.locator('button[mat-menu-item]').filter({ hasText: 'Sort' }).click();
+  await page.locator('button[mat-menu-item]').filter({ hasText: 'Descending' }).click();
+  const exited = new Promise(resolve => app.process().once('exit', resolve));
+  await app.evaluate(({ app }) => app.quit());
+  await exited;
+  expect(await savedSetting(userData, ['History', 'ClickedOkOnWelcomeDialog'])).toBe('true');
+  expect(await savedSetting(userData, ['DirectoryTreeView', 'SortDirection'])).toBe('Descending');
+  await launch();
+  await expect(page.locator('app-welcome-dialog')).toHaveCount(0);
+});
+test('a new date format is written before the app relaunches itself, and the relaunched app reads it', async () => {
+  const report = path.join(profile, 'launches.jsonl');
+  await app.close();
+  await launch({ env: { PLM_TEST_LAUNCH_REPORT: report } });
+  const userData = await app.evaluate(({ app }) => app.getPath('userData'));
+  await dismissWelcome();
+  await settings();
+  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Date & Time' }).click();
+  await page.getByRole('combobox', { name: 'Date Format' }).click();
+  await page.getByRole('option', { name: 'DD/MM/YYYY', exact: true }).click();
+  await expect(page.getByRole('listbox')).toHaveCount(0);
+  await page.evaluate(() => { window.confirm = () => true; });
+  // Taken before the click: once the app has quit, Playwright no longer has its process.
+  const { pid } = app.process();
+  const exited = new Promise(resolve => app.process().once('exit', resolve));
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  const relaunched = await waitForRealRelaunch(report, exited, pid);
+  expect(relaunched.rendererMarks.some(mark => mark.name === 'plm:renderer:home-rendered')).toBe(true);
+  expect(await savedSetting(userData, ['UserSettings', 'DateFormat'])).toBe('DD/MM/YYYY');
+  await launch();
+  await settings();
+  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Date & Time' }).click();
+  await expect(page.getByRole('combobox', { name: 'Date Format' })).toContainText('DD/MM/YYYY');
+});
+test('deleting the thumbnail cache empties it before the app relaunches itself', async () => {
+  const report = path.join(profile, 'launches.jsonl');
+  await app.close();
+  await launch({ env: { PLM_TEST_LAUNCH_REPORT: report } });
+  await dismissWelcome();
+  await settings();
+  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Cache' }).click();
+  const cacheFolder = (await page.locator('app-cache-settings .location-value').textContent()).trim();
+  await mkdir(path.join(cacheFolder, 'some', 'folder'), { recursive: true });
+  await writeFile(path.join(cacheFolder, 'some', 'folder', 'IMG_0001.HEIC.plm.jpg'), 'thumbnail');
+  await page.evaluate(() => { window.confirm = () => true; });
+  const { pid } = app.process();
+  const exited = new Promise(resolve => app.process().once('exit', resolve));
+  await page.getByRole('button', { name: 'Delete Thumbnail Cache', exact: true }).click();
+  await waitForRealRelaunch(report, exited, pid);
+  const { readdir } = await import('node:fs/promises');
+  expect(await readdir(cacheFolder)).toEqual([]);
+  await launch();
 });
 for (const [name, fixture, specialPath] of [
   ['JPEG', 'actual-photos/Kobe/IMG_4676.JPG'],

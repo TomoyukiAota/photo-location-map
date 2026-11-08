@@ -53,6 +53,12 @@ export namespace IpcConstants {
     export const Read = 'ipc-constants-read-exif';
   }
 
+  /** The settings: a renderer's synchronous request for its copy, and its writes (src-shared/user-data-storage/). */
+  export namespace UserDataStorage {
+    export const Snapshot = 'ipc-constants-user-data-storage-snapshot';
+    export const Write = 'ipc-constants-user-data-storage-write';
+  }
+
   /** A restart of the app, for a change that takes effect only on launch. Sent without waiting for an answer. */
   export namespace AppRestart {
     export const Request = 'ipc-constants-restart-app';

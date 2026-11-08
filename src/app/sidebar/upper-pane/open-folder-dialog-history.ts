@@ -3,7 +3,7 @@ import * as path from 'path';
 
 export interface OpenFolderDialogHistoryDependencies {
   read(): unknown;
-  write(directoryPath: string): void;
+  write(directoryPath: string): void | Promise<void>;
   isDirectory(directoryPath: string): Promise<boolean>;
   reportFailure(error: unknown): void;
 }
@@ -61,10 +61,10 @@ export class OpenFolderDialogHistory {
 
     const selectedFolderPath = result.filePaths[0];
     this.lastConfirmedDirectory = selectedFolderPath;
+    // A read-only settings directory must not prevent opening the chosen folder, whether writing fails at once or later.
     try {
-      this.dependencies.write(selectedFolderPath);
+      void Promise.resolve(this.dependencies.write(selectedFolderPath)).catch(error => this.dependencies.reportFailure(error));
     } catch (error) {
-      // A read-only settings directory must not prevent opening the chosen folder.
       this.dependencies.reportFailure(error);
     }
     return selectedFolderPath;

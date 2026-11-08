@@ -1,29 +1,42 @@
-import * as fsExtra from 'fs-extra';
-import * as path from 'path';
 import { Logger } from '../log/logger';
-import { startupMetadata } from '../startup/startup-metadata';
+import { ProcessIdentifier } from '../process/process-identifier';
+import { RendererUserDataStorage } from './renderer-user-data-storage';
 
-// Each process reads and writes the files itself: the main process, and the renderer, which has Node.js.
+/**
+ * Where the settings are kept. The main process owns them: its backend reads and writes their files
+ * (src-main/user-data-storage/). A renderer reads its copy, which it gets once from the main process, and asks the main
+ * process to write (renderer-user-data-storage.ts).
+ */
+export interface UserDataStorageBackend {
+  /** The value of `storagePath`. Throws when there is none. */
+  read(storagePath: ReadonlyArray<string>): string;
+  /**
+   * Saves `value` for `storagePath`. Later reads give `value` at once. The promise settles once it is written, and
+   * rejects if it could not be; a failure is also logged, so that a caller may ignore the promise.
+   */
+  write(storagePath: ReadonlyArray<string>, value: string): Promise<void>;
+}
+
+let backend: UserDataStorageBackend | undefined;
+
 export class UserDataStorage {
-  private static readonly fsExtra = fsExtra;
-  private static readonly path = path;
+  /** Sets where the settings are kept: in the main process, its files, before anything reads them. */
+  public static useBackend(newBackend: UserDataStorageBackend): void {
+    backend = newBackend;
+  }
 
-  // 'PhotoLocationMapStorage' is named like this to be unique without collision in 'userData' directory.
-  private static readonly subDirForStorage = 'PhotoLocationMapStorage';
-  private static get storageRootPath(): string {
-    return UserDataStorage.path.join(startupMetadata().userDataPath, UserDataStorage.subDirForStorage);
+  private static get backend(): UserDataStorageBackend {
+    if (!backend) {
+      if (ProcessIdentifier.isElectronMain)
+        throw new Error('The main process reads its settings before src-main/user-data-storage/ set where they are kept.');
+      backend = new RendererUserDataStorage();
+    }
+    return backend;
   }
 
   public static read(storagePath: ReadonlyArray<string>): string {
     this.log(storagePath, 'Attempt to read');
-    const {filePath, key} = this.getFilePathAndKey(storagePath);
-
-    if (!this.fsExtra.existsSync(filePath))
-      throw new Error(`File for ${key} does not exist in ${filePath}`);
-
-    const fileContent = this.fsExtra.readFileSync(filePath, 'utf8');
-    const jsonObject = JSON.parse(fileContent);
-    const value = jsonObject[key];
+    const value = this.backend.read(storagePath);
     this.log(storagePath, `Read result is "${value}"`);
     return value;
   }
@@ -41,31 +54,11 @@ export class UserDataStorage {
     return result;
   }
 
-  public static write(storagePath: ReadonlyArray<string>, value: string): void {
+  public static write(storagePath: ReadonlyArray<string>, value: string): Promise<void> {
     this.log(storagePath, `Attempt to write "${value}"`);
-    const {filePath, key} = this.getFilePathAndKey(storagePath);
-    const jsonObject = {};
-    jsonObject[key] = value;
-    const fileContent = JSON.stringify(jsonObject);
-    this.fsExtra.ensureFileSync(filePath);
-    this.fsExtra.writeFileSync(filePath, fileContent);
-    this.log(storagePath, `Finished writing "${value}"`);
-  }
-
-  public static getFilePath(storagePath: ReadonlyArray<string>): string {
-    const {filePath} = this.getFilePathAndKey(storagePath);
-    return filePath;
-  }
-
-  private static getFilePathAndKey(storagePath: ReadonlyArray<string>): { filePath: string; key: string } {
-    if (!storagePath || !storagePath.length) {
-      throw new Error('storagePath needs to be a string array which contains at least 1 element.');
-    }
-
-    const copiedStoragePath = Array.from(storagePath);
-    const lastElement = copiedStoragePath.pop();
-    const filePath = this.path.join(this.storageRootPath, ...copiedStoragePath, `${lastElement}.json`);
-    return {filePath: filePath, key: lastElement};
+    const written = this.backend.write(storagePath, value);
+    written.then(() => this.log(storagePath, `Finished writing "${value}"`), () => {});
+    return written;
   }
 
   private static log(storagePath: ReadonlyArray<string>, message: string) {
