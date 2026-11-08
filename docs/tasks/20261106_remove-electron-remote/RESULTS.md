@@ -25,6 +25,7 @@ The comparisons of [PERFORMANCE.md](PERFORMANCE.md), made with the harness in
 | --- | --- | --- | --- | --- |
 | [pilot](results/pilot.md) | none | 0 (code e6a1d1e7c0b2) | 3 + 1 warm-up each, all ok | Set the rules of rer-1. |
 | [rer-1-0](results/rer-1-0.md) | rer-1 | 0 | 10 + 1 each, all ok | The stage 0 baseline under rer-1. A Time Machine backup started at round 2; the settings dialog's closing, timed with Playwright's polls, then read about 210 ms instead of 110. Superseded by rer-2 for that and the viewer's metadata; the other times are kept as the record of stage 0. |
+| [rer-2-A](results/rer-2-A.md) | rer-2 | 0, A (235d6172) | 10 + 1 each, all 88 ok | Builds alternated by round; viewer unchanged; load average 3.0 at the start, 2.2 at the end. |
 
 ### Stage 0 (rer-1-0), the main metrics
 
@@ -49,3 +50,37 @@ Medians of ten trials, with the median absolute deviation; times in milliseconds
 | View Data, HEIC | Request to the photo shown | 573.4 | 7.4 |
 | | Process tree, peak increase | 492 | 4.5 |
 | Settings | Save to the restarted app's home view | 518.2 | 6.7 |
+
+### Stage A against 0 (rer-2-A)
+
+Medians of ten trials of each build, run in alternating order; times in milliseconds.
+
+| Scenario | Metric | 0 | A | A vs 0 |
+| --- | --- | ---: | ---: | --- |
+| Startup, new profile | Spawn to the home view | 403.0 | 397.6 | -1.4 %, within budget |
+|  | Navigation to `src/main.ts` (the renderer's modules) | 120.5 | 115.8 | -3.9 %, within budget |
+| Startup, used profile | Spawn to the home view | 365.9 | 368.3 | +0.7 %, within budget |
+| Open the large folder, first | Start to complete | 735.2 | 644.5 | -12.3 %, improvement |
+|  | Reading the photos' data | 610.4 | 516.1 | -15.5 %, improvement |
+|  | Start to the markers on the map | 1751.5 | 1662.3 | -5.1 %, within budget |
+|  | Start to the HEIC thumbnails done | 5733.6 | 5643.9 | -1.6 %, within budget |
+|  | Longest gap between frames | 44.2 | 43.6 | -1.4 %, within budget |
+|  | Process tree, peak (MB) | 3270.8 | 3157.9 | -3.5 %, within budget |
+| Open it again | Start to complete | 735.5 | 648.1 | -11.9 %, improvement |
+| View Data, JPEG, first | Request to the photo shown | 647.2 | 648.5 | +0.2 %, within budget |
+| View Data, JPEG | Request to the photo shown | 631.2 | 631.9 | +0.1 %, within budget |
+| View Data, HEIC | Request to the photo shown | 564.0 | 564.0 | +0.0 %, within budget |
+| Settings | Save to the dialog closed | 113.5 | 113.5 | +0.0 %, within budget |
+|  | Save to the restarted app's home view | 482.8 | 481.8 | -0.2 %, within budget |
+Of 110 compared metrics, 101 are within budget, 2 invariants are the same (the files read), and 6 are improvements:
+reading the photos' data of a folder takes 15 % less, as each photo is now one request to the main process
+instead of the many synchronous calls that @electron/remote made for exifr's results, and opening the folder 12 %.
+The EXIF sums (diagnostics) show where: the main process's parse sum fell from 236 to 81 ms, since stage 0 timed each
+remote call with its IPC; the rotations in the renderer did not change.
+
+One verdict is a regression: `view-data.jpeg.menu-to-request-ms`, 24.0 to 39.1 ms. Investigated, it is not the app.
+In both builds, the time from the driver's click on View Data to the renderer's handling of it takes one of two values,
+about 23 or 39 ms, one 60 Hz frame apart: the click lands on either side of a frame boundary (eight of ten trials of
+0 at 23 ms, six of ten of A at 39). The other two View Data cases, `jpeg-first` and `heic`, did not move, and every
+span of the app after the request, such as `request-to-launch-ms` (0.3 ms) and `request-to-image-ms`, is within
+budget. The rule was frozen before stage A and is kept; the verdict is recorded as a frame-quantized driver latency.

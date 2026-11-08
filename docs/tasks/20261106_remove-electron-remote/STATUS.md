@@ -6,7 +6,7 @@ the existence of a plan or from an agent's previous messages.
 
 ## Current checkpoint
 
-- State: EXECUTING. Stage 0 accepted; stage A implemented, under verification.
+- State: EXECUTING. Stages 0 and A accepted; stage B implemented, under verification.
 - Authorization: on 2026-11-09 the owner started the implementation, to run until
   the plan is complete, with questions for the owner collected for the end
   (section "Questions for the owner" below). Merging and publishing the separate
@@ -14,7 +14,7 @@ the existence of a plan or from an agent's previous messages.
 - Final target: C, via measured 0 -> A -> B -> C1 -> C2. C1 alone is incomplete C.
 - Implementation branch: `claude/remove-electron-remote`, from main 449f30f3
   (the merge of PR 674, which includes b7c9bfe6 and PR 673). Not pushed yet.
-- Last accepted IMPLEMENTATION stage: 0 (the instrumented baseline).
+- Last accepted IMPLEMENTATION stage: A (235d6172).
 - Task-owned processes: the pinned Photo Data Viewer server, `next start -p 3130
   -H 127.0.0.1` in `.upgrade-artifacts/remove-electron-remote/viewer/1ff7a50/`
   (log `logs/viewer-1ff7a50-server.log`). Stop it when no series or test needs it;
@@ -106,8 +106,8 @@ data only in windows wider than 1200 pixels.
 | Stage | State | Accepted source/build | Tests/CI | Performance series/result | Exact next action |
 | --- | --- | --- | --- | --- | --- |
 | 0 | ACCEPTED | Instrumentation fb581a26, harness 50670795, protocol c67935b4; packaged app `artifacts/0/` (code e6a1d1e7c0b2) | Lint, unit (Vitest 89; Electron-Mocha 136 main, 70 renderer) and headless e2e (40 passed, 1 Windows-only skipped) pass on fb581a26's build | Pilot (12/12 ok) set rer-1; baseline rer-1-0 40/40 ok, viewer unchanged (RESULTS.md); rer-2 retimes two metrics in the page, and its series rerun 0 beside each stage | Done |
-| A / 1 | IN PROGRESS | Working tree on c67935b4 | Build, lint, unit (Vitest 89; Electron-Mocha 144 main, 66 renderer), dependency-compat (4) and package-runner (19) pass; e2e running | Not measured yet | Finish e2e and live reload, commit, package `artifacts/A/`, run series rer-2-A (0 and A) once the Time Machine backup has finished |
-| B / 2 | NOT STARTED | None | NOT RUN | NOT RUN | Wait for accepted A |
+| A / 1 | ACCEPTED | 235d6172; packaged app `artifacts/A/` | Build, lint, unit (Vitest 89; Electron-Mocha 144 main, 66 renderer), dependency-compat (4), package-runner (19), headless e2e (40 passed, 1 Windows-only skipped) and live reload pass; packaged tree has no @electron/remote | rer-2-A: 88/88 ok; folder opening 12 % faster, 101 within budget, one frame-quantized driver latency (RESULTS.md) | Done |
+| B / 2 | IN PROGRESS | Working tree on A | Not run yet | Not measured yet | Build, test (new e2e cases for writes before quitting and real restarts), commit, package `artifacts/B/`, run rer-2-B (0, A, B) |
 | C1 / 3 main window | NOT STARTED | None | NOT RUN | NOT RUN | Wait for accepted B |
 | C2 / 3 viewer | NOT STARTED | None | NOT RUN | NOT RUN | Compatible viewer preview may be prepared during C1; no host release before rollout gate |
 
