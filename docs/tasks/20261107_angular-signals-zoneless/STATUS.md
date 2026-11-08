@@ -10,10 +10,10 @@ the existence of the plan or from an agent's earlier messages.
   and what the owner chose afterwards: pinned photos as a `computed`, and the
   e2e suite in CI against a development build and with its screenshots
   (questions 8 and 9), which also got `settings-appearance.png` compared at
-  last (stage ledger). What is left is the owner's: question 7 below. Both
-  checks left to the owner after the merges are settled: the OS tab on Windows
-  was checked on 2026-11-08 at the owner's request (manual check list), and
-  Google Maps was removed afterwards
+  last (stage ledger). Nothing is left. The owner answered question 7: no
+  upstream reports this time. Both checks left to the owner after the merges
+  are settled: the OS tab on Windows was checked on 2026-11-08 at the owner's
+  request (manual check list), and Google Maps was removed afterwards
   ([report](../20261108_remove-google-maps/REPORT.md)).
 - Authorized (owner, 2026-11-08): carry out the whole plan once the
   prerequisite is met, one pull request per stage or slice; address the
@@ -77,9 +77,8 @@ the existence of the plan or from an agent's earlier messages.
 
 ## Resume first action
 
-The plan is complete ("Current checkpoint" above), so do not begin it again.
-The next action is the owner's: the open question under "Questions for the
-owner" below, question 7. If the owner chooses another item, branch from the
+The plan is complete ("Current checkpoint" above), so do not begin it again;
+nothing is left of it. If the owner chooses another item, branch from the
 fetched main as below, follow PLAN.md's "Checkpoint discipline", and give the
 item a row in the stage ledger.
 
@@ -409,7 +408,7 @@ changes if the answer differs; keep answered rows, with the answer.
 | 4 | The tree's context menu does not close on a right-click outside it while the loading dialog is still closing (see "Findings while executing"). Fix it, by listening to the menu's own backdrop, the last one? | Owner, 2026-11-08: fix it. Fixed on the branch `claude/tree-context-menu-backdrop` (stage ledger). | 2 |
 | 5 | In a git worktree on macOS, `npm run test:package` fails its check of `latest-mac.yml` (see "Findings while executing"). Should AGENTS.md say so, with question 3? | Owner, 2026-11-08: write it in AGENTS.md, with question 3. Written there under "In a git worktree": the macOS CI job, which works in a clone, runs the whole test. | 3 |
 | 6 | Which of the other stage 4 items should follow: `inject()` with `prefer-inject`, `@Service`, the Material tree's `childrenAccessor`/`levelAccessor`, the standalone migration with `prefer-standalone`, `ngclass-to-class` (2.4), and pinned photos as a `computed`? They change the code's style throughout rather than its behavior. | Owner, 2026-11-08: all of them but pinned photos as a `computed`, which the owner has had explained and has not chosen: the Material tree's accessors, then `inject()`, `@Service` (after `inject()`, as the service migration leaves a class that takes its dependencies in its constructor as it is), `ngclass-to-class` and the standalone migration, one pull request each: #658 to #662. The three small items, `NgZone.run`, `RouterTestingModule` and `strictTemplates`, are done, one pull request each. Then, on the same day, the owner chose pinned photos as a `computed` too (stage ledger). | 4 |
-| 7 | Report upstream what the migrations here showed? The Angular CLI's MCP tool `onpush_zoneless_migration` fails with ENOTDIR on a spec file (MCP.md); `ng generate @angular/core:signals` writes twice in files that two tsconfigs compile; the bootstrap step of `ng generate @angular/core:standalone` drops what `bootstrapModule()` was given; and Playwright 1.64.1's `toHaveScreenshot` passes without comparing when its locator matches two elements (the last three under "Findings while executing"). | Assumed: not reported, as a report is outward-facing and the owner's to decide. | 2, 4, CI |
+| 7 | Report upstream what the migrations here showed? The Angular CLI's MCP tool `onpush_zoneless_migration` fails with ENOTDIR on a spec file (MCP.md); `ng generate @angular/core:signals` writes twice in files that two tsconfigs compile; the bootstrap step of `ng generate @angular/core:standalone` drops what `bootstrapModule()` was given; and Playwright 1.64.1's `toHaveScreenshot` passes without comparing when its locator matches two elements (the last three under "Findings while executing"). | Owner, 2026-11-08: not this time; no issue or pull request is opened upstream. What was found stays recorded here and in MCP.md. | 2, 4, CI |
 | 8 | Run the e2e suite against a development build in CI too, on one OS? CI runs it against the production build only, so the check for bindings changed without notification (NG0100) runs only when someone runs it locally. | Owner, 2026-11-08: yes, and the screenshot comparisons too. The Ubuntu job runs the suite against a development build after the AppImage (stage ledger); the screenshots are question 9. | 2, 3 |
 | 9 | CI's macOS runner draws two screenshots differently from the references, by more than the comparisons allow (see "Findings while executing"). Compare the screenshots in CI against a second set of references, made on the runner, or only locally, as before? | Owner, 2026-11-08: keep a second set for CI. CI's macOS arm64 job compares the screenshots against `test/e2e/snapshots-ci/macos-26-arm64/`, made on the runner (#668); the Intel job compares none. | CI |
 
