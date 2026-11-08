@@ -25,6 +25,12 @@ export interface ThumbnailGenerationStatus {
   readonly result: ThumbnailGenerationResult | null;
 }
 
+/** The HEIF files of a folder, and whether each has its thumbnail in the cache, as the main process checked them. */
+export interface ThumbnailCacheCheck {
+  readonly allHeifFilePaths: string[];
+  readonly states: ThumbnailState[];
+}
+
 export const idleThumbnailGenerationStatus: ThumbnailGenerationStatus = {
   phase: 'idle',
   numOfAllHeifFiles: 0,
@@ -49,19 +55,21 @@ export class ThumbnailGenerationService {
   private get numOfGenerationRequiredThumbnails(): number { return this.numOfHeifFilesToGenerateThumbnail; }
 
   /**
-   * @returns Whether a generation started, which it does when a HEIF file has no thumbnail in the cache. The main
-   * process checks the cache (src-main/thumbnail-generation/thumbnail-state.ts).
+   * Has the main process check which HEIF files of a folder have their thumbnail in the cache
+   * (src-main/thumbnail-generation/thumbnail-state.ts), for startThumbnailGeneration.
    */
-  public async startThumbnailGeneration(dirTreeObj: DirectoryTree): Promise<boolean> {
-    const flattenedDirTree = convertToFlattenedDirTree(dirTreeObj);
-
-    this.allHeifFilePaths = flattenedDirTree
+  public async checkThumbnailCache(dirTreeObj: DirectoryTree): Promise<ThumbnailCacheCheck> {
+    const allHeifFilePaths = convertToFlattenedDirTree(dirTreeObj)
       .filter(element => FilenameExtension.isHeif(element.extension))
       .map(element => element.path);
+    return { allHeifFilePaths, states: await this.thumbnailStates(allHeifFilePaths) };
+  }
 
-    const states = await this.thumbnailStates(this.allHeifFilePaths);
+  /** @returns Whether a generation started, which it does when a HEIF file has no thumbnail in the cache. */
+  public startThumbnailGeneration(check: ThumbnailCacheCheck): boolean {
+    this.allHeifFilePaths = check.allHeifFilePaths;
     this.heifFilePathsToGenerateThumbnail = this.allHeifFilePaths
-      .filter((_filePath, index) => !states[index].cacheAvailable);
+      .filter((_filePath, index) => !check.states[index].cacheAvailable);
 
     if (this.numOfHeifFilesToGenerateThumbnail >= 1) {
       perfMark('thumbnails:generation-started', { all: this.numOfAllHeifFiles, required: this.numOfHeifFilesToGenerateThumbnail });
