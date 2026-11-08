@@ -298,13 +298,15 @@ generation between its start and its end, and the two rows left to the owner.
   and is recorded once with that same label, which the new e2e case "an
   unhandled promise rejection in the renderer is recorded once, with its
   message" checks.
-- 2026-11-08, 3: in a git worktree, `npm run test:package` cannot pass its
-  last check, which reads `release/latest-mac.yml`. electron-builder writes
-  that file only for a publisher, which it detects from `GH_TOKEN` (CI sets
-  it) and the repository in `.git/config`, a file rather than a folder in a
-  worktree: without `GH_TOKEN` there is no file, and with one the build fails
-  with "Cannot detect repository by .git/config". The package itself was
-  built and signed, and the macOS CI job runs the whole test.
+- 2026-11-08, 3: in a git worktree on macOS, `npm run test:package` does not
+  get through. electron-builder writes `release/latest-mac.yml` for the GitHub
+  repository that it finds in `package.json` or `.git/config`, a file rather
+  than a folder in a worktree, so it finds none there. Without `GH_TOKEN` or `GITHUB_TOKEN`, the package was built and
+  signed, but the test's check of the mac bundle failed on the missing file,
+  so the checks of the bundle's architectures and the smoke test of the
+  packaged app did not run; with `GH_TOKEN` (CI sets it), the build fails with
+  "Cannot detect repository by .git/config". The macOS CI job runs the whole
+  test.
 - 2026-11-08, Material tree: with `childrenAccessor`, the CDK tree goes
   through every node that the accessor returns, all the way down, whenever its
   data or what is expanded changes, with an rxjs chain per node. Returning
@@ -345,9 +347,9 @@ changes if the answer differs; keep answered rows, with the answer.
 | ---: | --- | --- | --- |
 | 1 | Does this plan go before the `@electron/remote` removal? | Owner, 2026-11-08: yes; that removal comes after this plan. | all |
 | 2 | Checks that need a person or another platform: the OS tab on Windows, Google Maps with an API key. | Owner, 2026-11-08: the owner checks both after the merges. | 1F, 3 |
-| 3 | In a git worktree, mise does not trust the worktree's `mise.toml`, as trust is kept per path, so `mise exec` fails there. Should AGENTS.md say what agents do then? | This work passed `MISE_TRUSTED_CONFIG_PATHS=<worktree>/mise.toml` to each command rather than running `mise trust`; nothing in the repository depends on it. | all |
+| 3 | In a git worktree, mise does not trust the worktree's `mise.toml`, as trust is kept per path, so `mise exec` fails there. Should AGENTS.md say what agents do then? | Owner, 2026-11-08: write it in AGENTS.md. Written there under "In a git worktree", as this work did it: `MISE_TRUSTED_CONFIG_PATHS=<worktree>/mise.toml` with each command rather than `mise trust`. | all |
 | 4 | The tree's context menu does not close on a right-click outside it while the loading dialog is still closing (see "Findings while executing"). Fix it, by listening to the menu's own backdrop, the last one? | Owner, 2026-11-08: fix it. Fixed on the branch `claude/tree-context-menu-backdrop` (stage ledger). | 2 |
-| 5 | In a git worktree, `npm run test:package` fails its check of `latest-mac.yml` (see "Findings while executing"). Should AGENTS.md say so, with question 3? | Assumed: the macOS CI job, which runs it in a clone, is the check. | 3 |
+| 5 | In a git worktree on macOS, `npm run test:package` fails its check of `latest-mac.yml` (see "Findings while executing"). Should AGENTS.md say so, with question 3? | Owner, 2026-11-08: write it in AGENTS.md, with question 3. Written there under "In a git worktree": the macOS CI job, which works in a clone, runs the whole test. | 3 |
 | 6 | Which of the other stage 4 items should follow: `inject()` with `prefer-inject`, `@Service`, the Material tree's `childrenAccessor`/`levelAccessor`, the standalone migration with `prefer-standalone`, `ngclass-to-class` (2.4), and pinned photos as a `computed`? They change the code's style throughout rather than its behavior. | Owner, 2026-11-08: all of them but pinned photos as a `computed`, which the owner has had explained and has not chosen: the Material tree's accessors, then `inject()`, `@Service` (after `inject()`, as the service migration leaves a class that takes its dependencies in its constructor as it is), `ngclass-to-class` and the standalone migration, one pull request each: #658 to #662. The three small items, `NgZone.run`, `RouterTestingModule` and `strictTemplates`, are done, one pull request each. | 4 |
 | 7 | Report upstream what the migrations here showed? The Angular CLI's MCP tool `onpush_zoneless_migration` fails with ENOTDIR on a spec file (MCP.md); `ng generate @angular/core:signals` writes twice in files that two tsconfigs compile; and the bootstrap step of `ng generate @angular/core:standalone` drops what `bootstrapModule()` was given (both under "Findings while executing"). | Assumed: not reported, as a report is outward-facing and the owner's to decide. | 2, 4 |
 | 8 | Run the e2e suite against a development build in CI too, on one OS? CI runs it against the production build only, so the check for bindings changed without notification (NG0100) runs only when someone runs it locally. | Assumed: not done; it would add about 4.5 minutes to one job. | 2, 3 |
