@@ -1,4 +1,4 @@
-<mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+<mat-tree #tree="matTree" [dataSource]="treeData()" [childrenAccessor]="childrenAccessor">
   <mat-tree-node *matTreeNodeDef="let node"
                  matTreeNodeToggle
                  matTreeNodePadding
@@ -27,13 +27,14 @@
   </mat-tree-node>
 
   <mat-tree-node *matTreeNodeDef="let node; when: hasChildren"
+                 isExpandable
                  matTreeNodePadding
                  [matTreeNodePaddingIndent]="indentPerLevel"
                  (contextmenu)="onContextMenu($event, node)"
-                 [title]="node.level === 0 ? 'Opened Folder - ' + node.path : ''">
+                 [title]="isOpenedFolder(node) ? 'Opened Folder - ' + node.path : ''">
     <button mat-icon-button matTreeNodeToggle>
       <mat-icon class="mat-icon-rtl-mirror">
-        {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+        {{tree.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
       </mat-icon>
     </button>
     @if (node.isSelectable) {

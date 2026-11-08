@@ -1,5 +1,5 @@
-import { FlatNode } from '../directory-tree-view.model';
+import { NestedNode } from '../directory-tree-view.model';
 
 export interface DirTreeViewContextMenuData {
-  node: FlatNode;
+  node: NestedNode;
 }
