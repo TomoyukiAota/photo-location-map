@@ -6,10 +6,12 @@ the existence of the plan or from an agent's earlier messages.
 
 ## Current checkpoint
 
-- State: COMPLETE, stages 0 to 3 and three stage 4 items. What is left is the
-  owner's: the checks after the merges (the OS tab on Windows, Google Maps
-  with an API key), and the questions below, among them the other stage 4
-  items.
+- State: COMPLETE, stages 0 to 3 and three stage 4 items, with follow-ups that
+  the owner asked for on 2026-11-08 (stage ledger): the fix of question 4, IN
+  REVIEW on the branch `claude/tree-context-menu-backdrop`, then the Material
+  tree's accessors (question 6). What is left besides is the owner's: the
+  checks after the merges (the OS tab on Windows, Google Maps with an API
+  key), and the questions below.
 - Authorized (owner, 2026-11-08): carry out the whole plan once the
   prerequisite is met, one pull request per stage or slice; address the
   CodeRabbit review of each pull request, then merge it (the `automerge`
@@ -45,8 +47,10 @@ the existence of the plan or from an agent's earlier messages.
   builds a check for bindings changed without notification, on which the e2e
   suite fails (NG0100). Stage 3 removes Zone.js. Stage 4 removes the
   `NgZone.run` wrappers and `RouterTestingModule`, and checks the templates
-  strictly.
-- Processes or CI runs owned by this work: none.
+  strictly. The fix of question 4 makes the tree's context menu listen to its
+  own backdrop.
+- Processes or CI runs owned by this work: the CI of the follow-up pull
+  requests.
 - `provideCheckNoChangesConfig` (PLAN.md, 3.5) stays in development builds:
   the e2e suite run against one relies on it to find bindings changed
   without notification (`test/e2e/README.md`).
@@ -98,7 +102,8 @@ continue from "Next action" in the ledger below.
 | 4 `NgZone.run` wrappers | ACCEPTED | #653 | e8f63d9 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 39 cases in 3.4 min, all pass; `build:dev` and e2e, 39 cases in 4.2 min, no NG0100; CI green; CodeRabbit: question 6's assumption, which said the small items were done, corrected, then no actionable comments | headless e2e of what goes through `window.plmInternalRenderer` and the menus | none |
 | 4 `RouterTestingModule` | ACCEPTED | #654 | 1b8907e | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70) and `build:prod` pass; before the rebase onto main, `PLM_VISUAL=1` e2e with 38 cases passed too; CI green; CodeRabbit: no actionable comments | none needed: a spec only | none |
 | 4 `strictTemplates` | ACCEPTED | #655 | 3b9064c | 2026-11-08, macOS, on this branch's head: `build:dev`, `build:prod`, unit (Vitest 81, Electron-Mocha 121 and 70) and lint pass; binding 123 to the string input `photoPath` failed `build:prod`, as it should; `build:dev`, which compiles just in time, checks no templates; CI green; CodeRabbit: that `ng test` and `build:dev`, which compile just in time, check no templates, now said next to the setting and in this row, then no actionable comments | none needed: compile-time checks only | none |
-| 4 other items | NOT STARTED | | | NOT RUN | | the owner decides: question 6 below |
+| question 4, the tree's context menu | IN REVIEW | `claude/tree-context-menu-backdrop` | | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 39 cases in 3.4 min, all pass; `build:dev` and e2e, 39 cases in 4.3 min, no NG0100; the context menu's case, with a backdrop before the menu's, failed with the helper of main, as it should | headless e2e "a right-click outside the tree's context menu closes it" | merge the pull request after its review |
+| 4 other items | NOT STARTED | | | NOT RUN | | the Material tree's accessors next, which the owner asked for on 2026-11-08; the others: question 6 below |
 
 ## Progress counters
 
@@ -211,7 +216,7 @@ generation between its start and its end, and the two rows left to the owner.
 | Thumbnail status bar | HEIC folder, empty cache | appears, progresses, completes; details toggle; close button; Open Folder disabled while generating | 2026-11-08, 1D, macOS: headless e2e "the thumbnail status bar follows the generation of HEIF thumbnails from start to end": it appears, completes, disables Open Folder while generating, and closes; with one file, no step between the start and the end shows; the details toggle in the error dialog case |
 | Thumbnail error dialog | corrupt HEIC | "Click here..." link; dialog table sorts, filters, opens file/folder | 2026-11-08, 2, macOS: headless e2e "the thumbnail error dialog lists, sorts and filters the HEIF files without a thumbnail", which also opens a file and its folder, with the command replaced |
 | Tree checkboxes | click file and folder nodes | checked/indeterminate states; map and chart follow | 2026-11-08, 1E-1, macOS: headless e2e "the tree shows partly selected folders, and Select Only This from its menu selects one folder" and "folder picker loads real photo data, markers, tree selection and chart" |
-| Context menu | right-click a node | items act; menu closes on right-click outside | 2026-11-08, 1E-1, macOS: headless e2e "the tree shows partly selected folders, and Select Only This from its menu selects one folder"; 2026-11-08, 2, macOS: headless e2e "a right-click outside the tree's context menu closes it" (see "Findings while executing" for the loading dialog) |
+| Context menu | right-click a node | items act; menu closes on right-click outside | 2026-11-08, 1E-1, macOS: headless e2e "the tree shows partly selected folders, and Select Only This from its menu selects one folder"; 2026-11-08, 2, macOS: headless e2e "a right-click outside the tree's context menu closes it" (see "Findings while executing" for the loading dialog); 2026-11-08, question 4, macOS: the same case, with a stand-in for the dialog's backdrop before the menu's |
 | Popup "Select only this" | marker popup menu | tree, map and chart follow | 2026-11-08, 1E-1, macOS: headless e2e "Select Only This from a marker popup selects that photo in the tree and on the map" |
 | Region selection | draw a rectangle/polygon, "Select Photos" | count in the region info; tree, map and chart follow; remove region | 2026-11-08, 1E-1, macOS: headless e2e "map regions preserve drawing, removal and real photo selection" |
 | Cluster popup | click a cluster at max zoom | popup with the photos | 2026-11-08, 1E-1, macOS: headless e2e "a cluster of photos taken at one place opens a popup with each of them" |
@@ -264,8 +269,10 @@ generation between its start and its end, and the two rows left to the owner.
   (`DirTreeViewContextMenuHelper.configureClosingWithRightClick`). Right
   after a folder has loaded, while the loading dialog is still closing, that
   is the dialog's backdrop, so a right-click outside the menu then does not
-  close it. This was so before this plan; the e2e case waits for the dialog
-  to close, and question 4 below asks whether to fix it.
+  close it. This was so before this plan. Fixed on 2026-11-08, as the owner
+  decided (question 4): the menu listens to the last backdrop, its own; the
+  e2e case puts a stand-in for the dialog's backdrop first in the overlay
+  container, and failed with the old helper.
 - 2026-11-08, 3: with Zone.js, an unhandled promise rejection made outside
   Angular's zone, such as one from `page.evaluate`, reached no
   `unhandledrejection` listener: zone.js only logged it, and it was not
@@ -295,9 +302,9 @@ changes if the answer differs; keep answered rows, with the answer.
 | 1 | Does this plan go before the `@electron/remote` removal? | Owner, 2026-11-08: yes; that removal comes after this plan. | all |
 | 2 | Checks that need a person or another platform: the OS tab on Windows, Google Maps with an API key. | Owner, 2026-11-08: the owner checks both after the merges. | 1F, 3 |
 | 3 | In a git worktree, mise does not trust the worktree's `mise.toml`, as trust is kept per path, so `mise exec` fails there. Should AGENTS.md say what agents do then? | This work passed `MISE_TRUSTED_CONFIG_PATHS=<worktree>/mise.toml` to each command rather than running `mise trust`; nothing in the repository depends on it. | all |
-| 4 | The tree's context menu does not close on a right-click outside it while the loading dialog is still closing (see "Findings while executing"). Fix it, by listening to the menu's own backdrop, the last one? | Assumed: not fixed in this plan, which changes no behavior; the e2e case waits for the dialog to close. | 2 |
+| 4 | The tree's context menu does not close on a right-click outside it while the loading dialog is still closing (see "Findings while executing"). Fix it, by listening to the menu's own backdrop, the last one? | Owner, 2026-11-08: fix it. Fixed on the branch `claude/tree-context-menu-backdrop` (stage ledger). | 2 |
 | 5 | In a git worktree, `npm run test:package` fails its check of `latest-mac.yml` (see "Findings while executing"). Should AGENTS.md say so, with question 3? | Assumed: the macOS CI job, which runs it in a clone, is the check. | 3 |
-| 6 | Which of the other stage 4 items should follow: `inject()` with `prefer-inject`, `@Service`, the Material tree's `childrenAccessor`/`levelAccessor`, the standalone migration with `prefer-standalone`, `ngclass-to-class` (2.4), and pinned photos as a `computed`? They change the code's style throughout rather than its behavior. | Assumed: none until the owner says. The three small items, `NgZone.run`, `RouterTestingModule` and `strictTemplates`, are done, one pull request each. | 4 |
+| 6 | Which of the other stage 4 items should follow: `inject()` with `prefer-inject`, `@Service`, the Material tree's `childrenAccessor`/`levelAccessor`, the standalone migration with `prefer-standalone`, `ngclass-to-class` (2.4), and pinned photos as a `computed`? They change the code's style throughout rather than its behavior. | Owner, 2026-11-08: the Material tree's accessors. The owner has the others explained and has not chosen among them yet. The three small items, `NgZone.run`, `RouterTestingModule` and `strictTemplates`, are done, one pull request each. | 4 |
 
 ## Required update fields while executing
 
