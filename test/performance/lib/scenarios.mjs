@@ -115,6 +115,8 @@ async function measureOpenWith(context, app, page, pid, renderer, { first, thumb
     'exif-files': exif.files,
     'exif-parse-sum-ms': exif.parseMs,
     'exif-thumbnail-sum-ms': exif.thumbnailMs,
+    // From stage A on, the renderer's one request per photo, which compares with the two sums above before stage A.
+    'exif-read-sum-ms': exif.readMs ?? 0,
     'exif-rotate-sum-ms': exif.rotateMs,
     'exif-max-file-ms': exif.maxFileMs,
     'renderer-longtasks': longtasks.length,
@@ -192,7 +194,7 @@ async function measureViewer(context, app, page, pid, renderer, item, fileName, 
     .some(img => img.alt === name && img.src.startsWith('blob:') && img.complete && img.naturalWidth > 0)
     ? performance.timeOrigin + performance.now() : false), fileName, { polling: 'raf', timeout: 60000 })).jsonValue();
   const metadataMs = await (await viewer.waitForFunction(name => ((document.body?.innerText.includes('Date Taken') && document.body.innerText.includes(name))
-    ? performance.timeOrigin + performance.now() : false), fileName, { polling: 50, timeout: 60000 })).jsonValue();
+    ? performance.timeOrigin + performance.now() : false), fileName, { polling: 'raf', timeout: 60000 })).jsonValue();
   await viewer.waitForTimeout(context.settleMs);
   const peak = await sampler.stop();
   const open = await memoryNow(app, pid, renderer);
@@ -301,10 +303,13 @@ export async function settings(context) {
     const checkbox = page.getByRole('checkbox', { name: 'Show Status Bar' });
     const shown = await checkbox.isChecked();
     await checkbox.setChecked(!shown);
+    // Timed in the page, at each frame: a wait of Playwright's own polls at intervals that grow to 100 ms and more,
+    // which turned a few milliseconds' change into 100 (protocol rer-1's baseline).
+    const closed = page.waitForFunction(() => (document.querySelector('app-settings-dialog') ? false : performance.timeOrigin + performance.now()),
+      null, { polling: 'raf', timeout: 30000 });
     const saveMs = Date.now();
     await page.getByRole('button', { name: 'Save', exact: true }).click();
-    await page.locator('app-settings-dialog').waitFor({ state: 'detached' });
-    const closedMs = Date.now();
+    const closedMs = await (await closed).jsonValue();
     const persistedMs = await waitFor(async () => (await readSetting(userData, 'ShowStatusBar')) === String(!shown) && Date.now(), 5000);
     if (!persistedMs) throw new Error('Show Status Bar was not saved.');
 

@@ -68,6 +68,7 @@ for (const metric of allMetrics) {
     entry.deltaPercent = base.median ? (entry.delta / base.median) * 100 : null;
     const rule = ruleFor(metric);
     if (!rule) continue;
+    if (rule.kind === 'diagnostic') continue;
     if (rule.kind === 'invariant') {
       entry.verdict = entry.min === base.min && entry.max === base.max ? 'same' : 'MISMATCH';
       continue;

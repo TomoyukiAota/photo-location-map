@@ -39,13 +39,13 @@ mise exec -- node test/performance/workload.mjs "$PWD/.upgrade-artifacts/remove-
 # 3. The builds: each a packaged app kept outside release/, which the next build overwrites.
 
 # 4. The series, then its summary.
-mise exec -- node test/performance/run.mjs --protocol rer-1 \
+mise exec -- node test/performance/run.mjs --protocol rer-2 \
   --out "$PWD/.upgrade-artifacts/remove-electron-remote/series/<series>" \
   --workloads "$PWD/.upgrade-artifacts/remove-electron-remote/workloads" \
   --viewer-server http://127.0.0.1:3130 \
   --app 0=<executable of build 0> --app A=<executable of build A> --trials 10 --warmup 1
 mise exec -- node test/performance/summarize.mjs .upgrade-artifacts/remove-electron-remote/series/<series> \
-  --baseline 0 --protocol test/performance/protocol-rer-1.json
+  --baseline 0 --protocol test/performance/protocol-rer-2.json
 ```
 
 `--app <label>=checkout` measures the checkout's build (`dist/` and `src-main/`) instead of a packaged app. Do not
