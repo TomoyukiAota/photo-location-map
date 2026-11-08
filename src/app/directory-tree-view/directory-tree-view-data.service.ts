@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { Subject } from 'rxjs';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { DirTreeViewSortService } from './dir-tree-view-sort/dir-tree-view-sort.service';
@@ -7,9 +7,7 @@ import { NestedNode } from './directory-tree-view.model';
 /**
  * Tree view data service. This can build a tree structured object for tree view.
  */
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class DirectoryTreeViewDataService {
   private photoDataService = inject(PhotoDataService);
   private sortService = inject(DirTreeViewSortService);

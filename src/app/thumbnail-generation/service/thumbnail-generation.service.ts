@@ -1,4 +1,4 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, signal, Service } from '@angular/core';
 import { ipcRenderer } from 'electron';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { convertToFlattenedDirTree } from '../../../../src-shared/dir-tree/dir-tree-util';
@@ -39,9 +39,7 @@ export const idleThumbnailGenerationStatus: ThumbnailGenerationStatus = {
   result: null,
 };
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class ThumbnailGenerationService {
   private readonly statusState = signal<ThumbnailGenerationStatus>(idleThumbnailGenerationStatus);
   public readonly status = this.statusState.asReadonly();

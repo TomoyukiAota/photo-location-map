@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { signal, Service } from '@angular/core';
 import { Logger } from '../../../../src-shared/log/logger';
 import { LoadingFolderProgress as progress } from '../../shared/loading-folder-progress';
 
@@ -27,9 +27,7 @@ function isSameStatus(a: LoadingFolderProgressStatus, b: LoadingFolderProgressSt
     && a.isStarted === b.isStarted && a.isInProgress === b.isInProgress && a.isCompleted === b.isCompleted;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class LoadingFolderProgressReporterService {
   // Compared field by field, so that the dialog renders only when the progress changes, not on every update.
   private readonly statusState = signal(notStartedLoadingFolderProgressStatus, { equal: isSameStatus });

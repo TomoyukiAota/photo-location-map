@@ -1,4 +1,4 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { signal, inject, Service } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DirTreeObjectRecorder } from '../../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
 import { sleep } from '../../../../src-shared/sleep/sleep';
@@ -17,9 +17,7 @@ import { ThumbnailObjectUrlStorage } from '../thumbnail-object-url-storage';
 import { PhotoDataService } from './photo-data.service';
 import { PhotoSelectionHistoryService } from './photo-selection-history.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class OpenFolderService {
   private dialog = inject(MatDialog);
   private photoDataService = inject(PhotoDataService);

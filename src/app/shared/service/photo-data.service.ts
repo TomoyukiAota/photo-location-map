@@ -1,11 +1,9 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { computed, signal, Service } from '@angular/core';
 import { GpsInfo } from '../model/gps-info.model';
 import { Photo } from '../model/photo.model';
 import { PathPhotoMapCreator } from '../path-photo-map-creator';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class PhotoDataService {
   // The photos of the opened folder by path, in a signal: a template that looks a photo up, such as a node of the
   // tree, renders again when another folder replaces them, before the tree itself is replaced.

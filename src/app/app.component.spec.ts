@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -8,7 +8,7 @@ import { WelcomeDialogAtAppLaunchService } from './welcome-dialog/welcome-dialog
 
 import { AppComponent } from './app.component';
 
-@Injectable()
+@Service({ autoProvided: false })
 class DummyWelcomeDialogAtAppLaunchService {
   public showWelcomeDialogIfUserHasNotClickedOk() { /* Empty */ }
 }

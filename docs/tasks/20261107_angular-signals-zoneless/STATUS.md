@@ -7,12 +7,13 @@ the existence of the plan or from an agent's earlier messages.
 ## Current checkpoint
 
 - State: COMPLETE, stages 0 to 3 and three stage 4 items, with follow-ups that
-  the owner asked for on 2026-11-08 (stage ledger): the fix of question 4 and
-  the Material tree's accessors, accepted; `inject()`, IN REVIEW on the branch
-  `claude/inject-migration`; then `@Service`, `ngclass-to-class` and the
-  standalone migration, one pull request each, in that order (question 6).
-  What is left besides is the owner's: the checks after the merges (the OS
-  tab on Windows, Google Maps with an API key), and the questions below.
+  the owner asked for on 2026-11-08 (stage ledger): the fix of question 4,
+  the Material tree's accessors and `inject()`, accepted; `@Service`, IN
+  REVIEW on the branch `claude/service-decorator`; then `ngclass-to-class`
+  and the standalone migration, one pull request each, in that order
+  (question 6). What is left besides is the owner's: the checks after the
+  merges (the OS tab on Windows, Google Maps with an API key), and the
+  questions below.
 - Authorized (owner, 2026-11-08): carry out the whole plan once the
   prerequisite is met, one pull request per stage or slice; address the
   CodeRabbit review of each pull request, then merge it (the `automerge`
@@ -32,8 +33,8 @@ the existence of the plan or from an agent's earlier messages.
 - Investigation: complete on 2026-11-07 (REPORT.md, INVENTORY.md, MCP.md).
   The Angular unit tests passed under the zoneless TestBed default that day:
   25 files, 37 tests.
-- Last accepted slice: the Material tree's accessors, #658, merged on
-  2026-11-08 as 9e6a526.
+- Last accepted slice: the stage 4 item `inject()`, #659, merged on 2026-11-08
+  as 6c9dc67.
   Baseline (stage 0.4): recorded under "Baseline" below.
 - Runtime, dependency, test or build changes made by this plan: stage 0 added
   e2e cases, the MCP configuration and lint policy comments. 1A keeps the
@@ -50,7 +51,8 @@ the existence of the plan or from an agent's earlier messages.
   `NgZone.run` wrappers and `RouterTestingModule`, and checks the templates
   strictly. The fix of question 4 makes the tree's context menu listen to its
   own backdrop. The Material tree's accessors replace the deprecated flat tree
-  classes in the directory tree. The dependencies come through `inject()`.
+  classes in the directory tree. The dependencies come through `inject()`, and
+  the services are declared with `@Service`.
 - Processes or CI runs owned by this work: the CI of the follow-up pull
   requests.
 - `provideCheckNoChangesConfig` (PLAN.md, 3.5) stays in development builds:
@@ -104,10 +106,11 @@ continue from "Next action" in the ledger below.
 | 4 `NgZone.run` wrappers | ACCEPTED | #653 | e8f63d9 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 39 cases in 3.4 min, all pass; `build:dev` and e2e, 39 cases in 4.2 min, no NG0100; CI green; CodeRabbit: question 6's assumption, which said the small items were done, corrected, then no actionable comments | headless e2e of what goes through `window.plmInternalRenderer` and the menus | none |
 | 4 `RouterTestingModule` | ACCEPTED | #654 | 1b8907e | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70) and `build:prod` pass; before the rebase onto main, `PLM_VISUAL=1` e2e with 38 cases passed too; CI green; CodeRabbit: no actionable comments | none needed: a spec only | none |
 | 4 `strictTemplates` | ACCEPTED | #655 | 3b9064c | 2026-11-08, macOS, on this branch's head: `build:dev`, `build:prod`, unit (Vitest 81, Electron-Mocha 121 and 70) and lint pass; binding 123 to the string input `photoPath` failed `build:prod`, as it should; `build:dev`, which compiles just in time, checks no templates; CI green; CodeRabbit: that `ng test` and `build:dev`, which compile just in time, check no templates, now said next to the setting and in this row, then no actionable comments | none needed: compile-time checks only | none |
-| question 4, the tree's context menu | ACCEPTED | #657 | b8163d7 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 39 cases in 3.4 min, all pass; `build:dev` and e2e, 39 cases in 4.3 min, no NG0100; the context menu's case, with a backdrop before the menu's, failed with the helper of main, as it should; CI green after a rerun of the Windows job of the push, which had failed in a case that the fix does not touch: Playwright's worker could not close the application in time, and then could not remove the test profile's temporary folder (EBUSY); the pull_request trigger had passed on the same commit; CodeRabbit: no actionable comments | headless e2e "a right-click outside the tree's context menu closes it" | none |
-| 4 Material tree accessors | ACCEPTED | #658 | 9e6a526 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 82, Electron-Mocha 121 and 70), `build:prod` and e2e with 40 cases in 3.5 min, all pass; `build:dev` and e2e, 40 cases in 4.4 min, no NG0100; the new e2e case passed with main's tree too, and the new unit test failed with the previous folder left expanded, as it should; on synthetic folders of 20,000 and 100,000 files, opening, expanding and collapsing took as long as with main's tree (see "Findings while executing"); CI green; CodeRabbit: a unit test that opening another folder leaves nothing of the previous one expanded, selecting without spreading every node into one call (a RangeError past about 150,000 arguments), and exact names in the e2e case, all addressed, then no actionable comments | headless e2e "a folder of the tree expands and collapses, and keeps the selection of its photos", and the other cases of the tree | none |
-| 4 `inject()` | IN REVIEW | `claude/inject-migration` | | 2026-11-08, macOS, before the rebase onto main that brought #658: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 40 cases in 3.4 min, all pass; `build:dev` and e2e, 40 cases in 4.3 min, no NG0100; so did the same with `@Service` and `ngclass-to-class` on top; 30 of the 38 constructors that took parameters are gone or empty, and the 8 left belong to plain classes that Angular does not create | headless e2e: the whole suite, as the change touches the components and services throughout | merge the pull request after its review |
-| 4 other items | NOT STARTED | | | NOT RUN | | `@Service`, `ngclass-to-class` and the standalone migration, which the owner asked for on 2026-11-08, one pull request each in that order; pinned photos as a `computed`: question 6 below |
+| question 4, the tree's context menu | ACCEPTED | #657 | b8163d7 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 39 cases in 3.4 min, all pass; `build:dev` and e2e, 39 cases in 4.3 min, no NG0100; the context menu's case, with a backdrop before the menu's, failed with the helper of main, as it should; CI green after a rerun of the Windows job of the push, which had failed in a case that the fix does not touch: Playwright's worker could not close the application in time, and then could not remove the test profile's temporary folder (EBUSY); the pull_request trigger had passed on the same commit; CodeRabbit: no actionable comments; live-reload and `PLM_VISUAL=1` e2e, which the checkpoint asks for, were not run before the merge (CI runs live-reload, but the e2e suite without its screenshots): both passed on the head of #660, which contains this | headless e2e "a right-click outside the tree's context menu closes it" | none |
+| 4 Material tree accessors | ACCEPTED | #658 | 9e6a526 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 82, Electron-Mocha 121 and 70), `build:prod` and e2e with 40 cases in 3.5 min, all pass; `build:dev` and e2e, 40 cases in 4.4 min, no NG0100; the new e2e case passed with main's tree too, and the new unit test failed with the previous folder left expanded, as it should; on synthetic folders of 20,000 and 100,000 files, opening, expanding and collapsing took as long as with main's tree (see "Findings while executing"); CI green; CodeRabbit: a unit test that opening another folder leaves nothing of the previous one expanded, selecting without spreading every node into one call (a RangeError past about 150,000 arguments), and exact names in the e2e case, all addressed, then no actionable comments; live-reload and `PLM_VISUAL=1` e2e, which the checkpoint asks for, were not run before the merge (CI runs live-reload, but the e2e suite without its screenshots): both passed on the head of #660, which contains this | headless e2e "a folder of the tree expands and collapses, and keeps the selection of its photos", and the other cases of the tree | none |
+| 4 `inject()` | ACCEPTED | #659 | 6c9dc67 | 2026-11-08, macOS, before the rebase onto main that brought #658: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 40 cases in 3.4 min, all pass; `build:dev` and e2e, 40 cases in 4.3 min, no NG0100; so did the same with `@Service` and `ngclass-to-class` on top; 30 of the 38 constructors that took parameters are gone or empty, and the 8 left belong to plain classes that Angular does not create; on this branch's head after the rebase, the same passed, with Vitest 82; CI green; CodeRabbit: no actionable comments; live-reload and `PLM_VISUAL=1` e2e, which the checkpoint asks for, were not run before the merge (CI runs live-reload, but the e2e suite without its screenshots): both passed on the head of #660, which contains this | headless e2e: the whole suite, as the change touches the components and services throughout | none |
+| 4 `@Service` | IN REVIEW | `claude/service-decorator` | | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 82, Electron-Mocha 121 and 70), live-reload, `build:prod` and `PLM_VISUAL=1` e2e with 40 cases in 3.5 min, all pass, the committed references unchanged; `build:dev` and e2e, 40 cases in 4.4 min, no NG0100; 19 services are `@Service()`, the error handler and a spec's stand-in `@Service({ autoProvided: false })`, and no `@Injectable` is left | headless e2e: the whole suite | merge the pull request after its review |
+| 4 other items | NOT STARTED | | | NOT RUN | | `ngclass-to-class` and the standalone migration, which the owner asked for on 2026-11-08, one pull request each in that order; pinned photos as a `computed`: question 6 below |
 
 ## Progress counters
 
@@ -303,6 +306,12 @@ generation between its start and its end, and the two rows left to the owner.
   accessor returns the children of expanded nodes only, the ones that the tree
   shows: on 20,000 and 100,000 files, opening, expanding and collapsing then
   took as long as with the data source, 3 to 40 ms.
+- 2026-11-08, the follow-ups: #657, #658 and #659 were opened without two
+  commands of the checkpoint (PLAN.md, "Checkpoint discipline"):
+  `test:live-reload`, which CI runs, and the e2e suite with `PLM_VISUAL=1`,
+  whose screenshot comparisons CI does not run. CodeRabbit asked for them on
+  #660. On its head, which contains the three, both passed, with the
+  committed references unchanged.
 
 ## Questions for the owner
 

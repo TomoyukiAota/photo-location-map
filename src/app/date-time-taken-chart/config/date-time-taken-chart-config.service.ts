@@ -1,9 +1,7 @@
-import { Injectable, signal } from '@angular/core';
+import { signal, Service } from '@angular/core';
 import { unitOfTime } from 'moment';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class DateTimeTakenChartConfigService {
   private readonly showDateUnknownPhotosState = signal(true);
   private readonly xAxisUnitState = signal<unitOfTime.DurationConstructor>('day');

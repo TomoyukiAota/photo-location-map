@@ -11,8 +11,8 @@ import stylistic from '@stylistic/eslint-plugin';
 // The migration to signals, OnPush and zoneless Angular (docs/tasks/20261107_angular-signals-zoneless/PLAN.md)
 // turns rules on as its stages finish: @angular-eslint/no-uncalled-signals at the end of stage 1, together with the
 // typed linting it needs (projectService below); @angular-eslint/prefer-signals and
-// prefer-on-push-component-change-detection at the end of stage 2; prefer-inject and prefer-standalone in stage 4,
-// each with its migration.
+// prefer-on-push-component-change-detection at the end of stage 2; prefer-inject, prefer-service-decorator and
+// prefer-standalone in stage 4, each with its migration.
 const existingRules = {
   "@angular-eslint/prefer-standalone": "off", // Until stage 4 of the migration above.
   "@angular-eslint/component-selector": [
@@ -61,6 +61,8 @@ const existingRules = {
   ],
   // inject() rather than constructor parameters, as Angular's style guide recommends.
   "@angular-eslint/prefer-inject": "error",
+  // @Service() rather than @Injectable({ providedIn: 'root' }), as Angular's best practices recommend from Angular 22.
+  "@angular-eslint/prefer-service-decorator": "error",
   // `if (signal)` tests the function, which is always there, rather than its value. Needs type information.
   "@angular-eslint/no-uncalled-signals": "error",
   // Signal inputs and queries rather than @Input and @ViewChild, and signal properties that are readonly.

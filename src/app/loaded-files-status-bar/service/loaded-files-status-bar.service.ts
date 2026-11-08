@@ -1,10 +1,8 @@
-import { Injectable, signal } from '@angular/core';
+import { signal, Service } from '@angular/core';
 import { BooleanSetting } from '../../../../src-shared/user-settings/boolean-setting';
 import { currentUserSettings } from '../../../../src-shared/user-settings/user-settings';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class LoadedFilesStatusBarService {
   private readonly visibleState = signal(LoadedFilesStatusBarService.readSetting());
   /** Whether the status bar is shown: the "Show Status Bar" setting, or the value being tried in the settings dialog. */
