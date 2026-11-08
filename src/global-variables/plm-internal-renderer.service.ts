@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Logger } from '../../src-shared/log/logger';
 import { AboutBoxComponent } from '../app/about-box/about-box.component';
@@ -16,9 +16,7 @@ import {
   PlmInternalRendererWelcomeDialog
 } from './global-variable-for-internal-use-in-renderer';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class PlmInternalRendererService {
   private dialog = inject(MatDialog);
   private directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);

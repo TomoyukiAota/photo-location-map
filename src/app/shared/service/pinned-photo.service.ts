@@ -1,10 +1,8 @@
-import { Injectable, signal } from '@angular/core';
+import { signal, Service } from '@angular/core';
 import * as _ from 'lodash';
 import { Photo } from '../model/photo.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class PinnedPhotoService {
   private readonly pinnedPhotosState = signal<readonly Photo[]>([]);
   /** The photos pinned on the map. */

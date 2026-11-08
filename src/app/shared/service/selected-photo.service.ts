@@ -1,12 +1,10 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { signal, inject, Service } from '@angular/core';
 import * as _ from 'lodash';
 import { Logger } from '../../../../src-shared/log/logger';
 import { Photo } from '../model/photo.model';
 import { PhotoSelectionHistoryService } from './photo-selection-history.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class SelectedPhotoService {
   private photoSelectionHistoryService = inject(PhotoSelectionHistoryService);
 

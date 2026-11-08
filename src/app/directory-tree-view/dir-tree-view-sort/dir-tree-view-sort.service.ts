@@ -1,4 +1,4 @@
-import { computed, Injectable, signal, inject } from '@angular/core';
+import { computed, signal, inject, Service } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import moment from 'moment/moment';
 import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
@@ -20,9 +20,7 @@ type SortDirection = DirTreeViewSortDirection;
 type SortConfig = DirTreeViewSortConfig;
 const defaultSortConfig = defaultDirTreeViewSortConfig;
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class DirTreeViewSortService {
   private dialog = inject(MatDialog);
   private photoDataService = inject(PhotoDataService);

@@ -1,9 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 import { Subject } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class LeafletMapForceRenderService {
   public forceRenderWithoutPhotoHappened = new Subject<void>();
 

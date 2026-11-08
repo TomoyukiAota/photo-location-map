@@ -1,9 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 import { Subject } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class DirectoryTreeViewSelectionService {
   /**
    * Requests to select the photos of these paths in the tree and to deselect the others. An event, not state: the tree
