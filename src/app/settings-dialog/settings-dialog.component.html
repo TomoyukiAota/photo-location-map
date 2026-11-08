@@ -4,7 +4,7 @@
 <mat-nav-list class="settings-tab">
   @for (tabName of tabNames; track tabName) {
     <mat-list-item (click)="selectTab(tabName)"
-                   [ngClass]="{'selected-tab': isSelectedTab(tabName)}">
+                   [class.selected-tab]="isSelectedTab(tabName)">
       {{ tabName }}
     </mat-list-item>
   }

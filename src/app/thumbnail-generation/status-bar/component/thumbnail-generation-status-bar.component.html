@@ -17,7 +17,7 @@
   <div class="progress-bar-and-expand-icon">
     <mat-progress-bar mode="buffer" [value]="generation.progressPercent"></mat-progress-bar>
     <mat-icon class="expand-icon"
-              [ngClass]="{'expanded-expand-icon': detailsVisible()}">
+              [class.expanded-expand-icon]="detailsVisible()">
       expand_more
     </mat-icon>
   </div>
@@ -48,7 +48,8 @@
 </div>
 <span class="close-button"
       title="Close Thumbnail Generation Status Bar"
-      [ngClass]="{'hidden': generation.phase !== 'done', 'fade-in-close-button': generation.phase === 'done'}"
+      [class.hidden]="generation.phase !== 'done'"
+      [class.fade-in-close-button]="generation.phase === 'done'"
       (click)="handleCloseButtonClicked()">
   ×
 </span>
