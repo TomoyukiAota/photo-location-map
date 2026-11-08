@@ -1,0 +1,13 @@
+{
+  "source": "test/e2e/snapshots/settings-appearance.png of 926a777, the whole 1200x800 window",
+  "sourceApplication": "Angular 18.2.4 / Electron 32.0.2",
+  "sourceSha256": "d3af973412dd489f79258994030857e2228261095947a6425f195c46c1861a75",
+  "clip": {
+    "x": 100,
+    "y": 100,
+    "width": 1000,
+    "height": 600
+  },
+  "method": "Copied original screenshot pixels without resampling; not captured from upgraded dependencies. The case takes the settings dialog alone, which never matched the whole window: the comparison passed without comparing until the screenshot waited for a single dialog.",
+  "cropSha256": "dfbc375dad8eaf0dc5fd76a75b4426762887156ae27eb70fb8863d8d41cdd051"
+}
