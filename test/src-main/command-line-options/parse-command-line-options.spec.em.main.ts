@@ -44,6 +44,22 @@ describe('Command-line options', () => {
     assert.equal(output, '');
   });
 
+  it('reads the root of a drive or share whose last backslash Windows read as a quotation mark, and only on Windows', () => {
+    if (process.platform === 'win32') {
+      // Explorer runs `"<exe>" --open "C:\"` for the background of C:\, which Windows splits into --open and C:".
+      parse(['--open', 'C:"']);
+      assert.equal(commandLineOptionsValue.get().open, 'C:\\');
+      parse(['--open', '\\\\server\\share"']);
+      assert.equal(commandLineOptionsValue.get().open, '\\\\server\\share\\');
+      parse(['--open', 'C:\\Photos']);
+      assert.equal(commandLineOptionsValue.get().open, 'C:\\Photos');
+    } else {
+      // Elsewhere, a name can end with a quotation mark.
+      parse(['--open', '/photos/say "hi"']);
+      assert.equal(commandLineOptionsValue.get().open, '/photos/say "hi"');
+    }
+  });
+
   it('accepts a restart with only the NSIS flag', () => {
     parse(['--updated']);
     assert.equal(commandLineOptionsValue.get().open, undefined);

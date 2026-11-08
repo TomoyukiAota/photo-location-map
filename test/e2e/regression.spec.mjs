@@ -393,6 +393,91 @@ test('the cache settings open the cache folder, and ask before deleting the cach
     .toEqual(['This application will restart after deleting the thumbnail cache.\nDo you want to continue?']);
   await expect(page.locator('app-settings-dialog')).toBeVisible();
 });
+test('the OS tab has the main process add and remove the Explorer context menu with reg.exe, its console window hidden', async () => {
+  test.skip(process.platform !== 'win32', 'The OS tab is shown on Windows only.');
+  // reg.exe never runs here, as it would change the registry of the computer running the suite. In the main process, a
+  // stand-in answers execFile of any reg.exe, wherever it would be looked for, recording it with whether it hides its
+  // console window, and fails the runs that __plmRegFails picks. Starting reg.exe any other way throws.
+  const regExePath = await app.evaluate(() => {
+    const childProcess = globalThis.__plmTestRequire('child_process');
+    const isRegExe = file => /(^|[\\/])reg(\.exe)?$/i.test(String(file));
+    globalThis.__plmRegRuns = [];
+    globalThis.__plmRegFails = () => false;
+    const execFile = childProcess.execFile;
+    childProcess.execFile = function (file, args, options, callback) {
+      if (!isRegExe(file)) return execFile.apply(this, arguments);
+      globalThis.__plmRegRuns.push({ file, args: [...args], windowsHide: options?.windowsHide === true });
+      const failed = globalThis.__plmRegFails(args);
+      setImmediate(() => failed
+        ? callback(Object.assign(new Error('Failed on purpose'), { code: 1 }), Buffer.alloc(0), Buffer.from('Failed on purpose by the e2e suite'))
+        : callback(null, Buffer.alloc(0), Buffer.alloc(0)));
+    };
+    for (const name of ['spawn', 'spawnSync', 'execFileSync', 'exec', 'execSync']) {
+      const original = childProcess[name];
+      childProcess[name] = function (fileOrCommand) {
+        const startsRegExe = name === 'exec' || name === 'execSync'
+          ? /(^|[\s"\\/])reg(\.exe)?("|\s|$)/i.test(String(fileOrCommand)) : isRegExe(fileOrCommand);
+        if (startsRegExe) throw new Error(`The e2e suite lets reg.exe start with execFile only, not with ${name}.`);
+        return original.apply(this, arguments);
+      };
+    }
+    return globalThis.__plmTestRequire('path').win32.join(process.env.SystemRoot, 'System32', 'reg.exe');
+  });
+  /** The runs of reg.exe since the last call, each with its file, its arguments and whether it hid its console window. */
+  const regRuns = () => app.evaluate(() => globalThis.__plmRegRuns.splice(0));
+  /** The labels of the analytics events with `action`, one for each analytics service. */
+  const events = action => app.evaluate((_electron, action) =>
+    globalThis.__plmAnalyticsEvents.filter(event => event.action === action).map(event => event.label ?? null), action);
+  const exe = await app.evaluate(({ app }) => app.getPath('exe'));
+  const keys = ['*', 'Directory', 'Directory\\Background'].map(type => `HKCU\\Software\\Classes\\${type}\\shell\\OpenWithPhotoLocationMap`);
+  await dismissWelcome();
+  await settings();
+  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'OS' }).click();
+  const osSettings = page.locator('app-os-settings');
+  const lines = osSettings.locator('.message-after-button-clicked > div');
+  await expect(lines).toHaveCount(0);
+
+  await osSettings.getByRole('button', { name: 'Add', exact: true }).click();
+  await expect(lines).toHaveText(['Added "Open with Photo Location Map" in the context menu of Explorer.',
+    'Please open Explorer and right-click on a file/folder to confirm.']);
+  const addRuns = await regRuns();
+  // The exe is quoted in the command, as its path can have spaces; "%V" is the folder whose background was clicked.
+  expect(addRuns.map(run => run.args)).toEqual(keys.flatMap((key, index) => [
+    ['add', key, '/ve', '/t', 'REG_SZ', '/d', 'Open with &Photo Location Map', '/f'],
+    ['add', key, '/v', 'icon', '/t', 'REG_SZ', '/d', exe, '/f'],
+    ['add', `${key}\\command`, '/ve', '/t', 'REG_SZ', '/d', `"${exe}" --open "${index === 2 ? '%V' : '%1'}"`, '/f'],
+  ]));
+  expect(addRuns.every(run => run.windowsHide), 'Every reg.exe must hide its console window.').toBe(true);
+  // By its full path: by its name alone, reg.exe would be looked for in the current folder first.
+  expect(addRuns.every(run => run.file === regExePath), `Every run must start ${regExePath}.`).toBe(true);
+
+  await osSettings.getByRole('button', { name: 'Remove', exact: true }).click();
+  await expect(lines).toHaveText(['Removed "Open with Photo Location Map" in the context menu of Explorer.',
+    'Please open Explorer and right-click on a file/folder to confirm.']);
+  const removeRuns = await regRuns();
+  expect(removeRuns.map(run => run.args)).toEqual(keys.map(key => ['delete', key, '/f']));
+  expect(removeRuns.every(run => run.windowsHide), 'Every reg.exe must hide its console window.').toBe(true);
+  expect(removeRuns.every(run => run.file === regExePath), `Every run must start ${regExePath}.`).toBe(true);
+
+  // A failure is said in the tab, and recorded with its reason, without paths.
+  await app.evaluate(() => { globalThis.__plmRegFails = args => args[0] === 'add'; });
+  await osSettings.getByRole('button', { name: 'Add', exact: true }).click();
+  await expect(lines).toHaveText(['Failed to add "Open with Photo Location Map" in the context menu of Explorer.']);
+  // A delete that fails while the key is still there, as the query that follows finds.
+  await app.evaluate(() => { globalThis.__plmRegFails = args => args[0] === 'delete'; });
+  await osSettings.getByRole('button', { name: 'Remove', exact: true }).click();
+  await expect(lines).toHaveText(['Failed to remove "Open with Photo Location Map" from the context menu of Explorer.']);
+  expect((await regRuns()).map(run => run.args[0])).toEqual(['add', 'delete', 'query']);
+  for (const action of ['[Registry] Add Explorer Context Menu', '[Registry] Remove Explorer Context Menu']) {
+    await expect.poll(async () => (await events(action)).length, { timeout: 20000 }).toBeGreaterThan(0);
+  }
+  for (const [action, label] of [['[Registry] Add Explorer Context Menu: Error', 'Error: reg.exe add failed (exit code 1)'],
+    ['[Registry] Remove Explorer Context Menu: Error', 'Error: reg.exe delete failed (exit code 1)']]) {
+    await expect.poll(async () => (await events(action)).length, { timeout: 20000 }).toBeGreaterThan(0);
+    expect(new Set(await events(action))).toEqual(new Set([label]));
+  }
+  for (const kind of ['Main', 'Renderer']) expect(await events(`Unhandled Error (${kind})`)).toEqual([]);
+});
 test('appearance setting saves, affects layout, and survives a real app restart', async () => {
   await dismissWelcome();
   await settings();
