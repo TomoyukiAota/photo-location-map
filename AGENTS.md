@@ -121,14 +121,17 @@ outside the desktop app still see the real registry and folders.
   WMI, which runs it as the same user. Hide its console window, which would
   otherwise open on the owner's screen, and wait for it to end, as the call
   returns once it has started; stop when it has not ended in time, as its
-  output is then incomplete. Write the output to a new folder under
-  `%USERPROFILE%`, which only the owner can change, and delete the folder when
-  done:
+  output is then incomplete. `Win32_Process.Create` says only whether the
+  process started, so have `cmd.exe` write `reg.exe`'s exit code as the last
+  line of the output, and check it: `exit=0` when it worked. Write the output
+  to a new folder under `%USERPROFILE%`, which only the owner can change, and
+  delete the folder when done:
 
   ```powershell
   $hidden = New-CimInstance -CimClass (Get-CimClass Win32_ProcessStartup) -ClientOnly -Property @{ ShowWindow = [uint16]0 }
   $p = Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{
-    CommandLine = 'cmd.exe /c reg query "<key>" /s > "<folder>\reg.txt" 2>&1'
+    # /v:on reads !errorlevel! once reg.exe has ended, not when cmd.exe reads the line.
+    CommandLine = 'cmd.exe /v:on /c "reg query "<key>" /s > "<folder>\reg.txt" 2>&1 & echo exit=!errorlevel! >> "<folder>\reg.txt""'
     ProcessStartupInformation = $hidden
   }
   if ($p.ReturnValue -ne 0) { throw "Win32_Process.Create failed with $($p.ReturnValue)." }
