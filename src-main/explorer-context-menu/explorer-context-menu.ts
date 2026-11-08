@@ -109,6 +109,7 @@ export async function removeExplorerContextMenu(run: RunReg = runReg): Promise<v
   Analytics.trackEvent('Registry', '[Registry] Remove Explorer Context Menu');
 }
 
+/** Deletes `key` with its subkeys, and rejects only if it is still there or reg.exe does not work. */
 async function deleteKey(key: string, run: RunReg): Promise<void> {
   try {
     await run(['delete', key, '/f']);
@@ -120,6 +121,7 @@ async function deleteKey(key: string, run: RunReg): Promise<void> {
   }
 }
 
+/** Whether reg.exe succeeds with `args`, as a query does for a key that is there. */
 async function succeeds(args: readonly string[], run: RunReg): Promise<boolean> {
   try {
     await run(args);

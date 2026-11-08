@@ -412,7 +412,9 @@ test('the OS tab has the main process add and remove the Explorer context menu w
         : callback(null, '', ''));
     };
   });
+  /** The runs of reg.exe since the last call, each with its arguments and whether it hid its console window. */
   const regRuns = () => app.evaluate(() => globalThis.__plmRegRuns.splice(0));
+  /** The labels of the analytics events with `action`, one for each analytics service. */
   const events = action => app.evaluate((_electron, action) =>
     globalThis.__plmAnalyticsEvents.filter(event => event.action === action).map(event => event.label ?? null), action);
   const exe = await app.evaluate(({ app }) => app.getPath('exe'));

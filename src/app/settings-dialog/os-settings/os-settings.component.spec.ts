@@ -25,6 +25,7 @@ describe('OsSettingsComponent', () => {
     vi.restoreAllMocks();
   });
 
+  /** The lines that the tab shows below its buttons. */
   function messageLines(): string[] {
     const lines = fixture.nativeElement.querySelectorAll('.message-after-button-clicked div') as NodeListOf<HTMLElement>;
     return Array.from(lines, line => line.textContent.trim());

@@ -17,6 +17,7 @@ export class OsSettingsComponent {
   /** What the last click on Add or Remove did, shown once the main process has answered. */
   public readonly messageLinesAfterButtonClicked = signal<readonly string[]>([]);
 
+  /** Has the main process add "Open with Photo Location Map" in the context menu of Explorer, then says whether it did. */
   public async handleAddButtonClicked() {
     Logger.info('[Settings Dialog] [OS] Clicked "Add" button for Explorer\'s context menu.');
     Analytics.trackEvent('Settings Dialog', '[Settings Dialog] [OS] Click "Add"');
@@ -25,6 +26,7 @@ export class OsSettingsComponent {
       ['Failed to add "Open with Photo Location Map" in the context menu of Explorer.']);
   }
 
+  /** Has the main process remove "Open with Photo Location Map" from the context menu of Explorer, then says whether it did. */
   public async handleRemoveButtonClicked() {
     Logger.info('[Settings Dialog] [OS] Clicked "Remove" button for Explorer\'s context menu.');
     Analytics.trackEvent('Settings Dialog', '[Settings Dialog] [OS] Click "Remove"');
