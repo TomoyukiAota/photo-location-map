@@ -29,6 +29,7 @@ import './thumbnail-generation/thumbnail-generation-ipc-setup';
 import './thumbnail-generation/thumbnail-cache-ipc-setup';
 import { startDirectoryTreeWorker } from './directory-tree/directory-tree-requests';
 import { setMainWindow } from './ipc/ipc-sender';
+import { keepOnAppPage } from './ipc/main-window-pages';
 import { configureMainWindowForAnalytics } from './configure-main-window-for-analytics';
 import { handleAppQuit } from './handle-app-quit';
 import { LiveReload } from './live-reload';
@@ -93,7 +94,8 @@ const createWindow = async () => {
 
   const url = await getUrlForMainWindow();
   // Before the page loads: its preload asks for the startup metadata at once (src-main/ipc/ipc-sender.ts).
-  setMainWindow(mainWindow.webContents, url);
+  setMainWindow(mainWindow.webContents);
+  keepOnAppPage(mainWindow.webContents, url);
   mainWindow.loadURL(url);
 
   // Keep automated development checks on the application's CDP target.

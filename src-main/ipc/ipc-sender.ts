@@ -1,55 +1,34 @@
 import type { IpcMainEvent, IpcMainInvokeEvent, WebContents } from 'electron';
 
 // Which page a request came from. The main window's page reaches the main process only through its preload's bridge
-// (electron-util/preload/main-window.cjs), and each request handler checks the sender, so that another page, such as
-// Photo Data Viewer's or one a frame or a navigation would bring, cannot ask for what the app's page may.
+// (electron-util/preload/main-window.cjs), and each request handler checks the sender, so that another window's page,
+// such as Photo Data Viewer's, and a frame within a page cannot ask for what the app's page may.
+// TL;DR: The main window's top frame, whatever its URL: the window cannot leave the app's page (main-window-pages.ts).
+// Details: Checking the frame's URL as well raced the preload. The preload asks for the startup metadata
+// synchronously at the start of the document, and the main process can handle that request before it learns of the
+// navigation's commit, which comes on another pipe: the frame's URL was then still the previous one, and the app's
+// page was refused, in about 1 of 100 launches of the e2e suite. The other way, a page of another site could have
+// been answered for the app's page; the window now never navigates to one.
 
 type IpcEvent = IpcMainEvent | IpcMainInvokeEvent;
 
 let mainWindowContents: WebContents | undefined;
-let mainWindowPageUrl: string | undefined;
 
 /**
- * Records the main window, whose page alone may use the main window's operations: `pageUrl` is the app's page, which
- * the window loads (src-main/file-server/). Without `pageUrl`, any page of the window may, as electron-mocha's
- * renderer tests run the app's code in a page of their own (test/em-renderer-main-setup.js).
+ * Records the main window, whose page alone may use the main window's operations. electron-mocha's renderer tests
+ * record theirs, which runs the app's renderer code (test/em-renderer-main-setup.js).
  */
-export function setMainWindow(contents: WebContents | undefined, pageUrl?: string): void {
+export function setMainWindow(contents: WebContents | undefined): void {
   mainWindowContents = contents;
-  mainWindowPageUrl = pageUrl;
 }
 
-/**
- * The path of a file URL, decoded, so that Node.js's pathToFileURL and Chromium, which may escape a character
- * differently, give the same; on Windows without regard to case, as its file system has none.
- */
-function filePathOf(url: URL): string {
-  const decoded = decodeURIComponent(url.pathname);
-  return process.platform === 'win32' ? decoded.toLowerCase() : decoded;
-}
-
-/** The app's page, where the page is served from a file, or from `ng serve` for live reload. */
-function isAppPage(frameUrl: string): boolean {
-  if (mainWindowPageUrl === undefined)
-    return true;
-  try {
-    const page = new URL(mainWindowPageUrl);
-    const frame = new URL(frameUrl);
-    return page.protocol === 'file:'
-      ? frame.protocol === 'file:' && filePathOf(frame) === filePathOf(page)
-      : frame.origin === page.origin;
-  } catch {
-    return false;
-  }
-}
-
-/** Whether a request came from the top frame of the main window, on the app's page. */
+/** Whether a request came from the top frame of the main window. */
 export function isFromMainWindow(event: IpcEvent): boolean {
   const contents = mainWindowContents;
   if (!contents || contents.isDestroyed() || event.sender !== contents)
     return false;
   const frame = event.senderFrame;
-  return !!frame && !frame.parent && isAppPage(frame.url);
+  return !!frame && !frame.parent;
 }
 
 /** Throws, which rejects the request, unless it came from the main window's page. */

@@ -1233,6 +1233,16 @@ test('the main window\'s page runs isolated, without Node.js, and reaches the ma
       isDirectory: await window.plm.folderDialog.isDirectory(root),
     };
   }, root);
+  // Nor does the window leave the app's page, for a link or a new window, which would give another page the bridge.
+  const pageUrl = page.url();
+  expect(await page.evaluate(() => {
+    const opened = window.open('https://example.com/');
+    window.location.href = 'https://example.com/';
+    return opened;
+  })).toBeNull();
+  await page.waitForTimeout(500);
+  expect(page.url()).toBe(pageUrl);
+  expect(app.windows()).toHaveLength(1);
   expect(refused.tree).toContain('Only a folder that the user chose can be read.');
   expect(refused.file).toContain('Only a file or folder in a folder that the user opened can be opened with the OS.');
   expect(refused.url).toContain('Only an http or https URL can be opened in the OS browser.');
@@ -1608,11 +1618,23 @@ for (const [name, fixture, specialPath] of [
 }
 test('download website keeps desktop and narrow layouts and Windows navigation', async () => {
   test.skip(!!packagedExecutable, 'The static website is verified separately from the packaged application.');
-  await page.goto(pathToFileURL(path.join(root, 'docs/index.html')).href);
+  // In a window of its own, without the app's preload: the main window shows the app's page only
+  // (src-main/ipc/main-window-pages.ts). The size is the main window's in the other cases.
+  const websiteWindow = app.waitForEvent('window');
+  await app.evaluate(({ app, BrowserWindow }, url) => {
+    // Off the screen in a headless run, as the app's windows are (electron-util/e2e-test-hooks.js).
+    const require = globalThis.__plmTestRequire;
+    const { withHeadlessTestOptions } = require(require('node:path').join(app.getAppPath(), 'electron-util/e2e-test-hooks.js'));
+    const window = new BrowserWindow(withHeadlessTestOptions({ useContentSize: true, width: 1200, height: 800 }));
+    void window.loadURL(url);
+  }, pathToFileURL(path.join(root, 'docs/index.html')).href);
+  page = await websiteWindow;
+  const setContentSize = (width, height) => app.evaluate(({ BrowserWindow }, [width, height]) =>
+    BrowserWindow.getAllWindows().find(window => window.webContents.getURL().includes('/docs/')).setContentSize(width, height), [width, height]);
   await expect(page.locator('.title')).toHaveText('Photo Location Map');
   await expect(page.getByRole('link', { name: 'Download for Windows' })).toHaveAttribute('href', 'github-pages/downloading-for-windows/downloading-for-windows.html');
   await shot('website-desktop', [page.locator('iframe')]);
-  await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setContentSize(600, 800));
+  await setContentSize(600, 800);
   await shot('website-narrow', [page.locator('iframe')]);
   const macDownload = page.getByRole('button', { name: 'Download for macOS' });
   await macDownload.focus();
@@ -1622,7 +1644,7 @@ test('download website keeps desktop and narrow layouts and Windows navigation',
   await expect(macDownload).toHaveCSS('background-color', 'rgb(35, 39, 43)');
   await macDownload.click();
   await expect.poll(() => app.evaluate(() => globalThis.__plmDownloads.some(url => url.endsWith('-universal.dmg')))).toBe(true);
-  await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setContentSize(390, 800));
+  await setContentSize(390, 800);
   expect(await page.locator('.download-buttons').evaluate(el => getComputedStyle(el).flexDirection)).toBe('column');
   await page.getByRole('link', { name: 'Download for Windows' }).click();
   await expect(page).toHaveURL(/downloading-for-windows\.html$/);
