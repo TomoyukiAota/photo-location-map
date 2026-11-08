@@ -91,8 +91,8 @@ makes under `.claude/worktrees/`:
 - **`npm run test:package` stops before its smoke test on macOS**, and would
   on Windows. electron-builder writes the update feed (`release/latest-mac.yml`,
   `release/latest.yml` on Windows) for the GitHub repository that it finds in
-  `package.json`, `TRAVIS_REPO_SLUG` or `.git/config`, and `.git` is a file in
-  a worktree, so it finds none there. Without `GH_TOKEN` or `GITHUB_TOKEN`, the
+  `package.json` or `.git/config`, and `.git` is a file in a worktree, so it
+  finds none there. Without `GH_TOKEN` or `GITHUB_TOKEN`, the
   package is built and signed, but the test's check of the feed fails, so the
   smoke test of the packaged app does not run (nor, on macOS, the checks of
   the bundle's architectures). With either token, the build fails with
