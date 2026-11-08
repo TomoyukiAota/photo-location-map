@@ -26,6 +26,7 @@ The comparisons of [PERFORMANCE.md](PERFORMANCE.md), made with the harness in
 | [pilot](results/pilot.md) | none | 0 (code e6a1d1e7c0b2) | 3 + 1 warm-up each, all ok | Set the rules of rer-1. |
 | [rer-1-0](results/rer-1-0.md) | rer-1 | 0 | 10 + 1 each, all ok | The stage 0 baseline under rer-1. A Time Machine backup started at round 2; the settings dialog's closing, timed with Playwright's polls, then read about 210 ms instead of 110. Superseded by rer-2 for that and the viewer's metadata; the other times are kept as the record of stage 0. |
 | [rer-2-A](results/rer-2-A.md) | rer-2 | 0, A (235d6172) | 10 + 1 each, all 88 ok | Builds alternated by round; viewer unchanged; load average 3.0 at the start, 2.2 at the end. |
+| [rer-2-B](results/rer-2-B.md) | rer-2 | 0, A, B (f5b5f7b1) | 10 + 1 each, all 132 ok | 0 and A rerun beside B, alternated by round; viewer unchanged; load average 1.9 at the end. |
 
 ### Stage 0 (rer-1-0), the main metrics
 
@@ -84,3 +85,34 @@ about 23 or 39 ms, one 60 Hz frame apart: the click lands on either side of a fr
 0 at 23 ms, six of ten of A at 39). The other two View Data cases, `jpeg-first` and `heic`, did not move, and every
 span of the app after the request, such as `request-to-launch-ms` (0.3 ms) and `request-to-image-ms`, is within
 budget. The rule was frozen before stage A and is kept; the verdict is recorded as a frame-quantized driver latency.
+
+### Stage B against 0 and A (rer-2-B)
+
+Medians in milliseconds, of 10 trials each; 0 and A were measured again in the same series, beside B.
+
+| Scenario | Metric | 0 | A | B | B vs 0 | B vs A |
+| --- | --- | ---: | ---: | ---: | --- | --- |
+| Startup, new profile | Spawn to the home view | 406.6 | 399.1 | 399.5 | -1.7 %, within budget | +0.1 %, within budget |
+|  | Navigation to `src/main.ts` (the renderer's modules) | 121.3 | 116.5 | 114.4 | -5.7 %, within budget | -1.8 %, within budget |
+| Startup, used profile | Spawn to the home view | 370.7 | 362.9 | 360.6 | -2.7 %, within budget | -0.6 %, within budget |
+| Open the large folder, first | Start to complete | 728.8 | 643.7 | 644.2 | -11.6 %, improvement | +0.1 %, within budget |
+|  | Reading the photos' data | 601.8 | 516.9 | 516.0 | -14.3 %, improvement | -0.2 %, within budget |
+|  | Start to the markers on the map | 1746.3 | 1662.4 | 1664.4 | -4.7 %, within budget | +0.1 %, within budget |
+|  | Start to the HEIC thumbnails done | 5729.8 | 5643.6 | 5644.6 | -1.5 %, within budget | +0.0 %, within budget |
+|  | Longest gap between frames | 49.6 | 56.3 | 45.4 | -8.6 %, within budget | -19.5 %, within budget |
+|  | Process tree, peak (MB) | 3161.2 | 3364.9 | 3123.5 | -1.2 %, within budget | -7.2 %, within budget |
+| Open it again | Start to complete | 734.9 | 658.8 | 649.0 | -11.7 %, improvement | -1.5 %, within budget |
+| View Data, JPEG, first | Request to the photo shown | 651.8 | 655.8 | 650.4 | -0.2 %, within budget | -0.8 %, within budget |
+| View Data, JPEG | Request to the photo shown | 631.8 | 631.1 | 631.7 | -0.0 %, within budget | +0.1 %, within budget |
+| View Data, HEIC | Request to the photo shown | 564.2 | 563.8 | 564.9 | +0.1 %, within budget | +0.2 %, within budget |
+| Settings | Save to the dialog closed | 106.8 | 107.9 | 108.4 | +1.5 %, within budget | +0.5 %, within budget |
+|  | Save to the setting written to its file | 107.0 | 108.0 | 109.0 | +1.9 %, within budget | +0.9 %, within budget |
+|  | Save to the restarted app's home view | 486.2 | 482.3 | 481.8 | -0.9 %, within budget | -0.1 %, within budget |
+
+Of 110 compared metrics, B against 0 has 102 within budget, 2 invariants the same and 6 improvements, the same
+folder-opening gains as A; against A, 108 are within budget and the 2 invariants the same, with no improvement or
+regression. Moving the settings to the main process, with the renderer's writes sent asynchronously, cost nothing
+measurable: saving a setting and the restart that follows are unchanged, and so is reading the settings at startup.
+A's one regression verdict, `view-data.jpeg.menu-to-request-ms`, did not recur: 24.4 ms for 0, 25.3 for A and 24.7
+for B here, which bears out its reading as the frame quantization of the driver's click.
+
