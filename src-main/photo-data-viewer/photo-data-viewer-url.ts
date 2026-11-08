@@ -4,7 +4,9 @@ import { getPhotoDataViewerServerUrl } from './photo-data-viewer-server-config';
 
 export function createPhotoDataViewerUrl(photo: PhotoDataViewerIpcPhotoParams): string {
   const searchParamsObj = {
-    photoPath: photo.path,
+    // The page gets its photo from its window's bridge, which it waits for (src-main/photo-data-viewer/photo-delivery.ts):
+    // the photo's path is no longer in the address, which goes to the viewer's server.
+    plmBridge: '1',
     dateFormat: currentUserSettings.dateFormat,
     clockSystemFormat: currentUserSettings.clockSystemFormat,
   };

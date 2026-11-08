@@ -17,6 +17,8 @@ import { scenarios } from './lib/scenarios.mjs';
 
 const { values } = parseArgs({ options: {
   app: { type: 'string', multiple: true },
+  // <label>:<NAME>=<value>, an environment variable for one build's launches, such as a variant of a test profile.
+  'app-env': { type: 'string', multiple: true, default: [] },
   scenarios: { type: 'string', default: Object.keys(scenarios).join(',') },
   trials: { type: 'string', default: '10' },
   warmup: { type: 'string', default: '1' },
@@ -34,11 +36,19 @@ for (const name of selected) if (!scenarios[name]) throw new Error(`Unknown scen
 const trials = Number(values.trials);
 const warmup = Number(values.warmup);
 
+const appEnv = {};
+for (const entry of values['app-env']) {
+  const match = /^([^:]+):([A-Z][A-Z0-9_]*)=(.*)$/.exec(entry);
+  if (!match) throw new Error(`--app-env takes <label>:<NAME>=<value>, not ${entry}.`);
+  (appEnv[match[1]] ??= {})[match[2]] = match[3];
+}
 const apps = values.app.map(entry => {
   const [label, ...rest] = entry.split('=');
   const executable = rest.join('=');
-  return { label, target: executable === 'checkout' ? {} : { executable } };
+  return { label, target: { ...(executable === 'checkout' ? {} : { executable }), env: appEnv[label] ?? {} } };
 });
+for (const label of Object.keys(appEnv))
+  if (!apps.some(app => app.label === label)) throw new Error(`--app-env names ${label}, which no --app is.`);
 
 async function sha256(file) {
   const hash = createHash('sha256');
@@ -92,7 +102,8 @@ const series = {
   harness: { node: process.version, playwright: JSON.parse(await readFile(path.join(root, 'node_modules/playwright/package.json'), 'utf8')).version },
   workloads: Object.fromEntries(Object.entries(manifest.workloads).map(([name, workload]) => [name, { id: workload.id, files: workload.files, bytes: workload.bytes }])),
   viewerAtStart: await viewerIdentity(context.viewerServer),
-  apps: await Promise.all(apps.map(async app => ({ label: app.label, executable: app.target.executable ?? 'checkout', code: await codeHash(app.target) }))),
+  apps: await Promise.all(apps.map(async app => ({ label: app.label, executable: app.target.executable ?? 'checkout',
+    env: app.target.env, code: await codeHash(app.target) }))),
   scenarios: selected, trials, warmup, settleMs: context.settleMs,
 };
 await writeFile(path.join(values.out, 'series.json'), JSON.stringify(series, null, 2));

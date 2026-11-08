@@ -30,7 +30,7 @@ export async function removeProfile(profile) {
  */
 export async function launch({ target, profile, viewerServer, env: extraEnv = {} }) {
   const env = { ...process.env, PLM_TEST_ROOT: profile, PLM_E2E: '1', PLM_TEST_HEADLESS: '1', PLM_TEST_OFFLINE: '1',
-    ...(viewerServer ? { PLM_TEST_PHOTO_DATA_VIEWER_SERVER: viewerServer } : {}), ...extraEnv };
+    ...(viewerServer ? { PLM_TEST_PHOTO_DATA_VIEWER_SERVER: viewerServer } : {}), ...(target.env ?? {}), ...extraEnv };
   for (const key of ['PLM_EM_MAIN', 'PLM_EM_RENDERER', 'ELECTRON_RUN_AS_NODE', 'NODE_OPTIONS']) delete env[key];
   // A packaged app launched by a user has no npm development-profile setting.
   if (target.executable) delete env.npm_package_config_devOrProd;

@@ -1,11 +1,13 @@
-import { BrowserWindow } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import { isHeadlessTest, withHeadlessTestOptions } from '../../electron-util/e2e-test-hooks';
-import { legacyPhotoDataViewerWebPreferences } from '../../electron-util/electron-web-preferences';
+import { photoDataViewerWebPreferences } from '../../electron-util/electron-web-preferences';
 import { PhotoDataViewerIpcParams } from '../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params';
 import { logWindowBounds, photoDataViewerLogger as logger } from '../../src-shared/photo-data-viewer/photo-data-viewer-logger';
 import { perfMark } from '../../src-shared/perf/perf-mark';
 import { openUrl } from '../../src-shared/url/open-url';
 import { addPhotoDataViewerWindow } from '../ipc/ipc-sender';
+import { isWebPageUrl } from '../shell/open-with-os';
+import { grantPhoto, keepOnViewerPages } from './photo-delivery';
 import { trackOpeningPhotoDataViewer } from './photo-data-viewer-tracker';
 import { createPhotoDataViewerUrl } from './photo-data-viewer-url';
 import { PhotoDataViewerWindowState } from './photo-data-viewer-window-state';
@@ -24,13 +26,20 @@ export async function launchPhotoDataViewer(ipcParams: PhotoDataViewerIpcParams)
     height: windowState.height,
     title: `${photo.name} - Photo Location Map`,  // Needs to be the same as document.title in Photo Data Viewer.
     autoHideMenuBar: true,
-    webPreferences: legacyPhotoDataViewerWebPreferences,
+    webPreferences: photoDataViewerWebPreferences(app.getAppPath()),
   }));
 
   perfMark('view-data:window-created');
-  // Its page sends analytics events (src-main/analytics/analytics-backend-ipc.ts).
+  // Its page asks for its photo, and sends analytics events (src-main/analytics/analytics-backend-ipc.ts).
   addPhotoDataViewerWindow(browserWindow.webContents);
+  keepOnViewerPages(browserWindow.webContents);
+  grantPhoto(browserWindow.webContents, photo);
   browserWindow.webContents.setWindowOpenHandler(({url}) => {
+    // A web page only, as for the main window's links (src-main/shell/): the viewer's page is served apart from the app.
+    if (!isWebPageUrl(url)) {
+      logger.warn(`Refused to open a link of Photo Data Viewer that is not a web page.`);
+      return { action: 'deny' };
+    }
     const urlForAnalytics = modifyUrlForAnalyticsIfNeeded(url);
     openUrl(url, 'somewhere', 'Photo Data Viewer', urlForAnalytics);
     return { action: 'deny' };

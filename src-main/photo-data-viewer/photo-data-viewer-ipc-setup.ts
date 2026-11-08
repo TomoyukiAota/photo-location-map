@@ -3,6 +3,7 @@ import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { Logger } from '../../src-shared/log/logger';
 import { PhotoDataViewerIpcParams } from '../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params';
 import { assertFromMainWindow } from '../ipc/ipc-sender';
+import { isInUserChosenFolder } from '../ipc/user-chosen-folders';
 import { launchPhotoDataViewer } from './launch-photo-data-viewer';
 
 function isPhotoDataViewerIpcParams(value: unknown): value is PhotoDataViewerIpcParams {
@@ -15,6 +16,9 @@ ipcMain.handle(IpcConstants.PhotoDataViewer.Name, (event, ipcParams: unknown) =>
   assertFromMainWindow(event, 'Opening Photo Data Viewer');
   if (!isPhotoDataViewerIpcParams(ipcParams))
     throw new Error('Opening Photo Data Viewer needs the name and the path of a photo.');
+  // The viewer may read only this photo (photo-delivery.ts), one of a folder that the user opened.
+  if (!isInUserChosenFolder(ipcParams.photo.path))
+    throw new Error('Photo Data Viewer can only open a photo in a folder that the user opened.');
   // noinspection JSIgnoredPromiseFromCall
   launchPhotoDataViewer({ photo: { name: ipcParams.photo.name, path: ipcParams.photo.path } });
 });
