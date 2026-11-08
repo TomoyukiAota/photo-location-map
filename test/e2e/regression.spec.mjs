@@ -749,6 +749,35 @@ test('the tree shows partly selected folders, and Select Only This from its menu
   await expect(treeCheckbox('actual-photos')).toBeChecked({ indeterminate: true });
   await expectRepresentedPhotos(1);
 });
+test('a folder of the tree expands and collapses, and keeps the selection of its photos', async () => {
+  await dismissWelcome();
+  await openFolderWithPicker(photoFolder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
+  // Only the opened folder is expanded after loading, so its subfolders show, but not their photos.
+  const kobe = page.locator('mat-tree-node').filter({ hasText: 'Kobe' });
+  const kobeToggle = kobe.getByRole('button');
+  const photo = page.locator('mat-tree-node').filter({ hasText: 'IMG_4676.JPG' });
+  await expect(photo).toHaveCount(0);
+  await expect(kobe).toHaveAttribute('aria-expanded', 'false');
+  await kobeToggle.click();
+  await expect(photo).toBeVisible();
+  await expect(kobe).toHaveAttribute('aria-expanded', 'true');
+  await expect(kobe.locator('mat-icon')).toHaveText('expand_more');
+  await expect(treeCheckbox('IMG_4676.JPG')).toBeChecked();
+  // Two folders above the photo follow its checkbox.
+  await treeCheckbox('IMG_4676.JPG').uncheck();
+  await expect(treeCheckbox('Kobe')).not.toBeChecked();
+  await expect(treeCheckbox('actual-photos')).toBeChecked({ indeterminate: true });
+  await expectRepresentedPhotos(3);
+  await kobeToggle.click();
+  await expect(photo).toHaveCount(0);
+  await expect(kobe).toHaveAttribute('aria-expanded', 'false');
+  await expect(kobe.locator('mat-icon')).toHaveText('chevron_right');
+  await kobeToggle.click();
+  await expect(treeCheckbox('IMG_4676.JPG')).not.toBeChecked();
+  await expect(treeCheckbox('Kobe')).not.toBeChecked();
+  await expectRepresentedPhotos(3);
+});
 test('a right-click outside the tree\'s context menu closes it', async () => {
   await dismissWelcome();
   await openFolderWithPicker(photoFolder);
