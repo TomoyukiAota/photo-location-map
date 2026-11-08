@@ -188,6 +188,10 @@ async function measureViewData(context, app, page, pid, renderer, item, fileName
 
 async function measureViewer(context, app, page, pid, renderer, item, fileName, before, sampler) {
   const windowEvent = app.waitForEvent('window', { timeout: 60000 });
+  // TL;DR: Handled at once, so that a failure before it is awaited fails the trial, not the whole series.
+  // Details: When the click threw, the app was closed while this waited, and its rejection, unhandled, ended run.mjs
+  // in the first attempt of series rer-2-C1. Awaited below as before; the measurement is unchanged.
+  windowEvent.catch(() => {});
   const menuMs = Date.now();
   await item.click();
   const viewer = await windowEvent;

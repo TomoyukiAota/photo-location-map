@@ -73,9 +73,15 @@ export async function waitForPageMark(page, name, { sinceMs = 0, timeout = 12000
   return handle.jsonValue();
 }
 
-/** The launch is usable: its home view rendered. Returns the mark. */
-export function waitForUsable(page, timeout = 90000) {
-  return waitForPageMark(page, 'renderer:home-rendered', { timeout });
+/** The launch is usable: its home view rendered. Returns the mark; when it does not render, says what the page had. */
+export async function waitForUsable(page, timeout = 90000) {
+  try {
+    return await waitForPageMark(page, 'renderer:home-rendered', { timeout });
+  } catch (error) {
+    const bridge = await page.evaluate(() => !window.plm ? 'no bridge' : window.plm.startup === null
+      ? 'the startup metadata refused' : 'a bridge').catch(() => 'unknown');
+    throw new Error(`The home view did not render, with ${bridge}: ${error.message}`, { cause: error });
+  }
 }
 
 /** Clicks OK on the welcome dialog, which a profile shows until OK is clicked once. */
