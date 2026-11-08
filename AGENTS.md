@@ -100,6 +100,56 @@ makes under `.claude/worktrees/`:
   checks its feed the same way, and Linux checks none. The CI jobs, which work
   in a clone, run the whole test.
 
+## In the Claude desktop app on Windows
+
+When the Claude desktop app on Windows is installed as an MSIX package, it
+runs from `C:\Program Files\WindowsApps\Claude_...`. A session is inside it
+when that `claude.exe` is among the shell's parent processes
+(`Get-CimInstance Win32_Process`, following `ParentProcessId`). It is not the
+shell's parent, and the shell has no package identity of its own.
+
+Windows then redirects some writes of the shell, and of every program started
+from it, to the desktop app's own storage, as seen in November 2026: writes
+to `HKCU\Software\Classes` (the rest of `HKCU` was not tried), and a new
+folder directly under `%APPDATA%` or `%LOCALAPPDATA%`, which lands in
+`%LOCALAPPDATA%\Packages\Claude_...\LocalCache\`. A folder that is already
+there is written in place. Those programs read the redirected copy, so a
+change looks done from inside, while Explorer and every program started
+outside the desktop app still see the real registry and folders.
+
+- To read the real registry, start `reg.exe` outside the desktop app through
+  WMI, which runs it as the same user. Hide its console window, which would
+  otherwise open on the owner's screen, and wait for it to end, as the call
+  returns once it has started. Write its output to a new folder under
+  `%USERPROFILE%`, which only the owner can change, and delete the folder
+  afterwards:
+
+  ```powershell
+  $hidden = New-CimInstance -CimClass (Get-CimClass Win32_ProcessStartup) -ClientOnly -Property @{ ShowWindow = [uint16]0 }
+  $p = Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{
+    CommandLine = 'cmd.exe /c reg query "<key>" /s > "<folder>\reg.txt" 2>&1'
+    ProcessStartupInformation = $hidden
+  }
+  Wait-Process -Id $p.ProcessId -Timeout 60 -ErrorAction SilentlyContinue
+  ```
+
+- Before a check that changes the real registry, export the keys that it
+  changes, such as `explorerContextMenuKeys` in
+  `src-main/explorer-context-menu/explorer-context-menu.ts`, with `reg export`
+  started the same way, and afterwards restore them with `reg delete` and
+  `reg import`, started that way too.
+- When Photo Location Map must change the real registry, as for a check of
+  the OS tab's menu in Explorer, ask the owner to start it from Explorer, for
+  example `release\win-unpacked\Photo Location Map.exe` after
+  `npm run package:windows`.
+
+**Why:** a check of the OS tab run inside the desktop app added and removed
+the menu's keys, and every `reg query` there agreed, but only the desktop
+app's copy changed: the real registry kept the keys of the installed Photo
+Location Map all along, and Explorer kept showing its item
+(`docs/tasks/20261107_angular-signals-zoneless/STATUS.md`, "Settings: OS
+(Windows)").
+
 ## You can run the signed mac build yourself
 
 Run `npm run package:mac` (and the other packaging scripts) directly. The macOS
