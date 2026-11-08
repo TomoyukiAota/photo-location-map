@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import * as _ from 'lodash';
 import { Logger } from '../../../../src-shared/log/logger';
 import { Photo } from '../model/photo.model';
@@ -8,12 +8,11 @@ import { PhotoSelectionHistoryService } from './photo-selection-history.service'
   providedIn: 'root'
 })
 export class SelectedPhotoService {
+  private photoSelectionHistoryService = inject(PhotoSelectionHistoryService);
+
   private readonly selectedPhotosState = signal<readonly Photo[]>([]);
   /** The photos selected in the directory tree view. */
   public readonly selectedPhotos = this.selectedPhotosState.asReadonly();
-
-  constructor(private photoSelectionHistoryService: PhotoSelectionHistoryService) {
-  }
 
   /** Selects the photos and adds them to the selection history, unless the same paths are selected already. */
   public setSelectedPhotos(desiredSelectedPhotos: Photo[]) {

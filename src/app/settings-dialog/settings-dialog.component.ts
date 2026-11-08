@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialogRef } from '@angular/material/dialog';
 import * as os from 'os';
@@ -32,6 +32,9 @@ const availableSettingTabNames = os.platform() === 'win32'
   standalone: false
 })
 export class SettingsDialogComponent {
+  private settingsDialogRef = inject<MatDialogRef<SettingsDialogComponent>>(MatDialogRef);
+  private restoreSettingsService = inject(RestoreSettingsService);
+
   public readonly tabNames = availableSettingTabNames;
   public readonly selectedTab = signal<SettingsTabName>(availableSettingTabNames[0]);
   /** The settings as the tabs have changed them, which Save saves. Each change makes a new object. */
@@ -54,9 +57,9 @@ export class SettingsDialogComponent {
     return showStatusBarChanged || isDateFormatChanged || isClockSystemFormatChanged;
   });
 
-  constructor(private settingsDialogRef: MatDialogRef<SettingsDialogComponent>,
-              settingsChangedService: SettingsChangedService,
-              private restoreSettingsService: RestoreSettingsService) {
+  constructor() {
+    const settingsChangedService = inject(SettingsChangedService);
+
     // The service outlives the dialog, so each dialog stops listening when it closes.
     settingsChangedService.appearanceSettingsChanged.pipe(takeUntilDestroyed()).subscribe(changed => {
       this.userSettingsToBeSaved.update(settings => ({ ...settings, showStatusBar: changed.showStatusBar }));

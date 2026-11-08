@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import * as remote from '@electron/remote';
 import { Logger } from '../../../../src-shared/log/logger';
 import { RequireFromMainProcess } from '../../../../src-shared/require/require-from-main-process';
@@ -15,17 +15,15 @@ import { OpenFolderDialogHistory } from './open-folder-dialog-history';
   standalone: false
 })
 export class SidebarUpperPaneComponent {
+  private openFolderService = inject(OpenFolderService);
+  public thumbnailGenerationService = inject(ThumbnailGenerationService);
+
   private readonly folderDialogHistory = new OpenFolderDialogHistory({
     read: () => UserDataStorage.readOrDefault(UserDataStoragePath.FolderDialog.LastConfirmedDirectory, null),
     write: directoryPath => UserDataStorage.write(UserDataStoragePath.FolderDialog.LastConfirmedDirectory, directoryPath),
     isDirectory: async directoryPath => (await RequireFromMainProcess.fsExtra.stat(directoryPath)).isDirectory(),
     reportFailure: error => Logger.warn('Could not restore or persist folder dialog history.', error),
   });
-
-  constructor(private openFolderService: OpenFolderService,
-              public thumbnailGenerationService: ThumbnailGenerationService,
-  ) {
-  }
 
   public async showOpenFolderDialog() {
     const result = await remote.dialog.showOpenDialog(

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Injector, OnDestroy, effect, untracked, viewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Injector, OnDestroy, effect, untracked, viewChild, inject } from '@angular/core';
 import * as turf from '@turf/turf';
 import { Control, LayersControlEvent, LeafletEvent, Map, Marker, PopupEvent } from 'leaflet';
 import * as _ from 'lodash';
@@ -33,6 +33,11 @@ interface RegionInfo extends Control {
   standalone: false
 })
 export class LeafletMapComponent implements OnDestroy, AfterViewInit {
+  private directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);
+  private forceRenderService = inject(LeafletMapForceRenderService);
+  private injector = inject(Injector);
+  private pinnedPhotoService = inject(PinnedPhotoService);
+
   public readonly updateInProgressOverlay = viewChild.required<ElementRef<HTMLDivElement>>('updateInProgressOverlay');
   private forceRenderServiceSubscription: Subscription;
 
@@ -59,12 +64,6 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   private set selectedBaseLayerName(baseLayerName: string) {
     UserDataStorage.write(UserDataStoragePath.LeafletMap.SelectedBaseLayer, baseLayerName);
     Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Changed Base Layer`, `Changed Base Layer to "${baseLayerName}"`);
-  }
-
-  constructor(private directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
-              private forceRenderService: LeafletMapForceRenderService,
-              private injector: Injector,
-              private pinnedPhotoService: PinnedPhotoService) {
   }
 
   public ngAfterViewInit(): void {

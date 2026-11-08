@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, viewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, viewChild, inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { app } from '@electron/remote';
 
@@ -16,16 +16,15 @@ import { WelcomeDialogAtAppLaunchService } from './welcome-dialog-at-app-launch/
   standalone: false
 })
 export class WelcomeDialogComponent implements AfterViewInit {
+  private sanitizer = inject(DomSanitizer);
+  private welcomeDialogAtAppLaunchService = inject(WelcomeDialogAtAppLaunchService);
+
   public readonly appVersion = app.getVersion();
 
   public readonly troubleshootingPageLink = viewChild.required<ElementRef<HTMLAnchorElement>>('troubleshootingPageLink');
 
   public get xFormerlyTwitterLogoDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.xFormerlyTwitterLogo); }
   public get gitHubLogoDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.gitHubLogo); }
-
-  constructor(private sanitizer: DomSanitizer,
-              private welcomeDialogAtAppLaunchService: WelcomeDialogAtAppLaunchService) {
-  }
 
   public ngAfterViewInit() {
     configureOpeningInOsBrowser(this.troubleshootingPageLink(), 'https://github.com/TomoyukiAota/photo-location-map/blob/main/docs/troubleshooting/troubleshooting.md',

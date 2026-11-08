@@ -1,6 +1,6 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, OnInit, effect, signal, untracked, viewChild } from '@angular/core';
+import { Component, OnInit, effect, signal, untracked, viewChild, inject } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatTree } from '@angular/material/tree';
 import { Analytics } from '../../../src-shared/analytics/analytics';
@@ -25,6 +25,11 @@ const dirTreeViewLogger = createPrependedLogger('[Directory Tree View]');
   standalone: false
 })
 export class DirectoryTreeViewComponent implements OnInit {
+  private sortService = inject(DirTreeViewSortService);
+  private selectedPhotoService = inject(SelectedPhotoService);
+  private photoDataService = inject(PhotoDataService);
+  private focusMonitor = inject(FocusMonitor);
+
   // padding-left for each tree view node is `level * indentPerLevel` pixels where level is depth of the tree view node.
   public readonly indentPerLevel = 30;
 
@@ -48,18 +53,16 @@ export class DirectoryTreeViewComponent implements OnInit {
 
   public photoInfoDisplayLogic: DirTreeViewPhotoInfoDisplayLogic;
 
-  constructor(directoryTreeViewDataService: DirectoryTreeViewDataService,
-              directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
-              private sortService: DirTreeViewSortService,
-              private selectedPhotoService: SelectedPhotoService,
-              private photoDataService: PhotoDataService,
-              private focusMonitor: FocusMonitor) {
+  constructor() {
+    const directoryTreeViewDataService = inject(DirectoryTreeViewDataService);
+    const directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);
+
     directoryTreeViewDataService.dataReplaced
       .subscribe(data => this.handleDirectoryTreeViewDataReplaced(data));
 
     // Sort the tree again when the sort settings change. Sorting reads photo data, which must not become a dependency.
     effect(() => {
-      const sortConfig = sortService.sortConfig();
+      const sortConfig = this.sortService.sortConfig();
       untracked(() => this.sortData(sortConfig));
     });
 

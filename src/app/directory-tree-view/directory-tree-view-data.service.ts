@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Subject } from 'rxjs';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { DirTreeViewSortService } from './dir-tree-view-sort/dir-tree-view-sort.service';
@@ -11,6 +11,9 @@ import { NestedNode } from './directory-tree-view.model';
   providedIn: 'root'
 })
 export class DirectoryTreeViewDataService {
+  private photoDataService = inject(PhotoDataService);
+  private sortService = inject(DirTreeViewSortService);
+
   /**
    * The tree of a newly opened folder. An event rather than a signal: the tree view handles it synchronously, so that by
    * the time OpenFolderService.open() resolves, the tree is built and its photos are selected. --open with a photo
@@ -18,11 +21,6 @@ export class DirectoryTreeViewDataService {
    * tree view exists from the start, so it needs no initial value.
    */
   public readonly dataReplaced = new Subject<NestedNode[]>();
-
-  constructor(private photoDataService: PhotoDataService,
-              private sortService: DirTreeViewSortService,
-  ) {
-  }
 
   public replace(directoryTreeObject: DirectoryTree): void {
     const nestedNodeArray = this.convertToNestedNodeArray([directoryTreeObject]);
