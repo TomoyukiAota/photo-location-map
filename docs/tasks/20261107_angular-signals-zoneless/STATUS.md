@@ -6,13 +6,11 @@ the existence of the plan or from an agent's earlier messages.
 
 ## Current checkpoint
 
-- State: COMPLETE, stages 0 to 3 and three stage 4 items, with follow-ups that
-  the owner asked for on 2026-11-08 (stage ledger): the fix of question 4,
-  the Material tree's accessors, `inject()`, `@Service` and
-  `ngclass-to-class`, accepted; the standalone migration, IN REVIEW on the
-  branch `claude/standalone-migration` (question 6). What is left besides is
-  the owner's: the checks after the merges (the OS tab on Windows, Google
-  Maps with an API key), and the questions below.
+- State: COMPLETE: stages 0 to 3, every stage 4 item but pinned photos as a
+  `computed`, which the owner has had explained and has not chosen, and the
+  fix of question 4 (stage ledger). What is left is the owner's: the checks
+  after the merges (the OS tab on Windows, Google Maps with an API key), and
+  the questions below.
 - Authorized (owner, 2026-11-08): carry out the whole plan once the
   prerequisite is met, one pull request per stage or slice; address the
   CodeRabbit review of each pull request, then merge it (the `automerge`
@@ -32,8 +30,8 @@ the existence of the plan or from an agent's earlier messages.
 - Investigation: complete on 2026-11-07 (REPORT.md, INVENTORY.md, MCP.md).
   The Angular unit tests passed under the zoneless TestBed default that day:
   25 files, 37 tests.
-- Last accepted slice: the stage 4 item `ngclass-to-class`, #661, merged on
-  2026-11-08 as 646e4ed.
+- Last accepted slice: the stage 4 item standalone, #662, merged on 2026-11-08
+  as 7bf8755.
   Baseline (stage 0.4): recorded under "Baseline" below.
 - Runtime, dependency, test or build changes made by this plan: stage 0 added
   e2e cases, the MCP configuration and lint policy comments. 1A keeps the
@@ -54,8 +52,7 @@ the existence of the plan or from an agent's earlier messages.
   the services are declared with `@Service`. Templates bind classes with
   `[class.name]` rather than `[ngClass]`. The components are standalone, and
   `src/app/app.config.ts` holds the application's providers.
-- Processes or CI runs owned by this work: the CI of the follow-up pull
-  requests.
+- Processes or CI runs owned by this work: none.
 - `provideCheckNoChangesConfig` (PLAN.md, 3.5) stays in development builds:
   the e2e suite run against one relies on it to find bindings changed
   without notification (`test/e2e/README.md`).
@@ -112,8 +109,8 @@ continue from "Next action" in the ledger below.
 | 4 `inject()` | ACCEPTED | #659 | 6c9dc67 | 2026-11-08, macOS, before the rebase onto main that brought #658: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 40 cases in 3.4 min, all pass; `build:dev` and e2e, 40 cases in 4.3 min, no NG0100; so did the same with `@Service` and `ngclass-to-class` on top; 30 of the 38 constructors that took parameters are gone or empty, and the 8 left belong to plain classes that Angular does not create; on this branch's head after the rebase, the same passed, with Vitest 82; CI green; CodeRabbit: no actionable comments; live-reload and `PLM_VISUAL=1` e2e, which the checkpoint asks for, were not run before the merge (CI runs live-reload, but the e2e suite without its screenshots): both passed on the head of #660, which contains this | headless e2e: the whole suite, as the change touches the components and services throughout | none |
 | 4 `@Service` | ACCEPTED | #660 | bf13966 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 82, Electron-Mocha 121 and 70), live-reload, `build:prod` and `PLM_VISUAL=1` e2e with 40 cases in 3.5 min, all pass, the committed references unchanged; `build:dev` and e2e, 40 cases in 4.4 min, no NG0100; 19 services are `@Service()`, the error handler and a spec's stand-in `@Service({ autoProvided: false })`, and no `@Injectable` is left; CI green; CodeRabbit: the checkpoint's live-reload and `PLM_VISUAL=1` e2e, which it asked for, run on this branch's head and recorded, for #657 to #659 too, then no actionable comments | headless e2e: the whole suite | none |
 | 4 `ngclass-to-class` | ACCEPTED | #661 | 646e4ed | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 82, Electron-Mocha 121 and 70), live-reload, `build:prod` and `PLM_VISUAL=1` e2e with 40 cases in 3.5 min, all pass, the committed references unchanged; `build:dev` and e2e, 40 cases in 4.4 min, no NG0100; no `ngClass` is left; CI green; CodeRabbit: no actionable comments | headless e2e of what the 7 bindings show: the two status bars, the thumbnail status bar's details and close button, the settings dialog's tabs, the menu button and the sort's information | none |
-| 4 standalone | IN REVIEW | `claude/standalone-migration` | | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 82, Electron-Mocha 121 and 70), live-reload, `build:prod` and `PLM_VISUAL=1` e2e with 40 cases in 3.5 min, all pass, the committed references unchanged; `build:dev` and e2e, 40 cases in 4.3 min, no NG0100; no NgModule is left, and `build:prod`, which checks every template strictly, fails for a component that misses an import | headless e2e: the whole suite | merge the pull request after its review |
-| 4 other items | NOT STARTED | | | NOT RUN | | pinned photos as a `computed`, which the owner has had explained and has not chosen: question 6 below |
+| 4 standalone | ACCEPTED | #662 | 7bf8755 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 82, Electron-Mocha 121 and 70), live-reload, `build:prod` and `PLM_VISUAL=1` e2e with 40 cases in 3.5 min, all pass, the committed references unchanged; `build:dev` and e2e, 40 cases in 4.3 min, no NG0100; no NgModule is left, and `build:prod`, which checks every template strictly, fails for a component that misses an import; with a binding of the loaded-files status bar changed without notification, a development build failed an e2e case with NG0100, as it should; CI green; CodeRabbit: no actionable comments | headless e2e: the whole suite | none |
+| 4 pinned photos as a `computed` | NOT STARTED | | | NOT RUN | | the owner decides: question 6 below |
 
 ## Progress counters
 
@@ -343,7 +340,9 @@ changes if the answer differs; keep answered rows, with the answer.
 | 3 | In a git worktree, mise does not trust the worktree's `mise.toml`, as trust is kept per path, so `mise exec` fails there. Should AGENTS.md say what agents do then? | This work passed `MISE_TRUSTED_CONFIG_PATHS=<worktree>/mise.toml` to each command rather than running `mise trust`; nothing in the repository depends on it. | all |
 | 4 | The tree's context menu does not close on a right-click outside it while the loading dialog is still closing (see "Findings while executing"). Fix it, by listening to the menu's own backdrop, the last one? | Owner, 2026-11-08: fix it. Fixed on the branch `claude/tree-context-menu-backdrop` (stage ledger). | 2 |
 | 5 | In a git worktree, `npm run test:package` fails its check of `latest-mac.yml` (see "Findings while executing"). Should AGENTS.md say so, with question 3? | Assumed: the macOS CI job, which runs it in a clone, is the check. | 3 |
-| 6 | Which of the other stage 4 items should follow: `inject()` with `prefer-inject`, `@Service`, the Material tree's `childrenAccessor`/`levelAccessor`, the standalone migration with `prefer-standalone`, `ngclass-to-class` (2.4), and pinned photos as a `computed`? They change the code's style throughout rather than its behavior. | Owner, 2026-11-08: all of them but pinned photos as a `computed`, which the owner has had explained and has not chosen: the Material tree's accessors, then `inject()`, `@Service` (after `inject()`, as the service migration leaves a class that takes its dependencies in its constructor as it is), `ngclass-to-class` and the standalone migration, one pull request each. The three small items, `NgZone.run`, `RouterTestingModule` and `strictTemplates`, are done, one pull request each. | 4 |
+| 6 | Which of the other stage 4 items should follow: `inject()` with `prefer-inject`, `@Service`, the Material tree's `childrenAccessor`/`levelAccessor`, the standalone migration with `prefer-standalone`, `ngclass-to-class` (2.4), and pinned photos as a `computed`? They change the code's style throughout rather than its behavior. | Owner, 2026-11-08: all of them but pinned photos as a `computed`, which the owner has had explained and has not chosen: the Material tree's accessors, then `inject()`, `@Service` (after `inject()`, as the service migration leaves a class that takes its dependencies in its constructor as it is), `ngclass-to-class` and the standalone migration, one pull request each: #658 to #662. The three small items, `NgZone.run`, `RouterTestingModule` and `strictTemplates`, are done, one pull request each. | 4 |
+| 7 | Report upstream what the migrations here showed? The Angular CLI's MCP tool `onpush_zoneless_migration` fails with ENOTDIR on a spec file (MCP.md); `ng generate @angular/core:signals` writes twice in files that two tsconfigs compile; and the bootstrap step of `ng generate @angular/core:standalone` drops what `bootstrapModule()` was given (both under "Findings while executing"). | Assumed: not reported, as a report is outward-facing and the owner's to decide. | 2, 4 |
+| 8 | Run the e2e suite against a development build in CI too, on one OS? CI runs it against the production build only, so the check for bindings changed without notification (NG0100) runs only when someone runs it locally. | Assumed: not done; it would add about 4.5 minutes to one job. | 2, 3 |
 
 ## Required update fields while executing
 
