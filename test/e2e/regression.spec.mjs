@@ -753,12 +753,19 @@ test('a right-click outside the tree\'s context menu closes it', async () => {
   await dismissWelcome();
   await openFolderWithPicker(photoFolder);
   await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
-  // The menu listens to the first overlay backdrop, which is the loading dialog's until that has closed.
   await expect(page.locator('.cdk-overlay-backdrop')).toHaveCount(0);
+  // Right after a folder has loaded, the loading dialog's backdrop can still be fading out when the menu opens, before
+  // the menu's own. A stand-in for it, first in the overlay container, keeps that state for as long as this case needs.
+  await page.evaluate(() => {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'cdk-overlay-backdrop';
+    backdrop.style.pointerEvents = 'none'; // As the CDK leaves a backdrop that is going away.
+    document.querySelector('.cdk-overlay-container').prepend(backdrop);
+  });
   const selectOnlyThis = page.getByRole('menuitem', { name: 'Select Only This' });
   await page.locator('mat-tree-node').filter({ hasText: 'Kobe' }).click({ button: 'right' });
   await expect(selectOnlyThis).toBeVisible();
-  await page.locator('.cdk-overlay-backdrop').click({ button: 'right', position: { x: 5, y: 5 } });
+  await page.locator('.cdk-overlay-transparent-backdrop').click({ button: 'right', position: { x: 5, y: 5 } });
   await expect(selectOnlyThis).toHaveCount(0);
   await expect(treeCheckbox('Kobe')).toBeChecked();
 });
