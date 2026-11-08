@@ -64,7 +64,15 @@ the existence of the plan or from an agent's earlier messages.
 
 ## Resume first action
 
-Read AGENTS.md, PLAN.md and this file. Before stage 0, check the prerequisite:
+The plan is complete ("Current checkpoint" above), so do not begin it again.
+The next action is the owner's: the checks left to the owner and the open
+questions under "Questions for the owner" below. If the owner chooses another
+item, such as pinned photos as a `computed` (question 6), branch from the
+fetched main as below, follow PLAN.md's "Checkpoint discipline", and give the
+item a row in the stage ledger.
+
+How the plan was started: read AGENTS.md, PLAN.md and this file. Before stage
+0, check the prerequisite:
 each of the four pull requests must be `MERGED`, with its merge commit on
 `origin/main`. A pull request closed without being merged is not merged; ask
 the owner then.
@@ -83,9 +91,9 @@ done
 ```
 
 Branch from the fetched main, not from a local `main` that may be behind:
-`git switch -c <branch> origin/main`. Run `mise exec -- npm ci` and begin with
-PLAN.md step 0.1. If a slice is in progress, open its pull request and
-continue from "Next action" in the ledger below.
+`git switch -c <branch> origin/main`. Run `mise exec -- npm ci`; the plan
+began with PLAN.md step 0.1. If a slice is in progress, open its pull request
+and continue from "Next action" in the ledger below.
 
 ## Stage ledger
 
