@@ -32,4 +32,9 @@ export namespace IpcConstants {
     export const Redo = 'ipc-constants-photo-selection-redo';
     export const UpdateUndoRedoMenus = 'ipc-constants-photo-selection-update-undo-redo-menus';
   }
+
+  export namespace ExplorerContextMenu {
+    export const Add = 'ipc-constants-explorer-context-menu-add';
+    export const Remove = 'ipc-constants-explorer-context-menu-remove';
+  }
 }
