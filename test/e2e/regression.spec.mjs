@@ -138,6 +138,11 @@ async function launch({ resize = true } = {}) {
     return tiles.length > 0 && tiles.every(img => img.complete);
   });
 }
+/**
+ * With PLM_VISUAL=1, compares a screenshot with the reference `${name}.png`: of the dialog for welcome, about and the
+ * settings tabs, and of the whole window otherwise, with `mask` over what differs from run to run. empty-home also
+ * compares the two toolbars, which the negative controls move.
+ */
 async function shot(name, mask = []) {
   if (!visual) return;
   await page.evaluate(() => document.fonts.ready);
