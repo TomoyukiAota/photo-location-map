@@ -139,19 +139,18 @@ export class DirectoryTreeViewComponent implements OnInit {
   }
 
   private handleDirectoryTreeViewSelectionRequested(photoPaths: string[]) {
-    const allNodes = Array.from(this.parentNodes.keys());
-    const selectionRequestedNodes = allNodes.filter(node => photoPaths.includes(node.path));
+    const requestedPaths = new Set(photoPaths);
+    const selectionRequestedNodes = Array.from(this.parentNodes.keys()).filter(node => requestedPaths.has(node.path));
     this.selectRequestedNodesAndDeselectOthers(selectionRequestedNodes);
   }
 
   // See also DirectoryTreeViewComponent::toggleNodeSelection function because similar steps are performed.
   private selectRequestedNodesAndDeselectOthers(selectionRequestedNodes: NestedNode[]): void {
-    const allNodes = Array.from(this.parentNodes.keys());
-    this.nodeSelectionModel.deselect(...allNodes);
+    this.nodeSelectionModel.clear();
 
     const selectableNodes = selectionRequestedNodes.filter(node => node.isSelectable);
     if (selectableNodes.length >= 1) {
-      this.nodeSelectionModel.select(...selectableNodes);
+      this.selectNodes(selectableNodes);
       selectableNodes.filter(node => this.isExpandable(node)).forEach(node => this.selectAllDescendants(node));
       selectableNodes.forEach(node => this.updateAllParents(node));
     }
@@ -162,7 +161,19 @@ export class DirectoryTreeViewComponent implements OnInit {
 
   private selectAllDescendants(parent: NestedNode): void {
     const descendants = this.getSelectableDescendants(parent);
-    this.nodeSelectionModel.select(...descendants);
+    this.selectNodes(descendants);
+  }
+
+  // SelectionModel's select() and deselect() take the nodes as arguments, which one call cannot take as many of as a
+  // large folder has: past about 150,000, the engine throws a RangeError. One node at a time instead.
+  private selectNodes(nodes: NestedNode[]): void {
+    for (const node of nodes)
+      this.nodeSelectionModel.select(node);
+  }
+
+  private deselectNodes(nodes: NestedNode[]): void {
+    for (const node of nodes)
+      this.nodeSelectionModel.deselect(node);
   }
 
   public isSelected(node: NestedNode): boolean {
@@ -223,9 +234,9 @@ export class DirectoryTreeViewComponent implements OnInit {
   private toggleAllDescendants(parent: NestedNode) {
     const descendants = this.getSelectableDescendants(parent);
     if (this.isSelected(parent)) {
-      this.nodeSelectionModel.select(...descendants);
+      this.selectNodes(descendants);
     } else {
-      this.nodeSelectionModel.deselect(...descendants);
+      this.deselectNodes(descendants);
     }
   }
 
