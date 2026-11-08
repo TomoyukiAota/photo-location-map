@@ -1,18 +1,14 @@
 import { Component, input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatTree, MatTreeModule } from '@angular/material/tree';
+import { MatTree } from '@angular/material/tree';
 import { By } from '@angular/platform-browser';
+import { DirTreeViewPhotoInfoComponent } from './dir-tree-view-photo-info/dir-tree-view-photo-info.component';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { DirectoryTreeViewComponent } from './directory-tree-view.component';
 import { NestedNode } from './directory-tree-view.model';
 
 // A photo's information is covered by the application E2E suite.
-@Component({ selector: 'app-dir-tree-view-photo-info', template: '', standalone: false })
+@Component({ selector: 'app-dir-tree-view-photo-info', template: '' })
 class DummyDirTreeViewPhotoInfoComponent {
   public readonly photoPath = input<string>();
 }
@@ -36,9 +32,13 @@ describe('DirectoryTreeViewComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DirectoryTreeViewComponent, DummyDirTreeViewPhotoInfoComponent],
-      imports: [MatButtonModule, MatCheckboxModule, MatFormFieldModule, MatIconModule, MatMenuModule, MatTreeModule],
-    }).compileComponents();
+      imports: [DirectoryTreeViewComponent],
+    })
+      .overrideComponent(DirectoryTreeViewComponent, {
+        remove: { imports: [DirTreeViewPhotoInfoComponent] },
+        add: { imports: [DummyDirTreeViewPhotoInfoComponent] },
+      })
+      .compileComponents();
     fixture = TestBed.createComponent(DirectoryTreeViewComponent);
     dataService = TestBed.inject(DirectoryTreeViewDataService);
     await fixture.whenStable();

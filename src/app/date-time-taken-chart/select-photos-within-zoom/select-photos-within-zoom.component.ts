@@ -7,8 +7,7 @@ import { dateTimeTakenChartLogger as logger } from '../date-time-taken-chart-log
 @Component({
   selector: 'app-select-photos-within-zoom',
   templateUrl: './select-photos-within-zoom.component.html',
-  styleUrls: ['./select-photos-within-zoom.component.scss'],
-  standalone: false
+  styleUrls: ['./select-photos-within-zoom.component.scss']
 })
 export class SelectPhotosWithinZoomComponent {
   private directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);

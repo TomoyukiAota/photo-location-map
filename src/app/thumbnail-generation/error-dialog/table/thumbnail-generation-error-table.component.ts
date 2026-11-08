@@ -1,12 +1,16 @@
 import { Component, OnInit, viewChild, inject } from '@angular/core';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { DomSanitizer } from '@angular/platform-browser';
-import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
+import { TableVirtualScrollDataSource, TableVirtualScrollModule } from 'ng-table-virtual-scroll';
 import { Analytics } from '../../../../../src-shared/analytics/analytics';
 import { openContainingFolder, openWithAssociatedApp } from '../../../../../src-shared/command/command';
 import { createPrependedLogger } from '../../../../../src-shared/log/create-prepended-logger';
 import { IconDataUrl } from '../../../../assets/icon-data-url';
 import { ThumbnailGenerationService } from '../../service/thumbnail-generation.service';
+import { MatFormField } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
+import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
 
 const logger = createPrependedLogger('[Thumbnail Generation Error Table]');
 
@@ -19,7 +23,11 @@ interface TableRow {
   selector: 'app-thumbnail-generation-error-table',
   templateUrl: './thumbnail-generation-error-table.component.html',
   styleUrls: ['./thumbnail-generation-error-table.component.scss'],
-  standalone: false
+  imports: [
+    MatFormField, MatInput, CdkVirtualScrollViewport, TableVirtualScrollModule, MatTable, MatSort, MatColumnDef,
+    MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef,
+    MatRow,
+  ]
 })
 export class ThumbnailGenerationErrorTableComponent implements OnInit {
   private sanitizer = inject(DomSanitizer);

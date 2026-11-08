@@ -5,12 +5,18 @@ import { Logger } from '../../../src-shared/log/logger';
 import { LeafletMapForceRenderService } from '../map/leaflet-map/leaflet-map-force-render/leaflet-map-force-render.service';
 import { LoadedFilesStatusBarService } from '../loaded-files-status-bar/service/loaded-files-status-bar.service';
 import { ThumbnailGenerationStatusBarService } from '../thumbnail-generation/status-bar/service/thumbnail-generation-status-bar.service';
+import { SidebarUpperPaneComponent } from '../sidebar/upper-pane/sidebar-upper-pane.component';
+import { SidebarLowerPaneComponent } from '../sidebar/lower-pane/sidebar-lower-pane.component';
+import { MapComponent } from '../map/map/map.component';
+import { DateTimeTakenChartComponent } from '../date-time-taken-chart/date-time-taken-chart.component';
+import { ThumbnailGenerationStatusBarComponent } from '../thumbnail-generation/status-bar/component/thumbnail-generation-status-bar.component';
+import { LoadedFilesStatusBarComponent } from '../loaded-files-status-bar/component/loaded-files-status-bar.component';
 
 @Component({
   selector: 'app-home',
   styleUrls: ['./home.component.scss'],
   templateUrl: './home.component.html',
-  standalone: false
+  imports: [SidebarUpperPaneComponent, SidebarLowerPaneComponent, MapComponent, DateTimeTakenChartComponent, ThumbnailGenerationStatusBarComponent, LoadedFilesStatusBarComponent]
 })
 export class HomeComponent implements AfterViewInit {
   public thumbnailGenerationStatusBarService = inject(ThumbnailGenerationStatusBarService);

@@ -7,12 +7,14 @@ import {
 } from '../../error-dialog/thumbnail-generation-error-dialog.component';
 import { ThumbnailGenerationService } from '../../service/thumbnail-generation.service';
 import { ThumbnailGenerationStatusBarService } from '../service/thumbnail-generation-status-bar.service';
+import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-thumbnail-generation-status-bar',
   templateUrl: './thumbnail-generation-status-bar.component.html',
   styleUrls: ['./thumbnail-generation-status-bar.component.scss'],
-  standalone: false
+  imports: [MatProgressBar, MatIcon]
 })
 export class ThumbnailGenerationStatusBarComponent {
   private dialog = inject(MatDialog);

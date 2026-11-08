@@ -1,16 +1,17 @@
 import { Component, inject } from '@angular/core';
-import { MatSelectChange } from '@angular/material/select';
+import { MatSelectChange, MatSelect, MatOption } from '@angular/material/select';
 import moment from 'moment-timezone';
 import { DateTimeFormat } from '../../../../src-shared/date-time/date-time-format';
 import { currentUserSettings } from '../../../../src-shared/user-settings/user-settings';
 import { SettingsChangedService } from '../service/settings-changed.service';
 import { DateTimeSettingsChangedParameter } from './date-time-settings-changed-parameter';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-date-time-settings',
   templateUrl: './date-time-settings.component.html',
   styleUrls: ['./date-time-settings.component.scss'],
-  standalone: false
+  imports: [MatFormField, MatLabel, MatSelect, MatOption]
 })
 export class DateTimeSettingsComponent {
   private settingsChangedService = inject(SettingsChangedService);

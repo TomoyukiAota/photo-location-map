@@ -17,6 +17,7 @@ import { addEachMarker } from './add-each-marker';
 import { createDivIconHtml } from './div-icon';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
 import { rasterTileBaseLayerConfigsVersion1 } from './raster-tile-base-layer-configs-version-1';
+import { MatProgressBar } from '@angular/material/progress-bar';
 
 // "declare let L: any;" is defined here (in addition to global scope typing given by types/index.d.ts)
 // in order to avoid the compile errors for the types from leaflet.markercluster
@@ -30,7 +31,7 @@ interface RegionInfo extends Control {
   selector: 'app-leaflet-map',
   templateUrl: './leaflet-map.component.html',
   styleUrls: ['./leaflet-map.component.scss'],
-  standalone: false
+  imports: [MatProgressBar]
 })
 export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   private directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);

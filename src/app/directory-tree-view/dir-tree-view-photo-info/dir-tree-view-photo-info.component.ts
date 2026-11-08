@@ -5,8 +5,7 @@ import { PhotoDataService } from '../../shared/service/photo-data.service';
 @Component({
   selector: 'app-dir-tree-view-photo-info',
   templateUrl: './dir-tree-view-photo-info.component.html',
-  styleUrls: ['./dir-tree-view-photo-info.component.scss'],
-  standalone: false
+  styleUrls: ['./dir-tree-view-photo-info.component.scss']
 })
 export class DirTreeViewPhotoInfoComponent implements AfterViewInit {
   private photoDataService = inject(PhotoDataService);

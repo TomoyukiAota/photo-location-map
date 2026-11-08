@@ -7,14 +7,13 @@ import tsPlugin from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import stylistic from '@stylistic/eslint-plugin';
 
-// Preserve the existing rules and NgModule architecture.
+// Preserve the existing rules.
 // The migration to signals, OnPush and zoneless Angular (docs/tasks/20261107_angular-signals-zoneless/PLAN.md)
 // turns rules on as its stages finish: @angular-eslint/no-uncalled-signals at the end of stage 1, together with the
 // typed linting it needs (projectService below); @angular-eslint/prefer-signals and
 // prefer-on-push-component-change-detection at the end of stage 2; prefer-inject, prefer-service-decorator and
 // prefer-standalone in stage 4, each with its migration.
 const existingRules = {
-  "@angular-eslint/prefer-standalone": "off", // Until stage 4 of the migration above.
   "@angular-eslint/component-selector": [
     "error",
     {

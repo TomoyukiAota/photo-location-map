@@ -8,11 +8,11 @@ the existence of the plan or from an agent's earlier messages.
 
 - State: COMPLETE, stages 0 to 3 and three stage 4 items, with follow-ups that
   the owner asked for on 2026-11-08 (stage ledger): the fix of question 4,
-  the Material tree's accessors, `inject()` and `@Service`, accepted;
-  `ngclass-to-class`, IN REVIEW on the branch `claude/ngclass-to-class`; then
-  the standalone migration (question 6). What is left besides is the
-  owner's: the checks after the merges (the OS tab on Windows, Google Maps
-  with an API key), and the questions below.
+  the Material tree's accessors, `inject()`, `@Service` and
+  `ngclass-to-class`, accepted; the standalone migration, IN REVIEW on the
+  branch `claude/standalone-migration` (question 6). What is left besides is
+  the owner's: the checks after the merges (the OS tab on Windows, Google
+  Maps with an API key), and the questions below.
 - Authorized (owner, 2026-11-08): carry out the whole plan once the
   prerequisite is met, one pull request per stage or slice; address the
   CodeRabbit review of each pull request, then merge it (the `automerge`
@@ -32,8 +32,8 @@ the existence of the plan or from an agent's earlier messages.
 - Investigation: complete on 2026-11-07 (REPORT.md, INVENTORY.md, MCP.md).
   The Angular unit tests passed under the zoneless TestBed default that day:
   25 files, 37 tests.
-- Last accepted slice: the stage 4 item `@Service`, #660, merged on 2026-11-08
-  as bf13966.
+- Last accepted slice: the stage 4 item `ngclass-to-class`, #661, merged on
+  2026-11-08 as 646e4ed.
   Baseline (stage 0.4): recorded under "Baseline" below.
 - Runtime, dependency, test or build changes made by this plan: stage 0 added
   e2e cases, the MCP configuration and lint policy comments. 1A keeps the
@@ -52,7 +52,8 @@ the existence of the plan or from an agent's earlier messages.
   own backdrop. The Material tree's accessors replace the deprecated flat tree
   classes in the directory tree. The dependencies come through `inject()`, and
   the services are declared with `@Service`. Templates bind classes with
-  `[class.name]` rather than `[ngClass]`.
+  `[class.name]` rather than `[ngClass]`. The components are standalone, and
+  `src/app/app.config.ts` holds the application's providers.
 - Processes or CI runs owned by this work: the CI of the follow-up pull
   requests.
 - `provideCheckNoChangesConfig` (PLAN.md, 3.5) stays in development builds:
@@ -110,8 +111,9 @@ continue from "Next action" in the ledger below.
 | 4 Material tree accessors | ACCEPTED | #658 | 9e6a526 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 82, Electron-Mocha 121 and 70), `build:prod` and e2e with 40 cases in 3.5 min, all pass; `build:dev` and e2e, 40 cases in 4.4 min, no NG0100; the new e2e case passed with main's tree too, and the new unit test failed with the previous folder left expanded, as it should; on synthetic folders of 20,000 and 100,000 files, opening, expanding and collapsing took as long as with main's tree (see "Findings while executing"); CI green; CodeRabbit: a unit test that opening another folder leaves nothing of the previous one expanded, selecting without spreading every node into one call (a RangeError past about 150,000 arguments), and exact names in the e2e case, all addressed, then no actionable comments; live-reload and `PLM_VISUAL=1` e2e, which the checkpoint asks for, were not run before the merge (CI runs live-reload, but the e2e suite without its screenshots): both passed on the head of #660, which contains this | headless e2e "a folder of the tree expands and collapses, and keeps the selection of its photos", and the other cases of the tree | none |
 | 4 `inject()` | ACCEPTED | #659 | 6c9dc67 | 2026-11-08, macOS, before the rebase onto main that brought #658: lint, unit (Vitest 81, Electron-Mocha 121 and 70), `build:prod` and e2e with 40 cases in 3.4 min, all pass; `build:dev` and e2e, 40 cases in 4.3 min, no NG0100; so did the same with `@Service` and `ngclass-to-class` on top; 30 of the 38 constructors that took parameters are gone or empty, and the 8 left belong to plain classes that Angular does not create; on this branch's head after the rebase, the same passed, with Vitest 82; CI green; CodeRabbit: no actionable comments; live-reload and `PLM_VISUAL=1` e2e, which the checkpoint asks for, were not run before the merge (CI runs live-reload, but the e2e suite without its screenshots): both passed on the head of #660, which contains this | headless e2e: the whole suite, as the change touches the components and services throughout | none |
 | 4 `@Service` | ACCEPTED | #660 | bf13966 | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 82, Electron-Mocha 121 and 70), live-reload, `build:prod` and `PLM_VISUAL=1` e2e with 40 cases in 3.5 min, all pass, the committed references unchanged; `build:dev` and e2e, 40 cases in 4.4 min, no NG0100; 19 services are `@Service()`, the error handler and a spec's stand-in `@Service({ autoProvided: false })`, and no `@Injectable` is left; CI green; CodeRabbit: the checkpoint's live-reload and `PLM_VISUAL=1` e2e, which it asked for, run on this branch's head and recorded, for #657 to #659 too, then no actionable comments | headless e2e: the whole suite | none |
-| 4 `ngclass-to-class` | IN REVIEW | `claude/ngclass-to-class` | | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 82, Electron-Mocha 121 and 70), live-reload, `build:prod` and `PLM_VISUAL=1` e2e with 40 cases in 3.5 min, all pass, the committed references unchanged; `build:dev` and e2e, 40 cases in 4.4 min, no NG0100; no `ngClass` is left | headless e2e of what the 7 bindings show: the two status bars, the thumbnail status bar's details and close button, the settings dialog's tabs, the menu button and the sort's information | merge the pull request after its review |
-| 4 other items | NOT STARTED | | | NOT RUN | | the standalone migration, which the owner asked for on 2026-11-08; pinned photos as a `computed`: question 6 below |
+| 4 `ngclass-to-class` | ACCEPTED | #661 | 646e4ed | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 82, Electron-Mocha 121 and 70), live-reload, `build:prod` and `PLM_VISUAL=1` e2e with 40 cases in 3.5 min, all pass, the committed references unchanged; `build:dev` and e2e, 40 cases in 4.4 min, no NG0100; no `ngClass` is left; CI green; CodeRabbit: no actionable comments | headless e2e of what the 7 bindings show: the two status bars, the thumbnail status bar's details and close button, the settings dialog's tabs, the menu button and the sort's information | none |
+| 4 standalone | IN REVIEW | `claude/standalone-migration` | | 2026-11-08, macOS, on this branch's head: lint, unit (Vitest 82, Electron-Mocha 121 and 70), live-reload, `build:prod` and `PLM_VISUAL=1` e2e with 40 cases in 3.5 min, all pass, the committed references unchanged; `build:dev` and e2e, 40 cases in 4.3 min, no NG0100; no NgModule is left, and `build:prod`, which checks every template strictly, fails for a component that misses an import | headless e2e: the whole suite | merge the pull request after its review |
+| 4 other items | NOT STARTED | | | NOT RUN | | pinned photos as a `computed`, which the owner has had explained and has not chosen: question 6 below |
 
 ## Progress counters
 
@@ -318,6 +320,15 @@ generation between its start and its end, and the two rows left to the owner.
   themselves, as standalone ones do. It found nothing in the components here,
   which `AppModule` declared, so the 7 bindings were converted by hand as it
   converts them: each key of the object becomes a `[class.name]` binding.
+- 2026-11-08, standalone: the `standalone-bootstrap` step of
+  `ng generate @angular/core:standalone` builds `bootstrapApplication()` from
+  `AppModule` alone, so it dropped what `bootstrapModule()` was given here:
+  `provideZonelessChangeDetection()` and, in development builds,
+  `provideCheckNoChangesConfig()`. Both are in `src/app/app.config.ts` now.
+  The migration also moved the specs' stand-ins for child components into the
+  testing modules' imports, where they replace nothing, as a standalone
+  component imports its real children itself; the three specs with stand-ins
+  use `TestBed.overrideComponent()`.
 
 ## Questions for the owner
 

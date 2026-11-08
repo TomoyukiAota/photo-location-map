@@ -7,12 +7,15 @@ import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/us
 import { OpenFolderService } from '../../shared/service/open-folder.service';
 import { ThumbnailGenerationService } from '../../thumbnail-generation/service/thumbnail-generation.service';
 import { OpenFolderDialogHistory } from './open-folder-dialog-history';
+import { MatButton } from '@angular/material/button';
+import { SidebarUpperPaneMoreOptionsComponent } from './more-options/sidebar-upper-pane-more-options.component';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-sidebar-upper-pane',
   templateUrl: './sidebar-upper-pane.component.html',
   styleUrl: './sidebar-upper-pane.component.scss',
-  standalone: false
+  imports: [MatButton, SidebarUpperPaneMoreOptionsComponent, TranslatePipe]
 })
 export class SidebarUpperPaneComponent {
   private openFolderService = inject(OpenFolderService);

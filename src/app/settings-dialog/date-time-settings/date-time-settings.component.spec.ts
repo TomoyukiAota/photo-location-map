@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatSelectModule } from '@angular/material/select';
 
 import { DateTimeSettingsComponent } from './date-time-settings.component';
 
@@ -9,10 +8,7 @@ describe('DateTimeSettingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DateTimeSettingsComponent ],
-      imports: [
-        MatSelectModule
-      ]
+      imports: [DateTimeSettingsComponent],
     })
     .compileComponents();
   });

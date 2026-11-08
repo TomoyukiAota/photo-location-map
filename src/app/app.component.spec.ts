@@ -1,7 +1,5 @@
 import { Service } from '@angular/core';
 import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { RouterModule } from '@angular/router';
-import { MatDialogModule } from '@angular/material/dialog';
 import { provideTranslateService } from '@ngx-translate/core';
 
 import { WelcomeDialogAtAppLaunchService } from './welcome-dialog/welcome-dialog-at-app-launch/welcome-dialog-at-app-launch.service';
@@ -19,9 +17,7 @@ describe('AppComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        AppComponent
-      ],
+      imports: [AppComponent],
       providers: [
         provideTranslateService(),
         {
@@ -29,10 +25,6 @@ describe('AppComponent', () => {
           useClass: DummyWelcomeDialogAtAppLaunchService
         }
       ],
-      imports: [
-        MatDialogModule,
-        RouterModule,
-      ]
     }).compileComponents();
   });
 

@@ -8,12 +8,14 @@ import { openUrl } from '../../../src-shared/url/open-url';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { configureOpeningInOsBrowser } from '../shared/open-url/configure-opening-in-os-browser';
 import { WelcomeDialogAtAppLaunchService } from './welcome-dialog-at-app-launch/welcome-dialog-at-app-launch.service';
+import { MatButton } from '@angular/material/button';
+import { MatDialogClose } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-welcome-dialog',
   templateUrl: './welcome-dialog.component.html',
   styleUrls: ['./welcome-dialog.component.scss'],
-  standalone: false
+  imports: [MatButton, MatDialogClose]
 })
 export class WelcomeDialogComponent implements AfterViewInit {
   private sanitizer = inject(DomSanitizer);

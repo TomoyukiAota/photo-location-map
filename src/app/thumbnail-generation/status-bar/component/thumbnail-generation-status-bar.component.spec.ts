@@ -1,7 +1,5 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import {
   idleThumbnailGenerationStatus,
@@ -24,11 +22,7 @@ describe('ThumbnailGenerationStatusBarComponent', () => {
   beforeEach(async () => {
     status.set(idleThumbnailGenerationStatus);
     await TestBed.configureTestingModule({
-      declarations: [ ThumbnailGenerationStatusBarComponent ],
-      imports: [
-        MatIconModule,
-        MatProgressBarModule
-      ],
+      imports: [ThumbnailGenerationStatusBarComponent],
       providers: [{ provide: ThumbnailGenerationService, useValue: { status } }],
     })
     .compileComponents();

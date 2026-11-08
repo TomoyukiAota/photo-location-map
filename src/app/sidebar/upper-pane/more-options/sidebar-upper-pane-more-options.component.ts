@@ -6,12 +6,16 @@ import {
   DirTreeViewSortDirection,
   DirTreeViewSortKey,
 } from '../../../directory-tree-view/dir-tree-view-sort/dir-tree-view-sort-config';
+import { MatIconButton } from '@angular/material/button';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatIcon } from '@angular/material/icon';
+import { MatDivider } from '@angular/material/list';
 
 @Component({
   selector: 'app-sidebar-upper-pane-more-options',
   templateUrl: './sidebar-upper-pane-more-options.component.html',
   styleUrl: './sidebar-upper-pane-more-options.component.scss',
-  standalone: false
+  imports: [MatIconButton, MatMenuTrigger, MatIcon, MatMenu, MatMenuItem, MatDivider]
 })
 export class SidebarUpperPaneMoreOptionsComponent {
   public sortService = inject(DirTreeViewSortService);
