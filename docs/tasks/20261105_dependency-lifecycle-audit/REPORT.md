@@ -1,5 +1,9 @@
 # Dependency lifecycle audit results
 
+For the selected staged remote-removal work, start with the
+[execution plan](../20261106_remove-electron-remote/PLAN.md). This report remains
+the historical dependency audit and is not proof of implementation or benchmarks.
+
 Checked on 2026-11-05 against commit
 28f3b9aac550823b63706ef4ce47bbd9e1ee24b5. No application, dependency, lockfile,
 test or release configuration was changed for this investigation.

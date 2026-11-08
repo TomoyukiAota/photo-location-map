@@ -1,5 +1,11 @@
 # Options for removing @electron/remote
 
+The owner selected final option C with measured A/B intermediate checkpoints.
+Use the [execution plan](../20261106_remove-electron-remote/PLAN.md) and its STATUS
+and PERFORMANCE documents to implement after explicit kickoff. This file retains
+the design reasoning and alternatives; implementation and measurements have not
+started.
+
 Design investigation against 46d854e, 2026-11-05. The owner wants to remove the
 dependency and requested alternative rewrites with pros/cons before selecting
 implementation. No application/dependency changes, installs or tests are part
@@ -347,5 +353,6 @@ Design and independent review complete. Options A/B retain current renderer
 privileges; C changes those as part of a larger migration. Review clarified lazy
 Maps-key freshness and acknowledgement before restart/shutdown. The separate
 viewer contract was statically checked, with runtime acceptance still required
-during implementation. Present pros/cons to the owner and wait for the chosen
-scope before implementation. No test/build/packaging process was started.
+during implementation. The owner subsequently selected final C with measured
+A/B stages; the linked execution plan records that sequence. Await an explicit
+implementation kickoff. No test/build/packaging process was started.

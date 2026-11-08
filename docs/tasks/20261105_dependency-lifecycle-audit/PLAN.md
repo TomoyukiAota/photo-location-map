@@ -1,5 +1,9 @@
 # Dependency lifecycle audit
 
+Continuation: [staged remote-removal execution plan](../20261106_remove-electron-remote/PLAN.md).
+The audit is complete. The owner selected final option C with measured 0/A/B/C
+checkpoints; the current request records that plan and does not start implementation.
+
 ## Scope
 
 Audit the current dependency graph for npm deprecation notices and official
@@ -60,8 +64,9 @@ package-lock.json and all application/test/release files remain unchanged.
 
 This investigation is complete and implementation is deferred. PR634 was merged
 separately as d57cbfdff69daa5b81635547d2eec585aa3cd277. The audit documents live
-on codex/dependency-lifecycle-audit, based on that merged main; only PLAN.md and
-REPORT.md differ from main. No dependency migration or manual CI dispatch was
+on codex/dependency-lifecycle-audit, based on that merged main. The initial audit
+added PLAN.md and REPORT.md; later design/execution documents extend that work.
+No dependency migration or manual CI dispatch was
 performed for this audit, and no long-running audit process remains.
 
 Continue from REPORT.md when implementation is requested, writing a scoped
@@ -86,11 +91,11 @@ The owner deferred Moment and moment-timezone migration until evaluating Tempora
 with the required stable specification/runtime support. Zone.js belongs to a
 separate zoneless Angular task and is outside this follow-up.
 
-The owner now wants to remove @electron/remote and requested concrete rewrite
-options with pros/cons before choosing an implementation. It touches production
+The owner wants to remove @electron/remote and selected option C as the final
+goal, with measured options A and B as intermediate stages. It touches production
 module access, dialogs, paths, storage and EXIF. The package is maintained but
-discouraged, not formally retired. This step is design/investigation only;
-implementation has not been selected. Preserve features/UI; consult the owner
+discouraged, not formally retired. The executable plan is linked above;
+implementation has not started or been authorized by the planning request. Preserve features/UI; consult the owner
 about any unavoidable behavior or appearance change.
 
 ## Remote removal design checkpoint
@@ -101,6 +106,7 @@ viewer contract. Compare focused IPC removal, main-owned domain services and a
 full preload/contextBridge/isolation migration. Explicitly account for import-time
 settings/version reads, main-owned EXIF reader cleanup, persistence-before-restart,
 structured-clone boundaries and existing Node-enabled workers. Do not assume
-removing the package also removes all renderer Node privileges. The proposal and independent review are complete; the separate viewer was
-checked statically and implementation still requires runtime regression tests.
-Read the comparison and wait for the chosen scope before implementing any option.
+removing the package also removes all renderer Node privileges. The proposal and
+independent review are complete; the separate viewer was checked statically and
+implementation still requires runtime regression tests. Follow the new execution
+plan after an explicit instruction to start, rather than restarting the audit.
