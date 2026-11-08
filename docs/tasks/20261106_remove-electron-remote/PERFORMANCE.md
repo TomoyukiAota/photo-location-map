@@ -43,13 +43,14 @@ structured results. This path is planned, not currently executable. It must:
   paints at full rate: electron-util/e2e-test-hooks.js documents that a hidden
   window is throttled to about one frame per second on Windows and Linux. On
   macOS, PLM_TEST_HEADLESS=1 hides the windows and they paint as shown ones do;
-  on Windows it shows them transparent and click-through at full rate; on
-  Linux neither works, so run Linux series with visible windows on an isolated
-  virtual display (Xvfb, as Linux CI does) or, with the owner's go-ahead, on
-  the real display. None of these is the configuration users see. Record the
-  window mode of every series and keep it identical across the stages
-  compared; a visible-window series on a machine someone is using needs the
-  owner's go-ahead first.
+  on Windows it shows them transparent and click-through at full rate. Neither
+  is the configuration users see. Record the window mode of every series and
+  keep it identical across the stages compared; a visible-window series on a
+  machine someone is using needs the owner's go-ahead first. Linux is not
+  measured: PLM does not support Linux officially (owner, 2026-11-09), so the
+  performance series run on macOS and Windows only, while Linux CI keeps
+  running the functional suites. If Linux CI ever becomes far slower than the
+  others, that is looked at then, outside this protocol.
 - Work in checkout and packaged builds, and across current/isolated renderers.
   Do not depend on production window.require remaining available under C.
 - Start the startup clock externally BEFORE spawning the application. Async
@@ -90,7 +91,7 @@ preferred result appears.
 Record OS/build/architecture, CPU/RAM, storage/filesystem, power/thermal state,
 display/locale/fonts/window size, runtime versions, app/source/build hashes,
 viewer build and harness/protocol IDs. Same-machine paired/interleaved comparisons
-are preferable. Analyze each platform independently; do not pool Windows, Linux,
+are preferable. Analyze each platform independently; do not pool macOS, Windows,
 ARM and Intel timings or use CI runner wall time as a local performance baseline.
 Do not benchmark during builds, other tests, packaging/notarization or competing
 task-owned processes. Record uncontrollable load/network variation.

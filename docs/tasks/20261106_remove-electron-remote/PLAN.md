@@ -50,6 +50,9 @@ add CLAUDE.md or store handoff knowledge only in agent memory.
   Assess restoring browser defaults deliberately with provider/local-photo tests;
   do not silently expand the scope, preserve permissive settings as a new
   workaround, or claim a complete security audit merely from Node removal.
+- Performance is measured on macOS and Windows only. PLM does not support
+  Linux officially (owner, 2026-11-09); Linux CI keeps running the functional
+  suites, and a Linux slowdown is looked at only if it ever becomes serious.
 
 ### Changes on main since the plan was written
 

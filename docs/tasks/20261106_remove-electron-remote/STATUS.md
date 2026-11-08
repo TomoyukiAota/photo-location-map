@@ -94,6 +94,8 @@ documents only. Still no functional test, measurement or viewer change.
 2026-11-09: main b7c9bfe6 (PR 673) merged into the branch and recorded in
 PLAN.md; the same checks were repeated, and the diff against main is task
 documents only. Review of the pull request then had the baseline require
-b7c9bfe6, the window mode per platform (Linux hidden windows are throttled),
-a viewer milestone that exists headless, and the Linux e2e caveat written in.
+b7c9bfe6, the window mode per platform (hidden windows are throttled on
+Windows and Linux), a viewer milestone that exists headless, and the Linux e2e
+caveat written in. The owner then limited performance measurement to macOS and
+Windows: PLM does not support Linux officially, and Linux CI stays functional.
 Still no functional test, measurement or viewer change.
