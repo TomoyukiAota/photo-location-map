@@ -120,9 +120,10 @@ outside the desktop app still see the real registry and folders.
 - To read the real registry, start `reg.exe` outside the desktop app through
   WMI, which runs it as the same user. Hide its console window, which would
   otherwise open on the owner's screen, and wait for it to end, as the call
-  returns once it has started. Write its output to a new folder under
-  `%USERPROFILE%`, which only the owner can change, and delete the folder
-  afterwards:
+  returns once it has started; stop when it has not ended in time, as its
+  output is then incomplete. Write the output to a new folder under
+  `%USERPROFILE%`, which only the owner can change, and delete the folder when
+  done:
 
   ```powershell
   $hidden = New-CimInstance -CimClass (Get-CimClass Win32_ProcessStartup) -ClientOnly -Property @{ ShowWindow = [uint16]0 }
@@ -130,14 +131,21 @@ outside the desktop app still see the real registry and folders.
     CommandLine = 'cmd.exe /c reg query "<key>" /s > "<folder>\reg.txt" 2>&1'
     ProcessStartupInformation = $hidden
   }
-  Wait-Process -Id $p.ProcessId -Timeout 60 -ErrorAction SilentlyContinue
+  if ($p.ReturnValue -ne 0) { throw "Win32_Process.Create failed with $($p.ReturnValue)." }
+  # Get-Process finds nothing when the process has already ended.
+  $process = Get-Process -Id $p.ProcessId -ErrorAction SilentlyContinue
+  if ($process -and -not $process.WaitForExit(60000)) { throw 'reg.exe did not end in 60 seconds.' }
   ```
 
-- Before a check that changes the real registry, export the keys that it
-  changes, such as `explorerContextMenuKeys` in
-  `src-main/explorer-context-menu/explorer-context-menu.ts`, with `reg export`
-  started the same way, and afterwards restore them with `reg delete` and
-  `reg import`, started that way too.
+- Before a check that changes keys of the real registry, such as
+  `explorerContextMenuKeys` in
+  `src-main/explorer-context-menu/explorer-context-menu.ts`, record which of
+  them exist with `reg query`, and export each one that exists with
+  `reg export`, both started the same way. Start the check only once every
+  export has written its file. To restore, delete all of those keys with
+  `reg delete`, so that the ones that did not exist are gone again, then
+  import the exports with `reg import`, all started that way too. When one of
+  these fails, go on with the rest and report it.
 - When Photo Location Map must change the real registry, as for a check of
   the OS tab's menu in Explorer, ask the owner to start it from Explorer, for
   example `release\win-unpacked\Photo Location Map.exe` after
