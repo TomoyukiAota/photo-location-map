@@ -97,6 +97,10 @@ export default [
     files: ['src/**/*.html'],
     languageOptions: { parser: templateParser },
     plugins: { '@angular-eslint/template': angularTemplate },
-    rules: Object.assign({}, ...angularConfigs.configs.templateRecommended.map(config => config.rules)),
+    rules: {
+      ...Object.assign({}, ...angularConfigs.configs.templateRecommended.map(config => config.rules)),
+      // [class.name] bindings rather than [ngClass], as Angular's best practices recommend.
+      '@angular-eslint/template/prefer-class-binding': 'error',
+    },
   },
 ];
