@@ -139,6 +139,11 @@ async function launch({ resize = true } = {}) {
     return tiles.length > 0 && tiles.every(img => img.complete);
   });
 }
+/**
+ * With PLM_VISUAL=1, compares a screenshot with the reference `${name}.png`: of the dialog for welcome, about and the
+ * settings tabs, and of the whole window otherwise, with `mask` over what differs from run to run. empty-home also
+ * compares the two toolbars, which the negative controls move.
+ */
 async function shot(name, mask = []) {
   if (!visual) return;
   await page.evaluate(() => document.fonts.ready);
@@ -153,8 +158,16 @@ async function shot(name, mask = []) {
     // Reference pixels are cropped from the original full-page screenshot.
     await expect(page).toHaveScreenshot('map-toolbar.png', { clip: { x: 1155, y: 210, width: 36, height: 185 } });
   }
-  const dialog = name === 'welcome' || name === 'about' || name.startsWith('settings-')
-    ? page.locator('mat-dialog-container') : page;
+  const isDialog = name === 'welcome' || name === 'about' || name.startsWith('settings-');
+  const dialog = isDialog ? page.locator('mat-dialog-container') : page;
+  // TL;DR: A dialog's screenshot waits until no other dialog is left, as toHaveScreenshot passes without comparing
+  // when its locator matches two elements.
+  // Details: settings-appearance is taken right after the settings dialog opens, while the about box is still closing,
+  // so the locator matched both. Playwright 1.64.1 then took no screenshot, lost the strict mode violation and
+  // passed: the case passed with the welcome dialog's image as settings-appearance.png, three times out of three,
+  // while a wrong welcome, about, settings-date or settings-cache image failed it. Without a reference, as with
+  // --update-snapshots, it failed with "The "data" argument must be of type string or an instance of Buffer".
+  if (isDialog) await expect(dialog).toHaveCount(1);
   await expect(dialog).toHaveScreenshot(`${name}.png`, { mask });
 }
 async function dismissWelcome() {
@@ -243,6 +256,8 @@ test('welcome, about and every available settings tab keep their appearance', as
   await page.keyboard.press('Escape');
   await settings();
   await expect(page.getByRole('button', { name: 'Save', exact: true })).toBeDisabled();
+  // Its reference copies the dialog's pixels from the original application's screenshot of the whole window
+  // (docs/tasks/20261101_dependency-upgrades/evidence/SETTINGS_APPEARANCE_REFERENCE.json).
   await shot('settings-appearance');
   await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Date & Time' }).click();
   await shot('settings-date', [page.locator('.date-time-example')]);
