@@ -298,8 +298,8 @@ generation between its start and its end, and the two rows left to the owner.
   and is recorded once with that same label, which the new e2e case "an
   unhandled promise rejection in the renderer is recorded once, with its
   message" checks.
-- 2026-11-08, 3: in a git worktree, `npm run test:package` does not get
-  through. electron-builder writes `release/latest-mac.yml` only for a
+- 2026-11-08, 3: in a git worktree on macOS, `npm run test:package` does not
+  get through. electron-builder writes `release/latest-mac.yml` only for a
   publisher, which it detects from `GH_TOKEN` (CI sets it) and the repository
   in `.git/config`, a file rather than a folder in a worktree. Without
   `GH_TOKEN`, the package was built and signed, but the test's check of the

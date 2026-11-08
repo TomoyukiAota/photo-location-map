@@ -88,14 +88,15 @@ makes under `.claude/worktrees/`:
   per path, so `mise exec` fails there. Pass the file to each command rather
   than running `mise trust`, which would change mise's own settings:
   `MISE_TRUSTED_CONFIG_PATHS="$PWD/mise.toml" mise exec -- npm ci`.
-- **`npm run test:package` does not get through.** electron-builder writes
-  `release/latest-mac.yml` only for a publisher, which it detects from
+- **On macOS, `npm run test:package` does not get through.** electron-builder
+  writes `release/latest-mac.yml` only for a publisher, which it detects from
   `GH_TOKEN` and the repository in `.git/config`, a file rather than a folder
   in a worktree. Without `GH_TOKEN`, the package is built and signed, but the
-  test's check of the mac bundle fails on the missing file, so the checks of
-  the bundle's architectures and the smoke test of the packaged app do not
-  run. With `GH_TOKEN`, the build fails with "Cannot detect repository by
-  .git/config". The macOS CI job, which works in a clone, runs the whole test.
+  test's check of the mac bundle, which other OSes skip, fails on the missing
+  file, so the checks of the bundle's architectures and the smoke test of the
+  packaged app do not run. With `GH_TOKEN`, the build fails with "Cannot
+  detect repository by .git/config". The macOS CI job, which works in a clone,
+  runs the whole test.
 
 ## You can run the signed mac build yourself
 
