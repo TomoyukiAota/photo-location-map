@@ -20,7 +20,7 @@ describe('LoadedFilesStatusBarComponent', () => {
   beforeEach(async () => {
     photos.set([]);
     await TestBed.configureTestingModule({
-      declarations: [LoadedFilesStatusBarComponent],
+      imports: [LoadedFilesStatusBarComponent],
       providers: [{ provide: PhotoDataService, useValue: { photos } }],
     }).compileComponents();
     fixture = TestBed.createComponent(LoadedFilesStatusBarComponent);

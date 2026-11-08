@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatIconModule } from '@angular/material/icon';
 
 import { AboutBoxComponent } from './about-box.component';
 
@@ -9,8 +8,7 @@ describe('AboutBoxComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AboutBoxComponent ],
-      imports: [ MatIconModule ]
+      imports: [AboutBoxComponent],
     })
     .compileComponents();
   });

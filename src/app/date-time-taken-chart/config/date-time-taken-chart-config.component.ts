@@ -1,5 +1,5 @@
 import { Component, computed, output, inject } from '@angular/core';
-import { MatCheckboxChange } from '@angular/material/checkbox';
+import { MatCheckboxChange, MatCheckbox } from '@angular/material/checkbox';
 import { DomSanitizer } from '@angular/platform-browser';
 import { unitOfTime } from 'moment';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
@@ -8,12 +8,14 @@ import { SelectedPhotoService } from '../../shared/service/selected-photo.servic
 import { dateTimeTakenChartLogger as logger } from '../date-time-taken-chart-logger';
 import { DateTimeTakenChartConfigService } from './date-time-taken-chart-config.service';
 import { getXAxisUnitMomentJsStr, xAxisUnit } from './date-time-taken-chart-x-axis-unit';
+import { MatMenuTrigger, MatMenu } from '@angular/material/menu';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-date-time-taken-chart-config',
   templateUrl: './date-time-taken-chart-config.component.html',
   styleUrls: ['./date-time-taken-chart-config.component.scss'],
-  standalone: false
+  imports: [MatMenuTrigger, MatMenu, MatCheckbox, FormsModule]
 })
 export class DateTimeTakenChartConfigComponent {
   public chartConfigService = inject(DateTimeTakenChartConfigService);

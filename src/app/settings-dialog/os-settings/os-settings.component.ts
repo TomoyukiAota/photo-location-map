@@ -3,12 +3,13 @@ import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { Logger } from '../../../../src-shared/log/logger';
 import { addRegistryForExplorerContextMenu } from './add-registry-for-explorer-context-menu';
 import { deleteRegistryForExplorerContextMenu } from './delete-registry-for-explorer-context-menu';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-os-settings',
   templateUrl: './os-settings.component.html',
   styleUrl: './os-settings.component.scss',
-  standalone: false
+  imports: [MatButton]
 })
 export class OsSettingsComponent {
   /** What the last click on Add or Remove did, shown once the registry has been changed. */

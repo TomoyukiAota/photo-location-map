@@ -2,12 +2,14 @@ import { Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { Logger } from '../../../../src-shared/log/logger';
 import { PlmInternalRenderer, PlmInternalRendererMap } from '../../../global-variables/global-variable-for-internal-use-in-renderer';
 import { getMapType, MapType } from './map-type';
+import { GoogleMapsComponent } from '../google-maps/google-maps.component';
+import { LeafletMapComponent } from '../leaflet-map/leaflet-map.component';
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss'],
-  standalone: false
+  imports: [GoogleMapsComponent, LeafletMapComponent]
 })
 export class MapComponent implements OnInit, OnDestroy {
   public readonly mapType = MapType;

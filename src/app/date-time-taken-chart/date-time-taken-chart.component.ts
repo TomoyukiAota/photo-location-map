@@ -10,12 +10,15 @@ import { momentToStringMap } from '../shared/moment-to-string-map';
 import { DateTimeTakenChartConfigService } from './config/date-time-taken-chart-config.service';
 import { createDateTimeTakenChartData } from './date-time-taken-chart-data';
 import { dateTimeTakenChartLogger as logger } from './date-time-taken-chart-logger';
+import { NgxEchartsDirective } from 'ngx-echarts';
+import { DateTimeTakenChartConfigComponent } from './config/date-time-taken-chart-config.component';
+import { SelectPhotosWithinZoomComponent } from './select-photos-within-zoom/select-photos-within-zoom.component';
 
 @Component({
   selector: 'app-date-time-taken-chart',
   templateUrl: './date-time-taken-chart.component.html',
   styleUrls: ['./date-time-taken-chart.component.scss'],
-  standalone: false
+  imports: [NgxEchartsDirective, DateTimeTakenChartConfigComponent, SelectPhotosWithinZoomComponent]
 })
 export class DateTimeTakenChartComponent {
   private chartConfigService = inject(DateTimeTakenChartConfigService);

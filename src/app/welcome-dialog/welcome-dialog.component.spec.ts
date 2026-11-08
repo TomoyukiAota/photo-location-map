@@ -8,7 +8,7 @@ describe('WelcomeDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ WelcomeDialogComponent ]
+      imports: [WelcomeDialogComponent],
     })
     .compileComponents();
   });

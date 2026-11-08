@@ -5,8 +5,7 @@ import { summarizeLoadedFiles } from './loaded-files-summary';
 @Component({
   selector: 'app-loaded-files-status-bar',
   templateUrl: './loaded-files-status-bar.component.html',
-  styleUrls: ['./loaded-files-status-bar.component.scss'],
-  standalone: false
+  styleUrls: ['./loaded-files-status-bar.component.scss']
 })
 export class LoadedFilesStatusBarComponent {
   private photoDataService = inject(PhotoDataService);

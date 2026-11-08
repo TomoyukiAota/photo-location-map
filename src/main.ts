@@ -1,9 +1,12 @@
-import { enableProdMode, provideCheckNoChangesConfig, provideZonelessChangeDetection } from '@angular/core';
-import { platformBrowser } from '@angular/platform-browser';
+import 'reflect-metadata';
+
+import { enableProdMode } from '@angular/core';
+import { bootstrapApplication } from '@angular/platform-browser';
 
 import { LogFileConfig } from '../src-shared/log/file-config/log-file-config';
 import { Logger } from '../src-shared/log/logger';
-import { AppModule } from './app/app.module';
+import { AppComponent } from './app/app.component';
+import { appConfig } from './app/app.config';
 import { initializeRasterTileBaseLayerConfigs } from './app/map/leaflet-map/raster-tile-base-layer-configs-version-1';
 import { recordErrorsOutsideAngular } from './app/shared/error/analytics-error-handler';
 import { AppConfig } from './environments/environment';
@@ -20,17 +23,7 @@ async function bootstrap(): Promise<void> {
 
   recordErrorsOutsideAngular();
 
-  await platformBrowser().bootstrapModule(AppModule, {
-    applicationProviders: [
-      // Without Zone.js, Angular renders what signals, template events, markForCheck() and the like tell it about.
-      provideZonelessChangeDetection(),
-      // Development builds check every view each second for a binding that changed without telling Angular, which
-      // would not be rendered. Angular reports one as NG0100 (ExpressionChangedAfterItHasBeenCheckedError) to the
-      // ErrorHandler, which logs it.
-      ...(AppConfig.production ? [] : [provideCheckNoChangesConfig({ exhaustive: true, interval: 1000 })]),
-    ],
-    preserveWhitespaces: false
-  });
+  await bootstrapApplication(AppComponent, appConfig);
 
   Logger.info('Content on the main window is loading...');
   Logger.info(`Log File Location: ${LogFileConfig.filePath}`);

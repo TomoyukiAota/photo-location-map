@@ -5,12 +5,13 @@ import { Logger } from '../../../../src-shared/log/logger';
 import { restartApp } from '../../../../src-shared/process/restart-app';
 import { plmThumbnailCacheDir } from '../../../../src-shared/thumbnail/cache/thumbnail-cache-util';
 import { configureOpeningInOsBrowser } from '../../shared/open-url/configure-opening-in-os-browser';
+import { MatButton } from '@angular/material/button';
 
 @Component({
   selector: 'app-cache-settings',
   templateUrl: './cache-settings.component.html',
   styleUrls: ['./cache-settings.component.scss'],
-  standalone: false
+  imports: [MatButton]
 })
 export class CacheSettingsComponent implements AfterViewInit, OnInit {
   public thumbnailCacheLocation = plmThumbnailCacheDir;

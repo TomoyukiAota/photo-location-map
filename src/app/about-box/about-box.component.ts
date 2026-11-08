@@ -5,12 +5,13 @@ import { app } from '@electron/remote';
 import { openUrl } from '../../../src-shared/url/open-url';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { configureOpeningInOsBrowser } from '../shared/open-url/configure-opening-in-os-browser';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-about-box',
   templateUrl: './about-box.component.html',
   styleUrls: ['./about-box.component.scss'],
-  standalone: false
+  imports: [MatIcon]
 })
 export class AboutBoxComponent implements AfterViewInit {
   private sanitizer = inject(DomSanitizer);

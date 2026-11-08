@@ -3,12 +3,13 @@ import { TranslateService } from '@ngx-translate/core';
 import { PlmInternalRendererService } from '../global-variables/plm-internal-renderer.service';
 import { PhotoSelectionHistoryService } from './shared/service/photo-selection-history.service';
 import { WelcomeDialogAtAppLaunchService } from './welcome-dialog/welcome-dialog-at-app-launch/welcome-dialog-at-app-launch.service';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  standalone: false
+  imports: [RouterOutlet]
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   private photoSelectionHistoryService = inject(PhotoSelectionHistoryService);

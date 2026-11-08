@@ -12,7 +12,7 @@ describe('OsSettingsComponent', () => {
     const registryAnswer = new Promise<void>(resolve => answerRegistry = resolve);
     vi.spyOn(Registry, 'set').mockReturnValue(registryAnswer);
     vi.spyOn(Registry, 'delete').mockReturnValue(registryAnswer);
-    await TestBed.configureTestingModule({ declarations: [OsSettingsComponent] }).compileComponents();
+    await TestBed.configureTestingModule({ imports: [OsSettingsComponent] }).compileComponents();
     fixture = TestBed.createComponent(OsSettingsComponent);
     await fixture.whenStable();
   });

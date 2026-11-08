@@ -11,6 +11,12 @@ import {
 } from '../../../src-shared/user-settings/user-settings';
 import { RestoreSettingsService } from './service/restore-settings.service';
 import { SettingsChangedService } from './service/settings-changed.service';
+import { MatNavList, MatListItem } from '@angular/material/list';
+import { AppearanceSettingsComponent } from './appearance-settings/appearance-settings.component';
+import { DateTimeSettingsComponent } from './date-time-settings/date-time-settings.component';
+import { OsSettingsComponent } from './os-settings/os-settings.component';
+import { CacheSettingsComponent } from './cache-settings/cache-settings.component';
+import { MatButton } from '@angular/material/button';
 
 const settingsTabNames = [
   'Appearance',
@@ -29,7 +35,7 @@ const availableSettingTabNames = os.platform() === 'win32'
   selector: 'app-settings-dialog',
   templateUrl: './settings-dialog.component.html',
   styleUrls: ['./settings-dialog.component.scss'],
-  standalone: false
+  imports: [MatNavList, MatListItem, AppearanceSettingsComponent, DateTimeSettingsComponent, OsSettingsComponent, CacheSettingsComponent, MatButton]
 })
 export class SettingsDialogComponent {
   private settingsDialogRef = inject<MatDialogRef<SettingsDialogComponent>>(MatDialogRef);

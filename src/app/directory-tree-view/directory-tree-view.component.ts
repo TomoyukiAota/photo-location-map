@@ -1,8 +1,8 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Component, OnInit, effect, signal, untracked, viewChild, inject } from '@angular/core';
-import { MatMenuTrigger } from '@angular/material/menu';
-import { MatTree } from '@angular/material/tree';
+import { MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem } from '@angular/material/menu';
+import { MatTree, MatTreeNodeDef, MatTreeNode, MatTreeNodeToggle, MatTreeNodePadding } from '@angular/material/tree';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { createPrependedLogger } from '../../../src-shared/log/create-prepended-logger';
 import { PhotoDataService } from '../shared/service/photo-data.service';
@@ -15,6 +15,11 @@ import { DirectoryTreeViewSelectionService } from './directory-tree-view-selecti
 import { DirTreeViewSortConfig } from './dir-tree-view-sort/dir-tree-view-sort-config';
 import { DirTreeViewSortService } from './dir-tree-view-sort/dir-tree-view-sort.service';
 import { NestedNode } from './directory-tree-view.model';
+import { MatIconButton } from '@angular/material/button';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatLabel } from '@angular/material/form-field';
+import { DirTreeViewPhotoInfoComponent } from './dir-tree-view-photo-info/dir-tree-view-photo-info.component';
+import { MatIcon } from '@angular/material/icon';
 
 const dirTreeViewLogger = createPrependedLogger('[Directory Tree View]');
 
@@ -22,7 +27,10 @@ const dirTreeViewLogger = createPrependedLogger('[Directory Tree View]');
   selector: 'app-directory-tree-view',
   templateUrl: 'directory-tree-view.component.html',
   styleUrls: ['directory-tree-view.component.scss'],
-  standalone: false
+  imports: [
+    MatTree, MatTreeNodeDef, MatTreeNode, MatTreeNodeToggle, MatTreeNodePadding, MatIconButton, MatCheckbox,
+    MatLabel, DirTreeViewPhotoInfoComponent, MatIcon, MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem,
+  ]
 })
 export class DirectoryTreeViewComponent implements OnInit {
   private sortService = inject(DirTreeViewSortService);

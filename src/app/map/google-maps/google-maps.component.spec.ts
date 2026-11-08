@@ -42,7 +42,7 @@ describe('GoogleMapsComponent', () => {
 
   beforeEach(async () => {
     markerCountsOfMaps = [];
-    await TestBed.configureTestingModule({ declarations: [GoogleMapsComponent] }).compileComponents();
+    await TestBed.configureTestingModule({ imports: [GoogleMapsComponent] }).compileComponents();
     pinnedPhotoService = TestBed.inject(PinnedPhotoService);
   });
 

@@ -1,28 +1,30 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatButtonModule } from '@angular/material/button';
 import { MatDialogRef } from '@angular/material/dialog';
-import { MatListModule } from '@angular/material/list';
 import { DateTimeFormat } from '../../../src-shared/date-time/date-time-format';
 import { UserDataStorage } from '../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../src-shared/user-data-storage/user-data-stroage-path';
 import { BooleanSetting } from '../../../src-shared/user-settings/boolean-setting';
 import { currentUserSettings } from '../../../src-shared/user-settings/user-settings';
+import { AppearanceSettingsComponent } from './appearance-settings/appearance-settings.component';
+import { CacheSettingsComponent } from './cache-settings/cache-settings.component';
+import { DateTimeSettingsComponent } from './date-time-settings/date-time-settings.component';
+import { OsSettingsComponent } from './os-settings/os-settings.component';
 import { RestoreSettingsService } from './service/restore-settings.service';
 import { SettingsChangedService } from './service/settings-changed.service';
 import { SettingsDialogComponent } from './settings-dialog.component';
 
 // The tabs are left out: they tell the dialog about their changes through SettingsChangedService, as the tests do.
-@Component({ selector: 'app-appearance-settings', template: '', standalone: false })
+@Component({ selector: 'app-appearance-settings', template: '' })
 class DummyAppearanceSettingsComponent {}
 
-@Component({ selector: 'app-date-time-settings', template: '', standalone: false })
+@Component({ selector: 'app-date-time-settings', template: '' })
 class DummyDateTimeSettingsComponent {}
 
-@Component({ selector: 'app-os-settings', template: '', standalone: false })
+@Component({ selector: 'app-os-settings', template: '' })
 class DummyOsSettingsComponent {}
 
-@Component({ selector: 'app-cache-settings', template: '', standalone: false })
+@Component({ selector: 'app-cache-settings', template: '' })
 class DummyCacheSettingsComponent {}
 
 describe('SettingsDialogComponent', () => {
@@ -39,19 +41,17 @@ describe('SettingsDialogComponent', () => {
     close.mockClear();
     restore.mockClear();
     await TestBed.configureTestingModule({
-      declarations: [
-        SettingsDialogComponent,
-        DummyAppearanceSettingsComponent,
-        DummyDateTimeSettingsComponent,
-        DummyOsSettingsComponent,
-        DummyCacheSettingsComponent,
-      ],
-      imports: [MatButtonModule, MatListModule],
+      imports: [SettingsDialogComponent],
       providers: [
         { provide: MatDialogRef, useValue: { close } },
         { provide: RestoreSettingsService, useValue: { restore } },
       ],
-    }).compileComponents();
+    })
+      .overrideComponent(SettingsDialogComponent, {
+        remove: { imports: [AppearanceSettingsComponent, DateTimeSettingsComponent, OsSettingsComponent, CacheSettingsComponent] },
+        add: { imports: [DummyAppearanceSettingsComponent, DummyDateTimeSettingsComponent, DummyOsSettingsComponent, DummyCacheSettingsComponent] },
+      })
+      .compileComponents();
     fixture = TestBed.createComponent(SettingsDialogComponent);
     settingsChanged = TestBed.inject(SettingsChangedService);
     await fixture.whenStable();

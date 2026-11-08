@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { IpcConstants } from '../../../../src-shared/ipc/ipc-constants';
+import { GoogleMapsComponent } from '../google-maps/google-maps.component';
+import { LeafletMapComponent } from '../leaflet-map/leaflet-map.component';
 
 import { MapComponent } from './map.component';
 
@@ -8,13 +10,11 @@ import { MapComponent } from './map.component';
 // construction test independent of native map and worker initialization.
 @Component({
   selector: 'app-leaflet-map', template: '',
-  standalone: false
 })
 class DummyLeafletMapComponent {}
 
 @Component({
   selector: 'app-google-maps', template: '',
-  standalone: false
 })
 class DummyGoogleMapsComponent {}
 
@@ -24,11 +24,11 @@ describe('MapComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        MapComponent,
-        DummyLeafletMapComponent,
-        DummyGoogleMapsComponent,
-      ]
+      imports: [MapComponent],
+    })
+    .overrideComponent(MapComponent, {
+      remove: { imports: [LeafletMapComponent, GoogleMapsComponent] },
+      add: { imports: [DummyLeafletMapComponent, DummyGoogleMapsComponent] },
     })
     .compileComponents();
   });

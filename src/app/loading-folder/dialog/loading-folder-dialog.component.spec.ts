@@ -1,5 +1,4 @@
 import { signal } from '@angular/core';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import {
@@ -19,8 +18,7 @@ describe('LoadingFolderDialogComponent', () => {
     status.set(notStartedLoadingFolderProgressStatus);
     startUpdatingProgress.mockClear();
     await TestBed.configureTestingModule({
-      declarations: [ LoadingFolderDialogComponent ],
-      imports: [ MatProgressBarModule ],
+      imports: [LoadingFolderDialogComponent],
       providers: [{ provide: LoadingFolderProgressReporterService, useValue: { status, startUpdatingProgress } }],
     })
     .compileComponents();

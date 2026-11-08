@@ -1,11 +1,14 @@
 import { Component, computed, inject } from '@angular/core';
 import { ThumbnailGenerationService } from '../service/thumbnail-generation.service';
+import { ThumbnailGenerationErrorTableComponent } from './table/thumbnail-generation-error-table.component';
+import { MatButton } from '@angular/material/button';
+import { MatDialogClose } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-thumbnail-generation-error-dialog',
   templateUrl: './thumbnail-generation-error-dialog.component.html',
   styleUrl: './thumbnail-generation-error-dialog.component.scss',
-  standalone: false
+  imports: [ThumbnailGenerationErrorTableComponent, MatButton, MatDialogClose]
 })
 export class ThumbnailGenerationErrorDialogComponent {
   private thumbnailGenerationService = inject(ThumbnailGenerationService);
