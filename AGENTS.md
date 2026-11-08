@@ -146,9 +146,11 @@ outside the desktop app still see the real registry and folders.
   them exist with `reg query`, and export each one that exists with
   `reg export`, both started the same way. Start the check only once every
   export has written its file. To restore, delete all of those keys with
-  `reg delete`, so that the ones that did not exist are gone again, then
-  import the exports with `reg import`, all started that way too. When one of
-  these fails, go on with the rest and report it.
+  `reg delete <key> /f`, so that the ones that did not exist are gone again,
+  then import the exports with `reg import`, all started that way too. Without
+  `/f`, `reg delete` asks for a confirmation and waits for it, and nobody can
+  answer a hidden process. When one of these fails, go on with the rest and
+  report it.
 - When Photo Location Map must change the real registry, as for a check of
   the OS tab's menu in Explorer, ask the owner to start it from Explorer, for
   example `release\win-unpacked\Photo Location Map.exe` after
