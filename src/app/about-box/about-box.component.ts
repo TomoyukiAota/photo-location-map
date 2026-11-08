@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, viewChild, inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { app } from '@electron/remote';
 
+import { startupMetadata } from '../../../src-shared/startup/startup-metadata';
 import { openUrl } from '../../../src-shared/url/open-url';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { configureOpeningInOsBrowser } from '../shared/open-url/configure-opening-in-os-browser';
@@ -16,7 +16,7 @@ import { MatIcon } from '@angular/material/icon';
 export class AboutBoxComponent implements AfterViewInit {
   private sanitizer = inject(DomSanitizer);
 
-  public readonly appVersion = app.getVersion();
+  public readonly appVersion = startupMetadata().version;
 
   public readonly releasesLink = viewChild.required<ElementRef<HTMLAnchorElement>>('releasesLink');
   public readonly troubleshootingPageLink = viewChild.required<ElementRef<HTMLAnchorElement>>('troubleshootingPageLink');

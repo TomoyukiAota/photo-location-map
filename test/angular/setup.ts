@@ -4,10 +4,9 @@ import { cleanup, ipcRenderer, temporaryRoot } from './electron-double';
 import type { UserDataStorage as UserDataStorageDouble } from './storage-double';
 
 vi.mock('electron', () => import('./electron-double'));
-vi.mock('@electron/remote', () => import('./electron-double'));
 
-// Cache paths also derive directly from the environment, outside the remote
-// app-path and storage boundaries. Set this before importing application code.
+// Cache paths also derive directly from the environment, outside the storage
+// boundary. Set this before importing application code.
 vi.stubEnv('PLM_TEST_ROOT', temporaryRoot);
 
 beforeEach(() => {

@@ -118,7 +118,7 @@ async function verifyApplicationPolicy() {
     const application = new EventEmitter();
     application.getVersion = () => item.version;
     const prerelease = runCompiled('src-shared/version/is-prerelease-version.js', {
-      '../require/require-from-main-process': { RequireFromMainProcess: { electron: { app: application } } },
+      '../startup/startup-metadata': { startupMetadata: () => ({ version: application.getVersion() }) },
     });
     const updater = new EventEmitter();
     let checks = 0;

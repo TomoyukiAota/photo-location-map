@@ -12,12 +12,14 @@ export const app = {
   getAppPath: () => temporaryRoot,
 };
 
+// The renderer's two synchronous requests: the startup metadata (src-shared/startup/) and the log file's location.
 export const ipcRenderer = Object.assign(new EventEmitter(), {
   send: () => {},
-  sendSync: () => ({ dirName: temporaryRoot, fileName: 'test.log', filePath: path.join(temporaryRoot, 'test.log') }),
-  invoke: async () => undefined,
+  sendSync: (channel: string) => channel === 'ipc-constants-get-startup-metadata'
+    ? { version: app.getVersion(), userDataPath: app.getPath('userData') }
+    : { dirName: temporaryRoot, fileName: 'test.log', filePath: path.join(temporaryRoot, 'test.log') },
+  // The folder picker, which the main process shows, is canceled.
+  invoke: async (channel: string) => channel === 'ipc-constants-show-folder-dialog' ? { canceled: true, filePaths: [] } : undefined,
 });
 export const shell = { openExternal: async () => {}, openPath: async () => '' };
-export const dialog = { showOpenDialog: async () => ({ canceled: true, filePaths: [] }) };
-export const getCurrentWindow = () => ({ close: () => {} });
 export const cleanup = () => rmSync(temporaryRoot, { recursive: true, force: true });

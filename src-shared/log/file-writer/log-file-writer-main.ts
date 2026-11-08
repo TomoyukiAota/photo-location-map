@@ -1,13 +1,13 @@
 import * as fsExtra from 'fs-extra';
+import * as os from 'os';
 import { ProcessIdentifier } from '../../process/process-identifier';
-import { RequireFromMainProcess } from '../../require/require-from-main-process';
 import { LogFileConfig } from '../file-config/log-file-config';
 import { LogFileWriterInterface } from './log-file-writer-interface';
 import { LogFileWriterIpcMain } from './log-file-writer-ipc';
 
 class LogFileWriterMain implements LogFileWriterInterface {
-  private fsExtra = RequireFromMainProcess.fsExtra;
-  private os = RequireFromMainProcess.os;
+  private fsExtra = fsExtra;
+  private os = os;
   private fileHandle: fsExtra.promises.FileHandle;
 
   private constructor() { /* Private constructor by design. Call create function instead. */ }

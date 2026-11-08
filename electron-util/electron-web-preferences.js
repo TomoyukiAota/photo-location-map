@@ -3,7 +3,6 @@
  */
 const electronWebPreferences = {
   contextIsolation: false,
-  enableRemoteModule: true,
   nodeIntegration: true,
   nodeIntegrationInWorker: true,
   webSecurity: false,

@@ -1,15 +1,13 @@
-import { RequireFromMainProcess } from '../require/require-from-main-process';
+import { startupMetadata } from '../startup/startup-metadata';
 
-const versionStr = RequireFromMainProcess.electron.app.getVersion();
+// Read when asked rather than when this module is evaluated, so that it never runs before the metadata can be had.
+const versionIncludes = (text: string): boolean => startupMetadata().version.toLowerCase().includes(text);
 
-const includesAlphaInVersionStr = versionStr.toLowerCase().includes('alpha');
-export function isAlphaVersion(): boolean { return includesAlphaInVersionStr; }
+export function isAlphaVersion(): boolean { return versionIncludes('alpha'); }
 
-const includesBetaInVersionStr = versionStr.toLowerCase().includes('beta');
-export function isBetaVersion(): boolean { return includesBetaInVersionStr; }
+export function isBetaVersion(): boolean { return versionIncludes('beta'); }
 
-const includesRcInVersionStr = versionStr.toLowerCase().includes('rc');
-export function isRcVersion(): boolean { return includesRcInVersionStr; }
+export function isRcVersion(): boolean { return versionIncludes('rc'); }
 
 export function isPrereleaseVersion(): boolean {
   return isAlphaVersion() || isBetaVersion() || isRcVersion();

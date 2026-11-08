@@ -1,14 +1,18 @@
+import * as fsExtra from 'fs-extra';
+import * as path from 'path';
 import { Logger } from '../log/logger';
-import { RequireFromMainProcess } from '../require/require-from-main-process';
+import { startupMetadata } from '../startup/startup-metadata';
 
+// Each process reads and writes the files itself: the main process, and the renderer, which has Node.js.
 export class UserDataStorage {
-  private static readonly fsExtra = RequireFromMainProcess.fsExtra;
-  private static readonly path = RequireFromMainProcess.path;
-  private static readonly userDataPath = RequireFromMainProcess.electron.app.getPath('userData');
+  private static readonly fsExtra = fsExtra;
+  private static readonly path = path;
 
   // 'PhotoLocationMapStorage' is named like this to be unique without collision in 'userData' directory.
   private static readonly subDirForStorage = 'PhotoLocationMapStorage';
-  private static readonly storageRootPath = UserDataStorage.path.join(UserDataStorage.userDataPath, UserDataStorage.subDirForStorage);
+  private static get storageRootPath(): string {
+    return UserDataStorage.path.join(startupMetadata().userDataPath, UserDataStorage.subDirForStorage);
+  }
 
   public static read(storagePath: ReadonlyArray<string>): string {
     this.log(storagePath, 'Attempt to read');

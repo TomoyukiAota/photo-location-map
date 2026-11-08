@@ -1,8 +1,9 @@
 import { Component, inject } from '@angular/core';
-import * as remote from '@electron/remote';
+import { ipcRenderer } from 'electron';
+import * as fsExtra from 'fs-extra';
+import { IpcConstants } from '../../../../src-shared/ipc/ipc-constants';
 import { Logger } from '../../../../src-shared/log/logger';
 import { perfMark } from '../../../../src-shared/perf/perf-mark';
-import { RequireFromMainProcess } from '../../../../src-shared/require/require-from-main-process';
 import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/user-data-stroage-path';
 import { OpenFolderService } from '../../shared/service/open-folder.service';
@@ -25,19 +26,16 @@ export class SidebarUpperPaneComponent {
   private readonly folderDialogHistory = new OpenFolderDialogHistory({
     read: () => UserDataStorage.readOrDefault(UserDataStoragePath.FolderDialog.LastConfirmedDirectory, null),
     write: directoryPath => UserDataStorage.write(UserDataStoragePath.FolderDialog.LastConfirmedDirectory, directoryPath),
-    isDirectory: async directoryPath => (await RequireFromMainProcess.fsExtra.stat(directoryPath)).isDirectory(),
+    isDirectory: async directoryPath => (await fsExtra.stat(directoryPath)).isDirectory(),
     reportFailure: error => Logger.warn('Could not restore or persist folder dialog history.', error),
   });
 
   public async showOpenFolderDialog() {
     perfMark('open-folder:dialog-requested');
-    const result = await remote.dialog.showOpenDialog(
-      remote.getCurrentWindow(),
-      {
-        properties: ['openDirectory'],
-        defaultPath: await this.folderDialogHistory.getDefaultPath(),
-      }
-    );
+    // The main process shows the picker for this window (src-main/folder-dialog/).
+    const result: { canceled: boolean, filePaths: string[] } = await ipcRenderer.invoke(IpcConstants.FolderDialog.Show, {
+      defaultPath: await this.folderDialogHistory.getDefaultPath(),
+    });
 
     perfMark('open-folder:dialog-returned');
     const selectedFolderPath = this.folderDialogHistory.rememberSelection(result);

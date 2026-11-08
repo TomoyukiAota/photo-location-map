@@ -6,12 +6,3 @@ interface NodeRequireFunction {
   (id: 'os'): typeof import('os');
   (id: 'path'): typeof import('path');
 }
-
-declare namespace Electron {
-  interface Remote {
-    // Add overloads here in order to add return types of window.require('@electron/remote').require function.
-    require(module: 'electron'): typeof import('electron');
-    require(module: 'fs-extra'): typeof import('fs-extra');
-    require(module: 'os'): typeof import('os');
-  }
-}

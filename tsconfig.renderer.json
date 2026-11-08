@@ -25,9 +25,6 @@
       ],
       "directory-tree": [
         "./electron-util/renderer-modules/directory-tree.cjs"
-      ],
-      "@electron/remote": [
-        "./electron-util/renderer-modules/electron-remote.cjs"
       ]
     },
     "types": [
