@@ -1,6 +1,7 @@
 import { signal, inject, Service } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DirTreeObjectRecorder } from '../../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
+import { perfMark } from '../../../../src-shared/perf/perf-mark';
 import { sleep } from '../../../../src-shared/sleep/sleep';
 import { DirectoryTreeViewDataService } from '../../directory-tree-view/directory-tree-view-data.service';
 import { LoadingFolderDialogComponent } from '../../loading-folder/dialog/loading-folder-dialog.component';
@@ -38,6 +39,7 @@ export class OpenFolderService {
     let loadingFolderDialogRef: MatDialogRef<LoadingFolderDialogComponent> = null;
 
     try {
+      perfMark('open-folder:start');
       OpenFolderRecorder.start(folderPath);
       this.photoSelectionHistoryService.reset();
       PhotoInfoViewerContent.clearCache();
@@ -50,7 +52,9 @@ export class OpenFolderService {
       loadingFolderDialogRef = this.showLoadingFolderDialog();
 
       const directoryTreeObject = await OpenedDirectory.createDirectoryTree(folderPath);
+      perfMark('open-folder:tree-created');
       await this.photoDataService.update(directoryTreeObject); // Photo data is fetched from files. The loading folder dialog displays file loading status.
+      perfMark('open-folder:photo-data-loaded');
       await sleep(100); // To update the loading folder dialog before the work below, which freezes the GUI for a large folder.
 
       this.showPhotoWithLocationNotFoundDialogIfApplicable();
@@ -59,7 +63,9 @@ export class OpenFolderService {
         this.thumbnailGenerationStatusBarService.showForNewGeneration();
       DirTreeObjectRecorder.record(directoryTreeObject);
       OpenFolderRecorder.complete();
+      perfMark('open-folder:complete');
     } catch (reason) {
+      perfMark('open-folder:failed');
       OpenFolderRecorder.fail(reason);
     } finally {
       loadingFolderDialogRef?.close();

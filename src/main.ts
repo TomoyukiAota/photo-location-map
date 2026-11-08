@@ -5,6 +5,7 @@ import { bootstrapApplication } from '@angular/platform-browser';
 
 import { LogFileConfig } from '../src-shared/log/file-config/log-file-config';
 import { Logger } from '../src-shared/log/logger';
+import { perfMark } from '../src-shared/perf/perf-mark';
 import { AppComponent } from './app/app.component';
 import { appConfig } from './app/app.config';
 import { initializeRasterTileBaseLayerConfigs } from './app/map/leaflet-map/raster-tile-base-layer-configs-version-1';
@@ -14,6 +15,7 @@ import './ipc-renderer-setup/ipc-renderer-all-setup';
 
 /** Starts the renderer: the map's base layers, the error listeners, then Angular. */
 async function bootstrap(): Promise<void> {
+  perfMark('renderer:bootstrap-start');
   // Load map choices before Angular creates the map, as the former module await did.
   await initializeRasterTileBaseLayerConfigs();
 
@@ -24,6 +26,7 @@ async function bootstrap(): Promise<void> {
   recordErrorsOutsideAngular();
 
   await bootstrapApplication(AppComponent, appConfig);
+  perfMark('renderer:bootstrap-done');
 
   Logger.info('Content on the main window is loading...');
   Logger.info(`Log File Location: ${LogFileConfig.filePath}`);

@@ -5,6 +5,7 @@ import physicalCpuCount from 'physical-cpu-count';
 import * as workerpool from 'workerpool';
 import * as _ from 'lodash';
 import { stringArrayToLogText } from '../../src-shared/log/multiline-log-text';
+import { perfMark } from '../../src-shared/perf/perf-mark';
 import { removeInvalidThumbnailCache } from '../../src-shared/thumbnail/cache/remove-invalid-thumbnail-cache';
 import { createThumbnailGenerationLogFile, getThumbnailFilePath } from '../../src-shared/thumbnail/cache/thumbnail-cache-util';
 import { thumbnailGenerationLogger as logger } from '../../src-shared/thumbnail/generation/thumbnail-generation-logger';
@@ -91,6 +92,7 @@ async function generateThumbnails(heifFilePaths: string[]) {
   logger.info(`Files are split in ${argArrayChunks.length} chunks.`);
   logger.info(`Each chunk contains up to ${numberOfFilesInChunk} files.`);
 
+  perfMark('thumbnails:main-started', { files: argArray.length });
   const failures = new ThumbnailFailures();
   for (let index = 0; index < argArrayChunks.length; index++){
     const chunkNumber = `#${index + 1}`;
@@ -101,6 +103,7 @@ async function generateThumbnails(heifFilePaths: string[]) {
     logger.info(`Finished chunk ${chunkNumber} out of ${argArrayChunks.length} chunks.`);
   }
   failures.record();
+  perfMark('thumbnails:main-finished', { files: argArray.length });
 }
 
 async function runWorkerForThumbnailGeneration(argArray: ThumbnailFileGenerationArg[], failures: ThumbnailFailures) {

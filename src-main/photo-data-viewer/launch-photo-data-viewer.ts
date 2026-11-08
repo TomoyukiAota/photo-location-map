@@ -2,12 +2,14 @@ import { BrowserWindow } from 'electron';
 import { isHeadlessTest, withHeadlessTestOptions } from '../../electron-util/e2e-test-hooks';
 import { PhotoDataViewerIpcParams } from '../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params';
 import { logWindowBounds, photoDataViewerLogger as logger } from '../../src-shared/photo-data-viewer/photo-data-viewer-logger';
+import { perfMark } from '../../src-shared/perf/perf-mark';
 import { openUrl } from '../../src-shared/url/open-url';
 import { trackOpeningPhotoDataViewer } from './photo-data-viewer-tracker';
 import { createPhotoDataViewerUrl } from './photo-data-viewer-url';
 import { PhotoDataViewerWindowState } from './photo-data-viewer-window-state';
 
 export async function launchPhotoDataViewer(ipcParams: PhotoDataViewerIpcParams) {
+  perfMark('view-data:launch');
   const photo = ipcParams.photo;
   logger.info(`Open Window for ${photo.path}`);
 
@@ -26,6 +28,7 @@ export async function launchPhotoDataViewer(ipcParams: PhotoDataViewerIpcParams)
     },
   }));
 
+  perfMark('view-data:window-created');
   browserWindow.webContents.setWindowOpenHandler(({url}) => {
     const urlForAnalytics = modifyUrlForAnalyticsIfNeeded(url);
     openUrl(url, 'somewhere', 'Photo Data Viewer', urlForAnalytics);
@@ -38,6 +41,7 @@ export async function launchPhotoDataViewer(ipcParams: PhotoDataViewerIpcParams)
   PhotoDataViewerWindowState.manage({browserWindow, photo});
   const photoDataViewerUrl = createPhotoDataViewerUrl(photo);
   await browserWindow.loadURL(photoDataViewerUrl);
+  perfMark('view-data:page-loaded');
   // A headless test keeps the window off the screen instead (electron-util/e2e-test-hooks.js).
   if (!isHeadlessTest) browserWindow.show();
 }

@@ -50,6 +50,9 @@ exports.withHeadlessTestOptions = options => headless ? {
   webPreferences: { ...options.webPreferences, backgroundThrottling: false },
 } : options;
 
+// A test can serve Photo Data Viewer from a local build (see photo-data-viewer-server-override.js).
+exports.photoDataViewerServerOverride = require('./photo-data-viewer-server-override').photoDataViewerServerOverride(process.env);
+
 if (testRoot) {
   const { app, BrowserWindow, session } = require('electron');
   if (transparent) {
@@ -131,13 +134,30 @@ if (testRoot) {
       globalThis.__plmDownloads.push(item.getURL());
       event.preventDefault();
     });
-    session.defaultSession.webRequest.onBeforeRequest({ urls: [
+    const interceptedUrls = [
       '*://*.analytics.photo-location-map.tomoyukiaota.com/*',
       '*://*.analytics.photo-data-viewer.tomoyukiaota.com/*',
       '*://*.mixpanel.com/*', '*://*.amplitude.com/*',
       '*://*.google-analytics.com/*', '*://www.googletagmanager.com/*',
       'https://github.com/TomoyukiAota/photo-location-map/releases/download/*',
-    ] }, (details, callback) => {
+    ];
+    // TL;DR: PLM_TEST_OFFLINE=1 also cancels every other request that leaves the computer, so that a measurement does
+    // not wait on the network: the map's base-layer list then falls back to its built-in copy, and tiles stay blank.
+    // Details: The renderer awaits that list before Angular starts (src/main.ts), so its download is part of every
+    // startup. Electron keeps one onBeforeRequest listener per session, so this listener does both.
+    const offline = process.env.PLM_TEST_OFFLINE === '1';
+    globalThis.__plmOfflineCancelled = [];
+    session.defaultSession.webRequest.onBeforeRequest({ urls: offline ? ['*://*/*'] : interceptedUrls }, (details, callback) => {
+      const { hostname } = new URL(details.url);
+      const intercepted = /(^|\.)(analytics\.photo-location-map\.tomoyukiaota\.com|analytics\.photo-data-viewer\.tomoyukiaota\.com|mixpanel\.com|amplitude\.com|google-analytics\.com)$/.test(hostname)
+        || hostname === 'www.googletagmanager.com'
+        || details.url.startsWith('https://github.com/TomoyukiAota/photo-location-map/releases/download/');
+      if (!intercepted) {
+        const loopback = ['127.0.0.1', 'localhost', '[::1]'].includes(hostname);
+        if (!loopback) globalThis.__plmOfflineCancelled.push(details.url);
+        callback({ cancel: !loopback });
+        return;
+      }
       captureAnalytics(details);
       if (details.url.includes('github.com/TomoyukiAota/photo-location-map/releases/download/')) {
         globalThis.__plmDownloads.push(details.url);
@@ -148,4 +168,42 @@ if (testRoot) {
 
   if (app.isReady()) interceptTestTraffic();
   else app.once('ready', interceptTestTraffic);
+
+  // TL;DR: With PLM_TEST_LAUNCH_REPORT set to a file in the test profile, each launch on the profile appends one JSON
+  // line there once its home view has rendered: its process ID and the plm: marks of its main process and main
+  // window (src-shared/perf/perf-mark.ts), as times since the epoch.
+  // Details: A launch that the app starts itself, with app.relaunch() after saving a setting or deleting the cache,
+  // is not under the test's control, so it cannot be asked when it is ready. The relaunched process has the same
+  // environment, so it writes its line too; the test tells the launches apart by their process IDs.
+  const launchReport = process.env.PLM_TEST_LAUNCH_REPORT;
+  if (launchReport) {
+    const path = require('node:path');
+    if (!path.isAbsolute(launchReport) || path.relative(testRoot, launchReport).startsWith('..')) {
+      throw new Error('PLM_TEST_LAUNCH_REPORT must be a file in PLM_TEST_ROOT.');
+    }
+    const marksOf = entries => entries.filter(entry => entry.name.startsWith('plm:'))
+      .map(entry => ({ name: entry.name, epochMs: performance.timeOrigin + entry.startTime, detail: entry.detail ?? null }));
+    let reported = false;
+    app.on('browser-window-created', (_event, window) => {
+      if (reported) return;
+      reported = true; // The first window is the main window.
+      const { webContents } = window;
+      const startedAt = Date.now();
+      const poll = async () => {
+        if (window.isDestroyed()) return;
+        const rendererMarks = await webContents.executeJavaScript(`performance.getEntriesByType('mark')
+          .filter(entry => entry.name.startsWith('plm:'))
+          .map(entry => ({ name: entry.name, epochMs: performance.timeOrigin + entry.startTime, detail: entry.detail ?? null }))`)
+          .catch(() => []);
+        if (!rendererMarks.some(mark => mark.name === 'plm:renderer:home-rendered')) {
+          if (Date.now() - startedAt < 120000) setTimeout(poll, 50);
+          return;
+        }
+        const line = JSON.stringify({ pid: process.pid, ppid: process.ppid, timeOriginMs: performance.timeOrigin,
+          reportedAtMs: Date.now(), mainMarks: marksOf(performance.getEntriesByType('mark')), rendererMarks });
+        require('node:fs').appendFileSync(launchReport, line + '\n');
+      };
+      webContents.once('did-finish-load', () => { void poll(); });
+    });
+  }
 }

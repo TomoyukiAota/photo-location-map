@@ -5,6 +5,7 @@ import { convertToFlattenedDirTree } from '../../../../src-shared/dir-tree/dir-t
 import { FilenameExtension } from '../../../../src-shared/filename-extension/filename-extension';
 import { IpcConstants } from '../../../../src-shared/ipc/ipc-constants';
 import { stringArrayToLogText } from '../../../../src-shared/log/multiline-log-text';
+import { perfMark } from '../../../../src-shared/perf/perf-mark';
 import {
   isAttemptToGenerateThumbnailFinished,
   isThumbnailCacheAvailable
@@ -64,6 +65,7 @@ export class ThumbnailGenerationService {
       .filter(filePath => !isThumbnailCacheAvailable(filePath));
 
     if (this.numOfHeifFilesToGenerateThumbnail >= 1) {
+      perfMark('thumbnails:generation-started', { all: this.numOfAllHeifFiles, required: this.numOfHeifFilesToGenerateThumbnail });
       this.startGenerationInMainProcess();
       this.updateGenerationStatusAsStarted();
       this.updateGenerationStatusFromInProgressToDone();
@@ -134,6 +136,7 @@ export class ThumbnailGenerationService {
       filePathsWithoutThumbnail: heifFilePathsWithoutThumbnail,
     };
     this.statusState.update(status => ({...status, phase: 'done', result}));
+    perfMark('thumbnails:status-done', { required: this.numOfGenerationRequiredThumbnails, failed: heifFilePathsWithoutThumbnail.length });
   }
 
   private recordThumbnailGenerationResult() {

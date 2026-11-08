@@ -7,6 +7,7 @@ import * as electronWebPreferences from '../electron-util/electron-web-preferenc
 import '../electron-util/configure-electron-remote-in-main-process';
 import { LogFileConfig } from '../src-shared/log/file-config/log-file-config';
 import { Logger } from '../src-shared/log/logger';
+import { perfMark } from '../src-shared/perf/perf-mark';
 import './auto-update/configure-auto-update';
 import { getUrlForMainWindow } from './file-server/file-server';
 import './menu/menu';
@@ -29,6 +30,7 @@ Logger.info(`Log File Location: ${LogFileConfig.filePath}`);
 export let mainWindow: BrowserWindow;
 
 const createWindow = async () => {
+  perfMark('main:create-window');
   StartupTime.markAppReady();
   const mainWindowState = createMainWindowState();
 
@@ -40,6 +42,7 @@ const createWindow = async () => {
     webPreferences: electronWebPreferences,
   }));
 
+  perfMark('main:window-created');
   configureMainWindowForAnalytics(mainWindow);
 
   if (process.platform === 'win32') {
@@ -54,7 +57,9 @@ const createWindow = async () => {
     }));
   }
 
+  mainWindow.webContents.once('did-finish-load', () => perfMark('main:did-finish-load'));
   mainWindow.on('ready-to-show', () => {
+    perfMark('main:ready-to-show');
     // Call recordAtAppLaunch on ready-to-show event so that
     // recordAtAppLaunch is called after IPC setup for analytics in the renderer process is done.
     // This is because recordAtAppLaunch calls Analytics.trackEvent which requires the IPC setup to be done.

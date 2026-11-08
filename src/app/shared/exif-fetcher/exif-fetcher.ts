@@ -2,6 +2,8 @@ import PQueue from 'p-queue';
 import { exifFetchLibraryInUse } from '../../../../src-shared/exif-fetch-library-in-use/exif-fetch-library-in-use';
 import { FilenameExtension } from '../../../../src-shared/filename-extension/filename-extension';
 import { Logger } from '../../../../src-shared/log/logger';
+import { perfMark } from '../../../../src-shared/perf/perf-mark';
+import { exifPerfStats, resetExifPerfStats } from './exif-perf-stats';
 import { Exif } from '../model/exif.model';
 import { LoadingFolderProgress } from '../loading-folder-progress';
 import { fetchExifUsingExifParser } from './using-exif-parser/fetch-exif-using-exif-parser';
@@ -21,6 +23,7 @@ export class ExifFetcher {
     Logger.debug(`ExifFetcher.generatePathExifPairs function: Started with `, directoryTreeObject);
     this.pathExifPairPromiseFuncs.length = 0;
     this.queue.clear();
+    resetExifPerfStats();
 
     Logger.debug(`ExifFetcher.generatePathExifPairs function: Before calling updatePathExifPairPromiseFuncs`);
     this.updatePathExifPairPromiseFuncs(directoryTreeObject);
@@ -29,6 +32,7 @@ export class ExifFetcher {
 
     Logger.debug(`ExifFetcher.generatePathExifPairs function: Before awaiting all PathExifPair promises.`);
     const pathExifPairs = await this.queue.addAll(this.pathExifPairPromiseFuncs);
+    perfMark('exif:all-done', { ...exifPerfStats });
     Logger.debug(`ExifFetcher.generatePathExifPairs function: After awaiting all PathExifPair promises and gotten pathExifPairs`, pathExifPairs);
 
     return pathExifPairs;

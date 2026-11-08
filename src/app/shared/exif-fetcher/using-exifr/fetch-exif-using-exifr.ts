@@ -6,12 +6,14 @@ import { GpsInfo } from '../../model/gps-info.model';
 import { LatLng } from '../../model/lat-lng.model';
 import { Thumbnail } from '../../model/thumbnail.model';
 import { rotateImage, getRotatedSize } from '../../image-rotation';
+import { exifPerfStats } from '../exif-perf-stats';
 
 // exifr in the main process is used.
 // With exifr in the renderer process, 1) it is slower, and 2) loading files fails when many files are loaded.
 const exifr: typeof import('exifr') = window.require('@electron/remote').require('exifr');
 
 export function fetchExifUsingExifr(filePath: string): Promise<Exif> {
+  const startMs = performance.now();
   const exifPromise = fetchExifrParseOutput(filePath)
     .catch(error => {
       Logger.info(`[using exifr] Failed to fetch EXIF from ${filePath}`, error);
@@ -21,6 +23,10 @@ export function fetchExifUsingExifr(filePath: string): Promise<Exif> {
     .catch(error => {
       Logger.info(`[using exifr] Failed to create Exif class instance of ${filePath}`, error);
       return null;
+    })
+    .finally(() => {
+      exifPerfStats.files++;
+      exifPerfStats.maxFileMs = Math.max(exifPerfStats.maxFileMs, performance.now() - startMs);
     });
 
   return exifPromise;
@@ -55,7 +61,9 @@ const exifrOptions: ExifrOptionsType = {
 };
 
 async function fetchExifrParseOutput(filePath: string): Promise<ExifrParseOutput> {
+  const startMs = performance.now();
   const exifrParseOutput: ExifrParseOutput = await exifr.parse(filePath, exifrOptions);
+  exifPerfStats.parseMs += performance.now() - startMs;
   Logger.info(`[using exifr] Fetched EXIF of ${filePath} `, exifrParseOutput);
   return exifrParseOutput;
 }
@@ -85,10 +93,14 @@ async function createExifFromExifrParseOutput(exifrParseOutput: ExifrParseOutput
     exif.cameraMake = exifrParseOutput.Make.trim();
   }
 
+  const thumbnailStartMs = performance.now();
   const thumbnailBuffer = await exifr.thumbnail(filePath);
+  exifPerfStats.thumbnailMs += performance.now() - thumbnailStartMs;
   if (thumbnailBuffer) {
     const orientation = exifrParseOutput.Orientation ?? 1;   // If orientation is not available, assume 1, and display thumbnail.
+    const rotateStartMs = performance.now();
     const thumbnail = await createThumbnail(thumbnailBuffer, orientation, filePath);
+    exifPerfStats.rotateMs += performance.now() - rotateStartMs;
     exif.thumbnail = thumbnail;
   }
 

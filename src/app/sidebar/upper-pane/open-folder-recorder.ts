@@ -28,8 +28,10 @@ export class OpenFolderRecorder {
   }
 
   private static clearPerf(): void {
-    performance.clearMarks();
-    performance.clearMeasures();
+    // Only its own entries: the performance timeline also holds the plm: marks of src-shared/perf/perf-mark.ts.
+    performance.clearMarks(this.perfStartMarkName);
+    performance.clearMarks(this.perfEndMarkName);
+    performance.clearMeasures(this.perfMeasureName);
   }
 
   private static recordPerf(resultStr: string): void {

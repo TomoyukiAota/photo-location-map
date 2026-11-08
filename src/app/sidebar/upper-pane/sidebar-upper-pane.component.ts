@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import * as remote from '@electron/remote';
 import { Logger } from '../../../../src-shared/log/logger';
+import { perfMark } from '../../../../src-shared/perf/perf-mark';
 import { RequireFromMainProcess } from '../../../../src-shared/require/require-from-main-process';
 import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/user-data-stroage-path';
@@ -29,6 +30,7 @@ export class SidebarUpperPaneComponent {
   });
 
   public async showOpenFolderDialog() {
+    perfMark('open-folder:dialog-requested');
     const result = await remote.dialog.showOpenDialog(
       remote.getCurrentWindow(),
       {
@@ -37,6 +39,7 @@ export class SidebarUpperPaneComponent {
       }
     );
 
+    perfMark('open-folder:dialog-returned');
     const selectedFolderPath = this.folderDialogHistory.rememberSelection(result);
     if (!selectedFolderPath)
       return;
