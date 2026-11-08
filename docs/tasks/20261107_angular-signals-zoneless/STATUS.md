@@ -299,14 +299,15 @@ generation between its start and its end, and the two rows left to the owner.
   unhandled promise rejection in the renderer is recorded once, with its
   message" checks.
 - 2026-11-08, 3: in a git worktree on macOS, `npm run test:package` does not
-  get through. electron-builder writes `release/latest-mac.yml` only for a
-  publisher, which it detects from `GH_TOKEN` (CI sets it) and the repository
-  in `.git/config`, a file rather than a folder in a worktree. Without
-  `GH_TOKEN`, the package was built and signed, but the test's check of the
-  mac bundle failed on the missing file, so the checks of the bundle's
-  architectures and the smoke test of the packaged app did not run; with
-  `GH_TOKEN`, the build fails with "Cannot detect repository by .git/config".
-  The macOS CI job runs the whole test.
+  get through. electron-builder writes `release/latest-mac.yml` for the GitHub
+  repository that it finds in `package.json`, `TRAVIS_REPO_SLUG` or
+  `.git/config`, a file rather than a folder in a worktree, so it finds none
+  there. Without `GH_TOKEN` or `GITHUB_TOKEN`, the package was built and
+  signed, but the test's check of the mac bundle failed on the missing file,
+  so the checks of the bundle's architectures and the smoke test of the
+  packaged app did not run; with `GH_TOKEN` (CI sets it), the build fails with
+  "Cannot detect repository by .git/config". The macOS CI job runs the whole
+  test.
 - 2026-11-08, Material tree: with `childrenAccessor`, the CDK tree goes
   through every node that the accessor returns, all the way down, whenever its
   data or what is expanded changes, with an rxjs chain per node. Returning
