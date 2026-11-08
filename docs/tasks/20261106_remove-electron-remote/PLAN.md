@@ -134,8 +134,9 @@ acceptance criteria or ask for routine confirmation at every checkpoint.
 
 1. Inspect git status/remotes and any running builds/CI; preserve unrelated
    changes. Refresh main and choose the exact implementation base, at or after
-   4ade1268 so that it includes the zoneless application. If runtime code
-   changed since this plan, refresh the inventory and baseline accordingly.
+   b7c9bfe6 so that it includes the zoneless application and PR 673's Explorer
+   registration in main, which stage A takes as done. If runtime code changed
+   since this plan, refresh the inventory and baseline accordingly.
 2. Record platform/architecture, Node/npm/Electron versions, main/viewer settings,
    resolved dependencies, fixture hashes and the current served viewer build.
    Inventory main-only calls and renderer Node consumers against current code.
@@ -283,7 +284,8 @@ Use mise exec -- for commands; in a git worktree, prefix each with
 MISE_TRUSTED_CONFIG_PATHS="$PWD/mise.toml" (AGENTS.md, "In a git worktree").
 Run everything that opens a window headless (AGENTS.md, "Keep windows off the
 owner's screen"): npm run test:e2e is headless by default on macOS and Windows,
-and -- --headed is only for when the owner is to watch. After npm ci, run
+and -- --headed is only for when the owner is to watch; on Linux it still shows
+the windows, so ask the owner before running it there. After npm ci, run
 npm run verify:electron serially before concurrent Electron consumers. Do not run
 performance work concurrently with other tests/builds. Commands available now,
 to run only after implementation is started and as appropriate to the stage:

@@ -22,6 +22,10 @@ have since been resolved or changed:
 - npm `overrides` and the install-time patch of Temp were
   [removed](../20261107_remove-dependency-overrides/PLAN.md); the departures that
   remain are listed in [the dependency guide](../../contributing/dependencies.md).
+  Removing them brought back npm's deprecation warnings for the latest stable
+  releases (`glob@7.2.3`, `inflight`, `rimraf@2.6.3`, `boolean`,
+  `lodash.isequal@4.5.0`, `glob@10.5.0`), which the guide records with when to
+  revisit each, so the zero-warning state below describes the baseline, not main.
 - `@electron/remote`: the execution plan linked above was revised the same day.
 
 Checked on 2026-11-05 against commit
@@ -30,8 +34,10 @@ test or release configuration was changed for this investigation.
 
 ## Result
 
-There are remaining lifecycle concerns even though npm currently reports no
-deprecated installed-version metadata. Two indirect packages have explicit
+There are remaining lifecycle concerns even though, at the 2026-11-05 baseline,
+npm reported no deprecated installed-version metadata (the overrides then in
+place hid the warnings that a clean install prints today; see the note above).
+Two indirect packages have explicit
 upstream deprecation notices, one indirect release line is explicitly
 unmaintained, one direct tool is archived, and several other indirect projects
 are archived or unmaintained. These categories are distinct from the legacy or

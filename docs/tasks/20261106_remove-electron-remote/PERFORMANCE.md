@@ -12,10 +12,11 @@ full-byte delivery variants before transport selection. Architectural milestones
 change several things: use spans and targeted variants to attribute regressions,
 not an unsupported claim that a stage label alone caused every observed delta.
 
-Baseline 0 is measured on the zoneless application: main at or after 4ade1268
-(2026-11-08). The owner sequenced this work after the signals and zoneless
-migration because removing Zone.js changes the timings measured here, so no
-build or figure from before that migration is a valid 0.
+Baseline 0 is measured on main at or after b7c9bfe6 (2026-11-08), which has the
+zoneless application and PR 673's Explorer registration in main. The owner
+sequenced this work after the signals and zoneless migration because removing
+Zone.js changes the timings measured here, so no build or figure from before
+that migration is a valid 0.
 
 Freeze a protocol ID, harness source hash, input manifest, run counts, warm-up,
 cache/profile definitions and regression rules before examining A results.
@@ -38,13 +39,17 @@ structured results. This path is planned, not currently executable. It must:
 
 - Launch a fresh app/process and owned absolute PLM_TEST_ROOT for each trial;
   preserve required profile state within that trial. No owner profile is used.
-- Run headless by default (PLM_TEST_HEADLESS=1; AGENTS.md, "Keep windows off
-  the owner's screen"). electron-util/e2e-test-hooks.js then creates hidden
-  windows with backgroundThrottling disabled, or transparent click-through
-  windows on Windows, which is not the configuration users see. Record the
-  window mode of every series, keep it identical across the stages compared,
-  and treat a visible-window series as its own protocol that needs the owner's
-  go-ahead before it takes over the screen.
+- Keep windows off the owner's screen (AGENTS.md), but only in a mode that
+  paints at full rate: electron-util/e2e-test-hooks.js documents that a hidden
+  window is throttled to about one frame per second on Windows and Linux. On
+  macOS, PLM_TEST_HEADLESS=1 hides the windows and they paint as shown ones do;
+  on Windows it shows them transparent and click-through at full rate; on
+  Linux neither works, so run Linux series with visible windows on an isolated
+  virtual display (Xvfb, as Linux CI does) or, with the owner's go-ahead, on
+  the real display. None of these is the configuration users see. Record the
+  window mode of every series and keep it identical across the stages
+  compared; a visible-window series on a machine someone is using needs the
+  owner's go-ahead first.
 - Work in checkout and packaged builds, and across current/isolated renderers.
   Do not depend on production window.require remaining available under C.
 - Start the startup clock externally BEFORE spawning the application. Async
@@ -108,7 +113,7 @@ Do not alter system caches or machine settings without appropriate authorization
 | Startup | External spawn -> first usable main UI; snapshot/config preparation and renderer boot spans; no settings flash; main/renderer stalls. ready-to-show alone is not proof of usability. |
 | Open folder | Request -> first usable photo; all metadata/markers/UI ready; separate all-required-thumbnails-ready milestone; queue depth/progress/errors and EXIF versus renderer rotation/DOM spans. |
 | UI under load | Fixed UI interactions during loading, their response latency and long main/renderer tasks, in addition to total folder time. |
-| View Data | Menu action -> window shown -> photo bytes/resource ready -> first decoded image -> metadata ready; large JPEG/HEIC peak and settled memory. |
+| View Data | Menu action -> viewer window created and its page loaded (at C2, the bridge handshake) -> photo bytes/resource ready -> first decoded image -> metadata ready; large JPEG/HEIC peak and settled memory. Headless runs skip the viewer's show(), so "window shown" is measured only in visible-window series. |
 | Repeated/multiple viewers | Open/close cycles, retained memory after a fixed settling interval, file handles, listeners/windows and capability cleanup. |
 | Settings and restart | Save acknowledgement, persisted values, normal quit flush, renderer-triggered relaunch to usable UI, and failure behavior. |
 

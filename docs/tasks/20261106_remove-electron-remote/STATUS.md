@@ -93,4 +93,7 @@ documents only. Still no functional test, measurement or viewer change.
 
 2026-11-09: main b7c9bfe6 (PR 673) merged into the branch and recorded in
 PLAN.md; the same checks were repeated, and the diff against main is task
-documents only. Still no functional test, measurement or viewer change.
+documents only. Review of the pull request then had the baseline require
+b7c9bfe6, the window mode per platform (Linux hidden windows are throttled),
+a viewer milestone that exists headless, and the Linux e2e caveat written in.
+Still no functional test, measurement or viewer change.
