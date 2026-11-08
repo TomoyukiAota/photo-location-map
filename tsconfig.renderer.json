@@ -28,9 +28,6 @@
       ],
       "@electron/remote": [
         "./electron-util/renderer-modules/electron-remote.cjs"
-      ],
-      "rage-edit": [
-        "./electron-util/renderer-modules/rage-edit.cjs"
       ]
     },
     "types": [

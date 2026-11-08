@@ -10,6 +10,7 @@ import { Logger } from '../src-shared/log/logger';
 import './auto-update/configure-auto-update';
 import { getUrlForMainWindow } from './file-server/file-server';
 import './menu/menu';
+import './explorer-context-menu/explorer-context-menu-ipc-setup';
 import './photo-data-viewer/photo-data-viewer-ipc-setup';
 import './thumbnail-generation/thumbnail-generation-ipc-setup';
 import { configureMainWindowForAnalytics } from './configure-main-window-for-analytics';
