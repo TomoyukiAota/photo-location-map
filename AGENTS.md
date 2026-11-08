@@ -79,6 +79,27 @@ If something cannot run headless, say so and ask before starting it.
 **Why:** the e2e tests used to bring a window to the front at every launch of
 the app, in the way of the owner's own work.
 
+## In a git worktree
+
+Two things work differently in a git worktree, such as one that Claude Code
+makes under `.claude/worktrees/`:
+
+- **mise does not trust the worktree's `mise.toml`**, as mise keeps its trust
+  per path, so `mise exec` fails there. Pass the file to each command rather
+  than running `mise trust`, which would change mise's own settings:
+  `MISE_TRUSTED_CONFIG_PATHS="$PWD/mise.toml" mise exec -- npm ci`.
+- **`npm run test:package` stops before its smoke test on macOS**, and would
+  on Windows. electron-builder writes the update feed (`release/latest-mac.yml`,
+  `release/latest.yml` on Windows) for the GitHub repository that it finds in
+  `package.json` or `.git/config`, and `.git` is a file in a worktree, so it
+  finds none there. Without `GH_TOKEN` or `GITHUB_TOKEN`, the
+  package is built and signed, but the test's check of the feed fails, so the
+  smoke test of the packaged app does not run (nor, on macOS, the checks of
+  the bundle's architectures). With either token, the build fails with
+  "Cannot detect repository by .git/config". This was seen on macOS; Windows
+  checks its feed the same way, and Linux checks none. The CI jobs, which work
+  in a clone, run the whole test.
+
 ## You can run the signed mac build yourself
 
 Run `npm run package:mac` (and the other packaging scripts) directly. The macOS
