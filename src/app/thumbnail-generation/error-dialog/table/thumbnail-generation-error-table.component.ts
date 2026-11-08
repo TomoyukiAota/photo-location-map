@@ -1,4 +1,4 @@
-import { Component, OnInit, viewChild } from '@angular/core';
+import { Component, OnInit, viewChild, inject } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
@@ -22,6 +22,9 @@ interface TableRow {
   standalone: false
 })
 export class ThumbnailGenerationErrorTableComponent implements OnInit {
+  private sanitizer = inject(DomSanitizer);
+  private thumbnailGenerationService = inject(ThumbnailGenerationService);
+
   public displayedColumns: string[] = ['position', 'filePath'];
   public dataSource = new TableVirtualScrollDataSource<TableRow>();
 
@@ -29,11 +32,6 @@ export class ThumbnailGenerationErrorTableComponent implements OnInit {
   public get folderIconDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.folder); }
 
   private readonly sort = viewChild.required(MatSort);
-
-  constructor(private sanitizer: DomSanitizer,
-              private thumbnailGenerationService: ThumbnailGenerationService,
-  ) {
-  }
 
   public ngOnInit() {
     const filePathsWithoutThumbnail = this.thumbnailGenerationService.status().result?.filePathsWithoutThumbnail ?? [];

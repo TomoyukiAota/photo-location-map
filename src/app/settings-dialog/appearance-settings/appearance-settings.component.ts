@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { BooleanSetting } from '../../../../src-shared/user-settings/boolean-setting';
 import { currentUserSettings } from '../../../../src-shared/user-settings/user-settings';
 import { LoadedFilesStatusBarService } from '../../loaded-files-status-bar/service/loaded-files-status-bar.service';
@@ -12,10 +12,12 @@ import { AppearanceSettingsChangedParameter } from './appearance-settings-change
   standalone: false
 })
 export class AppearanceSettingsComponent {
+  private settingsChangedService = inject(SettingsChangedService);
+  private loadedFilesStatusBarService = inject(LoadedFilesStatusBarService);
+
   public shouldShowStatusBar: boolean;
 
-  constructor(private settingsChangedService: SettingsChangedService,
-              private loadedFilesStatusBarService: LoadedFilesStatusBarService) {
+  constructor() {
     this.shouldShowStatusBar = BooleanSetting.convertToBoolean(currentUserSettings.showStatusBar);
   }
 

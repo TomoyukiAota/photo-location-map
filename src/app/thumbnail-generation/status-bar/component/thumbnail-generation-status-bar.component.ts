@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Analytics } from '../../../../../src-shared/analytics/analytics';
 import { Logger } from '../../../../../src-shared/log/logger';
@@ -15,13 +15,12 @@ import { ThumbnailGenerationStatusBarService } from '../service/thumbnail-genera
   standalone: false
 })
 export class ThumbnailGenerationStatusBarComponent {
+  private dialog = inject(MatDialog);
+  private thumbnailGenerationService = inject(ThumbnailGenerationService);
+  private thumbnailGenerationStatusBarService = inject(ThumbnailGenerationStatusBarService);
+
   public readonly status = this.thumbnailGenerationService.status;
   public readonly detailsVisible = this.thumbnailGenerationStatusBarService.detailsVisible;
-
-  constructor(private dialog: MatDialog,
-              private thumbnailGenerationService: ThumbnailGenerationService,
-              private thumbnailGenerationStatusBarService: ThumbnailGenerationStatusBarService) {
-  }
 
   public handleClickHereTextClicked(event: MouseEvent) {
     event.stopPropagation();

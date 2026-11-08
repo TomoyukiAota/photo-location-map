@@ -1,4 +1,4 @@
-import { Component, computed, output } from '@angular/core';
+import { Component, computed, output, inject } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { DomSanitizer } from '@angular/platform-browser';
 import { unitOfTime } from 'moment';
@@ -16,6 +16,10 @@ import { getXAxisUnitMomentJsStr, xAxisUnit } from './date-time-taken-chart-x-ax
   standalone: false
 })
 export class DateTimeTakenChartConfigComponent {
+  public chartConfigService = inject(DateTimeTakenChartConfigService);
+  private sanitizer = inject(DomSanitizer);
+  private selectedPhotoService = inject(SelectedPhotoService);
+
   public xAxisUnits = [
     xAxisUnit.year.displayStr,
     xAxisUnit.month.displayStr,
@@ -31,11 +35,6 @@ export class DateTimeTakenChartConfigComponent {
   public readonly showDateUnknownPhotosChange = output<boolean>();
   /** The unit of the x-axis changed; the chart draws again with it and pins every selected photo. */
   public readonly xAxisUnitChange = output<unitOfTime.DurationConstructor>();
-
-  constructor(public chartConfigService: DateTimeTakenChartConfigService,
-              private sanitizer: DomSanitizer,
-              private selectedPhotoService: SelectedPhotoService) {
-  }
 
   public get moreOptionsIconDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.moreOptions); }
 

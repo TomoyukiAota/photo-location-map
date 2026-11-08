@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import moment from 'moment-timezone';
 import { DateTimeFormat } from '../../../../src-shared/date-time/date-time-format';
@@ -13,13 +13,12 @@ import { DateTimeSettingsChangedParameter } from './date-time-settings-changed-p
   standalone: false
 })
 export class DateTimeSettingsComponent {
+  private settingsChangedService = inject(SettingsChangedService);
+
   public dateFormatList = DateTimeFormat.ForUser.DateFormat_List;
   public clockSystemFormatList = DateTimeFormat.ForUser.ClockSystemFormat_List;
   public selectedDateFormat = currentUserSettings.dateFormat;
   public selectedClockSystemFormat = currentUserSettings.clockSystemFormat;
-
-  constructor(private settingsChangedService: SettingsChangedService) {
-  }
 
   public getDateTimeNow() {
     const momentJsFormatString = DateTimeFormat.ForUser.getMomentJsDateTimeFormat(this.selectedDateFormat, this.selectedClockSystemFormat);

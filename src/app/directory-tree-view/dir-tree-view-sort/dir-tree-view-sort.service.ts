@@ -1,4 +1,4 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, Injectable, signal, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import moment from 'moment/moment';
 import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
@@ -24,16 +24,14 @@ const defaultSortConfig = defaultDirTreeViewSortConfig;
   providedIn: 'root'
 })
 export class DirTreeViewSortService {
+  private dialog = inject(MatDialog);
+  private photoDataService = inject(PhotoDataService);
+
   private readonly sortKeyState = signal<SortKey>(DirTreeViewSortService.readSortKey());
   private readonly sortDirectionState = signal<SortDirection>(DirTreeViewSortService.readSortDirection());
   public readonly sortKey = this.sortKeyState.asReadonly();
   public readonly sortDirection = this.sortDirectionState.asReadonly();
   public readonly sortConfig = computed<SortConfig>(() => new DirTreeViewSortConfig(this.sortKey(), this.sortDirection()));
-
-  constructor(private dialog: MatDialog,
-              private photoDataService: PhotoDataService,
-  ) {
-  }
 
   // The setters save what is chosen. Reading the saved values at startup writes nothing back.
   public setSortKey(sortKey: SortKey): void {

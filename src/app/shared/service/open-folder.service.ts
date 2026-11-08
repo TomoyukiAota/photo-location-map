@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DirTreeObjectRecorder } from '../../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
 import { sleep } from '../../../../src-shared/sleep/sleep';
@@ -21,18 +21,16 @@ import { PhotoSelectionHistoryService } from './photo-selection-history.service'
   providedIn: 'root'
 })
 export class OpenFolderService {
+  private dialog = inject(MatDialog);
+  private photoDataService = inject(PhotoDataService);
+  private directoryTreeViewDataService = inject(DirectoryTreeViewDataService);
+  public thumbnailGenerationService = inject(ThumbnailGenerationService);
+  private thumbnailGenerationStatusBarService = inject(ThumbnailGenerationStatusBarService);
+  private photoSelectionHistoryService = inject(PhotoSelectionHistoryService);
+
   private readonly isFolderOpenedState = signal(false);
   /** Whether a folder has been opened since the application started. */
   public readonly isFolderOpened = this.isFolderOpenedState.asReadonly();
-
-  constructor(private dialog: MatDialog,
-              private photoDataService: PhotoDataService,
-              private directoryTreeViewDataService: DirectoryTreeViewDataService,
-              public thumbnailGenerationService: ThumbnailGenerationService,
-              private thumbnailGenerationStatusBarService: ThumbnailGenerationStatusBarService,
-              private photoSelectionHistoryService: PhotoSelectionHistoryService,
-  ) {
-  }
 
   /**
    * Opens a folder: reads its photos while the loading dialog is shown, then shows its tree, which pins its photos on

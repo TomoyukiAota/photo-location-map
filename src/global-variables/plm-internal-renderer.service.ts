@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Logger } from '../../src-shared/log/logger';
 import { AboutBoxComponent } from '../app/about-box/about-box.component';
@@ -20,11 +20,10 @@ import {
   providedIn: 'root'
 })
 export class PlmInternalRendererService {
-  constructor(private dialog: MatDialog,
-              private directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
-              private openAfterLaunchService: OpenAfterLaunchService,
-              private photoSelectionHistoryService: PhotoSelectionHistoryService) {
-  }
+  private dialog = inject(MatDialog);
+  private directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);
+  private openAfterLaunchService = inject(OpenAfterLaunchService);
+  private photoSelectionHistoryService = inject(PhotoSelectionHistoryService);
 
   public initialize(): void {
     window.plmInternalRenderer = window.plmInternalRenderer || new PlmInternalRenderer();

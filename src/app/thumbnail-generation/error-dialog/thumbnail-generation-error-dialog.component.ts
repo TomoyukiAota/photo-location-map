@@ -1,4 +1,4 @@
-import { Component, computed } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { ThumbnailGenerationService } from '../service/thumbnail-generation.service';
 
 @Component({
@@ -8,9 +8,8 @@ import { ThumbnailGenerationService } from '../service/thumbnail-generation.serv
   standalone: false
 })
 export class ThumbnailGenerationErrorDialogComponent {
+  private thumbnailGenerationService = inject(ThumbnailGenerationService);
+
   public readonly numberOfFilesWithoutThumbnail = computed(() =>
     this.thumbnailGenerationService.status().result?.filePathsWithoutThumbnail.length ?? 0);
-
-  constructor(private thumbnailGenerationService: ThumbnailGenerationService) {
-  }
 }

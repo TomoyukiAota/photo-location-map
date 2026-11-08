@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Analytics } from '../../../../../src-shared/analytics/analytics';
 import { Logger } from '../../../../../src-shared/log/logger';
 import { DirTreeViewSortService } from '../../../directory-tree-view/dir-tree-view-sort/dir-tree-view-sort.service';
@@ -14,9 +14,7 @@ import {
   standalone: false
 })
 export class SidebarUpperPaneMoreOptionsComponent {
-  constructor(public sortService: DirTreeViewSortService,
-  ) {
-  }
+  public sortService = inject(DirTreeViewSortService);
 
   public handleSortKeyMenuItemClicked(sortKey: DirTreeViewSortKey) {
     Logger.info(`[Sidebar] [Menu] [Sort] Clicked "By ${sortKey}"`);

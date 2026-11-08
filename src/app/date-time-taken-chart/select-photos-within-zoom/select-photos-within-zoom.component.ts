@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { DirectoryTreeViewSelectionService } from '../../directory-tree-view/directory-tree-view-selection.service';
 import { PinnedPhotoService } from '../../shared/service/pinned-photo.service';
@@ -11,9 +11,8 @@ import { dateTimeTakenChartLogger as logger } from '../date-time-taken-chart-log
   standalone: false
 })
 export class SelectPhotosWithinZoomComponent {
-  constructor(private directoryTreeViewSelectionService: DirectoryTreeViewSelectionService,
-              private pinnedPhotoService: PinnedPhotoService) {
-  }
+  private directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);
+  private pinnedPhotoService = inject(PinnedPhotoService);
 
   public onButtonClicked() {
     logger.info('Clicked "Select Photos within Zoom" button.');

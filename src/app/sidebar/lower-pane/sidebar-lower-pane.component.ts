@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { OpenFolderService } from '../../shared/service/open-folder.service';
 
 @Component({
@@ -8,6 +8,5 @@ import { OpenFolderService } from '../../shared/service/open-folder.service';
   standalone: false
 })
 export class SidebarLowerPaneComponent {
-  constructor(public openFolderService: OpenFolderService) {
-  }
+  public openFolderService = inject(OpenFolderService);
 }

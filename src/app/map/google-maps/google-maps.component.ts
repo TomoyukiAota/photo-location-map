@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, effect, signal, untracked } from '@angular/core';
+import { AfterViewInit, Component, effect, signal, untracked, inject } from '@angular/core';
 import { PinnedPhotoService } from '../../shared/service/pinned-photo.service';
 import { Photo } from '../../shared/model/photo.model';
 import { GoogleMapsApiKeyHandler } from './google-maps-api-key-handler';
@@ -12,10 +12,12 @@ import { GoogleMapsApiLoader } from './google-maps-api-loader';
   standalone: false
 })
 export class GoogleMapsComponent implements AfterViewInit {
+  private pinnedPhotoService = inject(PinnedPhotoService);
+
   // Whether the Google Maps API has loaded; ngAfterViewInit loads it for the first Google map of a launch.
   private readonly isApiLoaded = signal(typeof google !== 'undefined');
 
-  constructor(private pinnedPhotoService: PinnedPhotoService) {
+  constructor() {
     // The one place that renders: once the API has loaded, and again whenever other photos are pinned. Every render
     // creates a map, which uses the API's quota, so a map is not created twice for the same photos.
     effect(() => {

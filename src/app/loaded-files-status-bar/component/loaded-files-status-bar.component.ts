@@ -1,4 +1,4 @@
-import { Component, computed } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { PhotoDataService } from '../../shared/service/photo-data.service';
 import { summarizeLoadedFiles } from './loaded-files-summary';
 
@@ -9,7 +9,7 @@ import { summarizeLoadedFiles } from './loaded-files-summary';
   standalone: false
 })
 export class LoadedFilesStatusBarComponent {
-  public readonly summary = computed(() => summarizeLoadedFiles(this.photoDataService.photos()));
+  private photoDataService = inject(PhotoDataService);
 
-  constructor(private photoDataService: PhotoDataService) { }
+  public readonly summary = computed(() => summarizeLoadedFiles(this.photoDataService.photos()));
 }

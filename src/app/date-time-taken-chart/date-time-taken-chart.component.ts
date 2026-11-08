@@ -1,4 +1,4 @@
-import { Component, computed, effect, signal, untracked } from '@angular/core';
+import { Component, computed, effect, signal, untracked, inject } from '@angular/core';
 import { ECharts, EChartsOption } from 'echarts';
 import * as _ from 'lodash';
 import { unitOfTime } from 'moment';
@@ -18,6 +18,10 @@ import { dateTimeTakenChartLogger as logger } from './date-time-taken-chart-logg
   standalone: false
 })
 export class DateTimeTakenChartComponent {
+  private chartConfigService = inject(DateTimeTakenChartConfigService);
+  private pinnedPhotoService = inject(PinnedPhotoService);
+  private selectedPhotoService = inject(SelectedPhotoService);
+
   private readonly chartData = computed(() =>
     createDateTimeTakenChartData(this.selectedPhotoService.selectedPhotos(), this.chartConfigService.xAxisUnit()));
   public readonly eChartsOption = computed(() => this.createEChartsOption(this.chartData().xData, this.chartData().yData));
@@ -25,9 +29,7 @@ export class DateTimeTakenChartComponent {
   public readonly isSelectPhotosWithinZoomButtonVisible = signal(false);
   private echartsInstance: ECharts;
 
-  constructor(private chartConfigService: DateTimeTakenChartConfigService,
-              private pinnedPhotoService: PinnedPhotoService,
-              private selectedPhotoService: SelectedPhotoService) {
+  constructor() {
     // A new selection pins all of its photos and ends the zoom. An effect rather than a computed, as the pinned photos
     // also follow the chart's zoom window, which ECharts keeps, and the menu's checkbox for photos without a date.
     effect(() => {

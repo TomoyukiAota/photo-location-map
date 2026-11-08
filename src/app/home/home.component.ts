@@ -1,9 +1,4 @@
-import {
-  Component,
-  AfterViewInit,
-  ElementRef,
-  viewChild,
-} from '@angular/core';
+import { Component, AfterViewInit, ElementRef, viewChild, inject } from '@angular/core';
 import Split from 'split.js';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { Logger } from '../../../src-shared/log/logger';
@@ -18,15 +13,15 @@ import { ThumbnailGenerationStatusBarService } from '../thumbnail-generation/sta
   standalone: false
 })
 export class HomeComponent implements AfterViewInit {
+  public thumbnailGenerationStatusBarService = inject(ThumbnailGenerationStatusBarService);
+  public loadedFilesStatusBarService = inject(LoadedFilesStatusBarService);
+  private leafletMapForceRenderService = inject(LeafletMapForceRenderService);
+
   private sidebarSplitInstance: Split.Instance;
   private currentSidebarUpperPaneHeightPx: number;
 
   private readonly sidebarDiv = viewChild.required<ElementRef>('sidebar');
   private readonly sidebarUpperPaneDiv = viewChild.required<ElementRef>('sidebarUpperPane');
-
-  constructor(public thumbnailGenerationStatusBarService: ThumbnailGenerationStatusBarService,
-              public loadedFilesStatusBarService: LoadedFilesStatusBarService,
-              private leafletMapForceRenderService: LeafletMapForceRenderService) {}
 
   ngAfterViewInit() {
     const gutterSize = 8;              // 8px, which is the same width as the splitter gutter in Photo Data Viewer.
