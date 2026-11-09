@@ -6,21 +6,35 @@ the existence of a plan or from an agent's previous messages.
 
 ## Current checkpoint
 
-- State: EXECUTING. Stages 0, A, B and C1 accepted. Stage C2 (Photo Data Viewer's isolation) next, on a branch
-  of its own from this one, from the work in progress in `git stash` ("stage C2 work in progress").
+- State: EXECUTING. Stages 0, A, B and C1 accepted. Stage C2 (Photo Data Viewer's isolation) implemented,
+  functionally verified and measured (series rer-2-C2) on its branch `claude/isolate-photo-data-viewer`: a6f70a51,
+  which is b6a4bfa3, the measured build's source, rebased onto the C1 branch's CI fixes (08aaed71).
+  Left: series rer-2-C2v and a startup-only series, which need a quiet computer (stage ledger below), and final C.
 - Authorization: on 2026-11-09 the owner started the implementation, to run until
   the plan is complete, with questions for the owner collected for the end
   (section "Questions for the owner" below). Merging and publishing the separate
   viewer still need their own approval (PLAN.md).
 - Final target: C, via measured 0 -> A -> B -> C1 -> C2. C1 alone is incomplete C.
-- Implementation branch: `claude/remove-electron-remote`, from main 449f30f3
-  (the merge of PR 674, which includes b7c9bfe6 and PR 673). Not pushed yet.
+- Branches: `claude/remove-electron-remote` (stages A to C1, pull request 676) and, from it,
+  `claude/isolate-photo-data-viewer` (stage C2, not pushed yet).
 - Last accepted IMPLEMENTATION stage: C1 (0aefe3fc).
-- Task-owned processes: the pinned Photo Data Viewer server, `next start -p 3130
-  -H 127.0.0.1` in `.upgrade-artifacts/remove-electron-remote/viewer/1ff7a50/`
-  (log `logs/viewer-1ff7a50-server.log`). Stop it when no series or test needs it;
-  restart it with the command in that directory's section of "Artifacts" below.
-- External viewer changes/deployments: none.
+- CI of pull request 676: the two e2e cases where the app relaunches itself failed with the packaged app on Linux
+  and Windows, on both triggers; macOS passed. They came with stage B and had not run on those systems before.
+  954132fc makes the failure tell what the relaunched app logged; 74046e4c and 08aaed71 fix them ("Stage C1
+  notes"). At 08aaed71, CI passes on Ubuntu, Windows and macOS, on both triggers.
+- This Mac: Xcode 27.2 was installed at 09:30 (Asia/Tokyo) on 2026-11-09 and waits for its license to be accepted
+  (`sudo xcodebuild -license`, the owner's). Until then, `git`, `python3` and the notarization tools fail through
+  their `/usr/bin` shims, and run through the Command Line Tools with
+  `DEVELOPER_DIR=/Library/Developer/CommandLineTools`.
+- Task-owned processes: the Photo Data Viewer servers, `next start -p 3130 -H 127.0.0.1` in
+  `.upgrade-artifacts/remove-electron-remote/viewer/1ff7a50/` (log `logs/viewer-1ff7a50-server.log`) and
+  `next start -p 3131 -H 127.0.0.1` in `viewer/c2/` (log `logs/viewer-c2-server.log`), and a worktree of the C1
+  branch in `worktrees/c1/`. Stop and remove them when no series or test needs them; restart a server with the
+  command in "Artifacts" below.
+- External viewer changes/deployments: Photo Data Viewer's change for the bridge is open as
+  https://github.com/TomoyukiAota/photo-data-viewer/pull/72 (d3a2afc), not merged, so not deployed. With the viewer
+  that production serves, stage C2's window shows nothing and logs that its page did not ask for its photo, as
+  designed (checked with 1ff7a50 on port 3130).
 
 ## Resume first action
 
@@ -45,6 +59,11 @@ All under `.upgrade-artifacts/remove-electron-remote/` (ignored by git):
   `PDV_IN_PLM=True NEXT_PUBLIC_GOOGLE_ANALYTICS_ID= npx next start -p 3130 -H 127.0.0.1`
   from that directory (`MISE_TRUSTED_CONFIG_PATHS="$PWD/mise.toml" mise exec --`).
   The production server's page had build ID VqTPTJF1JHNCsQCU8-7qg on 2026-11-09.
+- `viewer/c2/`: a clone of Photo Data Viewer on its branch `claude/isolated-host-bridge` (stage C2's viewer),
+  built the same way and served on port 3131 instead. Series rer-2-C2 measured 568b8ab (build
+  kiytqYrbcsLHxY4Dju6bp); it serves d3a2afc since (build Ra3lqXLA3rSG7vMyCtI1D), which only adds an error message.
+- `worktrees/c1/`: a git worktree of `claude/remove-electron-remote`, for fixes to pull request 676 while the main
+  checkout is on the C2 branch.
 - `workloads/`: made by `test/performance/workload.mjs`; `manifest.json` has the
   SHA-256 of each file. IDs: large 3b8be5ead9724e0e (324 files, 986.7 MB as APFS
   clones), view-jpeg e54629e8bbf5aa31, view-heic 2b4ad7584c246aad.
@@ -110,7 +129,7 @@ data only in windows wider than 1200 pixels.
 | A / 1 | ACCEPTED | 235d6172; packaged app `artifacts/A/` | Build, lint, unit (Vitest 89; Electron-Mocha 144 main, 66 renderer), dependency-compat (4), package-runner (19), headless e2e (40 passed, 1 Windows-only skipped) and live reload pass; packaged tree has no @electron/remote | rer-2-A: 88/88 ok; folder opening 12 % faster, 101 within budget, one frame-quantized driver latency (RESULTS.md) | Done |
 | B / 2 | ACCEPTED | f5b5f7b1; packaged app `artifacts/B/` | Build, lint, unit (Vitest 89; Electron-Mocha 147 main and 2 pending, 69 renderer), dependency-compat (4), package-runner (19), headless e2e (43 passed, 1 Windows-only skipped) and live reload pass | rer-2-B: 132/132 ok; against 0, A's folder-opening gains (6 improvements) and 102 within budget; against A, all 108 within budget (RESULTS.md) | Done |
 | C1 / 3 main window | ACCEPTED | 0aefe3fc; packaged app `artifacts/C1/` (earlier ones in `artifacts/C1-ac6a51ad/`, `artifacts/C1-f3cabca8/`) | Build, lint, unit (Vitest 96; Electron-Mocha 181 main and 2 pending, 62 renderer, now with the real preload), dependency-compat (4), package-runner (19) and live reload pass; headless e2e passes at 0aefe3fc on the checkout (44, 1 Windows-only skipped), on `ng serve` (44) and on the package (43, 2 skipped); 100 harness launches of f3cabca8 all started; see "Stage C1 notes" | rer-2-C1 (ac6a51ad) found 3 regressions, fixed; rer-2-C1b (f3cabca8) 132/132 ok and rer-2-C1c (0aefe3fc, open-folder) 33/33 ok: home view 6 to 8 % earlier than B, folder opening as B, two explained moves of work (RESULTS.md) | Done |
-| C2 / 3 viewer | NOT STARTED | None | NOT RUN | NOT RUN | Compatible viewer preview may be prepared during C1; no host release before rollout gate |
+| C2 / 3 viewer | MEASURED, release gated on the viewer's deployment | a6f70a51 (b6a4bfa3 before the rebase onto 08aaed71); packaged app `artifacts/C2/`, of b6a4bfa3; viewer 568b8ab (its pull request 72, not merged) | Build, lint, unit (Vitest 96; Electron-Mocha 194 main and 2 pending, 62 renderer); headless e2e on the checkout (44, 1 Windows-only skipped) and the package (43, 2 skipped); the new viewer in stage 0's and C1's packages (4 of 4 each) and in its own Electron tests (Electron 32.0.2 and 45.2.1); see "Stage C2 notes" | rer-2-C2: 176/176 ok; against C1, 104 within budget and 4 improvements, no regression; the URL transport kept (IPC within budget everywhere); startup disturbed by the computer's load, to be measured again in a startup-only series (RESULTS.md) | Once the computer is quiet: rer-2-C2v (the new viewer in stage 0's window) and a startup-only series. Then final C: `npm run package:mac`, its checks and the packaged visual e2e |
 
 ## Stage C1 notes
 
@@ -166,6 +185,84 @@ Exceptions that remain after C1 (PLAN.md, C1 step 7):
 - The main window keeps `webSecurity: false` (and with it insecure content) and has no Content Security Policy,
   out of this plan's scope (tracked separately). Its navigation is restricted to the app's page since f3cabca8.
 
+Found by the CI of pull request 676, after C1's acceptance, and fixed in 74046e4c and 08aaed71 on that branch: the
+two e2e cases where the app relaunches itself, which came with stage B and had run on macOS only, failed with the
+packaged app on Linux and Windows. 954132fc made the failure tell what the relaunched app logged:
+
+- Linux: the app quit and no launch followed. An AppImage runs the app from a mount that its launcher removes once
+  the app has quit, and the helper that app.relaunch() starts to start the app again runs from that mount too, so
+  nothing started even with the AppImage as its executable (74046e4c). From an AppImage, /bin/sh now waits for the
+  app to end and starts the AppImage again (08aaed71, `src-main/process/relaunch-and-quit.ts`). Restarting after a
+  saved setting did not relaunch the AppImage before this work either.
+- Windows: Playwright starts the app through a shell (cmd.exe), so `app.process().pid` was the shell's, and the
+  report's only line, the quitting app's own, was taken for the relaunched one. The cases, and the harness on
+  Windows, now take the main process's own ID; on macOS and Linux it is the same ID, so earlier series stand.
+
+## Stage C2 notes
+
+What changed, in short (commit a6f70a51, b6a4bfa3 before its rebase onto the C1 branch's CI fixes): Photo Data Viewer's window runs as the main window does, with
+`contextIsolation: true`, `nodeIntegration: false`, `nodeIntegrationInWorker: false` and `sandbox: true`, through
+`withHeadlessTestOptions`. Its preload `electron-util/preload/photo-data-viewer.cjs` gives the page
+`window.plmPhotoDataViewer` (`src-shared/photo-data-viewer/photo-data-viewer-bridge.ts`): `readPhoto()` and
+`trackEvent()`. The main process grants each viewer window a capability, a random token for the photo that the user
+chose, which only that window's top frame may ask for and which ends when the window leaves the viewer's origin,
+closes or its page crashes (`src-main/photo-data-viewer/photo-delivery.ts`). The photo's path is no longer in the
+viewer's address, the viewer may open only a photo in a folder that the user opened, its links open only web pages,
+and its window stays on the viewer's origin. A viewer that does not ask for its photo within 15 seconds of loading,
+as one without the bridge would not, is logged and recorded; the window is never given Node.js instead.
+
+The viewer's side is Photo Data Viewer's branch `claude/isolated-host-bridge`, 568b8ab and then d3a2afc, which only
+adds an error message (https://github.com/TomoyukiAota/photo-data-viewer/pull/72, not merged): it uses the bridge
+when the window gives it, and in the earlier window, which has Node.js, reads the photo by its path as before.
+
+Found while testing, and fixed:
+
+- The viewer's build for this app used webpack's `electron-renderer` target. Its output registered the chunks on
+  Node.js's `global` and had `require("fs")`, `require("path")`, `require("buffer")` and `require("process")`, so
+  nothing ran in the isolated window ("global is not defined"). It is built for a browser now, as the standalone
+  deployment is; in the earlier window it reads the photo with Electron's own `require`.
+- Chromium gives protocol.handle no Origin header: the request had only `accept` and `user-agent`, with mode `cors`
+  and the viewer's page as its referrer. The first check, of the Origin, refused every request (403), and the viewer
+  then showed an empty file. The handler now takes a CORS request whose referrer is the viewer's page, and answers it
+  for the viewer's origin only; the viewer sends its referrer explicitly and fails on a refused answer.
+- net.fetch of the photo's file: URL went through the app's own handler of file: URLs (`protocol.registerFileProtocol`
+  in `src-main/electron-main.ts`, a workaround for the development server), which decodes the URL with `decodeURI`
+  and so keeps `%23`: every path with `#` failed with ERR_FILE_NOT_FOUND. net.fetch now bypasses custom handlers, as
+  Electron documents for this; a unit test registers a refusing handler and fails without the bypass.
+
+Verified on this Mac (arm64), with the viewer at 568b8ab served on port 3131:
+
+- Build, lint, unit tests (Vitest 96; Electron-Mocha 194 main and 2 pending, 62 renderer). Headless e2e passes on
+  the checkout (44, 1 Windows-only skipped) and on the C2 package (43, 2 skipped). Its View Data cases check the
+  window's applied web preferences, that the page has neither `require` nor `process`, that the address has no
+  photo path, that the main window's page cannot read the photo's URL, and that the URL ends with the window, for
+  four photos, two of them at a path with Unicode, spaces, `#` and `%`. The bytes transport, the test profile's
+  switch, showed such a photo in a View Data run of the harness, and runs in the series' C2-ipc trials.
+- The viewer: lint, typecheck, unit tests (169), both builds, its browser tests (14) and development smoke test (1),
+  and its Electron tests, all 8 with Electron 32.0.2 (the runtime of the installed 1.12.1) and the isolated
+  window's 5 with Electron 45.2.1. Its CI passes on macOS, Ubuntu and Windows.
+
+| Window that opens the viewer | Viewer 568b8ab |
+| --- | --- |
+| Stage 0's package, with Node.js (stage 0's e2e cases, without its comparison of the checkout's dependencies) | 4 of 4 |
+| C1's package, with Node.js (C1's e2e cases) | 4 of 4 |
+| C2, isolated (checkout and package) | 4 of 4 |
+| Electron 32.0.2 with Node.js, as 1.12.1 (the viewer's own tests) | 3 of 3 |
+| Electron 32.0.2 and 45.2.1, isolated (the viewer's own tests) | 5 of 5 each |
+| A browser, as the standalone deployment | 14 of 14, and the development smoke test |
+
+The transport rule, written down during series rer-2-C2 before its View Data numbers were read: compare C2-ipc with
+C2-url, the default, by summarize.mjs's rer-2 verdicts on the View Data metrics (request to image for the first JPEG,
+the JPEG and the HEIC, request to metadata, the process tree's peak and settled increases, the increase after
+closing, and what the cycles leave). Keep the URL unless IPC has an improvement verdict on a request-to-image or a
+memory metric, with no regression verdict elsewhere; then make IPC the default.
+
+Measured in series rer-2-C2 (RESULTS.md): against C1, no regression, 104 of the 110 metrics within budget and 4
+improvements, among them 105 MB less in the process tree while a HEIC is shown. Against 0, stage A's folder-opening
+gains, and C1's one regression verdict, the page's wait for its bridge. IPC showed the photo 16 to 20 ms sooner than
+the URL, within budget on every metric, so by the rule the URL stays, and IPC stays a switch of the test profile only
+(`PLM_TEST_PHOTO_TRANSPORT`), for a later comparison.
+
 ## Required update fields while executing
 
 For the active stage, record:
@@ -220,3 +317,7 @@ records what is assumed meanwhile.
 | # | Question | Assumed meanwhile |
 | ---: | --- | --- |
 | 1 | The performance series run on this Mac only; a Windows series needs the owner's Windows PC. Run it there, or accept macOS-only evidence? | macOS evidence only; the harness's commands are written so that the owner can run a Windows series. |
+| 2 | Merge Photo Data Viewer's pull request 72 (https://github.com/TomoyukiAota/photo-data-viewer/pull/72), which deploys it to production? It keeps working in 1.12.1's window, and stage C2's window needs it. | Not merged. Stage C2's pull request stays a draft; its View Data cases fail in CI against the production viewer until then. |
+| 3 | Merge pull request 676 (stages A to C1)? | Not merged. |
+| 4 | Once the viewer is deployed, merge stage C2's pull request, and release? | Not merged; nothing released. A release with C2 must come after the viewer's deployment. |
+| 5 | Accept the license of Xcode 27.2, installed on this Mac at 09:30 on 2026-11-09 (`sudo xcodebuild -license`)? | The tools run through the Command Line Tools meanwhile (Current checkpoint). |
