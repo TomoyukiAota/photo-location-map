@@ -98,6 +98,9 @@ const createWindow = async () => {
   // Before the page loads: its preload asks for the startup metadata at once (src-main/ipc/ipc-sender.ts).
   setMainWindow(mainWindow.webContents);
   keepOnAppPage(mainWindow.webContents, url);
+  // A preload that throws leaves the page without its bridge, so that the page cannot write to the log itself.
+  mainWindow.webContents.on('preload-error', (_event, preloadPath, error) =>
+    Logger.error(`The preload of the main window failed (${preloadPath}): ${error.stack ?? error.message}`));
   mainWindow.loadURL(url);
 
   // Keep automated development checks on the application's CDP target.

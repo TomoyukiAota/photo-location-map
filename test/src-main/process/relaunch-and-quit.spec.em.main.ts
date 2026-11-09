@@ -43,7 +43,7 @@ describe('relaunchAppImageAfter (in main process)', () => {
       const app = spawn('/bin/sh', ['-c', 'sleep 0.5']);
       const endedAt = new Promise<number>(resolve => app.once('exit', () => resolve(Date.now())));
 
-      relaunchAppImageAfter(appImage, ['--open', 'a # b', ''], app.pid);
+      relaunchAppImageAfter(appImage, ['--open', 'a # b', ''], { pid: app.pid });
 
       let startedAt: number | undefined;
       for (const deadline = Date.now() + 10000; Date.now() < deadline && startedAt === undefined;) {
@@ -54,6 +54,26 @@ describe('relaunchAppImageAfter (in main process)', () => {
       assert.ok(startedAt >= await endedAt, 'The AppImage was started before the app ended.');
       assert.deepStrictEqual(fs.readFileSync(started, 'utf8').split('\n'), ['--open', 'a # b', '', '']);
     } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+    }
+  });
+
+  it('gives up, starting nothing, when the process outlives the wait', async function () {
+    if (process.platform === 'win32') this.skip(); // An AppImage is for Linux, and Windows has no /bin/sh.
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'plm-relaunch-'));
+    const app = spawn('/bin/sh', ['-c', 'sleep 3']);
+    try {
+      const started = path.join(root, 'started.txt');
+      const appImage = path.join(root, 'Photo Location Map.AppImage');
+      fs.writeFileSync(appImage, `#!/bin/sh\ntouch "${started}"\n`, { mode: 0o755 });
+
+      relaunchAppImageAfter(appImage, [], { pid: app.pid, waitSeconds: 0.5 });
+
+      await new Promise(resolve => app.once('exit', resolve));
+      await new Promise(resolve => setTimeout(resolve, 500)); // As long as the shell would take to start it.
+      assert.strictEqual(fs.existsSync(started), false, 'The AppImage was started after the wait had ended.');
+    } finally {
+      app.kill();
       fs.rmSync(root, { recursive: true, force: true });
     }
   });

@@ -18,10 +18,12 @@ the existence of a plan or from an agent's previous messages.
 - Branches: `claude/remove-electron-remote` (stages A to C1, pull request 676) and, from it,
   `claude/isolate-photo-data-viewer` (stage C2, draft pull request 677, based on 676's branch).
 - Last accepted IMPLEMENTATION stage: C2 (a6f70a51), with C1 (0aefe3fc) and its CI fixes (08aaed71) below it.
+  The fixes for the review of pull request 676 (d088a836, on its branch) are merged into this branch.
 - CI of pull request 676: the two e2e cases where the app relaunches itself failed with the packaged app on Linux
   and Windows, on both triggers; macOS passed. They came with stage B and had not run on those systems before.
   954132fc makes the failure tell what the relaunched app logged; 74046e4c and 08aaed71 fix them ("Stage C1
-  notes"). At 08aaed71, CI passes on Ubuntu, Windows and macOS, on both triggers.
+  notes"). At 08aaed71, CI passes on Ubuntu, Windows and macOS, on both triggers. d088a836 addresses the
+  automated review of 676: its 23 threads are answered and resolved, 20 with a change and 3 kept with the reason.
 - CI of draft pull request 677 (e10f7a49): on Ubuntu, Windows and macOS, only the four View Data cases fail, as
   they must against the viewer that production serves, which does not know the bridge; the other cases pass
   (38, 40 and 39). Not to be rerun: they pass once the viewer is deployed.
