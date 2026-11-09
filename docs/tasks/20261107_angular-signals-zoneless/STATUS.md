@@ -1,6 +1,6 @@
 # Execution status and handoff
 
-Updated 2026-11-08 (Asia/Tokyo). This file is the execution ledger: update it
+Updated 2026-11-09 (Asia/Tokyo). This file is the execution ledger: update it
 after every meaningful result and before stopping. Do not infer completion from
 the existence of the plan or from an agent's earlier messages.
 
@@ -13,7 +13,8 @@ the existence of the plan or from an agent's earlier messages.
   last (stage ledger). Nothing is left. The owner answered question 7: no
   upstream reports this time. Both checks left to the owner after the merges
   are settled: the OS tab on Windows was checked on 2026-11-08 at the owner's
-  request (manual check list), and Google Maps was removed afterwards
+  request, and in Explorer by the owner on 2026-11-09 (manual check list), and
+  Google Maps was removed on 2026-11-08
   ([report](../20261108_remove-google-maps/REPORT.md)).
 - Authorized (owner, 2026-11-08): carry out the whole plan once the
   prerequisite is met, one pull request per stage or slice; address the
@@ -72,8 +73,9 @@ the existence of the plan or from an agent's earlier messages.
   comes after it.
 - Checks left to the owner, decided on 2026-11-08: the OS tab on Windows and
   Google Maps with an API key, after the merges. The OS tab was checked on
-  2026-11-08 at the owner's request (manual check list), and Google Maps was
-  removed afterwards, so neither is left.
+  2026-11-08 at the owner's request, and in Explorer by the owner on
+  2026-11-09 (manual check list), and Google Maps was removed on 2026-11-08,
+  so neither is left.
 
 ## Resume first action
 
@@ -257,7 +259,7 @@ generation between its start and its end, and the two rows left to the owner.
 | Settings: Appearance | toggle Show Status Bar; Cancel; Save | live toggle; Cancel restores; Save persists | 2026-11-08, 1B, macOS: headless e2e "Show Status Bar shows and hides the loaded-files status bar while it is changed, and Cancel restores it" and "appearance setting saves, affects layout, and survives a real app restart" |
 | Settings: Date & Time | change a format | restart notice; Save restarts | 2026-11-08, 1F, macOS: headless e2e "Save is enabled only while a setting differs, and a new date format asks before the restart that saving it needs": the notice, the example, and the question before the restart, declined; the restart itself is not covered |
 | Settings: Cache | open location; delete cache | opens; confirm then restart | 2026-11-08, 2, macOS: headless e2e "the cache settings open the cache folder, and ask before deleting the cache", with the command replaced and the question declined; the restart is not covered |
-| Settings: OS (Windows) | Add / Remove; the owner checks it after the merge | confirmation lines appear | 2026-11-08, main at a191b0d, Windows 11 Pro 26H2 (build 26300.9711), at the owner's request: a temporary headless e2e case, not committed, against `build:prod` in the checkout and the real registry; a click on Add, and nothing else, showed its two lines 2.8 ms after its last `reg.exe` ended, and `reg query` found the three keys with `command` set to `<exe> --open "%1"`, or `"%V"` for the folder background, `<exe>` being `app.getPath('exe')` without quotes; a click on Remove showed its two lines, and the keys were gone; with the lines in a plain property rather than a signal, the same case failed waiting for the lines after Add, and its negative-control mode showed that only their rendering was missing: a click on Remove then showed them, and the lines of Remove never came; the keys that the installed application had registered were restored after each run; the case, which hides the console window of each `reg.exe` that rage-edit starts, is in the description of the pull request that records this check |
+| Settings: OS (Windows) | Add / Remove; the owner checks it after the merge | confirmation lines appear | 2026-11-08, main at a191b0d, Windows 11 Pro 26H2 (build 26300.9711), at the owner's request: a temporary headless e2e case, not committed, against `build:prod` in the checkout; a click on Add, and nothing else, showed its two lines 2.8 ms after its last `reg.exe` ended, and a click on Remove showed its two lines; with the lines in a plain property rather than a signal, the same case failed waiting for the lines after Add, and its negative-control mode showed that only their rendering was missing: a click on Remove then showed them, and the lines of Remove never came; the case is in the description of the pull request that records this check; its `reg.exe` reached only the Claude desktop app's copy of the registry (see "Findings while executing", 2026-11-09); 2026-11-09, main at b7c9bfe (#673), the same Windows, by the owner, with `release\win-unpacked\Photo Location Map.exe` from `npm run package:windows` started from Explorer: Add and Remove put the item into Explorer's menu and took it out again, and it opened a photo, a folder, a folder's background, and the backgrounds of `C:\` and of a `subst` drive's root; the installed application's keys were then restored from outside the desktop app and checked equal to the original |
 | Welcome / About | Help menu | dialogs open; links open in the OS browser | 2026-11-08, 2, macOS: headless e2e "welcome, about and every available settings tab keep their appearance" and "the links of the welcome dialog, the about box and the cache settings open in the OS browser", with the browser replaced |
 | Map switch | menu; the owner checks Google Maps with an API key after the merge | OpenStreetMap and Google Maps render the pinned photos | 2026-11-08, 1F, macOS: headless e2e "the Map menu switches to Google Maps, which draws the selected photos, and back to OpenStreetMap", with a stand-in for the Google Maps API, and a second switch that creates one map; Google Maps itself is the owner's to check; Google Maps was removed on 2026-11-08, after the plan ([report](../20261108_remove-google-maps/REPORT.md)), so the owner's check of it is no longer needed |
 | `--open` | launch with a file and with a folder | parent folder opens and the file is selected; folder opens | 2026-11-08, 1E-2, macOS: headless e2e "--open loads a directory with Unicode, spaces, # and % without restoring photos on an ordinary restart" and "--open with a photo opens its folder with only that photo selected" |
@@ -393,6 +395,21 @@ generation between its start and its end, and the two rows left to the owner.
   (`docs/tasks/20261101_dependency-upgrades/evidence/SETTINGS_APPEARANCE_REFERENCE.json`),
   and no pixel of the current dialog differs from it beyond Playwright's
   threshold for a pixel.
+- 2026-11-09, the OS tab: the temporary e2e case of 2026-11-08 ran `reg.exe`
+  and `reg query` inside the Claude desktop app, which gives what it runs a
+  copy of `HKCU\Software\Classes` of its own (AGENTS.md, "In the Claude
+  desktop app on Windows"). The three keys that its `reg query` found after
+  Add, with `command` set to `<exe> --open "%1"`, or `"%V"` for the folder
+  background, `<exe>` being `app.getPath('exe')` without quotes, and found
+  gone after Remove, were in that copy. The keys that the installed
+  application had registered, which the runs seemed to change and restore,
+  were never touched. This came out when Explorer kept showing the item after
+  a Remove from inside the desktop app, and a `reg query` started through WMI,
+  outside it, found those keys unchanged. After the owner started the build
+  of #673 from Explorer and clicked Add, the same `reg query` found the
+  command with the exe quoted. The runs that Explorer then started on the
+  backgrounds of `C:\` and of a `subst` drive's root got `--open` as `C:"` and
+  `P:"`, which they read as `C:\` and `P:\` (#673).
 
 ## Questions for the owner
 
@@ -403,7 +420,7 @@ changes if the answer differs; keep answered rows, with the answer.
 | # | Question | Answer, or what is assumed meanwhile | Slice |
 | ---: | --- | --- | --- |
 | 1 | Does this plan go before the `@electron/remote` removal? | Owner, 2026-11-08: yes; that removal comes after this plan. | all |
-| 2 | Checks that need a person or another platform: the OS tab on Windows, Google Maps with an API key. | Owner, 2026-11-08: the owner checks both after the merges. The OS tab was checked on Windows on 2026-11-08, at the owner's request, on main at a191b0d (manual check list); Google Maps was removed afterwards ([report](../20261108_remove-google-maps/REPORT.md)), so neither is left. | 1F, 3 |
+| 2 | Checks that need a person or another platform: the OS tab on Windows, Google Maps with an API key. | Owner, 2026-11-08: the owner checks both after the merges. The OS tab was checked on Windows on 2026-11-08, at the owner's request, on main at a191b0d, and in Explorer by the owner on 2026-11-09, on main at b7c9bfe (manual check list); Google Maps was removed on 2026-11-08 ([report](../20261108_remove-google-maps/REPORT.md)), so neither is left. | 1F, 3 |
 | 3 | In a git worktree, mise does not trust the worktree's `mise.toml`, as trust is kept per path, so `mise exec` fails there. Should AGENTS.md say what agents do then? | Owner, 2026-11-08: write it in AGENTS.md. Written there under "In a git worktree", as this work did it: `MISE_TRUSTED_CONFIG_PATHS=<worktree>/mise.toml` with each command rather than `mise trust`. | all |
 | 4 | The tree's context menu does not close on a right-click outside it while the loading dialog is still closing (see "Findings while executing"). Fix it, by listening to the menu's own backdrop, the last one? | Owner, 2026-11-08: fix it. Fixed on the branch `claude/tree-context-menu-backdrop` (stage ledger). | 2 |
 | 5 | In a git worktree on macOS, `npm run test:package` fails its check of `latest-mac.yml` (see "Findings while executing"). Should AGENTS.md say so, with question 3? | Owner, 2026-11-08: write it in AGENTS.md, with question 3. Written there under "In a git worktree": the macOS CI job, which works in a clone, runs the whole test. | 3 |
