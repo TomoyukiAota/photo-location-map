@@ -1521,14 +1521,35 @@ async function savedSetting(userData, storagePath) {
 async function waitForRealRelaunch(report, exited, pid) {
   await exited;
   let relaunched;
-  await expect.poll(async () => {
-    const lines = (await readFile(report, 'utf8').catch(() => '')).split('\n').filter(Boolean).map(line => JSON.parse(line));
-    relaunched = lines.find(line => line.pid !== pid);
-    return !!relaunched;
-  }, { timeout: 60000, message: 'The app did not launch again by itself.' }).toBe(true);
-  process.kill(relaunched.pid, 'SIGTERM');
+  try {
+    await expect.poll(async () => {
+      const lines = (await readFile(report, 'utf8').catch(() => '')).split('\n').filter(Boolean).map(line => JSON.parse(line));
+      relaunched = lines.find(line => line.pid !== pid);
+      return !!relaunched;
+    }, { timeout: 60000, message: 'The app did not launch again by itself.' }).toBe(true);
+    process.kill(relaunched.pid, 'SIGTERM');
+  } catch (error) {
+    throw new Error(`${error.message}\n${await relaunchDiagnostics(report, pid, relaunched)}`, { cause: error });
+  }
   await expect.poll(() => { try { process.kill(relaunched.pid, 0); return true; } catch { return false; } }, { timeout: 15000 }).toBe(false);
   return relaunched;
+}
+/**
+ * What the profile tells of a relaunch that went wrong: the launch report's processes, and the end of each launch's
+ * log (src-main/log/log-setup.ts), which the test profile keeps under its appData.
+ */
+async function relaunchDiagnostics(report, pid, relaunched) {
+  const launches = (await readFile(report, 'utf8').catch(() => '')).split('\n').filter(Boolean)
+    .map(line => JSON.parse(line)).map(({ pid, ppid, reportedAtMs }) => ({ pid, ppid, reportedAtMs }));
+  const logs = path.join(profile, 'appData', 'Photo Location Map', 'logs');
+  const { readdir } = await import('node:fs/promises');
+  const tails = [];
+  for (const name of (await readdir(logs).catch(() => [])).sort()) {
+    const lines = (await readFile(path.join(logs, name), 'utf8').catch(() => '')).trimEnd().split(/\r?\n/);
+    tails.push(`--- ${name}, its last ${Math.min(lines.length, 40)} of ${lines.length} lines:`, ...lines.slice(-40));
+  }
+  return [`Quit: pid ${pid}. Relaunched: ${relaunched ? `pid ${relaunched.pid}` : 'none reported'}. Now: ${Date.now()}.`,
+    `Launch report: ${JSON.stringify(launches)}`, ...(tails.length ? tails : ['No log file.'])].join('\n');
 }
 test('settings changed just before quitting are saved', async () => {
   // A renderer's writes go to the main process, which writes the files: one sent before the quit is written.
