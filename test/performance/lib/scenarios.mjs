@@ -5,7 +5,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { alive, appMetrics, close, dismissWelcome, lastMark, launch, mainMarks, newProfile, pageMarks, removeProfile,
   startResponsivenessProbes, stubFolderPicker, waitForPageMark, waitForUsable, waitUntil as waitFor } from './app.mjs';
-import { startTreeSampler, treeSnapshot } from './memory.mjs';
+import { peakTreeRssKb, startTreeSampler, treeSnapshot } from './memory.mjs';
 
 const prefix = (name, metrics) => Object.fromEntries(Object.entries(metrics).map(([key, value]) => [`${name}.${key}`, value]));
 /** The time of mark `name`, which is required: a trial without it fails, rather than leave its metric out. */
@@ -107,6 +107,7 @@ async function measureOpenWith(context, app, page, pid, renderer, { first, thumb
   const responsiveness = await probes.stop();
   const thumbnailsDone = thumbnails ? await waitForPageMark(page, 'thumbnails:status-done', { sinceMs: clickMs, timeout: 300000 }) : undefined;
   const peak = await sampler.stop();
+  const peakRssKb = peakTreeRssKb(peak);
   await page.waitForTimeout(context.settleMs);
   const settled = await memoryNow(app, pid, renderer);
   const [rendererMarks, main] = await Promise.all([pageMarks(page), mainMarks(app)]);
@@ -136,8 +137,8 @@ async function measureOpenWith(context, app, page, pid, renderer, { first, thumb
     'renderer-max-frame-gap-ms': responsiveness.renderer.maxFrameGapMs,
     'main-event-loop-max-ms': responsiveness.main.maxMs,
     'main-event-loop-p99-ms': responsiveness.main.p99Ms,
-    'peak-tree-rss-kb': peak.peakTotalRssKb,
-    'peak-tree-delta-kb': peak.peakTotalRssKb - before.totalRssKb,
+    'peak-tree-rss-kb': peakRssKb,
+    'peak-tree-delta-kb': peakRssKb - before.totalRssKb,
     'settled-tree-rss-kb': settled.treeRssKb,
     'settled-renderer-ws-kb': settled.rendererWorkingSetKb,
     'settled-main-ws-kb': settled.mainWorkingSetKb,
@@ -213,6 +214,7 @@ async function measureViewer(context, app, page, pid, renderer, item, fileName, 
     ? performance.timeOrigin + performance.now() : false), fileName, { polling: 'raf', timeout: 60000 })).jsonValue();
   await viewer.waitForTimeout(context.settleMs);
   const peak = await sampler.stop();
+  const peakRssKb = peakTreeRssKb(peak);
   const open = await memoryNow(app, pid, renderer);
   const [rendererMarks, main, navigation] = await Promise.all([pageMarks(page), mainMarks(app),
     viewer.evaluate(() => performance.getEntriesByType('navigation')[0]?.toJSON() ?? null)]);
@@ -226,7 +228,7 @@ async function measureViewer(context, app, page, pid, renderer, item, fileName, 
     'request-to-page-loaded-ms': at(main, 'view-data:page-loaded', menuMs) - requested,
     'request-to-image-ms': imageMs - requested,
     'request-to-metadata-ms': metadataMs - requested,
-    'peak-tree-delta-kb': peak.peakTotalRssKb - before.totalRssKb,
+    'peak-tree-delta-kb': peakRssKb - before.totalRssKb,
     'open-tree-delta-kb': open.treeRssKb - before.totalRssKb,
   };
   const closeWindow = app.evaluate(({ BrowserWindow }) => new Promise(resolve => {

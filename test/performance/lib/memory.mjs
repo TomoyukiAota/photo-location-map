@@ -64,6 +64,16 @@ export function startTreeSampler(rootPid, intervalMs = 250) {
 }
 
 /**
+ * The peak resident memory of the tree from what a sampler's stop() gave: undefined on Windows, which has no ps, and a
+ * throw when the sampler could not read the tree once, so that the trial fails rather than report a peak of 0 KB.
+ */
+export function peakTreeRssKb(peak) {
+  if (peak.unsupported) return undefined;
+  if (!peak.samples) throw new Error('The sampler could not read the process tree once, so its peak is not known.');
+  return peak.peakTotalRssKb;
+}
+
+/**
  * One sample of the tree: the total and each process's resident memory, grouped by command name. A tree that cannot be
  * read throws, so that the trial fails rather than report 0 KB. On Windows, which has no ps, the total is NaN, which
  * summarize.mjs leaves out, as startTreeSampler does there.
