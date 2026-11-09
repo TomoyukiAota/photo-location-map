@@ -23,7 +23,10 @@ export async function removeProfile(profile) {
 /**
  * Launches `target` ({ executable } for a packaged app, or {} for the checkout) on `profile`, with windows hidden,
  * analytics and other external requests cancelled, and Photo Data Viewer from `viewerServer`.
- * Returns { app, page, pid, spawnMs }, where spawnMs is the time just before the process was started.
+ * Returns { app, page, pid, spawnMs }, where spawnMs is the time just before the process was started, and pid is
+ * the app's main process, whose are the launch report and the process tree. On Windows, Playwright starts the app
+ * through a shell (cmd.exe), whose ID app.process() gives, so the main process is asked there; elsewhere the two are
+ * the same, and the launch is not slowed by asking.
  */
 export async function launch({ target, profile, viewerServer, env: extraEnv = {} }) {
   const env = { ...process.env, PLM_TEST_ROOT: profile, PLM_E2E: '1', PLM_TEST_HEADLESS: '1', PLM_TEST_OFFLINE: '1',
@@ -40,7 +43,8 @@ export async function launch({ target, profile, viewerServer, env: extraEnv = {}
     timeout: 90000,
   });
   const page = await app.firstWindow();
-  return { app, page, pid: app.process().pid, spawnMs };
+  const pid = process.platform === 'win32' ? await app.evaluate(() => process.pid) : app.process().pid;
+  return { app, page, pid, spawnMs };
 }
 
 const readMarks = () => performance.getEntriesByType('mark').filter(entry => entry.name.startsWith('plm:'))

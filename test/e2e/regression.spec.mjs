@@ -1514,6 +1514,14 @@ async function savedSetting(userData, storagePath) {
   }
 }
 /**
+ * The ID of the app's main process, which the launch report records. Not app.process().pid: on Windows, Playwright
+ * starts the app through a shell (cmd.exe), whose ID that is, and the report's only line was then the app's own,
+ * which waitForRealRelaunch took for the relaunched app's (CI, before this was used).
+ */
+function mainProcessId() {
+  return app.evaluate(() => process.pid);
+}
+/**
  * Waits until the application, asked to restart, has quit and launched again by itself, and returns the relaunched
  * process's line of the launch report (PLM_TEST_LAUNCH_REPORT, electron-util/e2e-test-hooks.js), once its home view
  * has rendered. The relaunched process is not under the test's control, so it is stopped here.
@@ -1579,7 +1587,7 @@ test('a new date format is written before the app relaunches itself, and the rel
   await expect(page.getByRole('listbox')).toHaveCount(0);
   await page.evaluate(() => { window.confirm = () => true; });
   // Taken before the click: once the app has quit, Playwright no longer has its process.
-  const { pid } = app.process();
+  const pid = await mainProcessId();
   const exited = new Promise(resolve => app.process().once('exit', resolve));
   await page.getByRole('button', { name: 'Save', exact: true }).click();
   const relaunched = await waitForRealRelaunch(report, exited, pid);
@@ -1601,7 +1609,7 @@ test('deleting the thumbnail cache empties it before the app relaunches itself',
   await mkdir(path.join(cacheFolder, 'some', 'folder'), { recursive: true });
   await writeFile(path.join(cacheFolder, 'some', 'folder', 'IMG_0001.HEIC.plm.jpg'), 'thumbnail');
   await page.evaluate(() => { window.confirm = () => true; });
-  const { pid } = app.process();
+  const pid = await mainProcessId();
   const exited = new Promise(resolve => app.process().once('exit', resolve));
   await page.getByRole('button', { name: 'Delete Thumbnail Cache', exact: true }).click();
   await waitForRealRelaunch(report, exited, pid);

@@ -11,8 +11,18 @@ describe('relaunchAndQuit (in main process)', () => {
       exit: () => calls.push('exit'),
     } as unknown as Electron.App;
 
-    relaunchAndQuit(app);
+    relaunchAndQuit(app, '');
 
     assert.deepEqual(calls, ['relaunch', 'quit']);
+  });
+
+  it('should relaunch the AppImage itself, with the app\'s arguments, when the app runs from one', () => {
+    const relaunched: unknown[] = [];
+    const app = { relaunch: (options?: unknown) => relaunched.push(options), quit: () => {} } as unknown as Electron.App;
+
+    relaunchAndQuit(app, '/home/user/Photo Location Map.AppImage');
+    relaunchAndQuit(app, ''); // Not from an AppImage.
+
+    assert.deepEqual(relaunched, [{ execPath: '/home/user/Photo Location Map.AppImage', args: process.argv.slice(1) }, undefined]);
   });
 });
