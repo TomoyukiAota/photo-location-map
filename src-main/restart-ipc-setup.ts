@@ -1,8 +1,9 @@
 import { app, ipcMain } from 'electron';
 import { IpcConstants } from '../src-shared/ipc/ipc-constants';
 import { Logger } from '../src-shared/log/logger';
-import { relaunchAndQuit, useMainProcessRestart } from '../src-shared/process/restart-app';
+import { useMainProcessRestart } from '../src-shared/process/restart-app';
 import { isFromMainWindow } from './ipc/ipc-sender';
+import { relaunchAndQuit } from './process/relaunch-and-quit';
 
 useMainProcessRestart(() => relaunchAndQuit(app));
 
