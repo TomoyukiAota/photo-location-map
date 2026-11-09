@@ -14,7 +14,7 @@ The comparisons of [PERFORMANCE.md](PERFORMANCE.md), made with the harness in
 | Runtime | Electron 45.2.1 (Node 24.22.1, Chromium 156.0.8078.75); harness on Node 26.13.0, Playwright 1.64.1 |
 | Windows | Hidden (`PLM_TEST_HEADLESS=1`); on macOS they paint as shown ones do |
 | Network | Cut off (`PLM_TEST_OFFLINE=1`): the map's base layers come from the built-in list, tiles stay blank |
-| Photo Data Viewer | Its main commit 1ff7a50, built for this app and served on 127.0.0.1:3130 (build QjvCHsLYaL3PVXm214N5S). From rer-2-C2 on, its commit 568b8ab, which knows the bridge of stage C2 ([its pull request](https://github.com/TomoyukiAota/photo-data-viewer/pull/72)), built alike and served on 127.0.0.1:3131 (build kiytqYrbcsLHxY4Dju6bp). Each series records the hash of what its server serves |
+| Photo Data Viewer | Its main commit 1ff7a50, built for this app and served on 127.0.0.1:3130 (build QjvCHsLYaL3PVXm214N5S). From rer-2-C2 on, its commit 568b8ab, which knows the bridge of stage C2 ([its pull request](https://github.com/TomoyukiAota/photo-data-viewer/pull/72)), built alike and served on 127.0.0.1:3131 (build kiytqYrbcsLHxY4Dju6bp); rer-2-C2v and rer-2-C2s, its 6fe8814, which adds an error message and comments (build 2VJOG_nWG_NWbGWXRSpPe). Each series records the hash of what its server serves |
 | Workloads | large 3b8be5ead9724e0e (324 files), view-jpeg e54629e8bbf5aa31, view-heic 2b4ad7584c246aad |
 | Linux | Not measured: Photo Location Map does not support Linux officially (owner, 2026-11-09) |
 | Windows (OS) | Not measured: the series need the owner's Windows PC (STATUS.md, question 1) |
@@ -31,7 +31,9 @@ The comparisons of [PERFORMANCE.md](PERFORMANCE.md), made with the harness in
 | [rer-2-C1b](results/rer-2-C1b.md) | rer-2 | 0, B, C1 (f3cabca8) | 10 + 1 each, all 132 ok | Every launch of C1 rendered its home view. |
 | [rer-2-C1c](results/rer-2-C1c.md) | rer-2 | 0, B, C1 (0aefe3fc) | open-folder only, 10 + 1 each, all 33 ok | After the last fix, which touches folder opening only. |
 | [rer-2-C2](results/rer-2-C2.md) | rer-2 | 0, C1 (0aefe3fc), C2 (b6a4bfa3) by URL and by bytes | 10 + 1 each, all 176 ok | One package of C2, measured twice: `PLM_TEST_PHOTO_TRANSPORT=url` and `=ipc` (`--app-env`). The viewer at 568b8ab for every build. A Time Machine backup and another session's repeated tool runs put the load average between 3.5 and 11.7 in rounds 3 to 5, from 2.6 at the start. |
-| rer-2-C2v | rer-2 | 0 with the viewer 1ff7a50, and with 568b8ab | View Data only; INCOMPLETE, stopped in round 4 | What stage C2's viewer changes for the installed app's window, which has Node.js: stage 0's package with the viewer that production serves, and with the new one. | The computer's load, at 260 to 390 from 10:10, made its trials unusable; to be run again.
+| rer-2-C2v, first attempt | rer-2 | 0 with the viewer 1ff7a50, and with 568b8ab | View Data only; INCOMPLETE, stopped in round 4 | iOS Simulator runtimes and Spotlight's indexing, which an install of Xcode started, put the load average at 260 to 390 from 10:10 (Asia/Tokyo), and a trial's click timed out. Kept in the ignored series folder as `rer-2-C2v-interrupted`, not used. |
+| [rer-2-C2v](results/rer-2-C2v.md) | rer-2 | 0 with the viewer 1ff7a50, and with 6fe8814 | View Data only, 10 + 1 each, all 22 ok | Stage 0's package, a window with Node.js as 1.12.1's, with the viewer that production serves and with stage C2's. A Time Machine backup ran; the load average was between 2.4 and 5.7 at the trials' starts. |
+| [rer-2-C2s](results/rer-2-C2s.md) | rer-2 | 0, C1, C2 | startup only, 10 + 1 each, all 33 ok | Startup again, after rer-2-C2's was disturbed; the load average was between 2.2 and 3.1 at the trials' starts. |
 
 ### Stage 0 (rer-1-0), the main metrics
 
@@ -235,7 +237,7 @@ View Data, with each transport (memory in megabytes):
 Stage C2 isolates Photo Data Viewer's window without making anything slower than C1. Against C1, 104 of the 110
 compared metrics are within budget, 2 invariants are the same, and 4 are improvements, two of them in View Data:
 while a HEIC is shown, the process tree holds 105 MB less (365.6 MB more than before the window opened, instead
-of 470.5), and the first JPEG's page loads 14 % sooner (117 ms instead of 135). The photo itself shows 6 to 12 ms later
+of 470.5), and the first JPEG's page loads 14 % sooner (116.5 ms instead of 134.9). The photo itself shows 6 to 12 ms later
 than in C1 (+0.9 to +1.8 %, within budget), as the page now fetches it from the main process instead of reading the
 file. Against 0, C2 keeps stage A's folder-opening gains (13 improvements), and its one regression verdict,
 `startup.warm.renderer-bootstrap-ms` (15 to 20 ms), is C1's as well: the page waits for its bridge
@@ -251,12 +253,60 @@ Startup varied more than in the earlier series, in every build. A new profile's 
 was the cause rather than the code: C2-url and C2-ipc are the same package, whose View Data alone differs, and their
 medians differ by 60 ms. A Time Machine backup ran, and another session ran a tool many times a second, which put
 the load average between 3.5 and 11.7 in rounds 3 to 5, from 2.6 at the start. Stage C2 changes nothing in startup
-but registering its scheme.
+but registering its scheme; measured again on a quiet computer (rer-2-C2s, below), it starts as C1 does.
+
+### Stage C2's startup, measured again (rer-2-C2s)
+
+Startup only, of 0, C1 and C2, on a quiet computer, as rer-2-C2's was disturbed; medians in milliseconds, of 10 trials
+each, and the settled process tree in megabytes.
+
+| Startup | Metric | 0 | C1 | C2 | C2 vs 0 | C2 vs C1 |
+| --- | --- | ---: | ---: | ---: | --- | --- |
+| New profile | Spawn to the home view | 415.8 | 375.8 | 382.4 | -8.0 %, within budget | +1.8 %, within budget |
+|  | Navigation to the app's bootstrap | 122.0 | 119.1 | 123.1 | +0.9 %, within budget | +3.3 %, within budget |
+|  | The bootstrap | 17.4 | 22.5 | 24.1 | +38.2 %, REGRESSION | +7.1 %, within budget |
+|  | Spawn to ready-to-show | 408.3 | 254.6 | 256.5 | -37.2 %, within budget | +0.7 %, within budget |
+|  | Process tree, settled (MB) | 727.4 | 699.8 | 699.9 | -3.8 %, within budget | +0.0 %, within budget |
+| Used profile | Spawn to the home view | 368.3 | 335.8 | 335.2 | -9.0 %, within budget | -0.2 %, within budget |
+|  | Navigation to the app's bootstrap | 90.6 | 91.3 | 91.3 | +0.8 %, within budget | +0.1 %, within budget |
+|  | The bootstrap | 13.6 | 17.2 | 17.1 | +25.7 %, within budget | -0.6 %, within budget |
+|  | Spawn to ready-to-show | 370.1 | 248.9 | 247.3 | -33.2 %, improvement | -0.7 %, within budget |
+|  | Process tree, settled (MB) | 608.0 | 585.8 | 601.9 | -1.0 %, within budget | +2.7 %, within budget |
+
+C2 starts as C1 does: all 30 compared metrics are within budget against C1, and the home view renders 8 to 9 %
+earlier than in 0. Against 0, the one regression verdict is C1's, `startup.cold.renderer-bootstrap-ms`, 17.4 to
+24.1 ms here (22.5 in C1): the page asks for its startup metadata through the preload and loads the app once it has
+its bridge (stage C1 above). 6 metrics are improvements against 0, among them the spawn to `ready-to-show`, a third
+sooner.
 
 ### Stage C2's viewer in a window with Node.js (rer-2-C2v)
 
-Series rer-2-C2v, View Data in stage 0's package with the viewer that production serves (1ff7a50) and with stage
-C2's, was stopped in its fourth round and is INCOMPLETE. From 10:10 (Asia/Tokyo), iOS Simulator runtimes and
-Spotlight's indexing, which an install of Xcode on the computer started, put the load average at 260 to 390, and a
-trial's click timed out. Its trials stay in the ignored series folder and are not used; it is to be run again
-(STATUS.md). Stage C2's viewer in such a window is verified functionally meanwhile (STATUS.md, "Stage C2 notes").
+What deploying stage C2's viewer changes for the installed app, whose window has Node.js: stage 0's package, with
+the viewer that production serves (1ff7a50) and with stage C2's (6fe8814), alternated by round; medians in
+milliseconds, of 10 trials each.
+
+| View Data | Metric | Viewer 1ff7a50 | Viewer 6fe8814 | 6fe8814 vs 1ff7a50 |
+| --- | --- | ---: | ---: | --- |
+| JPEG, first | Request to the page loaded | 116.6 | 113.9 | -2.4 %, within budget |
+|  | Request to the photo shown | 649.0 | 650.0 | +0.2 %, within budget |
+|  | Request to its data shown | 652.0 | 652.0 | +0.0 %, within budget |
+|  | Process tree, peak increase (MB) | 245.8 | 245.9 | +0.0 %, within budget |
+|  | Process tree, increase while open (MB) | 231.8 | 228.7 | -1.3 %, within budget |
+| JPEG | Request to the page loaded | 108.9 | 106.9 | -1.9 %, within budget |
+|  | Request to the photo shown | 647.8 | 648.6 | +0.1 %, within budget |
+|  | Request to its data shown | 650.1 | 649.8 | -0.1 %, within budget |
+|  | Process tree, peak increase (MB) | 303.0 | 284.4 | -6.1 %, within budget |
+|  | Process tree, increase while open (MB) | 304.1 | 285.5 | -6.1 %, within budget |
+| HEIC | Request to the page loaded | 97.1 | 98.7 | +1.6 %, within budget |
+|  | Request to the photo shown | 572.7 | 573.4 | +0.1 %, within budget |
+|  | Request to its data shown | 573.9 | 575.1 | +0.2 %, within budget |
+|  | Process tree, peak increase (MB) | 473.8 | 475.0 | +0.3 %, within budget |
+|  | Process tree, increase while open (MB) | 472.1 | 469.7 | -0.5 %, within budget |
+| Three more HEIC | Process tree, left after the cycles (MB) | -52.6 | -52.8 | +0.4 %, within budget |
+
+Nothing changes: all 31 compared metrics are within budget, and the photo shows within 1 ms of the production
+viewer's time. In that window, stage C2's viewer reads the photo by its path with Electron's own `require`, where
+the production viewer used `get-file-object-from-local-path` through webpack's `electron-renderer` target.
+
+A first attempt of this series was stopped in its fourth round, when iOS Simulator runtimes and Spotlight's indexing,
+which an install of Xcode on the computer started, put the load average at 260 to 390; its trials are not used.
