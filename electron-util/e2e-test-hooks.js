@@ -124,6 +124,7 @@ if (testRoot) {
     }
   }
 
+  /** Records and cancels a test's downloads and analytics; PLM_TEST_OFFLINE cancels all else off the computer. */
   function interceptTestTraffic() {
     globalThis.__plmDownloads = [];
     globalThis.__plmAnalyticsEvents = [];
@@ -191,6 +192,7 @@ if (testRoot) {
       reported = true; // The first window is the main window.
       const { webContents } = window;
       const startedAt = Date.now();
+      /** Appends this launch's line to the report once its home view has rendered, polling for 2 minutes. */
       const poll = async () => {
         if (window.isDestroyed()) return;
         const rendererMarks = await webContents.executeJavaScript(`performance.getEntriesByType('mark')

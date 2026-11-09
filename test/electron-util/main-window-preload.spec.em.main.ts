@@ -39,6 +39,7 @@ function runPreload(contextIsolated: boolean) {
     },
   };
   const contextBridge = { exposeInMainWorld: (key: string, api: unknown) => { exposed.push({ key, api }); } };
+  /** The require of a sandboxed preload, which has only electron. */
   const sandboxRequire = (name: string) => {
     required.push(name);
     if (name === 'electron') return { contextBridge, ipcRenderer };
@@ -49,6 +50,7 @@ function runPreload(contextIsolated: boolean) {
   const context = { Event: class { constructor(public readonly type: string) {} } };
   const preload = vm.runInNewContext(`(function (require, process, window) {\n${source}\n})`, context, { filename: preloadPath });
   preload(sandboxRequire, { contextIsolated }, window);
+  /** Sends `args` on `channel` to the preload's listeners, as the main process would. */
   const emit = (channel: string, ...args: unknown[]) => (listeners.get(channel) ?? []).forEach(listener => listener({ sender: 'the IPC event' }, ...args));
   return { calls, listeners, required, exposed, window, emit, dispatched };
 }

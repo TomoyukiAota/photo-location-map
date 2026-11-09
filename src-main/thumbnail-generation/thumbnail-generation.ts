@@ -75,6 +75,9 @@ function createThumbnailFileGenerationArg(filePath: string) {
 const logicalCpuCount = os.cpus().length;
 const numberOfProcessesToUse = physicalCpuCount >= 2 ? physicalCpuCount - 1 : 1;
 
+/**
+ * Generates the thumbnails of `heifFilePaths` in worker processes, a new one for each file, and records the failures.
+ */
 async function generateThumbnails(heifFilePaths: string[]) {
   logger.info(`Number of CPU cores, Physical: ${physicalCpuCount}, Logical: ${logicalCpuCount}`);
   logger.info(`Number of processes for thumbnail generation: ${numberOfProcessesToUse}`);

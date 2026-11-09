@@ -11,6 +11,7 @@ export class AmplitudeAnalyticsBrowserWrapper {
   private static amplitude: typeof import('@amplitude/analytics-browser');
   private static isInitialized = false;
 
+  /** Sets Amplitude up for the renderer, with the user's ID as the device's too, and without the page's URL. */
   @AnalyticsLibraryWrapperInitialize(amplitudeLogger)
   public static initialize() {
     const apiKey = AmplitudeConfig.apiKey;

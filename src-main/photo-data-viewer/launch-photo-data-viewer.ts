@@ -10,6 +10,7 @@ import { trackOpeningPhotoDataViewer } from './photo-data-viewer-tracker';
 import { createPhotoDataViewerUrl } from './photo-data-viewer-url';
 import { PhotoDataViewerWindowState } from './photo-data-viewer-window-state';
 
+/** Opens Photo Data Viewer's window for the photo of `ipcParams`, where the last one was, and shows it once loaded. */
 export async function launchPhotoDataViewer(ipcParams: PhotoDataViewerIpcParams) {
   perfMark('view-data:launch');
   const photo = ipcParams.photo;

@@ -47,6 +47,7 @@ const apps = values.app.map(entry => {
   return { label, target: executable === 'checkout' ? {} : { executable } };
 });
 
+/** The SHA-256 of `file`, in hexadecimal. */
 async function sha256(file) {
   const hash = createHash('sha256');
   for await (const chunk of createReadStream(file)) hash.update(chunk);

@@ -23,6 +23,7 @@ async function rendererPid(app, page) {
   return window.evaluate(window => window.webContents.getOSProcessId());
 }
 
+/** The memory now: the process tree's RSS, and Electron's working sets of the main process and of `renderer`. */
 async function memoryNow(app, pid, renderer) {
   const [tree, electron] = await Promise.all([treeSnapshot(pid), appMetrics(app)]);
   return {
@@ -33,6 +34,7 @@ async function memoryNow(app, pid, renderer) {
   };
 }
 
+/** Measures a launch on `profile`: its startup to the home view, its memory once settled, and its close. */
 async function measureLaunch(context, profile, { welcome }) {
   const { app, page, pid, spawnMs } = await launch({ target: context.target, profile, viewerServer: context.viewerServer });
   try {
@@ -90,6 +92,7 @@ async function measureOpen(context, app, page, pid, renderer, { first, thumbnail
   }
 }
 
+/** Measures opening the folder from the click on: its steps, responsiveness and memory, with `sampler` for the peak. */
 async function measureOpenWith(context, app, page, pid, renderer, { first, thumbnails }, sampler) {
   const probes = await startResponsivenessProbes(app, page);
   const before = await treeSnapshot(pid);
@@ -282,6 +285,7 @@ export async function viewData(context) {
   }
 }
 
+/** The setting `name` as the app saved it in `userData`, or undefined when it has not. */
 async function readSetting(userData, name) {
   try {
     return JSON.parse(await readFile(path.join(userData, 'PhotoLocationMapStorage', 'UserSettings', `${name}.json`), 'utf8'))[name];

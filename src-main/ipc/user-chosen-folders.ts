@@ -12,10 +12,12 @@ function comparable(filePath: string): string {
   return process.platform === 'darwin' || process.platform === 'win32' ? resolved.toLowerCase() : resolved;
 }
 
+/** Whether `value` can be a path: a string that is not empty. */
 function isPath(value: unknown): value is string {
   return typeof value === 'string' && value.length > 0;
 }
 
+/** Remembers that the user chose the folder at `folderPath`, whose tree the main window's page may then read. */
 export function rememberUserChosenFolder(folderPath: string): void {
   if (isPath(folderPath))
     chosenFolders.add(comparable(folderPath));

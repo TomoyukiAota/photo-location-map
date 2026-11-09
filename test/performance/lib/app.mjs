@@ -176,6 +176,7 @@ export async function startResponsivenessProbes(app, page) {
     });
     probe.observer.observe({ type: 'longtask' });
     let last = performance.now();
+    /** Counts each animation frame and keeps the longest gap between two. */
     const frame = now => {
       probe.maxFrameGapMs = Math.max(probe.maxFrameGapMs, now - last);
       probe.frames++;

@@ -39,6 +39,7 @@ export function startTreeSampler(rootPid, intervalMs = 250) {
   let samples = 0;
   let stopped = false;
   let pending = Promise.resolve();
+  /** Reads the tree once, keeping the peak RSS of the tree and of each process. */
   const sample = async () => {
     const tree = await processTree(rootPid).catch(() => []);
     if (!tree.length) return;

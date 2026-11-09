@@ -31,12 +31,14 @@ export function useDirectoryTreeWorker(file: string): void {
   stopDirectoryTreeWorker();
 }
 
+/** Fails the requests that `treeWorker` has not answered, and forgets it, so that the next request starts another. */
 function fail(treeWorker: TreeWorker, error: Error): void {
   if (current === treeWorker) current = undefined;
   for (const request of treeWorker.pending.values()) request.reject(error);
   treeWorker.pending.clear();
 }
 
+/** The worker that reads the trees, started at first use; when it fails or exits, its unanswered requests fail. */
 function startedWorker(): TreeWorker {
   if (current)
     return current;

@@ -28,6 +28,7 @@ export const appConfig: ApplicationConfig = {
       }),
     }),
     provideEchartsCore({
+      /** Loads ECharts with its v5 theme, and in an e2e run lets the test read a chart's theme. */
       echarts: async () => {
         // ECharts and its official v5 theme share the same core in the ESM bundle,
         // so the theme registers on the instance passed to ngx-echarts.

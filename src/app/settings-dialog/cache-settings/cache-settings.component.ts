@@ -28,6 +28,7 @@ export class CacheSettingsComponent implements AfterViewInit {
       .catch(error => Logger.error(`Failed to open the thumbnail cache location.`, error));
   }
 
+  /** Once the user confirms, has the main process delete the thumbnail cache and restart the app. */
   public handleDeleteThumbnailCacheButtonClicked() {
     const isOkPressed = window.confirm('This application will restart after deleting the thumbnail cache.\nDo you want to continue?');
     if (!isOkPressed)

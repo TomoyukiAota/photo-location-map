@@ -5,6 +5,7 @@ import { PhotoDataViewerIpcParams } from '../../src-shared/photo-data-viewer/pho
 import { assertFromMainWindow } from '../ipc/ipc-sender';
 import { launchPhotoDataViewer } from './launch-photo-data-viewer';
 
+/** Whether `value` gives a photo's name and path, which opening Photo Data Viewer needs. */
 function isPhotoDataViewerIpcParams(value: unknown): value is PhotoDataViewerIpcParams {
   const photo = (value as PhotoDataViewerIpcParams | undefined)?.photo;
   return typeof photo?.name === 'string' && typeof photo?.path === 'string' && !!photo.path;

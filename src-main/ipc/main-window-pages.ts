@@ -30,6 +30,7 @@ export function isAppPage(url: string, pageUrl: string): boolean {
 
 /** Keeps the window of `contents` on the app's page `pageUrl`. */
 export function keepOnAppPage(contents: WebContents, pageUrl: string): void {
+  /** Prevents a navigation or a redirect (`kind`) that would leave the app's page, and logs it. */
   const prevent = (event: Electron.Event<{ url: string }>, kind: string) => {
     if (isAppPage(event.url, pageUrl))
       return;

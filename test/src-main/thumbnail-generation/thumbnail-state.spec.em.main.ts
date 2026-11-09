@@ -8,6 +8,7 @@ describe('thumbnailStates (in main process)', () => {
   let root: string;
   // A cache in a temporary folder, not the user's: the file's thumbnail and log beside it, in "cache".
   let paths: ThumbnailCachePaths;
+  /** Writes the log of `srcFilePath`'s thumbnail: `content` as it is when a string, or as JSON. */
   const writeLog = (srcFilePath: string, content: unknown) =>
     fs.writeFileSync(paths.logFilePath(srcFilePath), typeof content === 'string' ? content : JSON.stringify(content));
   const mtimeOf = (filePath: string) => fs.statSync(filePath).mtime.toISOString();

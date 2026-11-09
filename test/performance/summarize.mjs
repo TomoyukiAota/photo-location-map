@@ -25,6 +25,7 @@ const quantile = (sorted, q) => {
   const lower = Math.floor(position);
   return sorted[lower] + (sorted[Math.ceil(position)] - sorted[lower]) * (position - lower);
 };
+/** The count, median, 90th percentile (of at least 10), extremes and median absolute deviation of `values`. */
 function stats(values) {
   const sorted = [...values].sort((a, b) => a - b);
   const median = quantile(sorted, 0.5);
@@ -84,6 +85,7 @@ for (const metric of allMetrics) {
 }
 await writeFile(path.join(seriesDirectory, 'summary.json'), JSON.stringify(summary, null, 2));
 
+/** A number for the table: whole from 100 on, with one decimal below; empty for none. */
 const format = value => value === null || value === undefined ? '' : Math.abs(value) >= 100 ? value.toFixed(0) : value.toFixed(1);
 const lines = [`# Series ${path.basename(seriesDirectory)} (protocol ${series.protocol})`, '',
   `Builds: ${series.apps.map(app => `${app.label} (code ${app.code.sha256.slice(0, 12)})`).join(', ')}. Baseline: ${baseline}.`,
