@@ -20,6 +20,7 @@ function runPreload() {
     invoke: (channel: string, ...args: unknown[]) => { calls.push({ method: 'invoke', channel, args }); return Promise.resolve('the photo'); },
   };
   const contextBridge = { exposeInMainWorld: (key: string, api: unknown) => { exposed.push({ key, api }); } };
+  /** The require of a sandboxed preload, which has only electron. */
   const sandboxRequire = (name: string) => {
     required.push(name);
     if (name === 'electron') return { contextBridge, ipcRenderer };

@@ -23,6 +23,7 @@ export const photoScheme = 'plm-photo';
 
 type Transport = 'url' | 'ipc';
 
+/** How the page gets its photo: by its URL, or by its bytes over IPC where a test profile chooses so. */
 function transport(): Transport {
   const chosen = process.env.PLM_TEST_ROOT ? process.env.PLM_TEST_PHOTO_TRANSPORT : undefined;
   return chosen === 'ipc' ? 'ipc' : 'url';
@@ -45,6 +46,7 @@ const mimeTypes: Record<string, string> = {
   '.tiff': 'image/tiff', '.heic': 'image/heic', '.heif': 'image/heif', '.webp': 'image/webp',
 };
 
+/** The MIME type of the photo named `fileName`, by its extension, or '' for another extension. */
 export function photoMimeType(fileName: string): string {
   return mimeTypes[path.extname(fileName).toLowerCase()] ?? '';
 }
@@ -53,6 +55,7 @@ function viewerOrigin(): string {
   return new URL(getPhotoDataViewerServerUrl()).origin;
 }
 
+/** Whether `url` is a page of the viewer's origin. */
 export function isViewerPage(url: string | undefined): boolean {
   try {
     return !!url && new URL(url).origin === viewerOrigin();
@@ -61,6 +64,7 @@ export function isViewerPage(url: string | undefined): boolean {
   }
 }
 
+/** Ends the capability of the window of `contents`, if it has one, so that its token gives the photo no more. */
 function revoke(contents: WebContents): void {
   const capability = capabilitiesByContents.get(contents);
   if (!capability)
@@ -79,6 +83,7 @@ export function photoUrl(capability: Pick<Capability, 'token'>): string {
  * and a navigation elsewhere, as a dropped file would start, is prevented, so that no other page gets the photo.
  */
 export function keepOnViewerPages(contents: WebContents): void {
+  /** Prevents a navigation or a redirect that would leave the viewer's origin, and logs it. */
   const prevent = (event: Electron.Event<{ url: string }>) => {
     if (!isViewerPage(event.url)) {
       event.preventDefault();
