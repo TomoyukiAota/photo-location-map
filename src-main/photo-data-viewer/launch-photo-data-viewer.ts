@@ -33,6 +33,9 @@ export async function launchPhotoDataViewer(ipcParams: PhotoDataViewerIpcParams)
   // Its page asks for its photo, and sends analytics events (src-main/analytics/analytics-backend-ipc.ts).
   addPhotoDataViewerWindow(browserWindow.webContents);
   keepOnViewerPages(browserWindow.webContents);
+  // A preload that throws leaves the page without its bridge, which would show only as a page that did not ask.
+  browserWindow.webContents.on('preload-error', (_event, preloadPath, error) =>
+    logger.error(`The preload of Photo Data Viewer's window failed (${preloadPath}): ${error.stack ?? error.message}`));
   grantPhoto(browserWindow.webContents, photo);
   browserWindow.webContents.setWindowOpenHandler(({url}) => {
     // A web page only, as for the main window's links (src-main/shell/): the viewer's page is served apart from the app.

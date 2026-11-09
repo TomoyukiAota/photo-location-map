@@ -18,7 +18,10 @@ the existence of a plan or from an agent's previous messages.
 - Branches: `claude/remove-electron-remote` (stages A to C1, pull request 676) and, from it,
   `claude/isolate-photo-data-viewer` (stage C2, draft pull request 677, based on 676's branch).
 - Last accepted IMPLEMENTATION stage: C2 (a6f70a51), with C1 (0aefe3fc) and its CI fixes (08aaed71) below it.
-  The fixes for the review of pull request 676 (d088a836, on its branch) are merged into this branch.
+  The fixes for the review of pull request 676 (d088a836, on its branch) are merged into this branch, and the
+  viewer's window logs a failed preload as the main window's does. With both: build, lint, unit tests (Vitest 96;
+  Electron-Mocha 198 main and 2 pending, 62 renderer) and headless e2e on the checkout (44, 1 Windows-only
+  skipped), with the viewer's 6fe8814, pass.
 - CI of pull request 676: the two e2e cases where the app relaunches itself failed with the packaged app on Linux
   and Windows, on both triggers; macOS passed. They came with stage B and had not run on those systems before.
   954132fc makes the failure tell what the relaunched app logged; 74046e4c and 08aaed71 fix them ("Stage C1
