@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import * as path from 'node:path';
 
+import { startupMetadata } from '../../../../src-shared/startup/startup-metadata';
 import { CacheSettingsComponent } from './cache-settings.component';
 
 describe('CacheSettingsComponent', () => {
@@ -20,11 +20,24 @@ describe('CacheSettingsComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create with an isolated cache directory', () => {
-    expect(component).toBeTruthy();
-    expect(process.env.PLM_TEST_ROOT).toBeTruthy();
-    const relativeCachePath = path.relative(process.env.PLM_TEST_ROOT, component.thumbnailCacheLocation);
-    expect(path.isAbsolute(relativeCachePath)).toBe(false);
-    expect(relativeCachePath.startsWith('..')).toBe(false);
+  it('shows the cache folder that the main process reported, and has the main process open it', () => {
+    // The startup metadata, read once, as the app reads it: the first test file's bridge double gave it.
+    expect(component.thumbnailCacheLocation).toBe(startupMetadata().thumbnailCacheDir);
+    expect(component.thumbnailCacheLocation.endsWith('thumbnail-cache')).toBe(true);
+    const open = vi.spyOn(window.plm.thumbnailCache, 'open');
+    component.openThumbnailCacheLocation();
+    expect(open).toHaveBeenCalledExactlyOnceWith();
+  });
+
+  it('deletes the cache only once the user confirms, which the main process does before it restarts the app', () => {
+    const deleteAndRestart = vi.spyOn(window.plm.thumbnailCache, 'deleteAndRestart');
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValueOnce(false).mockReturnValueOnce(true);
+
+    component.handleDeleteThumbnailCacheButtonClicked();
+    expect(deleteAndRestart).not.toHaveBeenCalled();
+    component.handleDeleteThumbnailCacheButtonClicked();
+    expect(deleteAndRestart).toHaveBeenCalledExactlyOnceWith();
+    expect(confirm).toHaveBeenCalledTimes(2);
+    confirm.mockRestore();
   });
 });

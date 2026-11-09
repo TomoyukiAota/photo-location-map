@@ -81,16 +81,23 @@ function updateCurrentUserSettings(settings: UserSettingsToBeSaved): void {
   Object.assign(currentUserSettings, settings);
 }
 
-export const saveUserSetting:  ((UserSettingsToBeSaved) => void) = (settings: UserSettingsToBeSaved) => {
+/** Saves the settings; they apply at once in this process. The promise settles once they are written. */
+export const saveUserSetting: ((settings: UserSettingsToBeSaved) => Promise<void>) = async (settings: UserSettingsToBeSaved) => {
   updateCurrentUserSettings(settings);
-  UserDataStorage.write(UserDataStoragePath.UserSettings.ShowStatusBar, settings.showStatusBar);
-  UserDataStorage.write(UserDataStoragePath.UserSettings.DateFormat, settings.dateFormat);
-  UserDataStorage.write(UserDataStoragePath.UserSettings.ClockSystemFormat, settings.clockSystemFormat);
+  await Promise.all([
+    UserDataStorage.write(UserDataStoragePath.UserSettings.ShowStatusBar, settings.showStatusBar),
+    UserDataStorage.write(UserDataStoragePath.UserSettings.DateFormat, settings.dateFormat),
+    UserDataStorage.write(UserDataStoragePath.UserSettings.ClockSystemFormat, settings.clockSystemFormat),
+  ]);
   Logger.info(`Saved user settings ${JSON.stringify(settings)}`);
 };
 
-export const saveUserSettingsAndRestartApp: ((UserSettingsToBeSaved) => void) = (settings: UserSettingsToBeSaved) => {
-  saveUserSetting(settings);
+/**
+ * Saves the settings, then restarts the app once they are written, for those that take effect only on launch. If a
+ * setting could not be written, the app does not restart, and the failure is logged and recorded.
+ */
+export const saveUserSettingsAndRestartApp: ((settings: UserSettingsToBeSaved) => Promise<void>) = async (settings: UserSettingsToBeSaved) => {
+  await saveUserSetting(settings);
   Logger.info(`User settings are saved, so the application will restart.`);
   restartApp();
 };

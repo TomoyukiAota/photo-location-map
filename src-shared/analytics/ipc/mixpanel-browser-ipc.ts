@@ -1,8 +1,9 @@
-import { BrowserWindow } from 'electron';
-import { ProxyRequire } from '../../require/proxy-require';
-import { MixpanelBrowserWrapper } from '../library-wrapper/mixpanel-browser-wrapper';
+import type { BrowserWindow } from 'electron';
 
-class MixpanelBrowserIpcChannelName {
+// The main process sends its events to the renderer, whose SDK records them; the renderer listens through its
+// preload (electron-util/preload/main-window.cjs), which keeps a copy of the channel's name.
+
+export class MixpanelBrowserIpcChannelName {
   public static readonly trackEvent = 'mixpanel-browser-track-event';
 }
 
@@ -23,19 +24,6 @@ export class MixpanelBrowserIpcMain {
     this.mainWindow.webContents.send(
       MixpanelBrowserIpcChannelName.trackEvent,
       category, action, label, value
-    );
-  }
-}
-
-export class MixpanelBrowserIpcRenderer {
-  private static ipcRenderer = ProxyRequire.electron.ipcRenderer;
-
-  public static configureReceivingIpcFromMain() {
-    this.ipcRenderer.on(
-      MixpanelBrowserIpcChannelName.trackEvent,
-      (event, category: string, action: string, label?: string, value?: string | number) => {
-        MixpanelBrowserWrapper.trackEvent(category, action, label, value);
-      }
     );
   }
 }

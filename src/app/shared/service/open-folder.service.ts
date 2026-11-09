@@ -1,6 +1,7 @@
 import { signal, inject, Service } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DirTreeObjectRecorder } from '../../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
+import { perfMark } from '../../../../src-shared/perf/perf-mark';
 import { sleep } from '../../../../src-shared/sleep/sleep';
 import { DirectoryTreeViewDataService } from '../../directory-tree-view/directory-tree-view-data.service';
 import { LoadingFolderDialogComponent } from '../../loading-folder/dialog/loading-folder-dialog.component';
@@ -38,6 +39,7 @@ export class OpenFolderService {
     let loadingFolderDialogRef: MatDialogRef<LoadingFolderDialogComponent> = null;
 
     try {
+      perfMark('open-folder:start');
       OpenFolderRecorder.start(folderPath);
       this.photoSelectionHistoryService.reset();
       PhotoInfoViewerContent.clearCache();
@@ -50,16 +52,27 @@ export class OpenFolderService {
       loadingFolderDialogRef = this.showLoadingFolderDialog();
 
       const directoryTreeObject = await OpenedDirectory.createDirectoryTree(folderPath);
+      perfMark('open-folder:tree-created');
+      // TL;DR: The main process checks the thumbnail cache while the photos' data are read, so that the generation
+      // starts right after them, as when the renderer checked the cache itself.
+      // Details: Asked after the tree was shown, as it was at first, the answer came after the page had rendered the
+      // tree, which then held up the folder's completion and the loading dialog's closing: 34 ms for the large folder
+      // of the measurements (series rer-2-C1b).
+      const thumbnailCache = this.thumbnailGenerationService.checkThumbnailCache(directoryTreeObject);
+      thumbnailCache.catch(() => {});  // Awaited below; a failure then fails the open, as other failures do.
       await this.photoDataService.update(directoryTreeObject); // Photo data is fetched from files. The loading folder dialog displays file loading status.
+      perfMark('open-folder:photo-data-loaded');
       await sleep(100); // To update the loading folder dialog before the work below, which freezes the GUI for a large folder.
 
       this.showPhotoWithLocationNotFoundDialogIfApplicable();
       this.directoryTreeViewDataService.replace(directoryTreeObject);
-      if (this.thumbnailGenerationService.startThumbnailGeneration(directoryTreeObject))
+      if (this.thumbnailGenerationService.startThumbnailGeneration(await thumbnailCache))
         this.thumbnailGenerationStatusBarService.showForNewGeneration();
       DirTreeObjectRecorder.record(directoryTreeObject);
       OpenFolderRecorder.complete();
+      perfMark('open-folder:complete');
     } catch (reason) {
+      perfMark('open-folder:failed');
       OpenFolderRecorder.fail(reason);
     } finally {
       loadingFolderDialogRef?.close();

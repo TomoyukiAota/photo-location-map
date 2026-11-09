@@ -1,4 +1,6 @@
+import * as amplitude from '@amplitude/analytics-browser';
 import { createPrependedLogger } from '../../log/create-prepended-logger';
+import { startupMetadata } from '../../startup/startup-metadata';
 import { AmplitudeConfig } from '../config/amplitude-config';
 import { AnalyticsConfig } from '../config/analytics-config';
 import { AnalyticsLibraryWrapperInitialize, AnalyticsLibraryWrapperTrackEvent } from './library-wrapper-decorator';
@@ -9,6 +11,7 @@ export class AmplitudeAnalyticsBrowserWrapper {
   private static amplitude: typeof import('@amplitude/analytics-browser');
   private static isInitialized = false;
 
+  /** Sets Amplitude up for the renderer, with the user's ID as the device's too, and without the page's URL. */
   @AnalyticsLibraryWrapperInitialize(amplitudeLogger)
   public static initialize() {
     const apiKey = AmplitudeConfig.apiKey;
@@ -18,10 +21,11 @@ export class AmplitudeAnalyticsBrowserWrapper {
     amplitudeLogger.info(`User ID: ${userId}`);
     amplitudeLogger.info(`Device ID: ${deviceId}`);
 
-    // Avoid import at the top of the file to avoid loading @amplitude/analytics-browser in the main process.
-    // As of Oct 2022, there is no problem in loading @amplitude/analytics-browser in the main process,
-    // but this is a preventative measure because @amplitude/analytics-browser is designed to be used in web browsers.
-    this.amplitude = require('@amplitude/analytics-browser');
+    // Only the renderer loads this file (src/analytics-setup.ts): @amplitude/analytics-browser is for web browsers.
+    this.amplitude = amplitude;
+    // The e2e suite makes an instance of its own to check that the test notices what it must not send.
+    if (startupMetadata().isE2e)
+      (window as Window & { __plmCreateAmplitudeInstance?: typeof amplitude.createInstance }).__plmCreateAmplitudeInstance = amplitude.createInstance;
 
     this.amplitude.init(apiKey, userId, {
       // Keep PLM's identity on the SDK's new default events as well as manual events.

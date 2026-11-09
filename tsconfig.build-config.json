@@ -7,6 +7,7 @@
   },
   "include": [
     "electron-util/managed-exifr.cjs",
-    "electron-util/renderer-modules/*.cjs"
+    "electron-util/electron-web-preferences.js",
+    "electron-util/preload/*.cjs"
   ]
 }

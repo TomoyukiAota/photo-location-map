@@ -1,10 +1,6 @@
-import * as fsExtra from 'fs-extra';
-import * as pathModule from 'path';
 import { inject, Service } from '@angular/core';
-import { ipcRenderer } from 'electron';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
-import { CommandLineOptions } from '../../../../src-shared/command-line-options/command-line-options';
-import { IpcConstants } from '../../../../src-shared/ipc/ipc-constants';
+import { bridge, OpenTarget } from '../../../../src-shared/bridge/plm-bridge';
 import { Logger } from '../../../../src-shared/log/logger';
 import { DirectoryTreeViewSelectionService } from '../../directory-tree-view/directory-tree-view-selection.service';
 import { OpenFolderService } from './open-folder.service';
@@ -18,22 +14,27 @@ export class OpenAfterLaunchService {
   private photoDataService = inject(PhotoDataService);
   private photoSelectionHistoryService = inject(PhotoSelectionHistoryService);
 
+  /** Opens what `--open` gave at launch, if anything. */
   public async openAfterLaunchIfNeeded() {
-    const commandLineOptions = await this.getCommandLineOptionsFromMainProcess();
-    const specifiedPath = commandLineOptions.open;
-    if (!specifiedPath) { return; }
-    await this.openAfterLaunch(specifiedPath);
+    // The main process reads `--open`, and finds out what the path is.
+    const target = await bridge().commandLine.openTarget();
+    if (target.kind === 'none') { return; }
+    await this.openAfterLaunch(target);
   }
 
-  private async openAfterLaunch(specifiedPath: string) {
+  /**
+   * Opens the folder of `target`, or a file's folder and selects the file if it has a location; throws if it failed.
+   */
+  private async openAfterLaunch(target: Exclude<OpenTarget, { kind: 'none' }>) {
+    const specifiedPath = target.path;
     Logger.info(`[Open After Launch] Opening "${specifiedPath}"`);
     Analytics.trackEvent('Open After Launch', 'Open After Launch', 'Opening Item');
-    const stats = await fsExtra.stat(specifiedPath);
-    if (stats.isFile()) {
+    if (target.kind === 'failed') {
+      throw new Error(target.message);
+    } else if (target.kind === 'file') {
       Logger.info(`[Open After Launch] The specified item is a file. Opening the parent folder and then selecting the file.`);
       Analytics.trackEvent('Open After Launch', 'Open After Launch: File', 'Item Type: File');
-      const parentFolderPath = pathModule.dirname(specifiedPath);
-      await this.openFolderService.open(parentFolderPath);
+      await this.openFolderService.open(target.parentFolderPath);
       this.photoSelectionHistoryService.reset(); // Remove the unnecessary history of selecting all photos as a result of opening the parent folder.
       const gpsInfoExistsInSpecifiedFile = this.photoDataService.getPhotoPathsWithGpsInfo().includes(specifiedPath);
       if (gpsInfoExistsInSpecifiedFile) {
@@ -41,7 +42,7 @@ export class OpenAfterLaunchService {
       } else {
         this.directoryTreeViewSelectionService.select([]); // Deselect all photos if the specified file does not have GPS info.
       }
-    } else if (stats.isDirectory()) {
+    } else if (target.kind === 'directory') {
       Logger.info(`[Open After Launch] The specified item is a directory. Opening the directory.`);
       Analytics.trackEvent('Open After Launch', 'Open After Launch: Directory', 'Item Type: Directory');
       await this.openFolderService.open(specifiedPath);
@@ -49,9 +50,5 @@ export class OpenAfterLaunchService {
       Logger.error(`[Open After Launch] The specified item is neither a file nor a directory, which is unexpected.`);
       Analytics.trackEvent('Open After Launch', 'Open After Launch: Unexpected', 'Item Type: Unexpected');
     }
-  }
-
-  private async getCommandLineOptionsFromMainProcess(): Promise<CommandLineOptions> {
-    return await ipcRenderer.invoke(IpcConstants.CommandLineOptions.Get);
   }
 }

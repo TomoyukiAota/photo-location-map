@@ -1,4 +1,4 @@
-import { createDirectoryTree } from '../../../../src-shared/dir-tree/dir-tree-util';
+import { createDirectoryTree } from '../../../../src-shared/dir-tree/create-directory-tree';
 import assert = require('assert');
 import * as fs from 'fs';
 import * as os from 'os';

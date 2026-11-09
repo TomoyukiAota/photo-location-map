@@ -1,4 +1,4 @@
-import { ProxyRequire } from '../require/proxy-require';
+import { startupMetadata } from '../startup/startup-metadata';
 import { ErrorScrubbingContext, errorForAnalytics, maxLabelLength, scrubMessage } from './error-for-analytics';
 
 // Records errors that nothing handled, without the user's file paths (see errorForAnalytics).
@@ -63,14 +63,24 @@ function unwrapPromiseRejection(error: unknown): unknown {
   return error instanceof Error && 'rejection' in error ? (error as Error & { rejection: unknown }).rejection : error;
 }
 
+let mainProcessContext: (() => ErrorScrubbingContext) | undefined;
+
+/**
+ * Sets what the main process's errors are scrubbed of: the app's own folder, the home folder and the user name.
+ * src-main/analytics/ sets it before anything else is imported, as an error can be recorded from the start.
+ */
+export function setScrubbingContext(context: () => ErrorScrubbingContext): void {
+  mainProcessContext = context;
+}
+
+/** What errors are scrubbed of: in a renderer, the home folder and the user name that the main process sent. */
 function scrubbingContext(): ErrorScrubbingContext {
-  const os = ProxyRequire.os;
-  const appPaths: string[] = [];
-  const electronApp = ProxyRequire.electron?.app;  // Only in the main process.
-  if (electronApp)
-    appPaths.push(electronApp.getAppPath());
-  return {
-    appPaths,
-    sensitiveStrings: os ? [os.homedir(), os.userInfo().username] : [],
-  };
+  if (mainProcessContext)
+    return mainProcessContext();
+  try {
+    const { homeDir, userName } = startupMetadata();
+    return { appPaths: [], sensitiveStrings: [homeDir, userName].filter(Boolean) };
+  } catch {
+    return { appPaths: [], sensitiveStrings: [] };  // Not in Electron, as in Vitest.
+  }
 }

@@ -11,7 +11,7 @@ import { AnalyticsLibraryWrapperInitialize, AnalyticsLibraryWrapperTrackEvent } 
 const backendLogger = createPrependedLogger('[Analytics Backend]');
 
 // Sends events to the analytics backend, from the main process only (renderer events arrive over IPC; see
-// AnalyticsBackendIpcMain). When to send is decided by AnalyticsBackendSender.
+// AnalyticsBackendIpcMain in src-main/analytics/). When to send is decided by AnalyticsBackendSender.
 export class AnalyticsBackendWrapper {
   // Required in initialize, not imported at the top: the renderer bundle also loads this file
   // (through the IPC module), and these are main-process modules.

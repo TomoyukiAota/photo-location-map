@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, ElementRef, viewChild, inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { app } from '@electron/remote';
 
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { Logger } from '../../../src-shared/log/logger';
+import { startupMetadata } from '../../../src-shared/startup/startup-metadata';
 import { openUrl } from '../../../src-shared/url/open-url';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { configureOpeningInOsBrowser } from '../shared/open-url/configure-opening-in-os-browser';
@@ -21,7 +21,7 @@ export class WelcomeDialogComponent implements AfterViewInit {
   private sanitizer = inject(DomSanitizer);
   private welcomeDialogAtAppLaunchService = inject(WelcomeDialogAtAppLaunchService);
 
-  public readonly appVersion = app.getVersion();
+  public readonly appVersion = startupMetadata().version;
 
   public readonly troubleshootingPageLink = viewChild.required<ElementRef<HTMLAnchorElement>>('troubleshootingPageLink');
 

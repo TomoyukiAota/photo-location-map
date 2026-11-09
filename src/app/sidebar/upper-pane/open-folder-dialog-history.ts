@@ -1,9 +1,10 @@
 import type { OpenDialogReturnValue } from 'electron';
-import * as path from 'path';
+import { isAbsolutePath } from '../../../../src-shared/path/is-absolute-path';
+import { currentPlatform } from '../../../../src-shared/startup/startup-metadata';
 
 export interface OpenFolderDialogHistoryDependencies {
   read(): unknown;
-  write(directoryPath: string): void;
+  write(directoryPath: string): void | Promise<void>;
   isDirectory(directoryPath: string): Promise<boolean>;
   reportFailure(error: unknown): void;
 }
@@ -18,10 +19,11 @@ export class OpenFolderDialogHistory {
               private readonly directoryCheckTimeoutMs = 1000) {
   }
 
+  /** The folder for the picker to start in: the last one chosen while it is still a folder, else undefined. */
   public async getDefaultPath(): Promise<string | undefined> {
     try {
       const directoryPath = this.lastConfirmedDirectory ?? this.dependencies.read();
-      if (typeof directoryPath !== 'string' || !path.isAbsolute(directoryPath))
+      if (typeof directoryPath !== 'string' || !isAbsolutePath(directoryPath, currentPlatform()))
         return undefined;
 
       return await this.checkDirectory(directoryPath) ? directoryPath : undefined;
@@ -55,16 +57,17 @@ export class OpenFolderDialogHistory {
     return boundedCheck;
   }
 
+  /** The folder chosen, remembered for the next picker, or undefined if cancelled; a failed save is only reported. */
   public rememberSelection(result: Pick<OpenDialogReturnValue, 'canceled' | 'filePaths'>): string | undefined {
     if (result.canceled || result.filePaths.length === 0)
       return undefined;
 
     const selectedFolderPath = result.filePaths[0];
     this.lastConfirmedDirectory = selectedFolderPath;
+    // A read-only settings directory must not prevent opening the chosen folder, whether writing fails at once or later.
     try {
-      this.dependencies.write(selectedFolderPath);
+      void Promise.resolve(this.dependencies.write(selectedFolderPath)).catch(error => this.dependencies.reportFailure(error));
     } catch (error) {
-      // A read-only settings directory must not prevent opening the chosen folder.
       this.dependencies.reportFailure(error);
     }
     return selectedFolderPath;

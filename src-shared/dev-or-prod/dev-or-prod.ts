@@ -1,8 +1,18 @@
 import { Logger } from '../log/logger';
+import { ProcessIdentifier } from '../process/process-identifier';
+import { startupMetadata } from '../startup/startup-metadata';
 
 export type DevOrProdType = 'Dev' | 'Prod';
 
+/**
+ * Whether this is a development run or a production one: package.json says so under npm, a packaged app is 'Prod', and
+ * a renderer takes the main process's answer.
+ */
 function determineDevOrProd(): DevOrProdType {
+  // A renderer takes what the main process determined: the main window's page has no environment variables.
+  if (ProcessIdentifier.isElectronRenderer)
+    return startupMetadata().devOrProd;
+
   // process.env.npm_package_config_devOrProd is set from "devOrProd" in "config" in package.json
   // when npm script defined in package.json is used.
   // This means the followings:

@@ -104,6 +104,7 @@ function useApplicationUpdateSupport(realUpdater, trackEvent) {
   realUpdater.isUpdateSupported = standIn.isUpdateSupported;
 }
 
+/** Checks which versions look for an update at launch: none in development or for a prerelease, one otherwise. */
 async function verifyApplicationPolicy() {
   const actualVersion = require(path.join(repository, 'package.json')).version;
   const cases = [
@@ -118,7 +119,7 @@ async function verifyApplicationPolicy() {
     const application = new EventEmitter();
     application.getVersion = () => item.version;
     const prerelease = runCompiled('src-shared/version/is-prerelease-version.js', {
-      '../require/require-from-main-process': { RequireFromMainProcess: { electron: { app: application } } },
+      '../startup/startup-metadata': { startupMetadata: () => ({ version: application.getVersion() }) },
     });
     const updater = new EventEmitter();
     let checks = 0;

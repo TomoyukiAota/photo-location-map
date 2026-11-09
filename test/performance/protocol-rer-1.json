@@ -1,0 +1,23 @@
+{
+  "id": "rer-1",
+  "frozenAt": "2026-11-09T02:16+09:00",
+  "basis": "The pilot series of stage 0 (3 trials and 1 warm-up of each scenario, packaged arm64 build of fb581a26), before any stage A build existed.",
+  "trials": 10,
+  "warmup": 1,
+  "minimumTrials": 8,
+  "rules": [
+    { "pattern": "\\.exif-files$", "kind": "invariant", "why": "Every stage reads the same files." },
+    { "pattern": "\\.exif-(parse|thumbnail|read|rotate)-sum-ms$|\\.exif-max-file-ms$", "kind": "diagnostic",
+      "why": "Where the time goes, not how long anything took; parse and thumbnail sums change meaning at stage A (exif-perf-stats.ts)." },
+    { "pattern": "\\.(request-to-launch|dialog|dialog-to-start|menu-to-request|click-to-dialog)-ms$", "kind": "latency", "noiseMads": 3, "floor": 5, "budgetPercent": 25,
+      "why": "Spans of a few milliseconds, where the floor decides." },
+    { "pattern": "(renderer-max-frame-gap|main-event-loop-max|main-event-loop-p99|renderer-longtask-max|renderer-longtask-total)-ms$", "kind": "responsiveness", "noiseMads": 3, "floor": 10, "budgetPercent": 25,
+      "why": "The pilot's spread was up to 14 %." },
+    { "pattern": "renderer-longtasks$", "kind": "count", "noiseMads": 3, "floor": 2, "budgetPercent": 25 },
+    { "pattern": "close-ms$", "kind": "latency", "noiseMads": 3, "floor": 10, "budgetPercent": 25, "why": "Short and spread out." },
+    { "pattern": "(after-close-tree-delta|retained-tree|open-tree-delta|peak-tree-delta)-kb$", "kind": "memory", "noiseMads": 3, "floor": 30720, "budgetPercent": 10,
+      "why": "Differences of resident memory, which the garbage collector and the system's reclaiming move by tens of megabytes." },
+    { "pattern": "-kb$", "kind": "memory", "noiseMads": 3, "floor": 20480, "budgetPercent": 10 },
+    { "pattern": "-ms$", "kind": "latency", "noiseMads": 3, "floor": 5, "budgetPercent": 10 }
+  ]
+}

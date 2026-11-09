@@ -10,7 +10,7 @@ describe('EnvironmentDetector (in Vitest)', () => {
     expect(ProcessIdentifier.isNode).toBe(true);
     expect(ProcessIdentifier.isElectron).toBe(false);
     expect(ProcessIdentifier.processType).toBe('Node');
-    expect(window.require).toBeUndefined();
+    expect((window as Window & { require?: unknown }).require).toBeUndefined();
   });
 
   it('isElectronMochaMain should be false', () => {

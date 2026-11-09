@@ -22,6 +22,7 @@
   },
   "files": [
     "src-main/electron-main.ts",
+    "src-main/directory-tree/directory-tree-worker.ts",
     "src-main/thumbnail-generation/generate-thumbnail-file-worker.ts"
   ],
   "include": [

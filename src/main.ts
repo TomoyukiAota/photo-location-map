@@ -1,32 +1,17 @@
-import 'reflect-metadata';
+import { plmBridge, whenBridgeReady } from '../src-shared/bridge/plm-bridge';
 
-import { enableProdMode } from '@angular/core';
-import { bootstrapApplication } from '@angular/platform-browser';
-
-import { LogFileConfig } from '../src-shared/log/file-config/log-file-config';
-import { Logger } from '../src-shared/log/logger';
-import { AppComponent } from './app/app.component';
-import { appConfig } from './app/app.config';
-import { initializeRasterTileBaseLayerConfigs } from './app/map/leaflet-map/raster-tile-base-layer-configs-version-1';
-import { recordErrorsOutsideAngular } from './app/shared/error/analytics-error-handler';
-import { AppConfig } from './environments/environment';
-import './ipc-renderer-setup/ipc-renderer-all-setup';
-
-/** Starts the renderer: the map's base layers, the error listeners, then Angular. */
-async function bootstrap(): Promise<void> {
-  // Load map choices before Angular creates the map, as the former module await did.
-  await initializeRasterTileBaseLayerConfigs();
-
-  if (AppConfig.production) {
-    enableProdMode();
-  }
-
-  recordErrorsOutsideAngular();
-
-  await bootstrapApplication(AppComponent, appConfig);
-
-  Logger.info('Content on the main window is loading...');
-  Logger.info(`Log File Location: ${LogFileConfig.filePath}`);
+/**
+ * Writes why the app could not start to the console and, through the bridge, to the log file, as the logger is one of
+ * the app's modules (src-shared/log/logger.ts). Without a bridge the preload failed, which the main process logs.
+ */
+function reportStartFailure(error: unknown): void {
+  console.error('The app could not start.', error);
+  const details = error instanceof Error ? error.stack ?? error.message : String(error);
+  plmBridge()?.log.append(`[${new Date().toISOString()}] [Renderer] [error] The app could not start: ${details}`);
 }
 
-bootstrap().catch(err => Logger.error(err));
+// The page's entry: the app (src/start-app.ts) once the page has its bridge to the main process, which the app's
+// modules read while they are evaluated (src-shared/bridge/plm-bridge.ts, whenBridgeReady).
+whenBridgeReady()
+  .then(() => import('./start-app'))
+  .catch(reportStartFailure);

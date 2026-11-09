@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
-import * as remote from '@electron/remote';
+import { bridge } from '../../../../src-shared/bridge/plm-bridge';
 import { Logger } from '../../../../src-shared/log/logger';
-import { RequireFromMainProcess } from '../../../../src-shared/require/require-from-main-process';
+import { perfMark } from '../../../../src-shared/perf/perf-mark';
 import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/user-data-stroage-path';
 import { OpenFolderService } from '../../shared/service/open-folder.service';
@@ -24,19 +24,20 @@ export class SidebarUpperPaneComponent {
   private readonly folderDialogHistory = new OpenFolderDialogHistory({
     read: () => UserDataStorage.readOrDefault(UserDataStoragePath.FolderDialog.LastConfirmedDirectory, null),
     write: directoryPath => UserDataStorage.write(UserDataStoragePath.FolderDialog.LastConfirmedDirectory, directoryPath),
-    isDirectory: async directoryPath => (await RequireFromMainProcess.fsExtra.stat(directoryPath)).isDirectory(),
+    // The main process checks the folder that the picker would start in (src-main/folder-dialog/).
+    isDirectory: directoryPath => bridge().folderDialog.isDirectory(directoryPath),
     reportFailure: error => Logger.warn('Could not restore or persist folder dialog history.', error),
   });
 
+  /** Shows the folder picker, starting in the last folder chosen, and opens the folder that the user chooses. */
   public async showOpenFolderDialog() {
-    const result = await remote.dialog.showOpenDialog(
-      remote.getCurrentWindow(),
-      {
-        properties: ['openDirectory'],
-        defaultPath: await this.folderDialogHistory.getDefaultPath(),
-      }
-    );
+    perfMark('open-folder:dialog-requested');
+    // The main process shows the picker for this window (src-main/folder-dialog/).
+    const result = await bridge().folderDialog.show({
+      defaultPath: await this.folderDialogHistory.getDefaultPath(),
+    });
 
+    perfMark('open-folder:dialog-returned');
     const selectedFolderPath = this.folderDialogHistory.rememberSelection(result);
     if (!selectedFolderPath)
       return;

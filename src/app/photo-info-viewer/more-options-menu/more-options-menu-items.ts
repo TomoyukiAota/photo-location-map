@@ -1,5 +1,5 @@
 import { Analytics } from '../../../../src-shared/analytics/analytics';
-import { openContainingFolder } from '../../../../src-shared/command/command';
+import { openContainingFolder } from '../../shared/open-with-os';
 import { openUrl } from '../../../../src-shared/url/open-url';
 import { Photo } from '../../shared/model/photo.model';
 import { photoInfoViewerLogger as logger } from '../photo-info-viewer-logger';

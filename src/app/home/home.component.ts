@@ -1,7 +1,8 @@
-import { Component, AfterViewInit, ElementRef, viewChild, inject } from '@angular/core';
+import { Component, AfterViewInit, ElementRef, afterNextRender, viewChild, inject } from '@angular/core';
 import Split from 'split.js';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { Logger } from '../../../src-shared/log/logger';
+import { perfMark } from '../../../src-shared/perf/perf-mark';
 import { LeafletMapForceRenderService } from '../map/leaflet-map/leaflet-map-force-render/leaflet-map-force-render.service';
 import { LoadedFilesStatusBarService } from '../loaded-files-status-bar/service/loaded-files-status-bar.service';
 import { ThumbnailGenerationStatusBarService } from '../thumbnail-generation/status-bar/service/thumbnail-generation-status-bar.service';
@@ -28,6 +29,11 @@ export class HomeComponent implements AfterViewInit {
 
   private readonly sidebarDiv = viewChild.required<ElementRef>('sidebar');
   private readonly sidebarUpperPaneDiv = viewChild.required<ElementRef>('sidebarUpperPane');
+
+  constructor() {
+    // The home view, with its map and toolbars, is on the screen for the first time: the application can be used.
+    afterNextRender(() => perfMark('renderer:home-rendered'));
+  }
 
   ngAfterViewInit() {
     const gutterSize = 8;              // 8px, which is the same width as the splitter gutter in Photo Data Viewer.

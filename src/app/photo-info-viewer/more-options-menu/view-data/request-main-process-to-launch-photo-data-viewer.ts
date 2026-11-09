@@ -1,10 +1,11 @@
-import { ipcRenderer } from 'electron';
-import { IpcConstants } from '../../../../../src-shared/ipc/ipc-constants';
+import { bridge } from '../../../../../src-shared/bridge/plm-bridge';
 import { Logger } from '../../../../../src-shared/log/logger';
+import { perfMark } from '../../../../../src-shared/perf/perf-mark';
 import { PhotoDataViewerIpcParams } from '../../../../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params';
 import { Photo } from '../../../shared/model/photo.model';
 
 export function requestMainProcessToLaunchPhotoDataViewer(photo: Photo) {
+  perfMark('view-data:requested');
   Logger.info(`Sending the IPC invoke request to launch Photo Data Viewer in the main process.`);
 
   const ipcParams: PhotoDataViewerIpcParams = {
@@ -13,6 +14,6 @@ export function requestMainProcessToLaunchPhotoDataViewer(photo: Photo) {
       path: photo.path,
     }
   };
-  // noinspection JSIgnoredPromiseFromCall
-  ipcRenderer.invoke(IpcConstants.PhotoDataViewer.Name, ipcParams);
+  bridge().photoDataViewer.open(ipcParams)
+    .catch(error => Logger.error(`Failed to launch Photo Data Viewer for "${photo.path}".`, error));
 }

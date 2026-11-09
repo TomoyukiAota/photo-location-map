@@ -1,6 +1,9 @@
 import assert = require('assert');
 import { ProcessAccessor } from '../../../src-shared/process/process-accessor';
 
+// electron-mocha's renderer page has Node.js, unlike the app's main window (src-shared/process/process-identifier.ts).
+const pageProcess = () => (window as Window & { process?: NodeJS.Process }).process;
+
 describe('ProcessAccessor (in renderer process in electron-mocha)', () => {
   it('getProcess() should return process', () => {
     assert(ProcessAccessor.getProcess() === process);
@@ -16,14 +19,14 @@ describe('ProcessAccessor (in renderer process in electron-mocha)', () => {
   });
 
   it('process and window.process should refer to the same object', () => {
-    assert.equal(process, window.process);
+    assert.equal(process, pageProcess());
   });
 
   it('getProcess() and window.process should refer to the same object', () => {
-    assert.equal(ProcessAccessor.getProcess(), window.process);
+    assert.equal(ProcessAccessor.getProcess(), pageProcess());
   });
 
   it('window.process.type should be "renderer"', () => {
-    assert.equal(window.process.type, 'renderer');
+    assert.equal(pageProcess().type, 'renderer');
   });
 });

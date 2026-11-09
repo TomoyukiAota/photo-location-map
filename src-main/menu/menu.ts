@@ -1,11 +1,9 @@
 import { Menu } from 'electron';
-import { ProxyRequire } from '../../src-shared/require/proxy-require';
+import * as os from 'os';
 import { Logger } from '../../src-shared/log/logger';
 import { menuTemplateOnWindowsLinux } from './menu-template-on-windows-linux';
 import { menuTemplateOnMac } from './menu-template-on-mac';
 import { configureIpcForSelectionUndoRedoMenus } from './selection-menu';
-
-const os = ProxyRequire.os;
 
 const getMenuTemplate = () => {
   switch (os.platform()) {

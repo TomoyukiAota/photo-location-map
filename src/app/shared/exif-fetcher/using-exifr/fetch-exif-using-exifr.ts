@@ -1,3 +1,5 @@
+import { bridge } from '../../../../../src-shared/bridge/plm-bridge';
+import { ExifReadOutput, ExifReadResult } from '../../../../../src-shared/exif/exif-read-result';
 import { Logger } from '../../../../../src-shared/log/logger';
 import { DateTimeOriginal } from '../../model/date-time-original';
 import { Dimensions } from '../../model/dimensions.model';
@@ -6,64 +8,68 @@ import { GpsInfo } from '../../model/gps-info.model';
 import { LatLng } from '../../model/lat-lng.model';
 import { Thumbnail } from '../../model/thumbnail.model';
 import { rotateImage, getRotatedSize } from '../../image-rotation';
+import { exifPerfStats } from '../exif-perf-stats';
 
-// exifr in the main process is used.
+// exifr runs in the main process (src-main/exif/read-exif.ts), which also extracts the embedded thumbnail.
 // With exifr in the renderer process, 1) it is slower, and 2) loading files fails when many files are loaded.
-const exifr: typeof import('exifr') = window.require('@electron/remote').require('exifr');
+// One request per photo: the parse and the thumbnail together.
+async function readExifInMainProcess(filePath: string): Promise<ExifReadResult> {
+  const startMs = performance.now();
+  const result: ExifReadResult = await bridge().exif.read(filePath);
+  exifPerfStats.readMs += performance.now() - startMs;
+  if (result.parse === 'ok') {
+    exifPerfStats.parseMs += result.parseMs;
+    exifPerfStats.thumbnailMs += result.thumbnailMs;
+  }
+  return result;
+}
 
 export function fetchExifUsingExifr(filePath: string): Promise<Exif> {
+  const startMs = performance.now();
   const exifPromise = fetchExifrParseOutput(filePath)
     .catch(error => {
       Logger.info(`[using exifr] Failed to fetch EXIF from ${filePath}`, error);
       return null;
     })
-    .then(async exifrParseOutput => await createExifFromExifrParseOutput(exifrParseOutput, filePath))
+    .then(async read => await createExifFromExifrParseOutput(read, filePath))
     .catch(error => {
       Logger.info(`[using exifr] Failed to create Exif class instance of ${filePath}`, error);
       return null;
+    })
+    .finally(() => {
+      exifPerfStats.files++;
+      exifPerfStats.maxFileMs = Math.max(exifPerfStats.maxFileMs, performance.now() - startMs);
     });
 
   return exifPromise;
 }
 
-interface ExifrParseOutput {
-  DateTimeOriginal?: Date;
-  ExifImageHeight?: number;
-  ExifImageWidth?: number;
-  latitude?: number;
-  longitude?: number;
-  Orientation?: number;
-  Make?: string;
+interface ExifrRead {
+  output: ExifReadOutput;
+  thumbnail: Uint8Array | null;
+  thumbnailError?: string;
 }
 
-type ExifrParseParameterType = Parameters<typeof exifr.parse>;
-type ExifrOptionsType = ExifrParseParameterType[1];
+/** The parsed EXIF, or null for a photo without EXIF. Throws, as exifr.parse did, when parsing failed. */
+async function fetchExifrParseOutput(filePath: string): Promise<ExifrRead | null> {
+  const result = await readExifInMainProcess(filePath);
+  if (result.parse === 'failed')
+    throw new Error(result.error);
 
-const exifrOptions: ExifrOptionsType = {
-  translateValues: false,
-  pick: [
-    'DateTimeOriginal',
-    'ExifImageHeight',
-    'ExifImageWidth',
-    'GPSLatitude',     // Required for exifrParseOutput.latitude
-    'GPSLatitudeRef',  // Required for exifrParseOutput.latitude to be correctly calculated
-    'GPSLongitude',    // Required for exifrParseOutput.longitude
-    'GPSLongitudeRef', // Required for exifrParseOutput.longitude to be correctly calculated
-    'Orientation',
-    'Make',            // For analytics: which cameras users shoot with.
-  ]
-};
-
-async function fetchExifrParseOutput(filePath: string): Promise<ExifrParseOutput> {
-  const exifrParseOutput: ExifrParseOutput = await exifr.parse(filePath, exifrOptions);
-  Logger.info(`[using exifr] Fetched EXIF of ${filePath} `, exifrParseOutput);
-  return exifrParseOutput;
+  const read = result.parse === 'ok' ? { output: result.output, thumbnail: result.thumbnail, thumbnailError: result.thumbnailError } : null;
+  Logger.info(`[using exifr] Fetched EXIF of ${filePath} `, read?.output);
+  return read;
 }
 
-async function createExifFromExifrParseOutput(exifrParseOutput: ExifrParseOutput, filePath: string): Promise<Exif> {
-  if (!exifrParseOutput)
+/**
+ * The app's Exif of what the main process read with exifr: the date, the size as shown, the location, the camera's make
+ * and the thumbnail. Null when nothing was read; throws when the thumbnail could not be extracted.
+ */
+async function createExifFromExifrParseOutput(read: ExifrRead | null, filePath: string): Promise<Exif> {
+  if (!read)
     return null;
 
+  const exifrParseOutput = read.output;
   const exif = new Exif();
 
   if (exifrParseOutput.DateTimeOriginal) {
@@ -85,10 +91,16 @@ async function createExifFromExifrParseOutput(exifrParseOutput: ExifrParseOutput
     exif.cameraMake = exifrParseOutput.Make.trim();
   }
 
-  const thumbnailBuffer = await exifr.thumbnail(filePath);
+  // Extracting the thumbnail failed: the photo has no Exif, as when the renderer extracted it and exifr threw.
+  if (read.thumbnailError)
+    throw new Error(read.thumbnailError);
+
+  const thumbnailBuffer = read.thumbnail;
   if (thumbnailBuffer) {
     const orientation = exifrParseOutput.Orientation ?? 1;   // If orientation is not available, assume 1, and display thumbnail.
+    const rotateStartMs = performance.now();
     const thumbnail = await createThumbnail(thumbnailBuffer, orientation, filePath);
+    exifPerfStats.rotateMs += performance.now() - rotateStartMs;
     exif.thumbnail = thumbnail;
   }
 
@@ -97,7 +109,7 @@ async function createExifFromExifrParseOutput(exifrParseOutput: ExifrParseOutput
   return exif;
 }
 
-async function createThumbnail(thumbnailBuffer: Uint8Array | Buffer, orientation: number, filePath: string): Promise<Thumbnail> {
+async function createThumbnail(thumbnailBuffer: Uint8Array, orientation: number, filePath: string): Promise<Thumbnail> {
   const base64String = btoa(String.fromCharCode.apply(null, thumbnailBuffer));
   const dataUrl = `data:image/jpg;base64,${base64String}`;
   const thumbnail = rotateImage(dataUrl, orientation)

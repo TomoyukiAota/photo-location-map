@@ -1,3 +1,4 @@
+import mixpanel from 'mixpanel-browser';
 import { createPrependedLogger } from '../../log/create-prepended-logger';
 import { AnalyticsConfig } from '../config/analytics-config';
 import { MixpanelConfig } from '../config/mixpanel-config';
@@ -16,11 +17,8 @@ export class MixpanelBrowserWrapper {
     mixpanelLogger.info(`Project Token: ${projectToken}`);
     mixpanelLogger.info(`Distinct ID: ${distinctId}`);
 
-    // Avoid import at the top of the file to avoid loading mixpanel-browser in the main process.
-    // As of Oct 2022, there is no problem in loading mixpanel-browser in the main process,
-    // but this is a preventative measure because mixpanel-browser is designed to be used in web browsers.
-    const module = require('mixpanel-browser');
-    this.mixpanel = module.default ?? module;
+    // Only the renderer loads this file (src/analytics-setup.ts): mixpanel-browser is for web browsers.
+    this.mixpanel = mixpanel;
 
     this.mixpanel.init(projectToken);
     this.mixpanel.identify(distinctId);

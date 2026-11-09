@@ -3,7 +3,7 @@ import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TableVirtualScrollDataSource, TableVirtualScrollModule } from 'ng-table-virtual-scroll';
 import { Analytics } from '../../../../../src-shared/analytics/analytics';
-import { openContainingFolder, openWithAssociatedApp } from '../../../../../src-shared/command/command';
+import { openContainingFolder, openWithAssociatedApp } from '../../../shared/open-with-os';
 import { createPrependedLogger } from '../../../../../src-shared/log/create-prepended-logger';
 import { IconDataUrl } from '../../../../assets/icon-data-url';
 import { ThumbnailGenerationService } from '../../service/thumbnail-generation.service';
