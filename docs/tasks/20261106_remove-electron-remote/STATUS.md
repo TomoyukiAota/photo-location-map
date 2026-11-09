@@ -6,22 +6,24 @@ the existence of a plan or from an agent's previous messages.
 
 ## Current checkpoint
 
-- State: DONE HERE, waiting for the owner. Stages 0, A, B, C1 and C2 accepted, and final C verified ("Final C
-  notes"). Stage C2 is on its branch `claude/isolate-photo-data-viewer`: a6f70a51, which is b6a4bfa3, the measured
-  build's source, rebased onto the C1 branch's CI fixes (08aaed71). On 2026-11-09, the owner's Windows PC measured
-  series rer-2-C2w of 0, C1 at 2fc31672 and C2 at 080a8217 (RESULTS.md, "Stages C1 and C2 on Windows"); its summary
-  came as 73bd5f66, and the commit on it records its analysis (2026-11-10). C1 and C2 stay accepted with its three
-  regressions against 0 ("Stage C2 notes"). Left: the owner's decisions (section "Questions for the owner"), the
-  viewer's deployment first.
+- State: DONE, by the owner's decisions of 2026-11-10. Stages 0, A, B, C1 and C2 accepted, and final C verified
+  ("Final C notes"). Stage C2 is on its branch `claude/isolate-photo-data-viewer`: a6f70a51, which is b6a4bfa3, the
+  measured build's source, rebased onto the C1 branch's CI fixes (08aaed71). On 2026-11-09, the owner's Windows PC
+  measured series rer-2-C2w of 0, C1 at 2fc31672 and C2 at 080a8217 (RESULTS.md, "Stages C1 and C2 on Windows"); its
+  summary came as 73bd5f66, and 93dd336e records its analysis. C1 and C2 stay accepted with its three regressions
+  against 0 ("Stage C2 notes"). On 2026-11-10 the owner found the performance sound, kept stage C2 as it is, with the
+  URL, and handed over the rest of the work up to the implementation in both repositories, with no release of Photo
+  Location Map: Photo Data Viewer's pull request 72 is merged (c6f1c01e) and deployed, pull request 676 is merged into
+  main (006a6343), and this branch follows it as pull request 677. Left for the owner: a release, when wanted.
 - Authorization: on 2026-11-09 the owner started the implementation, to run until
   the plan is complete, with questions for the owner collected for the end
   (section "Questions for the owner" below). Merging and publishing the separate
   viewer still need their own approval (PLAN.md).
 - Final target: C, via measured 0 -> A -> B -> C1 -> C2. C1 alone is incomplete C.
-- Branches: `claude/remove-electron-remote` (stages A to C1, pull request 676) and, from it,
-  `claude/isolate-photo-data-viewer` (stage C2, draft pull request 677, based on 676's branch).
-  `claude/windows-performance-series` (73bd5f66, the Windows series' summary, now in C2's branch) stays on origin
-  until the owner decides whether to delete it.
+- Branches: `claude/remove-electron-remote` (stages A to C1, pull request 676, merged into main on 2026-11-10) and
+  `claude/isolate-photo-data-viewer` (stage C2, pull request 677, on main since). `claude/windows-performance-series`
+  (73bd5f66, the Windows series' summary, in C2's branch) is deleted once 677 is merged, with the rest of the work
+  that the owner handed over.
 - Last accepted IMPLEMENTATION stage: C2 (a6f70a51), with C1 (0aefe3fc) and its CI fixes (08aaed71) below it.
   The fixes for the review of pull request 676 (d088a836, on its branch) are merged into this branch, and the
   viewer's window logs a failed preload as the main window's does. With both: build, lint, unit tests (Vitest 96;
@@ -40,17 +42,22 @@ the existence of a plan or from an agent's previous messages.
 - CI of draft pull request 677 (080a8217, as at ca87fb49 and e10f7a49): on Ubuntu, Windows and macOS, only the four
   View Data cases fail, as they must against the viewer that production serves, which does not know the bridge; the
   other cases pass (38, 40 and 39). Not to be rerun: they pass once the viewer is deployed. 73bd5f66 has `[skip ci]`
-  and ran none.
-- This Mac: Xcode 27.2 was installed at 09:30 (Asia/Tokyo) on 2026-11-09 and waits for its license to be accepted
-  (`sudo xcodebuild -license`, the owner's). Until then, `git`, `python3` and the notarization tools fail through
-  their `/usr/bin` shims, and run through the Command Line Tools with
-  `DEVELOPER_DIR=/Library/Developer/CommandLineTools`.
+  and ran none. The viewer is deployed since 2026-11-10, and Mergify merges the pull request only once all three
+  test jobs pass. 93dd336e's run straddled the deployment: macOS ran its View Data cases after it and passed them
+  all, and Windows passed the three that it ran after it; Ubuntu's four and Windows' first, which ran before it,
+  failed as above, and their jobs were rerun.
+- This Mac: Xcode 27.2 was installed at 09:30 (Asia/Tokyo) on 2026-11-09, and its license was accepted at 09:51
+  the same day (`/Library/Preferences/com.apple.dt.Xcode.plist`; `xcodebuild -license check` passes), which this
+  record missed until 2026-11-10. Before that, `git`, `python3` and the notarization tools failed through their
+  `/usr/bin` shims, and ran through the Command Line Tools with `DEVELOPER_DIR=/Library/Developer/CommandLineTools`;
+  they need it no more.
 - Task-owned processes: none. Both Photo Data Viewer servers were stopped on 2026-11-09 after the last series;
   restart one with the command in "Artifacts" below when a test needs it.
-- External viewer changes/deployments: Photo Data Viewer's change for the bridge is open as
-  https://github.com/TomoyukiAota/photo-data-viewer/pull/72 (6fe8814, its CI green), not merged, so not deployed.
-  With the viewer that production serves, stage C2's window shows nothing and logs that its page did not ask for
-  its photo, as designed (checked with 1ff7a50 on port 3130).
+- External viewer changes/deployments: Photo Data Viewer's change for the bridge,
+  https://github.com/TomoyukiAota/photo-data-viewer/pull/72 (6fe8814, its CI green), was merged on 2026-11-10
+  (c6f1c01e) and deployed: production, https://pdv-in-plm.vercel.app/, serves build dzAaBBkEEgsA9XOfR8x12 instead of
+  VqTPTJF1JHNCsQCU8-7qg, and its scripts have the bridge. With the viewer of before, stage C2's window showed nothing
+  and logged that its page did not ask for its photo, as designed (checked with 1ff7a50 on port 3130).
 
 ## Resume first action
 
@@ -156,8 +163,8 @@ data only in windows wider than 1200 pixels.
 | 0 | ACCEPTED | Instrumentation fb581a26, harness 50670795, protocol c67935b4; packaged app `artifacts/0/` (code e6a1d1e7c0b2) | Lint, unit (Vitest 89; Electron-Mocha 136 main, 70 renderer) and headless e2e (40 passed, 1 Windows-only skipped) pass on fb581a26's build | Pilot (12/12 ok) set rer-1; baseline rer-1-0 40/40 ok, viewer unchanged (RESULTS.md); rer-2 retimes two metrics in the page, and its series rerun 0 beside each stage | Done |
 | A / 1 | ACCEPTED | 235d6172; packaged app `artifacts/A/` | Build, lint, unit (Vitest 89; Electron-Mocha 144 main, 66 renderer), dependency-compat (4), package-runner (19), headless e2e (40 passed, 1 Windows-only skipped) and live reload pass; packaged tree has no @electron/remote | rer-2-A: 88/88 ok; folder opening 12 % faster, 101 within budget, one frame-quantized driver latency (RESULTS.md) | Done |
 | B / 2 | ACCEPTED | f5b5f7b1; packaged app `artifacts/B/` | Build, lint, unit (Vitest 89; Electron-Mocha 147 main and 2 pending, 69 renderer), dependency-compat (4), package-runner (19), headless e2e (43 passed, 1 Windows-only skipped) and live reload pass | rer-2-B: 132/132 ok; against 0, A's folder-opening gains (6 improvements) and 102 within budget; against A, all 108 within budget (RESULTS.md) | Done |
-| C1 / 3 main window | ACCEPTED | 0aefe3fc; packaged app `artifacts/C1/` (earlier ones in `artifacts/C1-ac6a51ad/`, `artifacts/C1-f3cabca8/`) | Build, lint, unit (Vitest 96; Electron-Mocha 181 main and 2 pending, 62 renderer, now with the real preload), dependency-compat (4), package-runner (19) and live reload pass; headless e2e passes at 0aefe3fc on the checkout (44, 1 Windows-only skipped), on `ng serve` (44) and on the package (43, 2 skipped); 100 harness launches of f3cabca8 all started; see "Stage C1 notes" | rer-2-C1 (ac6a51ad) found 3 regressions, fixed; rer-2-C1b (f3cabca8) 132/132 ok and rer-2-C1c (0aefe3fc, open-folder) 33/33 ok: home view 6 to 8 % earlier than B, folder opening as B, two explained moves of work. On Windows, rer-2-C2w (2fc31672): against 0, 17 improvements, the folder opening 47 % sooner, and 3 regressions kept with their reasons, the folder's tree 5 to 6 ms longer (not understood) and the bootstrap on a used profile, time moved from the renderer's modules (RESULTS.md) | Done |
-| C2 / 3 viewer | ACCEPTED here; release gated on the viewer's deployment | a6f70a51 (b6a4bfa3 before the rebase onto 08aaed71); packaged app `artifacts/C2/`, of b6a4bfa3; viewer 568b8ab (its pull request 72, not merged) | Build, lint, unit (Vitest 96; Electron-Mocha 194 main and 2 pending, 62 renderer); headless e2e on the checkout (44, 1 Windows-only skipped) and the package (43, 2 skipped); the new viewer in stage 0's and C1's packages (4 of 4 each) and in its own Electron tests (Electron 32.0.2 and 45.2.1); see "Stage C2 notes" | rer-2-C2: 176/176 ok; against C1, 104 within budget and 4 improvements, no regression; the URL transport kept (IPC within budget everywhere); startup disturbed by the computer's load. rer-2-C2s, startup again: against C1, all 30 within budget. rer-2-C2v: the new viewer in stage 0's window, all 31 View Data metrics within budget. On Windows, rer-2-C2w (080a8217): against C1, 86 within budget and 4 improvements, no regression, the JPEG shown 56 to 69 ms later, within budget; against 0, C1's 3 regressions; 3 View Data trials failed on a race of the harness (RESULTS.md) | Done here, with final C ("Final C notes"). Left: the owner's decisions (questions 2 to 7): the viewer's deployment first, then merging and releasing |
+| C1 / 3 main window | ACCEPTED | 0aefe3fc; packaged app `artifacts/C1/` (earlier ones in `artifacts/C1-ac6a51ad/`, `artifacts/C1-f3cabca8/`) | Build, lint, unit (Vitest 96; Electron-Mocha 181 main and 2 pending, 62 renderer, now with the real preload), dependency-compat (4), package-runner (19) and live reload pass; headless e2e passes at 0aefe3fc on the checkout (44, 1 Windows-only skipped), on `ng serve` (44) and on the package (43, 2 skipped); 100 harness launches of f3cabca8 all started; see "Stage C1 notes" | rer-2-C1 (ac6a51ad) found 3 regressions, fixed; rer-2-C1b (f3cabca8) 132/132 ok and rer-2-C1c (0aefe3fc, open-folder) 33/33 ok: home view 6 to 8 % earlier than B, folder opening as B, two explained moves of work. On Windows, rer-2-C2w (2fc31672): against 0, 17 improvements, the folder opening 47 % sooner, and 3 regressions kept with their reasons, the folder's tree 5 to 6 ms longer (not understood) and the bootstrap on a used profile, time moved from the renderer's modules (RESULTS.md) | Done: merged into main by pull request 676 on 2026-11-10 (006a6343) |
+| C2 / 3 viewer | ACCEPTED; its viewer deployed on 2026-11-10 | a6f70a51 (b6a4bfa3 before the rebase onto 08aaed71); packaged app `artifacts/C2/`, of b6a4bfa3; viewer 568b8ab, then 6fe8814 (its pull request 72, merged and deployed on 2026-11-10) | Build, lint, unit (Vitest 96; Electron-Mocha 194 main and 2 pending, 62 renderer); headless e2e on the checkout (44, 1 Windows-only skipped) and the package (43, 2 skipped); the new viewer in stage 0's and C1's packages (4 of 4 each) and in its own Electron tests (Electron 32.0.2 and 45.2.1); see "Stage C2 notes" | rer-2-C2: 176/176 ok; against C1, 104 within budget and 4 improvements, no regression; the URL transport kept (IPC within budget everywhere); startup disturbed by the computer's load. rer-2-C2s, startup again: against C1, all 30 within budget. rer-2-C2v: the new viewer in stage 0's window, all 31 View Data metrics within budget. On Windows, rer-2-C2w (080a8217): against C1, 86 within budget and 4 improvements, no regression, the JPEG shown 56 to 69 ms later, within budget; against 0, C1's 3 regressions; 3 View Data trials failed on a race of the harness (RESULTS.md) | Done, with final C ("Final C notes"): after the viewer's deployment and the merge of 676 (2026-11-10), this branch goes into main as pull request 677. No release (owner, 2026-11-10) |
 
 ## Stage C1 notes
 
@@ -316,7 +323,8 @@ longer, as time that moved from the renderer's modules. Three View Data trials f
 ## Final C notes
 
 `npm run package:mac` at e10f7a49 (stage C2 on the C1 branch's CI fixes), in the background, with
-`DEVELOPER_DIR=/Library/Developer/CommandLineTools` while Xcode's license waits (Current checkpoint):
+`DEVELOPER_DIR=/Library/Developer/CommandLineTools`, which this record then took to be needed, though Xcode's
+license had been accepted at 09:51 (Current checkpoint):
 
 - Signed with the Developer ID Application certificate and notarized: the notarization took from 01:25:31 to 01:27:54
   (UTC), and the build gave no warning but the Angular build's 14 about CommonJS modules (23 at stage 0).
@@ -425,9 +433,9 @@ records what is assumed meanwhile.
 | # | Question | Assumed meanwhile |
 | ---: | --- | --- |
 | 1 | The performance series run on this Mac only; a Windows series needs the owner's Windows PC. Run it there, or accept macOS-only evidence? | Answered on 2026-11-09: the owner runs it on the Windows PC. Run there on 2026-11-09 as series rer-2-C2w, of 0 (fb581a26), C1 (2fc31672) and C2 (080a8217), all with the viewer 6fe8814, and recorded on 2026-11-10 (RESULTS.md, "Stages C1 and C2 on Windows"). Done. |
-| 2 | Merge Photo Data Viewer's pull request 72 (https://github.com/TomoyukiAota/photo-data-viewer/pull/72), which deploys it to production? It keeps working in 1.12.1's window, and stage C2's window needs it. | Not merged. Stage C2's pull request stays a draft; its View Data cases fail in CI against the production viewer until then. |
-| 3 | Merge pull request 676 (stages A to C1)? | Not merged. |
-| 4 | Once the viewer is deployed, merge stage C2's pull request, and release? | Not merged; nothing released. A release with C2 must come after the viewer's deployment. |
-| 5 | Accept the license of Xcode 27.2, installed on this Mac at 09:30 on 2026-11-09 (`sudo xcodebuild -license`)? | The tools run through the Command Line Tools meanwhile (Current checkpoint). |
-| 6 | The check of the folders that the user opened compares paths as written, so a symbolic link in such a folder to a photo outside it gives the page that photo's EXIF and thumbnail, and opens it with the OS (raised three times by the automated review of pull request 676, outside its diff). The folder's tree follows links, as directory-tree does by default, so the app shows and reads such photos, as before this change; checking a link's target would refuse them. Keep that, or check the targets in a follow-up, with the tree leaving such links out? | Kept, and recommended for this change: the behavior with links is unchanged, and using such a link needs a compromised page and a link that the user put in the folder. |
-| 7 | Measure stage C2's other transport, the photo's bytes over IPC, on Windows too? On the owner's Windows PC, C2, which gives the viewer its photo by the URL, shows the JPEG 56 to 69 ms later than C1, within budget (RESULTS.md, "Stages C1 and C2 on Windows"), where on the Mac it was 6 to 12 ms later; the transport rule ("Stage C2 notes") was applied on the Mac only, where IPC showed the photo 16 to 20 ms sooner, within budget everywhere. | Not measured; the URL stays, as on the Mac. |
+| 2 | Merge Photo Data Viewer's pull request 72 (https://github.com/TomoyukiAota/photo-data-viewer/pull/72), which deploys it to production? It keeps working in 1.12.1's window, and stage C2's window needs it. | Merged on 2026-11-10 (c6f1c01e), with the rest of the work that the owner handed over, and deployed: production serves build dzAaBBkEEgsA9XOfR8x12, with the bridge. Done. |
+| 3 | Merge pull request 676 (stages A to C1)? | Merged into main on 2026-11-10 (006a6343), once main's #675 was merged into it (c99340fd) and its CI passed. Done. |
+| 4 | Once the viewer is deployed, merge stage C2's pull request, and release? | The owner (2026-11-10): merge stage C2's pull request, now that the viewer is deployed, and release nothing for now. Pull request 677 is merged after this record, once its CI passes; nothing is released. |
+| 5 | Accept the license of Xcode 27.2, installed on this Mac at 09:30 on 2026-11-09 (`sudo xcodebuild -license`)? | Already accepted, at 09:51 on 2026-11-09, as the owner pointed out on 2026-11-10: `xcodebuild -license check` passes, and the tools run without the Command Line Tools. Done. |
+| 6 | The check of the folders that the user opened compares paths as written, so a symbolic link in such a folder to a photo outside it gives the page that photo's EXIF and thumbnail, and opens it with the OS (raised three times by the automated review of pull request 676, outside its diff). The folder's tree follows links, as directory-tree does by default, so the app shows and reads such photos, as before this change; checking a link's target would refuse them. Keep that, or check the targets in a follow-up, with the tree leaving such links out? | Kept, and recommended for this change: the behavior with links is unchanged, and using such a link needs a compromised page and a link that the user put in the folder. Kept as recommended when the owner handed over the rest of the work (2026-11-10). |
+| 7 | Measure stage C2's other transport, the photo's bytes over IPC, on Windows too? On the owner's Windows PC, C2, which gives the viewer its photo by the URL, shows the JPEG 56 to 69 ms later than C1, within budget (RESULTS.md, "Stages C1 and C2 on Windows"), where on the Mac it was 6 to 12 ms later; the transport rule ("Stage C2 notes") was applied on the Mac only, where IPC showed the photo 16 to 20 ms sooner, within budget everywhere. | The owner (2026-11-10): the performance is sound, and stage C2 stays as it is, with the URL; IPC is not measured on Windows. Done. |
