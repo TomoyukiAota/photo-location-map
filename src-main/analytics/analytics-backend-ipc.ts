@@ -12,6 +12,7 @@ export class AnalyticsBackendIpcChannelName {
   public static readonly trackEvent = 'analytics-backend-track-event';
 }
 
+/** Whether `field` is absent (undefined or null) or of one of the `types`. */
 function isOptional(field: unknown, ...types: string[]): boolean {
   return field === undefined || field === null || types.includes(typeof field);
 }

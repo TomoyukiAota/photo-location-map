@@ -57,6 +57,7 @@ const apps = values.app.map(entry => {
 for (const label of Object.keys(appEnv))
   if (!apps.some(app => app.label === label)) throw new Error(`--app-env names ${label}, which no --app is.`);
 
+/** The SHA-256 of `file`, in hexadecimal. */
 async function sha256(file) {
   const hash = createHash('sha256');
   for await (const chunk of createReadStream(file)) hash.update(chunk);

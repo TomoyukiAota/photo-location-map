@@ -29,6 +29,7 @@ export class SidebarUpperPaneComponent {
     reportFailure: error => Logger.warn('Could not restore or persist folder dialog history.', error),
   });
 
+  /** Shows the folder picker, starting in the last folder chosen, and opens the folder that the user chooses. */
   public async showOpenFolderDialog() {
     perfMark('open-folder:dialog-requested');
     // The main process shows the picker for this window (src-main/folder-dialog/).

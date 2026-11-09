@@ -27,6 +27,10 @@ export function thumbnailStates(srcFilePaths: string[], paths: ThumbnailCachePat
   return srcFilePaths.map(srcFilePath => thumbnailState(srcFilePath, paths));
 }
 
+/**
+ * Whether the thumbnail of `srcFilePath` was tried for the file as it is, and is cached; neither if that cannot be
+ * read.
+ */
 function thumbnailState(srcFilePath: string, paths: ThumbnailCachePaths): ThumbnailState {
   const thumbnailFilePath = paths.thumbnailFilePath(srcFilePath);
   try {

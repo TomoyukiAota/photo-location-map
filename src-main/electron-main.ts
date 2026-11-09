@@ -47,6 +47,7 @@ Logger.info(`Log File Location: ${LogFileConfig.filePath}`);
 
 export let mainWindow: BrowserWindow;
 
+/** Creates the main window, with its isolated page, keeps it on the app's page, and loads that page. */
 const createWindow = async () => {
   perfMark('main:create-window');
   StartupTime.markAppReady();

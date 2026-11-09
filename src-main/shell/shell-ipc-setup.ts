@@ -17,6 +17,7 @@ ipcMain.handle(IpcConstants.Shell.OpenExternal, (event, url: unknown) => {
   return shell.openExternal(url);
 });
 
+/** Throws unless `filePath` is in a folder that the user opened, the only files that the page may open with the OS. */
 function assertInUserChosenFolder(filePath: unknown): asserts filePath is string {
   if (!isInUserChosenFolder(filePath))
     throw new Error('Only a file or folder in a folder that the user opened can be opened with the OS.');

@@ -61,6 +61,10 @@ async function fetchExifrParseOutput(filePath: string): Promise<ExifrRead | null
   return read;
 }
 
+/**
+ * The app's Exif of what the main process read with exifr: the date, the size as shown, the location, the camera's make
+ * and the thumbnail. Null when nothing was read; throws when the thumbnail could not be extracted.
+ */
 async function createExifFromExifrParseOutput(read: ExifrRead | null, filePath: string): Promise<Exif> {
   if (!read)
     return null;

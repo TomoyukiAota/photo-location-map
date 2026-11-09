@@ -4,6 +4,7 @@ import { UserDataStorage } from '../../user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../user-data-storage/user-data-stroage-path';
 
 export class AnalyticsConfig {
+  /** The ID of this device's user: the one saved, or a new one, which only the main process saves. */
   public static get userId(): string {
     let userId: string;
 

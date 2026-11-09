@@ -19,6 +19,7 @@ export class OpenFolderDialogHistory {
               private readonly directoryCheckTimeoutMs = 1000) {
   }
 
+  /** The folder for the picker to start in: the last one chosen while it is still a folder, else undefined. */
   public async getDefaultPath(): Promise<string | undefined> {
     try {
       const directoryPath = this.lastConfirmedDirectory ?? this.dependencies.read();
@@ -56,6 +57,7 @@ export class OpenFolderDialogHistory {
     return boundedCheck;
   }
 
+  /** The folder chosen, remembered for the next picker, or undefined if cancelled; a failed save is only reported. */
   public rememberSelection(result: Pick<OpenDialogReturnValue, 'canceled' | 'filePaths'>): string | undefined {
     if (result.canceled || result.filePaths.length === 0)
       return undefined;

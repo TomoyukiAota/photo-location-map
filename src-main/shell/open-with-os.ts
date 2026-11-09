@@ -42,6 +42,7 @@ export function commandToOpenWithAssociatedApp(path: string, platform: string = 
   }
 }
 
+/** The command that shows `path` in its folder with `platform`'s file manager, or null on a platform without one. */
 export function commandToOpenContainingFolder(path: string, platform: string = os.platform()): OsCommand | null {
   switch (platform) {
     case 'win32':
@@ -64,6 +65,7 @@ function run(command: OsCommand): string {
   return [command.file, ...command.args].join(' ');
 }
 
+/** Opens `path` with the app that the OS associates with it, and warns when Windows may not open so long a path. */
 export function openWithAssociatedApp(path: string): void {
   const fileOrFolderName = pathModule.basename(path);
   const command = commandToOpenWithAssociatedApp(path);
@@ -81,6 +83,7 @@ export function openWithAssociatedApp(path: string): void {
   }
 }
 
+/** Shows `path` in its folder with the OS's file manager, and warns when Windows may not open so long a path. */
 export function openContainingFolder(path: string): void {
   const fileOrFolderName = pathModule.basename(path);
   const command = commandToOpenContainingFolder(path);

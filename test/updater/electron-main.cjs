@@ -104,6 +104,7 @@ function useApplicationUpdateSupport(realUpdater, trackEvent) {
   realUpdater.isUpdateSupported = standIn.isUpdateSupported;
 }
 
+/** Checks which versions look for an update at launch: none in development or for a prerelease, one otherwise. */
 async function verifyApplicationPolicy() {
   const actualVersion = require(path.join(repository, 'package.json')).version;
   const cases = [

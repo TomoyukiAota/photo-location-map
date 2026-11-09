@@ -42,6 +42,7 @@ async function writeTruncated(source, destination, bytes) {
   await writeFile(destination, (await readFile(source)).subarray(0, bytes));
 }
 
+/** The SHA-256 of `file`, in hexadecimal. */
 async function sha256(file) {
   const hash = createHash('sha256');
   for await (const chunk of createReadStream(file)) hash.update(chunk);
@@ -55,6 +56,7 @@ async function filesUnder(directory) {
     .sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
 }
 
+/** Makes the large workload in `directory`: 30 JPEGs and a movie per folder, 12 HEIC photos and two broken files. */
 async function makeLarge(directory) {
   for (let folder = 0; folder < folderNames.length; folder++) {
     for (let index = 0; index < 30; index++) {

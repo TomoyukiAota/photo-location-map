@@ -16,6 +16,7 @@ const rendererWriter: LogFileWriterInterface = {
 };
 
 export class LogFileWriter {
+  /** Appends `message` to the log file; as the logger does not wait for it, a failure is reported on the console. */
   public static async append(message: string): Promise<void> {
     if (EnvironmentDetector.isUnitTest)
       return;

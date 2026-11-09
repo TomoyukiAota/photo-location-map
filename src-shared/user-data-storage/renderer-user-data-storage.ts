@@ -15,6 +15,7 @@ import type { UserDataStorageBackend } from './user-data-storage';
 export class RendererUserDataStorage implements UserDataStorageBackend {
   private copy: Map<string, string> | undefined;
 
+  /** The page's copy of the settings, which the main process gives at its first use; throws if it refuses. */
   private get values(): Map<string, string> {
     if (!this.copy) {
       const entries = bridge().storage.snapshot();
@@ -25,6 +26,7 @@ export class RendererUserDataStorage implements UserDataStorageBackend {
     return this.copy;
   }
 
+  /** The value at `storagePath` in the page's copy of the settings; throws when there is none. */
   public read(storagePath: ReadonlyArray<string>): string {
     const value = this.values.get(storageKeyOf(storagePath));
     if (value === undefined)

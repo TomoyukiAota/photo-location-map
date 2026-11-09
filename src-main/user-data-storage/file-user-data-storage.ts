@@ -17,6 +17,7 @@ export class FileUserDataStorage implements UserDataStorageBackend {
     return path.join(this.app.getPath('userData'), FileUserDataStorage.subDirForStorage);
   }
 
+  /** The value at `storagePath`, from its JSON file; throws when the file is not there. */
   public read(storagePath: ReadonlyArray<string>): string {
     const { filePath, key } = this.getFilePathAndKey(storagePath);
 
@@ -39,6 +40,7 @@ export class FileUserDataStorage implements UserDataStorageBackend {
     return Promise.resolve();
   }
 
+  /** The file of `storagePath` and the key in it: its last segment names both, in the folders that the others name. */
   private getFilePathAndKey(storagePath: ReadonlyArray<string>): { filePath: string; key: string } {
     if (!storagePath || !storagePath.length) {
       throw new Error('storagePath needs to be a string array which contains at least 1 element.');

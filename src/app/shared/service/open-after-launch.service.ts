@@ -14,6 +14,7 @@ export class OpenAfterLaunchService {
   private photoDataService = inject(PhotoDataService);
   private photoSelectionHistoryService = inject(PhotoSelectionHistoryService);
 
+  /** Opens what `--open` gave at launch, if anything. */
   public async openAfterLaunchIfNeeded() {
     // The main process reads `--open`, and finds out what the path is.
     const target = await bridge().commandLine.openTarget();
@@ -21,6 +22,9 @@ export class OpenAfterLaunchService {
     await this.openAfterLaunch(target);
   }
 
+  /**
+   * Opens the folder of `target`, or a file's folder and selects the file if it has a location; throws if it failed.
+   */
   private async openAfterLaunch(target: Exclude<OpenTarget, { kind: 'none' }>) {
     const specifiedPath = target.path;
     Logger.info(`[Open After Launch] Opening "${specifiedPath}"`);

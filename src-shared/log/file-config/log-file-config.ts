@@ -14,6 +14,7 @@ interface LogFileConfigState {
 export class LogFileConfig {
   private static config: LogFileConfigState | undefined;
 
+  /** Sets where the log file is, once, in the main process only. */
   public static setup(dirName: string, fileName: string, pathSeparator: string) {
     if (!ProcessIdentifier.isElectronMain)
       throw new Error('LogFileConfig can be set up from Electron main process only.');
@@ -22,6 +23,7 @@ export class LogFileConfig {
     this.config = { dirName, fileName, filePath: `${dirName}${pathSeparator}${fileName}` };
   }
 
+  /** Where the log file is: as the main process set it up, or, in a renderer, as its startup metadata says. */
   private static get state(): LogFileConfigState {
     if (!ProcessIdentifier.isElectron)
       throw new Error('Use of this method from non-Electron process is not expected.');

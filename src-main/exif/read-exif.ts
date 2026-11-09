@@ -19,6 +19,7 @@ const exifrOptions = {
   ],
 };
 
+/** An error as one line for the log: its name and message, or what was thrown as a string. */
 const describe = (error: unknown): string => (error instanceof Error ? `${error.name}: ${error.message}` : String(error));
 
 /** Only the fields the app uses, so that IPC copies no more than it needs. */

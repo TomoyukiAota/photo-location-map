@@ -25,6 +25,7 @@ export class UserDataStorage {
     backend = newBackend;
   }
 
+  /** Where the settings are kept: set by the main process at its startup, and a copy from it in a renderer. */
   private static get backend(): UserDataStorageBackend {
     if (!backend) {
       if (ProcessIdentifier.isElectronMain)

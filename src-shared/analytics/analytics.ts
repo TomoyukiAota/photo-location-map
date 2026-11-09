@@ -25,6 +25,7 @@ export function useAnalytics(processAnalytics: AnalyticsInterface): void {
 }
 
 export class Analytics {
+  /** Sends an event, or keeps up to 1000 until the process's analytics are set up; none in unit tests. */
   public static trackEvent(category: string, action: string, label?: string, value?: string | number): void {
     if (EnvironmentDetector.isUnitTest)
       return;
