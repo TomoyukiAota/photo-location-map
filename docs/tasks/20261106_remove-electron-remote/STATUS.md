@@ -350,9 +350,10 @@ license had been accepted at 09:51 (Current checkpoint):
 
 Known weaknesses of the harness, found with series rer-2-C2w (1 to 3) and by the automated review of pull request
 677 (4 and 5), and left as they are for now, as the owner decided for the first three (2026-11-10). Fix them before
-the next series; once fixed, record the change and check that no span's endpoints move (PERFORMANCE.md). 1 and 2 did
-not happen in rer-2-C2w, 3 is the likely cause of its three failed trials (whether C1's changes play a part is not
-known), and no series met 4 or 5. Only Windows can check 1.
+the next series; once fixed, record the change and check that no span's endpoints move (PERFORMANCE.md). In
+rer-2-C2w, 2 did not happen, nothing shows that 1 did, though nothing rules it out either (below), 3 is the likely
+cause of its three failed trials (whether C1's changes play a part is not known), and no series met 4 or 5. Only
+Windows can check 1.
 
 1. On Windows, `close()` in `test/performance/lib/app.mjs` cannot end an app that is stuck. Its two kills, after the
    timeout (lines 137 to 142) and when Playwright says that the app closed while it still runs (lines 148 to 151),
@@ -363,7 +364,8 @@ known), and no series met 4 or 5. Only Windows can check 1.
    `close()` waits, so round 2's two could also have failed in the first cycle and waited for `close()` to give up:
    their lengths cannot tell. Had they, only cmd.exe would have been killed, and the app would have stayed. The run's
    check every 5 minutes never found two main processes of the app, and the Windows session found none left after
-   the series (not recorded).
+   the series (not recorded). That does not rule it out: an app left running that ended within 5 minutes would have
+   shared the computer with the trials after it, unseen. So whether 1 disturbed the series is not known.
 2. Two promises in `test/performance/lib/scenarios.mjs` are made before a click and awaited after it: `markers`
    (lines 100 to 104, on the first open only) and `closed` (lines 327 to 331). When a trial fails between the two,
    nothing awaits them; their rejection when the app closes is then unhandled and ends run.mjs. It is the failure
