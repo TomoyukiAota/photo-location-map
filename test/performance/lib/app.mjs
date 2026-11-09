@@ -11,6 +11,16 @@ import { fileURLToPath } from 'node:url';
 const require = createRequire(import.meta.url);
 export const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 
+/**
+ * The folder of a packaged app's own code, as electron-builder lays out a build without asar: the bundle's
+ * Contents/Resources/app on macOS, and resources/app beside the executable on Windows and Linux.
+ */
+export function packagedAppRoot(executable, platform = process.platform) {
+  const paths = platform === 'win32' ? path.win32 : path.posix;
+  const directory = paths.dirname(executable);
+  return platform === 'darwin' ? paths.join(directory, '..', 'Resources', 'app') : paths.join(directory, 'resources', 'app');
+}
+
 /** A temporary profile, which removeProfile deletes. */
 export async function newProfile() {
   return mkdtemp(path.join(tmpdir(), 'plm-perf-'));

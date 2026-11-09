@@ -12,7 +12,7 @@ import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
-import { root } from './lib/app.mjs';
+import { packagedAppRoot, root } from './lib/app.mjs';
 import { scenarios } from './lib/scenarios.mjs';
 
 const { values } = parseArgs({ options: {
@@ -56,9 +56,9 @@ async function sha256(file) {
 
 /** A hash of the application's own code (not node_modules), which tells two builds apart. */
 async function codeHash(target) {
-  const appRoot = target.executable
-    ? path.resolve(path.dirname(target.executable), '../Resources/app')
-    : root;
+  const appRoot = target.executable ? packagedAppRoot(target.executable) : root;
+  if (target.executable && !(await stat(appRoot).catch(() => null))?.isDirectory())
+    throw new Error(`No code of the app at ${appRoot}: give the executable of a directory build (electron-builder --dir).`);
   const entries = [];
   for (const part of ['dist', 'src-main', 'src-shared', 'electron-util']) {
     const directory = path.join(appRoot, part);
