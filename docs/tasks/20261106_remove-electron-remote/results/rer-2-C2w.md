@@ -109,3 +109,114 @@ Complete: yes. Trials: {"0":{"open-folder":{"ok":10,"failed":0,"interrupted":0,"
 | view-data.jpeg.request-to-metadata-ms | 765 (10, 3.5) | 767 (9, 3.0) | 825 (9, 3.0) | +1.6 (+0.2 %) within budget | +59.2 (+7.7 %) within budget |
 | view-data.jpeg.request-to-page-loaded-ms | 185 (10, 3.4) | 182 (9, 3.0) | 165 (9, 6.3) | -3.4 (-1.8 %) within budget | -20.4 (-11.0 %) improvement |
 | view-data.jpeg.window-created-to-page-loaded-ms | 174 (10, 3.3) | 171 (9, 3.2) | 153 (9, 5.5) | -3.1 (-1.8 %) within budget | -20.3 (-11.7 %) improvement |
+
+Measured on the owner's Windows PC (RESULTS.md, "Stages C1 and C2 on Windows"). 0 is fb581a26, C1 2fc31672 and C2 080a8217, the heads of their branches; C2 gives the viewer its photo by its default transport, the URL. The viewer is 6fe8814 for every build. Three View Data trials failed, all in its three extra HEIC cycles: C2's in the warm-up round, and C1's and C2's in round 2.
+
+## C2 against C1
+
+The same trials, with C1 as the baseline.
+
+| Metric | C1 median (n, MAD) | C2 median (n, MAD) | C2 vs C1 |
+| --- | ---: | ---: | --- |
+| open-folder.cold.click-to-complete-ms | 1127 (10, 8.3) | 1125 (10, 5.1) | -2.0 (-0.2 %) within budget |
+| open-folder.cold.click-to-dialog-ms | 25.4 (10, 1.5) | 24.5 (10, 1.0) | -0.9 (-3.3 %) within budget |
+| open-folder.cold.dialog-ms | 1.6 (10, 0.2) | 1.6 (10, 0.2) | +0.0 (+0.0 %) within budget |
+| open-folder.cold.dialog-to-start-ms | 0.3 (10, 0.1) | 0.4 (10, 0.1) | +0.0 (+14.3 %) within budget |
+| open-folder.cold.directory-tree-ms | 51.8 (10, 0.5) | 51.6 (10, 0.8) | -0.2 (-0.5 %) within budget |
+| open-folder.cold.exif-files | 314 (10, 0.0) | 314 (10, 0.0) | +0.0 (+0.0 %) same |
+| open-folder.cold.exif-max-file-ms | 120 (10, 17.1) | 112 (10, 4.7) | -7.5 (-6.3 %) |
+| open-folder.cold.exif-parse-sum-ms | 223 (10, 1.8) | 226 (10, 2.4) | +3.4 (+1.5 %) |
+| open-folder.cold.exif-read-sum-ms | 664 (10, 3.5) | 673 (10, 5.9) | +8.9 (+1.3 %) |
+| open-folder.cold.exif-rotate-sum-ms | 8217 (10, 79.5) | 8240 (10, 48.9) | +22.7 (+0.3 %) |
+| open-folder.cold.exif-thumbnail-sum-ms | 152 (10, 1.6) | 154 (10, 1.8) | +2.3 (+1.5 %) |
+| open-folder.cold.finish-ms | 129 (10, 1.8) | 128 (10, 0.8) | -1.3 (-1.0 %) within budget |
+| open-folder.cold.main-event-loop-max-ms | 71.9 (10, 3.3) | 72.0 (10, 2.7) | +0.1 (+0.1 %) within budget |
+| open-folder.cold.main-event-loop-p99-ms | 21.7 (10, 1.4) | 21.8 (10, 0.5) | +0.1 (+0.4 %) within budget |
+| open-folder.cold.photo-data-ms | 913 (10, 7.8) | 916 (10, 7.6) | +2.8 (+0.3 %) within budget |
+| open-folder.cold.renderer-longtask-max-ms | 105 (10, 3.5) | 100 (10, 3.0) | -4.5 (-4.3 %) within budget |
+| open-folder.cold.renderer-longtask-total-ms | 105 (10, 3.5) | 100 (10, 3.0) | -4.5 (-4.3 %) within budget |
+| open-folder.cold.renderer-longtasks | 1.0 (10, 0.0) | 1.0 (10, 0.0) | +0.0 (+0.0 %) within budget |
+| open-folder.cold.renderer-max-frame-gap-ms | 132 (10, 6.8) | 125 (10, 6.9) | -6.9 (-5.2 %) within budget |
+| open-folder.cold.settled-main-ws-kb | 174948 (10, 968) | 176134 (10, 1520) | +1186 (+0.7 %) within budget |
+| open-folder.cold.settled-renderer-ws-kb | 198966 (10, 3582) | 197342 (10, 4828) | -1624 (-0.8 %) within budget |
+| open-folder.cold.start-to-complete-ms | 1101 (10, 8.1) | 1099 (10, 6.4) | -1.9 (-0.2 %) within budget |
+| open-folder.cold.start-to-markers-ms | 2127 (10, 11.1) | 2123 (10, 11.2) | -4.1 (-0.2 %) within budget |
+| open-folder.cold.start-to-thumbnails-done-ms | 11090 (10, 9.7) | 11088 (10, 7.0) | -1.9 (-0.0 %) within budget |
+| open-folder.cold.thumbnails-main-ms | 5561 (10, 15.7) | 5589 (10, 45.3) | +28.6 (+0.5 %) within budget |
+| open-folder.warm.click-to-complete-ms | 1127 (10, 32.2) | 1123 (10, 36.1) | -4.3 (-0.4 %) within budget |
+| open-folder.warm.click-to-dialog-ms | 26.4 (10, 2.0) | 26.9 (10, 1.7) | +0.5 (+1.9 %) within budget |
+| open-folder.warm.dialog-ms | 2.4 (10, 0.3) | 2.2 (10, 0.6) | -0.2 (-6.4 %) within budget |
+| open-folder.warm.dialog-to-start-ms | 0.2 (10, 0.0) | 0.2 (10, 0.1) | +0.0 (+0.0 %) within budget |
+| open-folder.warm.directory-tree-ms | 51.0 (10, 1.5) | 51.1 (10, 1.0) | +0.1 (+0.2 %) within budget |
+| open-folder.warm.exif-files | 314 (10, 0.0) | 314 (10, 0.0) | +0.0 (+0.0 %) same |
+| open-folder.warm.exif-max-file-ms | 148 (10, 24.0) | 112 (10, 25.7) | -35.8 (-24.2 %) |
+| open-folder.warm.exif-parse-sum-ms | 188 (10, 3.3) | 188 (10, 0.7) | -0.3 (-0.2 %) |
+| open-folder.warm.exif-read-sum-ms | 647 (10, 6.9) | 651 (10, 6.5) | +4.1 (+0.6 %) |
+| open-folder.warm.exif-rotate-sum-ms | 8415 (10, 341) | 8336 (10, 370) | -79.2 (-0.9 %) |
+| open-folder.warm.exif-thumbnail-sum-ms | 142 (10, 2.6) | 142 (10, 1.0) | -0.3 (-0.2 %) |
+| open-folder.warm.finish-ms | 122 (10, 0.7) | 122 (10, 2.3) | +0.4 (+0.3 %) within budget |
+| open-folder.warm.main-event-loop-max-ms | 22.2 (10, 1.9) | 22.4 (10, 1.4) | +0.2 (+1.0 %) within budget |
+| open-folder.warm.main-event-loop-p99-ms | 21.4 (10, 2.0) | 20.3 (10, 1.0) | -1.0 (-4.8 %) within budget |
+| open-folder.warm.photo-data-ms | 929 (10, 33.6) | 922 (10, 36.8) | -7.4 (-0.8 %) within budget |
+| open-folder.warm.renderer-longtask-max-ms | 0.0 (10, 0.0) | 0.0 (10, 0.0) | +0.0 () within budget |
+| open-folder.warm.renderer-longtask-total-ms | 0.0 (10, 0.0) | 0.0 (10, 0.0) | +0.0 () within budget |
+| open-folder.warm.renderer-longtasks | 0.0 (10, 0.0) | 0.0 (10, 0.0) | +0.0 () within budget |
+| open-folder.warm.renderer-max-frame-gap-ms | 42.2 (10, 3.3) | 40.2 (10, 0.9) | -2.0 (-4.9 %) within budget |
+| open-folder.warm.settled-main-ws-kb | 181022 (10, 1426) | 179244 (10, 1542) | -1778 (-1.0 %) within budget |
+| open-folder.warm.settled-renderer-ws-kb | 217196 (10, 10420) | 216234 (10, 7338) | -962 (-0.4 %) within budget |
+| open-folder.warm.start-to-complete-ms | 1101 (10, 32.6) | 1094 (10, 35.8) | -7.2 (-0.7 %) within budget |
+| settings.restart.click-to-exit-ms | 151 (10, 2.5) | 151 (10, 2.0) | +0.5 (+0.3 %) within budget |
+| settings.restart.click-to-home-rendered-ms | 870 (10, 12.1) | 876 (10, 4.8) | +5.6 (+0.6 %) within budget |
+| settings.restart.click-to-process-started-ms | 178 (10, 2.6) | 178 (10, 1.6) | +0.3 (+0.2 %) within budget |
+| settings.restart.process-to-home-rendered-ms | 693 (10, 8.1) | 697 (10, 7.2) | +3.4 (+0.5 %) within budget |
+| settings.save.click-to-closed-ms | 114 (10, 0.8) | 116 (10, 1.1) | +2.0 (+1.7 %) within budget |
+| settings.save.click-to-persisted-ms | 115 (10, 1.0) | 117 (10, 1.0) | +1.5 (+1.3 %) within budget |
+| startup.cold.bootstrap-done-ms | 827 (10, 4.2) | 838 (10, 11.8) | +11.2 (+1.3 %) within budget |
+| startup.cold.bootstrap-start-ms | 750 (10, 1.7) | 767 (10, 8.4) | +17.0 (+2.3 %) within budget |
+| startup.cold.close-ms | 93.5 (10, 1.5) | 92.0 (10, 1.0) | -1.5 (-1.6 %) within budget |
+| startup.cold.create-window-ms | 422 (10, 1.1) | 428 (10, 2.5) | +5.6 (+1.3 %) within budget |
+| startup.cold.did-finish-load-ms | 578 (10, 6.3) | 590 (10, 4.8) | +11.1 (+1.9 %) within budget |
+| startup.cold.home-rendered-ms | 878 (10, 5.3) | 890 (10, 9.4) | +11.2 (+1.3 %) within budget |
+| startup.cold.navigation-start-ms | 489 (10, 1.3) | 495 (10, 2.6) | +6.8 (+1.4 %) within budget |
+| startup.cold.process-started-ms | 38.8 (10, 0.4) | 39.1 (10, 0.4) | +0.3 (+0.8 %) within budget |
+| startup.cold.ready-to-show-ms | 584 (10, 5.6) | 595 (10, 4.9) | +11.2 (+1.9 %) within budget |
+| startup.cold.renderer-bootstrap-ms | 75.5 (10, 3.0) | 73.1 (10, 2.1) | -2.4 (-3.1 %) within budget |
+| startup.cold.renderer-modules-ms | 261 (10, 2.3) | 269 (10, 9.3) | +7.5 (+2.9 %) within budget |
+| startup.cold.settled-main-ws-kb | 145014 (10, 1106) | 144492 (10, 834) | -522 (-0.4 %) within budget |
+| startup.cold.settled-renderer-ws-kb | 169020 (10, 528) | 169116 (10, 704) | +96.0 (+0.1 %) within budget |
+| startup.cold.window-created-ms | 451 (10, 2.1) | 455 (10, 2.8) | +4.2 (+0.9 %) within budget |
+| startup.warm.bootstrap-done-ms | 777 (10, 5.5) | 775 (10, 4.8) | -2.3 (-0.3 %) within budget |
+| startup.warm.bootstrap-start-ms | 707 (10, 4.7) | 709 (10, 7.2) | +2.1 (+0.3 %) within budget |
+| startup.warm.close-ms | 80.0 (10, 1.0) | 80.5 (10, 1.0) | +0.5 (+0.6 %) within budget |
+| startup.warm.create-window-ms | 416 (10, 1.3) | 416 (10, 2.0) | +0.5 (+0.1 %) within budget |
+| startup.warm.did-finish-load-ms | 558 (10, 4.0) | 562 (10, 6.1) | +3.7 (+0.7 %) within budget |
+| startup.warm.home-rendered-ms | 829 (10, 7.4) | 827 (10, 5.0) | -1.8 (-0.2 %) within budget |
+| startup.warm.navigation-start-ms | 476 (10, 2.2) | 476 (10, 3.0) | +0.0 (+0.0 %) within budget |
+| startup.warm.process-started-ms | 38.0 (10, 0.7) | 38.0 (10, 0.5) | -0.0 (-0.1 %) within budget |
+| startup.warm.ready-to-show-ms | 566 (10, 3.6) | 564 (10, 6.0) | -1.3 (-0.2 %) within budget |
+| startup.warm.renderer-bootstrap-ms | 67.4 (10, 6.9) | 63.3 (10, 2.4) | -4.2 (-6.2 %) within budget |
+| startup.warm.renderer-modules-ms | 232 (10, 6.2) | 230 (10, 5.9) | -1.6 (-0.7 %) within budget |
+| startup.warm.settled-main-ws-kb | 143652 (10, 298) | 144202 (10, 836) | +550 (+0.4 %) within budget |
+| startup.warm.settled-renderer-ws-kb | 153240 (10, 1028) | 152990 (10, 152) | -250 (-0.2 %) within budget |
+| startup.warm.window-created-ms | 441 (10, 1.9) | 441 (10, 1.9) | +0.0 (+0.0 %) within budget |
+| view-data.heic.launch-to-window-created-ms | 12.1 (9, 0.2) | 12.1 (9, 0.5) | +0.0 (+0.1 %) within budget |
+| view-data.heic.menu-to-request-ms | 22.6 (9, 0.5) | 23.6 (9, 1.0) | +1.0 (+4.4 %) within budget |
+| view-data.heic.request-to-image-ms | 1268 (9, 8.0) | 1283 (9, 10.3) | +15.7 (+1.2 %) within budget |
+| view-data.heic.request-to-launch-ms | 0.2 (9, 0.1) | 0.1 (9, 0.1) | -0.1 (-59.7 %) within budget |
+| view-data.heic.request-to-metadata-ms | 1270 (9, 8.1) | 1288 (9, 11.4) | +18.6 (+1.5 %) within budget |
+| view-data.heic.request-to-page-loaded-ms | 157 (9, 1.5) | 130 (9, 4.9) | -27.4 (-17.4 %) improvement |
+| view-data.heic.window-created-to-page-loaded-ms | 146 (9, 1.1) | 117 (9, 3.6) | -28.6 (-19.6 %) improvement |
+| view-data.jpeg-first.launch-to-window-created-ms | 20.9 (9, 0.4) | 20.5 (9, 0.4) | -0.4 (-1.7 %) within budget |
+| view-data.jpeg-first.menu-to-request-ms | 22.8 (9, 1.1) | 22.5 (9, 1.3) | -0.3 (-1.3 %) within budget |
+| view-data.jpeg-first.request-to-image-ms | 760 (9, 1.7) | 828 (9, 11.6) | +68.8 (+9.1 %) within budget |
+| view-data.jpeg-first.request-to-launch-ms | 0.3 (9, 0.2) | 0.3 (9, 0.1) | -0.0 (-10.0 %) within budget |
+| view-data.jpeg-first.request-to-metadata-ms | 783 (9, 1.7) | 846 (9, 6.7) | +62.7 (+8.0 %) within budget |
+| view-data.jpeg-first.request-to-page-loaded-ms | 205 (9, 1.2) | 186 (9, 2.1) | -19.2 (-9.4 %) within budget |
+| view-data.jpeg-first.window-created-to-page-loaded-ms | 184 (9, 1.4) | 165 (9, 2.4) | -19.1 (-10.4 %) improvement |
+| view-data.jpeg.launch-to-window-created-ms | 11.6 (9, 0.1) | 11.6 (9, 0.3) | +0.0 (+0.3 %) within budget |
+| view-data.jpeg.menu-to-request-ms | 22.6 (9, 0.4) | 22.2 (9, 0.5) | -0.4 (-1.8 %) within budget |
+| view-data.jpeg.request-to-image-ms | 745 (9, 2.4) | 801 (9, 4.9) | +56.0 (+7.5 %) within budget |
+| view-data.jpeg.request-to-launch-ms | 0.1 (9, 0.3) | 0.1 (9, 0.1) | -0.1 (-45.6 %) within budget |
+| view-data.jpeg.request-to-metadata-ms | 767 (9, 3.0) | 825 (9, 3.0) | +57.6 (+7.5 %) within budget |
+| view-data.jpeg.request-to-page-loaded-ms | 182 (9, 3.0) | 165 (9, 6.3) | -17.0 (-9.4 %) within budget |
+| view-data.jpeg.window-created-to-page-loaded-ms | 171 (9, 3.2) | 153 (9, 5.5) | -17.2 (-10.1 %) improvement |

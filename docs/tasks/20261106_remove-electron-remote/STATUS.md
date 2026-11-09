@@ -1,6 +1,6 @@
 # Execution status and handoff
 
-Updated 2026-11-09 (Asia/Tokyo). This file is the execution ledger; keep it current
+Updated 2026-11-10 (Asia/Tokyo). This file is the execution ledger; keep it current
 after every meaningful result and before stopping. Do not infer completion from
 the existence of a plan or from an agent's previous messages.
 
@@ -8,8 +8,11 @@ the existence of a plan or from an agent's previous messages.
 
 - State: DONE HERE, waiting for the owner. Stages 0, A, B, C1 and C2 accepted, and final C verified ("Final C
   notes"). Stage C2 is on its branch `claude/isolate-photo-data-viewer`: a6f70a51, which is b6a4bfa3, the measured
-  build's source, rebased onto the C1 branch's CI fixes (08aaed71). Left: the owner's decisions (section
-  "Questions for the owner"), the viewer's deployment first.
+  build's source, rebased onto the C1 branch's CI fixes (08aaed71). On 2026-11-09, the owner's Windows PC measured
+  series rer-2-C2w of 0, C1 at 2fc31672 and C2 at 080a8217 (RESULTS.md, "Stages C1 and C2 on Windows"); its summary
+  came as 73bd5f66, and the commit on it records its analysis (2026-11-10). C1 and C2 stay accepted with its three
+  regressions against 0 ("Stage C2 notes"). Left: the owner's decisions (section "Questions for the owner"), the
+  viewer's deployment first.
 - Authorization: on 2026-11-09 the owner started the implementation, to run until
   the plan is complete, with questions for the owner collected for the end
   (section "Questions for the owner" below). Merging and publishing the separate
@@ -17,22 +20,27 @@ the existence of a plan or from an agent's previous messages.
 - Final target: C, via measured 0 -> A -> B -> C1 -> C2. C1 alone is incomplete C.
 - Branches: `claude/remove-electron-remote` (stages A to C1, pull request 676) and, from it,
   `claude/isolate-photo-data-viewer` (stage C2, draft pull request 677, based on 676's branch).
+  `claude/windows-performance-series` (73bd5f66, the Windows series' summary, now in C2's branch) stays on origin
+  until the owner decides whether to delete it.
 - Last accepted IMPLEMENTATION stage: C2 (a6f70a51), with C1 (0aefe3fc) and its CI fixes (08aaed71) below it.
   The fixes for the review of pull request 676 (d088a836, on its branch) are merged into this branch, and the
   viewer's window logs a failed preload as the main window's does. With both: build, lint, unit tests (Vitest 96;
   Electron-Mocha 198 main and 2 pending, 62 renderer) and headless e2e on the checkout (44, 1 Windows-only
   skipped), with the viewer's 6fe8814, pass. Since then, 676's branch has a00a2c4a (JSDoc for the review's check
   of docstrings), fb98fe1d (the memory sampler) and 2fc31672 (the harness reads a Windows build), each merged
-  here, and cedc9a64 describes C2's own functions.
+  here, and cedc9a64 describes C2's own functions. 73bd5f66 and the commit after it record the Windows series,
+  without changing the app or the harness.
 - CI of pull request 676: the two e2e cases where the app relaunches itself failed with the packaged app on Linux
   and Windows, on both triggers; macOS passed. They came with stage B and had not run on those systems before.
   954132fc makes the failure tell what the relaunched app logged; 74046e4c and 08aaed71 fix them ("Stage C1
   notes"). At 08aaed71, CI passes on Ubuntu, Windows and macOS, on both triggers. d088a836 addresses the
   automated review of 676: its 23 threads are answered and resolved, 20 with a change and 3 kept with the reason,
-  which the review then withdrew. At fb98fe1d, CI passes on Ubuntu, Windows and macOS, on both triggers.
-- CI of draft pull request 677 (ca87fb49, as at e10f7a49): on Ubuntu, Windows and macOS, only the four View Data
-  cases fail, as they must against the viewer that production serves, which does not know the bridge; the other
-  cases pass (38, 40 and 39). Not to be rerun: they pass once the viewer is deployed.
+  which the review then withdrew. At fb98fe1d and at 2fc31672, CI passes on Ubuntu, Windows and macOS, on both
+  triggers.
+- CI of draft pull request 677 (080a8217, as at ca87fb49 and e10f7a49): on Ubuntu, Windows and macOS, only the four
+  View Data cases fail, as they must against the viewer that production serves, which does not know the bridge; the
+  other cases pass (38, 40 and 39). Not to be rerun: they pass once the viewer is deployed. 73bd5f66 has `[skip ci]`
+  and ran none.
 - This Mac: Xcode 27.2 was installed at 09:30 (Asia/Tokyo) on 2026-11-09 and waits for its license to be accepted
   (`sudo xcodebuild -license`, the owner's). Until then, `git`, `python3` and the notarization tools fail through
   their `/usr/bin` shims, and run through the Command Line Tools with
@@ -83,6 +91,15 @@ All under `.upgrade-artifacts/remove-electron-remote/` (ignored by git):
   (`npm run build:prod`, then `PLM_PACKAGE_TEST=true npx electron-builder build
   --mac dir --arm64 --publish never`, then `ditto` out of `release/mac-arm64/`).
 - `series/<series>/`: raw trials and summaries of each measurement series.
+- `series/rer-2-C2w/` and `series/rer-2-C2w-smoke/`: the Windows series and the smoke run just before it, from the
+  owner's Windows PC (removed after the import). `summary.delivered.md` and `summary.delivered.json` are the
+  summaries as they came; summarize.mjs made the same bytes again here.
+- `windows-rer-2-C2w/`: that run's logs, scripts and commit message, and its `workloads/manifest.json`, whose folders
+  are that PC's.
+- The Windows builds were not kept. To make one again, on Windows: a clone of its commit, which Git for Windows
+  checks out with `core.autocrlf=true`, then `npm ci`, `npm run build:prod` and
+  `npx electron-builder build --win dir --x64 --publish never` (electron-builder 26.18.1); its executable is
+  `release\win-unpacked\Photo Location Map.exe`.
 - `logs/`: build, test and server logs.
 
 ## Inventory at the implementation base (449f30f3)
@@ -139,8 +156,8 @@ data only in windows wider than 1200 pixels.
 | 0 | ACCEPTED | Instrumentation fb581a26, harness 50670795, protocol c67935b4; packaged app `artifacts/0/` (code e6a1d1e7c0b2) | Lint, unit (Vitest 89; Electron-Mocha 136 main, 70 renderer) and headless e2e (40 passed, 1 Windows-only skipped) pass on fb581a26's build | Pilot (12/12 ok) set rer-1; baseline rer-1-0 40/40 ok, viewer unchanged (RESULTS.md); rer-2 retimes two metrics in the page, and its series rerun 0 beside each stage | Done |
 | A / 1 | ACCEPTED | 235d6172; packaged app `artifacts/A/` | Build, lint, unit (Vitest 89; Electron-Mocha 144 main, 66 renderer), dependency-compat (4), package-runner (19), headless e2e (40 passed, 1 Windows-only skipped) and live reload pass; packaged tree has no @electron/remote | rer-2-A: 88/88 ok; folder opening 12 % faster, 101 within budget, one frame-quantized driver latency (RESULTS.md) | Done |
 | B / 2 | ACCEPTED | f5b5f7b1; packaged app `artifacts/B/` | Build, lint, unit (Vitest 89; Electron-Mocha 147 main and 2 pending, 69 renderer), dependency-compat (4), package-runner (19), headless e2e (43 passed, 1 Windows-only skipped) and live reload pass | rer-2-B: 132/132 ok; against 0, A's folder-opening gains (6 improvements) and 102 within budget; against A, all 108 within budget (RESULTS.md) | Done |
-| C1 / 3 main window | ACCEPTED | 0aefe3fc; packaged app `artifacts/C1/` (earlier ones in `artifacts/C1-ac6a51ad/`, `artifacts/C1-f3cabca8/`) | Build, lint, unit (Vitest 96; Electron-Mocha 181 main and 2 pending, 62 renderer, now with the real preload), dependency-compat (4), package-runner (19) and live reload pass; headless e2e passes at 0aefe3fc on the checkout (44, 1 Windows-only skipped), on `ng serve` (44) and on the package (43, 2 skipped); 100 harness launches of f3cabca8 all started; see "Stage C1 notes" | rer-2-C1 (ac6a51ad) found 3 regressions, fixed; rer-2-C1b (f3cabca8) 132/132 ok and rer-2-C1c (0aefe3fc, open-folder) 33/33 ok: home view 6 to 8 % earlier than B, folder opening as B, two explained moves of work (RESULTS.md) | Done |
-| C2 / 3 viewer | ACCEPTED here; release gated on the viewer's deployment | a6f70a51 (b6a4bfa3 before the rebase onto 08aaed71); packaged app `artifacts/C2/`, of b6a4bfa3; viewer 568b8ab (its pull request 72, not merged) | Build, lint, unit (Vitest 96; Electron-Mocha 194 main and 2 pending, 62 renderer); headless e2e on the checkout (44, 1 Windows-only skipped) and the package (43, 2 skipped); the new viewer in stage 0's and C1's packages (4 of 4 each) and in its own Electron tests (Electron 32.0.2 and 45.2.1); see "Stage C2 notes" | rer-2-C2: 176/176 ok; against C1, 104 within budget and 4 improvements, no regression; the URL transport kept (IPC within budget everywhere); startup disturbed by the computer's load. rer-2-C2s, startup again: against C1, all 30 within budget. rer-2-C2v: the new viewer in stage 0's window, all 31 View Data metrics within budget (RESULTS.md) | Done here, with final C ("Final C notes"). Left: the owner's decisions (questions 1 to 5): the viewer's deployment first, then merging and releasing |
+| C1 / 3 main window | ACCEPTED | 0aefe3fc; packaged app `artifacts/C1/` (earlier ones in `artifacts/C1-ac6a51ad/`, `artifacts/C1-f3cabca8/`) | Build, lint, unit (Vitest 96; Electron-Mocha 181 main and 2 pending, 62 renderer, now with the real preload), dependency-compat (4), package-runner (19) and live reload pass; headless e2e passes at 0aefe3fc on the checkout (44, 1 Windows-only skipped), on `ng serve` (44) and on the package (43, 2 skipped); 100 harness launches of f3cabca8 all started; see "Stage C1 notes" | rer-2-C1 (ac6a51ad) found 3 regressions, fixed; rer-2-C1b (f3cabca8) 132/132 ok and rer-2-C1c (0aefe3fc, open-folder) 33/33 ok: home view 6 to 8 % earlier than B, folder opening as B, two explained moves of work. On Windows, rer-2-C2w (2fc31672): against 0, 17 improvements, the folder opening 47 % sooner, and 3 regressions kept with their reasons, the folder's tree 5 to 6 ms longer (not understood) and the bootstrap on a used profile, time moved from the renderer's modules (RESULTS.md) | Done |
+| C2 / 3 viewer | ACCEPTED here; release gated on the viewer's deployment | a6f70a51 (b6a4bfa3 before the rebase onto 08aaed71); packaged app `artifacts/C2/`, of b6a4bfa3; viewer 568b8ab (its pull request 72, not merged) | Build, lint, unit (Vitest 96; Electron-Mocha 194 main and 2 pending, 62 renderer); headless e2e on the checkout (44, 1 Windows-only skipped) and the package (43, 2 skipped); the new viewer in stage 0's and C1's packages (4 of 4 each) and in its own Electron tests (Electron 32.0.2 and 45.2.1); see "Stage C2 notes" | rer-2-C2: 176/176 ok; against C1, 104 within budget and 4 improvements, no regression; the URL transport kept (IPC within budget everywhere); startup disturbed by the computer's load. rer-2-C2s, startup again: against C1, all 30 within budget. rer-2-C2v: the new viewer in stage 0's window, all 31 View Data metrics within budget. On Windows, rer-2-C2w (080a8217): against C1, 86 within budget and 4 improvements, no regression, the JPEG shown 56 to 69 ms later, within budget; against 0, C1's 3 regressions; 3 View Data trials failed on a race of the harness (RESULTS.md) | Done here, with final C ("Final C notes"). Left: the owner's decisions (questions 2 to 7): the viewer's deployment first, then merging and releasing |
 
 ## Stage C1 notes
 
@@ -289,6 +306,13 @@ Measured in series rer-2-C2v (RESULTS.md): in stage 0's package, a window with N
 is the same as the one that production serves. All 31 View Data metrics are within budget, and the photo shows
 within 1 ms. Deploying it changes nothing measurable for the installed app.
 
+Measured on Windows in series rer-2-C2w (RESULTS.md), on the owner's PC, with C1 at 2fc31672 and C2 at 080a8217:
+against C1, no regression, 86 metrics within budget and 4 improvements, and the JPEG shows 56 to 69 ms later, within
+budget. Against 0, C1's three regressions, with which C1 and C2 stay accepted: reading the folder's tree takes 5 to
+6 ms longer, not understood and not investigated (owner, 2026-11-10), and the bootstrap on a used profile 28 to 32 ms
+longer, as time that moved from the renderer's modules. Three View Data trials failed, on a race of the harness
+("Before the next series").
+
 ## Final C notes
 
 `npm run package:mac` at e10f7a49 (stage C2 on the C1 branch's CI fixes), in the background, with
@@ -312,6 +336,40 @@ within 1 ms. Deploying it changes nothing measurable for the installed app.
   AGENTS.md's Intel CI is not needed either: no new Electron or electron-builder version, no change to the macOS
   settings in `electron-builder.json`, and no dependency with native code (stage A removed `@electron/remote`, C1
   `comlink` and `exif-parser`, none of them native).
+
+## Before the next series
+
+Known weaknesses of the harness, found with series rer-2-C2w and left as they are for now (owner, 2026-11-10). Fix
+them before the next series; once fixed, record the change and check that no span's endpoints move (PERFORMANCE.md).
+1 and 2 did not happen in rer-2-C2w, and 3 caused its three failed trials. Only Windows can check 1.
+
+1. On Windows, `close()` in `test/performance/lib/app.mjs` cannot end an app that is stuck. Its two kills, after the
+   timeout (lines 137 to 142) and when Playwright says that the app closed while it still runs (lines 148 to 151),
+   both signal `app.process()`, which on win32 is the shell (cmd.exe) that Playwright's `_electron.launch` starts the
+   app through, not the app's main process. In rer-2-C2w, no startup's close took more than 110 ms (66 closes). The
+   lengths of the three failed trials (59.0, 73.8 and 74.0 s) fit a failure in the first of the cycles (C2's warm-up)
+   and in the third (both of round 2), each followed by a prompt close. Two cycles take about 15 s, though, as long as
+   `close()` waits, so round 2's two could also have failed in the first cycle and waited for `close()` to give up:
+   their lengths cannot tell. Had they, only cmd.exe would have been killed, and the app would have stayed. The run's
+   check every 5 minutes never found two main processes of the app, and the Windows session found none left after
+   the series (not recorded).
+2. Two promises in `test/performance/lib/scenarios.mjs` are made before a click and awaited after it: `markers`
+   (lines 100 to 104, on the first open only) and `closed` (lines 327 to 331). When a trial fails between the two,
+   nothing awaits them; their rejection when the app closes is then unhandled and ends run.mjs. It is the failure
+   of `windowEvent` in the first attempt of rer-2-C1, which lines 202 to 206 fixed.
+3. The race in View Data's cycles (RESULTS.md, "Stages C1 and C2 on Windows"). A closing popup shows the photo's
+   name for its 200 ms, so waiting for the name alone does not fix it. To fix it, press the marker only when no
+   `.leaflet-popup` that shows the photo's name has an opacity of 1, and then wait for one that has. Leave the click
+   on View Data (lines 207 and 208) as it is: it starts `menu-to-request-ms`. Inside Leaflet's container, expect too
+   that Leaflet undoes the scrolling of Playwright's retried clicks.
+
+For the next series on Windows, also:
+
+- Record whether the session is locked before the series, from Winlogon or WTS.
+- Collect the event logs of the series' hours: AppX, ClipSVC, Store, Software Protection and the account services.
+- Sample the CPU of each process, the services' included.
+- Stop the resident apps that the measurement does not need, before it.
+- Record the temperature.
 
 ## Required update fields while executing
 
@@ -366,9 +424,10 @@ records what is assumed meanwhile.
 
 | # | Question | Assumed meanwhile |
 | ---: | --- | --- |
-| 1 | The performance series run on this Mac only; a Windows series needs the owner's Windows PC. Run it there, or accept macOS-only evidence? | Answered on 2026-11-09: the owner runs it on the Windows PC. To compare, as rer-2-C2 did: 0 (fb581a26), and C1 and C2 at their branches' heads, all with the viewer 6fe8814; the commands are in test/performance/README.md, whose harness reads a Windows build since 2fc31672. Not run on Windows yet. |
+| 1 | The performance series run on this Mac only; a Windows series needs the owner's Windows PC. Run it there, or accept macOS-only evidence? | Answered on 2026-11-09: the owner runs it on the Windows PC. Run there on 2026-11-09 as series rer-2-C2w, of 0 (fb581a26), C1 (2fc31672) and C2 (080a8217), all with the viewer 6fe8814, and recorded on 2026-11-10 (RESULTS.md, "Stages C1 and C2 on Windows"). Done. |
 | 2 | Merge Photo Data Viewer's pull request 72 (https://github.com/TomoyukiAota/photo-data-viewer/pull/72), which deploys it to production? It keeps working in 1.12.1's window, and stage C2's window needs it. | Not merged. Stage C2's pull request stays a draft; its View Data cases fail in CI against the production viewer until then. |
 | 3 | Merge pull request 676 (stages A to C1)? | Not merged. |
 | 4 | Once the viewer is deployed, merge stage C2's pull request, and release? | Not merged; nothing released. A release with C2 must come after the viewer's deployment. |
 | 5 | Accept the license of Xcode 27.2, installed on this Mac at 09:30 on 2026-11-09 (`sudo xcodebuild -license`)? | The tools run through the Command Line Tools meanwhile (Current checkpoint). |
 | 6 | The check of the folders that the user opened compares paths as written, so a symbolic link in such a folder to a photo outside it gives the page that photo's EXIF and thumbnail, and opens it with the OS (raised three times by the automated review of pull request 676, outside its diff). The folder's tree follows links, as directory-tree does by default, so the app shows and reads such photos, as before this change; checking a link's target would refuse them. Keep that, or check the targets in a follow-up, with the tree leaving such links out? | Kept, and recommended for this change: the behavior with links is unchanged, and using such a link needs a compromised page and a link that the user put in the folder. |
+| 7 | Measure stage C2's other transport, the photo's bytes over IPC, on Windows too? On the owner's Windows PC, C2, which gives the viewer its photo by the URL, shows the JPEG 56 to 69 ms later than C1, within budget (RESULTS.md, "Stages C1 and C2 on Windows"), where on the Mac it was 6 to 12 ms later; the transport rule ("Stage C2 notes") was applied on the Mac only, where IPC showed the photo 16 to 20 ms sooner, within budget everywhere. | Not measured; the URL stays, as on the Mac. |
