@@ -17,7 +17,7 @@ The comparisons of [PERFORMANCE.md](PERFORMANCE.md), made with the harness in
 | Photo Data Viewer | Its main commit 1ff7a50, built for this app and served on 127.0.0.1:3130 (build QjvCHsLYaL3PVXm214N5S). From rer-2-C2 on, its commit 568b8ab, which knows the bridge of stage C2 ([its pull request](https://github.com/TomoyukiAota/photo-data-viewer/pull/72)), built alike and served on 127.0.0.1:3131 (build kiytqYrbcsLHxY4Dju6bp); rer-2-C2v and rer-2-C2s, its 6fe8814, which adds an error message and comments (build 2VJOG_nWG_NWbGWXRSpPe). Each series records the hash of what its server serves |
 | Workloads | large 3b8be5ead9724e0e (324 files), view-jpeg e54629e8bbf5aa31, view-heic 2b4ad7584c246aad |
 | Linux | Not measured: Photo Location Map does not support Linux officially (owner, 2026-11-09) |
-| Windows (OS) | Not measured: the series need the owner's Windows PC (STATUS.md, question 1) |
+| Windows (OS) | Not measured yet: the owner runs the series on the Windows PC (STATUS.md, question 1) |
 
 ## Series
 

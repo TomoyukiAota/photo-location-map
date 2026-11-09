@@ -21,15 +21,18 @@ the existence of a plan or from an agent's previous messages.
   The fixes for the review of pull request 676 (d088a836, on its branch) are merged into this branch, and the
   viewer's window logs a failed preload as the main window's does. With both: build, lint, unit tests (Vitest 96;
   Electron-Mocha 198 main and 2 pending, 62 renderer) and headless e2e on the checkout (44, 1 Windows-only
-  skipped), with the viewer's 6fe8814, pass.
+  skipped), with the viewer's 6fe8814, pass. Since then, 676's branch has a00a2c4a (JSDoc for the review's check
+  of docstrings), fb98fe1d (the memory sampler) and 2fc31672 (the harness reads a Windows build), each merged
+  here, and cedc9a64 describes C2's own functions.
 - CI of pull request 676: the two e2e cases where the app relaunches itself failed with the packaged app on Linux
   and Windows, on both triggers; macOS passed. They came with stage B and had not run on those systems before.
   954132fc makes the failure tell what the relaunched app logged; 74046e4c and 08aaed71 fix them ("Stage C1
   notes"). At 08aaed71, CI passes on Ubuntu, Windows and macOS, on both triggers. d088a836 addresses the
-  automated review of 676: its 23 threads are answered and resolved, 20 with a change and 3 kept with the reason.
-- CI of draft pull request 677 (e10f7a49): on Ubuntu, Windows and macOS, only the four View Data cases fail, as
-  they must against the viewer that production serves, which does not know the bridge; the other cases pass
-  (38, 40 and 39). Not to be rerun: they pass once the viewer is deployed.
+  automated review of 676: its 23 threads are answered and resolved, 20 with a change and 3 kept with the reason,
+  which the review then withdrew. At fb98fe1d, CI passes on Ubuntu, Windows and macOS, on both triggers.
+- CI of draft pull request 677 (ca87fb49, as at e10f7a49): on Ubuntu, Windows and macOS, only the four View Data
+  cases fail, as they must against the viewer that production serves, which does not know the bridge; the other
+  cases pass (38, 40 and 39). Not to be rerun: they pass once the viewer is deployed.
 - This Mac: Xcode 27.2 was installed at 09:30 (Asia/Tokyo) on 2026-11-09 and waits for its license to be accepted
   (`sudo xcodebuild -license`, the owner's). Until then, `git`, `python3` and the notarization tools fail through
   their `/usr/bin` shims, and run through the Command Line Tools with
@@ -363,8 +366,9 @@ records what is assumed meanwhile.
 
 | # | Question | Assumed meanwhile |
 | ---: | --- | --- |
-| 1 | The performance series run on this Mac only; a Windows series needs the owner's Windows PC. Run it there, or accept macOS-only evidence? | macOS evidence only; the harness's commands are written so that the owner can run a Windows series. |
+| 1 | The performance series run on this Mac only; a Windows series needs the owner's Windows PC. Run it there, or accept macOS-only evidence? | Answered on 2026-11-09: the owner runs it on the Windows PC. To compare, as rer-2-C2 did: 0 (fb581a26), and C1 and C2 at their branches' heads, all with the viewer 6fe8814; the commands are in test/performance/README.md, whose harness reads a Windows build since 2fc31672. Not run on Windows yet. |
 | 2 | Merge Photo Data Viewer's pull request 72 (https://github.com/TomoyukiAota/photo-data-viewer/pull/72), which deploys it to production? It keeps working in 1.12.1's window, and stage C2's window needs it. | Not merged. Stage C2's pull request stays a draft; its View Data cases fail in CI against the production viewer until then. |
 | 3 | Merge pull request 676 (stages A to C1)? | Not merged. |
 | 4 | Once the viewer is deployed, merge stage C2's pull request, and release? | Not merged; nothing released. A release with C2 must come after the viewer's deployment. |
 | 5 | Accept the license of Xcode 27.2, installed on this Mac at 09:30 on 2026-11-09 (`sudo xcodebuild -license`)? | The tools run through the Command Line Tools meanwhile (Current checkpoint). |
+| 6 | The check of the folders that the user opened compares paths as written, so a symbolic link in such a folder to a photo outside it gives the page that photo's EXIF and thumbnail, and opens it with the OS (raised three times by the automated review of pull request 676, outside its diff). The folder's tree follows links, as directory-tree does by default, so the app shows and reads such photos, as before this change; checking a link's target would refuse them. Keep that, or check the targets in a follow-up, with the tree leaving such links out? | Kept, and recommended for this change: the behavior with links is unchanged, and using such a link needs a compromised page and a link that the user put in the folder. |
