@@ -164,7 +164,7 @@ data only in windows wider than 1200 pixels.
 | A / 1 | ACCEPTED | 235d6172; packaged app `artifacts/A/` | Build, lint, unit (Vitest 89; Electron-Mocha 144 main, 66 renderer), dependency-compat (4), package-runner (19), headless e2e (40 passed, 1 Windows-only skipped) and live reload pass; packaged tree has no @electron/remote | rer-2-A: 88/88 ok; folder opening 12 % faster, 101 within budget, one frame-quantized driver latency (RESULTS.md) | Done |
 | B / 2 | ACCEPTED | f5b5f7b1; packaged app `artifacts/B/` | Build, lint, unit (Vitest 89; Electron-Mocha 147 main and 2 pending, 69 renderer), dependency-compat (4), package-runner (19), headless e2e (43 passed, 1 Windows-only skipped) and live reload pass | rer-2-B: 132/132 ok; against 0, A's folder-opening gains (6 improvements) and 102 within budget; against A, all 108 within budget (RESULTS.md) | Done |
 | C1 / 3 main window | ACCEPTED | 0aefe3fc; packaged app `artifacts/C1/` (earlier ones in `artifacts/C1-ac6a51ad/`, `artifacts/C1-f3cabca8/`) | Build, lint, unit (Vitest 96; Electron-Mocha 181 main and 2 pending, 62 renderer, now with the real preload), dependency-compat (4), package-runner (19) and live reload pass; headless e2e passes at 0aefe3fc on the checkout (44, 1 Windows-only skipped), on `ng serve` (44) and on the package (43, 2 skipped); 100 harness launches of f3cabca8 all started; see "Stage C1 notes" | rer-2-C1 (ac6a51ad) found 3 regressions, fixed; rer-2-C1b (f3cabca8) 132/132 ok and rer-2-C1c (0aefe3fc, open-folder) 33/33 ok: home view 6 to 8 % earlier than B, folder opening as B, two explained moves of work. On Windows, rer-2-C2w (2fc31672): against 0, 17 improvements, the folder opening 47 % sooner, and 3 regressions kept with their reasons, the folder's tree 5 to 6 ms longer (not understood) and the bootstrap on a used profile, time moved from the renderer's modules (RESULTS.md) | Done: merged into main by pull request 676 on 2026-11-10 (006a6343) |
-| C2 / 3 viewer | ACCEPTED; its viewer deployed on 2026-11-10 | a6f70a51 (b6a4bfa3 before the rebase onto 08aaed71); packaged app `artifacts/C2/`, of b6a4bfa3; viewer 568b8ab, then 6fe8814 (its pull request 72, merged and deployed on 2026-11-10) | Build, lint, unit (Vitest 96; Electron-Mocha 194 main and 2 pending, 62 renderer); headless e2e on the checkout (44, 1 Windows-only skipped) and the package (43, 2 skipped); the new viewer in stage 0's and C1's packages (4 of 4 each) and in its own Electron tests (Electron 32.0.2 and 45.2.1); see "Stage C2 notes" | rer-2-C2: 176/176 ok; against C1, 104 within budget and 4 improvements, no regression; the URL transport kept (IPC within budget everywhere); startup disturbed by the computer's load. rer-2-C2s, startup again: against C1, all 30 within budget. rer-2-C2v: the new viewer in stage 0's window, all 31 View Data metrics within budget. On Windows, rer-2-C2w (080a8217): against C1, 86 within budget and 4 improvements, no regression, the JPEG shown 56 to 69 ms later, within budget; against 0, C1's 3 regressions; 3 View Data trials failed on a race of the harness (RESULTS.md) | Done, with final C ("Final C notes"): after the viewer's deployment and the merge of 676 (2026-11-10), this branch goes into main as pull request 677. No release (owner, 2026-11-10) |
+| C2 / 3 viewer | ACCEPTED; its viewer deployed on 2026-11-10 | a6f70a51 (b6a4bfa3 before the rebase onto 08aaed71); packaged app `artifacts/C2/`, of b6a4bfa3; viewer 568b8ab, then 6fe8814 (its pull request 72, merged and deployed on 2026-11-10) | Build, lint, unit (Vitest 96; Electron-Mocha 194 main and 2 pending, 62 renderer); headless e2e on the checkout (44, 1 Windows-only skipped) and the package (43, 2 skipped); the new viewer in stage 0's and C1's packages (4 of 4 each) and in its own Electron tests (Electron 32.0.2 and 45.2.1); see "Stage C2 notes" | rer-2-C2: 176/176 ok; against C1, 104 within budget and 4 improvements, no regression; the URL transport kept (IPC within budget everywhere); startup disturbed by the computer's load. rer-2-C2s, startup again: against C1, all 30 within budget. rer-2-C2v: the new viewer in stage 0's window, all 31 View Data metrics within budget. On Windows, rer-2-C2w (080a8217): against C1, 86 within budget and 4 improvements, no regression, the JPEG shown 56 to 69 ms later, within budget; against 0, C1's 3 regressions; 3 View Data trials failed, likely on a race of the harness, and whether C1's changes play a part is not known (RESULTS.md) | Done, with final C ("Final C notes"): after the viewer's deployment and the merge of 676 (2026-11-10), this branch goes into main as pull request 677. No release (owner, 2026-11-10) |
 
 ## Stage C1 notes
 
@@ -248,7 +248,8 @@ viewer's origin. A viewer that does not ask for its photo within 15 seconds of l
 would not, is logged and recorded; the window is never given Node.js instead.
 
 The viewer's side is Photo Data Viewer's branch `claude/isolated-host-bridge`: 568b8ab, then d3a2afc, which adds an
-error message, and 6fe8814, comments (https://github.com/TomoyukiAota/photo-data-viewer/pull/72, not merged). It uses
+error message, and 6fe8814, comments (https://github.com/TomoyukiAota/photo-data-viewer/pull/72, merged on 2026-11-10
+as c6f1c01e and deployed). It uses
 the bridge when the window gives it, and in the earlier window, which has Node.js, reads the photo by its path as
 before.
 
@@ -317,8 +318,8 @@ Measured on Windows in series rer-2-C2w (RESULTS.md), on the owner's PC, with C1
 against C1, no regression, 86 metrics within budget and 4 improvements, and the JPEG shows 56 to 69 ms later, within
 budget. Against 0, C1's three regressions, with which C1 and C2 stay accepted: reading the folder's tree takes 5 to
 6 ms longer, not understood and not investigated (owner, 2026-11-10), and the bootstrap on a used profile 28 to 32 ms
-longer, as time that moved from the renderer's modules. Three View Data trials failed, on a race of the harness
-("Before the next series").
+longer, as time that moved from the renderer's modules. Three View Data trials failed, likely on a race of the
+harness ("Before the next series"); whether the changes of C1 play a part is not known.
 
 ## Final C notes
 
@@ -347,9 +348,11 @@ license had been accepted at 09:51 (Current checkpoint):
 
 ## Before the next series
 
-Known weaknesses of the harness, found with series rer-2-C2w and left as they are for now (owner, 2026-11-10). Fix
-them before the next series; once fixed, record the change and check that no span's endpoints move (PERFORMANCE.md).
-1 and 2 did not happen in rer-2-C2w, and 3 caused its three failed trials. Only Windows can check 1.
+Known weaknesses of the harness, found with series rer-2-C2w (1 to 3) and by the automated review of pull request
+677 (4 and 5), and left as they are for now, as the owner decided for the first three (2026-11-10). Fix them before
+the next series; once fixed, record the change and check that no span's endpoints move (PERFORMANCE.md). 1 and 2 did
+not happen in rer-2-C2w, 3 is the likely cause of its three failed trials (whether C1's changes play a part is not
+known), and no series met 4 or 5. Only Windows can check 1.
 
 1. On Windows, `close()` in `test/performance/lib/app.mjs` cannot end an app that is stuck. Its two kills, after the
    timeout (lines 137 to 142) and when Playwright says that the app closed while it still runs (lines 148 to 151),
@@ -365,11 +368,20 @@ them before the next series; once fixed, record the change and check that no spa
    (lines 100 to 104, on the first open only) and `closed` (lines 327 to 331). When a trial fails between the two,
    nothing awaits them; their rejection when the app closes is then unhandled and ends run.mjs. It is the failure
    of `windowEvent` in the first attempt of rer-2-C1, which lines 202 to 206 fixed.
-3. The race in View Data's cycles (RESULTS.md, "Stages C1 and C2 on Windows"). A closing popup shows the photo's
+3. The race in View Data's cycles, the likely cause of those failures (RESULTS.md, "Stages C1 and C2 on Windows").
+   A closing popup shows the photo's
    name for its 200 ms, so waiting for the name alone does not fix it. To fix it, press the marker only when no
    `.leaflet-popup` that shows the photo's name has an opacity of 1, and then wait for one that has. Leave the click
    on View Data (lines 207 and 208) as it is: it starts `menu-to-request-ms`. Inside Leaflet's container, expect too
    that Leaflet undoes the scrolling of Playwright's retried clicks.
+4. `launch()` in `test/performance/lib/app.mjs` (lines 42 and 43) applies a build's `--app-env` after the harness's own
+   settings, so such a variable can replace `PLM_TEST_ROOT`, the profile that a trial makes and removes, or
+   `PLM_TEST_OFFLINE`, and change what is compared. No series passed either. Apply `--app-env` before them, and keep
+   `PLM_TEST_PHOTO_DATA_VIEWER_SERVER` as the one setting that a build may change.
+5. `test/performance/run.mjs` (lines 112 and 149 to 150) hashes only the common `--viewer-server` at a series' start
+   and end, so a build's own server, given by `--app-env`, is not checked for a change. rer-2-C2v, which had such a
+   server, had it hashed by hand before and after (`results/rer-2-C2v.md`). Hash each build's own server at both
+   ends.
 
 For the next series on Windows, also:
 
