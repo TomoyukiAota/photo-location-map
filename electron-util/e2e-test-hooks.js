@@ -178,7 +178,9 @@ if (testRoot) {
   const launchReport = process.env.PLM_TEST_LAUNCH_REPORT;
   if (launchReport) {
     const path = require('node:path');
-    if (!path.isAbsolute(launchReport) || path.relative(testRoot, launchReport).startsWith('..')) {
+    const relative = path.relative(testRoot, launchReport);
+    if (!path.isAbsolute(launchReport) || !relative || relative === '..' || relative.startsWith(`..${path.sep}`)
+      || path.isAbsolute(relative)) {
       throw new Error('PLM_TEST_LAUNCH_REPORT must be a file in PLM_TEST_ROOT.');
     }
     const marksOf = entries => entries.filter(entry => entry.name.startsWith('plm:'))

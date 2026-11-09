@@ -26,8 +26,11 @@ export function storageKeyOf(storagePath: ReadonlyArray<string>): string {
   return storagePath.join('/');
 }
 
-/** Whether `storagePath` is one of `allowed`; anything else from IPC, not even an array of strings, is not. */
+/**
+ * Whether `storagePath` is one of `allowed`, segment by segment: `['LeafletMap/SelectedBaseLayer']` is not
+ * `['LeafletMap', 'SelectedBaseLayer']`, though their keys are the same. Anything else from IPC is not either.
+ */
 export function isOneOf(storagePath: unknown, allowed: ReadonlyArray<ReadonlyArray<string>>): storagePath is ReadonlyArray<string> {
   return Array.isArray(storagePath) && storagePath.every(part => typeof part === 'string')
-    && allowed.some(path => storageKeyOf(path) === storageKeyOf(storagePath));
+    && allowed.some(path => path.length === storagePath.length && path.every((part, index) => part === storagePath[index]));
 }

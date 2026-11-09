@@ -7,15 +7,7 @@ import { LogFileConfig } from '../../src-shared/log/file-config/log-file-config'
 import { setStartupMetadata, startupMetadata, StartupMetadata } from '../../src-shared/startup/startup-metadata';
 import { plmThumbnailCacheDir } from '../../src-shared/thumbnail/cache/thumbnail-cache-util';
 import { isFromMainWindow } from '../ipc/ipc-sender';
-
-/** os.userInfo() throws where the user has no name, such as in some containers. */
-function userNameOrEmpty(): string {
-  try {
-    return os.userInfo().username;
-  } catch {
-    return '';
-  }
-}
+import { userNameOrEmpty } from '../os/user-name';
 
 /** The startup metadata of this process: of `electronApp`, the computer and `env`. */
 export function createStartupMetadata(electronApp: Pick<Electron.App, 'getVersion' | 'getPath'>,

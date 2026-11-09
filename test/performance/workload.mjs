@@ -28,7 +28,10 @@ const heicSource = path.join(root, 'test/e2e/fixtures/demo.heic');
 const folderNames = ['01 写真', '02 # sharp', '03 100% done', '04 空白 あり', '05 Ünïcödé', '06 a#b%c', '07 旅行 2017',
   '08 plain', '09 % only', '10 # only'];
 
-/** Copies a file as an APFS clone where the file system can, which is fast and takes no space. */
+/**
+ * Copies a file as an APFS clone where the file system can, which is fast and takes no space. Where it cannot,
+ * COPYFILE_FICLONE copies the file in full, which is meant: the workload is then written out, about 1 GB.
+ */
 async function clone(source, destination) {
   await mkdir(path.dirname(destination), { recursive: true });
   await copyFile(source, destination, constants.COPYFILE_FICLONE);

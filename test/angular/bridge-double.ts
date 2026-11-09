@@ -26,7 +26,7 @@ export function createBridgeDouble(temporaryRoot: string): PlmBridge {
     log: { append: () => {} },
     analytics: { sendToBackend: () => {}, onAmplitudeEvent: listen, onMixpanelEvent: listen },
     folderDialog: { show: async () => ({ canceled: true, filePaths: [] }), isDirectory: async () => false },
-    exif: { read: async () => ({ kind: 'failed' }) as never },
+    exif: { read: async () => ({ parse: 'empty' as const }) },
     directoryTree: { create: async () => ({ kind: 'failed', message: 'No folder can be read in a unit test.' }) },
     // The files exist nowhere: no thumbnail was attempted or is in the cache.
     thumbnails: {

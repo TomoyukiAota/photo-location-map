@@ -6,15 +6,15 @@ the existence of a plan or from an agent's previous messages.
 
 ## Current checkpoint
 
-- State: EXECUTING. Stages 0, A, B and C1 accepted. Stage C2 (Photo Data Viewer's isolation) next, on a branch
-  of its own from this one, from the work in progress in `git stash` ("stage C2 work in progress").
+- State: EXECUTING. Stages 0, A, B and C1 accepted. Stage C2 (Photo Data Viewer's isolation) is on its own branch
+  from this one, `claude/isolate-photo-data-viewer` (draft pull request 677), whose STATUS.md goes on from here.
 - Authorization: on 2026-11-09 the owner started the implementation, to run until
   the plan is complete, with questions for the owner collected for the end
   (section "Questions for the owner" below). Merging and publishing the separate
   viewer still need their own approval (PLAN.md).
 - Final target: C, via measured 0 -> A -> B -> C1 -> C2. C1 alone is incomplete C.
 - Implementation branch: `claude/remove-electron-remote`, from main 449f30f3
-  (the merge of PR 674, which includes b7c9bfe6 and PR 673). Not pushed yet.
+  (the merge of PR 674, which includes b7c9bfe6 and PR 673), pushed as pull request 676.
 - Last accepted IMPLEMENTATION stage: C1 (0aefe3fc).
 - Task-owned processes: the pinned Photo Data Viewer server, `next start -p 3130
   -H 127.0.0.1` in `.upgrade-artifacts/remove-electron-remote/viewer/1ff7a50/`

@@ -8,7 +8,14 @@ import { alive, appMetrics, close, dismissWelcome, lastMark, launch, mainMarks, 
 import { startTreeSampler, treeSnapshot } from './memory.mjs';
 
 const prefix = (name, metrics) => Object.fromEntries(Object.entries(metrics).map(([key, value]) => [`${name}.${key}`, value]));
-const at = (marks, name, sinceMs) => lastMark(marks, name, sinceMs)?.epochMs;
+/** The time of mark `name`, which is required: a trial without it fails, rather than leave its metric out. */
+const at = (marks, name, sinceMs) => {
+  const found = lastMark(marks, name, sinceMs);
+  if (!found) throw new Error(`The mark plm:${name} was not recorded.`);
+  return found.epochMs;
+};
+/** The time of mark `name`, or undefined, for a mark that a trial may not have. */
+const atIfAny = (marks, name, sinceMs) => lastMark(marks, name, sinceMs)?.epochMs;
 
 /** The pid of the renderer of the window of `page`. */
 async function rendererPid(app, page) {
@@ -135,7 +142,8 @@ async function measureOpenWith(context, app, page, pid, renderer, { first, thumb
   if (markersMs) metrics['start-to-markers-ms'] = markersMs - start;
   if (thumbnailsDone) {
     metrics['start-to-thumbnails-done-ms'] = thumbnailsDone.epochMs - start;
-    metrics['thumbnails-main-ms'] = at(main, 'thumbnails:main-finished', clickMs) - at(main, 'thumbnails:main-started', clickMs);
+    const [mainStarted, mainFinished] = ['started', 'finished'].map(state => atIfAny(main, `thumbnails:main-${state}`, clickMs));
+    if (mainStarted !== undefined && mainFinished !== undefined) metrics['thumbnails-main-ms'] = mainFinished - mainStarted;
   }
   return { metrics, details: { rendererMarks: rendererMarks.filter(m => m.epochMs >= clickMs), mainMarks: main.filter(m => m.epochMs >= clickMs),
     longtasks, peak, settled } };
@@ -351,9 +359,12 @@ export async function settings(context) {
     };
   } finally {
     await close(app);
+    // The relaunched process can end between the check and the signal (ESRCH), which must hide neither the trial's
+    // own error nor the removal of the profile.
+    const signal = name => { try { process.kill(relaunchedPid, name); } catch { /* Ended already. */ } };
     if (relaunchedPid && alive(relaunchedPid)) {
-      process.kill(relaunchedPid, 'SIGTERM');
-      if (!(await waitFor(() => !alive(relaunchedPid), 15000, 100))) process.kill(relaunchedPid, 'SIGKILL');
+      signal('SIGTERM');
+      if (!(await waitFor(() => !alive(relaunchedPid), 15000, 100))) signal('SIGKILL');
     }
     await removeProfile(profile);
   }

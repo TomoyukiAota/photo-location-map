@@ -31,8 +31,15 @@ if (!values.workloads || !path.isAbsolute(values.workloads)) throw new Error('--
 if (!values.app?.length) throw new Error('Give at least one --app <label>=<executable>.');
 const selected = values.scenarios.split(',');
 for (const name of selected) if (!scenarios[name]) throw new Error(`Unknown scenario ${name}.`);
-const trials = Number(values.trials);
-const warmup = Number(values.warmup);
+/** The option `name` as a whole number of at least `min`; anything else stops the series before it starts. */
+function wholeNumber(name, min) {
+  const value = Number(values[name]);
+  if (!Number.isInteger(value) || value < min) throw new Error(`--${name} must be a whole number of at least ${min}, not ${values[name]}.`);
+  return value;
+}
+const trials = wholeNumber('trials', 1);
+const warmup = wholeNumber('warmup', 0);
+wholeNumber('settle-ms', 0);
 
 const apps = values.app.map(entry => {
   const [label, ...rest] = entry.split('=');

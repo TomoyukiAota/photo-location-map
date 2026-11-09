@@ -62,8 +62,14 @@ export function startTreeSampler(rootPid, intervalMs = 250) {
   };
 }
 
-/** One sample of the tree: the total and each process's resident memory, grouped by command name. */
+/**
+ * One sample of the tree: the total and each process's resident memory, grouped by command name. A tree that cannot be
+ * read throws, so that the trial fails rather than report 0 KB. On Windows, which has no ps, the total is NaN, which
+ * summarize.mjs leaves out, as startTreeSampler does there.
+ */
 export async function treeSnapshot(rootPid) {
-  const tree = await processTree(rootPid).catch(() => []);
+  if (process.platform === 'win32') return { totalRssKb: NaN, processes: [], unsupported: 'ps is not available on Windows' };
+  const tree = await processTree(rootPid);
+  if (!tree.length) throw new Error(`Process ${rootPid} is not in the list of processes.`);
   return { totalRssKb: tree.reduce((sum, entry) => sum + entry.rssKb, 0), processes: tree.map(({ pid, rssKb, command }) => ({ pid, rssKb, command })) };
 }

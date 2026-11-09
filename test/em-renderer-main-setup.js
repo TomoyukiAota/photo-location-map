@@ -11,9 +11,10 @@ require('../src-main/exif/exif-ipc-setup');
 
 const { app } = require('electron');
 const os = require('node:os');
-const path = require('node:path');
 const { setMainWindow } = require('../src-main/ipc/ipc-sender');
 const { rememberUserChosenFolder } = require('../src-main/ipc/user-chosen-folders');
 app.on('browser-window-created', (_event, window) => setMainWindow(window.webContents));
-// The tests read photos of their own folders, which the user would have chosen in the app: every folder counts.
-for (const folder of [os.tmpdir(), __dirname]) rememberUserChosenFolder(path.parse(path.resolve(folder)).root);
+// The tests read photos of their own folders, which the user would have chosen in the app: the temporary folder, as
+// it is named and as it resolves (/var is /private/var on macOS), and the tests' own.
+const fs = require('node:fs');
+for (const folder of new Set([os.tmpdir(), fs.realpathSync.native(os.tmpdir()), __dirname])) rememberUserChosenFolder(folder);

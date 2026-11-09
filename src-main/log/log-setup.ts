@@ -24,7 +24,10 @@ class LogFileWriterMain implements LogFileWriterInterface {
       await fsExtra.ensureDir(this.dirName); // The directory needs to be created before calling fsExtra.promises.open function.
       const fileSystemFlag = 'a'; // 'a' is for "Open file for appending. The file is created if it does not exist." See https://nodejs.org/api/fs.html
       return fsExtra.promises.open(this.filePath, fileSystemFlag);
-    })();
+    })().catch(error => {
+      this.fileHandle = undefined; // So that a later line tries again, as after a disk that was full.
+      throw error;
+    });
     return this.fileHandle;
   }
 
@@ -40,5 +43,5 @@ useLogFileWriter(writer);
 
 ipcMain.on(IpcConstants.Log.Append, (event, message: unknown) => {
   if (isFromMainWindow(event) && typeof message === 'string')
-    void writer.append(message);
+    writer.append(message).catch(error => console.error('A line of the renderer could not be written to the log file.', error));
 });

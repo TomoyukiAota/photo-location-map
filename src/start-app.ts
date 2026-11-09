@@ -34,4 +34,5 @@ async function bootstrap(): Promise<void> {
   Logger.info(`Log File Location: ${LogFileConfig.filePath}`);
 }
 
-bootstrap().catch(err => Logger.error(err));
+// The log file gets the message alone, so the error's stack is in it.
+bootstrap().catch(error => Logger.error(`The renderer failed to bootstrap: ${error instanceof Error ? error.stack ?? error.message : error}`, error));

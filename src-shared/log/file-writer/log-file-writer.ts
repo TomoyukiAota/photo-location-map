@@ -22,6 +22,11 @@ export class LogFileWriter {
 
     if (!logFileWriter && ProcessIdentifier.isElectronRenderer)
       logFileWriter = rendererWriter;
-    await logFileWriter?.append(message);
+    try {
+      await logFileWriter?.append(message);
+    } catch (error) {
+      // The logger does not wait for the file (src-shared/log/logger.ts), so a failure would go unhandled otherwise.
+      console.error('A line could not be written to the log file.', error);
+    }
   }
 }

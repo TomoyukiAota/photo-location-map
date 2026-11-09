@@ -128,7 +128,7 @@ Complete: yes. Trials: {"0":{"open-folder":{"ok":10,"failed":0,"interrupted":0,"
 | view-data.jpeg.request-to-page-loaded-ms | 96.4 (10, 1.7) | 95.8 (10, 1.2) | 96.1 (10, 1.3) | -0.6 (-0.6 %) within budget | -0.3 (-0.3 %) within budget |
 | view-data.jpeg.window-created-to-page-loaded-ms | 87.1 (10, 1.5) | 86.4 (10, 0.9) | 86.6 (10, 1.4) | -0.7 (-0.8 %) within budget | -0.5 (-0.5 %) within budget |
 
-C1 here is ac6a51ad. Its three regressions were fixed before series rer-2-C1b (STATUS.md, "Stage C1 notes"); the first attempt of this series ended in its warm-up round on a harness error, and is not kept.
+C1 here is ac6a51ad. Two of its three regressions were fixed before series rer-2-C1b; the third, `open-folder.cold.finish-ms`, was still one there, and was fixed in 0aefe3fc, which series rer-2-C1c measured (STATUS.md, "Stage C1 notes"). The first attempt of this series ended in its warm-up round on a harness error, and is not kept.
 
 ## C1 against B
 

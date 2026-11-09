@@ -76,6 +76,7 @@ Medians of ten trials of each build, run in alternating order; times in millisec
 | View Data, HEIC | Request to the photo shown | 564.0 | 564.0 | +0.0 %, within budget |
 | Settings | Save to the dialog closed | 113.5 | 113.5 | +0.0 %, within budget |
 |  | Save to the restarted app's home view | 482.8 | 481.8 | -0.2 %, within budget |
+
 Of 110 compared metrics, 101 are within budget, 2 invariants are the same (the files read), and 6 are improvements:
 reading the photos' data of a folder takes 15 % less, as each photo is now one request to the main process
 instead of the many synchronous calls that @electron/remote made for exifr's results, and opening the folder 12 %.
