@@ -9,30 +9,33 @@ the existence of a plan or from an agent's previous messages.
 - State: EXECUTING. Stages 0, A, B and C1 accepted. Stage C2 (Photo Data Viewer's isolation) implemented,
   functionally verified and measured (series rer-2-C2) on its branch `claude/isolate-photo-data-viewer`: a6f70a51,
   which is b6a4bfa3, the measured build's source, rebased onto the C1 branch's CI fixes (08aaed71).
-  Left: series rer-2-C2v and a startup-only series, which need a quiet computer (stage ledger below), and final C.
+  Final C is done ("Final C notes"). Left: series rer-2-C2v and a startup-only series, which need a quiet computer
+  (stage ledger below), and the owner's decisions.
 - Authorization: on 2026-11-09 the owner started the implementation, to run until
   the plan is complete, with questions for the owner collected for the end
   (section "Questions for the owner" below). Merging and publishing the separate
   viewer still need their own approval (PLAN.md).
 - Final target: C, via measured 0 -> A -> B -> C1 -> C2. C1 alone is incomplete C.
 - Branches: `claude/remove-electron-remote` (stages A to C1, pull request 676) and, from it,
-  `claude/isolate-photo-data-viewer` (stage C2, not pushed yet).
+  `claude/isolate-photo-data-viewer` (stage C2, draft pull request 677, based on 676's branch).
 - Last accepted IMPLEMENTATION stage: C1 (0aefe3fc).
 - CI of pull request 676: the two e2e cases where the app relaunches itself failed with the packaged app on Linux
   and Windows, on both triggers; macOS passed. They came with stage B and had not run on those systems before.
   954132fc makes the failure tell what the relaunched app logged; 74046e4c and 08aaed71 fix them ("Stage C1
   notes"). At 08aaed71, CI passes on Ubuntu, Windows and macOS, on both triggers.
+- CI of draft pull request 677 (e10f7a49): on Ubuntu, Windows and macOS, only the four View Data cases fail, as
+  they must against the viewer that production serves, which does not know the bridge; the other cases pass
+  (38, 40 and 39). Not to be rerun: they pass once the viewer is deployed.
 - This Mac: Xcode 27.2 was installed at 09:30 (Asia/Tokyo) on 2026-11-09 and waits for its license to be accepted
   (`sudo xcodebuild -license`, the owner's). Until then, `git`, `python3` and the notarization tools fail through
   their `/usr/bin` shims, and run through the Command Line Tools with
   `DEVELOPER_DIR=/Library/Developer/CommandLineTools`.
 - Task-owned processes: the Photo Data Viewer servers, `next start -p 3130 -H 127.0.0.1` in
   `.upgrade-artifacts/remove-electron-remote/viewer/1ff7a50/` (log `logs/viewer-1ff7a50-server.log`) and
-  `next start -p 3131 -H 127.0.0.1` in `viewer/c2/` (log `logs/viewer-c2-server.log`), and a worktree of the C1
-  branch in `worktrees/c1/`. Stop and remove them when no series or test needs them; restart a server with the
-  command in "Artifacts" below.
+  `next start -p 3131 -H 127.0.0.1` in `viewer/c2/` (log `logs/viewer-c2-server.log`). Stop them when no series
+  or test needs them; restart a server with the command in "Artifacts" below.
 - External viewer changes/deployments: Photo Data Viewer's change for the bridge is open as
-  https://github.com/TomoyukiAota/photo-data-viewer/pull/72 (d3a2afc), not merged, so not deployed. With the viewer
+  https://github.com/TomoyukiAota/photo-data-viewer/pull/72 (6fe8814, its CI green), not merged, so not deployed. With the viewer
   that production serves, stage C2's window shows nothing and logs that its page did not ask for its photo, as
   designed (checked with 1ff7a50 on port 3130).
 
@@ -61,9 +64,12 @@ All under `.upgrade-artifacts/remove-electron-remote/` (ignored by git):
   The production server's page had build ID VqTPTJF1JHNCsQCU8-7qg on 2026-11-09.
 - `viewer/c2/`: a clone of Photo Data Viewer on its branch `claude/isolated-host-bridge` (stage C2's viewer),
   built the same way and served on port 3131 instead. Series rer-2-C2 measured 568b8ab (build
-  kiytqYrbcsLHxY4Dju6bp); it serves d3a2afc since (build Ra3lqXLA3rSG7vMyCtI1D), which only adds an error message.
-- `worktrees/c1/`: a git worktree of `claude/remove-electron-remote`, for fixes to pull request 676 while the main
-  checkout is on the C2 branch.
+  kiytqYrbcsLHxY4Dju6bp). It serves 6fe8814 since (build 2VJOG_nWG_NWbGWXRSpPe), which adds an error message and
+  comments; its scripts are the same as d3a2afc's build, which the rebased branch's e2e used.
+- `worktrees/c1/` was a git worktree of `claude/remove-electron-remote`, for the CI fixes of pull request 676 while
+  the main checkout was on the C2 branch; removed once they were pushed.
+- `release/` has the final C package of e10f7a49 (`npm run package:mac`): the DMG, the update ZIP and
+  `latest-mac.yml`, not published.
 - `workloads/`: made by `test/performance/workload.mjs`; `manifest.json` has the
   SHA-256 of each file. IDs: large 3b8be5ead9724e0e (324 files, 986.7 MB as APFS
   clones), view-jpeg e54629e8bbf5aa31, view-heic 2b4ad7584c246aad.
@@ -129,7 +135,7 @@ data only in windows wider than 1200 pixels.
 | A / 1 | ACCEPTED | 235d6172; packaged app `artifacts/A/` | Build, lint, unit (Vitest 89; Electron-Mocha 144 main, 66 renderer), dependency-compat (4), package-runner (19), headless e2e (40 passed, 1 Windows-only skipped) and live reload pass; packaged tree has no @electron/remote | rer-2-A: 88/88 ok; folder opening 12 % faster, 101 within budget, one frame-quantized driver latency (RESULTS.md) | Done |
 | B / 2 | ACCEPTED | f5b5f7b1; packaged app `artifacts/B/` | Build, lint, unit (Vitest 89; Electron-Mocha 147 main and 2 pending, 69 renderer), dependency-compat (4), package-runner (19), headless e2e (43 passed, 1 Windows-only skipped) and live reload pass | rer-2-B: 132/132 ok; against 0, A's folder-opening gains (6 improvements) and 102 within budget; against A, all 108 within budget (RESULTS.md) | Done |
 | C1 / 3 main window | ACCEPTED | 0aefe3fc; packaged app `artifacts/C1/` (earlier ones in `artifacts/C1-ac6a51ad/`, `artifacts/C1-f3cabca8/`) | Build, lint, unit (Vitest 96; Electron-Mocha 181 main and 2 pending, 62 renderer, now with the real preload), dependency-compat (4), package-runner (19) and live reload pass; headless e2e passes at 0aefe3fc on the checkout (44, 1 Windows-only skipped), on `ng serve` (44) and on the package (43, 2 skipped); 100 harness launches of f3cabca8 all started; see "Stage C1 notes" | rer-2-C1 (ac6a51ad) found 3 regressions, fixed; rer-2-C1b (f3cabca8) 132/132 ok and rer-2-C1c (0aefe3fc, open-folder) 33/33 ok: home view 6 to 8 % earlier than B, folder opening as B, two explained moves of work (RESULTS.md) | Done |
-| C2 / 3 viewer | MEASURED, release gated on the viewer's deployment | a6f70a51 (b6a4bfa3 before the rebase onto 08aaed71); packaged app `artifacts/C2/`, of b6a4bfa3; viewer 568b8ab (its pull request 72, not merged) | Build, lint, unit (Vitest 96; Electron-Mocha 194 main and 2 pending, 62 renderer); headless e2e on the checkout (44, 1 Windows-only skipped) and the package (43, 2 skipped); the new viewer in stage 0's and C1's packages (4 of 4 each) and in its own Electron tests (Electron 32.0.2 and 45.2.1); see "Stage C2 notes" | rer-2-C2: 176/176 ok; against C1, 104 within budget and 4 improvements, no regression; the URL transport kept (IPC within budget everywhere); startup disturbed by the computer's load, to be measured again in a startup-only series (RESULTS.md) | Once the computer is quiet: rer-2-C2v (the new viewer in stage 0's window) and a startup-only series. Then final C: `npm run package:mac`, its checks and the packaged visual e2e |
+| C2 / 3 viewer | MEASURED, release gated on the viewer's deployment | a6f70a51 (b6a4bfa3 before the rebase onto 08aaed71); packaged app `artifacts/C2/`, of b6a4bfa3; viewer 568b8ab (its pull request 72, not merged) | Build, lint, unit (Vitest 96; Electron-Mocha 194 main and 2 pending, 62 renderer); headless e2e on the checkout (44, 1 Windows-only skipped) and the package (43, 2 skipped); the new viewer in stage 0's and C1's packages (4 of 4 each) and in its own Electron tests (Electron 32.0.2 and 45.2.1); see "Stage C2 notes" | rer-2-C2: 176/176 ok; against C1, 104 within budget and 4 improvements, no regression; the URL transport kept (IPC within budget everywhere); startup disturbed by the computer's load, to be measured again in a startup-only series (RESULTS.md) | Final C done ("Final C notes"). Left: rer-2-C2v (the new viewer in stage 0's window) and a startup-only series, once the computer is quiet; then the owner's decisions (questions 2 to 5) |
 
 ## Stage C1 notes
 
@@ -242,6 +248,13 @@ Verified on this Mac (arm64), with the viewer at 568b8ab served on port 3131:
   and its Electron tests, all 8 with Electron 32.0.2 (the runtime of the installed 1.12.1) and the isolated
   window's 5 with Electron 45.2.1. Its CI passes on macOS, Ubuntu and Windows.
 
+- After the rebase onto the C1 branch's CI fixes (a6f70a51): build, lint, unit tests (Vitest 96; Electron-Mocha 196
+  main and 2 pending, 62 renderer) and headless e2e on the checkout (44, 1 Windows-only skipped), with the viewer's
+  d3a2afc.
+- With the viewer that production serves, 1ff7a50, stage C2's window shows nothing, its page throws "global is not
+  defined", and the main process logs after 15 seconds that the page did not ask for its photo; it is never given
+  Node.js instead. That pairing is unsupported, so the viewer's deployment must come before C2's release.
+
 | Window that opens the viewer | Viewer 568b8ab |
 | --- | --- |
 | Stage 0's package, with Node.js (stage 0's e2e cases, without its comparison of the checkout's dependencies) | 4 of 4 |
@@ -262,6 +275,22 @@ improvements, among them 105 MB less in the process tree while a HEIC is shown. 
 gains, and C1's one regression verdict, the page's wait for its bridge. IPC showed the photo 16 to 20 ms sooner than
 the URL, within budget on every metric, so by the rule the URL stays, and IPC stays a switch of the test profile only
 (`PLM_TEST_PHOTO_TRANSPORT`), for a later comparison.
+
+## Final C notes
+
+`npm run package:mac` at e10f7a49 (stage C2 on the C1 branch's CI fixes), in the background, with
+`DEVELOPER_DIR=/Library/Developer/CommandLineTools` while Xcode's license waits (Current checkpoint):
+
+- Signed with the Developer ID Application certificate and notarized: the notarization took from 01:25:31 to 01:27:54 (UTC), and the build gave no warning but the Angular build's 14 about CommonJS modules (23 at stage 0).
+- `codesign --verify --deep --strict`: valid on disk, and satisfies its Designated Requirement. Gatekeeper (`spctl --assess`): accepted, "source=Notarized Developer ID".
+  `stapler validate`: the app's ticket validates. The DMG has neither a signature nor a ticket, as `electron-builder.json` sets no signing for it, unchanged from main. Both architectures in the executable: x86_64 and arm64.
+- The update feed `release/latest-mac.yml` has 1.12.1's shape: version, the ZIP and the DMG with their hashes and sizes, path, sha512 and releaseDate, and `vendor.minimumSystemVersion: '13.0'`, which main added since (8d3d587e).
+- The packaged visual e2e (`PLM_VISUAL=1`) on the universal app: 43 passed, and the 2 skipped as designed (the Windows-only case and the website, which is verified apart from the package), with the viewer's 6fe8814 on port 3131.
+- The DMG smoke, the package test's smoke step on that DMG with a profile of its own: passed: the app ran 60 seconds from the mounted DMG, with its windows off the screen, both `[Main]` and `[Renderer]` logged, and the app quit and the DMG detached.
+- The x64 half was not run here: Rosetta is not installed on this Mac, and installing it would change the system.
+  AGENTS.md's Intel CI is not needed either: no new Electron or electron-builder version, no change to the macOS
+  settings in `electron-builder.json`, and no dependency with native code (stage A removed `@electron/remote`, C1
+  `comlink` and `exif-parser`, none of them native).
 
 ## Required update fields while executing
 
