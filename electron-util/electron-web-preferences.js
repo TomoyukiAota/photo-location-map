@@ -19,14 +19,21 @@ function mainWindowWebPreferences(appPath) {
 }
 
 /**
- * Photo Data Viewer's window, whose page, served apart from the app, still reads the photo with Node.js. It is
- * isolated with a bridge of its own in stage C2 of the remote removal (docs/tasks/20261106_remove-electron-remote/).
- * @type {Electron.WebPreferences}
+ * Photo Data Viewer's window, whose page is served apart from the app: without Node.js, sandboxed, with context
+ * isolation, as the main window's, with a bridge of its own (preload/photo-data-viewer.cjs). Only a viewer that knows
+ * the bridge shows its photo; none is ever given Node.js instead.
+ * @param {string} appPath app.getAppPath(): the app's folder, in a checkout or a package, where the preload is.
+ * @returns {Electron.WebPreferences}
  */
-const legacyPhotoDataViewerWebPreferences = {
-  nodeIntegration: true,
-  contextIsolation: false,
-};
+function photoDataViewerWebPreferences(appPath) {
+  return {
+    preload: path.join(appPath, 'electron-util', 'preload', 'photo-data-viewer.cjs'),
+    contextIsolation: true,
+    nodeIntegration: false,
+    nodeIntegrationInWorker: false,
+    sandbox: true,
+  };
+}
 
 /**
  * electron-mocha's renderer tests: mocha needs Node.js in the page. Its own preload runs the main window's preload,
@@ -42,4 +49,4 @@ function rendererTestWebPreferences() {
   };
 }
 
-module.exports = { mainWindowWebPreferences, legacyPhotoDataViewerWebPreferences, rendererTestWebPreferences };
+module.exports = { mainWindowWebPreferences, photoDataViewerWebPreferences, rendererTestWebPreferences };

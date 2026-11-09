@@ -53,7 +53,7 @@ commands. Make each build a directory with `npm run build:prod`, then
 `npx electron-builder build --win dir --x64 --publish never`, and copy `release\win-unpacked\` out before the next
 build; `--app` takes the copy's `Photo Location Map.exe`, in quotes.
 
-`--app <label>=checkout` measures the checkout's build (`dist/` and `src-main/`) instead of a packaged app. Do not
+`--app <label>=checkout` measures the checkout's build (`dist/` and `src-main/`) instead of a packaged app. `--app-env <label>:<NAME>=<value>` sets an environment variable for one build's launches, such as `PLM_TEST_PHOTO_TRANSPORT=ipc` for the transport experiment of stage C2; `series.json` records it with the build. Do not
 run a series while builds, tests or other measurements run on the computer.
 
 ## Scenarios

@@ -20,6 +20,8 @@ import { getUrlForMainWindow } from './file-server/file-server';
 import './menu/menu';
 import './explorer-context-menu/explorer-context-menu-ipc-setup';
 import './photo-data-viewer/photo-data-viewer-ipc-setup';
+// Before the app is ready, which registering its scheme requires.
+import './photo-data-viewer/photo-delivery-setup';
 import './exif/exif-ipc-setup';
 import './folder-dialog/folder-dialog-ipc-setup';
 import './directory-tree/directory-tree-ipc-setup';

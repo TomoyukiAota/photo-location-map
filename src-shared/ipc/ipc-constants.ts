@@ -26,6 +26,8 @@ export namespace IpcConstants {
 
   export namespace PhotoDataViewer {
     export const Name = 'ipc-constants-launch-photo-data-viewer';
+    /** Photo Data Viewer's page asks its window's photo (electron-util/preload/photo-data-viewer.cjs). */
+    export const Photo = 'ipc-constants-photo-data-viewer-photo';
   }
 
   export namespace PhotoSelection {

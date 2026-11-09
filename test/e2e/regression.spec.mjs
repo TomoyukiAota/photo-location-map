@@ -1254,16 +1254,18 @@ test('the main window\'s page runs isolated, without Node.js, and reaches the ma
       await other.loadURL('data:text/html,<title>Another window</title>');
       return await other.webContents.executeJavaScript(`(async () => {
         const { ipcRenderer } = require('electron');
-        let exif;
+        let exif, photo;
         try { await ipcRenderer.invoke('ipc-constants-read-exif', '/photo.jpg'); exif = 'answered'; } catch (error) { exif = error.message; }
+        try { await ipcRenderer.invoke('ipc-constants-photo-data-viewer-photo'); photo = 'answered'; } catch (error) { photo = error.message; }
         return { startup: ipcRenderer.sendSync('ipc-constants-get-startup-metadata'),
-          settings: ipcRenderer.sendSync('ipc-constants-user-data-storage-snapshot'), exif };
+          settings: ipcRenderer.sendSync('ipc-constants-user-data-storage-snapshot'), exif, photo };
       })()`);
     } finally {
       other.destroy();
     }
   });
-  expect(fromAnotherWindow).toEqual({ startup: null, settings: null, exif: expect.stringContaining('Reading EXIF is only for the main window.') });
+  expect(fromAnotherWindow).toEqual({ startup: null, settings: null, exif: expect.stringContaining('Reading EXIF is only for the main window.'),
+    photo: expect.stringContaining('Only the page of Photo Data Viewer in its window has a photo.') });
 });
 test('the main window gets animation frames while its page changes', async () => {
   // A hidden window on Windows gets about 1 frame per second once its page changes (see
@@ -1633,6 +1635,8 @@ for (const [name, fixture, specialPath] of [
       await copyFile(photo, copiedPhoto);
       photo = copiedPhoto;
     }
+    // The viewer may open only a photo of a folder that the user opened (src-main/photo-data-viewer/).
+    await openFolderWithPicker(path.dirname(photo));
     const newWindow = app.waitForEvent('window');
     await page.evaluate(({ name, photo }) => window.plm.photoDataViewer.open({ photo: { name, path: photo } }),
       { name: path.basename(photo), photo });
@@ -1641,8 +1645,31 @@ for (const [name, fixture, specialPath] of [
     await viewer.waitForFunction(() => [...document.querySelectorAll('img')].some(img => img.naturalWidth > 100), { timeout: 30000 });
     await expect(viewer).toHaveTitle(`${path.basename(photo)} - Photo Location Map`);
     // The viewer calls show() once loaded; its window, too, must stay off the screen in a headless run.
-    await expectWindowOffScreenOnlyIfHeadless(await app.browserWindow(viewer));
-    expect(new URL(viewer.url()).searchParams.get('photoPath')).toBe(photo);
+    const viewerWindow = await app.browserWindow(viewer);
+    await expectWindowOffScreenOnlyIfHeadless(viewerWindow);
+    // Isolated as the main window is, the page gets the photo from its bridge, without its path, which no longer goes
+    // to the viewer's server in the address.
+    expect(await viewerWindow.evaluate(window => {
+      const applied = window.webContents.getLastWebPreferences();
+      return [applied.contextIsolation, applied.nodeIntegration, applied.sandbox];
+    })).toEqual([true, false, true]);
+    expect(await viewer.evaluate(() => [typeof window.require, typeof window.process])).toEqual(['undefined', 'undefined']);
+    expect(new URL(viewer.url()).searchParams.get('photoPath')).toBeNull();
+    expect(new URL(viewer.url()).searchParams.get('plmBridge')).toBe('1');
+    // The photo's URL is the viewer's alone: the main window's page cannot read it, and it ends with the window.
+    const { url } = await viewer.evaluate(() => window.plmPhotoDataViewer.readPhoto());
+    expect(url).toMatch(/^plm-photo:\/\/photo\/[0-9a-f]{64}$/);
+    expect(await page.evaluate(url => fetch(url).then(answer => answer.status, error => error.message), url)).not.toBe(200);
+    const status = () => app.evaluate(async ({ app }, { url, referrer }) => {
+      const require = globalThis.__plmTestRequire;
+      const delivery = require(require('node:path').join(app.getAppPath(), 'src-main/photo-data-viewer/photo-delivery.js'));
+      // What protocol.handle passes for the viewer's fetch(): the URL, the mode and the referrer that Chromium sets.
+      const request = { url, mode: 'cors', referrer, headers: new Headers() };
+      return (await delivery.respondToPhotoRequest(request)).status;
+    }, { url, referrer: `${new URL(viewer.url()).origin}/` });
+    expect(await status()).toBe(200);
+    await viewerWindow.evaluate(window => new Promise(resolve => { window.once('closed', resolve); window.close(); }));
+    expect(await status()).toBe(404);
   });
 }
 test('download website keeps desktop and narrow layouts and Windows navigation', async () => {
