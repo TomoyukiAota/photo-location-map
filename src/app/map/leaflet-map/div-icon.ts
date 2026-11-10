@@ -6,7 +6,8 @@ import { Photo } from '../../shared/model/photo.model';
  * TL;DR: Built with DOM calls on purpose, unlike the popups, which are Angular components.
  * Details: There is a label for every photo on the map, made whenever the map is rendered, tens of thousands for a
  * large folder, while a popup is made for the few photos that the user looks at. A label is a few elements of text
- * that nothing changes and nothing clicks, so a component would add its cost to each without giving anything.
+ * without a listener or a state of its own: Leaflet handles the click on a marker, and the map component colors the
+ * label of the marker whose popup is open. A component would add its cost to each label without giving anything.
  */
 export function createDivIconHtml(photo: Photo): HTMLElement {
   const divIcon = document.createElement('div');

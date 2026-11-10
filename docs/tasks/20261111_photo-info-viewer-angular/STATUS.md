@@ -69,9 +69,10 @@ Nothing looks different: see [Checks](#checks). These work differently.
 - **The label of a photo's marker** (`src/app/map/leaflet-map/div-icon.ts`):
   its shooting time, or its name. There is a label for every photo on the
   map, made whenever the map is rendered, tens of thousands for a large
-  folder. It is a few elements of text that nothing changes and nothing
-  clicks, so a component would add its cost to each without giving anything.
-  Its file says so.
+  folder. It is a few elements of text without a listener or a state of its
+  own: Leaflet handles the click on a marker, and the map component colors
+  the label of the marker whose popup is open. A component would add its cost
+  to each label without giving anything. Its file says so.
 - **What Leaflet and Leaflet-Geoman draw themselves**: the map, its controls
   and their tooltips.
 
