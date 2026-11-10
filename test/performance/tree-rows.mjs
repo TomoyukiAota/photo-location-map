@@ -30,6 +30,8 @@ const builds = [];
 for (const entry of values.app) {
   const [label, ...rest] = entry.split('=');
   const build = rest.join('=');
+  // Without a build, the working directory would be taken for one.
+  if (!label || !build) throw new Error(`--app takes <label>=<build>, not ${entry}.`);
   if (build === 'checkout') {
     builds.push({ label, target: {} });
     continue;
