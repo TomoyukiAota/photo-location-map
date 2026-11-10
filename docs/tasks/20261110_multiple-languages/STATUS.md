@@ -6,12 +6,11 @@ Started on 2026-11-10. See the [plan](./PLAN.md).
 
 All three stages of the plan are implemented and checked on macOS (2026-11-10),
 and the owner went through the application in Japanese and changed its texts
-(2026-11-11, [below](#the-owners-review-of-the-japanese-texts)).
+(2026-11-11, [below](#the-owners-review-of-the-japanese-texts)). That work is
+merged: pull request #678, on 2026-11-11.
 
-- Authorized (owner, 2026-11-11): merge the work. It is pull request #678, from
-  the branch `claude/internationalization-investigation-fad0bb`, which got
-  CI's macOS screenshots written anew and its review addressed, and is merged
-  with the `automerge` label once CI passes.
+Since then the application has 42 languages, and its list of languages has a
+search field: see [More languages and a search field](#more-languages-and-a-search-field).
 
 - Every text that the application shows is in `src-shared/i18n/locales/en.json`
   and, in Japanese, in `ja.json`. Both processes read them through `t()`
@@ -34,6 +33,115 @@ and the owner went through the application in Japanese and changed its texts
 - `docs/TRANSLATING.md` tells contributors how to add or improve a language;
   `README.md`, `docs/CONTRIBUTING.md` and the About box link to it, and a unit
   test checks every translation file.
+
+## More languages and a search field
+
+The owner asked on 2026-11-11 for the languages that Windows and macOS support,
+for a search field above the list of languages that narrows the list down, and
+for the same in Photo Data Viewer, which is to have the same languages.
+
+### What was decided
+
+- **Which languages.** The 42 that Windows 11 has a language pack for or that
+  the applications of macOS are translated into, English and Japanese among
+  them. Windows also has about 40 languages as "language interface packs",
+  which translate only a part of it and are added on top of another language:
+  those are left out, and are a question for the owner below.
+- **Their codes.** The language alone (`de`), unless a region or a script
+  matters for the text: `pt-BR` and `pt-PT`, `zh-Hans` and `zh-Hant`,
+  `sr-Latn`, and `nb` for Norwegian. The operating system's languages are
+  matched to them by the rules of `src-shared/i18n/resolve-language.ts`
+  (`zh-TW` is `zh-Hant`, `pt` is `pt-BR`, `no` is `nb`, `sr` is `sr-Latn`),
+  which are Photo Data Viewer's too.
+- **Their names and order.** Each under its own name, with a capital letter as
+  macOS lists them; the names in Latin letters by the alphabet, then those in
+  other scripts. Photo Data Viewer lists them the same.
+- **The translations** of the 40 new languages were written by the coding
+  agent, as machine translation that no speaker has read. `docs/TRANSLATING.md`
+  says so at its top and in its table, and asks speakers to read and correct
+  them. They use the words of macOS and Windows for common items, keep
+  "(Language)" after the word for language, and word a text with a number so
+  that the number can be any ("Geladene Dateien: 5."), as the application has
+  one form for each text.
+- **The search** compares without regard to case or diacritics, and finds a
+  language by its own name, its English name, its name in the application's
+  language (`Intl.DisplayNames`: ドイツ語 finds Deutsch in Japanese) or its
+  code. The first entry, which follows the operating system, is found by its
+  text. The chosen entry stays chosen while the search hides it. The box keeps
+  the height of seven entries whatever the search leaves, so that the dialog
+  does not move while the user types, and says "No languages found" when
+  nothing is left. The Language dialog opens with the search field focused.
+- **Arabic and Hebrew** are laid out from right to left, as Photo Data Viewer
+  lays them out: the page has `dir="rtl"`, which Angular Material follows for
+  its dialogs and menus, and the styles name their sides by the direction of
+  the text. Three things stay laid out from left to right: the row of the
+  sidebar and the map, which is reversed instead, as Split.js measures from the
+  left; the map, as Leaflet has nothing for the other direction; and the
+  chart's panel, as ECharts draws the chart the same in every language. The
+  name of a file or a folder and a path are in `bdi` elements, and each value
+  of a text's placeholder is on its own in the text (U+2068 and U+2069), so
+  that they keep their order and their punctuation in a text written the other
+  way.
+- **Dates** have the digits 0 to 9 in every language, as the other numbers of
+  the application have: moment's Arabic and Hindi locales would write the
+  digits of those scripts.
+- **Leaflet-Geoman** has texts in 25 of the 42 languages. In the other 17, the
+  tooltips while a region is drawn are in English; the buttons of its toolbar
+  are the application's texts in every language.
+- **The tests** check every translation file in the unit tests, which take a
+  second and a half as before. The e2e suite has its cases and screenshots in
+  English, Japanese and Arabic only, the last for the layout from right to
+  left, so that it does not get slower with every language: the owner's
+  concern.
+
+### What else changed
+
+- The label that appears under the chart's menu icon was "More" in every
+  language, as the styles wrote it. It is `chart.moreAlt` now.
+- The build warns about each locale of moment as a CommonJS module, as it did
+  about the Japanese one: 41 lines instead of one. They are left as they are
+  here.
+
+### Looked at
+
+Every dialog and view was photographed in each of the 42 languages, with the
+application hidden, and the elements whose content is larger than their box
+were listed and compared with English.
+
+- **The label of the clock's field** in the Date & Time tab was cut off in 16
+  languages: about 16 letters fit in it. Those translations are shorter now
+  ("12/24 Stunden"), and `docs/TRANSLATING.md` gives the limit.
+- **The dialog that says that no photo has location data** had a fixed height,
+  which its message outgrew by a line in five languages. It has a minimum
+  height now, the same as before in English.
+- **The chart's unit** is a select as wide as its longest option, and
+  "Δευτερόλεπτο", a second in Greek, pushed the menu's icon beside it over the
+  chart's Zoom buttons. The column that holds them is as wide as they need
+  now, and 130px, as before, where that is enough. The button that selects the
+  photos within the zoom grows with a text of three or four lines.
+- **The first entry of the list** takes two lines in six languages whose words
+  for it, or whose own name, are long ("Português (Portugal)"). It is left so.
+- In Arabic, each screen was looked at as well: the sidebar is at the right
+  and its border follows the mouse, the dialogs and menus are mirrored, a
+  photo's menu opens the other way round within the map, and a path keeps its
+  first slash at its start.
+
+Nothing else differed from English. What nobody has done is read the 40 new
+translations as a speaker.
+
+### Screenshots
+
+`test/e2e/snapshots/`, written on the Mac of the checks below with
+`--update-snapshots`:
+
+| Reference | Why |
+| --- | --- |
+| `language-dialog.png`, `language-dialog-ja.png`, `settings-language.png`, `settings-language-ja.png` | Changed: the search field above the list, and the list of 42 languages. In the dialog, the search field has the focus. |
+| `loaded-home-ar.png` | New: the main window in Arabic, laid out from right to left, with a folder of photos open. |
+
+The other references are unchanged and still match, so nothing else changed
+in English. CI's own set for macOS is written anew on the pull request's
+branch, as for the first languages.
 
 ## What changed in English
 
@@ -67,9 +175,14 @@ worktree, on a machine whose language is Japanese.
 | Stage 3, final | pass | 149 tests | 199 / 62 | 47 passed, 1 skipped |
 | The list in place of the radio buttons, with its scrollbar and the operating system's name | pass | 158 tests | 199 / 62 | 47 passed, 1 skipped |
 | The Japanese texts as the owner changed them, and the tree's item for a file and a folder | pass | 161 tests | 199 / 62 | 47 passed, 1 skipped |
+| 42 languages, the search field and the layout from right to left | pass | 389 tests | 199 / 62 | 48 passed, 1 skipped |
 
 - The stage 1 run compared every screenshot with its reference unchanged, so
   no text or layout changed in English.
+- With 42 languages, Vitest has 389 tests and takes a second and a half, as it
+  did with two: each translation file adds five checks. The e2e suite has one
+  more case, for Arabic, and also passed against a development build: 48
+  passed, 1 skipped.
 - The final state also passed the e2e suite against a development build
   (`npm run build:dev`), which fails a case that changed a binding without
   telling Angular: 47 passed, 1 skipped.
@@ -176,7 +289,20 @@ texts follow Photo Data Viewer's wording for the words the two share.
 
 ## Questions for the owner
 
-None is open.
+Open since the 42 languages (2026-11-11):
+
+- **Windows' partly translated languages.** Windows has about 40 more
+  languages as "language interface packs" (Icelandic, Welsh, Persian, Tamil
+  and others), which macOS does not have. Should the application get those as
+  well, as machine translations? They are left out so far.
+- **The translations of the 40 new languages** are machine translations that
+  no speaker has read. They are offered as they are, and `docs/TRANSLATING.md`
+  asks speakers to correct them. If a language should rather wait until
+  someone has read it, it can be taken out of the list by removing its line in
+  `src-shared/i18n/languages.ts`.
+- **The map and the chart in Arabic and Hebrew** stay laid out from left to
+  right, with the sidebar at the right. Say so if they should be mirrored as
+  well, which Leaflet and ECharts do not do by themselves.
 
 Answered on 2026-11-10:
 
