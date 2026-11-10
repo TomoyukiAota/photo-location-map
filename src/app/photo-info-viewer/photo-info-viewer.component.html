@@ -1,0 +1,104 @@
+<!--
+  One block for each layout, with the thumbnail's element written in both, rather than conditions around the parts
+  that differ: each condition around a part is a view of its own in every viewer (see the component's comment).
+-->
+@let shownPhoto = photo();
+@if (!shownPhoto?.path) {
+  {{ texts.unavailable }}
+} @else if (place() === 'leaflet-map-tile') {
+  <!-- A tile of a cluster's popup. -->
+  @let shownThumbnail = thumbnail();
+  <div>
+    <div class="photo-info-viewer-thumbnail-container">
+      <img class="photo-info-viewer-thumbnail"
+           loading="lazy"
+           [class.photo-info-viewer-thumbnail-placeholder]="shownThumbnail.kind !== 'image'"
+           [class.photo-info-viewer-generating-thumbnail]="shownThumbnail.kind === 'generating'"
+           [class.photo-info-viewer-fade-in-after-thumbnail-generation]="fadesInAfterGeneration()"
+           [src]="shownThumbnail.src"
+           [attr.alt]="shownThumbnail.alt"
+           [style.transform]="thumbnailTransform()"
+           (click)="onThumbnailClick()">
+      <button class="photo-info-viewer-rotate-button-in-thumbnail-container"
+              type="button"
+              (click)="onRotateButtonClick($event)">
+        <img class="photo-info-viewer-button-icon"
+             [src]="icons.rotate"
+             [alt]="texts.rotate"
+             [title]="texts.rotate">
+      </button>
+    </div>
+    <div class="photo-info-viewer-date-time-taken">
+      <div>{{ dateTaken() }}</div>
+      <div>{{ timeTaken() }}</div>
+    </div>
+  </div>
+} @else {
+  <!-- A row of the folder tree, or a popup of the map, which has the photo's name too. -->
+  @let shownThumbnail = thumbnail();
+  @let shownDateTimeTaken = dateTimeTaken();
+  <div>
+    <div class="photo-info-viewer-thumbnail-container">
+      <img class="photo-info-viewer-thumbnail"
+           loading="lazy"
+           [class.photo-info-viewer-thumbnail-placeholder]="shownThumbnail.kind !== 'image'"
+           [class.photo-info-viewer-generating-thumbnail]="shownThumbnail.kind === 'generating'"
+           [class.photo-info-viewer-fade-in-after-thumbnail-generation]="fadesInAfterGeneration()"
+           [src]="shownThumbnail.src"
+           [attr.alt]="shownThumbnail.alt"
+           [style.transform]="thumbnailTransform()"
+           (click)="onThumbnailClick()">
+    </div>
+    @if (place() === 'leaflet-map-popup') {
+      <!-- Written from the side that its first letter says, whatever the direction of the application's language is. -->
+      <div class="photo-info-viewer-name" dir="auto">{{ shownPhoto.name }}</div>
+    }
+    <div class="photo-info-viewer-date-time-taken"
+         [class.photo-info-viewer-date-time-taken-unknown]="!shownDateTimeTaken">{{ shownDateTimeTaken }}</div>
+  </div>
+  <div class="photo-info-viewer-lower-div">
+    <button class="photo-info-viewer-button"
+            type="button"
+            (click)="onRotateButtonClick($event)">
+      <img class="photo-info-viewer-button-icon"
+           [src]="icons.rotate"
+           [alt]="texts.rotate"
+           [title]="texts.rotate">
+    </button>
+    <button class="photo-info-viewer-button"
+            type="button"
+            (click)="onOpenFileButtonClick($event)">
+      <img class="photo-info-viewer-button-icon"
+           [src]="icons.openFile"
+           [alt]="texts.openFile"
+           [title]="texts.openFile">
+    </button>
+    @if (livePhotosFilePath(); as livePhotos) {
+      <button class="photo-info-viewer-button"
+              type="button"
+              (click)="onLivePhotosButtonClick($event, livePhotos)">
+        <img class="photo-info-viewer-button-icon"
+             [src]="icons.livePhotos"
+             [alt]="texts.livePhotos"
+             [title]="texts.livePhotos">
+      </button>
+    }
+    <!-- The menu is inside its button: see MoreOptionsMenuComponent. -->
+    <button class="photo-info-viewer-more-options-button"
+            type="button"
+            (click)="onMoreOptionsButtonClick($event)"
+            (focusout)="closeMenu()">
+      <img class="photo-info-viewer-button-icon"
+           [src]="icons.moreOptions"
+           [alt]="texts.moreOptions"
+           [title]="texts.moreOptions">
+      @if (menuPlacement(); as placement) {
+        <app-photo-info-viewer-more-options-menu
+          animate.enter="photo-info-viewer-more-options-menu-fade-in"
+          animate.leave="photo-info-viewer-more-options-menu-fade-out"
+          [photo]="shownPhoto"
+          [placement]="placement" />
+      }
+    </button>
+  </div>
+}

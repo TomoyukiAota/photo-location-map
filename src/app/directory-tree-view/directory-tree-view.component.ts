@@ -1,16 +1,17 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, OnInit, effect, signal, untracked, viewChild, inject } from '@angular/core';
+import { Component, effect, signal, untracked, viewChild, inject } from '@angular/core';
 import { MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem } from '@angular/material/menu';
 import { MatTree, MatTreeNodeDef, MatTreeNode, MatTreeNodeToggle, MatTreeNodePadding } from '@angular/material/tree';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { createPrependedLogger } from '../../../src-shared/log/create-prepended-logger';
+import { PhotoInfoViewerComponent } from '../photo-info-viewer/photo-info-viewer.component';
 import { TranslatePipe } from '../shared/i18n/translate.pipe';
+import { Photo } from '../shared/model/photo.model';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
 import { DirTreeViewContextMenuHelper } from './dir-tree-view-context-menu/dir-tree-view-context-menu-helper';
 import { dirTreeViewContextMenuItems } from './dir-tree-view-context-menu/dir-tree-view-context-menu-item';
-import { DirTreeViewPhotoInfoDisplayLogic } from './dir-tree-view-photo-info/dir-tree-view-photo-info-display-logic';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { DirectoryTreeViewSelectionService } from './directory-tree-view-selection.service';
 import { DirTreeViewSortConfig } from './dir-tree-view-sort/dir-tree-view-sort-config';
@@ -19,7 +20,6 @@ import { NestedNode } from './directory-tree-view.model';
 import { MatIconButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatLabel } from '@angular/material/form-field';
-import { DirTreeViewPhotoInfoComponent } from './dir-tree-view-photo-info/dir-tree-view-photo-info.component';
 import { MatIcon } from '@angular/material/icon';
 
 const dirTreeViewLogger = createPrependedLogger('[Directory Tree View]');
@@ -30,11 +30,11 @@ const dirTreeViewLogger = createPrependedLogger('[Directory Tree View]');
   styleUrls: ['directory-tree-view.component.scss'],
   imports: [
     MatTree, MatTreeNodeDef, MatTreeNode, MatTreeNodeToggle, MatTreeNodePadding, MatIconButton, MatCheckbox,
-    MatLabel, DirTreeViewPhotoInfoComponent, MatIcon, MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem,
+    MatLabel, PhotoInfoViewerComponent, MatIcon, MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem,
     TranslatePipe,
   ]
 })
-export class DirectoryTreeViewComponent implements OnInit {
+export class DirectoryTreeViewComponent {
   private sortService = inject(DirTreeViewSortService);
   private selectedPhotoService = inject(SelectedPhotoService);
   private photoDataService = inject(PhotoDataService);
@@ -61,8 +61,6 @@ export class DirectoryTreeViewComponent implements OnInit {
   // The parent of every node of the tree, shown or not, and null for the root. Its keys are all the nodes.
   private readonly parentNodes = new Map<NestedNode, NestedNode | null>();
 
-  public photoInfoDisplayLogic: DirTreeViewPhotoInfoDisplayLogic;
-
   constructor() {
     const directoryTreeViewDataService = inject(DirectoryTreeViewDataService);
     const directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);
@@ -80,8 +78,9 @@ export class DirectoryTreeViewComponent implements OnInit {
       .subscribe(photoPaths => this.handleDirectoryTreeViewSelectionRequested(photoPaths));
   }
 
-  public ngOnInit() {
-    this.photoInfoDisplayLogic = new DirTreeViewPhotoInfoDisplayLogic(this.photoDataService);
+  /** The photo of a file's node, whose information the node's row shows; null for a file that is not a photo. */
+  public photoOf(node: NestedNode): Photo | null {
+    return this.photoDataService.getPhoto(node.path);
   }
 
   /** Whether the node is a folder with something in it, which the tree can expand. */

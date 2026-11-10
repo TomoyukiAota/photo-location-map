@@ -31,8 +31,9 @@ export async function removeProfile(profile) {
 }
 
 /**
- * Launches `target` ({ executable } for a packaged app, or {} for the checkout) on `profile`, with windows hidden,
- * analytics and other external requests cancelled, and Photo Data Viewer from `viewerServer`.
+ * Launches `target` ({ executable } for a packaged app, { checkout } for the build of another checkout, with that
+ * checkout's Electron, or {} for this checkout) on `profile`, with windows hidden, analytics and other external
+ * requests cancelled, and Photo Data Viewer from `viewerServer`.
  * Returns { app, page, pid, spawnMs }, where spawnMs is the time just before the process was started, and pid is
  * the app's main process, whose are the launch report and the process tree. On Windows, Playwright starts the app
  * through a shell (cmd.exe), whose ID app.process() gives, so the main process is asked there; elsewhere the two are
@@ -46,9 +47,9 @@ export async function launch({ target, profile, viewerServer, env: extraEnv = {}
   if (target.executable) delete env.npm_package_config_devOrProd;
   const spawnMs = Date.now();
   const app = await _electron.launch({
-    executablePath: target.executable ?? require('electron'),
+    executablePath: target.executable ?? (target.checkout ? createRequire(path.join(target.checkout, 'package.json'))('electron') : require('electron')),
     args: target.executable ? [] : ['test/e2e/main.cjs'],
-    cwd: target.executable ? profile : root,
+    cwd: target.executable ? profile : target.checkout ?? root,
     env,
     timeout: 90000,
   });

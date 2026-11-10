@@ -71,6 +71,32 @@ read at once, so they show where the time goes, not how long the folder took. Re
 processes share once per process, so a sum overstates the memory in use; each process's value is kept in the
 trial's details.
 
+## The rows of the folder tree
+
+`tree-rows.mjs` is a measurement of its own, apart from the series above, for a change to what a row of the folder
+tree shows. A folder that has its photos in it has a row, and so a viewer of the photo
+(`src/app/photo-info-viewer/`), for each photo as soon as it is opened, thousands for a large folder, while the
+large workload above has its photos in folders that are not expanded.
+
+```sh
+mise exec -- node test/performance/tree-rows.mjs --app before=<build> --app now=checkout --photos 2000 --trials 3
+```
+
+`<build>` is a packaged app's executable, `checkout` for this checkout's build, or the folder of another checkout
+with its own build and `node_modules`, such as a git worktree of the commit before the change. Build each with
+`npm run build:prod` first. The script makes a folder of that many copies of one JPEG of the fixtures in a
+temporary folder (clones, which take no space, where the file system can), opens it in each build in turn, and
+prints for each trial, and as medians at the end:
+
+| Figure | What it is |
+| --- | --- |
+| `openMs` | From the click on Open Folder to the frame after the last row is in the page. Most of it is reading the photos. |
+| `rowsAgainMs` | The folder collapsed, then from the click that expands it to the frame after the last row: the rows made again. |
+| `checkboxMs` | From a click on one row's checkbox to the frame after it shows: what the other rows cost a change of one. |
+| `heapMb`, `nodes`, `listeners` | The page's JavaScript heap after a garbage collection, and its nodes and event listeners, once the folder is open. |
+| `processMb` | The working set of the page's process then, which Electron reports. Most of it is the thumbnails. |
+| `heapAfterRowsAgainMb` | The heap after the rows were made again three times: more than `heapMb` by much is a leak. |
+
 ## Results
 
 `run.mjs` writes `series.json` (the host, the builds with a hash of their code, the workloads, the viewer) and one

@@ -1281,7 +1281,7 @@ test('a right-click outside the tree\'s context menu closes it', async () => {
   await expect(treeCheckbox('Kobe')).toBeChecked();
 });
 test('Select Only This from a marker popup selects that photo in the tree and on the map', async () => {
-  // The popup and its menu are plain DOM that Leaflet shows, outside Angular.
+  // The popup's content is an Angular component that the map makes for Leaflet, outside any template.
   await dismissWelcome();
   await openFolderWithPicker(photoFolder);
   await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
@@ -1313,6 +1313,123 @@ test('a cluster of photos taken at one place opens a popup with each of them', a
     if (await page.locator('.photo-cluster-viewer-tile').count() === 0 && await cluster.count() === 1) await cluster.click();
     return page.locator('.photo-cluster-viewer-tile').count();
   }, { timeout: 20000 }).toBe(2);
+  // The first tile is chosen, and its photo's information is beside the tiles. A click on the other tile shows the
+  // other photo's. The two photos were taken at the same time, so either can be first.
+  const tiles = page.locator('.photo-cluster-viewer-tile');
+  const shownName = page.locator('.photo-cluster-viewer-right-pane .photo-info-viewer-name');
+  await expect(tiles.first()).toHaveClass(/selected-tile/);
+  await expect(tiles.nth(1)).not.toHaveClass(/selected-tile/);
+  await expect(shownName).toHaveText(/^Kobe [12]\.JPG$/);
+  const firstName = await shownName.textContent();
+  await tiles.nth(1).click();
+  await expect(tiles.nth(1)).toHaveClass(/selected-tile/);
+  await expect(tiles.first()).not.toHaveClass(/selected-tile/);
+  await expect(shownName).toHaveText(firstName === 'Kobe 1.JPG' ? 'Kobe 2.JPG' : 'Kobe 1.JPG');
+  // A tile's small button, which shows while the pointer is over the tile's thumbnail, turns that thumbnail without
+  // choosing the tile. The photo beside the tiles is turned on its own.
+  await tiles.first().locator('.photo-info-viewer-thumbnail-container').hover();
+  await tiles.first().locator('.photo-info-viewer-rotate-button-in-thumbnail-container').click();
+  await expect(tiles.first().locator('.photo-info-viewer-thumbnail')).toHaveAttribute('style', /rotate\(90deg\)/);
+  await expect(tiles.nth(1)).toHaveClass(/selected-tile/);
+  await tiles.first().click();
+  await expect(shownName).toHaveText(firstName);
+  await expect(page.locator('.photo-cluster-viewer-right-pane .photo-info-viewer-thumbnail')).toHaveCSS('transform', 'none');
+});
+test('a photo\'s information, in the tree and in a popup of the map, opens the photo, its folder and its Live Photos movie, and keeps its thumbnail turned', async () => {
+  // The same Angular component in both places, with what it keeps in services: a row of the tree and the content of a
+  // popup are made again, and show the thumbnail as it was turned.
+  const folder = path.join(profile, 'a photo with a movie');
+  await mkdir(folder);
+  const photo = path.join(folder, 'IMG_4676.JPG');
+  const movie = path.join(folder, 'IMG_4676.MOV');
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), photo);
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.MOV'), movie);
+  await dismissWelcome();
+  const openCommands = await recordOpenCommands();
+  const openedUrls = await recordOpenedUrls();
+  await openFolderWithPicker(folder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('1 files have location data.');
+  const turned = degrees => new RegExp(`rotate\\(${degrees}deg\\)`);
+  const menu = page.locator('.photo-info-viewer-more-options-menu');
+  const menuItem = name => page.locator('.photo-info-viewer-more-options-menu-item').filter({ hasText: name });
+
+  // The photo's row of the tree: its thumbnail and shooting time, and its buttons while the pointer is over it.
+  const row = page.locator('mat-tree-node').filter({ hasText: 'IMG_4676.JPG' });
+  const inTree = row.locator('app-photo-info-viewer');
+  const thumbnailInTree = inTree.locator('.photo-info-viewer-thumbnail');
+  await expect(inTree.locator('.photo-info-viewer-date-time-taken')).toHaveText('2017-12-16 Sat 20:11:22');
+  await expect(inTree.locator('.photo-info-viewer-name')).toHaveCount(0);
+  await page.locator('app-loaded-files-status-bar').hover();
+  await expect(inTree.locator('.photo-info-viewer-lower-div')).toHaveCSS('opacity', '0');
+  await thumbnailInTree.hover();
+  await expect(inTree.locator('.photo-info-viewer-lower-div')).toHaveCSS('opacity', '1');
+  await inTree.getByRole('button', { name: 'Rotate Thumbnail' }).click();
+  await expect(thumbnailInTree).toHaveAttribute('style', turned(90));
+  await inTree.getByRole('button', { name: 'Open File' }).click();
+  await inTree.getByRole('button', { name: 'Live Photos' }).click();
+  await thumbnailInTree.click();
+  await inTree.getByRole('button', { name: 'More Options' }).click();
+  await expect(page.locator('.photo-info-viewer-more-options-menu-item'))
+    .toHaveText(['Select Only This', 'Open Folder', 'Open Google Maps', 'Open Google Street View', 'View Data']);
+  // A click on an item does what the item says, and closes the menu.
+  await menuItem('Open Folder').click();
+  await expect(menu).toHaveCount(0);
+  await expect.poll(openCommands).toEqual([
+    osOpenCommand(photo), osOpenCommand(movie), osOpenCommand(photo), osOpenCommand(photo, { containingFolder: true }),
+  ]);
+  // The menu closes when its button is clicked again, and when something else is clicked.
+  await inTree.getByRole('button', { name: 'More Options' }).click();
+  await expect(menu).toHaveCount(1);
+  await inTree.getByRole('button', { name: 'More Options' }).click();
+  await expect(menu).toHaveCount(0);
+  await inTree.getByRole('button', { name: 'More Options' }).click();
+  await expect(menu).toHaveCount(1);
+  await page.locator('app-loaded-files-status-bar').click();
+  await expect(menu).toHaveCount(0);
+  // The row is made again when its folder is collapsed and expanded.
+  const folderToggle = page.locator('mat-tree-node').filter({ has: page.getByText('a photo with a movie', { exact: true }) }).getByRole('button');
+  await folderToggle.click();
+  await expect(row).toHaveCount(0);
+  await folderToggle.click();
+  await expect(thumbnailInTree).toHaveAttribute('style', turned(90));
+
+  // The popup of the only photo on the map, which opens by itself: the photo's name too, and a turn of its own.
+  const popup = page.locator('.leaflet-popup');
+  const inPopup = popup.locator('app-photo-info-viewer');
+  const thumbnailInPopup = inPopup.locator('.photo-info-viewer-thumbnail');
+  await expect(inPopup.locator('.photo-info-viewer-name')).toHaveText('IMG_4676.JPG');
+  await expect(inPopup.locator('.photo-info-viewer-date-time-taken')).toHaveText('2017-12-16 Sat 20:11:22');
+  await expect(thumbnailInPopup).toHaveCSS('transform', 'none');
+  await inPopup.getByRole('button', { name: 'Rotate Thumbnail' }).click();
+  await inPopup.getByRole('button', { name: 'Rotate Thumbnail' }).click();
+  await expect(thumbnailInPopup).toHaveAttribute('style', turned(180));
+  await inPopup.getByRole('button', { name: 'More Options' }).click();
+  await menuItem('Open Google Maps').click();
+  await inPopup.getByRole('button', { name: 'More Options' }).click();
+  await menuItem('Open Google Street View').click();
+  await expect.poll(openedUrls).toEqual([
+    expect.stringMatching(/^https:\/\/maps\.google\.com\/\?q=[\d.]+,[\d.]+&ll=[\d.]+,[\d.]+&z=14$/),
+    expect.stringMatching(/^https:\/\/www\.google\.com\/maps\/@\?api=1&map_action=pano&parameters&viewpoint=[\d.]+,[\d.]+$/),
+  ]);
+  // Closed and opened again, the popup shows the same content.
+  await popup.locator('.leaflet-popup-close-button').click();
+  await expect(popup).toHaveCount(0);
+  await page.locator('.plm-leaflet-map-div-icon').first().dispatchEvent('click');
+  await expect(thumbnailInPopup).toHaveAttribute('style', turned(180));
+  // The map is rendered again when the selection changes, and the popup's content is made again.
+  await treeCheckbox('IMG_4676.JPG').uncheck();
+  await expect(page.locator('.plm-leaflet-map-div-icon')).toHaveCount(0);
+  await treeCheckbox('IMG_4676.JPG').check();
+  await expect(thumbnailInPopup).toHaveAttribute('style', turned(180));
+  await expect(thumbnailInTree).toHaveAttribute('style', turned(90));
+
+  // Another folder turns every thumbnail back.
+  await openFolderWithPicker(photoFolder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
+  await openFolderWithPicker(folder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('1 files have location data.');
+  await expect(thumbnailInTree).toHaveCSS('transform', 'none');
+  await expect(thumbnailInPopup).toHaveCSS('transform', 'none');
 });
 test('undo and redo step through the photo selection from the Selection menu, which enables them when they apply', async () => {
   // The menu reaches the renderer through IPC, outside any template event, and the tree selects programmatically. The
@@ -1826,6 +1943,12 @@ test('the thumbnail status bar follows the generation of HEIF thumbnails from st
   await expect(statusBar).toContainText('Completed generating thumbnails for HEIF files.', { timeout: 30000 });
   await expect(statusBar).toContainText('Processed 1 out of 1 files.');
   await expect(openFolderButton).toBeEnabled();
+  // The photo's row of the tree shows the thumbnail that was made, from the cache, in place of the image that
+  // stood in for it.
+  const thumbnail = page.locator('mat-tree-node').filter({ hasText: 'demo.heic' }).locator('.photo-info-viewer-thumbnail');
+  await expect(thumbnail).toHaveAttribute('src', /demo\.heic\.plm\.jpg$/);
+  await expect(thumbnail).not.toHaveClass(/photo-info-viewer-generating-thumbnail/);
+  await expect.poll(() => thumbnail.evaluate(image => image.complete && image.naturalWidth)).toBeGreaterThan(0);
   await statusBar.getByTitle('Close Thumbnail Generation Status Bar').click();
   await expect(statusBar).toBeHidden();
 });
