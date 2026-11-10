@@ -1,10 +1,9 @@
+import isNaturalNumber from 'is-natural-number';
 import moment from 'moment-timezone';
 import { getMomentDiff, getMomentDiffAsIso8601, MomentDiffArgs } from '../src-shared/date-time/moment-diff';
 import { Now } from '../src-shared/date-time/now';
 import { UserDataStoragePath } from '../src-shared/user-data-storage/user-data-stroage-path';
 import { UserDataStorage } from '../src-shared/user-data-storage/user-data-storage';
-
-const isNaturalNumber = require('is-natural-number');
 
 export class LaunchInfo {
   public static currentLaunchDateTime = Now.extendedFormat;
