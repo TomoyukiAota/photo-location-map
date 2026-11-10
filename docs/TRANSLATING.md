@@ -1,9 +1,15 @@
 # Translating this application
 
-Photo Location Map can be shown in several languages. The translations are
-files in this repository, so anyone with a GitHub account can add a language or
-improve one through a pull request, from GitHub's web editor, without setting
-anything up on their computer.
+Photo Location Map can be shown in the [languages](#languages) that Windows or
+macOS is fully translated into. The translations are files in this repository,
+so anyone with a GitHub account can improve one or add a language through a
+pull request, from GitHub's web editor, without setting anything up on their
+computer.
+
+**Most of the translations were written by a machine and have not been read by
+a speaker of the language yet.** If you speak one of them, reading its texts
+in the application and correcting what is wrong or unnatural is the most
+useful contribution: see [Improve a translation](#improve-a-translation).
 
 ## Where the texts are
 
@@ -33,12 +39,19 @@ finds the texts by them.
    language's tag: the language alone (`de`, `fr`, `ko`) unless a region matters
    for the text (`pt-BR`, `zh-Hant`). Paste the content of `en.json` into it and
    translate every text.
-3. Add the language to `src-shared/i18n/languages.ts`, next to the others. For
-   German, say:
+3. Add the language to `src-shared/i18n/languages.ts`. For German, say:
    - at the top, `import de from './locales/de.json';`
    - in the `languages` list,
-     `{ code: 'de', name: 'Deutsch', momentLocale: 'de', geomanLocale: 'de', translation: de },`
-     with the language's name written in the language itself.
+     `{ code: 'de', name: 'Deutsch', englishName: 'German', direction: 'ltr', momentLocale: 'de', geomanLocale: 'de', translation: de },`
+     - `name` is the language's name written in the language itself, with a
+       capital letter where the script has them. The list is in the order of
+       these names: those in Latin letters by the alphabet, then those in
+       other scripts.
+     - `englishName` is its name in English, which the search of the list
+       also finds it by.
+     - `direction` is `rtl` for a language written from right to left, such
+       as Arabic and Hebrew, which the application is then laid out in, and
+       `ltr` for any other.
      - `momentLocale` is the name of the language in
        [moment's locales](https://github.com/moment/moment/tree/develop/locale),
        most of which have the language's code in lower case (`pt-br`, `zh-tw`).
@@ -53,14 +66,18 @@ finds the texts by them.
    screenshots of the application in your language; see
    [Checking how it looks](#checking-how-it-looks).
 
-Photo Data Viewer, which opens for **View Data**, has translations of its own:
+Photo Data Viewer, which opens for **View Data**, has translations of its own,
+in the same languages:
 [its guide](https://github.com/TomoyukiAota/photo-data-viewer/blob/main/docs/TRANSLATING.md).
-Until it has your language too, its window is in English.
+Until it has a new language too, its window is in English. The two applications
+share many words (folder, thumbnail, settings), so use the same ones in both.
 
 ## Improve a translation
 
 Edit the text in `src-shared/i18n/locales/<code>.json` and open a pull request
-titled `Improve <language> translation`, saying what was wrong.
+titled `Improve <language> translation`, saying what was wrong. Once you have
+read every text of a language, say so in the pull request and change its row
+in the [table](#languages) to "Reviewed by" with your GitHub name.
 
 ## What the check verifies
 
@@ -86,6 +103,9 @@ and tell you what is wrong before anyone reviews the pull request
 - `dateTime.weekdayPattern`, when the file has it, contains `ddd`.
 - Every file is listed in `src-shared/i18n/languages.ts`, and the locale of
   moment that each language names is loaded.
+- The list of `languages.ts` is in the order of the languages' names, each has
+  the English name that `Intl.DisplayNames` gives its code, and each names a
+  locale that Leaflet-Geoman has (`src-shared/i18n/languages.spec.ts`).
 
 To run them on your computer, set the repository up as
 [CONTRIBUTING.md](./CONTRIBUTING.md) says, then:
@@ -115,6 +135,12 @@ npm run test:unit:ng
   launch, shown in the language that is chosen in the list above it. Use the
   word that a button confirming a choice has in your language: Japanese has
   `決定` rather than `OK`.
+- `language.search` is the placeholder of the field above the list of
+  languages, which narrows the list down to what is typed in it;
+  `language.noLanguagesFound` is shown in the list when nothing is left.
+- Quotation marks are those of your language: “ ” in English, 「 」 in
+  Japanese, « » in French. A straight double quote would have to be written
+  `\"` in the file.
 - The texts under `menu` are the application menu. Use the words that
   applications of your language use on macOS and Windows for the same items
   (Quit, Hide Others, Actual Size, Undo).
@@ -134,10 +160,18 @@ npm run test:unit:ng
   the day of the week plainly. Letters would be read as a pattern too, so a word
   goes in square brackets: `[le] ddd`.
 - Texts with a number keep one form, whatever the number is ("Loaded 1
-  files."). If your language cannot do without plural forms, say so in the pull
-  request.
+  files."). Where your language has several forms of a word for several
+  numbers, word the text so that the number can be any, as "Loaded files:
+  {{count}}." If it cannot do without plural forms, say so in the pull request.
+- In a language written from right to left, the application puts each value of
+  a placeholder on its own in the text, so that a path, a number or a name in
+  Latin letters keeps its order: write the text around the placeholder as you
+  read it.
 - Prefer short texts for buttons, tabs and tooltips. The dialogs grow with
   their texts, but the status bar at the bottom and the sidebar do not.
+- `settings.dateTime.clockSystem` is the label of a small field, in which
+  about 16 letters fit: "12- or 24-hour" in English, `12/24 Stunden` in German.
+  A longer label is cut off.
 - English is written plainly, without exclamation marks. Follow the register
   that an application's dialogs have in your language.
 - The Welcome dialog says what the application collects
@@ -162,19 +196,68 @@ photo's popup on the map with its menu, and the chart.
 - The Language setting, on the first tab of the Settings dialog. Its default,
   to use the operating system's setting ("Use macOS setting" on macOS, "Use
   Windows setting" on Windows, "Use system setting" elsewhere), follows the
-  operating system's preferred languages: each is tried as it is (`pt-BR`) and
-  then as its language alone (`pt`), and the first that has a translation wins.
-  English is shown when none has.
+  operating system's preferred languages, and the first that has a translation
+  wins. Each is tried as it is (`pt-BR`, `zh-Hant`), then without its last
+  parts (`zh-Hant-TW` is `zh-Hant`, `en-GB` is `en`), then as a language that
+  the list has under another code: `zh-TW`, `zh-HK` and `zh-MO` are `zh-Hant`
+  and any other Chinese is `zh-Hans`; `pt` alone is `pt-BR` and any other
+  Portuguese is `pt-PT`; `no` and `nn` are `nb`; `sr` is `sr-Latn`
+  (`src-shared/i18n/resolve-language.ts`). English is shown when none has a
+  translation.
 - At the first launch, the application asks for the language before anything
   else, with the operating system's language chosen.
 - A changed language restarts the application.
 
 ## Languages
 
-| Code | Language | Status |
-| --- | --- | --- |
-| `en` | English | The source. |
-| `ja` | 日本語 | Complete; written with the application's support for languages, to be reviewed by the maintainer. |
+The languages that Windows 11 has a language pack for or that the applications
+of macOS are translated into, in the order that the application lists them.
+Photo Data Viewer has the same ones.
 
-When a language is added, add it here with who reviewed it, or "machine
-translation, not reviewed yet" until a speaker has.
+| Code | Language | In English | Status |
+| --- | --- | --- | --- |
+| `id` | Bahasa Indonesia | Indonesian | Machine translation, not reviewed yet. |
+| `ms` | Bahasa Melayu | Malay | Machine translation, not reviewed yet. |
+| `ca` | Català | Catalan | Machine translation, not reviewed yet. |
+| `cs` | Čeština | Czech | Machine translation, not reviewed yet. |
+| `da` | Dansk | Danish | Machine translation, not reviewed yet. |
+| `de` | Deutsch | German | Machine translation, not reviewed yet. |
+| `et` | Eesti | Estonian | Machine translation, not reviewed yet. |
+| `en` | English | English | The source. |
+| `es` | Español | Spanish | Machine translation, not reviewed yet. |
+| `eu` | Euskara | Basque | Machine translation, not reviewed yet. |
+| `fr` | Français | French | Machine translation, not reviewed yet. |
+| `gl` | Galego | Galician | Machine translation, not reviewed yet. |
+| `hr` | Hrvatski | Croatian | Machine translation, not reviewed yet. |
+| `it` | Italiano | Italian | Machine translation, not reviewed yet. |
+| `lv` | Latviešu | Latvian | Machine translation, not reviewed yet. |
+| `lt` | Lietuvių | Lithuanian | Machine translation, not reviewed yet. |
+| `hu` | Magyar | Hungarian | Machine translation, not reviewed yet. |
+| `nl` | Nederlands | Dutch | Machine translation, not reviewed yet. |
+| `nb` | Norsk bokmål | Norwegian Bokmål | Machine translation, not reviewed yet. |
+| `pl` | Polski | Polish | Machine translation, not reviewed yet. |
+| `pt-BR` | Português (Brasil) | Portuguese (Brazil) | Machine translation, not reviewed yet. |
+| `pt-PT` | Português (Portugal) | Portuguese (Portugal) | Machine translation, not reviewed yet. |
+| `ro` | Română | Romanian | Machine translation, not reviewed yet. |
+| `sk` | Slovenčina | Slovak | Machine translation, not reviewed yet. |
+| `sl` | Slovenščina | Slovenian | Machine translation, not reviewed yet. |
+| `sr-Latn` | Srpski (latinica) | Serbian (Latin) | Machine translation, not reviewed yet. |
+| `fi` | Suomi | Finnish | Machine translation, not reviewed yet. |
+| `sv` | Svenska | Swedish | Machine translation, not reviewed yet. |
+| `vi` | Tiếng Việt | Vietnamese | Machine translation, not reviewed yet. |
+| `tr` | Türkçe | Turkish | Machine translation, not reviewed yet. |
+| `el` | Ελληνικά | Greek | Machine translation, not reviewed yet. |
+| `bg` | Български | Bulgarian | Machine translation, not reviewed yet. |
+| `ru` | Русский | Russian | Machine translation, not reviewed yet. |
+| `uk` | Українська | Ukrainian | Machine translation, not reviewed yet. |
+| `he` | עברית | Hebrew | Machine translation, not reviewed yet. |
+| `ar` | العربية | Arabic | Machine translation, not reviewed yet. |
+| `hi` | हिन्दी | Hindi | Machine translation, not reviewed yet. |
+| `th` | ไทย | Thai | Machine translation, not reviewed yet. |
+| `ko` | 한국어 | Korean | Machine translation, not reviewed yet. |
+| `ja` | 日本語 | Japanese | Complete; reviewed by the maintainer. |
+| `zh-Hans` | 简体中文 | Chinese (Simplified) | Machine translation, not reviewed yet. |
+| `zh-Hant` | 繁體中文 | Chinese (Traditional) | Machine translation, not reviewed yet. |
+
+When a language is added, add it here with who reviewed it, or "Machine
+translation, not reviewed yet." until a speaker has.

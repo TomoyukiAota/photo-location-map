@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "Betöltés..."
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Mégsem",
+    "close": "Bezárás"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "Nyelv (Language)",
+    "systemLanguage": {
+      "mac": "A macOS beállításának használata ({{language}})",
+      "windows": "A Windows beállításának használata ({{language}})",
+      "other": "A rendszer beállításának használata ({{language}})"
+    },
+    "restartToApply": "Az alkalmazás újraindul a nyelv alkalmazásához.",
+    "confirm": "OK",
+    "search": "Keresés",
+    "noLanguagesFound": "Nem található nyelv"
+  },
+  "appInfo": {
+    "appIconAlt": "Az alkalmazás ikonja",
+    "version": "Verzió: {{version}}",
+    "developedBy": "Fejlesztő: Tomoyuki Aota.",
+    "xProfileAlt": "X-profil (korábban Twitter)",
+    "xProfileTitle": "Az X-profil (korábban Twitter) megnyitása",
+    "gitHubProfileAlt": "GitHub-profil",
+    "gitHubProfileTitle": "A GitHub-profil megnyitása",
+    "troubleshooting": "Ha problémába ütközik az alkalmazás használata közben, tekintse meg a <pageLink>hibaelhárítási oldalt</pageLink>.",
+    "troubleshootingLinkTitle": "A hibaelhárítási oldal megnyitása"
+  },
+  "welcome": {
+    "message": "Üdvözli a(z) {{appName}}",
+    "usageInfoCollection": "Az alkalmazás fejlesztése érdekében névtelen használati adatokat gyűjtünk. Az alkalmazás további használatával ehhez hozzájárul."
+  },
+  "about": {
+    "releasesLink": "Letöltések és kiadási megjegyzések",
+    "releasesLinkTitle": "A letöltések és a kiadási megjegyzések megnyitása",
+    "translations": "Szívesen fogadjuk a más nyelvekre készült fordításokat: lásd <guideLink>az alkalmazás fordításának módját</guideLink>.",
+    "translationsLinkTitle": "Az alkalmazás fordítási útmutatójának megnyitása",
+    "homePageTitle": "A kezdőlap megnyitása",
+    "sourceCodeTitle": "A forráskód megtekintése a GitHubon"
+  },
+  "sidebar": {
+    "openFolder": "Mappa megnyitása",
+    "cannotOpenWhileGeneratingThumbnails": "Bélyegképek készítése közben nem nyitható meg mappa.",
+    "openFolderToSeePhotos": "Nyisson meg egy mappát, hogy lássa, hol készültek a fotók.",
+    "sort": {
+      "title": "Rendezés",
+      "byName": "Név szerint",
+      "byShootingTime": "Készítés ideje szerint",
+      "ascending": "Növekvő",
+      "descending": "Csökkenő"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "Rendezés a készítés ideje szerint",
+    "intro": "Ha a „Készítés ideje szerint” van kiválasztva, az alkalmazás így rendezi a fájlokat:",
+    "step1": "Az EXIF-adatok DateTimeOriginal értékét használja. Ha ez nem érhető el,",
+    "step2": "a fájl módosítási idejét használja.",
+    "foldersNote": "A mappák név szerint vannak rendezve, mert a mappáknak nincs „készítési idejük”.",
+    "moreDetails": "További háttér-információk",
+    "details": {
+      "intro": "Az alábbiakban néhány háttér-információ olvasható:",
+      "mostTrustworthy": "Az EXIF-adatok DateTimeOriginal értéke a legmegbízhatóbb információ arról, hogy mikor készült a fotó.",
+      "sometimesMissing": "A legtöbb fényképezőgép a legtöbb JPEG/HEIF/TIFF fájlba beírja a DateTimeOriginal értéket, de néha hiányzik.",
+      "modifiedTime": "A fájl módosítási ideje gyakran megegyezik a fotó készítésének idejével, ezért ezt használjuk helyette, ha a DateTimeOriginal hiányzik.",
+      "otherFiles": "A JPEG/HEIF/TIFF fájloktól eltérő fájlokban nincsenek EXIF-adatok, ezért ezeknél mindig a módosítási időt használjuk."
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "Megnyitott mappa - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "Csak ennek a fájlnak a kijelölése",
+      "selectOnlyThisFolder": "Csak ennek a mappának a kijelölése",
+      "open": "Megnyitás",
+      "openFolder": "Mappa megnyitása"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "A fotó adatai nem érhetők el.",
+    "openFile": "Fájl megnyitása",
+    "moreOptions": "További lehetőségek",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "Bélyegkép elforgatása",
+    "menu": {
+      "selectOnlyThis": "Csak ennek a fájlnak a kijelölése",
+      "openFolder": "Mappa megnyitása",
+      "openGoogleMaps": "Megnyitás a Google Térképben",
+      "openGoogleStreetView": "Megnyitás a Google Street View-ban",
+      "viewData": "Adatok megtekintése"
+    },
+    "pathTooLong": "A bélyegkép nem jeleníthető meg, mert a fájl elérési útjának hossza {{length}}. A Windows az elérési út hosszát legfeljebb {{maximum}} karakterre korlátozza. Helyezze át a fájlt, hogy rövidebb legyen az elérési útja. A részletekért nyomja meg a Ctrl+Shift+I billentyűkombinációt, és olvassa el a konzol üzeneteit.",
+    "generatedThumbnailPathTooLong": "A bélyegkép nem jeleníthető meg, mert az elkészített bélyegkép elérési útjának hossza {{length}}. A Windows az elérési út hosszát legfeljebb {{maximum}} karakterre korlátozza. Helyezze át a fájlt, hogy rövidebb legyen az elkészített bélyegkép elérési útja. A részletekért nyomja meg a Ctrl+Shift+I billentyűkombinációt, és olvassa el a konzol üzeneteit."
+  },
+  "map": {
+    "zoomIn": "Nagyítás",
+    "zoomOut": "Kicsinyítés",
+    "layers": "Rétegek",
+    "photosInRegions": "Fotók a területeken: {{count}}",
+    "selectPhotos": "Fotók kijelölése",
+    "setRegionByRectangle": "Terület megadása téglalappal",
+    "setRegionByVertex": "Terület megadása csúcspontokkal",
+    "setText": "Szöveg elhelyezése",
+    "editRegion": "Terület szerkesztése",
+    "dragRegion": "Terület áthelyezése",
+    "removeRegion": "Terület eltávolítása"
+  },
+  "chart": {
+    "moreAlt": "Egyebek",
+    "dateUnknownPhotos": "Ismeretlen dátumú fotók: {{count}}",
+    "showDateUnknownPhotos": "Ismeretlen dátumú fotók megjelenítése a térképen",
+    "units": {
+      "year": "Év",
+      "month": "Hónap",
+      "day": "Nap",
+      "hour": "Óra",
+      "minute": "Perc",
+      "second": "Másodperc"
+    },
+    "unsupportedDuration": "Ez a diagram nem tud 30 napnál többet megjeleníteni, ha az „Óra” van kiválasztva, 3 napnál többet „Perc” esetén, illetve 1 óránál többet „Másodperc” esetén.",
+    "changeUnitOrSelection": "Módosítsa az Év/Hónap/Nap/Óra/Perc/Másodperc beállítást, vagy jelöljön ki fotókat úgy, hogy az időszak rövidebb legyen.",
+    "selectPhotosWithinZoom": "A nagyított tartomány fotóinak kijelölése",
+    "zoom": "Nagyítás",
+    "resetZoom": "Nagyítás\nvisszaállítása"
+  },
+  "loadingFolder": {
+    "collecting": "A betöltendő fájlok összegyűjtése a megnyitott mappából...",
+    "loading": "Fájlok betöltése a megnyitott mappából...",
+    "completed": "Minden fájl betöltődött (darabszám: {{count}}).",
+    "progress": "Betöltött fájlok: {{loaded}} / {{total}}.",
+    "generatingMap": "A térkép elkészítése a betöltött fájlokból..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "A megnyitott mappában nincsenek helyadatokat tartalmazó fotók."
+  },
+  "loadedFiles": {
+    "loaded": "Betöltött fájlok: {{count}}.",
+    "withLocationData": "Helyadatokat tartalmazó fájlok: {{count}}.",
+    "total": "Összesen"
+  },
+  "thumbnailGeneration": {
+    "generating": "Bélyegképek készítése a HEIF-fájlokhoz...",
+    "completed": "A HEIF-fájlok bélyegképei elkészültek.",
+    "finishedWithErrors": "A HEIF-fájlok bélyegképeinek készítése hibákkal fejeződött be.",
+    "showDetails": "Részletek megjelenítése",
+    "processed": "Feldolgozott fájlok: {{processed}} / {{total}}.",
+    "processedWithErrors": "Feldolgozott fájlok: {{processed}} / {{total}}, hibákkal.",
+    "seeFilesWithErrors": "Kattintson ide a hibás fájlok megtekintéséhez.",
+    "seeFilesWithErrorsTitle": "A hibás fájlok megtekintése",
+    "generationRequired": "Elkészítendő bélyegképek: {{required}}. Ez a szám így adódik: „HEIF-fájlok ({{heif}}) − a gyorsítótárban elérhető fájlok ({{cached}})”.",
+    "closeStatusBar": "A bélyegképkészítés állapotsorának bezárása",
+    "errorDialog": {
+      "message": "A következő fájlok bélyegképét nem sikerült elkészíteni (darabszám: {{count}}):",
+      "filter": "Szűrés",
+      "number": "Sorsz.",
+      "file": "Fájl",
+      "openFile": "Fájl megnyitása",
+      "openFolder": "Mappa megnyitása"
+    }
+  },
+  "settings": {
+    "title": "Beállítások",
+    "tabs": {
+      "language": "Nyelv (Language)",
+      "appearance": "Megjelenés",
+      "dateTime": "Dátum és idő",
+      "os": "Rendszer",
+      "cache": "Gyorsítótár"
+    },
+    "restartAfterSaving": "Az alkalmazás a beállítások mentése után újraindul.",
+    "confirmRestart": "Az alkalmazás a beállítások mentése után újraindul.\nFolytatja?",
+    "save": "Mentés",
+    "language": {
+      "title": "Nyelv",
+      "description": "A nyelv az alkalmazás újraindítása után változik meg."
+    },
+    "appearance": {
+      "title": "Megjelenés",
+      "showStatusBar": "Állapotsor megjelenítése"
+    },
+    "dateTime": {
+      "title": "Dátum- és időformátum",
+      "description": "A dátum- és időformátum az alkalmazás újraindítása után változik meg.",
+      "dateFormat": "Dátumformátum",
+      "clockSystem": "12 vagy 24 órás",
+      "clock12": "12 órás",
+      "clock24": "24 órás",
+      "example": "Példa"
+    },
+    "os": {
+      "title": "A Fájlkezelő helyi menüje",
+      "description": "A(z) „{{menuItem}}” elem hozzáadása a Fájlkezelő helyi menüjéhez, illetve eltávolítása onnan.",
+      "add": "Hozzáadás",
+      "remove": "Eltávolítás",
+      "added": "A(z) „{{menuItem}}” elem bekerült a Fájlkezelő helyi menüjébe.",
+      "removed": "A(z) „{{menuItem}}” elem kikerült a Fájlkezelő helyi menüjéből.",
+      "failedToAdd": "A(z) „{{menuItem}}” elemet nem sikerült hozzáadni a Fájlkezelő helyi menüjéhez.",
+      "failedToRemove": "A(z) „{{menuItem}}” elemet nem sikerült eltávolítani a Fájlkezelő helyi menüjéből.",
+      "confirmInExplorer": "Nyissa meg a Fájlkezelőt, és az ellenőrzéshez kattintson a jobb gombbal egy fájlra vagy mappára."
+    },
+    "cache": {
+      "title": "HEIF-bélyegképek gyorsítótára",
+      "requiredForHeif": "A <heifLink>HEIF-fájlokhoz</heifLink> bélyegképeket kell készíteni, ami időbe telik.",
+      "thereforeCached": "Ezért az elkészített bélyegképek a gyorsítótárba kerülnek.",
+      "usedNextTime": "A következő alkalomtól a gyorsítótárat használjuk, így a bélyegképeket nem kell újra elkészíteni.",
+      "location": "A gyorsítótár helye:",
+      "restartAfterDeleting": "Az alkalmazás a bélyegképek gyorsítótárának törlése után újraindul.",
+      "delete": "A bélyegképek gyorsítótárának törlése",
+      "confirmDelete": "Az alkalmazás a bélyegképek gyorsítótárának törlése után újraindul.\nFolytatja?"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "Megnyitás ezzel: {{appName}}",
+    "openWithAccessKey": "Megnyitás ezzel: &{{appName}}"
+  },
+  "menu": {
+    "app": {
+      "about": "A(z) {{appName}} névjegye",
+      "services": "Szolgáltatások",
+      "hide": "A(z) {{appName}} elrejtése",
+      "hideOthers": "A többi elrejtése",
+      "showAll": "Az összes megjelenítése",
+      "quit": "Kilépés a(z) {{appName}} alkalmazásból"
+    },
+    "view": {
+      "title": "Nézet",
+      "reload": "Újratöltés",
+      "actualSize": "Tényleges méret",
+      "zoomIn": "Nagyítás",
+      "zoomOut": "Kicsinyítés",
+      "toggleFullScreen": "Teljes képernyő be/ki"
+    },
+    "selection": {
+      "title": "Kijelölés",
+      "undo": "Visszavonás",
+      "redo": "Mégis"
+    },
+    "settings": {
+      "title": "Beállítások",
+      "openSettings": "Beállítások megnyitása"
+    },
+    "help": {
+      "title": "Súgó",
+      "showWelcomeDialog": "Az üdvözlőablak megjelenítése",
+      "advancedMenu": "Speciális menü",
+      "openLogFolder": "A naplómappa megnyitása",
+      "toggleDeveloperTools": "Fejlesztői eszközök megjelenítése/elrejtése"
+    }
+  },
+  "autoUpdate": {
+    "title": "Elérhető a(z) {{appName}} új verziója!",
+    "message": "Elérhető a(z) {{appName}} új verziója, amely az újraindítás után települ.\nÚjraindítja most az alkalmazást?\n\nJelenlegi verzió: {{currentVersion}}\nLegújabb verzió: {{latestVersion}}",
+    "yes": "Igen",
+    "no": "Nem"
+  }
+}

@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "Učitavanje..."
+  },
+  "common": {
+    "ok": "U redu",
+    "cancel": "Otkaži",
+    "close": "Zatvori"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "Jezik (Language)",
+    "systemLanguage": {
+      "mac": "Koristi podešavanje sistema macOS ({{language}})",
+      "windows": "Koristi podešavanje sistema Windows ({{language}})",
+      "other": "Koristi podešavanje sistema ({{language}})"
+    },
+    "restartToApply": "Aplikacija će se ponovo pokrenuti da bi se jezik primenio.",
+    "confirm": "U redu",
+    "search": "Pretraži",
+    "noLanguagesFound": "Nije pronađen nijedan jezik"
+  },
+  "appInfo": {
+    "appIconAlt": "Ikona aplikacije",
+    "version": "Verzija {{version}}",
+    "developedBy": "Razvio Tomoyuki Aota.",
+    "xProfileAlt": "Profil na mreži X (ranije Twitter)",
+    "xProfileTitle": "Otvori profil na mreži X (ranije Twitter)",
+    "gitHubProfileAlt": "Profil na GitHub-u",
+    "gitHubProfileTitle": "Otvori profil na GitHub-u",
+    "troubleshooting": "Ako naiđete na probleme sa ovom aplikacijom, pogledajte <pageLink>stranicu za rešavanje problema</pageLink>.",
+    "troubleshootingLinkTitle": "Otvori stranicu za rešavanje problema"
+  },
+  "welcome": {
+    "message": "Dobro došli u {{appName}}",
+    "usageInfoCollection": "Radi poboljšanja ove aplikacije prikupljaju se anonimni podaci o korišćenju. Daljim korišćenjem aplikacije pristajete na to."
+  },
+  "about": {
+    "releasesLink": "Preuzimanja i napomene uz izdanja",
+    "releasesLinkTitle": "Otvori preuzimanja i napomene uz izdanja",
+    "translations": "Prevodi na druge jezike su dobrodošli: pogledajte <guideLink>kako prevesti ovu aplikaciju</guideLink>.",
+    "translationsLinkTitle": "Otvori vodič za prevođenje ove aplikacije",
+    "homePageTitle": "Otvori početnu stranicu",
+    "sourceCodeTitle": "Pogledaj izvorni kôd na GitHub-u"
+  },
+  "sidebar": {
+    "openFolder": "Otvori fasciklu",
+    "cannotOpenWhileGeneratingThumbnails": "Fasciklu nije moguće otvoriti dok se prave sličice.",
+    "openFolderToSeePhotos": "Otvorite fasciklu da biste videli gde su fotografije snimljene.",
+    "sort": {
+      "title": "Sortiraj",
+      "byName": "Po imenu",
+      "byShootingTime": "Po vremenu snimanja",
+      "ascending": "Rastuće",
+      "descending": "Opadajuće"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "Sortiranje po vremenu snimanja",
+    "intro": "Kada je izabrano „Po vremenu snimanja“, aplikacija sortira datoteke ovako:",
+    "step1": "Koristi vrednost DateTimeOriginal iz podataka EXIF. Ako je nema,",
+    "step2": "koristi datum izmene datoteke.",
+    "foldersNote": "Fascikle se sortiraju po imenu jer fascikle nemaju „vreme snimanja“.",
+    "moreDetails": "Dodatne informacije",
+    "details": {
+      "intro": "U nastavku su dodatne informacije:",
+      "mostTrustworthy": "Vrednost DateTimeOriginal iz podataka EXIF je najpouzdaniji podatak o tome kada je fotografija snimljena.",
+      "sometimesMissing": "Većina fotoaparata upisuje DateTimeOriginal u većinu datoteka JPEG/HEIF/TIFF, ali ponekad nedostaje.",
+      "modifiedTime": "Datum izmene datoteke je često vreme kada je fotografija snimljena, pa se koristi umesto nje kada DateTimeOriginal nedostaje.",
+      "otherFiles": "Datoteke koje nisu JPEG/HEIF/TIFF nemaju podatke EXIF, pa se za njih uvek koristi datum izmene."
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "Otvorena fascikla - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "Izaberi samo ovu datoteku",
+      "selectOnlyThisFolder": "Izaberi samo ovu fasciklu",
+      "open": "Otvori",
+      "openFolder": "Otvori fasciklu"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "Podaci o fotografiji nisu dostupni.",
+    "openFile": "Otvori datoteku",
+    "moreOptions": "Još opcija",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "Rotiraj sličicu",
+    "menu": {
+      "selectOnlyThis": "Izaberi samo ovu datoteku",
+      "openFolder": "Otvori fasciklu",
+      "openGoogleMaps": "Otvori Google mape",
+      "openGoogleStreetView": "Otvori Google Street View",
+      "viewData": "Prikaži podatke"
+    },
+    "pathTooLong": "Sličicu nije moguće prikazati jer je dužina putanje datoteke {{length}}. Windows ograničava dužinu putanje na {{maximum}}. Premestite datoteku da biste skratili njenu putanju. Za detalje pritisnite Ctrl+Shift+I i pročitajte poruke u konzoli.",
+    "generatedThumbnailPathTooLong": "Sličicu nije moguće prikazati jer je dužina putanje napravljene sličice {{length}}. Windows ograničava dužinu putanje na {{maximum}}. Premestite datoteku da biste skratili putanju napravljene sličice. Za detalje pritisnite Ctrl+Shift+I i pročitajte poruke u konzoli."
+  },
+  "map": {
+    "zoomIn": "Uvećaj",
+    "zoomOut": "Umanji",
+    "layers": "Slojevi",
+    "photosInRegions": "Fotografije u oblastima: {{count}}",
+    "selectPhotos": "Izaberi fotografije",
+    "setRegionByRectangle": "Zadaj oblast pravougaonikom",
+    "setRegionByVertex": "Zadaj oblast temenima",
+    "setText": "Postavi tekst",
+    "editRegion": "Uredi oblast",
+    "dragRegion": "Premesti oblast",
+    "removeRegion": "Ukloni oblast"
+  },
+  "chart": {
+    "moreAlt": "Još",
+    "dateUnknownPhotos": "Fotografije sa nepoznatim datumom: {{count}}",
+    "showDateUnknownPhotos": "Prikaži na mapi fotografije sa nepoznatim datumom",
+    "units": {
+      "year": "Godina",
+      "month": "Mesec",
+      "day": "Dan",
+      "hour": "Sat",
+      "minute": "Minut",
+      "second": "Sekunda"
+    },
+    "unsupportedDuration": "Ovaj grafikon ne može da prikaže više od 30 dana kada je izabrano „Sat“, više od 3 dana za „Minut“ ni više od 1 sata za „Sekunda“.",
+    "changeUnitOrSelection": "Promenite Godina/Mesec/Dan/Sat/Minut/Sekunda ili izaberite fotografije tako da period bude kraći.",
+    "selectPhotosWithinZoom": "Izaberi fotografije u uvećanom opsegu",
+    "zoom": "Zumiranje",
+    "resetZoom": "Poništi\nzumiranje"
+  },
+  "loadingFolder": {
+    "collecting": "Prikupljanje datoteka za učitavanje iz otvorene fascikle...",
+    "loading": "Učitavanje datoteka iz otvorene fascikle...",
+    "completed": "Sve datoteke su učitane (broj: {{count}}).",
+    "progress": "Učitane datoteke: {{loaded}} od {{total}}.",
+    "generatingMap": "Pravljenje mape od učitanih datoteka..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "U otvorenoj fascikli nema fotografija sa podacima o lokaciji."
+  },
+  "loadedFiles": {
+    "loaded": "Učitane datoteke: {{count}}.",
+    "withLocationData": "Datoteke sa podacima o lokaciji: {{count}}.",
+    "total": "Ukupno"
+  },
+  "thumbnailGeneration": {
+    "generating": "Pravljenje sličica za datoteke HEIF...",
+    "completed": "Sličice za datoteke HEIF su napravljene.",
+    "finishedWithErrors": "Pravljenje sličica za datoteke HEIF završeno je sa greškama.",
+    "showDetails": "Prikaži detalje",
+    "processed": "Obrađene datoteke: {{processed}} od {{total}}.",
+    "processedWithErrors": "Obrađene datoteke: {{processed}} od {{total}}, sa greškama.",
+    "seeFilesWithErrors": "Kliknite ovde da biste videli datoteke sa greškama.",
+    "seeFilesWithErrorsTitle": "Prikaži datoteke sa greškama",
+    "generationRequired": "Sličice koje treba napraviti: {{required}}. Broj se dobija kao „datoteke HEIF ({{heif}}) − datoteke dostupne u kešu ({{cached}})“.",
+    "closeStatusBar": "Zatvori statusnu traku pravljenja sličica",
+    "errorDialog": {
+      "message": "Nije bilo moguće napraviti sličice za sledeće datoteke (broj: {{count}}):",
+      "filter": "Filtriraj",
+      "number": "Br.",
+      "file": "Datoteka",
+      "openFile": "Otvori datoteku",
+      "openFolder": "Otvori fasciklu"
+    }
+  },
+  "settings": {
+    "title": "Podešavanja",
+    "tabs": {
+      "language": "Jezik (Language)",
+      "appearance": "Izgled",
+      "dateTime": "Datum i vreme",
+      "os": "Sistem",
+      "cache": "Keš"
+    },
+    "restartAfterSaving": "Aplikacija će se ponovo pokrenuti nakon čuvanja podešavanja.",
+    "confirmRestart": "Aplikacija će se ponovo pokrenuti nakon čuvanja podešavanja.\nŽelite li da nastavite?",
+    "save": "Sačuvaj",
+    "language": {
+      "title": "Jezik",
+      "description": "Jezik će se promeniti nakon ponovnog pokretanja aplikacije."
+    },
+    "appearance": {
+      "title": "Izgled",
+      "showStatusBar": "Prikaži statusnu traku"
+    },
+    "dateTime": {
+      "title": "Format datuma i vremena",
+      "description": "Format datuma i vremena promeniće se nakon ponovnog pokretanja aplikacije.",
+      "dateFormat": "Format datuma",
+      "clockSystem": "12 ili 24 sata",
+      "clock12": "12 sati",
+      "clock24": "24 sata",
+      "example": "Primer"
+    },
+    "os": {
+      "title": "Kontekstualni meni Istraživača datoteka",
+      "description": "Dodaj stavku „{{menuItem}}“ u kontekstualni meni Istraživača datoteka ili je ukloni.",
+      "add": "Dodaj",
+      "remove": "Ukloni",
+      "added": "Stavka „{{menuItem}}“ je dodata u kontekstualni meni Istraživača datoteka.",
+      "removed": "Stavka „{{menuItem}}“ je uklonjena iz kontekstualnog menija Istraživača datoteka.",
+      "failedToAdd": "Stavku „{{menuItem}}“ nije bilo moguće dodati u kontekstualni meni Istraživača datoteka.",
+      "failedToRemove": "Stavku „{{menuItem}}“ nije bilo moguće ukloniti iz kontekstualnog menija Istraživača datoteka.",
+      "confirmInExplorer": "Otvorite Istraživač datoteka i kliknite desnim tasterom miša na datoteku ili fasciklu da biste proverili."
+    },
+    "cache": {
+      "title": "Keš sličica HEIF",
+      "requiredForHeif": "Za <heifLink>datoteke HEIF</heifLink> potrebno je napraviti sličice, što traje neko vreme.",
+      "thereforeCached": "Zato se napravljene sličice čuvaju u kešu.",
+      "usedNextTime": "Od sledećeg puta koristiće se keš, pa se sličice neće praviti ponovo.",
+      "location": "Lokacija keša:",
+      "restartAfterDeleting": "Aplikacija će se ponovo pokrenuti nakon brisanja keša sličica.",
+      "delete": "Izbriši keš sličica",
+      "confirmDelete": "Aplikacija će se ponovo pokrenuti nakon brisanja keša sličica.\nŽelite li da nastavite?"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "Otvori u aplikaciji {{appName}}",
+    "openWithAccessKey": "Otvori u aplikaciji &{{appName}}"
+  },
+  "menu": {
+    "app": {
+      "about": "O aplikaciji {{appName}}",
+      "services": "Usluge",
+      "hide": "Sakrij {{appName}}",
+      "hideOthers": "Sakrij ostale",
+      "showAll": "Prikaži sve",
+      "quit": "Zatvori {{appName}}"
+    },
+    "view": {
+      "title": "Prikaz",
+      "reload": "Učitaj ponovo",
+      "actualSize": "Stvarna veličina",
+      "zoomIn": "Uvećaj",
+      "zoomOut": "Umanji",
+      "toggleFullScreen": "Uključi/isključi ceo ekran"
+    },
+    "selection": {
+      "title": "Izbor",
+      "undo": "Opozovi",
+      "redo": "Ponovi"
+    },
+    "settings": {
+      "title": "Podešavanja",
+      "openSettings": "Otvori podešavanja"
+    },
+    "help": {
+      "title": "Pomoć",
+      "showWelcomeDialog": "Prikaži prozor dobrodošlice",
+      "advancedMenu": "Napredni meni",
+      "openLogFolder": "Otvori fasciklu sa evidencijama",
+      "toggleDeveloperTools": "Prikaži/sakrij alatke za programere"
+    }
+  },
+  "autoUpdate": {
+    "title": "Dostupna je nova verzija aplikacije {{appName}}!",
+    "message": "Dostupna je nova verzija aplikacije {{appName}}, koja će biti instalirana nakon ponovnog pokretanja.\nŽelite li da sada ponovo pokrenete aplikaciju?\n\nTrenutna verzija: {{currentVersion}}\nNajnovija verzija: {{latestVersion}}",
+    "yes": "Da",
+    "no": "Ne"
+  }
+}

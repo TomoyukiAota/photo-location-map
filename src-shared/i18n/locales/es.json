@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "Cargando..."
+  },
+  "common": {
+    "ok": "Aceptar",
+    "cancel": "Cancelar",
+    "close": "Cerrar"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "Idioma (Language)",
+    "systemLanguage": {
+      "mac": "Usar el ajuste de macOS ({{language}})",
+      "windows": "Usar la configuración de Windows ({{language}})",
+      "other": "Usar el ajuste del sistema ({{language}})"
+    },
+    "restartToApply": "Esta aplicación se reiniciará para aplicar el idioma.",
+    "confirm": "Aceptar",
+    "search": "Buscar",
+    "noLanguagesFound": "No se encontraron idiomas"
+  },
+  "appInfo": {
+    "appIconAlt": "Icono de la aplicación",
+    "version": "Versión {{version}}",
+    "developedBy": "Desarrollado por Tomoyuki Aota.",
+    "xProfileAlt": "Perfil de X (antes Twitter)",
+    "xProfileTitle": "Abrir el perfil de X (antes Twitter)",
+    "gitHubProfileAlt": "Perfil de GitHub",
+    "gitHubProfileTitle": "Abrir el perfil de GitHub",
+    "troubleshooting": "Si tienes problemas con esta aplicación, consulta <pageLink>la página de solución de problemas</pageLink>.",
+    "troubleshootingLinkTitle": "Abrir la página de solución de problemas"
+  },
+  "welcome": {
+    "message": "Te damos la bienvenida a {{appName}}",
+    "usageInfoCollection": "Para mejorar esta aplicación, se recopilan datos de uso anónimos. Si sigues usando esta aplicación, lo aceptas."
+  },
+  "about": {
+    "releasesLink": "Descargas y notas de la versión",
+    "releasesLinkTitle": "Abrir las descargas y las notas de la versión",
+    "translations": "Las traducciones a otros idiomas son bienvenidas: consulta <guideLink>cómo traducir esta aplicación</guideLink>.",
+    "translationsLinkTitle": "Abrir la guía para traducir esta aplicación",
+    "homePageTitle": "Abrir la página de inicio",
+    "sourceCodeTitle": "Ver el código fuente en GitHub"
+  },
+  "sidebar": {
+    "openFolder": "Abrir carpeta",
+    "cannotOpenWhileGeneratingThumbnails": "No se puede abrir una carpeta mientras se generan las miniaturas.",
+    "openFolderToSeePhotos": "Abre una carpeta para ver dónde se tomaron las fotos.",
+    "sort": {
+      "title": "Ordenar",
+      "byName": "Por nombre",
+      "byShootingTime": "Por fecha de captura",
+      "ascending": "Ascendente",
+      "descending": "Descendente"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "Ordenar por fecha de captura",
+    "intro": "Cuando se selecciona «Por fecha de captura», para ordenar los archivos, esta aplicación",
+    "step1": "usa el valor DateTimeOriginal de los datos EXIF y, si no está disponible,",
+    "step2": "usa la fecha de modificación del archivo.",
+    "foldersNote": "Las carpetas se ordenan por nombre, ya que no tienen «fecha de captura».",
+    "moreDetails": "Más información de referencia",
+    "details": {
+      "intro": "A continuación se ofrece información de referencia:",
+      "mostTrustworthy": "El valor DateTimeOriginal de los datos EXIF es la información más fiable sobre el momento en que se tomó la foto.",
+      "sometimesMissing": "La mayoría de las cámaras escriben DateTimeOriginal en la mayoría de los archivos JPEG/HEIF/TIFF, pero a veces falta.",
+      "modifiedTime": "La fecha de modificación del archivo suele coincidir con el momento en que se tomó la foto, por lo que se usa como alternativa cuando falta DateTimeOriginal.",
+      "otherFiles": "Además, los archivos que no son JPEG/HEIF/TIFF no tienen datos EXIF, por lo que para ellos siempre se usa la fecha de modificación."
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "Carpeta abierta - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "Seleccionar solo este archivo",
+      "selectOnlyThisFolder": "Seleccionar solo esta carpeta",
+      "open": "Abrir",
+      "openFolder": "Abrir carpeta"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "La información de la foto no está disponible.",
+    "openFile": "Abrir archivo",
+    "moreOptions": "Más opciones",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "Girar miniatura",
+    "menu": {
+      "selectOnlyThis": "Seleccionar solo este archivo",
+      "openFolder": "Abrir carpeta",
+      "openGoogleMaps": "Abrir Google Maps",
+      "openGoogleStreetView": "Abrir Google Street View",
+      "viewData": "Ver datos"
+    },
+    "pathTooLong": "No se puede mostrar la miniatura porque la longitud de la ruta del archivo es {{length}}. Windows limita la longitud máxima de las rutas a {{maximum}}. Cambia la ubicación del archivo para acortar su ruta. Para obtener más detalles, pulsa Ctrl+Shift+I y lee los mensajes de la consola.",
+    "generatedThumbnailPathTooLong": "No se puede mostrar la miniatura porque la longitud de la ruta de la miniatura generada es {{length}}. Windows limita la longitud máxima de las rutas a {{maximum}}. Cambia la ubicación del archivo para acortar la ruta de la miniatura generada. Para obtener más detalles, pulsa Ctrl+Shift+I y lee los mensajes de la consola."
+  },
+  "map": {
+    "zoomIn": "Acercar",
+    "zoomOut": "Alejar",
+    "layers": "Capas",
+    "photosInRegions": "Fotos en las áreas: {{count}}",
+    "selectPhotos": "Seleccionar fotos",
+    "setRegionByRectangle": "Definir un área con un rectángulo",
+    "setRegionByVertex": "Definir un área con vértices",
+    "setText": "Colocar texto",
+    "editRegion": "Editar área",
+    "dragRegion": "Mover área",
+    "removeRegion": "Eliminar área"
+  },
+  "chart": {
+    "moreAlt": "Más",
+    "dateUnknownPhotos": "Fotos de fecha desconocida: {{count}}",
+    "showDateUnknownPhotos": "Mostrar en el mapa las fotos de fecha desconocida",
+    "units": {
+      "year": "Año",
+      "month": "Mes",
+      "day": "Día",
+      "hour": "Hora",
+      "minute": "Minuto",
+      "second": "Segundo"
+    },
+    "unsupportedDuration": "Este gráfico no puede mostrar más de 30 días cuando se selecciona «Hora», más de 3 días con «Minuto» ni más de 1 hora con «Segundo».",
+    "changeUnitOrSelection": "Cambia Año/Mes/Día/Hora/Minuto/Segundo o selecciona fotos de modo que el periodo sea más corto.",
+    "selectPhotosWithinZoom": "Seleccionar las fotos dentro del zoom",
+    "zoom": "Zoom",
+    "resetZoom": "Restablecer\nzoom"
+  },
+  "loadingFolder": {
+    "collecting": "Reuniendo los archivos que se van a cargar de la carpeta abierta...",
+    "loading": "Cargando los archivos de la carpeta abierta...",
+    "completed": "Se han cargado todos los archivos (cantidad: {{count}}).",
+    "progress": "Archivos cargados: {{loaded}} de {{total}}.",
+    "generatingMap": "Generando el mapa con los archivos cargados..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "No hay fotos con datos de ubicación en la carpeta abierta."
+  },
+  "loadedFiles": {
+    "loaded": "Archivos cargados: {{count}}.",
+    "withLocationData": "Archivos con datos de ubicación: {{count}}.",
+    "total": "Total"
+  },
+  "thumbnailGeneration": {
+    "generating": "Generando miniaturas de los archivos HEIF...",
+    "completed": "Se han generado las miniaturas de los archivos HEIF.",
+    "finishedWithErrors": "La generación de miniaturas de los archivos HEIF ha terminado con errores.",
+    "showDetails": "Mostrar detalles",
+    "processed": "Archivos procesados: {{processed}} de {{total}}.",
+    "processedWithErrors": "Archivos procesados: {{processed}} de {{total}}, con errores.",
+    "seeFilesWithErrors": "Haz clic aquí para ver los archivos con errores.",
+    "seeFilesWithErrorsTitle": "Ver los archivos con errores",
+    "generationRequired": "Miniaturas que hay que generar: {{required}}. Resulta de «archivos HEIF ({{heif}}) − archivos disponibles en la caché ({{cached}})».",
+    "closeStatusBar": "Cerrar la barra de estado de la generación de miniaturas",
+    "errorDialog": {
+      "message": "No se pudieron generar las miniaturas de los siguientes archivos (cantidad: {{count}}):",
+      "filter": "Filtrar",
+      "number": "N.º",
+      "file": "Archivo",
+      "openFile": "Abrir archivo",
+      "openFolder": "Abrir carpeta"
+    }
+  },
+  "settings": {
+    "title": "Ajustes",
+    "tabs": {
+      "language": "Idioma (Language)",
+      "appearance": "Apariencia",
+      "dateTime": "Fecha y hora",
+      "os": "Sistema",
+      "cache": "Caché"
+    },
+    "restartAfterSaving": "Esta aplicación se reiniciará después de guardar los ajustes.",
+    "confirmRestart": "Esta aplicación se reiniciará después de guardar los ajustes.\n¿Quieres continuar?",
+    "save": "Guardar",
+    "language": {
+      "title": "Idioma",
+      "description": "El idioma cambiará después de reiniciar la aplicación."
+    },
+    "appearance": {
+      "title": "Apariencia",
+      "showStatusBar": "Mostrar la barra de estado"
+    },
+    "dateTime": {
+      "title": "Formato de fecha y hora",
+      "description": "El formato de fecha y hora cambiará después de reiniciar la aplicación.",
+      "dateFormat": "Formato de fecha",
+      "clockSystem": "12 o 24 horas",
+      "clock12": "12 horas",
+      "clock24": "24 horas",
+      "example": "Ejemplo"
+    },
+    "os": {
+      "title": "Menú contextual del Explorador",
+      "description": "Añadir o quitar «{{menuItem}}» en el menú contextual del Explorador.",
+      "add": "Añadir",
+      "remove": "Quitar",
+      "added": "Se ha añadido «{{menuItem}}» al menú contextual del Explorador.",
+      "removed": "Se ha quitado «{{menuItem}}» del menú contextual del Explorador.",
+      "failedToAdd": "No se pudo añadir «{{menuItem}}» al menú contextual del Explorador.",
+      "failedToRemove": "No se pudo quitar «{{menuItem}}» del menú contextual del Explorador.",
+      "confirmInExplorer": "Abre el Explorador y haz clic con el botón derecho en un archivo o una carpeta para comprobarlo."
+    },
+    "cache": {
+      "title": "Caché de miniaturas HEIF",
+      "requiredForHeif": "Los <heifLink>archivos HEIF</heifLink> necesitan que se generen miniaturas, lo que lleva tiempo.",
+      "thereforeCached": "Por eso, las miniaturas generadas se guardan en la caché.",
+      "usedNextTime": "A partir de la próxima vez se usará la caché para no volver a generar las miniaturas.",
+      "location": "Ubicación de la caché:",
+      "restartAfterDeleting": "Esta aplicación se reiniciará después de eliminar la caché de miniaturas.",
+      "delete": "Eliminar la caché de miniaturas",
+      "confirmDelete": "Esta aplicación se reiniciará después de eliminar la caché de miniaturas.\n¿Quieres continuar?"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "Abrir con {{appName}}",
+    "openWithAccessKey": "Abrir con &{{appName}}"
+  },
+  "menu": {
+    "app": {
+      "about": "Acerca de {{appName}}",
+      "services": "Servicios",
+      "hide": "Ocultar {{appName}}",
+      "hideOthers": "Ocultar otros",
+      "showAll": "Mostrar todo",
+      "quit": "Salir de {{appName}}"
+    },
+    "view": {
+      "title": "Ver",
+      "reload": "Recargar",
+      "actualSize": "Tamaño real",
+      "zoomIn": "Acercar",
+      "zoomOut": "Alejar",
+      "toggleFullScreen": "Activar/desactivar pantalla completa"
+    },
+    "selection": {
+      "title": "Selección",
+      "undo": "Deshacer",
+      "redo": "Rehacer"
+    },
+    "settings": {
+      "title": "Ajustes",
+      "openSettings": "Abrir ajustes"
+    },
+    "help": {
+      "title": "Ayuda",
+      "showWelcomeDialog": "Mostrar el cuadro de bienvenida",
+      "advancedMenu": "Menú avanzado",
+      "openLogFolder": "Abrir la carpeta de registros",
+      "toggleDeveloperTools": "Mostrar/ocultar herramientas de desarrollo"
+    }
+  },
+  "autoUpdate": {
+    "title": "¡Hay una nueva versión de {{appName}} disponible!",
+    "message": "Hay una nueva versión de {{appName}} disponible, que se instalará después de reiniciar.\n¿Quieres reiniciar esta aplicación ahora?\n\nVersión actual: {{currentVersion}}\nÚltima versión: {{latestVersion}}",
+    "yes": "Sí",
+    "no": "No"
+  }
+}

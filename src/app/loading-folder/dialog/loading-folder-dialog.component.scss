@@ -12,7 +12,7 @@
 mat-progress-bar {
   // Override width and left of mat-progress-bar so that it is located at the center with appropriate space from left and right.
   width: 90%;
-  left: 5%;
+  inset-inline-start: 5%;
 }
 
 .loading-and-progress {

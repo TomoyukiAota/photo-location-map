@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "Đang tải..."
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Hủy",
+    "close": "Đóng"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "Ngôn ngữ (Language)",
+    "systemLanguage": {
+      "mac": "Dùng cài đặt của macOS ({{language}})",
+      "windows": "Dùng cài đặt của Windows ({{language}})",
+      "other": "Dùng cài đặt của hệ thống ({{language}})"
+    },
+    "restartToApply": "Ứng dụng này sẽ khởi động lại để áp dụng ngôn ngữ.",
+    "confirm": "OK",
+    "search": "Tìm kiếm",
+    "noLanguagesFound": "Không tìm thấy ngôn ngữ nào"
+  },
+  "appInfo": {
+    "appIconAlt": "Biểu tượng ứng dụng",
+    "version": "Phiên bản {{version}}",
+    "developedBy": "Được phát triển bởi Tomoyuki Aota.",
+    "xProfileAlt": "Hồ sơ X (trước đây là Twitter)",
+    "xProfileTitle": "Mở hồ sơ X (trước đây là Twitter)",
+    "gitHubProfileAlt": "Hồ sơ GitHub",
+    "gitHubProfileTitle": "Mở hồ sơ GitHub",
+    "troubleshooting": "Nếu bạn gặp sự cố với ứng dụng này, hãy xem <pageLink>trang khắc phục sự cố</pageLink>.",
+    "troubleshootingLinkTitle": "Mở trang khắc phục sự cố"
+  },
+  "welcome": {
+    "message": "Chào mừng bạn đến với {{appName}}",
+    "usageInfoCollection": "Để cải thiện ứng dụng này, thông tin sử dụng ẩn danh sẽ được thu thập. Khi tiếp tục sử dụng ứng dụng, bạn đồng ý với điều này."
+  },
+  "about": {
+    "releasesLink": "Tải xuống và ghi chú phát hành",
+    "releasesLinkTitle": "Mở trang tải xuống và ghi chú phát hành",
+    "translations": "Rất hoan nghênh các bản dịch sang ngôn ngữ khác: hãy xem <guideLink>cách dịch ứng dụng này</guideLink>.",
+    "translationsLinkTitle": "Mở hướng dẫn dịch ứng dụng này",
+    "homePageTitle": "Mở trang chủ",
+    "sourceCodeTitle": "Xem mã nguồn trên GitHub"
+  },
+  "sidebar": {
+    "openFolder": "Mở thư mục",
+    "cannotOpenWhileGeneratingThumbnails": "Không thể mở thư mục trong khi đang tạo hình thu nhỏ.",
+    "openFolderToSeePhotos": "Mở một thư mục để xem ảnh được chụp ở đâu.",
+    "sort": {
+      "title": "Sắp xếp",
+      "byName": "Theo tên",
+      "byShootingTime": "Theo thời gian chụp",
+      "ascending": "Tăng dần",
+      "descending": "Giảm dần"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "Sắp xếp theo thời gian chụp",
+    "intro": "Khi chọn “Theo thời gian chụp”, ứng dụng sắp xếp các tệp như sau:",
+    "step1": "dùng DateTimeOriginal trong EXIF. Nếu không có,",
+    "step2": "dùng thời gian sửa đổi của tệp.",
+    "foldersNote": "Thư mục được sắp xếp theo tên vì thư mục không có “thời gian chụp”.",
+    "moreDetails": "Chi tiết khác",
+    "details": {
+      "intro": "Sau đây là thông tin bổ sung:",
+      "mostTrustworthy": "DateTimeOriginal trong EXIF là thông tin đáng tin cậy nhất về thời điểm chụp ảnh.",
+      "sometimesMissing": "Hầu hết máy ảnh ghi DateTimeOriginal vào hầu hết các tệp JPEG/HEIF/TIFF, nhưng đôi khi thông tin này bị thiếu.",
+      "modifiedTime": "Thời gian sửa đổi của tệp thường là thời điểm chụp ảnh, vì vậy nó được dùng khi thiếu DateTimeOriginal.",
+      "otherFiles": "Các tệp không phải JPEG/HEIF/TIFF không có EXIF, vì vậy thời gian sửa đổi luôn được dùng."
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "Thư mục đã mở - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "Chỉ chọn tệp này",
+      "selectOnlyThisFolder": "Chỉ chọn thư mục này",
+      "open": "Mở",
+      "openFolder": "Mở thư mục"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "Không có thông tin ảnh.",
+    "openFile": "Mở tệp",
+    "moreOptions": "Tùy chọn khác",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "Xoay hình thu nhỏ",
+    "menu": {
+      "selectOnlyThis": "Chỉ chọn tệp này",
+      "openFolder": "Mở thư mục",
+      "openGoogleMaps": "Mở Google Maps",
+      "openGoogleStreetView": "Mở Google Street View",
+      "viewData": "Xem dữ liệu"
+    },
+    "pathTooLong": "Không thể hiển thị hình thu nhỏ vì độ dài đường dẫn tệp là {{length}}. Windows giới hạn độ dài đường dẫn tối đa là {{maximum}}. Hãy đổi vị trí của tệp để rút ngắn đường dẫn. Để biết chi tiết, nhấn Ctrl+Shift+I và đọc các thông báo trong bảng điều khiển.",
+    "generatedThumbnailPathTooLong": "Không thể hiển thị hình thu nhỏ vì độ dài đường dẫn của hình thu nhỏ đã tạo là {{length}}. Windows giới hạn độ dài đường dẫn tối đa là {{maximum}}. Hãy đổi vị trí của tệp để rút ngắn đường dẫn của hình thu nhỏ đã tạo. Để biết chi tiết, nhấn Ctrl+Shift+I và đọc các thông báo trong bảng điều khiển."
+  },
+  "map": {
+    "zoomIn": "Phóng to",
+    "zoomOut": "Thu nhỏ",
+    "layers": "Lớp",
+    "photosInRegions": "Ảnh trong các vùng: {{count}}",
+    "selectPhotos": "Chọn ảnh",
+    "setRegionByRectangle": "Đặt vùng bằng hình chữ nhật",
+    "setRegionByVertex": "Đặt vùng bằng các đỉnh",
+    "setText": "Đặt văn bản",
+    "editRegion": "Sửa vùng",
+    "dragRegion": "Di chuyển vùng",
+    "removeRegion": "Xóa vùng"
+  },
+  "chart": {
+    "moreAlt": "Thêm",
+    "dateUnknownPhotos": "Ảnh không rõ ngày chụp: {{count}}",
+    "showDateUnknownPhotos": "Hiển thị ảnh không rõ ngày chụp trên bản đồ",
+    "units": {
+      "year": "Năm",
+      "month": "Tháng",
+      "day": "Ngày",
+      "hour": "Giờ",
+      "minute": "Phút",
+      "second": "Giây"
+    },
+    "unsupportedDuration": "Biểu đồ này không thể hiển thị khoảng thời gian dài hơn 30 ngày khi chọn “Giờ”, dài hơn 3 ngày khi chọn “Phút” hoặc dài hơn 1 giờ khi chọn “Giây”.",
+    "changeUnitOrSelection": "Hãy thay đổi lựa chọn Năm/Tháng/Ngày/Giờ/Phút/Giây hoặc chọn ảnh sao cho khoảng thời gian ngắn hơn.",
+    "selectPhotosWithinZoom": "Chọn ảnh trong phạm vi đã phóng to",
+    "zoom": "Thu phóng",
+    "resetZoom": "Đặt lại\nthu phóng"
+  },
+  "loadingFolder": {
+    "collecting": "Đang thu thập các tệp cần tải từ thư mục đã mở...",
+    "loading": "Đang tải các tệp từ thư mục đã mở...",
+    "completed": "Đã tải tất cả các tệp (số lượng: {{count}}).",
+    "progress": "Số tệp đã tải: {{loaded}} / {{total}}.",
+    "generatingMap": "Đang tạo bản đồ từ các tệp đã tải..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "Thư mục đã mở không có ảnh nào có dữ liệu vị trí."
+  },
+  "loadedFiles": {
+    "loaded": "Số tệp đã tải: {{count}}.",
+    "withLocationData": "Số tệp có dữ liệu vị trí: {{count}}.",
+    "total": "Tổng"
+  },
+  "thumbnailGeneration": {
+    "generating": "Đang tạo hình thu nhỏ cho các tệp HEIF...",
+    "completed": "Đã tạo xong hình thu nhỏ cho các tệp HEIF.",
+    "finishedWithErrors": "Việc tạo hình thu nhỏ cho các tệp HEIF đã kết thúc nhưng có lỗi.",
+    "showDetails": "Hiển thị chi tiết",
+    "processed": "Số tệp đã xử lý: {{processed}} / {{total}}.",
+    "processedWithErrors": "Số tệp đã xử lý: {{processed}} / {{total}}, có lỗi.",
+    "seeFilesWithErrors": "Bấm vào đây để xem các tệp bị lỗi.",
+    "seeFilesWithErrorsTitle": "Xem các tệp bị lỗi",
+    "generationRequired": "Số hình thu nhỏ cần tạo: {{required}}. Số này được tính bằng “tệp HEIF ({{heif}}) − tệp đã có trong bộ nhớ đệm ({{cached}})”.",
+    "closeStatusBar": "Đóng thanh trạng thái tạo hình thu nhỏ",
+    "errorDialog": {
+      "message": "Không thể tạo hình thu nhỏ cho các tệp sau (số lượng: {{count}}):",
+      "filter": "Lọc",
+      "number": "STT",
+      "file": "Tệp",
+      "openFile": "Mở tệp",
+      "openFolder": "Mở thư mục"
+    }
+  },
+  "settings": {
+    "title": "Cài đặt",
+    "tabs": {
+      "language": "Ngôn ngữ (Language)",
+      "appearance": "Giao diện",
+      "dateTime": "Ngày & giờ",
+      "os": "Hệ thống",
+      "cache": "Bộ nhớ đệm"
+    },
+    "restartAfterSaving": "Ứng dụng này sẽ khởi động lại sau khi lưu cài đặt.",
+    "confirmRestart": "Ứng dụng này sẽ khởi động lại sau khi lưu cài đặt.\nBạn có muốn tiếp tục không?",
+    "save": "Lưu",
+    "language": {
+      "title": "Ngôn ngữ",
+      "description": "Ngôn ngữ sẽ thay đổi sau khi ứng dụng khởi động lại."
+    },
+    "appearance": {
+      "title": "Giao diện",
+      "showStatusBar": "Hiển thị thanh trạng thái"
+    },
+    "dateTime": {
+      "title": "Định dạng ngày và giờ",
+      "description": "Định dạng ngày và giờ sẽ thay đổi sau khi ứng dụng khởi động lại.",
+      "dateFormat": "Định dạng ngày",
+      "clockSystem": "12 hoặc 24 giờ",
+      "clock12": "12 giờ",
+      "clock24": "24 giờ",
+      "example": "Ví dụ"
+    },
+    "os": {
+      "title": "Menu ngữ cảnh của File Explorer",
+      "description": "Thêm “{{menuItem}}” vào menu ngữ cảnh của File Explorer hoặc xóa khỏi đó.",
+      "add": "Thêm",
+      "remove": "Xóa",
+      "added": "Đã thêm “{{menuItem}}” vào menu ngữ cảnh của File Explorer.",
+      "removed": "Đã xóa “{{menuItem}}” khỏi menu ngữ cảnh của File Explorer.",
+      "failedToAdd": "Không thể thêm “{{menuItem}}” vào menu ngữ cảnh của File Explorer.",
+      "failedToRemove": "Không thể xóa “{{menuItem}}” khỏi menu ngữ cảnh của File Explorer.",
+      "confirmInExplorer": "Để kiểm tra, hãy mở File Explorer và bấm chuột phải vào một tệp hoặc thư mục."
+    },
+    "cache": {
+      "title": "Bộ nhớ đệm hình thu nhỏ HEIF",
+      "requiredForHeif": "<heifLink>Tệp HEIF</heifLink> cần được tạo hình thu nhỏ, và việc này mất thời gian.",
+      "thereforeCached": "Vì vậy, các hình thu nhỏ đã tạo được lưu vào bộ nhớ đệm.",
+      "usedNextTime": "Từ lần sau, bộ nhớ đệm sẽ được dùng và hình thu nhỏ không được tạo lại.",
+      "location": "Vị trí bộ nhớ đệm:",
+      "restartAfterDeleting": "Ứng dụng này sẽ khởi động lại sau khi xóa bộ nhớ đệm hình thu nhỏ.",
+      "delete": "Xóa bộ nhớ đệm hình thu nhỏ",
+      "confirmDelete": "Ứng dụng này sẽ khởi động lại sau khi xóa bộ nhớ đệm hình thu nhỏ.\nBạn có muốn tiếp tục không?"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "Mở bằng {{appName}}",
+    "openWithAccessKey": "Mở bằng &{{appName}}"
+  },
+  "menu": {
+    "app": {
+      "about": "Giới thiệu về {{appName}}",
+      "services": "Dịch vụ",
+      "hide": "Ẩn {{appName}}",
+      "hideOthers": "Ẩn các ứng dụng khác",
+      "showAll": "Hiển thị tất cả",
+      "quit": "Thoát {{appName}}"
+    },
+    "view": {
+      "title": "Xem",
+      "reload": "Tải lại",
+      "actualSize": "Kích thước thực",
+      "zoomIn": "Phóng to",
+      "zoomOut": "Thu nhỏ",
+      "toggleFullScreen": "Bật/tắt toàn màn hình"
+    },
+    "selection": {
+      "title": "Lựa chọn",
+      "undo": "Hoàn tác",
+      "redo": "Làm lại"
+    },
+    "settings": {
+      "title": "Cài đặt",
+      "openSettings": "Mở cài đặt"
+    },
+    "help": {
+      "title": "Trợ giúp",
+      "showWelcomeDialog": "Hiển thị hộp thoại chào mừng",
+      "advancedMenu": "Menu nâng cao",
+      "openLogFolder": "Mở thư mục nhật ký",
+      "toggleDeveloperTools": "Bật/tắt công cụ dành cho nhà phát triển"
+    }
+  },
+  "autoUpdate": {
+    "title": "Đã có phiên bản mới của {{appName}}!",
+    "message": "Đã có phiên bản mới của {{appName}} và sẽ được cài đặt sau khi khởi động lại.\nBạn có muốn khởi động lại ứng dụng ngay bây giờ không?\n\nPhiên bản hiện tại: {{currentVersion}}\nPhiên bản mới nhất: {{latestVersion}}",
+    "yes": "Có",
+    "no": "Không"
+  }
+}

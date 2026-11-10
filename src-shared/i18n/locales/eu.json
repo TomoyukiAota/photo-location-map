@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "Kargatzen..."
+  },
+  "common": {
+    "ok": "Ados",
+    "cancel": "Utzi",
+    "close": "Itxi"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "Hizkuntza (Language)",
+    "systemLanguage": {
+      "mac": "Erabili macOS-en ezarpena ({{language}})",
+      "windows": "Erabili Windows-en ezarpena ({{language}})",
+      "other": "Erabili sistemaren ezarpena ({{language}})"
+    },
+    "restartToApply": "Aplikazioa berrabiarazi egingo da hizkuntza aplikatzeko.",
+    "confirm": "Ados",
+    "search": "Bilatu",
+    "noLanguagesFound": "Ez da hizkuntzarik aurkitu"
+  },
+  "appInfo": {
+    "appIconAlt": "Aplikazioaren ikonoa",
+    "version": "{{version}} bertsioa",
+    "developedBy": "Garatzailea: Tomoyuki Aota.",
+    "xProfileAlt": "X-ko (lehen Twitter) profila",
+    "xProfileTitle": "Ireki X-ko (lehen Twitter) profila",
+    "gitHubProfileAlt": "GitHub-eko profila",
+    "gitHubProfileTitle": "Ireki GitHub-eko profila",
+    "troubleshooting": "Aplikazio honekin arazorik baduzu, ikusi <pageLink>arazoak konpontzeko orria</pageLink>.",
+    "troubleshootingLinkTitle": "Ireki arazoak konpontzeko orria"
+  },
+  "welcome": {
+    "message": "Ongi etorri {{appName}} aplikaziora",
+    "usageInfoCollection": "Aplikazio hau hobetzeko, erabilerari buruzko informazio anonimoa biltzen da. Aplikazioa erabiltzen jarraitzen baduzu, horrekin ados zaudela ulertuko da."
+  },
+  "about": {
+    "releasesLink": "Deskargak eta bertsio-oharrak",
+    "releasesLinkTitle": "Ireki deskargak eta bertsio-oharrak",
+    "translations": "Beste hizkuntza batzuetarako itzulpenak ongi etorriak dira: ikusi <guideLink>aplikazio hau nola itzuli</guideLink>.",
+    "translationsLinkTitle": "Ireki aplikazio honen itzulpen-gida",
+    "homePageTitle": "Ireki hasierako orria",
+    "sourceCodeTitle": "Ikusi iturburu-kodea GitHub-en"
+  },
+  "sidebar": {
+    "openFolder": "Ireki karpeta",
+    "cannotOpenWhileGeneratingThumbnails": "Ezin da karpetarik ireki miniaturak sortzen diren bitartean.",
+    "openFolderToSeePhotos": "Ireki karpeta bat argazkiak non atera ziren ikusteko.",
+    "sort": {
+      "title": "Ordenatu",
+      "byName": "Izenaren arabera",
+      "byShootingTime": "Ateratze-orduaren arabera",
+      "ascending": "Gorantz",
+      "descending": "Beherantz"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "Ateratze-orduaren araberako ordena",
+    "intro": "«Ateratze-orduaren arabera» hautatzen denean, aplikazioak honela ordenatzen ditu fitxategiak:",
+    "step1": "EXIF datuetako DateTimeOriginal balioa erabiltzen du. Baliorik ez badago,",
+    "step2": "fitxategiaren aldatze-data erabiltzen du.",
+    "foldersNote": "Karpetek ez dute «ateratze-ordurik»; beraz, izenaren arabera ordenatzen dira.",
+    "moreDetails": "Xehetasun gehiago",
+    "details": {
+      "intro": "Hona hemen informazio osagarria:",
+      "mostTrustworthy": "EXIF datuetako DateTimeOriginal balioa da argazkia noiz atera zen jakiteko informaziorik fidagarriena.",
+      "sometimesMissing": "Kamera gehienek DateTimeOriginal idazten dute JPEG/HEIF/TIFF fitxategi gehienetan, baina batzuetan falta izaten da.",
+      "modifiedTime": "Fitxategiaren aldatze-data argazkia atera zen unea izan ohi da; horregatik erabiltzen da DateTimeOriginal falta denean.",
+      "otherFiles": "JPEG/HEIF/TIFF ez diren fitxategiek ez dute EXIF daturik; beraz, haien aldatze-data erabiltzen da beti."
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "Irekitako karpeta - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "Hautatu fitxategi hau bakarrik",
+      "selectOnlyThisFolder": "Hautatu karpeta hau bakarrik",
+      "open": "Ireki",
+      "openFolder": "Ireki karpeta"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "Argazkiaren informazioa ez dago erabilgarri.",
+    "openFile": "Ireki fitxategia",
+    "moreOptions": "Aukera gehiago",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "Biratu miniatura",
+    "menu": {
+      "selectOnlyThis": "Hautatu fitxategi hau bakarrik",
+      "openFolder": "Ireki karpeta",
+      "openGoogleMaps": "Ireki Google Maps",
+      "openGoogleStreetView": "Ireki Google Street View",
+      "viewData": "Ikusi datuak"
+    },
+    "pathTooLong": "Ezin da miniatura erakutsi, fitxategiaren bide-izenaren luzera {{length}} delako. Windows-ek gehienez {{maximum}} luzerako bide-izenak onartzen ditu. Aldatu fitxategiaren kokalekua bide-izena laburtzeko. Xehetasunak ikusteko, sakatu Ctrl+Shift+I eta irakurri kontsolako mezuak.",
+    "generatedThumbnailPathTooLong": "Ezin da miniatura erakutsi, sortutako miniaturaren bide-izenaren luzera {{length}} delako. Windows-ek gehienez {{maximum}} luzerako bide-izenak onartzen ditu. Aldatu fitxategiaren kokalekua sortutako miniaturaren bide-izena laburtzeko. Xehetasunak ikusteko, sakatu Ctrl+Shift+I eta irakurri kontsolako mezuak."
+  },
+  "map": {
+    "zoomIn": "Handitu",
+    "zoomOut": "Txikitu",
+    "layers": "Geruzak",
+    "photosInRegions": "Eskualdeetako argazkiak: {{count}}",
+    "selectPhotos": "Hautatu argazkiak",
+    "setRegionByRectangle": "Zehaztu eskualdea laukizuzen batekin",
+    "setRegionByVertex": "Zehaztu eskualdea erpinekin",
+    "setText": "Jarri testua",
+    "editRegion": "Editatu eskualdea",
+    "dragRegion": "Mugitu eskualdea",
+    "removeRegion": "Kendu eskualdea"
+  },
+  "chart": {
+    "moreAlt": "Gehiago",
+    "dateUnknownPhotos": "Data ezezaguneko argazkiak: {{count}}",
+    "showDateUnknownPhotos": "Erakutsi mapan data ezezaguneko argazkiak",
+    "units": {
+      "year": "Urtea",
+      "month": "Hilabetea",
+      "day": "Eguna",
+      "hour": "Ordua",
+      "minute": "Minutua",
+      "second": "Segundoa"
+    },
+    "unsupportedDuration": "Grafiko honek ezin du erakutsi 30 egun baino gehiagoko tartea «Ordua» hautatuta dagoenean, 3 egun baino gehiagokoa «Minutua» hautatuta dagoenean, ezta ordubete baino gehiagokoa ere «Segundoa» hautatuta dagoenean.",
+    "changeUnitOrSelection": "Aldatu Urtea/Hilabetea/Eguna/Ordua/Minutua/Segundoa hautapena, edo hautatu argazkiak tartea laburragoa izan dadin.",
+    "selectPhotosWithinZoom": "Hautatu handitutako tarteko argazkiak",
+    "zoom": "Zooma",
+    "resetZoom": "Berrezarri\nzooma"
+  },
+  "loadingFolder": {
+    "collecting": "Irekitako karpetatik kargatuko diren fitxategiak biltzen...",
+    "loading": "Irekitako karpetako fitxategiak kargatzen...",
+    "completed": "Fitxategi guztiak kargatu dira (kopurua: {{count}}).",
+    "progress": "Kargatutako fitxategiak: {{loaded}} / {{total}}.",
+    "generatingMap": "Kargatutako fitxategietatik mapa sortzen..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "Irekitako karpetan ez dago kokapen-datuak dituen argazkirik."
+  },
+  "loadedFiles": {
+    "loaded": "Kargatutako fitxategiak: {{count}}.",
+    "withLocationData": "Kokapen-datuak dituzten fitxategiak: {{count}}.",
+    "total": "Guztira"
+  },
+  "thumbnailGeneration": {
+    "generating": "HEIF fitxategien miniaturak sortzen...",
+    "completed": "HEIF fitxategien miniaturak sortu dira.",
+    "finishedWithErrors": "HEIF fitxategien miniaturen sorrera erroreekin amaitu da.",
+    "showDetails": "Erakutsi xehetasunak",
+    "processed": "Prozesatutako fitxategiak: {{processed}} / {{total}}.",
+    "processedWithErrors": "Prozesatutako fitxategiak: {{processed}} / {{total}}, erroreekin.",
+    "seeFilesWithErrors": "Egin klik hemen erroreak dituzten fitxategiak ikusteko.",
+    "seeFilesWithErrorsTitle": "Ikusi erroreak dituzten fitxategiak",
+    "generationRequired": "Sortu beharreko miniaturak: {{required}}. Kopuru hori honela kalkulatzen da: «HEIF fitxategiak ({{heif}}) − cachean dauden fitxategiak ({{cached}})».",
+    "closeStatusBar": "Itxi miniaturen sorreraren egoera-barra",
+    "errorDialog": {
+      "message": "Ezin izan dira fitxategi hauen miniaturak sortu (kopurua: {{count}}):",
+      "filter": "Iragazi",
+      "number": "Zk.",
+      "file": "Fitxategia",
+      "openFile": "Ireki fitxategia",
+      "openFolder": "Ireki karpeta"
+    }
+  },
+  "settings": {
+    "title": "Ezarpenak",
+    "tabs": {
+      "language": "Hizkuntza (Language)",
+      "appearance": "Itxura",
+      "dateTime": "Data eta ordua",
+      "os": "Sistema",
+      "cache": "Cachea"
+    },
+    "restartAfterSaving": "Aplikazioa berrabiarazi egingo da ezarpenak gorde ondoren.",
+    "confirmRestart": "Aplikazioa berrabiarazi egingo da ezarpenak gorde ondoren.\nJarraitu nahi duzu?",
+    "save": "Gorde",
+    "language": {
+      "title": "Hizkuntza",
+      "description": "Hizkuntza aplikazioa berrabiarazi ondoren aldatzen da."
+    },
+    "appearance": {
+      "title": "Itxura",
+      "showStatusBar": "Erakutsi egoera-barra"
+    },
+    "dateTime": {
+      "title": "Dataren eta orduaren formatua",
+      "description": "Dataren eta orduaren formatua aplikazioa berrabiarazi ondoren aldatzen da.",
+      "dateFormat": "Dataren formatua",
+      "clockSystem": "12 edo 24 ordu",
+      "clock12": "12 ordu",
+      "clock24": "24 ordu",
+      "example": "Adibidea"
+    },
+    "os": {
+      "title": "Fitxategi-arakatzailearen laster-menua",
+      "description": "Gehitu «{{menuItem}}» Fitxategi-arakatzailearen laster-menuan, edo kendu handik.",
+      "add": "Gehitu",
+      "remove": "Kendu",
+      "added": "«{{menuItem}}» gehitu da Fitxategi-arakatzailearen laster-menuan.",
+      "removed": "«{{menuItem}}» kendu da Fitxategi-arakatzailearen laster-menutik.",
+      "failedToAdd": "Ezin izan da «{{menuItem}}» gehitu Fitxategi-arakatzailearen laster-menuan.",
+      "failedToRemove": "Ezin izan da «{{menuItem}}» kendu Fitxategi-arakatzailearen laster-menutik.",
+      "confirmInExplorer": "Egiaztatzeko, ireki Fitxategi-arakatzailea eta egin klik eskuineko botoiarekin fitxategi edo karpeta batean."
+    },
+    "cache": {
+      "title": "HEIF miniaturen cachea",
+      "requiredForHeif": "<heifLink>HEIF fitxategietarako</heifLink> miniaturak sortu behar dira, eta horrek denbora behar du.",
+      "thereforeCached": "Horregatik, sortutako miniaturak cachean gordetzen dira.",
+      "usedNextTime": "Hurrengo alditik aurrera cachea erabiltzen da, eta miniaturak ez dira berriro sortzen.",
+      "location": "Cachearen kokalekua:",
+      "restartAfterDeleting": "Aplikazioa berrabiarazi egingo da miniaturen cachea ezabatu ondoren.",
+      "delete": "Ezabatu miniaturen cachea",
+      "confirmDelete": "Aplikazioa berrabiarazi egingo da miniaturen cachea ezabatu ondoren.\nJarraitu nahi duzu?"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "Ireki {{appName}} aplikazioarekin",
+    "openWithAccessKey": "Ireki &{{appName}} aplikazioarekin"
+  },
+  "menu": {
+    "app": {
+      "about": "{{appName}} aplikazioari buruz",
+      "services": "Zerbitzuak",
+      "hide": "Ezkutatu {{appName}}",
+      "hideOthers": "Ezkutatu besteak",
+      "showAll": "Erakutsi denak",
+      "quit": "Irten {{appName}} aplikaziotik"
+    },
+    "view": {
+      "title": "Ikusi",
+      "reload": "Birkargatu",
+      "actualSize": "Benetako tamaina",
+      "zoomIn": "Handitu",
+      "zoomOut": "Txikitu",
+      "toggleFullScreen": "Aktibatu/desaktibatu pantaila osoa"
+    },
+    "selection": {
+      "title": "Hautapena",
+      "undo": "Desegin",
+      "redo": "Berregin"
+    },
+    "settings": {
+      "title": "Ezarpenak",
+      "openSettings": "Ireki ezarpenak"
+    },
+    "help": {
+      "title": "Laguntza",
+      "showWelcomeDialog": "Erakutsi ongietorri-leihoa",
+      "advancedMenu": "Menu aurreratua",
+      "openLogFolder": "Ireki erregistroen karpeta",
+      "toggleDeveloperTools": "Erakutsi/ezkutatu garatzaile-tresnak"
+    }
+  },
+  "autoUpdate": {
+    "title": "{{appName}} aplikazioaren bertsio berri bat dago!",
+    "message": "{{appName}} aplikazioaren bertsio berri bat dago, eta berrabiarazi ondoren instalatuko da.\nAplikazioa orain berrabiarazi nahi duzu?\n\nUneko bertsioa: {{currentVersion}}\nAzken bertsioa: {{latestVersion}}",
+    "yes": "Bai",
+    "no": "Ez"
+  }
+}

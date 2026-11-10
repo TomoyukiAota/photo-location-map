@@ -30,7 +30,8 @@
 }
 
 .progress-bar-with-details {
-  padding: 0 0 0 15px;
+  padding: 0;
+  padding-inline-start: 15px;
   border-radius: 4px;
   cursor: pointer;
 

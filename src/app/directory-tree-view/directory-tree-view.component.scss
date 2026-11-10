@@ -34,12 +34,15 @@ mat-tree-node {
   flex-grow: 1;
   overflow: hidden;
   mask-image: linear-gradient(to left, transparent 0%, #000 5px); // fade-out when the name overflows
+  // The name overflows at the other side in a language written from right to left.
+  :host-context([dir="rtl"]) & { mask-image: linear-gradient(to right, transparent 0%, #000 5px); }
   display: flex;
   align-items: center;
 }
 
 app-dir-tree-view-photo-info {
-  padding: 5px 10px 5px 0;
+  padding: 5px 0;
+  padding-inline-end: 10px;
   flex-shrink: 0;
 }
 
@@ -50,7 +53,7 @@ app-dir-tree-view-photo-info {
 }
 
 .non-selectable-node-name {
-  padding-left: 4px;
+  padding-inline-start: 4px;
 }
 
 div.disabled-checkbox-alternative {

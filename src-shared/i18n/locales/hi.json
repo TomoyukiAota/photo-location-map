@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "लोड हो रहा है..."
+  },
+  "common": {
+    "ok": "ठीक है",
+    "cancel": "रद्द करें",
+    "close": "बंद करें"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "भाषा (Language)",
+    "systemLanguage": {
+      "mac": "macOS की सेटिंग का उपयोग करें ({{language}})",
+      "windows": "Windows की सेटिंग का उपयोग करें ({{language}})",
+      "other": "सिस्टम की सेटिंग का उपयोग करें ({{language}})"
+    },
+    "restartToApply": "भाषा लागू करने के लिए यह ऐप फिर से शुरू होगा।",
+    "confirm": "ठीक है",
+    "search": "खोजें",
+    "noLanguagesFound": "कोई भाषा नहीं मिली"
+  },
+  "appInfo": {
+    "appIconAlt": "ऐप आइकन",
+    "version": "संस्करण {{version}}",
+    "developedBy": "Tomoyuki Aota द्वारा विकसित।",
+    "xProfileAlt": "X (पहले Twitter) प्रोफ़ाइल",
+    "xProfileTitle": "X (पहले Twitter) प्रोफ़ाइल खोलें",
+    "gitHubProfileAlt": "GitHub प्रोफ़ाइल",
+    "gitHubProfileTitle": "GitHub प्रोफ़ाइल खोलें",
+    "troubleshooting": "अगर इस ऐप में कोई समस्या आए, तो <pageLink>समस्या निवारण पेज</pageLink> देखें।",
+    "troubleshootingLinkTitle": "समस्या निवारण पेज खोलें"
+  },
+  "welcome": {
+    "message": "{{appName}} में आपका स्वागत है",
+    "usageInfoCollection": "इस ऐप को बेहतर बनाने के लिए, उपयोग की अनाम जानकारी इकट्ठा की जाती है। इस ऐप का उपयोग जारी रखने पर, आप इससे सहमत होते हैं।"
+  },
+  "about": {
+    "releasesLink": "डाउनलोड और रिलीज़ नोट",
+    "releasesLinkTitle": "डाउनलोड और रिलीज़ नोट खोलें",
+    "translations": "दूसरी भाषाओं में अनुवाद का स्वागत है: <guideLink>इस ऐप का अनुवाद कैसे करें</guideLink> देखें।",
+    "translationsLinkTitle": "इस ऐप की अनुवाद मार्गदर्शिका खोलें",
+    "homePageTitle": "होम पेज खोलें",
+    "sourceCodeTitle": "GitHub पर सोर्स कोड देखें"
+  },
+  "sidebar": {
+    "openFolder": "फ़ोल्डर खोलें",
+    "cannotOpenWhileGeneratingThumbnails": "थंबनेल बनाए जाने के दौरान फ़ोल्डर नहीं खोला जा सकता।",
+    "openFolderToSeePhotos": "फ़ोटो कहाँ ली गईं, यह देखने के लिए कोई फ़ोल्डर खोलें।",
+    "sort": {
+      "title": "क्रमबद्ध करें",
+      "byName": "नाम के अनुसार",
+      "byShootingTime": "फ़ोटो लेने के समय के अनुसार",
+      "ascending": "आरोही",
+      "descending": "अवरोही"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "फ़ोटो लेने के समय के अनुसार क्रमबद्ध करना",
+    "intro": "“फ़ोटो लेने के समय के अनुसार” चुनने पर, ऐप फ़ाइलों को इस तरह क्रमबद्ध करता है:",
+    "step1": "EXIF के DateTimeOriginal का उपयोग करता है। अगर यह उपलब्ध न हो, तो",
+    "step2": "फ़ाइल के संशोधन समय का उपयोग करता है।",
+    "foldersNote": "फ़ोल्डर नाम के अनुसार क्रमबद्ध होते हैं, क्योंकि फ़ोल्डर का कोई “फ़ोटो लेने का समय” नहीं होता।",
+    "moreDetails": "ज़्यादा जानकारी",
+    "details": {
+      "intro": "अतिरिक्त जानकारी नीचे दी गई है:",
+      "mostTrustworthy": "फ़ोटो कब ली गई, इसके बारे में EXIF का DateTimeOriginal सबसे भरोसेमंद जानकारी है।",
+      "sometimesMissing": "ज़्यादातर कैमरे ज़्यादातर JPEG/HEIF/TIFF फ़ाइलों में DateTimeOriginal लिखते हैं, लेकिन कभी-कभी यह मौजूद नहीं होता।",
+      "modifiedTime": "फ़ाइल का संशोधन समय अक्सर वही होता है जब फ़ोटो ली गई थी, इसलिए DateTimeOriginal न होने पर इसका उपयोग किया जाता है।",
+      "otherFiles": "JPEG/HEIF/TIFF के अलावा दूसरी फ़ाइलों में EXIF नहीं होता, इसलिए उनके लिए हमेशा संशोधन समय का उपयोग किया जाता है।"
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "खोला गया फ़ोल्डर - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "सिर्फ़ यह फ़ाइल चुनें",
+      "selectOnlyThisFolder": "सिर्फ़ यह फ़ोल्डर चुनें",
+      "open": "खोलें",
+      "openFolder": "फ़ोल्डर खोलें"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "फ़ोटो की जानकारी उपलब्ध नहीं है।",
+    "openFile": "फ़ाइल खोलें",
+    "moreOptions": "ज़्यादा विकल्प",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "थंबनेल घुमाएँ",
+    "menu": {
+      "selectOnlyThis": "सिर्फ़ यह फ़ाइल चुनें",
+      "openFolder": "फ़ोल्डर खोलें",
+      "openGoogleMaps": "Google Maps खोलें",
+      "openGoogleStreetView": "Google Street View खोलें",
+      "viewData": "डेटा देखें"
+    },
+    "pathTooLong": "थंबनेल नहीं दिखाया जा सकता, क्योंकि फ़ाइल के पाथ की लंबाई {{length}} है। Windows पाथ की लंबाई को ज़्यादा से ज़्यादा {{maximum}} तक सीमित करता है। पाथ छोटा करने के लिए फ़ाइल की जगह बदलें। ब्योरे के लिए, Ctrl+Shift+I दबाएँ और कंसोल के संदेश पढ़ें।",
+    "generatedThumbnailPathTooLong": "थंबनेल नहीं दिखाया जा सकता, क्योंकि बनाए गए थंबनेल के पाथ की लंबाई {{length}} है। Windows पाथ की लंबाई को ज़्यादा से ज़्यादा {{maximum}} तक सीमित करता है। बनाए गए थंबनेल का पाथ छोटा करने के लिए फ़ाइल की जगह बदलें। ब्योरे के लिए, Ctrl+Shift+I दबाएँ और कंसोल के संदेश पढ़ें।"
+  },
+  "map": {
+    "zoomIn": "ज़ूम इन करें",
+    "zoomOut": "ज़ूम आउट करें",
+    "layers": "लेयर",
+    "photosInRegions": "क्षेत्रों में फ़ोटो: {{count}}",
+    "selectPhotos": "फ़ोटो चुनें",
+    "setRegionByRectangle": "आयत से क्षेत्र तय करें",
+    "setRegionByVertex": "शीर्ष बिंदुओं से क्षेत्र तय करें",
+    "setText": "टेक्स्ट रखें",
+    "editRegion": "क्षेत्र में बदलाव करें",
+    "dragRegion": "क्षेत्र खिसकाएँ",
+    "removeRegion": "क्षेत्र हटाएँ"
+  },
+  "chart": {
+    "moreAlt": "ज़्यादा",
+    "dateUnknownPhotos": "अज्ञात तारीख वाली फ़ोटो: {{count}}",
+    "showDateUnknownPhotos": "अज्ञात तारीख वाली फ़ोटो मैप पर दिखाएँ",
+    "units": {
+      "year": "वर्ष",
+      "month": "महीना",
+      "day": "दिन",
+      "hour": "घंटा",
+      "minute": "मिनट",
+      "second": "सेकंड"
+    },
+    "unsupportedDuration": "यह चार्ट “घंटा” चुने जाने पर 30 दिन से ज़्यादा, “मिनट” चुने जाने पर 3 दिन से ज़्यादा या “सेकंड” चुने जाने पर 1 घंटे से ज़्यादा की अवधि नहीं दिखा सकता।",
+    "changeUnitOrSelection": "वर्ष/महीना/दिन/घंटा/मिनट/सेकंड का चुनाव बदलें या ऐसी फ़ोटो चुनें जिनसे अवधि छोटी हो जाए।",
+    "selectPhotosWithinZoom": "ज़ूम की गई सीमा की फ़ोटो चुनें",
+    "zoom": "ज़ूम",
+    "resetZoom": "ज़ूम\nरीसेट करें"
+  },
+  "loadingFolder": {
+    "collecting": "खोले गए फ़ोल्डर से लोड की जाने वाली फ़ाइलें इकट्ठा की जा रही हैं...",
+    "loading": "खोले गए फ़ोल्डर से फ़ाइलें लोड हो रही हैं...",
+    "completed": "सभी फ़ाइलें लोड हो गईं (संख्या: {{count}})।",
+    "progress": "लोड की गई फ़ाइलें: {{loaded}} / {{total}}।",
+    "generatingMap": "लोड की गई फ़ाइलों से मैप बनाया जा रहा है..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "खोले गए फ़ोल्डर में जगह की जानकारी वाली कोई फ़ोटो नहीं है।"
+  },
+  "loadedFiles": {
+    "loaded": "लोड की गई फ़ाइलें: {{count}}।",
+    "withLocationData": "जगह की जानकारी वाली फ़ाइलें: {{count}}।",
+    "total": "कुल"
+  },
+  "thumbnailGeneration": {
+    "generating": "HEIF फ़ाइलों के थंबनेल बनाए जा रहे हैं...",
+    "completed": "HEIF फ़ाइलों के थंबनेल बना दिए गए।",
+    "finishedWithErrors": "HEIF फ़ाइलों के थंबनेल बनाने का काम गड़बड़ियों के साथ खत्म हुआ।",
+    "showDetails": "ब्योरा दिखाएँ",
+    "processed": "प्रोसेस की गई फ़ाइलें: {{processed}} / {{total}}।",
+    "processedWithErrors": "प्रोसेस की गई फ़ाइलें: {{processed}} / {{total}}, गड़बड़ियों के साथ।",
+    "seeFilesWithErrors": "गड़बड़ी वाली फ़ाइलें देखने के लिए यहाँ क्लिक करें।",
+    "seeFilesWithErrorsTitle": "गड़बड़ी वाली फ़ाइलें देखें",
+    "generationRequired": "बनाए जाने वाले थंबनेल: {{required}}। यह संख्या “HEIF फ़ाइलें ({{heif}}) − कैश में पहले से मौजूद फ़ाइलें ({{cached}})” से निकाली जाती है।",
+    "closeStatusBar": "थंबनेल बनाने का स्टेटस बार बंद करें",
+    "errorDialog": {
+      "message": "इन फ़ाइलों के थंबनेल नहीं बनाए जा सके (संख्या: {{count}}):",
+      "filter": "फ़िल्टर",
+      "number": "क्र.",
+      "file": "फ़ाइल",
+      "openFile": "फ़ाइल खोलें",
+      "openFolder": "फ़ोल्डर खोलें"
+    }
+  },
+  "settings": {
+    "title": "सेटिंग",
+    "tabs": {
+      "language": "भाषा (Language)",
+      "appearance": "दिखावट",
+      "dateTime": "तारीख और समय",
+      "os": "सिस्टम",
+      "cache": "कैश"
+    },
+    "restartAfterSaving": "सेटिंग सेव करने के बाद यह ऐप फिर से शुरू होगा।",
+    "confirmRestart": "सेटिंग सेव करने के बाद यह ऐप फिर से शुरू होगा।\nक्या आप जारी रखना चाहते हैं?",
+    "save": "सेव करें",
+    "language": {
+      "title": "भाषा",
+      "description": "ऐप फिर से शुरू होने के बाद भाषा बदलती है।"
+    },
+    "appearance": {
+      "title": "दिखावट",
+      "showStatusBar": "स्टेटस बार दिखाएँ"
+    },
+    "dateTime": {
+      "title": "तारीख और समय का फ़ॉर्मैट",
+      "description": "ऐप फिर से शुरू होने के बाद तारीख और समय का फ़ॉर्मैट बदलता है।",
+      "dateFormat": "तारीख का फ़ॉर्मैट",
+      "clockSystem": "12 या 24 घंटे",
+      "clock12": "12 घंटे",
+      "clock24": "24 घंटे",
+      "example": "उदाहरण"
+    },
+    "os": {
+      "title": "फ़ाइल एक्सप्लोरर का संदर्भ मेन्यू",
+      "description": "फ़ाइल एक्सप्लोरर के संदर्भ मेन्यू में “{{menuItem}}” जोड़ें या उसे वहाँ से हटाएँ।",
+      "add": "जोड़ें",
+      "remove": "हटाएँ",
+      "added": "“{{menuItem}}” को फ़ाइल एक्सप्लोरर के संदर्भ मेन्यू में जोड़ दिया गया।",
+      "removed": "“{{menuItem}}” को फ़ाइल एक्सप्लोरर के संदर्भ मेन्यू से हटा दिया गया।",
+      "failedToAdd": "“{{menuItem}}” को फ़ाइल एक्सप्लोरर के संदर्भ मेन्यू में नहीं जोड़ा जा सका।",
+      "failedToRemove": "“{{menuItem}}” को फ़ाइल एक्सप्लोरर के संदर्भ मेन्यू से नहीं हटाया जा सका।",
+      "confirmInExplorer": "जाँचने के लिए, फ़ाइल एक्सप्लोरर खोलें और किसी फ़ाइल या फ़ोल्डर पर राइट-क्लिक करें।"
+    },
+    "cache": {
+      "title": "HEIF थंबनेल कैश",
+      "requiredForHeif": "<heifLink>HEIF फ़ाइलों</heifLink> के लिए थंबनेल बनाने पड़ते हैं, और इसमें समय लगता है।",
+      "thereforeCached": "इसलिए, बनाए गए थंबनेल कैश में रखे जाते हैं।",
+      "usedNextTime": "अगली बार से कैश का उपयोग किया जाता है और थंबनेल दोबारा नहीं बनाए जाते।",
+      "location": "कैश की जगह:",
+      "restartAfterDeleting": "थंबनेल कैश मिटाने के बाद यह ऐप फिर से शुरू होगा।",
+      "delete": "थंबनेल कैश मिटाएँ",
+      "confirmDelete": "थंबनेल कैश मिटाने के बाद यह ऐप फिर से शुरू होगा।\nक्या आप जारी रखना चाहते हैं?"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "{{appName}} से खोलें",
+    "openWithAccessKey": "{{appName}} से खोलें (&P)"
+  },
+  "menu": {
+    "app": {
+      "about": "{{appName}} के बारे में",
+      "services": "सेवाएँ",
+      "hide": "{{appName}} छिपाएँ",
+      "hideOthers": "दूसरे छिपाएँ",
+      "showAll": "सभी दिखाएँ",
+      "quit": "{{appName}} बंद करें"
+    },
+    "view": {
+      "title": "दृश्य",
+      "reload": "फिर से लोड करें",
+      "actualSize": "असल आकार",
+      "zoomIn": "ज़ूम इन करें",
+      "zoomOut": "ज़ूम आउट करें",
+      "toggleFullScreen": "फ़ुल स्क्रीन टॉगल करें"
+    },
+    "selection": {
+      "title": "चयन",
+      "undo": "पहले जैसा करें",
+      "redo": "फिर से करें"
+    },
+    "settings": {
+      "title": "सेटिंग",
+      "openSettings": "सेटिंग खोलें"
+    },
+    "help": {
+      "title": "सहायता",
+      "showWelcomeDialog": "स्वागत डायलॉग दिखाएँ",
+      "advancedMenu": "उन्नत मेन्यू",
+      "openLogFolder": "लॉग फ़ोल्डर खोलें",
+      "toggleDeveloperTools": "डेवलपर टूल टॉगल करें"
+    }
+  },
+  "autoUpdate": {
+    "title": "{{appName}} का नया संस्करण उपलब्ध है!",
+    "message": "{{appName}} का नया संस्करण उपलब्ध है, जो फिर से शुरू करने के बाद इंस्टॉल होगा।\nक्या आप ऐप को अभी फिर से शुरू करना चाहते हैं?\n\nमौजूदा संस्करण: {{currentVersion}}\nनवीनतम संस्करण: {{latestVersion}}",
+    "yes": "हाँ",
+    "no": "नहीं"
+  }
+}

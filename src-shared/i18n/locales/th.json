@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "กำลังโหลด..."
+  },
+  "common": {
+    "ok": "ตกลง",
+    "cancel": "ยกเลิก",
+    "close": "ปิด"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "ภาษา (Language)",
+    "systemLanguage": {
+      "mac": "ใช้การตั้งค่าของ macOS ({{language}})",
+      "windows": "ใช้การตั้งค่าของ Windows ({{language}})",
+      "other": "ใช้การตั้งค่าของระบบ ({{language}})"
+    },
+    "restartToApply": "แอปนี้จะเริ่มใหม่เพื่อใช้ภาษาที่เลือก",
+    "confirm": "ตกลง",
+    "search": "ค้นหา",
+    "noLanguagesFound": "ไม่พบภาษา"
+  },
+  "appInfo": {
+    "appIconAlt": "ไอคอนแอป",
+    "version": "เวอร์ชัน {{version}}",
+    "developedBy": "พัฒนาโดย Tomoyuki Aota",
+    "xProfileAlt": "โปรไฟล์ X (เดิมคือ Twitter)",
+    "xProfileTitle": "เปิดโปรไฟล์ X (เดิมคือ Twitter)",
+    "gitHubProfileAlt": "โปรไฟล์ GitHub",
+    "gitHubProfileTitle": "เปิดโปรไฟล์ GitHub",
+    "troubleshooting": "หากพบปัญหากับแอปนี้ โปรดดู<pageLink>หน้าการแก้ไขปัญหา</pageLink>",
+    "troubleshootingLinkTitle": "เปิดหน้าการแก้ไขปัญหา"
+  },
+  "welcome": {
+    "message": "ยินดีต้อนรับสู่ {{appName}}",
+    "usageInfoCollection": "เพื่อปรับปรุงแอปนี้ จะมีการเก็บรวบรวมข้อมูลการใช้งานแบบไม่ระบุตัวตน การใช้แอปนี้ต่อไปถือว่าคุณยอมรับเรื่องนี้"
+  },
+  "about": {
+    "releasesLink": "การดาวน์โหลดและบันทึกประจำรุ่น",
+    "releasesLinkTitle": "เปิดการดาวน์โหลดและบันทึกประจำรุ่น",
+    "translations": "ยินดีรับคำแปลเป็นภาษาอื่น: โปรดดู<guideLink>วิธีแปลแอปนี้</guideLink>",
+    "translationsLinkTitle": "เปิดคู่มือการแปลแอปนี้",
+    "homePageTitle": "เปิดหน้าแรก",
+    "sourceCodeTitle": "ดูซอร์สโค้ดบน GitHub"
+  },
+  "sidebar": {
+    "openFolder": "เปิดโฟลเดอร์",
+    "cannotOpenWhileGeneratingThumbnails": "ไม่สามารถเปิดโฟลเดอร์ได้ขณะกำลังสร้างภาพขนาดย่อ",
+    "openFolderToSeePhotos": "เปิดโฟลเดอร์เพื่อดูว่ารูปภาพถ่ายที่ใด",
+    "sort": {
+      "title": "เรียงลำดับ",
+      "byName": "ตามชื่อ",
+      "byShootingTime": "ตามเวลาที่ถ่าย",
+      "ascending": "น้อยไปมาก",
+      "descending": "มากไปน้อย"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "การเรียงลำดับตามเวลาที่ถ่าย",
+    "intro": "เมื่อเลือก “ตามเวลาที่ถ่าย” แอปจะเรียงลำดับไฟล์ดังนี้:",
+    "step1": "ใช้ DateTimeOriginal ใน EXIF หากไม่มี",
+    "step2": "ใช้เวลาที่แก้ไขไฟล์",
+    "foldersNote": "โฟลเดอร์จะเรียงตามชื่อ เนื่องจากโฟลเดอร์ไม่มี “เวลาที่ถ่าย”",
+    "moreDetails": "รายละเอียดเพิ่มเติม",
+    "details": {
+      "intro": "ข้อมูลเพิ่มเติมมีดังนี้:",
+      "mostTrustworthy": "DateTimeOriginal ใน EXIF เป็นข้อมูลที่เชื่อถือได้มากที่สุดเกี่ยวกับเวลาที่ถ่ายรูปภาพ",
+      "sometimesMissing": "กล้องส่วนใหญ่จะบันทึก DateTimeOriginal ลงในไฟล์ JPEG/HEIF/TIFF ส่วนใหญ่ แต่บางครั้งก็ไม่มีข้อมูลนี้",
+      "modifiedTime": "เวลาที่แก้ไขไฟล์มักเป็นเวลาที่ถ่ายรูปภาพ จึงนำมาใช้เมื่อไม่มี DateTimeOriginal",
+      "otherFiles": "ไฟล์ที่ไม่ใช่ JPEG/HEIF/TIFF ไม่มี EXIF จึงใช้เวลาที่แก้ไขไฟล์เสมอ"
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "โฟลเดอร์ที่เปิด - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "เลือกเฉพาะไฟล์นี้",
+      "selectOnlyThisFolder": "เลือกเฉพาะโฟลเดอร์นี้",
+      "open": "เปิด",
+      "openFolder": "เปิดโฟลเดอร์"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "ไม่มีข้อมูลรูปภาพ",
+    "openFile": "เปิดไฟล์",
+    "moreOptions": "ตัวเลือกเพิ่มเติม",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "หมุนภาพขนาดย่อ",
+    "menu": {
+      "selectOnlyThis": "เลือกเฉพาะไฟล์นี้",
+      "openFolder": "เปิดโฟลเดอร์",
+      "openGoogleMaps": "เปิด Google Maps",
+      "openGoogleStreetView": "เปิด Google Street View",
+      "viewData": "ดูข้อมูล"
+    },
+    "pathTooLong": "ไม่สามารถแสดงภาพขนาดย่อได้ เนื่องจากความยาวของพาธไฟล์คือ {{length}} Windows จำกัดความยาวของพาธไว้ไม่เกิน {{maximum}} โปรดเปลี่ยนตำแหน่งของไฟล์เพื่อให้พาธสั้นลง หากต้องการดูรายละเอียด ให้กด Ctrl+Shift+I แล้วอ่านข้อความในคอนโซล",
+    "generatedThumbnailPathTooLong": "ไม่สามารถแสดงภาพขนาดย่อได้ เนื่องจากความยาวของพาธของภาพขนาดย่อที่สร้างขึ้นคือ {{length}} Windows จำกัดความยาวของพาธไว้ไม่เกิน {{maximum}} โปรดเปลี่ยนตำแหน่งของไฟล์เพื่อให้พาธของภาพขนาดย่อที่สร้างขึ้นสั้นลง หากต้องการดูรายละเอียด ให้กด Ctrl+Shift+I แล้วอ่านข้อความในคอนโซล"
+  },
+  "map": {
+    "zoomIn": "ขยาย",
+    "zoomOut": "ย่อ",
+    "layers": "เลเยอร์",
+    "photosInRegions": "รูปภาพในพื้นที่: {{count}}",
+    "selectPhotos": "เลือกรูปภาพ",
+    "setRegionByRectangle": "กำหนดพื้นที่ด้วยสี่เหลี่ยมผืนผ้า",
+    "setRegionByVertex": "กำหนดพื้นที่ด้วยจุดยอด",
+    "setText": "วางข้อความ",
+    "editRegion": "แก้ไขพื้นที่",
+    "dragRegion": "ย้ายพื้นที่",
+    "removeRegion": "ลบพื้นที่"
+  },
+  "chart": {
+    "moreAlt": "เพิ่มเติม",
+    "dateUnknownPhotos": "รูปภาพที่ไม่ทราบวันที่: {{count}}",
+    "showDateUnknownPhotos": "แสดงรูปภาพที่ไม่ทราบวันที่บนแผนที่",
+    "units": {
+      "year": "ปี",
+      "month": "เดือน",
+      "day": "วัน",
+      "hour": "ชั่วโมง",
+      "minute": "นาที",
+      "second": "วินาที"
+    },
+    "unsupportedDuration": "แผนภูมินี้ไม่สามารถแสดงช่วงเวลาที่ยาวกว่า 30 วันเมื่อเลือก “ชั่วโมง” ยาวกว่า 3 วันเมื่อเลือก “นาที” หรือยาวกว่า 1 ชั่วโมงเมื่อเลือก “วินาที”",
+    "changeUnitOrSelection": "โปรดเปลี่ยนการเลือก ปี/เดือน/วัน/ชั่วโมง/นาที/วินาที หรือเลือกรูปภาพเพื่อให้ช่วงเวลาสั้นลง",
+    "selectPhotosWithinZoom": "เลือกรูปภาพในช่วงที่ซูม",
+    "zoom": "ซูม",
+    "resetZoom": "รีเซ็ต\nการซูม"
+  },
+  "loadingFolder": {
+    "collecting": "กำลังรวบรวมไฟล์ที่จะโหลดจากโฟลเดอร์ที่เปิด...",
+    "loading": "กำลังโหลดไฟล์จากโฟลเดอร์ที่เปิด...",
+    "completed": "โหลดไฟล์ทั้งหมดแล้ว (จำนวน: {{count}})",
+    "progress": "ไฟล์ที่โหลดแล้ว: {{loaded}} / {{total}}",
+    "generatingMap": "กำลังสร้างแผนที่จากไฟล์ที่โหลด..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "ไม่มีรูปภาพที่มีข้อมูลตำแหน่งในโฟลเดอร์ที่เปิด"
+  },
+  "loadedFiles": {
+    "loaded": "ไฟล์ที่โหลดแล้ว: {{count}}",
+    "withLocationData": "ไฟล์ที่มีข้อมูลตำแหน่ง: {{count}}",
+    "total": "รวม"
+  },
+  "thumbnailGeneration": {
+    "generating": "กำลังสร้างภาพขนาดย่อสำหรับไฟล์ HEIF...",
+    "completed": "สร้างภาพขนาดย่อสำหรับไฟล์ HEIF เสร็จแล้ว",
+    "finishedWithErrors": "การสร้างภาพขนาดย่อสำหรับไฟล์ HEIF สิ้นสุดลงโดยมีข้อผิดพลาด",
+    "showDetails": "แสดงรายละเอียด",
+    "processed": "ไฟล์ที่ประมวลผลแล้ว: {{processed}} / {{total}}",
+    "processedWithErrors": "ไฟล์ที่ประมวลผลแล้ว: {{processed}} / {{total}} โดยมีข้อผิดพลาด",
+    "seeFilesWithErrors": "คลิกที่นี่เพื่อดูไฟล์ที่มีข้อผิดพลาด",
+    "seeFilesWithErrorsTitle": "ดูไฟล์ที่มีข้อผิดพลาด",
+    "generationRequired": "ภาพขนาดย่อที่ต้องสร้าง: {{required}} จำนวนนี้คำนวณจาก “ไฟล์ HEIF ({{heif}}) − ไฟล์ที่มีอยู่ในแคชแล้ว ({{cached}})”",
+    "closeStatusBar": "ปิดแถบสถานะการสร้างภาพขนาดย่อ",
+    "errorDialog": {
+      "message": "ไม่สามารถสร้างภาพขนาดย่อสำหรับไฟล์ต่อไปนี้ (จำนวน: {{count}}):",
+      "filter": "กรอง",
+      "number": "ลำดับ",
+      "file": "ไฟล์",
+      "openFile": "เปิดไฟล์",
+      "openFolder": "เปิดโฟลเดอร์"
+    }
+  },
+  "settings": {
+    "title": "การตั้งค่า",
+    "tabs": {
+      "language": "ภาษา (Language)",
+      "appearance": "ลักษณะที่ปรากฏ",
+      "dateTime": "วันที่และเวลา",
+      "os": "ระบบ",
+      "cache": "แคช"
+    },
+    "restartAfterSaving": "แอปนี้จะเริ่มใหม่หลังจากบันทึกการตั้งค่า",
+    "confirmRestart": "แอปนี้จะเริ่มใหม่หลังจากบันทึกการตั้งค่า\nต้องการดำเนินการต่อหรือไม่",
+    "save": "บันทึก",
+    "language": {
+      "title": "ภาษา",
+      "description": "ภาษาจะเปลี่ยนหลังจากเริ่มแอปใหม่"
+    },
+    "appearance": {
+      "title": "ลักษณะที่ปรากฏ",
+      "showStatusBar": "แสดงแถบสถานะ"
+    },
+    "dateTime": {
+      "title": "รูปแบบวันที่และเวลา",
+      "description": "รูปแบบวันที่และเวลาจะเปลี่ยนหลังจากเริ่มแอปใหม่",
+      "dateFormat": "รูปแบบวันที่",
+      "clockSystem": "12 หรือ 24 ชั่วโมง",
+      "clock12": "12 ชั่วโมง",
+      "clock24": "24 ชั่วโมง",
+      "example": "ตัวอย่าง"
+    },
+    "os": {
+      "title": "เมนูบริบทของ File Explorer",
+      "description": "เพิ่ม “{{menuItem}}” ลงในเมนูบริบทของ File Explorer หรือนำออก",
+      "add": "เพิ่ม",
+      "remove": "นำออก",
+      "added": "เพิ่ม “{{menuItem}}” ลงในเมนูบริบทของ File Explorer แล้ว",
+      "removed": "นำ “{{menuItem}}” ออกจากเมนูบริบทของ File Explorer แล้ว",
+      "failedToAdd": "ไม่สามารถเพิ่ม “{{menuItem}}” ลงในเมนูบริบทของ File Explorer",
+      "failedToRemove": "ไม่สามารถนำ “{{menuItem}}” ออกจากเมนูบริบทของ File Explorer",
+      "confirmInExplorer": "หากต้องการตรวจสอบ ให้เปิด File Explorer แล้วคลิกขวาที่ไฟล์หรือโฟลเดอร์"
+    },
+    "cache": {
+      "title": "แคชภาพขนาดย่อ HEIF",
+      "requiredForHeif": "<heifLink>ไฟล์ HEIF</heifLink> จำเป็นต้องสร้างภาพขนาดย่อ ซึ่งใช้เวลา",
+      "thereforeCached": "ดังนั้น ภาพขนาดย่อที่สร้างขึ้นจึงถูกเก็บไว้ในแคช",
+      "usedNextTime": "ตั้งแต่ครั้งถัดไป จะใช้แคชและไม่สร้างภาพขนาดย่อซ้ำ",
+      "location": "ตำแหน่งของแคช:",
+      "restartAfterDeleting": "แอปนี้จะเริ่มใหม่หลังจากลบแคชภาพขนาดย่อ",
+      "delete": "ลบแคชภาพขนาดย่อ",
+      "confirmDelete": "แอปนี้จะเริ่มใหม่หลังจากลบแคชภาพขนาดย่อ\nต้องการดำเนินการต่อหรือไม่"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "เปิดด้วย {{appName}}",
+    "openWithAccessKey": "เปิดด้วย {{appName}} (&P)"
+  },
+  "menu": {
+    "app": {
+      "about": "เกี่ยวกับ {{appName}}",
+      "services": "บริการ",
+      "hide": "ซ่อน {{appName}}",
+      "hideOthers": "ซ่อนแอปอื่น",
+      "showAll": "แสดงทั้งหมด",
+      "quit": "ออกจาก {{appName}}"
+    },
+    "view": {
+      "title": "มุมมอง",
+      "reload": "โหลดใหม่",
+      "actualSize": "ขนาดจริง",
+      "zoomIn": "ขยาย",
+      "zoomOut": "ย่อ",
+      "toggleFullScreen": "สลับโหมดเต็มหน้าจอ"
+    },
+    "selection": {
+      "title": "การเลือก",
+      "undo": "เลิกทำ",
+      "redo": "ทำซ้ำ"
+    },
+    "settings": {
+      "title": "การตั้งค่า",
+      "openSettings": "เปิดการตั้งค่า"
+    },
+    "help": {
+      "title": "ช่วยเหลือ",
+      "showWelcomeDialog": "แสดงกล่องโต้ตอบต้อนรับ",
+      "advancedMenu": "เมนูขั้นสูง",
+      "openLogFolder": "เปิดโฟลเดอร์บันทึก",
+      "toggleDeveloperTools": "สลับเครื่องมือสำหรับนักพัฒนา"
+    }
+  },
+  "autoUpdate": {
+    "title": "มี {{appName}} เวอร์ชันใหม่!",
+    "message": "มี {{appName}} เวอร์ชันใหม่ ซึ่งจะติดตั้งหลังจากเริ่มใหม่\nต้องการเริ่มแอปใหม่ตอนนี้หรือไม่\n\nเวอร์ชันปัจจุบัน: {{currentVersion}}\nเวอร์ชันล่าสุด: {{latestVersion}}",
+    "yes": "ใช่",
+    "no": "ไม่"
+  }
+}

@@ -1,3 +1,8 @@
+<!--
+  The name of a file or a folder is in a bdi element: on its own in its row, and written from the side that its first
+  letter says, so that a name in Latin letters keeps its order in a language written from right to left, and a name in
+  Arabic or Hebrew letters in the others.
+-->
 <mat-tree #tree="matTree" [dataSource]="treeData()" [childrenAccessor]="childrenAccessor">
   <mat-tree-node *matTreeNodeDef="let node"
                  matTreeNodeToggle
@@ -10,13 +15,13 @@
       @if (node.isSelectable) {
         <mat-checkbox [checked]="isSelected(node)"
                       (change)="handleCheckboxChange(node)">
-          <span>{{node.name}}</span>
+          <bdi>{{node.name}}</bdi>
         </mat-checkbox>
       }
       @if (!node.isSelectable) {
         <mat-label class="non-selectable-node">
           <div class="disabled-checkbox-alternative"></div>
-          <span class="non-selectable-node-name">{{node.name}}</span>
+          <bdi class="non-selectable-node-name">{{node.name}}</bdi>
         </mat-label>
       }
     </div>
@@ -41,13 +46,13 @@
       <mat-checkbox [checked]="allDescendantsSelected(node)"
                     [indeterminate]="partOfDescendantsSelected(node)"
                     (change)="handleCheckboxChange(node)">
-        {{node.name}}
+        <bdi>{{node.name}}</bdi>
       </mat-checkbox>
     }
     @if (!node.isSelectable) {
       <mat-label class="non-selectable-node">
         <div class="disabled-checkbox-alternative"></div>
-        {{node.name}}
+        <bdi>{{node.name}}</bdi>
       </mat-label>
     }
   </mat-tree-node>

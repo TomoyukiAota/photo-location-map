@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "جارٍ التحميل..."
+  },
+  "common": {
+    "ok": "موافق",
+    "cancel": "إلغاء",
+    "close": "إغلاق"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "اللغة (Language)",
+    "systemLanguage": {
+      "mac": "استخدام إعداد macOS ({{language}})",
+      "windows": "استخدام إعداد Windows ({{language}})",
+      "other": "استخدام إعداد النظام ({{language}})"
+    },
+    "restartToApply": "سيُعاد تشغيل هذا التطبيق لتطبيق اللغة.",
+    "confirm": "موافق",
+    "search": "بحث",
+    "noLanguagesFound": "لم يُعثر على أي لغة"
+  },
+  "appInfo": {
+    "appIconAlt": "أيقونة التطبيق",
+    "version": "الإصدار {{version}}",
+    "developedBy": "من تطوير Tomoyuki Aota.",
+    "xProfileAlt": "الملف الشخصي على X (تويتر سابقًا)",
+    "xProfileTitle": "فتح الملف الشخصي على X (تويتر سابقًا)",
+    "gitHubProfileAlt": "الملف الشخصي على GitHub",
+    "gitHubProfileTitle": "فتح الملف الشخصي على GitHub",
+    "troubleshooting": "إذا واجهت مشكلة في هذا التطبيق، فراجع <pageLink>صفحة استكشاف الأخطاء وإصلاحها</pageLink>.",
+    "troubleshootingLinkTitle": "فتح صفحة استكشاف الأخطاء وإصلاحها"
+  },
+  "welcome": {
+    "message": "مرحبًا بك في {{appName}}",
+    "usageInfoCollection": "لتحسين هذا التطبيق، تُجمع معلومات استخدام مجهولة المصدر. باستمرارك في استخدام التطبيق، فإنك توافق على ذلك."
+  },
+  "about": {
+    "releasesLink": "التنزيلات وملاحظات الإصدار",
+    "releasesLinkTitle": "فتح التنزيلات وملاحظات الإصدار",
+    "translations": "نرحّب بالترجمات إلى لغات أخرى: راجع <guideLink>طريقة ترجمة هذا التطبيق</guideLink>.",
+    "translationsLinkTitle": "فتح دليل ترجمة هذا التطبيق",
+    "homePageTitle": "فتح الصفحة الرئيسية",
+    "sourceCodeTitle": "عرض الشيفرة المصدرية على GitHub"
+  },
+  "sidebar": {
+    "openFolder": "فتح مجلد",
+    "cannotOpenWhileGeneratingThumbnails": "لا يمكن فتح مجلد أثناء إنشاء الصور المصغّرة.",
+    "openFolderToSeePhotos": "افتح مجلدًا لترى أماكن التقاط الصور.",
+    "sort": {
+      "title": "فرز",
+      "byName": "حسب الاسم",
+      "byShootingTime": "حسب وقت الالتقاط",
+      "ascending": "تصاعدي",
+      "descending": "تنازلي"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "الفرز حسب وقت الالتقاط",
+    "intro": "عند اختيار «حسب وقت الالتقاط»، يفرز التطبيق الملفات كما يلي:",
+    "step1": "يستخدم قيمة DateTimeOriginal في بيانات EXIF. وإذا لم تكن متوفرة،",
+    "step2": "يستخدم وقت تعديل الملف.",
+    "foldersNote": "تُفرز المجلدات حسب الاسم لأن المجلدات ليس لها «وقت التقاط».",
+    "moreDetails": "تفاصيل أكثر",
+    "details": {
+      "intro": "في ما يلي معلومات إضافية:",
+      "mostTrustworthy": "قيمة DateTimeOriginal في بيانات EXIF هي أوثق معلومة عن وقت التقاط الصورة.",
+      "sometimesMissing": "تكتب معظم الكاميرات قيمة DateTimeOriginal في معظم ملفات JPEG/HEIF/TIFF، لكنها تكون مفقودة أحيانًا.",
+      "modifiedTime": "وقت تعديل الملف هو في الغالب وقت التقاط الصورة، ولذلك يُستخدم عند غياب DateTimeOriginal.",
+      "otherFiles": "الملفات غير JPEG/HEIF/TIFF لا تحتوي على بيانات EXIF، ولذلك يُستخدم وقت تعديلها دائمًا."
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "المجلد المفتوح - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "تحديد هذا الملف فقط",
+      "selectOnlyThisFolder": "تحديد هذا المجلد فقط",
+      "open": "فتح",
+      "openFolder": "فتح المجلد"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "معلومات الصورة غير متوفرة.",
+    "openFile": "فتح الملف",
+    "moreOptions": "خيارات أكثر",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "تدوير الصورة المصغّرة",
+    "menu": {
+      "selectOnlyThis": "تحديد هذا الملف فقط",
+      "openFolder": "فتح المجلد",
+      "openGoogleMaps": "فتح خرائط Google",
+      "openGoogleStreetView": "فتح Google Street View",
+      "viewData": "عرض البيانات"
+    },
+    "pathTooLong": "لا يمكن عرض الصورة المصغّرة لأن طول مسار الملف هو {{length}}. يحدّ Windows طول المسار بـ {{maximum}} كحد أقصى. غيّر موقع الملف لتقصير المسار. لمعرفة التفاصيل، اضغط Ctrl+Shift+I واقرأ رسائل وحدة التحكم.",
+    "generatedThumbnailPathTooLong": "لا يمكن عرض الصورة المصغّرة لأن طول مسار الصورة المصغّرة المُنشأة هو {{length}}. يحدّ Windows طول المسار بـ {{maximum}} كحد أقصى. غيّر موقع الملف لتقصير مسار الصورة المصغّرة المُنشأة. لمعرفة التفاصيل، اضغط Ctrl+Shift+I واقرأ رسائل وحدة التحكم."
+  },
+  "map": {
+    "zoomIn": "تكبير",
+    "zoomOut": "تصغير",
+    "layers": "الطبقات",
+    "photosInRegions": "الصور في المناطق: {{count}}",
+    "selectPhotos": "تحديد الصور",
+    "setRegionByRectangle": "تعيين منطقة بمستطيل",
+    "setRegionByVertex": "تعيين منطقة برؤوس",
+    "setText": "وضع نص",
+    "editRegion": "تعديل المنطقة",
+    "dragRegion": "تحريك المنطقة",
+    "removeRegion": "إزالة المنطقة"
+  },
+  "chart": {
+    "moreAlt": "المزيد",
+    "dateUnknownPhotos": "الصور غير معروفة التاريخ: {{count}}",
+    "showDateUnknownPhotos": "عرض الصور غير معروفة التاريخ على الخريطة",
+    "units": {
+      "year": "سنة",
+      "month": "شهر",
+      "day": "يوم",
+      "hour": "ساعة",
+      "minute": "دقيقة",
+      "second": "ثانية"
+    },
+    "unsupportedDuration": "لا يستطيع هذا المخطط عرض مدة تزيد على 30 يومًا عند اختيار «ساعة»، أو على 3 أيام عند اختيار «دقيقة»، أو على ساعة واحدة عند اختيار «ثانية».",
+    "changeUnitOrSelection": "غيّر اختيار سنة/شهر/يوم/ساعة/دقيقة/ثانية، أو حدّد صورًا تجعل المدة أقصر.",
+    "selectPhotosWithinZoom": "تحديد الصور ضمن النطاق المكبَّر",
+    "zoom": "تكبير/تصغير",
+    "resetZoom": "إعادة ضبط\nالتكبير"
+  },
+  "loadingFolder": {
+    "collecting": "جارٍ جمع الملفات المطلوب تحميلها من المجلد المفتوح...",
+    "loading": "جارٍ تحميل الملفات من المجلد المفتوح...",
+    "completed": "اكتمل تحميل جميع الملفات (العدد: {{count}}).",
+    "progress": "الملفات المحمَّلة: {{loaded}} من {{total}}.",
+    "generatingMap": "جارٍ إنشاء الخريطة من الملفات المحمَّلة..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "لا توجد في المجلد المفتوح صور تحتوي على بيانات الموقع."
+  },
+  "loadedFiles": {
+    "loaded": "الملفات المحمَّلة: {{count}}.",
+    "withLocationData": "الملفات التي تحتوي على بيانات الموقع: {{count}}.",
+    "total": "الإجمالي"
+  },
+  "thumbnailGeneration": {
+    "generating": "جارٍ إنشاء الصور المصغّرة لملفات HEIF...",
+    "completed": "اكتمل إنشاء الصور المصغّرة لملفات HEIF.",
+    "finishedWithErrors": "انتهى إنشاء الصور المصغّرة لملفات HEIF مع وجود أخطاء.",
+    "showDetails": "عرض التفاصيل",
+    "processed": "الملفات المعالَجة: {{processed}} من {{total}}.",
+    "processedWithErrors": "الملفات المعالَجة: {{processed}} من {{total}}، مع وجود أخطاء.",
+    "seeFilesWithErrors": "انقر هنا لعرض الملفات التي حدثت فيها أخطاء.",
+    "seeFilesWithErrorsTitle": "عرض الملفات التي حدثت فيها أخطاء",
+    "generationRequired": "الصور المصغّرة المطلوب إنشاؤها: {{required}}. يُحسب هذا العدد هكذا: «ملفات HEIF ({{heif}}) − الملفات الموجودة في ذاكرة التخزين المؤقت ({{cached}})».",
+    "closeStatusBar": "إغلاق شريط حالة إنشاء الصور المصغّرة",
+    "errorDialog": {
+      "message": "تعذّر إنشاء الصور المصغّرة للملفات التالية (العدد: {{count}}):",
+      "filter": "تصفية",
+      "number": "الرقم",
+      "file": "الملف",
+      "openFile": "فتح الملف",
+      "openFolder": "فتح المجلد"
+    }
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "tabs": {
+      "language": "اللغة (Language)",
+      "appearance": "المظهر",
+      "dateTime": "التاريخ والوقت",
+      "os": "النظام",
+      "cache": "ذاكرة التخزين المؤقت"
+    },
+    "restartAfterSaving": "سيُعاد تشغيل هذا التطبيق بعد حفظ الإعدادات.",
+    "confirmRestart": "سيُعاد تشغيل هذا التطبيق بعد حفظ الإعدادات.\nهل تريد المتابعة؟",
+    "save": "حفظ",
+    "language": {
+      "title": "اللغة",
+      "description": "تتغيّر اللغة بعد إعادة تشغيل التطبيق."
+    },
+    "appearance": {
+      "title": "المظهر",
+      "showStatusBar": "إظهار شريط الحالة"
+    },
+    "dateTime": {
+      "title": "تنسيق التاريخ والوقت",
+      "description": "يتغيّر تنسيق التاريخ والوقت بعد إعادة تشغيل التطبيق.",
+      "dateFormat": "تنسيق التاريخ",
+      "clockSystem": "12 أو 24 ساعة",
+      "clock12": "12 ساعة",
+      "clock24": "24 ساعة",
+      "example": "مثال"
+    },
+    "os": {
+      "title": "قائمة السياق في مستكشف الملفات",
+      "description": "أضف «{{menuItem}}» إلى قائمة السياق في مستكشف الملفات أو أزله منها.",
+      "add": "إضافة",
+      "remove": "إزالة",
+      "added": "أُضيف «{{menuItem}}» إلى قائمة السياق في مستكشف الملفات.",
+      "removed": "أُزيل «{{menuItem}}» من قائمة السياق في مستكشف الملفات.",
+      "failedToAdd": "تعذّرت إضافة «{{menuItem}}» إلى قائمة السياق في مستكشف الملفات.",
+      "failedToRemove": "تعذّرت إزالة «{{menuItem}}» من قائمة السياق في مستكشف الملفات.",
+      "confirmInExplorer": "للتحقق، افتح مستكشف الملفات وانقر بزر الفأرة الأيمن على ملف أو مجلد."
+    },
+    "cache": {
+      "title": "ذاكرة التخزين المؤقت للصور المصغّرة لملفات HEIF",
+      "requiredForHeif": "تتطلب <heifLink>ملفات HEIF</heifLink> إنشاء صور مصغّرة، وهذا يستغرق وقتًا.",
+      "thereforeCached": "لذلك تُحفظ الصور المصغّرة المُنشأة في ذاكرة التخزين المؤقت.",
+      "usedNextTime": "ابتداءً من المرة القادمة تُستخدم ذاكرة التخزين المؤقت ولا يُعاد إنشاء الصور المصغّرة.",
+      "location": "موقع ذاكرة التخزين المؤقت:",
+      "restartAfterDeleting": "سيُعاد تشغيل هذا التطبيق بعد حذف ذاكرة التخزين المؤقت للصور المصغّرة.",
+      "delete": "حذف ذاكرة التخزين المؤقت للصور المصغّرة",
+      "confirmDelete": "سيُعاد تشغيل هذا التطبيق بعد حذف ذاكرة التخزين المؤقت للصور المصغّرة.\nهل تريد المتابعة؟"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "فتح باستخدام {{appName}}",
+    "openWithAccessKey": "فتح باستخدام {{appName}} (&P)"
+  },
+  "menu": {
+    "app": {
+      "about": "حول {{appName}}",
+      "services": "الخدمات",
+      "hide": "إخفاء {{appName}}",
+      "hideOthers": "إخفاء الآخرين",
+      "showAll": "إظهار الكل",
+      "quit": "إنهاء {{appName}}"
+    },
+    "view": {
+      "title": "عرض",
+      "reload": "إعادة التحميل",
+      "actualSize": "الحجم الفعلي",
+      "zoomIn": "تكبير",
+      "zoomOut": "تصغير",
+      "toggleFullScreen": "تبديل وضع ملء الشاشة"
+    },
+    "selection": {
+      "title": "التحديد",
+      "undo": "تراجع",
+      "redo": "إعادة"
+    },
+    "settings": {
+      "title": "الإعدادات",
+      "openSettings": "فتح الإعدادات"
+    },
+    "help": {
+      "title": "مساعدة",
+      "showWelcomeDialog": "إظهار مربع حوار الترحيب",
+      "advancedMenu": "القائمة المتقدمة",
+      "openLogFolder": "فتح مجلد السجلات",
+      "toggleDeveloperTools": "إظهار/إخفاء أدوات المطوّرين"
+    }
+  },
+  "autoUpdate": {
+    "title": "يتوفر إصدار جديد من {{appName}}!",
+    "message": "يتوفر إصدار جديد من {{appName}}، وسيُثبَّت بعد إعادة التشغيل.\nهل تريد إعادة تشغيل التطبيق الآن؟\n\nالإصدار الحالي: {{currentVersion}}\nأحدث إصدار: {{latestVersion}}",
+    "yes": "نعم",
+    "no": "لا"
+  }
+}
