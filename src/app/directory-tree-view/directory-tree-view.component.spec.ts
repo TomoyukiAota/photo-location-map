@@ -2,15 +2,17 @@ import { Component, input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatTree } from '@angular/material/tree';
 import { By } from '@angular/platform-browser';
-import { DirTreeViewPhotoInfoComponent } from './dir-tree-view-photo-info/dir-tree-view-photo-info.component';
+import { PhotoInfoViewerComponent } from '../photo-info-viewer/photo-info-viewer.component';
+import { Photo } from '../shared/model/photo.model';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { DirectoryTreeViewComponent } from './directory-tree-view.component';
 import { NestedNode } from './directory-tree-view.model';
 
-// A photo's information is covered by the application E2E suite.
-@Component({ selector: 'app-dir-tree-view-photo-info', template: '' })
-class DummyDirTreeViewPhotoInfoComponent {
-  public readonly photoPath = input<string>();
+// A photo's information has tests of its own (src/app/photo-info-viewer/).
+@Component({ selector: 'app-photo-info-viewer', template: '' })
+class DummyPhotoInfoViewerComponent {
+  public readonly photo = input<Photo>();
+  public readonly place = input<string>();
 }
 
 /** A node of the tree that nothing can select, so that only what is expanded matters. */
@@ -35,8 +37,8 @@ describe('DirectoryTreeViewComponent', () => {
       imports: [DirectoryTreeViewComponent],
     })
       .overrideComponent(DirectoryTreeViewComponent, {
-        remove: { imports: [DirTreeViewPhotoInfoComponent] },
-        add: { imports: [DummyDirTreeViewPhotoInfoComponent] },
+        remove: { imports: [PhotoInfoViewerComponent] },
+        add: { imports: [DummyPhotoInfoViewerComponent] },
       })
       .compileComponents();
     fixture = TestBed.createComponent(DirectoryTreeViewComponent);

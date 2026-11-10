@@ -8,7 +8,8 @@ import { LoadingFolderDialogComponent } from '../../loading-folder/dialog/loadin
 import {
   NoPhotosWithLocationDataDialogComponent
 } from '../../no-photos-with-location-data-dialog/no-photos-with-location-data-dialog.component';
-import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewer-content';
+import { GeneratedThumbnailService } from '../../photo-info-viewer/generated-thumbnail.service';
+import { ThumbnailRotationService } from '../../photo-info-viewer/thumbnail-rotation.service';
 import { OpenFolderRecorder } from '../../sidebar/upper-pane/open-folder-recorder';
 import { ThumbnailGenerationService } from '../../thumbnail-generation/service/thumbnail-generation.service';
 import { ThumbnailGenerationStatusBarService } from '../../thumbnail-generation/status-bar/service/thumbnail-generation-status-bar.service';
@@ -26,6 +27,8 @@ export class OpenFolderService {
   public thumbnailGenerationService = inject(ThumbnailGenerationService);
   private thumbnailGenerationStatusBarService = inject(ThumbnailGenerationStatusBarService);
   private photoSelectionHistoryService = inject(PhotoSelectionHistoryService);
+  private generatedThumbnailService = inject(GeneratedThumbnailService);
+  private thumbnailRotationService = inject(ThumbnailRotationService);
 
   private readonly isFolderOpenedState = signal(false);
   /** Whether a folder has been opened since the application started. */
@@ -42,7 +45,6 @@ export class OpenFolderService {
       perfMark('open-folder:start');
       OpenFolderRecorder.start(folderPath);
       this.photoSelectionHistoryService.reset();
-      PhotoInfoViewerContent.clearCache();
       ThumbnailObjectUrlStorage.revokeObjectUrls();
       this.isFolderOpenedState.set(true);
       // Every open hides the thumbnail status bar of the previous folder, the second open too. This is a call rather
@@ -62,6 +64,12 @@ export class OpenFolderService {
       thumbnailCache.catch(() => {});  // Awaited below; a failure then fails the open, as other failures do.
       await this.photoDataService.update(directoryTreeObject); // Photo data is fetched from files. The loading folder dialog displays file loading status.
       perfMark('open-folder:photo-data-loaded');
+      // TL;DR: What was kept of the previous folder's photos is dropped here: how far each thumbnail is turned, and
+      // which thumbnails were made.
+      // Details: Not before the folder's photos are read: the previous folder is shown until then, behind the
+      // loading dialog, and its thumbnails would turn back and give way to the image that says they are being made.
+      this.thumbnailRotationService.reset();
+      this.generatedThumbnailService.reset();
       await sleep(100); // To update the loading folder dialog before the work below, which freezes the GUI for a large folder.
 
       this.showPhotoWithLocationNotFoundDialogIfApplicable();

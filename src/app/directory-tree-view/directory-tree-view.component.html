@@ -25,9 +25,8 @@
         </mat-label>
       }
     </div>
-    @if (photoInfoDisplayLogic.isVisible(node)) {
-      <app-dir-tree-view-photo-info [photoPath]="node.path">
-      </app-dir-tree-view-photo-info>
+    @if (photoOf(node); as photo) {
+      <app-photo-info-viewer place="dir-tree-view" [photo]="photo" />
     }
   </mat-tree-node>
 
