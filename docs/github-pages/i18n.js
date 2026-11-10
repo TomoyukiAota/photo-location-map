@@ -144,14 +144,23 @@
     }
     list.value = root.lang;
     list.hidden = false;
+    // TL;DR: Only the last choice changes the page.
+    // Details: A visitor who chooses Japanese and then English at once has two requests under way. Were the Japanese
+    // texts to arrive last, they would replace the English page, its address and the choice that is kept.
+    let choices = 0;
     list.addEventListener('change', async () => {
       const chosen = list.value;
+      const choice = ++choices;
+      let textsOfChosen;
       try {
-        apply(chosen, await fetchTexts(chosen));
+        textsOfChosen = await fetchTexts(chosen);
       } catch {
-        list.value = root.lang; // The page stays as it is when the language's texts cannot be fetched.
+        // The page stays as it is when the language's texts cannot be fetched.
+        if (choice === choices) list.value = root.lang;
         return;
       }
+      if (choice !== choices) return;
+      apply(chosen, textsOfChosen);
       saveLanguage(chosen);
       // The address says the language, so that the page is in it again when it is loaded anew or sent to someone.
       const url = new URL(window.location.href);

@@ -56,14 +56,15 @@ contribute.
 
 On macOS (Apple Silicon), 2026-11-11.
 
-- `npm run test:website`: 13 tests pass. They check the keys and the `<link>`
+- `npm run test:website`: 15 tests pass. They check the keys and the `<link>`
   tags of each file, that each file is listed, that the pages' own texts are
-  those of `en.json`, the lines for search engines, and how the language is
-  chosen.
+  those of `en.json`, the lines for search engines in the landing page and in
+  the sitemap, how the language is chosen, and that `docs/.nojekyll` is there.
 - The e2e suite's two cases of the website pass with `PLM_VISUAL=1`. The
   second is new: it serves `docs/` from an address of the computer and reads
   the landing page and the download page in Japanese, and the change of the
-  language in the list.
+  language in the list. It also chooses two languages one after the other
+  while the texts of the first are held back: the page stays in the second.
 - `test/e2e/snapshots/website-desktop.png` and `website-narrow.png` changed:
   the list of languages is at the top right, and the content is that much
   lower. `website-desktop-ja.png` is new.

@@ -1967,10 +1967,11 @@ test('download website keeps desktop and narrow layouts and Windows navigation',
 });
 /**
  * Serves docs/, the website, at an address of this computer, as GitHub Pages serves it: a page opened from the disk
- * cannot fetch the texts of a language.
+ * cannot fetch the texts of a language. hold() keeps the answers for a file back until what it returns is called.
  */
 async function serveWebsite() {
   const docs = path.join(root, 'docs');
+  const held = new Map();
   const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json',
     '.ico': 'image/x-icon', '.png': 'image/png' };
   const server = createServer(async (request, response) => {
@@ -1982,13 +1983,24 @@ async function serveWebsite() {
     }
     try {
       const body = await readFile(file);
+      await held.get(pathname);
       response.writeHead(200, { 'content-type': types[path.extname(file)] ?? 'application/octet-stream' }).end(body);
     } catch {
       response.writeHead(404).end();
     }
   });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  return { url: `http://127.0.0.1:${server.address().port}/`, close: () => new Promise(resolve => server.close(resolve)) };
+  const hold = pathname => {
+    let release;
+    held.set(pathname, new Promise(resolve => {
+      release = () => {
+        held.delete(pathname);
+        resolve();
+      };
+    }));
+    return release;
+  };
+  return { url: `http://127.0.0.1:${server.address().port}/`, hold, close: () => new Promise(resolve => server.close(resolve)) };
 }
 test('download website is in the language of its address, and in the one chosen in its list, on both of its pages', async () => {
   test.skip(!!packagedExecutable, 'The static website is verified separately from the packaged application.');
@@ -2026,6 +2038,30 @@ test('download website is in the language of its address, and in the one chosen 
     await expect(languageList).toHaveAttribute('aria-label', 'Language');
     await expect(page).toHaveURL(/\?lang=en$/);
     expect(await page.evaluate(() => document.documentElement.lang)).toBe('en');
+    // Only the last choice counts. Japanese and then English are chosen while the Japanese texts are on their way:
+    // when they arrive, after the English ones, the page stays in English, as do its address and the kept choice.
+    const textsOf = language => `/github-pages/locales/${language}.json`;
+    // Resolves once the page has read the answer to its next request for a language's texts: a request made after
+    // that answer has arrived is itself answered after the page has read the first.
+    const pageReadsTextsOf = language => {
+      const answer = page.waitForResponse(response => new URL(response.url()).pathname === textsOf(language));
+      return async () => {
+        await (await answer).finished();
+        await page.evaluate(url => fetch(url).then(response => response.json()), textsOf(language));
+      };
+    };
+    const sendJapaneseTexts = website.hold(textsOf('ja'));
+    const japaneseTextsRead = pageReadsTextsOf('ja');
+    await languageList.selectOption('ja');
+    const englishTextsRead = pageReadsTextsOf('en');
+    await languageList.selectOption('en');
+    await englishTextsRead();
+    sendJapaneseTexts();
+    await japaneseTextsRead();
+    await expect(page.locator('.app-summary')).toHaveText('Display the locations where photos were taken on a map.');
+    await expect(languageList).toHaveValue('en');
+    await expect(page).toHaveURL(/\?lang=en$/);
+    expect(await page.evaluate(() => [document.documentElement.lang, localStorage.getItem('PhotoLocationMapWebsiteLanguage')])).toEqual(['en', 'en']);
     // Japanese again. The Windows download page, whose link does not say the language, is in the chosen one.
     await languageList.selectOption('ja');
     await expect(page).toHaveURL(/\?lang=ja$/);

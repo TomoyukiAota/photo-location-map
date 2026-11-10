@@ -97,6 +97,25 @@ describe('The texts of the website (docs/github-pages/locales)', () => {
       assert.ok(landing.includes(`<link rel="alternate" hreflang="${code}" href="https://tomoyukiaota.github.io/photo-location-map/?lang=${code}">`), code);
     assert.ok(landing.includes('<link rel="alternate" hreflang="x-default" href="https://tomoyukiaota.github.io/photo-location-map/">'));
   });
+
+  it('are named in the sitemap too: it has the landing page\'s address in each language, and each names the others', () => {
+    const site = 'https://tomoyukiaota.github.io/photo-location-map/';
+    const sitemap = fs.readFileSync(path.join(docs, 'sitemap.xml'), 'utf8');
+    const urls = [...sitemap.matchAll(/<url>([\s\S]*?)<\/url>/g)].map(([, url]) => url);
+    const addressOf = url => /<loc>([^<]*)<\/loc>/.exec(url)?.[1];
+    assert.deepEqual(urls.map(addressOf).sort(), [site, ...languages.map(({ code }) => `${site}?lang=${code}`)].sort());
+    for (const url of urls) {
+      for (const { code } of languages)
+        assert.ok(url.includes(`<xhtml:link rel="alternate" hreflang="${code}" href="${site}?lang=${code}"/>`), `${code} at ${addressOf(url)}`);
+      assert.ok(url.includes(`<xhtml:link rel="alternate" hreflang="x-default" href="${site}"/>`), `x-default at ${addressOf(url)}`);
+    }
+  });
+
+  it('are published as the files are: docs/.nojekyll keeps GitHub Pages from running Jekyll over them', () => {
+    // Jekyll reads {{ … }} in a Markdown document of docs/ as an expression of its own, and failed the website's
+    // publication on one that quoted a template.
+    assert.ok(fs.existsSync(path.join(docs, '.nojekyll')));
+  });
 });
 
 describe('The language of the website (docs/github-pages/i18n.js)', () => {
