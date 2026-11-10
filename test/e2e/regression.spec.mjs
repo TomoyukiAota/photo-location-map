@@ -73,6 +73,25 @@ async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'con
     pageErrors.push(webError.error().message);
     if (webError.error().message.includes('NG0100')) changedWithoutNotification.push(webError.error().message);
   });
+  // The requests that have not finished, and those that failed, for a launch whose home view does not render: the
+  // page waits for the list of the map's base layers, which it downloads, before it starts Angular
+  // (src/start-app.ts). Each request is kept by itself, as two can have one address, and counts as finished once its
+  // answer is read to the end, which is what the page waits for.
+  const unfinishedRequests = new Set();
+  const failedRequests = [];
+  const addressOf = request => request.url().slice(0, 160);
+  app.context().on('request', request => unfinishedRequests.add(request));
+  app.context().on('requestfinished', request => unfinishedRequests.delete(request));
+  app.context().on('requestfailed', request => {
+    unfinishedRequests.delete(request);
+    // The suite cancels the requests of analytics and of downloads itself (electron-util/e2e-test-hooks.js).
+    const reason = request.failure()?.errorText ?? 'failed';
+    if (reason !== 'net::ERR_BLOCKED_BY_CLIENT') failedRequests.push(`${addressOf(request)}: ${reason}`);
+  });
+  // A request that the server refuses, as one too many, finishes like any other.
+  app.context().on('response', response => {
+    if (response.status() >= 400) failedRequests.push(`${addressOf(response.request())}: HTTP ${response.status()}`);
+  });
   const runtime = await app.evaluate(({ app }) => {
     const require = globalThis.__plmTestRequire;
     if (typeof require !== 'function') throw new Error('The application is missing its gated E2E hooks; rebuild it before testing.');
@@ -140,10 +159,19 @@ async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'con
       height: Math.min((compact ? 600 : 800) + frameHeight, area.height - 40) });
   }, { visual, compact: process.env.PLM_E2E_COMPACT === '1' });
   await page.waitForSelector('app-root app-home').catch(async error => {
-    // Says why the app did not start: whether its page got its bridge to the main process, and what it threw.
-    const bridge = await page.evaluate(() => !window.plm ? 'no bridge' : window.plm.startup === null
-      ? 'the startup metadata was refused' : 'a bridge').catch(() => 'unknown');
-    throw new Error(`The home view did not render, with ${bridge}; page errors: ${JSON.stringify(pageErrors)}.`, { cause: error });
+    // TL;DR: Says why the app did not start: whether its page got its bridge to the main process, how far its
+    // start came, which requests it still waits for, and what it threw.
+    // Details: On Windows in CI, the home view did not render within 30 seconds for several launches in a row,
+    // twice in one evening, with a bridge and without an error, while the same commit passed in the other run. The
+    // marks tell a start that waits (renderer:bootstrap-start without renderer:bootstrap-done) from a page that
+    // did not come that far, and the requests tell what it waits for, or what it asked for in vain.
+    const bridge = await within5Seconds(page.evaluate(() => !window.plm ? 'no bridge' : window.plm.startup === null
+      ? 'the startup metadata was refused' : 'a bridge').catch(() => 'unknown'), 'a page that does not answer');
+    const marks = await within5Seconds(page.evaluate(() => performance.getEntriesByType('mark')
+      .filter(mark => mark.name.startsWith('plm:')).map(mark => mark.name.slice(4))).catch(() => 'unknown'), 'unknown');
+    throw new Error(`The home view did not render, with ${bridge}; marks: ${JSON.stringify(marks)}; `
+      + `requests not finished: ${JSON.stringify([...unfinishedRequests].map(addressOf))}; `
+      + `requests that failed: ${JSON.stringify(failedRequests.slice(-10))}; page errors: ${JSON.stringify(pageErrors)}.`, { cause: error });
   });
   if (liveReload) expect(new URL(page.url()).origin).toBe('http://localhost:4200');
   await page.waitForFunction(() => !!window.plmInternalRenderer?.settingsDialog?.showSettingsDialog);
@@ -279,13 +307,76 @@ test.beforeEach(async () => {
   changedWithoutNotification = [];
   await launch();
 });
-test.afterEach(async () => {
+/** The promise's value, or `otherwise` when it has none within 5 seconds: a process that hangs does not answer. */
+function within5Seconds(promise, otherwise) {
+  let timer;
+  return Promise.race([promise, new Promise(resolve => { timer = setTimeout(() => resolve(otherwise), 5000); })])
+    .finally(() => clearTimeout(timer));
+}
+/**
+ * What the application was doing, for a case that timed out: whether its main process and each of its pages still
+ * answer, and what each window was loading.
+ * TL;DR: A case that times out says only that it did, and which step it was in, when that step has no time limit of
+ * its own, is not known: a call into the application waits as long as the application takes.
+ * Details: The first case of Photo Data Viewer with a HEIC photo timed out on macOS in CI twice in one evening, and
+ * so did the hook that closes the application after it, while the same commit passed in the other run. Its log
+ * could not tell a page of the viewer that did not load from an application that hung.
+ */
+async function describeApplication() {
+  const unanswered = 'no answer within 5 seconds';
+  const failed = error => `failed: ${error.message}`;
+  const lines = [];
+  const windows = await within5Seconds(app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows().map(window => ({
+    title: window.getTitle(),
+    url: window.webContents.getURL(),
+    loading: window.webContents.isLoading(),
+    waitingForResponse: window.webContents.isWaitingForResponse(),
+    crashed: window.webContents.isCrashed(),
+  }))).catch(failed), unanswered);
+  lines.push(`main process: ${typeof windows === 'string' ? windows : `answers, with ${windows.length} windows`}`);
+  if (typeof windows !== 'string') lines.push(...windows.map(window => `window: ${JSON.stringify(window)}`));
+  for (const openPage of app.windows()) {
+    const state = await within5Seconds(openPage.evaluate(() => `answers, ${document.readyState}`).catch(failed), unanswered);
+    lines.push(`page ${openPage.url()}: ${state}`);
+  }
+  return lines.join('\n');
+}
+/**
+ * Removes a case's profile.
+ * TL;DR: The removal is tried again for ten seconds while Windows still holds the folder.
+ * Details: On Windows in CI, three runs in one evening had a case that failed with "EBUSY: resource busy or locked,
+ * rmdir <profile>" and nothing else, each in a stretch of a few minutes in which the launches around it took several
+ * times as long as usual, while the same commit passed in the run of the other trigger. The application's other
+ * processes, as the page's, end a moment after its main process, and hold the folder until then. The whole removal
+ * is tried again, within one limit: fs.rm's own maxRetries tries each file and folder again by itself, which can add
+ * up to more than the hook's time. Any other error, and a folder that is still held after ten seconds, fails the
+ * case, as before.
+ */
+async function removeProfile(folder) {
+  const deadline = Date.now() + 10000;
+  for (;;) {
+    try {
+      await rm(folder, { recursive: true, force: true });
+      return;
+    } catch (error) {
+      if (error.code !== 'EBUSY' || Date.now() >= deadline) throw error;
+      await new Promise(resolve => setTimeout(resolve, 250));
+    }
+  }
+}
+// Playwright reads the names of the fixtures from the first parameter, which has to be written as a pattern.
+test.afterEach(async ({}, testInfo) => {
   const child = app?.process();
   let timer;
   try {
+    if (app && testInfo.status === 'timedOut') {
+      const state = await describeApplication().catch(error => `could not be read: ${error.message}`);
+      console.log(`The case timed out. The application then:\n${state}`);
+      await testInfo.attach('application-state', { body: state, contentType: 'text/plain' });
+    }
     // A development build checks every view each second (src/app/app.config.ts): let one more check run, after the
-    // case's last step, before the application closes.
-    if (page && !page.isClosed() && await page.evaluate(() => !!globalThis.ngDevMode).catch(() => false))
+    // case's last step, before the application closes. A page that hangs does not hold the hook up.
+    if (page && !page.isClosed() && await within5Seconds(page.evaluate(() => !!globalThis.ngDevMode).catch(() => false), false))
       await page.waitForTimeout(1100);
     if (app) await Promise.race([
       app.close(),
@@ -298,7 +389,7 @@ test.afterEach(async () => {
       child.kill('SIGKILL');
       await stopped;
     }
-    if (profile) await rm(profile, { recursive: true, force: true });
+    if (profile) await removeProfile(profile);
   }
   expect(changedWithoutNotification, 'Bindings changed without telling Angular').toEqual([]);
 });

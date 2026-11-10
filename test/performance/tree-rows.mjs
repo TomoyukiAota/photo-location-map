@@ -30,28 +30,34 @@ const builds = [];
 for (const entry of values.app) {
   const [label, ...rest] = entry.split('=');
   const build = rest.join('=');
+  // Without a build, the working directory would be taken for one.
+  if (!label || !build) throw new Error(`--app takes <label>=<build>, not ${entry}.`);
   if (build === 'checkout') {
     builds.push({ label, target: {} });
     continue;
   }
-  const isFolder = await stat(build).then(found => found.isDirectory(), () => {
-    throw new Error(`--app ${entry}: there is nothing at ${build}. Give an executable, "checkout" or the folder of a checkout.`);
+  // Resolved, so that a bundle is known by its name with a slash after it too.
+  const resolved = path.resolve(build);
+  const isFolder = await stat(resolved).then(found => found.isDirectory(), error => {
+    if (error.code !== 'ENOENT') throw error;
+    throw new Error(`--app ${entry}: there is nothing at ${resolved}. Give an executable, "checkout" or the folder of a checkout.`);
   });
-  if (isFolder && build.endsWith('.app'))
-    throw new Error(`--app ${entry}: give the executable inside the bundle, ${path.join(build, 'Contents/MacOS/<name>')}.`);
-  builds.push({ label, target: isFolder ? { checkout: path.resolve(build) } : { executable: build } });
+  if (isFolder && resolved.endsWith('.app'))
+    throw new Error(`--app ${entry}: give the executable inside the bundle, ${path.join(resolved, 'Contents/MacOS/<name>')}.`);
+  builds.push({ label, target: isFolder ? { checkout: resolved } : { executable: resolved } });
 }
 
 /**
- * Makes the folder: copies of one JPEG of the fixtures, which has a thumbnail, a shooting time and a location.
+ * Fills the folder: copies of one JPEG of the fixtures, which has a thumbnail, a shooting time and a location.
  * Copied as clones where the file system can (APFS), which takes no space; elsewhere the copies are written out.
  */
-async function makeFolder(folder) {
+async function fillFolder() {
   const photo = path.join(root, 'test/test-resources/actual-photos/Kobe/IMG_4676.JPG');
   for (let index = 1; index <= photoCount; index++)
     await copyFile(photo, path.join(folder, `IMG_${String(index).padStart(6, '0')}.JPG`), constants.COPYFILE_FICLONE);
 }
-const folder = await mkdtemp(path.join(tmpdir(), 'plm-tree-rows-'));
+/** The folder of photos, a temporary one, which is made and removed around the trials. */
+let folder;
 
 const viewers = '.photo-info-viewer-thumbnail-container';
 const median = numbers => [...numbers].sort((a, b) => a - b)[Math.floor(numbers.length / 2)];
@@ -148,7 +154,8 @@ async function measure(build) {
 
 const results = Object.fromEntries(builds.map(build => [build.label, []]));
 try {
-  await makeFolder(folder);
+  folder = await mkdtemp(path.join(tmpdir(), 'plm-tree-rows-'));
+  await fillFolder();
   for (let trial = 0; trial < trials; trial++) {
     // Each round runs the builds in the opposite order of the round before.
     for (const build of trial % 2 === 0 ? builds : [...builds].reverse()) {
@@ -158,7 +165,7 @@ try {
     }
   }
 } finally {
-  await rm(folder, { recursive: true, force: true });
+  if (folder) await rm(folder, { recursive: true, force: true });
 }
 
 console.log(`\nMedians of ${trials} trials with ${photoCount} photos:`);
