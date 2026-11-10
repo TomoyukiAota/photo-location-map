@@ -87,6 +87,10 @@ async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'con
     const reason = request.failure()?.errorText ?? 'failed';
     if (reason !== 'net::ERR_BLOCKED_BY_CLIENT') failedRequests.push(`${addressOf(request)}: ${reason}`);
   });
+  // A request that the server refuses, as one too many, finishes like any other.
+  app.context().on('response', response => {
+    if (response.status() >= 400) failedRequests.push(`${addressOf(response.request())}: HTTP ${response.status()}`);
+  });
   const runtime = await app.evaluate(({ app }) => {
     const require = globalThis.__plmTestRequire;
     if (typeof require !== 'function') throw new Error('The application is missing its gated E2E hooks; rebuild it before testing.');
@@ -336,6 +340,29 @@ async function describeApplication() {
   }
   return lines.join('\n');
 }
+/**
+ * Removes a case's profile.
+ * TL;DR: The removal is tried again for ten seconds while Windows still holds the folder.
+ * Details: On Windows in CI, three runs in one evening had a case that failed with "EBUSY: resource busy or locked,
+ * rmdir <profile>" and nothing else, each in a stretch of a few minutes in which the launches around it took several
+ * times as long as usual, while the same commit passed in the run of the other trigger. The application's other
+ * processes, as the page's, end a moment after its main process, and hold the folder until then. The whole removal
+ * is tried again, within one limit: fs.rm's own maxRetries tries each file and folder again by itself, which can add
+ * up to more than the hook's time. Any other error, and a folder that is still held after ten seconds, fails the
+ * case, as before.
+ */
+async function removeProfile(folder) {
+  const deadline = Date.now() + 10000;
+  for (;;) {
+    try {
+      await rm(folder, { recursive: true, force: true });
+      return;
+    } catch (error) {
+      if (error.code !== 'EBUSY' || Date.now() >= deadline) throw error;
+      await new Promise(resolve => setTimeout(resolve, 250));
+    }
+  }
+}
 // Playwright reads the names of the fixtures from the first parameter, which has to be written as a pattern.
 test.afterEach(async ({}, testInfo) => {
   const child = app?.process();
@@ -361,15 +388,7 @@ test.afterEach(async ({}, testInfo) => {
       child.kill('SIGKILL');
       await stopped;
     }
-    // TL;DR: Removing the profile is tried again for a few seconds, as Windows may still hold its folder.
-    // Details: On Windows in CI, three runs in one evening had a case that failed with "EBUSY: resource busy or
-    // locked, rmdir <profile>" and nothing else, each in a stretch of a few minutes in which the launches around it
-    // took several times as long as usual, while the same commit passed in the run of the other trigger. The
-    // application's other processes, as the page's, end a moment after its main process, and hold the folder until
-    // then. fs.rm tries again on EBUSY with maxRetries, waiting 200 ms longer each time, about 11 seconds in all.
-    // The performance harness removes its profiles the same way (test/performance/lib/app.mjs). A folder that is
-    // still held after that fails the case, as before.
-    if (profile) await rm(profile, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
+    if (profile) await removeProfile(profile);
   }
   expect(changedWithoutNotification, 'Bindings changed without telling Angular').toEqual([]);
 });
