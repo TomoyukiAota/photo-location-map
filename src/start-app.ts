@@ -6,6 +6,7 @@ import { enableProdMode } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 
 import { currentLanguage, t } from '../src-shared/i18n/i18n';
+import { recordUnhandledError } from '../src-shared/analytics/record-error';
 import { LogFileConfig } from '../src-shared/log/file-config/log-file-config';
 import { Logger } from '../src-shared/log/logger';
 import { perfMark } from '../src-shared/perf/perf-mark';
@@ -46,5 +47,11 @@ async function bootstrap(): Promise<void> {
   Logger.info(`Log File Location: ${LogFileConfig.filePath}`);
 }
 
-// The log file gets the message alone, so the error's stack is in it.
-bootstrap().catch(error => Logger.error(`The renderer failed to bootstrap: ${error instanceof Error ? error.stack ?? error.message : error}`, error));
+// TL;DR: A start that fails is logged, and recorded for analytics as an error that nothing handled.
+// Details: The user then sees the loading text and nothing else. The listeners that record such errors
+// (recordErrorsOutsideAngular) are set during the start, so a failure before them, as of the map's base layers,
+// was only in the log file of the user's computer. The log file gets the message alone, so the error's stack is in it.
+bootstrap().catch(error => {
+  Logger.error(`The renderer failed to bootstrap: ${error instanceof Error ? error.stack ?? error.message : error}`, error);
+  recordUnhandledError(error, 'Renderer');
+});
