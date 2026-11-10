@@ -128,8 +128,8 @@ process.
   did, 11% of the page's heap with every row shown, and six listeners fewer.
   The memory of the whole process is the same: most of it is the thumbnails.
 - The rows take about a tenth longer to be made again, as their viewers are
-  made again rather than kept. Nothing was kept back by a collapsed folder
-  before, and the viewers of a collapsed folder are freed now.
+  made again rather than kept. In return, a collapsed folder's viewers are
+  freed, where the contents built for its rows stayed in memory before.
 - The heap is the same after the rows were made again three times: nothing
   leaks.
 
