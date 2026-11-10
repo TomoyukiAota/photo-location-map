@@ -72,12 +72,21 @@ async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'con
     pageErrors.push(webError.error().message);
     if (webError.error().message.includes('NG0100')) changedWithoutNotification.push(webError.error().message);
   });
-  // The requests that have no answer yet, for a launch whose home view does not render: the page waits for the list
-  // of the map's base layers, which it downloads, before it starts Angular (src/start-app.ts).
-  const unansweredRequests = new Set();
-  app.context().on('request', request => unansweredRequests.add(request.url().slice(0, 160)));
-  for (const answered of ['requestfinished', 'requestfailed'])
-    app.context().on(answered, request => unansweredRequests.delete(request.url().slice(0, 160)));
+  // The requests that have not finished, and those that failed, for a launch whose home view does not render: the
+  // page waits for the list of the map's base layers, which it downloads, before it starts Angular
+  // (src/start-app.ts). Each request is kept by itself, as two can have one address, and counts as finished once its
+  // answer is read to the end, which is what the page waits for.
+  const unfinishedRequests = new Set();
+  const failedRequests = [];
+  const addressOf = request => request.url().slice(0, 160);
+  app.context().on('request', request => unfinishedRequests.add(request));
+  app.context().on('requestfinished', request => unfinishedRequests.delete(request));
+  app.context().on('requestfailed', request => {
+    unfinishedRequests.delete(request);
+    // The suite cancels the requests of analytics and of downloads itself (electron-util/e2e-test-hooks.js).
+    const reason = request.failure()?.errorText ?? 'failed';
+    if (reason !== 'net::ERR_BLOCKED_BY_CLIENT') failedRequests.push(`${addressOf(request)}: ${reason}`);
+  });
   const runtime = await app.evaluate(({ app }) => {
     const require = globalThis.__plmTestRequire;
     if (typeof require !== 'function') throw new Error('The application is missing its gated E2E hooks; rebuild it before testing.');
@@ -150,13 +159,14 @@ async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'con
     // Details: On Windows in CI, the home view did not render within 30 seconds for several launches in a row,
     // twice in one evening, with a bridge and without an error, while the same commit passed in the other run. The
     // marks tell a start that waits (renderer:bootstrap-start without renderer:bootstrap-done) from a page that
-    // did not come that far, and the requests tell what it waits for.
+    // did not come that far, and the requests tell what it waits for, or what it asked for in vain.
     const bridge = await within5Seconds(page.evaluate(() => !window.plm ? 'no bridge' : window.plm.startup === null
       ? 'the startup metadata was refused' : 'a bridge').catch(() => 'unknown'), 'a page that does not answer');
     const marks = await within5Seconds(page.evaluate(() => performance.getEntriesByType('mark')
       .filter(mark => mark.name.startsWith('plm:')).map(mark => mark.name.slice(4))).catch(() => 'unknown'), 'unknown');
-    throw new Error(`The home view did not render, with ${bridge}; marks: ${JSON.stringify(marks)}; requests without an answer: `
-      + `${JSON.stringify([...unansweredRequests])}; page errors: ${JSON.stringify(pageErrors)}.`, { cause: error });
+    throw new Error(`The home view did not render, with ${bridge}; marks: ${JSON.stringify(marks)}; `
+      + `requests not finished: ${JSON.stringify([...unfinishedRequests].map(addressOf))}; `
+      + `requests that failed: ${JSON.stringify(failedRequests.slice(-10))}; page errors: ${JSON.stringify(pageErrors)}.`, { cause: error });
   });
   if (liveReload) expect(new URL(page.url()).origin).toBe('http://localhost:4200');
   await page.waitForFunction(() => !!window.plmInternalRenderer?.settingsDialog?.showSettingsDialog);
