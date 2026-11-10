@@ -278,13 +278,53 @@ test.beforeEach(async () => {
   changedWithoutNotification = [];
   await launch();
 });
-test.afterEach(async () => {
+/** The promise's value, or `otherwise` when it has none within 5 seconds: a process that hangs does not answer. */
+function within5Seconds(promise, otherwise) {
+  let timer;
+  return Promise.race([promise, new Promise(resolve => { timer = setTimeout(() => resolve(otherwise), 5000); })])
+    .finally(() => clearTimeout(timer));
+}
+/**
+ * What the application was doing, for a case that timed out: whether its main process and each of its pages still
+ * answer, and what each window was loading.
+ * TL;DR: A case that times out says only that it did, and which step it was in, when that step has no time limit of
+ * its own, is not known: a call into the application waits as long as the application takes.
+ * Details: The first case of Photo Data Viewer with a HEIC photo timed out on macOS in CI twice in one evening, and
+ * so did the hook that closes the application after it, while the same commit passed in the other run. Its log
+ * could not tell a page of the viewer that did not load from an application that hung.
+ */
+async function describeApplication() {
+  const unanswered = 'no answer within 5 seconds';
+  const failed = error => `failed: ${error.message}`;
+  const lines = [];
+  const windows = await within5Seconds(app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows().map(window => ({
+    title: window.getTitle(),
+    url: window.webContents.getURL(),
+    loading: window.webContents.isLoading(),
+    waitingForResponse: window.webContents.isWaitingForResponse(),
+    crashed: window.webContents.isCrashed(),
+  }))).catch(failed), unanswered);
+  lines.push(`main process: ${typeof windows === 'string' ? windows : `answers, with ${windows.length} windows`}`);
+  if (typeof windows !== 'string') lines.push(...windows.map(window => `window: ${JSON.stringify(window)}`));
+  for (const openPage of app.windows()) {
+    const state = await within5Seconds(openPage.evaluate(() => `answers, ${document.readyState}`).catch(failed), unanswered);
+    lines.push(`page ${openPage.url()}: ${state}`);
+  }
+  return lines.join('\n');
+}
+// Playwright reads the names of the fixtures from the first parameter, which has to be written as a pattern.
+test.afterEach(async ({}, testInfo) => {
   const child = app?.process();
   let timer;
   try {
+    if (app && testInfo.status === 'timedOut') {
+      const state = await describeApplication().catch(error => `could not be read: ${error.message}`);
+      console.log(`The case timed out. The application then:\n${state}`);
+      await testInfo.attach('application-state', { body: state, contentType: 'text/plain' });
+    }
     // A development build checks every view each second (src/app/app.config.ts): let one more check run, after the
-    // case's last step, before the application closes.
-    if (page && !page.isClosed() && await page.evaluate(() => !!globalThis.ngDevMode).catch(() => false))
+    // case's last step, before the application closes. A page that hangs does not hold the hook up.
+    if (page && !page.isClosed() && await within5Seconds(page.evaluate(() => !!globalThis.ngDevMode).catch(() => false), false))
       await page.waitForTimeout(1100);
     if (app) await Promise.race([
       app.close(),
