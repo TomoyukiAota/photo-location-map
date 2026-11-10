@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "正在加载..."
+  },
+  "common": {
+    "ok": "确定",
+    "cancel": "取消",
+    "close": "关闭"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "语言 (Language)",
+    "systemLanguage": {
+      "mac": "跟随 macOS 设置（{{language}}）",
+      "windows": "跟随 Windows 设置（{{language}}）",
+      "other": "跟随系统设置（{{language}}）"
+    },
+    "restartToApply": "为应用所选语言，此应用将重新启动。",
+    "confirm": "确定",
+    "search": "搜索",
+    "noLanguagesFound": "未找到语言"
+  },
+  "appInfo": {
+    "appIconAlt": "应用图标",
+    "version": "版本 {{version}}",
+    "developedBy": "由 Tomoyuki Aota 开发。",
+    "xProfileAlt": "X（原 Twitter）个人资料",
+    "xProfileTitle": "打开 X（原 Twitter）个人资料",
+    "gitHubProfileAlt": "GitHub 个人资料",
+    "gitHubProfileTitle": "打开 GitHub 个人资料",
+    "troubleshooting": "如果使用此应用时遇到问题，请参阅<pageLink>故障排除页面</pageLink>。",
+    "troubleshootingLinkTitle": "打开故障排除页面"
+  },
+  "welcome": {
+    "message": "欢迎使用 {{appName}}",
+    "usageInfoCollection": "为改进此应用，我们会收集匿名的使用情况信息。继续使用此应用即表示你同意这一点。"
+  },
+  "about": {
+    "releasesLink": "下载和发行说明",
+    "releasesLinkTitle": "打开下载和发行说明",
+    "translations": "欢迎将此应用翻译成其他语言：请参阅<guideLink>如何翻译此应用</guideLink>。",
+    "translationsLinkTitle": "打开此应用的翻译指南",
+    "homePageTitle": "打开主页",
+    "sourceCodeTitle": "在 GitHub 上查看源代码"
+  },
+  "sidebar": {
+    "openFolder": "打开文件夹",
+    "cannotOpenWhileGeneratingThumbnails": "正在生成缩略图时无法打开文件夹。",
+    "openFolderToSeePhotos": "打开文件夹即可查看照片的拍摄地点。",
+    "sort": {
+      "title": "排序",
+      "byName": "按名称",
+      "byShootingTime": "按拍摄时间",
+      "ascending": "升序",
+      "descending": "降序"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "按拍摄时间排序",
+    "intro": "选择“按拍摄时间”后，此应用按以下方式对文件排序：",
+    "step1": "使用 EXIF 中的 DateTimeOriginal。如果没有，则",
+    "step2": "使用文件的修改时间。",
+    "foldersNote": "文件夹没有“拍摄时间”的概念，因此文件夹按名称排序。",
+    "moreDetails": "更多详情",
+    "details": {
+      "intro": "以下是补充说明：",
+      "mostTrustworthy": "EXIF 中的 DateTimeOriginal 是关于照片拍摄时间的最可靠信息。",
+      "sometimesMissing": "大多数相机会在大多数 JPEG/HEIF/TIFF 文件中写入 DateTimeOriginal，但有时会缺少该信息。",
+      "modifiedTime": "文件的修改时间通常就是照片的拍摄时间，因此在没有 DateTimeOriginal 时用它代替。",
+      "otherFiles": "JPEG/HEIF/TIFF 以外的文件没有 EXIF，因此始终使用修改时间。"
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "已打开的文件夹 - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "仅选择此文件",
+      "selectOnlyThisFolder": "仅选择此文件夹",
+      "open": "打开",
+      "openFolder": "打开文件夹"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "照片信息不可用。",
+    "openFile": "打开文件",
+    "moreOptions": "更多选项",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "旋转缩略图",
+    "menu": {
+      "selectOnlyThis": "仅选择此文件",
+      "openFolder": "打开文件夹",
+      "openGoogleMaps": "打开 Google 地图",
+      "openGoogleStreetView": "打开 Google 街景",
+      "viewData": "查看数据"
+    },
+    "pathTooLong": "文件路径的长度为 {{length}}，因此无法显示缩略图。Windows 将路径长度限制为最多 {{maximum}}。请更改文件的位置以缩短路径。有关详细信息，请按 Ctrl+Shift+I 并查看控制台消息。",
+    "generatedThumbnailPathTooLong": "生成的缩略图的路径长度为 {{length}}，因此无法显示缩略图。Windows 将路径长度限制为最多 {{maximum}}。请更改文件的位置以缩短生成的缩略图的路径。有关详细信息，请按 Ctrl+Shift+I 并查看控制台消息。"
+  },
+  "map": {
+    "zoomIn": "放大",
+    "zoomOut": "缩小",
+    "layers": "图层",
+    "photosInRegions": "区域内的照片：{{count}} 张",
+    "selectPhotos": "选择照片",
+    "setRegionByRectangle": "用矩形设置区域",
+    "setRegionByVertex": "用顶点设置区域",
+    "setText": "放置文字",
+    "editRegion": "编辑区域",
+    "dragRegion": "移动区域",
+    "removeRegion": "删除区域"
+  },
+  "chart": {
+    "moreAlt": "更多",
+    "dateUnknownPhotos": "拍摄日期未知的照片：{{count}} 张",
+    "showDateUnknownPhotos": "在地图上显示拍摄日期未知的照片",
+    "units": {
+      "year": "年",
+      "month": "月",
+      "day": "日",
+      "hour": "时",
+      "minute": "分",
+      "second": "秒"
+    },
+    "unsupportedDuration": "选择“时”时，此图表无法显示超过 30 天的时间段；选择“分”时无法显示超过 3 天的时间段；选择“秒”时无法显示超过 1 小时的时间段。",
+    "changeUnitOrSelection": "请更改年/月/日/时/分/秒，或选择照片以缩短时间段。",
+    "selectPhotosWithinZoom": "选择缩放范围内的照片",
+    "zoom": "缩放",
+    "resetZoom": "重置\n缩放"
+  },
+  "loadingFolder": {
+    "collecting": "正在从打开的文件夹中收集要加载的文件...",
+    "loading": "正在从打开的文件夹中加载文件...",
+    "completed": "已加载全部文件（{{count}} 个）。",
+    "progress": "已加载 {{loaded}} / {{total}} 个文件。",
+    "generatingMap": "正在根据已加载的文件生成地图..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "打开的文件夹中没有带位置数据的照片。"
+  },
+  "loadedFiles": {
+    "loaded": "已加载 {{count}} 个文件。",
+    "withLocationData": "{{count}} 个文件带有位置数据。",
+    "total": "合计"
+  },
+  "thumbnailGeneration": {
+    "generating": "正在为 HEIF 文件生成缩略图...",
+    "completed": "已完成 HEIF 文件缩略图的生成。",
+    "finishedWithErrors": "HEIF 文件缩略图的生成已结束，但出现了错误。",
+    "showDetails": "显示详细信息",
+    "processed": "已处理 {{processed}} / {{total}} 个文件。",
+    "processedWithErrors": "已处理 {{processed}} / {{total}} 个文件，但出现了错误。",
+    "seeFilesWithErrors": "点击此处查看出错的文件。",
+    "seeFilesWithErrorsTitle": "查看出错的文件",
+    "generationRequired": "需要生成 {{required}} 个缩略图。该数量的计算方式为“HEIF 文件（{{heif}} 个）− 已有缓存的文件（{{cached}} 个）”。",
+    "closeStatusBar": "关闭缩略图生成状态栏",
+    "errorDialog": {
+      "message": "无法为以下 {{count}} 个文件生成缩略图：",
+      "filter": "筛选",
+      "number": "序号",
+      "file": "文件",
+      "openFile": "打开文件",
+      "openFolder": "打开文件夹"
+    }
+  },
+  "settings": {
+    "title": "设置",
+    "tabs": {
+      "language": "语言 (Language)",
+      "appearance": "外观",
+      "dateTime": "日期和时间",
+      "os": "操作系统",
+      "cache": "缓存"
+    },
+    "restartAfterSaving": "保存设置后，此应用将重新启动。",
+    "confirmRestart": "保存设置后，此应用将重新启动。\n是否继续？",
+    "save": "保存",
+    "language": {
+      "title": "语言",
+      "description": "语言将在应用重新启动后更改。"
+    },
+    "appearance": {
+      "title": "外观",
+      "showStatusBar": "显示状态栏"
+    },
+    "dateTime": {
+      "title": "日期和时间格式",
+      "description": "日期和时间格式将在应用重新启动后更改。",
+      "dateFormat": "日期格式",
+      "clockSystem": "12/24 小时制",
+      "clock12": "12 小时制",
+      "clock24": "24 小时制",
+      "example": "示例"
+    },
+    "os": {
+      "title": "文件资源管理器的右键菜单",
+      "description": "在文件资源管理器的右键菜单中添加或移除“{{menuItem}}”。",
+      "add": "添加",
+      "remove": "移除",
+      "added": "已将“{{menuItem}}”添加到文件资源管理器的右键菜单。",
+      "removed": "已从文件资源管理器的右键菜单中移除“{{menuItem}}”。",
+      "failedToAdd": "无法将“{{menuItem}}”添加到文件资源管理器的右键菜单。",
+      "failedToRemove": "无法从文件资源管理器的右键菜单中移除“{{menuItem}}”。",
+      "confirmInExplorer": "请打开文件资源管理器，右键点击文件或文件夹进行确认。"
+    },
+    "cache": {
+      "title": "HEIF 缩略图缓存",
+      "requiredForHeif": "<heifLink>HEIF 文件</heifLink>需要生成缩略图，而生成需要一些时间。",
+      "thereforeCached": "因此，生成的缩略图会被缓存。",
+      "usedNextTime": "下次起将使用缓存，不再重新生成缩略图。",
+      "location": "缓存位置：",
+      "restartAfterDeleting": "删除缩略图缓存后，此应用将重新启动。",
+      "delete": "删除缩略图缓存",
+      "confirmDelete": "删除缩略图缓存后，此应用将重新启动。\n是否继续？"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "使用 {{appName}} 打开",
+    "openWithAccessKey": "使用 {{appName}} 打开(&P)"
+  },
+  "menu": {
+    "app": {
+      "about": "关于 {{appName}}",
+      "services": "服务",
+      "hide": "隐藏 {{appName}}",
+      "hideOthers": "隐藏其他",
+      "showAll": "全部显示",
+      "quit": "退出 {{appName}}"
+    },
+    "view": {
+      "title": "视图",
+      "reload": "重新加载",
+      "actualSize": "实际大小",
+      "zoomIn": "放大",
+      "zoomOut": "缩小",
+      "toggleFullScreen": "切换全屏"
+    },
+    "selection": {
+      "title": "选择",
+      "undo": "撤销",
+      "redo": "重做"
+    },
+    "settings": {
+      "title": "设置",
+      "openSettings": "打开设置"
+    },
+    "help": {
+      "title": "帮助",
+      "showWelcomeDialog": "显示欢迎对话框",
+      "advancedMenu": "高级菜单",
+      "openLogFolder": "打开日志文件夹",
+      "toggleDeveloperTools": "切换开发者工具"
+    }
+  },
+  "autoUpdate": {
+    "title": "{{appName}} 有新版本可用！",
+    "message": "{{appName}} 有新版本可用，将在重新启动后安装。\n是否立即重新启动此应用？\n\n当前版本：{{currentVersion}}\n最新版本：{{latestVersion}}",
+    "yes": "是",
+    "no": "否"
+  }
+}

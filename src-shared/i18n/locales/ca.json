@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "S'està carregant..."
+  },
+  "common": {
+    "ok": "D'acord",
+    "cancel": "Cancel·la",
+    "close": "Tanca"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "Idioma (Language)",
+    "systemLanguage": {
+      "mac": "Utilitza la configuració del macOS ({{language}})",
+      "windows": "Utilitza la configuració del Windows ({{language}})",
+      "other": "Utilitza la configuració del sistema ({{language}})"
+    },
+    "restartToApply": "Aquesta aplicació es reiniciarà per aplicar l'idioma.",
+    "confirm": "D'acord",
+    "search": "Cerca",
+    "noLanguagesFound": "No s'ha trobat cap idioma"
+  },
+  "appInfo": {
+    "appIconAlt": "Icona de l'aplicació",
+    "version": "Versió {{version}}",
+    "developedBy": "Desenvolupada per Tomoyuki Aota.",
+    "xProfileAlt": "Perfil d'X (abans Twitter)",
+    "xProfileTitle": "Obre el perfil d'X (abans Twitter)",
+    "gitHubProfileAlt": "Perfil de GitHub",
+    "gitHubProfileTitle": "Obre el perfil de GitHub",
+    "troubleshooting": "Si teniu algun problema amb aquesta aplicació, consulteu la <pageLink>pàgina de resolució de problemes</pageLink>.",
+    "troubleshootingLinkTitle": "Obre la pàgina de resolució de problemes"
+  },
+  "welcome": {
+    "message": "Us donem la benvinguda a {{appName}}",
+    "usageInfoCollection": "Per millorar aquesta aplicació, es recull informació d'ús anònima. Si continueu utilitzant-la, hi doneu el vostre consentiment."
+  },
+  "about": {
+    "releasesLink": "Baixades i notes de la versió",
+    "releasesLinkTitle": "Obre les baixades i les notes de la versió",
+    "translations": "Les traduccions a altres idiomes són benvingudes: consulteu <guideLink>com es tradueix aquesta aplicació</guideLink>.",
+    "translationsLinkTitle": "Obre la guia de traducció d'aquesta aplicació",
+    "homePageTitle": "Obre la pàgina d'inici",
+    "sourceCodeTitle": "Mostra el codi font a GitHub"
+  },
+  "sidebar": {
+    "openFolder": "Obre una carpeta",
+    "cannotOpenWhileGeneratingThumbnails": "No es pot obrir cap carpeta mentre es generen les miniatures.",
+    "openFolderToSeePhotos": "Obriu una carpeta per veure on es van fer les fotos.",
+    "sort": {
+      "title": "Ordena",
+      "byName": "Per nom",
+      "byShootingTime": "Per hora de captura",
+      "ascending": "Ascendent",
+      "descending": "Descendent"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "Ordenació per hora de captura",
+    "intro": "Quan se selecciona «Per hora de captura», l'aplicació ordena els fitxers així:",
+    "step1": "utilitza el valor DateTimeOriginal de les dades EXIF. Si no hi és,",
+    "step2": "utilitza la data de modificació del fitxer.",
+    "foldersNote": "Les carpetes s'ordenen per nom, perquè no tenen «hora de captura».",
+    "moreDetails": "Més detalls",
+    "details": {
+      "intro": "Tot seguit hi ha informació addicional:",
+      "mostTrustworthy": "El valor DateTimeOriginal de les dades EXIF és la informació més fiable sobre el moment en què es va fer una foto.",
+      "sometimesMissing": "La majoria de càmeres escriuen DateTimeOriginal a la majoria de fitxers JPEG/HEIF/TIFF, però de vegades hi falta.",
+      "modifiedTime": "La data de modificació del fitxer sol ser el moment en què es va fer la foto, i per això s'utilitza quan falta DateTimeOriginal.",
+      "otherFiles": "Els fitxers que no són JPEG/HEIF/TIFF no tenen dades EXIF, de manera que sempre s'hi utilitza la data de modificació."
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "Carpeta oberta - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "Selecciona només aquest fitxer",
+      "selectOnlyThisFolder": "Selecciona només aquesta carpeta",
+      "open": "Obre",
+      "openFolder": "Obre la carpeta"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "La informació de la foto no està disponible.",
+    "openFile": "Obre el fitxer",
+    "moreOptions": "Més opcions",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "Gira la miniatura",
+    "menu": {
+      "selectOnlyThis": "Selecciona només aquest fitxer",
+      "openFolder": "Obre la carpeta",
+      "openGoogleMaps": "Obre Google Maps",
+      "openGoogleStreetView": "Obre Google Street View",
+      "viewData": "Mostra les dades"
+    },
+    "pathTooLong": "No es pot mostrar la miniatura perquè la longitud del camí del fitxer és {{length}}. El Windows limita la longitud dels camins a {{maximum}} com a màxim. Canvieu la ubicació del fitxer per escurçar-ne el camí. Per veure'n els detalls, premeu Ctrl+Shift+I i llegiu els missatges de la consola.",
+    "generatedThumbnailPathTooLong": "No es pot mostrar la miniatura perquè la longitud del camí de la miniatura generada és {{length}}. El Windows limita la longitud dels camins a {{maximum}} com a màxim. Canvieu la ubicació del fitxer per escurçar el camí de la miniatura generada. Per veure'n els detalls, premeu Ctrl+Shift+I i llegiu els missatges de la consola."
+  },
+  "map": {
+    "zoomIn": "Amplia",
+    "zoomOut": "Redueix",
+    "layers": "Capes",
+    "photosInRegions": "Fotos a les regions: {{count}}",
+    "selectPhotos": "Selecciona les fotos",
+    "setRegionByRectangle": "Defineix una regió amb un rectangle",
+    "setRegionByVertex": "Defineix una regió amb vèrtexs",
+    "setText": "Col·loca un text",
+    "editRegion": "Edita la regió",
+    "dragRegion": "Mou la regió",
+    "removeRegion": "Elimina la regió"
+  },
+  "chart": {
+    "moreAlt": "Més",
+    "dateUnknownPhotos": "Fotos amb data desconeguda: {{count}}",
+    "showDateUnknownPhotos": "Mostra al mapa les fotos amb data desconeguda",
+    "units": {
+      "year": "Any",
+      "month": "Mes",
+      "day": "Dia",
+      "hour": "Hora",
+      "minute": "Minut",
+      "second": "Segon"
+    },
+    "unsupportedDuration": "Aquest gràfic no pot mostrar un període de més de 30 dies quan se selecciona «Hora», de més de 3 dies amb «Minut» ni de més d'1 hora amb «Segon».",
+    "changeUnitOrSelection": "Canvieu la selecció d'Any/Mes/Dia/Hora/Minut/Segon o seleccioneu fotos de manera que el període sigui més curt.",
+    "selectPhotosWithinZoom": "Selecciona les fotos de l'interval ampliat",
+    "zoom": "Zoom",
+    "resetZoom": "Restableix\nel zoom"
+  },
+  "loadingFolder": {
+    "collecting": "S'estan recollint els fitxers que es carregaran de la carpeta oberta...",
+    "loading": "S'estan carregant els fitxers de la carpeta oberta...",
+    "completed": "S'han carregat tots els fitxers (nombre: {{count}}).",
+    "progress": "Fitxers carregats: {{loaded}} de {{total}}.",
+    "generatingMap": "S'està generant el mapa a partir dels fitxers carregats..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "A la carpeta oberta no hi ha cap foto amb dades d'ubicació."
+  },
+  "loadedFiles": {
+    "loaded": "Fitxers carregats: {{count}}.",
+    "withLocationData": "Fitxers amb dades d'ubicació: {{count}}.",
+    "total": "Total"
+  },
+  "thumbnailGeneration": {
+    "generating": "S'estan generant les miniatures dels fitxers HEIF...",
+    "completed": "S'han generat les miniatures dels fitxers HEIF.",
+    "finishedWithErrors": "La generació de miniatures dels fitxers HEIF ha acabat amb errors.",
+    "showDetails": "Mostra els detalls",
+    "processed": "Fitxers processats: {{processed}} de {{total}}.",
+    "processedWithErrors": "Fitxers processats: {{processed}} de {{total}}, amb errors.",
+    "seeFilesWithErrors": "Feu clic aquí per veure els fitxers amb errors.",
+    "seeFilesWithErrorsTitle": "Mostra els fitxers amb errors",
+    "generationRequired": "Miniatures que cal generar: {{required}}. Aquest nombre es calcula així: «fitxers HEIF ({{heif}}) − fitxers que ja són a la memòria cau ({{cached}})».",
+    "closeStatusBar": "Tanca la barra d'estat de la generació de miniatures",
+    "errorDialog": {
+      "message": "No s'han pogut generar les miniatures dels fitxers següents (nombre: {{count}}):",
+      "filter": "Filtra",
+      "number": "Núm.",
+      "file": "Fitxer",
+      "openFile": "Obre el fitxer",
+      "openFolder": "Obre la carpeta"
+    }
+  },
+  "settings": {
+    "title": "Configuració",
+    "tabs": {
+      "language": "Idioma (Language)",
+      "appearance": "Aparença",
+      "dateTime": "Data i hora",
+      "os": "Sistema",
+      "cache": "Memòria cau"
+    },
+    "restartAfterSaving": "Aquesta aplicació es reiniciarà després de desar la configuració.",
+    "confirmRestart": "Aquesta aplicació es reiniciarà després de desar la configuració.\nVoleu continuar?",
+    "save": "Desa",
+    "language": {
+      "title": "Idioma",
+      "description": "L'idioma canvia després de reiniciar l'aplicació."
+    },
+    "appearance": {
+      "title": "Aparença",
+      "showStatusBar": "Mostra la barra d'estat"
+    },
+    "dateTime": {
+      "title": "Format de data i hora",
+      "description": "El format de data i hora canvia després de reiniciar l'aplicació.",
+      "dateFormat": "Format de data",
+      "clockSystem": "12 o 24 hores",
+      "clock12": "12 hores",
+      "clock24": "24 hores",
+      "example": "Exemple"
+    },
+    "os": {
+      "title": "Menú contextual de l'Explorador de fitxers",
+      "description": "Afegiu «{{menuItem}}» al menú contextual de l'Explorador de fitxers o suprimiu-lo.",
+      "add": "Afegeix",
+      "remove": "Suprimeix",
+      "added": "S'ha afegit «{{menuItem}}» al menú contextual de l'Explorador de fitxers.",
+      "removed": "S'ha suprimit «{{menuItem}}» del menú contextual de l'Explorador de fitxers.",
+      "failedToAdd": "No s'ha pogut afegir «{{menuItem}}» al menú contextual de l'Explorador de fitxers.",
+      "failedToRemove": "No s'ha pogut suprimir «{{menuItem}}» del menú contextual de l'Explorador de fitxers.",
+      "confirmInExplorer": "Per comprovar-ho, obriu l'Explorador de fitxers i feu clic amb el botó dret en un fitxer o una carpeta."
+    },
+    "cache": {
+      "title": "Memòria cau de miniatures HEIF",
+      "requiredForHeif": "Per als <heifLink>fitxers HEIF</heifLink> cal generar miniatures, i això porta temps.",
+      "thereforeCached": "Per això, les miniatures generades es desen a la memòria cau.",
+      "usedNextTime": "A partir de la vegada següent s'utilitza la memòria cau i no es tornen a generar les miniatures.",
+      "location": "Ubicació de la memòria cau:",
+      "restartAfterDeleting": "Aquesta aplicació es reiniciarà després de suprimir la memòria cau de miniatures.",
+      "delete": "Suprimeix la memòria cau de miniatures",
+      "confirmDelete": "Aquesta aplicació es reiniciarà després de suprimir la memòria cau de miniatures.\nVoleu continuar?"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "Obre amb {{appName}}",
+    "openWithAccessKey": "Obre amb &{{appName}}"
+  },
+  "menu": {
+    "app": {
+      "about": "Quant a {{appName}}",
+      "services": "Serveis",
+      "hide": "Amaga {{appName}}",
+      "hideOthers": "Amaga la resta",
+      "showAll": "Mostra-ho tot",
+      "quit": "Surt de {{appName}}"
+    },
+    "view": {
+      "title": "Visualització",
+      "reload": "Torna a carregar",
+      "actualSize": "Mida real",
+      "zoomIn": "Amplia",
+      "zoomOut": "Redueix",
+      "toggleFullScreen": "Activa o desactiva la pantalla completa"
+    },
+    "selection": {
+      "title": "Selecció",
+      "undo": "Desfés",
+      "redo": "Refés"
+    },
+    "settings": {
+      "title": "Configuració",
+      "openSettings": "Obre la configuració"
+    },
+    "help": {
+      "title": "Ajuda",
+      "showWelcomeDialog": "Mostra el diàleg de benvinguda",
+      "advancedMenu": "Menú avançat",
+      "openLogFolder": "Obre la carpeta de registres",
+      "toggleDeveloperTools": "Mostra o amaga les eines per a desenvolupadors"
+    }
+  },
+  "autoUpdate": {
+    "title": "Hi ha una versió nova de {{appName}}!",
+    "message": "Hi ha una versió nova de {{appName}}, que s'instal·larà després de reiniciar.\nVoleu reiniciar l'aplicació ara?\n\nVersió actual: {{currentVersion}}\nÚltima versió: {{latestVersion}}",
+    "yes": "Sí",
+    "no": "No"
+  }
+}

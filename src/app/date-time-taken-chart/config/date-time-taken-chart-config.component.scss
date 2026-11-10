@@ -22,10 +22,11 @@
 
     &::after {
       position: absolute;
-      right: 2px;
+      inset-inline-end: 2px;
       top: 34px; // Align horizontally with the text below the buttons (e.g. Zoom) in the chart.
       font-size: 13px;
-      content: 'More';
+      white-space: nowrap;
+      content: attr(data-label); // The icon's name in the application's language, which the template sets.
     }
   }
 }
@@ -37,13 +38,13 @@
 }
 
 .more-options-menu {
-  padding-right: 20px;
+  padding-inline-end: 20px;
 }
 
 .date-unknown-photos-count {
   height: 40px;
   line-height: 40px;
-  padding-left: 10px;
+  padding-inline-start: 10px;
   font-size: 14px;
 }
 
@@ -55,7 +56,7 @@
 
 .x-axis-unit-select::after {
   position: absolute;
-  right: 6px;
+  inset-inline-end: 6px;
   width: 10px;
   height: 7px;
   background-color: #535353;
@@ -67,7 +68,8 @@
 .x-axis-unit-select select {
   appearance: none;
   height: 2em;
-  padding: .4em calc(.4em + 14px) .4em .4em;
+  padding: .4em;
+  padding-inline-end: calc(.4em + 14px); // Room for the arrow, which is at the end of the field.
   border: 1px solid #cccccc;
   border-radius: 3px;
   outline: none;

@@ -18,7 +18,9 @@
       "other": "OS の設定に従う（{{language}}）"
     },
     "restartToApply": "言語を適用するため、このアプリを再起動します。",
-    "confirm": "決定"
+    "confirm": "決定",
+    "search": "検索",
+    "noLanguagesFound": "言語が見つかりません"
   },
   "appInfo": {
     "appIconAlt": "アプリのアイコン",

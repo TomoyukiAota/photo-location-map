@@ -22,6 +22,24 @@
   height: 100%;
 }
 
+// TL;DR: In a language written from right to left, the sidebar is at the right: by a row that is reversed, not by a
+// row laid out from right to left.
+// Details: Split.js, which moves the border between the sidebar and the map, measures from the left. It follows a
+// reversed row (flex-direction: row-reverse), but not the direction of the page, in which its border would not follow
+// the mouse. So the row itself is laid out from left to right and reversed, and its two sides get the page's
+// direction back.
+:host-context([dir="rtl"]) {
+  .sidebar-and-map-container {
+    direction: ltr;
+    flex-direction: row-reverse;
+  }
+
+  #home-left-sidebar,
+  #home-right {
+    direction: rtl;
+  }
+}
+
 #home-sidebar-upper-pane {
   height: 100%;
   overflow-y: hidden;

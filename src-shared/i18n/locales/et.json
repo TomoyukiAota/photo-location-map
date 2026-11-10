@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "Laadimine..."
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Loobu",
+    "close": "Sulge"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "Keel (Language)",
+    "systemLanguage": {
+      "mac": "Kasuta macOS-i seadet ({{language}})",
+      "windows": "Kasuta Windowsi seadet ({{language}})",
+      "other": "Kasuta süsteemi seadet ({{language}})"
+    },
+    "restartToApply": "Keele rakendamiseks taaskäivitatakse see rakendus.",
+    "confirm": "OK",
+    "search": "Otsi",
+    "noLanguagesFound": "Keeli ei leitud"
+  },
+  "appInfo": {
+    "appIconAlt": "Rakenduse ikoon",
+    "version": "Versioon {{version}}",
+    "developedBy": "Arendaja: Tomoyuki Aota.",
+    "xProfileAlt": "X-i (endine Twitter) profiil",
+    "xProfileTitle": "Ava X-i (endine Twitter) profiil",
+    "gitHubProfileAlt": "GitHubi profiil",
+    "gitHubProfileTitle": "Ava GitHubi profiil",
+    "troubleshooting": "Kui teil on selle rakendusega probleeme, vaadake <pageLink>tõrkeotsingu lehte</pageLink>.",
+    "troubleshootingLinkTitle": "Ava tõrkeotsingu leht"
+  },
+  "welcome": {
+    "message": "Tere tulemast rakendusse {{appName}}",
+    "usageInfoCollection": "Selle rakenduse täiustamiseks kogutakse anonüümset kasutusteavet. Rakenduse kasutamist jätkates nõustute sellega."
+  },
+  "about": {
+    "releasesLink": "Allalaadimised ja väljalaskemärkmed",
+    "releasesLinkTitle": "Ava allalaadimised ja väljalaskemärkmed",
+    "translations": "Tõlked teistesse keeltesse on teretulnud: vaadake, <guideLink>kuidas seda rakendust tõlkida</guideLink>.",
+    "translationsLinkTitle": "Ava selle rakenduse tõlkimisjuhend",
+    "homePageTitle": "Ava koduleht",
+    "sourceCodeTitle": "Vaata lähtekoodi GitHubis"
+  },
+  "sidebar": {
+    "openFolder": "Ava kaust",
+    "cannotOpenWhileGeneratingThumbnails": "Pisipiltide loomise ajal ei saa kausta avada.",
+    "openFolderToSeePhotos": "Avage kaust, et näha, kus fotod on tehtud.",
+    "sort": {
+      "title": "Sordi",
+      "byName": "Nime järgi",
+      "byShootingTime": "Pildistamisaja järgi",
+      "ascending": "Kasvav",
+      "descending": "Kahanev"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "Sortimine pildistamisaja järgi",
+    "intro": "Kui valitud on „Pildistamisaja järgi“, sordib rakendus failid nii:",
+    "step1": "kasutab EXIF-andmete väärtust DateTimeOriginal. Kui see puudub,",
+    "step2": "kasutab faili muutmisaega.",
+    "foldersNote": "Kaustad sorditakse nime järgi, sest kaustadel ei ole „pildistamisaega“.",
+    "moreDetails": "Rohkem üksikasju",
+    "details": {
+      "intro": "Allpool on lisateave:",
+      "mostTrustworthy": "EXIF-andmete väärtus DateTimeOriginal on kõige usaldusväärsem teave foto tegemise aja kohta.",
+      "sometimesMissing": "Enamik kaameraid kirjutab väärtuse DateTimeOriginal enamikku JPEG/HEIF/TIFF-failidesse, kuid mõnikord see puudub.",
+      "modifiedTime": "Faili muutmisaeg on enamasti foto tegemise aeg, seepärast kasutatakse seda siis, kui DateTimeOriginal puudub.",
+      "otherFiles": "Muudel failidel peale JPEG/HEIF/TIFF-failide EXIF-andmeid ei ole, seega kasutatakse nende puhul alati muutmisaega."
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "Avatud kaust - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "Vali ainult see fail",
+      "selectOnlyThisFolder": "Vali ainult see kaust",
+      "open": "Ava",
+      "openFolder": "Ava kaust"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "Foto teave pole saadaval.",
+    "openFile": "Ava fail",
+    "moreOptions": "Rohkem valikuid",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "Pööra pisipilti",
+    "menu": {
+      "selectOnlyThis": "Vali ainult see fail",
+      "openFolder": "Ava kaust",
+      "openGoogleMaps": "Ava Google Maps",
+      "openGoogleStreetView": "Ava Google Street View",
+      "viewData": "Kuva andmed"
+    },
+    "pathTooLong": "Pisipilti ei saa kuvada, sest faili tee pikkus on {{length}}. Windows lubab tee pikkuseks kõige rohkem {{maximum}}. Tee lühendamiseks muutke faili asukohta. Üksikasjade nägemiseks vajutage Ctrl+Shift+I ja lugege konsooli teateid.",
+    "generatedThumbnailPathTooLong": "Pisipilti ei saa kuvada, sest loodud pisipildi tee pikkus on {{length}}. Windows lubab tee pikkuseks kõige rohkem {{maximum}}. Loodud pisipildi tee lühendamiseks muutke faili asukohta. Üksikasjade nägemiseks vajutage Ctrl+Shift+I ja lugege konsooli teateid."
+  },
+  "map": {
+    "zoomIn": "Suurenda",
+    "zoomOut": "Vähenda",
+    "layers": "Kihid",
+    "photosInRegions": "Fotosid piirkondades: {{count}}",
+    "selectPhotos": "Vali fotod",
+    "setRegionByRectangle": "Määra piirkond ristkülikuga",
+    "setRegionByVertex": "Määra piirkond tippudega",
+    "setText": "Lisa tekst",
+    "editRegion": "Muuda piirkonda",
+    "dragRegion": "Liiguta piirkonda",
+    "removeRegion": "Eemalda piirkond"
+  },
+  "chart": {
+    "moreAlt": "Veel",
+    "dateUnknownPhotos": "Teadmata kuupäevaga fotosid: {{count}}",
+    "showDateUnknownPhotos": "Kuva teadmata kuupäevaga fotod kaardil",
+    "units": {
+      "year": "Aasta",
+      "month": "Kuu",
+      "day": "Päev",
+      "hour": "Tund",
+      "minute": "Minut",
+      "second": "Sekund"
+    },
+    "unsupportedDuration": "See diagramm ei saa kuvada pikemat ajavahemikku kui 30 päeva, kui valitud on „Tund“, pikemat kui 3 päeva, kui valitud on „Minut“, ega pikemat kui 1 tund, kui valitud on „Sekund“.",
+    "changeUnitOrSelection": "Muutke valikut Aasta/Kuu/Päev/Tund/Minut/Sekund või valige fotod nii, et ajavahemik oleks lühem.",
+    "selectPhotosWithinZoom": "Vali suumitud vahemikus olevad fotod",
+    "zoom": "Suum",
+    "resetZoom": "Lähtesta\nsuum"
+  },
+  "loadingFolder": {
+    "collecting": "Avatud kaustast laaditavate failide kogumine...",
+    "loading": "Avatud kausta failide laadimine...",
+    "completed": "Kõik failid on laaditud (arv: {{count}}).",
+    "progress": "Laaditud faile: {{loaded}} / {{total}}.",
+    "generatingMap": "Laaditud failidest kaardi loomine..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "Avatud kaustas ei ole asukohaandmetega fotosid."
+  },
+  "loadedFiles": {
+    "loaded": "Laaditud faile: {{count}}.",
+    "withLocationData": "Asukohaandmetega faile: {{count}}.",
+    "total": "Kokku"
+  },
+  "thumbnailGeneration": {
+    "generating": "HEIF-failide pisipiltide loomine...",
+    "completed": "HEIF-failide pisipildid on loodud.",
+    "finishedWithErrors": "HEIF-failide pisipiltide loomine lõppes vigadega.",
+    "showDetails": "Kuva üksikasjad",
+    "processed": "Töödeldud faile: {{processed}} / {{total}}.",
+    "processedWithErrors": "Töödeldud faile: {{processed}} / {{total}}, vigadega.",
+    "seeFilesWithErrors": "Vigadega failide nägemiseks klõpsake siin.",
+    "seeFilesWithErrorsTitle": "Kuva vigadega failid",
+    "generationRequired": "Loodavaid pisipilte: {{required}}. See arv saadakse nii: „HEIF-failid ({{heif}}) − vahemälus juba olemas olevad failid ({{cached}})“.",
+    "closeStatusBar": "Sulge pisipiltide loomise olekuriba",
+    "errorDialog": {
+      "message": "Järgmiste failide pisipilte ei õnnestunud luua (arv: {{count}}):",
+      "filter": "Filtreeri",
+      "number": "Nr",
+      "file": "Fail",
+      "openFile": "Ava fail",
+      "openFolder": "Ava kaust"
+    }
+  },
+  "settings": {
+    "title": "Seaded",
+    "tabs": {
+      "language": "Keel (Language)",
+      "appearance": "Välimus",
+      "dateTime": "Kuupäev ja kellaaeg",
+      "os": "Süsteem",
+      "cache": "Vahemälu"
+    },
+    "restartAfterSaving": "Pärast seadete salvestamist taaskäivitatakse see rakendus.",
+    "confirmRestart": "Pärast seadete salvestamist taaskäivitatakse see rakendus.\nKas soovite jätkata?",
+    "save": "Salvesta",
+    "language": {
+      "title": "Keel",
+      "description": "Keel muutub pärast rakenduse taaskäivitamist."
+    },
+    "appearance": {
+      "title": "Välimus",
+      "showStatusBar": "Kuva olekuriba"
+    },
+    "dateTime": {
+      "title": "Kuupäeva ja kellaaja vorming",
+      "description": "Kuupäeva ja kellaaja vorming muutub pärast rakenduse taaskäivitamist.",
+      "dateFormat": "Kuupäeva vorming",
+      "clockSystem": "12 või 24 tundi",
+      "clock12": "12 tundi",
+      "clock24": "24 tundi",
+      "example": "Näide"
+    },
+    "os": {
+      "title": "File Exploreri kontekstimenüü",
+      "description": "Lisage „{{menuItem}}“ File Exploreri kontekstimenüüsse või eemaldage see sealt.",
+      "add": "Lisa",
+      "remove": "Eemalda",
+      "added": "„{{menuItem}}“ on lisatud File Exploreri kontekstimenüüsse.",
+      "removed": "„{{menuItem}}“ on eemaldatud File Exploreri kontekstimenüüst.",
+      "failedToAdd": "Üksust „{{menuItem}}“ ei õnnestunud File Exploreri kontekstimenüüsse lisada.",
+      "failedToRemove": "Üksust „{{menuItem}}“ ei õnnestunud File Exploreri kontekstimenüüst eemaldada.",
+      "confirmInExplorer": "Kontrollimiseks avage File Explorer ja paremklõpsake faili või kausta."
+    },
+    "cache": {
+      "title": "HEIF-pisipiltide vahemälu",
+      "requiredForHeif": "<heifLink>HEIF-failide</heifLink> jaoks tuleb luua pisipildid ja see võtab aega.",
+      "thereforeCached": "Seepärast salvestatakse loodud pisipildid vahemällu.",
+      "usedNextTime": "Järgmisest korrast alates kasutatakse vahemälu ja pisipilte uuesti ei looda.",
+      "location": "Vahemälu asukoht:",
+      "restartAfterDeleting": "Pärast pisipiltide vahemälu kustutamist taaskäivitatakse see rakendus.",
+      "delete": "Kustuta pisipiltide vahemälu",
+      "confirmDelete": "Pärast pisipiltide vahemälu kustutamist taaskäivitatakse see rakendus.\nKas soovite jätkata?"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "Ava rakendusega {{appName}}",
+    "openWithAccessKey": "Ava rakendusega &{{appName}}"
+  },
+  "menu": {
+    "app": {
+      "about": "Teave rakenduse {{appName}} kohta",
+      "services": "Teenused",
+      "hide": "Peida {{appName}}",
+      "hideOthers": "Peida teised",
+      "showAll": "Kuva kõik",
+      "quit": "Sulge {{appName}}"
+    },
+    "view": {
+      "title": "Vaade",
+      "reload": "Laadi uuesti",
+      "actualSize": "Tegelik suurus",
+      "zoomIn": "Suurenda",
+      "zoomOut": "Vähenda",
+      "toggleFullScreen": "Lülita täisekraan sisse/välja"
+    },
+    "selection": {
+      "title": "Valik",
+      "undo": "Võta tagasi",
+      "redo": "Tee uuesti"
+    },
+    "settings": {
+      "title": "Seaded",
+      "openSettings": "Ava seaded"
+    },
+    "help": {
+      "title": "Abi",
+      "showWelcomeDialog": "Kuva tervitusaken",
+      "advancedMenu": "Täpsem menüü",
+      "openLogFolder": "Ava logikaust",
+      "toggleDeveloperTools": "Kuva/peida arendaja tööriistad"
+    }
+  },
+  "autoUpdate": {
+    "title": "Rakendusest {{appName}} on saadaval uus versioon!",
+    "message": "Rakendusest {{appName}} on saadaval uus versioon, mis installitakse pärast taaskäivitamist.\nKas soovite rakenduse kohe taaskäivitada?\n\nPraegune versioon: {{currentVersion}}\nUusim versioon: {{latestVersion}}",
+    "yes": "Jah",
+    "no": "Ei"
+  }
+}
