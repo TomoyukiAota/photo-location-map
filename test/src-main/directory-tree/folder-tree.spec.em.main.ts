@@ -46,13 +46,15 @@ describe('The tree of a folder (in main process)', () => {
     }
   });
 
-  it('matches each photo with its Live Photos movie, lowercased, as the renderer did', () => {
+  it('matches each photo with its Live Photos movie without regard to case, and gives the movie\'s own path', () => {
     const result = createFolderTree(folder);
     assert.strictEqual(result.kind, 'ok');
     if (result.kind !== 'ok') return;
+    // IMG_0001.JPG has its movie as .MOV, and the extensions of Live Photos are looked for in lower case. The path
+    // is not lowercased: a file system with regard to case, as those of Linux, has no file at such a path.
     assert.deepStrictEqual(result.livePhotos, {
-      [path.join(folder, 'IMG_0001.JPG')]: path.join(folder, 'IMG_0001.mov').toLowerCase(),
-      [path.join(folder, 'day 2', 'IMG_0003.jpg')]: path.join(folder, 'day 2', 'IMG_0003.mp4').toLowerCase(),
+      [path.join(folder, 'IMG_0001.JPG')]: path.join(folder, 'IMG_0001.MOV'),
+      [path.join(folder, 'day 2', 'IMG_0003.jpg')]: path.join(folder, 'day 2', 'IMG_0003.mp4'),
     });
   });
 
