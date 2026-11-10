@@ -86,6 +86,10 @@ On macOS (Apple Silicon), 2026-11-11.
 | `npm run test:unit:em:both` | 203 passed and 2 pending in the main process, 62 passed in the renderer |
 | `npm run test:e2e` on the production build, with `PLM_VISUAL=1` | 47 passed, 1 skipped; no screenshot changed |
 
+The branch then took in `main` with the application's 42 languages, whose tests
+add to these: lint, 389 tests of `test:unit:ng` and the same 203 and 62 of
+`test:unit:em:both` passed again; CI ran the e2e suite on it.
+
 The three new recordings are checked by tests of their parts, with stand-ins
 for the window and for what records: no test makes a real preload script fail
 or a real page stop answering.
