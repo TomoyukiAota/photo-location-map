@@ -158,8 +158,8 @@ thumbnail in the cases that it had.
 
 - **The button of a photo's Live Photos did nothing on a file system with
   regard to case**, as those of Linux: the movie's path was given in lower
-  case, where there is no file. Fixed in a pull request of its own, which this
-  branch includes: the new end-to-end case clicks the button on Linux too.
+  case, where there is no file. Fixed in a pull request of its own, #684, which
+  the new end-to-end case relies on: it clicks the button on Linux too.
 
 ## Questions for the owner
 
