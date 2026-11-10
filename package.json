@@ -8,6 +8,7 @@
     "name": "Tomoyuki Aota"
   },
   "main": "src-main/electron-main.js",
+  "type": "commonjs",
   "private": true,
   "config": {
     "devOrProd": "Dev"
@@ -40,9 +41,10 @@
     "notarytool:log": "node script/notarize/xcrun-notarytool-log.js",
     "lint:ng": "ng lint",
     "lint:ng:fix": "ng lint --fix",
+    "lint:main": "eslint \"src-main/**/*.ts\" \"src-shared/**/*.ts\"",
     "lint:script": "eslint -c ./script/eslint.config.mjs ./script/**/*.js",
     "lint:script:fix": "npm run lint:script -- --fix",
-    "lint:all": "npm-run-all lint:ng lint:script",
+    "lint:all": "npm-run-all lint:ng lint:main lint:script",
     "test:unit:ng": "ng test --watch=false",
     "test:unit:ng:watch": "ng test --watch",
     "test:unit:ng:coverage": "ng test --watch=false --coverage",

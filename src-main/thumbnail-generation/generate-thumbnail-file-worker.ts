@@ -1,4 +1,5 @@
 import * as fsExtra from 'fs-extra';
+import decode from 'heic-decode';
 import * as workerpool from 'workerpool';
 import { Now } from '../../src-shared/date-time/now';
 import { resizeAndEncode } from './resize-and-encode';
@@ -30,8 +31,6 @@ const logger = new WorkerLogger();
 //  - The shrunk thumbnail file takes 20 to 100 kB.
 // 2. Stripping out the unused code. e.g. PNG is not used, so it's removed.
 // Also, note that "jpeg-js": "^0.4.1" and "heic-decode": "^1.1.2" are the dependencies of heic-convert v1.2.4.
-
-const decode = require('heic-decode');
 
 const to = {
   JPEG: ({ data, width, height, quality }) => resizeAndEncode({data, width, height}, quality).data, // Originally jpegJs.encode({ data, width, height }, quality).data,
