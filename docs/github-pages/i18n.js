@@ -130,13 +130,19 @@
     else resolve();
   });
 
-  Promise.all([texts, pageParsed]).then(([textsOfLanguage]) => {
-    if (textsOfLanguage) apply(language, textsOfLanguage);
-    show();
+  // TL;DR: Only the last choice changes the page.
+  // Details: A visitor who chooses Japanese and then English at once has two requests under way. Were the Japanese
+  // texts to arrive last, they would replace the English page, its address and the choice that is kept. The texts
+  // that the page is loaded with can arrive after a choice in the same way.
+  let choices = 0;
 
-    // The list of languages, which each page has empty and hidden: without this script there is nothing to choose.
+  // The list of languages, which each page has empty and hidden: without this script there is nothing to choose.
+  // TL;DR: The list is there once the page is parsed, whether the page's texts have arrived or not.
+  // Details: When those texts do not come in time, the page is shown in English. Were the list to wait for them, a
+  // visitor would have none for as long as the request is under way, on every page, and could not choose English.
+  const listShown = pageParsed.then(() => {
     const list = document.getElementById('language-select');
-    if (!list) return;
+    if (!list) return null;
     for (const { code, name } of languages) {
       const option = new Option(name, code);
       option.lang = code;
@@ -144,10 +150,6 @@
     }
     list.value = root.lang;
     list.hidden = false;
-    // TL;DR: Only the last choice changes the page.
-    // Details: A visitor who chooses Japanese and then English at once has two requests under way. Were the Japanese
-    // texts to arrive last, they would replace the English page, its address and the choice that is kept.
-    let choices = 0;
     list.addEventListener('change', async () => {
       const chosen = list.value;
       const choice = ++choices;
@@ -167,5 +169,15 @@
       url.searchParams.set('lang', chosen);
       window.history.replaceState(null, '', url);
     });
+    return list;
+  });
+
+  Promise.all([texts, listShown]).then(([textsOfLanguage, list]) => {
+    // A visitor who has chosen a language by now keeps it: the texts that the page was loaded with came too late.
+    if (textsOfLanguage && choices === 0) {
+      apply(language, textsOfLanguage);
+      if (list) list.value = language;
+    }
+    show();
   });
 })();

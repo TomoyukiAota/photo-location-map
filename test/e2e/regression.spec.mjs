@@ -2307,13 +2307,15 @@ async function serveWebsite() {
   const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json',
     '.ico': 'image/x-icon', '.png': 'image/png' };
   const server = createServer(async (request, response) => {
-    const { pathname } = new URL(request.url, 'http://127.0.0.1');
-    const file = path.join(docs, decodeURIComponent(pathname.endsWith('/') ? `${pathname}index.html` : pathname));
-    if (!file.startsWith(docs + path.sep)) {
-      response.writeHead(403).end();
-      return;
-    }
+    // An address that cannot be read, as one with a malformed percent sequence, is answered as a file that is not
+    // there: an error thrown here would otherwise be a rejection that nothing handles.
     try {
+      const { pathname } = new URL(request.url, 'http://127.0.0.1');
+      const file = path.join(docs, decodeURIComponent(pathname.endsWith('/') ? `${pathname}index.html` : pathname));
+      if (!file.startsWith(docs + path.sep)) {
+        response.writeHead(403).end();
+        return;
+      }
       const body = await readFile(file);
       await held.get(pathname);
       response.writeHead(200, { 'content-type': types[path.extname(file)] ?? 'application/octet-stream' }).end(body);
@@ -2370,30 +2372,56 @@ test('download website is in the language of its address, and in the one chosen 
     await expect(languageList).toHaveAttribute('aria-label', 'Language');
     await expect(page).toHaveURL(/\?lang=en$/);
     expect(await page.evaluate(() => document.documentElement.lang)).toBe('en');
+    // TL;DR: From here on, the page lists the texts that it has dealt with, for the steps with texts that come late.
+    // Details: Whether late texts change the page can be told only once the page has dealt with them. Each reading
+    // of texts in the page, a call of Response.json(), is listed by its file one task after the texts are read: what
+    // the page does with them follows their reading as microtasks of the same task (docs/github-pages/i18n.js). The
+    // page is loaded anew for this, in English, for which it asks for no texts.
+    await page.addInitScript(() => {
+      globalThis.__plmTextsDealtWith = [];
+      const json = Response.prototype.json;
+      Response.prototype.json = function () {
+        const read = json.call(this);
+        const file = this.url.split('?')[0].split('/').pop();
+        const dealtWith = () => setTimeout(() => globalThis.__plmTextsDealtWith.push(file));
+        read.then(dealtWith, dealtWith);
+        return read;
+      };
+    });
+    /** Waits until the page has dealt with the texts of these files, in this order, since it was loaded. */
+    const textsDealtWith = files => expect.poll(() => page.evaluate(() => globalThis.__plmTextsDealtWith)).toEqual(files);
+    const isInEnglish = async () => {
+      await expect(page.locator('.app-summary')).toHaveText('Display the locations where photos were taken on a map.');
+      await expect(languageList).toHaveValue('en');
+      await expect(page).toHaveURL(/\?lang=en$/);
+      expect(await page.evaluate(() => [document.documentElement.lang, localStorage.getItem('PhotoLocationMapWebsiteLanguage')])).toEqual(['en', 'en']);
+    };
+    await page.goto(`${website.url}?lang=en`, { waitUntil: 'domcontentloaded' });
+    await isInEnglish();
     // Only the last choice counts. Japanese and then English are chosen while the Japanese texts are on their way:
     // when they arrive, after the English ones, the page stays in English, as do its address and the kept choice.
     const textsOf = language => `/github-pages/locales/${language}.json`;
-    // Resolves once the page has read the answer to its next request for a language's texts: a request made after
-    // that answer has arrived is itself answered after the page has read the first.
-    const pageReadsTextsOf = language => {
-      const answer = page.waitForResponse(response => new URL(response.url()).pathname === textsOf(language));
-      return async () => {
-        await (await answer).finished();
-        await page.evaluate(url => fetch(url).then(response => response.json()), textsOf(language));
-      };
-    };
     const sendJapaneseTexts = website.hold(textsOf('ja'));
-    const japaneseTextsRead = pageReadsTextsOf('ja');
     await languageList.selectOption('ja');
-    const englishTextsRead = pageReadsTextsOf('en');
     await languageList.selectOption('en');
-    await englishTextsRead();
+    await textsDealtWith(['en.json']);
     sendJapaneseTexts();
-    await japaneseTextsRead();
-    await expect(page.locator('.app-summary')).toHaveText('Display the locations where photos were taken on a map.');
+    await textsDealtWith(['en.json', 'ja.json']);
+    await isInEnglish();
+    // The texts that a page is loaded with can come late as well. Japanese by the address, with its texts held back:
+    // the page is shown in English after a second and a half, and has its list by then, in which English is chosen.
+    // When the Japanese texts arrive after that, the page stays in English.
+    const sendLateTexts = website.hold(textsOf('ja'));
+    await page.goto(`${website.url}?lang=ja`, { waitUntil: 'domcontentloaded' });
+    await expect(languageList).toBeVisible();
     await expect(languageList).toHaveValue('en');
-    await expect(page).toHaveURL(/\?lang=en$/);
-    expect(await page.evaluate(() => [document.documentElement.lang, localStorage.getItem('PhotoLocationMapWebsiteLanguage')])).toEqual(['en', 'en']);
+    await expect(page.locator('.app-summary')).toHaveText('Display the locations where photos were taken on a map.');
+    await languageList.selectOption('en');
+    await textsDealtWith(['en.json']);
+    await isInEnglish();
+    sendLateTexts();
+    await textsDealtWith(['en.json', 'ja.json']);
+    await isInEnglish();
     // Japanese again. The Windows download page, whose link does not say the language, is in the chosen one.
     await languageList.selectOption('ja');
     await expect(page).toHaveURL(/\?lang=ja$/);

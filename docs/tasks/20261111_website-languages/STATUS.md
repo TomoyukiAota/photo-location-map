@@ -39,6 +39,10 @@ contribute.
 - **A page in another language is hidden until its texts are in it**, for a
   second and a half at most, so that a Japanese visitor does not see the
   English texts first.
+- **The list of languages does not wait for those texts.** It is there once
+  the page is parsed. When the texts do not come, the page is shown in English
+  after the second and a half, and a visitor can choose a language in the
+  list. Texts that arrive after a choice do not replace it.
 - **The texts of the file formats and the names** (Photo Location Map, JPEG,
   HEIF) are not translated.
 - **The steps of the Windows download page** name the buttons of Windows'
@@ -65,6 +69,9 @@ On macOS (Apple Silicon), 2026-11-11.
   the landing page and the download page in Japanese, and the change of the
   language in the list. It also chooses two languages one after the other
   while the texts of the first are held back: the page stays in the second.
+  And it loads a page in Japanese whose texts are held back: the page is shown
+  in English with its list, and stays in the language chosen there when the
+  texts arrive. Each of these steps fails without the code that it checks.
 - `test/e2e/snapshots/website-desktop.png` and `website-narrow.png` changed:
   the list of languages is at the top right, and the content is that much
   lower. `website-desktop-ja.png` is new.
