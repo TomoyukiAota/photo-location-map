@@ -9,8 +9,7 @@
 // of another checkout with its own build and node_modules, such as a git worktree of the commit before a change.
 // Prints one JSON line for each trial, then the median of each figure for each build.
 import { constants } from 'node:fs';
-import { copyFile, mkdir, mkdtemp, rm, stat } from 'node:fs/promises';
-import { createRequire } from 'node:module';
+import { copyFile, mkdtemp, rm, stat } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
@@ -31,28 +30,28 @@ const builds = [];
 for (const entry of values.app) {
   const [label, ...rest] = entry.split('=');
   const build = rest.join('=');
-  if (build === 'checkout') builds.push({ label, target: {} });
-  else if ((await stat(build)).isDirectory() && !build.endsWith('.app')) builds.push({ label, checkout: path.resolve(build) });
-  else builds.push({ label, target: { executable: build } });
+  if (build === 'checkout') {
+    builds.push({ label, target: {} });
+    continue;
+  }
+  const isFolder = await stat(build).then(found => found.isDirectory(), () => {
+    throw new Error(`--app ${entry}: there is nothing at ${build}. Give an executable, "checkout" or the folder of a checkout.`);
+  });
+  if (isFolder && build.endsWith('.app'))
+    throw new Error(`--app ${entry}: give the executable inside the bundle, ${path.join(build, 'Contents/MacOS/<name>')}.`);
+  builds.push({ label, target: isFolder ? { checkout: path.resolve(build) } : { executable: build } });
 }
 
-/** Launches the build of another checkout, as lib/app.mjs launches this checkout's, with that checkout's Electron. */
-async function launchCheckout(checkout, profile) {
-  const require = createRequire(path.join(checkout, 'package.json'));
-  const { _electron } = require('playwright');
-  const env = { ...process.env, PLM_TEST_ROOT: profile, PLM_E2E: '1', PLM_TEST_HEADLESS: '1', PLM_TEST_OFFLINE: '1' };
-  for (const key of ['PLM_EM_MAIN', 'PLM_EM_RENDERER', 'ELECTRON_RUN_AS_NODE', 'NODE_OPTIONS']) delete env[key];
-  const app = await _electron.launch({ executablePath: require('electron'), args: ['test/e2e/main.cjs'], cwd: checkout, env, timeout: 90000 });
-  return { app, page: await app.firstWindow() };
+/**
+ * Makes the folder: copies of one JPEG of the fixtures, which has a thumbnail, a shooting time and a location.
+ * Copied as clones where the file system can (APFS), which takes no space; elsewhere the copies are written out.
+ */
+async function makeFolder(folder) {
+  const photo = path.join(root, 'test/test-resources/actual-photos/Kobe/IMG_4676.JPG');
+  for (let index = 1; index <= photoCount; index++)
+    await copyFile(photo, path.join(folder, `IMG_${String(index).padStart(6, '0')}.JPG`), constants.COPYFILE_FICLONE);
 }
-
-// The folder: copies of one JPEG of the fixtures, which has a thumbnail, a shooting time and a location. Copied as
-// clones where the file system can (APFS), which takes no space; elsewhere the copies are written out.
 const folder = await mkdtemp(path.join(tmpdir(), 'plm-tree-rows-'));
-const photo = path.join(root, 'test/test-resources/actual-photos/Kobe/IMG_4676.JPG');
-await mkdir(folder, { recursive: true });
-for (let index = 1; index <= photoCount; index++)
-  await copyFile(photo, path.join(folder, `IMG_${String(index).padStart(6, '0')}.JPG`), constants.COPYFILE_FICLONE);
 
 const viewers = '.photo-info-viewer-thumbnail-container';
 const median = numbers => [...numbers].sort((a, b) => a - b)[Math.floor(numbers.length / 2)];
@@ -60,7 +59,7 @@ const median = numbers => [...numbers].sort((a, b) => a - b)[Math.floor(numbers.
 /** One trial of a build: its figures, in milliseconds, megabytes and counts. */
 async function measure(build) {
   const profile = await newProfile();
-  const { app, page } = build.checkout ? await launchCheckout(build.checkout, profile) : await launch({ target: build.target, profile });
+  const { app, page } = await launch({ target: build.target, profile });
   try {
     await waitForUsable(page);
     await dismissWelcome(page);
@@ -80,11 +79,18 @@ async function measure(build) {
       return { heapMb: Math.round(metric('JSHeapUsedSize') / 1048576 * 10) / 10, nodes: metric('Nodes'), listeners: metric('JSEventListeners'),
         processMb: Math.round(workingSetKb / 1024) };
     };
-    /** The time from now to the frame after the page has `count` viewers. */
-    const viewersShown = count => page.evaluate(([selector, count]) => new Promise(resolve => {
+    /** The time from now to the frame after the page has `count` viewers, which it has to have within 5 minutes. */
+    const viewersShown = count => page.evaluate(([selector, count]) => new Promise((resolve, reject) => {
       const start = performance.now();
-      const check = () => requestAnimationFrame(document.querySelectorAll(selector).length === count
-        ? () => resolve(Math.round(performance.now() - start)) : check);
+      const check = () => {
+        const shown = document.querySelectorAll(selector).length;
+        if (shown === count)
+          requestAnimationFrame(() => resolve(Math.round(performance.now() - start)));
+        else if (performance.now() - start > 300000)
+          reject(new Error(`The page has ${shown} viewers after 5 minutes, not ${count}.`));
+        else
+          requestAnimationFrame(check);
+      };
       check();
     }), [viewers, count]);
 
@@ -116,10 +122,17 @@ async function measure(build) {
     const checkbox = page.locator('mat-tree-node').nth(5).locator('input[type="checkbox"]');
     const checkboxMs = [];
     for (let turn = 0; turn < 6; turn++) {
-      checkboxMs.push(await checkbox.evaluate(input => new Promise(resolve => {
+      checkboxMs.push(await checkbox.evaluate(input => new Promise((resolve, reject) => {
         const before = input.checked;
         const start = performance.now();
-        const check = () => requestAnimationFrame(input.checked !== before ? () => resolve(Math.round(performance.now() - start)) : check);
+        const check = () => {
+          if (input.checked !== before)
+            requestAnimationFrame(() => resolve(Math.round(performance.now() - start)));
+          else if (performance.now() - start > 60000)
+            reject(new Error('The checkbox did not change within a minute of its click.'));
+          else
+            requestAnimationFrame(check);
+        };
         input.click();
         check();
       })));
@@ -135,6 +148,7 @@ async function measure(build) {
 
 const results = Object.fromEntries(builds.map(build => [build.label, []]));
 try {
+  await makeFolder(folder);
   for (let trial = 0; trial < trials; trial++) {
     // Each round runs the builds in the opposite order of the round before.
     for (const build of trial % 2 === 0 ? builds : [...builds].reverse()) {
