@@ -1,11 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<!--
+  The landing page, as it is for a visitor and in each of its languages (github-pages/i18n.js). Every address names
+  the others, as search engines ask for of the versions of a page in several languages. When a language is added to
+  the website, add its address and its line to each address here (docs/TRANSLATING.md).
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
-<!--  created with free sitemap generation system www.sitemapxml.jp  --> 
 <url>
   <loc>https://tomoyukiaota.github.io/photo-location-map/</loc>
+  <xhtml:link rel="alternate" hreflang="en" href="https://tomoyukiaota.github.io/photo-location-map/?lang=en"/>
+  <xhtml:link rel="alternate" hreflang="ja" href="https://tomoyukiaota.github.io/photo-location-map/?lang=ja"/>
+  <xhtml:link rel="alternate" hreflang="x-default" href="https://tomoyukiaota.github.io/photo-location-map/"/>
   <priority>1.0</priority>
-  <lastmod>2020-12-02T21:30:11+09:00</lastmod>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=en</loc>
+  <xhtml:link rel="alternate" hreflang="en" href="https://tomoyukiaota.github.io/photo-location-map/?lang=en"/>
+  <xhtml:link rel="alternate" hreflang="ja" href="https://tomoyukiaota.github.io/photo-location-map/?lang=ja"/>
+  <xhtml:link rel="alternate" hreflang="x-default" href="https://tomoyukiaota.github.io/photo-location-map/"/>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=ja</loc>
+  <xhtml:link rel="alternate" hreflang="en" href="https://tomoyukiaota.github.io/photo-location-map/?lang=en"/>
+  <xhtml:link rel="alternate" hreflang="ja" href="https://tomoyukiaota.github.io/photo-location-map/?lang=ja"/>
+  <xhtml:link rel="alternate" hreflang="x-default" href="https://tomoyukiaota.github.io/photo-location-map/"/>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
 </url>
 
 </urlset>

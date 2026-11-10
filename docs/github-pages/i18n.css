@@ -1,0 +1,30 @@
+/* The list of languages at the top of each page, and what i18n.js needs to show a page in a language. */
+
+/* A page in another language than English, until its texts are in it (i18n.js). */
+html.i18n-pending body {
+  visibility: hidden;
+}
+
+/* At the right: of the column that the landing page is, and of the block that the download page is. */
+.language {
+  align-self: flex-end;
+  text-align: right;
+}
+
+.language-select {
+  padding: 4px 28px 4px 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background: #fff url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") no-repeat right 8px center / 12px 9px;
+  color: #212529;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  appearance: none;
+  cursor: pointer;
+}
+
+.language-select:focus-visible {
+  outline: 2px solid #007bff;
+  outline-offset: 1px;
+}

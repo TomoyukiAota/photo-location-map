@@ -26,6 +26,9 @@ branch-protection check.
 
 ## Changes that skip the tests
 
-A push or pull request that changes only documents (`docs/`, `README.md`,
-`AGENTS.md`, `LICENSE` and `.github/ISSUE_TEMPLATE/`, as listed in
-[`.github/ci-filters.yml`](../../.github/ci-filters.yml)) skips the tests.
+A push or pull request that changes only documents (the Markdown files and the
+document folders of `docs/`, `README.md`, `AGENTS.md`, `LICENSE` and
+`.github/ISSUE_TEMPLATE/`, as listed in
+[`.github/ci-filters.yml`](../../.github/ci-filters.yml)) skips the tests. The
+website, `docs/index.html` and `docs/github-pages/`, is not a document: CI
+checks its texts and its layout.

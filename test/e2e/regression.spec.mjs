@@ -1,6 +1,7 @@
 import { test, expect, _electron } from 'playwright/test';
 import { createRequire } from 'node:module';
 import { copyFile, mkdir, mkdtemp, readFile, realpath, rm, writeFile } from 'node:fs/promises';
+import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -1940,7 +1941,8 @@ test('download website keeps desktop and narrow layouts and Windows navigation',
     const { withHeadlessTestOptions } = require(require('node:path').join(app.getAppPath(), 'electron-util/e2e-test-hooks.js'));
     const window = new BrowserWindow(withHeadlessTestOptions({ useContentSize: true, width: 1200, height: 800 }));
     void window.loadURL(url);
-  }, pathToFileURL(path.join(root, 'docs/index.html')).href);
+    // In English by its address: the website is otherwise in the language of the computer that the suite runs on.
+  }, `${pathToFileURL(path.join(root, 'docs/index.html')).href}?lang=en`);
   page = await websiteWindow;
   const setContentSize = (width, height) => app.evaluate(({ BrowserWindow }, [width, height]) =>
     BrowserWindow.getAllWindows().find(window => window.webContents.getURL().includes('/docs/')).setContentSize(width, height), [width, height]);
@@ -1962,4 +1964,89 @@ test('download website keeps desktop and narrow layouts and Windows navigation',
   await page.getByRole('link', { name: 'Download for Windows' }).click();
   await expect(page).toHaveURL(/downloading-for-windows\.html$/);
   await expect.poll(() => app.evaluate(() => globalThis.__plmDownloads.some(url => url.endsWith('.exe')))).toBe(true);
+});
+/**
+ * Serves docs/, the website, at an address of this computer, as GitHub Pages serves it: a page opened from the disk
+ * cannot fetch the texts of a language.
+ */
+async function serveWebsite() {
+  const docs = path.join(root, 'docs');
+  const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json',
+    '.ico': 'image/x-icon', '.png': 'image/png' };
+  const server = createServer(async (request, response) => {
+    const { pathname } = new URL(request.url, 'http://127.0.0.1');
+    const file = path.join(docs, decodeURIComponent(pathname.endsWith('/') ? `${pathname}index.html` : pathname));
+    if (!file.startsWith(docs + path.sep)) {
+      response.writeHead(403).end();
+      return;
+    }
+    try {
+      const body = await readFile(file);
+      response.writeHead(200, { 'content-type': types[path.extname(file)] ?? 'application/octet-stream' }).end(body);
+    } catch {
+      response.writeHead(404).end();
+    }
+  });
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  return { url: `http://127.0.0.1:${server.address().port}/`, close: () => new Promise(resolve => server.close(resolve)) };
+}
+test('download website is in the language of its address, and in the one chosen in its list, on both of its pages', async () => {
+  test.skip(!!packagedExecutable, 'The static website is verified separately from the packaged application.');
+  const website = await serveWebsite();
+  try {
+    // Japanese by the address, as a link of a search engine has it. The browser's own language is that of the
+    // computer, so the address says the language in every step here.
+    const websiteWindow = app.waitForEvent('window');
+    await app.evaluate(({ app, BrowserWindow }, url) => {
+      const require = globalThis.__plmTestRequire;
+      const { withHeadlessTestOptions } = require(require('node:path').join(app.getAppPath(), 'electron-util/e2e-test-hooks.js'));
+      const window = new BrowserWindow(withHeadlessTestOptions({ useContentSize: true, width: 1200, height: 800 }));
+      void window.loadURL(url);
+    }, `${website.url}?lang=ja`);
+    page = await websiteWindow;
+    await expect(page.locator('.app-summary')).toHaveText('写真の撮影場所をマップに表示します。');
+    expect(await page.evaluate(() => document.documentElement.lang)).toBe('ja');
+    await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', '写真の撮影場所をマップに表示します。');
+    await expect(page.getByRole('button', { name: 'macOS 版をダウンロード' })).toBeVisible();
+    // A sentence with a link keeps the link, around the words that are the link in Japanese.
+    const troubleshooting = page.locator('.troubleshooting');
+    await expect(troubleshooting).toHaveText('このアプリで問題が起きたときは、トラブルシューティングのページをご覧ください。');
+    await expect(troubleshooting.getByRole('link')).toHaveText('トラブルシューティングのページ');
+    await expect(troubleshooting.getByRole('link')).toHaveAttribute('href', /troubleshooting\.md$/);
+    // The list of languages, each under its own name, with the page's language chosen.
+    const languageList = page.locator('#language-select');
+    await expect(languageList).toHaveAttribute('aria-label', '言語');
+    await expect(languageList.locator('option')).toHaveText(['English', '日本語']);
+    await expect(languageList).toHaveValue('ja');
+    await shot('website-desktop-ja', [page.locator('iframe')]);
+    // English, chosen in the list: the texts change in place, and the address says the language from then on.
+    await languageList.selectOption('en');
+    await expect(page.locator('.app-summary')).toHaveText('Display the locations where photos were taken on a map.');
+    await expect(troubleshooting.getByRole('link')).toHaveText('the troubleshooting page');
+    await expect(languageList).toHaveAttribute('aria-label', 'Language');
+    await expect(page).toHaveURL(/\?lang=en$/);
+    expect(await page.evaluate(() => document.documentElement.lang)).toBe('en');
+    // Japanese again. The Windows download page, whose link does not say the language, is in the chosen one.
+    await languageList.selectOption('ja');
+    await expect(page).toHaveURL(/\?lang=ja$/);
+    // TL;DR: That page is kept from starting its download here, which the case above checks.
+    // Details: A page served over HTTP starts the download by going to the installer's address, where the browser
+    // finds a file to save and stays on the page. The suite cancels that request, so the page would be replaced by
+    // the browser's error page before its texts are read.
+    await page.addInitScript(() => {
+      const click = HTMLAnchorElement.prototype.click;
+      HTMLAnchorElement.prototype.click = function () {
+        if (!this.hasAttribute('download')) click.call(this);
+      };
+    });
+    await page.getByRole('link', { name: 'Windows 版をダウンロード' }).click();
+    await expect(page).toHaveURL(/downloading-for-windows\.html$/);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('インストール方法');
+    await expect(page.locator('.install-step').first()).toHaveText('1. ダウンロードした exe ファイルをダブルクリックします。');
+    await expect(page.locator('.windows-defender-more-info')).toHaveAttribute('alt', 'Windows Defender SmartScreen の画像（詳細情報）');
+    await expect(page).toHaveTitle('Photo Location Map をダウンロード中');
+    await expect(page.locator('#language-select')).toHaveValue('ja');
+  } finally {
+    await website.close();
+  }
 });

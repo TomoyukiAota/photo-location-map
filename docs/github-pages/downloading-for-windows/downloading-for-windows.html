@@ -17,34 +17,44 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Downloading Photo Location Map</title>
+  <title data-i18n="downloading.pageTitle">Downloading Photo Location Map</title>
   <link rel="shortcut icon" type="image/x-icon" href="https://github.com/TomoyukiAota/photo-location-map/blob/main/docs/docs-resources/favicon.ico">
   <link rel="stylesheet" type="text/css" href="downloading-for-windows.css" />
+  <link rel="stylesheet" type="text/css" href="../i18n.css" />
+
+  <!-- Before the content, so that a page in another language is not seen in English first. -->
+  <script src="../i18n.js"></script>
 </head>
 <body>
   <div class="layout-container">
-    <div>
+    <div class="language">
+      <!-- ../i18n.js lists the languages here and shows the list. -->
+      <select id="language-select" class="language-select" aria-label="Language" data-i18n-aria-label="language" hidden></select>
+    </div>
+    <div data-i18n="downloading.willStart">
       Download of Photo Location Map will start shortly. If it does not start, please click <a href="#" onClick="downloadForWindows('link')">here</a>.
     </div>
     <div class="how-to-install-section">
-      <h1>How to install</h1>
+      <h1 data-i18n="downloading.howToInstall">How to install</h1>
       <div>
-        <div class="install-step">
+        <div class="install-step" data-i18n="downloading.step1">
           1. Double-click the downloaded exe file.
         </div>
-        <div class="install-step">
+        <div class="install-step" data-i18n="downloading.step2">
           2. Windows Defender SmartScreen popup will appear. Click "More info".
         </div>
         <img src="../../docs-resources/windows-defender-smartscreen/windows-defender-smartscreen-more-info.png"
              alt="Image of Windows Defender SmartScreen (More info)"
+             data-i18n-alt="downloading.moreInfoImageAlt"
              class="windows-defender-more-info">
-        <div class="install-step">
+        <div class="install-step" data-i18n="downloading.step3">
           3. Click "Run anyway".
         </div>
         <img src="../../docs-resources/windows-defender-smartscreen/windows-defender-smartscreen-run-anyway.png"
              alt="Image of Windows Defender SmartScreen (Run anyway)"
+             data-i18n-alt="downloading.runAnywayImageAlt"
              class="windows-defender-run-anyway">
-        <div class="install-step">
+        <div class="install-step" data-i18n="downloading.step4">
           4. The installer of Photo Location Map will launch. Follow the instructions on the installer.
         </div>
       </div>

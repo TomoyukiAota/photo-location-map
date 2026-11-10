@@ -2,8 +2,14 @@
 # predicate-quantifier "every": "app" is true when a push or pull request changes a file that is not a document.
 # When only documents change, the "test" job is skipped, because nothing in CI checks these files and the app's
 # package does not contain them. Keep anything that the app or CI uses out of this list.
+# The website is not a document: its pages are docs/index.html and docs/github-pages/, whose texts and layout CI
+# checks (npm run test:website, and the e2e suite's cases of the website). So docs/ is listed by its documents.
 app:
-  - '!docs/**'
+  - '!docs/*.md'
+  - '!docs/contributing/**'
+  - '!docs/tasks/**'
+  - '!docs/troubleshooting/**'
+  - '!docs/README/**'
   - '!README.md'
   - '!AGENTS.md'
   - '!LICENSE'

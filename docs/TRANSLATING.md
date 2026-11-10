@@ -157,6 +157,41 @@ and the application restarts in it. Look at the Welcome dialog (**Help** >
 menus, and the main window with a folder of photos opened: the status bar, a
 photo's popup on the map with its menu, and the chart.
 
+## The website
+
+The [website](https://tomoyukiaota.github.io/photo-location-map/), where the
+application is downloaded from, has translations of its own. A visitor sees it
+in the browser's language when the website has it, and can choose another one
+in the list at the top of the page.
+
+| File | What it is |
+| --- | --- |
+| `docs/github-pages/locales/en.json` | English, the source, which the pages themselves hold as well. |
+| `docs/github-pages/locales/<code>.json` | One file per language, with the keys of `en.json`. |
+| `docs/github-pages/i18n.js` | The languages that the website offers, at its top, and how a page gets its texts. |
+
+To add a language:
+
+1. Create `docs/github-pages/locales/<code>.json`, paste the content of
+   `en.json` into it and translate every text. `<link>` and `</link>` are
+   around the words of a link: keep the pair, around the words that are the
+   link in your language. A text that you leave out is shown in English.
+2. Add the language to the `languages` list at the top of
+   `docs/github-pages/i18n.js`, with its name written in the language itself.
+3. So that search engines find the page in your language, add its line next to
+   those of the other languages in the head of `docs/index.html`
+   (`<link rel="alternate" hreflang="<code>" …>`), and its address with those
+   lines in `docs/sitemap.xml`.
+4. Open a pull request titled `Add <language> translation of the website`.
+
+`npm run test:website`, which runs on every pull request, checks what the
+check of the application's texts checks: the keys, the `<link>` tags, and that
+each file is listed. To look at the result, serve the folder
+(`python3 -m http.server 8080 --directory docs`) and open
+`http://localhost:8080/?lang=<code>`.
+
+The website is in English and Japanese (日本語) so far.
+
 ## How the language is chosen
 
 - The Language setting, on the first tab of the Settings dialog. Its default,
