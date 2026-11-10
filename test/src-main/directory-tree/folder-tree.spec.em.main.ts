@@ -1,9 +1,10 @@
 import assert = require('assert');
+import type { DirectoryTree } from 'directory-tree';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { createDirectoryTreeInWorker, stopDirectoryTreeWorker, useDirectoryTreeWorker } from '../../../src-main/directory-tree/directory-tree-requests';
-import { createFolderTree } from '../../../src-main/directory-tree/folder-tree';
+import { createFolderTree, livePhotosOf } from '../../../src-main/directory-tree/folder-tree';
 import { convertToFlattenedDirTree } from '../../../src-shared/dir-tree/dir-tree-util';
 
 describe('The tree of a folder (in main process)', () => {
@@ -55,6 +56,23 @@ describe('The tree of a folder (in main process)', () => {
     assert.deepStrictEqual(result.livePhotos, {
       [path.join(folder, 'IMG_0001.JPG')]: path.join(folder, 'IMG_0001.MOV'),
       [path.join(folder, 'day 2', 'IMG_0003.jpg')]: path.join(folder, 'day 2', 'IMG_0003.mp4'),
+    });
+  });
+
+  it('matches a photo with a movie of its own folder only, where the names of two folders differ in case alone', () => {
+    // A tree made by hand: only a file system with regard to case, as those of Linux, can hold these two folders.
+    const file = (...parts: string[]): DirectoryTree => {
+      const name = parts[parts.length - 1];
+      return { path: path.join(folder, ...parts), name, type: 'file', extension: path.extname(name).toLowerCase() };
+    };
+    const tree: DirectoryTree = { path: folder, name: 'photos', type: 'directory', children: [
+      { path: path.join(folder, 'album'), name: 'album', type: 'directory',
+        children: [file('album', 'IMG_0004.jpg'), file('album', 'IMG_0005.jpg'), file('album', 'img_0005.MOV')] },
+      { path: path.join(folder, 'Album'), name: 'Album', type: 'directory', children: [file('Album', 'IMG_0004.mov')] },
+    ] };
+    // IMG_0004.jpg has no movie: the one of that name is in the other folder. IMG_0005.jpg has the one next to it.
+    assert.deepStrictEqual(livePhotosOf(tree), {
+      [path.join(folder, 'album', 'IMG_0005.jpg')]: path.join(folder, 'album', 'img_0005.MOV'),
     });
   });
 
