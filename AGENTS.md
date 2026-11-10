@@ -225,6 +225,25 @@ time, and they are not urgent. An earlier pull request removed every warning by
 adding five overrides and two install-time source patches, each pinned to exact
 versions that every later upgrade had to review again.
 
+## Module formats
+
+The application is written with `import` everywhere. The renderer runs as ES
+modules, and the main process as CommonJS, which `tsc` writes; `package.json`
+says `"type": "commonjs"`.
+
+- In TypeScript, load a module with `import`. `npm run lint:main` and
+  `ng lint` fail a `require()`; the few that stay say why in a comment.
+- A new script or tool is an ES module, `.mjs`, unless something loads it
+  with `require`, as a preload script, `.cjs`.
+- Do not turn the main process into ES modules for the sake of one format.
+
+[`docs/contributing/module-formats.md`](docs/contributing/module-formats.md)
+has the table of what is which, and the reasons.
+
+**Why:** the question whether the code mixes the two formats came up, and it
+does, by what loads each file. One format everywhere would change about 145
+files of the part that ships, for nothing that a user sees.
+
 ## Prefer a narrow workaround over a risky upgrade
 
 When an intermittent failure turns out to be a known upstream bug, propose a

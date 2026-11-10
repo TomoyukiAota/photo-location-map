@@ -70,6 +70,9 @@ jobs:
     - name: npm run lint:ng
       run: npm run lint:ng
 
+    - name: npm run lint:main
+      run: npm run lint:main
+
     - name: npm run lint:script
       run: npm run lint:script
 

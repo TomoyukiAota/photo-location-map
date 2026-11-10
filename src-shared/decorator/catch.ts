@@ -7,7 +7,9 @@
 // Without this, "ERROR: Cannot read properties of undefined (reading 'value')" occurs.
 // This started occurring after updating Angular version from 15 to 16.
 
-/* eslint-disable @typescript-eslint/ban-types */ // Suppress the lint error "Don't use `Function` as a type."
+// Suppress the lint error about `Function` as a type, which this decorator takes. The rule had the name
+// @typescript-eslint/ban-types until typescript-eslint 8, where a comment that names it is an error.
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 
 function isPromise(object: any): object is Promise<any> {
   return object && Promise.resolve(object) === object;

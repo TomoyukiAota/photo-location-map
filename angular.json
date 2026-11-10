@@ -17,6 +17,22 @@
             },
             "index": "src/index.html",
             "tsConfig": "src/tsconfig.app.json",
+            "allowedCommonJsDependencies": [
+              "@turf/jsts",
+              "concaveman",
+              "earcut",
+              "echarts/theme/v5.js",
+              "fast-deep-equal",
+              "lodash",
+              "moment",
+              "moment-duration-format",
+              "moment-timezone",
+              "rbush",
+              "reflect-metadata",
+              "safe-json-stringify",
+              "skmeans",
+              "zen-observable"
+            ],
             "assets": [
               "src/assets",
               "src/favicon.ico",

@@ -36,6 +36,7 @@ export function recordUnhandledError(error: unknown, processName: 'Main' | 'Rend
     recordedErrors++;
     // Required here, not imported at the top: this file is loaded first in the main process (to catch errors
     // from the start), and importing Analytics there would initialize analytics earlier than before.
+    // eslint-disable-next-line @typescript-eslint/no-require-imports -- See above.
     const { Analytics } = require('./analytics') as typeof import('./analytics');
     Analytics.trackEvent('Unhandled Error', `Unhandled Error (${processName})`, label, value);
   } catch {

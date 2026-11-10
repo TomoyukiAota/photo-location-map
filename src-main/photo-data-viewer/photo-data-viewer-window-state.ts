@@ -1,10 +1,9 @@
+import isNumber from 'is-number';
 import { PhotoDataViewerIpcPhotoParams } from '../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params';
 import { logWindowBounds, photoDataViewerLogger as logger } from '../../src-shared/photo-data-viewer/photo-data-viewer-logger';
 import { UserDataStorage } from '../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../src-shared/user-data-storage/user-data-stroage-path';
 import { trackClosingPhotoDataViewer } from './photo-data-viewer-tracker';
-
-const isNumber = require('is-number');
 
 interface StateManageParams {
   browserWindow: Electron.BrowserWindow,

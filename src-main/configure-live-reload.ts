@@ -10,6 +10,7 @@ export function configureLiveReload(mainFile: string): FSWatcher {
   let relaunching = false;
 
   // Loaded only in development; packaged applications do not need this tool.
+  // eslint-disable-next-line @typescript-eslint/no-require-imports -- An import at the top would load it in a package, which does not have it.
   const { watch } = require('chokidar6') as typeof import('chokidar6');
   const watchRoot = path.dirname(path.resolve(mainFile));
   watcher = watch(watchRoot, {
