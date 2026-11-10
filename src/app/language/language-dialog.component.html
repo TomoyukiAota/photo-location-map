@@ -9,6 +9,7 @@
         color="primary"
         class="ok-button"
         [attr.lang]="selectedLanguage()"
+        [disabled]="isSaving()"
         (click)="onOkClicked()">
   {{ confirmLabel() }}
 </button>

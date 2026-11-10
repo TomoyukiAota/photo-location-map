@@ -94,6 +94,30 @@ describe('LanguageDialogComponent', () => {
     expect(restart).not.toHaveBeenCalled();
   });
 
+  it('does nothing on a second click while the first is at work, so that the application restarts once', async () => {
+    const restart = vi.spyOn(window.plm.app, 'restart');
+    await choose('日本語');
+
+    okButton().click();
+    okButton().click();
+    await fixture.whenStable();
+
+    await vi.waitFor(() => expect(restart).toHaveBeenCalledTimes(1));
+    // The application is quitting, so the button stays disabled.
+    expect(okButton().disabled).toBe(true);
+  });
+
+  it('lets the button be clicked again when saving fails', async () => {
+    vi.spyOn(UserDataStorage, 'write').mockRejectedValueOnce(new Error('The disk is full.'));
+
+    await expect(fixture.componentInstance.onOkClicked()).rejects.toThrow('The disk is full.');
+    await fixture.whenStable();
+
+    expect(fixture.componentInstance.isSaving()).toBe(false);
+    expect(okButton().disabled).toBe(false);
+    expect(close).not.toHaveBeenCalled();
+  });
+
   it('says in the chosen language that the application will restart, names its button in it, and restarts once the choice is saved', async () => {
     const restart = vi.spyOn(window.plm.app, 'restart');
     await choose('日本語');

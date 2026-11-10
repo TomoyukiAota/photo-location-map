@@ -1,4 +1,6 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { recordUnhandledError } from '../../src-shared/analytics/record-error';
+import { Logger } from '../../src-shared/log/logger';
 import { PlmInternalRendererService } from '../global-variables/plm-internal-renderer.service';
 import { LanguageDialogAtAppLaunchService } from './language/language-dialog-at-app-launch.service';
 import { PhotoSelectionHistoryService } from './shared/service/photo-selection-history.service';
@@ -30,9 +32,17 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
    * The Language dialog first, for a user who has not confirmed a language, then the Welcome dialog, for one who has not
    * clicked its OK: its messages are read in the language that the user chose. Another language than the one on screen
    * restarts the application, which shows the Welcome dialog at its next launch.
+   * TL;DR: The Welcome dialog is shown also when the Language dialog fails.
+   * Details: The Welcome dialog says what the application collects, which a user agrees to by using the application,
+   * so a failure before it must not keep it away. The failure is logged and recorded as an unhandled one is.
    */
   private async showDialogsAtAppLaunch(): Promise<void> {
-    await this.languageDialogAtAppLaunchService.showLanguageDialogIfUserHasNotClickedOk();
+    try {
+      await this.languageDialogAtAppLaunchService.showLanguageDialogIfUserHasNotClickedOk();
+    } catch (error) {
+      Logger.error('Failed to show the Language dialog. The Welcome dialog is shown next.', error);
+      recordUnhandledError(error, 'Renderer');
+    }
     this.welcomeDialogAtAppLaunchService.showWelcomeDialogIfUserHasNotClickedOk();
   }
 

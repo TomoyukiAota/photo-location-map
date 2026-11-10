@@ -48,22 +48,38 @@ export class LanguageDialogComponent {
   /** The button's text, in the chosen language as well. */
   public readonly confirmLabel = computed(() => tIn(this.selectedLanguage(), 'language.confirm'));
 
+  /** Whether a click on the button is at work, during which the button is disabled. */
+  public readonly isSaving = signal(false);
+
   /**
    * Saves that the user confirmed a language, and the Language setting, before the dialog closes or, for another
    * language than the one on screen, the application restarts.
+   * TL;DR: A second click does nothing while the first is at work.
+   * Details: Saving takes a moment, and Electron starts the application once for every restart that it is asked for,
+   * so two clicks in a row could start it twice. The button works again when saving fails. Once a restart is asked
+   * for, it stays disabled, as the application is quitting.
    */
   public async onOkClicked(): Promise<void> {
+    if (this.isSaving())
+      return;
+
+    this.isSaving.set(true);
     const language = this.selected();
     Logger.info(`[Language Dialog] Clicked OK button with the Language setting "${language}".`);
     Analytics.trackEvent('Language Dialog', '[Language Dialog] Clicked OK button', `Language: ${language}`);
 
-    await UserDataStorage.write(UserDataStoragePath.History.ClickedOkOnLanguageDialog, true.toString());
-    const settings = { ...getUserSettingsToBeSaved(), language };
-    if (this.isRestartRequired()) {
-      await saveUserSettingsAndRestartApp(settings);
-    } else {
-      await saveUserSetting(settings);
-      this.dialogRef.close();
+    try {
+      await UserDataStorage.write(UserDataStoragePath.History.ClickedOkOnLanguageDialog, true.toString());
+      const settings = { ...getUserSettingsToBeSaved(), language };
+      if (this.isRestartRequired()) {
+        await saveUserSettingsAndRestartApp(settings);
+      } else {
+        await saveUserSetting(settings);
+        this.dialogRef.close();
+      }
+    } catch (error) {
+      this.isSaving.set(false);
+      throw error;
     }
   }
 }

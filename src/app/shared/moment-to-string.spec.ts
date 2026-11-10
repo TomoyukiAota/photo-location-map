@@ -21,6 +21,9 @@ describe('The dates shown to the user (moment-to-string.ts)', () => {
     expect(formatMoment(afternoon, 'YYYY-MM-DD ddd', 'en', 'ddd')).toBe('2019-11-25 Mon');
     // The parts of a pattern that are not the day are in brackets when they are letters.
     expect(formatMoment(afternoon, 'YYYY-MM-DD ddd', 'en', '[on] ddd')).toBe('2019-11-25 on Mon');
+    // Only the short name of the day is written as the pattern says, not the first letters of its full name.
+    expect(formatMoment(afternoon, 'dddd, YYYY-MM-DD ddd', 'en', '(ddd)')).toBe('Monday, 2019-11-25 (Mon)');
+    expect(formatMoment(afternoon, 'dddd YYYY-MM-DD', 'ja', '(ddd)')).toBe('月曜日 2019-11-25');
   });
 
   it('leave moment\'s global locale English, and the date they are given as it was', () => {

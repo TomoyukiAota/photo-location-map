@@ -13,11 +13,12 @@ const weekdayPattern = t('dateTime.weekdayPattern');
 
 /**
  * Formats a date in a language: `locale` is moment's locale of the language, which the day of the week and AM or PM
- * come from, and `pattern` is how the language writes the day of the week, which replaces `ddd` in the format. The
- * locale is set on a copy of the date, as moment's global locale stays English (./i18n/moment-locales.ts).
+ * come from, and `pattern` is how the language writes the day of the week, which replaces `ddd` in the format, but
+ * not the first letters of `dddd`, the day's full name. The locale is set on a copy of the date, as moment's global
+ * locale stays English (./i18n/moment-locales.ts).
  */
 export function formatMoment(input: moment.Moment, momentJsFormatString: string, locale: string, pattern: string): string {
-  return input.clone().locale(locale).format(momentJsFormatString.replace('ddd', pattern));
+  return input.clone().locale(locale).format(momentJsFormatString.replace(/(?<!d)ddd(?!d)/, () => pattern));
 }
 
 /** Formats a date for the user, in the application's language. */

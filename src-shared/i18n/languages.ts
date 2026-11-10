@@ -36,5 +36,8 @@ export function isLanguageSetting(value: string): value is LanguageSetting {
 }
 
 export function getLanguage(code: LanguageCode): Language {
-  return languages.find(language => language.code === code);
+  const found = languages.find(language => language.code === code);
+  if (!found)
+    throw new Error(`"${code}" is not among the languages of the application (src-shared/i18n/languages.ts).`);
+  return found;
 }
