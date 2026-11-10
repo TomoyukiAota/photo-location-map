@@ -337,9 +337,9 @@ it is run on demand), and a failed job would sit unattended that long.
 
 Each CI workflow first runs a `changes` job, which finds the files the push or
 pull request changes with [dorny/paths-filter](https://github.com/dorny/paths-filter)
-and `.github/ci-filters.yml`. When every one of them is a document — the
-Markdown files of `docs/` and its `contributing/`, `tasks/`, `troubleshooting/`
-and `README/` folders, `README.md`, `AGENTS.md`, `LICENSE` or
+and `.github/ci-filters.yml`. When every one of them is a document — a
+Markdown file directly in `docs/`, any file in its `contributing/`, `tasks/`,
+`troubleshooting/` or `README/` folder, `README.md`, `AGENTS.md`, `LICENSE` or
 `.github/ISSUE_TEMPLATE/` — the `test` job is skipped. A skipped job passes
 GitHub's required checks, and `.mergify.yml` accepts `check-skipped`, so such a
 pull request does not wait for the tests.
