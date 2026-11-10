@@ -6,6 +6,7 @@ import { enableProdMode } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 
 import { currentLanguage, t } from '../src-shared/i18n/i18n';
+import { getLanguage } from '../src-shared/i18n/languages';
 import { LogFileConfig } from '../src-shared/log/file-config/log-file-config';
 import { Logger } from '../src-shared/log/logger';
 import { perfMark } from '../src-shared/perf/perf-mark';
@@ -20,6 +21,9 @@ import './ipc-renderer-setup/ipc-renderer-all-setup';
 function applyLanguageToPage(): void {
   // Chromium chooses the glyphs of Japanese and Chinese, which share code points, by the page's language.
   document.documentElement.lang = currentLanguage;
+  // The page is laid out from the side that the language is written from: Arabic and Hebrew start at the right, where
+  // the sidebar then is. Angular Material reads the direction from here as well, for its dialogs and menus.
+  document.documentElement.dir = getLanguage(currentLanguage).direction;
   // The text of index.html, which stays while the map's base layers are fetched.
   const loadingText = document.getElementById('app-loading-text');
   if (loadingText)

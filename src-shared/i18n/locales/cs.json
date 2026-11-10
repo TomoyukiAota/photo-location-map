@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "Načítání..."
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Zrušit",
+    "close": "Zavřít"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "Jazyk (Language)",
+    "systemLanguage": {
+      "mac": "Použít nastavení macOS ({{language}})",
+      "windows": "Použít nastavení Windows ({{language}})",
+      "other": "Použít nastavení systému ({{language}})"
+    },
+    "restartToApply": "Aplikace se restartuje, aby se jazyk použil.",
+    "confirm": "OK",
+    "search": "Hledat",
+    "noLanguagesFound": "Nebyly nalezeny žádné jazyky"
+  },
+  "appInfo": {
+    "appIconAlt": "Ikona aplikace",
+    "version": "Verze {{version}}",
+    "developedBy": "Vyvinul Tomoyuki Aota.",
+    "xProfileAlt": "Profil na síti X (dříve Twitter)",
+    "xProfileTitle": "Otevřít profil na síti X (dříve Twitter)",
+    "gitHubProfileAlt": "Profil na GitHubu",
+    "gitHubProfileTitle": "Otevřít profil na GitHubu",
+    "troubleshooting": "Pokud narazíte na potíže s touto aplikací, podívejte se na <pageLink>stránku s řešením potíží</pageLink>.",
+    "troubleshootingLinkTitle": "Otevřít stránku s řešením potíží"
+  },
+  "welcome": {
+    "message": "Vítejte v aplikaci {{appName}}",
+    "usageInfoCollection": "Kvůli vylepšování této aplikace se shromažďují anonymní údaje o jejím používání. Dalším používáním aplikace s tím souhlasíte."
+  },
+  "about": {
+    "releasesLink": "Soubory ke stažení a poznámky k vydání",
+    "releasesLinkTitle": "Otevřít soubory ke stažení a poznámky k vydání",
+    "translations": "Překlady do dalších jazyků jsou vítány: viz <guideLink>jak tuto aplikaci přeložit</guideLink>.",
+    "translationsLinkTitle": "Otevřít návod k překladu této aplikace",
+    "homePageTitle": "Otevřít domovskou stránku",
+    "sourceCodeTitle": "Zobrazit zdrojový kód na GitHubu"
+  },
+  "sidebar": {
+    "openFolder": "Otevřít složku",
+    "cannotOpenWhileGeneratingThumbnails": "Během vytváření miniatur nelze otevřít složku.",
+    "openFolderToSeePhotos": "Otevřete složku a uvidíte, kde byly fotky pořízeny.",
+    "sort": {
+      "title": "Seřadit",
+      "byName": "Podle názvu",
+      "byShootingTime": "Podle času pořízení",
+      "ascending": "Vzestupně",
+      "descending": "Sestupně"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "Řazení podle času pořízení",
+    "intro": "Když je vybráno „Podle času pořízení“, aplikace řadí soubory takto:",
+    "step1": "Použije hodnotu DateTimeOriginal z dat EXIF. Pokud není k dispozici,",
+    "step2": "použije datum změny souboru.",
+    "foldersNote": "Složky se řadí podle názvu, protože složky žádný „čas pořízení“ nemají.",
+    "moreDetails": "Další informace",
+    "details": {
+      "intro": "Níže jsou další informace:",
+      "mostTrustworthy": "Hodnota DateTimeOriginal z dat EXIF je nejspolehlivější údaj o tom, kdy byla fotka pořízena.",
+      "sometimesMissing": "Většina fotoaparátů zapisuje DateTimeOriginal do většiny souborů JPEG/HEIF/TIFF, někdy ale chybí.",
+      "modifiedTime": "Datum změny souboru bývá často časem pořízení fotky, proto se použije náhradně, když DateTimeOriginal chybí.",
+      "otherFiles": "Jiné soubory než JPEG/HEIF/TIFF data EXIF nemají, proto se pro ně vždy použije datum změny."
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "Otevřená složka - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "Vybrat jen tento soubor",
+      "selectOnlyThisFolder": "Vybrat jen tuto složku",
+      "open": "Otevřít",
+      "openFolder": "Otevřít složku"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "Informace o fotce nejsou k dispozici.",
+    "openFile": "Otevřít soubor",
+    "moreOptions": "Další volby",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "Otočit miniaturu",
+    "menu": {
+      "selectOnlyThis": "Vybrat jen tento soubor",
+      "openFolder": "Otevřít složku",
+      "openGoogleMaps": "Otevřít Mapy Google",
+      "openGoogleStreetView": "Otevřít Google Street View",
+      "viewData": "Zobrazit data"
+    },
+    "pathTooLong": "Miniaturu nelze zobrazit, protože délka cesty k souboru je {{length}}. Windows omezuje délku cesty na {{maximum}}. Přesuňte soubor jinam, aby byla jeho cesta kratší. Podrobnosti zjistíte stisknutím Ctrl+Shift+I a přečtením zpráv v konzoli.",
+    "generatedThumbnailPathTooLong": "Miniaturu nelze zobrazit, protože délka cesty k vytvořené miniatuře je {{length}}. Windows omezuje délku cesty na {{maximum}}. Přesuňte soubor jinam, aby byla cesta k vytvořené miniatuře kratší. Podrobnosti zjistíte stisknutím Ctrl+Shift+I a přečtením zpráv v konzoli."
+  },
+  "map": {
+    "zoomIn": "Přiblížit",
+    "zoomOut": "Oddálit",
+    "layers": "Vrstvy",
+    "photosInRegions": "Fotky v oblastech: {{count}}",
+    "selectPhotos": "Vybrat fotky",
+    "setRegionByRectangle": "Určit oblast obdélníkem",
+    "setRegionByVertex": "Určit oblast vrcholy",
+    "setText": "Umístit text",
+    "editRegion": "Upravit oblast",
+    "dragRegion": "Přesunout oblast",
+    "removeRegion": "Odstranit oblast"
+  },
+  "chart": {
+    "moreAlt": "Více",
+    "dateUnknownPhotos": "Fotky s neznámým datem: {{count}}",
+    "showDateUnknownPhotos": "Zobrazit na mapě fotky s neznámým datem",
+    "units": {
+      "year": "Rok",
+      "month": "Měsíc",
+      "day": "Den",
+      "hour": "Hodina",
+      "minute": "Minuta",
+      "second": "Sekunda"
+    },
+    "unsupportedDuration": "Tento graf nedokáže zobrazit více než 30 dní, když je vybráno „Hodina“, více než 3 dny pro „Minuta“ ani více než 1 hodinu pro „Sekunda“.",
+    "changeUnitOrSelection": "Změňte Rok/Měsíc/Den/Hodina/Minuta/Sekunda nebo vyberte fotky tak, aby bylo období kratší.",
+    "selectPhotosWithinZoom": "Vybrat fotky v přiblíženém rozsahu",
+    "zoom": "Přiblížení",
+    "resetZoom": "Obnovit\npřiblížení"
+  },
+  "loadingFolder": {
+    "collecting": "Shromažďují se soubory k načtení z otevřené složky...",
+    "loading": "Načítají se soubory z otevřené složky...",
+    "completed": "Všechny soubory byly načteny (počet: {{count}}).",
+    "progress": "Načtené soubory: {{loaded}} z {{total}}.",
+    "generatingMap": "Z načtených souborů se vytváří mapa..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "V otevřené složce nejsou žádné fotky s údaji o poloze."
+  },
+  "loadedFiles": {
+    "loaded": "Načtené soubory: {{count}}.",
+    "withLocationData": "Soubory s údaji o poloze: {{count}}.",
+    "total": "Celkem"
+  },
+  "thumbnailGeneration": {
+    "generating": "Vytvářejí se miniatury souborů HEIF...",
+    "completed": "Miniatury souborů HEIF byly vytvořeny.",
+    "finishedWithErrors": "Vytváření miniatur souborů HEIF skončilo s chybami.",
+    "showDetails": "Zobrazit podrobnosti",
+    "processed": "Zpracované soubory: {{processed}} z {{total}}.",
+    "processedWithErrors": "Zpracované soubory: {{processed}} z {{total}}, s chybami.",
+    "seeFilesWithErrors": "Kliknutím sem zobrazíte soubory s chybami.",
+    "seeFilesWithErrorsTitle": "Zobrazit soubory s chybami",
+    "generationRequired": "Miniatury, které je třeba vytvořit: {{required}}. Počet vychází z výpočtu „soubory HEIF ({{heif}}) − soubory dostupné v mezipaměti ({{cached}})“.",
+    "closeStatusBar": "Zavřít stavový řádek vytváření miniatur",
+    "errorDialog": {
+      "message": "Miniatury následujících souborů se nepodařilo vytvořit (počet: {{count}}):",
+      "filter": "Filtrovat",
+      "number": "Č.",
+      "file": "Soubor",
+      "openFile": "Otevřít soubor",
+      "openFolder": "Otevřít složku"
+    }
+  },
+  "settings": {
+    "title": "Nastavení",
+    "tabs": {
+      "language": "Jazyk (Language)",
+      "appearance": "Vzhled",
+      "dateTime": "Datum a čas",
+      "os": "Systém",
+      "cache": "Mezipaměť"
+    },
+    "restartAfterSaving": "Aplikace se po uložení nastavení restartuje.",
+    "confirmRestart": "Aplikace se po uložení nastavení restartuje.\nChcete pokračovat?",
+    "save": "Uložit",
+    "language": {
+      "title": "Jazyk",
+      "description": "Jazyk se změní po restartování aplikace."
+    },
+    "appearance": {
+      "title": "Vzhled",
+      "showStatusBar": "Zobrazit stavový řádek"
+    },
+    "dateTime": {
+      "title": "Formát data a času",
+      "description": "Formát data a času se změní po restartování aplikace.",
+      "dateFormat": "Formát data",
+      "clockSystem": "12 nebo 24 hodin",
+      "clock12": "12 hodin",
+      "clock24": "24 hodin",
+      "example": "Příklad"
+    },
+    "os": {
+      "title": "Místní nabídka Průzkumníka souborů",
+      "description": "Přidat položku „{{menuItem}}“ do místní nabídky Průzkumníka souborů nebo ji odebrat.",
+      "add": "Přidat",
+      "remove": "Odebrat",
+      "added": "Položka „{{menuItem}}“ byla přidána do místní nabídky Průzkumníka souborů.",
+      "removed": "Položka „{{menuItem}}“ byla odebrána z místní nabídky Průzkumníka souborů.",
+      "failedToAdd": "Položku „{{menuItem}}“ se nepodařilo přidat do místní nabídky Průzkumníka souborů.",
+      "failedToRemove": "Položku „{{menuItem}}“ se nepodařilo odebrat z místní nabídky Průzkumníka souborů.",
+      "confirmInExplorer": "Otevřete Průzkumník souborů a klikněte pravým tlačítkem na soubor nebo složku, abyste to ověřili."
+    },
+    "cache": {
+      "title": "Mezipaměť miniatur HEIF",
+      "requiredForHeif": "Pro <heifLink>soubory HEIF</heifLink> je třeba vytvářet miniatury, což nějakou dobu trvá.",
+      "thereforeCached": "Vytvořené miniatury se proto ukládají do mezipaměti.",
+      "usedNextTime": "Příště se použije mezipaměť, takže se miniatury nebudou vytvářet znovu.",
+      "location": "Umístění mezipaměti:",
+      "restartAfterDeleting": "Aplikace se po smazání mezipaměti miniatur restartuje.",
+      "delete": "Smazat mezipaměť miniatur",
+      "confirmDelete": "Aplikace se po smazání mezipaměti miniatur restartuje.\nChcete pokračovat?"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "Otevřít v aplikaci {{appName}}",
+    "openWithAccessKey": "Otevřít v aplikaci &{{appName}}"
+  },
+  "menu": {
+    "app": {
+      "about": "O aplikaci {{appName}}",
+      "services": "Služby",
+      "hide": "Skrýt {{appName}}",
+      "hideOthers": "Skrýt ostatní",
+      "showAll": "Zobrazit vše",
+      "quit": "Ukončit {{appName}}"
+    },
+    "view": {
+      "title": "Zobrazení",
+      "reload": "Načíst znovu",
+      "actualSize": "Skutečná velikost",
+      "zoomIn": "Přiblížit",
+      "zoomOut": "Oddálit",
+      "toggleFullScreen": "Zapnout/vypnout celou obrazovku"
+    },
+    "selection": {
+      "title": "Výběr",
+      "undo": "Zpět",
+      "redo": "Znovu"
+    },
+    "settings": {
+      "title": "Nastavení",
+      "openSettings": "Otevřít nastavení"
+    },
+    "help": {
+      "title": "Nápověda",
+      "showWelcomeDialog": "Zobrazit uvítací okno",
+      "advancedMenu": "Rozšířená nabídka",
+      "openLogFolder": "Otevřít složku protokolů",
+      "toggleDeveloperTools": "Zobrazit/skrýt vývojářské nástroje"
+    }
+  },
+  "autoUpdate": {
+    "title": "Je k dispozici nová verze aplikace {{appName}}!",
+    "message": "Je k dispozici nová verze aplikace {{appName}}, která se nainstaluje po restartování.\nChcete aplikaci restartovat hned?\n\nAktuální verze: {{currentVersion}}\nNejnovější verze: {{latestVersion}}",
+    "yes": "Ano",
+    "no": "Ne"
+  }
+}

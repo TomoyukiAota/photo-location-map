@@ -26,6 +26,17 @@ describe('The dates shown to the user (moment-to-string.ts)', () => {
     expect(formatMoment(afternoon, 'dddd YYYY-MM-DD', 'ja', '(ddd)')).toBe('月曜日 2019-11-25');
   });
 
+  it('write the date with the digits 0 to 9 in every language, as the other numbers of the application are', () => {
+    // moment's own Arabic and Hindi locales write the digits of those scripts (./i18n/moment-locales.ts).
+    expect(formatMoment(afternoon, 'YYYY-MM-DD ddd', 'ar', 'ddd')).toBe('2019-11-25 إثنين');
+    expect(formatMoment(afternoon, 'YYYY-MM-DD ddd', 'hi', 'ddd')).toBe('2019-11-25 सोम');
+    for (const language of languages) {
+      const date = formatMoment(afternoon, 'YYYY-MM-DD ddd hh:mm:ss a', language.momentLocale, 'ddd');
+      expect(`${language.code}: ${date.replace(/[0-9]/g, '').match(/\p{Nd}/gu)}`).toBe(`${language.code}: null`);
+      expect(date.startsWith('2019-11-25 ')).toBe(true);
+    }
+  });
+
   it('leave moment\'s global locale English, and the date they are given as it was', () => {
     formatMoment(afternoon, 'ddd', 'ja', '(ddd)');
     expect(moment.locale()).toBe('en');

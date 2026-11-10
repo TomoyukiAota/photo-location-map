@@ -17,7 +17,7 @@
   display: none;  // Removed from DOM by default. Needs to be restored to "display: inline-grid" where the button is needed.
   position: absolute;
   bottom: 0;
-  right: 0;
+  inset-inline-end: 0;
   width: 12px;
   height: 12px;
   margin: 0;

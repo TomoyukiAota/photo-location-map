@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "Nalaganje..."
+  },
+  "common": {
+    "ok": "V redu",
+    "cancel": "Prekliči",
+    "close": "Zapri"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "Jezik (Language)",
+    "systemLanguage": {
+      "mac": "Uporabi nastavitev sistema macOS ({{language}})",
+      "windows": "Uporabi nastavitev sistema Windows ({{language}})",
+      "other": "Uporabi nastavitev sistema ({{language}})"
+    },
+    "restartToApply": "Aplikacija se bo znova zagnala, da se jezik uveljavi.",
+    "confirm": "V redu",
+    "search": "Išči",
+    "noLanguagesFound": "Ni najdenih jezikov"
+  },
+  "appInfo": {
+    "appIconAlt": "Ikona aplikacije",
+    "version": "Različica {{version}}",
+    "developedBy": "Razvil Tomoyuki Aota.",
+    "xProfileAlt": "Profil v omrežju X (prej Twitter)",
+    "xProfileTitle": "Odpri profil v omrežju X (prej Twitter)",
+    "gitHubProfileAlt": "Profil v GitHubu",
+    "gitHubProfileTitle": "Odpri profil v GitHubu",
+    "troubleshooting": "Če imate s to aplikacijo težave, si oglejte <pageLink>stran za odpravljanje težav</pageLink>.",
+    "troubleshootingLinkTitle": "Odpri stran za odpravljanje težav"
+  },
+  "welcome": {
+    "message": "Dobrodošli v aplikaciji {{appName}}",
+    "usageInfoCollection": "Za izboljšanje te aplikacije se zbirajo anonimni podatki o uporabi. Z nadaljnjo uporabo aplikacije se s tem strinjate."
+  },
+  "about": {
+    "releasesLink": "Prenosi in opombe ob izdajah",
+    "releasesLinkTitle": "Odpri prenose in opombe ob izdajah",
+    "translations": "Prevodi v druge jezike so dobrodošli: glejte <guideLink>kako prevesti to aplikacijo</guideLink>.",
+    "translationsLinkTitle": "Odpri vodnik za prevajanje te aplikacije",
+    "homePageTitle": "Odpri domačo stran",
+    "sourceCodeTitle": "Oglej si izvorno kodo v GitHubu"
+  },
+  "sidebar": {
+    "openFolder": "Odpri mapo",
+    "cannotOpenWhileGeneratingThumbnails": "Med ustvarjanjem sličic mape ni mogoče odpreti.",
+    "openFolderToSeePhotos": "Odprite mapo, da vidite, kje so bile fotografije posnete.",
+    "sort": {
+      "title": "Razvrsti",
+      "byName": "Po imenu",
+      "byShootingTime": "Po času zajema",
+      "ascending": "Naraščajoče",
+      "descending": "Padajoče"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "Razvrščanje po času zajema",
+    "intro": "Ko je izbrano »Po času zajema«, aplikacija datoteke razvršča tako:",
+    "step1": "Uporabi vrednost DateTimeOriginal iz podatkov EXIF. Če je ni,",
+    "step2": "uporabi datum spremembe datoteke.",
+    "foldersNote": "Mape so razvrščene po imenu, ker mape nimajo »časa zajema«.",
+    "moreDetails": "Dodatne informacije",
+    "details": {
+      "intro": "V nadaljevanju so dodatne informacije:",
+      "mostTrustworthy": "Vrednost DateTimeOriginal iz podatkov EXIF je najzanesljivejši podatek o tem, kdaj je bila fotografija posneta.",
+      "sometimesMissing": "Večina fotoaparatov zapiše DateTimeOriginal v večino datotek JPEG/HEIF/TIFF, včasih pa manjka.",
+      "modifiedTime": "Datum spremembe datoteke je pogosto čas, ko je bila fotografija posneta, zato se uporabi namesto nje, kadar DateTimeOriginal manjka.",
+      "otherFiles": "Datoteke, ki niso JPEG/HEIF/TIFF, nimajo podatkov EXIF, zato se zanje vedno uporabi datum spremembe."
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "Odprta mapa - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "Izberi samo to datoteko",
+      "selectOnlyThisFolder": "Izberi samo to mapo",
+      "open": "Odpri",
+      "openFolder": "Odpri mapo"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "Podatki o fotografiji niso na voljo.",
+    "openFile": "Odpri datoteko",
+    "moreOptions": "Več možnosti",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "Zasukaj sličico",
+    "menu": {
+      "selectOnlyThis": "Izberi samo to datoteko",
+      "openFolder": "Odpri mapo",
+      "openGoogleMaps": "Odpri Google Zemljevide",
+      "openGoogleStreetView": "Odpri Google Street View",
+      "viewData": "Prikaži podatke"
+    },
+    "pathTooLong": "Sličice ni mogoče prikazati, ker je dolžina poti datoteke {{length}}. Windows omejuje dolžino poti na {{maximum}}. Premaknite datoteko, da skrajšate njeno pot. Za podrobnosti pritisnite Ctrl+Shift+I in preberite sporočila v konzoli.",
+    "generatedThumbnailPathTooLong": "Sličice ni mogoče prikazati, ker je dolžina poti ustvarjene sličice {{length}}. Windows omejuje dolžino poti na {{maximum}}. Premaknite datoteko, da skrajšate pot ustvarjene sličice. Za podrobnosti pritisnite Ctrl+Shift+I in preberite sporočila v konzoli."
+  },
+  "map": {
+    "zoomIn": "Povečaj",
+    "zoomOut": "Pomanjšaj",
+    "layers": "Plasti",
+    "photosInRegions": "Fotografije na območjih: {{count}}",
+    "selectPhotos": "Izberi fotografije",
+    "setRegionByRectangle": "Določi območje s pravokotnikom",
+    "setRegionByVertex": "Določi območje z oglišči",
+    "setText": "Postavi besedilo",
+    "editRegion": "Uredi območje",
+    "dragRegion": "Premakni območje",
+    "removeRegion": "Odstrani območje"
+  },
+  "chart": {
+    "moreAlt": "Več",
+    "dateUnknownPhotos": "Fotografije z neznanim datumom: {{count}}",
+    "showDateUnknownPhotos": "Prikaži na zemljevidu fotografije z neznanim datumom",
+    "units": {
+      "year": "Leto",
+      "month": "Mesec",
+      "day": "Dan",
+      "hour": "Ura",
+      "minute": "Minuta",
+      "second": "Sekunda"
+    },
+    "unsupportedDuration": "Ta grafikon ne more prikazati več kot 30 dni, ko je izbrano »Ura«, več kot 3 dni za »Minuta« in več kot 1 ure za »Sekunda«.",
+    "changeUnitOrSelection": "Spremenite Leto/Mesec/Dan/Ura/Minuta/Sekunda ali izberite fotografije tako, da bo obdobje krajše.",
+    "selectPhotosWithinZoom": "Izberi fotografije v povečanem obsegu",
+    "zoom": "Povečava",
+    "resetZoom": "Ponastavi\npovečavo"
+  },
+  "loadingFolder": {
+    "collecting": "Zbiranje datotek za nalaganje iz odprte mape...",
+    "loading": "Nalaganje datotek iz odprte mape...",
+    "completed": "Vse datoteke so naložene (število: {{count}}).",
+    "progress": "Naložene datoteke: {{loaded}} od {{total}}.",
+    "generatingMap": "Ustvarjanje zemljevida iz naloženih datotek..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "V odprti mapi ni fotografij s podatki o lokaciji."
+  },
+  "loadedFiles": {
+    "loaded": "Naložene datoteke: {{count}}.",
+    "withLocationData": "Datoteke s podatki o lokaciji: {{count}}.",
+    "total": "Skupaj"
+  },
+  "thumbnailGeneration": {
+    "generating": "Ustvarjanje sličic za datoteke HEIF...",
+    "completed": "Sličice za datoteke HEIF so ustvarjene.",
+    "finishedWithErrors": "Ustvarjanje sličic za datoteke HEIF se je končalo z napakami.",
+    "showDetails": "Prikaži podrobnosti",
+    "processed": "Obdelane datoteke: {{processed}} od {{total}}.",
+    "processedWithErrors": "Obdelane datoteke: {{processed}} od {{total}}, z napakami.",
+    "seeFilesWithErrors": "Kliknite tukaj, če si želite ogledati datoteke z napakami.",
+    "seeFilesWithErrorsTitle": "Prikaži datoteke z napakami",
+    "generationRequired": "Sličice, ki jih je treba ustvariti: {{required}}. Število izhaja iz »datoteke HEIF ({{heif}}) − datoteke v predpomnilniku ({{cached}})«.",
+    "closeStatusBar": "Zapri vrstico stanja ustvarjanja sličic",
+    "errorDialog": {
+      "message": "Za naslednje datoteke ni bilo mogoče ustvariti sličic (število: {{count}}):",
+      "filter": "Filtriraj",
+      "number": "Št.",
+      "file": "Datoteka",
+      "openFile": "Odpri datoteko",
+      "openFolder": "Odpri mapo"
+    }
+  },
+  "settings": {
+    "title": "Nastavitve",
+    "tabs": {
+      "language": "Jezik (Language)",
+      "appearance": "Videz",
+      "dateTime": "Datum in ura",
+      "os": "Sistem",
+      "cache": "Predpomnilnik"
+    },
+    "restartAfterSaving": "Aplikacija se bo po shranjevanju nastavitev znova zagnala.",
+    "confirmRestart": "Aplikacija se bo po shranjevanju nastavitev znova zagnala.\nAli želite nadaljevati?",
+    "save": "Shrani",
+    "language": {
+      "title": "Jezik",
+      "description": "Jezik se bo spremenil po vnovičnem zagonu aplikacije."
+    },
+    "appearance": {
+      "title": "Videz",
+      "showStatusBar": "Prikaži vrstico stanja"
+    },
+    "dateTime": {
+      "title": "Oblika datuma in ure",
+      "description": "Oblika datuma in ure se bo spremenila po vnovičnem zagonu aplikacije.",
+      "dateFormat": "Oblika datuma",
+      "clockSystem": "12 ali 24 ur",
+      "clock12": "12 ur",
+      "clock24": "24 ur",
+      "example": "Primer"
+    },
+    "os": {
+      "title": "Priročni meni Raziskovalca",
+      "description": "Dodaj element »{{menuItem}}« v priročni meni Raziskovalca ali ga odstrani.",
+      "add": "Dodaj",
+      "remove": "Odstrani",
+      "added": "Element »{{menuItem}}« je dodan v priročni meni Raziskovalca.",
+      "removed": "Element »{{menuItem}}« je odstranjen iz priročnega menija Raziskovalca.",
+      "failedToAdd": "Elementa »{{menuItem}}« ni bilo mogoče dodati v priročni meni Raziskovalca.",
+      "failedToRemove": "Elementa »{{menuItem}}« ni bilo mogoče odstraniti iz priročnega menija Raziskovalca.",
+      "confirmInExplorer": "Odprite Raziskovalca in z desno tipko miške kliknite datoteko ali mapo, da to preverite."
+    },
+    "cache": {
+      "title": "Predpomnilnik sličic HEIF",
+      "requiredForHeif": "Za <heifLink>datoteke HEIF</heifLink> je treba ustvariti sličice, kar traja nekaj časa.",
+      "thereforeCached": "Zato se ustvarjene sličice shranijo v predpomnilnik.",
+      "usedNextTime": "Naslednjič bo uporabljen predpomnilnik, zato sličic ne bo treba znova ustvarjati.",
+      "location": "Mesto predpomnilnika:",
+      "restartAfterDeleting": "Aplikacija se bo po brisanju predpomnilnika sličic znova zagnala.",
+      "delete": "Izbriši predpomnilnik sličic",
+      "confirmDelete": "Aplikacija se bo po brisanju predpomnilnika sličic znova zagnala.\nAli želite nadaljevati?"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "Odpri z aplikacijo {{appName}}",
+    "openWithAccessKey": "Odpri z aplikacijo &{{appName}}"
+  },
+  "menu": {
+    "app": {
+      "about": "O aplikaciji {{appName}}",
+      "services": "Storitve",
+      "hide": "Skrij {{appName}}",
+      "hideOthers": "Skrij druge",
+      "showAll": "Prikaži vse",
+      "quit": "Končaj {{appName}}"
+    },
+    "view": {
+      "title": "Pogled",
+      "reload": "Znova naloži",
+      "actualSize": "Dejanska velikost",
+      "zoomIn": "Povečaj",
+      "zoomOut": "Pomanjšaj",
+      "toggleFullScreen": "Vklopi/izklopi celozaslonski način"
+    },
+    "selection": {
+      "title": "Izbor",
+      "undo": "Razveljavi",
+      "redo": "Uveljavi"
+    },
+    "settings": {
+      "title": "Nastavitve",
+      "openSettings": "Odpri nastavitve"
+    },
+    "help": {
+      "title": "Pomoč",
+      "showWelcomeDialog": "Prikaži pozdravno okno",
+      "advancedMenu": "Napredni meni",
+      "openLogFolder": "Odpri mapo z dnevniki",
+      "toggleDeveloperTools": "Prikaži/skrij razvijalska orodja"
+    }
+  },
+  "autoUpdate": {
+    "title": "Na voljo je nova različica aplikacije {{appName}}!",
+    "message": "Na voljo je nova različica aplikacije {{appName}}, ki bo nameščena po vnovičnem zagonu.\nAli želite aplikacijo znova zagnati zdaj?\n\nTrenutna različica: {{currentVersion}}\nNajnovejša različica: {{latestVersion}}",
+    "yes": "Da",
+    "no": "Ne"
+  }
+}

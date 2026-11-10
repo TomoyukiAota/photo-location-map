@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "Memuatkan..."
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Batal",
+    "close": "Tutup"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "Bahasa (Language)",
+    "systemLanguage": {
+      "mac": "Guna tetapan macOS ({{language}})",
+      "windows": "Guna tetapan Windows ({{language}})",
+      "other": "Guna tetapan sistem ({{language}})"
+    },
+    "restartToApply": "Aplikasi ini akan dimulakan semula untuk menggunakan bahasa tersebut.",
+    "confirm": "OK",
+    "search": "Cari",
+    "noLanguagesFound": "Tiada bahasa ditemui"
+  },
+  "appInfo": {
+    "appIconAlt": "Ikon aplikasi",
+    "version": "Versi {{version}}",
+    "developedBy": "Dibangunkan oleh Tomoyuki Aota.",
+    "xProfileAlt": "Profil X (dahulunya Twitter)",
+    "xProfileTitle": "Buka profil X (dahulunya Twitter)",
+    "gitHubProfileAlt": "Profil GitHub",
+    "gitHubProfileTitle": "Buka profil GitHub",
+    "troubleshooting": "Jika anda menghadapi masalah dengan aplikasi ini, lihat <pageLink>halaman penyelesaian masalah</pageLink>.",
+    "troubleshootingLinkTitle": "Buka halaman penyelesaian masalah"
+  },
+  "welcome": {
+    "message": "Selamat datang ke {{appName}}",
+    "usageInfoCollection": "Untuk menambah baik aplikasi ini, maklumat penggunaan tanpa nama dikumpulkan. Dengan terus menggunakan aplikasi ini, anda bersetuju dengannya."
+  },
+  "about": {
+    "releasesLink": "Muat turun dan nota keluaran",
+    "releasesLinkTitle": "Buka muat turun dan nota keluaran",
+    "translations": "Terjemahan ke bahasa lain amat dialu-alukan: lihat <guideLink>cara menterjemah aplikasi ini</guideLink>.",
+    "translationsLinkTitle": "Buka panduan terjemahan aplikasi ini",
+    "homePageTitle": "Buka laman utama",
+    "sourceCodeTitle": "Lihat kod sumber di GitHub"
+  },
+  "sidebar": {
+    "openFolder": "Buka Folder",
+    "cannotOpenWhileGeneratingThumbnails": "Folder tidak boleh dibuka semasa lakaran kecil sedang dijana.",
+    "openFolderToSeePhotos": "Buka folder untuk melihat tempat foto diambil.",
+    "sort": {
+      "title": "Isih",
+      "byName": "Mengikut nama",
+      "byShootingTime": "Mengikut masa penggambaran",
+      "ascending": "Menaik",
+      "descending": "Menurun"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "Mengisih mengikut masa penggambaran",
+    "intro": "Apabila “Mengikut masa penggambaran” dipilih, aplikasi mengisih fail seperti berikut:",
+    "step1": "menggunakan DateTimeOriginal dalam EXIF. Jika tiada,",
+    "step2": "menggunakan masa fail diubah suai.",
+    "foldersNote": "Folder diisih mengikut nama kerana folder tidak mempunyai “masa penggambaran”.",
+    "moreDetails": "Butiran lanjut",
+    "details": {
+      "intro": "Berikut ialah maklumat tambahan:",
+      "mostTrustworthy": "DateTimeOriginal dalam EXIF ialah maklumat yang paling boleh dipercayai tentang masa foto diambil.",
+      "sometimesMissing": "Kebanyakan kamera menulis DateTimeOriginal ke dalam kebanyakan fail JPEG/HEIF/TIFF, tetapi kadangkala ia tiada.",
+      "modifiedTime": "Masa fail diubah suai biasanya ialah masa foto diambil, jadi ia digunakan apabila DateTimeOriginal tiada.",
+      "otherFiles": "Fail selain JPEG/HEIF/TIFF tidak mempunyai EXIF, jadi masa diubah suai sentiasa digunakan."
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "Folder yang dibuka - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "Pilih fail ini sahaja",
+      "selectOnlyThisFolder": "Pilih folder ini sahaja",
+      "open": "Buka",
+      "openFolder": "Buka folder"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "Maklumat foto tidak tersedia.",
+    "openFile": "Buka fail",
+    "moreOptions": "Lagi pilihan",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "Putar lakaran kecil",
+    "menu": {
+      "selectOnlyThis": "Pilih fail ini sahaja",
+      "openFolder": "Buka folder",
+      "openGoogleMaps": "Buka Google Maps",
+      "openGoogleStreetView": "Buka Google Street View",
+      "viewData": "Lihat data"
+    },
+    "pathTooLong": "Lakaran kecil tidak dapat dipaparkan kerana panjang laluan fail ialah {{length}}. Windows mengehadkan panjang laluan kepada maksimum {{maximum}}. Tukar lokasi fail untuk memendekkan laluan. Untuk butiran, tekan Ctrl+Shift+I dan baca mesej konsol.",
+    "generatedThumbnailPathTooLong": "Lakaran kecil tidak dapat dipaparkan kerana panjang laluan lakaran kecil yang dijana ialah {{length}}. Windows mengehadkan panjang laluan kepada maksimum {{maximum}}. Tukar lokasi fail untuk memendekkan laluan lakaran kecil yang dijana. Untuk butiran, tekan Ctrl+Shift+I dan baca mesej konsol."
+  },
+  "map": {
+    "zoomIn": "Zum masuk",
+    "zoomOut": "Zum keluar",
+    "layers": "Lapisan",
+    "photosInRegions": "Foto dalam kawasan: {{count}}",
+    "selectPhotos": "Pilih foto",
+    "setRegionByRectangle": "Tetapkan kawasan dengan segi empat tepat",
+    "setRegionByVertex": "Tetapkan kawasan dengan bucu",
+    "setText": "Letakkan teks",
+    "editRegion": "Edit kawasan",
+    "dragRegion": "Alihkan kawasan",
+    "removeRegion": "Buang kawasan"
+  },
+  "chart": {
+    "moreAlt": "Lagi",
+    "dateUnknownPhotos": "Foto dengan tarikh tidak diketahui: {{count}}",
+    "showDateUnknownPhotos": "Tunjukkan foto dengan tarikh tidak diketahui pada peta",
+    "units": {
+      "year": "Tahun",
+      "month": "Bulan",
+      "day": "Hari",
+      "hour": "Jam",
+      "minute": "Minit",
+      "second": "Saat"
+    },
+    "unsupportedDuration": "Carta ini tidak dapat memaparkan tempoh melebihi 30 hari apabila “Jam” dipilih, melebihi 3 hari apabila “Minit” dipilih, atau melebihi 1 jam apabila “Saat” dipilih.",
+    "changeUnitOrSelection": "Tukar pilihan Tahun/Bulan/Hari/Jam/Minit/Saat, atau pilih foto supaya tempohnya lebih pendek.",
+    "selectPhotosWithinZoom": "Pilih foto dalam julat yang dizum",
+    "zoom": "Zum",
+    "resetZoom": "Set semula\nzum"
+  },
+  "loadingFolder": {
+    "collecting": "Mengumpulkan fail untuk dimuatkan daripada folder yang dibuka...",
+    "loading": "Memuatkan fail daripada folder yang dibuka...",
+    "completed": "Semua fail telah dimuatkan (bilangan: {{count}}).",
+    "progress": "Fail yang dimuatkan: {{loaded}} daripada {{total}}.",
+    "generatingMap": "Menjana peta daripada fail yang dimuatkan..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "Tiada foto dengan data lokasi dalam folder yang dibuka."
+  },
+  "loadedFiles": {
+    "loaded": "Fail yang dimuatkan: {{count}}.",
+    "withLocationData": "Fail dengan data lokasi: {{count}}.",
+    "total": "Jumlah"
+  },
+  "thumbnailGeneration": {
+    "generating": "Menjana lakaran kecil untuk fail HEIF...",
+    "completed": "Lakaran kecil untuk fail HEIF telah siap dijana.",
+    "finishedWithErrors": "Penjanaan lakaran kecil untuk fail HEIF selesai dengan ralat.",
+    "showDetails": "Tunjukkan butiran",
+    "processed": "Fail yang diproses: {{processed}} daripada {{total}}.",
+    "processedWithErrors": "Fail yang diproses: {{processed}} daripada {{total}}, dengan ralat.",
+    "seeFilesWithErrors": "Klik di sini untuk melihat fail yang mempunyai ralat.",
+    "seeFilesWithErrorsTitle": "Lihat fail yang mempunyai ralat",
+    "generationRequired": "Lakaran kecil yang perlu dijana: {{required}}. Bilangan ini dikira sebagai “fail HEIF ({{heif}}) − fail yang sudah ada dalam cache ({{cached}})”.",
+    "closeStatusBar": "Tutup bar status penjanaan lakaran kecil",
+    "errorDialog": {
+      "message": "Lakaran kecil tidak dapat dijana untuk fail berikut (bilangan: {{count}}):",
+      "filter": "Tapis",
+      "number": "No.",
+      "file": "Fail",
+      "openFile": "Buka fail",
+      "openFolder": "Buka folder"
+    }
+  },
+  "settings": {
+    "title": "Tetapan",
+    "tabs": {
+      "language": "Bahasa (Language)",
+      "appearance": "Penampilan",
+      "dateTime": "Tarikh & Masa",
+      "os": "Sistem",
+      "cache": "Cache"
+    },
+    "restartAfterSaving": "Aplikasi ini akan dimulakan semula selepas tetapan disimpan.",
+    "confirmRestart": "Aplikasi ini akan dimulakan semula selepas tetapan disimpan.\nAdakah anda mahu meneruskan?",
+    "save": "Simpan",
+    "language": {
+      "title": "Bahasa",
+      "description": "Bahasa berubah selepas aplikasi dimulakan semula."
+    },
+    "appearance": {
+      "title": "Penampilan",
+      "showStatusBar": "Tunjukkan bar status"
+    },
+    "dateTime": {
+      "title": "Format tarikh dan masa",
+      "description": "Format tarikh dan masa berubah selepas aplikasi dimulakan semula.",
+      "dateFormat": "Format tarikh",
+      "clockSystem": "12 atau 24 jam",
+      "clock12": "12 jam",
+      "clock24": "24 jam",
+      "example": "Contoh"
+    },
+    "os": {
+      "title": "Menu konteks Penjelajah Fail",
+      "description": "Tambahkan “{{menuItem}}” pada menu konteks Penjelajah Fail atau buangnya.",
+      "add": "Tambah",
+      "remove": "Buang",
+      "added": "“{{menuItem}}” telah ditambahkan pada menu konteks Penjelajah Fail.",
+      "removed": "“{{menuItem}}” telah dibuang daripada menu konteks Penjelajah Fail.",
+      "failedToAdd": "Gagal menambahkan “{{menuItem}}” pada menu konteks Penjelajah Fail.",
+      "failedToRemove": "Gagal membuang “{{menuItem}}” daripada menu konteks Penjelajah Fail.",
+      "confirmInExplorer": "Untuk mengesahkannya, buka Penjelajah Fail dan klik kanan pada fail atau folder."
+    },
+    "cache": {
+      "title": "Cache lakaran kecil HEIF",
+      "requiredForHeif": "<heifLink>Fail HEIF</heifLink> memerlukan penjanaan lakaran kecil, dan ini mengambil masa.",
+      "thereforeCached": "Oleh itu, lakaran kecil yang dijana disimpan dalam cache.",
+      "usedNextTime": "Mulai kali seterusnya, cache digunakan dan lakaran kecil tidak dijana semula.",
+      "location": "Lokasi cache:",
+      "restartAfterDeleting": "Aplikasi ini akan dimulakan semula selepas cache lakaran kecil dipadam.",
+      "delete": "Padam cache lakaran kecil",
+      "confirmDelete": "Aplikasi ini akan dimulakan semula selepas cache lakaran kecil dipadam.\nAdakah anda mahu meneruskan?"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "Buka dengan {{appName}}",
+    "openWithAccessKey": "Buka dengan &{{appName}}"
+  },
+  "menu": {
+    "app": {
+      "about": "Perihal {{appName}}",
+      "services": "Perkhidmatan",
+      "hide": "Sembunyikan {{appName}}",
+      "hideOthers": "Sembunyikan Lain",
+      "showAll": "Tunjukkan Semua",
+      "quit": "Keluar daripada {{appName}}"
+    },
+    "view": {
+      "title": "Paparan",
+      "reload": "Muat semula",
+      "actualSize": "Saiz sebenar",
+      "zoomIn": "Zum masuk",
+      "zoomOut": "Zum keluar",
+      "toggleFullScreen": "Togol skrin penuh"
+    },
+    "selection": {
+      "title": "Pilihan",
+      "undo": "Buat asal",
+      "redo": "Buat semula"
+    },
+    "settings": {
+      "title": "Tetapan",
+      "openSettings": "Buka tetapan"
+    },
+    "help": {
+      "title": "Bantuan",
+      "showWelcomeDialog": "Tunjukkan dialog selamat datang",
+      "advancedMenu": "Menu lanjutan",
+      "openLogFolder": "Buka folder log",
+      "toggleDeveloperTools": "Tunjukkan/sembunyikan alat pembangun"
+    }
+  },
+  "autoUpdate": {
+    "title": "Versi baharu {{appName}} tersedia!",
+    "message": "Versi baharu {{appName}} tersedia dan akan dipasang selepas aplikasi dimulakan semula.\nAdakah anda mahu memulakan semula aplikasi sekarang?\n\nVersi semasa: {{currentVersion}}\nVersi terkini: {{latestVersion}}",
+    "yes": "Ya",
+    "no": "Tidak"
+  }
+}

@@ -98,7 +98,8 @@ export class OpenFolderService {
 
     this.dialog.open(NoPhotosWithLocationDataDialogComponent, {
       width: '500px',
-      height: '125px',
+      // At least its height in English; taller for a message that takes two lines in another language.
+      minHeight: '125px',
       panelClass: 'custom-dialog-container',
       disableClose: true,
       autoFocus: false,

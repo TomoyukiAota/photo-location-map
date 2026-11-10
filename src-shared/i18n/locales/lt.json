@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "Įkeliama..."
+  },
+  "common": {
+    "ok": "Gerai",
+    "cancel": "Atšaukti",
+    "close": "Uždaryti"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "Kalba (Language)",
+    "systemLanguage": {
+      "mac": "Naudoti „macOS“ nustatymą ({{language}})",
+      "windows": "Naudoti „Windows“ nustatymą ({{language}})",
+      "other": "Naudoti sistemos nustatymą ({{language}})"
+    },
+    "restartToApply": "Kad kalba būtų pritaikyta, ši programa bus paleista iš naujo.",
+    "confirm": "Gerai",
+    "search": "Ieškoti",
+    "noLanguagesFound": "Kalbų nerasta"
+  },
+  "appInfo": {
+    "appIconAlt": "Programos piktograma",
+    "version": "{{version}} versija",
+    "developedBy": "Kūrėjas: Tomoyuki Aota.",
+    "xProfileAlt": "„X“ (anksčiau „Twitter“) profilis",
+    "xProfileTitle": "Atidaryti „X“ (anksčiau „Twitter“) profilį",
+    "gitHubProfileAlt": "„GitHub“ profilis",
+    "gitHubProfileTitle": "Atidaryti „GitHub“ profilį",
+    "troubleshooting": "Jei kyla problemų dėl šios programos, žr. <pageLink>trikčių šalinimo puslapį</pageLink>.",
+    "troubleshootingLinkTitle": "Atidaryti trikčių šalinimo puslapį"
+  },
+  "welcome": {
+    "message": "Sveiki atvykę į „{{appName}}“",
+    "usageInfoCollection": "Siekiant tobulinti šią programą, renkama anoniminė naudojimo informacija. Toliau naudodami programą, su tuo sutinkate."
+  },
+  "about": {
+    "releasesLink": "Atsisiuntimai ir leidimo pastabos",
+    "releasesLinkTitle": "Atidaryti atsisiuntimus ir leidimo pastabas",
+    "translations": "Vertimai į kitas kalbas yra laukiami: žr., <guideLink>kaip išversti šią programą</guideLink>.",
+    "translationsLinkTitle": "Atidaryti šios programos vertimo vadovą",
+    "homePageTitle": "Atidaryti pagrindinį puslapį",
+    "sourceCodeTitle": "Peržiūrėti išeitinį kodą „GitHub“"
+  },
+  "sidebar": {
+    "openFolder": "Atidaryti aplanką",
+    "cannotOpenWhileGeneratingThumbnails": "Kol kuriamos miniatiūros, aplanko atidaryti negalima.",
+    "openFolderToSeePhotos": "Atidarykite aplanką, kad pamatytumėte, kur darytos nuotraukos.",
+    "sort": {
+      "title": "Rikiuoti",
+      "byName": "Pagal pavadinimą",
+      "byShootingTime": "Pagal fotografavimo laiką",
+      "ascending": "Didėjimo tvarka",
+      "descending": "Mažėjimo tvarka"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "Rikiavimas pagal fotografavimo laiką",
+    "intro": "Pasirinkus „Pagal fotografavimo laiką“, programa failus rikiuoja taip:",
+    "step1": "naudoja EXIF duomenų reikšmę DateTimeOriginal. Jei jos nėra,",
+    "step2": "naudoja failo modifikavimo laiką.",
+    "foldersNote": "Aplankai rikiuojami pagal pavadinimą, nes aplankai neturi „fotografavimo laiko“.",
+    "moreDetails": "Daugiau informacijos",
+    "details": {
+      "intro": "Toliau pateikiama papildoma informacija:",
+      "mostTrustworthy": "EXIF duomenų reikšmė DateTimeOriginal yra patikimiausia informacija apie tai, kada nuotrauka buvo padaryta.",
+      "sometimesMissing": "Dauguma fotoaparatų įrašo DateTimeOriginal į daugumą JPEG/HEIF/TIFF failų, tačiau kartais šios reikšmės nėra.",
+      "modifiedTime": "Failo modifikavimo laikas dažniausiai sutampa su nuotraukos padarymo laiku, todėl jis naudojamas, kai nėra DateTimeOriginal.",
+      "otherFiles": "Kiti failai, ne JPEG/HEIF/TIFF, neturi EXIF duomenų, todėl jiems visada naudojamas modifikavimo laikas."
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "Atidarytas aplankas - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "Pasirinkti tik šį failą",
+      "selectOnlyThisFolder": "Pasirinkti tik šį aplanką",
+      "open": "Atidaryti",
+      "openFolder": "Atidaryti aplanką"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "Nuotraukos informacija nepasiekiama.",
+    "openFile": "Atidaryti failą",
+    "moreOptions": "Daugiau parinkčių",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "Pasukti miniatiūrą",
+    "menu": {
+      "selectOnlyThis": "Pasirinkti tik šį failą",
+      "openFolder": "Atidaryti aplanką",
+      "openGoogleMaps": "Atidaryti „Google Maps“",
+      "openGoogleStreetView": "Atidaryti „Google Street View“",
+      "viewData": "Peržiūrėti duomenis"
+    },
+    "pathTooLong": "Miniatiūros parodyti negalima, nes failo kelio ilgis yra {{length}}. „Windows“ riboja kelio ilgį iki {{maximum}}. Pakeiskite failo vietą, kad kelias būtų trumpesnis. Norėdami sužinoti daugiau, paspauskite Ctrl+Shift+I ir perskaitykite konsolės pranešimus.",
+    "generatedThumbnailPathTooLong": "Miniatiūros parodyti negalima, nes sukurtos miniatiūros kelio ilgis yra {{length}}. „Windows“ riboja kelio ilgį iki {{maximum}}. Pakeiskite failo vietą, kad sukurtos miniatiūros kelias būtų trumpesnis. Norėdami sužinoti daugiau, paspauskite Ctrl+Shift+I ir perskaitykite konsolės pranešimus."
+  },
+  "map": {
+    "zoomIn": "Artinti",
+    "zoomOut": "Tolinti",
+    "layers": "Sluoksniai",
+    "photosInRegions": "Nuotraukos regionuose: {{count}}",
+    "selectPhotos": "Pasirinkti nuotraukas",
+    "setRegionByRectangle": "Nustatyti regioną stačiakampiu",
+    "setRegionByVertex": "Nustatyti regioną viršūnėmis",
+    "setText": "Įterpti tekstą",
+    "editRegion": "Redaguoti regioną",
+    "dragRegion": "Perkelti regioną",
+    "removeRegion": "Pašalinti regioną"
+  },
+  "chart": {
+    "moreAlt": "Daugiau",
+    "dateUnknownPhotos": "Nuotraukos su nežinoma data: {{count}}",
+    "showDateUnknownPhotos": "Rodyti žemėlapyje nuotraukas su nežinoma data",
+    "units": {
+      "year": "Metai",
+      "month": "Mėnuo",
+      "day": "Diena",
+      "hour": "Valanda",
+      "minute": "Minutė",
+      "second": "Sekundė"
+    },
+    "unsupportedDuration": "Ši diagrama negali rodyti ilgesnio nei 30 dienų laikotarpio, kai pasirinkta „Valanda“, ilgesnio nei 3 dienų, kai pasirinkta „Minutė“, ir ilgesnio nei 1 valandos, kai pasirinkta „Sekundė“.",
+    "changeUnitOrSelection": "Pakeiskite pasirinkimą Metai/Mėnuo/Diena/Valanda/Minutė/Sekundė arba pasirinkite nuotraukas taip, kad laikotarpis būtų trumpesnis.",
+    "selectPhotosWithinZoom": "Pasirinkti nuotraukas priartintame intervale",
+    "zoom": "Mastelis",
+    "resetZoom": "Atkurti\nmastelį"
+  },
+  "loadingFolder": {
+    "collecting": "Renkami iš atidaryto aplanko įkeltini failai...",
+    "loading": "Įkeliami atidaryto aplanko failai...",
+    "completed": "Visi failai įkelti (skaičius: {{count}}).",
+    "progress": "Įkelta failų: {{loaded}} iš {{total}}.",
+    "generatingMap": "Iš įkeltų failų kuriamas žemėlapis..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "Atidarytame aplanke nėra nuotraukų su vietos duomenimis."
+  },
+  "loadedFiles": {
+    "loaded": "Įkelta failų: {{count}}.",
+    "withLocationData": "Failų su vietos duomenimis: {{count}}.",
+    "total": "Iš viso"
+  },
+  "thumbnailGeneration": {
+    "generating": "Kuriamos HEIF failų miniatiūros...",
+    "completed": "HEIF failų miniatiūros sukurtos.",
+    "finishedWithErrors": "HEIF failų miniatiūrų kūrimas baigtas su klaidomis.",
+    "showDetails": "Rodyti išsamią informaciją",
+    "processed": "Apdorota failų: {{processed}} iš {{total}}.",
+    "processedWithErrors": "Apdorota failų: {{processed}} iš {{total}}, su klaidomis.",
+    "seeFilesWithErrors": "Spustelėkite čia, kad pamatytumėte failus su klaidomis.",
+    "seeFilesWithErrorsTitle": "Peržiūrėti failus su klaidomis",
+    "generationRequired": "Reikia sukurti miniatiūrų: {{required}}. Šis skaičius gaunamas taip: „HEIF failai ({{heif}}) − failai, jau esantys talpykloje ({{cached}})“.",
+    "closeStatusBar": "Uždaryti miniatiūrų kūrimo būsenos juostą",
+    "errorDialog": {
+      "message": "Nepavyko sukurti šių failų miniatiūrų (skaičius: {{count}}):",
+      "filter": "Filtruoti",
+      "number": "Nr.",
+      "file": "Failas",
+      "openFile": "Atidaryti failą",
+      "openFolder": "Atidaryti aplanką"
+    }
+  },
+  "settings": {
+    "title": "Nustatymai",
+    "tabs": {
+      "language": "Kalba (Language)",
+      "appearance": "Išvaizda",
+      "dateTime": "Data ir laikas",
+      "os": "Sistema",
+      "cache": "Talpykla"
+    },
+    "restartAfterSaving": "Įrašius nustatymus, ši programa bus paleista iš naujo.",
+    "confirmRestart": "Įrašius nustatymus, ši programa bus paleista iš naujo.\nAr norite tęsti?",
+    "save": "Įrašyti",
+    "language": {
+      "title": "Kalba",
+      "description": "Kalba pasikeičia paleidus programą iš naujo."
+    },
+    "appearance": {
+      "title": "Išvaizda",
+      "showStatusBar": "Rodyti būsenos juostą"
+    },
+    "dateTime": {
+      "title": "Datos ir laiko formatas",
+      "description": "Datos ir laiko formatas pasikeičia paleidus programą iš naujo.",
+      "dateFormat": "Datos formatas",
+      "clockSystem": "12 arba 24 val.",
+      "clock12": "12 valandų",
+      "clock24": "24 valandos",
+      "example": "Pavyzdys"
+    },
+    "os": {
+      "title": "Failų naršyklės kontekstinis meniu",
+      "description": "Įtraukite „{{menuItem}}“ į failų naršyklės kontekstinį meniu arba pašalinkite iš jo.",
+      "add": "Įtraukti",
+      "remove": "Pašalinti",
+      "added": "„{{menuItem}}“ įtraukta į failų naršyklės kontekstinį meniu.",
+      "removed": "„{{menuItem}}“ pašalinta iš failų naršyklės kontekstinio meniu.",
+      "failedToAdd": "Nepavyko įtraukti „{{menuItem}}“ į failų naršyklės kontekstinį meniu.",
+      "failedToRemove": "Nepavyko pašalinti „{{menuItem}}“ iš failų naršyklės kontekstinio meniu.",
+      "confirmInExplorer": "Norėdami patikrinti, atidarykite failų naršyklę ir dešiniuoju pelės mygtuku spustelėkite failą arba aplanką."
+    },
+    "cache": {
+      "title": "HEIF miniatiūrų talpykla",
+      "requiredForHeif": "<heifLink>HEIF failams</heifLink> reikia kurti miniatiūras, o tai užtrunka.",
+      "thereforeCached": "Todėl sukurtos miniatiūros įrašomos į talpyklą.",
+      "usedNextTime": "Nuo kito karto naudojama talpykla ir miniatiūros iš naujo nekuriamos.",
+      "location": "Talpyklos vieta:",
+      "restartAfterDeleting": "Ištrynus miniatiūrų talpyklą, ši programa bus paleista iš naujo.",
+      "delete": "Ištrinti miniatiūrų talpyklą",
+      "confirmDelete": "Ištrynus miniatiūrų talpyklą, ši programa bus paleista iš naujo.\nAr norite tęsti?"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "Atidaryti naudojant „{{appName}}“",
+    "openWithAccessKey": "Atidaryti naudojant „&{{appName}}“"
+  },
+  "menu": {
+    "app": {
+      "about": "Apie „{{appName}}“",
+      "services": "Paslaugos",
+      "hide": "Slėpti „{{appName}}“",
+      "hideOthers": "Slėpti kitas",
+      "showAll": "Rodyti visas",
+      "quit": "Išjungti „{{appName}}“"
+    },
+    "view": {
+      "title": "Rodymas",
+      "reload": "Įkelti iš naujo",
+      "actualSize": "Tikrasis dydis",
+      "zoomIn": "Artinti",
+      "zoomOut": "Tolinti",
+      "toggleFullScreen": "Įjungti arba išjungti viso ekrano režimą"
+    },
+    "selection": {
+      "title": "Pasirinkimas",
+      "undo": "Anuliuoti",
+      "redo": "Perdaryti"
+    },
+    "settings": {
+      "title": "Nustatymai",
+      "openSettings": "Atidaryti nustatymus"
+    },
+    "help": {
+      "title": "Žinynas",
+      "showWelcomeDialog": "Rodyti pasveikinimo langą",
+      "advancedMenu": "Išplėstinis meniu",
+      "openLogFolder": "Atidaryti žurnalų aplanką",
+      "toggleDeveloperTools": "Rodyti arba slėpti kūrėjo įrankius"
+    }
+  },
+  "autoUpdate": {
+    "title": "Yra nauja „{{appName}}“ versija!",
+    "message": "Yra nauja „{{appName}}“ versija, kuri bus įdiegta paleidus iš naujo.\nAr norite paleisti programą iš naujo dabar?\n\nDabartinė versija: {{currentVersion}}\nNaujausia versija: {{latestVersion}}",
+    "yes": "Taip",
+    "no": "Ne"
+  }
+}

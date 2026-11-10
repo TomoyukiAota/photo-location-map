@@ -26,7 +26,8 @@ export class LanguageDialogAtAppLaunchService {
       width: '420px',
       panelClass: 'custom-dialog-container',
       ariaLabelledBy: 'language-dialog-title',
-      autoFocus: 'dialog',
+      // The search field, which is the first element that the Tab key reaches: the user can type a language at once.
+      autoFocus: 'first-tabbable',
       restoreFocus: false,
       disableClose: true
     });

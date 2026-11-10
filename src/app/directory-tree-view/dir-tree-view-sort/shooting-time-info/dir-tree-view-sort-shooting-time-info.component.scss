@@ -24,7 +24,8 @@
   padding: 25px 10px;
 
   .message-main {
-    padding: 0 0 20px 15px;
+    padding: 0 0 20px;
+    padding-inline-start: 15px;
 
     li {
       margin-bottom: 10px;
@@ -36,9 +37,9 @@
   }
 
   .message-details {
-    margin-left: 20px;
+    margin-inline-start: 20px;
     padding: 5px 20px;
-    border-left: black 1px solid;
+    border-inline-start: black 1px solid;
 
     p {
       margin: 10px 0;
@@ -53,7 +54,14 @@
   font-weight: normal; // Restore "font-weight: 500" given by mat-button to the browser's default value
 }
 
-.details-opened-icon {
+// The arrow points to where the text runs: to the left in a language written from right to left.
+:host-context([dir="rtl"]) mat-icon {
+  transform: scaleX(-1);
+}
+
+// Down, in either direction.
+.details-opened-icon,
+:host-context([dir="rtl"]) .details-opened-icon {
   transform: rotate(90deg);
 }
 

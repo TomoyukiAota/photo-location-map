@@ -26,16 +26,27 @@ export class MoreOptionsMenuElement {
    * TL;DR: The menu is as wide as its longest item, which depends on the language.
    * Details: Under the button, it opens leftwards from the button's right side. In English it was 24 px short of the
    * map's left edge for a popup at that edge; in Japanese, whose items are about 25 px wider, it was cut off there.
+   * In a language written from right to left, the sides are the other way round: the menu opens rightwards from the
+   * button's left side, and is moved to the left when its right edge is beyond that of its area.
    */
   public static keepWithinArea(menuElement: HTMLElement, moreOptionsButton: HTMLElement): void {
     const area = moreOptionsButton.closest(sidebarAreaId) ?? document.querySelector(mapAreaId);
-    if (!area || menuElement.style.right === '')
+    if (!area || menuElement.style.insetInlineEnd === '')
       return;
 
     const margin = 4;
-    const cutOff = area.getBoundingClientRect().left + margin - menuElement.getBoundingClientRect().left;
+    const areaBounds = area.getBoundingClientRect();
+    const menuBounds = menuElement.getBoundingClientRect();
+    const cutOff = this.isRightToLeft(moreOptionsButton)
+      ? menuBounds.right - (areaBounds.right - margin)
+      : areaBounds.left + margin - menuBounds.left;
     if (cutOff > 0)
-      menuElement.style.right = `${parseFloat(menuElement.style.right) - cutOff}px`;
+      menuElement.style.insetInlineEnd = `${parseFloat(menuElement.style.insetInlineEnd) - cutOff}px`;
+  }
+
+  /** Whether the button is in a page of a language written from right to left, where it is at the left of its row. */
+  private static isRightToLeft(moreOptionsButton: HTMLElement): boolean {
+    return getComputedStyle(moreOptionsButton).direction === 'rtl';
   }
 
   private static configureMenuPosition(menuElement: HTMLElement, moreOptionsButton: HTMLElement) {
@@ -45,22 +56,26 @@ export class MoreOptionsMenuElement {
       ? document.querySelector(sidebarAreaId)
       : document.querySelector(mapAreaId);
     const {clientWidth: viewportWidth} = document.documentElement;
-    const {bottom: buttonBottom, right: buttonRight} = moreOptionsButton.getBoundingClientRect();
+    const {bottom: buttonBottom, left: buttonLeft, right: buttonRight} = moreOptionsButton.getBoundingClientRect();
 
     const enoughRoomBelowButton = areaHeight - buttonBottom > 195; // Adjust the value if the menu height changes.
-    const enoughRoomRightToButton = isWithinSidebar
+    // The room on the side that the texts run to: the right, or the left in a language written from right to left.
+    const roomBesideButton = this.isRightToLeft(moreOptionsButton) ? buttonLeft : viewportWidth - buttonRight;
+    const enoughRoomBesideButton = isWithinSidebar
       ? false
-      : viewportWidth - buttonRight > 230; // Adjust the value if the menu width changes.
+      : roomBesideButton > 230; // Adjust the value if the menu width changes.
 
+    // The sides are named by the direction of the text (inset-inline-*), so that they are the other way round in a
+    // language written from right to left: "end" is the right side, or the left side there.
     if (enoughRoomBelowButton) {
       menuElement.style.top = '37px';
-      menuElement.style.right = isWithinSidebar ? '0' : '-25px';
-    } else if (enoughRoomRightToButton) {
+      menuElement.style.insetInlineEnd = isWithinSidebar ? '0' : '-25px';
+    } else if (enoughRoomBesideButton) {
       menuElement.style.bottom = '0';
-      menuElement.style.left = '37px';
+      menuElement.style.insetInlineStart = '37px';
     } else {
       menuElement.style.bottom = '37px';
-      menuElement.style.right = isWithinSidebar ? '0' : '-25px';
+      menuElement.style.insetInlineEnd = isWithinSidebar ? '0' : '-25px';
     }
   }
 

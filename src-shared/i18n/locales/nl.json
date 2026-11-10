@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "Laden..."
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Annuleer",
+    "close": "Sluit"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "Taal (Language)",
+    "systemLanguage": {
+      "mac": "Gebruik de instelling van macOS ({{language}})",
+      "windows": "Gebruik de instelling van Windows ({{language}})",
+      "other": "Gebruik de instelling van het systeem ({{language}})"
+    },
+    "restartToApply": "Deze app wordt opnieuw gestart om de taal toe te passen.",
+    "confirm": "OK",
+    "search": "Zoek",
+    "noLanguagesFound": "Geen talen gevonden"
+  },
+  "appInfo": {
+    "appIconAlt": "Appsymbool",
+    "version": "Versie {{version}}",
+    "developedBy": "Ontwikkeld door Tomoyuki Aota.",
+    "xProfileAlt": "Profiel op X (voorheen Twitter)",
+    "xProfileTitle": "Open het profiel op X (voorheen Twitter)",
+    "gitHubProfileAlt": "GitHub-profiel",
+    "gitHubProfileTitle": "Open het GitHub-profiel",
+    "troubleshooting": "Als je problemen ondervindt met deze app, raadpleeg dan <pageLink>de pagina voor probleemoplossing</pageLink>.",
+    "troubleshootingLinkTitle": "Open de pagina voor probleemoplossing"
+  },
+  "welcome": {
+    "message": "Welkom bij {{appName}}",
+    "usageInfoCollection": "Om deze app te verbeteren, worden anonieme gebruiksgegevens verzameld. Door deze app te blijven gebruiken, ga je hiermee akkoord."
+  },
+  "about": {
+    "releasesLink": "Downloads en release-opmerkingen",
+    "releasesLinkTitle": "Open de downloads en release-opmerkingen",
+    "translations": "Vertalingen in andere talen zijn welkom: zie <guideLink>hoe je deze app vertaalt</guideLink>.",
+    "translationsLinkTitle": "Open de handleiding voor het vertalen van deze app",
+    "homePageTitle": "Open de startpagina",
+    "sourceCodeTitle": "Bekijk de broncode op GitHub"
+  },
+  "sidebar": {
+    "openFolder": "Open map",
+    "cannotOpenWhileGeneratingThumbnails": "Tijdens het aanmaken van miniaturen kan geen map worden geopend.",
+    "openFolderToSeePhotos": "Open een map om te zien waar de foto’s zijn gemaakt.",
+    "sort": {
+      "title": "Sorteer",
+      "byName": "Op naam",
+      "byShootingTime": "Op opnametijd",
+      "ascending": "Oplopend",
+      "descending": "Aflopend"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "Sorteren op opnametijd",
+    "intro": "Als ‘Op opnametijd’ is geselecteerd, gaat deze app bij het sorteren van bestanden als volgt te werk:",
+    "step1": "De app gebruikt DateTimeOriginal uit de EXIF-gegevens. Als die waarde ontbreekt,",
+    "step2": "gebruikt de app de wijzigingsdatum van het bestand.",
+    "foldersNote": "Mappen worden op naam gesorteerd, omdat mappen geen ‘opnametijd’ hebben.",
+    "moreDetails": "Meer achtergrondinformatie",
+    "details": {
+      "intro": "Hieronder staat wat achtergrondinformatie:",
+      "mostTrustworthy": "DateTimeOriginal uit de EXIF-gegevens is de betrouwbaarste informatie over het moment waarop de foto is gemaakt.",
+      "sometimesMissing": "De meeste camera’s schrijven DateTimeOriginal in de meeste JPEG-/HEIF-/TIFF-bestanden, maar soms ontbreekt de waarde.",
+      "modifiedTime": "De wijzigingsdatum van het bestand is vaak het moment waarop de foto is gemaakt. Daarom wordt die gebruikt als DateTimeOriginal ontbreekt.",
+      "otherFiles": "Andere bestanden dan JPEG/HEIF/TIFF bevatten geen EXIF-gegevens. Daarom wordt voor die bestanden altijd de wijzigingsdatum gebruikt."
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "Geopende map - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "Selecteer alleen dit bestand",
+      "selectOnlyThisFolder": "Selecteer alleen deze map",
+      "open": "Open",
+      "openFolder": "Open map"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "Er is geen informatie over de foto beschikbaar.",
+    "openFile": "Open bestand",
+    "moreOptions": "Meer opties",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "Roteer miniatuur",
+    "menu": {
+      "selectOnlyThis": "Selecteer alleen dit bestand",
+      "openFolder": "Open map",
+      "openGoogleMaps": "Open Google Maps",
+      "openGoogleStreetView": "Open Google Street View",
+      "viewData": "Bekijk gegevens"
+    },
+    "pathTooLong": "De miniatuur kan niet worden weergegeven, omdat het bestandspad {{length}} tekens lang is. Windows beperkt de lengte van een pad tot {{maximum}} tekens. Verplaats het bestand om het pad korter te maken. Druk voor details op Ctrl+Shift+I en lees de meldingen in de console.",
+    "generatedThumbnailPathTooLong": "De miniatuur kan niet worden weergegeven, omdat het bestandspad van de aangemaakte miniatuur {{length}} tekens lang is. Windows beperkt de lengte van een pad tot {{maximum}} tekens. Verplaats het bestand om het pad van de aangemaakte miniatuur korter te maken. Druk voor details op Ctrl+Shift+I en lees de meldingen in de console."
+  },
+  "map": {
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom uit",
+    "layers": "Lagen",
+    "photosInRegions": "Foto’s in de gebieden: {{count}}",
+    "selectPhotos": "Selecteer foto’s",
+    "setRegionByRectangle": "Stel een gebied in met een rechthoek",
+    "setRegionByVertex": "Stel een gebied in met hoekpunten",
+    "setText": "Plaats tekst",
+    "editRegion": "Bewerk gebied",
+    "dragRegion": "Verplaats gebied",
+    "removeRegion": "Verwijder gebied"
+  },
+  "chart": {
+    "moreAlt": "Meer",
+    "dateUnknownPhotos": "Foto’s met onbekende datum: {{count}}",
+    "showDateUnknownPhotos": "Toon foto’s met onbekende datum op de kaart",
+    "units": {
+      "year": "Jaar",
+      "month": "Maand",
+      "day": "Dag",
+      "hour": "Uur",
+      "minute": "Minuut",
+      "second": "Seconde"
+    },
+    "unsupportedDuration": "Dit diagram kan niet meer dan 30 dagen tonen als ‘Uur’ is geselecteerd, niet meer dan 3 dagen bij ‘Minuut’ en niet meer dan 1 uur bij ‘Seconde’.",
+    "changeUnitOrSelection": "Wijzig Jaar/Maand/Dag/Uur/Minuut/Seconde of selecteer foto’s zodat de periode korter wordt.",
+    "selectPhotosWithinZoom": "Selecteer foto’s binnen de zoom",
+    "zoom": "Zoom",
+    "resetZoom": "Herstel\nzoom"
+  },
+  "loadingFolder": {
+    "collecting": "De te laden bestanden uit de geopende map worden verzameld...",
+    "loading": "Bestanden uit de geopende map worden geladen...",
+    "completed": "Alle bestanden zijn geladen (aantal: {{count}}).",
+    "progress": "Geladen bestanden: {{loaded}} van {{total}}.",
+    "generatingMap": "De kaart wordt gemaakt van de geladen bestanden..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "De geopende map bevat geen foto’s met locatiegegevens."
+  },
+  "loadedFiles": {
+    "loaded": "Geladen bestanden: {{count}}.",
+    "withLocationData": "Bestanden met locatiegegevens: {{count}}.",
+    "total": "Totaal"
+  },
+  "thumbnailGeneration": {
+    "generating": "Miniaturen voor HEIF-bestanden worden aangemaakt...",
+    "completed": "De miniaturen voor HEIF-bestanden zijn aangemaakt.",
+    "finishedWithErrors": "Het aanmaken van miniaturen voor HEIF-bestanden is beëindigd met fouten.",
+    "showDetails": "Toon details",
+    "processed": "Verwerkte bestanden: {{processed}} van {{total}}.",
+    "processedWithErrors": "Verwerkte bestanden: {{processed}} van {{total}}, met fouten.",
+    "seeFilesWithErrors": "Klik hier om de bestanden met fouten te bekijken.",
+    "seeFilesWithErrorsTitle": "Bekijk de bestanden met fouten",
+    "generationRequired": "Aan te maken miniaturen: {{required}}. Dit volgt uit ‘HEIF-bestanden ({{heif}}) − bestanden in de cache ({{cached}})’.",
+    "closeStatusBar": "Sluit de statusbalk van het aanmaken van miniaturen",
+    "errorDialog": {
+      "message": "Voor de volgende bestanden konden geen miniaturen worden aangemaakt (aantal: {{count}}):",
+      "filter": "Filter",
+      "number": "Nr.",
+      "file": "Bestand",
+      "openFile": "Open bestand",
+      "openFolder": "Open map"
+    }
+  },
+  "settings": {
+    "title": "Instellingen",
+    "tabs": {
+      "language": "Taal (Language)",
+      "appearance": "Weergave",
+      "dateTime": "Datum en tijd",
+      "os": "Systeem",
+      "cache": "Cache"
+    },
+    "restartAfterSaving": "Deze app wordt opnieuw gestart nadat de instellingen zijn bewaard.",
+    "confirmRestart": "Deze app wordt opnieuw gestart nadat de instellingen zijn bewaard.\nWil je doorgaan?",
+    "save": "Bewaar",
+    "language": {
+      "title": "Taal",
+      "description": "De taal wordt gewijzigd nadat de app opnieuw is gestart."
+    },
+    "appearance": {
+      "title": "Weergave",
+      "showStatusBar": "Toon statusbalk"
+    },
+    "dateTime": {
+      "title": "Datum- en tijdnotatie",
+      "description": "De datum- en tijdnotatie wordt gewijzigd nadat de app opnieuw is gestart.",
+      "dateFormat": "Datumnotatie",
+      "clockSystem": "12 of 24 uur",
+      "clock12": "12 uur",
+      "clock24": "24 uur",
+      "example": "Voorbeeld"
+    },
+    "os": {
+      "title": "Contextmenu van Verkenner",
+      "description": "Voeg ‘{{menuItem}}’ toe aan het contextmenu van Verkenner of verwijder het daaruit.",
+      "add": "Voeg toe",
+      "remove": "Verwijder",
+      "added": "‘{{menuItem}}’ is toegevoegd aan het contextmenu van Verkenner.",
+      "removed": "‘{{menuItem}}’ is verwijderd uit het contextmenu van Verkenner.",
+      "failedToAdd": "‘{{menuItem}}’ kon niet worden toegevoegd aan het contextmenu van Verkenner.",
+      "failedToRemove": "‘{{menuItem}}’ kon niet worden verwijderd uit het contextmenu van Verkenner.",
+      "confirmInExplorer": "Open Verkenner en klik met de rechtermuisknop op een bestand of map om dit te controleren."
+    },
+    "cache": {
+      "title": "Cache voor HEIF-miniaturen",
+      "requiredForHeif": "Voor <heifLink>HEIF-bestanden</heifLink> moeten miniaturen worden aangemaakt, en dat kost tijd.",
+      "thereforeCached": "Daarom worden de aangemaakte miniaturen in de cache bewaard.",
+      "usedNextTime": "Vanaf de volgende keer wordt de cache gebruikt, zodat de miniaturen niet opnieuw worden aangemaakt.",
+      "location": "Locatie van de cache:",
+      "restartAfterDeleting": "Deze app wordt opnieuw gestart nadat de miniaturencache is verwijderd.",
+      "delete": "Verwijder miniaturencache",
+      "confirmDelete": "Deze app wordt opnieuw gestart nadat de miniaturencache is verwijderd.\nWil je doorgaan?"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "Open met {{appName}}",
+    "openWithAccessKey": "Open met &{{appName}}"
+  },
+  "menu": {
+    "app": {
+      "about": "Over {{appName}}",
+      "services": "Voorzieningen",
+      "hide": "Verberg {{appName}}",
+      "hideOthers": "Verberg andere",
+      "showAll": "Toon alles",
+      "quit": "Stop {{appName}}"
+    },
+    "view": {
+      "title": "Weergave",
+      "reload": "Laad opnieuw",
+      "actualSize": "Ware grootte",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom uit",
+      "toggleFullScreen": "Schermvullende weergave aan/uit"
+    },
+    "selection": {
+      "title": "Selectie",
+      "undo": "Herstel",
+      "redo": "Opnieuw"
+    },
+    "settings": {
+      "title": "Instellingen",
+      "openSettings": "Open instellingen"
+    },
+    "help": {
+      "title": "Help",
+      "showWelcomeDialog": "Toon het welkomstvenster",
+      "advancedMenu": "Geavanceerd menu",
+      "openLogFolder": "Open de logmap",
+      "toggleDeveloperTools": "Toon/verberg ontwikkelaarstools"
+    }
+  },
+  "autoUpdate": {
+    "title": "Er is een nieuwe versie van {{appName}} beschikbaar!",
+    "message": "Er is een nieuwe versie van {{appName}} beschikbaar, die na het herstarten wordt geïnstalleerd.\nWil je deze app nu opnieuw starten?\n\nHuidige versie: {{currentVersion}}\nNieuwste versie: {{latestVersion}}",
+    "yes": "Ja",
+    "no": "Nee"
+  }
+}

@@ -65,6 +65,8 @@ export class PhotoInfoViewerContent {
   private static createNameElement(photo: Photo) {
     const nameElement = document.createElement('div');
     nameElement.className = 'photo-info-viewer-name';
+    // Written from the side that its first letter says, whatever the direction of the application's language is.
+    nameElement.dir = 'auto';
     nameElement.innerText = photo.name;
     return nameElement;
   }

@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "Laster inn..."
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Avbryt",
+    "close": "Lukk"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "Språk (Language)",
+    "systemLanguage": {
+      "mac": "Bruk innstillingen i macOS ({{language}})",
+      "windows": "Bruk innstillingen i Windows ({{language}})",
+      "other": "Bruk systemets innstilling ({{language}})"
+    },
+    "restartToApply": "Appen starter på nytt for å ta i bruk språket.",
+    "confirm": "OK",
+    "search": "Søk",
+    "noLanguagesFound": "Fant ingen språk"
+  },
+  "appInfo": {
+    "appIconAlt": "Appsymbol",
+    "version": "Versjon {{version}}",
+    "developedBy": "Utviklet av Tomoyuki Aota.",
+    "xProfileAlt": "Profil på X (tidligere Twitter)",
+    "xProfileTitle": "Åpne profilen på X (tidligere Twitter)",
+    "gitHubProfileAlt": "GitHub-profil",
+    "gitHubProfileTitle": "Åpne GitHub-profilen",
+    "troubleshooting": "Hvis du får problemer med denne appen, kan du se <pageLink>siden for feilsøking</pageLink>.",
+    "troubleshootingLinkTitle": "Åpne siden for feilsøking"
+  },
+  "welcome": {
+    "message": "Velkommen til {{appName}}",
+    "usageInfoCollection": "For å forbedre denne appen samles det inn anonym bruksinformasjon. Ved å fortsette å bruke appen godtar du dette."
+  },
+  "about": {
+    "releasesLink": "Nedlastinger og versjonsmerknader",
+    "releasesLinkTitle": "Åpne nedlastinger og versjonsmerknader",
+    "translations": "Oversettelser til andre språk er velkomne: se <guideLink>hvordan du oversetter denne appen</guideLink>.",
+    "translationsLinkTitle": "Åpne veiledningen for å oversette denne appen",
+    "homePageTitle": "Åpne hjemmesiden",
+    "sourceCodeTitle": "Vis kildekoden på GitHub"
+  },
+  "sidebar": {
+    "openFolder": "Åpne mappe",
+    "cannotOpenWhileGeneratingThumbnails": "Det er ikke mulig å åpne en mappe mens miniatyrbilder lages.",
+    "openFolderToSeePhotos": "Åpne en mappe for å se hvor bildene ble tatt.",
+    "sort": {
+      "title": "Sorter",
+      "byName": "Etter navn",
+      "byShootingTime": "Etter opptakstidspunkt",
+      "ascending": "Stigende",
+      "descending": "Synkende"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "Sortering etter opptakstidspunkt",
+    "intro": "Når «Etter opptakstidspunkt» er valgt, gjør appen slik for å sortere filene:",
+    "step1": "Den bruker DateTimeOriginal fra EXIF-informasjonen. Hvis den verdien mangler,",
+    "step2": "bruker den filens endringsdato.",
+    "foldersNote": "Mapper sorteres etter navn, siden mapper ikke har noe «opptakstidspunkt».",
+    "moreDetails": "Mer bakgrunnsinformasjon",
+    "details": {
+      "intro": "Her er litt bakgrunnsinformasjon:",
+      "mostTrustworthy": "DateTimeOriginal fra EXIF-informasjonen er den mest pålitelige opplysningen om når bildet ble tatt.",
+      "sometimesMissing": "De fleste kameraer skriver DateTimeOriginal i de fleste JPEG-/HEIF-/TIFF-filer, men noen ganger mangler verdien.",
+      "modifiedTime": "Filens endringsdato er ofte tidspunktet da bildet ble tatt. Derfor brukes den i stedet når DateTimeOriginal mangler.",
+      "otherFiles": "Andre filer enn JPEG/HEIF/TIFF har ingen EXIF-informasjon. Derfor brukes endringsdatoen alltid for dem."
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "Åpnet mappe - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "Marker bare denne filen",
+      "selectOnlyThisFolder": "Marker bare denne mappen",
+      "open": "Åpne",
+      "openFolder": "Åpne mappe"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "Bildeinformasjon er ikke tilgjengelig.",
+    "openFile": "Åpne fil",
+    "moreOptions": "Flere valg",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "Roter miniatyrbilde",
+    "menu": {
+      "selectOnlyThis": "Marker bare denne filen",
+      "openFolder": "Åpne mappe",
+      "openGoogleMaps": "Åpne Google Maps",
+      "openGoogleStreetView": "Åpne Google Street View",
+      "viewData": "Vis data"
+    },
+    "pathTooLong": "Miniatyrbildet kan ikke vises fordi filbanen er {{length}} tegn lang. Windows begrenser lengden på baner til {{maximum}} tegn. Flytt filen for å gjøre banen kortere. Trykk på Ctrl+Shift+I og les meldingene i konsollen for detaljer.",
+    "generatedThumbnailPathTooLong": "Miniatyrbildet kan ikke vises fordi banen til det lagde miniatyrbildet er {{length}} tegn lang. Windows begrenser lengden på baner til {{maximum}} tegn. Flytt filen for å gjøre banen til det lagde miniatyrbildet kortere. Trykk på Ctrl+Shift+I og les meldingene i konsollen for detaljer."
+  },
+  "map": {
+    "zoomIn": "Zoom inn",
+    "zoomOut": "Zoom ut",
+    "layers": "Lag",
+    "photosInRegions": "Bilder i områdene: {{count}}",
+    "selectPhotos": "Marker bilder",
+    "setRegionByRectangle": "Angi et område med et rektangel",
+    "setRegionByVertex": "Angi et område med hjørnepunkter",
+    "setText": "Plasser tekst",
+    "editRegion": "Rediger område",
+    "dragRegion": "Flytt område",
+    "removeRegion": "Fjern område"
+  },
+  "chart": {
+    "moreAlt": "Mer",
+    "dateUnknownPhotos": "Bilder med ukjent dato: {{count}}",
+    "showDateUnknownPhotos": "Vis bilder med ukjent dato på kartet",
+    "units": {
+      "year": "År",
+      "month": "Måned",
+      "day": "Dag",
+      "hour": "Time",
+      "minute": "Minutt",
+      "second": "Sekund"
+    },
+    "unsupportedDuration": "Dette diagrammet kan ikke vise mer enn 30 dager når «Time» er valgt, mer enn 3 dager for «Minutt» eller mer enn 1 time for «Sekund».",
+    "changeUnitOrSelection": "Endre År/Måned/Dag/Time/Minutt/Sekund, eller marker bilder slik at perioden blir kortere.",
+    "selectPhotosWithinZoom": "Marker bilder innenfor zoomen",
+    "zoom": "Zoom",
+    "resetZoom": "Nullstill\nzoom"
+  },
+  "loadingFolder": {
+    "collecting": "Samler filene som skal lastes inn fra den åpnede mappen...",
+    "loading": "Laster inn filer fra den åpnede mappen...",
+    "completed": "Alle filene er lastet inn (antall: {{count}}).",
+    "progress": "Innlastede filer: {{loaded}} av {{total}}.",
+    "generatingMap": "Lager kartet av de innlastede filene..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "Det finnes ingen bilder med stedsinformasjon i den åpnede mappen."
+  },
+  "loadedFiles": {
+    "loaded": "Innlastede filer: {{count}}.",
+    "withLocationData": "Filer med stedsinformasjon: {{count}}.",
+    "total": "Totalt"
+  },
+  "thumbnailGeneration": {
+    "generating": "Lager miniatyrbilder for HEIF-filer...",
+    "completed": "Miniatyrbildene for HEIF-filer er laget.",
+    "finishedWithErrors": "Lagingen av miniatyrbilder for HEIF-filer ble avsluttet med feil.",
+    "showDetails": "Vis detaljer",
+    "processed": "Behandlede filer: {{processed}} av {{total}}.",
+    "processedWithErrors": "Behandlede filer: {{processed}} av {{total}}, med feil.",
+    "seeFilesWithErrors": "Klikk her for å se filene med feil.",
+    "seeFilesWithErrorsTitle": "Se filene med feil",
+    "generationRequired": "Miniatyrbilder som må lages: {{required}}. Tallet er gitt av «HEIF-filer ({{heif}}) − filer som finnes i bufferen ({{cached}})».",
+    "closeStatusBar": "Lukk statuslinjen for laging av miniatyrbilder",
+    "errorDialog": {
+      "message": "Kunne ikke lage miniatyrbilder for følgende filer (antall: {{count}}):",
+      "filter": "Filtrer",
+      "number": "Nr.",
+      "file": "Fil",
+      "openFile": "Åpne fil",
+      "openFolder": "Åpne mappe"
+    }
+  },
+  "settings": {
+    "title": "Innstillinger",
+    "tabs": {
+      "language": "Språk (Language)",
+      "appearance": "Utseende",
+      "dateTime": "Dato og tid",
+      "os": "System",
+      "cache": "Buffer"
+    },
+    "restartAfterSaving": "Appen starter på nytt etter at innstillingene er lagret.",
+    "confirmRestart": "Appen starter på nytt etter at innstillingene er lagret.\nVil du fortsette?",
+    "save": "Lagre",
+    "language": {
+      "title": "Språk",
+      "description": "Språket endres etter at appen er startet på nytt."
+    },
+    "appearance": {
+      "title": "Utseende",
+      "showStatusBar": "Vis statuslinjen"
+    },
+    "dateTime": {
+      "title": "Dato- og tidsformat",
+      "description": "Dato- og tidsformatet endres etter at appen er startet på nytt.",
+      "dateFormat": "Datoformat",
+      "clockSystem": "12 eller 24 timer",
+      "clock12": "12 timer",
+      "clock24": "24 timer",
+      "example": "Eksempel"
+    },
+    "os": {
+      "title": "Hurtigmenyen i Filutforsker",
+      "description": "Legg til eller fjern «{{menuItem}}» i hurtigmenyen i Filutforsker.",
+      "add": "Legg til",
+      "remove": "Fjern",
+      "added": "«{{menuItem}}» er lagt til i hurtigmenyen i Filutforsker.",
+      "removed": "«{{menuItem}}» er fjernet fra hurtigmenyen i Filutforsker.",
+      "failedToAdd": "Kunne ikke legge til «{{menuItem}}» i hurtigmenyen i Filutforsker.",
+      "failedToRemove": "Kunne ikke fjerne «{{menuItem}}» fra hurtigmenyen i Filutforsker.",
+      "confirmInExplorer": "Åpne Filutforsker og høyreklikk på en fil eller mappe for å kontrollere."
+    },
+    "cache": {
+      "title": "Buffer for HEIF-miniatyrbilder",
+      "requiredForHeif": "For <heifLink>HEIF-filer</heifLink> må det lages miniatyrbilder, og det tar tid.",
+      "thereforeCached": "Derfor lagres de lagde miniatyrbildene i en buffer.",
+      "usedNextTime": "Fra neste gang brukes bufferen, slik at miniatyrbildene ikke må lages på nytt.",
+      "location": "Bufferens plassering:",
+      "restartAfterDeleting": "Appen starter på nytt etter at bufferen for miniatyrbilder er slettet.",
+      "delete": "Slett bufferen for miniatyrbilder",
+      "confirmDelete": "Appen starter på nytt etter at bufferen for miniatyrbilder er slettet.\nVil du fortsette?"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "Åpne med {{appName}}",
+    "openWithAccessKey": "Åpne med &{{appName}}"
+  },
+  "menu": {
+    "app": {
+      "about": "Om {{appName}}",
+      "services": "Tjenester",
+      "hide": "Skjul {{appName}}",
+      "hideOthers": "Skjul andre",
+      "showAll": "Vis alle",
+      "quit": "Avslutt {{appName}}"
+    },
+    "view": {
+      "title": "Vis",
+      "reload": "Last inn på nytt",
+      "actualSize": "Faktisk størrelse",
+      "zoomIn": "Zoom inn",
+      "zoomOut": "Zoom ut",
+      "toggleFullScreen": "Fullskjerm av/på"
+    },
+    "selection": {
+      "title": "Markering",
+      "undo": "Angre",
+      "redo": "Gjør om"
+    },
+    "settings": {
+      "title": "Innstillinger",
+      "openSettings": "Åpne innstillinger"
+    },
+    "help": {
+      "title": "Hjelp",
+      "showWelcomeDialog": "Vis velkomstdialogen",
+      "advancedMenu": "Avansert meny",
+      "openLogFolder": "Åpne loggmappen",
+      "toggleDeveloperTools": "Vis/skjul utviklerverktøy"
+    }
+  },
+  "autoUpdate": {
+    "title": "En ny versjon av {{appName}} er tilgjengelig!",
+    "message": "En ny versjon av {{appName}} er tilgjengelig og installeres etter omstart.\nVil du starte appen på nytt nå?\n\nNåværende versjon: {{currentVersion}}\nNyeste versjon: {{latestVersion}}",
+    "yes": "Ja",
+    "no": "Nei"
+  }
+}
