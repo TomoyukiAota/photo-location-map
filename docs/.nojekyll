@@ -1,0 +1,7 @@
+This file tells GitHub Pages to publish docs/ as it is, without Jekyll. Only that it exists matters.
+
+TL;DR: The website is plain files, and the Markdown documents beside it are not templates.
+Details: GitHub Pages runs Jekyll over the folder that it publishes, and Jekyll reads {{ … }} in a Markdown file as
+a Liquid expression. A document that quoted an Angular template, {{ key | t: { count } }}, was not a valid one, so
+the build failed and the website was not published again (the "pages build and deployment" run of 2026-11-10). The
+website itself, index.html and github-pages/, needs nothing from Jekyll.
