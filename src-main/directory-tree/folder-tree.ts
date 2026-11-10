@@ -19,14 +19,20 @@ export function createFolderTree(dirPath: string): DirectoryTreeResult {
 }
 
 /**
- * For each file with a Live Photos movie next to it, the movie's path, lowercased: the photo's path with each extension
- * of Live Photos in turn, matched without regard to case, as the renderer matched them.
+ * For each file with a Live Photos movie next to it, the movie's path: the file whose path is the photo's with an
+ * extension of Live Photos, each in turn, without regard to case.
+ * TL;DR: The path is the movie's own, as the folder has it, not the lowercased one that it is matched by.
+ * Details: The lowercased path was given at first, as the renderer had matched and opened the movies before the main
+ * process read the folder. macOS and Windows open a file by such a path on their usual file systems, which have no
+ * regard to case. A file system that has, as those of Linux, has no file at that path, and the main process refused
+ * to open it: with a capital letter in it, the path is not in a folder that the user opened
+ * (../ipc/user-chosen-folders.ts), so the button of a photo's Live Photos did nothing there.
  */
 function livePhotosOf(tree: DirectoryTree): Record<string, string> {
   const files = convertToFlattenedDirTree(tree).filter(element => element?.type === 'file');
-  const movies = new Set(files
+  const movies = new Map(files
     .filter(element => FilenameExtension.isLivePhotos(element.extension))
-    .map(element => element.path.toLowerCase()));
+    .map(element => [element.path.toLowerCase(), element.path]));
   const livePhotos: Record<string, string> = {};
   if (movies.size === 0)
     return livePhotos;
@@ -35,8 +41,8 @@ function livePhotosOf(tree: DirectoryTree): Record<string, string> {
       continue;
     const parsedPath = pathModule.parse(file.path);
     for (const extension of FilenameExtension.extensionsForLivePhotos) {
-      const moviePath = pathModule.join(parsedPath.dir, parsedPath.name + extension).toLowerCase();
-      if (movies.has(moviePath)) {
+      const moviePath = movies.get(pathModule.join(parsedPath.dir, parsedPath.name + extension).toLowerCase());
+      if (moviePath) {
         livePhotos[file.path] = moviePath;
         break;
       }
