@@ -23,4 +23,17 @@ describe('The texts of the application (src-shared/i18n/i18n.ts)', () => {
     expect(tIn('ja', 'loadedFiles.loaded', { count: 5 })).toBe('5 個のファイルを読み込みました。');
     expect(tIn('en', 'common.close')).toBe('Close');
   });
+
+  it('keep each value on its own in a language written from right to left, so that it keeps its order there', () => {
+    // U+2068 and U+2069, which are not drawn, are around the value.
+    expect(tIn('ar', 'directoryTree.openedFolder', { path: '/photos/2019' })).toBe('المجلد المفتوح - \u2068/photos/2019\u2069');
+    expect(tIn('he', 'appInfo.version', { version: '1.2.3' })).toBe('גרסה \u20681.2.3\u2069');
+    // The name of the application is not a value that the caller gives.
+    expect(tIn('ar', 'menu.app.about')).toBe('حول Photo Location Map');
+  });
+
+  it('add nothing to a value in a language written from left to right', () => {
+    expect(tIn('ja', 'appInfo.version', { version: '1.2.3' })).toBe('バージョン 1.2.3');
+    expect(t('appInfo.version', { version: '1.2.3' })).toBe('Version 1.2.3');
+  });
 });

@@ -1,4 +1,4 @@
-import { Component, computed, inject, linkedSignal } from '@angular/core';
+import { afterNextRender, Component, computed, ElementRef, inject, linkedSignal } from '@angular/core';
 import { ECharts, EChartsOption } from 'echarts';
 import * as _ from 'lodash';
 import { unitOfTime } from 'moment';
@@ -33,6 +33,24 @@ export class DateTimeTakenChartComponent {
     computation: () => false,
   });
   private echartsInstance: ECharts;
+
+  constructor() {
+    const host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+    // TL;DR: The column beside the chart is as wide as the chart's unit needs in the application's language.
+    // Details: The unit is a select, which is as wide as its longest option, and "Δευτερόλεπτο", a second in Greek,
+    // is twice as wide as "Second". In a column of 130px, which fits English, a wider select pushed the icon of the
+    // menu beside it over the chart's Zoom buttons. The column gets its width as a number rather than from its
+    // contents by the layout, with which the chart was intermittently drawn wrong when a splitter was dragged (see
+    // the styles).
+    afterNextRender(() => {
+      const config = host.querySelector<HTMLElement>('.config');
+      const marginBesideConfig = 10;
+      const needed = Math.ceil(config.getBoundingClientRect().width) + marginBesideConfig;
+      const widthInEnglish = 130;
+      if (needed > widthInEnglish)
+        host.style.setProperty('--chart-sidebar-width', `${needed}px`);
+    });
+  }
 
   private createEChartsOption(xData: string[], yData: number[]) {
     const option: EChartsOption = {

@@ -67,7 +67,11 @@ Every text that the application shows comes from `t()` of
 [`src-shared/i18n/i18n.ts`](src-shared/i18n/i18n.ts), or from the `t` pipe in a
 template, and lives in `src-shared/i18n/locales/en.json`, with its translations
 next to it. Do not write such a text where it is shown: not in a template, a DOM
-call, the menu or a dialog. Add it to `en.json` and to `ja.json`.
+call, the menu or a dialog. Add it to `en.json`, and translate it in every
+other file of `locales/`: the owner reviews the Japanese, and the other
+languages are machine translations until a speaker reviews them
+(`docs/TRANSLATING.md`, "Languages"). A text left out of a file is shown in
+English.
 
 - The log, analytics events and the messages of errors stay in English, written
   where they are used.
@@ -77,6 +81,16 @@ call, the menu or a dialog. Add it to `en.json` and to `ja.json`.
   the `tagParts` pipe splits.
 - The tests run in English on a machine in any language. A test of another
   language asks for it with `PLM_TEST_SYSTEM_LANGUAGES`.
+- Every translation file is checked by a unit test, which takes no time to
+  speak of. The e2e cases and their screenshots are for English, Japanese and
+  Arabic only, the last for the layout from right to left: do not add a case
+  or a screenshot for each language, which would make the suite slower with
+  every language.
+- Arabic and Hebrew are laid out from right to left (`dir="rtl"` on the page).
+  In styles, name the sides by the direction of the text (`margin-inline-start`,
+  `inset-inline-end`, `text-align: start`), not `left` and `right`. The map
+  and the chart stay laid out from left to right. A file's name or path is in a
+  `<bdi>` element, so that it keeps its order in either direction.
 
 [`docs/TRANSLATING.md`](docs/TRANSLATING.md) is the guide for translators.
 

@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "Se încarcă..."
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Anulează",
+    "close": "Închide"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "Limbă (Language)",
+    "systemLanguage": {
+      "mac": "Folosește configurarea din macOS ({{language}})",
+      "windows": "Folosește setarea din Windows ({{language}})",
+      "other": "Folosește setarea sistemului ({{language}})"
+    },
+    "restartToApply": "Aplicația va reporni pentru a aplica limba.",
+    "confirm": "OK",
+    "search": "Caută",
+    "noLanguagesFound": "Nu s-a găsit nicio limbă"
+  },
+  "appInfo": {
+    "appIconAlt": "Pictograma aplicației",
+    "version": "Versiunea {{version}}",
+    "developedBy": "Dezvoltată de Tomoyuki Aota.",
+    "xProfileAlt": "Profil X (fostul Twitter)",
+    "xProfileTitle": "Deschide profilul X (fostul Twitter)",
+    "gitHubProfileAlt": "Profil GitHub",
+    "gitHubProfileTitle": "Deschide profilul GitHub",
+    "troubleshooting": "Dacă întâmpinați probleme cu această aplicație, consultați <pageLink>pagina de depanare</pageLink>.",
+    "troubleshootingLinkTitle": "Deschide pagina de depanare"
+  },
+  "welcome": {
+    "message": "Bun venit în {{appName}}",
+    "usageInfoCollection": "Pentru a îmbunătăți această aplicație, se colectează date anonime de utilizare. Continuând să folosiți aplicația, sunteți de acord cu acest lucru."
+  },
+  "about": {
+    "releasesLink": "Descărcări și note de lansare",
+    "releasesLinkTitle": "Deschide descărcările și notele de lansare",
+    "translations": "Traducerile în alte limbi sunt binevenite: vedeți <guideLink>cum se traduce această aplicație</guideLink>.",
+    "translationsLinkTitle": "Deschide ghidul de traducere a acestei aplicații",
+    "homePageTitle": "Deschide pagina principală",
+    "sourceCodeTitle": "Vezi codul sursă pe GitHub"
+  },
+  "sidebar": {
+    "openFolder": "Deschide dosar",
+    "cannotOpenWhileGeneratingThumbnails": "Nu se poate deschide un dosar în timp ce se creează miniaturile.",
+    "openFolderToSeePhotos": "Deschideți un dosar pentru a vedea unde au fost făcute pozele.",
+    "sort": {
+      "title": "Sortează",
+      "byName": "După nume",
+      "byShootingTime": "După momentul fotografierii",
+      "ascending": "Crescător",
+      "descending": "Descrescător"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "Sortare după momentul fotografierii",
+    "intro": "Când este selectat „După momentul fotografierii”, aplicația sortează fișierele astfel:",
+    "step1": "Folosește valoarea DateTimeOriginal din datele EXIF. Dacă aceasta lipsește,",
+    "step2": "folosește data modificării fișierului.",
+    "foldersNote": "Dosarele sunt sortate după nume, deoarece dosarele nu au un „moment al fotografierii”.",
+    "moreDetails": "Mai multe informații",
+    "details": {
+      "intro": "Mai jos sunt câteva informații suplimentare:",
+      "mostTrustworthy": "Valoarea DateTimeOriginal din datele EXIF este cea mai de încredere informație despre momentul în care a fost făcută poza.",
+      "sometimesMissing": "Majoritatea aparatelor foto scriu DateTimeOriginal în majoritatea fișierelor JPEG/HEIF/TIFF, dar uneori lipsește.",
+      "modifiedTime": "Data modificării fișierului este adesea momentul în care a fost făcută poza, de aceea este folosită în schimb atunci când DateTimeOriginal lipsește.",
+      "otherFiles": "Alte fișiere decât JPEG/HEIF/TIFF nu au date EXIF, de aceea pentru ele se folosește întotdeauna data modificării."
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "Dosar deschis - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "Selectează doar acest fișier",
+      "selectOnlyThisFolder": "Selectează doar acest dosar",
+      "open": "Deschide",
+      "openFolder": "Deschide dosarul"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "Informațiile despre poză nu sunt disponibile.",
+    "openFile": "Deschide fișierul",
+    "moreOptions": "Mai multe opțiuni",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "Rotește miniatura",
+    "menu": {
+      "selectOnlyThis": "Selectează doar acest fișier",
+      "openFolder": "Deschide dosarul",
+      "openGoogleMaps": "Deschide Google Maps",
+      "openGoogleStreetView": "Deschide Google Street View",
+      "viewData": "Vezi datele"
+    },
+    "pathTooLong": "Miniatura nu poate fi afișată deoarece lungimea căii fișierului este {{length}}. Windows limitează lungimea căii la {{maximum}}. Mutați fișierul pentru a-i scurta calea. Pentru detalii, apăsați Ctrl+Shift+I și citiți mesajele din consolă.",
+    "generatedThumbnailPathTooLong": "Miniatura nu poate fi afișată deoarece lungimea căii miniaturii create este {{length}}. Windows limitează lungimea căii la {{maximum}}. Mutați fișierul pentru a scurta calea miniaturii create. Pentru detalii, apăsați Ctrl+Shift+I și citiți mesajele din consolă."
+  },
+  "map": {
+    "zoomIn": "Mărește",
+    "zoomOut": "Micșorează",
+    "layers": "Straturi",
+    "photosInRegions": "Poze în zone: {{count}}",
+    "selectPhotos": "Selectează pozele",
+    "setRegionByRectangle": "Stabilește o zonă cu un dreptunghi",
+    "setRegionByVertex": "Stabilește o zonă prin vârfuri",
+    "setText": "Plasează text",
+    "editRegion": "Editează zona",
+    "dragRegion": "Mută zona",
+    "removeRegion": "Elimină zona"
+  },
+  "chart": {
+    "moreAlt": "Mai multe",
+    "dateUnknownPhotos": "Poze cu dată necunoscută: {{count}}",
+    "showDateUnknownPhotos": "Afișează pe hartă pozele cu dată necunoscută",
+    "units": {
+      "year": "An",
+      "month": "Lună",
+      "day": "Zi",
+      "hour": "Oră",
+      "minute": "Minut",
+      "second": "Secundă"
+    },
+    "unsupportedDuration": "Acest grafic nu poate afișa mai mult de 30 de zile când este selectat „Oră”, mai mult de 3 zile pentru „Minut” și mai mult de 1 oră pentru „Secundă”.",
+    "changeUnitOrSelection": "Schimbați An/Lună/Zi/Oră/Minut/Secundă sau selectați pozele astfel încât perioada să fie mai scurtă.",
+    "selectPhotosWithinZoom": "Selectează pozele din intervalul mărit",
+    "zoom": "Zoom",
+    "resetZoom": "Resetează\nzoomul"
+  },
+  "loadingFolder": {
+    "collecting": "Se adună fișierele de încărcat din dosarul deschis...",
+    "loading": "Se încarcă fișierele din dosarul deschis...",
+    "completed": "Toate fișierele au fost încărcate (număr: {{count}}).",
+    "progress": "Fișiere încărcate: {{loaded}} din {{total}}.",
+    "generatingMap": "Se creează harta din fișierele încărcate..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "În dosarul deschis nu există poze cu date de localizare."
+  },
+  "loadedFiles": {
+    "loaded": "Fișiere încărcate: {{count}}.",
+    "withLocationData": "Fișiere cu date de localizare: {{count}}.",
+    "total": "Total"
+  },
+  "thumbnailGeneration": {
+    "generating": "Se creează miniaturile fișierelor HEIF...",
+    "completed": "Miniaturile fișierelor HEIF au fost create.",
+    "finishedWithErrors": "Crearea miniaturilor fișierelor HEIF s-a încheiat cu erori.",
+    "showDetails": "Afișează detaliile",
+    "processed": "Fișiere procesate: {{processed}} din {{total}}.",
+    "processedWithErrors": "Fișiere procesate: {{processed}} din {{total}}, cu erori.",
+    "seeFilesWithErrors": "Faceți clic aici pentru a vedea fișierele cu erori.",
+    "seeFilesWithErrorsTitle": "Vezi fișierele cu erori",
+    "generationRequired": "Miniaturi de creat: {{required}}. Numărul rezultă din „fișiere HEIF ({{heif}}) − fișiere disponibile în cache ({{cached}})”.",
+    "closeStatusBar": "Închide bara de stare a creării miniaturilor",
+    "errorDialog": {
+      "message": "Nu s-au putut crea miniaturile următoarelor fișiere (număr: {{count}}):",
+      "filter": "Filtrează",
+      "number": "Nr.",
+      "file": "Fișier",
+      "openFile": "Deschide fișierul",
+      "openFolder": "Deschide dosarul"
+    }
+  },
+  "settings": {
+    "title": "Setări",
+    "tabs": {
+      "language": "Limbă (Language)",
+      "appearance": "Aspect",
+      "dateTime": "Dată și oră",
+      "os": "Sistem",
+      "cache": "Cache"
+    },
+    "restartAfterSaving": "Aplicația va reporni după salvarea setărilor.",
+    "confirmRestart": "Aplicația va reporni după salvarea setărilor.\nDoriți să continuați?",
+    "save": "Salvează",
+    "language": {
+      "title": "Limbă",
+      "description": "Limba se va schimba după repornirea aplicației."
+    },
+    "appearance": {
+      "title": "Aspect",
+      "showStatusBar": "Afișează bara de stare"
+    },
+    "dateTime": {
+      "title": "Formatul datei și al orei",
+      "description": "Formatul datei și al orei se va schimba după repornirea aplicației.",
+      "dateFormat": "Formatul datei",
+      "clockSystem": "12 sau 24 de ore",
+      "clock12": "12 ore",
+      "clock24": "24 de ore",
+      "example": "Exemplu"
+    },
+    "os": {
+      "title": "Meniul contextual din Explorer",
+      "description": "Adaugă sau elimină „{{menuItem}}” în meniul contextual din Explorer.",
+      "add": "Adaugă",
+      "remove": "Elimină",
+      "added": "„{{menuItem}}” a fost adăugat în meniul contextual din Explorer.",
+      "removed": "„{{menuItem}}” a fost eliminat din meniul contextual din Explorer.",
+      "failedToAdd": "„{{menuItem}}” nu a putut fi adăugat în meniul contextual din Explorer.",
+      "failedToRemove": "„{{menuItem}}” nu a putut fi eliminat din meniul contextual din Explorer.",
+      "confirmInExplorer": "Deschideți Explorer și faceți clic dreapta pe un fișier sau pe un dosar pentru a verifica."
+    },
+    "cache": {
+      "title": "Cache pentru miniaturile HEIF",
+      "requiredForHeif": "Pentru <heifLink>fișierele HEIF</heifLink> trebuie create miniaturi, ceea ce durează.",
+      "thereforeCached": "De aceea, miniaturile create sunt păstrate în cache.",
+      "usedNextTime": "Începând de data viitoare se va folosi cache-ul, astfel încât miniaturile să nu mai fie create din nou.",
+      "location": "Locația cache-ului:",
+      "restartAfterDeleting": "Aplicația va reporni după ștergerea cache-ului de miniaturi.",
+      "delete": "Șterge cache-ul de miniaturi",
+      "confirmDelete": "Aplicația va reporni după ștergerea cache-ului de miniaturi.\nDoriți să continuați?"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "Deschide cu {{appName}}",
+    "openWithAccessKey": "Deschide cu &{{appName}}"
+  },
+  "menu": {
+    "app": {
+      "about": "Despre {{appName}}",
+      "services": "Servicii",
+      "hide": "Ascunde {{appName}}",
+      "hideOthers": "Ascunde restul",
+      "showAll": "Afișează tot",
+      "quit": "Închide {{appName}}"
+    },
+    "view": {
+      "title": "Vizualizare",
+      "reload": "Reîncarcă",
+      "actualSize": "Dimensiune reală",
+      "zoomIn": "Mărește",
+      "zoomOut": "Micșorează",
+      "toggleFullScreen": "Activează/dezactivează ecranul complet"
+    },
+    "selection": {
+      "title": "Selecție",
+      "undo": "Anulează acțiunea",
+      "redo": "Refă acțiunea"
+    },
+    "settings": {
+      "title": "Setări",
+      "openSettings": "Deschide setările"
+    },
+    "help": {
+      "title": "Ajutor",
+      "showWelcomeDialog": "Afișează fereastra de bun venit",
+      "advancedMenu": "Meniu avansat",
+      "openLogFolder": "Deschide dosarul de jurnale",
+      "toggleDeveloperTools": "Afișează/ascunde instrumentele pentru dezvoltatori"
+    }
+  },
+  "autoUpdate": {
+    "title": "Este disponibilă o versiune nouă de {{appName}}!",
+    "message": "Este disponibilă o versiune nouă de {{appName}}, care va fi instalată după repornire.\nDoriți să reporniți aplicația acum?\n\nVersiunea actuală: {{currentVersion}}\nUltima versiune: {{latestVersion}}",
+    "yes": "Da",
+    "no": "Nu"
+  }
+}

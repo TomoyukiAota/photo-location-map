@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "Memuat..."
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Batal",
+    "close": "Tutup"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "Bahasa (Language)",
+    "systemLanguage": {
+      "mac": "Gunakan pengaturan macOS ({{language}})",
+      "windows": "Gunakan pengaturan Windows ({{language}})",
+      "other": "Gunakan pengaturan sistem ({{language}})"
+    },
+    "restartToApply": "Aplikasi ini akan dimulai ulang untuk menerapkan bahasa.",
+    "confirm": "OK",
+    "search": "Cari",
+    "noLanguagesFound": "Bahasa tidak ditemukan"
+  },
+  "appInfo": {
+    "appIconAlt": "Ikon aplikasi",
+    "version": "Versi {{version}}",
+    "developedBy": "Dikembangkan oleh Tomoyuki Aota.",
+    "xProfileAlt": "Profil X (sebelumnya Twitter)",
+    "xProfileTitle": "Buka profil X (sebelumnya Twitter)",
+    "gitHubProfileAlt": "Profil GitHub",
+    "gitHubProfileTitle": "Buka profil GitHub",
+    "troubleshooting": "Jika Anda mengalami masalah dengan aplikasi ini, lihat <pageLink>halaman pemecahan masalah</pageLink>.",
+    "troubleshootingLinkTitle": "Buka halaman pemecahan masalah"
+  },
+  "welcome": {
+    "message": "Selamat datang di {{appName}}",
+    "usageInfoCollection": "Untuk meningkatkan aplikasi ini, informasi penggunaan anonim dikumpulkan. Dengan terus menggunakan aplikasi ini, Anda menyetujuinya."
+  },
+  "about": {
+    "releasesLink": "Unduhan dan catatan rilis",
+    "releasesLinkTitle": "Buka unduhan dan catatan rilis",
+    "translations": "Terjemahan ke bahasa lain sangat diharapkan: lihat <guideLink>cara menerjemahkan aplikasi ini</guideLink>.",
+    "translationsLinkTitle": "Buka panduan penerjemahan aplikasi ini",
+    "homePageTitle": "Buka beranda",
+    "sourceCodeTitle": "Lihat kode sumber di GitHub"
+  },
+  "sidebar": {
+    "openFolder": "Buka Folder",
+    "cannotOpenWhileGeneratingThumbnails": "Folder tidak dapat dibuka saat gambar mini sedang dibuat.",
+    "openFolderToSeePhotos": "Buka folder untuk melihat tempat foto diambil.",
+    "sort": {
+      "title": "Urutkan",
+      "byName": "Menurut nama",
+      "byShootingTime": "Menurut waktu pengambilan",
+      "ascending": "Naik",
+      "descending": "Turun"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "Mengurutkan menurut waktu pengambilan",
+    "intro": "Saat “Menurut waktu pengambilan” dipilih, aplikasi mengurutkan file sebagai berikut:",
+    "step1": "menggunakan DateTimeOriginal di EXIF. Jika tidak tersedia,",
+    "step2": "menggunakan waktu modifikasi file.",
+    "foldersNote": "Folder diurutkan menurut nama karena folder tidak memiliki “waktu pengambilan”.",
+    "moreDetails": "Detail selengkapnya",
+    "details": {
+      "intro": "Berikut adalah informasi tambahan:",
+      "mostTrustworthy": "DateTimeOriginal di EXIF adalah informasi yang paling tepercaya tentang kapan foto diambil.",
+      "sometimesMissing": "Sebagian besar kamera menulis DateTimeOriginal ke sebagian besar file JPEG/HEIF/TIFF, tetapi terkadang tidak ada.",
+      "modifiedTime": "Waktu modifikasi file biasanya adalah waktu foto diambil, sehingga digunakan saat DateTimeOriginal tidak ada.",
+      "otherFiles": "File selain JPEG/HEIF/TIFF tidak memiliki EXIF, sehingga waktu modifikasinya selalu digunakan."
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "Folder yang dibuka - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "Pilih hanya file ini",
+      "selectOnlyThisFolder": "Pilih hanya folder ini",
+      "open": "Buka",
+      "openFolder": "Buka folder"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "Informasi foto tidak tersedia.",
+    "openFile": "Buka file",
+    "moreOptions": "Opsi lainnya",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "Putar gambar mini",
+    "menu": {
+      "selectOnlyThis": "Pilih hanya file ini",
+      "openFolder": "Buka folder",
+      "openGoogleMaps": "Buka Google Maps",
+      "openGoogleStreetView": "Buka Google Street View",
+      "viewData": "Lihat data"
+    },
+    "pathTooLong": "Gambar mini tidak dapat ditampilkan karena panjang jalur file adalah {{length}}. Windows membatasi panjang jalur hingga maksimum {{maximum}}. Ubah lokasi file untuk memperpendek jalurnya. Untuk detailnya, tekan Ctrl+Shift+I dan baca pesan konsol.",
+    "generatedThumbnailPathTooLong": "Gambar mini tidak dapat ditampilkan karena panjang jalur gambar mini yang dibuat adalah {{length}}. Windows membatasi panjang jalur hingga maksimum {{maximum}}. Ubah lokasi file untuk memperpendek jalur gambar mini yang dibuat. Untuk detailnya, tekan Ctrl+Shift+I dan baca pesan konsol."
+  },
+  "map": {
+    "zoomIn": "Perbesar",
+    "zoomOut": "Perkecil",
+    "layers": "Lapisan",
+    "photosInRegions": "Foto di dalam area: {{count}}",
+    "selectPhotos": "Pilih foto",
+    "setRegionByRectangle": "Tetapkan area dengan persegi panjang",
+    "setRegionByVertex": "Tetapkan area dengan titik sudut",
+    "setText": "Tempatkan teks",
+    "editRegion": "Edit area",
+    "dragRegion": "Pindahkan area",
+    "removeRegion": "Hapus area"
+  },
+  "chart": {
+    "moreAlt": "Lainnya",
+    "dateUnknownPhotos": "Foto dengan tanggal tidak diketahui: {{count}}",
+    "showDateUnknownPhotos": "Tampilkan foto dengan tanggal tidak diketahui di peta",
+    "units": {
+      "year": "Tahun",
+      "month": "Bulan",
+      "day": "Hari",
+      "hour": "Jam",
+      "minute": "Menit",
+      "second": "Detik"
+    },
+    "unsupportedDuration": "Bagan ini tidak dapat menampilkan rentang waktu lebih dari 30 hari saat “Jam” dipilih, lebih dari 3 hari saat “Menit” dipilih, atau lebih dari 1 jam saat “Detik” dipilih.",
+    "changeUnitOrSelection": "Ubah pilihan Tahun/Bulan/Hari/Jam/Menit/Detik, atau pilih foto agar rentang waktunya lebih pendek.",
+    "selectPhotosWithinZoom": "Pilih foto dalam rentang yang diperbesar",
+    "zoom": "Zoom",
+    "resetZoom": "Atur ulang\nzoom"
+  },
+  "loadingFolder": {
+    "collecting": "Mengumpulkan file yang akan dimuat dari folder yang dibuka...",
+    "loading": "Memuat file dari folder yang dibuka...",
+    "completed": "Semua file telah dimuat (jumlah: {{count}}).",
+    "progress": "File yang dimuat: {{loaded}} dari {{total}}.",
+    "generatingMap": "Membuat peta dari file yang dimuat..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "Tidak ada foto dengan data lokasi di folder yang dibuka."
+  },
+  "loadedFiles": {
+    "loaded": "File yang dimuat: {{count}}.",
+    "withLocationData": "File dengan data lokasi: {{count}}.",
+    "total": "Total"
+  },
+  "thumbnailGeneration": {
+    "generating": "Membuat gambar mini untuk file HEIF...",
+    "completed": "Gambar mini untuk file HEIF selesai dibuat.",
+    "finishedWithErrors": "Pembuatan gambar mini untuk file HEIF selesai dengan kesalahan.",
+    "showDetails": "Tampilkan detail",
+    "processed": "File yang diproses: {{processed}} dari {{total}}.",
+    "processedWithErrors": "File yang diproses: {{processed}} dari {{total}}, dengan kesalahan.",
+    "seeFilesWithErrors": "Klik di sini untuk melihat file yang mengalami kesalahan.",
+    "seeFilesWithErrorsTitle": "Lihat file yang mengalami kesalahan",
+    "generationRequired": "Gambar mini yang perlu dibuat: {{required}}. Jumlah ini dihitung sebagai “file HEIF ({{heif}}) − file yang sudah ada di cache ({{cached}})”.",
+    "closeStatusBar": "Tutup bilah status pembuatan gambar mini",
+    "errorDialog": {
+      "message": "Gambar mini tidak dapat dibuat untuk file berikut (jumlah: {{count}}):",
+      "filter": "Filter",
+      "number": "No.",
+      "file": "File",
+      "openFile": "Buka file",
+      "openFolder": "Buka folder"
+    }
+  },
+  "settings": {
+    "title": "Pengaturan",
+    "tabs": {
+      "language": "Bahasa (Language)",
+      "appearance": "Tampilan",
+      "dateTime": "Tanggal & Waktu",
+      "os": "Sistem",
+      "cache": "Cache"
+    },
+    "restartAfterSaving": "Aplikasi ini akan dimulai ulang setelah pengaturan disimpan.",
+    "confirmRestart": "Aplikasi ini akan dimulai ulang setelah pengaturan disimpan.\nIngin melanjutkan?",
+    "save": "Simpan",
+    "language": {
+      "title": "Bahasa",
+      "description": "Bahasa berubah setelah aplikasi dimulai ulang."
+    },
+    "appearance": {
+      "title": "Tampilan",
+      "showStatusBar": "Tampilkan bilah status"
+    },
+    "dateTime": {
+      "title": "Format tanggal dan waktu",
+      "description": "Format tanggal dan waktu berubah setelah aplikasi dimulai ulang.",
+      "dateFormat": "Format tanggal",
+      "clockSystem": "12 atau 24 jam",
+      "clock12": "12 jam",
+      "clock24": "24 jam",
+      "example": "Contoh"
+    },
+    "os": {
+      "title": "Menu konteks Penjelajah File",
+      "description": "Tambahkan “{{menuItem}}” ke menu konteks Penjelajah File atau hapus dari sana.",
+      "add": "Tambahkan",
+      "remove": "Hapus",
+      "added": "“{{menuItem}}” telah ditambahkan ke menu konteks Penjelajah File.",
+      "removed": "“{{menuItem}}” telah dihapus dari menu konteks Penjelajah File.",
+      "failedToAdd": "Gagal menambahkan “{{menuItem}}” ke menu konteks Penjelajah File.",
+      "failedToRemove": "Gagal menghapus “{{menuItem}}” dari menu konteks Penjelajah File.",
+      "confirmInExplorer": "Untuk memeriksanya, buka Penjelajah File, lalu klik kanan file atau folder."
+    },
+    "cache": {
+      "title": "Cache gambar mini HEIF",
+      "requiredForHeif": "<heifLink>File HEIF</heifLink> memerlukan pembuatan gambar mini, dan itu memakan waktu.",
+      "thereforeCached": "Karena itu, gambar mini yang dibuat disimpan dalam cache.",
+      "usedNextTime": "Mulai lain kali, cache digunakan dan gambar mini tidak dibuat lagi.",
+      "location": "Lokasi cache:",
+      "restartAfterDeleting": "Aplikasi ini akan dimulai ulang setelah cache gambar mini dihapus.",
+      "delete": "Hapus cache gambar mini",
+      "confirmDelete": "Aplikasi ini akan dimulai ulang setelah cache gambar mini dihapus.\nIngin melanjutkan?"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "Buka dengan {{appName}}",
+    "openWithAccessKey": "Buka dengan &{{appName}}"
+  },
+  "menu": {
+    "app": {
+      "about": "Tentang {{appName}}",
+      "services": "Layanan",
+      "hide": "Sembunyikan {{appName}}",
+      "hideOthers": "Sembunyikan Lainnya",
+      "showAll": "Tampilkan Semua",
+      "quit": "Keluar dari {{appName}}"
+    },
+    "view": {
+      "title": "Lihat",
+      "reload": "Muat ulang",
+      "actualSize": "Ukuran sebenarnya",
+      "zoomIn": "Perbesar",
+      "zoomOut": "Perkecil",
+      "toggleFullScreen": "Alihkan layar penuh"
+    },
+    "selection": {
+      "title": "Pilihan",
+      "undo": "Urungkan",
+      "redo": "Ulangi"
+    },
+    "settings": {
+      "title": "Pengaturan",
+      "openSettings": "Buka pengaturan"
+    },
+    "help": {
+      "title": "Bantuan",
+      "showWelcomeDialog": "Tampilkan dialog selamat datang",
+      "advancedMenu": "Menu lanjutan",
+      "openLogFolder": "Buka folder log",
+      "toggleDeveloperTools": "Tampilkan/sembunyikan alat pengembang"
+    }
+  },
+  "autoUpdate": {
+    "title": "Versi baru {{appName}} tersedia!",
+    "message": "Versi baru {{appName}} tersedia dan akan dipasang setelah aplikasi dimulai ulang.\nIngin memulai ulang aplikasi sekarang?\n\nVersi saat ini: {{currentVersion}}\nVersi terbaru: {{latestVersion}}",
+    "yes": "Ya",
+    "no": "Tidak"
+  }
+}

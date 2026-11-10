@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef } from '@angular/material/dialog';
+import { languages as languagesOfApplication } from '../../../src-shared/i18n/languages';
 import { startupMetadata } from '../../../src-shared/startup/startup-metadata';
 import { UserDataStorage } from '../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../src-shared/user-data-storage/user-data-stroage-path';
@@ -64,7 +65,7 @@ describe('LanguageDialogComponent', () => {
 
   it('has the operating system\'s language chosen, and says nothing of a restart', () => {
     expect(host.querySelector('.language-dialog-title').textContent).toBe('Language');
-    expect(languages().map(language => language.textContent.trim())).toEqual(['Use system setting (English)', 'English', '日本語']);
+    expect(languages().map(language => language.textContent.trim())).toEqual(['Use system setting (English)', ...languagesOfApplication.map(language => language.name)]);
     expect(chosenLanguage()).toBe('Use system setting (English)');
     expect(okButton().textContent.trim()).toBe('OK');
     expect(restartNote().style.visibility).toBe('hidden');

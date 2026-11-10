@@ -8,5 +8,19 @@
   z-index: 1001;  // Override the default z-index (1000) so that div.leaflet-control-layers is displayed on top of Leaflet-Geoman controls.
 }
 
+// TL;DR: The map is laid out from left to right in every language.
+// Details: Leaflet places its panes, markers and controls by left and top, and has nothing for a page written from
+// right to left: there, the scale read "km 3000" for "3000 km", and a marker's label stood beside its tail. What
+// the application writes into the map, the contents of a popup and the info of a region, gets the page's direction
+// back.
+[dir="rtl"] .leaflet-container {
+  direction: ltr;
+}
+
+[dir="rtl"] .leaflet-popup-content,
+[dir="rtl"] .plm-leaflet-map-region-info {
+  direction: rtl;
+}
+
 @include meta.load-css("plm-leaflet-map-div-icon");
 @include meta.load-css("plm-leaflet-map-region-info");

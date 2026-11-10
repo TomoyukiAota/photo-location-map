@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "불러오는 중..."
+  },
+  "common": {
+    "ok": "확인",
+    "cancel": "취소",
+    "close": "닫기"
+  },
+  "dateTime": {
+    "weekdayPattern": "(ddd)"
+  },
+  "language": {
+    "title": "언어 (Language)",
+    "systemLanguage": {
+      "mac": "macOS 설정 따르기 ({{language}})",
+      "windows": "Windows 설정 따르기 ({{language}})",
+      "other": "시스템 설정 따르기 ({{language}})"
+    },
+    "restartToApply": "언어를 적용하기 위해 이 앱을 다시 시작합니다.",
+    "confirm": "확인",
+    "search": "검색",
+    "noLanguagesFound": "언어를 찾을 수 없습니다"
+  },
+  "appInfo": {
+    "appIconAlt": "앱 아이콘",
+    "version": "버전 {{version}}",
+    "developedBy": "Tomoyuki Aota가 개발했습니다.",
+    "xProfileAlt": "X(구 Twitter) 프로필",
+    "xProfileTitle": "X(구 Twitter) 프로필 열기",
+    "gitHubProfileAlt": "GitHub 프로필",
+    "gitHubProfileTitle": "GitHub 프로필 열기",
+    "troubleshooting": "이 앱에 문제가 있으면 <pageLink>문제 해결 페이지</pageLink>를 참고하세요.",
+    "troubleshootingLinkTitle": "문제 해결 페이지 열기"
+  },
+  "welcome": {
+    "message": "{{appName}}에 오신 것을 환영합니다",
+    "usageInfoCollection": "이 앱을 개선하기 위해 익명의 사용 정보를 수집합니다. 앱을 계속 사용하면 이에 동의하는 것으로 간주됩니다."
+  },
+  "about": {
+    "releasesLink": "다운로드 및 릴리스 노트",
+    "releasesLinkTitle": "다운로드 및 릴리스 노트 열기",
+    "translations": "다른 언어로의 번역을 환영합니다. <guideLink>이 앱을 번역하는 방법</guideLink>을 참고하세요.",
+    "translationsLinkTitle": "이 앱의 번역 안내 열기",
+    "homePageTitle": "홈페이지 열기",
+    "sourceCodeTitle": "GitHub에서 소스 코드 보기"
+  },
+  "sidebar": {
+    "openFolder": "폴더 열기",
+    "cannotOpenWhileGeneratingThumbnails": "썸네일을 생성하는 동안에는 폴더를 열 수 없습니다.",
+    "openFolderToSeePhotos": "폴더를 열면 사진을 촬영한 위치가 표시됩니다.",
+    "sort": {
+      "title": "정렬",
+      "byName": "이름순",
+      "byShootingTime": "촬영 시간순",
+      "ascending": "오름차순",
+      "descending": "내림차순"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "촬영 시간순 정렬",
+    "intro": "“촬영 시간순”을 선택하면 이 앱은 파일을 정렬하기 위해",
+    "step1": "EXIF의 DateTimeOriginal을 사용하고, 이 값이 없으면",
+    "step2": "파일의 수정 시간을 사용합니다.",
+    "foldersNote": "폴더에는 “촬영 시간”이라는 개념이 없으므로 폴더는 이름순으로 정렬됩니다.",
+    "moreDetails": "자세한 정보",
+    "details": {
+      "intro": "다음은 추가 정보입니다.",
+      "mostTrustworthy": "EXIF의 DateTimeOriginal은 사진을 촬영한 시간에 대한 가장 신뢰할 수 있는 정보입니다.",
+      "sometimesMissing": "대부분의 카메라는 대부분의 JPEG/HEIF/TIFF 파일에 DateTimeOriginal을 기록하지만, 없는 경우도 있습니다.",
+      "modifiedTime": "파일의 수정 시간은 사진을 촬영한 시간인 경우가 많으므로, DateTimeOriginal이 없으면 대신 수정 시간을 사용합니다.",
+      "otherFiles": "JPEG/HEIF/TIFF 이외의 파일에는 EXIF가 없으므로 항상 수정 시간을 사용합니다."
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "연 폴더 - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "이 파일만 선택",
+      "selectOnlyThisFolder": "이 폴더만 선택",
+      "open": "열기",
+      "openFolder": "폴더 열기"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "사진 정보를 사용할 수 없습니다.",
+    "openFile": "파일 열기",
+    "moreOptions": "추가 옵션",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "썸네일 회전",
+    "menu": {
+      "selectOnlyThis": "이 파일만 선택",
+      "openFolder": "폴더 열기",
+      "openGoogleMaps": "Google 지도 열기",
+      "openGoogleStreetView": "Google 스트리트 뷰 열기",
+      "viewData": "데이터 보기"
+    },
+    "pathTooLong": "파일 경로의 길이({{length}}) 때문에 썸네일을 표시할 수 없습니다. Windows에서는 경로 길이가 최대 {{maximum}}까지로 제한됩니다. 파일 위치를 변경하여 경로를 줄이세요. 자세한 내용은 Ctrl+Shift+I를 눌러 콘솔 메시지를 확인하세요.",
+    "generatedThumbnailPathTooLong": "생성된 썸네일 경로의 길이({{length}}) 때문에 썸네일을 표시할 수 없습니다. Windows에서는 경로 길이가 최대 {{maximum}}까지로 제한됩니다. 파일 위치를 변경하여 생성되는 썸네일의 경로를 줄이세요. 자세한 내용은 Ctrl+Shift+I를 눌러 콘솔 메시지를 확인하세요."
+  },
+  "map": {
+    "zoomIn": "확대",
+    "zoomOut": "축소",
+    "layers": "레이어",
+    "photosInRegions": "영역 내 사진: {{count}}장",
+    "selectPhotos": "사진 선택",
+    "setRegionByRectangle": "사각형으로 영역 지정",
+    "setRegionByVertex": "꼭짓점으로 영역 지정",
+    "setText": "텍스트 배치",
+    "editRegion": "영역 편집",
+    "dragRegion": "영역 이동",
+    "removeRegion": "영역 삭제"
+  },
+  "chart": {
+    "moreAlt": "더 보기",
+    "dateUnknownPhotos": "촬영 날짜를 알 수 없는 사진: {{count}}장",
+    "showDateUnknownPhotos": "촬영 날짜를 알 수 없는 사진을 지도에 표시",
+    "units": {
+      "year": "년",
+      "month": "월",
+      "day": "일",
+      "hour": "시",
+      "minute": "분",
+      "second": "초"
+    },
+    "unsupportedDuration": "이 차트는 “시”를 선택한 경우 30일, “분”을 선택한 경우 3일, “초”를 선택한 경우 1시간을 초과하는 기간을 표시할 수 없습니다.",
+    "changeUnitOrSelection": "년/월/일/시/분/초를 변경하거나 기간이 짧아지도록 사진을 선택하세요.",
+    "selectPhotosWithinZoom": "확대한 범위의 사진 선택",
+    "zoom": "확대/축소",
+    "resetZoom": "확대/축소\n재설정"
+  },
+  "loadingFolder": {
+    "collecting": "연 폴더에서 불러올 파일을 수집하는 중...",
+    "loading": "연 폴더에서 파일을 불러오는 중...",
+    "completed": "모든 파일({{count}}개)을 불러왔습니다.",
+    "progress": "파일 {{total}}개 중 {{loaded}}개를 불러왔습니다.",
+    "generatingMap": "불러온 파일로 지도를 만드는 중..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "연 폴더에 위치 정보가 있는 사진이 없습니다."
+  },
+  "loadedFiles": {
+    "loaded": "파일 {{count}}개를 불러왔습니다.",
+    "withLocationData": "파일 {{count}}개에 위치 정보가 있습니다.",
+    "total": "합계"
+  },
+  "thumbnailGeneration": {
+    "generating": "HEIF 파일의 썸네일을 생성하는 중...",
+    "completed": "HEIF 파일의 썸네일 생성을 완료했습니다.",
+    "finishedWithErrors": "HEIF 파일의 썸네일 생성이 끝났지만 오류가 있었습니다.",
+    "showDetails": "세부 정보 표시",
+    "processed": "파일 {{total}}개 중 {{processed}}개를 처리했습니다.",
+    "processedWithErrors": "파일 {{total}}개 중 {{processed}}개를 처리했지만 오류가 있었습니다.",
+    "seeFilesWithErrors": "오류가 발생한 파일을 보려면 여기를 클릭하세요.",
+    "seeFilesWithErrorsTitle": "오류가 발생한 파일 보기",
+    "generationRequired": "생성해야 하는 썸네일: {{required}}개. “HEIF 파일({{heif}}개) − 캐시가 있는 파일({{cached}}개)”로 계산한 수입니다.",
+    "closeStatusBar": "썸네일 생성 상태 표시줄 닫기",
+    "errorDialog": {
+      "message": "다음 파일 {{count}}개의 썸네일을 생성하지 못했습니다:",
+      "filter": "필터",
+      "number": "번호",
+      "file": "파일",
+      "openFile": "파일 열기",
+      "openFolder": "폴더 열기"
+    }
+  },
+  "settings": {
+    "title": "설정",
+    "tabs": {
+      "language": "언어 (Language)",
+      "appearance": "모양",
+      "dateTime": "날짜 및 시간",
+      "os": "OS",
+      "cache": "캐시"
+    },
+    "restartAfterSaving": "설정을 저장하면 이 앱이 다시 시작됩니다.",
+    "confirmRestart": "설정을 저장하면 이 앱이 다시 시작됩니다.\n계속하시겠습니까?",
+    "save": "저장",
+    "language": {
+      "title": "언어",
+      "description": "언어는 앱을 다시 시작한 후에 변경됩니다."
+    },
+    "appearance": {
+      "title": "모양",
+      "showStatusBar": "상태 표시줄 표시"
+    },
+    "dateTime": {
+      "title": "날짜 및 시간 형식",
+      "description": "날짜 및 시간 형식은 앱을 다시 시작한 후에 변경됩니다.",
+      "dateFormat": "날짜 형식",
+      "clockSystem": "12/24시간제",
+      "clock12": "12시간제",
+      "clock24": "24시간제",
+      "example": "예"
+    },
+    "os": {
+      "title": "파일 탐색기의 컨텍스트 메뉴",
+      "description": "파일 탐색기의 컨텍스트 메뉴에 “{{menuItem}}” 항목을 추가하거나 제거합니다.",
+      "add": "추가",
+      "remove": "제거",
+      "added": "파일 탐색기의 컨텍스트 메뉴에 “{{menuItem}}” 항목을 추가했습니다.",
+      "removed": "파일 탐색기의 컨텍스트 메뉴에서 “{{menuItem}}” 항목을 제거했습니다.",
+      "failedToAdd": "파일 탐색기의 컨텍스트 메뉴에 “{{menuItem}}” 항목을 추가하지 못했습니다.",
+      "failedToRemove": "파일 탐색기의 컨텍스트 메뉴에서 “{{menuItem}}” 항목을 제거하지 못했습니다.",
+      "confirmInExplorer": "확인하려면 파일 탐색기를 열고 파일이나 폴더를 마우스 오른쪽 버튼으로 클릭하세요."
+    },
+    "cache": {
+      "title": "HEIF 썸네일 캐시",
+      "requiredForHeif": "<heifLink>HEIF 파일</heifLink>은 썸네일을 생성해야 하며, 생성에는 시간이 걸립니다.",
+      "thereforeCached": "따라서 생성한 썸네일을 캐시에 저장합니다.",
+      "usedNextTime": "다음부터는 캐시를 사용하므로 썸네일을 다시 생성하지 않습니다.",
+      "location": "캐시 위치:",
+      "restartAfterDeleting": "썸네일 캐시를 삭제하면 이 앱이 다시 시작됩니다.",
+      "delete": "썸네일 캐시 삭제",
+      "confirmDelete": "썸네일 캐시를 삭제하면 이 앱이 다시 시작됩니다.\n계속하시겠습니까?"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "{{appName}}에서 열기",
+    "openWithAccessKey": "{{appName}}에서 열기(&P)"
+  },
+  "menu": {
+    "app": {
+      "about": "{{appName}}에 관하여",
+      "services": "서비스",
+      "hide": "{{appName}} 가리기",
+      "hideOthers": "기타 가리기",
+      "showAll": "모두 보기",
+      "quit": "{{appName}} 종료"
+    },
+    "view": {
+      "title": "보기",
+      "reload": "새로 고침",
+      "actualSize": "실제 크기",
+      "zoomIn": "확대",
+      "zoomOut": "축소",
+      "toggleFullScreen": "전체 화면 전환"
+    },
+    "selection": {
+      "title": "선택",
+      "undo": "실행 취소",
+      "redo": "다시 실행"
+    },
+    "settings": {
+      "title": "설정",
+      "openSettings": "설정 열기"
+    },
+    "help": {
+      "title": "도움말",
+      "showWelcomeDialog": "환영 대화 상자 표시",
+      "advancedMenu": "고급 메뉴",
+      "openLogFolder": "로그 폴더 열기",
+      "toggleDeveloperTools": "개발자 도구 전환"
+    }
+  },
+  "autoUpdate": {
+    "title": "{{appName}}의 새 버전이 있습니다!",
+    "message": "{{appName}}의 새 버전이 있으며, 다시 시작한 후에 설치됩니다.\n지금 이 앱을 다시 시작하시겠습니까?\n\n현재 버전: {{currentVersion}}\n최신 버전: {{latestVersion}}",
+    "yes": "예",
+    "no": "아니요"
+  }
+}

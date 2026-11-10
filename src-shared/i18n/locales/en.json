@@ -18,7 +18,9 @@
       "other": "Use system setting ({{language}})"
     },
     "restartToApply": "This application will restart to apply the language.",
-    "confirm": "OK"
+    "confirm": "OK",
+    "search": "Search",
+    "noLanguagesFound": "No languages found"
   },
   "appInfo": {
     "appIconAlt": "Application Icon",

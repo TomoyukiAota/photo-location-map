@@ -332,6 +332,15 @@ const isMac = process.platform === 'darwin';
 const operatingSystemName = { darwin: 'macOS', win32: 'Windows' }[process.platform];
 const systemLanguageInEnglish = language => `Use ${operatingSystemName ?? 'system'} setting (${language})`;
 const systemLanguageInJapanese = language => `${operatingSystemName ?? 'OS'} の設定に従う（${language}）`;
+// The languages of the application under their own names, in the order of the list: those in Latin letters by the
+// alphabet, then those in other scripts.
+const languageNames = [
+  'Bahasa Indonesia', 'Bahasa Melayu', 'Català', 'Čeština', 'Dansk', 'Deutsch', 'Eesti', 'English', 'Español', 'Euskara',
+  'Français', 'Galego', 'Hrvatski', 'Italiano', 'Latviešu', 'Lietuvių', 'Magyar', 'Nederlands', 'Norsk bokmål', 'Polski',
+  'Português (Brasil)', 'Português (Portugal)', 'Română', 'Slovenčina', 'Slovenščina', 'Srpski (latinica)', 'Suomi', 'Svenska',
+  'Tiếng Việt', 'Türkçe', 'Ελληνικά', 'Български', 'Русский', 'Українська', 'עברית', 'العربية', 'हिन्दी', 'ไทย', '한국어', '日本語',
+  '简体中文', '繁體中文',
+];
 const menuInEnglish = [
   ...(isMac ? [{
     // macOS shows the application's name instead of this label.
@@ -364,28 +373,46 @@ test('the Language dialog comes before the Welcome dialog at the first launch, a
   await expect(dialog.locator('.language-dialog-title')).toHaveText('Language');
   // A list like the one in the setup of macOS: the operating system's language, which a test profile gives as
   // English and which is chosen, then each language under its own name.
-  await expect(dialog.getByRole('listbox', { name: 'Language' }).getByRole('option'))
-    .toHaveText([systemLanguageInEnglish('English'), 'English', '日本語']);
+  const options = dialog.getByRole('listbox', { name: 'Language' }).getByRole('option');
+  await expect(options).toHaveText([systemLanguageInEnglish('English'), ...languageNames]);
   const systemLanguage = dialog.getByRole('option', { name: systemLanguageInEnglish('English'), exact: true });
-  const english = dialog.getByRole('option', { name: 'English', exact: true });
+  const korean = dialog.getByRole('option', { name: '한국어', exact: true });
   const japanese = dialog.getByRole('option', { name: '日本語', exact: true });
   await expect(systemLanguage).toHaveAttribute('aria-selected', 'true');
+  // The dialog opens with the search field ready to be typed in.
+  const search = dialog.getByRole('searchbox', { name: 'Search' });
+  await expect(search).toBeFocused();
   const okButton = dialog.locator('.ok-button');
   await expect(okButton).toHaveText('OK');
   const restartNote = dialog.locator('.restart-note');
   await expect(restartNote).toBeHidden();
   await shot('language-dialog');
   // With more entries than the box shows, the list scrolls, and its scrollbar takes room in the box, so it stays in
-  // view, where the one of macOS would hide. Entries are added to the page, as the application has few languages yet.
-  const box = await dialog.locator('.languages').evaluate(list => {
-    const added = Array.from({ length: 10 }, () => list.appendChild(list.lastElementChild.cloneNode(true)));
-    const borders = 2;
-    const sizes = { entries: list.children.length, content: list.scrollHeight, shown: list.clientHeight,
-      scrollbar: list.offsetWidth - list.clientWidth - borders };
-    added.forEach(entry => entry.remove());
-    return sizes;
-  });
-  expect(box).toEqual({ entries: 13, content: 13 * 32, shown: 7 * 32, scrollbar: 12 });
+  // view, where the one of macOS would hide.
+  const box = await dialog.locator('.languages').evaluate(list => ({ entries: list.children.length,
+    content: list.scrollHeight, shown: list.clientHeight, scrollbar: list.offsetWidth - list.clientWidth }));
+  expect(box).toEqual({ entries: 43, content: 43 * 32, shown: 7 * 32, scrollbar: 12 });
+  // The search field narrows the list down to what is typed: by a language's own name, by its English name, without
+  // regard to case or diacritics. The dialog keeps its size, and so its place, while the list gets shorter.
+  const dialogSize = async () => { const { width, height } = await dialog.boundingBox(); return { width, height }; };
+  const sizeWithEveryLanguage = await dialogSize();
+  await search.fill('日本');
+  await expect(options).toHaveText(['日本語']);
+  await search.fill('CESTINA');
+  await expect(options).toHaveText(['Čeština']);
+  await search.fill('portuguese');
+  await expect(options).toHaveText(['Português (Brasil)', 'Português (Portugal)']);
+  expect(await dialogSize()).toEqual(sizeWithEveryLanguage);
+  await search.fill('no such language');
+  await expect(options).toHaveCount(0);
+  await expect(dialog.getByRole('status')).toHaveText('No languages found');
+  expect(await dialogSize()).toEqual(sizeWithEveryLanguage);
+  // The chosen entry, which the search hid, is still the chosen one, and in view, once the search is cleared.
+  await search.fill('');
+  await expect(options).toHaveCount(43);
+  await expect(dialog.getByRole('status')).toHaveText('');
+  await expect(systemLanguage).toHaveAttribute('aria-selected', 'true');
+  await expect(systemLanguage).toBeInViewport();
   // Another language than the one on screen needs a restart, which the dialog says in that language, as its button is.
   await japanese.click();
   await expect(japanese).toHaveAttribute('aria-selected', 'true');
@@ -395,12 +422,19 @@ test('the Language dialog comes before the Welcome dialog at the first launch, a
   await expect(okButton).toHaveText('決定');
   // The keyboard chooses as well: the arrow keys move along the list, and Space chooses the language under them.
   await page.keyboard.press('ArrowUp');
-  await expect(english).toBeFocused();
+  await expect(korean).toBeFocused();
   await expect(japanese).toHaveAttribute('aria-selected', 'true');
   await page.keyboard.press('Space');
-  await expect(english).toHaveAttribute('aria-selected', 'true');
+  await expect(korean).toHaveAttribute('aria-selected', 'true');
+  await expect(restartNote).toHaveText('언어를 적용하기 위해 이 앱을 다시 시작합니다.');
+  await expect(okButton).toHaveText('확인');
+  // The language on screen, found by the search and chosen by its name, needs no restart.
+  await search.fill('english');
+  await expect(options).toHaveText([systemLanguageInEnglish('English'), 'English']);
+  await dialog.getByRole('option', { name: 'English', exact: true }).click();
   await expect(restartNote).toBeHidden();
   await expect(okButton).toHaveText('OK');
+  await search.fill('');
   await systemLanguage.click();
   await expect(systemLanguage).toHaveAttribute('aria-selected', 'true');
   await okButton.click();
@@ -442,8 +476,18 @@ test('a language chosen in the Language dialog, and another chosen later in the 
   // English, chosen in the Settings dialog, which opens on its Language tab: Save asks, then restarts the application.
   await settings();
   const languageSettings = page.locator('app-language-settings');
-  await expect(languageSettings.getByRole('option')).toHaveText([systemLanguageInJapanese('English'), 'English', '日本語']);
+  await expect(languageSettings.getByRole('option')).toHaveText([systemLanguageInJapanese('English'), ...languageNames]);
   await expect(languageSettings.getByRole('option', { name: '日本語', exact: true })).toHaveAttribute('aria-selected', 'true');
+  // The list opens where the chosen language is, far down the list.
+  await expect(languageSettings.getByRole('option', { name: '日本語', exact: true })).toBeInViewport();
+  // The search finds a language by its name in the application's language as well: ドイツ語 is German in Japanese.
+  const languageSearch = languageSettings.getByRole('searchbox', { name: '検索' });
+  await languageSearch.fill('ドイツ');
+  await expect(languageSettings.getByRole('option')).toHaveText(['Deutsch']);
+  await languageSearch.fill('見つからない言語');
+  await expect(languageSettings.getByRole('status')).toHaveText('言語が見つかりません');
+  await languageSearch.fill('engl');
+  await expect(languageSettings.getByRole('option')).toHaveText([systemLanguageInJapanese('English'), 'English']);
   const save = page.getByRole('button', { name: '保存', exact: true });
   const restartNotice = page.locator('app-settings-dialog').getByText('設定を保存すると、このアプリは再起動します。');
   await expect(save).toBeDisabled();
@@ -472,7 +516,7 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   await launchAsNew({ env: { PLM_TEST_SYSTEM_LANGUAGES: 'ja-JP,en-US' } });
   const languageDialog = page.locator('app-language-dialog');
   await expect(languageDialog.locator('.language-dialog-title')).toHaveText('言語 (Language)');
-  await expect(languageDialog.getByRole('option')).toHaveText([systemLanguageInJapanese('日本語'), 'English', '日本語']);
+  await expect(languageDialog.getByRole('option')).toHaveText([systemLanguageInJapanese('日本語'), ...languageNames]);
   await expect(languageDialog.getByRole('option', { name: systemLanguageInJapanese('日本語') })).toHaveAttribute('aria-selected', 'true');
   await expect(languageDialog.locator('.restart-note')).toBeHidden();
   await shot('language-dialog-ja');
@@ -536,7 +580,7 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   await expect(page.locator('app-settings-dialog mat-list-item')).toHaveText(
     ['言語 (Language)', '外観', '日付と時刻', ...(process.platform === 'win32' ? ['OS'] : []), 'キャッシュ']);
   const languageSettings = page.locator('app-language-settings');
-  await expect(languageSettings.getByRole('option')).toHaveText([systemLanguageInJapanese('日本語'), 'English', '日本語']);
+  await expect(languageSettings.getByRole('option')).toHaveText([systemLanguageInJapanese('日本語'), ...languageNames]);
   await expect(languageSettings.getByRole('option', { name: systemLanguageInJapanese('日本語') })).toHaveAttribute('aria-selected', 'true');
   await shot('settings-language-ja');
   await page.locator('app-settings-dialog mat-list-item').filter({ hasText: '日付と時刻' }).click();
@@ -545,6 +589,80 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   await expect(page.locator('.date-time-example')).toContainText('2019-11-25 02:53:29 午後');
   await page.getByRole('button', { name: 'キャンセル', exact: true }).click();
   await expect(page.locator('app-settings-dialog')).toHaveCount(0);
+});
+test('on a computer whose language is Arabic, the application is laid out from right to left', async () => {
+  // The one language written from right to left that is run here; Hebrew is laid out by the same rules.
+  await launchAsNew({ env: { PLM_TEST_SYSTEM_LANGUAGES: 'ar-SA,en-US' } });
+  expect(await page.evaluate(() => [document.documentElement.lang, document.documentElement.dir])).toEqual(['ar', 'rtl']);
+  const languageDialog = page.locator('app-language-dialog');
+  await expect(languageDialog.locator('.language-dialog-title')).toHaveText('اللغة (Language)');
+  // The name of the language that the first entry stands for is a value of its text: it is on its own there, between
+  // U+2068 and U+2069, so that a name written the other way, such as English, keeps its parentheses around it.
+  await expect(languageDialog.getByRole('option').first())
+    .toHaveText(`استخدام إعداد ${operatingSystemName ?? 'النظام'} (\u2068العربية\u2069)`);
+  await languageDialog.getByRole('button', { name: 'موافق', exact: true }).click();
+  const welcome = page.locator('app-welcome-dialog');
+  await expect(welcome).toContainText('مرحبًا بك في Photo Location Map');
+  await welcome.getByRole('button', { name: 'موافق', exact: true }).click();
+  await expect(welcome).toHaveCount(0);
+  // The sidebar is at the right of the map, and the border between them follows the mouse there as well.
+  const sidebar = page.locator('#home-left-sidebar');
+  const map = page.locator('#home-map');
+  const sidebarAtStart = await sidebar.boundingBox();
+  const mapAtStart = await map.boundingBox();
+  expect(sidebarAtStart.x).toBeGreaterThanOrEqual(mapAtStart.x + mapAtStart.width);
+  const gutter = await page.locator('.sidebar-and-map-container > .gutter-horizontal').boundingBox();
+  await page.mouse.move(gutter.x + gutter.width / 2, gutter.y + 100);
+  await page.mouse.down();
+  await page.mouse.move(gutter.x + gutter.width / 2 - 120, gutter.y + 100, { steps: 8 });
+  await page.mouse.up();
+  const sidebarAfterDrag = await sidebar.boundingBox();
+  expect(Math.abs(sidebarAfterDrag.width - sidebarAtStart.width - 120)).toBeLessThan(3);
+  expect(Math.abs(sidebarAfterDrag.x - (sidebarAtStart.x - 120))).toBeLessThan(3);
+  // A folder of photos: the status bar, the tree and the map, which itself stays laid out from left to right.
+  await app.evaluate(({ dialog }, folder) => {
+    dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [folder] });
+  }, photoFolder);
+  await page.getByRole('button', { name: 'فتح مجلد', exact: true }).click();
+  await expectRepresentedPhotos(4);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('الملفات المحمَّلة: \u20685\u2069.');
+  await expect(page.locator('#plm-leaflet-map')).toHaveCSS('direction', 'ltr');
+  await expect(page.locator('app-date-time-taken-chart')).toHaveCSS('direction', 'ltr');
+  await expect(page.locator('app-date-time-taken-chart canvas')).toBeVisible();
+  await shot('loaded-home-ar');
+  // A date has the day of the week in Arabic, from moment's locale, and the digits 0 to 9.
+  await page.locator('.plm-leaflet-map-div-icon').first().dispatchEvent('click');
+  const popup = page.locator('.leaflet-popup');
+  await expect(popup.locator('.leaflet-popup-content')).toHaveCSS('direction', 'rtl');
+  await expect(popup.locator('.photo-info-viewer-date-time-taken')).toHaveText(/^\d{4}-\d{2}-\d{2} [\u0621-\u064A]+ \d{2}:\d{2}:\d{2}$/);
+  // The photo's menu opens the other way round, and stays within the map.
+  await popup.locator('.photo-info-viewer-more-options-button').click();
+  await expect(page.locator('.photo-info-viewer-more-options-menu-item'))
+    .toHaveText(['تحديد هذا الملف فقط', 'فتح المجلد', 'فتح خرائط Google', 'فتح Google Street View', 'عرض البيانات']);
+  const menuBox = await page.locator('.photo-info-viewer-more-options-menu').boundingBox();
+  const mapBox = await map.boundingBox();
+  expect(menuBox.x).toBeGreaterThanOrEqual(mapBox.x);
+  expect(menuBox.x + menuBox.width).toBeLessThanOrEqual(mapBox.x + mapBox.width);
+  await page.keyboard.press('Escape');
+  // A path is written from left to right within the text around it: its first slash stays at its start.
+  await settings();
+  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'ذاكرة التخزين المؤقت' }).click();
+  const cacheLocation = page.locator('app-cache-settings .location-value bdi');
+  await expect(cacheLocation).toHaveText(/thumbnail-cache$/);
+  await expect(cacheLocation).toHaveCSS('direction', 'ltr');
+  await page.getByRole('button', { name: 'إلغاء', exact: true }).click();
+  await expect(page.locator('app-settings-dialog')).toHaveCount(0);
+  expect(await menuLabels()).toEqual([
+    ...(isMac ? [{
+      label: 'The name of the first menu item is the application name on macOS',
+      items: ['حول Photo Location Map', 'الخدمات', 'إخفاء Photo Location Map', 'إخفاء الآخرين', 'إظهار الكل', 'إنهاء Photo Location Map'],
+    }] : []),
+    { label: 'عرض', items: ['إعادة التحميل', 'الحجم الفعلي', 'تكبير', 'تصغير', 'تبديل وضع ملء الشاشة'] },
+    { label: 'التحديد', items: ['تراجع', 'إعادة'] },
+    { label: 'الإعدادات', items: ['فتح الإعدادات'] },
+    { label: 'مساعدة', items: [...(isMac ? [] : ['حول Photo Location Map']),
+      'إظهار مربع حوار الترحيب', 'القائمة المتقدمة', 'فتح مجلد السجلات', 'إظهار/إخفاء أدوات المطوّرين'] },
+  ]);
 });
 test('map regions preserve drawing, removal and real photo selection', async () => {
   await page.addInitScript(() => {

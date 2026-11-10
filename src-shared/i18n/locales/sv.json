@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "Läser in..."
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Avbryt",
+    "close": "Stäng"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "Språk (Language)",
+    "systemLanguage": {
+      "mac": "Använd inställningen i macOS ({{language}})",
+      "windows": "Använd inställningen i Windows ({{language}})",
+      "other": "Använd systemets inställning ({{language}})"
+    },
+    "restartToApply": "Appen startas om för att språket ska börja gälla.",
+    "confirm": "OK",
+    "search": "Sök",
+    "noLanguagesFound": "Inga språk hittades"
+  },
+  "appInfo": {
+    "appIconAlt": "Appsymbol",
+    "version": "Version {{version}}",
+    "developedBy": "Utvecklad av Tomoyuki Aota.",
+    "xProfileAlt": "Profil på X (tidigare Twitter)",
+    "xProfileTitle": "Öppna profilen på X (tidigare Twitter)",
+    "gitHubProfileAlt": "GitHub-profil",
+    "gitHubProfileTitle": "Öppna GitHub-profilen",
+    "troubleshooting": "Om du får problem med den här appen kan du läsa <pageLink>felsökningssidan</pageLink>.",
+    "troubleshootingLinkTitle": "Öppna felsökningssidan"
+  },
+  "welcome": {
+    "message": "Välkommen till {{appName}}",
+    "usageInfoCollection": "För att förbättra den här appen samlas anonym användningsinformation in. Genom att fortsätta använda appen godkänner du det."
+  },
+  "about": {
+    "releasesLink": "Hämtningar och versionsinformation",
+    "releasesLinkTitle": "Öppna hämtningar och versionsinformation",
+    "translations": "Översättningar till andra språk är välkomna: se <guideLink>hur du översätter den här appen</guideLink>.",
+    "translationsLinkTitle": "Öppna guiden för att översätta den här appen",
+    "homePageTitle": "Öppna hemsidan",
+    "sourceCodeTitle": "Visa källkoden på GitHub"
+  },
+  "sidebar": {
+    "openFolder": "Öppna mapp",
+    "cannotOpenWhileGeneratingThumbnails": "Det går inte att öppna en mapp medan miniatyrer skapas.",
+    "openFolderToSeePhotos": "Öppna en mapp för att se var bilderna togs.",
+    "sort": {
+      "title": "Sortera",
+      "byName": "Efter namn",
+      "byShootingTime": "Efter fotograferingstid",
+      "ascending": "Stigande",
+      "descending": "Fallande"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "Sortera efter fotograferingstid",
+    "intro": "När ”Efter fotograferingstid” är valt gör appen så här för att sortera filerna:",
+    "step1": "Den använder DateTimeOriginal i EXIF-informationen. Om det värdet saknas",
+    "step2": "använder den filens ändringsdatum.",
+    "foldersNote": "Mappar sorteras efter namn, eftersom mappar inte har någon ”fotograferingstid”.",
+    "moreDetails": "Mer bakgrundsinformation",
+    "details": {
+      "intro": "Här följer lite bakgrundsinformation:",
+      "mostTrustworthy": "DateTimeOriginal i EXIF-informationen är den mest tillförlitliga uppgiften om när bilden togs.",
+      "sometimesMissing": "De flesta kameror skriver DateTimeOriginal i de flesta JPEG-/HEIF-/TIFF-filer, men ibland saknas värdet.",
+      "modifiedTime": "Filens ändringsdatum är ofta tidpunkten då bilden togs. Därför används det i stället när DateTimeOriginal saknas.",
+      "otherFiles": "Andra filer än JPEG/HEIF/TIFF har ingen EXIF-information. För dem används därför alltid ändringsdatumet."
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "Öppnad mapp - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "Markera endast den här filen",
+      "selectOnlyThisFolder": "Markera endast den här mappen",
+      "open": "Öppna",
+      "openFolder": "Öppna mapp"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "Bildinformation är inte tillgänglig.",
+    "openFile": "Öppna fil",
+    "moreOptions": "Fler alternativ",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "Rotera miniatyr",
+    "menu": {
+      "selectOnlyThis": "Markera endast den här filen",
+      "openFolder": "Öppna mapp",
+      "openGoogleMaps": "Öppna Google Maps",
+      "openGoogleStreetView": "Öppna Google Street View",
+      "viewData": "Visa data"
+    },
+    "pathTooLong": "Miniatyren kan inte visas eftersom filens sökväg är {{length}} tecken lång. Windows begränsar sökvägens längd till {{maximum}} tecken. Flytta filen så att sökvägen blir kortare. Tryck på Ctrl+Shift+I och läs meddelandena i konsolen för mer information.",
+    "generatedThumbnailPathTooLong": "Miniatyren kan inte visas eftersom sökvägen till den skapade miniatyren är {{length}} tecken lång. Windows begränsar sökvägens längd till {{maximum}} tecken. Flytta filen så att sökvägen till den skapade miniatyren blir kortare. Tryck på Ctrl+Shift+I och läs meddelandena i konsolen för mer information."
+  },
+  "map": {
+    "zoomIn": "Zooma in",
+    "zoomOut": "Zooma ut",
+    "layers": "Lager",
+    "photosInRegions": "Bilder i områdena: {{count}}",
+    "selectPhotos": "Markera bilder",
+    "setRegionByRectangle": "Ange område med rektangel",
+    "setRegionByVertex": "Ange område med hörnpunkter",
+    "setText": "Placera text",
+    "editRegion": "Redigera område",
+    "dragRegion": "Flytta område",
+    "removeRegion": "Ta bort område"
+  },
+  "chart": {
+    "moreAlt": "Mer",
+    "dateUnknownPhotos": "Bilder med okänt datum: {{count}}",
+    "showDateUnknownPhotos": "Visa bilder med okänt datum på kartan",
+    "units": {
+      "year": "År",
+      "month": "Månad",
+      "day": "Dag",
+      "hour": "Timme",
+      "minute": "Minut",
+      "second": "Sekund"
+    },
+    "unsupportedDuration": "Det här diagrammet kan inte visa mer än 30 dagar när ”Timme” är valt, mer än 3 dagar för ”Minut” eller mer än 1 timme för ”Sekund”.",
+    "changeUnitOrSelection": "Ändra År/Månad/Dag/Timme/Minut/Sekund eller markera bilder så att perioden blir kortare.",
+    "selectPhotosWithinZoom": "Markera bilder inom zoomen",
+    "zoom": "Zooma",
+    "resetZoom": "Återställ\nzoom"
+  },
+  "loadingFolder": {
+    "collecting": "Samlar in filerna som ska läsas in från den öppnade mappen...",
+    "loading": "Läser in filer från den öppnade mappen...",
+    "completed": "Alla filer har lästs in (antal: {{count}}).",
+    "progress": "Inlästa filer: {{loaded}} av {{total}}.",
+    "generatingMap": "Skapar kartan av de inlästa filerna..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "Det finns inga bilder med platsinformation i den öppnade mappen."
+  },
+  "loadedFiles": {
+    "loaded": "Inlästa filer: {{count}}.",
+    "withLocationData": "Filer med platsinformation: {{count}}.",
+    "total": "Totalt"
+  },
+  "thumbnailGeneration": {
+    "generating": "Skapar miniatyrer för HEIF-filer...",
+    "completed": "Miniatyrerna för HEIF-filer har skapats.",
+    "finishedWithErrors": "Skapandet av miniatyrer för HEIF-filer avslutades med fel.",
+    "showDetails": "Visa detaljer",
+    "processed": "Bearbetade filer: {{processed}} av {{total}}.",
+    "processedWithErrors": "Bearbetade filer: {{processed}} av {{total}}, med fel.",
+    "seeFilesWithErrors": "Klicka här för att se filerna med fel.",
+    "seeFilesWithErrorsTitle": "Visa filerna med fel",
+    "generationRequired": "Miniatyrer som behöver skapas: {{required}}. Antalet ges av ”HEIF-filer ({{heif}}) − filer som finns i cachen ({{cached}})”.",
+    "closeStatusBar": "Stäng statusfältet för miniatyrskapandet",
+    "errorDialog": {
+      "message": "Det gick inte att skapa miniatyrer för följande filer (antal: {{count}}):",
+      "filter": "Filtrera",
+      "number": "Nr",
+      "file": "Fil",
+      "openFile": "Öppna fil",
+      "openFolder": "Öppna mapp"
+    }
+  },
+  "settings": {
+    "title": "Inställningar",
+    "tabs": {
+      "language": "Språk (Language)",
+      "appearance": "Utseende",
+      "dateTime": "Datum och tid",
+      "os": "System",
+      "cache": "Cache"
+    },
+    "restartAfterSaving": "Appen startas om när inställningarna har sparats.",
+    "confirmRestart": "Appen startas om när inställningarna har sparats.\nVill du fortsätta?",
+    "save": "Spara",
+    "language": {
+      "title": "Språk",
+      "description": "Språket ändras när appen har startats om."
+    },
+    "appearance": {
+      "title": "Utseende",
+      "showStatusBar": "Visa statusfältet"
+    },
+    "dateTime": {
+      "title": "Datum- och tidsformat",
+      "description": "Datum- och tidsformatet ändras när appen har startats om.",
+      "dateFormat": "Datumformat",
+      "clockSystem": "12/24 timmar",
+      "clock12": "12 timmar",
+      "clock24": "24 timmar",
+      "example": "Exempel"
+    },
+    "os": {
+      "title": "Utforskarens snabbmeny",
+      "description": "Lägg till eller ta bort ”{{menuItem}}” i Utforskarens snabbmeny.",
+      "add": "Lägg till",
+      "remove": "Ta bort",
+      "added": "”{{menuItem}}” har lagts till i Utforskarens snabbmeny.",
+      "removed": "”{{menuItem}}” har tagits bort från Utforskarens snabbmeny.",
+      "failedToAdd": "Det gick inte att lägga till ”{{menuItem}}” i Utforskarens snabbmeny.",
+      "failedToRemove": "Det gick inte att ta bort ”{{menuItem}}” från Utforskarens snabbmeny.",
+      "confirmInExplorer": "Öppna Utforskaren och högerklicka på en fil eller mapp för att kontrollera."
+    },
+    "cache": {
+      "title": "Cache för HEIF-miniatyrer",
+      "requiredForHeif": "För <heifLink>HEIF-filer</heifLink> måste miniatyrer skapas, vilket tar tid.",
+      "thereforeCached": "Därför sparas de skapade miniatyrerna i en cache.",
+      "usedNextTime": "Från och med nästa gång används cachen, så att miniatyrerna inte behöver skapas igen.",
+      "location": "Cachens plats:",
+      "restartAfterDeleting": "Appen startas om när miniatyrcachen har raderats.",
+      "delete": "Radera miniatyrcachen",
+      "confirmDelete": "Appen startas om när miniatyrcachen har raderats.\nVill du fortsätta?"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "Öppna med {{appName}}",
+    "openWithAccessKey": "Öppna med &{{appName}}"
+  },
+  "menu": {
+    "app": {
+      "about": "Om {{appName}}",
+      "services": "Tjänster",
+      "hide": "Göm {{appName}}",
+      "hideOthers": "Göm övriga",
+      "showAll": "Visa alla",
+      "quit": "Avsluta {{appName}}"
+    },
+    "view": {
+      "title": "Visa",
+      "reload": "Läs in igen",
+      "actualSize": "Verklig storlek",
+      "zoomIn": "Zooma in",
+      "zoomOut": "Zooma ut",
+      "toggleFullScreen": "Helskärmsläge av/på"
+    },
+    "selection": {
+      "title": "Markering",
+      "undo": "Ångra",
+      "redo": "Gör om"
+    },
+    "settings": {
+      "title": "Inställningar",
+      "openSettings": "Öppna inställningar"
+    },
+    "help": {
+      "title": "Hjälp",
+      "showWelcomeDialog": "Visa välkomstdialogen",
+      "advancedMenu": "Avancerad meny",
+      "openLogFolder": "Öppna loggmappen",
+      "toggleDeveloperTools": "Visa/göm utvecklarverktyg"
+    }
+  },
+  "autoUpdate": {
+    "title": "En ny version av {{appName}} finns tillgänglig!",
+    "message": "En ny version av {{appName}} finns tillgänglig och installeras efter omstart.\nVill du starta om appen nu?\n\nNuvarande version: {{currentVersion}}\nSenaste version: {{latestVersion}}",
+    "yes": "Ja",
+    "no": "Nej"
+  }
+}

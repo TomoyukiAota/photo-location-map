@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { languages as languagesOfApplication } from '../../../../src-shared/i18n/languages';
 import { startupMetadata } from '../../../../src-shared/startup/startup-metadata';
 import { SettingsChangedService } from '../service/settings-changed.service';
 import { LanguageSettingsChangedParameter } from './language-settings-changed-parameter';
@@ -32,7 +33,7 @@ describe('LanguageSettingsComponent', () => {
   it('shows the Language setting in use, and that a change takes effect after a restart', () => {
     expect(host.querySelector('.setting-title').textContent).toBe('Language');
     expect(host.querySelector('.description-row').textContent.trim()).toBe('The language will be changed after application restart.');
-    expect(languages().map(language => language.textContent.trim())).toEqual(['Use system setting (English)', 'English', '日本語']);
+    expect(languages().map(language => language.textContent.trim())).toEqual(['Use system setting (English)', ...languagesOfApplication.map(language => language.name)]);
     expect(chosenLanguage()).toBe('Use system setting (English)');
   });
 

@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "טוען..."
+  },
+  "common": {
+    "ok": "אישור",
+    "cancel": "ביטול",
+    "close": "סגירה"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "שפה (Language)",
+    "systemLanguage": {
+      "mac": "שימוש בהגדרת macOS ({{language}})",
+      "windows": "שימוש בהגדרת Windows ({{language}})",
+      "other": "שימוש בהגדרת המערכת ({{language}})"
+    },
+    "restartToApply": "היישום יופעל מחדש כדי להחיל את השפה.",
+    "confirm": "אישור",
+    "search": "חיפוש",
+    "noLanguagesFound": "לא נמצאו שפות"
+  },
+  "appInfo": {
+    "appIconAlt": "סמל היישום",
+    "version": "גרסה {{version}}",
+    "developedBy": "פותח על ידי Tomoyuki Aota.",
+    "xProfileAlt": "פרופיל X (לשעבר Twitter)",
+    "xProfileTitle": "פתיחת פרופיל X (לשעבר Twitter)",
+    "gitHubProfileAlt": "פרופיל GitHub",
+    "gitHubProfileTitle": "פתיחת פרופיל GitHub",
+    "troubleshooting": "אם נתקלת בבעיה ביישום זה, אפשר לעיין ב<pageLink>דף פתרון הבעיות</pageLink>.",
+    "troubleshootingLinkTitle": "פתיחת דף פתרון הבעיות"
+  },
+  "welcome": {
+    "message": "ברוכים הבאים אל {{appName}}",
+    "usageInfoCollection": "כדי לשפר את היישום, נאסף מידע אנונימי על השימוש. המשך השימוש ביישום מהווה הסכמה לכך."
+  },
+  "about": {
+    "releasesLink": "הורדות והערות מוצר",
+    "releasesLinkTitle": "פתיחת ההורדות והערות המוצר",
+    "translations": "תרגומים לשפות נוספות יתקבלו בברכה: אפשר לעיין ב<guideLink>הסבר על תרגום היישום</guideLink>.",
+    "translationsLinkTitle": "פתיחת המדריך לתרגום היישום",
+    "homePageTitle": "פתיחת דף הבית",
+    "sourceCodeTitle": "הצגת קוד המקור ב-GitHub"
+  },
+  "sidebar": {
+    "openFolder": "פתיחת תיקייה",
+    "cannotOpenWhileGeneratingThumbnails": "אי אפשר לפתוח תיקייה בזמן יצירת תמונות ממוזערות.",
+    "openFolderToSeePhotos": "יש לפתוח תיקייה כדי לראות היכן צולמו התמונות.",
+    "sort": {
+      "title": "מיון",
+      "byName": "לפי שם",
+      "byShootingTime": "לפי זמן הצילום",
+      "ascending": "סדר עולה",
+      "descending": "סדר יורד"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "מיון לפי זמן הצילום",
+    "intro": "כשנבחרת האפשרות ״לפי זמן הצילום״, היישום ממיין את הקבצים כך:",
+    "step1": "נעשה שימוש בערך DateTimeOriginal שבנתוני EXIF. אם הוא אינו זמין,",
+    "step2": "נעשה שימוש בזמן השינוי של הקובץ.",
+    "foldersNote": "תיקיות ממוינות לפי שם, כי לתיקיות אין ״זמן צילום״.",
+    "moreDetails": "פרטים נוספים",
+    "details": {
+      "intro": "להלן מידע נוסף:",
+      "mostTrustworthy": "הערך DateTimeOriginal שבנתוני EXIF הוא המידע האמין ביותר על מועד צילום התמונה.",
+      "sometimesMissing": "רוב המצלמות כותבות את DateTimeOriginal לרוב קובצי JPEG/HEIF/TIFF, אך לפעמים הוא חסר.",
+      "modifiedTime": "זמן השינוי של הקובץ הוא בדרך כלל מועד צילום התמונה, ולכן נעשה בו שימוש כאשר DateTimeOriginal חסר.",
+      "otherFiles": "בקבצים שאינם JPEG/HEIF/TIFF אין נתוני EXIF, ולכן תמיד נעשה שימוש בזמן השינוי שלהם."
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "התיקייה שנפתחה - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "בחירת קובץ זה בלבד",
+      "selectOnlyThisFolder": "בחירת תיקייה זו בלבד",
+      "open": "פתיחה",
+      "openFolder": "פתיחת התיקייה"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "פרטי התמונה אינם זמינים.",
+    "openFile": "פתיחת הקובץ",
+    "moreOptions": "אפשרויות נוספות",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "סיבוב התמונה הממוזערת",
+    "menu": {
+      "selectOnlyThis": "בחירת קובץ זה בלבד",
+      "openFolder": "פתיחת התיקייה",
+      "openGoogleMaps": "פתיחת מפות Google",
+      "openGoogleStreetView": "פתיחת Google Street View",
+      "viewData": "הצגת הנתונים"
+    },
+    "pathTooLong": "אי אפשר להציג את התמונה הממוזערת כי אורך הנתיב של הקובץ הוא {{length}}. Windows מגביל את אורך הנתיב ל-{{maximum}} לכל היותר. יש לשנות את מיקום הקובץ כדי לקצר את הנתיב. לפרטים, יש להקיש Ctrl+Shift+I ולקרוא את ההודעות במסוף.",
+    "generatedThumbnailPathTooLong": "אי אפשר להציג את התמונה הממוזערת כי אורך הנתיב של התמונה הממוזערת שנוצרה הוא {{length}}. Windows מגביל את אורך הנתיב ל-{{maximum}} לכל היותר. יש לשנות את מיקום הקובץ כדי לקצר את הנתיב של התמונה הממוזערת שנוצרה. לפרטים, יש להקיש Ctrl+Shift+I ולקרוא את ההודעות במסוף."
+  },
+  "map": {
+    "zoomIn": "התקרבות",
+    "zoomOut": "התרחקות",
+    "layers": "שכבות",
+    "photosInRegions": "תמונות באזורים: {{count}}",
+    "selectPhotos": "בחירת תמונות",
+    "setRegionByRectangle": "הגדרת אזור באמצעות מלבן",
+    "setRegionByVertex": "הגדרת אזור באמצעות קודקודים",
+    "setText": "הוספת טקסט",
+    "editRegion": "עריכת האזור",
+    "dragRegion": "הזזת האזור",
+    "removeRegion": "הסרת האזור"
+  },
+  "chart": {
+    "moreAlt": "עוד",
+    "dateUnknownPhotos": "תמונות שתאריך הצילום שלהן לא ידוע: {{count}}",
+    "showDateUnknownPhotos": "הצגת תמונות שתאריך הצילום שלהן לא ידוע על המפה",
+    "units": {
+      "year": "שנה",
+      "month": "חודש",
+      "day": "יום",
+      "hour": "שעה",
+      "minute": "דקה",
+      "second": "שנייה"
+    },
+    "unsupportedDuration": "התרשים אינו יכול להציג פרק זמן ארוך מ-30 ימים כשנבחרה האפשרות ״שעה״, ארוך מ-3 ימים כשנבחרה ״דקה״, או ארוך משעה אחת כשנבחרה ״שנייה״.",
+    "changeUnitOrSelection": "יש לשנות את הבחירה שנה/חודש/יום/שעה/דקה/שנייה, או לבחור תמונות כך שפרק הזמן יתקצר.",
+    "selectPhotosWithinZoom": "בחירת התמונות שבטווח המוגדל",
+    "zoom": "זום",
+    "resetZoom": "איפוס\nהזום"
+  },
+  "loadingFolder": {
+    "collecting": "אוסף את הקבצים לטעינה מהתיקייה שנפתחה...",
+    "loading": "טוען את הקבצים מהתיקייה שנפתחה...",
+    "completed": "כל הקבצים נטענו (מספר: {{count}}).",
+    "progress": "קבצים שנטענו: {{loaded}} מתוך {{total}}.",
+    "generatingMap": "יוצר מפה מהקבצים שנטענו..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "בתיקייה שנפתחה אין תמונות עם נתוני מיקום."
+  },
+  "loadedFiles": {
+    "loaded": "קבצים שנטענו: {{count}}.",
+    "withLocationData": "קבצים עם נתוני מיקום: {{count}}.",
+    "total": "סך הכול"
+  },
+  "thumbnailGeneration": {
+    "generating": "יוצר תמונות ממוזערות לקובצי HEIF...",
+    "completed": "יצירת התמונות הממוזערות לקובצי HEIF הושלמה.",
+    "finishedWithErrors": "יצירת התמונות הממוזערות לקובצי HEIF הסתיימה עם שגיאות.",
+    "showDetails": "הצגת פרטים",
+    "processed": "קבצים שעובדו: {{processed}} מתוך {{total}}.",
+    "processedWithErrors": "קבצים שעובדו: {{processed}} מתוך {{total}}, עם שגיאות.",
+    "seeFilesWithErrors": "יש ללחוץ כאן כדי לראות את הקבצים שבהם אירעו שגיאות.",
+    "seeFilesWithErrorsTitle": "הצגת הקבצים שבהם אירעו שגיאות",
+    "generationRequired": "תמונות ממוזערות שיש ליצור: {{required}}. המספר מחושב כך: ״קובצי HEIF ({{heif}}) − קבצים שכבר נמצאים במטמון ({{cached}})״.",
+    "closeStatusBar": "סגירת שורת המצב של יצירת התמונות הממוזערות",
+    "errorDialog": {
+      "message": "לא ניתן היה ליצור תמונות ממוזערות לקבצים הבאים (מספר: {{count}}):",
+      "filter": "סינון",
+      "number": "מס׳",
+      "file": "קובץ",
+      "openFile": "פתיחת הקובץ",
+      "openFolder": "פתיחת התיקייה"
+    }
+  },
+  "settings": {
+    "title": "הגדרות",
+    "tabs": {
+      "language": "שפה (Language)",
+      "appearance": "מראה",
+      "dateTime": "תאריך ושעה",
+      "os": "מערכת",
+      "cache": "מטמון"
+    },
+    "restartAfterSaving": "היישום יופעל מחדש לאחר שמירת ההגדרות.",
+    "confirmRestart": "היישום יופעל מחדש לאחר שמירת ההגדרות.\nלהמשיך?",
+    "save": "שמירה",
+    "language": {
+      "title": "שפה",
+      "description": "השפה משתנה לאחר הפעלה מחדש של היישום."
+    },
+    "appearance": {
+      "title": "מראה",
+      "showStatusBar": "הצגת שורת המצב"
+    },
+    "dateTime": {
+      "title": "תבנית תאריך ושעה",
+      "description": "תבנית התאריך והשעה משתנה לאחר הפעלה מחדש של היישום.",
+      "dateFormat": "תבנית תאריך",
+      "clockSystem": "12 או 24 שעות",
+      "clock12": "12 שעות",
+      "clock24": "24 שעות",
+      "example": "דוגמה"
+    },
+    "os": {
+      "title": "תפריט ההקשר של סייר הקבצים",
+      "description": "הוספת ״{{menuItem}}״ לתפריט ההקשר של סייר הקבצים או הסרתו ממנו.",
+      "add": "הוספה",
+      "remove": "הסרה",
+      "added": "״{{menuItem}}״ נוסף לתפריט ההקשר של סייר הקבצים.",
+      "removed": "״{{menuItem}}״ הוסר מתפריט ההקשר של סייר הקבצים.",
+      "failedToAdd": "לא ניתן היה להוסיף את ״{{menuItem}}״ לתפריט ההקשר של סייר הקבצים.",
+      "failedToRemove": "לא ניתן היה להסיר את ״{{menuItem}}״ מתפריט ההקשר של סייר הקבצים.",
+      "confirmInExplorer": "כדי לבדוק, יש לפתוח את סייר הקבצים וללחוץ לחיצה ימנית על קובץ או על תיקייה."
+    },
+    "cache": {
+      "title": "מטמון התמונות הממוזערות של HEIF",
+      "requiredForHeif": "עבור <heifLink>קובצי HEIF</heifLink> יש ליצור תמונות ממוזערות, והדבר אורך זמן.",
+      "thereforeCached": "לכן התמונות הממוזערות שנוצרו נשמרות במטמון.",
+      "usedNextTime": "מהפעם הבאה נעשה שימוש במטמון, והתמונות הממוזערות אינן נוצרות מחדש.",
+      "location": "מיקום המטמון:",
+      "restartAfterDeleting": "היישום יופעל מחדש לאחר מחיקת מטמון התמונות הממוזערות.",
+      "delete": "מחיקת מטמון התמונות הממוזערות",
+      "confirmDelete": "היישום יופעל מחדש לאחר מחיקת מטמון התמונות הממוזערות.\nלהמשיך?"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "פתיחה באמצעות {{appName}}",
+    "openWithAccessKey": "פתיחה באמצעות {{appName}} (&P)"
+  },
+  "menu": {
+    "app": {
+      "about": "אודות {{appName}}",
+      "services": "שירותים",
+      "hide": "הסתרת {{appName}}",
+      "hideOthers": "הסתרת האחרים",
+      "showAll": "הצגת הכול",
+      "quit": "יציאה מ-{{appName}}"
+    },
+    "view": {
+      "title": "תצוגה",
+      "reload": "טעינה מחדש",
+      "actualSize": "גודל אמיתי",
+      "zoomIn": "התקרבות",
+      "zoomOut": "התרחקות",
+      "toggleFullScreen": "מעבר למסך מלא ובחזרה"
+    },
+    "selection": {
+      "title": "בחירה",
+      "undo": "ביטול פעולה",
+      "redo": "ביצוע חוזר"
+    },
+    "settings": {
+      "title": "הגדרות",
+      "openSettings": "פתיחת ההגדרות"
+    },
+    "help": {
+      "title": "עזרה",
+      "showWelcomeDialog": "הצגת חלון הפתיחה",
+      "advancedMenu": "תפריט מתקדם",
+      "openLogFolder": "פתיחת תיקיית היומנים",
+      "toggleDeveloperTools": "הצגה או הסתרה של כלי הפיתוח"
+    }
+  },
+  "autoUpdate": {
+    "title": "גרסה חדשה של {{appName}} זמינה!",
+    "message": "גרסה חדשה של {{appName}} זמינה, והיא תותקן לאחר הפעלה מחדש.\nלהפעיל מחדש את היישום עכשיו?\n\nהגרסה הנוכחית: {{currentVersion}}\nהגרסה האחרונה: {{latestVersion}}",
+    "yes": "כן",
+    "no": "לא"
+  }
+}

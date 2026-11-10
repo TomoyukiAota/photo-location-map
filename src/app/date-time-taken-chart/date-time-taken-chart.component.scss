@@ -5,11 +5,25 @@
   display: flex; // If CSS grid is used, there is an intermittent issue that the chart does not properly render when its width/height is changed by dragging the splitter.
 }
 
-$sidebar-width: 130px;
+// TL;DR: The chart's panel is laid out from left to right in every language.
+// Details: ECharts draws the chart the same in every language, with its Zoom buttons at the right. The column beside
+// them, with the unit of the chart and the button that selects the photos within the zoom, stays there with them. The
+// message over the chart is a text, which gets the page's direction back.
+:host-context([dir="rtl"]) {
+  direction: ltr;
+
+  .unsupported-message {
+    direction: rtl;
+  }
+}
+
+// The column beside the chart, with the chart's unit and the button that selects the photos within the zoom: 130px,
+// or as wide as the unit's select needs in the application's language, which the component sets.
+$sidebar-width: var(--chart-sidebar-width, 130px);
 
 .chart-container {
   height: 100%;
-  width: calc(100% - $sidebar-width); // If "flex-grow: 1" is used instead, there is an intermittent issue that the chart does not properly render when its width/height is changed by dragging the splitter.
+  width: calc(100% - #{$sidebar-width}); // If "flex-grow: 1" is used instead, there is an intermittent issue that the chart does not properly render when its width/height is changed by dragging the splitter.
   position: relative;
 }
 
@@ -45,9 +59,11 @@ $sidebar-width: 130px;
 }
 
 .config {
-  margin: 4px 10px 0 0;
+  margin: 4px 0 0;
+  margin-inline-end: 10px;
 }
 
 .select-photos-within-zoom {
-  margin: 0 10px 7px 0;
+  margin: 0 0 7px;
+  margin-inline-end: 10px;
 }

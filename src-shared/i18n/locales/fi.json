@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "Ladataan..."
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Peruuta",
+    "close": "Sulje"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "Kieli (Language)",
+    "systemLanguage": {
+      "mac": "Käytä macOS:n asetusta ({{language}})",
+      "windows": "Käytä Windowsin asetusta ({{language}})",
+      "other": "Käytä järjestelmän asetusta ({{language}})"
+    },
+    "restartToApply": "Tämä sovellus käynnistyy uudelleen, jotta kieli otetaan käyttöön.",
+    "confirm": "OK",
+    "search": "Hae",
+    "noLanguagesFound": "Kieliä ei löytynyt"
+  },
+  "appInfo": {
+    "appIconAlt": "Sovelluksen kuvake",
+    "version": "Versio {{version}}",
+    "developedBy": "Kehittäjä: Tomoyuki Aota.",
+    "xProfileAlt": "X-profiili (aiemmin Twitter)",
+    "xProfileTitle": "Avaa X-profiili (aiemmin Twitter)",
+    "gitHubProfileAlt": "GitHub-profiili",
+    "gitHubProfileTitle": "Avaa GitHub-profiili",
+    "troubleshooting": "Jos tämän sovelluksen käytössä ilmenee ongelmia, katso <pageLink>vianmäärityssivu</pageLink>.",
+    "troubleshootingLinkTitle": "Avaa vianmäärityssivu"
+  },
+  "welcome": {
+    "message": "Tervetuloa – {{appName}}",
+    "usageInfoCollection": "Sovelluksen parantamiseksi siitä kerätään nimettömiä käyttötietoja. Jatkamalla sovelluksen käyttöä hyväksyt tämän."
+  },
+  "about": {
+    "releasesLink": "Lataukset ja julkaisutiedot",
+    "releasesLinkTitle": "Avaa lataukset ja julkaisutiedot",
+    "translations": "Käännökset muille kielille ovat tervetulleita: katso <guideLink>miten tämä sovellus käännetään</guideLink>.",
+    "translationsLinkTitle": "Avaa tämän sovelluksen käännösohje",
+    "homePageTitle": "Avaa kotisivu",
+    "sourceCodeTitle": "Näytä lähdekoodi GitHubissa"
+  },
+  "sidebar": {
+    "openFolder": "Avaa kansio",
+    "cannotOpenWhileGeneratingThumbnails": "Kansiota ei voi avata, kun miniatyyrejä luodaan.",
+    "openFolderToSeePhotos": "Avaa kansio, niin näet, missä kuvat on otettu.",
+    "sort": {
+      "title": "Järjestä",
+      "byName": "Nimen mukaan",
+      "byShootingTime": "Kuvausajan mukaan",
+      "ascending": "Nouseva",
+      "descending": "Laskeva"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "Järjestäminen kuvausajan mukaan",
+    "intro": "Kun ”Kuvausajan mukaan” on valittuna, sovellus järjestää tiedostot näin:",
+    "step1": "Se käyttää EXIF-tietojen DateTimeOriginal-arvoa. Jos arvoa ei ole,",
+    "step2": "se käyttää tiedoston muokkausaikaa.",
+    "foldersNote": "Kansiot järjestetään nimen mukaan, koska kansioilla ei ole ”kuvausaikaa”.",
+    "moreDetails": "Lisää taustatietoa",
+    "details": {
+      "intro": "Seuraavassa on taustatietoa:",
+      "mostTrustworthy": "EXIF-tietojen DateTimeOriginal on luotettavin tieto siitä, milloin kuva on otettu.",
+      "sometimesMissing": "Useimmat kamerat kirjoittavat DateTimeOriginal-arvon useimpiin JPEG-/HEIF-/TIFF-tiedostoihin, mutta joskus se puuttuu.",
+      "modifiedTime": "Tiedoston muokkausaika on usein kuvan ottamisen ajankohta, joten sitä käytetään, kun DateTimeOriginal puuttuu.",
+      "otherFiles": "Muissa kuin JPEG-/HEIF-/TIFF-tiedostoissa ei ole EXIF-tietoja, joten niille käytetään aina muokkausaikaa."
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "Avattu kansio - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "Valitse vain tämä tiedosto",
+      "selectOnlyThisFolder": "Valitse vain tämä kansio",
+      "open": "Avaa",
+      "openFolder": "Avaa kansio"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "Kuvan tiedot eivät ole saatavilla.",
+    "openFile": "Avaa tiedosto",
+    "moreOptions": "Lisää valintoja",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "Käännä miniatyyriä",
+    "menu": {
+      "selectOnlyThis": "Valitse vain tämä tiedosto",
+      "openFolder": "Avaa kansio",
+      "openGoogleMaps": "Avaa Google Maps",
+      "openGoogleStreetView": "Avaa Google Street View",
+      "viewData": "Näytä tiedot"
+    },
+    "pathTooLong": "Miniatyyriä ei voi näyttää, koska tiedoston polun pituus on {{length}} merkkiä. Windows rajoittaa polun pituuden {{maximum}} merkkiin. Siirrä tiedosto, jotta sen polku lyhenee. Saat lisätietoja painamalla Ctrl+Shift+I ja lukemalla konsolin viestit.",
+    "generatedThumbnailPathTooLong": "Miniatyyriä ei voi näyttää, koska luodun miniatyyrin polun pituus on {{length}} merkkiä. Windows rajoittaa polun pituuden {{maximum}} merkkiin. Siirrä tiedosto, jotta luodun miniatyyrin polku lyhenee. Saat lisätietoja painamalla Ctrl+Shift+I ja lukemalla konsolin viestit."
+  },
+  "map": {
+    "zoomIn": "Lähennä",
+    "zoomOut": "Loitonna",
+    "layers": "Tasot",
+    "photosInRegions": "Kuvia alueilla: {{count}}",
+    "selectPhotos": "Valitse kuvat",
+    "setRegionByRectangle": "Määritä alue suorakulmiolla",
+    "setRegionByVertex": "Määritä alue kulmapisteillä",
+    "setText": "Lisää teksti",
+    "editRegion": "Muokkaa aluetta",
+    "dragRegion": "Siirrä aluetta",
+    "removeRegion": "Poista alue"
+  },
+  "chart": {
+    "moreAlt": "Lisää",
+    "dateUnknownPhotos": "Kuvia, joiden päivämäärä on tuntematon: {{count}}",
+    "showDateUnknownPhotos": "Näytä kartalla kuvat, joiden päivämäärä on tuntematon",
+    "units": {
+      "year": "Vuosi",
+      "month": "Kuukausi",
+      "day": "Päivä",
+      "hour": "Tunti",
+      "minute": "Minuutti",
+      "second": "Sekunti"
+    },
+    "unsupportedDuration": "Tämä kaavio ei voi näyttää yli 30:tä päivää, kun valittuna on ”Tunti”, yli 3:a päivää, kun valittuna on ”Minuutti”, eikä yli 1:tä tuntia, kun valittuna on ”Sekunti”.",
+    "changeUnitOrSelection": "Vaihda Vuosi/Kuukausi/Päivä/Tunti/Minuutti/Sekunti tai valitse kuvat niin, että ajanjakso lyhenee.",
+    "selectPhotosWithinZoom": "Valitse zoomauksen sisällä olevat kuvat",
+    "zoom": "Zoomaa",
+    "resetZoom": "Nollaa\nzoomaus"
+  },
+  "loadingFolder": {
+    "collecting": "Kerätään ladattavia tiedostoja avatusta kansiosta...",
+    "loading": "Ladataan tiedostoja avatusta kansiosta...",
+    "completed": "Kaikki tiedostot on ladattu (määrä: {{count}}).",
+    "progress": "Ladattuja tiedostoja: {{loaded}} / {{total}}.",
+    "generatingMap": "Luodaan karttaa ladatuista tiedostoista..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "Avatussa kansiossa ei ole kuvia, joissa on sijaintitietoja."
+  },
+  "loadedFiles": {
+    "loaded": "Ladattuja tiedostoja: {{count}}.",
+    "withLocationData": "Tiedostoja, joissa on sijaintitiedot: {{count}}.",
+    "total": "Yhteensä"
+  },
+  "thumbnailGeneration": {
+    "generating": "Luodaan miniatyyrejä HEIF-tiedostoille...",
+    "completed": "HEIF-tiedostojen miniatyyrit on luotu.",
+    "finishedWithErrors": "HEIF-tiedostojen miniatyyrien luonti päättyi virheisiin.",
+    "showDetails": "Näytä tiedot",
+    "processed": "Käsiteltyjä tiedostoja: {{processed}} / {{total}}.",
+    "processedWithErrors": "Käsiteltyjä tiedostoja: {{processed}} / {{total}}, virheitä ilmeni.",
+    "seeFilesWithErrors": "Näytä virheelliset tiedostot klikkaamalla tästä.",
+    "seeFilesWithErrorsTitle": "Näytä virheelliset tiedostot",
+    "generationRequired": "Luotavia miniatyyrejä: {{required}}. Määrä saadaan laskemalla ”HEIF-tiedostot ({{heif}}) − välimuistissa olevat tiedostot ({{cached}})”.",
+    "closeStatusBar": "Sulje miniatyyrien luonnin tilapalkki",
+    "errorDialog": {
+      "message": "Seuraavien tiedostojen miniatyyrejä ei voitu luoda (määrä: {{count}}):",
+      "filter": "Suodata",
+      "number": "Nro",
+      "file": "Tiedosto",
+      "openFile": "Avaa tiedosto",
+      "openFolder": "Avaa kansio"
+    }
+  },
+  "settings": {
+    "title": "Asetukset",
+    "tabs": {
+      "language": "Kieli (Language)",
+      "appearance": "Ulkoasu",
+      "dateTime": "Päivämäärä ja aika",
+      "os": "Järjestelmä",
+      "cache": "Välimuisti"
+    },
+    "restartAfterSaving": "Tämä sovellus käynnistyy uudelleen, kun asetukset on tallennettu.",
+    "confirmRestart": "Tämä sovellus käynnistyy uudelleen, kun asetukset on tallennettu.\nHaluatko jatkaa?",
+    "save": "Tallenna",
+    "language": {
+      "title": "Kieli",
+      "description": "Kieli vaihtuu, kun sovellus on käynnistetty uudelleen."
+    },
+    "appearance": {
+      "title": "Ulkoasu",
+      "showStatusBar": "Näytä tilapalkki"
+    },
+    "dateTime": {
+      "title": "Päivämäärän ja ajan muoto",
+      "description": "Päivämäärän ja ajan muoto vaihtuu, kun sovellus on käynnistetty uudelleen.",
+      "dateFormat": "Päivämäärän muoto",
+      "clockSystem": "12 tai 24 tuntia",
+      "clock12": "12 tuntia",
+      "clock24": "24 tuntia",
+      "example": "Esimerkki"
+    },
+    "os": {
+      "title": "Resurssienhallinnan pikavalikko",
+      "description": "Lisää ”{{menuItem}}” Resurssienhallinnan pikavalikkoon tai poista se sieltä.",
+      "add": "Lisää",
+      "remove": "Poista",
+      "added": "”{{menuItem}}” lisättiin Resurssienhallinnan pikavalikkoon.",
+      "removed": "”{{menuItem}}” poistettiin Resurssienhallinnan pikavalikosta.",
+      "failedToAdd": "Kohdetta ”{{menuItem}}” ei voitu lisätä Resurssienhallinnan pikavalikkoon.",
+      "failedToRemove": "Kohdetta ”{{menuItem}}” ei voitu poistaa Resurssienhallinnan pikavalikosta.",
+      "confirmInExplorer": "Avaa Resurssienhallinta ja tarkista klikkaamalla tiedostoa tai kansiota hiiren kakkospainikkeella."
+    },
+    "cache": {
+      "title": "HEIF-miniatyyrien välimuisti",
+      "requiredForHeif": "<heifLink>HEIF-tiedostoille</heifLink> on luotava miniatyyrit, mikä vie aikaa.",
+      "thereforeCached": "Siksi luodut miniatyyrit tallennetaan välimuistiin.",
+      "usedNextTime": "Seuraavasta kerrasta alkaen käytetään välimuistia, jolloin miniatyyrejä ei tarvitse luoda uudelleen.",
+      "location": "Välimuistin sijainti:",
+      "restartAfterDeleting": "Tämä sovellus käynnistyy uudelleen, kun miniatyyrien välimuisti on poistettu.",
+      "delete": "Poista miniatyyrien välimuisti",
+      "confirmDelete": "Tämä sovellus käynnistyy uudelleen, kun miniatyyrien välimuisti on poistettu.\nHaluatko jatkaa?"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "Avaa sovelluksessa {{appName}}",
+    "openWithAccessKey": "Avaa sovelluksessa &{{appName}}"
+  },
+  "menu": {
+    "app": {
+      "about": "Tietoja: {{appName}}",
+      "services": "Palvelut",
+      "hide": "Kätke {{appName}}",
+      "hideOthers": "Kätke muut",
+      "showAll": "Näytä kaikki",
+      "quit": "Lopeta {{appName}}"
+    },
+    "view": {
+      "title": "Näytä",
+      "reload": "Lataa uudelleen",
+      "actualSize": "Todellinen koko",
+      "zoomIn": "Lähennä",
+      "zoomOut": "Loitonna",
+      "toggleFullScreen": "Koko näyttö päälle/pois"
+    },
+    "selection": {
+      "title": "Valinta",
+      "undo": "Kumoa",
+      "redo": "Tee uudelleen"
+    },
+    "settings": {
+      "title": "Asetukset",
+      "openSettings": "Avaa asetukset"
+    },
+    "help": {
+      "title": "Ohje",
+      "showWelcomeDialog": "Näytä tervetuloikkuna",
+      "advancedMenu": "Lisävalikko",
+      "openLogFolder": "Avaa lokikansio",
+      "toggleDeveloperTools": "Näytä/kätke kehittäjän työkalut"
+    }
+  },
+  "autoUpdate": {
+    "title": "Uusi versio sovelluksesta {{appName}} on saatavilla!",
+    "message": "Uusi versio sovelluksesta {{appName}} on saatavilla, ja se asennetaan uudelleenkäynnistyksen jälkeen.\nHaluatko käynnistää sovelluksen uudelleen nyt?\n\nNykyinen versio: {{currentVersion}}\nUusin versio: {{latestVersion}}",
+    "yes": "Kyllä",
+    "no": "Ei"
+  }
+}
