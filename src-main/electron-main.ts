@@ -41,6 +41,7 @@ import { configureLiveReload } from './configure-live-reload';
 import { recordAtAppLaunch } from './record-at-app-launch';
 import { configureRecordAtAppQuit } from './record-at-app-quit';
 import { configureRecordProcessGone } from './record-process-gone';
+import { recordWindowFailures } from './record-window-failures';
 import { StartupTime } from './startup-time';
 import { createMainWindowState } from './window-config';
 
@@ -102,8 +103,7 @@ const createWindow = async () => {
   setMainWindow(mainWindow.webContents);
   keepOnAppPage(mainWindow.webContents, url);
   // A preload that throws leaves the page without its bridge, so that the page cannot write to the log itself.
-  mainWindow.webContents.on('preload-error', (_event, preloadPath, error) =>
-    Logger.error(`The preload of the main window failed (${preloadPath}): ${error.stack ?? error.message}`));
+  recordWindowFailures(mainWindow, 'Main Window');
   mainWindow.loadURL(url);
 
   // Keep automated development checks on the application's CDP target.
