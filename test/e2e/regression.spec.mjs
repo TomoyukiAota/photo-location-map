@@ -361,7 +361,15 @@ test.afterEach(async ({}, testInfo) => {
       child.kill('SIGKILL');
       await stopped;
     }
-    if (profile) await rm(profile, { recursive: true, force: true });
+    // TL;DR: Removing the profile is tried again for a few seconds, as Windows may still hold its folder.
+    // Details: On Windows in CI, three runs in one evening had a case that failed with "EBUSY: resource busy or
+    // locked, rmdir <profile>" and nothing else, each in a stretch of a few minutes in which the launches around it
+    // took several times as long as usual, while the same commit passed in the run of the other trigger. The
+    // application's other processes, as the page's, end a moment after its main process, and hold the folder until
+    // then. fs.rm tries again on EBUSY with maxRetries, waiting 200 ms longer each time, about 11 seconds in all.
+    // The performance harness removes its profiles the same way (test/performance/lib/app.mjs). A folder that is
+    // still held after that fails the case, as before.
+    if (profile) await rm(profile, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 });
   }
   expect(changedWithoutNotification, 'Bindings changed without telling Angular').toEqual([]);
 });
