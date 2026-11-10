@@ -18,6 +18,6 @@
 
 .close-button {
   margin-bottom: 5px;
-  width: 80px;
+  min-width: 80px; // At least its width in English; wider for a longer text of another language.
   justify-self: center;
 }

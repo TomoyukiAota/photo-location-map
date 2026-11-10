@@ -1,0 +1,18 @@
+@use "../settings-styles" as *;
+
+.setting-title {
+  font-size: $setting-title-font-size;
+}
+
+.setting-container {
+  padding: $setting-container-padding;
+}
+
+.description-row {
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.language-list {
+  max-width: 360px; // The width that the list has in the Language dialog.
+}

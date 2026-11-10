@@ -1,0 +1,15 @@
+:host {
+  display: block;
+  padding: 20px;
+}
+
+.message {
+  white-space: pre-line; // A line break in the message starts a new line.
+}
+
+.buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}

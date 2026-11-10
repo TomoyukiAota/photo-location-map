@@ -15,3 +15,8 @@ Clicking the image above opens YouTube where a higher-quality demo video is avai
 ## To contribute to this project
 
 Please refer to [CONTRIBUTING.md](./docs/CONTRIBUTING.md).
+
+
+## To translate this application
+
+Translations into other languages are welcome. Please refer to [TRANSLATING.md](./docs/TRANSLATING.md).

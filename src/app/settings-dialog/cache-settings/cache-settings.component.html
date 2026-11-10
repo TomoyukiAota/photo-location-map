@@ -1,19 +1,20 @@
-<div class="setting-title">HEIF Thumbnail Cache</div>
+<div class="setting-title">{{ 'settings.cache.title' | t }}</div>
 <div class="setting-container">
   <div class="cache-description">
-    <p>Thumbnail generation is required for <a #heifWikipediaLink href="">HEIF files</a>, but it takes time.</p>
-    <p>Therefore, the generated thumbnails are cached.</p>
-    <p>The cache will be used from the next time to skip thumbnail generation.</p>
+    @let requiredForHeif = 'settings.cache.requiredForHeif' | t | tagParts: 'heifLink';
+    <p>{{ requiredForHeif.before }}<a #heifWikipediaLink href="">{{ requiredForHeif.inside }}</a>{{ requiredForHeif.after }}</p>
+    <p>{{ 'settings.cache.thereforeCached' | t }}</p>
+    <p>{{ 'settings.cache.usedNextTime' | t }}</p>
   </div>
   <div class="location-table">
-    <div class="location-label">Cache location:</div>
+    <div class="location-label">{{ 'settings.cache.location' | t }}</div>
     <div class="location-value anchor-tag-like-text" (click)="openThumbnailCacheLocation()">{{ thumbnailCacheLocation }}</div>
   </div>
-  <div class="delete-button-description">This application will restart after deleting the thumbnail cache.</div>
+  <div class="delete-button-description">{{ 'settings.cache.restartAfterDeleting' | t }}</div>
   <button mat-flat-button
           color="warn"
           class="delete-button"
           (click)="handleDeleteThumbnailCacheButtonClicked()">
-    Delete Thumbnail Cache
+    {{ 'settings.cache.delete' | t }}
   </button>
 </div>

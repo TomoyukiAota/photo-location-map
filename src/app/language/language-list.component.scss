@@ -1,0 +1,74 @@
+@use "../../styles/color" as *;
+
+$row-height: 32px;
+$scrollbar-width: 12px;
+
+:host {
+  display: block;
+}
+
+// A box of at most seven entries, which scrolls for more.
+.languages {
+  box-sizing: border-box;
+  max-height: calc(7 * #{$row-height} + 2px);
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  border: 1px solid #7f7f7f;
+  background: white;
+  list-style: none;
+
+  // TL;DR: A scrollbar of the list's own, which stays in view while there are more entries than the box shows.
+  // Details: macOS hides its scrollbar until the list is scrolled, so a box that ends between two entries looks like
+  // the whole list. A scrollbar styled here is drawn by Chromium in place of the system's, at all times.
+  &::-webkit-scrollbar {
+    width: $scrollbar-width;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  // The border leaves the thumb narrower than its track, and rounded at both ends.
+  &::-webkit-scrollbar-thumb {
+    border: 2px solid #f1f1f1;
+    border-radius: calc(#{$scrollbar-width} / 2);
+    background: #8a8a8a;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #6e6e6e;
+  }
+}
+
+.language {
+  box-sizing: border-box;
+  min-height: $row-height;
+  padding: 6px 12px;
+  font-size: 15px;
+  line-height: 20px;
+  // Where the names stand in the box is up to the dialog that shows the list.
+  text-align: var(--language-list-text-align, start);
+  cursor: pointer;
+  user-select: none;
+
+  &:hover {
+    background: $white-background_hover;
+  }
+
+  &[aria-selected="true"] {
+    background: $primary;
+    color: white;
+  }
+
+  // The keyboard's focus, which the arrow keys move; Space or Enter chooses the entry under it.
+  &:focus-visible {
+    outline: 2px solid $primary;
+    outline-offset: -2px;
+  }
+
+  &[aria-selected="true"]:focus-visible {
+    outline-color: white;
+    outline-offset: -4px;
+  }
+}

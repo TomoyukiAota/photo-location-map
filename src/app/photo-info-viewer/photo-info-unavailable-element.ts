@@ -1,6 +1,8 @@
+import { t } from '../../../src-shared/i18n/i18n';
+
 const element = document.createElement('div');
 element.style.textAlign = 'center';
-element.innerText = 'Photo information is unavailable.';
+element.innerText = t('photoInfo.unavailable');
 
 export class PhotoInfoUnavailableElement {
   public static get(): HTMLDivElement {

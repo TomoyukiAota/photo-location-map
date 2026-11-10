@@ -5,6 +5,7 @@ import { MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem } from '@angular/m
 import { MatTree, MatTreeNodeDef, MatTreeNode, MatTreeNodeToggle, MatTreeNodePadding } from '@angular/material/tree';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { createPrependedLogger } from '../../../src-shared/log/create-prepended-logger';
+import { TranslatePipe } from '../shared/i18n/translate.pipe';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
 import { DirTreeViewContextMenuHelper } from './dir-tree-view-context-menu/dir-tree-view-context-menu-helper';
@@ -30,6 +31,7 @@ const dirTreeViewLogger = createPrependedLogger('[Directory Tree View]');
   imports: [
     MatTree, MatTreeNodeDef, MatTreeNode, MatTreeNodeToggle, MatTreeNodePadding, MatIconButton, MatCheckbox,
     MatLabel, DirTreeViewPhotoInfoComponent, MatIcon, MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem,
+    TranslatePipe,
   ]
 })
 export class DirectoryTreeViewComponent implements OnInit {

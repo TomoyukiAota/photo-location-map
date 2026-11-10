@@ -2,8 +2,8 @@
 @if (loaded.numberOfLoadedFiles >= 1) {
   <div class='message-container'>
     <div class="left-message-container">
-      <span>Loaded {{ loaded.numberOfLoadedFiles }} files.</span>
-      <span>{{ loaded.numberOfFilesWithGpsInfo }} files have location data.</span>
+      <span>{{ 'loadedFiles.loaded' | t: { count: loaded.numberOfLoadedFiles } }}</span>
+      <span>{{ 'loadedFiles.withLocationData' | t: { count: loaded.numberOfFilesWithGpsInfo } }}</span>
     </div>
     <div class="right-message-container">
       <span>{{ loaded.descriptionByFileType }}</span>

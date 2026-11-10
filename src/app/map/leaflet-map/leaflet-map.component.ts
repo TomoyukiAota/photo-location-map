@@ -5,6 +5,8 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { recordUnhandledError } from '../../../../src-shared/analytics/record-error';
+import { currentLanguage, t } from '../../../../src-shared/i18n/i18n';
+import { getLanguage } from '../../../../src-shared/i18n/languages';
 import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/user-data-stroage-path';
 import { DirectoryTreeViewSelectionService } from '../../directory-tree-view/directory-tree-view-selection.service';
@@ -144,7 +146,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   }
 
   private configureZoom() {
-    L.control.zoom({position: 'bottomright'}).addTo(this.map);
+    L.control.zoom({position: 'bottomright', zoomInTitle: t('map.zoomIn'), zoomOutTitle: t('map.zoomOut')}).addTo(this.map);
     this.configureInitialMaxZoomLevel();
   }
 
@@ -162,7 +164,9 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     const baseLayers = {
       ...rasterTileBaseLayers,
     };
-    L.control.layers(baseLayers, null, {position: 'topright'}).addTo(this.map);
+    const layersControl: Control.Layers = L.control.layers(baseLayers, null, {position: 'topright'}).addTo(this.map);
+    // Leaflet gives the control's button the tooltip "Layers", and no option to change it.
+    layersControl.getContainer()?.querySelector('.leaflet-control-layers-toggle')?.setAttribute('title', t('map.layers'));
 
     const previousBaseLayer = baseLayers[this.selectedBaseLayerName];
     const defaultBaseLayer = Object.values(baseLayers)[0];
@@ -230,11 +234,11 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
 
     const text = document.createElement('div');
     text.classList.add('plm-leaflet-map-region-info-text');
-    text.innerText = `Photos in Regions: ${this.photosWithinRegion.size}`;
+    text.innerText = t('map.photosInRegions', { count: this.photosWithinRegion.size });
 
     const button = document.createElement('button');
     button.classList.add('plm-leaflet-map-region-info-select-photos-button');
-    button.innerText = 'Select Photos';
+    button.innerText = t('map.selectPhotos');
     button.disabled = this.photosWithinRegion.size === 0;
     button.onclick = () => {
       logger.info(`Select Photos in Regions, Photos: ${this.photosWithinRegion.size}, Regions: ${this.getNumberOfRegions()}`);
@@ -264,15 +268,17 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
 
     const customTranslation = {
       buttonTitles: {
-        drawRectButton: 'Set Region by Rectangle',
-        drawPolyButton: 'Set Region by Vertex',
-        drawTextButton: 'Set Text',
-        editButton: 'Edit Region',
-        dragButton: 'Drag Region',
-        deleteButton: 'Remove Region',
+        drawRectButton: t('map.setRegionByRectangle'),
+        drawPolyButton: t('map.setRegionByVertex'),
+        drawTextButton: t('map.setText'),
+        editButton: t('map.editRegion'),
+        dragButton: t('map.dragRegion'),
+        deleteButton: t('map.removeRegion'),
       },
     };
-    (this.map as any).pm.setLang('customTranslation', customTranslation, 'en');
+    // The texts that are not set here, such as the tooltips while a region is drawn, are Leaflet-Geoman's own in the
+    // application's language, or its English ones when it has no translation for the language.
+    (this.map as any).pm.setLang('customTranslation', customTranslation, getLanguage(currentLanguage).geomanLocale);
   }
 
   private onGeomanLayerCreated(e) {

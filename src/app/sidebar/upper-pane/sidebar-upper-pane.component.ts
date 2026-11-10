@@ -4,12 +4,12 @@ import { Logger } from '../../../../src-shared/log/logger';
 import { perfMark } from '../../../../src-shared/perf/perf-mark';
 import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/user-data-stroage-path';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 import { OpenFolderService } from '../../shared/service/open-folder.service';
 import { ThumbnailGenerationService } from '../../thumbnail-generation/service/thumbnail-generation.service';
 import { OpenFolderDialogHistory } from './open-folder-dialog-history';
 import { MatButton } from '@angular/material/button';
 import { SidebarUpperPaneMoreOptionsComponent } from './more-options/sidebar-upper-pane-more-options.component';
-import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-sidebar-upper-pane',

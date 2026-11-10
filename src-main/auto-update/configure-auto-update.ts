@@ -3,6 +3,7 @@ import { autoUpdater, UpdateInfo } from 'electron-updater';
 import { Analytics } from '../../src-shared/analytics/analytics';
 import { scrubbedErrorLabel } from '../../src-shared/analytics/record-error';
 import { DevOrProd } from '../../src-shared/dev-or-prod/dev-or-prod';
+import { t } from '../../src-shared/i18n/i18n';
 import { isPrereleaseVersion } from '../../src-shared/version/is-prerelease-version';
 import { mainWindow } from '../electron-main';
 import { autoUpdateLogger } from './auto-update-logger';
@@ -57,11 +58,7 @@ autoUpdater.on('download-progress', progress => {
 });
 
 const createMessageForMessageBox = (info: UpdateInfo) => {
-  return `A new version of Photo Location Map is available and will be installed after restart.
-Do you want to restart this application now?
-
-Current version: ${app.getVersion()}
-Latest version: ${info.version}`;
+  return t('autoUpdate.message', { currentVersion: app.getVersion(), latestVersion: info.version });
 };
 
 autoUpdater.on('update-downloaded', (info: UpdateInfo) => {
@@ -69,10 +66,10 @@ autoUpdater.on('update-downloaded', (info: UpdateInfo) => {
   Analytics.trackEvent('Auto-update', `Auto-update`, `Updating from ${app.getVersion()} to ${info.version}`);
 
   dialog.showMessageBox(mainWindow, {
-    title: 'A new version of Photo Location Map is available!',
+    title: t('autoUpdate.title'),
     type: 'info',
     message: createMessageForMessageBox(info),
-    buttons: ['Yes', 'No'],
+    buttons: [t('autoUpdate.yes'), t('autoUpdate.no')],
   }).then(result => {
     const yes = result.response === 0;
     autoUpdateLogger.info(`User clicked "${yes ? 'Yes' : 'No'}" on the dialog to restart this application to install the new version ${info.version}.`);

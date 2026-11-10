@@ -60,7 +60,9 @@ export class PlmInternalRendererService {
   private showAboutBox(): void {
     this.dialog.open(AboutBoxComponent, {
       width: '600px',
-      height: '420px',
+      // Its height in English. A translation whose texts take more lines makes the dialog taller, instead of
+      // cutting off what is at its bottom.
+      minHeight: '420px',
       panelClass: 'custom-dialog-container',
       autoFocus: false,
       restoreFocus: false
@@ -83,7 +85,9 @@ export class PlmInternalRendererService {
   private showWelcomeDialog(): void {
     this.dialog.open(WelcomeDialogComponent, {
       width: '620px',
-      height: '495px',
+      // Its height in English. A translation whose texts take more lines makes the dialog taller, instead of
+      // cutting off its OK button, as a fixed height did in Japanese.
+      minHeight: '495px',
       panelClass: 'custom-dialog-container',
       autoFocus: false,
       restoreFocus: false,

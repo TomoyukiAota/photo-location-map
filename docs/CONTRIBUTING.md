@@ -61,6 +61,11 @@ Prefix these with `mise exec --`, as above, unless your shell activates mise wit
 See [dependencies.md](contributing/dependencies.md).
 
 
+## Translations
+
+The texts that the application shows are in `src-shared/i18n/locales/`, one file per language. See [TRANSLATING.md](TRANSLATING.md).
+
+
 ## Sidenote
 
 Development of this application is started by using [maximegris/angular-electron](https://github.com/maximegris/angular-electron). [The contents of the respository as of commit 7618abcea496a26656be11f31542713b728919e9 (on Dec 31, 2018)](https://github.com/maximegris/angular-electron/tree/7618abcea496a26656be11f31542713b728919e9) are used with some modification and removal.

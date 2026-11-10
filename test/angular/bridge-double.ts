@@ -14,6 +14,7 @@ export function createBridgeDouble(temporaryRoot: string): PlmBridge {
       version: '0.0.0-test',
       userDataPath: path.join(temporaryRoot, 'userData'),
       platform: process.platform,
+      systemLanguages: ['en-US'],
       pathSeparator: path.sep,
       homeDir: os.homedir(),
       userName: os.userInfo().username,

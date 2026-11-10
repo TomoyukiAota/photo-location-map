@@ -1,14 +1,17 @@
 import { BrowserWindow, MenuItemConstructorOptions } from 'electron';
 import { Analytics } from '../../src-shared/analytics/analytics';
 import { DevOrProd } from '../../src-shared/dev-or-prod/dev-or-prod';
+import { t } from '../../src-shared/i18n/i18n';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { Logger } from '../../src-shared/log/logger';
 import { mainWindow } from '../electron-main';
 import { selectionMenuTemplate } from './selection-menu';
 
-const handleManageSettingsClicked = () => {
-  Logger.info(`[Main Window Menu] Clicked "Manage Settings".`);
-  Analytics.trackEvent('Main Window Menu', 'Clicked "Manage Settings"');
+const handleOpenSettingsClicked = () => {
+  // The versions in which the item was named "Manage Settings" recorded this event as 'Clicked "Manage Settings"':
+  // add the two events when counting how often the item is clicked.
+  Logger.info(`[Main Window Menu] Clicked "Open Settings".`);
+  Analytics.trackEvent('Main Window Menu', 'Clicked "Open Settings"');
 
   if (!mainWindow)
     return;
@@ -16,12 +19,14 @@ const handleManageSettingsClicked = () => {
   mainWindow.webContents.send(IpcConstants.ManageSettings.Name);
 };
 
+// An item with a role gets its label here too: Electron's own labels for roles are English in any language
+// (shell/browser/api/electron_api_menu_roles.cc). In English, they are the labels that Electron gives.
 export const commonMenuTemplate: MenuItemConstructorOptions[] = [
   {
-    label: 'View',
+    label: t('menu.view.title'),
     submenu: [
       {
-        label: 'Reload',
+        label: t('menu.view.reload'),
         visible: DevOrProd.isDev,
         accelerator: DevOrProd.isDev ? 'CmdOrCtrl+R' : '',
         click(item, focusedWindow) {
@@ -30,20 +35,20 @@ export const commonMenuTemplate: MenuItemConstructorOptions[] = [
           }
         },
       },
-      { role: 'resetZoom' },
-      { role: 'zoomIn' },
-      { role: 'zoomOut' },
+      { role: 'resetZoom', label: t('menu.view.actualSize') },
+      { role: 'zoomIn', label: t('menu.view.zoomIn') },
+      { role: 'zoomOut', label: t('menu.view.zoomOut') },
       { type: 'separator' },
-      { role: 'togglefullscreen' }
+      { role: 'togglefullscreen', label: t('menu.view.toggleFullScreen') }
     ]
   },
   selectionMenuTemplate,
   {
-    label: 'Settings',
+    label: t('menu.settings.title'),
     submenu: [
       {
-        label: 'Manage Settings',
-        click: () => handleManageSettingsClicked()
+        label: t('menu.settings.openSettings'),
+        click: () => handleOpenSettingsClicked()
       }
     ]
   }

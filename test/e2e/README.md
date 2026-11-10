@@ -134,7 +134,18 @@ The negative controls `PLM_NEGATIVE_CONTROL=1` and `PLM_MAP_NEGATIVE_CONTROL=1`,
 combined with `PLM_VISUAL=1`, deliberately move the Open Folder button by 20px
 or the map toolbar by 3px and must fail the welcome/empty-home case.
 
-Coverage includes welcome/about/settings, recursive folder loading, map regions,
+The suite runs in English on a machine in any language: with a test profile,
+the application takes `en-US` as the operating system's language instead of
+asking the machine (`src-main/startup/startup-metadata-setup.ts`). A case of
+another language gives the languages in `PLM_TEST_SYSTEM_LANGUAGES`, as
+`launchAsNew({ env: { PLM_TEST_SYSTEM_LANGUAGES: 'ja-JP,en-US' } })` does. A new
+profile shows the Language dialog first; `launch()` confirms it, with the
+language that it offers, unless it is asked to keep it. The references ending
+in `-ja` are of the application in Japanese, whose text is set in the system's
+Japanese font.
+
+Coverage includes the Language dialog, a restart in another language, a Japanese
+launch, welcome/about/settings, recursive folder loading, map regions,
 photo selection, grouping/zoom/reset, splitters, chooser/window/settings restart
 behavior, analytics payloads, the actual HEIC worker and corrupt input, public
 embedded JPEG/HEIC viewing and the download website. Map/embedded viewer checks

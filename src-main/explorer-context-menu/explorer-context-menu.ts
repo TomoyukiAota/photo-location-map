@@ -2,6 +2,7 @@ import * as childProcess from 'child_process';
 import * as path from 'path';
 import { Analytics } from '../../src-shared/analytics/analytics';
 import { scrubbedErrorLabel } from '../../src-shared/analytics/record-error';
+import { t } from '../../src-shared/i18n/i18n';
 import { Logger } from '../../src-shared/log/logger';
 
 /** A value of a registry key, `name` null for the key's default value. */
@@ -42,10 +43,14 @@ const keyThatIsAlwaysThere = 'HKCU\\Software';
  */
 export const regExePath = path.win32.join(process.env.SystemRoot || 'C:\\Windows', 'System32', 'reg.exe');
 
-/** What Add writes for the application at `exePath`, in that order. */
+/**
+ * What Add writes for the application at `exePath`, in that order. The item's text is in the application's language
+ * at that time; after the language changes, Remove and Add write it again.
+ */
 export function explorerContextMenuValues(exePath: string): RegistryValue[] {
   return menuItems.flatMap(({ key, placeholder }) => [
-    { key, name: null, data: 'Open with &Photo Location Map' },
+    // The letter after & is the item's access key in Explorer's menu.
+    { key, name: null, data: t('explorerContextMenu.openWithAccessKey') },
     { key, name: 'icon', data: exePath },
     // Quoted, as the path has spaces. Unquoted, CreateProcess takes the part before each space in turn as the program,
     // trying "...\Photo.exe" and "...\Photo Location.exe" before "...\Photo Location Map.exe".

@@ -98,9 +98,19 @@ export async function waitForUsable(page, timeout = 90000) {
   }
 }
 
-/** Clicks OK on the welcome dialog, which a profile shows until OK is clicked once. */
+/**
+ * Clicks OK on the welcome dialog, which a profile shows until OK is clicked once. A build with several languages
+ * shows its Language dialog before it, until a language is confirmed: OK there keeps the language that it offers,
+ * English on a test profile.
+ */
 export async function dismissWelcome(page, { timeout = 15000 } = {}) {
+  const languageDialog = page.locator('app-language-dialog');
   const dialog = page.locator('app-welcome-dialog');
+  await languageDialog.or(dialog).first().waitFor({ timeout });
+  if (await languageDialog.count() > 0) {
+    await languageDialog.locator('.ok-button').click();
+    await languageDialog.waitFor({ state: 'detached', timeout });
+  }
   await dialog.waitFor({ timeout });
   await page.getByRole('button', { name: 'OK', exact: true }).click();
   await dialog.waitFor({ state: 'detached', timeout });

@@ -19,7 +19,7 @@
   margin-bottom: 20px;
 
   button {
-     width: 100px;
+     min-width: 100px; // At least its width in English; wider for a longer text of another language.
   }
 }
 

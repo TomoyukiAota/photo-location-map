@@ -3,6 +3,7 @@ import { app, screen } from 'electron';
 import { Analytics } from '../src-shared/analytics/analytics';
 import { DateTimeFormat } from '../src-shared/date-time/date-time-format';
 import { DevOrProd } from '../src-shared/dev-or-prod/dev-or-prod';
+import { currentLanguage } from '../src-shared/i18n/i18n';
 import { IpcConstants } from '../src-shared/ipc/ipc-constants';
 import { Logger } from '../src-shared/log/logger';
 import { toLoggableString } from '../src-shared/log/to-loggable-string';
@@ -128,6 +129,9 @@ const recordLoadedUserSettings = () => {
   Analytics.trackEvent('Loaded User Settings', `Date Format`, `Date Format: ${settings.dateFormat}`);
   Analytics.trackEvent('Loaded User Settings', `Clock System Format`, `Clock System Format: ${settings.clockSystemFormat}`);
   Analytics.trackEvent('Loaded User Settings', `moment.js Format`, `moment.js Format: ${momentJsFormatString}`);
+  // The setting, `auto` unless the user chose a language, and the language that the application is shown in.
+  Analytics.trackEvent('Loaded User Settings', `Language`, `Language: ${settings.language}`);
+  Analytics.trackEvent('Loaded User Settings', `Language in Use`, `Language in Use: ${currentLanguage}`);
 };
 
 const recordLoadedLeafletBaseLayer = () => {

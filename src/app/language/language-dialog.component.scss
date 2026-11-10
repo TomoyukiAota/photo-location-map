@@ -1,0 +1,28 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+}
+
+.language-dialog-title {
+  font-size: 24px;
+  text-align: center;
+}
+
+.language-list {
+  margin-top: 20px;
+  --language-list-text-align: center; // As in the setup of macOS, which this dialog is modeled on.
+}
+
+// Takes its place while it is hidden, so that the dialog keeps its size when a language is chosen.
+.restart-note {
+  margin-top: 15px;
+  font-size: 15px;
+  color: red;
+}
+
+.ok-button {
+  margin-top: 20px;
+  align-self: center;
+  min-width: 80px; // At least its width in English; wider for a longer text of another language.
+}

@@ -2,6 +2,9 @@ import { Photo } from '../../shared/model/photo.model';
 import { removeFocus } from '../../shared/remove-focus';
 import { getMoreOptionsMenuItems } from './more-options-menu-items';
 
+const sidebarAreaId = '#home-left-sidebar';
+const mapAreaId = '#home-map';
+
 export class MoreOptionsMenuElement {
   public static create(photo: Photo, moreOptionsButton: HTMLElement): HTMLElement {
     const menuElement = document.createElement('div');
@@ -17,9 +20,25 @@ export class MoreOptionsMenuElement {
     return menuElement;
   }
 
+  /**
+   * Moves the menu, once it is in the page, to the right when its left edge is beyond that of its area, the sidebar
+   * or the map, which would cut it off.
+   * TL;DR: The menu is as wide as its longest item, which depends on the language.
+   * Details: Under the button, it opens leftwards from the button's right side. In English it was 24 px short of the
+   * map's left edge for a popup at that edge; in Japanese, whose items are about 25 px wider, it was cut off there.
+   */
+  public static keepWithinArea(menuElement: HTMLElement, moreOptionsButton: HTMLElement): void {
+    const area = moreOptionsButton.closest(sidebarAreaId) ?? document.querySelector(mapAreaId);
+    if (!area || menuElement.style.right === '')
+      return;
+
+    const margin = 4;
+    const cutOff = area.getBoundingClientRect().left + margin - menuElement.getBoundingClientRect().left;
+    if (cutOff > 0)
+      menuElement.style.right = `${parseFloat(menuElement.style.right) - cutOff}px`;
+  }
+
   private static configureMenuPosition(menuElement: HTMLElement, moreOptionsButton: HTMLElement) {
-    const sidebarAreaId = '#home-left-sidebar';
-    const mapAreaId = '#home-map';
 
     const isWithinSidebar = !!moreOptionsButton.closest(sidebarAreaId);
     const {clientHeight: areaHeight} = isWithinSidebar

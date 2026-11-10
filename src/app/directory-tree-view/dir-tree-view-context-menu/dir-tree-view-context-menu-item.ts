@@ -1,27 +1,34 @@
 import { Analytics } from '../../../../src-shared/analytics/analytics';
+import { TranslationKey } from '../../../../src-shared/i18n/translation-key';
 import { openContainingFolder, openWithAssociatedApp} from '../../shared/open-with-os';
 import { DirTreeViewContextMenuData as ContextMenuData } from './dir-tree-view-context-menu-data';
 import { dirTreeViewContextMenuLogger as contextMenuLogger } from './dir-tree-view-context-menu-logger';
 
 export interface DirTreeViewContextMenuItem {
-  text: string;
+  /** The key of the item's text, for the file or folder that the menu is opened on. */
+  textKey: (data: ContextMenuData) => TranslationKey;
   onClick: (data: ContextMenuData) => void;
   visible: (data: ContextMenuData) => boolean;
 }
 
 export const dirTreeViewContextMenuItems: DirTreeViewContextMenuItem[] = [
   {
-    text: 'Select Only This',
+    // TL;DR: A text for a file and one for a folder, though English says "Select Only This" of both.
+    // Details: Japanese names what is selected, "このファイルのみを選択" and "このフォルダーのみを選択": one text for
+    // both said "this file" of a folder.
+    textKey: (data) => data.node.type === 'directory'
+      ? 'directoryTree.contextMenu.selectOnlyThisFolder'
+      : 'directoryTree.contextMenu.selectOnlyThisFile',
     onClick: (data) => selectOnlyThis(data),
     visible: (data) => data.node.isSelectable,
   },
   {
-    text: 'Open',
+    textKey: () => 'directoryTree.contextMenu.open',
     onClick: (data) => open(data),
     visible: () => true,
   },
   {
-    text: 'Open Folder',
+    textKey: () => 'directoryTree.contextMenu.openFolder',
     onClick: (data) => openFolder(data),
     visible: () => true,
   },

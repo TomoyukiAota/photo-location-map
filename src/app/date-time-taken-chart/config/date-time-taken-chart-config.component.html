@@ -1,23 +1,23 @@
 <picture class="more-options-icon" [matMenuTriggerFor]="moreOptionsMenu">
   <img class="more-options-icon-img"
        [src]="moreOptionsIconDataUrl"
-       alt="More"/>
+       [alt]="'chart.moreAlt' | t"/>
 </picture>
 <mat-menu #moreOptionsMenu>
   <div class="more-options-menu" (click)="$event.stopPropagation();">
-    <div class="date-unknown-photos-count">Date-unknown photos: {{ dateUnknownPhotosCount() }}</div>
+    <div class="date-unknown-photos-count">{{ 'chart.dateUnknownPhotos' | t: { count: dateUnknownPhotosCount() } }}</div>
     @if (dateUnknownPhotosCount() >= 1) {
       <mat-checkbox [checked]="chartConfigService.showDateUnknownPhotos()"
                     (change)="onShowDateUnknownPhotosCheckboxChanged($event)">
-        Show date-unknown photos on the map
+        {{ 'chart.showDateUnknownPhotos' | t }}
       </mat-checkbox>
     }
   </div>
 </mat-menu>
 <div class="x-axis-unit-select">
   <select (change)="onXAxisSelectChange($event)">
-    @for (unit of xAxisUnits; track unit) {
-      <option [defaultSelected]="unit === 'Day'">{{ unit }}</option>
+    @for (unit of xAxisUnits; track unit.momentJsStr) {
+      <option [value]="unit.momentJsStr" [defaultSelected]="unit.momentJsStr === 'day'">{{ unit.labelKey | t }}</option>
     }
   </select>
 </div>

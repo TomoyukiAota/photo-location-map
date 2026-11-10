@@ -61,6 +61,28 @@ the text belongs:
 **Why:** agents added details to CONTRIBUTING.md as they worked, until it was
 too long to read as an introduction.
 
+## Texts that the user sees are translated
+
+Every text that the application shows comes from `t()` of
+[`src-shared/i18n/i18n.ts`](src-shared/i18n/i18n.ts), or from the `t` pipe in a
+template, and lives in `src-shared/i18n/locales/en.json`, with its translations
+next to it. Do not write such a text where it is shown: not in a template, a DOM
+call, the menu or a dialog. Add it to `en.json` and to `ja.json`.
+
+- The log, analytics events and the messages of errors stay in English, written
+  where they are used.
+- A word that the code also compares or saves, such as a tab or a unit, gets an
+  identifier apart from its text.
+- A sentence with a link is one text, with a tag around the linked words, which
+  the `tagParts` pipe splits.
+- The tests run in English on a machine in any language. A test of another
+  language asks for it with `PLM_TEST_SYSTEM_LANGUAGES`.
+
+[`docs/TRANSLATING.md`](docs/TRANSLATING.md) is the guide for translators.
+
+**Why:** a text written in the code is shown in English to every user, and no
+check finds it.
+
 ## Keep windows off the owner's screen
 
 Run anything that opens a browser or an app window **headless**, unless you are

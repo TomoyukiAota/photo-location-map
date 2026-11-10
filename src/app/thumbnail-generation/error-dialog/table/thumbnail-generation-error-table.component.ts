@@ -6,6 +6,7 @@ import { Analytics } from '../../../../../src-shared/analytics/analytics';
 import { openContainingFolder, openWithAssociatedApp } from '../../../shared/open-with-os';
 import { createPrependedLogger } from '../../../../../src-shared/log/create-prepended-logger';
 import { IconDataUrl } from '../../../../assets/icon-data-url';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 import { ThumbnailGenerationService } from '../../service/thumbnail-generation.service';
 import { MatFormField } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
@@ -26,7 +27,7 @@ interface TableRow {
   imports: [
     MatFormField, MatInput, CdkVirtualScrollViewport, TableVirtualScrollModule, MatTable, MatSort, MatColumnDef,
     MatHeaderCellDef, MatHeaderCell, MatSortHeader, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef,
-    MatRow,
+    MatRow, TranslatePipe,
   ]
 })
 export class ThumbnailGenerationErrorTableComponent implements OnInit {

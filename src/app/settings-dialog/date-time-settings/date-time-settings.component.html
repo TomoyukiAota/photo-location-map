@@ -1,11 +1,11 @@
-<div class="setting-title">Date & Time Format</div>
+<div class="setting-title">{{ 'settings.dateTime.title' | t }}</div>
 <div class="setting-container">
   <div class="description-row">
-    The date and time format will be changed after application restart.
+    {{ 'settings.dateTime.description' | t }}
   </div>
   <div class="dropdown-and-example-row">
     <mat-form-field class="date-format-dropdown">
-      <mat-label>Date Format</mat-label>
+      <mat-label>{{ 'settings.dateTime.dateFormat' | t }}</mat-label>
       <mat-select [(value)]="selectedDateFormat" (selectionChange)="notifySettingsChanged($event)">
         @for (dateFormat of dateFormatList; track dateFormat) {
           <mat-option [value]="dateFormat">
@@ -15,17 +15,17 @@
       </mat-select>
     </mat-form-field>
     <mat-form-field class="clock-system-format-dropdown">
-      <mat-label>12- or 24-hour</mat-label>
+      <mat-label>{{ 'settings.dateTime.clockSystem' | t }}</mat-label>
       <mat-select [(value)]="selectedClockSystemFormat" (selectionChange)="notifySettingsChanged($event)">
         @for (clockSystemFormat of clockSystemFormatList; track clockSystemFormat) {
           <mat-option [value]="clockSystemFormat">
-            {{clockSystemFormat}}
+            {{ clockSystemFormatLabelKeys[clockSystemFormat] | t }}
           </mat-option>
         }
       </mat-select>
     </mat-form-field>
     <div class="date-time-example">
-      <div>Example</div>
+      <div>{{ 'settings.dateTime.example' | t }}</div>
       <div>{{getDateTimeNow()}}</div>
     </div>
   </div>

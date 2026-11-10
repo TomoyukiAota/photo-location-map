@@ -1,11 +1,13 @@
 // TL;DR: The order of the first imports matters: each sets up what the next ones use while they are evaluated.
 // Details: The test profile moves the app's folders; errors are scrubbed and logged from the start; the startup metadata
-// needs the log's location; the settings hold the analytics user ID; analytics then sends what was tracked before.
+// needs the log's location; the settings hold the analytics user ID and the language, which the texts of the menu and
+// the dialogs are in; analytics then sends what was tracked before.
 import '../electron-util/isolated-test-profile';
 import './analytics/error-scrubbing-setup';
 import './log/log-setup';
 import './startup/startup-metadata-setup';
 import './user-data-storage/user-data-storage-setup';
+import './i18n/i18n-setup';
 import { withHeadlessTestOptions } from '../electron-util/e2e-test-hooks';
 import './configure-electron-unhandled';
 import './command-line-options/configure-command-line-options';

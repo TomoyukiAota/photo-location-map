@@ -1,0 +1,14 @@
+<div class="message">{{ data.message }}</div>
+<div class="buttons">
+  <button mat-flat-button
+          color="primary"
+          class="ok-button"
+          [mat-dialog-close]="true">
+    {{ 'common.ok' | t }}
+  </button>
+  <button mat-button
+          class="cancel-button"
+          [mat-dialog-close]="false">
+    {{ 'common.cancel' | t }}
+  </button>
+</div>

@@ -6,6 +6,8 @@ import { Logger } from '../../../src-shared/log/logger';
 import { startupMetadata } from '../../../src-shared/startup/startup-metadata';
 import { openUrl } from '../../../src-shared/url/open-url';
 import { IconDataUrl } from '../../assets/icon-data-url';
+import { TagPartsPipe } from '../shared/i18n/tag-parts.pipe';
+import { TranslatePipe } from '../shared/i18n/translate.pipe';
 import { configureOpeningInOsBrowser } from '../shared/open-url/configure-opening-in-os-browser';
 import { WelcomeDialogAtAppLaunchService } from './welcome-dialog-at-app-launch/welcome-dialog-at-app-launch.service';
 import { MatButton } from '@angular/material/button';
@@ -15,7 +17,7 @@ import { MatDialogClose } from '@angular/material/dialog';
   selector: 'app-welcome-dialog',
   templateUrl: './welcome-dialog.component.html',
   styleUrls: ['./welcome-dialog.component.scss'],
-  imports: [MatButton, MatDialogClose]
+  imports: [MatButton, MatDialogClose, TranslatePipe, TagPartsPipe]
 })
 export class WelcomeDialogComponent implements AfterViewInit {
   private sanitizer = inject(DomSanitizer);

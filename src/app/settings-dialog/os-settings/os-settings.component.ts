@@ -2,17 +2,19 @@ import { Component, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { bridge } from '../../../../src-shared/bridge/plm-bridge';
+import { t } from '../../../../src-shared/i18n/i18n';
 import { Logger } from '../../../../src-shared/log/logger';
-
-const lineToConfirm = 'Please open Explorer and right-click on a file/folder to confirm.';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'app-os-settings',
   templateUrl: './os-settings.component.html',
   styleUrl: './os-settings.component.scss',
-  imports: [MatButton]
+  imports: [MatButton, TranslatePipe]
 })
 export class OsSettingsComponent {
+  /** The item of Explorer's context menu, as the main process writes it without its access key (src-main/explorer-context-menu/). */
+  public readonly menuItem = t('explorerContextMenu.openWith');
   /** What the last click on Add or Remove did, shown once the main process has answered. */
   public readonly messageLinesAfterButtonClicked = signal<readonly string[]>([]);
 
@@ -21,8 +23,8 @@ export class OsSettingsComponent {
     Logger.info('[Settings Dialog] [OS] Clicked "Add" button for Explorer\'s context menu.');
     Analytics.trackEvent('Settings Dialog', '[Settings Dialog] [OS] Click "Add"');
     await this.changeRegistry(() => bridge().explorerContextMenu.add(),
-      ['Added "Open with Photo Location Map" in the context menu of Explorer.', lineToConfirm],
-      ['Failed to add "Open with Photo Location Map" in the context menu of Explorer.']);
+      [t('settings.os.added', { menuItem: this.menuItem }), t('settings.os.confirmInExplorer')],
+      [t('settings.os.failedToAdd', { menuItem: this.menuItem })]);
   }
 
   /** Has the main process remove "Open with Photo Location Map" from the context menu of Explorer, then says whether it did. */
@@ -30,8 +32,8 @@ export class OsSettingsComponent {
     Logger.info('[Settings Dialog] [OS] Clicked "Remove" button for Explorer\'s context menu.');
     Analytics.trackEvent('Settings Dialog', '[Settings Dialog] [OS] Click "Remove"');
     await this.changeRegistry(() => bridge().explorerContextMenu.remove(),
-      ['Removed "Open with Photo Location Map" in the context menu of Explorer.', lineToConfirm],
-      ['Failed to remove "Open with Photo Location Map" from the context menu of Explorer.']);
+      [t('settings.os.removed', { menuItem: this.menuItem }), t('settings.os.confirmInExplorer')],
+      [t('settings.os.failedToRemove', { menuItem: this.menuItem })]);
   }
 
   /** Asks the main process to change the registry, then shows whether it did. The main process logs a failure. */

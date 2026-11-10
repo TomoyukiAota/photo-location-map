@@ -1,7 +1,11 @@
-import { AfterViewInit, Component, ElementRef, viewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, viewChild } from '@angular/core';
 import { bridge } from '../../../../src-shared/bridge/plm-bridge';
+import { t } from '../../../../src-shared/i18n/i18n';
 import { Logger } from '../../../../src-shared/log/logger';
 import { startupMetadata } from '../../../../src-shared/startup/startup-metadata';
+import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
+import { TagPartsPipe } from '../../shared/i18n/tag-parts.pipe';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 import { configureOpeningInOsBrowser } from '../../shared/open-url/configure-opening-in-os-browser';
 import { MatButton } from '@angular/material/button';
 
@@ -9,9 +13,11 @@ import { MatButton } from '@angular/material/button';
   selector: 'app-cache-settings',
   templateUrl: './cache-settings.component.html',
   styleUrls: ['./cache-settings.component.scss'],
-  imports: [MatButton]
+  imports: [MatButton, TranslatePipe, TagPartsPipe]
 })
 export class CacheSettingsComponent implements AfterViewInit {
+  private confirmDialogService = inject(ConfirmDialogService);
+
   public thumbnailCacheLocation = startupMetadata().thumbnailCacheDir;
 
   public readonly heifWikipediaLink = viewChild.required<ElementRef<HTMLAnchorElement>>('heifWikipediaLink');
@@ -29,8 +35,8 @@ export class CacheSettingsComponent implements AfterViewInit {
   }
 
   /** Once the user confirms, has the main process delete the thumbnail cache and restart the app. */
-  public handleDeleteThumbnailCacheButtonClicked() {
-    const isOkPressed = window.confirm('This application will restart after deleting the thumbnail cache.\nDo you want to continue?');
+  public async handleDeleteThumbnailCacheButtonClicked() {
+    const isOkPressed = await this.confirmDialogService.confirm(t('settings.cache.confirmDelete'));
     if (!isOkPressed)
       return;
 

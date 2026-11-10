@@ -1,8 +1,5 @@
-import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { ApplicationConfig, ErrorHandler, provideCheckNoChangesConfig, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter, withHashLocation } from '@angular/router';
-import { provideTranslateService } from '@ngx-translate/core';
-import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { provideEchartsCore } from 'ngx-echarts';
 import { startupMetadata } from '../../src-shared/startup/startup-metadata';
 import { AppConfig } from '../environments/environment';
@@ -19,14 +16,6 @@ export const appConfig: ApplicationConfig = {
     // ErrorHandler, which logs it.
     ...(AppConfig.production ? [] : [provideCheckNoChangesConfig({ exhaustive: true, interval: 1000 })]),
     provideRouter(routes, withHashLocation()),
-    provideHttpClient(withXhr(), withInterceptorsFromDi()),
-    provideTranslateService({
-      loader: provideTranslateHttpLoader({
-        prefix: './assets/i18n/',
-        suffix: '.json',
-        failOnError: true, // Preserve the original loader's HTTP error propagation.
-      }),
-    }),
     provideEchartsCore({
       /** Loads ECharts with its v5 theme, and in an e2e run lets the test read a chart's theme. */
       echarts: async () => {
