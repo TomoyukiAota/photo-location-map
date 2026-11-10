@@ -109,8 +109,9 @@ in its own file.
   (`src/app/map/leaflet-map/`), which makes it outside any template.
 - A component that is there for every photo, as `PhotoInfoViewerComponent` is
   in each row of the folder tree, is kept light, in the ways that its comment
-  lists. Measure the page's memory with a folder of thousands of photos before
-  and after a change to it.
+  lists. Measure a change to it with `test/performance/tree-rows.mjs`, which
+  opens a folder of thousands of photos in the build before and in the build
+  after (`test/performance/README.md`).
 - What a component of a photo has to keep while it is not shown is in a
   service, as `ThumbnailRotationService` keeps how far a thumbnail is turned:
   the component is destroyed when its row or popup goes.

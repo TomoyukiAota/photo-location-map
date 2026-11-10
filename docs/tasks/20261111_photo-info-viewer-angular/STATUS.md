@@ -104,9 +104,9 @@ size, font and transform.
 ### Time and memory
 
 A folder with all its photos in it has a row for each photo as soon as it is
-opened, so the viewer's cost counts there. A script opened such a folder of
-copies of one JPEG, with the network cut, and read the page's memory after a
-garbage collection.
+opened, so the viewer's cost counts there. `test/performance/tree-rows.mjs`,
+which is new, opens such a folder of copies of one JPEG, with the network cut,
+and reads the page's memory after a garbage collection.
 
 | 10,000 photos (two runs before, three now) | Before | Now |
 | --- | --- | --- |
