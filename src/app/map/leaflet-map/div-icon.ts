@@ -1,6 +1,13 @@
 import { trimStringWithEllipsis } from '../../../../src-shared/string/trim-string-with-ellipsis';
 import { Photo } from '../../shared/model/photo.model';
 
+/**
+ * The label of a photo's marker: its shooting time, or its name when the time is unknown.
+ * TL;DR: Built with DOM calls on purpose, unlike the popups, which are Angular components.
+ * Details: There is a label for every photo on the map, made whenever the map is rendered, tens of thousands for a
+ * large folder, while a popup is made for the few photos that the user looks at. A label is a few elements of text
+ * that nothing changes and nothing clicks, so a component would add its cost to each without giving anything.
+ */
 export function createDivIconHtml(photo: Photo): HTMLElement {
   const divIcon = document.createElement('div');
   divIcon.className = 'plm-leaflet-map-div-icon-content-and-tail';

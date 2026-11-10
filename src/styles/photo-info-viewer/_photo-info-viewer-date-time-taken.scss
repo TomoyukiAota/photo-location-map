@@ -1,6 +1,0 @@
-@use "photo-info-viewer-common" as *;
-
-.photo-info-viewer-date-time-taken {
-  @include photo-info-viewer-text;
-  padding: 0 0 3px 0;
-}

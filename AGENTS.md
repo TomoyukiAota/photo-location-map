@@ -97,6 +97,31 @@ English.
 **Why:** a text written in the code is shown in English to every user, and no
 check finds it.
 
+## What the application shows is an Angular component
+
+Do not build what the application shows with DOM calls
+(`document.createElement`, `innerHTML`, `appendChild`, `element.style`). Write
+an Angular component, with its texts from `t()` or the `t` pipe and its styles
+in its own file.
+
+- What Leaflet shows in an element of its own making, a popup's content or a
+  control's, gets its component from `LeafletContentService`
+  (`src/app/map/leaflet-map/`), which makes it outside any template.
+- A component that is there for every photo, as `PhotoInfoViewerComponent` is
+  in each row of the folder tree, is kept light, in the ways that its comment
+  lists. Measure the page's memory with a folder of thousands of photos before
+  and after a change to it.
+- What a component of a photo has to keep while it is not shown is in a
+  service, as `ThumbnailRotationService` keeps how far a thumbnail is turned:
+  the component is destroyed when its row or popup goes.
+- The label of a marker on the map (`div-icon.ts`) is the exception, for the
+  reason in its comment.
+
+**Why:** the content that shows a photo was built with DOM calls, apart from
+Angular. Its texts, styles and events were set in TypeScript, and each place
+that showed it changed its elements one by one after they were made
+(`docs/tasks/20261111_photo-info-viewer-angular/STATUS.md`).
+
 ## Keep windows off the owner's screen
 
 Run anything that opens a browser or an app window **headless**, unless you are

@@ -1,6 +1,6 @@
-@use "../color" as *;
+@use "../../styles/color" as *;
 
-.photo-cluster-viewer-root {
+:host {
   display: flex;
   align-items: center;
   gap: 20px;

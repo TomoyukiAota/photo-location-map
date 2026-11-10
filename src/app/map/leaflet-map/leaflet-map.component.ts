@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Injector, OnDestroy, effect, untracked, viewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, ComponentRef, ElementRef, Injector, OnDestroy, effect, untracked, viewChild, inject } from '@angular/core';
 import * as turf from '@turf/turf';
 import { Control, LayersControlEvent, LeafletEvent, Map, Marker, PopupEvent } from 'leaflet';
 import * as _ from 'lodash';
@@ -12,22 +12,20 @@ import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/us
 import { DirectoryTreeViewSelectionService } from '../../directory-tree-view/directory-tree-view-selection.service';
 import { Photo } from '../../shared/model/photo.model';
 import { PinnedPhotoService } from '../../shared/service/pinned-photo.service';
-import { PhotoClusterViewer } from '../../photo-cluster-viewer/photo-cluster-viewer';
-import { PhotoInfoViewerContent } from '../../photo-info-viewer/photo-info-viewer-content';
+import { PhotoClusterViewerComponent } from '../../photo-cluster-viewer/photo-cluster-viewer.component';
+import { PhotoInfoViewerComponent } from '../../photo-info-viewer/photo-info-viewer.component';
 import { LeafletMapForceRenderService } from './leaflet-map-force-render/leaflet-map-force-render.service';
 import { addEachMarker } from './add-each-marker';
 import { createDivIconHtml } from './div-icon';
+import { LeafletContentService } from './leaflet-content.service';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
 import { rasterTileBaseLayerConfigsVersion1 } from './raster-tile-base-layer-configs-version-1';
+import { RegionInfoComponent } from './region-info/region-info.component';
 import { MatProgressBar } from '@angular/material/progress-bar';
 
 // "declare let L: any;" is defined here (in addition to global scope typing given by types/index.d.ts)
 // in order to avoid the compile errors for the types from leaflet.markercluster
 declare let L: any;
-
-interface RegionInfo extends Control {
-  updateContent(): RegionInfo;
-}
 
 @Component({
   selector: 'app-leaflet-map',
@@ -39,6 +37,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   private directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);
   private forceRenderService = inject(LeafletMapForceRenderService);
   private injector = inject(Injector);
+  private leafletContentService = inject(LeafletContentService);
   private pinnedPhotoService = inject(PinnedPhotoService);
 
   public readonly updateInProgressOverlay = viewChild.required<ElementRef<HTMLDivElement>>('updateInProgressOverlay');
@@ -57,7 +56,10 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   };
 
   private map: Map;
-  private regionInfo: RegionInfo;
+  private regionInfo: Control;
+  private regionInfoContent: ComponentRef<RegionInfoComponent>;
+  // The viewer of each cluster whose popup has been opened on this map, which the cluster's popup shows again.
+  private clusterViewers = new WeakMap<object, ComponentRef<PhotoClusterViewerComponent>>();
   private photos: Photo[] = [];
   private photosWithinRegion: Set<Photo> = new Set<Photo>();
 
@@ -85,6 +87,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     this.forceRenderServiceSubscription.unsubscribe();
     // A render still waiting would draw into the removed view.
     this.renderMapWithDebouncing.cancel();
+    this.leafletContentService.destroyAll();
   }
 
   // The overlay is shown and hidden through its style rather than a binding, so it needs no change detection.
@@ -123,6 +126,8 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
       this.map.off();
       this.map.remove();
     }
+    // The components that the removed map showed in its popups and its region info.
+    this.leafletContentService.destroyAll();
   }
 
   private initializeMap(): void {
@@ -197,18 +202,16 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   }
 
   private configureRegionInfo() {
-    const getContent = () => this.getRegionInfoContent();
+    this.regionInfoContent = this.leafletContentService.create(RegionInfoComponent, { photoCount: 0 });
+    this.regionInfoContent.instance.selectPhotos.subscribe(() => this.selectPhotosWithinRegion());
+    const content: HTMLElement = this.regionInfoContent.location.nativeElement;
     L.RegionInfo = L.Control.extend({
       // Control::onAdd required for Leaflet
       onAdd: function(map) {
         this._div = L.DomUtil.create('div', 'leaflet-bar plm-leaflet-map-region-info');
         L.DomEvent.disableClickPropagation(this._div);
+        this._div.appendChild(content);
         return this._div;
-      },
-      // RegionInfo::updateContent
-      updateContent: function() {
-        this._div.replaceChildren(getContent());
-        return this;
       },
     });
 
@@ -228,27 +231,11 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     this.regionInfo.getContainer().style.visibility = 'visible';
   }
 
-  private getRegionInfoContent(): HTMLElement {
-    const container = document.createElement('div');
-    container.classList.add('plm-leaflet-map-region-info-container');
-
-    const text = document.createElement('div');
-    text.classList.add('plm-leaflet-map-region-info-text');
-    text.innerText = t('map.photosInRegions', { count: this.photosWithinRegion.size });
-
-    const button = document.createElement('button');
-    button.classList.add('plm-leaflet-map-region-info-select-photos-button');
-    button.innerText = t('map.selectPhotos');
-    button.disabled = this.photosWithinRegion.size === 0;
-    button.onclick = () => {
-      logger.info(`Select Photos in Regions, Photos: ${this.photosWithinRegion.size}, Regions: ${this.getNumberOfRegions()}`);
-      Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Select Photos in Regions`, `Photos: ${this.photosWithinRegion.size}, Regions: ${this.getNumberOfRegions()}`);
-      const photoPaths = Array.from(this.photosWithinRegion).map(photo => photo.path);
-      this.directoryTreeViewSelectionService.select(photoPaths);
-    };
-
-    container.append(text, button);
-    return container;
+  private selectPhotosWithinRegion(): void {
+    logger.info(`Select Photos in Regions, Photos: ${this.photosWithinRegion.size}, Regions: ${this.getNumberOfRegions()}`);
+    Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Select Photos in Regions`, `Photos: ${this.photosWithinRegion.size}, Regions: ${this.getNumberOfRegions()}`);
+    const photoPaths = Array.from(this.photosWithinRegion).map(photo => photo.path);
+    this.directoryTreeViewSelectionService.select(photoPaths);
   }
 
   private configureLeafletGeoman() {
@@ -305,7 +292,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
 
   private updateRegionInfo() {
     this.updatePhotosWithinRegion();
-    this.regionInfo.updateContent();
+    this.regionInfoContent.setInput('photoCount', this.photosWithinRegion.size);
   }
 
   private regionExists(): boolean {
@@ -408,8 +395,17 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
 
   private showPopupForMarkerCluster(cluster) {
     const markers = cluster.getAllChildMarkers();
-    const photos = markers.map(marker => marker.options.photo);
-    const popupContent = PhotoClusterViewer.create(photos);
+    const photos: Photo[] = markers.map(marker => marker.options.photo);
+    let viewer = this.clusterViewers.get(cluster);
+    if (viewer) {
+      // Given its photos again, the viewer chooses the first tile, as in a popup that is opened for the first time.
+      viewer.setInput('photos', photos);
+      viewer.changeDetectorRef.detectChanges();
+    } else {
+      viewer = this.leafletContentService.create(PhotoClusterViewerComponent, { photos });
+      this.clusterViewers.set(cluster, viewer);
+    }
+    const popupContent: HTMLElement = viewer.location.nativeElement;
     L.popup({
       maxWidth: 100000,   // Set to some large number so that there is no maxWidth limit.
       offset: L.point(0, -10),
@@ -430,7 +426,12 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
       }
     );
     // A function, which Leaflet calls when the popup opens, so that the content is made only for the photos shown.
-    marker.bindPopup(() => PhotoInfoViewerContent.request('leaflet-map-popup', photo));
+    // The popup shows the same component when it opens again.
+    let viewer: ComponentRef<PhotoInfoViewerComponent> | undefined;
+    marker.bindPopup(() => {
+      viewer ??= this.leafletContentService.create(PhotoInfoViewerComponent, { photo, place: 'leaflet-map-popup' });
+      return viewer.location.nativeElement as HTMLElement;
+    });
     marker.on('popupopen',  event => this.updateDivIconBackgroundColor(event, 'rgba( 63,  81, 181, .15)')); // Same as $white-background_selected in _color.scss
     marker.on('popupclose', event => this.updateDivIconBackgroundColor(event, 'rgba(255, 255, 255, 1  )'));
     (marker.options as any).photo = photo;
