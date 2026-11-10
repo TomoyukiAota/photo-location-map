@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "Chargement..."
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Annuler",
+    "close": "Fermer"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "Langue (Language)",
+    "systemLanguage": {
+      "mac": "Utiliser le réglage de macOS ({{language}})",
+      "windows": "Utiliser le paramètre de Windows ({{language}})",
+      "other": "Utiliser le réglage du système ({{language}})"
+    },
+    "restartToApply": "Cette application va redémarrer pour appliquer la langue.",
+    "confirm": "OK",
+    "search": "Rechercher",
+    "noLanguagesFound": "Aucune langue trouvée"
+  },
+  "appInfo": {
+    "appIconAlt": "Icône de l’application",
+    "version": "Version {{version}}",
+    "developedBy": "Développé par Tomoyuki Aota.",
+    "xProfileAlt": "Profil X (anciennement Twitter)",
+    "xProfileTitle": "Ouvrir le profil X (anciennement Twitter)",
+    "gitHubProfileAlt": "Profil GitHub",
+    "gitHubProfileTitle": "Ouvrir le profil GitHub",
+    "troubleshooting": "Si vous rencontrez des problèmes avec cette application, consultez <pageLink>la page de dépannage</pageLink>.",
+    "troubleshootingLinkTitle": "Ouvrir la page de dépannage"
+  },
+  "welcome": {
+    "message": "Bienvenue dans {{appName}}",
+    "usageInfoCollection": "Pour être améliorée, cette application collecte des données d’utilisation anonymes. En continuant à utiliser cette application, vous l’acceptez."
+  },
+  "about": {
+    "releasesLink": "Téléchargements et notes de version",
+    "releasesLinkTitle": "Ouvrir les téléchargements et les notes de version",
+    "translations": "Les traductions dans d’autres langues sont les bienvenues : voir <guideLink>comment traduire cette application</guideLink>.",
+    "translationsLinkTitle": "Ouvrir le guide de traduction de cette application",
+    "homePageTitle": "Ouvrir la page d’accueil",
+    "sourceCodeTitle": "Voir le code source sur GitHub"
+  },
+  "sidebar": {
+    "openFolder": "Ouvrir un dossier",
+    "cannotOpenWhileGeneratingThumbnails": "Impossible d’ouvrir un dossier pendant la création des vignettes.",
+    "openFolderToSeePhotos": "Ouvrez un dossier pour voir où les photos ont été prises.",
+    "sort": {
+      "title": "Trier",
+      "byName": "Par nom",
+      "byShootingTime": "Par date de prise de vue",
+      "ascending": "Ordre croissant",
+      "descending": "Ordre décroissant"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "Tri par date de prise de vue",
+    "intro": "Lorsque « Par date de prise de vue » est sélectionné, pour trier les fichiers, cette application",
+    "step1": "utilise la valeur DateTimeOriginal des données EXIF et, si elle n’est pas disponible,",
+    "step2": "utilise la date de modification du fichier.",
+    "foldersNote": "Les dossiers sont triés par nom, car la notion de « date de prise de vue » n’existe pas pour eux.",
+    "moreDetails": "Informations complémentaires",
+    "details": {
+      "intro": "Voici quelques informations complémentaires :",
+      "mostTrustworthy": "La valeur DateTimeOriginal des données EXIF est l’information la plus fiable sur le moment où la photo a été prise.",
+      "sometimesMissing": "La plupart des appareils photo écrivent DateTimeOriginal dans la plupart des fichiers JPEG/HEIF/TIFF, mais cette valeur est parfois absente.",
+      "modifiedTime": "La date de modification du fichier correspond souvent au moment où la photo a été prise ; elle est donc utilisée à la place lorsque DateTimeOriginal est absente.",
+      "otherFiles": "De plus, les fichiers autres que JPEG/HEIF/TIFF ne contiennent pas de données EXIF ; la date de modification est donc toujours utilisée pour eux."
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "Dossier ouvert - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "Sélectionner uniquement ce fichier",
+      "selectOnlyThisFolder": "Sélectionner uniquement ce dossier",
+      "open": "Ouvrir",
+      "openFolder": "Ouvrir le dossier"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "Les informations sur la photo ne sont pas disponibles.",
+    "openFile": "Ouvrir le fichier",
+    "moreOptions": "Plus d’options",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "Faire pivoter la vignette",
+    "menu": {
+      "selectOnlyThis": "Sélectionner uniquement ce fichier",
+      "openFolder": "Ouvrir le dossier",
+      "openGoogleMaps": "Ouvrir Google Maps",
+      "openGoogleStreetView": "Ouvrir Google Street View",
+      "viewData": "Afficher les données"
+    },
+    "pathTooLong": "La vignette ne peut pas être affichée, car la longueur du chemin du fichier est de {{length}}. Windows limite la longueur des chemins à {{maximum}}. Déplacez le fichier pour raccourcir son chemin. Pour plus de détails, appuyez sur Ctrl+Shift+I et lisez les messages de la console.",
+    "generatedThumbnailPathTooLong": "La vignette ne peut pas être affichée, car la longueur du chemin de la vignette créée est de {{length}}. Windows limite la longueur des chemins à {{maximum}}. Déplacez le fichier pour raccourcir le chemin de la vignette créée. Pour plus de détails, appuyez sur Ctrl+Shift+I et lisez les messages de la console."
+  },
+  "map": {
+    "zoomIn": "Zoom avant",
+    "zoomOut": "Zoom arrière",
+    "layers": "Calques",
+    "photosInRegions": "Photos dans les zones : {{count}}",
+    "selectPhotos": "Sélectionner les photos",
+    "setRegionByRectangle": "Définir une zone par un rectangle",
+    "setRegionByVertex": "Définir une zone par ses sommets",
+    "setText": "Placer du texte",
+    "editRegion": "Modifier la zone",
+    "dragRegion": "Déplacer la zone",
+    "removeRegion": "Supprimer la zone"
+  },
+  "chart": {
+    "moreAlt": "Plus",
+    "dateUnknownPhotos": "Photos de date inconnue : {{count}}",
+    "showDateUnknownPhotos": "Afficher sur la carte les photos de date inconnue",
+    "units": {
+      "year": "Année",
+      "month": "Mois",
+      "day": "Jour",
+      "hour": "Heure",
+      "minute": "Minute",
+      "second": "Seconde"
+    },
+    "unsupportedDuration": "Ce graphique ne peut pas afficher plus de 30 jours lorsque « Heure » est sélectionné, plus de 3 jours pour « Minute » et plus d’1 heure pour « Seconde ».",
+    "changeUnitOrSelection": "Changez Année/Mois/Jour/Heure/Minute/Seconde ou sélectionnez des photos de façon à raccourcir la période.",
+    "selectPhotosWithinZoom": "Sélectionner les photos dans le zoom",
+    "zoom": "Zoom",
+    "resetZoom": "Réinitialiser\nle zoom"
+  },
+  "loadingFolder": {
+    "collecting": "Recherche des fichiers à charger dans le dossier ouvert...",
+    "loading": "Chargement des fichiers du dossier ouvert...",
+    "completed": "Tous les fichiers ont été chargés (nombre : {{count}}).",
+    "progress": "Fichiers chargés : {{loaded}} sur {{total}}.",
+    "generatingMap": "Création de la carte à partir des fichiers chargés..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "Le dossier ouvert ne contient aucune photo avec des données de localisation."
+  },
+  "loadedFiles": {
+    "loaded": "Fichiers chargés : {{count}}.",
+    "withLocationData": "Fichiers avec données de localisation : {{count}}.",
+    "total": "Total"
+  },
+  "thumbnailGeneration": {
+    "generating": "Création des vignettes des fichiers HEIF...",
+    "completed": "La création des vignettes des fichiers HEIF est terminée.",
+    "finishedWithErrors": "La création des vignettes des fichiers HEIF s’est terminée avec des erreurs.",
+    "showDetails": "Afficher les détails",
+    "processed": "Fichiers traités : {{processed}} sur {{total}}.",
+    "processedWithErrors": "Fichiers traités : {{processed}} sur {{total}}, avec des erreurs.",
+    "seeFilesWithErrors": "Cliquez ici pour voir les fichiers en erreur.",
+    "seeFilesWithErrorsTitle": "Voir les fichiers en erreur",
+    "generationRequired": "Vignettes à créer : {{required}}. Ce nombre correspond à « fichiers HEIF ({{heif}}) − fichiers disponibles dans le cache ({{cached}}) ».",
+    "closeStatusBar": "Fermer la barre d’état de la création des vignettes",
+    "errorDialog": {
+      "message": "Impossible de créer les vignettes des fichiers suivants (nombre : {{count}}) :",
+      "filter": "Filtrer",
+      "number": "N°",
+      "file": "Fichier",
+      "openFile": "Ouvrir le fichier",
+      "openFolder": "Ouvrir le dossier"
+    }
+  },
+  "settings": {
+    "title": "Paramètres",
+    "tabs": {
+      "language": "Langue (Language)",
+      "appearance": "Apparence",
+      "dateTime": "Date et heure",
+      "os": "Système",
+      "cache": "Cache"
+    },
+    "restartAfterSaving": "Cette application redémarrera après l’enregistrement des paramètres.",
+    "confirmRestart": "Cette application redémarrera après l’enregistrement des paramètres.\nVoulez-vous continuer ?",
+    "save": "Enregistrer",
+    "language": {
+      "title": "Langue",
+      "description": "La langue sera modifiée après le redémarrage de l’application."
+    },
+    "appearance": {
+      "title": "Apparence",
+      "showStatusBar": "Afficher la barre d’état"
+    },
+    "dateTime": {
+      "title": "Format de la date et de l’heure",
+      "description": "Le format de la date et de l’heure sera modifié après le redémarrage de l’application.",
+      "dateFormat": "Format de la date",
+      "clockSystem": "12 ou 24 heures",
+      "clock12": "12 heures",
+      "clock24": "24 heures",
+      "example": "Exemple"
+    },
+    "os": {
+      "title": "Menu contextuel de l’Explorateur",
+      "description": "Ajouter « {{menuItem}} » au menu contextuel de l’Explorateur ou l’en retirer.",
+      "add": "Ajouter",
+      "remove": "Retirer",
+      "added": "« {{menuItem}} » a été ajouté au menu contextuel de l’Explorateur.",
+      "removed": "« {{menuItem}} » a été retiré du menu contextuel de l’Explorateur.",
+      "failedToAdd": "Impossible d’ajouter « {{menuItem}} » au menu contextuel de l’Explorateur.",
+      "failedToRemove": "Impossible de retirer « {{menuItem}} » du menu contextuel de l’Explorateur.",
+      "confirmInExplorer": "Ouvrez l’Explorateur et faites un clic droit sur un fichier ou un dossier pour vérifier."
+    },
+    "cache": {
+      "title": "Cache des vignettes HEIF",
+      "requiredForHeif": "Les <heifLink>fichiers HEIF</heifLink> nécessitent la création de vignettes, ce qui prend du temps.",
+      "thereforeCached": "Les vignettes créées sont donc mises en cache.",
+      "usedNextTime": "Le cache sera utilisé dès la prochaine fois pour éviter de recréer les vignettes.",
+      "location": "Emplacement du cache :",
+      "restartAfterDeleting": "Cette application redémarrera après la suppression du cache des vignettes.",
+      "delete": "Supprimer le cache des vignettes",
+      "confirmDelete": "Cette application redémarrera après la suppression du cache des vignettes.\nVoulez-vous continuer ?"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "Ouvrir avec {{appName}}",
+    "openWithAccessKey": "Ouvrir avec &{{appName}}"
+  },
+  "menu": {
+    "app": {
+      "about": "À propos de {{appName}}",
+      "services": "Services",
+      "hide": "Masquer {{appName}}",
+      "hideOthers": "Masquer les autres",
+      "showAll": "Tout afficher",
+      "quit": "Quitter {{appName}}"
+    },
+    "view": {
+      "title": "Affichage",
+      "reload": "Recharger",
+      "actualSize": "Taille réelle",
+      "zoomIn": "Zoom avant",
+      "zoomOut": "Zoom arrière",
+      "toggleFullScreen": "Activer/désactiver le plein écran"
+    },
+    "selection": {
+      "title": "Sélection",
+      "undo": "Annuler",
+      "redo": "Rétablir"
+    },
+    "settings": {
+      "title": "Paramètres",
+      "openSettings": "Ouvrir les paramètres"
+    },
+    "help": {
+      "title": "Aide",
+      "showWelcomeDialog": "Afficher la fenêtre de bienvenue",
+      "advancedMenu": "Menu avancé",
+      "openLogFolder": "Ouvrir le dossier des journaux",
+      "toggleDeveloperTools": "Afficher/masquer les outils de développement"
+    }
+  },
+  "autoUpdate": {
+    "title": "Une nouvelle version de {{appName}} est disponible !",
+    "message": "Une nouvelle version de {{appName}} est disponible et sera installée après le redémarrage.\nVoulez-vous redémarrer cette application maintenant ?\n\nVersion actuelle : {{currentVersion}}\nDernière version : {{latestVersion}}",
+    "yes": "Oui",
+    "no": "Non"
+  }
+}

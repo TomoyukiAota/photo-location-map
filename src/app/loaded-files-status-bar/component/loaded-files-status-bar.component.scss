@@ -15,11 +15,11 @@
 
   .left-message-container               { grid-area: left-message;  }
   .right-message-container              { grid-area: right-message;
-                                          justify-self: right;      }
+                                          justify-self: end;        }
 }
 
 .left-message-container {
   * + * {
-    margin-left: 8px;
+    margin-inline-start: 8px;
   }
 }

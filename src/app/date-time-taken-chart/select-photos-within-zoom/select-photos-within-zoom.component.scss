@@ -4,13 +4,15 @@ button {
   display: inline-block;
   box-sizing: border-box;
   margin: 0;
-  padding: 0 6px;
+  padding: 4px 6px;
   outline: none;
   border: 1px solid #cccccc;
   border-radius: 4px;
   width: 106px;
-  height: 50px;
+  // The height of two lines, which the text has in English; taller for a text of three lines in another language.
+  min-height: 50px;
   line-height: 20px;
+  overflow-wrap: break-word;
   font-size: 14px;
   user-select: none;
   white-space: normal;

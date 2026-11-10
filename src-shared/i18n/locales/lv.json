@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "Notiek ielāde..."
+  },
+  "common": {
+    "ok": "Labi",
+    "cancel": "Atcelt",
+    "close": "Aizvērt"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "Valoda (Language)",
+    "systemLanguage": {
+      "mac": "Izmantot macOS iestatījumu ({{language}})",
+      "windows": "Izmantot Windows iestatījumu ({{language}})",
+      "other": "Izmantot sistēmas iestatījumu ({{language}})"
+    },
+    "restartToApply": "Lai lietotu valodu, šī lietotne tiks restartēta.",
+    "confirm": "Labi",
+    "search": "Meklēt",
+    "noLanguagesFound": "Nav atrasta neviena valoda"
+  },
+  "appInfo": {
+    "appIconAlt": "Lietotnes ikona",
+    "version": "Versija {{version}}",
+    "developedBy": "Izstrādātājs: Tomoyuki Aota.",
+    "xProfileAlt": "X (iepriekš Twitter) profils",
+    "xProfileTitle": "Atvērt X (iepriekš Twitter) profilu",
+    "gitHubProfileAlt": "GitHub profils",
+    "gitHubProfileTitle": "Atvērt GitHub profilu",
+    "troubleshooting": "Ja rodas problēmas ar šo lietotni, skatiet <pageLink>problēmu novēršanas lapu</pageLink>.",
+    "troubleshootingLinkTitle": "Atvērt problēmu novēršanas lapu"
+  },
+  "welcome": {
+    "message": "Laipni lūdzam lietotnē {{appName}}",
+    "usageInfoCollection": "Lai uzlabotu šo lietotni, tiek apkopota anonīma lietošanas informācija. Turpinot lietot lietotni, jūs tam piekrītat."
+  },
+  "about": {
+    "releasesLink": "Lejupielādes un laidiena piezīmes",
+    "releasesLinkTitle": "Atvērt lejupielādes un laidiena piezīmes",
+    "translations": "Tulkojumi citās valodās ir laipni gaidīti: skatiet, <guideLink>kā tulkot šo lietotni</guideLink>.",
+    "translationsLinkTitle": "Atvērt šīs lietotnes tulkošanas ceļvedi",
+    "homePageTitle": "Atvērt sākumlapu",
+    "sourceCodeTitle": "Skatīt pirmkodu vietnē GitHub"
+  },
+  "sidebar": {
+    "openFolder": "Atvērt mapi",
+    "cannotOpenWhileGeneratingThumbnails": "Sīktēlu veidošanas laikā mapi nevar atvērt.",
+    "openFolderToSeePhotos": "Atveriet mapi, lai redzētu, kur fotoattēli ir uzņemti.",
+    "sort": {
+      "title": "Kārtot",
+      "byName": "Pēc nosaukuma",
+      "byShootingTime": "Pēc uzņemšanas laika",
+      "ascending": "Augošā secībā",
+      "descending": "Dilstošā secībā"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "Kārtošana pēc uzņemšanas laika",
+    "intro": "Ja ir izvēlēts „Pēc uzņemšanas laika”, lietotne kārto failus šādi:",
+    "step1": "izmanto EXIF datu vērtību DateTimeOriginal. Ja tās nav,",
+    "step2": "izmanto faila modificēšanas laiku.",
+    "foldersNote": "Mapes tiek kārtotas pēc nosaukuma, jo mapēm nav „uzņemšanas laika”.",
+    "moreDetails": "Papildinformācija",
+    "details": {
+      "intro": "Tālāk ir sniegta papildu informācija:",
+      "mostTrustworthy": "EXIF datu vērtība DateTimeOriginal ir visuzticamākā informācija par to, kad fotoattēls ir uzņemts.",
+      "sometimesMissing": "Lielākā daļa kameru ieraksta DateTimeOriginal lielākajā daļā JPEG/HEIF/TIFF failu, taču dažkārt šīs vērtības nav.",
+      "modifiedTime": "Faila modificēšanas laiks parasti ir fotoattēla uzņemšanas laiks, tāpēc to izmanto, ja nav DateTimeOriginal.",
+      "otherFiles": "Failiem, kas nav JPEG/HEIF/TIFF, nav EXIF datu, tāpēc tiem vienmēr izmanto modificēšanas laiku."
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "Atvērtā mape - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "Atlasīt tikai šo failu",
+      "selectOnlyThisFolder": "Atlasīt tikai šo mapi",
+      "open": "Atvērt",
+      "openFolder": "Atvērt mapi"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "Fotoattēla informācija nav pieejama.",
+    "openFile": "Atvērt failu",
+    "moreOptions": "Citas opcijas",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "Pagriezt sīktēlu",
+    "menu": {
+      "selectOnlyThis": "Atlasīt tikai šo failu",
+      "openFolder": "Atvērt mapi",
+      "openGoogleMaps": "Atvērt Google Maps",
+      "openGoogleStreetView": "Atvērt Google Street View",
+      "viewData": "Skatīt datus"
+    },
+    "pathTooLong": "Sīktēlu nevar parādīt, jo faila ceļa garums ir {{length}}. Windows ierobežo ceļa garumu līdz {{maximum}}. Lai saīsinātu ceļu, mainiet faila atrašanās vietu. Lai skatītu detalizētu informāciju, nospiediet Ctrl+Shift+I un izlasiet konsoles ziņojumus.",
+    "generatedThumbnailPathTooLong": "Sīktēlu nevar parādīt, jo izveidotā sīktēla ceļa garums ir {{length}}. Windows ierobežo ceļa garumu līdz {{maximum}}. Lai saīsinātu izveidotā sīktēla ceļu, mainiet faila atrašanās vietu. Lai skatītu detalizētu informāciju, nospiediet Ctrl+Shift+I un izlasiet konsoles ziņojumus."
+  },
+  "map": {
+    "zoomIn": "Tuvināt",
+    "zoomOut": "Tālināt",
+    "layers": "Slāņi",
+    "photosInRegions": "Fotoattēli reģionos: {{count}}",
+    "selectPhotos": "Atlasīt fotoattēlus",
+    "setRegionByRectangle": "Iestatīt reģionu ar taisnstūri",
+    "setRegionByVertex": "Iestatīt reģionu ar virsotnēm",
+    "setText": "Ievietot tekstu",
+    "editRegion": "Rediģēt reģionu",
+    "dragRegion": "Pārvietot reģionu",
+    "removeRegion": "Noņemt reģionu"
+  },
+  "chart": {
+    "moreAlt": "Vairāk",
+    "dateUnknownPhotos": "Fotoattēli ar nezināmu datumu: {{count}}",
+    "showDateUnknownPhotos": "Rādīt kartē fotoattēlus ar nezināmu datumu",
+    "units": {
+      "year": "Gads",
+      "month": "Mēnesis",
+      "day": "Diena",
+      "hour": "Stunda",
+      "minute": "Minūte",
+      "second": "Sekunde"
+    },
+    "unsupportedDuration": "Šī diagramma nevar parādīt periodu, kas garāks par 30 dienām, ja izvēlēts „Stunda”, par 3 dienām, ja izvēlēts „Minūte”, vai par 1 stundu, ja izvēlēts „Sekunde”.",
+    "changeUnitOrSelection": "Mainiet izvēli Gads/Mēnesis/Diena/Stunda/Minūte/Sekunde vai atlasiet fotoattēlus tā, lai periods būtu īsāks.",
+    "selectPhotosWithinZoom": "Atlasīt fotoattēlus tuvinātajā diapazonā",
+    "zoom": "Tālummaiņa",
+    "resetZoom": "Atiestatīt\ntālummaiņu"
+  },
+  "loadingFolder": {
+    "collecting": "Notiek ielādējamo failu apkopošana no atvērtās mapes...",
+    "loading": "Notiek failu ielāde no atvērtās mapes...",
+    "completed": "Visi faili ir ielādēti (skaits: {{count}}).",
+    "progress": "Ielādēti faili: {{loaded}} no {{total}}.",
+    "generatingMap": "Notiek kartes veidošana no ielādētajiem failiem..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "Atvērtajā mapē nav fotoattēlu ar atrašanās vietas datiem."
+  },
+  "loadedFiles": {
+    "loaded": "Ielādēti faili: {{count}}.",
+    "withLocationData": "Faili ar atrašanās vietas datiem: {{count}}.",
+    "total": "Kopā"
+  },
+  "thumbnailGeneration": {
+    "generating": "Notiek HEIF failu sīktēlu veidošana...",
+    "completed": "HEIF failu sīktēli ir izveidoti.",
+    "finishedWithErrors": "HEIF failu sīktēlu veidošana ir pabeigta ar kļūdām.",
+    "showDetails": "Rādīt detalizētu informāciju",
+    "processed": "Apstrādāti faili: {{processed}} no {{total}}.",
+    "processedWithErrors": "Apstrādāti faili: {{processed}} no {{total}}, ar kļūdām.",
+    "seeFilesWithErrors": "Noklikšķiniet šeit, lai skatītu failus ar kļūdām.",
+    "seeFilesWithErrorsTitle": "Skatīt failus ar kļūdām",
+    "generationRequired": "Jāizveido sīktēli: {{required}}. Šo skaitu iegūst šādi: „HEIF faili ({{heif}}) − faili, kas jau ir kešatmiņā ({{cached}})”.",
+    "closeStatusBar": "Aizvērt sīktēlu veidošanas statusa joslu",
+    "errorDialog": {
+      "message": "Neizdevās izveidot sīktēlus šiem failiem (skaits: {{count}}):",
+      "filter": "Filtrēt",
+      "number": "Nr.",
+      "file": "Fails",
+      "openFile": "Atvērt failu",
+      "openFolder": "Atvērt mapi"
+    }
+  },
+  "settings": {
+    "title": "Iestatījumi",
+    "tabs": {
+      "language": "Valoda (Language)",
+      "appearance": "Izskats",
+      "dateTime": "Datums un laiks",
+      "os": "Sistēma",
+      "cache": "Kešatmiņa"
+    },
+    "restartAfterSaving": "Pēc iestatījumu saglabāšanas šī lietotne tiks restartēta.",
+    "confirmRestart": "Pēc iestatījumu saglabāšanas šī lietotne tiks restartēta.\nVai vēlaties turpināt?",
+    "save": "Saglabāt",
+    "language": {
+      "title": "Valoda",
+      "description": "Valoda mainās pēc lietotnes restartēšanas."
+    },
+    "appearance": {
+      "title": "Izskats",
+      "showStatusBar": "Rādīt statusa joslu"
+    },
+    "dateTime": {
+      "title": "Datuma un laika formāts",
+      "description": "Datuma un laika formāts mainās pēc lietotnes restartēšanas.",
+      "dateFormat": "Datuma formāts",
+      "clockSystem": "12 vai 24 stundas",
+      "clock12": "12 stundas",
+      "clock24": "24 stundas",
+      "example": "Piemērs"
+    },
+    "os": {
+      "title": "Failu pārlūka konteksta izvēlne",
+      "description": "Pievienojiet „{{menuItem}}” failu pārlūka konteksta izvēlnei vai noņemiet to.",
+      "add": "Pievienot",
+      "remove": "Noņemt",
+      "added": "„{{menuItem}}” ir pievienots failu pārlūka konteksta izvēlnei.",
+      "removed": "„{{menuItem}}” ir noņemts no failu pārlūka konteksta izvēlnes.",
+      "failedToAdd": "Neizdevās pievienot „{{menuItem}}” failu pārlūka konteksta izvēlnei.",
+      "failedToRemove": "Neizdevās noņemt „{{menuItem}}” no failu pārlūka konteksta izvēlnes.",
+      "confirmInExplorer": "Lai pārbaudītu, atveriet failu pārlūku un ar peles labo pogu noklikšķiniet uz faila vai mapes."
+    },
+    "cache": {
+      "title": "HEIF sīktēlu kešatmiņa",
+      "requiredForHeif": "<heifLink>HEIF failiem</heifLink> ir jāveido sīktēli, un tas aizņem laiku.",
+      "thereforeCached": "Tāpēc izveidotie sīktēli tiek saglabāti kešatmiņā.",
+      "usedNextTime": "Sākot ar nākamo reizi, tiek izmantota kešatmiņa, un sīktēli netiek veidoti atkārtoti.",
+      "location": "Kešatmiņas atrašanās vieta:",
+      "restartAfterDeleting": "Pēc sīktēlu kešatmiņas dzēšanas šī lietotne tiks restartēta.",
+      "delete": "Dzēst sīktēlu kešatmiņu",
+      "confirmDelete": "Pēc sīktēlu kešatmiņas dzēšanas šī lietotne tiks restartēta.\nVai vēlaties turpināt?"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "Atvērt lietotnē {{appName}}",
+    "openWithAccessKey": "Atvērt lietotnē &{{appName}}"
+  },
+  "menu": {
+    "app": {
+      "about": "Par {{appName}}",
+      "services": "Pakalpojumi",
+      "hide": "Paslēpt {{appName}}",
+      "hideOthers": "Paslēpt pārējās",
+      "showAll": "Rādīt visas",
+      "quit": "Iziet no {{appName}}"
+    },
+    "view": {
+      "title": "Skats",
+      "reload": "Pārlādēt",
+      "actualSize": "Faktiskais lielums",
+      "zoomIn": "Tuvināt",
+      "zoomOut": "Tālināt",
+      "toggleFullScreen": "Pārslēgt pilnekrāna režīmu"
+    },
+    "selection": {
+      "title": "Atlase",
+      "undo": "Atsaukt",
+      "redo": "Atcelt atsaukšanu"
+    },
+    "settings": {
+      "title": "Iestatījumi",
+      "openSettings": "Atvērt iestatījumus"
+    },
+    "help": {
+      "title": "Palīdzība",
+      "showWelcomeDialog": "Rādīt sveiciena dialoglodziņu",
+      "advancedMenu": "Papildu izvēlne",
+      "openLogFolder": "Atvērt žurnālu mapi",
+      "toggleDeveloperTools": "Rādīt/paslēpt izstrādātāja rīkus"
+    }
+  },
+  "autoUpdate": {
+    "title": "Ir pieejama jauna {{appName}} versija!",
+    "message": "Ir pieejama jauna {{appName}} versija, kas tiks instalēta pēc restartēšanas.\nVai vēlaties restartēt lietotni tūlīt?\n\nPašreizējā versija: {{currentVersion}}\nJaunākā versija: {{latestVersion}}",
+    "yes": "Jā",
+    "no": "Nē"
+  }
+}

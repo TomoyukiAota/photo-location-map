@@ -1,0 +1,261 @@
+{
+  "app": {
+    "loading": "Yükleniyor..."
+  },
+  "common": {
+    "ok": "Tamam",
+    "cancel": "Vazgeç",
+    "close": "Kapat"
+  },
+  "dateTime": {
+    "weekdayPattern": "ddd"
+  },
+  "language": {
+    "title": "Dil (Language)",
+    "systemLanguage": {
+      "mac": "macOS ayarını kullan ({{language}})",
+      "windows": "Windows ayarını kullan ({{language}})",
+      "other": "Sistem ayarını kullan ({{language}})"
+    },
+    "restartToApply": "Dili uygulamak için bu uygulama yeniden başlatılacak.",
+    "confirm": "Tamam",
+    "search": "Ara",
+    "noLanguagesFound": "Dil bulunamadı"
+  },
+  "appInfo": {
+    "appIconAlt": "Uygulama simgesi",
+    "version": "Sürüm {{version}}",
+    "developedBy": "Geliştiren: Tomoyuki Aota.",
+    "xProfileAlt": "X (eski adıyla Twitter) profili",
+    "xProfileTitle": "X (eski adıyla Twitter) profilini aç",
+    "gitHubProfileAlt": "GitHub profili",
+    "gitHubProfileTitle": "GitHub profilini aç",
+    "troubleshooting": "Bu uygulamayla ilgili sorun yaşarsanız <pageLink>sorun giderme sayfasına</pageLink> bakın.",
+    "troubleshootingLinkTitle": "Sorun giderme sayfasını aç"
+  },
+  "welcome": {
+    "message": "{{appName}} uygulamasına hoş geldiniz",
+    "usageInfoCollection": "Bu uygulamayı geliştirmek için anonim kullanım bilgileri toplanır. Uygulamayı kullanmaya devam ederek bunu kabul etmiş olursunuz."
+  },
+  "about": {
+    "releasesLink": "İndirmeler ve sürüm notları",
+    "releasesLinkTitle": "İndirmeleri ve sürüm notlarını aç",
+    "translations": "Başka dillere çeviriler memnuniyetle karşılanır: <guideLink>bu uygulamanın nasıl çevrileceğine</guideLink> bakın.",
+    "translationsLinkTitle": "Bu uygulamanın çeviri kılavuzunu aç",
+    "homePageTitle": "Ana sayfayı aç",
+    "sourceCodeTitle": "Kaynak kodunu GitHub'da görüntüle"
+  },
+  "sidebar": {
+    "openFolder": "Klasör Aç",
+    "cannotOpenWhileGeneratingThumbnails": "Küçük resimler oluşturulurken klasör açılamaz.",
+    "openFolderToSeePhotos": "Fotoğrafların nerede çekildiğini görmek için bir klasör açın.",
+    "sort": {
+      "title": "Sırala",
+      "byName": "Ada göre",
+      "byShootingTime": "Çekim zamanına göre",
+      "ascending": "Artan",
+      "descending": "Azalan"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "Çekim zamanına göre sıralama",
+    "intro": "“Çekim zamanına göre” seçildiğinde uygulama dosyaları şöyle sıralar:",
+    "step1": "EXIF verilerindeki DateTimeOriginal değerini kullanır. Bu değer yoksa",
+    "step2": "dosyanın değiştirilme tarihini kullanır.",
+    "foldersNote": "Klasörlerin “çekim zamanı” olmadığı için klasörler ada göre sıralanır.",
+    "moreDetails": "Daha fazla bilgi",
+    "details": {
+      "intro": "Aşağıda ek bilgiler yer almaktadır:",
+      "mostTrustworthy": "EXIF verilerindeki DateTimeOriginal değeri, fotoğrafın ne zaman çekildiğine dair en güvenilir bilgidir.",
+      "sometimesMissing": "Çoğu fotoğraf makinesi DateTimeOriginal değerini çoğu JPEG/HEIF/TIFF dosyasına yazar, ancak bu değer bazen eksik olur.",
+      "modifiedTime": "Dosyanın değiştirilme tarihi çoğunlukla fotoğrafın çekildiği zamandır; bu nedenle DateTimeOriginal eksik olduğunda onun yerine kullanılır.",
+      "otherFiles": "JPEG/HEIF/TIFF dışındaki dosyalarda EXIF verisi bulunmaz; bu nedenle bu dosyalar için her zaman değiştirilme tarihi kullanılır."
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "Açılan klasör - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "Yalnızca bu dosyayı seç",
+      "selectOnlyThisFolder": "Yalnızca bu klasörü seç",
+      "open": "Aç",
+      "openFolder": "Klasörü aç"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "Fotoğraf bilgileri kullanılamıyor.",
+    "openFile": "Dosyayı aç",
+    "moreOptions": "Diğer seçenekler",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "Küçük resmi döndür",
+    "menu": {
+      "selectOnlyThis": "Yalnızca bu dosyayı seç",
+      "openFolder": "Klasörü aç",
+      "openGoogleMaps": "Google Haritalar'ı aç",
+      "openGoogleStreetView": "Google Street View'ı aç",
+      "viewData": "Verileri görüntüle"
+    },
+    "pathTooLong": "Dosya yolunun uzunluğu {{length}} olduğu için küçük resim gösterilemiyor. Windows, yol uzunluğunu en fazla {{maximum}} ile sınırlar. Yolu kısaltmak için dosyanın konumunu değiştirin. Ayrıntılar için Ctrl+Shift+I tuşlarına basın ve konsol iletilerini okuyun.",
+    "generatedThumbnailPathTooLong": "Oluşturulan küçük resmin yolunun uzunluğu {{length}} olduğu için küçük resim gösterilemiyor. Windows, yol uzunluğunu en fazla {{maximum}} ile sınırlar. Oluşturulan küçük resmin yolunu kısaltmak için dosyanın konumunu değiştirin. Ayrıntılar için Ctrl+Shift+I tuşlarına basın ve konsol iletilerini okuyun."
+  },
+  "map": {
+    "zoomIn": "Yakınlaştır",
+    "zoomOut": "Uzaklaştır",
+    "layers": "Katmanlar",
+    "photosInRegions": "Bölgelerdeki fotoğraflar: {{count}}",
+    "selectPhotos": "Fotoğrafları seç",
+    "setRegionByRectangle": "Dikdörtgenle bölge belirle",
+    "setRegionByVertex": "Köşe noktalarıyla bölge belirle",
+    "setText": "Metin yerleştir",
+    "editRegion": "Bölgeyi düzenle",
+    "dragRegion": "Bölgeyi taşı",
+    "removeRegion": "Bölgeyi kaldır"
+  },
+  "chart": {
+    "moreAlt": "Diğer",
+    "dateUnknownPhotos": "Tarihi bilinmeyen fotoğraflar: {{count}}",
+    "showDateUnknownPhotos": "Tarihi bilinmeyen fotoğrafları haritada göster",
+    "units": {
+      "year": "Yıl",
+      "month": "Ay",
+      "day": "Gün",
+      "hour": "Saat",
+      "minute": "Dakika",
+      "second": "Saniye"
+    },
+    "unsupportedDuration": "Bu grafik, “Saat” seçildiğinde 30 günden, “Dakika” seçildiğinde 3 günden, “Saniye” seçildiğinde 1 saatten uzun bir süreyi gösteremez.",
+    "changeUnitOrSelection": "Yıl/Ay/Gün/Saat/Dakika/Saniye seçimini değiştirin veya süre kısalacak şekilde fotoğraf seçin.",
+    "selectPhotosWithinZoom": "Yakınlaştırılan aralıktaki fotoğrafları seç",
+    "zoom": "Yakınlaştır",
+    "resetZoom": "Yakınlaştırmayı\nsıfırla"
+  },
+  "loadingFolder": {
+    "collecting": "Açılan klasörden yüklenecek dosyalar toplanıyor...",
+    "loading": "Açılan klasördeki dosyalar yükleniyor...",
+    "completed": "Tüm dosyalar yüklendi (sayı: {{count}}).",
+    "progress": "Yüklenen dosyalar: {{loaded}} / {{total}}.",
+    "generatingMap": "Yüklenen dosyalardan harita oluşturuluyor..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "Açılan klasörde konum verisi içeren fotoğraf yok."
+  },
+  "loadedFiles": {
+    "loaded": "Yüklenen dosyalar: {{count}}.",
+    "withLocationData": "Konum verisi içeren dosyalar: {{count}}.",
+    "total": "Toplam"
+  },
+  "thumbnailGeneration": {
+    "generating": "HEIF dosyaları için küçük resimler oluşturuluyor...",
+    "completed": "HEIF dosyaları için küçük resimler oluşturuldu.",
+    "finishedWithErrors": "HEIF dosyaları için küçük resim oluşturma işlemi hatalarla tamamlandı.",
+    "showDetails": "Ayrıntıları göster",
+    "processed": "İşlenen dosyalar: {{processed}} / {{total}}.",
+    "processedWithErrors": "İşlenen dosyalar: {{processed}} / {{total}}, hatalarla.",
+    "seeFilesWithErrors": "Hatalı dosyaları görmek için buraya tıklayın.",
+    "seeFilesWithErrorsTitle": "Hatalı dosyaları gör",
+    "generationRequired": "Oluşturulması gereken küçük resimler: {{required}}. Bu sayı şöyle bulunur: “HEIF dosyaları ({{heif}}) − önbellekte bulunan dosyalar ({{cached}})”.",
+    "closeStatusBar": "Küçük resim oluşturma durum çubuğunu kapat",
+    "errorDialog": {
+      "message": "Aşağıdaki dosyalar için küçük resim oluşturulamadı (sayı: {{count}}):",
+      "filter": "Filtrele",
+      "number": "No.",
+      "file": "Dosya",
+      "openFile": "Dosyayı aç",
+      "openFolder": "Klasörü aç"
+    }
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "tabs": {
+      "language": "Dil (Language)",
+      "appearance": "Görünüm",
+      "dateTime": "Tarih ve saat",
+      "os": "Sistem",
+      "cache": "Önbellek"
+    },
+    "restartAfterSaving": "Ayarlar kaydedildikten sonra bu uygulama yeniden başlatılacak.",
+    "confirmRestart": "Ayarlar kaydedildikten sonra bu uygulama yeniden başlatılacak.\nDevam etmek istiyor musunuz?",
+    "save": "Kaydet",
+    "language": {
+      "title": "Dil",
+      "description": "Dil, uygulama yeniden başlatıldıktan sonra değişir."
+    },
+    "appearance": {
+      "title": "Görünüm",
+      "showStatusBar": "Durum çubuğunu göster"
+    },
+    "dateTime": {
+      "title": "Tarih ve saat biçimi",
+      "description": "Tarih ve saat biçimi, uygulama yeniden başlatıldıktan sonra değişir.",
+      "dateFormat": "Tarih biçimi",
+      "clockSystem": "12 veya 24 saat",
+      "clock12": "12 saat",
+      "clock24": "24 saat",
+      "example": "Örnek"
+    },
+    "os": {
+      "title": "Dosya Gezgini bağlam menüsü",
+      "description": "Dosya Gezgini'nin bağlam menüsüne “{{menuItem}}” öğesini ekleyin veya menüden kaldırın.",
+      "add": "Ekle",
+      "remove": "Kaldır",
+      "added": "“{{menuItem}}” öğesi Dosya Gezgini'nin bağlam menüsüne eklendi.",
+      "removed": "“{{menuItem}}” öğesi Dosya Gezgini'nin bağlam menüsünden kaldırıldı.",
+      "failedToAdd": "“{{menuItem}}” öğesi Dosya Gezgini'nin bağlam menüsüne eklenemedi.",
+      "failedToRemove": "“{{menuItem}}” öğesi Dosya Gezgini'nin bağlam menüsünden kaldırılamadı.",
+      "confirmInExplorer": "Doğrulamak için Dosya Gezgini'ni açın ve bir dosyaya veya klasöre sağ tıklayın."
+    },
+    "cache": {
+      "title": "HEIF küçük resim önbelleği",
+      "requiredForHeif": "<heifLink>HEIF dosyaları</heifLink> için küçük resim oluşturulması gerekir ve bu zaman alır.",
+      "thereforeCached": "Bu nedenle oluşturulan küçük resimler önbelleğe alınır.",
+      "usedNextTime": "Bir sonraki seferden itibaren önbellek kullanılır ve küçük resimler yeniden oluşturulmaz.",
+      "location": "Önbellek konumu:",
+      "restartAfterDeleting": "Küçük resim önbelleği silindikten sonra bu uygulama yeniden başlatılacak.",
+      "delete": "Küçük resim önbelleğini sil",
+      "confirmDelete": "Küçük resim önbelleği silindikten sonra bu uygulama yeniden başlatılacak.\nDevam etmek istiyor musunuz?"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "{{appName}} ile aç",
+    "openWithAccessKey": "&{{appName}} ile aç"
+  },
+  "menu": {
+    "app": {
+      "about": "{{appName}} Hakkında",
+      "services": "Servisler",
+      "hide": "{{appName}} uygulamasını gizle",
+      "hideOthers": "Diğerlerini gizle",
+      "showAll": "Tümünü göster",
+      "quit": "{{appName}} uygulamasından çık"
+    },
+    "view": {
+      "title": "Görüntü",
+      "reload": "Yeniden yükle",
+      "actualSize": "Gerçek boyut",
+      "zoomIn": "Yakınlaştır",
+      "zoomOut": "Uzaklaştır",
+      "toggleFullScreen": "Tam ekranı aç/kapat"
+    },
+    "selection": {
+      "title": "Seçim",
+      "undo": "Geri al",
+      "redo": "Yinele"
+    },
+    "settings": {
+      "title": "Ayarlar",
+      "openSettings": "Ayarları aç"
+    },
+    "help": {
+      "title": "Yardım",
+      "showWelcomeDialog": "Karşılama penceresini göster",
+      "advancedMenu": "Gelişmiş menü",
+      "openLogFolder": "Günlük klasörünü aç",
+      "toggleDeveloperTools": "Geliştirici araçlarını göster/gizle"
+    }
+  },
+  "autoUpdate": {
+    "title": "{{appName}} için yeni bir sürüm var!",
+    "message": "{{appName}} için yeni bir sürüm var; yeniden başlatmanın ardından yüklenecek.\nUygulamayı şimdi yeniden başlatmak istiyor musunuz?\n\nGeçerli sürüm: {{currentVersion}}\nEn son sürüm: {{latestVersion}}",
+    "yes": "Evet",
+    "no": "Hayır"
+  }
+}

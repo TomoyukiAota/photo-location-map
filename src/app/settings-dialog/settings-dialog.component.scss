@@ -15,7 +15,8 @@
 }
 
 .settings-dialog-header {
-  padding: 10px 0 10px 20px;
+  padding: 10px 0;
+  padding-inline-start: 20px;
   border-bottom: 1px solid #7f7f7f;
   background-color: #eeeeee;
   font-size: 20px;
@@ -23,7 +24,7 @@
 
 .settings-tab {
   padding: 0;
-  border-right: solid 1px #7f7f7f;
+  border-inline-end: solid 1px #7f7f7f;
 
   .selected-tab {
     background-color: $white-background_selected;
