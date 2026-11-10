@@ -1,0 +1,45 @@
+@use "sass:color";
+
+// The box that this is in, Leaflet's control, is styled with the map (src/styles/plm-leaflet-map/).
+
+:host {
+  min-width: 290px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.plm-leaflet-map-region-info-text {
+  line-height: 30px;
+  font-size: 14px;
+}
+
+.plm-leaflet-map-region-info-select-photos-button {
+  display: inline-block;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 10px;
+  outline: none;
+  border: none;
+  border-radius: 4px;
+  line-height: 30px; // Same height as other buttons on the map (e.g. zoom in/out buttons)
+  font-size: 14px;
+  user-select: none;
+  white-space: nowrap;
+  text-decoration: none;
+  vertical-align: baseline;
+  text-align: center;
+  color: #ffffff;
+  background-color: #00000033;
+
+  &:not([disabled]) {
+    cursor: pointer;
+
+    $enabled-button-background-color: rgb(51, 136, 255); // Same color as the region border on the map
+    background-color: $enabled-button-background-color;
+    &:hover {
+      background-color: color.adjust($enabled-button-background-color, $lightness: -10%, $space: hsl);
+    }
+    transition: background-color 0.2s ease;
+  }
+}

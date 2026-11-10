@@ -1,0 +1,184 @@
+@use "../../styles/icon-button" as *;
+
+@keyframes flicker {
+  0%   { opacity: 0.2; }
+  50%  { opacity: 1;   }
+  100% { opacity: 0.2; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@mixin photo-info-viewer-text {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+// The layout of a popup of the map, which the other places change below.
+:host {
+  display: block;
+  text-align: center;
+}
+
+.photo-info-viewer-thumbnail-container {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+  height: 200px;
+
+  position: relative;
+  &:hover > .photo-info-viewer-rotate-button-in-thumbnail-container {
+    visibility: visible;
+    opacity: 0.6;
+  }
+}
+
+.photo-info-viewer-thumbnail {
+  cursor: pointer;
+
+  // The image fits within its container, whatever its own size is.
+  width: auto;
+  height: auto;
+  max-width: 100% !important;  // !important to override CSS from Leaflet
+  max-height: 100% !important; // !important to override CSS from Leaflet
+
+  // Style for text of img.alt
+  white-space: pre-wrap;
+  font-size: 12px;
+  line-height: 1.3;
+
+  transition:
+    transform  0.3s ease-in-out,  // Animation for thumbnail rotation
+    box-shadow 0.2s ease-in-out,  // Hover effect
+    filter     0.2s ease-in-out;  // Click effect
+
+  box-shadow: 0 0 3px 2px transparent;
+  &:hover { box-shadow: 0 0 3px 2px rgba(0,0,0,0.4); }
+
+  filter: brightness(1);
+  &:active { filter: brightness(0.8); }
+}
+
+// The image that stands in for a thumbnail that is being made, or that cannot be made.
+.photo-info-viewer-thumbnail.photo-info-viewer-thumbnail-placeholder {
+  max-width: 80% !important;
+  max-height: 80% !important;
+}
+
+.photo-info-viewer-generating-thumbnail {
+  animation: flicker 3s infinite;
+}
+
+.photo-info-viewer-fade-in-after-thumbnail-generation {
+  animation: fade-in 2s ease 0s;
+}
+
+.photo-info-viewer-name {
+  @include photo-info-viewer-text;
+  padding: 6px 0 3px 0;
+}
+
+.photo-info-viewer-date-time-taken {
+  @include photo-info-viewer-text;
+  padding: 0 0 3px 0;
+}
+
+.photo-info-viewer-button {
+  @include icon-button;
+}
+
+.photo-info-viewer-more-options-button {
+  @include icon-button;
+  position: relative;
+  &:focus  { background-color: #444444; }
+}
+
+// The menu, whose element is MoreOptionsMenuComponent's: it fades in when it opens and out when it closes.
+.photo-info-viewer-more-options-menu-fade-in {
+  animation: fade-in 0.4s ease 0s forwards;
+}
+
+.photo-info-viewer-more-options-menu-fade-out {
+  animation: fade-out 0.4s ease 0s forwards;
+}
+
+// A row of the folder tree: the thumbnail and the shooting time, with the buttons in a column beside them, which
+// shows while the pointer is over the row's photo.
+:host([data-place="dir-tree-view"]) {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  .photo-info-viewer-lower-div {
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  .photo-info-viewer-date-time-taken {
+    font-weight: 400; // The same value specified in .mat-tree-node
+    padding: 3px 0;
+  }
+
+  .photo-info-viewer-date-time-taken-unknown {
+    padding: 0;
+  }
+}
+
+:host([data-place="dir-tree-view"]:hover) .photo-info-viewer-lower-div {
+  opacity: 1;
+}
+
+// A tile of a cluster's popup: the thumbnail, small and without the effects of one that opens the file, with a small
+// button in its corner that turns it and shows while the pointer is over the thumbnail, and the shooting time.
+:host([data-place="leaflet-map-tile"]) {
+  .photo-info-viewer-thumbnail-container {
+    width: 100px;
+    height: 100px;
+  }
+
+  .photo-info-viewer-thumbnail,
+  .photo-info-viewer-thumbnail:hover,
+  .photo-info-viewer-thumbnail:active {
+    box-shadow: none;
+    filter: none;
+  }
+
+  .photo-info-viewer-date-time-taken {
+    padding: 0;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 12px;
+  }
+}
+
+.photo-info-viewer-rotate-button-in-thumbnail-container {
+  @include icon-button;
+
+  position: absolute;
+  bottom: 0;
+  inset-inline-end: 0;
+  width: 12px;
+  height: 12px;
+  margin: 0;
+  border-radius: 2px;
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    background-color 0.2s ease, // Keep the value specified in the icon-button mixin
+    opacity          0.2s ease;
+
+  > .photo-info-viewer-button-icon {
+    width: 12px;  // Override the default 25px
+    height: 12px; // Override the default 25px
+  }
+}

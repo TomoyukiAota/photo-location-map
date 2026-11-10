@@ -56,6 +56,4 @@ $max-z-index: 2147483647;
 }
 
 @include meta.load-css("app-loading-indicator");
-@include meta.load-css("photo-cluster-viewer/photo-cluster-viewer");
-@include meta.load-css("photo-info-viewer/photo-info-viewer");
 @include meta.load-css("plm-leaflet-map/plm-leaflet-map");

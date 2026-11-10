@@ -1,6 +1,0 @@
-@use "photo-info-viewer-common" as *;
-
-.photo-info-viewer-name {
-  @include photo-info-viewer-text;
-  padding: 6px 0 3px 0;
-}
