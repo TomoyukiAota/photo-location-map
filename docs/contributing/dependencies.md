@@ -28,6 +28,26 @@ npm modules used in Electron main process need to be configured in
 `dependencies` in `package.json`.
 
 
+### CommonJS modules in the renderer
+
+Angular's build warns about a dependency of the renderer that is a CommonJS
+module, as it cannot cut such a module down to what is used. The ones in use
+are listed in `angular.json` (`allowedCommonJsDependencies`), which ends the
+warning for them, so that a new one stands out. Prefer a dependency that is an
+ES module; when a CommonJS one is needed, add it to that list and to this
+table. [module-formats.md](./module-formats.md) has the rules for the
+repository's own files.
+
+| Module | What it is there for |
+|:--|:--|
+| `moment`, `moment-timezone`, `moment-duration-format` | Dates and durations. moment is published as CommonJS; only another date library would end these. |
+| `lodash` | `debounce`, `throttle`, `isEqual`, `isObject` and `chunk`. `src-shared/` uses it in the main process too, which is CommonJS. |
+| `reflect-metadata` | Loaded for its effect, the metadata that decorators read. |
+| `echarts/theme/v5.js` | The theme that keeps the chart's look of ECharts 5; ECharts itself is an ES module. |
+| `zen-observable`, `safe-json-stringify` | Dependencies of `@amplitude/analytics-browser`. |
+| `@turf/jsts`, `concaveman`, `earcut`, `fast-deep-equal`, `rbush`, `skmeans` | Dependencies of `@turf/turf`, which the map's regions use. |
+
+
 ## Install scripts
 
 Dependency install scripts are reviewed in `allowScripts` in `package.json`.

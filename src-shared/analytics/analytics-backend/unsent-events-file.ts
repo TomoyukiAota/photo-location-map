@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- fs is loaded where the main process calls, not at the top: see the class. */
 import { AnalyticsBackendEvent } from './analytics-backend-event';
 
 // Keeps the events that were not sent before quitting, to send them on the next launch.
