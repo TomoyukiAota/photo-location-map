@@ -6,6 +6,7 @@ import { logWindowBounds, photoDataViewerLogger as logger } from '../../src-shar
 import { perfMark } from '../../src-shared/perf/perf-mark';
 import { openUrl } from '../../src-shared/url/open-url';
 import { addPhotoDataViewerWindow } from '../ipc/ipc-sender';
+import { recordWindowFailures } from '../record-window-failures';
 import { isWebPageUrl } from '../shell/open-with-os';
 import { grantPhoto, keepOnViewerPages } from './photo-delivery';
 import { trackOpeningPhotoDataViewer } from './photo-data-viewer-tracker';
@@ -35,8 +36,7 @@ export async function launchPhotoDataViewer(ipcParams: PhotoDataViewerIpcParams)
   addPhotoDataViewerWindow(browserWindow.webContents);
   keepOnViewerPages(browserWindow.webContents);
   // A preload that throws leaves the page without its bridge, which would show only as a page that did not ask.
-  browserWindow.webContents.on('preload-error', (_event, preloadPath, error) =>
-    logger.error(`The preload of Photo Data Viewer's window failed (${preloadPath}): ${error.stack ?? error.message}`));
+  recordWindowFailures(browserWindow, 'Photo Data Viewer');
   grantPhoto(browserWindow.webContents, photo);
   browserWindow.webContents.setWindowOpenHandler(({url}) => {
     // A web page only, as for the main window's links (src-main/shell/): the viewer's page is served apart from the app.
