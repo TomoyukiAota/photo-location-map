@@ -72,6 +72,12 @@ async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'con
     pageErrors.push(webError.error().message);
     if (webError.error().message.includes('NG0100')) changedWithoutNotification.push(webError.error().message);
   });
+  // The requests that have no answer yet, for a launch whose home view does not render: the page waits for the list
+  // of the map's base layers, which it downloads, before it starts Angular (src/start-app.ts).
+  const unansweredRequests = new Set();
+  app.context().on('request', request => unansweredRequests.add(request.url().slice(0, 160)));
+  for (const answered of ['requestfinished', 'requestfailed'])
+    app.context().on(answered, request => unansweredRequests.delete(request.url().slice(0, 160)));
   const runtime = await app.evaluate(({ app }) => {
     const require = globalThis.__plmTestRequire;
     if (typeof require !== 'function') throw new Error('The application is missing its gated E2E hooks; rebuild it before testing.');
@@ -139,10 +145,18 @@ async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'con
       height: Math.min((compact ? 600 : 800) + frameHeight, area.height - 40) });
   }, { visual, compact: process.env.PLM_E2E_COMPACT === '1' });
   await page.waitForSelector('app-root app-home').catch(async error => {
-    // Says why the app did not start: whether its page got its bridge to the main process, and what it threw.
-    const bridge = await page.evaluate(() => !window.plm ? 'no bridge' : window.plm.startup === null
-      ? 'the startup metadata was refused' : 'a bridge').catch(() => 'unknown');
-    throw new Error(`The home view did not render, with ${bridge}; page errors: ${JSON.stringify(pageErrors)}.`, { cause: error });
+    // TL;DR: Says why the app did not start: whether its page got its bridge to the main process, how far its
+    // start came, which requests it still waits for, and what it threw.
+    // Details: On Windows in CI, the home view did not render within 30 seconds for several launches in a row,
+    // twice in one evening, with a bridge and without an error, while the same commit passed in the other run. The
+    // marks tell a start that waits (renderer:bootstrap-start without renderer:bootstrap-done) from a page that
+    // did not come that far, and the requests tell what it waits for.
+    const bridge = await within5Seconds(page.evaluate(() => !window.plm ? 'no bridge' : window.plm.startup === null
+      ? 'the startup metadata was refused' : 'a bridge').catch(() => 'unknown'), 'a page that does not answer');
+    const marks = await within5Seconds(page.evaluate(() => performance.getEntriesByType('mark')
+      .filter(mark => mark.name.startsWith('plm:')).map(mark => mark.name.slice(4))).catch(() => 'unknown'), 'unknown');
+    throw new Error(`The home view did not render, with ${bridge}; marks: ${JSON.stringify(marks)}; requests without an answer: `
+      + `${JSON.stringify([...unansweredRequests])}; page errors: ${JSON.stringify(pageErrors)}.`, { cause: error });
   });
   if (liveReload) expect(new URL(page.url()).origin).toBe('http://localhost:4200');
   await page.waitForFunction(() => !!window.plmInternalRenderer?.settingsDialog?.showSettingsDialog);
