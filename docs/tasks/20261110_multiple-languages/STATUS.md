@@ -8,10 +8,10 @@ All three stages of the plan are implemented and checked on macOS (2026-11-10),
 and the owner went through the application in Japanese and changed its texts
 (2026-11-11, [below](#the-owners-review-of-the-japanese-texts)).
 
-- Authorized (owner, 2026-11-11): merge the work. It is committed on the branch
-  `claude/internationalization-investigation-fad0bb` for a pull request, which
-  gets CI's macOS screenshots written anew and is merged with the `automerge`
-  label once CI passes and its review is addressed.
+- Authorized (owner, 2026-11-11): merge the work. It is pull request #678, from
+  the branch `claude/internationalization-investigation-fad0bb`, which got
+  CI's macOS screenshots written anew and its review addressed, and is merged
+  with the `automerge` label once CI passes.
 
 - Every text that the application shows is in `src-shared/i18n/locales/en.json`
   and, in Japanese, in `ja.json`. Both processes read them through `t()`
@@ -120,6 +120,14 @@ worktree, on a machine whose language is Japanese.
 
 The other references are unchanged and still match.
 
+`test/e2e/snapshots-ci/macos-26-arm64/`, CI's own set, was written anew by a
+manual run of "CI on macOS" with `update_screenshots` on the pull request's
+branch: the four changed and the five new references above, and `welcome.png`.
+In that one, the content sits one pixel higher than before, and nothing else
+differs: with the runner's fonts the Welcome dialog's content is a pixel taller
+than the height that the dialog used to be fixed at, which its minimum height
+now gives way to. The reference of `snapshots/` did not change.
+
 ### Japanese layout
 
 Every dialog and view was looked at in Japanese. Three things did not fit and
@@ -160,11 +168,6 @@ texts follow Photo Data Viewer's wording for the words the two share.
 
 ## Left for the owner
 
-- **CI's own screenshots** (`test/e2e/snapshots-ci/macos-26-arm64/`) do not have
-  the new and changed references, so "CI on macOS" fails its visual comparison
-  until they are written anew: run the workflow by hand with
-  `update_screenshots` on the pushed branch, and commit its artifact
-  (`test/e2e/README.md`).
 - **Windows and Linux** were not run here: CI runs them. On Windows, the item of
   Explorer's context menu and the OS tab are worth a look in Japanese.
 - **Not exercised**: the update dialog (updates are off in development and in
