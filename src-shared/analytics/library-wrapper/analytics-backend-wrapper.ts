@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- Node's modules are loaded in initialize, not at the top: see the class. */
 import { v4 as uuidv4 } from 'uuid';
 import { createPrependedLogger } from '../../log/create-prepended-logger';
 import { AnalyticsBackendEvent } from '../analytics-backend/analytics-backend-event';
