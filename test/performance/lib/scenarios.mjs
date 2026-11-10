@@ -297,9 +297,11 @@ async function readSetting(userData, name) {
 }
 
 
-async function openSettings(page) {
+/** Opens the Settings dialog on the tab named `tab`: a build with several languages opens it on its Language tab. */
+async function openSettings(page, tab) {
   await page.evaluate(() => window.plmInternalRenderer.settingsDialog.showSettingsDialog());
   await page.locator('app-settings-dialog').waitFor();
+  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: tab }).click();
 }
 
 /**
@@ -318,7 +320,7 @@ export async function settings(context) {
     await page.waitForTimeout(context.settleMs);
     const userData = await app.evaluate(({ app }) => app.getPath('userData'));
 
-    await openSettings(page);
+    await openSettings(page, 'Appearance');
     const checkbox = page.getByRole('checkbox', { name: 'Show Status Bar' });
     const shown = await checkbox.isChecked();
     await checkbox.setChecked(!shown);
@@ -332,16 +334,22 @@ export async function settings(context) {
     const persistedMs = await waitFor(async () => (await readSetting(userData, 'ShowStatusBar')) === String(!shown) && Date.now(), 5000);
     if (!persistedMs) throw new Error('Show Status Bar was not saved.');
 
-    await openSettings(page);
-    await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Date & Time' }).click();
+    await openSettings(page, 'Date & Time');
     await page.getByRole('combobox', { name: 'Date Format' }).click();
     await page.getByRole('option', { name: 'DD/MM/YYYY', exact: true }).click();
     await page.getByRole('listbox').waitFor({ state: 'detached' });
+    // An earlier build asks before the restart with window.confirm, which answers at once here. A build with several
+    // languages asks in a dialog of its own: the restart is timed from the click on its OK.
     await page.evaluate(() => { window.confirm = () => true; });
     const child = app.process();
     const exited = new Promise(resolve => child.once('exit', () => resolve(Date.now())));
-    const restartMs = Date.now();
+    let restartMs = Date.now();
     await page.getByRole('button', { name: 'Save', exact: true }).click();
+    const confirmation = page.locator('app-confirm-dialog');
+    if (await confirmation.waitFor({ timeout: 2000 }).then(() => true, () => false)) {
+      restartMs = Date.now();
+      await confirmation.locator('.ok-button').click();
+    }
     const exitMs = await Promise.race([exited, new Promise(resolve => setTimeout(() => resolve(undefined), 30000))]);
     if (!exitMs) throw new Error('The application did not quit to restart.');
     const relaunched = await waitFor(async () => {

@@ -1,0 +1,9 @@
+<div class="setting-title">{{ 'settings.language.title' | t }}</div>
+<div class="setting-container">
+  <div class="description-row">
+    {{ 'settings.language.description' | t }}
+  </div>
+  <app-language-list class="language-list"
+                     [selected]="selectedLanguage()"
+                     (selectedChange)="onLanguageSelected($event)"></app-language-list>
+</div>

@@ -2,6 +2,7 @@ import { MenuItemConstructorOptions } from 'electron';
 import * as fsExtra from 'fs-extra';
 import { Analytics } from '../../src-shared/analytics/analytics';
 import { openWithAssociatedApp } from '../shell/open-with-os';
+import { t } from '../../src-shared/i18n/i18n';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { LogFileConfig } from '../../src-shared/log/file-config/log-file-config';
 import { Logger } from '../../src-shared/log/logger';
@@ -26,18 +27,18 @@ const handleOpenLogFolderClicked = () => {
 
 export const commonHelpSubmenuTemplate: MenuItemConstructorOptions[] = [
   {
-    label: 'Show Welcome Dialog',
+    label: t('menu.help.showWelcomeDialog'),
     click: () => handleShowWelcomeDialogClicked()
   },
   { type: 'separator' },
   {
-    label: 'Advanced Menu',
+    label: t('menu.help.advancedMenu'),
     submenu: [
       {
-        label: 'Open Log Folder',
+        label: t('menu.help.openLogFolder'),
         click: () => handleOpenLogFolderClicked(),
       },
-      { role: 'toggleDevTools' }
+      { role: 'toggleDevTools', label: t('menu.help.toggleDeveloperTools') }
     ]
   }
 ];

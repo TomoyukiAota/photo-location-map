@@ -3,17 +3,17 @@
   <mat-icon fontIcon="more_horiz" class="more-options-icon"></mat-icon>
 </button>
 <mat-menu #moreOptionsMenu>
-  <button mat-menu-item [matMenuTriggerFor]="sortMenu">Sort</button>
+  <button mat-menu-item [matMenuTriggerFor]="sortMenu">{{ 'sidebar.sort.title' | t }}</button>
 </mat-menu>
 <mat-menu #sortMenu>
   <button mat-menu-item (click)="handleSortKeyMenuItemClicked('Name')">
     <mat-icon fontIcon="check" [style.visibility]="sortService.sortKey() === 'Name' ? 'visible' : 'hidden'"></mat-icon>
-    <label>By Name</label>
+    <label>{{ 'sidebar.sort.byName' | t }}</label>
   </button>
   <button mat-menu-item (click)="handleSortKeyMenuItemClicked('ShootingTime')">
     <mat-icon fontIcon="check" [style.visibility]="sortService.sortKey() === 'ShootingTime' ? 'visible' : 'hidden'"></mat-icon>
     <div class="shooting-time-label-and-info-button">
-      <label>By Shooting Time</label>
+      <label>{{ 'sidebar.sort.byShootingTime' | t }}</label>
       <button mat-icon-button (click)="handleShootingTimeInfoButtonClicked($event)">
         <mat-icon fontIcon="info"></mat-icon>
       </button>
@@ -22,10 +22,10 @@
   <mat-divider></mat-divider>
   <button mat-menu-item (click)="handleSortDirectionMenuItemClicked('Ascending')">
     <mat-icon fontIcon="check" [style.visibility]="sortService.sortDirection() === 'Ascending' ? 'visible' : 'hidden'"></mat-icon>
-    <label>Ascending</label>
+    <label>{{ 'sidebar.sort.ascending' | t }}</label>
   </button>
   <button mat-menu-item (click)="handleSortDirectionMenuItemClicked('Descending')">
     <mat-icon fontIcon="check" [style.visibility]="sortService.sortDirection() === 'Descending' ? 'visible' : 'hidden'"></mat-icon>
-    <label>Descending</label>
+    <label>{{ 'sidebar.sort.descending' | t }}</label>
   </button>
 </mat-menu>

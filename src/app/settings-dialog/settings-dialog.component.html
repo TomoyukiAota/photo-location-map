@@ -1,36 +1,37 @@
 <div class="settings-dialog-header">
-  Settings
+  {{ 'settings.title' | t }}
 </div>
 <mat-nav-list class="settings-tab">
-  @for (tabName of tabNames; track tabName) {
-    <mat-list-item (click)="selectTab(tabName)"
-                   [class.selected-tab]="isSelectedTab(tabName)">
-      {{ tabName }}
+  @for (tab of tabs; track tab.id) {
+    <mat-list-item (click)="selectTab(tab.id)"
+                   [class.selected-tab]="isSelectedTab(tab.id)">
+      {{ tab.labelKey | t }}
     </mat-list-item>
   }
 </mat-nav-list>
 <div class="settings-content">
-  <app-appearance-settings [style.display]="isSelectedTab('Appearance')  ? 'block' : 'none'"></app-appearance-settings>
-  <app-date-time-settings  [style.display]="isSelectedTab('Date & Time') ? 'block' : 'none'"></app-date-time-settings>
-  <app-os-settings         [style.display]="isSelectedTab('OS')          ? 'block' : 'none'"></app-os-settings>
-  <app-cache-settings      [style.display]="isSelectedTab('Cache')       ? 'block' : 'none'"></app-cache-settings>
+  <app-language-settings   [style.display]="isSelectedTab('language')   ? 'block' : 'none'"></app-language-settings>
+  <app-appearance-settings [style.display]="isSelectedTab('appearance') ? 'block' : 'none'"></app-appearance-settings>
+  <app-date-time-settings  [style.display]="isSelectedTab('dateTime')   ? 'block' : 'none'"></app-date-time-settings>
+  <app-os-settings         [style.display]="isSelectedTab('os')         ? 'block' : 'none'"></app-os-settings>
+  <app-cache-settings      [style.display]="isSelectedTab('cache')      ? 'block' : 'none'"></app-cache-settings>
 </div>
 <div class="settings-dialog-footer">
   <div class="settings-dialog-footer-description"
        [style.visibility]="isAppRestartRequired() ? 'visible' : 'hidden'">
-    This application will restart after saving settings.
+    {{ 'settings.restartAfterSaving' | t }}
   </div>
   <div class="settings-dialog-footer-buttons">
     <button mat-flat-button
             color="primary"
             [disabled]="!isSaveButtonEnabled()"
             (click)="saveSettings()">
-      Save
+      {{ 'settings.save' | t }}
     </button>
     <button mat-button
             (click)="handleCancelClicked()"
             class="settings-dialog-cancel-button">
-      Cancel
+      {{ 'common.cancel' | t }}
     </button>
   </div>
 </div>

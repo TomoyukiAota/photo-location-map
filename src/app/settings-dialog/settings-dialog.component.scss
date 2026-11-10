@@ -62,7 +62,7 @@
 .settings-dialog-footer-buttons > button {
   display: inline-block;
   margin: 0 10px;
-  width: 80px;
+  min-width: 80px; // At least its width in English; wider for a longer text of another language.
 }
 
 .settings-dialog-cancel-button {

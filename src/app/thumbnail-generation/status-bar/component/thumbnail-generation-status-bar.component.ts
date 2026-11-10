@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Analytics } from '../../../../../src-shared/analytics/analytics';
 import { Logger } from '../../../../../src-shared/log/logger';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 import {
   ThumbnailGenerationErrorDialogComponent
 } from '../../error-dialog/thumbnail-generation-error-dialog.component';
@@ -14,7 +15,7 @@ import { MatIcon } from '@angular/material/icon';
   selector: 'app-thumbnail-generation-status-bar',
   templateUrl: './thumbnail-generation-status-bar.component.html',
   styleUrls: ['./thumbnail-generation-status-bar.component.scss'],
-  imports: [MatProgressBar, MatIcon]
+  imports: [MatProgressBar, MatIcon, TranslatePipe]
 })
 export class ThumbnailGenerationStatusBarComponent {
   private dialog = inject(MatDialog);

@@ -1,5 +1,6 @@
 .about-box-container {
-  padding: 20px 20px 0 20px;
+  // The space under the icons, which the dialog's fixed height used to leave in English.
+  padding: 20px 20px 12px 20px;
   text-align: center;
 }
 
@@ -66,6 +67,11 @@
 
 .troubleshooting-message {
   margin-top: 15px;
+  font-size: 14px;
+}
+
+.translations-message {
+  margin-top: 10px;
   font-size: 14px;
 }
 

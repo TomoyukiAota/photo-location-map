@@ -1,3 +1,4 @@
+import { t } from '../../../../src-shared/i18n/i18n';
 import { IconDataUrl } from '../../../assets/icon-data-url';
 import { Photo } from '../../shared/model/photo.model';
 import { removeFocus } from '../../shared/remove-focus';
@@ -7,7 +8,7 @@ import { createPhotoInfoViewerButton } from './photo-info-viewer-button-util';
 export class MoreOptionsButton {
   public static create(photo: Photo): HTMLElement {
     const onClick = () => this.handleButtonClick(photo, button);
-    const button = createPhotoInfoViewerButton(onClick, IconDataUrl.moreOptions, 'More Options');
+    const button = createPhotoInfoViewerButton(onClick, IconDataUrl.moreOptions, t('photoInfo.moreOptions'));
     button.className = 'photo-info-viewer-more-options-button';
     return button;
   }
@@ -25,6 +26,7 @@ export class MoreOptionsButton {
     const element = MoreOptionsMenuElement.create(photo, button);
     element.classList.add(this.fadeInCssClass);
     button.appendChild(element);
+    MoreOptionsMenuElement.keepWithinArea(element, button);
     button.addEventListener(
       'focusout',
       () => this.removeMoreOptionsMenuElementIfFound(),

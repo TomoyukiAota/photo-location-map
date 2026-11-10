@@ -8,6 +8,7 @@ export namespace UserDataStoragePath {
     export const LastLaunchDateTime: ReadonlyArray<string> = ['History', 'LastLaunchDateTime'];
     export const LaunchCount: ReadonlyArray<string> = ['History', 'LaunchCount'];
     export const ClickedOkOnWelcomeDialog: ReadonlyArray<string> = ['History', 'ClickedOkOnWelcomeDialog'];
+    export const ClickedOkOnLanguageDialog: ReadonlyArray<string> = ['History', 'ClickedOkOnLanguageDialog'];
   }
 
   export namespace DirectoryTreeView {
@@ -34,5 +35,6 @@ export namespace UserDataStoragePath {
     export const ShowStatusBar: ReadonlyArray<string> = ['UserSettings', 'ShowStatusBar'];
     export const DateFormat: ReadonlyArray<string> = ['UserSettings', 'DateFormat'];
     export const ClockSystemFormat: ReadonlyArray<string> = ['UserSettings', 'ClockSystemFormat'];
+    export const Language: ReadonlyArray<string> = ['UserSettings', 'Language'];
   }
 }

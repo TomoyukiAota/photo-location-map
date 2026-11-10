@@ -5,6 +5,7 @@ import './analytics-setup';
 import { enableProdMode } from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 
+import { currentLanguage, t } from '../src-shared/i18n/i18n';
 import { LogFileConfig } from '../src-shared/log/file-config/log-file-config';
 import { Logger } from '../src-shared/log/logger';
 import { perfMark } from '../src-shared/perf/perf-mark';
@@ -15,9 +16,20 @@ import { recordErrorsOutsideAngular } from './app/shared/error/analytics-error-h
 import { AppConfig } from './environments/environment';
 import './ipc-renderer-setup/ipc-renderer-all-setup';
 
-/** Starts the renderer: the map's base layers, the error listeners, then Angular. */
+/** Shows the page in the application's language, as far as it is shown before Angular renders it. */
+function applyLanguageToPage(): void {
+  // Chromium chooses the glyphs of Japanese and Chinese, which share code points, by the page's language.
+  document.documentElement.lang = currentLanguage;
+  // The text of index.html, which stays while the map's base layers are fetched.
+  const loadingText = document.getElementById('app-loading-text');
+  if (loadingText)
+    loadingText.textContent = t('app.loading');
+}
+
+/** Starts the renderer: the page's language, the map's base layers, the error listeners, then Angular. */
 async function bootstrap(): Promise<void> {
   perfMark('renderer:bootstrap-start');
+  applyLanguageToPage();
   // Load map choices before Angular creates the map, as the former module await did.
   await initializeRasterTileBaseLayerConfigs();
 

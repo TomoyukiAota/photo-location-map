@@ -1,0 +1,14 @@
+<div class="language-dialog-title" id="language-dialog-title">{{ 'language.title' | t }}</div>
+<app-language-list class="language-list" [(selected)]="selected"></app-language-list>
+<div class="restart-note"
+     [style.visibility]="isRestartRequired() ? 'visible' : 'hidden'"
+     [attr.lang]="selectedLanguage()">
+  {{ restartNote() }}
+</div>
+<button mat-flat-button
+        color="primary"
+        class="ok-button"
+        [attr.lang]="selectedLanguage()"
+        (click)="onOkClicked()">
+  {{ confirmLabel() }}
+</button>

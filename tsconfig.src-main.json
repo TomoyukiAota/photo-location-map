@@ -9,6 +9,7 @@
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "nodenext",
+    "resolveJsonModule": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "typeRoots": [

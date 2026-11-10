@@ -1,14 +1,14 @@
-<div class="setting-title">Explorer Context Menu</div>
+<div class="setting-title">{{ 'settings.os.title' | t }}</div>
 <div class="setting-container">
   <div class="description">
-    Add/Remove "Open with Photo Location Map" in the context menu of Explorer.
+    {{ 'settings.os.description' | t: { menuItem } }}
   </div>
   <div class="buttons">
     <button mat-stroked-button (click)="handleAddButtonClicked()">
-      Add
+      {{ 'settings.os.add' | t }}
     </button>
     <button mat-stroked-button (click)="handleRemoveButtonClicked()">
-      Remove
+      {{ 'settings.os.remove' | t }}
     </button>
   </div>
   <div class="message-after-button-clicked">

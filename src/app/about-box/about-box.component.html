@@ -1,36 +1,41 @@
 <div class="about-box-container">
-  <img src="favicon.svg" alt="Application Icon" class="app-icon">
+  <img src="favicon.svg" [alt]="'appInfo.appIconAlt' | t" class="app-icon">
   <div class="app-name">Photo Location Map</div>
-  <div class="app-version">Version {{ appVersion }}</div>
-  <a class="releases-link" href="" title="Open Downloads and Release Notes" #releasesLink>
-    Downloads and Release Notes
+  <div class="app-version">{{ 'appInfo.version' | t: { version: appVersion } }}</div>
+  <a class="releases-link" href="" [title]="'about.releasesLinkTitle' | t" #releasesLink>
+    {{ 'about.releasesLink' | t }}
   </a>
   <div class="developed-by">
     <div class="developed-by-message">
-      Developed by Tomoyuki Aota.
+      {{ 'appInfo.developedBy' | t }}
     </div>
     <img  class="x-formerly-twitter-profile-icon"
           [src]="xFormerlyTwitterLogoDataUrl"
-          alt="X (Formerly Twitter) Profile"
-          title="Open X (Formerly Twitter) Profile"
+          [alt]="'appInfo.xProfileAlt' | t"
+          [title]="'appInfo.xProfileTitle' | t"
           (click)="handleXFormerlyTwitterProfileIconClicked()">
     <img class="github-profile-icon"
          [src]="gitHubLogoDataUrl"
-         alt="GitHub Profile"
-         title="Open GitHub Profile"
+         [alt]="'appInfo.gitHubProfileAlt' | t"
+         [title]="'appInfo.gitHubProfileTitle' | t"
          (click)="handleGitHubProfileIconClicked()"/>
   </div>
   <div class="troubleshooting-message">
-    If you encounter issues with this application, please see <a href="" title="Open the troubleshooting page" #troubleshootingPageLink>the troubleshooting page</a>.
+    @let troubleshooting = 'appInfo.troubleshooting' | t | tagParts: 'pageLink';
+    {{ troubleshooting.before }}<a href="" [title]="'appInfo.troubleshootingLinkTitle' | t" #troubleshootingPageLink>{{ troubleshooting.inside }}</a>{{ troubleshooting.after }}
+  </div>
+  <div class="translations-message">
+    @let translations = 'about.translations' | t | tagParts: 'guideLink';
+    {{ translations.before }}<a href="" [title]="'about.translationsLinkTitle' | t" #translatingGuideLink>{{ translations.inside }}</a>{{ translations.after }}
   </div>
   <div class="icons-grid">
     <mat-icon class="home-icon"
-              title="Open Home Page"
+              [title]="'about.homePageTitle' | t"
               (click)="handleHomeIconClicked()">
       home
     </mat-icon>
     <mat-icon class="code-icon"
-              title="View Source Code in GitHub"
+              [title]="'about.sourceCodeTitle' | t"
               (click)="handleSourceCodeIconClicked()">
       code
     </mat-icon>

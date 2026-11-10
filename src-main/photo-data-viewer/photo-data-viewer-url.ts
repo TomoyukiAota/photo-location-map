@@ -1,3 +1,4 @@
+import { currentLanguage } from '../../src-shared/i18n/i18n';
 import { PhotoDataViewerIpcPhotoParams } from '../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params';
 import { currentUserSettings } from '../../src-shared/user-settings/user-settings';
 import { getPhotoDataViewerServerUrl } from './photo-data-viewer-server-config';
@@ -9,6 +10,8 @@ export function createPhotoDataViewerUrl(photo: PhotoDataViewerIpcPhotoParams): 
     plmBridge: '1',
     dateFormat: currentUserSettings.dateFormat,
     clockSystemFormat: currentUserSettings.clockSystemFormat,
+    // The viewer shows its texts in this language when it has a translation for it, and in English otherwise.
+    language: currentLanguage,
   };
   const serverUrl = getPhotoDataViewerServerUrl();
   const photoDataViewerUrl = new URL(serverUrl);

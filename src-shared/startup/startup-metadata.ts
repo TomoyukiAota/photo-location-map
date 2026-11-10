@@ -8,6 +8,11 @@ export interface StartupMetadata {
   userDataPath: string;
   /** process.platform of the main process. */
   platform: string;
+  /**
+   * The operating system's preferred languages, the most preferred first, such as `ja-JP`; in a test, what the test
+   * gave instead (src-main/startup/). The application's language is decided from them (src-shared/i18n/).
+   */
+  systemLanguages: string[];
   /** The separator of this platform's paths, path.sep. */
   pathSeparator: string;
   /** os.homedir() and os.userInfo().username, which errors are scrubbed of before analytics records them. */

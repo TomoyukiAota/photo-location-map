@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { startupMetadata } from '../../../../src-shared/startup/startup-metadata';
+import { ConfirmDialogService } from '../../shared/confirm-dialog/confirm-dialog.service';
 import { CacheSettingsComponent } from './cache-settings.component';
 
 describe('CacheSettingsComponent', () => {
@@ -29,15 +30,22 @@ describe('CacheSettingsComponent', () => {
     expect(open).toHaveBeenCalledExactlyOnceWith();
   });
 
-  it('deletes the cache only once the user confirms, which the main process does before it restarts the app', () => {
+  it('deletes the cache only once the user confirms, which the main process does before it restarts the app', async () => {
     const deleteAndRestart = vi.spyOn(window.plm.thumbnailCache, 'deleteAndRestart');
-    const confirm = vi.spyOn(window, 'confirm').mockReturnValueOnce(false).mockReturnValueOnce(true);
+    const confirm = vi.spyOn(TestBed.inject(ConfirmDialogService), 'confirm').mockResolvedValueOnce(false).mockResolvedValueOnce(true);
 
-    component.handleDeleteThumbnailCacheButtonClicked();
+    await component.handleDeleteThumbnailCacheButtonClicked();
     expect(deleteAndRestart).not.toHaveBeenCalled();
-    component.handleDeleteThumbnailCacheButtonClicked();
+    await component.handleDeleteThumbnailCacheButtonClicked();
     expect(deleteAndRestart).toHaveBeenCalledExactlyOnceWith();
     expect(confirm).toHaveBeenCalledTimes(2);
-    confirm.mockRestore();
+    expect(confirm).toHaveBeenCalledWith('This application will restart after deleting the thumbnail cache.\nDo you want to continue?');
+  });
+
+  it('shows the sentence about HEIF files with its link around the words of the translation', () => {
+    const host: HTMLElement = fixture.nativeElement;
+    const sentence = host.querySelector('.cache-description p');
+    expect(sentence.textContent).toBe('Thumbnail generation is required for HEIF files, but it takes time.');
+    expect(sentence.querySelector('a').textContent).toBe('HEIF files');
   });
 });

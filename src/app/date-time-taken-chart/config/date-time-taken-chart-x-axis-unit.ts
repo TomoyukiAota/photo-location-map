@@ -1,28 +1,21 @@
 import { unitOfTime } from 'moment';
+import { TranslationKey } from '../../../../src-shared/i18n/translation-key';
 
 export interface DateTimeTakenChartXAxisUnit {
-  displayStr: string;
+  /** The key of the unit's name, which the chart's select shows. */
+  labelKey: TranslationKey;
+  /** The unit as moment names it, which also identifies it: the value of its option, and what analytics records. */
   momentJsStr: unitOfTime.DurationConstructor;
 }
 
-export const xAxisUnit: {readonly [index: string]: DateTimeTakenChartXAxisUnit} = {
-  year:   {displayStr: 'Year'  , momentJsStr: 'year'  },
-  month:  {displayStr: 'Month' , momentJsStr: 'month' },
-  day:    {displayStr: 'Day'   , momentJsStr: 'day'   },
-  hour:   {displayStr: 'Hour'  , momentJsStr: 'hour'  },
-  minute: {displayStr: 'Minute', momentJsStr: 'minute'},
-  second: {displayStr: 'Second', momentJsStr: 'second'},
-};
+export const xAxisUnit = {
+  year:   {labelKey: 'chart.units.year'  , momentJsStr: 'year'  },
+  month:  {labelKey: 'chart.units.month' , momentJsStr: 'month' },
+  day:    {labelKey: 'chart.units.day'   , momentJsStr: 'day'   },
+  hour:   {labelKey: 'chart.units.hour'  , momentJsStr: 'hour'  },
+  minute: {labelKey: 'chart.units.minute', momentJsStr: 'minute'},
+  second: {labelKey: 'chart.units.second', momentJsStr: 'second'},
+} as const satisfies {readonly [index: string]: DateTimeTakenChartXAxisUnit};
 
-const displayStrToMomentJsStrMap = new Map<string, unitOfTime.DurationConstructor>([
-  [xAxisUnit.year.displayStr  , xAxisUnit.year.momentJsStr  ],
-  [xAxisUnit.month.displayStr , xAxisUnit.month.momentJsStr ],
-  [xAxisUnit.day.displayStr   , xAxisUnit.day.momentJsStr   ],
-  [xAxisUnit.hour.displayStr  , xAxisUnit.hour.momentJsStr  ],
-  [xAxisUnit.minute.displayStr, xAxisUnit.minute.momentJsStr],
-  [xAxisUnit.second.displayStr, xAxisUnit.second.momentJsStr],
-]);
-
-export function getXAxisUnitMomentJsStr(displayStr: string): unitOfTime.DurationConstructor {
-  return displayStrToMomentJsStrMap.get(displayStr);
-}
+/** The units, in the order that the chart's select lists them. */
+export const xAxisUnits: readonly DateTimeTakenChartXAxisUnit[] = Object.values(xAxisUnit);

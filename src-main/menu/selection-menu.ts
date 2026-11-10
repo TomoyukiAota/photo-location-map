@@ -1,5 +1,6 @@
 import { ipcMain, MenuItemConstructorOptions } from 'electron';
 import { Analytics } from '../../src-shared/analytics/analytics';
+import { t } from '../../src-shared/i18n/i18n';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
 import { IpcParams } from '../../src-shared/ipc/ipc-params';
 import { Logger } from '../../src-shared/log/logger';
@@ -20,17 +21,17 @@ const handleRedoClicked = () => {
 };
 
 export const selectionMenuTemplate: MenuItemConstructorOptions = {
-  label: 'Selection',
+  label: t('menu.selection.title'),
   submenu: [
     {
-      label: 'Undo',
+      label: t('menu.selection.undo'),
       id: MenuId.Selection.Undo,
       enabled: false,
       accelerator: 'CmdOrCtrl+Z',
       click: () => handleUndoClicked(),
     },
     {
-      label: 'Redo',
+      label: t('menu.selection.redo'),
       id: MenuId.Selection.Redo,
       enabled: false,
       accelerator: 'CmdOrCtrl+Y',

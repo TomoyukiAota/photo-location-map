@@ -1,4 +1,5 @@
 import { Analytics } from '../../../../src-shared/analytics/analytics';
+import { t } from '../../../../src-shared/i18n/i18n';
 import { openWithAssociatedApp } from '../../shared/open-with-os';
 import { IconDataUrl } from '../../../assets/icon-data-url';
 import { Photo } from '../../shared/model/photo.model';
@@ -14,7 +15,7 @@ export class PlayLivePhotosButton {
       return null;
 
     const onClick = () => this.handleButtonClick(livePhotosFilePath, photo);
-    const button = createPhotoInfoViewerButton(onClick, IconDataUrl.play, 'Live Photos');
+    const button = createPhotoInfoViewerButton(onClick, IconDataUrl.play, t('photoInfo.livePhotos'));
     return button;
   }
 

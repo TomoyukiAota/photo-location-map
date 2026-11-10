@@ -1,5 +1,6 @@
 .welcome-dialog-container {
-  padding: 30px 30px 0 30px;
+  // The space under the OK button, which the dialog's fixed height used to leave in English.
+  padding: 30px;
   text-align: center;
 }
 

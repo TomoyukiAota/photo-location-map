@@ -1,5 +1,5 @@
 <mat-form-field>
-  <input matInput (keyup)="applyFilter($any($event.target).value)" placeholder="Filter">
+  <input matInput (keyup)="applyFilter($any($event.target).value)" [placeholder]="'thumbnailGeneration.errorDialog.filter' | t">
 </mat-form-field>
 
 <cdk-virtual-scroll-viewport tvsItemSize="48"
@@ -13,7 +13,7 @@
           *matHeaderCellDef
           mat-sort-header
           class="position-column-header-cell">
-        No.
+        {{ 'thumbnailGeneration.errorDialog.number' | t }}
       </th>
       <td mat-cell
           *matCellDef="let element"
@@ -24,7 +24,7 @@
 
     <!-- File Column -->
     <ng-container matColumnDef="filePath">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>File</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'thumbnailGeneration.errorDialog.file' | t }}</th>
       <td mat-cell *matCellDef="let element">
         <div class="file-path-and-buttons"
              (mouseenter)="buttons.style.opacity = '1'"
@@ -33,13 +33,13 @@
           <div class="buttons" #buttons>
             <button (click)="handleOpenFileButtonClicked(element.filePath)">
               <img [src]="launchExternalAppIconDataUrl"
-                   alt="Open File"
-                   title="Open File">
+                   [alt]="'thumbnailGeneration.errorDialog.openFile' | t"
+                   [title]="'thumbnailGeneration.errorDialog.openFile' | t">
             </button>
             <button (click)="handleOpenFolderButtonClicked(element.filePath)">
               <img [src]="folderIconDataUrl"
-                   alt="Open Folder"
-                   title="Open Folder">
+                   [alt]="'thumbnailGeneration.errorDialog.openFolder' | t"
+                   [title]="'thumbnailGeneration.errorDialog.openFolder' | t">
             </button>
           </div>
         </div>

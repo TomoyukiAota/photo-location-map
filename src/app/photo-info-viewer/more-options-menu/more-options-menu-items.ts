@@ -1,4 +1,5 @@
 import { Analytics } from '../../../../src-shared/analytics/analytics';
+import { t } from '../../../../src-shared/i18n/i18n';
 import { openContainingFolder } from '../../shared/open-with-os';
 import { openUrl } from '../../../../src-shared/url/open-url';
 import { Photo } from '../../shared/model/photo.model';
@@ -14,29 +15,29 @@ export function getMoreOptionsMenuItems(photo: Photo): MoreOptionsMenuItem[] {
   const menuItems: MoreOptionsMenuItem[] = [];
   if (photo.hasGpsInfo) {
     menuItems.push({
-      text: 'Select Only This',
+      text: t('photoInfo.menu.selectOnlyThis'),
       onClick: () => handleSelectOnlyThisMenuItemClicked(photo)
     });
   }
 
   menuItems.push({
-    text: 'Open Folder',
+    text: t('photoInfo.menu.openFolder'),
     onClick: () => handleOpenFolderMenuItemClicked(photo)
   });
 
   if (photo.hasGpsInfo) {
     menuItems.push({
-      text: 'Open Google Maps',
+      text: t('photoInfo.menu.openGoogleMaps'),
       onClick: () => handleOpenGoogleMapsMenuItemClicked(photo)
     });
     menuItems.push({
-      text: 'Open Google Street View',
+      text: t('photoInfo.menu.openGoogleStreetView'),
       onClick: () => handleOpenGoogleStreetViewMenuItemClicked(photo)
     });
   }
 
   menuItems.push({
-    text: 'View Data',
+    text: t('photoInfo.menu.viewData'),
     onClick: () => handleViewDataMenuItemClicked(photo)
   });
 

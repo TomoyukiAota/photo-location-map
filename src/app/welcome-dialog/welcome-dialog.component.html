@@ -1,27 +1,28 @@
 <div class="welcome-dialog-container">
-  <img src="favicon.svg" alt="Application Icon" class="app-icon">
-  <div class="welcome-message">Welcome to Photo Location Map</div>
-  <div class="app-version">Version {{ appVersion }}</div>
+  <img src="favicon.svg" [alt]="'appInfo.appIconAlt' | t" class="app-icon">
+  <div class="welcome-message">{{ 'welcome.message' | t }}</div>
+  <div class="app-version">{{ 'appInfo.version' | t: { version: appVersion } }}</div>
   <div class="developed-by">
     <div class="developed-by-message">
-      Developed by Tomoyuki Aota.
+      {{ 'appInfo.developedBy' | t }}
     </div>
     <img  class="x-formerly-twitter-profile-icon"
           [src]="xFormerlyTwitterLogoDataUrl"
-          alt="X (Formerly Twitter) Profile"
-          title="Open X (Formerly Twitter) Profile"
+          [alt]="'appInfo.xProfileAlt' | t"
+          [title]="'appInfo.xProfileTitle' | t"
           (click)="handleXFormerlyTwitterProfileIconClicked()">
     <img class="github-profile-icon"
          [src]="gitHubLogoDataUrl"
-         alt="GitHub Profile"
-         title="Open GitHub Profile"
+         [alt]="'appInfo.gitHubProfileAlt' | t"
+         [title]="'appInfo.gitHubProfileTitle' | t"
          (click)="handleGitHubProfileIconClicked()"/>
   </div>
   <div class="troubleshooting-message">
-    If you encounter issues with this application, please see <a href="" title="Open the troubleshooting page" #troubleshootingPageLink>the troubleshooting page</a>.
+    @let troubleshooting = 'appInfo.troubleshooting' | t | tagParts: 'pageLink';
+    {{ troubleshooting.before }}<a href="" [title]="'appInfo.troubleshootingLinkTitle' | t" #troubleshootingPageLink>{{ troubleshooting.inside }}</a>{{ troubleshooting.after }}
   </div>
   <div class="usage-info-collection-message">
-    To improve this application, this application collects anonymous usage information. You agree to it by continuing to use this application.
+    {{ 'welcome.usageInfoCollection' | t }}
   </div>
   <button
     mat-stroked-button
@@ -29,6 +30,6 @@
     mat-dialog-close
     class="ok-button"
     (click)="onOkClicked()">
-    OK
+    {{ 'common.ok' | t }}
   </button>
 </div>

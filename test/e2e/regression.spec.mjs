@@ -42,8 +42,14 @@ async function expectWindowOffScreenOnlyIfHeadless(window) {
       .toEqual({ visible: true, opacity: 0, focused: false });
   } else expect(state.visible, 'A headless run must keep the window hidden.').toBe(false);
 }
-/** Launches the application on the test profile, finds its main window as `page`, and checks how it runs. */
-async function launch({ resize = true, env: extraEnv = {} } = {}) {
+/**
+ * Launches the application on the test profile, finds its main window as `page`, and checks how it runs. In a
+ * profile whose user has not confirmed a language, the application shows the Language dialog first: it is confirmed
+ * here, with the language that it offers, unless `languageDialog` is 'keep', for the cases about the dialog. The
+ * application takes en-US as the operating system's language in a test profile, whatever the machine's is, unless
+ * `env` gives others in PLM_TEST_SYSTEM_LANGUAGES (src-main/startup/startup-metadata-setup.ts).
+ */
+async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'confirm' } = {}) {
   const env = { ...process.env, PLM_TEST_ROOT: profile, PLM_E2E: '1', PLM_TEST_HEADLESS: headless ? '1' : '0', ...extraEnv };
   for (const key of ['PLM_EM_MAIN', 'PLM_EM_RENDERER', 'ELECTRON_RUN_AS_NODE', 'NODE_OPTIONS']) delete env[key];
   // A publicly launched package has no npm development-profile override.
@@ -145,11 +151,35 @@ async function launch({ resize = true, env: extraEnv = {} } = {}) {
     const tiles = [...document.querySelectorAll('img.leaflet-tile')];
     return tiles.length > 0 && tiles.every(img => img.complete);
   });
+  if (languageDialog === 'confirm') await confirmLanguageDialog();
+}
+/** Clicks OK in the Language dialog, which a profile shows until its user has confirmed a language. */
+async function confirmLanguageDialog() {
+  const confirmed = await page.evaluate(() => window.plm.storage.snapshot()['History/ClickedOkOnLanguageDialog'] === 'true');
+  if (confirmed) return;
+  const dialog = page.locator('app-language-dialog');
+  await dialog.locator('.ok-button').click();
+  await expect(dialog).toHaveCount(0);
+}
+/** Closes the application and launches it again on an empty profile, as at its first launch on a computer. */
+async function launchAsNew(options) {
+  await app.close();
+  await rm(profile, { recursive: true, force: true });
+  await mkdir(profile);
+  await launch({ languageDialog: 'keep', ...options });
+}
+/** The labels of the application menu: each menu with the items of its submenu, and of theirs, without separators. */
+function menuLabels() {
+  return app.evaluate(({ Menu }) => {
+    const labels = items => items.filter(item => item.type !== 'separator')
+      .flatMap(item => [item.label, ...(item.role === 'services' || !item.submenu ? [] : labels(item.submenu.items))]);
+    return Menu.getApplicationMenu().items.map(menu => ({ label: menu.label, items: labels(menu.submenu.items) }));
+  });
 }
 /**
- * With PLM_VISUAL=1, compares a screenshot with the reference `${name}.png`: of the dialog for welcome, about and the
- * settings tabs, and of the whole window otherwise, with `mask` over what differs from run to run. empty-home also
- * compares the two toolbars, which the negative controls move.
+ * With PLM_VISUAL=1, compares a screenshot with the reference `${name}.png`: of the dialog for welcome, about, the
+ * Language dialog and the settings tabs, and of the whole window otherwise, with `mask` over what differs from run to
+ * run. empty-home also compares the two toolbars, which the negative controls move.
  */
 async function shot(name, mask = []) {
   if (!visual) return;
@@ -165,7 +195,7 @@ async function shot(name, mask = []) {
     // Reference pixels are cropped from the original full-page screenshot.
     await expect(page).toHaveScreenshot('map-toolbar.png', { clip: { x: 1155, y: 210, width: 36, height: 185 } });
   }
-  const isDialog = name === 'welcome' || name === 'about' || name.startsWith('settings-');
+  const isDialog = /^(welcome|about|language-dialog|settings-)/.test(name);
   const dialog = isDialog ? page.locator('mat-dialog-container') : page;
   // TL;DR: A dialog's screenshot waits until no other dialog is left, as toHaveScreenshot passes without comparing
   // when its locator matches two elements.
@@ -188,9 +218,21 @@ async function expectRepresentedPhotos(count) {
   await expect.poll(async () => await page.locator('.plm-leaflet-map-div-icon').count() +
     await page.locator('.marker-cluster span').evaluateAll(nodes => nodes.reduce((sum, node) => sum + Number(node.textContent), 0))).toBe(count);
 }
-async function settings() {
+/** Opens the Settings dialog, which opens on its Language tab, and shows the tab named `tab` if one is given. */
+async function settings(tab) {
   await page.evaluate(() => window.plmInternalRenderer.settingsDialog.showSettingsDialog());
   await expect(page.locator('app-settings-dialog')).toBeVisible();
+  if (tab) await page.locator('app-settings-dialog mat-list-item').filter({ hasText: tab }).click();
+}
+/**
+ * The application's question before a restart, which it asks in a dialog of its own: checks its lines, then clicks
+ * `answer`, OK or Cancel.
+ */
+async function answerConfirmation(lines, answer) {
+  const confirmation = page.locator('app-confirm-dialog');
+  await expect(confirmation.locator('.message')).toHaveText(lines.join('\n'), { useInnerText: true });
+  await confirmation.getByRole('button', { name: answer, exact: true }).click();
+  await expect(confirmation).toHaveCount(0);
 }
 async function openFolderWithPicker(folder) {
   await app.evaluate(({ dialog }, folder) => {
@@ -272,14 +314,236 @@ test('welcome, about and every available settings tab keep their appearance', as
   await page.keyboard.press('Escape');
   await settings();
   await expect(page.getByRole('button', { name: 'Save', exact: true })).toBeDisabled();
-  // Its reference copies the dialog's pixels from the original application's screenshot of the whole window
-  // (docs/tasks/20261101_dependency-upgrades/evidence/SETTINGS_APPEARANCE_REFERENCE.json).
+  await expect(page.locator('app-settings-dialog mat-list-item').first()).toHaveText('Language');
+  await expect(page.locator('app-language-settings')).toBeVisible();
+  await shot('settings-language');
+  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Appearance' }).click();
   await shot('settings-appearance');
   await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Date & Time' }).click();
   await shot('settings-date', [page.locator('.date-time-example')]);
   await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Cache' }).click();
   await shot('settings-cache', [page.locator('.location-value')]);
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+});
+// The application menu in English, as it was when Electron gave the labels of the items with a role, and in Japanese.
+const isMac = process.platform === 'darwin';
+// The entry of the Language list that follows the operating system's language names macOS and Windows.
+const operatingSystemName = { darwin: 'macOS', win32: 'Windows' }[process.platform];
+const systemLanguageInEnglish = language => `Use ${operatingSystemName ?? 'system'} setting (${language})`;
+const systemLanguageInJapanese = language => `${operatingSystemName ?? 'OS'} の設定に従う（${language}）`;
+const menuInEnglish = [
+  ...(isMac ? [{
+    // macOS shows the application's name instead of this label.
+    label: 'The name of the first menu item is the application name on macOS',
+    items: ['About Photo Location Map', 'Services', 'Hide Photo Location Map', 'Hide Others', 'Show All', 'Quit Photo Location Map'],
+  }] : []),
+  { label: 'View', items: ['Reload', 'Actual Size', 'Zoom In', 'Zoom Out', 'Toggle Full Screen'] },
+  { label: 'Selection', items: ['Undo', 'Redo'] },
+  { label: 'Settings', items: ['Open Settings'] },
+  { label: 'Help', items: [...(isMac ? [] : ['About Photo Location Map']),
+    'Show Welcome Dialog', 'Advanced Menu', 'Open Log Folder', 'Toggle Developer Tools'] },
+];
+const menuInJapanese = [
+  ...(isMac ? [{
+    label: 'The name of the first menu item is the application name on macOS',
+    items: ['Photo Location Map について', 'サービス', 'Photo Location Map を非表示', 'ほかを非表示', 'すべてを表示', 'Photo Location Map を終了'],
+  }] : []),
+  { label: '表示', items: ['再読み込み', '実際のサイズ', '拡大', '縮小', 'フルスクリーンの切り替え'] },
+  { label: '選択', items: ['元に戻す', 'やり直す'] },
+  { label: '設定', items: ['設定を開く'] },
+  { label: 'ヘルプ', items: [...(isMac ? [] : ['Photo Location Map について']),
+    '「ようこそダイアログ」を表示', '詳細メニュー', 'ログフォルダーを開く', '開発者ツールの切り替え'] },
+];
+test('the Language dialog comes before the Welcome dialog at the first launch, and not again once a language is confirmed', async () => {
+  await launchAsNew();
+  const dialog = page.locator('app-language-dialog');
+  await expect(dialog).toBeVisible();
+  // The Welcome dialog waits: its messages are to be read in the language that the user chooses.
+  await expect(page.locator('app-welcome-dialog')).toHaveCount(0);
+  await expect(dialog.locator('.language-dialog-title')).toHaveText('Language');
+  // A list like the one in the setup of macOS: the operating system's language, which a test profile gives as
+  // English and which is chosen, then each language under its own name.
+  await expect(dialog.getByRole('listbox', { name: 'Language' }).getByRole('option'))
+    .toHaveText([systemLanguageInEnglish('English'), 'English', '日本語']);
+  const systemLanguage = dialog.getByRole('option', { name: systemLanguageInEnglish('English'), exact: true });
+  const english = dialog.getByRole('option', { name: 'English', exact: true });
+  const japanese = dialog.getByRole('option', { name: '日本語', exact: true });
+  await expect(systemLanguage).toHaveAttribute('aria-selected', 'true');
+  const okButton = dialog.locator('.ok-button');
+  await expect(okButton).toHaveText('OK');
+  const restartNote = dialog.locator('.restart-note');
+  await expect(restartNote).toBeHidden();
+  await shot('language-dialog');
+  // With more entries than the box shows, the list scrolls, and its scrollbar takes room in the box, so it stays in
+  // view, where the one of macOS would hide. Entries are added to the page, as the application has few languages yet.
+  const box = await dialog.locator('.languages').evaluate(list => {
+    const added = Array.from({ length: 10 }, () => list.appendChild(list.lastElementChild.cloneNode(true)));
+    const borders = 2;
+    const sizes = { entries: list.children.length, content: list.scrollHeight, shown: list.clientHeight,
+      scrollbar: list.offsetWidth - list.clientWidth - borders };
+    added.forEach(entry => entry.remove());
+    return sizes;
+  });
+  expect(box).toEqual({ entries: 13, content: 13 * 32, shown: 7 * 32, scrollbar: 12 });
+  // Another language than the one on screen needs a restart, which the dialog says in that language, as its button is.
+  await japanese.click();
+  await expect(japanese).toHaveAttribute('aria-selected', 'true');
+  await expect(systemLanguage).toHaveAttribute('aria-selected', 'false');
+  await expect(restartNote).toBeVisible();
+  await expect(restartNote).toHaveText('言語を適用するため、このアプリを再起動します。');
+  await expect(okButton).toHaveText('決定');
+  // The keyboard chooses as well: the arrow keys move along the list, and Space chooses the language under them.
+  await page.keyboard.press('ArrowUp');
+  await expect(english).toBeFocused();
+  await expect(japanese).toHaveAttribute('aria-selected', 'true');
+  await page.keyboard.press('Space');
+  await expect(english).toHaveAttribute('aria-selected', 'true');
+  await expect(restartNote).toBeHidden();
+  await expect(okButton).toHaveText('OK');
+  await systemLanguage.click();
+  await expect(systemLanguage).toHaveAttribute('aria-selected', 'true');
+  await okButton.click();
+  await expect(dialog).toHaveCount(0);
+  await expect(page.locator('app-welcome-dialog')).toContainText('Welcome to Photo Location Map');
+  expect(await page.evaluate(() => document.documentElement.lang)).toBe('en');
+  expect(await menuLabels()).toEqual(menuInEnglish);
+  const userData = await app.evaluate(({ app }) => app.getPath('userData'));
+  await expect.poll(() => savedSetting(userData, ['History', 'ClickedOkOnLanguageDialog'])).toBe('true');
+  await expect.poll(() => savedSetting(userData, ['UserSettings', 'Language'])).toBe('auto');
+  // At the next launch, the Welcome dialog is shown at once, as its OK was not clicked.
+  await app.close();
+  await launch({ languageDialog: 'keep' });
+  await expect(page.locator('app-welcome-dialog')).toBeVisible();
+  await expect(page.locator('app-language-dialog')).toHaveCount(0);
+});
+test('a language chosen in the Language dialog, and another chosen later in the Settings dialog, each restart the application in it', async () => {
+  const report = path.join(profile, 'launches.jsonl');
+  await launchAsNew({ env: { PLM_TEST_LAUNCH_REPORT: report } });
+  const userData = await app.evaluate(({ app }) => app.getPath('userData'));
+  // Japanese, chosen in the Language dialog of an application in English: its button restarts the application.
+  const dialog = page.locator('app-language-dialog');
+  await dialog.getByRole('option', { name: '日本語', exact: true }).click();
+  let pid = await mainProcessId();
+  let exited = new Promise(resolve => app.process().once('exit', resolve));
+  await dialog.getByRole('button', { name: '決定', exact: true }).click();
+  await waitForRealRelaunch(report, exited, pid);
+  expect(await savedSetting(userData, ['UserSettings', 'Language'])).toBe('ja');
+  expect(await savedSetting(userData, ['History', 'ClickedOkOnLanguageDialog'])).toBe('true');
+  // The application is in Japanese, and goes on to the Welcome dialog without asking for the language again. The
+  // second restart gets a launch report of its own, as waitForRealRelaunch takes the first other process of a report.
+  const secondReport = path.join(profile, 'launches-2.jsonl');
+  await launch({ env: { PLM_TEST_LAUNCH_REPORT: secondReport }, languageDialog: 'keep' });
+  await expect(page.locator('app-language-dialog')).toHaveCount(0);
+  await expect(page.locator('app-welcome-dialog')).toContainText('Photo Location Map へようこそ');
+  await dismissWelcome();
+  expect(await page.evaluate(() => document.documentElement.lang)).toBe('ja');
+  expect(await menuLabels()).toEqual(menuInJapanese);
+  // English, chosen in the Settings dialog, which opens on its Language tab: Save asks, then restarts the application.
+  await settings();
+  const languageSettings = page.locator('app-language-settings');
+  await expect(languageSettings.getByRole('option')).toHaveText([systemLanguageInJapanese('English'), 'English', '日本語']);
+  await expect(languageSettings.getByRole('option', { name: '日本語', exact: true })).toHaveAttribute('aria-selected', 'true');
+  const save = page.getByRole('button', { name: '保存', exact: true });
+  const restartNotice = page.locator('app-settings-dialog').getByText('設定を保存すると、このアプリは再起動します。');
+  await expect(save).toBeDisabled();
+  await expect(restartNotice).toBeHidden();
+  await languageSettings.getByRole('option', { name: 'English', exact: true }).click();
+  await expect(save).toBeEnabled();
+  await expect(restartNotice).toBeVisible();
+  await save.click();
+  // Declined, nothing is saved and the dialog stays.
+  await answerConfirmation(['設定を保存すると、このアプリは再起動します。', '続けますか？'], 'キャンセル');
+  await expect(page.locator('app-settings-dialog')).toBeVisible();
+  expect(await savedSetting(userData, ['UserSettings', 'Language'])).toBe('ja');
+  pid = await mainProcessId();
+  exited = new Promise(resolve => app.process().once('exit', resolve));
+  await save.click();
+  await page.locator('app-confirm-dialog').getByRole('button', { name: 'OK', exact: true }).click();
+  await waitForRealRelaunch(secondReport, exited, pid);
+  expect(await savedSetting(userData, ['UserSettings', 'Language'])).toBe('en');
+  await launch();
+  expect(await page.evaluate(() => document.documentElement.lang)).toBe('en');
+  expect(await menuLabels()).toEqual(menuInEnglish);
+  await expect(page.getByRole('button', { name: 'Open Folder', exact: true })).toBeVisible();
+});
+test('on a computer whose language is Japanese, the application is in Japanese: its dialogs, menu, map, dates and viewer', async () => {
+  // The operating system's languages, the most preferred first, as macOS and Windows give them.
+  await launchAsNew({ env: { PLM_TEST_SYSTEM_LANGUAGES: 'ja-JP,en-US' } });
+  const languageDialog = page.locator('app-language-dialog');
+  await expect(languageDialog.locator('.language-dialog-title')).toHaveText('言語 (Language)');
+  await expect(languageDialog.getByRole('option')).toHaveText([systemLanguageInJapanese('日本語'), 'English', '日本語']);
+  await expect(languageDialog.getByRole('option', { name: systemLanguageInJapanese('日本語') })).toHaveAttribute('aria-selected', 'true');
+  await expect(languageDialog.locator('.restart-note')).toBeHidden();
+  await shot('language-dialog-ja');
+  // The button is named as Japanese names it, not "OK".
+  await languageDialog.getByRole('button', { name: '決定', exact: true }).click();
+  const welcome = page.locator('app-welcome-dialog');
+  await expect(welcome).toContainText('Photo Location Map へようこそ');
+  await expect(welcome).toContainText(`バージョン ${manifest.version}`);
+  await expect(welcome.locator('.troubleshooting-message a')).toHaveText('トラブルシューティングのページ');
+  await shot('welcome-ja');
+  await dismissWelcome();
+  expect(await page.evaluate(() => document.documentElement.lang)).toBe('ja');
+  expect(await menuLabels()).toEqual(menuInJapanese);
+  // The home view, with the tooltips of the map's controls: the application's, Leaflet's and Leaflet-Geoman's.
+  await expect(page.locator('.message-when-folder-is-not-opened')).toHaveText('フォルダーを開くと、写真の撮影場所が表示されます。');
+  await expect(page.getByTitle('長方形で範囲を指定', { exact: true })).toBeVisible();
+  await expect(page.locator('.leaflet-control-zoom-in')).toHaveAttribute('title', '拡大');
+  await expect(page.locator('.leaflet-control-layers-toggle')).toHaveAttribute('title', 'レイヤー');
+  await app.evaluate(({ dialog }, folder) => {
+    dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [folder] });
+  }, photoFolder);
+  await page.getByRole('button', { name: 'フォルダーを開く', exact: true }).click();
+  const statusBar = page.locator('app-loaded-files-status-bar');
+  await expect(statusBar).toContainText('5 個のファイルを読み込みました。');
+  await expect(statusBar).toContainText('4 個のファイルに位置情報があります。');
+  await expect(statusBar).toContainText('合計: 5');
+  // A date writes the day of the week as Japanese does, in parentheses, from moment's Japanese locale.
+  await expectRepresentedPhotos(4);
+  await page.locator('.plm-leaflet-map-div-icon').first().dispatchEvent('click');
+  const popup = page.locator('.leaflet-popup');
+  await expect(popup.locator('.photo-info-viewer-date-time-taken')).toHaveText(/^\d{4}-\d{2}-\d{2} \([日月火水木金土]\) \d{2}:\d{2}:\d{2}$/);
+  await popup.locator('.photo-info-viewer-more-options-button').click();
+  await expect(page.locator('.photo-info-viewer-more-options-menu-item'))
+    .toHaveText(['このファイルのみを選択', 'フォルダーを開く', 'Google マップを開く', 'Google ストリートビューを開く', 'データを表示']);
+  // The menu is wider than in English, and this popup is at the map's left edge: the menu is not cut off there.
+  const menuBox = await page.locator('.photo-info-viewer-more-options-menu').boundingBox();
+  const mapBox = await page.locator('#home-map').boundingBox();
+  expect(menuBox.x).toBeGreaterThanOrEqual(mapBox.x);
+  await page.keyboard.press('Escape');
+  // The tree's menu names what it is opened on, a folder or a file, where English says "Select Only This" of both.
+  const treeMenuItems = page.getByRole('menuitem');
+  const appleParkFolder = page.locator('mat-tree-node').filter({ hasText: 'Apple Park' });
+  await appleParkFolder.click({ button: 'right' });
+  await expect(treeMenuItems).toHaveText(['このフォルダーのみを選択', '開く', 'フォルダーを開く']);
+  await page.keyboard.press('Escape');
+  await expect(treeMenuItems).toHaveCount(0);
+  await appleParkFolder.locator('button[mattreenodetoggle]').click();
+  await page.locator('mat-tree-node').filter({ hasText: 'IMG_5769.JPG' }).click({ button: 'right' });
+  await expect(treeMenuItems).toHaveText(['このファイルのみを選択', '開く', 'フォルダーを開く']);
+  await page.keyboard.press('Escape');
+  await expect(treeMenuItems).toHaveCount(0);
+  // Photo Data Viewer is asked for the same language in its address, next to the date format.
+  const viewerUrl = await app.evaluate(({ app }) => {
+    const require = globalThis.__plmTestRequire;
+    const viewer = require(require('node:path').join(app.getAppPath(), 'src-main/photo-data-viewer/photo-data-viewer-url.js'));
+    return viewer.createPhotoDataViewerUrl({ name: 'photo.jpg', path: '/photos/photo.jpg' });
+  });
+  expect(new URL(viewerUrl).searchParams.get('language')).toBe('ja');
+  // The Settings dialog, whose first tab keeps the English word for a user who cannot read Japanese.
+  await settings();
+  await expect(page.locator('app-settings-dialog mat-list-item')).toHaveText(
+    ['言語 (Language)', '外観', '日付と時刻', ...(process.platform === 'win32' ? ['OS'] : []), 'キャッシュ']);
+  const languageSettings = page.locator('app-language-settings');
+  await expect(languageSettings.getByRole('option')).toHaveText([systemLanguageInJapanese('日本語'), 'English', '日本語']);
+  await expect(languageSettings.getByRole('option', { name: systemLanguageInJapanese('日本語') })).toHaveAttribute('aria-selected', 'true');
+  await shot('settings-language-ja');
+  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: '日付と時刻' }).click();
+  await page.getByRole('combobox', { name: '12/24 時間制' }).click();
+  await page.getByRole('option', { name: '12 時間制', exact: true }).click();
+  await expect(page.locator('.date-time-example')).toContainText('2019-11-25 02:53:29 午後');
+  await page.getByRole('button', { name: 'キャンセル', exact: true }).click();
+  await expect(page.locator('app-settings-dialog')).toHaveCount(0);
 });
 test('map regions preserve drawing, removal and real photo selection', async () => {
   await page.addInitScript(() => {
@@ -371,7 +635,8 @@ test('the links of the welcome dialog, the about box and the cache settings open
   await page.evaluate(() => window.plmInternalRenderer.aboutBox.showAboutBox());
   const about = page.locator('app-about-box');
   for (const title of ['Open Downloads and Release Notes', 'Open X (Formerly Twitter) Profile', 'Open GitHub Profile',
-    'Open the troubleshooting page', 'Open Home Page', 'View Source Code in GitHub']) {
+    'Open the troubleshooting page', 'Open the guide to translating this application', 'Open Home Page',
+    'View Source Code in GitHub']) {
     await about.getByTitle(title, { exact: true }).click();
   }
   await page.keyboard.press('Escape');
@@ -383,20 +648,17 @@ test('the links of the welcome dialog, the about box and the cache settings open
   await expect.poll(openedUrls).toEqual([
     troubleshooting, 'https://x.com/TomoyukiAota', 'https://github.com/TomoyukiAota',
     'https://github.com/TomoyukiAota/photo-location-map/releases', 'https://x.com/TomoyukiAota',
-    'https://github.com/TomoyukiAota', troubleshooting, 'https://tomoyukiaota.github.io/photo-location-map/',
+    'https://github.com/TomoyukiAota', troubleshooting,
+    'https://github.com/TomoyukiAota/photo-location-map/blob/main/docs/TRANSLATING.md',
+    'https://tomoyukiaota.github.io/photo-location-map/',
     'https://github.com/TomoyukiAota/photo-location-map',
     'https://en.wikipedia.org/wiki/High_Efficiency_Image_File_Format',
   ]);
 });
 test('the cache settings open the cache folder, and ask before deleting the cache', async () => {
-  // Deleting restarts the app once confirmed, so the question is declined. window.confirm is replaced, as Electron
-  // would show it in a window of its own.
+  // Deleting restarts the app once confirmed, so the question is declined.
   await dismissWelcome();
   const openCommands = await recordOpenCommands();
-  await page.evaluate(() => {
-    window.__plmConfirmMessages = [];
-    window.confirm = message => { window.__plmConfirmMessages.push(message); return false; };
-  });
   await settings();
   await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Cache' }).click();
   const location = page.locator('app-cache-settings .location-value');
@@ -405,8 +667,7 @@ test('the cache settings open the cache folder, and ask before deleting the cach
   await location.click();
   await expect.poll(openCommands).toEqual([osOpenCommand(cacheFolder)]);
   await page.getByRole('button', { name: 'Delete Thumbnail Cache', exact: true }).click();
-  expect(await page.evaluate(() => window.__plmConfirmMessages))
-    .toEqual(['This application will restart after deleting the thumbnail cache.\nDo you want to continue?']);
+  await answerConfirmation(['This application will restart after deleting the thumbnail cache.', 'Do you want to continue?'], 'Cancel');
   await expect(page.locator('app-settings-dialog')).toBeVisible();
 });
 test('the OS tab has the main process add and remove the Explorer context menu with reg.exe, its console window hidden', async () => {
@@ -496,7 +757,7 @@ test('the OS tab has the main process add and remove the Explorer context menu w
 });
 test('appearance setting saves, affects layout, and survives a real app restart', async () => {
   await dismissWelcome();
-  await settings();
+  await settings('Appearance');
   const checkbox = page.getByRole('checkbox', { name: 'Show Status Bar' });
   const before = await checkbox.isChecked();
   await checkbox.setChecked(!before);
@@ -505,12 +766,12 @@ test('appearance setting saves, affects layout, and survives a real app restart'
   await app.close();
   await launch();
   await expect(page.locator('app-welcome-dialog')).toHaveCount(0);
-  await settings();
+  await settings('Appearance');
   await expect(page.getByRole('checkbox', { name: 'Show Status Bar' })).toBeChecked({ checked: !before });
   await page.getByRole('checkbox', { name: 'Show Status Bar' }).setChecked(before);
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
   await expect(page.locator('app-settings-dialog')).toHaveCount(0);
-  await settings();
+  await settings('Appearance');
   await expect(page.getByRole('checkbox', { name: 'Show Status Bar' })).toBeChecked({ checked: !before });
 });
 test('Show Status Bar shows and hides the loaded-files status bar while it is changed, and Cancel restores it', async () => {
@@ -520,13 +781,13 @@ test('Show Status Bar shows and hides the loaded-files status bar while it is ch
   await expect(statusBar).toContainText('4 files have location data.');
   await expect(statusBar).toBeVisible();
   const showStatusBar = page.getByRole('checkbox', { name: 'Show Status Bar' });
-  await settings();
+  await settings('Appearance');
   await showStatusBar.uncheck();
   await expect(statusBar).toBeHidden();
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
   await expect(page.locator('app-settings-dialog')).toHaveCount(0);
   await expect(statusBar).toBeVisible();
-  await settings();
+  await settings('Appearance');
   await showStatusBar.uncheck();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(page.locator('app-settings-dialog')).toHaveCount(0);
@@ -534,7 +795,7 @@ test('Show Status Bar shows and hides the loaded-files status bar while it is ch
 });
 test('Save is enabled only while a setting differs, and a new date format asks before the restart that saving it needs', async () => {
   await dismissWelcome();
-  await settings();
+  await settings('Appearance');
   const save = page.getByRole('button', { name: 'Save', exact: true });
   const restartNotice = page.locator('app-settings-dialog').getByText('This application will restart after saving settings.');
   const showStatusBar = page.getByRole('checkbox', { name: 'Show Status Bar' });
@@ -566,21 +827,14 @@ test('Save is enabled only while a setting differs, and a new date format asks b
   await expect(save).toBeDisabled();
   await expect(restartNotice).toBeHidden();
 
-  // Saving asks first. Declined, nothing is saved and the dialog stays. window.confirm is replaced, as Electron would
-  // show it in a window of its own.
+  // Saving asks first. Declined, nothing is saved and the dialog stays.
   await chooseDateFormat('DD/MM/YYYY');
-  await page.evaluate(() => {
-    window.__plmConfirmMessages = [];
-    window.confirm = message => { window.__plmConfirmMessages.push(message); return false; };
-  });
   await save.click();
-  expect(await page.evaluate(() => window.__plmConfirmMessages))
-    .toEqual(['This application will restart after saving settings.\nDo you want to continue?']);
+  await answerConfirmation(['This application will restart after saving settings.', 'Do you want to continue?'], 'Cancel');
   await expect(page.locator('app-settings-dialog')).toBeVisible();
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
   await expect(page.locator('app-settings-dialog')).toHaveCount(0);
-  await settings();
-  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Date & Time' }).click();
+  await settings('Date & Time');
   await expect(dateFormat).toContainText('YYYY-MM-DD');
   await expect(save).toBeDisabled();
 });
@@ -711,14 +965,17 @@ test('chart grouping, zoom, reset and photo selection keep their real data behav
   expect(chartTheme.api).toEqual({ init: 'function', getInstanceByDom: 'function', registerTheme: 'function' });
   await expect.poll(async () => (await readChartTheme()).palette?.[0]).toBe('#5470c6');
   const unit = page.locator('app-date-time-taken-chart-config select');
-  await expect(unit).toHaveValue('Day');
+  // An option's value is the unit as the code knows it, and its text is the unit's name, which the user chooses by.
+  await expect(unit).toHaveValue('day');
+  await expect(unit.locator('option:checked')).toHaveText('Day');
   // Hours cannot show photos taken years apart: the chart says so, until a unit that can is chosen.
   const unsupported = page.locator('app-date-time-taken-chart .unsupported-message');
   await expect(unsupported).toBeHidden();
   await unit.selectOption('Hour');
   await expect(unsupported).toContainText('does not support showing more than 30 days when Hour is selected');
   await unit.selectOption('Year');
-  await expect(unit).toHaveValue('Year');
+  await expect(unit).toHaveValue('year');
+  await expect(unit.locator('option:checked')).toHaveText('Year');
   await expect(unsupported).toBeHidden();
   const choose = page.getByRole('button', { name: 'Select Photos within Zoom', exact: true });
   async function zoomToLastYear() {
@@ -1587,11 +1844,11 @@ test('a new date format is written before the app relaunches itself, and the rel
   await page.getByRole('combobox', { name: 'Date Format' }).click();
   await page.getByRole('option', { name: 'DD/MM/YYYY', exact: true }).click();
   await expect(page.getByRole('listbox')).toHaveCount(0);
-  await page.evaluate(() => { window.confirm = () => true; });
   // Taken before the click: once the app has quit, Playwright no longer has its process.
   const pid = await mainProcessId();
   const exited = new Promise(resolve => app.process().once('exit', resolve));
   await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await page.locator('app-confirm-dialog').getByRole('button', { name: 'OK', exact: true }).click();
   const relaunched = await waitForRealRelaunch(report, exited, pid);
   expect(relaunched.rendererMarks.some(mark => mark.name === 'plm:renderer:home-rendered')).toBe(true);
   expect(await savedSetting(userData, ['UserSettings', 'DateFormat'])).toBe('DD/MM/YYYY');
@@ -1610,10 +1867,10 @@ test('deleting the thumbnail cache empties it before the app relaunches itself',
   const cacheFolder = (await page.locator('app-cache-settings .location-value').textContent()).trim();
   await mkdir(path.join(cacheFolder, 'some', 'folder'), { recursive: true });
   await writeFile(path.join(cacheFolder, 'some', 'folder', 'IMG_0001.HEIC.plm.jpg'), 'thumbnail');
-  await page.evaluate(() => { window.confirm = () => true; });
   const pid = await mainProcessId();
   const exited = new Promise(resolve => app.process().once('exit', resolve));
   await page.getByRole('button', { name: 'Delete Thumbnail Cache', exact: true }).click();
+  await page.locator('app-confirm-dialog').getByRole('button', { name: 'OK', exact: true }).click();
   await waitForRealRelaunch(report, exited, pid);
   const { readdir } = await import('node:fs/promises');
   expect(await readdir(cacheFolder)).toEqual([]);

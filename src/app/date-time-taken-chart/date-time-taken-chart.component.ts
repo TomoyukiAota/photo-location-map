@@ -3,6 +3,8 @@ import { ECharts, EChartsOption } from 'echarts';
 import * as _ from 'lodash';
 import { unitOfTime } from 'moment';
 import { Analytics } from '../../../src-shared/analytics/analytics';
+import { t } from '../../../src-shared/i18n/i18n';
+import { TranslatePipe } from '../shared/i18n/translate.pipe';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
 import { DateTimeTakenChartConfigService } from './config/date-time-taken-chart-config.service';
 import { createDateTimeTakenChartData } from './date-time-taken-chart-data';
@@ -15,7 +17,7 @@ import { SelectPhotosWithinZoomComponent } from './select-photos-within-zoom/sel
   selector: 'app-date-time-taken-chart',
   templateUrl: './date-time-taken-chart.component.html',
   styleUrls: ['./date-time-taken-chart.component.scss'],
-  imports: [NgxEchartsDirective, DateTimeTakenChartConfigComponent, SelectPhotosWithinZoomComponent]
+  imports: [NgxEchartsDirective, DateTimeTakenChartConfigComponent, SelectPhotosWithinZoomComponent, TranslatePipe]
 })
 export class DateTimeTakenChartComponent {
   private chartConfigService = inject(DateTimeTakenChartConfigService);
@@ -57,13 +59,15 @@ export class DateTimeTakenChartComponent {
         emphasis: { iconStyle: { borderColor: '#3E98C5' } },
         feature: {
           dataZoom: {
+            // The button's tooltip, which ECharts would give in English ("Zoom") whatever the language.
+            title: { zoom: t('chart.zoom') },
             icon: {
               back: 'Invalid path' // Set to invalid path to hide Zoom Reset button provided by ECharts. See https://stackoverflow.com/a/74459890/7947548
             },
             yAxisIndex: 'none'
           },
           restore: {
-            title: 'Reset\nZoom'  // Show Restore button provided by ECharts as Reset Zoom button.
+            title: t('chart.resetZoom')  // Show Restore button provided by ECharts as Reset Zoom button.
           },
         }
       },

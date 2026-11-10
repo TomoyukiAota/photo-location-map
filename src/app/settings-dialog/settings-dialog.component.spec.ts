@@ -6,15 +6,20 @@ import { UserDataStorage } from '../../../src-shared/user-data-storage/user-data
 import { UserDataStoragePath } from '../../../src-shared/user-data-storage/user-data-stroage-path';
 import { BooleanSetting } from '../../../src-shared/user-settings/boolean-setting';
 import { currentUserSettings } from '../../../src-shared/user-settings/user-settings';
+import { ConfirmDialogService } from '../shared/confirm-dialog/confirm-dialog.service';
 import { AppearanceSettingsComponent } from './appearance-settings/appearance-settings.component';
 import { CacheSettingsComponent } from './cache-settings/cache-settings.component';
 import { DateTimeSettingsComponent } from './date-time-settings/date-time-settings.component';
+import { LanguageSettingsComponent } from './language-settings/language-settings.component';
 import { OsSettingsComponent } from './os-settings/os-settings.component';
 import { RestoreSettingsService } from './service/restore-settings.service';
 import { SettingsChangedService } from './service/settings-changed.service';
 import { SettingsDialogComponent } from './settings-dialog.component';
 
 // The tabs are left out: they tell the dialog about their changes through SettingsChangedService, as the tests do.
+@Component({ selector: 'app-language-settings', template: '' })
+class DummyLanguageSettingsComponent {}
+
 @Component({ selector: 'app-appearance-settings', template: '' })
 class DummyAppearanceSettingsComponent {}
 
@@ -48,8 +53,13 @@ describe('SettingsDialogComponent', () => {
       ],
     })
       .overrideComponent(SettingsDialogComponent, {
-        remove: { imports: [AppearanceSettingsComponent, DateTimeSettingsComponent, OsSettingsComponent, CacheSettingsComponent] },
-        add: { imports: [DummyAppearanceSettingsComponent, DummyDateTimeSettingsComponent, DummyOsSettingsComponent, DummyCacheSettingsComponent] },
+        remove: { imports: [LanguageSettingsComponent, AppearanceSettingsComponent, DateTimeSettingsComponent, OsSettingsComponent, CacheSettingsComponent] },
+        add: {
+          imports: [
+            DummyLanguageSettingsComponent, DummyAppearanceSettingsComponent, DummyDateTimeSettingsComponent, DummyOsSettingsComponent,
+            DummyCacheSettingsComponent,
+          ],
+        },
       })
       .compileComponents();
     fixture = TestBed.createComponent(SettingsDialogComponent);
@@ -107,6 +117,28 @@ describe('SettingsDialogComponent', () => {
     expect(saveButton().disabled).toBe(true);
   });
 
+  it('says that saving restarts the app while the language differs, and saves it once the restart is confirmed', async () => {
+    expect(settingsInUse.language).toBe('auto');
+    settingsChanged.languageSettingsChanged.next({ language: 'ja' });
+    await fixture.whenStable();
+    expect(isRestartNoticeShown()).toBe(true);
+    expect(saveButton().disabled).toBe(false);
+
+    settingsChanged.languageSettingsChanged.next({ language: 'auto' });
+    await fixture.whenStable();
+    expect(isRestartNoticeShown()).toBe(false);
+    expect(saveButton().disabled).toBe(true);
+
+    settingsChanged.languageSettingsChanged.next({ language: 'ja' });
+    await fixture.whenStable();
+    vi.spyOn(TestBed.inject(ConfirmDialogService), 'confirm').mockResolvedValue(true);
+    const restart = vi.spyOn(window.plm.app, 'restart');
+    saveButton().click();
+    await fixture.whenStable();
+    await vi.waitFor(() => expect(restart).toHaveBeenCalledTimes(1));
+    expect(UserDataStorage.read(UserDataStoragePath.UserSettings.Language)).toBe('ja');
+  });
+
   it('saves a new status bar setting without a restart and closes', async () => {
     settingsChanged.appearanceSettingsChanged.next({ showStatusBar: otherShowStatusBar });
     await fixture.whenStable();
@@ -119,27 +151,31 @@ describe('SettingsDialogComponent', () => {
   });
 
   it('asks before the restart, and saves nothing when it is declined', async () => {
-    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    const confirm = vi.spyOn(TestBed.inject(ConfirmDialogService), 'confirm').mockResolvedValue(false);
     settingsChanged.dateTimeSettingsChanged.next({ dateFormat: otherDateFormat, clockSystemFormat: settingsInUse.clockSystemFormat });
     await fixture.whenStable();
 
     saveButton().click();
+    await fixture.whenStable();
 
     expect(confirm).toHaveBeenCalledWith('This application will restart after saving settings.\nDo you want to continue?');
     expect(currentUserSettings.dateFormat).toBe(settingsInUse.dateFormat);
     expect(close).not.toHaveBeenCalled();
   });
 
-  it('shows the tab chosen in the list', async () => {
-    expect(tab('Appearance').classList).toContain('selected-tab');
+  it('opens on the Language tab, the first, and shows the tab chosen in the list', async () => {
+    const host: HTMLElement = fixture.nativeElement;
+    expect(host.querySelector('mat-list-item').textContent.trim()).toBe('Language');
+    expect(tab('Language').classList).toContain('selected-tab');
+    expect((host.querySelector('app-language-settings') as HTMLElement).style.display).toBe('block');
 
     tab('Cache').click();
     await fixture.whenStable();
 
     expect(tab('Cache').classList).toContain('selected-tab');
-    expect(tab('Appearance').classList).not.toContain('selected-tab');
-    const host: HTMLElement = fixture.nativeElement;
+    expect(tab('Language').classList).not.toContain('selected-tab');
     expect((host.querySelector('app-cache-settings') as HTMLElement).style.display).toBe('block');
+    expect((host.querySelector('app-language-settings') as HTMLElement).style.display).toBe('none');
     expect((host.querySelector('app-appearance-settings') as HTMLElement).style.display).toBe('none');
   });
 
@@ -154,10 +190,12 @@ describe('SettingsDialogComponent', () => {
   it('stops listening to the tabs once it is closed', () => {
     expect(settingsChanged.appearanceSettingsChanged.observed).toBe(true);
     expect(settingsChanged.dateTimeSettingsChanged.observed).toBe(true);
+    expect(settingsChanged.languageSettingsChanged.observed).toBe(true);
 
     fixture.destroy();
 
     expect(settingsChanged.appearanceSettingsChanged.observed).toBe(false);
     expect(settingsChanged.dateTimeSettingsChanged.observed).toBe(false);
+    expect(settingsChanged.languageSettingsChanged.observed).toBe(false);
   });
 });

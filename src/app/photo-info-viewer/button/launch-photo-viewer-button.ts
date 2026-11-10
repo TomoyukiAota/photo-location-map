@@ -1,4 +1,5 @@
 import { Analytics } from '../../../../src-shared/analytics/analytics';
+import { t } from '../../../../src-shared/i18n/i18n';
 import { IconDataUrl } from '../../../assets/icon-data-url';
 import { Photo } from '../../shared/model/photo.model';
 import { PhotoViewerLauncher } from '../../photo-viewer-launcher/photo-viewer-launcher';
@@ -8,7 +9,7 @@ import { createPhotoInfoViewerButton } from './photo-info-viewer-button-util';
 export class LaunchPhotoViewerButton {
   public static create(photo: Photo): HTMLButtonElement {
     const onClick = () => this.handleButtonClick(photo);
-    const button = createPhotoInfoViewerButton(onClick, IconDataUrl.launchExternalApp, 'Open File');
+    const button = createPhotoInfoViewerButton(onClick, IconDataUrl.launchExternalApp, t('photoInfo.openFile'));
     return button;
   }
 

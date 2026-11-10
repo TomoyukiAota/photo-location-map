@@ -3,3 +3,6 @@ $white-background_hover:              rgba( 0,  0,   0, .08);
 $white-background_active:             rgba( 0,  0,   0, .2 );
 $white-background_selected:           rgba(63, 81, 181, .15);
 $white-background_selected-and-hover: rgba(63, 81, 181, .3 );
+
+// The primary color of Material's theme (indigo-pink in angular.json), for what is drawn without its components.
+$primary: rgb(63, 81, 181);

@@ -4,22 +4,22 @@
   <div class="loading-and-progress">
     <div>
       @if (!progress.isStarted) {
-        Collecting files to load from the opened folder...
+        {{ 'loadingFolder.collecting' | t }}
       }
       @if (progress.isInProgress) {
-        Loading files from the opened folder...
+        {{ 'loadingFolder.loading' | t }}
       }
       @if (progress.isCompleted) {
-        Completed loading all files ({{ progress.numberOfLoadedFiles }} files).
+        {{ 'loadingFolder.completed' | t: { count: progress.numberOfLoadedFiles } }}
       }
     </div>
     @if (progress.isStarted) {
       <div>
         @if (progress.isInProgress) {
-          Loaded {{ progress.numberOfLoadedFiles }} files out of {{ progress.numberOfAllFilesToLoad }} files.
+          {{ 'loadingFolder.progress' | t: { loaded: progress.numberOfLoadedFiles, total: progress.numberOfAllFilesToLoad } }}
         }
         @if (progress.isCompleted) {
-          Generating the map using the loaded files...
+          {{ 'loadingFolder.generatingMap' | t }}
         }
       </div>
     }

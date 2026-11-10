@@ -1,0 +1,114 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialogRef } from '@angular/material/dialog';
+import { startupMetadata } from '../../../src-shared/startup/startup-metadata';
+import { UserDataStorage } from '../../../src-shared/user-data-storage/user-data-storage';
+import { UserDataStoragePath } from '../../../src-shared/user-data-storage/user-data-stroage-path';
+import { currentUserSettings } from '../../../src-shared/user-settings/user-settings';
+import { LanguageDialogComponent } from './language-dialog.component';
+
+// The tests run in English, the operating system's language of the bridge's stand-in, with the Language setting auto.
+describe('LanguageDialogComponent', () => {
+  const close = vi.fn();
+  const settingsInUse = { ...currentUserSettings };
+  const platformInUse = startupMetadata().platform;
+  let fixture: ComponentFixture<LanguageDialogComponent>;
+  let host: HTMLElement;
+
+  beforeEach(async () => {
+    startupMetadata().platform = 'linux'; // The entry of the operating system's language names macOS and Windows.
+    close.mockClear();
+    await TestBed.configureTestingModule({
+      imports: [LanguageDialogComponent],
+      providers: [{ provide: MatDialogRef, useValue: { close } }],
+    }).compileComponents();
+    fixture = TestBed.createComponent(LanguageDialogComponent);
+    host = fixture.nativeElement;
+    await fixture.whenStable();
+  });
+
+  afterEach(() => {
+    Object.assign(currentUserSettings, settingsInUse); // OK changes the settings in use.
+    startupMetadata().platform = platformInUse;
+    vi.restoreAllMocks();
+  });
+
+  function restartNote(): HTMLElement {
+    return host.querySelector('.restart-note');
+  }
+
+  function languages(): HTMLElement[] {
+    return Array.from(host.querySelectorAll<HTMLElement>('[role="option"]'));
+  }
+
+  function chosenLanguage(): string {
+    return host.querySelector('[role="option"][aria-selected="true"]').textContent.trim();
+  }
+
+  function okButton(): HTMLButtonElement {
+    return host.querySelector('.ok-button');
+  }
+
+  async function choose(label: string) {
+    languages().find(language => language.textContent.trim() === label).click();
+    await fixture.whenStable();
+  }
+
+  async function clickOk() {
+    okButton().click();
+    await fixture.whenStable();
+  }
+
+  function saved(storagePath: ReadonlyArray<string>): string {
+    return UserDataStorage.readOrDefault(storagePath, 'not saved');
+  }
+
+  it('has the operating system\'s language chosen, and says nothing of a restart', () => {
+    expect(host.querySelector('.language-dialog-title').textContent).toBe('Language');
+    expect(languages().map(language => language.textContent.trim())).toEqual(['Use system setting (English)', 'English', '日本語']);
+    expect(chosenLanguage()).toBe('Use system setting (English)');
+    expect(okButton().textContent.trim()).toBe('OK');
+    expect(restartNote().style.visibility).toBe('hidden');
+  });
+
+  it('keeps the language on OK, remembers that the user confirmed it, and closes without a restart', async () => {
+    const restart = vi.spyOn(window.plm.app, 'restart');
+
+    await clickOk();
+
+    await vi.waitFor(() => expect(close).toHaveBeenCalledTimes(1));
+    expect(saved(UserDataStoragePath.History.ClickedOkOnLanguageDialog)).toBe('true');
+    expect(saved(UserDataStoragePath.UserSettings.Language)).toBe('auto');
+    expect(restart).not.toHaveBeenCalled();
+  });
+
+  it('closes without a restart for the language on screen chosen by its name, and saves that choice', async () => {
+    const restart = vi.spyOn(window.plm.app, 'restart');
+    await choose('English');
+    expect(restartNote().style.visibility).toBe('hidden');
+    expect(okButton().textContent.trim()).toBe('OK');
+
+    await clickOk();
+
+    await vi.waitFor(() => expect(close).toHaveBeenCalledTimes(1));
+    expect(saved(UserDataStoragePath.UserSettings.Language)).toBe('en');
+    expect(restart).not.toHaveBeenCalled();
+  });
+
+  it('says in the chosen language that the application will restart, names its button in it, and restarts once the choice is saved', async () => {
+    const restart = vi.spyOn(window.plm.app, 'restart');
+    await choose('日本語');
+    expect(chosenLanguage()).toBe('日本語');
+    expect(restartNote().style.visibility).toBe('visible');
+    expect(restartNote().textContent.trim()).toBe('言語を適用するため、このアプリを再起動します。');
+    expect(restartNote().getAttribute('lang')).toBe('ja');
+    expect(okButton().textContent.trim()).toBe('決定');
+    expect(okButton().getAttribute('lang')).toBe('ja');
+
+    await clickOk();
+
+    await vi.waitFor(() => expect(restart).toHaveBeenCalledTimes(1));
+    expect(saved(UserDataStoragePath.History.ClickedOkOnLanguageDialog)).toBe('true');
+    expect(saved(UserDataStoragePath.UserSettings.Language)).toBe('ja');
+    expect(close).not.toHaveBeenCalled();
+  });
+});

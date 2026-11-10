@@ -1,4 +1,5 @@
 import { DateTimeFormat } from '../date-time/date-time-format';
+import { isLanguageSetting, LanguageSetting, languageSettingAuto } from '../i18n/languages';
 import { Logger } from '../log/logger';
 import { restartApp } from '../process/restart-app';
 import { UserDataStorage } from '../user-data-storage/user-data-storage';
@@ -11,18 +12,22 @@ interface UserSettings {
   showStatusBar: BooleanSettingType;
   dateFormat: DateFormatType;
   clockSystemFormat: ClockSystemFormatType;
+  /** `auto`, the operating system's language, or a language; the language in use is in src-shared/i18n/i18n.ts. */
+  language: LanguageSetting;
 }
 
 export class CurrentUserSettings implements UserSettings {
   constructor(public showStatusBar: BooleanSettingType,
               public dateFormat: DateFormatType,
-              public clockSystemFormat: ClockSystemFormatType) {}
+              public clockSystemFormat: ClockSystemFormatType,
+              public language: LanguageSetting) {}
 }
 
 export class UserSettingsToBeSaved implements UserSettings {
   public showStatusBar: BooleanSettingType;
   public dateFormat: DateFormatType;
   public clockSystemFormat: ClockSystemFormatType;
+  public language: LanguageSetting;
 }
 
 const loadShowStatusBar: (() => BooleanSettingType) = () => {
@@ -62,11 +67,18 @@ const loadClockSystemFormat: (() => ClockSystemFormatType) = () => {
   return clockSystemFormat;
 };
 
+/** The saved Language setting, or `auto` when none is saved or the saved language is not one the application has. */
+const loadLanguage: (() => LanguageSetting) = () => {
+  const loadedLanguage: string = UserDataStorage.readOrDefault(UserDataStoragePath.UserSettings.Language, languageSettingAuto);
+  return isLanguageSetting(loadedLanguage) ? loadedLanguage : languageSettingAuto;
+};
+
 const loadUserSettings: (() => CurrentUserSettings) = () => {
   const showStatusBar = loadShowStatusBar();
   const dateFormat = loadDateFormat();
   const clockSystemFormat = loadClockSystemFormat();
-  const userSettings = new CurrentUserSettings(showStatusBar, dateFormat, clockSystemFormat);
+  const language = loadLanguage();
+  const userSettings = new CurrentUserSettings(showStatusBar, dateFormat, clockSystemFormat, language);
   Logger.info(`Loaded user settings ${JSON.stringify(userSettings)}`);
   return userSettings;
 };
@@ -88,6 +100,7 @@ export const saveUserSetting: ((settings: UserSettingsToBeSaved) => Promise<void
     UserDataStorage.write(UserDataStoragePath.UserSettings.ShowStatusBar, settings.showStatusBar),
     UserDataStorage.write(UserDataStoragePath.UserSettings.DateFormat, settings.dateFormat),
     UserDataStorage.write(UserDataStoragePath.UserSettings.ClockSystemFormat, settings.clockSystemFormat),
+    UserDataStorage.write(UserDataStoragePath.UserSettings.Language, settings.language),
   ]);
   Logger.info(`Saved user settings ${JSON.stringify(settings)}`);
 };

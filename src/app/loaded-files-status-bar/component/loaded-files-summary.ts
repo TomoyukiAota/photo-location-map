@@ -1,3 +1,4 @@
+import { t } from '../../../../src-shared/i18n/i18n';
 import { Photo } from '../../shared/model/photo.model';
 
 export interface LoadedFilesSummary {
@@ -14,7 +15,7 @@ export function summarizeLoadedFiles(photos: readonly Photo[]): LoadedFilesSumma
     ['HEIF', photos.filter(photo => photo.isHeif).length],
     ['PNG', photos.filter(photo => photo.isPng).length],
     ['TIFF', photos.filter(photo => photo.isTiff).length],
-    ['Total', photos.length],
+    [t('loadedFiles.total'), photos.length],
   ]);
   const descriptionByFileType = [...fileTypeAndNumber]
     .filter(([, number]) => number !== 0)

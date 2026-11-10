@@ -1,5 +1,5 @@
 @if (!openFolderService.isFolderOpened()) {
-  <div class="message-when-folder-is-not-opened">Please open a folder to see where photos were taken.</div>
+  <div class="message-when-folder-is-not-opened">{{ 'sidebar.openFolderToSeePhotos' | t }}</div>
 }
 <div class="directory-tree-view-area">
   <app-directory-tree-view></app-directory-tree-view>

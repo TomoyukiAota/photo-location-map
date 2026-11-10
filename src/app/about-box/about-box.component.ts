@@ -4,6 +4,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { startupMetadata } from '../../../src-shared/startup/startup-metadata';
 import { openUrl } from '../../../src-shared/url/open-url';
 import { IconDataUrl } from '../../assets/icon-data-url';
+import { TagPartsPipe } from '../shared/i18n/tag-parts.pipe';
+import { TranslatePipe } from '../shared/i18n/translate.pipe';
 import { configureOpeningInOsBrowser } from '../shared/open-url/configure-opening-in-os-browser';
 import { MatIcon } from '@angular/material/icon';
 
@@ -11,7 +13,7 @@ import { MatIcon } from '@angular/material/icon';
   selector: 'app-about-box',
   templateUrl: './about-box.component.html',
   styleUrls: ['./about-box.component.scss'],
-  imports: [MatIcon]
+  imports: [MatIcon, TranslatePipe, TagPartsPipe]
 })
 export class AboutBoxComponent implements AfterViewInit {
   private sanitizer = inject(DomSanitizer);
@@ -20,6 +22,7 @@ export class AboutBoxComponent implements AfterViewInit {
 
   public readonly releasesLink = viewChild.required<ElementRef<HTMLAnchorElement>>('releasesLink');
   public readonly troubleshootingPageLink = viewChild.required<ElementRef<HTMLAnchorElement>>('troubleshootingPageLink');
+  public readonly translatingGuideLink = viewChild.required<ElementRef<HTMLAnchorElement>>('translatingGuideLink');
 
   public get xFormerlyTwitterLogoDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.xFormerlyTwitterLogo); }
   public get gitHubLogoDataUrl() { return this.sanitizer.bypassSecurityTrustResourceUrl(IconDataUrl.gitHubLogo); }
@@ -29,6 +32,8 @@ export class AboutBoxComponent implements AfterViewInit {
                                 'GitHub Releases', 'About Box');
     configureOpeningInOsBrowser(this.troubleshootingPageLink(), 'https://github.com/TomoyukiAota/photo-location-map/blob/main/docs/troubleshooting/troubleshooting.md',
                                 'Troubleshooting Page', 'About Box');
+    configureOpeningInOsBrowser(this.translatingGuideLink(), 'https://github.com/TomoyukiAota/photo-location-map/blob/main/docs/TRANSLATING.md',
+                                'Translating Guide', 'About Box');
   }
 
   public handleXFormerlyTwitterProfileIconClicked() {

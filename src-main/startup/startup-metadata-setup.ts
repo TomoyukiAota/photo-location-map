@@ -9,13 +9,28 @@ import { plmThumbnailCacheDir } from '../../src-shared/thumbnail/cache/thumbnail
 import { isFromMainWindow } from '../ipc/ipc-sender';
 import { userNameOrEmpty } from '../os/user-name';
 
+/**
+ * The operating system's preferred languages, the most preferred first, which answer before the app is ready.
+ * TL;DR: A test does not follow the machine's languages: with a test profile or in a unit test, they are `en-US`, or
+ * what PLM_TEST_SYSTEM_LANGUAGES gives, separated by commas.
+ * Details: The suites find elements by their English text and compare screenshots, so on a machine in another
+ * language, such as Japanese, they would fail there and pass on CI. A test of another language asks for it.
+ */
+export function systemLanguagesOf(electronApp: Pick<Electron.App, 'getPreferredSystemLanguages'>, env: NodeJS.ProcessEnv): string[] {
+  const isTest = !!env.PLM_TEST_ROOT || !!env.PLM_EM_MAIN || !!env.PLM_EM_RENDERER;
+  if (!isTest)
+    return electronApp.getPreferredSystemLanguages();
+  return (env.PLM_TEST_SYSTEM_LANGUAGES || 'en-US').split(',').map(tag => tag.trim()).filter(tag => tag !== '');
+}
+
 /** The startup metadata of this process: of `electronApp`, the computer and `env`. */
-export function createStartupMetadata(electronApp: Pick<Electron.App, 'getVersion' | 'getPath'>,
+export function createStartupMetadata(electronApp: Pick<Electron.App, 'getVersion' | 'getPath' | 'getPreferredSystemLanguages'>,
                                       env: NodeJS.ProcessEnv): StartupMetadata {
   return {
     version: electronApp.getVersion(),
     userDataPath: electronApp.getPath('userData'),
     platform: process.platform,
+    systemLanguages: systemLanguagesOf(electronApp, env),
     pathSeparator: path.sep,
     homeDir: os.homedir(),
     userName: userNameOrEmpty(),

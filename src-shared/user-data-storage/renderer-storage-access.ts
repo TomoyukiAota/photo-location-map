@@ -10,9 +10,11 @@ export const rendererWritableStoragePaths: ReadonlyArray<ReadonlyArray<string>> 
   UserDataStoragePath.DirectoryTreeView.SortKey,
   UserDataStoragePath.DirectoryTreeView.SortDirection,
   UserDataStoragePath.History.ClickedOkOnWelcomeDialog,
+  UserDataStoragePath.History.ClickedOkOnLanguageDialog,
   UserDataStoragePath.UserSettings.ShowStatusBar,
   UserDataStoragePath.UserSettings.DateFormat,
   UserDataStoragePath.UserSettings.ClockSystemFormat,
+  UserDataStoragePath.UserSettings.Language,
 ];
 
 /** What a renderer reads: what it writes, and the analytics user ID, which the main process makes. */

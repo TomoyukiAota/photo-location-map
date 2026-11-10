@@ -1,0 +1,259 @@
+{
+  "app": {
+    "loading": "読み込み中..."
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "キャンセル",
+    "close": "閉じる"
+  },
+  "dateTime": {
+    "weekdayPattern": "(ddd)"
+  },
+  "language": {
+    "title": "言語 (Language)",
+    "systemLanguage": {
+      "mac": "macOS の設定に従う（{{language}}）",
+      "windows": "Windows の設定に従う（{{language}}）",
+      "other": "OS の設定に従う（{{language}}）"
+    },
+    "restartToApply": "言語を適用するため、このアプリを再起動します。",
+    "confirm": "決定"
+  },
+  "appInfo": {
+    "appIconAlt": "アプリのアイコン",
+    "version": "バージョン {{version}}",
+    "developedBy": "Tomoyuki Aota が開発しています。",
+    "xProfileAlt": "X（旧 Twitter）のプロフィール",
+    "xProfileTitle": "X（旧 Twitter）のプロフィールを開く",
+    "gitHubProfileAlt": "GitHub のプロフィール",
+    "gitHubProfileTitle": "GitHub のプロフィールを開く",
+    "troubleshooting": "問題が起きたときは、<pageLink>トラブルシューティングのページ</pageLink>をご覧ください。",
+    "troubleshootingLinkTitle": "トラブルシューティングのページを開く"
+  },
+  "welcome": {
+    "message": "{{appName}} へようこそ",
+    "usageInfoCollection": "このアプリの改善のため、匿名の使用状況データを収集しています。このアプリの使用を続けると、これに同意したものとみなされます。"
+  },
+  "about": {
+    "releasesLink": "ダウンロードとリリースノート",
+    "releasesLinkTitle": "ダウンロードとリリースノートを開く",
+    "translations": "他の言語への翻訳を歓迎します。<guideLink>翻訳のしかた</guideLink>をご覧ください。",
+    "translationsLinkTitle": "翻訳のしかたのページを開く",
+    "homePageTitle": "ホームページを開く",
+    "sourceCodeTitle": "GitHub でソースコードを見る"
+  },
+  "sidebar": {
+    "openFolder": "フォルダーを開く",
+    "cannotOpenWhileGeneratingThumbnails": "サムネイルの生成中はフォルダーを開けません。",
+    "openFolderToSeePhotos": "フォルダーを開くと、写真の撮影場所が表示されます。",
+    "sort": {
+      "title": "並べ替え",
+      "byName": "名前順",
+      "byShootingTime": "撮影日時順",
+      "ascending": "昇順",
+      "descending": "降順"
+    }
+  },
+  "sortByShootingTimeInfo": {
+    "title": "撮影日時順での並べ替え",
+    "intro": "「撮影日時順」を選択すると、ファイルを並べ替えるために、このアプリは、",
+    "step1": "EXIF の DateTimeOriginal を使用し、それが無い場合は、",
+    "step2": "ファイルの更新日時を使用します。",
+    "foldersNote": "フォルダーには「撮影日時」という概念が無いため、フォルダーは名前順に並びます。",
+    "moreDetails": "参考情報",
+    "details": {
+      "intro": "以下は参考情報です。",
+      "mostTrustworthy": "EXIF の DateTimeOriginal は、写真の撮影日時として信頼できる情報です。",
+      "sometimesMissing": "DateTimeOriginal は、ほとんどのカメラが JPEG/HEIF/TIFF ファイルに書き込みますが、無い場合もあります。",
+      "modifiedTime": "ファイルの更新日時は写真の撮影日時であることが多いため、DateTimeOriginal が無い場合は、代わりに更新日時を使用します。",
+      "otherFiles": "また、JPEG/HEIF/TIFF 以外のファイルには EXIF が無いため、常に更新日時を使用します。"
+    }
+  },
+  "directoryTree": {
+    "openedFolder": "開いたフォルダー - {{path}}",
+    "contextMenu": {
+      "selectOnlyThisFile": "このファイルのみを選択",
+      "selectOnlyThisFolder": "このフォルダーのみを選択",
+      "open": "開く",
+      "openFolder": "フォルダーを開く"
+    }
+  },
+  "photoInfo": {
+    "unavailable": "写真の情報がありません。",
+    "openFile": "ファイルを開く",
+    "moreOptions": "その他のオプション",
+    "livePhotos": "Live Photos",
+    "rotateThumbnail": "サムネイルを回転",
+    "menu": {
+      "selectOnlyThis": "このファイルのみを選択",
+      "openFolder": "フォルダーを開く",
+      "openGoogleMaps": "Google マップを開く",
+      "openGoogleStreetView": "Google ストリートビューを開く",
+      "viewData": "データを表示"
+    },
+    "pathTooLong": "ファイルのパスの長さが {{length}} であるため、サムネイルを表示できません。Windows では、パスの長さの上限は {{maximum}} です。ファイルの場所を変えて、ファイルのパスを短くしてください。詳細は、Ctrl+Shift+I を押してコンソールのメッセージをご覧ください。",
+    "generatedThumbnailPathTooLong": "生成したサムネイルのファイルのパスの長さが {{length}} であるため、サムネイルを表示できません。Windows では、パスの長さの上限は {{maximum}} です。ファイルの場所を変えて、生成されるサムネイルのパスを短くしてください。詳細は、Ctrl+Shift+I を押してコンソールのメッセージをご覧ください。"
+  },
+  "map": {
+    "zoomIn": "拡大",
+    "zoomOut": "縮小",
+    "layers": "レイヤー",
+    "photosInRegions": "範囲内の写真: {{count}} 枚",
+    "selectPhotos": "写真を選択",
+    "setRegionByRectangle": "長方形で範囲を指定",
+    "setRegionByVertex": "頂点で範囲を指定",
+    "setText": "テキストを配置",
+    "editRegion": "範囲を編集",
+    "dragRegion": "範囲を移動",
+    "removeRegion": "範囲を削除"
+  },
+  "chart": {
+    "moreAlt": "その他",
+    "dateUnknownPhotos": "撮影日時が不明な写真: {{count}} 枚",
+    "showDateUnknownPhotos": "撮影日時が不明な写真をマップに表示",
+    "units": {
+      "year": "年",
+      "month": "月",
+      "day": "日",
+      "hour": "時",
+      "minute": "分",
+      "second": "秒"
+    },
+    "unsupportedDuration": "このグラフは、「時」を選択した場合は 30 日、「分」を選択した場合は 3 日、「秒」を選択した場合は 1 時間を超える期間を表示できません。",
+    "changeUnitOrSelection": "年/月/日/時/分/秒を変更するか、期間が短くなるように写真を選択してください。",
+    "selectPhotosWithinZoom": "ズーム範囲内の写真を選択",
+    "zoom": "ズーム",
+    "resetZoom": "ズームを\nリセット"
+  },
+  "loadingFolder": {
+    "collecting": "開いたフォルダーから、読み込むファイルを収集中です...",
+    "loading": "開いたフォルダーから、ファイルを読み込み中です...",
+    "completed": "すべてのファイル（{{count}} 個）の読み込みを完了しました。",
+    "progress": "{{total}} 個中 {{loaded}} 個のファイルを読み込みました。",
+    "generatingMap": "読み込んだファイルからマップを作成中です..."
+  },
+  "noPhotosWithLocationData": {
+    "message": "開いたフォルダーに、位置情報のある写真がありません。"
+  },
+  "loadedFiles": {
+    "loaded": "{{count}} 個のファイルを読み込みました。",
+    "withLocationData": "{{count}} 個のファイルに位置情報があります。",
+    "total": "合計"
+  },
+  "thumbnailGeneration": {
+    "generating": "HEIF ファイルのサムネイルを生成中です...",
+    "completed": "HEIF ファイルのサムネイルの生成が完了しました。",
+    "finishedWithErrors": "HEIF ファイルのサムネイルの生成が終了しましたが、エラーがありました。",
+    "showDetails": "詳細を表示",
+    "processed": "{{total}} 個中 {{processed}} 個のファイルを処理しました。",
+    "processedWithErrors": "{{total}} 個中 {{processed}} 個のファイルを処理しましたが、エラーがありました。",
+    "seeFilesWithErrors": "エラーのあったファイルを見るには、ここをクリックしてください。",
+    "seeFilesWithErrorsTitle": "エラーのあったファイルを見る",
+    "generationRequired": "{{required}} 個のサムネイルを生成する必要があります。これは「HEIF ファイル（{{heif}} 個）− キャッシュのあるファイル（{{cached}} 個）」で求めた数です。",
+    "closeStatusBar": "サムネイル生成のステータスバーを閉じる",
+    "errorDialog": {
+      "message": "以下の {{count}} 個のファイルのサムネイルを生成できませんでした:",
+      "filter": "絞り込み",
+      "number": "No.",
+      "file": "ファイル",
+      "openFile": "ファイルを開く",
+      "openFolder": "フォルダーを開く"
+    }
+  },
+  "settings": {
+    "title": "設定",
+    "tabs": {
+      "language": "言語 (Language)",
+      "appearance": "外観",
+      "dateTime": "日付と時刻",
+      "os": "OS",
+      "cache": "キャッシュ"
+    },
+    "restartAfterSaving": "設定を保存すると、このアプリは再起動します。",
+    "confirmRestart": "設定を保存すると、このアプリは再起動します。\n続けますか？",
+    "save": "保存",
+    "language": {
+      "title": "言語",
+      "description": "言語は、アプリの再起動後に変更されます。"
+    },
+    "appearance": {
+      "title": "外観",
+      "showStatusBar": "ステータスバーを表示"
+    },
+    "dateTime": {
+      "title": "日時の形式",
+      "description": "日時の形式は、アプリの再起動後に変更されます。",
+      "dateFormat": "日付の形式",
+      "clockSystem": "12/24 時間制",
+      "clock12": "12 時間制",
+      "clock24": "24 時間制",
+      "example": "例"
+    },
+    "os": {
+      "title": "エクスプローラーのコンテキストメニュー",
+      "description": "エクスプローラーのコンテキストメニューに「{{menuItem}}」を追加・削除します。",
+      "add": "追加",
+      "remove": "削除",
+      "added": "エクスプローラーのコンテキストメニューに「{{menuItem}}」を追加しました。",
+      "removed": "エクスプローラーのコンテキストメニューから「{{menuItem}}」を削除しました。",
+      "failedToAdd": "エクスプローラーのコンテキストメニューに「{{menuItem}}」を追加できませんでした。",
+      "failedToRemove": "エクスプローラーのコンテキストメニューから「{{menuItem}}」を削除できませんでした。",
+      "confirmInExplorer": "エクスプローラーを開き、ファイルまたはフォルダーを右クリックして確認してください。"
+    },
+    "cache": {
+      "title": "HEIF サムネイルのキャッシュ",
+      "requiredForHeif": "<heifLink>HEIF ファイル</heifLink>にはサムネイルの生成が必要ですが、生成には時間がかかります。",
+      "thereforeCached": "そのため、生成したサムネイルをキャッシュしています。",
+      "usedNextTime": "次回からはキャッシュを使用して、サムネイルの生成を省略します。",
+      "location": "キャッシュの場所:",
+      "restartAfterDeleting": "サムネイルのキャッシュを削除すると、このアプリは再起動します。",
+      "delete": "サムネイルのキャッシュを削除",
+      "confirmDelete": "サムネイルのキャッシュを削除すると、このアプリは再起動します。\n続けますか？"
+    }
+  },
+  "explorerContextMenu": {
+    "openWith": "{{appName}} で開く",
+    "openWithAccessKey": "{{appName}} で開く(&P)"
+  },
+  "menu": {
+    "app": {
+      "about": "{{appName}} について",
+      "services": "サービス",
+      "hide": "{{appName}} を非表示",
+      "hideOthers": "ほかを非表示",
+      "showAll": "すべてを表示",
+      "quit": "{{appName}} を終了"
+    },
+    "view": {
+      "title": "表示",
+      "reload": "再読み込み",
+      "actualSize": "実際のサイズ",
+      "zoomIn": "拡大",
+      "zoomOut": "縮小",
+      "toggleFullScreen": "フルスクリーンの切り替え"
+    },
+    "selection": {
+      "title": "選択",
+      "undo": "元に戻す",
+      "redo": "やり直す"
+    },
+    "settings": {
+      "title": "設定",
+      "openSettings": "設定を開く"
+    },
+    "help": {
+      "title": "ヘルプ",
+      "showWelcomeDialog": "「ようこそダイアログ」を表示",
+      "advancedMenu": "詳細メニュー",
+      "openLogFolder": "ログフォルダーを開く",
+      "toggleDeveloperTools": "開発者ツールの切り替え"
+    }
+  },
+  "autoUpdate": {
+    "title": "{{appName}} の新しいバージョンがあります",
+    "message": "{{appName}} の新しいバージョンがあり、再起動後にインストールされます。\n今すぐこのアプリを再起動しますか？\n\n現在のバージョン: {{currentVersion}}\n最新のバージョン: {{latestVersion}}",
+    "yes": "はい",
+    "no": "いいえ"
+  }
+}

@@ -1,6 +1,7 @@
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { bridge } from '../../../src-shared/bridge/plm-bridge';
 import { FilenameExtension } from '../../../src-shared/filename-extension/filename-extension';
+import { t } from '../../../src-shared/i18n/i18n';
 import { isFilePathTooLongOnWindows, maxFilePathLengthOnWindows } from '../../../src-shared/max-file-path-length-on-windows/max-file-path-length-on-windows';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { Photo } from '../shared/model/photo.model';
@@ -90,9 +91,7 @@ export class ThumbnailElement {
 
   private static handlePathTooLongCaseOnWindowsWhenUsingPhotoForThumbnail(thumbnailElement: HTMLImageElement, photo: Photo) {
     if (isFilePathTooLongOnWindows(photo.path)) {
-      thumbnailElement.alt = `Thumbnail cannot be displayed because the length of the file path is ${photo.path.length}. `
-        + `Windows restricts the maximum path length to ${maxFilePathLengthOnWindows}. Please change file location to shorten the path of the file. `
-        + `For details, press Ctrl+Shift+I and read the console messages.`;
+      thumbnailElement.alt = t('photoInfo.pathTooLong', { length: photo.path.length, maximum: maxFilePathLengthOnWindows });
       logger.warn(`\n`
         + `Thumbnail of ${photo.name} cannot be displayed because the length of the file path exceeds the maximum.\n`
         + `Please change the location of ${photo.name} to shorten the path.\n`
@@ -107,9 +106,7 @@ export class ThumbnailElement {
 
   private static handlePathTooLongCaseOnWindowsForGeneratedThumbnail(thumbnailElement: HTMLImageElement, photo: Photo, thumbnailFilePath: string) {
     if (isFilePathTooLongOnWindows(thumbnailFilePath)) {
-      thumbnailElement.alt = `Thumbnail cannot be displayed because the length of the file path of the generated thumbnail is ${thumbnailFilePath.length}. `
-                           + `Windows restricts the maximum path length to ${maxFilePathLengthOnWindows}. Please change file location to shorten the path of the generated thumbnail. `
-                           + `For details, press Ctrl+Shift+I and read the console messages.`;
+      thumbnailElement.alt = t('photoInfo.generatedThumbnailPathTooLong', { length: thumbnailFilePath.length, maximum: maxFilePathLengthOnWindows });
       logger.warn(`\n`
                 + `Thumbnail of ${photo.name} cannot be displayed because the length of the file path of the generated thumbnail exceeds the maximum.\n`
                 + `Please change the location of ${photo.name} to shorten the path of the generated thumbnail.\n`

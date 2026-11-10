@@ -2,9 +2,9 @@
   <div class="open-folder-button">
     <button mat-stroked-button
             [disabled]="thumbnailGenerationService.isGenerating()"
-            [title]="thumbnailGenerationService.isGenerating() ? 'Cannot open a folder when generating thumbnails.' : ''"
+            [title]="thumbnailGenerationService.isGenerating() ? ('sidebar.cannotOpenWhileGeneratingThumbnails' | t) : ''"
             (click)="showOpenFolderDialog()">
-      {{ 'SIDEBAR.OPEN_FOLDER' | translate }}
+      {{ 'sidebar.openFolder' | t }}
     </button>
   </div>
   <app-sidebar-upper-pane-more-options></app-sidebar-upper-pane-more-options>

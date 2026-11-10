@@ -1,4 +1,5 @@
 import { Analytics } from '../../../../src-shared/analytics/analytics';
+import { t } from '../../../../src-shared/i18n/i18n';
 import { IconDataUrl } from '../../../assets/icon-data-url';
 import { Photo } from '../../shared/model/photo.model';
 import { photoInfoViewerLogger as logger } from '../photo-info-viewer-logger';
@@ -7,7 +8,7 @@ import { createPhotoInfoViewerButton } from './photo-info-viewer-button-util';
 export class RotateButton {
   public static create(thumbnailElement: HTMLImageElement, photo: Photo): HTMLButtonElement {
     const onClick = () => this.handleButtonClick(thumbnailElement, photo);
-    const button = createPhotoInfoViewerButton(onClick, IconDataUrl.rotate, 'Rotate Thumbnail');
+    const button = createPhotoInfoViewerButton(onClick, IconDataUrl.rotate, t('photoInfo.rotateThumbnail'));
     return button;
   }
 

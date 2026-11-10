@@ -2,17 +2,17 @@
 <div class="summary">
   @if (generation.phase === 'done') {
     @if (generation.result?.errorOccurred) {
-      <span>Finished generating thumbnails for HEIF files with errors.</span>
+      <span>{{ 'thumbnailGeneration.finishedWithErrors' | t }}</span>
     } @else {
-      <span>Completed generating thumbnails for HEIF files.</span>
+      <span>{{ 'thumbnailGeneration.completed' | t }}</span>
     }
   } @else {
-    <span>Generating thumbnails for HEIF files...</span>
+    <span>{{ 'thumbnailGeneration.generating' | t }}</span>
   }
 </div>
 <div class="progress-bar-with-details"
      [class]="detailsVisible() ? 'expanded-progress-bar-with-details' : 'shrunk-progress-bar-with-details'"
-     [title]="detailsVisible() ? '' : 'Show Details'"
+     [title]="detailsVisible() ? '' : ('thumbnailGeneration.showDetails' | t)"
      (click)="toggleDetailsVisibility()">
   <div class="progress-bar-and-expand-icon">
     <mat-progress-bar mode="buffer" [value]="generation.progressPercent"></mat-progress-bar>
@@ -22,32 +22,36 @@
     </mat-icon>
   </div>
   <div class="details">
+    @let processed = { processed: generation.numOfProcessedThumbnails, total: generation.numOfGenerationRequiredThumbnails };
     <div>
       @if (generation.phase === 'done') {
         @if (generation.result?.errorOccurred) {
           <span>
-            <span>Processed {{ generation.numOfProcessedThumbnails }} out of {{ generation.numOfGenerationRequiredThumbnails }} files with errors. </span>
+            <span>{{ 'thumbnailGeneration.processedWithErrors' | t: processed }} </span>
             <span class="anchor-tag-like-text"
-                  title="See the files with errors"
+                  [title]="'thumbnailGeneration.seeFilesWithErrorsTitle' | t"
                   (click)="handleClickHereTextClicked($event)">
-              Click here to see the files with errors.
+              {{ 'thumbnailGeneration.seeFilesWithErrors' | t }}
             </span>
           </span>
         } @else {
-          <span>Processed {{ generation.numOfProcessedThumbnails }} out of {{ generation.numOfGenerationRequiredThumbnails }} files.</span>
+          <span>{{ 'thumbnailGeneration.processed' | t: processed }}</span>
         }
       } @else {
-        <span>Processed {{ generation.numOfProcessedThumbnails }} out of {{ generation.numOfGenerationRequiredThumbnails }} files.</span>
+        <span>{{ 'thumbnailGeneration.processed' | t: processed }}</span>
       }
     </div>
     <div class="generation-required-files-description">
-      {{ generation.numOfGenerationRequiredThumbnails }} thumbnails need generation, which is given by "HEIF files ({{ generation.numOfAllHeifFiles }} files)
-      − Cache-available files ({{ generation.numOfCacheAvailableThumbnails }} files)".
+      {{ 'thumbnailGeneration.generationRequired' | t: {
+           required: generation.numOfGenerationRequiredThumbnails,
+           heif: generation.numOfAllHeifFiles,
+           cached: generation.numOfCacheAvailableThumbnails
+         } }}
     </div>
   </div>
 </div>
 <span class="close-button"
-      title="Close Thumbnail Generation Status Bar"
+      [title]="'thumbnailGeneration.closeStatusBar' | t"
       [class.hidden]="generation.phase !== 'done'"
       [class.fade-in-close-button]="generation.phase === 'done'"
       (click)="handleCloseButtonClicked()">
