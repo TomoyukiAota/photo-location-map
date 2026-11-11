@@ -79,6 +79,17 @@ describe('LanguageListComponent', () => {
     expect(labels()[0]).toBe(label);
   });
 
+  it('shows the flag of each language beside its name, and that of the operating system\'s language beside its entry', async () => {
+    await create('auto');
+    const flags = items().map(item => item.element.querySelector('.flag'));
+
+    expect(flags.map(flag => Array.from(flag.classList).filter(name => name.startsWith('fi-'))))
+      .toEqual([['fi-us'], ...languages.map(language => [`fi-${language.flag}`])]);
+    // Before the name, and not read aloud: the name alone is the entry's.
+    expect(flags.every(flag => flag === flag.parentElement.firstElementChild && flag.getAttribute('aria-hidden') === 'true')).toBe(true);
+    expect(flags.every(flag => flag.textContent === '')).toBe(true);
+  });
+
   it('is a list box of which one entry is chosen', async () => {
     await create('auto');
     expect(listbox().getAttribute('aria-label')).toBe('Language');

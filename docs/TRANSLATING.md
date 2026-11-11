@@ -42,13 +42,21 @@ finds the texts by them.
 3. Add the language to `src-shared/i18n/languages.ts`. For German, say:
    - at the top, `import de from './locales/de.json';`
    - in the `languages` list,
-     `{ code: 'de', name: 'Deutsch', englishName: 'German', direction: 'ltr', momentLocale: 'de', geomanLocale: 'de', translation: de },`
+     `{ code: 'de', name: 'Deutsch', englishName: 'German', flag: 'de', direction: 'ltr', momentLocale: 'de', geomanLocale: 'de', translation: de },`
      - `name` is the language's name written in the language itself, with a
        capital letter where the script has them. The list is in the order of
        these names: those in Latin letters by the alphabet, then those in
        other scripts.
      - `englishName` is its name in English, which the search of the list
        also finds it by.
+     - `flag` is the flag shown beside its name in the list, by its name in
+       [flag-icons](https://flagicons.lipis.dev): the code of the language's
+       country in lower case, which `new Intl.Locale('<code>').maximize().region`
+       gives in a browser's console. A language of a region that has a flag of
+       its own has that flag, as Catalan has Catalonia's (`es-ct`). Add the
+       name to `$flag-icons-included-countries` in
+       `src/app/language/language-list.component.scss` too, so that the
+       application has the flag; a test checks it.
      - `direction` is `rtl` for a language written from right to left, such
        as Arabic and Hebrew, which the application is then laid out in, and
        `ltr` for any other.

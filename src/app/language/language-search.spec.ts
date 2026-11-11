@@ -1,9 +1,9 @@
 import { foldForSearch, LanguageListItem, matchesSearch } from './language-search';
 
 describe('The search of the list of languages (language-search.ts)', () => {
-  const german: LanguageListItem = { setting: 'de', label: 'Deutsch', labelLanguage: 'de', keywords: ['German', 'ドイツ語', 'de'] };
-  const czech: LanguageListItem = { setting: 'cs', label: 'Čeština', labelLanguage: 'cs', keywords: ['Czech', 'チェコ語', 'cs'] };
-  const turkish: LanguageListItem = { setting: 'tr', label: 'Türkçe', labelLanguage: 'tr', keywords: ['Turkish', 'トルコ語', 'tr'] };
+  const german: LanguageListItem = { setting: 'de', label: 'Deutsch', labelLanguage: 'de', flag: 'de', keywords: ['German', 'ドイツ語', 'de'] };
+  const czech: LanguageListItem = { setting: 'cs', label: 'Čeština', labelLanguage: 'cs', flag: 'cz', keywords: ['Czech', 'チェコ語', 'cs'] };
+  const turkish: LanguageListItem = { setting: 'tr', label: 'Türkçe', labelLanguage: 'tr', flag: 'tr', keywords: ['Turkish', 'トルコ語', 'tr'] };
 
   it('compares texts in lower case and without diacritics', () => {
     expect(foldForSearch('Čeština')).toBe('cestina');

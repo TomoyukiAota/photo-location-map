@@ -40,7 +40,12 @@
               "src/favicon.icns",
               "src/favicon.256x256.png",
               "src/favicon.512x512.png",
-              "src/favicon.svg"
+              "src/favicon.svg",
+              {
+                "glob": "LICENSE",
+                "input": "node_modules/flag-icons",
+                "output": "licenses/flag-icons"
+              }
             ],
             "styles": [
               "./node_modules/leaflet/dist/leaflet.css",

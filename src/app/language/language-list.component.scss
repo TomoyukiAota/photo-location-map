@@ -1,4 +1,19 @@
 @use "../../styles/color" as *;
+// TL;DR: The flags beside the names, from the flag-icons package, as its README says to choose them: the flag of each
+// language (`flag` in src-shared/i18n/languages.ts) and no other, in their rectangular shape only.
+// Details: The build copies each flag that this lists into the application, so a flag that no language has would only
+// make it larger. A test checks that the list has the flags of the languages (test/src-shared/i18n/). The package's
+// license is copied in as well (angular.json, `assets`): the build lists the licenses of what its scripts hold only.
+@use "flag-icons/sass/flag-icons" with (
+  // From this file: the build resolves a flag's address where the address is used.
+  $flag-icons-path: "../../../node_modules/flag-icons/flags",
+  $flag-icons-use-square: false,
+  $flag-icons-included-countries: (
+    "arab", "bg", "br", "cn", "cz", "de", "dk", "ee", "es", "es-ct", "es-ga", "es-pv", "fi", "fr", "gr", "hr", "hu",
+    "id", "il", "in", "it", "jp", "kr", "lt", "lv", "my", "nl", "no", "pl", "pt", "ro", "rs", "ru", "se", "si", "sk",
+    "th", "tr", "tw", "ua", "us", "vn"
+  )
+);
 
 $row-height: 32px;
 $scrollbar-width: 12px;
@@ -110,6 +125,17 @@ $secondary-text: #6e6e6e;
     outline-color: white;
     outline-offset: -4px;
   }
+}
+
+// The flag beside a name, as high as its capital letters, with a thin line around it that keeps the white of a flag apart
+// from the white of the box.
+.flag {
+  width: 20px;
+  height: 15px;
+  margin-inline-end: 8px;
+  vertical-align: -2px;
+  line-height: 15px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .15);
 }
 
 // Said in the box, in the place of the entries, when the search finds none.

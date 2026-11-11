@@ -477,6 +477,14 @@ test('the Language dialog comes before the Welcome dialog at the first launch, a
   const restartNote = dialog.locator('.restart-note');
   await expect(restartNote).toBeHidden();
   await shot('language-dialog');
+  // Each entry has a flag before its name, drawn from a file that the application has. Which flag each language has is
+  // checked by the unit tests.
+  const flagsDrawn = await dialog.locator('.languages .flag').evaluateAll(elements => Promise.all(elements.map(element => {
+    const image = new Image();
+    image.src = /url\("?([^")]*)"?\)/.exec(getComputedStyle(element).backgroundImage)?.[1] ?? '';
+    return image.decode().then(() => image.naturalWidth > 0, () => false);
+  })));
+  expect(flagsDrawn).toEqual(Array(languageNames.length + 1).fill(true));
   // With more entries than the box shows, the list scrolls, and its scrollbar takes room in the box, so it stays in
   // view, where the one of macOS would hide.
   const box = await dialog.locator('.languages').evaluate(list => ({ entries: list.children.length,
@@ -690,6 +698,11 @@ test('on a computer whose language is Arabic, the application is laid out from r
   // U+2068 and U+2069, so that a name written the other way, such as English, keeps its parentheses around it.
   await expect(languageDialog.getByRole('option').first())
     .toHaveText(`استخدام إعداد ${operatingSystemName ?? 'النظام'} (\u2068العربية\u2069)`);
+  // The flag of an entry is where its line starts, at the right of its name.
+  const firstEntry = languageDialog.getByRole('option').first();
+  const flagBox = await firstEntry.locator('.flag').boundingBox();
+  const nameBox = await firstEntry.locator('bdi').boundingBox();
+  expect(flagBox.x).toBeGreaterThanOrEqual(nameBox.x + nameBox.width);
   await languageDialog.getByRole('button', { name: 'موافق', exact: true }).click();
   const welcome = page.locator('app-welcome-dialog');
   await expect(welcome).toContainText('مرحبًا بك في Photo Location Map');

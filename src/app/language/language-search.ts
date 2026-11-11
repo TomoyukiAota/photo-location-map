@@ -8,6 +8,8 @@ export interface LanguageListItem {
   label: string;
   /** The language that the label is written in, by which it is drawn and read aloud. */
   labelLanguage: string;
+  /** The flag beside the label, by its name in flag-icons: that of the language that the entry stands for. */
+  flag: string;
   /** What the search finds the entry by, besides its label: for a language, its other names and its code. */
   keywords: readonly string[];
 }

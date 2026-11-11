@@ -27,7 +27,8 @@ const namesInApplicationLanguage = new Intl.DisplayNames([currentLanguage], { ty
  * The list to choose the Language setting from, in the Language dialog and in the Settings dialog, with a field above
  * it that narrows the list down: the operating system's language first, by the name of macOS or Windows and with the
  * language that it stands for on this computer, then each language under its own name, so that a user who cannot read
- * the current language still finds theirs.
+ * the current language still finds theirs. Each entry has the flag of its language beside it, the operating system's
+ * that of the language that it stands for.
  * TL;DR: A list in a box that scrolls, like the one in the setup of macOS, so that the dialogs stay as they are when
  * languages are added. Photo Data Viewer's list looks and works like this one.
  * Details: Radio buttons, which this was at first, make the dialog taller with every language. A menu would show one
@@ -58,8 +59,10 @@ const namesInApplicationLanguage = new Intl.DisplayNames([currentLanguage], { ty
           [cdkListboxValue]="[selected()]"
           (cdkListboxValueChange)="onChosen($event)">
         @for (item of listedItems(); track item.setting) {
-          <!-- The name is on its own, so that one written in the other direction than the page keeps its order. -->
-          <li class="language" [cdkOption]="item.setting" [attr.data-setting]="item.setting" [attr.lang]="item.labelLanguage"><bdi>{{ item.label }}</bdi></li>
+          <!-- The name is on its own, so that one written in the other direction than the page keeps its order. The
+               flag is before it, at the side where the page's lines start, and is not read aloud. -->
+          <li class="language" [cdkOption]="item.setting" [attr.data-setting]="item.setting" [attr.lang]="item.labelLanguage"
+            ><span class="flag fi fi-{{ item.flag }}" aria-hidden="true"></span><bdi>{{ item.label }}</bdi></li>
         }
       </ul>
       <div class="no-languages" role="status">{{ listedItems().length === 0 ? ('language.noLanguagesFound' | t) : '' }}</div>
@@ -86,12 +89,14 @@ export class LanguageListComponent {
       setting: languageSettingAuto,
       label: t(systemLanguageLabelKey(currentPlatform()), { language: getLanguage(systemLanguage).name }),
       labelLanguage: currentLanguage,
+      flag: getLanguage(systemLanguage).flag,
       keywords: [],
     },
     ...languages.map(language => ({
       setting: language.code,
       label: language.name,
       labelLanguage: language.code,
+      flag: language.flag,
       keywords: [language.englishName, namesInApplicationLanguage.of(language.code) ?? '', language.code],
     })),
   ];
