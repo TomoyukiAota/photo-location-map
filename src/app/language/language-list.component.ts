@@ -1,5 +1,6 @@
 import { CdkListbox, CdkOption, ListboxValueChangeEvent } from '@angular/cdk/listbox';
 import { afterNextRender, ChangeDetectorRef, Component, computed, ElementRef, inject, Injector, model, signal, viewChild } from '@angular/core';
+import { IconDataUrl } from '../../assets/icon-data-url';
 import { currentLanguage, systemLanguage, t } from '../../../src-shared/i18n/i18n';
 import { getLanguage, languages, LanguageSetting, languageSettingAuto } from '../../../src-shared/i18n/languages';
 import { currentPlatform } from '../../../src-shared/startup/startup-metadata';
@@ -27,7 +28,7 @@ const namesInApplicationLanguage = new Intl.DisplayNames([currentLanguage], { ty
  * The list to choose the Language setting from, in the Language dialog and in the Settings dialog, with a field above
  * it that narrows the list down: the operating system's language first, by the name of macOS or Windows and with the
  * language that it stands for on this computer, then each language under its own name, so that a user who cannot read
- * the current language still finds theirs.
+ * the current language still finds theirs. The field has a magnifying glass at its end, as search fields usually do.
  * TL;DR: A list in a box that scrolls, like the one in the setup of macOS, so that the dialogs stay as they are when
  * languages are added. Photo Data Viewer's list looks and works like this one.
  * Details: Radio buttons, which this was at first, make the dialog taller with every language. A menu would show one
@@ -38,16 +39,20 @@ const namesInApplicationLanguage = new Intl.DisplayNames([currentLanguage], { ty
 @Component({
   selector: 'app-language-list',
   template: `
-    <input class="search"
-           type="search"
-           autocomplete="off"
-           autocapitalize="off"
-           spellcheck="false"
-           [placeholder]="'language.search' | t"
-           [attr.aria-label]="'language.search' | t"
-           [attr.aria-controls]="listId"
-           [value]="search()"
-           (input)="onSearchInput($event)">
+    <div class="search-field">
+      <input class="search"
+             type="search"
+             autocomplete="off"
+             autocapitalize="off"
+             spellcheck="false"
+             [placeholder]="'language.search' | t"
+             [attr.aria-label]="'language.search' | t"
+             [attr.aria-controls]="listId"
+             [value]="search()"
+             (input)="onSearchInput($event)">
+      <!-- Not read aloud: the field has its name. -->
+      <img class="search-icon" [src]="searchIcon" alt="">
+    </div>
     <div class="box">
       <ul #list
           class="languages"
@@ -80,6 +85,8 @@ export class LanguageListComponent {
   public readonly search = signal('');
 
   public readonly listId = `language-list-${nextListNumber++}`;
+
+  protected readonly searchIcon = IconDataUrl.search;
 
   public readonly items: readonly LanguageListItem[] = [
     {

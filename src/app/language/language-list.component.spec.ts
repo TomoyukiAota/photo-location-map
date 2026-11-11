@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { IconDataUrl } from '../../assets/icon-data-url';
 import { languages, LanguageSetting } from '../../../src-shared/i18n/languages';
 import { startupMetadata } from '../../../src-shared/startup/startup-metadata';
 import { LanguageListComponent } from './language-list.component';
@@ -115,6 +116,14 @@ describe('LanguageListComponent', () => {
   });
 
   describe('The search field', () => {
+    it('has a magnifying glass after it, which is not read aloud', async () => {
+      await create('auto');
+      const icon = host().querySelector<HTMLImageElement>('.search-field > .search-icon');
+      expect(icon.getAttribute('src')).toBe(IconDataUrl.search);
+      expect(icon.getAttribute('alt')).toBe('');
+      expect(icon.previousElementSibling).toBe(searchField());
+    });
+
     it('is named in the application\'s language, and says which list it narrows down', async () => {
       await create('auto');
       expect(searchField().placeholder).toBe('Search');
