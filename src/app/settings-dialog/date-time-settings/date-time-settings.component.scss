@@ -13,19 +13,66 @@
   margin-bottom: 20px;
 }
 
+// In one row while there is room, and on rows of their own once a language's texts make the fields wide.
 .dropdown-and-example-row {
   display: flex;
-  flex-direction: row;
+  flex-flow: row wrap;
+  gap: 16px 30px;
 }
 
-.date-format-dropdown {
-  width: 180px;
-  margin-inline-end: 30px;
+// TL;DR: A field is as wide as its label and its widest choice need, in any language, and at least as wide as it
+// is in English.
+// Details: Angular Material gives a field its width, whatever its texts are: a label that is longer is cut with
+// "...", and a choice that is longer is on two lines in the list of the choices, which is as wide as the field. With
+// widths of 180px and 150px, the German "24 Stunden" was on two lines there, and a label of more than about 16
+// letters was cut, so the translations had to be short ("12/24 hodin") rather than natural.
+// The box around a field therefore lays out, without showing them, the label and the choices in the size that the
+// field shows them in, and the field fills the box. The two are in ::before and ::after rather than in elements, so
+// that they are neither read out nor found as texts of the page.
+.dropdown-box {
+  display: inline-grid;
+
+  &::before,
+  &::after {
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+    white-space: pre; // The choices are one on a line.
+    // The font of Angular Material's fields: Roboto, 16px, with letters 0.5px apart.
+    font-family: Roboto, sans-serif;
+  }
+
+  // The label, which the field shows at three quarters of its size, in what is left of the field's width beside its
+  // padding of 16px at each side and a margin of 18px that Angular Material keeps.
+  &::before {
+    content: attr(data-label);
+    font-size: 12px;
+    letter-spacing: 0.375px;
+    padding-inline: 26px;
+  }
+
+  // A choice, which the list shows between a padding of 16px at each side, with a check mark of 18px at 16px from
+  // the text when it is the chosen one.
+  &::after {
+    content: attr(data-choices);
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    padding-inline: 16px 52px;
+  }
+
+  // The field has no width of its own: it is as wide as its box.
+  mat-form-field {
+    width: 0;
+    min-width: 100%;
+  }
 }
 
-.clock-system-format-dropdown {
-  width: 150px;
-  margin-inline-end: 30px;
+.date-format-dropdown-box {
+  min-width: 180px;
+}
+
+.clock-system-format-dropdown-box {
+  min-width: 150px;
 }
 
 .date-time-example > div {

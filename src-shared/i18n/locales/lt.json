@@ -30,7 +30,7 @@
     "xProfileTitle": "Atidaryti „X“ (anksčiau „Twitter“) profilį",
     "gitHubProfileAlt": "„GitHub“ profilis",
     "gitHubProfileTitle": "Atidaryti „GitHub“ profilį",
-    "troubleshooting": "Jei kyla problemų dėl šios programos, žr. <pageLink>trikčių šalinimo puslapį</pageLink>.",
+    "troubleshooting": "Jei kyla problemų dėl šios programos, žiūrėkite <pageLink>trikčių šalinimo puslapį</pageLink>.",
     "troubleshootingLinkTitle": "Atidaryti trikčių šalinimo puslapį"
   },
   "welcome": {
@@ -40,10 +40,10 @@
   "about": {
     "releasesLink": "Atsisiuntimai ir leidimo pastabos",
     "releasesLinkTitle": "Atidaryti atsisiuntimus ir leidimo pastabas",
-    "translations": "Vertimai į kitas kalbas yra laukiami: žr., <guideLink>kaip išversti šią programą</guideLink>.",
+    "translations": "Vertimai į kitas kalbas yra laukiami: skaitykite, <guideLink>kaip išversti šią programą</guideLink>.",
     "translationsLinkTitle": "Atidaryti šios programos vertimo vadovą",
     "homePageTitle": "Atidaryti pagrindinį puslapį",
-    "sourceCodeTitle": "Peržiūrėti išeitinį kodą „GitHub“"
+    "sourceCodeTitle": "Peržiūrėti pirminį programos tekstą platformoje „GitHub“"
   },
   "sidebar": {
     "openFolder": "Atidaryti aplanką",
@@ -60,7 +60,7 @@
   "sortByShootingTimeInfo": {
     "title": "Rikiavimas pagal fotografavimo laiką",
     "intro": "Pasirinkus „Pagal fotografavimo laiką“, programa failus rikiuoja taip:",
-    "step1": "naudoja EXIF duomenų reikšmę DateTimeOriginal. Jei jos nėra,",
+    "step1": "naudoja EXIF duomenų reikšmę DateTimeOriginal, o jei jos nėra,",
     "step2": "naudoja failo modifikavimo laiką.",
     "foldersNote": "Aplankai rikiuojami pagal pavadinimą, nes aplankai neturi „fotografavimo laiko“.",
     "moreDetails": "Daugiau informacijos",
@@ -68,7 +68,7 @@
       "intro": "Toliau pateikiama papildoma informacija:",
       "mostTrustworthy": "EXIF duomenų reikšmė DateTimeOriginal yra patikimiausia informacija apie tai, kada nuotrauka buvo padaryta.",
       "sometimesMissing": "Dauguma fotoaparatų įrašo DateTimeOriginal į daugumą JPEG/HEIF/TIFF failų, tačiau kartais šios reikšmės nėra.",
-      "modifiedTime": "Failo modifikavimo laikas dažniausiai sutampa su nuotraukos padarymo laiku, todėl jis naudojamas, kai nėra DateTimeOriginal.",
+      "modifiedTime": "Failo modifikavimo laikas dažnai sutampa su nuotraukos padarymo laiku, todėl jis naudojamas, kai nėra DateTimeOriginal.",
       "otherFiles": "Kiti failai, ne JPEG/HEIF/TIFF, neturi EXIF duomenų, todėl jiems visada naudojamas modifikavimo laikas."
     }
   },
@@ -82,7 +82,7 @@
     }
   },
   "photoInfo": {
-    "unavailable": "Nuotraukos informacija nepasiekiama.",
+    "unavailable": "Nuotraukos informacijos nėra.",
     "openFile": "Atidaryti failą",
     "moreOptions": "Daugiau parinkčių",
     "livePhotos": "Live Photos",
@@ -90,7 +90,7 @@
     "menu": {
       "selectOnlyThis": "Pasirinkti tik šį failą",
       "openFolder": "Atidaryti aplanką",
-      "openGoogleMaps": "Atidaryti „Google Maps“",
+      "openGoogleMaps": "Atidaryti „Google“ žemėlapius",
       "openGoogleStreetView": "Atidaryti „Google Street View“",
       "viewData": "Peržiūrėti duomenis"
     },
@@ -101,14 +101,14 @@
     "zoomIn": "Artinti",
     "zoomOut": "Tolinti",
     "layers": "Sluoksniai",
-    "photosInRegions": "Nuotraukos regionuose: {{count}}",
+    "photosInRegions": "Nuotraukos srityse: {{count}}",
     "selectPhotos": "Pasirinkti nuotraukas",
-    "setRegionByRectangle": "Nustatyti regioną stačiakampiu",
-    "setRegionByVertex": "Nustatyti regioną viršūnėmis",
+    "setRegionByRectangle": "Nustatyti sritį stačiakampiu",
+    "setRegionByVertex": "Nustatyti sritį viršūnėmis",
     "setText": "Įterpti tekstą",
-    "editRegion": "Redaguoti regioną",
-    "dragRegion": "Perkelti regioną",
-    "removeRegion": "Pašalinti regioną"
+    "editRegion": "Redaguoti sritį",
+    "dragRegion": "Perkelti sritį",
+    "removeRegion": "Pašalinti sritį"
   },
   "chart": {
     "moreAlt": "Daugiau",
@@ -131,7 +131,7 @@
   "loadingFolder": {
     "collecting": "Renkami iš atidaryto aplanko įkeltini failai...",
     "loading": "Įkeliami atidaryto aplanko failai...",
-    "completed": "Visi failai įkelti (skaičius: {{count}}).",
+    "completed": "Visi failai įkelti (iš viso {{count}}).",
     "progress": "Įkelta failų: {{loaded}} iš {{total}}.",
     "generatingMap": "Iš įkeltų failų kuriamas žemėlapis..."
   },
@@ -155,7 +155,7 @@
     "generationRequired": "Reikia sukurti miniatiūrų: {{required}}. Šis skaičius gaunamas taip: „HEIF failai ({{heif}}) − failai, jau esantys talpykloje ({{cached}})“.",
     "closeStatusBar": "Uždaryti miniatiūrų kūrimo būsenos juostą",
     "errorDialog": {
-      "message": "Nepavyko sukurti šių failų miniatiūrų (skaičius: {{count}}):",
+      "message": "Nepavyko sukurti šių failų miniatiūrų (iš viso {{count}}):",
       "filter": "Filtruoti",
       "number": "Nr.",
       "file": "Failas",
@@ -177,7 +177,7 @@
     "save": "Įrašyti",
     "language": {
       "title": "Kalba",
-      "description": "Kalba pasikeičia paleidus programą iš naujo."
+      "description": "Kalba pasikeis paleidus programą iš naujo."
     },
     "appearance": {
       "title": "Išvaizda",
@@ -185,11 +185,11 @@
     },
     "dateTime": {
       "title": "Datos ir laiko formatas",
-      "description": "Datos ir laiko formatas pasikeičia paleidus programą iš naujo.",
+      "description": "Datos ir laiko formatas pasikeis paleidus programą iš naujo.",
       "dateFormat": "Datos formatas",
-      "clockSystem": "12 arba 24 val.",
+      "clockSystem": "12 arba 24 valandų formatas",
       "clock12": "12 valandų",
-      "clock24": "24 valandos",
+      "clock24": "24 valandų",
       "example": "Pavyzdys"
     },
     "os": {
@@ -225,7 +225,7 @@
       "hide": "Slėpti „{{appName}}“",
       "hideOthers": "Slėpti kitas",
       "showAll": "Rodyti visas",
-      "quit": "Išjungti „{{appName}}“"
+      "quit": "Baigti „{{appName}}“ darbą"
     },
     "view": {
       "title": "Rodymas",

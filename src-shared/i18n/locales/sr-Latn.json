@@ -25,7 +25,7 @@
   "appInfo": {
     "appIconAlt": "Ikona aplikacije",
     "version": "Verzija {{version}}",
-    "developedBy": "Razvio Tomoyuki Aota.",
+    "developedBy": "Razvija Tomoyuki Aota.",
     "xProfileAlt": "Profil na mreži X (ranije Twitter)",
     "xProfileTitle": "Otvori profil na mreži X (ranije Twitter)",
     "gitHubProfileAlt": "Profil na GitHub-u",
@@ -34,7 +34,7 @@
     "troubleshootingLinkTitle": "Otvori stranicu za rešavanje problema"
   },
   "welcome": {
-    "message": "Dobro došli u {{appName}}",
+    "message": "Dobro došli u aplikaciju {{appName}}",
     "usageInfoCollection": "Radi poboljšanja ove aplikacije prikupljaju se anonimni podaci o korišćenju. Daljim korišćenjem aplikacije pristajete na to."
   },
   "about": {
@@ -68,7 +68,7 @@
       "intro": "U nastavku su dodatne informacije:",
       "mostTrustworthy": "Vrednost DateTimeOriginal iz podataka EXIF je najpouzdaniji podatak o tome kada je fotografija snimljena.",
       "sometimesMissing": "Većina fotoaparata upisuje DateTimeOriginal u većinu datoteka JPEG/HEIF/TIFF, ali ponekad nedostaje.",
-      "modifiedTime": "Datum izmene datoteke je često vreme kada je fotografija snimljena, pa se koristi umesto nje kada DateTimeOriginal nedostaje.",
+      "modifiedTime": "Datum izmene datoteke je često vreme kada je fotografija snimljena, pa se koristi kao zamena kada DateTimeOriginal nedostaje.",
       "otherFiles": "Datoteke koje nisu JPEG/HEIF/TIFF nemaju podatke EXIF, pa se za njih uvek koristi datum izmene."
     }
   },
@@ -131,9 +131,9 @@
   "loadingFolder": {
     "collecting": "Prikupljanje datoteka za učitavanje iz otvorene fascikle...",
     "loading": "Učitavanje datoteka iz otvorene fascikle...",
-    "completed": "Sve datoteke su učitane (broj: {{count}}).",
+    "completed": "Sve datoteke su učitane (ukupno {{count}}).",
     "progress": "Učitane datoteke: {{loaded}} od {{total}}.",
-    "generatingMap": "Pravljenje mape od učitanih datoteka..."
+    "generatingMap": "Pravljenje mape pomoću učitanih datoteka..."
   },
   "noPhotosWithLocationData": {
     "message": "U otvorenoj fascikli nema fotografija sa podacima o lokaciji."
@@ -155,7 +155,7 @@
     "generationRequired": "Sličice koje treba napraviti: {{required}}. Broj se dobija kao „datoteke HEIF ({{heif}}) − datoteke dostupne u kešu ({{cached}})“.",
     "closeStatusBar": "Zatvori statusnu traku pravljenja sličica",
     "errorDialog": {
-      "message": "Nije bilo moguće napraviti sličice za sledeće datoteke (broj: {{count}}):",
+      "message": "Nije bilo moguće napraviti sličice za sledeće datoteke (ukupno {{count}}):",
       "filter": "Filtriraj",
       "number": "Br.",
       "file": "Datoteka",
@@ -187,9 +187,9 @@
       "title": "Format datuma i vremena",
       "description": "Format datuma i vremena promeniće se nakon ponovnog pokretanja aplikacije.",
       "dateFormat": "Format datuma",
-      "clockSystem": "12 ili 24 sata",
-      "clock12": "12 sati",
-      "clock24": "24 sata",
+      "clockSystem": "12-časovni ili 24-časovni format",
+      "clock12": "12-časovni",
+      "clock24": "24-časovni",
       "example": "Primer"
     },
     "os": {

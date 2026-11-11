@@ -6,7 +6,8 @@
   grid: "header       header          " auto
         "settings-tab settings-content" 1fr
         "footer       footer          " auto
-        /200px        1fr;
+        // The tabs are as wide as the longest of their names needs, and at least as wide as they are in English.
+        /minmax(200px, max-content) 1fr;
 
   .settings-dialog-header { grid-area: header;           }
   .settings-tab           { grid-area: settings-tab;     }

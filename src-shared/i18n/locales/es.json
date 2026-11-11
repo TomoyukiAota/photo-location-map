@@ -20,7 +20,7 @@
     "restartToApply": "Esta aplicación se reiniciará para aplicar el idioma.",
     "confirm": "Aceptar",
     "search": "Buscar",
-    "noLanguagesFound": "No se encontraron idiomas"
+    "noLanguagesFound": "No se han encontrado idiomas"
   },
   "appInfo": {
     "appIconAlt": "Icono de la aplicación",
@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Abrir Google Street View",
       "viewData": "Ver datos"
     },
-    "pathTooLong": "No se puede mostrar la miniatura porque la longitud de la ruta del archivo es {{length}}. Windows limita la longitud máxima de las rutas a {{maximum}}. Cambia la ubicación del archivo para acortar su ruta. Para obtener más detalles, pulsa Ctrl+Shift+I y lee los mensajes de la consola.",
-    "generatedThumbnailPathTooLong": "No se puede mostrar la miniatura porque la longitud de la ruta de la miniatura generada es {{length}}. Windows limita la longitud máxima de las rutas a {{maximum}}. Cambia la ubicación del archivo para acortar la ruta de la miniatura generada. Para obtener más detalles, pulsa Ctrl+Shift+I y lee los mensajes de la consola."
+    "pathTooLong": "No se puede mostrar la miniatura porque la longitud de la ruta del archivo es {{length}}. Windows limita la longitud máxima de las rutas a {{maximum}}. Cambia la ubicación del archivo para acortar su ruta. Para obtener más detalles, pulsa Ctrl+Mayús+I y lee los mensajes de la consola.",
+    "generatedThumbnailPathTooLong": "No se puede mostrar la miniatura porque la longitud de la ruta de la miniatura generada es {{length}}. Windows limita la longitud máxima de las rutas a {{maximum}}. Cambia la ubicación del archivo para acortar la ruta de la miniatura generada. Para obtener más detalles, pulsa Ctrl+Mayús+I y lee los mensajes de la consola."
   },
   "map": {
     "zoomIn": "Acercar",
@@ -124,14 +124,14 @@
     },
     "unsupportedDuration": "Este gráfico no puede mostrar más de 30 días cuando se selecciona «Hora», más de 3 días con «Minuto» ni más de 1 hora con «Segundo».",
     "changeUnitOrSelection": "Cambia Año/Mes/Día/Hora/Minuto/Segundo o selecciona fotos de modo que el periodo sea más corto.",
-    "selectPhotosWithinZoom": "Seleccionar las fotos dentro del zoom",
+    "selectPhotosWithinZoom": "Seleccionar las fotos del intervalo ampliado",
     "zoom": "Zoom",
     "resetZoom": "Restablecer\nzoom"
   },
   "loadingFolder": {
     "collecting": "Reuniendo los archivos que se van a cargar de la carpeta abierta...",
     "loading": "Cargando los archivos de la carpeta abierta...",
-    "completed": "Se han cargado todos los archivos (cantidad: {{count}}).",
+    "completed": "Se han cargado todos los archivos ({{count}} en total).",
     "progress": "Archivos cargados: {{loaded}} de {{total}}.",
     "generatingMap": "Generando el mapa con los archivos cargados..."
   },
@@ -152,10 +152,10 @@
     "processedWithErrors": "Archivos procesados: {{processed}} de {{total}}, con errores.",
     "seeFilesWithErrors": "Haz clic aquí para ver los archivos con errores.",
     "seeFilesWithErrorsTitle": "Ver los archivos con errores",
-    "generationRequired": "Miniaturas que hay que generar: {{required}}. Resulta de «archivos HEIF ({{heif}}) − archivos disponibles en la caché ({{cached}})».",
+    "generationRequired": "Miniaturas que hay que generar: {{required}}. Este número resulta de «archivos HEIF ({{heif}}) − archivos disponibles en la caché ({{cached}})».",
     "closeStatusBar": "Cerrar la barra de estado de la generación de miniaturas",
     "errorDialog": {
-      "message": "No se pudieron generar las miniaturas de los siguientes archivos (cantidad: {{count}}):",
+      "message": "No se han podido generar las miniaturas de los siguientes archivos ({{count}} en total):",
       "filter": "Filtrar",
       "number": "N.º",
       "file": "Archivo",
@@ -187,21 +187,21 @@
       "title": "Formato de fecha y hora",
       "description": "El formato de fecha y hora cambiará después de reiniciar la aplicación.",
       "dateFormat": "Formato de fecha",
-      "clockSystem": "12 o 24 horas",
+      "clockSystem": "Formato de 12 o 24 horas",
       "clock12": "12 horas",
       "clock24": "24 horas",
       "example": "Ejemplo"
     },
     "os": {
-      "title": "Menú contextual del Explorador",
-      "description": "Añadir o quitar «{{menuItem}}» en el menú contextual del Explorador.",
+      "title": "Menú contextual del Explorador de archivos",
+      "description": "Añadir o quitar «{{menuItem}}» en el menú contextual del Explorador de archivos.",
       "add": "Añadir",
       "remove": "Quitar",
-      "added": "Se ha añadido «{{menuItem}}» al menú contextual del Explorador.",
-      "removed": "Se ha quitado «{{menuItem}}» del menú contextual del Explorador.",
-      "failedToAdd": "No se pudo añadir «{{menuItem}}» al menú contextual del Explorador.",
-      "failedToRemove": "No se pudo quitar «{{menuItem}}» del menú contextual del Explorador.",
-      "confirmInExplorer": "Abre el Explorador y haz clic con el botón derecho en un archivo o una carpeta para comprobarlo."
+      "added": "Se ha añadido «{{menuItem}}» al menú contextual del Explorador de archivos.",
+      "removed": "Se ha quitado «{{menuItem}}» del menú contextual del Explorador de archivos.",
+      "failedToAdd": "No se ha podido añadir «{{menuItem}}» al menú contextual del Explorador de archivos.",
+      "failedToRemove": "No se ha podido quitar «{{menuItem}}» del menú contextual del Explorador de archivos.",
+      "confirmInExplorer": "Abre el Explorador de archivos y haz clic con el botón derecho en un archivo o una carpeta para comprobarlo."
     },
     "cache": {
       "title": "Caché de miniaturas HEIF",
@@ -246,7 +246,7 @@
     },
     "help": {
       "title": "Ayuda",
-      "showWelcomeDialog": "Mostrar el cuadro de bienvenida",
+      "showWelcomeDialog": "Mostrar el cuadro de diálogo de bienvenida",
       "advancedMenu": "Menú avanzado",
       "openLogFolder": "Abrir la carpeta de registros",
       "toggleDeveloperTools": "Mostrar/ocultar herramientas de desarrollo"

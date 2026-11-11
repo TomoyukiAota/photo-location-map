@@ -60,7 +60,7 @@
   "sortByShootingTimeInfo": {
     "title": "Kārtošana pēc uzņemšanas laika",
     "intro": "Ja ir izvēlēts „Pēc uzņemšanas laika”, lietotne kārto failus šādi:",
-    "step1": "izmanto EXIF datu vērtību DateTimeOriginal. Ja tās nav,",
+    "step1": "izmanto EXIF datu vērtību DateTimeOriginal, bet, ja tās nav,",
     "step2": "izmanto faila modificēšanas laiku.",
     "foldersNote": "Mapes tiek kārtotas pēc nosaukuma, jo mapēm nav „uzņemšanas laika”.",
     "moreDetails": "Papildinformācija",
@@ -68,7 +68,7 @@
       "intro": "Tālāk ir sniegta papildu informācija:",
       "mostTrustworthy": "EXIF datu vērtība DateTimeOriginal ir visuzticamākā informācija par to, kad fotoattēls ir uzņemts.",
       "sometimesMissing": "Lielākā daļa kameru ieraksta DateTimeOriginal lielākajā daļā JPEG/HEIF/TIFF failu, taču dažkārt šīs vērtības nav.",
-      "modifiedTime": "Faila modificēšanas laiks parasti ir fotoattēla uzņemšanas laiks, tāpēc to izmanto, ja nav DateTimeOriginal.",
+      "modifiedTime": "Faila modificēšanas laiks bieži ir fotoattēla uzņemšanas laiks, tāpēc to izmanto, ja nav DateTimeOriginal.",
       "otherFiles": "Failiem, kas nav JPEG/HEIF/TIFF, nav EXIF datu, tāpēc tiem vienmēr izmanto modificēšanas laiku."
     }
   },
@@ -101,14 +101,14 @@
     "zoomIn": "Tuvināt",
     "zoomOut": "Tālināt",
     "layers": "Slāņi",
-    "photosInRegions": "Fotoattēli reģionos: {{count}}",
+    "photosInRegions": "Fotoattēli apgabalos: {{count}}",
     "selectPhotos": "Atlasīt fotoattēlus",
-    "setRegionByRectangle": "Iestatīt reģionu ar taisnstūri",
-    "setRegionByVertex": "Iestatīt reģionu ar virsotnēm",
+    "setRegionByRectangle": "Iestatīt apgabalu ar taisnstūri",
+    "setRegionByVertex": "Iestatīt apgabalu ar virsotnēm",
     "setText": "Ievietot tekstu",
-    "editRegion": "Rediģēt reģionu",
-    "dragRegion": "Pārvietot reģionu",
-    "removeRegion": "Noņemt reģionu"
+    "editRegion": "Rediģēt apgabalu",
+    "dragRegion": "Pārvietot apgabalu",
+    "removeRegion": "Noņemt apgabalu"
   },
   "chart": {
     "moreAlt": "Vairāk",
@@ -131,7 +131,7 @@
   "loadingFolder": {
     "collecting": "Notiek ielādējamo failu apkopošana no atvērtās mapes...",
     "loading": "Notiek failu ielāde no atvērtās mapes...",
-    "completed": "Visi faili ir ielādēti (skaits: {{count}}).",
+    "completed": "Visi faili ir ielādēti (kopā {{count}}).",
     "progress": "Ielādēti faili: {{loaded}} no {{total}}.",
     "generatingMap": "Notiek kartes veidošana no ielādētajiem failiem..."
   },
@@ -155,7 +155,7 @@
     "generationRequired": "Jāizveido sīktēli: {{required}}. Šo skaitu iegūst šādi: „HEIF faili ({{heif}}) − faili, kas jau ir kešatmiņā ({{cached}})”.",
     "closeStatusBar": "Aizvērt sīktēlu veidošanas statusa joslu",
     "errorDialog": {
-      "message": "Neizdevās izveidot sīktēlus šiem failiem (skaits: {{count}}):",
+      "message": "Neizdevās izveidot sīktēlus šiem failiem (kopā {{count}}):",
       "filter": "Filtrēt",
       "number": "Nr.",
       "file": "Fails",
@@ -177,7 +177,7 @@
     "save": "Saglabāt",
     "language": {
       "title": "Valoda",
-      "description": "Valoda mainās pēc lietotnes restartēšanas."
+      "description": "Valoda tiks mainīta pēc lietotnes restartēšanas."
     },
     "appearance": {
       "title": "Izskats",
@@ -185,22 +185,22 @@
     },
     "dateTime": {
       "title": "Datuma un laika formāts",
-      "description": "Datuma un laika formāts mainās pēc lietotnes restartēšanas.",
+      "description": "Datuma un laika formāts tiks mainīts pēc lietotnes restartēšanas.",
       "dateFormat": "Datuma formāts",
-      "clockSystem": "12 vai 24 stundas",
-      "clock12": "12 stundas",
-      "clock24": "24 stundas",
+      "clockSystem": "12 vai 24 stundu formāts",
+      "clock12": "12 stundu",
+      "clock24": "24 stundu",
       "example": "Piemērs"
     },
     "os": {
-      "title": "Failu pārlūka konteksta izvēlne",
-      "description": "Pievienojiet „{{menuItem}}” failu pārlūka konteksta izvēlnei vai noņemiet to.",
+      "title": "Failu pārlūka kontekstizvēlne",
+      "description": "Pievienojiet „{{menuItem}}” failu pārlūka kontekstizvēlnei vai noņemiet to.",
       "add": "Pievienot",
       "remove": "Noņemt",
-      "added": "„{{menuItem}}” ir pievienots failu pārlūka konteksta izvēlnei.",
-      "removed": "„{{menuItem}}” ir noņemts no failu pārlūka konteksta izvēlnes.",
-      "failedToAdd": "Neizdevās pievienot „{{menuItem}}” failu pārlūka konteksta izvēlnei.",
-      "failedToRemove": "Neizdevās noņemt „{{menuItem}}” no failu pārlūka konteksta izvēlnes.",
+      "added": "„{{menuItem}}” ir pievienots failu pārlūka kontekstizvēlnei.",
+      "removed": "„{{menuItem}}” ir noņemts no failu pārlūka kontekstizvēlnes.",
+      "failedToAdd": "Neizdevās pievienot „{{menuItem}}” failu pārlūka kontekstizvēlnei.",
+      "failedToRemove": "Neizdevās noņemt „{{menuItem}}” no failu pārlūka kontekstizvēlnes.",
       "confirmInExplorer": "Lai pārbaudītu, atveriet failu pārlūku un ar peles labo pogu noklikšķiniet uz faila vai mapes."
     },
     "cache": {
@@ -223,8 +223,8 @@
       "about": "Par {{appName}}",
       "services": "Pakalpojumi",
       "hide": "Paslēpt {{appName}}",
-      "hideOthers": "Paslēpt pārējās",
-      "showAll": "Rādīt visas",
+      "hideOthers": "Paslēpt citus",
+      "showAll": "Rādīt visus",
       "quit": "Iziet no {{appName}}"
     },
     "view": {

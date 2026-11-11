@@ -25,7 +25,7 @@
   "appInfo": {
     "appIconAlt": "Biểu tượng ứng dụng",
     "version": "Phiên bản {{version}}",
-    "developedBy": "Được phát triển bởi Tomoyuki Aota.",
+    "developedBy": "Do Tomoyuki Aota phát triển.",
     "xProfileAlt": "Hồ sơ X (trước đây là Twitter)",
     "xProfileTitle": "Mở hồ sơ X (trước đây là Twitter)",
     "gitHubProfileAlt": "Hồ sơ GitHub",
@@ -35,7 +35,7 @@
   },
   "welcome": {
     "message": "Chào mừng bạn đến với {{appName}}",
-    "usageInfoCollection": "Để cải thiện ứng dụng này, thông tin sử dụng ẩn danh sẽ được thu thập. Khi tiếp tục sử dụng ứng dụng, bạn đồng ý với điều này."
+    "usageInfoCollection": "Để cải thiện ứng dụng này, ứng dụng thu thập thông tin sử dụng ẩn danh. Khi tiếp tục sử dụng ứng dụng, bạn đồng ý với điều này."
   },
   "about": {
     "releasesLink": "Tải xuống và ghi chú phát hành",
@@ -60,10 +60,10 @@
   "sortByShootingTimeInfo": {
     "title": "Sắp xếp theo thời gian chụp",
     "intro": "Khi chọn “Theo thời gian chụp”, ứng dụng sắp xếp các tệp như sau:",
-    "step1": "dùng DateTimeOriginal trong EXIF. Nếu không có,",
+    "step1": "dùng DateTimeOriginal trong EXIF; nếu không có thì",
     "step2": "dùng thời gian sửa đổi của tệp.",
     "foldersNote": "Thư mục được sắp xếp theo tên vì thư mục không có “thời gian chụp”.",
-    "moreDetails": "Chi tiết khác",
+    "moreDetails": "Thêm chi tiết",
     "details": {
       "intro": "Sau đây là thông tin bổ sung:",
       "mostTrustworthy": "DateTimeOriginal trong EXIF là thông tin đáng tin cậy nhất về thời điểm chụp ảnh.",
@@ -111,7 +111,7 @@
     "removeRegion": "Xóa vùng"
   },
   "chart": {
-    "moreAlt": "Thêm",
+    "moreAlt": "Xem thêm",
     "dateUnknownPhotos": "Ảnh không rõ ngày chụp: {{count}}",
     "showDateUnknownPhotos": "Hiển thị ảnh không rõ ngày chụp trên bản đồ",
     "units": {
@@ -131,7 +131,7 @@
   "loadingFolder": {
     "collecting": "Đang thu thập các tệp cần tải từ thư mục đã mở...",
     "loading": "Đang tải các tệp từ thư mục đã mở...",
-    "completed": "Đã tải tất cả các tệp (số lượng: {{count}}).",
+    "completed": "Đã tải tất cả các tệp ({{count}} tệp).",
     "progress": "Số tệp đã tải: {{loaded}} / {{total}}.",
     "generatingMap": "Đang tạo bản đồ từ các tệp đã tải..."
   },
@@ -155,7 +155,7 @@
     "generationRequired": "Số hình thu nhỏ cần tạo: {{required}}. Số này được tính bằng “tệp HEIF ({{heif}}) − tệp đã có trong bộ nhớ đệm ({{cached}})”.",
     "closeStatusBar": "Đóng thanh trạng thái tạo hình thu nhỏ",
     "errorDialog": {
-      "message": "Không thể tạo hình thu nhỏ cho các tệp sau (số lượng: {{count}}):",
+      "message": "Không thể tạo hình thu nhỏ cho {{count}} tệp sau:",
       "filter": "Lọc",
       "number": "STT",
       "file": "Tệp",
@@ -169,7 +169,7 @@
       "language": "Ngôn ngữ (Language)",
       "appearance": "Giao diện",
       "dateTime": "Ngày & giờ",
-      "os": "Hệ thống",
+      "os": "Hệ điều hành",
       "cache": "Bộ nhớ đệm"
     },
     "restartAfterSaving": "Ứng dụng này sẽ khởi động lại sau khi lưu cài đặt.",
@@ -187,7 +187,7 @@
       "title": "Định dạng ngày và giờ",
       "description": "Định dạng ngày và giờ sẽ thay đổi sau khi ứng dụng khởi động lại.",
       "dateFormat": "Định dạng ngày",
-      "clockSystem": "12 hoặc 24 giờ",
+      "clockSystem": "Định dạng 12 hoặc 24 giờ",
       "clock12": "12 giờ",
       "clock24": "24 giờ",
       "example": "Ví dụ"
@@ -223,7 +223,7 @@
       "about": "Giới thiệu về {{appName}}",
       "services": "Dịch vụ",
       "hide": "Ẩn {{appName}}",
-      "hideOthers": "Ẩn các ứng dụng khác",
+      "hideOthers": "Ẩn các mục khác",
       "showAll": "Hiển thị tất cả",
       "quit": "Thoát {{appName}}"
     },

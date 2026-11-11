@@ -1,6 +1,6 @@
 <div class="welcome-dialog-container">
   <img src="favicon.svg" [alt]="'appInfo.appIconAlt' | t" class="app-icon">
-  <div class="welcome-message">{{ 'welcome.message' | t }}</div>
+  <div class="welcome-message">{{ 'welcome.message' | t: { appName: appNameOnOneLine } }}</div>
   <div class="app-version">{{ 'appInfo.version' | t: { version: appVersion } }}</div>
   <div class="developed-by">
     <div class="developed-by-message">

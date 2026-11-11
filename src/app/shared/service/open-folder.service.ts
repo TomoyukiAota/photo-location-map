@@ -91,7 +91,8 @@ export class OpenFolderService {
   private showLoadingFolderDialog() {
     return this.dialog.open(LoadingFolderDialogComponent, {
       width: '440px',
-      height: '120px',
+      // At least its height in English; taller for texts that take two lines each in another language.
+      minHeight: '120px',
       panelClass: 'custom-dialog-container',
       disableClose: true,
       autoFocus: false,

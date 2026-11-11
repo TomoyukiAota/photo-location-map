@@ -35,7 +35,7 @@
   },
   "welcome": {
     "message": "Witamy w {{appName}}",
-    "usageInfoCollection": "Aby ulepszać tę aplikację, zbierane są anonimowe dane o jej używaniu. Dalsze korzystanie z aplikacji oznacza zgodę na to."
+    "usageInfoCollection": "W celu ulepszania tej aplikacji zbierane są anonimowe dane o jej użytkowaniu. Dalsze korzystanie z aplikacji oznacza zgodę na ich zbieranie."
   },
   "about": {
     "releasesLink": "Pliki do pobrania i informacje o wydaniach",
@@ -52,23 +52,23 @@
     "sort": {
       "title": "Sortuj",
       "byName": "Według nazwy",
-      "byShootingTime": "Według czasu zrobienia",
+      "byShootingTime": "Według daty wykonania",
       "ascending": "Rosnąco",
       "descending": "Malejąco"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "Sortowanie według czasu zrobienia",
-    "intro": "Gdy wybrano „Według czasu zrobienia”, aplikacja sortuje pliki w ten sposób:",
+    "title": "Sortowanie według daty wykonania",
+    "intro": "Gdy wybrano „Według daty wykonania”, aplikacja sortuje pliki w ten sposób:",
     "step1": "Używa wartości DateTimeOriginal z danych EXIF. Jeśli jej nie ma,",
     "step2": "używa daty modyfikacji pliku.",
-    "foldersNote": "Foldery są sortowane według nazw, ponieważ foldery nie mają „czasu zrobienia”.",
+    "foldersNote": "Foldery są sortowane według nazw, ponieważ foldery nie mają „daty wykonania”.",
     "moreDetails": "Więcej informacji",
     "details": {
       "intro": "Poniżej kilka dodatkowych informacji:",
       "mostTrustworthy": "Wartość DateTimeOriginal z danych EXIF to najbardziej wiarygodna informacja o tym, kiedy zrobiono zdjęcie.",
       "sometimesMissing": "Większość aparatów zapisuje DateTimeOriginal w większości plików JPEG/HEIF/TIFF, ale czasem tej wartości brakuje.",
-      "modifiedTime": "Data modyfikacji pliku często jest czasem zrobienia zdjęcia, dlatego jest używana zastępczo, gdy brakuje DateTimeOriginal.",
+      "modifiedTime": "Data modyfikacji pliku często jest datą wykonania zdjęcia, dlatego jest używana zastępczo, gdy brakuje DateTimeOriginal.",
       "otherFiles": "Pliki inne niż JPEG/HEIF/TIFF nie zawierają danych EXIF, dlatego dla nich zawsze używana jest data modyfikacji."
     }
   },
@@ -126,12 +126,12 @@
     "changeUnitOrSelection": "Zmień Rok/Miesiąc/Dzień/Godzina/Minuta/Sekunda albo zaznacz zdjęcia tak, aby okres był krótszy.",
     "selectPhotosWithinZoom": "Zaznacz zdjęcia w powiększonym zakresie",
     "zoom": "Powiększenie",
-    "resetZoom": "Wyzeruj\npowiększenie"
+    "resetZoom": "Resetuj\npowiększenie"
   },
   "loadingFolder": {
     "collecting": "Zbieranie plików do wczytania z otwartego folderu...",
     "loading": "Wczytywanie plików z otwartego folderu...",
-    "completed": "Wczytano wszystkie pliki (liczba: {{count}}).",
+    "completed": "Wczytano wszystkie pliki (łącznie {{count}}).",
     "progress": "Wczytane pliki: {{loaded}} z {{total}}.",
     "generatingMap": "Tworzenie mapy z wczytanych plików..."
   },
@@ -155,7 +155,7 @@
     "generationRequired": "Miniaturki do utworzenia: {{required}}. Liczba ta wynika z działania „pliki HEIF ({{heif}}) − pliki dostępne w pamięci podręcznej ({{cached}})”.",
     "closeStatusBar": "Zamknij pasek stanu tworzenia miniaturek",
     "errorDialog": {
-      "message": "Nie udało się utworzyć miniaturek następujących plików (liczba: {{count}}):",
+      "message": "Nie udało się utworzyć miniaturek następujących plików (łącznie {{count}}):",
       "filter": "Filtruj",
       "number": "Nr",
       "file": "Plik",
@@ -187,9 +187,9 @@
       "title": "Format daty i czasu",
       "description": "Format daty i czasu zmieni się po ponownym uruchomieniu aplikacji.",
       "dateFormat": "Format daty",
-      "clockSystem": "12 lub 24 godziny",
-      "clock12": "12 godzin",
-      "clock24": "24 godziny",
+      "clockSystem": "Format 12- lub 24-godzinny",
+      "clock12": "12-godzinny",
+      "clock24": "24-godzinny",
       "example": "Przykład"
     },
     "os": {

@@ -23,7 +23,7 @@
     "noLanguagesFound": "Inga språk hittades"
   },
   "appInfo": {
-    "appIconAlt": "Appsymbol",
+    "appIconAlt": "Appikon",
     "version": "Version {{version}}",
     "developedBy": "Utvecklad av Tomoyuki Aota.",
     "xProfileAlt": "Profil på X (tidigare Twitter)",
@@ -38,8 +38,8 @@
     "usageInfoCollection": "För att förbättra den här appen samlas anonym användningsinformation in. Genom att fortsätta använda appen godkänner du det."
   },
   "about": {
-    "releasesLink": "Hämtningar och versionsinformation",
-    "releasesLinkTitle": "Öppna hämtningar och versionsinformation",
+    "releasesLink": "Nedladdningar och versionsinformation",
+    "releasesLinkTitle": "Öppna nedladdningar och versionsinformation",
     "translations": "Översättningar till andra språk är välkomna: se <guideLink>hur du översätter den här appen</guideLink>.",
     "translationsLinkTitle": "Öppna guiden för att översätta den här appen",
     "homePageTitle": "Öppna hemsidan",
@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Öppna Google Street View",
       "viewData": "Visa data"
     },
-    "pathTooLong": "Miniatyren kan inte visas eftersom filens sökväg är {{length}} tecken lång. Windows begränsar sökvägens längd till {{maximum}} tecken. Flytta filen så att sökvägen blir kortare. Tryck på Ctrl+Shift+I och läs meddelandena i konsolen för mer information.",
-    "generatedThumbnailPathTooLong": "Miniatyren kan inte visas eftersom sökvägen till den skapade miniatyren är {{length}} tecken lång. Windows begränsar sökvägens längd till {{maximum}} tecken. Flytta filen så att sökvägen till den skapade miniatyren blir kortare. Tryck på Ctrl+Shift+I och läs meddelandena i konsolen för mer information."
+    "pathTooLong": "Miniatyren kan inte visas eftersom filens sökväg är {{length}} tecken lång. Windows begränsar sökvägens längd till {{maximum}} tecken. Flytta filen så att sökvägen blir kortare. Tryck på Ctrl+Skift+I och läs meddelandena i konsolen för mer information.",
+    "generatedThumbnailPathTooLong": "Miniatyren kan inte visas eftersom sökvägen till den skapade miniatyren är {{length}} tecken lång. Windows begränsar sökvägens längd till {{maximum}} tecken. Flytta filen så att sökvägen till den skapade miniatyren blir kortare. Tryck på Ctrl+Skift+I och läs meddelandena i konsolen för mer information."
   },
   "map": {
     "zoomIn": "Zooma in",
@@ -124,14 +124,14 @@
     },
     "unsupportedDuration": "Det här diagrammet kan inte visa mer än 30 dagar när ”Timme” är valt, mer än 3 dagar för ”Minut” eller mer än 1 timme för ”Sekund”.",
     "changeUnitOrSelection": "Ändra År/Månad/Dag/Timme/Minut/Sekund eller markera bilder så att perioden blir kortare.",
-    "selectPhotosWithinZoom": "Markera bilder inom zoomen",
+    "selectPhotosWithinZoom": "Markera bilder inom zoomområdet",
     "zoom": "Zooma",
     "resetZoom": "Återställ\nzoom"
   },
   "loadingFolder": {
     "collecting": "Samlar in filerna som ska läsas in från den öppnade mappen...",
     "loading": "Läser in filer från den öppnade mappen...",
-    "completed": "Alla filer har lästs in (antal: {{count}}).",
+    "completed": "Alla filer har lästs in (totalt {{count}}).",
     "progress": "Inlästa filer: {{loaded}} av {{total}}.",
     "generatingMap": "Skapar kartan av de inlästa filerna..."
   },
@@ -155,7 +155,7 @@
     "generationRequired": "Miniatyrer som behöver skapas: {{required}}. Antalet ges av ”HEIF-filer ({{heif}}) − filer som finns i cachen ({{cached}})”.",
     "closeStatusBar": "Stäng statusfältet för miniatyrskapandet",
     "errorDialog": {
-      "message": "Det gick inte att skapa miniatyrer för följande filer (antal: {{count}}):",
+      "message": "Det gick inte att skapa miniatyrer för följande filer (totalt {{count}}):",
       "filter": "Filtrera",
       "number": "Nr",
       "file": "Fil",
@@ -169,7 +169,7 @@
       "language": "Språk (Language)",
       "appearance": "Utseende",
       "dateTime": "Datum och tid",
-      "os": "System",
+      "os": "Operativsystem",
       "cache": "Cache"
     },
     "restartAfterSaving": "Appen startas om när inställningarna har sparats.",
@@ -187,9 +187,9 @@
       "title": "Datum- och tidsformat",
       "description": "Datum- och tidsformatet ändras när appen har startats om.",
       "dateFormat": "Datumformat",
-      "clockSystem": "12/24 timmar",
-      "clock12": "12 timmar",
-      "clock24": "24 timmar",
+      "clockSystem": "12- eller 24-timmarsklocka",
+      "clock12": "12-timmarsklocka",
+      "clock24": "24-timmarsklocka",
       "example": "Exempel"
     },
     "os": {

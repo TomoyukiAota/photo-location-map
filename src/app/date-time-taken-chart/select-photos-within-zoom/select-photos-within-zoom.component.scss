@@ -1,4 +1,5 @@
 @use "sass:color";
+@use "../../../styles/balanced-lines" as *;
 
 button {
   display: inline-block;
@@ -8,11 +9,21 @@ button {
   outline: none;
   border: 1px solid #cccccc;
   border-radius: 4px;
-  width: 106px;
+  // TL;DR: As wide as it is in English, 106px, and wider only for a text that needs it: as wide as its longest
+  // word, and as wide as the component finds that the text needs to take three lines at most, up to 160px.
+  // Details: With 106px in every language, which fits the two lines of the English text, the text took four lines
+  // in 24 of the 42 languages, as "the photos of the zoomed range" is twice as long as "Photos within Zoom" in most
+  // of them. The button was then taller than the room that the chart's column has at the chart's smallest height,
+  // and a word of 15 letters was broken in its middle. No style gives a box the width at which its text takes a
+  // number of lines, so the component measures it (see there) and sets --width. A button that is wider than the
+  // column reaches over the chart's right margin, which is empty beside the chart's slider (90px, the chart's grid).
+  width: var(--width, 106px);
+  min-width: min-content;
   // The height of two lines, which the text has in English; taller for a text of three lines in another language.
   min-height: 50px;
   line-height: 20px;
-  overflow-wrap: break-word;
+  // As "Select Photos" above "within Zoom".
+  @include balanced-lines;
   font-size: 14px;
   user-select: none;
   white-space: normal;

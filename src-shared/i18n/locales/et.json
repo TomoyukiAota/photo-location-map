@@ -60,7 +60,7 @@
   "sortByShootingTimeInfo": {
     "title": "Sortimine pildistamisaja järgi",
     "intro": "Kui valitud on „Pildistamisaja järgi“, sordib rakendus failid nii:",
-    "step1": "kasutab EXIF-andmete väärtust DateTimeOriginal. Kui see puudub,",
+    "step1": "kasutab EXIF-andmete väärtust DateTimeOriginal ja kui see puudub,",
     "step2": "kasutab faili muutmisaega.",
     "foldersNote": "Kaustad sorditakse nime järgi, sest kaustadel ei ole „pildistamisaega“.",
     "moreDetails": "Rohkem üksikasju",
@@ -68,7 +68,7 @@
       "intro": "Allpool on lisateave:",
       "mostTrustworthy": "EXIF-andmete väärtus DateTimeOriginal on kõige usaldusväärsem teave foto tegemise aja kohta.",
       "sometimesMissing": "Enamik kaameraid kirjutab väärtuse DateTimeOriginal enamikku JPEG/HEIF/TIFF-failidesse, kuid mõnikord see puudub.",
-      "modifiedTime": "Faili muutmisaeg on enamasti foto tegemise aeg, seepärast kasutatakse seda siis, kui DateTimeOriginal puudub.",
+      "modifiedTime": "Faili muutmisaeg on sageli foto tegemise aeg, seepärast kasutatakse seda asendusena, kui DateTimeOriginal puudub.",
       "otherFiles": "Muudel failidel peale JPEG/HEIF/TIFF-failide EXIF-andmeid ei ole, seega kasutatakse nende puhul alati muutmisaega."
     }
   },
@@ -131,7 +131,7 @@
   "loadingFolder": {
     "collecting": "Avatud kaustast laaditavate failide kogumine...",
     "loading": "Avatud kausta failide laadimine...",
-    "completed": "Kõik failid on laaditud (arv: {{count}}).",
+    "completed": "Kõik failid on laaditud (kokku {{count}}).",
     "progress": "Laaditud faile: {{loaded}} / {{total}}.",
     "generatingMap": "Laaditud failidest kaardi loomine..."
   },
@@ -155,7 +155,7 @@
     "generationRequired": "Loodavaid pisipilte: {{required}}. See arv saadakse nii: „HEIF-failid ({{heif}}) − vahemälus juba olemas olevad failid ({{cached}})“.",
     "closeStatusBar": "Sulge pisipiltide loomise olekuriba",
     "errorDialog": {
-      "message": "Järgmiste failide pisipilte ei õnnestunud luua (arv: {{count}}):",
+      "message": "Järgmiste failide pisipilte ei õnnestunud luua (kokku {{count}}):",
       "filter": "Filtreeri",
       "number": "Nr",
       "file": "Fail",
@@ -169,7 +169,7 @@
       "language": "Keel (Language)",
       "appearance": "Välimus",
       "dateTime": "Kuupäev ja kellaaeg",
-      "os": "Süsteem",
+      "os": "Operatsioonisüsteem",
       "cache": "Vahemälu"
     },
     "restartAfterSaving": "Pärast seadete salvestamist taaskäivitatakse see rakendus.",
@@ -187,9 +187,9 @@
       "title": "Kuupäeva ja kellaaja vorming",
       "description": "Kuupäeva ja kellaaja vorming muutub pärast rakenduse taaskäivitamist.",
       "dateFormat": "Kuupäeva vorming",
-      "clockSystem": "12 või 24 tundi",
-      "clock12": "12 tundi",
-      "clock24": "24 tundi",
+      "clockSystem": "12- või 24-tunnine vorming",
+      "clock12": "12-tunnine vorming",
+      "clock24": "24-tunnine vorming",
       "example": "Näide"
     },
     "os": {
@@ -225,7 +225,7 @@
       "hide": "Peida {{appName}}",
       "hideOthers": "Peida teised",
       "showAll": "Kuva kõik",
-      "quit": "Sulge {{appName}}"
+      "quit": "Välju rakendusest {{appName}}"
     },
     "view": {
       "title": "Vaade",

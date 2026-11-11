@@ -17,7 +17,7 @@
       "windows": "A Windows beállításának használata ({{language}})",
       "other": "A rendszer beállításának használata ({{language}})"
     },
-    "restartToApply": "Az alkalmazás újraindul a nyelv alkalmazásához.",
+    "restartToApply": "A nyelv beállításához az alkalmazás újraindul.",
     "confirm": "OK",
     "search": "Keresés",
     "noLanguagesFound": "Nem található nyelv"
@@ -34,7 +34,7 @@
     "troubleshootingLinkTitle": "A hibaelhárítási oldal megnyitása"
   },
   "welcome": {
-    "message": "Üdvözli a(z) {{appName}}",
+    "message": "Üdvözli a {{appName}}",
     "usageInfoCollection": "Az alkalmazás fejlesztése érdekében névtelen használati adatokat gyűjtünk. Az alkalmazás további használatával ehhez hozzájárul."
   },
   "about": {
@@ -42,7 +42,7 @@
     "releasesLinkTitle": "A letöltések és a kiadási megjegyzések megnyitása",
     "translations": "Szívesen fogadjuk a más nyelvekre készült fordításokat: lásd <guideLink>az alkalmazás fordításának módját</guideLink>.",
     "translationsLinkTitle": "Az alkalmazás fordítási útmutatójának megnyitása",
-    "homePageTitle": "A kezdőlap megnyitása",
+    "homePageTitle": "A honlap megnyitása",
     "sourceCodeTitle": "A forráskód megtekintése a GitHubon"
   },
   "sidebar": {
@@ -90,12 +90,12 @@
     "menu": {
       "selectOnlyThis": "Csak ennek a fájlnak a kijelölése",
       "openFolder": "Mappa megnyitása",
-      "openGoogleMaps": "Megnyitás a Google Térképben",
-      "openGoogleStreetView": "Megnyitás a Google Street View-ban",
+      "openGoogleMaps": "Megnyitás a Google Térképen",
+      "openGoogleStreetView": "Megnyitás a Google Utcaképben",
       "viewData": "Adatok megtekintése"
     },
-    "pathTooLong": "A bélyegkép nem jeleníthető meg, mert a fájl elérési útjának hossza {{length}}. A Windows az elérési út hosszát legfeljebb {{maximum}} karakterre korlátozza. Helyezze át a fájlt, hogy rövidebb legyen az elérési útja. A részletekért nyomja meg a Ctrl+Shift+I billentyűkombinációt, és olvassa el a konzol üzeneteit.",
-    "generatedThumbnailPathTooLong": "A bélyegkép nem jeleníthető meg, mert az elkészített bélyegkép elérési útjának hossza {{length}}. A Windows az elérési út hosszát legfeljebb {{maximum}} karakterre korlátozza. Helyezze át a fájlt, hogy rövidebb legyen az elkészített bélyegkép elérési útja. A részletekért nyomja meg a Ctrl+Shift+I billentyűkombinációt, és olvassa el a konzol üzeneteit."
+    "pathTooLong": "A bélyegkép nem jeleníthető meg, mert a fájl elérési útjának hossza {{length}} karakter. A Windows az elérési út hosszát legfeljebb {{maximum}} karakterre korlátozza. Helyezze át a fájlt, hogy rövidebb legyen az elérési útja. A részletekért nyomja meg a Ctrl+Shift+I billentyűkombinációt, és olvassa el a konzol üzeneteit.",
+    "generatedThumbnailPathTooLong": "A bélyegkép nem jeleníthető meg, mert az elkészített bélyegkép elérési útjának hossza {{length}} karakter. A Windows az elérési út hosszát legfeljebb {{maximum}} karakterre korlátozza. Helyezze át a fájlt, hogy rövidebb legyen az elkészített bélyegkép elérési útja. A részletekért nyomja meg a Ctrl+Shift+I billentyűkombinációt, és olvassa el a konzol üzeneteit."
   },
   "map": {
     "zoomIn": "Nagyítás",
@@ -131,7 +131,7 @@
   "loadingFolder": {
     "collecting": "A betöltendő fájlok összegyűjtése a megnyitott mappából...",
     "loading": "Fájlok betöltése a megnyitott mappából...",
-    "completed": "Minden fájl betöltődött (darabszám: {{count}}).",
+    "completed": "Minden fájl betöltődött (összesen {{count}}).",
     "progress": "Betöltött fájlok: {{loaded}} / {{total}}.",
     "generatingMap": "A térkép elkészítése a betöltött fájlokból..."
   },
@@ -155,7 +155,7 @@
     "generationRequired": "Elkészítendő bélyegképek: {{required}}. Ez a szám így adódik: „HEIF-fájlok ({{heif}}) − a gyorsítótárban elérhető fájlok ({{cached}})”.",
     "closeStatusBar": "A bélyegképkészítés állapotsorának bezárása",
     "errorDialog": {
-      "message": "A következő fájlok bélyegképét nem sikerült elkészíteni (darabszám: {{count}}):",
+      "message": "A következő {{count}} fájl bélyegképét nem sikerült elkészíteni:",
       "filter": "Szűrés",
       "number": "Sorsz.",
       "file": "Fájl",
@@ -169,7 +169,7 @@
       "language": "Nyelv (Language)",
       "appearance": "Megjelenés",
       "dateTime": "Dátum és idő",
-      "os": "Rendszer",
+      "os": "Operációs rendszer",
       "cache": "Gyorsítótár"
     },
     "restartAfterSaving": "Az alkalmazás a beállítások mentése után újraindul.",
@@ -187,20 +187,20 @@
       "title": "Dátum- és időformátum",
       "description": "A dátum- és időformátum az alkalmazás újraindítása után változik meg.",
       "dateFormat": "Dátumformátum",
-      "clockSystem": "12 vagy 24 órás",
-      "clock12": "12 órás",
-      "clock24": "24 órás",
+      "clockSystem": "12 vagy 24 órás formátum",
+      "clock12": "12 órás formátum",
+      "clock24": "24 órás formátum",
       "example": "Példa"
     },
     "os": {
       "title": "A Fájlkezelő helyi menüje",
-      "description": "A(z) „{{menuItem}}” elem hozzáadása a Fájlkezelő helyi menüjéhez, illetve eltávolítása onnan.",
+      "description": "A „{{menuItem}}” elem hozzáadása a Fájlkezelő helyi menüjéhez, illetve eltávolítása onnan.",
       "add": "Hozzáadás",
       "remove": "Eltávolítás",
-      "added": "A(z) „{{menuItem}}” elem bekerült a Fájlkezelő helyi menüjébe.",
-      "removed": "A(z) „{{menuItem}}” elem kikerült a Fájlkezelő helyi menüjéből.",
-      "failedToAdd": "A(z) „{{menuItem}}” elemet nem sikerült hozzáadni a Fájlkezelő helyi menüjéhez.",
-      "failedToRemove": "A(z) „{{menuItem}}” elemet nem sikerült eltávolítani a Fájlkezelő helyi menüjéből.",
+      "added": "A „{{menuItem}}” elem bekerült a Fájlkezelő helyi menüjébe.",
+      "removed": "A „{{menuItem}}” elem kikerült a Fájlkezelő helyi menüjéből.",
+      "failedToAdd": "A „{{menuItem}}” elemet nem sikerült hozzáadni a Fájlkezelő helyi menüjéhez.",
+      "failedToRemove": "A „{{menuItem}}” elemet nem sikerült eltávolítani a Fájlkezelő helyi menüjéből.",
       "confirmInExplorer": "Nyissa meg a Fájlkezelőt, és az ellenőrzéshez kattintson a jobb gombbal egy fájlra vagy mappára."
     },
     "cache": {
@@ -220,12 +220,12 @@
   },
   "menu": {
     "app": {
-      "about": "A(z) {{appName}} névjegye",
+      "about": "A {{appName}} névjegye",
       "services": "Szolgáltatások",
-      "hide": "A(z) {{appName}} elrejtése",
-      "hideOthers": "A többi elrejtése",
-      "showAll": "Az összes megjelenítése",
-      "quit": "Kilépés a(z) {{appName}} alkalmazásból"
+      "hide": "A {{appName}} elrejtése",
+      "hideOthers": "Többi elrejtése",
+      "showAll": "Összes megjelenítése",
+      "quit": "Kilépés a {{appName}} alkalmazásból"
     },
     "view": {
       "title": "Nézet",
@@ -253,8 +253,8 @@
     }
   },
   "autoUpdate": {
-    "title": "Elérhető a(z) {{appName}} új verziója!",
-    "message": "Elérhető a(z) {{appName}} új verziója, amely az újraindítás után települ.\nÚjraindítja most az alkalmazást?\n\nJelenlegi verzió: {{currentVersion}}\nLegújabb verzió: {{latestVersion}}",
+    "title": "Elérhető a {{appName}} új verziója!",
+    "message": "Elérhető a {{appName}} új verziója, amely az újraindítás után települ.\nÚjraindítja most az alkalmazást?\n\nJelenlegi verzió: {{currentVersion}}\nLegújabb verzió: {{latestVersion}}",
     "yes": "Igen",
     "no": "Nem"
   }
