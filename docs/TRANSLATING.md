@@ -216,7 +216,9 @@ To add a language:
    - `<link>` and `</link>` are around the words of a link: keep the pair,
      around the words that are the link in your language.
    - The names stay as they are: Photo Location Map, Photo Data Viewer,
-     Windows Defender SmartScreen, GitHub, EXIF.
+     Windows Defender SmartScreen, GitHub, EXIF. Write them with ordinary
+     spaces: the page keeps Photo Location Map, Photo Data Viewer, the
+     developer's name, More info and Run anyway on one line by itself.
    - The steps of the Windows download page name the two buttons of Windows'
      warning as a Windows in your language shows them, with the English words
      after them in parentheses, as the two pictures on the page are of an
@@ -239,11 +241,22 @@ and that the list is in the order of the application's. To look at the result,
 serve the folder (`python3 -m http.server 8080 --directory docs`) and open
 `http://localhost:8080/?lang=<code>`.
 
+`node test/website/layout-in-every-language.mjs` opens the two pages in every
+language at 18 widths, from a phone's to a desktop's, and reports what does not
+fit: run it after a change to the website's layout or to a text of a button.
+The layout is the same for every language and follows its texts: the two
+download buttons are side by side when they fit in the page's language, and
+one above the other when they do not. A line ends where the page's language
+ends its lines, Japanese between its phrases and Korean between its words,
+and not inside one of the names that the page keeps on one line.
+
 The website's texts have the status of the application's
 ([Languages](#languages)): English is the source, Japanese is the
 maintainer's, and the others are machine translations until a speaker reviews
-them. In those, the names of Windows' two buttons were written from memory,
-not read off a Windows in the language.
+them. In those, the names of Windows' two buttons were looked up in the review
+of November 2026. Where a page was found that shows or quotes the warning of a
+Windows in the language, the name is the one it has; in the other languages it
+is the reviewers' best knowledge, not read off a Windows.
 
 ## How the language is chosen
 

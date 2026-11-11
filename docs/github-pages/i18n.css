@@ -5,6 +5,29 @@ html.i18n-pending body {
   visibility: hidden;
 }
 
+/*
+ * TL;DR: A line ends where the page's language ends its lines, and a text of several lines does not end with a word
+ * alone on its last line, where the browser can avoid that.
+ * Details: A browser breaks Japanese and Korean after any letter, so a line ended inside a word, and a sentence with
+ * one letter on a line of its own in a desktop's window (...してくださ / い。). Japanese is broken between its phrases
+ * (word-break: auto-phrase, which does nothing in a language without them) and never before a long vowel mark or a
+ * small letter (line-break: strict), and Korean between its words, which spaces separate (keep-all): each
+ * language's own way of breaking a line, as the direction is for Arabic and Hebrew. In the other languages, the
+ * steps of the download page ended with "info)." alone on a line on a phone: text-wrap: pretty asks a browser to
+ * break the lines before the last one so that this does not happen. A browser that does not know one of these
+ * breaks the lines as before. The landing page's centered sentences have lines of about the same length instead
+ * (github-page-style.css).
+ */
+body {
+  text-wrap: pretty;
+  line-break: strict;
+  word-break: auto-phrase;
+}
+
+body:lang(ko) {
+  word-break: keep-all;
+}
+
 /* Where a line ends, the right, or the left in a page laid out from right to left: of the column that the landing page
    is, and of the block that the download page is. */
 .language {

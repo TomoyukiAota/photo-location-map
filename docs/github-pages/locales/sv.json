@@ -14,14 +14,14 @@
     "troubleshooting": "Om du får problem med den här appen kan du läsa <link>felsökningssidan</link>.",
     "sourceCode": "Källkoden till Photo Location Map <link>finns på GitHub</link>.",
     "developedBy": "Photo Location Map utvecklas av <link>Tomoyuki Aota</link>.",
-    "wantExifData": "Vill du se EXIF-data?",
+    "wantExifData": "Vill du se EXIF-information?",
     "photoDataViewer": "<link>Photo Data Viewer</link> finns också.",
     "analyticsNotice": "Den här webbplatsen samlar in användningsinformation."
   },
   "downloading": {
     "pageTitle": "Laddar ned Photo Location Map",
     "willStart": "Nedladdningen av Photo Location Map startar strax. Om den inte startar klickar du <link>här</link>.",
-    "howToInstall": "Så här installerar du",
+    "howToInstall": "Så här installerar du appen",
     "step1": "1. Dubbelklicka på den nedladdade exe-filen.",
     "step2": "2. Fönstret Windows Defender SmartScreen visas. Klicka på ”Mer information” (More info).",
     "moreInfoImageAlt": "Bild av Windows Defender SmartScreen (Mer information)",

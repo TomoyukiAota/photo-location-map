@@ -14,7 +14,7 @@
     "troubleshooting": "Ako naiđete na probleme sa ovom aplikacijom, pogledajte <link>stranicu za rešavanje problema</link>.",
     "sourceCode": "Izvorni kôd aplikacije Photo Location Map <link>dostupan je na GitHub-u</link>.",
     "developedBy": "Aplikaciju Photo Location Map razvija <link>Tomoyuki Aota</link>.",
-    "wantExifData": "Želite da pregledate EXIF podatke?",
+    "wantExifData": "Želite li da pregledate podatke EXIF?",
     "photoDataViewer": "Dostupan je i <link>Photo Data Viewer</link>.",
     "analyticsNotice": "Ovaj veb-sajt prikuplja podatke o korišćenju."
   },
@@ -22,7 +22,7 @@
     "pageTitle": "Preuzimanje aplikacije Photo Location Map",
     "willStart": "Preuzimanje aplikacije Photo Location Map uskoro počinje. Ako ne počne, kliknite <link>ovde</link>.",
     "howToInstall": "Kako se instalira",
-    "step1": "1. Dvaput kliknite na preuzetu exe datoteku.",
+    "step1": "1. Dvaput kliknite na preuzetu datoteku exe.",
     "step2": "2. Pojaviće se iskačući prozor Windows Defender SmartScreen. Kliknite na „Više informacija“ (More info).",
     "moreInfoImageAlt": "Slika prozora Windows Defender SmartScreen (Više informacija)",
     "step3": "3. Kliknite na „Ipak pokreni“ (Run anyway).",

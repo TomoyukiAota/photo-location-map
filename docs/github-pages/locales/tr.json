@@ -12,15 +12,15 @@
     "showsLocationsOnMap": "Bu uygulama, fotoğraflardaki konum verisini okur ve konumları haritada gösterir.",
     "supportedFileFormats": "Desteklenen dosya biçimleri:",
     "troubleshooting": "Bu uygulamayla ilgili sorun yaşarsanız <link>sorun giderme sayfasına</link> bakın.",
-    "sourceCode": "Photo Location Map'in kaynak kodu <link>GitHub'da barındırılıyor</link>.",
-    "developedBy": "Photo Location Map'i <link>Tomoyuki Aota</link> geliştiriyor.",
+    "sourceCode": "Photo Location Map’in kaynak kodu <link>GitHub’da barındırılıyor</link>.",
+    "developedBy": "Photo Location Map’i <link>Tomoyuki Aota</link> geliştiriyor.",
     "wantExifData": "EXIF verilerine bakmak ister misiniz?",
     "photoDataViewer": "<link>Photo Data Viewer</link> da kullanılabilir.",
     "analyticsNotice": "Bu web sitesi kullanım bilgileri toplar."
   },
   "downloading": {
     "pageTitle": "Photo Location Map indiriliyor",
-    "willStart": "Photo Location Map'in indirilmesi birazdan başlayacak. Başlamazsa <link>buraya</link> tıklayın.",
+    "willStart": "Photo Location Map’in indirilmesi birazdan başlayacak. Başlamazsa <link>buraya</link> tıklayın.",
     "howToInstall": "Nasıl yüklenir",
     "step1": "1. İndirilen exe dosyasına çift tıklayın.",
     "step2": "2. Windows Defender SmartScreen penceresi görünür. “Ek bilgi” (More info) bağlantısına tıklayın.",

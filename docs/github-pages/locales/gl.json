@@ -25,8 +25,8 @@
     "step1": "1. Fai dobre clic no ficheiro exe descargado.",
     "step2": "2. Aparecerá a ventá emerxente de Windows Defender SmartScreen. Fai clic en «Máis información» (More info).",
     "moreInfoImageAlt": "Imaxe de Windows Defender SmartScreen (Máis información)",
-    "step3": "3. Fai clic en «Executar de todas as formas» (Run anyway).",
-    "runAnywayImageAlt": "Imaxe de Windows Defender SmartScreen (Executar de todas as formas)",
+    "step3": "3. Fai clic en «Executar de todos os xeitos» (Run anyway).",
+    "runAnywayImageAlt": "Imaxe de Windows Defender SmartScreen (Executar de todos os xeitos)",
     "step4": "4. Abrirase o instalador de Photo Location Map. Segue as instrucións do instalador."
   }
 }

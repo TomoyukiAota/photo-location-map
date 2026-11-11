@@ -1,6 +1,7 @@
 # The website in several languages: status
 
-Started and implemented on 2026-11-11.
+Started and implemented on 2026-11-11. On 2026-11-12, the 40 machine
+translations were reviewed, and the layout was looked at in every language.
 
 ## What was asked
 
@@ -31,6 +32,14 @@ contribute.
 - The head of the landing page and `docs/sitemap.xml` name the page in each
   language, for search engines. The landing page has a description for them,
   its summary, which it did not have.
+- The 40 machine translations were reviewed on 2026-11-12, by sessions of
+  Claude, in seven rounds, together with the application's and Photo Data
+  Viewer's: 69 of the website's 1,040 texts were changed. The record of that
+  review, with its sources and what it left open, is in the pull request of
+  the application's translations (#692), as
+  `docs/tasks/20261112_translation-review/`.
+- The layout was looked at in all 42 languages, and holds in each: see
+  [Checks](#checks).
 
 ## What was decided, and why
 
@@ -97,6 +106,41 @@ contribute.
   and their last letters were on a line of their own. Both buttons are now as
   wide as the wider of the two, and 200px at least, so the English page is as
   it was.
+- **In a wider window, the two download buttons are side by side when they fit
+  in the page's language, and one above the other when they do not.** They
+  were side by side from 501px, where the English ones fit. In 14 languages
+  they did not, and each text was on two lines: the Latvian ones need 578px.
+  The owner decided that a natural translation comes before the layout, and
+  that the layout is one for all languages which stretches and shrinks with
+  the texts, rather than one made for the longest: a width from which every
+  language fits would put the English buttons one above the other where they
+  fit side by side. So the row wraps, which is by the texts' own widths, and
+  `i18n.js` marks a row that wrapped, so that the styles give both buttons the
+  width of the wider, as on a phone.
+- **The centered sentences are broken into lines of about the same length**
+  (`text-wrap: balance`), each sentence by itself. On a phone, most languages
+  had the last word of a sentence alone on its line.
+- **A line ends where the page's language ends its lines**, in every text of
+  both pages (`i18n.css`). Japanese is broken between its phrases
+  (`word-break: auto-phrase`) and Korean between its words
+  (`word-break: keep-all`): a browser otherwise ends a line inside a word in
+  both (トラブルシュー / ティング), and a Japanese sentence of the download
+  page ended with one letter on a line of its own in a desktop's window
+  (...してくださ / い。). That is a rule for one language, as the direction is
+  for Arabic and Hebrew: how a language's lines are broken is the language's
+  own. In the other languages, a text of several lines does not end with a
+  word alone on its last line where the browser can avoid it
+  (`text-wrap: pretty`): the steps of the download page ended with "info)."
+  on a line of its own. A browser that does not know one of these breaks the
+  lines as before.
+- **A name stays on one line**: Photo Location Map, Photo Data Viewer, the
+  developer's, and the English names of Windows' two buttons, which the steps
+  of the download page have in parentheses. Lines of the same length put the
+  end of a line inside the application's name in most languages on a phone
+  (... Photo Location / Map ...), and the steps had "(More / info)". `i18n.js`
+  gives these names no-break spaces in what a page shows; the pages' own
+  texts and the languages' files keep ordinary spaces, so that they are
+  written and checked as they read.
 - **The texts of the file formats and the names** (Photo Location Map, JPEG,
   HEIF) are not translated.
 - **The steps of the Windows download page** name the buttons of Windows'
@@ -141,8 +185,26 @@ On macOS (Apple Silicon), 2026-11-11.
   lower. `website-desktop-ja.png`, and `website-picker-ja.png` and
   `website-picker-ar.png`, the picker open, are new.
 - The pages were looked at in Japanese, English, German and Arabic, at the
-  widths of a desktop and of a phone. The other languages were not looked at
-  one by one: the unit tests check their files.
+  widths of a desktop and of a phone.
+- On 2026-11-12, after the review of the translations:
+  `node test/website/layout-in-every-language.mjs` opened both pages in each
+  of the 42 languages at 18 widths from 320px to 1200px, and found nothing
+  that does not fit: no page wider than its window, no text cut, no download
+  button on two lines, the two buttons of equal width when one is above the
+  other, no name divided between two lines, and the picker's box within a
+  window of 320px. Its pictures of both pages were looked at in all 42
+  languages, at the width of a phone and at the width of a desktop; at the
+  width of a phone, where the texts take several lines, again after the last
+  changes to where a line ends, and at the width of a desktop in six
+  languages then.
+- The e2e case of the website also checks that the two download buttons are
+  one above the other, equally wide, in Japanese in a window a little
+  narrower than the two need side by side, and side by side in English in the
+  same window. It measures what the two need, as that depends on the
+  machine's fonts: 536px in Japanese on a Mac. It also checks that the
+  application's name is on one line of the sentence about the source code, in
+  English on a narrow phone. Without the code that it checks, each of these
+  fails.
 
 ## Not done
 
@@ -154,9 +216,13 @@ On macOS (Apple Silicon), 2026-11-11.
   is not among what it sends.
 
 - **The names of Windows' two buttons in the 40 machine translations** were
-  written from memory, not read off a Windows in each language. Where one is
-  not what Windows shows, the English words after it and the pictures still
-  say which button is meant.
+  looked up in the review. Where a page shows or quotes the warning of a
+  Windows in the language, the names are the ones it has: the Estonian link's
+  name is from a picture on a page of the Estonian state. In about half of the
+  languages no such page was found, and the names are the reviewers' best
+  knowledge; the review's record lists them. Where one is not what Windows
+  shows, the English words after it and the pictures still say which button
+  is meant.
 
 ## Questions for the owner
 

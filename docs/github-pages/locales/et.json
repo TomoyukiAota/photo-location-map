@@ -6,8 +6,8 @@
     "pageTitle": "Photo Location Map",
     "appIconAlt": "Photo Location Mapi ikoon",
     "summary": "Kuvab kaardil kohad, kus fotod on tehtud.",
-    "downloadForWindows": "Laadi alla Windowsi jaoks",
-    "downloadForMacos": "Laadi alla macOS-i jaoks",
+    "downloadForWindows": "Laadi alla Windowsile",
+    "downloadForMacos": "Laadi alla macOS-ile",
     "photosHaveLocationData": "Nutitelefoniga tehtud fotodel on asukohaandmed (laius- ja pikkuskraad).",
     "showsLocationsOnMap": "See rakendus loeb fotodelt asukohaandmed ja kuvab kohad kaardil.",
     "supportedFileFormats": "Toetatud failivormingud:",
@@ -23,10 +23,10 @@
     "willStart": "Photo Location Mapi allalaadimine algab peagi. Kui see ei alga, klõpsake <link>siin</link>.",
     "howToInstall": "Installimine",
     "step1": "1. Topeltklõpsake allalaaditud exe-faili.",
-    "step2": "2. Kuvatakse Windows Defender SmartScreeni hüpikaken. Klõpsake „Lisateave“ (More info).",
+    "step2": "2. Kuvatakse Windows Defender SmartScreeni hüpikaken. Klõpsake linki „Lisateave“ (More info).",
     "moreInfoImageAlt": "Windows Defender SmartScreeni pilt (Lisateave)",
-    "step3": "3. Klõpsake „Käivita ikkagi“ (Run anyway).",
-    "runAnywayImageAlt": "Windows Defender SmartScreeni pilt (Käivita ikkagi)",
+    "step3": "3. Klõpsake nuppu „Käivita siiski“ (Run anyway).",
+    "runAnywayImageAlt": "Windows Defender SmartScreeni pilt (Käivita siiski)",
     "step4": "4. Käivitub Photo Location Mapi installiprogramm. Järgige installiprogrammi juhiseid."
   }
 }

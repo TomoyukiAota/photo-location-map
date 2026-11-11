@@ -4,10 +4,10 @@
   "noLanguagesFound": "Geen talen gevonden",
   "landing": {
     "pageTitle": "Photo Location Map",
-    "appIconAlt": "Pictogram van Photo Location Map",
+    "appIconAlt": "Symbool van Photo Location Map",
     "summary": "Toont op een kaart waar foto’s zijn gemaakt.",
-    "downloadForWindows": "Downloaden voor Windows",
-    "downloadForMacos": "Downloaden voor macOS",
+    "downloadForWindows": "Download voor Windows",
+    "downloadForMacos": "Download voor macOS",
     "photosHaveLocationData": "Foto’s die met een smartphone zijn gemaakt, bevatten locatiegegevens (breedtegraad en lengtegraad).",
     "showsLocationsOnMap": "Deze app leest de locatiegegevens uit de foto’s en toont de locaties op een kaart.",
     "supportedFileFormats": "Ondersteunde bestandsindelingen:",

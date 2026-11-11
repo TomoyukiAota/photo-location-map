@@ -13,15 +13,15 @@
     "supportedFileFormats": "Støttede filformater:",
     "troubleshooting": "Hvis du får problemer med denne appen, kan du se <link>siden for feilsøking</link>.",
     "sourceCode": "Kildekoden til Photo Location Map <link>ligger på GitHub</link>.",
-    "developedBy": "Photo Location Map er utviklet av <link>Tomoyuki Aota</link>.",
-    "wantExifData": "Vil du se EXIF-data?",
+    "developedBy": "Photo Location Map utvikles av <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Vil du se EXIF-informasjon?",
     "photoDataViewer": "<link>Photo Data Viewer</link> er også tilgjengelig.",
     "analyticsNotice": "Dette nettstedet samler inn bruksinformasjon."
   },
   "downloading": {
     "pageTitle": "Laster ned Photo Location Map",
     "willStart": "Nedlastingen av Photo Location Map starter snart. Hvis den ikke starter, klikk <link>her</link>.",
-    "howToInstall": "Slik installerer du",
+    "howToInstall": "Slik installerer du appen",
     "step1": "1. Dobbeltklikk på den nedlastede exe-filen.",
     "step2": "2. Vinduet Windows Defender SmartScreen vises. Klikk på «Mer informasjon» (More info).",
     "moreInfoImageAlt": "Bilde av Windows Defender SmartScreen (Mer informasjon)",

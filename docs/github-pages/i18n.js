@@ -175,6 +175,41 @@
   // The attributes that get a text, each by the key in the attribute of the same name after "data-i18n-".
   const translatedAttributes = ['alt', 'content', 'aria-label', 'placeholder'];
 
+  // TL;DR: Marks the landing page's two download buttons as stacked when they do not fit side by side in the
+  // window, so that the styles lay them out one above the other, both as wide as the wider.
+  // Details: How wide the two are depends on the page's language, so the window's width from which they fit side by
+  // side does too: 459px in English and 578px in Latvian, with a Mac's fonts. The styles let the row wrap
+  // (github-page-style.css), which shows whether the two fit: the second button is then under the first. Wrapped,
+  // each has its own width, though, and the two are not wrapped any more once they are laid out as a column, so
+  // this looks at the row without the mark each time: when the page gets its texts, and when the window's width
+  // changes.
+  const stackedClass = 'stacked';
+  const layDownloadButtonsOut = () => {
+    const row = document.querySelector('.download-buttons');
+    if (!row) return;
+    row.classList.remove(stackedClass);
+    const tops = Array.from(row.children, (button) => button.offsetTop);
+    row.classList.toggle(stackedClass, tops.some((top) => top !== tops[0]));
+  };
+
+  // TL;DR: A name of several words stays on one line.
+  // Details: The landing page's centered sentences are broken into lines of about the same length
+  // (github-page-style.css), which puts the end of a line inside the application's name in most languages, on a
+  // phone ("... Photo Location / Map ..."). The steps of the download page have the English names of Windows' two
+  // buttons in parentheses, which were divided as well ("(More / info)"). The spaces of these names are therefore
+  // no-break spaces in what a page shows. The pages' own texts and the languages' files keep ordinary spaces, so
+  // that they are written, searched and checked as they read.
+  const namesOnOneLine = /Photo Location Map|Photo Data Viewer|Tomoyuki Aota|More info|Run anyway/g;
+  const keepNamesWhole = () => {
+    for (const element of document.body.querySelectorAll('[data-i18n]')) {
+      const texts = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+      for (let text = texts.nextNode(); text; text = texts.nextNode()) {
+        const whole = text.data.replace(namesOnOneLine, (name) => name.replace(/ /g, '\u00a0'));
+        if (whole !== text.data) text.data = whole;
+      }
+    }
+  };
+
   /**
    * Puts the texts of a language into the page, which is laid out from right to left for a language written so. A key
    * that the language does not have keeps what the page shows.
@@ -200,6 +235,8 @@
         if (typeof text === 'string') element.setAttribute(attribute, text);
       }
     }
+    keepNamesWhole();
+    layDownloadButtonsOut();
   };
 
   // TL;DR: A page in another language is not shown until its texts are in it, or a second and a half have passed.
@@ -429,6 +466,13 @@
   // Details: When those texts do not come in time, the page is shown in English. Were the picker to wait for them, a
   // visitor would have none for as long as the request is under way, on every page, and could not choose English.
   const pickerShown = pageParsed.then(makePicker);
+  // The names and the download buttons, for the texts that the page holds; the buttons from then on for each width
+  // of the window.
+  pageParsed.then(() => {
+    keepNamesWhole();
+    layDownloadButtonsOut();
+    window.addEventListener('resize', layDownloadButtonsOut);
+  });
 
   Promise.all([texts, pickerShown]).then(([textsOfLanguage, showChosen]) => {
     // A visitor who has chosen a language by now keeps it: the texts that the page was loaded with came too late.

@@ -2446,6 +2446,35 @@ test('download website is in the language of its address, and in the one chosen 
     const buttonsOnPhone = await downloadButtons();
     expect(buttonsOnPhone.map(button => button.height)).toEqual(heightsOnOneLine);
     expect(buttonsOnPhone[0].width).toBe(buttonsOnPhone[1].width);
+    /**
+     * The narrowest window in which the two buttons fit side by side, in the page's language and with this machine's
+     * fonts: their widths with their margins, and what the page leaves beside the room that their row has.
+     */
+    const windowForARow = async () => {
+      await setContentSize(700, 800);
+      await expect.poll(buttonsDirection).toBe('row');
+      return page.locator('.download-buttons').evaluate(row => {
+        const container = getComputedStyle(row.parentElement);
+        const room = row.parentElement.clientWidth - parseFloat(container.paddingLeft) - parseFloat(container.paddingRight);
+        return Math.ceil([...row.children].reduce((width, button) => {
+          const style = getComputedStyle(button);
+          return width + button.getBoundingClientRect().width + parseFloat(style.marginLeft) + parseFloat(style.marginRight);
+        }, window.innerWidth - room));
+      });
+    };
+    // In a window a little narrower than that, and wider than a phone, the two do not fit side by side in Japanese,
+    // where each text was then on two lines: they are one above the other, both as wide as the wider. With a font
+    // that makes the Japanese texts as short as the English ones, there is no such window.
+    const japaneseRow = await windowForARow();
+    if (japaneseRow - 10 > 500) {
+      await setContentSize(japaneseRow - 10, 800);
+      await expect.poll(buttonsDirection).toBe('column');
+      const buttonsInNarrowWindow = await downloadButtons();
+      expect(buttonsInNarrowWindow.map(button => button.height)).toEqual(heightsOnOneLine);
+      expect(buttonsInNarrowWindow[0].width).toBe(buttonsInNarrowWindow[1].width);
+    }
+    await setContentSize(Math.max(japaneseRow, 501) + 10, 800);
+    await expect.poll(buttonsDirection).toBe('row');
     await setContentSize(1200, 800);
     await expect.poll(buttonsDirection).toBe('row');
     // English, typed in the search field and chosen with Enter: the texts change in place, the button shows the
@@ -2455,6 +2484,33 @@ test('download website is in the language of its address, and in the one chosen 
     await search.press('Enter');
     await expect(pickerBox).toBeHidden();
     await expect(page.locator('.app-summary')).toHaveText('Display the locations where photos were taken on a map.');
+    // The English texts are shorter: the two buttons fit side by side in the window in which the Japanese ones did
+    // not, and are side by side there, as they were before the website had other languages.
+    const englishRow = await windowForARow();
+    if (japaneseRow - 10 > Math.max(englishRow, 500) + 10) {
+      await setContentSize(japaneseRow - 10, 800);
+      await expect.poll(buttonsDirection).toBe('row');
+      expect((await downloadButtons()).map(button => button.height)).toEqual(heightsOnOneLine);
+    }
+    // On a narrow phone, the sentence about the source code takes more than one line, and its lines are of about the
+    // same length. The application's name is on one of them, not divided between two: i18n.js gives it no-break
+    // spaces.
+    await setContentSize(320, 800);
+    await expect.poll(buttonsDirection).toBe('column');
+    const linesOnPhone = await page.locator('[data-i18n="landing.sourceCode"]').evaluate(sentence => {
+      const linesOf = range => new Set([...range.getClientRects()].map(line => Math.round(line.top))).size;
+      const whole = document.createRange();
+      whole.selectNodeContents(sentence);
+      const text = sentence.firstChild;
+      const name = document.createRange();
+      name.setStart(text, text.data.search(/Photo\sLocation\sMap/));
+      name.setEnd(text, text.data.search(/Photo\sLocation\sMap/) + 'Photo Location Map'.length);
+      return { sentence: linesOf(whole), name: linesOf(name) };
+    });
+    expect(linesOnPhone.sentence).toBeGreaterThan(1);
+    expect(linesOnPhone.name).toBe(1);
+    await setContentSize(1200, 800);
+    await expect.poll(buttonsDirection).toBe('row');
     await expect(troubleshooting.getByRole('link')).toHaveText('the troubleshooting page');
     await expect(page.getByRole('button', { name: 'Language English', exact: true })).toBeFocused();
     await expect(page).toHaveURL(/\?lang=en$/);

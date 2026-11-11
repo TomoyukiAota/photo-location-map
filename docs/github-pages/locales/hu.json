@@ -8,7 +8,7 @@
     "summary": "Térképen jeleníti meg, hol készültek a fotók.",
     "downloadForWindows": "Letöltés Windowsra",
     "downloadForMacos": "Letöltés macOS-re",
-    "photosHaveLocationData": "Az okostelefonnal készített fotók helyadatokat tartalmaznak (szélességi és hosszúsági fok).",
+    "photosHaveLocationData": "Az okostelefonnal készített fotók helyadatokat tartalmaznak (földrajzi szélesség és hosszúság).",
     "showsLocationsOnMap": "Ez az alkalmazás kiolvassa a fotók helyadatait, és térképen jeleníti meg a helyeket.",
     "supportedFileFormats": "Támogatott fájlformátumok:",
     "troubleshooting": "Ha problémába ütközik az alkalmazás használata közben, tekintse meg a <link>hibaelhárítási oldalt</link>.",

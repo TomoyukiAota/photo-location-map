@@ -9,7 +9,7 @@
     "downloadForWindows": "تنزيل لنظام Windows",
     "downloadForMacos": "تنزيل لنظام macOS",
     "photosHaveLocationData": "الصور الملتقطة بالهواتف الذكية تحتوي على بيانات الموقع (خط العرض وخط الطول).",
-    "showsLocationsOnMap": "يقرأ هذا التطبيق بيانات الموقع من الصور ويعرض الأماكن على الخريطة.",
+    "showsLocationsOnMap": "يقرأ هذا التطبيق بيانات الموقع من الصور ويعرض أماكن التقاطها على الخريطة.",
     "supportedFileFormats": "تنسيقات الملفات المدعومة:",
     "troubleshooting": "إذا واجهت مشكلة في هذا التطبيق، فراجع <link>صفحة استكشاف الأخطاء وإصلاحها</link>.",
     "sourceCode": "الشيفرة المصدرية لتطبيق Photo Location Map <link>مستضافة على GitHub</link>.",
@@ -20,7 +20,7 @@
   },
   "downloading": {
     "pageTitle": "جارٍ تنزيل Photo Location Map",
-    "willStart": "سيبدأ تنزيل Photo Location Map بعد قليل. إذا لم يبدأ، انقر <link>هنا</link>.",
+    "willStart": "سيبدأ تنزيل Photo Location Map بعد قليل. إذا لم يبدأ، فانقر <link>هنا</link>.",
     "howToInstall": "طريقة التثبيت",
     "step1": "1. انقر نقرًا مزدوجًا على ملف exe الذي نزّلته.",
     "step2": "2. ستظهر نافذة Windows Defender SmartScreen المنبثقة. انقر على «معلومات إضافية» (More info).",
