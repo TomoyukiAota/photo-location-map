@@ -53,10 +53,14 @@ finds the texts by them.
        [flag-icons](https://flagicons.lipis.dev): the code of the language's
        country in lower case, which `new Intl.Locale('<code>').maximize().region`
        gives in a browser's console. A language of a region that has a flag of
-       its own has that flag, as Catalan has Catalonia's (`es-ct`). Add the
-       name to `$flag-icons-included-countries` in
-       `src/app/language/language-list.component.scss` too, so that the
-       application has the flag; a test checks it.
+       its own has that flag, as Catalan has Catalonia's (`es-ct`): add the
+       language to `flagsOfTheirOwn` in
+       `test/src-shared/i18n/language-flags.spec.em.main.ts` as well, the
+       languages whose flags that code does not give. Unless another language
+       has the same flag already, add its name to
+       `$flag-icons-included-countries` in
+       `src/app/language/language-list.component.scss`, so that the
+       application has the flag. A test checks both.
      - `direction` is `rtl` for a language written from right to left, such
        as Arabic and Hebrew, which the application is then laid out in, and
        `ltr` for any other.
