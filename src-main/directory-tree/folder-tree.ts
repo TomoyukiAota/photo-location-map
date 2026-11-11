@@ -19,29 +19,36 @@ export function createFolderTree(dirPath: string): DirectoryTreeResult {
 }
 
 /**
- * For each file with a Live Photos movie next to it, the movie's path: the file whose path is the photo's with an
- * extension of Live Photos, each in turn, without regard to case.
- * TL;DR: The path is the movie's own, as the folder has it, not the lowercased one that it is matched by.
+ * For each file with a Live Photos movie next to it, the movie's path: the file of the photo's folder whose name is
+ * the photo's with an extension of Live Photos, each in turn, without regard to case.
+ * TL;DR: The path is the movie's own, as the folder has it, not a lowercased one. Only the file's name is matched
+ * without regard to case: the folder is the photo's own.
  * Details: The lowercased path was given at first, as the renderer had matched and opened the movies before the main
  * process read the folder. macOS and Windows open a file by such a path on their usual file systems, which have no
  * regard to case. A file system that has, as those of Linux, has no file at that path, and the main process refused
  * to open it: with a capital letter in it, the path is not in a folder that the user opened
  * (../ipc/user-chosen-folders.ts), so the button of a photo's Live Photos did nothing there.
+ * Such a file system can also hold two folders whose names differ in case alone, `album` and `Album`. Matched by the
+ * whole path in lower case, a photo of one would get a movie of the other, which would open now that the path is the
+ * movie's own.
  */
-function livePhotosOf(tree: DirectoryTree): Record<string, string> {
+export function livePhotosOf(tree: DirectoryTree): Record<string, string> {
   const files = convertToFlattenedDirTree(tree).filter(element => element?.type === 'file');
   const movies = new Map(files
     .filter(element => FilenameExtension.isLivePhotos(element.extension))
-    .map(element => [element.path.toLowerCase(), element.path]));
+    .map((element): [string, string] => {
+      const { dir, base } = pathModule.parse(element.path);
+      return [nameInFolder(dir, base), element.path];
+    }));
   const livePhotos: Record<string, string> = {};
   if (movies.size === 0)
     return livePhotos;
   for (const file of files) {
     if (FilenameExtension.isLivePhotos(file.extension))
       continue;
-    const parsedPath = pathModule.parse(file.path);
+    const { dir, name } = pathModule.parse(file.path);
     for (const extension of FilenameExtension.extensionsForLivePhotos) {
-      const moviePath = movies.get(pathModule.join(parsedPath.dir, parsedPath.name + extension).toLowerCase());
+      const moviePath = movies.get(nameInFolder(dir, name + extension));
       if (moviePath) {
         livePhotos[file.path] = moviePath;
         break;
@@ -49,4 +56,9 @@ function livePhotosOf(tree: DirectoryTree): Record<string, string> {
     }
   }
   return livePhotos;
+}
+
+/** What a photo and its movie are matched by: the folder as the tree has it, and the file's name in lower case. */
+function nameInFolder(folder: string, fileName: string): string {
+  return pathModule.join(folder, fileName.toLowerCase());
 }
