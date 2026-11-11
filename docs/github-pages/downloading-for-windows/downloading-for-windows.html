@@ -28,8 +28,24 @@
 <body>
   <div class="layout-container">
     <div class="language">
-      <!-- ../i18n.js lists the languages here and shows the list. -->
-      <select id="language-select" class="language-select" aria-label="Language" data-i18n-aria-label="language" hidden></select>
+      <!-- ../i18n.js lists the languages in the picker and shows it: a button that opens a box under it, with a
+           search field above the list of languages. -->
+      <div class="language-picker" hidden>
+        <button type="button" class="language-button" aria-haspopup="dialog" aria-expanded="false" aria-controls="language-popup">
+          <span class="language-hidden-label" data-i18n="language">Language</span>
+          <img class="language-flag" alt="">
+          <span class="language-button-name"></span>
+          <svg class="language-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="m2 5 6 6 6-6"/></svg>
+        </button>
+        <div id="language-popup" class="language-popup" role="dialog" aria-label="Language" data-i18n-aria-label="language" hidden>
+          <input type="search" class="language-search" autocomplete="off" autocapitalize="off" spellcheck="false"
+                 placeholder="Search" data-i18n-placeholder="languageSearch"
+                 aria-label="Search" data-i18n-aria-label="languageSearch" aria-controls="language-options">
+          <ul id="language-options" class="language-options" role="listbox" aria-label="Language" data-i18n-aria-label="language"></ul>
+          <div class="language-none" role="status"></div>
+          <span class="language-none-text" data-i18n="noLanguagesFound" hidden>No languages found</span>
+        </div>
+      </div>
     </div>
     <div data-i18n="downloading.willStart">
       Download of Photo Location Map will start shortly. If it does not start, please click <a href="#" onClick="downloadForWindows('link')">here</a>.

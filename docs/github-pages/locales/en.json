@@ -1,5 +1,7 @@
 {
   "language": "Language",
+  "languageSearch": "Search",
+  "noLanguagesFound": "No languages found",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "Photo Location Map Icon",

@@ -196,13 +196,14 @@ photo's popup on the map with its menu, and the chart.
 The [website](https://tomoyukiaota.github.io/photo-location-map/), where the
 application is downloaded from, has translations of its own. A visitor sees it
 in the browser's language when the website has it, and can choose another one
-in the list at the top of the page.
+in the language picker at the top of the page.
 
 | File | What it is |
 | --- | --- |
 | `docs/github-pages/locales/en.json` | English, the source, which the pages themselves hold as well. |
 | `docs/github-pages/locales/<code>.json` | One file per language, with the keys of `en.json`. |
 | `docs/github-pages/i18n.js` | The languages that the website offers, at its top, and how a page gets its texts. |
+| `docs/github-pages/flags/<flag>.svg` | The flag beside each language in the picker. |
 
 To add a language:
 
@@ -211,7 +212,11 @@ To add a language:
    around the words of a link: keep the pair, around the words that are the
    link in your language. A text that you leave out is shown in English.
 2. Add the language to the `languages` list at the top of
-   `docs/github-pages/i18n.js`, with its name written in the language itself.
+   `docs/github-pages/i18n.js`, with its name written in the language itself,
+   its name in English, and its flag: the one that the application gives it
+   (`flag` in `src-shared/i18n/languages.ts`). Copy that flag's file from the
+   [flag-icons](https://github.com/lipis/flag-icons) package,
+   `flags/4x3/<flag>.svg`, into `docs/github-pages/flags/`.
 3. So that search engines find the page in your language, add its line next to
    those of the other languages in the head of `docs/index.html`
    (`<link rel="alternate" hreflang="<code>" …>`), and its address with those

@@ -8,7 +8,8 @@ const { describe, it } = require('node:test');
 
 const docs = path.join(__dirname, '../../docs');
 const localesDirectory = path.join(docs, 'github-pages/locales');
-const { languages, matchLanguage, resolveLanguage, linkParts, textOf } = require(path.join(docs, 'github-pages/i18n.js'));
+const flagsDirectory = path.join(docs, 'github-pages/flags');
+const { languages, matchLanguage, resolveLanguage, linkParts, textOf, foldForSearch, matchesSearch } = require(path.join(docs, 'github-pages/i18n.js'));
 
 const pages = {
   'docs/index.html': fs.readFileSync(path.join(docs, 'index.html'), 'utf8'),
@@ -111,6 +112,18 @@ describe('The texts of the website (docs/github-pages/locales)', () => {
     }
   });
 
+  it('have a flag each, in flags/, the one that the application gives the language', () => {
+    // The rule of the application's flags (src-shared/i18n/languages.ts): the region that Unicode gives the language,
+    // but for the languages with flags of their own.
+    const flagsOfTheirOwn = { ca: 'es-ct', eu: 'es-pv', gl: 'es-ga', ar: 'arab' };
+    for (const { code, flag } of languages)
+      assert.equal(flag, flagsOfTheirOwn[code] ?? new Intl.Locale(code).maximize().region.toLowerCase(), code);
+    // Each flag of the languages, and no other, with the license of the flag-icons package that they are from.
+    const flagFiles = fs.readdirSync(flagsDirectory).filter(file => file.endsWith('.svg')).sort();
+    assert.deepEqual(flagFiles, [...new Set(languages.map(({ flag }) => `${flag}.svg`))].sort());
+    assert.match(fs.readFileSync(path.join(flagsDirectory, 'LICENSE'), 'utf8'), /^The MIT License \(MIT\)\s+Copyright \(c\) 2013 Panayiotis Lipiridis/);
+  });
+
   it('are published as the files are: docs/.nojekyll keeps GitHub Pages from running Jekyll over them', () => {
     // Jekyll reads {{ … }} in a Markdown document of docs/ as an expression of its own, and failed the website's
     // publication on one that quoted a template.
@@ -139,6 +152,20 @@ describe('The language of the website (docs/github-pages/i18n.js)', () => {
     // A language that the website does not have, in the address or kept from before, is passed over.
     assert.equal(resolveLanguage({ param: 'xx', saved: 'ja', browserLanguages: ['en-US'] }), 'ja');
     assert.equal(resolveLanguage({ param: 'xx', saved: 'yy', browserLanguages: ['en-US'] }), 'en');
+  });
+
+  it('is found in the picker\'s list by any part of its own name, English name, name in the page\'s language or code', () => {
+    const [english, japanese] = ['en', 'ja'].map(code => languages.find(language => language.code === code));
+    assert.equal(foldForSearch('Čeština'), 'cestina');
+    assert.equal(matchesSearch(english, 'ENG'), true);
+    assert.equal(matchesSearch(japanese, '日本'), true);
+    assert.equal(matchesSearch(japanese, 'japan'), true);
+    assert.equal(matchesSearch(japanese, ' ja '), true);
+    assert.equal(matchesSearch(english, '英語', '英語'), true);
+    assert.equal(matchesSearch(english, '英語'), false);
+    assert.equal(matchesSearch(japanese, 'eng'), false);
+    // Nothing typed lists every language.
+    assert.equal(matchesSearch(japanese, '  '), true);
   });
 
   it('finds the words of a text\'s link, and the text of a key', () => {

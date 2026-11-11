@@ -1,4 +1,4 @@
-/* The list of languages at the top of each page, and what i18n.js needs to show a page in a language. */
+/* The language picker at the top of each page, and what i18n.js needs to show a page in a language. */
 
 /* A page in another language than English, until its texts are in it (i18n.js). */
 html.i18n-pending body {
@@ -7,24 +7,194 @@ html.i18n-pending body {
 
 /* At the right: of the column that the landing page is, and of the block that the download page is. */
 .language {
+  position: relative;
   align-self: flex-end;
   text-align: right;
 }
 
-.language-select {
-  padding: 4px 28px 4px 10px;
+/*
+ * The language picker: a button that shows the page's language, which opens a box under it, with a search field above
+ * the list of languages, as the application's list has. The pages differ in their styles, and the download page has no
+ * Bootstrap, so the picker is styled whole here.
+ */
+.language-picker {
+  display: inline-block;
+  text-align: start;
+}
+
+.language-picker[hidden] {
+  display: none;
+}
+
+.language-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 4px 10px;
   border: 1px solid #ced4da;
   border-radius: 4px;
-  background: #fff url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") no-repeat right 8px center / 12px 9px;
+  background: #fff;
   color: #212529;
   font: inherit;
   font-size: 14px;
   line-height: 1.5;
-  appearance: none;
   cursor: pointer;
 }
 
-.language-select:focus-visible {
-  outline: 2px solid #007bff;
+.language-button:hover {
+  background: #f1f3f5;
+}
+
+.language-button:focus-visible {
+  outline: 2px solid #0d6efd;
   outline-offset: 1px;
+}
+
+/* Said by a screen reader before the name of the language on the button, and not shown. */
+.language-hidden-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Points down while the box is closed, and up while it is open. */
+.language-chevron {
+  width: 12px;
+  height: 12px;
+  fill: none;
+  stroke: #343a40;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.language-button[aria-expanded="true"] .language-chevron {
+  transform: rotate(180deg);
+}
+
+/* A flag, as in the application's list: as high as the capital letters, with a thin line that keeps a white flag
+   apart from the white around it. */
+.language-flag {
+  flex: none;
+  width: 20px;
+  height: 15px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
+}
+
+/* The box, under the button and at its right edge, over the page's content. */
+.language-popup {
+  position: absolute;
+  top: calc(100% + 6px);
+  inset-inline-end: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-sizing: border-box;
+  width: 260px;
+  max-width: calc(100vw - 20px);
+  padding: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  color: #212529;
+  font-size: 15px;
+  line-height: 20px;
+}
+
+.language-popup[hidden] {
+  display: none;
+}
+
+.language-search {
+  box-sizing: border-box;
+  width: 100%;
+  height: 32px;
+  margin: 0;
+  padding: 6px 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+  appearance: none; /* Without the rounded corners that a browser gives a search field. */
+}
+
+.language-search::placeholder {
+  color: #6c757d;
+  opacity: 1;
+}
+
+.language-search:focus-visible {
+  outline: 2px solid #0d6efd;
+  outline-offset: -1px;
+}
+
+/* The languages, which scroll when there are more than seven. */
+.language-options {
+  position: relative; /* The entries' offsetTop is measured from here. */
+  max-height: calc(7 * 32px);
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  list-style: none;
+}
+
+.language-options[hidden] {
+  display: none;
+}
+
+.language-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  min-height: 32px;
+  padding: 6px 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.language-option[hidden] {
+  display: none;
+}
+
+.language-option:hover {
+  background: #f1f3f5;
+}
+
+.language-option[aria-selected="true"] {
+  background: #0d6efd;
+  color: #fff;
+}
+
+/* The keyboard's focus, which the arrow keys move; Enter or Space chooses the entry under it. */
+.language-option:focus-visible {
+  outline: 2px solid #0d6efd;
+  outline-offset: -2px;
+}
+
+.language-option[aria-selected="true"]:focus-visible {
+  outline-color: #fff;
+  outline-offset: -4px;
+}
+
+/* Said in the place of the list when the search finds no language. Without a text, it takes no room. */
+.language-none {
+  padding: 6px 10px;
+  color: #6c757d;
+}
+
+.language-none:empty {
+  padding: 0;
 }
