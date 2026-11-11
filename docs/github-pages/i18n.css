@@ -5,11 +5,12 @@ html.i18n-pending body {
   visibility: hidden;
 }
 
-/* At the right: of the column that the landing page is, and of the block that the download page is. */
+/* Where a line ends, the right, or the left in a page laid out from right to left: of the column that the landing page
+   is, and of the block that the download page is. */
 .language {
   position: relative;
   align-self: flex-end;
-  text-align: right;
+  text-align: end;
 }
 
 /*
@@ -64,6 +65,14 @@ html.i18n-pending body {
   border: 0;
 }
 
+/* A globe before the name of the language, which says what the button is for in any language. */
+.language-globe {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: #495057;
+}
+
 /* Points down while the box is closed, and up while it is open. */
 .language-chevron {
   width: 12px;
@@ -79,7 +88,7 @@ html.i18n-pending body {
   transform: rotate(180deg);
 }
 
-/* The box, under the button and at its right edge, over the page's content. */
+/* The box, under the button and at the edge where its line ends, over the page's content. */
 .language-popup {
   position: absolute;
   top: calc(100% + 6px);
@@ -147,16 +156,42 @@ html.i18n-pending body {
   outline-offset: -1px;
 }
 
-/* The languages, which scroll when there are more than seven. */
+/*
+ * The languages, which scroll.
+ * TL;DR: Seven entries and a half, and a scrollbar that stays in view, so that the list is seen to go on.
+ * Details: macOS and phones hide a scrollbar until the list is scrolled, so a box that ends between two entries would
+ * look like the whole list. Half an entry at the box's edge shows in any browser that there are more. The scrollbar
+ * styled here is drawn at all times, in the browsers that take these styles (Chrome, Edge and Safari).
+ */
 .language-options {
   position: relative; /* The entries' offsetTop is measured from here. */
-  max-height: calc(7 * 32px);
+  box-sizing: content-box; /* Seven entries and a half inside the border, on the page with Bootstrap as on the one without. */
+  max-height: calc(7.5 * 32px);
   margin: 0;
   padding: 0;
   overflow-y: auto;
   border: 1px solid #ced4da;
   border-radius: 4px;
   list-style: none;
+}
+
+.language-options::-webkit-scrollbar {
+  width: 12px;
+}
+
+.language-options::-webkit-scrollbar-track {
+  background: #f1f3f5;
+}
+
+/* The border leaves the thumb narrower than its track, and rounded at both ends. */
+.language-options::-webkit-scrollbar-thumb {
+  border: 2px solid #f1f3f5;
+  border-radius: 6px;
+  background: #8a8a8a;
+}
+
+.language-options::-webkit-scrollbar-thumb:hover {
+  background: #6e6e6e;
 }
 
 .language-options[hidden] {

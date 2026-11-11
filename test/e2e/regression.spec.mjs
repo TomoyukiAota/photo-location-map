@@ -2359,11 +2359,14 @@ test('download website is in the language of its address, and in the one chosen 
     await expect(troubleshooting).toHaveText('このアプリで問題が起きたときは、トラブルシューティングのページをご覧ください。');
     await expect(troubleshooting.getByRole('link')).toHaveText('トラブルシューティングのページ');
     await expect(troubleshooting.getByRole('link')).toHaveAttribute('href', /troubleshooting\.md$/);
-    // The language picker: a button with the page's language, which a screen reader calls the language.
+    // The language picker: a button with a globe and the page's language, which a screen reader calls the language.
     const pickerButton = page.locator('.language-button');
     const chosenOnButton = pickerButton.locator('.language-button-name');
     await expect(page.getByRole('button', { name: '言語 日本語', exact: true })).toBeVisible();
     await expect(pickerButton).toHaveAttribute('aria-expanded', 'false');
+    const globe = await pickerButton.locator('.language-globe').boundingBox();
+    expect(globe.width).toBeGreaterThan(0);
+    expect(globe.x + globe.width).toBeLessThanOrEqual((await chosenOnButton.boundingBox()).x);
     await shot('website-desktop-ja', [page.locator('iframe')]);
     // It opens a box under it, with a search field above the list of languages, as the application's list has: each
     // language under its own name, and the page's language chosen. The search field is ready to be typed in.
@@ -2374,10 +2377,16 @@ test('download website is in the language of its address, and in the one chosen 
     const search = pickerBox.getByRole('searchbox', { name: '検索' });
     await expect(search).toBeFocused();
     await expect(search).toHaveAttribute('placeholder', '検索');
+    // The application's languages, in the order of its list. With more of them than the box shows, the list scrolls:
+    // it ends half an entry down, so that it is seen to go on, and shows the chosen language.
     const options = pickerBox.getByRole('listbox', { name: '言語' }).getByRole('option');
-    await expect(options).toHaveText(['English', '日本語']);
-    await expect(options.nth(1)).toHaveAttribute('aria-selected', 'true');
-    await expect(options.nth(0)).toHaveAttribute('aria-selected', 'false');
+    const optionOf = name => pickerBox.getByRole('option', { name, exact: true });
+    await expect(options).toHaveText(languageNames);
+    await expect(optionOf('日本語')).toHaveAttribute('aria-selected', 'true');
+    await expect(pickerBox.locator('[role="option"][aria-selected="true"]')).toHaveCount(1);
+    await expect(optionOf('日本語')).toBeInViewport({ ratio: 1 });
+    expect(await pickerBox.getByRole('listbox').evaluate(list => [list.scrollHeight > list.clientHeight, list.clientHeight / list.firstElementChild.offsetHeight]))
+      .toEqual([true, 7.5]);
     // A magnifying glass at the end of the search field, 8 pixels from its right edge and in the middle of its height.
     const searchBox = await search.boundingBox();
     const magnifier = await pickerBox.locator('.language-search-icon').boundingBox();
@@ -2390,7 +2399,8 @@ test('download website is in the language of its address, and in the one chosen 
     await shot('website-picker-ja', [page.locator('iframe')]);
     // The search finds a language by its own name, its English name, its name in the page's language or its code, and
     // says when it finds none.
-    for (const [typed, found] of [['eng', ['English']], ['日本', ['日本語']], ['英語', ['English']], ['JA', ['日本語']]]) {
+    for (const [typed, found] of [['engl', ['English']], ['日本', ['日本語']], ['英語', ['English']], ['ドイツ', ['Deutsch']], ['JA', ['日本語']],
+      ['deu', ['Deutsch']], ['portug', ['Português (Brasil)', 'Português (Portugal)']], ['zh-hant', ['繁體中文']]]) {
       await search.fill(typed);
       await expect(options.filter({ visible: true })).toHaveText(found);
     }
@@ -2407,9 +2417,14 @@ test('download website is in the language of its address, and in the one chosen 
     await expect(search).toBeFocused();
     await expect(search).toHaveValue('');
     await search.press('ArrowDown');
-    await expect(options.nth(1)).toBeFocused();
+    await expect(optionOf('日本語')).toBeFocused();
     await page.keyboard.press('ArrowUp');
-    await expect(options.nth(0)).toBeFocused();
+    await expect(optionOf('한국어')).toBeFocused();
+    // Letters typed on the list move to the language whose name starts with them, as in the application's list.
+    await page.keyboard.type('de');
+    await expect(optionOf('Deutsch')).toBeFocused();
+    await page.keyboard.press('Home');
+    await expect(optionOf('Bahasa Indonesia')).toBeFocused();
     await page.keyboard.press('ArrowUp');
     await expect(search).toBeFocused();
     await page.locator('.app-summary').click();
@@ -2500,9 +2515,32 @@ test('download website is in the language of its address, and in the one chosen 
     sendLateTexts();
     await textsDealtWith(['en.json', 'ja.json']);
     await isInEnglish();
-    // Japanese again. The Windows download page, whose link does not say the language, is in the chosen one.
+    // Arabic, which is written from right to left: the page is laid out so. The picker is at the page's left, where
+    // its lines end, with the box under it at the button's left edge and the magnifying glass at the left of the
+    // search field. The list of formats has its bullets at the right.
+    await page.goto(`${website.url}?lang=ar`, { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('.app-summary')).toHaveText('عرض أماكن التقاط الصور على الخريطة.');
+    expect(await page.evaluate(() => [document.documentElement.lang, document.documentElement.dir])).toEqual(['ar', 'rtl']);
+    await expect(chosenOnButton).toHaveText('العربية');
+    await pickerButton.click();
+    await expect(pickerBox.getByRole('searchbox', { name: 'بحث' })).toBeFocused();
+    const buttonInArabic = await pickerButton.boundingBox();
+    const boxInArabic = await pickerBox.boundingBox();
+    expect(buttonInArabic.x + buttonInArabic.width).toBeLessThan(600);
+    expect(Math.abs(boxInArabic.x - buttonInArabic.x)).toBeLessThan(1);
+    const searchInArabic = await pickerBox.getByRole('searchbox').boundingBox();
+    const magnifierInArabic = await pickerBox.locator('.language-search-icon').boundingBox();
+    expect(magnifierInArabic.x - searchInArabic.x).toBeCloseTo(8, 0);
+    expect(await page.locator('.supported-file-format ul').evaluate(list => [getComputedStyle(list).paddingRight, getComputedStyle(list).paddingLeft]))
+      .toEqual(['40px', '0px']);
+    await shot('website-picker-ar', [page.locator('iframe')]);
+    await page.keyboard.press('Escape');
+    await expect(pickerBox).toBeHidden();
+    // Japanese again, laid out from left to right again. The Windows download page, whose link does not say the
+    // language, is in the chosen one.
     await chooseLanguage('日本語');
     await expect(page).toHaveURL(/\?lang=ja$/);
+    expect(await page.evaluate(() => document.documentElement.dir)).toBe('ltr');
     // TL;DR: That page is kept from starting its download here, which the case above checks.
     // Details: A page served over HTTP starts the download by going to the installer's address, where the browser
     // finds a file to save and stays on the page. The suite cancels that request, so the page would be replaced by

@@ -11,26 +11,97 @@
 // chosen in the page's language picker before, which localStorage keeps; the first of the browser's languages that
 // this website has; English.
 (() => {
-  // The languages of this website, in the order of its list, each under its own name, with its English name, which the
-  // search of the list finds it by too. To add one, add its file to locales/ and its line here (docs/TRANSLATING.md).
+  // The languages of this website, which are the application's (src-shared/i18n/languages.ts), in its order: the names
+  // in Latin letters by the alphabet, then those in other scripts. Each is under its own name, with its English name,
+  // which the search of the list finds it by too. `rtl` is for a language written from right to left, which the page
+  // is then laid out in. To add one, add its file to locales/ and its line here (docs/TRANSLATING.md). A test checks
+  // that these are languages of the application, in its order and under its names (test/website/website-texts.cjs).
   const languages = [
+    { code: 'id', name: 'Bahasa Indonesia', englishName: 'Indonesian' },
+    { code: 'ms', name: 'Bahasa Melayu', englishName: 'Malay' },
+    { code: 'ca', name: 'Català', englishName: 'Catalan' },
+    { code: 'cs', name: 'Čeština', englishName: 'Czech' },
+    { code: 'da', name: 'Dansk', englishName: 'Danish' },
+    { code: 'de', name: 'Deutsch', englishName: 'German' },
+    { code: 'et', name: 'Eesti', englishName: 'Estonian' },
     { code: 'en', name: 'English', englishName: 'English' },
+    { code: 'es', name: 'Español', englishName: 'Spanish' },
+    { code: 'eu', name: 'Euskara', englishName: 'Basque' },
+    { code: 'fr', name: 'Français', englishName: 'French' },
+    { code: 'gl', name: 'Galego', englishName: 'Galician' },
+    { code: 'hr', name: 'Hrvatski', englishName: 'Croatian' },
+    { code: 'it', name: 'Italiano', englishName: 'Italian' },
+    { code: 'lv', name: 'Latviešu', englishName: 'Latvian' },
+    { code: 'lt', name: 'Lietuvių', englishName: 'Lithuanian' },
+    { code: 'hu', name: 'Magyar', englishName: 'Hungarian' },
+    { code: 'nl', name: 'Nederlands', englishName: 'Dutch' },
+    { code: 'nb', name: 'Norsk bokmål', englishName: 'Norwegian Bokmål' },
+    { code: 'pl', name: 'Polski', englishName: 'Polish' },
+    { code: 'pt-BR', name: 'Português (Brasil)', englishName: 'Portuguese (Brazil)' },
+    { code: 'pt-PT', name: 'Português (Portugal)', englishName: 'Portuguese (Portugal)' },
+    { code: 'ro', name: 'Română', englishName: 'Romanian' },
+    { code: 'sk', name: 'Slovenčina', englishName: 'Slovak' },
+    { code: 'sl', name: 'Slovenščina', englishName: 'Slovenian' },
+    { code: 'sr-Latn', name: 'Srpski (latinica)', englishName: 'Serbian (Latin)' },
+    { code: 'fi', name: 'Suomi', englishName: 'Finnish' },
+    { code: 'sv', name: 'Svenska', englishName: 'Swedish' },
+    { code: 'vi', name: 'Tiếng Việt', englishName: 'Vietnamese' },
+    { code: 'tr', name: 'Türkçe', englishName: 'Turkish' },
+    { code: 'el', name: 'Ελληνικά', englishName: 'Greek' },
+    { code: 'bg', name: 'Български', englishName: 'Bulgarian' },
+    { code: 'ru', name: 'Русский', englishName: 'Russian' },
+    { code: 'uk', name: 'Українська', englishName: 'Ukrainian' },
+    { code: 'he', name: 'עברית', englishName: 'Hebrew', rtl: true },
+    { code: 'ar', name: 'العربية', englishName: 'Arabic', rtl: true },
+    { code: 'hi', name: 'हिन्दी', englishName: 'Hindi' },
+    { code: 'th', name: 'ไทย', englishName: 'Thai' },
+    { code: 'ko', name: '한국어', englishName: 'Korean' },
     { code: 'ja', name: '日本語', englishName: 'Japanese' },
+    { code: 'zh-Hans', name: '简体中文', englishName: 'Chinese (Simplified)' },
+    { code: 'zh-Hant', name: '繁體中文', englishName: 'Chinese (Traditional)' },
   ];
   const defaultLanguage = 'en';
   const storageKey = 'PhotoLocationMapWebsiteLanguage';
 
-  /** The language of this website that a list of language tags asks for, the first that it has, or null. */
+  /** The code of the list for a code however its case is written, or null. */
+  const listed = (code) => languages.find((language) => language.code.toLowerCase() === code.toLowerCase())?.code ?? null;
+
+  /**
+   * The code of the list for a language that the list has under another code than its own, from the subtags of a tag
+   * in lower case, or null, as the application has it (src-shared/i18n/resolve-language.ts): Chinese is listed by its
+   * script, Portuguese by its region, Norwegian as Bokmål and Serbian in Latin letters.
+   */
+  const listedUnderAnotherCode = ([language, ...rest]) => {
+    switch (language) {
+      case 'zh':
+        return rest.some((subtag) => ['tw', 'hk', 'mo'].includes(subtag)) ? 'zh-Hant' : 'zh-Hans';
+      case 'pt':
+        return rest.length === 0 || rest.includes('br') ? 'pt-BR' : 'pt-PT';
+      case 'no':
+      case 'nn':
+        return 'nb';
+      case 'sr':
+        return 'sr-Latn';
+      default:
+        return null;
+    }
+  };
+
+  /**
+   * The language of this website that a list of language tags asks for, the first that it has, or null. A tag is
+   * matched as it is (pt-BR, zh-Hant), then without its last part, again and again (ja-JP is ja), then as a language
+   * that the list has under another code (zh-TW, no), without regard to case.
+   */
   const matchLanguage = (tags) => {
     for (const tag of tags) {
       if (typeof tag !== 'string') continue;
-      // A tag is matched as it is, then without its last parts: ja-JP is ja.
       const subtags = tag.toLowerCase().split('-');
       for (let length = subtags.length; length > 0; length--) {
-        const candidate = subtags.slice(0, length).join('-');
-        const language = languages.find(({ code }) => code.toLowerCase() === candidate);
-        if (language) return language.code;
+        const code = listed(subtags.slice(0, length).join('-'));
+        if (code) return code;
       }
+      const otherCode = listedUnderAnotherCode(subtags);
+      if (otherCode && listed(otherCode)) return listed(otherCode);
     }
     return null;
   };
@@ -104,9 +175,13 @@
   // The attributes that get a text, each by the key in the attribute of the same name after "data-i18n-".
   const translatedAttributes = ['alt', 'content', 'aria-label', 'placeholder'];
 
-  /** Puts the texts of a language into the page. A key that the language does not have keeps what the page shows. */
+  /**
+   * Puts the texts of a language into the page, which is laid out from right to left for a language written so. A key
+   * that the language does not have keeps what the page shows.
+   */
   const apply = (code, texts) => {
     root.lang = code;
+    root.dir = languages.find((each) => each.code === code)?.rtl ? 'rtl' : 'ltr';
     for (const element of document.querySelectorAll('[data-i18n]')) {
       const text = textOf(texts, element.dataset.i18n);
       if (typeof text !== 'string') continue;
@@ -225,10 +300,10 @@
     };
     showChosen(root.lang);
 
-    const listed = () => options.filter((option) => !option.hidden);
+    const listedOptions = () => options.filter((option) => !option.hidden);
     /** The entry that the Tab key reaches in the list, the chosen one or else the first listed, which it returns. */
     const setTabStop = () => {
-      const stop = listed().find((option) => option.dataset.code === shown) ?? listed()[0];
+      const stop = listedOptions().find((option) => option.dataset.code === shown) ?? listedOptions()[0];
       for (const option of options) option.tabIndex = option === stop ? 0 : -1;
       return stop;
     };
@@ -244,7 +319,7 @@
         const code = option.dataset.code;
         option.hidden = !matchesSearch(languageOf(code), search.value, namesInPageLanguage?.of(code) ?? '');
       }
-      const none = listed().length === 0;
+      const none = listedOptions().length === 0;
       list.hidden = none;
       status.textContent = none ? noLanguagesFound.textContent : '';
       setTabStop();
@@ -281,23 +356,41 @@
       list.scrollTop = 0;
     });
     search.addEventListener('keydown', (event) => {
-      if (event.key === 'ArrowDown' && listed().length > 0) {
+      if (event.key === 'ArrowDown' && listedOptions().length > 0) {
         event.preventDefault();
         focusOption(setTabStop());
-      } else if (event.key === 'Enter' && search.value.trim() !== '' && listed().length > 0) {
+      } else if (event.key === 'Enter' && search.value.trim() !== '' && listedOptions().length > 0) {
         // The first language that the search finds, for a visitor who types its name and presses Enter.
         event.preventDefault();
-        pick(listed()[0]);
+        pick(listedOptions()[0]);
       }
     });
     list.addEventListener('click', (event) => {
       const option = event.target.closest('.language-option');
       if (option) pick(option);
     });
+    // TL;DR: A letter typed on the list moves the focus to the next language whose name starts with it. Letters typed
+    // within half a second of each other are taken together, "de" for Deutsch, and the same letter again goes on to
+    // the next language that starts with it.
+    // Details: The application's list and Photo Data Viewer's do this. The names are compared as the search compares
+    // them, without regard to case or diacritics.
+    let typed = '';
+    let typedAt = 0;
+    const optionTypedFor = (entries, at, letter) => {
+      const now = Date.now();
+      typed = now - typedAt < 500 ? typed + letter : letter;
+      typedAt = now;
+      const sameLetter = [...typed].every((each) => each === typed[0]);
+      const sought = foldForSearch(sameLetter ? typed[0] : typed);
+      // From the entry after the focused one for a letter on its own, and from the focused one while a name is typed.
+      const from = sameLetter ? at + 1 : at;
+      return [...entries.slice(from), ...entries.slice(0, from)]
+        .find((option) => foldForSearch(languageOf(option.dataset.code).name).startsWith(sought));
+    };
     // The arrow keys, Home and End move between the entries, and Enter or Space chooses one. Up from the first entry
     // goes back to the search field.
     list.addEventListener('keydown', (event) => {
-      const entries = listed();
+      const entries = listedOptions();
       const at = entries.indexOf(document.activeElement);
       if (at === -1) return;
       if (event.key === 'Enter' || event.key === ' ') {
@@ -306,10 +399,14 @@
         return;
       }
       const moves = { ArrowDown: at + 1, ArrowUp: at - 1, Home: 0, End: entries.length - 1 };
-      if (!(event.key in moves)) return;
-      event.preventDefault();
-      if (moves[event.key] < 0) search.focus();
-      else focusOption(entries[Math.min(moves[event.key], entries.length - 1)]);
+      if (event.key in moves) {
+        event.preventDefault();
+        if (moves[event.key] < 0) search.focus();
+        else focusOption(entries[Math.min(moves[event.key], entries.length - 1)]);
+      } else if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+        const option = optionTypedFor(entries, at, event.key);
+        if (option) focusOption(option);
+      }
     });
     // Escape, a click outside the picker, or the keyboard's focus leaving it closes the box without a choice.
     popup.addEventListener('keydown', (event) => {

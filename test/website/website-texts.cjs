@@ -27,6 +27,9 @@ function flatten(value, prefix = '') {
 
 const english = flatten(read('en.json'));
 const tags = text => (text.match(/<\/?[a-zA-Z][^>]*>/g) ?? []).join(' ');
+/** The names that every language writes as English does. Each is found in a word with an ending too, as Windowsille. */
+const names = ['Photo Location Map', 'Photo Data Viewer', 'Windows Defender SmartScreen', 'GitHub', 'Tomoyuki Aota', 'EXIF',
+  'Windows', 'macOS', 'exe'];
 const oneLine = text => text.replace(/\s+/g, ' ').trim();
 
 /** The element of a page that has `attribute="key"`: its opening tag, and what is between that and its closing tag. */
@@ -55,6 +58,18 @@ describe('The texts of the website (docs/github-pages/locales)', () => {
     const codes = languages.map(language => language.code);
     assert.equal(new Set(codes).size, codes.length);
     assert.deepEqual(codes.map(code => `${code}.json`).sort(), files);
+  });
+
+  it('are in languages of the application, in the order of its list, under the same names', () => {
+    // The list of the application, read as text: it is TypeScript, with the application's texts imported into it.
+    const source = fs.readFileSync(path.join(docs, '../src-shared/i18n/languages.ts'), 'utf8');
+    const ofApplication = [...source.matchAll(/\{ code: '([^']+)', name: '([^']+)', englishName: '([^']+)', direction: '(ltr|rtl)'/g)]
+      .map(([, code, name, englishName, direction]) => ({ code, name, englishName, rtl: direction === 'rtl' }));
+    assert.ok(ofApplication.length > 40, `${ofApplication.length} languages read from languages.ts`);
+    // A language of the application alone is passed over: its translation of the website may follow later.
+    const codes = languages.map(language => language.code);
+    assert.deepEqual(languages.map(({ code, name, englishName, rtl }) => ({ code, name, englishName, rtl: rtl === true })),
+      ofApplication.filter(({ code }) => codes.includes(code)));
   });
 
   it('have an English text for every key that a page asks for, and no English text that no page asks for', () => {
@@ -88,6 +103,22 @@ describe('The texts of the website (docs/github-pages/locales)', () => {
       it('keeps the <link> tags of each English text', () => {
         assert.deepEqual(Object.keys(texts).filter(key => key in english && tags(texts[key]) !== tags(english[key])), []);
       });
+
+      it('writes the names as English does: Photo Location Map, Windows, GitHub and the others', () => {
+        const without = Object.keys(texts).flatMap(key =>
+          names.filter(name => (english[key] ?? '').includes(name) && !texts[key].includes(name)).map(name => `${key}: ${name}`));
+        assert.deepEqual(without, []);
+      });
+
+      it('numbers the steps of the installation, and names the two buttons of Windows as the pictures show them', () => {
+        for (const step of [1, 2, 3, 4]) {
+          const text = texts[`downloading.step${step}`];
+          if (text !== undefined) assert.ok(text.startsWith(`${step}. `), `downloading.step${step}: ${text}`);
+        }
+        // The pictures are of an English Windows, so a step has the English words, beside the language's own.
+        if ('downloading.step2' in texts) assert.ok(texts['downloading.step2'].includes('More info'), texts['downloading.step2']);
+        if ('downloading.step3' in texts) assert.ok(texts['downloading.step3'].includes('Run anyway'), texts['downloading.step3']);
+      });
     });
   }
 
@@ -98,17 +129,11 @@ describe('The texts of the website (docs/github-pages/locales)', () => {
     assert.ok(landing.includes('<link rel="alternate" hreflang="x-default" href="https://tomoyukiaota.github.io/photo-location-map/">'));
   });
 
-  it('are named in the sitemap too: it has the landing page\'s address in each language, and each names the others', () => {
+  it('have their addresses in the sitemap: the landing page\'s, as it is and in each language, in the order of the list', () => {
     const site = 'https://tomoyukiaota.github.io/photo-location-map/';
     const sitemap = fs.readFileSync(path.join(docs, 'sitemap.xml'), 'utf8');
-    const urls = [...sitemap.matchAll(/<url>([\s\S]*?)<\/url>/g)].map(([, url]) => url);
-    const addressOf = url => /<loc>([^<]*)<\/loc>/.exec(url)?.[1];
-    assert.deepEqual(urls.map(addressOf).sort(), [site, ...languages.map(({ code }) => `${site}?lang=${code}`)].sort());
-    for (const url of urls) {
-      for (const { code } of languages)
-        assert.ok(url.includes(`<xhtml:link rel="alternate" hreflang="${code}" href="${site}?lang=${code}"/>`), `${code} at ${addressOf(url)}`);
-      assert.ok(url.includes(`<xhtml:link rel="alternate" hreflang="x-default" href="${site}"/>`), `x-default at ${addressOf(url)}`);
-    }
+    const addresses = [...sitemap.matchAll(/<url>\s*<loc>([^<]*)<\/loc>/g)].map(([, address]) => address);
+    assert.deepEqual(addresses, [site, ...languages.map(({ code }) => `${site}?lang=${code}`)]);
   });
 
   it('are published as the files are: docs/.nojekyll keeps GitHub Pages from running Jekyll over them', () => {
@@ -119,15 +144,33 @@ describe('The texts of the website (docs/github-pages/locales)', () => {
 });
 
 describe('The language of the website (docs/github-pages/i18n.js)', () => {
+  // Icelandic and Welsh stand for the languages that the website has no texts in. The cases are those of the
+  // application's matching, which this is to be the same as (src-shared/i18n/resolve-language.spec.ts).
   it('is the first of a list of language tags that the website has, as it is or without its last parts', () => {
     assert.equal(matchLanguage(['ja']), 'ja');
     assert.equal(matchLanguage(['ja-JP']), 'ja');
     assert.equal(matchLanguage(['JA-jp']), 'ja');
     assert.equal(matchLanguage(['en-GB']), 'en');
+    assert.equal(matchLanguage(['es-419']), 'es');
+    assert.equal(matchLanguage(['fr-CA']), 'fr');
+    assert.equal(matchLanguage(['pt-BR']), 'pt-BR');
+    assert.equal(matchLanguage(['pt-br']), 'pt-BR');
+    assert.equal(matchLanguage(['zh-Hant-TW']), 'zh-Hant');
+    assert.equal(matchLanguage(['zh-Hans-CN']), 'zh-Hans');
+    assert.equal(matchLanguage(['sr-Latn-RS']), 'sr-Latn');
+    assert.equal(matchLanguage(['nb-NO']), 'nb');
     assert.equal(matchLanguage(['is-IS', 'ja-JP', 'en-US']), 'ja');
+    assert.equal(matchLanguage(['en-US', 'ja-JP']), 'en');
     assert.equal(matchLanguage(['is-IS', 'cy']), null);
     assert.equal(matchLanguage([null, undefined, '']), null);
     assert.equal(matchLanguage([]), null);
+  });
+
+  it('is found under another code where the list has it so: Chinese by its script, Portuguese by its region, Bokmål and Serbian in Latin letters', () => {
+    for (const [tag, code] of [['zh-TW', 'zh-Hant'], ['zh-HK', 'zh-Hant'], ['zh-MO', 'zh-Hant'], ['zh-CN', 'zh-Hans'], ['zh-SG', 'zh-Hans'],
+      ['zh', 'zh-Hans'], ['pt', 'pt-BR'], ['pt-PT', 'pt-PT'], ['pt-AO', 'pt-PT'], ['no', 'nb'], ['no-NO', 'nb'], ['nn-NO', 'nb'],
+      ['sr', 'sr-Latn'], ['sr-RS', 'sr-Latn'], ['sr-Cyrl-RS', 'sr-Latn']])
+      assert.equal(matchLanguage([tag]), code, tag);
   });
 
   it('is the one in the address, then the one chosen before, then the browser\'s, then English', () => {
@@ -139,6 +182,9 @@ describe('The language of the website (docs/github-pages/i18n.js)', () => {
     // A language that the website does not have, in the address or kept from before, is passed over.
     assert.equal(resolveLanguage({ param: 'xx', saved: 'ja', browserLanguages: ['en-US'] }), 'ja');
     assert.equal(resolveLanguage({ param: 'xx', saved: 'yy', browserLanguages: ['en-US'] }), 'en');
+    // The address gives a code in any case, and one that the list has under another code.
+    assert.equal(resolveLanguage({ param: 'zh-hant', saved: null, browserLanguages: ['en-US'] }), 'zh-Hant');
+    assert.equal(resolveLanguage({ param: 'zh-TW', saved: null, browserLanguages: ['en-US'] }), 'zh-Hant');
   });
 
   it('is found in the picker\'s list by any part of its own name, English name, name in the page\'s language or code', () => {

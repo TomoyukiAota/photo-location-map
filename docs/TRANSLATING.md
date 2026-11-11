@@ -66,6 +66,9 @@ finds the texts by them.
    screenshots of the application in your language; see
    [Checking how it looks](#checking-how-it-looks).
 
+The website has texts of its own, in the same languages: translate them too,
+so that the website offers your language as well ([The website](#the-website)).
+
 Photo Data Viewer, which opens for **View Data**, has translations of its own,
 in the same languages:
 [its guide](https://github.com/TomoyukiAota/photo-data-viewer/blob/main/docs/TRANSLATING.md).
@@ -194,9 +197,10 @@ photo's popup on the map with its menu, and the chart.
 ## The website
 
 The [website](https://tomoyukiaota.github.io/photo-location-map/), where the
-application is downloaded from, has translations of its own. A visitor sees it
-in the browser's language when the website has it, and can choose another one
-in the language picker at the top of the page.
+application is downloaded from, has translations of its own, in the
+application's languages. A visitor sees it in the browser's language when the
+website has it, and can choose another one in the language picker at the top
+of the page.
 
 | File | What it is |
 | --- | --- |
@@ -207,25 +211,39 @@ in the language picker at the top of the page.
 To add a language:
 
 1. Create `docs/github-pages/locales/<code>.json`, paste the content of
-   `en.json` into it and translate every text. `<link>` and `</link>` are
-   around the words of a link: keep the pair, around the words that are the
-   link in your language. A text that you leave out is shown in English.
+   `en.json` into it and translate every text, with the application's words
+   for the same things. A text that you leave out is shown in English.
+   - `<link>` and `</link>` are around the words of a link: keep the pair,
+     around the words that are the link in your language.
+   - The names stay as they are: Photo Location Map, Photo Data Viewer,
+     Windows Defender SmartScreen, GitHub, EXIF.
+   - The steps of the Windows download page name the two buttons of Windows'
+     warning as a Windows in your language shows them, with the English words
+     after them in parentheses, as the two pictures on the page are of an
+     English Windows: `„Weitere Informationen“ (More info)` in German.
 2. Add the language to the `languages` list at the top of
-   `docs/github-pages/i18n.js`, with its name written in the language itself
-   and its name in English, which the search of the picker finds it by too.
+   `docs/github-pages/i18n.js`, where the application's list has it, with the
+   same name and English name, and with `rtl: true` when it is written from
+   right to left.
 3. So that search engines find the page in your language, add its line next to
    those of the other languages in the head of `docs/index.html`
-   (`<link rel="alternate" hreflang="<code>" …>`), and its address with those
-   lines in `docs/sitemap.xml`.
-4. Open a pull request titled `Add <language> translation of the website`.
+   (`<link rel="alternate" hreflang="<code>" …>`), and its address next to
+   theirs in `docs/sitemap.xml`.
+4. Open a pull request titled `Add <language> translation of the website`, or
+   add this to the pull request of the application's translation.
 
 `npm run test:website`, which runs on every pull request, checks what the
-check of the application's texts checks: the keys, the `<link>` tags, and that
-each file is listed. To look at the result, serve the folder
-(`python3 -m http.server 8080 --directory docs`) and open
+check of the application's texts checks, and a little more: the keys, the
+`<link>` tags, the names, the numbers of the steps, that each file is listed,
+and that the list is in the order of the application's. To look at the result,
+serve the folder (`python3 -m http.server 8080 --directory docs`) and open
 `http://localhost:8080/?lang=<code>`.
 
-The website is in English and Japanese (日本語) so far.
+The website's texts have the status of the application's
+([Languages](#languages)): English is the source, Japanese is the
+maintainer's, and the others are machine translations until a speaker reviews
+them. In those, the names of Windows' two buttons were written from memory,
+not read off a Windows in the language.
 
 ## How the language is chosen
 

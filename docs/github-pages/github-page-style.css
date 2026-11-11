@@ -141,8 +141,9 @@ a:hover {
   text-decoration: underline;
 }
 
+/* At the side where the lines start, which is the right in a page laid out from right to left (i18n.js). */
 ul, ol {
-  padding-left: 40px;
+  padding-inline: 40px 0;
 }
 
 .btn {
