@@ -187,7 +187,7 @@
       "title": "Dato- og tidsformat",
       "description": "Dato- og tidsformatet ændres, når appen er genstartet.",
       "dateFormat": "Datoformat",
-      "clockSystem": "12 eller 24 timer",
+      "clockSystem": "12/24 timer",
       "clock12": "12 timer",
       "clock24": "24 timer",
       "example": "Eksempel"
