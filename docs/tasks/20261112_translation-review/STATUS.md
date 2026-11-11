@@ -174,19 +174,20 @@ On macOS (Apple Silicon), 2026-11-12.
 - `node test/layout/app-in-every-language.mjs --pictures`, with the final
   texts: 25 screens in each of the 42 languages. Every step ran, and the tool
   reports nothing that English does not have: no text that is cut or out of
-  its box, and none on more lines than in English but the zoom button's, on
-  two lines in 9 languages and on three in 33, which is meant. By amount
-  rather than by kind, one thing differs: the date under a thumbnail in the
-  tree is cut by 3px in English at the sidebar's first width, and by up to
-  8px in other languages, whose short names of the days are longer. The tree
-  is wider than the sidebar by design, and the sidebar can be made wider.
+  its box, to a side or in height, and none on more lines than in English.
+  The zoom button, which is made for up to three lines, is on two in 9
+  languages and on three in 33. By amount rather than by kind, one thing
+  differs: the date under a thumbnail in the tree is cut by 3px in English at
+  the sidebar's first width, and by up to 8px in other languages, whose short
+  names of the days are longer. The tree is wider than the sidebar by design,
+  and the sidebar can be made wider.
 - The pictures were looked at as sheets of all languages side by side: the
   Date & Time settings, the status bars in windows of 1200px and of 800px, the
-  question before a restart, the Welcome dialog's heading and the Open Folder
-  button in all 42 languages; the whole Welcome dialog, the Sort menu, a
-  photo's popup with its menu, the chart's button and the chart's message in 12
-  to 27 languages each, with Arabic or Hebrew, Japanese, Korean and Chinese
-  among them.
+  question before a restart, the Welcome dialog's heading, the Open Folder
+  button, the chart's button and the Language dialog in all 42 languages; the
+  whole Welcome dialog, the Sort menu, a photo's popup with its menu and the
+  chart's message in 12 to 27 languages each, with Arabic or Hebrew, Japanese,
+  Korean and Chinese among them.
 
 ## Not done
 
@@ -197,6 +198,10 @@ On macOS (Apple Silicon), 2026-11-12.
   menu is drawn by the operating system.
 - **The loading dialog** is on the screen for a moment only, and the tool
   catches it in some languages and not in others.
+- **Chinese is broken after any letter**, as a browser has no rule for where
+  its words end: on the Open Folder button in the narrowest sidebar, 打开文 /
+  件夹 divides the word for a folder. The lines are of the same length there,
+  where one letter was alone on the second line.
 
 ## Questions for the owner
 

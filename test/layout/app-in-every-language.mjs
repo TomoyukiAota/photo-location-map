@@ -10,11 +10,12 @@
 // on the map, the tabs of the Settings dialog with the choices of the clock's field, the question before a restart,
 // the About box, the dialog of the thumbnails that failed, and the dialog of a folder without location data.
 //
-// In each screen it finds the texts that are cut, the texts that reach outside their dialog or the window, the texts
-// of buttons, tabs, menu items, labels and headings that are on more than one line, and the boxes that scroll. It
-// prints what a language has and English does not have in the same screen, and what English itself has, and writes
-// everything to measurements.json in the output folder. With --pictures, it also writes a picture of each screen in
-// each language, <screen>-<code>.png, which contact-sheets.mjs puts side by side.
+// In each screen it finds the texts that are cut, the texts that reach outside their dialog or the window, to a side
+// or in height, the texts of buttons, tabs, menu items, labels and headings that are on more than one line, and the
+// boxes that scroll. It prints what a language has and English does not have in the same screen, a text on more
+// lines than the English one among it, and what English itself has, and writes everything to measurements.json in
+// the output folder. With --pictures, it also writes a picture of each screen in each language,
+// <screen>-<code>.png, which contact-sheets.mjs puts side by side.
 //
 // The windows are kept off the screen as in the e2e suite (test/e2e/README.md): hidden on macOS, transparent on
 // Windows, and shown on Linux.
@@ -66,7 +67,8 @@ const measure = ([selector, within]) => {
   // What scrolls by design, whatever the language: the map, the lists of languages and of files, the tree.
   const scrollsByDesign = '.leaflet-container, cdk-virtual-scroll-viewport, .language-list, mat-tree, #home-sidebar-lower-pane';
   const boundsElement = within ? document.querySelector(within) : null;
-  const bounds = boundsElement ? boundsElement.getBoundingClientRect() : { left: 0, right: window.innerWidth };
+  const bounds = boundsElement ? boundsElement.getBoundingClientRect()
+    : { left: 0, right: window.innerWidth, top: 0, bottom: window.innerHeight };
   const range = document.createRange();
   for (const root of document.querySelectorAll(selector)) {
     for (const box of [root, ...root.querySelectorAll('*')]) {
@@ -93,9 +95,12 @@ const measure = ([selector, within]) => {
       const bottom = Math.max(...rects.map(rect => rect.bottom));
       const shown = `${nameOf(element)} “${text.length > 50 ? text.slice(0, 50) + '…' : text}”`;
       // Cut by an element around it that hides or scrolls what does not fit. An inline element hides nothing.
+      let keptInHeight = false;
       for (let around = element; around && around !== document.body; around = around.parentElement) {
         const aroundStyle = getComputedStyle(around);
         if (aroundStyle.display === 'inline' || aroundStyle.display === 'contents') continue;
+        // What an element around the text hides or scrolls in height does not reach below it: see "outside".
+        if (aroundStyle.overflowY !== 'visible') keptInHeight = true;
         // What is shown in the top layer, as a menu or the choices of a field, is cut by nothing around it.
         if (around.matches(':popover-open') || aroundStyle.position === 'fixed') break;
         const box = around.getBoundingClientRect();
@@ -112,8 +117,14 @@ const measure = ([selector, within]) => {
       }
       if (right > Math.min(window.innerWidth, bounds.right) + 1 || left < Math.max(0, bounds.left) - 1)
         found.outside.push(`${shown}: ${Math.round(left)}..${Math.round(right)} of ${Math.round(bounds.left)}..${Math.round(bounds.right)}`);
+      // Below or above the dialog or the window, as a dialog that is taller than the window is: only for a text that
+      // nothing around it cuts or scrolls in height, which is looked at above and with the boxes that scroll.
+      else if (!keptInHeight && (bottom > Math.min(window.innerHeight, bounds.bottom) + 2 || top < Math.max(0, bounds.top) - 2))
+        found.outside.push(`${shown} in height: ${Math.round(top)}..${Math.round(bottom)} of ${Math.round(bounds.top)}..${Math.round(bounds.bottom)}`);
       const lines = new Set(rects.map(rect => Math.round(rect.top))).size;
-      if (lines > 1 && element.closest(labels)) found.lines.push(`${shown}: ${lines} lines`);
+      // The button that selects the photos within the chart's zoom is made for up to three lines (see its component).
+      const linesByDesign = element.closest('app-select-photos-within-zoom') ? 3 : 1;
+      if (lines > linesByDesign && element.closest(labels)) found.lines.push(`${shown}: ${lines} lines`);
     }
   }
   return found;
@@ -334,17 +345,20 @@ await rm(folders, { recursive: true, force: true });
 await writeFile(path.join(output, 'measurements.json'), JSON.stringify(results, null, 1));
 
 // What a language has and English does not have in the same screen: the same element with the same fault, whatever
-// its text and its numbers are.
+// its text and its numbers are. The lines of a text are the exception: a text on more lines than the English one
+// is reported, as "Open Folder" on two lines does not excuse a translation on four.
 const kinds = ['cut', 'outside', 'lines', 'scrolls'];
 const kindOf = item => item.replace(/“.*?”/g, '').replace(/\d+/g, 'N');
+const linesOf = item => Number(item.match(/: (\d+) lines$/)?.[1] ?? 1);
 let found = 0;
 for (const [code, screens] of Object.entries(results)) {
   if (code === 'en') continue;
   for (const [name, at] of Object.entries(screens)) {
     for (const kind of kinds) {
-      const inEnglish = new Set((results.en?.[name]?.[kind] ?? []).map(kindOf));
+      const inEnglish = new Map();
+      for (const item of results.en?.[name]?.[kind] ?? []) inEnglish.set(kindOf(item), Math.max(inEnglish.get(kindOf(item)) ?? 1, linesOf(item)));
       for (const item of at?.[kind] ?? []) {
-        if (inEnglish.has(kindOf(item))) continue;
+        if (inEnglish.has(kindOf(item)) && linesOf(item) <= inEnglish.get(kindOf(item))) continue;
         found += 1;
         console.log(`${code.padEnd(8)} ${name.padEnd(26)} ${kind.padEnd(8)} ${item}`);
       }

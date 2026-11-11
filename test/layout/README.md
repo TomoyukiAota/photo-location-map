@@ -24,17 +24,21 @@ with.
 In each screen it looks for:
 
 - **cut**: a text that an element around it cuts, with "..." or at its edge;
-- **outside**: a text that reaches outside its dialog, the map or the window;
+- **outside**: a text that reaches outside its dialog, the map or the window,
+  to a side, or below or above it, as in a dialog that is taller than the
+  window;
 - **lines**: the text of a button, a tab, a menu item, a label or a heading
-  that is on more than one line;
+  that is on more than one line, and on more than three for the chart's
+  button that selects the photos within a zoom, which is made for three;
 - **scrolls**: a box that scrolls because its content does not fit.
 
 It prints what a language has and English does not have in the same screen,
 then what English itself has, which is the application's design (the name of a
-file in the narrow tree, the details of the Sort dialog, which scroll). A
-finding is a place to look at, not always a fault: the text of a long button
-may well take two lines. `measurements.json` in the output folder (the system's
-temporary folder, or `--output=<folder>`) has everything.
+file in the narrow tree, the details of the Sort dialog, which scroll). A text
+that is on more lines than the English one is among what English does not
+have. A finding is a place to look at, not always a fault: the text of a long
+button may well take two lines. `measurements.json` in the output folder (the
+system's temporary folder, or `--output=<folder>`) has everything.
 
 The screens are listed at the top of `app-in-every-language.mjs`. The OS tab of
 the Settings dialog exists on Windows only, and the application menu is drawn

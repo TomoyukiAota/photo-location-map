@@ -26,6 +26,9 @@ const option = (name, otherwise) => process.argv.slice(2).find(argument => argum
 const width = Number(option('width', 300));
 const columns = Number(option('columns', 5));
 const rows = Number(option('rows', 4));
+// A sheet of no row or no column would never be finished.
+for (const [name, value] of Object.entries({ width, columns, rows }))
+  if (!Number.isInteger(value) || value < 1) throw new Error(`--${name} takes a whole number of 1 or more.`);
 const clip = option('clip')?.split(',').map(Number);
 if (clip && (clip.length !== 4 || clip.some(Number.isNaN))) throw new Error('--clip takes four numbers: x,y,width,height.');
 const name = option('name', screen);
