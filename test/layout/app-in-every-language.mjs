@@ -95,32 +95,38 @@ const measure = ([selector, within]) => {
       const bottom = Math.max(...rects.map(rect => rect.bottom));
       const shown = `${nameOf(element)} “${text.length > 50 ? text.slice(0, 50) + '…' : text}”`;
       // Cut by an element around it that hides or scrolls what does not fit. An inline element hides nothing.
-      let keptInHeight = false;
+      // The same elements say what is left to be seen of the text in height, for "outside": what is within each
+      // of those that hide or scroll in height, wherever that element itself is.
+      let seenTop = top;
+      let seenBottom = bottom;
+      let cut = false;
       for (let around = element; around && around !== document.body; around = around.parentElement) {
         const aroundStyle = getComputedStyle(around);
         if (aroundStyle.display === 'inline' || aroundStyle.display === 'contents') continue;
-        // What an element around the text hides or scrolls in height does not reach below it: see "outside".
-        if (aroundStyle.overflowY !== 'visible') keptInHeight = true;
-        // What is shown in the top layer, as a menu or the choices of a field, is cut by nothing around it.
-        if (around.matches(':popover-open') || aroundStyle.position === 'fixed') break;
         const box = around.getBoundingClientRect();
         const inner = { left: box.left + parseFloat(aroundStyle.borderLeftWidth), right: box.right - parseFloat(aroundStyle.borderRightWidth),
           top: box.top + parseFloat(aroundStyle.borderTopWidth), bottom: box.bottom - parseFloat(aroundStyle.borderBottomWidth) };
+        if (aroundStyle.overflowY !== 'visible') {
+          seenTop = Math.max(seenTop, inner.top);
+          seenBottom = Math.min(seenBottom, inner.bottom);
+        }
+        // What is shown in the top layer, as a menu or the choices of a field, is cut by nothing around it.
+        if (around.matches(':popover-open') || aroundStyle.position === 'fixed') break;
+        if (cut) continue;
         if (aroundStyle.overflowX !== 'visible' && (right > inner.right + 1 || left < inner.left - 1)) {
           found.cut.push(`${shown} by ${nameOf(around)} (${aroundStyle.overflowX}): ${Math.round(Math.max(right - inner.right, inner.left - left))}px`);
-          break;
-        }
-        if (!['visible', 'auto', 'scroll'].includes(aroundStyle.overflowY) && (bottom > inner.bottom + 2 || top < inner.top - 2)) {
+          cut = true;
+        } else if (!['visible', 'auto', 'scroll'].includes(aroundStyle.overflowY) && (bottom > inner.bottom + 2 || top < inner.top - 2)) {
           found.cut.push(`${shown} by ${nameOf(around)} (${aroundStyle.overflowY}, in height): ${Math.round(Math.max(bottom - inner.bottom, inner.top - top))}px`);
-          break;
+          cut = true;
         }
       }
       if (right > Math.min(window.innerWidth, bounds.right) + 1 || left < Math.max(0, bounds.left) - 1)
         found.outside.push(`${shown}: ${Math.round(left)}..${Math.round(right)} of ${Math.round(bounds.left)}..${Math.round(bounds.right)}`);
-      // Below or above the dialog or the window, as a dialog that is taller than the window is: only for a text that
-      // nothing around it cuts or scrolls in height, which is looked at above and with the boxes that scroll.
-      else if (!keptInHeight && (bottom > Math.min(window.innerHeight, bounds.bottom) + 2 || top < Math.max(0, bounds.top) - 2))
-        found.outside.push(`${shown} in height: ${Math.round(top)}..${Math.round(bottom)} of ${Math.round(bounds.top)}..${Math.round(bounds.bottom)}`);
+      // Below or above the dialog or the window, as in a dialog that is taller than the window: what is left to be
+      // seen of the text reaches there. A text that is outside to a side as well is reported for both.
+      if (seenBottom > seenTop && (seenBottom > Math.min(window.innerHeight, bounds.bottom) + 2 || seenTop < Math.max(0, bounds.top) - 2))
+        found.outside.push(`${shown} in height: ${Math.round(seenTop)}..${Math.round(seenBottom)} of ${Math.round(bounds.top)}..${Math.round(bounds.bottom)}`);
       const lines = new Set(rects.map(rect => Math.round(rect.top))).size;
       // The button that selects the photos within the chart's zoom is made for up to three lines (see its component).
       const linesByDesign = element.closest('app-select-photos-within-zoom') ? 3 : 1;

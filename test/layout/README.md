@@ -19,7 +19,10 @@ mise exec -- node test/layout/app-in-every-language.mjs
 It takes about half a minute per language, and keeps the application's windows
 off the screen as the e2e suite does (`test/e2e/README.md`). `--languages=de,fi`
 goes through those languages only, and English, which the others are compared
-with.
+with. On a machine that is busy, with other work or with several runs of the
+tool at once, a step can take longer than the tool waits for it: the tool then
+lists the steps that did not run to their end, and such a language is run
+again by itself with `--languages`.
 
 In each screen it looks for:
 
