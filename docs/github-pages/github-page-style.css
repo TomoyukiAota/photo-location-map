@@ -48,10 +48,11 @@ body {
   display: flex;
 }
 
+/* On a narrow screen, one button above the other, both as wide as the wider of the two. */
 @media screen and (max-width: 500px) {
   .download-buttons {
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
   }
 }
 
@@ -67,10 +68,14 @@ body {
   margin: 10px 20px;
 }
 
+/*
+ * TL;DR: At least as wide as before, 200px, and wider for a text that is longer than the English ones.
+ * Details: With a width of 200px, the Japanese texts did not fit, and their last letters were on a line of their own.
+ */
 @media screen and (max-width: 500px) {
   .download-buttons button,
   .download-buttons a {
-    width: 200px;
+    min-width: 200px;
   }
 }
 

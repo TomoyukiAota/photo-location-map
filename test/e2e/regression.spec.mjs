@@ -2365,6 +2365,24 @@ test('download website is in the language of its address, and in the one chosen 
     await expect(languageList.locator('option')).toHaveText(['English', '日本語']);
     await expect(languageList).toHaveValue('ja');
     await shot('website-desktop-ja', [page.locator('iframe')]);
+    // On a phone, where the two download buttons are one above the other, each keeps its text on one line, as it has
+    // at this width, and both are as wide as the wider. The Japanese texts are longer than the English ones, for
+    // which the buttons had their width.
+    const downloadButtons = () => page.locator('.download-buttons > *').evaluateAll(buttons => buttons.map(button => {
+      const { width, height } = button.getBoundingClientRect();
+      return { width: Math.round(width), height: Math.round(height) };
+    }));
+    const buttonsDirection = () => page.locator('.download-buttons').evaluate(element => getComputedStyle(element).flexDirection);
+    const setContentSize = (width, height) => app.evaluate(({ BrowserWindow }, [address, width, height]) =>
+      BrowserWindow.getAllWindows().find(window => window.webContents.getURL().startsWith(address)).setContentSize(width, height), [website.url, width, height]);
+    const heightsOnOneLine = (await downloadButtons()).map(button => button.height);
+    await setContentSize(390, 800);
+    await expect.poll(buttonsDirection).toBe('column');
+    const buttonsOnPhone = await downloadButtons();
+    expect(buttonsOnPhone.map(button => button.height)).toEqual(heightsOnOneLine);
+    expect(buttonsOnPhone[0].width).toBe(buttonsOnPhone[1].width);
+    await setContentSize(1200, 800);
+    await expect.poll(buttonsDirection).toBe('row');
     // English, chosen in the list: the texts change in place, and the address says the language from then on.
     await languageList.selectOption('en');
     await expect(page.locator('.app-summary')).toHaveText('Display the locations where photos were taken on a map.');

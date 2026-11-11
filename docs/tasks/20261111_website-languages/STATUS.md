@@ -43,6 +43,11 @@ contribute.
   the page is parsed. When the texts do not come, the page is shown in English
   after the second and a half, and a visitor can choose a language in the
   list. Texts that arrive after a choice do not replace it.
+- **On a phone, the download buttons are as wide as their texts need.** They
+  were 200px wide, which the English texts fit. The Japanese ones are longer,
+  and their last letters were on a line of their own. Both buttons are now as
+  wide as the wider of the two, and 200px at least, so the English page is as
+  it was.
 - **The texts of the file formats and the names** (Photo Location Map, JPEG,
   HEIF) are not translated.
 - **The steps of the Windows download page** name the buttons of Windows'
@@ -71,7 +76,9 @@ On macOS (Apple Silicon), 2026-11-11.
   while the texts of the first are held back: the page stays in the second.
   And it loads a page in Japanese whose texts are held back: the page is shown
   in English with its list, and stays in the language chosen there when the
-  texts arrive. Each of these steps fails without the code that it checks.
+  texts arrive. At the width of a phone, it checks that each download button
+  keeps its Japanese text on one line and that both are equally wide. Each of
+  these steps fails without the code that it checks.
 - `test/e2e/snapshots/website-desktop.png` and `website-narrow.png` changed:
   the list of languages is at the top right, and the content is that much
   lower. `website-desktop-ja.png` is new.
