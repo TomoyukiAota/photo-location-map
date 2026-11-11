@@ -187,7 +187,7 @@
       "title": "Formát data a času",
       "description": "Formát data a času se změní po restartování aplikace.",
       "dateFormat": "Formát data",
-      "clockSystem": "12 nebo 24 hodin",
+      "clockSystem": "12/24 hodin",
       "clock12": "12 hodin",
       "clock24": "24 hodin",
       "example": "Příklad"
