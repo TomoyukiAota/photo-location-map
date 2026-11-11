@@ -187,7 +187,7 @@
       "title": "Formatul datei și al orei",
       "description": "Formatul datei și al orei se va schimba după repornirea aplicației.",
       "dateFormat": "Formatul datei",
-      "clockSystem": "12 sau 24 de ore",
+      "clockSystem": "12/24 de ore",
       "clock12": "12 ore",
       "clock24": "24 de ore",
       "example": "Exemplu"
