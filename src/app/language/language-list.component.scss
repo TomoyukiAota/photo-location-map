@@ -4,6 +4,8 @@ $row-height: 32px;
 $scrollbar-width: 12px;
 $border: 1px solid #7f7f7f;
 $secondary-text: #6e6e6e;
+$search-icon-size: 20px;
+$search-icon-gap: 8px; // Between the icon and the field's end, and between the field's text and the icon.
 
 :host {
   display: flex;
@@ -11,13 +13,33 @@ $secondary-text: #6e6e6e;
   gap: 8px;
 }
 
+// The search field and the icon in it.
+.search-field {
+  position: relative;
+}
+
+// TL;DR: A magnifying glass at the end of the search field, where a line ends, as search fields usually have, in the
+// grey of the placeholder: at the right, and at the left in Arabic and Hebrew. Photo Data Viewer's field has the same.
+// Details: It is drawn over the field, whose text and the button that clears it end before it. A click on it goes to
+// the field under it.
+.search-icon {
+  position: absolute;
+  inset-block-start: ($row-height - $search-icon-size) * 0.5;
+  inset-inline-end: $search-icon-gap;
+  width: $search-icon-size;
+  height: $search-icon-size;
+  pointer-events: none;
+}
+
 // As wide as the box, and as high as one of its entries.
 .search {
+  display: block;
   box-sizing: border-box;
   width: 100%;
   height: $row-height;
   margin: 0;
   padding: 6px 12px;
+  padding-inline-end: $search-icon-gap + $search-icon-size + $search-icon-gap;
   border: $border;
   border-radius: 0;
   background: white;

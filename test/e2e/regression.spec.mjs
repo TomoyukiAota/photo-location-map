@@ -472,6 +472,15 @@ test('the Language dialog comes before the Welcome dialog at the first launch, a
   // The dialog opens with the search field ready to be typed in.
   const search = dialog.getByRole('searchbox', { name: 'Search' });
   await expect(search).toBeFocused();
+  // A magnifying glass at the end of the field, as search fields usually have: 8 pixels from its right edge, in the
+  // middle of its height. A click on it goes to the field under it.
+  const searchBox = await search.boundingBox();
+  const magnifier = await dialog.locator('.search-icon').boundingBox();
+  expect(searchBox.x + searchBox.width - (magnifier.x + magnifier.width)).toBeCloseTo(8, 0);
+  expect(magnifier.y + magnifier.height / 2).toBeCloseTo(searchBox.y + searchBox.height / 2, 0);
+  await dialog.locator('.ok-button').focus();
+  await page.mouse.click(magnifier.x + magnifier.width / 2, magnifier.y + magnifier.height / 2);
+  await expect(search).toBeFocused();
   const okButton = dialog.locator('.ok-button');
   await expect(okButton).toHaveText('OK');
   const restartNote = dialog.locator('.restart-note');
@@ -690,6 +699,10 @@ test('on a computer whose language is Arabic, the application is laid out from r
   // U+2068 and U+2069, so that a name written the other way, such as English, keeps its parentheses around it.
   await expect(languageDialog.getByRole('option').first())
     .toHaveText(`استخدام إعداد ${operatingSystemName ?? 'النظام'} (\u2068العربية\u2069)`);
+  // The magnifying glass of the search field is at its end, where a line ends: at its left.
+  const searchBox = await languageDialog.getByRole('searchbox').boundingBox();
+  const magnifier = await languageDialog.locator('.search-icon').boundingBox();
+  expect(magnifier.x - searchBox.x).toBeCloseTo(8, 0);
   await languageDialog.getByRole('button', { name: 'موافق', exact: true }).click();
   const welcome = page.locator('app-welcome-dialog');
   await expect(welcome).toContainText('مرحبًا بك في Photo Location Map');
