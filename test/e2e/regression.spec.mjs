@@ -2304,9 +2304,8 @@ test('download website keeps desktop and narrow layouts and Windows navigation',
 async function serveWebsite() {
   const docs = path.join(root, 'docs');
   const held = new Map();
-  // An SVG file is drawn as an image only with its own type, which GitHub Pages gives it as well.
   const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json',
-    '.ico': 'image/x-icon', '.png': 'image/png', '.svg': 'image/svg+xml' };
+    '.ico': 'image/x-icon', '.png': 'image/png' };
   const server = createServer(async (request, response) => {
     // An address that cannot be read, as one with a malformed percent sequence, is answered as a file that is not
     // there: an error thrown here would otherwise be a rejection that nothing handles.
@@ -2360,15 +2359,14 @@ test('download website is in the language of its address, and in the one chosen 
     await expect(troubleshooting).toHaveText('このアプリで問題が起きたときは、トラブルシューティングのページをご覧ください。');
     await expect(troubleshooting.getByRole('link')).toHaveText('トラブルシューティングのページ');
     await expect(troubleshooting.getByRole('link')).toHaveAttribute('href', /troubleshooting\.md$/);
-    // The language picker: a button with the page's language and its flag, which a screen reader calls the language.
+    // The language picker: a button with the page's language, which a screen reader calls the language.
     const pickerButton = page.locator('.language-button');
     const chosenOnButton = pickerButton.locator('.language-button-name');
     await expect(page.getByRole('button', { name: '言語 日本語', exact: true })).toBeVisible();
     await expect(pickerButton).toHaveAttribute('aria-expanded', 'false');
-    await expect(pickerButton.locator('.language-flag')).toHaveAttribute('src', /\/github-pages\/flags\/jp\.svg$/);
     await shot('website-desktop-ja', [page.locator('iframe')]);
     // It opens a box under it, with a search field above the list of languages, as the application's list has: each
-    // language under its own name with its flag, and the page's language chosen. The search field is ready to be typed in.
+    // language under its own name, and the page's language chosen. The search field is ready to be typed in.
     const pickerBox = page.locator('#language-popup');
     await pickerButton.click();
     await expect(page.getByRole('dialog', { name: '言語' })).toBeVisible();
@@ -2380,9 +2378,11 @@ test('download website is in the language of its address, and in the one chosen 
     await expect(options).toHaveText(['English', '日本語']);
     await expect(options.nth(1)).toHaveAttribute('aria-selected', 'true');
     await expect(options.nth(0)).toHaveAttribute('aria-selected', 'false');
-    const flagsDrawn = await options.locator('img').evaluateAll(images => Promise.all(images.map(image =>
-      image.decode().then(() => [image.src.split('/').pop(), image.naturalWidth > 0], () => [image.src.split('/').pop(), false]))));
-    expect(flagsDrawn).toEqual([['us.svg', true], ['jp.svg', true]]);
+    // A magnifying glass at the end of the search field, 8 pixels from its right edge and in the middle of its height.
+    const searchBox = await search.boundingBox();
+    const magnifier = await pickerBox.locator('.language-search-icon').boundingBox();
+    expect(searchBox.x + searchBox.width - (magnifier.x + magnifier.width)).toBeCloseTo(8, 0);
+    expect(magnifier.y + magnifier.height / 2).toBeCloseTo(searchBox.y + searchBox.height / 2, 0);
     const buttonBox = await pickerButton.boundingBox();
     const boxBox = await pickerBox.boundingBox();
     expect(boxBox.y).toBeGreaterThanOrEqual(buttonBox.y + buttonBox.height);
@@ -2442,7 +2442,6 @@ test('download website is in the language of its address, and in the one chosen 
     await expect(page.locator('.app-summary')).toHaveText('Display the locations where photos were taken on a map.');
     await expect(troubleshooting.getByRole('link')).toHaveText('the troubleshooting page');
     await expect(page.getByRole('button', { name: 'Language English', exact: true })).toBeFocused();
-    await expect(pickerButton.locator('.language-flag')).toHaveAttribute('src', /\/github-pages\/flags\/us\.svg$/);
     await expect(page).toHaveURL(/\?lang=en$/);
     expect(await page.evaluate(() => document.documentElement.lang)).toBe('en');
     /** Chooses a language in the picker with the mouse, by its own name. */
@@ -2521,7 +2520,6 @@ test('download website is in the language of its address, and in the one chosen 
     await expect(page.locator('.windows-defender-more-info')).toHaveAttribute('alt', 'Windows Defender SmartScreen の画像（詳細情報）');
     await expect(page).toHaveTitle('Photo Location Map をダウンロード中');
     await expect(chosenOnButton).toHaveText('日本語');
-    await expect(pickerButton.locator('.language-flag')).toHaveAttribute('src', /\/github-pages\/flags\/jp\.svg$/);
     await pickerButton.click();
     await expect(pickerBox.getByRole('option', { name: '日本語', exact: true })).toHaveAttribute('aria-selected', 'true');
   } finally {

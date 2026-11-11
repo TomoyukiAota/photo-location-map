@@ -8,7 +8,6 @@ const { describe, it } = require('node:test');
 
 const docs = path.join(__dirname, '../../docs');
 const localesDirectory = path.join(docs, 'github-pages/locales');
-const flagsDirectory = path.join(docs, 'github-pages/flags');
 const { languages, matchLanguage, resolveLanguage, linkParts, textOf, foldForSearch, matchesSearch } = require(path.join(docs, 'github-pages/i18n.js'));
 
 const pages = {
@@ -110,18 +109,6 @@ describe('The texts of the website (docs/github-pages/locales)', () => {
         assert.ok(url.includes(`<xhtml:link rel="alternate" hreflang="${code}" href="${site}?lang=${code}"/>`), `${code} at ${addressOf(url)}`);
       assert.ok(url.includes(`<xhtml:link rel="alternate" hreflang="x-default" href="${site}"/>`), `x-default at ${addressOf(url)}`);
     }
-  });
-
-  it('have a flag each, in flags/, the one that the application gives the language', () => {
-    // The rule of the application's flags (src-shared/i18n/languages.ts): the region that Unicode gives the language,
-    // but for the languages with flags of their own.
-    const flagsOfTheirOwn = { ca: 'es-ct', eu: 'es-pv', gl: 'es-ga', ar: 'arab' };
-    for (const { code, flag } of languages)
-      assert.equal(flag, flagsOfTheirOwn[code] ?? new Intl.Locale(code).maximize().region.toLowerCase(), code);
-    // Each flag of the languages, and no other, with the license of the flag-icons package that they are from.
-    const flagFiles = fs.readdirSync(flagsDirectory).filter(file => file.endsWith('.svg')).sort();
-    assert.deepEqual(flagFiles, [...new Set(languages.map(({ flag }) => `${flag}.svg`))].sort());
-    assert.match(fs.readFileSync(path.join(flagsDirectory, 'LICENSE'), 'utf8'), /^The MIT License \(MIT\)\s+Copyright \(c\) 2013 Panayiotis Lipiridis/);
   });
 
   it('are published as the files are: docs/.nojekyll keeps GitHub Pages from running Jekyll over them', () => {

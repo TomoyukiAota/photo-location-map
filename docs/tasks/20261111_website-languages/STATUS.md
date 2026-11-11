@@ -15,11 +15,11 @@ contribute.
   address (`?lang=ja`), then the one chosen in the page's list before, then the
   first of the browser's languages that the website has, then English.
 - Both pages have a language picker at their top right: a button with the
-  page's language and its flag, which opens a box under it with a search
-  field above the list of languages, as the application's list has. Each
-  language is under its own name with its flag. A choice changes the texts in
-  place, is kept for the next visit and for the other page, and is written
-  into the address.
+  page's language, which opens a box under it with a search field above the
+  list of languages, as the application's list has. Each language is under its
+  own name, and the search field has a magnifying glass at its end. A choice
+  changes the texts in place, is kept for the next visit and for the other
+  page, and is written into the address.
 - The texts are in `docs/github-pages/locales/<code>.json`, and
   `docs/github-pages/i18n.js` puts them into the pages. `docs/TRANSLATING.md`
   has a section on adding a language to the website.
@@ -48,16 +48,18 @@ contribute.
   picker. Texts that arrive after a choice do not replace it, even a choice of
   the language that the page is in.
 - **A picker rather than the browser's own list**, which was here at first:
-  the owner asked for a box like the application's, with a search field, and
-  for flags, which a browser's list cannot show. The search finds a language
-  by its own name, its English name, its name in the page's language or its
-  code, as the application's does. The keyboard opens it, moves in it and
-  chooses (the arrow keys, Enter, Escape).
-- **The flags are the application's**, from the flag-icons package: the
-  region that Unicode gives the language, the United States for English and
-  Japan for Japanese. The files of the website's languages are copied into
-  `docs/github-pages/flags/`, with the package's license, as the website has
-  no build step to take them from the package.
+  the owner asked for a box like the application's, with a search field. The
+  search finds a language by its own name, its English name, its name in the
+  page's language or its code, as the application's does. The keyboard opens
+  it, moves in it and chooses (the arrow keys, Enter, Escape).
+- **A magnifying glass at the end of the search field**, as the owner asked
+  for the application, Photo Data Viewer and the website alike: Material
+  Icons' search, 20 pixels in the grey of the placeholder, 8 pixels from the
+  field's end, over the field and taking no click.
+- **No flags.** They were beside the names for a while, and the owner decided
+  against them: a flag stands for a country, while English, Spanish or Arabic
+  is the language of many, and the lists of macOS, Windows and most
+  applications name each language in itself without one.
 - **On a phone, the download buttons are as wide as their texts need.** They
   were 200px wide, which the English texts fit. The Japanese ones are longer,
   and their last letters were on a line of their own. Both buttons are now as
@@ -91,9 +93,9 @@ On macOS (Apple Silicon), 2026-11-11.
   while the texts of the first are held back: the page stays in the second.
   And it loads a page in Japanese whose texts are held back: the page is shown
   in English with its list, and stays in the language chosen there when the
-  texts arrive. It opens the picker, searches in it, moves in it with the
-  keyboard, checks that its flags are drawn, and chooses with the mouse and
-  with Enter. At the width of a phone, it checks that each download button
+  texts arrive. It opens the picker, checks where its magnifying glass is,
+  searches in it, moves in it with the keyboard, and chooses with the mouse
+  and with Enter. At the width of a phone, it checks that each download button
   keeps its Japanese text on one line and that both are equally wide. Each of
   these steps fails without the code that it checks.
 - `test/e2e/snapshots/website-desktop.png` and `website-narrow.png` changed:

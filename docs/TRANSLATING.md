@@ -203,7 +203,6 @@ in the language picker at the top of the page.
 | `docs/github-pages/locales/en.json` | English, the source, which the pages themselves hold as well. |
 | `docs/github-pages/locales/<code>.json` | One file per language, with the keys of `en.json`. |
 | `docs/github-pages/i18n.js` | The languages that the website offers, at its top, and how a page gets its texts. |
-| `docs/github-pages/flags/<flag>.svg` | The flag beside each language in the picker. |
 
 To add a language:
 
@@ -212,11 +211,8 @@ To add a language:
    around the words of a link: keep the pair, around the words that are the
    link in your language. A text that you leave out is shown in English.
 2. Add the language to the `languages` list at the top of
-   `docs/github-pages/i18n.js`, with its name written in the language itself,
-   its name in English, and its flag: the one that the application gives it
-   (`flag` in `src-shared/i18n/languages.ts`). Copy that flag's file from the
-   [flag-icons](https://github.com/lipis/flag-icons) package,
-   `flags/4x3/<flag>.svg`, into `docs/github-pages/flags/`.
+   `docs/github-pages/i18n.js`, with its name written in the language itself
+   and its name in English, which the search of the picker finds it by too.
 3. So that search engines find the page in your language, add its line next to
    those of the other languages in the head of `docs/index.html`
    (`<link rel="alternate" hreflang="<code>" …>`), and its address with those

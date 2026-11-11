@@ -12,11 +12,10 @@
 // this website has; English.
 (() => {
   // The languages of this website, in the order of its list, each under its own name, with its English name, which the
-  // search of the list finds it by too, and its flag, the file flags/<flag>.svg. To add one, add its file to locales/,
-  // its flag to flags/ and its line here (docs/TRANSLATING.md).
+  // search of the list finds it by too. To add one, add its file to locales/ and its line here (docs/TRANSLATING.md).
   const languages = [
-    { code: 'en', name: 'English', englishName: 'English', flag: 'us' },
-    { code: 'ja', name: '日本語', englishName: 'Japanese', flag: 'jp' },
+    { code: 'en', name: 'English', englishName: 'English' },
+    { code: 'ja', name: '日本語', englishName: 'Japanese' },
   ];
   const defaultLanguage = 'en';
   const storageKey = 'PhotoLocationMapWebsiteLanguage';
@@ -70,7 +69,6 @@
 
   const root = document.documentElement;
   const localesUrl = new URL('locales/', document.currentScript.src);
-  const flagsUrl = new URL('flags/', document.currentScript.src);
 
   // Reading window.localStorage throws where the browser blocks storage.
   const savedLanguage = () => {
@@ -187,8 +185,8 @@
   /**
    * Makes the language picker of the page, which each page has empty and hidden: without this script there is nothing
    * to choose. A button that shows the page's language opens a box under it, with a search field above the list of
-   * languages, as the list of the application has, each language under its own name with its flag. Returns how to
-   * show a language as the chosen one, or null for a page without a picker.
+   * languages, as the list of the application has, each language under its own name. Returns how to show a language
+   * as the chosen one, or null for a page without a picker.
    */
   const makePicker = () => {
     const picker = document.querySelector('.language-picker');
@@ -200,10 +198,8 @@
     const status = picker.querySelector('.language-none');
     const noLanguagesFound = picker.querySelector('.language-none-text');
     const languageOf = (code) => languages.find((each) => each.code === code);
-    const flagOf = (code) => new URL(`${languageOf(code).flag}.svg`, flagsUrl).href;
 
-    // The flag, before the name, is not read aloud. The name is on its own, so that one written in the other direction
-    // than the page keeps its order.
+    // The name is on its own, so that one written in the other direction than the page keeps its order.
     const options = languages.map(({ code, name }) => {
       const option = document.createElement('li');
       option.className = 'language-option';
@@ -212,13 +208,9 @@
       option.dataset.code = code;
       option.lang = code;
       option.tabIndex = -1;
-      const flag = document.createElement('img');
-      flag.className = 'language-flag';
-      flag.alt = '';
-      flag.src = flagOf(code);
       const label = document.createElement('bdi');
       label.textContent = name;
-      option.append(flag, label);
+      option.append(label);
       return option;
     });
     list.append(...options);
@@ -226,7 +218,6 @@
     let shown = root.lang;
     const showChosen = (code) => {
       shown = code;
-      button.querySelector('.language-flag').src = flagOf(code);
       const name = button.querySelector('.language-button-name');
       name.textContent = languageOf(code).name;
       name.lang = code;

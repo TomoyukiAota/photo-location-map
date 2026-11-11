@@ -79,15 +79,6 @@ html.i18n-pending body {
   transform: rotate(180deg);
 }
 
-/* A flag, as in the application's list: as high as the capital letters, with a thin line that keeps a white flag
-   apart from the white around it. */
-.language-flag {
-  flex: none;
-  width: 20px;
-  height: 15px;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
-}
-
 /* The box, under the button and at its right edge, over the page's content. */
 .language-popup {
   position: absolute;
@@ -108,13 +99,36 @@ html.i18n-pending body {
 }
 
 
+/* The search field and the magnifying glass in it. */
+.language-search-field {
+  position: relative;
+  margin-bottom: 8px;
+}
+
+/*
+ * A magnifying glass at the end of the search field, where a line ends, as search fields usually have, and as the
+ * application's field and Photo Data Viewer's have it: 20 pixels, in the grey of the placeholder, 8 pixels from the
+ * field's end. It is drawn over the field, whose text and clear button end before it, and a click on it goes to the
+ * field under it.
+ */
+.language-search-icon {
+  position: absolute;
+  top: 6px;
+  inset-inline-end: 8px;
+  width: 20px;
+  height: 20px;
+  fill: #6c757d;
+  pointer-events: none;
+}
+
 .language-search {
   display: block;
   box-sizing: border-box;
   width: 100%;
   height: 32px;
-  margin: 0 0 8px;
+  margin: 0;
   padding: 6px 10px;
+  padding-inline-end: 36px;
   border: 1px solid #ced4da;
   border-radius: 4px;
   background: #fff;
