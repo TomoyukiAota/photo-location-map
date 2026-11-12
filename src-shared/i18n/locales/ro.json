@@ -52,17 +52,17 @@
     "sort": {
       "title": "Sortează",
       "byName": "După nume",
-      "byShootingTime": "După momentul fotografierii",
+      "byShootingTime": "După data fotografierii",
       "ascending": "Crescător",
       "descending": "Descrescător"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "Sortare după momentul fotografierii",
-    "intro": "Când este selectat „După momentul fotografierii”, aplicația sortează fișierele astfel:",
+    "title": "Sortare după data fotografierii",
+    "intro": "Când este selectat „După data fotografierii”, aplicația sortează fișierele astfel:",
     "step1": "Folosește valoarea DateTimeOriginal din datele EXIF. Dacă aceasta lipsește,",
     "step2": "folosește data modificării fișierului.",
-    "foldersNote": "Dosarele sunt sortate după nume, deoarece dosarele nu au un „moment al fotografierii”.",
+    "foldersNote": "Dosarele sunt sortate după nume, deoarece dosarele nu au o „dată a fotografierii”.",
     "moreDetails": "Mai multe informații",
     "details": {
       "intro": "Mai jos sunt câteva informații suplimentare:",
@@ -123,7 +123,7 @@
       "second": "Secundă"
     },
     "unsupportedDuration": "Acest grafic nu poate afișa mai mult de 30 de zile când este selectat „Oră”, mai mult de 3 zile pentru „Minut” și mai mult de 1 oră pentru „Secundă”.",
-    "changeUnitOrSelection": "Schimbați An/Lună/Zi/Oră/Minut/Secundă sau selectați pozele astfel încât perioada să fie mai scurtă.",
+    "changeUnitOrSelection": "Alegeți altă unitate (An/Lună/Zi/Oră/Minut/Secundă) sau selectați pozele astfel încât perioada să fie mai scurtă.",
     "selectPhotosWithinZoom": "Selectează pozele din intervalul mărit",
     "zoom": "Zoom",
     "resetZoom": "Resetează\nzoomul"
@@ -131,7 +131,7 @@
   "loadingFolder": {
     "collecting": "Se adună fișierele de încărcat din dosarul deschis...",
     "loading": "Se încarcă fișierele din dosarul deschis...",
-    "completed": "Toate fișierele au fost încărcate (număr: {{count}}).",
+    "completed": "Toate fișierele au fost încărcate ({{count}} în total).",
     "progress": "Fișiere încărcate: {{loaded}} din {{total}}.",
     "generatingMap": "Se creează harta din fișierele încărcate..."
   },
@@ -155,7 +155,7 @@
     "generationRequired": "Miniaturi de creat: {{required}}. Numărul rezultă din „fișiere HEIF ({{heif}}) − fișiere disponibile în cache ({{cached}})”.",
     "closeStatusBar": "Închide bara de stare a creării miniaturilor",
     "errorDialog": {
-      "message": "Nu s-au putut crea miniaturile următoarelor fișiere (număr: {{count}}):",
+      "message": "Nu s-au putut crea miniaturile următoarelor fișiere ({{count}} în total):",
       "filter": "Filtrează",
       "number": "Nr.",
       "file": "Fișier",
@@ -187,7 +187,7 @@
       "title": "Formatul datei și al orei",
       "description": "Formatul datei și al orei se va schimba după repornirea aplicației.",
       "dateFormat": "Formatul datei",
-      "clockSystem": "12/24 de ore",
+      "clockSystem": "Format de 12 sau 24 de ore",
       "clock12": "12 ore",
       "clock24": "24 de ore",
       "example": "Exemplu"

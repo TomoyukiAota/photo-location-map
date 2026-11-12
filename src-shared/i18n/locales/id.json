@@ -52,17 +52,17 @@
     "sort": {
       "title": "Urutkan",
       "byName": "Menurut nama",
-      "byShootingTime": "Menurut waktu pengambilan",
-      "ascending": "Naik",
-      "descending": "Turun"
+      "byShootingTime": "Menurut waktu pengambilan foto",
+      "ascending": "Menaik",
+      "descending": "Menurun"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "Mengurutkan menurut waktu pengambilan",
-    "intro": "Saat “Menurut waktu pengambilan” dipilih, aplikasi mengurutkan file sebagai berikut:",
-    "step1": "menggunakan DateTimeOriginal di EXIF. Jika tidak tersedia,",
+    "title": "Mengurutkan menurut waktu pengambilan foto",
+    "intro": "Saat “Menurut waktu pengambilan foto” dipilih, aplikasi mengurutkan file sebagai berikut:",
+    "step1": "menggunakan DateTimeOriginal di EXIF; jika tidak tersedia,",
     "step2": "menggunakan waktu modifikasi file.",
-    "foldersNote": "Folder diurutkan menurut nama karena folder tidak memiliki “waktu pengambilan”.",
+    "foldersNote": "Folder diurutkan menurut nama karena folder tidak memiliki “waktu pengambilan foto”.",
     "moreDetails": "Detail selengkapnya",
     "details": {
       "intro": "Berikut adalah informasi tambahan:",
@@ -131,7 +131,7 @@
   "loadingFolder": {
     "collecting": "Mengumpulkan file yang akan dimuat dari folder yang dibuka...",
     "loading": "Memuat file dari folder yang dibuka...",
-    "completed": "Semua file telah dimuat (jumlah: {{count}}).",
+    "completed": "Semua file telah dimuat ({{count}} file).",
     "progress": "File yang dimuat: {{loaded}} dari {{total}}.",
     "generatingMap": "Membuat peta dari file yang dimuat..."
   },
@@ -155,7 +155,7 @@
     "generationRequired": "Gambar mini yang perlu dibuat: {{required}}. Jumlah ini dihitung sebagai “file HEIF ({{heif}}) − file yang sudah ada di cache ({{cached}})”.",
     "closeStatusBar": "Tutup bilah status pembuatan gambar mini",
     "errorDialog": {
-      "message": "Gambar mini tidak dapat dibuat untuk file berikut (jumlah: {{count}}):",
+      "message": "Gambar mini tidak dapat dibuat untuk {{count}} file berikut:",
       "filter": "Filter",
       "number": "No.",
       "file": "File",
@@ -169,7 +169,7 @@
       "language": "Bahasa (Language)",
       "appearance": "Tampilan",
       "dateTime": "Tanggal & Waktu",
-      "os": "Sistem",
+      "os": "Sistem Operasi",
       "cache": "Cache"
     },
     "restartAfterSaving": "Aplikasi ini akan dimulai ulang setelah pengaturan disimpan.",
@@ -187,27 +187,27 @@
       "title": "Format tanggal dan waktu",
       "description": "Format tanggal dan waktu berubah setelah aplikasi dimulai ulang.",
       "dateFormat": "Format tanggal",
-      "clockSystem": "12 atau 24 jam",
+      "clockSystem": "Format 12 atau 24 jam",
       "clock12": "12 jam",
       "clock24": "24 jam",
       "example": "Contoh"
     },
     "os": {
-      "title": "Menu konteks Penjelajah File",
-      "description": "Tambahkan “{{menuItem}}” ke menu konteks Penjelajah File atau hapus dari sana.",
+      "title": "Menu konteks File Explorer",
+      "description": "Tambahkan “{{menuItem}}” ke menu konteks File Explorer atau hapus dari sana.",
       "add": "Tambahkan",
       "remove": "Hapus",
-      "added": "“{{menuItem}}” telah ditambahkan ke menu konteks Penjelajah File.",
-      "removed": "“{{menuItem}}” telah dihapus dari menu konteks Penjelajah File.",
-      "failedToAdd": "Gagal menambahkan “{{menuItem}}” ke menu konteks Penjelajah File.",
-      "failedToRemove": "Gagal menghapus “{{menuItem}}” dari menu konteks Penjelajah File.",
-      "confirmInExplorer": "Untuk memeriksanya, buka Penjelajah File, lalu klik kanan file atau folder."
+      "added": "“{{menuItem}}” telah ditambahkan ke menu konteks File Explorer.",
+      "removed": "“{{menuItem}}” telah dihapus dari menu konteks File Explorer.",
+      "failedToAdd": "Gagal menambahkan “{{menuItem}}” ke menu konteks File Explorer.",
+      "failedToRemove": "Gagal menghapus “{{menuItem}}” dari menu konteks File Explorer.",
+      "confirmInExplorer": "Untuk memeriksanya, buka File Explorer, lalu klik kanan file atau folder."
     },
     "cache": {
       "title": "Cache gambar mini HEIF",
       "requiredForHeif": "<heifLink>File HEIF</heifLink> memerlukan pembuatan gambar mini, dan itu memakan waktu.",
       "thereforeCached": "Karena itu, gambar mini yang dibuat disimpan dalam cache.",
-      "usedNextTime": "Mulai lain kali, cache digunakan dan gambar mini tidak dibuat lagi.",
+      "usedNextTime": "Selanjutnya, cache digunakan sehingga gambar mini tidak perlu dibuat lagi.",
       "location": "Lokasi cache:",
       "restartAfterDeleting": "Aplikasi ini akan dimulai ulang setelah cache gambar mini dihapus.",
       "delete": "Hapus cache gambar mini",
@@ -223,9 +223,9 @@
       "about": "Tentang {{appName}}",
       "services": "Layanan",
       "hide": "Sembunyikan {{appName}}",
-      "hideOthers": "Sembunyikan Lainnya",
-      "showAll": "Tampilkan Semua",
-      "quit": "Keluar dari {{appName}}"
+      "hideOthers": "Sembunyikan lainnya",
+      "showAll": "Tampilkan semua",
+      "quit": "Tutup {{appName}}"
     },
     "view": {
       "title": "Lihat",
@@ -233,7 +233,7 @@
       "actualSize": "Ukuran sebenarnya",
       "zoomIn": "Perbesar",
       "zoomOut": "Perkecil",
-      "toggleFullScreen": "Alihkan layar penuh"
+      "toggleFullScreen": "Aktifkan/nonaktifkan layar penuh"
     },
     "selection": {
       "title": "Pilihan",

@@ -10,13 +10,27 @@ mat-form-field {
   width: 100%;
 }
 
+// TL;DR: The column of the numbers is as wide as its header needs in any language, and the column of the files
+// has the rest.
+// Details: The column had a width of 70px, which fits "No." with the arrow of the sorting beside it, in a table
+// whose columns do not follow their contents (table-layout: fixed, which Angular Material gives its tables too). A
+// header that is a word, as in Hungarian and Hindi, had no room for the arrow. The columns now follow their
+// contents: the header is on one line, and its column is as narrow as that allows, as a width of 1% is less than
+// any content. A file's path breaks anywhere (see below), so it never widens its column beyond the table.
 table {
   width: 100%;
-  table-layout: fixed;
+  table-layout: auto;
 }
 
 .position-column-header-cell, .position-column-cell {
-  width: 70px;
+  width: 1%;
+  white-space: nowrap;
+}
+
+// At least as wide as it was, for a header as short as "No.".
+.position-column-header-cell {
+  min-width: 70px;
+  box-sizing: border-box;
 }
 
 .file-path-and-buttons {

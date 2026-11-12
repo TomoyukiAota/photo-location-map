@@ -1,8 +1,12 @@
+// TL;DR: The dialog is as tall as its two texts need, and at least as tall as it is in English.
+// Details: The dialog had a height of 120px, in which the two texts fit when each is on one line. A text that is
+// longer than the dialog is wide, as the German one about collecting the files is, takes two lines, and the second
+// text was then cut at the dialog's lower edge.
 .progress-indicator {
-  height: 100%;
+  min-height: 120px;
   display: grid;
   grid: "progress-bar"         38px
-        "loading-and-progress" 1fr
+        "loading-and-progress" minmax(82px, auto)
         /1fr;
   justify-content: center;
   mat-progress-bar      { grid-area: progress-bar;         align-self: end;    }
@@ -16,6 +20,8 @@ mat-progress-bar {
 }
 
 .loading-and-progress {
+  // Room around the texts once they fill the dialog's width or its height; they are in its middle otherwise.
+  padding: 8px 16px;
   text-align: center;
 
   * + * {

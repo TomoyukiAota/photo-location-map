@@ -8,8 +8,10 @@
   display: grid;
   align-items: start;
   column-gap: 10px;
-  grid: "summary progress-bar-with-details close-button" auto
-        /auto    minmax(auto, 800px)       min-content;
+  // The summary is on one line while it takes no more than half of the bar, and on more lines from there on, so
+  // that a long sentence in a narrow window leaves room for the progress bar and does not push it out of the window.
+  grid: "summary             progress-bar-with-details close-button" auto
+        /fit-content(50%)    minmax(auto, 800px)       min-content;
 
   .summary                   { grid-area: summary;
                                justify-self: end;                    }
@@ -19,7 +21,6 @@
 
 .summary {
   line-height: $status-bar-min-height;
-  white-space: nowrap;
 }
 
 .anchor-tag-like-text {

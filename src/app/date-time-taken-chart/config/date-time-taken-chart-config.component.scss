@@ -42,8 +42,11 @@
 }
 
 .date-unknown-photos-count {
-  height: 40px;
-  line-height: 40px;
+  // As tall as one line in the middle of 40px, and taller for a text that takes more lines.
+  box-sizing: border-box;
+  min-height: 40px;
+  padding-block: 10px;
+  line-height: 20px;
   padding-inline-start: 10px;
   font-size: 14px;
 }

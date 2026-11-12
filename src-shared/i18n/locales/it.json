@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Apri Google Street View",
       "viewData": "Visualizza dati"
     },
-    "pathTooLong": "Impossibile mostrare la miniatura perché la lunghezza del percorso del file è {{length}}. Windows limita la lunghezza massima dei percorsi a {{maximum}}. Sposta il file per accorciarne il percorso. Per i dettagli, premi Ctrl+Shift+I e leggi i messaggi della console.",
-    "generatedThumbnailPathTooLong": "Impossibile mostrare la miniatura perché la lunghezza del percorso della miniatura creata è {{length}}. Windows limita la lunghezza massima dei percorsi a {{maximum}}. Sposta il file per accorciare il percorso della miniatura creata. Per i dettagli, premi Ctrl+Shift+I e leggi i messaggi della console."
+    "pathTooLong": "Impossibile mostrare la miniatura perché la lunghezza del percorso del file è {{length}}. Windows limita la lunghezza massima dei percorsi a {{maximum}}. Sposta il file per accorciarne il percorso. Per i dettagli, premi Ctrl+Maiusc+I e leggi i messaggi della console.",
+    "generatedThumbnailPathTooLong": "Impossibile mostrare la miniatura perché la lunghezza del percorso della miniatura creata è {{length}}. Windows limita la lunghezza massima dei percorsi a {{maximum}}. Sposta il file per accorciare il percorso della miniatura creata. Per i dettagli, premi Ctrl+Maiusc+I e leggi i messaggi della console."
   },
   "map": {
     "zoomIn": "Ingrandisci",
@@ -124,14 +124,14 @@
     },
     "unsupportedDuration": "Questo grafico non può mostrare più di 30 giorni quando è selezionato «Ora», più di 3 giorni con «Minuto» e più di 1 ora con «Secondo».",
     "changeUnitOrSelection": "Cambia Anno/Mese/Giorno/Ora/Minuto/Secondo oppure seleziona le foto in modo da accorciare il periodo.",
-    "selectPhotosWithinZoom": "Seleziona le foto nello zoom",
+    "selectPhotosWithinZoom": "Seleziona le foto nell’intervallo ingrandito",
     "zoom": "Zoom",
     "resetZoom": "Reimposta\nzoom"
   },
   "loadingFolder": {
     "collecting": "Raccolta dei file da caricare dalla cartella aperta...",
     "loading": "Caricamento dei file dalla cartella aperta...",
-    "completed": "Tutti i file sono stati caricati (numero: {{count}}).",
+    "completed": "Tutti i file sono stati caricati ({{count}} in totale).",
     "progress": "File caricati: {{loaded}} di {{total}}.",
     "generatingMap": "Creazione della mappa dai file caricati..."
   },
@@ -155,7 +155,7 @@
     "generationRequired": "Miniature da creare: {{required}}. Il numero risulta da «file HEIF ({{heif}}) − file disponibili nella cache ({{cached}})».",
     "closeStatusBar": "Chiudi la barra di stato della creazione delle miniature",
     "errorDialog": {
-      "message": "Impossibile creare le miniature dei seguenti file (numero: {{count}}):",
+      "message": "Impossibile creare le miniature dei seguenti file ({{count}} in totale):",
       "filter": "Filtra",
       "number": "N.",
       "file": "File",
@@ -187,7 +187,7 @@
       "title": "Formato di data e ora",
       "description": "Il formato di data e ora verrà cambiato dopo il riavvio dell’applicazione.",
       "dateFormat": "Formato della data",
-      "clockSystem": "12 o 24 ore",
+      "clockSystem": "Formato 12 o 24 ore",
       "clock12": "12 ore",
       "clock24": "24 ore",
       "example": "Esempio"

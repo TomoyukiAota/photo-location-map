@@ -23,7 +23,7 @@
     "noLanguagesFound": "Fant ingen språk"
   },
   "appInfo": {
-    "appIconAlt": "Appsymbol",
+    "appIconAlt": "Appikon",
     "version": "Versjon {{version}}",
     "developedBy": "Utviklet av Tomoyuki Aota.",
     "xProfileAlt": "Profil på X (tidligere Twitter)",
@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Åpne Google Street View",
       "viewData": "Vis data"
     },
-    "pathTooLong": "Miniatyrbildet kan ikke vises fordi filbanen er {{length}} tegn lang. Windows begrenser lengden på baner til {{maximum}} tegn. Flytt filen for å gjøre banen kortere. Trykk på Ctrl+Shift+I og les meldingene i konsollen for detaljer.",
-    "generatedThumbnailPathTooLong": "Miniatyrbildet kan ikke vises fordi banen til det lagde miniatyrbildet er {{length}} tegn lang. Windows begrenser lengden på baner til {{maximum}} tegn. Flytt filen for å gjøre banen til det lagde miniatyrbildet kortere. Trykk på Ctrl+Shift+I og les meldingene i konsollen for detaljer."
+    "pathTooLong": "Miniatyrbildet kan ikke vises fordi filbanen er {{length}} tegn lang. Windows begrenser lengden på baner til {{maximum}} tegn. Flytt filen for å gjøre banen kortere. Trykk på Ctrl+Skift+I og les meldingene i konsollen for detaljer.",
+    "generatedThumbnailPathTooLong": "Miniatyrbildet kan ikke vises fordi banen til det genererte miniatyrbildet er {{length}} tegn lang. Windows begrenser lengden på baner til {{maximum}} tegn. Flytt filen for å gjøre banen til det genererte miniatyrbildet kortere. Trykk på Ctrl+Skift+I og les meldingene i konsollen for detaljer."
   },
   "map": {
     "zoomIn": "Zoom inn",
@@ -124,14 +124,14 @@
     },
     "unsupportedDuration": "Dette diagrammet kan ikke vise mer enn 30 dager når «Time» er valgt, mer enn 3 dager for «Minutt» eller mer enn 1 time for «Sekund».",
     "changeUnitOrSelection": "Endre År/Måned/Dag/Time/Minutt/Sekund, eller marker bilder slik at perioden blir kortere.",
-    "selectPhotosWithinZoom": "Marker bilder innenfor zoomen",
+    "selectPhotosWithinZoom": "Marker bilder innenfor zoomområdet",
     "zoom": "Zoom",
     "resetZoom": "Nullstill\nzoom"
   },
   "loadingFolder": {
     "collecting": "Samler filene som skal lastes inn fra den åpnede mappen...",
     "loading": "Laster inn filer fra den åpnede mappen...",
-    "completed": "Alle filene er lastet inn (antall: {{count}}).",
+    "completed": "Alle filene er lastet inn ({{count}} totalt).",
     "progress": "Innlastede filer: {{loaded}} av {{total}}.",
     "generatingMap": "Lager kartet av de innlastede filene..."
   },
@@ -146,7 +146,7 @@
   "thumbnailGeneration": {
     "generating": "Lager miniatyrbilder for HEIF-filer...",
     "completed": "Miniatyrbildene for HEIF-filer er laget.",
-    "finishedWithErrors": "Lagingen av miniatyrbilder for HEIF-filer ble avsluttet med feil.",
+    "finishedWithErrors": "Ferdig med å lage miniatyrbilder for HEIF-filer, men med feil.",
     "showDetails": "Vis detaljer",
     "processed": "Behandlede filer: {{processed}} av {{total}}.",
     "processedWithErrors": "Behandlede filer: {{processed}} av {{total}}, med feil.",
@@ -155,7 +155,7 @@
     "generationRequired": "Miniatyrbilder som må lages: {{required}}. Tallet er gitt av «HEIF-filer ({{heif}}) − filer som finnes i bufferen ({{cached}})».",
     "closeStatusBar": "Lukk statuslinjen for laging av miniatyrbilder",
     "errorDialog": {
-      "message": "Kunne ikke lage miniatyrbilder for følgende filer (antall: {{count}}):",
+      "message": "Kunne ikke lage miniatyrbilder for følgende filer ({{count}} totalt):",
       "filter": "Filtrer",
       "number": "Nr.",
       "file": "Fil",
@@ -169,7 +169,7 @@
       "language": "Språk (Language)",
       "appearance": "Utseende",
       "dateTime": "Dato og tid",
-      "os": "System",
+      "os": "Operativsystem",
       "cache": "Buffer"
     },
     "restartAfterSaving": "Appen starter på nytt etter at innstillingene er lagret.",
@@ -187,9 +187,9 @@
       "title": "Dato- og tidsformat",
       "description": "Dato- og tidsformatet endres etter at appen er startet på nytt.",
       "dateFormat": "Datoformat",
-      "clockSystem": "12/24 timer",
-      "clock12": "12 timer",
-      "clock24": "24 timer",
+      "clockSystem": "12- eller 24-timersklokke",
+      "clock12": "12-timersklokke",
+      "clock24": "24-timersklokke",
       "example": "Eksempel"
     },
     "os": {
@@ -206,7 +206,7 @@
     "cache": {
       "title": "Buffer for HEIF-miniatyrbilder",
       "requiredForHeif": "For <heifLink>HEIF-filer</heifLink> må det lages miniatyrbilder, og det tar tid.",
-      "thereforeCached": "Derfor lagres de lagde miniatyrbildene i en buffer.",
+      "thereforeCached": "Derfor lagres de genererte miniatyrbildene i en buffer.",
       "usedNextTime": "Fra neste gang brukes bufferen, slik at miniatyrbildene ikke må lages på nytt.",
       "location": "Bufferens plassering:",
       "restartAfterDeleting": "Appen starter på nytt etter at bufferen for miniatyrbilder er slettet.",

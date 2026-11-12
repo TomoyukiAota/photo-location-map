@@ -1,0 +1,17 @@
+// TL;DR: For a short text that takes two or three lines where its language's words are long (a button, a
+// heading): lines of about the same length, broken where the language breaks its lines.
+// Details: A browser fills each line and leaves what remains on the last one: a word alone, as the "Map" of the
+// application's name, or a single letter in Chinese. Lines of the same length look better in every language, but a
+// browser makes them by breaking Japanese and Korean after any letter, which gave フォルダ / ーを開く and
+// 범위 / 의 사진. So Japanese is broken between its phrases, and never before a long vowel mark or a small letter,
+// and Korean between its words, which spaces separate. That is each language's own way of breaking a line, as the
+// direction is for Arabic and Hebrew, not a layout of its own. Chinese has no such rule to give a browser.
+@mixin balanced-lines {
+  text-wrap: balance;
+  line-break: strict;
+  word-break: auto-phrase;
+
+  &:lang(ko) {
+    word-break: keep-all;
+  }
+}

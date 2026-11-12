@@ -61,13 +61,13 @@
     "title": "Sort By Shooting Time",
     "intro": "When \"By Shooting Time\" is selected, in order to sort files, this application",
     "step1": "tries to use DateTimeOriginal in EXIF, and if it is not available,",
-    "step2": "use the modified time of the file.",
+    "step2": "uses the modified time of the file.",
     "foldersNote": "Note that folders are sorted by their names since there is no concept of \"Shooting Time\" of folders.",
     "moreDetails": "More details for reference",
     "details": {
       "intro": "Below are details for reference:",
       "mostTrustworthy": "DateTimeOriginal in EXIF is the most trustworthy information about the time when the photo was taken.",
-      "sometimesMissing": "DateTimeOriginal is written in most JPEG/HEIF/TIFF files by most cameras, but sometime it is missing.",
+      "sometimesMissing": "DateTimeOriginal is written in most JPEG/HEIF/TIFF files by most cameras, but sometimes it is missing.",
       "modifiedTime": "The modified time of the file is often the time when the photo was taken, so the modified time is used as an alternative when DateTimeOriginal is missing.",
       "otherFiles": "Also, files other than JPEG/HEIF/TIFF do not have EXIF in the first place, so the modified time is always used for such files."
     }

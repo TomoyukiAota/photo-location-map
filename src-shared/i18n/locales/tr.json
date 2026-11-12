@@ -43,7 +43,7 @@
     "translations": "Başka dillere çeviriler memnuniyetle karşılanır: <guideLink>bu uygulamanın nasıl çevrileceğine</guideLink> bakın.",
     "translationsLinkTitle": "Bu uygulamanın çeviri kılavuzunu aç",
     "homePageTitle": "Ana sayfayı aç",
-    "sourceCodeTitle": "Kaynak kodunu GitHub'da görüntüle"
+    "sourceCodeTitle": "Kaynak kodunu GitHub’da görüntüle"
   },
   "sidebar": {
     "openFolder": "Klasör Aç",
@@ -82,7 +82,7 @@
     }
   },
   "photoInfo": {
-    "unavailable": "Fotoğraf bilgileri kullanılamıyor.",
+    "unavailable": "Fotoğraf bilgileri mevcut değil.",
     "openFile": "Dosyayı aç",
     "moreOptions": "Diğer seçenekler",
     "livePhotos": "Live Photos",
@@ -90,8 +90,8 @@
     "menu": {
       "selectOnlyThis": "Yalnızca bu dosyayı seç",
       "openFolder": "Klasörü aç",
-      "openGoogleMaps": "Google Haritalar'ı aç",
-      "openGoogleStreetView": "Google Street View'ı aç",
+      "openGoogleMaps": "Google Haritalar’da aç",
+      "openGoogleStreetView": "Google Street View’da aç",
       "viewData": "Verileri görüntüle"
     },
     "pathTooLong": "Dosya yolunun uzunluğu {{length}} olduğu için küçük resim gösterilemiyor. Windows, yol uzunluğunu en fazla {{maximum}} ile sınırlar. Yolu kısaltmak için dosyanın konumunu değiştirin. Ayrıntılar için Ctrl+Shift+I tuşlarına basın ve konsol iletilerini okuyun.",
@@ -131,7 +131,7 @@
   "loadingFolder": {
     "collecting": "Açılan klasörden yüklenecek dosyalar toplanıyor...",
     "loading": "Açılan klasördeki dosyalar yükleniyor...",
-    "completed": "Tüm dosyalar yüklendi (sayı: {{count}}).",
+    "completed": "Tüm dosyalar yüklendi ({{count}} dosya).",
     "progress": "Yüklenen dosyalar: {{loaded}} / {{total}}.",
     "generatingMap": "Yüklenen dosyalardan harita oluşturuluyor..."
   },
@@ -155,7 +155,7 @@
     "generationRequired": "Oluşturulması gereken küçük resimler: {{required}}. Bu sayı şöyle bulunur: “HEIF dosyaları ({{heif}}) − önbellekte bulunan dosyalar ({{cached}})”.",
     "closeStatusBar": "Küçük resim oluşturma durum çubuğunu kapat",
     "errorDialog": {
-      "message": "Aşağıdaki dosyalar için küçük resim oluşturulamadı (sayı: {{count}}):",
+      "message": "Aşağıdaki {{count}} dosya için küçük resim oluşturulamadı:",
       "filter": "Filtrele",
       "number": "No.",
       "file": "Dosya",
@@ -187,21 +187,21 @@
       "title": "Tarih ve saat biçimi",
       "description": "Tarih ve saat biçimi, uygulama yeniden başlatıldıktan sonra değişir.",
       "dateFormat": "Tarih biçimi",
-      "clockSystem": "12 veya 24 saat",
+      "clockSystem": "12 veya 24 saat biçimi",
       "clock12": "12 saat",
       "clock24": "24 saat",
       "example": "Örnek"
     },
     "os": {
       "title": "Dosya Gezgini bağlam menüsü",
-      "description": "Dosya Gezgini'nin bağlam menüsüne “{{menuItem}}” öğesini ekleyin veya menüden kaldırın.",
+      "description": "Dosya Gezgini’nin bağlam menüsüne “{{menuItem}}” öğesini ekleyin veya menüden kaldırın.",
       "add": "Ekle",
       "remove": "Kaldır",
-      "added": "“{{menuItem}}” öğesi Dosya Gezgini'nin bağlam menüsüne eklendi.",
-      "removed": "“{{menuItem}}” öğesi Dosya Gezgini'nin bağlam menüsünden kaldırıldı.",
-      "failedToAdd": "“{{menuItem}}” öğesi Dosya Gezgini'nin bağlam menüsüne eklenemedi.",
-      "failedToRemove": "“{{menuItem}}” öğesi Dosya Gezgini'nin bağlam menüsünden kaldırılamadı.",
-      "confirmInExplorer": "Doğrulamak için Dosya Gezgini'ni açın ve bir dosyaya veya klasöre sağ tıklayın."
+      "added": "“{{menuItem}}” öğesi Dosya Gezgini’nin bağlam menüsüne eklendi.",
+      "removed": "“{{menuItem}}” öğesi Dosya Gezgini’nin bağlam menüsünden kaldırıldı.",
+      "failedToAdd": "“{{menuItem}}” öğesi Dosya Gezgini’nin bağlam menüsüne eklenemedi.",
+      "failedToRemove": "“{{menuItem}}” öğesi Dosya Gezgini’nin bağlam menüsünden kaldırılamadı.",
+      "confirmInExplorer": "Doğrulamak için Dosya Gezgini’ni açın ve bir dosyaya veya klasöre sağ tıklayın."
     },
     "cache": {
       "title": "HEIF küçük resim önbelleği",
@@ -220,7 +220,7 @@
   },
   "menu": {
     "app": {
-      "about": "{{appName}} Hakkında",
+      "about": "{{appName}} hakkında",
       "services": "Servisler",
       "hide": "{{appName}} uygulamasını gizle",
       "hideOthers": "Diğerlerini gizle",

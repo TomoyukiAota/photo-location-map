@@ -4,6 +4,7 @@ import moment from 'moment-timezone';
 import { DateTimeFormat } from '../../../../src-shared/date-time/date-time-format';
 import { TranslationKey } from '../../../../src-shared/i18n/translation-key';
 import { currentUserSettings } from '../../../../src-shared/user-settings/user-settings';
+import { t } from '../../../../src-shared/i18n/i18n';
 import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 import { formatMomentForUser } from '../../shared/moment-to-string';
 import { SettingsChangedService } from '../service/settings-changed.service';
@@ -26,6 +27,12 @@ export class DateTimeSettingsComponent {
     [DateTimeFormat.ForUser.ClockSystemFormat_12h]: 'settings.dateTime.clock12',
     [DateTimeFormat.ForUser.ClockSystemFormat_24h]: 'settings.dateTime.clock24',
   };
+  /**
+   * The choices of each field, one on a line: what the field's box takes its width from (see the styles), so that the
+   * widest choice fits in the field and in the list of its choices, in any language.
+   */
+  public readonly dateFormatChoices = this.dateFormatList.join('\n');
+  public readonly clockSystemFormatChoices = this.clockSystemFormatList.map(format => t(this.clockSystemFormatLabelKeys[format])).join('\n');
   public selectedDateFormat = currentUserSettings.dateFormat;
   public selectedClockSystemFormat = currentUserSettings.clockSystemFormat;
 

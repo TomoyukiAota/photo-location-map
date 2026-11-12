@@ -23,7 +23,7 @@
     "noLanguagesFound": "Ingen sprog fundet"
   },
   "appInfo": {
-    "appIconAlt": "Appens symbol",
+    "appIconAlt": "Appikon",
     "version": "Version {{version}}",
     "developedBy": "Udviklet af Tomoyuki Aota.",
     "xProfileAlt": "Profil på X (tidligere Twitter)",
@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Åbn Google Street View",
       "viewData": "Vis data"
     },
-    "pathTooLong": "Miniaturen kan ikke vises, fordi filens sti er {{length}} tegn lang. Windows begrænser stiens længde til {{maximum}} tegn. Flyt filen for at gøre stien kortere. Tryk på Ctrl+Shift+I, og læs meddelelserne i konsollen for at få flere oplysninger.",
-    "generatedThumbnailPathTooLong": "Miniaturen kan ikke vises, fordi stien til den oprettede miniature er {{length}} tegn lang. Windows begrænser stiens længde til {{maximum}} tegn. Flyt filen for at gøre stien til den oprettede miniature kortere. Tryk på Ctrl+Shift+I, og læs meddelelserne i konsollen for at få flere oplysninger."
+    "pathTooLong": "Miniaturen kan ikke vises, fordi filens sti er {{length}} tegn lang. Windows begrænser stiens længde til {{maximum}} tegn. Flyt filen for at gøre stien kortere. Tryk på Ctrl+Skift+I, og læs meddelelserne i konsollen for at få flere oplysninger.",
+    "generatedThumbnailPathTooLong": "Miniaturen kan ikke vises, fordi stien til den oprettede miniature er {{length}} tegn lang. Windows begrænser stiens længde til {{maximum}} tegn. Flyt filen for at gøre stien til den oprettede miniature kortere. Tryk på Ctrl+Skift+I, og læs meddelelserne i konsollen for at få flere oplysninger."
   },
   "map": {
     "zoomIn": "Zoom ind",
@@ -124,14 +124,14 @@
     },
     "unsupportedDuration": "Dette diagram kan ikke vise mere end 30 dage, når “Time” er valgt, mere end 3 dage ved “Minut” eller mere end 1 time ved “Sekund”.",
     "changeUnitOrSelection": "Skift År/Måned/Dag/Time/Minut/Sekund, eller vælg billeder, så perioden bliver kortere.",
-    "selectPhotosWithinZoom": "Vælg billeder inden for zoomet",
+    "selectPhotosWithinZoom": "Vælg billeder inden for zoomområdet",
     "zoom": "Zoom",
     "resetZoom": "Nulstil\nzoom"
   },
   "loadingFolder": {
     "collecting": "Samler de filer, der skal indlæses fra den åbnede mappe...",
     "loading": "Indlæser filer fra den åbnede mappe...",
-    "completed": "Alle filer er indlæst (antal: {{count}}).",
+    "completed": "Alle filer er indlæst ({{count}} i alt).",
     "progress": "Indlæste filer: {{loaded}} af {{total}}.",
     "generatingMap": "Opretter kortet ud fra de indlæste filer..."
   },
@@ -155,7 +155,7 @@
     "generationRequired": "Miniaturer, der skal oprettes: {{required}}. Tallet fås af “HEIF-filer ({{heif}}) − filer, der findes i cachen ({{cached}})”.",
     "closeStatusBar": "Luk statuslinjen for oprettelse af miniaturer",
     "errorDialog": {
-      "message": "Der kunne ikke oprettes miniaturer til følgende filer (antal: {{count}}):",
+      "message": "Der kunne ikke oprettes miniaturer til følgende filer ({{count}} i alt):",
       "filter": "Filtrer",
       "number": "Nr.",
       "file": "Fil",
@@ -169,7 +169,7 @@
       "language": "Sprog (Language)",
       "appearance": "Udseende",
       "dateTime": "Dato og tid",
-      "os": "System",
+      "os": "Operativsystem",
       "cache": "Cache"
     },
     "restartAfterSaving": "Appen genstarter, når indstillingerne er gemt.",
@@ -187,9 +187,9 @@
       "title": "Dato- og tidsformat",
       "description": "Dato- og tidsformatet ændres, når appen er genstartet.",
       "dateFormat": "Datoformat",
-      "clockSystem": "12/24 timer",
-      "clock12": "12 timer",
-      "clock24": "24 timer",
+      "clockSystem": "12- eller 24-timers ur",
+      "clock12": "12-timers ur",
+      "clock24": "24-timers ur",
       "example": "Eksempel"
     },
     "os": {

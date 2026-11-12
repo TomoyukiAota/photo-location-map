@@ -52,24 +52,24 @@
     "sort": {
       "title": "Ordenatu",
       "byName": "Izenaren arabera",
-      "byShootingTime": "Ateratze-orduaren arabera",
+      "byShootingTime": "Ateratze-dataren arabera",
       "ascending": "Gorantz",
       "descending": "Beherantz"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "Ateratze-orduaren araberako ordena",
-    "intro": "«Ateratze-orduaren arabera» hautatzen denean, aplikazioak honela ordenatzen ditu fitxategiak:",
+    "title": "Ateratze-dataren araberako ordena",
+    "intro": "«Ateratze-dataren arabera» hautatzen denean, aplikazioak honela ordenatzen ditu fitxategiak:",
     "step1": "EXIF datuetako DateTimeOriginal balioa erabiltzen du. Baliorik ez badago,",
     "step2": "fitxategiaren aldatze-data erabiltzen du.",
-    "foldersNote": "Karpetek ez dute «ateratze-ordurik»; beraz, izenaren arabera ordenatzen dira.",
+    "foldersNote": "Karpetek ez dute «ateratze-datarik»; beraz, izenaren arabera ordenatzen dira.",
     "moreDetails": "Xehetasun gehiago",
     "details": {
       "intro": "Hona hemen informazio osagarria:",
       "mostTrustworthy": "EXIF datuetako DateTimeOriginal balioa da argazkia noiz atera zen jakiteko informaziorik fidagarriena.",
       "sometimesMissing": "Kamera gehienek DateTimeOriginal idazten dute JPEG/HEIF/TIFF fitxategi gehienetan, baina batzuetan falta izaten da.",
-      "modifiedTime": "Fitxategiaren aldatze-data argazkia atera zen unea izan ohi da; horregatik erabiltzen da DateTimeOriginal falta denean.",
-      "otherFiles": "JPEG/HEIF/TIFF ez diren fitxategiek ez dute EXIF daturik; beraz, haien aldatze-data erabiltzen da beti."
+      "modifiedTime": "Fitxategiaren aldatze-data argazkia atera zen unea izan ohi da; horregatik, ordezko gisa erabiltzen da DateTimeOriginal falta denean.",
+      "otherFiles": "Gainera, JPEG/HEIF/TIFF ez diren fitxategiek ez dute EXIF daturik; beraz, haien aldatze-data erabiltzen da beti."
     }
   },
   "directoryTree": {
@@ -131,7 +131,7 @@
   "loadingFolder": {
     "collecting": "Irekitako karpetatik kargatuko diren fitxategiak biltzen...",
     "loading": "Irekitako karpetako fitxategiak kargatzen...",
-    "completed": "Fitxategi guztiak kargatu dira (kopurua: {{count}}).",
+    "completed": "Fitxategi guztiak kargatu dira ({{count}} guztira).",
     "progress": "Kargatutako fitxategiak: {{loaded}} / {{total}}.",
     "generatingMap": "Kargatutako fitxategietatik mapa sortzen..."
   },
@@ -155,7 +155,7 @@
     "generationRequired": "Sortu beharreko miniaturak: {{required}}. Kopuru hori honela kalkulatzen da: «HEIF fitxategiak ({{heif}}) − cachean dauden fitxategiak ({{cached}})».",
     "closeStatusBar": "Itxi miniaturen sorreraren egoera-barra",
     "errorDialog": {
-      "message": "Ezin izan dira fitxategi hauen miniaturak sortu (kopurua: {{count}}):",
+      "message": "Ezin izan dira fitxategi hauen miniaturak sortu ({{count}} guztira):",
       "filter": "Iragazi",
       "number": "Zk.",
       "file": "Fitxategia",
@@ -187,7 +187,7 @@
       "title": "Dataren eta orduaren formatua",
       "description": "Dataren eta orduaren formatua aplikazioa berrabiarazi ondoren aldatzen da.",
       "dateFormat": "Dataren formatua",
-      "clockSystem": "12 edo 24 ordu",
+      "clockSystem": "12 edo 24 orduko formatua",
       "clock12": "12 ordu",
       "clock24": "24 ordu",
       "example": "Adibidea"

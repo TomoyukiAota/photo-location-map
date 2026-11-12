@@ -705,7 +705,9 @@ test('on a computer whose language is Arabic, the application is laid out from r
   expect(magnifier.x - searchBox.x).toBeCloseTo(8, 0);
   await languageDialog.getByRole('button', { name: 'موافق', exact: true }).click();
   const welcome = page.locator('app-welcome-dialog');
-  await expect(welcome).toContainText('مرحبًا بك في Photo Location Map');
+  // The application's name is a value of the heading, so that it stays on one line: as any value in a text
+  // written from right to left, it is between U+2068 and U+2069.
+  await expect(welcome).toContainText('مرحبًا بك في \u2068Photo Location Map\u2069');
   await welcome.getByRole('button', { name: 'موافق', exact: true }).click();
   await expect(welcome).toHaveCount(0);
   // The sidebar is at the right of the map, and the border between them follows the mouse there as well.
@@ -758,7 +760,7 @@ test('on a computer whose language is Arabic, the application is laid out from r
   expect(await menuLabels()).toEqual([
     ...(isMac ? [{
       label: 'The name of the first menu item is the application name on macOS',
-      items: ['حول Photo Location Map', 'الخدمات', 'إخفاء Photo Location Map', 'إخفاء الآخرين', 'إظهار الكل', 'إنهاء Photo Location Map'],
+      items: ['حول Photo Location Map', 'الخدمات', 'إخفاء Photo Location Map', 'إخفاء الأخرى', 'إظهار الكل', 'إنهاء Photo Location Map'],
     }] : []),
     { label: 'عرض', items: ['إعادة التحميل', 'الحجم الفعلي', 'تكبير', 'تصغير', 'تبديل وضع ملء الشاشة'] },
     { label: 'التحديد', items: ['تراجع', 'إعادة'] },
@@ -1214,6 +1216,10 @@ test('chart grouping, zoom, reset and photo selection keep their real data behav
     await expectRepresentedPhotos(1);
   }
   await zoomToLastYear();
+  // The button keeps its width in English, on two lines: it is wider only for a language whose text would take more
+  // than three lines (see its component). The lines that a text takes depend on the machine's font, as the
+  // screenshots do.
+  if (visual) expect(await choose.evaluate(button => [button.getBoundingClientRect().width, button.getBoundingClientRect().height])).toEqual([106, 50]);
   await expect(page.locator('mat-tree-node').filter({ hasText: 'Gold Coast' }).getByRole('checkbox')).toBeChecked();
   const box = await chart.boundingBox();
   // ECharts' rightmost toolbox control is the existing Reset Zoom canvas icon.

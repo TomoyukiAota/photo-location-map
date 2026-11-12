@@ -25,7 +25,7 @@
   "appInfo": {
     "appIconAlt": "Ikona aplikace",
     "version": "Verze {{version}}",
-    "developedBy": "Vyvinul Tomoyuki Aota.",
+    "developedBy": "Vyvíjí Tomoyuki Aota.",
     "xProfileAlt": "Profil na síti X (dříve Twitter)",
     "xProfileTitle": "Otevřít profil na síti X (dříve Twitter)",
     "gitHubProfileAlt": "Profil na GitHubu",
@@ -40,7 +40,7 @@
   "about": {
     "releasesLink": "Soubory ke stažení a poznámky k vydání",
     "releasesLinkTitle": "Otevřít soubory ke stažení a poznámky k vydání",
-    "translations": "Překlady do dalších jazyků jsou vítány: viz <guideLink>jak tuto aplikaci přeložit</guideLink>.",
+    "translations": "Překlady do dalších jazyků jsou vítány. Přečtěte si, <guideLink>jak tuto aplikaci přeložit</guideLink>.",
     "translationsLinkTitle": "Otevřít návod k překladu této aplikace",
     "homePageTitle": "Otevřít domovskou stránku",
     "sourceCodeTitle": "Zobrazit zdrojový kód na GitHubu"
@@ -131,7 +131,7 @@
   "loadingFolder": {
     "collecting": "Shromažďují se soubory k načtení z otevřené složky...",
     "loading": "Načítají se soubory z otevřené složky...",
-    "completed": "Všechny soubory byly načteny (počet: {{count}}).",
+    "completed": "Všechny soubory byly načteny (celkem {{count}}).",
     "progress": "Načtené soubory: {{loaded}} z {{total}}.",
     "generatingMap": "Z načtených souborů se vytváří mapa..."
   },
@@ -155,7 +155,7 @@
     "generationRequired": "Miniatury, které je třeba vytvořit: {{required}}. Počet vychází z výpočtu „soubory HEIF ({{heif}}) − soubory dostupné v mezipaměti ({{cached}})“.",
     "closeStatusBar": "Zavřít stavový řádek vytváření miniatur",
     "errorDialog": {
-      "message": "Miniatury následujících souborů se nepodařilo vytvořit (počet: {{count}}):",
+      "message": "Miniatury následujících souborů se nepodařilo vytvořit (celkem {{count}}):",
       "filter": "Filtrovat",
       "number": "Č.",
       "file": "Soubor",
@@ -187,9 +187,9 @@
       "title": "Formát data a času",
       "description": "Formát data a času se změní po restartování aplikace.",
       "dateFormat": "Formát data",
-      "clockSystem": "12/24 hodin",
-      "clock12": "12 hodin",
-      "clock24": "24 hodin",
+      "clockSystem": "12hodinový nebo 24hodinový formát",
+      "clock12": "12hodinový",
+      "clock24": "24hodinový",
       "example": "Příklad"
     },
     "os": {
@@ -201,7 +201,7 @@
       "removed": "Položka „{{menuItem}}“ byla odebrána z místní nabídky Průzkumníka souborů.",
       "failedToAdd": "Položku „{{menuItem}}“ se nepodařilo přidat do místní nabídky Průzkumníka souborů.",
       "failedToRemove": "Položku „{{menuItem}}“ se nepodařilo odebrat z místní nabídky Průzkumníka souborů.",
-      "confirmInExplorer": "Otevřete Průzkumník souborů a klikněte pravým tlačítkem na soubor nebo složku, abyste to ověřili."
+      "confirmInExplorer": "Pro ověření otevřete Průzkumníka souborů a klikněte pravým tlačítkem na soubor nebo složku."
     },
     "cache": {
       "title": "Mezipaměť miniatur HEIF",

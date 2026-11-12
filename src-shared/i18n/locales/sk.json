@@ -25,7 +25,7 @@
   "appInfo": {
     "appIconAlt": "Ikona aplikácie",
     "version": "Verzia {{version}}",
-    "developedBy": "Vyvinul Tomoyuki Aota.",
+    "developedBy": "Vyvíja Tomoyuki Aota.",
     "xProfileAlt": "Profil na sieti X (predtým Twitter)",
     "xProfileTitle": "Otvoriť profil na sieti X (predtým Twitter)",
     "gitHubProfileAlt": "Profil na GitHube",
@@ -61,15 +61,15 @@
     "title": "Zoradenie podľa času nasnímania",
     "intro": "Keď je vybraté „Podľa času nasnímania“, aplikácia zoraďuje súbory takto:",
     "step1": "Použije hodnotu DateTimeOriginal z údajov EXIF. Ak nie je k dispozícii,",
-    "step2": "použije dátum zmeny súboru.",
+    "step2": "použije dátum úpravy súboru.",
     "foldersNote": "Priečinky sa zoraďujú podľa názvu, pretože priečinky nemajú žiadny „čas nasnímania“.",
     "moreDetails": "Ďalšie informácie",
     "details": {
       "intro": "Nižšie sú ďalšie informácie:",
       "mostTrustworthy": "Hodnota DateTimeOriginal z údajov EXIF je najspoľahlivejší údaj o tom, kedy bola fotka nasnímaná.",
       "sometimesMissing": "Väčšina fotoaparátov zapisuje DateTimeOriginal do väčšiny súborov JPEG/HEIF/TIFF, niekedy však chýba.",
-      "modifiedTime": "Dátum zmeny súboru býva často časom nasnímania fotky, preto sa použije náhradne, keď DateTimeOriginal chýba.",
-      "otherFiles": "Iné súbory ako JPEG/HEIF/TIFF údaje EXIF nemajú, preto sa pre ne vždy použije dátum zmeny."
+      "modifiedTime": "Dátum úpravy súboru býva často časom nasnímania fotky, preto sa použije náhradne, keď DateTimeOriginal chýba.",
+      "otherFiles": "Iné súbory ako JPEG/HEIF/TIFF údaje EXIF nemajú, preto sa pre ne vždy použije dátum úpravy."
     }
   },
   "directoryTree": {
@@ -131,7 +131,7 @@
   "loadingFolder": {
     "collecting": "Zhromažďujú sa súbory na načítanie z otvoreného priečinka...",
     "loading": "Načítavajú sa súbory z otvoreného priečinka...",
-    "completed": "Všetky súbory boli načítané (počet: {{count}}).",
+    "completed": "Všetky súbory boli načítané (spolu {{count}}).",
     "progress": "Načítané súbory: {{loaded}} z {{total}}.",
     "generatingMap": "Z načítaných súborov sa vytvára mapa..."
   },
@@ -155,7 +155,7 @@
     "generationRequired": "Miniatúry, ktoré treba vytvoriť: {{required}}. Počet vychádza z výpočtu „súbory HEIF ({{heif}}) − súbory dostupné vo vyrovnávacej pamäti ({{cached}})“.",
     "closeStatusBar": "Zavrieť stavový riadok vytvárania miniatúr",
     "errorDialog": {
-      "message": "Miniatúry nasledujúcich súborov sa nepodarilo vytvoriť (počet: {{count}}):",
+      "message": "Miniatúry nasledujúcich súborov sa nepodarilo vytvoriť (spolu {{count}}):",
       "filter": "Filtrovať",
       "number": "Č.",
       "file": "Súbor",
@@ -187,9 +187,9 @@
       "title": "Formát dátumu a času",
       "description": "Formát dátumu a času sa zmení po reštartovaní aplikácie.",
       "dateFormat": "Formát dátumu",
-      "clockSystem": "12/24 hodín",
-      "clock12": "12 hodín",
-      "clock24": "24 hodín",
+      "clockSystem": "12-hodinový alebo 24-hodinový formát",
+      "clock12": "12-hodinový",
+      "clock24": "24-hodinový",
       "example": "Príklad"
     },
     "os": {
@@ -224,7 +224,7 @@
       "services": "Služby",
       "hide": "Skryť {{appName}}",
       "hideOthers": "Skryť ostatné",
-      "showAll": "Zobraziť všetko",
+      "showAll": "Zobraziť všetky",
       "quit": "Ukončiť {{appName}}"
     },
     "view": {

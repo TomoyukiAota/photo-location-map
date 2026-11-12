@@ -13,9 +13,9 @@
   "language": {
     "title": "Sprache (Language)",
     "systemLanguage": {
-      "mac": "Einstellung von macOS verwenden ({{language}})",
-      "windows": "Einstellung von Windows verwenden ({{language}})",
-      "other": "Einstellung des Systems verwenden ({{language}})"
+      "mac": "macOS-Einstellung verwenden ({{language}})",
+      "windows": "Windows-Einstellung verwenden ({{language}})",
+      "other": "Systemeinstellung verwenden ({{language}})"
     },
     "restartToApply": "Diese App wird neu gestartet, um die Sprache zu übernehmen.",
     "confirm": "OK",
@@ -42,7 +42,7 @@
     "releasesLinkTitle": "Downloads und Versionshinweise öffnen",
     "translations": "Übersetzungen in andere Sprachen sind willkommen: siehe <guideLink>So übersetzen Sie diese App</guideLink>.",
     "translationsLinkTitle": "Anleitung zum Übersetzen dieser App öffnen",
-    "homePageTitle": "Startseite öffnen",
+    "homePageTitle": "Website öffnen",
     "sourceCodeTitle": "Quellcode auf GitHub ansehen"
   },
   "sidebar": {
@@ -52,17 +52,17 @@
     "sort": {
       "title": "Sortieren",
       "byName": "Nach Name",
-      "byShootingTime": "Nach Aufnahmezeit",
+      "byShootingTime": "Nach Aufnahmedatum",
       "ascending": "Aufsteigend",
       "descending": "Absteigend"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "Sortieren nach Aufnahmezeit",
-    "intro": "Wenn „Nach Aufnahmezeit“ ausgewählt ist, geht diese App beim Sortieren der Dateien so vor:",
+    "title": "Sortieren nach Aufnahmedatum",
+    "intro": "Wenn „Nach Aufnahmedatum“ ausgewählt ist, geht diese App beim Sortieren der Dateien so vor:",
     "step1": "Sie verwendet DateTimeOriginal aus den EXIF-Daten. Ist dieser Wert nicht vorhanden,",
     "step2": "verwendet sie das Änderungsdatum der Datei.",
-    "foldersNote": "Ordner werden nach Namen sortiert, da es für Ordner keine „Aufnahmezeit“ gibt.",
+    "foldersNote": "Ordner werden nach Namen sortiert, da es für Ordner kein „Aufnahmedatum“ gibt.",
     "moreDetails": "Weitere Hinweise",
     "details": {
       "intro": "Im Folgenden einige Hinweise:",
@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Google Street View öffnen",
       "viewData": "Daten anzeigen"
     },
-    "pathTooLong": "Die Miniatur kann nicht angezeigt werden, da der Dateipfad {{length}} Zeichen lang ist. Windows beschränkt die Pfadlänge auf höchstens {{maximum}} Zeichen. Bitte verschieben Sie die Datei, um ihren Pfad zu verkürzen. Für Details drücken Sie Ctrl+Shift+I und lesen Sie die Meldungen in der Konsole.",
-    "generatedThumbnailPathTooLong": "Die Miniatur kann nicht angezeigt werden, da der Dateipfad der erstellten Miniatur {{length}} Zeichen lang ist. Windows beschränkt die Pfadlänge auf höchstens {{maximum}} Zeichen. Bitte verschieben Sie die Datei, um den Pfad der erstellten Miniatur zu verkürzen. Für Details drücken Sie Ctrl+Shift+I und lesen Sie die Meldungen in der Konsole."
+    "pathTooLong": "Die Miniatur kann nicht angezeigt werden, da der Dateipfad {{length}} Zeichen lang ist. Windows beschränkt die Pfadlänge auf höchstens {{maximum}} Zeichen. Bitte verschieben Sie die Datei, um ihren Pfad zu verkürzen. Für Details drücken Sie Strg+Umschalt+I und lesen Sie die Meldungen in der Konsole.",
+    "generatedThumbnailPathTooLong": "Die Miniatur kann nicht angezeigt werden, da der Dateipfad der erstellten Miniatur {{length}} Zeichen lang ist. Windows beschränkt die Pfadlänge auf höchstens {{maximum}} Zeichen. Bitte verschieben Sie die Datei, um den Pfad der erstellten Miniatur zu verkürzen. Für Details drücken Sie Strg+Umschalt+I und lesen Sie die Meldungen in der Konsole."
   },
   "map": {
     "zoomIn": "Vergrößern",
@@ -131,7 +131,7 @@
   "loadingFolder": {
     "collecting": "Die zu ladenden Dateien aus dem geöffneten Ordner werden zusammengestellt...",
     "loading": "Dateien aus dem geöffneten Ordner werden geladen...",
-    "completed": "Alle Dateien wurden geladen (Anzahl: {{count}}).",
+    "completed": "Alle Dateien wurden geladen (insgesamt {{count}}).",
     "progress": "Geladene Dateien: {{loaded}} von {{total}}.",
     "generatingMap": "Die Karte wird aus den geladenen Dateien erstellt..."
   },
@@ -155,7 +155,7 @@
     "generationRequired": "Zu erstellende Miniaturen: {{required}}. Das ergibt sich aus „HEIF-Dateien ({{heif}}) − Dateien mit Cache ({{cached}})“.",
     "closeStatusBar": "Statusleiste der Miniaturerstellung schließen",
     "errorDialog": {
-      "message": "Für die folgenden Dateien konnten keine Miniaturen erstellt werden (Anzahl: {{count}}):",
+      "message": "Für die folgenden Dateien konnten keine Miniaturen erstellt werden (insgesamt {{count}}):",
       "filter": "Filter",
       "number": "Nr.",
       "file": "Datei",
@@ -187,9 +187,9 @@
       "title": "Datums- und Uhrzeitformat",
       "description": "Das Datums- und Uhrzeitformat wird nach einem Neustart der App geändert.",
       "dateFormat": "Datumsformat",
-      "clockSystem": "12/24 Stunden",
-      "clock12": "12 Stunden",
-      "clock24": "24 Stunden",
+      "clockSystem": "12- oder 24-Stunden-Format",
+      "clock12": "12-Stunden-Format",
+      "clock24": "24-Stunden-Format",
       "example": "Beispiel"
     },
     "os": {

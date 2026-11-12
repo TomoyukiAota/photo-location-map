@@ -25,11 +25,11 @@
   "appInfo": {
     "appIconAlt": "Ikona aplikacije",
     "version": "Različica {{version}}",
-    "developedBy": "Razvil Tomoyuki Aota.",
+    "developedBy": "Razvija Tomoyuki Aota.",
     "xProfileAlt": "Profil v omrežju X (prej Twitter)",
     "xProfileTitle": "Odpri profil v omrežju X (prej Twitter)",
-    "gitHubProfileAlt": "Profil v GitHubu",
-    "gitHubProfileTitle": "Odpri profil v GitHubu",
+    "gitHubProfileAlt": "Profil na GitHubu",
+    "gitHubProfileTitle": "Odpri profil na GitHubu",
     "troubleshooting": "Če imate s to aplikacijo težave, si oglejte <pageLink>stran za odpravljanje težav</pageLink>.",
     "troubleshootingLinkTitle": "Odpri stran za odpravljanje težav"
   },
@@ -40,10 +40,10 @@
   "about": {
     "releasesLink": "Prenosi in opombe ob izdajah",
     "releasesLinkTitle": "Odpri prenose in opombe ob izdajah",
-    "translations": "Prevodi v druge jezike so dobrodošli: glejte <guideLink>kako prevesti to aplikacijo</guideLink>.",
+    "translations": "Prevodi v druge jezike so dobrodošli: oglejte si, <guideLink>kako prevesti to aplikacijo</guideLink>.",
     "translationsLinkTitle": "Odpri vodnik za prevajanje te aplikacije",
     "homePageTitle": "Odpri domačo stran",
-    "sourceCodeTitle": "Oglej si izvorno kodo v GitHubu"
+    "sourceCodeTitle": "Oglej si izvorno kodo na GitHubu"
   },
   "sidebar": {
     "openFolder": "Odpri mapo",
@@ -68,7 +68,7 @@
       "intro": "V nadaljevanju so dodatne informacije:",
       "mostTrustworthy": "Vrednost DateTimeOriginal iz podatkov EXIF je najzanesljivejši podatek o tem, kdaj je bila fotografija posneta.",
       "sometimesMissing": "Večina fotoaparatov zapiše DateTimeOriginal v večino datotek JPEG/HEIF/TIFF, včasih pa manjka.",
-      "modifiedTime": "Datum spremembe datoteke je pogosto čas, ko je bila fotografija posneta, zato se uporabi namesto nje, kadar DateTimeOriginal manjka.",
+      "modifiedTime": "Datum spremembe datoteke je pogosto čas, ko je bila fotografija posneta, zato se uporabi kot nadomestilo, kadar DateTimeOriginal manjka.",
       "otherFiles": "Datoteke, ki niso JPEG/HEIF/TIFF, nimajo podatkov EXIF, zato se zanje vedno uporabi datum spremembe."
     }
   },
@@ -131,7 +131,7 @@
   "loadingFolder": {
     "collecting": "Zbiranje datotek za nalaganje iz odprte mape...",
     "loading": "Nalaganje datotek iz odprte mape...",
-    "completed": "Vse datoteke so naložene (število: {{count}}).",
+    "completed": "Vse datoteke so naložene (skupaj {{count}}).",
     "progress": "Naložene datoteke: {{loaded}} od {{total}}.",
     "generatingMap": "Ustvarjanje zemljevida iz naloženih datotek..."
   },
@@ -155,7 +155,7 @@
     "generationRequired": "Sličice, ki jih je treba ustvariti: {{required}}. Število izhaja iz »datoteke HEIF ({{heif}}) − datoteke v predpomnilniku ({{cached}})«.",
     "closeStatusBar": "Zapri vrstico stanja ustvarjanja sličic",
     "errorDialog": {
-      "message": "Za naslednje datoteke ni bilo mogoče ustvariti sličic (število: {{count}}):",
+      "message": "Za naslednje datoteke ni bilo mogoče ustvariti sličic (skupaj {{count}}):",
       "filter": "Filtriraj",
       "number": "Št.",
       "file": "Datoteka",
@@ -187,9 +187,9 @@
       "title": "Oblika datuma in ure",
       "description": "Oblika datuma in ure se bo spremenila po vnovičnem zagonu aplikacije.",
       "dateFormat": "Oblika datuma",
-      "clockSystem": "12 ali 24 ur",
-      "clock12": "12 ur",
-      "clock24": "24 ur",
+      "clockSystem": "12-urna ali 24-urna oblika",
+      "clock12": "12-urna",
+      "clock24": "24-urna",
       "example": "Primer"
     },
     "os": {
@@ -222,10 +222,10 @@
     "app": {
       "about": "O aplikaciji {{appName}}",
       "services": "Storitve",
-      "hide": "Skrij {{appName}}",
+      "hide": "Skrij aplikacijo {{appName}}",
       "hideOthers": "Skrij druge",
       "showAll": "Prikaži vse",
-      "quit": "Končaj {{appName}}"
+      "quit": "Zapri aplikacijo {{appName}}"
     },
     "view": {
       "title": "Pogled",

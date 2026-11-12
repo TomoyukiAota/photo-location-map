@@ -11,6 +11,14 @@ a speaker of the language yet.** If you speak one of them, reading its texts
 in the application and correcting what is wrong or unnatural is the most
 useful contribution: see [Improve a translation](#improve-a-translation).
 
+In November 2026 they were reviewed, again by a machine, in seven rounds, for
+accuracy and for what similar software says in each language
+([the record](./tasks/20261112_translation-review/STATUS.md)). What that
+review could not settle without a speaker is listed for each language in
+`docs/tasks/20261112_translation-review/evidence/open-<group>.md`, with the
+sources of what it did settle in `decisions-<group>.md` beside it, and where
+those sources are read in `sources.md`: a good place to start.
+
 ## Where the texts are
 
 | File | What it is |
@@ -116,6 +124,15 @@ npm run test:unit:ng
 
 ## Writing the texts
 
+- A natural and accurate translation comes before the layout. Write what a
+  speaker of your language would write: the words that widely used software
+  has for the same thing in your language (Windows, macOS, a photo application,
+  a file manager, a map), in a way that fits this application, which shows on
+  a map where photos were taken, to anyone who has photos. Do not shorten or
+  abbreviate a text for the room that it has. The layout is the same in every
+  language and is made to hold for long words and long sentences; where a text
+  is cut or runs out of its box, that is a bug of the layout: say so in the
+  pull request, or open an issue.
 - Names stay as they are: Photo Location Map, macOS, Windows, EXIF, DateTimeOriginal, JPEG,
   HEIF, TIFF, Live Photos, GitHub, Google Maps, Google Street View, Explorer
   (or the name that Windows gives it in your language).
@@ -162,16 +179,23 @@ npm run test:unit:ng
 - Texts with a number keep one form, whatever the number is ("Loaded 1
   files."). Where your language has several forms of a word for several
   numbers, word the text so that the number can be any, as "Loaded files:
-  {{count}}." If it cannot do without plural forms, say so in the pull request.
+  {{count}}." or "All files were loaded ({{count}} in total)." If it cannot do
+  without plural forms, say so in the pull request.
+- `photoInfo.pathTooLong` and `photoInfo.generatedThumbnailPathTooLong`, which
+  are shown on Windows, name a shortcut, `Ctrl+Shift+I`. Write its keys as
+  keyboards and Windows name them in your language: `Strg+Umschalt+I` in
+  German, `Ctrl+Maj+I` in French, and `Ctrl+Shift+I` where the keys keep their
+  English names.
 - In a language written from right to left, the application puts each value of
   a placeholder on its own in the text, so that a path, a number or a name in
   Latin letters keeps its order: write the text around the placeholder as you
   read it.
-- Prefer short texts for buttons, tabs and tooltips. The dialogs grow with
-  their texts, but the status bar at the bottom and the sidebar do not.
-- `settings.dateTime.clockSystem` is the label of a small field, in which
-  about 16 letters fit: "12- or 24-hour" in English, `12/24 Stunden` in German.
-  A longer label is cut off.
+- `settings.dateTime.clockSystem` is the label of the field that chooses
+  between a clock of 12 hours and one of 24, and `clock12` and `clock24` are
+  its two choices. Name them as the settings of phones and computers do in your
+  language, not as a number of hours, which reads as a length of time:
+  `12- oder 24-Stunden-Format` with `12-Stunden-Format` and `24-Stunden-Format`
+  in German. The field is as wide as its label and its choices need.
 - English is written plainly, without exclamation marks. Follow the register
   that an application's dialogs have in your language.
 - The Welcome dialog says what the application collects
@@ -216,48 +240,48 @@ Photo Data Viewer has the same ones.
 
 | Code | Language | In English | Status |
 | --- | --- | --- | --- |
-| `id` | Bahasa Indonesia | Indonesian | Machine translation, not reviewed yet. |
-| `ms` | Bahasa Melayu | Malay | Machine translation, not reviewed yet. |
-| `ca` | Català | Catalan | Machine translation, not reviewed yet. |
-| `cs` | Čeština | Czech | Machine translation, not reviewed yet. |
-| `da` | Dansk | Danish | Machine translation, not reviewed yet. |
-| `de` | Deutsch | German | Machine translation, not reviewed yet. |
-| `et` | Eesti | Estonian | Machine translation, not reviewed yet. |
+| `id` | Bahasa Indonesia | Indonesian | Machine translation, not reviewed by a speaker yet. |
+| `ms` | Bahasa Melayu | Malay | Machine translation, not reviewed by a speaker yet. |
+| `ca` | Català | Catalan | Machine translation, not reviewed by a speaker yet. |
+| `cs` | Čeština | Czech | Machine translation, not reviewed by a speaker yet. |
+| `da` | Dansk | Danish | Machine translation, not reviewed by a speaker yet. |
+| `de` | Deutsch | German | Machine translation, not reviewed by a speaker yet. |
+| `et` | Eesti | Estonian | Machine translation, not reviewed by a speaker yet. |
 | `en` | English | English | The source. |
-| `es` | Español | Spanish | Machine translation, not reviewed yet. |
-| `eu` | Euskara | Basque | Machine translation, not reviewed yet. |
-| `fr` | Français | French | Machine translation, not reviewed yet. |
-| `gl` | Galego | Galician | Machine translation, not reviewed yet. |
-| `hr` | Hrvatski | Croatian | Machine translation, not reviewed yet. |
-| `it` | Italiano | Italian | Machine translation, not reviewed yet. |
-| `lv` | Latviešu | Latvian | Machine translation, not reviewed yet. |
-| `lt` | Lietuvių | Lithuanian | Machine translation, not reviewed yet. |
-| `hu` | Magyar | Hungarian | Machine translation, not reviewed yet. |
-| `nl` | Nederlands | Dutch | Machine translation, not reviewed yet. |
-| `nb` | Norsk bokmål | Norwegian Bokmål | Machine translation, not reviewed yet. |
-| `pl` | Polski | Polish | Machine translation, not reviewed yet. |
-| `pt-BR` | Português (Brasil) | Portuguese (Brazil) | Machine translation, not reviewed yet. |
-| `pt-PT` | Português (Portugal) | Portuguese (Portugal) | Machine translation, not reviewed yet. |
-| `ro` | Română | Romanian | Machine translation, not reviewed yet. |
-| `sk` | Slovenčina | Slovak | Machine translation, not reviewed yet. |
-| `sl` | Slovenščina | Slovenian | Machine translation, not reviewed yet. |
-| `sr-Latn` | Srpski (latinica) | Serbian (Latin) | Machine translation, not reviewed yet. |
-| `fi` | Suomi | Finnish | Machine translation, not reviewed yet. |
-| `sv` | Svenska | Swedish | Machine translation, not reviewed yet. |
-| `vi` | Tiếng Việt | Vietnamese | Machine translation, not reviewed yet. |
-| `tr` | Türkçe | Turkish | Machine translation, not reviewed yet. |
-| `el` | Ελληνικά | Greek | Machine translation, not reviewed yet. |
-| `bg` | Български | Bulgarian | Machine translation, not reviewed yet. |
-| `ru` | Русский | Russian | Machine translation, not reviewed yet. |
-| `uk` | Українська | Ukrainian | Machine translation, not reviewed yet. |
-| `he` | עברית | Hebrew | Machine translation, not reviewed yet. |
-| `ar` | العربية | Arabic | Machine translation, not reviewed yet. |
-| `hi` | हिन्दी | Hindi | Machine translation, not reviewed yet. |
-| `th` | ไทย | Thai | Machine translation, not reviewed yet. |
-| `ko` | 한국어 | Korean | Machine translation, not reviewed yet. |
+| `es` | Español | Spanish | Machine translation, not reviewed by a speaker yet. |
+| `eu` | Euskara | Basque | Machine translation, not reviewed by a speaker yet. |
+| `fr` | Français | French | Machine translation, not reviewed by a speaker yet. |
+| `gl` | Galego | Galician | Machine translation, not reviewed by a speaker yet. |
+| `hr` | Hrvatski | Croatian | Machine translation, not reviewed by a speaker yet. |
+| `it` | Italiano | Italian | Machine translation, not reviewed by a speaker yet. |
+| `lv` | Latviešu | Latvian | Machine translation, not reviewed by a speaker yet. |
+| `lt` | Lietuvių | Lithuanian | Machine translation, not reviewed by a speaker yet. |
+| `hu` | Magyar | Hungarian | Machine translation, not reviewed by a speaker yet. |
+| `nl` | Nederlands | Dutch | Machine translation, not reviewed by a speaker yet. |
+| `nb` | Norsk bokmål | Norwegian Bokmål | Machine translation, not reviewed by a speaker yet. |
+| `pl` | Polski | Polish | Machine translation, not reviewed by a speaker yet. |
+| `pt-BR` | Português (Brasil) | Portuguese (Brazil) | Machine translation, not reviewed by a speaker yet. |
+| `pt-PT` | Português (Portugal) | Portuguese (Portugal) | Machine translation, not reviewed by a speaker yet. |
+| `ro` | Română | Romanian | Machine translation, not reviewed by a speaker yet. |
+| `sk` | Slovenčina | Slovak | Machine translation, not reviewed by a speaker yet. |
+| `sl` | Slovenščina | Slovenian | Machine translation, not reviewed by a speaker yet. |
+| `sr-Latn` | Srpski (latinica) | Serbian (Latin) | Machine translation, not reviewed by a speaker yet. |
+| `fi` | Suomi | Finnish | Machine translation, not reviewed by a speaker yet. |
+| `sv` | Svenska | Swedish | Machine translation, not reviewed by a speaker yet. |
+| `vi` | Tiếng Việt | Vietnamese | Machine translation, not reviewed by a speaker yet. |
+| `tr` | Türkçe | Turkish | Machine translation, not reviewed by a speaker yet. |
+| `el` | Ελληνικά | Greek | Machine translation, not reviewed by a speaker yet. |
+| `bg` | Български | Bulgarian | Machine translation, not reviewed by a speaker yet. |
+| `ru` | Русский | Russian | Machine translation, not reviewed by a speaker yet. |
+| `uk` | Українська | Ukrainian | Machine translation, not reviewed by a speaker yet. |
+| `he` | עברית | Hebrew | Machine translation, not reviewed by a speaker yet. |
+| `ar` | العربية | Arabic | Machine translation, not reviewed by a speaker yet. |
+| `hi` | हिन्दी | Hindi | Machine translation, not reviewed by a speaker yet. |
+| `th` | ไทย | Thai | Machine translation, not reviewed by a speaker yet. |
+| `ko` | 한국어 | Korean | Machine translation, not reviewed by a speaker yet. |
 | `ja` | 日本語 | Japanese | Complete; reviewed by the maintainer. |
-| `zh-Hans` | 简体中文 | Chinese (Simplified) | Machine translation, not reviewed yet. |
-| `zh-Hant` | 繁體中文 | Chinese (Traditional) | Machine translation, not reviewed yet. |
+| `zh-Hans` | 简体中文 | Chinese (Simplified) | Machine translation, not reviewed by a speaker yet. |
+| `zh-Hant` | 繁體中文 | Chinese (Traditional) | Machine translation, not reviewed by a speaker yet. |
 
 When a language is added, add it here with who reviewed it, or "Machine
-translation, not reviewed yet." until a speaker has.
+translation, not reviewed by a speaker yet." until a speaker has.
