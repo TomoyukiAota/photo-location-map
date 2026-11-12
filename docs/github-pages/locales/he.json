@@ -2,6 +2,7 @@
   "language": "שפה",
   "languageSearch": "חיפוש",
   "noLanguagesFound": "לא נמצאו שפות",
+  "useBrowserSetting": "שימוש בהגדרת הדפדפן ({{language}})",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "הסמל של Photo Location Map",

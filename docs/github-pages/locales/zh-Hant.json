@@ -2,6 +2,7 @@
   "language": "語言",
   "languageSearch": "搜尋",
   "noLanguagesFound": "找不到語言",
+  "useBrowserSetting": "依照瀏覽器設定（{{language}}）",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "Photo Location Map 圖示",

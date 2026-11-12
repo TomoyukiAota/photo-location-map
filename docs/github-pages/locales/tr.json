@@ -2,6 +2,7 @@
   "language": "Dil",
   "languageSearch": "Ara",
   "noLanguagesFound": "Dil bulunamadı",
+  "useBrowserSetting": "Tarayıcı ayarını kullan ({{language}})",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "Photo Location Map simgesi",

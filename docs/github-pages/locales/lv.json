@@ -2,6 +2,7 @@
   "language": "Valoda",
   "languageSearch": "Meklēt",
   "noLanguagesFound": "Nav atrasta neviena valoda",
+  "useBrowserSetting": "Izmantot pārlūkprogrammas iestatījumu ({{language}})",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "Photo Location Map ikona",

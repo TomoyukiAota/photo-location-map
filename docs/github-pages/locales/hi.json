@@ -2,6 +2,7 @@
   "language": "भाषा",
   "languageSearch": "खोजें",
   "noLanguagesFound": "कोई भाषा नहीं मिली",
+  "useBrowserSetting": "ब्राउज़र की सेटिंग का उपयोग करें ({{language}})",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "Photo Location Map का आइकन",

@@ -2,6 +2,7 @@
   "language": "Jazyk",
   "languageSearch": "Hledat",
   "noLanguagesFound": "Nebyly nalezeny žádné jazyky",
+  "useBrowserSetting": "Použít nastavení prohlížeče ({{language}})",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "Ikona aplikace Photo Location Map",

@@ -9,7 +9,8 @@
 //
 // The language is, in this order: `lang` in the address (?lang=ja), which the links for search engines have; the one
 // chosen in the page's language picker before, which localStorage keeps; the first of the browser's languages that
-// this website has; English.
+// this website has; English. The picker's first entry, "Use browser setting", forgets the first two, so that the page
+// follows the browser again.
 (() => {
   // The languages of this website, which are the application's (src-shared/i18n/languages.ts), in its order: the names
   // in Latin letters by the alphabet, then those in other scripts. Each is under its own name, with its English name,
@@ -110,6 +111,18 @@
   const resolveLanguage = ({ param, saved, browserLanguages }) =>
     matchLanguage([param]) ?? matchLanguage([saved]) ?? matchLanguage(browserLanguages ?? []) ?? defaultLanguage;
 
+  /**
+   * Whether the page follows the browser's language, which the picker's first entry, "Use browser setting", stands
+   * for: neither the address nor a choice kept from before asks for a language that this website has.
+   */
+  const followsBrowser = ({ param, saved }) => !matchLanguage([param]) && !matchLanguage([saved]);
+
+  /** The parts of a text around {{language}}, where the name of a language goes, or the text alone without one. */
+  const languageParts = (text) => {
+    const at = text.indexOf('{{language}}');
+    return at === -1 ? { before: text, after: '' } : { before: text.slice(0, at), after: text.slice(at + '{{language}}'.length) };
+  };
+
   /** The parts of a text around and inside <link>…</link>, or the text alone when it has no such tag. */
   const linkParts = (text) => {
     const match = /^([\s\S]*?)<link>([\s\S]*?)<\/link>([\s\S]*)$/.exec(text);
@@ -122,19 +135,23 @@
   /** A text as the search compares it: in lower case and without diacritics, so that "cestina" finds "Čeština". */
   const foldForSearch = (text) => text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
+  /** Whether what is typed in the search field is in any part of one of these texts, or nothing is typed. */
+  const searchFinds = (texts, search) => {
+    const sought = foldForSearch(search.trim());
+    return !sought || texts.some((text) => foldForSearch(text).includes(sought));
+  };
+
   /**
    * Whether a language is listed for what is typed in the search field: any part of its own name, its English name,
    * its name in the page's language or its code, as the search of the application's list of languages finds it.
    */
-  const matchesSearch = (language, search, nameInPageLanguage = '') => {
-    const sought = foldForSearch(search.trim());
-    if (!sought) return true;
-    return [language.name, language.englishName, nameInPageLanguage, language.code].some((text) => foldForSearch(text).includes(sought));
-  };
+  const matchesSearch = (language, search, nameInPageLanguage = '') =>
+    searchFinds([language.name, language.englishName, nameInPageLanguage, language.code], search);
 
   // In Node, where the test reads these functions, there is no page to show.
   if (typeof module === 'object' && module.exports) {
-    module.exports = { languages, defaultLanguage, matchLanguage, resolveLanguage, linkParts, textOf, foldForSearch, matchesSearch };
+    module.exports = { languages, defaultLanguage, matchLanguage, resolveLanguage, followsBrowser, languageParts, linkParts, textOf,
+      foldForSearch, searchFinds, matchesSearch };
     return;
   }
 
@@ -156,13 +173,23 @@
       // The choice then lasts as long as the address has it.
     }
   };
+  const forgetLanguage = () => {
+    try {
+      window.localStorage.removeItem(storageKey);
+    } catch {
+      // Where storage is blocked, nothing was kept.
+    }
+  };
 
   const param = new URLSearchParams(window.location.search).get('lang');
-  const language = resolveLanguage({
-    param,
-    saved: savedLanguage(),
-    browserLanguages: navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language],
-  });
+  const saved = savedLanguage();
+  const browserLanguages = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language];
+  const language = resolveLanguage({ param, saved, browserLanguages });
+  // The language that the browser asks for, which the picker's first entry names: "Use browser setting (日本語)".
+  const browserLanguage = matchLanguage(browserLanguages) ?? defaultLanguage;
+  // Whether the page follows the browser: until a language is asked for in the address or chosen in the picker, and
+  // again once that entry is chosen.
+  let following = followsBrowser({ param, saved });
   // A language asked for in the address is a choice: the page that a link of this one leads to is in it as well.
   if (param && matchLanguage([param]) === language) saveLanguage(language);
 
@@ -210,6 +237,9 @@
     }
   };
 
+  // What the picker does when the page gets the texts of another language: it words its first entry in it.
+  let relabelPicker = () => {};
+
   /**
    * Puts the texts of a language into the page, which is laid out from right to left for a language written so. A key
    * that the language does not have keeps what the page shows.
@@ -237,6 +267,7 @@
     }
     keepNamesWhole();
     layDownloadButtonsOut();
+    relabelPicker();
   };
 
   // TL;DR: A page in another language is not shown until its texts are in it, or a second and a half have passed.
@@ -263,26 +294,34 @@
 
   /**
    * Shows the page in a language that the visitor chose: `showChosen` shows it in the picker at once, and the page's
-   * own again when its texts cannot be fetched. Choosing the language that the page is in counts as well: texts of the
-   * page's load that come later do not replace it.
+   * own again when its texts cannot be fetched. `follow` is for the entry "Use browser setting", with the browser's
+   * language. Choosing the language that the page is in counts as well: texts of the page's load that come later do
+   * not replace it.
    */
-  const choose = async (chosen, showChosen) => {
+  const choose = async (chosen, showChosen, follow = false) => {
     const choice = ++choices;
-    showChosen(chosen);
+    showChosen(chosen, follow);
     let textsOfChosen;
     try {
       textsOfChosen = await fetchTexts(chosen);
     } catch {
       // The page stays as it is when the language's texts cannot be fetched.
-      if (choice === choices) showChosen(root.lang);
+      if (choice === choices) showChosen(root.lang, following);
       return;
     }
     if (choice !== choices) return;
     apply(chosen, textsOfChosen);
-    saveLanguage(chosen);
-    // The address says the language, so that the page is in it again when it is loaded anew or sent to someone.
+    following = follow;
+    // The address says the language, so that the page is in it again when it is loaded anew or sent to someone. A page
+    // that follows the browser says none, and keeps no choice: it is in the language of each browser that opens it.
     const url = new URL(window.location.href);
-    url.searchParams.set('lang', chosen);
+    if (follow) {
+      forgetLanguage();
+      url.searchParams.delete('lang');
+    } else {
+      saveLanguage(chosen);
+      url.searchParams.set('lang', chosen);
+    }
     window.history.replaceState(null, '', url);
   };
 
@@ -296,9 +335,10 @@
 
   /**
    * Makes the language picker of the page, which each page has empty and hidden: without this script there is nothing
-   * to choose. A button that shows the page's language opens a box under it, with a search field above the list of
-   * languages, as the list of the application has, each language under its own name. Returns how to show a language
-   * as the chosen one, or null for a page without a picker.
+   * to choose. A button that shows the page's language opens a box under it, with a search field above the list, as
+   * the list of the application has: "Use browser setting", with the language that it stands for in this browser,
+   * then each language under its own name. Returns how to show a language as the chosen one, or null for a page
+   * without a picker.
    */
   const makePicker = () => {
     const picker = document.querySelector('.language-picker');
@@ -309,7 +349,31 @@
     const list = picker.querySelector('.language-options');
     const status = picker.querySelector('.language-none');
     const noLanguagesFound = picker.querySelector('.language-none-text');
+    const useBrowserSetting = picker.querySelector('.language-browser-text');
     const languageOf = (code) => languages.find((each) => each.code === code);
+
+    // TL;DR: The first entry follows the browser's language, as the application's list has one that follows the
+    // operating system's, and Photo Data Viewer's one that follows the browser's.
+    // Details: A visitor who has chosen a language, or followed a link that says one, keeps it on every visit. This
+    // entry forgets that choice. It says which language the browser stands for, in the page's language, with the name
+    // of that language in an element of its own, so that one written in the other direction keeps its order.
+    const browserEntry = document.createElement('li');
+    browserEntry.className = 'language-option';
+    browserEntry.id = 'language-option-browser';
+    browserEntry.setAttribute('role', 'option');
+    browserEntry.tabIndex = -1;
+    const labelBrowserEntry = () => {
+      const { before, after } = languageParts(useBrowserSetting.textContent);
+      const name = document.createElement('bdi');
+      name.lang = browserLanguage;
+      name.textContent = languageOf(browserLanguage).name;
+      const label = document.createElement('bdi');
+      label.append(before, name, after);
+      browserEntry.lang = root.lang;
+      browserEntry.replaceChildren(label);
+    };
+    labelBrowserEntry();
+    relabelPicker = labelBrowserEntry;
 
     // The name is on its own, so that one written in the other direction than the page keeps its order.
     const options = languages.map(({ code, name }) => {
@@ -325,26 +389,31 @@
       option.append(label);
       return option;
     });
-    list.append(...options);
+    const allEntries = [browserEntry, ...options];
+    list.append(...allEntries);
 
     let shown = root.lang;
-    const showChosen = (code) => {
+    let shownFollowing = following;
+    const showChosen = (code, follow) => {
       shown = code;
+      shownFollowing = follow;
       const name = button.querySelector('.language-button-name');
       name.textContent = languageOf(code).name;
       name.lang = code;
-      for (const option of options) option.setAttribute('aria-selected', String(option.dataset.code === code));
+      browserEntry.setAttribute('aria-selected', String(follow));
+      for (const option of options) option.setAttribute('aria-selected', String(!follow && option.dataset.code === code));
     };
-    showChosen(root.lang);
+    showChosen(root.lang, following);
+    const chosenEntry = () => (shownFollowing ? browserEntry : options.find((option) => option.dataset.code === shown));
 
-    const listedOptions = () => options.filter((option) => !option.hidden);
+    const listedEntries = () => allEntries.filter((entry) => !entry.hidden);
     /** The entry that the Tab key reaches in the list, the chosen one or else the first listed, which it returns. */
     const setTabStop = () => {
-      const stop = listedOptions().find((option) => option.dataset.code === shown) ?? listedOptions()[0];
-      for (const option of options) option.tabIndex = option === stop ? 0 : -1;
+      const stop = listedEntries().find((entry) => entry === chosenEntry()) ?? listedEntries()[0];
+      for (const entry of allEntries) entry.tabIndex = entry === stop ? 0 : -1;
       return stop;
     };
-    /** Lists the languages that the search finds, or says that it finds none. */
+    /** Lists the entries that the search finds, or says that it finds none. */
     const filter = () => {
       let namesInPageLanguage = null;
       try {
@@ -352,19 +421,21 @@
       } catch {
         // The search then finds a language by its other names.
       }
+      // The first entry is found by its words, the name of the browser's language among them, as in the application.
+      browserEntry.hidden = !searchFinds([browserEntry.textContent], search.value);
       for (const option of options) {
         const code = option.dataset.code;
         option.hidden = !matchesSearch(languageOf(code), search.value, namesInPageLanguage?.of(code) ?? '');
       }
-      const none = listedOptions().length === 0;
+      const none = listedEntries().length === 0;
       list.hidden = none;
       status.textContent = none ? noLanguagesFound.textContent : '';
       setTabStop();
     };
-    const focusOption = (option) => {
-      for (const each of options) each.tabIndex = each === option ? 0 : -1;
-      option.focus();
-      showInList(list, option);
+    const focusEntry = (entry) => {
+      for (const each of allEntries) each.tabIndex = each === entry ? 0 : -1;
+      entry.focus();
+      showInList(list, entry);
     };
     const isOpen = () => !popup.hidden;
     const open = () => {
@@ -372,7 +443,7 @@
       filter();
       popup.hidden = false;
       button.setAttribute('aria-expanded', 'true');
-      showInList(list, options.find((option) => option.dataset.code === shown));
+      showInList(list, chosenEntry());
       // The search field, so that the visitor can type a language at once, as in the application's dialog.
       search.focus();
     };
@@ -382,9 +453,10 @@
       button.setAttribute('aria-expanded', 'false');
       if (focusButton) button.focus();
     };
-    const pick = (option) => {
+    const pick = (entry) => {
       close(true);
-      choose(option.dataset.code, showChosen);
+      if (entry === browserEntry) choose(browserLanguage, showChosen, true);
+      else choose(entry.dataset.code, showChosen);
     };
 
     button.addEventListener('click', () => (isOpen() ? close(false) : open()));
@@ -393,27 +465,28 @@
       list.scrollTop = 0;
     });
     search.addEventListener('keydown', (event) => {
-      if (event.key === 'ArrowDown' && listedOptions().length > 0) {
+      if (event.key === 'ArrowDown' && listedEntries().length > 0) {
         event.preventDefault();
-        focusOption(setTabStop());
-      } else if (event.key === 'Enter' && search.value.trim() !== '' && listedOptions().length > 0) {
-        // The first language that the search finds, for a visitor who types its name and presses Enter.
+        focusEntry(setTabStop());
+      } else if (event.key === 'Enter' && search.value.trim() !== '' && listedEntries().length > 0) {
+        // The first language that the search finds, for a visitor who types its name and presses Enter. The first
+        // entry has a language's name in it too, and is chosen so only when the search finds no language.
         event.preventDefault();
-        pick(listedOptions()[0]);
+        pick(listedEntries().find((entry) => entry !== browserEntry) ?? listedEntries()[0]);
       }
     });
     list.addEventListener('click', (event) => {
-      const option = event.target.closest('.language-option');
-      if (option) pick(option);
+      const entry = event.target.closest('.language-option');
+      if (entry) pick(entry);
     });
-    // TL;DR: A letter typed on the list moves the focus to the next language whose name starts with it. Letters typed
+    // TL;DR: A letter typed on the list moves the focus to the next entry whose words start with it. Letters typed
     // within half a second of each other are taken together, "de" for Deutsch, and the same letter again goes on to
-    // the next language that starts with it.
-    // Details: The application's list and Photo Data Viewer's do this. The names are compared as the search compares
+    // the next entry that starts with it.
+    // Details: The application's list and Photo Data Viewer's do this. The words are compared as the search compares
     // them, without regard to case or diacritics.
     let typed = '';
     let typedAt = 0;
-    const optionTypedFor = (entries, at, letter) => {
+    const entryTypedFor = (entries, at, letter) => {
       const now = Date.now();
       typed = now - typedAt < 500 ? typed + letter : letter;
       typedAt = now;
@@ -421,13 +494,12 @@
       const sought = foldForSearch(sameLetter ? typed[0] : typed);
       // From the entry after the focused one for a letter on its own, and from the focused one while a name is typed.
       const from = sameLetter ? at + 1 : at;
-      return [...entries.slice(from), ...entries.slice(0, from)]
-        .find((option) => foldForSearch(languageOf(option.dataset.code).name).startsWith(sought));
+      return [...entries.slice(from), ...entries.slice(0, from)].find((entry) => foldForSearch(entry.textContent).startsWith(sought));
     };
     // The arrow keys, Home and End move between the entries, and Enter or Space chooses one. Up from the first entry
     // goes back to the search field.
     list.addEventListener('keydown', (event) => {
-      const entries = listedOptions();
+      const entries = listedEntries();
       const at = entries.indexOf(document.activeElement);
       if (at === -1) return;
       if (event.key === 'Enter' || event.key === ' ') {
@@ -439,10 +511,10 @@
       if (event.key in moves) {
         event.preventDefault();
         if (moves[event.key] < 0) search.focus();
-        else focusOption(entries[Math.min(moves[event.key], entries.length - 1)]);
+        else focusEntry(entries[Math.min(moves[event.key], entries.length - 1)]);
       } else if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
-        const option = optionTypedFor(entries, at, event.key);
-        if (option) focusOption(option);
+        const entry = entryTypedFor(entries, at, event.key);
+        if (entry) focusEntry(entry);
       }
     });
     // Escape, a click outside the picker, or the keyboard's focus leaving it closes the box without a choice.
@@ -478,7 +550,7 @@
     // A visitor who has chosen a language by now keeps it: the texts that the page was loaded with came too late.
     if (textsOfLanguage && choices === 0) {
       apply(language, textsOfLanguage);
-      if (showChosen) showChosen(language);
+      if (showChosen) showChosen(language, following);
     }
     show();
   });

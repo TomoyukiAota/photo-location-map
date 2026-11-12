@@ -2,6 +2,7 @@
   "language": "Språk",
   "languageSearch": "Søk",
   "noLanguagesFound": "Fant ingen språk",
+  "useBrowserSetting": "Bruk nettleserens innstilling ({{language}})",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "Ikon for Photo Location Map",

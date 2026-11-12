@@ -2,6 +2,7 @@
   "language": "Мова",
   "languageSearch": "Пошук",
   "noLanguagesFound": "Мов не знайдено",
+  "useBrowserSetting": "Використовувати параметр браузера ({{language}})",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "Значок Photo Location Map",

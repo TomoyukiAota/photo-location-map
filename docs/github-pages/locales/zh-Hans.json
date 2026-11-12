@@ -2,6 +2,7 @@
   "language": "语言",
   "languageSearch": "搜索",
   "noLanguagesFound": "未找到语言",
+  "useBrowserSetting": "跟随浏览器设置（{{language}}）",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "Photo Location Map 图标",

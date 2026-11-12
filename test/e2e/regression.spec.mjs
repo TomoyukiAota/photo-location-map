@@ -2396,12 +2396,21 @@ test('download website is in the language of its address, and in the one chosen 
     const search = pickerBox.getByRole('searchbox', { name: '検索' });
     await expect(search).toBeFocused();
     await expect(search).toHaveAttribute('placeholder', '検索');
-    // The application's languages, in the order of its list. With more of them than the box shows, the list scrolls:
-    // it ends half an entry down, so that it is seen to go on, and shows the chosen language.
+    // "Use browser setting", with the language that the browser stands for, as the application's list has the
+    // operating system's: the language of the computer that the suite runs on. Then the application's languages, in
+    // the order of its list. With more of them than the box shows, the list scrolls: it ends half an entry down, so
+    // that it is seen to go on, and shows the chosen language. The address asked for Japanese, so the page does not
+    // follow the browser.
+    const { languages: websiteLanguages, matchLanguage } = require('../../docs/github-pages/i18n.js');
+    const browserCode = matchLanguage(await page.evaluate(() => navigator.languages)) ?? 'en';
+    const browserName = websiteLanguages.find(language => language.code === browserCode).name;
     const options = pickerBox.getByRole('listbox', { name: '言語' }).getByRole('option');
+    const languageOptions = pickerBox.locator('.language-option[data-code]');
     const optionOf = name => pickerBox.getByRole('option', { name, exact: true });
-    await expect(options).toHaveText(languageNames);
+    const browserEntry = pickerBox.locator('#language-option-browser');
+    await expect(options).toHaveText([`ブラウザの設定に従う（${browserName}）`, ...languageNames]);
     await expect(optionOf('日本語')).toHaveAttribute('aria-selected', 'true');
+    await expect(browserEntry).toHaveAttribute('aria-selected', 'false');
     await expect(pickerBox.locator('[role="option"][aria-selected="true"]')).toHaveCount(1);
     await expect(optionOf('日本語')).toBeInViewport({ ratio: 1 });
     expect(await pickerBox.getByRole('listbox').evaluate(list => [list.scrollHeight > list.clientHeight, list.clientHeight / list.firstElementChild.offsetHeight]))
@@ -2421,8 +2430,11 @@ test('download website is in the language of its address, and in the one chosen 
     for (const [typed, found] of [['engl', ['English']], ['日本', ['日本語']], ['英語', ['English']], ['ドイツ', ['Deutsch']], ['JA', ['日本語']],
       ['deu', ['Deutsch']], ['portug', ['Português (Brasil)', 'Português (Portugal)']], ['zh-hant', ['繁體中文']]]) {
       await search.fill(typed);
-      await expect(options.filter({ visible: true })).toHaveText(found);
+      await expect(languageOptions.filter({ visible: true })).toHaveText(found);
     }
+    // The first entry is found by its words, as the application's is.
+    await search.fill('ブラウザ');
+    await expect(options.filter({ visible: true })).toHaveText([`ブラウザの設定に従う（${browserName}）`]);
     await search.fill('xyz');
     await expect(options.filter({ visible: true })).toHaveCount(0);
     await expect(pickerBox.getByRole('status')).toHaveText('言語が見つかりません');
@@ -2443,7 +2455,10 @@ test('download website is in the language of its address, and in the one chosen 
     await page.keyboard.type('de');
     await expect(optionOf('Deutsch')).toBeFocused();
     await page.keyboard.press('Home');
+    await expect(browserEntry).toBeFocused();
+    await page.keyboard.press('ArrowDown');
     await expect(optionOf('Bahasa Indonesia')).toBeFocused();
+    await page.keyboard.press('Home');
     await page.keyboard.press('ArrowUp');
     await expect(search).toBeFocused();
     await page.locator('.app-summary').click();
@@ -2599,6 +2614,9 @@ test('download website is in the language of its address, and in the one chosen 
     await expect(chosenOnButton).toHaveText('العربية');
     await pickerButton.click();
     await expect(pickerBox.getByRole('searchbox', { name: 'بحث' })).toBeFocused();
+    // The first entry is worded in the page's language, around the name of the browser's language in its own.
+    await expect(browserEntry).toHaveText(`استخدام إعداد المتصفح (${browserName})`);
+    await expect(browserEntry.locator('bdi bdi')).toHaveAttribute('lang', browserCode);
     const buttonInArabic = await pickerButton.boundingBox();
     const boxInArabic = await pickerBox.boundingBox();
     expect(buttonInArabic.x + buttonInArabic.width).toBeLessThan(600);
@@ -2635,6 +2653,21 @@ test('download website is in the language of its address, and in the one chosen 
     await expect(chosenOnButton).toHaveText('日本語');
     await pickerButton.click();
     await expect(pickerBox.getByRole('option', { name: '日本語', exact: true })).toHaveAttribute('aria-selected', 'true');
+    // "Use browser setting" forgets the choice: the page is in the browser's language, its address says none, and
+    // nothing is kept, so that it follows the browser on the next visit too, where the entry is the chosen one.
+    await browserEntry.click();
+    await expect(pickerBox).toBeHidden();
+    // The kept choice goes once the texts of the browser's language are in the page, which may be Japanese already.
+    await expect.poll(() => page.evaluate(() => localStorage.getItem('PhotoLocationMapWebsiteLanguage'))).toBeNull();
+    expect(await page.evaluate(() => document.documentElement.lang)).toBe(browserCode);
+    await expect(chosenOnButton).toHaveText(browserName);
+    expect(new URL(page.url()).searchParams.has('lang')).toBe(false);
+    await page.goto(`${website.url}github-pages/downloading-for-windows/downloading-for-windows.html`, { waitUntil: 'domcontentloaded' });
+    await expect.poll(() => page.evaluate(() => document.documentElement.lang)).toBe(browserCode);
+    await expect(chosenOnButton).toHaveText(browserName);
+    await pickerButton.click();
+    await expect(browserEntry).toHaveAttribute('aria-selected', 'true');
+    await expect(pickerBox.locator('[role="option"][aria-selected="true"]')).toHaveCount(1);
   } finally {
     await website.close();
   }

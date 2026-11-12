@@ -2,6 +2,7 @@
   "language": "Jezik",
   "languageSearch": "Išči",
   "noLanguagesFound": "Ni najdenih jezikov",
+  "useBrowserSetting": "Uporabi nastavitev brskalnika ({{language}})",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "Ikona aplikacije Photo Location Map",

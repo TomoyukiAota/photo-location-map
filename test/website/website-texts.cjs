@@ -8,7 +8,8 @@ const { describe, it } = require('node:test');
 
 const docs = path.join(__dirname, '../../docs');
 const localesDirectory = path.join(docs, 'github-pages/locales');
-const { languages, matchLanguage, resolveLanguage, linkParts, textOf, foldForSearch, matchesSearch } = require(path.join(docs, 'github-pages/i18n.js'));
+const { languages, matchLanguage, resolveLanguage, followsBrowser, languageParts, linkParts, textOf, foldForSearch, searchFinds, matchesSearch } =
+  require(path.join(docs, 'github-pages/i18n.js'));
 
 const pages = {
   'docs/index.html': fs.readFileSync(path.join(docs, 'index.html'), 'utf8'),
@@ -27,6 +28,8 @@ function flatten(value, prefix = '') {
 
 const english = flatten(read('en.json'));
 const tags = text => (text.match(/<\/?[a-zA-Z][^>]*>/g) ?? []).join(' ');
+/** The places of a text where the page puts a value, as {{language}}. */
+const placeholders = text => (text.match(/\{\{[^}]*\}\}/g) ?? []).sort().join(' ');
 /** The names that every language writes as English does. Each is found in a word with an ending too, as Windowsille. */
 const names = ['Photo Location Map', 'Photo Data Viewer', 'Windows Defender SmartScreen', 'GitHub', 'Tomoyuki Aota', 'EXIF',
   'Windows', 'macOS', 'exe'];
@@ -102,6 +105,10 @@ describe('The texts of the website (docs/github-pages/locales)', () => {
 
       it('keeps the <link> tags of each English text', () => {
         assert.deepEqual(Object.keys(texts).filter(key => key in english && tags(texts[key]) !== tags(english[key])), []);
+      });
+
+      it('keeps the {{language}} of each English text, where the page puts the name of a language', () => {
+        assert.deepEqual(Object.keys(texts).filter(key => key in english && placeholders(texts[key]) !== placeholders(english[key])), []);
       });
 
       it('writes the names as English does: Photo Location Map, Windows, GitHub and the others', () => {
@@ -185,6 +192,29 @@ describe('The language of the website (docs/github-pages/i18n.js)', () => {
     // The address gives a code in any case, and one that the list has under another code.
     assert.equal(resolveLanguage({ param: 'zh-hant', saved: null, browserLanguages: ['en-US'] }), 'zh-Hant');
     assert.equal(resolveLanguage({ param: 'zh-TW', saved: null, browserLanguages: ['en-US'] }), 'zh-Hant');
+  });
+
+  it('follows the browser while neither the address nor a choice kept from before asks for a language of the website', () => {
+    assert.equal(followsBrowser({ param: null, saved: null }), true);
+    assert.equal(followsBrowser({ param: 'ja', saved: null }), false);
+    assert.equal(followsBrowser({ param: null, saved: 'ja' }), false);
+    assert.equal(followsBrowser({ param: 'zh-TW', saved: null }), false);
+    // A language that the website does not have asks for nothing.
+    assert.equal(followsBrowser({ param: 'xx', saved: 'yy' }), true);
+  });
+
+  it('puts the name of the browser\'s language where {{language}} is in the first entry of the picker', () => {
+    assert.deepEqual(languageParts('Use browser setting ({{language}})'), { before: 'Use browser setting (', after: ')' });
+    assert.deepEqual(languageParts('ブラウザの設定に従う（{{language}}）'), { before: 'ブラウザの設定に従う（', after: '）' });
+    assert.deepEqual(languageParts('No name here'), { before: 'No name here', after: '' });
+  });
+
+  it('finds the first entry of the picker by any part of its words, the name of the browser\'s language among them', () => {
+    assert.equal(searchFinds(['ブラウザの設定に従う（日本語）'], 'ブラウザ'), true);
+    assert.equal(searchFinds(['ブラウザの設定に従う（日本語）'], '日本'), true);
+    assert.equal(searchFinds(['Use browser setting (English)'], 'BROWSER'), true);
+    assert.equal(searchFinds(['Use browser setting (English)'], 'deutsch'), false);
+    assert.equal(searchFinds(['Use browser setting (English)'], ' '), true);
   });
 
   it('is found in the picker\'s list by any part of its own name, English name, name in the page\'s language or code', () => {

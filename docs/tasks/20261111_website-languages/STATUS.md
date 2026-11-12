@@ -1,7 +1,8 @@
 # The website in several languages: status
 
 Started and implemented on 2026-11-11. On 2026-11-12, the 40 machine
-translations were reviewed, and the layout was looked at in every language.
+translations were reviewed, and the layout was looked at in every language. On
+2026-11-13, the language picker got an entry that follows the browser.
 
 ## What was asked
 
@@ -10,6 +11,10 @@ languages: Japanese first, the browser's language by default, a way for the
 visitor to change it, and translations that anyone with a GitHub account can
 contribute.
 
+On 2026-11-13, having tried the website, the owner asked what Claude thought of
+an entry "Use browser setting" in the picker, as Photo Data Viewer's list has,
+and then to add it.
+
 ## Current state
 
 - The website is in the application's 42 languages. English is the source,
@@ -17,13 +22,15 @@ contribute.
   machine translations, as the application's are. A visitor gets the language
   of the address (`?lang=ja`), then the one chosen in the page's picker
   before, then the first of the browser's languages that the website has, then
-  English.
+  English. The picker's first entry, "Use browser setting", goes back to the
+  browser's language.
 - Both pages have a language picker at their top right: a button with a globe
   and the page's language, which opens a box under it with a search field
-  above the list of languages, as the application's list has. Each language is
-  under its own name, and the search field has a magnifying glass at its end.
-  A choice changes the texts in place, is kept for the next visit and for the
-  other page, and is written into the address.
+  above the list, as the application's list has: "Use browser setting (日本語)"
+  first, with the language that the browser stands for, then each language
+  under its own name. The search field has a magnifying glass at its end. A
+  choice of a language changes the texts in place, is kept for the next visit
+  and for the other page, and is written into the address.
 - Arabic and Hebrew are laid out from right to left, as in the application:
   the picker is at the top left then.
 - The texts are in `docs/github-pages/locales/<code>.json`, and
@@ -43,6 +50,29 @@ contribute.
 
 ## What was decided, and why
 
+- **"Use browser setting" first in the picker**, as the application's list has
+  "Use macOS setting" and Photo Data Viewer's "Use browser setting". A
+  language chosen in the picker, or asked for by a link with `?lang=`, is kept
+  for every later visit, and the page had no way back to the browser's
+  language but to clear the site's data. Chosen, the entry shows the page in
+  the browser's language, forgets the kept choice and takes the language out
+  of the address, so that the page follows the browser from then on, and an
+  address sent to someone opens in their language. It is the chosen entry
+  while the page follows the browser.
+  - Its text is Photo Data Viewer's, in all 42 languages, which the review of
+    2026-11-12 read with the rest: the two are the same entry, on two pages of
+    the web.
+  - The name of the browser's language is in an element of its own, so that
+    it keeps its order in a page written in the other direction.
+  - The search finds it by its words, the language's name among them, as the
+    application's does. Enter in the search field chooses the first language
+    that the search finds, and the entry only when it finds no language: a
+    visitor who types 日本 and presses Enter means 日本語.
+  - The box of the picker is 260 pixels wide, and wider where the entry needs
+    more to be on one line, up to the window's width: 277 pixels in Japanese,
+    with 日本語 as the browser's language. The languages' names all fit in 260
+    pixels, and English stays at 260. In a window narrower than the entry
+    needs, it takes another line.
 - **No build step.** The website is the files of `docs/` as GitHub Pages
   serves them, so the texts are put into the page by a script in the browser.
   Pages written out for each language would need a generator, and a check that
@@ -205,6 +235,20 @@ On macOS (Apple Silicon), 2026-11-11.
   application's name is on one line of the sentence about the source code, in
   English on a narrow phone. Without the code that it checks, each of these
   fails.
+- On 2026-11-13, with "Use browser setting": `npm run test:website` passes,
+  267 tests, which check that each language's text keeps its `{{language}}`.
+  The e2e case of the website checks the entry's place and words, in Japanese
+  and in Arabic, with the name of the language that the browser of the
+  machine stands for; that it is not the chosen entry while the address asks
+  for a language; that the search finds it, and Home goes to it; and that
+  choosing it shows the browser's language, takes the language out of the
+  address and forgets the kept choice, so that the download page follows the
+  browser too, with the entry chosen. The last fails when the entry keeps a
+  language. `website-picker-ja.png` changed: the box is 277 pixels wide.
+  `node test/website/layout-in-every-language.mjs` finds nothing in any of
+  the 42 languages, and measures the entry too: it is on one line in a
+  desktop's window in each, in a box of 260 to 459 pixels (Greek). Its
+  pictures of the box with the top of the list were looked at in all 42.
 
 ## Not done
 

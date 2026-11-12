@@ -2,6 +2,7 @@
   "language": "Ngôn ngữ",
   "languageSearch": "Tìm kiếm",
   "noLanguagesFound": "Không tìm thấy ngôn ngữ nào",
+  "useBrowserSetting": "Dùng cài đặt của trình duyệt ({{language}})",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "Biểu tượng Photo Location Map",

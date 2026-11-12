@@ -2,6 +2,7 @@
   "language": "Keel",
   "languageSearch": "Otsi",
   "noLanguagesFound": "Keeli ei leitud",
+  "useBrowserSetting": "Kasuta brauseri seadet ({{language}})",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "Photo Location Mapi ikoon",

@@ -2,6 +2,7 @@
   "language": "Hizkuntza",
   "languageSearch": "Bilatu",
   "noLanguagesFound": "Ez da hizkuntzarik aurkitu",
+  "useBrowserSetting": "Erabili nabigatzailearen ezarpena ({{language}})",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "Photo Location Map-en ikonoa",

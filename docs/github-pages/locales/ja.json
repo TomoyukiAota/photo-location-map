@@ -2,6 +2,7 @@
   "language": "言語",
   "languageSearch": "検索",
   "noLanguagesFound": "言語が見つかりません",
+  "useBrowserSetting": "ブラウザの設定に従う（{{language}}）",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "Photo Location Map のアイコン",

@@ -2,6 +2,7 @@
   "language": "Kieli",
   "languageSearch": "Hae",
   "noLanguagesFound": "Kieliä ei löytynyt",
+  "useBrowserSetting": "Käytä selaimen asetusta ({{language}})",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "Photo Location Mapin kuvake",

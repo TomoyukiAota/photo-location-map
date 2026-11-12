@@ -2,6 +2,7 @@
   "language": "Taal",
   "languageSearch": "Zoek",
   "noLanguagesFound": "Geen talen gevonden",
+  "useBrowserSetting": "Gebruik de instelling van de browser ({{language}})",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "Symbool van Photo Location Map",

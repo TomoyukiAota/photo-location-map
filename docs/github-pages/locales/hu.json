@@ -2,6 +2,7 @@
   "language": "Nyelv",
   "languageSearch": "Keresés",
   "noLanguagesFound": "Nem található nyelv",
+  "useBrowserSetting": "A böngésző beállításának használata ({{language}})",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "A Photo Location Map ikonja",

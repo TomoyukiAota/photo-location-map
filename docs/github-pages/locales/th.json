@@ -2,6 +2,7 @@
   "language": "ภาษา",
   "languageSearch": "ค้นหา",
   "noLanguagesFound": "ไม่พบภาษา",
+  "useBrowserSetting": "ใช้การตั้งค่าของเบราว์เซอร์ ({{language}})",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "ไอคอน Photo Location Map",

@@ -2,6 +2,7 @@
   "language": "Γλώσσα",
   "languageSearch": "Αναζήτηση",
   "noLanguagesFound": "Δεν βρέθηκαν γλώσσες",
+  "useBrowserSetting": "Χρήση της ρύθμισης του προγράμματος περιήγησης ({{language}})",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "Εικονίδιο του Photo Location Map",

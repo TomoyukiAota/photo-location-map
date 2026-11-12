@@ -12,11 +12,14 @@
 // - a name that is divided between two lines (Photo Location Map, Photo Data Viewer, the developer's, and the
 //   English names of Windows' two buttons), which i18n.js keeps on one;
 // - the language picker's button on two lines, and its box outside a window of 320 pixels, with its line for a
-//   search that finds no language on two lines or the search field's hint wider than the field.
+//   search that finds no language on two lines or the search field's hint wider than the field;
+// - the picker's first entry, "Use browser setting" with the name of the browser's language, on two lines in a
+//   desktop's window, where the box can grow with it.
 // It prints the findings and writes everything to measurements.json in the output folder (the system's temporary
 // folder, or --output). With --pictures, it also writes a picture of each page in each language at 390 and 1000
 // pixels, landing-390-<code>.png and so on, with the video and the two pictures of Windows made low, as they are
-// the same in every language, and of the picker's search field and its "no languages" line.
+// the same in every language, and of the picker's search field and its "no languages" line, and of its box with the
+// top of the list in a desktop's window, picker-list-<code>.png.
 //
 // The pages are served from docs/ at an address of this computer and shown in a window of the application's
 // Electron, kept off the screen as in the e2e suite (test/e2e/README.md). The video is not loaded.
@@ -162,6 +165,24 @@ try {
         results[code][name][width] = await page.evaluate(measure);
       }
       if (name === 'landing') {
+        // The picker's box in a desktop's window, with its first entry.
+        await setWidth(1000);
+        await page.locator('.language-button').click();
+        results[code].pickerList = await page.evaluate(() => {
+          // The lines by the entry's height, as the name of the language in it is set in another font, whose boxes
+          // stand higher or lower on the same line.
+          const entry = document.querySelector('#language-option-browser');
+          const style = getComputedStyle(entry);
+          const height = entry.getBoundingClientRect().height - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+          return { entryLines: Math.round(height / parseFloat(style.lineHeight)), entryText: entry.textContent,
+            width: Math.round(document.querySelector('.language-popup').getBoundingClientRect().width) };
+        });
+        if (pictures) {
+          // The list from its top, where the first entry is, rather than at the chosen language.
+          await page.locator('.language-options').evaluate(list => { list.scrollTop = 0; });
+          await page.locator('.language-popup').screenshot({ path: path.join(output, `picker-list-${code}.png`), scale: 'css' });
+        }
+        await page.keyboard.press('Escape');
         // The picker's box in the narrowest window, with a search that finds no language.
         await setWidth(320);
         await page.locator('.language-button').click();
@@ -207,7 +228,7 @@ await writeFile(path.join(output, 'measurements.json'), JSON.stringify(results, 
 let found = 0;
 const report = text => { found += 1; console.log(text); };
 for (const [code, of] of Object.entries(results)) {
-  for (const name of Object.keys(of).filter(name => name !== 'picker')) {
+  for (const name of Object.keys(of).filter(name => !['picker', 'pickerList'].includes(name))) {
     for (const [width, at] of Object.entries(of[name])) {
       const where = `${code.padEnd(8)} ${name.padEnd(11)} ${String(width).padStart(4)}px`;
       if (at.wider > 0) report(`${where}: the page is ${at.wider}px wider than the window`);
@@ -220,6 +241,8 @@ for (const [code, of] of Object.entries(results)) {
       if (at.dividedNames.length) report(`${where}: divided between two lines: ${[...new Set(at.dividedNames)].join(', ')}`);
     }
   }
+  const list = of.pickerList;
+  if (list && list.entryLines > 1) report(`${code.padEnd(8)} the picker's first entry is on ${list.entryLines} lines in a desktop's window: ${list.entryText}`);
   const picker = of.picker;
   if (!picker) continue;
   if (picker.left < 0 || picker.right > picker.view) report(`${code.padEnd(8)} the picker's box is outside a window of 320px (${picker.left}..${picker.right})`);

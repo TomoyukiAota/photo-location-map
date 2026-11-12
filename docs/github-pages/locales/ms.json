@@ -2,6 +2,7 @@
   "language": "Bahasa",
   "languageSearch": "Cari",
   "noLanguagesFound": "Tiada bahasa ditemui",
+  "useBrowserSetting": "Guna tetapan pelayar ({{language}})",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "Ikon Photo Location Map",

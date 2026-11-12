@@ -2,6 +2,7 @@
   "language": "Kalba",
   "languageSearch": "Ieškoti",
   "noLanguagesFound": "Kalbų nerasta",
+  "useBrowserSetting": "Naudoti naršyklės nustatymą ({{language}})",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "„Photo Location Map“ piktograma",

@@ -224,7 +224,8 @@ The [website](https://tomoyukiaota.github.io/photo-location-map/), where the
 application is downloaded from, has translations of its own, in the
 application's languages. A visitor sees it in the browser's language when the
 website has it, and can choose another one in the language picker at the top
-of the page.
+of the page, which keeps it for later visits. The picker's first entry, "Use
+browser setting", goes back to the browser's language.
 
 | File | What it is |
 | --- | --- |
@@ -239,6 +240,11 @@ To add a language:
    for the same things. A text that you leave out is shown in English.
    - `<link>` and `</link>` are around the words of a link: keep the pair,
      around the words that are the link in your language.
+   - `useBrowserSetting` is the first entry of the language picker, which
+     follows the browser's language: the page puts that language's name in
+     the place of `{{language}}`, which you keep as it is. Word it as Photo
+     Data Viewer's `language.useBrowserSetting` is in your language, as the
+     two are the same entry.
    - The names stay as they are: Photo Location Map, Photo Data Viewer,
      Windows Defender SmartScreen, GitHub, EXIF. Write them with ordinary
      spaces: the page keeps Photo Location Map, Photo Data Viewer, the
@@ -258,12 +264,12 @@ To add a language:
 4. Open a pull request titled `Add <language> translation of the website`, or
    add this to the pull request of the application's translation.
 
-`npm run test:website`, which runs on every pull request, checks what the
-check of the application's texts checks, and a little more: the keys, the
-`<link>` tags, the names, the numbers of the steps, that each file is listed,
-and that the list is in the order of the application's. To look at the result,
-serve the folder (`python3 -m http.server 8080 --directory docs`) and open
-`http://localhost:8080/?lang=<code>`.
+`npm run test:website`, which runs on every pull request, checks what the check
+of the application's texts checks, and a little more: the keys, the `<link>`
+tags, the `{{language}}`, the names, the numbers of the steps, that each file
+is listed, and that the list is in the order of the application's. To look at
+the result, serve the folder (`python3 -m http.server 8080 --directory docs`)
+and open `http://localhost:8080/?lang=<code>`.
 
 `node test/website/layout-in-every-language.mjs` opens the two pages in every
 language at 18 widths, from a phone's to a desktop's, and reports what does not

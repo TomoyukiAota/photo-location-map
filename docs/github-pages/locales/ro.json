@@ -2,6 +2,7 @@
   "language": "Limbă",
   "languageSearch": "Caută",
   "noLanguagesFound": "Nu s-a găsit nicio limbă",
+  "useBrowserSetting": "Folosește setarea browserului ({{language}})",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "Pictograma Photo Location Map",

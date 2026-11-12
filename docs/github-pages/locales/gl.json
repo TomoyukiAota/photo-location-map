@@ -2,6 +2,7 @@
   "language": "Idioma",
   "languageSearch": "Buscar",
   "noLanguagesFound": "Non se atopou ningún idioma",
+  "useBrowserSetting": "Usar a configuración do navegador ({{language}})",
   "landing": {
     "pageTitle": "Photo Location Map",
     "appIconAlt": "Icona de Photo Location Map",
