@@ -73,7 +73,7 @@
     }
   },
   "directoryTree": {
-    "openedFolder": "연 폴더 - {{path}}",
+    "openedFolder": "열린 폴더 - {{path}}",
     "contextMenu": {
       "selectOnlyThisFile": "이 파일만 선택",
       "selectOnlyThisFolder": "이 폴더만 선택",
@@ -82,7 +82,7 @@
     }
   },
   "photoInfo": {
-    "unavailable": "사진 정보를 사용할 수 없습니다.",
+    "unavailable": "사진 정보가 없습니다.",
     "openFile": "파일 열기",
     "moreOptions": "추가 옵션",
     "livePhotos": "Live Photos",
@@ -129,14 +129,14 @@
     "resetZoom": "확대/축소\n재설정"
   },
   "loadingFolder": {
-    "collecting": "연 폴더에서 불러올 파일을 수집하는 중...",
-    "loading": "연 폴더에서 파일을 불러오는 중...",
+    "collecting": "열린 폴더에서 불러올 파일을 수집하는 중...",
+    "loading": "열린 폴더에서 파일을 불러오는 중...",
     "completed": "모든 파일({{count}}개)을 불러왔습니다.",
     "progress": "파일 {{total}}개 중 {{loaded}}개를 불러왔습니다.",
     "generatingMap": "불러온 파일로 지도를 만드는 중..."
   },
   "noPhotosWithLocationData": {
-    "message": "연 폴더에 위치 정보가 있는 사진이 없습니다."
+    "message": "열린 폴더에 위치 정보가 있는 사진이 없습니다."
   },
   "loadedFiles": {
     "loaded": "파일 {{count}}개를 불러왔습니다.",

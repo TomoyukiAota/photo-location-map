@@ -52,17 +52,17 @@
     "sort": {
       "title": "Isih",
       "byName": "Mengikut nama",
-      "byShootingTime": "Mengikut masa penggambaran",
+      "byShootingTime": "Mengikut masa foto diambil",
       "ascending": "Menaik",
       "descending": "Menurun"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "Mengisih mengikut masa penggambaran",
-    "intro": "Apabila “Mengikut masa penggambaran” dipilih, aplikasi mengisih fail seperti berikut:",
-    "step1": "menggunakan DateTimeOriginal dalam EXIF. Jika tiada,",
+    "title": "Mengisih mengikut masa foto diambil",
+    "intro": "Apabila “Mengikut masa foto diambil” dipilih, aplikasi mengisih fail seperti berikut:",
+    "step1": "menggunakan DateTimeOriginal dalam EXIF; jika tiada,",
     "step2": "menggunakan masa fail diubah suai.",
-    "foldersNote": "Folder diisih mengikut nama kerana folder tidak mempunyai “masa penggambaran”.",
+    "foldersNote": "Folder diisih mengikut nama kerana folder tidak mempunyai “masa foto diambil”.",
     "moreDetails": "Butiran lanjut",
     "details": {
       "intro": "Berikut ialah maklumat tambahan:",
@@ -131,7 +131,7 @@
   "loadingFolder": {
     "collecting": "Mengumpulkan fail untuk dimuatkan daripada folder yang dibuka...",
     "loading": "Memuatkan fail daripada folder yang dibuka...",
-    "completed": "Semua fail telah dimuatkan (bilangan: {{count}}).",
+    "completed": "Semua fail telah dimuatkan ({{count}} fail).",
     "progress": "Fail yang dimuatkan: {{loaded}} daripada {{total}}.",
     "generatingMap": "Menjana peta daripada fail yang dimuatkan..."
   },
@@ -155,7 +155,7 @@
     "generationRequired": "Lakaran kecil yang perlu dijana: {{required}}. Bilangan ini dikira sebagai “fail HEIF ({{heif}}) − fail yang sudah ada dalam cache ({{cached}})”.",
     "closeStatusBar": "Tutup bar status penjanaan lakaran kecil",
     "errorDialog": {
-      "message": "Lakaran kecil tidak dapat dijana untuk fail berikut (bilangan: {{count}}):",
+      "message": "Lakaran kecil tidak dapat dijana untuk {{count}} fail berikut:",
       "filter": "Tapis",
       "number": "No.",
       "file": "Fail",
@@ -169,7 +169,7 @@
       "language": "Bahasa (Language)",
       "appearance": "Penampilan",
       "dateTime": "Tarikh & Masa",
-      "os": "Sistem",
+      "os": "Sistem Pengendalian",
       "cache": "Cache"
     },
     "restartAfterSaving": "Aplikasi ini akan dimulakan semula selepas tetapan disimpan.",
@@ -187,7 +187,7 @@
       "title": "Format tarikh dan masa",
       "description": "Format tarikh dan masa berubah selepas aplikasi dimulakan semula.",
       "dateFormat": "Format tarikh",
-      "clockSystem": "12 atau 24 jam",
+      "clockSystem": "Format 12 atau 24 jam",
       "clock12": "12 jam",
       "clock24": "24 jam",
       "example": "Contoh"
@@ -207,7 +207,7 @@
       "title": "Cache lakaran kecil HEIF",
       "requiredForHeif": "<heifLink>Fail HEIF</heifLink> memerlukan penjanaan lakaran kecil, dan ini mengambil masa.",
       "thereforeCached": "Oleh itu, lakaran kecil yang dijana disimpan dalam cache.",
-      "usedNextTime": "Mulai kali seterusnya, cache digunakan dan lakaran kecil tidak dijana semula.",
+      "usedNextTime": "Pada kali seterusnya, cache akan digunakan supaya lakaran kecil tidak perlu dijana semula.",
       "location": "Lokasi cache:",
       "restartAfterDeleting": "Aplikasi ini akan dimulakan semula selepas cache lakaran kecil dipadam.",
       "delete": "Padam cache lakaran kecil",
@@ -223,8 +223,8 @@
       "about": "Perihal {{appName}}",
       "services": "Perkhidmatan",
       "hide": "Sembunyikan {{appName}}",
-      "hideOthers": "Sembunyikan Lain",
-      "showAll": "Tunjukkan Semua",
+      "hideOthers": "Sembunyikan lain",
+      "showAll": "Tunjukkan semua",
       "quit": "Keluar daripada {{appName}}"
     },
     "view": {

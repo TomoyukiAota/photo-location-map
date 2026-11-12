@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, viewChild, inject } from '@angula
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { Analytics } from '../../../src-shared/analytics/analytics';
+import { appName } from '../../../src-shared/i18n/i18n';
 import { Logger } from '../../../src-shared/log/logger';
 import { startupMetadata } from '../../../src-shared/startup/startup-metadata';
 import { openUrl } from '../../../src-shared/url/open-url';
@@ -24,6 +25,11 @@ export class WelcomeDialogComponent implements AfterViewInit {
   private welcomeDialogAtAppLaunchService = inject(WelcomeDialogAtAppLaunchService);
 
   public readonly appVersion = startupMetadata().version;
+  /**
+   * The application's name with no-break spaces, for the heading, which takes two lines in the languages where it
+   * is longer than the dialog is wide: the name is then on one of the two lines, not divided between them.
+   */
+  public readonly appNameOnOneLine = appName.replace(/ /g, '\u00a0');
 
   public readonly troubleshootingPageLink = viewChild.required<ElementRef<HTMLAnchorElement>>('troubleshootingPageLink');
 

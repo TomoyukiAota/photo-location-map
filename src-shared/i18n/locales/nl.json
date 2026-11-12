@@ -42,7 +42,7 @@
     "releasesLinkTitle": "Open de downloads en release-opmerkingen",
     "translations": "Vertalingen in andere talen zijn welkom: zie <guideLink>hoe je deze app vertaalt</guideLink>.",
     "translationsLinkTitle": "Open de handleiding voor het vertalen van deze app",
-    "homePageTitle": "Open de startpagina",
+    "homePageTitle": "Open de website",
     "sourceCodeTitle": "Bekijk de broncode op GitHub"
   },
   "sidebar": {
@@ -52,23 +52,23 @@
     "sort": {
       "title": "Sorteer",
       "byName": "Op naam",
-      "byShootingTime": "Op opnametijd",
+      "byShootingTime": "Op opnamedatum",
       "ascending": "Oplopend",
       "descending": "Aflopend"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "Sorteren op opnametijd",
-    "intro": "Als ‘Op opnametijd’ is geselecteerd, gaat deze app bij het sorteren van bestanden als volgt te werk:",
+    "title": "Sorteren op opnamedatum",
+    "intro": "Als ‘Op opnamedatum’ is geselecteerd, gaat deze app bij het sorteren van bestanden als volgt te werk:",
     "step1": "De app gebruikt DateTimeOriginal uit de EXIF-gegevens. Als die waarde ontbreekt,",
     "step2": "gebruikt de app de wijzigingsdatum van het bestand.",
-    "foldersNote": "Mappen worden op naam gesorteerd, omdat mappen geen ‘opnametijd’ hebben.",
+    "foldersNote": "Mappen worden op naam gesorteerd, omdat mappen geen ‘opnamedatum’ hebben.",
     "moreDetails": "Meer achtergrondinformatie",
     "details": {
       "intro": "Hieronder staat wat achtergrondinformatie:",
       "mostTrustworthy": "DateTimeOriginal uit de EXIF-gegevens is de betrouwbaarste informatie over het moment waarop de foto is gemaakt.",
       "sometimesMissing": "De meeste camera’s schrijven DateTimeOriginal in de meeste JPEG-/HEIF-/TIFF-bestanden, maar soms ontbreekt de waarde.",
-      "modifiedTime": "De wijzigingsdatum van het bestand is vaak het moment waarop de foto is gemaakt. Daarom wordt die gebruikt als DateTimeOriginal ontbreekt.",
+      "modifiedTime": "De wijzigingsdatum van het bestand is vaak het moment waarop de foto is gemaakt. Daarom wordt die als alternatief gebruikt wanneer DateTimeOriginal ontbreekt.",
       "otherFiles": "Andere bestanden dan JPEG/HEIF/TIFF bevatten geen EXIF-gegevens. Daarom wordt voor die bestanden altijd de wijzigingsdatum gebruikt."
     }
   },
@@ -124,14 +124,14 @@
     },
     "unsupportedDuration": "Dit diagram kan niet meer dan 30 dagen tonen als ‘Uur’ is geselecteerd, niet meer dan 3 dagen bij ‘Minuut’ en niet meer dan 1 uur bij ‘Seconde’.",
     "changeUnitOrSelection": "Wijzig Jaar/Maand/Dag/Uur/Minuut/Seconde of selecteer foto’s zodat de periode korter wordt.",
-    "selectPhotosWithinZoom": "Selecteer foto’s binnen de zoom",
+    "selectPhotosWithinZoom": "Selecteer foto’s binnen het zoombereik",
     "zoom": "Zoom",
     "resetZoom": "Herstel\nzoom"
   },
   "loadingFolder": {
     "collecting": "De te laden bestanden uit de geopende map worden verzameld...",
     "loading": "Bestanden uit de geopende map worden geladen...",
-    "completed": "Alle bestanden zijn geladen (aantal: {{count}}).",
+    "completed": "Alle bestanden zijn geladen (in totaal {{count}}).",
     "progress": "Geladen bestanden: {{loaded}} van {{total}}.",
     "generatingMap": "De kaart wordt gemaakt van de geladen bestanden..."
   },
@@ -155,7 +155,7 @@
     "generationRequired": "Aan te maken miniaturen: {{required}}. Dit volgt uit ‘HEIF-bestanden ({{heif}}) − bestanden in de cache ({{cached}})’.",
     "closeStatusBar": "Sluit de statusbalk van het aanmaken van miniaturen",
     "errorDialog": {
-      "message": "Voor de volgende bestanden konden geen miniaturen worden aangemaakt (aantal: {{count}}):",
+      "message": "Voor de volgende bestanden konden geen miniaturen worden aangemaakt (in totaal {{count}}):",
       "filter": "Filter",
       "number": "Nr.",
       "file": "Bestand",
@@ -169,7 +169,7 @@
       "language": "Taal (Language)",
       "appearance": "Weergave",
       "dateTime": "Datum en tijd",
-      "os": "Systeem",
+      "os": "Besturingssysteem",
       "cache": "Cache"
     },
     "restartAfterSaving": "Deze app wordt opnieuw gestart nadat de instellingen zijn bewaard.",
@@ -187,9 +187,9 @@
       "title": "Datum- en tijdnotatie",
       "description": "De datum- en tijdnotatie wordt gewijzigd nadat de app opnieuw is gestart.",
       "dateFormat": "Datumnotatie",
-      "clockSystem": "12 of 24 uur",
-      "clock12": "12 uur",
-      "clock24": "24 uur",
+      "clockSystem": "12- of 24-uursnotatie",
+      "clock12": "12-uursnotatie",
+      "clock24": "24-uursnotatie",
       "example": "Voorbeeld"
     },
     "os": {
@@ -230,7 +230,7 @@
     "view": {
       "title": "Weergave",
       "reload": "Laad opnieuw",
-      "actualSize": "Ware grootte",
+      "actualSize": "Werkelijke grootte",
       "zoomIn": "Zoom in",
       "zoomOut": "Zoom uit",
       "toggleFullScreen": "Schermvullende weergave aan/uit"

@@ -4,26 +4,35 @@
     {{ 'settings.dateTime.description' | t }}
   </div>
   <div class="dropdown-and-example-row">
-    <mat-form-field class="date-format-dropdown">
-      <mat-label>{{ 'settings.dateTime.dateFormat' | t }}</mat-label>
-      <mat-select [(value)]="selectedDateFormat" (selectionChange)="notifySettingsChanged($event)">
-        @for (dateFormat of dateFormatList; track dateFormat) {
-          <mat-option [value]="dateFormat">
-            {{dateFormat}}
-          </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field class="clock-system-format-dropdown">
-      <mat-label>{{ 'settings.dateTime.clockSystem' | t }}</mat-label>
-      <mat-select [(value)]="selectedClockSystemFormat" (selectionChange)="notifySettingsChanged($event)">
-        @for (clockSystemFormat of clockSystemFormatList; track clockSystemFormat) {
-          <mat-option [value]="clockSystemFormat">
-            {{ clockSystemFormatLabelKeys[clockSystemFormat] | t }}
-          </mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+    <!-- Each field is in a box that is as wide as the field's label and its widest choice need (see the styles). -->
+    <div class="dropdown-box date-format-dropdown-box"
+         [attr.data-label]="'settings.dateTime.dateFormat' | t"
+         [attr.data-choices]="dateFormatChoices">
+      <mat-form-field class="date-format-dropdown">
+        <mat-label>{{ 'settings.dateTime.dateFormat' | t }}</mat-label>
+        <mat-select [(value)]="selectedDateFormat" (selectionChange)="notifySettingsChanged($event)">
+          @for (dateFormat of dateFormatList; track dateFormat) {
+            <mat-option [value]="dateFormat">
+              {{dateFormat}}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="dropdown-box clock-system-format-dropdown-box"
+         [attr.data-label]="'settings.dateTime.clockSystem' | t"
+         [attr.data-choices]="clockSystemFormatChoices">
+      <mat-form-field class="clock-system-format-dropdown">
+        <mat-label>{{ 'settings.dateTime.clockSystem' | t }}</mat-label>
+        <mat-select [(value)]="selectedClockSystemFormat" (selectionChange)="notifySettingsChanged($event)">
+          @for (clockSystemFormat of clockSystemFormatList; track clockSystemFormat) {
+            <mat-option [value]="clockSystemFormat">
+              {{ clockSystemFormatLabelKeys[clockSystemFormat] | t }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
     <div class="date-time-example">
       <div>{{ 'settings.dateTime.example' | t }}</div>
       <div>{{getDateTimeNow()}}</div>

@@ -17,7 +17,7 @@
       "windows": "跟随 Windows 设置（{{language}}）",
       "other": "跟随系统设置（{{language}}）"
     },
-    "restartToApply": "为应用所选语言，此应用将重新启动。",
+    "restartToApply": "为使所选语言生效，此应用将重新启动。",
     "confirm": "确定",
     "search": "搜索",
     "noLanguagesFound": "未找到语言"
@@ -122,7 +122,7 @@
       "minute": "分",
       "second": "秒"
     },
-    "unsupportedDuration": "选择“时”时，此图表无法显示超过 30 天的时间段；选择“分”时无法显示超过 3 天的时间段；选择“秒”时无法显示超过 1 小时的时间段。",
+    "unsupportedDuration": "如果选择“时”，此图表无法显示超过 30 天的时间段；如果选择“分”，无法显示超过 3 天的时间段；如果选择“秒”，无法显示超过 1 小时的时间段。",
     "changeUnitOrSelection": "请更改年/月/日/时/分/秒，或选择照片以缩短时间段。",
     "selectPhotosWithinZoom": "选择缩放范围内的照片",
     "zoom": "缩放",
@@ -145,7 +145,7 @@
   },
   "thumbnailGeneration": {
     "generating": "正在为 HEIF 文件生成缩略图...",
-    "completed": "已完成 HEIF 文件缩略图的生成。",
+    "completed": "HEIF 文件的缩略图已生成完毕。",
     "finishedWithErrors": "HEIF 文件缩略图的生成已结束，但出现了错误。",
     "showDetails": "显示详细信息",
     "processed": "已处理 {{processed}} / {{total}} 个文件。",
@@ -228,7 +228,7 @@
       "quit": "退出 {{appName}}"
     },
     "view": {
-      "title": "视图",
+      "title": "查看",
       "reload": "重新加载",
       "actualSize": "实际大小",
       "zoomIn": "放大",

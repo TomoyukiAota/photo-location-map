@@ -1,3 +1,5 @@
+@use "../../../styles/balanced-lines" as *;
+
 .container {
   margin: 10px 20px;
   display: grid;
@@ -7,4 +9,7 @@
 
 .open-folder-button {
   text-align: center;
+  // Where the sidebar is so narrow that the text takes two lines, which it does in English as well: a single
+  // letter was otherwise left on the second line in Chinese.
+  @include balanced-lines;
 }

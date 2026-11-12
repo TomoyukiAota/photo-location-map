@@ -1,3 +1,5 @@
+@use "../../styles/balanced-lines" as *;
+
 .welcome-dialog-container {
   // The space under the OK button, which the dialog's fixed height used to leave in English.
   padding: 30px;
@@ -14,6 +16,9 @@
 .welcome-message {
   margin-top: 20px;
   font-size: 30px;
+  // Where the text takes two lines: in a dozen languages it is a little wider than the dialog, and its last word,
+  // the "Map" of the application's name, was then alone on the second line.
+  @include balanced-lines;
 }
 
 .app-version {

@@ -122,7 +122,7 @@
       "minute": "分",
       "second": "秒"
     },
-    "unsupportedDuration": "選擇「時」時，此圖表無法顯示超過 30 天的期間；選擇「分」時無法顯示超過 3 天的期間；選擇「秒」時無法顯示超過 1 小時的期間。",
+    "unsupportedDuration": "如果選擇「時」，此圖表無法顯示超過 30 天的期間；如果選擇「分」，無法顯示超過 3 天的期間；如果選擇「秒」，無法顯示超過 1 小時的期間。",
     "changeUnitOrSelection": "請變更年/月/日/時/分/秒，或選取照片以縮短期間。",
     "selectPhotosWithinZoom": "選取縮放範圍內的照片",
     "zoom": "縮放",
@@ -145,7 +145,7 @@
   },
   "thumbnailGeneration": {
     "generating": "正在為 HEIF 檔案產生縮圖...",
-    "completed": "已完成 HEIF 檔案縮圖的產生。",
+    "completed": "HEIF 檔案的縮圖已產生完畢。",
     "finishedWithErrors": "HEIF 檔案縮圖的產生已結束，但發生了錯誤。",
     "showDetails": "顯示詳細資訊",
     "processed": "已處理 {{processed}} / {{total}} 個檔案。",

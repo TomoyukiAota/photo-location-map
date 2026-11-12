@@ -40,7 +40,7 @@
   "about": {
     "releasesLink": "Téléchargements et notes de version",
     "releasesLinkTitle": "Ouvrir les téléchargements et les notes de version",
-    "translations": "Les traductions dans d’autres langues sont les bienvenues : voir <guideLink>comment traduire cette application</guideLink>.",
+    "translations": "Les traductions dans d’autres langues sont les bienvenues\u00a0: voir <guideLink>comment traduire cette application</guideLink>.",
     "translationsLinkTitle": "Ouvrir le guide de traduction de cette application",
     "homePageTitle": "Ouvrir la page d’accueil",
     "sourceCodeTitle": "Voir le code source sur GitHub"
@@ -59,17 +59,17 @@
   },
   "sortByShootingTimeInfo": {
     "title": "Tri par date de prise de vue",
-    "intro": "Lorsque « Par date de prise de vue » est sélectionné, pour trier les fichiers, cette application",
+    "intro": "Lorsque «\u00a0Par date de prise de vue\u00a0» est sélectionné, pour trier les fichiers, cette application",
     "step1": "utilise la valeur DateTimeOriginal des données EXIF et, si elle n’est pas disponible,",
     "step2": "utilise la date de modification du fichier.",
-    "foldersNote": "Les dossiers sont triés par nom, car la notion de « date de prise de vue » n’existe pas pour eux.",
+    "foldersNote": "Les dossiers sont triés par nom, car la notion de «\u00a0date de prise de vue\u00a0» n’existe pas pour eux.",
     "moreDetails": "Informations complémentaires",
     "details": {
-      "intro": "Voici quelques informations complémentaires :",
+      "intro": "Voici quelques informations complémentaires\u00a0:",
       "mostTrustworthy": "La valeur DateTimeOriginal des données EXIF est l’information la plus fiable sur le moment où la photo a été prise.",
       "sometimesMissing": "La plupart des appareils photo écrivent DateTimeOriginal dans la plupart des fichiers JPEG/HEIF/TIFF, mais cette valeur est parfois absente.",
-      "modifiedTime": "La date de modification du fichier correspond souvent au moment où la photo a été prise ; elle est donc utilisée à la place lorsque DateTimeOriginal est absente.",
-      "otherFiles": "De plus, les fichiers autres que JPEG/HEIF/TIFF ne contiennent pas de données EXIF ; la date de modification est donc toujours utilisée pour eux."
+      "modifiedTime": "La date de modification du fichier correspond souvent au moment où la photo a été prise\u00a0; elle est donc utilisée à la place lorsque DateTimeOriginal est absente.",
+      "otherFiles": "De plus, les fichiers autres que JPEG/HEIF/TIFF ne contiennent pas de données EXIF\u00a0; la date de modification est donc toujours utilisée pour eux."
     }
   },
   "directoryTree": {
@@ -94,14 +94,14 @@
       "openGoogleStreetView": "Ouvrir Google Street View",
       "viewData": "Afficher les données"
     },
-    "pathTooLong": "La vignette ne peut pas être affichée, car la longueur du chemin du fichier est de {{length}}. Windows limite la longueur des chemins à {{maximum}}. Déplacez le fichier pour raccourcir son chemin. Pour plus de détails, appuyez sur Ctrl+Shift+I et lisez les messages de la console.",
-    "generatedThumbnailPathTooLong": "La vignette ne peut pas être affichée, car la longueur du chemin de la vignette créée est de {{length}}. Windows limite la longueur des chemins à {{maximum}}. Déplacez le fichier pour raccourcir le chemin de la vignette créée. Pour plus de détails, appuyez sur Ctrl+Shift+I et lisez les messages de la console."
+    "pathTooLong": "La vignette ne peut pas être affichée, car la longueur du chemin du fichier est de {{length}}. Windows limite la longueur des chemins à {{maximum}}. Déplacez le fichier pour raccourcir son chemin. Pour plus de détails, appuyez sur Ctrl+Maj+I et lisez les messages de la console.",
+    "generatedThumbnailPathTooLong": "La vignette ne peut pas être affichée, car la longueur du chemin de la vignette créée est de {{length}}. Windows limite la longueur des chemins à {{maximum}}. Déplacez le fichier pour raccourcir le chemin de la vignette créée. Pour plus de détails, appuyez sur Ctrl+Maj+I et lisez les messages de la console."
   },
   "map": {
     "zoomIn": "Zoom avant",
     "zoomOut": "Zoom arrière",
     "layers": "Calques",
-    "photosInRegions": "Photos dans les zones : {{count}}",
+    "photosInRegions": "Photos dans les zones\u00a0: {{count}}",
     "selectPhotos": "Sélectionner les photos",
     "setRegionByRectangle": "Définir une zone par un rectangle",
     "setRegionByVertex": "Définir une zone par ses sommets",
@@ -112,7 +112,7 @@
   },
   "chart": {
     "moreAlt": "Plus",
-    "dateUnknownPhotos": "Photos de date inconnue : {{count}}",
+    "dateUnknownPhotos": "Photos de date inconnue\u00a0: {{count}}",
     "showDateUnknownPhotos": "Afficher sur la carte les photos de date inconnue",
     "units": {
       "year": "Année",
@@ -122,25 +122,25 @@
       "minute": "Minute",
       "second": "Seconde"
     },
-    "unsupportedDuration": "Ce graphique ne peut pas afficher plus de 30 jours lorsque « Heure » est sélectionné, plus de 3 jours pour « Minute » et plus d’1 heure pour « Seconde ».",
+    "unsupportedDuration": "Ce graphique ne peut pas afficher plus de 30 jours lorsque «\u00a0Heure\u00a0» est sélectionné, plus de 3 jours pour «\u00a0Minute\u00a0» et plus d’1 heure pour «\u00a0Seconde\u00a0».",
     "changeUnitOrSelection": "Changez Année/Mois/Jour/Heure/Minute/Seconde ou sélectionnez des photos de façon à raccourcir la période.",
-    "selectPhotosWithinZoom": "Sélectionner les photos dans le zoom",
+    "selectPhotosWithinZoom": "Sélectionner les photos de la plage zoomée",
     "zoom": "Zoom",
     "resetZoom": "Réinitialiser\nle zoom"
   },
   "loadingFolder": {
     "collecting": "Recherche des fichiers à charger dans le dossier ouvert...",
     "loading": "Chargement des fichiers du dossier ouvert...",
-    "completed": "Tous les fichiers ont été chargés (nombre : {{count}}).",
-    "progress": "Fichiers chargés : {{loaded}} sur {{total}}.",
+    "completed": "Tous les fichiers ont été chargés ({{count}} au total).",
+    "progress": "Fichiers chargés\u00a0: {{loaded}} sur {{total}}.",
     "generatingMap": "Création de la carte à partir des fichiers chargés..."
   },
   "noPhotosWithLocationData": {
     "message": "Le dossier ouvert ne contient aucune photo avec des données de localisation."
   },
   "loadedFiles": {
-    "loaded": "Fichiers chargés : {{count}}.",
-    "withLocationData": "Fichiers avec données de localisation : {{count}}.",
+    "loaded": "Fichiers chargés\u00a0: {{count}}.",
+    "withLocationData": "Fichiers avec données de localisation\u00a0: {{count}}.",
     "total": "Total"
   },
   "thumbnailGeneration": {
@@ -148,14 +148,14 @@
     "completed": "La création des vignettes des fichiers HEIF est terminée.",
     "finishedWithErrors": "La création des vignettes des fichiers HEIF s’est terminée avec des erreurs.",
     "showDetails": "Afficher les détails",
-    "processed": "Fichiers traités : {{processed}} sur {{total}}.",
-    "processedWithErrors": "Fichiers traités : {{processed}} sur {{total}}, avec des erreurs.",
+    "processed": "Fichiers traités\u00a0: {{processed}} sur {{total}}.",
+    "processedWithErrors": "Fichiers traités\u00a0: {{processed}} sur {{total}}, avec des erreurs.",
     "seeFilesWithErrors": "Cliquez ici pour voir les fichiers en erreur.",
     "seeFilesWithErrorsTitle": "Voir les fichiers en erreur",
-    "generationRequired": "Vignettes à créer : {{required}}. Ce nombre correspond à « fichiers HEIF ({{heif}}) − fichiers disponibles dans le cache ({{cached}}) ».",
+    "generationRequired": "Vignettes à créer\u00a0: {{required}}. Ce nombre correspond à «\u00a0fichiers HEIF ({{heif}}) − fichiers disponibles dans le cache ({{cached}})\u00a0».",
     "closeStatusBar": "Fermer la barre d’état de la création des vignettes",
     "errorDialog": {
-      "message": "Impossible de créer les vignettes des fichiers suivants (nombre : {{count}}) :",
+      "message": "Impossible de créer les vignettes des fichiers suivants ({{count}} au total)\u00a0:",
       "filter": "Filtrer",
       "number": "N°",
       "file": "Fichier",
@@ -173,7 +173,7 @@
       "cache": "Cache"
     },
     "restartAfterSaving": "Cette application redémarrera après l’enregistrement des paramètres.",
-    "confirmRestart": "Cette application redémarrera après l’enregistrement des paramètres.\nVoulez-vous continuer ?",
+    "confirmRestart": "Cette application redémarrera après l’enregistrement des paramètres.\nVoulez-vous continuer\u00a0?",
     "save": "Enregistrer",
     "language": {
       "title": "Langue",
@@ -187,31 +187,31 @@
       "title": "Format de la date et de l’heure",
       "description": "Le format de la date et de l’heure sera modifié après le redémarrage de l’application.",
       "dateFormat": "Format de la date",
-      "clockSystem": "12 ou 24 heures",
+      "clockSystem": "Format 12 ou 24 heures",
       "clock12": "12 heures",
       "clock24": "24 heures",
       "example": "Exemple"
     },
     "os": {
-      "title": "Menu contextuel de l’Explorateur",
-      "description": "Ajouter « {{menuItem}} » au menu contextuel de l’Explorateur ou l’en retirer.",
+      "title": "Menu contextuel de l’Explorateur de fichiers",
+      "description": "Ajouter «\u00a0{{menuItem}}\u00a0» au menu contextuel de l’Explorateur de fichiers ou l’en retirer.",
       "add": "Ajouter",
       "remove": "Retirer",
-      "added": "« {{menuItem}} » a été ajouté au menu contextuel de l’Explorateur.",
-      "removed": "« {{menuItem}} » a été retiré du menu contextuel de l’Explorateur.",
-      "failedToAdd": "Impossible d’ajouter « {{menuItem}} » au menu contextuel de l’Explorateur.",
-      "failedToRemove": "Impossible de retirer « {{menuItem}} » du menu contextuel de l’Explorateur.",
-      "confirmInExplorer": "Ouvrez l’Explorateur et faites un clic droit sur un fichier ou un dossier pour vérifier."
+      "added": "«\u00a0{{menuItem}}\u00a0» a été ajouté au menu contextuel de l’Explorateur de fichiers.",
+      "removed": "«\u00a0{{menuItem}}\u00a0» a été retiré du menu contextuel de l’Explorateur de fichiers.",
+      "failedToAdd": "Impossible d’ajouter «\u00a0{{menuItem}}\u00a0» au menu contextuel de l’Explorateur de fichiers.",
+      "failedToRemove": "Impossible de retirer «\u00a0{{menuItem}}\u00a0» du menu contextuel de l’Explorateur de fichiers.",
+      "confirmInExplorer": "Ouvrez l’Explorateur de fichiers et faites un clic droit sur un fichier ou un dossier pour vérifier."
     },
     "cache": {
       "title": "Cache des vignettes HEIF",
       "requiredForHeif": "Les <heifLink>fichiers HEIF</heifLink> nécessitent la création de vignettes, ce qui prend du temps.",
       "thereforeCached": "Les vignettes créées sont donc mises en cache.",
       "usedNextTime": "Le cache sera utilisé dès la prochaine fois pour éviter de recréer les vignettes.",
-      "location": "Emplacement du cache :",
+      "location": "Emplacement du cache\u00a0:",
       "restartAfterDeleting": "Cette application redémarrera après la suppression du cache des vignettes.",
       "delete": "Supprimer le cache des vignettes",
-      "confirmDelete": "Cette application redémarrera après la suppression du cache des vignettes.\nVoulez-vous continuer ?"
+      "confirmDelete": "Cette application redémarrera après la suppression du cache des vignettes.\nVoulez-vous continuer\u00a0?"
     }
   },
   "explorerContextMenu": {
@@ -253,8 +253,8 @@
     }
   },
   "autoUpdate": {
-    "title": "Une nouvelle version de {{appName}} est disponible !",
-    "message": "Une nouvelle version de {{appName}} est disponible et sera installée après le redémarrage.\nVoulez-vous redémarrer cette application maintenant ?\n\nVersion actuelle : {{currentVersion}}\nDernière version : {{latestVersion}}",
+    "title": "Une nouvelle version de {{appName}} est disponible\u00a0!",
+    "message": "Une nouvelle version de {{appName}} est disponible et sera installée après le redémarrage.\nVoulez-vous redémarrer cette application maintenant\u00a0?\n\nVersion actuelle\u00a0: {{currentVersion}}\nDernière version\u00a0: {{latestVersion}}",
     "yes": "Oui",
     "no": "Non"
   }

@@ -15,7 +15,7 @@
     "systemLanguage": {
       "mac": "Usar o ajuste do macOS ({{language}})",
       "windows": "Usar a configuração do Windows ({{language}})",
-      "other": "Usar o ajuste do sistema ({{language}})"
+      "other": "Usar a configuração do sistema ({{language}})"
     },
     "restartToApply": "Este aplicativo será reiniciado para aplicar o idioma.",
     "confirm": "OK",
@@ -124,14 +124,14 @@
     },
     "unsupportedDuration": "Este gráfico não consegue mostrar mais de 30 dias quando “Hora” está selecionado, mais de 3 dias com “Minuto” e mais de 1 hora com “Segundo”.",
     "changeUnitOrSelection": "Altere Ano/Mês/Dia/Hora/Minuto/Segundo ou selecione fotos de modo que o período fique mais curto.",
-    "selectPhotosWithinZoom": "Selecionar as fotos dentro do zoom",
+    "selectPhotosWithinZoom": "Selecionar as fotos do intervalo ampliado",
     "zoom": "Zoom",
     "resetZoom": "Redefinir\nzoom"
   },
   "loadingFolder": {
     "collecting": "Reunindo os arquivos a carregar da pasta aberta...",
     "loading": "Carregando os arquivos da pasta aberta...",
-    "completed": "Todos os arquivos foram carregados (quantidade: {{count}}).",
+    "completed": "Todos os arquivos foram carregados ({{count}} no total).",
     "progress": "Arquivos carregados: {{loaded}} de {{total}}.",
     "generatingMap": "Gerando o mapa com os arquivos carregados..."
   },
@@ -155,7 +155,7 @@
     "generationRequired": "Miniaturas a gerar: {{required}}. O número resulta de “arquivos HEIF ({{heif}}) − arquivos disponíveis no cache ({{cached}})”.",
     "closeStatusBar": "Fechar a barra de status da geração de miniaturas",
     "errorDialog": {
-      "message": "Não foi possível gerar as miniaturas dos seguintes arquivos (quantidade: {{count}}):",
+      "message": "Não foi possível gerar as miniaturas dos seguintes arquivos ({{count}} no total):",
       "filter": "Filtrar",
       "number": "N.º",
       "file": "Arquivo",
@@ -187,7 +187,7 @@
       "title": "Formato de data e hora",
       "description": "O formato de data e hora será alterado após reiniciar o aplicativo.",
       "dateFormat": "Formato da data",
-      "clockSystem": "12 ou 24 horas",
+      "clockSystem": "Formato de 12 ou 24 horas",
       "clock12": "12 horas",
       "clock24": "24 horas",
       "example": "Exemplo"

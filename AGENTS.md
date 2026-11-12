@@ -97,6 +97,45 @@ English.
 **Why:** a text written in the code is shown in English to every user, and no
 check finds it.
 
+## One layout for every language, which gives the texts room
+
+A natural and accurate translation comes before the layout. Do not shorten or
+abbreviate a text so that it fits, and do not ask a translator to: change the
+layout.
+
+- The layout is the same in every language: no size, rule or breakpoint for
+  one language. It is made to hold whatever the length of a language's words
+  and sentences is, by stretching and shrinking with the texts: an element is
+  as wide as its text needs (the fields of the Date & Time settings, the tabs
+  of the Settings dialog, the button that selects the photos within the
+  chart's zoom), a long sentence takes another line (the status bars, the
+  loading dialog), and what is side by side goes on to a second row when it
+  does not fit (the fields of the Date & Time settings).
+- Do not size a layout for the longest text among the languages: the
+  languages with shorter texts, English among them, would then show empty room
+  around theirs. What fits in English keeps its size in English.
+- A text is not cut, by "..." or by its box, and a word is not broken in its
+  middle.
+- Where a language breaks its lines is part of its writing, as its direction
+  is, and not a layout of its own: Japanese between its phrases, Korean
+  between its words. A short text that takes two or three lines, such as a
+  button's or a heading's, gets that, and lines of about the same length, from
+  the `balanced-lines` mixin (`src/styles/_balanced-lines.scss`).
+- After a change to a layout, or to a text that is shown where room is short,
+  look at it in every language, not in English alone: German has long words,
+  Finnish, Greek and the Slavic languages long sentences, and Arabic and Hebrew
+  the other direction. `test/layout/app-in-every-language.mjs` goes through the
+  application's screens in every language, reports the texts that are cut, out
+  of their box or on more lines than in English, and takes the pictures to look
+  at (`test/layout/README.md`).
+
+**Why:** the first translations were shortened to fit a layout made for
+English ("12/24 hodin" for a label of 16 letters, abbreviated names in a
+column of 130px), and the owner decided that the wording comes first, by far,
+and that the layout follows it: one layout for all languages, which stretches
+and shrinks with their texts and never breaks, rather than one made for the
+longest of them.
+
 ## What the application shows is an Angular component
 
 Do not build what the application shows with DOM calls

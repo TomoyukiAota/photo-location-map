@@ -124,14 +124,14 @@
     },
     "unsupportedDuration": "Este gráfico não consegue mostrar mais de 30 dias quando «Hora» está selecionado, mais de 3 dias com «Minuto» e mais de 1 hora com «Segundo».",
     "changeUnitOrSelection": "Altere Ano/Mês/Dia/Hora/Minuto/Segundo ou selecione fotografias de modo que o período fique mais curto.",
-    "selectPhotosWithinZoom": "Selecionar as fotografias dentro do zoom",
+    "selectPhotosWithinZoom": "Selecionar as fotografias do intervalo ampliado",
     "zoom": "Zoom",
     "resetZoom": "Repor\nzoom"
   },
   "loadingFolder": {
     "collecting": "A reunir os ficheiros a carregar da pasta aberta...",
     "loading": "A carregar os ficheiros da pasta aberta...",
-    "completed": "Todos os ficheiros foram carregados (quantidade: {{count}}).",
+    "completed": "Todos os ficheiros foram carregados ({{count}} no total).",
     "progress": "Ficheiros carregados: {{loaded}} de {{total}}.",
     "generatingMap": "A gerar o mapa com os ficheiros carregados..."
   },
@@ -155,7 +155,7 @@
     "generationRequired": "Miniaturas a gerar: {{required}}. O número resulta de «ficheiros HEIF ({{heif}}) − ficheiros disponíveis na cache ({{cached}})».",
     "closeStatusBar": "Fechar a barra de estado da geração de miniaturas",
     "errorDialog": {
-      "message": "Não foi possível gerar as miniaturas dos seguintes ficheiros (quantidade: {{count}}):",
+      "message": "Não foi possível gerar as miniaturas dos seguintes ficheiros ({{count}} no total):",
       "filter": "Filtrar",
       "number": "N.º",
       "file": "Ficheiro",
@@ -187,7 +187,7 @@
       "title": "Formato de data e hora",
       "description": "O formato de data e hora será alterado depois de reiniciar a aplicação.",
       "dateFormat": "Formato da data",
-      "clockSystem": "12 ou 24 horas",
+      "clockSystem": "Formato de 12 ou 24 horas",
       "clock12": "12 horas",
       "clock24": "24 horas",
       "example": "Exemplo"
@@ -222,8 +222,8 @@
     "app": {
       "about": "Acerca do {{appName}}",
       "services": "Serviços",
-      "hide": "Ocultar {{appName}}",
-      "hideOthers": "Ocultar outras",
+      "hide": "Ocultar o {{appName}}",
+      "hideOthers": "Ocultar outras aplicações",
       "showAll": "Mostrar tudo",
       "quit": "Sair do {{appName}}"
     },
