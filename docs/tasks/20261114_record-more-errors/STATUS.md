@@ -205,7 +205,9 @@ What was changed:
   dialog's layout was not checked in every language. The e2e references
   `welcome.png` and `welcome-ja.png` were written anew on the Mac
   (`--update-snapshots=changed`); CI's, in `snapshots-ci/macos-26-arm64/`,
-  are written by its workflow run with `update_screenshots`.
+  by the macOS workflow run with `update_screenshots` on this branch, whose
+  artifact had only these two differing from the references. Both show the
+  new sentence, on as many lines as before.
 
 Checked by hand on macOS, 2026-11-14: the app, built from this branch and
 launched with a test profile and its windows off the screen (Playwright, as
