@@ -208,4 +208,23 @@ describe('scrubConsoleMessage and scrubConsoleSource', () => {
     assert.equal(scrubConsoleMessage(message, mac), 'GET http://<user>-macbook.local:8080/<path> net::ERR_CONNECTION_REFUSED');
     assert.equal(scrubConsoleSource('http://hanako-macbook.local:8080/tiles/1/2/3.png', mac), 'http://<user>-macbook.local:8080/<path>');
   });
+
+  it('should take the user name out of an origin in any case, as a URL gives its host in lower case', () => {
+    const capitalized = { ...mac, sensitiveStrings: ['/Users/Hanako', 'Hanako'] };
+
+    assert.equal(scrubConsoleMessage('GET http://Hanako-MacBook.local:8080/x.png failed', capitalized), 'GET http://<user>-macbook.local:8080/<path> failed');
+    assert.equal(scrubConsoleSource('http://Hanako-MacBook.local:8080/x.png', capitalized), 'http://<user>-macbook.local:8080/<path>');
+  });
+
+  it('should give any web source by its origin only, a local server\'s and one that names app.asar among them', () => {
+    assert.equal(scrubConsoleSource('http://localhost:8080/tiles/12/3456/789.png?key=secret', mac), 'http://localhost:8080/<path>');
+    assert.equal(scrubConsoleSource('https://example.org/x/app.asar/dist/main.js', mac), 'https://example.org/<path>');
+  });
+
+  it('should give a file of the app\'s by its name, without a query', () => {
+    const source = 'file:///Applications/Photo%20Location%20Map.app/Contents/Resources/app.asar/dist/main.js?v=1#x';
+
+    assert.equal(scrubConsoleSource(source, mac), 'app.asar/dist/main.js');
+    assert.equal(scrubConsoleSource('file:///Users/hanako/Pictures/a.html?b', mac), '<path>');
+  });
 });
