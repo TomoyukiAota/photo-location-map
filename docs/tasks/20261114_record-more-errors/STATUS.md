@@ -4,7 +4,7 @@ Started on 2026-11-14. See the [plan](./PLAN.md).
 
 ## Current state
 
-Stages 1 to 4 are implemented (see below). The owner asked on 2026-11-14
+Stages 1 to 5 are implemented (see below). The owner asked on 2026-11-14
 for as many errors as the application can record, decided what the plan lists
 under "The owner's decisions", and then said to carry the plan through without
 stopping, keeping questions for the end.
@@ -17,7 +17,7 @@ stopping, keeping questions for the end.
 | 2 | What the code logs: `Logged Error`, `Logged Warning`, the `logged` tag and its lint rule | Implemented; its pull request waits for stage 1's | — |
 | 3 | Failures with their reasons: `Opened Folder: Failed`, `Opened Folder: EXIF Read Failed` | Implemented; its pull request waits for stage 2's | — |
 | 4 | Starts that fail, launches that do not end, and saving at once | Implemented; its pull request waits for stage 3's | — |
-| 5 | What only the console shows: `Console Error (Renderer)` | Not started | — |
+| 5 | What only the console shows: `Console Error (Renderer)` | Implemented; its pull request waits for stage 4's | — |
 | 6 | Crash reports, and the Welcome dialog's sentence | Waits for the backend to take crash dumps | — |
 
 When a stage is done, write here what was changed, what was checked with the
@@ -161,6 +161,32 @@ What was changed:
   their events into its own file before removing them. An event sent twice is
   counted once by the backend, which tells events by their ID.
 
+## Stage 5: What only the console shows
+
+What was changed:
+
+- `src-main/record-console-errors.ts`: the main process listens to the main
+  window's `console-message` (in Electron 45, one argument with `level`,
+  `message`, `lineNumber` and `sourceId`), and records the lines of the level
+  `error` as `Console Error (Renderer)`, within limits of their own (20 per
+  launch, 3 with the same label). It leaves out what is recorded otherwise: the
+  logger's own lines, which begin with the time and the process, Chromium's
+  `Uncaught …` and Angular's `ERROR …`, which the renderer records with their
+  stacks, and the line of a page that could not start.
+- `src-shared/analytics/error-for-analytics.ts`: `scrubConsoleMessage` scrubs a
+  line as an error's message, but that a web address keeps its origin
+  (`https://tile.example.org/<path>`); `scrubConsoleSource` gives the source as
+  a file of the app's by its name, a web address by its origin, or `<path>`.
+  The part of the scrubbing of stacks that tells an app's file is
+  `scrubFile`, which both use.
+- Photo Data Viewer's window is left out: that application records its own
+  errors.
+
+Found on the way: the unit tests load a module's compiled `.js` when one is
+next to its `.ts`, which `npm run build:src-main` writes. After a build for the
+e2e suite, a change to a module of the main process is not what its tests run
+until the compiled files are removed (`git clean -fX src-main src-shared`).
+
 ## Checks
 
 | Check | Stage | Result |
@@ -185,3 +211,8 @@ What was changed:
 | `npm run test:unit:em:main` | 4 | 242 passed, 2 pending |
 | `npm run test:unit:em:renderer` | 4 | 91 passed |
 | `npm run test:unit:ng` | 4 | 58 files passed |
+| `npm run test:e2e`, on a production build of stage 4 | 1 to 4 | 49 passed, 1 skipped (5.0 min) |
+| `npm run lint:all`, `tsc` of the main process | 5 | passed |
+| `npm run test:unit:em:main` | 5 | 247 passed, 2 pending |
+| `npm run test:unit:em:renderer` | 5 | 91 passed |
+| `npm run test:unit:ng` | 5 | 58 files passed |

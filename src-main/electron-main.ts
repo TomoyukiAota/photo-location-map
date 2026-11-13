@@ -43,6 +43,7 @@ import { handleAppQuit } from './handle-app-quit';
 import { LiveReload } from './live-reload';
 import { configureLiveReload } from './configure-live-reload';
 import { recordAtAppLaunch } from './record-at-app-launch';
+import { recordConsoleErrors } from './record-console-errors';
 import { configureRecordAtAppQuit } from './record-at-app-quit';
 import { configureRecordProcessGone } from './record-process-gone';
 import { recordWindowFailures } from './record-window-failures';
@@ -108,6 +109,7 @@ const createWindow = async () => {
   keepOnAppPage(mainWindow.webContents, url);
   // A preload that throws leaves the page without its bridge, so that the page cannot write to the log itself.
   recordWindowFailures(mainWindow, 'Main Window');
+  recordConsoleErrors(mainWindow.webContents);
   mainWindow.loadURL(url);
 
   // Keep automated development checks on the application's CDP target.

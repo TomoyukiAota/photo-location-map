@@ -73,27 +73,71 @@ function scrubLocation(location: string, context: ErrorScrubbingContext): string
   const match = /^(.*?)(:\d+:\d+)?$/.exec(location);
   const file = match[1];
   const lineAndColumn = match[2] || '';
+  return `${scrubFile(file, context)}${lineAndColumn}`;
+}
 
+/** A file of a stack or of the console: kept only when it is the app's own, relative to the app. */
+function scrubFile(file: string, context: ErrorScrubbingContext): string {
   if (file === 'native' || file === '<anonymous>' || file.startsWith('node:'))
-    return location;
+    return file;
 
   const devServer = /^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?\/(.*)$/.exec(file);
   if (devServer)
-    return `${devServer[1]}${lineAndColumn}`;
+    return devServer[1];
 
   const normalized = file.replace(/\\/g, '/');
   const asarIndex = normalized.indexOf('app.asar/');
   if (asarIndex >= 0)
-    return `${normalized.slice(asarIndex)}${lineAndColumn}`;
+    return normalized.slice(asarIndex);
 
   for (const appPath of context.appPaths) {
     const normalizedAppPath = appPath.replace(/\\/g, '/').replace(/\/$/, '');
     const index = normalizedAppPath ? normalized.indexOf(`${normalizedAppPath}/`) : -1;
     if (index >= 0)
-      return `${normalized.slice(index + normalizedAppPath.length + 1)}${lineAndColumn}`;
+      return normalized.slice(index + normalizedAppPath.length + 1);
   }
 
-  return `<path>${lineAndColumn}`;
+  return '<path>';
+}
+
+/** A web address's origin, which tells which server, without its path and query, which can hold anything. */
+function webOrigin(url: string): string | undefined {
+  try {
+    const parsed = new URL(url);
+    return /^https?:$/.test(parsed.protocol) ? `${parsed.origin}/<path>` : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * A console message as scrubMessage gives it, but that a web address keeps its origin
+ * ("https://tile.example.org/<path>"), so that a request that failed tells which server.
+ */
+export function scrubConsoleMessage(message: string, context: ErrorScrubbingContext): string {
+  const origins: string[] = [];
+  const marked = message.replace(/\bhttps?:\/\/[^\s'"`()<>]+/gi, url => {
+    const origin = webOrigin(url);
+    if (origin === undefined)
+      return url;
+    origins.push(origin);
+    return `\u0000${origins.length - 1}\u0000`;
+  });
+  return scrubMessage(marked, context).replace(/\u0000(\d+)\u0000/g, (_match, index: string) => origins[Number(index)]);
+}
+
+/** The source of a console message: a file of the app's by its name, a web address by its origin, else <path>. */
+export function scrubConsoleSource(sourceId: string, context: ErrorScrubbingContext): string {
+  if (!sourceId)
+    return '';
+  let decoded = sourceId;
+  try {
+    decoded = decodeURI(sourceId);
+  } catch {
+    // Kept as it is.
+  }
+  const file = scrubFile(decoded, context);
+  return file === '<path>' ? webOrigin(sourceId) ?? file : file;
 }
 
 function replaceSensitiveStrings(text: string, context: ErrorScrubbingContext): string {
