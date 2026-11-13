@@ -35,7 +35,7 @@
   },
   "welcome": {
     "message": "Tervetuloa {{appName}} -sovellukseen",
-    "usageInfoCollection": "Sovelluksen parantamiseksi kerätään nimettömiä käyttötietoja. Jatkamalla sovelluksen käyttöä hyväksyt tämän."
+    "usageInfoCollection": "Sovelluksen parantamiseksi kerätään käyttötietoja. Jatkamalla sovelluksen käyttöä hyväksyt tämän."
   },
   "about": {
     "releasesLink": "Lataukset ja julkaisutiedot",

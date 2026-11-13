@@ -35,7 +35,7 @@
   },
   "welcome": {
     "message": "Bun venit în {{appName}}",
-    "usageInfoCollection": "Pentru a îmbunătăți această aplicație, se colectează date anonime de utilizare. Continuând să folosiți aplicația, sunteți de acord cu acest lucru."
+    "usageInfoCollection": "Pentru a îmbunătăți această aplicație, se colectează date de utilizare. Continuând să folosiți aplicația, sunteți de acord cu acest lucru."
   },
   "about": {
     "releasesLink": "Descărcări și note de lansare",

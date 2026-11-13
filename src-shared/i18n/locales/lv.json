@@ -35,7 +35,7 @@
   },
   "welcome": {
     "message": "Laipni lūdzam lietotnē {{appName}}",
-    "usageInfoCollection": "Lai uzlabotu šo lietotni, tiek apkopota anonīma lietošanas informācija. Turpinot lietot lietotni, jūs tam piekrītat."
+    "usageInfoCollection": "Lai uzlabotu šo lietotni, tiek apkopota lietošanas informācija. Turpinot lietot lietotni, jūs tam piekrītat."
   },
   "about": {
     "releasesLink": "Lejupielādes un laidiena piezīmes",

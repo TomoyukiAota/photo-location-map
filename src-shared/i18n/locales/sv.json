@@ -35,7 +35,7 @@
   },
   "welcome": {
     "message": "Välkommen till {{appName}}",
-    "usageInfoCollection": "För att förbättra den här appen samlas anonym användningsinformation in. Genom att fortsätta använda appen godkänner du det."
+    "usageInfoCollection": "För att förbättra den här appen samlas användningsinformation in. Genom att fortsätta använda appen godkänner du det."
   },
   "about": {
     "releasesLink": "Nedladdningar och versionsinformation",

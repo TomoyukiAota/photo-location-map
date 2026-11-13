@@ -35,7 +35,7 @@
   },
   "welcome": {
     "message": "Vítejte v aplikaci {{appName}}",
-    "usageInfoCollection": "Kvůli vylepšování této aplikace se shromažďují anonymní údaje o jejím používání. Dalším používáním aplikace s tím souhlasíte."
+    "usageInfoCollection": "Kvůli vylepšování této aplikace se shromažďují údaje o jejím používání. Dalším používáním aplikace s tím souhlasíte."
   },
   "about": {
     "releasesLink": "Soubory ke stažení a poznámky k vydání",

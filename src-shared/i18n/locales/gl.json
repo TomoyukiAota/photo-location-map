@@ -35,7 +35,7 @@
   },
   "welcome": {
     "message": "Dámosche a benvida a {{appName}}",
-    "usageInfoCollection": "Para mellorar esta aplicación, recóllese información de uso anónima. Se continúas usando a aplicación, aceptas isto."
+    "usageInfoCollection": "Para mellorar esta aplicación, recóllese información de uso. Se continúas usando a aplicación, aceptas isto."
   },
   "about": {
     "releasesLink": "Descargas e notas da versión",

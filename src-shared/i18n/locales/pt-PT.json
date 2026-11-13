@@ -35,7 +35,7 @@
   },
   "welcome": {
     "message": "Bem-vindo ao {{appName}}",
-    "usageInfoCollection": "Para melhorar esta aplicação, são recolhidos dados de utilização anónimos. Ao continuar a usar esta aplicação, concorda com isso."
+    "usageInfoCollection": "Para melhorar esta aplicação, são recolhidos dados de utilização. Ao continuar a usar esta aplicação, concorda com isso."
   },
   "about": {
     "releasesLink": "Transferências e notas de versão",

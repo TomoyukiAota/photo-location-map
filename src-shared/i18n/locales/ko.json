@@ -35,7 +35,7 @@
   },
   "welcome": {
     "message": "{{appName}}에 오신 것을 환영합니다",
-    "usageInfoCollection": "이 앱을 개선하기 위해 익명의 사용 정보를 수집합니다. 앱을 계속 사용하면 이에 동의하는 것으로 간주됩니다."
+    "usageInfoCollection": "이 앱을 개선하기 위해 사용 정보를 수집합니다. 앱을 계속 사용하면 이에 동의하는 것으로 간주됩니다."
   },
   "about": {
     "releasesLink": "다운로드 및 릴리스 노트",

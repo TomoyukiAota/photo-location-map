@@ -35,7 +35,7 @@
   },
   "welcome": {
     "message": "Us donem la benvinguda a {{appName}}",
-    "usageInfoCollection": "Per millorar aquesta aplicació, es recull informació d’ús anònima. Si continueu utilitzant-la, hi doneu el vostre consentiment."
+    "usageInfoCollection": "Per millorar aquesta aplicació, es recull informació d’ús. Si continueu utilitzant-la, hi doneu el vostre consentiment."
   },
   "about": {
     "releasesLink": "Baixades i notes de la versió",

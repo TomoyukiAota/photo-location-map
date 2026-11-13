@@ -35,7 +35,7 @@
   },
   "welcome": {
     "message": "欢迎使用 {{appName}}",
-    "usageInfoCollection": "为改进此应用，我们会收集匿名的使用情况信息。继续使用此应用即表示你同意这一点。"
+    "usageInfoCollection": "为改进此应用，我们会收集使用情况信息。继续使用此应用即表示你同意这一点。"
   },
   "about": {
     "releasesLink": "下载和发行说明",

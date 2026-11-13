@@ -35,7 +35,7 @@
   },
   "welcome": {
     "message": "Dobrodošli v aplikaciji {{appName}}",
-    "usageInfoCollection": "Za izboljšanje te aplikacije se zbirajo anonimni podatki o uporabi. Z nadaljnjo uporabo aplikacije se s tem strinjate."
+    "usageInfoCollection": "Za izboljšanje te aplikacije se zbirajo podatki o uporabi. Z nadaljnjo uporabo aplikacije se s tem strinjate."
   },
   "about": {
     "releasesLink": "Prenosi in opombe ob izdajah",

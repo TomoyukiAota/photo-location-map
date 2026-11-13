@@ -35,7 +35,7 @@
   },
   "welcome": {
     "message": "Chào mừng bạn đến với {{appName}}",
-    "usageInfoCollection": "Để cải thiện ứng dụng này, ứng dụng thu thập thông tin sử dụng ẩn danh. Khi tiếp tục sử dụng ứng dụng, bạn đồng ý với điều này."
+    "usageInfoCollection": "Để cải thiện ứng dụng này, ứng dụng thu thập thông tin sử dụng. Khi tiếp tục sử dụng ứng dụng, bạn đồng ý với điều này."
   },
   "about": {
     "releasesLink": "Tải xuống và ghi chú phát hành",
