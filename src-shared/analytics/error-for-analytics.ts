@@ -1,10 +1,12 @@
 // Turns an error into an event label and value without any of the user's file paths, which can contain their
 // name or the names of their folders and photos.
 //  - The message keeps its words; anything that looks like a path becomes "<path>", including anything under
-//    the user's home folder, and the user name becomes "<user>".
-//  - The stack keeps its first few frames: function names, and file names only when the file is inside the
-//    app (the app.asar bundle, the app's own folder, or the page served by the dev server); every other file
-//    location becomes "<path>".
+//    the user's home folder, a file's name with the extension of a photo or a movie becomes "<file>", and the
+//    user name becomes "<user>".
+//  - The stack keeps its first frames: function names, and file names only when the file is inside the app (the
+//    app.asar bundle, the app's own folder, or the page served by the dev server); every other file location
+//    becomes "<path>". The causes of the error follow it, and the first errors of an AggregateError.
+//  - A thrown value that is not an error keeps its type, and an object its JSON with only the texts that are codes.
 
 export interface ErrorScrubbingContext {
   /** Folders of the app itself, whose files may be named in stacks (e.g. app.getAppPath()). */
@@ -14,14 +16,33 @@ export interface ErrorScrubbingContext {
 }
 
 export const maxLabelLength = 1000;
-export const maxStackFrames = 5;
+export const maxStackFrames = 20;
+/** How many causes deep the value goes (error.cause), and how many errors of an AggregateError it gives. */
+export const maxCauses = 3;
+export const maxAggregatedErrors = 3;
+/** The longest value: an error, its causes and their frames fit, far below what the analytics backend takes. */
+export const maxValueLength = 16_000;
+
+// The file types that the app opens, with those of Live Photos (src-shared/filename-extension/): a word that ends in
+// one of them is the name of a user's file.
+const fileExtensions = 'jpe?g|jpe|jfif?|jif|tiff?|png|heic|heif|webp|mov|mp4';
+const quotedFileName = new RegExp(`(['"\`])[^'"\`]*\\.(?:${fileExtensions})\\1`, 'gi');
+const fileName = new RegExp(`[^\\s'"\`()<>,;]+\\.(?:${fileExtensions})\\b`, 'gi');
 
 export function scrubMessage(message: string, context: ErrorScrubbingContext): string {
   let result = replaceSensitiveStrings(message, context);
   // Quoted text with a path separator in it, such as ENOENT's "open '/Users/x/Pictures/a b.jpg'".
   result = result.replace(/(['"`])[^'"`]*[\\/][^'"`]*\1/g, (_match, quote: string) => `${quote}<path>${quote}`);
+  // A quoted file name, which can have spaces: "'IMG 0001.jpg'".
+  result = result.replace(quotedFileName, (_match, quote: string) => `${quote}<file>${quote}`);
+  // TL;DR: An unquoted path in the home folder goes to the end of its line.
+  // Details: Where such a path ends cannot be told, as its folders' names can have spaces ("~/Pictures/Trip to
+  // Kyoto"), and the user's files are in the home folder. Words after it on the line are lost with it.
+  result = result.replace(/~[\\/][^\n'"`]*/g, '<path>');
   // Anything else with a path separator, such as an unquoted path or URL.
   result = result.replace(/[^\s'"`()<>,;]*[\\/][^\s'"`()<>,;]*/g, token => token === '/' ? token : '<path>');
+  // A file name by itself.
+  result = result.replace(fileName, '<file>');
   return result;
 }
 
@@ -86,10 +107,89 @@ function replaceSensitiveStrings(text: string, context: ErrorScrubbingContext): 
   return result;
 }
 
+interface Thrown {
+  readonly name: string;
+  /** Scrubbed. */
+  readonly message: string;
+  /** Not scrubbed yet. */
+  readonly stack?: string;
+}
+
+/**
+ * Something with a message, as an error sent from another process or a worker is: it is described as an error. An
+ * ErrorEvent is one too, its constructor's name its name.
+ */
+function isErrorLike(value: unknown): value is { name?: unknown, message: string, stack?: unknown } {
+  return typeof value === 'object' && value !== null && typeof (value as { message?: unknown }).message === 'string';
+}
+
+function constructorName(value: object): string {
+  const name = (value as { constructor?: { name?: unknown } }).constructor?.name;
+  return typeof name === 'string' && name ? name : 'Object';
+}
+
+/**
+ * An object as JSON, with only the texts that are codes, such as "ENOENT" or "killed": any other text could be a name
+ * of the user's, and an object can hold anything. Numbers, booleans and null are kept.
+ */
+function objectText(value: object): string {
+  try {
+    return JSON.stringify(value, (_key, field: unknown) =>
+      typeof field === 'string' && !/^[A-Za-z0-9_:-]{0,40}$/.test(field) ? '<value>' : field) ?? '';
+  } catch {
+    return `[object ${constructorName(value)}]`;  // A cycle, or a BigInt.
+  }
+}
+
+/** What was thrown, as a name and a scrubbed message, with its stack when it has one. */
+function describeThrown(thrown: unknown, context: ErrorScrubbingContext): Thrown {
+  if (thrown instanceof Error)
+    return { name: thrown.name, message: scrubMessage(thrown.message, context), stack: thrown.stack };
+  if (isErrorLike(thrown)) {
+    const name = typeof thrown.name === 'string' && thrown.name ? thrown.name : constructorName(thrown);
+    return { name, message: scrubMessage(thrown.message, context), stack: typeof thrown.stack === 'string' ? thrown.stack : undefined };
+  }
+  if (typeof thrown === 'object' && thrown !== null)
+    return { name: constructorName(thrown), message: scrubMessage(objectText(thrown), context) };
+  return { name: typeof thrown, message: scrubMessage(String(thrown), context) };
+}
+
+/** The cause of an error, given with `new Error(message, { cause })`, or undefined. */
+function causeOf(thrown: unknown): unknown {
+  return typeof thrown === 'object' && thrown !== null && 'cause' in thrown ? (thrown as { cause: unknown }).cause : undefined;
+}
+
+/** The errors that an AggregateError, such as Promise.any's, holds. */
+function aggregatedErrors(thrown: unknown): unknown[] {
+  const errors = thrown instanceof Error ? (thrown as { errors?: unknown }).errors : undefined;
+  return Array.isArray(errors) ? errors : [];
+}
+
+/** The frames of an error, then each of its causes with their frames, then the first errors of an AggregateError. */
+function valueOf(thrown: unknown, first: Thrown, context: ErrorScrubbingContext): string {
+  const parts: string[] = [];
+  const add = (heading: string, described: Thrown) => {
+    parts.push(`${heading}${described.name}: ${described.message}`.slice(0, maxLabelLength));
+    if (described.stack)
+      parts.push(scrubStack(described.stack, context));
+  };
+
+  if (first.stack)
+    parts.push(scrubStack(first.stack, context));
+  let cause = causeOf(thrown);
+  for (let depth = 0; depth < maxCauses && cause !== undefined; depth++) {
+    add('Caused by: ', describeThrown(cause, context));
+    cause = causeOf(cause);
+  }
+  const errors = aggregatedErrors(thrown);
+  errors.slice(0, maxAggregatedErrors).forEach((error, index) =>
+    add(`Error ${index + 1} of ${errors.length}: `, describeThrown(error, context)));
+
+  return parts.filter(Boolean).join('\n').slice(0, maxValueLength);
+}
+
 export function errorForAnalytics(error: unknown, context: ErrorScrubbingContext): { label: string, value: string } {
-  const name = error instanceof Error ? error.name : typeof error;
-  const message = error instanceof Error ? error.message : String(error);
-  const label = `${name}: ${scrubMessage(message, context)}`.slice(0, maxLabelLength);
-  const value = error instanceof Error && error.stack ? scrubStack(error.stack, context) : '';
-  return { label, value };
+  const thrown = describeThrown(error, context);
+  const label = `${thrown.name}: ${thrown.message}`.slice(0, maxLabelLength);
+  return { label, value: valueOf(error, thrown, context) };
 }
