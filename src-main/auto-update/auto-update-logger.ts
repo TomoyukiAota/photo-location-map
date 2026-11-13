@@ -1,4 +1,5 @@
 import { Logger as ElectronUpdaterLoggerInterface } from 'electron-updater';
+import { LoggedLine } from '../../src-shared/log/logged-line';
 import { LogMessage, Logger as PlmLogger } from '../../src-shared/log/logger';
 
 // Note that the logger passed to autoUpdater.logger needs to have the following methods:
@@ -41,9 +42,13 @@ class AutoUpdateLogger implements ElectronUpdaterLoggerInterface {
     PlmLogger.debug(text);
   }
 
+  /**
+   * The line with its prefix. electron-updater passes not only texts: its MacUpdater passes the native updater's Error
+   * to warn() before it emits the error, so anything but a tagged line is made a text, as the template made it before.
+   */
   // noinspection JSMethodCanBeStatic
-  private indicateAutoUpdate(text: LogMessage): LogMessage {
-    return typeof text === 'string' ? `[auto-update] ${text}` : text.prefixed('[auto-update] ');
+  private indicateAutoUpdate(text: LogMessage | unknown): LogMessage {
+    return text instanceof LoggedLine ? text.prefixed('[auto-update] ') : `[auto-update] ${String(text)}`;
   }
 }
 
