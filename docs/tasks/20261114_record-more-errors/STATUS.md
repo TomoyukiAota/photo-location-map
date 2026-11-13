@@ -4,10 +4,11 @@ Started on 2026-11-14. See the [plan](./PLAN.md).
 
 ## Current state
 
-All six stages are implemented (see below). The owner asked on 2026-11-14
-for as many errors as the application can record, decided what the plan lists
-under "The owner's decisions", and then said to carry the plan through without
-stopping, keeping questions for the end.
+All six stages are merged, on 2026-11-14 (see below). They reach users with
+the application's next release, which the owner decides. The owner asked on
+2026-11-14 for as many errors as the application can record, decided what the
+plan lists under "The owner's decisions", and then said to carry the plan
+through without stopping, keeping questions for the end.
 
 ## The stages
 
@@ -18,7 +19,7 @@ stopping, keeping questions for the end.
 | 3 | Failures with their reasons: `Opened Folder: Failed`, `Opened Folder: EXIF Read Failed` | Merged | #697 |
 | 4 | Starts that fail, launches that do not end, and saving at once | Merged | #698 |
 | 5 | What only the console shows: `Console Error (Renderer)` | Merged | #699 |
-| 6 | Crash reports, and the Welcome dialog's sentence | Its pull request waits for CI | #700 |
+| 6 | Crash reports, and the Welcome dialog's sentence | Merged | #700 |
 
 When a stage is done, write here what was changed, what was checked with the
 result of each check, and what was found on the way, and tick its steps in the
@@ -26,15 +27,12 @@ plan.
 
 ## To resume
 
-1. Read this file, then the plan's rules for every stage.
-2. Take the first stage that is not done, and the first unchecked step of it.
-3. Work on a branch of `main` for that stage, or of the previous stage's branch
-   while that one waits for CI. Stages 1 to 5 need nothing from outside this
-   repository.
+Nothing is left: every stage is merged. What the analytics backend makes of the
+new events is checked after the next release, outside this repository.
 
 ## Waiting on the owner
 
-Nothing. Questions that come up are kept for the end of the work.
+The release, which is the owner's to decide; nothing else for this task.
 
 ## Stage 1: More of each error
 
@@ -272,6 +270,12 @@ launch; dev's endpoint accepted both, and both have their stacks there
 with a user ID and a session ID. Launched through the e2e suite's entry, the
 dumps name the product as `Electron` and the version as Electron's, as that
 entry runs Electron's own bundle; a build of the app names its own.
+
+What CodeRabbit found on the pull request: that users who confirmed the
+Welcome dialog before do not see the new sentence, and that a disclosure which
+names crash dumps should be shown again, with uploads waiting for its
+acknowledgment. Kept as it is, as the owner decided on 2026-11-14 (the plan,
+"The owner's decisions"); crash dumps and events follow the same rule.
 
 ## Checks
 
