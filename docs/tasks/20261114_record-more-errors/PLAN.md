@@ -226,11 +226,11 @@ Steps:
 
 Steps:
 
-- [ ] `Opened Folder: Failed` (`src/app/sidebar/upper-pane/open-folder-recorder.ts`).
-- [ ] The counter and its event (`src/app/shared/exif-fetcher/`), recorded where
+- [x] `Opened Folder: Failed` (`src/app/sidebar/upper-pane/open-folder-recorder.ts`).
+- [x] The counter and its event (`src/app/shared/exif-fetcher/`), recorded where
   the folder's photos have been read (`ExifFetcher.generatePathExifPairs` or
   `PathPhotoMapRecorder`).
-- [ ] Tests: the reasons are counted, the most frequent five are recorded, and
+- [x] Tests: the reasons are counted, the most frequent five are recorded, and
   a path in what was thrown is not sent (`test/src/app/shared/`).
 - [ ] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
 

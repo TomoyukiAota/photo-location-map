@@ -4,7 +4,7 @@ Started on 2026-11-14. See the [plan](./PLAN.md).
 
 ## Current state
 
-Stages 1 and 2 are implemented (see below). The owner asked on 2026-11-14
+Stages 1 to 3 are implemented (see below). The owner asked on 2026-11-14
 for as many errors as the application can record, decided what the plan lists
 under "The owner's decisions", and then said to carry the plan through without
 stopping, keeping questions for the end.
@@ -15,7 +15,7 @@ stopping, keeping questions for the end.
 | --- | --- | --- | --- |
 | 1 | More of each error: 20 frames, causes, thrown objects, the limits as one class, `Errors Dropped` | Implemented; its pull request waits for CI | — |
 | 2 | What the code logs: `Logged Error`, `Logged Warning`, the `logged` tag and its lint rule | Implemented; its pull request waits for stage 1's | — |
-| 3 | Failures with their reasons: `Opened Folder: Failed`, `Opened Folder: EXIF Read Failed` | Not started | — |
+| 3 | Failures with their reasons: `Opened Folder: Failed`, `Opened Folder: EXIF Read Failed` | Implemented; its pull request waits for stage 2's | — |
 | 4 | Starts that fail, launches that do not end, and saving at once | Not started | — |
 | 5 | What only the console shows: `Console Error (Renderer)` | Not started | — |
 | 6 | Crash reports, and the Welcome dialog's sentence | Waits for the backend to take crash dumps | — |
@@ -103,6 +103,28 @@ What was changed:
 - The two warnings about a path too long for Windows, which the photo's
   thumbnail writes, are tagged lines.
 
+## Stage 3: Failures with their reasons
+
+What was changed:
+
+- `src-shared/analytics/failure-reasons.ts`: `FailureReasons`, the counter of
+  reasons that `ThumbnailFailures` was, for any batch of files: what was thrown
+  without paths, counted per status and reason, recorded as one event per
+  reason with `Files: N`, the five most frequent. `ThumbnailFailures` is now
+  that class with its event's names. A reason that is neither a text nor an
+  error is described as an unhandled error's is, an `Event` by its type.
+- `Opened Folder: Failed` (`src/app/sidebar/upper-pane/open-folder-recorder.ts`):
+  why a folder failed to open, as an unhandled error's label and value, before
+  `Opened Folder: Performance`, which stays. Its log line only logs.
+- `Opened Folder: EXIF Read Failed` (`src/app/shared/exif-fetcher/exif-read-failures.ts`):
+  the photos of a folder whose EXIF data could not be read, counted while the
+  folder's photos are read and recorded when all are (`ExifFetcher`), with the
+  statuses `read-failed` (exifr could not parse the file), `thumbnail-failed`
+  (it could not extract the embedded thumbnail, so the photo has no EXIF data),
+  `exif-failed` (the app could not make its model of what was read) and
+  `rotate-failed` (the embedded thumbnail could not be turned). A photo without
+  EXIF data is not a failure.
+
 ## Checks
 
 | Check | Stage | Result |
@@ -118,3 +140,8 @@ What was changed:
 | `npm run test:unit:em:renderer` | 2 | 90 passed |
 | `npm run test:unit:ng` | 2 | 58 files passed |
 | `npm run test:e2e` | 2 | Left to CI: nothing that a window shows changes |
+| `npm run lint:all`, `tsc` of the main process | 3 | passed |
+| `npm run test:unit:em:main` | 3 | 233 passed, 2 pending |
+| `npm run test:unit:em:renderer` | 3 | 91 passed, among them a file that is not a photo, counted as `read-failed` without its name |
+| `npm run test:unit:ng` | 3 | 58 files passed |
+| `npm run test:e2e` | 3 | Left to CI: nothing that a window shows changes |

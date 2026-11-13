@@ -48,3 +48,15 @@ describe('ThumbnailFailures', () => {
     assert.strictEqual(reasons[0].files, maxRecordedReasons + 3);
   });
 });
+
+describe('FailureReasons, which ThumbnailFailures is', () => {
+  it('should describe what is neither an error nor a text by its type, as an unhandled error is', () => {
+    class Event { public readonly isTrusted = true; }
+    const failures = new ThumbnailFailures();
+    failures.add('rotate-failed', new Event());
+    failures.clear();
+    failures.add('rotate-failed', new Event());
+
+    assert.deepStrictEqual(failures.reasons, [{ reason: 'rotate-failed: Event: {"isTrusted":true}', files: 1 }]);
+  });
+});
