@@ -47,6 +47,11 @@ export function recordUnhandledError(error: unknown, processName: 'Main' | 'Rend
   }
 }
 
+/** An error's label and value as an unhandled error's are, without paths, for an event of its own. */
+export function scrubbedError(error: unknown): { label: string, value: string } {
+  return errorForAnalytics(error, scrubbingContext());
+}
+
 /** Records an error message that is not an exception, such as an auto-update failure, without paths. */
 export function scrubbedErrorLabel(error: unknown): string {
   return errorForAnalytics(error, scrubbingContext()).label;
