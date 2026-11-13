@@ -1,6 +1,6 @@
 import assert = require('assert');
 import {
-  errorForAnalytics, maxAggregatedErrors, maxCauses, maxStackFrames, scrubMessage, scrubStack,
+  errorForAnalytics, maxAggregatedErrors, maxCauses, maxStackFrames, scrubConsoleMessage, scrubConsoleSource, scrubMessage, scrubStack,
 } from '../../../src-shared/analytics/error-for-analytics';
 
 const mac = {
@@ -198,5 +198,14 @@ describe('errorForAnalytics', () => {
       for (const name of ['hanako', 'Pictures', 'Kyoto', 'IMG', '0001'])
         assert.ok(!text.includes(name), `${name} is in ${text}`);
     }
+  });
+});
+
+describe('scrubConsoleMessage and scrubConsoleSource', () => {
+  it('should keep a web address by its origin, without the user name that a computer on the network can be named with', () => {
+    const message = 'GET http://hanako-macbook.local:8080/tiles/1/2/3.png?key=secret net::ERR_CONNECTION_REFUSED';
+
+    assert.equal(scrubConsoleMessage(message, mac), 'GET http://<user>-macbook.local:8080/<path> net::ERR_CONNECTION_REFUSED');
+    assert.equal(scrubConsoleSource('http://hanako-macbook.local:8080/tiles/1/2/3.png', mac), 'http://<user>-macbook.local:8080/<path>');
   });
 });

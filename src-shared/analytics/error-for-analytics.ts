@@ -112,7 +112,8 @@ function webOrigin(url: string): string | undefined {
 
 /**
  * A console message as scrubMessage gives it, but that a web address keeps its origin
- * ("https://tile.example.org/<path>"), so that a request that failed tells which server.
+ * ("https://tile.example.org/<path>"), so that a request that failed tells which server; without the user name, which
+ * the name of a computer on the network can hold.
  */
 export function scrubConsoleMessage(message: string, context: ErrorScrubbingContext): string {
   const origins: string[] = [];
@@ -120,13 +121,16 @@ export function scrubConsoleMessage(message: string, context: ErrorScrubbingCont
     const origin = webOrigin(url);
     if (origin === undefined)
       return url;
-    origins.push(origin);
+    origins.push(replaceSensitiveStrings(origin, context));
     return `\u0000${origins.length - 1}\u0000`;
   });
   return scrubMessage(marked, context).replace(/\u0000(\d+)\u0000/g, (_match, index: string) => origins[Number(index)]);
 }
 
-/** The source of a console message: a file of the app's by its name, a web address by its origin, else <path>. */
+/**
+ * The source of a console message: a file of the app's by its name, a web address by its origin without the user
+ * name (as scrubConsoleMessage), else <path>.
+ */
 export function scrubConsoleSource(sourceId: string, context: ErrorScrubbingContext): string {
   if (!sourceId)
     return '';
@@ -137,7 +141,10 @@ export function scrubConsoleSource(sourceId: string, context: ErrorScrubbingCont
     // Kept as it is.
   }
   const file = scrubFile(decoded, context);
-  return file === '<path>' ? webOrigin(sourceId) ?? file : file;
+  if (file !== '<path>')
+    return file;
+  const origin = webOrigin(sourceId);
+  return origin === undefined ? file : replaceSensitiveStrings(origin, context);
 }
 
 function replaceSensitiveStrings(text: string, context: ErrorScrubbingContext): string {
