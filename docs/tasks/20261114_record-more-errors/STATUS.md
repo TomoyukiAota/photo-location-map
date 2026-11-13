@@ -13,8 +13,8 @@ stopping, keeping questions for the end.
 
 | Stage | What | State | Pull request |
 | --- | --- | --- | --- |
-| 1 | More of each error: 20 frames, causes, thrown objects, the limits as one class, `Errors Dropped` | Implemented; its pull request waits for CI | — |
-| 2 | What the code logs: `Logged Error`, `Logged Warning`, the `logged` tag and its lint rule | Implemented; its pull request waits for stage 1's | — |
+| 1 | More of each error: 20 frames, causes, thrown objects, the limits as one class, `Errors Dropped` | Merged | #694 |
+| 2 | What the code logs: `Logged Error`, `Logged Warning`, the `logged` tag and its lint rule | Its pull request waits for CI | — |
 | 3 | Failures with their reasons: `Opened Folder: Failed`, `Opened Folder: EXIF Read Failed` | Not started | — |
 | 4 | Starts that fail, launches that do not end, and saving at once | Not started | — |
 | 5 | What only the console shows: `Console Error (Renderer)` | Not started | — |
