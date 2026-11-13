@@ -275,14 +275,14 @@ their `event_id`. The file is safe for two instances.
 
 Steps:
 
-- [ ] The order of the imports and the `catch` (`src-main/electron-main.ts`);
+- [x] The order of the imports and the `catch` (`src-main/electron-main.ts`);
   the handler works without the log file.
-- [ ] `reportStartFailure` sends the event (`src/main.ts`).
-- [ ] The launch's file: written, touched, removed, found at the next launch;
+- [x] `reportStartFailure` sends the event (`src/main.ts`).
+- [x] The launch's file: written, touched, removed, found at the next launch;
   `session-end` on Windows; the session ID's new place.
-- [ ] Unsent events saved when an error is tracked, kept until sent, for two
+- [x] Unsent events saved when an error is tracked, kept until sent, for two
   instances (`analytics-backend-wrapper.ts`, `unsent-events-file.ts`).
-- [ ] Tests: an error thrown by a setup module is recorded and saved; a file of
+- [x] Tests: an error thrown by a setup module is recorded and saved; a file of
   a process that does not run gives the event, one of a process that runs does
   not; events saved at once are loaded by the next launch and sent once.
 - [ ] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.

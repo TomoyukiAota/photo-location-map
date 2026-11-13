@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { AnalyticsBackendEvent } from '../../../src-shared/analytics/analytics-backend/analytics-backend-event';
-import { UnsentEventsFile } from '../../../src-shared/analytics/analytics-backend/unsent-events-file';
+import { UnsentEventsFile, UnsentEventsFiles, maxUnwrittenMs } from '../../../src-shared/analytics/analytics-backend/unsent-events-file';
 
 const event = (id: string): AnalyticsBackendEvent => ({
   event_id: id, user_id: 'u', session_id: 's', seq: 0, client_ts: '2026-10-06T00:00:00.000Z',
@@ -57,5 +57,57 @@ describe('UnsentEventsFile', () => {
     fs.writeFileSync(filePath, JSON.stringify({ event_id: 'a' }));
 
     assert.deepEqual(new UnsentEventsFile(filePath).loadAndRemove(), []);
+  });
+});
+
+describe('UnsentEventsFiles', () => {
+  let directory: string;
+  const now = Date.now();
+
+  beforeEach(() => {
+    directory = fs.mkdtempSync(path.join(os.tmpdir(), 'unsent-events-files-'));
+  });
+
+  afterEach(() => {
+    fs.rmSync(directory, { recursive: true, force: true });
+  });
+
+  const write = (name: string, ids: string[], modifiedAt = now) => {
+    const filePath = path.join(directory, name);
+    fs.writeFileSync(filePath, JSON.stringify(ids.map(event)));
+    fs.utimesSync(filePath, modifiedAt / 1000, modifiedAt / 1000);
+  };
+
+  it("should name each launch's own file by its process ID and endpoint", () => {
+    const files = new UnsentEventsFiles(directory, 'prod', () => true, () => now);
+
+    assert.equal(path.basename(files.own(123).filePath), 'analytics-backend-unsent-events-prod-123.json');
+  });
+
+  it('should take over the files of launches that ended, and the one file of earlier versions, but not of running ones', () => {
+    const running = new Set([1, 2]);
+    write('analytics-backend-unsent-events-prod.json', ['old']);
+    write('analytics-backend-unsent-events-prod-1.json', ['mine']);
+    write('analytics-backend-unsent-events-prod-2.json', ['running']);
+    write('analytics-backend-unsent-events-prod-3.json', ['ended']);
+    write('analytics-backend-unsent-events-prod-4.json', ['long ago'], now - maxUnwrittenMs - 1000);
+    write('analytics-backend-unsent-events-dev-5.json', ['dev']);
+    running.add(4);  // Its process ID belongs to another process now.
+
+    const files = new UnsentEventsFiles(directory, 'prod', pid => running.has(pid), () => now);
+    const ids = files.left(1).flatMap(file => file.load().map(e => e.event_id)).sort();
+
+    assert.deepEqual(ids, ['ended', 'long ago', 'old']);
+  });
+
+  it('should load a file without removing it, until it is removed', () => {
+    const file = new UnsentEventsFiles(directory, 'dev', () => false, () => now).own(7);
+    file.save([event('a')]);
+
+    assert.deepEqual(file.load().map(e => e.event_id), ['a']);
+    assert.deepEqual(file.load().map(e => e.event_id), ['a']);
+    file.remove();
+    assert.deepEqual(file.load(), []);
+    file.remove();
   });
 });
