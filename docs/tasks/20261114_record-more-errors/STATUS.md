@@ -221,6 +221,17 @@ What was changed:
   taken out, as a computer on the network can be named after its user
   (`http://<user>-macbook.local:8080/<path>`); added before the pull request
   was reviewed.
+
+What CodeRabbit found on the pull request, and was changed on 2026-11-14:
+
+- A URL gives its host in lower case, so a user name in another case stayed in
+  an origin. The user name is taken out of an origin in any case.
+- A web source on the local machine, such as a tile server at
+  `http://localhost:8080/tiles/…?key=…`, was taken for the dev server's file
+  and kept its path and query, and a web address that names `app.asar/` was
+  taken for the app's file. The source of a console line that is a web address
+  is now given by its origin only, whatever it serves; a file's, without its
+  query.
 - Photo Data Viewer's window is left out: that application records its own
   errors.
 
@@ -266,3 +277,6 @@ until the compiled files are removed (`git clean -fX src-main src-shared`).
 | `npm run test:unit:em:main` | 5, merged with the reviewed stage 4 | 257 passed, 2 pending, among them an origin named after its user |
 | `npm run test:unit:em:renderer` | 5, merged with the reviewed stage 4 | 92 passed |
 | `npm run test:unit:ng` | 5, merged with the reviewed stage 4 | 58 files passed |
+| `npm run lint:all`, `tsc` of the main process | 5, after the review | passed |
+| `npm run test:unit:em:main` | 5, after the review | 260 passed, 2 pending, among them a user name in another case, a local tile server's source, a web address that names `app.asar`, and a file with a query |
+| `npm run test:unit:em:renderer` | 5, after the review | 95 passed |
