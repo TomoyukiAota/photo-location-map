@@ -8,11 +8,26 @@ export class UnsentEventsFile {
   constructor(public readonly filePath: string) {
   }
 
-  /** Writes the events, or removes the file when there are none. */
+  /**
+   * Writes the events, or removes the file when there are none. They are written beside the file first and then
+   * renamed over it, so that a launch that ends or fails while writing leaves the events that the file held, which can
+   * be another launch's that it took over.
+   */
   public save(events: readonly AnalyticsBackendEvent[]): void {
     const fs: typeof import('fs') = require('fs');
     if (events.length > 0) {
-      fs.writeFileSync(this.filePath, JSON.stringify(events));
+      const beside = `${this.filePath}.tmp`;
+      try {
+        fs.writeFileSync(beside, JSON.stringify(events));
+        fs.renameSync(beside, this.filePath);
+      } catch (error) {
+        try {
+          fs.rmSync(beside, { force: true });
+        } catch {
+          // The failure to save is what the caller is told of.
+        }
+        throw error;
+      }
     } else if (fs.existsSync(this.filePath)) {
       fs.unlinkSync(this.filePath);
     }
@@ -38,6 +53,7 @@ export class UnsentEventsFile {
   public remove(): void {
     const fs: typeof import('fs') = require('fs');
     fs.rmSync(this.filePath, { force: true });
+    fs.rmSync(`${this.filePath}.tmp`, { force: true });  // Left by a launch that ended while saving.
   }
 
   /**

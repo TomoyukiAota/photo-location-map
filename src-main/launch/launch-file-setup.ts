@@ -14,7 +14,7 @@ import { Launch, LaunchFiles, LaunchRecord } from './launch-files';
 // session-end removes the file then.
 
 const aliveIntervalMs = 60 * 1000;
-/** At most so many earlier launches are recorded at once, should many files have been left. */
+/** At most so many earlier launches are recorded at once, should many files have been left; the others, later. */
 const maxRecordedLaunches = 5;
 /** At most so many events that a launch tracked before its analytics were set are kept in its file, the latest. */
 const maxKeptEvents = 20;
@@ -76,8 +76,7 @@ app.on('browser-window-created', (_event, window: BrowserWindow) => window.on('s
  */
 export function recordLaunchesThatEndedAbnormally(): void {
   try {
-    const launches = launchFiles.takeEndedAbnormally(thisLaunch());
-    for (const launch of launches.slice(-maxRecordedLaunches)) {
+    for (const launch of launchFiles.takeEndedAbnormally(thisLaunch(), maxRecordedLaunches)) {
       const keptEvents = launch.keptEvents ?? [];
       const kept = keptEvents.length > 0 ? `; Kept events: ${keptEvents.length}` : '';
       Logger.info(`[Launch Info] A launch of ${launch.version} that started at ${launch.startedAt} ended abnormally; it was last alive at ${launch.lastAliveAt}${kept}.`);

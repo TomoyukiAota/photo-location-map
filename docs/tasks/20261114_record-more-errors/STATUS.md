@@ -148,7 +148,7 @@ What was changed:
   other events, a later launch records each file of a process that no longer
   runs, or that was not written for seven days, or of its own process ID but
   another session, as `Launch Info: Previous Launch Ended Abnormally`, at most
-  five at once, and removes it. A crash of the main process, a forced quit, a
+  five at once, the oldest first, and removes it. A crash of the main process, a forced quit, a
   `SIGTERM` and a power cut all leave the file: the event tells that a launch
   did not end, not why. A launch that quits before its analytics are set, as
   one whose setup failed, keeps its file, with the last 20 events that it
@@ -184,6 +184,11 @@ What CodeRabbit found on the pull request, and was changed on 2026-11-14:
   that ends while writing it does not leave a file that cannot be read.
 - A file of unsent events that could not be removed made the launch drop the
   events that it had taken over.
+- On its second look: of more than five launches that ended, the files of those
+  beyond the five recorded were removed, with the events that they kept. A
+  launch now takes the five oldest and leaves the others for later launches.
+  And a file of unsent events is written beside it and renamed over it too, as
+  it can hold the only copy of another launch's events.
 
 ## Checks
 
@@ -210,6 +215,6 @@ What CodeRabbit found on the pull request, and was changed on 2026-11-14:
 | `npm run test:unit:em:renderer` | 4 | 91 passed |
 | `npm run test:unit:ng` | 4 | 58 files passed |
 | `npm run lint:all`, `tsc` of the main process | 4, after the review | passed |
-| `npm run test:unit:em:main` | 4, after the review | 249 passed, 2 pending, among them a launch given the process ID of one that ended, a file left half written, the events that a launch kept, and a file of unsent events that cannot be removed |
+| `npm run test:unit:em:main` | 4, after the review | 251 passed, 2 pending, among them a launch given the process ID of one that ended, a file left half written, the events that a launch kept, more launches than are taken at once, and files of unsent events that cannot be written or removed |
 | `npm run test:unit:em:renderer` | 4, after the review | 91 passed |
 | `npm run test:unit:ng` | 4, after the review | 58 files passed |

@@ -32,6 +32,18 @@ describe('UnsentEventsFile', () => {
     assert.deepEqual(file.loadAndRemove(), []);
   });
 
+  it('should write the file anew through a file beside it, and keep the events it held when writing fails', () => {
+    const file = new UnsentEventsFile(filePath);
+    file.save([event('a')]);
+    file.save([event('b')]);
+    assert.deepEqual(fs.readdirSync(directory), ['unsent.json']);
+
+    fs.mkdirSync(`${filePath}.tmp`);  // Cannot be written as a file.
+    assert.throws(() => file.save([event('c')]));
+
+    assert.deepEqual(file.load().map(e => e.event_id), ['b']);
+  });
+
   it('should remove the file when saving no events', () => {
     const file = new UnsentEventsFile(filePath);
     file.save([event('a')]);

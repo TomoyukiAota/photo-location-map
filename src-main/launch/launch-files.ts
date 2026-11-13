@@ -71,10 +71,11 @@ export class LaunchFiles {
   }
 
   /**
-   * The launches other than `current` that ended without removing their file, whose files are removed so that each
-   * is told once; the oldest first. A file that cannot be read is removed too.
+   * The launches other than `current` that ended without removing their file, the oldest first and at most `max`,
+   * whose files are removed so that each is told once; those beyond `max` are left for a later launch to tell. A file
+   * that cannot be read is removed without being told.
    */
-  public takeEndedAbnormally(current: Launch): LaunchRecord[] {
+  public takeEndedAbnormally(current: Launch, max = Number.POSITIVE_INFINITY): LaunchRecord[] {
     let names: string[];
     try {
       names = fs.readdirSync(this.directory);
@@ -91,14 +92,18 @@ export class LaunchFiles {
       if (launch.pid === current.pid && launch.sessionId === current.sessionId)
         continue;
       const record = this.read(launch);
-      // A launch of the current process ID but another session has ended, as its process ID was given to this one.
-      if (record && launch.pid !== current.pid && !this.hasEnded(record))
+      if (!record) {
+        this.remove(launch);
         continue;
-      this.remove(launch);
-      if (record)
+      }
+      // A launch of the current process ID but another session has ended, as its process ID was given to this one.
+      if (launch.pid === current.pid || this.hasEnded(record))
         ended.push(record);
     }
-    return ended.sort((a, b) => a.startedAt.localeCompare(b.startedAt));
+    const taken = ended.sort((a, b) => a.startedAt.localeCompare(b.startedAt)).slice(0, max);
+    for (const record of taken)
+      this.remove(record);
+    return taken;
   }
 
   private hasEnded(record: LaunchRecord): boolean {

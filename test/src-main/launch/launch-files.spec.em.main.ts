@@ -34,6 +34,16 @@ describe('LaunchFiles', () => {
     assert.deepEqual(files.takeEndedAbnormally(current), []);
   });
 
+  it('should take at most so many launches, the oldest first, and leave the others for a later launch', () => {
+    const files = new LaunchFiles(directory, () => false, () => now);
+    for (const pid of [20, 30, 40, 50])
+      files.write(launch(pid));
+
+    assert.deepEqual(files.takeEndedAbnormally(current, 3).map(record => record.pid), [50, 40, 30]);
+    assert.deepEqual(fs.readdirSync(directory), ['20-session-20.json']);
+    assert.deepEqual(files.takeEndedAbnormally(current, 3).map(record => record.pid), [20]);
+  });
+
   it('should take a launch whose file was not written for too long as ended, as its process ID may be another\'s', () => {
     const files = new LaunchFiles(directory, () => true, () => now);
     files.write(launch(20, new Date(now - maxSilenceMs - 1).toISOString()));
