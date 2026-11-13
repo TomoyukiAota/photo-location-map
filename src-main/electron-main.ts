@@ -1,9 +1,10 @@
 // TL;DR: The order of the first imports matters: each sets up what the next ones use while they are evaluated.
 // Details: The test profile moves the app's folders; errors are scrubbed, and handled from the start, so that an error
-// of the setups that follow is recorded once analytics are set; the launch's file is written before them too, so that
-// a launch whose setup fails is told at the next (src-main/launch/); the startup metadata needs the log's location; the
-// settings hold the analytics user ID, which the crash reporter's dumps carry, and the language, which the texts of the
-// menu and the dialogs are in; analytics then sends what was tracked before.
+// of the setups that follow is recorded; the launch's file is written before them too, so that a launch whose setup
+// fails and stops it before analytics are set is told at the next, which sends its error (src-main/launch/); the
+// startup metadata needs the log's location; the settings hold the analytics user ID, which the crash reporter's dumps
+// carry, and the language, which the texts of the menu and the dialogs are in; analytics then sends what was tracked
+// before.
 import '../electron-util/isolated-test-profile';
 import './analytics/error-scrubbing-setup';
 import './configure-electron-unhandled';

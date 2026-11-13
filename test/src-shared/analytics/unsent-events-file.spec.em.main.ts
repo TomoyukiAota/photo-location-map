@@ -32,6 +32,18 @@ describe('UnsentEventsFile', () => {
     assert.deepEqual(file.loadAndRemove(), []);
   });
 
+  it('should write the file anew through a file beside it, and keep the events it held when writing fails', () => {
+    const file = new UnsentEventsFile(filePath);
+    file.save([event('a')]);
+    file.save([event('b')]);
+    assert.deepEqual(fs.readdirSync(directory), ['unsent.json']);
+
+    fs.mkdirSync(`${filePath}.tmp`);  // Cannot be written as a file.
+    assert.throws(() => file.save([event('c')]));
+
+    assert.deepEqual(file.load().map(e => e.event_id), ['b']);
+  });
+
   it('should remove the file when saving no events', () => {
     const file = new UnsentEventsFile(filePath);
     file.save([event('a')]);
@@ -98,6 +110,35 @@ describe('UnsentEventsFiles', () => {
     const ids = files.left(1).flatMap(file => file.load().map(e => e.event_id)).sort();
 
     assert.deepEqual(ids, ['ended', 'long ago', 'old']);
+  });
+
+  it('should take over its own file, which a launch that was given the same process ID left, with those of ended launches', () => {
+    write('analytics-backend-unsent-events-prod-1.json', ['earlier']);
+    write('analytics-backend-unsent-events-prod-2.json', ['running']);
+    write('analytics-backend-unsent-events-prod-3.json', ['ended']);
+    const warnings: string[] = [];
+    const files = new UnsentEventsFiles(directory, 'prod', pid => pid === 2, () => now);
+
+    const ids = files.takeOver(1, message => warnings.push(message)).map(e => e.event_id).sort();
+
+    assert.deepEqual(ids, ['earlier', 'ended']);
+    assert.deepEqual(files.own(1).load().map(e => e.event_id).sort(), ['earlier', 'ended']);
+    assert.deepEqual(fs.readdirSync(directory).sort(), ['analytics-backend-unsent-events-prod-1.json', 'analytics-backend-unsent-events-prod-2.json']);
+    assert.deepEqual(warnings, []);
+  });
+
+  it('should give the events taken over when a file cannot be removed, which a later launch takes over again', () => {
+    write('analytics-backend-unsent-events-prod-3.json', ['ended']);
+    fs.mkdirSync(path.join(directory, 'analytics-backend-unsent-events-prod-4.json'));  // Cannot be removed as a file.
+    const warnings: string[] = [];
+    const files = new UnsentEventsFiles(directory, 'prod', () => false, () => now);
+
+    const ids = files.takeOver(1, message => warnings.push(message)).map(e => e.event_id);
+
+    assert.deepEqual(ids, ['ended']);
+    assert.deepEqual(files.own(1).load().map(e => e.event_id), ['ended']);
+    assert.equal(warnings.length, 1);
+    assert.ok(fs.existsSync(path.join(directory, 'analytics-backend-unsent-events-prod-4.json')));
   });
 
   it('should load a file without removing it, until it is removed', () => {
