@@ -105,7 +105,7 @@ export async function addExplorerContextMenu(exePath: string, run: RunReg = runR
       await run(['add', key, ...(name === null ? ['/ve'] : ['/v', name]), '/t', 'REG_SZ', '/d', data, '/f']);
     }
   } catch (error) {
-    Logger.error(`[Registry] Failed to add the registry keys for the Explorer's context menu: ${failureText(error)}`);
+    Logger.errorNotRecorded(`[Registry] Failed to add the registry keys for the Explorer's context menu: ${failureText(error)}`);
     Analytics.trackEvent('Registry', '[Registry] Add Explorer Context Menu: Error', scrubbedErrorLabel(error));
     throw error;
   }
@@ -120,7 +120,7 @@ export async function removeExplorerContextMenu(run: RunReg = runReg): Promise<v
       await deleteKey(key, run);
     }
   } catch (error) {
-    Logger.error(`[Registry] Failed to delete the registry keys for the Explorer's context menu: ${failureText(error)}`);
+    Logger.errorNotRecorded(`[Registry] Failed to delete the registry keys for the Explorer's context menu: ${failureText(error)}`);
     Analytics.trackEvent('Registry', '[Registry] Remove Explorer Context Menu: Error', scrubbedErrorLabel(error));
     throw error;
   }

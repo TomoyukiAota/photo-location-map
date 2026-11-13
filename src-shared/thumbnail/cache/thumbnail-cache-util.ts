@@ -3,6 +3,7 @@ import * as os from 'os';
 import * as pathModule from 'path';
 import { PrependedLogger } from '../../log/create-prepended-logger';
 import { Logger } from '../../log/logger';
+import { logged } from '../../log/logged-line';
 
 export const plmThumbnailCacheDir = process.env.PLM_TEST_ROOT
   ? pathModule.resolve(process.env.PLM_TEST_ROOT, 'thumbnail-cache')
@@ -70,7 +71,7 @@ export function getOriginalFilePath(thumbnailFilePath: string): string {
     if (isDriveLetter) {
       const driveLetter = driveLetterOrHostname.substring(2);   // Convert "D_C" to "C"
       if (driveLetter.length !== 1) {
-        Logger.error(`A drive letter must be a single character, but "${driveLetter}" is observed. Something went wrong.`);
+        Logger.error(logged`A drive letter must be a single character, but "${driveLetter}" is observed. Something went wrong.`);
       }
       const pathAfterDriverLetter = pathAfterStep2.replace(`\\D_${driveLetter}`, '');
       originalFilePath = `${driveLetter}:${pathAfterDriverLetter}`;
@@ -98,7 +99,7 @@ export async function createThumbnailGenerationLogFile(srcFilePath: string, thum
     await fsExtra.ensureFile(logFilePath);
     await fsExtra.promises.writeFile(logFilePath, fileContentStr);
   } catch (error) {
-    logger.error(`Failed to write the file in "${logFilePath}" which is the thumbnail generation result for "${srcFilePath}". error: ${error}`, error);
+    logger.error(logged`Failed to write the file in "${logFilePath}" which is the thumbnail generation result for "${srcFilePath}". error: ${error}`, error);
     return;
   }
 
@@ -136,7 +137,7 @@ export function lastModifiedMatchBetweenSrcFileAndThumbnailGenerationLogFile(src
   try {
     fileContentStr = fsExtra.readFileSync(logFilePath, 'utf8');
   } catch (error) {
-    Logger.warn(`Failed to read the log file "${logFilePath}" which is the thumbnail generation result for "${srcFilePath}". error: ${error}`, error);
+    Logger.warn(logged`Failed to read the log file "${logFilePath}" which is the thumbnail generation result for "${srcFilePath}". error: ${error}`, error);
     return false;
   }
 
@@ -144,7 +145,7 @@ export function lastModifiedMatchBetweenSrcFileAndThumbnailGenerationLogFile(src
   try {
     fileContentObj = JSON.parse(fileContentStr);
   } catch (error) {
-    Logger.warn(`Failed to parse the content of the log file "${logFilePath}" as JSON format. The log file is for thumbnail generation result of "${srcFilePath}". error: ${error}`, error);
+    Logger.warn(logged`Failed to parse the content of the log file "${logFilePath}" as JSON format. The log file is for thumbnail generation result of "${srcFilePath}". error: ${error}`, error);
     return false;
   }
 

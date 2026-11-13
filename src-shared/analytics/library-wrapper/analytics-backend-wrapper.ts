@@ -9,7 +9,8 @@ import { AnalyticsBackendEndpoint } from '../config/analytics-backend-endpoint';
 import { AnalyticsConfig } from '../config/analytics-config';
 import { AnalyticsLibraryWrapperInitialize, AnalyticsLibraryWrapperTrackEvent } from './library-wrapper-decorator';
 
-const backendLogger = createPrependedLogger('[Analytics Backend]');
+// Its errors and warnings are not recorded: they would record the analytics' own failures to send.
+const backendLogger = createPrependedLogger('[Analytics Backend]', { recorded: false });
 
 // Sends events to the analytics backend, from the main process only (renderer events arrive over IPC; see
 // AnalyticsBackendIpcMain in src-main/analytics/). When to send is decided by AnalyticsBackendSender.

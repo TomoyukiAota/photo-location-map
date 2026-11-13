@@ -3,6 +3,7 @@ import * as os from 'os';
 import * as pathModule from 'path';
 import { Logger } from '../../src-shared/log/logger';
 import { isFilePathTooLongOnWindows, maxFilePathLengthOnWindows } from '../../src-shared/max-file-path-length-on-windows/max-file-path-length-on-windows';
+import { logged, shown } from '../../src-shared/log/logged-line';
 
 /** Whether `url` is a web page, the only kind that the main window's page may open in the OS browser. */
 export function isWebPageUrl(url: unknown): url is string {
@@ -61,7 +62,7 @@ function run(command: OsCommand): string {
     stdio: 'ignore', windowsVerbatimArguments: command.windowsVerbatimArguments,
   });
   // Without a shell, a program that is not there, such as nautilus, fails here instead of in the shell.
-  child.on('error', error => Logger.error(`Failed to run ${command.file}.`, error));
+  child.on('error', error => Logger.error(logged`Failed to run ${shown(command.file)}.`, error));
   return [command.file, ...command.args].join(' ');
 }
 
@@ -74,12 +75,10 @@ export function openWithAssociatedApp(path: string): void {
     Logger.info(`Opened with associated app: ${path}`);
 
     if (isFilePathTooLongOnWindows(path)) {
-      Logger.warn(`Opening ${fileOrFolderName} with its associated app might not work because the length of the file path exceeds the maximum on Windows.\n`
-        + `Maximum: ${maxFilePathLengthOnWindows} characters\n`
-        + `File path: ${path.length} characters`);
+      Logger.warn(logged`Opening ${fileOrFolderName} with its associated app might not work because the length of the file path exceeds the maximum on Windows.\nMaximum: ${maxFilePathLengthOnWindows} characters\nFile path: ${path.length} characters`);
     }
   } else {
-    Logger.warn(`Opening ${fileOrFolderName} with its associated app is not supported on this platform: ${os.platform()}, file path: ${path}`);
+    Logger.warn(logged`Opening ${fileOrFolderName} with its associated app is not supported on this platform: ${shown(os.platform())}, file path: ${path}`);
   }
 }
 
@@ -92,11 +91,9 @@ export function openContainingFolder(path: string): void {
     Logger.info(`Opened the containing folder of "${path}"`);
 
     if (isFilePathTooLongOnWindows(path)) {
-      Logger.warn(`Opening the containing folder of ${fileOrFolderName} might not work because the length of the file path exceeds the maximum on Windows.\n`
-        + `Maximum: ${maxFilePathLengthOnWindows} characters\n`
-        + `File path: ${path.length} characters`);
+      Logger.warn(logged`Opening the containing folder of ${fileOrFolderName} might not work because the length of the file path exceeds the maximum on Windows.\nMaximum: ${maxFilePathLengthOnWindows} characters\nFile path: ${path.length} characters`);
     }
   } else {
-    Logger.warn(`Opening the containing folder of ${fileOrFolderName} is not supported on this platform: ${os.platform()}, file path: ${path}`);
+    Logger.warn(logged`Opening the containing folder of ${fileOrFolderName} is not supported on this platform: ${shown(os.platform())}, file path: ${path}`);
   }
 }

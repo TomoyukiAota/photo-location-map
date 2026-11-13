@@ -2,6 +2,7 @@ import moment from 'moment';
 import 'moment-duration-format'; // To use moment.duration().format()
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { Logger } from '../../../../src-shared/log/logger';
+import { logged } from '../../../../src-shared/log/logged-line';
 
 export class OpenFolderRecorder {
   private static readonly perfMeasureName = 'OpenFolder';
@@ -23,7 +24,7 @@ export class OpenFolderRecorder {
   }
 
   public static fail(reason: any): void {
-    Logger.error(`Something went wrong after opening the folder ${this.openedFolderPath} : `, reason);
+    Logger.error(logged`Something went wrong after opening the folder ${this.openedFolderPath} : `, reason);
     this.recordPerf('Fail');
   }
 

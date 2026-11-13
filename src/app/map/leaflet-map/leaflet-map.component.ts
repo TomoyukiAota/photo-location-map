@@ -356,7 +356,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     addEachMarker(photos,
       photo => this.addMarkerToMarkerClusterGroup(markerClusterGroup, photo),
       (error, photo) => {
-        logger.error(`Failed to add the marker of ${photo.path}`, error);
+        logger.errorNotRecorded(`Failed to add the marker of ${photo.path}`, error);
         recordUnhandledError(error, 'Renderer'); // Without its path, as any error nothing else handled.
       });
     markerClusterGroup.on('clusterclick',  e => this.handleClusterClick(e));

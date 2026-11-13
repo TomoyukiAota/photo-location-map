@@ -8,6 +8,7 @@ import { isPrereleaseVersion } from '../../src-shared/version/is-prerelease-vers
 import { mainWindow } from '../electron-main';
 import { autoUpdateLogger } from './auto-update-logger';
 import { currentSystemVersion, isVersionAtLeast, minimumSystemVersionOf } from './minimum-system-version';
+import { logged, shown } from '../../src-shared/log/logged-line';
 
 autoUpdater.logger = autoUpdateLogger;
 
@@ -32,7 +33,7 @@ autoUpdater.isUpdateSupported = async updateInfo => {
 
   const supported = isVersionAtLeast(system.version, minimumVersion);
   if (supported === undefined) {
-    autoUpdateLogger.warn(`Cannot compare ${system.name} ${system.version} with ${minimumVersion}, the minimum of ${updateInfo.version}, so the update is not skipped.`);
+    autoUpdateLogger.warnRecorded(logged`Cannot compare ${shown(system.name)} ${shown(system.version)} with ${shown(minimumVersion)}, the minimum of ${shown(updateInfo.version)}, so the update is not skipped.`);
     return true;
   }
 
@@ -45,7 +46,7 @@ autoUpdater.isUpdateSupported = async updateInfo => {
 
 // Whether some users never receive updates. The message can contain paths, which are removed.
 autoUpdater.on('error', error => {
-  autoUpdateLogger.warn(`Auto-update failed: ${error}`);
+  autoUpdateLogger.warnNotRecorded(`Auto-update failed: ${error}`);  // Recorded as "Auto-update: Error", below.
   Analytics.trackEvent('Auto-update', 'Auto-update: Error', scrubbedErrorLabel(error));
 });
 
@@ -91,6 +92,7 @@ app.on('ready', async () => {
   }
 
   await autoUpdater.checkForUpdates().catch(reason => {
-    autoUpdateLogger.warn(`Promise from autoUpdater.checkForUpdates() is rejected. ${reason}`);
+    // The same failure as the error event's, which records it.
+    autoUpdateLogger.warnNotRecorded(`Promise from autoUpdater.checkForUpdates() is rejected. ${reason}`);
   });
 });

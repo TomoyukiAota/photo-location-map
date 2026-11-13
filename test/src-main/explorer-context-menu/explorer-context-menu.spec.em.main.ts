@@ -100,17 +100,18 @@ describe('Explorer context menu (in main process)', () => {
 
   it('writes to the log what failed, on which key, with what reg.exe wrote', async () => {
     const logged: string[] = [];
-    const original = Logger.error;
+    // Logged, not recorded: the failure is recorded as its own event ([Registry] … Error).
+    const original = Logger.errorNotRecorded;
     const failOn = (key: string) => async (args: readonly string[]) => {
       if (args[1] === key) throw Object.assign(new Error(`reg.exe ${args[0]} failed (exit code 1)`), { key, output: 'ERROR: Access is denied.' });
     };
     try {
-      (Logger as { error: unknown }).error = (message: string) => logged.push(message);
+      (Logger as { errorNotRecorded: unknown }).errorNotRecorded = (message: string) => logged.push(message);
       await assert.rejects(addExplorerContextMenu(exePath, failOn(folderKey)));
       // The key is still there, as the query that follows the failed delete finds.
       await assert.rejects(removeExplorerContextMenu(args => args[0] === 'delete' ? failOn(backgroundKey)(args) : Promise.resolve()));
     } finally {
-      (Logger as { error: unknown }).error = original;
+      (Logger as { errorNotRecorded: unknown }).errorNotRecorded = original;
     }
     assert.deepEqual(logged, [
       `[Registry] Failed to add the registry keys for the Explorer's context menu: Error: reg.exe add failed (exit code 1): ${folderKey}: ERROR: Access is denied.`,
