@@ -165,12 +165,16 @@ describe('errorForAnalytics', () => {
     assert.equal(errorForAnalytics(new ErrorEvent(), mac).label, 'ErrorEvent: Script error.');
   });
 
-  it('should give an object as JSON with only the texts that are codes, not [object Object]', () => {
-    const thrown = { code: 'ENOENT', errno: -2, folder: 'Trip to Kyoto', file: 'IMG_0001.JPG', ok: false, inner: { reason: 'killed' } };
+  it('should give an object as JSON with only the codes of its diagnostic fields, not [object Object]', () => {
+    const thrown = {
+      code: 'ENOENT', errno: -2, folder: 'Trip to Kyoto', file: 'IMG_0001.JPG', name: 'IMG_0001', ok: false, inner: { reason: 'killed' },
+      accessToken: 'abcdef0123456789abcdef0123456789', status: '0123456789abcdef',
+    };
 
     const { label } = errorForAnalytics(thrown, mac);
 
-    assert.equal(label, 'Object: {"code":"ENOENT","errno":-2,"folder":"<value>","file":"<value>","ok":false,"inner":{"reason":"killed"}}');
+    assert.equal(label, 'Object: {"code":"ENOENT","errno":-2,"folder":"<value>","file":"<value>","name":"<value>","ok":false,'
+      + '"inner":{"reason":"killed"},"accessToken":"<value>","status":"<value>"}');
     class Event { public readonly isTrusted = true; }
     assert.equal(errorForAnalytics(new Event(), mac).label, 'Event: {"isTrusted":true}');
   });

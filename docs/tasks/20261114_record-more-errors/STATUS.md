@@ -46,8 +46,11 @@ What was changed:
   first three errors of an `AggregateError` as `Error 1 of N: …`; it is cut at
   16,000 characters. A thrown object with a message, such as an error sent from
   a worker, is described as an error, an `ErrorEvent` by its name; another
-  object is its JSON, with only the texts that are codes (`ENOENT`, `killed`)
-  and every other text as `<value>`.
+  object is its JSON with its numbers and booleans, and the texts of its
+  diagnostic fields (`code`, `syscall`, `type`, `reason`, `status`, `kind`)
+  that are codes (`ENOENT`, `killed`); every other text is `<value>`. At first
+  any short text of letters and digits was kept, which CodeRabbit found would
+  keep a token such as an access token's.
 - Found while writing the test of paths: an unquoted path with spaces in the
   home folder (`/Users/x/Pictures/Trip to Kyoto`) kept the words after its
   first space, as the earlier scrubbing ended a path at a space. Such a path

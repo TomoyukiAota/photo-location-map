@@ -6,7 +6,8 @@
 //  - The stack keeps its first frames: function names, and file names only when the file is inside the app (the
 //    app.asar bundle, the app's own folder, or the page served by the dev server); every other file location
 //    becomes "<path>". The causes of the error follow it, and the first errors of an AggregateError.
-//  - A thrown value that is not an error keeps its type, and an object its JSON with only the texts that are codes.
+//  - A thrown value that is not an error keeps its type, and an object its JSON with only the texts that are codes in
+//    its diagnostic fields, such as "code".
 
 export interface ErrorScrubbingContext {
   /** Folders of the app itself, whose files may be named in stacks (e.g. app.getAppPath()). */
@@ -128,14 +129,17 @@ function constructorName(value: object): string {
   return typeof name === 'string' && name ? name : 'Object';
 }
 
+/** The fields of a thrown object whose text is kept when it is a code, such as "ENOENT" or "killed". */
+const diagnosticFields: readonly string[] = ['code', 'syscall', 'type', 'reason', 'status', 'kind'];
+
 /**
- * An object as JSON, with only the texts that are codes, such as "ENOENT" or "killed": any other text could be a name
- * of the user's, and an object can hold anything. Numbers, booleans and null are kept.
+ * An object as JSON, with its numbers, booleans and null, and the texts of its diagnostic fields that are codes: any
+ * other text could be a name of the user's or a token, and an object can hold anything.
  */
 function objectText(value: object): string {
   try {
-    return JSON.stringify(value, (_key, field: unknown) =>
-      typeof field === 'string' && !/^[A-Za-z0-9_:-]{0,40}$/.test(field) ? '<value>' : field) ?? '';
+    return JSON.stringify(value, (key, field: unknown) =>
+      typeof field === 'string' && !(diagnosticFields.includes(key) && /^[A-Za-z][A-Za-z0-9_:-]{0,39}$/.test(field)) ? '<value>' : field) ?? '';
   } catch {
     return `[object ${constructorName(value)}]`;  // A cycle, or a BigInt.
   }
