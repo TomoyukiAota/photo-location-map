@@ -17,8 +17,8 @@ stopping, keeping questions for the end.
 | 2 | What the code logs: `Logged Error`, `Logged Warning`, the `logged` tag and its lint rule | Merged | #696 |
 | 3 | Failures with their reasons: `Opened Folder: Failed`, `Opened Folder: EXIF Read Failed` | Merged | #697 |
 | 4 | Starts that fail, launches that do not end, and saving at once | Merged | #698 |
-| 5 | What only the console shows: `Console Error (Renderer)` | Its pull request waits for CI | #699 |
-| 6 | Crash reports, and the Welcome dialog's sentence | Implemented; its pull request is merged after stage 5's | #700 |
+| 5 | What only the console shows: `Console Error (Renderer)` | Merged | #699 |
+| 6 | Crash reports, and the Welcome dialog's sentence | Its pull request waits for CI | #700 |
 
 When a stage is done, write here what was changed, what was checked with the
 result of each check, and what was found on the way, and tick its steps in the
@@ -318,3 +318,6 @@ entry runs Electron's own bundle; a build of the app names its own.
 | `npm run test:unit:em:renderer` | 6 | 91 passed |
 | `npm run test:unit:ng` | 6 | 58 files passed, the translations' among them |
 | `PLM_VISUAL=1 npm run test:e2e`, the Welcome dialog's cases | 6 | 2 passed, with the references written anew |
+| `npm run lint:all` | 6, merged with the reviewed stages 4 and 5 | passed |
+| `npm run test:unit:em:main` | 6, merged with the reviewed stages 4 and 5 | 262 passed, 2 pending |
+| `npm run test:unit:em:renderer` | 6, merged with the reviewed stages 4 and 5 | 95 passed |
