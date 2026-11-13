@@ -224,8 +224,9 @@ Run the commands from the repository's root. In a git worktree, put
 application's windows off the screen on macOS and Windows: do not add
 `--headed`.
 
-After each stage, update STATUS.md and commit. Push only where a stage says
-so: a push starts CI on three operating systems.
+After each stage, update STATUS.md and commit. Push a commit that changes
+only this folder, as CI skips its tests for documents. Push the others only
+where a stage says so: such a push runs CI's tests on three operating systems.
 
 ### 0. The baseline, before any change
 
