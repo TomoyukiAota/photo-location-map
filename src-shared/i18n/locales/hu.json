@@ -35,7 +35,7 @@
   },
   "welcome": {
     "message": "Üdvözli a {{appName}}",
-    "usageInfoCollection": "Az alkalmazás fejlesztése érdekében névtelen használati adatokat gyűjtünk. Az alkalmazás további használatával ehhez hozzájárul."
+    "usageInfoCollection": "Az alkalmazás fejlesztése érdekében használati adatokat gyűjtünk. Az alkalmazás további használatával ehhez hozzájárul."
   },
   "about": {
     "releasesLink": "Letöltések és kiadási megjegyzések",

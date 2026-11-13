@@ -35,7 +35,7 @@
   },
   "welcome": {
     "message": "Welkom bij {{appName}}",
-    "usageInfoCollection": "Om deze app te verbeteren, worden anonieme gebruiksgegevens verzameld. Door deze app te blijven gebruiken, ga je hiermee akkoord."
+    "usageInfoCollection": "Om deze app te verbeteren, worden gebruiksgegevens verzameld. Door deze app te blijven gebruiken, ga je hiermee akkoord."
   },
   "about": {
     "releasesLink": "Downloads en release-opmerkingen",

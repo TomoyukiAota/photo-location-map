@@ -4,7 +4,7 @@ Started on 2026-11-14. See the [plan](./PLAN.md).
 
 ## Current state
 
-Stages 1 to 5 are implemented (see below). The owner asked on 2026-11-14
+All six stages are implemented (see below). The owner asked on 2026-11-14
 for as many errors as the application can record, decided what the plan lists
 under "The owner's decisions", and then said to carry the plan through without
 stopping, keeping questions for the end.
@@ -17,8 +17,8 @@ stopping, keeping questions for the end.
 | 2 | What the code logs: `Logged Error`, `Logged Warning`, the `logged` tag and its lint rule | Merged | #696 |
 | 3 | Failures with their reasons: `Opened Folder: Failed`, `Opened Folder: EXIF Read Failed` | Merged | #697 |
 | 4 | Starts that fail, launches that do not end, and saving at once | Merged | #698 |
-| 5 | What only the console shows: `Console Error (Renderer)` | Its pull request waits for CI | #699 |
-| 6 | Crash reports, and the Welcome dialog's sentence | Waits for the backend to take crash dumps | — |
+| 5 | What only the console shows: `Console Error (Renderer)` | Merged | #699 |
+| 6 | Crash reports, and the Welcome dialog's sentence | Its pull request waits for CI | #700 |
 
 When a stage is done, write here what was changed, what was checked with the
 result of each check, and what was found on the way, and tick its steps in the
@@ -240,6 +240,39 @@ next to its `.ts`, which `npm run build:src-main` writes. After a build for the
 e2e suite, a change to a module of the main process is not what its tests run
 until the compiled files are removed (`git clean -fX src-main src-shared`).
 
+## Stage 6: Crash reports, and the Welcome dialog's sentence
+
+What was changed:
+
+- `src-main/crash-reporter-setup.ts`: Electron's crash reporter, started right
+  after the settings (which hold the analytics user ID) and before the app is
+  ready, uploads to `src-shared/analytics/config/crash-report-endpoint.ts`'s
+  address by the events' rule (dev for a development build and a prerelease
+  version), gzipped, without Crashpad's limit of one an hour, with the user
+  ID and the launch's session ID as `globalExtra`. A test profile, a package
+  test and unit tests upload nothing, unless a test with a test profile gives
+  its own address in `PLM_TEST_CRASH_REPORT_URL`.
+- The Welcome dialog's sentence, `welcome.usageInfoCollection`, without the
+  word for "anonymous" in all 42 languages, as the owner decided; the
+  Japanese as the owner approved it. The sentence only got shorter, so the
+  dialog's layout was not checked in every language. The e2e references
+  `welcome.png` and `welcome-ja.png` were written anew on the Mac
+  (`--update-snapshots=changed`); CI's, in `snapshots-ci/macos-26-arm64/`,
+  by the macOS workflow run with `update_screenshots` on this branch, whose
+  artifact had only these two differing from the references. Both show the
+  new sentence, on as many lines as before.
+
+Checked by hand on macOS, 2026-11-14: the app, built from this branch and
+launched with a test profile and its windows off the screen (Playwright, as
+the e2e suite), with `PLM_TEST_CRASH_REPORT_URL` set to the analytics
+backend's dev address. A renderer crashed on purpose (`chrome://crash`) was
+uploaded at once, and the main process (`process.crash()`) at the next
+launch; dev's endpoint accepted both, and both have their stacks there
+(`blink::internal::CrashIntentionally()`, `electron::ElectronBindings::Crash()`),
+with a user ID and a session ID. Launched through the e2e suite's entry, the
+dumps name the product as `Electron` and the version as Electron's, as that
+entry runs Electron's own bundle; a build of the app names its own.
+
 ## Checks
 
 | Check | Stage | Result |
@@ -280,3 +313,11 @@ until the compiled files are removed (`git clean -fX src-main src-shared`).
 | `npm run lint:all`, `tsc` of the main process | 5, after the review | passed |
 | `npm run test:unit:em:main` | 5, after the review | 260 passed, 2 pending, among them a user name in another case, a local tile server's source, a web address that names `app.asar`, and a file with a query |
 | `npm run test:unit:em:renderer` | 5, after the review | 95 passed |
+| `npm run lint:all`, `tsc` of the main process | 6 | passed |
+| `npm run test:unit:em:main` | 6 | 249 passed, 2 pending |
+| `npm run test:unit:em:renderer` | 6 | 91 passed |
+| `npm run test:unit:ng` | 6 | 58 files passed, the translations' among them |
+| `PLM_VISUAL=1 npm run test:e2e`, the Welcome dialog's cases | 6 | 2 passed, with the references written anew |
+| `npm run lint:all` | 6, merged with the reviewed stages 4 and 5 | passed |
+| `npm run test:unit:em:main` | 6, merged with the reviewed stages 4 and 5 | 262 passed, 2 pending |
+| `npm run test:unit:em:renderer` | 6, merged with the reviewed stages 4 and 5 | 95 passed |

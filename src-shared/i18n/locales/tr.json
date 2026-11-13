@@ -35,7 +35,7 @@
   },
   "welcome": {
     "message": "{{appName}} uygulamasına hoş geldiniz",
-    "usageInfoCollection": "Bu uygulamayı geliştirmek için anonim kullanım bilgileri toplanır. Uygulamayı kullanmaya devam ederek bunu kabul etmiş olursunuz."
+    "usageInfoCollection": "Bu uygulamayı geliştirmek için kullanım bilgileri toplanır. Uygulamayı kullanmaya devam ederek bunu kabul etmiş olursunuz."
   },
   "about": {
     "releasesLink": "İndirmeler ve sürüm notları",

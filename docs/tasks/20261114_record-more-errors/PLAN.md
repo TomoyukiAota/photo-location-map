@@ -344,22 +344,22 @@ at an address that does not take them yet.
 
 Steps:
 
-- [ ] The endpoints and their rule, with a test as the events' rule has
+- [x] The endpoints and their rule, with a test as the events' rule has
   (`src-shared/analytics/config/`).
-- [ ] `crashReporter.start`, where the main process sets itself up
+- [x] `crashReporter.start`, where the main process sets itself up
   (`src-main/electron-main.ts`); off in tests.
-- [ ] A check that a dump arrives: a local server that takes the upload, a
+- [x] A check that a dump arrives: a local server that takes the upload, a
   renderer crashed on purpose (`process.crash()`), and the fields of the
   request. As an automated test if it is stable on CI; otherwise by hand on
   macOS, written down in `STATUS.md`.
-- [ ] With the backend's dev address: crash the application run in development
+- [x] With the backend's dev address: crash the application run in development
   mode on purpose, main process and renderer, and check that both dumps
   arrived, with the user ID and the session ID of the launch's events.
-- [ ] The sentence in 42 files; the translations' unit test; the layout check
+- [x] The sentence in 42 files; the translations' unit test; the layout check
   of the Welcome dialog in every language (`test/layout/README.md`); the e2e
   screenshots that show the dialog, if any, updated as `test/e2e/README.md`
   says.
-- [ ] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
+- [x] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
 
 ## Checks for every stage
 
