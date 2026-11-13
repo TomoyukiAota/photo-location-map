@@ -148,7 +148,7 @@ Steps:
 - [x] Tests: `test/src-shared/analytics/error-for-analytics.spec.em.both.ts`
   for the frames, the causes and the objects, with paths in each of them; a
   spec for the limits and their counts.
-- [ ] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
+- [x] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
 
 ### Stage 2: What the code logs
 
@@ -209,7 +209,7 @@ Steps:
   value, decide whether it is `shown`: when unsure, it is not.
 - [x] Tests: a line with a path with spaces, a file's name and the user's name
   sends none of them; the analytics' own lines send nothing; the limits.
-- [ ] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
+- [x] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
 
 ### Stage 3: Failures with their reasons
 
@@ -232,7 +232,7 @@ Steps:
   `PathPhotoMapRecorder`).
 - [x] Tests: the reasons are counted, the most frequent five are recorded, and
   a path in what was thrown is not sent (`test/src/app/shared/`).
-- [ ] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
+- [x] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
 
 ### Stage 4: Starts that fail, launches that do not end, and saving at once
 
@@ -275,17 +275,17 @@ their `event_id`. The file is safe for two instances.
 
 Steps:
 
-- [ ] The order of the imports and the `catch` (`src-main/electron-main.ts`);
+- [x] The order of the imports and the `catch` (`src-main/electron-main.ts`);
   the handler works without the log file.
-- [ ] `reportStartFailure` sends the event (`src/main.ts`).
-- [ ] The launch's file: written, touched, removed, found at the next launch;
+- [x] `reportStartFailure` sends the event (`src/main.ts`).
+- [x] The launch's file: written, touched, removed, found at the next launch;
   `session-end` on Windows; the session ID's new place.
-- [ ] Unsent events saved when an error is tracked, kept until sent, for two
+- [x] Unsent events saved when an error is tracked, kept until sent, for two
   instances (`analytics-backend-wrapper.ts`, `unsent-events-file.ts`).
-- [ ] Tests: an error thrown by a setup module is recorded and saved; a file of
+- [x] Tests: an error thrown by a setup module is recorded and saved; a file of
   a process that does not run gives the event, one of a process that runs does
   not; events saved at once are loaded by the next launch and sent once.
-- [ ] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
+- [x] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
 
 ### Stage 5: What only the console shows
 

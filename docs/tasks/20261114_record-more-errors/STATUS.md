@@ -4,7 +4,7 @@ Started on 2026-11-14. See the [plan](./PLAN.md).
 
 ## Current state
 
-Stages 1 to 3 are implemented (see below). The owner asked on 2026-11-14
+Stages 1 to 4 are implemented (see below). The owner asked on 2026-11-14
 for as many errors as the application can record, decided what the plan lists
 under "The owner's decisions", and then said to carry the plan through without
 stopping, keeping questions for the end.
@@ -15,8 +15,8 @@ stopping, keeping questions for the end.
 | --- | --- | --- | --- |
 | 1 | More of each error: 20 frames, causes, thrown objects, the limits as one class, `Errors Dropped` | Merged | #694 |
 | 2 | What the code logs: `Logged Error`, `Logged Warning`, the `logged` tag and its lint rule | Merged | #696 |
-| 3 | Failures with their reasons: `Opened Folder: Failed`, `Opened Folder: EXIF Read Failed` | Its pull request waits for CI | #697 |
-| 4 | Starts that fail, launches that do not end, and saving at once | Not started | — |
+| 3 | Failures with their reasons: `Opened Folder: Failed`, `Opened Folder: EXIF Read Failed` | Merged | #697 |
+| 4 | Starts that fail, launches that do not end, and saving at once | Its pull request waits for CI | #698 |
 | 5 | What only the console shows: `Console Error (Renderer)` | Not started | — |
 | 6 | Crash reports, and the Welcome dialog's sentence | Waits for the backend to take crash dumps | — |
 
@@ -125,6 +125,71 @@ What was changed:
   `rotate-failed` (the embedded thumbnail could not be turned). A photo without
   EXIF data is not a failure.
 
+## Stage 4: Starts that fail, launches that do not end, and saving at once
+
+What was changed:
+
+- `src-main/electron-main.ts`: the handler of unhandled errors
+  (`configure-electron-unhandled.ts`) is set right after the scrubbing of
+  errors, before the setups that can throw: the log, the startup metadata, the
+  settings, the language. An error of theirs is recorded once analytics are set,
+  or, when it stops the launch before they are, by the next launch (below); it
+  is logged to the console before the log file is. The `catch` at the end
+  records what it caught as an unhandled error of the main process.
+- `src/main.ts`: a page whose modules cannot be loaded records
+  `Unhandled Error (Renderer)` through the bridge, to the analytics backend
+  only, with the home folder and the user name of the startup metadata taken
+  out; `error-for-analytics.ts` imports nothing, so the entry stays free of the
+  app's modules.
+- `src-main/launch/`: each launch writes `<userData>/launches/<pid>-<session ID>.json`
+  (its version, when it started and when it was last alive) first thing, again
+  every minute, through a file beside it that is renamed over it, and removes it
+  on `will-quit`, or on a window's `session-end` on Windows. With the launch's
+  other events, a later launch records each file of a process that no longer
+  runs, or that was not written for seven days, or of its own process ID but
+  another session, as `Launch Info: Previous Launch Ended Abnormally`, at most
+  five at once, the oldest first, and removes it. A crash of the main process, a forced quit, a
+  `SIGTERM` and a power cut all leave the file: the event tells that a launch
+  did not end, not why. A launch that quits before its analytics are set, as
+  one whose setup failed, keeps its file, with the last 20 events that it
+  tracked until then, its error among them, which the later launch sends after
+  that event (its value then ends with `; Kept events: <count>`). A launch that
+  starts writes its file without them once its analytics take them.
+- `src-shared/analytics/launch-session.ts`: the launch's session ID, made when
+  first asked for, which the launch's file and the events share.
+- Saving at once (`analytics-backend-wrapper.ts`, `unsent-events-file.ts`): a
+  launch saves what it has not sent when an error is tracked (unhandled and
+  logged errors, processes gone, windows unresponsive, console errors, dropped
+  errors, a launch that ended abnormally) and on `will-quit`, into a file of its
+  own, named by its process ID, which it updates as batches are sent. A launch
+  takes over the files of launches whose process no longer runs, or that were
+  not written for seven days, and the one file of the earlier versions, writing
+  their events into its own file before removing them; and its own file, which
+  before it writes is an earlier launch's that was given the same process ID.
+  A file that cannot be removed is kept, for a later launch to take over again.
+  An event sent twice is counted once by the backend, which tells events by
+  their ID.
+
+What CodeRabbit found on the pull request, and was changed on 2026-11-14:
+
+- A setup that throws stops the main process's entry before analytics are set,
+  so its error stayed in memory, and the launch's file was removed when the
+  user quit: such a start was not recorded at all. The launch now keeps the
+  events in its file, and the file.
+- A later launch given the process ID of one that crashed wrote over that
+  launch's file and left out its file of unsent events. The launch files are
+  named with the session too, and a launch takes over its own file of unsent
+  events.
+- A launch's file is written beside it and renamed over it, so that a launch
+  that ends while writing it does not leave a file that cannot be read.
+- A file of unsent events that could not be removed made the launch drop the
+  events that it had taken over.
+- On its second look: of more than five launches that ended, the files of those
+  beyond the five recorded were removed, with the events that they kept. A
+  launch now takes the five oldest and leaves the others for later launches.
+  And a file of unsent events is written beside it and renamed over it too, as
+  it can hold the only copy of another launch's events.
+
 ## Checks
 
 | Check | Stage | Result |
@@ -145,3 +210,11 @@ What was changed:
 | `npm run test:unit:em:renderer` | 3 | 91 passed, among them a file that is not a photo, counted as `read-failed` without its name |
 | `npm run test:unit:ng` | 3 | 58 files passed |
 | `npm run test:e2e` | 3 | Left to CI: nothing that a window shows changes |
+| `npm run lint:all`, `tsc` of the main process | 4 | passed |
+| `npm run test:unit:em:main` | 4 | 242 passed, 2 pending |
+| `npm run test:unit:em:renderer` | 4 | 91 passed |
+| `npm run test:unit:ng` | 4 | 58 files passed |
+| `npm run lint:all`, `tsc` of the main process | 4, after the review | passed |
+| `npm run test:unit:em:main` | 4, after the review | 251 passed, 2 pending, among them a launch given the process ID of one that ended, a file left half written, the events that a launch kept, more launches than are taken at once, and files of unsent events that cannot be written or removed |
+| `npm run test:unit:em:renderer` | 4, after the review | 91 passed |
+| `npm run test:unit:ng` | 4, after the review | 58 files passed |

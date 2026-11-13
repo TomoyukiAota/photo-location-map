@@ -11,6 +11,7 @@ import { UserDataStorage } from '../src-shared/user-data-storage/user-data-stora
 import { UserDataStoragePath } from '../src-shared/user-data-storage/user-data-stroage-path';
 import { currentUserSettings } from '../src-shared/user-settings/user-settings';
 import { commandLineOptionsValue } from './command-line-options/command-line-options-value';
+import { recordLaunchesThatEndedAbnormally } from './launch/launch-file-setup';
 import { mainWindow } from './electron-main';
 import { LaunchInfo } from './launch-info';
 import { StartupTime } from './startup-time';
@@ -169,6 +170,7 @@ export const recordAtAppLaunch = () => {
   recordOs();
   recordSystemInfo();
   recordLanguages();
+  recordLaunchesThatEndedAbnormally();
 
   recordDisplays();
   recordWindowState();
