@@ -4,6 +4,7 @@ import { logWindowBounds, photoDataViewerLogger as logger } from '../../src-shar
 import { UserDataStorage } from '../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../src-shared/user-data-storage/user-data-stroage-path';
 import { trackClosingPhotoDataViewer } from './photo-data-viewer-tracker';
+import { logged } from '../../src-shared/log/logged-line';
 
 interface StateManageParams {
   browserWindow: Electron.BrowserWindow,
@@ -85,8 +86,8 @@ export class PhotoDataViewerWindowState {
       trackClosingPhotoDataViewer(bounds);
     } catch (error) {
       // Catching the error so that the Unhandled Promise Rejection dialog for "TypeError: Object has been destroyed" does not pop up.
-      logger.warn(`Error occurred when closing the window for ${params?.photo?.path}`);
-      logger.warn(`error?.toString?.(): ${error?.toString?.()}`);
+      logger.warn(logged`Error occurred when closing the window for ${params?.photo?.path}`, error);
+      logger.warnNotRecorded(`error?.toString?.(): ${error?.toString?.()}`);
       console.warn(error); // Print information such as stack trace in the console
     }
   }

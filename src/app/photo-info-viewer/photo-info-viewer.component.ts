@@ -16,6 +16,7 @@ import { MoreOptionsMenuPlacement, placeMenu, roomAround } from './more-options-
 import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
 import { PhotoInfoViewerPlace } from './photo-info-viewer-place';
 import { ThumbnailRotationService } from './thumbnail-rotation.service';
+import { LoggedLine, logged } from '../../../src-shared/log/logged-line';
 
 /** What the img element of a thumbnail shows. */
 interface Thumbnail {
@@ -25,7 +26,7 @@ interface Thumbnail {
   /** Shown in place of an image that cannot be loaded: why, for a file whose path is too long for Windows. */
   readonly alt: string | null;
   /** What the log says about such a file. */
-  readonly warning: string | null;
+  readonly warning: LoggedLine | null;
 }
 
 const generatingThumbnail: Thumbnail = { kind: 'generating', src: IconDataUrl.generatingThumbnail, alt: null, warning: null };
@@ -76,14 +77,15 @@ function thumbnailOfPhotoItself(photo: Photo): Thumbnail {
     kind: 'image',
     src: fileUrl(photo.path),
     alt: t('photoInfo.pathTooLong', { length: photo.path.length, maximum: maxFilePathLengthOnWindows }),
-    warning: `\n`
-      + `Thumbnail of ${photo.name} cannot be displayed because the length of the file path exceeds the maximum.\n`
-      + `Please change the location of ${photo.name} to shorten the path.\n`
-      + `-------------------------------\n`
-      + `Maximum file path length: ${maxFilePathLengthOnWindows}\n`
-      + `File path length of ${photo.name}: ${photo.path.length}\n`
-      + `-------------------------------\n`
-      + `File path of ${photo.name} is "${photo.path}"\n`,
+    warning: logged`
+Thumbnail of ${photo.name} cannot be displayed because the length of the file path exceeds the maximum.
+Please change the location of ${photo.name} to shorten the path.
+-------------------------------
+Maximum file path length: ${maxFilePathLengthOnWindows}
+File path length of ${photo.name}: ${photo.path.length}
+-------------------------------
+File path of ${photo.name} is "${photo.path}"
+`,
   };
 }
 
@@ -96,17 +98,18 @@ function thumbnailOfGeneratedFile(photo: Photo, thumbnailFilePath: string): Thum
     kind: 'image',
     src: fileUrl(thumbnailFilePath),
     alt: t('photoInfo.generatedThumbnailPathTooLong', { length: thumbnailFilePath.length, maximum: maxFilePathLengthOnWindows }),
-    warning: `\n`
-      + `Thumbnail of ${photo.name} cannot be displayed because the length of the file path of the generated thumbnail exceeds the maximum.\n`
-      + `Please change the location of ${photo.name} to shorten the path of the generated thumbnail.\n`
-      + `-------------------------------\n`
-      + `Maximum file path length: ${maxFilePathLengthOnWindows}\n`
-      + `File path length of ${photo.name}: ${photo.path.length}\n`
-      + `File path length of generated thumbnail: ${thumbnailFilePath.length}\n`
-      + `-------------------------------\n`
-      + `File path of ${photo.name} is "${photo.path}"\n`
-      + `-------------------------------\n`
-      + `File path of generated thumbnail is "${thumbnailFilePath}"\n`,
+    warning: logged`
+Thumbnail of ${photo.name} cannot be displayed because the length of the file path of the generated thumbnail exceeds the maximum.
+Please change the location of ${photo.name} to shorten the path of the generated thumbnail.
+-------------------------------
+Maximum file path length: ${maxFilePathLengthOnWindows}
+File path length of ${photo.name}: ${photo.path.length}
+File path length of generated thumbnail: ${thumbnailFilePath.length}
+-------------------------------
+File path of ${photo.name} is "${photo.path}"
+-------------------------------
+File path of generated thumbnail is "${thumbnailFilePath}"
+`,
   };
 }
 
@@ -171,7 +174,7 @@ export class PhotoInfoViewerComponent {
     effect(() => {
       const photo = this.photo();
       if (!photo?.path) {
-        Logger.error(`[PhotoInfoViewerComponent] photo.path is not available. photo: ${photo}, photo?.name: ${photo?.name}`, photo);
+        Logger.error(logged`[PhotoInfoViewerComponent] photo.path is not available. photo: ${photo}, photo?.name: ${photo?.name}`, photo);
         return;
       }
 

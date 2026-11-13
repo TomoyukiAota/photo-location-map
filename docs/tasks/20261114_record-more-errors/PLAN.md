@@ -197,17 +197,17 @@ afterwards.
 
 Steps:
 
-- [ ] `logged` and `shown` (`src-shared/log/`), with tests of what each kind of
+- [x] `logged` and `shown` (`src-shared/log/`), with tests of what each kind of
   value becomes.
-- [ ] `Logger.error` and `Logger.warn` take a string or a tagged line; the
+- [x] `Logger.error` and `Logger.warn` take a string or a tagged line; the
   variant that only logs; `createPrependedLogger` passes both on, and can make
   a logger that only logs.
-- [ ] What records a line, set by each process, with the limits and a guard
+- [x] What records a line, set by each process, with the limits and a guard
   against recording from inside recording.
-- [ ] The lint rule, and every call that it refuses changed to the tag (about
+- [x] The lint rule, and every call that it refuses changed to the tag (about
   105 calls; `git grep -n -E "ogger\.(error|warn)\("` lists them). For each
   value, decide whether it is `shown`: when unsure, it is not.
-- [ ] Tests: a line with a path with spaces, a file's name and the user's name
+- [x] Tests: a line with a path with spaces, a file's name and the user's name
   sends none of them; the analytics' own lines send nothing; the limits.
 - [ ] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
 

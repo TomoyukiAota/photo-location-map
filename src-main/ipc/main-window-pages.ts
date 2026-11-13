@@ -1,5 +1,6 @@
 import type { WebContents } from 'electron';
 import { Logger } from '../../src-shared/log/logger';
+import { logged, shown } from '../../src-shared/log/logged-line';
 
 // The main window shows the app's page only, the one page that its preload's bridge serves (ipc-sender.ts). The app
 // itself never navigates the window elsewhere: its routes change the URL's fragment, and links open in the OS browser
@@ -35,7 +36,7 @@ export function keepOnAppPage(contents: WebContents, pageUrl: string): void {
     if (isAppPage(event.url, pageUrl))
       return;
     event.preventDefault();
-    Logger.warn(`[Main Window] Prevented a ${kind} away from the app's page.`);
+    Logger.warn(logged`[Main Window] Prevented a ${shown(kind)} away from the app's page.`);
   };
   contents.on('will-navigate', event => prevent(event, 'navigation'));
   contents.on('will-redirect', event => prevent(event, 'redirect'));

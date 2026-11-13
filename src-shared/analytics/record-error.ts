@@ -76,7 +76,7 @@ export function setScrubbingContext(context: () => ErrorScrubbingContext): void 
 }
 
 /** What errors are scrubbed of: in a renderer, the home folder and the user name that the main process sent. */
-function scrubbingContext(): ErrorScrubbingContext {
+export function scrubbingContext(): ErrorScrubbingContext {
   if (mainProcessContext)
     return mainProcessContext();
   try {

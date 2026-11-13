@@ -74,6 +74,19 @@ const existingRules = {
   ]
 };
 
+// TL;DR: A logged error or warning with values is written with the tag `logged`.
+// Details: Logger.error and Logger.warn record their lines for analytics, and a line's values can name the user's
+// files, which no scrubbing can tell by their form. Only the tag says which values may be recorded
+// (src-shared/log/logged-line.ts). Any logger's error() and warn() are checked: a logger is named "logger" or
+// "…Logger".
+const loggedLineMessage = 'Write a logged error or warning that has values with the tag `logged` '
+  + '(src-shared/log/logged-line.ts), so that no value that could name the user\'s files is recorded.';
+const loggerCall = 'CallExpression[callee.property.name=/^(error|warn)$/][callee.object.name=/(^l|L)ogger$/]';
+const loggedLineRule = ['error',
+  { selector: `${loggerCall} > TemplateLiteral:first-child[expressions.length>0]`, message: loggedLineMessage },
+  { selector: `${loggerCall} > BinaryExpression:first-child[operator='+']`, message: loggedLineMessage },
+];
+
 export default [
   { ignores: ['projects/**', 'dist/**', 'release/**', '.upgrade-artifacts/**'] },
   {
@@ -90,6 +103,7 @@ export default [
       ...tsPlugin.configs['eslint-recommended'].overrides[0].rules,
       ...tsPlugin.configs.recommended.rules,
       ...existingRules,
+      'no-restricted-syntax': loggedLineRule,
     },
   },
   {
@@ -103,7 +117,18 @@ export default [
     linterOptions: { reportUnusedDisableDirectives: 'off' },
     languageOptions: { parser: tsParser, parserOptions: { ecmaVersion: 'latest', sourceType: 'module' } },
     plugins: { '@typescript-eslint': tsPlugin },
-    rules: { '@typescript-eslint/no-require-imports': 'error' },
+    rules: { '@typescript-eslint/no-require-imports': 'error', 'no-restricted-syntax': loggedLineRule },
+  },
+  {
+    // Loggers that record nothing, so whose lines need no tag: the thumbnail worker's own, which writes to its console
+    // only (its failures are recorded by reason, src-main/thumbnail-generation/thumbnail-failures.ts), and the
+    // analytics code's, made with { recorded: false } so as not to record the analytics' own failures to send.
+    files: [
+      'src-main/thumbnail-generation/generate-thumbnail-file-worker.ts',
+      'src-shared/analytics/library-wrapper/**/*.ts',
+      'src-shared/analytics/analytics-backend/**/*.ts',
+    ],
+    rules: { 'no-restricted-syntax': 'off' },
   },
   {
     files: ['src/**/*.html'],

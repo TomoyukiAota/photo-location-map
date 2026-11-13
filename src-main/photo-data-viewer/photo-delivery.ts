@@ -8,6 +8,7 @@ import type { PhotoDataViewerPhoto } from '../../src-shared/photo-data-viewer/ph
 import { PhotoDataViewerIpcPhotoParams } from '../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params';
 import { photoDataViewerLogger as logger } from '../../src-shared/photo-data-viewer/photo-data-viewer-logger';
 import { getPhotoDataViewerServerUrl } from './photo-data-viewer-server-config';
+import { logged } from '../../src-shared/log/logged-line';
 
 // TL;DR: How Photo Data Viewer's page, without Node.js, gets the photo of its window: a capability, a random token
 // for that photo, which only that window's page has and may use, from the viewer's origin, until the window leaves
@@ -161,7 +162,7 @@ export async function respondToPhotoRequest(request: Request): Promise<Response>
     // it decodes the URL with decodeURI, which keeps "%23" as it is.
     file = await net.fetch(pathToFileURL(capability.filePath).href, { bypassCustomProtocolHandlers: true });
   } catch (error) {
-    logger.warn(`The photo of Photo Data Viewer's window could not be read: ${(error as Error).message}`);
+    logger.warn(logged`The photo of Photo Data Viewer's window could not be read: ${error as Error}`);
     return new Response(null, { status: 404 });
   }
   return new Response(file.body, {
