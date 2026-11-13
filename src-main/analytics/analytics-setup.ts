@@ -1,5 +1,7 @@
+import { app } from 'electron';
 import { AnalyticsMain } from '../../src-shared/analytics/analytics-main';
 import { useAnalytics } from '../../src-shared/analytics/analytics';
+import { recordDroppedEvents } from '../../src-shared/analytics/record-dropped-events';
 import { EnvironmentDetector } from '../../src-shared/environment/environment-detector';
 import { AnalyticsBackendIpcMain } from './analytics-backend-ipc';
 
@@ -8,4 +10,6 @@ import { AnalyticsBackendIpcMain } from './analytics-backend-ipc';
 if (!EnvironmentDetector.isUnitTest) {
   useAnalytics(new AnalyticsMain());
   AnalyticsBackendIpcMain.configureReceivingIpcFromRenderer();
+  // On before-quit, which comes before will-quit, when the events not sent yet are saved (AnalyticsBackendWrapper).
+  app.on('before-quit', () => recordDroppedEvents('Main'));
 }

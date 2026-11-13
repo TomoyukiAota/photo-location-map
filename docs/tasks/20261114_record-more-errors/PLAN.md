@@ -140,12 +140,12 @@ What each recorded error tells, and what the limits drop.
 
 Steps:
 
-- [ ] `maxStackFrames` 20; causes and `AggregateError` in the value; JSON for
+- [x] `maxStackFrames` 20; causes and `AggregateError` in the value; JSON for
   thrown objects (`src-shared/analytics/error-for-analytics.ts`).
-- [ ] The limits as a class with counts of what it dropped; `recordUnhandledError`
+- [x] The limits as a class with counts of what it dropped; `recordUnhandledError`
   uses it (`src-shared/analytics/record-error.ts`).
-- [ ] `Errors Dropped` from both processes.
-- [ ] Tests: `test/src-shared/analytics/error-for-analytics.spec.em.both.ts`
+- [x] `Errors Dropped` from both processes.
+- [x] Tests: `test/src-shared/analytics/error-for-analytics.spec.em.both.ts`
   for the frames, the causes and the objects, with paths in each of them; a
   spec for the limits and their counts.
 - [ ] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
