@@ -55,7 +55,6 @@ export class DateTimeTakenChartComponent {
   private createEChartsOption(xData: string[], yData: number[]) {
     const option: EChartsOption = {
       grid: {
-        outerBoundsMode: 'none', // Preserve the v5 layout rather than moving axes to prevent overflow.
         top: 25,
         bottom: 80,
         left: 90,
@@ -71,9 +70,14 @@ export class DateTimeTakenChartComponent {
         itemSize: 20,
         top: 4,
         right: 0,
+        // TL;DR: The icons are in the row of the menu's icon and the unit's select, which are beside the chart.
+        // Details: ECharts 6 has 15px around its toolbox and 10px between the icons, where ECharts 5 had 5px and 8px.
+        // With 15px, the icons are 10px lower and 10px further to the left, below the middle of that row.
         padding: 5,
         itemGap: 8,
-        iconStyle: { borderColor: '#666', color: 'none' },
+        // The grey of the icons, and their blue under the pointer, which the menu's icon beside them has too
+        // (config/date-time-taken-chart-config.component.scss). ECharts 6's own are #6578ba and #404c76.
+        iconStyle: { borderColor: '#666' },
         emphasis: { iconStyle: { borderColor: '#3E98C5' } },
         feature: {
           dataZoom: {
@@ -91,7 +95,6 @@ export class DateTimeTakenChartComponent {
       },
       xAxis: {
         type: 'category',
-        nameMoveOverlap: false,
         data: xData,
         axisLabel: {
           formatter: (value: string) => {
@@ -99,12 +102,14 @@ export class DateTimeTakenChartComponent {
           },
         },
         axisTick: {
+          // ECharts 6 shows no ticks on an axis like this one, whose values each have a band of their own for their bar.
+          // A tick shows which bar a label is for, where only some of the bars have a label, as the days of years do.
+          show: true,
           alignWithLabel: true,
         }
       },
       yAxis: {
         type: 'value',
-        nameMoveOverlap: false,
         minInterval: 1,   // Make sure Y-axis label is shown as integer.
       },
       dataZoom: [
@@ -117,28 +122,14 @@ export class DateTimeTakenChartComponent {
           type: 'slider',
           start: 0,
           end: 100,
-          // Pin the component defaults that changed with the v6 style tokens.
+          // TL;DR: The slider is low enough for the x-axis's labels of two lines above it.
+          // Details: ECharts 6 puts the slider 8px higher than ECharts 5 did, 15px from the chart's bottom edge rather
+          // than 7px. The bar at the slider's top, with which the zoom window is moved, then covers the second line of
+          // the labels: the time under the date, which the units Hour, Minute and Second have. 14px is the 7px of
+          // ECharts 5 and the 7px of that bar, which ECharts puts at the top of the slider's place. With `top: 'auto'`,
+          // ECharts places the slider by `bottom`, rather than by a top of its own.
           top: 'auto',
-          bottom: 14, // The v5 7px edge gap plus its 7px move handle.
-          borderColor: '#d2dbee',
-          borderRadius: 3,
-          backgroundColor: 'rgba(47,69,84,0)',
-          dataBackground: {
-            lineStyle: { color: '#d2dbee', width: 0.5 },
-            areaStyle: { color: '#d2dbee', opacity: 0.2 },
-          },
-          selectedDataBackground: {
-            lineStyle: { color: '#8fb0f7', width: 0.5 },
-            areaStyle: { color: '#8fb0f7', opacity: 0.2 },
-          },
-          handleStyle: { color: '#fff', borderColor: '#ACB8D1' },
-          moveHandleStyle: { color: '#D2DBEE', opacity: 0.7 },
-          textStyle: { color: '#6E7079' },
-          brushStyle: { color: 'rgba(135,175,274,0.15)', opacity: 1 },
-          emphasis: {
-            handleStyle: { borderColor: '#8FB0F7' },
-            moveHandleStyle: { color: '#8FB0F7', opacity: 0.7 },
-          },
+          bottom: 14,
           labelFormatter: (_, valueStr) => {
             return valueStr.replace(' ', '\n'); // Add a line break between date and time.
           },

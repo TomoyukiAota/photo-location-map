@@ -1180,14 +1180,6 @@ test('chart grouping, zoom, reset and photo selection keep their real data behav
   await expectRepresentedPhotos(4);
   const chart = page.locator('app-date-time-taken-chart .chart');
   await expect(chart.locator('canvas')).toBeVisible();
-  const readChartTheme = () => chart.evaluate(element => {
-    if (typeof window.__plmReadChartTheme !== 'function') throw new Error('The fixed E2E chart-theme hook is unavailable.');
-    return window.__plmReadChartTheme(element);
-  });
-  const chartTheme = await readChartTheme();
-  console.info('Resolved chart theme:', JSON.stringify(chartTheme));
-  expect(chartTheme.api).toEqual({ init: 'function', getInstanceByDom: 'function', registerTheme: 'function' });
-  await expect.poll(async () => (await readChartTheme()).palette?.[0]).toBe('#5470c6');
   const unit = page.locator('app-date-time-taken-chart-config select');
   // An option's value is the unit as the code knows it, and its text is the unit's name, which the user chooses by.
   await expect(unit).toHaveValue('day');

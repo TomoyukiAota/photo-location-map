@@ -21,7 +21,6 @@
               "@turf/jsts",
               "concaveman",
               "earcut",
-              "echarts/theme/v5.js",
               "fast-deep-equal",
               "lodash",
               "moment",

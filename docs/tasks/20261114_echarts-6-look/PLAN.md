@@ -25,7 +25,7 @@ On 2026-11-14, after the investigation [below](#what-was-found):
 - **Keep where the toolbox and the slider are**, as the application's layout
   depends on both.
 - **Keep the toolbox's two colors** (`#666`, and `#3E98C5` under the pointer),
-  which the icon of the chart's menu beside it has as well.
+  which the icon of the chart's menu beside it matches.
 - **Keep the ticks of the x-axis**, which show what a label is for.
 
 ## What keeps the look of ECharts 5 today
@@ -110,10 +110,16 @@ repository.
    dragged or under the pointer. ECharts' development build prints no warning
    for the option, with or without the theme.
 7. **The icon of the chart's menu follows the toolbox.** Its styles
-   (`config/date-time-taken-chart-config.component.scss`) give it the
-   toolbox's grey, the toolbox's `#3e98c5` under the pointer, and its name
-   under it where ECharts draws the names of its icons. With ECharts 6's
-   toolbox colors, the three icons of the row would have two sets of colors.
+   (`config/date-time-taken-chart-config.component.scss`) give it a grey close
+   to the toolbox's (`#777`), the toolbox's `#3e98c5` under the pointer, and
+   its name under it where ECharts draws the names of its icons. With ECharts
+   6's toolbox colors, the three icons of the row would have two sets of
+   colors.
+8. **The screenshots of the e2e suite would not notice the ticks or the
+   toolbox's colors.** A comparison allows 0.1% of the window to differ, 960
+   pixels of 1200x800. Without the ticks, 28 pixels of the window differ; with
+   ECharts 6's toolbox colors, about 190. The places of the toolbox and the
+   slider, about 17,800 pixels, would be noticed.
 
 ## The change
 
@@ -143,56 +149,22 @@ In `createEChartsOption`:
   "Pin the component defaults that changed with the v6 style tokens".
 - **Keep, each with a comment that says why** (finding 3 and the decisions
   above), so that nobody takes them for leftovers of ECharts 5:
+  - the toolbox's `padding: 5` and `itemGap: 8`;
+  - the toolbox's `iconStyle: { borderColor: '#666' }` and
+    `emphasis: { iconStyle: { borderColor: '#3E98C5' } }`, without the
+    `color: 'none'` that `iconStyle` had, which is ECharts' own value;
+  - `show: true` in the x-axis's `axisTick`;
+  - the slider's `top: 'auto'` and `bottom: 14`. With `top: 'auto'`, ECharts
+    places the slider by `bottom`; it would otherwise place it by a top of its
+    own, and `bottom` would do nothing.
 
-```ts
-      toolbox: {
-        itemSize: 20,
-        top: 4,
-        right: 0,
-        // TL;DR: The room around the icons and between them that keeps them in the row of the menu's icon and the
-        // unit's select, which are beside the chart.
-        // Details: By itself, ECharts 6 has 15px around its toolbox and 10px between its icons, where ECharts 5 had 5px
-        // and 8px. With 15px, the icons are 10px lower and 10px further left: the middle of the icons is then at 575px
-        // of a window of 1200x800, and the middle of the row beside them at 565px.
-        padding: 5,
-        itemGap: 8,
-        // The colors of the menu's icon beside these, at rest and under the pointer, which its styles give it
-        // (config/date-time-taken-chart-config.component.scss). ECharts 6 has its own two, #6578ba and #404c76.
-        iconStyle: { borderColor: '#666' },
-        emphasis: { iconStyle: { borderColor: '#3E98C5' } },
-        feature: { /* as it is */ }
-      },
-      xAxis: {
-        type: 'category',
-        data: xData,
-        axisLabel: { /* as it is */ },
-        axisTick: {
-          // By itself, ECharts 6 leaves out the ticks of an axis like this one, with a bar for each label. A tick
-          // shows which place on the axis a label is for, among years of days.
-          show: true,
-          alignWithLabel: true,
-        }
-      },
-```
+### `src/app/date-time-taken-chart/date-time-taken-chart.component.spec.ts`
 
-```ts
-        {
-          type: 'slider',
-          start: 0,
-          end: 100,
-          // TL;DR: The slider is where the x-axis's labels of two lines have room above it.
-          // Details: By itself, ECharts 6 has the slider 8px higher, 15px from the chart's bottom edge where ECharts 5
-          // had 7px. The bar above the slider, with which the zoom window is moved, then covers the second line of the
-          // labels: the time under the date, which the units Hour, Minute and Second have. 14px is those 7px and the
-          // 7px of that bar, which ECharts draws from the slider's top. Without `top: 'auto'`, ECharts places the
-          // slider by its own top, and `bottom` does nothing.
-          top: 'auto',
-          bottom: 14,
-          labelFormatter: /* as it is */
-        }
-```
-
-`iconStyle` loses its `color: 'none'`, which is ECharts' own value.
+A new unit test of the option that the component gives ECharts: the four
+settings that it keeps. The screenshots would not notice two of them gone
+(finding 8), and the e2e suite's click on the Reset Zoom icon notices only
+the toolbox's place. The test creates the component with a template of the
+column beside the chart only, as ECharts needs a canvas to draw.
 
 ### `angular.json`, `docs/contributing/dependencies.md`
 
@@ -324,6 +296,8 @@ Before opening it, make sure that nothing private is in what GitHub will
 show (`AGENTS.md`, "This repository is public"): the commit messages, the
 branch's name, the title, the description and the diff.
 
+Open it once the CI runs of the push of stage 3 have passed:
+
 ```sh
 gh pr create --base main --head claude/echarts-v6-migration-6e240f --label automerge \
   --title "Draw the chart with ECharts 6's own look" --body-file <the description>
@@ -336,9 +310,13 @@ and `test (macos-arm64)` pass (`.mergify.yml`): nothing else is needed to
 merge. The Intel macOS job is not needed, as nothing that differs between x64
 and arm64 changes.
 
-Until it is merged: read a failed check's log and classify it before a rerun,
-and read the review comments, change what they are right about and answer the
-others.
+The owner asked for the pull request to be merged without waiting for them,
+so it has the label from the start; the owner usually adds it after the
+review. CodeRabbit reviews in about 10 minutes, about as long as the checks
+take. Until it is merged: read a failed check's log and classify it before a
+rerun, and read the review comments, change what they are right about and
+answer the others. Take the label off while a change for a comment is being
+made, so that Mergify does not merge without it.
 
 ### 5. After the merge
 

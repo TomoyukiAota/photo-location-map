@@ -43,7 +43,6 @@ repository's own files.
 | `moment`, `moment-timezone`, `moment-duration-format` | Dates and durations. moment is published as CommonJS; only another date library would end these. |
 | `lodash` | `debounce`, `throttle`, `isEqual`, `isObject` and `chunk`. `src-shared/` uses it in the main process too, which is CommonJS. |
 | `reflect-metadata` | Loaded for its effect, the metadata that decorators read. |
-| `echarts/theme/v5.js` | The theme that keeps the chart's look of ECharts 5; ECharts itself is an ES module. |
 | `zen-observable`, `safe-json-stringify` | Dependencies of `@amplitude/analytics-browser`. |
 | `@turf/jsts`, `concaveman`, `earcut`, `fast-deep-equal`, `rbush`, `skmeans` | Dependencies of `@turf/turf`, which the map's regions use. |
 
