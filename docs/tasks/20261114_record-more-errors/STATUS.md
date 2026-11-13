@@ -14,8 +14,8 @@ stopping, keeping questions for the end.
 | Stage | What | State | Pull request |
 | --- | --- | --- | --- |
 | 1 | More of each error: 20 frames, causes, thrown objects, the limits as one class, `Errors Dropped` | Merged | #694 |
-| 2 | What the code logs: `Logged Error`, `Logged Warning`, the `logged` tag and its lint rule | Its pull request waits for CI | #696 |
-| 3 | Failures with their reasons: `Opened Folder: Failed`, `Opened Folder: EXIF Read Failed` | Implemented; its pull request is merged after stage 2's | #697 |
+| 2 | What the code logs: `Logged Error`, `Logged Warning`, the `logged` tag and its lint rule | Merged | #696 |
+| 3 | Failures with their reasons: `Opened Folder: Failed`, `Opened Folder: EXIF Read Failed` | Its pull request waits for CI | #697 |
 | 4 | Starts that fail, launches that do not end, and saving at once | Not started | — |
 | 5 | What only the console shows: `Console Error (Renderer)` | Not started | — |
 | 6 | Crash reports, and the Welcome dialog's sentence | Waits for the backend to take crash dumps | — |
