@@ -67,7 +67,7 @@ export class AnalyticsBackendWrapper {
     // launches can run at once: a launch takes over those that ended launches left (UnsentEventsFiles).
     const files = new UnsentEventsFiles(this.electron.app.getPath('userData'), AnalyticsBackendEndpoint.nameOf(this.endpoint), isProcessRunning);
     this.unsentEventsFile = files.own(process.pid);
-    const unsentEvents = this.takeOverUnsentEvents(files.left(process.pid));
+    const unsentEvents = this.takeOverUnsentEvents(files);
     this.electron.app.on('will-quit', () => this.saveUnsentEvents());
     this.isInitialized = true;
     this.sender.add(...unsentEvents);
@@ -127,20 +127,14 @@ export class AnalyticsBackendWrapper {
     return response.status;
   }
 
-  /**
-   * The events of the files that ended launches left, written into this launch's own file before those are removed, so
-   * that none is lost if this launch ends before sending them.
-   */
-  private static takeOverUnsentEvents(files: UnsentEventsFile[]): AnalyticsBackendEvent[] {
+  /** The events that ended launches left, taken over into this launch's own file (UnsentEventsFiles.takeOver). */
+  private static takeOverUnsentEvents(files: UnsentEventsFiles): AnalyticsBackendEvent[] {
     try {
-      const events = files.flatMap(file => file.load());
+      const events = files.takeOver(process.pid, message => backendLogger.warn(message));
       if (events.length > 0) {
-        this.unsentEventsFile.save(events);
         this.isUnsentEventsFileWritten = true;
         backendLogger.info(`Loaded ${events.length} unsent events.`);
       }
-      for (const file of files)
-        file.remove();
       return events;
     } catch (error) {
       backendLogger.warn(`Failed to load unsent events: ${error}`);

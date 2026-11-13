@@ -110,6 +110,36 @@ export class UnsentEventsFiles {
     return files;
   }
 
+  /**
+   * TL;DR: The events of the files that ended launches left, written into the file of the launch whose process ID is
+   * `currentPid` before those are removed, so that none is lost if that launch ends before sending them.
+   * Details: The launch's own file is taken over too: before the launch writes it, it is the file of an earlier launch
+   * that was given the same process ID. A file whose events could not be written into the launch's own file is kept,
+   * and so is a file that cannot be removed: a later launch takes it over again, and its events may be sent twice,
+   * which the analytics backend drops by their event_id, rather than not at all. `warn` is told of each such file.
+   */
+  public takeOver(currentPid: number, warn: (message: string) => void): AnalyticsBackendEvent[] {
+    const own = this.own(currentPid);
+    const left = this.left(currentPid);
+    const events = [own, ...left].flatMap(file => file.load());
+    if (events.length > 0) {
+      try {
+        own.save(events);
+      } catch (error) {
+        warn(`Failed to save the unsent events taken over, which a later launch takes over again: ${error}`);
+        return events;
+      }
+    }
+    for (const file of left) {
+      try {
+        file.remove();
+      } catch (error) {
+        warn(`Failed to remove a file of unsent events, which a later launch may send again: ${error}`);
+      }
+    }
+    return events;
+  }
+
   private modifiedAt(filePath: string): number {
     const fs: typeof import('fs') = require('fs');
     try {
