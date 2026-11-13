@@ -183,10 +183,11 @@ they were.
 ### The reference screenshots
 
 Four screenshots of the whole window show the chart: `empty-home.png`,
-`loaded-home.png`, `resized-home.png` and `loaded-home-ar.png`. They change in
-both sets: `test/e2e/snapshots/`, which matches the owner's Mac, and
-`test/e2e/snapshots-ci/macos-26-arm64/`, which CI's runner writes
-(`test/e2e/README.md`). In each, only the chart may differ from before.
+`loaded-home.png`, `resized-home.png` and `loaded-home-ar.png`. They are
+written anew in `test/e2e/snapshots/`, which matches the owner's Mac, so that
+they show the chart as it is now; in each, only the chart differs from
+before. `test/e2e/snapshots-ci/macos-26-arm64/`, which CI's runner writes
+(`test/e2e/README.md`), changes only if CI's comparisons fail (stage 3).
 
 ## Stages
 
@@ -225,24 +226,44 @@ mise exec -- npm run build:prod     # no warning about a CommonJS module
 mise exec -- npm run test:e2e       # without the screenshots: every case passes
 ```
 
-Commit the code, the test and the two documents. Do not push yet: CI's
-comparison of the screenshots fails until stage 3, so one push is enough.
+Commit the code, the test and the two documents. The push and CI's run of
+stage 3 can start now, while stage 2 runs on the Mac: CI's screenshots are
+taken from the application, not from the references of stage 2.
 
 ### 2. The references of the owner's Mac
 
 Only on the Mac that `test/e2e/snapshots/` matches (the baseline of stage 0
-passes there). With the production build of stage 1:
+passes there). With the production build of stage 1.
+
+The comparisons do not fail: the chart's new colors are within what a
+comparison allows, as each pixel may differ by a little in color (Playwright's
+`threshold`, 0.2) and 0.1% of the pixels by more. So
+`--update-snapshots=changed` writes nothing, and the four references are
+written anew on purpose, so that they show the chart as it is now:
 
 ```sh
-PLM_VISUAL=1 mise exec -- npm run test:e2e                                  # the four comparisons fail, and no other
-PLM_VISUAL=1 mise exec -- npm run test:e2e -- --update-snapshots=changed    # writes anew the references that differ
-git status --short test/e2e/snapshots                                       # the four files, and no other
-PLM_VISUAL=1 mise exec -- npm run test:e2e                                  # every case passes
+PLM_VISUAL=1 mise exec -- npm run test:e2e -- --update-snapshots=all \
+  -g "welcome, about and every available settings tab|laid out from right to left|folder picker loads real photo data"
 ```
 
-A reference other than the four that was written anew is not the chart's:
-look at it, and restore it unless it is explained. Then check that each of the
-four differs from its version on `main` only in the chart, with the script
+These three cases take the four screenshots, and three others: `welcome`,
+`toolbar` and `map-toolbar`. All seven are written anew, and every one differs
+from before outside the chart too, by what differs from run to run: the map's
+tiles by 1 or 2 in a channel, and the edges of the texts and the buttons by up
+to 33. Restore the three others with `git checkout`. Of the four, keep the
+rectangle of the chart's element from the new screenshot and the rest from
+the reference on `main`, so that a reference changes where the chart is and
+nowhere else:
+
+| Reference | The chart's element, from (x, y) to (x, y) |
+| --- | --- |
+| `empty-home.png`, `loaded-home.png` | (304, 544) to (1069, 770) |
+| `resized-home.png`, where the sidebar is wider | (380, 544) to (1069, 770) |
+| `loaded-home-ar.png`, where the chart is at the left | (0, 544) to (645, 770) |
+
+The rectangles are where the gutters of the splitters end, and where the
+column beside the chart, of 130px, begins. Then check that each of the four
+differs from its version on `main` only in the chart, with the script
 [below](#where-two-screenshots-differ):
 
 ```sh
@@ -254,14 +275,13 @@ for name in empty-home loaded-home resized-home loaded-home-ar; do
 done
 ```
 
-In `empty-home.png` and `loaded-home.png`, the chart is the rectangle from
-(304, 544) to (1070, 771) of 1200x800. In the other two it is elsewhere: below
-the map, and beside the sidebar. Look at the four pictures as well.
-
-Then the same suite against a development build, which also fails a case for
-a binding that changed without telling Angular (`test/e2e/README.md`):
+Look at the four pictures as well. Then the whole suite, with the screenshots,
+on the production build; and the suite on a development build, which also
+fails a case for a binding that changed without telling Angular
+(`test/e2e/README.md`):
 
 ```sh
+PLM_VISUAL=1 mise exec -- npm run test:e2e
 mise exec -- npm run build:dev
 mise exec -- npm run test:e2e
 ```
@@ -278,17 +298,20 @@ gh run watch <run> --exit-status    # about 10 minutes
 gh run download <run> -n screenshots-macos-26-arm64 -D <a new, empty folder outside the repository>
 ```
 
-The push starts the three CI workflows. "CI on macOS" fails that run in
-`npm run test:e2e`, at the comparisons of the four screenshots with CI's
-references, which still show the old chart: that is expected, and not to be
-run again. A failure anywhere else is to be read and classified (`AGENTS.md`,
-"Classify a CI failure before rerunning it").
+The push starts the three CI workflows. A failure in them is to be read and
+classified (`AGENTS.md`, "Classify a CI failure before rerunning it").
 
-The manual run writes anew the references that differ and uploads the whole
-folder. Copy the PNG files of the download over
-`test/e2e/snapshots-ci/macos-26-arm64/`: `git status` then shows the four
-files, and no other. Check each against its version on `main` with the script,
-as in stage 2, and look at the pictures. Commit them with STATUS.md, and push.
+The manual run writes anew the references that fail their comparison
+(`--update-snapshots=changed`), and uploads the whole folder. As on the
+owner's Mac, CI's comparisons of the chart are expected to pass, and then
+nothing is written anew: CI's set stays as it is, as #691 left it for a
+change that its comparisons passed. Copy the PNG files of the download over
+`test/e2e/snapshots-ci/macos-26-arm64/` and look at `git status`. If a
+reference was written anew, check it against its version on `main` with the
+script, as in stage 2, and look at it, before committing it.
+
+Commit STATUS.md with what the run did, and push. The CI runs of that push
+are the ones that stage 4 waits for.
 
 ### 4. The pull request
 
