@@ -4,7 +4,7 @@ Started on 2026-11-14. See the [plan](./PLAN.md).
 
 ## Current state
 
-Stages 1 to 4 are implemented (see below). The owner asked on 2026-11-14
+Stages 1 to 5 are implemented (see below). The owner asked on 2026-11-14
 for as many errors as the application can record, decided what the plan lists
 under "The owner's decisions", and then said to carry the plan through without
 stopping, keeping questions for the end.
@@ -16,8 +16,8 @@ stopping, keeping questions for the end.
 | 1 | More of each error: 20 frames, causes, thrown objects, the limits as one class, `Errors Dropped` | Merged | #694 |
 | 2 | What the code logs: `Logged Error`, `Logged Warning`, the `logged` tag and its lint rule | Merged | #696 |
 | 3 | Failures with their reasons: `Opened Folder: Failed`, `Opened Folder: EXIF Read Failed` | Merged | #697 |
-| 4 | Starts that fail, launches that do not end, and saving at once | Its pull request waits for CI | #698 |
-| 5 | What only the console shows: `Console Error (Renderer)` | Not started | — |
+| 4 | Starts that fail, launches that do not end, and saving at once | Merged | #698 |
+| 5 | What only the console shows: `Console Error (Renderer)` | Its pull request waits for CI | #699 |
 | 6 | Crash reports, and the Welcome dialog's sentence | Waits for the backend to take crash dumps | — |
 
 When a stage is done, write here what was changed, what was checked with the
@@ -190,6 +190,56 @@ What CodeRabbit found on the pull request, and was changed on 2026-11-14:
   And a file of unsent events is written beside it and renamed over it too, as
   it can hold the only copy of another launch's events.
 
+Checked by hand on macOS, 2026-11-14, after the review: the main process,
+started as the e2e suite's entry starts it with a test profile, its language
+setup made to throw by the script that started it, and its dialogs and Dock
+icon kept off the screen. The launch kept the setup's
+`Unhandled Error (Main)`, its stack scrubbed, in its launch file, and kept the
+file when it quit. The next launch, on the same profile, with its windows
+hidden and the analytics backend's requests caught by the script rather than
+sent, sent `Launch Info: Previous Launch Ended Abnormally` with
+`; Kept events: 1` and then that error, and removed its own file when it quit.
+
+## Stage 5: What only the console shows
+
+What was changed:
+
+- `src-main/record-console-errors.ts`: the main process listens to the main
+  window's `console-message` (in Electron 45, one argument with `level`,
+  `message`, `lineNumber` and `sourceId`), and records the lines of the level
+  `error` as `Console Error (Renderer)`, within limits of their own (20 per
+  launch, 3 with the same label). It leaves out what is recorded otherwise: the
+  logger's own lines, which begin with the time and the process, Chromium's
+  `Uncaught …` and Angular's `ERROR …`, which the renderer records with their
+  stacks, and the line of a page that could not start.
+- `src-shared/analytics/error-for-analytics.ts`: `scrubConsoleMessage` scrubs a
+  line as an error's message, but that a web address keeps its origin
+  (`https://tile.example.org/<path>`); `scrubConsoleSource` gives the source as
+  a file of the app's by its name, a web address by its origin, or `<path>`.
+  The part of the scrubbing of stacks that tells an app's file is
+  `scrubFile`, which both use. The origin that either keeps has the user name
+  taken out, as a computer on the network can be named after its user
+  (`http://<user>-macbook.local:8080/<path>`); added before the pull request
+  was reviewed.
+
+What CodeRabbit found on the pull request, and was changed on 2026-11-14:
+
+- A URL gives its host in lower case, so a user name in another case stayed in
+  an origin. The user name is taken out of an origin in any case.
+- A web source on the local machine, such as a tile server at
+  `http://localhost:8080/tiles/…?key=…`, was taken for the dev server's file
+  and kept its path and query, and a web address that names `app.asar/` was
+  taken for the app's file. The source of a console line that is a web address
+  is now given by its origin only, whatever it serves; a file's, without its
+  query.
+- Photo Data Viewer's window is left out: that application records its own
+  errors.
+
+Found on the way: the unit tests load a module's compiled `.js` when one is
+next to its `.ts`, which `npm run build:src-main` writes. After a build for the
+e2e suite, a change to a module of the main process is not what its tests run
+until the compiled files are removed (`git clean -fX src-main src-shared`).
+
 ## Checks
 
 | Check | Stage | Result |
@@ -218,3 +268,15 @@ What CodeRabbit found on the pull request, and was changed on 2026-11-14:
 | `npm run test:unit:em:main` | 4, after the review | 251 passed, 2 pending, among them a launch given the process ID of one that ended, a file left half written, the events that a launch kept, more launches than are taken at once, and files of unsent events that cannot be written or removed |
 | `npm run test:unit:em:renderer` | 4, after the review | 91 passed |
 | `npm run test:unit:ng` | 4, after the review | 58 files passed |
+| `npm run test:e2e`, on a production build of stage 4 | 1 to 4 | 49 passed, 1 skipped (5.0 min) |
+| `npm run lint:all`, `tsc` of the main process | 5 | passed |
+| `npm run test:unit:em:main` | 5 | 247 passed, 2 pending |
+| `npm run test:unit:em:renderer` | 5 | 91 passed |
+| `npm run test:unit:ng` | 5 | 58 files passed |
+| `npm run lint:all`, `tsc` of the main process | 5, merged with the reviewed stage 4 | passed |
+| `npm run test:unit:em:main` | 5, merged with the reviewed stage 4 | 257 passed, 2 pending, among them an origin named after its user |
+| `npm run test:unit:em:renderer` | 5, merged with the reviewed stage 4 | 92 passed |
+| `npm run test:unit:ng` | 5, merged with the reviewed stage 4 | 58 files passed |
+| `npm run lint:all`, `tsc` of the main process | 5, after the review | passed |
+| `npm run test:unit:em:main` | 5, after the review | 260 passed, 2 pending, among them a user name in another case, a local tile server's source, a web address that names `app.asar`, and a file with a query |
+| `npm run test:unit:em:renderer` | 5, after the review | 95 passed |

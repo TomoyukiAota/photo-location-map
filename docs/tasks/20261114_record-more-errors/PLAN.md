@@ -307,13 +307,13 @@ the errors, as `Console Error (Renderer)`.
 
 Steps:
 
-- [ ] Check the event's arguments in the Electron version in use: they changed
+- [x] Check the event's arguments in the Electron version in use: they changed
   from separate arguments to one event object in an earlier major version.
-- [ ] The listener (`src-main/`, set where `recordWindowFailures` is), the
+- [x] The listener (`src-main/`, set where `recordWindowFailures` is), the
   filter and the scrubbing of a web address.
-- [ ] Tests with stand-ins for the window, as
+- [x] Tests with stand-ins for the window, as
   `test/src-main/window/record-window-failures.spec.em.main.ts` has.
-- [ ] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
+- [x] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
 
 ### Stage 6: Crash reports, and the Welcome dialog's sentence
 

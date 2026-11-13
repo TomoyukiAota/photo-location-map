@@ -73,27 +73,89 @@ function scrubLocation(location: string, context: ErrorScrubbingContext): string
   const match = /^(.*?)(:\d+:\d+)?$/.exec(location);
   const file = match[1];
   const lineAndColumn = match[2] || '';
+  return `${scrubFile(file, context)}${lineAndColumn}`;
+}
 
+/** A file of a stack or of the console: kept only when it is the app's own, relative to the app. */
+function scrubFile(file: string, context: ErrorScrubbingContext): string {
   if (file === 'native' || file === '<anonymous>' || file.startsWith('node:'))
-    return location;
+    return file;
 
   const devServer = /^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?\/(.*)$/.exec(file);
   if (devServer)
-    return `${devServer[1]}${lineAndColumn}`;
+    return devServer[1];
 
   const normalized = file.replace(/\\/g, '/');
   const asarIndex = normalized.indexOf('app.asar/');
   if (asarIndex >= 0)
-    return `${normalized.slice(asarIndex)}${lineAndColumn}`;
+    return normalized.slice(asarIndex);
 
   for (const appPath of context.appPaths) {
     const normalizedAppPath = appPath.replace(/\\/g, '/').replace(/\/$/, '');
     const index = normalizedAppPath ? normalized.indexOf(`${normalizedAppPath}/`) : -1;
     if (index >= 0)
-      return `${normalized.slice(index + normalizedAppPath.length + 1)}${lineAndColumn}`;
+      return normalized.slice(index + normalizedAppPath.length + 1);
   }
 
-  return `<path>${lineAndColumn}`;
+  return '<path>';
+}
+
+/**
+ * A web address's origin, which tells which server, without its path and query, which can hold anything; nor the user
+ * name, which the name of a computer on the network can hold ("http://<user>-macbook.local:8080/<path>"). A URL gives
+ * its host in lower case, so the user name is matched in any case.
+ */
+function webOrigin(url: string, context: ErrorScrubbingContext): string | undefined {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return undefined;
+  }
+  if (!/^https?:$/.test(parsed.protocol))
+    return undefined;
+  let origin = parsed.origin;
+  const names = context.sensitiveStrings
+    .filter(s => s && s.length >= 3 && !/[\\/]/.test(s))
+    .sort((a, b) => b.length - a.length);
+  for (const name of names)
+    origin = origin.replace(new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), '<user>');
+  return `${origin}/<path>`;
+}
+
+/**
+ * A console message as scrubMessage gives it, but that a web address keeps its origin
+ * ("https://tile.example.org/<path>"), so that a request that failed tells which server.
+ */
+export function scrubConsoleMessage(message: string, context: ErrorScrubbingContext): string {
+  const origins: string[] = [];
+  const marked = message.replace(/\bhttps?:\/\/[^\s'"`()<>]+/gi, url => {
+    const origin = webOrigin(url, context);
+    if (origin === undefined)
+      return url;
+    origins.push(origin);
+    return `\u0000${origins.length - 1}\u0000`;
+  });
+  return scrubMessage(marked, context).replace(/\u0000(\d+)\u0000/g, (_match, index: string) => origins[Number(index)]);
+}
+
+/**
+ * The source of a console message: a web address by its origin, whatever it serves, as its path and query can hold
+ * anything, the dev server's included; else a file of the app's by its name, without a query, or <path>.
+ */
+export function scrubConsoleSource(sourceId: string, context: ErrorScrubbingContext): string {
+  if (!sourceId)
+    return '';
+  const origin = webOrigin(sourceId, context);
+  if (origin !== undefined)
+    return origin;
+  let file = sourceId.replace(/[?#][\s\S]*$/, '');
+  try {
+    file = decodeURI(file);
+  } catch {
+    // Kept as it is.
+  }
+  return scrubFile(file, context);
 }
 
 function replaceSensitiveStrings(text: string, context: ErrorScrubbingContext): string {
