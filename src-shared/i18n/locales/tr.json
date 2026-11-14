@@ -52,17 +52,17 @@
     "sort": {
       "title": "Sırala",
       "byName": "Ada göre",
-      "byShootingTime": "Çekim zamanına göre",
+      "byShootingTime": "Çekim tarihine göre",
       "ascending": "Artan",
       "descending": "Azalan"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "Çekim zamanına göre sıralama",
-    "intro": "“Çekim zamanına göre” seçildiğinde uygulama dosyaları şöyle sıralar:",
+    "title": "Çekim tarihine göre sıralama",
+    "intro": "“Çekim tarihine göre” seçildiğinde uygulama dosyaları şöyle sıralar:",
     "step1": "EXIF verilerindeki DateTimeOriginal değerini kullanır. Bu değer yoksa",
     "step2": "dosyanın değiştirilme tarihini kullanır.",
-    "foldersNote": "Klasörlerin “çekim zamanı” olmadığı için klasörler ada göre sıralanır.",
+    "foldersNote": "Klasörlerin “çekim tarihi” olmadığı için klasörler ada göre sıralanır.",
     "moreDetails": "Daha fazla bilgi",
     "details": {
       "intro": "Aşağıda ek bilgiler yer almaktadır:",
@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Google Street View’da aç",
       "viewData": "Verileri görüntüle"
     },
-    "pathTooLong": "Dosya yolunun uzunluğu {{length}} olduğu için küçük resim gösterilemiyor. Windows, yol uzunluğunu en fazla {{maximum}} ile sınırlar. Yolu kısaltmak için dosyanın konumunu değiştirin. Ayrıntılar için Ctrl+Shift+I tuşlarına basın ve konsol iletilerini okuyun.",
-    "generatedThumbnailPathTooLong": "Oluşturulan küçük resmin yolunun uzunluğu {{length}} olduğu için küçük resim gösterilemiyor. Windows, yol uzunluğunu en fazla {{maximum}} ile sınırlar. Oluşturulan küçük resmin yolunu kısaltmak için dosyanın konumunu değiştirin. Ayrıntılar için Ctrl+Shift+I tuşlarına basın ve konsol iletilerini okuyun."
+    "pathTooLong": "Dosya yolunun uzunluğu {{length}} karakter olduğu için küçük resim gösterilemiyor. Windows, yol uzunluğunu en fazla {{maximum}} karakterle sınırlar. Yolu kısaltmak için dosyanın konumunu değiştirin. Ayrıntılar için Ctrl+Shift+I tuşlarına basın ve konsol iletilerini okuyun.",
+    "generatedThumbnailPathTooLong": "Oluşturulan küçük resmin yolunun uzunluğu {{length}} karakter olduğu için küçük resim gösterilemiyor. Windows, yol uzunluğunu en fazla {{maximum}} karakterle sınırlar. Oluşturulan küçük resmin yolunu kısaltmak için dosyanın konumunu değiştirin. Ayrıntılar için Ctrl+Shift+I tuşlarına basın ve konsol iletilerini okuyun."
   },
   "map": {
     "zoomIn": "Yakınlaştır",

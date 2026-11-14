@@ -52,17 +52,17 @@
     "sort": {
       "title": "Sordi",
       "byName": "Nime järgi",
-      "byShootingTime": "Pildistamisaja järgi",
+      "byShootingTime": "Pildistamise kuupäeva järgi",
       "ascending": "Kasvav",
       "descending": "Kahanev"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "Sortimine pildistamisaja järgi",
-    "intro": "Kui valitud on „Pildistamisaja järgi“, sordib rakendus failid nii:",
+    "title": "Sortimine pildistamise kuupäeva järgi",
+    "intro": "Kui valitud on „Pildistamise kuupäeva järgi“, sordib rakendus failid nii:",
     "step1": "kasutab EXIF-andmete väärtust DateTimeOriginal ja kui see puudub,",
     "step2": "kasutab faili muutmisaega.",
-    "foldersNote": "Kaustad sorditakse nime järgi, sest kaustadel ei ole „pildistamisaega“.",
+    "foldersNote": "Kaustad sorditakse nime järgi, sest kaustadel ei ole „pildistamise kuupäeva“.",
     "moreDetails": "Rohkem üksikasju",
     "details": {
       "intro": "Allpool on lisateave:",
@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Ava Google Street View",
       "viewData": "Kuva andmed"
     },
-    "pathTooLong": "Pisipilti ei saa kuvada, sest faili tee pikkus on {{length}}. Windows lubab tee pikkuseks kõige rohkem {{maximum}}. Tee lühendamiseks muutke faili asukohta. Üksikasjade nägemiseks vajutage Ctrl+Shift+I ja lugege konsooli teateid.",
-    "generatedThumbnailPathTooLong": "Pisipilti ei saa kuvada, sest loodud pisipildi tee pikkus on {{length}}. Windows lubab tee pikkuseks kõige rohkem {{maximum}}. Loodud pisipildi tee lühendamiseks muutke faili asukohta. Üksikasjade nägemiseks vajutage Ctrl+Shift+I ja lugege konsooli teateid."
+    "pathTooLong": "Pisipilti ei saa kuvada, sest faili tee pikkus on {{length}} märki. Windows lubab tee pikkuseks kõige rohkem {{maximum}} märki. Tee lühendamiseks muutke faili asukohta. Üksikasjade nägemiseks vajutage Ctrl+Shift+I ja lugege konsooli teateid.",
+    "generatedThumbnailPathTooLong": "Pisipilti ei saa kuvada, sest loodud pisipildi tee pikkus on {{length}} märki. Windows lubab tee pikkuseks kõige rohkem {{maximum}} märki. Loodud pisipildi tee lühendamiseks muutke faili asukohta. Üksikasjade nägemiseks vajutage Ctrl+Shift+I ja lugege konsooli teateid."
   },
   "map": {
     "zoomIn": "Suurenda",

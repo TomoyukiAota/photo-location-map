@@ -52,17 +52,17 @@
     "sort": {
       "title": "Rendezés",
       "byName": "Név szerint",
-      "byShootingTime": "Készítés ideje szerint",
+      "byShootingTime": "Készítés dátuma szerint",
       "ascending": "Növekvő",
       "descending": "Csökkenő"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "Rendezés a készítés ideje szerint",
-    "intro": "Ha a „Készítés ideje szerint” van kiválasztva, az alkalmazás így rendezi a fájlokat:",
+    "title": "Rendezés a készítés dátuma szerint",
+    "intro": "Ha a „Készítés dátuma szerint” van kiválasztva, az alkalmazás így rendezi a fájlokat:",
     "step1": "Az EXIF-adatok DateTimeOriginal értékét használja. Ha ez nem érhető el,",
     "step2": "a fájl módosítási idejét használja.",
-    "foldersNote": "A mappák név szerint vannak rendezve, mert a mappáknak nincs „készítési idejük”.",
+    "foldersNote": "A mappák név szerint vannak rendezve, mert a mappáknak nincs „készítési dátumuk”.",
     "moreDetails": "További háttér-információk",
     "details": {
       "intro": "Az alábbiakban néhány háttér-információ olvasható:",

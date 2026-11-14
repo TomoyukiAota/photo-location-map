@@ -52,17 +52,17 @@
     "sort": {
       "title": "Kārtot",
       "byName": "Pēc nosaukuma",
-      "byShootingTime": "Pēc uzņemšanas laika",
+      "byShootingTime": "Pēc uzņemšanas datuma",
       "ascending": "Augošā secībā",
       "descending": "Dilstošā secībā"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "Kārtošana pēc uzņemšanas laika",
-    "intro": "Ja ir izvēlēts „Pēc uzņemšanas laika”, lietotne kārto failus šādi:",
+    "title": "Kārtošana pēc uzņemšanas datuma",
+    "intro": "Ja ir izvēlēts “Pēc uzņemšanas datuma”, lietotne kārto failus šādi:",
     "step1": "izmanto EXIF datu vērtību DateTimeOriginal, bet, ja tās nav,",
     "step2": "izmanto faila modificēšanas laiku.",
-    "foldersNote": "Mapes tiek kārtotas pēc nosaukuma, jo mapēm nav „uzņemšanas laika”.",
+    "foldersNote": "Mapes tiek kārtotas pēc nosaukuma, jo mapēm nav “uzņemšanas datuma”.",
     "moreDetails": "Papildinformācija",
     "details": {
       "intro": "Tālāk ir sniegta papildu informācija:",
@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Atvērt Google Street View",
       "viewData": "Skatīt datus"
     },
-    "pathTooLong": "Sīktēlu nevar parādīt, jo faila ceļa garums ir {{length}}. Windows ierobežo ceļa garumu līdz {{maximum}}. Lai saīsinātu ceļu, mainiet faila atrašanās vietu. Lai skatītu detalizētu informāciju, nospiediet Ctrl+Shift+I un izlasiet konsoles ziņojumus.",
-    "generatedThumbnailPathTooLong": "Sīktēlu nevar parādīt, jo izveidotā sīktēla ceļa garums ir {{length}}. Windows ierobežo ceļa garumu līdz {{maximum}}. Lai saīsinātu izveidotā sīktēla ceļu, mainiet faila atrašanās vietu. Lai skatītu detalizētu informāciju, nospiediet Ctrl+Shift+I un izlasiet konsoles ziņojumus."
+    "pathTooLong": "Sīktēlu nevar parādīt, jo rakstzīmju skaits faila ceļā ir {{length}}. Windows ierobežo rakstzīmju skaitu ceļā līdz {{maximum}}. Lai saīsinātu ceļu, mainiet faila atrašanās vietu. Lai skatītu detalizētu informāciju, nospiediet Ctrl+Shift+I un izlasiet konsoles ziņojumus.",
+    "generatedThumbnailPathTooLong": "Sīktēlu nevar parādīt, jo rakstzīmju skaits izveidotā sīktēla ceļā ir {{length}}. Windows ierobežo rakstzīmju skaitu ceļā līdz {{maximum}}. Lai saīsinātu izveidotā sīktēla ceļu, mainiet faila atrašanās vietu. Lai skatītu detalizētu informāciju, nospiediet Ctrl+Shift+I un izlasiet konsoles ziņojumus."
   },
   "map": {
     "zoomIn": "Tuvināt",
@@ -122,7 +122,7 @@
       "minute": "Minūte",
       "second": "Sekunde"
     },
-    "unsupportedDuration": "Šī diagramma nevar parādīt periodu, kas garāks par 30 dienām, ja izvēlēts „Stunda”, par 3 dienām, ja izvēlēts „Minūte”, vai par 1 stundu, ja izvēlēts „Sekunde”.",
+    "unsupportedDuration": "Šī diagramma nevar parādīt periodu, kas garāks par 30 dienām, ja izvēlēts “Stunda”, par 3 dienām, ja izvēlēts “Minūte”, vai par 1 stundu, ja izvēlēts “Sekunde”.",
     "changeUnitOrSelection": "Mainiet izvēli Gads/Mēnesis/Diena/Stunda/Minūte/Sekunde vai atlasiet fotoattēlus tā, lai periods būtu īsāks.",
     "selectPhotosWithinZoom": "Atlasīt fotoattēlus tuvinātajā diapazonā",
     "zoom": "Tālummaiņa",
@@ -152,7 +152,7 @@
     "processedWithErrors": "Apstrādāti faili: {{processed}} no {{total}}, ar kļūdām.",
     "seeFilesWithErrors": "Noklikšķiniet šeit, lai skatītu failus ar kļūdām.",
     "seeFilesWithErrorsTitle": "Skatīt failus ar kļūdām",
-    "generationRequired": "Jāizveido sīktēli: {{required}}. Šo skaitu iegūst šādi: „HEIF faili ({{heif}}) − faili, kas jau ir kešatmiņā ({{cached}})”.",
+    "generationRequired": "Jāizveido sīktēli: {{required}}. Šo skaitu iegūst šādi: “HEIF faili ({{heif}}) − faili, kas jau ir kešatmiņā ({{cached}})”.",
     "closeStatusBar": "Aizvērt sīktēlu veidošanas statusa joslu",
     "errorDialog": {
       "message": "Neizdevās izveidot sīktēlus šiem failiem (kopā {{count}}):",
@@ -194,13 +194,13 @@
     },
     "os": {
       "title": "Failu pārlūka kontekstizvēlne",
-      "description": "Pievienojiet „{{menuItem}}” failu pārlūka kontekstizvēlnei vai noņemiet to.",
+      "description": "Pievienojiet “{{menuItem}}” failu pārlūka kontekstizvēlnei vai noņemiet to.",
       "add": "Pievienot",
       "remove": "Noņemt",
-      "added": "„{{menuItem}}” ir pievienots failu pārlūka kontekstizvēlnei.",
-      "removed": "„{{menuItem}}” ir noņemts no failu pārlūka kontekstizvēlnes.",
-      "failedToAdd": "Neizdevās pievienot „{{menuItem}}” failu pārlūka kontekstizvēlnei.",
-      "failedToRemove": "Neizdevās noņemt „{{menuItem}}” no failu pārlūka kontekstizvēlnes.",
+      "added": "“{{menuItem}}” ir pievienots failu pārlūka kontekstizvēlnei.",
+      "removed": "“{{menuItem}}” ir noņemts no failu pārlūka kontekstizvēlnes.",
+      "failedToAdd": "Neizdevās pievienot “{{menuItem}}” failu pārlūka kontekstizvēlnei.",
+      "failedToRemove": "Neizdevās noņemt “{{menuItem}}” no failu pārlūka kontekstizvēlnes.",
       "confirmInExplorer": "Lai pārbaudītu, atveriet failu pārlūku un ar peles labo pogu noklikšķiniet uz faila vai mapes."
     },
     "cache": {

@@ -52,17 +52,17 @@
     "sort": {
       "title": "Sorter",
       "byName": "Efter navn",
-      "byShootingTime": "Efter optagelsestidspunkt",
+      "byShootingTime": "Efter optagelsesdato",
       "ascending": "Stigende",
       "descending": "Faldende"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "Sortering efter optagelsestidspunkt",
-    "intro": "Når “Efter optagelsestidspunkt” er valgt, gør appen sådan for at sortere filerne:",
+    "title": "Sortering efter optagelsesdato",
+    "intro": "Når “Efter optagelsesdato” er valgt, gør appen sådan for at sortere filerne:",
     "step1": "Den bruger DateTimeOriginal fra EXIF-oplysningerne. Hvis den værdi mangler,",
     "step2": "bruger den filens ændringsdato.",
-    "foldersNote": "Mapper sorteres efter navn, da mapper ikke har noget “optagelsestidspunkt”.",
+    "foldersNote": "Mapper sorteres efter navn, da mapper ikke har nogen “optagelsesdato”.",
     "moreDetails": "Flere baggrundsoplysninger",
     "details": {
       "intro": "Her er nogle baggrundsoplysninger:",

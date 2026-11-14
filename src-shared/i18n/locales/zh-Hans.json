@@ -52,17 +52,17 @@
     "sort": {
       "title": "排序",
       "byName": "按名称",
-      "byShootingTime": "按拍摄时间",
+      "byShootingTime": "按拍摄日期",
       "ascending": "升序",
       "descending": "降序"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "按拍摄时间排序",
-    "intro": "选择“按拍摄时间”后，此应用按以下方式对文件排序：",
+    "title": "按拍摄日期排序",
+    "intro": "选择“按拍摄日期”后，此应用按以下方式对文件排序：",
     "step1": "使用 EXIF 中的 DateTimeOriginal。如果没有，则",
     "step2": "使用文件的修改时间。",
-    "foldersNote": "文件夹没有“拍摄时间”的概念，因此文件夹按名称排序。",
+    "foldersNote": "文件夹没有“拍摄日期”的概念，因此文件夹按名称排序。",
     "moreDetails": "更多详情",
     "details": {
       "intro": "以下是补充说明：",
@@ -94,8 +94,8 @@
       "openGoogleStreetView": "打开 Google 街景",
       "viewData": "查看数据"
     },
-    "pathTooLong": "文件路径的长度为 {{length}}，因此无法显示缩略图。Windows 将路径长度限制为最多 {{maximum}}。请更改文件的位置以缩短路径。有关详细信息，请按 Ctrl+Shift+I 并查看控制台消息。",
-    "generatedThumbnailPathTooLong": "生成的缩略图的路径长度为 {{length}}，因此无法显示缩略图。Windows 将路径长度限制为最多 {{maximum}}。请更改文件的位置以缩短生成的缩略图的路径。有关详细信息，请按 Ctrl+Shift+I 并查看控制台消息。"
+    "pathTooLong": "文件路径的长度为 {{length}} 个字符，因此无法显示缩略图。Windows 将路径长度限制为最多 {{maximum}} 个字符。请更改文件的位置以缩短路径。有关详细信息，请按 Ctrl+Shift+I 并查看控制台消息。",
+    "generatedThumbnailPathTooLong": "生成的缩略图的路径长度为 {{length}} 个字符，因此无法显示缩略图。Windows 将路径长度限制为最多 {{maximum}} 个字符。请更改文件的位置以缩短生成的缩略图的路径。有关详细信息，请按 Ctrl+Shift+I 并查看控制台消息。"
   },
   "map": {
     "zoomIn": "放大",

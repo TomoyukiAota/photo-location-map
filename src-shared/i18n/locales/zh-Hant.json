@@ -52,17 +52,17 @@
     "sort": {
       "title": "排序",
       "byName": "依名稱",
-      "byShootingTime": "依拍攝時間",
+      "byShootingTime": "依拍攝日期",
       "ascending": "遞增",
       "descending": "遞減"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "依拍攝時間排序",
-    "intro": "選擇「依拍攝時間」後，此應用程式會以下列方式排序檔案：",
+    "title": "依拍攝日期排序",
+    "intro": "選擇「依拍攝日期」後，此應用程式會以下列方式排序檔案：",
     "step1": "使用 EXIF 中的 DateTimeOriginal。如果沒有，則",
     "step2": "使用檔案的修改時間。",
-    "foldersNote": "資料夾沒有「拍攝時間」的概念，因此資料夾會依名稱排序。",
+    "foldersNote": "資料夾沒有「拍攝日期」的概念，因此資料夾會依名稱排序。",
     "moreDetails": "更多詳細資訊",
     "details": {
       "intro": "以下是補充說明：",
@@ -94,8 +94,8 @@
       "openGoogleStreetView": "開啟 Google 街景服務",
       "viewData": "檢視資料"
     },
-    "pathTooLong": "檔案路徑的長度為 {{length}}，因此無法顯示縮圖。Windows 將路徑長度限制為最多 {{maximum}}。請變更檔案的位置以縮短路徑。如需詳細資訊，請按 Ctrl+Shift+I 並查看主控台訊息。",
-    "generatedThumbnailPathTooLong": "產生的縮圖的路徑長度為 {{length}}，因此無法顯示縮圖。Windows 將路徑長度限制為最多 {{maximum}}。請變更檔案的位置以縮短產生的縮圖的路徑。如需詳細資訊，請按 Ctrl+Shift+I 並查看主控台訊息。"
+    "pathTooLong": "檔案路徑的長度為 {{length}} 個字元，因此無法顯示縮圖。Windows 將路徑長度限制為最多 {{maximum}} 個字元。請變更檔案的位置以縮短路徑。如需詳細資訊，請按 Ctrl+Shift+I 並查看主控台訊息。",
+    "generatedThumbnailPathTooLong": "產生的縮圖的路徑長度為 {{length}} 個字元，因此無法顯示縮圖。Windows 將路徑長度限制為最多 {{maximum}} 個字元。請變更檔案的位置以縮短產生的縮圖的路徑。如需詳細資訊，請按 Ctrl+Shift+I 並查看主控台訊息。"
   },
   "map": {
     "zoomIn": "放大",

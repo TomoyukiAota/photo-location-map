@@ -52,17 +52,17 @@
     "sort": {
       "title": "Zoradiť",
       "byName": "Podľa názvu",
-      "byShootingTime": "Podľa času nasnímania",
+      "byShootingTime": "Podľa dátumu nasnímania",
       "ascending": "Vzostupne",
       "descending": "Zostupne"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "Zoradenie podľa času nasnímania",
-    "intro": "Keď je vybraté „Podľa času nasnímania“, aplikácia zoraďuje súbory takto:",
+    "title": "Zoradenie podľa dátumu nasnímania",
+    "intro": "Keď je vybraté „Podľa dátumu nasnímania“, aplikácia zoraďuje súbory takto:",
     "step1": "Použije hodnotu DateTimeOriginal z údajov EXIF. Ak nie je k dispozícii,",
     "step2": "použije dátum úpravy súboru.",
-    "foldersNote": "Priečinky sa zoraďujú podľa názvu, pretože priečinky nemajú žiadny „čas nasnímania“.",
+    "foldersNote": "Priečinky sa zoraďujú podľa názvu, pretože priečinky nemajú žiadny „dátum nasnímania“.",
     "moreDetails": "Ďalšie informácie",
     "details": {
       "intro": "Nižšie sú ďalšie informácie:",
@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Otvoriť Google Street View",
       "viewData": "Zobraziť údaje"
     },
-    "pathTooLong": "Miniatúru nie je možné zobraziť, pretože dĺžka cesty k súboru je {{length}}. Windows obmedzuje dĺžku cesty na {{maximum}}. Presuňte súbor inam, aby bola jeho cesta kratšia. Podrobnosti zistíte stlačením Ctrl+Shift+I a prečítaním správ v konzole.",
-    "generatedThumbnailPathTooLong": "Miniatúru nie je možné zobraziť, pretože dĺžka cesty k vytvorenej miniatúre je {{length}}. Windows obmedzuje dĺžku cesty na {{maximum}}. Presuňte súbor inam, aby bola cesta k vytvorenej miniatúre kratšia. Podrobnosti zistíte stlačením Ctrl+Shift+I a prečítaním správ v konzole."
+    "pathTooLong": "Miniatúru nie je možné zobraziť, pretože počet znakov v ceste k súboru je {{length}}. Windows obmedzuje počet znakov v ceste na {{maximum}}. Presuňte súbor inam, aby bola jeho cesta kratšia. Podrobnosti zistíte stlačením Ctrl+Shift+I a prečítaním správ v konzole.",
+    "generatedThumbnailPathTooLong": "Miniatúru nie je možné zobraziť, pretože počet znakov v ceste k vytvorenej miniatúre je {{length}}. Windows obmedzuje počet znakov v ceste na {{maximum}}. Presuňte súbor inam, aby bola cesta k vytvorenej miniatúre kratšia. Podrobnosti zistíte stlačením Ctrl+Shift+I a prečítaním správ v konzole."
   },
   "map": {
     "zoomIn": "Priblížiť",

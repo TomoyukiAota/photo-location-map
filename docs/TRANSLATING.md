@@ -159,8 +159,20 @@ npm run test:unit:ng
   languages, which narrows the list down to what is typed in it;
   `language.noLanguagesFound` is shown in the list when nothing is left.
 - Quotation marks are those of your language: “ ” in English, 「 」 in
-  Japanese, « » in French. A straight double quote would have to be written
-  `\"` in the file.
+  Japanese, « » in French, and “ ” in Latvian, as its software has them. A
+  straight double quote would have to be written `\"` in the file.
+- `directoryTree.openedFolder` puts between its label and the folder's path the
+  dash that your language writes there: ` - ` in English, ` — ` in Russian and
+  Ukrainian, ` – ` in Bulgarian and Hebrew.
+- When a photo was taken is one term, "Date Taken", as Explorer names it for a
+  value with the time: in the sort (`sidebar.sort.byShootingTime` and
+  `sortByShootingTimeInfo`) and in Photo Data Viewer. Use the word of your
+  language's Windows or Photo Data Viewer for both, not one for the date and
+  another for the time.
+- `photoInfo.pathTooLong` and `generatedThumbnailPathTooLong` say the unit of
+  their two lengths, characters. Where the noun after a number changes with
+  the number in your language, say "the number of characters in the path is
+  {{length}}" instead, which holds for any number.
 - The texts under `menu` are the application menu. Use the words that
   applications of your language use on macOS and Windows for the same items
   (Quit, Hide Others, Actual Size, Undo).

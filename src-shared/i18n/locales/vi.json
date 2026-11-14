@@ -52,17 +52,17 @@
     "sort": {
       "title": "Sắp xếp",
       "byName": "Theo tên",
-      "byShootingTime": "Theo thời gian chụp",
+      "byShootingTime": "Theo ngày chụp",
       "ascending": "Tăng dần",
       "descending": "Giảm dần"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "Sắp xếp theo thời gian chụp",
-    "intro": "Khi chọn “Theo thời gian chụp”, ứng dụng sắp xếp các tệp như sau:",
+    "title": "Sắp xếp theo ngày chụp",
+    "intro": "Khi chọn “Theo ngày chụp”, ứng dụng sắp xếp các tệp như sau:",
     "step1": "dùng DateTimeOriginal trong EXIF; nếu không có thì",
     "step2": "dùng thời gian sửa đổi của tệp.",
-    "foldersNote": "Thư mục được sắp xếp theo tên vì thư mục không có “thời gian chụp”.",
+    "foldersNote": "Thư mục được sắp xếp theo tên vì thư mục không có “ngày chụp”.",
     "moreDetails": "Thêm chi tiết",
     "details": {
       "intro": "Sau đây là thông tin bổ sung:",
@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Mở Google Street View",
       "viewData": "Xem dữ liệu"
     },
-    "pathTooLong": "Không thể hiển thị hình thu nhỏ vì độ dài đường dẫn tệp là {{length}}. Windows giới hạn độ dài đường dẫn tối đa là {{maximum}}. Hãy đổi vị trí của tệp để rút ngắn đường dẫn. Để biết chi tiết, nhấn Ctrl+Shift+I và đọc các thông báo trong bảng điều khiển.",
-    "generatedThumbnailPathTooLong": "Không thể hiển thị hình thu nhỏ vì độ dài đường dẫn của hình thu nhỏ đã tạo là {{length}}. Windows giới hạn độ dài đường dẫn tối đa là {{maximum}}. Hãy đổi vị trí của tệp để rút ngắn đường dẫn của hình thu nhỏ đã tạo. Để biết chi tiết, nhấn Ctrl+Shift+I và đọc các thông báo trong bảng điều khiển."
+    "pathTooLong": "Không thể hiển thị hình thu nhỏ vì độ dài đường dẫn tệp là {{length}} ký tự. Windows giới hạn độ dài đường dẫn tối đa là {{maximum}} ký tự. Hãy đổi vị trí của tệp để rút ngắn đường dẫn. Để biết chi tiết, nhấn Ctrl+Shift+I và đọc các thông báo trong bảng điều khiển.",
+    "generatedThumbnailPathTooLong": "Không thể hiển thị hình thu nhỏ vì độ dài đường dẫn của hình thu nhỏ đã tạo là {{length}} ký tự. Windows giới hạn độ dài đường dẫn tối đa là {{maximum}} ký tự. Hãy đổi vị trí của tệp để rút ngắn đường dẫn của hình thu nhỏ đã tạo. Để biết chi tiết, nhấn Ctrl+Shift+I và đọc các thông báo trong bảng điều khiển."
   },
   "map": {
     "zoomIn": "Phóng to",

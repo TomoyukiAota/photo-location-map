@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Abrir o Google Street View",
       "viewData": "Ver dados"
     },
-    "pathTooLong": "Não é possível mostrar a miniatura porque o comprimento do caminho do ficheiro é {{length}}. O Windows limita o comprimento máximo dos caminhos a {{maximum}}. Mude o ficheiro de local para encurtar o caminho. Para ver os detalhes, prima Ctrl+Shift+I e leia as mensagens da consola.",
-    "generatedThumbnailPathTooLong": "Não é possível mostrar a miniatura porque o comprimento do caminho da miniatura gerada é {{length}}. O Windows limita o comprimento máximo dos caminhos a {{maximum}}. Mude o ficheiro de local para encurtar o caminho da miniatura gerada. Para ver os detalhes, prima Ctrl+Shift+I e leia as mensagens da consola."
+    "pathTooLong": "Não é possível mostrar a miniatura porque o comprimento do caminho do ficheiro é de {{length}} caracteres. O Windows limita o comprimento máximo dos caminhos a {{maximum}} caracteres. Mude o ficheiro de local para encurtar o caminho. Para ver os detalhes, prima Ctrl+Shift+I e leia as mensagens da consola.",
+    "generatedThumbnailPathTooLong": "Não é possível mostrar a miniatura porque o comprimento do caminho da miniatura gerada é de {{length}} caracteres. O Windows limita o comprimento máximo dos caminhos a {{maximum}} caracteres. Mude o ficheiro de local para encurtar o caminho da miniatura gerada. Para ver os detalhes, prima Ctrl+Shift+I e leia as mensagens da consola."
   },
   "map": {
     "zoomIn": "Ampliar",

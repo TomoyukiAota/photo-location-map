@@ -52,17 +52,17 @@
     "sort": {
       "title": "정렬",
       "byName": "이름순",
-      "byShootingTime": "촬영 시간순",
+      "byShootingTime": "촬영 날짜순",
       "ascending": "오름차순",
       "descending": "내림차순"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "촬영 시간순 정렬",
-    "intro": "“촬영 시간순”을 선택하면 이 앱은 파일을 정렬하기 위해",
+    "title": "촬영 날짜순 정렬",
+    "intro": "“촬영 날짜순”을 선택하면 이 앱은 파일을 정렬하기 위해",
     "step1": "EXIF의 DateTimeOriginal을 사용하고, 이 값이 없으면",
     "step2": "파일의 수정 시간을 사용합니다.",
-    "foldersNote": "폴더에는 “촬영 시간”이라는 개념이 없으므로 폴더는 이름순으로 정렬됩니다.",
+    "foldersNote": "폴더에는 “촬영 날짜”라는 개념이 없으므로 폴더는 이름순으로 정렬됩니다.",
     "moreDetails": "자세한 정보",
     "details": {
       "intro": "다음은 추가 정보입니다.",
@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Google 스트리트 뷰 열기",
       "viewData": "데이터 보기"
     },
-    "pathTooLong": "파일 경로의 길이({{length}}) 때문에 썸네일을 표시할 수 없습니다. Windows에서는 경로 길이가 최대 {{maximum}}까지로 제한됩니다. 파일 위치를 변경하여 경로를 줄이세요. 자세한 내용은 Ctrl+Shift+I를 눌러 콘솔 메시지를 확인하세요.",
-    "generatedThumbnailPathTooLong": "생성된 썸네일 경로의 길이({{length}}) 때문에 썸네일을 표시할 수 없습니다. Windows에서는 경로 길이가 최대 {{maximum}}까지로 제한됩니다. 파일 위치를 변경하여 생성되는 썸네일의 경로를 줄이세요. 자세한 내용은 Ctrl+Shift+I를 눌러 콘솔 메시지를 확인하세요."
+    "pathTooLong": "파일 경로의 길이({{length}}자) 때문에 썸네일을 표시할 수 없습니다. Windows에서는 경로 길이가 최대 {{maximum}}자로 제한됩니다. 파일 위치를 변경하여 경로를 줄이세요. 자세한 내용은 Ctrl+Shift+I를 눌러 콘솔 메시지를 확인하세요.",
+    "generatedThumbnailPathTooLong": "생성된 썸네일 경로의 길이({{length}}자) 때문에 썸네일을 표시할 수 없습니다. Windows에서는 경로 길이가 최대 {{maximum}}자로 제한됩니다. 파일 위치를 변경하여 생성되는 썸네일의 경로를 줄이세요. 자세한 내용은 Ctrl+Shift+I를 눌러 콘솔 메시지를 확인하세요."
   },
   "map": {
     "zoomIn": "확대",

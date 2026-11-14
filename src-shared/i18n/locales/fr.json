@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Ouvrir Google Street View",
       "viewData": "Afficher les données"
     },
-    "pathTooLong": "La vignette ne peut pas être affichée, car la longueur du chemin du fichier est de {{length}}. Windows limite la longueur des chemins à {{maximum}}. Déplacez le fichier pour raccourcir son chemin. Pour plus de détails, appuyez sur Ctrl+Maj+I et lisez les messages de la console.",
-    "generatedThumbnailPathTooLong": "La vignette ne peut pas être affichée, car la longueur du chemin de la vignette créée est de {{length}}. Windows limite la longueur des chemins à {{maximum}}. Déplacez le fichier pour raccourcir le chemin de la vignette créée. Pour plus de détails, appuyez sur Ctrl+Maj+I et lisez les messages de la console."
+    "pathTooLong": "La vignette ne peut pas être affichée, car la longueur du chemin du fichier est de {{length}} caractères. Windows limite la longueur des chemins à {{maximum}} caractères. Déplacez le fichier pour raccourcir son chemin. Pour plus de détails, appuyez sur Ctrl+Maj+I et lisez les messages de la console.",
+    "generatedThumbnailPathTooLong": "La vignette ne peut pas être affichée, car la longueur du chemin de la vignette créée est de {{length}} caractères. Windows limite la longueur des chemins à {{maximum}} caractères. Déplacez le fichier pour raccourcir le chemin de la vignette créée. Pour plus de détails, appuyez sur Ctrl+Maj+I et lisez les messages de la console."
   },
   "map": {
     "zoomIn": "Zoom avant",

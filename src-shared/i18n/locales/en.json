@@ -52,24 +52,24 @@
     "sort": {
       "title": "Sort",
       "byName": "By Name",
-      "byShootingTime": "By Shooting Time",
+      "byShootingTime": "By Date Taken",
       "ascending": "Ascending",
       "descending": "Descending"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "Sort By Shooting Time",
-    "intro": "When \"By Shooting Time\" is selected, in order to sort files, this application",
+    "title": "Sort By Date Taken",
+    "intro": "When \"By Date Taken\" is selected, in order to sort files, this application",
     "step1": "tries to use DateTimeOriginal in EXIF, and if it is not available,",
-    "step2": "uses the modified time of the file.",
-    "foldersNote": "Note that folders are sorted by their names since there is no concept of \"Shooting Time\" of folders.",
+    "step2": "uses the file’s “Date modified”.",
+    "foldersNote": "Note that folders are sorted by their names since there is no concept of \"Date Taken\" of folders.",
     "moreDetails": "More details for reference",
     "details": {
       "intro": "Below are details for reference:",
       "mostTrustworthy": "DateTimeOriginal in EXIF is the most trustworthy information about the time when the photo was taken.",
       "sometimesMissing": "DateTimeOriginal is written in most JPEG/HEIF/TIFF files by most cameras, but sometimes it is missing.",
-      "modifiedTime": "The modified time of the file is often the time when the photo was taken, so the modified time is used as an alternative when DateTimeOriginal is missing.",
-      "otherFiles": "Also, files other than JPEG/HEIF/TIFF do not have EXIF in the first place, so the modified time is always used for such files."
+      "modifiedTime": "The file’s “Date modified” is often when the photo was taken, so it is used instead when DateTimeOriginal is missing.",
+      "otherFiles": "Also, files other than JPEG/HEIF/TIFF do not have EXIF in the first place, so their “Date modified” is always used."
     }
   },
   "directoryTree": {
@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Open Google Street View",
       "viewData": "View Data"
     },
-    "pathTooLong": "Thumbnail cannot be displayed because the length of the file path is {{length}}. Windows restricts the maximum path length to {{maximum}}. Please change file location to shorten the path of the file. For details, press Ctrl+Shift+I and read the console messages.",
-    "generatedThumbnailPathTooLong": "Thumbnail cannot be displayed because the length of the file path of the generated thumbnail is {{length}}. Windows restricts the maximum path length to {{maximum}}. Please change file location to shorten the path of the generated thumbnail. For details, press Ctrl+Shift+I and read the console messages."
+    "pathTooLong": "Thumbnail cannot be displayed because the file path is {{length}} characters long. Windows limits a path to {{maximum}} characters. Please change file location to shorten the path of the file. For details, press Ctrl+Shift+I and read the console messages.",
+    "generatedThumbnailPathTooLong": "Thumbnail cannot be displayed because the file path of the generated thumbnail is {{length}} characters long. Windows limits a path to {{maximum}} characters. Please change file location to shorten the path of the generated thumbnail. For details, press Ctrl+Shift+I and read the console messages."
   },
   "map": {
     "zoomIn": "Zoom in",
@@ -123,8 +123,8 @@
       "second": "Second"
     },
     "unsupportedDuration": "This chart does not support showing more than 30 days when Hour is selected, 3 days when Minute is selected, and 1 hour when Second is selected.",
-    "changeUnitOrSelection": "Please change Year/Month/Day/Hour/Minute/Second, or select photos so that the duration is shortened.",
-    "selectPhotosWithinZoom": "Select Photos within Zoom",
+    "changeUnitOrSelection": "Please choose another unit (Year/Month/Day/Hour/Minute/Second), or select photos over a shorter period.",
+    "selectPhotosWithinZoom": "Select Photos in the Zoomed Range",
     "zoom": "Zoom",
     "resetZoom": "Reset\nZoom"
   },

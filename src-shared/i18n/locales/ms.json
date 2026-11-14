@@ -52,17 +52,17 @@
     "sort": {
       "title": "Isih",
       "byName": "Mengikut nama",
-      "byShootingTime": "Mengikut masa foto diambil",
+      "byShootingTime": "Mengikut tarikh diambil",
       "ascending": "Menaik",
       "descending": "Menurun"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "Mengisih mengikut masa foto diambil",
-    "intro": "Apabila “Mengikut masa foto diambil” dipilih, aplikasi mengisih fail seperti berikut:",
+    "title": "Mengisih mengikut tarikh diambil",
+    "intro": "Apabila “Mengikut tarikh diambil” dipilih, aplikasi mengisih fail seperti berikut:",
     "step1": "menggunakan DateTimeOriginal dalam EXIF; jika tiada,",
     "step2": "menggunakan masa fail diubah suai.",
-    "foldersNote": "Folder diisih mengikut nama kerana folder tidak mempunyai “masa foto diambil”.",
+    "foldersNote": "Folder diisih mengikut nama kerana folder tidak mempunyai “tarikh diambil”.",
     "moreDetails": "Butiran lanjut",
     "details": {
       "intro": "Berikut ialah maklumat tambahan:",
@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Buka Google Street View",
       "viewData": "Lihat data"
     },
-    "pathTooLong": "Lakaran kecil tidak dapat dipaparkan kerana panjang laluan fail ialah {{length}}. Windows mengehadkan panjang laluan kepada maksimum {{maximum}}. Tukar lokasi fail untuk memendekkan laluan. Untuk butiran, tekan Ctrl+Shift+I dan baca mesej konsol.",
-    "generatedThumbnailPathTooLong": "Lakaran kecil tidak dapat dipaparkan kerana panjang laluan lakaran kecil yang dijana ialah {{length}}. Windows mengehadkan panjang laluan kepada maksimum {{maximum}}. Tukar lokasi fail untuk memendekkan laluan lakaran kecil yang dijana. Untuk butiran, tekan Ctrl+Shift+I dan baca mesej konsol."
+    "pathTooLong": "Lakaran kecil tidak dapat dipaparkan kerana panjang laluan fail ialah {{length}} aksara. Windows mengehadkan panjang laluan kepada maksimum {{maximum}} aksara. Tukar lokasi fail untuk memendekkan laluan. Untuk butiran, tekan Ctrl+Shift+I dan baca mesej konsol.",
+    "generatedThumbnailPathTooLong": "Lakaran kecil tidak dapat dipaparkan kerana panjang laluan lakaran kecil yang dijana ialah {{length}} aksara. Windows mengehadkan panjang laluan kepada maksimum {{maximum}} aksara. Tukar lokasi fail untuk memendekkan laluan lakaran kecil yang dijana. Untuk butiran, tekan Ctrl+Shift+I dan baca mesej konsol."
   },
   "map": {
     "zoomIn": "Zum masuk",
