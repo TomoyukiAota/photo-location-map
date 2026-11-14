@@ -257,5 +257,9 @@
     "message": "Uusi versio sovelluksesta {{appName}} on saatavilla, ja se asennetaan uudelleenkäynnistyksen jälkeen.\nHaluatko käynnistää sovelluksen uudelleen nyt?\n\nNykyinen versio: {{currentVersion}}\nUusin versio: {{latestVersion}}",
     "yes": "Kyllä",
     "no": "Ei"
+  },
+  "unhandledError": {
+    "message": "Tapahtui odottamaton virhe.",
+    "copyError": "Kopioi virhe"
   }
 }

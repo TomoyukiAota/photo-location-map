@@ -270,6 +270,26 @@ async function openFolderWithPicker(folder) {
   }, folder);
   await page.getByRole('button', { name: 'Open Folder', exact: true }).click();
 }
+/**
+ * What the dialog of an error that nothing handled in the main process shows, for a promise rejected there with
+ * `message`. The dialog is replaced while it is shown, as the real one would wait for a click.
+ */
+async function mainProcessErrorDialog(message) {
+  await app.evaluate(({ dialog }, message) => {
+    globalThis.__plmE2eErrorDialogs = [];
+    globalThis.__plmE2eShowMessageBoxSync ??= dialog.showMessageBoxSync;
+    dialog.showMessageBoxSync = options => {
+      globalThis.__plmE2eErrorDialogs.push(options);
+      return 0;
+    };
+    Promise.reject(new Error(message));
+  }, message);
+  await expect.poll(() => app.evaluate(() => globalThis.__plmE2eErrorDialogs.length), { timeout: 20000 }).toBe(1);
+  return app.evaluate(({ dialog }) => {
+    dialog.showMessageBoxSync = globalThis.__plmE2eShowMessageBoxSync;
+    return globalThis.__plmE2eErrorDialogs[0];
+  });
+}
 function treeCheckbox(name) {
   return page.locator('mat-tree-node').filter({ hasText: name }).getByRole('checkbox');
 }
@@ -692,6 +712,10 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   await expect(page.locator('.date-time-example')).toContainText('2019-11-25 02:53:29 午後');
   await page.getByRole('button', { name: 'キャンセル', exact: true }).click();
   await expect(page.locator('app-settings-dialog')).toHaveCount(0);
+  // The dialog of an error that nothing handled in the main process, whose details stay in English.
+  const errorDialog = await mainProcessErrorDialog('Rejected on purpose by the e2e suite');
+  expect(errorDialog).toMatchObject({ message: '予期しないエラーが発生しました。', buttons: ['OK', 'エラーをコピー'] });
+  expect(errorDialog.detail).toMatch(/^Unhandled Promise Rejection\n/);
 });
 test('on a computer whose language is Arabic, the application is laid out from right to left', async () => {
   // The one language written from right to left that is run here; Hebrew is laid out by the same rules.
@@ -1908,6 +1932,20 @@ test('an unhandled promise rejection in the renderer is recorded once, with its 
       .filter(event => event.service === service && event.action === 'After the rejection').length, service),
     { timeout: 20000 }).toBe(1);
     expect(await recorded(service)).toHaveLength(1);
+  }
+});
+test('an unhandled promise rejection in the main process is recorded, and shown with its details', async () => {
+  await dismissWelcome();
+  const message = 'Rejected in the main process on purpose by the e2e suite';
+  const shown = await mainProcessErrorDialog(message);
+  expect(shown).toMatchObject({ type: 'error', message: 'An unexpected error occurred.', buttons: ['OK', 'Copy Error'] });
+  // The details stay in English: the kind of error, then its stack.
+  expect(shown.detail.split('\n').slice(0, 2)).toEqual(['Unhandled Promise Rejection', `Error: ${message}`]);
+  for (const service of ['amplitude', 'mixpanel']) {
+    await expect.poll(() => app.evaluate((_electron, service) => globalThis.__plmAnalyticsEvents
+      .filter(event => event.service === service && event.action === 'Unhandled Error (Main)')
+      .map(event => ({ category: event.category, label: event.label })), service), { timeout: 20000 })
+      .toEqual([{ category: 'Unhandled Error', label: `Error: ${message}` }]);
   }
 });
 test('analytics preserves events and identity without new Amplitude local URLs', async () => {

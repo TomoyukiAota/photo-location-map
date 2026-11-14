@@ -257,5 +257,9 @@
     "message": "Elérhető a {{appName}} új verziója, amely az újraindítás után települ.\nÚjraindítja most az alkalmazást?\n\nJelenlegi verzió: {{currentVersion}}\nLegújabb verzió: {{latestVersion}}",
     "yes": "Igen",
     "no": "Nem"
+  },
+  "unhandledError": {
+    "message": "Váratlan hiba történt.",
+    "copyError": "Hiba másolása"
   }
 }

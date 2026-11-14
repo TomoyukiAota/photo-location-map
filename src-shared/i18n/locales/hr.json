@@ -257,5 +257,9 @@
     "message": "Dostupna je nova verzija aplikacije {{appName}}, koja će se instalirati nakon ponovnog pokretanja.\nŽelite li sada ponovno pokrenuti aplikaciju?\n\nTrenutačna verzija: {{currentVersion}}\nNajnovija verzija: {{latestVersion}}",
     "yes": "Da",
     "no": "Ne"
+  },
+  "unhandledError": {
+    "message": "Došlo je do neočekivane pogreške.",
+    "copyError": "Kopiraj pogrešku"
   }
 }

@@ -165,6 +165,10 @@ npm run test:unit:ng
   restart (`settings.confirmRestart`, `settings.cache.confirmDelete`) and in
   the update dialog (`autoUpdate.message`). `chart.resetZoom` is a tooltip under
   a small icon: two short lines.
+- `unhandledError.message` is shown in a dialog when an error occurs that the
+  application did not handle, above the error's details, which stay in English.
+  `unhandledError.copyError` is the dialog's button that copies the message and
+  the details, for a report.
 - `explorerContextMenu.openWithAccessKey` is the item added to Explorer's
   context menu on Windows. `&` marks the letter after it as the item's access
   key; languages that do not write in Latin letters put it at the end, as
