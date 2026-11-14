@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron';
-import fsExtra from 'fs-extra';
+import * as fs from 'fs';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
 import { UserDataStorage } from '../../src-shared/user-data-storage/user-data-storage.js';
 import { UserDataStoragePath } from '../../src-shared/user-data-storage/user-data-stroage-path.js';
@@ -25,5 +25,5 @@ ipcMain.handle(IpcConstants.FolderDialog.IsDirectory, async (event, directoryPat
   const lastConfirmed = UserDataStorage.readOrDefault(UserDataStoragePath.FolderDialog.LastConfirmedDirectory, null);
   if (!isUserChosenFolder(directoryPath) && !(typeof directoryPath === 'string' && directoryPath === lastConfirmed))
     return false;
-  return (await fsExtra.stat(directoryPath)).isDirectory();
+  return (await fs.promises.stat(directoryPath)).isDirectory();
 });

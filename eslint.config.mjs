@@ -95,9 +95,23 @@ const loggedLineRule = ['error',
 // in development and fail in the package.
 const lodashImportMessage = 'Import a function of lodash from its own file of lodash-es, as '
   + '`import debounce from \'lodash-es/debounce.js\'` (eslint.config.mjs says why).';
-const lodashImportRule = ['error', {
-  paths: ['lodash', 'lodash-es'].map(name => ({ name, message: lodashImportMessage })),
-  patterns: [{ group: ['lodash/*'], message: lodashImportMessage }],
+
+// TL;DR: Files are read and written with Node's fs, not fs-extra.
+// Details: The application's code moved to Node's fs, which has what it used of fs-extra. fs-extra stays in the
+// package only as a dependency of electron-updater, at the version that electron-updater asks for, and in development
+// at another, which the development tools ask for: an import of it would work in either, with a version of neither's
+// choosing.
+const fsExtraImportMessage = 'Use Node\'s fs, as `import * as fs from \'fs\'`, rather than fs-extra (eslint.config.mjs says why).';
+
+const restrictedImportsRule = ['error', {
+  paths: [
+    ...['lodash', 'lodash-es'].map(name => ({ name, message: lodashImportMessage })),
+    { name: 'fs-extra', message: fsExtraImportMessage },
+  ],
+  patterns: [
+    { group: ['lodash/*'], message: lodashImportMessage },
+    { group: ['fs-extra/*'], message: fsExtraImportMessage },
+  ],
 }];
 
 export default [
@@ -117,7 +131,7 @@ export default [
       ...tsPlugin.configs.recommended.rules,
       ...existingRules,
       'no-restricted-syntax': loggedLineRule,
-      'no-restricted-imports': lodashImportRule,
+      'no-restricted-imports': restrictedImportsRule,
     },
   },
   {
@@ -134,7 +148,7 @@ export default [
     rules: {
       '@typescript-eslint/no-require-imports': 'error',
       'no-restricted-syntax': loggedLineRule,
-      'no-restricted-imports': lodashImportRule,
+      'no-restricted-imports': restrictedImportsRule,
     },
   },
   {

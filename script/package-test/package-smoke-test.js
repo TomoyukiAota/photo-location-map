@@ -1,5 +1,5 @@
 import child_process from 'child_process';
-import fs from 'fs-extra';
+import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import treeKill from 'tree-kill';
@@ -14,7 +14,9 @@ class PackageSmokeTest {
     logger.info(`Searching the log directory "${testInfo.logDirectory}"`);
     testUtil.printItemsInDirectory(testInfo.logDirectory);
     logger.info('Removing all files in the log directory...');
-    fs.emptyDirSync(testInfo.logDirectory);
+    fs.mkdirSync(testInfo.logDirectory, { recursive: true });
+    for (const entry of fs.readdirSync(testInfo.logDirectory))
+      fs.rmSync(path.join(testInfo.logDirectory, entry), { recursive: true, force: true });
     testUtil.printItemsInDirectory(testInfo.logDirectory);
     const logFiles = fs.readdirSync(testInfo.logDirectory)
                        .filter(fileName => fileName.endsWith('_log.txt'));

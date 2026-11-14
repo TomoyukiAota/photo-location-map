@@ -1,5 +1,5 @@
 import { utilityProcess } from 'electron';
-import fsExtra from 'fs-extra';
+import * as fs from 'fs';
 import * as os from 'os';
 import * as pathModule from 'path';
 import physicalCpuCount from 'physical-cpu-count';
@@ -42,7 +42,7 @@ class FileForWorker {
 function checkFileForWorkerExists(): void {
   const filePath = FileForWorker.absoluteFilePath;
   logger.info(`The expected file path for worker used during thumbnail generation is "${filePath}"`);
-  const isFileFound = fsExtra.existsSync(filePath);
+  const isFileFound = fs.existsSync(filePath);
 
   if (isFileFound) {
     logger.info(`The file for worker used during thumbnail generation is found.`);
@@ -124,7 +124,7 @@ async function runWorkerForThumbnailGeneration(argArray: ThumbnailFileGeneration
         const { status, error } = result ?? {};
         logger.info(`Observed completion of worker for thumbnail generation. Status: ${status}`);
         logger.info(`Finished attempting to create a thumbnail file "${arg.outputFilePath}" from "${arg.srcFilePath}".`);
-        const isThumbnailFileCreated = await fsExtra.pathExists(arg.outputFilePath);
+        const isThumbnailFileCreated = fs.existsSync(arg.outputFilePath);
         logger.info(`Does the thumbnail file exist? -> ${isThumbnailFileCreated}`);
         if(!isThumbnailFileCreated) {
           // Recorded as a reason of failed thumbnails (thumbnail-failures.ts), below.
