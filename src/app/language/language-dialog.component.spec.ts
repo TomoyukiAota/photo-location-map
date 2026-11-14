@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Analytics } from '../../../src-shared/analytics/analytics';
 import { languages as languagesOfApplication } from '../../../src-shared/i18n/languages';
 import { startupMetadata } from '../../../src-shared/startup/startup-metadata';
 import { UserDataStorage } from '../../../src-shared/user-data-storage/user-data-storage';
@@ -73,6 +74,7 @@ describe('LanguageDialogComponent', () => {
 
   it('keeps the language on OK, remembers that the user confirmed it, and closes without a restart', async () => {
     const restart = vi.spyOn(window.plm.app, 'restart');
+    const trackEvent = vi.spyOn(Analytics, 'trackEvent');
 
     await clickOk();
 
@@ -80,10 +82,13 @@ describe('LanguageDialogComponent', () => {
     expect(saved(UserDataStoragePath.History.ClickedOkOnLanguageDialog)).toBe('true');
     expect(saved(UserDataStoragePath.UserSettings.Language)).toBe('auto');
     expect(restart).not.toHaveBeenCalled();
+    // The setting did not change, so no change is recorded for analytics, only the click.
+    expect(trackEvent.mock.calls).toEqual([['Language Dialog', '[Language Dialog] Clicked OK button', 'Language: auto']]);
   });
 
   it('closes without a restart for the language on screen chosen by its name, and saves that choice', async () => {
     const restart = vi.spyOn(window.plm.app, 'restart');
+    const trackEvent = vi.spyOn(Analytics, 'trackEvent');
     await choose('English');
     expect(restartNote().style.visibility).toBe('hidden');
     expect(okButton().textContent.trim()).toBe('OK');
@@ -93,6 +98,8 @@ describe('LanguageDialogComponent', () => {
     await vi.waitFor(() => expect(close).toHaveBeenCalledTimes(1));
     expect(saved(UserDataStoragePath.UserSettings.Language)).toBe('en');
     expect(restart).not.toHaveBeenCalled();
+    // The setting changed from auto to English, the language on screen, which is recorded for analytics.
+    expect(trackEvent).toHaveBeenCalledWith('User Setting', 'Changed User Setting', 'Language: en');
   });
 
   it('does nothing on a second click while the first is at work, so that the application restarts once', async () => {
@@ -117,6 +124,28 @@ describe('LanguageDialogComponent', () => {
     expect(fixture.componentInstance.isSaving()).toBe(false);
     expect(okButton().disabled).toBe(false);
     expect(close).not.toHaveBeenCalled();
+  });
+
+  it('records a new setting for analytics once it is saved, at a second try as well', async () => {
+    const trackEvent = vi.spyOn(Analytics, 'trackEvent');
+    await choose('English');
+    // Writing the Language setting itself fails.
+    const write = vi.spyOn(UserDataStorage, 'write').mockImplementation(async storagePath => {
+      if (storagePath === UserDataStoragePath.UserSettings.Language)
+        throw new Error('The disk is full.');
+    });
+
+    await expect(fixture.componentInstance.onOkClicked()).rejects.toThrow('The disk is full.');
+
+    expect(trackEvent).not.toHaveBeenCalledWith('User Setting', 'Changed User Setting', expect.anything());
+
+    // The button works again, and the second try saves the setting, which is then recorded, though the settings in
+    // use took it at the first try.
+    write.mockRestore();
+    await clickOk();
+
+    await vi.waitFor(() => expect(close).toHaveBeenCalledTimes(1));
+    expect(trackEvent).toHaveBeenCalledWith('User Setting', 'Changed User Setting', 'Language: en');
   });
 
   it('says in the chosen language that the application will restart, names its button in it, and restarts once the choice is saved', async () => {

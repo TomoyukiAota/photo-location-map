@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Analytics } from '../../../src-shared/analytics/analytics';
 import { DateTimeFormat } from '../../../src-shared/date-time/date-time-format';
 import { UserDataStorage } from '../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../src-shared/user-data-storage/user-data-stroage-path';
@@ -118,6 +119,7 @@ describe('SettingsDialogComponent', () => {
   });
 
   it('says that saving restarts the app while the language differs, and saves it once the restart is confirmed', async () => {
+    const trackEvent = vi.spyOn(Analytics, 'trackEvent');
     expect(settingsInUse.language).toBe('auto');
     settingsChanged.languageSettingsChanged.next({ language: 'ja' });
     await fixture.whenStable();
@@ -137,6 +139,9 @@ describe('SettingsDialogComponent', () => {
     await fixture.whenStable();
     await vi.waitFor(() => expect(restart).toHaveBeenCalledTimes(1));
     expect(UserDataStorage.read(UserDataStoragePath.UserSettings.Language)).toBe('ja');
+    // The new setting is recorded for analytics once it is saved, before the restart.
+    expect(trackEvent).toHaveBeenCalledExactlyOnceWith('User Setting', 'Changed User Setting', 'Language: ja');
+    expect(trackEvent.mock.invocationCallOrder[0]).toBeLessThan(restart.mock.invocationCallOrder[0]);
   });
 
   it('saves a new status bar setting without a restart and closes', async () => {
