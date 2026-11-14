@@ -239,6 +239,9 @@ async function shot(name, mask = []) {
   if (isDialog) await expect(dialog).toHaveCount(1);
   await expect(dialog).toHaveScreenshot(`${name}.png`, { mask });
 }
+// The version in the Welcome and About dialogs, which changes with every release, is masked in their screenshots: the
+// cases check its text before taking them.
+const dialogVersion = () => page.locator('mat-dialog-container .app-version');
 async function dismissWelcome() {
   if (await page.locator('app-welcome-dialog').count()) {
     await page.getByRole('button', { name: 'OK', exact: true }).click();
@@ -422,12 +425,13 @@ test('welcome, about and every available settings tab keep their appearance', as
   await expect(page.locator('app-welcome-dialog')).toContainText(`Version ${manifest.version}`);
   const paths = await app.evaluate(({ app }) => [app.getPath('appData'), app.getPath('userData')]);
   expect(paths.every(p => p.startsWith(profile + path.sep))).toBe(true);
-  await shot('welcome');
+  await shot('welcome', [dialogVersion()]);
   await dismissWelcome();
   await shot('empty-home');
   await page.evaluate(() => window.plmInternalRenderer.aboutBox.showAboutBox());
   await expect(page.locator('app-about-box')).toBeVisible();
-  await shot('about');
+  await expect(page.locator('app-about-box .app-version')).toHaveText(`Version ${manifest.version}`);
+  await shot('about', [dialogVersion()]);
   await page.keyboard.press('Escape');
   await settings();
   await expect(page.getByRole('button', { name: 'Save', exact: true })).toBeDisabled();
@@ -669,7 +673,7 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   await expect(welcome).toContainText('Photo Location Map へようこそ');
   await expect(welcome).toContainText(`バージョン ${manifest.version}`);
   await expect(welcome.locator('.troubleshooting-message a')).toHaveText('トラブルシューティングのページ');
-  await shot('welcome-ja');
+  await shot('welcome-ja', [dialogVersion()]);
   await dismissWelcome();
   expect(await page.evaluate(() => document.documentElement.lang)).toBe('ja');
   expect(await menuLabels()).toEqual(menuInJapanese);
