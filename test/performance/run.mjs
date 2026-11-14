@@ -8,11 +8,11 @@
 // <executable> is a packaged app's executable, or "checkout" for this checkout's build (dist/ and src-main/).
 import { createHash } from 'node:crypto';
 import { createReadStream } from 'node:fs';
-import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
+import { mkdir, open, readdir, readFile, stat, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
-import { packagedAppRoot, root } from './lib/app.mjs';
+import { packagedAppArchive, packagedAppRoot, root } from './lib/app.mjs';
 import { scenarios } from './lib/scenarios.mjs';
 
 const { values } = parseArgs({ options: {
@@ -64,21 +64,91 @@ async function sha256(file) {
   return hash.digest('hex');
 }
 
-/** A hash of the application's own code (not node_modules), which tells two builds apart. */
-async function codeHash(target) {
-  const appRoot = target.executable ? packagedAppRoot(target.executable) : root;
-  if (target.executable && !(await stat(appRoot).catch(() => null))?.isDirectory())
-    throw new Error(`No code of the app at ${appRoot}: give the executable of a directory build (electron-builder --dir).`);
+/** The folders of the application's own code, and the files in them that a hash of the code covers. */
+const codeFolders = ['dist', 'src-main', 'src-shared', 'electron-util'];
+const codeFile = /\.(js|cjs|mjs|html|css|json)$/;
+
+/** Each file of the code in the folder `appRoot`, as its path relative to the folder and its SHA-256. */
+async function hashesInFolder(appRoot) {
   const entries = [];
-  for (const part of ['dist', 'src-main', 'src-shared', 'electron-util']) {
-    const directory = path.join(appRoot, part);
-    for (const entry of await readdir(directory, { recursive: true, withFileTypes: true })) {
-      if (!entry.isFile() || !/\.(js|cjs|mjs|html|css|json)$/.test(entry.name)) continue;
+  for (const part of codeFolders) {
+    for (const entry of await readdir(path.join(appRoot, part), { recursive: true, withFileTypes: true })) {
+      if (!entry.isFile() || !codeFile.test(entry.name)) continue;
       const file = path.join(entry.parentPath, entry.name);
       entries.push(`${path.relative(appRoot, file)} ${await sha256(file)}`);
     }
   }
   entries.push(`package.json ${await sha256(path.join(appRoot, 'package.json'))}`);
+  return entries;
+}
+
+/** Fills `buffer` from `handle`, the open `file`, at `position`, or throws when the file ends first. */
+async function readAt(handle, buffer, position, file) {
+  for (let offset = 0; offset < buffer.length;) {
+    const { bytesRead } = await handle.read(buffer, offset, buffer.length - offset, position + offset);
+    if (bytesRead === 0) throw new Error(`${file} ends before the header of an archive does.`);
+    offset += bytesRead;
+  }
+}
+
+/**
+ * The same as hashesInFolder, from the archive `archive`, without reading its files: its header has the SHA-256 of
+ * each. The archive starts with 16 bytes of sizes, the last four of which are the length of that header, in JSON,
+ * which follows them.
+ */
+async function hashesInArchive(archive) {
+  const handle = await open(archive);
+  let header;
+  try {
+    const sizes = Buffer.alloc(16);
+    await readAt(handle, sizes, 0, archive);
+    const json = Buffer.alloc(sizes.readUInt32LE(12));
+    await readAt(handle, json, sizes.length, archive);
+    header = JSON.parse(json.toString('utf8'));
+  } finally {
+    await handle.close();
+  }
+  const hashOf = (node, relative) => {
+    if (node?.integrity?.algorithm !== 'SHA256') throw new Error(`${archive} has no SHA-256 of ${relative}.`);
+    return `${relative} ${node.integrity.hash}`;
+  };
+  const entries = [];
+  /** Adds the files of `folder`, the folder of the header at `relative`, and of the folders in it. */
+  const addFiles = (folder, relative) => {
+    for (const [name, node] of Object.entries(folder.files)) {
+      const nodeRelative = path.join(relative, name);
+      if (node.files) addFiles(node, nodeRelative);
+      else if (!node.link && codeFile.test(name)) entries.push(hashOf(node, nodeRelative));
+    }
+  };
+  for (const part of codeFolders) {
+    if (!header.files?.[part]?.files) throw new Error(`${archive} has no folder ${part}.`);
+    addFiles(header.files[part], part);
+  }
+  entries.push(hashOf(header.files['package.json'], 'package.json'));
+  return entries;
+}
+
+/**
+ * The code of `target`, the checkout or a package: where it is, and each of its files as its path relative to there
+ * and its SHA-256. A package has its code in app.asar, and the packages before docs/tasks/20261114_enable-asar/ in a
+ * folder; the same code gives the same entries in either.
+ */
+async function codeOf(target) {
+  if (!target.executable)
+    return { appRoot: root, entries: await hashesInFolder(root) };
+  const archive = packagedAppArchive(target.executable);
+  if ((await stat(archive).catch(() => null))?.isFile())
+    return { appRoot: archive, entries: await hashesInArchive(archive) };
+  const folder = packagedAppRoot(target.executable);
+  if ((await stat(folder).catch(() => null))?.isDirectory())
+    return { appRoot: folder, entries: await hashesInFolder(folder) };
+  throw new Error(`No code of the app at ${archive} or ${folder}: give the executable of a directory build (electron-builder --dir).`);
+}
+
+/** A hash of the application's own code (not node_modules), which tells two builds apart. */
+async function codeHash(target) {
+  const { appRoot, entries } = await codeOf(target);
   entries.sort();
   return { appRoot, files: entries.length, sha256: createHash('sha256').update(entries.join('\n')).digest('hex') };
 }
