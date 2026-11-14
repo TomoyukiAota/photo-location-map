@@ -1,0 +1,33 @@
+{
+  "language": "Idioma",
+  "languageSearch": "Pesquisar",
+  "noLanguagesFound": "Nenhum idioma encontrado",
+  "useBrowserSetting": "Usar a definição do navegador ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Ícone do Photo Location Map",
+    "summary": "Mostra num mapa onde as fotografias foram tiradas.",
+    "downloadForWindows": "Transferir para Windows",
+    "downloadForMacos": "Transferir para macOS",
+    "photosHaveLocationData": "As fotografias tiradas com smartphones têm dados de localização (latitude e longitude).",
+    "showsLocationsOnMap": "Esta aplicação lê os dados de localização das fotografias e mostra os locais num mapa.",
+    "supportedFileFormats": "Formatos de ficheiro suportados:",
+    "troubleshooting": "Se tiver problemas com esta aplicação, consulte <link>a página de resolução de problemas</link>.",
+    "sourceCode": "O código-fonte do Photo Location Map está <link>alojado no GitHub</link>.",
+    "developedBy": "O Photo Location Map é desenvolvido por <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Quer consultar os dados EXIF?",
+    "photoDataViewer": "O <link>Photo Data Viewer</link> também está disponível.",
+    "analyticsNotice": "Este site recolhe dados de utilização."
+  },
+  "downloading": {
+    "pageTitle": "A transferir o Photo Location Map",
+    "willStart": "A transferência do Photo Location Map vai começar dentro de momentos. Se não começar, clique <link>aqui</link>.",
+    "howToInstall": "Como instalar",
+    "step1": "1. Faça duplo clique no ficheiro exe transferido.",
+    "step2": "2. É apresentada a janela do Windows Defender SmartScreen. Clique em «Mais informações» (More info).",
+    "moreInfoImageAlt": "Imagem do Windows Defender SmartScreen (Mais informações)",
+    "step3": "3. Clique em «Executar mesmo assim» (Run anyway).",
+    "runAnywayImageAlt": "Imagem do Windows Defender SmartScreen (Executar mesmo assim)",
+    "step4": "4. O instalador do Photo Location Map é iniciado. Siga as instruções do instalador."
+  }
+}

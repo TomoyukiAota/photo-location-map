@@ -1,0 +1,33 @@
+{
+  "language": "Язык",
+  "languageSearch": "Поиск",
+  "noLanguagesFound": "Языки не найдены",
+  "useBrowserSetting": "Использовать настройку браузера ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Значок Photo Location Map",
+    "summary": "Показывает на карте, где были сделаны фотографии.",
+    "downloadForWindows": "Скачать для Windows",
+    "downloadForMacos": "Скачать для macOS",
+    "photosHaveLocationData": "Фотографии, сделанные на смартфон, содержат данные о местоположении (широту и долготу).",
+    "showsLocationsOnMap": "Это приложение считывает данные о местоположении из фотографий и показывает места съёмки на карте.",
+    "supportedFileFormats": "Поддерживаемые форматы файлов:",
+    "troubleshooting": "Если при работе с приложением возникли проблемы, откройте <link>страницу устранения неполадок</link>.",
+    "sourceCode": "Исходный код Photo Location Map <link>размещён на GitHub</link>.",
+    "developedBy": "Photo Location Map разрабатывает <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Хотите посмотреть данные EXIF?",
+    "photoDataViewer": "Также доступно приложение <link>Photo Data Viewer</link>.",
+    "analyticsNotice": "Этот сайт собирает данные об использовании."
+  },
+  "downloading": {
+    "pageTitle": "Скачивание Photo Location Map",
+    "willStart": "Скачивание Photo Location Map скоро начнётся. Если оно не началось, нажмите <link>здесь</link>.",
+    "howToInstall": "Как установить",
+    "step1": "1. Дважды щёлкните скачанный файл exe.",
+    "step2": "2. Появится окно Windows Defender SmartScreen. Нажмите «Подробнее» (More info).",
+    "moreInfoImageAlt": "Изображение окна Windows Defender SmartScreen (Подробнее)",
+    "step3": "3. Нажмите «Выполнить в любом случае» (Run anyway).",
+    "runAnywayImageAlt": "Изображение окна Windows Defender SmartScreen (Выполнить в любом случае)",
+    "step4": "4. Запустится установщик Photo Location Map. Следуйте инструкциям установщика."
+  }
+}

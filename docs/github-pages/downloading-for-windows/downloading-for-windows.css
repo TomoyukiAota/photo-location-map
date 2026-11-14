@@ -29,3 +29,8 @@ body {
   width: 100%;
   max-width: 500px;
 }
+
+/* The list of languages (../i18n.css), above the page's first line. */
+.language {
+  margin-bottom: 16px;
+}

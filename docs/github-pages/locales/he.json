@@ -1,0 +1,33 @@
+{
+  "language": "שפה",
+  "languageSearch": "חיפוש",
+  "noLanguagesFound": "לא נמצאו שפות",
+  "useBrowserSetting": "שימוש בהגדרת הדפדפן ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "הסמל של Photo Location Map",
+    "summary": "הצגה על מפה של המקומות שבהם צולמו התמונות.",
+    "downloadForWindows": "הורדה עבור Windows",
+    "downloadForMacos": "הורדה עבור macOS",
+    "photosHaveLocationData": "תמונות שצולמו בסמארטפון כוללות נתוני מיקום (קו רוחב וקו אורך).",
+    "showsLocationsOnMap": "היישום קורא את נתוני המיקום מהתמונות ומציג על מפה את המקומות שבהם צולמו.",
+    "supportedFileFormats": "תבניות קבצים נתמכות:",
+    "troubleshooting": "אם נתקלת בבעיה ביישום זה, אפשר לעיין ב<link>דף פתרון הבעיות</link>.",
+    "sourceCode": "קוד המקור של Photo Location Map <link>מתארח ב-GitHub</link>.",
+    "developedBy": "Photo Location Map מפותח על ידי <link>Tomoyuki Aota</link>.",
+    "wantExifData": "רוצה לבדוק נתוני EXIF?",
+    "photoDataViewer": "גם <link>Photo Data Viewer</link> זמין.",
+    "analyticsNotice": "האתר הזה אוסף מידע על השימוש."
+  },
+  "downloading": {
+    "pageTitle": "מתבצעת הורדה של Photo Location Map",
+    "willStart": "ההורדה של Photo Location Map תתחיל בעוד רגע. אם היא לא מתחילה, יש ללחוץ <link>כאן</link>.",
+    "howToInstall": "אופן ההתקנה",
+    "step1": "1. יש ללחוץ לחיצה כפולה על קובץ ה-exe שהורד.",
+    "step2": "2. יופיע החלון הקופץ של Windows Defender SmartScreen. יש ללחוץ על ״מידע נוסף״ (More info).",
+    "moreInfoImageAlt": "תמונה של Windows Defender SmartScreen (מידע נוסף)",
+    "step3": "3. יש ללחוץ על ״הפעל בכל זאת״ (Run anyway).",
+    "runAnywayImageAlt": "תמונה של Windows Defender SmartScreen (הפעל בכל זאת)",
+    "step4": "4. תוכנית ההתקנה של Photo Location Map תופעל. יש לפעול לפי ההוראות בתוכנית ההתקנה."
+  }
+}

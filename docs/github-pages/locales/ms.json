@@ -1,0 +1,33 @@
+{
+  "language": "Bahasa",
+  "languageSearch": "Cari",
+  "noLanguagesFound": "Tiada bahasa ditemui",
+  "useBrowserSetting": "Guna tetapan pelayar ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Ikon Photo Location Map",
+    "summary": "Memaparkan tempat foto diambil pada peta.",
+    "downloadForWindows": "Muat turun untuk Windows",
+    "downloadForMacos": "Muat turun untuk macOS",
+    "photosHaveLocationData": "Foto yang diambil dengan telefon pintar mempunyai data lokasi (latitud dan longitud).",
+    "showsLocationsOnMap": "Aplikasi ini membaca data lokasi daripada foto dan memaparkan lokasinya pada peta.",
+    "supportedFileFormats": "Format fail yang disokong:",
+    "troubleshooting": "Jika anda menghadapi masalah dengan aplikasi ini, lihat <link>halaman penyelesaian masalah</link>.",
+    "sourceCode": "Kod sumber Photo Location Map <link>dihoskan di GitHub</link>.",
+    "developedBy": "Photo Location Map dibangunkan oleh <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Ingin menyemak data EXIF?",
+    "photoDataViewer": "<link>Photo Data Viewer</link> juga tersedia.",
+    "analyticsNotice": "Laman web ini mengumpulkan maklumat penggunaan."
+  },
+  "downloading": {
+    "pageTitle": "Memuat turun Photo Location Map",
+    "willStart": "Muat turun Photo Location Map akan bermula sebentar lagi. Jika tidak bermula, klik <link>di sini</link>.",
+    "howToInstall": "Cara memasang",
+    "step1": "1. Klik dua kali fail exe yang telah dimuat turun.",
+    "step2": "2. Tetingkap timbul Windows Defender SmartScreen akan muncul. Klik “Maklumat lanjut” (More info).",
+    "moreInfoImageAlt": "Imej Windows Defender SmartScreen (Maklumat lanjut)",
+    "step3": "3. Klik “Jalankan juga” (Run anyway).",
+    "runAnywayImageAlt": "Imej Windows Defender SmartScreen (Jalankan juga)",
+    "step4": "4. Pemasang Photo Location Map akan dilancarkan. Ikut arahan pada pemasang."
+  }
+}

@@ -1,4 +1,4 @@
-import fsExtra from 'fs-extra';
+import * as fs from 'fs';
 import * as path from 'path';
 import type { UserDataStorageBackend } from '../../src-shared/user-data-storage/user-data-storage.js';
 
@@ -21,10 +21,10 @@ export class FileUserDataStorage implements UserDataStorageBackend {
   public read(storagePath: ReadonlyArray<string>): string {
     const { filePath, key } = this.getFilePathAndKey(storagePath);
 
-    if (!fsExtra.existsSync(filePath))
+    if (!fs.existsSync(filePath))
       throw new Error(`File for ${key} does not exist in ${filePath}`);
 
-    const fileContent = fsExtra.readFileSync(filePath, 'utf8');
+    const fileContent = fs.readFileSync(filePath, 'utf8');
     const jsonObject = JSON.parse(fileContent);
     return jsonObject[key];
   }
@@ -35,8 +35,8 @@ export class FileUserDataStorage implements UserDataStorageBackend {
     const jsonObject = {};
     jsonObject[key] = value;
     const fileContent = JSON.stringify(jsonObject);
-    fsExtra.ensureFileSync(filePath);
-    fsExtra.writeFileSync(filePath, fileContent);
+    fs.mkdirSync(path.dirname(filePath), { recursive: true });
+    fs.writeFileSync(filePath, fileContent);
     return Promise.resolve();
   }
 

@@ -1,5 +1,5 @@
 import { MenuItemConstructorOptions } from 'electron';
-import fsExtra from 'fs-extra';
+import * as fs from 'fs';
 import { Analytics } from '../../src-shared/analytics/analytics.js';
 import { openWithAssociatedApp } from '../shell/open-with-os.js';
 import { t } from '../../src-shared/i18n/i18n.js';
@@ -21,7 +21,7 @@ const handleShowWelcomeDialogClicked = () => {
 const handleOpenLogFolderClicked = () => {
   Logger.info(`[Main Window Menu] Clicked "Open Log Folder".`);
   Analytics.trackEvent('Main Window Menu', 'Clicked "Open Log Folder"');
-  fsExtra.ensureDirSync(LogFileConfig.dirName); // The log folder is created when the app starts, but ensuring the directory just in case.
+  fs.mkdirSync(LogFileConfig.dirName, { recursive: true }); // The log folder is created when the app starts, but ensuring the directory just in case.
   openWithAssociatedApp(LogFileConfig.dirName);
 };
 

@@ -1,0 +1,33 @@
+{
+  "language": "Kieli",
+  "languageSearch": "Hae",
+  "noLanguagesFound": "Kieliä ei löytynyt",
+  "useBrowserSetting": "Käytä selaimen asetusta ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Photo Location Mapin kuvake",
+    "summary": "Näyttää kartalla, missä kuvat on otettu.",
+    "downloadForWindows": "Lataa Windowsille",
+    "downloadForMacos": "Lataa macOS:lle",
+    "photosHaveLocationData": "Älypuhelimella otetuissa kuvissa on sijaintitiedot (leveys- ja pituusaste).",
+    "showsLocationsOnMap": "Tämä sovellus lukee kuvien sijaintitiedot ja näyttää paikat kartalla.",
+    "supportedFileFormats": "Tuetut tiedostomuodot:",
+    "troubleshooting": "Jos tämän sovelluksen käytössä ilmenee ongelmia, katso <link>vianmäärityssivu</link>.",
+    "sourceCode": "Photo Location Mapin lähdekoodi on <link>saatavilla GitHubissa</link>.",
+    "developedBy": "Photo Location Mapin kehittäjä on <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Haluatko tarkastella EXIF-tietoja?",
+    "photoDataViewer": "Myös <link>Photo Data Viewer</link> on saatavilla.",
+    "analyticsNotice": "Tämä sivusto kerää käyttötietoja."
+  },
+  "downloading": {
+    "pageTitle": "Ladataan Photo Location Mapia",
+    "willStart": "Photo Location Mapin lataus alkaa hetken kuluttua. Jos se ei ala, klikkaa <link>tästä</link>.",
+    "howToInstall": "Asennusohje",
+    "step1": "1. Kaksoisklikkaa ladattua exe-tiedostoa.",
+    "step2": "2. Windows Defender SmartScreen -ikkuna tulee näkyviin. Klikkaa ”Lisätietoja” (More info).",
+    "moreInfoImageAlt": "Kuva Windows Defender SmartScreen -ikkunasta (Lisätietoja)",
+    "step3": "3. Klikkaa ”Suorita joka tapauksessa” (Run anyway).",
+    "runAnywayImageAlt": "Kuva Windows Defender SmartScreen -ikkunasta (Suorita joka tapauksessa)",
+    "step4": "4. Photo Location Mapin asennusohjelma käynnistyy. Noudata asennusohjelman ohjeita."
+  }
+}
