@@ -87,6 +87,19 @@ const loggedLineRule = ['error',
   { selector: `${loggerCall} > BinaryExpression:first-child[operator='+']`, message: loggedLineMessage },
 ];
 
+// TL;DR: A function of lodash is imported from its own file of lodash-es, as `import debounce from 'lodash-es/debounce.js'`.
+// Details: The main process is not bundled, so Node loads each file that its imports name: the index of lodash-es
+// imports all of its 647 files, which took 55 ms where the two files that the main process uses took 2 ms. The
+// renderer imports them in the same way, as src-shared/ runs in both. lodash, the CommonJS build of the same
+// functions, is only a dependency of the development tools, which the package leaves out: an import of it would work
+// in development and fail in the package.
+const lodashImportMessage = 'Import a function of lodash from its own file of lodash-es, as '
+  + '`import debounce from \'lodash-es/debounce.js\'` (eslint.config.mjs says why).';
+const lodashImportRule = ['error', {
+  paths: ['lodash', 'lodash-es'].map(name => ({ name, message: lodashImportMessage })),
+  patterns: [{ group: ['lodash/*'], message: lodashImportMessage }],
+}];
+
 export default [
   { ignores: ['projects/**', 'dist/**', 'release/**', '.upgrade-artifacts/**'] },
   {
@@ -104,6 +117,7 @@ export default [
       ...tsPlugin.configs.recommended.rules,
       ...existingRules,
       'no-restricted-syntax': loggedLineRule,
+      'no-restricted-imports': lodashImportRule,
     },
   },
   {
@@ -117,7 +131,11 @@ export default [
     linterOptions: { reportUnusedDisableDirectives: 'off' },
     languageOptions: { parser: tsParser, parserOptions: { ecmaVersion: 'latest', sourceType: 'module' } },
     plugins: { '@typescript-eslint': tsPlugin },
-    rules: { '@typescript-eslint/no-require-imports': 'error', 'no-restricted-syntax': loggedLineRule },
+    rules: {
+      '@typescript-eslint/no-require-imports': 'error',
+      'no-restricted-syntax': loggedLineRule,
+      'no-restricted-imports': lodashImportRule,
+    },
   },
   {
     // Loggers that record nothing, so whose lines need no tag: the thumbnail worker's own, which writes to its console

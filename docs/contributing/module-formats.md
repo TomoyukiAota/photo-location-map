@@ -41,9 +41,9 @@ and the rules that keep it so.
    e2e suite loads modules in the main process with it
    (`electron-util/e2e-test-hooks.js`).
 5. **A CommonJS package is imported by its default export**
-   (`import _ from 'lodash'`), which is its `module.exports`. Node finds the
-   named exports of a CommonJS package by reading its code, and finds none of
-   lodash's, moment's or exifr's, only some of fs-extra's (not `existsSync`),
+   (`import moment from 'moment'`), which is its `module.exports`. Node finds
+   the named exports of a CommonJS package by reading its code, and finds none
+   of moment's or exifr's, only some of fs-extra's (not `existsSync`),
    and not electron-updater's `autoUpdater`, which is a getter. A named import
    of an export that Node does not find fails when the module is loaded, but a
    namespace import (`import * as fsExtra`) fails only when the missing export

@@ -1,4 +1,3 @@
-import isNaturalNumber from 'is-natural-number';
 import moment from 'moment-timezone';
 import { getMomentDiff, getMomentDiffAsIso8601, MomentDiffArgs } from '../src-shared/date-time/moment-diff.js';
 import { Now } from '../src-shared/date-time/now.js';
@@ -53,7 +52,7 @@ export class LaunchInfo {
       UserDataStoragePath.History.LaunchCount,
       '0');
     const maybePrevLaunchCount = Number(prevLaunchCountStr);
-    const prevLaunchCount = isNaturalNumber(maybePrevLaunchCount, {includeZero: true}) ? maybePrevLaunchCount : 0;
+    const prevLaunchCount = Number.isSafeInteger(maybePrevLaunchCount) && maybePrevLaunchCount >= 0 ? maybePrevLaunchCount : 0;
     this.launchCount = prevLaunchCount + 1;
     UserDataStorage.write(UserDataStoragePath.History.LaunchCount, this.launchCount.toString());
   }

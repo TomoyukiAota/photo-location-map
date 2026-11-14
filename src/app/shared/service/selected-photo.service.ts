@@ -1,5 +1,5 @@
 import { signal, inject, Service } from '@angular/core';
-import * as _ from 'lodash';
+import isEqual from 'lodash-es/isEqual.js';
 import { Logger } from '../../../../src-shared/log/logger';
 import { Photo } from '../model/photo.model';
 import { PhotoSelectionHistoryService } from './photo-selection-history.service';
@@ -16,7 +16,7 @@ export class SelectedPhotoService {
   public setSelectedPhotos(desiredSelectedPhotos: Photo[]) {
     const desiredSelectedPhotoPaths = desiredSelectedPhotos.map(photo => photo.path);
     const currentSelectedPhotoPaths = this.getSelectedPhotos().map(photo => photo.path);
-    const isDesiredSameAsCurrent = _.isEqual(desiredSelectedPhotoPaths.sort(), currentSelectedPhotoPaths.sort());
+    const isDesiredSameAsCurrent = isEqual(desiredSelectedPhotoPaths.sort(), currentSelectedPhotoPaths.sort());
     if (isDesiredSameAsCurrent) { return; } // If same, avoid adding selection history. e.g. Avoid adding history when repeating "Select Only This" for the same photo(s).
 
     this.selectedPhotosState.set(desiredSelectedPhotos);

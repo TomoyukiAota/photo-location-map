@@ -1,4 +1,3 @@
-import isNumber from 'is-number';
 import { PhotoDataViewerIpcPhotoParams } from '../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params.js';
 import { logWindowBounds, photoDataViewerLogger as logger } from '../../src-shared/photo-data-viewer/photo-data-viewer-logger.js';
 import { UserDataStorage } from '../../src-shared/user-data-storage/user-data-storage.js';
@@ -18,8 +17,10 @@ const defaultWindowState = {
   height: 500,
 };
 
+/** The number that the text is, as "-12.5", or the default for a text that is empty or not a finite number. */
 function toNumberOrElse(numStr: string, defaultNum: number): number {
-  return isNumber(numStr) ? Number(numStr) : defaultNum;
+  const num = Number(numStr);
+  return numStr.trim() !== '' && Number.isFinite(num) ? num : defaultNum;
 }
 
 export class PhotoDataViewerWindowState {

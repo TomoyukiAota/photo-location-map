@@ -1,7 +1,8 @@
 import { AfterViewInit, Component, ComponentRef, ElementRef, Injector, OnDestroy, effect, untracked, viewChild, inject } from '@angular/core';
 import * as turf from '@turf/turf';
 import { Control, LayersControlEvent, LeafletEvent, Map, Marker, PopupEvent } from 'leaflet';
-import * as _ from 'lodash';
+import debounce from 'lodash-es/debounce.js';
+import throttle from 'lodash-es/throttle.js';
 import { Subscription } from 'rxjs';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { recordUnhandledError } from '../../../../src-shared/analytics/record-error';
@@ -100,7 +101,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
 
   // renderMap function needs debouncing.
   // Otherwise, changing pinned photos in a short time results in sending frequent requests to the tile server.
-  private renderMapWithDebouncing = _.debounce((photos: Photo[]) => {
+  private renderMapWithDebouncing = debounce((photos: Photo[]) => {
     try {
       this.renderMap(photos);
     } finally {
@@ -279,7 +280,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Create Geoman Layer`, `layer.geoJson.geometry.type: ${geometryType}`);
   }
 
-  private onGeomanLayerChanged = _.throttle(() => this.updateRegionInfo(), 200 /* ms */);
+  private onGeomanLayerChanged = throttle(() => this.updateRegionInfo(), 200 /* ms */);
 
   private onGeomanLayerRemoved() {
     if (!this.regionExists()) {
