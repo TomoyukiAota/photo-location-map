@@ -257,5 +257,9 @@
     "message": "En ny version af {{appName}} er tilgængelig og installeres efter genstart.\nVil du genstarte appen nu?\n\nNuværende version: {{currentVersion}}\nNyeste version: {{latestVersion}}",
     "yes": "Ja",
     "no": "Nej"
+  },
+  "unhandledError": {
+    "message": "Der opstod en uventet fejl.",
+    "copyError": "Kopiér fejlen"
   }
 }

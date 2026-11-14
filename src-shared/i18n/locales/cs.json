@@ -257,5 +257,9 @@
     "message": "Je k dispozici nová verze aplikace {{appName}}, která se nainstaluje po restartování.\nChcete aplikaci restartovat hned?\n\nAktuální verze: {{currentVersion}}\nNejnovější verze: {{latestVersion}}",
     "yes": "Ano",
     "no": "Ne"
+  },
+  "unhandledError": {
+    "message": "Došlo k neočekávané chybě.",
+    "copyError": "Kopírovat chybu"
   }
 }

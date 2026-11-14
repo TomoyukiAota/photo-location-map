@@ -257,5 +257,9 @@
     "message": "Este disponibilă o versiune nouă de {{appName}}, care va fi instalată după repornire.\nDoriți să reporniți aplicația acum?\n\nVersiunea actuală: {{currentVersion}}\nUltima versiune: {{latestVersion}}",
     "yes": "Da",
     "no": "Nu"
+  },
+  "unhandledError": {
+    "message": "A apărut o eroare neașteptată.",
+    "copyError": "Copiază eroarea"
   }
 }

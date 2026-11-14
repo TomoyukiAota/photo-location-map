@@ -257,5 +257,9 @@
     "message": "Er is een nieuwe versie van {{appName}} beschikbaar, die na het herstarten wordt geïnstalleerd.\nWil je deze app nu opnieuw starten?\n\nHuidige versie: {{currentVersion}}\nNieuwste versie: {{latestVersion}}",
     "yes": "Ja",
     "no": "Nee"
+  },
+  "unhandledError": {
+    "message": "Er is een onverwachte fout opgetreden.",
+    "copyError": "Kopieer de fout"
   }
 }

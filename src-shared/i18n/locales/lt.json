@@ -257,5 +257,9 @@
     "message": "Yra nauja „{{appName}}“ versija, kuri bus įdiegta paleidus iš naujo.\nAr norite paleisti programą iš naujo dabar?\n\nDabartinė versija: {{currentVersion}}\nNaujausia versija: {{latestVersion}}",
     "yes": "Taip",
     "no": "Ne"
+  },
+  "unhandledError": {
+    "message": "Įvyko netikėta klaida.",
+    "copyError": "Kopijuoti klaidą"
   }
 }

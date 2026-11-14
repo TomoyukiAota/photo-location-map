@@ -68,7 +68,6 @@
   "dependencies": {
     "commander": "15.0.0",
     "directory-tree": "3.6.0",
-    "electron-unhandled": "4.0.1",
     "electron-updater": "6.8.12",
     "electron-window-state": "5.0.3",
     "exifr": "7.1.3",

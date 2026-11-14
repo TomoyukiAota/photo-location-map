@@ -34,7 +34,7 @@ const recorders: WindowFailureRecorders = {
  *   tells the main process when it stops answering and when it answers again; how long it took is recorded with
  *   the second event.
  * The other ways in which a window fails are recorded elsewhere: a page that does not load makes loadURL() reject,
- * which is an unhandled rejection of the main process (configure-electron-unhandled.ts), and a renderer process
+ * which is an unhandled rejection of the main process (unhandled-errors.ts), and a renderer process
  * that ends is recorded by record-process-gone.ts.
  */
 export function recordWindowFailures(window: BrowserWindow, windowName: RecordedWindow, record = recorders): void {

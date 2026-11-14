@@ -257,5 +257,9 @@
     "message": "K dispozícii je nová verzia aplikácie {{appName}}, ktorá sa nainštaluje po reštartovaní.\nChcete aplikáciu reštartovať teraz?\n\nAktuálna verzia: {{currentVersion}}\nNajnovšia verzia: {{latestVersion}}",
     "yes": "Áno",
     "no": "Nie"
+  },
+  "unhandledError": {
+    "message": "Vyskytla sa neočakávaná chyba.",
+    "copyError": "Kopírovať chybu"
   }
 }
