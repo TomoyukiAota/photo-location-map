@@ -58,11 +58,11 @@ ng:serve`, wait for `http://localhost:4200/`, then set
 `PLM_E2E_LIVE_RELOAD=1` for the checkout tests. This uses the application's real
 `--live-reload` option and asserts the HTTP origin. Stop the server afterward.
 
-On macOS, run the same application flows against the actual final signed bundle:
+On macOS, run the same application flows against a copy of the final signed bundle:
 
 ```sh
-PLM_PACKAGED_EXECUTABLE="$PWD/release/mac-universal/Photo Location Map.app/Contents/MacOS/Photo Location Map" \
-  PLM_VISUAL=1 mise exec -- npm run test:e2e
+executable="$(mise exec -- node script/package-test/inspectable-package.js)" &&
+  PLM_PACKAGED_EXECUTABLE="$executable" PLM_VISUAL=1 mise exec -- npm run test:e2e
 ```
 
 This mode asserts the real executable/resources, packaged flag, production
@@ -70,6 +70,14 @@ profile, dependency manifest, Electron/Node versions and architecture. Worker
 and JPEG dependencies come from the bundle, while public photo fixtures stay
 in the checkout. The separate website case is skipped. The bundle must include
 the fixed test helper **before signing**; never modify it after signing.
+
+The suite runs a copy of the package, which `inspectable-package.js` makes in
+`release/e2e/` and whose executable it prints; the suite starts only once the
+copy is made, as without `PLM_PACKAGED_EXECUTABLE` it would run the checkout: Playwright controls the
+application through Node's inspector, and the package has the fuse that lets
+`--inspect` start it off. The copy has that fuse on, and differs from the
+package by it alone; on macOS it is signed again ad hoc, without the hardened
+runtime (`docs/contributing/electron-fuses.md`).
 
 The controller creates its own temporary profile. `PLM_E2E=1` requires an
 absolute `PLM_TEST_ROOT`; only known injected debugger flags are removed.

@@ -1977,18 +1977,15 @@ test('HEIC worker generates the approved bounded JPEG and reports corrupt input'
       heicDecode: decoderRequire('./package.json').version,
       libheifJs: decoderRequire('libheif-js/package.json').version,
     };
-    const pool = require(path.join(appRoot, 'node_modules/workerpool')).pool(
-      path.join(appRoot, 'out/app/src-main/thumbnail-generation/generate-thumbnail-file-worker.js'),
-      { workerType: 'process', maxWorkers: 1 });
+    // The worker in a utility process of its own, as the app starts it for each thumbnail.
+    const { generateThumbnailInProcess } = require(path.join(appRoot, 'out/app/src-main/thumbnail-generation/thumbnail-generation.js'));
     const source = path.join(root, 'test/e2e/fixtures/demo.heic');
     const output = path.join(profile, 'thumbnail.jpg');
-    try {
-      const good = await pool.exec('generateThumbnailFile', [{ srcFilePath: source, outputFileDir: profile, outputFilePath: output }]);
-      const jpeg = require(path.join(appRoot, 'node_modules/jpeg-js')).decode(fs.readFileSync(output));
-      const bad = await pool.exec('generateThumbnailFile', [{ srcFilePath: path.join(root, 'test/test-resources/unsupported-files/Invalid Photo.JPG'), outputFileDir: profile, outputFilePath: output }]);
-      return { good, bad, decoderVersions, width: jpeg.width, height: jpeg.height,
-        pixels: require('node:crypto').createHash('sha256').update(jpeg.data).digest('hex') };
-    } finally { await pool.terminate(); }
+    const good = await generateThumbnailInProcess({ srcFilePath: source, outputFileDir: profile, outputFilePath: output });
+    const jpeg = require(path.join(appRoot, 'node_modules/jpeg-js')).decode(fs.readFileSync(output));
+    const bad = await generateThumbnailInProcess({ srcFilePath: path.join(root, 'test/test-resources/unsupported-files/Invalid Photo.JPG'), outputFileDir: profile, outputFilePath: output });
+    return { good, bad, decoderVersions, width: jpeg.width, height: jpeg.height,
+      pixels: require('node:crypto').createHash('sha256').update(jpeg.data).digest('hex') };
   }, { root, profile });
   expect(result.good.status).toBe('success');
   expect(result.good.error).toBeUndefined();

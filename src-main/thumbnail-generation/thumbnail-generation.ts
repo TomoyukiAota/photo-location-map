@@ -1,8 +1,8 @@
+import { utilityProcess } from 'electron';
 import fsExtra from 'fs-extra';
 import * as os from 'os';
 import * as pathModule from 'path';
 import physicalCpuCount from 'physical-cpu-count';
-import workerpool from 'workerpool';
 import _ from 'lodash';
 import { stringArrayToLogText } from '../../src-shared/log/multiline-log-text.js';
 import { perfMark } from '../../src-shared/perf/perf-mark.js';
@@ -32,10 +32,9 @@ export function handleThumbnailGenerationIpcRequest(allHeifFilePaths: string[], 
 
 class FileForWorker {
   private static _fileName = 'generate-thumbnail-file-worker.js';
-  // In a package, the script is in app.asar. workerpool starts each worker with child_process.fork, and Electron runs
-  // the forked process as Node.js, which loads the script and its modules from the archive as the main process does:
-  // nothing is left out of the archive for it (docs/tasks/20261114_enable-asar/). fork needs Electron's fuse
-  // runAsNode, which electron-builder.json keeps on (docs/contributing/electron-fuses.md).
+  // In a package, the script is in app.asar. Each worker is a utility process of Electron, which loads the script and
+  // its modules from the archive as the main process does: nothing is left out of the archive for it
+  // (docs/tasks/20261114_enable-asar/).
   private static _absoluteFilePath = pathModule.join(import.meta.dirname, this._fileName);
   public static get absoluteFilePath() { return this._absoluteFilePath; }
 }
@@ -119,17 +118,10 @@ async function runWorkerForThumbnailGeneration(argArray: ThumbnailFileGeneration
   const logText = stringArrayToLogText(logLines);
   logger.info(`Queuing tasks for worker to generate thumbnail:${logText}`);
 
-  const pool = workerpool.pool(FileForWorker.absoluteFilePath, {
-    maxWorkers: numberOfProcessesToUse,
-    workerType: 'process',
-  });
-
   const workerPromises = argArray.map(arg => {
-    return pool
-      .proxy()
-      .then(worker => worker.generateThumbnailFile(arg))
+    return generateThumbnailInProcess(arg)
       .then(async result => {
-        const { status, error } = (result as unknown as ThumbnailFileGenerationResult) ?? {}; // Cast is necessary to avoid the TypeScript compilation error TS2352.
+        const { status, error } = result ?? {};
         logger.info(`Observed completion of worker for thumbnail generation. Status: ${status}`);
         logger.info(`Finished attempting to create a thumbnail file "${arg.outputFilePath}" from "${arg.srcFilePath}".`);
         const isThumbnailFileCreated = await fsExtra.pathExists(arg.outputFilePath);
@@ -155,5 +147,37 @@ async function runWorkerForThumbnailGeneration(argArray: ThumbnailFileGeneration
   });
 
   await Promise.allSettled(workerPromises);
-  await pool.terminate();
+}
+
+/**
+ * TL;DR: Makes the thumbnail of `arg` in a process of its own, and resolves with the result that the process sent once
+ * the process has ended, or rejects when it ended without sending one, as when it crashed.
+ * Details: Each thumbnail gets a new process, as the memory of a process grows with each that it makes (see
+ * generateThumbnails). The process is Electron's utility process rather than child_process.fork, which Electron refuses
+ * with the fuse runAsNode off (docs/contributing/electron-fuses.md). It runs `workerFile`, which the tests replace.
+ */
+export function generateThumbnailInProcess(arg: ThumbnailFileGenerationArg,
+                                           workerFile = FileForWorker.absoluteFilePath): Promise<ThumbnailFileGenerationResult> {
+  return new Promise((resolve, reject) => {
+    const worker = utilityProcess.fork(workerFile, [], { serviceName: 'Photo Location Map Thumbnail Generation' });
+    let result: ThumbnailFileGenerationResult | undefined;
+    let fatalError = '';
+    // A message posted before the worker listens is kept for it.
+    worker.once('spawn', () => worker.postMessage({ ...arg }));
+    worker.once('message', (sent: ThumbnailFileGenerationResult) => {
+      result = sent;
+      worker.kill();
+    });
+    // A fatal error of V8 in the worker, which Electron emits before 'exit': without a listener, the worker's emitter
+    // would throw it in the main process.
+    worker.on('error', (type, location) => { fatalError = ` after ${type} at ${location}`; });
+    // Settled once the process has ended, not when its result arrives: the next chunk's processes start then, and this
+    // one, still ending, would hold its memory beside theirs.
+    worker.once('exit', code => {
+      if (result)
+        resolve(result);
+      else
+        reject(new Error(`The process for thumbnail generation exited with code ${code}${fatalError} without sending a result.`));
+    });
+  });
 }

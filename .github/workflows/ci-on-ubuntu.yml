@@ -96,9 +96,12 @@ jobs:
     - name: npm run test:package
       run: xvfb-run --auto-servernum npm run test:package
 
-    - name: Locate packaged AppImage for E2E
+    - name: Make an AppImage for E2E
+      # Of a copy of the package whose fuse enableNodeCliInspectArguments is on: Playwright controls the application
+      # through Node's inspector, which the package does not start (script/package-test/inspectable-package.js).
       run: |
-        node -e 'const fs = require("node:fs"); const path = require("node:path"); const version = require("./package.json").version; fs.appendFileSync(process.env.GITHUB_ENV, "PLM_PACKAGED_EXECUTABLE=" + path.resolve("release", "Photo Location Map-" + version + ".AppImage") + "\n");'
+        executable="$(node script/package-test/inspectable-package.js)"
+        echo "PLM_PACKAGED_EXECUTABLE=$executable" >> "$GITHUB_ENV"
 
     - name: npm run test:e2e
       run: xvfb-run --auto-servernum npm run test:e2e
@@ -110,7 +113,7 @@ jobs:
       # A development build checks every view each second for a binding that changed without telling Angular, which
       # would not be rendered, and the suite fails a case that logged one, as NG0100 (test/e2e/README.md). The AppImage
       # above is a production build, which checks nothing. This job, the shortest, runs it: it takes about 5 minutes
-      # more, and the Windows job still takes longer. PLM_PACKAGED_EXECUTABLE, which "Locate packaged AppImage for E2E"
+      # more, and the Windows job still takes longer. PLM_PACKAGED_EXECUTABLE, which "Make an AppImage for E2E"
       # set, is unset so that the suite runs the checkout.
       run: env -u PLM_PACKAGED_EXECUTABLE xvfb-run --auto-servernum npm run test:e2e
 

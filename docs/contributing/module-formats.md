@@ -87,6 +87,5 @@ give it Node.js. Each preload is a single file, so it needs no bundler either.
 
 The application's code is in `app.asar`, with the fuses that let it load only
 from there (`docs/contributing/electron-fuses.md`). The main process, the
-worker thread that reads the trees of folders, and the processes that make
-the thumbnails of HEIF photos, which workerpool starts with
-`child_process.fork`, load their ES modules from the archive.
+worker thread that reads the trees of folders, and the utility processes that
+make the thumbnails of HEIF photos load their ES modules from the archive.

@@ -10,10 +10,10 @@
   ],
   "afterSign": "script/notarize/notarize.js",
   "electronFuses": {
-    "runAsNode": true,
+    "runAsNode": false,
     "enableCookieEncryption": false,
     "enableNodeOptionsEnvironmentVariable": false,
-    "enableNodeCliInspectArguments": true,
+    "enableNodeCliInspectArguments": false,
     "enableEmbeddedAsarIntegrityValidation": true,
     "onlyLoadAppFromAsar": true,
     "loadBrowserProcessSpecificV8Snapshot": false,
