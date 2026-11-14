@@ -2310,6 +2310,32 @@ for (const [name, fixture, specialPath] of [
     expect(await status()).toBe(404);
   });
 }
+test('closing Photo Data Viewer while its page loads shows and records no error', async () => {
+  await dismissWelcome();
+  const photo = path.join(root, 'test/test-resources/actual-photos/Kobe/IMG_4676.JPG');
+  await openFolderWithPicker(path.dirname(photo));
+  // The viewer's window is closed as soon as its page starts to load, as a user can close it as soon as it appears.
+  // A dialog of an unhandled error is recorded instead of shown, as it would hold the main process.
+  await app.evaluate(({ app, dialog }) => {
+    globalThis.__plmE2eErrorDialogs = [];
+    dialog.showMessageBoxSync = options => {
+      globalThis.__plmE2eErrorDialogs.push(options);
+      return 0;
+    };
+    globalThis.__plmE2eViewerClosed = new Promise(resolve => app.once('browser-window-created', (_event, window) => {
+      window.once('closed', resolve);
+      window.webContents.once('did-start-loading', () => window.close());
+    }));
+  });
+  await page.evaluate(({ name, photo }) => window.plm.photoDataViewer.open({ photo: { name, path: photo } }),
+    { name: path.basename(photo), photo });
+  await app.evaluate(() => globalThis.__plmE2eViewerClosed);
+  // The load that the closing stopped rejects at once; give it time to reach the handler of unhandled errors.
+  await page.waitForTimeout(1000);
+  expect(await app.evaluate(() => globalThis.__plmE2eErrorDialogs.map(options => options.detail))).toEqual([]);
+  expect(await app.evaluate(() => globalThis.__plmAnalyticsEvents
+    .filter(event => event.action === 'Unhandled Error (Main)').map(event => event.label))).toEqual([]);
+});
 test('download website keeps desktop and narrow layouts and Windows navigation', async () => {
   test.skip(!!packagedExecutable, 'The static website is verified separately from the packaged application.');
   // In a window of its own, without the app's preload: the main window shows the app's page only
