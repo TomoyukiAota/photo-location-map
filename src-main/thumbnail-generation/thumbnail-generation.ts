@@ -150,8 +150,8 @@ async function runWorkerForThumbnailGeneration(argArray: ThumbnailFileGeneration
 }
 
 /**
- * TL;DR: Makes the thumbnail of `arg` in a process of its own, and resolves with the result that the process sent, or
- * rejects when the process ended without sending one, as when it crashed.
+ * TL;DR: Makes the thumbnail of `arg` in a process of its own, and resolves with the result that the process sent once
+ * the process has ended, or rejects when it ended without sending one, as when it crashed.
  * Details: Each thumbnail gets a new process, as the memory of a process grows with each that it makes (see
  * generateThumbnails). The process is Electron's utility process rather than child_process.fork, which Electron refuses
  * with the fuse runAsNode off (docs/contributing/electron-fuses.md). It runs `workerFile`, which the tests replace.
@@ -160,17 +160,24 @@ export function generateThumbnailInProcess(arg: ThumbnailFileGenerationArg,
                                            workerFile = FileForWorker.absoluteFilePath): Promise<ThumbnailFileGenerationResult> {
   return new Promise((resolve, reject) => {
     const worker = utilityProcess.fork(workerFile, [], { serviceName: 'Photo Location Map Thumbnail Generation' });
-    let resultSent = false;
+    let result: ThumbnailFileGenerationResult | undefined;
+    let fatalError = '';
     // A message posted before the worker listens is kept for it.
     worker.once('spawn', () => worker.postMessage({ ...arg }));
-    worker.once('message', (result: ThumbnailFileGenerationResult) => {
-      resultSent = true;
-      resolve(result);
+    worker.once('message', (sent: ThumbnailFileGenerationResult) => {
+      result = sent;
       worker.kill();
     });
+    // A fatal error of V8 in the worker, which Electron emits before 'exit': without a listener, the worker's emitter
+    // would throw it in the main process.
+    worker.on('error', (type, location) => { fatalError = ` after ${type} at ${location}`; });
+    // Settled once the process has ended, not when its result arrives: the next chunk's processes start then, and this
+    // one, still ending, would hold its memory beside theirs.
     worker.once('exit', code => {
-      if (!resultSent)
-        reject(new Error(`The process for thumbnail generation exited with code ${code} without sending a result.`));
+      if (result)
+        resolve(result);
+      else
+        reject(new Error(`The process for thumbnail generation exited with code ${code}${fatalError} without sending a result.`));
     });
   });
 }

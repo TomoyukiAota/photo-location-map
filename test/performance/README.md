@@ -36,7 +36,9 @@ PDV_IN_PLM=True npx next build --webpack && PDV_IN_PLM=True npx next start -p 31
 # 2. The workloads, once per series.
 mise exec -- node test/performance/workload.mjs "$PWD/.upgrade-artifacts/remove-electron-remote/workloads"
 
-# 3. The builds: each a packaged app kept outside release/, which the next build overwrites.
+# 3. The builds: each a packaged app kept outside release/, which the next build overwrites, and of each, a copy
+#    that Playwright can control, whose executable --app takes:
+mise exec -- node script/package-test/inspectable-package.js <the app of build 0> <a new folder for its copy>
 
 # 4. The series, then its summary.
 mise exec -- node test/performance/run.mjs --protocol rer-2 \
@@ -51,9 +53,10 @@ mise exec -- node test/performance/summarize.mjs .upgrade-artifacts/remove-elect
 On Windows, in PowerShell, the steps are the same, with `$env:PDV_IN_PLM = 'True'` before the viewer's two
 commands. Make each build a directory with `npm run build:prod`, then
 `npx electron-builder build --win dir --x64 --publish never`, and copy `release\win-unpacked\` out before the next
-build; `--app` takes the copy's `Photo Location Map.exe`, in quotes.
+build; the app that `inspectable-package.js` takes is that copied folder, and `--app` takes the executable that it
+prints, in quotes.
 
-A packaged app's executable is that of a copy with Electron's fuse `enableNodeCliInspectArguments` on, which Playwright needs to control the app: `node script/package-test/inspectable-package.js` makes one of the package in `release/e2e/`, and prints its executable (`docs/contributing/electron-fuses.md`). `--app <label>=checkout` measures the checkout's build (`dist/` and `out/app/`) instead of a packaged app. `--app-env <label>:<NAME>=<value>` sets an environment variable for one build's launches, such as `PLM_TEST_PHOTO_TRANSPORT=ipc` for the transport experiment of stage C2; `series.json` records it with the build. Do not
+A packaged app's executable is that of a copy with Electron's fuse `enableNodeCliInspectArguments` on, which Playwright needs to control the app: `node script/package-test/inspectable-package.js <app> <folder>` makes one of the app, an `.app` on macOS or the folder of its executable elsewhere, in the folder, which must not exist yet, and prints its executable (`docs/contributing/electron-fuses.md`). Without arguments, it makes one of the package that the package test built, in `release/e2e/`. `--app <label>=checkout` measures the checkout's build (`dist/` and `out/app/`) instead of a packaged app. `--app-env <label>:<NAME>=<value>` sets an environment variable for one build's launches, such as `PLM_TEST_PHOTO_TRANSPORT=ipc` for the transport experiment of stage C2; `series.json` records it with the build. Do not
 run a series while builds, tests or other measurements run on the computer.
 
 ## Scenarios
