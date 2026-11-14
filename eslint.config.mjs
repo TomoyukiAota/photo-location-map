@@ -95,10 +95,31 @@ const loggedLineRule = ['error',
 // in development and fail in the package.
 const lodashImportMessage = 'Import a function of lodash from its own file of lodash-es, as '
   + '`import debounce from \'lodash-es/debounce.js\'` (eslint.config.mjs says why).';
-const lodashImportRule = ['error', {
-  paths: ['lodash', 'lodash-es'].map(name => ({ name, message: lodashImportMessage })),
-  patterns: [{ group: ['lodash/*'], message: lodashImportMessage }],
+
+// TL;DR: Files are read and written with Node's fs, not fs-extra.
+// Details: The application's code moved to Node's fs, which has what it used of fs-extra. fs-extra stays in the
+// package only as a dependency of electron-updater, at the version that electron-updater asks for, and in development
+// at another, which the development tools ask for: an import of it would work in either, with a version of neither's
+// choosing.
+const fsExtraImportMessage = 'Use Node\'s fs, as `import * as fs from \'fs\'`, rather than fs-extra (eslint.config.mjs says why).';
+
+const restrictedImportsRule = ['error', {
+  paths: [
+    ...['lodash', 'lodash-es'].map(name => ({ name, message: lodashImportMessage })),
+    { name: 'fs-extra', message: fsExtraImportMessage },
+  ],
+  patterns: [
+    { group: ['lodash/*'], message: lodashImportMessage },
+    { group: ['fs-extra/*'], message: fsExtraImportMessage },
+  ],
 }];
+// no-restricted-imports checks only the declarations of imports, so import() of the same modules is checked by its
+// syntax, with the rule about logged lines (no-restricted-syntax). The regular expressions write a slash as \u002F,
+// which the selectors' syntax would take as the end of the expression.
+const restrictedDynamicImports = [
+  { selector: 'ImportExpression[source.value=/^lodash(\\u002F.*)?$|^lodash-es$/]', message: lodashImportMessage },
+  { selector: 'ImportExpression[source.value=/^fs-extra(\\u002F.*)?$/]', message: fsExtraImportMessage },
+];
 
 export default [
   { ignores: ['projects/**', 'dist/**', 'release/**', '.upgrade-artifacts/**'] },
@@ -116,8 +137,8 @@ export default [
       ...tsPlugin.configs['eslint-recommended'].overrides[0].rules,
       ...tsPlugin.configs.recommended.rules,
       ...existingRules,
-      'no-restricted-syntax': loggedLineRule,
-      'no-restricted-imports': lodashImportRule,
+      'no-restricted-syntax': [...loggedLineRule, ...restrictedDynamicImports],
+      'no-restricted-imports': restrictedImportsRule,
     },
   },
   {
@@ -133,20 +154,21 @@ export default [
     plugins: { '@typescript-eslint': tsPlugin },
     rules: {
       '@typescript-eslint/no-require-imports': 'error',
-      'no-restricted-syntax': loggedLineRule,
-      'no-restricted-imports': lodashImportRule,
+      'no-restricted-syntax': [...loggedLineRule, ...restrictedDynamicImports],
+      'no-restricted-imports': restrictedImportsRule,
     },
   },
   {
     // Loggers that record nothing, so whose lines need no tag: the thumbnail worker's own, which writes to its console
     // only (its failures are recorded by reason, src-main/thumbnail-generation/thumbnail-failures.ts), and the
-    // analytics code's, made with { recorded: false } so as not to record the analytics' own failures to send.
+    // analytics code's, made with { recorded: false } so as not to record the analytics' own failures to send. The
+    // rule about import() stays on.
     files: [
       'src-main/thumbnail-generation/generate-thumbnail-file-worker.ts',
       'src-shared/analytics/library-wrapper/**/*.ts',
       'src-shared/analytics/analytics-backend/**/*.ts',
     ],
-    rules: { 'no-restricted-syntax': 'off' },
+    rules: { 'no-restricted-syntax': ['error', ...restrictedDynamicImports] },
   },
   {
     files: ['src/**/*.html'],

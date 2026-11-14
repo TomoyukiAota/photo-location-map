@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron';
-import fsExtra from 'fs-extra';
+import * as fs from 'fs';
 import * as path from 'path';
 import type { OpenTarget } from '../../src-shared/bridge/plm-bridge.js';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
@@ -12,9 +12,9 @@ import { commandLineOptionsValue } from './command-line-options-value.js';
 export async function openTargetOf(specifiedPath: string | undefined): Promise<OpenTarget> {
   if (!specifiedPath)
     return { kind: 'none' };
-  let stats: fsExtra.Stats;
+  let stats: fs.Stats;
   try {
-    stats = await fsExtra.stat(specifiedPath);
+    stats = await fs.promises.stat(specifiedPath);
   } catch (error) {
     return { kind: 'failed', path: specifiedPath, message: error instanceof Error ? error.message : String(error) };
   }
