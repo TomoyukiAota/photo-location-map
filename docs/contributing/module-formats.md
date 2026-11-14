@@ -43,11 +43,10 @@ and the rules that keep it so.
 5. **A CommonJS package is imported by its default export**
    (`import moment from 'moment'`), which is its `module.exports`. Node finds
    the named exports of a CommonJS package by reading its code, and finds none
-   of moment's or exifr's, only some of fs-extra's (not `existsSync`),
-   and not electron-updater's `autoUpdater`, which is a getter. A named import
-   of an export that Node does not find fails when the module is loaded, but a
-   namespace import (`import * as fsExtra`) fails only when the missing export
-   is used.
+   of moment's or exifr's, and not electron-updater's `autoUpdater`, which is a
+   getter. A named import of an export that Node does not find fails when the
+   module is loaded, but a namespace import (`import * as moment`) fails only
+   when the missing export is used.
 6. **A test that replaces a function of Node's modules**, as
    `child_process.spawn`, does so on the CommonJS module and calls
    `syncBuiltinESMExports()` of `node:module` after it, and after it puts the
