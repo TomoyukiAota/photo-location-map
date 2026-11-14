@@ -246,6 +246,25 @@ describe('AnalyticsBackendSender', () => {
     assert.deepEqual(backend.batches[1], [next[0].event_id]);
   });
 
+  it('says when a batch is done with, sent or dropped, and not while it is to be retried, with what is left unsent', async () => {
+    const backend = new FakeBackend([new Error('offline'), 200, 400]);
+    const timers = new FakeTimers();
+    const unsentWhenDone: number[] = [];
+    const sender: AnalyticsBackendSender = new AnalyticsBackendSender({
+      post: backend.post, setTimer: timers.setTimer, clearTimer: timers.clearTimer, logger: silentLogger,
+      onBatchDone: () => unsentWhenDone.push(sender.unsentEvents.length),
+    });
+
+    sender.add(...events(2));
+    await timers.advance(1000);
+    assert.deepEqual(unsentWhenDone, []);  // Failed: retried in 5 seconds.
+    await timers.advance(5000);
+    assert.deepEqual(unsentWhenDone, [0]);  // Sent.
+    sender.add(...events(1));
+    await timers.advance(1000);
+    assert.deepEqual(unsentWhenDone, [0, 0]);  // Dropped with 400.
+  });
+
   it('keeps at most 5,000 events, dropping the oldest', async () => {
     const backend = new FakeBackend([new Error('offline')]);
     const timers = new FakeTimers();

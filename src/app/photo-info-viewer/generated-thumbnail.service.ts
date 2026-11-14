@@ -1,6 +1,7 @@
 import { Service, signal, untracked } from '@angular/core';
 import { bridge } from '../../../src-shared/bridge/plm-bridge';
 import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
+import { logged } from '../../../src-shared/log/logged-line';
 
 /** How long after a check the next one asks about the thumbnails that are still being made. */
 export const thumbnailCheckIntervalMs = 1000;
@@ -85,7 +86,7 @@ export class GeneratedThumbnailService {
         this.awaitedPhotoPaths.delete(photoPath);
       this.filePaths.update(filePaths => new Map([...filePaths, ...finished]));
     } catch (error) {
-      logger.error(`Failed to check the thumbnails of ${photoPaths.length} photos.`, error);
+      logger.error(logged`Failed to check the thumbnails of ${photoPaths.length} photos.`, error);
     } finally {
       this.isChecking = false;
       // Photos of a folder that was opened during the check have waited for it to end.

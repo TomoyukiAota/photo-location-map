@@ -3,6 +3,7 @@ import { Logger } from '../../../../../src-shared/log/logger';
 import { perfMark } from '../../../../../src-shared/perf/perf-mark';
 import { PhotoDataViewerIpcParams } from '../../../../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params';
 import { Photo } from '../../../shared/model/photo.model';
+import { logged } from '../../../../../src-shared/log/logged-line';
 
 export function requestMainProcessToLaunchPhotoDataViewer(photo: Photo) {
   perfMark('view-data:requested');
@@ -15,5 +16,5 @@ export function requestMainProcessToLaunchPhotoDataViewer(photo: Photo) {
     }
   };
   bridge().photoDataViewer.open(ipcParams)
-    .catch(error => Logger.error(`Failed to launch Photo Data Viewer for "${photo.path}".`, error));
+    .catch(error => Logger.error(logged`Failed to launch Photo Data Viewer for "${photo.path}".`, error));
 }

@@ -35,7 +35,7 @@
   },
   "welcome": {
     "message": "Selamat datang ke {{appName}}",
-    "usageInfoCollection": "Untuk menambah baik aplikasi ini, maklumat penggunaan tanpa nama dikumpulkan. Dengan terus menggunakan aplikasi ini, anda bersetuju dengannya."
+    "usageInfoCollection": "Untuk menambah baik aplikasi ini, maklumat penggunaan dikumpulkan. Dengan terus menggunakan aplikasi ini, anda bersetuju dengannya."
   },
   "about": {
     "releasesLink": "Muat turun dan nota keluaran",

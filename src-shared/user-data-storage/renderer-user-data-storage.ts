@@ -3,6 +3,7 @@ import { bridge } from '../bridge/plm-bridge';
 import { Logger } from '../log/logger';
 import { storageKeyOf } from './renderer-storage-access';
 import type { UserDataStorageBackend } from './user-data-storage';
+import { logged, shown } from '../log/logged-line';
 
 /**
  * A renderer's settings: a copy, which it gets once from the main process, and writes that the main process makes.
@@ -38,7 +39,7 @@ export class RendererUserDataStorage implements UserDataStorageBackend {
     this.values.set(storageKeyOf(storagePath), value);
     const written = bridge().storage.write(storagePath, value);
     written.catch(error => {
-      Logger.error(`[UserDataStorage] Failed to write "${value}" for "${storagePath.join(',')}".`, error);
+      Logger.error(logged`[UserDataStorage] Failed to write "${value}" for "${shown(storagePath.join(','))}".`, error);
       recordUnhandledError(error, 'Renderer');
     });
     return written;

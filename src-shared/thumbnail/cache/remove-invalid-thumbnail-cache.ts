@@ -5,6 +5,7 @@ import { createPrependedLogger } from '../../log/create-prepended-logger';
 import { stringArrayToLogText } from '../../log/multiline-log-text';
 import { getOriginalFilePath, getThumbnailLogFilePath, plmThumbnailCacheDir } from './thumbnail-cache-util';
 import { removeEmptyCacheDirectories } from './remove-empty-cache-directories';
+import { logged } from '../../log/logged-line';
 
 const logger = createPrependedLogger('[Invalid thumbnail cache removal]');
 
@@ -12,7 +13,7 @@ export function removeInvalidThumbnailCache(): void {
   try {
     tryRemoveInvalidThumbnailCache();
   } catch (error) {
-    logger.warn(`Aborted the procedure of invalid thumbnail cache removal because error(s) are caught. Error: ${error}`, error);
+    logger.warn(logged`Aborted the procedure of invalid thumbnail cache removal because error(s) are caught. Error: ${error}`, error);
     logger.warn('Swallowed the error(s) to continue application running because errors in invalid cache removal are negligible to the other features of this application.');
   }
 }
@@ -28,7 +29,7 @@ function removeFileInCacheDir(filePath: string): void {
 
   const fileExists = fs.existsSync(filePath);
   if (!fileExists) {
-    logger.warn(`Tried to remove the file which does not exist. File path: "${filePath}"`);
+    logger.warn(logged`Tried to remove the file which does not exist. File path: "${filePath}"`);
     return;
   }
 
@@ -104,6 +105,6 @@ function tryRemoveInvalidThumbnailCache() {
     removeEmptyCacheDirectories(plmThumbnailCacheDir);
     logger.info('Successfully removed empty directories for thumbnail cache (if any).');
   } catch (error) {
-    logger.warn(`Error occurred during removing empty directories for thumbnail cache. Error: ${error}`, error);
+    logger.warn(logged`Error occurred during removing empty directories for thumbnail cache. Error: ${error}`, error);
   }
 }

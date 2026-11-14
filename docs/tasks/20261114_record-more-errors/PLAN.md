@@ -140,15 +140,15 @@ What each recorded error tells, and what the limits drop.
 
 Steps:
 
-- [ ] `maxStackFrames` 20; causes and `AggregateError` in the value; JSON for
+- [x] `maxStackFrames` 20; causes and `AggregateError` in the value; JSON for
   thrown objects (`src-shared/analytics/error-for-analytics.ts`).
-- [ ] The limits as a class with counts of what it dropped; `recordUnhandledError`
+- [x] The limits as a class with counts of what it dropped; `recordUnhandledError`
   uses it (`src-shared/analytics/record-error.ts`).
-- [ ] `Errors Dropped` from both processes.
-- [ ] Tests: `test/src-shared/analytics/error-for-analytics.spec.em.both.ts`
+- [x] `Errors Dropped` from both processes.
+- [x] Tests: `test/src-shared/analytics/error-for-analytics.spec.em.both.ts`
   for the frames, the causes and the objects, with paths in each of them; a
   spec for the limits and their counts.
-- [ ] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
+- [x] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
 
 ### Stage 2: What the code logs
 
@@ -197,19 +197,19 @@ afterwards.
 
 Steps:
 
-- [ ] `logged` and `shown` (`src-shared/log/`), with tests of what each kind of
+- [x] `logged` and `shown` (`src-shared/log/`), with tests of what each kind of
   value becomes.
-- [ ] `Logger.error` and `Logger.warn` take a string or a tagged line; the
+- [x] `Logger.error` and `Logger.warn` take a string or a tagged line; the
   variant that only logs; `createPrependedLogger` passes both on, and can make
   a logger that only logs.
-- [ ] What records a line, set by each process, with the limits and a guard
+- [x] What records a line, set by each process, with the limits and a guard
   against recording from inside recording.
-- [ ] The lint rule, and every call that it refuses changed to the tag (about
+- [x] The lint rule, and every call that it refuses changed to the tag (about
   105 calls; `git grep -n -E "ogger\.(error|warn)\("` lists them). For each
   value, decide whether it is `shown`: when unsure, it is not.
-- [ ] Tests: a line with a path with spaces, a file's name and the user's name
+- [x] Tests: a line with a path with spaces, a file's name and the user's name
   sends none of them; the analytics' own lines send nothing; the limits.
-- [ ] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
+- [x] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
 
 ### Stage 3: Failures with their reasons
 
@@ -226,13 +226,13 @@ Steps:
 
 Steps:
 
-- [ ] `Opened Folder: Failed` (`src/app/sidebar/upper-pane/open-folder-recorder.ts`).
-- [ ] The counter and its event (`src/app/shared/exif-fetcher/`), recorded where
+- [x] `Opened Folder: Failed` (`src/app/sidebar/upper-pane/open-folder-recorder.ts`).
+- [x] The counter and its event (`src/app/shared/exif-fetcher/`), recorded where
   the folder's photos have been read (`ExifFetcher.generatePathExifPairs` or
   `PathPhotoMapRecorder`).
-- [ ] Tests: the reasons are counted, the most frequent five are recorded, and
+- [x] Tests: the reasons are counted, the most frequent five are recorded, and
   a path in what was thrown is not sent (`test/src/app/shared/`).
-- [ ] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
+- [x] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
 
 ### Stage 4: Starts that fail, launches that do not end, and saving at once
 
@@ -275,17 +275,17 @@ their `event_id`. The file is safe for two instances.
 
 Steps:
 
-- [ ] The order of the imports and the `catch` (`src-main/electron-main.ts`);
+- [x] The order of the imports and the `catch` (`src-main/electron-main.ts`);
   the handler works without the log file.
-- [ ] `reportStartFailure` sends the event (`src/main.ts`).
-- [ ] The launch's file: written, touched, removed, found at the next launch;
+- [x] `reportStartFailure` sends the event (`src/main.ts`).
+- [x] The launch's file: written, touched, removed, found at the next launch;
   `session-end` on Windows; the session ID's new place.
-- [ ] Unsent events saved when an error is tracked, kept until sent, for two
+- [x] Unsent events saved when an error is tracked, kept until sent, for two
   instances (`analytics-backend-wrapper.ts`, `unsent-events-file.ts`).
-- [ ] Tests: an error thrown by a setup module is recorded and saved; a file of
+- [x] Tests: an error thrown by a setup module is recorded and saved; a file of
   a process that does not run gives the event, one of a process that runs does
   not; events saved at once are loaded by the next launch and sent once.
-- [ ] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
+- [x] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
 
 ### Stage 5: What only the console shows
 
@@ -307,13 +307,13 @@ the errors, as `Console Error (Renderer)`.
 
 Steps:
 
-- [ ] Check the event's arguments in the Electron version in use: they changed
+- [x] Check the event's arguments in the Electron version in use: they changed
   from separate arguments to one event object in an earlier major version.
-- [ ] The listener (`src-main/`, set where `recordWindowFailures` is), the
+- [x] The listener (`src-main/`, set where `recordWindowFailures` is), the
   filter and the scrubbing of a web address.
-- [ ] Tests with stand-ins for the window, as
+- [x] Tests with stand-ins for the window, as
   `test/src-main/window/record-window-failures.spec.em.main.ts` has.
-- [ ] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
+- [x] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
 
 ### Stage 6: Crash reports, and the Welcome dialog's sentence
 
@@ -344,22 +344,22 @@ at an address that does not take them yet.
 
 Steps:
 
-- [ ] The endpoints and their rule, with a test as the events' rule has
+- [x] The endpoints and their rule, with a test as the events' rule has
   (`src-shared/analytics/config/`).
-- [ ] `crashReporter.start`, where the main process sets itself up
+- [x] `crashReporter.start`, where the main process sets itself up
   (`src-main/electron-main.ts`); off in tests.
-- [ ] A check that a dump arrives: a local server that takes the upload, a
+- [x] A check that a dump arrives: a local server that takes the upload, a
   renderer crashed on purpose (`process.crash()`), and the fields of the
   request. As an automated test if it is stable on CI; otherwise by hand on
   macOS, written down in `STATUS.md`.
-- [ ] With the backend's dev address: crash the application run in development
+- [x] With the backend's dev address: crash the application run in development
   mode on purpose, main process and renderer, and check that both dumps
   arrived, with the user ID and the session ID of the launch's events.
-- [ ] The sentence in 42 files; the translations' unit test; the layout check
+- [x] The sentence in 42 files; the translations' unit test; the layout check
   of the Welcome dialog in every language (`test/layout/README.md`); the e2e
   screenshots that show the dialog, if any, updated as `test/e2e/README.md`
   says.
-- [ ] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
+- [x] [Checks](#checks-for-every-stage); `STATUS.md`; pull request.
 
 ## Checks for every stage
 

@@ -6,12 +6,12 @@ import { Logger } from '../src-shared/log/logger';
 // and on which environments. A crash of the main process itself cannot be recorded from here.
 export function configureRecordProcessGone(): void {
   app.on('render-process-gone', (_event, _webContents, details) => {
-    Logger.error(`[Process Gone] Renderer process gone. Reason: ${details.reason}, exit code: ${details.exitCode}`);
+    Logger.errorNotRecorded(`[Process Gone] Renderer process gone. Reason: ${details.reason}, exit code: ${details.exitCode}`);
     Analytics.trackEvent('Process Gone', 'Process Gone: Renderer', `Reason: ${details.reason}`, `Exit Code: ${details.exitCode}`);
   });
 
   app.on('child-process-gone', (_event, details) => {
-    Logger.error(`[Process Gone] Child process gone. Type: ${details.type}, name: ${details.name}, reason: ${details.reason}, exit code: ${details.exitCode}`);
+    Logger.errorNotRecorded(`[Process Gone] Child process gone. Type: ${details.type}, name: ${details.name}, reason: ${details.reason}, exit code: ${details.exitCode}`);
     Analytics.trackEvent('Process Gone', 'Process Gone: Child',
       `Type: ${details.type}, Reason: ${details.reason}`, `Exit Code: ${details.exitCode}, Name: ${details.name || ''}`);
   });

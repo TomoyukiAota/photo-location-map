@@ -35,7 +35,7 @@
   },
   "welcome": {
     "message": "Ongi etorri {{appName}} aplikaziora",
-    "usageInfoCollection": "Aplikazio hau hobetzeko, erabilerari buruzko informazio anonimoa biltzen da. Aplikazioa erabiltzen jarraitzen baduzu, horrekin ados zaudela ulertuko da."
+    "usageInfoCollection": "Aplikazio hau hobetzeko, erabilerari buruzko informazioa biltzen da. Aplikazioa erabiltzen jarraitzen baduzu, horrekin ados zaudela ulertuko da."
   },
   "about": {
     "releasesLink": "Deskargak eta bertsio-oharrak",

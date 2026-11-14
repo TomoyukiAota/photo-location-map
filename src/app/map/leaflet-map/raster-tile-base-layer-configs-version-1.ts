@@ -89,7 +89,7 @@ function recordFetchingConfigs(url: string): void {
 
 function recordInvalidConfigsObjectError(url: string, configs: any, responseText: string): void {
   const message = `Invalid configs object is fetched from ${url}.\n----------\nconfigs:\n${toLoggableString(configs)}\n----------\nresponseText:\n${responseText}`;
-  logger.error(message);
+  logger.errorNotRecorded(message);  // Recorded as the event below.
   Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Invalid BaseLayerConfigs`, message);
 }
 
@@ -101,13 +101,13 @@ function recordFetchSuccess(url: string, configs: RasterTileBaseLayerConfigsVers
 
 function recordFetchFailed(url: string, error: Error): void {
   const message = `Failed to fetch ${url}. error.message: "${error.message}"`;
-  logger.error(message);
+  logger.errorNotRecorded(message);  // Recorded as the event below.
   Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Failed to fetch configs`, message);
 }
 
 function recordFetchFailedForAllUrls(): void {
   const message = `Failed to fetch the configs from all the possible URLs. Using the fallback configs.`;
-  logger.error(message);
+  logger.errorNotRecorded(message);  // Recorded as the event below.
   Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Fallback BaseLayerConfigs`, message);
 }
 

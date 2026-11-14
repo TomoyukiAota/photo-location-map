@@ -1,15 +1,18 @@
 /* eslint-disable @typescript-eslint/no-require-imports -- Node's modules are loaded in initialize, not at the top: see the class. */
 import { v4 as uuidv4 } from 'uuid';
 import { createPrependedLogger } from '../../log/create-prepended-logger';
+import { isProcessRunning } from '../../process/is-process-running';
 import { AnalyticsBackendEvent } from '../analytics-backend/analytics-backend-event';
 import { AnalyticsBackendSender } from '../analytics-backend/analytics-backend-sender';
-import { UnsentEventsFile } from '../analytics-backend/unsent-events-file';
+import { UnsentEventsFile, UnsentEventsFiles } from '../analytics-backend/unsent-events-file';
 import { AnalyticsBackendConfig } from '../config/analytics-backend-config';
 import { AnalyticsBackendEndpoint } from '../config/analytics-backend-endpoint';
 import { AnalyticsConfig } from '../config/analytics-config';
+import { launchSessionId } from '../launch-session';
 import { AnalyticsLibraryWrapperInitialize, AnalyticsLibraryWrapperTrackEvent } from './library-wrapper-decorator';
 
-const backendLogger = createPrependedLogger('[Analytics Backend]');
+// Its errors and warnings are not recorded: they would record the analytics' own failures to send.
+const backendLogger = createPrependedLogger('[Analytics Backend]', { recorded: false });
 
 // Sends events to the analytics backend, from the main process only (renderer events arrive over IPC; see
 // AnalyticsBackendIpcMain in src-main/analytics/). When to send is decided by AnalyticsBackendSender.
@@ -24,6 +27,9 @@ export class AnalyticsBackendWrapper {
   private static sessionId: string;
   private static seq = 0;
   private static sender: AnalyticsBackendSender;
+  private static unsentEventsFile: UnsentEventsFile;
+  /** Whether this launch's file of unsent events may hold events that have been sent since it was saved. */
+  private static isUnsentEventsFileWritten = false;
   private static isInitialized = false;
 
   @AnalyticsLibraryWrapperInitialize(backendLogger)
@@ -31,10 +37,9 @@ export class AnalyticsBackendWrapper {
     this.electron = require('electron');
     this.crypto = require('crypto');
     this.os = require('os');
-    const path: typeof import('path') = require('path');
     this.endpoint = AnalyticsBackendConfig.endpoint;
     this.userId = AnalyticsConfig.userId;
-    this.sessionId = uuidv4();
+    this.sessionId = launchSessionId();
     backendLogger.info(`Endpoint: ${this.endpoint}`);
     backendLogger.info(`Session ID: ${this.sessionId}`);
 
@@ -47,19 +52,34 @@ export class AnalyticsBackendWrapper {
       },
       clearTimer: timer => clearTimeout(timer as ReturnType<typeof setTimeout>),
       logger: backendLogger,
+      // The events sent are taken out of this launch's file, if it was written.
+      onBatchDone: () => {
+        if (this.isUnsentEventsFileWritten)
+          this.saveUnsentEvents();
+      },
     });
 
-    // Sending on quit may not finish, so keep what is left and send it on the next launch.
-    // On will-quit rather than before-quit, so that events tracked on before-quit (such as the quit event) are kept.
-    // One file per endpoint: the app launched with npm scripts and prerelease versions share the user data folder
-    // with the released app, and their events must not be sent to the other endpoint.
-    const unsentEventsFile = new UnsentEventsFile(path.join(this.electron.app.getPath('userData'),
-      `analytics-backend-unsent-events-${AnalyticsBackendEndpoint.nameOf(this.endpoint)}.json`));
-    const unsentEvents = this.loadUnsentEvents(unsentEventsFile);
-    this.electron.app.on('will-quit', () => this.saveUnsentEvents(unsentEventsFile));
+    // TL;DR: What is not sent yet is kept in a file, which the next launch sends, as sending may not finish.
+    // Details: Saved on will-quit rather than before-quit, so that events tracked on before-quit (such as the quit
+    // event) are kept, and when an error is tracked, so that an error that comes before a crash is not lost with it.
+    // A file per endpoint: the app launched with npm scripts and prerelease versions share the user data folder with
+    // the released app, and their events must not be sent to the other endpoint. And a file per launch, as two
+    // launches can run at once: a launch takes over those that ended launches left (UnsentEventsFiles).
+    const files = new UnsentEventsFiles(this.electron.app.getPath('userData'), AnalyticsBackendEndpoint.nameOf(this.endpoint), isProcessRunning);
+    this.unsentEventsFile = files.own(process.pid);
+    const unsentEvents = this.takeOverUnsentEvents(files);
+    this.electron.app.on('will-quit', () => this.saveUnsentEvents());
     this.isInitialized = true;
     this.sender.add(...unsentEvents);
   }
+
+  /**
+   * The categories of events whose tracking saves the unsent events at once: those of errors, which may come just
+   * before a crash.
+   */
+  private static readonly categoriesSavedAtOnce: readonly string[] = [
+    'Unhandled Error', 'Logged Error', 'Process Gone', 'Window Unresponsive', 'Console Error', 'Errors Dropped',
+  ];
 
   @AnalyticsLibraryWrapperTrackEvent(backendLogger)
   public static trackEvent(category: string, action: string, label?: string, value?: string | number) {
@@ -82,6 +102,8 @@ export class AnalyticsBackendWrapper {
       label: label ?? null,
       value: value ?? null,
     });
+    if (this.categoriesSavedAtOnce.includes(category) || action === 'Launch Info: Previous Launch Ended Abnormally')
+      this.saveUnsentEvents();
   }
 
   private static async post(events: AnalyticsBackendEvent[]): Promise<number> {
@@ -105,11 +127,14 @@ export class AnalyticsBackendWrapper {
     return response.status;
   }
 
-  private static loadUnsentEvents(file: UnsentEventsFile): AnalyticsBackendEvent[] {
+  /** The events that ended launches left, taken over into this launch's own file (UnsentEventsFiles.takeOver). */
+  private static takeOverUnsentEvents(files: UnsentEventsFiles): AnalyticsBackendEvent[] {
     try {
-      const events = file.loadAndRemove();
-      if (events.length > 0)
+      const events = files.takeOver(process.pid, message => backendLogger.warn(message));
+      if (events.length > 0) {
+        this.isUnsentEventsFileWritten = true;
         backendLogger.info(`Loaded ${events.length} unsent events.`);
+      }
       return events;
     } catch (error) {
       backendLogger.warn(`Failed to load unsent events: ${error}`);
@@ -117,10 +142,11 @@ export class AnalyticsBackendWrapper {
     }
   }
 
-  private static saveUnsentEvents(file: UnsentEventsFile): void {
+  private static saveUnsentEvents(): void {
     try {
       const events = this.sender.unsentEvents;
-      file.save(events);
+      this.unsentEventsFile.save(events);
+      this.isUnsentEventsFileWritten = events.length > 0;
       if (events.length > 0)
         backendLogger.info(`Saved ${events.length} unsent events.`);
     } catch (error) {

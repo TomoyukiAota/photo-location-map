@@ -11,11 +11,12 @@ import { createThumbnailGenerationLogFile, getThumbnailFilePath } from '../../sr
 import { thumbnailGenerationLogger as logger } from '../../src-shared/thumbnail/generation/thumbnail-generation-logger';
 import { ThumbnailFileGenerationArg, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result';
 import { ThumbnailFailures } from './thumbnail-failures';
+import { logged } from '../../src-shared/log/logged-line';
 
 export function handleThumbnailGenerationIpcRequest(allHeifFilePaths: string[], heifFilePathsToGenerateThumbnail: string[]): void {
   if (!allHeifFilePaths || !heifFilePathsToGenerateThumbnail) {
     logger.error(`handleThumbnailGenerationIpcRequest should be called with string arrays.`);
-    logger.error(`allHeifFilePaths: ${allHeifFilePaths}, heifFilePathsToGenerateThumbnail: ${heifFilePathsToGenerateThumbnail}`,
+    logger.errorNotRecorded(`allHeifFilePaths: ${allHeifFilePaths}, heifFilePathsToGenerateThumbnail: ${heifFilePathsToGenerateThumbnail}`,
       allHeifFilePaths, heifFilePathsToGenerateThumbnail);
     return;
   }
@@ -130,7 +131,8 @@ async function runWorkerForThumbnailGeneration(argArray: ThumbnailFileGeneration
         const isThumbnailFileCreated = await fsExtra.pathExists(arg.outputFilePath);
         logger.info(`Does the thumbnail file exist? -> ${isThumbnailFileCreated}`);
         if(!isThumbnailFileCreated) {
-          logger.warn(`Failed to create a thumbnail file since it does not exist after an attempt to create it.` +
+          // Recorded as a reason of failed thumbnails (thumbnail-failures.ts), below.
+          logger.warnNotRecorded(`Failed to create a thumbnail file since it does not exist after an attempt to create it.` +
             ` Attempted to create a thumbnail file "${arg.outputFilePath}" from "${arg.srcFilePath}". Error: ${error}`);
           failures.add(status ?? 'unknown', error);
         }
@@ -138,12 +140,12 @@ async function runWorkerForThumbnailGeneration(argArray: ThumbnailFileGeneration
       }, async error => {
         // The worker process failed and sent nothing back, such as when it crashed. The generation log file is still
         // written: the window counts a thumbnail as done by it, and without it would wait for this one for ever.
-        logger.error(`The worker for thumbnail generation failed for "${arg.srcFilePath}". error: ${error}`, error);
+        logger.errorNotRecorded(`The worker for thumbnail generation failed for "${arg.srcFilePath}". error: ${error}`, error);  // Recorded as "worker-failed", below.
         failures.add('worker-failed', error);
         try {
           await createThumbnailGenerationLogFile(arg.srcFilePath, arg.outputFileDir, false, logger);
         } catch (logFileError) {
-          logger.error(`Failed to write the thumbnail generation log file for "${arg.srcFilePath}".`, logFileError);
+          logger.error(logged`Failed to write the thumbnail generation log file for "${arg.srcFilePath}".`, logFileError);
         }
       });
   });

@@ -39,7 +39,7 @@ const recorders: WindowFailureRecorders = {
  */
 export function recordWindowFailures(window: BrowserWindow, windowName: RecordedWindow, record = recorders): void {
   window.webContents.on('preload-error', (_event, preloadPath, error) => {
-    Logger.error(`The preload of ${windowName} failed (${preloadPath}): ${error.stack ?? error.message}`);
+    Logger.errorNotRecorded(`The preload of ${windowName} failed (${preloadPath}): ${error.stack ?? error.message}`);
     record.recordError(error);
   });
 
@@ -50,7 +50,7 @@ export function recordWindowFailures(window: BrowserWindow, windowName: Recorded
       return;
     unresponsiveSince = record.now();
     recordedTimes++;
-    Logger.warn(`[Window Unresponsive] ${windowName} stopped answering.`);
+    Logger.warnNotRecorded(`[Window Unresponsive] ${windowName} stopped answering.`);
     if (recordedTimes <= maxUnresponsiveEventsPerWindow)
       record.trackEvent('Window Unresponsive', `Window Unresponsive: ${windowName}`);
   });

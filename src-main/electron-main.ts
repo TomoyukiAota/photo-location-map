@@ -1,19 +1,25 @@
 // TL;DR: The order of the first imports matters: each sets up what the next ones use while they are evaluated.
-// Details: The test profile moves the app's folders; errors are scrubbed and logged from the start; the startup metadata
-// needs the log's location; the settings hold the analytics user ID and the language, which the texts of the menu and
-// the dialogs are in; analytics then sends what was tracked before.
+// Details: The test profile moves the app's folders; errors are scrubbed, and handled from the start, so that an error
+// of the setups that follow is recorded; the launch's file is written before them too, so that a launch whose setup
+// fails and stops it before analytics are set is told at the next, which sends its error (src-main/launch/); the
+// startup metadata needs the log's location; the settings hold the analytics user ID, which the crash reporter's dumps
+// carry, and the language, which the texts of the menu and the dialogs are in; analytics then sends what was tracked
+// before.
 import '../electron-util/isolated-test-profile';
 import './analytics/error-scrubbing-setup';
+import './configure-electron-unhandled';
+import './launch/launch-file-setup';
 import './log/log-setup';
 import './startup/startup-metadata-setup';
 import './user-data-storage/user-data-storage-setup';
+import './crash-reporter-setup';
 import './i18n/i18n-setup';
 import { withHeadlessTestOptions } from '../electron-util/e2e-test-hooks';
-import './configure-electron-unhandled';
 import './command-line-options/configure-command-line-options';
 import './analytics/analytics-setup';
 import { app, BrowserWindow, protocol } from 'electron';
 import { mainWindowWebPreferences } from '../electron-util/electron-web-preferences';
+import { recordUnhandledError } from '../src-shared/analytics/record-error';
 import { LogFileConfig } from '../src-shared/log/file-config/log-file-config';
 import { Logger } from '../src-shared/log/logger';
 import { perfMark } from '../src-shared/perf/perf-mark';
@@ -39,6 +45,7 @@ import { handleAppQuit } from './handle-app-quit';
 import { LiveReload } from './live-reload';
 import { configureLiveReload } from './configure-live-reload';
 import { recordAtAppLaunch } from './record-at-app-launch';
+import { recordConsoleErrors } from './record-console-errors';
 import { configureRecordAtAppQuit } from './record-at-app-quit';
 import { configureRecordProcessGone } from './record-process-gone';
 import { recordWindowFailures } from './record-window-failures';
@@ -104,6 +111,7 @@ const createWindow = async () => {
   keepOnAppPage(mainWindow.webContents, url);
   // A preload that throws leaves the page without its bridge, so that the page cannot write to the log itself.
   recordWindowFailures(mainWindow, 'Main Window');
+  recordConsoleErrors(mainWindow.webContents);
   mainWindow.loadURL(url);
 
   // Keep automated development checks on the application's CDP target.
@@ -164,10 +172,8 @@ try {
     });
   });
 } catch (e) {
-  Logger.error(e);
-  Logger.error('Fatal error occurred in main process. Photo Location Map is closing.');
-
-  // TODO: Handle error with electron-unhandled
-
+  Logger.errorNotRecorded(e);
+  Logger.errorNotRecorded('Fatal error occurred in main process. Photo Location Map is closing.');
+  recordUnhandledError(e, 'Main');
   process.exitCode = 1;
 }

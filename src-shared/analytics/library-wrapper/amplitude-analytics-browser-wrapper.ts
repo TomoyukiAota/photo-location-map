@@ -5,7 +5,8 @@ import { AmplitudeConfig } from '../config/amplitude-config';
 import { AnalyticsConfig } from '../config/analytics-config';
 import { AnalyticsLibraryWrapperInitialize, AnalyticsLibraryWrapperTrackEvent } from './library-wrapper-decorator';
 
-const amplitudeLogger = createPrependedLogger('[Amplitude]');
+// Its errors and warnings are not recorded: they would record the analytics' own failures to send.
+const amplitudeLogger = createPrependedLogger('[Amplitude]', { recorded: false });
 
 export class AmplitudeAnalyticsBrowserWrapper {
   private static amplitude: typeof import('@amplitude/analytics-browser');

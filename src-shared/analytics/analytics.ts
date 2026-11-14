@@ -6,6 +6,36 @@ let analytics: AnalyticsInterface | undefined;
 // never sets them, as the main window's preload keeps at most so many messages for its page.
 const pendingEvents: Parameters<AnalyticsInterface['trackEvent']>[] = [];
 const maxPendingEvents = 1000;
+let pendingEventsListener: (() => void) | undefined;
+
+/** Whether this process's analytics are set. */
+export function isAnalyticsSet(): boolean {
+  return analytics !== undefined;
+}
+
+/**
+ * TL;DR: The events tracked before this process's analytics were set, while they are not, and what is called when
+ * they change: when one is kept, and when the analytics are set and take them.
+ * Details: A launch of the main process keeps them in its file (src-main/launch/), so that those of a setup that fails
+ * and stops the launch before its analytics are set, its error among them, are sent by the next launch; and writes the
+ * file without them once its analytics take them, so that they are not sent twice.
+ */
+export function eventsKeptBeforeAnalytics(): Parameters<AnalyticsInterface['trackEvent']>[] {
+  return analytics ? [] : [...pendingEvents];
+}
+
+export function whenEventsKeptBeforeAnalyticsChange(listener: (() => void) | undefined): void {
+  pendingEventsListener = listener;
+}
+
+function tellPendingEventsChanged(): void {
+  try {
+    pendingEventsListener?.();
+  } catch (error) {
+    // The events are kept or sent all the same; tracking never throws.
+    console.error('What is called when the analytics events kept before the analytics were set change failed.', error);
+  }
+}
 
 /**
  * Sets the analytics of this process, and sends what was tracked before: the main process's (src-main/analytics/),
@@ -22,6 +52,7 @@ export function useAnalytics(processAnalytics: AnalyticsInterface): void {
       console.error('An analytics event tracked before the analytics were set could not be sent.', error);
     }
   }
+  tellPendingEventsChanged();
 }
 
 export class Analytics {
@@ -30,9 +61,11 @@ export class Analytics {
     if (EnvironmentDetector.isUnitTest)
       return;
 
-    if (analytics)
+    if (analytics) {
       analytics.trackEvent(category, action, label, value);
-    else if (pendingEvents.length < maxPendingEvents)
+    } else if (pendingEvents.length < maxPendingEvents) {
       pendingEvents.push([category, action, label, value]);
+      tellPendingEventsChanged();
+    }
   }
 }

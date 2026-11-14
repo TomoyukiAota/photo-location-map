@@ -1,20 +1,19 @@
 import { startupMetadata } from '../startup/startup-metadata';
 import { ErrorScrubbingContext, errorForAnalytics, maxLabelLength, scrubMessage } from './error-for-analytics';
+import { EventLimiter } from './event-limiter';
 
 // Records errors that nothing handled, without the user's file paths (see errorForAnalytics).
 // An error in a loop must not flood analytics, so each process sends at most 20 errors per launch, and at most 3
-// with the same message. Recording never throws: it runs while handling another error.
-const maxErrorsPerLaunch = 20;
-const maxErrorsWithSameLabel = 3;
+// with the same message; what the limits drop is counted (event-limiter.ts). Recording never throws: it runs while
+// handling another error.
+const unhandledErrors = new EventLimiter('Unhandled Error', 20, 3);
 
-let recordedErrors = 0;
-const recordedLabels = new Map<string, number>();
 const recordedErrorObjects = new WeakSet<object>();
 let isRecording = false;
 
 /** Records an error that nothing handled, once for each error object and within the limits above. */
 export function recordUnhandledError(error: unknown, processName: 'Main' | 'Renderer'): void {
-  if (isRecording || recordedErrors >= maxErrorsPerLaunch)
+  if (isRecording)
     return;
 
   isRecording = true;
@@ -27,13 +26,15 @@ export function recordUnhandledError(error: unknown, processName: 'Main' | 'Rend
       recordedErrorObjects.add(original);
     }
 
+    // Past the limit of the launch, the error is counted without the work of describing it.
+    if (unhandledErrors.isFull) {
+      unhandledErrors.drop();
+      return;
+    }
     const { label, value } = errorForAnalytics(original, scrubbingContext());
-    const sameLabel = recordedLabels.get(label) || 0;
-    if (sameLabel >= maxErrorsWithSameLabel)
+    if (!unhandledErrors.allows(label))
       return;
 
-    recordedLabels.set(label, sameLabel + 1);
-    recordedErrors++;
     // Required here, not imported at the top: this file is loaded first in the main process (to catch errors
     // from the start), and importing Analytics there would initialize analytics earlier than before.
     // eslint-disable-next-line @typescript-eslint/no-require-imports -- See above.
@@ -44,6 +45,11 @@ export function recordUnhandledError(error: unknown, processName: 'Main' | 'Rend
   } finally {
     isRecording = false;
   }
+}
+
+/** An error's label and value as an unhandled error's are, without paths, for an event of its own. */
+export function scrubbedError(error: unknown): { label: string, value: string } {
+  return errorForAnalytics(error, scrubbingContext());
 }
 
 /** Records an error message that is not an exception, such as an auto-update failure, without paths. */
@@ -75,7 +81,7 @@ export function setScrubbingContext(context: () => ErrorScrubbingContext): void 
 }
 
 /** What errors are scrubbed of: in a renderer, the home folder and the user name that the main process sent. */
-function scrubbingContext(): ErrorScrubbingContext {
+export function scrubbingContext(): ErrorScrubbingContext {
   if (mainProcessContext)
     return mainProcessContext();
   try {
