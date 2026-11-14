@@ -17,7 +17,7 @@ import './i18n/i18n-setup.js';
 import { withHeadlessTestOptions } from '../electron-util/e2e-test-hooks.js';
 import './command-line-options/configure-command-line-options.js';
 import './analytics/analytics-setup.js';
-import { app, BrowserWindow, protocol } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import { mainWindowWebPreferences } from '../electron-util/electron-web-preferences.js';
 import { recordUnhandledError } from '../src-shared/analytics/record-error.js';
 import { LogFileConfig } from '../src-shared/log/file-config/log-file-config.js';
@@ -30,6 +30,7 @@ import './explorer-context-menu/explorer-context-menu-ipc-setup.js';
 import './photo-data-viewer/photo-data-viewer-ipc-setup.js';
 // Before the app is ready, which registering the schemes requires.
 import './privileged-schemes-setup.js';
+import './file-server/photo-files-setup.js';
 import './photo-data-viewer/photo-delivery-setup.js';
 import './exif/exif-ipc-setup.js';
 import './folder-dialog/folder-dialog-ipc-setup.js';
@@ -158,20 +159,6 @@ try {
 
   app.on('quit', () => handleAppQuit());
 
-  // Below is a workaround for the issue that displaying a file with "file://" protocol
-  // on the browser using development server results in an error like
-  // -------------------------------
-  // GET file:///C:/temp/temp.JPG
-  // net::ERR_UNKNOWN_URL_SCHEME
-  // -------------------------------
-  // This issue happens from Electron 9.
-  // See https://github.com/electron/electron/issues/23757#issuecomment-640146333
-  app.whenReady().then(() => {
-    protocol.registerFileProtocol('file', (request, callback) => {
-      const pathname = decodeURI(request.url.replace('file:///', ''));
-      callback(pathname);
-    });
-  });
 } catch (e) {
   Logger.errorNotRecorded(e);
   Logger.errorNotRecorded('Fatal error occurred in main process. Photo Location Map is closing.');

@@ -2,6 +2,7 @@ import assert from 'assert';
 import {
   errorForAnalytics, maxAggregatedErrors, maxCauses, maxStackFrames, scrubConsoleMessage, scrubConsoleSource, scrubMessage, scrubStack,
 } from '../../../src-shared/analytics/error-for-analytics.js';
+import { photoFileUrl } from '../../../src-shared/main-window-schemes.js';
 
 const mac = {
   appPaths: ['/Applications/Photo Location Map.app/Contents/Resources/app.asar'],
@@ -219,6 +220,18 @@ describe('scrubConsoleMessage and scrubConsoleSource', () => {
   it('should give any web source by its origin only, a local server\'s and one that names app.asar among them', () => {
     assert.equal(scrubConsoleSource('http://localhost:8080/tiles/12/3456/789.png?key=secret', mac), 'http://localhost:8080/<path>');
     assert.equal(scrubConsoleSource('https://example.org/x/app.asar/dist/main.js', mac), 'https://example.org/<path>');
+  });
+
+  it('should give a file of the main window\'s page by its name in the build, as plm-app: serves it', () => {
+    assert.equal(scrubConsoleSource('plm-app://app/chunk-ABC.js?v=1', mac), 'dist/chunk-ABC.js');
+    assert.equal(scrubStack('TypeError: x\n    at render (plm-app://app/main-XYZ.js:10:20)\n    at plm-app://app/chunk-ABC.js:3:4', mac),
+      'at render (dist/main-XYZ.js:10:20)\nat dist/chunk-ABC.js:3:4');
+    assert.equal(scrubConsoleMessage('GET plm-file://local/%2FUsers%2Fhanako%2FPictures%2Fa.jpg 404 (Not Found)', mac), 'GET <path> 404 (Not Found)');
+    // The address escapes the characters that encodeURIComponent keeps, so that a folder's name in parentheses, or with
+    // an apostrophe, goes with the rest of the address.
+    const address = photoFileUrl("/Volumes/Photos/(private) it's/a.jpg");
+    assert.equal(scrubConsoleMessage(`GET ${address} 404 (Not Found)`, mac), 'GET <path> 404 (Not Found)');
+    assert.equal(scrubConsoleMessage(`Failed to load '${address}'.`, mac), "Failed to load '<path>'.");
   });
 
   it('should give a file of the app\'s by its name, without a query', () => {

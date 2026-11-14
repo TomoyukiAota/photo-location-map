@@ -158,8 +158,8 @@ export async function respondToPhotoRequest(request: Request): Promise<Response>
     return new Response(null, { status: 403 });
   let file: Response;
   try {
-    // Past the app's own handler of file: URLs (src-main/electron-main.ts), which cannot read a path with "#" in it:
-    // it decodes the URL with decodeURI, which keeps "%23" as it is.
+    // Past any handler of file: URLs that protocol.handle may have: the app's own, which it had until the main
+    // window's page got its photos from plm-file:, could not read a path with "#" in it, as it decoded with decodeURI.
     file = await net.fetch(pathToFileURL(capability.filePath).href, { bypassCustomProtocolHandlers: true });
   } catch (error) {
     logger.warn(logged`The photo of Photo Data Viewer's window could not be read: ${error as Error}`);

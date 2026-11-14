@@ -2356,6 +2356,26 @@ test('closing Photo Data Viewer while its page loads shows and records no error'
   expect(await app.evaluate(() => globalThis.__plmAnalyticsEvents
     .filter(event => event.action === 'Unhandled Error (Main)').map(event => event.label))).toEqual([]);
 });
+test('the page shows the photos of a folder that the user opened, and no other file', async () => {
+  // The page's web security is on: no file: URL loads, and plm-file: answers only for the opened folders
+  // (src-main/file-server/photo-files.ts).
+  await dismissWelcome();
+  const folder = path.join(photoFolder, 'Kobe');
+  await openFolderWithPicker(folder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('files have location data.');
+  const loads = src => page.evaluate(src => new Promise(resolve => {
+    const image = new Image();
+    image.onload = () => resolve(image.naturalWidth > 0);
+    image.onerror = () => resolve(false);
+    image.src = src;
+  }), src);
+  const photoFileUrl = filePath => `plm-file://local/${encodeURIComponent(filePath)}`;
+  const inside = path.join(folder, 'IMG_4676.JPG');
+  expect(await loads(photoFileUrl(inside))).toBe(true);
+  expect(await loads(photoFileUrl(path.join(photoFolder, 'Unga', 'IMG_2581.JPG')))).toBe(false);
+  expect(await loads(photoFileUrl(`${folder}${path.sep}..${path.sep}Unga${path.sep}IMG_2581.JPG`))).toBe(false);
+  expect(await loads(pathToFileURL(inside).href)).toBe(false);
+});
 test('download website keeps desktop and narrow layouts and Windows navigation', async () => {
   test.skip(!!packagedExecutable, 'The static website is verified separately from the packaged application.');
   // In a window of its own, without the app's preload: the main window shows the app's page only
