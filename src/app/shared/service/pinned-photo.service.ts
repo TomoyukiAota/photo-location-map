@@ -1,5 +1,5 @@
 import { computed, inject, Service } from '@angular/core';
-import * as _ from 'lodash';
+import isEqual from 'lodash-es/isEqual.js';
 import { DateTimeTakenChartConfigService } from '../../date-time-taken-chart/config/date-time-taken-chart-config.service';
 import { photosToPin } from '../../date-time-taken-chart/photos-to-pin';
 import { Photo } from '../model/photo.model';
@@ -7,7 +7,7 @@ import { SelectedPhotoService } from './selected-photo.service';
 
 /** Whether the photos are the same, whatever their order. */
 function haveSamePaths(a: readonly Photo[], b: readonly Photo[]): boolean {
-  return _.isEqual(a.map(photo => photo.path).sort(), b.map(photo => photo.path).sort());
+  return isEqual(a.map(photo => photo.path).sort(), b.map(photo => photo.path).sort());
 }
 
 @Service()

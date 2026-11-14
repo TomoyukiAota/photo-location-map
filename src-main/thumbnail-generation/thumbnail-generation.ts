@@ -3,7 +3,7 @@ import fsExtra from 'fs-extra';
 import * as os from 'os';
 import * as pathModule from 'path';
 import physicalCpuCount from 'physical-cpu-count';
-import _ from 'lodash';
+import chunk from 'lodash-es/chunk.js';
 import { stringArrayToLogText } from '../../src-shared/log/multiline-log-text.js';
 import { perfMark } from '../../src-shared/perf/perf-mark.js';
 import { removeInvalidThumbnailCache } from '../../src-shared/thumbnail/cache/remove-invalid-thumbnail-cache.js';
@@ -95,7 +95,7 @@ async function generateThumbnails(heifFilePaths: string[]) {
   // By numberOfFilesInChunk === numberOfProcessesToUse, each worker process will be restarted per thumbnail.
 
   const numberOfFilesInChunk = numberOfProcessesToUse;
-  const argArrayChunks = _.chunk(argArray, numberOfFilesInChunk);
+  const argArrayChunks = chunk(argArray, numberOfFilesInChunk);
   logger.info(`Files are split in ${argArrayChunks.length} chunks.`);
   logger.info(`Each chunk contains up to ${numberOfFilesInChunk} files.`);
 
@@ -104,9 +104,9 @@ async function generateThumbnails(heifFilePaths: string[]) {
   for (let index = 0; index < argArrayChunks.length; index++){
     const chunkNumber = `#${index + 1}`;
     logger.info(`Started chunk ${chunkNumber} out of ${argArrayChunks.length} chunks.`);
-    const chunk = argArrayChunks[index];
-    logger.info(`Chunk ${chunkNumber} contains ${chunk.length} files.`);
-    await runWorkerForThumbnailGeneration(chunk, failures);
+    const argChunk = argArrayChunks[index];
+    logger.info(`Chunk ${chunkNumber} contains ${argChunk.length} files.`);
+    await runWorkerForThumbnailGeneration(argChunk, failures);
     logger.info(`Finished chunk ${chunkNumber} out of ${argArrayChunks.length} chunks.`);
   }
   failures.record();

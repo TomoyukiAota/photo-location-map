@@ -318,7 +318,7 @@ sandboxed page.
   in place of the TypeScript.
 - There is no `require`, `__dirname` or `__filename`: use `import`,
   `import()` for what is loaded late, and `import.meta.dirname`.
-- Import a CommonJS package by its default export (`import _ from 'lodash'`).
+- Import a CommonJS package by its default export (`import moment from 'moment'`).
 - A test that replaces a function of Node's modules calls
   `syncBuiltinESMExports()` after it.
 
