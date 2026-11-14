@@ -8,6 +8,7 @@ import { openUrl } from '../../src-shared/url/open-url.js';
 import { addPhotoDataViewerWindow } from '../ipc/ipc-sender.js';
 import { recordWindowFailures } from '../record-window-failures.js';
 import { isWebPageUrl } from '../shell/open-with-os.js';
+import { loadViewerPage } from './load-viewer-page.js';
 import { grantPhoto, keepOnViewerPages } from './photo-delivery.js';
 import { trackOpeningPhotoDataViewer } from './photo-data-viewer-tracker.js';
 import { createPhotoDataViewerUrl } from './photo-data-viewer-url.js';
@@ -54,10 +55,8 @@ export async function launchPhotoDataViewer(ipcParams: PhotoDataViewerIpcParams)
   trackOpeningPhotoDataViewer(bounds);
   PhotoDataViewerWindowState.manage({browserWindow, photo});
   const photoDataViewerUrl = createPhotoDataViewerUrl(photo);
-  await browserWindow.loadURL(photoDataViewerUrl);
-  perfMark('view-data:page-loaded');
   // A headless test keeps the window off the screen instead (electron-util/e2e-test-hooks.js).
-  if (!isHeadlessTest) browserWindow.show();
+  await loadViewerPage(browserWindow, photoDataViewerUrl, !isHeadlessTest);
 }
 
 function modifyUrlForAnalyticsIfNeeded(originalUrl: string): string {
