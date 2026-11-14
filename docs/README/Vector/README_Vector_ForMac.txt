@@ -34,7 +34,7 @@ HP     https://tomoyukiaota.github.io/photo-location-map/
 
 ○ 動 作 環 境
 
-  macOS 10.10 (Yosemite) 以降
+  macOS 13 (Ventura) 以降
 
 --------------------------------------------------------------
 

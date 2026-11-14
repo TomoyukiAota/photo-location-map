@@ -43,4 +43,6 @@ installer checks the OS version otherwise.
    version installs the update anyway, and is left with an app that does not
    start.
 4. State in the release notes which OS versions the release needs, and which
-   version of the app is the last one for older ones.
+   version of the app is the last one for older ones. The READMEs of the ZIP
+   files for Vector, in [`docs/README/Vector/`](../README/Vector/), state the
+   OS versions too (動作環境): change them with the minimums.
