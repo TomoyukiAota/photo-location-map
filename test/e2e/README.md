@@ -75,8 +75,8 @@ The suite runs a copy of the package, which `inspectable-package.js` makes in
 `release/e2e/` and whose executable it prints: Playwright controls the
 application through Node's inspector, and the package has the fuse that lets
 `--inspect` start it off. The copy has that fuse on, and differs from the
-package by it alone; on macOS it is signed again ad hoc
-(`docs/contributing/electron-fuses.md`).
+package by it alone; on macOS it is signed again ad hoc, without the hardened
+runtime (`docs/contributing/electron-fuses.md`).
 
 The controller creates its own temporary profile. `PLM_E2E=1` requires an
 absolute `PLM_TEST_ROOT`; only known injected debugger flags are removed.

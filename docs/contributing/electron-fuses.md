@@ -34,8 +34,8 @@ process through Node's inspector, which Playwright starts with `--inspect`,
 and which a package does not start. They run a copy of the package with
 `enableNodeCliInspectArguments` on, which
 `script/package-test/inspectable-package.js` makes in `release/e2e/` and whose
-executable it prints: on macOS, a copy of the application signed again ad hoc;
-on Windows, a copy of the application that the installer installed; on Linux,
+executable it prints: on macOS, a copy of the application signed again ad hoc,
+without the hardened runtime; on Windows, a copy of the application that the installer installed; on Linux,
 an AppImage of a copy of `release/linux-unpacked`. The package itself is
 checked by the package test: its fuses, and its installation and launch,
 which do not use the inspector.

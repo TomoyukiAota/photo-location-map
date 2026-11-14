@@ -11,7 +11,9 @@ import packageJson from '../../package.json' with { type: 'json' };
 //   the package has the fuse that lets --inspect start it off (electron-builder.json, docs/contributing/electron-fuses.md).
 //   The copy differs from the package by that fuse alone. The package itself is checked by the package test: its fuses,
 //   and its installation and launch in the smoke test, which does not use the inspector.
-// - macOS: a copy of the application of release/mac-universal, signed again ad hoc, as the fuse is in the signed binary.
+// - macOS: a copy of the application of release/mac-universal, signed again ad hoc, as the fuse is in the signed
+//   framework of Electron, and without the hardened runtime: its library validation refuses to load a framework that
+//   is not signed by the team of the application's executable, and a signature made ad hoc has no team.
 // - Windows: a copy of the application as the package test's smoke test left it installed, by the NSIS installer.
 // - Linux: an AppImage of a copy of release/linux-unpacked, so that the e2e suite runs the application from an AppImage,
 //   as users do. electron-builder packs a folder given with --prepackaged as it is, without setting its fuses.
@@ -22,13 +24,9 @@ const { flipFuses, FuseV1Options, FuseVersion } = fuses;
 const releaseDirectory = path.resolve(import.meta.dirname, '../../release');
 const copyDirectory = path.join(releaseDirectory, 'e2e');
 
-/** Turns on the fuse of `executable` that lets --inspect start the inspector, signing a macOS application again. */
+/** Turns on the fuse of `executable` (on macOS, the application) that lets --inspect start the inspector. */
 async function enableInspectArguments(executable) {
-  await flipFuses(executable, {
-    version: FuseVersion.V1,
-    [FuseV1Options.EnableNodeCliInspectArguments]: true,
-    resetAdHocDarwinSignature: process.platform === 'darwin',
-  });
+  await flipFuses(executable, { version: FuseVersion.V1, [FuseV1Options.EnableNodeCliInspectArguments]: true });
 }
 
 /** Copies `source` to `target`, keeping the symbolic links of a macOS application as they are. */
@@ -45,6 +43,8 @@ export async function makeInspectablePackage(platform = process.platform, arch =
       const application = path.join(copyDirectory, 'Photo Location Map.app');
       copy(path.join(releaseDirectory, 'mac-universal', 'Photo Location Map.app'), application);
       await enableInspectArguments(application);
+      // Every part of the copy signed again ad hoc, without the hardened runtime, which --preserve-metadata would keep.
+      execFileSync('codesign', ['--force', '--deep', '--sign', '-', application], { stdio: ['ignore', 2, 2] });
       return path.join(application, 'Contents', 'MacOS', 'Photo Location Map');
     }
     case 'win32': {
