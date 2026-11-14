@@ -9,7 +9,7 @@
 //  - A thrown value that is not an error keeps its type, and an object its JSON with only the texts that are codes in
 //    its diagnostic fields, such as "code".
 
-import { appPageOrigin, photoFileScheme } from '../main-window-schemes.js';
+import { appPageOrigin, photoFileAddressPattern } from '../main-window-schemes.js';
 
 export interface ErrorScrubbingContext {
   /** Folders of the app itself, whose files may be named in stacks (e.g. app.getAppPath()). */
@@ -32,11 +32,9 @@ const fileExtensions = 'jpe?g|jpe|jfif?|jif|tiff?|png|heic|heif|webp|mov|mp4';
 const quotedFileName = new RegExp(`(['"\`])[^'"\`]*\\.(?:${fileExtensions})\\1`, 'gi');
 const fileName = new RegExp(`[^\\s'"\`()<>,;]+\\.(?:${fileExtensions})\\b`, 'gi');
 
-// An address of plm-file:, a user's photo or its thumbnail, holds the file's whole path, escaped, slashes and all.
-const photoFileAddress = new RegExp(`\\b${photoFileScheme}:\\/\\/[^\\s'"\`()<>]*`, 'gi');
-
 export function scrubMessage(message: string, context: ErrorScrubbingContext): string {
-  let result = replaceSensitiveStrings(message.replace(photoFileAddress, '<path>'), context);
+  // An address of a user's photo or its thumbnail holds the file's whole path, escaped, slashes and all.
+  let result = replaceSensitiveStrings(message.replace(photoFileAddressPattern, '<path>'), context);
   // Quoted text with a path separator in it, such as ENOENT's "open '/Users/x/Pictures/a b.jpg'".
   result = result.replace(/(['"`])[^'"`]*[\\/][^'"`]*\1/g, (_match, quote: string) => `${quote}<path>${quote}`);
   // A quoted file name, which can have spaces: "'IMG 0001.jpg'".

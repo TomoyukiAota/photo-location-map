@@ -12,11 +12,20 @@ const photoFileOrigin = `${photoFileScheme}://local`;
 
 /**
  * The address of a photo or of a thumbnail for an img element of the page: its whole path in one segment, escaped,
- * so that a character of a path, as "#", "%", "?" or a Windows backslash, stays the path's.
+ * so that a character of a path, as "#", "%", "?" or a Windows backslash, stays the path's. Every character but
+ * letters, digits and "-._~" is escaped, those that encodeURIComponent keeps ("!'()*") too, so that
+ * photoFileAddressPattern takes an address whole.
  */
 export function photoFileUrl(filePath: string): string {
-  return `${photoFileOrigin}/${encodeURIComponent(filePath)}`;
+  const escaped = encodeURIComponent(filePath).replace(/[!'()*]/g, c => `%${c.charCodeAt(0).toString(16).toUpperCase()}`);
+  return `${photoFileOrigin}/${escaped}`;
 }
+
+/**
+ * An address of photoFileUrl, whole, in a text such as a console message, which holds the path of a user's file: the
+ * analytics of errors take it as a path (src-shared/analytics/error-for-analytics.ts).
+ */
+export const photoFileAddressPattern = /\bplm-file:\/\/[\w.~%/-]*/gi;
 
 /** The path that an address of photoFileUrl stands for; undefined for any other address, or an escape that is not one. */
 export function photoFilePathOf(url: string): string | undefined {

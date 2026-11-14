@@ -2,6 +2,7 @@ import assert from 'assert';
 import {
   errorForAnalytics, maxAggregatedErrors, maxCauses, maxStackFrames, scrubConsoleMessage, scrubConsoleSource, scrubMessage, scrubStack,
 } from '../../../src-shared/analytics/error-for-analytics.js';
+import { photoFileUrl } from '../../../src-shared/main-window-schemes.js';
 
 const mac = {
   appPaths: ['/Applications/Photo Location Map.app/Contents/Resources/app.asar'],
@@ -226,6 +227,11 @@ describe('scrubConsoleMessage and scrubConsoleSource', () => {
     assert.equal(scrubStack('TypeError: x\n    at render (plm-app://app/main-XYZ.js:10:20)\n    at plm-app://app/chunk-ABC.js:3:4', mac),
       'at render (dist/main-XYZ.js:10:20)\nat dist/chunk-ABC.js:3:4');
     assert.equal(scrubConsoleMessage('GET plm-file://local/%2FUsers%2Fhanako%2FPictures%2Fa.jpg 404 (Not Found)', mac), 'GET <path> 404 (Not Found)');
+    // The address escapes the characters that encodeURIComponent keeps, so that a folder's name in parentheses, or with
+    // an apostrophe, goes with the rest of the address.
+    const address = photoFileUrl("/Volumes/Photos/(private) it's/a.jpg");
+    assert.equal(scrubConsoleMessage(`GET ${address} 404 (Not Found)`, mac), 'GET <path> 404 (Not Found)');
+    assert.equal(scrubConsoleMessage(`Failed to load '${address}'.`, mac), "Failed to load '<path>'.");
   });
 
   it('should give a file of the app\'s by its name, without a query', () => {

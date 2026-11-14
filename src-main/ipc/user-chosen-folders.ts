@@ -4,7 +4,8 @@ import * as path from 'path';
 // the tree of such a folder, and open the files and folders in it with the OS, but not those of any other folder.
 // A relative path, which --open can give, is relative to the main process's working directory, as for the tree.
 
-const chosenFolders = new Set<string>();
+// Each folder by its comparable path, with its path as resolved.
+const chosenFolders = new Map<string, string>();
 
 /** A path resolved, and compared as the file systems of macOS and Windows do by default: without regard to case. */
 function comparable(filePath: string): string {
@@ -20,7 +21,12 @@ function isPath(value: unknown): value is string {
 /** Remembers that the user chose the folder at `folderPath`, whose tree the main window's page may then read. */
 export function rememberUserChosenFolder(folderPath: string): void {
   if (isPath(folderPath))
-    chosenFolders.add(comparable(folderPath));
+    chosenFolders.set(comparable(folderPath), path.resolve(folderPath));
+}
+
+/** The folders that the user chose, as resolved. */
+export function userChosenFolderPaths(): string[] {
+  return [...chosenFolders.values()];
 }
 
 /** Whether the user chose the folder at `folderPath`. */
@@ -33,7 +39,7 @@ export function isInUserChosenFolder(filePath: unknown): filePath is string {
   if (!isPath(filePath))
     return false;
   const target = comparable(filePath);
-  for (const folder of chosenFolders) {
+  for (const folder of chosenFolders.keys()) {
     if (isComparableInFolder(target, folder))
       return true;
   }
