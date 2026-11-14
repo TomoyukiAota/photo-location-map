@@ -34,11 +34,20 @@ export function isInUserChosenFolder(filePath: unknown): filePath is string {
     return false;
   const target = comparable(filePath);
   for (const folder of chosenFolders) {
-    const prefix = folder.endsWith(path.sep) ? folder : folder + path.sep;
-    if (target === folder || target.startsWith(prefix))
+    if (isComparableInFolder(target, folder))
       return true;
   }
   return false;
+}
+
+/** Whether `filePath` is the folder at `folderPath`, or is in it, as the paths of the chosen folders are compared. */
+export function isInFolder(filePath: string, folderPath: string): boolean {
+  return isPath(filePath) && isPath(folderPath) && isComparableInFolder(comparable(filePath), comparable(folderPath));
+}
+
+function isComparableInFolder(target: string, folder: string): boolean {
+  const prefix = folder.endsWith(path.sep) ? folder : folder + path.sep;
+  return target === folder || target.startsWith(prefix);
 }
 
 /** Forgets every folder, for tests. */

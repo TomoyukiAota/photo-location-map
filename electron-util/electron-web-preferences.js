@@ -3,9 +3,9 @@ import path from 'path';
 
 /**
  * The main window's page runs without Node.js, sandboxed, with context isolation: it reaches the main process only
- * through its preload's bridge, window.plm (preload/main-window.cjs). webSecurity stays off, as it was: the page,
- * served from plm-app: (src-main/file-server/app-page.ts), shows the photos from their file: URLs, which a page of
- * another scheme may load only so (docs/contributing/electron-fuses.md, "What is still open").
+ * through its preload's bridge, window.plm (preload/main-window.cjs). With webSecurity, it loads no file: URL, and
+ * gets the user's photos from plm-file:, which answers only for those of the folders that the user opened
+ * (src-main/file-server/photo-files.ts).
  * @param {string} appPath app.getAppPath(): the app's folder, in a checkout or a package, where the preload is.
  * @returns {Electron.WebPreferences}
  */
@@ -16,7 +16,7 @@ export function mainWindowWebPreferences(appPath) {
     nodeIntegration: false,
     nodeIntegrationInWorker: false,
     sandbox: true,
-    webSecurity: false,
+    webSecurity: true,
   };
 }
 

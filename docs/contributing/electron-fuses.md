@@ -40,7 +40,7 @@ an AppImage of a copy of `release/linux-unpacked`. The package itself is
 checked by the package test: its fuses, and its installation and launch,
 which do not use the inspector.
 
-## What is still open
+## What they protect
 
 With `runAsNode` and `enableNodeCliInspectArguments` off, other software can
 no longer run its code as Photo Location Map, with `ELECTRON_RUN_AS_NODE=1` or
@@ -48,11 +48,12 @@ no longer run its code as Photo Location Map, with `ELECTRON_RUN_AS_NODE=1` or
 to the folders that the user let it read. With `grantFileProtocolExtraPrivileges`
 off, no page has the privileges that Electron gives a page of `file:`.
 
-- The main window's `webSecurity` is off (`electron-util/electron-web-preferences.js`),
-  so that its page shows the photos from their `file:` URLs, which a page of
-  another scheme may not load otherwise. It can be turned on once the photos
-  are served from a scheme of the application's own too, which answers only for
-  the files of the folders that the user opened.
+The main window's `webSecurity` is on (`electron-util/electron-web-preferences.js`):
+its page loads no `file:` URL, and gets the user's photos and their thumbnails
+from `plm-file:`, which answers only for the files of the folders that the user
+opened and for the thumbnails that the application made
+(`src-main/file-server/photo-files.ts`). Nothing that these settings decide is
+left open.
 
 ## When the package test fails on the fuses
 

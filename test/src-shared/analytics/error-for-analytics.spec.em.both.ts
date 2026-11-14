@@ -221,6 +221,13 @@ describe('scrubConsoleMessage and scrubConsoleSource', () => {
     assert.equal(scrubConsoleSource('https://example.org/x/app.asar/dist/main.js', mac), 'https://example.org/<path>');
   });
 
+  it('should give a file of the main window\'s page by its name in the build, as plm-app: serves it', () => {
+    assert.equal(scrubConsoleSource('plm-app://app/chunk-ABC.js?v=1', mac), 'dist/chunk-ABC.js');
+    assert.equal(scrubStack('TypeError: x\n    at render (plm-app://app/main-XYZ.js:10:20)\n    at plm-app://app/chunk-ABC.js:3:4', mac),
+      'at render (dist/main-XYZ.js:10:20)\nat dist/chunk-ABC.js:3:4');
+    assert.equal(scrubConsoleMessage('GET plm-file://local/%2FUsers%2Fhanako%2FPictures%2Fa.jpg 404 (Not Found)', mac), 'GET <path> 404 (Not Found)');
+  });
+
   it('should give a file of the app\'s by its name, without a query', () => {
     const source = 'file:///Applications/Photo%20Location%20Map.app/Contents/Resources/app.asar/dist/main.js?v=1#x';
 

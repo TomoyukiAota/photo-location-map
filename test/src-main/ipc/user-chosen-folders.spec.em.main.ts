@@ -1,7 +1,7 @@
 import assert from 'assert';
 import * as path from 'path';
 import {
-  forgetUserChosenFolders, isInUserChosenFolder, isUserChosenFolder, rememberUserChosenFolder
+  forgetUserChosenFolders, isInFolder, isInUserChosenFolder, isUserChosenFolder, rememberUserChosenFolder
 } from '../../../src-main/ipc/user-chosen-folders.js';
 
 describe('user-chosen-folders (in main process)', () => {
@@ -25,6 +25,14 @@ describe('user-chosen-folders (in main process)', () => {
     assert.strictEqual(isInUserChosenFolder(''), false);
     assert.strictEqual(isInUserChosenFolder(undefined), false);
     assert.strictEqual(isInUserChosenFolder(['/photos/trip/a.jpg']), false);
+  });
+
+  it('tells a path in a given folder as it tells one in a chosen folder', () => {
+    assert.strictEqual(isInFolder(path.join(folder, 'a.jpg'), folder), true);
+    assert.strictEqual(isInFolder(folder, folder), true);
+    assert.strictEqual(isInFolder(path.resolve('/photos', 'trip2', 'a.jpg'), folder), false);
+    assert.strictEqual(isInFolder(`${folder}${path.sep}..${path.sep}a.jpg`, folder), false);
+    assert.strictEqual(isInFolder('', folder), false);
   });
 
   it('compares without regard to case on macOS and Windows, whose file systems do by default', () => {
