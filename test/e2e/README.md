@@ -100,8 +100,9 @@ option when the migration guard is unset.
 
 The visual references are macOS arm64 at a 1200x800 content size. Keep the same
 display scaling and color profile, locale and fonts. OpenStreetMap tiles can
-vary independently; inspect any difference. Date examples and temporary cache
-paths are masked.
+vary independently; inspect any difference. Date examples, temporary cache
+paths and the version in the Welcome and About dialogs, which changes with
+every release, are masked.
 Nonvisual runs fit the physical work area so native pointer events stay on screen.
 `PLM_E2E_COMPACT=1` exercises a 960x600 maximum content area locally. Map checks
 count represented photos across marker clusters; clustering can change with size.
