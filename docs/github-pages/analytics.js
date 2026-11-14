@@ -358,7 +358,7 @@
     // address; and the language that the page is in.
     languageSetting: websiteLanguage ? websiteLanguage.setting() : undefined,
     languageInUse: websiteLanguage ? websiteLanguage.inUse() : undefined,
-    screen:`${window.screen.width}x${window.screen.height}`,
+    screen: `${window.screen.width}x${window.screen.height}`,
     viewport: `${window.innerWidth}x${window.innerHeight}`,
     devicePixelRatio: window.devicePixelRatio,
     timeZone: timeZone(),
