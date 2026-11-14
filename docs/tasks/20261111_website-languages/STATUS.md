@@ -4,7 +4,8 @@ Started and implemented on 2026-11-11. On 2026-11-12, the 40 machine
 translations were reviewed, and the layout was looked at in every language. On
 2026-11-13, the language picker got an entry that follows the browser. On
 2026-11-14, the pages send the Language setting to the analytics backend, and
-the website was merged (#680), published and checked as published.
+the website was merged (#680), published and checked as published. On
+2026-11-15, the owner read it in Japanese.
 
 ## What was asked
 
@@ -311,11 +312,16 @@ On macOS (Apple Silicon), 2026-11-11.
   languages no such page was found, and the names are the reviewers' best
   knowledge; the review's record lists them. Where one is not what Windows
   shows, the English words after it and the pictures still say which button
-  is meant.
+  is meant. The owner decided on 2026-11-15 to leave them so, as nothing more
+  can be found about them: a user of Windows in the language may correct one.
 
 ## Questions for the owner
 
 - **The Japanese texts** of `docs/github-pages/locales/ja.json` follow the
-  application's wording (マップ, 使用状況データ). They have not been reviewed.
+  application's wording (マップ, 使用状況データ). The owner read the published
+  pages in Japanese on 2026-11-15, and found them fine.
 - **The 40 machine translations** were published with the website on
-  2026-11-14, as the application's are with its next release.
+  2026-11-14, as the application's are with its next release. The owner
+  decided on 2026-11-15 to release them as they are: a speaker reads them
+  after the release, and a correction comes as a pull request
+  (`docs/TRANSLATING.md`).
