@@ -28,7 +28,8 @@ import { getUrlForMainWindow } from './file-server/file-server.js';
 import './menu/menu.js';
 import './explorer-context-menu/explorer-context-menu-ipc-setup.js';
 import './photo-data-viewer/photo-data-viewer-ipc-setup.js';
-// Before the app is ready, which registering its scheme requires.
+// Before the app is ready, which registering the schemes requires.
+import './privileged-schemes-setup.js';
 import './photo-data-viewer/photo-delivery-setup.js';
 import './exif/exif-ipc-setup.js';
 import './folder-dialog/folder-dialog-ipc-setup.js';
