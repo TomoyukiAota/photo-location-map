@@ -257,5 +257,9 @@
     "message": "{{appName}} の新しいバージョンがあり、再起動後にインストールされます。\n今すぐこのアプリを再起動しますか？\n\n現在のバージョン: {{currentVersion}}\n最新のバージョン: {{latestVersion}}",
     "yes": "はい",
     "no": "いいえ"
+  },
+  "unhandledError": {
+    "message": "予期しないエラーが発生しました。",
+    "copyError": "エラーをコピー"
   }
 }

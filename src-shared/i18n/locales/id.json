@@ -257,5 +257,9 @@
     "message": "Versi baru {{appName}} tersedia dan akan dipasang setelah aplikasi dimulai ulang.\nIngin memulai ulang aplikasi sekarang?\n\nVersi saat ini: {{currentVersion}}\nVersi terbaru: {{latestVersion}}",
     "yes": "Ya",
     "no": "Tidak"
+  },
+  "unhandledError": {
+    "message": "Terjadi kesalahan yang tidak terduga.",
+    "copyError": "Salin kesalahan"
   }
 }

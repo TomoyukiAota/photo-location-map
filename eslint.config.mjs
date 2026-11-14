@@ -87,6 +87,40 @@ const loggedLineRule = ['error',
   { selector: `${loggerCall} > BinaryExpression:first-child[operator='+']`, message: loggedLineMessage },
 ];
 
+// TL;DR: A function of lodash is imported from its own file of lodash-es, as `import debounce from 'lodash-es/debounce.js'`.
+// Details: The main process is not bundled, so Node loads each file that its imports name: the index of lodash-es
+// imports all of its 647 files, which took 55 ms where the two files that the main process uses took 2 ms. The
+// renderer imports them in the same way, as src-shared/ runs in both. lodash, the CommonJS build of the same
+// functions, is only a dependency of the development tools, which the package leaves out: an import of it would work
+// in development and fail in the package.
+const lodashImportMessage = 'Import a function of lodash from its own file of lodash-es, as '
+  + '`import debounce from \'lodash-es/debounce.js\'` (eslint.config.mjs says why).';
+
+// TL;DR: Files are read and written with Node's fs, not fs-extra.
+// Details: The application's code moved to Node's fs, which has what it used of fs-extra. fs-extra stays in the
+// package only as a dependency of electron-updater, at the version that electron-updater asks for, and in development
+// at another, which the development tools ask for: an import of it would work in either, with a version of neither's
+// choosing.
+const fsExtraImportMessage = 'Use Node\'s fs, as `import * as fs from \'fs\'`, rather than fs-extra (eslint.config.mjs says why).';
+
+const restrictedImportsRule = ['error', {
+  paths: [
+    ...['lodash', 'lodash-es'].map(name => ({ name, message: lodashImportMessage })),
+    { name: 'fs-extra', message: fsExtraImportMessage },
+  ],
+  patterns: [
+    { group: ['lodash/*'], message: lodashImportMessage },
+    { group: ['fs-extra/*'], message: fsExtraImportMessage },
+  ],
+}];
+// no-restricted-imports checks only the declarations of imports, so import() of the same modules is checked by its
+// syntax, with the rule about logged lines (no-restricted-syntax). The regular expressions write a slash as \u002F,
+// which the selectors' syntax would take as the end of the expression.
+const restrictedDynamicImports = [
+  { selector: 'ImportExpression[source.value=/^lodash(\\u002F.*)?$|^lodash-es$/]', message: lodashImportMessage },
+  { selector: 'ImportExpression[source.value=/^fs-extra(\\u002F.*)?$/]', message: fsExtraImportMessage },
+];
+
 export default [
   { ignores: ['projects/**', 'dist/**', 'release/**', '.upgrade-artifacts/**'] },
   {
@@ -103,32 +137,38 @@ export default [
       ...tsPlugin.configs['eslint-recommended'].overrides[0].rules,
       ...tsPlugin.configs.recommended.rules,
       ...existingRules,
-      'no-restricted-syntax': loggedLineRule,
+      'no-restricted-syntax': [...loggedLineRule, ...restrictedDynamicImports],
+      'no-restricted-imports': restrictedImportsRule,
     },
   },
   {
     // The main process, and the code that it shares with the renderer: checked for the form of its imports so far.
-    // TL;DR: A module is loaded by an import, not by require(), which is for the few places that say why.
-    // Details: tsc turns these files into CommonJS (the package's "type"), so require() works in them, without the
-    // types and the checks that an import has. The places that need it load a module late on purpose, such as a
-    // module of Node in code that the renderer bundles too (docs/contributing/module-formats.md).
+    // TL;DR: A module is loaded by an import: these files run as ES modules, which have no require().
+    // Details: tsc accepts a call of require(), which the types of Node declare everywhere, and it would fail only once
+    // it runs. A module that is loaded late, or that may be missing, is loaded with import()
+    // (docs/contributing/module-formats.md).
     files: ['src-main/**/*.ts', 'src-shared/**/*.ts'],
     // These files have comments that switch off rules which are not checked here: they are not reported as unused.
     linterOptions: { reportUnusedDisableDirectives: 'off' },
     languageOptions: { parser: tsParser, parserOptions: { ecmaVersion: 'latest', sourceType: 'module' } },
     plugins: { '@typescript-eslint': tsPlugin },
-    rules: { '@typescript-eslint/no-require-imports': 'error', 'no-restricted-syntax': loggedLineRule },
+    rules: {
+      '@typescript-eslint/no-require-imports': 'error',
+      'no-restricted-syntax': [...loggedLineRule, ...restrictedDynamicImports],
+      'no-restricted-imports': restrictedImportsRule,
+    },
   },
   {
     // Loggers that record nothing, so whose lines need no tag: the thumbnail worker's own, which writes to its console
     // only (its failures are recorded by reason, src-main/thumbnail-generation/thumbnail-failures.ts), and the
-    // analytics code's, made with { recorded: false } so as not to record the analytics' own failures to send.
+    // analytics code's, made with { recorded: false } so as not to record the analytics' own failures to send. The
+    // rule about import() stays on.
     files: [
       'src-main/thumbnail-generation/generate-thumbnail-file-worker.ts',
       'src-shared/analytics/library-wrapper/**/*.ts',
       'src-shared/analytics/analytics-backend/**/*.ts',
     ],
-    rules: { 'no-restricted-syntax': 'off' },
+    rules: { 'no-restricted-syntax': ['error', ...restrictedDynamicImports] },
   },
   {
     files: ['src/**/*.html'],

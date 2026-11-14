@@ -35,13 +35,13 @@ test('the fuses that electron-builder.json sets pass, in each half of a universa
   checkElectronFuses({ configured, wires: fuseWiresOf(binaryWith(configuredWire, configuredWire)) });
 });
 
-test('electron-builder.json keeps on the fuses that the application needs, and changes the three of the plan', () => {
+test('electron-builder.json keeps on the fuses that the application needs, and turns off those that run code from outside', () => {
   // docs/contributing/electron-fuses.md has why each is so.
   assert.deepEqual(configured, {
-    runAsNode: true,
+    runAsNode: false,
     enableCookieEncryption: false,
     enableNodeOptionsEnvironmentVariable: false,
-    enableNodeCliInspectArguments: true,
+    enableNodeCliInspectArguments: false,
     enableEmbeddedAsarIntegrityValidation: true,
     onlyLoadAppFromAsar: true,
     loadBrowserProcessSpecificV8Snapshot: false,
@@ -74,7 +74,7 @@ test('wasmTrapHandlers, which electron-builder cannot set, must stay on', () => 
 
 test('a fuse that Electron removed, or one that it added, fails until it is decided', () => {
   const removed = withFuse(configuredWire, 'runAsNode', 'r');
-  assert.throws(() => checkElectronFuses({ configured, wires: fuseWiresOf(binaryWith(removed)) }), /runAsNode is removed, not on/);
+  assert.throws(() => checkElectronFuses({ configured, wires: fuseWiresOf(binaryWith(removed)) }), /runAsNode is removed, not off/);
   assert.throws(() => checkElectronFuses({ configured, wires: fuseWiresOf(binaryWith(`${configuredWire}1`)) }),
     /Electron has 10 fuses, and this check knows 9: decide the new ones/);
 });

@@ -257,5 +257,9 @@
     "message": "{{appName}}의 새 버전이 있으며, 다시 시작한 후에 설치됩니다.\n지금 이 앱을 다시 시작하시겠습니까?\n\n현재 버전: {{currentVersion}}\n최신 버전: {{latestVersion}}",
     "yes": "예",
     "no": "아니요"
+  },
+  "unhandledError": {
+    "message": "예기치 않은 오류가 발생했습니다.",
+    "copyError": "오류 복사"
   }
 }

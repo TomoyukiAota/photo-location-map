@@ -257,5 +257,9 @@
     "message": "A new version of {{appName}} is available and will be installed after restart.\nDo you want to restart this application now?\n\nCurrent version: {{currentVersion}}\nLatest version: {{latestVersion}}",
     "yes": "Yes",
     "no": "No"
+  },
+  "unhandledError": {
+    "message": "An unexpected error occurred.",
+    "copyError": "Copy Error"
   }
 }

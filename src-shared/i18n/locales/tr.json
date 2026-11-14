@@ -257,5 +257,9 @@
     "message": "{{appName}} için yeni bir sürüm var; yeniden başlatmanın ardından yüklenecek.\nUygulamayı şimdi yeniden başlatmak istiyor musunuz?\n\nGeçerli sürüm: {{currentVersion}}\nEn son sürüm: {{latestVersion}}",
     "yes": "Evet",
     "no": "Hayır"
+  },
+  "unhandledError": {
+    "message": "Beklenmeyen bir hata oluştu.",
+    "copyError": "Hatayı kopyala"
   }
 }

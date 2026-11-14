@@ -41,7 +41,6 @@ repository's own files.
 | Module | What it is there for |
 |:--|:--|
 | `moment`, `moment-timezone`, `moment-duration-format` | Dates and durations. moment is published as CommonJS; only another date library would end these. |
-| `lodash` | `debounce`, `throttle`, `isEqual`, `isObject` and `chunk`. `src-shared/` uses it in the main process too. |
 | `reflect-metadata` | Loaded for its effect, the metadata that decorators read. |
 | `zen-observable`, `safe-json-stringify` | Dependencies of `@amplitude/analytics-browser`. |
 | `@turf/jsts`, `concaveman`, `earcut`, `fast-deep-equal`, `rbush`, `skmeans` | Dependencies of `@turf/turf`, which the map's regions use. |

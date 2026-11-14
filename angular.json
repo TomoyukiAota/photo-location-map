@@ -22,7 +22,6 @@
               "concaveman",
               "earcut",
               "fast-deep-equal",
-              "lodash",
               "moment",
               "moment-duration-format",
               "moment-timezone",

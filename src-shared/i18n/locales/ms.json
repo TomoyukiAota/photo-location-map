@@ -257,5 +257,9 @@
     "message": "Versi baharu {{appName}} tersedia dan akan dipasang selepas aplikasi dimulakan semula.\nAdakah anda mahu memulakan semula aplikasi sekarang?\n\nVersi semasa: {{currentVersion}}\nVersi terkini: {{latestVersion}}",
     "yes": "Ya",
     "no": "Tidak"
+  },
+  "unhandledError": {
+    "message": "Ralat yang tidak dijangka telah berlaku.",
+    "copyError": "Salin ralat"
   }
 }

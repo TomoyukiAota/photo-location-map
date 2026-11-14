@@ -272,6 +272,26 @@ async function openFolderWithPicker(folder) {
   }, folder);
   await page.getByRole('button', { name: 'Open Folder', exact: true }).click();
 }
+/**
+ * What the dialog of an error that nothing handled in the main process shows, for a promise rejected there with
+ * `message`. The dialog is replaced while it is shown, as the real one would wait for a click.
+ */
+async function mainProcessErrorDialog(message) {
+  await app.evaluate(({ dialog }, message) => {
+    globalThis.__plmE2eErrorDialogs = [];
+    globalThis.__plmE2eShowMessageBoxSync ??= dialog.showMessageBoxSync;
+    dialog.showMessageBoxSync = options => {
+      globalThis.__plmE2eErrorDialogs.push(options);
+      return 0;
+    };
+    Promise.reject(new Error(message));
+  }, message);
+  await expect.poll(() => app.evaluate(() => globalThis.__plmE2eErrorDialogs.length), { timeout: 20000 }).toBe(1);
+  return app.evaluate(({ dialog }) => {
+    dialog.showMessageBoxSync = globalThis.__plmE2eShowMessageBoxSync;
+    return globalThis.__plmE2eErrorDialogs[0];
+  });
+}
 function treeCheckbox(name) {
   return page.locator('mat-tree-node').filter({ hasText: name }).getByRole('checkbox');
 }
@@ -694,6 +714,10 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   await expect(page.locator('.date-time-example')).toContainText('2019-11-25 02:53:29 午後');
   await page.getByRole('button', { name: 'キャンセル', exact: true }).click();
   await expect(page.locator('app-settings-dialog')).toHaveCount(0);
+  // The dialog of an error that nothing handled in the main process, whose details stay in English.
+  const errorDialog = await mainProcessErrorDialog('Rejected on purpose by the e2e suite');
+  expect(errorDialog).toMatchObject({ message: '予期しないエラーが発生しました。', buttons: ['OK', 'エラーをコピー'] });
+  expect(errorDialog.detail).toMatch(/^Unhandled Promise Rejection\n/);
 });
 test('on a computer whose language is Arabic, the application is laid out from right to left', async () => {
   // The one language written from right to left that is run here; Hebrew is laid out by the same rules.
@@ -1912,6 +1936,20 @@ test('an unhandled promise rejection in the renderer is recorded once, with its 
     expect(await recorded(service)).toHaveLength(1);
   }
 });
+test('an unhandled promise rejection in the main process is recorded, and shown with its details', async () => {
+  await dismissWelcome();
+  const message = 'Rejected in the main process on purpose by the e2e suite';
+  const shown = await mainProcessErrorDialog(message);
+  expect(shown).toMatchObject({ type: 'error', message: 'An unexpected error occurred.', buttons: ['OK', 'Copy Error'] });
+  // The details stay in English: the kind of error, then its stack.
+  expect(shown.detail.split('\n').slice(0, 2)).toEqual(['Unhandled Promise Rejection', `Error: ${message}`]);
+  for (const service of ['amplitude', 'mixpanel']) {
+    await expect.poll(() => app.evaluate((_electron, service) => globalThis.__plmAnalyticsEvents
+      .filter(event => event.service === service && event.action === 'Unhandled Error (Main)')
+      .map(event => ({ category: event.category, label: event.label })), service), { timeout: 20000 })
+      .toEqual([{ category: 'Unhandled Error', label: `Error: ${message}` }]);
+  }
+});
 test('analytics preserves events and identity without new Amplitude local URLs', async () => {
   await dismissWelcome();
   if (process.env.PLM_ANALYTICS_NEGATIVE_CONTROL === '1') {
@@ -1979,18 +2017,15 @@ test('HEIC worker generates the approved bounded JPEG and reports corrupt input'
       heicDecode: decoderRequire('./package.json').version,
       libheifJs: decoderRequire('libheif-js/package.json').version,
     };
-    const pool = require(path.join(appRoot, 'node_modules/workerpool')).pool(
-      path.join(appRoot, 'out/app/src-main/thumbnail-generation/generate-thumbnail-file-worker.js'),
-      { workerType: 'process', maxWorkers: 1 });
+    // The worker in a utility process of its own, as the app starts it for each thumbnail.
+    const { generateThumbnailInProcess } = require(path.join(appRoot, 'out/app/src-main/thumbnail-generation/thumbnail-generation.js'));
     const source = path.join(root, 'test/e2e/fixtures/demo.heic');
     const output = path.join(profile, 'thumbnail.jpg');
-    try {
-      const good = await pool.exec('generateThumbnailFile', [{ srcFilePath: source, outputFileDir: profile, outputFilePath: output }]);
-      const jpeg = require(path.join(appRoot, 'node_modules/jpeg-js')).decode(fs.readFileSync(output));
-      const bad = await pool.exec('generateThumbnailFile', [{ srcFilePath: path.join(root, 'test/test-resources/unsupported-files/Invalid Photo.JPG'), outputFileDir: profile, outputFilePath: output }]);
-      return { good, bad, decoderVersions, width: jpeg.width, height: jpeg.height,
-        pixels: require('node:crypto').createHash('sha256').update(jpeg.data).digest('hex') };
-    } finally { await pool.terminate(); }
+    const good = await generateThumbnailInProcess({ srcFilePath: source, outputFileDir: profile, outputFilePath: output });
+    const jpeg = require(path.join(appRoot, 'node_modules/jpeg-js')).decode(fs.readFileSync(output));
+    const bad = await generateThumbnailInProcess({ srcFilePath: path.join(root, 'test/test-resources/unsupported-files/Invalid Photo.JPG'), outputFileDir: profile, outputFilePath: output });
+    return { good, bad, decoderVersions, width: jpeg.width, height: jpeg.height,
+      pixels: require('node:crypto').createHash('sha256').update(jpeg.data).digest('hex') };
   }, { root, profile });
   expect(result.good.status).toBe('success');
   expect(result.good.error).toBeUndefined();
@@ -2277,6 +2312,32 @@ for (const [name, fixture, specialPath] of [
     expect(await status()).toBe(404);
   });
 }
+test('closing Photo Data Viewer while its page loads shows and records no error', async () => {
+  await dismissWelcome();
+  const photo = path.join(root, 'test/test-resources/actual-photos/Kobe/IMG_4676.JPG');
+  await openFolderWithPicker(path.dirname(photo));
+  // The viewer's window is closed as soon as its page starts to load, as a user can close it as soon as it appears.
+  // A dialog of an unhandled error is recorded instead of shown, as it would hold the main process.
+  await app.evaluate(({ app, dialog }) => {
+    globalThis.__plmE2eErrorDialogs = [];
+    dialog.showMessageBoxSync = options => {
+      globalThis.__plmE2eErrorDialogs.push(options);
+      return 0;
+    };
+    globalThis.__plmE2eViewerClosed = new Promise(resolve => app.once('browser-window-created', (_event, window) => {
+      window.once('closed', resolve);
+      window.webContents.once('did-start-loading', () => window.close());
+    }));
+  });
+  await page.evaluate(({ name, photo }) => window.plm.photoDataViewer.open({ photo: { name, path: photo } }),
+    { name: path.basename(photo), photo });
+  await app.evaluate(() => globalThis.__plmE2eViewerClosed);
+  // The load that the closing stopped rejects at once; give it time to reach the handler of unhandled errors.
+  await page.waitForTimeout(1000);
+  expect(await app.evaluate(() => globalThis.__plmE2eErrorDialogs.map(options => options.detail))).toEqual([]);
+  expect(await app.evaluate(() => globalThis.__plmAnalyticsEvents
+    .filter(event => event.action === 'Unhandled Error (Main)').map(event => event.label))).toEqual([]);
+});
 test('download website keeps desktop and narrow layouts and Windows navigation', async () => {
   test.skip(!!packagedExecutable, 'The static website is verified separately from the packaged application.');
   // In a window of its own, without the app's preload: the main window shows the app's page only

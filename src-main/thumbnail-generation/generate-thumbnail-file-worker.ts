@@ -1,6 +1,5 @@
-import fsExtra from 'fs-extra';
+import * as fs from 'fs';
 import decode from 'heic-decode';
-import workerpool from 'workerpool';
 import { Now } from '../../src-shared/date-time/now.js';
 import { resizeAndEncode } from './resize-and-encode.js';
 import { describeThumbnailError, ThumbnailFileGenerationArg, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result.js';
@@ -82,7 +81,7 @@ async function generateThumbnailFile(arg: ThumbnailFileGenerationArg): Promise<T
 
   let inputBuffer: Buffer;
   try {
-    inputBuffer = await fsExtra.promises.readFile(arg.srcFilePath);
+    inputBuffer = await fs.promises.readFile(arg.srcFilePath);
   } catch (error) {
     logger.error(`Failed to read source file for thumbnail generation. Source file path is "${arg.srcFilePath}". error: ${error}`, error);
     return new ThumbnailFileGenerationResult('failed-to-read-src-file', describeThumbnailError(error));
@@ -118,14 +117,14 @@ async function generateThumbnailFile(arg: ThumbnailFileGenerationArg): Promise<T
   }
 
   try {
-    await fsExtra.ensureDir(arg.outputFileDir);
+    await fs.promises.mkdir(arg.outputFileDir, { recursive: true });
   } catch (error) {
     logger.error(`Failed to ensure thumbnail directory exists. Directory path is "${arg.outputFileDir}". error: ${error}`, error);
     return new ThumbnailFileGenerationResult('failed-to-ensure-dir', describeThumbnailError(error));
   }
 
   try {
-    await fsExtra.promises.writeFile(arg.outputFilePath, outputBuffer);
+    await fs.promises.writeFile(arg.outputFilePath, outputBuffer);
   } catch (error) {
     logger.error(`Failed to write the file for thumbnail in "${arg.outputFilePath}". error: ${error}`, error);
     return new ThumbnailFileGenerationResult('failed-to-write-thumbnail-file', describeThumbnailError(error));
@@ -135,6 +134,8 @@ async function generateThumbnailFile(arg: ThumbnailFileGenerationArg): Promise<T
   return new ThumbnailFileGenerationResult('success');
 }
 
-workerpool.worker({
-  generateThumbnailFile: generateThumbnailFile,
+// The main process starts this file in a utility process for each thumbnail (generateThumbnailInProcess in
+// thumbnail-generation.ts), sends it what to make, and ends the process once it has sent the result back.
+process.parentPort.once('message', async ({ data }: { data: ThumbnailFileGenerationArg }) => {
+  process.parentPort.postMessage(await generateThumbnailFile(data));
 });

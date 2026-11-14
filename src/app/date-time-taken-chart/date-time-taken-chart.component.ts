@@ -1,6 +1,6 @@
 import { afterNextRender, Component, computed, ElementRef, inject, linkedSignal } from '@angular/core';
 import { ECharts, EChartsOption } from 'echarts';
-import * as _ from 'lodash';
+import debounce from 'lodash-es/debounce.js';
 import { unitOfTime } from 'moment';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { t } from '../../../src-shared/i18n/i18n';
@@ -162,7 +162,7 @@ export class DateTimeTakenChartComponent {
   }
 
   /** Pins the selected photos taken within the zoom window, without the photos that have no shooting time. */
-  private onChartDataZoomWithDebouncing = _.debounce(() => {
+  private onChartDataZoomWithDebouncing = debounce(() => {
     logger.info('Chart Data Zoom');
     this.chartConfigService.zoom(this.getXValuesWithinZoom());
   }, 300 /* ms */);
@@ -174,7 +174,7 @@ export class DateTimeTakenChartComponent {
     return xValuesWithinZoom;
   }
 
-  private trackChartDataZoomWithDebouncing = _.debounce(() => {
+  private trackChartDataZoomWithDebouncing = debounce(() => {
     Analytics.trackEvent('DTT Chart', `[DTT Chart] Chart Data Zoom`);
   }, 2000 /* ms */); // Longer duration for debouncing compared to updating pinned photos because tracking data shouldn't be sent too frequently.
 

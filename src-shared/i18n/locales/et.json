@@ -257,5 +257,9 @@
     "message": "Rakendusest {{appName}} on saadaval uus versioon, mis installitakse pärast taaskäivitamist.\nKas soovite rakenduse kohe taaskäivitada?\n\nPraegune versioon: {{currentVersion}}\nUusim versioon: {{latestVersion}}",
     "yes": "Jah",
     "no": "Ei"
+  },
+  "unhandledError": {
+    "message": "Ilmnes ootamatu viga.",
+    "copyError": "Kopeeri viga"
   }
 }

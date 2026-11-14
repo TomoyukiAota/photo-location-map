@@ -257,5 +257,9 @@
     "message": "Na voljo je nova različica aplikacije {{appName}}, ki bo nameščena po vnovičnem zagonu.\nAli želite aplikacijo znova zagnati zdaj?\n\nTrenutna različica: {{currentVersion}}\nNajnovejša različica: {{latestVersion}}",
     "yes": "Da",
     "no": "Ne"
+  },
+  "unhandledError": {
+    "message": "Prišlo je do nepričakovane napake.",
+    "copyError": "Kopiraj napako"
   }
 }

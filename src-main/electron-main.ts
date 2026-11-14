@@ -7,7 +7,7 @@
 // before.
 import '../electron-util/isolated-test-profile.js';
 import './analytics/error-scrubbing-setup.js';
-import './configure-electron-unhandled.js';
+import './unhandled-errors-setup.js';
 import './launch/launch-file-setup.js';
 import './log/log-setup.js';
 import './startup/startup-metadata-setup.js';

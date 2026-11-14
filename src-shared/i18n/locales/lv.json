@@ -257,5 +257,9 @@
     "message": "Ir pieejama jauna {{appName}} versija, kas tiks instalēta pēc restartēšanas.\nVai vēlaties restartēt lietotni tūlīt?\n\nPašreizējā versija: {{currentVersion}}\nJaunākā versija: {{latestVersion}}",
     "yes": "Jā",
     "no": "Nē"
+  },
+  "unhandledError": {
+    "message": "Radās neparedzēta kļūda.",
+    "copyError": "Kopēt kļūdu"
   }
 }

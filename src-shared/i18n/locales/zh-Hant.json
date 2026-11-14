@@ -257,5 +257,9 @@
     "message": "{{appName}} 有新版本可用，將在重新啟動後安裝。\n要立即重新啟動此應用程式嗎？\n\n目前版本：{{currentVersion}}\n最新版本：{{latestVersion}}",
     "yes": "是",
     "no": "否"
+  },
+  "unhandledError": {
+    "message": "發生了未預期的錯誤。",
+    "copyError": "複製錯誤資訊"
   }
 }

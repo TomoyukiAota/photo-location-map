@@ -257,5 +257,9 @@
     "message": "{{appName}} aplikazioaren bertsio berri bat dago, eta berrabiarazi ondoren instalatuko da.\nAplikazioa orain berrabiarazi nahi duzu?\n\nUneko bertsioa: {{currentVersion}}\nAzken bertsioa: {{latestVersion}}",
     "yes": "Bai",
     "no": "Ez"
+  },
+  "unhandledError": {
+    "message": "Ustekabeko errore bat gertatu da.",
+    "copyError": "Kopiatu errorea"
   }
 }

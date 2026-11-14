@@ -257,5 +257,9 @@
     "message": "Đã có phiên bản mới của {{appName}} và sẽ được cài đặt sau khi khởi động lại.\nBạn có muốn khởi động lại ứng dụng ngay bây giờ không?\n\nPhiên bản hiện tại: {{currentVersion}}\nPhiên bản mới nhất: {{latestVersion}}",
     "yes": "Có",
     "no": "Không"
+  },
+  "unhandledError": {
+    "message": "Đã xảy ra lỗi không mong muốn.",
+    "copyError": "Sao chép lỗi"
   }
 }
