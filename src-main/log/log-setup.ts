@@ -1,5 +1,5 @@
 import { app, ipcMain } from 'electron';
-import fsExtra from 'fs-extra';
+import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { Now } from '../../src-shared/date-time/now.js';
@@ -14,16 +14,16 @@ import { isFromMainWindow } from '../ipc/ipc-sender.js';
 // at the first line, which the app writes as it starts; unit tests, which write none, leave no file.
 
 class LogFileWriterMain implements LogFileWriterInterface {
-  private fileHandle: Promise<fsExtra.promises.FileHandle> | undefined;
+  private fileHandle: Promise<fs.promises.FileHandle> | undefined;
 
   constructor(private readonly dirName: string, private readonly filePath: string) {
   }
 
-  private opened(): Promise<fsExtra.promises.FileHandle> {
+  private opened(): Promise<fs.promises.FileHandle> {
     this.fileHandle ??= (async () => {
-      await fsExtra.ensureDir(this.dirName); // The directory needs to be created before calling fsExtra.promises.open function.
+      await fs.promises.mkdir(this.dirName, { recursive: true }); // The directory needs to be created before calling fs.promises.open function.
       const fileSystemFlag = 'a'; // 'a' is for "Open file for appending. The file is created if it does not exist." See https://nodejs.org/api/fs.html
-      return fsExtra.promises.open(this.filePath, fileSystemFlag);
+      return fs.promises.open(this.filePath, fileSystemFlag);
     })().catch(error => {
       this.fileHandle = undefined; // So that a later line tries again, as after a disk that was full.
       throw error;

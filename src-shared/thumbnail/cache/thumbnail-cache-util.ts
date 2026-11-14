@@ -1,4 +1,4 @@
-import fsExtra from 'fs-extra';
+import * as fs from 'fs';
 import * as os from 'os';
 import * as pathModule from 'path';
 import { PrependedLogger } from '../../log/create-prepended-logger.js';
@@ -88,7 +88,7 @@ const isThumbnailFileCreatedKey = 'IsThumbnailFileCreated';
 
 export async function createThumbnailGenerationLogFile(srcFilePath: string, thumbnailFileDir: string, isThumbnailFileCreated: boolean, logger: PrependedLogger) {
   const srcFileName = pathModule.basename(srcFilePath);
-  const lastModified = fsExtra.statSync(srcFilePath).mtime.toISOString();
+  const lastModified = fs.statSync(srcFilePath).mtime.toISOString();
   const fileContentObj = {};
   fileContentObj[lastModifiedKey] = lastModified;
   fileContentObj[isThumbnailFileCreatedKey] = isThumbnailFileCreated;
@@ -96,8 +96,8 @@ export async function createThumbnailGenerationLogFile(srcFilePath: string, thum
   const logFilePath = pathModule.join(thumbnailFileDir, `${srcFileName}.log.json`);
 
   try {
-    await fsExtra.ensureFile(logFilePath);
-    await fsExtra.promises.writeFile(logFilePath, fileContentStr);
+    await fs.promises.mkdir(thumbnailFileDir, { recursive: true });
+    await fs.promises.writeFile(logFilePath, fileContentStr);
   } catch (error) {
     logger.error(logged`Failed to write the file in "${logFilePath}" which is the thumbnail generation result for "${srcFilePath}". error: ${error}`, error);
     return;
@@ -116,7 +116,7 @@ export function isThumbnailCacheAvailable(srcFilePath: string): boolean {
     return false;
 
   const { thumbnailFilePath } = getThumbnailFilePath(srcFilePath);
-  const thumbnailFileExists = fsExtra.existsSync(thumbnailFilePath);
+  const thumbnailFileExists = fs.existsSync(thumbnailFilePath);
   if (!thumbnailFileExists)
     return false;
 
@@ -129,13 +129,13 @@ export function lastModifiedMatchBetweenSrcFileAndThumbnailGenerationLogFile(src
     return false;
 
   const logFilePath = getThumbnailLogFilePath(srcFilePath);
-  const logFileExists = fsExtra.existsSync(logFilePath);
+  const logFileExists = fs.existsSync(logFilePath);
   if (!logFileExists)
     return false;
 
   let fileContentStr;
   try {
-    fileContentStr = fsExtra.readFileSync(logFilePath, 'utf8');
+    fileContentStr = fs.readFileSync(logFilePath, 'utf8');
   } catch (error) {
     Logger.warn(logged`Failed to read the log file "${logFilePath}" which is the thumbnail generation result for "${srcFilePath}". error: ${error}`, error);
     return false;
@@ -153,7 +153,7 @@ export function lastModifiedMatchBetweenSrcFileAndThumbnailGenerationLogFile(src
   if (!lastModifiedFromLogFile)
     return false;
 
-  const lastModifiedFromSrcFile = fsExtra.statSync(srcFilePath).mtime.toISOString();
+  const lastModifiedFromSrcFile = fs.statSync(srcFilePath).mtime.toISOString();
   const lastModifiedMatch = lastModifiedFromLogFile === lastModifiedFromSrcFile;
   return lastModifiedMatch;
 }

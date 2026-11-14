@@ -1,5 +1,5 @@
 import assert from 'assert';
-import fsExtra from 'fs-extra';
+import * as fs from 'fs';
 import * as path from 'path';
 import { DirTreeObjectRecorder } from '../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder.js';
 import { createDirectoryTree } from '../../../src-shared/dir-tree/create-directory-tree.js';
@@ -38,7 +38,7 @@ describe('DirTreeObjectRecorder', () => {
   it('getNumbersToRecord should handle an empty folder', () => {
     // Arrange
     const emptyDirectory = repositoryPath('test', 'test-resources', 'empty-folder');
-    fsExtra.ensureDirSync(emptyDirectory);
+    fs.mkdirSync(emptyDirectory, { recursive: true });
     const dirTreeObject = createDirectoryTree(emptyDirectory);
     const flattenedDirTree = convertToFlattenedDirTree(dirTreeObject);
 
