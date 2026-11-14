@@ -49,7 +49,7 @@ in the repository.
    | --- | --- | --- |
    | `runAsNode` | on | Off: the application starts, but makes no HEIF thumbnail. workerpool starts each worker with `child_process.fork`, which Electron refuses: "child_process.fork() is not supported when the runAsNode fuse is disabled; use utilityProcess.fork() instead". The two e2e cases of the thumbnails failed. |
    | `enableCookieEncryption` | off | Not tried. Turning it on cannot be undone: a package that has it off again cannot read the cookies. The application keeps nothing in cookies that needs protecting: it gives the analytics libraries their user's ID again at each launch (mixpanel-browser keeps its state in a cookie). |
-   | `enableNodeOptionsEnvironmentVariable` | on | Off, with the two fuses of the archive below: the e2e suite against the copy passed 48 cases and skipped 2, as against the package. Nothing of the application reads `NODE_OPTIONS` or `NODE_EXTRA_CA_CERTS`: its requests go through Electron's `net`, which is Chromium's, and the test runners remove `NODE_OPTIONS`. |
+   | `enableNodeOptionsEnvironmentVariable` | on | Off, with the two fuses of the archive below: the e2e suite against the copy passed 48 cases and skipped 2, as against the package. Nothing of the application reads `NODE_OPTIONS` or `NODE_EXTRA_CA_CERTS`: its requests go through Electron's `net`, which is Chromium's, and the test runners remove `NODE_OPTIONS`. Electron already ignores `NODE_OPTIONS`, but for two of its options, in the main process of a package; the fuse makes the processes that it runs as Node.js ignore it too, and `NODE_EXTRA_CA_CERTS` (finding 5). |
    | `enableNodeCliInspectArguments` | on | Off: the application starts, but Playwright's launch of it timed out after 90 s. Playwright starts it with `--inspect` to control its main process, which the e2e suite against a package (on all three operating systems in CI) and the performance harness do. |
    | `enableEmbeddedAsarIntegrityValidation` | off | On: see `enableNodeOptionsEnvironmentVariable`. |
    | `onlyLoadAppFromAsar` | off | On: the same. |
@@ -82,7 +82,11 @@ in the repository.
      of a file against the header as it reads it. On Linux, Electron does not
      check.
    - With `NODE_OPTIONS` ignored, an environment variable no longer adds code
-     (`--require`) to the application's processes.
+     (`--require`) to the processes that Electron runs as Node.js, as
+     `child_process.fork` does for the thumbnails' workers, which inherit the
+     application's environment. Electron already ignores `NODE_OPTIONS` in the
+     main process of a package
+     ([its documentation](https://www.electronjs.org/docs/latest/api/environment-variables)).
    - `ELECTRON_RUN_AS_NODE` and `--inspect` still run code as the application.
      On macOS, such code has the application's permissions, such as to the
      folders that the user let it read. Turning off one without the other
@@ -189,7 +193,8 @@ PLM_PACKAGED_EXECUTABLE="$PWD/release/mac-universal/Photo Location Map.app/Conte
   (`AGENTS.md`).
 - The e2e suite passes 48 cases and skips 2, as before: the application
   starts with its archive checked, under its own signature.
-- The package ignores `NODE_OPTIONS`: started with
+- The package ignores `NODE_OPTIONS`: started as Node.js
+  (`ELECTRON_RUN_AS_NODE=1`, as the thumbnails' workers are) with
   `NODE_OPTIONS="--require <a script that writes a file>"`, it does not write
   the file, where a package with the defaults does.
 

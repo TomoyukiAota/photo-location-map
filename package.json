@@ -53,7 +53,7 @@
     "test:unit:em:both": "npm-run-all test:unit:em:main test:unit:em:renderer",
     "test:unit:em:help": "electron-mocha --help",
     "test:unit:all": "npm-run-all test:unit:ng test:unit:em:both",
-    "test:package-runner": "node --test test/package-test/run.cjs test/package-test/minimum-system-version.cjs test/package-test/disk-image-tools.cjs",
+    "test:package-runner": "node --test test/package-test/run.cjs test/package-test/minimum-system-version.cjs test/package-test/disk-image-tools.cjs test/package-test/electron-fuses.cjs",
     "test:package": "npm run test:package-runner && cross-env PLM_PACKAGE_TEST=true node ./script/package-test/run-package-test.js",
     "test:e2e": "playwright test -c test/e2e/playwright.config.mjs",
     "test:live-reload": "npm run build:src-main && node ./test/live-reload/run.cjs",
