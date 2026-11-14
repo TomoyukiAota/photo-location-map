@@ -1,0 +1,33 @@
+{
+  "language": "Jezik",
+  "languageSearch": "Išči",
+  "noLanguagesFound": "Ni najdenih jezikov",
+  "useBrowserSetting": "Uporabi nastavitev brskalnika ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Ikona aplikacije Photo Location Map",
+    "summary": "Na zemljevidu prikaže, kje so bile fotografije posnete.",
+    "downloadForWindows": "Prenesi za Windows",
+    "downloadForMacos": "Prenesi za macOS",
+    "photosHaveLocationData": "Fotografije, posnete s pametnim telefonom, vsebujejo podatke o lokaciji (zemljepisno širino in dolžino).",
+    "showsLocationsOnMap": "Ta aplikacija prebere podatke o lokaciji iz fotografij in prikaže kraje na zemljevidu.",
+    "supportedFileFormats": "Podprte oblike zapisa datotek:",
+    "troubleshooting": "Če imate s to aplikacijo težave, si oglejte <link>stran za odpravljanje težav</link>.",
+    "sourceCode": "Izvorna koda aplikacije Photo Location Map je <link>na voljo na GitHubu</link>.",
+    "developedBy": "Aplikacijo Photo Location Map razvija <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Si želite ogledati podatke EXIF?",
+    "photoDataViewer": "Na voljo je tudi <link>Photo Data Viewer</link>.",
+    "analyticsNotice": "To spletno mesto zbira podatke o uporabi."
+  },
+  "downloading": {
+    "pageTitle": "Prenos aplikacije Photo Location Map",
+    "willStart": "Prenos aplikacije Photo Location Map se bo kmalu začel. Če se ne začne, kliknite <link>tukaj</link>.",
+    "howToInstall": "Navodila za namestitev",
+    "step1": "1. Dvokliknite preneseno datoteko exe.",
+    "step2": "2. Prikaže se pojavno okno Windows Defender SmartScreen. Kliknite »Več informacij« (More info).",
+    "moreInfoImageAlt": "Slika okna Windows Defender SmartScreen (Več informacij)",
+    "step3": "3. Kliknite »Vseeno zaženi« (Run anyway).",
+    "runAnywayImageAlt": "Slika okna Windows Defender SmartScreen (Vseeno zaženi)",
+    "step4": "4. Zažene se namestitveni program aplikacije Photo Location Map. Sledite navodilom namestitvenega programa."
+  }
+}

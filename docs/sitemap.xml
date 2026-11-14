@@ -1,11 +1,227 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<!--
+  The landing page, as it is for a visitor and in each of its languages (github-pages/i18n.js), in the order of their
+  list. When a language is added to the website, add its address here (docs/TRANSLATING.md).
+  TL;DR: The addresses alone. Which address is the page in which language is said in the page's head.
+  Details: Search engines ask for that in one place, the head or the sitemap. Here every address would name every
+  other: with 42 languages, 43 lines under each of 43 addresses.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
-<!--  created with free sitemap generation system www.sitemapxml.jp  --> 
 <url>
   <loc>https://tomoyukiaota.github.io/photo-location-map/</loc>
   <priority>1.0</priority>
-  <lastmod>2020-12-02T21:30:11+09:00</lastmod>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=id</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=ms</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=ca</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=cs</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=da</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=de</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=et</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=en</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=es</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=eu</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=fr</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=gl</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=hr</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=it</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=lv</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=lt</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=hu</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=nl</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=nb</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=pl</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=pt-BR</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=pt-PT</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=ro</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=sk</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=sl</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=sr-Latn</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=fi</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=sv</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=vi</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=tr</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=el</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=bg</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=ru</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=uk</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=he</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=ar</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=hi</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=th</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=ko</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=ja</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=zh-Hans</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
+</url>
+
+<url>
+  <loc>https://tomoyukiaota.github.io/photo-location-map/?lang=zh-Hant</loc>
+  <lastmod>2026-11-11T00:00:00+09:00</lastmod>
 </url>
 
 </urlset>

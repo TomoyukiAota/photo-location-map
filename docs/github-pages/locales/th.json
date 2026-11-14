@@ -1,0 +1,33 @@
+{
+  "language": "ภาษา",
+  "languageSearch": "ค้นหา",
+  "noLanguagesFound": "ไม่พบภาษา",
+  "useBrowserSetting": "ใช้การตั้งค่าของเบราว์เซอร์ ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "ไอคอน Photo Location Map",
+    "summary": "แสดงตำแหน่งที่ถ่ายรูปภาพบนแผนที่",
+    "downloadForWindows": "ดาวน์โหลดสำหรับ Windows",
+    "downloadForMacos": "ดาวน์โหลดสำหรับ macOS",
+    "photosHaveLocationData": "รูปภาพที่ถ่ายด้วยสมาร์ทโฟนมีข้อมูลตำแหน่ง (ละติจูดและลองจิจูด)",
+    "showsLocationsOnMap": "แอปนี้อ่านข้อมูลตำแหน่งจากรูปภาพ แล้วแสดงตำแหน่งบนแผนที่",
+    "supportedFileFormats": "รูปแบบไฟล์ที่รองรับ:",
+    "troubleshooting": "หากพบปัญหากับแอปนี้ โปรดดู<link>หน้าการแก้ไขปัญหา</link>",
+    "sourceCode": "ซอร์สโค้ดของ Photo Location Map <link>อยู่บน GitHub</link>",
+    "developedBy": "Photo Location Map พัฒนาโดย <link>Tomoyuki Aota</link>",
+    "wantExifData": "ต้องการดูข้อมูล EXIF ใช่ไหม",
+    "photoDataViewer": "มี <link>Photo Data Viewer</link> ให้ใช้ด้วย",
+    "analyticsNotice": "เว็บไซต์นี้เก็บรวบรวมข้อมูลการใช้งาน"
+  },
+  "downloading": {
+    "pageTitle": "กำลังดาวน์โหลด Photo Location Map",
+    "willStart": "การดาวน์โหลด Photo Location Map จะเริ่มในอีกสักครู่ หากไม่เริ่ม ให้คลิก<link>ที่นี่</link>",
+    "howToInstall": "วิธีติดตั้ง",
+    "step1": "1. ดับเบิลคลิกไฟล์ exe ที่ดาวน์โหลดมา",
+    "step2": "2. ป๊อปอัป Windows Defender SmartScreen จะปรากฏขึ้น ให้คลิก “ข้อมูลเพิ่มเติม” (More info)",
+    "moreInfoImageAlt": "รูปภาพของ Windows Defender SmartScreen (ข้อมูลเพิ่มเติม)",
+    "step3": "3. คลิก “เรียกใช้ต่อไป” (Run anyway)",
+    "runAnywayImageAlt": "รูปภาพของ Windows Defender SmartScreen (เรียกใช้ต่อไป)",
+    "step4": "4. โปรแกรมติดตั้งของ Photo Location Map จะเปิดขึ้น ให้ทำตามคำแนะนำในโปรแกรมติดตั้ง"
+  }
+}

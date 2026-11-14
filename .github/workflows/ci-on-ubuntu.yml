@@ -62,6 +62,9 @@ jobs:
     - name: npm run test:dependency-compat
       run: npm run test:dependency-compat
 
+    - name: npm run test:website
+      run: npm run test:website
+
     - name: Install virtual display dependencies
       run: |
         sudo apt-get update

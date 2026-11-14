@@ -1,0 +1,33 @@
+{
+  "language": "Lingua",
+  "languageSearch": "Cerca",
+  "noLanguagesFound": "Nessuna lingua trovata",
+  "useBrowserSetting": "Usa l’impostazione del browser ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Icona di Photo Location Map",
+    "summary": "Mostra su una mappa dove sono state scattate le foto.",
+    "downloadForWindows": "Scarica per Windows",
+    "downloadForMacos": "Scarica per macOS",
+    "photosHaveLocationData": "Le foto scattate con uno smartphone contengono dati sulla posizione (latitudine e longitudine).",
+    "showsLocationsOnMap": "Questa applicazione legge i dati sulla posizione dalle foto e mostra i luoghi su una mappa.",
+    "supportedFileFormats": "Formati di file supportati:",
+    "troubleshooting": "Se riscontri problemi con questa applicazione, consulta <link>la pagina di risoluzione dei problemi</link>.",
+    "sourceCode": "Il codice sorgente di Photo Location Map è <link>ospitato su GitHub</link>.",
+    "developedBy": "Photo Location Map è sviluppato da <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Vuoi controllare i dati EXIF?",
+    "photoDataViewer": "È disponibile anche <link>Photo Data Viewer</link>.",
+    "analyticsNotice": "Questo sito web raccoglie dati di utilizzo."
+  },
+  "downloading": {
+    "pageTitle": "Download di Photo Location Map",
+    "willStart": "Il download di Photo Location Map inizierà a breve. Se non inizia, fai clic <link>qui</link>.",
+    "howToInstall": "Come installare",
+    "step1": "1. Fai doppio clic sul file exe scaricato.",
+    "step2": "2. Verrà visualizzata la finestra di Windows Defender SmartScreen. Fai clic su «Ulteriori informazioni» (More info).",
+    "moreInfoImageAlt": "Immagine di Windows Defender SmartScreen (Ulteriori informazioni)",
+    "step3": "3. Fai clic su «Esegui comunque» (Run anyway).",
+    "runAnywayImageAlt": "Immagine di Windows Defender SmartScreen (Esegui comunque)",
+    "step4": "4. Si avvierà il programma di installazione di Photo Location Map. Segui le istruzioni del programma di installazione."
+  }
+}

@@ -382,13 +382,19 @@ it is run on demand), and a failed job would sit unattended that long.
 
 Each CI workflow first runs a `changes` job, which finds the files the push or
 pull request changes with [dorny/paths-filter](https://github.com/dorny/paths-filter)
-and `.github/ci-filters.yml`. When every one of them is a document — `docs/`
-(including the landing page), `README.md`, `AGENTS.md`, `LICENSE` or
+and `.github/ci-filters.yml`. When every one of them is a document — a
+Markdown file directly in `docs/`, any file in its `contributing/`, `tasks/`,
+`troubleshooting/` or `README/` folder, `README.md`, `AGENTS.md`, `LICENSE` or
 `.github/ISSUE_TEMPLATE/` — the `test` job is skipped. A skipped job passes
 GitHub's required checks, and `.mergify.yml` accepts `check-skipped`, so such a
 pull request does not wait for the tests.
 
-**Why:** nothing in CI checks these files (`lint:script` covers `script/`,
+The website is not a document: `docs/index.html`, `docs/github-pages/`,
+`docs/docs-resources/` and `docs/sitemap.xml`. CI checks its texts in each of
+its languages (`npm run test:website`) and its layout (the e2e suite's cases of
+the website), so a change to it runs the tests.
+
+**Why:** nothing in CI checks the documents (`lint:script` covers `script/`,
 `ng lint` covers `src/`, and the app's package does not contain `docs/`), yet
 every push ran the tests on three OSes for about 10 minutes.
 

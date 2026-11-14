@@ -1,0 +1,33 @@
+{
+  "language": "اللغة",
+  "languageSearch": "بحث",
+  "noLanguagesFound": "لم يُعثر على أي لغة",
+  "useBrowserSetting": "استخدام إعداد المتصفح ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "أيقونة Photo Location Map",
+    "summary": "عرض أماكن التقاط الصور على الخريطة.",
+    "downloadForWindows": "تنزيل لنظام Windows",
+    "downloadForMacos": "تنزيل لنظام macOS",
+    "photosHaveLocationData": "الصور الملتقطة بالهواتف الذكية تحتوي على بيانات الموقع (خط العرض وخط الطول).",
+    "showsLocationsOnMap": "يقرأ هذا التطبيق بيانات الموقع من الصور ويعرض أماكن التقاطها على الخريطة.",
+    "supportedFileFormats": "تنسيقات الملفات المدعومة:",
+    "troubleshooting": "إذا واجهت مشكلة في هذا التطبيق، فراجع <link>صفحة استكشاف الأخطاء وإصلاحها</link>.",
+    "sourceCode": "الشيفرة المصدرية لتطبيق Photo Location Map <link>مستضافة على GitHub</link>.",
+    "developedBy": "Photo Location Map من تطوير <link>Tomoyuki Aota</link>.",
+    "wantExifData": "هل تريد الاطلاع على بيانات EXIF؟",
+    "photoDataViewer": "يتوفر أيضًا <link>Photo Data Viewer</link>.",
+    "analyticsNotice": "يجمع هذا الموقع معلومات استخدام."
+  },
+  "downloading": {
+    "pageTitle": "جارٍ تنزيل Photo Location Map",
+    "willStart": "سيبدأ تنزيل Photo Location Map بعد قليل. إذا لم يبدأ، فانقر <link>هنا</link>.",
+    "howToInstall": "طريقة التثبيت",
+    "step1": "1. انقر نقرًا مزدوجًا على ملف exe الذي نزّلته.",
+    "step2": "2. ستظهر نافذة Windows Defender SmartScreen المنبثقة. انقر على «معلومات إضافية» (More info).",
+    "moreInfoImageAlt": "صورة Windows Defender SmartScreen (معلومات إضافية)",
+    "step3": "3. انقر على «تشغيل على أي حال» (Run anyway).",
+    "runAnywayImageAlt": "صورة Windows Defender SmartScreen (تشغيل على أي حال)",
+    "step4": "4. سيبدأ برنامج تثبيت Photo Location Map. اتبع التعليمات الظاهرة في برنامج التثبيت."
+  }
+}

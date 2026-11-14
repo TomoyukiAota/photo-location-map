@@ -1,0 +1,33 @@
+{
+  "language": "Jazyk",
+  "languageSearch": "Hledat",
+  "noLanguagesFound": "Nebyly nalezeny žádné jazyky",
+  "useBrowserSetting": "Použít nastavení prohlížeče ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Ikona aplikace Photo Location Map",
+    "summary": "Zobrazí na mapě místa, kde byly fotky pořízeny.",
+    "downloadForWindows": "Stáhnout pro Windows",
+    "downloadForMacos": "Stáhnout pro macOS",
+    "photosHaveLocationData": "Fotky pořízené chytrým telefonem obsahují údaje o poloze (zeměpisnou šířku a délku).",
+    "showsLocationsOnMap": "Tato aplikace načte údaje o poloze z fotek a zobrazí místa na mapě.",
+    "supportedFileFormats": "Podporované formáty souborů:",
+    "troubleshooting": "Pokud narazíte na potíže s touto aplikací, podívejte se na <link>stránku s řešením potíží</link>.",
+    "sourceCode": "Zdrojový kód aplikace Photo Location Map je <link>dostupný na GitHubu</link>.",
+    "developedBy": "Aplikaci Photo Location Map vyvíjí <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Chcete si prohlédnout data EXIF?",
+    "photoDataViewer": "K dispozici je také <link>Photo Data Viewer</link>.",
+    "analyticsNotice": "Tento web shromažďuje údaje o používání."
+  },
+  "downloading": {
+    "pageTitle": "Stahování aplikace Photo Location Map",
+    "willStart": "Stahování aplikace Photo Location Map za chvíli začne. Pokud nezačne, klikněte <link>sem</link>.",
+    "howToInstall": "Jak aplikaci nainstalovat",
+    "step1": "1. Dvakrát klikněte na stažený soubor exe.",
+    "step2": "2. Zobrazí se okno Windows Defender SmartScreen. Klikněte na „Další informace“ (More info).",
+    "moreInfoImageAlt": "Obrázek okna Windows Defender SmartScreen (Další informace)",
+    "step3": "3. Klikněte na „Přesto spustit“ (Run anyway).",
+    "runAnywayImageAlt": "Obrázek okna Windows Defender SmartScreen (Přesto spustit)",
+    "step4": "4. Spustí se instalační program aplikace Photo Location Map. Postupujte podle pokynů instalačního programu."
+  }
+}

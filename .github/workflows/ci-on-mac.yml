@@ -72,6 +72,9 @@ jobs:
     - name: npm run test:dependency-compat
       run: npm run test:dependency-compat
 
+    - name: npm run test:website
+      run: npm run test:website
+
     - name: npm run lint:ng
       run: npm run lint:ng
 

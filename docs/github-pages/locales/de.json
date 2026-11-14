@@ -1,0 +1,33 @@
+{
+  "language": "Sprache",
+  "languageSearch": "Suchen",
+  "noLanguagesFound": "Keine Sprachen gefunden",
+  "useBrowserSetting": "Browsereinstellung verwenden ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Symbol von Photo Location Map",
+    "summary": "Zeigt auf einer Karte, wo Fotos aufgenommen wurden.",
+    "downloadForWindows": "Für Windows herunterladen",
+    "downloadForMacos": "Für macOS herunterladen",
+    "photosHaveLocationData": "Mit dem Smartphone aufgenommene Fotos enthalten Standortdaten (Breiten- und Längengrad).",
+    "showsLocationsOnMap": "Diese App liest die Standortdaten aus den Fotos und zeigt die Orte auf einer Karte an.",
+    "supportedFileFormats": "Unterstützte Dateiformate:",
+    "troubleshooting": "Wenn Probleme mit dieser App auftreten, lesen Sie bitte <link>die Seite zur Fehlerbehebung</link>.",
+    "sourceCode": "Der Quellcode von Photo Location Map ist <link>auf GitHub verfügbar</link>.",
+    "developedBy": "Photo Location Map wird von <link>Tomoyuki Aota</link> entwickelt.",
+    "wantExifData": "Möchten Sie EXIF-Daten ansehen?",
+    "photoDataViewer": "<link>Photo Data Viewer</link> ist ebenfalls verfügbar.",
+    "analyticsNotice": "Diese Website erfasst Nutzungsdaten."
+  },
+  "downloading": {
+    "pageTitle": "Photo Location Map wird heruntergeladen",
+    "willStart": "Der Download von Photo Location Map beginnt in Kürze. Falls er nicht beginnt, klicken Sie <link>hier</link>.",
+    "howToInstall": "So installieren Sie die App",
+    "step1": "1. Doppelklicken Sie auf die heruntergeladene exe-Datei.",
+    "step2": "2. Das Fenster von Windows Defender SmartScreen wird angezeigt. Klicken Sie auf „Weitere Informationen“ (More info).",
+    "moreInfoImageAlt": "Bild von Windows Defender SmartScreen (Weitere Informationen)",
+    "step3": "3. Klicken Sie auf „Trotzdem ausführen“ (Run anyway).",
+    "runAnywayImageAlt": "Bild von Windows Defender SmartScreen (Trotzdem ausführen)",
+    "step4": "4. Das Installationsprogramm von Photo Location Map wird gestartet. Folgen Sie den Anweisungen des Installationsprogramms."
+  }
+}

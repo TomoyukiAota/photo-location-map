@@ -1,0 +1,33 @@
+{
+  "language": "Idioma",
+  "languageSearch": "Buscar",
+  "noLanguagesFound": "No se han encontrado idiomas",
+  "useBrowserSetting": "Usar el ajuste del navegador ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Icono de Photo Location Map",
+    "summary": "Muestra en un mapa dónde se tomaron las fotos.",
+    "downloadForWindows": "Descargar para Windows",
+    "downloadForMacos": "Descargar para macOS",
+    "photosHaveLocationData": "Las fotos tomadas con un teléfono inteligente tienen datos de ubicación (latitud y longitud).",
+    "showsLocationsOnMap": "Esta aplicación lee los datos de ubicación de las fotos y muestra las ubicaciones en un mapa.",
+    "supportedFileFormats": "Formatos de archivo compatibles:",
+    "troubleshooting": "Si tienes problemas con esta aplicación, consulta <link>la página de solución de problemas</link>.",
+    "sourceCode": "El código fuente de Photo Location Map está <link>alojado en GitHub</link>.",
+    "developedBy": "Photo Location Map está desarrollado por <link>Tomoyuki Aota</link>.",
+    "wantExifData": "¿Quieres consultar los datos EXIF?",
+    "photoDataViewer": "También está disponible <link>Photo Data Viewer</link>.",
+    "analyticsNotice": "Este sitio web recopila datos de uso."
+  },
+  "downloading": {
+    "pageTitle": "Descargando Photo Location Map",
+    "willStart": "La descarga de Photo Location Map empezará en breve. Si no empieza, haz clic <link>aquí</link>.",
+    "howToInstall": "Cómo instalar",
+    "step1": "1. Haz doble clic en el archivo exe descargado.",
+    "step2": "2. Aparecerá la ventana emergente de Windows Defender SmartScreen. Haz clic en «Más información» (More info).",
+    "moreInfoImageAlt": "Imagen de Windows Defender SmartScreen (Más información)",
+    "step3": "3. Haz clic en «Ejecutar de todas formas» (Run anyway).",
+    "runAnywayImageAlt": "Imagen de Windows Defender SmartScreen (Ejecutar de todas formas)",
+    "step4": "4. Se abrirá el instalador de Photo Location Map. Sigue las instrucciones del instalador."
+  }
+}

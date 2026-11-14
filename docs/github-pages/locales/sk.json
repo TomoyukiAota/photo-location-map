@@ -1,0 +1,33 @@
+{
+  "language": "Jazyk",
+  "languageSearch": "Hľadať",
+  "noLanguagesFound": "Nenašli sa žiadne jazyky",
+  "useBrowserSetting": "Použiť nastavenie prehliadača ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Ikona aplikácie Photo Location Map",
+    "summary": "Zobrazí na mape miesta, kde boli fotky nasnímané.",
+    "downloadForWindows": "Stiahnuť pre Windows",
+    "downloadForMacos": "Stiahnuť pre macOS",
+    "photosHaveLocationData": "Fotky nasnímané smartfónom obsahujú údaje o polohe (zemepisnú šírku a dĺžku).",
+    "showsLocationsOnMap": "Táto aplikácia načíta údaje o polohe z fotiek a zobrazí miesta na mape.",
+    "supportedFileFormats": "Podporované formáty súborov:",
+    "troubleshooting": "Ak narazíte na problémy s touto aplikáciou, pozrite si <link>stránku s riešením problémov</link>.",
+    "sourceCode": "Zdrojový kód aplikácie Photo Location Map je <link>dostupný na GitHube</link>.",
+    "developedBy": "Aplikáciu Photo Location Map vyvíja <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Chcete si pozrieť údaje EXIF?",
+    "photoDataViewer": "K dispozícii je aj <link>Photo Data Viewer</link>.",
+    "analyticsNotice": "Táto webová lokalita zhromažďuje údaje o používaní."
+  },
+  "downloading": {
+    "pageTitle": "Sťahovanie aplikácie Photo Location Map",
+    "willStart": "Sťahovanie aplikácie Photo Location Map sa o chvíľu začne. Ak sa nezačne, kliknite <link>sem</link>.",
+    "howToInstall": "Ako aplikáciu nainštalovať",
+    "step1": "1. Dvakrát kliknite na stiahnutý súbor exe.",
+    "step2": "2. Zobrazí sa okno Windows Defender SmartScreen. Kliknite na „Ďalšie informácie“ (More info).",
+    "moreInfoImageAlt": "Obrázok okna Windows Defender SmartScreen (Ďalšie informácie)",
+    "step3": "3. Kliknite na „Spustiť aj tak“ (Run anyway).",
+    "runAnywayImageAlt": "Obrázok okna Windows Defender SmartScreen (Spustiť aj tak)",
+    "step4": "4. Spustí sa inštalačný program aplikácie Photo Location Map. Postupujte podľa pokynov inštalačného programu."
+  }
+}

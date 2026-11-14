@@ -1,0 +1,33 @@
+{
+  "language": "Keel",
+  "languageSearch": "Otsi",
+  "noLanguagesFound": "Keeli ei leitud",
+  "useBrowserSetting": "Kasuta brauseri seadet ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Photo Location Mapi ikoon",
+    "summary": "Kuvab kaardil kohad, kus fotod on tehtud.",
+    "downloadForWindows": "Laadi alla Windowsile",
+    "downloadForMacos": "Laadi alla macOS-ile",
+    "photosHaveLocationData": "Nutitelefoniga tehtud fotodel on asukohaandmed (laius- ja pikkuskraad).",
+    "showsLocationsOnMap": "See rakendus loeb fotodelt asukohaandmed ja kuvab kohad kaardil.",
+    "supportedFileFormats": "Toetatud failivormingud:",
+    "troubleshooting": "Kui teil on selle rakendusega probleeme, vaadake <link>tõrkeotsingu lehte</link>.",
+    "sourceCode": "Photo Location Mapi lähtekood on <link>saadaval GitHubis</link>.",
+    "developedBy": "Photo Location Mapi arendab <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Kas soovite vaadata EXIF-andmeid?",
+    "photoDataViewer": "Saadaval on ka <link>Photo Data Viewer</link>.",
+    "analyticsNotice": "See veebisait kogub kasutusteavet."
+  },
+  "downloading": {
+    "pageTitle": "Photo Location Mapi allalaadimine",
+    "willStart": "Photo Location Mapi allalaadimine algab peagi. Kui see ei alga, klõpsake <link>siin</link>.",
+    "howToInstall": "Installimine",
+    "step1": "1. Topeltklõpsake allalaaditud exe-faili.",
+    "step2": "2. Kuvatakse Windows Defender SmartScreeni hüpikaken. Klõpsake linki „Lisateave“ (More info).",
+    "moreInfoImageAlt": "Windows Defender SmartScreeni pilt (Lisateave)",
+    "step3": "3. Klõpsake nuppu „Käivita siiski“ (Run anyway).",
+    "runAnywayImageAlt": "Windows Defender SmartScreeni pilt (Käivita siiski)",
+    "step4": "4. Käivitub Photo Location Mapi installiprogramm. Järgige installiprogrammi juhiseid."
+  }
+}

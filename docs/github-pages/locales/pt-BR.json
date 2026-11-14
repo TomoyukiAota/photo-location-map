@@ -1,0 +1,33 @@
+{
+  "language": "Idioma",
+  "languageSearch": "Buscar",
+  "noLanguagesFound": "Nenhum idioma encontrado",
+  "useBrowserSetting": "Usar a configuração do navegador ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Ícone do Photo Location Map",
+    "summary": "Mostra em um mapa onde as fotos foram tiradas.",
+    "downloadForWindows": "Baixar para Windows",
+    "downloadForMacos": "Baixar para macOS",
+    "photosHaveLocationData": "Fotos tiradas com smartphones têm dados de localização (latitude e longitude).",
+    "showsLocationsOnMap": "Este aplicativo lê os dados de localização das fotos e mostra os locais em um mapa.",
+    "supportedFileFormats": "Formatos de arquivo compatíveis:",
+    "troubleshooting": "Se você tiver problemas com este aplicativo, consulte <link>a página de solução de problemas</link>.",
+    "sourceCode": "O código-fonte do Photo Location Map está <link>hospedado no GitHub</link>.",
+    "developedBy": "O Photo Location Map é desenvolvido por <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Quer consultar os dados EXIF?",
+    "photoDataViewer": "O <link>Photo Data Viewer</link> também está disponível.",
+    "analyticsNotice": "Este site coleta dados de uso."
+  },
+  "downloading": {
+    "pageTitle": "Baixando o Photo Location Map",
+    "willStart": "O download do Photo Location Map começará em instantes. Se não começar, clique <link>aqui</link>.",
+    "howToInstall": "Como instalar",
+    "step1": "1. Clique duas vezes no arquivo exe baixado.",
+    "step2": "2. A janela do Windows Defender SmartScreen será exibida. Clique em “Mais informações” (More info).",
+    "moreInfoImageAlt": "Imagem do Windows Defender SmartScreen (Mais informações)",
+    "step3": "3. Clique em “Executar assim mesmo” (Run anyway).",
+    "runAnywayImageAlt": "Imagem do Windows Defender SmartScreen (Executar assim mesmo)",
+    "step4": "4. O instalador do Photo Location Map será aberto. Siga as instruções do instalador."
+  }
+}

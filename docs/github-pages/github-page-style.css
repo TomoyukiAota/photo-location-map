@@ -48,17 +48,35 @@ body {
   display: flex;
 }
 
+/* On a narrow screen, one button above the other, both as wide as the wider of the two. */
 @media screen and (max-width: 500px) {
   .download-buttons {
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
   }
 }
 
+/*
+ * TL;DR: In a wider window, side by side when the two fit so in the page's language, and one above the other when
+ * they do not.
+ * Details: Side by side, the two buttons need a window of 459px in English and of up to 578px in the language with
+ * the longest texts (Latvian, among the 42), with a Mac's fonts. In a row that does not wrap, each text was on two lines in a window
+ * narrower than that, which happened in 14 languages at 501px. A width from which every language fits would put the
+ * English buttons one above the other where they fit side by side. So the row wraps: the second button goes under
+ * the first when the two do not fit, whatever the language is. i18n.js then marks the row as stacked, which lays it
+ * out as on a narrow screen, both buttons as wide as the wider; without the script, each has its own width.
+ */
 @media screen and (min-width: 501px) {
   .download-buttons {
     flex-direction: row;
+    flex-wrap: wrap;
     justify-content: center;
+  }
+
+  .download-buttons.stacked {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
   }
 }
 
@@ -67,10 +85,14 @@ body {
   margin: 10px 20px;
 }
 
+/*
+ * TL;DR: At least as wide as before, 200px, and wider for a text that is longer than the English ones.
+ * Details: With a width of 200px, the Japanese texts did not fit, and their last letters were on a line of their own.
+ */
 @media screen and (max-width: 500px) {
   .download-buttons button,
   .download-buttons a {
-    width: 200px;
+    min-width: 200px;
   }
 }
 
@@ -79,6 +101,11 @@ body {
   .download-buttons a {
     width: unset;
   }
+}
+
+.download-buttons.stacked button,
+.download-buttons.stacked a {
+  min-width: 200px;
 }
 
 .demo-video {
@@ -125,6 +152,34 @@ body {
   margin-top: 50px;
 }
 
+/*
+ * TL;DR: The centered sentences are broken into lines of about the same length.
+ * Details: A sentence that takes two lines on a phone ended with one word alone on the second line in most
+ * languages ("... is developed by Tomoyuki / Aota."), which looks worse in the middle of the page than at the start
+ * of a line. Lines of the same length keep a last word from being alone (text-wrap: balance). They end between
+ * words or phrases in every language, Japanese and Korean among them (i18n.css), and not inside a name (i18n.js).
+ */
+.app-summary,
+.troubleshooting,
+.project-description,
+.photo-data-viewer {
+  text-wrap: balance;
+}
+
+/*
+ * Each of the two sentences of a block is a block of its own, in place of the line break between them: lines are
+ * made the same length within a block, and those after a line break in it were left as they were.
+ */
+.project-description > span,
+.photo-data-viewer > span {
+  display: block;
+}
+
+.project-description > br,
+.photo-data-viewer > br {
+  display: none;
+}
+
 /* Keep the original Bootstrap 4 appearance with Bootstrap 5's supported CSS. */
 a {
   color: #007bff;
@@ -136,8 +191,9 @@ a:hover {
   text-decoration: underline;
 }
 
+/* At the side where the lines start, which is the right in a page laid out from right to left (i18n.js). */
 ul, ol {
-  padding-left: 40px;
+  padding-inline: 40px 0;
 }
 
 .btn {

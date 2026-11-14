@@ -1,0 +1,33 @@
+{
+  "language": "Valoda",
+  "languageSearch": "Meklēt",
+  "noLanguagesFound": "Nav atrasta neviena valoda",
+  "useBrowserSetting": "Izmantot pārlūkprogrammas iestatījumu ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Photo Location Map ikona",
+    "summary": "Parāda kartē vietas, kur fotoattēli ir uzņemti.",
+    "downloadForWindows": "Lejupielādēt sistēmai Windows",
+    "downloadForMacos": "Lejupielādēt sistēmai macOS",
+    "photosHaveLocationData": "Ar viedtālruni uzņemtos fotoattēlos ir atrašanās vietas dati (ģeogrāfiskais platums un garums).",
+    "showsLocationsOnMap": "Šī lietotne nolasa atrašanās vietas datus no fotoattēliem un parāda vietas kartē.",
+    "supportedFileFormats": "Atbalstītie failu formāti:",
+    "troubleshooting": "Ja rodas problēmas ar šo lietotni, skatiet <link>problēmu novēršanas lapu</link>.",
+    "sourceCode": "Photo Location Map pirmkods ir <link>pieejams vietnē GitHub</link>.",
+    "developedBy": "Lietotni Photo Location Map izstrādā <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Vai vēlaties apskatīt EXIF datus?",
+    "photoDataViewer": "Ir pieejams arī <link>Photo Data Viewer</link>.",
+    "analyticsNotice": "Šī vietne apkopo lietošanas informāciju."
+  },
+  "downloading": {
+    "pageTitle": "Photo Location Map lejupielāde",
+    "willStart": "Photo Location Map lejupielāde drīz sāksies. Ja tā nesākas, noklikšķiniet <link>šeit</link>.",
+    "howToInstall": "Kā instalēt",
+    "step1": "1. Veiciet dubultklikšķi uz lejupielādētā exe faila.",
+    "step2": "2. Tiks parādīts Windows Defender SmartScreen uznirstošais logs. Noklikšķiniet uz „Papildinformācija” (More info).",
+    "moreInfoImageAlt": "Windows Defender SmartScreen attēls (Papildinformācija)",
+    "step3": "3. Noklikšķiniet uz „Tomēr palaist” (Run anyway).",
+    "runAnywayImageAlt": "Windows Defender SmartScreen attēls (Tomēr palaist)",
+    "step4": "4. Tiks palaista Photo Location Map instalēšanas programma. Izpildiet instalēšanas programmas norādījumus."
+  }
+}

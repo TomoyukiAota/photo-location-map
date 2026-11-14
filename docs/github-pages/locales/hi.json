@@ -1,0 +1,33 @@
+{
+  "language": "भाषा",
+  "languageSearch": "खोजें",
+  "noLanguagesFound": "कोई भाषा नहीं मिली",
+  "useBrowserSetting": "ब्राउज़र की सेटिंग का उपयोग करें ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Photo Location Map का आइकन",
+    "summary": "फ़ोटो कहाँ ली गईं, यह मैप पर दिखाता है।",
+    "downloadForWindows": "Windows के लिए डाउनलोड करें",
+    "downloadForMacos": "macOS के लिए डाउनलोड करें",
+    "photosHaveLocationData": "स्मार्टफ़ोन से ली गई फ़ोटो में जगह की जानकारी (अक्षांश और देशांतर) होती है।",
+    "showsLocationsOnMap": "यह ऐप फ़ोटो से जगह की जानकारी पढ़ता है और जगहें मैप पर दिखाता है।",
+    "supportedFileFormats": "इन फ़ाइल फ़ॉर्मैट के साथ काम करता है:",
+    "troubleshooting": "अगर इस ऐप में कोई समस्या आए, तो <link>समस्या निवारण पेज</link> देखें।",
+    "sourceCode": "Photo Location Map का सोर्स कोड <link>GitHub पर उपलब्ध है</link>।",
+    "developedBy": "Photo Location Map को <link>Tomoyuki Aota</link> ने विकसित किया है।",
+    "wantExifData": "क्या आप EXIF डेटा देखना चाहते हैं?",
+    "photoDataViewer": "<link>Photo Data Viewer</link> भी उपलब्ध है।",
+    "analyticsNotice": "यह वेबसाइट उपयोग की जानकारी इकट्ठा करती है।"
+  },
+  "downloading": {
+    "pageTitle": "Photo Location Map डाउनलोड हो रहा है",
+    "willStart": "Photo Location Map का डाउनलोड थोड़ी देर में शुरू होगा। अगर शुरू न हो, तो <link>यहाँ</link> क्लिक करें।",
+    "howToInstall": "इंस्टॉल करने का तरीका",
+    "step1": "1. डाउनलोड की गई exe फ़ाइल पर डबल-क्लिक करें।",
+    "step2": "2. Windows Defender SmartScreen का पॉप-अप दिखेगा। “अधिक जानकारी” (More info) पर क्लिक करें।",
+    "moreInfoImageAlt": "Windows Defender SmartScreen की इमेज (अधिक जानकारी)",
+    "step3": "3. “फिर भी चलाएँ” (Run anyway) पर क्लिक करें।",
+    "runAnywayImageAlt": "Windows Defender SmartScreen की इमेज (फिर भी चलाएँ)",
+    "step4": "4. Photo Location Map का इंस्टॉलर खुलेगा। इंस्टॉलर में दिए गए निर्देशों का पालन करें।"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "language": "Idioma",
+  "languageSearch": "Cerca",
+  "noLanguagesFound": "No s’ha trobat cap idioma",
+  "useBrowserSetting": "Utilitza la configuració del navegador ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Icona de Photo Location Map",
+    "summary": "Mostra en un mapa on es van fer les fotos.",
+    "downloadForWindows": "Baixa per a Windows",
+    "downloadForMacos": "Baixa per a macOS",
+    "photosHaveLocationData": "Les fotos fetes amb telèfons intel·ligents tenen dades d’ubicació (latitud i longitud).",
+    "showsLocationsOnMap": "Aquesta aplicació llegeix les dades d’ubicació de les fotos i mostra les ubicacions en un mapa.",
+    "supportedFileFormats": "Formats de fitxer compatibles:",
+    "troubleshooting": "Si teniu algun problema amb aquesta aplicació, consulteu la <link>pàgina de resolució de problemes</link>.",
+    "sourceCode": "El codi font de Photo Location Map està <link>allotjat a GitHub</link>.",
+    "developedBy": "Photo Location Map és una aplicació desenvolupada per <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Voleu consultar les dades EXIF?",
+    "photoDataViewer": "També hi ha disponible <link>Photo Data Viewer</link>.",
+    "analyticsNotice": "Aquest lloc web recull informació d’ús."
+  },
+  "downloading": {
+    "pageTitle": "S’està baixant Photo Location Map",
+    "willStart": "La baixada de Photo Location Map començarà d’aquí a un moment. Si no comença, feu clic <link>aquí</link>.",
+    "howToInstall": "Com s’instal·la",
+    "step1": "1. Feu doble clic al fitxer exe baixat.",
+    "step2": "2. Apareixerà la finestra emergent de Windows Defender SmartScreen. Feu clic a «Més informació» (More info).",
+    "moreInfoImageAlt": "Imatge de Windows Defender SmartScreen (Més informació)",
+    "step3": "3. Feu clic a «Executa igualment» (Run anyway).",
+    "runAnywayImageAlt": "Imatge de Windows Defender SmartScreen (Executa igualment)",
+    "step4": "4. S’obrirà l’instal·lador de Photo Location Map. Seguiu les instruccions de l’instal·lador."
+  }
+}

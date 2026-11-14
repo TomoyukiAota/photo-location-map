@@ -1,0 +1,33 @@
+{
+  "language": "Sprog",
+  "languageSearch": "Søg",
+  "noLanguagesFound": "Ingen sprog fundet",
+  "useBrowserSetting": "Brug browserens indstilling ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Ikon for Photo Location Map",
+    "summary": "Viser på et kort, hvor billederne er taget.",
+    "downloadForWindows": "Hent til Windows",
+    "downloadForMacos": "Hent til macOS",
+    "photosHaveLocationData": "Billeder taget med en smartphone indeholder lokalitetsdata (breddegrad og længdegrad).",
+    "showsLocationsOnMap": "Denne app læser lokalitetsdata fra billederne og viser stederne på et kort.",
+    "supportedFileFormats": "Understøttede filformater:",
+    "troubleshooting": "Hvis du oplever problemer med denne app, kan du se <link>siden om fejlfinding</link>.",
+    "sourceCode": "Kildekoden til Photo Location Map <link>ligger på GitHub</link>.",
+    "developedBy": "Photo Location Map udvikles af <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Vil du se EXIF-oplysninger?",
+    "photoDataViewer": "<link>Photo Data Viewer</link> er også tilgængelig.",
+    "analyticsNotice": "Dette websted indsamler brugsoplysninger."
+  },
+  "downloading": {
+    "pageTitle": "Henter Photo Location Map",
+    "willStart": "Overførslen af Photo Location Map starter om et øjeblik. Hvis den ikke starter, så klik <link>her</link>.",
+    "howToInstall": "Sådan installerer du appen",
+    "step1": "1. Dobbeltklik på den hentede exe-fil.",
+    "step2": "2. Pop op-vinduet Windows Defender SmartScreen vises. Klik på “Flere oplysninger” (More info).",
+    "moreInfoImageAlt": "Billede af Windows Defender SmartScreen (Flere oplysninger)",
+    "step3": "3. Klik på “Kør alligevel” (Run anyway).",
+    "runAnywayImageAlt": "Billede af Windows Defender SmartScreen (Kør alligevel)",
+    "step4": "4. Installationsprogrammet til Photo Location Map starter. Følg vejledningen i installationsprogrammet."
+  }
+}

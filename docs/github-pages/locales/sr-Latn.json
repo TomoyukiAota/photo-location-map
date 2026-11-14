@@ -1,0 +1,33 @@
+{
+  "language": "Jezik",
+  "languageSearch": "Pretraži",
+  "noLanguagesFound": "Nije pronađen nijedan jezik",
+  "useBrowserSetting": "Koristi podešavanje pregledača ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Ikona aplikacije Photo Location Map",
+    "summary": "Prikazuje na mapi mesta na kojima su fotografije snimljene.",
+    "downloadForWindows": "Preuzmi za Windows",
+    "downloadForMacos": "Preuzmi za macOS",
+    "photosHaveLocationData": "Fotografije snimljene pametnim telefonom sadrže podatke o lokaciji (geografsku širinu i dužinu).",
+    "showsLocationsOnMap": "Ova aplikacija čita podatke o lokaciji iz fotografija i prikazuje mesta na mapi.",
+    "supportedFileFormats": "Podržani formati datoteka:",
+    "troubleshooting": "Ako naiđete na probleme sa ovom aplikacijom, pogledajte <link>stranicu za rešavanje problema</link>.",
+    "sourceCode": "Izvorni kôd aplikacije Photo Location Map <link>dostupan je na GitHub-u</link>.",
+    "developedBy": "Aplikaciju Photo Location Map razvija <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Želite li da pregledate podatke EXIF?",
+    "photoDataViewer": "Dostupan je i <link>Photo Data Viewer</link>.",
+    "analyticsNotice": "Ovaj veb-sajt prikuplja podatke o korišćenju."
+  },
+  "downloading": {
+    "pageTitle": "Preuzimanje aplikacije Photo Location Map",
+    "willStart": "Preuzimanje aplikacije Photo Location Map uskoro počinje. Ako ne počne, kliknite <link>ovde</link>.",
+    "howToInstall": "Kako se instalira",
+    "step1": "1. Dvaput kliknite na preuzetu datoteku exe.",
+    "step2": "2. Pojaviće se iskačući prozor Windows Defender SmartScreen. Kliknite na „Više informacija“ (More info).",
+    "moreInfoImageAlt": "Slika prozora Windows Defender SmartScreen (Više informacija)",
+    "step3": "3. Kliknite na „Ipak pokreni“ (Run anyway).",
+    "runAnywayImageAlt": "Slika prozora Windows Defender SmartScreen (Ipak pokreni)",
+    "step4": "4. Pokrenuće se instalacioni program aplikacije Photo Location Map. Pratite uputstva instalacionog programa."
+  }
+}

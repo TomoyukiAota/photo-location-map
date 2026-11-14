@@ -1,0 +1,33 @@
+{
+  "language": "语言",
+  "languageSearch": "搜索",
+  "noLanguagesFound": "未找到语言",
+  "useBrowserSetting": "跟随浏览器设置（{{language}}）",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Photo Location Map 图标",
+    "summary": "在地图上显示照片的拍摄地点。",
+    "downloadForWindows": "下载 Windows 版",
+    "downloadForMacos": "下载 macOS 版",
+    "photosHaveLocationData": "用智能手机拍摄的照片带有位置数据（纬度和经度）。",
+    "showsLocationsOnMap": "此应用从照片中读取位置数据，并在地图上显示拍摄地点。",
+    "supportedFileFormats": "支持的文件格式：",
+    "troubleshooting": "如果使用此应用时遇到问题，请参阅<link>故障排除页面</link>。",
+    "sourceCode": "Photo Location Map 的源代码<link>托管在 GitHub 上</link>。",
+    "developedBy": "Photo Location Map 由 <link>Tomoyuki Aota</link> 开发。",
+    "wantExifData": "想查看 EXIF 数据？",
+    "photoDataViewer": "还可以使用 <link>Photo Data Viewer</link>。",
+    "analyticsNotice": "本网站会收集使用情况信息。"
+  },
+  "downloading": {
+    "pageTitle": "正在下载 Photo Location Map",
+    "willStart": "Photo Location Map 即将开始下载。如果没有开始，请点击<link>此处</link>。",
+    "howToInstall": "安装方法",
+    "step1": "1. 双击下载的 exe 文件。",
+    "step2": "2. 将显示 Windows Defender SmartScreen 弹出窗口。点击“更多信息”（More info）。",
+    "moreInfoImageAlt": "Windows Defender SmartScreen 的图片（更多信息）",
+    "step3": "3. 点击“仍要运行”（Run anyway）。",
+    "runAnywayImageAlt": "Windows Defender SmartScreen 的图片（仍要运行）",
+    "step4": "4. Photo Location Map 的安装程序将启动。请按照安装程序的提示操作。"
+  }
+}
