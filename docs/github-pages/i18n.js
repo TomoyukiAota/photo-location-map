@@ -193,6 +193,15 @@
   // A language asked for in the address is a choice: the page that a link of this one leads to is in it as well.
   if (param && matchLanguage([param]) === language) saveLanguage(language);
 
+  // TL;DR: The Language setting and the language that the page is in, which analytics.js sends with each page load.
+  // Details: The setting is `auto` while the page follows the browser, or the language chosen in the picker or asked
+  // for in the address, which the page keeps. analytics.js is loaded after this script, so it asks for the two, and
+  // choose() tells it of each change.
+  const settingOf = (code, follows) => (follows ? 'auto' : code);
+  let languageSetting = settingOf(language, following);
+  let languageInUse = language;
+  window.PhotoLocationMapWebsiteLanguage = { setting: () => languageSetting, inUse: () => languageInUse };
+
   const fetchTexts = async (code) => {
     const response = await fetch(new URL(`${code}.json`, localesUrl));
     if (!response.ok) throw new Error(`${code}.json: ${response.status}`);
@@ -312,6 +321,13 @@
     if (choice !== choices) return;
     apply(chosen, textsOfChosen);
     following = follow;
+    // A new setting is sent to the analytics backend, unless analytics.js did not load. Choosing the setting that the
+    // page has changes nothing.
+    const setting = settingOf(chosen, follow);
+    if (setting !== languageSetting && window.PhotoLocationMapAnalytics)
+      window.PhotoLocationMapAnalytics.trackChangedLanguageSetting(setting, chosen);
+    languageSetting = setting;
+    languageInUse = chosen;
     // The address says the language, so that the page is in it again when it is loaded anew or sent to someone. A page
     // that follows the browser says none, and keeps no choice: it is in the language of each browser that opens it.
     const url = new URL(window.location.href);

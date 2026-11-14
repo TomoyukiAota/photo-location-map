@@ -2355,6 +2355,28 @@ test('download website is in the language of its address, and in the one chosen 
   test.skip(!!packagedExecutable, 'The static website is verified separately from the packaged application.');
   const website = await serveWebsite();
   try {
+    // TL;DR: The pages' analytics events are answered here rather than sent, and each page lists the ones it sends.
+    // Details: The suite cancels the requests of analytics (electron-util/e2e-test-hooks.js), and analytics.js sends a
+    // batch that fails again only seconds later.
+    await app.context().addInitScript(() => {
+      globalThis.__plmWebsiteAnalytics = [];
+      const fetchOfPage = globalThis.fetch;
+      globalThis.fetch = (resource, options) => {
+        if (!String(resource).endsWith('/landing-page/v1/events')) return fetchOfPage(resource, options);
+        for (const event of JSON.parse(options.body).events)
+          globalThis.__plmWebsiteAnalytics.push({ action: event.action, ...JSON.parse(event.label) });
+        return Promise.resolve(new Response(null, { status: 204 }));
+      };
+    });
+    /**
+     * The fields of the analytics events with `action` of the page as it was last loaded. A page also sends the events
+     * that the page before it had not sent when it was left, which belong to another page load.
+     */
+    const websiteEvents = action => page.evaluate(action => {
+      const events = globalThis.__plmWebsiteAnalytics;
+      const pageLoadId = events.findLast(event => event.action === 'Page Loaded')?.pageLoadId;
+      return events.filter(event => event.action === action && event.pageLoadId === pageLoadId);
+    }, action);
     // Japanese by the address, as a link of a search engine has it. The browser's own language is that of the
     // computer, so the address says the language in every step here.
     const websiteWindow = app.waitForEvent('window');
@@ -2367,6 +2389,11 @@ test('download website is in the language of its address, and in the one chosen 
     page = await websiteWindow;
     await expect(page.locator('.app-summary')).toHaveText('写真の撮影場所をマップに表示します。');
     expect(await page.evaluate(() => document.documentElement.lang)).toBe('ja');
+    // The page load is sent to the analytics backend with the browser's languages, the Language setting, which the
+    // address made Japanese, and the language that the page is in.
+    const [browserLanguage, browserLanguages] = await page.evaluate(() => [navigator.language, [...navigator.languages]]);
+    await expect.poll(() => websiteEvents('Page Loaded')).toEqual([expect.objectContaining({ page: 'landing',
+      language: browserLanguage, languages: browserLanguages, languageSetting: 'ja', languageInUse: 'ja' })]);
     await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', '写真の撮影場所をマップに表示します。');
     await expect(page.getByRole('button', { name: 'macOS 版をダウンロード' })).toBeVisible();
     // A sentence with a link keeps the link, around the words that are the link in Japanese.
@@ -2513,6 +2540,9 @@ test('download website is in the language of its address, and in the one chosen 
     await search.press('Enter');
     await expect(pickerBox).toBeHidden();
     await expect(page.locator('.app-summary')).toHaveText('Display the locations where photos were taken on a map.');
+    // The new setting is sent to the analytics backend, with the language that the page is then in.
+    await expect.poll(() => websiteEvents('Changed Language Setting'))
+      .toEqual([expect.objectContaining({ page: 'landing', languageSetting: 'en', languageInUse: 'en' })]);
     // The English texts are shorter: the two buttons fit side by side in the window in which the Japanese ones did
     // not, and are side by side there, as they were before the website had other languages.
     const englishRow = await windowForARow();
@@ -2646,6 +2676,8 @@ test('download website is in the language of its address, and in the one chosen 
     await expect(page.locator('.windows-defender-more-info')).toHaveAttribute('alt', 'Windows Defender SmartScreen の画像（詳細情報）');
     await expect(page).toHaveTitle('Photo Location Map をダウンロード中');
     await expect(chosenOnButton).toHaveText('日本語');
+    await expect.poll(() => websiteEvents('Page Loaded'))
+      .toEqual([expect.objectContaining({ page: 'downloading-for-windows', languageSetting: 'ja', languageInUse: 'ja' })]);
     await pickerButton.click();
     await expect(pickerBox.getByRole('option', { name: '日本語', exact: true })).toHaveAttribute('aria-selected', 'true');
     // "Use browser setting" forgets the choice: the page is in the browser's language, its address says none, and
@@ -2657,12 +2689,26 @@ test('download website is in the language of its address, and in the one chosen 
     expect(await page.evaluate(() => document.documentElement.lang)).toBe(browserCode);
     await expect(chosenOnButton).toHaveText(browserName);
     expect(new URL(page.url()).searchParams.has('lang')).toBe(false);
+    // The setting sent for that is `auto`, with the browser's language as the page's.
+    await expect.poll(() => websiteEvents('Changed Language Setting')).toEqual([expect.objectContaining({
+      page: 'downloading-for-windows', languageSetting: 'auto', languageInUse: browserCode })]);
     await page.goto(`${website.url}github-pages/downloading-for-windows/downloading-for-windows.html`, { waitUntil: 'domcontentloaded' });
     await expect.poll(() => page.evaluate(() => document.documentElement.lang)).toBe(browserCode);
     await expect(chosenOnButton).toHaveText(browserName);
+    await expect.poll(() => websiteEvents('Page Loaded'))
+      .toEqual([expect.objectContaining({ languageSetting: 'auto', languageInUse: browserCode })]);
     await pickerButton.click();
     await expect(browserEntry).toHaveAttribute('aria-selected', 'true');
     await expect(pickerBox.locator('[role="option"][aria-selected="true"]')).toHaveCount(1);
+    // Choosing the setting that the page has changes nothing, and sends nothing: of that choice and the next one, of
+    // Japanese, only the next one is sent, as events are sent in their order a second after they are made. The page
+    // has dealt with the first choice once it has read the texts of the browser's language for it, after those that it
+    // was loaded with, which English has in the page itself.
+    await browserEntry.click();
+    await textsDealtWith(browserCode === 'en' ? ['en.json'] : [`${browserCode}.json`, `${browserCode}.json`]);
+    await chooseLanguage('日本語');
+    await expect.poll(() => websiteEvents('Changed Language Setting'))
+      .toEqual([expect.objectContaining({ languageSetting: 'ja', languageInUse: 'ja' })]);
   } finally {
     await website.close();
   }

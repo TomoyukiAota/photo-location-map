@@ -330,6 +330,10 @@
     // Called by download.js as a download starts. trigger is what started it: 'button' (the
     // macOS button), 'page' (the Windows page as it loads) or 'link' (its link to start again).
     trackStartedDownload: (downloadOs, trigger) => track('Started Download', { os: downloadOs, version: appVersion(), trigger }),
+    // Called by i18n.js when the Language setting is changed in the picker: `auto` for "Use browser setting", or the
+    // chosen language; with the language that the page is then in.
+    trackChangedLanguageSetting: (languageSetting, languageInUse) =>
+      track('Changed Language Setting', { languageSetting, languageInUse }),
   };
 
   add(...takeKept());
@@ -341,6 +345,8 @@
   document.addEventListener('auxclick', handleClick, true);
 
   const connection = navigator.connection;
+  // The page's Language setting and language, from i18n.js, which is loaded before this script.
+  const websiteLanguage = window.PhotoLocationMapWebsiteLanguage;
   track('Page Loaded', {
     // The address's query string, without "?": where a campaign link says where it was posted.
     query: location.search.slice(1, 513) || undefined,
@@ -348,7 +354,11 @@
     referrer: document.referrer.slice(0, 512) || undefined,
     language: navigator.language,
     languages: navigator.languages ? [...navigator.languages] : undefined,
-    screen: `${window.screen.width}x${window.screen.height}`,
+    // `auto` while the page follows the browser's language, or the language chosen in its picker or asked for in its
+    // address; and the language that the page is in.
+    languageSetting: websiteLanguage ? websiteLanguage.setting() : undefined,
+    languageInUse: websiteLanguage ? websiteLanguage.inUse() : undefined,
+    screen:`${window.screen.width}x${window.screen.height}`,
     viewport: `${window.innerWidth}x${window.innerHeight}`,
     devicePixelRatio: window.devicePixelRatio,
     timeZone: timeZone(),

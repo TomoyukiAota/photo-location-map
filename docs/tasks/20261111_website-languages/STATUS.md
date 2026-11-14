@@ -2,7 +2,8 @@
 
 Started and implemented on 2026-11-11. On 2026-11-12, the 40 machine
 translations were reviewed, and the layout was looked at in every language. On
-2026-11-13, the language picker got an entry that follows the browser.
+2026-11-13, the language picker got an entry that follows the browser. On
+2026-11-14, the pages send the Language setting to the analytics backend.
 
 ## What was asked
 
@@ -14,6 +15,10 @@ contribute.
 On 2026-11-13, having tried the website, the owner asked what Claude thought of
 an entry "Use browser setting" in the picker, as Photo Data Viewer's list has,
 and then to add it.
+
+On 2026-11-14, the owner asked that a page send, as it is opened, the browser's
+languages and the visitor's Language setting to the analytics backend, and
+send the setting again whenever it is changed.
 
 ## Current state
 
@@ -47,8 +52,23 @@ and then to add it.
   `docs/tasks/20261112_translation-review/`.
 - The layout was looked at in all 42 languages, and holds in each: see
   [Checks](#checks).
+- Each page load sends the analytics backend the browser's languages, as it
+  did, and now the Language setting and the language that the page is in. A
+  change of the setting in the picker is an event of its own.
 
 ## What was decided, and why
+
+- **The Language setting goes with each page load, and each change of it is
+  an event** (`Changed Language Setting`), as the owner asked on 2026-11-14,
+  of the application as well. Photo Data Viewer sends its setting in the same
+  way.
+  - The setting is `auto` while the page follows the browser, and otherwise
+    the language chosen in the picker or asked for in the address, which the
+    page keeps. The language that the page is in goes with it: the browser's,
+    for `auto`.
+  - Choosing the setting that the page has sends nothing, as nothing changed.
+  - `i18n.js` makes them, and `analytics.js`, which is loaded after it, sends
+    them, as it does the other events of the pages.
 
 - **"Use browser setting" first in the picker**, as the application's list has
   "Use macOS setting" and Photo Data Viewer's "Use browser setting". A
@@ -249,6 +269,14 @@ On macOS (Apple Silicon), 2026-11-11.
   the 42 languages, and measures the entry too: it is on one line in a
   desktop's window in each, in a box of 260 to 459 pixels (Greek). Its
   pictures of the box with the top of the list were looked at in all 42.
+- On 2026-11-14, with the Language setting sent: the e2e case of the website
+  answers the pages' analytics requests itself, and checks the fields of each
+  page load (the browser's languages, `languageSetting`, `languageInUse`) on
+  both pages, with `ja` from the address and with `auto`; the change to
+  English, and to "Use browser setting" as `auto` with the browser's language;
+  and that choosing the setting that the page has sends nothing. With that
+  check of i18n.js taken out, or with the setting never `auto`, the case
+  fails.
 
 ## Not done
 
