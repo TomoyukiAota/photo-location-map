@@ -1,0 +1,33 @@
+{
+  "language": "Jezik",
+  "languageSearch": "Pretraži",
+  "noLanguagesFound": "Nije pronađen nijedan jezik",
+  "useBrowserSetting": "Koristi postavku preglednika ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Ikona aplikacije Photo Location Map",
+    "summary": "Prikazuje na karti mjesta na kojima su fotografije snimljene.",
+    "downloadForWindows": "Preuzmi za Windows",
+    "downloadForMacos": "Preuzmi za macOS",
+    "photosHaveLocationData": "Fotografije snimljene pametnim telefonom sadrže podatke o lokaciji (zemljopisnu širinu i dužinu).",
+    "showsLocationsOnMap": "Ova aplikacija čita podatke o lokaciji iz fotografija i prikazuje mjesta na karti.",
+    "supportedFileFormats": "Podržani formati datoteka:",
+    "troubleshooting": "Ako naiđete na poteškoće s ovom aplikacijom, pogledajte <link>stranicu za rješavanje problema</link>.",
+    "sourceCode": "Izvorni kod aplikacije Photo Location Map <link>dostupan je na GitHubu</link>.",
+    "developedBy": "Aplikaciju Photo Location Map razvija <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Želite li pregledati podatke EXIF?",
+    "photoDataViewer": "Dostupan je i <link>Photo Data Viewer</link>.",
+    "analyticsNotice": "Ovo web-mjesto prikuplja podatke o korištenju."
+  },
+  "downloading": {
+    "pageTitle": "Preuzimanje aplikacije Photo Location Map",
+    "willStart": "Preuzimanje aplikacije Photo Location Map uskoro će započeti. Ako ne započne, kliknite <link>ovdje</link>.",
+    "howToInstall": "Kako instalirati",
+    "step1": "1. Dvaput kliknite preuzetu datoteku exe.",
+    "step2": "2. Pojavit će se skočni prozor Windows Defender SmartScreen. Kliknite „Više informacija” (More info).",
+    "moreInfoImageAlt": "Slika prozora Windows Defender SmartScreen (Više informacija)",
+    "step3": "3. Kliknite „Svejedno pokreni” (Run anyway).",
+    "runAnywayImageAlt": "Slika prozora Windows Defender SmartScreen (Svejedno pokreni)",
+    "step4": "4. Pokrenut će se instalacijski program aplikacije Photo Location Map. Slijedite upute instalacijskog programa."
+  }
+}

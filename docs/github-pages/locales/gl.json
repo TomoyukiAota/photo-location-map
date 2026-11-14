@@ -1,0 +1,33 @@
+{
+  "language": "Idioma",
+  "languageSearch": "Buscar",
+  "noLanguagesFound": "Non se atopou ningún idioma",
+  "useBrowserSetting": "Usar a configuración do navegador ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Icona de Photo Location Map",
+    "summary": "Mostra nun mapa onde se fixeron as fotos.",
+    "downloadForWindows": "Descargar para Windows",
+    "downloadForMacos": "Descargar para macOS",
+    "photosHaveLocationData": "As fotos feitas con teléfonos intelixentes teñen datos de localización (latitude e lonxitude).",
+    "showsLocationsOnMap": "Esta aplicación le os datos de localización das fotos e mostra as localizacións nun mapa.",
+    "supportedFileFormats": "Formatos de ficheiro compatibles:",
+    "troubleshooting": "Se tes algún problema con esta aplicación, consulta a <link>páxina de resolución de problemas</link>.",
+    "sourceCode": "O código fonte de Photo Location Map está <link>aloxado en GitHub</link>.",
+    "developedBy": "Photo Location Map está desenvolvida por <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Queres consultar os datos EXIF?",
+    "photoDataViewer": "Tamén está dispoñible <link>Photo Data Viewer</link>.",
+    "analyticsNotice": "Este sitio web recolle información de uso."
+  },
+  "downloading": {
+    "pageTitle": "Descargando Photo Location Map",
+    "willStart": "A descarga de Photo Location Map comezará axiña. Se non comeza, fai clic <link>aquí</link>.",
+    "howToInstall": "Como instalar",
+    "step1": "1. Fai dobre clic no ficheiro exe descargado.",
+    "step2": "2. Aparecerá a ventá emerxente de Windows Defender SmartScreen. Fai clic en «Máis información» (More info).",
+    "moreInfoImageAlt": "Imaxe de Windows Defender SmartScreen (Máis información)",
+    "step3": "3. Fai clic en «Executar de todos os xeitos» (Run anyway).",
+    "runAnywayImageAlt": "Imaxe de Windows Defender SmartScreen (Executar de todos os xeitos)",
+    "step4": "4. Abrirase o instalador de Photo Location Map. Segue as instrucións do instalador."
+  }
+}

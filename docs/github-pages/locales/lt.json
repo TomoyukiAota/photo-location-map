@@ -1,0 +1,33 @@
+{
+  "language": "Kalba",
+  "languageSearch": "Ieškoti",
+  "noLanguagesFound": "Kalbų nerasta",
+  "useBrowserSetting": "Naudoti naršyklės nustatymą ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "„Photo Location Map“ piktograma",
+    "summary": "Rodo žemėlapyje, kur darytos nuotraukos.",
+    "downloadForWindows": "Atsisiųsti „Windows“ versiją",
+    "downloadForMacos": "Atsisiųsti „macOS“ versiją",
+    "photosHaveLocationData": "Išmaniaisiais telefonais darytose nuotraukose yra vietos duomenys (platuma ir ilguma).",
+    "showsLocationsOnMap": "Ši programa nuskaito nuotraukų vietos duomenis ir rodo vietas žemėlapyje.",
+    "supportedFileFormats": "Palaikomi failų formatai:",
+    "troubleshooting": "Jei kyla problemų dėl šios programos, žiūrėkite <link>trikčių šalinimo puslapį</link>.",
+    "sourceCode": "„Photo Location Map“ pirminis programos tekstas <link>pateikiamas platformoje „GitHub“</link>.",
+    "developedBy": "Programą „Photo Location Map“ kuria <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Ar norite peržiūrėti EXIF duomenis?",
+    "photoDataViewer": "Taip pat yra <link>„Photo Data Viewer“</link>.",
+    "analyticsNotice": "Ši svetainė renka naudojimo informaciją."
+  },
+  "downloading": {
+    "pageTitle": "Atsisiunčiama „Photo Location Map“",
+    "willStart": "„Photo Location Map“ atsisiuntimas netrukus prasidės. Jei neprasideda, spustelėkite <link>čia</link>.",
+    "howToInstall": "Kaip įdiegti",
+    "step1": "1. Dukart spustelėkite atsisiųstą exe failą.",
+    "step2": "2. Pasirodys „Windows Defender SmartScreen“ iškylantysis langas. Spustelėkite „Daugiau informacijos“ (More info).",
+    "moreInfoImageAlt": "„Windows Defender SmartScreen“ vaizdas (Daugiau informacijos)",
+    "step3": "3. Spustelėkite „Vis tiek vykdyti“ (Run anyway).",
+    "runAnywayImageAlt": "„Windows Defender SmartScreen“ vaizdas (Vis tiek vykdyti)",
+    "step4": "4. Bus paleista „Photo Location Map“ diegimo programa. Vykdykite diegimo programos nurodymus."
+  }
+}

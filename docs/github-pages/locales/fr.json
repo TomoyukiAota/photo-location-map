@@ -1,0 +1,33 @@
+{
+  "language": "Langue",
+  "languageSearch": "Rechercher",
+  "noLanguagesFound": "Aucune langue trouvée",
+  "useBrowserSetting": "Utiliser le réglage du navigateur ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Icône de Photo Location Map",
+    "summary": "Affiche sur une carte les lieux où les photos ont été prises.",
+    "downloadForWindows": "Télécharger pour Windows",
+    "downloadForMacos": "Télécharger pour macOS",
+    "photosHaveLocationData": "Les photos prises avec un smartphone contiennent des données de localisation (latitude et longitude).",
+    "showsLocationsOnMap": "Cette application lit les données de localisation des photos et affiche les lieux sur une carte.",
+    "supportedFileFormats": "Formats de fichier pris en charge\u00a0:",
+    "troubleshooting": "Si vous rencontrez des problèmes avec cette application, consultez <link>la page de dépannage</link>.",
+    "sourceCode": "Le code source de Photo Location Map est <link>hébergé sur GitHub</link>.",
+    "developedBy": "Photo Location Map est développé par <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Vous voulez consulter les données EXIF\u00a0?",
+    "photoDataViewer": "<link>Photo Data Viewer</link> est également disponible.",
+    "analyticsNotice": "Ce site web collecte des données d’utilisation."
+  },
+  "downloading": {
+    "pageTitle": "Téléchargement de Photo Location Map",
+    "willStart": "Le téléchargement de Photo Location Map va bientôt commencer. S’il ne commence pas, cliquez <link>ici</link>.",
+    "howToInstall": "Comment installer",
+    "step1": "1. Double-cliquez sur le fichier exe téléchargé.",
+    "step2": "2. La fenêtre de Windows Defender SmartScreen s’affiche. Cliquez sur «\u00a0Informations complémentaires\u00a0» (More info).",
+    "moreInfoImageAlt": "Image de Windows Defender SmartScreen (Informations complémentaires)",
+    "step3": "3. Cliquez sur «\u00a0Exécuter quand même\u00a0» (Run anyway).",
+    "runAnywayImageAlt": "Image de Windows Defender SmartScreen (Exécuter quand même)",
+    "step4": "4. Le programme d’installation de Photo Location Map démarre. Suivez les instructions du programme d’installation."
+  }
+}

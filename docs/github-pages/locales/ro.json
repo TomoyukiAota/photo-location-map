@@ -1,0 +1,33 @@
+{
+  "language": "Limbă",
+  "languageSearch": "Caută",
+  "noLanguagesFound": "Nu s-a găsit nicio limbă",
+  "useBrowserSetting": "Folosește setarea browserului ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Pictograma Photo Location Map",
+    "summary": "Afișează pe hartă locurile unde au fost făcute pozele.",
+    "downloadForWindows": "Descarcă pentru Windows",
+    "downloadForMacos": "Descarcă pentru macOS",
+    "photosHaveLocationData": "Pozele făcute cu smartphone-ul conțin date de localizare (latitudine și longitudine).",
+    "showsLocationsOnMap": "Această aplicație citește datele de localizare din poze și afișează pe hartă locurile unde au fost făcute.",
+    "supportedFileFormats": "Formate de fișier acceptate:",
+    "troubleshooting": "Dacă întâmpinați probleme cu această aplicație, consultați <link>pagina de depanare</link>.",
+    "sourceCode": "Codul sursă al Photo Location Map este <link>găzduit pe GitHub</link>.",
+    "developedBy": "Photo Location Map este dezvoltat de <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Doriți să consultați datele EXIF?",
+    "photoDataViewer": "Este disponibil și <link>Photo Data Viewer</link>.",
+    "analyticsNotice": "Acest site colectează date de utilizare."
+  },
+  "downloading": {
+    "pageTitle": "Se descarcă Photo Location Map",
+    "willStart": "Descărcarea Photo Location Map va începe în scurt timp. Dacă nu începe, faceți clic <link>aici</link>.",
+    "howToInstall": "Cum se instalează",
+    "step1": "1. Faceți dublu clic pe fișierul exe descărcat.",
+    "step2": "2. Va apărea fereastra Windows Defender SmartScreen. Faceți clic pe „Mai multe informații” (More info).",
+    "moreInfoImageAlt": "Imagine cu Windows Defender SmartScreen (Mai multe informații)",
+    "step3": "3. Faceți clic pe „Executare oricum” (Run anyway).",
+    "runAnywayImageAlt": "Imagine cu Windows Defender SmartScreen (Executare oricum)",
+    "step4": "4. Se va lansa programul de instalare Photo Location Map. Urmați instrucțiunile programului de instalare."
+  }
+}

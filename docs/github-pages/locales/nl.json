@@ -1,0 +1,33 @@
+{
+  "language": "Taal",
+  "languageSearch": "Zoek",
+  "noLanguagesFound": "Geen talen gevonden",
+  "useBrowserSetting": "Gebruik de instelling van de browser ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Symbool van Photo Location Map",
+    "summary": "Toont op een kaart waar foto’s zijn gemaakt.",
+    "downloadForWindows": "Download voor Windows",
+    "downloadForMacos": "Download voor macOS",
+    "photosHaveLocationData": "Foto’s die met een smartphone zijn gemaakt, bevatten locatiegegevens (breedtegraad en lengtegraad).",
+    "showsLocationsOnMap": "Deze app leest de locatiegegevens uit de foto’s en toont de locaties op een kaart.",
+    "supportedFileFormats": "Ondersteunde bestandsindelingen:",
+    "troubleshooting": "Als je problemen ondervindt met deze app, raadpleeg dan <link>de pagina voor probleemoplossing</link>.",
+    "sourceCode": "De broncode van Photo Location Map <link>staat op GitHub</link>.",
+    "developedBy": "Photo Location Map wordt ontwikkeld door <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Wil je EXIF-gegevens bekijken?",
+    "photoDataViewer": "<link>Photo Data Viewer</link> is ook beschikbaar.",
+    "analyticsNotice": "Deze website verzamelt gebruiksgegevens."
+  },
+  "downloading": {
+    "pageTitle": "Photo Location Map wordt gedownload",
+    "willStart": "De download van Photo Location Map begint zo. Als de download niet begint, klik dan <link>hier</link>.",
+    "howToInstall": "Zo installeer je de app",
+    "step1": "1. Dubbelklik op het gedownloade exe-bestand.",
+    "step2": "2. Het venster van Windows Defender SmartScreen verschijnt. Klik op ‘Meer informatie’ (More info).",
+    "moreInfoImageAlt": "Afbeelding van Windows Defender SmartScreen (Meer informatie)",
+    "step3": "3. Klik op ‘Toch uitvoeren’ (Run anyway).",
+    "runAnywayImageAlt": "Afbeelding van Windows Defender SmartScreen (Toch uitvoeren)",
+    "step4": "4. Het installatieprogramma van Photo Location Map wordt gestart. Volg de instructies in het installatieprogramma."
+  }
+}
