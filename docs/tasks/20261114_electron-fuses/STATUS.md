@@ -5,24 +5,35 @@ owner's decisions, what was found, the change and the stages.
 
 ## Current state
 
-The change is made, and a package of it on macOS has the fuses of
-`electron-builder.json` and passes the e2e suite.
+Done on 2026-11-14. A package has the fuses of `electron-builder.json`, and
+passes CI on the three operating systems and on Intel. The pull request from
+the branch `claude/electron-fuses` has the label `automerge`, with which
+Mergify merges it once its checks pass.
 
 | Stage | State |
 | --- | --- |
 | 1. The change, and the package on macOS | Done |
-| 2. CI on three operating systems, and on Intel | Not started |
-| 3. The pull request | Not started |
-| 4. After the merge | Not started |
+| 2. CI on three operating systems, and on Intel | Done: every job passed |
+| 3. The pull request | Opened, with the label `automerge` |
+| 4. After the merge | Nothing in the repository is left to change |
 
 ## Next
 
-Stage 2.
+Nothing, once the pull request is merged. Until then, a failed check or a
+review comment is handled as the plan's stage 3 says.
 
 ## Waiting on the owner
 
 Nothing: the owner asked for the change to be made and merged, if it is worth
-making, without waiting for them.
+making, without waiting for them. What is left for the owner, below, does not
+hold up the merge.
+
+## Left for the owner
+
+Whether to close what is still open, each a change of its own, which
+`docs/contributing/electron-fuses.md` describes under "What is still open":
+`runAsNode` and `enableNodeCliInspectArguments`, which still let other
+software run code as the application, and `grantFileProtocolExtraPrivileges`.
 
 ## Log
 
@@ -50,3 +61,24 @@ failed and why, and anything that the plan did not foresee.
   themselves, neither did: Electron ignores `NODE_OPTIONS` in the main process
   of a package, which the plan did not say at first; its finding 5 and
   `docs/contributing/electron-fuses.md` now do.
+- 2026-11-14, stage 2: the push of `88e147bd` ran the three workflows, and
+  "CI on macOS", run by hand, added `macos-26-intel`. `main` was still at
+  `52c28530`. Every job passed. In each, electron-builder printed "executing
+  @electron/fuses", and the package test's new check read the fuses of the
+  package that it built as `electron-builder.json` sets them: in both halves
+  of the Electron Framework on macOS, in `win-unpacked\Photo Location Map.exe`
+  on Windows, and in `linux-unpacked/photo-location-map` on Linux. The e2e
+  suite against each package passed, with the archive checked on macOS and
+  Windows.
+
+  | Job | Run | Time | The e2e suite |
+  | --- | --- | --- | --- |
+  | `test (macos-arm64)` | 43569163750 | 16 min | 48 passed and 2 skipped against the dmg's application, with the screenshots of `snapshots-ci/macos-26-arm64` |
+  | `test (windows-latest)` | 43569163883 | 15 min | 49 passed and 1 skipped (the website's) against the application that the NSIS installer installed |
+  | `test (ubuntu)` | 43569163775 | 17 min | 47 passed and 3 skipped against the AppImage; then 48 passed and 2 skipped against a development build of the checkout |
+  | `test (macos-x64)` | 43569163812 | 21 min | 48 passed and 2 skipped |
+  | `test (macos-arm64)`, of the same run | 43569163812 | 13 min | 48 passed and 2 skipped |
+
+- 2026-11-14, stage 3: this file is written as it should read on `main`. The
+  pull request is opened without the label `automerge`, which is added once
+  the test jobs that it starts are running (the plan's stage 3).
