@@ -58,6 +58,9 @@ and the rules that keep it so.
    `ready` once the main module and what it imports have run; a module loaded
    with `import()` may run after it
    ([Electron's documentation](https://www.electronjs.org/docs/latest/tutorial/esm)).
+   For the same reason, the main module does not `await app.whenReady()` at
+   its top: `ready` waits for the module, which waits for `ready`, and the
+   application hangs, as a check with Electron 45.2.1 did.
 8. **A new script or tool is an ES module**: `.js` in `script/`, which ESLint
    checks as such, and `.mjs` elsewhere.
 9. **The renderer prefers dependencies that are ES modules**, which the build
