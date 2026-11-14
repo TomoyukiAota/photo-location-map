@@ -1,4 +1,4 @@
-import { startupMetadata } from '../startup/startup-metadata';
+import { startupMetadata } from '../startup/startup-metadata.js';
 
 // Read when asked rather than when this module is evaluated, so that it never runs before the metadata can be had.
 const versionIncludes = (text: string): boolean => startupMetadata().version.toLowerCase().includes(text);

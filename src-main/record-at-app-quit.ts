@@ -1,6 +1,6 @@
 import { app } from 'electron';
-import { Analytics } from '../src-shared/analytics/analytics';
-import { Logger } from '../src-shared/log/logger';
+import { Analytics } from '../src-shared/analytics/analytics.js';
+import { Logger } from '../src-shared/log/logger.js';
 
 let isRecorded = false;
 

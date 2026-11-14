@@ -1,7 +1,8 @@
+import { app } from 'electron';
 import * as path from 'path';
 import { pathToFileURL } from 'url';
-import { createPrependedLogger } from '../../src-shared/log/create-prepended-logger';
-import { LiveReload } from '../live-reload';
+import { createPrependedLogger } from '../../src-shared/log/create-prepended-logger.js';
+import { LiveReload } from '../live-reload.js';
 
 const fileServerLogger = createPrependedLogger('[File Server]');
 
@@ -18,7 +19,8 @@ export async function getUrlForMainWindow(): Promise<string> {
   //  - https://stackoverflow.com/a/63810451/7947548
   //  - https://stackoverflow.com/q/48478869/7947548
   // Therefore, the file server implementation is removed, and file protocol continues to be used.
-  const urlObj = pathToFileURL(path.join(__dirname, '..', '..', 'dist', 'index.html'));
+  // The page is in the app's folder (app.asar in a package), beside out/app, where this file runs from.
+  const urlObj = pathToFileURL(path.join(app.getAppPath(), 'dist', 'index.html'));
   const url = urlObj.href;
   fileServerLogger.info(`isLiveReloadMode === false, so the file URL is used. ${url}`);
   return url;

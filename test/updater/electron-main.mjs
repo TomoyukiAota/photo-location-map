@@ -1,15 +1,18 @@
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const fsp = require('node:fs/promises');
-const path = require('node:path');
-const crypto = require('node:crypto');
-const http = require('node:http');
-const vm = require('node:vm');
-const { EventEmitter } = require('node:events');
-const { app, autoUpdater: nativeUpdater, session } = require('electron');
+import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
+import { EventEmitter } from 'node:events';
+import fs from 'node:fs';
+import fsp from 'node:fs/promises';
+import http from 'node:http';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
+import vm from 'node:vm';
+import { app, autoUpdater as nativeUpdater, session } from 'electron';
+import ts from 'typescript';
+import manifest from '../../package.json' with { type: 'json' };
 process.on('uncaughtException', error => { console.error(error); app.exit(1); });
 
-const repository = path.resolve(__dirname, '../..');
+const repository = path.resolve(import.meta.dirname, '../..');
 const root = fs.realpathSync(process.env.PLM_UPDATER_TEST_ROOT || '/invalid-updater-test-root');
 const owner = JSON.parse(fs.readFileSync(path.join(root, 'owner.json'), 'utf8'));
 assert.equal(owner.kind, 'plm-updater-integration');
@@ -63,10 +66,17 @@ for (const method of ['checkForUpdates', 'quitAndInstall']) {
 
 const logger = { info() {}, warn() {}, error() {}, debug() {} };
 
-function runCompiled(relative, imports) {
+// TL;DR: Runs a module of the application with the dependencies that `imports` gives, a new instance at each call.
+// Details: The application's modules are ES modules, which Node loads once for each path, with their own imports. So
+// the module's TypeScript is compiled here into a CommonJS module, whose require() is the stand-in of `imports`.
+function runTranspiled(relative, imports) {
   const filename = path.join(repository, relative);
+  const { outputText } = ts.transpileModule(fs.readFileSync(filename, 'utf8'), {
+    fileName: filename,
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true },
+  });
   const module = { exports: {} };
-  vm.runInNewContext(fs.readFileSync(filename, 'utf8'), {
+  vm.runInNewContext(outputText, {
     module, exports: module.exports,
     require(name) {
       assert.ok(Object.hasOwn(imports, name), `Unexpected dependency in application guard check: ${name}`);
@@ -76,19 +86,23 @@ function runCompiled(relative, imports) {
   return module.exports;
 }
 
-// The compiled auto-update setup, run against the given app and updater with its other dependencies controlled.
+// The compiled module of the application that has no dependencies, and reads the OS version of this computer.
+const minimumSystemVersion = await import(pathToFileURL(path.join(repository, 'out/app/src-main/auto-update/minimum-system-version.js')).href);
+
+// The auto-update setup, run against the given app and updater with its other dependencies controlled.
 function runConfigureAutoUpdate({ application, updater, isDev = false, prerelease, trackEvent = () => {} }) {
-  runCompiled('src-main/auto-update/configure-auto-update.js', {
+  runTranspiled('src-main/auto-update/configure-auto-update.ts', {
     electron: { app: application, dialog: { showMessageBox: async () => ({ response: 1 }) } },
     'electron-updater': { autoUpdater: updater },
-    '../../src-shared/analytics/analytics': { Analytics: { trackEvent } },
-    '../../src-shared/analytics/record-error': { scrubbedErrorLabel: () => '' },
-    '../../src-shared/dev-or-prod/dev-or-prod': { DevOrProd: { isDev } },
-    '../../src-shared/version/is-prerelease-version': prerelease,
-    '../electron-main': { mainWindow: null },
-    './auto-update-logger': { autoUpdateLogger: logger },
-    // Has no dependencies, and reads the OS version of this computer.
-    './minimum-system-version': require(path.join(repository, 'src-main/auto-update/minimum-system-version.js')),
+    '../../src-shared/analytics/analytics.js': { Analytics: { trackEvent } },
+    '../../src-shared/analytics/record-error.js': { scrubbedErrorLabel: () => '' },
+    '../../src-shared/dev-or-prod/dev-or-prod.js': { DevOrProd: { isDev } },
+    '../../src-shared/i18n/i18n.js': { t: key => key },
+    '../../src-shared/log/logged-line.js': { logged: (strings, ...values) => String.raw({ raw: strings }, ...values), shown: value => value },
+    '../../src-shared/version/is-prerelease-version.js': prerelease,
+    '../electron-main.js': { mainWindow: null },
+    './auto-update-logger.js': { autoUpdateLogger: logger },
+    './minimum-system-version.js': minimumSystemVersion,
   });
 }
 
@@ -106,7 +120,7 @@ function useApplicationUpdateSupport(realUpdater, trackEvent) {
 
 /** Checks which versions look for an update at launch: none in development or for a prerelease, one otherwise. */
 async function verifyApplicationPolicy() {
-  const actualVersion = require(path.join(repository, 'package.json')).version;
+  const actualVersion = manifest.version;
   const cases = [
     { version: '1.12.1', dev: false, checks: 1 },
     { version: '1.12.1', dev: true, checks: 0 },
@@ -118,8 +132,8 @@ async function verifyApplicationPolicy() {
   for (const item of cases) {
     const application = new EventEmitter();
     application.getVersion = () => item.version;
-    const prerelease = runCompiled('src-shared/version/is-prerelease-version.js', {
-      '../startup/startup-metadata': { startupMetadata: () => ({ version: application.getVersion() }) },
+    const prerelease = runTranspiled('src-shared/version/is-prerelease-version.ts', {
+      '../startup/startup-metadata.js': { startupMetadata: () => ({ version: application.getVersion() }) },
     });
     const updater = new EventEmitter();
     let checks = 0;
@@ -177,7 +191,7 @@ async function main() {
   const sha512 = await hashFile(artifact);
   const publishedName = path.basename(artifact).replaceAll(' ', '-');
   assert.equal(path.basename(publishedName), publishedName);
-  const candidateVersion = require(path.join(repository, 'package.json')).version;
+  const candidateVersion = manifest.version;
   let feedVersion = candidateVersion;
   let expectedHash = sha512;
   // What electron-builder writes from mac.releaseInfo.vendor of electron-builder.json, when set.
@@ -211,9 +225,10 @@ async function main() {
   await fsp.writeFile(configFile, JSON.stringify({ provider: 'generic', url: origin,
     channel: 'latest', updaterCacheDirName: 'updater-cache' }));
 
-  const { MacUpdater } = require('electron-updater');
-  const { ElectronHttpExecutor, NET_SESSION_NAME } = require('electron-updater/out/electronHttpExecutor');
-  const updaterVersion = require('electron-updater/package.json').version;
+  // Imported once the app's folders are set. electron-updater is CommonJS: its default import is its module.exports.
+  const { default: { MacUpdater } } = await import('electron-updater');
+  const { default: { ElectronHttpExecutor, NET_SESSION_NAME } } = await import('electron-updater/out/electronHttpExecutor.js');
+  const { default: { version: updaterVersion } } = await import('electron-updater/package.json', { with: { type: 'json' } });
   assert.match(updaterVersion, /^6\./, 'Review the download-only isolation seam before using another updater major.');
   guardNetwork(session.fromPartition(NET_SESSION_NAME, { cache: false }));
   const adapter = version => ({

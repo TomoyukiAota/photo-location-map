@@ -1,7 +1,7 @@
-import { AnalyticsConfig } from '../../src-shared/analytics/config/analytics-config';
-import { Logger } from '../../src-shared/log/logger';
-import { isOneOf, rendererReadableStoragePaths, rendererWritableStoragePaths, storageKeyOf } from '../../src-shared/user-data-storage/renderer-storage-access';
-import { UserDataStorage, UserDataStorageBackend } from '../../src-shared/user-data-storage/user-data-storage';
+import { AnalyticsConfig } from '../../src-shared/analytics/config/analytics-config.js';
+import { Logger } from '../../src-shared/log/logger.js';
+import { isOneOf, rendererReadableStoragePaths, rendererWritableStoragePaths, storageKeyOf } from '../../src-shared/user-data-storage/renderer-storage-access.js';
+import { UserDataStorage, UserDataStorageBackend } from '../../src-shared/user-data-storage/user-data-storage.js';
 
 /**
  * The settings that a renderer reads, from the files, for its copy (src-shared/user-data-storage/). The analytics user

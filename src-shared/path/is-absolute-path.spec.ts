@@ -1,5 +1,5 @@
 import * as path from 'node:path';
-import { isAbsolutePath } from './is-absolute-path';
+import { isAbsolutePath } from './is-absolute-path.js';
 
 describe('isAbsolutePath', () => {
   // Node.js's own answers on each platform, which the renderer, without Node.js, must give.

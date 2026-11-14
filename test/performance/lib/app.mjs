@@ -62,7 +62,7 @@ export async function launch({ target, profile, viewerServer, env: extraEnv = {}
   const spawnMs = Date.now();
   const app = await _electron.launch({
     executablePath: target.executable ?? (target.checkout ? createRequire(path.join(target.checkout, 'package.json'))('electron') : require('electron')),
-    args: target.executable ? [] : ['test/e2e/main.cjs'],
+    args: target.executable ? [] : ['test/e2e/main.mjs'],
     cwd: target.executable ? profile : target.checkout ?? root,
     env,
     timeout: 90000,

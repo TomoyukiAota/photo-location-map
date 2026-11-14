@@ -1,6 +1,6 @@
-import { Logger as ElectronUpdaterLoggerInterface } from 'electron-updater';
-import { LoggedLine } from '../../src-shared/log/logged-line';
-import { LogMessage, Logger as PlmLogger } from '../../src-shared/log/logger';
+import type { Logger as ElectronUpdaterLoggerInterface } from 'electron-updater';
+import { LoggedLine } from '../../src-shared/log/logged-line.js';
+import { LogMessage, Logger as PlmLogger } from '../../src-shared/log/logger.js';
 
 // Note that the logger passed to autoUpdater.logger needs to have the following methods:
 // { info(), warn(), error() }

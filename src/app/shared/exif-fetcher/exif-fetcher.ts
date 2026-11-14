@@ -1,12 +1,12 @@
 import PQueue from 'p-queue';
-import { FilenameExtension } from '../../../../src-shared/filename-extension/filename-extension';
-import { Logger } from '../../../../src-shared/log/logger';
-import { perfMark } from '../../../../src-shared/perf/perf-mark';
-import { exifPerfStats, resetExifPerfStats } from './exif-perf-stats';
-import { exifReadFailures } from './exif-read-failures';
-import { Exif } from '../model/exif.model';
-import { LoadingFolderProgress } from '../loading-folder-progress';
-import { fetchExifUsingExifr } from './using-exifr/fetch-exif-using-exifr';
+import { FilenameExtension } from '../../../../src-shared/filename-extension/filename-extension.js';
+import { Logger } from '../../../../src-shared/log/logger.js';
+import { perfMark } from '../../../../src-shared/perf/perf-mark.js';
+import { exifPerfStats, resetExifPerfStats } from './exif-perf-stats.js';
+import { exifReadFailures } from './exif-read-failures.js';
+import { Exif } from '../model/exif.model.js';
+import { LoadingFolderProgress } from '../loading-folder-progress.js';
+import { fetchExifUsingExifr } from './using-exifr/fetch-exif-using-exifr.js';
 
 export class PathExifPair {
   constructor(public readonly path: string,

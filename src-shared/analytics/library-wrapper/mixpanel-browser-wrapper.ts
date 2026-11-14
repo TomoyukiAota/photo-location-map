@@ -1,8 +1,8 @@
 import mixpanel from 'mixpanel-browser';
-import { createPrependedLogger } from '../../log/create-prepended-logger';
-import { AnalyticsConfig } from '../config/analytics-config';
-import { MixpanelConfig } from '../config/mixpanel-config';
-import { AnalyticsLibraryWrapperInitialize, AnalyticsLibraryWrapperTrackEvent } from './library-wrapper-decorator';
+import { createPrependedLogger } from '../../log/create-prepended-logger.js';
+import { AnalyticsConfig } from '../config/analytics-config.js';
+import { MixpanelConfig } from '../config/mixpanel-config.js';
+import { AnalyticsLibraryWrapperInitialize, AnalyticsLibraryWrapperTrackEvent } from './library-wrapper-decorator.js';
 
 // Its errors and warnings are not recorded: they would record the analytics' own failures to send.
 const mixpanelLogger = createPrependedLogger('[Mixpanel]', { recorded: false });

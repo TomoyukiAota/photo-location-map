@@ -1,5 +1,5 @@
 // The webPreferences of the app's windows: https://www.electronjs.org/docs/latest/api/structures/web-preferences
-const path = require('path');
+import path from 'path';
 
 /**
  * The main window's page runs without Node.js, sandboxed, with context isolation: it reaches the main process only
@@ -7,7 +7,7 @@ const path = require('path');
  * @param {string} appPath app.getAppPath(): the app's folder, in a checkout or a package, where the preload is.
  * @returns {Electron.WebPreferences}
  */
-function mainWindowWebPreferences(appPath) {
+export function mainWindowWebPreferences(appPath) {
   return {
     preload: path.join(appPath, 'electron-util', 'preload', 'main-window.cjs'),
     contextIsolation: true,
@@ -25,7 +25,7 @@ function mainWindowWebPreferences(appPath) {
  * @param {string} appPath app.getAppPath(): the app's folder, in a checkout or a package, where the preload is.
  * @returns {Electron.WebPreferences}
  */
-function photoDataViewerWebPreferences(appPath) {
+export function photoDataViewerWebPreferences(appPath) {
   return {
     preload: path.join(appPath, 'electron-util', 'preload', 'photo-data-viewer.cjs'),
     contextIsolation: true,
@@ -38,15 +38,13 @@ function photoDataViewerWebPreferences(appPath) {
 /**
  * electron-mocha's renderer tests: mocha needs Node.js in the page. Its own preload runs the main window's preload,
  * given to it with --preload (package.json), in the page's world, so that the app's renderer code finds window.plm as
- * it does in the app (test/em-renderer-window-config.js).
+ * it does in the app (test/em-renderer-window-config.ts).
  * @returns {Electron.WebPreferences}
  */
-function rendererTestWebPreferences() {
+export function rendererTestWebPreferences() {
   return {
     contextIsolation: false,
     nodeIntegration: true,
     sandbox: false,
   };
 }
-
-module.exports = { mainWindowWebPreferences, photoDataViewerWebPreferences, rendererTestWebPreferences };

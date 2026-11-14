@@ -1,6 +1,6 @@
-import assert = require('assert');
-import { AnalyticsBackendEndpoint } from '../../../src-shared/analytics/config/analytics-backend-endpoint';
-import { CrashReportEndpoint } from '../../../src-shared/analytics/config/crash-report-endpoint';
+import assert from 'assert';
+import { AnalyticsBackendEndpoint } from '../../../src-shared/analytics/config/analytics-backend-endpoint.js';
+import { CrashReportEndpoint } from '../../../src-shared/analytics/config/crash-report-endpoint.js';
 
 describe('CrashReportEndpoint', () => {
   it('should choose dev or prod by the events\' rule', () => {

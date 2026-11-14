@@ -1,13 +1,13 @@
 import { app, ipcMain } from 'electron';
 import * as os from 'os';
 import * as path from 'path';
-import { DevOrProd } from '../../src-shared/dev-or-prod/dev-or-prod';
-import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
-import { LogFileConfig } from '../../src-shared/log/file-config/log-file-config';
-import { setStartupMetadata, startupMetadata, StartupMetadata } from '../../src-shared/startup/startup-metadata';
-import { plmThumbnailCacheDir } from '../../src-shared/thumbnail/cache/thumbnail-cache-util';
-import { isFromMainWindow } from '../ipc/ipc-sender';
-import { userNameOrEmpty } from '../os/user-name';
+import { DevOrProd } from '../../src-shared/dev-or-prod/dev-or-prod.js';
+import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
+import { LogFileConfig } from '../../src-shared/log/file-config/log-file-config.js';
+import { setStartupMetadata, startupMetadata, StartupMetadata } from '../../src-shared/startup/startup-metadata.js';
+import { plmThumbnailCacheDir } from '../../src-shared/thumbnail/cache/thumbnail-cache-util.js';
+import { isFromMainWindow } from '../ipc/ipc-sender.js';
+import { userNameOrEmpty } from '../os/user-name.js';
 
 /**
  * The operating system's preferred languages, the most preferred first, which answer before the app is ready.

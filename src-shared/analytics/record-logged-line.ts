@@ -1,8 +1,8 @@
-import { LoggedLine } from '../log/logged-line';
-import { Analytics } from './analytics';
-import { ErrorScrubbingContext, errorForAnalytics, maxLabelLength, scrubMessage } from './error-for-analytics';
-import { EventLimiter } from './event-limiter';
-import { scrubbingContext } from './record-error';
+import { LoggedLine } from '../log/logged-line.js';
+import { Analytics } from './analytics.js';
+import { ErrorScrubbingContext, errorForAnalytics, maxLabelLength, scrubMessage } from './error-for-analytics.js';
+import { EventLimiter } from './event-limiter.js';
+import { scrubbingContext } from './record-error.js';
 
 // TL;DR: Records the errors and warnings that the code logs, as "Logged Error" and "Logged Warning".
 // Details: About a hundred places catch an error, log it and go on; until these events, such a failure was only in the

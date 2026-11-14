@@ -1,9 +1,9 @@
-import { recordUnhandledError } from '../analytics/record-error';
-import { bridge } from '../bridge/plm-bridge';
-import { Logger } from '../log/logger';
-import { storageKeyOf } from './renderer-storage-access';
-import type { UserDataStorageBackend } from './user-data-storage';
-import { logged, shown } from '../log/logged-line';
+import { recordUnhandledError } from '../analytics/record-error.js';
+import { bridge } from '../bridge/plm-bridge.js';
+import { Logger } from '../log/logger.js';
+import { storageKeyOf } from './renderer-storage-access.js';
+import type { UserDataStorageBackend } from './user-data-storage.js';
+import { logged, shown } from '../log/logged-line.js';
 
 /**
  * A renderer's settings: a copy, which it gets once from the main process, and writes that the main process makes.

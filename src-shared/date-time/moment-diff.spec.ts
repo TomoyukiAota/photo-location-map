@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { getMomentDiff, getMomentDiffAsIso8601 } from './moment-diff';
+import { getMomentDiff, getMomentDiffAsIso8601 } from './moment-diff.js';
 
 describe('getMomentDiff', () => {
   it('General case: from [2007, 6, 17, 15, 25, 50] to [2015, 11, 29, 19, 30, 56]', () => {

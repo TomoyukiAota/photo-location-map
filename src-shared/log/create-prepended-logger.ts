@@ -1,5 +1,5 @@
-import { LoggedLine } from './logged-line';
-import { LogMessage, Logger } from './logger';
+import { LoggedLine } from './logged-line.js';
+import { LogMessage, Logger } from './logger.js';
 
 export interface PrependedLoggerOptions {
   /**

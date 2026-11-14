@@ -1,10 +1,11 @@
-import assert = require('assert');
+import assert from 'assert';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { readExif } from '../../../src-main/exif/read-exif';
+import { readExif } from '../../../src-main/exif/read-exif.js';
+import { repositoryPath } from '../../test-util/repository.js';
 
-const resources = path.join(__dirname, '..', '..', 'test-resources');
+const resources = repositoryPath('test', 'test-resources');
 
 describe('readExif (in main process)', () => {
   let directory: string;
@@ -27,7 +28,7 @@ describe('readExif (in main process)', () => {
   });
 
   it('gives the rotation of a HEIC', async () => {
-    const result = await readExif(path.join(__dirname, '..', '..', 'e2e', 'fixtures', 'demo.heic'));
+    const result = await readExif(repositoryPath('test', 'e2e', 'fixtures', 'demo.heic'));
     assert.strictEqual(result.parse, 'ok');
     if (result.parse === 'ok') assert.strictEqual(result.output.Orientation, 6);
   });

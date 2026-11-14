@@ -1,6 +1,6 @@
-import { Logger } from '../log/logger';
-import { ProcessIdentifier } from '../process/process-identifier';
-import { startupMetadata } from '../startup/startup-metadata';
+import { Logger } from '../log/logger.js';
+import { ProcessIdentifier } from '../process/process-identifier.js';
+import { startupMetadata } from '../startup/startup-metadata.js';
 
 export type DevOrProdType = 'Dev' | 'Prod';
 

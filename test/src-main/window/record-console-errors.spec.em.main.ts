@@ -1,6 +1,6 @@
-import assert = require('assert');
+import assert from 'assert';
 import { EventEmitter } from 'events';
-import { isRecordedOtherwise, recordConsoleErrors } from '../../../src-main/record-console-errors';
+import { isRecordedOtherwise, recordConsoleErrors } from '../../../src-main/record-console-errors.js';
 
 describe('recordConsoleErrors (in main process)', () => {
   /** A stand-in for the page, whose console lines the test emits, and for what records an error. */

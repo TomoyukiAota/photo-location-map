@@ -1,4 +1,4 @@
-import { bridge, bridgeReadyEvent, plmBridge, whenBridgeReady } from './plm-bridge';
+import { bridge, bridgeReadyEvent, plmBridge, whenBridgeReady } from './plm-bridge.js';
 
 describe('The page\'s bridge to the main process', () => {
   let doubleOfPreload: typeof window.plm;

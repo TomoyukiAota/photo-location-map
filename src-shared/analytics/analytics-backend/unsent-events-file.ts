@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-require-imports -- fs and path are loaded where the main process calls, not at the top: see the class. */
-import { AnalyticsBackendEvent } from './analytics-backend-event';
+import * as fs from 'fs';
+import * as path from 'path';
+import { AnalyticsBackendEvent } from './analytics-backend-event.js';
 
-// Keeps the events that were not sent yet, to send them on the next launch.
-// fs is required where it is used, not imported at the top: the renderer bundle also loads this file through
-// the IPC module, and only the main process uses it.
+// Keeps the events that were not sent yet, to send them on the next launch. Only the main process loads this file.
 export class UnsentEventsFile {
   constructor(public readonly filePath: string) {
   }
@@ -14,7 +13,6 @@ export class UnsentEventsFile {
    * be another launch's that it took over.
    */
   public save(events: readonly AnalyticsBackendEvent[]): void {
-    const fs: typeof import('fs') = require('fs');
     if (events.length > 0) {
       const beside = `${this.filePath}.tmp`;
       try {
@@ -38,7 +36,6 @@ export class UnsentEventsFile {
    * gives none.
    */
   public load(): AnalyticsBackendEvent[] {
-    const fs: typeof import('fs') = require('fs');
     if (!fs.existsSync(this.filePath))
       return [];
 
@@ -51,7 +48,6 @@ export class UnsentEventsFile {
   }
 
   public remove(): void {
-    const fs: typeof import('fs') = require('fs');
     fs.rmSync(this.filePath, { force: true });
     fs.rmSync(`${this.filePath}.tmp`, { force: true });  // Left by a launch that ended while saving.
   }
@@ -95,14 +91,11 @@ export class UnsentEventsFiles {
 
   /** The file of the launch whose process ID is `pid`. */
   public own(pid: number): UnsentEventsFile {
-    const path: typeof import('path') = require('path');
     return new UnsentEventsFile(path.join(this.directory, `${this.prefix}-${pid}.json`));
   }
 
   /** The files that ended launches left, for the launch whose process ID is `currentPid`. */
   public left(currentPid: number): UnsentEventsFile[] {
-    const fs: typeof import('fs') = require('fs');
-    const path: typeof import('path') = require('path');
     let names: string[];
     try {
       names = fs.readdirSync(this.directory);
@@ -157,7 +150,6 @@ export class UnsentEventsFiles {
   }
 
   private modifiedAt(filePath: string): number {
-    const fs: typeof import('fs') = require('fs');
     try {
       return fs.statSync(filePath).mtimeMs;
     } catch {

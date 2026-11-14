@@ -1,11 +1,11 @@
 import { app, ipcMain } from 'electron';
-import * as fsExtra from 'fs-extra';
-import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
-import { Logger } from '../../src-shared/log/logger';
-import { plmThumbnailCacheDir } from '../../src-shared/thumbnail/cache/thumbnail-cache-util';
-import { assertFromMainWindow } from '../ipc/ipc-sender';
-import { relaunchAndQuit } from '../process/relaunch-and-quit';
-import { openWithAssociatedApp } from '../shell/open-with-os';
+import fsExtra from 'fs-extra';
+import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
+import { Logger } from '../../src-shared/log/logger.js';
+import { plmThumbnailCacheDir } from '../../src-shared/thumbnail/cache/thumbnail-cache-util.js';
+import { assertFromMainWindow } from '../ipc/ipc-sender.js';
+import { relaunchAndQuit } from '../process/relaunch-and-quit.js';
+import { openWithAssociatedApp } from '../shell/open-with-os.js';
 
 // The Cache tab of the settings dialog (src/app/settings-dialog/cache-settings/).
 

@@ -1,7 +1,7 @@
-import assert = require('assert');
+import assert from 'assert';
 import * as os from 'os';
 import * as path from 'path';
-import { maxRecordedReasons, ThumbnailFailures } from '../../../src-main/thumbnail-generation/thumbnail-failures';
+import { maxRecordedReasons, ThumbnailFailures } from '../../../src-main/thumbnail-generation/thumbnail-failures.js';
 
 describe('ThumbnailFailures', () => {
   it('should count the files of each reason, the most frequent first', () => {

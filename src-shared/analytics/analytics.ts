@@ -1,5 +1,5 @@
-import { EnvironmentDetector } from '../environment/environment-detector';
-import { AnalyticsInterface } from './analytics-interface';
+import { EnvironmentDetector } from '../environment/environment-detector.js';
+import { AnalyticsInterface } from './analytics-interface.js';
 
 let analytics: AnalyticsInterface | undefined;
 // Events tracked before the process's analytics were set, sent once they are; at most so many, in case a process

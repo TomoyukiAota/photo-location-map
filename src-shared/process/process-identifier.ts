@@ -1,4 +1,4 @@
-import { ProcessAccessor } from './process-accessor';
+import { ProcessAccessor } from './process-accessor.js';
 
 export class ProcessIdentifier {
   //                   |  process  | process.type | window.plm

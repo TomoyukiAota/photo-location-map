@@ -1,8 +1,8 @@
 import { WebContents } from 'electron';
-import { Analytics } from '../src-shared/analytics/analytics';
-import { maxLabelLength, scrubConsoleMessage, scrubConsoleSource } from '../src-shared/analytics/error-for-analytics';
-import { EventLimiter } from '../src-shared/analytics/event-limiter';
-import { scrubbingContext } from '../src-shared/analytics/record-error';
+import { Analytics } from '../src-shared/analytics/analytics.js';
+import { maxLabelLength, scrubConsoleMessage, scrubConsoleSource } from '../src-shared/analytics/error-for-analytics.js';
+import { EventLimiter } from '../src-shared/analytics/event-limiter.js';
+import { scrubbingContext } from '../src-shared/analytics/record-error.js';
 
 /** What records a console error, which a test replaces. */
 export type ConsoleErrorRecorder = (label: string, value: string) => void;

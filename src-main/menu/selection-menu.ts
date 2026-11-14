@@ -1,12 +1,12 @@
 import { ipcMain, MenuItemConstructorOptions } from 'electron';
-import { Analytics } from '../../src-shared/analytics/analytics';
-import { t } from '../../src-shared/i18n/i18n';
-import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
-import { IpcParams } from '../../src-shared/ipc/ipc-params';
-import { Logger } from '../../src-shared/log/logger';
-import { mainWindow } from '../electron-main';
-import { assertFromMainWindow } from '../ipc/ipc-sender';
-import { MenuId } from './menu-id';
+import { Analytics } from '../../src-shared/analytics/analytics.js';
+import { t } from '../../src-shared/i18n/i18n.js';
+import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
+import { IpcParams } from '../../src-shared/ipc/ipc-params.js';
+import { Logger } from '../../src-shared/log/logger.js';
+import { mainWindow } from '../electron-main.js';
+import { assertFromMainWindow } from '../ipc/ipc-sender.js';
+import { MenuId } from './menu-id.js';
 
 const handleUndoClicked = () => {
   Logger.info(`[Main Window Menu] Clicked "Selection -> Undo".`);

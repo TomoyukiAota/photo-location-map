@@ -6,7 +6,7 @@
     "checkJs": true
   },
   "include": [
-    "electron-util/managed-exifr.cjs",
+    "electron-util/managed-exifr.js",
     "electron-util/electron-web-preferences.js",
     "electron-util/preload/*.cjs"
   ]

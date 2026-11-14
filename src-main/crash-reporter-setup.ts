@@ -1,10 +1,10 @@
 import { crashReporter } from 'electron';
-import { CrashReportEndpoint } from '../src-shared/analytics/config/crash-report-endpoint';
-import { AnalyticsConfig } from '../src-shared/analytics/config/analytics-config';
-import { launchSessionId } from '../src-shared/analytics/launch-session';
-import { DevOrProd } from '../src-shared/dev-or-prod/dev-or-prod';
-import { Logger } from '../src-shared/log/logger';
-import { isPrereleaseVersion } from '../src-shared/version/is-prerelease-version';
+import { CrashReportEndpoint } from '../src-shared/analytics/config/crash-report-endpoint.js';
+import { AnalyticsConfig } from '../src-shared/analytics/config/analytics-config.js';
+import { launchSessionId } from '../src-shared/analytics/launch-session.js';
+import { DevOrProd } from '../src-shared/dev-or-prod/dev-or-prod.js';
+import { Logger } from '../src-shared/log/logger.js';
+import { isPrereleaseVersion } from '../src-shared/version/is-prerelease-version.js';
 
 // TL;DR: Electron's crash reporter uploads a dump of a process that crashes in native code to the analytics backend.
 // Details: Nothing of the app runs to record such a crash: a renderer's or a child process's ends as "Process Gone",

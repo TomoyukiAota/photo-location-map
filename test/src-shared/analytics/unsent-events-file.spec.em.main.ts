@@ -1,9 +1,9 @@
-import assert = require('assert');
+import assert from 'assert';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { AnalyticsBackendEvent } from '../../../src-shared/analytics/analytics-backend/analytics-backend-event';
-import { UnsentEventsFile, UnsentEventsFiles, maxUnwrittenMs } from '../../../src-shared/analytics/analytics-backend/unsent-events-file';
+import { AnalyticsBackendEvent } from '../../../src-shared/analytics/analytics-backend/analytics-backend-event.js';
+import { UnsentEventsFile, UnsentEventsFiles, maxUnwrittenMs } from '../../../src-shared/analytics/analytics-backend/unsent-events-file.js';
 
 const event = (id: string): AnalyticsBackendEvent => ({
   event_id: id, user_id: 'u', session_id: 's', seq: 0, client_ts: '2026-10-06T00:00:00.000Z',

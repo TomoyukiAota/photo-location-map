@@ -1,4 +1,4 @@
-import { UserDataStoragePath } from './user-data-stroage-path';
+import { UserDataStoragePath } from './user-data-stroage-path.js';
 
 /**
  * The settings that a renderer writes. The main process refuses to write any other for it: the launch history, the

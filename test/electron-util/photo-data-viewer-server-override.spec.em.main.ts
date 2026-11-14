@@ -1,6 +1,5 @@
-import assert = require('assert');
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const { photoDataViewerServerOverride } = require('../../electron-util/photo-data-viewer-server-override');
+import assert from 'assert';
+import { photoDataViewerServerOverride } from '../../electron-util/photo-data-viewer-server-override.js';
 
 describe('photoDataViewerServerOverride', () => {
   it('leaves an ordinary launch, without a test profile, on the production viewer', () => {

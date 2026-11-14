@@ -1,5 +1,5 @@
-import assert = require('assert');
-import { ProcessAccessor } from '../../../src-shared/process/process-accessor';
+import assert from 'assert';
+import { ProcessAccessor } from '../../../src-shared/process/process-accessor.js';
 
 // electron-mocha's renderer page has Node.js, unlike the app's main window (src-shared/process/process-identifier.ts).
 const pageProcess = () => (window as Window & { process?: NodeJS.Process }).process;

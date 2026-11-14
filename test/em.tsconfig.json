@@ -1,0 +1,14 @@
+{
+  // The Electron-Mocha tests, with the sources that they import, compiled as the main process is, into out/em: they
+  // run there, and read the repository's files through test/test-util/repository.ts.
+  "extends": "../tsconfig.src-main.json",
+  "compilerOptions": {
+    "outDir": "../out/em",
+    // Not type-checked, as with ts-node's transpileOnly before: the tests have no types of Mocha, and use the DOM's.
+    "noCheck": true
+  },
+  "include": [
+    "**/*.ts",
+    "../**/*.d.ts"
+  ]
+}

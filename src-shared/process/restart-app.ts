@@ -1,4 +1,4 @@
-import { bridge } from '../bridge/plm-bridge';
+import { bridge } from '../bridge/plm-bridge.js';
 
 let mainProcessRestart: (() => void) | undefined;
 

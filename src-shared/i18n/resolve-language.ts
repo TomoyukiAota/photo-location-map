@@ -1,4 +1,4 @@
-import { defaultLanguage, isLanguageCode, LanguageCode, languageCodes, languageSettingAuto } from './languages';
+import { defaultLanguage, isLanguageCode, LanguageCode, languageCodes, languageSettingAuto } from './languages.js';
 
 /** Where the language can come from. */
 export interface LanguageSources {

@@ -1,7 +1,7 @@
-const assert = require('node:assert/strict');
-const test = require('node:test');
-const builderConfig = require('../../electron-builder.json');
-const { checkElectronFuses, fuseNames, fuseWiresOf } = require('../../script/package-test/electron-fuses');
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import builderConfig from '../../electron-builder.json' with { type: 'json' };
+import { checkElectronFuses, fuseNames, fuseWiresOf } from '../../script/package-test/electron-fuses.js';
 
 const sentinel = 'dL7pKGdnNz796PbbjQWNKmHXBZaB9tsX';
 const configured = builderConfig.electronFuses;

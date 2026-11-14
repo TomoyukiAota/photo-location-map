@@ -1,9 +1,9 @@
 import moment from 'moment';
-import { DateFormatOption, DateTimeFormat } from '../../../src-shared/date-time/date-time-format';
-import { currentLanguage, t } from '../../../src-shared/i18n/i18n';
-import { getLanguage } from '../../../src-shared/i18n/languages';
-import { currentUserSettings } from '../../../src-shared/user-settings/user-settings';
-import './i18n/moment-locales';
+import { DateFormatOption, DateTimeFormat } from '../../../src-shared/date-time/date-time-format.js';
+import { currentLanguage, t } from '../../../src-shared/i18n/i18n.js';
+import { getLanguage } from '../../../src-shared/i18n/languages.js';
+import { currentUserSettings } from '../../../src-shared/user-settings/user-settings.js';
+import './i18n/moment-locales.js';
 
 /** moment's locale of the application's language, which the days of the week and AM and PM come from. */
 const userLocale = getLanguage(currentLanguage).momentLocale;

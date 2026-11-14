@@ -1,17 +1,17 @@
-import * as fsExtra from 'fs-extra';
+import fsExtra from 'fs-extra';
 import * as os from 'os';
 import * as pathModule from 'path';
 import physicalCpuCount from 'physical-cpu-count';
-import * as workerpool from 'workerpool';
-import * as _ from 'lodash';
-import { stringArrayToLogText } from '../../src-shared/log/multiline-log-text';
-import { perfMark } from '../../src-shared/perf/perf-mark';
-import { removeInvalidThumbnailCache } from '../../src-shared/thumbnail/cache/remove-invalid-thumbnail-cache';
-import { createThumbnailGenerationLogFile, getThumbnailFilePath } from '../../src-shared/thumbnail/cache/thumbnail-cache-util';
-import { thumbnailGenerationLogger as logger } from '../../src-shared/thumbnail/generation/thumbnail-generation-logger';
-import { ThumbnailFileGenerationArg, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result';
-import { ThumbnailFailures } from './thumbnail-failures';
-import { logged } from '../../src-shared/log/logged-line';
+import workerpool from 'workerpool';
+import _ from 'lodash';
+import { stringArrayToLogText } from '../../src-shared/log/multiline-log-text.js';
+import { perfMark } from '../../src-shared/perf/perf-mark.js';
+import { removeInvalidThumbnailCache } from '../../src-shared/thumbnail/cache/remove-invalid-thumbnail-cache.js';
+import { createThumbnailGenerationLogFile, getThumbnailFilePath } from '../../src-shared/thumbnail/cache/thumbnail-cache-util.js';
+import { thumbnailGenerationLogger as logger } from '../../src-shared/thumbnail/generation/thumbnail-generation-logger.js';
+import { ThumbnailFileGenerationArg, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result.js';
+import { ThumbnailFailures } from './thumbnail-failures.js';
+import { logged } from '../../src-shared/log/logged-line.js';
 
 export function handleThumbnailGenerationIpcRequest(allHeifFilePaths: string[], heifFilePathsToGenerateThumbnail: string[]): void {
   if (!allHeifFilePaths || !heifFilePathsToGenerateThumbnail) {
@@ -36,7 +36,7 @@ class FileForWorker {
   // the forked process as Node.js, which loads the script and its modules from the archive as the main process does:
   // nothing is left out of the archive for it (docs/tasks/20261114_enable-asar/). fork needs Electron's fuse
   // runAsNode, which electron-builder.json keeps on (docs/contributing/electron-fuses.md).
-  private static _absoluteFilePath = pathModule.join(__dirname, this._fileName);
+  private static _absoluteFilePath = pathModule.join(import.meta.dirname, this._fileName);
   public static get absoluteFilePath() { return this._absoluteFilePath; }
 }
 

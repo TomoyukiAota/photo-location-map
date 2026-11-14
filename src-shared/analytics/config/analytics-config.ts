@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
-import { ProcessIdentifier } from '../../process/process-identifier';
-import { UserDataStorage } from '../../user-data-storage/user-data-storage';
-import { UserDataStoragePath } from '../../user-data-storage/user-data-stroage-path';
+import { ProcessIdentifier } from '../../process/process-identifier.js';
+import { UserDataStorage } from '../../user-data-storage/user-data-storage.js';
+import { UserDataStoragePath } from '../../user-data-storage/user-data-stroage-path.js';
 
 export class AnalyticsConfig {
   /** The ID of this device's user: the one saved, or a new one, which only the main process saves. */

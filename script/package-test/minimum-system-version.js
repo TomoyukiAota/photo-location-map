@@ -10,7 +10,7 @@
 const versionPattern = /^\d+(\.\d+)*$/;
 
 // Compares versions such as "12.7" and "13.0" part by part as numbers; a missing part counts as 0.
-function compareVersions(left, right) {
+export function compareVersions(left, right) {
   const leftParts = left.split('.').map(Number);
   const rightParts = right.split('.').map(Number);
   for (let index = 0; index < Math.max(leftParts.length, rightParts.length); index++) {
@@ -21,12 +21,12 @@ function compareVersions(left, right) {
 }
 
 // The minimum macOS of each architecture in the output of `otool -arch all -l`, from its LC_BUILD_VERSION load command.
-function buildMinimumsOf(otoolOutput) {
+export function buildMinimumsOf(otoolOutput) {
   return [...otoolOutput.matchAll(/cmd LC_BUILD_VERSION[\s\S]*?\bminos (\S+)/g)].map(match => match[1]);
 }
 
 // vendor.minimumSystemVersion of latest-mac.yml or latest.yml, as electron-builder writes it.
-function feedMinimumOf(feedYml) {
+export function feedMinimumOf(feedYml) {
   return /^vendor:\r?\n[ \t]+minimumSystemVersion: *['"]?([^'"\s]+)['"]? *\r?$/m.exec(feedYml)?.[1];
 }
 
@@ -45,7 +45,7 @@ function checkSameEverywhere(name, configured, others) {
 }
 
 // Throws unless the declared minimum macOS is the same everywhere and at least what Electron is built for. Returns the latter.
-function checkMacMinimumSystemVersion({ configured, vendor, plist, feed, electron }) {
+export function checkMacMinimumSystemVersion({ configured, vendor, plist, feed, electron }) {
   checkDeclaredVersion('mac.minimumSystemVersion', configured);
   checkSameEverywhere('mac.minimumSystemVersion', configured, [
     ['mac.releaseInfo.vendor.minimumSystemVersion in electron-builder.json', vendor],
@@ -65,13 +65,9 @@ function checkMacMinimumSystemVersion({ configured, vendor, plist, feed, electro
 }
 
 // Throws unless latest.yml carries the declared minimum Windows.
-function checkWindowsMinimumSystemVersion({ configured, feed }) {
+export function checkWindowsMinimumSystemVersion({ configured, feed }) {
   checkDeclaredVersion('win.releaseInfo.vendor.minimumSystemVersion', configured);
   checkSameEverywhere('win.releaseInfo.vendor.minimumSystemVersion', configured, [
     ['vendor.minimumSystemVersion in latest.yml', feed],
   ]);
 }
-
-module.exports = {
-  buildMinimumsOf, checkMacMinimumSystemVersion, checkWindowsMinimumSystemVersion, compareVersions, feedMinimumOf,
-};

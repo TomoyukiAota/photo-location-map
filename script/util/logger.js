@@ -1,6 +1,6 @@
-const moment = require('moment-timezone');
+import moment from 'moment-timezone';
 
-module.exports = class ScriptLogger {
+export default class ScriptLogger {
   static dateTime() {
     return moment.utc().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]');
   }
@@ -16,4 +16,4 @@ module.exports = class ScriptLogger {
   static info(message) {
     console.info(`[${this.dateTime()}] [info] ${message}`);
   }
-};
+}

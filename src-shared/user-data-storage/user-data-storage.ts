@@ -1,6 +1,6 @@
-import { Logger } from '../log/logger';
-import { ProcessIdentifier } from '../process/process-identifier';
-import { RendererUserDataStorage } from './renderer-user-data-storage';
+import { Logger } from '../log/logger.js';
+import { ProcessIdentifier } from '../process/process-identifier.js';
+import { RendererUserDataStorage } from './renderer-user-data-storage.js';
 
 /**
  * Where the settings are kept. The main process owns them: its backend reads and writes their files

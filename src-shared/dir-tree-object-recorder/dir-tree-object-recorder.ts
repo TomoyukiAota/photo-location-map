@@ -1,9 +1,9 @@
 import type { DirectoryTree } from 'directory-tree';
-import { Analytics } from '../analytics/analytics';
-import { countBy, countsLabel } from '../analytics/counts-label';
-import { convertToFlattenedDirTree } from '../dir-tree/dir-tree-util';
-import { FilenameExtension } from '../filename-extension/filename-extension';
-import { Logger } from '../log/logger';
+import { Analytics } from '../analytics/analytics.js';
+import { countBy, countsLabel } from '../analytics/counts-label.js';
+import { convertToFlattenedDirTree } from '../dir-tree/dir-tree-util.js';
+import { FilenameExtension } from '../filename-extension/filename-extension.js';
+import { Logger } from '../log/logger.js';
 
 class NumbersOfPhotos {
   public jpeg: number;

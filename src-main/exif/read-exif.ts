@@ -1,8 +1,6 @@
-import { ExifReadOutput, ExifReadResult } from '../../src-shared/exif/exif-read-result';
-
-// The managed reader closes exifr's file handles on every path (electron-util/managed-exifr.cjs).
-// eslint-disable-next-line @typescript-eslint/no-require-imports -- A CommonJS file without types, which the tests load as well.
-const { managedExifr } = require('../../electron-util/managed-exifr.cjs');
+import { ExifReadOutput, ExifReadResult } from '../../src-shared/exif/exif-read-result.js';
+// The managed reader closes exifr's file handles on every path.
+import { managedExifr } from '../../electron-util/managed-exifr.js';
 
 const exifrOptions = {
   translateValues: false,

@@ -1,5 +1,5 @@
-import { Analytics } from './analytics';
-import { droppedEventsLabel } from './event-limiter';
+import { Analytics } from './analytics.js';
+import { droppedEventsLabel } from './event-limiter.js';
 
 let isRecorded = false;
 

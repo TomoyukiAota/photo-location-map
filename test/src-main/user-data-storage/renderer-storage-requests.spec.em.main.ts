@@ -1,11 +1,11 @@
-import assert = require('assert');
+import assert from 'assert';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { FileUserDataStorage } from '../../../src-main/user-data-storage/file-user-data-storage';
-import { rendererStorageSnapshot, writeFromRenderer } from '../../../src-main/user-data-storage/renderer-storage-requests';
-import { UserDataStorage } from '../../../src-shared/user-data-storage/user-data-storage';
-import { UserDataStoragePath } from '../../../src-shared/user-data-storage/user-data-stroage-path';
+import { FileUserDataStorage } from '../../../src-main/user-data-storage/file-user-data-storage.js';
+import { rendererStorageSnapshot, writeFromRenderer } from '../../../src-main/user-data-storage/renderer-storage-requests.js';
+import { UserDataStorage } from '../../../src-shared/user-data-storage/user-data-storage.js';
+import { UserDataStoragePath } from '../../../src-shared/user-data-storage/user-data-stroage-path.js';
 
 describe('the renderer\'s requests for settings (in main process)', () => {
   let directory: string;

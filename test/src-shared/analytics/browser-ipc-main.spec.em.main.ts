@@ -1,7 +1,7 @@
-import assert = require('assert');
+import assert from 'assert';
 import { BrowserWindow } from 'electron';
-import { AmplitudeAnalyticsBrowserIpcMain } from '../../../src-shared/analytics/ipc/amplitude-analytics-browser-ipc';
-import { MixpanelBrowserIpcMain } from '../../../src-shared/analytics/ipc/mixpanel-browser-ipc';
+import { AmplitudeAnalyticsBrowserIpcMain } from '../../../src-shared/analytics/ipc/amplitude-analytics-browser-ipc.js';
+import { MixpanelBrowserIpcMain } from '../../../src-shared/analytics/ipc/mixpanel-browser-ipc.js';
 
 // A stand-in for the main window: a destroyed BrowserWindow throws "Object has been destroyed" on any access to
 // webContents, which is what made quitting fail on Windows.

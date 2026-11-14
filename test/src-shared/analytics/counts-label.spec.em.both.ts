@@ -1,5 +1,5 @@
-import assert = require('assert');
-import { countBy, countsLabel, otherKey } from '../../../src-shared/analytics/counts-label';
+import assert from 'assert';
+import { countBy, countsLabel, otherKey } from '../../../src-shared/analytics/counts-label.js';
 
 describe('countsLabel', () => {
   it('should list the counts as a JSON object, most common first', () => {

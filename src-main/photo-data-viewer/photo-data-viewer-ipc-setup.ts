@@ -1,10 +1,10 @@
 import { ipcMain } from 'electron';
-import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
-import { Logger } from '../../src-shared/log/logger';
-import { PhotoDataViewerIpcParams } from '../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params';
-import { assertFromMainWindow } from '../ipc/ipc-sender';
-import { isInUserChosenFolder } from '../ipc/user-chosen-folders';
-import { launchPhotoDataViewer } from './launch-photo-data-viewer';
+import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
+import { Logger } from '../../src-shared/log/logger.js';
+import { PhotoDataViewerIpcParams } from '../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params.js';
+import { assertFromMainWindow } from '../ipc/ipc-sender.js';
+import { isInUserChosenFolder } from '../ipc/user-chosen-folders.js';
+import { launchPhotoDataViewer } from './launch-photo-data-viewer.js';
 
 /** Whether `value` gives a photo's name and path, which opening Photo Data Viewer needs. */
 function isPhotoDataViewerIpcParams(value: unknown): value is PhotoDataViewerIpcParams {

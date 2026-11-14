@@ -1,5 +1,5 @@
 import { session } from 'electron';
-import { Logger } from '../src-shared/log/logger';
+import { Logger } from '../src-shared/log/logger.js';
 
 export function handleAppQuit() {
   Logger.info('Quitting application.');

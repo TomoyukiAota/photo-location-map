@@ -1,7 +1,7 @@
-import { AmplitudeAnalyticsBrowserIpcMain } from './ipc/amplitude-analytics-browser-ipc';
-import { MixpanelBrowserIpcMain } from './ipc/mixpanel-browser-ipc';
-import { AnalyticsBackendWrapper } from './library-wrapper/analytics-backend-wrapper';
-import { AnalyticsInterface } from './analytics-interface';
+import { AmplitudeAnalyticsBrowserIpcMain } from './ipc/amplitude-analytics-browser-ipc.js';
+import { MixpanelBrowserIpcMain } from './ipc/mixpanel-browser-ipc.js';
+import { AnalyticsBackendWrapper } from './library-wrapper/analytics-backend-wrapper.js';
+import { AnalyticsInterface } from './analytics-interface.js';
 
 export class AnalyticsMain implements AnalyticsInterface {
   constructor() {

@@ -1,6 +1,6 @@
-import assert = require('assert');
+import assert from 'assert';
 import { createHash } from 'crypto';
-import { resizeAndEncode } from '../../../src-main/thumbnail-generation/resize-and-encode';
+import { resizeAndEncode } from '../../../src-main/thumbnail-generation/resize-and-encode.js';
 
 // Captured with original Jimp 0.16.2 and jpeg-js 0.4.4; never derived from the upgraded helper.
 const references = [

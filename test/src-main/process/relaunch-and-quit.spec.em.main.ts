@@ -1,9 +1,9 @@
-import assert = require('assert');
+import assert from 'assert';
 import { spawn } from 'child_process';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { relaunchAndQuit, relaunchAppImageAfter } from '../../../src-main/process/relaunch-and-quit';
+import { relaunchAndQuit, relaunchAppImageAfter } from '../../../src-main/process/relaunch-and-quit.js';
 
 describe('relaunchAndQuit (in main process)', () => {
   // The real app.quit() would quit the test runner, so a stand-in records the calls.

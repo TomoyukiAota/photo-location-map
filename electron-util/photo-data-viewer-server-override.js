@@ -9,7 +9,7 @@
  * @param {Record<string, string | undefined>} env
  * @returns {string | undefined}
  */
-function photoDataViewerServerOverride(env) {
+export function photoDataViewerServerOverride(env) {
   const server = env.PLM_TEST_PHOTO_DATA_VIEWER_SERVER;
   if (!env.PLM_TEST_ROOT || !server) return undefined;
   const url = new URL(server);
@@ -19,5 +19,3 @@ function photoDataViewerServerOverride(env) {
   }
   return url.href;
 }
-
-module.exports = { photoDataViewerServerOverride };

@@ -1,4 +1,4 @@
-import { matchLanguage, resolveLanguage, systemLanguageOf } from './resolve-language';
+import { matchLanguage, resolveLanguage, systemLanguageOf } from './resolve-language.js';
 
 // Icelandic and Welsh stand for the languages that the application has no translation in.
 describe('matchLanguage', () => {

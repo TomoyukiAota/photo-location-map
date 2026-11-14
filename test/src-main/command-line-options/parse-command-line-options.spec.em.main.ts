@@ -1,8 +1,9 @@
-import assert = require('assert');
+import assert from 'assert';
 import { spawnSync } from 'child_process';
+import * as path from 'path';
 import { Command, CommanderError } from 'commander';
-import { parseCommandLineOptions } from '../../../src-main/command-line-options/parse-command-line-options';
-import { commandLineOptionsValue } from '../../../src-main/command-line-options/command-line-options-value';
+import { parseCommandLineOptions } from '../../../src-main/command-line-options/parse-command-line-options.js';
+import { commandLineOptionsValue } from '../../../src-main/command-line-options/command-line-options-value.js';
 
 describe('Command-line options', () => {
   let originalArgv: string[];
@@ -68,8 +69,11 @@ describe('Command-line options', () => {
   });
 
   it('accepts the packaged NSIS argv shape without a separate entry path', () => {
-    const parser = require.resolve('../../../src-main/command-line-options/parse-command-line-options.ts');
-    const value = require.resolve('../../../src-main/command-line-options/command-line-options-value');
+    // The compiled modules of the parser, which the tests are compiled with (test/em.tsconfig.json), and which require()
+    // loads as ES modules.
+    const folder = path.join(import.meta.dirname, '..', '..', '..', 'src-main', 'command-line-options');
+    const parser = path.join(folder, 'parse-command-line-options.js');
+    const value = path.join(folder, 'command-line-options-value.js');
     // Electron's defaultApp property is read-only. Its Node mode naturally has
     // the same argv prefix as a packaged app, so exercise that real parser path.
     const script = [
@@ -78,7 +82,7 @@ describe('Command-line options', () => {
       'require(' + JSON.stringify(parser) + ').parseCommandLineOptions();',
       'console.info(JSON.stringify(require(' + JSON.stringify(value) + ').commandLineOptionsValue.get()));',
     ].join('\n');
-    const child = spawnSync(process.execPath, ['-r', require.resolve('ts-node/register'), '-e', script], {
+    const child = spawnSync(process.execPath, ['-e', script], {
       env: { ...process.env, ELECTRON_RUN_AS_NODE: '1' }, encoding: 'utf8', timeout: 10000,
     });
     assert.ifError(child.error);

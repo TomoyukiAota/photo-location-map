@@ -1,7 +1,7 @@
 import { BrowserWindow } from 'electron';
-import { Analytics } from '../src-shared/analytics/analytics';
-import { recordUnhandledError } from '../src-shared/analytics/record-error';
-import { Logger } from '../src-shared/log/logger';
+import { Analytics } from '../src-shared/analytics/analytics.js';
+import { recordUnhandledError } from '../src-shared/analytics/record-error.js';
+import { Logger } from '../src-shared/log/logger.js';
 
 /** The windows whose failures are recorded, by the names that the events have. */
 export type RecordedWindow = 'Main Window' | 'Photo Data Viewer';

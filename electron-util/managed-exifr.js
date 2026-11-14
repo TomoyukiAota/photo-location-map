@@ -1,4 +1,8 @@
-const exifr = require('exifr');
+import exifrModule from 'exifr';
+
+// exifr is CommonJS, so its default import is its module.exports, which holds every export of its declarations. Its
+// declarations' default export types Exifr as an instance rather than the class, so it is typed as the module.
+const exifr = /** @type {typeof import('exifr')} */ (/** @type {unknown} */ (exifrModule));
 
 /** @typedef {Parameters<typeof exifr.parse>[0]} Input */
 /** @typedef {Parameters<typeof exifr.parse>[1]} Options */
@@ -85,7 +89,5 @@ async function thumbnail(input) {
   });
 }
 
-/** @type {typeof exifr} */
-const managedExifr = { ...exifr, parse, thumbnail };
-
-module.exports = { managedExifr };
+/** @type {Omit<typeof exifr, 'parse' | 'thumbnail'> & {parse: typeof parse, thumbnail: typeof thumbnail}} */
+export const managedExifr = { ...exifr, parse, thumbnail };

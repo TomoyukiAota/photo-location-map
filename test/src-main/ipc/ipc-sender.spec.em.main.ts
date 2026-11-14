@@ -1,8 +1,8 @@
-import assert = require('assert');
+import assert from 'assert';
 import type { IpcMainInvokeEvent, WebContents } from 'electron';
 import {
   addPhotoDataViewerWindow, assertFromMainWindow, isFromMainWindow, isFromPhotoDataViewerWindow, setMainWindow
-} from '../../../src-main/ipc/ipc-sender';
+} from '../../../src-main/ipc/ipc-sender.js';
 
 // Stand-ins for a window's web contents and the IPC events from its frames.
 function contents() {

@@ -1,7 +1,7 @@
-import assert = require('assert');
-import { autoUpdateLogger } from '../../../src-main/auto-update/auto-update-logger';
-import { logged } from '../../../src-shared/log/logged-line';
-import { Logger } from '../../../src-shared/log/logger';
+import assert from 'assert';
+import { autoUpdateLogger } from '../../../src-main/auto-update/auto-update-logger.js';
+import { logged } from '../../../src-shared/log/logged-line.js';
+import { Logger } from '../../../src-shared/log/logger.js';
 
 describe('autoUpdateLogger (in main process)', () => {
   // What it logs, without recording, as electron-updater's lines are.

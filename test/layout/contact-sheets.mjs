@@ -46,7 +46,7 @@ if (cells.length === 0) throw new Error(`${folder} has no picture named ${screen
 await mkdir(output, { recursive: true });
 
 const profile = await mkdtemp(path.join(tmpdir(), 'plm-layout-sheets-'));
-const app = await _electron.launch({ executablePath: require('electron'), args: ['test/e2e/main.cjs'], cwd: root,
+const app = await _electron.launch({ executablePath: require('electron'), args: ['test/e2e/main.mjs'], cwd: root,
   env: { ...process.env, PLM_TEST_ROOT: profile, PLM_E2E: '1', PLM_TEST_HEADLESS: process.platform === 'linux' ? '0' : '1' } });
 try {
   await app.firstWindow();
@@ -54,7 +54,7 @@ try {
   const opened = app.waitForEvent('window');
   await app.evaluate(({ app, BrowserWindow }, windowWidth) => {
     const require = globalThis.__plmTestRequire;
-    const { withHeadlessTestOptions } = require(require('node:path').join(app.getAppPath(), 'electron-util/e2e-test-hooks.js'));
+    const { withHeadlessTestOptions } = require(require('node:path').join(app.getAppPath(), 'out/app/electron-util/e2e-test-hooks.js'));
     const window = new BrowserWindow(withHeadlessTestOptions({ useContentSize: true, width: windowWidth, height: 800, minWidth: 100,
       webPreferences: { webSecurity: false } }));
     void window.loadURL('about:blank');

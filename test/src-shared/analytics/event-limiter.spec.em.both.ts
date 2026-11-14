@@ -1,5 +1,5 @@
-import assert = require('assert');
-import { EventLimiter, droppedEventsLabel } from '../../../src-shared/analytics/event-limiter';
+import assert from 'assert';
+import { EventLimiter, droppedEventsLabel } from '../../../src-shared/analytics/event-limiter.js';
 
 describe('EventLimiter', () => {
   it('should allow the events of a launch up to its limit, and count the rest as dropped', () => {

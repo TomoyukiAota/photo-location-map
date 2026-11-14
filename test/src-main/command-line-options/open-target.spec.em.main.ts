@@ -1,8 +1,8 @@
-import assert = require('assert');
+import assert from 'assert';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { openTargetOf } from '../../../src-main/command-line-options/setup-ipc-main-for-command-line-options';
+import { openTargetOf } from '../../../src-main/command-line-options/setup-ipc-main-for-command-line-options.js';
 
 describe('openTargetOf (in main process)', () => {
   let root: string;

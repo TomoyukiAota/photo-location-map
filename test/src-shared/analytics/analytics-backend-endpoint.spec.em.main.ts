@@ -1,5 +1,5 @@
-import assert = require('assert');
-import { AnalyticsBackendEndpoint } from '../../../src-shared/analytics/config/analytics-backend-endpoint';
+import assert from 'assert';
+import { AnalyticsBackendEndpoint } from '../../../src-shared/analytics/config/analytics-backend-endpoint.js';
 
 describe('AnalyticsBackendEndpoint', () => {
   it('select should return dev when launched through npm scripts', () => {

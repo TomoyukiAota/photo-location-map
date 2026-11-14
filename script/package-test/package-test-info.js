@@ -1,7 +1,9 @@
-const path = require('path');
-const { version } = require('../../package.json');
-const getLogDirectory = require('./get-log-directory');
-const getDiskImageTools = require('./disk-image-tools');
+import path from 'path';
+import packageJson from '../../package.json' with { type: 'json' };
+import getDiskImageTools from './disk-image-tools.js';
+import getLogDirectory from './get-log-directory.js';
+
+const { version } = packageJson;
 
 // The folder of the unpacked application that electron-builder leaves in release/ beside the installer or the
 // AppImage: win-unpacked or linux-unpacked for x64, its default arch, and such as linux-arm64-unpacked for another.
@@ -67,9 +69,9 @@ class PackageTestInfo {
         break;
       }
       default:
-        throw new Error(`Unsupported platform for "${__filename}"`);
+        throw new Error(`Unsupported platform for "${import.meta.filename}"`);
     }
   }
 }
 
-module.exports = new PackageTestInfo();
+export default new PackageTestInfo();

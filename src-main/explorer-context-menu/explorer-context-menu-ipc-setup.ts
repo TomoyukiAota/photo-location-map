@@ -1,8 +1,8 @@
 import { app, ipcMain } from 'electron';
-import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
-import { Logger } from '../../src-shared/log/logger';
-import { assertFromMainWindow } from '../ipc/ipc-sender';
-import { addExplorerContextMenu, afterPreviousChange, removeExplorerContextMenu } from './explorer-context-menu';
+import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
+import { Logger } from '../../src-shared/log/logger.js';
+import { assertFromMainWindow } from '../ipc/ipc-sender.js';
+import { addExplorerContextMenu, afterPreviousChange, removeExplorerContextMenu } from './explorer-context-menu.js';
 
 // The OS tab of the settings dialog, shown on Windows only, asks for these. A rejection reaches the renderer's invoke.
 

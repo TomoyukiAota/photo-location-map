@@ -1,7 +1,7 @@
-import assert = require('assert');
-import { createPrependedLogger } from '../../../src-shared/log/create-prepended-logger';
-import { logged, shown } from '../../../src-shared/log/logged-line';
-import { Logger, useLineRecorder } from '../../../src-shared/log/logger';
+import assert from 'assert';
+import { createPrependedLogger } from '../../../src-shared/log/create-prepended-logger.js';
+import { logged, shown } from '../../../src-shared/log/logged-line.js';
+import { Logger, useLineRecorder } from '../../../src-shared/log/logger.js';
 
 describe('logged', () => {
   const path = '/Users/hanako/Pictures/Trip to Kyoto/IMG 0001.jpg';

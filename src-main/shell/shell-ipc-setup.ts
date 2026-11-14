@@ -1,9 +1,9 @@
 import { ipcMain, shell } from 'electron';
-import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
-import { setUrlOpener } from '../../src-shared/url/open-url';
-import { assertFromMainWindow } from '../ipc/ipc-sender';
-import { isInUserChosenFolder } from '../ipc/user-chosen-folders';
-import { isWebPageUrl, openContainingFolder, openWithAssociatedApp } from './open-with-os';
+import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
+import { setUrlOpener } from '../../src-shared/url/open-url.js';
+import { assertFromMainWindow } from '../ipc/ipc-sender.js';
+import { isInUserChosenFolder } from '../ipc/user-chosen-folders.js';
+import { isWebPageUrl, openContainingFolder, openWithAssociatedApp } from './open-with-os.js';
 
 // What the main window's page opens with the OS: web pages, and the files and folders of the folders the user opened.
 
