@@ -1,3 +1,4 @@
+import { Analytics } from '../analytics/analytics.js';
 import { DateTimeFormat } from '../date-time/date-time-format.js';
 import { isLanguageSetting, LanguageSetting, languageSettingAuto } from '../i18n/languages.js';
 import { Logger } from '../log/logger.js';
@@ -85,6 +86,14 @@ const loadUserSettings: (() => CurrentUserSettings) = () => {
 
 export const currentUserSettings = loadUserSettings();
 
+/**
+ * TL;DR: The Language setting as it was last loaded or saved, which a new one is recorded against for analytics.
+ * Details: Not the one of currentUserSettings, which takes a new setting before it is written, and keeps it when
+ * writing fails. The Language dialog lets its button be clicked again then, and a second try that saves the setting
+ * would be compared with itself, so that the change would never be recorded.
+ */
+let savedLanguage: LanguageSetting = currentUserSettings.language;
+
 export const getUserSettingsToBeSaved: (() => UserSettingsToBeSaved) = () => {
   return {...currentUserSettings};
 };
@@ -93,7 +102,12 @@ function updateCurrentUserSettings(settings: UserSettingsToBeSaved): void {
   Object.assign(currentUserSettings, settings);
 }
 
-/** Saves the settings; they apply at once in this process. The promise settles once they are written. */
+/**
+ * Saves the settings; they apply at once in this process. The promise settles once they are written.
+ * A new Language setting, chosen in the Language dialog or the Settings dialog, is recorded for analytics once it is
+ * saved, as Photo Data Viewer records its own. Each launch records the setting and the language that the application
+ * is in (src-main/record-at-app-launch.ts), the launch after the restart for a new language among them.
+ */
 export const saveUserSetting: ((settings: UserSettingsToBeSaved) => Promise<void>) = async (settings: UserSettingsToBeSaved) => {
   updateCurrentUserSettings(settings);
   await Promise.all([
@@ -103,6 +117,10 @@ export const saveUserSetting: ((settings: UserSettingsToBeSaved) => Promise<void
     UserDataStorage.write(UserDataStoragePath.UserSettings.Language, settings.language),
   ]);
   Logger.info(`Saved user settings ${JSON.stringify(settings)}`);
+  if (settings.language !== savedLanguage) {
+    savedLanguage = settings.language;
+    Analytics.trackEvent('User Setting', 'Changed User Setting', `Language: ${settings.language}`);
+  }
 };
 
 /**
