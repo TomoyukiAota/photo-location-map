@@ -5,10 +5,10 @@ import { mainWindowWebPreferences, photoDataViewerWebPreferences, rendererTestWe
 describe('The web preferences of the app\'s windows', () => {
   const appPath = path.resolve('/app');
 
-  it('isolate the main window, with its preload from the app\'s folder', () => {
+  it('isolate the main window, with its preload from the app\'s folder and web security on', () => {
     assert.deepStrictEqual(mainWindowWebPreferences(appPath), {
       preload: path.join(appPath, 'electron-util', 'preload', 'main-window.cjs'),
-      contextIsolation: true, nodeIntegration: false, nodeIntegrationInWorker: false, sandbox: true, webSecurity: false,
+      contextIsolation: true, nodeIntegration: false, nodeIntegrationInWorker: false, sandbox: true, webSecurity: true,
     });
   });
 

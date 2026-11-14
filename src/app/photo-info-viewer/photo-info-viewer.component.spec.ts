@@ -113,8 +113,8 @@ describe('PhotoInfoViewerComponent', () => {
     it('is the photo itself, where its EXIF data has no thumbnail and the page can show it', async () => {
       await show(photoAt('/photos/# 1/drawing #2.png'), 'leaflet-map-popup');
 
-      // A # would start a fragment in the address.
-      expect(thumbnail().getAttribute('src')).toBe('file:///photos/%23 1/drawing %232.png');
+      // The whole path in one segment of the address, escaped, so that a # does not start a fragment.
+      expect(thumbnail().getAttribute('src')).toBe(`plm-file://local/${encodeURIComponent('/photos/# 1/drawing #2.png')}`);
       expect(thumbnail().className).toBe('photo-info-viewer-thumbnail');
     });
 
@@ -161,7 +161,7 @@ describe('PhotoInfoViewerComponent', () => {
 
         finished = true;
         await pass(thumbnailCheckIntervalMs);
-        expect(thumbnail().getAttribute('src')).toBe('file:///cache/photos/IMG_0002.HEIC.plm.jpg');
+        expect(thumbnail().getAttribute('src')).toBe(`plm-file://local/${encodeURIComponent('/cache/photos/IMG_0002.HEIC.plm.jpg')}`);
         expect(thumbnail().className).toBe('photo-info-viewer-thumbnail photo-info-viewer-fade-in-after-thumbnail-generation');
 
         // The class goes once the animation is over, so that the thumbnail does not fade in again in a popup that is
@@ -179,7 +179,7 @@ describe('PhotoInfoViewerComponent', () => {
 
         await showHeifPhoto();
 
-        expect(thumbnail().getAttribute('src')).toBe('file:///cache/photos/IMG_0002.HEIC.plm.jpg');
+        expect(thumbnail().getAttribute('src')).toBe(`plm-file://local/${encodeURIComponent('/cache/photos/IMG_0002.HEIC.plm.jpg')}`);
         expect(thumbnail().className).toBe('photo-info-viewer-thumbnail');
       });
     });

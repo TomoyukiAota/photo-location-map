@@ -4,10 +4,12 @@
 //    the user's home folder, a file's name with the extension of a photo or a movie becomes "<file>", and the
 //    user name becomes "<user>".
 //  - The stack keeps its first frames: function names, and file names only when the file is inside the app (the
-//    app.asar bundle, the app's own folder, or the page served by the dev server); every other file location
-//    becomes "<path>". The causes of the error follow it, and the first errors of an AggregateError.
+//    app.asar bundle, the app's own folder, the page served from plm-app: or by the dev server); every other file
+//    location becomes "<path>". The causes of the error follow it, and the first errors of an AggregateError.
 //  - A thrown value that is not an error keeps its type, and an object its JSON with only the texts that are codes in
 //    its diagnostic fields, such as "code".
+
+import { appPageOrigin, photoFileAddressPattern } from '../main-window-schemes.js';
 
 export interface ErrorScrubbingContext {
   /** Folders of the app itself, whose files may be named in stacks (e.g. app.getAppPath()). */
@@ -31,7 +33,8 @@ const quotedFileName = new RegExp(`(['"\`])[^'"\`]*\\.(?:${fileExtensions})\\1`,
 const fileName = new RegExp(`[^\\s'"\`()<>,;]+\\.(?:${fileExtensions})\\b`, 'gi');
 
 export function scrubMessage(message: string, context: ErrorScrubbingContext): string {
-  let result = replaceSensitiveStrings(message, context);
+  // An address of a user's photo or its thumbnail holds the file's whole path, escaped, slashes and all.
+  let result = replaceSensitiveStrings(message.replace(photoFileAddressPattern, '<path>'), context);
   // Quoted text with a path separator in it, such as ENOENT's "open '/Users/x/Pictures/a b.jpg'".
   result = result.replace(/(['"`])[^'"`]*[\\/][^'"`]*\1/g, (_match, quote: string) => `${quote}<path>${quote}`);
   // A quoted file name, which can have spaces: "'IMG 0001.jpg'".
@@ -84,6 +87,10 @@ function scrubFile(file: string, context: ErrorScrubbingContext): string {
   const devServer = /^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?\/(.*)$/.exec(file);
   if (devServer)
     return devServer[1];
+
+  // The main window's page, which plm-app: serves from the build's dist/ (src-main/file-server/app-page.ts).
+  if (file.startsWith(`${appPageOrigin}/`))
+    return `dist/${file.slice(appPageOrigin.length + 1)}`;
 
   const normalized = file.replace(/\\/g, '/');
   const asarIndex = normalized.indexOf('app.asar/');

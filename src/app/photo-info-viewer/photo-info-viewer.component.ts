@@ -17,6 +17,7 @@ import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
 import { PhotoInfoViewerPlace } from './photo-info-viewer-place';
 import { ThumbnailRotationService } from './thumbnail-rotation.service';
 import { LoggedLine, logged } from '../../../src-shared/log/logged-line';
+import { photoFileUrl } from '../../../src-shared/main-window-schemes';
 
 /** What the img element of a thumbnail shows. */
 interface Thumbnail {
@@ -57,12 +58,6 @@ const viewerTexts = {
   unavailable: t('photoInfo.unavailable'),
 } as const;
 
-/** The address of a file for an img element. */
-function fileUrl(filePath: string): string {
-  // # needs to be escaped. See https://www.w3schools.com/tags/ref_urlencode.asp for encoding.
-  return `file://${filePath.replace(/#/g, '%23')}`;
-}
-
 /** The thumbnail that the camera wrote into the photo's EXIF data. */
 function thumbnailOfExif(photo: Photo): Thumbnail {
   return { kind: 'image', src: photo.exif.thumbnail.objectUrl, alt: null, warning: null };
@@ -71,11 +66,11 @@ function thumbnailOfExif(photo: Photo): Thumbnail {
 /** The photo itself as its thumbnail, which the page can show for a JPEG or PNG file. */
 function thumbnailOfPhotoItself(photo: Photo): Thumbnail {
   if (!isFilePathTooLongOnWindows(photo.path))
-    return { kind: 'image', src: fileUrl(photo.path), alt: null, warning: null };
+    return { kind: 'image', src: photoFileUrl(photo.path), alt: null, warning: null };
 
   return {
     kind: 'image',
-    src: fileUrl(photo.path),
+    src: photoFileUrl(photo.path),
     alt: t('photoInfo.pathTooLong', { length: photo.path.length, maximum: maxFilePathLengthOnWindows }),
     warning: logged`
 Thumbnail of ${photo.name} cannot be displayed because the length of the file path exceeds the maximum.
@@ -92,11 +87,11 @@ File path of ${photo.name} is "${photo.path}"
 /** The thumbnail that the main process made of a photo, in its cache. */
 function thumbnailOfGeneratedFile(photo: Photo, thumbnailFilePath: string): Thumbnail {
   if (!isFilePathTooLongOnWindows(thumbnailFilePath))
-    return { kind: 'image', src: fileUrl(thumbnailFilePath), alt: null, warning: null };
+    return { kind: 'image', src: photoFileUrl(thumbnailFilePath), alt: null, warning: null };
 
   return {
     kind: 'image',
-    src: fileUrl(thumbnailFilePath),
+    src: photoFileUrl(thumbnailFilePath),
     alt: t('photoInfo.generatedThumbnailPathTooLong', { length: thumbnailFilePath.length, maximum: maxFilePathLengthOnWindows }),
     warning: logged`
 Thumbnail of ${photo.name} cannot be displayed because the length of the file path of the generated thumbnail exceeds the maximum.
