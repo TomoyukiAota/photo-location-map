@@ -3,7 +3,8 @@
 Started and implemented on 2026-11-11. On 2026-11-12, the 40 machine
 translations were reviewed, and the layout was looked at in every language. On
 2026-11-13, the language picker got an entry that follows the browser. On
-2026-11-14, the pages send the Language setting to the analytics backend.
+2026-11-14, the pages send the Language setting to the analytics backend, and
+the website was merged (#680), published and checked as published.
 
 ## What was asked
 
@@ -277,15 +278,31 @@ On macOS (Apple Silicon), 2026-11-11.
   and that choosing the setting that the page has sends nothing. With that
   check of i18n.js taken out, or with the setting never `auto`, the case
   fails.
+- On 2026-11-14, as published: #680 was merged at 14:55 UTC, and GitHub Pages
+  published its merge commit (`4e436e68`) a few seconds later. A headless
+  Chromium of Playwright opened the published pages, answering their analytics
+  requests itself so that nothing reached the production backend, blocking
+  Google Analytics and downloading no installer. In English, Japanese and
+  Arabic by the address, with a browser in English: the language and the
+  direction of the page, its title and texts, the picker's 43 entries with
+  "Use browser setting (English)" first and the page's language chosen, the
+  page load sent to the production backend with `languageSetting` and
+  `languageInUse`, and the Windows download page in the same language. With a
+  browser in Japanese and no language in the address: the page follows the
+  browser (`auto`, `ja`), and the changes to English and back to "Use browser
+  setting" are sent, the second without `?lang=` and without a kept choice.
+  The sitemap and the head's addresses for each language are there, and no
+  page has an error. All 40 of these checks pass.
+  - In Playwright's Chromium, the landing page's icon does not load in any
+    page of the website, published or local, though the file is served whole
+    and loads in a page of its own. The application's Electron shows it in the
+    published page, as the e2e suite's pictures show it. Its `<img>` and the
+    file are as they were before the website had other languages.
 
 ## Not done
 
-- The published website was not looked at: GitHub Pages serves `main`.
 - The troubleshooting page that both the website and the application link to
   is a Markdown file in English.
-- The website sends what a visitor does to the analytics backend
-  (`docs/github-pages/analytics.js`). The language that the page is shown in
-  is not among what it sends.
 
 - **The names of Windows' two buttons in the 40 machine translations** were
   looked up in the review. Where a page shows or quotes the warning of a
@@ -300,5 +317,5 @@ On macOS (Apple Silicon), 2026-11-11.
 
 - **The Japanese texts** of `docs/github-pages/locales/ja.json` follow the
   application's wording (マップ, 使用状況データ). They have not been reviewed.
-- **The 40 machine translations** are published with the website when this is
-  merged, as the application's are with its next release.
+- **The 40 machine translations** were published with the website on
+  2026-11-14, as the application's are with its next release.
