@@ -1,3 +1,4 @@
+import { Analytics } from '../analytics/analytics.js';
 import { DateTimeFormat } from '../date-time/date-time-format.js';
 import { isLanguageSetting, LanguageSetting, languageSettingAuto } from '../i18n/languages.js';
 import { Logger } from '../log/logger.js';
@@ -93,8 +94,14 @@ function updateCurrentUserSettings(settings: UserSettingsToBeSaved): void {
   Object.assign(currentUserSettings, settings);
 }
 
-/** Saves the settings; they apply at once in this process. The promise settles once they are written. */
+/**
+ * Saves the settings; they apply at once in this process. The promise settles once they are written.
+ * A new Language setting, chosen in the Language dialog or the Settings dialog, is recorded for analytics once it is
+ * saved, as Photo Data Viewer records its own. Each launch records the setting and the language that the application
+ * is in (src-main/record-at-app-launch.ts), the launch after the restart for a new language among them.
+ */
 export const saveUserSetting: ((settings: UserSettingsToBeSaved) => Promise<void>) = async (settings: UserSettingsToBeSaved) => {
+  const isLanguageChanged = settings.language !== currentUserSettings.language;
   updateCurrentUserSettings(settings);
   await Promise.all([
     UserDataStorage.write(UserDataStoragePath.UserSettings.ShowStatusBar, settings.showStatusBar),
@@ -103,6 +110,8 @@ export const saveUserSetting: ((settings: UserSettingsToBeSaved) => Promise<void
     UserDataStorage.write(UserDataStoragePath.UserSettings.Language, settings.language),
   ]);
   Logger.info(`Saved user settings ${JSON.stringify(settings)}`);
+  if (isLanguageChanged)
+    Analytics.trackEvent('User Setting', 'Changed User Setting', `Language: ${settings.language}`);
 };
 
 /**

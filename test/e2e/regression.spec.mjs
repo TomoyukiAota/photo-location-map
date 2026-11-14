@@ -634,6 +634,20 @@ test('a language chosen in the Language dialog, and another chosen later in the 
   expect(await menuLabels()).toEqual(menuInEnglish);
   await expect(page.getByRole('button', { name: 'Open Folder', exact: true })).toBeVisible();
 });
+test('a new Language setting is sent to the analytics services', async () => {
+  await launchAsNew();
+  // English by its name, the language on screen: the setting changes from auto, without a restart.
+  const dialog = page.locator('app-language-dialog');
+  await dialog.getByRole('option', { name: 'English', exact: true }).click();
+  await dialog.locator('.ok-button').click();
+  await expect(dialog).toHaveCount(0);
+  /** The labels of the analytics events with `action`, one for each analytics service. */
+  const events = action => app.evaluate((_electron, action) =>
+    globalThis.__plmAnalyticsEvents.filter(event => event.action === action).map(event => event.label ?? null), action);
+  await expect.poll(() => events('Changed User Setting')).toEqual(['Language: en', 'Language: en']);
+  // The click of the button was sent before it.
+  expect(await events('[Language Dialog] Clicked OK button')).toEqual(['Language: en', 'Language: en']);
+});
 test('on a computer whose language is Japanese, the application is in Japanese: its dialogs, menu, map, dates and viewer', async () => {
   // The operating system's languages, the most preferred first, as macOS and Windows give them.
   await launchAsNew({ env: { PLM_TEST_SYSTEM_LANGUAGES: 'ja-JP,en-US' } });
