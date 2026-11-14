@@ -643,12 +643,16 @@ test('a new Language setting is sent to the analytics services', async () => {
   await dialog.getByRole('option', { name: 'English', exact: true }).click();
   await dialog.locator('.ok-button').click();
   await expect(dialog).toHaveCount(0);
-  /** The labels of the analytics events with `action`, one for each analytics service. */
-  const events = action => app.evaluate((_electron, action) =>
-    globalThis.__plmAnalyticsEvents.filter(event => event.action === action).map(event => event.label ?? null), action);
-  await expect.poll(() => events('Changed User Setting')).toEqual(['Language: en', 'Language: en']);
-  // The click of the button was sent before it.
-  expect(await events('[Language Dialog] Clicked OK button')).toEqual(['Language: en', 'Language: en']);
+  /** The analytics events with `action`: the service that got each, its category and its label, by service. */
+  const events = action => app.evaluate((_electron, action) => globalThis.__plmAnalyticsEvents
+    .filter(event => event.action === action)
+    .map(({ service, category, label }) => ({ service, category, label: label ?? null }))
+    .sort((a, b) => a.service.localeCompare(b.service)), action);
+  /** One event for each analytics service. */
+  const once = (category, label) => ['amplitude', 'mixpanel'].map(service => ({ service, category, label }));
+  await expect.poll(() => events('Changed User Setting')).toEqual(once('User Setting', 'Language: en'));
+  // The click of the button, which each service gets in a request of its own, so in no order with the other's.
+  await expect.poll(() => events('[Language Dialog] Clicked OK button')).toEqual(once('Language Dialog', 'Language: en'));
 });
 test('on a computer whose language is Japanese, the application is in Japanese: its dialogs, menu, map, dates and viewer', async () => {
   // The operating system's languages, the most preferred first, as macOS and Windows give them.
