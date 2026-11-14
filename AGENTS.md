@@ -306,22 +306,28 @@ versions that every later upgrade had to review again.
 
 ## Module formats
 
-The application is written with `import` everywhere. The renderer runs as ES
-modules, and the main process as CommonJS, which `tsc` writes; `package.json`
-says `"type": "commonjs"`.
+Everything is an ES module (`"type": "module"` in `package.json`): the
+renderer, the main process, the scripts and the tests. The preload scripts,
+`electron-util/preload/*.cjs`, are CommonJS, as Electron runs the preload of a
+sandboxed page.
 
-- In TypeScript, load a module with `import`. `npm run lint:main` and
-  `ng lint` fail a `require()`; the few that stay say why in a comment.
-- A new script or tool is an ES module, `.mjs`, unless something loads it
-  with `require`, as a preload script, `.cjs`.
-- Do not turn the main process into ES modules for the sake of one format.
+- A relative import names its file: `.js` for a `.ts`
+  (`'../log/logger.js'`), as Node asks of an ES module.
+- `tsc` writes the main process into `out/app` and the Electron-Mocha tests
+  into `out/em`, not beside the sources, which the renderer's build would take
+  in place of the TypeScript.
+- There is no `require`, `__dirname` or `__filename`: use `import`,
+  `import()` for what is loaded late, and `import.meta.dirname`.
+- Import a CommonJS package by its default export (`import _ from 'lodash'`).
+- A test that replaces a function of Node's modules calls
+  `syncBuiltinESMExports()` after it.
 
 [`docs/contributing/module-formats.md`](docs/contributing/module-formats.md)
 has the table of what is which, and the reasons.
 
-**Why:** the question whether the code mixes the two formats came up, and it
-does, by what loads each file. One format everywhere would change about 145
-files of the part that ships, for nothing that a user sees.
+**Why:** ES modules are JavaScript's standard format and what new code is
+written in. The owner had the main process, which ran as CommonJS, moved to
+them in November 2026, while the work was on what users do not see.
 
 ## Prefer a narrow workaround over a risky upgrade
 

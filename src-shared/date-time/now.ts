@@ -1,5 +1,5 @@
 import moment from 'moment-timezone';
-import { DateTimeFormat } from './date-time-format';
+import { DateTimeFormat } from './date-time-format.js';
 
 export class Now {
   public static get basicFormat(): string {

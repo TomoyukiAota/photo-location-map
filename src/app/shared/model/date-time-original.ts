@@ -1,6 +1,6 @@
 import moment from 'moment';
-import { DateFormatOption } from '../../../../src-shared/date-time/date-time-format';
-import { momentToDateString, momentToDateTimeString, momentToTimeString } from '../moment-to-string';
+import { DateFormatOption } from '../../../../src-shared/date-time/date-time-format.js';
+import { momentToDateString, momentToDateTimeString, momentToTimeString } from '../moment-to-string.js';
 
 export class DateTimeOriginal {
   constructor(dateOrMoment: Date | ReturnType<typeof import('moment')>) {

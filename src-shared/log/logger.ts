@@ -1,8 +1,8 @@
-import { Now } from '../date-time/now';
-import { EnvironmentDetector } from '../environment/environment-detector';
-import { ProcessIdentifier } from '../process/process-identifier';
-import { LogFileWriter } from './file-writer/log-file-writer';
-import { LoggedLine } from './logged-line';
+import { Now } from '../date-time/now.js';
+import { EnvironmentDetector } from '../environment/environment-detector.js';
+import { ProcessIdentifier } from '../process/process-identifier.js';
+import { LogFileWriter } from './file-writer/log-file-writer.js';
+import { LoggedLine } from './logged-line.js';
 
 /** A line of the log: a plain text, or a line made by `logged`, which says what of it may be recorded. */
 export type LogMessage = string | LoggedLine;

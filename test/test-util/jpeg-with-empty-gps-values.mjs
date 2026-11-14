@@ -5,7 +5,7 @@
 //
 // Made from a JPEG of the test resources, with its APP1 segments (EXIF and XMP) replaced, so that no such file has
 // to be committed.
-function jpegWithEmptyGpsValues(sourceJpeg) {
+export function jpegWithEmptyGpsValues(sourceJpeg) {
   const entries = [
     [0x0001, 7, 0], // GPSLatitudeRef, UNDEFINED, no bytes
     [0x0002, 5, 0], // GPSLatitude, RATIONAL, no values
@@ -32,7 +32,7 @@ function jpegWithEmptyGpsValues(sourceJpeg) {
 }
 
 /** The source JPEG with its APP1 segments (EXIF and XMP) replaced by one EXIF APP1 of this TIFF data. */
-function withExifReplaced(sourceJpeg, tiff) {
+export function withExifReplaced(sourceJpeg, tiff) {
   const payload = Buffer.concat([Buffer.from('Exif\0\0', 'latin1'), tiff]);
   const app1 = Buffer.concat([Buffer.from([0xff, 0xe1, 0, 0]), payload]);
   app1.writeUInt16BE(payload.length + 2, 2);
@@ -48,5 +48,3 @@ function withExifReplaced(sourceJpeg, tiff) {
   segments.push(sourceJpeg.subarray(i));
   return Buffer.concat(segments);
 }
-
-module.exports = { jpegWithEmptyGpsValues, withExifReplaced };

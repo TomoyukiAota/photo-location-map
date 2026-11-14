@@ -2,6 +2,11 @@
   "compilerOptions": {
     "module": "nodenext",
     "rootDir": ".",
+    // The main process runs from out/app, apart from the sources: the renderer's build bundles src-shared from its
+    // TypeScript, and would take a compiled .js beside a .ts for an import that names the .js (docs/contributing/module-formats.md).
+    "outDir": "out/app",
+    // electron-util's modules that the main process imports are JavaScript, and go to out/app with the rest.
+    "allowJs": true,
     "target": "ES2022",
     "lib": [
       "es2020"

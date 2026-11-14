@@ -1,10 +1,10 @@
 import isNumber from 'is-number';
-import { PhotoDataViewerIpcPhotoParams } from '../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params';
-import { logWindowBounds, photoDataViewerLogger as logger } from '../../src-shared/photo-data-viewer/photo-data-viewer-logger';
-import { UserDataStorage } from '../../src-shared/user-data-storage/user-data-storage';
-import { UserDataStoragePath } from '../../src-shared/user-data-storage/user-data-stroage-path';
-import { trackClosingPhotoDataViewer } from './photo-data-viewer-tracker';
-import { logged } from '../../src-shared/log/logged-line';
+import { PhotoDataViewerIpcPhotoParams } from '../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params.js';
+import { logWindowBounds, photoDataViewerLogger as logger } from '../../src-shared/photo-data-viewer/photo-data-viewer-logger.js';
+import { UserDataStorage } from '../../src-shared/user-data-storage/user-data-storage.js';
+import { UserDataStoragePath } from '../../src-shared/user-data-storage/user-data-stroage-path.js';
+import { trackClosingPhotoDataViewer } from './photo-data-viewer-tracker.js';
+import { logged } from '../../src-shared/log/logged-line.js';
 
 interface StateManageParams {
   browserWindow: Electron.BrowserWindow,

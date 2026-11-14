@@ -1,9 +1,9 @@
 import { app, BrowserWindow } from 'electron';
 import * as path from 'path';
-import { Analytics, eventsKeptBeforeAnalytics, isAnalyticsSet, whenEventsKeptBeforeAnalyticsChange } from '../../src-shared/analytics/analytics';
-import { launchSessionId } from '../../src-shared/analytics/launch-session';
-import { Logger } from '../../src-shared/log/logger';
-import { Launch, LaunchFiles, LaunchRecord } from './launch-files';
+import { Analytics, eventsKeptBeforeAnalytics, isAnalyticsSet, whenEventsKeptBeforeAnalyticsChange } from '../../src-shared/analytics/analytics.js';
+import { launchSessionId } from '../../src-shared/analytics/launch-session.js';
+import { Logger } from '../../src-shared/log/logger.js';
+import { Launch, LaunchFiles, LaunchRecord } from './launch-files.js';
 
 // TL;DR: This launch's file, written first thing and every minute, and removed when the app quits (launch-files.ts).
 // Details: Imported right after the handler of unhandled errors (src-main/electron-main.ts), so that a launch whose

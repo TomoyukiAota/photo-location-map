@@ -1,15 +1,16 @@
-import assert = require('assert');
-import * as fsExtra from 'fs-extra';
+import assert from 'assert';
+import fsExtra from 'fs-extra';
 import * as path from 'path';
-import { DirTreeObjectRecorder } from '../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder';
-import { createDirectoryTree } from '../../../src-shared/dir-tree/create-directory-tree';
-import { convertToFlattenedDirTree } from '../../../src-shared/dir-tree/dir-tree-util';
+import { DirTreeObjectRecorder } from '../../../src-shared/dir-tree-object-recorder/dir-tree-object-recorder.js';
+import { createDirectoryTree } from '../../../src-shared/dir-tree/create-directory-tree.js';
+import { convertToFlattenedDirTree } from '../../../src-shared/dir-tree/dir-tree-util.js';
+import { repositoryPath } from '../../test-util/repository.js';
 
 
 describe('DirTreeObjectRecorder', () => {
   it('getNumbersToRecord should handle files in dir-tree-object-recorder-test-resource folder', () => {
     // Arrange
-    const testResourceDirectory = path.join(__dirname, '..', '..', 'test-resources', 'dir-tree-object-recorder-test-resource');
+    const testResourceDirectory = repositoryPath('test', 'test-resources', 'dir-tree-object-recorder-test-resource');
     const dirTreeObject = createDirectoryTree(testResourceDirectory);
     const flattenedDirTree = convertToFlattenedDirTree(dirTreeObject);
 
@@ -36,7 +37,7 @@ describe('DirTreeObjectRecorder', () => {
 
   it('getNumbersToRecord should handle an empty folder', () => {
     // Arrange
-    const emptyDirectory = path.join(__dirname, '..', '..', 'test-resources', 'empty-folder');
+    const emptyDirectory = repositoryPath('test', 'test-resources', 'empty-folder');
     fsExtra.ensureDirSync(emptyDirectory);
     const dirTreeObject = createDirectoryTree(emptyDirectory);
     const flattenedDirTree = convertToFlattenedDirTree(dirTreeObject);
@@ -64,7 +65,7 @@ describe('DirTreeObjectRecorder', () => {
 
   it('getFileCountsByExtension should count every file by its extension as written', () => {
     // Arrange
-    const testResourceDirectory = path.join(__dirname, '..', '..', 'test-resources', 'dir-tree-object-recorder-test-resource');
+    const testResourceDirectory = repositoryPath('test', 'test-resources', 'dir-tree-object-recorder-test-resource');
     const flattenedDirTree = convertToFlattenedDirTree(createDirectoryTree(testResourceDirectory));
 
     // Act

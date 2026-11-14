@@ -1,6 +1,6 @@
 import { app } from 'electron';
-import { Analytics } from '../src-shared/analytics/analytics';
-import { Logger } from '../src-shared/log/logger';
+import { Analytics } from '../src-shared/analytics/analytics.js';
+import { Logger } from '../src-shared/log/logger.js';
 
 // Records crashes of the renderer and of child processes (e.g. the GPU process), to see how often the app crashes
 // and on which environments. A crash of the main process itself cannot be recorded from here.

@@ -1,4 +1,4 @@
-import { photoDataViewerServerOverride } from '../../electron-util/e2e-test-hooks';
+import { photoDataViewerServerOverride } from '../../electron-util/e2e-test-hooks.js';
 
 /** The URL to load Photo Data Viewer from: its production server, or the local build that a test serves. */
 export function getPhotoDataViewerServerUrl(): string {

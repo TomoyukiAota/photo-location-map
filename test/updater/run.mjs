@@ -1,19 +1,20 @@
 // Launch a separate Electron process; never import the application's main entry.
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const os = require('node:os');
-const path = require('node:path');
-const crypto = require('node:crypto');
-const { spawn } = require('node:child_process');
+import assert from 'node:assert/strict';
+import { spawn } from 'node:child_process';
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import electronPath from 'electron';
 
 async function main() {
   assert.equal(process.platform, 'darwin', 'This integration check exercises MacUpdater on macOS.');
-  const repository = path.resolve(__dirname, '../..');
+  const repository = path.resolve(import.meta.dirname, '../..');
   const options = {};
   for (let index = 2; index < process.argv.length; index += 2) {
     const option = process.argv[index];
     assert.ok(['--artifact', '--report'].includes(option) && process.argv[index + 1],
-      'Usage: node test/updater/run.cjs [--artifact release/candidate.zip] [--report .upgrade-artifacts/report.json]');
+      'Usage: node test/updater/run.mjs [--artifact release/candidate.zip] [--report .upgrade-artifacts/report.json]');
     options[option.slice(2)] = process.argv[index + 1];
   }
   const suppliedArtifact = options.artifact || process.env.PLM_UPDATER_ARTIFACT;
@@ -55,7 +56,7 @@ async function main() {
   });
   let timer;
   try {
-    const child = spawn(require('electron'), [path.join(__dirname, 'electron-main.cjs')], {
+    const child = spawn(electronPath, [path.join(import.meta.dirname, 'electron-main.mjs')], {
       cwd: repository, env: environment, stdio: ['ignore', 'inherit', 'inherit'],
     });
     timer = setTimeout(() => child.kill('SIGKILL'), 180000);

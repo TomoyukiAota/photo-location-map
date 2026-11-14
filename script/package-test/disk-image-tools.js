@@ -1,4 +1,4 @@
-const { spawnSync } = require('child_process');
+import { spawnSync } from 'child_process';
 
 // TL;DR: Use diskutil's supported disk-image commands where available.
 // Details: macOS 27 warns that hdiutil attach/detach are deprecated. The local
@@ -17,4 +17,4 @@ function getDiskImageTools(run = spawnSync) {
   return { attach: '/usr/bin/hdiutil attach', detach: '/usr/bin/hdiutil', detachVerb: 'detach' };
 }
 
-module.exports = getDiskImageTools;
+export default getDiskImageTools;

@@ -1,9 +1,9 @@
-import * as fsExtra from 'fs-extra';
+import fsExtra from 'fs-extra';
 import * as os from 'os';
 import * as pathModule from 'path';
-import { PrependedLogger } from '../../log/create-prepended-logger';
-import { Logger } from '../../log/logger';
-import { logged } from '../../log/logged-line';
+import { PrependedLogger } from '../../log/create-prepended-logger.js';
+import { Logger } from '../../log/logger.js';
+import { logged } from '../../log/logged-line.js';
 
 export const plmThumbnailCacheDir = process.env.PLM_TEST_ROOT
   ? pathModule.resolve(process.env.PLM_TEST_ROOT, 'thumbnail-cache')

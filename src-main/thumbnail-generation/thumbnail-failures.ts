@@ -1,6 +1,6 @@
-import { FailureReason, FailureReasons } from '../../src-shared/analytics/failure-reasons';
+import { FailureReason, FailureReasons } from '../../src-shared/analytics/failure-reasons.js';
 
-export { maxRecordedReasons } from '../../src-shared/analytics/failure-reasons';
+export { maxRecordedReasons } from '../../src-shared/analytics/failure-reasons.js';
 
 export type ThumbnailFailureReason = FailureReason;
 

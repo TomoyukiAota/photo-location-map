@@ -2,9 +2,9 @@ import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import * as path from 'node:path';
 import { afterAll, beforeEach } from 'vitest';
-import { UserDataStorage } from '../../src-shared/user-data-storage/user-data-storage';
-import { createBridgeDouble } from './bridge-double';
-import type { UserDataStorage as UserDataStorageDouble } from './storage-double';
+import { UserDataStorage } from '../../src-shared/user-data-storage/user-data-storage.js';
+import { createBridgeDouble } from './bridge-double.js';
+import type { UserDataStorage as UserDataStorageDouble } from './storage-double.js';
 
 const temporaryRoot = mkdtempSync(path.join(tmpdir(), 'plm-vitest-'));
 

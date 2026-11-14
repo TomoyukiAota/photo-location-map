@@ -1,14 +1,15 @@
-import assert = require('assert');
+import assert from 'assert';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vm from 'vm';
-import { AnalyticsBackendIpcChannelName } from '../../src-main/analytics/analytics-backend-ipc';
-import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
+import { AnalyticsBackendIpcChannelName } from '../../src-main/analytics/analytics-backend-ipc.js';
+import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
+import { repositoryPath } from '../test-util/repository.js';
 
 // Photo Data Viewer's preload (electron-util/preload/photo-data-viewer.cjs), run as Electron runs a sandboxed preload,
 // with stand-ins for contextBridge and ipcRenderer.
 
-const preloadPath = path.join(__dirname, '..', '..', 'electron-util', 'preload', 'photo-data-viewer.cjs');
+const preloadPath = repositoryPath('electron-util', 'preload', 'photo-data-viewer.cjs');
 
 function runPreload() {
   const calls: { method: string, channel: string, args: unknown[] }[] = [];

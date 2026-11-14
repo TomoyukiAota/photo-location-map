@@ -1,7 +1,7 @@
-import { bridge } from '../bridge/plm-bridge';
-import { AmplitudeAnalyticsBrowserWrapper } from './library-wrapper/amplitude-analytics-browser-wrapper';
-import { MixpanelBrowserWrapper } from './library-wrapper/mixpanel-browser-wrapper';
-import { AnalyticsInterface } from './analytics-interface';
+import { bridge } from '../bridge/plm-bridge.js';
+import { AmplitudeAnalyticsBrowserWrapper } from './library-wrapper/amplitude-analytics-browser-wrapper.js';
+import { MixpanelBrowserWrapper } from './library-wrapper/mixpanel-browser-wrapper.js';
+import { AnalyticsInterface } from './analytics-interface.js';
 
 export class AnalyticsRenderer implements AnalyticsInterface {
   constructor() {

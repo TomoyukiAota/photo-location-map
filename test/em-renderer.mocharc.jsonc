@@ -1,0 +1,7 @@
+{
+  // The tests run compiled in out/em (test/em.tsconfig.json). In the renderer, Electron-Mocha loads them with
+  // require(), which loads an ES module that awaits nothing at its top.
+  "spec": "out/em/test/**/*.spec.em.@(renderer|both).js",
+  // Increased from 2000 ms (default) to 60000 ms to avoid "Timeout of 2000ms exceeded" error in GitHub Actions.
+  "timeout": 60000
+}

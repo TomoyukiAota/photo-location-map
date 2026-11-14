@@ -1,6 +1,6 @@
-const fs = require('fs');
-const logger = require('../util/logger');
-const testInfo = require('./package-test-info');
+import fs from 'fs';
+import logger from '../util/logger.js';
+import testInfo from './package-test-info.js';
 
 function removePreviousPackageTestOutcomes() {
   logger.info(`Removing the outcomes of the previous run of the package test ("${testInfo.distDirectory}" and "${testInfo.releaseDirectory}" directories) if they exist.`);
@@ -18,4 +18,4 @@ function removePreviousPackageTestOutcomes() {
   logger.info(`"${testInfo.distDirectory}" and "${testInfo.releaseDirectory}" directories do not exist. Proceeding to the next step of the package test.`);
 }
 
-module.exports = removePreviousPackageTestOutcomes;
+export default removePreviousPackageTestOutcomes;

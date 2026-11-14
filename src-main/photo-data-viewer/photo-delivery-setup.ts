@@ -1,7 +1,7 @@
 import { app, ipcMain, protocol } from 'electron';
-import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
-import { isFromPhotoDataViewerWindow } from '../ipc/ipc-sender';
-import { photoFor, photoScheme, respondToPhotoRequest } from './photo-delivery';
+import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
+import { isFromPhotoDataViewerWindow } from '../ipc/ipc-sender.js';
+import { photoFor, photoScheme, respondToPhotoRequest } from './photo-delivery.js';
 
 // The photo of Photo Data Viewer's window (photo-delivery.ts). Imported before the app is ready, as registering a
 // scheme requires (src-main/electron-main.ts). Secure, so that a page on https may fetch it; with CORS, for the

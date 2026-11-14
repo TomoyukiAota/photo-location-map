@@ -1,7 +1,7 @@
-import type { ExifReadResult } from '../exif/exif-read-result';
-import type { IpcParams } from '../ipc/ipc-params';
-import type { PhotoDataViewerIpcParams } from '../photo-data-viewer/photo-data-viewer-ipc-params';
-import type { StartupMetadata } from '../startup/startup-metadata';
+import type { ExifReadResult } from '../exif/exif-read-result.js';
+import type { IpcParams } from '../ipc/ipc-params.js';
+import type { PhotoDataViewerIpcParams } from '../photo-data-viewer/photo-data-viewer-ipc-params.js';
+import type { StartupMetadata } from '../startup/startup-metadata.js';
 
 /** The tree of a folder that the user opens, which the main process made (src-main/directory-tree/), as plain data. */
 export type DirectoryTreeResult =

@@ -1,8 +1,8 @@
-import assert = require('assert');
+import assert from 'assert';
 import * as path from 'path';
 import {
   forgetUserChosenFolders, isInUserChosenFolder, isUserChosenFolder, rememberUserChosenFolder
-} from '../../../src-main/ipc/user-chosen-folders';
+} from '../../../src-main/ipc/user-chosen-folders.js';
 
 describe('user-chosen-folders (in main process)', () => {
   const folder = path.resolve('/photos', 'trip');

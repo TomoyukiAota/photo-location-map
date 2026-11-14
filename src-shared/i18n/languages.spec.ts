@@ -1,4 +1,4 @@
-import { getLanguage, LanguageCode, languages } from './languages';
+import { getLanguage, LanguageCode, languages } from './languages.js';
 
 describe('The languages of the application (src-shared/i18n/languages.ts)', () => {
   it('are listed under their own names: those in Latin letters by the alphabet, then those in other scripts', () => {

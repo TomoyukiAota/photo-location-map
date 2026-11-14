@@ -1,7 +1,9 @@
-import assert = require('assert');
+import assert from 'assert';
+import childProcess from 'child_process';
+import { syncBuiltinESMExports } from 'module';
 import {
   commandToOpenContainingFolder, commandToOpenWithAssociatedApp, isWebPageUrl, openContainingFolder, openWithAssociatedApp
-} from '../../../src-main/shell/open-with-os';
+} from '../../../src-main/shell/open-with-os.js';
 
 describe('open-with-os (in main process)', () => {
   // A file name may hold characters that a shell would run: they must stay in one argument.
@@ -24,20 +26,22 @@ describe('open-with-os (in main process)', () => {
   });
 
   it('runs the command without a shell, and handles a program that cannot be run', () => {
-    // The module itself, which open-with-os.ts reads spawn from at each call; an import would give a copy.
-    const childProcess: { spawn: unknown } = require('child_process');
+    // open-with-os.ts reads spawn from child_process's ES module at each call, whose exports follow those of its
+    // CommonJS module, which this replaces, once syncBuiltinESMExports() is called.
     const original = childProcess.spawn;
     const spawned: unknown[][] = [];
     const errorHandlers: unknown[] = [];
-    childProcess.spawn = (...args: unknown[]) => {
+    (childProcess as { spawn: unknown }).spawn = (...args: unknown[]) => {
       spawned.push(args);
       return { on: (event: string, handler: unknown) => { if (event === 'error') errorHandlers.push(handler); } };
     };
+    syncBuiltinESMExports();
     try {
       openWithAssociatedApp(posixPath);
       openContainingFolder(posixPath);
     } finally {
       childProcess.spawn = original;
+      syncBuiltinESMExports();
     }
     const expected = [commandToOpenWithAssociatedApp(posixPath), commandToOpenContainingFolder(posixPath)];
     assert.deepStrictEqual(spawned, expected.map(command => [command.file, command.args, { stdio: 'ignore', windowsVerbatimArguments: command.windowsVerbatimArguments }]));

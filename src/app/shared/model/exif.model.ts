@@ -1,7 +1,7 @@
-import { DateTimeOriginal } from './date-time-original';
-import { Dimensions } from './dimensions.model';
-import { GpsInfo } from './gps-info.model';
-import { Thumbnail } from './thumbnail.model';
+import { DateTimeOriginal } from './date-time-original.js';
+import { Dimensions } from './dimensions.model.js';
+import { GpsInfo } from './gps-info.model.js';
+import { Thumbnail } from './thumbnail.model.js';
 
 export class Exif {
   dateTimeOriginal?: DateTimeOriginal;

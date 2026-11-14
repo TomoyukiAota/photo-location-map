@@ -1,11 +1,11 @@
 import type { DirectoryTree } from 'directory-tree';
 import type { Stats } from 'fs';
 import * as pathModule from 'path';
-import type { DirectoryTreeResult } from '../../src-shared/bridge/plm-bridge';
-import { createDirectoryTree } from '../../src-shared/dir-tree/create-directory-tree';
-import { convertToFlattenedDirTree } from '../../src-shared/dir-tree/dir-tree-util';
-import { FilenameExtension } from '../../src-shared/filename-extension/filename-extension';
-import { excludedPathPatterns } from './excluded-paths';
+import type { DirectoryTreeResult } from '../../src-shared/bridge/plm-bridge.js';
+import { createDirectoryTree } from '../../src-shared/dir-tree/create-directory-tree.js';
+import { convertToFlattenedDirTree } from '../../src-shared/dir-tree/dir-tree-util.js';
+import { FilenameExtension } from '../../src-shared/filename-extension/filename-extension.js';
+import { excludedPathPatterns } from './excluded-paths.js';
 
 /**
  * The tree of the folder at `dirPath`, without its hidden files, and the Live Photos movie of each photo. Synchronous:

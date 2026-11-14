@@ -1,8 +1,8 @@
-import assert = require('assert');
+import assert from 'assert';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { removeEmptyCacheDirectories } from '../../../src-shared/thumbnail/cache/remove-empty-cache-directories';
+import { removeEmptyCacheDirectories } from '../../../src-shared/thumbnail/cache/remove-empty-cache-directories.js';
 
 describe('removeEmptyCacheDirectories', () => {
   let temporaryDirectory: string;

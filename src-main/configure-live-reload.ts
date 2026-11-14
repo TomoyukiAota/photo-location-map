@@ -1,43 +1,22 @@
 import { app, BrowserWindow } from 'electron';
-import * as path from 'path';
 import type { FSWatcher } from 'chokidar6';
-import { Logger } from '../src-shared/log/logger';
+import { Logger } from '../src-shared/log/logger.js';
+import { watchForLiveReload } from './live-reload-watcher.js';
 
-let watcher: FSWatcher;
+let watcher: Promise<FSWatcher> | undefined;
 
-export function configureLiveReload(mainFile: string): FSWatcher {
-  if (watcher) return watcher;
-  let relaunching = false;
-
-  // Loaded only in development; packaged applications do not need this tool.
-  // eslint-disable-next-line @typescript-eslint/no-require-imports -- An import at the top would load it in a package, which does not have it.
-  const { watch } = require('chokidar6') as typeof import('chokidar6');
-  const watchRoot = path.dirname(path.resolve(mainFile));
-  watcher = watch(watchRoot, {
-    ignored: candidate => {
-      const relative = path.relative(watchRoot, candidate);
-      // Check descendants only: a checkout itself may have hidden ancestors.
-      if (!relative || relative === '..' || relative.startsWith('..' + path.sep) || path.isAbsolute(relative)) return false;
-      return relative.split(path.sep).some(segment => segment === 'node_modules' || segment.startsWith('.'));
-    },
-    ignoreInitial: true,
-  });
-  watcher.on('error', error => Logger.error('Development file watcher failed.', error));
-  watcher.on('change', changedFile => {
-    if (relaunching) return;
-    // This directory contains main-process output. A renderer reload does not
-    // invalidate Node's cached JavaScript modules, so those changes need a relaunch.
-    const isMainProcessModule = ['.js', '.cjs', '.mjs'].includes(path.extname(changedFile).toLowerCase());
-    if (path.resolve(changedFile) === path.resolve(mainFile) || isMainProcessModule) {
-      // A compiler can update several modules before quit closes the watcher.
-      relaunching = true;
-      app.relaunch({ args: process.argv.slice(1) });
-      app.quit();
-    } else {
+/** Relaunches the app when its main process's files change, and reloads its windows when another file does. */
+export function configureLiveReload(mainFile: string): Promise<FSWatcher> {
+  // Imported only in development: a package does not have chokidar6, and an import at the top would look for it there.
+  watcher ??= import('chokidar6').then(({ watch }) => watchForLiveReload({
+    watch,
+    relaunch: () => app.relaunch({ args: process.argv.slice(1) }),
+    quit: () => app.quit(),
+    reloadWindows: () => {
       for (const window of BrowserWindow.getAllWindows()) window.webContents.reloadIgnoringCache();
-    }
-  });
-  // Unclosed file watchers keep the Node event loop alive after Electron quits.
-  app.once('will-quit', () => { void watcher.close(); });
+    },
+    onWillQuit: listener => app.once('will-quit', listener),
+    logError: (message, error) => Logger.error(message, error),
+  }, mainFile));
   return watcher;
 }

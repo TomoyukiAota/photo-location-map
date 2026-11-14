@@ -1,6 +1,6 @@
-import assert = require('assert');
-import { loggedLineLabel, loggedLineValue } from '../../../src-shared/analytics/record-logged-line';
-import { logged, shown } from '../../../src-shared/log/logged-line';
+import assert from 'assert';
+import { loggedLineLabel, loggedLineValue } from '../../../src-shared/analytics/record-logged-line.js';
+import { logged, shown } from '../../../src-shared/log/logged-line.js';
 
 const mac = {
   appPaths: ['/Applications/Photo Location Map.app/Contents/Resources/app.asar'],

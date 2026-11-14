@@ -1,11 +1,11 @@
 import { app } from 'electron';
-import { AnalyticsMain } from '../../src-shared/analytics/analytics-main';
-import { useAnalytics } from '../../src-shared/analytics/analytics';
-import { recordDroppedEvents } from '../../src-shared/analytics/record-dropped-events';
-import { recordLoggedLine } from '../../src-shared/analytics/record-logged-line';
-import { EnvironmentDetector } from '../../src-shared/environment/environment-detector';
-import { useLineRecorder } from '../../src-shared/log/logger';
-import { AnalyticsBackendIpcMain } from './analytics-backend-ipc';
+import { AnalyticsMain } from '../../src-shared/analytics/analytics-main.js';
+import { useAnalytics } from '../../src-shared/analytics/analytics.js';
+import { recordDroppedEvents } from '../../src-shared/analytics/record-dropped-events.js';
+import { recordLoggedLine } from '../../src-shared/analytics/record-logged-line.js';
+import { EnvironmentDetector } from '../../src-shared/environment/environment-detector.js';
+import { useLineRecorder } from '../../src-shared/log/logger.js';
+import { AnalyticsBackendIpcMain } from './analytics-backend-ipc.js';
 
 // The main process's analytics, which src-shared/analytics/analytics.ts, loaded by the renderer too, cannot import.
 // Set after the settings (src-main/electron-main.ts), which hold the analytics user ID.

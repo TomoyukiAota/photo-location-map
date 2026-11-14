@@ -1,8 +1,8 @@
-import assert = require('assert');
+import assert from 'assert';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-const { preloadAppChunk } = require('../../script/build/preload-app-chunk');
+import { preloadAppChunk } from '../../script/build/preload-app-chunk.js';
 
 describe('preloadAppChunk (script/build/)', () => {
   let dist: string;

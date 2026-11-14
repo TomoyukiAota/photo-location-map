@@ -1,4 +1,4 @@
-import { Dimensions } from './dimensions.model';
+import { Dimensions } from './dimensions.model.js';
 
 export class Thumbnail {
   constructor(public readonly objectUrl: string,

@@ -1,9 +1,9 @@
-const assert = require('node:assert/strict');
-const test = require('node:test');
-const builderConfig = require('../../electron-builder.json');
-const {
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import builderConfig from '../../electron-builder.json' with { type: 'json' };
+import {
   buildMinimumsOf, checkMacMinimumSystemVersion, checkWindowsMinimumSystemVersion, compareVersions, feedMinimumOf,
-} = require('../../script/package-test/minimum-system-version');
+} from '../../script/package-test/minimum-system-version.js';
 
 const otoolOutput = minimums => minimums.map((minos, index) => `Electron Framework (architecture ${index ? 'arm64' : 'x86_64'}):
 Load command 9

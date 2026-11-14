@@ -1,6 +1,6 @@
 import electronUnhandled from 'electron-unhandled';
-import { recordUnhandledError } from '../src-shared/analytics/record-error';
-import { Logger } from '../src-shared/log/logger';
+import { recordUnhandledError } from '../src-shared/analytics/record-error.js';
+import { Logger } from '../src-shared/log/logger.js';
 
 electronUnhandled({
   logger: error => {

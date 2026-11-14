@@ -1,5 +1,5 @@
-const child_process = require('child_process');
-const logger = require('../util/logger');
+import child_process from 'child_process';
+import logger from '../util/logger.js';
 
 // electron-builder requires the GH_TOKEN environment variable to publish to GitHub Releases.
 //
@@ -33,4 +33,4 @@ const getGitHubToken = () => {
   return token;
 };
 
-module.exports = getGitHubToken;
+export default getGitHubToken;

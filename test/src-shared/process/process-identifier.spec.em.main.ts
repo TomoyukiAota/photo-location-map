@@ -1,5 +1,5 @@
-import assert = require('assert');
-import { ProcessIdentifier } from '../../../src-shared/process/process-identifier';
+import assert from 'assert';
+import { ProcessIdentifier } from '../../../src-shared/process/process-identifier.js';
 
 describe('ProcessIdentifier (in main process in electron-mocha)', () => {
   it('isNode should be true', () => {

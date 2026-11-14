@@ -1,15 +1,15 @@
-import { bridge } from '../../../../../src-shared/bridge/plm-bridge';
-import { ExifReadOutput, ExifReadResult } from '../../../../../src-shared/exif/exif-read-result';
-import { Logger } from '../../../../../src-shared/log/logger';
-import { DateTimeOriginal } from '../../model/date-time-original';
-import { Dimensions } from '../../model/dimensions.model';
-import { Exif } from '../../model/exif.model';
-import { GpsInfo } from '../../model/gps-info.model';
-import { LatLng } from '../../model/lat-lng.model';
-import { Thumbnail } from '../../model/thumbnail.model';
-import { rotateImage, getRotatedSize } from '../../image-rotation';
-import { exifPerfStats } from '../exif-perf-stats';
-import { ExifReadError, exifReadFailures } from '../exif-read-failures';
+import { bridge } from '../../../../../src-shared/bridge/plm-bridge.js';
+import { ExifReadOutput, ExifReadResult } from '../../../../../src-shared/exif/exif-read-result.js';
+import { Logger } from '../../../../../src-shared/log/logger.js';
+import { DateTimeOriginal } from '../../model/date-time-original.js';
+import { Dimensions } from '../../model/dimensions.model.js';
+import { Exif } from '../../model/exif.model.js';
+import { GpsInfo } from '../../model/gps-info.model.js';
+import { LatLng } from '../../model/lat-lng.model.js';
+import { Thumbnail } from '../../model/thumbnail.model.js';
+import { rotateImage, getRotatedSize } from '../../image-rotation.js';
+import { exifPerfStats } from '../exif-perf-stats.js';
+import { ExifReadError, exifReadFailures } from '../exif-read-failures.js';
 
 // exifr runs in the main process (src-main/exif/read-exif.ts), which also extracts the embedded thumbnail.
 // With exifr in the renderer process, 1) it is slower, and 2) loading files fails when many files are loaded.

@@ -1,10 +1,10 @@
-import assert = require('assert');
+import assert from 'assert';
 import { app } from 'electron';
 import * as os from 'os';
 import * as path from 'path';
-import { createStartupMetadata, systemLanguagesOf } from '../../../src-main/startup/startup-metadata-setup';
-import { LogFileConfig } from '../../../src-shared/log/file-config/log-file-config';
-import { startupMetadata } from '../../../src-shared/startup/startup-metadata';
+import { createStartupMetadata, systemLanguagesOf } from '../../../src-main/startup/startup-metadata-setup.js';
+import { LogFileConfig } from '../../../src-shared/log/file-config/log-file-config.js';
+import { startupMetadata } from '../../../src-shared/startup/startup-metadata.js';
 
 describe('startupMetadata (in main process)', () => {
   it('gives what the renderer needs to know of the app, the computer and the test profile', () => {

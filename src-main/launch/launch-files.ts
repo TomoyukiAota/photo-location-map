@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { isProcessRunning } from '../../src-shared/process/is-process-running';
+import { isProcessRunning } from '../../src-shared/process/is-process-running.js';
 
 /** An event as Analytics.trackEvent takes it (src-shared/analytics/analytics.ts). */
 export type KeptEvent = readonly [category: string, action: string, label?: string, value?: string | number];

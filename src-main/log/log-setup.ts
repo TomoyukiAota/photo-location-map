@@ -1,13 +1,13 @@
 import { app, ipcMain } from 'electron';
-import * as fsExtra from 'fs-extra';
+import fsExtra from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
-import { Now } from '../../src-shared/date-time/now';
-import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
-import { LogFileConfig } from '../../src-shared/log/file-config/log-file-config';
-import { LogFileWriterInterface } from '../../src-shared/log/file-writer/log-file-writer-interface';
-import { useLogFileWriter } from '../../src-shared/log/file-writer/log-file-writer';
-import { isFromMainWindow } from '../ipc/ipc-sender';
+import { Now } from '../../src-shared/date-time/now.js';
+import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
+import { LogFileConfig } from '../../src-shared/log/file-config/log-file-config.js';
+import { LogFileWriterInterface } from '../../src-shared/log/file-writer/log-file-writer-interface.js';
+import { useLogFileWriter } from '../../src-shared/log/file-writer/log-file-writer.js';
+import { isFromMainWindow } from '../ipc/ipc-sender.js';
 
 // TL;DR: The log file, set up before anything else logs (src-main/electron-main.ts).
 // Details: A renderer sends its lines through its preload (electron-util/preload/main-window.cjs). The file is opened

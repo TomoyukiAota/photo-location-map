@@ -1,10 +1,10 @@
 import { ipcMain } from 'electron';
-import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
-import { thumbnailGenerationLogger as logger } from '../../src-shared/thumbnail/generation/thumbnail-generation-logger';
-import { assertFromMainWindow } from '../ipc/ipc-sender';
-import { isInUserChosenFolder } from '../ipc/user-chosen-folders';
-import { handleThumbnailGenerationIpcRequest } from './thumbnail-generation';
-import { thumbnailStates } from './thumbnail-state';
+import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
+import { thumbnailGenerationLogger as logger } from '../../src-shared/thumbnail/generation/thumbnail-generation-logger.js';
+import { assertFromMainWindow } from '../ipc/ipc-sender.js';
+import { isInUserChosenFolder } from '../ipc/user-chosen-folders.js';
+import { handleThumbnailGenerationIpcRequest } from './thumbnail-generation.js';
+import { thumbnailStates } from './thumbnail-state.js';
 
 /** The HEIF files of a folder that the user opened, which the page asks about. */
 function assertFilesInUserChosenFolders(filePaths: unknown, operation: string): asserts filePaths is string[] {

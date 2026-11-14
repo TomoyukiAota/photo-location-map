@@ -1,6 +1,6 @@
-import assert = require('assert');
-import { AnalyticsBackendEvent } from '../../../src-shared/analytics/analytics-backend/analytics-backend-event';
-import { AnalyticsBackendSender } from '../../../src-shared/analytics/analytics-backend/analytics-backend-sender';
+import assert from 'assert';
+import { AnalyticsBackendEvent } from '../../../src-shared/analytics/analytics-backend/analytics-backend-event.js';
+import { AnalyticsBackendSender } from '../../../src-shared/analytics/analytics-backend/analytics-backend-sender.js';
 
 // Timers that run only when the test advances the clock.
 class FakeTimers {

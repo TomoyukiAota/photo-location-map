@@ -1,6 +1,6 @@
-import assert = require('assert');
+import assert from 'assert';
 import type { UpdateInfo } from 'electron-updater';
-import { currentSystemVersion, isVersionAtLeast, minimumSystemVersionOf } from '../../../src-main/auto-update/minimum-system-version';
+import { currentSystemVersion, isVersionAtLeast, minimumSystemVersionOf } from '../../../src-main/auto-update/minimum-system-version.js';
 
 describe('Minimum OS version of an update', () => {
   const updateInfo = (fields: object) => ({ version: '2.0.0', files: [], path: '', sha512: '', releaseDate: '', ...fields }) as UpdateInfo;

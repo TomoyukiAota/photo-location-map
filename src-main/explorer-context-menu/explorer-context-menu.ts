@@ -1,9 +1,9 @@
 import * as childProcess from 'child_process';
 import * as path from 'path';
-import { Analytics } from '../../src-shared/analytics/analytics';
-import { scrubbedErrorLabel } from '../../src-shared/analytics/record-error';
-import { t } from '../../src-shared/i18n/i18n';
-import { Logger } from '../../src-shared/log/logger';
+import { Analytics } from '../../src-shared/analytics/analytics.js';
+import { scrubbedErrorLabel } from '../../src-shared/analytics/record-error.js';
+import { t } from '../../src-shared/i18n/i18n.js';
+import { Logger } from '../../src-shared/log/logger.js';
 
 /** A value of a registry key, `name` null for the key's default value. */
 export interface RegistryValue {

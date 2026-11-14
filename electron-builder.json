@@ -5,9 +5,8 @@
   },
   "files": [
     "dist/**/*",
-    "electron-util/**/*",
-    "src-main/**/*",
-    "src-shared/**/*"
+    "electron-util/preload/**/*",
+    "out/app/**/*"
   ],
   "afterSign": "script/notarize/notarize.js",
   "electronFuses": {

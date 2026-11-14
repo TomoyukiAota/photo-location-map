@@ -1,9 +1,9 @@
 import * as amplitude from '@amplitude/analytics-browser';
-import { createPrependedLogger } from '../../log/create-prepended-logger';
-import { startupMetadata } from '../../startup/startup-metadata';
-import { AmplitudeConfig } from '../config/amplitude-config';
-import { AnalyticsConfig } from '../config/analytics-config';
-import { AnalyticsLibraryWrapperInitialize, AnalyticsLibraryWrapperTrackEvent } from './library-wrapper-decorator';
+import { createPrependedLogger } from '../../log/create-prepended-logger.js';
+import { startupMetadata } from '../../startup/startup-metadata.js';
+import { AmplitudeConfig } from '../config/amplitude-config.js';
+import { AnalyticsConfig } from '../config/analytics-config.js';
+import { AnalyticsLibraryWrapperInitialize, AnalyticsLibraryWrapperTrackEvent } from './library-wrapper-decorator.js';
 
 // Its errors and warnings are not recorded: they would record the analytics' own failures to send.
 const amplitudeLogger = createPrependedLogger('[Amplitude]', { recorded: false });

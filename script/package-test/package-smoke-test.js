@@ -1,11 +1,12 @@
-const child_process = require('child_process');
-const fs = require('fs-extra');
-const os = require('os');
-const path = require('path');
-const logger = require('../util/logger');
-const runCommandSync = require('../util/run-command-sync');
-const testInfo = require('./package-test-info');
-const testUtil = require('./package-test-util');
+import child_process from 'child_process';
+import fs from 'fs-extra';
+import os from 'os';
+import path from 'path';
+import treeKill from 'tree-kill';
+import logger from '../util/logger.js';
+import runCommandSync from '../util/run-command-sync.js';
+import testInfo from './package-test-info.js';
+import testUtil from './package-test-util.js';
 
 class PackageSmokeTest {
   emptyLogDirectory() {
@@ -143,7 +144,7 @@ class PackageSmokeTest {
       executableProcess.on('error', error => this.handleExecutableProcessError(error));
 
       await new Promise(resolve => setTimeout(resolve, executionTime));
-      require('tree-kill')(executableProcess.pid);
+      treeKill(executableProcess.pid);
 
       if (this.retryCount > this.maxRetryCount) {
         logger.error('Retry count exceeded the maximum for the executable launch command.');
@@ -307,4 +308,4 @@ class PackageSmokeTest {
   }
 }
 
-module.exports = new PackageSmokeTest();
+export default new PackageSmokeTest();

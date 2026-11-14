@@ -1,7 +1,7 @@
-import { Analytics } from '../analytics/analytics';
-import { bridge } from '../bridge/plm-bridge';
-import { Logger } from '../log/logger';
-import { logged, shown } from '../log/logged-line';
+import { Analytics } from '../analytics/analytics.js';
+import { bridge } from '../bridge/plm-bridge.js';
+import { Logger } from '../log/logger.js';
+import { logged, shown } from '../log/logged-line.js';
 
 let mainProcessOpener: ((url: string) => Promise<void>) | undefined;
 

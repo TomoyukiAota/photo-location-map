@@ -1,9 +1,9 @@
 import { Menu } from 'electron';
 import * as os from 'os';
-import { Logger } from '../../src-shared/log/logger';
-import { menuTemplateOnWindowsLinux } from './menu-template-on-windows-linux';
-import { menuTemplateOnMac } from './menu-template-on-mac';
-import { configureIpcForSelectionUndoRedoMenus } from './selection-menu';
+import { Logger } from '../../src-shared/log/logger.js';
+import { menuTemplateOnWindowsLinux } from './menu-template-on-windows-linux.js';
+import { menuTemplateOnMac } from './menu-template-on-mac.js';
+import { configureIpcForSelectionUndoRedoMenus } from './selection-menu.js';
 
 const getMenuTemplate = () => {
   switch (os.platform()) {

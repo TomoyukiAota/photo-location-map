@@ -1,14 +1,14 @@
-'use strict';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import test from 'node:test';
+import { fileURLToPath } from 'node:url';
+import vm from 'node:vm';
+import { patchElectronMocha } from '../../script/patch-electron-mocha.js';
 
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const os = require('node:os');
-const path = require('node:path');
-const test = require('node:test');
-const vm = require('node:vm');
-const { patchElectronMocha } = require('../../script/patch-electron-mocha.js');
-
-const installed = path.dirname(require.resolve('electron-mocha/package.json'));
+// Electron-Mocha's own files, which are CommonJS, are run below with stand-ins for what they require.
+const installed = path.dirname(fileURLToPath(import.meta.resolve('electron-mocha/package.json')));
 const files = ['bin/electron-mocha', 'lib/main.js'];
 const read = (root, file) => fs.readFileSync(path.join(root, file), 'utf8');
 

@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 export function toLoggableString(value: any): string {
   if (value === null) {

@@ -1,8 +1,8 @@
-import assert = require('assert');
+import assert from 'assert';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { ThumbnailCachePaths, thumbnailStates } from '../../../src-main/thumbnail-generation/thumbnail-state';
+import { ThumbnailCachePaths, thumbnailStates } from '../../../src-main/thumbnail-generation/thumbnail-state.js';
 
 describe('thumbnailStates (in main process)', () => {
   let root: string;

@@ -1,6 +1,6 @@
-import { currentLanguage, systemLanguage } from '../../src-shared/i18n/i18n';
-import { Logger } from '../../src-shared/log/logger';
-import { currentUserSettings } from '../../src-shared/user-settings/user-settings';
+import { currentLanguage, systemLanguage } from '../../src-shared/i18n/i18n.js';
+import { Logger } from '../../src-shared/log/logger.js';
+import { currentUserSettings } from '../../src-shared/user-settings/user-settings.js';
 
 // The language of the application's texts, decided when src-shared/i18n/i18n.ts is first imported: here, once the
 // startup metadata and the settings can be read, and before the menu is built, which takes its labels at once

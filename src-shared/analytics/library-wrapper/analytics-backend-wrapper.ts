@@ -1,15 +1,17 @@
-/* eslint-disable @typescript-eslint/no-require-imports -- Node's modules are loaded in initialize, not at the top: see the class. */
+import * as crypto from 'crypto';
+import { app, net } from 'electron';
+import * as os from 'os';
 import { v4 as uuidv4 } from 'uuid';
-import { createPrependedLogger } from '../../log/create-prepended-logger';
-import { isProcessRunning } from '../../process/is-process-running';
-import { AnalyticsBackendEvent } from '../analytics-backend/analytics-backend-event';
-import { AnalyticsBackendSender } from '../analytics-backend/analytics-backend-sender';
-import { UnsentEventsFile, UnsentEventsFiles } from '../analytics-backend/unsent-events-file';
-import { AnalyticsBackendConfig } from '../config/analytics-backend-config';
-import { AnalyticsBackendEndpoint } from '../config/analytics-backend-endpoint';
-import { AnalyticsConfig } from '../config/analytics-config';
-import { launchSessionId } from '../launch-session';
-import { AnalyticsLibraryWrapperInitialize, AnalyticsLibraryWrapperTrackEvent } from './library-wrapper-decorator';
+import { createPrependedLogger } from '../../log/create-prepended-logger.js';
+import { isProcessRunning } from '../../process/is-process-running.js';
+import { AnalyticsBackendEvent } from '../analytics-backend/analytics-backend-event.js';
+import { AnalyticsBackendSender } from '../analytics-backend/analytics-backend-sender.js';
+import { UnsentEventsFile, UnsentEventsFiles } from '../analytics-backend/unsent-events-file.js';
+import { AnalyticsBackendConfig } from '../config/analytics-backend-config.js';
+import { AnalyticsBackendEndpoint } from '../config/analytics-backend-endpoint.js';
+import { AnalyticsConfig } from '../config/analytics-config.js';
+import { launchSessionId } from '../launch-session.js';
+import { AnalyticsLibraryWrapperInitialize, AnalyticsLibraryWrapperTrackEvent } from './library-wrapper-decorator.js';
 
 // Its errors and warnings are not recorded: they would record the analytics' own failures to send.
 const backendLogger = createPrependedLogger('[Analytics Backend]', { recorded: false });
@@ -17,11 +19,6 @@ const backendLogger = createPrependedLogger('[Analytics Backend]', { recorded: f
 // Sends events to the analytics backend, from the main process only (renderer events arrive over IPC; see
 // AnalyticsBackendIpcMain in src-main/analytics/). When to send is decided by AnalyticsBackendSender.
 export class AnalyticsBackendWrapper {
-  // Required in initialize, not imported at the top: the renderer bundle also loads this file
-  // (through the IPC module), and these are main-process modules.
-  private static electron: typeof import('electron');
-  private static crypto: typeof import('crypto');
-  private static os: typeof import('os');
   private static endpoint: string;
   private static userId: string;
   private static sessionId: string;
@@ -34,9 +31,6 @@ export class AnalyticsBackendWrapper {
 
   @AnalyticsLibraryWrapperInitialize(backendLogger)
   public static initialize() {
-    this.electron = require('electron');
-    this.crypto = require('crypto');
-    this.os = require('os');
     this.endpoint = AnalyticsBackendConfig.endpoint;
     this.userId = AnalyticsConfig.userId;
     this.sessionId = launchSessionId();
@@ -65,10 +59,10 @@ export class AnalyticsBackendWrapper {
     // A file per endpoint: the app launched with npm scripts and prerelease versions share the user data folder with
     // the released app, and their events must not be sent to the other endpoint. And a file per launch, as two
     // launches can run at once: a launch takes over those that ended launches left (UnsentEventsFiles).
-    const files = new UnsentEventsFiles(this.electron.app.getPath('userData'), AnalyticsBackendEndpoint.nameOf(this.endpoint), isProcessRunning);
+    const files = new UnsentEventsFiles(app.getPath('userData'), AnalyticsBackendEndpoint.nameOf(this.endpoint), isProcessRunning);
     this.unsentEventsFile = files.own(process.pid);
     const unsentEvents = this.takeOverUnsentEvents(files);
-    this.electron.app.on('will-quit', () => this.saveUnsentEvents());
+    app.on('will-quit', () => this.saveUnsentEvents());
     this.isInitialized = true;
     this.sender.add(...unsentEvents);
   }
@@ -94,9 +88,9 @@ export class AnalyticsBackendWrapper {
       session_id: this.sessionId,
       seq: this.seq++,
       client_ts: new Date().toISOString(),
-      app_version: this.electron.app.getVersion(),
+      app_version: app.getVersion(),
       os: process.platform,
-      os_release: this.os.release(),
+      os_release: os.release(),
       category,
       action,
       label: label ?? null,
@@ -108,13 +102,13 @@ export class AnalyticsBackendWrapper {
 
   private static async post(events: AnalyticsBackendEvent[]): Promise<number> {
     const body = JSON.stringify({ schema_version: 1, events });
-    const response = await this.electron.net.fetch(this.endpoint, {
+    const response = await net.fetch(this.endpoint, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
         // The backend requires the SHA-256 of the body for POST.
-        'x-amz-content-sha256': this.crypto.createHash('sha256').update(body).digest('hex'),
-        'user-agent': `PhotoLocationMap/${this.electron.app.getVersion()} (${process.platform}; ${process.arch}) Electron/${process.versions.electron}`,
+        'x-amz-content-sha256': crypto.createHash('sha256').update(body).digest('hex'),
+        'user-agent': `PhotoLocationMap/${app.getVersion()} (${process.platform}; ${process.arch}) Electron/${process.versions.electron}`,
       },
       body,
     });

@@ -1,9 +1,10 @@
-import assert = require('node:assert/strict');
-import fs = require('node:fs');
-import os = require('node:os');
-import path = require('node:path');
-import exifr = require('exifr');
-import { managedExifr } from '../../../electron-util/managed-exifr.cjs';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import exifr from 'exifr';
+import { managedExifr } from '../../../electron-util/managed-exifr.js';
+import { repositoryPath } from '../../test-util/repository.js';
 
 describe('managed exifr file readers', () => {
   let directory: string;
@@ -86,7 +87,7 @@ describe('managed exifr file readers', () => {
   }
 
   it('keeps buffers, data URLs, and long base64 strings on their original readers', async () => {
-    const filename = path.join(__dirname, '../../test-resources/actual-photos/Kobe/IMG_4676.JPG');
+    const filename = repositoryPath('test', 'test-resources', 'actual-photos', 'Kobe', 'IMG_4676.JPG');
     const input = fs.readFileSync(filename);
     const options = { pick: ['Make', 'Orientation'] };
     const expected = await exifr.parse(input, options);
@@ -100,7 +101,7 @@ describe('managed exifr file readers', () => {
   });
 
   it('preserves the original metadata and embedded thumbnail bytes', async () => {
-    const filename = path.join(__dirname, '../../test-resources/actual-photos/Kobe/IMG_4676.JPG');
+    const filename = repositoryPath('test', 'test-resources', 'actual-photos', 'Kobe', 'IMG_4676.JPG');
     const input = fs.readFileSync(filename);
     const options = { translateValues: false, pick: ['Make', 'Orientation', 'GPSLatitude', 'GPSLongitude'] };
 

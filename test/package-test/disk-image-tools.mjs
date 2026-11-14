@@ -1,6 +1,6 @@
-const assert = require('node:assert/strict');
-const test = require('node:test');
-const getDiskImageTools = require('../../script/package-test/disk-image-tools');
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import getDiskImageTools from '../../script/package-test/disk-image-tools.js';
 
 function select(probe) {
   return getDiskImageTools((command, args, options) => {

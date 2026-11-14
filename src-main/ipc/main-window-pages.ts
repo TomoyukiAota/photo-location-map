@@ -1,6 +1,6 @@
 import type { WebContents } from 'electron';
-import { Logger } from '../../src-shared/log/logger';
-import { logged, shown } from '../../src-shared/log/logged-line';
+import { Logger } from '../../src-shared/log/logger.js';
+import { logged, shown } from '../../src-shared/log/logged-line.js';
 
 // The main window shows the app's page only, the one page that its preload's bridge serves (ipc-sender.ts). The app
 // itself never navigates the window elsewhere: its routes change the URL's fragment, and links open in the OS browser

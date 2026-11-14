@@ -1,0 +1,16 @@
+{
+  // The tests run compiled in out/em (test/em.tsconfig.json), with the modules that they import, which they share with
+  // these: an ES module is loaded once for its path.
+  "require": [
+    "./out/em/electron-util/isolated-test-profile.js",
+    // The first setups of the app's main process, in its order (src-main/electron-main.ts): the log's location, the
+    // startup metadata, and the settings, which are files.
+    "./out/em/src-main/analytics/error-scrubbing-setup.js",
+    "./out/em/src-main/log/log-setup.js",
+    "./out/em/src-main/startup/startup-metadata-setup.js",
+    "./out/em/src-main/user-data-storage/user-data-storage-setup.js"
+  ],
+  "spec": "out/em/test/**/*.spec.em.@(main|both).js",
+  // Increased from 2000 ms (default) to 60000 ms to avoid "Timeout of 2000ms exceeded" error in GitHub Actions.
+  "timeout": 60000
+}

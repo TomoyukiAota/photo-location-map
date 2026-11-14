@@ -1,6 +1,6 @@
-import assert = require('assert');
+import assert from 'assert';
 import * as path from 'path';
-import { OpenFolderDialogHistory, OpenFolderDialogHistoryDependencies } from '../../../../../src/app/sidebar/upper-pane/open-folder-dialog-history';
+import { OpenFolderDialogHistory, OpenFolderDialogHistoryDependencies } from '../../../../../src/app/sidebar/upper-pane/open-folder-dialog-history.js';
 
 describe('OpenFolderDialogHistory', () => {
   const firstDirectory = path.resolve('folder-history-first');

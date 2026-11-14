@@ -1,4 +1,4 @@
-import { AnalyticsBackendEvent } from './analytics-backend-event';
+import { AnalyticsBackendEvent } from './analytics-backend-event.js';
 
 export interface AnalyticsBackendSenderOptions {
   /** Sends one batch. Resolves with the HTTP status; rejects when the request fails (e.g. offline). */

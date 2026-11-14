@@ -1,8 +1,8 @@
-import assert = require('assert');
+import assert from 'assert';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { LaunchFiles, LaunchRecord, maxSilenceMs } from '../../../src-main/launch/launch-files';
+import { LaunchFiles, LaunchRecord, maxSilenceMs } from '../../../src-main/launch/launch-files.js';
 
 describe('LaunchFiles', () => {
   const now = Date.parse('2026-11-14T00:00:00.000Z');

@@ -1,16 +1,16 @@
-import { createDirectoryTree } from '../../../../src-shared/dir-tree/create-directory-tree';
-import assert = require('assert');
+import { createDirectoryTree } from '../../../../src-shared/dir-tree/create-directory-tree.js';
+import assert from 'assert';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { nearlyEqual } from '../../../test-util/number-comparison';
-import { ExifFetcher, PathExifPair } from '../../../../src/app/shared/exif-fetcher/exif-fetcher';
-import { exifReadFailures } from '../../../../src/app/shared/exif-fetcher/exif-read-failures';
-import { fetchExifUsingExifr } from '../../../../src/app/shared/exif-fetcher/using-exifr/fetch-exif-using-exifr';
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const { jpegWithEmptyGpsValues } = require('../../../test-util/jpeg-with-empty-gps-values.cjs');
+import { nearlyEqual } from '../../../test-util/number-comparison.js';
+import { ExifFetcher, PathExifPair } from '../../../../src/app/shared/exif-fetcher/exif-fetcher.js';
+import { exifReadFailures } from '../../../../src/app/shared/exif-fetcher/exif-read-failures.js';
+import { fetchExifUsingExifr } from '../../../../src/app/shared/exif-fetcher/using-exifr/fetch-exif-using-exifr.js';
+import { repositoryPath } from '../../../test-util/repository.js';
+import { jpegWithEmptyGpsValues } from '../../../test-util/jpeg-with-empty-gps-values.mjs';
 
-const testResourceDirectory = path.join(__dirname, '..', '..', '..', 'test-resources');
+const testResourceDirectory = repositoryPath('test', 'test-resources');
 
 describe('fetchExifUsingExifr', () => {
   let directory: string;

@@ -1,6 +1,6 @@
-import assert = require('assert');
+import assert from 'assert';
 import * as path from 'path';
-const { mainWindowWebPreferences, photoDataViewerWebPreferences, rendererTestWebPreferences } = require('../../electron-util/electron-web-preferences');
+import { mainWindowWebPreferences, photoDataViewerWebPreferences, rendererTestWebPreferences } from '../../electron-util/electron-web-preferences.js';
 
 describe('The web preferences of the app\'s windows', () => {
   const appPath = path.resolve('/app');

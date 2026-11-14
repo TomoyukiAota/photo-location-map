@@ -1,5 +1,5 @@
-import { Analytics } from './analytics';
-import { scrubbedErrorLabel, scrubbedErrorText } from './record-error';
+import { Analytics } from './analytics.js';
+import { scrubbedErrorLabel, scrubbedErrorText } from './record-error.js';
 
 /** How many reasons one batch records: the most frequent. */
 export const maxRecordedReasons = 5;

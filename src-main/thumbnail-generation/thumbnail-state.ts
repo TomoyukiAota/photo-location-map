@@ -1,8 +1,8 @@
 import * as fs from 'fs';
-import type { ThumbnailState } from '../../src-shared/bridge/plm-bridge';
-import { Logger } from '../../src-shared/log/logger';
-import { getThumbnailFilePath, getThumbnailLogFilePath } from '../../src-shared/thumbnail/cache/thumbnail-cache-util';
-import { logged } from '../../src-shared/log/logged-line';
+import type { ThumbnailState } from '../../src-shared/bridge/plm-bridge.js';
+import { Logger } from '../../src-shared/log/logger.js';
+import { getThumbnailFilePath, getThumbnailLogFilePath } from '../../src-shared/thumbnail/cache/thumbnail-cache-util.js';
+import { logged } from '../../src-shared/log/logged-line.js';
 
 // TL;DR: Where the thumbnail of each HEIF file is, which the main window's page asks when it opens a folder and polls
 // while thumbnails are made: the checks of thumbnail-cache-util.ts, which the renderer made itself until the main

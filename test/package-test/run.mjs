@@ -1,12 +1,9 @@
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const os = require('node:os');
-const path = require('node:path');
-const test = require('node:test');
-const vm = require('node:vm');
-
-const runnerPath = path.resolve(__dirname, '../../script/package-test/run-package-test.js');
-const source = fs.readFileSync(runnerPath, 'utf8');
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import test from 'node:test';
+import { runPackageTest } from '../../script/package-test/run-package-test.js';
 
 async function checkRunner(options, verify) {
   const fixtureRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'plm-runner-cleanup-test-'));
@@ -18,38 +15,38 @@ async function checkRunner(options, verify) {
   let selectedRoot;
   let removedRoot;
   let cleanupOptions;
+  const fileSystem = {
+    ...fs,
+    rmSync(root, settings) {
+      removedRoot = root;
+      cleanupOptions = settings;
+      if (options.failCleanup) throw new Error('simulated busy profile');
+      fs.rmSync(root, settings);
+    },
+  };
+  const modules = {
+    '../util/logger.js': { info() {}, error() {}, warn: message => warnings.push(message) },
+    './remove-previous-package-test-outcomes.js': () => {},
+    './package-creation-test.js': { run() {
+      fs.mkdirSync(path.join(selectedRoot, 'appData', 'cache'), { recursive: true });
+      fs.writeFileSync(path.join(selectedRoot, 'appData', 'cache', 'session'), 'test session');
+    } },
+    './package-smoke-test.js': { async run() {
+      if (options.switchRoot) runnerProcess.env.PLM_TEST_ROOT = providedRoot;
+      if (options.failSmoke) throw new Error('simulated smoke failure');
+    } },
+  };
   try {
-    await vm.runInNewContext(source, {
-      __filename: runnerPath,
-      process: runnerProcess,
-      require(name) {
-        if (name === 'fs') return {
-          ...fs,
-          rmSync(root, settings) {
-            removedRoot = root;
-            cleanupOptions = settings;
-            if (options.failCleanup) throw new Error('simulated busy profile');
-            fs.rmSync(root, settings);
-          },
-        };
-        if (name === 'os') return { tmpdir: () => fixtureRoot };
-        if (name === 'path') return path;
+    await runPackageTest({
+      runnerProcess, fileSystem, temporaryDirectory: fixtureRoot,
+      async importModule(specifier) {
         // Loading these modules must already see the selected test profile.
         selectedRoot = runnerProcess.env.PLM_TEST_ROOT;
         assert.ok(selectedRoot);
-        if (name === '../util/logger') return { info() {}, error() {}, warn: message => warnings.push(message) };
-        if (name === './remove-previous-package-test-outcomes') return () => {};
-        if (name === './package-creation-test') return { run() {
-          fs.mkdirSync(path.join(selectedRoot, 'appData', 'cache'), { recursive: true });
-          fs.writeFileSync(path.join(selectedRoot, 'appData', 'cache', 'session'), 'test session');
-        } };
-        if (name === './package-smoke-test') return { async run() {
-          if (options.switchRoot) runnerProcess.env.PLM_TEST_ROOT = providedRoot;
-          if (options.failSmoke) throw new Error('simulated smoke failure');
-        } };
-        throw new Error(`Unexpected runner dependency: ${name}`);
+        if (!(specifier in modules)) throw new Error(`Unexpected runner dependency: ${specifier}`);
+        return { default: modules[specifier] };
       },
-    }, { filename: runnerPath });
+    });
     verify({ selectedRoot, removedRoot, cleanupOptions, providedRoot, runnerProcess, warnings });
   } finally {
     fs.rmSync(fixtureRoot, { recursive: true, force: true });

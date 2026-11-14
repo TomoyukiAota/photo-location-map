@@ -1,4 +1,4 @@
-const path = require('path');
+import path from 'path';
 
 function parsePathWithWindowsEnvironmentVariable(path) {
   const parsed = path.replace(/%([^%]+)%/g, (_,n) => process.env[n]);
@@ -17,7 +17,7 @@ function getAppDataDirectory() {
     case 'linux':
       return `${process.env.HOME}/.config`;
     default:
-      throw new Error(`Unsupported platform for "${__filename}"`);
+      throw new Error(`Unsupported platform for "${import.meta.filename}"`);
   }
 }
 
@@ -32,4 +32,4 @@ function getLogDirectory() {
   return logDirectory;
 }
 
-module.exports = getLogDirectory;
+export default getLogDirectory;

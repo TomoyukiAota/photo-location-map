@@ -1,6 +1,6 @@
-const child_process = require('child_process');
-const logger = require('../util/logger');
-const getGitHubToken = require('./get-github-token');
+import child_process from 'child_process';
+import logger from '../util/logger.js';
+import getGitHubToken from './get-github-token.js';
 
 const supportedPlatforms = ['linux', 'mac', 'windows'];
 const platform = process.argv[2];

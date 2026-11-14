@@ -1,6 +1,6 @@
 import type { OpenDialogReturnValue } from 'electron';
-import { isAbsolutePath } from '../../../../src-shared/path/is-absolute-path';
-import { currentPlatform } from '../../../../src-shared/startup/startup-metadata';
+import { isAbsolutePath } from '../../../../src-shared/path/is-absolute-path.js';
+import { currentPlatform } from '../../../../src-shared/startup/startup-metadata.js';
 
 export interface OpenFolderDialogHistoryDependencies {
   read(): unknown;

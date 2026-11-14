@@ -1,11 +1,11 @@
 import * as fs from 'fs';
-import { createDirectoryTree } from '../../dir-tree/create-directory-tree';
-import { convertToFlattenedDirTree } from '../../dir-tree/dir-tree-util';
-import { createPrependedLogger } from '../../log/create-prepended-logger';
-import { stringArrayToLogText } from '../../log/multiline-log-text';
-import { getOriginalFilePath, getThumbnailLogFilePath, plmThumbnailCacheDir } from './thumbnail-cache-util';
-import { removeEmptyCacheDirectories } from './remove-empty-cache-directories';
-import { logged } from '../../log/logged-line';
+import { createDirectoryTree } from '../../dir-tree/create-directory-tree.js';
+import { convertToFlattenedDirTree } from '../../dir-tree/dir-tree-util.js';
+import { createPrependedLogger } from '../../log/create-prepended-logger.js';
+import { stringArrayToLogText } from '../../log/multiline-log-text.js';
+import { getOriginalFilePath, getThumbnailLogFilePath, plmThumbnailCacheDir } from './thumbnail-cache-util.js';
+import { removeEmptyCacheDirectories } from './remove-empty-cache-directories.js';
+import { logged } from '../../log/logged-line.js';
 
 const logger = createPrependedLogger('[Invalid thumbnail cache removal]');
 

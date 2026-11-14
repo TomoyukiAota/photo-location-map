@@ -1,5 +1,5 @@
-import { DevOrProd } from '../../dev-or-prod/dev-or-prod';
-import { isPrereleaseVersion } from '../../version/is-prerelease-version';
+import { DevOrProd } from '../../dev-or-prod/dev-or-prod.js';
+import { isPrereleaseVersion } from '../../version/is-prerelease-version.js';
 
 class AmplitudeApiKey {
   public static dev  = '504cfac385ea79239a18052ee430fc19';

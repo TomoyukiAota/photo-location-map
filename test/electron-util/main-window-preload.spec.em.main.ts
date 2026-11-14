@@ -1,16 +1,17 @@
-import assert = require('assert');
+import assert from 'assert';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as vm from 'vm';
-import { AnalyticsBackendIpcChannelName } from '../../src-main/analytics/analytics-backend-ipc';
-import { AmplitudeAnalyticsBrowserIpcChannelName } from '../../src-shared/analytics/ipc/amplitude-analytics-browser-ipc';
-import { MixpanelBrowserIpcChannelName } from '../../src-shared/analytics/ipc/mixpanel-browser-ipc';
-import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
+import { AnalyticsBackendIpcChannelName } from '../../src-main/analytics/analytics-backend-ipc.js';
+import { AmplitudeAnalyticsBrowserIpcChannelName } from '../../src-shared/analytics/ipc/amplitude-analytics-browser-ipc.js';
+import { MixpanelBrowserIpcChannelName } from '../../src-shared/analytics/ipc/mixpanel-browser-ipc.js';
+import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
+import { repositoryPath } from '../test-util/repository.js';
 
 // The main window's preload (electron-util/preload/main-window.cjs), run as Electron runs a sandboxed preload: a
 // function with its own require, here with stand-ins for contextBridge and ipcRenderer that record what it does.
 
-const preloadPath = path.join(__dirname, '..', '..', 'electron-util', 'preload', 'main-window.cjs');
+const preloadPath = repositoryPath('electron-util', 'preload', 'main-window.cjs');
 const startup = { version: '9.9.9-test' };
 
 interface Call { method: 'send' | 'sendSync' | 'invoke'; channel: string; args: unknown[]; }

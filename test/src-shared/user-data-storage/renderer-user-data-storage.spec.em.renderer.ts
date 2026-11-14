@@ -1,11 +1,11 @@
-import assert = require('assert');
+import assert from 'assert';
 import { ipcRenderer } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
-import { RendererUserDataStorage } from '../../../src-shared/user-data-storage/renderer-user-data-storage';
-import { UserDataStoragePath } from '../../../src-shared/user-data-storage/user-data-stroage-path';
+import { RendererUserDataStorage } from '../../../src-shared/user-data-storage/renderer-user-data-storage.js';
+import { UserDataStoragePath } from '../../../src-shared/user-data-storage/user-data-stroage-path.js';
 
-// Against the main process's real handlers and files (test/em-renderer-main-setup.js).
+// Against the main process's real handlers and files (test/em-renderer-main-setup.ts).
 describe('RendererUserDataStorage (in real Electron renderer)', () => {
   const userDataPath: string = ipcRenderer.sendSync('ipc-constants-get-startup-metadata').userDataPath;
   const fileOf = (storagePath: ReadonlyArray<string>) =>

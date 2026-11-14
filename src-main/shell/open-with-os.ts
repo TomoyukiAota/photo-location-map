@@ -1,9 +1,9 @@
 import * as childProcess from 'child_process';
 import * as os from 'os';
 import * as pathModule from 'path';
-import { Logger } from '../../src-shared/log/logger';
-import { isFilePathTooLongOnWindows, maxFilePathLengthOnWindows } from '../../src-shared/max-file-path-length-on-windows/max-file-path-length-on-windows';
-import { logged, shown } from '../../src-shared/log/logged-line';
+import { Logger } from '../../src-shared/log/logger.js';
+import { isFilePathTooLongOnWindows, maxFilePathLengthOnWindows } from '../../src-shared/max-file-path-length-on-windows/max-file-path-length-on-windows.js';
+import { logged, shown } from '../../src-shared/log/logged-line.js';
 
 /** Whether `url` is a web page, the only kind that the main window's page may open in the OS browser. */
 export function isWebPageUrl(url: unknown): url is string {

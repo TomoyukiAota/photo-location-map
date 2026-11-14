@@ -1,6 +1,7 @@
-import { startupMetadata } from '../startup/startup-metadata';
-import { ErrorScrubbingContext, errorForAnalytics, maxLabelLength, scrubMessage } from './error-for-analytics';
-import { EventLimiter } from './event-limiter';
+import { startupMetadata } from '../startup/startup-metadata.js';
+import { Analytics } from './analytics.js';
+import { ErrorScrubbingContext, errorForAnalytics, maxLabelLength, scrubMessage } from './error-for-analytics.js';
+import { EventLimiter } from './event-limiter.js';
 
 // Records errors that nothing handled, without the user's file paths (see errorForAnalytics).
 // An error in a loop must not flood analytics, so each process sends at most 20 errors per launch, and at most 3
@@ -35,10 +36,8 @@ export function recordUnhandledError(error: unknown, processName: 'Main' | 'Rend
     if (!unhandledErrors.allows(label))
       return;
 
-    // Required here, not imported at the top: this file is loaded first in the main process (to catch errors
-    // from the start), and importing Analytics there would initialize analytics earlier than before.
-    // eslint-disable-next-line @typescript-eslint/no-require-imports -- See above.
-    const { Analytics } = require('./analytics') as typeof import('./analytics');
+    // This file is loaded first in the main process, to catch errors from the start. Importing Analytics sets nothing
+    // up: until the process sets its analytics (useAnalytics), the event is kept, and sent once they are.
     Analytics.trackEvent('Unhandled Error', `Unhandled Error (${processName})`, label, value);
   } catch {
     // Nothing more can be done here.

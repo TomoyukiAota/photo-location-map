@@ -1,7 +1,7 @@
-import assert = require('assert');
+import assert from 'assert';
 import {
   errorForAnalytics, maxAggregatedErrors, maxCauses, maxStackFrames, scrubConsoleMessage, scrubConsoleSource, scrubMessage, scrubStack,
-} from '../../../src-shared/analytics/error-for-analytics';
+} from '../../../src-shared/analytics/error-for-analytics.js';
 
 const mac = {
   appPaths: ['/Applications/Photo Location Map.app/Contents/Resources/app.asar'],

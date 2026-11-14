@@ -1,42 +1,36 @@
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const os = require('node:os');
-const path = require('node:path');
-const vm = require('node:vm');
-const { EventEmitter } = require('node:events');
-const { spawn } = require('node:child_process');
+import assert from 'node:assert/strict';
+import { spawn } from 'node:child_process';
+import { EventEmitter } from 'node:events';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
+import electronPath from 'electron';
 
-function checkRelaunchBurst(helper) {
+const repository = path.resolve(import.meta.dirname, '../..');
+
+// The watcher of live reload, with stand-ins for Electron and chokidar (src-main/live-reload-watcher.ts). The arguments
+// of the relaunch, which configure-live-reload.ts gives, are checked by the launches of Electron in main().
+async function checkRelaunchBurst(watcherModule) {
+  const { watchForLiveReload } = await import(pathToFileURL(watcherModule).href);
   const watcher = new EventEmitter();
-  let closed = false, quits = 0, reloads = 0;
-  let watchRoot, ignored;
-  const relaunches = [];
+  let closed = false, quits = 0, reloads = 0, relaunches = 0;
+  let watchRoot, ignored, willQuit;
   watcher.close = async () => { closed = true; };
-  const app = new EventEmitter();
-  app.relaunch = options => relaunches.push(options);
-  // Model a quit still in progress while a compiler emits more file changes.
-  app.quit = () => { quits++; };
-  const argv = ['electron', 'main.cjs', '--live-reload', '--probe-token', 'kept-value'];
-  const exported = {};
-  vm.runInNewContext(fs.readFileSync(helper, 'utf8'), {
-    exports: exported,
-    process: { argv },
-    require: name => {
-      if (name === 'electron') return { app, BrowserWindow: { getAllWindows: () => [
-        { webContents: { reloadIgnoringCache: () => { reloads++; } } },
-      ] } };
-      if (name === 'path') return path;
-      if (name === 'chokidar6') return { watch: (directory, options) => {
-        watchRoot = directory;
-        ignored = options.ignored;
-        return watcher;
-      } };
-      if (name === '../src-shared/log/logger') return { Logger: { error: error => { throw error; } } };
-      throw new Error('Unexpected watcher dependency: ' + name);
-    },
-  });
   const mainFile = path.resolve('watcher-burst/.hidden-checkout/source/main.cjs');
-  exported.configureLiveReload(mainFile);
+  watchForLiveReload({
+    watch: (directory, options) => {
+      watchRoot = directory;
+      ignored = options.ignored;
+      return watcher;
+    },
+    relaunch: () => { relaunches++; },
+    // Model a quit still in progress while a compiler emits more file changes.
+    quit: () => { quits++; },
+    reloadWindows: () => { reloads++; },
+    onWillQuit: listener => { willQuit = listener; },
+    logError: (_message, error) => { throw error; },
+  }, mainFile);
   assert.equal(watchRoot, path.dirname(mainFile));
   for (const candidate of [watchRoot, path.dirname(watchRoot), mainFile,
     path.join(watchRoot, 'node_modules-not-ignored', 'module.js')]) {
@@ -49,18 +43,17 @@ function checkRelaunchBurst(helper) {
   for (const name of ['asset.txt', 'module.js', 'worker.cjs', 'module.mjs'])
     watcher.emit('change', path.join(path.dirname(mainFile), name));
   assert.equal(reloads, 1, 'Non-code changes must still reload the renderer.');
-  assert.equal(relaunches.length, 1, 'A compilation burst must request exactly one relaunch.');
+  assert.equal(relaunches, 1, 'A compilation burst must request exactly one relaunch.');
   assert.equal(quits, 1);
-  assert.deepEqual(relaunches[0].args, argv.slice(1));
-  app.emit('will-quit');
+  willQuit();
   assert.equal(closed, true);
-  return { ignoredPathPredicatePassed: true, queuedRelaunches: relaunches.length, quitRequests: quits, watcherClosed: closed };
+  return { ignoredPathPredicatePassed: true, queuedRelaunches: relaunches, quitRequests: quits, watcherClosed: closed };
 }
 
 async function main() {
-  const helper = path.resolve(__dirname, '../../src-main/configure-live-reload.js');
+  const helper = path.join(repository, 'out/app/src-main/configure-live-reload.js');
   assert.ok(fs.existsSync(helper), 'Build src-main before running the watcher lifecycle check.');
-  const compilationBurst = checkRelaunchBurst(helper);
+  const compilationBurst = await checkRelaunchBurst(path.join(repository, 'out/app/src-main/live-reload-watcher.js'));
   const results = [];
   for (const mode of ['quit', 'soft', 'relaunch', 'module-relaunch', 'hidden-root']) {
     const root = fs.mkdtempSync(path.join(os.tmpdir(), 'plm-watch-check-'));
@@ -84,8 +77,9 @@ const second = fs.existsSync(path.join(root, 'started'));
 fs.writeFileSync(path.join(root, 'started'), 'yes');
 if (second) fs.writeFileSync(path.join(root, 'second.pid'), String(process.pid));
 fs.writeFileSync(path.join(root, second ? 'module-second-value' : 'module-first-value'), require('./module.js'));
-const watcher = require(${JSON.stringify(helper)}).configureLiveReload(__filename);
-const ready = new Promise(resolve => watcher.once('ready', resolve));
+// The helper is an ES module, which require() loads; it starts its watcher once it has imported chokidar.
+const ready = require(${JSON.stringify(helper)}).configureLiveReload(__filename)
+  .then(watcher => new Promise(resolve => watcher.once('ready', resolve)));
 app.on('quit', () => fs.writeFileSync(path.join(root, second ? 'second-quit' : 'first-quit'), 'yes'));
 app.whenReady().then(async () => {
   const window = new BrowserWindow({ show: false });
@@ -118,7 +112,7 @@ app.whenReady().then(async () => {
 `);
     const environment = { ...process.env, PLM_EM_MAIN: 'true' };
     for (const name of ['ELECTRON_RUN_AS_NODE', 'NODE_OPTIONS', 'PLM_E2E', 'PLM_TEST_ROOT']) delete environment[name];
-    const child = spawn(require('electron'), [
+    const child = spawn(electronPath, [
       ...(process.platform === 'linux' ? ['--no-sandbox'] : []),
       '--user-data-dir=' + path.join(root, 'userData'), entry, '--live-reload', '--probe-token', 'kept-value',
     ], { env: environment, stdio: ['ignore', 'inherit', 'inherit'] });
@@ -168,7 +162,7 @@ app.whenReady().then(async () => {
       fs.rmSync(root, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
     }
   }
-  const metadata = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../node_modules/chokidar6/package.json')));
+  const metadata = JSON.parse(fs.readFileSync(path.join(repository, 'node_modules/chokidar6/package.json')));
   process.stdout.write(JSON.stringify({ watcher: metadata.version, compilationBurst, results }, null, 2) + '\n');
 }
 

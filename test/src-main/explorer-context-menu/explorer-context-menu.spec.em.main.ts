@@ -1,11 +1,12 @@
-import assert = require('assert');
-import childProcess = require('child_process');
-import path = require('path');
+import assert from 'assert';
+import childProcess from 'child_process';
+import { syncBuiltinESMExports } from 'module';
+import path from 'path';
 import {
   addExplorerContextMenu, afterPreviousChange, explorerContextMenuKeys, explorerContextMenuValues, regExePath,
   RegFailure, removeExplorerContextMenu, runReg,
-} from '../../../src-main/explorer-context-menu/explorer-context-menu';
-import { Logger } from '../../../src-shared/log/logger';
+} from '../../../src-main/explorer-context-menu/explorer-context-menu.js';
+import { Logger } from '../../../src-shared/log/logger.js';
 
 const exePath = 'C:\\Users\\Someone\\AppData\\Local\\Programs\\Photo Location Map\\Photo Location Map.exe';
 const fileKey = 'HKCU\\Software\\Classes\\*\\shell\\OpenWithPhotoLocationMap';
@@ -24,6 +25,15 @@ function fakeReg(fails: (args: readonly string[]) => boolean = () => false) {
   return { runs, run };
 }
 
+
+/**
+ * Replaces child_process's execFile for explorer-context-menu.ts, which reads it from child_process's ES module, whose
+ * exports follow those of its CommonJS module, which this changes, once syncBuiltinESMExports() is called.
+ */
+function setExecFile(execFile: unknown): void {
+  (childProcess as { execFile: unknown }).execFile = execFile;
+  syncBuiltinESMExports();
+}
 describe('Explorer context menu (in main process)', () => {
   it('writes, for files, folders and the background of a folder, the label, the icon and a command with the exe quoted', () => {
     assert.deepEqual(explorerContextMenuKeys, [fileKey, folderKey, backgroundKey]);
@@ -125,12 +135,12 @@ describe('Explorer context menu (in main process)', () => {
     // "エラー" in Shift_JIS, which is not UTF-8.
     for (const stderr of [Buffer.from('ERROR: Access is denied.\r\n'), Buffer.from([0x83, 0x47, 0x83, 0x89, 0x81, 0x5b])]) {
       try {
-        (childProcess as { execFile: unknown }).execFile = (_file: string, _args: readonly string[], _options: unknown,
+        setExecFile((_file: string, _args: readonly string[], _options: unknown,
           callback: (error: Error | null, stdout: Buffer, stderr: Buffer) => void) =>
-          callback(Object.assign(new Error('Command failed'), { code: 1 }), Buffer.alloc(0), stderr);
+          callback(Object.assign(new Error('Command failed'), { code: 1 }), Buffer.alloc(0), stderr));
         await runReg(['delete', folderKey, '/f']).catch((error: RegFailure) => failures.push(error));
       } finally {
-        (childProcess as { execFile: unknown }).execFile = original;
+        setExecFile(original);
       }
     }
     assert.deepEqual(failures.map(failure => [failure.message, failure.key, failure.output]), [
@@ -145,14 +155,14 @@ describe('Explorer context menu (in main process)', () => {
     const original = childProcess.execFile;
     const calls: { file: string, args: readonly string[], options: childProcess.ExecFileOptions }[] = [];
     try {
-      (childProcess as { execFile: unknown }).execFile = (file: string, args: readonly string[],
+      setExecFile((file: string, args: readonly string[],
         options: childProcess.ExecFileOptions, callback: (error: Error | null, stdout: string, stderr: string) => void) => {
         calls.push({ file, args, options });
         callback(null, '', '');
-      };
+      });
       await runReg(['query', fileKey]);
     } finally {
-      (childProcess as { execFile: unknown }).execFile = original;
+      setExecFile(original);
     }
     assert.deepEqual(calls.map(call => [call.file, call.args, call.options.windowsHide]), [[regExePath, ['query', fileKey], true]]);
   });

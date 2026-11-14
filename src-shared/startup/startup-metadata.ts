@@ -1,4 +1,4 @@
-import { plmBridge } from '../bridge/plm-bridge';
+import { plmBridge } from '../bridge/plm-bridge.js';
 
 /** What the renderer needs to know about the app and the computer from the main process; none of it changes. */
 export interface StartupMetadata {

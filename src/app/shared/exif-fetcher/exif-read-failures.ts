@@ -1,4 +1,4 @@
-import { FailureReasons } from '../../../../src-shared/analytics/failure-reasons';
+import { FailureReasons } from '../../../../src-shared/analytics/failure-reasons.js';
 
 /**
  * Why the photos of the folder being opened could not be read, recorded once its photos are read (ExifFetcher) as

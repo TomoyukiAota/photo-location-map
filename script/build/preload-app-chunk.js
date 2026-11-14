@@ -1,7 +1,5 @@
-'use strict';
-
-const fs = require('node:fs');
-const path = require('node:path');
+import fs from 'node:fs';
+import path from 'node:path';
 
 // TL;DR: After `ng build`, have dist/index.html fetch the app's chunk at once, with a modulepreload link, rather than
 // after src/main.ts has run and found the page's bridge.
@@ -13,7 +11,7 @@ const path = require('node:path');
 // instead of 389. The build fails if the entry does not import exactly one chunk, so that a change of the build is
 // seen rather than losing the preload.
 
-function preloadAppChunk(dist) {
+export function preloadAppChunk(dist) {
   const entry = fs.readFileSync(path.join(dist, 'main.js'), 'utf8');
   const chunks = [...new Set([...entry.matchAll(/\bimport\(\s*[`'"]\.\/(chunk-[\w-]+\.js)[`'"]\s*\)/g)].map(match => match[1]))];
   if (chunks.length !== 1)
@@ -30,9 +28,8 @@ function preloadAppChunk(dist) {
   return chunks[0];
 }
 
-if (require.main === module) {
-  const chunk = preloadAppChunk(path.join(__dirname, '..', '..', 'dist'));
+// Run by postbuild; test/script/ imports it.
+if (import.meta.main) {
+  const chunk = preloadAppChunk(path.join(import.meta.dirname, '..', '..', 'dist'));
   console.info(`dist/index.html preloads the app's chunk, ${chunk}.`);
 }
-
-module.exports = { preloadAppChunk };

@@ -1,5 +1,5 @@
-import assert = require('assert');
-import { showFolderDialog } from '../../../src-main/folder-dialog/show-folder-dialog';
+import assert from 'assert';
+import { showFolderDialog } from '../../../src-main/folder-dialog/show-folder-dialog.js';
 
 describe('showFolderDialog', () => {
   const sender = { id: 1 } as unknown as Electron.WebContents;

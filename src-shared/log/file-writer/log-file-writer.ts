@@ -1,7 +1,7 @@
-import { plmBridge } from '../../bridge/plm-bridge';
-import { EnvironmentDetector } from '../../environment/environment-detector';
-import { ProcessIdentifier } from '../../process/process-identifier';
-import { LogFileWriterInterface } from './log-file-writer-interface';
+import { plmBridge } from '../../bridge/plm-bridge.js';
+import { EnvironmentDetector } from '../../environment/environment-detector.js';
+import { ProcessIdentifier } from '../../process/process-identifier.js';
+import { LogFileWriterInterface } from './log-file-writer-interface.js';
 
 let logFileWriter: LogFileWriterInterface | undefined;
 
