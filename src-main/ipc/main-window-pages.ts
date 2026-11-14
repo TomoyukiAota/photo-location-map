@@ -8,22 +8,18 @@ import { logged, shown } from '../../src-shared/log/logged-line.js';
 // so such a navigation is prevented, as a page's new window is.
 
 /**
- * A file's path in a file URL, decoded, so that Node.js's pathToFileURL and Chromium, which may escape a character
- * differently, give the same; on Windows without regard to case, as its file system has none.
+ * Whether `url` is on the app's page `pageUrl`, at any of its routes: of the app's scheme (src-main/file-server/), or of
+ * `ng serve`'s origin for live reload.
+ * TL;DR: The scheme and the host are compared, not the origins.
+ * Details: Node.js's URL knows only the schemes of the web, so the origin of the app's scheme is "null", as that of any
+ * other scheme that it does not know, such as one that another application registered. For http, the scheme and the
+ * host, with its port, are the origin.
  */
-function filePathOf(url: URL): string {
-  const decoded = decodeURIComponent(url.pathname);
-  return process.platform === 'win32' ? decoded.toLowerCase() : decoded;
-}
-
-/** Whether `url` is the app's page `pageUrl`, a file, or `ng serve`'s origin for live reload, at any of its routes. */
 export function isAppPage(url: string, pageUrl: string): boolean {
   try {
     const page = new URL(pageUrl);
     const target = new URL(url);
-    return page.protocol === 'file:'
-      ? target.protocol === 'file:' && filePathOf(target) === filePathOf(page)
-      : target.origin === page.origin;
+    return target.protocol === page.protocol && target.host === page.host;
   } catch {
     return false;
   }

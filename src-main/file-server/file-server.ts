@@ -1,8 +1,6 @@
-import { app } from 'electron';
-import * as path from 'path';
-import { pathToFileURL } from 'url';
 import { createPrependedLogger } from '../../src-shared/log/create-prepended-logger.js';
 import { LiveReload } from '../live-reload.js';
+import { appPageUrl, serveAppPage } from './app-page.js';
 
 const fileServerLogger = createPrependedLogger('[File Server]');
 
@@ -13,15 +11,9 @@ export async function getUrlForMainWindow(): Promise<string> {
     return url;
   }
 
-  // In order to switch from file protocol to http protocol,
-  // the file server is implemented in October 2022, but there are port issues
-  // which randomly happen notably with Windows Update and are difficult to handle.
-  //  - https://stackoverflow.com/a/63810451/7947548
-  //  - https://stackoverflow.com/q/48478869/7947548
-  // Therefore, the file server implementation is removed, and file protocol continues to be used.
-  // The page is in the app's folder (app.asar in a package), beside out/app, where this file runs from.
-  const urlObj = pathToFileURL(path.join(app.getAppPath(), 'dist', 'index.html'));
-  const url = urlObj.href;
-  fileServerLogger.info(`isLiveReloadMode === false, so the file URL is used. ${url}`);
-  return url;
+  // The page in the app's folder (app.asar in a package), from a scheme of the app's own (app-page.ts), answered before
+  // the window loads it.
+  serveAppPage();
+  fileServerLogger.info(`isLiveReloadMode === false, so the app's page is served from ${appPageUrl}`);
+  return appPageUrl;
 }

@@ -20,7 +20,7 @@ fuse that has not been decided here.
 | `enableEmbeddedAsarIntegrityValidation` | off | **on** | On macOS and Windows, a changed `app.asar` does not run. A worker process takes about 4 ms more to load its code from the archive. |
 | `onlyLoadAppFromAsar` | off | **on** | Electron loads no `app` folder in place of `app.asar`, which would get round the check above. |
 | `loadBrowserProcessSpecificV8Snapshot` | off | off | The application has no V8 snapshot of its own. |
-| `grantFileProtocolExtraPrivileges` | on | on | The main window's page is a `file:` URL in the package, and does not start with this fuse off. |
+| `grantFileProtocolExtraPrivileges` | on | **off** | No page is a `file:` URL: the main window's page is served from `plm-app:`, a scheme of the application's own (`src-main/file-server/app-page.ts`). A page of `file:` whose scripts are modules, as the main window's was, does not start with this fuse off. |
 | `wasmTrapHandlers` | on | on | electron-builder 26 cannot set it. The workers of the thumbnails decode HEIC with WebAssembly, which it makes faster. |
 
 [The task that set them](../tasks/20261114_electron-fuses/PLAN.md), and
@@ -45,11 +45,14 @@ which do not use the inspector.
 With `runAsNode` and `enableNodeCliInspectArguments` off, other software can
 no longer run its code as Photo Location Map, with `ELECTRON_RUN_AS_NODE=1` or
 `--inspect`, which on macOS would have the application's permissions, such as
-to the folders that the user let it read.
+to the folders that the user let it read. With `grantFileProtocolExtraPrivileges`
+off, no page has the privileges that Electron gives a page of `file:`.
 
-- `grantFileProtocolExtraPrivileges` can be turned off once the main window's
-  page is served from a protocol of the application's own (`protocol.handle`)
-  rather than from `file:`.
+- The main window's `webSecurity` is off (`electron-util/electron-web-preferences.js`),
+  so that its page shows the photos from their `file:` URLs, which a page of
+  another scheme may not load otherwise. It can be turned on once the photos
+  are served from a scheme of the application's own too, which answers only for
+  the files of the folders that the user opened.
 
 ## When the package test fails on the fuses
 

@@ -17,7 +17,7 @@
     "enableEmbeddedAsarIntegrityValidation": true,
     "onlyLoadAppFromAsar": true,
     "loadBrowserProcessSpecificV8Snapshot": false,
-    "grantFileProtocolExtraPrivileges": true
+    "grantFileProtocolExtraPrivileges": false
   },
   "win": {
     "icon": "dist/favicon.ico",

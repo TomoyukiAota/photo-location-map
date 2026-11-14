@@ -45,7 +45,7 @@ test('electron-builder.json keeps on the fuses that the application needs, and t
     enableEmbeddedAsarIntegrityValidation: true,
     onlyLoadAppFromAsar: true,
     loadBrowserProcessSpecificV8Snapshot: false,
-    grantFileProtocolExtraPrivileges: true,
+    grantFileProtocolExtraPrivileges: false,
   });
 });
 
