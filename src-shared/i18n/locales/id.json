@@ -52,17 +52,17 @@
     "sort": {
       "title": "Urutkan",
       "byName": "Menurut nama",
-      "byShootingTime": "Menurut waktu pengambilan foto",
+      "byShootingTime": "Menurut tanggal diambil",
       "ascending": "Menaik",
       "descending": "Menurun"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "Mengurutkan menurut waktu pengambilan foto",
-    "intro": "Saat “Menurut waktu pengambilan foto” dipilih, aplikasi mengurutkan file sebagai berikut:",
+    "title": "Mengurutkan menurut tanggal diambil",
+    "intro": "Saat “Menurut tanggal diambil” dipilih, aplikasi mengurutkan file sebagai berikut:",
     "step1": "menggunakan DateTimeOriginal di EXIF; jika tidak tersedia,",
     "step2": "menggunakan waktu modifikasi file.",
-    "foldersNote": "Folder diurutkan menurut nama karena folder tidak memiliki “waktu pengambilan foto”.",
+    "foldersNote": "Folder diurutkan menurut nama karena folder tidak memiliki “tanggal diambil”.",
     "moreDetails": "Detail selengkapnya",
     "details": {
       "intro": "Berikut adalah informasi tambahan:",
@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Buka Google Street View",
       "viewData": "Lihat data"
     },
-    "pathTooLong": "Gambar mini tidak dapat ditampilkan karena panjang jalur file adalah {{length}}. Windows membatasi panjang jalur hingga maksimum {{maximum}}. Ubah lokasi file untuk memperpendek jalurnya. Untuk detailnya, tekan Ctrl+Shift+I dan baca pesan konsol.",
-    "generatedThumbnailPathTooLong": "Gambar mini tidak dapat ditampilkan karena panjang jalur gambar mini yang dibuat adalah {{length}}. Windows membatasi panjang jalur hingga maksimum {{maximum}}. Ubah lokasi file untuk memperpendek jalur gambar mini yang dibuat. Untuk detailnya, tekan Ctrl+Shift+I dan baca pesan konsol."
+    "pathTooLong": "Gambar mini tidak dapat ditampilkan karena panjang jalur file adalah {{length}} karakter. Windows membatasi panjang jalur hingga maksimum {{maximum}} karakter. Ubah lokasi file untuk memperpendek jalurnya. Untuk detailnya, tekan Ctrl+Shift+I dan baca pesan konsol.",
+    "generatedThumbnailPathTooLong": "Gambar mini tidak dapat ditampilkan karena panjang jalur gambar mini yang dibuat adalah {{length}} karakter. Windows membatasi panjang jalur hingga maksimum {{maximum}} karakter. Ubah lokasi file untuk memperpendek jalur gambar mini yang dibuat. Untuk detailnya, tekan Ctrl+Shift+I dan baca pesan konsol."
   },
   "map": {
     "zoomIn": "Perbesar",

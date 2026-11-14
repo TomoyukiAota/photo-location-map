@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Otwórz Google Street View",
       "viewData": "Pokaż dane"
     },
-    "pathTooLong": "Nie można wyświetlić miniaturki, ponieważ długość ścieżki pliku wynosi {{length}}. System Windows ogranicza długość ścieżki do {{maximum}}. Przenieś plik w inne miejsce, aby skrócić jego ścieżkę. Aby poznać szczegóły, naciśnij Ctrl+Shift+I i przeczytaj komunikaty w konsoli.",
-    "generatedThumbnailPathTooLong": "Nie można wyświetlić miniaturki, ponieważ długość ścieżki utworzonej miniaturki wynosi {{length}}. System Windows ogranicza długość ścieżki do {{maximum}}. Przenieś plik w inne miejsce, aby skrócić ścieżkę utworzonej miniaturki. Aby poznać szczegóły, naciśnij Ctrl+Shift+I i przeczytaj komunikaty w konsoli."
+    "pathTooLong": "Nie można wyświetlić miniaturki, ponieważ liczba znaków w ścieżce pliku wynosi {{length}}. System Windows ogranicza liczbę znaków w ścieżce do {{maximum}}. Przenieś plik w inne miejsce, aby skrócić jego ścieżkę. Aby poznać szczegóły, naciśnij Ctrl+Shift+I i przeczytaj komunikaty w konsoli.",
+    "generatedThumbnailPathTooLong": "Nie można wyświetlić miniaturki, ponieważ liczba znaków w ścieżce utworzonej miniaturki wynosi {{length}}. System Windows ogranicza liczbę znaków w ścieżce do {{maximum}}. Przenieś plik w inne miejsce, aby skrócić ścieżkę utworzonej miniaturki. Aby poznać szczegóły, naciśnij Ctrl+Shift+I i przeczytaj komunikaty w konsoli."
   },
   "map": {
     "zoomIn": "Powiększ",

@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Google ストリートビューを開く",
       "viewData": "データを表示"
     },
-    "pathTooLong": "ファイルのパスの長さが {{length}} であるため、サムネイルを表示できません。Windows では、パスの長さの上限は {{maximum}} です。ファイルの場所を変えて、ファイルのパスを短くしてください。詳細は、Ctrl+Shift+I を押してコンソールのメッセージをご覧ください。",
-    "generatedThumbnailPathTooLong": "生成したサムネイルのファイルのパスの長さが {{length}} であるため、サムネイルを表示できません。Windows では、パスの長さの上限は {{maximum}} です。ファイルの場所を変えて、生成されるサムネイルのパスを短くしてください。詳細は、Ctrl+Shift+I を押してコンソールのメッセージをご覧ください。"
+    "pathTooLong": "ファイルのパスの長さが {{length}} 文字であるため、サムネイルを表示できません。Windows では、パスの長さの上限は {{maximum}} 文字です。ファイルの場所を変えて、ファイルのパスを短くしてください。詳細は、Ctrl+Shift+I を押してコンソールのメッセージをご覧ください。",
+    "generatedThumbnailPathTooLong": "生成したサムネイルのファイルのパスの長さが {{length}} 文字であるため、サムネイルを表示できません。Windows では、パスの長さの上限は {{maximum}} 文字です。ファイルの場所を変えて、生成されるサムネイルのパスを短くしてください。詳細は、Ctrl+Shift+I を押してコンソールのメッセージをご覧ください。"
   },
   "map": {
     "zoomIn": "拡大",
@@ -123,7 +123,7 @@
       "second": "秒"
     },
     "unsupportedDuration": "このグラフは、「時」を選択した場合は 30 日、「分」を選択した場合は 3 日、「秒」を選択した場合は 1 時間を超える期間を表示できません。",
-    "changeUnitOrSelection": "年/月/日/時/分/秒を変更するか、期間が短くなるように写真を選択してください。",
+    "changeUnitOrSelection": "別の単位（年/月/日/時/分/秒）を選ぶか、期間が短くなるように写真を選択してください。",
     "selectPhotosWithinZoom": "ズーム範囲内の写真を選択",
     "zoom": "ズーム",
     "resetZoom": "ズームを\nリセット"

@@ -52,17 +52,17 @@
     "sort": {
       "title": "Razvrstaj",
       "byName": "Po nazivu",
-      "byShootingTime": "Po vremenu snimanja",
+      "byShootingTime": "Po datumu snimanja",
       "ascending": "Uzlazno",
       "descending": "Silazno"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "Razvrstavanje po vremenu snimanja",
-    "intro": "Kad je odabrano „Po vremenu snimanja”, aplikacija razvrstava datoteke ovako:",
+    "title": "Razvrstavanje po datumu snimanja",
+    "intro": "Kad je odabrano „Po datumu snimanja”, aplikacija razvrstava datoteke ovako:",
     "step1": "Koristi vrijednost DateTimeOriginal iz podataka EXIF. Ako je nema,",
     "step2": "koristi datum izmjene datoteke.",
-    "foldersNote": "Mape se razvrstavaju po nazivu jer mape nemaju „vrijeme snimanja”.",
+    "foldersNote": "Mape se razvrstavaju po nazivu jer mape nemaju „datum snimanja”.",
     "moreDetails": "Dodatne informacije",
     "details": {
       "intro": "U nastavku su dodatne informacije:",
@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Otvori Google Street View",
       "viewData": "Prikaži podatke"
     },
-    "pathTooLong": "Minijaturu nije moguće prikazati jer je duljina puta datoteke {{length}}. Windows ograničava duljinu puta na {{maximum}}. Premjestite datoteku kako biste skratili njezin put. Za pojedinosti pritisnite Ctrl+Shift+I i pročitajte poruke u konzoli.",
-    "generatedThumbnailPathTooLong": "Minijaturu nije moguće prikazati jer je duljina puta izrađene minijature {{length}}. Windows ograničava duljinu puta na {{maximum}}. Premjestite datoteku kako biste skratili put izrađene minijature. Za pojedinosti pritisnite Ctrl+Shift+I i pročitajte poruke u konzoli."
+    "pathTooLong": "Minijaturu nije moguće prikazati jer je broj znakova u putu datoteke {{length}}. Windows ograničava broj znakova u putu na {{maximum}}. Premjestite datoteku kako biste skratili njezin put. Za pojedinosti pritisnite Ctrl+Shift+I i pročitajte poruke u konzoli.",
+    "generatedThumbnailPathTooLong": "Minijaturu nije moguće prikazati jer je broj znakova u putu izrađene minijature {{length}}. Windows ograničava broj znakova u putu na {{maximum}}. Premjestite datoteku kako biste skratili put izrađene minijature. Za pojedinosti pritisnite Ctrl+Shift+I i pročitajte poruke u konzoli."
   },
   "map": {
     "zoomIn": "Povećaj",

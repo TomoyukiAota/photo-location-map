@@ -52,17 +52,17 @@
     "sort": {
       "title": "Seřadit",
       "byName": "Podle názvu",
-      "byShootingTime": "Podle času pořízení",
+      "byShootingTime": "Podle data pořízení",
       "ascending": "Vzestupně",
       "descending": "Sestupně"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "Řazení podle času pořízení",
-    "intro": "Když je vybráno „Podle času pořízení“, aplikace řadí soubory takto:",
+    "title": "Řazení podle data pořízení",
+    "intro": "Když je vybráno „Podle data pořízení“, aplikace řadí soubory takto:",
     "step1": "Použije hodnotu DateTimeOriginal z dat EXIF. Pokud není k dispozici,",
     "step2": "použije datum změny souboru.",
-    "foldersNote": "Složky se řadí podle názvu, protože složky žádný „čas pořízení“ nemají.",
+    "foldersNote": "Složky se řadí podle názvu, protože složky žádné „datum pořízení“ nemají.",
     "moreDetails": "Další informace",
     "details": {
       "intro": "Níže jsou další informace:",
@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Otevřít Google Street View",
       "viewData": "Zobrazit data"
     },
-    "pathTooLong": "Miniaturu nelze zobrazit, protože délka cesty k souboru je {{length}}. Windows omezuje délku cesty na {{maximum}}. Přesuňte soubor jinam, aby byla jeho cesta kratší. Podrobnosti zjistíte stisknutím Ctrl+Shift+I a přečtením zpráv v konzoli.",
-    "generatedThumbnailPathTooLong": "Miniaturu nelze zobrazit, protože délka cesty k vytvořené miniatuře je {{length}}. Windows omezuje délku cesty na {{maximum}}. Přesuňte soubor jinam, aby byla cesta k vytvořené miniatuře kratší. Podrobnosti zjistíte stisknutím Ctrl+Shift+I a přečtením zpráv v konzoli."
+    "pathTooLong": "Miniaturu nelze zobrazit, protože počet znaků v cestě k souboru je {{length}}. Windows omezuje počet znaků v cestě na {{maximum}}. Přesuňte soubor jinam, aby byla jeho cesta kratší. Podrobnosti zjistíte stisknutím Ctrl+Shift+I a přečtením zpráv v konzoli.",
+    "generatedThumbnailPathTooLong": "Miniaturu nelze zobrazit, protože počet znaků v cestě k vytvořené miniatuře je {{length}}. Windows omezuje počet znaků v cestě na {{maximum}}. Přesuňte soubor jinam, aby byla cesta k vytvořené miniatuře kratší. Podrobnosti zjistíte stisknutím Ctrl+Shift+I a přečtením zpráv v konzoli."
   },
   "map": {
     "zoomIn": "Přiblížit",

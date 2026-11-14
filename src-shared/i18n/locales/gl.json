@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Abrir Google Street View",
       "viewData": "Ver os datos"
     },
-    "pathTooLong": "Non se pode mostrar a miniatura porque a lonxitude da ruta do ficheiro é {{length}}. Windows limita a lonxitude das rutas a {{maximum}} como máximo. Cambia a localización do ficheiro para acurtar a ruta. Para ver os detalles, preme Ctrl+Maiús+I e le as mensaxes da consola.",
-    "generatedThumbnailPathTooLong": "Non se pode mostrar a miniatura porque a lonxitude da ruta da miniatura xerada é {{length}}. Windows limita a lonxitude das rutas a {{maximum}} como máximo. Cambia a localización do ficheiro para acurtar a ruta da miniatura xerada. Para ver os detalles, preme Ctrl+Maiús+I e le as mensaxes da consola."
+    "pathTooLong": "Non se pode mostrar a miniatura porque a lonxitude da ruta do ficheiro é de {{length}} caracteres. Windows limita a lonxitude das rutas a {{maximum}} caracteres como máximo. Cambia a localización do ficheiro para acurtar a ruta. Para ver os detalles, preme Ctrl+Maiús+I e le as mensaxes da consola.",
+    "generatedThumbnailPathTooLong": "Non se pode mostrar a miniatura porque a lonxitude da ruta da miniatura xerada é de {{length}} caracteres. Windows limita a lonxitude das rutas a {{maximum}} caracteres como máximo. Cambia a localización do ficheiro para acurtar a ruta da miniatura xerada. Para ver os detalles, preme Ctrl+Maiús+I e le as mensaxes da consola."
   },
   "map": {
     "zoomIn": "Ampliar",

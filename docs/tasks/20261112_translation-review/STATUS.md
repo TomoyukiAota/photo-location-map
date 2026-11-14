@@ -1,6 +1,8 @@
 # The review of the machine translations, and a layout that follows the texts
 
-Written by Claude (Fable 5.2) on 2026-11-12, after the work.
+Written by Claude (Fable 5.2) on 2026-11-12, after the work. On 2026-11-15,
+the owner answered its [questions](#questions-for-the-owner), and the texts
+were changed by them.
 
 ## What was asked
 
@@ -188,6 +190,14 @@ On macOS (Apple Silicon), 2026-11-12.
   whole Welcome dialog, the Sort menu, a photo's popup with its menu and the
   chart's message in 12 to 27 languages each, with Arabic or Hebrew, Japanese,
   Korean and Chinese among them.
+- On 2026-11-15, with the owner's answers: `npm run test:unit:ng` passes, 445
+  tests, among them the checks of every language's file. The e2e suite passes
+  with `PLM_VISUAL=1`; the chart's button that selects the photos within a
+  zoom is on three lines in English now, as wide as before, which its
+  component allows, and its case checks that size. `test/layout/app-in-every-language.mjs`
+  finds nothing that English does not have in any of the 42 languages, and
+  its pictures of the chart's button and message and of the Sort menu were
+  looked at in English, Japanese, Russian and Finnish.
 
 ## Not done
 
@@ -205,35 +215,48 @@ On macOS (Apple Silicon), 2026-11-12.
 
 ## Questions for the owner
 
-None of these stops the pull request. The translations follow what each
-answer is now.
+The owner answered these on 2026-11-15, and the texts were changed so.
 
-- **English texts that the review found unclear**, which are the owner's:
+- **English texts that the review found unclear**, which are the owner's: each
+  was changed as proposed.
   - `chart.changeUnitOrSelection`, "Please change
-    Year/Month/Day/Hour/Minute/Second", does not say what is changed, the unit
-    of a bar. Several translations now say "Choose another unit (Year/...)".
-  - `photoInfo.pathTooLong` and `generatedThumbnailPathTooLong` give the two
-    lengths without a unit. Most translations say "characters".
-  - `chart.selectPhotosWithinZoom`, "Select Photos within Zoom", was translated
-    word for word in many languages at first; "within the Zoomed Range" is
-    what the Japanese says.
-  - "the modified time of the file" is "Date modified" in Explorer and in
-    Finder; the translations use the platform's name.
+    Year/Month/Day/Hour/Minute/Second", did not say what is changed, the unit
+    of a bar. It is now "Please choose another unit
+    (Year/Month/Day/Hour/Minute/Second), or select photos over a shorter
+    period". Five translations said so already, and the Japanese now does; the
+    others say to change Year/Month/..., which is the same choice.
+  - `photoInfo.pathTooLong` and `generatedThumbnailPathTooLong` gave the two
+    lengths without a unit. They now say "characters". This record said that
+    most translations had the unit; only 7 of the 41 had it. All of them have
+    it now: where the noun after a number changes with the number (Arabic,
+    the Baltic and Slavic languages, Romanian), they say "the number of
+    characters in the path is {{length}}", which holds for any number.
+  - `chart.selectPhotosWithinZoom`, "Select Photos within Zoom", which was
+    translated word for word in many languages at first, is now "Select
+    Photos in the Zoomed Range", as the translations say.
+  - "the modified time of the file" is now the file's “Date modified”, as
+    Explorer and Finder name it; the translations had the platform's name
+    already.
   - Two slips were corrected in `en.json`: "sometime it is missing"
     (sometimes), and "use the modified time" (uses) after "this application".
-- **The separator ` - `** in `directoryTree.openedFolder` is a hyphen between
-  spaces in every language. Russian and Ukrainian typography has ` — ` there,
-  Bulgarian and Hebrew ` – `. It was left as one separator for all languages.
-- **One word or two for when a photo was taken.** Japanese has 撮影日時 for
-  both the sort ("Shooting Time") and Photo Data Viewer's row ("Date Taken").
-  Some languages now have one word for both, others follow the English with
-  two.
-- **The Latvian quotation marks.** The texts have `„…”`, which the Latvian
-  Language Agency recommends and Word writes. Latvian software has `“…”`:
-  Microsoft's style guide for the texts of software, Chrome, Firefox, GNOME.
-  They were left as they are, as each side has an authority: the other way is
-  a change of the opening mark in 13 texts of the three places, with no word
-  touched.
+- **The separator ` - `** in `directoryTree.openedFolder` was a hyphen between
+  spaces in every language. It is now the dash that each language writes
+  there: ` — ` in Russian and Ukrainian, ` – ` in Bulgarian and Hebrew.
+- **One word or two for when a photo was taken**: one, "Date Taken", as
+  Windows' Explorer has it for a value with the time, and as Photo Data
+  Viewer's row has it. "By Shooting Time" is now "By Date Taken", and the 26
+  languages that had a word for the time in the sort have Photo Data Viewer's
+  word for the date, in the form that each text needs. Japanese has 撮影日時
+  for both, as before. The keys keep their names (`byShootingTime`,
+  `sortByShootingTimeInfo`), and so do the log and the analytics events.
+- **The Latvian quotation marks** are now `“…”`, as Latvian software has them
+  (Microsoft's style guide for the texts of software, Chrome, Firefox, GNOME),
+  rather than `„…”`, which the Latvian Language Agency recommends and Word
+  writes: 11 marks in the application's texts and 2 in the website's. Photo
+  Data Viewer's 2 are changed in its own repository.
+- **Where a language breaks its lines** is written in `AGENTS.md` as part of
+  its writing, as its direction is, and not a layout of its own. The owner
+  kept it so.
 - **Choices that a speaker may want to make differently**, each recorded with
   its sources: Finnish `pikkukuva` (Windows, Android) for a thumbnail, where
   the first translation had Apple's `miniatyyri`; the Spanish of Spain, with

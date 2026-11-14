@@ -52,17 +52,17 @@
     "sort": {
       "title": "Razvrsti",
       "byName": "Po imenu",
-      "byShootingTime": "Po času zajema",
+      "byShootingTime": "Po datumu zajema",
       "ascending": "Naraščajoče",
       "descending": "Padajoče"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "Razvrščanje po času zajema",
-    "intro": "Ko je izbrano »Po času zajema«, aplikacija datoteke razvršča tako:",
+    "title": "Razvrščanje po datumu zajema",
+    "intro": "Ko je izbrano »Po datumu zajema«, aplikacija datoteke razvršča tako:",
     "step1": "Uporabi vrednost DateTimeOriginal iz podatkov EXIF. Če je ni,",
     "step2": "uporabi datum spremembe datoteke.",
-    "foldersNote": "Mape so razvrščene po imenu, ker mape nimajo »časa zajema«.",
+    "foldersNote": "Mape so razvrščene po imenu, ker mape nimajo »datuma zajema«.",
     "moreDetails": "Dodatne informacije",
     "details": {
       "intro": "V nadaljevanju so dodatne informacije:",
@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Odpri Google Street View",
       "viewData": "Prikaži podatke"
     },
-    "pathTooLong": "Sličice ni mogoče prikazati, ker je dolžina poti datoteke {{length}}. Windows omejuje dolžino poti na {{maximum}}. Premaknite datoteko, da skrajšate njeno pot. Za podrobnosti pritisnite Ctrl+Shift+I in preberite sporočila v konzoli.",
-    "generatedThumbnailPathTooLong": "Sličice ni mogoče prikazati, ker je dolžina poti ustvarjene sličice {{length}}. Windows omejuje dolžino poti na {{maximum}}. Premaknite datoteko, da skrajšate pot ustvarjene sličice. Za podrobnosti pritisnite Ctrl+Shift+I in preberite sporočila v konzoli."
+    "pathTooLong": "Sličice ni mogoče prikazati, ker je število znakov v poti datoteke {{length}}. Windows omejuje število znakov v poti na {{maximum}}. Premaknite datoteko, da skrajšate njeno pot. Za podrobnosti pritisnite Ctrl+Shift+I in preberite sporočila v konzoli.",
+    "generatedThumbnailPathTooLong": "Sličice ni mogoče prikazati, ker je število znakov v poti ustvarjene sličice {{length}}. Windows omejuje število znakov v poti na {{maximum}}. Premaknite datoteko, da skrajšate pot ustvarjene sličice. Za podrobnosti pritisnite Ctrl+Shift+I in preberite sporočila v konzoli."
   },
   "map": {
     "zoomIn": "Povečaj",

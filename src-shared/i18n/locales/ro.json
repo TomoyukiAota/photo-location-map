@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Deschide Google Street View",
       "viewData": "Vezi datele"
     },
-    "pathTooLong": "Miniatura nu poate fi afișată deoarece lungimea căii fișierului este {{length}}. Windows limitează lungimea căii la {{maximum}}. Mutați fișierul pentru a-i scurta calea. Pentru detalii, apăsați Ctrl+Shift+I și citiți mesajele din consolă.",
-    "generatedThumbnailPathTooLong": "Miniatura nu poate fi afișată deoarece lungimea căii miniaturii create este {{length}}. Windows limitează lungimea căii la {{maximum}}. Mutați fișierul pentru a scurta calea miniaturii create. Pentru detalii, apăsați Ctrl+Shift+I și citiți mesajele din consolă."
+    "pathTooLong": "Miniatura nu poate fi afișată deoarece numărul de caractere din calea fișierului este {{length}}. Windows limitează numărul de caractere dintr-o cale la {{maximum}}. Mutați fișierul pentru a-i scurta calea. Pentru detalii, apăsați Ctrl+Shift+I și citiți mesajele din consolă.",
+    "generatedThumbnailPathTooLong": "Miniatura nu poate fi afișată deoarece numărul de caractere din calea miniaturii create este {{length}}. Windows limitează numărul de caractere dintr-o cale la {{maximum}}. Mutați fișierul pentru a scurta calea miniaturii create. Pentru detalii, apăsați Ctrl+Shift+I și citiți mesajele din consolă."
   },
   "map": {
     "zoomIn": "Mărește",

@@ -1243,7 +1243,7 @@ test('chart grouping, zoom, reset and photo selection keep their real data behav
   await expect(unit).toHaveValue('year');
   await expect(unit.locator('option:checked')).toHaveText('Year');
   await expect(unsupported).toBeHidden();
-  const choose = page.getByRole('button', { name: 'Select Photos within Zoom', exact: true });
+  const choose = page.getByRole('button', { name: 'Select Photos in the Zoomed Range', exact: true });
   async function zoomToLastYear() {
     const box = await chart.boundingBox();
     // Drag the visible slider's left handle to the final year, keeping its right handle at 100%.
@@ -1258,10 +1258,10 @@ test('chart grouping, zoom, reset and photo selection keep their real data behav
     await expectRepresentedPhotos(1);
   }
   await zoomToLastYear();
-  // The button keeps its width in English, on two lines: it is wider only for a language whose text would take more
+  // The button keeps its width in English, on three lines: it is wider only for a language whose text would take more
   // than three lines (see its component). The lines that a text takes depend on the machine's font, as the
   // screenshots do.
-  if (visual) expect(await choose.evaluate(button => [button.getBoundingClientRect().width, button.getBoundingClientRect().height])).toEqual([106, 50]);
+  if (visual) expect(await choose.evaluate(button => [button.getBoundingClientRect().width, button.getBoundingClientRect().height])).toEqual([106, 70]);
   await expect(page.locator('mat-tree-node').filter({ hasText: 'Gold Coast' }).getByRole('checkbox')).toBeChecked();
   const box = await chart.boundingBox();
   // ECharts' rightmost toolbox control is the existing Reset Zoom canvas icon.
@@ -1319,7 +1319,7 @@ test('while the chart is zoomed, its checkbox adds the photos without a shooting
   await page.mouse.down();
   await page.mouse.move(box.x + 90 + (box.width - 180) * 0.92, y, { steps: 12 });
   await page.mouse.up();
-  const choose = page.getByRole('button', { name: 'Select Photos within Zoom', exact: true });
+  const choose = page.getByRole('button', { name: 'Select Photos in the Zoomed Range', exact: true });
   await expect(choose).toBeVisible();
   // The zoom leaves out the photo without a shooting time, and unchecks the menu's checkbox for such photos.
   await expectRepresentedPhotos(1);
@@ -1658,18 +1658,18 @@ test('the sort menu orders the tree by name and by shooting time, shows its choi
   await openFolderWithPicker(folder);
   await expect(page.locator('app-loaded-files-status-bar')).toContainText('6 files have location data.');
   await expect.poll(treeNames).toEqual([root, 'x', 'y', ...byName]);
-  await expectChecked(['By Name', 'Ascending'], ['By Shooting Time', 'Descending']);
+  await expectChecked(['By Name', 'Ascending'], ['By Date Taken', 'Descending']);
   await chooseInSortMenu('Descending');
   await expect.poll(treeNames).toEqual([root, 'y', 'x', ...[...byName].reverse()]);
-  await chooseInSortMenu('By Shooting Time');
+  await chooseInSortMenu('By Date Taken');
   await expect.poll(treeNames).toEqual([root, 'y', 'x', ...[...byShootingTime].reverse()]);
-  await expectChecked(['By Shooting Time', 'Descending'], ['By Name', 'Ascending']);
-  // The info button beside "By Shooting Time" explains it, with details that open and close.
+  await expectChecked(['By Date Taken', 'Descending'], ['By Name', 'Ascending']);
+  // The info button beside "By Date Taken" explains it, with details that open and close.
   await page.locator('.more-options-button').click();
   await sortMenuItem('Sort').click();
-  await sortMenuItem('By Shooting Time').locator('button').click();
+  await sortMenuItem('By Date Taken').locator('button').click();
   const info = page.locator('app-dir-tree-view-sort-shooting-time-info');
-  await expect(info).toContainText('Sort By Shooting Time');
+  await expect(info).toContainText('Sort By Date Taken');
   const detailsButton = info.getByRole('button', { name: 'More details for reference' });
   await detailsButton.click();
   await expect(info.locator('.message-details')).toBeVisible();
@@ -1686,7 +1686,7 @@ test('the sort menu orders the tree by name and by shooting time, shows its choi
   await openFolderWithPicker(folder);
   await expect(page.locator('app-loaded-files-status-bar')).toContainText('6 files have location data.');
   await expect.poll(treeNames).toEqual([root, 'y', 'x', ...[...byShootingTime].reverse()]);
-  await expectChecked(['By Shooting Time', 'Descending'], ['By Name', 'Ascending']);
+  await expectChecked(['By Date Taken', 'Descending'], ['By Name', 'Ascending']);
   await chooseInSortMenu('Ascending');
   await expect.poll(treeNames).toEqual([root, 'x', 'y', ...byShootingTime]);
 });

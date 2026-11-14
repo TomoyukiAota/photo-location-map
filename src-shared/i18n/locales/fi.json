@@ -52,17 +52,17 @@
     "sort": {
       "title": "Järjestä",
       "byName": "Nimen mukaan",
-      "byShootingTime": "Kuvausajan mukaan",
+      "byShootingTime": "Kuvauspäivän mukaan",
       "ascending": "Nouseva",
       "descending": "Laskeva"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "Järjestäminen kuvausajan mukaan",
-    "intro": "Kun ”Kuvausajan mukaan” on valittuna, sovellus järjestää tiedostot näin:",
+    "title": "Järjestäminen kuvauspäivän mukaan",
+    "intro": "Kun ”Kuvauspäivän mukaan” on valittuna, sovellus järjestää tiedostot näin:",
     "step1": "Se käyttää EXIF-tietojen DateTimeOriginal-arvoa. Jos arvoa ei ole,",
     "step2": "se käyttää tiedoston muokkausaikaa.",
-    "foldersNote": "Kansiot järjestetään nimen mukaan, koska kansioilla ei ole ”kuvausaikaa”.",
+    "foldersNote": "Kansiot järjestetään nimen mukaan, koska kansioilla ei ole ”kuvauspäivää”.",
     "moreDetails": "Lisää taustatietoa",
     "details": {
       "intro": "Seuraavassa on taustatietoa:",

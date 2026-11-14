@@ -52,17 +52,17 @@
     "sort": {
       "title": "Rikiuoti",
       "byName": "Pagal pavadinimą",
-      "byShootingTime": "Pagal fotografavimo laiką",
+      "byShootingTime": "Pagal fotografavimo datą",
       "ascending": "Didėjimo tvarka",
       "descending": "Mažėjimo tvarka"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "Rikiavimas pagal fotografavimo laiką",
-    "intro": "Pasirinkus „Pagal fotografavimo laiką“, programa failus rikiuoja taip:",
+    "title": "Rikiavimas pagal fotografavimo datą",
+    "intro": "Pasirinkus „Pagal fotografavimo datą“, programa failus rikiuoja taip:",
     "step1": "naudoja EXIF duomenų reikšmę DateTimeOriginal, o jei jos nėra,",
     "step2": "naudoja failo modifikavimo laiką.",
-    "foldersNote": "Aplankai rikiuojami pagal pavadinimą, nes aplankai neturi „fotografavimo laiko“.",
+    "foldersNote": "Aplankai rikiuojami pagal pavadinimą, nes aplankai neturi „fotografavimo datos“.",
     "moreDetails": "Daugiau informacijos",
     "details": {
       "intro": "Toliau pateikiama papildoma informacija:",
@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Atidaryti „Google Street View“",
       "viewData": "Peržiūrėti duomenis"
     },
-    "pathTooLong": "Miniatiūros parodyti negalima, nes failo kelio ilgis yra {{length}}. „Windows“ riboja kelio ilgį iki {{maximum}}. Pakeiskite failo vietą, kad kelias būtų trumpesnis. Norėdami sužinoti daugiau, paspauskite Ctrl+Shift+I ir perskaitykite konsolės pranešimus.",
-    "generatedThumbnailPathTooLong": "Miniatiūros parodyti negalima, nes sukurtos miniatiūros kelio ilgis yra {{length}}. „Windows“ riboja kelio ilgį iki {{maximum}}. Pakeiskite failo vietą, kad sukurtos miniatiūros kelias būtų trumpesnis. Norėdami sužinoti daugiau, paspauskite Ctrl+Shift+I ir perskaitykite konsolės pranešimus."
+    "pathTooLong": "Miniatiūros parodyti negalima, nes simbolių skaičius failo kelyje yra {{length}}. „Windows“ riboja simbolių skaičių kelyje iki {{maximum}}. Pakeiskite failo vietą, kad kelias būtų trumpesnis. Norėdami sužinoti daugiau, paspauskite Ctrl+Shift+I ir perskaitykite konsolės pranešimus.",
+    "generatedThumbnailPathTooLong": "Miniatiūros parodyti negalima, nes simbolių skaičius sukurtos miniatiūros kelyje yra {{length}}. „Windows“ riboja simbolių skaičių kelyje iki {{maximum}}. Pakeiskite failo vietą, kad sukurtos miniatiūros kelias būtų trumpesnis. Norėdami sužinoti daugiau, paspauskite Ctrl+Shift+I ir perskaitykite konsolės pranešimus."
   },
   "map": {
     "zoomIn": "Artinti",

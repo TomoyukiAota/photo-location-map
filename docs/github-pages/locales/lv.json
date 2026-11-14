@@ -24,9 +24,9 @@
     "willStart": "Photo Location Map lejupielāde drīz sāksies. Ja tā nesākas, noklikšķiniet <link>šeit</link>.",
     "howToInstall": "Kā instalēt",
     "step1": "1. Veiciet dubultklikšķi uz lejupielādētā exe faila.",
-    "step2": "2. Tiks parādīts Windows Defender SmartScreen uznirstošais logs. Noklikšķiniet uz „Papildinformācija” (More info).",
+    "step2": "2. Tiks parādīts Windows Defender SmartScreen uznirstošais logs. Noklikšķiniet uz “Papildinformācija” (More info).",
     "moreInfoImageAlt": "Windows Defender SmartScreen attēls (Papildinformācija)",
-    "step3": "3. Noklikšķiniet uz „Tomēr palaist” (Run anyway).",
+    "step3": "3. Noklikšķiniet uz “Tomēr palaist” (Run anyway).",
     "runAnywayImageAlt": "Windows Defender SmartScreen attēls (Tomēr palaist)",
     "step4": "4. Tiks palaista Photo Location Map instalēšanas programma. Izpildiet instalēšanas programmas norādījumus."
   }

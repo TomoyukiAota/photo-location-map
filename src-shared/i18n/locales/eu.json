@@ -94,8 +94,8 @@
       "openGoogleStreetView": "Ireki Google Street View",
       "viewData": "Ikusi datuak"
     },
-    "pathTooLong": "Ezin da miniatura erakutsi, fitxategiaren bide-izenaren luzera {{length}} delako. Windows-ek gehienez {{maximum}} luzerako bide-izenak onartzen ditu. Aldatu fitxategiaren kokalekua bide-izena laburtzeko. Xehetasunak ikusteko, sakatu Ctrl+Shift+I eta irakurri kontsolako mezuak.",
-    "generatedThumbnailPathTooLong": "Ezin da miniatura erakutsi, sortutako miniaturaren bide-izenaren luzera {{length}} delako. Windows-ek gehienez {{maximum}} luzerako bide-izenak onartzen ditu. Aldatu fitxategiaren kokalekua sortutako miniaturaren bide-izena laburtzeko. Xehetasunak ikusteko, sakatu Ctrl+Shift+I eta irakurri kontsolako mezuak."
+    "pathTooLong": "Ezin da miniatura erakutsi, fitxategiaren bide-izenaren luzera {{length}} karaktere delako. Windows-ek gehienez {{maximum}} karaktereko bide-izenak onartzen ditu. Aldatu fitxategiaren kokalekua bide-izena laburtzeko. Xehetasunak ikusteko, sakatu Ctrl+Shift+I eta irakurri kontsolako mezuak.",
+    "generatedThumbnailPathTooLong": "Ezin da miniatura erakutsi, sortutako miniaturaren bide-izenaren luzera {{length}} karaktere delako. Windows-ek gehienez {{maximum}} karaktereko bide-izenak onartzen ditu. Aldatu fitxategiaren kokalekua sortutako miniaturaren bide-izena laburtzeko. Xehetasunak ikusteko, sakatu Ctrl+Shift+I eta irakurri kontsolako mezuak."
   },
   "map": {
     "zoomIn": "Handitu",

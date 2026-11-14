@@ -52,17 +52,17 @@
     "sort": {
       "title": "Sortera",
       "byName": "Efter namn",
-      "byShootingTime": "Efter fotograferingstid",
+      "byShootingTime": "Efter fotograferingsdatum",
       "ascending": "Stigande",
       "descending": "Fallande"
     }
   },
   "sortByShootingTimeInfo": {
-    "title": "Sortera efter fotograferingstid",
-    "intro": "När ”Efter fotograferingstid” är valt gör appen så här för att sortera filerna:",
+    "title": "Sortera efter fotograferingsdatum",
+    "intro": "När ”Efter fotograferingsdatum” är valt gör appen så här för att sortera filerna:",
     "step1": "Den använder DateTimeOriginal i EXIF-informationen. Om det värdet saknas",
     "step2": "använder den filens ändringsdatum.",
-    "foldersNote": "Mappar sorteras efter namn, eftersom mappar inte har någon ”fotograferingstid”.",
+    "foldersNote": "Mappar sorteras efter namn, eftersom mappar inte har något ”fotograferingsdatum”.",
     "moreDetails": "Mer bakgrundsinformation",
     "details": {
       "intro": "Här följer lite bakgrundsinformation:",
