@@ -113,6 +113,13 @@ const restrictedImportsRule = ['error', {
     { group: ['fs-extra/*'], message: fsExtraImportMessage },
   ],
 }];
+// no-restricted-imports checks only the declarations of imports, so import() of the same modules is checked by its
+// syntax, with the rule about logged lines (no-restricted-syntax). The regular expressions write a slash as \u002F,
+// which the selectors' syntax would take as the end of the expression.
+const restrictedDynamicImports = [
+  { selector: 'ImportExpression[source.value=/^lodash(\\u002F.*)?$|^lodash-es$/]', message: lodashImportMessage },
+  { selector: 'ImportExpression[source.value=/^fs-extra(\\u002F.*)?$/]', message: fsExtraImportMessage },
+];
 
 export default [
   { ignores: ['projects/**', 'dist/**', 'release/**', '.upgrade-artifacts/**'] },
@@ -130,7 +137,7 @@ export default [
       ...tsPlugin.configs['eslint-recommended'].overrides[0].rules,
       ...tsPlugin.configs.recommended.rules,
       ...existingRules,
-      'no-restricted-syntax': loggedLineRule,
+      'no-restricted-syntax': [...loggedLineRule, ...restrictedDynamicImports],
       'no-restricted-imports': restrictedImportsRule,
     },
   },
@@ -147,20 +154,21 @@ export default [
     plugins: { '@typescript-eslint': tsPlugin },
     rules: {
       '@typescript-eslint/no-require-imports': 'error',
-      'no-restricted-syntax': loggedLineRule,
+      'no-restricted-syntax': [...loggedLineRule, ...restrictedDynamicImports],
       'no-restricted-imports': restrictedImportsRule,
     },
   },
   {
     // Loggers that record nothing, so whose lines need no tag: the thumbnail worker's own, which writes to its console
     // only (its failures are recorded by reason, src-main/thumbnail-generation/thumbnail-failures.ts), and the
-    // analytics code's, made with { recorded: false } so as not to record the analytics' own failures to send.
+    // analytics code's, made with { recorded: false } so as not to record the analytics' own failures to send. The
+    // rule about import() stays on.
     files: [
       'src-main/thumbnail-generation/generate-thumbnail-file-worker.ts',
       'src-shared/analytics/library-wrapper/**/*.ts',
       'src-shared/analytics/analytics-backend/**/*.ts',
     ],
-    rules: { 'no-restricted-syntax': 'off' },
+    rules: { 'no-restricted-syntax': ['error', ...restrictedDynamicImports] },
   },
   {
     files: ['src/**/*.html'],

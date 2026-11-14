@@ -124,7 +124,7 @@ async function runWorkerForThumbnailGeneration(argArray: ThumbnailFileGeneration
         const { status, error } = result ?? {};
         logger.info(`Observed completion of worker for thumbnail generation. Status: ${status}`);
         logger.info(`Finished attempting to create a thumbnail file "${arg.outputFilePath}" from "${arg.srcFilePath}".`);
-        const isThumbnailFileCreated = fs.existsSync(arg.outputFilePath);
+        const isThumbnailFileCreated = await fs.promises.access(arg.outputFilePath).then(() => true, () => false);
         logger.info(`Does the thumbnail file exist? -> ${isThumbnailFileCreated}`);
         if(!isThumbnailFileCreated) {
           // Recorded as a reason of failed thumbnails (thumbnail-failures.ts), below.
