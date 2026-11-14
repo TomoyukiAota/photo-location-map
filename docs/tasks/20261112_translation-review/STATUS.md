@@ -202,7 +202,9 @@ On macOS (Apple Silicon), 2026-11-12.
 ## Not done
 
 - **No speaker has read the translations.** `docs/TRANSLATING.md` still says
-  so of each language.
+  so of each language. The owner decided on 2026-11-15 to release them as
+  they are: a speaker reads them after the release, and a correction comes as
+  a pull request.
 - **The OS tab of the Settings dialog** exists on Windows only, and was not
   looked at: its texts are in a dialog that grows with them. The application
   menu is drawn by the operating system.
