@@ -108,10 +108,10 @@ export default [
   },
   {
     // The main process, and the code that it shares with the renderer: checked for the form of its imports so far.
-    // TL;DR: A module is loaded by an import, not by require(), which is for the few places that say why.
-    // Details: tsc turns these files into CommonJS (the package's "type"), so require() works in them, without the
-    // types and the checks that an import has. The places that need it load a module late on purpose, such as a
-    // module of Node in code that the renderer bundles too (docs/contributing/module-formats.md).
+    // TL;DR: A module is loaded by an import: these files run as ES modules, which have no require().
+    // Details: tsc accepts a call of require(), which the types of Node declare everywhere, and it would fail only once
+    // it runs. A module that is loaded late, or that may be missing, is loaded with import()
+    // (docs/contributing/module-formats.md).
     files: ['src-main/**/*.ts', 'src-shared/**/*.ts'],
     // These files have comments that switch off rules which are not checked here: they are not reported as unused.
     linterOptions: { reportUnusedDisableDirectives: 'off' },
