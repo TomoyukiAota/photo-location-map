@@ -27,7 +27,7 @@ export async function showablePathIn(filePath: string, folders: readonly string[
     return undefined;
   for (const folder of folders) {
     const realFolder = await realPath(folder);
-    if (realFolder && isWithin(realFile, realFolder))
+    if (realFolder && isWithinRealFolder(realFile, realFolder))
       return realFile;
   }
   return undefined;
@@ -59,8 +59,8 @@ export async function respondToPhotoFileRequest(request: Request, showable = sho
   return net.fetch(pathToFileURL(filePath).href, { bypassCustomProtocolHandlers: true });
 }
 
-/** Whether the real path `realFile` is the real path `realFolder`, or is in it. */
-function isWithin(realFile: string, realFolder: string): boolean {
+/** Whether the real path `realFile` is the real path `realFolder`, or is in it, by their case as the file system has it. */
+export function isWithinRealFolder(realFile: string, realFolder: string): boolean {
   const prefix = realFolder.endsWith(path.sep) ? realFolder : realFolder + path.sep;
   return realFile === realFolder || realFile.startsWith(prefix);
 }

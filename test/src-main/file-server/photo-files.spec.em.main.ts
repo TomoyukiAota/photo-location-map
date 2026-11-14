@@ -2,7 +2,7 @@ import assert from 'assert';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { respondToPhotoFileRequest, showablePath, showablePathIn } from '../../../src-main/file-server/photo-files.js';
+import { isWithinRealFolder, respondToPhotoFileRequest, showablePath, showablePathIn } from '../../../src-main/file-server/photo-files.js';
 import { forgetUserChosenFolders, rememberUserChosenFolder } from '../../../src-main/ipc/user-chosen-folders.js';
 import { photoFilePathOf, photoFileUrl } from '../../../src-shared/main-window-schemes.js';
 
@@ -98,6 +98,17 @@ describe('The photos of the main window\'s page (in main process)', () => {
       filePath => showablePathIn(filePath, [linkedFolder]));
     assert.strictEqual(shown.status, 200);
     assert.strictEqual(await shown.text(), 'photo');
+  });
+
+  it('compares real paths by their case, so that a sibling whose name differs in case only is another folder, on every system', () => {
+    // A real path has the case of the file system. One that folded case, as macOS's and Windows's comparisons of the
+    // opened folders do, would take a sibling on a case-sensitive volume, such as one of APFS, for the opened folder.
+    const opened = path.join(path.sep, 'Volumes', 'Case', 'Photos');
+    assert.strictEqual(isWithinRealFolder(path.join(path.sep, 'Volumes', 'Case', 'photos', 'secret.jpg'), opened), false);
+    assert.strictEqual(isWithinRealFolder(path.join(path.sep, 'Volumes', 'Case', 'PHOTOS'), opened), false);
+    assert.strictEqual(isWithinRealFolder(path.join(opened, 'a.jpg'), opened), true);
+    assert.strictEqual(isWithinRealFolder(opened, opened), true);
+    assert.strictEqual(isWithinRealFolder(`${opened}2${path.sep}a.jpg`, opened), false);
   });
 
   it('takes the case of a path as the file system does: one folder in any case where it ignores case, two where not', async () => {
