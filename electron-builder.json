@@ -9,7 +9,6 @@
     "src-main/**/*",
     "src-shared/**/*"
   ],
-  "asar": false,
   "afterSign": "script/notarize/notarize.js",
   "win": {
     "icon": "dist/favicon.ico",

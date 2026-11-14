@@ -21,6 +21,8 @@ interface TreeWorker {
   pending: Map<number, Pending>;
 }
 
+// In a package, the script is in app.asar, from which the worker thread loads it and the modules that it imports, as
+// the main process does: nothing is left out of the archive for it (docs/tasks/20261114_enable-asar/).
 let workerFile = path.join(__dirname, 'directory-tree-worker.js');
 let current: TreeWorker | undefined;
 let nextId = 0;

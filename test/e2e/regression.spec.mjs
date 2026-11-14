@@ -116,7 +116,7 @@ async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'con
     expect(runtime.versions.electron).toBe(manifest.devDependencies.electron);
     expect(runtime.versions.node.split('.')[0]).toBe(manifest.devDependencies['@types/node'].match(/\d+/)[0]);
     expect(runtime.dependencies).toEqual(manifest.dependencies);
-    expect(await realpath(runtime.appRoot)).toBe(await realpath(path.join(runtime.resources, 'app')));
+    expect(await realpath(runtime.appRoot)).toBe(await realpath(path.join(runtime.resources, 'app.asar')));
     const launchedExecutable = process.platform === 'linux' && packagedExecutable.endsWith('.AppImage')
       ? runtime.appImage : runtime.executable;
     expect(await realpath(launchedExecutable)).toBe(await realpath(packagedExecutable));
