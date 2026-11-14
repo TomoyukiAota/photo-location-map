@@ -85,8 +85,7 @@
     "moment-duration-format": "2.3.2",
     "moment-timezone": "0.6.6",
     "physical-cpu-count": "2.0.0",
-    "uuid": "14.0.3",
-    "workerpool": "10.0.3"
+    "uuid": "14.0.3"
   },
   "devDependencies": {
     "@amplitude/analytics-browser": "2.49.0",
@@ -107,6 +106,7 @@
     "@angular/material": "22.2.5",
     "@angular/platform-browser": "22.2.4",
     "@angular/router": "22.2.4",
+    "@electron/fuses": "1.8.0",
     "@electron/notarize": "3.1.2",
     "@eslint/js": "10.0.1",
     "@geoman-io/leaflet-geoman-free": "2.20.4",

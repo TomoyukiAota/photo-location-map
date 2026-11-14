@@ -1,6 +1,5 @@
 import fsExtra from 'fs-extra';
 import decode from 'heic-decode';
-import workerpool from 'workerpool';
 import { Now } from '../../src-shared/date-time/now.js';
 import { resizeAndEncode } from './resize-and-encode.js';
 import { describeThumbnailError, ThumbnailFileGenerationArg, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result.js';
@@ -135,6 +134,8 @@ async function generateThumbnailFile(arg: ThumbnailFileGenerationArg): Promise<T
   return new ThumbnailFileGenerationResult('success');
 }
 
-workerpool.worker({
-  generateThumbnailFile: generateThumbnailFile,
+// The main process starts this file in a utility process for each thumbnail (generateThumbnailInProcess in
+// thumbnail-generation.ts), sends it what to make, and ends the process once it has sent the result back.
+process.parentPort.once('message', async ({ data }: { data: ThumbnailFileGenerationArg }) => {
+  process.parentPort.postMessage(await generateThumbnailFile(data));
 });

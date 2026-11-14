@@ -98,14 +98,18 @@ jobs:
 
     - name: npm run test:e2e
       env:
-        PLM_PACKAGED_EXECUTABLE: ${{ github.workspace }}/release/mac-universal/Photo Location Map.app/Contents/MacOS/Photo Location Map
         # The screenshot comparisons too, on arm64 only, against the references that CI keeps for its runner, whose
         # macOS sets text differently from the Mac that snapshots/ matches (test/e2e/README.md). test-intel runs these
         # steps as well.
         PLM_VISUAL: ${{ runner.arch == 'ARM64' && '1' || '' }}
         PLM_VISUAL_REFERENCES: ${{ runner.arch == 'ARM64' && 'snapshots-ci/macos-26-arm64' || '' }}
+      # Against a copy of the package whose fuse enableNodeCliInspectArguments is on: Playwright controls the application
+      # through Node's inspector, which the package does not start (script/package-test/inspectable-package.js).
       # With update_screenshots, the references that differ are written anew rather than failed on.
-      run: npm run test:e2e ${{ inputs.update_screenshots && '-- --update-snapshots=changed' || '' }}
+      run: |
+        executable="$(node script/package-test/inspectable-package.js)"
+        export PLM_PACKAGED_EXECUTABLE="$executable"
+        npm run test:e2e ${{ inputs.update_screenshots && '-- --update-snapshots=changed' || '' }}
 
     - name: Upload the screenshot references written anew
       if: ${{ !cancelled() && inputs.update_screenshots && runner.arch == 'ARM64' }}

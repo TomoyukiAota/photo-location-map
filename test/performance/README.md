@@ -53,7 +53,7 @@ commands. Make each build a directory with `npm run build:prod`, then
 `npx electron-builder build --win dir --x64 --publish never`, and copy `release\win-unpacked\` out before the next
 build; `--app` takes the copy's `Photo Location Map.exe`, in quotes.
 
-`--app <label>=checkout` measures the checkout's build (`dist/` and `src-main/`) instead of a packaged app. `--app-env <label>:<NAME>=<value>` sets an environment variable for one build's launches, such as `PLM_TEST_PHOTO_TRANSPORT=ipc` for the transport experiment of stage C2; `series.json` records it with the build. Do not
+A packaged app's executable is that of a copy with Electron's fuse `enableNodeCliInspectArguments` on, which Playwright needs to control the app: `node script/package-test/inspectable-package.js` makes one of the package in `release/e2e/`, and prints its executable (`docs/contributing/electron-fuses.md`). `--app <label>=checkout` measures the checkout's build (`dist/` and `out/app/`) instead of a packaged app. `--app-env <label>:<NAME>=<value>` sets an environment variable for one build's launches, such as `PLM_TEST_PHOTO_TRANSPORT=ipc` for the transport experiment of stage C2; `series.json` records it with the build. Do not
 run a series while builds, tests or other measurements run on the computer.
 
 ## Scenarios

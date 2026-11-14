@@ -105,8 +105,12 @@ jobs:
       run: npm run test:package
 
     - name: npm run test:e2e
+      # Against a copy of the installed application whose fuse enableNodeCliInspectArguments is on: Playwright controls
+      # the application through Node's inspector, which the package does not start
+      # (script/package-test/inspectable-package.js).
       run: |
-        $env:PLM_PACKAGED_EXECUTABLE = Join-Path $env:LOCALAPPDATA 'Programs\Photo Location Map\Photo Location Map.exe'
+        $env:PLM_PACKAGED_EXECUTABLE = node script/package-test/inspectable-package.js
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         npm run test:e2e
 
     - name: '[Publish to GitHub Releases] Clean-up by "git clean -fdx" (1st time)'

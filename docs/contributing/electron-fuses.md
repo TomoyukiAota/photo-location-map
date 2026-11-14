@@ -13,32 +13,40 @@ fuse that has not been decided here.
 
 | Fuse | Electron's default | Here | Why |
 | --- | --- | --- | --- |
-| `runAsNode` | on | on | workerpool starts the workers of the HEIF thumbnails with `child_process.fork`, which Electron refuses with this fuse off. |
+| `runAsNode` | on | **off** | Nothing runs the application as Node.js: the workers of the HEIF thumbnails are Electron's utility processes, which do not need it, where `child_process.fork`, which they were started with before, does. |
 | `enableCookieEncryption` | off | off | Nothing that needs protecting is in cookies. Turning it on cannot be undone: a package with it off again could not read them. |
-| `enableNodeOptionsEnvironmentVariable` | on | **off** | Nothing reads `NODE_OPTIONS` or `NODE_EXTRA_CA_CERTS`. Electron ignores `NODE_OPTIONS` in the main process of a package, but `NODE_OPTIONS=--require …` would add code to the processes that it runs as Node.js, such as the workers of the thumbnails. |
-| `enableNodeCliInspectArguments` | on | on | Playwright starts the application with `--inspect` to control its main process: the e2e suite against a package, and the performance harness, do. |
+| `enableNodeOptionsEnvironmentVariable` | on | **off** | Nothing reads `NODE_OPTIONS` or `NODE_EXTRA_CA_CERTS`, and no environment variable is to add code to the application's processes (`NODE_OPTIONS=--require …`). Electron ignores `NODE_OPTIONS` in the main process of a package by itself. |
+| `enableNodeCliInspectArguments` | on | **off** | Nothing starts the application's inspector but Playwright, which controls a copy of the package with this fuse on ([below](#the-tests-of-a-package)). |
 | `enableEmbeddedAsarIntegrityValidation` | off | **on** | On macOS and Windows, a changed `app.asar` does not run. A worker process takes about 4 ms more to load its code from the archive. |
 | `onlyLoadAppFromAsar` | off | **on** | Electron loads no `app` folder in place of `app.asar`, which would get round the check above. |
 | `loadBrowserProcessSpecificV8Snapshot` | off | off | The application has no V8 snapshot of its own. |
 | `grantFileProtocolExtraPrivileges` | on | on | The main window's page is a `file:` URL in the package, and does not start with this fuse off. |
 | `wasmTrapHandlers` | on | on | electron-builder 26 cannot set it. The workers of the thumbnails decode HEIC with WebAssembly, which it makes faster. |
 
-[The task that set them](../tasks/20261114_electron-fuses/PLAN.md) has what was
-tried and measured.
+[The task that set them](../tasks/20261114_electron-fuses/PLAN.md), and
+[the one that turned off `runAsNode` and `enableNodeCliInspectArguments`](../tasks/20261114_close-node-fuses/STATUS.md),
+have what was tried and measured.
+
+## The tests of a package
+
+The e2e suite and the performance harness control the application's main
+process through Node's inspector, which Playwright starts with `--inspect`,
+and which a package does not start. They run a copy of the package with
+`enableNodeCliInspectArguments` on, which
+`script/package-test/inspectable-package.js` makes in `release/e2e/` and whose
+executable it prints: on macOS, a copy of the application signed again ad hoc;
+on Windows, a copy of the application that the installer installed; on Linux,
+an AppImage of a copy of `release/linux-unpacked`. The package itself is
+checked by the package test: its fuses, and its installation and launch,
+which do not use the inspector.
 
 ## What is still open
 
-With `runAsNode` and `enableNodeCliInspectArguments` on, other software can
-still run code as Photo Location Map, with `ELECTRON_RUN_AS_NODE=1` or
-`--inspect`. On macOS, such code has the application's permissions, such as
-to the folders that the user let it read. Turning off one without the other
-closes little.
+With `runAsNode` and `enableNodeCliInspectArguments` off, other software can
+no longer run its code as Photo Location Map, with `ELECTRON_RUN_AS_NODE=1` or
+`--inspect`, which on macOS would have the application's permissions, such as
+to the folders that the user let it read.
 
-- `runAsNode` can be turned off once the workers of the thumbnails are started
-  with Electron's `utilityProcess` rather than `child_process.fork`.
-- `enableNodeCliInspectArguments` can be turned off once the tests control the
-  application without the inspector, or test a package other than the one
-  released.
 - `grantFileProtocolExtraPrivileges` can be turned off once the main window's
   page is served from a protocol of the application's own (`protocol.handle`)
   rather than from `file:`.
