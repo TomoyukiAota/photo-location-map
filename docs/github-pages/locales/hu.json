@@ -1,0 +1,33 @@
+{
+  "language": "Nyelv",
+  "languageSearch": "Keresés",
+  "noLanguagesFound": "Nem található nyelv",
+  "useBrowserSetting": "A böngésző beállításának használata ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "A Photo Location Map ikonja",
+    "summary": "Térképen jeleníti meg, hol készültek a fotók.",
+    "downloadForWindows": "Letöltés Windowsra",
+    "downloadForMacos": "Letöltés macOS-re",
+    "photosHaveLocationData": "Az okostelefonnal készített fotók helyadatokat tartalmaznak (földrajzi szélesség és hosszúság).",
+    "showsLocationsOnMap": "Ez az alkalmazás kiolvassa a fotók helyadatait, és térképen jeleníti meg a helyeket.",
+    "supportedFileFormats": "Támogatott fájlformátumok:",
+    "troubleshooting": "Ha problémába ütközik az alkalmazás használata közben, tekintse meg a <link>hibaelhárítási oldalt</link>.",
+    "sourceCode": "A Photo Location Map forráskódja <link>a GitHubon érhető el</link>.",
+    "developedBy": "A Photo Location Map fejlesztője <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Szeretné megnézni az EXIF-adatokat?",
+    "photoDataViewer": "A <link>Photo Data Viewer</link> is elérhető.",
+    "analyticsNotice": "Ez a webhely használati adatokat gyűjt."
+  },
+  "downloading": {
+    "pageTitle": "A Photo Location Map letöltése",
+    "willStart": "A Photo Location Map letöltése hamarosan elindul. Ha nem indul el, kattintson <link>ide</link>.",
+    "howToInstall": "A telepítés menete",
+    "step1": "1. Kattintson duplán a letöltött exe fájlra.",
+    "step2": "2. Megjelenik a Windows Defender SmartScreen előugró ablaka. Kattintson a „További információ” (More info) hivatkozásra.",
+    "moreInfoImageAlt": "A Windows Defender SmartScreen képe (További információ)",
+    "step3": "3. Kattintson a „Futtatás mindenképpen” (Run anyway) gombra.",
+    "runAnywayImageAlt": "A Windows Defender SmartScreen képe (Futtatás mindenképpen)",
+    "step4": "4. Elindul a Photo Location Map telepítője. Kövesse a telepítő utasításait."
+  }
+}

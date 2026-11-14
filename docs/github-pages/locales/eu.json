@@ -1,0 +1,33 @@
+{
+  "language": "Hizkuntza",
+  "languageSearch": "Bilatu",
+  "noLanguagesFound": "Ez da hizkuntzarik aurkitu",
+  "useBrowserSetting": "Erabili nabigatzailearen ezarpena ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Photo Location Map-en ikonoa",
+    "summary": "Argazkiak non atera ziren erakusten du mapa batean.",
+    "downloadForWindows": "Deskargatu Windows-erako",
+    "downloadForMacos": "Deskargatu macOS-erako",
+    "photosHaveLocationData": "Telefono adimendunekin ateratako argazkiek kokapen-datuak dituzte (latitudea eta longitudea).",
+    "showsLocationsOnMap": "Aplikazio honek argazkietako kokapen-datuak irakurtzen ditu eta kokapenak mapa batean erakusten ditu.",
+    "supportedFileFormats": "Onartutako fitxategi-formatuak:",
+    "troubleshooting": "Aplikazio honekin arazorik baduzu, ikusi <link>arazoak konpontzeko orria</link>.",
+    "sourceCode": "Photo Location Map-en iturburu-kodea <link>GitHub-en dago eskuragarri</link>.",
+    "developedBy": "Photo Location Map-en garatzailea <link>Tomoyuki Aota</link> da.",
+    "wantExifData": "EXIF datuak ikusi nahi dituzu?",
+    "photoDataViewer": "<link>Photo Data Viewer</link> ere eskuragarri dago.",
+    "analyticsNotice": "Webgune honek erabilerari buruzko informazioa biltzen du."
+  },
+  "downloading": {
+    "pageTitle": "Photo Location Map deskargatzen",
+    "willStart": "Photo Location Map-en deskarga laster hasiko da. Hasten ez bada, egin klik <link>hemen</link>.",
+    "howToInstall": "Nola instalatu",
+    "step1": "1. Egin klik bikoitza deskargatutako exe fitxategian.",
+    "step2": "2. Windows Defender SmartScreen-en leiho gainerakorra agertuko da. Egin klik «Informazio gehiago» (More info) aukeran.",
+    "moreInfoImageAlt": "Windows Defender SmartScreen-en irudia (Informazio gehiago)",
+    "step3": "3. Egin klik «Exekutatu hala ere» (Run anyway) aukeran.",
+    "runAnywayImageAlt": "Windows Defender SmartScreen-en irudia (Exekutatu hala ere)",
+    "step4": "4. Photo Location Map-en instalatzailea abiaraziko da. Jarraitu instalatzailearen argibideei."
+  }
+}

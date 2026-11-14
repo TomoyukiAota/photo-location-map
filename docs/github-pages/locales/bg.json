@@ -1,0 +1,33 @@
+{
+  "language": "Език",
+  "languageSearch": "Търсене",
+  "noLanguagesFound": "Няма намерени езици",
+  "useBrowserSetting": "Използване на настройката на браузъра ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Икона на Photo Location Map",
+    "summary": "Показва на карта къде са направени снимките.",
+    "downloadForWindows": "Изтегляне за Windows",
+    "downloadForMacos": "Изтегляне за macOS",
+    "photosHaveLocationData": "Снимките, направени със смартфон, съдържат данни за местоположение (географска ширина и дължина).",
+    "showsLocationsOnMap": "Това приложение прочита данните за местоположение от снимките и показва на карта къде са направени.",
+    "supportedFileFormats": "Поддържани файлови формати:",
+    "troubleshooting": "Ако срещнете проблеми с това приложение, вижте <link>страницата за отстраняване на проблеми</link>.",
+    "sourceCode": "Изходният код на Photo Location Map е <link>публикуван в GitHub</link>.",
+    "developedBy": "Photo Location Map се разработва от <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Искате ли да прегледате данните EXIF?",
+    "photoDataViewer": "Налично е и <link>Photo Data Viewer</link>.",
+    "analyticsNotice": "Този уебсайт събира данни за използването."
+  },
+  "downloading": {
+    "pageTitle": "Изтегляне на Photo Location Map",
+    "willStart": "Изтеглянето на Photo Location Map ще започне след малко. Ако не започне, щракнете <link>тук</link>.",
+    "howToInstall": "Как се инсталира",
+    "step1": "1. Щракнете двукратно върху изтегления exe файл.",
+    "step2": "2. Ще се появи изскачащият прозорец на Windows Defender SmartScreen. Щракнете върху „Повече информация“ (More info).",
+    "moreInfoImageAlt": "Изображение на Windows Defender SmartScreen (Повече информация)",
+    "step3": "3. Щракнете върху „Изпълни въпреки това“ (Run anyway).",
+    "runAnywayImageAlt": "Изображение на Windows Defender SmartScreen (Изпълни въпреки това)",
+    "step4": "4. Ще се стартира инсталаторът на Photo Location Map. Следвайте инструкциите на инсталатора."
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "language": "Γλώσσα",
+  "languageSearch": "Αναζήτηση",
+  "noLanguagesFound": "Δεν βρέθηκαν γλώσσες",
+  "useBrowserSetting": "Χρήση της ρύθμισης του προγράμματος περιήγησης ({{language}})",
+  "landing": {
+    "pageTitle": "Photo Location Map",
+    "appIconAlt": "Εικονίδιο του Photo Location Map",
+    "summary": "Εμφανίζει σε χάρτη πού τραβήχτηκαν οι φωτογραφίες.",
+    "downloadForWindows": "Λήψη για Windows",
+    "downloadForMacos": "Λήψη για macOS",
+    "photosHaveLocationData": "Οι φωτογραφίες που τραβιούνται με smartphone περιέχουν δεδομένα τοποθεσίας (γεωγραφικό πλάτος και μήκος).",
+    "showsLocationsOnMap": "Αυτή η εφαρμογή διαβάζει τα δεδομένα τοποθεσίας από τις φωτογραφίες και εμφανίζει τις τοποθεσίες σε χάρτη.",
+    "supportedFileFormats": "Υποστηριζόμενες μορφές αρχείων:",
+    "troubleshooting": "Αν αντιμετωπίσετε προβλήματα με αυτή την εφαρμογή, δείτε <link>τη σελίδα αντιμετώπισης προβλημάτων</link>.",
+    "sourceCode": "Ο πηγαίος κώδικας του Photo Location Map <link>φιλοξενείται στο GitHub</link>.",
+    "developedBy": "Το Photo Location Map αναπτύσσεται από τον <link>Tomoyuki Aota</link>.",
+    "wantExifData": "Θέλετε να δείτε τα δεδομένα EXIF;",
+    "photoDataViewer": "Διατίθεται επίσης το <link>Photo Data Viewer</link>.",
+    "analyticsNotice": "Αυτός ο ιστότοπος συλλέγει δεδομένα χρήσης."
+  },
+  "downloading": {
+    "pageTitle": "Λήψη του Photo Location Map",
+    "willStart": "Η λήψη του Photo Location Map θα ξεκινήσει σε λίγο. Αν δεν ξεκινήσει, κάντε κλικ <link>εδώ</link>.",
+    "howToInstall": "Τρόπος εγκατάστασης",
+    "step1": "1. Κάντε διπλό κλικ στο αρχείο exe που κατεβάσατε.",
+    "step2": "2. Θα εμφανιστεί το αναδυόμενο παράθυρο του Windows Defender SmartScreen. Κάντε κλικ στο «Περισσότερες πληροφορίες» (More info).",
+    "moreInfoImageAlt": "Εικόνα του Windows Defender SmartScreen (Περισσότερες πληροφορίες)",
+    "step3": "3. Κάντε κλικ στο «Εκτέλεση οπωσδήποτε» (Run anyway).",
+    "runAnywayImageAlt": "Εικόνα του Windows Defender SmartScreen (Εκτέλεση οπωσδήποτε)",
+    "step4": "4. Θα ξεκινήσει το πρόγραμμα εγκατάστασης του Photo Location Map. Ακολουθήστε τις οδηγίες του προγράμματος εγκατάστασης."
+  }
+}
