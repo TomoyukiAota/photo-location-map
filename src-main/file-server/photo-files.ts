@@ -4,7 +4,7 @@ import * as path from 'path';
 import { pathToFileURL } from 'url';
 import { photoFilePathOf } from '../../src-shared/main-window-schemes.js';
 import { plmThumbnailCacheDir } from '../../src-shared/thumbnail/cache/thumbnail-cache-util.js';
-import { isInFolder, userChosenFolderPaths } from '../ipc/user-chosen-folders.js';
+import { userChosenFolderPaths } from '../ipc/user-chosen-folders.js';
 
 // TL;DR: The main window's page gets the user's photos and their thumbnails from plm-file:, which answers only for the
 // files of the folders that the user opened and for the thumbnails that the app made.
@@ -13,7 +13,9 @@ import { isInFolder, userChosenFolderPaths } from '../ipc/user-chosen-folders.js
 // not load at all ("Not allowed to load local resource"), and this scheme is the page's one way to a file, which the
 // main process answers as the other requests of the page about files are (src-main/ipc/user-chosen-folders.ts). The
 // paths are compared, and the file is read, with their links followed: a link in an opened folder to a file or a
-// folder elsewhere does not take the page there.
+// folder elsewhere does not take the page there. They are compared as they are, case and all: a real path has the
+// case of the file system, so that a path written in another case on a file system that ignores case comes to the
+// same, and two folders whose names differ in case only, on one that does not, stay two.
 
 /**
  * The real path of the file at `filePath`, with its links followed, if it is in one of `folders`, whose links are
@@ -25,7 +27,7 @@ export async function showablePathIn(filePath: string, folders: readonly string[
     return undefined;
   for (const folder of folders) {
     const realFolder = await realPath(folder);
-    if (realFolder && isInFolder(realFile, realFolder))
+    if (realFolder && isWithin(realFile, realFolder))
       return realFile;
   }
   return undefined;
@@ -55,6 +57,12 @@ export async function respondToPhotoFileRequest(request: Request, showable = sho
   if (!isFile)
     return notFound();
   return net.fetch(pathToFileURL(filePath).href, { bypassCustomProtocolHandlers: true });
+}
+
+/** Whether the real path `realFile` is the real path `realFolder`, or is in it. */
+function isWithin(realFile: string, realFolder: string): boolean {
+  const prefix = realFolder.endsWith(path.sep) ? realFolder : realFolder + path.sep;
+  return realFile === realFolder || realFile.startsWith(prefix);
 }
 
 function realPath(filePath: string): Promise<string | undefined> {

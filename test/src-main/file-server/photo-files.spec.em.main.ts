@@ -100,6 +100,21 @@ describe('The photos of the main window\'s page (in main process)', () => {
     assert.strictEqual(await shown.text(), 'photo');
   });
 
+  it('takes the case of a path as the file system does: one folder in any case where it ignores case, two where not', async () => {
+    const folder = path.join(root, 'Case');
+    fs.mkdirSync(folder);
+    fs.writeFileSync(path.join(folder, 'a.jpg'), 'photo');
+    const ignoresCase = fs.existsSync(path.join(root, 'case'));
+    if (ignoresCase) {
+      assert.strictEqual(await showablePathIn(path.join(root, 'case', 'A.JPG'), [folder]), fs.realpathSync.native(path.join(folder, 'a.jpg')));
+    } else {
+      fs.mkdirSync(path.join(root, 'case'));
+      fs.writeFileSync(path.join(root, 'case', 'secret.jpg'), 'not to be shown');
+      assert.strictEqual(await showablePathIn(path.join(root, 'case', 'secret.jpg'), [folder]), undefined);
+      assert.strictEqual(await showablePathIn(path.join(folder, 'a.jpg'), [folder]), fs.realpathSync.native(path.join(folder, 'a.jpg')));
+    }
+  });
+
   it('only reads', async () => {
     assert.strictEqual((await respond(photoFileUrl(photo), 'POST')).status, 405);
   });
