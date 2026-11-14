@@ -1,6 +1,7 @@
 import assert from 'assert';
 import * as path from 'path';
 import { pathToFileURL } from 'url';
+import { inspect } from 'util';
 import english from '../../../src-shared/i18n/locales/en.json' with { type: 'json' };
 import {
   handleUnhandledError,
@@ -90,7 +91,20 @@ describe('handleUnhandledError (in main process)', () => {
     assert.match(calls.messageBoxes[0].detail ?? '', /^Unhandled Promise Rejection\nNonError: \{ reason: 'not an error' \}\n/);
   });
 
-  it('writes the home folder as ~, in a path and in the file URL of a module, but not in another folder', () => {
+  it('logs, records and shows a value whose own inspection throws, without throwing', () => {
+    const { calls, use } = setUp();
+    const value = { [inspect.custom]: () => { throw new Error('The inspection failed.'); } };
+
+    assert.doesNotThrow(() => handleUnhandledError('Unhandled Promise Rejection', value, use));
+
+    const [[, logged]] = calls.logged;
+    assert.equal(logged.name, 'NonError');
+    assert.equal(logged.message, '[object that could not be inspected]');
+    assert.deepEqual(calls.recorded, [logged]);
+    assert.equal(calls.messageBoxes.length, 1);
+  });
+
+  it('writes the home folder as ~, itself, in a path and in the file URL of a module, but not a folder beside it', () => {
     const { calls, use } = setUp();
     const picture = path.join(home, 'Pictures', 'a.jpg');
     const moduleUrl = pathToFileURL(path.join(home, 'app', 'b.js')).href;
@@ -100,14 +114,20 @@ describe('handleUnhandledError (in main process)', () => {
       `Error: ENOENT: no such file or directory, open '${picture}'`,
       `    at load (${moduleUrl}:3:4)`,
       `    at read (${otherFolder}:5:6)`,
+      `    at scan (node:internal/fs:7:8), scanning ${home}`,
     ].join('\n')), use);
+    handleUnhandledError('Unhandled Error', errorWithStack(`Error: EACCES: permission denied, scandir '${home}'`), use);
 
-    assert.equal(calls.messageBoxes[0].detail, [
-      'Unhandled Error',
-      `Error: ENOENT: no such file or directory, open '${path.join('~', 'Pictures', 'a.jpg')}'`,
-      '    at load (~/app/b.js:3:4)',
-      `    at read (${otherFolder}:5:6)`,
-    ].join('\n'));
+    assert.deepEqual(calls.messageBoxes.map(box => box.detail), [
+      [
+        'Unhandled Error',
+        `Error: ENOENT: no such file or directory, open '${path.join('~', 'Pictures', 'a.jpg')}'`,
+        '    at load (~/app/b.js:3:4)',
+        `    at read (${otherFolder}:5:6)`,
+        '    at scan (node:internal/fs:7:8), scanning ~',
+      ].join('\n'),
+      'Unhandled Error\nError: EACCES: permission denied, scandir \'~\'',
+    ]);
   });
 
   it('shows the dialog in the application\'s language once the language is decided', () => {

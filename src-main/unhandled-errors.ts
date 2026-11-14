@@ -93,22 +93,31 @@ function showDialog(kind: UnhandledErrorKind, error: Error, use: UnhandledErrorH
 
 /** A value that a promise was rejected with, which need not be an error, as an error that says what it was. */
 class NonError extends Error {
-  constructor(value: unknown) {
-    super(inspect(value));
+  constructor(description: string) {
+    super(description);
     this.name = 'NonError';
     Error.captureStackTrace(this, NonError);
   }
 }
 
 function asError(value: unknown): Error {
-  return value instanceof Error ? value : new NonError(value);
+  try {
+    return value instanceof Error ? value : new NonError(inspect(value));
+  } catch {
+    // The value's own inspection threw, or a proxy's trap did: that must not keep the error from being handled.
+    return new NonError(`[${typeof value} that could not be inspected]`);
+  }
 }
 
-/** The text with the home folder written as ~, both as a path and as the file URL in a stack's frames. */
+/**
+ * The text with the home folder written as ~, both as a path and as the file URL in a stack's frames: the folder
+ * itself, and a path in it. The folder is followed by a separator, a quotation mark, a space, a closing bracket, a
+ * comma, a colon, a semicolon or the end of the text, so that a folder beside it whose name begins with the home
+ * folder's, as /home/someone-else does /home/someone's, keeps its path.
+ */
 function withHomeAsTilde(text: string, home: string): string {
   if (!home)
     return text;
-  return text
-    .split(`${pathToFileURL(home).href}/`).join('~/')
-    .split(`${home}${path.sep}`).join(`~${path.sep}`);
+  const forms = [pathToFileURL(home).href, home].map(form => form.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  return text.replace(new RegExp(`(?:${forms.join('|')})(?=[\\\\/'"\`\\s)\\]},:;]|$)`, 'g'), '~');
 }
