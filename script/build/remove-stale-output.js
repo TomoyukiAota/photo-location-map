@@ -34,13 +34,23 @@ function removeOutputBesideSources(folder) {
 }
 
 /**
+ * Whether `target` is a folder in `folder`, and not `folder` itself, by `pathModule`, which the test sets to
+ * path.win32. On Windows, a folder on another drive is relative to none of the repository's folders, and
+ * path.relative gives it as an absolute path.
+ */
+export function isFolderIn(folder, target, pathModule = path) {
+  const relative = pathModule.relative(folder, target);
+  return !!relative && relative !== '..' && !relative.startsWith(`..${pathModule.sep}`) && !pathModule.isAbsolute(relative);
+}
+
+/**
  * Removes the output of tsc beside the sources and, when given, the output folder `outputFolder` (relative to the
  * repository). Returns how many files beside the sources it removed.
  */
 export function removeStaleOutput(outputFolder) {
   if (outputFolder) {
     const target = path.resolve(root, outputFolder);
-    if (path.relative(path.join(root, 'out'), target).startsWith('..')) throw new Error(`Not a folder of out/: ${outputFolder}`);
+    if (!isFolderIn(path.join(root, 'out'), target)) throw new Error(`Not a folder of out/: ${outputFolder}`);
     fs.rmSync(target, { recursive: true, force: true });
   }
   return sourceFolders.reduce((count, folder) => count + removeOutputBesideSources(path.join(root, folder)), 0);
