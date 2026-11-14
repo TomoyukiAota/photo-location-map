@@ -1,9 +1,9 @@
-import * as fsExtra from 'fs-extra';
+import fsExtra from 'fs-extra';
 import decode from 'heic-decode';
-import * as workerpool from 'workerpool';
-import { Now } from '../../src-shared/date-time/now';
-import { resizeAndEncode } from './resize-and-encode';
-import { describeThumbnailError, ThumbnailFileGenerationArg, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result';
+import workerpool from 'workerpool';
+import { Now } from '../../src-shared/date-time/now.js';
+import { resizeAndEncode } from './resize-and-encode.js';
+import { describeThumbnailError, ThumbnailFileGenerationArg, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result.js';
 
 
 class WorkerLogger {

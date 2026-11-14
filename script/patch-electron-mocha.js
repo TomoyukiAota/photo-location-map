@@ -1,8 +1,7 @@
-'use strict';
-
-const { createHash } = require('node:crypto');
-const fs = require('node:fs');
-const path = require('node:path');
+import { createHash } from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 // TL;DR: Let the Electron-Mocha suites start on Windows from a checkout whose
 // path contains a space. Electron-Mocha 13.1.0 launches Electron through cmd.exe
@@ -38,7 +37,7 @@ const patches = [
   },
 ];
 
-function patchElectronMocha(root = path.dirname(require.resolve('electron-mocha/package.json'))) {
+export function patchElectronMocha(root = path.dirname(fileURLToPath(import.meta.resolve('electron-mocha/package.json')))) {
   const version = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')).version;
   if (version !== '13.1.0') {
     throw new Error(`Review the Electron-Mocha spawn workaround for version ${version}.`);
@@ -61,5 +60,5 @@ function patchElectronMocha(root = path.dirname(require.resolve('electron-mocha/
   }
 }
 
-module.exports = { patchElectronMocha };
-if (require.main === module) patchElectronMocha();
+// Run by postinstall; test/deprecation-warnings/ imports it to check the patch.
+if (import.meta.main) patchElectronMocha();

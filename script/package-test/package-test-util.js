@@ -1,5 +1,5 @@
-const fs = require('fs');
-const logger = require('../util/logger');
+import fs from 'fs';
+import logger from '../util/logger.js';
 
 class PackageTestUtil {
   printItemsInDirectory(directory) {
@@ -23,4 +23,4 @@ class PackageTestUtil {
   }
 }
 
-module.exports = new PackageTestUtil();
+export default new PackageTestUtil();

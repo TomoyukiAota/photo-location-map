@@ -1,7 +1,7 @@
-import assert = require('assert');
+import assert from 'assert';
 import { EventEmitter } from 'events';
 import type { WebContents } from 'electron';
-import { isAppPage, keepOnAppPage } from '../../../src-main/ipc/main-window-pages';
+import { isAppPage, keepOnAppPage } from '../../../src-main/ipc/main-window-pages.js';
 
 describe('The main window\'s pages (in main process)', () => {
   it('are the app\'s file at any route, however its path is escaped, as Node.js and Chromium escape differently', () => {

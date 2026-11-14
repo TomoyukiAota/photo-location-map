@@ -3,11 +3,12 @@ import { net, WebContents } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
 import { pathToFileURL } from 'url';
-import { Analytics } from '../../src-shared/analytics/analytics';
-import type { PhotoDataViewerPhoto } from '../../src-shared/photo-data-viewer/photo-data-viewer-bridge';
-import { PhotoDataViewerIpcPhotoParams } from '../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params';
-import { photoDataViewerLogger as logger } from '../../src-shared/photo-data-viewer/photo-data-viewer-logger';
-import { getPhotoDataViewerServerUrl } from './photo-data-viewer-server-config';
+import { Analytics } from '../../src-shared/analytics/analytics.js';
+import type { PhotoDataViewerPhoto } from '../../src-shared/photo-data-viewer/photo-data-viewer-bridge.js';
+import { PhotoDataViewerIpcPhotoParams } from '../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params.js';
+import { photoDataViewerLogger as logger } from '../../src-shared/photo-data-viewer/photo-data-viewer-logger.js';
+import { getPhotoDataViewerServerUrl } from './photo-data-viewer-server-config.js';
+import { logged } from '../../src-shared/log/logged-line.js';
 
 // TL;DR: How Photo Data Viewer's page, without Node.js, gets the photo of its window: a capability, a random token
 // for that photo, which only that window's page has and may use, from the viewer's origin, until the window leaves
@@ -161,7 +162,7 @@ export async function respondToPhotoRequest(request: Request): Promise<Response>
     // it decodes the URL with decodeURI, which keeps "%23" as it is.
     file = await net.fetch(pathToFileURL(capability.filePath).href, { bypassCustomProtocolHandlers: true });
   } catch (error) {
-    logger.warn(`The photo of Photo Data Viewer's window could not be read: ${(error as Error).message}`);
+    logger.warn(logged`The photo of Photo Data Viewer's window could not be read: ${error as Error}`);
     return new Response(null, { status: 404 });
   }
   return new Response(file.body, {

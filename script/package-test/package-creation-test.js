@@ -1,14 +1,15 @@
-const fs = require('fs');
-const path = require('path');
-const { execFileSync } = require('child_process');
-const logger = require('../util/logger');
-const runCommandSync = require('../util/run-command-sync');
-const builderConfig = require('../../electron-builder.json');
-const {
+import { execFileSync } from 'child_process';
+import fs from 'fs';
+import path from 'path';
+import builderConfig from '../../electron-builder.json' with { type: 'json' };
+import logger from '../util/logger.js';
+import runCommandSync from '../util/run-command-sync.js';
+import { checkElectronFuses, fuseWiresOf } from './electron-fuses.js';
+import {
   buildMinimumsOf, checkMacMinimumSystemVersion, checkWindowsMinimumSystemVersion, feedMinimumOf,
-} = require('./minimum-system-version');
-const testInfo = require('./package-test-info');
-const testUtil = require('./package-test-util');
+} from './minimum-system-version.js';
+import testInfo from './package-test-info.js';
+import testUtil from './package-test-util.js';
 
 class PackageCreationTest {
   createPackage() {
@@ -40,7 +41,7 @@ class PackageCreationTest {
       ['-extract', key, 'raw', '-o', '-', path.join(contents, 'Info.plist')], { encoding: 'utf8' }).trim();
     const icon = readPlist('CFBundleIconFile');
     const bundledIcon = fs.readFileSync(path.join(contents, 'Resources', icon));
-    const originalIcon = fs.readFileSync(path.join(__dirname, '../../src/favicon.icns'));
+    const originalIcon = fs.readFileSync(path.join(import.meta.dirname, '../../src/favicon.icns'));
     if (!bundledIcon.equals(originalIcon)) throw new Error('The packaged macOS icon differs from the original app icon.');
     const binaries = [path.join(contents, 'MacOS', readPlist('CFBundleExecutable')),
       path.join(contents, 'Frameworks/Electron Framework.framework/Electron Framework')];
@@ -61,6 +62,13 @@ class PackageCreationTest {
       + `as its minimum in Info.plist and latest-mac.yml (Electron needs ${electronMinimum}).`);
   }
 
+  testElectronFuses() {
+    logger.info(`Reading the fuses of "${testInfo.electronFuseBinary}".`);
+    const wires = fuseWiresOf(fs.readFileSync(testInfo.electronFuseBinary));
+    checkElectronFuses({ configured: builderConfig.electronFuses, wires });
+    logger.info(`The packaged Electron has the fuses of electron-builder.json${wires.length > 1 ? `, in each of the ${wires.length} halves of the binary` : ''}.`);
+  }
+
   testWindowsUpdateInfo() {
     if (process.platform !== 'win32') return;
     const minimum = builderConfig.win.releaseInfo?.vendor?.minimumSystemVersion;
@@ -75,10 +83,11 @@ class PackageCreationTest {
     logger.info('Start of package creation test.');
     this.createPackage();
     this.testIfPackagesExist();
+    this.testElectronFuses();
     this.testMacBundle();
     this.testWindowsUpdateInfo();
     logger.info('End of package creation test.');
   }
 }
 
-module.exports = new PackageCreationTest();
+export default new PackageCreationTest();

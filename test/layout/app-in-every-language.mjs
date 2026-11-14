@@ -144,7 +144,7 @@ for (const code of codes) {
   const env = { ...process.env, PLM_TEST_ROOT: profile, PLM_E2E: '1', PLM_TEST_HEADLESS: process.platform === 'linux' ? '0' : '1',
     PLM_TEST_SYSTEM_LANGUAGES: `${code},en-US` };
   for (const key of ['PLM_EM_MAIN', 'PLM_EM_RENDERER', 'ELECTRON_RUN_AS_NODE', 'NODE_OPTIONS']) delete env[key];
-  const app = await _electron.launch({ executablePath: require('electron'), args: ['test/e2e/main.cjs'], cwd: root, env, timeout: 30000 });
+  const app = await _electron.launch({ executablePath: require('electron'), args: ['test/e2e/main.mjs'], cwd: root, env, timeout: 30000 });
   results[code] = {};
   try {
     const page = await app.firstWindow();

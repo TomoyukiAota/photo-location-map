@@ -1,17 +1,17 @@
 import { app, BrowserWindow } from 'electron';
-import { isHeadlessTest, withHeadlessTestOptions } from '../../electron-util/e2e-test-hooks';
-import { photoDataViewerWebPreferences } from '../../electron-util/electron-web-preferences';
-import { PhotoDataViewerIpcParams } from '../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params';
-import { logWindowBounds, photoDataViewerLogger as logger } from '../../src-shared/photo-data-viewer/photo-data-viewer-logger';
-import { perfMark } from '../../src-shared/perf/perf-mark';
-import { openUrl } from '../../src-shared/url/open-url';
-import { addPhotoDataViewerWindow } from '../ipc/ipc-sender';
-import { recordWindowFailures } from '../record-window-failures';
-import { isWebPageUrl } from '../shell/open-with-os';
-import { grantPhoto, keepOnViewerPages } from './photo-delivery';
-import { trackOpeningPhotoDataViewer } from './photo-data-viewer-tracker';
-import { createPhotoDataViewerUrl } from './photo-data-viewer-url';
-import { PhotoDataViewerWindowState } from './photo-data-viewer-window-state';
+import { isHeadlessTest, withHeadlessTestOptions } from '../../electron-util/e2e-test-hooks.js';
+import { photoDataViewerWebPreferences } from '../../electron-util/electron-web-preferences.js';
+import { PhotoDataViewerIpcParams } from '../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params.js';
+import { logWindowBounds, photoDataViewerLogger as logger } from '../../src-shared/photo-data-viewer/photo-data-viewer-logger.js';
+import { perfMark } from '../../src-shared/perf/perf-mark.js';
+import { openUrl } from '../../src-shared/url/open-url.js';
+import { addPhotoDataViewerWindow } from '../ipc/ipc-sender.js';
+import { recordWindowFailures } from '../record-window-failures.js';
+import { isWebPageUrl } from '../shell/open-with-os.js';
+import { grantPhoto, keepOnViewerPages } from './photo-delivery.js';
+import { trackOpeningPhotoDataViewer } from './photo-data-viewer-tracker.js';
+import { createPhotoDataViewerUrl } from './photo-data-viewer-url.js';
+import { PhotoDataViewerWindowState } from './photo-data-viewer-window-state.js';
 
 /** Opens Photo Data Viewer's window for the photo of `ipcParams`, where the last one was, and shows it once loaded. */
 export async function launchPhotoDataViewer(ipcParams: PhotoDataViewerIpcParams) {

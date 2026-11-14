@@ -1,21 +1,22 @@
-import * as fsExtra from 'fs-extra';
+import fsExtra from 'fs-extra';
 import * as os from 'os';
 import * as pathModule from 'path';
 import physicalCpuCount from 'physical-cpu-count';
-import * as workerpool from 'workerpool';
-import * as _ from 'lodash';
-import { stringArrayToLogText } from '../../src-shared/log/multiline-log-text';
-import { perfMark } from '../../src-shared/perf/perf-mark';
-import { removeInvalidThumbnailCache } from '../../src-shared/thumbnail/cache/remove-invalid-thumbnail-cache';
-import { createThumbnailGenerationLogFile, getThumbnailFilePath } from '../../src-shared/thumbnail/cache/thumbnail-cache-util';
-import { thumbnailGenerationLogger as logger } from '../../src-shared/thumbnail/generation/thumbnail-generation-logger';
-import { ThumbnailFileGenerationArg, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result';
-import { ThumbnailFailures } from './thumbnail-failures';
+import workerpool from 'workerpool';
+import _ from 'lodash';
+import { stringArrayToLogText } from '../../src-shared/log/multiline-log-text.js';
+import { perfMark } from '../../src-shared/perf/perf-mark.js';
+import { removeInvalidThumbnailCache } from '../../src-shared/thumbnail/cache/remove-invalid-thumbnail-cache.js';
+import { createThumbnailGenerationLogFile, getThumbnailFilePath } from '../../src-shared/thumbnail/cache/thumbnail-cache-util.js';
+import { thumbnailGenerationLogger as logger } from '../../src-shared/thumbnail/generation/thumbnail-generation-logger.js';
+import { ThumbnailFileGenerationArg, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result.js';
+import { ThumbnailFailures } from './thumbnail-failures.js';
+import { logged } from '../../src-shared/log/logged-line.js';
 
 export function handleThumbnailGenerationIpcRequest(allHeifFilePaths: string[], heifFilePathsToGenerateThumbnail: string[]): void {
   if (!allHeifFilePaths || !heifFilePathsToGenerateThumbnail) {
     logger.error(`handleThumbnailGenerationIpcRequest should be called with string arrays.`);
-    logger.error(`allHeifFilePaths: ${allHeifFilePaths}, heifFilePathsToGenerateThumbnail: ${heifFilePathsToGenerateThumbnail}`,
+    logger.errorNotRecorded(`allHeifFilePaths: ${allHeifFilePaths}, heifFilePathsToGenerateThumbnail: ${heifFilePathsToGenerateThumbnail}`,
       allHeifFilePaths, heifFilePathsToGenerateThumbnail);
     return;
   }
@@ -31,7 +32,11 @@ export function handleThumbnailGenerationIpcRequest(allHeifFilePaths: string[], 
 
 class FileForWorker {
   private static _fileName = 'generate-thumbnail-file-worker.js';
-  private static _absoluteFilePath = pathModule.join(__dirname, this._fileName);
+  // In a package, the script is in app.asar. workerpool starts each worker with child_process.fork, and Electron runs
+  // the forked process as Node.js, which loads the script and its modules from the archive as the main process does:
+  // nothing is left out of the archive for it (docs/tasks/20261114_enable-asar/). fork needs Electron's fuse
+  // runAsNode, which electron-builder.json keeps on (docs/contributing/electron-fuses.md).
+  private static _absoluteFilePath = pathModule.join(import.meta.dirname, this._fileName);
   public static get absoluteFilePath() { return this._absoluteFilePath; }
 }
 
@@ -130,7 +135,8 @@ async function runWorkerForThumbnailGeneration(argArray: ThumbnailFileGeneration
         const isThumbnailFileCreated = await fsExtra.pathExists(arg.outputFilePath);
         logger.info(`Does the thumbnail file exist? -> ${isThumbnailFileCreated}`);
         if(!isThumbnailFileCreated) {
-          logger.warn(`Failed to create a thumbnail file since it does not exist after an attempt to create it.` +
+          // Recorded as a reason of failed thumbnails (thumbnail-failures.ts), below.
+          logger.warnNotRecorded(`Failed to create a thumbnail file since it does not exist after an attempt to create it.` +
             ` Attempted to create a thumbnail file "${arg.outputFilePath}" from "${arg.srcFilePath}". Error: ${error}`);
           failures.add(status ?? 'unknown', error);
         }
@@ -138,12 +144,12 @@ async function runWorkerForThumbnailGeneration(argArray: ThumbnailFileGeneration
       }, async error => {
         // The worker process failed and sent nothing back, such as when it crashed. The generation log file is still
         // written: the window counts a thumbnail as done by it, and without it would wait for this one for ever.
-        logger.error(`The worker for thumbnail generation failed for "${arg.srcFilePath}". error: ${error}`, error);
+        logger.errorNotRecorded(`The worker for thumbnail generation failed for "${arg.srcFilePath}". error: ${error}`, error);  // Recorded as "worker-failed", below.
         failures.add('worker-failed', error);
         try {
           await createThumbnailGenerationLogFile(arg.srcFilePath, arg.outputFileDir, false, logger);
         } catch (logFileError) {
-          logger.error(`Failed to write the thumbnail generation log file for "${arg.srcFilePath}".`, logFileError);
+          logger.error(logged`Failed to write the thumbnail generation log file for "${arg.srcFilePath}".`, logFileError);
         }
       });
   });

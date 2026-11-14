@@ -1,11 +1,11 @@
 import { BrowserWindow, MenuItemConstructorOptions } from 'electron';
-import { Analytics } from '../../src-shared/analytics/analytics';
-import { DevOrProd } from '../../src-shared/dev-or-prod/dev-or-prod';
-import { t } from '../../src-shared/i18n/i18n';
-import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
-import { Logger } from '../../src-shared/log/logger';
-import { mainWindow } from '../electron-main';
-import { selectionMenuTemplate } from './selection-menu';
+import { Analytics } from '../../src-shared/analytics/analytics.js';
+import { DevOrProd } from '../../src-shared/dev-or-prod/dev-or-prod.js';
+import { t } from '../../src-shared/i18n/i18n.js';
+import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
+import { Logger } from '../../src-shared/log/logger.js';
+import { mainWindow } from '../electron-main.js';
+import { selectionMenuTemplate } from './selection-menu.js';
 
 const handleOpenSettingsClicked = () => {
   // The versions in which the item was named "Manage Settings" recorded this event as 'Clicked "Manage Settings"':

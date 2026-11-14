@@ -1,4 +1,4 @@
-import { AnalyticsBackendEvent } from './analytics-backend-event';
+import { AnalyticsBackendEvent } from './analytics-backend-event.js';
 
 export interface AnalyticsBackendSenderOptions {
   /** Sends one batch. Resolves with the HTTP status; rejects when the request fails (e.g. offline). */
@@ -6,6 +6,8 @@ export interface AnalyticsBackendSenderOptions {
   setTimer: (callback: () => void, delayMs: number) => unknown;
   clearTimer: (timer: unknown) => void;
   logger: { info: (message: string) => void, warn: (message: string) => void };
+  /** Called when a batch is done with: sent, or dropped as it would fail again; not when it is to be retried. */
+  onBatchDone?: () => void;
 }
 
 // Decides when to send events to the analytics backend:
@@ -119,6 +121,7 @@ export class AnalyticsBackendSender {
     }
 
     this.retryDelayMs = 0;
+    this.options.onBatchDone?.();
     if (isCutShort)
       void this.send();
     else

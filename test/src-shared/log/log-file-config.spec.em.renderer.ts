@@ -1,5 +1,5 @@
-import assert = require('assert');
-import { LogFileConfig } from '../../../src-shared/log/file-config/log-file-config';
+import assert from 'assert';
+import { LogFileConfig } from '../../../src-shared/log/file-config/log-file-config.js';
 
 describe('LogFileConfig (in real Electron renderer)', () => {
   it('rejects setup outside the main process', () => {

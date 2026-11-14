@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import * as path from 'node:path';
-import { languages } from './languages';
-import en from './locales/en.json';
+import { languages } from './languages.js';
+import en from './locales/en.json' with { type: 'json' };
 
 // What a translation pull request is checked against (docs/TRANSLATING.md). Every file of locales/ is read from the
 // checkout, which the tests run in, so that one missing from languages.ts is found too.

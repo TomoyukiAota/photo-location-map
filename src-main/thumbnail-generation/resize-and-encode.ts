@@ -1,5 +1,5 @@
 import { Jimp, Bitmap } from 'jimp';
-import * as jpegJs from 'jpeg-js';
+import jpegJs from 'jpeg-js';
 
 export function resizeAndEncode(bitmap: Bitmap, quality: number) {
   // The bitmap constructor preserves Buffer view offsets; fromBitmap 1.6 does not.

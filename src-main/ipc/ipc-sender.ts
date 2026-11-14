@@ -16,7 +16,7 @@ let mainWindowContents: WebContents | undefined;
 
 /**
  * Records the main window, whose page alone may use the main window's operations. electron-mocha's renderer tests
- * record theirs, which runs the app's renderer code (test/em-renderer-main-setup.js).
+ * record theirs, which runs the app's renderer code (test/em-renderer-main-setup.ts).
  */
 export function setMainWindow(contents: WebContents | undefined): void {
   mainWindowContents = contents;

@@ -5,7 +5,7 @@
 // the key in its data-i18n attribute, and an attribute by the key in data-i18n-alt, data-i18n-content,
 // data-i18n-aria-label or data-i18n-placeholder. In a text, <link>…</link> is around the words of the element's link.
 // The pages themselves hold the English texts, which stay when a language's file cannot be fetched, as when a page is
-// opened from a disk; a test checks that they are those of en.json (test/website/website-texts.cjs).
+// opened from a disk; a test checks that they are those of en.json (test/website/website-texts.mjs).
 //
 // The language is, in this order: `lang` in the address (?lang=ja), which the links for search engines have; the one
 // chosen in the page's language picker before, which localStorage keeps; the first of the browser's languages that
@@ -16,7 +16,7 @@
   // in Latin letters by the alphabet, then those in other scripts. Each is under its own name, with its English name,
   // which the search of the list finds it by too. `rtl` is for a language written from right to left, which the page
   // is then laid out in. To add one, add its file to locales/ and its line here (docs/TRANSLATING.md). A test checks
-  // that these are languages of the application, in its order and under its names (test/website/website-texts.cjs).
+  // that these are languages of the application, in its order and under its names (test/website/website-texts.mjs).
   const languages = [
     { code: 'id', name: 'Bahasa Indonesia', englishName: 'Indonesian' },
     { code: 'ms', name: 'Bahasa Melayu', englishName: 'Malay' },

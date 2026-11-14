@@ -1,10 +1,10 @@
-import { DateTimeFormat } from '../date-time/date-time-format';
-import { isLanguageSetting, LanguageSetting, languageSettingAuto } from '../i18n/languages';
-import { Logger } from '../log/logger';
-import { restartApp } from '../process/restart-app';
-import { UserDataStorage } from '../user-data-storage/user-data-storage';
-import { UserDataStoragePath } from '../user-data-storage/user-data-stroage-path';
-import { BooleanSetting, BooleanSettingType } from './boolean-setting';
+import { DateTimeFormat } from '../date-time/date-time-format.js';
+import { isLanguageSetting, LanguageSetting, languageSettingAuto } from '../i18n/languages.js';
+import { Logger } from '../log/logger.js';
+import { restartApp } from '../process/restart-app.js';
+import { UserDataStorage } from '../user-data-storage/user-data-storage.js';
+import { UserDataStoragePath } from '../user-data-storage/user-data-stroage-path.js';
+import { BooleanSetting, BooleanSettingType } from './boolean-setting.js';
 import DateFormatType = DateTimeFormat.ForUser.DateFormatType;
 import ClockSystemFormatType = DateTimeFormat.ForUser.ClockSystemFormatType;
 

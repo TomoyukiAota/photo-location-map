@@ -1,5 +1,5 @@
-const child_process = require('child_process');
-const logger = require('./logger');
+import child_process from 'child_process';
+import logger from './logger.js';
 
 const runCommandSync = (command, startMsg, endMsg) => {
   logger.info(startMsg);
@@ -14,4 +14,4 @@ const runCommandSync = (command, startMsg, endMsg) => {
   logger.info(endMsg);
 };
 
-module.exports = runCommandSync;
+export default runCommandSync;

@@ -1,11 +1,11 @@
-import assert = require('assert');
+import assert from 'assert';
 import * as os from 'os';
 import {
   getOriginalFilePath,
   getThumbnailFilePath,
   getThumbnailLogFilePath,
   plmThumbnailCacheDir
-} from '../../../src-shared/thumbnail/cache/thumbnail-cache-util';
+} from '../../../src-shared/thumbnail/cache/thumbnail-cache-util.js';
 
 describe('ThumbnailCacheUtil', () => {
   describe('getThumbnailFilePath should return the thumbnail file path from the original file path', () => {

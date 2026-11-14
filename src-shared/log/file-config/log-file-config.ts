@@ -1,5 +1,5 @@
-import { ProcessIdentifier } from '../../process/process-identifier';
-import { startupMetadata } from '../../startup/startup-metadata';
+import { ProcessIdentifier } from '../../process/process-identifier.js';
+import { startupMetadata } from '../../startup/startup-metadata.js';
 
 interface LogFileConfigState {
   dirName: string;

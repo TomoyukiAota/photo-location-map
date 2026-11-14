@@ -1,14 +1,15 @@
-import { bridge } from '../../../../../src-shared/bridge/plm-bridge';
-import { ExifReadOutput, ExifReadResult } from '../../../../../src-shared/exif/exif-read-result';
-import { Logger } from '../../../../../src-shared/log/logger';
-import { DateTimeOriginal } from '../../model/date-time-original';
-import { Dimensions } from '../../model/dimensions.model';
-import { Exif } from '../../model/exif.model';
-import { GpsInfo } from '../../model/gps-info.model';
-import { LatLng } from '../../model/lat-lng.model';
-import { Thumbnail } from '../../model/thumbnail.model';
-import { rotateImage, getRotatedSize } from '../../image-rotation';
-import { exifPerfStats } from '../exif-perf-stats';
+import { bridge } from '../../../../../src-shared/bridge/plm-bridge.js';
+import { ExifReadOutput, ExifReadResult } from '../../../../../src-shared/exif/exif-read-result.js';
+import { Logger } from '../../../../../src-shared/log/logger.js';
+import { DateTimeOriginal } from '../../model/date-time-original.js';
+import { Dimensions } from '../../model/dimensions.model.js';
+import { Exif } from '../../model/exif.model.js';
+import { GpsInfo } from '../../model/gps-info.model.js';
+import { LatLng } from '../../model/lat-lng.model.js';
+import { Thumbnail } from '../../model/thumbnail.model.js';
+import { rotateImage, getRotatedSize } from '../../image-rotation.js';
+import { exifPerfStats } from '../exif-perf-stats.js';
+import { ExifReadError, exifReadFailures } from '../exif-read-failures.js';
 
 // exifr runs in the main process (src-main/exif/read-exif.ts), which also extracts the embedded thumbnail.
 // With exifr in the renderer process, 1) it is slower, and 2) loading files fails when many files are loaded.
@@ -29,11 +30,16 @@ export function fetchExifUsingExifr(filePath: string): Promise<Exif> {
   const exifPromise = fetchExifrParseOutput(filePath)
     .catch(error => {
       Logger.info(`[using exifr] Failed to fetch EXIF from ${filePath}`, error);
+      exifReadFailures.add('read-failed', error instanceof ExifReadError ? error.description : error);
       return null;
     })
     .then(async read => await createExifFromExifrParseOutput(read, filePath))
     .catch(error => {
       Logger.info(`[using exifr] Failed to create Exif class instance of ${filePath}`, error);
+      if (error instanceof ExifReadError)
+        exifReadFailures.add(error.status, error.description);
+      else
+        exifReadFailures.add('exif-failed', error);
       return null;
     })
     .finally(() => {
@@ -54,7 +60,7 @@ interface ExifrRead {
 async function fetchExifrParseOutput(filePath: string): Promise<ExifrRead | null> {
   const result = await readExifInMainProcess(filePath);
   if (result.parse === 'failed')
-    throw new Error(result.error);
+    throw new ExifReadError('read-failed', result.error);
 
   const read = result.parse === 'ok' ? { output: result.output, thumbnail: result.thumbnail, thumbnailError: result.thumbnailError } : null;
   Logger.info(`[using exifr] Fetched EXIF of ${filePath} `, read?.output);
@@ -93,7 +99,7 @@ async function createExifFromExifrParseOutput(read: ExifrRead | null, filePath: 
 
   // Extracting the thumbnail failed: the photo has no Exif, as when the renderer extracted it and exifr threw.
   if (read.thumbnailError)
-    throw new Error(read.thumbnailError);
+    throw new ExifReadError('thumbnail-failed', read.thumbnailError);
 
   const thumbnailBuffer = read.thumbnail;
   if (thumbnailBuffer) {
@@ -116,6 +122,7 @@ async function createThumbnail(thumbnailBuffer: Uint8Array, orientation: number,
     .then(rotatedImage => new Thumbnail(rotatedImage.objectUrl, rotatedImage.dimensions))
     .catch((errorEvent: ErrorEvent) => {
       Logger.info(`[using exifr] Failed to rotate the thumbnail of "${filePath}". ErrorEvent: `, errorEvent);
+      exifReadFailures.add('rotate-failed', errorEvent);
       return null;
     });
   return thumbnail;

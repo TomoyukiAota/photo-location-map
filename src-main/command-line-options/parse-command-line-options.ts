@@ -1,5 +1,5 @@
 import { Command, Option } from 'commander';
-import { commandLineOptionsValue } from './command-line-options-value';
+import { commandLineOptionsValue } from './command-line-options-value.js';
 
 /** Reads the application's options from its command line into `commandLineOptionsValue`, for the renderer to ask for. */
 export function parseCommandLineOptions() {

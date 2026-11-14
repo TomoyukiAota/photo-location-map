@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron';
-import { AnalyticsBackendWrapper } from '../../src-shared/analytics/library-wrapper/analytics-backend-wrapper';
-import { Logger } from '../../src-shared/log/logger';
-import { isFromMainWindow, isFromPhotoDataViewerWindow } from '../ipc/ipc-sender';
+import { AnalyticsBackendWrapper } from '../../src-shared/analytics/library-wrapper/analytics-backend-wrapper.js';
+import { Logger } from '../../src-shared/log/logger.js';
+import { isFromMainWindow, isFromPhotoDataViewerWindow } from '../ipc/ipc-sender.js';
 
 export class AnalyticsBackendIpcChannelName {
   // Photo Data Viewer also sends on this channel, from the window launch-photo-data-viewer.ts opens, so that its

@@ -1,4 +1,4 @@
-const runCommandSync = require('../util/run-command-sync');
+import runCommandSync from '../util/run-command-sync.js';
 
 const xcrunNotarytoolHistory = () => {
   const appleId = process.env.APPLE_ID;

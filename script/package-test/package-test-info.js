@@ -1,7 +1,15 @@
-const path = require('path');
-const { version } = require('../../package.json');
-const getLogDirectory = require('./get-log-directory');
-const getDiskImageTools = require('./disk-image-tools');
+import path from 'path';
+import packageJson from '../../package.json' with { type: 'json' };
+import getDiskImageTools from './disk-image-tools.js';
+import getLogDirectory from './get-log-directory.js';
+
+const { version } = packageJson;
+
+// The folder of the unpacked application that electron-builder leaves in release/ beside the installer or the
+// AppImage: win-unpacked or linux-unpacked for x64, its default arch, and such as linux-arm64-unpacked for another.
+function unpackedDirectory(platform) {
+  return global.process.arch === 'x64' ? `${platform}-unpacked` : `${platform}-${global.process.arch}-unpacked`;
+}
 
 class PackageTestInfo {
   constructor() {
@@ -23,6 +31,8 @@ class PackageTestInfo {
         this.executablePrelaunchCommand = `"${installerLocation}" /S`;
         this.installationDirectory = installationDirectory;
         this.executableLaunchCommand = `"${installationDirectory}\\Photo Location Map.exe"`;
+        // The binary whose fuses electron-builder set (script/package-test/electron-fuses.js).
+        this.electronFuseBinary = `${this.releaseDirectory}\\${unpackedDirectory('win')}\\Photo Location Map.exe`;
         break;
       }
       case 'darwin': {
@@ -41,6 +51,10 @@ class PackageTestInfo {
         // Used to quit the app and detach the dmg after the smoke test (PackageSmokeTest::cleanUpOnMacOs).
         this.dmgVolume = dmgVolume;
         this.appExecutablePath = `${dmgVolume}/Photo Location Map.app/Contents/MacOS/Photo Location Map`;
+        // The binary whose fuses electron-builder set (script/package-test/electron-fuses.js): Electron's framework,
+        // with the fuses of both halves of the universal application.
+        this.electronFuseBinary = `${this.releaseDirectory}/mac-universal/Photo Location Map.app/Contents/Frameworks/`
+          + 'Electron Framework.framework/Electron Framework';
         break;
       }
       case 'linux': {
@@ -50,12 +64,14 @@ class PackageTestInfo {
         this.packageCreationCommand = 'npm run package:linux';
         this.expectedPackageLocations = [`${this.releaseDirectory}/Photo Location Map-${version}${archSuffix}.AppImage`];
         this.executableLaunchCommand = `"${this.releaseDirectory}/Photo Location Map-${version}${archSuffix}.AppImage"`;
+        // The binary whose fuses electron-builder set (script/package-test/electron-fuses.js), named after package.json.
+        this.electronFuseBinary = `${this.releaseDirectory}/${unpackedDirectory('linux')}/photo-location-map`;
         break;
       }
       default:
-        throw new Error(`Unsupported platform for "${__filename}"`);
+        throw new Error(`Unsupported platform for "${import.meta.filename}"`);
     }
   }
 }
 
-module.exports = new PackageTestInfo();
+export default new PackageTestInfo();

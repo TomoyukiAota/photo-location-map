@@ -1,4 +1,4 @@
-import { currentLanguage, systemLanguage, t, tIn } from './i18n';
+import { currentLanguage, systemLanguage, t, tIn } from './i18n.js';
 
 // The tests run in English: the bridge's stand-in gives en-US as the operating system's language
 // (test/angular/bridge-double.ts), and no Language setting is saved.

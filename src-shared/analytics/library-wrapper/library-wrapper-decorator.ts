@@ -1,5 +1,5 @@
-import { DefaultCatch } from '../../decorator/catch';
-import { PrependedLogger } from '../../log/create-prepended-logger';
+import { DefaultCatch } from '../../decorator/catch.js';
+import { PrependedLogger } from '../../log/create-prepended-logger.js';
 
 export const AnalyticsLibraryWrapperInitialize = (logger: PrependedLogger) => {
   return DefaultCatch((error: any, ctx: any) => {

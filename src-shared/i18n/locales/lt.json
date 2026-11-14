@@ -35,7 +35,7 @@
   },
   "welcome": {
     "message": "Sveiki atvykę į „{{appName}}“",
-    "usageInfoCollection": "Siekiant tobulinti šią programą, renkama anoniminė naudojimo informacija. Toliau naudodami programą, su tuo sutinkate."
+    "usageInfoCollection": "Siekiant tobulinti šią programą, renkama naudojimo informacija. Toliau naudodami programą, su tuo sutinkate."
   },
   "about": {
     "releasesLink": "Atsisiuntimai ir leidimo pastabos",

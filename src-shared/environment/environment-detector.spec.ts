@@ -1,5 +1,5 @@
-import { EnvironmentDetector } from './environment-detector';
-import { ProcessIdentifier } from '../process/process-identifier';
+import { EnvironmentDetector } from './environment-detector.js';
+import { ProcessIdentifier } from '../process/process-identifier.js';
 
 describe('EnvironmentDetector (in Vitest)', () => {
   it('isVitest should be true', () => {

@@ -1,5 +1,5 @@
-import { Dimensions } from './model/dimensions.model';
-import { ThumbnailObjectUrlStorage } from './thumbnail-object-url-storage';
+import { Dimensions } from './model/dimensions.model.js';
+import { ThumbnailObjectUrlStorage } from './thumbnail-object-url-storage.js';
 
 export class RotatedImage {
   public objectUrl: string;

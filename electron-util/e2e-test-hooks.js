@@ -1,9 +1,16 @@
 // Fixed test support shared by checkout and packaged launches. No external code
 // is loaded from environment variables, and ordinary launches do not enter here.
+import { app, BrowserWindow, session } from 'electron';
+import fs from 'node:fs';
+import { createRequire } from 'node:module';
+import path from 'node:path';
+import zlib from 'node:zlib';
+import { photoDataViewerServerOverride as serverOverrideOf } from './photo-data-viewer-server-override.js';
+
 const testRoot = process.env.PLM_TEST_ROOT;
 const automated = process.env.PLM_E2E === '1';
 
-if (automated && (!testRoot || !require('node:path').isAbsolute(testRoot))) {
+if (automated && (!testRoot || !path.isAbsolute(testRoot))) {
   throw new Error('PLM_E2E requires an absolute PLM_TEST_ROOT.');
 }
 
@@ -44,17 +51,16 @@ if (automated && (!testRoot || !require('node:path').isAbsolute(testRoot))) {
 //   (webPreferences.offscreen) gave 60, but renders differently from the app as shipped.
 const headless = !!testRoot && process.env.PLM_TEST_HEADLESS === '1';
 const transparent = headless && process.platform === 'win32';
-exports.isHeadlessTest = headless;
-exports.withHeadlessTestOptions = options => headless ? {
+export const isHeadlessTest = headless;
+export const withHeadlessTestOptions = options => headless ? {
   ...options, show: false, ...(transparent ? { opacity: 0, type: 'toolbar', focusable: false } : {}),
   webPreferences: { ...options.webPreferences, backgroundThrottling: false },
 } : options;
 
 // A test can serve Photo Data Viewer from a local build (see photo-data-viewer-server-override.js).
-exports.photoDataViewerServerOverride = require('./photo-data-viewer-server-override').photoDataViewerServerOverride(process.env);
+export const photoDataViewerServerOverride = serverOverrideOf(process.env);
 
 if (testRoot) {
-  const { app, BrowserWindow, session } = require('electron');
   if (transparent) {
     app.commandLine.appendSwitch('disable-backgrounding-occluded-windows');
     // Show each window that withHeadlessTestOptions created. Electron emits this event before the
@@ -70,7 +76,9 @@ if (testRoot) {
     // These exact flags are added by Playwright, including its Linux default.
     const debuggingFlags = new Set(['--inspect=0', '--remote-debugging-port=0', '--no-sandbox']);
     process.argv = process.argv.filter((arg, index) => index === 0 || !debuggingFlags.has(arg));
-    globalThis.__plmTestRequire = require;
+    // The e2e suite and the performance harness load modules in the main process with this: Node's, Electron's, and
+    // the app's, which are ES modules that require() loads as well, as none awaits at its top.
+    globalThis.__plmTestRequire = createRequire(import.meta.url);
     // Record the calls that would show a hidden window by restoring a maximized or full-screen
     // state, for the e2e suite to check that none is made: on macOS, a window becomes full screen
     // only after a transition, which can still be under way when the suite looks at it.
@@ -90,7 +98,7 @@ if (testRoot) {
     if (!service || !details.uploadData) return;
     try {
       let body = Buffer.concat(details.uploadData.filter(part => part.bytes).map(part => part.bytes));
-      if (body[0] === 0x1f && body[1] === 0x8b) body = require('node:zlib').gunzipSync(body);
+      if (body[0] === 0x1f && body[1] === 0x8b) body = zlib.gunzipSync(body);
       let text = body.toString('utf8');
       if (service === 'mixpanel' && !text.startsWith('[') && !text.startsWith('{')) {
         const data = new URLSearchParams(text).get('data') || text;
@@ -178,7 +186,6 @@ if (testRoot) {
   // environment, so it writes its line too; the test tells the launches apart by their process IDs.
   const launchReport = process.env.PLM_TEST_LAUNCH_REPORT;
   if (launchReport) {
-    const path = require('node:path');
     const relative = path.relative(testRoot, launchReport);
     if (!path.isAbsolute(launchReport) || !relative || relative === '..' || relative.startsWith(`..${path.sep}`)
       || path.isAbsolute(relative)) {
@@ -205,7 +212,7 @@ if (testRoot) {
         }
         const line = JSON.stringify({ pid: process.pid, ppid: process.ppid, timeOriginMs: performance.timeOrigin,
           reportedAtMs: Date.now(), mainMarks: marksOf(performance.getEntriesByType('mark')), rendererMarks });
-        require('node:fs').appendFileSync(launchReport, line + '\n');
+        fs.appendFileSync(launchReport, line + '\n');
       };
       webContents.once('did-finish-load', () => { void poll(); });
     });

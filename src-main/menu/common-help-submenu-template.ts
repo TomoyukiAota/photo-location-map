@@ -1,12 +1,12 @@
 import { MenuItemConstructorOptions } from 'electron';
-import * as fsExtra from 'fs-extra';
-import { Analytics } from '../../src-shared/analytics/analytics';
-import { openWithAssociatedApp } from '../shell/open-with-os';
-import { t } from '../../src-shared/i18n/i18n';
-import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
-import { LogFileConfig } from '../../src-shared/log/file-config/log-file-config';
-import { Logger } from '../../src-shared/log/logger';
-import { mainWindow } from '../electron-main';
+import fsExtra from 'fs-extra';
+import { Analytics } from '../../src-shared/analytics/analytics.js';
+import { openWithAssociatedApp } from '../shell/open-with-os.js';
+import { t } from '../../src-shared/i18n/i18n.js';
+import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
+import { LogFileConfig } from '../../src-shared/log/file-config/log-file-config.js';
+import { Logger } from '../../src-shared/log/logger.js';
+import { mainWindow } from '../electron-main.js';
 
 const handleShowWelcomeDialogClicked = () => {
   Logger.info(`[Main Window Menu] Clicked "Show Welcome Dialog".`);

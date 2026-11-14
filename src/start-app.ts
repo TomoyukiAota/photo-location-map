@@ -56,6 +56,6 @@ async function bootstrap(): Promise<void> {
 // (recordErrorsOutsideAngular) are set during the start, so a failure before them, as of the map's base layers,
 // was only in the log file of the user's computer. The log file gets the message alone, so the error's stack is in it.
 bootstrap().catch(error => {
-  Logger.error(`The renderer failed to bootstrap: ${error instanceof Error ? error.stack ?? error.message : error}`, error);
+  Logger.errorNotRecorded(`The renderer failed to bootstrap: ${error instanceof Error ? error.stack ?? error.message : error}`, error);
   recordUnhandledError(error, 'Renderer');
 });

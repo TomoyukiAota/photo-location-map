@@ -1,9 +1,9 @@
 import * as childProcess from 'child_process';
 import * as path from 'path';
-import { Analytics } from '../../src-shared/analytics/analytics';
-import { scrubbedErrorLabel } from '../../src-shared/analytics/record-error';
-import { t } from '../../src-shared/i18n/i18n';
-import { Logger } from '../../src-shared/log/logger';
+import { Analytics } from '../../src-shared/analytics/analytics.js';
+import { scrubbedErrorLabel } from '../../src-shared/analytics/record-error.js';
+import { t } from '../../src-shared/i18n/i18n.js';
+import { Logger } from '../../src-shared/log/logger.js';
 
 /** A value of a registry key, `name` null for the key's default value. */
 export interface RegistryValue {
@@ -105,7 +105,7 @@ export async function addExplorerContextMenu(exePath: string, run: RunReg = runR
       await run(['add', key, ...(name === null ? ['/ve'] : ['/v', name]), '/t', 'REG_SZ', '/d', data, '/f']);
     }
   } catch (error) {
-    Logger.error(`[Registry] Failed to add the registry keys for the Explorer's context menu: ${failureText(error)}`);
+    Logger.errorNotRecorded(`[Registry] Failed to add the registry keys for the Explorer's context menu: ${failureText(error)}`);
     Analytics.trackEvent('Registry', '[Registry] Add Explorer Context Menu: Error', scrubbedErrorLabel(error));
     throw error;
   }
@@ -120,7 +120,7 @@ export async function removeExplorerContextMenu(run: RunReg = runReg): Promise<v
       await deleteKey(key, run);
     }
   } catch (error) {
-    Logger.error(`[Registry] Failed to delete the registry keys for the Explorer's context menu: ${failureText(error)}`);
+    Logger.errorNotRecorded(`[Registry] Failed to delete the registry keys for the Explorer's context menu: ${failureText(error)}`);
     Analytics.trackEvent('Registry', '[Registry] Remove Explorer Context Menu: Error', scrubbedErrorLabel(error));
     throw error;
   }

@@ -1,10 +1,10 @@
 import i18next from 'i18next';
-import { DevOrProd } from '../dev-or-prod/dev-or-prod';
-import { startupMetadata } from '../startup/startup-metadata';
-import { currentUserSettings } from '../user-settings/user-settings';
-import { defaultLanguage, getLanguage, LanguageCode, languages } from './languages';
-import { resolveLanguage, systemLanguageOf } from './resolve-language';
-import type { TranslationKey, TranslationValues } from './translation-key';
+import { DevOrProd } from '../dev-or-prod/dev-or-prod.js';
+import { startupMetadata } from '../startup/startup-metadata.js';
+import { currentUserSettings } from '../user-settings/user-settings.js';
+import { defaultLanguage, getLanguage, LanguageCode, languages } from './languages.js';
+import { resolveLanguage, systemLanguageOf } from './resolve-language.js';
+import type { TranslationKey, TranslationValues } from './translation-key.js';
 
 // TL;DR: The texts of the application, in the language it is shown in, for both processes: t() gives a text at
 // once, wherever it is called, even while a module is evaluated.

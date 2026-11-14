@@ -1,6 +1,7 @@
 import moment from 'moment';
 import 'moment-duration-format'; // To use moment.duration().format()
 import { Analytics } from '../../../../src-shared/analytics/analytics';
+import { scrubbedError } from '../../../../src-shared/analytics/record-error';
 import { Logger } from '../../../../src-shared/log/logger';
 
 export class OpenFolderRecorder {
@@ -22,8 +23,11 @@ export class OpenFolderRecorder {
     this.recordPerf('Success');
   }
 
-  public static fail(reason: any): void {
-    Logger.error(`Something went wrong after opening the folder ${this.openedFolderPath} : `, reason);
+  /** Records why a folder failed to open, without paths, then how long it took, as a folder that opened does. */
+  public static fail(reason: unknown): void {
+    Logger.errorNotRecorded(`Something went wrong after opening the folder ${this.openedFolderPath} : `, reason);
+    const { label, value } = scrubbedError(reason);
+    Analytics.trackEvent('Opened Folder Info', 'Opened Folder: Failed', label, value);
     this.recordPerf('Fail');
   }
 

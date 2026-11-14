@@ -1,7 +1,7 @@
 import * as path from 'path';
 import { Worker } from 'worker_threads';
-import type { DirectoryTreeResult } from '../../src-shared/bridge/plm-bridge';
-import { Logger } from '../../src-shared/log/logger';
+import type { DirectoryTreeResult } from '../../src-shared/bridge/plm-bridge.js';
+import { Logger } from '../../src-shared/log/logger.js';
 
 // TL;DR: The trees of opened folders, made in one worker thread of the main process, one folder at a time.
 // Details: Reading a folder's tree is synchronous (directory-tree) and takes seconds for a large folder, so it never
@@ -21,11 +21,13 @@ interface TreeWorker {
   pending: Map<number, Pending>;
 }
 
-let workerFile = path.join(__dirname, 'directory-tree-worker.js');
+// In a package, the script is in app.asar, from which the worker thread loads it and the modules that it imports, as
+// the main process does: nothing is left out of the archive for it (docs/tasks/20261114_enable-asar/).
+let workerFile = path.join(import.meta.dirname, 'directory-tree-worker.js');
 let current: TreeWorker | undefined;
 let nextId = 0;
 
-/** Uses another worker script, for tests that run the TypeScript sources. */
+/** Uses another worker script, for the tests: one that fails to start, or the app's own again. */
 export function useDirectoryTreeWorker(file: string): void {
   workerFile = file;
   stopDirectoryTreeWorker();

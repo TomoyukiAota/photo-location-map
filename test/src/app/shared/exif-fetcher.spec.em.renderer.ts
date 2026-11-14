@@ -1,15 +1,16 @@
-import { createDirectoryTree } from '../../../../src-shared/dir-tree/create-directory-tree';
-import assert = require('assert');
+import { createDirectoryTree } from '../../../../src-shared/dir-tree/create-directory-tree.js';
+import assert from 'assert';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { nearlyEqual } from '../../../test-util/number-comparison';
-import { ExifFetcher, PathExifPair } from '../../../../src/app/shared/exif-fetcher/exif-fetcher';
-import { fetchExifUsingExifr } from '../../../../src/app/shared/exif-fetcher/using-exifr/fetch-exif-using-exifr';
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const { jpegWithEmptyGpsValues } = require('../../../test-util/jpeg-with-empty-gps-values.cjs');
+import { nearlyEqual } from '../../../test-util/number-comparison.js';
+import { ExifFetcher, PathExifPair } from '../../../../src/app/shared/exif-fetcher/exif-fetcher.js';
+import { exifReadFailures } from '../../../../src/app/shared/exif-fetcher/exif-read-failures.js';
+import { fetchExifUsingExifr } from '../../../../src/app/shared/exif-fetcher/using-exifr/fetch-exif-using-exifr.js';
+import { repositoryPath } from '../../../test-util/repository.js';
+import { jpegWithEmptyGpsValues } from '../../../test-util/jpeg-with-empty-gps-values.mjs';
 
-const testResourceDirectory = path.join(__dirname, '..', '..', '..', 'test-resources');
+const testResourceDirectory = repositoryPath('test', 'test-resources');
 
 describe('fetchExifUsingExifr', () => {
   let directory: string;
@@ -31,6 +32,22 @@ describe('fetchExifUsingExifr', () => {
     const exif = await fetchExifUsingExifr(filePath);
     assert(exif !== null);
     assert.strictEqual(exif.gpsInfo, undefined);
+  });
+
+  it('should count a file that cannot be read by why, without its name', async () => {
+    const filePath = path.join(directory, 'Trip to Kyoto 0001.jpg');
+    fs.writeFileSync(filePath, 'not a photo');
+    exifReadFailures.clear();
+
+    assert.strictEqual(await fetchExifUsingExifr(filePath), null);
+    assert.strictEqual(await fetchExifUsingExifr(filePath), null);
+
+    const [reason, ...others] = exifReadFailures.reasons;
+    assert.deepStrictEqual(others, []);
+    assert.strictEqual(reason.files, 2);
+    assert.match(reason.reason, /^read-failed: /);
+    assert(!reason.reason.includes('Kyoto'), reason.reason);
+    assert(!reason.reason.includes(directory), reason.reason);
   });
 });
 

@@ -35,7 +35,7 @@
   },
   "welcome": {
     "message": "Tere tulemast rakendusse {{appName}}",
-    "usageInfoCollection": "Selle rakenduse täiustamiseks kogutakse anonüümset kasutusteavet. Rakenduse kasutamist jätkates nõustute sellega."
+    "usageInfoCollection": "Selle rakenduse täiustamiseks kogutakse kasutusteavet. Rakenduse kasutamist jätkates nõustute sellega."
   },
   "about": {
     "releasesLink": "Allalaadimised ja väljalaskemärkmed",

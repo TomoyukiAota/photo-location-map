@@ -1,7 +1,7 @@
-import { currentLanguage } from '../../src-shared/i18n/i18n';
-import { PhotoDataViewerIpcPhotoParams } from '../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params';
-import { currentUserSettings } from '../../src-shared/user-settings/user-settings';
-import { getPhotoDataViewerServerUrl } from './photo-data-viewer-server-config';
+import { currentLanguage } from '../../src-shared/i18n/i18n.js';
+import { PhotoDataViewerIpcPhotoParams } from '../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params.js';
+import { currentUserSettings } from '../../src-shared/user-settings/user-settings.js';
+import { getPhotoDataViewerServerUrl } from './photo-data-viewer-server-config.js';
 
 export function createPhotoDataViewerUrl(photo: PhotoDataViewerIpcPhotoParams): string {
   const searchParamsObj = {

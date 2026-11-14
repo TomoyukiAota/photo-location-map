@@ -1,8 +1,8 @@
 import windowStateKeeper from 'electron-window-state';
-import { isHeadlessTest } from '../electron-util/e2e-test-hooks';
-import { Analytics } from '../src-shared/analytics/analytics';
-import { Logger } from '../src-shared/log/logger';
-import { LaunchInfo } from './launch-info';
+import { isHeadlessTest } from '../electron-util/e2e-test-hooks.js';
+import { Analytics } from '../src-shared/analytics/analytics.js';
+import { Logger } from '../src-shared/log/logger.js';
+import { LaunchInfo } from './launch-info.js';
 
 const defaultConfig = {
   defaultWidth: 1000,

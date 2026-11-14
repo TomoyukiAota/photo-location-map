@@ -1,5 +1,5 @@
-import { createPrependedLogger } from '../log/create-prepended-logger';
-import { PhotoDataViewerIpcPhotoParams } from './photo-data-viewer-ipc-params';
+import { createPrependedLogger } from '../log/create-prepended-logger.js';
+import { PhotoDataViewerIpcPhotoParams } from './photo-data-viewer-ipc-params.js';
 
 export const photoDataViewerLogger = createPrependedLogger('[Photo Data Viewer]');
 

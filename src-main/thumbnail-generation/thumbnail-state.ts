@@ -1,7 +1,8 @@
 import * as fs from 'fs';
-import type { ThumbnailState } from '../../src-shared/bridge/plm-bridge';
-import { Logger } from '../../src-shared/log/logger';
-import { getThumbnailFilePath, getThumbnailLogFilePath } from '../../src-shared/thumbnail/cache/thumbnail-cache-util';
+import type { ThumbnailState } from '../../src-shared/bridge/plm-bridge.js';
+import { Logger } from '../../src-shared/log/logger.js';
+import { getThumbnailFilePath, getThumbnailLogFilePath } from '../../src-shared/thumbnail/cache/thumbnail-cache-util.js';
+import { logged } from '../../src-shared/log/logged-line.js';
 
 // TL;DR: Where the thumbnail of each HEIF file is, which the main window's page asks when it opens a folder and polls
 // while thumbnails are made: the checks of thumbnail-cache-util.ts, which the renderer made itself until the main
@@ -37,7 +38,7 @@ function thumbnailState(srcFilePath: string, paths: ThumbnailCachePaths): Thumbn
     const attemptFinished = lastModifiedMatchesLogFile(srcFilePath, paths.logFilePath(srcFilePath));
     return { attemptFinished, cacheAvailable: attemptFinished && fs.existsSync(thumbnailFilePath), thumbnailFilePath };
   } catch (error) {
-    Logger.warn(`Failed to check the thumbnail of "${srcFilePath}". error: ${error}`, error);
+    Logger.warn(logged`Failed to check the thumbnail of "${srcFilePath}". error: ${error}`, error);
     return { attemptFinished: false, cacheAvailable: false, thumbnailFilePath };
   }
 }
@@ -51,7 +52,7 @@ function lastModifiedMatchesLogFile(srcFilePath: string, logFilePath: string): b
   try {
     fileContentStr = fs.readFileSync(logFilePath, 'utf8');
   } catch (error) {
-    Logger.warn(`Failed to read the log file "${logFilePath}" which is the thumbnail generation result for "${srcFilePath}". error: ${error}`, error);
+    Logger.warn(logged`Failed to read the log file "${logFilePath}" which is the thumbnail generation result for "${srcFilePath}". error: ${error}`, error);
     return false;
   }
 
@@ -59,7 +60,7 @@ function lastModifiedMatchesLogFile(srcFilePath: string, logFilePath: string): b
   try {
     fileContentObj = JSON.parse(fileContentStr);
   } catch (error) {
-    Logger.warn(`Failed to parse the content of the log file "${logFilePath}" as JSON format. The log file is for thumbnail generation result of "${srcFilePath}". error: ${error}`, error);
+    Logger.warn(logged`Failed to parse the content of the log file "${logFilePath}" as JSON format. The log file is for thumbnail generation result of "${srcFilePath}". error: ${error}`, error);
     return false;
   }
 

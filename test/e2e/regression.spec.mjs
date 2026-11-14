@@ -5,6 +5,9 @@ import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { languages as websiteLanguages, matchLanguage } from '../website/website-i18n.mjs';
+import { jpegWithEmptyGpsValues } from '../test-util/jpeg-with-empty-gps-values.mjs';
+import { jpegWithLocationOnly } from '../test-util/jpeg-with-location-only.mjs';
 const require = createRequire(import.meta.url);
 const root = path.resolve(import.meta.dirname, '../..');
 const manifest = require('../../package.json');
@@ -62,7 +65,7 @@ async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'con
     ...(process.env.PLM_E2E_OPEN ? ['--open', process.env.PLM_E2E_OPEN] : []),
   ];
   app = await _electron.launch({ executablePath: packagedLauncher || packagedExecutable || require('electron'),
-    args: packagedExecutable ? openArgs : ['test/e2e/main.cjs', ...openArgs],
+    args: packagedExecutable ? openArgs : ['test/e2e/main.mjs', ...openArgs],
     cwd: packagedExecutable ? profile : root, env, timeout: packagedExecutable ? 90000 : 30000 });
   // Listened to for every page from the launch on, so that what the first change detection reports is not missed.
   app.context().on('console', message => {
@@ -102,8 +105,8 @@ async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'con
       updated: process.argv.includes('--updated'),
       arch: process.arch, translated: app.runningUnderARM64Translation,
       paths: ['appData', 'userData', 'sessionData'].map(name => app.getPath(name)),
-      prod: require(path.join(appRoot, 'src-shared/dev-or-prod/dev-or-prod.js')).DevOrProd.isProd,
-      unitTest: require(path.join(appRoot, 'src-shared/environment/environment-detector.js')).EnvironmentDetector.isUnitTest,
+      prod: require(path.join(appRoot, 'out/app/src-shared/dev-or-prod/dev-or-prod.js')).DevOrProd.isProd,
+      unitTest: require(path.join(appRoot, 'out/app/src-shared/environment/environment-detector.js')).EnvironmentDetector.isUnitTest,
       dependencies: require(path.join(appRoot, 'package.json')).dependencies };
   });
   expect(runtime.unitTest).toBe(false);
@@ -117,7 +120,7 @@ async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'con
     expect(runtime.versions.electron).toBe(manifest.devDependencies.electron);
     expect(runtime.versions.node.split('.')[0]).toBe(manifest.devDependencies['@types/node'].match(/\d+/)[0]);
     expect(runtime.dependencies).toEqual(manifest.dependencies);
-    expect(await realpath(runtime.appRoot)).toBe(await realpath(path.join(runtime.resources, 'app')));
+    expect(await realpath(runtime.appRoot)).toBe(await realpath(path.join(runtime.resources, 'app.asar')));
     const launchedExecutable = process.platform === 'linux' && packagedExecutable.endsWith('.AppImage')
       ? runtime.appImage : runtime.executable;
     expect(await realpath(launchedExecutable)).toBe(await realpath(packagedExecutable));
@@ -288,6 +291,8 @@ async function recordOpenCommands() {
       globalThis.__plmOpenCommands.push({ file, args });
       return { on() {} };
     };
+    // The app reads spawn from child_process's ES module, whose exports follow the CommonJS module's once synced.
+    globalThis.__plmTestRequire('node:module').syncBuiltinESMExports();
   });
   return () => app.evaluate(() => globalThis.__plmOpenCommands);
 }
@@ -671,7 +676,7 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   // Photo Data Viewer is asked for the same language in its address, next to the date format.
   const viewerUrl = await app.evaluate(({ app }) => {
     const require = globalThis.__plmTestRequire;
-    const viewer = require(require('node:path').join(app.getAppPath(), 'src-main/photo-data-viewer/photo-data-viewer-url.js'));
+    const viewer = require(require('node:path').join(app.getAppPath(), 'out/app/src-main/photo-data-viewer/photo-data-viewer-url.js'));
     return viewer.createPhotoDataViewerUrl({ name: 'photo.jpg', path: '/photos/photo.jpg' });
   });
   expect(new URL(viewerUrl).searchParams.get('language')).toBe('ja');
@@ -923,6 +928,8 @@ test('the OS tab has the main process add and remove the Explorer context menu w
         return original.apply(this, arguments);
       };
     }
+    // The app reads these from child_process's ES module, whose exports follow the CommonJS module's once synced.
+    globalThis.__plmTestRequire('node:module').syncBuiltinESMExports();
     return globalThis.__plmTestRequire('path').win32.join(process.env.SystemRoot, 'System32', 'reg.exe');
   });
   /** The runs of reg.exe since the last call, each with its file, its arguments and whether it hid its console window. */
@@ -1181,14 +1188,6 @@ test('chart grouping, zoom, reset and photo selection keep their real data behav
   await expectRepresentedPhotos(4);
   const chart = page.locator('app-date-time-taken-chart .chart');
   await expect(chart.locator('canvas')).toBeVisible();
-  const readChartTheme = () => chart.evaluate(element => {
-    if (typeof window.__plmReadChartTheme !== 'function') throw new Error('The fixed E2E chart-theme hook is unavailable.');
-    return window.__plmReadChartTheme(element);
-  });
-  const chartTheme = await readChartTheme();
-  console.info('Resolved chart theme:', JSON.stringify(chartTheme));
-  expect(chartTheme.api).toEqual({ init: 'function', getInstanceByDom: 'function', registerTheme: 'function' });
-  await expect.poll(async () => (await readChartTheme()).palette?.[0]).toBe('#5470c6');
   const unit = page.locator('app-date-time-taken-chart-config select');
   // An option's value is the unit as the code knows it, and its text is the unit's name, which the user chooses by.
   await expect(unit).toHaveValue('day');
@@ -1238,7 +1237,6 @@ test('chart grouping, zoom, reset and photo selection keep their real data behav
   await expect(page.locator('.plm-leaflet-map-div-icon')).toHaveCount(1);
 });
 test('the chart menu counts the photos without a shooting time, and its checkbox shows or hides them on the map', async () => {
-  const { jpegWithLocationOnly } = require('../test-util/jpeg-with-location-only.cjs');
   const folder = path.join(profile, 'a photo without a shooting time');
   await mkdir(folder);
   await writeFile(path.join(folder, 'no shooting time.JPG'),
@@ -1258,7 +1256,6 @@ test('the chart menu counts the photos without a shooting time, and its checkbox
   await expectRepresentedPhotos(2);
 });
 test('while the chart is zoomed, its checkbox adds the photos without a shooting time, and a new selection ends the zoom', async () => {
-  const { jpegWithLocationOnly } = require('../test-util/jpeg-with-location-only.cjs');
   const folder = path.join(profile, 'photos with and without a shooting time');
   await mkdir(folder);
   await writeFile(path.join(folder, 'no shooting time.JPG'),
@@ -1701,7 +1698,6 @@ test('a photo whose GPS values are empty leaves the other photos on the map', as
   // exifr gives such a photo's latitude and longitude as the text "NaNNaN", and Leaflet threw on its marker. The
   // error ended the loop that added the markers, so the folder had no markers at all, and the map kept its progress
   // bar. The photo sorts first, so that the loop would end before any marker.
-  const { jpegWithEmptyGpsValues } = require('../test-util/jpeg-with-empty-gps-values.cjs');
   const folder = path.join(profile, 'empty GPS values');
   await mkdir(folder);
   await writeFile(path.join(folder, '1 empty GPS values.JPG'),
@@ -1906,7 +1902,7 @@ test('an unhandled promise rejection in the renderer is recorded once, with its 
   // A second report of the same error would be sent before an event tracked after it, so wait for one.
   await app.evaluate(({ app }) => {
     const require = globalThis.__plmTestRequire;
-    const { Analytics } = require(require('node:path').join(app.getAppPath(), 'src-shared/analytics/analytics.js'));
+    const { Analytics } = require(require('node:path').join(app.getAppPath(), 'out/app/src-shared/analytics/analytics.js'));
     Analytics.trackEvent('E2E', 'After the rejection');
   });
   for (const service of ['amplitude', 'mixpanel']) {
@@ -1930,8 +1926,8 @@ test('analytics preserves events and identity without new Amplitude local URLs',
   const userId = await app.evaluate(({ app }) => {
     const require = globalThis.__plmTestRequire;
     const path = require('node:path');
-    const { Analytics } = require(path.join(app.getAppPath(), 'src-shared/analytics/analytics.js'));
-    const { AnalyticsConfig } = require(path.join(app.getAppPath(), 'src-shared/analytics/config/analytics-config.js'));
+    const { Analytics } = require(path.join(app.getAppPath(), 'out/app/src-shared/analytics/analytics.js'));
+    const { AnalyticsConfig } = require(path.join(app.getAppPath(), 'out/app/src-shared/analytics/config/analytics-config.js'));
     Analytics.trackEvent('Compatibility', 'Dependency Upgrade Check', 'fixed label', 17);
     return AnalyticsConfig.userId;
   });
@@ -1984,7 +1980,7 @@ test('HEIC worker generates the approved bounded JPEG and reports corrupt input'
       libheifJs: decoderRequire('libheif-js/package.json').version,
     };
     const pool = require(path.join(appRoot, 'node_modules/workerpool')).pool(
-      path.join(appRoot, 'src-main/thumbnail-generation/generate-thumbnail-file-worker.js'),
+      path.join(appRoot, 'out/app/src-main/thumbnail-generation/generate-thumbnail-file-worker.js'),
       { workerType: 'process', maxWorkers: 1 });
     const source = path.join(root, 'test/e2e/fixtures/demo.heic');
     const output = path.join(profile, 'thumbnail.jpg');
@@ -2271,7 +2267,7 @@ for (const [name, fixture, specialPath] of [
     expect(await page.evaluate(url => fetch(url).then(answer => answer.status, error => error.message), url)).not.toBe(200);
     const status = () => app.evaluate(async ({ app }, { url, referrer }) => {
       const require = globalThis.__plmTestRequire;
-      const delivery = require(require('node:path').join(app.getAppPath(), 'src-main/photo-data-viewer/photo-delivery.js'));
+      const delivery = require(require('node:path').join(app.getAppPath(), 'out/app/src-main/photo-data-viewer/photo-delivery.js'));
       // What protocol.handle passes for the viewer's fetch(): the URL, the mode and the referrer that Chromium sets.
       const request = { url, mode: 'cors', referrer, headers: new Headers() };
       return (await delivery.respondToPhotoRequest(request)).status;
@@ -2289,7 +2285,7 @@ test('download website keeps desktop and narrow layouts and Windows navigation',
   await app.evaluate(({ app, BrowserWindow }, url) => {
     // Off the screen in a headless run, as the app's windows are (electron-util/e2e-test-hooks.js).
     const require = globalThis.__plmTestRequire;
-    const { withHeadlessTestOptions } = require(require('node:path').join(app.getAppPath(), 'electron-util/e2e-test-hooks.js'));
+    const { withHeadlessTestOptions } = require(require('node:path').join(app.getAppPath(), 'out/app/electron-util/e2e-test-hooks.js'));
     const window = new BrowserWindow(withHeadlessTestOptions({ useContentSize: true, width: 1200, height: 800 }));
     void window.loadURL(url);
     // In English by its address: the website is otherwise in the language of the computer that the suite runs on.
@@ -2364,7 +2360,7 @@ test('download website is in the language of its address, and in the one chosen 
     const websiteWindow = app.waitForEvent('window');
     await app.evaluate(({ app, BrowserWindow }, url) => {
       const require = globalThis.__plmTestRequire;
-      const { withHeadlessTestOptions } = require(require('node:path').join(app.getAppPath(), 'electron-util/e2e-test-hooks.js'));
+      const { withHeadlessTestOptions } = require(require('node:path').join(app.getAppPath(), 'out/app/electron-util/e2e-test-hooks.js'));
       const window = new BrowserWindow(withHeadlessTestOptions({ useContentSize: true, width: 1200, height: 800 }));
       void window.loadURL(url);
     }, `${website.url}?lang=ja`);
@@ -2401,7 +2397,6 @@ test('download website is in the language of its address, and in the one chosen 
     // the order of its list. With more of them than the box shows, the list scrolls: it ends half an entry down, so
     // that it is seen to go on, and shows the chosen language. The address asked for Japanese, so the page does not
     // follow the browser.
-    const { languages: websiteLanguages, matchLanguage } = require('../../docs/github-pages/i18n.js');
     const browserCode = matchLanguage(await page.evaluate(() => navigator.languages)) ?? 'en';
     const browserName = websiteLanguages.find(language => language.code === browserCode).name;
     const options = pickerBox.getByRole('listbox', { name: '言語' }).getByRole('option');

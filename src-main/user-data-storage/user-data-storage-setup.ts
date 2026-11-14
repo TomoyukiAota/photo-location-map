@@ -1,9 +1,9 @@
 import { app, ipcMain } from 'electron';
-import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
-import { UserDataStorage } from '../../src-shared/user-data-storage/user-data-storage';
-import { assertFromMainWindow, isFromMainWindow } from '../ipc/ipc-sender';
-import { FileUserDataStorage } from './file-user-data-storage';
-import { rendererStorageSnapshot, writeFromRenderer } from './renderer-storage-requests';
+import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
+import { UserDataStorage } from '../../src-shared/user-data-storage/user-data-storage.js';
+import { assertFromMainWindow, isFromMainWindow } from '../ipc/ipc-sender.js';
+import { FileUserDataStorage } from './file-user-data-storage.js';
+import { rendererStorageSnapshot, writeFromRenderer } from './renderer-storage-requests.js';
 
 // TL;DR: The main process owns the settings' files. Imported right after the test profile, before anything reads them.
 // Details: Several modules read settings while they are evaluated (currentUserSettings, and analytics through the

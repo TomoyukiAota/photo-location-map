@@ -3,7 +3,7 @@
 // is tested by Electron-Mocha (test/electron-util/main-window-preload.spec.em.main.ts) and the Playwright suite.
 import * as os from 'node:os';
 import * as path from 'node:path';
-import type { PlmBridge, Unsubscribe } from '../../src-shared/bridge/plm-bridge';
+import type { PlmBridge, Unsubscribe } from '../../src-shared/bridge/plm-bridge.js';
 
 export function createBridgeDouble(temporaryRoot: string): PlmBridge {
   const listen = (): Unsubscribe => () => {};

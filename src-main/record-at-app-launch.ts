@@ -1,20 +1,21 @@
 import * as os from 'os';
 import { app, screen } from 'electron';
-import { Analytics } from '../src-shared/analytics/analytics';
-import { DateTimeFormat } from '../src-shared/date-time/date-time-format';
-import { DevOrProd } from '../src-shared/dev-or-prod/dev-or-prod';
-import { currentLanguage } from '../src-shared/i18n/i18n';
-import { IpcConstants } from '../src-shared/ipc/ipc-constants';
-import { Logger } from '../src-shared/log/logger';
-import { toLoggableString } from '../src-shared/log/to-loggable-string';
-import { UserDataStorage } from '../src-shared/user-data-storage/user-data-storage';
-import { UserDataStoragePath } from '../src-shared/user-data-storage/user-data-stroage-path';
-import { currentUserSettings } from '../src-shared/user-settings/user-settings';
-import { commandLineOptionsValue } from './command-line-options/command-line-options-value';
-import { mainWindow } from './electron-main';
-import { LaunchInfo } from './launch-info';
-import { StartupTime } from './startup-time';
-import { recordWindowState } from './window-config';
+import { Analytics } from '../src-shared/analytics/analytics.js';
+import { DateTimeFormat } from '../src-shared/date-time/date-time-format.js';
+import { DevOrProd } from '../src-shared/dev-or-prod/dev-or-prod.js';
+import { currentLanguage } from '../src-shared/i18n/i18n.js';
+import { IpcConstants } from '../src-shared/ipc/ipc-constants.js';
+import { Logger } from '../src-shared/log/logger.js';
+import { toLoggableString } from '../src-shared/log/to-loggable-string.js';
+import { UserDataStorage } from '../src-shared/user-data-storage/user-data-storage.js';
+import { UserDataStoragePath } from '../src-shared/user-data-storage/user-data-stroage-path.js';
+import { currentUserSettings } from '../src-shared/user-settings/user-settings.js';
+import { commandLineOptionsValue } from './command-line-options/command-line-options-value.js';
+import { recordLaunchesThatEndedAbnormally } from './launch/launch-file-setup.js';
+import { mainWindow } from './electron-main.js';
+import { LaunchInfo } from './launch-info.js';
+import { StartupTime } from './startup-time.js';
+import { recordWindowState } from './window-config.js';
 
 const recordAppLaunch = () => {
   Analytics.trackEvent('App Launch', `App Launch`);
@@ -169,6 +170,7 @@ export const recordAtAppLaunch = () => {
   recordOs();
   recordSystemInfo();
   recordLanguages();
+  recordLaunchesThatEndedAbnormally();
 
   recordDisplays();
   recordWindowState();

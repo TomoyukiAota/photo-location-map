@@ -1,7 +1,7 @@
 import { BrowserWindow } from 'electron';
-import { Analytics } from '../src-shared/analytics/analytics';
-import { recordUnhandledError } from '../src-shared/analytics/record-error';
-import { Logger } from '../src-shared/log/logger';
+import { Analytics } from '../src-shared/analytics/analytics.js';
+import { recordUnhandledError } from '../src-shared/analytics/record-error.js';
+import { Logger } from '../src-shared/log/logger.js';
 
 /** The windows whose failures are recorded, by the names that the events have. */
 export type RecordedWindow = 'Main Window' | 'Photo Data Viewer';
@@ -39,7 +39,7 @@ const recorders: WindowFailureRecorders = {
  */
 export function recordWindowFailures(window: BrowserWindow, windowName: RecordedWindow, record = recorders): void {
   window.webContents.on('preload-error', (_event, preloadPath, error) => {
-    Logger.error(`The preload of ${windowName} failed (${preloadPath}): ${error.stack ?? error.message}`);
+    Logger.errorNotRecorded(`The preload of ${windowName} failed (${preloadPath}): ${error.stack ?? error.message}`);
     record.recordError(error);
   });
 
@@ -50,7 +50,7 @@ export function recordWindowFailures(window: BrowserWindow, windowName: Recorded
       return;
     unresponsiveSince = record.now();
     recordedTimes++;
-    Logger.warn(`[Window Unresponsive] ${windowName} stopped answering.`);
+    Logger.warnNotRecorded(`[Window Unresponsive] ${windowName} stopped answering.`);
     if (recordedTimes <= maxUnresponsiveEventsPerWindow)
       record.trackEvent('Window Unresponsive', `Window Unresponsive: ${windowName}`);
   });

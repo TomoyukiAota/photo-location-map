@@ -1,4 +1,4 @@
-import { currentPlatform } from '../startup/startup-metadata';
+import { currentPlatform } from '../startup/startup-metadata.js';
 
 // 259 comes from MAX_PATH (i.e. 260) minus the terminating null character.
 // See https://stackoverflow.com/a/1880453/7947548

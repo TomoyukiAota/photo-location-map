@@ -1,5 +1,5 @@
 import moment from 'moment-timezone';
-import { Now } from './now';
+import { Now } from './now.js';
 
 describe('Now', () => {
   it('basicFormat should return valid date-time string', () => {

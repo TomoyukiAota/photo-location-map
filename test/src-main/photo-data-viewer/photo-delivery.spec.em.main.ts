@@ -1,11 +1,11 @@
-import assert = require('assert');
+import assert from 'assert';
 import { EventEmitter } from 'events';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { app, protocol, type WebContents } from 'electron';
-import { grantPhoto, isViewerPage, keepOnViewerPages, photoFor, photoMimeType, respondToPhotoRequest } from '../../../src-main/photo-data-viewer/photo-delivery';
-import { getPhotoDataViewerServerUrl } from '../../../src-main/photo-data-viewer/photo-data-viewer-server-config';
+import { grantPhoto, isViewerPage, keepOnViewerPages, photoFor, photoMimeType, respondToPhotoRequest } from '../../../src-main/photo-data-viewer/photo-delivery.js';
+import { getPhotoDataViewerServerUrl } from '../../../src-main/photo-data-viewer/photo-data-viewer-server-config.js';
 
 // A stand-in for the web contents of a window of Photo Data Viewer: its events are emitted by the test.
 class Contents extends EventEmitter {

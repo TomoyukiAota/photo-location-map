@@ -1,12 +1,12 @@
 import { ipcMain } from 'electron';
-import * as fsExtra from 'fs-extra';
+import fsExtra from 'fs-extra';
 import * as path from 'path';
-import type { OpenTarget } from '../../src-shared/bridge/plm-bridge';
-import { IpcConstants } from '../../src-shared/ipc/ipc-constants';
-import { Logger } from '../../src-shared/log/logger';
-import { assertFromMainWindow } from '../ipc/ipc-sender';
-import { rememberUserChosenFolder } from '../ipc/user-chosen-folders';
-import { commandLineOptionsValue } from './command-line-options-value';
+import type { OpenTarget } from '../../src-shared/bridge/plm-bridge.js';
+import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
+import { Logger } from '../../src-shared/log/logger.js';
+import { assertFromMainWindow } from '../ipc/ipc-sender.js';
+import { rememberUserChosenFolder } from '../ipc/user-chosen-folders.js';
+import { commandLineOptionsValue } from './command-line-options-value.js';
 
 /** What `--open` asks the app to open: the file or folder at `specifiedPath`, as it is now. */
 export async function openTargetOf(specifiedPath: string | undefined): Promise<OpenTarget> {

@@ -1,49 +1,56 @@
 // TL;DR: The order of the first imports matters: each sets up what the next ones use while they are evaluated.
-// Details: The test profile moves the app's folders; errors are scrubbed and logged from the start; the startup metadata
-// needs the log's location; the settings hold the analytics user ID and the language, which the texts of the menu and
-// the dialogs are in; analytics then sends what was tracked before.
-import '../electron-util/isolated-test-profile';
-import './analytics/error-scrubbing-setup';
-import './log/log-setup';
-import './startup/startup-metadata-setup';
-import './user-data-storage/user-data-storage-setup';
-import './i18n/i18n-setup';
-import { withHeadlessTestOptions } from '../electron-util/e2e-test-hooks';
-import './configure-electron-unhandled';
-import './command-line-options/configure-command-line-options';
-import './analytics/analytics-setup';
+// Details: The test profile moves the app's folders; errors are scrubbed, and handled from the start, so that an error
+// of the setups that follow is recorded; the launch's file is written before them too, so that a launch whose setup
+// fails and stops it before analytics are set is told at the next, which sends its error (src-main/launch/); the
+// startup metadata needs the log's location; the settings hold the analytics user ID, which the crash reporter's dumps
+// carry, and the language, which the texts of the menu and the dialogs are in; analytics then sends what was tracked
+// before.
+import '../electron-util/isolated-test-profile.js';
+import './analytics/error-scrubbing-setup.js';
+import './configure-electron-unhandled.js';
+import './launch/launch-file-setup.js';
+import './log/log-setup.js';
+import './startup/startup-metadata-setup.js';
+import './user-data-storage/user-data-storage-setup.js';
+import './crash-reporter-setup.js';
+import './i18n/i18n-setup.js';
+import { withHeadlessTestOptions } from '../electron-util/e2e-test-hooks.js';
+import './command-line-options/configure-command-line-options.js';
+import './analytics/analytics-setup.js';
 import { app, BrowserWindow, protocol } from 'electron';
-import { mainWindowWebPreferences } from '../electron-util/electron-web-preferences';
-import { LogFileConfig } from '../src-shared/log/file-config/log-file-config';
-import { Logger } from '../src-shared/log/logger';
-import { perfMark } from '../src-shared/perf/perf-mark';
-import './auto-update/configure-auto-update';
-import { getUrlForMainWindow } from './file-server/file-server';
-import './menu/menu';
-import './explorer-context-menu/explorer-context-menu-ipc-setup';
-import './photo-data-viewer/photo-data-viewer-ipc-setup';
+import { mainWindowWebPreferences } from '../electron-util/electron-web-preferences.js';
+import { recordUnhandledError } from '../src-shared/analytics/record-error.js';
+import { LogFileConfig } from '../src-shared/log/file-config/log-file-config.js';
+import { Logger } from '../src-shared/log/logger.js';
+import { perfMark } from '../src-shared/perf/perf-mark.js';
+import './auto-update/configure-auto-update.js';
+import { getUrlForMainWindow } from './file-server/file-server.js';
+import './menu/menu.js';
+import './explorer-context-menu/explorer-context-menu-ipc-setup.js';
+import './photo-data-viewer/photo-data-viewer-ipc-setup.js';
 // Before the app is ready, which registering its scheme requires.
-import './photo-data-viewer/photo-delivery-setup';
-import './exif/exif-ipc-setup';
-import './folder-dialog/folder-dialog-ipc-setup';
-import './directory-tree/directory-tree-ipc-setup';
-import './restart-ipc-setup';
-import './shell/shell-ipc-setup';
-import './thumbnail-generation/thumbnail-generation-ipc-setup';
-import './thumbnail-generation/thumbnail-cache-ipc-setup';
-import { startDirectoryTreeWorker } from './directory-tree/directory-tree-requests';
-import { setMainWindow } from './ipc/ipc-sender';
-import { keepOnAppPage } from './ipc/main-window-pages';
-import { configureMainWindowForAnalytics } from './configure-main-window-for-analytics';
-import { handleAppQuit } from './handle-app-quit';
-import { LiveReload } from './live-reload';
-import { configureLiveReload } from './configure-live-reload';
-import { recordAtAppLaunch } from './record-at-app-launch';
-import { configureRecordAtAppQuit } from './record-at-app-quit';
-import { configureRecordProcessGone } from './record-process-gone';
-import { recordWindowFailures } from './record-window-failures';
-import { StartupTime } from './startup-time';
-import { createMainWindowState } from './window-config';
+import './photo-data-viewer/photo-delivery-setup.js';
+import './exif/exif-ipc-setup.js';
+import './folder-dialog/folder-dialog-ipc-setup.js';
+import './directory-tree/directory-tree-ipc-setup.js';
+import './restart-ipc-setup.js';
+import './shell/shell-ipc-setup.js';
+import './thumbnail-generation/thumbnail-generation-ipc-setup.js';
+import './thumbnail-generation/thumbnail-cache-ipc-setup.js';
+import { startDirectoryTreeWorker } from './directory-tree/directory-tree-requests.js';
+import { setMainWindow } from './ipc/ipc-sender.js';
+import { keepOnAppPage } from './ipc/main-window-pages.js';
+import { configureMainWindowForAnalytics } from './configure-main-window-for-analytics.js';
+import { handleAppQuit } from './handle-app-quit.js';
+import { LiveReload } from './live-reload.js';
+import { configureLiveReload } from './configure-live-reload.js';
+import { recordAtAppLaunch } from './record-at-app-launch.js';
+import { recordConsoleErrors } from './record-console-errors.js';
+import { configureRecordAtAppQuit } from './record-at-app-quit.js';
+import { configureRecordProcessGone } from './record-process-gone.js';
+import { recordWindowFailures } from './record-window-failures.js';
+import { StartupTime } from './startup-time.js';
+import { createMainWindowState } from './window-config.js';
 
 
 Logger.info(`Log File Location: ${LogFileConfig.filePath}`);
@@ -95,7 +102,7 @@ const createWindow = async () => {
   mainWindow.on('closed', () => { mainWindow = null; });
 
   if (LiveReload.enabled) {
-    configureLiveReload(__filename);
+    await configureLiveReload(import.meta.filename);
   }
 
   const url = await getUrlForMainWindow();
@@ -104,6 +111,7 @@ const createWindow = async () => {
   keepOnAppPage(mainWindow.webContents, url);
   // A preload that throws leaves the page without its bridge, so that the page cannot write to the log itself.
   recordWindowFailures(mainWindow, 'Main Window');
+  recordConsoleErrors(mainWindow.webContents);
   mainWindow.loadURL(url);
 
   // Keep automated development checks on the application's CDP target.
@@ -164,10 +172,8 @@ try {
     });
   });
 } catch (e) {
-  Logger.error(e);
-  Logger.error('Fatal error occurred in main process. Photo Location Map is closing.');
-
-  // TODO: Handle error with electron-unhandled
-
+  Logger.errorNotRecorded(e);
+  Logger.errorNotRecorded('Fatal error occurred in main process. Photo Location Map is closing.');
+  recordUnhandledError(e, 'Main');
   process.exitCode = 1;
 }

@@ -1,6 +1,6 @@
-import * as fsExtra from 'fs-extra';
+import fsExtra from 'fs-extra';
 import * as path from 'path';
-import type { UserDataStorageBackend } from '../../src-shared/user-data-storage/user-data-storage';
+import type { UserDataStorageBackend } from '../../src-shared/user-data-storage/user-data-storage.js';
 
 /**
  * The settings' files, in the main process, which owns them: one JSON file per setting, under

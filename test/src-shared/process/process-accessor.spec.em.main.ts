@@ -1,5 +1,5 @@
-import assert = require('assert');
-import { ProcessAccessor } from '../../../src-shared/process/process-accessor';
+import assert from 'assert';
+import { ProcessAccessor } from '../../../src-shared/process/process-accessor.js';
 
 describe('ProcessAccessor (in main process in electron-mocha)', () => {
   it('getProcess() should return process', () => {

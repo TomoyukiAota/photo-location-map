@@ -1,4 +1,4 @@
-import { asyncFilter, asyncMap } from './async-util';
+import { asyncFilter, asyncMap } from './async-util.js';
 
 describe('AsyncUtil', () => {
   it('asyncMap should map objects', async () => {

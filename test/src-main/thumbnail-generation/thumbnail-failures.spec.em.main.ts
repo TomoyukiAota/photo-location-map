@@ -1,7 +1,7 @@
-import assert = require('assert');
+import assert from 'assert';
 import * as os from 'os';
 import * as path from 'path';
-import { maxRecordedReasons, ThumbnailFailures } from '../../../src-main/thumbnail-generation/thumbnail-failures';
+import { maxRecordedReasons, ThumbnailFailures } from '../../../src-main/thumbnail-generation/thumbnail-failures.js';
 
 describe('ThumbnailFailures', () => {
   it('should count the files of each reason, the most frequent first', () => {
@@ -46,5 +46,17 @@ describe('ThumbnailFailures', () => {
     assert.strictEqual(reasons.length, maxRecordedReasons);
     assert.strictEqual(reasons[0].reason, `failed-in-heic-convert: Error: reason ${maxRecordedReasons + 2}`);
     assert.strictEqual(reasons[0].files, maxRecordedReasons + 3);
+  });
+});
+
+describe('FailureReasons, which ThumbnailFailures is', () => {
+  it('should describe what is neither an error nor a text by its type, as an unhandled error is', () => {
+    class Event { public readonly isTrusted = true; }
+    const failures = new ThumbnailFailures();
+    failures.add('rotate-failed', new Event());
+    failures.clear();
+    failures.add('rotate-failed', new Event());
+
+    assert.deepStrictEqual(failures.reasons, [{ reason: 'rotate-failed: Event: {"isTrusted":true}', files: 1 }]);
   });
 });

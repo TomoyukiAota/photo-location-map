@@ -35,7 +35,7 @@
   },
   "welcome": {
     "message": "Welcome to {{appName}}",
-    "usageInfoCollection": "To improve this application, this application collects anonymous usage information. You agree to it by continuing to use this application."
+    "usageInfoCollection": "To improve this application, this application collects usage information. You agree to it by continuing to use this application."
   },
   "about": {
     "releasesLink": "Downloads and Release Notes",

@@ -2,7 +2,8 @@ import stylistic from '@stylistic/eslint-plugin';
 
 export default [{
   files: ['**/*.js'],
-  languageOptions: { ecmaVersion: 2022, sourceType: 'commonjs' },
+  // ES modules, with import attributes for JSON and await at the top.
+  languageOptions: { ecmaVersion: 'latest', sourceType: 'module' },
   plugins: { '@stylistic': stylistic },
   rules: {
     // Keep the pre-upgrade policy if recommended rules are composed here later.

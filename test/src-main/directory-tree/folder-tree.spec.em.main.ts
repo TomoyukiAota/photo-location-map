@@ -1,16 +1,17 @@
-import assert = require('assert');
+import assert from 'assert';
 import type { DirectoryTree } from 'directory-tree';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { createDirectoryTreeInWorker, stopDirectoryTreeWorker, useDirectoryTreeWorker } from '../../../src-main/directory-tree/directory-tree-requests';
-import { createFolderTree, livePhotosOf } from '../../../src-main/directory-tree/folder-tree';
-import { convertToFlattenedDirTree } from '../../../src-shared/dir-tree/dir-tree-util';
+import { createDirectoryTreeInWorker, stopDirectoryTreeWorker, useDirectoryTreeWorker } from '../../../src-main/directory-tree/directory-tree-requests.js';
+import { createFolderTree, livePhotosOf } from '../../../src-main/directory-tree/folder-tree.js';
+import { convertToFlattenedDirTree } from '../../../src-shared/dir-tree/dir-tree-util.js';
 
 describe('The tree of a folder (in main process)', () => {
   let root: string;
   let folder: string;
   let workerFiles: string;
+  const appWorker = path.join(import.meta.dirname, '..', '..', '..', 'src-main', 'directory-tree', 'directory-tree-worker.js');
 
   before(() => {
     root = fs.mkdtempSync(path.join(os.tmpdir(), 'plm-folder-tree-'));
@@ -18,13 +19,9 @@ describe('The tree of a folder (in main process)', () => {
     fs.mkdirSync(path.join(folder, 'day 2'), { recursive: true });
     for (const name of ['IMG_0001.JPG', 'IMG_0001.MOV', 'IMG_0002.HEIC', '.DS_Store', 'Thumbs.db', 'desktop.ini', path.join('day 2', 'IMG_0003.jpg'), path.join('day 2', '._IMG_0003.jpg'), path.join('day 2', 'IMG_0003.mp4')])
       fs.writeFileSync(path.join(folder, name), '');
-    // A worker that runs the TypeScript sources, as the tests do, and ones that fail.
+    // A worker that fails to start; the app's own is compiled with the tests (test/em.tsconfig.json).
     workerFiles = path.join(root, 'workers');
     fs.mkdirSync(workerFiles);
-    const project = path.join(__dirname, '..', '..', 'em-main.tsconfig.json');
-    const workerSource = path.join(__dirname, '..', '..', '..', 'src-main', 'directory-tree', 'directory-tree-worker.ts');
-    fs.writeFileSync(path.join(workerFiles, 'worker.js'), `require(${JSON.stringify(require.resolve('ts-node'))})`
-      + `.register({ transpileOnly: true, project: ${JSON.stringify(project)} });\nrequire(${JSON.stringify(workerSource)});\n`);
     fs.writeFileSync(path.join(workerFiles, 'failing-worker.js'), `throw new Error('The worker could not start.');\n`);
   });
 
@@ -81,7 +78,7 @@ describe('The tree of a folder (in main process)', () => {
   });
 
   it('makes the same tree in a worker thread', async () => {
-    useDirectoryTreeWorker(path.join(workerFiles, 'worker.js'));
+    useDirectoryTreeWorker(appWorker);
     assert.deepStrictEqual(await createDirectoryTreeInWorker(folder), createFolderTree(folder));
     // One request at a time, in the order sent.
     const [first, second] = await Promise.all([createDirectoryTreeInWorker(folder), createDirectoryTreeInWorker(path.join(folder, 'day 2'))]);
@@ -91,12 +88,12 @@ describe('The tree of a folder (in main process)', () => {
   it('fails the requests of a worker that fails, and starts another for the next request', async () => {
     useDirectoryTreeWorker(path.join(workerFiles, 'failing-worker.js'));
     await assert.rejects(createDirectoryTreeInWorker(folder), /The worker could not start/);
-    useDirectoryTreeWorker(path.join(workerFiles, 'worker.js'));
+    useDirectoryTreeWorker(appWorker);
     assert.deepStrictEqual(await createDirectoryTreeInWorker(folder), createFolderTree(folder));
   });
 
   it('fails the requests of a worker that is stopped, without failing those of the next one', async () => {
-    useDirectoryTreeWorker(path.join(workerFiles, 'worker.js'));
+    useDirectoryTreeWorker(appWorker);
     const stopped = createDirectoryTreeInWorker(folder);
     stopDirectoryTreeWorker();
     const next = createDirectoryTreeInWorker(folder);

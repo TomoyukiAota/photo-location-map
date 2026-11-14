@@ -1,4 +1,4 @@
-import { CommandLineOptions } from '../../src-shared/command-line-options/command-line-options';
+import { CommandLineOptions } from '../../src-shared/command-line-options/command-line-options.js';
 
 class CommandLineOptionsValue {
   private _value: CommandLineOptions;

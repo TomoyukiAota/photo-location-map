@@ -28,6 +28,7 @@ import { createServer } from 'node:http';
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { languages } from './website-i18n.mjs';
 
 const root = path.resolve(import.meta.dirname, '../..');
 const option = name => process.argv.slice(2).find(argument => argument.startsWith(`--${name}=`))?.slice(name.length + 3);
@@ -41,7 +42,6 @@ const PICTURE_WIDTHS = [390, 1000];
 
 const require = createRequire(import.meta.url);
 const { _electron } = require('playwright');
-const { languages } = require(path.join(root, 'docs/github-pages/i18n.js'));
 await mkdir(output, { recursive: true });
 
 const docs = path.join(root, 'docs');
@@ -62,7 +62,7 @@ const server = createServer(async (request, response) => {
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const base = `http://127.0.0.1:${server.address().port}/`;
 const profile = await mkdtemp(path.join(tmpdir(), 'plm-layout-website-'));
-const app = await _electron.launch({ executablePath: require('electron'), args: ['test/e2e/main.cjs'], cwd: root,
+const app = await _electron.launch({ executablePath: require('electron'), args: ['test/e2e/main.mjs'], cwd: root,
   env: { ...process.env, PLM_TEST_ROOT: profile, PLM_E2E: '1', PLM_TEST_HEADLESS: process.platform === 'linux' ? '0' : '1' } });
 
 /** The parts that are the same in every language are made low, so that a page's texts fill its picture. */
@@ -126,7 +126,7 @@ try {
   const opened = app.waitForEvent('window');
   await app.evaluate(({ app, BrowserWindow }) => {
     const require = globalThis.__plmTestRequire;
-    const { withHeadlessTestOptions } = require(require('node:path').join(app.getAppPath(), 'electron-util/e2e-test-hooks.js'));
+    const { withHeadlessTestOptions } = require(require('node:path').join(app.getAppPath(), 'out/app/electron-util/e2e-test-hooks.js'));
     const window = new BrowserWindow(withHeadlessTestOptions({ useContentSize: true, width: 1000, height: 900, minWidth: 100 }));
     window.webContents.setAudioMuted(true);
     globalThis.__websiteWindow = window;

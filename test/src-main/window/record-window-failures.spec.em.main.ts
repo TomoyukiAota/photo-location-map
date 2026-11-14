@@ -1,6 +1,6 @@
-import assert = require('assert');
+import assert from 'assert';
 import { EventEmitter } from 'events';
-import { maxUnresponsiveEventsPerWindow, recordWindowFailures, WindowFailureRecorders } from '../../../src-main/record-window-failures';
+import { maxUnresponsiveEventsPerWindow, recordWindowFailures, WindowFailureRecorders } from '../../../src-main/record-window-failures.js';
 
 describe('recordWindowFailures (in main process)', () => {
   /** A stand-in for a window, whose events the test emits, and for what records a failure. */

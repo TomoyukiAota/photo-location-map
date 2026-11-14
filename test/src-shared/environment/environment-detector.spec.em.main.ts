@@ -1,5 +1,5 @@
-import assert = require('assert');
-import { EnvironmentDetector } from '../../../src-shared/environment/environment-detector';
+import assert from 'assert';
+import { EnvironmentDetector } from '../../../src-shared/environment/environment-detector.js';
 
 describe('EnvironmentDetector (in main process in electron-mocha)', () => {
   it('isVitest should be false', () => {

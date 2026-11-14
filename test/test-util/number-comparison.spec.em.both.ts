@@ -1,5 +1,5 @@
-import assert = require('assert');
-import { nearlyEqual } from './number-comparison';
+import assert from 'assert';
+import { nearlyEqual } from './number-comparison.js';
 
 describe('NumberComparison', () => {
   describe('nearlyEqual', () => {

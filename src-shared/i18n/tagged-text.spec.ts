@@ -1,4 +1,4 @@
-import { splitAtTag } from './tagged-text';
+import { splitAtTag } from './tagged-text.js';
 
 describe('splitAtTag', () => {
   it('gives what is before, inside and after the tag', () => {

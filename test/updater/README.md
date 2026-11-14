@@ -1,10 +1,10 @@
 # Isolated Mac updater integration
 
-Run after the normal build has generated the current main/shared JavaScript:
+Run after the normal build has compiled the main process into `out/app`:
 
 ```sh
 mise exec -- npm run build:src-main
-mise exec -- node test/updater/run.cjs --report .upgrade-artifacts/updater-transport.json
+mise exec -- node test/updater/run.mjs --report .upgrade-artifacts/updater-transport.json
 ```
 
 The default ZIP is a deterministic, synthetic transport fixture. It contains no
@@ -12,7 +12,7 @@ application and cannot establish installation, signing or rollback behavior.
 To repeat the download checks with the final signed universal ZIP:
 
 ```sh
-mise exec -- node test/updater/run.cjs \
+mise exec -- node test/updater/run.mjs \
   --artifact 'release/Photo Location Map-1.12.2-alpha-universal-mac.zip' \
   --report .upgrade-artifacts/updater-final-zip.json
 ```
@@ -24,8 +24,10 @@ through a symlink, hard link or case-insensitive alias. The launcher rejects
 such collisions before starting the test. It creates and removes its own temporary
 profile, and passes no signing or publishing credentials to Electron.
 
-The test executes the actual compiled application version/startup guards in a
-VM with controlled dependencies. It separately exercises electron-updater 6's
+The test executes the application's version/startup guards in a VM with
+controlled dependencies: as they are ES modules, which Node loads once, their
+TypeScript is compiled into CommonJS for each run, with TypeScript's
+`transpileModule`. It separately exercises electron-updater 6's
 real `MacUpdater`, HTTP executor, generic loopback feed, availability policy,
 full ZIP download, SHA-512 verification, persistent cache reuse and corrupt
 checksum rejection. The generic provider does not apply GitHub's prerelease

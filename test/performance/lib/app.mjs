@@ -12,13 +12,27 @@ const require = createRequire(import.meta.url);
 export const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
 
 /**
- * The folder of a packaged app's own code, as electron-builder lays out a build without asar: the bundle's
- * Contents/Resources/app on macOS, and resources/app beside the executable on Windows and Linux.
+ * The archive of a packaged app's own code, as electron-builder makes it: app.asar in the folder of the app's
+ * resources, which is the bundle's Contents/Resources on macOS, and resources beside the executable on Windows and
+ * Linux.
+ */
+export function packagedAppArchive(executable, platform = process.platform) {
+  return inPackagedResources(executable, platform, 'app.asar');
+}
+
+/**
+ * The folder of a packaged app's own code, as electron-builder lays out a build without asar, as the builds before
+ * docs/tasks/20261114_enable-asar/ are: app, in the same folder as app.asar.
  */
 export function packagedAppRoot(executable, platform = process.platform) {
+  return inPackagedResources(executable, platform, 'app');
+}
+
+/** `name` in the folder of the resources of the packaged app whose executable is `executable`. */
+function inPackagedResources(executable, platform, name) {
   const paths = platform === 'win32' ? path.win32 : path.posix;
   const directory = paths.dirname(executable);
-  return platform === 'darwin' ? paths.join(directory, '..', 'Resources', 'app') : paths.join(directory, 'resources', 'app');
+  return platform === 'darwin' ? paths.join(directory, '..', 'Resources', name) : paths.join(directory, 'resources', name);
 }
 
 /** A temporary profile, which removeProfile deletes. */
@@ -48,7 +62,7 @@ export async function launch({ target, profile, viewerServer, env: extraEnv = {}
   const spawnMs = Date.now();
   const app = await _electron.launch({
     executablePath: target.executable ?? (target.checkout ? createRequire(path.join(target.checkout, 'package.json'))('electron') : require('electron')),
-    args: target.executable ? [] : ['test/e2e/main.cjs'],
+    args: target.executable ? [] : ['test/e2e/main.mjs'],
     cwd: target.executable ? profile : target.checkout ?? root,
     env,
     timeout: 90000,

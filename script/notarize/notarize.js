@@ -1,7 +1,8 @@
-const { notarize } = require('@electron/notarize');
-const logger = require('../util/logger');
+import { notarize } from '@electron/notarize';
+import logger from '../util/logger.js';
 
-exports.default = async function notarizing(context) {
+// electron-builder's afterSign hook (electron-builder.json), which it imports.
+export default async function notarizing(context) {
   const { electronPlatformName, appOutDir } = context;
   const appName = context.packager.appInfo.productFilename;
 
@@ -25,4 +26,4 @@ exports.default = async function notarizing(context) {
     teamId: process.env.APPLE_TEAM_ID,
   });
   logger.info('Finished notarization.');
-};
+}
