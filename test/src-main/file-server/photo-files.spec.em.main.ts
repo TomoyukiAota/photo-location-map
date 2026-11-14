@@ -20,7 +20,8 @@ describe('The photos of the main window\'s page (in main process)', () => {
     fs.mkdirSync(path.join(opened, 'day 1'), { recursive: true });
     fs.mkdirSync(path.join(root, 'outside'), { recursive: true });
     fs.mkdirSync(cache, { recursive: true });
-    photo = path.join(opened, 'day 1', 'IMG #1 50%?.jpg');
+    // Characters that an address would read otherwise, in a name that every file system takes (Windows takes no "?").
+    photo = path.join(opened, 'day 1', 'IMG #1 50%.jpg');
     fs.writeFileSync(photo, 'photo');
     fs.writeFileSync(path.join(root, 'outside', 'secret.jpg'), 'not to be shown');
     fs.writeFileSync(path.join(cache, 'IMG_0002.HEIC.plm.jpg'), 'thumbnail');
