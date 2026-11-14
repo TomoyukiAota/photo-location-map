@@ -35,7 +35,7 @@ class FileForWorker {
   // In a package, the script is in app.asar. workerpool starts each worker with child_process.fork, and Electron runs
   // the forked process as Node.js, which loads the script and its modules from the archive as the main process does:
   // nothing is left out of the archive for it (docs/tasks/20261114_enable-asar/). fork needs Electron's fuse
-  // runAsNode, which is on by default.
+  // runAsNode, which electron-builder.json keeps on (docs/contributing/electron-fuses.md).
   private static _absoluteFilePath = pathModule.join(__dirname, this._fileName);
   public static get absoluteFilePath() { return this._absoluteFilePath; }
 }

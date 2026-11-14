@@ -4,6 +4,7 @@ const { execFileSync } = require('child_process');
 const logger = require('../util/logger');
 const runCommandSync = require('../util/run-command-sync');
 const builderConfig = require('../../electron-builder.json');
+const { checkElectronFuses, fuseWiresOf } = require('./electron-fuses');
 const {
   buildMinimumsOf, checkMacMinimumSystemVersion, checkWindowsMinimumSystemVersion, feedMinimumOf,
 } = require('./minimum-system-version');
@@ -61,6 +62,13 @@ class PackageCreationTest {
       + `as its minimum in Info.plist and latest-mac.yml (Electron needs ${electronMinimum}).`);
   }
 
+  testElectronFuses() {
+    logger.info(`Reading the fuses of "${testInfo.electronFuseBinary}".`);
+    const wires = fuseWiresOf(fs.readFileSync(testInfo.electronFuseBinary));
+    checkElectronFuses({ configured: builderConfig.electronFuses, wires });
+    logger.info(`The packaged Electron has the fuses of electron-builder.json${wires.length > 1 ? `, in each of the ${wires.length} halves of the binary` : ''}.`);
+  }
+
   testWindowsUpdateInfo() {
     if (process.platform !== 'win32') return;
     const minimum = builderConfig.win.releaseInfo?.vendor?.minimumSystemVersion;
@@ -75,6 +83,7 @@ class PackageCreationTest {
     logger.info('Start of package creation test.');
     this.createPackage();
     this.testIfPackagesExist();
+    this.testElectronFuses();
     this.testMacBundle();
     this.testWindowsUpdateInfo();
     logger.info('End of package creation test.');
