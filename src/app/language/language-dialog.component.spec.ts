@@ -126,11 +126,11 @@ describe('LanguageDialogComponent', () => {
     expect(close).not.toHaveBeenCalled();
   });
 
-  it('records a new setting for analytics only once it is saved', async () => {
+  it('records a new setting for analytics once it is saved, at a second try as well', async () => {
     const trackEvent = vi.spyOn(Analytics, 'trackEvent');
     await choose('English');
     // Writing the Language setting itself fails.
-    vi.spyOn(UserDataStorage, 'write').mockImplementation(async storagePath => {
+    const write = vi.spyOn(UserDataStorage, 'write').mockImplementation(async storagePath => {
       if (storagePath === UserDataStoragePath.UserSettings.Language)
         throw new Error('The disk is full.');
     });
@@ -138,6 +138,14 @@ describe('LanguageDialogComponent', () => {
     await expect(fixture.componentInstance.onOkClicked()).rejects.toThrow('The disk is full.');
 
     expect(trackEvent).not.toHaveBeenCalledWith('User Setting', 'Changed User Setting', expect.anything());
+
+    // The button works again, and the second try saves the setting, which is then recorded, though the settings in
+    // use took it at the first try.
+    write.mockRestore();
+    await clickOk();
+
+    await vi.waitFor(() => expect(close).toHaveBeenCalledTimes(1));
+    expect(trackEvent).toHaveBeenCalledWith('User Setting', 'Changed User Setting', 'Language: en');
   });
 
   it('says in the chosen language that the application will restart, names its button in it, and restarts once the choice is saved', async () => {

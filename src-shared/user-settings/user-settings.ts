@@ -86,6 +86,14 @@ const loadUserSettings: (() => CurrentUserSettings) = () => {
 
 export const currentUserSettings = loadUserSettings();
 
+/**
+ * TL;DR: The Language setting as it was last loaded or saved, which a new one is recorded against for analytics.
+ * Details: Not the one of currentUserSettings, which takes a new setting before it is written, and keeps it when
+ * writing fails. The Language dialog lets its button be clicked again then, and a second try that saves the setting
+ * would be compared with itself, so that the change would never be recorded.
+ */
+let savedLanguage: LanguageSetting = currentUserSettings.language;
+
 export const getUserSettingsToBeSaved: (() => UserSettingsToBeSaved) = () => {
   return {...currentUserSettings};
 };
@@ -101,7 +109,6 @@ function updateCurrentUserSettings(settings: UserSettingsToBeSaved): void {
  * is in (src-main/record-at-app-launch.ts), the launch after the restart for a new language among them.
  */
 export const saveUserSetting: ((settings: UserSettingsToBeSaved) => Promise<void>) = async (settings: UserSettingsToBeSaved) => {
-  const isLanguageChanged = settings.language !== currentUserSettings.language;
   updateCurrentUserSettings(settings);
   await Promise.all([
     UserDataStorage.write(UserDataStoragePath.UserSettings.ShowStatusBar, settings.showStatusBar),
@@ -110,8 +117,10 @@ export const saveUserSetting: ((settings: UserSettingsToBeSaved) => Promise<void
     UserDataStorage.write(UserDataStoragePath.UserSettings.Language, settings.language),
   ]);
   Logger.info(`Saved user settings ${JSON.stringify(settings)}`);
-  if (isLanguageChanged)
+  if (settings.language !== savedLanguage) {
+    savedLanguage = settings.language;
     Analytics.trackEvent('User Setting', 'Changed User Setting', `Language: ${settings.language}`);
+  }
 };
 
 /**
