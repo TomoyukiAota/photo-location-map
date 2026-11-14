@@ -110,7 +110,8 @@ describe('The photos of the main window\'s page (in main process)', () => {
     forgetUserChosenFolders();
     assert.strictEqual(await showablePath(photo), undefined);
     rememberUserChosenFolder(opened);
-    assert.strictEqual(await showablePath(photo), fs.realpathSync(photo));
+    // The native real path, as fs.promises.realpath gives it: on Windows, with a short name of a folder (RUNNER~1) long.
+    assert.strictEqual(await showablePath(photo), fs.realpathSync.native(photo));
     assert.strictEqual(await showablePath(secret), undefined);
   });
 });
