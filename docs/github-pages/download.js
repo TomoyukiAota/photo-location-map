@@ -7,7 +7,7 @@ const download = (url) => {
   document.body.removeChild(a);
 };
 
-const version = '1.12.1';
+const version = '1.13.0';
 const downloadDirectory = `https://github.com/TomoyukiAota/photo-location-map/releases/download/v${version}`;
 const downloadLink = {
   win: `${downloadDirectory}/Photo-Location-Map-Setup-${version}.exe`,
