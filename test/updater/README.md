@@ -13,7 +13,7 @@ To repeat the download checks with the final signed universal ZIP:
 
 ```sh
 mise exec -- node test/updater/run.mjs \
-  --artifact 'release/Photo Location Map-1.12.2-alpha-universal-mac.zip' \
+  --artifact 'release/Photo-Location-Map-1.13.0-universal-mac.zip' \
   --report .upgrade-artifacts/updater-final-zip.json
 ```
 
