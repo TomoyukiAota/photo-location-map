@@ -200,7 +200,11 @@
   const settingOf = (code, follows) => (follows ? 'auto' : code);
   let languageSetting = settingOf(language, following);
   let languageInUse = language;
-  window.PhotoLocationMapWebsiteLanguage = { setting: () => languageSetting, inUse: () => languageInUse };
+  // `shown` is settled once the page is shown (show() below): in its language, or in English when the texts do not
+  // come in time. The Windows download page starts its download then (downloading-for-windows.html).
+  let pageShown;
+  const shown = new Promise((resolve) => { pageShown = resolve; });
+  window.PhotoLocationMapWebsiteLanguage = { setting: () => languageSetting, inUse: () => languageInUse, shown };
 
   const fetchTexts = async (code) => {
     const response = await fetch(new URL(`${code}.json`, localesUrl));
@@ -283,7 +287,10 @@
   // Details: The page holds the English texts, so a visitor whose language is Japanese would see them for a moment
   // before the Japanese ones replace them. When the texts do not come in time, the page is shown in English.
   const pendingClass = 'i18n-pending';
-  const show = () => root.classList.remove(pendingClass);
+  const show = () => {
+    root.classList.remove(pendingClass);
+    pageShown();
+  };
   if (language !== defaultLanguage) {
     root.classList.add(pendingClass);
     window.setTimeout(show, 1500);

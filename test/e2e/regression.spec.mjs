@@ -2429,6 +2429,13 @@ async function serveWebsite() {
     // there: an error thrown here would otherwise be a rejection that nothing handles.
     try {
       const { pathname } = new URL(request.url, 'http://127.0.0.1');
+      // The installer that a case has the Windows download page download in place of GitHub's: a file to save, as
+      // GitHub's is, which the browser downloads without leaving the page.
+      if (pathname === '/installer.exe') {
+        response.writeHead(200, { 'content-type': 'application/octet-stream', 'content-disposition': 'attachment; filename="installer.exe"' })
+          .end('not an installer');
+        return;
+      }
       const file = path.join(docs, decodeURIComponent(pathname.endsWith('/') ? `${pathname}index.html` : pathname));
       if (!file.startsWith(docs + path.sep)) {
         response.writeHead(403).end();
@@ -2452,7 +2459,8 @@ async function serveWebsite() {
     }));
     return release;
   };
-  return { url: `http://127.0.0.1:${server.address().port}/`, hold, close: () => new Promise(resolve => server.close(resolve)) };
+  const url = `http://127.0.0.1:${server.address().port}/`;
+  return { url, installer: `${url}installer.exe`, hold, close: () => new Promise(resolve => server.close(resolve)) };
 }
 test('download website is in the language of its address, and in the one chosen in its picker, on both of its pages', async () => {
   test.skip(!!packagedExecutable, 'The static website is verified separately from the packaged application.');
@@ -2762,16 +2770,12 @@ test('download website is in the language of its address, and in the one chosen 
     await chooseLanguage('日本語');
     await expect(page).toHaveURL(/\?lang=ja$/);
     expect(await page.evaluate(() => document.documentElement.dir)).toBe('ltr');
-    // TL;DR: That page is kept from starting its download here, which the case above checks.
-    // Details: A page served over HTTP starts the download by going to the installer's address, where the browser
-    // finds a file to save and stays on the page. The suite cancels that request, so the page would be replaced by
-    // the browser's error page before its texts are read.
-    await page.addInitScript(() => {
-      const click = HTMLAnchorElement.prototype.click;
-      HTMLAnchorElement.prototype.click = function () {
-        if (!this.hasAttribute('download')) click.call(this);
-      };
-    });
+    // TL;DR: That page starts its download as on GitHub Pages, and is in the chosen language all the same.
+    // Details: The page goes to the installer's address, where the browser finds a file to save and stays on the page.
+    // The suite cancels the requests for GitHub's installers, which would leave the page for the browser's error page,
+    // so the installer here is this server's (electron-util/e2e-test-hooks.js). Started while the page loaded, the
+    // download stopped the loading, and the page stayed in English, without its picker (downloading-for-windows.html).
+    await app.evaluate((_electron, installer) => { globalThis.__plmInstallerRedirect = installer; }, website.installer);
     await page.getByRole('link', { name: 'Windows 版をダウンロード' }).click();
     await expect(page).toHaveURL(/downloading-for-windows\.html$/);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('インストール方法');
@@ -2779,6 +2783,8 @@ test('download website is in the language of its address, and in the one chosen 
     await expect(page.locator('.windows-defender-more-info')).toHaveAttribute('alt', 'Windows Defender SmartScreen の画像（詳細情報）');
     await expect(page).toHaveTitle('Photo Location Map をダウンロード中');
     await expect(chosenOnButton).toHaveText('日本語');
+    await expect.poll(() => app.evaluate(() => globalThis.__plmDownloads.some(url => url.endsWith('/installer.exe')))).toBe(true);
+    await expect(page).toHaveURL(/downloading-for-windows\.html$/);
     await expect.poll(() => websiteEvents('Page Loaded'))
       .toEqual([expect.objectContaining({ page: 'downloading-for-windows', languageSetting: 'ja', languageInUse: 'ja' })]);
     await pickerButton.click();
@@ -2813,6 +2819,8 @@ test('download website is in the language of its address, and in the one chosen 
     await expect.poll(() => websiteEvents('Changed Language Setting'))
       .toEqual([expect.objectContaining({ languageSetting: 'ja', languageInUse: 'ja' })]);
   } finally {
+    // The other cases have the requests for GitHub's installers cancelled again.
+    await app.evaluate(() => { delete globalThis.__plmInstallerRedirect; }).catch(() => {});
     await website.close();
   }
 });

@@ -86,8 +86,18 @@
   <script src="../download.js"></script>
   <script src="../analytics.js" data-page="downloading-for-windows"></script>
   <script>
-      // Download Windows installer when this pages is loaded.
-      downloadForWindows('page')
+    // TL;DR: The Windows installer is downloaded once this page is loaded and shown in its language.
+    // Details: The download goes to the installer's address, a navigation that the browser turns into a download, and a
+    // navigation that starts while the page loads stops the loading. Started here at once, as it was, it left the page
+    // in English, without its language picker: the texts of the page's language were not put in, and the page did not
+    // get to DOMContentLoaded, which the picker waits for. ../i18n.js says when the page is shown, in its language or
+    // in English when the texts do not come in time.
+    const pageLoaded = new Promise((resolve) => {
+      if (document.readyState === 'complete') resolve();
+      else window.addEventListener('load', resolve, { once: true });
+    });
+    const pageShown = window.PhotoLocationMapWebsiteLanguage ? window.PhotoLocationMapWebsiteLanguage.shown : Promise.resolve();
+    Promise.all([pageLoaded, pageShown]).then(() => downloadForWindows('page'));
   </script>
 </body>
 </html>
