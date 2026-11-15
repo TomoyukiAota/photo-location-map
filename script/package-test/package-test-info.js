@@ -37,9 +37,10 @@ class PackageTestInfo {
       }
       case 'darwin': {
         // The dmg is the package to install the application manually, and the zip is the package which electron-updater
-        // requires in the release to auto-update on macOS. Both of them need to be created.
-        const dmgLocation = `${this.releaseDirectory}/Photo Location Map-${version}-universal.dmg`;
-        const zipLocation = `${this.releaseDirectory}/Photo Location Map-${version}-universal-mac.zip`;
+        // requires in the release to auto-update on macOS. Both of them need to be created. electron-builder.json names
+        // them without a space, for the reason in test/package-test/package-names.mjs.
+        const dmgLocation = `${this.releaseDirectory}/Photo-Location-Map-${version}-universal.dmg`;
+        const zipLocation = `${this.releaseDirectory}/Photo-Location-Map-${version}-universal-mac.zip`;
         const dmgVolume = `/Volumes/Photo Location Map ${version}-universal`;
         this.packageCreationCommand = 'npm run package:mac';
         this.expectedPackageLocations = [dmgLocation, zipLocation];
