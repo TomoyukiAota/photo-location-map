@@ -170,6 +170,13 @@ if (testRoot) {
       captureAnalytics(details);
       if (details.url.includes('github.com/TomoyukiAota/photo-location-map/releases/download/')) {
         globalThis.__plmDownloads.push(details.url);
+        // A test that serves an installer of its own has the page download it, and stay, as GitHub's installer has it:
+        // a cancelled request leaves the page for the browser's error page (the website's cases in
+        // test/e2e/regression.spec.mjs). will-download above records and cancels that download.
+        if (globalThis.__plmInstallerRedirect) {
+          callback({ redirectURL: globalThis.__plmInstallerRedirect });
+          return;
+        }
       }
       callback({ cancel: true });
     });
