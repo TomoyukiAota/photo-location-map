@@ -38,10 +38,11 @@ const names = ['Photo Location Map', 'Photo Data Viewer', 'Windows Defender Smar
   'Windows', 'macOS', 'exe'];
 const oneLine = text => text.replace(/\s+/g, ' ').trim();
 
-/** The element of a page that has `attribute="key"`: its opening tag, and what is between that and its closing tag. */
-function elementWith(html, attribute, key) {
-  const at = html.indexOf(`${attribute}="${key}"`);
-  assert.notEqual(at, -1, `${attribute}="${key}" is in no page`);
+/**
+ * The element of a page whose opening tag has an attribute at `at`: its opening tag, and what is between that and its
+ * closing tag.
+ */
+function elementAt(html, at) {
   const start = html.lastIndexOf('<', at);
   const end = html.indexOf('>', at);
   const openingTag = html.slice(start, end + 1);
@@ -50,11 +51,15 @@ function elementWith(html, attribute, key) {
   return { openingTag, content: closing === -1 ? '' : html.slice(end + 1, closing) };
 }
 
-/** Which keys the pages ask for, by the attribute that asks: data-i18n for a text, data-i18n-alt for an attribute. */
+/**
+ * Which keys the pages ask for, by the attribute that asks: data-i18n for a text, data-i18n-alt for an attribute. Each
+ * is where it asks, as several elements can ask for one key, as the description and og:description do.
+ */
 function keysOfPages() {
   const keys = [];
   for (const [page, html] of Object.entries(pages)) {
-    for (const [, attribute, key] of html.matchAll(/(data-i18n(?:-[a-z-]+)?)="([^"]+)"/g)) keys.push({ page, html, attribute, key });
+    for (const { 1: attribute, 2: key, index } of html.matchAll(/(data-i18n(?:-[a-z-]+)?)="([^"]+)"/g))
+      keys.push({ page, html, attribute, key, at: index });
   }
   return keys;
 }
@@ -84,8 +89,8 @@ describe('The texts of the website (docs/github-pages/locales)', () => {
   });
 
   it('are, in English, what the pages themselves hold, which is shown when a file cannot be fetched', () => {
-    for (const { page, html, attribute, key } of keysOfPages()) {
-      const { openingTag, content } = elementWith(html, attribute, key);
+    for (const { page, html, attribute, key, at } of keysOfPages()) {
+      const { openingTag, content } = elementAt(html, at);
       const inPage = attribute === 'data-i18n'
         // The element's one link stands for <link>…</link> in the text.
         ? oneLine(content.replace(/<a\b[^>]*>([\s\S]*?)<\/a>/, '<link>$1</link>')).replace(/&quot;/g, '"')
@@ -183,6 +188,27 @@ describe('The landing page in each language (docs/<code>/index.html, written by 
     assert.deepEqual(linksOf(documentOf(written.get('index.html'))), { canonical: site, alternates });
     for (const { code, document } of pagesInLanguages)
       assert.deepEqual(linksOf(document), { canonical: addressOf(code), alternates }, code);
+  });
+
+  it('is previewed in social networks and chats with the application\'s icon, its title and its summary, in its language (Open Graph)', () => {
+    const icon = 'docs-resources/app-icon-512x512.png';
+    // A copy of the application's icon, as the website is the files of docs/: a change of the icon is to change it too.
+    const png = fs.readFileSync(path.join(docs, icon));
+    assert.deepEqual(png, fs.readFileSync(path.join(docs, '../src/favicon.512x512.png')), `docs/${icon} is a copy of src/favicon.512x512.png`);
+    assert.deepEqual([png.readUInt32BE(16), png.readUInt32BE(20)], [512, 512], 'the width and height in the PNG\'s header');
+    const tagsOf = document => Object.fromEntries([...document.querySelectorAll('meta[property^="og:"], meta[name^="twitter:"]')]
+      .map(meta => [meta.getAttribute('property') ?? meta.getAttribute('name'), meta.getAttribute('content')]));
+    const pages = [{ code: null, document: documentOf(written.get('index.html')) }, ...pagesInLanguages];
+    for (const { code, document } of pages) {
+      const texts = code ? flatten(read(`${code}.json`)) : english;
+      const text = key => texts[key] ?? english[key];
+      assert.deepEqual(tagsOf(document), {
+        'og:type': 'website', 'og:site_name': 'Photo Location Map', 'og:title': text('landing.pageTitle'),
+        'og:description': text('landing.summary'), 'og:url': addressOf(code), 'og:image': `${site}${icon}`,
+        'og:image:type': 'image/png', 'og:image:width': '512', 'og:image:height': '512', 'og:image:alt': text('landing.appIconAlt'),
+        'twitter:card': 'summary',
+      }, code ?? 'the landing page as it is');
+    }
   });
 
   it('says its language to i18n.js, links to the download page in it, and has the addresses of the landing page from its folder', () => {
