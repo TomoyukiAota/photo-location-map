@@ -1,5 +1,6 @@
 import assert from 'assert';
 import childProcess from 'child_process';
+import fs from 'fs';
 import { syncBuiltinESMExports } from 'module';
 import path from 'path';
 import {
@@ -7,6 +8,7 @@ import {
   RegFailure, removeExplorerContextMenu, runReg,
 } from '../../../src-main/explorer-context-menu/explorer-context-menu.js';
 import { Logger } from '../../../src-shared/log/logger.js';
+import { repositoryPath } from '../../test-util/repository.js';
 
 const exePath = 'C:\\Users\\Someone\\AppData\\Local\\Programs\\Photo Location Map\\Photo Location Map.exe';
 const fileKey = 'HKCU\\Software\\Classes\\*\\shell\\OpenWithPhotoLocationMap';
@@ -48,6 +50,27 @@ describe('Explorer context menu (in main process)', () => {
       { key: backgroundKey, name: 'icon', data: exePath },
       { key: `${backgroundKey}\\command`, name: null, data: `"${exePath}" --open "%V"` },
     ]);
+  });
+
+  it('is deleted by the uninstaller, the same keys in the same order, unless it runs for an update', () => {
+    // electron-builder includes the script by its name, and electron-builder.json names it as well, so that a package
+    // build fails without it (build/installer.nsh).
+    const builderConfig = JSON.parse(fs.readFileSync(repositoryPath('electron-builder.json'), 'utf8'));
+    assert.equal(builderConfig.nsis.include, 'build/installer.nsh');
+    const script = fs.readFileSync(repositoryPath('build', 'installer.nsh'), 'utf8');
+    // NSIS joins a line that ends with a backslash, a comment's too, to the next one, which then does not run.
+    assert.deepEqual(script.split(/\r?\n/).filter(line => line.endsWith('\\')), []);
+    const macro = script.match(/^!macro customUnInstall\r?\n([\s\S]*?)^!macroend/m)?.[1];
+    assert.ok(macro, 'build/installer.nsh defines the macro customUnInstall.');
+    // Up to the next line of LogicLib, such as ${endIf}: one such as ${else} or ${orIf} before the keys would have them
+    // deleted on an update.
+    const notUpdated = macro.match(/^ *\$\{ifNot\} \$\{isUpdated\}\r?\n([\s\S]*?)^[ \t]*\$\{/m)?.[1];
+    assert.ok(notUpdated, 'customUnInstall deletes the keys first thing inside ${ifNot} ${isUpdated}.');
+    assert.deepEqual([...notUpdated.matchAll(/^ *DeleteRegKey HKCU "([^"]+)"\r?$/gm)].map(match => `HKCU\\${match[1]}`),
+      explorerContextMenuKeys);
+    // Nothing else in the file deletes a key: not on an update as well, and not more than the menu, as a path cut short
+    // would. NSIS takes its instructions in any case, indented with spaces or tabs.
+    assert.equal(script.match(/^[ \t]*DeleteRegKey\b/gim)?.length, explorerContextMenuKeys.length);
   });
 
   it('adds each value with reg.exe, in order', async () => {

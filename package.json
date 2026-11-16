@@ -56,6 +56,7 @@
     "test:unit:all": "npm-run-all test:unit:ng test:unit:em:both",
     "test:package-runner": "node --test test/package-test/run.mjs test/package-test/minimum-system-version.mjs test/package-test/disk-image-tools.mjs test/package-test/electron-fuses.mjs test/package-test/package-names.mjs",
     "test:package": "npm run test:package-runner && cross-env PLM_PACKAGE_TEST=true node ./script/package-test/run-package-test.js",
+    "test:uninstaller": "node ./script/package-test/uninstaller-test.js",
     "test:e2e": "playwright test -c test/e2e/playwright.config.mjs",
     "test:live-reload": "npm run build:src-main && node ./test/live-reload/run.mjs",
     "test:dependency-compat": "node --test test/deprecation-warnings/electron-mocha.mjs",
