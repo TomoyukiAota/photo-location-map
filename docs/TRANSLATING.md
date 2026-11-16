@@ -243,11 +243,17 @@ website has it, and can choose another one in the language picker at the top
 of the page, which keeps it for later visits. The picker's first entry, "Use
 browser setting", goes back to the browser's language.
 
+The landing page is also written out in each language, at an address of its
+own (`https://tomoyukiaota.github.io/photo-location-map/ja/`), which is what
+search engines show: they read a page as it is served, mostly without running
+its script, which would otherwise find every language in English.
+
 | File | What it is |
 | --- | --- |
 | `docs/github-pages/locales/en.json` | English, the source, which the pages themselves hold as well. |
 | `docs/github-pages/locales/<code>.json` | One file per language, with the keys of `en.json`. |
 | `docs/github-pages/i18n.js` | The languages that the website offers, at its top, and how a page gets its texts. |
+| `docs/<code>/index.html` | The landing page in each language, written by `npm run generate:website`: do not edit it. |
 
 To add a language:
 
@@ -273,19 +279,26 @@ To add a language:
    `docs/github-pages/i18n.js`, where the application's list has it, with the
    same name and English name, and with `rtl: true` when it is written from
    right to left.
-3. So that search engines find the page in your language, add its line next to
-   those of the other languages in the head of `docs/index.html`
-   (`<link rel="alternate" hreflang="<code>" …>`), and its address next to
-   theirs in `docs/sitemap.xml`.
+3. Run `npm run generate:website`. It writes the landing page in your
+   language, `docs/<code>/index.html`, and gives search engines its address,
+   in the head of each landing page and in `docs/sitemap.xml`. Commit what it
+   writes with your files.
 4. Open a pull request titled `Add <language> translation of the website`, or
    add this to the pull request of the application's translation.
+
+To improve a text of the website, edit it in
+`docs/github-pages/locales/<code>.json` and run `npm run generate:website` as
+well, which writes it into the landing page in that language. If you cannot
+run it, say so in the pull request, and the maintainer will.
 
 `npm run test:website`, which runs on every pull request, checks what the check
 of the application's texts checks, and a little more: the keys, the `<link>`
 tags, the `{{language}}`, the names, the numbers of the steps, that each file
-is listed, and that the list is in the order of the application's. To look at
-the result, serve the folder (`python3 -m http.server 8080 --directory docs`)
-and open `http://localhost:8080/?lang=<code>`.
+is listed, that the list is in the order of the application's, and that the
+landing page in each language is as `npm run generate:website` writes it. To
+look at the result, serve the folder
+(`python3 -m http.server 8080 --directory docs`) and open
+`http://localhost:8080/<code>/`.
 
 `node test/website/layout-in-every-language.mjs` opens the two pages in every
 language at 18 widths, from a phone's to a desktop's, and reports what does not

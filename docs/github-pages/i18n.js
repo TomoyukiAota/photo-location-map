@@ -1,5 +1,6 @@
-// Shows this website in the visitor's language. Loaded in the head of the landing page and of the Windows download
-// page, before their content, so that a page in another language than English is not seen in English first.
+// Shows this website in the visitor's language. Loaded in the head of the landing page, of the landing page in each
+// language and of the Windows download page, before their content, so that a page in another language than English is
+// not seen in English first.
 //
 // The texts of a language are in locales/<code>.json, with the keys of locales/en.json. An element gets its text by
 // the key in its data-i18n attribute, and an attribute by the key in data-i18n-alt, data-i18n-content,
@@ -7,10 +8,19 @@
 // The pages themselves hold the English texts, which stay when a language's file cannot be fetched, as when a page is
 // opened from a disk; a test checks that they are those of en.json (test/website/website-texts.mjs).
 //
-// The language is, in this order: `lang` in the address (?lang=ja), which the links for search engines have; the one
-// chosen in the page's language picker before, which localStorage keeps; the first of the browser's languages that
-// this website has; English. The picker's first entry, "Use browser setting", forgets the first two, so that the page
-// follows the browser again.
+// TL;DR: The landing page is also written in each language, as <code>/index.html beside it, which is in its language
+// as it is served.
+// Details: Search engines and the previews of links read a page as it is served, mostly without running this script,
+// and would find every language in English otherwise. script/website/generate-website.js writes those pages with
+// putTexts() below, which puts the texts into a page here as well, and the script tag of each says its language in
+// data-language. The script fetches no texts for such a page, and a language chosen in its picker is the page in that
+// language (docs/tasks/20261116_website-seo/STATUS.md).
+//
+// The language of the download page is, in this order: `lang` in its address (?lang=ja), which the link of the
+// landing page in a language has; the one chosen in a page's language picker before, which localStorage keeps, as is
+// the language of a landing page in a language that was opened; the first of the browser's languages that this
+// website has; English. The landing page as it is takes the same from the second on. The picker's first entry, "Use
+// browser setting", forgets the first two, so that the page follows the browser again.
 (() => {
   // The languages of this website, which are the application's (src-shared/i18n/languages.ts), in its order: the names
   // in Latin letters by the alphabet, then those in other scripts. Each is under its own name, with its English name,
@@ -148,15 +158,69 @@
   const matchesSearch = (language, search, nameInPageLanguage = '') =>
     searchFinds([language.name, language.englishName, nameInPageLanguage, language.code], search);
 
-  // In Node, where the test reads these functions, there is no page to show.
+  // The attributes that get a text, each by the key in the attribute of the same name after "data-i18n-".
+  const translatedAttributes = ['alt', 'content', 'aria-label', 'placeholder'];
+
+  /**
+   * Puts the texts of a language into a page's document, which is laid out from right to left for a language written
+   * so. A key that the language does not have keeps what the page shows. This script does it in the browser, and
+   * script/website/generate-website.js with it writes the landing page in each language.
+   */
+  const putTexts = (document, code, texts) => {
+    const page = document.documentElement;
+    page.setAttribute('lang', code);
+    page.setAttribute('dir', languages.find((each) => each.code === code)?.rtl ? 'rtl' : 'ltr');
+    for (const element of document.querySelectorAll('[data-i18n]')) {
+      const text = textOf(texts, element.dataset.i18n);
+      if (typeof text !== 'string') continue;
+      const { before, inside, after } = linkParts(text);
+      const link = element.querySelector('a');
+      if (link && inside !== null) {
+        link.textContent = inside;
+        element.replaceChildren(before, link, after);
+      } else {
+        element.textContent = text;
+      }
+    }
+    for (const attribute of translatedAttributes) {
+      for (const element of document.querySelectorAll(`[data-i18n-${attribute}]`)) {
+        const text = textOf(texts, element.getAttribute(`data-i18n-${attribute}`));
+        if (typeof text === 'string') element.setAttribute(attribute, text);
+      }
+    }
+  };
+
+  // In Node, where the tests and the generator of the landing page in each language read these functions, there is no
+  // page to show.
   if (typeof module === 'object' && module.exports) {
     module.exports = { languages, defaultLanguage, matchLanguage, resolveLanguage, followsBrowser, languageParts, linkParts, textOf,
-      foldForSearch, searchFinds, matchesSearch };
+      foldForSearch, searchFinds, matchesSearch, putTexts };
     return;
   }
 
   const root = document.documentElement;
-  const localesUrl = new URL('locales/', document.currentScript.src);
+  const script = document.currentScript;
+  const localesUrl = new URL('locales/', script.src);
+  // The landing pages say so in data-page of their script tag, and the landing page in a language says its language
+  // in data-language. They are in the folder above this script's: the landing page as it is, and the one in each
+  // language in a folder of its own.
+  const isLandingPage = script.dataset.page === 'landing';
+  const pageLanguage = isLandingPage && script.dataset.language ? listed(script.dataset.language) : null;
+  const siteUrl = new URL('../', script.src);
+
+  /**
+   * The address of the landing page in a language, or of the landing page as it is for no language. A page opened from
+   * a disk is a file, which a server finds for the address of its folder.
+   */
+  const landingPageUrl = (code) => {
+    const url = new URL(code ? `${code}/` : './', siteUrl);
+    if (url.protocol === 'file:') url.pathname += 'index.html';
+    return url;
+  };
+
+  // The download page's address can say its language, as the link of the landing page in a language does. A landing
+  // page has its language in its path, and the landing page as it is has none.
+  const param = isLandingPage ? null : new URLSearchParams(window.location.search).get('lang');
 
   // Reading window.localStorage throws where the browser blocks storage.
   const savedLanguage = () => {
@@ -181,22 +245,23 @@
     }
   };
 
-  const param = new URLSearchParams(window.location.search).get('lang');
   const saved = savedLanguage();
   const browserLanguages = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language];
-  const language = resolveLanguage({ param, saved, browserLanguages });
+  // The landing page in a language is in it, whatever else asks for one.
+  const language = pageLanguage ?? resolveLanguage({ param, saved, browserLanguages });
   // The language that the browser asks for, which the picker's first entry names: "Use browser setting (日本語)".
   const browserLanguage = matchLanguage(browserLanguages) ?? defaultLanguage;
   // Whether the page follows the browser: until a language is asked for in the address or chosen in the picker, and
-  // again once that entry is chosen.
-  let following = followsBrowser({ param, saved });
-  // A language asked for in the address is a choice: the page that a link of this one leads to is in it as well.
-  if (param && matchLanguage([param]) === language) saveLanguage(language);
+  // again once that entry is chosen. The landing page in a language does not.
+  let following = !pageLanguage && followsBrowser({ param, saved });
+  // A language asked for in the address is a choice: the page that a link of this one leads to is in it as well. The
+  // address of the landing page in a language says its language.
+  if (pageLanguage || (param && matchLanguage([param]) === language)) saveLanguage(language);
 
   // TL;DR: The Language setting and the language that the page is in, which analytics.js sends with each page load.
   // Details: The setting is `auto` while the page follows the browser, or the language chosen in the picker or asked
   // for in the address, which the page keeps. analytics.js is loaded after this script, so it asks for the two, and
-  // choose() tells it of each change.
+  // choose() and goTo() tell it of each change.
   const settingOf = (code, follows) => (follows ? 'auto' : code);
   let languageSetting = settingOf(language, following);
   let languageInUse = language;
@@ -211,9 +276,6 @@
     if (!response.ok) throw new Error(`${code}.json: ${response.status}`);
     return response.json();
   };
-
-  // The attributes that get a text, each by the key in the attribute of the same name after "data-i18n-".
-  const translatedAttributes = ['alt', 'content', 'aria-label', 'placeholder'];
 
   // TL;DR: Marks the landing page's two download buttons as stacked when they do not fit side by side in the
   // window, so that the styles lay them out one above the other, both as wide as the wider.
@@ -253,31 +315,9 @@
   // What the picker does when the page gets the texts of another language: it words its first entry in it.
   let relabelPicker = () => {};
 
-  /**
-   * Puts the texts of a language into the page, which is laid out from right to left for a language written so. A key
-   * that the language does not have keeps what the page shows.
-   */
+  /** Puts the texts of a language into the page, with what depends on them. */
   const apply = (code, texts) => {
-    root.lang = code;
-    root.dir = languages.find((each) => each.code === code)?.rtl ? 'rtl' : 'ltr';
-    for (const element of document.querySelectorAll('[data-i18n]')) {
-      const text = textOf(texts, element.dataset.i18n);
-      if (typeof text !== 'string') continue;
-      const { before, inside, after } = linkParts(text);
-      const link = element.querySelector('a');
-      if (link && inside !== null) {
-        link.textContent = inside;
-        element.replaceChildren(before, link, after);
-      } else {
-        element.textContent = text;
-      }
-    }
-    for (const attribute of translatedAttributes) {
-      for (const element of document.querySelectorAll(`[data-i18n-${attribute}]`)) {
-        const text = textOf(texts, element.getAttribute(`data-i18n-${attribute}`));
-        if (typeof text === 'string') element.setAttribute(attribute, text);
-      }
-    }
+    putTexts(document, code, texts);
     keepNamesWhole();
     layDownloadButtonsOut();
     relabelPicker();
@@ -285,18 +325,20 @@
 
   // TL;DR: A page in another language is not shown until its texts are in it, or a second and a half have passed.
   // Details: The page holds the English texts, so a visitor whose language is Japanese would see them for a moment
-  // before the Japanese ones replace them. When the texts do not come in time, the page is shown in English.
+  // before the Japanese ones replace them. When the texts do not come in time, the page is shown in English. The
+  // landing page in a language holds its texts, and is shown at once.
   const pendingClass = 'i18n-pending';
   const show = () => {
     root.classList.remove(pendingClass);
     pageShown();
   };
-  if (language !== defaultLanguage) {
+  const needsTexts = language !== defaultLanguage && !pageLanguage;
+  if (needsTexts) {
     root.classList.add(pendingClass);
     window.setTimeout(show, 1500);
   }
 
-  const texts = language === defaultLanguage ? Promise.resolve(null) : fetchTexts(language).catch(() => null);
+  const texts = needsTexts ? fetchTexts(language).catch(() => null) : Promise.resolve(null);
   const pageParsed = new Promise((resolve) => {
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', resolve, { once: true });
     else resolve();
@@ -309,10 +351,10 @@
   let choices = 0;
 
   /**
-   * Shows the page in a language that the visitor chose: `showChosen` shows it in the picker at once, and the page's
-   * own again when its texts cannot be fetched. `follow` is for the entry "Use browser setting", with the browser's
-   * language. Choosing the language that the page is in counts as well: texts of the page's load that come later do
-   * not replace it.
+   * Shows the download page in a language that the visitor chose, in place: `showChosen` shows it in the picker at
+   * once, and the page's own again when its texts cannot be fetched. `follow` is for the entry "Use browser setting",
+   * with the browser's language. Choosing the language that the page is in counts as well: texts of the page's load
+   * that come later do not replace it.
    */
   const choose = async (chosen, showChosen, follow = false) => {
     const choice = ++choices;
@@ -346,6 +388,27 @@
       url.searchParams.set('lang', chosen);
     }
     window.history.replaceState(null, '', url);
+  };
+
+  /**
+   * Goes from a landing page to the landing page in a language that the visitor chose, or to the landing page as it is
+   * for "Use browser setting" (`follow`), which follows the browser: `showChosen` shows the choice in the picker
+   * meanwhile. Choosing the page that is shown does nothing. As on the download page, a chosen language is kept, and
+   * "Use browser setting" forgets the one kept.
+   */
+  const goTo = (chosen, showChosen, follow = false) => {
+    if (follow ? following : chosen === pageLanguage) return;
+    // Texts of the page's load that come later do not change the page that is being left.
+    choices += 1;
+    showChosen(chosen, follow);
+    // A new setting is sent to the analytics backend, unless analytics.js did not load. What it has not sent when the
+    // page is left, it sends then, and from the next page too.
+    const setting = settingOf(chosen, follow);
+    if (setting !== languageSetting && window.PhotoLocationMapAnalytics)
+      window.PhotoLocationMapAnalytics.trackChangedLanguageSetting(setting, chosen);
+    if (follow) forgetLanguage();
+    else saveLanguage(chosen);
+    window.location.assign(landingPageUrl(follow ? null : chosen));
   };
 
   /** Scrolls the list, and nothing around it, by as little as shows the entry. */
@@ -476,10 +539,12 @@
       button.setAttribute('aria-expanded', 'false');
       if (focusButton) button.focus();
     };
+    // A landing page goes to the page in the chosen language, and the download page shows itself in it.
+    const chooseEntry = isLandingPage ? goTo : choose;
     const pick = (entry) => {
       close(true);
-      if (entry === browserEntry) choose(browserLanguage, showChosen, true);
-      else choose(entry.dataset.code, showChosen);
+      if (entry === browserEntry) chooseEntry(browserLanguage, showChosen, true);
+      else chooseEntry(entry.dataset.code, showChosen);
     };
 
     button.addEventListener('click', () => (isOpen() ? close(false) : open()));

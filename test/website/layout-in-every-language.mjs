@@ -28,7 +28,7 @@ import { createServer } from 'node:http';
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { languages } from './website-i18n.mjs';
+import { languages } from '../../script/website/website-i18n.js';
 
 const root = path.resolve(import.meta.dirname, '../..');
 const option = name => process.argv.slice(2).find(argument => argument.startsWith(`--${name}=`))?.slice(name.length + 3);
@@ -53,8 +53,8 @@ const server = createServer(async (request, response) => {
     const file = path.join(docs, decodeURIComponent(pathname.endsWith('/') ? `${pathname}index.html` : pathname));
     if (!file.startsWith(docs + path.sep)) throw new Error('Outside docs/.');
     let body = await readFile(file);
-    // The landing page without its video, which is the same in every language and would be played.
-    if (file === path.join(docs, 'index.html'))
+    // A landing page without its video, which is the same in every language and would be played.
+    if (path.basename(file) === 'index.html')
       body = Buffer.from(body.toString().replace(/src="https:\/\/www\.youtube\.com\/embed\/[^"]*"/, 'src="about:blank"'));
     response.writeHead(200, { 'content-type': types[path.extname(file)] ?? 'application/octet-stream', 'cache-control': 'no-store' }).end(body);
   } catch { response.writeHead(404).end(); }
@@ -149,14 +149,15 @@ try {
     && document.querySelector('.language-picker')?.hidden === false
     && document.querySelector('.language-button-name').lang === language
     && [...document.images].every(image => image.complete && image.naturalWidth > 0), language);
-  const pages = { landing: '', downloading: 'github-pages/downloading-for-windows/downloading-for-windows.html' };
+  // The landing page in the language, and the download page with the language in its address.
+  const pages = { landing: code => `${code}/`, downloading: code => `github-pages/downloading-for-windows/downloading-for-windows.html?lang=${code}` };
 
   for (const { code } of languages) {
     if (only && !only.includes(code)) continue;
     results[code] = {};
     for (const [name, address] of Object.entries(pages)) {
       await setWidth(1000);
-      await page.goto(`${base}${address}?lang=${code}`, { waitUntil: 'load' });
+      await page.goto(`${base}${address(code)}`, { waitUntil: 'load' });
       await shown(code);
       await page.evaluate(() => document.fonts.ready);
       results[code][name] = {};
