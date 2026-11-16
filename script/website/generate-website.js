@@ -13,8 +13,8 @@ import { languages, putTexts } from './website-i18n.js';
 // it in the browser. Read without that script, the page is in English at any address, so it is written out in each
 // language as a browser shows it, with an address of its own (docs/tasks/20261116_website-seo/STATUS.md):
 // - docs/<code>/index.html: docs/index.html with the texts of the language put into it by i18n.js's own putTexts(),
-//   its own address as the canonical one, its other addresses from a folder deeper, and its language in
-//   data-language of the script tag of i18n.js, which then keeps the page in it;
+//   its own address as the canonical one and as og:url, which the preview of a link names, its other addresses from
+//   a folder deeper, and its language in data-language of the script tag of i18n.js, which then keeps the page in it;
 // - in the head of docs/index.html, and so of each of those pages, the address of the page in each language;
 // - docs/sitemap.xml, with those addresses.
 
@@ -70,6 +70,7 @@ function pageInLanguage(landing, code, texts) {
   })();
   putTexts(document, code, texts);
   one('link[rel="canonical"]').setAttribute('href', addressOf(code));
+  one('meta[property="og:url"]').setAttribute('content', addressOf(code));
   for (const element of document.querySelectorAll('[href], [src]')) {
     for (const attribute of ['href', 'src'].filter(attribute => element.hasAttribute(attribute)))
       element.setAttribute(attribute, fromFolder(element.getAttribute(attribute)));
