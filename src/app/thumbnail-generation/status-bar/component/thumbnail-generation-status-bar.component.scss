@@ -12,9 +12,13 @@
   // that a long sentence in a narrow window leaves room for the progress bar and does not push it out of the window.
   grid: "summary             progress-bar-with-details close-button" auto
         /fit-content(50%)    minmax(auto, 800px)       min-content;
+  // When the bar is wider than its three columns can be, they are at its end, and the room left over is before the
+  // summary. The progress bar then keeps its length and its place while the summary changes from one phase of the
+  // generation to the next, which makes its progress easier to follow, and the close button is at the end of the
+  // bar. No column takes that room by itself: a grid stretches only a column whose largest size is auto.
+  justify-content: end;
 
-  .summary                   { grid-area: summary;
-                               justify-self: end;                    }
+  .summary                   { grid-area: summary;                   }
   .progress-bar-with-details { grid-area: progress-bar-with-details; }
   .close-button              { grid-area: close-button;              }
 }

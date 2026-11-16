@@ -2105,6 +2105,17 @@ test('the thumbnail status bar follows the generation of HEIF thumbnails from st
   await expect(openFolderButton).toBeDisabled();
   await expect(statusBar).toContainText('Completed generating thumbnails for HEIF files.', { timeout: 30000 });
   await expect(statusBar).toContainText('Processed 1 out of 1 files.');
+  // The close button is at the end of the bar, and the room that the bar's parts leave over is before the summary.
+  // The visual run's window leaves some: there, the progress bar is as long as it gets, so that it keeps its length
+  // and its place whatever the summary beside it says.
+  const layout = await statusBar.evaluate(bar => {
+    const end = bar.getBoundingClientRect().right - parseFloat(getComputedStyle(bar).paddingRight);
+    const box = selector => bar.querySelector(selector).getBoundingClientRect();
+    return { roomAfterCloseButton: Math.round(end - box('.close-button').right),
+      progressWidth: Math.round(box('.progress-bar-with-details').width) };
+  });
+  expect(layout.roomAfterCloseButton).toBe(0);
+  if (visual) expect(layout.progressWidth).toBe(800);
   await expect(openFolderButton).toBeEnabled();
   // The photo's row of the tree shows the thumbnail that was made, from the cache, in place of the image that
   // stood in for it.
