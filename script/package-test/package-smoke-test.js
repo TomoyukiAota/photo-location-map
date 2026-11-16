@@ -56,7 +56,9 @@ class PackageSmokeTest {
         && error?.status === this.windowsInstallerCrashExitCode;
   }
 
-  runExecutablePrelaunchCommand() {
+  // `options` are more options of execSync for the command, such as the timeout of the uninstaller test
+  // (script/package-test/uninstaller-test.js), which runs the installer again with this.
+  runExecutablePrelaunchCommand(options = {}) {
     const command = testInfo.executablePrelaunchCommand;
     if(!command) {
       logger.info('No executable prelaunch command on this platform.');
@@ -68,7 +70,8 @@ class PackageSmokeTest {
         runCommandSync(
           command,
           `Start of executable prelaunch command: "${command}"`,
-          `End of executable prelaunch command: "${command}"`
+          `End of executable prelaunch command: "${command}"`,
+          options
         );
         return;
       } catch (error) {

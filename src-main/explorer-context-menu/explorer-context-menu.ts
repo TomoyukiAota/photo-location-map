@@ -31,7 +31,7 @@ const menuItems = [
   { key: 'HKCU\\Software\\Classes\\Directory\\Background\\shell\\OpenWithPhotoLocationMap', placeholder: '%V' },
 ];
 
-/** The keys that Add creates and Remove deletes. */
+/** The keys that Add creates, and that Remove and the uninstaller (build/installer.nsh, as a unit test checks) delete. */
 export const explorerContextMenuKeys: readonly string[] = menuItems.map(item => item.key);
 
 /** A key that is always there, which reg.exe can query whenever it works at all. */
