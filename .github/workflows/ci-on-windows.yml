@@ -105,6 +105,7 @@ jobs:
       run: npm run test:live-reload
 
     - name: npm run test:package
+      id: package-test
       run: npm run test:package
 
     - name: npm run test:e2e
@@ -115,6 +116,17 @@ jobs:
         $env:PLM_PACKAGED_EXECUTABLE = node script/package-test/inspectable-package.js
         if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         npm run test:e2e
+
+    - name: npm run test:uninstaller
+      # After the e2e suite, which runs its copy of the installed application: this reinstalls over and then
+      # uninstalls the application that the package test installed, and checks that build/installer.nsh deletes the
+      # Explorer context menu on uninstall and keeps it on an update (script/package-test/uninstaller-test.js).
+      # It runs when only the e2e suite failed, as the suite cannot change the installation.
+      if: ${{ !cancelled() && steps.package-test.outcome == 'success' }}
+      timeout-minutes: 6
+      env:
+        PLM_UNINSTALLER_TEST: 'true'
+      run: npm run test:uninstaller
 
     - name: '[Publish to GitHub Releases] Clean-up by "git clean -fdx" (1st time)'
       run: git clean -fdx

@@ -31,7 +31,8 @@
     }
   },
   "nsis": {
-    "oneClick": false
+    "oneClick": false,
+    "include": "build/installer.nsh"
   },
   "mac": {
     "icon": "dist/favicon.icns",
