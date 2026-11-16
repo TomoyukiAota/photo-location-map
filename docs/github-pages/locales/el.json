@@ -4,7 +4,7 @@
   "noLanguagesFound": "Δεν βρέθηκαν γλώσσες",
   "useBrowserSetting": "Χρήση της ρύθμισης του προγράμματος περιήγησης ({{language}})",
   "landing": {
-    "pageTitle": "Photo Location Map",
+    "pageTitle": "Photo Location Map - Εμφανίζει σε χάρτη πού τραβήχτηκαν οι φωτογραφίες",
     "appIconAlt": "Εικονίδιο του Photo Location Map",
     "summary": "Εμφανίζει σε χάρτη πού τραβήχτηκαν οι φωτογραφίες.",
     "downloadForWindows": "Λήψη για Windows",

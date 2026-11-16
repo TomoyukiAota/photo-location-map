@@ -4,7 +4,7 @@
   "noLanguagesFound": "未找到语言",
   "useBrowserSetting": "跟随浏览器设置（{{language}}）",
   "landing": {
-    "pageTitle": "Photo Location Map",
+    "pageTitle": "Photo Location Map - 在地图上显示照片的拍摄地点",
     "appIconAlt": "Photo Location Map 图标",
     "summary": "在地图上显示照片的拍摄地点。",
     "downloadForWindows": "下载 Windows 版",

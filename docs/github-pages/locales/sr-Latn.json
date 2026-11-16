@@ -4,7 +4,7 @@
   "noLanguagesFound": "Nije pronađen nijedan jezik",
   "useBrowserSetting": "Koristi podešavanje pregledača ({{language}})",
   "landing": {
-    "pageTitle": "Photo Location Map",
+    "pageTitle": "Photo Location Map - Prikazuje na mapi mesta na kojima su fotografije snimljene",
     "appIconAlt": "Ikona aplikacije Photo Location Map",
     "summary": "Prikazuje na mapi mesta na kojima su fotografije snimljene.",
     "downloadForWindows": "Preuzmi za Windows",

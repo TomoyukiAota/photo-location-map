@@ -4,7 +4,7 @@
   "noLanguagesFound": "Inga språk hittades",
   "useBrowserSetting": "Använd webbläsarens inställning ({{language}})",
   "landing": {
-    "pageTitle": "Photo Location Map",
+    "pageTitle": "Photo Location Map - Visar på en karta var bilderna togs",
     "appIconAlt": "Ikon för Photo Location Map",
     "summary": "Visar på en karta var bilderna togs.",
     "downloadForWindows": "Ladda ned för Windows",

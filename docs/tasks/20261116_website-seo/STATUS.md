@@ -1,6 +1,7 @@
 # The website for search engines in each language: status
 
-Investigated and implemented on 2026-11-16.
+Investigated and implemented on 2026-11-16. On 2026-11-17, the title of the
+landing page got a description in each language.
 
 ## What was asked
 
@@ -13,6 +14,9 @@ The owner also decided that the addresses of the landing page in a language
 that were published from 2026-11-14 (`?lang=ja`) need not keep working, as
 they were published for two days only.
 
+On 2026-11-17, the owner asked for the title in each language, the first of
+what was left, and chose its English and Japanese wording.
+
 ## What was found
 
 The published website, read as it is served, without running its scripts:
@@ -22,8 +26,8 @@ The published website, read as it is served, without running its scripts:
   English title and description. The texts of a language were put in by
   `i18n.js` in the browser only, so every language's address was the English
   page to anything that does not run the script.
-- The title is "Photo Location Map" in every language (`landing.pageTitle`):
-  a search result's link has no word of the language (see [Not done](#not-done)).
+- The title was "Photo Location Map" in every language (`landing.pageTitle`):
+  a search result's link had no word of the language.
 - There was no canonical link, no Open Graph tags, no structured data, and no
   `<h1>` on the landing page.
 - `https://tomoyukiaota.github.io/robots.txt` is a 404, as there is no site at
@@ -86,6 +90,9 @@ Sources:
 - The Windows download page is as it was: its language is the one of `?lang=`,
   then the kept choice, then the browser's. The landing page in a language
   links to it with `?lang=<code>`.
+- The title of the landing page is the name and what the application does, in
+  each language: "Photo Location Map - Show where photos were taken on a map",
+  "Photo Location Map - 写真の撮影場所をマップに表示".
 
 ## What was decided, and why
 
@@ -126,6 +133,16 @@ Sources:
 - **No Open Graph tags yet**: a preview is worth having with a picture, which
   is to be made (1200×630). The previews get the title and description of the
   language from the pages as they are served.
+- **The title: the name, a dash, and what the application does.** The owner
+  chose the English and the Japanese on 2026-11-17, the Japanese with マップ,
+  as the website and the application say, rather than 地図, which people search
+  with more often. The other languages say it in the words of their
+  `landing.summary`, which the review of 2026-11-12 read, without its full
+  stop; Korean, as the Japanese, without its polite ending (표시합니다 to 표시).
+  The dash is each language's own, as in the application's
+  `directoryTree.openedFolder`: ` — ` in Russian and Ukrainian, ` – ` in
+  Bulgarian and Hebrew, ` - ` in the others. The name comes first in Arabic
+  and Hebrew as well, as a reader of either reads it first.
 
 ## Checks
 
@@ -160,6 +177,9 @@ On macOS (Apple Silicon), 2026-11-16 and 17.
   page that is left, or by the next one.
 - `node test/website/layout-in-every-language.mjs --languages=ja,ar,de,lv`,
   which now opens the pages at their new addresses, finds nothing.
+- With the title in each language (2026-11-17): `npm run test:website` passes,
+  271 tests, among them the check that each page's `<title>` is its language's
+  `landing.pageTitle`.
 
 ## Not done
 
@@ -167,9 +187,6 @@ On macOS (Apple Silicon), 2026-11-16 and 17.
   Search Console, submit `sitemap.xml`, test `/ja/` with the URL Inspection's
   live test, and watch the Page indexing report; in Bing Webmaster Tools,
   import the site from Search Console.
-- **A title in each language.** "Photo Location Map – <a description in the
-  language>", the name not translated, needs a text in each language, the
-  Japanese one the owner's.
 - **Open Graph tags**, with a picture (above).
 - **Smaller ones**: an `<h1>` for the application's name, a `title` for the
   video's frame, and structured data (`SoftwareApplication`), for which Google

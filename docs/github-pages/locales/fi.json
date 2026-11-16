@@ -4,7 +4,7 @@
   "noLanguagesFound": "Kieliä ei löytynyt",
   "useBrowserSetting": "Käytä selaimen asetusta ({{language}})",
   "landing": {
-    "pageTitle": "Photo Location Map",
+    "pageTitle": "Photo Location Map - Näyttää kartalla, missä kuvat on otettu",
     "appIconAlt": "Photo Location Mapin kuvake",
     "summary": "Näyttää kartalla, missä kuvat on otettu.",
     "downloadForWindows": "Lataa Windowsille",

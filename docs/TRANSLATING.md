@@ -262,6 +262,11 @@ To add a language:
    for the same things. A text that you leave out is shown in English.
    - `<link>` and `</link>` are around the words of a link: keep the pair,
      around the words that are the link in your language.
+   - `landing.pageTitle` is the title of the landing page, which a search
+     result shows: the name, the dash that your language has in the
+     application's `directoryTree.openedFolder` (` - ` in most languages), and
+     what the application does, in the words of `landing.summary` without its
+     full stop.
    - `useBrowserSetting` is the first entry of the language picker, which
      follows the browser's language: the page puts that language's name in
      the place of `{{language}}`, which you keep as it is. Word it as Photo

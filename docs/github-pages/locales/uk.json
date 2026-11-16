@@ -4,7 +4,7 @@
   "noLanguagesFound": "Мов не знайдено",
   "useBrowserSetting": "Використовувати параметр браузера ({{language}})",
   "landing": {
-    "pageTitle": "Photo Location Map",
+    "pageTitle": "Photo Location Map — Показує на карті, де було зроблено фотографії",
     "appIconAlt": "Значок Photo Location Map",
     "summary": "Показує на карті, де було зроблено фотографії.",
     "downloadForWindows": "Завантажити для Windows",
