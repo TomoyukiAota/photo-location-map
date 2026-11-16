@@ -2797,9 +2797,15 @@ test('download website is in the language of its address, and in the one chosen 
       .toEqual([expect.objectContaining({ page: 'landing', languageSetting: 'auto', languageInUse: browserCode })]);
     await expect.poll(() => websiteEvents('Changed Language Setting', 1))
       .toEqual([expect.objectContaining({ page: 'landing', languageSetting: 'auto', languageInUse: browserCode })]);
+    // Chosen there again, the entry forgets a language that was kept meanwhile, and the page stays. So it is when Back
+    // shows the page again from the browser's cache after a language was chosen in it: the page follows the browser
+    // still, while that language is kept.
+    await page.evaluate(() => localStorage.setItem('PhotoLocationMapWebsiteLanguage', 'de'));
     await pickerButton.click();
     await expect(browserEntry).toHaveAttribute('aria-selected', 'true');
-    await page.keyboard.press('Escape');
+    await browserEntry.click();
+    await expect(pickerBox).toBeHidden();
+    expect(await page.evaluate(() => [location.href, localStorage.getItem('PhotoLocationMapWebsiteLanguage')])).toEqual([website.url, null]);
     // Japanese again, laid out from left to right again. The Windows download page, whose link says the language, is
     // in it.
     await chooseLanguage('日本語');
