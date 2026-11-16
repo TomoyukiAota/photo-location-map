@@ -1,7 +1,8 @@
 # The website for search engines in each language: status
 
 Investigated and implemented on 2026-11-16. On 2026-11-17, the title of the
-landing page got a description in each language.
+landing page got a description in each language, and a `robots.txt` at the
+root of the account's GitHub Pages names the sitemap.
 
 ## What was asked
 
@@ -15,7 +16,10 @@ that were published from 2026-11-14 (`?lang=ja`) need not keep working, as
 they were published for two days only.
 
 On 2026-11-17, the owner asked for the title in each language, the first of
-what was left, and chose its English and Japanese wording.
+what was left, and chose its English and Japanese wording. The owner then had
+a `robots.txt` put at `https://tomoyukiaota.github.io/robots.txt`, so that
+search engines find the sitemap without its being submitted again in their
+tools when it changes.
 
 ## What was found
 
@@ -93,6 +97,12 @@ Sources:
 - The Windows download page is as it was: its language is the one of `?lang=`,
   then the kept choice, then the browser's. The landing page in a language
   links to it with `?lang=<code>`.
+- `https://tomoyukiaota.github.io/robots.txt` allows everything and names
+  `https://tomoyukiaota.github.io/photo-location-map/sitemap.xml`. It is in the
+  repository `TomoyukiAota/tomoyukiaota.github.io`, which GitHub Pages serves
+  at the root of the account's sites, as search engines read `robots.txt` only
+  at the root of a host. Its README says why it is there. When the sitemap
+  moves, change its `Sitemap:` line.
 - The title of the landing page is the name and what the application does, in
   each language: "Photo Location Map - Show where photos were taken on a map",
   "Photo Location Map - 写真の撮影場所をマップに表示".
@@ -128,6 +138,15 @@ Sources:
   among them, checks the files out with CRLF.
 - **No redirect of `?lang=`**, as the owner decided (above). Such an address
   shows the landing page as it is.
+- **`robots.txt` names the sitemap**, rather than the sitemap being submitted
+  in each search engine's tools again when it changes. Google Search Console
+  had the sitemap submitted on 2020-12-02, and had last read it on 2021-09-03,
+  with the one page that it listed then: Google reads a sitemap again at its
+  own pace, which a `Sitemap:` line in `robots.txt` does not change either.
+  Google also finds the page of a new language from the alternates in the head
+  of the pages that it reads again, so neither is needed for a new language.
+  `robots.txt` names the sitemap to every search engine at once. Search
+  Console's Sitemaps report lists only the sitemaps submitted in it.
 - **No `<lastmod>` in the sitemap**: the generator cannot tell when a page last
   changed, and Google uses the date only where it is consistently accurate.
   The dates before were of 2026-11-11, older than the pages' last changes.
@@ -187,10 +206,11 @@ On macOS (Apple Silicon), 2026-11-16 and 17.
 
 ## Not done
 
-- **The search engines' own tools**, which need the owner's accounts: in Google
-  Search Console, submit `sitemap.xml`, test `/ja/` with the URL Inspection's
-  live test, and watch the Page indexing report; in Bing Webmaster Tools,
-  import the site from Search Console.
+- **The search engines' own tools**, which need the owner's accounts, and are
+  optional: in Google Search Console, submit `sitemap.xml` once more after the
+  pages in each language are published, which makes Google read it sooner; test
+  `/ja/` with the URL Inspection's live test; and watch the Page indexing
+  report.
 - **Open Graph tags**, with a picture (above).
 - **Smaller ones**: an `<h1>` for the application's name, a `title` for the
   video's frame, and structured data (`SoftwareApplication`), for which Google
