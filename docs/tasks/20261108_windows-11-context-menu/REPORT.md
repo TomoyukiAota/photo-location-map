@@ -409,11 +409,13 @@ what this report says of them is as of 2026-11-08.
    - Analytics events for success and for the error's code, without paths.
 6. **The uninstaller**, in the `customUnInstall` of #729
    (`build/installer.nsh`), for a real uninstall only:
-   `Get-AppxPackage -Name <name> | Remove-AppxPackage`, with `-AllUsers` for a
-   per-machine install. It goes after the `DeleteRegKey` lines, which #729's
-   unit test wants first inside `${ifNot} ${isUpdated}`. It reaches the 64-bit
-   PowerShell through `$WINDIR\Sysnative`, as the uninstaller is 32-bit,
-   ignores the exit code, and never aborts.
+   `Get-AppxPackage -Name <name> | Remove-AppxPackage` for a per-user install,
+   and `Get-AppxPackage -AllUsers -Name <name> | Remove-AppxPackage -AllUsers`
+   for a per-machine install, as the administrator who uninstalls it may not
+   be the user who registered the package. It goes after the `DeleteRegKey`
+   lines, which #729's unit test wants first inside `${ifNot} ${isUpdated}`. It
+   reaches the 64-bit PowerShell through `$WINDIR\Sysnative`, as the
+   uninstaller is 32-bit, ignores the exit code, and never aborts.
 7. **CI** (`.github/workflows/ci-on-windows.yml`): the test steps sign with a
    throwaway self-signed certificate that the job makes and trusts, as the
    runners are administrators. The publish steps build again and sign with the
