@@ -4,7 +4,7 @@
   "noLanguagesFound": "Ingen sprog fundet",
   "useBrowserSetting": "Brug browserens indstilling ({{language}})",
   "landing": {
-    "pageTitle": "Photo Location Map",
+    "pageTitle": "Photo Location Map - Viser på et kort, hvor billederne er taget",
     "appIconAlt": "Ikon for Photo Location Map",
     "summary": "Viser på et kort, hvor billederne er taget.",
     "downloadForWindows": "Hent til Windows",

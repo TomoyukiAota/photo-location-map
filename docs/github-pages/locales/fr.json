@@ -4,7 +4,7 @@
   "noLanguagesFound": "Aucune langue trouvée",
   "useBrowserSetting": "Utiliser le réglage du navigateur ({{language}})",
   "landing": {
-    "pageTitle": "Photo Location Map",
+    "pageTitle": "Photo Location Map - Affiche sur une carte les lieux où les photos ont été prises",
     "appIconAlt": "Icône de Photo Location Map",
     "summary": "Affiche sur une carte les lieux où les photos ont été prises.",
     "downloadForWindows": "Télécharger pour Windows",

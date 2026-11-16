@@ -4,7 +4,7 @@
   "noLanguagesFound": "Nie znaleziono języków",
   "useBrowserSetting": "Użyj ustawienia przeglądarki ({{language}})",
   "landing": {
-    "pageTitle": "Photo Location Map",
+    "pageTitle": "Photo Location Map - Pokazuje na mapie, gdzie zrobiono zdjęcia",
     "appIconAlt": "Ikona Photo Location Map",
     "summary": "Pokazuje na mapie, gdzie zrobiono zdjęcia.",
     "downloadForWindows": "Pobierz dla Windows",

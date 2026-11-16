@@ -1,0 +1,154 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { JSDOM } from 'jsdom';
+import { languages, putTexts } from './website-i18n.js';
+
+// Writes the landing page of the website in each of its languages, and the addresses of them all for search engines.
+// Run `npm run generate:website` after a change to docs/index.html, to a text in docs/github-pages/locales/ or to the
+// list of languages in docs/github-pages/i18n.js, and commit what it writes: test/website/website-texts.mjs fails
+// until that is done (docs/TRANSLATING.md, "The website").
+//
+// TL;DR: A search engine or the preview of a link reads a page as it is served, mostly without running its scripts.
+// Details: docs/index.html holds the English texts, and github-pages/i18n.js puts those of the visitor's language into
+// it in the browser. Read without that script, the page is in English at any address, so it is written out in each
+// language as a browser shows it, with an address of its own (docs/tasks/20261116_website-seo/STATUS.md):
+// - docs/<code>/index.html: docs/index.html with the texts of the language put into it by i18n.js's own putTexts(),
+//   its own address as the canonical one, its other addresses from a folder deeper, and its language in
+//   data-language of the script tag of i18n.js, which then keeps the page in it;
+// - in the head of docs/index.html, and so of each of those pages, the address of the page in each language;
+// - docs/sitemap.xml, with those addresses.
+
+const docs = path.resolve(import.meta.dirname, '../../docs');
+/** Where GitHub Pages publishes the website. */
+export const site = 'https://tomoyukiaota.github.io/photo-location-map/';
+
+/** The address of the landing page in a language, or of the landing page as it is for no language. */
+export const addressOf = code => (code ? `${site}${code}/` : site);
+
+/** What a landing page in a language says in its first comment, by which a folder is found to hold one. */
+export const writtenMark = 'Written by `npm run generate:website` (script/website/generate-website.js)';
+
+// The head of docs/index.html has the lines that this writes between these two comments.
+const startOfLinks = '<!-- Written by `npm run generate:website`:';
+const endOfLinks = '<!-- End of what `npm run generate:website` writes. -->';
+
+/**
+ * A file's text with the line endings of the repository. A checkout on Windows may have CRLF, as Git converts them
+ * there by default, and the HTML parser reads either as LF.
+ */
+export const readText = file => fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n');
+
+/** The head's lines for search engines: the page's own address, `canonical`, and the page in each language. */
+const linksForSearchEngines = canonical => [
+  `<link rel="canonical" href="${canonical}">`,
+  ...languages.map(({ code }) => `<link rel="alternate" hreflang="${code}" href="${addressOf(code)}">`),
+  `<link rel="alternate" hreflang="x-default" href="${addressOf(null)}">`,
+];
+
+/** docs/index.html with the lines for search engines that it is to have. */
+function landingPage(source) {
+  const start = source.indexOf(startOfLinks);
+  const end = source.indexOf(endOfLinks);
+  if (start === -1 || end < start) throw new Error(`The head of docs/index.html has no "${startOfLinks} … -->" followed by "${endOfLinks}".`);
+  const afterStart = source.indexOf('-->', start) + '-->'.length;
+  const indent = source.slice(source.lastIndexOf('\n', end) + 1, end);
+  const lines = linksForSearchEngines(addressOf(null)).map(line => `${indent}${line}\n`).join('');
+  return `${source.slice(0, afterStart)}\n${lines}${indent}${source.slice(end)}`;
+}
+
+/** An address of the landing page as it is, for the page in a folder of the website's: from the folder above. */
+const fromFolder = address => (/^(?:[a-z][a-z\d+.-]*:|\/|#)/i.test(address) ? address : `../${address.replace(/^\.\//, '')}`);
+
+/**
+ * The landing page in a language, written from the landing page as it is, `landing`, and the texts of the language.
+ * The page is parsed once, and each language has a copy of it: a window for each would take ten times as long.
+ */
+function pageInLanguage(landing, code, texts) {
+  const document = landing.cloneNode(true);
+  const one = selector => document.querySelector(selector) ?? (() => {
+    throw new Error(`docs/index.html has no ${selector}, which the page in each language changes.`);
+  })();
+  putTexts(document, code, texts);
+  one('link[rel="canonical"]').setAttribute('href', addressOf(code));
+  for (const element of document.querySelectorAll('[href], [src]')) {
+    for (const attribute of ['href', 'src'].filter(attribute => element.hasAttribute(attribute)))
+      element.setAttribute(attribute, fromFolder(element.getAttribute(attribute)));
+  }
+  // The link to the Windows download page says the language, which that page is then in.
+  const download = one('a[href$="downloading-for-windows.html"]');
+  download.setAttribute('href', `${download.getAttribute('href')}?lang=${code}`);
+  one('script[src$="github-pages/i18n.js"]').setAttribute('data-language', code);
+  // The comment before <html> says where the page comes from, in the place of what the landing page says there.
+  if (!document.childNodes[1] || document.childNodes[1].nodeType !== document.COMMENT_NODE)
+    throw new Error('docs/index.html has no comment between <!DOCTYPE html> and <html>.');
+  const comment = ` ${writtenMark} from ../index.html, with the texts
+     of ../github-pages/locales/${code}.json. Change those, and run it again, rather than this file. `;
+  // The parser leaves out the line between <html> and <head>.
+  return `<!DOCTYPE html>\n<!--${comment}-->\n${document.documentElement.outerHTML.replace(/^(<html[^>]*>)<head>/, '$1\n<head>')}\n`;
+}
+
+/** docs/sitemap.xml: the landing page as it is, then in each language. */
+function sitemap() {
+  const pages = languages.length + 1;
+  const urls = [addressOf(null), ...languages.map(({ code }) => addressOf(code))]
+    .map((url, at) => `<url>\n  <loc>${url}</loc>\n${at === 0 ? '  <priority>1.0</priority>\n' : ''}</url>\n`);
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ${writtenMark}:
+  the landing page as it is for a visitor, then the landing page in each of its languages, in the order of their list
+  (github-pages/i18n.js).
+  TL;DR: The addresses alone. Which address is the page in which language is said in the head of each page.
+  Details: Search engines ask for that in one place, the head or the sitemap. Here every address would name every
+  other: with ${languages.length} languages, ${pages} lines under each of ${pages} addresses.
+  There is no <lastmod>: this cannot tell when a page last changed, and Google uses the date only where it is
+  consistently accurate.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+${urls.join('\n')}
+</urlset>
+`;
+}
+
+/** What this writes: each file by its path in docs/, with its text. */
+export function websiteFiles() {
+  const landing = landingPage(readText(path.join(docs, 'index.html')));
+  const files = new Map([['index.html', landing]]);
+  const { document } = new JSDOM(landing).window;
+  for (const { code } of languages) {
+    const texts = JSON.parse(readText(path.join(docs, 'github-pages/locales', `${code}.json`)));
+    files.set(`${code}/index.html`, pageInLanguage(document, code, texts));
+  }
+  files.set('sitemap.xml', sitemap());
+  return files;
+}
+
+/** The folders of docs/ that hold a landing page in a language, as their pages say. */
+export function foldersOfLanguagePages() {
+  return fs.readdirSync(docs, { withFileTypes: true })
+    .filter(entry => entry.isDirectory() && fs.existsSync(path.join(docs, entry.name, 'index.html')))
+    .map(entry => entry.name)
+    .filter(folder => readText(path.join(docs, folder, 'index.html')).includes(`<!-- ${writtenMark}`))
+    .sort();
+}
+
+if (import.meta.main) {
+  const files = websiteFiles();
+  let changed = 0;
+  for (const [file, text] of files) {
+    const target = path.join(docs, file);
+    if (fs.existsSync(target) && readText(target) === text) continue;
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    fs.writeFileSync(target, text);
+    console.log(`Wrote docs/${file}.`);
+    changed += 1;
+  }
+  // The page of a language that the list no longer has.
+  for (const folder of foldersOfLanguagePages().filter(folder => !files.has(`${folder}/index.html`))) {
+    fs.rmSync(path.join(docs, folder, 'index.html'));
+    if (fs.readdirSync(path.join(docs, folder)).length === 0) fs.rmdirSync(path.join(docs, folder));
+    console.log(`Removed docs/${folder}/index.html, as i18n.js does not list the language.`);
+    changed += 1;
+  }
+  console.log(changed === 0 ? 'The website was up to date.' : `${changed} file(s) of the website written or removed.`);
+}

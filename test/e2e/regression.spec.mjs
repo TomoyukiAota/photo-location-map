@@ -5,7 +5,7 @@ import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { languages as websiteLanguages, matchLanguage } from '../website/website-i18n.mjs';
+import { languages as websiteLanguages, matchLanguage } from '../../script/website/website-i18n.js';
 import { jpegWithEmptyGpsValues } from '../test-util/jpeg-with-empty-gps-values.mjs';
 import { jpegWithLocationOnly } from '../test-util/jpeg-with-location-only.mjs';
 const require = createRequire(import.meta.url);
@@ -2402,13 +2402,14 @@ test('download website keeps desktop and narrow layouts and Windows navigation',
     const { withHeadlessTestOptions } = require(require('node:path').join(app.getAppPath(), 'out/app/electron-util/e2e-test-hooks.js'));
     const window = new BrowserWindow(withHeadlessTestOptions({ useContentSize: true, width: 1200, height: 800 }));
     void window.loadURL(url);
-    // In English by its address: the website is otherwise in the language of the computer that the suite runs on.
-  }, `${pathToFileURL(path.join(root, 'docs/index.html')).href}?lang=en`);
+    // The landing page in English: the one as it is would be in the language of the computer that the suite runs on.
+  }, pathToFileURL(path.join(root, 'docs/en/index.html')).href);
   page = await websiteWindow;
   const setContentSize = (width, height) => app.evaluate(({ BrowserWindow }, [width, height]) =>
     BrowserWindow.getAllWindows().find(window => window.webContents.getURL().includes('/docs/')).setContentSize(width, height), [width, height]);
   await expect(page.locator('.title')).toHaveText('Photo Location Map');
-  await expect(page.getByRole('link', { name: 'Download for Windows' })).toHaveAttribute('href', 'github-pages/downloading-for-windows/downloading-for-windows.html');
+  await expect(page.getByRole('link', { name: 'Download for Windows' }))
+    .toHaveAttribute('href', '../github-pages/downloading-for-windows/downloading-for-windows.html?lang=en');
   await shot('website-desktop', [page.locator('iframe')]);
   await setContentSize(600, 800);
   await shot('website-narrow', [page.locator('iframe')]);
@@ -2423,7 +2424,7 @@ test('download website keeps desktop and narrow layouts and Windows navigation',
   await setContentSize(390, 800);
   expect(await page.locator('.download-buttons').evaluate(el => getComputedStyle(el).flexDirection)).toBe('column');
   await page.getByRole('link', { name: 'Download for Windows' }).click();
-  await expect(page).toHaveURL(/downloading-for-windows\.html$/);
+  await expect(page).toHaveURL(/downloading-for-windows\.html\?lang=en$/);
   await expect.poll(() => app.evaluate(() => globalThis.__plmDownloads.some(url => url.endsWith('.exe')))).toBe(true);
 });
 /**
@@ -2477,40 +2478,49 @@ test('download website is in the language of its address, and in the one chosen 
   test.skip(!!packagedExecutable, 'The static website is verified separately from the packaged application.');
   const website = await serveWebsite();
   try {
-    // TL;DR: The pages' analytics events are answered here rather than sent, and each page lists the ones it sends.
+    // TL;DR: The pages' analytics events are answered here rather than sent, and listed for the window across its page
+    // loads.
     // Details: The suite cancels the requests of analytics (electron-util/e2e-test-hooks.js), and analytics.js sends a
-    // batch that fails again only seconds later.
+    // batch that fails again only seconds later. A page that is left sends what it has not sent yet, and the next page
+    // sends that again, which the list has once, by the event's ID.
     await app.context().addInitScript(() => {
-      globalThis.__plmWebsiteAnalytics = [];
+      const listed = () => JSON.parse(sessionStorage.getItem('plmWebsiteAnalytics') ?? '[]');
+      Object.defineProperty(globalThis, '__plmWebsiteAnalytics', { get: listed });
       const fetchOfPage = globalThis.fetch;
       globalThis.fetch = (resource, options) => {
         if (!String(resource).endsWith('/landing-page/v1/events')) return fetchOfPage(resource, options);
-        for (const event of JSON.parse(options.body).events)
-          globalThis.__plmWebsiteAnalytics.push({ action: event.action, ...JSON.parse(event.label) });
+        const events = listed();
+        for (const event of JSON.parse(options.body).events) {
+          if (!events.some(each => each.eventId === event.event_id))
+            events.push({ eventId: event.event_id, action: event.action, ...JSON.parse(event.label) });
+        }
+        sessionStorage.setItem('plmWebsiteAnalytics', JSON.stringify(events));
         return Promise.resolve(new Response(null, { status: 204 }));
       };
     });
     /**
-     * The fields of the analytics events with `action` of the page as it was last loaded. A page also sends the events
-     * that the page before it had not sent when it was left, which belong to another page load.
+     * The fields of the analytics events with `action` of the page as it was last loaded, or of the page load `back`
+     * before it: a page that is left sends a choice that it made in its picker.
      */
-    const websiteEvents = action => page.evaluate(action => {
+    const websiteEvents = (action, back = 0) => page.evaluate(([action, back]) => {
       const events = globalThis.__plmWebsiteAnalytics;
-      const pageLoadId = events.findLast(event => event.action === 'Page Loaded')?.pageLoadId;
+      const pageLoads = events.filter(event => event.action === 'Page Loaded').map(event => event.pageLoadId);
+      const pageLoadId = pageLoads[pageLoads.length - 1 - back];
       return events.filter(event => event.action === action && event.pageLoadId === pageLoadId);
-    }, action);
-    // Japanese by the address, as a link of a search engine has it. The browser's own language is that of the
-    // computer, so the address says the language in every step here.
+    }, [action, back]);
+    // The landing page in Japanese, by its address, as a search engine links to it. The browser's own language is that
+    // of the computer, so the address says the language in every step here.
     const websiteWindow = app.waitForEvent('window');
     await app.evaluate(({ app, BrowserWindow }, url) => {
       const require = globalThis.__plmTestRequire;
       const { withHeadlessTestOptions } = require(require('node:path').join(app.getAppPath(), 'out/app/electron-util/e2e-test-hooks.js'));
       const window = new BrowserWindow(withHeadlessTestOptions({ useContentSize: true, width: 1200, height: 800 }));
       void window.loadURL(url);
-    }, `${website.url}?lang=ja`);
+    }, `${website.url}ja/`);
     page = await websiteWindow;
     await expect(page.locator('.app-summary')).toHaveText('写真の撮影場所をマップに表示します。');
-    expect(await page.evaluate(() => document.documentElement.lang)).toBe('ja');
+    // The language of the address is a choice, which is kept for the landing page as it is and the download page.
+    expect(await page.evaluate(() => [document.documentElement.lang, localStorage.getItem('PhotoLocationMapWebsiteLanguage')])).toEqual(['ja', 'ja']);
     // The page load is sent to the analytics backend with the browser's languages, the Language setting, which the
     // address made Japanese, and the language that the page is in.
     const [browserLanguage, browserLanguages] = await page.evaluate(() => [navigator.language, [...navigator.languages]]);
@@ -2655,15 +2665,17 @@ test('download website is in the language of its address, and in the one chosen 
     await expect.poll(buttonsDirection).toBe('row');
     await setContentSize(1200, 800);
     await expect.poll(buttonsDirection).toBe('row');
-    // English, typed in the search field and chosen with Enter: the texts change in place, the button shows the
-    // language, and the address says it from then on.
+    // English, typed in the search field and chosen with Enter: the landing page in English.
     await pickerButton.click();
     await search.fill('english');
     await search.press('Enter');
-    await expect(pickerBox).toBeHidden();
+    await expect(page).toHaveURL(`${website.url}en/`);
     await expect(page.locator('.app-summary')).toHaveText('Display the locations where photos were taken on a map.');
-    // The new setting is sent to the analytics backend, with the language that the page is then in.
-    await expect.poll(() => websiteEvents('Changed Language Setting'))
+    // The new setting is sent to the analytics backend, with the language that the page is then in, by the page in
+    // Japanese that was left; the page in English is loaded with it.
+    await expect.poll(() => websiteEvents('Changed Language Setting', 1))
+      .toEqual([expect.objectContaining({ page: 'landing', languageSetting: 'en', languageInUse: 'en' })]);
+    await expect.poll(() => websiteEvents('Page Loaded'))
       .toEqual([expect.objectContaining({ page: 'landing', languageSetting: 'en', languageInUse: 'en' })]);
     // The English texts are shorter: the two buttons fit side by side in the window in which the Japanese ones did
     // not, and are side by side there, as they were before the website had other languages.
@@ -2693,16 +2705,16 @@ test('download website is in the language of its address, and in the one chosen 
     await setContentSize(1200, 800);
     await expect.poll(buttonsDirection).toBe('row');
     await expect(troubleshooting.getByRole('link')).toHaveText('the troubleshooting page');
-    await expect(page.getByRole('button', { name: 'Language English', exact: true })).toBeFocused();
-    await expect(page).toHaveURL(/\?lang=en$/);
-    expect(await page.evaluate(() => document.documentElement.lang)).toBe('en');
+    await expect(page.getByRole('button', { name: 'Language English', exact: true })).toBeVisible();
+    expect(await page.evaluate(() => [document.documentElement.lang, localStorage.getItem('PhotoLocationMapWebsiteLanguage')])).toEqual(['en', 'en']);
     /** Chooses a language in the picker with the mouse, by its own name. */
     const chooseLanguage = async name => {
       await pickerButton.click();
       await pickerBox.getByRole('option', { name, exact: true }).click();
       await expect(pickerBox).toBeHidden();
     };
-    // TL;DR: From here on, the page lists the texts that it has dealt with, for the steps with texts that come late.
+    // TL;DR: The download page shows itself in a chosen language in place, with the texts of the language, which can
+    // come late: from here on, a page lists the texts that it has dealt with.
     // Details: Whether late texts change the page can be told only once the page has dealt with them. Each reading
     // of texts in the page, a call of Response.json(), is listed by its file one task after the texts are read: what
     // the page does with them follows their reading as microtasks of the same task (docs/github-pages/i18n.js). The
@@ -2720,13 +2732,21 @@ test('download website is in the language of its address, and in the one chosen 
     });
     /** Waits until the page has dealt with the texts of these files, in this order, since it was loaded. */
     const textsDealtWith = files => expect.poll(() => page.evaluate(() => globalThis.__plmTextsDealtWith)).toEqual(files);
+    // TL;DR: The download page starts its download as on GitHub Pages, at each of its loads, and is in its language all
+    // the same.
+    // Details: The page goes to the installer's address, where the browser finds a file to save and stays on the page.
+    // The suite cancels the requests for GitHub's installers, which would leave the page for the browser's error page,
+    // so the installer here is this server's (electron-util/e2e-test-hooks.js). Started while the page loaded, the
+    // download stopped the loading, and the page stayed in English, without its picker (downloading-for-windows.html).
+    await app.evaluate((_electron, installer) => { globalThis.__plmInstallerRedirect = installer; }, website.installer);
+    const downloadPage = `${website.url}github-pages/downloading-for-windows/downloading-for-windows.html`;
     const isInEnglish = async () => {
-      await expect(page.locator('.app-summary')).toHaveText('Display the locations where photos were taken on a map.');
+      await expect(page.getByRole('heading', { level: 1 })).toHaveText('How to install');
       await expect(chosenOnButton).toHaveText('English');
-      await expect(page).toHaveURL(/\?lang=en$/);
+      await expect(page).toHaveURL(`${downloadPage}?lang=en`);
       expect(await page.evaluate(() => [document.documentElement.lang, localStorage.getItem('PhotoLocationMapWebsiteLanguage')])).toEqual(['en', 'en']);
     };
-    await page.goto(`${website.url}?lang=en`, { waitUntil: 'domcontentloaded' });
+    await page.goto(`${downloadPage}?lang=en`, { waitUntil: 'domcontentloaded' });
     await isInEnglish();
     // Only the last choice counts. Japanese and then English are chosen while the Japanese texts are on their way:
     // when they arrive, after the English ones, the page stays in English, as do its address and the kept choice.
@@ -2742,10 +2762,10 @@ test('download website is in the language of its address, and in the one chosen 
     // the page is shown in English after a second and a half, and has its picker by then, in which English is chosen.
     // When the Japanese texts arrive after that, the page stays in English.
     const sendLateTexts = website.hold(textsOf('ja'));
-    await page.goto(`${website.url}?lang=ja`, { waitUntil: 'domcontentloaded' });
+    await page.goto(`${downloadPage}?lang=ja`, { waitUntil: 'domcontentloaded' });
     await expect(pickerButton).toBeVisible();
     await expect(chosenOnButton).toHaveText('English');
-    await expect(page.locator('.app-summary')).toHaveText('Display the locations where photos were taken on a map.');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('How to install');
     await chooseLanguage('English');
     await textsDealtWith(['en.json']);
     await isInEnglish();
@@ -2755,7 +2775,7 @@ test('download website is in the language of its address, and in the one chosen 
     // Arabic, which is written from right to left: the page is laid out so. The picker is at the page's left, where
     // its lines end, with the box under it at the button's left edge and the magnifying glass at the left of the
     // search field. The list of formats has its bullets at the right.
-    await page.goto(`${website.url}?lang=ar`, { waitUntil: 'domcontentloaded' });
+    await page.goto(`${website.url}ar/`, { waitUntil: 'domcontentloaded' });
     await expect(page.locator('.app-summary')).toHaveText('عرض أماكن التقاط الصور على الخريطة.');
     expect(await page.evaluate(() => [document.documentElement.lang, document.documentElement.dir])).toEqual(['ar', 'rtl']);
     await expect(chosenOnButton).toHaveText('العربية');
@@ -2776,26 +2796,41 @@ test('download website is in the language of its address, and in the one chosen 
     await shot('website-picker-ar', [page.locator('iframe')]);
     await page.keyboard.press('Escape');
     await expect(pickerBox).toBeHidden();
-    // Japanese again, laid out from left to right again. The Windows download page, whose link does not say the
-    // language, is in the chosen one.
+    // "Use browser setting" goes to the landing page as it is, which follows the browser: in the browser's language,
+    // with no choice kept, and with the entry chosen. The page in Arabic sent the setting, `auto`.
+    await pickerButton.click();
+    await browserEntry.click();
+    await expect(page).toHaveURL(website.url);
+    await expect.poll(() => page.evaluate(() => document.documentElement.lang)).toBe(browserCode);
+    await expect(chosenOnButton).toHaveText(browserName);
+    expect(await page.evaluate(() => localStorage.getItem('PhotoLocationMapWebsiteLanguage'))).toBeNull();
+    await expect.poll(() => websiteEvents('Page Loaded'))
+      .toEqual([expect.objectContaining({ page: 'landing', languageSetting: 'auto', languageInUse: browserCode })]);
+    await expect.poll(() => websiteEvents('Changed Language Setting', 1))
+      .toEqual([expect.objectContaining({ page: 'landing', languageSetting: 'auto', languageInUse: browserCode })]);
+    // Chosen there again, the entry forgets a language that was kept meanwhile, and the page stays. So it is when Back
+    // shows the page again from the browser's cache after a language was chosen in it: the page follows the browser
+    // still, while that language is kept.
+    await page.evaluate(() => localStorage.setItem('PhotoLocationMapWebsiteLanguage', 'de'));
+    await pickerButton.click();
+    await expect(browserEntry).toHaveAttribute('aria-selected', 'true');
+    await browserEntry.click();
+    await expect(pickerBox).toBeHidden();
+    expect(await page.evaluate(() => [location.href, localStorage.getItem('PhotoLocationMapWebsiteLanguage')])).toEqual([website.url, null]);
+    // Japanese again, laid out from left to right again. The Windows download page, whose link says the language, is
+    // in it.
     await chooseLanguage('日本語');
-    await expect(page).toHaveURL(/\?lang=ja$/);
+    await expect(page).toHaveURL(`${website.url}ja/`);
     expect(await page.evaluate(() => document.documentElement.dir)).toBe('ltr');
-    // TL;DR: That page starts its download as on GitHub Pages, and is in the chosen language all the same.
-    // Details: The page goes to the installer's address, where the browser finds a file to save and stays on the page.
-    // The suite cancels the requests for GitHub's installers, which would leave the page for the browser's error page,
-    // so the installer here is this server's (electron-util/e2e-test-hooks.js). Started while the page loaded, the
-    // download stopped the loading, and the page stayed in English, without its picker (downloading-for-windows.html).
-    await app.evaluate((_electron, installer) => { globalThis.__plmInstallerRedirect = installer; }, website.installer);
     await page.getByRole('link', { name: 'Windows 版をダウンロード' }).click();
-    await expect(page).toHaveURL(/downloading-for-windows\.html$/);
+    await expect(page).toHaveURL(`${downloadPage}?lang=ja`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('インストール方法');
     await expect(page.locator('.install-step').first()).toHaveText('1. ダウンロードした exe ファイルをダブルクリックします。');
     await expect(page.locator('.windows-defender-more-info')).toHaveAttribute('alt', 'Windows Defender SmartScreen の画像（詳細情報）');
     await expect(page).toHaveTitle('Photo Location Map をダウンロード中');
     await expect(chosenOnButton).toHaveText('日本語');
     await expect.poll(() => app.evaluate(() => globalThis.__plmDownloads.some(url => url.endsWith('/installer.exe')))).toBe(true);
-    await expect(page).toHaveURL(/downloading-for-windows\.html$/);
+    await expect(page).toHaveURL(`${downloadPage}?lang=ja`);
     await expect.poll(() => websiteEvents('Page Loaded'))
       .toEqual([expect.objectContaining({ page: 'downloading-for-windows', languageSetting: 'ja', languageInUse: 'ja' })]);
     await pickerButton.click();
@@ -2812,7 +2847,7 @@ test('download website is in the language of its address, and in the one chosen 
     // The setting sent for that is `auto`, with the browser's language as the page's.
     await expect.poll(() => websiteEvents('Changed Language Setting')).toEqual([expect.objectContaining({
       page: 'downloading-for-windows', languageSetting: 'auto', languageInUse: browserCode })]);
-    await page.goto(`${website.url}github-pages/downloading-for-windows/downloading-for-windows.html`, { waitUntil: 'domcontentloaded' });
+    await page.goto(downloadPage, { waitUntil: 'domcontentloaded' });
     await expect.poll(() => page.evaluate(() => document.documentElement.lang)).toBe(browserCode);
     await expect(chosenOnButton).toHaveText(browserName);
     await expect.poll(() => websiteEvents('Page Loaded'))

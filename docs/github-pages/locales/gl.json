@@ -4,7 +4,7 @@
   "noLanguagesFound": "Non se atopou ningún idioma",
   "useBrowserSetting": "Usar a configuración do navegador ({{language}})",
   "landing": {
-    "pageTitle": "Photo Location Map",
+    "pageTitle": "Photo Location Map - Mostra nun mapa onde se fixeron as fotos",
     "appIconAlt": "Icona de Photo Location Map",
     "summary": "Mostra nun mapa onde se fixeron as fotos.",
     "downloadForWindows": "Descargar para Windows",

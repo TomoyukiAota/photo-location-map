@@ -4,7 +4,7 @@
   "noLanguagesFound": "Nenašli sa žiadne jazyky",
   "useBrowserSetting": "Použiť nastavenie prehliadača ({{language}})",
   "landing": {
-    "pageTitle": "Photo Location Map",
+    "pageTitle": "Photo Location Map - Zobrazí na mape miesta, kde boli fotky nasnímané",
     "appIconAlt": "Ikona aplikácie Photo Location Map",
     "summary": "Zobrazí na mape miesta, kde boli fotky nasnímané.",
     "downloadForWindows": "Stiahnuť pre Windows",

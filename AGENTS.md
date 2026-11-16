@@ -389,10 +389,11 @@ Markdown file directly in `docs/`, any file in its `contributing/`, `tasks/`,
 GitHub's required checks, and `.mergify.yml` accepts `check-skipped`, so such a
 pull request does not wait for the tests.
 
-The website is not a document: `docs/index.html`, `docs/github-pages/`,
-`docs/docs-resources/` and `docs/sitemap.xml`. CI checks its texts in each of
-its languages (`npm run test:website`) and its layout (the e2e suite's cases of
-the website), so a change to it runs the tests.
+The website is not a document: `docs/index.html`, the landing page in each
+language (`docs/<code>/index.html`, which `npm run generate:website` writes),
+`docs/github-pages/`, `docs/docs-resources/` and `docs/sitemap.xml`. CI checks
+its texts in each of its languages (`npm run test:website`) and its layout (the
+e2e suite's cases of the website), so a change to it runs the tests.
 
 **Why:** nothing in CI checks the documents (`lint:script` covers `script/`,
 `ng lint` covers `src/`, and the app's package does not contain `docs/`), yet

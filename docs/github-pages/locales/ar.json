@@ -4,7 +4,7 @@
   "noLanguagesFound": "لم يُعثر على أي لغة",
   "useBrowserSetting": "استخدام إعداد المتصفح ({{language}})",
   "landing": {
-    "pageTitle": "Photo Location Map",
+    "pageTitle": "Photo Location Map - عرض أماكن التقاط الصور على الخريطة",
     "appIconAlt": "أيقونة Photo Location Map",
     "summary": "عرض أماكن التقاط الصور على الخريطة.",
     "downloadForWindows": "تنزيل لنظام Windows",

@@ -99,6 +99,9 @@ send the setting again whenever it is changed.
   serves them, so the texts are put into the page by a script in the browser.
   Pages written out for each language would need a generator, and a check that
   its output is up to date.
+  - Changed on 2026-11-16: the landing page is written out in each language,
+    with such a generator and check, for search engines
+    ([20261116_website-seo](../20261116_website-seo/STATUS.md)).
 - **The pages hold the English texts**, and the script replaces them. Without
   the script, or when a language's file cannot be fetched, the page is in
   English. A test checks that the pages' texts are those of `en.json`.
@@ -109,6 +112,9 @@ send the setting again whenever it is changed.
   the languages under each address too, while there were two: with 42, that
   would be 43 lines under each of 43 addresses, and search engines ask for it
   in one place.
+  - Changed on 2026-11-16: the address of the landing page in a language is
+    its folder (`/ja/`), and the landing page no longer reads `?lang=`
+    ([20261116_website-seo](../20261116_website-seo/STATUS.md)).
 - **The application's languages, all of them.** The website had English and
   Japanese at first, as asked then, and the owner expected the application's
   list in the picker. The list in `i18n.js` is the application's, in its order
