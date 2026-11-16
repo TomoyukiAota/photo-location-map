@@ -4,7 +4,7 @@
   "noLanguagesFound": "Không tìm thấy ngôn ngữ nào",
   "useBrowserSetting": "Dùng cài đặt của trình duyệt ({{language}})",
   "landing": {
-    "pageTitle": "Photo Location Map",
+    "pageTitle": "Photo Location Map - Hiển thị trên bản đồ nơi ảnh được chụp",
     "appIconAlt": "Biểu tượng Photo Location Map",
     "summary": "Hiển thị trên bản đồ nơi ảnh được chụp.",
     "downloadForWindows": "Tải xuống cho Windows",

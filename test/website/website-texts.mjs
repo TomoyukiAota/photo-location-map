@@ -1,13 +1,15 @@
-// Checks the texts of the website (docs/index.html and the Windows download page) in each of its languages, and how
-// its script chooses the language. What a pull request that translates the website is checked against
-// (docs/TRANSLATING.md). Run with `npm run test:website`.
+// Checks the texts of the website (docs/index.html and the Windows download page) in each of its languages, the
+// landing page written in each language, and how its script chooses the language. What a pull request that
+// translates the website is checked against (docs/TRANSLATING.md). Run with `npm run test:website`.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, it } from 'node:test';
+import { JSDOM } from 'jsdom';
+import { addressOf, foldersOfLanguagePages, readText, site, websiteFiles } from '../../script/website/generate-website.js';
 import {
   languages, matchLanguage, resolveLanguage, followsBrowser, languageParts, linkParts, textOf, foldForSearch, searchFinds, matchesSearch,
-} from './website-i18n.mjs';
+} from '../../script/website/website-i18n.js';
 
 const docs = path.join(import.meta.dirname, '../../docs');
 const localesDirectory = path.join(docs, 'github-pages/locales');
@@ -130,24 +132,78 @@ describe('The texts of the website (docs/github-pages/locales)', () => {
     });
   }
 
-  it('are named for search engines: the landing page links to itself in each language', () => {
-    const landing = pages['docs/index.html'];
-    for (const { code } of languages)
-      assert.ok(landing.includes(`<link rel="alternate" hreflang="${code}" href="https://tomoyukiaota.github.io/photo-location-map/?lang=${code}">`), code);
-    assert.ok(landing.includes('<link rel="alternate" hreflang="x-default" href="https://tomoyukiaota.github.io/photo-location-map/">'));
-  });
-
-  it('have their addresses in the sitemap: the landing page\'s, as it is and in each language, in the order of the list', () => {
-    const site = 'https://tomoyukiaota.github.io/photo-location-map/';
-    const sitemap = fs.readFileSync(path.join(docs, 'sitemap.xml'), 'utf8');
-    const addresses = [...sitemap.matchAll(/<url>\s*<loc>([^<]*)<\/loc>/g)].map(([, address]) => address);
-    assert.deepEqual(addresses, [site, ...languages.map(({ code }) => `${site}?lang=${code}`)]);
-  });
-
   it('are published as the files are: docs/.nojekyll keeps GitHub Pages from running Jekyll over them', () => {
     // Jekyll reads {{ … }} in a Markdown document of docs/ as an expression of its own, and failed the website's
     // publication on one that quoted a template.
     assert.ok(fs.existsSync(path.join(docs, '.nojekyll')));
+  });
+});
+
+describe('The landing page in each language (docs/<code>/index.html, written by npm run generate:website)', () => {
+  const written = websiteFiles();
+  const codes = languages.map(({ code }) => code);
+  /** A page as it is served, which a search engine or the preview of a link reads mostly without running its scripts. */
+  const documentOf = html => new JSDOM(html).window.document;
+  const pagesInLanguages = codes.map(code => ({ code, document: documentOf(written.get(`${code}/index.html`)) }));
+
+  it('is as npm run generate:website writes it from docs/index.html and the texts, as are the head\'s addresses and the sitemap', () => {
+    const outdated = [...written].filter(([file, text]) => !fs.existsSync(path.join(docs, file)) || readText(path.join(docs, file)) !== text)
+      .map(([file]) => `docs/${file}`);
+    assert.deepEqual(outdated, [], 'Run `npm run generate:website` after a change to docs/index.html, to a text of the website or to its '
+      + 'languages, and commit what it writes (docs/TRANSLATING.md, "The website").');
+  });
+
+  it('is there for each language of the list, and for no other', () => {
+    assert.deepEqual(foldersOfLanguagePages(), [...codes].sort());
+  });
+
+  it('is in its language as it is served: its language and direction, its title, its description and its texts', () => {
+    for (const { code, document } of pagesInLanguages) {
+      const texts = flatten(read(`${code}.json`));
+      const text = key => texts[key] ?? english[key];
+      assert.deepEqual([document.documentElement.lang, document.documentElement.dir],
+        [code, languages.find(language => language.code === code).rtl ? 'rtl' : 'ltr'], code);
+      assert.equal(document.title, text('landing.pageTitle'), code);
+      assert.equal(document.querySelector('meta[name="description"]').getAttribute('content'), text('landing.summary'), code);
+      assert.equal(document.querySelector('.app-summary').textContent, text('landing.summary'), code);
+      assert.equal(document.querySelector('.app-icon-img').getAttribute('alt'), text('landing.appIconAlt'), code);
+      // A sentence with a link has the words of the language around the link and in it.
+      const troubleshooting = document.querySelector('[data-i18n="landing.troubleshooting"]');
+      assert.equal(troubleshooting.textContent, text('landing.troubleshooting').replace(/<\/?link>/g, ''), code);
+      assert.equal(troubleshooting.querySelector('a').textContent, linkParts(text('landing.troubleshooting')).inside, code);
+    }
+  });
+
+  it('has its own address as the canonical one, and names the landing page as it is and in each language, itself among them', () => {
+    const linksOf = document => ({
+      canonical: document.querySelector('link[rel="canonical"]')?.getAttribute('href'),
+      alternates: [...document.querySelectorAll('link[rel="alternate"][hreflang]')].map(link => [link.getAttribute('hreflang'), link.getAttribute('href')]),
+    });
+    const alternates = [...codes.map(code => [code, addressOf(code)]), ['x-default', site]];
+    assert.deepEqual(linksOf(documentOf(written.get('index.html'))), { canonical: site, alternates });
+    for (const { code, document } of pagesInLanguages)
+      assert.deepEqual(linksOf(document), { canonical: addressOf(code), alternates }, code);
+  });
+
+  it('says its language to i18n.js, links to the download page in it, and has the addresses of the landing page from its folder', () => {
+    const landing = documentOf(written.get('index.html'));
+    assert.deepEqual({ ...landing.querySelector('script[src="github-pages/i18n.js"]').dataset }, { page: 'landing' });
+    for (const { code, document } of pagesInLanguages) {
+      assert.deepEqual({ ...document.querySelector('script[src="../github-pages/i18n.js"]').dataset }, { page: 'landing', language: code }, code);
+      assert.equal(document.querySelector('[data-analytics-download="windows"]').getAttribute('href'),
+        `../github-pages/downloading-for-windows/downloading-for-windows.html?lang=${code}`, code);
+      const addresses = [...document.querySelectorAll('[href], [src]')]
+        .flatMap(element => ['href', 'src'].map(name => element.getAttribute(name)))
+        .filter(address => address !== null && !address.startsWith('https://'));
+      for (const address of addresses)
+        assert.ok(address.startsWith('../') && fs.existsSync(path.join(docs, code, address.split('?')[0])), `${code}: ${address}`);
+    }
+  });
+
+  it('has its address in the sitemap, after the landing page as it is, in the order of the list', () => {
+    const sitemap = readText(path.join(docs, 'sitemap.xml'));
+    const addresses = [...sitemap.matchAll(/<url>\s*<loc>([^<]*)<\/loc>/g)].map(([, address]) => address);
+    assert.deepEqual(addresses, [site, ...codes.map(code => addressOf(code))]);
   });
 });
 

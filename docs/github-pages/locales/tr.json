@@ -4,7 +4,7 @@
   "noLanguagesFound": "Dil bulunamadı",
   "useBrowserSetting": "Tarayıcı ayarını kullan ({{language}})",
   "landing": {
-    "pageTitle": "Photo Location Map",
+    "pageTitle": "Photo Location Map - Fotoğrafların nerede çekildiğini haritada gösterir",
     "appIconAlt": "Photo Location Map simgesi",
     "summary": "Fotoğrafların nerede çekildiğini haritada gösterir.",
     "downloadForWindows": "Windows için indir",

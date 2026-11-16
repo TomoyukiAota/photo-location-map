@@ -4,7 +4,7 @@
   "noLanguagesFound": "言語が見つかりません",
   "useBrowserSetting": "ブラウザの設定に従う（{{language}}）",
   "landing": {
-    "pageTitle": "Photo Location Map",
+    "pageTitle": "Photo Location Map - 写真の撮影場所をマップに表示",
     "appIconAlt": "Photo Location Map のアイコン",
     "summary": "写真の撮影場所をマップに表示します。",
     "downloadForWindows": "Windows 版をダウンロード",

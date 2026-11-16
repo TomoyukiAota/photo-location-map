@@ -4,7 +4,7 @@
   "noLanguagesFound": "कोई भाषा नहीं मिली",
   "useBrowserSetting": "ब्राउज़र की सेटिंग का उपयोग करें ({{language}})",
   "landing": {
-    "pageTitle": "Photo Location Map",
+    "pageTitle": "Photo Location Map - फ़ोटो कहाँ ली गईं, यह मैप पर दिखाता है",
     "appIconAlt": "Photo Location Map का आइकन",
     "summary": "फ़ोटो कहाँ ली गईं, यह मैप पर दिखाता है।",
     "downloadForWindows": "Windows के लिए डाउनलोड करें",
