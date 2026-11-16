@@ -84,7 +84,10 @@ Sources:
   `?lang=`.
 - In the picker of a landing page, a language goes to the landing page in that
   language, and "Use browser setting" goes to the landing page as it is, which
-  follows the browser, forgetting the kept choice.
+  follows the browser, forgetting the kept choice. It forgets it on that page
+  too, which still follows the browser when Back shows it again from the
+  browser's cache after a language was chosen in it (a finding of the review
+  of #726).
 - Opening the landing page in a language keeps its language as the choice, as
   `?lang=` did, for the landing page as it is and the download page.
 - The Windows download page is as it was: its language is the one of `?lang=`,
@@ -171,7 +174,8 @@ On macOS (Apple Silicon), 2026-11-16 and 17.
   whose link opens the download page in Japanese. Without the code that goes
   to the page in a language, the case fails at the address of the page in
   English; without the code that keeps the language of the page opened, at
-  the kept choice.
+  the kept choice. "Use browser setting" chosen again on `/`, with a language
+  kept meanwhile, forgets it, and fails to without the code that does.
 - The e2e case lists the analytics events of its window across page loads
   (sessionStorage), as a choice in the picker of a landing page is sent by the
   page that is left, or by the next one.

@@ -397,6 +397,11 @@
    * "Use browser setting" forgets the one kept.
    */
   const goTo = (chosen, showChosen, follow = false) => {
+    // TL;DR: "Use browser setting" forgets the kept language even on a page that follows the browser already.
+    // Details: The landing page as it is, shown again by Back from the browser's cache after a language was chosen in
+    // it, is as it was, following the browser, while that language is kept. Without this, the choice would stay, and
+    // the page would be in that language at its next load.
+    if (follow) forgetLanguage();
     if (follow ? following : chosen === pageLanguage) return;
     // Texts of the page's load that come later do not change the page that is being left.
     choices += 1;
@@ -406,8 +411,7 @@
     const setting = settingOf(chosen, follow);
     if (setting !== languageSetting && window.PhotoLocationMapAnalytics)
       window.PhotoLocationMapAnalytics.trackChangedLanguageSetting(setting, chosen);
-    if (follow) forgetLanguage();
-    else saveLanguage(chosen);
+    if (!follow) saveLanguage(chosen);
     window.location.assign(landingPageUrl(follow ? null : chosen));
   };
 
