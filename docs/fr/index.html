@@ -20,6 +20,21 @@
   <meta name="description" content="Affiche sur une carte les lieux où les photos ont été prises." data-i18n-content="landing.summary">
   <link rel="shortcut icon" type="image/x-icon" href="../docs-resources/favicon.ico">
 
+  <!-- How a link to this page is shown in social networks and chats (Open Graph), in the page's language: the title
+       and the summary beside the application's icon, a copy of src/favicon.512x512.png. The icon is square, so the card
+       is the small one (twitter:card summary). npm run generate:website gives og:url the address of each page. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Photo Location Map">
+  <meta property="og:title" content="Photo Location Map - Affiche sur une carte les lieux où les photos ont été prises" data-i18n-content="landing.pageTitle">
+  <meta property="og:description" content="Affiche sur une carte les lieux où les photos ont été prises." data-i18n-content="landing.summary">
+  <meta property="og:url" content="https://tomoyukiaota.github.io/photo-location-map/fr/">
+  <meta property="og:image" content="https://tomoyukiaota.github.io/photo-location-map/docs-resources/app-icon-512x512.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
+  <meta property="og:image:alt" content="Icône de Photo Location Map" data-i18n-content="landing.appIconAlt">
+  <meta name="twitter:card" content="summary">
+
   <!-- Written by `npm run generate:website`: the address of this page and of the landing page in each language, in
        the order of their list (github-pages/i18n.js), for search engines. -->
   <link rel="canonical" href="https://tomoyukiaota.github.io/photo-location-map/fr/">
