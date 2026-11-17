@@ -6,7 +6,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { describe, it } from 'node:test';
 import { JSDOM } from 'jsdom';
-import { addressOf, foldersOfLanguagePages, readText, site, websiteFiles } from '../../script/website/generate-website.js';
+import { addressOf, foldersOfLanguagePages, iconAddress, readText, site, websiteFiles } from '../../script/website/generate-website.js';
 import {
   languages, matchLanguage, resolveLanguage, followsBrowser, languageParts, linkParts, textOf, foldForSearch, searchFinds, matchesSearch,
 } from '../../script/website/website-i18n.js';
@@ -172,6 +172,7 @@ describe('The landing page in each language (docs/<code>/index.html, written by 
       assert.equal(document.querySelector('meta[name="description"]').getAttribute('content'), text('landing.summary'), code);
       assert.equal(document.querySelector('.app-summary').textContent, text('landing.summary'), code);
       assert.equal(document.querySelector('.app-icon-img').getAttribute('alt'), text('landing.appIconAlt'), code);
+      assert.equal(document.querySelector('.demo-video iframe').getAttribute('title'), text('landing.demoVideoTitle'), code);
       // A sentence with a link has the words of the language around the link and in it.
       const troubleshooting = document.querySelector('[data-i18n="landing.troubleshooting"]');
       assert.equal(troubleshooting.textContent, text('landing.troubleshooting').replace(/<\/?link>/g, ''), code);
@@ -190,6 +191,24 @@ describe('The landing page in each language (docs/<code>/index.html, written by 
       assert.deepEqual(linksOf(document), { canonical: addressOf(code), alternates }, code);
   });
 
+  it('has the application\'s name as its one heading of the first level, and says what the application is, in its language (schema.org)', () => {
+    const pages = [{ code: null, document: documentOf(written.get('index.html')) }, ...pagesInLanguages];
+    for (const { code, document } of pages) {
+      const page = code ?? 'the landing page as it is';
+      assert.deepEqual([...document.querySelectorAll('h1')].map(heading => heading.textContent), ['Photo Location Map'], page);
+      const scripts = [...document.querySelectorAll('script[type="application/ld+json"]')];
+      assert.equal(scripts.length, 1, page);
+      const texts = code ? flatten(read(`${code}.json`)) : english;
+      assert.deepEqual(JSON.parse(scripts[0].textContent), {
+        '@context': 'https://schema.org', '@type': 'SoftwareApplication', name: 'Photo Location Map',
+        description: texts['landing.summary'] ?? english['landing.summary'], url: addressOf(code), image: iconAddress,
+        applicationCategory: 'MultimediaApplication', operatingSystem: 'Windows, macOS',
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' }, inLanguage: codes,
+        author: { '@type': 'Person', name: 'Tomoyuki Aota', url: 'https://github.com/tomoyukiaota' },
+      }, page);
+    }
+  });
+
   it('is previewed in social networks and chats with the application\'s icon, its title and its summary, in its language (Open Graph)', () => {
     const icon = 'docs-resources/app-icon-512x512.png';
     // A copy of the application's icon, as the website is the files of docs/: a change of the icon is to change it too.
@@ -204,7 +223,7 @@ describe('The landing page in each language (docs/<code>/index.html, written by 
       const text = key => texts[key] ?? english[key];
       assert.deepEqual(tagsOf(document), {
         'og:type': 'website', 'og:site_name': 'Photo Location Map', 'og:title': text('landing.pageTitle'),
-        'og:description': text('landing.summary'), 'og:url': addressOf(code), 'og:image': `${site}${icon}`,
+        'og:description': text('landing.summary'), 'og:url': addressOf(code), 'og:image': iconAddress,
         'og:image:type': 'image/png', 'og:image:width': '512', 'og:image:height': '512', 'og:image:alt': text('landing.appIconAlt'),
         'twitter:card': 'summary',
       }, code ?? 'the landing page as it is');
