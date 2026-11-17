@@ -8,15 +8,21 @@ import testInfo from './package-test-info.js';
 import testUtil from './package-test-util.js';
 
 // TL;DR: Checks on Windows, with the installer that the package test built and the application that it installed,
-// that uninstalling the application deletes "Open with Photo Location Map" from the context menu of Explorer, and that
-// an update keeps it (build/installer.nsh). CI runs it after the e2e suite (.github/workflows/ci-on-windows.yml).
+// that uninstalling the application deletes "Open with Photo Location Map" from the context menu of Explorer, that a
+// key which it cannot delete does not stop it, and that an update keeps the menu (build/installer.nsh). CI runs it
+// after the e2e suite (.github/workflows/ci-on-windows.yml).
 // Details:
 // - It writes the keys that the uninstaller deletes, and runs the installer again over the installed application, as
 //   an update does: an installer runs the installed version's uninstaller with --updated, whether electron-updater or
 //   the user starts it. That uninstaller must have run, which a file put in the installation's folder shows by being
-//   gone, and the keys must still be there. Then it deletes the second key, so that the uninstaller meets a key that
-//   is not there, as it meets all of them for a user who never added the menu, and must still delete the one after it.
-//   It uninstalls the application as its QuietUninstallString does, and the keys must be gone.
+//   gone, and the keys must still be there.
+// - Then it uninstalls the application as its QuietUninstallString does, with two keys that the uninstaller fails to
+//   delete. It deletes the second key, so that the uninstaller meets a key that is not there, as it meets all of them
+//   for a user who never added the menu. It denies everyone the deletion of the third key, as an administrator can
+//   deny it to the user. The uninstaller must end with 0 and remove the application. The third key must still be
+//   there, or the test did not meet a key that cannot be deleted, and the other keys must be gone, with the third
+//   key's subkey "command": DeleteRegKey deletes the subkeys before the key, so that subkey shows that the uninstaller
+//   went on after the second key.
 // - It runs only when PLM_UNINSTALLER_TEST is true, as the step of CI sets it: it reinstalls over and then uninstalls
 //   the application installed for the user, and deletes keys of the context menu of Explorer without restoring them.
 // - It covers an installation for the current user by an administrator, as on GitHub's runners. It does not cover an
@@ -27,6 +33,9 @@ import testUtil from './package-test-util.js';
 
 const installerScript = path.resolve(import.meta.dirname, '../../build/installer.nsh');
 const regExe = path.win32.join(process.env.SystemRoot || 'C:\\Windows', 'System32', 'reg.exe');
+// reg.exe cannot change the permissions of a key, which PowerShell can.
+const powerShellExe = path.win32.join(process.env.SystemRoot || 'C:\\Windows', 'System32', 'WindowsPowerShell', 'v1.0',
+  'powershell.exe');
 const uninstallerFileName = 'Uninstall Photo Location Map.exe';
 // A silent installation takes about 15 seconds on GitHub's runner. A run that hangs, as at a message box that a silent
 // installer can still show, fails the test with the state of the installation rather than waiting for the job's
@@ -47,9 +56,56 @@ function reg(args) {
   return result;
 }
 
-/** Each of `keys` and its subkey "command", with whether it is there. */
+/** Each of `keys` and its subkey "command". */
+function withCommands(keys) {
+  return keys.flatMap(key => [key, `${key}\\command`]);
+}
+
+/** Each of `keys`, with whether it is there. */
 function keyStates(keys) {
-  return keys.flatMap(key => [key, `${key}\\command`]).map(key => ({ key, isThere: reg(['query', key]).status === 0 }));
+  return keys.map(key => ({ key, isThere: reg(['query', key]).status === 0 }));
+}
+
+/**
+ * Denies everyone the deletion of `key` when `isDenied` is true, and stops denying it otherwise. The denial is not
+ * inherited, so the key's subkeys can still be deleted, and it applies to an administrator too, such as the account of
+ * GitHub's runner. PowerShell changes the permissions through .NET, which takes the key's name as it is: PowerShell's
+ * paths would take the "*" of the first key as a wildcard. The name is in an environment variable, not in the command.
+ * Stopping the denial of a key that is not there does nothing.
+ */
+function setDeletionDenied(key, isDenied) {
+  const root = 'HKCU\\';
+  if (!key.startsWith(root)) throw new Error(`"${key}" is not under ${root}.`);
+  const script = `
+    $ErrorActionPreference = 'Stop'
+    $rights = [System.Security.AccessControl.RegistryRights]
+    $opened = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey($env:PLM_UNINSTALLER_TEST_KEY,
+      [Microsoft.Win32.RegistryKeyPermissionCheck]::ReadWriteSubTree,
+      $rights::ReadPermissions -bor $rights::ChangePermissions)
+    $isDenied = $env:PLM_UNINSTALLER_TEST_DENY -eq 'true'
+    if ($null -eq $opened) { if ($isDenied) { throw 'The key is not there.' } else { 'not there'; exit 0 } }
+    # S-1-1-0 is Everyone, whose name depends on the language of Windows.
+    $everyone = [System.Security.Principal.SecurityIdentifier]::new('S-1-1-0')
+    $rule = [System.Security.AccessControl.RegistryAccessRule]::new($everyone, $rights::Delete, 'Deny')
+    $permissions = $opened.GetAccessControl()
+    if ($isDenied) { $permissions.AddAccessRule($rule) } else { [void]$permissions.RemoveAccessRule($rule) }
+    $opened.SetAccessControl($permissions)
+    $opened.Close()
+  `;
+  const result = child_process.spawnSync(powerShellExe, ['-NoProfile', '-NonInteractive', '-Command', script], {
+    windowsHide: true, encoding: 'utf8',
+    env: { ...process.env, PLM_UNINSTALLER_TEST_KEY: key.slice(root.length), PLM_UNINSTALLER_TEST_DENY: `${isDenied}` },
+  });
+  if (result.error) throw result.error;
+  if (result.status !== 0) {
+    throw new Error(`PowerShell could not ${isDenied ? 'deny' : 'stop denying'} the deletion of "${key}" (exit code `
+      + `${result.status}): ${result.stderr.trim()}`);
+  }
+  if (result.stdout.trim() === 'not there') {
+    logger.info(`${key} is not there, so its deletion is not denied.`);
+  } else {
+    logger.info(isDenied ? `Denied everyone the deletion of ${key}.` : `Stopped denying the deletion of ${key}.`);
+  }
 }
 
 /**
@@ -129,7 +185,9 @@ function uninstall(installationDirectory) {
 function printState(installationDirectory, keys) {
   try {
     testUtil.printItemsInDirectory(installationDirectory);
-    for (const { key, isThere } of keyStates(keys)) logger.info(`${isThere ? 'There' : 'Not there'}: ${key}`);
+    for (const { key, isThere } of keyStates(withCommands(keys))) {
+      logger.info(`${isThere ? 'There' : 'Not there'}: ${key}`);
+    }
   } catch (error) {
     logger.warn(`Could not print the state of the installation: ${error.message}`);
   }
@@ -149,32 +207,42 @@ function runUninstallerTest() {
     throw new Error(`"${applicationExe}" does not exist: run the package test first, which installs the application.`);
   }
   const keys = keysThatTheUninstallerDeletes();
-  if (keys.length < 2) {
-    throw new Error(`"${installerScript}" deletes ${keys.length} key(s), where the test needs two or more: it leaves `
-      + 'the second out.');
+  if (keys.length < 3) {
+    throw new Error(`"${installerScript}" deletes ${keys.length} key(s), where the test needs three or more: it leaves `
+      + 'the second out and denies the deletion of the third.');
   }
+  // The second key and the third, so that the first, the menu on every file, is still checked.
+  const [missingKey, protectedKey] = keys.slice(1, 3);
 
   try {
     addKeys(keys, applicationExe);
     update(installationDirectory, applicationExe);
-    checkKeys(keys, true, 'Missing after the update, which must keep them, so the uninstaller that the installer ran '
-      + 'with --updated deleted them (build/installer.nsh)');
+    checkKeys(withCommands(keys), true, 'Missing after the update, which must keep them, so the uninstaller that the '
+      + 'installer ran with --updated deleted them (build/installer.nsh)');
 
-    // The second key, so that the first, the menu on every file, is still checked.
-    const missingKey = keys[1];
     const deleted = reg(['delete', missingKey, '/f']);
     if (deleted.status !== 0) {
       throw new Error(`reg.exe could not delete "${missingKey}" (exit code ${deleted.status}): ${deleted.stderr.trim()}`);
     }
     logger.info(`Deleted ${missingKey}, so that the uninstaller meets a key that is not there.`);
+    setDeletionDenied(protectedKey, true);
     uninstall(installationDirectory);
     if (fs.existsSync(applicationExe)) throw new Error(`"${applicationExe}" is still there after uninstalling.`);
-    checkKeys(keys, false, 'Still there after uninstalling, so the uninstaller did not delete them (customUnInstall in '
+    checkKeys([protectedKey], true, 'Gone after uninstalling, though its deletion was denied, so the test did not check '
+      + 'a key that the uninstaller cannot delete');
+    checkKeys(withCommands(keys).filter(key => key !== protectedKey), false, 'Still there after uninstalling, so the '
+      + 'uninstaller did not delete them, or stopped at a key that it could not delete (customUnInstall in '
       + 'build/installer.nsh)');
   } catch (error) {
     printState(installationDirectory, keys);
     throw error;
   } finally {
+    // Before the keys are deleted, as the third could not be.
+    try {
+      setDeletionDenied(protectedKey, false);
+    } catch (error) {
+      logger.warn(error.message);
+    }
     for (const key of keys) {
       try {
         reg(['delete', key, '/f']);
