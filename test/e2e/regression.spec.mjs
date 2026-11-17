@@ -2351,6 +2351,30 @@ for (const [name, fixture, specialPath] of [
     expect(await status()).toBe(404);
   });
 }
+test('a link of Photo Data Viewer to Google Maps or Google Earth opens in the browser, recorded without the place', async () => {
+  await dismissWelcome();
+  const photo = path.join(root, 'test/test-resources/actual-photos/Kobe/IMG_4676.JPG');
+  await openFolderWithPicker(path.dirname(photo));
+  const newWindow = app.waitForEvent('window');
+  await page.evaluate(photo => window.plm.photoDataViewer.open({ photo: { name: 'IMG_4676.JPG', path: photo } }), photo);
+  const viewer = await newWindow;
+  // The address tells the viewer that it may show its Google Earth button, as such a link is recorded so.
+  await viewer.waitForURL(url => url.searchParams.get('plmBridge') === '1');
+  expect(new URL(viewer.url()).searchParams.get('googleEarth')).toBe('1');
+  // What the viewer's buttons open, with the photo's latitude and longitude, opened as a button opens them.
+  const openedUrls = await recordOpenedUrls();
+  const links = ['https://maps.google.com/?q=34.69,135.19&ll=34.69,135.19&z=14', 'https://earth.google.com/web/search/34.69,135.19'];
+  await viewer.evaluate(links => { for (const link of links) window.open(link, '_blank'); }, links);
+  await expect.poll(async () => (await openedUrls()).toSorted()).toEqual(links.toSorted());
+  const recorded = service => app.evaluate((_electron, service) => globalThis.__plmAnalyticsEvents
+    .filter(event => event.service === service && event.action === 'Opened URL')
+    .map(event => event.value)
+    .sort(), service);
+  for (const service of ['amplitude', 'mixpanel']) {
+    await expect.poll(() => recorded(service), { timeout: 20000 })
+      .toEqual(['URL including https://earth.google.com/', 'URL including https://maps.google.com/']);
+  }
+});
 test('closing Photo Data Viewer while its page loads shows and records no error', async () => {
   await dismissWelcome();
   const photo = path.join(root, 'test/test-resources/actual-photos/Kobe/IMG_4676.JPG');
