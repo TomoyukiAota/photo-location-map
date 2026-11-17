@@ -472,6 +472,16 @@ what this report says of them is as of 2026-11-08, except for what "Check of
    lines, which #729's unit test wants first inside `${ifNot} ${isUpdated}`. It
    reaches the 64-bit PowerShell through `$WINDIR\Sysnative`, as the
    uninstaller is 32-bit, ignores the exit code, and never aborts.
+   It also gives PowerShell a time limit, as a PowerShell that does not end
+   would stop the uninstallation there (VS Code's uninstaller waits until
+   PowerShell ends). nsExec, a plugin that electron-builder's NSIS includes,
+   has `nsExec::Exec /TIMEOUT=<ms>`, which ends the process once it has
+   written nothing for that long, and returns `timeout`. So the command
+   writes nothing until it ends (`$ProgressPreference = 'SilentlyContinue'`),
+   and the limit covers its whole run. On a timeout, the uninstaller goes on,
+   as on any other failure of the command. The limit is how long Remove
+   takes, which item 5 of "What to find out on Windows 11" measures, with a
+   margin.
 7. **CI** (`.github/workflows/ci-on-windows.yml`): the test steps sign with a
    throwaway self-signed certificate that the job makes and trusts, as the
    runners are administrators. The publish steps build again and sign with the
@@ -697,3 +707,12 @@ Read on 2026-11-17, for "Check of 2026-11-17":
   [Pureinfotech, 2026-11-12](https://pureinfotech.com/windows-11-classic-context-menu-registry-tweak-broken/)
   and
   [WinCentral, 2026-11-13](https://thewincentral.com/windows-11-kb5132061-classic-context-menu-registry-tweak-broken/).
+
+Read on 2026-11-18, for the time limit in step 6 of "Outline of Option B":
+
+- NSIS's [nsExec](https://nsis.sourceforge.io/Docs/nsExec/nsExec.txt), and
+  [`nsexec.c`](https://github.com/kichik/nsis/blob/53d4ee26239c1004bb560a2db223f1f0b37f13ee/Contrib/nsExec/nsexec.c#L379-L381),
+  which ends the process at the time limit.
+- VS Code's
+  [`RemoveAppxPackage`](https://github.com/microsoft/vscode/blob/a0fba2a7fcafe9f2fc6cda0ce5b7044e8c370ed8/build/win32/code.iss#L1797-L1814)
+  in `code.iss`, which waits until PowerShell ends.
