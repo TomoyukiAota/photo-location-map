@@ -83,8 +83,9 @@ The controller creates its own temporary profile. `PLM_E2E=1` requires an
 absolute `PLM_TEST_ROOT`; only known injected debugger flags are removed.
 Normal startup is unaffected. Test-profile launches intercept analytics and
 release downloads without disabling SDK initialization or application logging.
-They also cancel YouTube, whose player, once loaded, scrolls the website's
-landing page to its demo video (`electron-util/e2e-test-hooks.js`).
+They also cancel YouTube, which shows an error message in the frame of the
+website's demo video on a page read from a `file:` address, and the message
+takes the focus and scrolls the landing page (`electron-util/e2e-test-hooks.js`).
 
 For the x64 half of a universal app on Apple Silicon, create an external shell
 launcher that executes `/usr/bin/arch -x86_64` with the same verified binary and
