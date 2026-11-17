@@ -346,6 +346,47 @@ installer failure is still surfaced. Record the investigation — the evidence, 
 hypotheses ruled out, why other fixes were rejected — in a comment next to the
 workaround rather than in an issue, using a `TL;DR:` / `Details:` structure.
 
+## Wait for your pull request until it is merged
+
+Mergify merges a pull request of the owner that has the label `automerge`, and
+brings it up to date with `main` when `main` moves on (`.mergify.yml`). Nothing
+tells you when either happens, so once you have opened a pull request, wait for
+it:
+
+```sh
+node script/pull-request/wait-for-merge.js <number>
+```
+
+Run it in the background (in Claude Code, with `run_in_background`, which wakes
+you when it ends). It looks at the pull request every minute, and ends on what
+changed since it began. Do what it says:
+
+- **Merged**: go on with the next step of the work, without waiting to be asked.
+- **A required check failed**: classify the failure (see the next section).
+- **It conflicts with `main`**, which Mergify cannot bring it up to date over:
+  merge `main` into the branch, resolve the conflicts and push.
+- **A new review or comment**: change what it is right about, and answer the
+  rest.
+- **Behind `main` with the label, and not brought up to date**: read Mergify's
+  check "Summary", which says what it waits for.
+
+Then start it again while the pull request is open. Without the label, it waits
+for whoever adds it. In the Claude desktop app, when Auto-fix is on for the pull
+request, add `--with-auto-fix`: Auto-fix reports failed checks, conflicts and
+review comments itself, and the script then ends only on a merge, a close, or
+Mergify leaving the pull request behind.
+
+Take the label off while you change the pull request, so that Mergify neither
+merges it nor pushes to it meanwhile, and pull before you push, as Mergify may
+have pushed a merge of `main`. Do not merge `main` into a pull request with the
+label yourself, unless to resolve a conflict. In a git worktree, run the script
+through mise (see "In a git worktree").
+
+**Why:** an agent stopped once it had opened a pull request, as nothing told it
+that the pull request had been merged or that `main` had moved on, and the
+owner had to ask about it to get the work going again. Auto-fix wakes a session
+on a failed check, a conflict or a review comment, but not on a merge.
+
 ## Classify a CI failure before rerunning it
 
 When asked to keep a pull request green, **read the failed job's log and classify
