@@ -4,7 +4,8 @@
 //
 // The texts of a language are in locales/<code>.json, with the keys of locales/en.json. An element gets its text by
 // the key in its data-i18n attribute, and an attribute by the key in data-i18n-alt, data-i18n-content,
-// data-i18n-aria-label or data-i18n-placeholder. In a text, <link>…</link> is around the words of the element's link.
+// data-i18n-aria-label, data-i18n-placeholder or data-i18n-title. In a text, <link>…</link> is around the words of
+// the element's link.
 // The pages themselves hold the English texts, which stay when a language's file cannot be fetched, as when a page is
 // opened from a disk; a test checks that they are those of en.json (test/website/website-texts.mjs).
 //
@@ -159,7 +160,7 @@
     searchFinds([language.name, language.englishName, nameInPageLanguage, language.code], search);
 
   // The attributes that get a text, each by the key in the attribute of the same name after "data-i18n-".
-  const translatedAttributes = ['alt', 'content', 'aria-label', 'placeholder'];
+  const translatedAttributes = ['alt', 'content', 'aria-label', 'placeholder', 'title'];
 
   /**
    * Puts the texts of a language into a page's document, which is laid out from right to left for a language written
