@@ -12,6 +12,10 @@ export function createPhotoDataViewerUrl(photo: PhotoDataViewerIpcPhotoParams): 
     clockSystemFormat: currentUserSettings.clockSystemFormat,
     // The viewer shows its texts in this language when it has a translation for it, and in English otherwise.
     language: currentLanguage,
+    // The viewer may show its button that opens the photo's place in Google Earth: this app records such a link
+    // without the place (modifyUrlForAnalyticsIfNeeded in launch-photo-data-viewer.ts), which a version without this
+    // parameter did not.
+    googleEarth: '1',
   };
   const serverUrl = getPhotoDataViewerServerUrl();
   const photoDataViewerUrl = new URL(serverUrl);

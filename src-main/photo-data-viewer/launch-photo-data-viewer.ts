@@ -59,16 +59,16 @@ export async function launchPhotoDataViewer(ipcParams: PhotoDataViewerIpcParams)
   await loadViewerPage(browserWindow, photoDataViewerUrl, !isHeadlessTest);
 }
 
-function modifyUrlForAnalyticsIfNeeded(originalUrl: string): string {
-  const googleMapsUrlPattern1 = 'https://maps.google.com/';
-  const googleMapsUrlPattern2 = 'https://www.google.com/maps/';
-
-  let urlForAnalytics = originalUrl;
-  if (originalUrl.includes(googleMapsUrlPattern1)) {
-    urlForAnalytics = `URL including ${googleMapsUrlPattern1}`; // Not to send query parameters containing latitude and longitude
-  } else if (originalUrl.includes(googleMapsUrlPattern2)) {
-    urlForAnalytics = `URL including ${googleMapsUrlPattern2}`; // Not to send query parameters containing latitude and longitude
-  }
-
-  return urlForAnalytics;
+/**
+ * The address of a link of the viewer as the analytics get it. A link to Google Maps, Street View or Google Earth has
+ * the photo's latitude and longitude in its query or its path, so the analytics get the site's address alone.
+ *
+ * The viewer shows its Google Earth button only where its address says that such a link is recorded so (`googleEarth`
+ * in photo-data-viewer-url.ts): it is served to every version of this app, and an earlier one recorded a link to
+ * Google Earth whole.
+ */
+export function modifyUrlForAnalyticsIfNeeded(originalUrl: string): string {
+  const urlPatternsWithPlace = ['https://maps.google.com/', 'https://www.google.com/maps/', 'https://earth.google.com/'];
+  const pattern = urlPatternsWithPlace.find(urlPattern => originalUrl.includes(urlPattern));
+  return pattern ? `URL including ${pattern}` : originalUrl;
 }
