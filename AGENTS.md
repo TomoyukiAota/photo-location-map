@@ -386,7 +386,7 @@ and `.github/ci-filters.yml`. When every one of them is a document — a
 Markdown file directly in `docs/`, any file in its `contributing/`, `tasks/`,
 `troubleshooting/` or `README/` folder, `README.md`, `AGENTS.md`, `LICENSE` or
 `.github/ISSUE_TEMPLATE/` — the `test` job is skipped. A skipped job passes
-GitHub's required checks, and `.mergify.yml` accepts `check-skipped`, so such a
+GitHub's required checks, which are also Mergify's (`.mergify.yml`), so such a
 pull request does not wait for the tests.
 
 The website is not a document: `docs/index.html`, the landing page in each
