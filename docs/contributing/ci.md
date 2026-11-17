@@ -8,10 +8,27 @@ merging a change related to Intel Mac support.
 
 Ubuntu CI uses Ubuntu 26.04 LTS and reports `test (ubuntu)`. The regular macOS
 check is `test (macos-arm64)`; the manual Intel check is `test (macos-x64)`.
-These check names stay stable when runner versions change. Keep branch protection
-and Mergify aligned with the regular check names. When renaming a required check,
-first make the workflow and Mergify changes and confirm the new check passes,
-then replace the old context in branch protection.
+These check names stay stable when runner versions change. Branch protection
+requires the regular ones, and Mergify takes them from it (see "Merging" below),
+so they are listed there only. When renaming a required check, first change the
+workflow and confirm that the new check passes, then replace the old context in
+branch protection.
+
+
+## Merging
+
+Mergify merges a pull request of the owner that has the label `automerge` once
+it meets branch protection: the required checks have passed or been skipped,
+and the pull request is up to date with `main`
+([`.mergify.yml`](../../.mergify.yml)).
+
+When `main` moves on, Mergify merges it into each such pull request, unless they
+conflict, which is left to whoever made the pull request. The new commit cancels
+the CI runs of the commit before it (`concurrency` in each workflow), so the
+tests run again on `main` as it is now, and nobody has to notice that it moved.
+A run on `main`, or one started by hand, is never canceled. A push's run of the
+Windows CI that is canceled while it publishes leaves some files of its package
+in the draft release; the next run that publishes replaces them.
 
 
 ## Running the macOS CI on Intel
