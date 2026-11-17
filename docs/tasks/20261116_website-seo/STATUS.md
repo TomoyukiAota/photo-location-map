@@ -3,7 +3,9 @@
 Investigated and implemented on 2026-11-16. On 2026-11-17, the title of the
 landing page got a description in each language, a `robots.txt` at the root
 of the account's GitHub Pages names the sitemap, and the landing pages got
-Open Graph tags with the application's icon.
+Open Graph tags with the application's icon. On 2026-11-18, the application's
+name became the pages' heading (`<h1>`), the demo video got a title in each
+language, and the pages say what the application is (structured data).
 
 ## What was asked
 
@@ -22,6 +24,10 @@ a `robots.txt` put at `https://tomoyukiaota.github.io/robots.txt`, so that
 search engines find the sitemap without its being submitted again in their
 tools when it changes. Last, the owner asked for Open Graph tags with the
 application's icon as their picture.
+
+On 2026-11-18, the owner asked for the three smaller items that were left, and
+chose the title of the video: "Photo Location Map demo video",
+"Photo Location Map のデモ動画".
 
 ## What was found
 
@@ -110,6 +116,13 @@ Sources:
   language, `og:url` the page's own address, and the application's icon,
   `docs/docs-resources/app-icon-512x512.png`, a copy of
   `src/favicon.512x512.png`, as the small card (`twitter:card` `summary`).
+- The application's name is the landing pages' heading of the first level
+  (`<h1>`), as it looked before.
+- The demo video's frame has a title in each language
+  (`landing.demoVideoTitle`), by which a screen reader names it.
+- The head of each landing page says what the application is, in the words of
+  schema.org (`SoftwareApplication`), with the summary of the page's language
+  and the page's address.
 - The title of the landing page is the name and what the application does, in
   each language: "Photo Location Map - Show where photos were taken on a map",
   "Photo Location Map - 写真の撮影場所をマップに表示".
@@ -154,6 +167,21 @@ Sources:
   of the pages that it reads again, so neither is needed for a new language.
   `robots.txt` names the sitemap to every search engine at once. Search
   Console's Sitemaps report lists only the sitemaps submitted in it.
+- **The name as an `<h1>` that looks as it did**: Bootstrap gives a heading its
+  own weight and line height, which `.title` sets back to those of the page's
+  text.
+- **The video's title as each language names the icon** (`landing.appIconAlt`):
+  the same words for the application, in the same construction (Czech
+  "aplikace", Lithuanian quotation marks). Spanish has "Vídeo", as its files
+  are in the Spanish of Spain. `i18n.js` translates a `title` attribute now,
+  by `data-i18n-title`.
+- **The structured data**: `SoftwareApplication`, `MultimediaApplication`, for
+  Windows and macOS, free (`price` 0), by Tomoyuki Aota, whom the page names, in
+  the 42 languages of its list, which the generator writes, as the list changes.
+  No version, which would be one more thing to change at each release. Google
+  shows no rich result without ratings or reviews, which the website has none
+  of: the data says what the page is about, to search engines and AI
+  assistants.
 - **No `<lastmod>` in the sitemap**: the generator cannot tell when a page last
   changed, and Google uses the date only where it is consistently accurate.
   The dates before were of 2026-11-11, older than the pages' last changes.
@@ -227,6 +255,16 @@ On macOS (Apple Silicon), 2026-11-16 and 17.
   of the pages are those of `en.json` now reads each element that asks for a
   key, not the first only: with `og:description` in English other than the
   summary, it fails.
+- With the heading, the video's title and the structured data (2026-11-18):
+  `npm run test:website` passes, 273 tests. Each landing page has the name as
+  its one `<h1>`, the video's title in its language, and the structured data
+  with its summary and address; the check of the video's title fails when
+  `i18n.js` does not translate `title`, and the check of the structured data
+  when the generator does not write it for each language. The e2e case of the
+  website in Japanese passes with its pictures as they were, the name among
+  them. The other case, of the English page from the disk, failed on this
+  machine with `main`'s website too, its page scrolled down before its first
+  picture, while CI passed it on `main`.
 
 ## Not done
 
@@ -235,6 +273,3 @@ On macOS (Apple Silicon), 2026-11-16 and 17.
   pages in each language are published, which makes Google read it sooner; test
   `/ja/` with the URL Inspection's live test; and watch the Page indexing
   report.
-- **Smaller ones**: an `<h1>` for the application's name, a `title` for the
-  video's frame, and structured data (`SoftwareApplication`), for which Google
-  shows no rich result without ratings or reviews.

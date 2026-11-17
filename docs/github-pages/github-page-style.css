@@ -20,10 +20,14 @@ body {
   width: 100px;
 }
 
+/* The application's name, the page's heading (h1). It keeps the weight and the line height of the page's text, which it
+   had before it was a heading, where Bootstrap gives a heading its own. */
 .title {
   text-align: center;
   margin-top: 20px;
   margin-bottom: 20px;
+  font-weight: inherit;
+  line-height: inherit;
 }
 
 @media screen and (max-width: 500px) {
