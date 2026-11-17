@@ -24,7 +24,8 @@ export interface RegFailure extends Error {
 }
 
 // The context menu items of Explorer, which Explorer shows under "Show more options" on Windows 11: for files, for
-// folders and for the background of a folder, each with what Explorer replaces with the path of the item.
+// folders and for the background of a folder, each with what Explorer replaces with the path of the item. Only signed
+// packages put an app's items in the new menu of Windows 11 (docs/tasks/20261108_windows-11-context-menu/REPORT.md).
 const menuItems = [
   { key: 'HKCU\\Software\\Classes\\*\\shell\\OpenWithPhotoLocationMap', placeholder: '%1' },
   { key: 'HKCU\\Software\\Classes\\Directory\\shell\\OpenWithPhotoLocationMap', placeholder: '%1' },
