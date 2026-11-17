@@ -45,13 +45,16 @@
   }
 }
 
-// --- Animation for the max-height of the progress-bar-with-details area ---
-// Note that the animation needs to be set to max-height (NOT height) considering the cases that
-// lines of texts increase because of the small width of the progress-bar-with-details area
-// caused by small window width.
-.progress-bar-with-details          { transition: max-height 0.4s linear; }
-.shrunk-progress-bar-with-details   { max-height: $status-bar-min-height; }
-.expanded-progress-bar-with-details { max-height: 150px;                  }
+// --- Animation for the height of the progress-bar-with-details area ---
+// Expanded, the area is as tall as its texts, however many lines they take in a narrow window or a language with long
+// sentences, and interpolate-size animates its height from and to that. A max-height of 150px, as before, left the
+// lines past it under the status bar of the loaded files, and kept a closing area from moving until the max-height
+// came down to its height. Shrunk, the area clips its details, which the status bar below does not cover where the
+// summary takes more lines than the progress bar. overflow: hidden would make the area a scroll container, whose
+// least width in a grid is 0, and change the widths of the columns; overflow: clip does not.
+.progress-bar-with-details          { overflow: clip; interpolate-size: allow-keywords; transition: height 0.4s linear; }
+.shrunk-progress-bar-with-details   { height: $status-bar-min-height; }
+.expanded-progress-bar-with-details { height: auto;                   }
 // --------------------------------------------------------------------------
 
 .progress-bar-and-expand-icon {
