@@ -130,7 +130,8 @@ jobs:
     - name: npm run test:uninstaller
       # After the e2e suite, which runs its copy of the installed application: this reinstalls over and then
       # uninstalls the application that the package test installed, and checks that build/installer.nsh deletes the
-      # Explorer context menu on uninstall and keeps it on an update (script/package-test/uninstaller-test.js).
+      # Explorer context menu on uninstall, without stopping at a key that it cannot delete, and keeps it on an update
+      # (script/package-test/uninstaller-test.js).
       # It runs when only the e2e suite failed, as the suite cannot change the installation.
       if: ${{ !cancelled() && steps.package-test.outcome == 'success' }}
       timeout-minutes: 6
