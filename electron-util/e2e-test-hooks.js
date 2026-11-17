@@ -132,7 +132,10 @@ if (testRoot) {
     }
   }
 
-  /** Records and cancels a test's downloads and analytics; PLM_TEST_OFFLINE cancels all else off the computer. */
+  /**
+   * Records and cancels a test's downloads and analytics, and cancels the website's demo video; PLM_TEST_OFFLINE
+   * cancels all else off the computer.
+   */
   function interceptTestTraffic() {
     globalThis.__plmDownloads = [];
     globalThis.__plmAnalyticsEvents = [];
@@ -143,12 +146,31 @@ if (testRoot) {
       globalThis.__plmDownloads.push(item.getURL());
       event.preventDefault();
     });
+    // TL;DR: YouTube is cancelled too, so that the website's demo video does not load. Since 2026-11-17, YouTube's
+    // player takes the focus once it has loaded, and the landing page scrolls to show the whole of its frame, which
+    // moves the page under the mouse and in the pictures of the website's cases in test/e2e/regression.spec.mjs. The
+    // frame, which stays empty, is masked in the pictures.
+    // Details:
+    // - The landing page plays https://www.youtube.com/embed/n7hv_h1llKo?autoplay=1 in a frame. In a window of
+    //   1200x800, the frame became the page's focused element about 0.4 seconds after the page began to load, and the
+    //   page scrolled down by 181 px, until the frame's bottom met the window's. On a Mac, website-desktop.png then
+    //   differed from its reference by 18% of its pixels, three runs out of three, with the website of main as well,
+    //   though nothing in the repository that could explain it had changed. On Ubuntu CI, which takes no pictures, a
+    //   pull_request run of #735 failed at the hover check of the macOS download button, which had moved from under
+    //   the mouse, while the push run of the same commit passed.
+    // - With these hosts cancelled, the page stays at the top. No case needs the video, and
+    //   test/website/layout-in-every-language.mjs leaves it out of its pages as well.
+    // - Rejected: aborting the requests to YouTube with Playwright's app.context().route() (Playwright 1.64.1,
+    //   Electron 45.3.2). The page stayed at the top, but its icon, an image read from a file: address, no longer
+    //   showed (its naturalWidth was 0).
+    const youTubeHosts = ['youtube.com', 'youtube-nocookie.com', 'ytimg.com', 'googlevideo.com'];
     const interceptedUrls = [
       '*://*.analytics.photo-location-map.tomoyukiaota.com/*',
       '*://*.analytics.photo-data-viewer.tomoyukiaota.com/*',
       '*://*.mixpanel.com/*', '*://*.amplitude.com/*',
       '*://*.google-analytics.com/*', '*://www.googletagmanager.com/*',
       'https://github.com/TomoyukiAota/photo-location-map/releases/download/*',
+      ...youTubeHosts.map(host => `*://*.${host}/*`),
     ];
     // TL;DR: PLM_TEST_OFFLINE=1 also cancels every other request that leaves the computer, so that a measurement does
     // not wait on the network: the map's base-layer list then falls back to its built-in copy, and tiles stay blank.
@@ -160,6 +182,7 @@ if (testRoot) {
       const { hostname } = new URL(details.url);
       const intercepted = /(^|\.)(analytics\.photo-location-map\.tomoyukiaota\.com|analytics\.photo-data-viewer\.tomoyukiaota\.com|mixpanel\.com|amplitude\.com|google-analytics\.com)$/.test(hostname)
         || hostname === 'www.googletagmanager.com'
+        || youTubeHosts.some(host => hostname === host || hostname.endsWith(`.${host}`))
         || details.url.startsWith('https://github.com/TomoyukiAota/photo-location-map/releases/download/');
       if (!intercepted) {
         const loopback = ['127.0.0.1', 'localhost', '[::1]'].includes(hostname);
