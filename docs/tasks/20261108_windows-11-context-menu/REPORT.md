@@ -10,7 +10,8 @@ owner decided to wait until the redesign of the menu that Windows 11 started
 in October 2026 has settled, and had only the classic item fixed
 ([#673](https://github.com/TomoyukiAota/photo-location-map/pull/673)). This
 records what the investigation found, so that the work can resume from here
-rather than from the start.
+rather than from the start. The conditions for resuming were checked again on
+2026-11-17, and neither holds yet ("Check of 2026-11-17").
 
 ## Result
 
@@ -34,7 +35,7 @@ rather than from the start.
 - **The redesign leaves the placement open.** Since the update of October
   2026, the user chooses which app extensions appear in the main menu and
   which in a submenu. Microsoft has not documented where a signed item starts;
-  a news site says in the submenu.
+  news sites say in the submenu.
 
 ## Why it waits
 
@@ -44,7 +45,7 @@ redesign has settled, rather than start now. The reasons:
 1. **The change is still under way.** It came in a preview update, which
    Windows rolls out gradually. Microsoft has not told developers where a
    signed package's item appears: at the top of the menu, or in its "App
-   extensions" submenu. A news site is the only source for the default.
+   extensions" submenu. News sites are the only sources for the default.
 2. **The placement decides whether signing is worth it.** If the item starts
    in the submenu, a signed package puts it one level down, which is not much
    better than "Send to", which needs no signing.
@@ -61,6 +62,60 @@ Resume when both of these hold, which was expected to take months:
 - Microsoft's developer documentation, the page on
   [integrating with File Explorer](https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/integrate-packaged-app-with-file-explorer)
   (dated 2026-07-16 when it was read), describes it.
+
+## Check of 2026-11-17
+
+Neither condition holds yet, so the work still waits. As read on 2026-11-17:
+
+- **The redesign reaches users only in part.** The security update of
+  2026-11-10, [KB5132061](https://support.microsoft.com/help/5132061)
+  (builds 26300.9974, 26200.9974 and 26100.9974), says that it includes the
+  improvements of KB5127936, but its page says nothing of File Explorer or
+  the context menu. Microsoft still calls the menu's rollout gradual:
+  - KB5127936 lists the menu under "Gradual rollout".
+  - The
+    [Windows IT Pro Blog](https://techcommunity.microsoft.com/blog/windows-itpro-blog/windows-news-you-can-use-october-2026/4552396)
+    of 2026-11-03 names it among the features of the November security
+    update, and says that the optional update of October brings their
+    gradual rollout.
+  - The Release Preview notes of 26H1's
+    [build 28000.3612](https://learn.microsoft.com/en-us/windows-insider/release-notes/release-preview-26h1/build-28000-3612)
+    (2026-11-13) list it under "Gradual rollout" again. Those of
+    [builds 26200.10066 and 26300.10066](https://learn.microsoft.com/en-us/windows-insider/release-notes/release-preview-24h2-25h2/build-26200-10066-26300-10066)
+    for 25H2 and 26H2 (KB5132057, 2026-11-13) do not mention it.
+  - No Microsoft page says that the rollout has ended or stopped, and
+    release health lists no issue with the menu.
+
+  Windows Latest and two other news sites (2026-11-10 to 2026-11-16) report
+  that the menu still arrives in phases.
+- **Microsoft's developer page has not changed.** It is still dated
+  2026-07-16, and still says only that an `IExplorerCommand` item appears in
+  Windows 11's context menu, not where. No Microsoft page says where a
+  packaged app's item starts, in the main menu or in the "App extensions"
+  submenu, or whether classic verbs count as app extensions. The page of
+  [best practices](https://learn.microsoft.com/en-us/windows/apps/get-started/best-practices)
+  (2026-10-07) still describes the menu of 2021, and
+  [`desktop10:Verb`](https://learn.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-desktop10-verb)
+  has only `Id` and `Clsid`: nothing in it chooses the placement.
+- **News sites add two things that Microsoft has not said.**
+  - [XDA](https://www.xda-developers.com/microsoft-is-copying-the-best-context-menu-app/)
+    (2026-09-29) found on an Insider build that the items of other apps
+    start in the "App extensions" submenu, none in the main menu, and that
+    older shell extensions, such as 7-Zip's, get no place in the new menu:
+    they stay under "Show more options". It does not say whether static
+    verbs, which Add writes, are among them.
+  - [Pureinfotech](https://pureinfotech.com/windows-11-classic-context-menu-registry-tweak-broken/)
+    (2026-11-12) and
+    [WinCentral](https://thewincentral.com/windows-11-kb5132061-classic-context-menu-registry-tweak-broken/)
+    (2026-11-13) say that, after KB5132061, the key that brought the
+    classic menu back (`{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}`, see "Where
+    to check") no longer does. Both say that Shift+right-click on a file or
+    a folder still opens the classic menu.
+
+Microsoft said on 2026-11-10 that there will be no non-security preview
+update in December 2026, and that they resume in January 2027
+([Windows message center](https://learn.microsoft.com/en-us/windows/release-health/windows-message-center)).
+New features come first in these previews, as the menu did in KB5127936.
 
 ## How the new menu takes an item
 
@@ -296,7 +351,8 @@ stays under "Show more options" and Shift+right-click.
 
 Check the two conditions under "Why it waits". Then read KB5127936,
 Microsoft's page on File Explorer and the terms of the signing routes again:
-what this report says of them is as of 2026-11-08.
+what this report says of them is as of 2026-11-08, except for what "Check of
+2026-11-17" read again.
 
 ### Decisions for the owner
 
@@ -512,7 +568,11 @@ what this report says of them is as of 2026-11-08.
 10. After KB5127936: where does the item start, can the user move it to the
     top, can classic verbs be moved there too (then the package matters
     less), and does Shift+right-click on a file or a folder still open the
-    classic menu?
+    classic menu? A news site found on an Insider build, before KB5127936,
+    that older shell extensions, such as 7-Zip's, get no place in the new
+    menu, but it does not mention static verbs. Two others say that, after
+    KB5132061, Shift+right-click on a file or a folder still opens the
+    classic menu ("Check of 2026-11-17").
 11. Can CI's Windows runner, Windows Server 2025, which runs as an
     administrator with UAC off, register the package and start its COM
     class? Microsoft's list of the systems that MSIX supports does not
@@ -528,20 +588,24 @@ what this report says of them is as of 2026-11-08.
 
 ### Where to check
 
-- The owner's PC forces the classic menu: it has
+- On 2026-11-08, the owner's PC forced the classic menu: it had
   `HKCU\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32`,
   which VS Code's installer also takes as the user's choice of the classic
   menu. That was read from a shell inside the Claude desktop app, which can
   see its own copy of that part of the registry
   ([AGENTS.md](../../../AGENTS.md), "In the Claude desktop app on Windows"),
-  so read it again from outside before relying on it.
+  so read it again from outside before relying on it. News sites say that
+  the key no longer brings the classic menu back after KB5132061 ("Check of
+  2026-11-17"), which the owner's PC has had since 2026-11-13: see which
+  menu a right-click opens there.
 - Check in a Windows 11 VM, or remove that key only with the owner's
   agreement, and put it back afterwards. Change it outside the Claude desktop
   app, with the steps of that section of AGENTS.md: export the key first, and
   restore it with `reg delete /f` and `reg import`. Restart Explorer after
   each change, which closes its windows.
-- Check again once KB5127936 is installed, and check the classic verbs on
-  Windows 10 22H2.
+- Check again once the redesigned menu shows on the PC: KB5132061 includes
+  the improvements of KB5127936, but the menu reaches PCs gradually ("Check
+  of 2026-11-17"). Check the classic verbs on Windows 10 22H2 too.
 - Explorer's menu is UI, so the owner checks it.
 
 ## Not covered
@@ -604,3 +668,32 @@ Read on 2026-11-08.
   - [electron/fiddle-core's `windows-identity.ts`](https://github.com/electron/fiddle-core/blob/769e0b57eb15/src/windows-identity.ts)
   - winapp CLI: [sparse packages](https://github.com/microsoft/WinAppCli/blob/5f379fb55517/docs/guides/sparse.md),
     [Electron](https://github.com/microsoft/WinAppCli/blob/5f379fb55517/docs/guides/electron/setup.md)
+
+Read on 2026-11-17, for "Check of 2026-11-17":
+
+- Microsoft's pages on updates:
+  [KB5132061](https://support.microsoft.com/help/5132061),
+  [KB5127936](https://support.microsoft.com/help/5127936),
+  the Release Preview notes of
+  [build 28000.3612](https://learn.microsoft.com/en-us/windows-insider/release-notes/release-preview-26h1/build-28000-3612)
+  and of
+  [builds 26200.10066 and 26300.10066](https://learn.microsoft.com/en-us/windows-insider/release-notes/release-preview-24h2-25h2/build-26200-10066-26300-10066),
+  the [Windows message center](https://learn.microsoft.com/en-us/windows/release-health/windows-message-center),
+  release health for
+  [25H2](https://learn.microsoft.com/en-us/windows/release-health/status-windows-11-25h2)
+  and [26H2](https://learn.microsoft.com/en-us/windows/release-health/status-windows-11-26h2),
+  and the
+  [Windows IT Pro Blog of 2026-11-03](https://techcommunity.microsoft.com/blog/windows-itpro-blog/windows-news-you-can-use-october-2026/4552396).
+- Microsoft's pages for developers: the page on
+  [integrating with File Explorer](https://learn.microsoft.com/en-us/windows/apps/desktop/modernize/integrate-packaged-app-with-file-explorer),
+  [best practices](https://learn.microsoft.com/en-us/windows/apps/get-started/best-practices)
+  and
+  [`desktop10:Verb`](https://learn.microsoft.com/en-us/uwp/schemas/appxpackage/uapmanifestschema/element-desktop10-verb).
+- News sites:
+  [Windows Latest, 2026-11-10](https://www.windowslatest.com/2026/11/10/windows-11-kb5132061-is-out-with-new-features-direct-download-links-for-offline-installer-msu/),
+  [MIXED News, 2026-11-12](https://mixed-news.com/en/windows-11-file-explorer-right-click-menu-customise-november-update/),
+  [The Gadgeteer, 2026-11-16](https://the-gadgeteer.com/2026/11/16/windows-11-november-update-file-explorer-cloud-rebuild/),
+  [XDA, 2026-09-29](https://www.xda-developers.com/microsoft-is-copying-the-best-context-menu-app/),
+  [Pureinfotech, 2026-11-12](https://pureinfotech.com/windows-11-classic-context-menu-registry-tweak-broken/)
+  and
+  [WinCentral, 2026-11-13](https://thewincentral.com/windows-11-kb5132061-classic-context-menu-registry-tweak-broken/).
