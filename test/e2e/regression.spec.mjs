@@ -2416,6 +2416,8 @@ test('download website keeps desktop and narrow layouts and Windows navigation',
   await expect(page.locator('.title')).toHaveText('Photo Location Map');
   await expect(page.getByRole('link', { name: 'Download for Windows' }))
     .toHaveAttribute('href', '../github-pages/downloading-for-windows/downloading-for-windows.html?lang=en');
+  // The demo video's frame stays empty: the suite cancels YouTube, whose error message for a page read from a file:
+  // address took the focus and scrolled the page to the frame (electron-util/e2e-test-hooks.js).
   await shot('website-desktop', [page.locator('iframe')]);
   await setContentSize(600, 800);
   await shot('website-narrow', [page.locator('iframe')]);
