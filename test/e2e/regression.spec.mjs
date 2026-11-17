@@ -2178,6 +2178,12 @@ test('the thumbnail error dialog lists, sorts and filters the HEIF files without
   await expect.poll(openCommands).toEqual([osOpenCommand(brokenFile), osOpenCommand(brokenFile, { containingFolder: true })]);
   await dialog.getByRole('button', { name: 'Close', exact: true }).click();
   await expect(dialog).toHaveCount(0);
+  // In a narrow window, the details take more lines, and their area is as tall as they are: none of them is under
+  // the status bar of the loaded files, as the ones past a height of 150px were.
+  await (await app.browserWindow(page)).evaluate(window => window.setContentSize(400, 800));
+  await expect.poll(() => page.evaluate(() => window.innerWidth)).toBe(400);
+  await expect.poll(() => details.evaluate(area => Math.round(area.querySelector('.details').getBoundingClientRect().bottom
+    - area.getBoundingClientRect().bottom))).toBeLessThanOrEqual(0);
 });
 /** The value of a setting in the test profile's files, or undefined. */
 async function savedSetting(userData, storagePath) {
