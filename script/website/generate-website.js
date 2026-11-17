@@ -15,7 +15,8 @@ import { languages, putTexts } from './website-i18n.js';
 // - docs/<code>/index.html: docs/index.html with the texts of the language put into it by i18n.js's own putTexts(),
 //   its own address as the canonical one and as og:url, which the preview of a link names, its other addresses from
 //   a folder deeper, and its language in data-language of the script tag of i18n.js, which then keeps the page in it;
-// - in the head of docs/index.html, and so of each of those pages, the address of the page in each language;
+// - in the head of docs/index.html, and so of each of those pages, the address of the page in each language, and what
+//   the application is, in the words of schema.org (structured data), with the summary of the page's language;
 // - docs/sitemap.xml, with those addresses.
 
 const docs = path.resolve(import.meta.dirname, '../../docs');
@@ -24,6 +25,9 @@ export const site = 'https://tomoyukiaota.github.io/photo-location-map/';
 
 /** The address of the landing page in a language, or of the landing page as it is for no language. */
 export const addressOf = code => (code ? `${site}${code}/` : site);
+
+/** The application's icon, which the previews of links show (Open Graph) and the structured data names. */
+export const iconAddress = `${site}docs-resources/app-icon-512x512.png`;
 
 /** What a landing page in a language says in its first comment, by which a folder is found to hold one. */
 export const writtenMark = 'Written by `npm run generate:website` (script/website/generate-website.js)';
@@ -45,14 +49,41 @@ const linksForSearchEngines = canonical => [
   `<link rel="alternate" hreflang="x-default" href="${addressOf(null)}">`,
 ];
 
-/** docs/index.html with the lines for search engines that it is to have. */
-function landingPage(source) {
+/**
+ * What the application is, for search engines, in the words of schema.org, with the summary of the page's language and
+ * the page's own address. Google shows no rich result for an application without ratings or reviews, which the
+ * website has none of, but search engines and AI assistants read it as what the page is about. No version: it would be
+ * one more thing to change at each release.
+ */
+export const structuredData = (code, summary) => ({
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'Photo Location Map',
+  description: summary,
+  url: addressOf(code),
+  image: iconAddress,
+  applicationCategory: 'MultimediaApplication',
+  operatingSystem: 'Windows, macOS',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  inLanguage: languages.map(language => language.code),
+  author: { '@type': 'Person', name: 'Tomoyuki Aota', url: 'https://github.com/tomoyukiaota' },
+});
+
+/** The text of the head's script of structured data, which starts and ends each of its lines with `indent`. */
+const structuredDataScript = (data, indent) =>
+  `\n${JSON.stringify(data, null, 2).replace(/</g, '\\u003c').split('\n').map(line => `${indent}${line}\n`).join('')}${indent}`;
+
+/** docs/index.html with the lines for search engines that it is to have, in English. */
+function landingPage(source, summary) {
   const start = source.indexOf(startOfLinks);
   const end = source.indexOf(endOfLinks);
   if (start === -1 || end < start) throw new Error(`The head of docs/index.html has no "${startOfLinks} … -->" followed by "${endOfLinks}".`);
   const afterStart = source.indexOf('-->', start) + '-->'.length;
   const indent = source.slice(source.lastIndexOf('\n', end) + 1, end);
-  const lines = linksForSearchEngines(addressOf(null)).map(line => `${indent}${line}\n`).join('');
+  const lines = [
+    ...linksForSearchEngines(addressOf(null)),
+    `<script type="application/ld+json">${structuredDataScript(structuredData(null, summary), indent)}</script>`,
+  ].map(line => `${indent}${line}\n`).join('');
   return `${source.slice(0, afterStart)}\n${lines}${indent}${source.slice(end)}`;
 }
 
@@ -71,6 +102,10 @@ function pageInLanguage(landing, code, texts) {
   putTexts(document, code, texts);
   one('link[rel="canonical"]').setAttribute('href', addressOf(code));
   one('meta[property="og:url"]').setAttribute('content', addressOf(code));
+  // The summary of the language, which putTexts() has put into the description, as the page shows it.
+  const script = one('script[type="application/ld+json"]');
+  const indent = script.previousSibling.data.slice(script.previousSibling.data.lastIndexOf('\n') + 1);
+  script.textContent = structuredDataScript(structuredData(code, one('meta[name="description"]').getAttribute('content')), indent);
   for (const element of document.querySelectorAll('[href], [src]')) {
     for (const attribute of ['href', 'src'].filter(attribute => element.hasAttribute(attribute)))
       element.setAttribute(attribute, fromFolder(element.getAttribute(attribute)));
@@ -113,7 +148,8 @@ ${urls.join('\n')}
 
 /** What this writes: each file by its path in docs/, with its text. */
 export function websiteFiles() {
-  const landing = landingPage(readText(path.join(docs, 'index.html')));
+  const english = JSON.parse(readText(path.join(docs, 'github-pages/locales/en.json')));
+  const landing = landingPage(readText(path.join(docs, 'index.html')), english.landing.summary);
   const files = new Map([['index.html', landing]]);
   const { document } = new JSDOM(landing).window;
   for (const { code } of languages) {
