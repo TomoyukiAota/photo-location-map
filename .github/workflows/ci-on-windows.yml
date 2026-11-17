@@ -8,6 +8,16 @@ on:
     branches:
       - main
 
+# A new commit on a branch cancels the runs of the commit before it, the push's and the pull request's each in a group
+# of their own, so that only the latest commit is tested when Mergify brings a pull request up to date with main
+# (.mergify.yml). Each run on main has a group of its own, and is never canceled.
+# A push's run that is canceled while it publishes leaves the files that it uploaded in the draft release, and the next
+# run that publishes replaces them: electron-publish deletes a file that the draft release already has, and uploads it
+# again (overwriteArtifact of its GitHubPublisher). A pull request's run does not publish.
+concurrency:
+  group: ${{ github.ref == 'refs/heads/main' && github.run_id || format('{0} {1} {2}', github.workflow, github.event_name, github.event.pull_request.number || github.ref_name) }}
+  cancel-in-progress: true
+
 jobs:
   changes:
     # Finds out whether anything other than documents changed (see .github/ci-filters.yml).

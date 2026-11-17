@@ -15,6 +15,13 @@ on:
         type: boolean
         default: false
 
+# A new commit on a branch cancels the runs of the commit before it, the push's and the pull request's each in a group
+# of their own, so that only the latest commit is tested when Mergify brings a pull request up to date with main
+# (.mergify.yml). Each run on main, and each run started by hand, has a group of its own, and is never canceled.
+concurrency:
+  group: ${{ (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch') && github.run_id || format('{0} {1} {2}', github.workflow, github.event_name, github.event.pull_request.number || github.ref_name) }}
+  cancel-in-progress: true
+
 jobs:
   changes:
     # Finds out whether anything other than documents changed (see .github/ci-filters.yml).

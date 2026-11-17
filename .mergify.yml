@@ -1,16 +1,24 @@
 pull_request_rules:
+  # Branch protection requires a pull request to be up to date with main. When main moves on, this merges main into
+  # each pull request that is to be merged, unless they conflict, and the new commit cancels the CI runs of the commit
+  # before it (the "concurrency" of each workflow in .github/workflows/). So the tests run again on main as it is now,
+  # without anyone having to notice that main moved (docs/contributing/ci.md, "Merging").
+  - name: keep automerge pull requests up to date with main
+    conditions:
+      - base=main
+      - label=automerge
+      - author=TomoyukiAota
+      - -draft
+      - "#commits-behind>0"
+    actions:
+      update:
+
+  # Mergify adds to these conditions what branch protection requires, so that it is written in one place: the required
+  # checks, each of which passes when it is skipped, as it is when only documents changed (.github/ci-filters.yml), and
+  # that the pull request is up to date with main. The "Summary" check of a pull request shows them, marked "GitHub
+  # branch protection".
   - name: automatic merge on CI success
     conditions:
-      # Each test job is skipped when only documents changed (see .github/ci-filters.yml).
-      - or:
-        - check-success=test (ubuntu)
-        - check-skipped=test (ubuntu)
-      - or:
-        - check-success=test (windows-latest)
-        - check-skipped=test (windows-latest)
-      - or:
-        - check-success=test (macos-arm64)
-        - check-skipped=test (macos-arm64)
       - label=automerge
       - author=TomoyukiAota
     actions:
