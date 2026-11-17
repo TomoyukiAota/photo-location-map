@@ -146,7 +146,7 @@ if (testRoot) {
       globalThis.__plmDownloads.push(item.getURL());
       event.preventDefault();
     });
-    // TL;DR: YouTube is cancelled too, so that the website's demo video does not load. Since 2026-11-17, YouTube's
+    // TL;DR: YouTube is cancelled too, so that the website's demo video does not load. Since 2026-11-16, YouTube's
     // player takes the focus once it has loaded, and the landing page scrolls to show the whole of its frame, which
     // moves the page under the mouse and in the pictures of the website's cases in test/e2e/regression.spec.mjs. The
     // frame, which stays empty, is masked in the pictures.
@@ -155,9 +155,10 @@ if (testRoot) {
     //   1200x800, the frame became the page's focused element about 0.4 seconds after the page began to load, and the
     //   page scrolled down by 181 px, until the frame's bottom met the window's. On a Mac, website-desktop.png then
     //   differed from its reference by 18% of its pixels, three runs out of three, with the website of main as well,
-    //   though nothing in the repository that could explain it had changed. On Ubuntu CI, which takes no pictures, a
-    //   pull_request run of #735 failed at the hover check of the macOS download button, which had moved from under
-    //   the mouse, while the push run of the same commit passed.
+    //   though nothing in the repository that could explain it had changed. On Ubuntu CI, which takes no pictures, the
+    //   case failed at the hover check of the macOS download button, which had moved from under the mouse: in a push
+    //   run of main on 2026-11-16, and on 2026-11-17 in pull_request runs of #735 and #736, whose push runs of the
+    //   same commits passed.
     // - With these hosts cancelled, the page stays at the top. No case needs the video, and
     //   test/website/layout-in-every-language.mjs leaves it out of its pages as well.
     // - Rejected: aborting the requests to YouTube with Playwright's app.context().route() (Playwright 1.64.1,
