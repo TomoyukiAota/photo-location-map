@@ -2407,6 +2407,22 @@ test('download website keeps desktop and narrow layouts and Windows navigation',
     const require = globalThis.__plmTestRequire;
     const { withHeadlessTestOptions } = require(require('node:path').join(app.getAppPath(), 'out/app/electron-util/e2e-test-hooks.js'));
     const window = new BrowserWindow(withHeadlessTestOptions({ useContentSize: true, width: 1200, height: 800 }));
+    // TL;DR: The frame of the demo video stays empty: YouTube's answer to a page opened from the disk takes the
+    // keyboard focus, and the page scrolls to it, which moves the hovered button from under the pointer and the page
+    // from where its screenshots have it.
+    // Details: A page opened from the disk sends YouTube no Referer, and YouTube shows "Video player configuration
+    // error" (Error 153) in place of the video, as it did in November 2026. That message takes the focus once it is
+    // shown, about half a second after the page starts to load, and the page scrolls to show the frame, smoothly
+    // (Bootstrap's scroll-behavior): by 30px in the window 600px wide. When that came just after the hover, the macOS
+    // button moved from under the pointer, and Chromium took the hover off it once the page had scrolled: the button
+    // had its hover color for only 60 to 100ms, which Playwright's polls could miss, and the case failed in 3 of its 58
+    // runs on Ubuntu CI on 16 and 17 November 2026. On macOS, the page had scrolled by 181px by the first screenshot,
+    // which failed in 5 of 5 runs with PLM_VISUAL=1. The frame keeps its size, and the screenshots mask it. The case
+    // served over HTTP below plays the video, which takes no focus. A route of Playwright's would keep YouTube out as
+    // well, but the page's icon, a file, then did not load.
+    window.webContents.on('will-frame-navigate', event => {
+      if (!event.isMainFrame && event.url.startsWith('https://www.youtube.com/embed/')) event.preventDefault();
+    });
     void window.loadURL(url);
     // The landing page in English: the one as it is would be in the language of the computer that the suite runs on.
   }, pathToFileURL(path.join(root, 'docs/en/index.html')).href);
