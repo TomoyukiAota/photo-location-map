@@ -81,6 +81,10 @@
       "openFolder": "Odpri mapo"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Ali želite odpreti spodnjo mapo?",
+    "openFile": "Ali želite odpreti spodnjo datoteko?"
+  },
   "photoInfo": {
     "unavailable": "Podatki o fotografiji niso na voljo.",
     "openFile": "Odpri datoteko",
@@ -89,9 +93,12 @@
     "rotateThumbnail": "Zasukaj sličico",
     "menu": {
       "selectOnlyThis": "Izberi samo to datoteko",
+      "selectPrevious": "Izberi prejšnjo datoteko",
+      "selectNext": "Izberi naslednjo datoteko",
       "openFolder": "Odpri mapo",
       "openGoogleMaps": "Odpri Google Zemljevide",
       "openGoogleStreetView": "Odpri Google Street View",
+      "openGoogleEarth": "Odpri Google Earth",
       "viewData": "Prikaži podatke"
     },
     "pathTooLong": "Sličice ni mogoče prikazati, ker je število znakov v poti datoteke {{length}}. Windows omejuje število znakov v poti na {{maximum}}. Premaknite datoteko, da skrajšate njeno pot. Za podrobnosti pritisnite Ctrl+Shift+I in preberite sporočila v konzoli.",
@@ -238,7 +245,9 @@
     "selection": {
       "title": "Izbor",
       "undo": "Razveljavi",
-      "redo": "Uveljavi"
+      "redo": "Uveljavi",
+      "selectPrevious": "Izberi prejšnjo datoteko",
+      "selectNext": "Izberi naslednjo datoteko"
     },
     "settings": {
       "title": "Nastavitve",

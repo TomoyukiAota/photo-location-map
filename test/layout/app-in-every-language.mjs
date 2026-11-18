@@ -4,8 +4,8 @@
 //   node test/layout/app-in-every-language.mjs [--languages=de,fi] [--pictures] [--output=<folder>]
 //
 // For each language, on an empty profile of a computer in that language, it goes through the screens that show
-// texts: the Language dialog, the Welcome dialog, the home view without and with a folder of photos (in a window of
-// 1200x800 and of 800x600), a photo's popup with its menu, the tree's menu, the Sort menu and its info dialog, the
+// texts: the Language dialog, the Welcome dialog, the question that a dropped folder asks, the home view without and
+// with a folder of photos (in a window of 1200x800 and of 800x600), a photo's popup with its menu, the tree's menu, the Sort menu and its info dialog, the
 // chart's menu, its message for a duration that it cannot show and its button for the photos within a zoom, a region
 // on the map, the tabs of the Settings dialog with the choices of the clock's field, the question before a restart,
 // the About box, the dialog of the thumbnails that failed, and the dialog of a folder without location data.
@@ -195,6 +195,18 @@ for (const code of codes) {
         await page.waitForTimeout(250);
       }
     };
+    /** Waits until `selector` has stayed where it is for a quarter of a second, as the map does once it has panned. */
+    const untilStill = async selector => {
+      let last;
+      for (let still = 0, checks = 0; still < 5; checks += 1) {
+        if (checks === 100) throw new Error(`${selector} kept moving for 5 seconds`);
+        await page.waitForTimeout(50);
+        const box = await page.locator(selector).first().boundingBox();
+        const where = box && `${Math.round(box.x)},${Math.round(box.y)}`;
+        still = where && where === last ? still + 1 : 0;
+        last = where;
+      }
+    };
 
     await step('language-dialog', async () => {
       await page.waitForSelector('app-language-dialog');
@@ -208,6 +220,28 @@ for (const code of codes) {
       await page.waitForSelector('app-welcome-dialog', { state: 'detached' });
     });
     await step('home-empty', () => screen('home-empty', 'app-root'));
+    await step('drop-question', async () => {
+      // The question that a dropped folder asks, with its path below it. The drop's File has the folder's path, as
+      // in a drop from the OS (dragOnWindow in test/e2e/regression.spec.mjs).
+      await page.evaluate(() => document.body.append(Object.assign(document.createElement('input'),
+        { type: 'file', hidden: true, id: 'plm-layout-dragged-files' })));
+      const cdp = await page.context().newCDPSession(page);
+      const { result } = await cdp.send('Runtime.evaluate', { expression: `document.getElementById('plm-layout-dragged-files')` });
+      await cdp.send('DOM.setFileInputFiles', { objectId: result.objectId, files: [photos] });
+      await cdp.detach();
+      await page.evaluate(() => {
+        const input = document.getElementById('plm-layout-dragged-files');
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(input.files[0]);
+        input.remove();
+        for (const type of ['dragenter', 'dragover', 'drop'])
+          document.body.dispatchEvent(new DragEvent(type, { bubbles: true, cancelable: true, dataTransfer }));
+      });
+      await page.waitForSelector('app-confirm-dialog .path');
+      await screen('drop-question', 'app-confirm-dialog', 'mat-dialog-container:has(app-confirm-dialog)');
+      await page.locator('app-confirm-dialog .cancel-button').click();
+      await page.waitForSelector('app-confirm-dialog', { state: 'detached' });
+    });
     await step('home-loaded', async () => {
       await openFolder(photos);
       // The loading dialog is there for a moment only: it is measured at once, if it is caught at all.
@@ -227,7 +261,17 @@ for (const code of codes) {
     });
     await step('popup-menu', async () => {
       await page.locator('.plm-leaflet-map-div-icon').first().dispatchEvent('click');
-      await page.locator('.leaflet-popup .photo-info-viewer-more-options-button').click();
+      // TL;DR: The button is clicked with the mouse where it is once the map has panned, as a person clicks it.
+      // Details: The menu opens below its button, beside it or above it, where its size fits in the room around the
+      // button when it is clicked. Playwright's click of the element scrolled the map's container, which Leaflet keeps
+      // at no scroll, to bring the button into view: for the click, the button was 270 px higher, at the top of the
+      // map, and the menu opened below it, to be cut off at the map's bottom edge once Leaflet had scrolled the
+      // container back. The map also pans for about a quarter of a second after the popup opens, which moves the
+      // button.
+      const moreOptionsButton = '.leaflet-popup .photo-info-viewer-more-options-button';
+      await untilStill(moreOptionsButton);
+      const buttonBox = await page.locator(moreOptionsButton).boundingBox();
+      await page.mouse.click(buttonBox.x + buttonBox.width / 2, buttonBox.y + buttonBox.height / 2);
       await page.waitForSelector('.photo-info-viewer-more-options-menu');
       await screen('popup-menu', '.leaflet-popup', '#home-map', '#home-map');
       await page.keyboard.press('Escape');

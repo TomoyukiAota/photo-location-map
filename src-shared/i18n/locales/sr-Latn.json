@@ -81,6 +81,10 @@
       "openFolder": "Otvori fasciklu"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Želite li da otvorite sledeću fasciklu?",
+    "openFile": "Želite li da otvorite sledeću datoteku?"
+  },
   "photoInfo": {
     "unavailable": "Podaci o fotografiji nisu dostupni.",
     "openFile": "Otvori datoteku",
@@ -89,9 +93,12 @@
     "rotateThumbnail": "Rotiraj sličicu",
     "menu": {
       "selectOnlyThis": "Izaberi samo ovu datoteku",
+      "selectPrevious": "Izaberi prethodnu datoteku",
+      "selectNext": "Izaberi sledeću datoteku",
       "openFolder": "Otvori fasciklu",
       "openGoogleMaps": "Otvori Google mape",
       "openGoogleStreetView": "Otvori Google Street View",
+      "openGoogleEarth": "Otvori Google Earth",
       "viewData": "Prikaži podatke"
     },
     "pathTooLong": "Sličicu nije moguće prikazati jer je broj znakova u putanji datoteke {{length}}. Windows ograničava broj znakova u putanji na {{maximum}}. Premestite datoteku da biste skratili njenu putanju. Za detalje pritisnite Ctrl+Shift+I i pročitajte poruke u konzoli.",
@@ -238,7 +245,9 @@
     "selection": {
       "title": "Izbor",
       "undo": "Opozovi",
-      "redo": "Ponovi"
+      "redo": "Ponovi",
+      "selectPrevious": "Izaberi prethodnu datoteku",
+      "selectNext": "Izaberi sledeću datoteku"
     },
     "settings": {
       "title": "Podešavanja",

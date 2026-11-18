@@ -81,6 +81,10 @@
       "openFolder": "フォルダーを開く"
     }
   },
+  "dropToOpen": {
+    "openFolder": "以下のフォルダーを開きますか？",
+    "openFile": "以下のファイルを開きますか？"
+  },
   "photoInfo": {
     "unavailable": "写真の情報がありません。",
     "openFile": "ファイルを開く",
@@ -89,9 +93,12 @@
     "rotateThumbnail": "サムネイルを回転",
     "menu": {
       "selectOnlyThis": "このファイルのみを選択",
+      "selectPrevious": "前のファイルを選択",
+      "selectNext": "次のファイルを選択",
       "openFolder": "フォルダーを開く",
       "openGoogleMaps": "Google マップを開く",
       "openGoogleStreetView": "Google ストリートビューを開く",
+      "openGoogleEarth": "Google Earth を開く",
       "viewData": "データを表示"
     },
     "pathTooLong": "ファイルのパスの長さが {{length}} 文字であるため、サムネイルを表示できません。Windows では、パスの長さの上限は {{maximum}} 文字です。ファイルの場所を変えて、ファイルのパスを短くしてください。詳細は、Ctrl+Shift+I を押してコンソールのメッセージをご覧ください。",
@@ -238,7 +245,9 @@
     "selection": {
       "title": "選択",
       "undo": "元に戻す",
-      "redo": "やり直す"
+      "redo": "やり直す",
+      "selectPrevious": "前のファイルを選択",
+      "selectNext": "次のファイルを選択"
     },
     "settings": {
       "title": "設定",

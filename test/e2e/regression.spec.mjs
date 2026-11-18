@@ -276,6 +276,55 @@ async function openFolderWithPicker(folder) {
   await page.getByRole('button', { name: 'Open Folder', exact: true }).click();
 }
 /**
+ * Drags the files and folders at `itemPaths` over the map, as from Explorer or Finder, and drops them there unless
+ * `drop` is false. Resolves with whether the page took the drag, and the effect that it set: copy for a drop that it
+ * takes, none for one that it refuses.
+ * TL;DR: The Files of the drag have the items' paths on the disk, as a drag from the OS has, so that the preload reads
+ * their paths as it does for a real drop (electron-util/preload/main-window.cjs).
+ * Details: Playwright cannot start a drag of the OS. The Files come from a file input that this adds to the page, as
+ * Chromium's DOM.setFileInputFiles makes them from paths, a folder's too: Playwright's setInputFiles takes a folder
+ * only for an input with webkitdirectory, which then has the files in it rather than the folder. The drag's events
+ * are dispatched with a DataTransfer that holds those Files. Chromium ignores the dropEffect that is set on a
+ * DataTransfer which a script made, as it is not a drag's, so this one records what the page sets.
+ */
+async function dragOnWindow(itemPaths, { drop = true } = {}) {
+  await page.evaluate(() => {
+    const input = Object.assign(document.createElement('input'), { type: 'file', multiple: true, hidden: true, id: 'plm-e2e-dragged-files' });
+    document.body.append(input);
+  });
+  const cdp = await page.context().newCDPSession(page);
+  try {
+    const { result } = await cdp.send('Runtime.evaluate', { expression: `document.getElementById('plm-e2e-dragged-files')` });
+    await cdp.send('DOM.setFileInputFiles', { objectId: result.objectId, files: itemPaths });
+  } finally {
+    await cdp.detach();
+  }
+  return page.evaluate(drop => {
+    const input = document.getElementById('plm-e2e-dragged-files');
+    const dataTransfer = new DataTransfer();
+    for (const file of input.files) dataTransfer.items.add(file);
+    input.remove();
+    let dropEffect = 'none';
+    Object.defineProperty(dataTransfer, 'dropEffect', { get: () => dropEffect, set: effect => { dropEffect = effect; } });
+    const map = document.getElementById('plm-leaflet-map');
+    // false when the page prevented the event's default action, which takes the drag.
+    const dispatch = type => !map.dispatchEvent(new DragEvent(type, { bubbles: true, cancelable: true, dataTransfer }));
+    dispatch('dragenter');
+    const taken = dispatch('dragover');
+    const effect = dataTransfer.dropEffect;
+    if (drop) dispatch('drop');
+    return { taken, effect };
+  }, drop);
+}
+/** Checks the question that a drop asks, about the folder or the file at `itemPath`, then clicks `answer`, OK or Cancel. */
+async function answerDropQuestion(question, itemPath, answer) {
+  const dialog = page.locator('app-confirm-dialog');
+  await expect(dialog.locator('.message')).toHaveText(question);
+  await expect(dialog.locator('.path')).toHaveText(itemPath);
+  await dialog.getByRole('button', { name: answer, exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+}
+/**
  * What the dialog of an error that nothing handled in the main process shows, for a promise rejected there with
  * `message`. The dialog is replaced while it is shown, as the real one would wait for a click.
  */
@@ -468,7 +517,7 @@ const menuInEnglish = [
     items: ['About Photo Location Map', 'Services', 'Hide Photo Location Map', 'Hide Others', 'Show All', 'Quit Photo Location Map'],
   }] : []),
   { label: 'View', items: ['Reload', 'Actual Size', 'Zoom In', 'Zoom Out', 'Toggle Full Screen'] },
-  { label: 'Selection', items: ['Undo', 'Redo'] },
+  { label: 'Selection', items: ['Undo', 'Redo', 'Select Previous', 'Select Next'] },
   { label: 'Settings', items: ['Open Settings'] },
   { label: 'Help', items: [...(isMac ? [] : ['About Photo Location Map']),
     'Show Welcome Dialog', 'Advanced Menu', 'Open Log Folder', 'Toggle Developer Tools'] },
@@ -479,7 +528,7 @@ const menuInJapanese = [
     items: ['Photo Location Map について', 'サービス', 'Photo Location Map を非表示', 'ほかを非表示', 'すべてを表示', 'Photo Location Map を終了'],
   }] : []),
   { label: '表示', items: ['再読み込み', '実際のサイズ', '拡大', '縮小', 'フルスクリーンの切り替え'] },
-  { label: '選択', items: ['元に戻す', 'やり直す'] },
+  { label: '選択', items: ['元に戻す', 'やり直す', '前のファイルを選択', '次のファイルを選択'] },
   { label: '設定', items: ['設定を開く'] },
   { label: 'ヘルプ', items: [...(isMac ? [] : ['Photo Location Map について']),
     '「ようこそダイアログ」を表示', '詳細メニュー', 'ログフォルダーを開く', '開発者ツールの切り替え'] },
@@ -697,7 +746,8 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   await expect(popup.locator('.photo-info-viewer-date-time-taken')).toHaveText(/^\d{4}-\d{2}-\d{2} \([日月火水木金土]\) \d{2}:\d{2}:\d{2}$/);
   await popup.locator('.photo-info-viewer-more-options-button').click();
   await expect(page.locator('.photo-info-viewer-more-options-menu-item'))
-    .toHaveText(['このファイルのみを選択', 'フォルダーを開く', 'Google マップを開く', 'Google ストリートビューを開く', 'データを表示']);
+    .toHaveText(['このファイルのみを選択', '前のファイルを選択', 'フォルダーを開く', 'Google マップを開く', 'Google Earth を開く',
+      'Google ストリートビューを開く', 'データを表示']);
   // The menu is wider than in English, and this popup is at the map's left edge: the menu is not cut off there.
   const menuBox = await page.locator('.photo-info-viewer-more-options-menu').boundingBox();
   const mapBox = await page.locator('#home-map').boundingBox();
@@ -795,7 +845,8 @@ test('on a computer whose language is Arabic, the application is laid out from r
   // The photo's menu opens the other way round, and stays within the map.
   await popup.locator('.photo-info-viewer-more-options-button').click();
   await expect(page.locator('.photo-info-viewer-more-options-menu-item'))
-    .toHaveText(['تحديد هذا الملف فقط', 'فتح المجلد', 'فتح خرائط Google', 'فتح Google Street View', 'عرض البيانات']);
+    .toHaveText(['تحديد هذا الملف فقط', 'تحديد الملف السابق', 'فتح المجلد', 'فتح خرائط Google', 'فتح Google Earth',
+      'فتح Google Street View', 'عرض البيانات']);
   const menuBox = await page.locator('.photo-info-viewer-more-options-menu').boundingBox();
   const mapBox = await map.boundingBox();
   expect(menuBox.x).toBeGreaterThanOrEqual(mapBox.x);
@@ -815,7 +866,7 @@ test('on a computer whose language is Arabic, the application is laid out from r
       items: ['حول Photo Location Map', 'الخدمات', 'إخفاء Photo Location Map', 'إخفاء الأخرى', 'إظهار الكل', 'إنهاء Photo Location Map'],
     }] : []),
     { label: 'عرض', items: ['إعادة التحميل', 'الحجم الفعلي', 'تكبير', 'تصغير', 'تبديل وضع ملء الشاشة'] },
-    { label: 'التحديد', items: ['تراجع', 'إعادة'] },
+    { label: 'التحديد', items: ['تراجع', 'إعادة', 'تحديد الملف السابق', 'تحديد الملف التالي'] },
     { label: 'الإعدادات', items: ['فتح الإعدادات'] },
     { label: 'مساعدة', items: [...(isMac ? [] : ['حول Photo Location Map']),
       'إظهار مربع حوار الترحيب', 'القائمة المتقدمة', 'فتح مجلد السجلات', 'إظهار/إخفاء أدوات المطوّرين'] },
@@ -1572,7 +1623,7 @@ test('a photo\'s information, in the tree and in a popup of the map, opens the p
   await thumbnailInTree.click();
   await inTree.getByRole('button', { name: 'More Options' }).click();
   await expect(page.locator('.photo-info-viewer-more-options-menu-item'))
-    .toHaveText(['Select Only This', 'Open Folder', 'Open Google Maps', 'Open Google Street View', 'View Data']);
+    .toHaveText(['Select Only This', 'Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data']);
   // A click on an item does what the item says, and closes the menu.
   await menuItem('Open Folder').click();
   await expect(menu).toHaveCount(0);
@@ -1608,11 +1659,35 @@ test('a photo\'s information, in the tree and in a popup of the map, opens the p
   await inPopup.getByRole('button', { name: 'More Options' }).click();
   await menuItem('Open Google Maps').click();
   await inPopup.getByRole('button', { name: 'More Options' }).click();
+  await menuItem('Open Google Earth').click();
+  await inPopup.getByRole('button', { name: 'More Options' }).click();
   await menuItem('Open Google Street View').click();
   await expect.poll(openedUrls).toEqual([
     expect.stringMatching(/^https:\/\/maps\.google\.com\/\?q=[\d.]+,[\d.]+&ll=[\d.]+,[\d.]+&z=14$/),
+    expect.stringMatching(/^https:\/\/earth\.google\.com\/web\/search\/[\d.]+,[\d.]+$/),
     expect.stringMatching(/^https:\/\/www\.google\.com\/maps\/@\?api=1&map_action=pano&parameters&viewpoint=[\d.]+,[\d.]+$/),
   ]);
+  // All three at the photo's place, which none of the analytics' events has: they get the site alone.
+  const place = new URL((await openedUrls())[0]).searchParams.get('q');
+  expect(await openedUrls()).toEqual([
+    `https://maps.google.com/?q=${place}&ll=${place}&z=14`,
+    `https://earth.google.com/web/search/${place}`,
+    `https://www.google.com/maps/@?api=1&map_action=pano&parameters&viewpoint=${place}`,
+  ]);
+  const openedUrlEvents = service => app.evaluate((_electron, service) => globalThis.__plmAnalyticsEvents
+    .filter(event => event.service === service && event.action === 'Opened URL')
+    .map(event => event.value)
+    .sort(), service);
+  for (const service of ['amplitude', 'mixpanel']) {
+    await expect.poll(() => openedUrlEvents(service), { timeout: 20000 }).toEqual([
+      'https://earth.google.com/web/search/ with latitude and longitude',
+      'https://maps.google.com/ with query parameters for latitude, longitude, and zoom',
+      'https://www.google.com/maps/ with query parameters for latitude, longitude',
+    ]);
+  }
+  const analyticsEvents = JSON.stringify(await app.evaluate(() => globalThis.__plmAnalyticsEvents));
+  for (const coordinate of place.split(','))
+    expect(analyticsEvents).not.toContain(coordinate);
   // Closed and opened again, the popup shows the same content.
   await popup.locator('.leaflet-popup-close-button').click();
   await expect(popup).toHaveCount(0);
@@ -1670,6 +1745,159 @@ test('undo and redo step through the photo selection from the Selection menu, wh
   await expect(treeCheckbox('Unga')).not.toBeChecked();
   await expectRepresentedPhotos(2);
   await expect.poll(enabled).toEqual({ undo: true, redo: false });
+});
+test('Select Previous and Select Next go through the photos in the order they were taken, from a photo\'s menu and from the Selection menu', async () => {
+  // The photos were taken at Gold Coast in 2013, Unga in 2015, Kobe in 2017 and Apple Park in 2019: not in the order
+  // of their folders' names. The Selection menu's items act on the one selected photo and reach the renderer through
+  // IPC, as Undo and Redo do.
+  const menuItem = id => ({
+    click: () => app.evaluate(({ Menu }, id) => Menu.getApplicationMenu().getMenuItemById(id).click(), id),
+    enabled: () => app.evaluate(({ Menu }, id) => Menu.getApplicationMenu().getMenuItemById(id).enabled, id),
+  });
+  const selectPrevious = menuItem('photo-selection-select-previous');
+  const selectNext = menuItem('photo-selection-select-next');
+  const enabled = async () => ({ previous: await selectPrevious.enabled(), next: await selectNext.enabled() });
+  expect(await app.evaluate(({ Menu }) => ['photo-selection-select-previous', 'photo-selection-select-next']
+    .map(id => Menu.getApplicationMenu().getMenuItemById(id).accelerator))).toEqual(['CmdOrCtrl+Left', 'CmdOrCtrl+Right']);
+  const folders = { 'IMG_1579.JPG': 'Gold Coast', 'IMG_2581.JPG': 'Unga', 'IMG_4676.JPG': 'Kobe', 'IMG_5769.JPG': 'Apple Park' };
+  const popup = page.locator('.leaflet-popup');
+  /** The photo is the only one selected: checked alone in the tree, and alone on the map, whose popup opens for it. */
+  async function expectSelected(name) {
+    await expectRepresentedPhotos(1);
+    await expect(popup.locator('.photo-info-viewer-name')).toHaveText(name);
+    for (const [photo, folder] of Object.entries(folders))
+      await expect(treeCheckbox(folder)).toBeChecked({ checked: photo === name });
+  }
+  await dismissWelcome();
+  await openFolderWithPicker(photoFolder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
+  await expectRepresentedPhotos(4);
+  await expect.poll(enabled).toEqual({ previous: false, next: false });
+  await page.evaluate(photo => window.plmInternalRenderer.photoSelection.selectOnlyThis(photo), path.join(photoFolder, 'Gold Coast/IMG_1579.JPG'));
+  await expectSelected('IMG_1579.JPG');
+  await expect.poll(enabled).toEqual({ previous: false, next: true });
+
+  // The Selection menu, from the first photo to the last, and back.
+  for (const name of ['IMG_2581.JPG', 'IMG_4676.JPG', 'IMG_5769.JPG']) {
+    await selectNext.click();
+    await expectSelected(name);
+  }
+  await expect.poll(enabled).toEqual({ previous: true, next: false });
+  // Nothing comes after the last photo, nor round to the first: clicked anyway, the item leaves the selection.
+  await selectNext.click();
+  for (const name of ['IMG_4676.JPG', 'IMG_2581.JPG', 'IMG_1579.JPG']) {
+    await selectPrevious.click();
+    await expectSelected(name);
+  }
+  await expect.poll(enabled).toEqual({ previous: false, next: true });
+  // Each step is in the selection's history.
+  await menuItem('photo-selection-undo').click();
+  await expectSelected('IMG_2581.JPG');
+  await expect.poll(enabled).toEqual({ previous: true, next: true });
+
+  // A photo's menu, right after Select Only This: in the popup of the map, and in the photo's row of the tree.
+  const moreOptionsItems = page.locator('.photo-info-viewer-more-options-menu-item');
+  const withLocation = ['Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data'];
+  await popup.locator('.photo-info-viewer-more-options-button').click();
+  await expect(moreOptionsItems).toHaveText(['Select Only This', 'Select Previous', 'Select Next', ...withLocation]);
+  await moreOptionsItems.filter({ hasText: 'Select Next' }).click();
+  await expectSelected('IMG_4676.JPG');
+  const kobe = page.locator('mat-tree-node').filter({ has: page.getByText('Kobe', { exact: true }) });
+  await kobe.getByRole('button').click();
+  const row = page.locator('mat-tree-node').filter({ hasText: 'IMG_4676.JPG' });
+  await row.locator('.photo-info-viewer-thumbnail').hover();
+  await row.getByRole('button', { name: 'More Options' }).click();
+  await expect(moreOptionsItems).toHaveText(['Select Only This', 'Select Previous', 'Select Next', ...withLocation]);
+  await moreOptionsItems.filter({ hasText: 'Select Next' }).click();
+  await expectSelected('IMG_5769.JPG');
+  await popup.locator('.photo-info-viewer-more-options-button').click();
+  await expect(moreOptionsItems).toHaveText(['Select Only This', 'Select Previous', ...withLocation]);
+  await moreOptionsItems.filter({ hasText: 'Select Previous' }).click();
+  await expectSelected('IMG_4676.JPG');
+  await expect.poll(enabled).toEqual({ previous: true, next: true });
+
+  // The items' keys: Cmd on macOS and Ctrl on Windows and Linux, with the Left and Right arrow keys. Electron gives
+  // the menu only a key that the page leaves unhandled, which the page does where nothing else uses them, a node of
+  // the tree and the map too, while a text field moves its caret with them.
+  await page.evaluate(() => {
+    window.__plmKeys = [];
+    // On the window, which a key reaches after the listeners of the tree and the map. Not Ctrl or Cmd itself.
+    window.addEventListener('keydown', event => {
+      if (event.key.startsWith('Arrow')) window.__plmKeys.push({ key: event.key, handled: event.defaultPrevented });
+    });
+  });
+  await expect(kobe).toHaveAttribute('aria-expanded', 'true');
+  for (const focused of [kobe, page.locator('#plm-leaflet-map')]) {
+    await focused.focus();
+    for (const key of ['ControlOrMeta+ArrowLeft', 'ControlOrMeta+ArrowRight']) await page.keyboard.press(key);
+  }
+  // The tree's own arrows would have collapsed the folder and gone into it, and taken the keys.
+  await expect(kobe).toHaveAttribute('aria-expanded', 'true');
+  expect(await page.evaluate(() => window.__plmKeys))
+    .toEqual(['ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight'].map(key => ({ key, handled: false })));
+  await settings();
+  const search = page.locator('app-settings-dialog input[type="search"]');
+  await search.fill('Norsk bokmål');
+  await page.keyboard.press('ControlOrMeta+ArrowLeft');
+  // To the start of the line on macOS, and of the word on Windows and Linux.
+  expect(await search.evaluate(input => input.selectionStart)).toBe(isMac ? 0 : 'Norsk '.length);
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await expect(page.locator('app-settings-dialog')).toHaveCount(0);
+  await expectSelected('IMG_4676.JPG');
+
+  // The keys through the menu, where it takes them in this run. Playwright's keys never reach it, as the browser
+  // skips a key of CDP that the page leaves unless it has a native key code (Chromium's input_handler.cc): these
+  // have one, with what macOS gives a key of the menu, the arrow's character, and AppKit's commands for it. On macOS,
+  // the application menu takes the keys of any window of the application. On Windows and Linux, a window takes an
+  // accelerator only while it is active (views::View::CanHandleAccelerators), which a headless run on Windows never
+  // makes it (electron-util/e2e-test-hooks.js), so the page's part above is what is checked there.
+  if (isMac || await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows().some(window => window.isFocused()))) {
+    const cdp = await page.context().newCDPSession(page);
+    const nativeArrows = {
+      ArrowLeft: { keyCode: 37, macKeyCode: 123, character: '\uF702', macCommand: 'moveToLeftEndOfLine' },
+      ArrowRight: { keyCode: 39, macKeyCode: 124, character: '\uF703', macCommand: 'moveToRightEndOfLine' },
+    };
+    const pressWithCmdOrCtrl = async key => {
+      const { keyCode, macKeyCode, character, macCommand } = nativeArrows[key];
+      const event = { modifiers: isMac ? 4 : 2, key, code: key, windowsVirtualKeyCode: keyCode, nativeVirtualKeyCode: isMac ? macKeyCode : keyCode };
+      await cdp.send('Input.dispatchKeyEvent', { type: 'rawKeyDown', ...event,
+        ...(isMac ? { text: character, unmodifiedText: character, commands: [macCommand] } : {}) });
+      await cdp.send('Input.dispatchKeyEvent', { type: 'keyUp', ...event });
+    };
+    await page.evaluate(() => document.activeElement.blur());
+    await pressWithCmdOrCtrl('ArrowLeft');
+    await expectSelected('IMG_2581.JPG');
+    // Again and again, through the trip: the first photo has none before it.
+    await pressWithCmdOrCtrl('ArrowLeft');
+    await expectSelected('IMG_1579.JPG');
+    await expect.poll(enabled).toEqual({ previous: false, next: true });
+    await pressWithCmdOrCtrl('ArrowLeft');
+    await pressWithCmdOrCtrl('ArrowRight');
+    await expectSelected('IMG_2581.JPG');
+    await kobe.focus();
+    await pressWithCmdOrCtrl('ArrowRight');
+    await expectSelected('IMG_4676.JPG');
+    await pressWithCmdOrCtrl('ArrowLeft');
+    await expectSelected('IMG_2581.JPG');
+    await expect(kobe).toHaveAttribute('aria-expanded', 'true');
+    await expect(kobe).toBeFocused();
+    await page.locator('#plm-leaflet-map').focus();
+    await pressWithCmdOrCtrl('ArrowRight');
+    await expectSelected('IMG_4676.JPG');
+    await settings();
+    await search.fill('Norsk bokmål');
+    await pressWithCmdOrCtrl('ArrowLeft');
+    expect(await search.evaluate(input => [input.value, input.selectionStart])).toEqual(['Norsk bokmål', isMac ? 0 : 'Norsk '.length]);
+    await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await expect(page.locator('app-settings-dialog')).toHaveCount(0);
+    // The key went to the text field only: one step back from where the selection was.
+    await selectPrevious.click();
+    await expectSelected('IMG_2581.JPG');
+  }
+  // The tree keeps the arrows alone.
+  await kobe.focus();
+  await page.keyboard.press('ArrowLeft');
+  await expect(kobe).toHaveAttribute('aria-expanded', 'false');
 });
 test('the sort menu orders the tree by name and by shooting time, shows its choice, and keeps it across a restart', async () => {
   // Photos named against the order they were taken in (Apple Park 2019, Kobe 2017, Unga 2015, Gold Coast 2013), so
@@ -1791,6 +2019,53 @@ test('--open with a photo opens its folder with only that photo selected', async
     if (previousOpen === undefined) delete process.env.PLM_E2E_OPEN;
     else process.env.PLM_E2E_OPEN = previousOpen;
   }
+});
+test('a folder dropped on the window opens once the user confirms, with all of its photos selected', async () => {
+  const folder = path.join(profile, 'dropped 写真 # 100%');
+  await mkdir(folder);
+  await copyFile(path.join(photoFolder, 'Gold Coast/IMG_1579.JPG'), path.join(folder, 'Gold Coast.JPG'));
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'Kobe.JPG'));
+  // While a dialog is open, Open Folder cannot be clicked, and a drop is refused.
+  await expect(page.locator('app-welcome-dialog')).toBeVisible();
+  expect(await dragOnWindow([folder], { drop: false })).toEqual({ taken: true, effect: 'none' });
+  await dismissWelcome();
+  // A File that the page makes is not on the disk: it opens nothing, and nothing is asked.
+  await page.evaluate(() => {
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(new File(['not a photo'], 'made by the page.jpg'));
+    document.getElementById('plm-leaflet-map').dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer }));
+  });
+  await expect.poll(() => app.evaluate(() => globalThis.__plmAnalyticsEvents
+    .filter(event => event.action === 'Drop to Open: Nothing to Open').map(event => event.label)))
+    .toEqual(['Item Type: none', 'Item Type: none']);
+  await expect(page.locator('app-confirm-dialog')).toHaveCount(0);
+  // Canceled, the folder is not opened, and the page may not read it.
+  expect(await dragOnWindow([folder])).toEqual({ taken: true, effect: 'copy' });
+  await answerDropQuestion('Do you want to open the folder below?', folder, 'Cancel');
+  await expect(page.evaluate(folder => window.plm.directoryTree.create(folder), folder)).rejects.toThrow('Only a folder that the user chose can be read.');
+  await expect(page.locator('mat-tree-node')).toHaveCount(0);
+  await dragOnWindow([folder]);
+  await answerDropQuestion('Do you want to open the folder below?', folder, 'OK');
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('2 files have location data.');
+  await expect(page.locator('mat-tree-node').filter({ hasText: path.basename(folder) })).toBeVisible();
+  await expect(treeCheckbox('Kobe.JPG')).toBeChecked();
+  await expect(treeCheckbox('Gold Coast.JPG')).toBeChecked();
+  await expectRepresentedPhotos(2);
+});
+test('a photo dropped on the window opens its folder once the user confirms, with only that photo selected', async () => {
+  const folder = path.join(profile, 'dropped through a photo');
+  await mkdir(folder);
+  await copyFile(path.join(photoFolder, 'Gold Coast/IMG_1579.JPG'), path.join(folder, 'Gold Coast.JPG'));
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'Kobe.JPG'));
+  await dismissWelcome();
+  const photo = path.join(folder, 'Kobe.JPG');
+  // Of two photos dropped at once, the first is asked about.
+  expect(await dragOnWindow([photo, path.join(folder, 'Gold Coast.JPG')])).toEqual({ taken: true, effect: 'copy' });
+  await answerDropQuestion('Do you want to open the file below?', photo, 'OK');
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('2 files have location data.');
+  await expect(treeCheckbox('Kobe.JPG')).toBeChecked();
+  await expect(treeCheckbox('Gold Coast.JPG')).not.toBeChecked();
+  await expectRepresentedPhotos(1);
 });
 test('a photo whose GPS values are empty leaves the other photos on the map', async () => {
   // exifr gives such a photo's latitude and longitude as the text "NaNNaN", and Leaflet threw on its marker. The
@@ -2452,6 +2727,41 @@ test('closing Photo Data Viewer while its page loads shows and records no error'
   expect(await app.evaluate(() => globalThis.__plmE2eErrorDialogs.map(options => options.detail))).toEqual([]);
   expect(await app.evaluate(() => globalThis.__plmAnalyticsEvents
     .filter(event => event.action === 'Unhandled Error (Main)').map(event => event.label))).toEqual([]);
+});
+test('Photo Data Viewer opens first wide enough to split its panes, in the middle of the main window\'s display, and then where the user left it', async () => {
+  await dismissWelcome();
+  const photo = path.join(root, 'test/test-resources/actual-photos/Kobe/IMG_4676.JPG');
+  await openFolderWithPicker(path.dirname(photo));
+  const openViewer = async () => {
+    const newWindow = app.waitForEvent('window');
+    await page.evaluate(photo => window.plm.photoDataViewer.open({ photo: { name: 'IMG_4676.JPG', path: photo } }), photo);
+    const viewer = await newWindow;
+    return { viewer, viewerWindow: await app.browserWindow(viewer) };
+  };
+  const bounds = window => window.evaluate(window => window.getBounds());
+  // The default bounds, 1240x800 where the work area has the room (src-main/photo-data-viewer/photo-data-viewer-window-state.ts).
+  const area = await (await app.browserWindow(page)).evaluate(window =>
+    globalThis.__plmTestRequire('electron').screen.getDisplayMatching(window.getBounds()).workArea);
+  const width = Math.min(1240, area.width);
+  const height = Math.min(800, area.height);
+  const { viewer, viewerWindow } = await openViewer();
+  expect(await bounds(viewerWindow)).toEqual({ x: area.x + Math.round((area.width - width) / 2),
+    y: area.y + Math.round((area.height - height) / 2), width, height });
+  // The viewer splits its panes in a page wider than 1200 pixels: the photo and the map beside the data, which are
+  // not behind the tabs of a single pane. The display may be too small for it, as the 1024x768 of CI's macOS and
+  // Windows runners is; Ubuntu's, of 1280x1024, is not.
+  if (width === 1240) {
+    await expect(viewer.locator('.leaflet-container')).toBeVisible({ timeout: 30000 });
+    await expect(viewer.getByRole('tab', { name: 'General', exact: true })).toBeVisible();
+    await expect(viewer.getByRole('tab', { name: 'Map', exact: true })).toHaveCount(0);
+    expect(await viewer.evaluate(() => document.documentElement.clientWidth)).toBeGreaterThan(1200);
+  }
+  // Bounds that the user gave the window, saved when it closes, are where it opens next.
+  const userBounds = { x: area.x + 30, y: area.y + 40, width: Math.min(720, area.width - 30), height: Math.min(560, area.height - 40) };
+  await viewerWindow.evaluate((window, userBounds) => window.setBounds(userBounds), userBounds);
+  await expect.poll(() => bounds(viewerWindow)).toEqual(userBounds);
+  await viewerWindow.evaluate(window => new Promise(resolve => { window.once('closed', resolve); window.close(); }));
+  expect(await bounds((await openViewer()).viewerWindow)).toEqual(userBounds);
 });
 test('the page shows the photos of a folder that the user opened, and no other file', async () => {
   // The page's web security is on: no file: URL loads, and plm-file: answers only for the opened folders

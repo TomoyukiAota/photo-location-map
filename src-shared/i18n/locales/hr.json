@@ -81,6 +81,10 @@
       "openFolder": "Otvori mapu"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Želite li otvoriti sljedeću mapu?",
+    "openFile": "Želite li otvoriti sljedeću datoteku?"
+  },
   "photoInfo": {
     "unavailable": "Podaci o fotografiji nisu dostupni.",
     "openFile": "Otvori datoteku",
@@ -89,9 +93,12 @@
     "rotateThumbnail": "Zakreni minijaturu",
     "menu": {
       "selectOnlyThis": "Odaberi samo ovu datoteku",
+      "selectPrevious": "Odaberi prethodnu datoteku",
+      "selectNext": "Odaberi sljedeću datoteku",
       "openFolder": "Otvori mapu",
       "openGoogleMaps": "Otvori Google karte",
       "openGoogleStreetView": "Otvori Google Street View",
+      "openGoogleEarth": "Otvori Google Earth",
       "viewData": "Prikaži podatke"
     },
     "pathTooLong": "Minijaturu nije moguće prikazati jer je broj znakova u putu datoteke {{length}}. Windows ograničava broj znakova u putu na {{maximum}}. Premjestite datoteku kako biste skratili njezin put. Za pojedinosti pritisnite Ctrl+Shift+I i pročitajte poruke u konzoli.",
@@ -238,7 +245,9 @@
     "selection": {
       "title": "Odabir",
       "undo": "Poništi",
-      "redo": "Ponovi"
+      "redo": "Ponovi",
+      "selectPrevious": "Odaberi prethodnu datoteku",
+      "selectNext": "Odaberi sljedeću datoteku"
     },
     "settings": {
       "title": "Postavke",

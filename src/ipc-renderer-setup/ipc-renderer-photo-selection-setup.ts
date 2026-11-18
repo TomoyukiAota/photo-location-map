@@ -12,3 +12,13 @@ bridge().events.onRedo(() => {
   Logger.debug(`[IPC Renderer Received] ${IpcConstants.PhotoSelection.Redo}`);
   window.plmInternalRenderer.photoSelection.redo();
 });
+
+bridge().events.onSelectPrevious(() => {
+  Logger.debug(`[IPC Renderer Received] ${IpcConstants.PhotoSelection.SelectPrevious}`);
+  window.plmInternalRenderer.photoSelection.selectPrevious();
+});
+
+bridge().events.onSelectNext(() => {
+  Logger.debug(`[IPC Renderer Received] ${IpcConstants.PhotoSelection.SelectNext}`);
+  window.plmInternalRenderer.photoSelection.selectNext();
+});

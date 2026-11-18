@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron';
+import { BrowserWindow, ipcMain } from 'electron';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
 import { Logger } from '../../src-shared/log/logger.js';
 import { PhotoDataViewerIpcParams } from '../../src-shared/photo-data-viewer/photo-data-viewer-ipc-params.js';
@@ -20,6 +20,8 @@ ipcMain.handle(IpcConstants.PhotoDataViewer.Name, (event, ipcParams: unknown) =>
   // The viewer may read only this photo (photo-delivery.ts), one of a folder that the user opened.
   if (!isInUserChosenFolder(ipcParams.photo.path))
     throw new Error('Photo Data Viewer can only open a photo in a folder that the user opened.');
+  // A viewer that has no bounds of the user's opens on the main window's display, where the user asked for it.
+  const mainWindowBounds = BrowserWindow.fromWebContents(event.sender)?.getBounds();
   // noinspection JSIgnoredPromiseFromCall
-  launchPhotoDataViewer({ photo: { name: ipcParams.photo.name, path: ipcParams.photo.path } });
+  launchPhotoDataViewer({ photo: { name: ipcParams.photo.name, path: ipcParams.photo.path } }, mainWindowBounds);
 });

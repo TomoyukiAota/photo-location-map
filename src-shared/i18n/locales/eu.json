@@ -81,6 +81,10 @@
       "openFolder": "Ireki karpeta"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Beheko karpeta ireki nahi duzu?",
+    "openFile": "Beheko fitxategia ireki nahi duzu?"
+  },
   "photoInfo": {
     "unavailable": "Argazkiaren informazioa ez dago erabilgarri.",
     "openFile": "Ireki fitxategia",
@@ -89,9 +93,12 @@
     "rotateThumbnail": "Biratu miniatura",
     "menu": {
       "selectOnlyThis": "Hautatu fitxategi hau bakarrik",
+      "selectPrevious": "Hautatu aurreko fitxategia",
+      "selectNext": "Hautatu hurrengo fitxategia",
       "openFolder": "Ireki karpeta",
       "openGoogleMaps": "Ireki Google Maps",
       "openGoogleStreetView": "Ireki Google Street View",
+      "openGoogleEarth": "Ireki Google Earth",
       "viewData": "Ikusi datuak"
     },
     "pathTooLong": "Ezin da miniatura erakutsi, fitxategiaren bide-izenaren luzera {{length}} karaktere delako. Windows-ek gehienez {{maximum}} karaktereko bide-izenak onartzen ditu. Aldatu fitxategiaren kokalekua bide-izena laburtzeko. Xehetasunak ikusteko, sakatu Ctrl+Shift+I eta irakurri kontsolako mezuak.",
@@ -238,7 +245,9 @@
     "selection": {
       "title": "Hautapena",
       "undo": "Desegin",
-      "redo": "Berregin"
+      "redo": "Berregin",
+      "selectPrevious": "Hautatu aurreko fitxategia",
+      "selectNext": "Hautatu hurrengo fitxategia"
     },
     "settings": {
       "title": "Ezarpenak",

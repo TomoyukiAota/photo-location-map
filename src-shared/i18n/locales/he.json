@@ -81,6 +81,10 @@
       "openFolder": "פתיחת התיקייה"
     }
   },
+  "dropToOpen": {
+    "openFolder": "לפתוח את התיקייה שלהלן?",
+    "openFile": "לפתוח את הקובץ שלהלן?"
+  },
   "photoInfo": {
     "unavailable": "פרטי התמונה אינם זמינים.",
     "openFile": "פתיחת הקובץ",
@@ -89,9 +93,12 @@
     "rotateThumbnail": "סיבוב התמונה הממוזערת",
     "menu": {
       "selectOnlyThis": "בחירת קובץ זה בלבד",
+      "selectPrevious": "בחירת הקובץ הקודם",
+      "selectNext": "בחירת הקובץ הבא",
       "openFolder": "פתיחת התיקייה",
       "openGoogleMaps": "פתיחת מפות Google",
       "openGoogleStreetView": "פתיחת Google Street View",
+      "openGoogleEarth": "פתיחת Google Earth",
       "viewData": "הצגת הנתונים"
     },
     "pathTooLong": "אי אפשר להציג את התמונה הממוזערת כי אורך הנתיב של הקובץ הוא {{length}} תווים. Windows מגביל את אורך הנתיב ל-{{maximum}} תווים לכל היותר. יש לשנות את מיקום הקובץ כדי לקצר את הנתיב. לפרטים, יש להקיש Ctrl+Shift+I ולקרוא את ההודעות במסוף.",
@@ -238,7 +245,9 @@
     "selection": {
       "title": "בחירה",
       "undo": "ביטול פעולה",
-      "redo": "ביצוע חוזר"
+      "redo": "ביצוע חוזר",
+      "selectPrevious": "בחירת הקובץ הקודם",
+      "selectNext": "בחירת הקובץ הבא"
     },
     "settings": {
       "title": "הגדרות",

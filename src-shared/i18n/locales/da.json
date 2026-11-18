@@ -81,6 +81,10 @@
       "openFolder": "Åbn mappe"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Vil du åbne mappen nedenfor?",
+    "openFile": "Vil du åbne filen nedenfor?"
+  },
   "photoInfo": {
     "unavailable": "Oplysninger om billedet er ikke tilgængelige.",
     "openFile": "Åbn fil",
@@ -89,9 +93,12 @@
     "rotateThumbnail": "Roter miniature",
     "menu": {
       "selectOnlyThis": "Vælg kun denne fil",
+      "selectPrevious": "Vælg forrige fil",
+      "selectNext": "Vælg næste fil",
       "openFolder": "Åbn mappe",
       "openGoogleMaps": "Åbn Google Maps",
       "openGoogleStreetView": "Åbn Google Street View",
+      "openGoogleEarth": "Åbn Google Earth",
       "viewData": "Vis data"
     },
     "pathTooLong": "Miniaturen kan ikke vises, fordi filens sti er {{length}} tegn lang. Windows begrænser stiens længde til {{maximum}} tegn. Flyt filen for at gøre stien kortere. Tryk på Ctrl+Skift+I, og læs meddelelserne i konsollen for at få flere oplysninger.",
@@ -238,7 +245,9 @@
     "selection": {
       "title": "Valg",
       "undo": "Fortryd",
-      "redo": "Gentag"
+      "redo": "Gentag",
+      "selectPrevious": "Vælg forrige fil",
+      "selectNext": "Vælg næste fil"
     },
     "settings": {
       "title": "Indstillinger",

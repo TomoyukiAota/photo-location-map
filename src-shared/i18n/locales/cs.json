@@ -81,6 +81,10 @@
       "openFolder": "Otevřít složku"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Chcete otevřít níže uvedenou složku?",
+    "openFile": "Chcete otevřít níže uvedený soubor?"
+  },
   "photoInfo": {
     "unavailable": "Informace o fotce nejsou k dispozici.",
     "openFile": "Otevřít soubor",
@@ -89,9 +93,12 @@
     "rotateThumbnail": "Otočit miniaturu",
     "menu": {
       "selectOnlyThis": "Vybrat jen tento soubor",
+      "selectPrevious": "Vybrat předchozí soubor",
+      "selectNext": "Vybrat další soubor",
       "openFolder": "Otevřít složku",
       "openGoogleMaps": "Otevřít Mapy Google",
       "openGoogleStreetView": "Otevřít Google Street View",
+      "openGoogleEarth": "Otevřít Google Earth",
       "viewData": "Zobrazit data"
     },
     "pathTooLong": "Miniaturu nelze zobrazit, protože počet znaků v cestě k souboru je {{length}}. Windows omezuje počet znaků v cestě na {{maximum}}. Přesuňte soubor jinam, aby byla jeho cesta kratší. Podrobnosti zjistíte stisknutím Ctrl+Shift+I a přečtením zpráv v konzoli.",
@@ -238,7 +245,9 @@
     "selection": {
       "title": "Výběr",
       "undo": "Zpět",
-      "redo": "Znovu"
+      "redo": "Znovu",
+      "selectPrevious": "Vybrat předchozí soubor",
+      "selectNext": "Vybrat další soubor"
     },
     "settings": {
       "title": "Nastavení",

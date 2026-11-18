@@ -81,6 +81,10 @@
       "openFolder": "Ava kaust"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Kas soovite avada alloleva kausta?",
+    "openFile": "Kas soovite avada alloleva faili?"
+  },
   "photoInfo": {
     "unavailable": "Foto teave pole saadaval.",
     "openFile": "Ava fail",
@@ -89,9 +93,12 @@
     "rotateThumbnail": "Pööra pisipilti",
     "menu": {
       "selectOnlyThis": "Vali ainult see fail",
+      "selectPrevious": "Vali eelmine fail",
+      "selectNext": "Vali järgmine fail",
       "openFolder": "Ava kaust",
       "openGoogleMaps": "Ava Google Maps",
       "openGoogleStreetView": "Ava Google Street View",
+      "openGoogleEarth": "Ava Google Earth",
       "viewData": "Kuva andmed"
     },
     "pathTooLong": "Pisipilti ei saa kuvada, sest faili tee pikkus on {{length}} märki. Windows lubab tee pikkuseks kõige rohkem {{maximum}} märki. Tee lühendamiseks muutke faili asukohta. Üksikasjade nägemiseks vajutage Ctrl+Shift+I ja lugege konsooli teateid.",
@@ -238,7 +245,9 @@
     "selection": {
       "title": "Valik",
       "undo": "Võta tagasi",
-      "redo": "Tee uuesti"
+      "redo": "Tee uuesti",
+      "selectPrevious": "Vali eelmine fail",
+      "selectNext": "Vali järgmine fail"
     },
     "settings": {
       "title": "Seaded",

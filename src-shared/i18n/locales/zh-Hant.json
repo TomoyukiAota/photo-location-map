@@ -81,6 +81,10 @@
       "openFolder": "開啟資料夾"
     }
   },
+  "dropToOpen": {
+    "openFolder": "要開啟下列資料夾嗎？",
+    "openFile": "要開啟下列檔案嗎？"
+  },
   "photoInfo": {
     "unavailable": "無法取得照片資訊。",
     "openFile": "開啟檔案",
@@ -89,9 +93,12 @@
     "rotateThumbnail": "旋轉縮圖",
     "menu": {
       "selectOnlyThis": "僅選取此檔案",
+      "selectPrevious": "選取上一個檔案",
+      "selectNext": "選取下一個檔案",
       "openFolder": "開啟資料夾",
       "openGoogleMaps": "開啟 Google 地圖",
       "openGoogleStreetView": "開啟 Google 街景服務",
+      "openGoogleEarth": "開啟 Google 地球",
       "viewData": "檢視資料"
     },
     "pathTooLong": "檔案路徑的長度為 {{length}} 個字元，因此無法顯示縮圖。Windows 將路徑長度限制為最多 {{maximum}} 個字元。請變更檔案的位置以縮短路徑。如需詳細資訊，請按 Ctrl+Shift+I 並查看主控台訊息。",
@@ -238,7 +245,9 @@
     "selection": {
       "title": "選取",
       "undo": "復原",
-      "redo": "重做"
+      "redo": "重做",
+      "selectPrevious": "選取上一個檔案",
+      "selectNext": "選取下一個檔案"
     },
     "settings": {
       "title": "設定",

@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit, inject } from '@angular/co
 import { recordUnhandledError } from '../../src-shared/analytics/record-error';
 import { Logger } from '../../src-shared/log/logger';
 import { PlmInternalRendererService } from '../global-variables/plm-internal-renderer.service';
+import { DropToOpenService } from './drop-to-open/drop-to-open.service';
 import { LanguageDialogAtAppLaunchService } from './language/language-dialog-at-app-launch.service';
 import { PhotoSelectionHistoryService } from './shared/service/photo-selection-history.service';
 import { WelcomeDialogAtAppLaunchService } from './welcome-dialog/welcome-dialog-at-app-launch/welcome-dialog-at-app-launch.service';
@@ -11,9 +12,16 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  imports: [RouterOutlet]
+  imports: [RouterOutlet],
+  // The drag events of the whole window, over a dialog too: a folder or a file dropped on it opens (DropToOpenService).
+  host: {
+    '(window:dragenter)': 'dropToOpenService.dragOver($event)',
+    '(window:dragover)': 'dropToOpenService.dragOver($event)',
+    '(window:drop)': 'dropToOpenService.drop($event)',
+  },
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
+  protected readonly dropToOpenService = inject(DropToOpenService);
   private languageDialogAtAppLaunchService = inject(LanguageDialogAtAppLaunchService);
   private photoSelectionHistoryService = inject(PhotoSelectionHistoryService);
   private plmInternalRendererService = inject(PlmInternalRendererService);

@@ -81,6 +81,10 @@
       "openFolder": "Apri cartella"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Vuoi aprire la cartella seguente?",
+    "openFile": "Vuoi aprire il file seguente?"
+  },
   "photoInfo": {
     "unavailable": "Le informazioni sulla foto non sono disponibili.",
     "openFile": "Apri file",
@@ -89,9 +93,12 @@
     "rotateThumbnail": "Ruota miniatura",
     "menu": {
       "selectOnlyThis": "Seleziona solo questo file",
+      "selectPrevious": "Seleziona il file precedente",
+      "selectNext": "Seleziona il file successivo",
       "openFolder": "Apri cartella",
       "openGoogleMaps": "Apri Google Maps",
       "openGoogleStreetView": "Apri Google Street View",
+      "openGoogleEarth": "Apri Google Earth",
       "viewData": "Visualizza dati"
     },
     "pathTooLong": "Impossibile mostrare la miniatura perché la lunghezza del percorso del file è di {{length}} caratteri. Windows limita la lunghezza massima dei percorsi a {{maximum}} caratteri. Sposta il file per accorciarne il percorso. Per i dettagli, premi Ctrl+Maiusc+I e leggi i messaggi della console.",
@@ -238,7 +245,9 @@
     "selection": {
       "title": "Selezione",
       "undo": "Annulla",
-      "redo": "Ripristina"
+      "redo": "Ripristina",
+      "selectPrevious": "Seleziona il file precedente",
+      "selectNext": "Seleziona il file successivo"
     },
     "settings": {
       "title": "Impostazioni",

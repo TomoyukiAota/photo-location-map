@@ -81,6 +81,10 @@
       "openFolder": "Öppna mapp"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Vill du öppna mappen nedan?",
+    "openFile": "Vill du öppna filen nedan?"
+  },
   "photoInfo": {
     "unavailable": "Bildinformation är inte tillgänglig.",
     "openFile": "Öppna fil",
@@ -89,9 +93,12 @@
     "rotateThumbnail": "Rotera miniatyr",
     "menu": {
       "selectOnlyThis": "Markera endast den här filen",
+      "selectPrevious": "Markera föregående fil",
+      "selectNext": "Markera nästa fil",
       "openFolder": "Öppna mapp",
       "openGoogleMaps": "Öppna Google Maps",
       "openGoogleStreetView": "Öppna Google Street View",
+      "openGoogleEarth": "Öppna Google Earth",
       "viewData": "Visa data"
     },
     "pathTooLong": "Miniatyren kan inte visas eftersom filens sökväg är {{length}} tecken lång. Windows begränsar sökvägens längd till {{maximum}} tecken. Flytta filen så att sökvägen blir kortare. Tryck på Ctrl+Skift+I och läs meddelandena i konsolen för mer information.",
@@ -238,7 +245,9 @@
     "selection": {
       "title": "Markering",
       "undo": "Ångra",
-      "redo": "Gör om"
+      "redo": "Gör om",
+      "selectPrevious": "Markera föregående fil",
+      "selectNext": "Markera nästa fil"
     },
     "settings": {
       "title": "Inställningar",
