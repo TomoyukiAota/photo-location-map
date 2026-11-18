@@ -362,7 +362,8 @@ you when it ends). It looks at the pull request every minute, and ends on what
 changed since it began. Do what it says:
 
 - **Merged**: go on with the next step of the work, without waiting to be asked.
-- **A required check failed**: classify the failure (see the next section).
+- **A required check failed or was canceled**: classify the failure (see the
+  next section).
 - **It conflicts with `main`**, which Mergify cannot bring it up to date over:
   merge `main` into the branch, resolve the conflicts and push.
 - **A new review or comment**: change what it is right about, and answer the
@@ -371,10 +372,10 @@ changed since it began. Do what it says:
   check "Summary", which says what it waits for.
 
 Then start it again while the pull request is open. Without the label, it waits
-for whoever adds it. In the Claude desktop app, when Auto-fix is on for the pull
-request, add `--with-auto-fix`: Auto-fix reports failed checks, conflicts and
-review comments itself, and the script then ends only on a merge, a close, or
-Mergify leaving the pull request behind.
+for whoever adds it. Run it in the Claude desktop app too, even when its Auto-fix
+is on: Auto-fix may wake you for the same failure or comment as well, which is
+the lesser harm, as it did not wake the session of #737 for any of the four
+checks that were canceled or failed there.
 
 Take the label off while you change the pull request, so that Mergify neither
 merges it nor pushes to it meanwhile, and pull before you push, as Mergify may
@@ -384,8 +385,8 @@ through mise (see "In a git worktree").
 
 **Why:** an agent stopped once it had opened a pull request, as nothing told it
 that the pull request had been merged or that `main` had moved on, and the
-owner had to ask about it to get the work going again. Auto-fix wakes a session
-on a failed check, a conflict or a review comment, but not on a merge.
+owner had to ask about it to get the work going again. Auto-fix does not wake a
+session on a merge, and did not always wake it on a failed check.
 
 ## Classify a CI failure before rerunning it
 
@@ -407,12 +408,18 @@ whenever one can be expected to pass. Examples:
   `getaddrinfo ENOTFOUND github.com` while `npm ci` downloads Electron.
 - The runner's disk images: `hdiutil: couldn't eject "diskN" - Resource busy`
   while electron-builder makes the macOS DMG, before any test runs.
+- No runner for the job: a job canceled after 15 minutes in the queue, with
+  `The job was not acquired by Runner of type hosted even after multiple attempts`,
+  as happened twice to `test (macos-arm64)` when GitHub was short of macOS arm64
+  runners. Such a job has no log, as no runner started it: `gh run view <run>`
+  shows the message under "ANNOTATIONS". Rerun it even when both triggers show
+  it, as nothing of the code ran.
 - Any other failure whose log points at the runner rather than the code, when
   the other trigger passed on the same commit.
 
 Tell the owner what was rerun and why. Stop and report anything that may be a
-real defect: a failure both triggers share, or one in the app's own tests or
-behavior. If the same environmental cause keeps coming back, propose a narrow
+real defect: a failure both triggers share, unless it is one of the runner's
+above, or one in the app's own tests or behavior. If the same environmental cause keeps coming back, propose a narrow
 workaround (see above) instead of rerunning indefinitely.
 
 **Handle each failed check as soon as it fails.** Do not wait for all checks to
