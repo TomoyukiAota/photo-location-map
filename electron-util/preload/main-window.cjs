@@ -6,7 +6,7 @@
 // Details: The channels are copies of src-shared/ipc/ipc-constants.ts and of the analytics and log channels;
 // test/electron-util/main-window-preload.spec.em.main.ts checks that they stay the same.
 'use strict';
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer, webUtils } = require('electron');
 
 const channels = {
   startupMetadata: 'ipc-constants-get-startup-metadata',
@@ -29,7 +29,10 @@ const channels = {
   openContainingFolder: 'ipc-constants-open-containing-folder',
   restart: 'ipc-constants-restart-app',
   openTarget: 'ipc-constants-get-open-target',
+  droppedItemOpenTarget: 'ipc-constants-dropped-item-open-target',
+  droppedItemChoose: 'ipc-constants-dropped-item-choose',
   updateUndoRedoMenus: 'ipc-constants-photo-selection-update-undo-redo-menus',
+  updateSelectPreviousNextMenus: 'ipc-constants-photo-selection-update-select-previous-next-menus',
   photoDataViewer: 'ipc-constants-launch-photo-data-viewer',
   explorerContextMenuAdd: 'ipc-constants-explorer-context-menu-add',
   explorerContextMenuRemove: 'ipc-constants-explorer-context-menu-remove',
@@ -38,6 +41,8 @@ const channels = {
   welcomeDialog: 'ipc-constants-show-welcome-dialog',
   undo: 'ipc-constants-photo-selection-undo',
   redo: 'ipc-constants-photo-selection-redo',
+  selectPrevious: 'ipc-constants-photo-selection-select-previous',
+  selectNext: 'ipc-constants-photo-selection-select-next',
   recordAtAppLaunchFinished: 'ipc-constants-record-at-app-launch-finished',
 };
 
@@ -47,7 +52,8 @@ const channels = {
 // the main process has sent, as it sends the end of the launch's records, which opens the folder of --open, and the
 // analytics events of the launch, once the window is ready to show. A channel keeps at most maxPending messages.
 const eventChannels = [channels.amplitude, channels.mixpanel, channels.aboutBox, channels.manageSettings,
-  channels.welcomeDialog, channels.undo, channels.redo, channels.recordAtAppLaunchFinished];
+  channels.welcomeDialog, channels.undo, channels.redo, channels.selectPrevious, channels.selectNext,
+  channels.recordAtAppLaunchFinished];
 const maxPending = 1000;
 const hubs = new Map();
 for (const channel of eventChannels) {
@@ -73,6 +79,18 @@ function subscribe(channel, listener) {
   // After subscribe returns, as a message would come.
   if (pending && pending.length > 0) Promise.resolve().then(() => pending.forEach(args => subscription(...args)));
   return () => { hub.listeners.delete(subscription); };
+}
+
+/**
+ * TL;DR: Asks the main process on `channel` about the folder or file that the user dropped on the page, given as its
+ * File, by the path that Electron knows for that File.
+ * Details: The page gives the File of the drop, never a path, so that what it can have opened, and then read through
+ * the main process, is what the user dropped: a File that the page makes itself has no path, and opens nothing,
+ * without a request. webUtils.getPathForFile throws for what is not a File, which the page then gets.
+ */
+function askAboutDroppedItem(channel, file) {
+  const filePath = webUtils.getPathForFile(file);
+  return filePath ? ipcRenderer.invoke(channel, filePath) : Promise.resolve({ kind: 'none' });
 }
 
 const plm = {
@@ -110,7 +128,14 @@ const plm = {
   },
   app: { restart: () => { ipcRenderer.send(channels.restart); } },
   commandLine: { openTarget: () => ipcRenderer.invoke(channels.openTarget) },
-  menus: { updateUndoRedo: params => ipcRenderer.invoke(channels.updateUndoRedoMenus, params) },
+  droppedItem: {
+    openTarget: file => askAboutDroppedItem(channels.droppedItemOpenTarget, file),
+    choose: file => askAboutDroppedItem(channels.droppedItemChoose, file),
+  },
+  menus: {
+    updateUndoRedo: params => ipcRenderer.invoke(channels.updateUndoRedoMenus, params),
+    updateSelectPreviousNext: params => ipcRenderer.invoke(channels.updateSelectPreviousNextMenus, params),
+  },
   photoDataViewer: { open: params => ipcRenderer.invoke(channels.photoDataViewer, params) },
   explorerContextMenu: {
     add: () => ipcRenderer.invoke(channels.explorerContextMenuAdd),
@@ -122,6 +147,8 @@ const plm = {
     onWelcomeDialog: listener => subscribe(channels.welcomeDialog, listener),
     onUndo: listener => subscribe(channels.undo, listener),
     onRedo: listener => subscribe(channels.redo, listener),
+    onSelectPrevious: listener => subscribe(channels.selectPrevious, listener),
+    onSelectNext: listener => subscribe(channels.selectNext, listener),
     onRecordAtAppLaunchFinished: listener => subscribe(channels.recordAtAppLaunchFinished, listener),
   },
 };

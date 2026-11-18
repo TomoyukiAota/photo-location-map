@@ -77,9 +77,14 @@
     "contextMenu": {
       "selectOnlyThisFile": "Yalnızca bu dosyayı seç",
       "selectOnlyThisFolder": "Yalnızca bu klasörü seç",
+      "revealInMap": "Haritada göster",
       "open": "Aç",
       "openFolder": "Klasörü aç"
     }
+  },
+  "dropToOpen": {
+    "openFolder": "Aşağıdaki klasörü açmak istiyor musunuz?",
+    "openFile": "Aşağıdaki dosyayı açmak istiyor musunuz?"
   },
   "photoInfo": {
     "unavailable": "Fotoğraf bilgileri mevcut değil.",
@@ -89,9 +94,14 @@
     "rotateThumbnail": "Küçük resmi döndür",
     "menu": {
       "selectOnlyThis": "Yalnızca bu dosyayı seç",
+      "selectPrevious": "Önceki dosyayı seç",
+      "selectNext": "Sonraki dosyayı seç",
       "openFolder": "Klasörü aç",
+      "revealInMap": "Haritada göster",
+      "revealInSidebar": "Kenar çubuğunda göster",
       "openGoogleMaps": "Google Haritalar’da aç",
       "openGoogleStreetView": "Google Street View’da aç",
+      "openGoogleEarth": "Google Earth’te aç",
       "viewData": "Verileri görüntüle"
     },
     "pathTooLong": "Dosya yolunun uzunluğu {{length}} karakter olduğu için küçük resim gösterilemiyor. Windows, yol uzunluğunu en fazla {{maximum}} karakterle sınırlar. Yolu kısaltmak için dosyanın konumunu değiştirin. Ayrıntılar için Ctrl+Shift+I tuşlarına basın ve konsol iletilerini okuyun.",
@@ -238,7 +248,9 @@
     "selection": {
       "title": "Seçim",
       "undo": "Geri al",
-      "redo": "Yinele"
+      "redo": "Yinele",
+      "selectPrevious": "Önceki dosyayı seç",
+      "selectNext": "Sonraki dosyayı seç"
     },
     "settings": {
       "title": "Ayarlar",

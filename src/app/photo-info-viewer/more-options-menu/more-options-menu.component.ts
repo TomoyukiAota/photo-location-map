@@ -7,8 +7,11 @@ import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 import { Photo } from '../../shared/model/photo.model';
 import { openContainingFolder } from '../../shared/open-with-os';
 import { removeFocus } from '../../shared/remove-focus';
+import { PhotoRevealService } from '../../shared/service/photo-reveal.service';
+import { SelectPreviousNextService } from '../../shared/service/select-previous-next.service';
 import { photoInfoViewerLogger as logger } from '../photo-info-viewer-logger';
-import { cutOffAtEdgeOfArea, MoreOptionsMenuPlacement } from './more-options-menu-placement';
+import { PhotoInfoViewerPlace } from '../photo-info-viewer-place';
+import { cutOffAtEdgeOfArea, MoreOptionsMenuSize, placeMenu, RoomAroundButton } from './more-options-menu-placement';
 import { requestMainProcessToLaunchPhotoDataViewer } from './view-data/request-main-process-to-launch-photo-data-viewer';
 
 interface MoreOptionsMenuItem {
@@ -43,11 +46,20 @@ interface MoreOptionsMenuItem {
 })
 export class MoreOptionsMenuComponent {
   private readonly directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);
+  private readonly photoRevealService = inject(PhotoRevealService);
+  private readonly selectPreviousNextService = inject(SelectPreviousNextService);
   private readonly element = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
 
   public readonly photo = input.required<Photo>();
-  /** Where the menu opens, which the viewer decides from the room around the button (placeMenu()). */
-  public readonly placement = input.required<MoreOptionsMenuPlacement>();
+  /** Where the photo is shown, which decides the item that shows it in the other place. */
+  public readonly place = input.required<PhotoInfoViewerPlace>();
+  /** The room around the button when it was clicked, which the viewer measures (roomAround()). */
+  public readonly room = input.required<RoomAroundButton>();
+
+  /** The menu's size once it is in the page: until then, the menu is below its button, where it is measured. */
+  private readonly size = signal<MoreOptionsMenuSize | null>(null);
+  /** Where the menu opens: where it fits, by its size and the room around the button (placeMenu()). */
+  protected readonly placement = computed(() => placeMenu(this.room(), this.size()));
 
   /** How far the menu was beyond the edge of its area when it opened, by which it is moved towards the inside. */
   private readonly cutOff = signal(0);
@@ -56,15 +68,33 @@ export class MoreOptionsMenuComponent {
     return insetInlineEnd === null ? null : insetInlineEnd - this.cutOff();
   });
 
-  /** A photo without a location has no item that needs one. */
+  /**
+   * A photo without a location has no item that needs one. Select Previous and Select Next are there when a photo was
+   * taken before or after this one (SelectPreviousNextService). A row of the folder tree has the item that shows the
+   * photo on the map, and a popup of the map the one that shows it in the folder tree.
+   */
   protected readonly items = computed<MoreOptionsMenuItem[]>(() => {
     const photo = this.photo();
+    const place = this.place();
     const items: MoreOptionsMenuItem[] = [];
-    if (photo.hasGpsInfo)
+    if (photo.hasGpsInfo) {
       items.push({ textKey: 'photoInfo.menu.selectOnlyThis', onClick: () => this.selectOnlyThis(photo) });
+      const previous = this.selectPreviousNextService.previousOf(photo.path);
+      if (previous !== null)
+        items.push({ textKey: 'photoInfo.menu.selectPrevious', onClick: () => this.selectPrevious(photo, previous) });
+      const next = this.selectPreviousNextService.nextOf(photo.path);
+      if (next !== null)
+        items.push({ textKey: 'photoInfo.menu.selectNext', onClick: () => this.selectNext(photo, next) });
+    }
+    if (place === 'dir-tree-view' && photo.hasGpsInfo)
+      items.push({ textKey: 'photoInfo.menu.revealInMap', onClick: () => this.revealInMap(photo) });
+    if (place === 'leaflet-map-popup')
+      items.push({ textKey: 'photoInfo.menu.revealInSidebar', onClick: () => this.revealInSidebar(photo) });
     items.push({ textKey: 'photoInfo.menu.openFolder', onClick: () => this.openFolder(photo) });
     if (photo.hasGpsInfo) {
+      // In the order of Photo Data Viewer's buttons beside the latitude and the longitude.
       items.push({ textKey: 'photoInfo.menu.openGoogleMaps', onClick: () => this.openGoogleMaps(photo) });
+      items.push({ textKey: 'photoInfo.menu.openGoogleEarth', onClick: () => this.openGoogleEarth(photo) });
       items.push({ textKey: 'photoInfo.menu.openGoogleStreetView', onClick: () => this.openGoogleStreetView(photo) });
     }
     items.push({ textKey: 'photoInfo.menu.viewData', onClick: () => this.viewData(photo) });
@@ -72,12 +102,17 @@ export class MoreOptionsMenuComponent {
   });
 
   constructor() {
-    // The menu is as wide as its longest item, so it is measured once it is in the page, before it is painted.
+    // The menu is as high as its items and as wide as its longest item, so it is measured once it is in the page,
+    // below its button, and placed where it fits before it is painted: when a signal changes in this hook, Angular
+    // renders again before it returns to the browser (ApplicationRef's synchronize()). The size is the layout's, which
+    // no transform of the map's zoom changes.
     afterNextRender({
       read: () => {
         const moreOptionsButton = this.element.parentElement;
-        if (moreOptionsButton)
-          this.cutOff.set(cutOffAtEdgeOfArea(this.element, moreOptionsButton));
+        if (!moreOptionsButton)
+          return;
+        this.size.set({ width: this.element.offsetWidth, height: this.element.offsetHeight });
+        this.cutOff.set(cutOffAtEdgeOfArea(this.element, moreOptionsButton));
       },
     });
   }
@@ -96,6 +131,30 @@ export class MoreOptionsMenuComponent {
     this.directoryTreeViewSelectionService.select([photo.path]);
   }
 
+  private selectPrevious(photo: Photo, previous: string): void {
+    logger.info(`Clicked "Select Previous" menu item for ${photo.path}, which selects ${previous}`);
+    Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Select Previous"');
+    this.selectPreviousNextService.select(previous);
+  }
+
+  private selectNext(photo: Photo, next: string): void {
+    logger.info(`Clicked "Select Next" menu item for ${photo.path}, which selects ${next}`);
+    Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Select Next"');
+    this.selectPreviousNextService.select(next);
+  }
+
+  private revealInMap(photo: Photo): void {
+    logger.info(`Clicked "Reveal in Map" menu item for ${photo.path}`);
+    Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Reveal in Map"');
+    this.photoRevealService.revealInMap(photo);
+  }
+
+  private revealInSidebar(photo: Photo): void {
+    logger.info(`Clicked "Reveal in Sidebar" menu item for ${photo.path}`);
+    Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Reveal in Sidebar"');
+    this.photoRevealService.revealInSidebar(photo);
+  }
+
   private openFolder(photo: Photo): void {
     logger.info(`Clicked "Open Folder" menu item for ${photo.path}`);
     Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Open Folder"');
@@ -111,6 +170,21 @@ export class MoreOptionsMenuComponent {
             '"Open Google Maps" Menu Item',
             'Photo Info Viewer',
             'https://maps.google.com/ with query parameters for latitude, longitude, and zoom');
+  }
+
+  /**
+   * Google Earth searches for the latitude and the longitude: it goes to the place and marks it with a pin. The address
+   * is that of Photo Data Viewer's Google Earth button (src/components/photo-data/row/LatLngRow.tsx of
+   * https://github.com/TomoyukiAota/photo-data-viewer), so that both open the same view.
+   */
+  private openGoogleEarth(photo: Photo): void {
+    logger.info(`Clicked "Open Google Earth" menu item for ${photo.path}`);
+    Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Open Google Earth"');
+    const { latitude, longitude } = photo.exif.gpsInfo.latLng;
+    openUrl(`https://earth.google.com/web/search/${latitude},${longitude}`,
+            '"Open Google Earth" Menu Item',
+            'Photo Info Viewer',
+            'https://earth.google.com/web/search/ with latitude and longitude');
   }
 
   private openGoogleStreetView(photo: Photo): void {

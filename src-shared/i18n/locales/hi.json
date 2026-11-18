@@ -77,9 +77,14 @@
     "contextMenu": {
       "selectOnlyThisFile": "सिर्फ़ यह फ़ाइल चुनें",
       "selectOnlyThisFolder": "सिर्फ़ यह फ़ोल्डर चुनें",
+      "revealInMap": "मैप पर दिखाएँ",
       "open": "खोलें",
       "openFolder": "फ़ोल्डर खोलें"
     }
+  },
+  "dropToOpen": {
+    "openFolder": "क्या आप नीचे दिया गया फ़ोल्डर खोलना चाहते हैं?",
+    "openFile": "क्या आप नीचे दी गई फ़ाइल खोलना चाहते हैं?"
   },
   "photoInfo": {
     "unavailable": "फ़ोटो की जानकारी उपलब्ध नहीं है।",
@@ -89,9 +94,14 @@
     "rotateThumbnail": "थंबनेल घुमाएँ",
     "menu": {
       "selectOnlyThis": "सिर्फ़ यह फ़ाइल चुनें",
+      "selectPrevious": "पिछली फ़ाइल चुनें",
+      "selectNext": "अगली फ़ाइल चुनें",
       "openFolder": "फ़ोल्डर खोलें",
+      "revealInMap": "मैप पर दिखाएँ",
+      "revealInSidebar": "साइडबार में दिखाएँ",
       "openGoogleMaps": "Google Maps खोलें",
       "openGoogleStreetView": "Google Street View खोलें",
+      "openGoogleEarth": "Google Earth खोलें",
       "viewData": "डेटा देखें"
     },
     "pathTooLong": "थंबनेल नहीं दिखाया जा सकता, क्योंकि फ़ाइल के पाथ की लंबाई {{length}} वर्ण है। Windows पाथ की लंबाई को ज़्यादा से ज़्यादा {{maximum}} वर्णों तक सीमित करता है। पाथ छोटा करने के लिए फ़ाइल की जगह बदलें। विवरण के लिए, Ctrl+Shift+I दबाएँ और कंसोल के संदेश पढ़ें।",
@@ -238,7 +248,9 @@
     "selection": {
       "title": "चयन",
       "undo": "पहले जैसा करें",
-      "redo": "फिर से करें"
+      "redo": "फिर से करें",
+      "selectPrevious": "पिछली फ़ाइल चुनें",
+      "selectNext": "अगली फ़ाइल चुनें"
     },
     "settings": {
       "title": "सेटिंग",

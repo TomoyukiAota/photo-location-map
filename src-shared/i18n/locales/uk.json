@@ -77,9 +77,14 @@
     "contextMenu": {
       "selectOnlyThisFile": "Вибрати лише цей файл",
       "selectOnlyThisFolder": "Вибрати лише цю папку",
+      "revealInMap": "Показати на карті",
       "open": "Відкрити",
       "openFolder": "Відкрити папку"
     }
+  },
+  "dropToOpen": {
+    "openFolder": "Відкрити вказану нижче папку?",
+    "openFile": "Відкрити вказаний нижче файл?"
   },
   "photoInfo": {
     "unavailable": "Інформація про фотографію відсутня.",
@@ -89,9 +94,14 @@
     "rotateThumbnail": "Повернути мініатюру",
     "menu": {
       "selectOnlyThis": "Вибрати лише цей файл",
+      "selectPrevious": "Вибрати попередній файл",
+      "selectNext": "Вибрати наступний файл",
       "openFolder": "Відкрити папку",
+      "revealInMap": "Показати на карті",
+      "revealInSidebar": "Показати на бічній панелі",
       "openGoogleMaps": "Відкрити Google Карти",
       "openGoogleStreetView": "Відкрити Google Street View",
+      "openGoogleEarth": "Відкрити Google Планета Земля",
       "viewData": "Показати дані"
     },
     "pathTooLong": "Мініатюру не можна показати, оскільки кількість символів у шляху до файлу становить {{length}}. Windows обмежує кількість символів у шляху значенням {{maximum}}. Перемістіть файл, щоб скоротити шлях до нього. Щоб дізнатися подробиці, натисніть Ctrl+Shift+I і прочитайте повідомлення в консолі.",
@@ -238,7 +248,9 @@
     "selection": {
       "title": "Вибір",
       "undo": "Скасувати",
-      "redo": "Повторити"
+      "redo": "Повторити",
+      "selectPrevious": "Вибрати попередній файл",
+      "selectNext": "Вибрати наступний файл"
     },
     "settings": {
       "title": "Параметри",

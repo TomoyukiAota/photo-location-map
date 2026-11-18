@@ -77,9 +77,14 @@
     "contextMenu": {
       "selectOnlyThisFile": "Sélectionner uniquement ce fichier",
       "selectOnlyThisFolder": "Sélectionner uniquement ce dossier",
+      "revealInMap": "Afficher sur la carte",
       "open": "Ouvrir",
       "openFolder": "Ouvrir le dossier"
     }
+  },
+  "dropToOpen": {
+    "openFolder": "Voulez-vous ouvrir le dossier ci-dessous ?",
+    "openFile": "Voulez-vous ouvrir le fichier ci-dessous ?"
   },
   "photoInfo": {
     "unavailable": "Les informations sur la photo ne sont pas disponibles.",
@@ -89,9 +94,14 @@
     "rotateThumbnail": "Faire pivoter la vignette",
     "menu": {
       "selectOnlyThis": "Sélectionner uniquement ce fichier",
+      "selectPrevious": "Sélectionner le fichier précédent",
+      "selectNext": "Sélectionner le fichier suivant",
       "openFolder": "Ouvrir le dossier",
+      "revealInMap": "Afficher sur la carte",
+      "revealInSidebar": "Afficher dans la barre latérale",
       "openGoogleMaps": "Ouvrir Google Maps",
       "openGoogleStreetView": "Ouvrir Google Street View",
+      "openGoogleEarth": "Ouvrir Google Earth",
       "viewData": "Afficher les données"
     },
     "pathTooLong": "La vignette ne peut pas être affichée, car la longueur du chemin du fichier est de {{length}} caractères. Windows limite la longueur des chemins à {{maximum}} caractères. Déplacez le fichier pour raccourcir son chemin. Pour plus de détails, appuyez sur Ctrl+Maj+I et lisez les messages de la console.",
@@ -238,7 +248,9 @@
     "selection": {
       "title": "Sélection",
       "undo": "Annuler",
-      "redo": "Rétablir"
+      "redo": "Rétablir",
+      "selectPrevious": "Sélectionner le fichier précédent",
+      "selectNext": "Sélectionner le fichier suivant"
     },
     "settings": {
       "title": "Paramètres",

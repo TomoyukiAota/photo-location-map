@@ -9,7 +9,17 @@ export class DirectoryTreeViewSelectionService {
    */
   public readonly selectionRequested = new Subject<string[]>(); // string for photoPath
 
+  /**
+   * Requests to select the photo of this path in the tree too, keeping the others selected, as a click on its
+   * checkbox would. An event, as selectionRequested is.
+   */
+  public readonly additionRequested = new Subject<string>(); // string for photoPath
+
   public select(photoPaths: string[]) {
     this.selectionRequested.next(photoPaths);
+  }
+
+  public add(photoPath: string) {
+    this.additionRequested.next(photoPath);
   }
 }

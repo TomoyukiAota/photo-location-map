@@ -77,9 +77,14 @@
     "contextMenu": {
       "selectOnlyThisFile": "Selecciona només aquest fitxer",
       "selectOnlyThisFolder": "Selecciona només aquesta carpeta",
+      "revealInMap": "Mostra al mapa",
       "open": "Obre",
       "openFolder": "Obre la carpeta"
     }
+  },
+  "dropToOpen": {
+    "openFolder": "Voleu obrir la carpeta següent?",
+    "openFile": "Voleu obrir el fitxer següent?"
   },
   "photoInfo": {
     "unavailable": "La informació de la foto no està disponible.",
@@ -89,9 +94,14 @@
     "rotateThumbnail": "Gira la miniatura",
     "menu": {
       "selectOnlyThis": "Selecciona només aquest fitxer",
+      "selectPrevious": "Selecciona el fitxer anterior",
+      "selectNext": "Selecciona el fitxer següent",
       "openFolder": "Obre la carpeta",
+      "revealInMap": "Mostra al mapa",
+      "revealInSidebar": "Mostra a la barra lateral",
       "openGoogleMaps": "Obre Google Maps",
       "openGoogleStreetView": "Obre Google Street View",
+      "openGoogleEarth": "Obre Google Earth",
       "viewData": "Mostra les dades"
     },
     "pathTooLong": "No es pot mostrar la miniatura perquè la longitud del camí del fitxer és de {{length}} caràcters. El Windows limita la longitud dels camins a {{maximum}} caràcters com a màxim. Canvieu la ubicació del fitxer per escurçar-ne el camí. Per veure’n els detalls, premeu Ctrl+Maj+I i llegiu els missatges de la consola.",
@@ -238,7 +248,9 @@
     "selection": {
       "title": "Selecció",
       "undo": "Desfés",
-      "redo": "Refés"
+      "redo": "Refés",
+      "selectPrevious": "Selecciona el fitxer anterior",
+      "selectNext": "Selecciona el fitxer següent"
     },
     "settings": {
       "title": "Configuració",

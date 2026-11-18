@@ -93,4 +93,26 @@ describe('PhotoClusterViewerComponent', () => {
     // The tiles of the same photos are the same elements.
     expect(tiles()).toEqual(tilesBefore);
   });
+
+  it('chooses the tile of the photo that it is given to choose, as for a photo revealed on the map, until it is given none', async () => {
+    const photos = [photo('late.jpg', 20), photo('early.jpg', 8), photo('noon.jpg', 12)];
+    fixture.componentRef.setInput('photos', photos);
+    fixture.componentRef.setInput('chosenPhoto', photos[0]);
+    await fixture.whenStable();
+
+    expect(selectedTiles()).toEqual([tiles()[2]]);
+    expect(shownName()).toBe('late.jpg');
+
+    // The map's photos of the same path, as when the map has been rendered again.
+    fixture.componentRef.setInput('photos', [photo('late.jpg', 20), photo('early.jpg', 8), photo('noon.jpg', 12)]);
+    fixture.componentRef.setInput('chosenPhoto', photo('noon.jpg', 12));
+    await fixture.whenStable();
+    expect(shownName()).toBe('noon.jpg');
+
+    fixture.componentRef.setInput('photos', photos);
+    fixture.componentRef.setInput('chosenPhoto', null);
+    await fixture.whenStable();
+    expect(selectedTiles()).toEqual([tiles()[0]]);
+    expect(shownName()).toBe('early.jpg');
+  });
 });

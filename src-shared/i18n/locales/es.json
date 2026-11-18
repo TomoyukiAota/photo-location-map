@@ -77,9 +77,14 @@
     "contextMenu": {
       "selectOnlyThisFile": "Seleccionar solo este archivo",
       "selectOnlyThisFolder": "Seleccionar solo esta carpeta",
+      "revealInMap": "Mostrar en el mapa",
       "open": "Abrir",
       "openFolder": "Abrir carpeta"
     }
+  },
+  "dropToOpen": {
+    "openFolder": "¿Quieres abrir la siguiente carpeta?",
+    "openFile": "¿Quieres abrir el siguiente archivo?"
   },
   "photoInfo": {
     "unavailable": "La información de la foto no está disponible.",
@@ -89,9 +94,14 @@
     "rotateThumbnail": "Girar miniatura",
     "menu": {
       "selectOnlyThis": "Seleccionar solo este archivo",
+      "selectPrevious": "Seleccionar el archivo anterior",
+      "selectNext": "Seleccionar el archivo siguiente",
       "openFolder": "Abrir carpeta",
+      "revealInMap": "Mostrar en el mapa",
+      "revealInSidebar": "Mostrar en la barra lateral",
       "openGoogleMaps": "Abrir Google Maps",
       "openGoogleStreetView": "Abrir Google Street View",
+      "openGoogleEarth": "Abrir Google Earth",
       "viewData": "Ver datos"
     },
     "pathTooLong": "No se puede mostrar la miniatura porque la longitud de la ruta del archivo es de {{length}} caracteres. Windows limita la longitud máxima de las rutas a {{maximum}} caracteres. Cambia la ubicación del archivo para acortar su ruta. Para obtener más detalles, pulsa Ctrl+Mayús+I y lee los mensajes de la consola.",
@@ -238,7 +248,9 @@
     "selection": {
       "title": "Selección",
       "undo": "Deshacer",
-      "redo": "Rehacer"
+      "redo": "Rehacer",
+      "selectPrevious": "Seleccionar el archivo anterior",
+      "selectNext": "Seleccionar el archivo siguiente"
     },
     "settings": {
       "title": "Ajustes",

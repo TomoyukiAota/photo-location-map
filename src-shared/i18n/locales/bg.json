@@ -77,9 +77,14 @@
     "contextMenu": {
       "selectOnlyThisFile": "Избиране само на този файл",
       "selectOnlyThisFolder": "Избиране само на тази папка",
+      "revealInMap": "Показване върху картата",
       "open": "Отваряне",
       "openFolder": "Отваряне на папката"
     }
+  },
+  "dropToOpen": {
+    "openFolder": "Искате ли да отворите папката по-долу?",
+    "openFile": "Искате ли да отворите файла по-долу?"
   },
   "photoInfo": {
     "unavailable": "Няма налична информация за снимката.",
@@ -89,9 +94,14 @@
     "rotateThumbnail": "Завъртане на миниатюрата",
     "menu": {
       "selectOnlyThis": "Избиране само на този файл",
+      "selectPrevious": "Избиране на предишния файл",
+      "selectNext": "Избиране на следващия файл",
       "openFolder": "Отваряне на папката",
+      "revealInMap": "Показване върху картата",
+      "revealInSidebar": "Показване в страничната лента",
       "openGoogleMaps": "Отваряне на Google Карти",
       "openGoogleStreetView": "Отваряне на Google Street View",
+      "openGoogleEarth": "Отваряне на Google Earth",
       "viewData": "Преглед на данните"
     },
     "pathTooLong": "Миниатюрата не може да се покаже, защото дължината на пътя до файла е {{length}} символа. Windows ограничава дължината на пътя до {{maximum}} символа. Преместете файла, за да скъсите пътя до него. За подробности натиснете Ctrl+Shift+I и прочетете съобщенията в конзолата.",
@@ -238,7 +248,9 @@
     "selection": {
       "title": "Избор",
       "undo": "Отмяна",
-      "redo": "Възстановяване"
+      "redo": "Възстановяване",
+      "selectPrevious": "Избиране на предишния файл",
+      "selectNext": "Избиране на следващия файл"
     },
     "settings": {
       "title": "Настройки",

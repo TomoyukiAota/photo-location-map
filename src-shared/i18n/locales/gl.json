@@ -77,9 +77,14 @@
     "contextMenu": {
       "selectOnlyThisFile": "Seleccionar só este ficheiro",
       "selectOnlyThisFolder": "Seleccionar só este cartafol",
+      "revealInMap": "Mostrar no mapa",
       "open": "Abrir",
       "openFolder": "Abrir o cartafol"
     }
+  },
+  "dropToOpen": {
+    "openFolder": "Queres abrir o seguinte cartafol?",
+    "openFile": "Queres abrir o seguinte ficheiro?"
   },
   "photoInfo": {
     "unavailable": "A información da foto non está dispoñible.",
@@ -89,9 +94,14 @@
     "rotateThumbnail": "Xirar a miniatura",
     "menu": {
       "selectOnlyThis": "Seleccionar só este ficheiro",
+      "selectPrevious": "Seleccionar o ficheiro anterior",
+      "selectNext": "Seleccionar o ficheiro seguinte",
       "openFolder": "Abrir o cartafol",
+      "revealInMap": "Mostrar no mapa",
+      "revealInSidebar": "Mostrar na barra lateral",
       "openGoogleMaps": "Abrir Google Maps",
       "openGoogleStreetView": "Abrir Google Street View",
+      "openGoogleEarth": "Abrir Google Earth",
       "viewData": "Ver os datos"
     },
     "pathTooLong": "Non se pode mostrar a miniatura porque a lonxitude da ruta do ficheiro é de {{length}} caracteres. Windows limita a lonxitude das rutas a {{maximum}} caracteres como máximo. Cambia a localización do ficheiro para acurtar a ruta. Para ver os detalles, preme Ctrl+Maiús+I e le as mensaxes da consola.",
@@ -238,7 +248,9 @@
     "selection": {
       "title": "Selección",
       "undo": "Desfacer",
-      "redo": "Refacer"
+      "redo": "Refacer",
+      "selectPrevious": "Seleccionar o ficheiro anterior",
+      "selectNext": "Seleccionar o ficheiro seguinte"
     },
     "settings": {
       "title": "Configuración",

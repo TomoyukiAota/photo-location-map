@@ -77,9 +77,14 @@
     "contextMenu": {
       "selectOnlyThisFile": "Pilih fail ini sahaja",
       "selectOnlyThisFolder": "Pilih folder ini sahaja",
+      "revealInMap": "Tunjukkan pada peta",
       "open": "Buka",
       "openFolder": "Buka folder"
     }
+  },
+  "dropToOpen": {
+    "openFolder": "Adakah anda mahu membuka folder di bawah?",
+    "openFile": "Adakah anda mahu membuka fail di bawah?"
   },
   "photoInfo": {
     "unavailable": "Maklumat foto tidak tersedia.",
@@ -89,9 +94,14 @@
     "rotateThumbnail": "Putar lakaran kecil",
     "menu": {
       "selectOnlyThis": "Pilih fail ini sahaja",
+      "selectPrevious": "Pilih fail sebelumnya",
+      "selectNext": "Pilih fail seterusnya",
       "openFolder": "Buka folder",
+      "revealInMap": "Tunjukkan pada peta",
+      "revealInSidebar": "Tunjukkan dalam bar sisi",
       "openGoogleMaps": "Buka Google Maps",
       "openGoogleStreetView": "Buka Google Street View",
+      "openGoogleEarth": "Buka Google Earth",
       "viewData": "Lihat data"
     },
     "pathTooLong": "Lakaran kecil tidak dapat dipaparkan kerana panjang laluan fail ialah {{length}} aksara. Windows mengehadkan panjang laluan kepada maksimum {{maximum}} aksara. Tukar lokasi fail untuk memendekkan laluan. Untuk butiran, tekan Ctrl+Shift+I dan baca mesej konsol.",
@@ -238,7 +248,9 @@
     "selection": {
       "title": "Pilihan",
       "undo": "Buat asal",
-      "redo": "Buat semula"
+      "redo": "Buat semula",
+      "selectPrevious": "Pilih fail sebelumnya",
+      "selectNext": "Pilih fail seterusnya"
     },
     "settings": {
       "title": "Tetapan",

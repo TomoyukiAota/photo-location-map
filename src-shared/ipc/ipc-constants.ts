@@ -4,6 +4,17 @@ export namespace IpcConstants {
     export const OpenTarget = 'ipc-constants-get-open-target';
   }
 
+  /**
+   * A folder or a file that the user dropped on the main window, whose path the preload reads from the File that the
+   * page gives it (src-main/dropped-item/).
+   */
+  export namespace DroppedItem {
+    /** What the item would open, before the user confirms. */
+    export const OpenTarget = 'ipc-constants-dropped-item-open-target';
+    /** The item that the user confirmed, whose folder the page may then read. */
+    export const Choose = 'ipc-constants-dropped-item-choose';
+  }
+
   export namespace RecordAtAppLaunch {
     export const Finished = 'ipc-constants-record-at-app-launch-finished';
   }
@@ -34,6 +45,10 @@ export namespace IpcConstants {
     export const Undo = 'ipc-constants-photo-selection-undo';
     export const Redo = 'ipc-constants-photo-selection-redo';
     export const UpdateUndoRedoMenus = 'ipc-constants-photo-selection-update-undo-redo-menus';
+    /** The Selection menu's Select Previous and Select Next, which act on the one selected photo (src-main/menu/selection-menu.ts). */
+    export const SelectPrevious = 'ipc-constants-photo-selection-select-previous';
+    export const SelectNext = 'ipc-constants-photo-selection-select-next';
+    export const UpdateSelectPreviousNextMenus = 'ipc-constants-photo-selection-update-select-previous-next-menus';
   }
 
   export namespace ExplorerContextMenu {

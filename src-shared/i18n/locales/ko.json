@@ -77,9 +77,14 @@
     "contextMenu": {
       "selectOnlyThisFile": "이 파일만 선택",
       "selectOnlyThisFolder": "이 폴더만 선택",
+      "revealInMap": "지도에서 보기",
       "open": "열기",
       "openFolder": "폴더 열기"
     }
+  },
+  "dropToOpen": {
+    "openFolder": "아래 폴더를 여시겠습니까?",
+    "openFile": "아래 파일을 여시겠습니까?"
   },
   "photoInfo": {
     "unavailable": "사진 정보가 없습니다.",
@@ -89,9 +94,14 @@
     "rotateThumbnail": "썸네일 회전",
     "menu": {
       "selectOnlyThis": "이 파일만 선택",
+      "selectPrevious": "이전 파일 선택",
+      "selectNext": "다음 파일 선택",
       "openFolder": "폴더 열기",
+      "revealInMap": "지도에서 보기",
+      "revealInSidebar": "사이드바에서 보기",
       "openGoogleMaps": "Google 지도 열기",
       "openGoogleStreetView": "Google 스트리트 뷰 열기",
+      "openGoogleEarth": "Google 어스 열기",
       "viewData": "데이터 보기"
     },
     "pathTooLong": "파일 경로의 길이({{length}}자) 때문에 썸네일을 표시할 수 없습니다. Windows에서는 경로 길이가 최대 {{maximum}}자로 제한됩니다. 파일 위치를 변경하여 경로를 줄이세요. 자세한 내용은 Ctrl+Shift+I를 눌러 콘솔 메시지를 확인하세요.",
@@ -238,7 +248,9 @@
     "selection": {
       "title": "선택",
       "undo": "실행 취소",
-      "redo": "다시 실행"
+      "redo": "다시 실행",
+      "selectPrevious": "이전 파일 선택",
+      "selectNext": "다음 파일 선택"
     },
     "settings": {
       "title": "설정",

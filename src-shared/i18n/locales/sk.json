@@ -77,9 +77,14 @@
     "contextMenu": {
       "selectOnlyThisFile": "Vybrať len tento súbor",
       "selectOnlyThisFolder": "Vybrať len tento priečinok",
+      "revealInMap": "Zobraziť na mape",
       "open": "Otvoriť",
       "openFolder": "Otvoriť priečinok"
     }
+  },
+  "dropToOpen": {
+    "openFolder": "Chcete otvoriť nižšie uvedený priečinok?",
+    "openFile": "Chcete otvoriť nižšie uvedený súbor?"
   },
   "photoInfo": {
     "unavailable": "Informácie o fotke nie sú k dispozícii.",
@@ -89,9 +94,14 @@
     "rotateThumbnail": "Otočiť miniatúru",
     "menu": {
       "selectOnlyThis": "Vybrať len tento súbor",
+      "selectPrevious": "Vybrať predchádzajúci súbor",
+      "selectNext": "Vybrať nasledujúci súbor",
       "openFolder": "Otvoriť priečinok",
+      "revealInMap": "Zobraziť na mape",
+      "revealInSidebar": "Zobraziť v bočnom paneli",
       "openGoogleMaps": "Otvoriť Mapy Google",
       "openGoogleStreetView": "Otvoriť Google Street View",
+      "openGoogleEarth": "Otvoriť Google Earth",
       "viewData": "Zobraziť údaje"
     },
     "pathTooLong": "Miniatúru nie je možné zobraziť, pretože počet znakov v ceste k súboru je {{length}}. Windows obmedzuje počet znakov v ceste na {{maximum}}. Presuňte súbor inam, aby bola jeho cesta kratšia. Podrobnosti zistíte stlačením Ctrl+Shift+I a prečítaním správ v konzole.",
@@ -238,7 +248,9 @@
     "selection": {
       "title": "Výber",
       "undo": "Späť",
-      "redo": "Znova"
+      "redo": "Znova",
+      "selectPrevious": "Vybrať predchádzajúci súbor",
+      "selectNext": "Vybrať nasledujúci súbor"
     },
     "settings": {
       "title": "Nastavenia",

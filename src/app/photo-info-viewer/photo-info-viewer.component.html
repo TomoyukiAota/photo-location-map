@@ -92,12 +92,13 @@
            [src]="icons.moreOptions"
            [alt]="texts.moreOptions"
            [title]="texts.moreOptions">
-      @if (menuPlacement(); as placement) {
+      @if (menuRoom(); as room) {
         <app-photo-info-viewer-more-options-menu
           animate.enter="photo-info-viewer-more-options-menu-fade-in"
           animate.leave="photo-info-viewer-more-options-menu-fade-out"
           [photo]="shownPhoto"
-          [placement]="placement" />
+          [place]="place()"
+          [room]="room" />
       }
     </button>
   </div>

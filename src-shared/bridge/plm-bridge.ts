@@ -24,7 +24,10 @@ export interface ThumbnailState {
   thumbnailFilePath: string;
 }
 
-/** What `--open` asks the app to open after it launches, as the main process found it. */
+/**
+ * What a path given to the app opens, as the main process found it: the path of `--open`, which the app opens after it
+ * launches, or that of a folder or a file that the user dropped on the main window.
+ */
 export type OpenTarget =
   | { kind: 'none' }
   | { kind: 'file'; path: string; parentFolderPath: string }
@@ -84,7 +87,22 @@ export interface PlmBridge {
   };
   readonly app: { restart(): void };
   readonly commandLine: { openTarget(): Promise<OpenTarget> };
-  readonly menus: { updateUndoRedo(params: IpcParams.PhotoSelection.UpdateUndoRedoMenus): Promise<void> };
+  /**
+   * A folder or a file that the user dropped on the page, given as the File of the drop: the preload reads its path,
+   * so that the page can have only what the user dropped opened. A File that is not on the disk opens nothing.
+   */
+  readonly droppedItem: {
+    /** What the item would open, for the page to ask the user; nothing is chosen yet. */
+    openTarget(file: File): Promise<OpenTarget>;
+    /**
+     * Chooses the item, once the user has confirmed: the page may then read its folder, or the folder that it is in.
+     */
+    choose(file: File): Promise<OpenTarget>;
+  };
+  readonly menus: {
+    updateUndoRedo(params: IpcParams.PhotoSelection.UpdateUndoRedoMenus): Promise<void>;
+    updateSelectPreviousNext(params: IpcParams.PhotoSelection.UpdateSelectPreviousNextMenus): Promise<void>;
+  };
   readonly photoDataViewer: { open(params: PhotoDataViewerIpcParams): Promise<void> };
   readonly explorerContextMenu: { add(): Promise<void>; remove(): Promise<void> };
   readonly events: {
@@ -93,6 +111,8 @@ export interface PlmBridge {
     onWelcomeDialog(listener: Listener): Unsubscribe;
     onUndo(listener: Listener): Unsubscribe;
     onRedo(listener: Listener): Unsubscribe;
+    onSelectPrevious(listener: Listener): Unsubscribe;
+    onSelectNext(listener: Listener): Unsubscribe;
     onRecordAtAppLaunchFinished(listener: Listener): Unsubscribe;
   };
 }

@@ -4,5 +4,10 @@ export namespace IpcParams {
       isUndoMenuEnabled: boolean;
       isRedoMenuEnabled: boolean;
     }
+
+    export interface UpdateSelectPreviousNextMenus {
+      isSelectPreviousMenuEnabled: boolean;
+      isSelectNextMenuEnabled: boolean;
+    }
   }
 }

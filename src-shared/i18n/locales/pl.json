@@ -77,9 +77,14 @@
     "contextMenu": {
       "selectOnlyThisFile": "Zaznacz tylko ten plik",
       "selectOnlyThisFolder": "Zaznacz tylko ten folder",
+      "revealInMap": "Pokaż na mapie",
       "open": "Otwórz",
       "openFolder": "Otwórz folder"
     }
+  },
+  "dropToOpen": {
+    "openFolder": "Czy chcesz otworzyć poniższy folder?",
+    "openFile": "Czy chcesz otworzyć poniższy plik?"
   },
   "photoInfo": {
     "unavailable": "Informacje o zdjęciu są niedostępne.",
@@ -89,9 +94,14 @@
     "rotateThumbnail": "Obróć miniaturkę",
     "menu": {
       "selectOnlyThis": "Zaznacz tylko ten plik",
+      "selectPrevious": "Zaznacz poprzedni plik",
+      "selectNext": "Zaznacz następny plik",
       "openFolder": "Otwórz folder",
+      "revealInMap": "Pokaż na mapie",
+      "revealInSidebar": "Pokaż na pasku bocznym",
       "openGoogleMaps": "Otwórz Mapy Google",
       "openGoogleStreetView": "Otwórz Google Street View",
+      "openGoogleEarth": "Otwórz Google Earth",
       "viewData": "Pokaż dane"
     },
     "pathTooLong": "Nie można wyświetlić miniaturki, ponieważ liczba znaków w ścieżce pliku wynosi {{length}}. System Windows ogranicza liczbę znaków w ścieżce do {{maximum}}. Przenieś plik w inne miejsce, aby skrócić jego ścieżkę. Aby poznać szczegóły, naciśnij Ctrl+Shift+I i przeczytaj komunikaty w konsoli.",
@@ -238,7 +248,9 @@
     "selection": {
       "title": "Zaznaczenie",
       "undo": "Cofnij",
-      "redo": "Ponów"
+      "redo": "Ponów",
+      "selectPrevious": "Zaznacz poprzedni plik",
+      "selectNext": "Zaznacz następny plik"
     },
     "settings": {
       "title": "Ustawienia",

@@ -6,6 +6,7 @@ import { DirectoryTreeViewSelectionService } from '../app/directory-tree-view/di
 import { SettingsDialogComponent } from '../app/settings-dialog/settings-dialog.component';
 import { OpenAfterLaunchService } from '../app/shared/service/open-after-launch.service';
 import { PhotoSelectionHistoryService } from '../app/shared/service/photo-selection-history.service';
+import { SelectPreviousNextService } from '../app/shared/service/select-previous-next.service';
 import { WelcomeDialogComponent } from '../app/welcome-dialog/welcome-dialog.component';
 import {
   PlmInternalRenderer,
@@ -22,6 +23,8 @@ export class PlmInternalRendererService {
   private directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);
   private openAfterLaunchService = inject(OpenAfterLaunchService);
   private photoSelectionHistoryService = inject(PhotoSelectionHistoryService);
+  // Made with this service, at the start: it enables the Selection menu's Select Previous and Select Next.
+  private selectPreviousNextService = inject(SelectPreviousNextService);
 
   public initialize(): void {
     window.plmInternalRenderer = window.plmInternalRenderer || new PlmInternalRenderer();
@@ -42,6 +45,8 @@ export class PlmInternalRendererService {
     window.plmInternalRenderer.photoSelection.undo = () => this.undoPhotoSelection();
     window.plmInternalRenderer.photoSelection.redo = () => this.redoPhotoSelection();
     window.plmInternalRenderer.photoSelection.selectOnlyThis = (photoPath) => this.selectOnlyThis(photoPath);
+    window.plmInternalRenderer.photoSelection.selectPrevious = () => this.selectPreviousNextService.selectPreviousOfSelectedPhoto();
+    window.plmInternalRenderer.photoSelection.selectNext = () => this.selectPreviousNextService.selectNextOfSelectedPhoto();
   }
 
   public destroy(): void {

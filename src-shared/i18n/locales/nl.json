@@ -77,9 +77,14 @@
     "contextMenu": {
       "selectOnlyThisFile": "Selecteer alleen dit bestand",
       "selectOnlyThisFolder": "Selecteer alleen deze map",
+      "revealInMap": "Toon op de kaart",
       "open": "Open",
       "openFolder": "Open map"
     }
+  },
+  "dropToOpen": {
+    "openFolder": "Wil je de onderstaande map openen?",
+    "openFile": "Wil je het onderstaande bestand openen?"
   },
   "photoInfo": {
     "unavailable": "Er is geen informatie over de foto beschikbaar.",
@@ -89,9 +94,14 @@
     "rotateThumbnail": "Roteer miniatuur",
     "menu": {
       "selectOnlyThis": "Selecteer alleen dit bestand",
+      "selectPrevious": "Selecteer het vorige bestand",
+      "selectNext": "Selecteer het volgende bestand",
       "openFolder": "Open map",
+      "revealInMap": "Toon op de kaart",
+      "revealInSidebar": "Toon in de zijbalk",
       "openGoogleMaps": "Open Google Maps",
       "openGoogleStreetView": "Open Google Street View",
+      "openGoogleEarth": "Open Google Earth",
       "viewData": "Bekijk gegevens"
     },
     "pathTooLong": "De miniatuur kan niet worden weergegeven, omdat het bestandspad {{length}} tekens lang is. Windows beperkt de lengte van een pad tot {{maximum}} tekens. Verplaats het bestand om het pad korter te maken. Druk voor details op Ctrl+Shift+I en lees de meldingen in de console.",
@@ -238,7 +248,9 @@
     "selection": {
       "title": "Selectie",
       "undo": "Herstel",
-      "redo": "Opnieuw"
+      "redo": "Opnieuw",
+      "selectPrevious": "Selecteer het vorige bestand",
+      "selectNext": "Selecteer het volgende bestand"
     },
     "settings": {
       "title": "Instellingen",

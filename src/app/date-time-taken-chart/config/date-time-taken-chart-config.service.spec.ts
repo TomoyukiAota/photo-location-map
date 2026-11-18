@@ -59,4 +59,20 @@ describe('DateTimeTakenChartConfigService', () => {
     expect(service.xValuesWithinZoom()).toBeNull();
     expect(service.showDateUnknownPhotos()).toBe(true);
   });
+
+  it('resets the zoom from outside the chart at once, and tells the chart to zoom out', () => {
+    let zoomResets = 0;
+    service.zoomResetFromOutside.subscribe(() => {
+      zoomResets++;
+      // Reset by the time the chart hears it.
+      expect(service.xValuesWithinZoom()).toBeNull();
+    });
+    service.zoom(['2019']);
+
+    service.resetZoomFromOutside();
+
+    expect(zoomResets).toBe(1);
+    expect(service.xValuesWithinZoom()).toBeNull();
+    expect(service.showDateUnknownPhotos()).toBe(true);
+  });
 });

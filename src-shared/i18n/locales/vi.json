@@ -77,9 +77,14 @@
     "contextMenu": {
       "selectOnlyThisFile": "Chỉ chọn tệp này",
       "selectOnlyThisFolder": "Chỉ chọn thư mục này",
+      "revealInMap": "Hiển thị trên bản đồ",
       "open": "Mở",
       "openFolder": "Mở thư mục"
     }
+  },
+  "dropToOpen": {
+    "openFolder": "Bạn có muốn mở thư mục bên dưới không?",
+    "openFile": "Bạn có muốn mở tệp bên dưới không?"
   },
   "photoInfo": {
     "unavailable": "Không có thông tin ảnh.",
@@ -89,9 +94,14 @@
     "rotateThumbnail": "Xoay hình thu nhỏ",
     "menu": {
       "selectOnlyThis": "Chỉ chọn tệp này",
+      "selectPrevious": "Chọn tệp trước đó",
+      "selectNext": "Chọn tệp tiếp theo",
       "openFolder": "Mở thư mục",
+      "revealInMap": "Hiển thị trên bản đồ",
+      "revealInSidebar": "Hiển thị trong thanh bên",
       "openGoogleMaps": "Mở Google Maps",
       "openGoogleStreetView": "Mở Google Street View",
+      "openGoogleEarth": "Mở Google Earth",
       "viewData": "Xem dữ liệu"
     },
     "pathTooLong": "Không thể hiển thị hình thu nhỏ vì độ dài đường dẫn tệp là {{length}} ký tự. Windows giới hạn độ dài đường dẫn tối đa là {{maximum}} ký tự. Hãy đổi vị trí của tệp để rút ngắn đường dẫn. Để biết chi tiết, nhấn Ctrl+Shift+I và đọc các thông báo trong bảng điều khiển.",
@@ -238,7 +248,9 @@
     "selection": {
       "title": "Lựa chọn",
       "undo": "Hoàn tác",
-      "redo": "Làm lại"
+      "redo": "Làm lại",
+      "selectPrevious": "Chọn tệp trước đó",
+      "selectNext": "Chọn tệp tiếp theo"
     },
     "settings": {
       "title": "Cài đặt",

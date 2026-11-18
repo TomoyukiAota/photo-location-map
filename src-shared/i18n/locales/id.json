@@ -77,9 +77,14 @@
     "contextMenu": {
       "selectOnlyThisFile": "Pilih hanya file ini",
       "selectOnlyThisFolder": "Pilih hanya folder ini",
+      "revealInMap": "Tampilkan di peta",
       "open": "Buka",
       "openFolder": "Buka folder"
     }
+  },
+  "dropToOpen": {
+    "openFolder": "Ingin membuka folder di bawah ini?",
+    "openFile": "Ingin membuka file di bawah ini?"
   },
   "photoInfo": {
     "unavailable": "Informasi foto tidak tersedia.",
@@ -89,9 +94,14 @@
     "rotateThumbnail": "Putar gambar mini",
     "menu": {
       "selectOnlyThis": "Pilih hanya file ini",
+      "selectPrevious": "Pilih file sebelumnya",
+      "selectNext": "Pilih file berikutnya",
       "openFolder": "Buka folder",
+      "revealInMap": "Tampilkan di peta",
+      "revealInSidebar": "Tampilkan di bilah samping",
       "openGoogleMaps": "Buka Google Maps",
       "openGoogleStreetView": "Buka Google Street View",
+      "openGoogleEarth": "Buka Google Earth",
       "viewData": "Lihat data"
     },
     "pathTooLong": "Gambar mini tidak dapat ditampilkan karena panjang jalur file adalah {{length}} karakter. Windows membatasi panjang jalur hingga maksimum {{maximum}} karakter. Ubah lokasi file untuk memperpendek jalurnya. Untuk detailnya, tekan Ctrl+Shift+I dan baca pesan konsol.",
@@ -238,7 +248,9 @@
     "selection": {
       "title": "Pilihan",
       "undo": "Urungkan",
-      "redo": "Ulangi"
+      "redo": "Ulangi",
+      "selectPrevious": "Pilih file sebelumnya",
+      "selectNext": "Pilih file berikutnya"
     },
     "settings": {
       "title": "Pengaturan",

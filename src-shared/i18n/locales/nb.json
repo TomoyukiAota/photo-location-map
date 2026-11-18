@@ -77,9 +77,14 @@
     "contextMenu": {
       "selectOnlyThisFile": "Marker bare denne filen",
       "selectOnlyThisFolder": "Marker bare denne mappen",
+      "revealInMap": "Vis på kartet",
       "open": "Åpne",
       "openFolder": "Åpne mappe"
     }
+  },
+  "dropToOpen": {
+    "openFolder": "Vil du åpne mappen nedenfor?",
+    "openFile": "Vil du åpne filen nedenfor?"
   },
   "photoInfo": {
     "unavailable": "Bildeinformasjon er ikke tilgjengelig.",
@@ -89,9 +94,14 @@
     "rotateThumbnail": "Roter miniatyrbilde",
     "menu": {
       "selectOnlyThis": "Marker bare denne filen",
+      "selectPrevious": "Marker forrige fil",
+      "selectNext": "Marker neste fil",
       "openFolder": "Åpne mappe",
+      "revealInMap": "Vis på kartet",
+      "revealInSidebar": "Vis i sidepanelet",
       "openGoogleMaps": "Åpne Google Maps",
       "openGoogleStreetView": "Åpne Google Street View",
+      "openGoogleEarth": "Åpne Google Earth",
       "viewData": "Vis data"
     },
     "pathTooLong": "Miniatyrbildet kan ikke vises fordi filbanen er {{length}} tegn lang. Windows begrenser lengden på baner til {{maximum}} tegn. Flytt filen for å gjøre banen kortere. Trykk på Ctrl+Skift+I og les meldingene i konsollen for detaljer.",
@@ -238,7 +248,9 @@
     "selection": {
       "title": "Markering",
       "undo": "Angre",
-      "redo": "Gjør om"
+      "redo": "Gjør om",
+      "selectPrevious": "Marker forrige fil",
+      "selectNext": "Marker neste fil"
     },
     "settings": {
       "title": "Innstillinger",
