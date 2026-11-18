@@ -1693,59 +1693,87 @@ test('Select Previous and Select Next go through the photos in the order they we
   await expect.poll(enabled).toEqual({ previous: true, next: true });
 
   // The items' keys: Cmd on macOS and Ctrl on Windows and Linux, with the Left and Right arrow keys. Electron gives
-  // the menu a key that the page leaves unhandled, as the page does where nothing else uses them, a node of the tree
-  // and the map too, while a text field moves its caret with them. Playwright's keys never reach the menu, as the
-  // browser skips a key of CDP that the page leaves unless it has a native key code (Chromium's input_handler.cc):
-  // these have one, with what macOS gives a key of the menu, the arrow's character, and AppKit's commands for it.
-  const cdp = await page.context().newCDPSession(page);
-  const nativeArrows = {
-    ArrowLeft: { keyCode: 37, macKeyCode: 123, character: '\uF702', macCommand: 'moveToLeftEndOfLine' },
-    ArrowRight: { keyCode: 39, macKeyCode: 124, character: '\uF703', macCommand: 'moveToRightEndOfLine' },
-  };
-  async function pressWithCmdOrCtrl(key) {
-    const { keyCode, macKeyCode, character, macCommand } = nativeArrows[key];
-    const event = { modifiers: isMac ? 4 : 2, key, code: key, windowsVirtualKeyCode: keyCode, nativeVirtualKeyCode: isMac ? macKeyCode : keyCode };
-    await cdp.send('Input.dispatchKeyEvent', { type: 'rawKeyDown', ...event,
-      ...(isMac ? { text: character, unmodifiedText: character, commands: [macCommand] } : {}) });
-    await cdp.send('Input.dispatchKeyEvent', { type: 'keyUp', ...event });
+  // the menu only a key that the page leaves unhandled, which the page does where nothing else uses them, a node of
+  // the tree and the map too, while a text field moves its caret with them.
+  await page.evaluate(() => {
+    window.__plmKeys = [];
+    // On the window, which a key reaches after the listeners of the tree and the map. Not Ctrl or Cmd itself.
+    window.addEventListener('keydown', event => {
+      if (event.key.startsWith('Arrow')) window.__plmKeys.push({ key: event.key, handled: event.defaultPrevented });
+    });
+  });
+  await expect(kobe).toHaveAttribute('aria-expanded', 'true');
+  for (const focused of [kobe, page.locator('#plm-leaflet-map')]) {
+    await focused.focus();
+    for (const key of ['ControlOrMeta+ArrowLeft', 'ControlOrMeta+ArrowRight']) await page.keyboard.press(key);
   }
-  await page.evaluate(() => document.activeElement.blur());
-  await pressWithCmdOrCtrl('ArrowLeft');
-  await expectSelected('IMG_2581.JPG');
-  // Again and again, through the trip: the first photo has none before it.
-  await pressWithCmdOrCtrl('ArrowLeft');
-  await expectSelected('IMG_1579.JPG');
-  await expect.poll(enabled).toEqual({ previous: false, next: true });
-  await pressWithCmdOrCtrl('ArrowLeft');
-  await pressWithCmdOrCtrl('ArrowRight');
-  await expectSelected('IMG_2581.JPG');
-  // A node of the tree: its own arrows would have taken the keys, to collapse the folder or to go into it.
+  // The tree's own arrows would have collapsed the folder and gone into it, and taken the keys.
   await expect(kobe).toHaveAttribute('aria-expanded', 'true');
-  await kobe.focus();
-  await pressWithCmdOrCtrl('ArrowRight');
-  await expectSelected('IMG_4676.JPG');
-  await pressWithCmdOrCtrl('ArrowLeft');
-  await expectSelected('IMG_2581.JPG');
-  await expect(kobe).toHaveAttribute('aria-expanded', 'true');
-  await expect(kobe).toBeFocused();
-  // The tree keeps the arrows alone.
-  await page.keyboard.press('ArrowLeft');
-  await expect(kobe).toHaveAttribute('aria-expanded', 'false');
-  // The map, whose arrows alone pan it.
-  await page.locator('#plm-leaflet-map').focus();
-  await pressWithCmdOrCtrl('ArrowRight');
-  await expectSelected('IMG_4676.JPG');
-  // A text field: to the start of the line on macOS, and of the word on Windows and Linux.
+  expect(await page.evaluate(() => window.__plmKeys))
+    .toEqual(['ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight'].map(key => ({ key, handled: false })));
   await settings();
   const search = page.locator('app-settings-dialog input[type="search"]');
   await search.fill('Norsk bokmål');
-  await pressWithCmdOrCtrl('ArrowLeft');
-  expect(await search.evaluate(input => [input.value, input.selectionStart])).toEqual(['Norsk bokmål', isMac ? 0 : 'Norsk '.length]);
+  await page.keyboard.press('ControlOrMeta+ArrowLeft');
+  // To the start of the line on macOS, and of the word on Windows and Linux.
+  expect(await search.evaluate(input => input.selectionStart)).toBe(isMac ? 0 : 'Norsk '.length);
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
   await expect(page.locator('app-settings-dialog')).toHaveCount(0);
-  // The key went to the text field only: one step back from where the selection was.
-  await selectPrevious.click();
-  await expectSelected('IMG_2581.JPG');
+  await expectSelected('IMG_4676.JPG');
+
+  // The keys through the menu, where it takes them in this run. Playwright's keys never reach it, as the browser
+  // skips a key of CDP that the page leaves unless it has a native key code (Chromium's input_handler.cc): these
+  // have one, with what macOS gives a key of the menu, the arrow's character, and AppKit's commands for it. On macOS,
+  // the application menu takes the keys of any window of the application. On Windows and Linux, a window takes an
+  // accelerator only while it is active (views::View::CanHandleAccelerators), which a headless run on Windows never
+  // makes it (electron-util/e2e-test-hooks.js), so the page's part above is what is checked there.
+  if (isMac || await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows().some(window => window.isFocused()))) {
+    const cdp = await page.context().newCDPSession(page);
+    const nativeArrows = {
+      ArrowLeft: { keyCode: 37, macKeyCode: 123, character: '\uF702', macCommand: 'moveToLeftEndOfLine' },
+      ArrowRight: { keyCode: 39, macKeyCode: 124, character: '\uF703', macCommand: 'moveToRightEndOfLine' },
+    };
+    const pressWithCmdOrCtrl = async key => {
+      const { keyCode, macKeyCode, character, macCommand } = nativeArrows[key];
+      const event = { modifiers: isMac ? 4 : 2, key, code: key, windowsVirtualKeyCode: keyCode, nativeVirtualKeyCode: isMac ? macKeyCode : keyCode };
+      await cdp.send('Input.dispatchKeyEvent', { type: 'rawKeyDown', ...event,
+        ...(isMac ? { text: character, unmodifiedText: character, commands: [macCommand] } : {}) });
+      await cdp.send('Input.dispatchKeyEvent', { type: 'keyUp', ...event });
+    };
+    await page.evaluate(() => document.activeElement.blur());
+    await pressWithCmdOrCtrl('ArrowLeft');
+    await expectSelected('IMG_2581.JPG');
+    // Again and again, through the trip: the first photo has none before it.
+    await pressWithCmdOrCtrl('ArrowLeft');
+    await expectSelected('IMG_1579.JPG');
+    await expect.poll(enabled).toEqual({ previous: false, next: true });
+    await pressWithCmdOrCtrl('ArrowLeft');
+    await pressWithCmdOrCtrl('ArrowRight');
+    await expectSelected('IMG_2581.JPG');
+    await kobe.focus();
+    await pressWithCmdOrCtrl('ArrowRight');
+    await expectSelected('IMG_4676.JPG');
+    await pressWithCmdOrCtrl('ArrowLeft');
+    await expectSelected('IMG_2581.JPG');
+    await expect(kobe).toHaveAttribute('aria-expanded', 'true');
+    await expect(kobe).toBeFocused();
+    await page.locator('#plm-leaflet-map').focus();
+    await pressWithCmdOrCtrl('ArrowRight');
+    await expectSelected('IMG_4676.JPG');
+    await settings();
+    await search.fill('Norsk bokmål');
+    await pressWithCmdOrCtrl('ArrowLeft');
+    expect(await search.evaluate(input => [input.value, input.selectionStart])).toEqual(['Norsk bokmål', isMac ? 0 : 'Norsk '.length]);
+    await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await expect(page.locator('app-settings-dialog')).toHaveCount(0);
+    // The key went to the text field only: one step back from where the selection was.
+    await selectPrevious.click();
+    await expectSelected('IMG_2581.JPG');
+  }
+  // The tree keeps the arrows alone.
+  await kobe.focus();
+  await page.keyboard.press('ArrowLeft');
+  await expect(kobe).toHaveAttribute('aria-expanded', 'false');
 });
 test('the sort menu orders the tree by name and by shooting time, shows its choice, and keeps it across a restart', async () => {
   // Photos named against the order they were taken in (Apple Park 2019, Kobe 2017, Unga 2015, Gold Coast 2013), so
