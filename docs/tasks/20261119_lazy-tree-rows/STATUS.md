@@ -14,14 +14,17 @@ A folder that has its photos in it has a row for each, and each row had a
 checkbox and a viewer of the photo (`src/app/photo-info-viewer/`), with its
 thumbnail and three or four buttons, as soon as the folder was expanded.
 
-Expanding a folder of 2,000 photos (copies of one JPEG of the fixtures) was
-one task of about a second on the page's thread, during which the window did
-nothing else. Of that, a trace gave 0.54 s to scripts, 0.17 s to layout,
-0.13 s to style and 0.05 s to the 8,008 requests of the rows' images.
+Expanding a folder of 2,000 photos (copies of one JPEG of the fixtures) is
+one task on the page's thread, during which the window does nothing else:
+387 ms on a quiet computer (Measurements, below). A trace taken while other
+work shared the computer, when it took about a second, gave 0.54 s to
+scripts, 0.17 s to layout, 0.13 s to style and 0.05 s to the 8,008 requests
+of the rows' images.
 
 Builds of the tree's template without each part of a row tell what each costs,
-with the same folder (8 to 16 expansions of each build, on a computer that
-other work shared):
+with the same folder (8 to 16 expansions of each build, while other work
+shared the computer, which made every time longer than on a quiet one; their
+proportions are what tell):
 
 | The rows of 2,000 photos | Expanding, median | Nodes | Listeners |
 | --- | --- | --- | --- |
@@ -80,6 +83,15 @@ rows that held them did.
   it did: the tree's keyboard, which focuses a row and so scrolls it into view,
   its typeahead, which reads a row's text (the name and the shooting time are
   there), the right-click menu, the selection, and a row scrolled into view.
+- **A folder's Live Photos movies are taken when its tree replaces the one
+  shown**, no longer when its tree is read (`OpenedDirectory`,
+  `OpenFolderService.open()`). A photo's viewer looks up its movie when it
+  makes its buttons, which a row now does when it comes near the view. While
+  the next folder's photos are read, the previous folder's rows are still
+  shown, behind the loading dialog, and one that came near then, as when the
+  window was made taller, would have looked up its movie among the next
+  folder's and shown no Live Photos button. A review of the pull request
+  found this.
 - `test/performance/tree-rows.mjs` counts the rows rather than the viewers,
   waits for the thumbnails of the rows in view, and measures the frames while
   the sidebar scrolls.
@@ -125,59 +137,73 @@ check of the tree follow.
 
 `test/performance/tree-rows.mjs`, the build of `main` before this change
 (3d57628d) and the build with it, each with `npm run build:prod`, in turns,
-on macOS (Apple Silicon). Other sessions built and tested on the same computer
-meanwhile, more so during the trials with 10,000 photos, which took both
-builds longer than an earlier series did; the medians are of interleaved
-trials, with the range of the trials in parentheses.
+on macOS (Apple Silicon), with the script of this change, which waits for the
+thumbnails of the rows in view to load. No other application of the
+repository ran meanwhile. The load average over a minute was 1.4 to 3.1
+during the trials with 2,000 photos, and 2.3 to 17.7, mostly 6 to 9, during
+those with 10,000, which includes the application's own reading of the
+photos. The medians are of interleaved trials, with the range of the trials
+in parentheses.
 
 | 2,000 photos, medians of 7 trials | Before | Now |
 | --- | --- | --- |
-| From the click on Open Folder to the last row, with the thumbnails in view | 5.08 s | 4.40 s |
-| The rows made again: from the click that expands the folder to the thumbnails in view | 840 ms (771–885) | 344 ms (319–382) |
-| A click on a checkbox, to the frame that shows it | 91 ms | 64 ms |
-| Scrolling down past a hundred rows: the mean time between frames | 31.2 ms (27.2–36.2) | 16.9 ms (16.7–18.1) |
-| Scrolling: the longest time between frames | 51 ms | 34 ms |
+| From the click on Open Folder to the last row, with the thumbnails in view | 3.99 s | 3.78 s |
+| The rows made again: from the click that expands the folder to the thumbnails in view | 387 ms (379–395) | 215 ms (198–219) |
+| A click on a checkbox, to the frame that shows it | 40 ms | 37 ms |
+| Scrolling down past a hundred rows: the mean time between frames | 16.7 ms (16.7–16.8) | 16.7 ms (16.6–16.7) |
+| Scrolling: the longest time between frames | 19 ms | 19 ms |
 | JavaScript heap | 59.7 MB | 47.3 MB |
 | Elements and other nodes of the page | 104,843 | 57,061 |
 | Event listeners | 30,513 | 12,593 |
-| Memory of the page's process (working set) | 477 MB | 384 MB |
-| JavaScript heap after the rows were made again three times | 59.3 MB | 48.1 MB |
+| Memory of the page's process (working set) | 609 MB | 469 MB |
+| JavaScript heap after the rows were made again three times | 59.4 MB | 47.9 MB |
 
-| 10,000 photos, medians of 3 trials | Before | Now |
+| 10,000 photos, medians of 5 trials | Before | Now |
 | --- | --- | --- |
-| From the click on Open Folder to the last row, with the thumbnails in view | 27.1 s | 23.2 s |
-| The rows made again | 4.44 s (4.40–5.19) | 2.12 s (1.81–2.12) |
-| A click on a checkbox, to the frame that shows it | 726 ms | 585 ms |
-| Scrolling: the mean time between frames | 194 ms (144–198) | 99 ms (89–107) |
-| Scrolling: the longest time between frames | 482 ms | 250 ms |
+| From the click on Open Folder to the last row, with the thumbnails in view | 20.8 s | 19.6 s |
+| The rows made again | 2.28 s (1.97–2.99) | 1.34 s (0.99–1.66) |
+| A click on a checkbox, to the frame that shows it | 399 ms | 387 ms |
+| Scrolling: the mean time between frames | 80.5 ms (61–128) | 61 ms (42–71) |
+| Scrolling: the longest time between frames | 135 ms | 150 ms |
 | JavaScript heap | 224 MB | 169 MB |
 | Elements and other nodes of the page | 520,843 | 281,061 |
 | Event listeners | 150,513 | 60,593 |
-| Memory of the page's process (working set) | 1,294 MB | 737 MB |
+| Memory of the page's process (working set) | 1,401 MB | 892 MB |
 
-- **The rows are made in less than half the time**, with the thumbnails of
-  the rows in view. In the measurement's window, the eight rows nearest the
-  top make their checkboxes, thumbnails and buttons a frame after the
-  folder's rows, when the observer tells them.
-- **Scrolling is smoother, not slower**, although the rows now make what they
-  show as they come near: with 2,000 photos, the sidebar scrolls at the
-  display's rate, a frame every 16.7 ms. What is left of the frames with
-  10,000 photos is Chromium's own work for a page of so many rows, its
+- **The rows are made in less than 60% of the time**, with the thumbnails of
+  the rows in view: 44% less with 2,000 photos, and 41% less with 10,000. The
+  trials with 10,000 photos were slower toward their end, as the load rose;
+  in each of their rounds, this change took 45 to 60% of the time of `main`.
+  In the measurement's window, the eight rows nearest the top make their
+  checkboxes, thumbnails and buttons a frame after the folder's rows, when
+  the observer tells them.
+- **Scrolling is not slower**, although the rows now make what they show as
+  they come near. With 2,000 photos, both builds scroll at the display's
+  rate, a frame every 16.7 ms. With 10,000, the frames come more often, every
+  61 ms rather than 80.5 ms, and the longest of them is about as long. What is
+  left of those frames is Chromium's own work for a page of so many rows, its
   compositing and painting, and its observers: on `main`, the one of the
   10,000 lazy images; now, this change's.
 - **The page holds less**: a row that is far from the view has 24 nodes fewer
   and 9 listeners fewer than one that is near, and the page's process takes
-  about 40% less memory with 10,000 photos. A row that has come near keeps
-  what it made, so after scrolling through every row, the page holds about
-  what it held before this change.
+  about a third less memory with 10,000 photos. A row that has come near
+  keeps what it made, so after scrolling through every row, the page holds
+  about what it held before this change.
+- **A click on a checkbox takes about as long**, as it has every row checked
+  again (below).
+- A first series ran while other sessions built and tested on the same
+  computer, with a load average of up to about 200. Both builds were slower,
+  and the differences larger: the rows were made again in 840 ms before and
+  344 ms now with 2,000 photos, and the sidebar scrolled past them at 31.2 ms
+  a frame before and 16.9 ms now. Its figures are not in the tables above.
 
 ## Found on the way
 
 - **A click on a checkbox has every row checked again**, as before this
   change: the tree's template gives each row whether it is selected, which it
   reads from a signal, in the rows' embedded views (above). With 10,000
-  photos, a click took 0.64 to 0.85 s to show before this change and 0.47 to
-  0.59 s with it, the map's markers included. A component of the row that read
+  photos, a click took 0.35 to 0.51 s to show before this change and 0.29 to
+  0.42 s with it, the map's markers included. A component of the row that read
   the selection itself would make a click check only the rows that change.
 - **A row that nothing can select puts the room before its name on the wrong
   side in a language written from right to left.** The name's `bdi` element
