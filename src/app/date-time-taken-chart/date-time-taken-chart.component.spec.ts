@@ -45,4 +45,27 @@ describe('DateTimeTakenChartComponent', () => {
     expect(dispatchAction).toHaveBeenCalledExactlyOnceWith({ type: 'restore' }, { silent: true });
     expect(chart.isSelectPhotosWithinZoomButtonVisible()).toBe(false);
   });
+
+  it('drops a zoom that it was about to pin when the zoom is reset, from outside or with its Reset Zoom button', () => {
+    TestBed.overrideComponent(DateTimeTakenChartComponent, { set: { imports: [], template: '<div class="config"></div>' } });
+    const chart = TestBed.createComponent(DateTimeTakenChartComponent).componentInstance;
+    const chartConfigService = TestBed.inject(DateTimeTakenChartConfigService);
+    // The chart after the reset, which shows its whole axis: a zoom read from it would pin all of it.
+    const getOption = vi.fn(() => ({ xAxis: [{ data: ['2013', '2019'] }], dataZoom: [{ startValue: 0, endValue: 1 }] }));
+    chart.onChartInit({ dispatchAction: vi.fn(), getOption });
+    vi.useFakeTimers();
+    try {
+      for (const reset of [() => chartConfigService.resetZoomFromOutside(), () => chart.onChartRestore()]) {
+        chart.onChartDataZoom();
+        reset();
+        vi.advanceTimersByTime(1000);
+
+        expect(getOption).not.toHaveBeenCalled();
+        expect(chartConfigService.xValuesWithinZoom()).toBeNull();
+        expect(chartConfigService.showDateUnknownPhotos()).toBe(true);
+      }
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

@@ -65,6 +65,7 @@ export class DateTimeTakenChartComponent {
    */
   private zoomOutAfterResetFromOutside(): void {
     logger.info('Reset the zoom from outside the chart');
+    this.onChartDataZoomWithDebouncing.cancel(); // See onChartRestore().
     this.echartsInstance?.dispatchAction({ type: 'restore' }, { silent: true });
     this.isSelectPhotosWithinZoomButtonVisible.set(false);
   }
@@ -199,6 +200,9 @@ export class DateTimeTakenChartComponent {
     logger.info(`Restore`);
     Analytics.trackEvent('DTT Chart', `[DTT Chart] Restore`);
 
+    // A zoom that is about to be pinned, from a zoom less than 300 ms before, would read the whole axis after the
+    // reset, and pin its photos without those that have no shooting time: the reset ends it.
+    this.onChartDataZoomWithDebouncing.cancel();
     this.chartConfigService.resetZoom();
     this.isSelectPhotosWithinZoomButtonVisible.set(false);
   }
