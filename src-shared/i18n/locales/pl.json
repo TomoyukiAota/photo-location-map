@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "Zaznacz tylko ten plik",
       "selectOnlyThisFolder": "Zaznacz tylko ten folder",
+      "revealInMap": "Pokaż na mapie",
       "open": "Otwórz",
       "openFolder": "Otwórz folder"
     }
@@ -96,6 +97,8 @@
       "selectPrevious": "Zaznacz poprzedni plik",
       "selectNext": "Zaznacz następny plik",
       "openFolder": "Otwórz folder",
+      "revealInMap": "Pokaż na mapie",
+      "revealInSidebar": "Pokaż na pasku bocznym",
       "openGoogleMaps": "Otwórz Mapy Google",
       "openGoogleStreetView": "Otwórz Google Street View",
       "openGoogleEarth": "Otwórz Google Earth",

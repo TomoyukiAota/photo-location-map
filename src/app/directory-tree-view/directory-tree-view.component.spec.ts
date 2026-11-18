@@ -6,9 +6,11 @@ import { PhotoInfoViewerComponent } from '../photo-info-viewer/photo-info-viewer
 import { Photo } from '../shared/model/photo.model';
 import { NearViewService } from '../shared/near-view/near-view.service';
 import { PhotoDataService } from '../shared/service/photo-data.service';
+import { PhotoRevealService } from '../shared/service/photo-reveal.service';
+import { SelectedPhotoService } from '../shared/service/selected-photo.service';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { DirectoryTreeViewSelectionService } from './directory-tree-view-selection.service';
-import { DirectoryTreeViewComponent } from './directory-tree-view.component';
+import { DirectoryTreeViewComponent, revealHighlightMs } from './directory-tree-view.component';
 import { NestedNode } from './directory-tree-view.model';
 
 // A photo's information has tests of its own (src/app/photo-info-viewer/).
@@ -138,6 +140,95 @@ describe('DirectoryTreeViewComponent', () => {
     selection.select(['/folder/a.jpg']);
     await fixture.whenStable();
     expect(checked()).toEqual({ 'a.jpg': true, 'b.jpg': false });
+  });
+
+  describe('revealing a photo from the map', () => {
+    const photo = Object.assign(new Photo(), { name: 'photo.jpg', path: '/opened/a/b/photo.jpg' });
+    const b = node('/opened/a/b', [node('/opened/a/b/other.jpg'), node(photo.path)]);
+    const a = node('/opened/a', [b]);
+    const opened = node('/opened', [a, node('/opened/z.jpg')]);
+    let scrolledIntoView: HTMLElement[];
+    let scrollOptions: ScrollIntoViewOptions[];
+
+    const rowOf = (name: string) => Array.from((fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('mat-tree-node'))
+      .find(row => row.textContent.includes(name));
+
+    beforeEach(async () => {
+      // The page has no layout here, and jsdom no scrollIntoView().
+      scrolledIntoView = [];
+      scrollOptions = [];
+      Element.prototype.scrollIntoView = function (this: HTMLElement, options: ScrollIntoViewOptions) {
+        scrolledIntoView.push(this);
+        scrollOptions.push(options);
+      };
+      dataService.dataReplaced.next([opened]);
+      await fixture.whenStable();
+    });
+
+    afterEach(() => delete Element.prototype.scrollIntoView);
+
+    it('expands the folders above it, and scrolls its row to the middle of the sidebar', async () => {
+      expect(rowOf('photo.jpg')).toBeUndefined();
+
+      TestBed.inject(PhotoRevealService).revealInSidebar(photo);
+      await fixture.whenStable();
+
+      expect(tree.isExpanded(a)).toBe(true);
+      expect(tree.isExpanded(b)).toBe(true);
+      expect(scrolledIntoView).toEqual([rowOf('photo.jpg')]);
+      expect(scrollOptions).toEqual([{ block: 'center', inline: 'nearest' }]);
+    });
+
+    it('highlights its row for a moment, anew when it is revealed again', async () => {
+      const reveal = () => TestBed.inject(PhotoRevealService).revealInSidebar(photo);
+      vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+      try {
+        reveal();
+        fixture.detectChanges();
+        expect(rowOf('photo.jpg').getAttribute('data-reveal-highlight')).toBe('1');
+        expect(rowOf('other.jpg').hasAttribute('data-reveal-highlight')).toBe(false);
+
+        // Another animation of the same highlight, which starts from its beginning.
+        vi.advanceTimersByTime(revealHighlightMs - 1000);
+        reveal();
+        fixture.detectChanges();
+        expect(rowOf('photo.jpg').getAttribute('data-reveal-highlight')).toBe('2');
+
+        vi.advanceTimersByTime(revealHighlightMs);
+        fixture.detectChanges();
+        expect(rowOf('photo.jpg').getAttribute('data-reveal-highlight')).toBe('2');
+        vi.advanceTimersByTime(500);
+        fixture.detectChanges();
+        expect(rowOf('photo.jpg').hasAttribute('data-reveal-highlight')).toBe(false);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+  });
+
+  it('selects one more photo on request, keeping the others selected, as a click on its checkbox does', async () => {
+    const photos = ['/opened/a.jpg', '/opened/b.jpg', '/opened/c.jpg']
+      .map(path => Object.assign(new Photo(), { name: path.split('/').pop(), path }));
+    vi.spyOn(TestBed.inject(PhotoDataService), 'getPhoto').mockImplementation(path => photos.find(each => each.path === path) ?? null);
+    const selectable = (path: string, children: NestedNode[] = []) => Object.assign(node(path, children), { isSelectable: true });
+    dataService.dataReplaced.next([selectable('/opened', photos.map(each => selectable(each.path)))]);
+    await fixture.whenStable();
+    const selectionService = TestBed.inject(DirectoryTreeViewSelectionService);
+    const selectedPhotoService = TestBed.inject(SelectedPhotoService);
+    const selectedPaths = () => selectedPhotoService.selectedPhotos().map(each => each.path).sort();
+    selectionService.select(['/opened/a.jpg']);
+    expect(selectedPaths()).toEqual(['/opened/a.jpg']);
+
+    selectionService.add('/opened/c.jpg');
+    expect(selectedPaths()).toEqual(['/opened/a.jpg', '/opened/c.jpg']);
+
+    // A photo that is selected already stays so.
+    selectionService.add('/opened/a.jpg');
+    expect(selectedPaths()).toEqual(['/opened/a.jpg', '/opened/c.jpg']);
+    selectionService.add('/opened/b.jpg');
+    await fixture.whenStable();
+    expect(selectedPaths()).toEqual(['/opened/a.jpg', '/opened/b.jpg', '/opened/c.jpg']);
+    expect(fixture.nativeElement.querySelector('mat-tree-node input[type=checkbox]').checked).toBe(true);
   });
 
   it('leaves the keys of Select Previous and Select Next to the Selection menu while a node has the focus', async () => {

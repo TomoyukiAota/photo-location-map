@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "このファイルのみを選択",
       "selectOnlyThisFolder": "このフォルダーのみを選択",
+      "revealInMap": "マップで表示",
       "open": "開く",
       "openFolder": "フォルダーを開く"
     }
@@ -96,6 +97,8 @@
       "selectPrevious": "前のファイルを選択",
       "selectNext": "次のファイルを選択",
       "openFolder": "フォルダーを開く",
+      "revealInMap": "マップで表示",
+      "revealInSidebar": "サイドバーで表示",
       "openGoogleMaps": "Google マップを開く",
       "openGoogleStreetView": "Google ストリートビューを開く",
       "openGoogleEarth": "Google Earth を開く",

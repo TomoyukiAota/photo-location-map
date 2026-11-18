@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "Izaberi samo ovu datoteku",
       "selectOnlyThisFolder": "Izaberi samo ovu fasciklu",
+      "revealInMap": "Prikaži na mapi",
       "open": "Otvori",
       "openFolder": "Otvori fasciklu"
     }
@@ -96,6 +97,8 @@
       "selectPrevious": "Izaberi prethodnu datoteku",
       "selectNext": "Izaberi sledeću datoteku",
       "openFolder": "Otvori fasciklu",
+      "revealInMap": "Prikaži na mapi",
+      "revealInSidebar": "Prikaži na bočnoj traci",
       "openGoogleMaps": "Otvori Google mape",
       "openGoogleStreetView": "Otvori Google Street View",
       "openGoogleEarth": "Otvori Google Earth",

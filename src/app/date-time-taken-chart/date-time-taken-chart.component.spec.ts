@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { EChartsOption } from 'echarts';
+import { DateTimeTakenChartConfigService } from './config/date-time-taken-chart-config.service';
 import { DateTimeTakenChartComponent } from './date-time-taken-chart.component';
 
 // TL;DR: ECharts 6 draws the chart with its own look, but for what the layout beside the chart needs, which the
@@ -29,5 +30,42 @@ describe('DateTimeTakenChartComponent', () => {
 
   it('shows the ticks of the x-axis', () => {
     expect(option().xAxis).toMatchObject({ axisTick: { show: true, alignWithLabel: true } });
+  });
+
+  it('zooms out without an event of its own when the zoom is reset from outside, and hides the button of the zoom', () => {
+    TestBed.overrideComponent(DateTimeTakenChartComponent, { set: { imports: [], template: '<div class="config"></div>' } });
+    const chart = TestBed.createComponent(DateTimeTakenChartComponent).componentInstance;
+    const dispatchAction = vi.fn();
+    chart.onChartInit({ dispatchAction });
+    // As after a zoom, without the zoom's handler, which reads the chart's option a moment later.
+    chart.isSelectPhotosWithinZoomButtonVisible.set(true);
+
+    TestBed.inject(DateTimeTakenChartConfigService).resetZoomFromOutside();
+
+    expect(dispatchAction).toHaveBeenCalledExactlyOnceWith({ type: 'restore' }, { silent: true });
+    expect(chart.isSelectPhotosWithinZoomButtonVisible()).toBe(false);
+  });
+
+  it('drops a zoom that it was about to pin when the zoom is reset, from outside or with its Reset Zoom button', () => {
+    TestBed.overrideComponent(DateTimeTakenChartComponent, { set: { imports: [], template: '<div class="config"></div>' } });
+    const chart = TestBed.createComponent(DateTimeTakenChartComponent).componentInstance;
+    const chartConfigService = TestBed.inject(DateTimeTakenChartConfigService);
+    // The chart after the reset, which shows its whole axis: a zoom read from it would pin all of it.
+    const getOption = vi.fn(() => ({ xAxis: [{ data: ['2013', '2019'] }], dataZoom: [{ startValue: 0, endValue: 1 }] }));
+    chart.onChartInit({ dispatchAction: vi.fn(), getOption });
+    vi.useFakeTimers();
+    try {
+      for (const reset of [() => chartConfigService.resetZoomFromOutside(), () => chart.onChartRestore()]) {
+        chart.onChartDataZoom();
+        reset();
+        vi.advanceTimersByTime(1000);
+
+        expect(getOption).not.toHaveBeenCalled();
+        expect(chartConfigService.xValuesWithinZoom()).toBeNull();
+        expect(chartConfigService.showDateUnknownPhotos()).toBe(true);
+      }
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

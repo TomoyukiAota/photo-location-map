@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "Vælg kun denne fil",
       "selectOnlyThisFolder": "Vælg kun denne mappe",
+      "revealInMap": "Vis på kortet",
       "open": "Åbn",
       "openFolder": "Åbn mappe"
     }
@@ -96,6 +97,8 @@
       "selectPrevious": "Vælg forrige fil",
       "selectNext": "Vælg næste fil",
       "openFolder": "Åbn mappe",
+      "revealInMap": "Vis på kortet",
+      "revealInSidebar": "Vis i sidepanelet",
       "openGoogleMaps": "Åbn Google Maps",
       "openGoogleStreetView": "Åbn Google Street View",
       "openGoogleEarth": "Åbn Google Earth",

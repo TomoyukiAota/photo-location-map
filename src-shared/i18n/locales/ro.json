@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "Selectează doar acest fișier",
       "selectOnlyThisFolder": "Selectează doar acest dosar",
+      "revealInMap": "Afișează pe hartă",
       "open": "Deschide",
       "openFolder": "Deschide dosarul"
     }
@@ -96,6 +97,8 @@
       "selectPrevious": "Selectează fișierul anterior",
       "selectNext": "Selectează fișierul următor",
       "openFolder": "Deschide dosarul",
+      "revealInMap": "Afișează pe hartă",
+      "revealInSidebar": "Afișează în bara laterală",
       "openGoogleMaps": "Deschide Google Maps",
       "openGoogleStreetView": "Deschide Google Street View",
       "openGoogleEarth": "Deschide Google Earth",

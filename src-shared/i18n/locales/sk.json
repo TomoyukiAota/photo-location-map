@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "Vybrať len tento súbor",
       "selectOnlyThisFolder": "Vybrať len tento priečinok",
+      "revealInMap": "Zobraziť na mape",
       "open": "Otvoriť",
       "openFolder": "Otvoriť priečinok"
     }
@@ -96,6 +97,8 @@
       "selectPrevious": "Vybrať predchádzajúci súbor",
       "selectNext": "Vybrať nasledujúci súbor",
       "openFolder": "Otvoriť priečinok",
+      "revealInMap": "Zobraziť na mape",
+      "revealInSidebar": "Zobraziť v bočnom paneli",
       "openGoogleMaps": "Otvoriť Mapy Google",
       "openGoogleStreetView": "Otvoriť Google Street View",
       "openGoogleEarth": "Otvoriť Google Earth",

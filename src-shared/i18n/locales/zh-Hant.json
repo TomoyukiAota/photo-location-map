@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "僅選取此檔案",
       "selectOnlyThisFolder": "僅選取此資料夾",
+      "revealInMap": "在地圖上顯示",
       "open": "開啟",
       "openFolder": "開啟資料夾"
     }
@@ -96,6 +97,8 @@
       "selectPrevious": "選取上一個檔案",
       "selectNext": "選取下一個檔案",
       "openFolder": "開啟資料夾",
+      "revealInMap": "在地圖上顯示",
+      "revealInSidebar": "在側邊欄中顯示",
       "openGoogleMaps": "開啟 Google 地圖",
       "openGoogleStreetView": "開啟 Google 街景服務",
       "openGoogleEarth": "開啟 Google 地球",

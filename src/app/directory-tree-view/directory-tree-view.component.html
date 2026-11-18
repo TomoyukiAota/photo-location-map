@@ -5,15 +5,16 @@
 -->
 <mat-tree #tree="matTree" [dataSource]="treeData()" [childrenAccessor]="childrenAccessor">
   <!--
-    A file's row makes what is costly in it, a photo's checkbox and the photo's thumbnail and buttons, only once it
-    comes near the part of the tree that is shown (appNearView), as an expanded folder can have thousands of rows.
-    The components inside the row read whether it is near, in their own templates: this template must not (see
-    NearViewDirective).
+    A file's row, which a photo revealed from the map highlights for a moment: see reveal(). It makes what is costly
+    in it, a photo's checkbox and the photo's thumbnail and buttons, only once it comes near the part of the tree that
+    is shown (appNearView), as an expanded folder can have thousands of rows. The components inside the row read
+    whether it is near, in their own templates: this template must not (see NearViewDirective).
   -->
   <mat-tree-node *matTreeNodeDef="let node"
                  matTreeNodeToggle
                  matTreeNodePadding
                  [matTreeNodePaddingIndent]="indentPerLevel"
+                 [attr.data-reveal-highlight]="revealHighlightOf(node)"
                  (contextmenu)="onContextMenu($event, node)"
                  appNearView
                  class="leaf-tree-node">
@@ -62,7 +63,7 @@
   <ng-template matMenuContent let-data="contextMenuData">
     @for (menuItem of contextMenuItems; track menuItem) {
       @if (menuItem.visible(data)) {
-        <button mat-menu-item class="context-menu-button" (click)="menuItem.onClick(data)">{{ menuItem.textKey(data) | t }}</button>
+        <button mat-menu-item class="context-menu-button" (click)="menuItem.onClick(data, injector)">{{ menuItem.textKey(data) | t }}</button>
       }
     }
   </ng-template>

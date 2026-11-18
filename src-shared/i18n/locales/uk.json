@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "Вибрати лише цей файл",
       "selectOnlyThisFolder": "Вибрати лише цю папку",
+      "revealInMap": "Показати на карті",
       "open": "Відкрити",
       "openFolder": "Відкрити папку"
     }
@@ -96,6 +97,8 @@
       "selectPrevious": "Вибрати попередній файл",
       "selectNext": "Вибрати наступний файл",
       "openFolder": "Відкрити папку",
+      "revealInMap": "Показати на карті",
+      "revealInSidebar": "Показати на бічній панелі",
       "openGoogleMaps": "Відкрити Google Карти",
       "openGoogleStreetView": "Відкрити Google Street View",
       "openGoogleEarth": "Відкрити Google Планета Земля",
