@@ -3,6 +3,8 @@ $white-background_hover:              rgba( 0,  0,   0, .08);
 $white-background_active:             rgba( 0,  0,   0, .2 );
 $white-background_selected:           rgba(63, 81, 181, .15);
 $white-background_selected-and-hover: rgba(63, 81, 181, .3 );
+// A row of the folder tree that is revealed from the map, for a moment: amber, which no selection has.
+$white-background_revealed:           rgba(255, 193, 7, .35);
 
 // The primary color of Material's theme (indigo-pink in angular.json), for what is drawn without its components.
 $primary: rgb(63, 81, 181);

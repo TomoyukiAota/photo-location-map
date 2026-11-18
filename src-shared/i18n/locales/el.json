@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "Επιλογή μόνο αυτού του αρχείου",
       "selectOnlyThisFolder": "Επιλογή μόνο αυτού του φακέλου",
+      "revealInMap": "Εμφάνιση στον χάρτη",
       "open": "Άνοιγμα",
       "openFolder": "Άνοιγμα φακέλου"
     }
@@ -90,6 +91,8 @@
     "menu": {
       "selectOnlyThis": "Επιλογή μόνο αυτού του αρχείου",
       "openFolder": "Άνοιγμα φακέλου",
+      "revealInMap": "Εμφάνιση στον χάρτη",
+      "revealInSidebar": "Εμφάνιση στην πλαϊνή στήλη",
       "openGoogleMaps": "Άνοιγμα στους Χάρτες Google",
       "openGoogleStreetView": "Άνοιγμα στο Google Street View",
       "viewData": "Προβολή δεδομένων"

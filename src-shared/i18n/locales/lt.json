@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "Pasirinkti tik šį failą",
       "selectOnlyThisFolder": "Pasirinkti tik šį aplanką",
+      "revealInMap": "Rodyti žemėlapyje",
       "open": "Atidaryti",
       "openFolder": "Atidaryti aplanką"
     }
@@ -90,6 +91,8 @@
     "menu": {
       "selectOnlyThis": "Pasirinkti tik šį failą",
       "openFolder": "Atidaryti aplanką",
+      "revealInMap": "Rodyti žemėlapyje",
+      "revealInSidebar": "Rodyti šoninėje juostoje",
       "openGoogleMaps": "Atidaryti „Google“ žemėlapius",
       "openGoogleStreetView": "Atidaryti „Google Street View“",
       "viewData": "Peržiūrėti duomenis"

@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "Csak ennek a fájlnak a kijelölése",
       "selectOnlyThisFolder": "Csak ennek a mappának a kijelölése",
+      "revealInMap": "Megjelenítés a térképen",
       "open": "Megnyitás",
       "openFolder": "Mappa megnyitása"
     }
@@ -90,6 +91,8 @@
     "menu": {
       "selectOnlyThis": "Csak ennek a fájlnak a kijelölése",
       "openFolder": "Mappa megnyitása",
+      "revealInMap": "Megjelenítés a térképen",
+      "revealInSidebar": "Megjelenítés az oldalsávon",
       "openGoogleMaps": "Megnyitás a Google Térképen",
       "openGoogleStreetView": "Megnyitás a Google Utcaképben",
       "viewData": "Adatok megtekintése"

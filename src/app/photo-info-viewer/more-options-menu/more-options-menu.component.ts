@@ -7,8 +7,10 @@ import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 import { Photo } from '../../shared/model/photo.model';
 import { openContainingFolder } from '../../shared/open-with-os';
 import { removeFocus } from '../../shared/remove-focus';
+import { PhotoRevealService } from '../../shared/service/photo-reveal.service';
 import { photoInfoViewerLogger as logger } from '../photo-info-viewer-logger';
-import { cutOffAtEdgeOfArea, MoreOptionsMenuPlacement } from './more-options-menu-placement';
+import { PhotoInfoViewerPlace } from '../photo-info-viewer-place';
+import { cutOffAtEdgeOfArea, placeMenu, RoomAroundButton } from './more-options-menu-placement';
 import { requestMainProcessToLaunchPhotoDataViewer } from './view-data/request-main-process-to-launch-photo-data-viewer';
 
 interface MoreOptionsMenuItem {
@@ -43,11 +45,17 @@ interface MoreOptionsMenuItem {
 })
 export class MoreOptionsMenuComponent {
   private readonly directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);
+  private readonly photoRevealService = inject(PhotoRevealService);
   private readonly element = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
 
   public readonly photo = input.required<Photo>();
-  /** Where the menu opens, which the viewer decides from the room around the button (placeMenu()). */
-  public readonly placement = input.required<MoreOptionsMenuPlacement>();
+  /** Where the photo is shown, which decides the item that shows it in the other place. */
+  public readonly place = input.required<PhotoInfoViewerPlace>();
+  /** The room around the button, which the viewer measures when the button is clicked (roomAround()). */
+  public readonly room = input.required<RoomAroundButton>();
+
+  /** Where the menu opens, from the room around the button and the height of the items. */
+  protected readonly placement = computed(() => placeMenu(this.room(), this.items().length));
 
   /** How far the menu was beyond the edge of its area when it opened, by which it is moved towards the inside. */
   private readonly cutOff = signal(0);
@@ -56,12 +64,20 @@ export class MoreOptionsMenuComponent {
     return insetInlineEnd === null ? null : insetInlineEnd - this.cutOff();
   });
 
-  /** A photo without a location has no item that needs one. */
+  /**
+   * A photo without a location has no item that needs one. A row of the folder tree has the item that shows the photo
+   * on the map, and a popup of the map the one that shows it in the folder tree.
+   */
   protected readonly items = computed<MoreOptionsMenuItem[]>(() => {
     const photo = this.photo();
+    const place = this.place();
     const items: MoreOptionsMenuItem[] = [];
     if (photo.hasGpsInfo)
       items.push({ textKey: 'photoInfo.menu.selectOnlyThis', onClick: () => this.selectOnlyThis(photo) });
+    if (place === 'dir-tree-view' && photo.hasGpsInfo)
+      items.push({ textKey: 'photoInfo.menu.revealInMap', onClick: () => this.revealInMap(photo) });
+    if (place === 'leaflet-map-popup')
+      items.push({ textKey: 'photoInfo.menu.revealInSidebar', onClick: () => this.revealInSidebar(photo) });
     items.push({ textKey: 'photoInfo.menu.openFolder', onClick: () => this.openFolder(photo) });
     if (photo.hasGpsInfo) {
       items.push({ textKey: 'photoInfo.menu.openGoogleMaps', onClick: () => this.openGoogleMaps(photo) });
@@ -94,6 +110,18 @@ export class MoreOptionsMenuComponent {
     logger.info(`Clicked "Select Only This" menu item for ${photo.path}`);
     Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Select Only This"');
     this.directoryTreeViewSelectionService.select([photo.path]);
+  }
+
+  private revealInMap(photo: Photo): void {
+    logger.info(`Clicked "Reveal in Map" menu item for ${photo.path}`);
+    Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Reveal in Map"');
+    this.photoRevealService.revealInMap(photo);
+  }
+
+  private revealInSidebar(photo: Photo): void {
+    logger.info(`Clicked "Reveal in Sidebar" menu item for ${photo.path}`);
+    Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Reveal in Sidebar"');
+    this.photoRevealService.revealInSidebar(photo);
   }
 
   private openFolder(photo: Photo): void {

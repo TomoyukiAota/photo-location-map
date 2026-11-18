@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "Vybrat jen tento soubor",
       "selectOnlyThisFolder": "Vybrat jen tuto složku",
+      "revealInMap": "Zobrazit na mapě",
       "open": "Otevřít",
       "openFolder": "Otevřít složku"
     }
@@ -90,6 +91,8 @@
     "menu": {
       "selectOnlyThis": "Vybrat jen tento soubor",
       "openFolder": "Otevřít složku",
+      "revealInMap": "Zobrazit na mapě",
+      "revealInSidebar": "Zobrazit v postranním panelu",
       "openGoogleMaps": "Otevřít Mapy Google",
       "openGoogleStreetView": "Otevřít Google Street View",
       "viewData": "Zobrazit data"

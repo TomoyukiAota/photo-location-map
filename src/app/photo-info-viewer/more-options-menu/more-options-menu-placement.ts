@@ -1,5 +1,7 @@
 const sidebarAreaSelector = '#home-left-sidebar';
 const mapAreaSelector = '#home-map';
+/** The height of an item of the menu (.photo-info-viewer-more-options-menu-item in more-options-menu.component.scss). */
+const menuItemHeight = 35;
 
 /**
  * Where the menu is, from the edges of its button. The sides are named by the direction of the text
@@ -25,12 +27,12 @@ export interface RoomAroundButton {
 }
 
 /**
- * Where the menu opens: below its button where there is room, otherwise beside the button on the map where there is
- * room on the side that the texts run to, otherwise above the button.
+ * Where the menu of `itemCount` items opens: below its button where there is room, otherwise beside the button on the
+ * map where there is room on the side that the texts run to, otherwise above the button.
  */
-export function placeMenu(room: RoomAroundButton): MoreOptionsMenuPlacement {
+export function placeMenu(room: RoomAroundButton, itemCount: number): MoreOptionsMenuPlacement {
   const insetInlineEnd = room.isWithinSidebar ? 0 : -25;
-  const enoughRoomBelow = room.below > 195; // Adjust the value if the menu height changes.
+  const enoughRoomBelow = room.below > itemCount * menuItemHeight + 20; // The menu, and a margin below it.
   const enoughRoomBeside = !room.isWithinSidebar && room.beside > 230; // Adjust the value if the menu width changes.
 
   if (enoughRoomBelow)

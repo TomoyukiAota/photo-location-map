@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "Selecteer alleen dit bestand",
       "selectOnlyThisFolder": "Selecteer alleen deze map",
+      "revealInMap": "Toon op de kaart",
       "open": "Open",
       "openFolder": "Open map"
     }
@@ -90,6 +91,8 @@
     "menu": {
       "selectOnlyThis": "Selecteer alleen dit bestand",
       "openFolder": "Open map",
+      "revealInMap": "Toon op de kaart",
+      "revealInSidebar": "Toon in de zijbalk",
       "openGoogleMaps": "Open Google Maps",
       "openGoogleStreetView": "Open Google Street View",
       "viewData": "Bekijk gegevens"

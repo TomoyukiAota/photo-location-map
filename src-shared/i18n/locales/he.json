@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "בחירת קובץ זה בלבד",
       "selectOnlyThisFolder": "בחירת תיקייה זו בלבד",
+      "revealInMap": "הצגה על המפה",
       "open": "פתיחה",
       "openFolder": "פתיחת התיקייה"
     }
@@ -90,6 +91,8 @@
     "menu": {
       "selectOnlyThis": "בחירת קובץ זה בלבד",
       "openFolder": "פתיחת התיקייה",
+      "revealInMap": "הצגה על המפה",
+      "revealInSidebar": "הצגה בסרגל הצד",
       "openGoogleMaps": "פתיחת מפות Google",
       "openGoogleStreetView": "פתיחת Google Street View",
       "viewData": "הצגת הנתונים"

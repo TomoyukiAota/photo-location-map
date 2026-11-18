@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "Select Only This",
       "selectOnlyThisFolder": "Select Only This",
+      "revealInMap": "Reveal in Map",
       "open": "Open",
       "openFolder": "Open Folder"
     }
@@ -90,6 +91,8 @@
     "menu": {
       "selectOnlyThis": "Select Only This",
       "openFolder": "Open Folder",
+      "revealInMap": "Reveal in Map",
+      "revealInSidebar": "Reveal in Sidebar",
       "openGoogleMaps": "Open Google Maps",
       "openGoogleStreetView": "Open Google Street View",
       "viewData": "View Data"

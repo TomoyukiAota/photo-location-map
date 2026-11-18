@@ -2,28 +2,35 @@ import { cutOffAtEdgeOfArea, placeMenu, roomAround } from './more-options-menu-p
 
 describe('placeMenu', () => {
   it('opens the menu below its button where there is room, from the button\'s side in the sidebar', () => {
-    expect(placeMenu({ isWithinSidebar: true, below: 196, beside: 0 }))
+    expect(placeMenu({ isWithinSidebar: true, below: 196, beside: 0 }, 5))
       .toEqual({ top: '37px', bottom: null, insetInlineStart: null, insetInlineEnd: 0 });
   });
 
   it('opens the menu below its button on the map a little beyond the button\'s side', () => {
-    expect(placeMenu({ isWithinSidebar: false, below: 500, beside: 500 }))
+    expect(placeMenu({ isWithinSidebar: false, below: 500, beside: 500 }, 5))
       .toEqual({ top: '37px', bottom: null, insetInlineStart: null, insetInlineEnd: -25 });
   });
 
   it('opens the menu beside its button on the map where there is no room below but room beside', () => {
-    expect(placeMenu({ isWithinSidebar: false, below: 195, beside: 231 }))
+    expect(placeMenu({ isWithinSidebar: false, below: 195, beside: 231 }, 5))
       .toEqual({ top: null, bottom: '0', insetInlineStart: '37px', insetInlineEnd: null });
   });
 
   it('opens the menu above its button where there is room neither below nor beside', () => {
-    expect(placeMenu({ isWithinSidebar: false, below: 195, beside: 230 }))
+    expect(placeMenu({ isWithinSidebar: false, below: 195, beside: 230 }, 5))
       .toEqual({ top: null, bottom: '37px', insetInlineStart: null, insetInlineEnd: -25 });
   });
 
   it('never opens the menu beside its button in the sidebar, which is narrow', () => {
-    expect(placeMenu({ isWithinSidebar: true, below: 0, beside: 1000 }))
+    expect(placeMenu({ isWithinSidebar: true, below: 0, beside: 1000 }, 5))
       .toEqual({ top: null, bottom: '37px', insetInlineStart: null, insetInlineEnd: 0 });
+  });
+
+  it('needs the room of each item below its button, 35 px, and a margin of 20 px', () => {
+    const below = { top: '37px', bottom: null, insetInlineStart: null, insetInlineEnd: 0 };
+    expect(placeMenu({ isWithinSidebar: true, below: 231, beside: 0 }, 6)).toEqual(below);
+    expect(placeMenu({ isWithinSidebar: true, below: 230, beside: 0 }, 6)).not.toEqual(below);
+    expect(placeMenu({ isWithinSidebar: true, below: 76, beside: 0 }, 1)).toEqual(below);
   });
 });
 

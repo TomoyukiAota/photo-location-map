@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "Atlasīt tikai šo failu",
       "selectOnlyThisFolder": "Atlasīt tikai šo mapi",
+      "revealInMap": "Rādīt kartē",
       "open": "Atvērt",
       "openFolder": "Atvērt mapi"
     }
@@ -90,6 +91,8 @@
     "menu": {
       "selectOnlyThis": "Atlasīt tikai šo failu",
       "openFolder": "Atvērt mapi",
+      "revealInMap": "Rādīt kartē",
+      "revealInSidebar": "Rādīt sānjoslā",
       "openGoogleMaps": "Atvērt Google Maps",
       "openGoogleStreetView": "Atvērt Google Street View",
       "viewData": "Skatīt datus"

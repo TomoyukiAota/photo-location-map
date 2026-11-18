@@ -1,14 +1,16 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, effect, signal, untracked, viewChild, inject } from '@angular/core';
+import { Component, DestroyRef, effect, Injector, signal, untracked, viewChild, viewChildren, inject } from '@angular/core';
 import { MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem } from '@angular/material/menu';
 import { MatTree, MatTreeNodeDef, MatTreeNode, MatTreeNodeToggle, MatTreeNodePadding } from '@angular/material/tree';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { createPrependedLogger } from '../../../src-shared/log/create-prepended-logger';
+import { logged } from '../../../src-shared/log/logged-line';
 import { PhotoInfoViewerComponent } from '../photo-info-viewer/photo-info-viewer.component';
 import { TranslatePipe } from '../shared/i18n/translate.pipe';
 import { Photo } from '../shared/model/photo.model';
 import { PhotoDataService } from '../shared/service/photo-data.service';
+import { PhotoRevealService } from '../shared/service/photo-reveal.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
 import { DirTreeViewContextMenuHelper } from './dir-tree-view-context-menu/dir-tree-view-context-menu-helper';
 import { dirTreeViewContextMenuItems } from './dir-tree-view-context-menu/dir-tree-view-context-menu-item';
@@ -23,6 +25,9 @@ import { MatLabel } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 
 const dirTreeViewLogger = createPrependedLogger('[Directory Tree View]');
+
+/** How long a revealed row is highlighted: the length of its animation in directory-tree-view.component.scss. */
+export const revealHighlightMs = 3000;
 
 @Component({
   selector: 'app-directory-tree-view',
@@ -76,6 +81,12 @@ export class DirectoryTreeViewComponent {
 
     directoryTreeViewSelectionService.selectionRequested
       .subscribe(photoPaths => this.handleDirectoryTreeViewSelectionRequested(photoPaths));
+    directoryTreeViewSelectionService.additionRequested
+      .subscribe(photoPath => this.handleDirectoryTreeViewAdditionRequested(photoPath));
+
+    inject(PhotoRevealService).revealInSidebarRequested
+      .subscribe(photo => this.reveal(photo.path));
+    inject(DestroyRef).onDestroy(() => clearTimeout(this.revealHighlightTimer));
   }
 
   /** The photo of a file's node, whose information the node's row shows; null for a file that is not a photo. */
@@ -154,6 +165,25 @@ export class DirectoryTreeViewComponent {
     const requestedPaths = new Set(photoPaths);
     const selectionRequestedNodes = Array.from(this.parentNodes.keys()).filter(node => requestedPaths.has(node.path));
     this.selectRequestedNodesAndDeselectOthers(selectionRequestedNodes);
+  }
+
+  /**
+   * Selects one more photo, as a click on its checkbox does, rather than through a request to select every photo that
+   * is selected and it, which goes through the folders above each of them.
+   */
+  private handleDirectoryTreeViewAdditionRequested(photoPath: string) {
+    const node = this.nodeOf(photoPath);
+    if (node && !this.isSelected(node))
+      this.toggleNodeSelection(node);
+  }
+
+  /** The node of a file or a folder of the tree, shown or not. */
+  private nodeOf(path: string): NestedNode | undefined {
+    for (const node of this.parentNodes.keys()) {
+      if (node.path === path)
+        return node;
+    }
+    return undefined;
   }
 
   // See also DirectoryTreeViewComponent::toggleNodeSelection function because similar steps are performed.
@@ -288,6 +318,8 @@ export class DirectoryTreeViewComponent {
   public contextMenuPosition = { x: '0px', y: '0px' };
   public contextMenuHelper = DirTreeViewContextMenuHelper;
   public contextMenuItems = dirTreeViewContextMenuItems;
+  /** The services that the items of the context menu use. */
+  protected readonly injector = inject(Injector);
 
   public onContextMenu(event: MouseEvent, node: NestedNode) {
     event.preventDefault();
@@ -301,4 +333,69 @@ export class DirectoryTreeViewComponent {
     this.contextMenuHelper.configureClosingWithRightClick(contextMenu);
   }
   //#endregion --- Context Menu ---
+
+  //#region --- Reveal ---
+  /** The rows that the tree shows, each with its node as its data. */
+  private readonly treeNodes = viewChildren(MatTreeNode);
+  /**
+   * The row that was revealed last, while it is highlighted: its node, and which of the highlight's two animations it
+   * has (see the styles), so that a row revealed again while it is highlighted starts its highlight anew.
+   */
+  private readonly revealedRow = signal<{ node: NestedNode; highlight: 1 | 2 } | null>(null);
+  private revealHighlightTimer: ReturnType<typeof setTimeout> | undefined;
+
+  /** Which of the highlight's animations the node's row has while it is highlighted, and null otherwise. */
+  public revealHighlightOf(node: NestedNode): 1 | 2 | null {
+    const revealedRow = this.revealedRow();
+    return revealedRow?.node === node ? revealedRow.highlight : null;
+  }
+
+  /**
+   * Shows the row of a node, as a link to a message of a chat application shows the message: the folders above it are
+   * expanded, its row is scrolled to the middle of the sidebar, and it is highlighted for a moment. The selection does
+   * not change.
+   * TL;DR: The rows of an expanded folder are in the page as soon as it is expanded, so the row is scrolled to at once.
+   * Details: The tree renders its nodes again whenever a folder is expanded, synchronously, as its data is an array
+   * and its children come from childrenAccessor. A row stays in the page while its folder is expanded, so it is
+   * scrolled to by its element, whatever its content is.
+   */
+  private reveal(path: string): void {
+    const node = this.nodeOf(path);
+    if (!node) {
+      dirTreeViewLogger.warn(logged`Cannot reveal "${path}", which is not in the tree.`);
+      return;
+    }
+    dirTreeViewLogger.info(`Reveal "${path}"`);
+    const tree = this.tree();
+    for (const folder of this.foldersAbove(node)) {
+      if (!tree.isExpanded(folder))
+        tree.expand(folder);
+    }
+    const row = this.treeNodes().find(treeNode => treeNode.data === node);
+    if (!row) {
+      dirTreeViewLogger.warn(logged`Cannot reveal "${path}", whose row is not shown.`);
+      return;
+    }
+    // Scrolled within the sidebar, which is the only part of the window that scrolls.
+    row._elementRef.nativeElement.scrollIntoView({ block: 'center', inline: 'nearest' });
+    this.highlight(node);
+  }
+
+  /** The folders above a node, from the opened folder down. */
+  private foldersAbove(node: NestedNode): NestedNode[] {
+    const folders: NestedNode[] = [];
+    for (let parent = this.getParentNode(node); parent; parent = this.getParentNode(parent))
+      folders.unshift(parent);
+    return folders;
+  }
+
+  private highlight(node: NestedNode): void {
+    const previous = this.revealedRow();
+    const highlight = previous?.node === node && previous.highlight === 1 ? 2 : 1;
+    this.revealedRow.set({ node, highlight });
+    clearTimeout(this.revealHighlightTimer);
+    // Once the animation has ended, so that a row made again, as when its folder is expanded again, has none.
+    this.revealHighlightTimer = setTimeout(() => this.revealedRow.set(null), revealHighlightMs + 500);
+  }
+  //#endregion --- Reveal ---
 }

@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "Izberi samo to datoteko",
       "selectOnlyThisFolder": "Izberi samo to mapo",
+      "revealInMap": "Prikaži na zemljevidu",
       "open": "Odpri",
       "openFolder": "Odpri mapo"
     }
@@ -90,6 +91,8 @@
     "menu": {
       "selectOnlyThis": "Izberi samo to datoteko",
       "openFolder": "Odpri mapo",
+      "revealInMap": "Prikaži na zemljevidu",
+      "revealInSidebar": "Prikaži v stranski vrstici",
       "openGoogleMaps": "Odpri Google Zemljevide",
       "openGoogleStreetView": "Odpri Google Street View",
       "viewData": "Prikaži podatke"

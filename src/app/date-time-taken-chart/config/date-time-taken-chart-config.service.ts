@@ -1,5 +1,6 @@
 import { computed, inject, linkedSignal, signal, Service } from '@angular/core';
 import { unitOfTime } from 'moment';
+import { Subject } from 'rxjs';
 import { SelectedPhotoService } from '../../shared/service/selected-photo.service';
 
 @Service()
@@ -32,6 +33,12 @@ export class DateTimeTakenChartConfigService {
   /** The values of the chart's x-axis within its zoom, or null when the chart is not zoomed. */
   public readonly xValuesWithinZoom = this.xValuesWithinZoomState.asReadonly();
 
+  /**
+   * Requests from outside the chart to show its whole x-axis again, which resetZoomFromOutside() makes. An event: the
+   * chart zooms out when it hears it (DateTimeTakenChartComponent).
+   */
+  public readonly zoomResetFromOutside = new Subject<void>();
+
   public setShowDateUnknownPhotos(showDateUnknownPhotos: boolean): void {
     this.showDateUnknownPhotosState.set(showDateUnknownPhotos);
   }
@@ -50,5 +57,14 @@ export class DateTimeTakenChartConfigService {
   public resetZoom(): void {
     this.xValuesWithinZoomState.set(null);
     this.showDateUnknownPhotosState.set(true);
+  }
+
+  /**
+   * Resets the zoom from outside the chart, as its Reset Zoom button does: for a photo to reveal on the map that the
+   * zoom leaves out. Every selected photo is pinned again at once, and the chart zooms out.
+   */
+  public resetZoomFromOutside(): void {
+    this.resetZoom();
+    this.zoomResetFromOutside.next();
   }
 }

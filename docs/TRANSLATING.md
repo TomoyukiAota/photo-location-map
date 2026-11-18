@@ -151,6 +151,12 @@ npm run test:unit:ng
   one item of the menu of the list of folders, as it is shown on a file and on
   a folder. English says the same of both; name the file and the folder where
   your language does, as Japanese does.
+- `photoInfo.menu.revealInMap` and `revealInSidebar`, with
+  `directoryTree.contextMenu.revealInMap`, are items of a photo's menus that
+  show the photo in the other part of the window: on the map, from the list of
+  folders, and in the list of folders, from the map. The sidebar is the part of
+  the window that has the list of folders: use the word that your language's
+  operating system has for a sidebar, as Finder has one on macOS.
 - `language.confirm` is the button that confirms the language at the first
   launch, shown in the language that is chosen in the list above it. Use the
   word that a button confirming a choice has in your language: Japanese has

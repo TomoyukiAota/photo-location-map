@@ -1,13 +1,17 @@
+import { Injector } from '@angular/core';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { TranslationKey } from '../../../../src-shared/i18n/translation-key';
 import { openContainingFolder, openWithAssociatedApp} from '../../shared/open-with-os';
+import { PhotoDataService } from '../../shared/service/photo-data.service';
+import { PhotoRevealService } from '../../shared/service/photo-reveal.service';
 import { DirTreeViewContextMenuData as ContextMenuData } from './dir-tree-view-context-menu-data';
 import { dirTreeViewContextMenuLogger as contextMenuLogger } from './dir-tree-view-context-menu-logger';
 
 export interface DirTreeViewContextMenuItem {
   /** The key of the item's text, for the file or folder that the menu is opened on. */
   textKey: (data: ContextMenuData) => TranslationKey;
-  onClick: (data: ContextMenuData) => void;
+  /** What the item does, with the services of the application from `injector`. */
+  onClick: (data: ContextMenuData, injector: Injector) => void;
   visible: (data: ContextMenuData) => boolean;
 }
 
@@ -21,6 +25,12 @@ export const dirTreeViewContextMenuItems: DirTreeViewContextMenuItem[] = [
       : 'directoryTree.contextMenu.selectOnlyThisFile',
     onClick: (data) => selectOnlyThis(data),
     visible: (data) => data.node.isSelectable,
+  },
+  {
+    // A file that can be selected is a photo with a location.
+    textKey: () => 'directoryTree.contextMenu.revealInMap',
+    onClick: (data, injector) => revealInMap(data, injector),
+    visible: (data) => data.node.type === 'file' && data.node.isSelectable,
   },
   {
     textKey: () => 'directoryTree.contextMenu.open',
@@ -46,6 +56,13 @@ function openFolder(data: ContextMenuData) {
   contextMenuLogger.info(`Open the containing folder of "${path}"`);
   Analytics.trackEvent('Directory Tree View', `[Tree View] [Ctx Menu] Open Folder`);
   openContainingFolder(path);
+}
+
+function revealInMap(data: ContextMenuData, injector: Injector) {
+  const path = data.node.path;
+  contextMenuLogger.info(`Reveal in Map for "${path}"`);
+  Analytics.trackEvent('Directory Tree View', `[Tree View] [Ctx Menu] Reveal in Map`);
+  injector.get(PhotoRevealService).revealInMap(injector.get(PhotoDataService).getPhoto(path));
 }
 
 function selectOnlyThis(data: ContextMenuData) {

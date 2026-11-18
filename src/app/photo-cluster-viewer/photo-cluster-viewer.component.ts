@@ -1,4 +1,4 @@
-import { afterRenderEffect, Component, computed, ElementRef, input, linkedSignal, viewChild } from '@angular/core';
+import { afterRenderEffect, Component, computed, ElementRef, input, linkedSignal, untracked, viewChild, viewChildren } from '@angular/core';
 import { PhotoInfoViewerComponent } from '../photo-info-viewer/photo-info-viewer.component';
 import { Photo } from '../shared/model/photo.model';
 
@@ -13,7 +13,7 @@ export function sortByShootingTime(photos: readonly Photo[]): Photo[] {
 
 /**
  * The photos of a cluster of the map that cannot be split, as they were taken at one place: a tile for each photo,
- * and the information of the photo whose tile is chosen, the first one at first.
+ * and the information of the photo whose tile is chosen, the first one at first, or the one that the map reveals.
  * The map makes this component for the cluster's popup (src/app/map/leaflet-map/leaflet-content.service.ts), and
  * keeps it for the popup to show again.
  */
@@ -22,7 +22,8 @@ export function sortByShootingTime(photos: readonly Photo[]): Photo[] {
   template: `
     <div #tiles class="photo-cluster-viewer-left-pane">
       @for (photo of sortedPhotos(); track photo.path) {
-        <app-photo-info-viewer class="photo-cluster-viewer-tile"
+        <app-photo-info-viewer #tile
+                               class="photo-cluster-viewer-tile"
                                place="leaflet-map-tile"
                                [class.selected-tile]="photo === selectedPhoto()"
                                [photo]="photo"
@@ -47,19 +48,39 @@ export function sortByShootingTime(photos: readonly Photo[]): Photo[] {
 })
 export class PhotoClusterViewerComponent {
   public readonly photos = input.required<readonly Photo[]>();
+  /** The photo whose tile is chosen when the viewer gets its photos, as the map gives for a photo that it reveals. */
+  public readonly chosenPhoto = input<Photo | null>(null);
 
   protected readonly sortedPhotos = computed(() => sortByShootingTime(this.photos()));
-  /** The photo whose tile is chosen: the first one whenever the viewer gets its photos. */
-  protected readonly selectedPhoto = linkedSignal(() => this.sortedPhotos()[0]);
+  /** The photo whose tile is chosen: the one given, or the first one, whenever the viewer gets its photos. */
+  protected readonly selectedPhoto = linkedSignal(() => {
+    const sortedPhotos = this.sortedPhotos();
+    const chosenPhotoPath = this.chosenPhoto()?.path;
+    return sortedPhotos.find(photo => photo.path === chosenPhotoPath) ?? sortedPhotos[0];
+  });
   private readonly tiles = viewChild.required<ElementRef<HTMLElement>>('tiles');
+  private readonly tileElements = viewChildren('tile', { read: ElementRef });
 
   constructor() {
     // The map gives the viewer its photos again when the cluster's popup is opened again: the viewer then starts
-    // over, with the first tile chosen and the tiles scrolled back to it.
+    // over, with the tiles scrolled back to their top, or to the middle of the tile that is chosen, when it is
+    // further down than the tiles show. The scroll is an object of its own each time, as the write phase runs only
+    // when what the read phase gives it changes.
     afterRenderEffect({
-      write: () => {
+      earlyRead: () => {
         this.photos();
-        this.tiles().nativeElement.scrollTop = 0;
+        this.chosenPhoto();
+        const index = this.sortedPhotos().indexOf(untracked(this.selectedPhoto));
+        const tile: HTMLElement | undefined = this.tileElements()[index]?.nativeElement;
+        const tiles = this.tiles().nativeElement;
+        if (!tile || index === 0)
+          return { scrollTop: 0 };
+        const tileTop = tile.getBoundingClientRect().top - tiles.getBoundingClientRect().top + tiles.scrollTop;
+        const tileBottom = tileTop + tile.offsetHeight;
+        return { scrollTop: tileBottom <= tiles.clientHeight ? 0 : tileTop - (tiles.clientHeight - tile.offsetHeight) / 2 };
+      },
+      write: scroll => {
+        this.tiles().nativeElement.scrollTop = scroll().scrollTop;
       },
     });
   }

@@ -1,4 +1,5 @@
 import { afterNextRender, Component, computed, ElementRef, inject, linkedSignal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ECharts, EChartsOption } from 'echarts';
 import debounce from 'lodash-es/debounce.js';
 import { unitOfTime } from 'moment';
@@ -50,6 +51,22 @@ export class DateTimeTakenChartComponent {
       if (needed > widthInEnglish)
         host.style.setProperty('--chart-sidebar-width', `${needed}px`);
     });
+
+    this.chartConfigService.zoomResetFromOutside
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.zoomOutAfterResetFromOutside());
+  }
+
+  /**
+   * The zoom was reset from outside the chart, for a photo to reveal on the map that it left out: the chart shows its
+   * whole x-axis again, as after a click on its Reset Zoom button. The restore is silent, as the pinned photos are
+   * already those of the whole axis (DateTimeTakenChartConfigService.resetZoomFromOutside()), and the click on the
+   * button is all that onChartRestore() records.
+   */
+  private zoomOutAfterResetFromOutside(): void {
+    logger.info('Reset the zoom from outside the chart');
+    this.echartsInstance?.dispatchAction({ type: 'restore' }, { silent: true });
+    this.isSelectPhotosWithinZoomButtonVisible.set(false);
   }
 
   private createEChartsOption(xData: string[], yData: number[]) {

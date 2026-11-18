@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "Выбрать только этот файл",
       "selectOnlyThisFolder": "Выбрать только эту папку",
+      "revealInMap": "Показать на карте",
       "open": "Открыть",
       "openFolder": "Открыть папку"
     }
@@ -90,6 +91,8 @@
     "menu": {
       "selectOnlyThis": "Выбрать только этот файл",
       "openFolder": "Открыть папку",
+      "revealInMap": "Показать на карте",
+      "revealInSidebar": "Показать на боковой панели",
       "openGoogleMaps": "Открыть Google Карты",
       "openGoogleStreetView": "Открыть Google Street View",
       "viewData": "Показать данные"
