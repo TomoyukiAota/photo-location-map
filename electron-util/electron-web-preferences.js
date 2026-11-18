@@ -5,7 +5,8 @@ import path from 'path';
  * The main window's page runs without Node.js, sandboxed, with context isolation: it reaches the main process only
  * through its preload's bridge, window.plm (preload/main-window.cjs). With webSecurity, it loads no file: URL, and
  * gets the user's photos from plm-file:, which answers only for those of the folders that the user opened
- * (src-main/file-server/photo-files.ts).
+ * (src-main/file-server/photo-files.ts). Its Content Security Policy comes with the page
+ * (src-main/file-server/content-security-policy.ts).
  * @param {string} appPath app.getAppPath(): the app's folder, in a checkout or a package, where the preload is.
  * @returns {Electron.WebPreferences}
  */
