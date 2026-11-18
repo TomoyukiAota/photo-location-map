@@ -206,6 +206,30 @@ describe('DirectoryTreeViewComponent', () => {
     });
   });
 
+  it('highlights the row of a photo revealed from the map before the row has made its checkbox', async () => {
+    // The row is scrolled to and highlighted at once, and makes its checkbox once the observer finds it near.
+    Element.prototype.scrollIntoView = () => undefined; // jsdom has none.
+    try {
+      nearView.keepsAway = true;
+      const photo = Object.assign(new Photo(), { name: 'photo.jpg', path: '/opened/a/photo.jpg' });
+      dataService.dataReplaced.next([node('/opened', [node('/opened/a', [Object.assign(node(photo.path), { isSelectable: true })])])]);
+      await fixture.whenStable();
+
+      TestBed.inject(PhotoRevealService).revealInSidebar(photo);
+      await fixture.whenStable();
+      const row: HTMLElement = fixture.nativeElement.querySelector('mat-tree-node.leaf-tree-node');
+      expect(row.getAttribute('data-reveal-highlight')).toBe('1');
+      expect(row.querySelector('mat-checkbox')).toBeNull();
+
+      nearView.bringNear();
+      await fixture.whenStable();
+      expect(row.getAttribute('data-reveal-highlight')).toBe('1');
+      expect(row.querySelector('mat-checkbox bdi').textContent).toBe('photo.jpg');
+    } finally {
+      delete Element.prototype.scrollIntoView;
+    }
+  });
+
   it('selects one more photo on request, keeping the others selected, as a click on its checkbox does', async () => {
     const photos = ['/opened/a.jpg', '/opened/b.jpg', '/opened/c.jpg']
       .map(path => Object.assign(new Photo(), { name: path.split('/').pop(), path }));
