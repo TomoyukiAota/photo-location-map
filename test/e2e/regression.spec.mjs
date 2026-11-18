@@ -1520,10 +1520,16 @@ test('Reveal in Sidebar from a popup of the map expands the folders above the ph
   for (const name of ['the photo', 'taken', 'in Kobe']) await expect(treeNode(name)).toHaveAttribute('aria-expanded', 'true');
   await expect(row).toHaveAttribute('data-reveal-highlight', '1');
   await expect(row).toHaveCSS('animation-name', /reveal-highlight-1/);
-  const paneBox = await pane.boundingBox();
-  const rowBox = await row.boundingBox();
   expect(await pane.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
-  expect(Math.abs(rowBox.y + rowBox.height / 2 - (paneBox.y + paneBox.height / 2))).toBeLessThan(2);
+  // In the middle of what the sidebar shows: above its horizontal scrollbar, which Windows and Linux draw below the
+  // rows, so that the middle of the sidebar's box is half the scrollbar lower there. macOS draws it over the rows.
+  const distanceFromMiddle = await row.evaluate(rowElement => {
+    const sidebar = rowElement.closest('#home-sidebar-lower-pane');
+    const shownMiddle = sidebar.getBoundingClientRect().top + sidebar.clientTop + sidebar.clientHeight / 2;
+    const rowBox = rowElement.getBoundingClientRect();
+    return Math.abs(rowBox.top + rowBox.height / 2 - shownMiddle);
+  });
+  expect(distanceFromMiddle).toBeLessThan(2);
   // The highlight fades, and the row is as before. The selection, and so the map, are as they were.
   await expect(row).not.toHaveAttribute('data-reveal-highlight', /./, { timeout: 5000 });
   await expect(row).toHaveCSS('animation-name', 'none');
