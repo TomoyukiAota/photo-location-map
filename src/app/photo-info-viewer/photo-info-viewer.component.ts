@@ -241,8 +241,9 @@ export class PhotoInfoViewerComponent {
   }
 
   /**
-   * The movie of the photo's Live Photos, or null when it has none. Looked up once for a photo: the movies are those
-   * of the folder that was read last, which is not the photo's own while another folder is being opened.
+   * The movie of the photo's Live Photos, or null when it has none, looked up once for a photo. The movies are those of
+   * the folder whose tree is shown, while another folder is being read too, as a row of the tree looks up its photo's
+   * only once it comes near the view (OpenedDirectory.setLivePhotos()).
    */
   protected livePhotosFilePath(): string | null {
     const photo = this.photo();

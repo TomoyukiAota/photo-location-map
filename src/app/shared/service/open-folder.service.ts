@@ -53,7 +53,7 @@ export class OpenFolderService {
 
       loadingFolderDialogRef = this.showLoadingFolderDialog();
 
-      const directoryTreeObject = await OpenedDirectory.createDirectoryTree(folderPath);
+      const { tree: directoryTreeObject, livePhotos } = await OpenedDirectory.createDirectoryTree(folderPath);
       perfMark('open-folder:tree-created');
       // TL;DR: The main process checks the thumbnail cache while the photos' data are read, so that the generation
       // starts right after them, as when the renderer checked the cache itself.
@@ -73,6 +73,9 @@ export class OpenFolderService {
       await sleep(100); // To update the loading folder dialog before the work below, which freezes the GUI for a large folder.
 
       this.showPhotoWithLocationNotFoundDialogIfApplicable();
+      // The folder's Live Photos movies with its tree, not when the tree was read: until here, the previous folder's
+      // rows are shown, and one that comes near the view looks up its photo's movie then.
+      OpenedDirectory.setLivePhotos(livePhotos);
       this.directoryTreeViewDataService.replace(directoryTreeObject);
       if (this.thumbnailGenerationService.startThumbnailGeneration(await thumbnailCache))
         this.thumbnailGenerationStatusBarService.showForNewGeneration();

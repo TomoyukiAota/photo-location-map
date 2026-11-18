@@ -1,8 +1,12 @@
 // Import-time worker creation is outside component construction tests. Real
 // discovery and Live Photos lookup run in the Playwright application suite.
 export class OpenedDirectory {
-  public static createDirectoryTree(_directory: string): Promise<DirectoryTree> {
+  public static createDirectoryTree(_directory: string): Promise<{ tree: DirectoryTree; livePhotos: Record<string, string> }> {
     throw new Error('Directory discovery requires the real application test environment');
+  }
+
+  public static setLivePhotos(_livePhotos: Record<string, string>): void {
+    throw new Error('Live Photos lookup requires the real application test environment');
   }
 
   public static getLivePhotosFilePathIfAvailable(_filePath: string): { livePhotosAvailable: boolean; livePhotosFilePath: string } {
