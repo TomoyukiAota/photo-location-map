@@ -101,6 +101,12 @@
   &:focus  { background-color: #444444; }
 }
 
+// The room of the buttons in a row of the tree that is not yet near what is shown: as wide as a button.
+.photo-info-viewer-button-room {
+  @include icon-button;
+  visibility: hidden;
+}
+
 // The menu, whose element is MoreOptionsMenuComponent's: it fades in when it opens and out when it closes.
 .photo-info-viewer-more-options-menu-fade-in {
   animation: fade-in 0.4s ease 0s forwards;

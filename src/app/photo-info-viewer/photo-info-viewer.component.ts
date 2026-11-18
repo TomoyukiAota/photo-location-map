@@ -8,6 +8,7 @@ import { IconDataUrl } from '../../assets/icon-data-url';
 import { PhotoViewerLauncher } from '../photo-viewer-launcher/photo-viewer-launcher';
 import { Photo } from '../shared/model/photo.model';
 import { openWithAssociatedApp } from '../shared/open-with-os';
+import { NearViewDirective } from '../shared/near-view/near-view.directive';
 import { OpenedDirectory } from '../shared/opened-directory';
 import { removeFocus } from '../shared/remove-focus';
 import { GeneratedThumbnailService } from './generated-thumbnail.service';
@@ -128,6 +129,11 @@ File path of generated thumbnail is "${thumbnailFilePath}"
  *   each has a row in the tree. What the template shows is read through methods rather than computed values, which
  *   Angular follows in the same way, while a computed value is an object of its own in each component. The texts
  *   are read once for all the components, and the buttons have no listener that nothing needs.
+ * - In a row of the tree, it makes the thumbnail and the buttons only once the row comes near the part of the tree
+ *   that is shown, which the row's NearViewDirective tells; the other places have no such directive, and show
+ *   everything at once. Until then it shows the shooting time, with room for the rest, so that the row is as high and
+ *   as wide as it is with them, and nothing moves when they are made. A large folder expands faster and holds less
+ *   so, and no thumbnail far from the view is loaded (docs/tasks/20261119_lazy-tree-rows/STATUS.md).
  * - Each element keeps the class that it had when this content was built with DOM calls, which the end-to-end
  *   tests find the elements by.
  */
@@ -158,6 +164,9 @@ export class PhotoInfoViewerComponent {
    * (MoreOptionsMenuComponent).
    */
   protected readonly menuRoom = signal<RoomAroundButton | null>(null);
+
+  /** Whether the row of the tree that this is in has come near the part of the tree that is shown; none elsewhere. */
+  protected readonly nearView = inject(NearViewDirective, { optional: true });
 
   /** The movie of a photo's Live Photos, for livePhotosFilePath(). */
   private livePhotos: { photo: Photo; filePath: string | null } | undefined;
@@ -235,8 +244,9 @@ export class PhotoInfoViewerComponent {
   }
 
   /**
-   * The movie of the photo's Live Photos, or null when it has none. Looked up once for a photo: the movies are those
-   * of the folder that was read last, which is not the photo's own while another folder is being opened.
+   * The movie of the photo's Live Photos, or null when it has none, looked up once for a photo. The movies are those of
+   * the folder whose tree is shown, while another folder is being read too, as a row of the tree looks up its photo's
+   * only once it comes near the view (OpenedDirectory.setLivePhotos()).
    */
   protected livePhotosFilePath(): string | null {
     const photo = this.photo();

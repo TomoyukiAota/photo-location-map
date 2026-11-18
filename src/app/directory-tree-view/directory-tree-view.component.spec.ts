@@ -4,6 +4,7 @@ import { MatTree } from '@angular/material/tree';
 import { By } from '@angular/platform-browser';
 import { PhotoInfoViewerComponent } from '../photo-info-viewer/photo-info-viewer.component';
 import { Photo } from '../shared/model/photo.model';
+import { NearViewService } from '../shared/near-view/near-view.service';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { PhotoRevealService } from '../shared/service/photo-reveal.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
@@ -17,6 +18,30 @@ import { NestedNode } from './directory-tree-view.model';
 class DummyPhotoInfoViewerComponent {
   public readonly photo = input<Photo>();
   public readonly place = input<string>();
+}
+
+/**
+ * NearViewService, as jsdom has no IntersectionObserver: a row is near what is shown as soon as it is made, as the rows
+ * at the top of the tree are, unless the test keeps the rows away until it brings them near.
+ */
+class NearViewDouble implements Pick<NearViewService, 'watch'> {
+  public keepsAway = false;
+  private readonly waiting = new Map<Element, () => void>();
+
+  public watch(element: Element, whenNear: () => void): () => void {
+    if (!this.keepsAway) {
+      whenNear();
+      return () => undefined;
+    }
+    this.waiting.set(element, whenNear);
+    return () => this.waiting.delete(element);
+  }
+
+  public bringNear(): void {
+    const whenNear = [...this.waiting.values()];
+    this.waiting.clear();
+    whenNear.forEach(each => each());
+  }
 }
 
 /** A node of the tree that nothing can select, so that only what is expanded matters. */
@@ -35,10 +60,13 @@ describe('DirectoryTreeViewComponent', () => {
   let fixture: ComponentFixture<DirectoryTreeViewComponent>;
   let dataService: DirectoryTreeViewDataService;
   let tree: MatTree<NestedNode>;
+  let nearView: NearViewDouble;
 
   beforeEach(async () => {
+    nearView = new NearViewDouble();
     await TestBed.configureTestingModule({
       imports: [DirectoryTreeViewComponent],
+      providers: [{ provide: NearViewService, useValue: nearView }],
     })
       .overrideComponent(DirectoryTreeViewComponent, {
         remove: { imports: [PhotoInfoViewerComponent] },
@@ -71,6 +99,47 @@ describe('DirectoryTreeViewComponent', () => {
     expect(tree.isExpanded(second)).toBe(true);
     expect(fixture.nativeElement.textContent).toContain('photo.jpg');
     expect(fixture.nativeElement.textContent).not.toContain('subfolder');
+  });
+
+  it('makes the checkbox of a photo\'s row once the row comes near what is shown, with the photo\'s name before it', async () => {
+    nearView.keepsAway = true;
+    const photo = Object.assign(node('/folder/photo.jpg'), { isSelectable: true });
+    dataService.dataReplaced.next([node('/folder', [photo])]);
+    await fixture.whenStable();
+    const row: HTMLElement = fixture.nativeElement.querySelector('mat-tree-node.leaf-tree-node');
+    expect(row.querySelector('mat-checkbox')).toBeNull();
+    expect(row.querySelector('bdi').textContent).toBe('photo.jpg');
+
+    nearView.bringNear();
+    await fixture.whenStable();
+
+    expect(row.querySelector('mat-checkbox bdi').textContent).toBe('photo.jpg');
+  });
+
+  it('makes the checkbox of a photo\'s row with the selection made while the row was away, and updates it after', async () => {
+    // As Select Previous and Select Next or the map select a photo, whose row may be far from what is shown.
+    nearView.keepsAway = true;
+    // The selected photos, which a selection gives to SelectedPhotoService, need only their paths here.
+    vi.spyOn(TestBed.inject(PhotoDataService), 'getPhoto').mockImplementation(path => ({ path }) as Photo);
+    const photos = ['/folder/a.jpg', '/folder/b.jpg'].map(path => Object.assign(node(path), { isSelectable: true }));
+    dataService.dataReplaced.next([node('/folder', photos)]);
+    await fixture.whenStable();
+    const selection = TestBed.inject(DirectoryTreeViewSelectionService);
+    /** Whether each photo's checkbox is checked, by the photo's name. */
+    const checked = () => Object.fromEntries([...fixture.nativeElement.querySelectorAll('mat-tree-node.leaf-tree-node')]
+      .map((row: HTMLElement) => [row.querySelector('bdi').textContent, row.querySelector<HTMLInputElement>('input[type="checkbox"]')?.checked]));
+
+    selection.select(['/folder/b.jpg']);
+    await fixture.whenStable();
+    expect(checked()).toEqual({ 'a.jpg': undefined, 'b.jpg': undefined });
+
+    nearView.bringNear();
+    await fixture.whenStable();
+    expect(checked()).toEqual({ 'a.jpg': false, 'b.jpg': true });
+
+    selection.select(['/folder/a.jpg']);
+    await fixture.whenStable();
+    expect(checked()).toEqual({ 'a.jpg': true, 'b.jpg': false });
   });
 
   describe('revealing a photo from the map', () => {
@@ -135,6 +204,30 @@ describe('DirectoryTreeViewComponent', () => {
         vi.useRealTimers();
       }
     });
+  });
+
+  it('highlights the row of a photo revealed from the map before the row has made its checkbox', async () => {
+    // The row is scrolled to and highlighted at once, and makes its checkbox once the observer finds it near.
+    Element.prototype.scrollIntoView = () => undefined; // jsdom has none.
+    try {
+      nearView.keepsAway = true;
+      const photo = Object.assign(new Photo(), { name: 'photo.jpg', path: '/opened/a/photo.jpg' });
+      dataService.dataReplaced.next([node('/opened', [node('/opened/a', [Object.assign(node(photo.path), { isSelectable: true })])])]);
+      await fixture.whenStable();
+
+      TestBed.inject(PhotoRevealService).revealInSidebar(photo);
+      await fixture.whenStable();
+      const row: HTMLElement = fixture.nativeElement.querySelector('mat-tree-node.leaf-tree-node');
+      expect(row.getAttribute('data-reveal-highlight')).toBe('1');
+      expect(row.querySelector('mat-checkbox')).toBeNull();
+
+      nearView.bringNear();
+      await fixture.whenStable();
+      expect(row.getAttribute('data-reveal-highlight')).toBe('1');
+      expect(row.querySelector('mat-checkbox bdi').textContent).toBe('photo.jpg');
+    } finally {
+      delete Element.prototype.scrollIntoView;
+    }
   });
 
   it('selects one more photo on request, keeping the others selected, as a click on its checkbox does', async () => {

@@ -1,0 +1,39 @@
+@use "../non-selectable-node";
+
+:host {
+  min-width: 83px; // When the width is minimum, the checkbox is shown, and the name is hidden.
+  flex-grow: 1;
+  overflow: hidden;
+  mask-image: linear-gradient(to left, transparent 0%, #000 5px); // fade-out when the name overflows
+  display: flex;
+  align-items: center;
+}
+
+// The name overflows at the other side in a language written from right to left.
+:host-context([dir="rtl"]) {
+  mask-image: linear-gradient(to right, transparent 0%, #000 5px);
+}
+
+// The room of the disabled button and the checkbox that a photo's row makes once it is near what is shown: Angular
+// Material's icon button of the theme, 48 pixels, its checkbox, 40 pixels, and the 4 pixels between the checkbox and
+// its label. They are the room's rather than a margin of the name, as the name's bdi element takes its direction from
+// the name, not from the page.
+.room-of-checkbox {
+  flex-shrink: 0;
+  width: 92px;
+  height: 48px;
+}
+
+// The name in the type of the checkbox's label, from the tokens of the theme that the label takes it from.
+.name-beside-room-of-checkbox {
+  color: var(--mat-checkbox-label-text-color, var(--mat-sys-on-surface));
+  font-family: var(--mat-checkbox-label-text-font, var(--mat-sys-body-medium-font));
+  line-height: var(--mat-checkbox-label-text-line-height, var(--mat-sys-body-medium-line-height));
+  font-size: var(--mat-checkbox-label-text-size, var(--mat-sys-body-medium-size));
+  letter-spacing: var(--mat-checkbox-label-text-tracking, var(--mat-sys-body-medium-tracking));
+  font-weight: var(--mat-checkbox-label-text-weight, var(--mat-sys-body-medium-weight));
+}
+
+.non-selectable-node-name {
+  padding-inline-start: 4px;
+}

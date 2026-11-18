@@ -1488,6 +1488,55 @@ test('a folder of the tree expands and collapses, and keeps the selection of its
   await expect(kobe.getByRole('checkbox')).not.toBeChecked();
   await expectRepresentedPhotos(3);
 });
+test('a row of the tree makes its checkbox and its photo\'s thumbnail and buttons once it comes near the view, in the room that it had for them', async () => {
+  // Every row of the photos of an expanded folder is in the page, but one far below the view has only its photo's
+  // name and shooting time, with the room of the rest (src/app/directory-tree-view/dir-tree-view-checkbox-and-name/,
+  // src/app/photo-info-viewer/), so that a large folder expands quickly, and loads no thumbnail that is far from the
+  // view.
+  const folder = path.join(profile, 'forty photos');
+  await mkdir(folder);
+  for (let index = 1; index <= 40; index++)
+    await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, `IMG_${String(index).padStart(4, '0')}.JPG`));
+  await dismissWelcome();
+  await openFolderWithPicker(folder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('40 files have location data.');
+  const rows = page.locator('mat-tree-node.leaf-tree-node');
+  await expect(rows).toHaveCount(40);
+  const loaded = row => row.locator('.photo-info-viewer-thumbnail').evaluate(image => image.complete && image.naturalWidth > 0);
+  const [first, last] = [rows.first(), rows.last()];
+  await expect.poll(() => loaded(first)).toBe(true);
+  await expect(first.getByRole('checkbox')).toBeChecked();
+  await expect(last.locator('bdi')).toHaveText('IMG_0040.JPG');
+  await expect(last.locator('.photo-info-viewer-date-time-taken')).toHaveText('2017-12-16 Sat 20:11:22');
+  await expect(last.getByRole('checkbox')).toHaveCount(0);
+  await expect(last.locator('.photo-info-viewer-thumbnail')).toHaveCount(0);
+  await expect(last.locator('.photo-info-viewer-lower-div button')).toHaveCount(0);
+  // No thumbnail far below the sidebar's view is loaded: a row makes its thumbnail, and Chromium loads a lazy image,
+  // from 1,250 pixels away.
+  const loadedFarBelow = await page.locator('#home-sidebar-lower-pane').evaluate(pane => {
+    const farBelow = pane.getBoundingClientRect().bottom + 2000;
+    return [...pane.querySelectorAll('mat-tree-node .photo-info-viewer-thumbnail')]
+      .filter(image => image.getBoundingClientRect().top > farBelow && image.complete && image.naturalWidth > 0).length;
+  });
+  expect(loadedFarBelow).toBe(0);
+  /** The row's height, where its name is and how wide, and how big its photo's viewer is: what it makes keeps them. */
+  const layout = row => row.evaluate(element => {
+    const box = element.getBoundingClientRect();
+    const name = element.querySelector('bdi').getBoundingClientRect();
+    const viewer = element.querySelector('app-photo-info-viewer').getBoundingClientRect();
+    return { height: box.height, nameStart: name.left - box.left, nameWidth: name.width, viewerHeight: viewer.height,
+      viewerWidth: viewer.width };
+  });
+  const before = await layout(last);
+  expect(before).toEqual(await layout(first));
+  // Scrolled into view, the last row makes its checkbox, thumbnail and buttons, in the room that it had for them.
+  await last.scrollIntoViewIfNeeded();
+  await expect.poll(() => loaded(last)).toBe(true);
+  await expect(last.getByRole('checkbox')).toBeChecked();
+  await expect(last.locator('.photo-info-viewer-lower-div button')).toHaveCount(3);
+  expect(await layout(last)).toEqual(before);
+  await expect(rows).toHaveCount(40);
+});
 test('a right-click outside the tree\'s context menu closes it', async () => {
   await dismissWelcome();
   await openFolderWithPicker(photoFolder);
@@ -2023,9 +2072,12 @@ test('the sort menu orders the tree by name and by shooting time, shows its choi
   const root = path.basename(folder);
   const byName = ['a Apple Park.JPG', 'b Kobe.JPG', 'c Unga.JPG', 'd Gold Coast.JPG'];
   const byShootingTime = ['d Gold Coast.JPG', 'c Unga.JPG', 'b Kobe.JPG', 'a Apple Park.JPG'];
-  /** The names of the tree's nodes as they are shown, from the top: the folder, its subfolders, then its photos. */
+  /**
+   * The names of the tree's nodes as they are shown, from the top: the folder, its subfolders, then its photos. Each
+   * name is in a bdi element, whether or not its row has made its checkbox.
+   */
   const treeNames = () => page.locator('mat-tree-node')
-    .evaluateAll(nodes => nodes.map(node => node.querySelector('mat-checkbox, .non-selectable-node')?.textContent.trim()));
+    .evaluateAll(nodes => nodes.map(node => node.querySelector('bdi')?.textContent.trim()));
   const sortMenuItem = name => page.locator('button[mat-menu-item]').filter({ hasText: name });
   /** Chooses an item of the Sort submenu, which closes the menu. */
   async function chooseInSortMenu(name) {

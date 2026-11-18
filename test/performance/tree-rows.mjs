@@ -59,7 +59,8 @@ async function fillFolder() {
 /** The folder of photos, a temporary one, which is made and removed around the trials. */
 let folder;
 
-const viewers = '.photo-info-viewer-thumbnail-container';
+/** The rows of files, each of which is a photo here. */
+const rows = 'mat-tree-node.leaf-tree-node';
 const median = numbers => [...numbers].sort((a, b) => a - b)[Math.floor(numbers.length / 2)];
 
 /** One trial of a build: its figures, in milliseconds, megabytes and counts. */
@@ -85,23 +86,42 @@ async function measure(build) {
       return { heapMb: Math.round(metric('JSHeapUsedSize') / 1048576 * 10) / 10, nodes: metric('Nodes'), listeners: metric('JSEventListeners'),
         processMb: Math.round(workingSetKb / 1024) };
     };
-    /** The time from now to the frame after the page has `count` viewers, which it has to have within 5 minutes. */
-    const viewersShown = count => page.evaluate(([selector, count]) => new Promise((resolve, reject) => {
+    /**
+     * The time from now to the frame after the page has `count` rows, of which those in the sidebar's view show their
+     * photos' thumbnails, loaded, which the page has to within 5 minutes. A row makes its photo's thumbnail once it
+     * comes near that view, while a build before 2026-11-19 made it with the row: either way, this is when the user
+     * sees the rows in view complete.
+     */
+    const rowsShown = count => page.evaluate(([selector, count]) => new Promise((resolve, reject) => {
       const start = performance.now();
+      const pane = document.querySelector('#home-sidebar-lower-pane');
+      /** Whether the rows in the pane's view show their thumbnails, loaded. The rows are in their order on the page. */
+      const thumbnailsInView = shownRows => {
+        const view = pane.getBoundingClientRect();
+        for (const row of shownRows) {
+          const box = row.getBoundingClientRect();
+          if (box.top >= view.bottom)
+            return true;
+          const thumbnail = row.querySelector('img.photo-info-viewer-thumbnail');
+          if (box.bottom > view.top && !(thumbnail?.complete && thumbnail.naturalWidth > 0))
+            return false;
+        }
+        return true;
+      };
       const check = () => {
-        const shown = document.querySelectorAll(selector).length;
-        if (shown === count)
+        const shownRows = document.querySelectorAll(selector);
+        if (shownRows.length === count && thumbnailsInView(shownRows))
           requestAnimationFrame(() => resolve(Math.round(performance.now() - start)));
         else if (performance.now() - start > 300000)
-          reject(new Error(`The page has ${shown} viewers after 5 minutes, not ${count}.`));
+          reject(new Error(`The page has ${shownRows.length} rows after 5 minutes, not ${count} with the thumbnails of those in view loaded.`));
         else
           requestAnimationFrame(check);
       };
       check();
-    }), [viewers, count]);
+    }), [rows, count]);
 
     await stubFolderPicker(app, folder);
-    let shown = viewersShown(photoCount);
+    let shown = rowsShown(photoCount);
     await page.locator('.open-folder-button button').click();
     const openMs = await shown;
     await page.locator('app-loading-folder-dialog').waitFor({ state: 'detached', timeout: 300000 });
@@ -112,11 +132,11 @@ async function measure(build) {
     const toggle = page.locator('mat-tree-node').first().locator('button[mattreenodetoggle]');
     const rowsAgainMs = [];
     for (let turn = 0; turn < 3; turn++) {
-      shown = viewersShown(0);
+      shown = rowsShown(0);
       await toggle.click();
       await shown;
       await page.waitForTimeout(500);
-      shown = viewersShown(photoCount);
+      shown = rowsShown(photoCount);
       await toggle.click();
       rowsAgainMs.push(await shown);
       await page.waitForTimeout(1000);
@@ -144,7 +164,28 @@ async function measure(build) {
       })));
       await page.waitForTimeout(1500);
     }
-    return { openMs, rowsAgainMs: median(rowsAgainMs), checkboxMs: median(checkboxMs), heapMb: afterOpen.heapMb, nodes: afterOpen.nodes,
+
+    // Scrolling down the rows from the top, by 100 pixels a frame for 240 frames, past about a hundred rows: the
+    // time between frames, as each row makes what it shows when it comes near the view.
+    const frameGaps = await page.evaluate(() => new Promise(resolve => {
+      const pane = document.querySelector('#home-sidebar-lower-pane');
+      pane.scrollTop = 0;
+      const gaps = [];
+      let previous;
+      const step = now => {
+        if (previous !== undefined)
+          gaps.push(now - previous);
+        previous = now;
+        if (gaps.length === 240)
+          return resolve(gaps);
+        pane.scrollTop += 100;
+        requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }));
+    return { openMs, rowsAgainMs: median(rowsAgainMs), checkboxMs: median(checkboxMs),
+      scrollFrameMs: Math.round(frameGaps.reduce((sum, gap) => sum + gap, 0) / frameGaps.length * 10) / 10,
+      scrollLongestFrameMs: Math.round(Math.max(...frameGaps)), heapMb: afterOpen.heapMb, nodes: afterOpen.nodes,
       listeners: afterOpen.listeners, processMb: afterOpen.processMb, heapAfterRowsAgainMb: afterRowsAgain.heapMb };
   } finally {
     await close(app);

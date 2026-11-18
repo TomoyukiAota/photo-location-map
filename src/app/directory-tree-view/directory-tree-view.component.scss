@@ -1,4 +1,5 @@
 @use "../../styles/color" as *;
+@use "non-selectable-node";
 
 @keyframes fadeIn {
   from {
@@ -45,39 +46,8 @@ mat-tree-node {
   gap: 10px;
 }
 
-.leaf-tree-node-checkbox-and-name {
-  min-width: 83px; // When the width is minimum, the checkbox is shown, and the name is hidden.
-  flex-grow: 1;
-  overflow: hidden;
-  mask-image: linear-gradient(to left, transparent 0%, #000 5px); // fade-out when the name overflows
-  // The name overflows at the other side in a language written from right to left.
-  :host-context([dir="rtl"]) & { mask-image: linear-gradient(to right, transparent 0%, #000 5px); }
-  display: flex;
-  align-items: center;
-}
-
 app-photo-info-viewer {
   padding: 5px 0;
   padding-inline-end: 10px;
   flex-shrink: 0;
-}
-
-.non-selectable-node {
-  display: inline-flex;
-  align-items: center;
-  color: #c0c0c0;
-}
-
-.non-selectable-node-name {
-  padding-inline-start: 4px;
-}
-
-div.disabled-checkbox-alternative {
-  display: inline-block;
-  vertical-align: middle;
-  background-color: #e0e0e0;
-  width: 18px;
-  height: 18px;
-  border-radius: 2px;
-  margin: 11px;
 }

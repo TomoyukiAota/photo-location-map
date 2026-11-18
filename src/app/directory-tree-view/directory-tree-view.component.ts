@@ -7,11 +7,13 @@ import { Analytics } from '../../../src-shared/analytics/analytics';
 import { createPrependedLogger } from '../../../src-shared/log/create-prepended-logger';
 import { logged } from '../../../src-shared/log/logged-line';
 import { PhotoInfoViewerComponent } from '../photo-info-viewer/photo-info-viewer.component';
+import { NearViewDirective } from '../shared/near-view/near-view.directive';
 import { TranslatePipe } from '../shared/i18n/translate.pipe';
 import { Photo } from '../shared/model/photo.model';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { PhotoRevealService } from '../shared/service/photo-reveal.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
+import { DirTreeViewCheckboxAndNameComponent } from './dir-tree-view-checkbox-and-name/dir-tree-view-checkbox-and-name.component';
 import { DirTreeViewContextMenuHelper } from './dir-tree-view-context-menu/dir-tree-view-context-menu-helper';
 import { dirTreeViewContextMenuItems } from './dir-tree-view-context-menu/dir-tree-view-context-menu-item';
 import { dirTreeViewKeyManagerFactory } from './dir-tree-view-key-manager';
@@ -37,7 +39,7 @@ export const revealHighlightMs = 3000;
   imports: [
     MatTree, MatTreeNodeDef, MatTreeNode, MatTreeNodeToggle, MatTreeNodePadding, MatIconButton, MatCheckbox,
     MatLabel, PhotoInfoViewerComponent, MatIcon, MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem,
-    TranslatePipe,
+    TranslatePipe, NearViewDirective, DirTreeViewCheckboxAndNameComponent,
   ],
   // The tree's keys leave Select Previous and Select Next to the Selection menu.
   providers: [{ provide: TREE_KEY_MANAGER, useValue: dirTreeViewKeyManagerFactory }],
