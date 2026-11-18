@@ -5,7 +5,9 @@ import { By } from '@angular/platform-browser';
 import { PhotoInfoViewerComponent } from '../photo-info-viewer/photo-info-viewer.component';
 import { Photo } from '../shared/model/photo.model';
 import { NearViewService } from '../shared/near-view/near-view.service';
+import { PhotoDataService } from '../shared/service/photo-data.service';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
+import { DirectoryTreeViewSelectionService } from './directory-tree-view-selection.service';
 import { DirectoryTreeViewComponent } from './directory-tree-view.component';
 import { NestedNode } from './directory-tree-view.model';
 
@@ -110,6 +112,32 @@ describe('DirectoryTreeViewComponent', () => {
     await fixture.whenStable();
 
     expect(row.querySelector('mat-checkbox bdi').textContent).toBe('photo.jpg');
+  });
+
+  it('makes the checkbox of a photo\'s row with the selection made while the row was away, and updates it after', async () => {
+    // As Select Previous and Select Next or the map select a photo, whose row may be far from what is shown.
+    nearView.keepsAway = true;
+    // The selected photos, which a selection gives to SelectedPhotoService, need only their paths here.
+    vi.spyOn(TestBed.inject(PhotoDataService), 'getPhoto').mockImplementation(path => ({ path }) as Photo);
+    const photos = ['/folder/a.jpg', '/folder/b.jpg'].map(path => Object.assign(node(path), { isSelectable: true }));
+    dataService.dataReplaced.next([node('/folder', photos)]);
+    await fixture.whenStable();
+    const selection = TestBed.inject(DirectoryTreeViewSelectionService);
+    /** Whether each photo's checkbox is checked, by the photo's name. */
+    const checked = () => Object.fromEntries([...fixture.nativeElement.querySelectorAll('mat-tree-node.leaf-tree-node')]
+      .map((row: HTMLElement) => [row.querySelector('bdi').textContent, row.querySelector<HTMLInputElement>('input[type="checkbox"]')?.checked]));
+
+    selection.select(['/folder/b.jpg']);
+    await fixture.whenStable();
+    expect(checked()).toEqual({ 'a.jpg': undefined, 'b.jpg': undefined });
+
+    nearView.bringNear();
+    await fixture.whenStable();
+    expect(checked()).toEqual({ 'a.jpg': false, 'b.jpg': true });
+
+    selection.select(['/folder/a.jpg']);
+    await fixture.whenStable();
+    expect(checked()).toEqual({ 'a.jpg': true, 'b.jpg': false });
   });
 
   it('leaves the keys of Select Previous and Select Next to the Selection menu while a node has the focus', async () => {
