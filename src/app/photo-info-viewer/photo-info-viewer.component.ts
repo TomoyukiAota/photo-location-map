@@ -153,7 +153,10 @@ export class PhotoInfoViewerComponent {
   /** Whether the thumbnail has just been made while this showed that it was being made, and fades in. */
   protected readonly fadesInAfterGeneration = signal(false);
 
-  /** The room around the More Options button, which the menu is placed by, while the menu is open. */
+  /**
+   * The room around the More Options button when it was clicked, while its menu is open: the menu opens where it fits
+   * (MoreOptionsMenuComponent).
+   */
   protected readonly menuRoom = signal<RoomAroundButton | null>(null);
 
   /** The movie of a photo's Live Photos, for livePhotosFilePath(). */

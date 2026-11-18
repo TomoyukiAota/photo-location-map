@@ -1,36 +1,52 @@
 import { cutOffAtEdgeOfArea, placeMenu, roomAround } from './more-options-menu-placement';
 
 describe('placeMenu', () => {
-  it('opens the menu below its button where there is room, from the button\'s side in the sidebar', () => {
-    expect(placeMenu({ isWithinSidebar: true, below: 196, beside: 0 }, 5))
+  /** The menu of a photo with a location in English: 6 items of 35 px, as wide as "Open Google Street View". */
+  const menu = { width: 186, height: 210 };
+
+  it('opens the menu below its button where it fits, from the button\'s side in the sidebar', () => {
+    expect(placeMenu({ isWithinSidebar: true, below: 231, beside: 0 }, menu))
       .toEqual({ top: '37px', bottom: null, insetInlineStart: null, insetInlineEnd: 0 });
   });
 
   it('opens the menu below its button on the map a little beyond the button\'s side', () => {
-    expect(placeMenu({ isWithinSidebar: false, below: 500, beside: 500 }, 5))
+    expect(placeMenu({ isWithinSidebar: false, below: 500, beside: 500 }, menu))
       .toEqual({ top: '37px', bottom: null, insetInlineStart: null, insetInlineEnd: -25 });
   });
 
-  it('opens the menu beside its button on the map where there is no room below but room beside', () => {
-    expect(placeMenu({ isWithinSidebar: false, below: 195, beside: 231 }, 5))
+  it('opens the menu beside its button on the map where it fits there but not below', () => {
+    expect(placeMenu({ isWithinSidebar: false, below: 230, beside: 207 }, menu))
       .toEqual({ top: null, bottom: '0', insetInlineStart: '37px', insetInlineEnd: null });
   });
 
-  it('opens the menu above its button where there is room neither below nor beside', () => {
-    expect(placeMenu({ isWithinSidebar: false, below: 195, beside: 230 }, 5))
+  it('opens the menu above its button where it fits neither below nor beside', () => {
+    expect(placeMenu({ isWithinSidebar: false, below: 230, beside: 206 }, menu))
       .toEqual({ top: null, bottom: '37px', insetInlineStart: null, insetInlineEnd: -25 });
   });
 
   it('never opens the menu beside its button in the sidebar, which is narrow', () => {
-    expect(placeMenu({ isWithinSidebar: true, below: 0, beside: 1000 }, 5))
+    expect(placeMenu({ isWithinSidebar: true, below: 0, beside: 1000 }, menu))
       .toEqual({ top: null, bottom: '37px', insetInlineStart: null, insetInlineEnd: 0 });
   });
 
-  it('needs the room of each item below its button, 35 px, and a margin of 20 px', () => {
-    const below = { top: '37px', bottom: null, insetInlineStart: null, insetInlineEnd: 0 };
-    expect(placeMenu({ isWithinSidebar: true, below: 231, beside: 0 }, 6)).toEqual(below);
-    expect(placeMenu({ isWithinSidebar: true, below: 230, beside: 0 }, 6)).not.toEqual(below);
-    expect(placeMenu({ isWithinSidebar: true, below: 76, beside: 0 }, 1)).toEqual(below);
+  it('needs as much room below as the menu is high: the 2 items of a photo without a location fit where 6 do not', () => {
+    const room = { isWithinSidebar: true, below: 100, beside: 0 };
+
+    expect(placeMenu(room, { width: 120, height: 70 }).top).toBe('37px');
+    expect(placeMenu(room, menu).top).toBeNull();
+  });
+
+  it('needs as much room beside as the menu is wide, which it is by the language', () => {
+    const room = { isWithinSidebar: false, below: 0, beside: 240 };
+
+    expect(placeMenu(room, menu).insetInlineStart).toBe('37px');
+    // As wide as "Открыть Google Планета Земля", the menu would reach beyond the map.
+    expect(placeMenu(room, { width: 240, height: 210 }).insetInlineStart).toBeNull();
+  });
+
+  it('opens the menu below its button until it is measured there', () => {
+    expect(placeMenu({ isWithinSidebar: false, below: 0, beside: 0 }, null))
+      .toEqual({ top: '37px', bottom: null, insetInlineStart: null, insetInlineEnd: -25 });
   });
 });
 

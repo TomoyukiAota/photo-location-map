@@ -82,6 +82,10 @@
       "openFolder": "Deschide dosarul"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Doriți să deschideți dosarul de mai jos?",
+    "openFile": "Doriți să deschideți fișierul de mai jos?"
+  },
   "photoInfo": {
     "unavailable": "Informațiile despre poză nu sunt disponibile.",
     "openFile": "Deschide fișierul",
@@ -95,6 +99,7 @@
       "revealInSidebar": "Afișează în bara laterală",
       "openGoogleMaps": "Deschide Google Maps",
       "openGoogleStreetView": "Deschide Google Street View",
+      "openGoogleEarth": "Deschide Google Earth",
       "viewData": "Vezi datele"
     },
     "pathTooLong": "Miniatura nu poate fi afișată deoarece numărul de caractere din calea fișierului este {{length}}. Windows limitează numărul de caractere dintr-o cale la {{maximum}}. Mutați fișierul pentru a-i scurta calea. Pentru detalii, apăsați Ctrl+Shift+I și citiți mesajele din consolă.",

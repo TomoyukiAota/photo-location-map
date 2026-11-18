@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Analytics } from '../../../src-shared/analytics/analytics';
 import type { ThumbnailState } from '../../../src-shared/bridge/plm-bridge';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { DirectoryTreeViewSelectionService } from '../directory-tree-view/directory-tree-view-selection.service';
@@ -277,7 +278,8 @@ describe('PhotoInfoViewerComponent', () => {
 
       const menu = element.querySelector('.photo-info-viewer-more-options-menu');
       expect(menu.parentElement).toBe(button('More Options'));
-      expect(menuItems().map(item => item.textContent)).toEqual(['Select Only This', 'Reveal in Sidebar', 'Open Folder', 'Open Google Maps', 'Open Google Street View', 'View Data']);
+      expect(menuItems().map(item => item.textContent)).toEqual(
+        ['Select Only This', 'Reveal in Sidebar', 'Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data']);
     });
 
     it('shows a photo of a row of the folder tree on the map, rather than in the sidebar', async () => {
@@ -286,7 +288,7 @@ describe('PhotoInfoViewerComponent', () => {
 
       await click(button('More Options'));
 
-      expect(menuItems().map(item => item.textContent)).toEqual(['Select Only This', 'Reveal in Map', 'Open Folder', 'Open Google Maps', 'Open Google Street View', 'View Data']);
+      expect(menuItems().map(item => item.textContent)).toEqual(['Select Only This', 'Reveal in Map', 'Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data']);
       await click(menuItems().find(item => item.textContent === 'Reveal in Map'));
       expect(revealInMap).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ path: '/photos/IMG_0001.JPG' }));
     });
@@ -299,6 +301,34 @@ describe('PhotoInfoViewerComponent', () => {
       expect(menuItems().map(item => item.textContent)).toEqual(['Open Folder', 'View Data']);
     });
 
+    it('opens where its items fit once it is in the page: below its button, or above it when they do not fit below', async () => {
+      // The page has no layout here: the sidebar, the button and the menu get the sizes that a layout would give them.
+      const sidebar = document.createElement('div');
+      sidebar.id = 'home-left-sidebar';
+      Object.defineProperty(sidebar, 'clientHeight', { value: 400 });
+      document.body.appendChild(sidebar);
+      const height = vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function (this: HTMLElement) {
+        return this.matches('.photo-info-viewer-more-options-menu') ? menuItems().length * 35 : 0;
+      });
+      try {
+        // 120 px below the button: room for the 2 items of a photo without a location, and not for the 6 of one with it.
+        for (const [photo, top, bottom] of [[photoAt('/photos/drawing.png'), '37px', ''], [cameraPhoto(), '', '37px']] as const) {
+          await show(photo, 'dir-tree-view');
+          sidebar.appendChild(element);
+          button('More Options').getBoundingClientRect = () => ({ left: 240, right: 276, bottom: 280 }) as DOMRect;
+
+          await click(button('More Options'));
+
+          const menu = element.querySelector<HTMLElement>('.photo-info-viewer-more-options-menu');
+          expect({ top: menu.style.top, bottom: menu.style.bottom }).toEqual({ top, bottom });
+          element.remove();
+        }
+      } finally {
+        height.mockRestore();
+        sidebar.remove();
+      }
+    });
+
     it('closes when its button is clicked again, and when its button loses the focus', async () => {
       await show(cameraPhoto(), 'leaflet-map-popup');
       await click(button('More Options'));
@@ -306,7 +336,7 @@ describe('PhotoInfoViewerComponent', () => {
       expect(menuItems()).toEqual([]);
 
       await click(button('More Options'));
-      expect(menuItems()).toHaveLength(6);
+      expect(menuItems()).toHaveLength(7);
       button('More Options').dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
       await fixture.whenStable();
       expect(menuItems()).toEqual([]);
@@ -321,7 +351,7 @@ describe('PhotoInfoViewerComponent', () => {
       await show(cameraPhoto(), 'leaflet-map-popup');
       document.body.appendChild(element);
       try {
-        for (const text of ['Select Only This', 'Reveal in Sidebar', 'Open Folder', 'Open Google Maps', 'Open Google Street View', 'View Data']) {
+        for (const text of ['Select Only This', 'Reveal in Sidebar', 'Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data']) {
           button('More Options').focus();
           await click(button('More Options'));
           const item = menuItems().find(candidate => candidate.textContent === text);
@@ -342,9 +372,40 @@ describe('PhotoInfoViewerComponent', () => {
       expect(openContainingFolder).toHaveBeenCalledExactlyOnceWith('/photos/IMG_0001.JPG');
       expect(openExternal.mock.calls).toEqual([
         ['https://maps.google.com/?q=34.68,135.19&ll=34.68,135.19&z=14'],
+        ['https://earth.google.com/web/search/34.68,135.19'],
         ['https://www.google.com/maps/@?api=1&map_action=pano&parameters&viewpoint=34.68,135.19'],
       ]);
       expect(openPhotoDataViewer).toHaveBeenCalledExactlyOnceWith({ photo: { name: 'IMG_0001.JPG', path: '/photos/IMG_0001.JPG' } });
+    });
+
+    it('tells the analytics which of Google\'s sites its items open, without the photo\'s place', async () => {
+      await show(cameraPhoto(), 'leaflet-map-popup');
+      // In the page, so that a click on an item takes the focus off the button, which closes the menu.
+      document.body.appendChild(element);
+      const trackEvent = vi.spyOn(Analytics, 'trackEvent');
+      try {
+        for (const text of ['Open Google Maps', 'Open Google Earth', 'Open Google Street View']) {
+          button('More Options').focus();
+          await click(button('More Options'));
+          await click(menuItems().find(candidate => candidate.textContent === text));
+        }
+
+        expect(trackEvent.mock.calls).toEqual([
+          ['Photo Info Viewer', '[PIV] Clicked "Open Google Maps"'],
+          ['Opened URL', 'Opened URL', '[Photo Info Viewer] Opened URL for "Open Google Maps" Menu Item',
+            'https://maps.google.com/ with query parameters for latitude, longitude, and zoom'],
+          ['Photo Info Viewer', '[PIV] Clicked "Open Google Earth"'],
+          ['Opened URL', 'Opened URL', '[Photo Info Viewer] Opened URL for "Open Google Earth" Menu Item',
+            'https://earth.google.com/web/search/ with latitude and longitude'],
+          ['Photo Info Viewer', '[PIV] Clicked "Open Google Street View"'],
+          ['Opened URL', 'Opened URL', '[Photo Info Viewer] Opened URL for "Open Google Street View" Menu Item',
+            'https://www.google.com/maps/ with query parameters for latitude, longitude'],
+        ]);
+        expect(JSON.stringify(trackEvent.mock.calls)).not.toMatch(/34\.68|135\.19/);
+      } finally {
+        trackEvent.mockRestore();
+        element.remove();
+      }
     });
   });
 });

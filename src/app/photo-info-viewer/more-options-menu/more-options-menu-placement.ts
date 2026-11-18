@@ -1,7 +1,5 @@
 const sidebarAreaSelector = '#home-left-sidebar';
 const mapAreaSelector = '#home-map';
-/** The height of an item of the menu (.photo-info-viewer-more-options-menu-item in more-options-menu.component.scss). */
-const menuItemHeight = 35;
 
 /**
  * Where the menu is, from the edges of its button. The sides are named by the direction of the text
@@ -26,18 +24,34 @@ export interface RoomAroundButton {
   readonly beside: number;
 }
 
-/**
- * Where the menu of `itemCount` items opens: below its button where there is room, otherwise beside the button on the
- * map where there is room on the side that the texts run to, otherwise above the button.
- */
-export function placeMenu(room: RoomAroundButton, itemCount: number): MoreOptionsMenuPlacement {
-  const insetInlineEnd = room.isWithinSidebar ? 0 : -25;
-  const enoughRoomBelow = room.below > itemCount * menuItemHeight + 20; // The menu, and a margin below it.
-  const enoughRoomBeside = !room.isWithinSidebar && room.beside > 230; // Adjust the value if the menu width changes.
+/** The menu's size as it is laid out in the page, in pixels. */
+export interface MoreOptionsMenuSize {
+  readonly width: number;
+  readonly height: number;
+}
 
-  if (enoughRoomBelow)
+/**
+ * What the menu needs besides its own size where it opens: the 1 px between it and its button, which is 36 px high and
+ * wide while the menu is 37 px from the button's edge, and its shadow.
+ */
+const roomBesidesMenu = 20;
+
+/**
+ * Where the menu opens: below its button where it fits, otherwise beside the button on the map where it fits on the
+ * side that the texts run to, otherwise above the button.
+ * TL;DR: The menu fits where the room is larger than the menu, which is measured once it is in the page.
+ * Details: The menu is as high as its items, of which a photo without a location has fewer, and as wide as its longest
+ * item, which depends on the language. Until it is measured, `menuSize` is null and the menu is below its button:
+ * MoreOptionsMenuComponent measures it there and places it again before it is painted.
+ */
+export function placeMenu(room: RoomAroundButton, menuSize: MoreOptionsMenuSize | null): MoreOptionsMenuPlacement {
+  const insetInlineEnd = room.isWithinSidebar ? 0 : -25;
+  const fitsBelow = !menuSize || room.below > menuSize.height + roomBesidesMenu;
+  const fitsBeside = !room.isWithinSidebar && !!menuSize && room.beside > menuSize.width + roomBesidesMenu;
+
+  if (fitsBelow)
     return { top: '37px', bottom: null, insetInlineStart: null, insetInlineEnd };
-  if (enoughRoomBeside)
+  if (fitsBeside)
     return { top: null, bottom: '0', insetInlineStart: '37px', insetInlineEnd: null };
   return { top: null, bottom: '37px', insetInlineStart: null, insetInlineEnd };
 }

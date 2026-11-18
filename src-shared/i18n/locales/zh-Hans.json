@@ -82,6 +82,10 @@
       "openFolder": "打开文件夹"
     }
   },
+  "dropToOpen": {
+    "openFolder": "是否打开以下文件夹？",
+    "openFile": "是否打开以下文件？"
+  },
   "photoInfo": {
     "unavailable": "照片信息不可用。",
     "openFile": "打开文件",
@@ -95,6 +99,7 @@
       "revealInSidebar": "在边栏中显示",
       "openGoogleMaps": "打开 Google 地图",
       "openGoogleStreetView": "打开 Google 街景",
+      "openGoogleEarth": "打开 Google 地球",
       "viewData": "查看数据"
     },
     "pathTooLong": "文件路径的长度为 {{length}} 个字符，因此无法显示缩略图。Windows 将路径长度限制为最多 {{maximum}} 个字符。请更改文件的位置以缩短路径。有关详细信息，请按 Ctrl+Shift+I 并查看控制台消息。",

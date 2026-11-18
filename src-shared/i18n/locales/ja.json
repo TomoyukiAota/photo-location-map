@@ -82,6 +82,10 @@
       "openFolder": "フォルダーを開く"
     }
   },
+  "dropToOpen": {
+    "openFolder": "以下のフォルダーを開きますか？",
+    "openFile": "以下のファイルを開きますか？"
+  },
   "photoInfo": {
     "unavailable": "写真の情報がありません。",
     "openFile": "ファイルを開く",
@@ -95,6 +99,7 @@
       "revealInSidebar": "サイドバーで表示",
       "openGoogleMaps": "Google マップを開く",
       "openGoogleStreetView": "Google ストリートビューを開く",
+      "openGoogleEarth": "Google Earth を開く",
       "viewData": "データを表示"
     },
     "pathTooLong": "ファイルのパスの長さが {{length}} 文字であるため、サムネイルを表示できません。Windows では、パスの長さの上限は {{maximum}} 文字です。ファイルの場所を変えて、ファイルのパスを短くしてください。詳細は、Ctrl+Shift+I を押してコンソールのメッセージをご覧ください。",

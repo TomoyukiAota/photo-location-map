@@ -82,6 +82,10 @@
       "openFolder": "Otvoriť priečinok"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Chcete otvoriť nižšie uvedený priečinok?",
+    "openFile": "Chcete otvoriť nižšie uvedený súbor?"
+  },
   "photoInfo": {
     "unavailable": "Informácie o fotke nie sú k dispozícii.",
     "openFile": "Otvoriť súbor",
@@ -95,6 +99,7 @@
       "revealInSidebar": "Zobraziť v bočnom paneli",
       "openGoogleMaps": "Otvoriť Mapy Google",
       "openGoogleStreetView": "Otvoriť Google Street View",
+      "openGoogleEarth": "Otvoriť Google Earth",
       "viewData": "Zobraziť údaje"
     },
     "pathTooLong": "Miniatúru nie je možné zobraziť, pretože počet znakov v ceste k súboru je {{length}}. Windows obmedzuje počet znakov v ceste na {{maximum}}. Presuňte súbor inam, aby bola jeho cesta kratšia. Podrobnosti zistíte stlačením Ctrl+Shift+I a prečítaním správ v konzole.",

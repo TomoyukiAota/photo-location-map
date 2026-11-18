@@ -82,6 +82,10 @@
       "openFolder": "Åpne mappe"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Vil du åpne mappen nedenfor?",
+    "openFile": "Vil du åpne filen nedenfor?"
+  },
   "photoInfo": {
     "unavailable": "Bildeinformasjon er ikke tilgjengelig.",
     "openFile": "Åpne fil",
@@ -95,6 +99,7 @@
       "revealInSidebar": "Vis i sidepanelet",
       "openGoogleMaps": "Åpne Google Maps",
       "openGoogleStreetView": "Åpne Google Street View",
+      "openGoogleEarth": "Åpne Google Earth",
       "viewData": "Vis data"
     },
     "pathTooLong": "Miniatyrbildet kan ikke vises fordi filbanen er {{length}} tegn lang. Windows begrenser lengden på baner til {{maximum}} tegn. Flytt filen for å gjøre banen kortere. Trykk på Ctrl+Skift+I og les meldingene i konsollen for detaljer.",

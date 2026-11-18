@@ -1,4 +1,7 @@
 <div class="message">{{ data.message }}</div>
+@if (data.path) {
+  <div class="path"><bdi>{{ data.path }}</bdi></div>
+}
 <div class="buttons">
   <button mat-flat-button
           color="primary"

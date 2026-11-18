@@ -4,7 +4,8 @@ import { assertFromMainWindow } from '../ipc/ipc-sender.js';
 import { isUserChosenFolder } from '../ipc/user-chosen-folders.js';
 import { createDirectoryTreeInWorker } from './directory-tree-requests.js';
 
-// The tree of a folder that the user chose to open, in the folder picker or with --open (src/app/shared/opened-directory.ts).
+// The tree of a folder that the user chose to open, in the folder picker, with --open or by a drop
+// (src/app/shared/opened-directory.ts).
 ipcMain.handle(IpcConstants.DirectoryTree.Create, (event, dirPath: unknown) => {
   assertFromMainWindow(event, 'Reading a folder');
   if (!isUserChosenFolder(dirPath))

@@ -82,6 +82,10 @@
       "openFolder": "Åbn mappe"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Vil du åbne mappen nedenfor?",
+    "openFile": "Vil du åbne filen nedenfor?"
+  },
   "photoInfo": {
     "unavailable": "Oplysninger om billedet er ikke tilgængelige.",
     "openFile": "Åbn fil",
@@ -95,6 +99,7 @@
       "revealInSidebar": "Vis i sidepanelet",
       "openGoogleMaps": "Åbn Google Maps",
       "openGoogleStreetView": "Åbn Google Street View",
+      "openGoogleEarth": "Åbn Google Earth",
       "viewData": "Vis data"
     },
     "pathTooLong": "Miniaturen kan ikke vises, fordi filens sti er {{length}} tegn lang. Windows begrænser stiens længde til {{maximum}} tegn. Flyt filen for at gøre stien kortere. Tryk på Ctrl+Skift+I, og læs meddelelserne i konsollen for at få flere oplysninger.",

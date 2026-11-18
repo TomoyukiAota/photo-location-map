@@ -82,6 +82,10 @@
       "openFolder": "Open map"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Wil je de onderstaande map openen?",
+    "openFile": "Wil je het onderstaande bestand openen?"
+  },
   "photoInfo": {
     "unavailable": "Er is geen informatie over de foto beschikbaar.",
     "openFile": "Open bestand",
@@ -95,6 +99,7 @@
       "revealInSidebar": "Toon in de zijbalk",
       "openGoogleMaps": "Open Google Maps",
       "openGoogleStreetView": "Open Google Street View",
+      "openGoogleEarth": "Open Google Earth",
       "viewData": "Bekijk gegevens"
     },
     "pathTooLong": "De miniatuur kan niet worden weergegeven, omdat het bestandspad {{length}} tekens lang is. Windows beperkt de lengte van een pad tot {{maximum}} tekens. Verplaats het bestand om het pad korter te maken. Druk voor details op Ctrl+Shift+I en lees de meldingen in de console.",

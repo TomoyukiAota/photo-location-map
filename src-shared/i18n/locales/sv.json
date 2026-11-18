@@ -82,6 +82,10 @@
       "openFolder": "Öppna mapp"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Vill du öppna mappen nedan?",
+    "openFile": "Vill du öppna filen nedan?"
+  },
   "photoInfo": {
     "unavailable": "Bildinformation är inte tillgänglig.",
     "openFile": "Öppna fil",
@@ -95,6 +99,7 @@
       "revealInSidebar": "Visa i sidofältet",
       "openGoogleMaps": "Öppna Google Maps",
       "openGoogleStreetView": "Öppna Google Street View",
+      "openGoogleEarth": "Öppna Google Earth",
       "viewData": "Visa data"
     },
     "pathTooLong": "Miniatyren kan inte visas eftersom filens sökväg är {{length}} tecken lång. Windows begränsar sökvägens längd till {{maximum}} tecken. Flytta filen så att sökvägen blir kortare. Tryck på Ctrl+Skift+I och läs meddelandena i konsolen för mer information.",

@@ -10,7 +10,7 @@ import { removeFocus } from '../../shared/remove-focus';
 import { PhotoRevealService } from '../../shared/service/photo-reveal.service';
 import { photoInfoViewerLogger as logger } from '../photo-info-viewer-logger';
 import { PhotoInfoViewerPlace } from '../photo-info-viewer-place';
-import { cutOffAtEdgeOfArea, placeMenu, RoomAroundButton } from './more-options-menu-placement';
+import { cutOffAtEdgeOfArea, MoreOptionsMenuSize, placeMenu, RoomAroundButton } from './more-options-menu-placement';
 import { requestMainProcessToLaunchPhotoDataViewer } from './view-data/request-main-process-to-launch-photo-data-viewer';
 
 interface MoreOptionsMenuItem {
@@ -51,11 +51,13 @@ export class MoreOptionsMenuComponent {
   public readonly photo = input.required<Photo>();
   /** Where the photo is shown, which decides the item that shows it in the other place. */
   public readonly place = input.required<PhotoInfoViewerPlace>();
-  /** The room around the button, which the viewer measures when the button is clicked (roomAround()). */
+  /** The room around the button when it was clicked, which the viewer measures (roomAround()). */
   public readonly room = input.required<RoomAroundButton>();
 
-  /** Where the menu opens, from the room around the button and the height of the items. */
-  protected readonly placement = computed(() => placeMenu(this.room(), this.items().length));
+  /** The menu's size once it is in the page: until then, the menu is below its button, where it is measured. */
+  private readonly size = signal<MoreOptionsMenuSize | null>(null);
+  /** Where the menu opens: where it fits, by its size and the room around the button (placeMenu()). */
+  protected readonly placement = computed(() => placeMenu(this.room(), this.size()));
 
   /** How far the menu was beyond the edge of its area when it opened, by which it is moved towards the inside. */
   private readonly cutOff = signal(0);
@@ -80,7 +82,9 @@ export class MoreOptionsMenuComponent {
       items.push({ textKey: 'photoInfo.menu.revealInSidebar', onClick: () => this.revealInSidebar(photo) });
     items.push({ textKey: 'photoInfo.menu.openFolder', onClick: () => this.openFolder(photo) });
     if (photo.hasGpsInfo) {
+      // In the order of Photo Data Viewer's buttons beside the latitude and the longitude.
       items.push({ textKey: 'photoInfo.menu.openGoogleMaps', onClick: () => this.openGoogleMaps(photo) });
+      items.push({ textKey: 'photoInfo.menu.openGoogleEarth', onClick: () => this.openGoogleEarth(photo) });
       items.push({ textKey: 'photoInfo.menu.openGoogleStreetView', onClick: () => this.openGoogleStreetView(photo) });
     }
     items.push({ textKey: 'photoInfo.menu.viewData', onClick: () => this.viewData(photo) });
@@ -88,12 +92,17 @@ export class MoreOptionsMenuComponent {
   });
 
   constructor() {
-    // The menu is as wide as its longest item, so it is measured once it is in the page, before it is painted.
+    // The menu is as high as its items and as wide as its longest item, so it is measured once it is in the page,
+    // below its button, and placed where it fits before it is painted: when a signal changes in this hook, Angular
+    // renders again before it returns to the browser (ApplicationRef's synchronize()). The size is the layout's, which
+    // no transform of the map's zoom changes.
     afterNextRender({
       read: () => {
         const moreOptionsButton = this.element.parentElement;
-        if (moreOptionsButton)
-          this.cutOff.set(cutOffAtEdgeOfArea(this.element, moreOptionsButton));
+        if (!moreOptionsButton)
+          return;
+        this.size.set({ width: this.element.offsetWidth, height: this.element.offsetHeight });
+        this.cutOff.set(cutOffAtEdgeOfArea(this.element, moreOptionsButton));
       },
     });
   }
@@ -139,6 +148,21 @@ export class MoreOptionsMenuComponent {
             '"Open Google Maps" Menu Item',
             'Photo Info Viewer',
             'https://maps.google.com/ with query parameters for latitude, longitude, and zoom');
+  }
+
+  /**
+   * Google Earth searches for the latitude and the longitude: it goes to the place and marks it with a pin. The address
+   * is that of Photo Data Viewer's Google Earth button (src/components/photo-data/row/LatLngRow.tsx of
+   * https://github.com/TomoyukiAota/photo-data-viewer), so that both open the same view.
+   */
+  private openGoogleEarth(photo: Photo): void {
+    logger.info(`Clicked "Open Google Earth" menu item for ${photo.path}`);
+    Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Open Google Earth"');
+    const { latitude, longitude } = photo.exif.gpsInfo.latLng;
+    openUrl(`https://earth.google.com/web/search/${latitude},${longitude}`,
+            '"Open Google Earth" Menu Item',
+            'Photo Info Viewer',
+            'https://earth.google.com/web/search/ with latitude and longitude');
   }
 
   private openGoogleStreetView(photo: Photo): void {

@@ -25,6 +25,25 @@ describe('ConfirmDialogComponent', () => {
     expect(close).toHaveBeenLastCalledWith(false);
     ok.click();
     expect(close).toHaveBeenLastCalledWith(true);
+    expect(host.querySelector('.path')).toBeNull();
+  });
+
+  it('shows the path that the question is about on the line below it, as it is, in either direction of the text', async () => {
+    const path = 'C:\\Photos  with two spaces\\写真 # 100%';
+    await TestBed.configureTestingModule({
+      imports: [ConfirmDialogComponent],
+      providers: [
+        { provide: MAT_DIALOG_DATA, useValue: { message: 'Do you want to open the folder below?', path } },
+        { provide: MatDialogRef, useValue: { close: vi.fn() } },
+      ],
+    }).compileComponents();
+    const fixture = TestBed.createComponent(ConfirmDialogComponent);
+    await fixture.whenStable();
+    const host: HTMLElement = fixture.nativeElement;
+
+    expect(host.querySelector('.message').textContent).toBe('Do you want to open the folder below?');
+    // In a <bdi>, a path keeps its order in a language written from right to left.
+    expect(host.querySelector('.message + .path > bdi').textContent).toBe(path);
   });
 });
 
@@ -42,6 +61,15 @@ describe('ConfirmDialogService', () => {
     expect(confirmed).toBe(true);
     expect(open).toHaveBeenCalledExactlyOnceWith(ConfirmDialogComponent, expect.objectContaining({
       data: { message: 'Do you want to continue?' }, role: 'alertdialog', ariaLabel: 'Photo Location Map',
+    }));
+  });
+
+  it('gives the dialog the path that a question is about', async () => {
+    const open = vi.fn().mockReturnValue({ afterClosed: () => of(true) });
+    TestBed.configureTestingModule({ providers: [{ provide: MatDialog, useValue: { open } }] });
+    await TestBed.inject(ConfirmDialogService).confirm('Do you want to open the file below?', '/photos/a.jpg');
+    expect(open).toHaveBeenCalledExactlyOnceWith(ConfirmDialogComponent, expect.objectContaining({
+      data: { message: 'Do you want to open the file below?', path: '/photos/a.jpg' },
     }));
   });
 

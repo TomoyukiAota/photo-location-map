@@ -82,6 +82,10 @@
       "openFolder": "เปิดโฟลเดอร์"
     }
   },
+  "dropToOpen": {
+    "openFolder": "ต้องการเปิดโฟลเดอร์ด้านล่างหรือไม่",
+    "openFile": "ต้องการเปิดไฟล์ด้านล่างหรือไม่"
+  },
   "photoInfo": {
     "unavailable": "ไม่มีข้อมูลรูปภาพ",
     "openFile": "เปิดไฟล์",
@@ -95,6 +99,7 @@
       "revealInSidebar": "แสดงในแถบด้านข้าง",
       "openGoogleMaps": "เปิด Google Maps",
       "openGoogleStreetView": "เปิด Google Street View",
+      "openGoogleEarth": "เปิด Google Earth",
       "viewData": "ดูข้อมูล"
     },
     "pathTooLong": "ไม่สามารถแสดงภาพขนาดย่อได้ เนื่องจากความยาวของเส้นทางไฟล์คือ {{length}} อักขระ Windows จำกัดความยาวของเส้นทางไว้ไม่เกิน {{maximum}} อักขระ โปรดเปลี่ยนตำแหน่งของไฟล์เพื่อให้เส้นทางสั้นลง หากต้องการดูรายละเอียด ให้กด Ctrl+Shift+I แล้วอ่านข้อความในคอนโซล",

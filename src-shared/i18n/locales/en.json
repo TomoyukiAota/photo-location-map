@@ -82,6 +82,10 @@
       "openFolder": "Open Folder"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Do you want to open the folder below?",
+    "openFile": "Do you want to open the file below?"
+  },
   "photoInfo": {
     "unavailable": "Photo information is unavailable.",
     "openFile": "Open File",
@@ -95,6 +99,7 @@
       "revealInSidebar": "Reveal in Sidebar",
       "openGoogleMaps": "Open Google Maps",
       "openGoogleStreetView": "Open Google Street View",
+      "openGoogleEarth": "Open Google Earth",
       "viewData": "View Data"
     },
     "pathTooLong": "Thumbnail cannot be displayed because the file path is {{length}} characters long. Windows limits a path to {{maximum}} characters. Please change file location to shorten the path of the file. For details, press Ctrl+Shift+I and read the console messages.",

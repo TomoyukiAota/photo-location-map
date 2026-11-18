@@ -82,6 +82,10 @@
       "openFolder": "Ordner öffnen"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Möchten Sie den folgenden Ordner öffnen?",
+    "openFile": "Möchten Sie die folgende Datei öffnen?"
+  },
   "photoInfo": {
     "unavailable": "Fotoinformationen sind nicht verfügbar.",
     "openFile": "Datei öffnen",
@@ -95,6 +99,7 @@
       "revealInSidebar": "In der Seitenleiste anzeigen",
       "openGoogleMaps": "Google Maps öffnen",
       "openGoogleStreetView": "Google Street View öffnen",
+      "openGoogleEarth": "Google Earth öffnen",
       "viewData": "Daten anzeigen"
     },
     "pathTooLong": "Die Miniatur kann nicht angezeigt werden, da der Dateipfad {{length}} Zeichen lang ist. Windows beschränkt die Pfadlänge auf höchstens {{maximum}} Zeichen. Bitte verschieben Sie die Datei, um ihren Pfad zu verkürzen. Für Details drücken Sie Strg+Umschalt+I und lesen Sie die Meldungen in der Konsole.",

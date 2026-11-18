@@ -82,6 +82,10 @@
       "openFolder": "فتح المجلد"
     }
   },
+  "dropToOpen": {
+    "openFolder": "هل تريد فتح المجلد أدناه؟",
+    "openFile": "هل تريد فتح الملف أدناه؟"
+  },
   "photoInfo": {
     "unavailable": "معلومات الصورة غير متوفرة.",
     "openFile": "فتح الملف",
@@ -95,6 +99,7 @@
       "revealInSidebar": "عرض في الشريط الجانبي",
       "openGoogleMaps": "فتح خرائط Google",
       "openGoogleStreetView": "فتح Google Street View",
+      "openGoogleEarth": "فتح Google Earth",
       "viewData": "عرض البيانات"
     },
     "pathTooLong": "لا يمكن عرض الصورة المصغّرة لأن عدد أحرف مسار الملف هو {{length}}. يحدّ Windows عدد أحرف المسار بـ {{maximum}} كحد أقصى. غيّر موقع الملف لتقصير المسار. لمعرفة التفاصيل، اضغط Ctrl+Shift+I واقرأ رسائل وحدة التحكم.",

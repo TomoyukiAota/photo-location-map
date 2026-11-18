@@ -82,6 +82,10 @@
       "openFolder": "Atidaryti aplanką"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Ar norite atidaryti toliau nurodytą aplanką?",
+    "openFile": "Ar norite atidaryti toliau nurodytą failą?"
+  },
   "photoInfo": {
     "unavailable": "Nuotraukos informacijos nėra.",
     "openFile": "Atidaryti failą",
@@ -95,6 +99,7 @@
       "revealInSidebar": "Rodyti šoninėje juostoje",
       "openGoogleMaps": "Atidaryti „Google“ žemėlapius",
       "openGoogleStreetView": "Atidaryti „Google Street View“",
+      "openGoogleEarth": "Atidaryti „Google Earth“",
       "viewData": "Peržiūrėti duomenis"
     },
     "pathTooLong": "Miniatiūros parodyti negalima, nes simbolių skaičius failo kelyje yra {{length}}. „Windows“ riboja simbolių skaičių kelyje iki {{maximum}}. Pakeiskite failo vietą, kad kelias būtų trumpesnis. Norėdami sužinoti daugiau, paspauskite Ctrl+Shift+I ir perskaitykite konsolės pranešimus.",

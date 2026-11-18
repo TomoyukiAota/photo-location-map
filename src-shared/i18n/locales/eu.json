@@ -82,6 +82,10 @@
       "openFolder": "Ireki karpeta"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Beheko karpeta ireki nahi duzu?",
+    "openFile": "Beheko fitxategia ireki nahi duzu?"
+  },
   "photoInfo": {
     "unavailable": "Argazkiaren informazioa ez dago erabilgarri.",
     "openFile": "Ireki fitxategia",
@@ -95,6 +99,7 @@
       "revealInSidebar": "Erakutsi alboko barran",
       "openGoogleMaps": "Ireki Google Maps",
       "openGoogleStreetView": "Ireki Google Street View",
+      "openGoogleEarth": "Ireki Google Earth",
       "viewData": "Ikusi datuak"
     },
     "pathTooLong": "Ezin da miniatura erakutsi, fitxategiaren bide-izenaren luzera {{length}} karaktere delako. Windows-ek gehienez {{maximum}} karaktereko bide-izenak onartzen ditu. Aldatu fitxategiaren kokalekua bide-izena laburtzeko. Xehetasunak ikusteko, sakatu Ctrl+Shift+I eta irakurri kontsolako mezuak.",
