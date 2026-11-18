@@ -81,6 +81,10 @@
       "openFolder": "Open map"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Wil je de onderstaande map openen?",
+    "openFile": "Wil je het onderstaande bestand openen?"
+  },
   "photoInfo": {
     "unavailable": "Er is geen informatie over de foto beschikbaar.",
     "openFile": "Open bestand",

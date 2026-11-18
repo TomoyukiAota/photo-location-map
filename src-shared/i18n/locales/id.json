@@ -81,6 +81,10 @@
       "openFolder": "Buka folder"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Ingin membuka folder di bawah ini?",
+    "openFile": "Ingin membuka file di bawah ini?"
+  },
   "photoInfo": {
     "unavailable": "Informasi foto tidak tersedia.",
     "openFile": "Buka file",

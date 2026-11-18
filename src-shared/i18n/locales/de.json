@@ -81,6 +81,10 @@
       "openFolder": "Ordner öffnen"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Möchten Sie den folgenden Ordner öffnen?",
+    "openFile": "Möchten Sie die folgende Datei öffnen?"
+  },
   "photoInfo": {
     "unavailable": "Fotoinformationen sind nicht verfügbar.",
     "openFile": "Datei öffnen",

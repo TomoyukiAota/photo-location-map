@@ -7,6 +7,11 @@
   white-space: pre-line; // A line break in the message starts a new line.
 }
 
+.path {
+  white-space: pre-wrap; // The spaces of the path as they are, not run together.
+  overflow-wrap: anywhere; // A path longer than the dialog is wide goes on to the next line.
+}
+
 .buttons {
   margin-top: 20px;
   display: flex;

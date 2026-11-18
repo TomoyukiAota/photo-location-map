@@ -81,6 +81,10 @@
       "openFolder": "Otvori mapu"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Želite li otvoriti sljedeću mapu?",
+    "openFile": "Želite li otvoriti sljedeću datoteku?"
+  },
   "photoInfo": {
     "unavailable": "Podaci o fotografiji nisu dostupni.",
     "openFile": "Otvori datoteku",

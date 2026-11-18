@@ -2,6 +2,7 @@ import { Service } from '@angular/core';
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { Logger } from '../../src-shared/log/logger';
 
+import { DropToOpenService } from './drop-to-open/drop-to-open.service';
 import { LanguageDialogAtAppLaunchService } from './language/language-dialog-at-app-launch.service';
 import { WelcomeDialogAtAppLaunchService } from './welcome-dialog/welcome-dialog-at-app-launch/welcome-dialog-at-app-launch.service';
 
@@ -60,6 +61,16 @@ describe('AppComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('gives the drag events of the whole window to DropToOpenService', () => {
+    const service = TestBed.inject(DropToOpenService);
+    const dragOver = vi.spyOn(service, 'dragOver').mockImplementation(() => undefined);
+    const drop = vi.spyOn(service, 'drop').mockResolvedValue(undefined);
+    const events = ['dragenter', 'dragover', 'drop'].map(type => new Event(type));
+    events.forEach(event => window.dispatchEvent(event));
+    expect(dragOver.mock.calls).toEqual([[events[0]], [events[1]]]);
+    expect(drop.mock.calls).toEqual([[events[2]]]);
   });
 
   it('shows the Welcome dialog only once the Language dialog is closed', async () => {

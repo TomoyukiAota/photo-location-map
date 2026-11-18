@@ -81,6 +81,10 @@
       "openFolder": "Mở thư mục"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Bạn có muốn mở thư mục bên dưới không?",
+    "openFile": "Bạn có muốn mở tệp bên dưới không?"
+  },
   "photoInfo": {
     "unavailable": "Không có thông tin ảnh.",
     "openFile": "Mở tệp",

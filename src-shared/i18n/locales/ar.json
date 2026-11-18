@@ -81,6 +81,10 @@
       "openFolder": "فتح المجلد"
     }
   },
+  "dropToOpen": {
+    "openFolder": "هل تريد فتح المجلد أدناه؟",
+    "openFile": "هل تريد فتح الملف أدناه؟"
+  },
   "photoInfo": {
     "unavailable": "معلومات الصورة غير متوفرة.",
     "openFile": "فتح الملف",
