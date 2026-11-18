@@ -288,6 +288,34 @@ describe('PhotoInfoViewerComponent', () => {
       expect(menuItems().map(item => item.textContent)).toEqual(['Open Folder', 'View Data']);
     });
 
+    it('opens where its items fit once it is in the page: below its button, or above it when they do not fit below', async () => {
+      // The page has no layout here: the sidebar, the button and the menu get the sizes that a layout would give them.
+      const sidebar = document.createElement('div');
+      sidebar.id = 'home-left-sidebar';
+      Object.defineProperty(sidebar, 'clientHeight', { value: 400 });
+      document.body.appendChild(sidebar);
+      const height = vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function (this: HTMLElement) {
+        return this.matches('.photo-info-viewer-more-options-menu') ? menuItems().length * 35 : 0;
+      });
+      try {
+        // 120 px below the button: room for the 2 items of a photo without a location, and not for the 6 of one with it.
+        for (const [photo, top, bottom] of [[photoAt('/photos/drawing.png'), '37px', ''], [cameraPhoto(), '', '37px']] as const) {
+          await show(photo, 'dir-tree-view');
+          sidebar.appendChild(element);
+          button('More Options').getBoundingClientRect = () => ({ left: 240, right: 276, bottom: 280 }) as DOMRect;
+
+          await click(button('More Options'));
+
+          const menu = element.querySelector<HTMLElement>('.photo-info-viewer-more-options-menu');
+          expect({ top: menu.style.top, bottom: menu.style.bottom }).toEqual({ top, bottom });
+          element.remove();
+        }
+      } finally {
+        height.mockRestore();
+        sidebar.remove();
+      }
+    });
+
     it('closes when its button is clicked again, and when its button loses the focus', async () => {
       await show(cameraPhoto(), 'leaflet-map-popup');
       await click(button('More Options'));

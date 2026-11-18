@@ -240,11 +240,12 @@ for (const code of codes) {
     await step('popup-menu', async () => {
       await page.locator('.plm-leaflet-map-div-icon').first().dispatchEvent('click');
       // TL;DR: The button is clicked with the mouse where it is once the map has panned, as a person clicks it.
-      // Details: The menu opens below its button, beside it or above it by the room around the button when it is
-      // clicked. Playwright's click of the element scrolled the map's container, which Leaflet keeps at no scroll, to
-      // bring the button into view: for the click, the button was 270 px higher, at the top of the map, and the menu
-      // opened below it, to be cut off at the map's bottom edge once Leaflet had scrolled the container back. The map
-      // also pans for about a quarter of a second after the popup opens, which moves the button.
+      // Details: The menu opens below its button, beside it or above it, where its size fits in the room around the
+      // button when it is clicked. Playwright's click of the element scrolled the map's container, which Leaflet keeps
+      // at no scroll, to bring the button into view: for the click, the button was 270 px higher, at the top of the
+      // map, and the menu opened below it, to be cut off at the map's bottom edge once Leaflet had scrolled the
+      // container back. The map also pans for about a quarter of a second after the popup opens, which moves the
+      // button.
       const moreOptionsButton = '.leaflet-popup .photo-info-viewer-more-options-button';
       await untilStill(moreOptionsButton);
       const buttonBox = await page.locator(moreOptionsButton).boundingBox();

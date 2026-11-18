@@ -12,7 +12,7 @@ import { OpenedDirectory } from '../shared/opened-directory';
 import { removeFocus } from '../shared/remove-focus';
 import { GeneratedThumbnailService } from './generated-thumbnail.service';
 import { MoreOptionsMenuComponent } from './more-options-menu/more-options-menu.component';
-import { MoreOptionsMenuPlacement, placeMenu, roomAround } from './more-options-menu/more-options-menu-placement';
+import { roomAround, RoomAroundButton } from './more-options-menu/more-options-menu-placement';
 import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
 import { PhotoInfoViewerPlace } from './photo-info-viewer-place';
 import { ThumbnailRotationService } from './thumbnail-rotation.service';
@@ -153,8 +153,11 @@ export class PhotoInfoViewerComponent {
   /** Whether the thumbnail has just been made while this showed that it was being made, and fades in. */
   protected readonly fadesInAfterGeneration = signal(false);
 
-  /** Where the More Options menu is, while it is open. */
-  protected readonly menuPlacement = signal<MoreOptionsMenuPlacement | null>(null);
+  /**
+   * The room around the More Options button when it was clicked, while its menu is open: the menu opens where it fits
+   * (MoreOptionsMenuComponent).
+   */
+  protected readonly menuRoom = signal<RoomAroundButton | null>(null);
 
   /** The movie of a photo's Live Photos, for livePhotosFilePath(). */
   private livePhotos: { photo: Photo; filePath: string | null } | undefined;
@@ -281,16 +284,16 @@ export class PhotoInfoViewerComponent {
   /** Opens the menu, or closes it when it is open. */
   protected onMoreOptionsButtonClick(event: MouseEvent): void {
     this.keepToButton(event);
-    if (this.menuPlacement()) {
+    if (this.menuRoom()) {
       this.closeMenu();
       removeFocus(); // To restore the button's style
       return;
     }
-    this.menuPlacement.set(placeMenu(roomAround(event.currentTarget as HTMLElement)));
+    this.menuRoom.set(roomAround(event.currentTarget as HTMLElement));
   }
 
   protected closeMenu(): void {
-    this.menuPlacement.set(null);
+    this.menuRoom.set(null);
   }
 
   /**

@@ -8,7 +8,7 @@ import { Photo } from '../../shared/model/photo.model';
 import { openContainingFolder } from '../../shared/open-with-os';
 import { removeFocus } from '../../shared/remove-focus';
 import { photoInfoViewerLogger as logger } from '../photo-info-viewer-logger';
-import { cutOffAtEdgeOfArea, MoreOptionsMenuPlacement } from './more-options-menu-placement';
+import { cutOffAtEdgeOfArea, MoreOptionsMenuSize, placeMenu, RoomAroundButton } from './more-options-menu-placement';
 import { requestMainProcessToLaunchPhotoDataViewer } from './view-data/request-main-process-to-launch-photo-data-viewer';
 
 interface MoreOptionsMenuItem {
@@ -46,8 +46,13 @@ export class MoreOptionsMenuComponent {
   private readonly element = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
 
   public readonly photo = input.required<Photo>();
-  /** Where the menu opens, which the viewer decides from the room around the button (placeMenu()). */
-  public readonly placement = input.required<MoreOptionsMenuPlacement>();
+  /** The room around the button when it was clicked, which the viewer measures (roomAround()). */
+  public readonly room = input.required<RoomAroundButton>();
+
+  /** The menu's size once it is in the page: until then, the menu is below its button, where it is measured. */
+  private readonly size = signal<MoreOptionsMenuSize | null>(null);
+  /** Where the menu opens: where it fits, by its size and the room around the button (placeMenu()). */
+  protected readonly placement = computed(() => placeMenu(this.room(), this.size()));
 
   /** How far the menu was beyond the edge of its area when it opened, by which it is moved towards the inside. */
   private readonly cutOff = signal(0);
@@ -74,12 +79,17 @@ export class MoreOptionsMenuComponent {
   });
 
   constructor() {
-    // The menu is as wide as its longest item, so it is measured once it is in the page, before it is painted.
+    // The menu is as high as its items and as wide as its longest item, so it is measured once it is in the page,
+    // below its button, and placed where it fits before it is painted: when a signal changes in this hook, Angular
+    // renders again before it returns to the browser (ApplicationRef's synchronize()). The size is the layout's, which
+    // no transform of the map's zoom changes.
     afterNextRender({
       read: () => {
         const moreOptionsButton = this.element.parentElement;
-        if (moreOptionsButton)
-          this.cutOff.set(cutOffAtEdgeOfArea(this.element, moreOptionsButton));
+        if (!moreOptionsButton)
+          return;
+        this.size.set({ width: this.element.offsetWidth, height: this.element.offsetHeight });
+        this.cutOff.set(cutOffAtEdgeOfArea(this.element, moreOptionsButton));
       },
     });
   }
