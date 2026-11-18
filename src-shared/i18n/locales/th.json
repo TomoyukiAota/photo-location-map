@@ -89,6 +89,8 @@
     "rotateThumbnail": "หมุนภาพขนาดย่อ",
     "menu": {
       "selectOnlyThis": "เลือกเฉพาะไฟล์นี้",
+      "selectPrevious": "เลือกไฟล์ก่อนหน้า",
+      "selectNext": "เลือกไฟล์ถัดไป",
       "openFolder": "เปิดโฟลเดอร์",
       "openGoogleMaps": "เปิด Google Maps",
       "openGoogleStreetView": "เปิด Google Street View",
@@ -238,7 +240,9 @@
     "selection": {
       "title": "การเลือก",
       "undo": "เลิกทำ",
-      "redo": "ทำซ้ำ"
+      "redo": "ทำซ้ำ",
+      "selectPrevious": "เลือกไฟล์ก่อนหน้า",
+      "selectNext": "เลือกไฟล์ถัดไป"
     },
     "settings": {
       "title": "การตั้งค่า",

@@ -89,6 +89,8 @@
     "rotateThumbnail": "Kierrä pikkukuvaa",
     "menu": {
       "selectOnlyThis": "Valitse vain tämä tiedosto",
+      "selectPrevious": "Valitse edellinen tiedosto",
+      "selectNext": "Valitse seuraava tiedosto",
       "openFolder": "Avaa kansio",
       "openGoogleMaps": "Avaa Google Maps",
       "openGoogleStreetView": "Avaa Google Street View",
@@ -238,7 +240,9 @@
     "selection": {
       "title": "Valinta",
       "undo": "Kumoa",
-      "redo": "Tee uudelleen"
+      "redo": "Tee uudelleen",
+      "selectPrevious": "Valitse edellinen tiedosto",
+      "selectNext": "Valitse seuraava tiedosto"
     },
     "settings": {
       "title": "Asetukset",

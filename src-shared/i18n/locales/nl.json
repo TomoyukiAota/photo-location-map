@@ -89,6 +89,8 @@
     "rotateThumbnail": "Roteer miniatuur",
     "menu": {
       "selectOnlyThis": "Selecteer alleen dit bestand",
+      "selectPrevious": "Selecteer het vorige bestand",
+      "selectNext": "Selecteer het volgende bestand",
       "openFolder": "Open map",
       "openGoogleMaps": "Open Google Maps",
       "openGoogleStreetView": "Open Google Street View",
@@ -238,7 +240,9 @@
     "selection": {
       "title": "Selectie",
       "undo": "Herstel",
-      "redo": "Opnieuw"
+      "redo": "Opnieuw",
+      "selectPrevious": "Selecteer het vorige bestand",
+      "selectNext": "Selecteer het volgende bestand"
     },
     "settings": {
       "title": "Instellingen",

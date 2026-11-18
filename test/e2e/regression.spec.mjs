@@ -468,7 +468,7 @@ const menuInEnglish = [
     items: ['About Photo Location Map', 'Services', 'Hide Photo Location Map', 'Hide Others', 'Show All', 'Quit Photo Location Map'],
   }] : []),
   { label: 'View', items: ['Reload', 'Actual Size', 'Zoom In', 'Zoom Out', 'Toggle Full Screen'] },
-  { label: 'Selection', items: ['Undo', 'Redo'] },
+  { label: 'Selection', items: ['Undo', 'Redo', 'Select Previous', 'Select Next'] },
   { label: 'Settings', items: ['Open Settings'] },
   { label: 'Help', items: [...(isMac ? [] : ['About Photo Location Map']),
     'Show Welcome Dialog', 'Advanced Menu', 'Open Log Folder', 'Toggle Developer Tools'] },
@@ -479,7 +479,7 @@ const menuInJapanese = [
     items: ['Photo Location Map について', 'サービス', 'Photo Location Map を非表示', 'ほかを非表示', 'すべてを表示', 'Photo Location Map を終了'],
   }] : []),
   { label: '表示', items: ['再読み込み', '実際のサイズ', '拡大', '縮小', 'フルスクリーンの切り替え'] },
-  { label: '選択', items: ['元に戻す', 'やり直す'] },
+  { label: '選択', items: ['元に戻す', 'やり直す', '前のファイルを選択', '次のファイルを選択'] },
   { label: '設定', items: ['設定を開く'] },
   { label: 'ヘルプ', items: [...(isMac ? [] : ['Photo Location Map について']),
     '「ようこそダイアログ」を表示', '詳細メニュー', 'ログフォルダーを開く', '開発者ツールの切り替え'] },
@@ -697,7 +697,7 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   await expect(popup.locator('.photo-info-viewer-date-time-taken')).toHaveText(/^\d{4}-\d{2}-\d{2} \([日月火水木金土]\) \d{2}:\d{2}:\d{2}$/);
   await popup.locator('.photo-info-viewer-more-options-button').click();
   await expect(page.locator('.photo-info-viewer-more-options-menu-item'))
-    .toHaveText(['このファイルのみを選択', 'フォルダーを開く', 'Google マップを開く', 'Google ストリートビューを開く', 'データを表示']);
+    .toHaveText(['このファイルのみを選択', '前のファイルを選択', 'フォルダーを開く', 'Google マップを開く', 'Google ストリートビューを開く', 'データを表示']);
   // The menu is wider than in English, and this popup is at the map's left edge: the menu is not cut off there.
   const menuBox = await page.locator('.photo-info-viewer-more-options-menu').boundingBox();
   const mapBox = await page.locator('#home-map').boundingBox();
@@ -795,7 +795,7 @@ test('on a computer whose language is Arabic, the application is laid out from r
   // The photo's menu opens the other way round, and stays within the map.
   await popup.locator('.photo-info-viewer-more-options-button').click();
   await expect(page.locator('.photo-info-viewer-more-options-menu-item'))
-    .toHaveText(['تحديد هذا الملف فقط', 'فتح المجلد', 'فتح خرائط Google', 'فتح Google Street View', 'عرض البيانات']);
+    .toHaveText(['تحديد هذا الملف فقط', 'تحديد الملف السابق', 'فتح المجلد', 'فتح خرائط Google', 'فتح Google Street View', 'عرض البيانات']);
   const menuBox = await page.locator('.photo-info-viewer-more-options-menu').boundingBox();
   const mapBox = await map.boundingBox();
   expect(menuBox.x).toBeGreaterThanOrEqual(mapBox.x);
@@ -815,7 +815,7 @@ test('on a computer whose language is Arabic, the application is laid out from r
       items: ['حول Photo Location Map', 'الخدمات', 'إخفاء Photo Location Map', 'إخفاء الأخرى', 'إظهار الكل', 'إنهاء Photo Location Map'],
     }] : []),
     { label: 'عرض', items: ['إعادة التحميل', 'الحجم الفعلي', 'تكبير', 'تصغير', 'تبديل وضع ملء الشاشة'] },
-    { label: 'التحديد', items: ['تراجع', 'إعادة'] },
+    { label: 'التحديد', items: ['تراجع', 'إعادة', 'تحديد الملف السابق', 'تحديد الملف التالي'] },
     { label: 'الإعدادات', items: ['فتح الإعدادات'] },
     { label: 'مساعدة', items: [...(isMac ? [] : ['حول Photo Location Map']),
       'إظهار مربع حوار الترحيب', 'القائمة المتقدمة', 'فتح مجلد السجلات', 'إظهار/إخفاء أدوات المطوّرين'] },
@@ -1621,6 +1621,131 @@ test('undo and redo step through the photo selection from the Selection menu, wh
   await expect(treeCheckbox('Unga')).not.toBeChecked();
   await expectRepresentedPhotos(2);
   await expect.poll(enabled).toEqual({ undo: true, redo: false });
+});
+test('Select Previous and Select Next go through the photos in the order they were taken, from a photo\'s menu and from the Selection menu', async () => {
+  // The photos were taken at Gold Coast in 2013, Unga in 2015, Kobe in 2017 and Apple Park in 2019: not in the order
+  // of their folders' names. The Selection menu's items act on the one selected photo and reach the renderer through
+  // IPC, as Undo and Redo do.
+  const menuItem = id => ({
+    click: () => app.evaluate(({ Menu }, id) => Menu.getApplicationMenu().getMenuItemById(id).click(), id),
+    enabled: () => app.evaluate(({ Menu }, id) => Menu.getApplicationMenu().getMenuItemById(id).enabled, id),
+  });
+  const selectPrevious = menuItem('photo-selection-select-previous');
+  const selectNext = menuItem('photo-selection-select-next');
+  const enabled = async () => ({ previous: await selectPrevious.enabled(), next: await selectNext.enabled() });
+  expect(await app.evaluate(({ Menu }) => ['photo-selection-select-previous', 'photo-selection-select-next']
+    .map(id => Menu.getApplicationMenu().getMenuItemById(id).accelerator))).toEqual(['CmdOrCtrl+Left', 'CmdOrCtrl+Right']);
+  const folders = { 'IMG_1579.JPG': 'Gold Coast', 'IMG_2581.JPG': 'Unga', 'IMG_4676.JPG': 'Kobe', 'IMG_5769.JPG': 'Apple Park' };
+  const popup = page.locator('.leaflet-popup');
+  /** The photo is the only one selected: checked alone in the tree, and alone on the map, whose popup opens for it. */
+  async function expectSelected(name) {
+    await expectRepresentedPhotos(1);
+    await expect(popup.locator('.photo-info-viewer-name')).toHaveText(name);
+    for (const [photo, folder] of Object.entries(folders))
+      await expect(treeCheckbox(folder)).toBeChecked({ checked: photo === name });
+  }
+  await dismissWelcome();
+  await openFolderWithPicker(photoFolder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
+  await expectRepresentedPhotos(4);
+  await expect.poll(enabled).toEqual({ previous: false, next: false });
+  await page.evaluate(photo => window.plmInternalRenderer.photoSelection.selectOnlyThis(photo), path.join(photoFolder, 'Gold Coast/IMG_1579.JPG'));
+  await expectSelected('IMG_1579.JPG');
+  await expect.poll(enabled).toEqual({ previous: false, next: true });
+
+  // The Selection menu, from the first photo to the last, and back.
+  for (const name of ['IMG_2581.JPG', 'IMG_4676.JPG', 'IMG_5769.JPG']) {
+    await selectNext.click();
+    await expectSelected(name);
+  }
+  await expect.poll(enabled).toEqual({ previous: true, next: false });
+  // Nothing comes after the last photo, nor round to the first: clicked anyway, the item leaves the selection.
+  await selectNext.click();
+  for (const name of ['IMG_4676.JPG', 'IMG_2581.JPG', 'IMG_1579.JPG']) {
+    await selectPrevious.click();
+    await expectSelected(name);
+  }
+  await expect.poll(enabled).toEqual({ previous: false, next: true });
+  // Each step is in the selection's history.
+  await menuItem('photo-selection-undo').click();
+  await expectSelected('IMG_2581.JPG');
+  await expect.poll(enabled).toEqual({ previous: true, next: true });
+
+  // A photo's menu, right after Select Only This: in the popup of the map, and in the photo's row of the tree.
+  const moreOptionsItems = page.locator('.photo-info-viewer-more-options-menu-item');
+  const withLocation = ['Open Folder', 'Open Google Maps', 'Open Google Street View', 'View Data'];
+  await popup.locator('.photo-info-viewer-more-options-button').click();
+  await expect(moreOptionsItems).toHaveText(['Select Only This', 'Select Previous', 'Select Next', ...withLocation]);
+  await moreOptionsItems.filter({ hasText: 'Select Next' }).click();
+  await expectSelected('IMG_4676.JPG');
+  const kobe = page.locator('mat-tree-node').filter({ has: page.getByText('Kobe', { exact: true }) });
+  await kobe.getByRole('button').click();
+  const row = page.locator('mat-tree-node').filter({ hasText: 'IMG_4676.JPG' });
+  await row.locator('.photo-info-viewer-thumbnail').hover();
+  await row.getByRole('button', { name: 'More Options' }).click();
+  await expect(moreOptionsItems).toHaveText(['Select Only This', 'Select Previous', 'Select Next', ...withLocation]);
+  await moreOptionsItems.filter({ hasText: 'Select Next' }).click();
+  await expectSelected('IMG_5769.JPG');
+  await popup.locator('.photo-info-viewer-more-options-button').click();
+  await expect(moreOptionsItems).toHaveText(['Select Only This', 'Select Previous', ...withLocation]);
+  await moreOptionsItems.filter({ hasText: 'Select Previous' }).click();
+  await expectSelected('IMG_4676.JPG');
+  await expect.poll(enabled).toEqual({ previous: true, next: true });
+
+  // The items' keys: Cmd on macOS and Ctrl on Windows and Linux, with the Left and Right arrow keys. Electron gives
+  // the menu a key that the page leaves unhandled, as the page does where nothing else uses them, a node of the tree
+  // and the map too, while a text field moves its caret with them. Playwright's keys never reach the menu, as the
+  // browser skips a key of CDP that the page leaves unless it has a native key code (Chromium's input_handler.cc):
+  // these have one, with what macOS gives a key of the menu, the arrow's character, and AppKit's commands for it.
+  const cdp = await page.context().newCDPSession(page);
+  const nativeArrows = {
+    ArrowLeft: { keyCode: 37, macKeyCode: 123, character: '\uF702', macCommand: 'moveToLeftEndOfLine' },
+    ArrowRight: { keyCode: 39, macKeyCode: 124, character: '\uF703', macCommand: 'moveToRightEndOfLine' },
+  };
+  async function pressWithCmdOrCtrl(key) {
+    const { keyCode, macKeyCode, character, macCommand } = nativeArrows[key];
+    const event = { modifiers: isMac ? 4 : 2, key, code: key, windowsVirtualKeyCode: keyCode, nativeVirtualKeyCode: isMac ? macKeyCode : keyCode };
+    await cdp.send('Input.dispatchKeyEvent', { type: 'rawKeyDown', ...event,
+      ...(isMac ? { text: character, unmodifiedText: character, commands: [macCommand] } : {}) });
+    await cdp.send('Input.dispatchKeyEvent', { type: 'keyUp', ...event });
+  }
+  await page.evaluate(() => document.activeElement.blur());
+  await pressWithCmdOrCtrl('ArrowLeft');
+  await expectSelected('IMG_2581.JPG');
+  // Again and again, through the trip: the first photo has none before it.
+  await pressWithCmdOrCtrl('ArrowLeft');
+  await expectSelected('IMG_1579.JPG');
+  await expect.poll(enabled).toEqual({ previous: false, next: true });
+  await pressWithCmdOrCtrl('ArrowLeft');
+  await pressWithCmdOrCtrl('ArrowRight');
+  await expectSelected('IMG_2581.JPG');
+  // A node of the tree: its own arrows would have taken the keys, to collapse the folder or to go into it.
+  await expect(kobe).toHaveAttribute('aria-expanded', 'true');
+  await kobe.focus();
+  await pressWithCmdOrCtrl('ArrowRight');
+  await expectSelected('IMG_4676.JPG');
+  await pressWithCmdOrCtrl('ArrowLeft');
+  await expectSelected('IMG_2581.JPG');
+  await expect(kobe).toHaveAttribute('aria-expanded', 'true');
+  await expect(kobe).toBeFocused();
+  // The tree keeps the arrows alone.
+  await page.keyboard.press('ArrowLeft');
+  await expect(kobe).toHaveAttribute('aria-expanded', 'false');
+  // The map, whose arrows alone pan it.
+  await page.locator('#plm-leaflet-map').focus();
+  await pressWithCmdOrCtrl('ArrowRight');
+  await expectSelected('IMG_4676.JPG');
+  // A text field: to the start of the line on macOS, and of the word on Windows and Linux.
+  await settings();
+  const search = page.locator('app-settings-dialog input[type="search"]');
+  await search.fill('Norsk bokmål');
+  await pressWithCmdOrCtrl('ArrowLeft');
+  expect(await search.evaluate(input => [input.value, input.selectionStart])).toEqual(['Norsk bokmål', isMac ? 0 : 'Norsk '.length]);
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await expect(page.locator('app-settings-dialog')).toHaveCount(0);
+  // The key went to the text field only: one step back from where the selection was.
+  await selectPrevious.click();
+  await expectSelected('IMG_2581.JPG');
 });
 test('the sort menu orders the tree by name and by shooting time, shows its choice, and keeps it across a restart', async () => {
   // Photos named against the order they were taken in (Apple Park 2019, Kobe 2017, Unga 2015, Gold Coast 2013), so

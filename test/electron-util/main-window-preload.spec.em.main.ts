@@ -79,6 +79,7 @@ describe('The main window\'s preload', () => {
 
   it('sends each operation on its channel, with only its own arguments', async () => {
     const photoSelection = { isUndoMenuEnabled: true, isRedoMenuEnabled: false };
+    const previousNext = { isSelectPreviousMenuEnabled: false, isSelectNextMenuEnabled: true };
     const viewerParams = { photo: { name: 'a.jpg', path: '/photos/a.jpg' } };
     const operations: [(plm: any) => unknown, Call][] = [
       [plm => plm.storage.snapshot(), { method: 'sendSync', channel: IpcConstants.UserDataStorage.Snapshot, args: [] }],
@@ -100,6 +101,8 @@ describe('The main window\'s preload', () => {
       [plm => plm.app.restart(), { method: 'send', channel: IpcConstants.AppRestart.Request, args: [] }],
       [plm => plm.commandLine.openTarget(), { method: 'invoke', channel: IpcConstants.CommandLineOptions.OpenTarget, args: [] }],
       [plm => plm.menus.updateUndoRedo(photoSelection), { method: 'invoke', channel: IpcConstants.PhotoSelection.UpdateUndoRedoMenus, args: [photoSelection] }],
+      [plm => plm.menus.updateSelectPreviousNext(previousNext),
+        { method: 'invoke', channel: IpcConstants.PhotoSelection.UpdateSelectPreviousNextMenus, args: [previousNext] }],
       [plm => plm.photoDataViewer.open(viewerParams), { method: 'invoke', channel: IpcConstants.PhotoDataViewer.Name, args: [viewerParams] }],
       [plm => plm.explorerContextMenu.add(), { method: 'invoke', channel: IpcConstants.ExplorerContextMenu.Add, args: [] }],
       [plm => plm.explorerContextMenu.remove(), { method: 'invoke', channel: IpcConstants.ExplorerContextMenu.Remove, args: [] }],
@@ -122,6 +125,8 @@ describe('The main window\'s preload', () => {
       ['onWelcomeDialog', IpcConstants.WelcomeDialog.Name, []],
       ['onUndo', IpcConstants.PhotoSelection.Undo, []],
       ['onRedo', IpcConstants.PhotoSelection.Redo, []],
+      ['onSelectPrevious', IpcConstants.PhotoSelection.SelectPrevious, []],
+      ['onSelectNext', IpcConstants.PhotoSelection.SelectNext, []],
       ['onRecordAtAppLaunchFinished', IpcConstants.RecordAtAppLaunch.Finished, []],
     ];
     for (const [name, channel, args] of events) {

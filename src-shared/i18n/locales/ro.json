@@ -89,6 +89,8 @@
     "rotateThumbnail": "Rotește miniatura",
     "menu": {
       "selectOnlyThis": "Selectează doar acest fișier",
+      "selectPrevious": "Selectează fișierul anterior",
+      "selectNext": "Selectează fișierul următor",
       "openFolder": "Deschide dosarul",
       "openGoogleMaps": "Deschide Google Maps",
       "openGoogleStreetView": "Deschide Google Street View",
@@ -238,7 +240,9 @@
     "selection": {
       "title": "Selecție",
       "undo": "Anulează acțiunea",
-      "redo": "Refă acțiunea"
+      "redo": "Refă acțiunea",
+      "selectPrevious": "Selectează fișierul anterior",
+      "selectNext": "Selectează fișierul următor"
     },
     "settings": {
       "title": "Setări",

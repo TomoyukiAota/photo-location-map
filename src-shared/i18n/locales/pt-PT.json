@@ -89,6 +89,8 @@
     "rotateThumbnail": "Rodar miniatura",
     "menu": {
       "selectOnlyThis": "Selecionar apenas este ficheiro",
+      "selectPrevious": "Selecionar o ficheiro anterior",
+      "selectNext": "Selecionar o ficheiro seguinte",
       "openFolder": "Abrir pasta",
       "openGoogleMaps": "Abrir o Google Maps",
       "openGoogleStreetView": "Abrir o Google Street View",
@@ -238,7 +240,9 @@
     "selection": {
       "title": "Seleção",
       "undo": "Desfazer",
-      "redo": "Refazer"
+      "redo": "Refazer",
+      "selectPrevious": "Selecionar o ficheiro anterior",
+      "selectNext": "Selecionar o ficheiro seguinte"
     },
     "settings": {
       "title": "Definições",

@@ -89,6 +89,8 @@
     "rotateThumbnail": "Pagriezt sīktēlu",
     "menu": {
       "selectOnlyThis": "Atlasīt tikai šo failu",
+      "selectPrevious": "Atlasīt iepriekšējo failu",
+      "selectNext": "Atlasīt nākamo failu",
       "openFolder": "Atvērt mapi",
       "openGoogleMaps": "Atvērt Google Maps",
       "openGoogleStreetView": "Atvērt Google Street View",
@@ -238,7 +240,9 @@
     "selection": {
       "title": "Atlase",
       "undo": "Atsaukt",
-      "redo": "Atcelt atsaukšanu"
+      "redo": "Atcelt atsaukšanu",
+      "selectPrevious": "Atlasīt iepriekšējo failu",
+      "selectNext": "Atlasīt nākamo failu"
     },
     "settings": {
       "title": "Iestatījumi",

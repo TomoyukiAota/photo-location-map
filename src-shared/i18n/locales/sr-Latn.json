@@ -89,6 +89,8 @@
     "rotateThumbnail": "Rotiraj sličicu",
     "menu": {
       "selectOnlyThis": "Izaberi samo ovu datoteku",
+      "selectPrevious": "Izaberi prethodnu datoteku",
+      "selectNext": "Izaberi sledeću datoteku",
       "openFolder": "Otvori fasciklu",
       "openGoogleMaps": "Otvori Google mape",
       "openGoogleStreetView": "Otvori Google Street View",
@@ -238,7 +240,9 @@
     "selection": {
       "title": "Izbor",
       "undo": "Opozovi",
-      "redo": "Ponovi"
+      "redo": "Ponovi",
+      "selectPrevious": "Izaberi prethodnu datoteku",
+      "selectNext": "Izaberi sledeću datoteku"
     },
     "settings": {
       "title": "Podešavanja",

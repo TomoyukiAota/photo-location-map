@@ -89,6 +89,8 @@
     "rotateThumbnail": "Roter miniatyrbilde",
     "menu": {
       "selectOnlyThis": "Marker bare denne filen",
+      "selectPrevious": "Marker forrige fil",
+      "selectNext": "Marker neste fil",
       "openFolder": "Åpne mappe",
       "openGoogleMaps": "Åpne Google Maps",
       "openGoogleStreetView": "Åpne Google Street View",
@@ -238,7 +240,9 @@
     "selection": {
       "title": "Markering",
       "undo": "Angre",
-      "redo": "Gjør om"
+      "redo": "Gjør om",
+      "selectPrevious": "Marker forrige fil",
+      "selectNext": "Marker neste fil"
     },
     "settings": {
       "title": "Innstillinger",

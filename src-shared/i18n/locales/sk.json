@@ -89,6 +89,8 @@
     "rotateThumbnail": "Otočiť miniatúru",
     "menu": {
       "selectOnlyThis": "Vybrať len tento súbor",
+      "selectPrevious": "Vybrať predchádzajúci súbor",
+      "selectNext": "Vybrať nasledujúci súbor",
       "openFolder": "Otvoriť priečinok",
       "openGoogleMaps": "Otvoriť Mapy Google",
       "openGoogleStreetView": "Otvoriť Google Street View",
@@ -238,7 +240,9 @@
     "selection": {
       "title": "Výber",
       "undo": "Späť",
-      "redo": "Znova"
+      "redo": "Znova",
+      "selectPrevious": "Vybrať predchádzajúci súbor",
+      "selectNext": "Vybrať nasledujúci súbor"
     },
     "settings": {
       "title": "Nastavenia",

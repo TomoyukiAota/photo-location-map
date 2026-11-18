@@ -89,6 +89,8 @@
     "rotateThumbnail": "סיבוב התמונה הממוזערת",
     "menu": {
       "selectOnlyThis": "בחירת קובץ זה בלבד",
+      "selectPrevious": "בחירת הקובץ הקודם",
+      "selectNext": "בחירת הקובץ הבא",
       "openFolder": "פתיחת התיקייה",
       "openGoogleMaps": "פתיחת מפות Google",
       "openGoogleStreetView": "פתיחת Google Street View",
@@ -238,7 +240,9 @@
     "selection": {
       "title": "בחירה",
       "undo": "ביטול פעולה",
-      "redo": "ביצוע חוזר"
+      "redo": "ביצוע חוזר",
+      "selectPrevious": "בחירת הקובץ הקודם",
+      "selectNext": "בחירת הקובץ הבא"
     },
     "settings": {
       "title": "הגדרות",

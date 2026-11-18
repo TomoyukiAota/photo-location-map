@@ -89,6 +89,8 @@
     "rotateThumbnail": "Повернути мініатюру",
     "menu": {
       "selectOnlyThis": "Вибрати лише цей файл",
+      "selectPrevious": "Вибрати попередній файл",
+      "selectNext": "Вибрати наступний файл",
       "openFolder": "Відкрити папку",
       "openGoogleMaps": "Відкрити Google Карти",
       "openGoogleStreetView": "Відкрити Google Street View",
@@ -238,7 +240,9 @@
     "selection": {
       "title": "Вибір",
       "undo": "Скасувати",
-      "redo": "Повторити"
+      "redo": "Повторити",
+      "selectPrevious": "Вибрати попередній файл",
+      "selectNext": "Вибрати наступний файл"
     },
     "settings": {
       "title": "Параметри",

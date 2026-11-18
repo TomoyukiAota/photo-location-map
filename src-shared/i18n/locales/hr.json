@@ -89,6 +89,8 @@
     "rotateThumbnail": "Zakreni minijaturu",
     "menu": {
       "selectOnlyThis": "Odaberi samo ovu datoteku",
+      "selectPrevious": "Odaberi prethodnu datoteku",
+      "selectNext": "Odaberi sljedeću datoteku",
       "openFolder": "Otvori mapu",
       "openGoogleMaps": "Otvori Google karte",
       "openGoogleStreetView": "Otvori Google Street View",
@@ -238,7 +240,9 @@
     "selection": {
       "title": "Odabir",
       "undo": "Poništi",
-      "redo": "Ponovi"
+      "redo": "Ponovi",
+      "selectPrevious": "Odaberi prethodnu datoteku",
+      "selectNext": "Odaberi sljedeću datoteku"
     },
     "settings": {
       "title": "Postavke",
