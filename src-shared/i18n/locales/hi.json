@@ -98,6 +98,7 @@
       "openFolder": "फ़ोल्डर खोलें",
       "openGoogleMaps": "Google Maps खोलें",
       "openGoogleStreetView": "Google Street View खोलें",
+      "openGoogleEarth": "Google Earth खोलें",
       "viewData": "डेटा देखें"
     },
     "pathTooLong": "थंबनेल नहीं दिखाया जा सकता, क्योंकि फ़ाइल के पाथ की लंबाई {{length}} वर्ण है। Windows पाथ की लंबाई को ज़्यादा से ज़्यादा {{maximum}} वर्णों तक सीमित करता है। पाथ छोटा करने के लिए फ़ाइल की जगह बदलें। विवरण के लिए, Ctrl+Shift+I दबाएँ और कंसोल के संदेश पढ़ें।",

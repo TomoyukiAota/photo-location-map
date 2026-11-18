@@ -98,6 +98,7 @@
       "openFolder": "Otevřít složku",
       "openGoogleMaps": "Otevřít Mapy Google",
       "openGoogleStreetView": "Otevřít Google Street View",
+      "openGoogleEarth": "Otevřít Google Earth",
       "viewData": "Zobrazit data"
     },
     "pathTooLong": "Miniaturu nelze zobrazit, protože počet znaků v cestě k souboru je {{length}}. Windows omezuje počet znaků v cestě na {{maximum}}. Přesuňte soubor jinam, aby byla jeho cesta kratší. Podrobnosti zjistíte stisknutím Ctrl+Shift+I a přečtením zpráv v konzoli.",

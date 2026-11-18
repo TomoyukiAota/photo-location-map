@@ -98,6 +98,7 @@
       "openFolder": "Avaa kansio",
       "openGoogleMaps": "Avaa Google Maps",
       "openGoogleStreetView": "Avaa Google Street View",
+      "openGoogleEarth": "Avaa Google Earth",
       "viewData": "Näytä tiedot"
     },
     "pathTooLong": "Pikkukuvaa ei voi näyttää, koska tiedoston polun pituus on {{length}} merkkiä. Windows rajoittaa polun pituuden {{maximum}} merkkiin. Siirrä tiedosto, jotta sen polku lyhenee. Saat lisätietoja painamalla Ctrl+Vaihto+I ja lukemalla konsolin viestit.",

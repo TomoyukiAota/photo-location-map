@@ -98,6 +98,7 @@
       "openFolder": "Abrir o cartafol",
       "openGoogleMaps": "Abrir Google Maps",
       "openGoogleStreetView": "Abrir Google Street View",
+      "openGoogleEarth": "Abrir Google Earth",
       "viewData": "Ver os datos"
     },
     "pathTooLong": "Non se pode mostrar a miniatura porque a lonxitude da ruta do ficheiro é de {{length}} caracteres. Windows limita a lonxitude das rutas a {{maximum}} caracteres como máximo. Cambia a localización do ficheiro para acurtar a ruta. Para ver os detalles, preme Ctrl+Maiús+I e le as mensaxes da consola.",

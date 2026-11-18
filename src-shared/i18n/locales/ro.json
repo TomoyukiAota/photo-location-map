@@ -98,6 +98,7 @@
       "openFolder": "Deschide dosarul",
       "openGoogleMaps": "Deschide Google Maps",
       "openGoogleStreetView": "Deschide Google Street View",
+      "openGoogleEarth": "Deschide Google Earth",
       "viewData": "Vezi datele"
     },
     "pathTooLong": "Miniatura nu poate fi afișată deoarece numărul de caractere din calea fișierului este {{length}}. Windows limitează numărul de caractere dintr-o cale la {{maximum}}. Mutați fișierul pentru a-i scurta calea. Pentru detalii, apăsați Ctrl+Shift+I și citiți mesajele din consolă.",

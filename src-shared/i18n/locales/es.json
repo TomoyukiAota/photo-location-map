@@ -98,6 +98,7 @@
       "openFolder": "Abrir carpeta",
       "openGoogleMaps": "Abrir Google Maps",
       "openGoogleStreetView": "Abrir Google Street View",
+      "openGoogleEarth": "Abrir Google Earth",
       "viewData": "Ver datos"
     },
     "pathTooLong": "No se puede mostrar la miniatura porque la longitud de la ruta del archivo es de {{length}} caracteres. Windows limita la longitud máxima de las rutas a {{maximum}} caracteres. Cambia la ubicación del archivo para acortar su ruta. Para obtener más detalles, pulsa Ctrl+Mayús+I y lee los mensajes de la consola.",

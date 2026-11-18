@@ -195,6 +195,18 @@ for (const code of codes) {
         await page.waitForTimeout(250);
       }
     };
+    /** Waits until `selector` has stayed where it is for a quarter of a second, as the map does once it has panned. */
+    const untilStill = async selector => {
+      let last;
+      for (let still = 0, checks = 0; still < 5; checks += 1) {
+        if (checks === 100) throw new Error(`${selector} kept moving for 5 seconds`);
+        await page.waitForTimeout(50);
+        const box = await page.locator(selector).first().boundingBox();
+        const where = box && `${Math.round(box.x)},${Math.round(box.y)}`;
+        still = where && where === last ? still + 1 : 0;
+        last = where;
+      }
+    };
 
     await step('language-dialog', async () => {
       await page.waitForSelector('app-language-dialog');
@@ -249,7 +261,17 @@ for (const code of codes) {
     });
     await step('popup-menu', async () => {
       await page.locator('.plm-leaflet-map-div-icon').first().dispatchEvent('click');
-      await page.locator('.leaflet-popup .photo-info-viewer-more-options-button').click();
+      // TL;DR: The button is clicked with the mouse where it is once the map has panned, as a person clicks it.
+      // Details: The menu opens below its button, beside it or above it, where its size fits in the room around the
+      // button when it is clicked. Playwright's click of the element scrolled the map's container, which Leaflet keeps
+      // at no scroll, to bring the button into view: for the click, the button was 270 px higher, at the top of the
+      // map, and the menu opened below it, to be cut off at the map's bottom edge once Leaflet had scrolled the
+      // container back. The map also pans for about a quarter of a second after the popup opens, which moves the
+      // button.
+      const moreOptionsButton = '.leaflet-popup .photo-info-viewer-more-options-button';
+      await untilStill(moreOptionsButton);
+      const buttonBox = await page.locator(moreOptionsButton).boundingBox();
+      await page.mouse.click(buttonBox.x + buttonBox.width / 2, buttonBox.y + buttonBox.height / 2);
       await page.waitForSelector('.photo-info-viewer-more-options-menu');
       await screen('popup-menu', '.leaflet-popup', '#home-map', '#home-map');
       await page.keyboard.press('Escape');

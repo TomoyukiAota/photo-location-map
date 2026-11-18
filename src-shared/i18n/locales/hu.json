@@ -98,6 +98,7 @@
       "openFolder": "Mappa megnyitása",
       "openGoogleMaps": "Megnyitás a Google Térképen",
       "openGoogleStreetView": "Megnyitás a Google Utcaképben",
+      "openGoogleEarth": "Megnyitás a Google Earthben",
       "viewData": "Adatok megtekintése"
     },
     "pathTooLong": "A bélyegkép nem jeleníthető meg, mert a fájl elérési útjának hossza {{length}} karakter. A Windows az elérési út hosszát legfeljebb {{maximum}} karakterre korlátozza. Helyezze át a fájlt, hogy rövidebb legyen az elérési útja. A részletekért nyomja meg a Ctrl+Shift+I billentyűkombinációt, és olvassa el a konzol üzeneteit.",

@@ -98,6 +98,7 @@
       "openFolder": "Obre la carpeta",
       "openGoogleMaps": "Obre Google Maps",
       "openGoogleStreetView": "Obre Google Street View",
+      "openGoogleEarth": "Obre Google Earth",
       "viewData": "Mostra les dades"
     },
     "pathTooLong": "No es pot mostrar la miniatura perquè la longitud del camí del fitxer és de {{length}} caràcters. El Windows limita la longitud dels camins a {{maximum}} caràcters com a màxim. Canvieu la ubicació del fitxer per escurçar-ne el camí. Per veure’n els detalls, premeu Ctrl+Maj+I i llegiu els missatges de la consola.",

@@ -98,6 +98,7 @@
       "openFolder": "Apri cartella",
       "openGoogleMaps": "Apri Google Maps",
       "openGoogleStreetView": "Apri Google Street View",
+      "openGoogleEarth": "Apri Google Earth",
       "viewData": "Visualizza dati"
     },
     "pathTooLong": "Impossibile mostrare la miniatura perché la lunghezza del percorso del file è di {{length}} caratteri. Windows limita la lunghezza massima dei percorsi a {{maximum}} caratteri. Sposta il file per accorciarne il percorso. Per i dettagli, premi Ctrl+Maiusc+I e leggi i messaggi della console.",

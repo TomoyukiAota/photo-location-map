@@ -98,6 +98,7 @@
       "openFolder": "Åpne mappe",
       "openGoogleMaps": "Åpne Google Maps",
       "openGoogleStreetView": "Åpne Google Street View",
+      "openGoogleEarth": "Åpne Google Earth",
       "viewData": "Vis data"
     },
     "pathTooLong": "Miniatyrbildet kan ikke vises fordi filbanen er {{length}} tegn lang. Windows begrenser lengden på baner til {{maximum}} tegn. Flytt filen for å gjøre banen kortere. Trykk på Ctrl+Skift+I og les meldingene i konsollen for detaljer.",

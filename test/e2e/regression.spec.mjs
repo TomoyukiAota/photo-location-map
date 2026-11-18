@@ -746,7 +746,8 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   await expect(popup.locator('.photo-info-viewer-date-time-taken')).toHaveText(/^\d{4}-\d{2}-\d{2} \([日月火水木金土]\) \d{2}:\d{2}:\d{2}$/);
   await popup.locator('.photo-info-viewer-more-options-button').click();
   await expect(page.locator('.photo-info-viewer-more-options-menu-item'))
-    .toHaveText(['このファイルのみを選択', '前のファイルを選択', 'フォルダーを開く', 'Google マップを開く', 'Google ストリートビューを開く', 'データを表示']);
+    .toHaveText(['このファイルのみを選択', '前のファイルを選択', 'フォルダーを開く', 'Google マップを開く', 'Google Earth を開く',
+      'Google ストリートビューを開く', 'データを表示']);
   // The menu is wider than in English, and this popup is at the map's left edge: the menu is not cut off there.
   const menuBox = await page.locator('.photo-info-viewer-more-options-menu').boundingBox();
   const mapBox = await page.locator('#home-map').boundingBox();
@@ -844,7 +845,8 @@ test('on a computer whose language is Arabic, the application is laid out from r
   // The photo's menu opens the other way round, and stays within the map.
   await popup.locator('.photo-info-viewer-more-options-button').click();
   await expect(page.locator('.photo-info-viewer-more-options-menu-item'))
-    .toHaveText(['تحديد هذا الملف فقط', 'تحديد الملف السابق', 'فتح المجلد', 'فتح خرائط Google', 'فتح Google Street View', 'عرض البيانات']);
+    .toHaveText(['تحديد هذا الملف فقط', 'تحديد الملف السابق', 'فتح المجلد', 'فتح خرائط Google', 'فتح Google Earth',
+      'فتح Google Street View', 'عرض البيانات']);
   const menuBox = await page.locator('.photo-info-viewer-more-options-menu').boundingBox();
   const mapBox = await map.boundingBox();
   expect(menuBox.x).toBeGreaterThanOrEqual(mapBox.x);
@@ -1572,7 +1574,7 @@ test('a photo\'s information, in the tree and in a popup of the map, opens the p
   await thumbnailInTree.click();
   await inTree.getByRole('button', { name: 'More Options' }).click();
   await expect(page.locator('.photo-info-viewer-more-options-menu-item'))
-    .toHaveText(['Select Only This', 'Open Folder', 'Open Google Maps', 'Open Google Street View', 'View Data']);
+    .toHaveText(['Select Only This', 'Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data']);
   // A click on an item does what the item says, and closes the menu.
   await menuItem('Open Folder').click();
   await expect(menu).toHaveCount(0);
@@ -1608,11 +1610,35 @@ test('a photo\'s information, in the tree and in a popup of the map, opens the p
   await inPopup.getByRole('button', { name: 'More Options' }).click();
   await menuItem('Open Google Maps').click();
   await inPopup.getByRole('button', { name: 'More Options' }).click();
+  await menuItem('Open Google Earth').click();
+  await inPopup.getByRole('button', { name: 'More Options' }).click();
   await menuItem('Open Google Street View').click();
   await expect.poll(openedUrls).toEqual([
     expect.stringMatching(/^https:\/\/maps\.google\.com\/\?q=[\d.]+,[\d.]+&ll=[\d.]+,[\d.]+&z=14$/),
+    expect.stringMatching(/^https:\/\/earth\.google\.com\/web\/search\/[\d.]+,[\d.]+$/),
     expect.stringMatching(/^https:\/\/www\.google\.com\/maps\/@\?api=1&map_action=pano&parameters&viewpoint=[\d.]+,[\d.]+$/),
   ]);
+  // All three at the photo's place, which none of the analytics' events has: they get the site alone.
+  const place = new URL((await openedUrls())[0]).searchParams.get('q');
+  expect(await openedUrls()).toEqual([
+    `https://maps.google.com/?q=${place}&ll=${place}&z=14`,
+    `https://earth.google.com/web/search/${place}`,
+    `https://www.google.com/maps/@?api=1&map_action=pano&parameters&viewpoint=${place}`,
+  ]);
+  const openedUrlEvents = service => app.evaluate((_electron, service) => globalThis.__plmAnalyticsEvents
+    .filter(event => event.service === service && event.action === 'Opened URL')
+    .map(event => event.value)
+    .sort(), service);
+  for (const service of ['amplitude', 'mixpanel']) {
+    await expect.poll(() => openedUrlEvents(service), { timeout: 20000 }).toEqual([
+      'https://earth.google.com/web/search/ with latitude and longitude',
+      'https://maps.google.com/ with query parameters for latitude, longitude, and zoom',
+      'https://www.google.com/maps/ with query parameters for latitude, longitude',
+    ]);
+  }
+  const analyticsEvents = JSON.stringify(await app.evaluate(() => globalThis.__plmAnalyticsEvents));
+  for (const coordinate of place.split(','))
+    expect(analyticsEvents).not.toContain(coordinate);
   // Closed and opened again, the popup shows the same content.
   await popup.locator('.leaflet-popup-close-button').click();
   await expect(popup).toHaveCount(0);
@@ -1722,7 +1748,7 @@ test('Select Previous and Select Next go through the photos in the order they we
 
   // A photo's menu, right after Select Only This: in the popup of the map, and in the photo's row of the tree.
   const moreOptionsItems = page.locator('.photo-info-viewer-more-options-menu-item');
-  const withLocation = ['Open Folder', 'Open Google Maps', 'Open Google Street View', 'View Data'];
+  const withLocation = ['Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data'];
   await popup.locator('.photo-info-viewer-more-options-button').click();
   await expect(moreOptionsItems).toHaveText(['Select Only This', 'Select Previous', 'Select Next', ...withLocation]);
   await moreOptionsItems.filter({ hasText: 'Select Next' }).click();

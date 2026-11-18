@@ -98,6 +98,7 @@
       "openFolder": "Ava kaust",
       "openGoogleMaps": "Ava Google Maps",
       "openGoogleStreetView": "Ava Google Street View",
+      "openGoogleEarth": "Ava Google Earth",
       "viewData": "Kuva andmed"
     },
     "pathTooLong": "Pisipilti ei saa kuvada, sest faili tee pikkus on {{length}} märki. Windows lubab tee pikkuseks kõige rohkem {{maximum}} märki. Tee lühendamiseks muutke faili asukohta. Üksikasjade nägemiseks vajutage Ctrl+Shift+I ja lugege konsooli teateid.",
