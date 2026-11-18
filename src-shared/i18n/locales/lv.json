@@ -81,6 +81,10 @@
       "openFolder": "Atvērt mapi"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Vai vēlaties atvērt tālāk norādīto mapi?",
+    "openFile": "Vai vēlaties atvērt tālāk norādīto failu?"
+  },
   "photoInfo": {
     "unavailable": "Fotoattēla informācija nav pieejama.",
     "openFile": "Atvērt failu",

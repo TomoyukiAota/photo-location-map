@@ -81,6 +81,10 @@
       "openFolder": "Otvori fasciklu"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Želite li da otvorite sledeću fasciklu?",
+    "openFile": "Želite li da otvorite sledeću datoteku?"
+  },
   "photoInfo": {
     "unavailable": "Podaci o fotografiji nisu dostupni.",
     "openFile": "Otvori datoteku",

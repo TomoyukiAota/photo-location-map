@@ -2,7 +2,8 @@ import assert from 'assert';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { openTargetOf } from '../../../src-main/command-line-options/setup-ipc-main-for-command-line-options.js';
+import { forgetUserChosenFolders, isUserChosenFolder, userChosenFolderPaths } from '../../../src-main/ipc/user-chosen-folders.js';
+import { chooseFolderOf, openTargetOf } from '../../../src-main/open-target/open-target.js';
 
 describe('openTargetOf (in main process)', () => {
   let root: string;
@@ -11,6 +12,7 @@ describe('openTargetOf (in main process)', () => {
     fs.writeFileSync(path.join(root, 'a.jpg'), '');
   });
   after(() => fs.rmSync(root, { recursive: true, force: true }));
+  afterEach(() => forgetUserChosenFolders());
 
   it('opens nothing without --open', async () => {
     assert.deepStrictEqual(await openTargetOf(undefined), { kind: 'none' });
@@ -29,5 +31,19 @@ describe('openTargetOf (in main process)', () => {
     assert.strictEqual(target.kind, 'failed');
     assert.strictEqual(target.kind === 'failed' && target.path, missing);
     assert.match(target.kind === 'failed' ? target.message : '', /ENOENT/);
+  });
+
+  it('chooses the folder that a target opens: a folder itself, or the folder of a file, and nothing else', async () => {
+    chooseFolderOf(await openTargetOf(path.join(root, 'a.jpg')));
+    assert.deepStrictEqual(userChosenFolderPaths(), [path.resolve(root)]);
+    forgetUserChosenFolders();
+    chooseFolderOf(await openTargetOf(root));
+    assert.deepStrictEqual(userChosenFolderPaths(), [path.resolve(root)]);
+    forgetUserChosenFolders();
+    for (const target of [await openTargetOf(undefined), await openTargetOf(path.join(root, 'missing')),
+      { kind: 'unexpected' as const, path: root }])
+      chooseFolderOf(target);
+    assert.deepStrictEqual(userChosenFolderPaths(), []);
+    assert.strictEqual(isUserChosenFolder(root), false);
   });
 });

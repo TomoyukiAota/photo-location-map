@@ -4,8 +4,9 @@ import { logged, shown } from '../../src-shared/log/logged-line.js';
 
 // The main window shows the app's page only, the one page that its preload's bridge serves (ipc-sender.ts). The app
 // itself never navigates the window elsewhere: its routes change the URL's fragment, and links open in the OS browser
-// (src-shared/url/open-url.ts). A link or a file dropped on the window would have replaced the app with another page,
-// so such a navigation is prevented, as a page's new window is.
+// (src-shared/url/open-url.ts). The page takes a drop of files and folders itself, to open them
+// (src/app/drop-to-open/). A link dropped on the window, or a file that the page does not take, would have replaced
+// the app with another page, so such a navigation is prevented, as a page's new window is.
 
 /**
  * Whether `url` is on the app's page `pageUrl`, at any of its routes: of the app's scheme (src-main/file-server/), or of

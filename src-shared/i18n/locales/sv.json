@@ -81,6 +81,10 @@
       "openFolder": "Öppna mapp"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Vill du öppna mappen nedan?",
+    "openFile": "Vill du öppna filen nedan?"
+  },
   "photoInfo": {
     "unavailable": "Bildinformation är inte tillgänglig.",
     "openFile": "Öppna fil",

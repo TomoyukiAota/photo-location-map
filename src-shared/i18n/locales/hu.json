@@ -81,6 +81,10 @@
       "openFolder": "Mappa megnyitása"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Megnyitja az alábbi mappát?",
+    "openFile": "Megnyitja az alábbi fájlt?"
+  },
   "photoInfo": {
     "unavailable": "A fotó adatai nem érhetők el.",
     "openFile": "Fájl megnyitása",

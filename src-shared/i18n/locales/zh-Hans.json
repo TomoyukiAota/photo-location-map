@@ -81,6 +81,10 @@
       "openFolder": "打开文件夹"
     }
   },
+  "dropToOpen": {
+    "openFolder": "是否打开以下文件夹？",
+    "openFile": "是否打开以下文件？"
+  },
   "photoInfo": {
     "unavailable": "照片信息不可用。",
     "openFile": "打开文件",

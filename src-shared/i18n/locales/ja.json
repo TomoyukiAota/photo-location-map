@@ -81,6 +81,10 @@
       "openFolder": "フォルダーを開く"
     }
   },
+  "dropToOpen": {
+    "openFolder": "以下のフォルダーを開きますか？",
+    "openFile": "以下のファイルを開きますか？"
+  },
   "photoInfo": {
     "unavailable": "写真の情報がありません。",
     "openFile": "ファイルを開く",

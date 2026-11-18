@@ -81,6 +81,10 @@
       "openFolder": "Obre la carpeta"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Voleu obrir la carpeta següent?",
+    "openFile": "Voleu obrir el fitxer següent?"
+  },
   "photoInfo": {
     "unavailable": "La informació de la foto no està disponible.",
     "openFile": "Obre el fitxer",

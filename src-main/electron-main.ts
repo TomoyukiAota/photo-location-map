@@ -34,6 +34,7 @@ import './file-server/photo-files-setup.js';
 import './photo-data-viewer/photo-delivery-setup.js';
 import './exif/exif-ipc-setup.js';
 import './folder-dialog/folder-dialog-ipc-setup.js';
+import './dropped-item/dropped-item-ipc-setup.js';
 import './directory-tree/directory-tree-ipc-setup.js';
 import './restart-ipc-setup.js';
 import './shell/shell-ipc-setup.js';

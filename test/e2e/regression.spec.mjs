@@ -276,6 +276,55 @@ async function openFolderWithPicker(folder) {
   await page.getByRole('button', { name: 'Open Folder', exact: true }).click();
 }
 /**
+ * Drags the files and folders at `itemPaths` over the map, as from Explorer or Finder, and drops them there unless
+ * `drop` is false. Resolves with whether the page took the drag, and the effect that it set: copy for a drop that it
+ * takes, none for one that it refuses.
+ * TL;DR: The Files of the drag have the items' paths on the disk, as a drag from the OS has, so that the preload reads
+ * their paths as it does for a real drop (electron-util/preload/main-window.cjs).
+ * Details: Playwright cannot start a drag of the OS. The Files come from a file input that this adds to the page, as
+ * Chromium's DOM.setFileInputFiles makes them from paths, a folder's too: Playwright's setInputFiles takes a folder
+ * only for an input with webkitdirectory, which then has the files in it rather than the folder. The drag's events
+ * are dispatched with a DataTransfer that holds those Files. Chromium ignores the dropEffect that is set on a
+ * DataTransfer which a script made, as it is not a drag's, so this one records what the page sets.
+ */
+async function dragOnWindow(itemPaths, { drop = true } = {}) {
+  await page.evaluate(() => {
+    const input = Object.assign(document.createElement('input'), { type: 'file', multiple: true, hidden: true, id: 'plm-e2e-dragged-files' });
+    document.body.append(input);
+  });
+  const cdp = await page.context().newCDPSession(page);
+  try {
+    const { result } = await cdp.send('Runtime.evaluate', { expression: `document.getElementById('plm-e2e-dragged-files')` });
+    await cdp.send('DOM.setFileInputFiles', { objectId: result.objectId, files: itemPaths });
+  } finally {
+    await cdp.detach();
+  }
+  return page.evaluate(drop => {
+    const input = document.getElementById('plm-e2e-dragged-files');
+    const dataTransfer = new DataTransfer();
+    for (const file of input.files) dataTransfer.items.add(file);
+    input.remove();
+    let dropEffect = 'none';
+    Object.defineProperty(dataTransfer, 'dropEffect', { get: () => dropEffect, set: effect => { dropEffect = effect; } });
+    const map = document.getElementById('plm-leaflet-map');
+    // false when the page prevented the event's default action, which takes the drag.
+    const dispatch = type => !map.dispatchEvent(new DragEvent(type, { bubbles: true, cancelable: true, dataTransfer }));
+    dispatch('dragenter');
+    const taken = dispatch('dragover');
+    const effect = dataTransfer.dropEffect;
+    if (drop) dispatch('drop');
+    return { taken, effect };
+  }, drop);
+}
+/** Checks the question that a drop asks, about the folder or the file at `itemPath`, then clicks `answer`, OK or Cancel. */
+async function answerDropQuestion(question, itemPath, answer) {
+  const dialog = page.locator('app-confirm-dialog');
+  await expect(dialog.locator('.message')).toHaveText(question);
+  await expect(dialog.locator('.path')).toHaveText(itemPath);
+  await dialog.getByRole('button', { name: answer, exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+}
+/**
  * What the dialog of an error that nothing handled in the main process shows, for a promise rejected there with
  * `message`. The dialog is replaced while it is shown, as the real one would wait for a click.
  */
@@ -1892,6 +1941,53 @@ test('--open with a photo opens its folder with only that photo selected', async
     if (previousOpen === undefined) delete process.env.PLM_E2E_OPEN;
     else process.env.PLM_E2E_OPEN = previousOpen;
   }
+});
+test('a folder dropped on the window opens once the user confirms, with all of its photos selected', async () => {
+  const folder = path.join(profile, 'dropped 写真 # 100%');
+  await mkdir(folder);
+  await copyFile(path.join(photoFolder, 'Gold Coast/IMG_1579.JPG'), path.join(folder, 'Gold Coast.JPG'));
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'Kobe.JPG'));
+  // While a dialog is open, Open Folder cannot be clicked, and a drop is refused.
+  await expect(page.locator('app-welcome-dialog')).toBeVisible();
+  expect(await dragOnWindow([folder], { drop: false })).toEqual({ taken: true, effect: 'none' });
+  await dismissWelcome();
+  // A File that the page makes is not on the disk: it opens nothing, and nothing is asked.
+  await page.evaluate(() => {
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(new File(['not a photo'], 'made by the page.jpg'));
+    document.getElementById('plm-leaflet-map').dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer }));
+  });
+  await expect.poll(() => app.evaluate(() => globalThis.__plmAnalyticsEvents
+    .filter(event => event.action === 'Drop to Open: Nothing to Open').map(event => event.label)))
+    .toEqual(['Item Type: none', 'Item Type: none']);
+  await expect(page.locator('app-confirm-dialog')).toHaveCount(0);
+  // Canceled, the folder is not opened, and the page may not read it.
+  expect(await dragOnWindow([folder])).toEqual({ taken: true, effect: 'copy' });
+  await answerDropQuestion('Do you want to open the folder below?', folder, 'Cancel');
+  await expect(page.evaluate(folder => window.plm.directoryTree.create(folder), folder)).rejects.toThrow('Only a folder that the user chose can be read.');
+  await expect(page.locator('mat-tree-node')).toHaveCount(0);
+  await dragOnWindow([folder]);
+  await answerDropQuestion('Do you want to open the folder below?', folder, 'OK');
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('2 files have location data.');
+  await expect(page.locator('mat-tree-node').filter({ hasText: path.basename(folder) })).toBeVisible();
+  await expect(treeCheckbox('Kobe.JPG')).toBeChecked();
+  await expect(treeCheckbox('Gold Coast.JPG')).toBeChecked();
+  await expectRepresentedPhotos(2);
+});
+test('a photo dropped on the window opens its folder once the user confirms, with only that photo selected', async () => {
+  const folder = path.join(profile, 'dropped through a photo');
+  await mkdir(folder);
+  await copyFile(path.join(photoFolder, 'Gold Coast/IMG_1579.JPG'), path.join(folder, 'Gold Coast.JPG'));
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'Kobe.JPG'));
+  await dismissWelcome();
+  const photo = path.join(folder, 'Kobe.JPG');
+  // Of two photos dropped at once, the first is asked about.
+  expect(await dragOnWindow([photo, path.join(folder, 'Gold Coast.JPG')])).toEqual({ taken: true, effect: 'copy' });
+  await answerDropQuestion('Do you want to open the file below?', photo, 'OK');
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('2 files have location data.');
+  await expect(treeCheckbox('Kobe.JPG')).toBeChecked();
+  await expect(treeCheckbox('Gold Coast.JPG')).not.toBeChecked();
+  await expectRepresentedPhotos(1);
 });
 test('a photo whose GPS values are empty leaves the other photos on the map', async () => {
   // exifr gives such a photo's latitude and longitude as the text "NaNNaN", and Leaflet threw on its marker. The

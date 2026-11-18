@@ -81,6 +81,10 @@
       "openFolder": "Abrir o cartafol"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Queres abrir o seguinte cartafol?",
+    "openFile": "Queres abrir o seguinte ficheiro?"
+  },
   "photoInfo": {
     "unavailable": "A información da foto non está dispoñible.",
     "openFile": "Abrir o ficheiro",

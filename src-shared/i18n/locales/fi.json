@@ -81,6 +81,10 @@
       "openFolder": "Avaa kansio"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Haluatko avata alla olevan kansion?",
+    "openFile": "Haluatko avata alla olevan tiedoston?"
+  },
   "photoInfo": {
     "unavailable": "Kuvan tiedot eivät ole saatavilla.",
     "openFile": "Avaa tiedosto",

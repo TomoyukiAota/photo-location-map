@@ -17,6 +17,11 @@ const startup = { version: '9.9.9-test' };
 interface Call { method: 'send' | 'sendSync' | 'invoke'; channel: string; args: unknown[]; }
 type Listener = (event: unknown, ...args: unknown[]) => void;
 
+/** A File of a drop, as the page gives it, and the path that Electron knows for it. */
+class DroppedFile {
+  constructor(public readonly path: string) {}
+}
+
 function runPreload(contextIsolated: boolean) {
   const calls: Call[] = [];
   const listeners = new Map<string, Listener[]>();
@@ -40,10 +45,17 @@ function runPreload(contextIsolated: boolean) {
     },
   };
   const contextBridge = { exposeInMainWorld: (key: string, api: unknown) => { exposed.push({ key, api }); } };
+  // Electron's: the path of a File, '' for one that is not on the disk, and a TypeError for what is not a File.
+  const webUtils = {
+    getPathForFile: (file: unknown) => {
+      if (!(file instanceof DroppedFile)) throw new TypeError('getPathForFile expected to receive a File object but one was not provided');
+      return file.path;
+    },
+  };
   /** The require of a sandboxed preload, which has only electron. */
   const sandboxRequire = (name: string) => {
     required.push(name);
-    if (name === 'electron') return { contextBridge, ipcRenderer };
+    if (name === 'electron') return { contextBridge, ipcRenderer, webUtils };
     throw new Error(`A sandboxed preload cannot require ${name}.`);
   };
   const source = fs.readFileSync(preloadPath, 'utf8');
@@ -100,6 +112,9 @@ describe('The main window\'s preload', () => {
       [plm => plm.shell.openContainingFolder('/photos/a.jpg'), { method: 'invoke', channel: IpcConstants.Shell.OpenContainingFolder, args: ['/photos/a.jpg'] }],
       [plm => plm.app.restart(), { method: 'send', channel: IpcConstants.AppRestart.Request, args: [] }],
       [plm => plm.commandLine.openTarget(), { method: 'invoke', channel: IpcConstants.CommandLineOptions.OpenTarget, args: [] }],
+      [plm => plm.droppedItem.openTarget(new DroppedFile('/photos/trip')),
+        { method: 'invoke', channel: IpcConstants.DroppedItem.OpenTarget, args: ['/photos/trip'] }],
+      [plm => plm.droppedItem.choose(new DroppedFile('/photos/a.jpg')), { method: 'invoke', channel: IpcConstants.DroppedItem.Choose, args: ['/photos/a.jpg'] }],
       [plm => plm.menus.updateUndoRedo(photoSelection), { method: 'invoke', channel: IpcConstants.PhotoSelection.UpdateUndoRedoMenus, args: [photoSelection] }],
       [plm => plm.menus.updateSelectPreviousNext(previousNext),
         { method: 'invoke', channel: IpcConstants.PhotoSelection.UpdateSelectPreviousNextMenus, args: [previousNext] }],
@@ -116,6 +131,22 @@ describe('The main window\'s preload', () => {
       if (expected.method === 'sendSync') assert.deepStrictEqual(answer, { setting: 'value' });
       if (expected.method === 'send') assert.strictEqual(answer, undefined);
     }
+  });
+
+  it('asks about a dropped item by the path that Electron knows for its File, never by a path that the page gives', async () => {
+    const { calls, exposed } = runPreload(true);
+    calls.length = 0;
+    const droppedItem = exposed[0].api.droppedItem;
+    // A File that is not on the disk, such as one that the page made, opens nothing, without asking the main process.
+    // The answer is an object of the preload's context, copied here to be compared.
+    assert.deepStrictEqual({ ...await droppedItem.openTarget(new DroppedFile('')) }, { kind: 'none' });
+    assert.deepStrictEqual({ ...await droppedItem.choose(new DroppedFile('')) }, { kind: 'none' });
+    // A path, or anything else that is not a File, is refused.
+    for (const notAFile of ['/photos/trip', { path: '/photos/trip' }, undefined]) {
+      assert.throws(() => droppedItem.openTarget(notAFile), TypeError);
+      assert.throws(() => droppedItem.choose(notAFile), TypeError);
+    }
+    assert.deepStrictEqual(calls, []);
   });
 
   it('gives each event to its listener without the IPC event, until the listener is removed', () => {
@@ -194,8 +225,8 @@ describe('The main window\'s preload', () => {
     const { exposed } = runPreload(true);
     const api = exposed[0].api;
     assert.deepStrictEqual(Object.keys(api), ['version', 'startup', 'storage', 'log', 'analytics', 'folderDialog', 'exif',
-      'directoryTree', 'thumbnails', 'thumbnailCache', 'shell', 'app', 'commandLine', 'menus', 'photoDataViewer',
-      'explorerContextMenu', 'events']);
+      'directoryTree', 'thumbnails', 'thumbnailCache', 'shell', 'app', 'commandLine', 'droppedItem', 'menus',
+      'photoDataViewer', 'explorerContextMenu', 'events']);
     const memberNames = Object.values(api).flatMap(member => typeof member === 'object' && member !== null ? Object.keys(member) : []);
     for (const generic of ['send', 'sendSync', 'invoke', 'on', 'require', 'ipcRenderer', 'process', 'exec', 'spawn', 'readFile'])
       assert(!memberNames.includes(generic), generic);

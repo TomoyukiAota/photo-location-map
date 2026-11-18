@@ -81,6 +81,10 @@
       "openFolder": "Otvoriť priečinok"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Chcete otvoriť nižšie uvedený priečinok?",
+    "openFile": "Chcete otvoriť nižšie uvedený súbor?"
+  },
   "photoInfo": {
     "unavailable": "Informácie o fotke nie sú k dispozícii.",
     "openFile": "Otvoriť súbor",
