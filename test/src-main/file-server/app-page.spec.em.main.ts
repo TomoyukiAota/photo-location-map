@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { respondToAppPageRequest } from '../../../src-main/file-server/app-page.js';
+import { mainWindowContentSecurityPolicy } from '../../../src-main/file-server/content-security-policy.js';
 
 describe('The app\'s page (in main process)', () => {
   let root: string;
@@ -36,6 +37,29 @@ describe('The app\'s page (in main process)', () => {
     const media = await respond(`plm-app://app/media/${encodeURIComponent('写真 #1.svg')}`);
     assert.strictEqual(media.status, 200);
     assert.match(media.headers.get('content-type') ?? '', /^image\/svg\+xml/);
+  });
+
+  it('answers each file with the page\'s Content Security Policy', async () => {
+    for (const url of ['plm-app://app/index.html', 'plm-app://app/main-ABC.js', `plm-app://app/media/${encodeURIComponent('写真 #1.svg')}`]) {
+      const answer = await respond(url);
+      assert.strictEqual(answer.headers.get('content-security-policy'), mainWindowContentSecurityPolicy, url);
+      // The answer is the file, whole, with its other headers.
+      assert.ok(answer.headers.get('content-type'), url);
+      assert.ok((await answer.arrayBuffer()).byteLength > 0, url);
+    }
+  });
+
+  // TL;DR: protocol.handle has the network service send the file of an answer that is still net.fetch's, as
+  // app-page.ts says, and streams any other through JavaScript.
+  // Details: These are the conditions of relayUntouchedFetch in Electron's lib/browser/api/protocol.ts, which reads
+  // the __fetch that net.fetch puts on its answer. After an upgrade of Electron that fails here, look again at how
+  // protocol.handle answers.
+  it('answers with the Response of net.fetch itself, unread, which protocol.handle relays without JavaScript', async () => {
+    const answer = await respond('plm-app://app/main-ABC.js') as Response & { __fetch?: { body: unknown } };
+    assert.ok(answer.__fetch, 'The answer is not the Response of net.fetch.');
+    assert.strictEqual(answer.body, answer.__fetch.body);
+    assert.strictEqual(answer.bodyUsed, false);
+    assert.strictEqual(answer.body?.locked, false);
   });
 
   it('answers nothing outside the build, of another host, or that is not a file', async () => {

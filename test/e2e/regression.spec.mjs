@@ -27,6 +27,24 @@ let app, page, profile, headless;
 // components and zoneless change detection would not render (see src/app/app.config.ts). A production build checks
 // nothing.
 let changedWithoutNotification = [];
+// TL;DR: The lines of the main window's page about its Content Security Policy: what the policy refused, or a policy
+// that Chromium could not read (src-main/file-server/content-security-policy.ts). A case fails with any that it did not
+// cause on purpose (takePolicyViolations), so that the whole suite checks that the page needs nothing more.
+// Details: Chromium writes them to the page's console, also for what happens before the page's scripts run, as of
+// index.html. Photo Data Viewer's page and the website's are not the app's page, and have policies of their own, if any.
+let policyViolations = [];
+/** What takePolicyViolations was given in the case: the lines that the case causes on purpose. */
+let expectedPolicyViolations = [];
+/** Whether `url` is the main window's page: the app's page, or ng serve's for live reload. */
+const isAppPageUrl = url => !!url && (url.startsWith('plm-app://app/') || (liveReload && url.startsWith('http://localhost:4200/')));
+/**
+ * Returns the lines about the Content Security Policy so far that `expected` matches, which the case causes on
+ * purpose: those no longer fail it, nor does such a line that comes later. Any other line still does.
+ */
+const takePolicyViolations = expected => {
+  expectedPolicyViolations.push(expected);
+  return policyViolations.filter(line => expected(line));
+};
 // TL;DR: On macOS and Windows, the windows stay off the screen, as Playwright's browsers do, unless --headed
 // is given: hidden on macOS, and on Windows shown but transparent, click-through and never activated
 // (see electron-util/e2e-test-hooks.js). On Linux, they are shown; Linux CI runs under Xvfb.
@@ -70,6 +88,8 @@ async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'con
   // Listened to for every page from the launch on, so that what the first change detection reports is not missed.
   app.context().on('console', message => {
     if (message.type() === 'error' && message.text().includes('NG0100')) changedWithoutNotification.push(message.text());
+    if (/\bContent[- ]Security[- ]Policy\b/i.test(message.text()) && isAppPageUrl(message.page()?.url()))
+      policyViolations.push(`${message.type()}: ${message.text()}`);
   });
   const pageErrors = [];
   app.context().on('weberror', webError => {
@@ -382,6 +402,8 @@ test.beforeEach(async () => {
   }
   profile = await mkdtemp(path.join(tmpdir(), 'plm-e2e-'));
   changedWithoutNotification = [];
+  policyViolations = [];
+  expectedPolicyViolations = [];
   await launch();
 });
 /** The promise's value, or `otherwise` when it has none within 5 seconds: a process that hangs does not answer. */
@@ -469,6 +491,8 @@ test.afterEach(async ({}, testInfo) => {
     if (profile) await removeProfile(profile);
   }
   expect(changedWithoutNotification, 'Bindings changed without telling Angular').toEqual([]);
+  expect(policyViolations.filter(line => !expectedPolicyViolations.some(expected => expected(line))),
+    'The main window\'s page broke its Content Security Policy (src-main/file-server/content-security-policy.ts)').toEqual([]);
 });
 test('welcome, about and every available settings tab keep their appearance', async () => {
   await expect(page.locator('app-welcome-dialog')).toContainText(`Version ${manifest.version}`);
@@ -2315,18 +2339,22 @@ test('the main window\'s page runs isolated, without Node.js, and reaches the ma
       nodeIntegrationInWorker: applied.nodeIntegrationInWorker, sandbox: applied.sandbox };
   });
   expect(preferences).toEqual({ contextIsolation: true, nodeIntegration: false, nodeIntegrationInWorker: false, sandbox: true });
-  // Neither the page nor a worker of it has Node.js; the bridge is frozen and has no generic way to the main process.
+  // Neither the page nor a worker of it has Node.js: the page cannot even start a worker, which its Content Security
+  // Policy refuses (src-main/file-server/content-security-policy.ts), and the preference above would give one none.
+  // The bridge is frozen and has no generic way to the main process.
   const inPage = await page.evaluate(async () => ({
     globals: ['require', 'process', 'module', 'Buffer', 'global', 'setImmediate'].map(name => [name, typeof window[name]]),
     worker: await new Promise(resolve => {
       const worker = new Worker(URL.createObjectURL(new Blob(['postMessage([typeof require, typeof process])'])));
       worker.onmessage = message => { resolve(message.data); worker.terminate(); };
+      worker.onerror = () => resolve('refused');
     }),
     frozen: Object.isFrozen(window.plm) && Object.isFrozen(window.plm.shell) && Object.isFrozen(window.plm.startup),
     members: Object.values(window.plm).flatMap(member => typeof member === 'object' && member ? Object.keys(member) : []),
   }));
   expect(inPage.globals).toEqual(['require', 'process', 'module', 'Buffer', 'global', 'setImmediate'].map(name => [name, 'undefined']));
-  expect(inPage.worker).toEqual(['undefined', 'undefined']);
+  expect(inPage.worker).toBe('refused');
+  expect(takePolicyViolations(line => /\bworker\b.*'blob:/i.test(line))).toHaveLength(1);
   expect(inPage.frozen).toBe(true);
   for (const generic of ['send', 'sendSync', 'invoke', 'on', 'ipcRenderer']) expect(inPage.members).not.toContain(generic);
   // The main process answers the page only what it may ask for.
@@ -2372,6 +2400,53 @@ test('the main window\'s page runs isolated, without Node.js, and reaches the ma
   });
   expect(fromAnotherWindow).toEqual({ startup: null, settings: null, exif: expect.stringContaining('Reading EXIF is only for the main window.'),
     photo: expect.stringContaining('Only the page of Photo Data Viewer in its window has a photo.') });
+});
+test('the main window\'s page refuses what its Content Security Policy does not allow, and each refusal is logged and recorded', async () => {
+  await dismissWelcome();
+  // What a text that the page shows could try, were it injected into the page
+  // (src-main/file-server/content-security-policy.ts). The addresses are of this computer, where nothing answers, so
+  // that the case sends nothing out should the policy allow one.
+  const outcome = await page.evaluate(async () => {
+    const script = document.createElement('script');
+    script.textContent = 'window.__plmInjectedScriptRan = true;';
+    document.body.append(script);
+    // From a task of the page's: Playwright's own evaluation may evaluate a string under any policy.
+    const evaluated = await new Promise(resolve => setTimeout(() => {
+      try { resolve(String(eval('"ran"'))); } catch (error) { resolve(error.name); }
+    }));
+    const fetched = await fetch('https://127.0.0.1:9/').then(() => 'sent', error => error.name);
+    const image = await new Promise(resolve => {
+      const image = new Image();
+      image.onload = () => resolve('loaded');
+      image.onerror = () => resolve('refused');
+      image.src = 'http://127.0.0.1:9/tile.png';
+    });
+    return { script: window.__plmInjectedScriptRan ? 'ran' : 'refused', evaluated, fetched, image };
+  });
+  expect(outcome).toEqual({ script: 'refused', evaluated: 'EvalError', fetched: 'TypeError', image: 'refused' });
+  // The suite sees each refusal in the page's console, as it would one that a case does not cause on purpose.
+  const refusals = [/\binline script\b/i, /\beval\b/i, /'https:\/\/127\.0\.0\.1:9\/'/, /'http:\/\/127\.0\.0\.1:9\/tile\.png'/];
+  await expect.poll(() => refusals.filter(refusal => !policyViolations.some(line => refusal.test(line))).map(String)).toEqual([]);
+  // Those lines, and the fetch's second one, which gives the address without quotes.
+  takePolicyViolations(line => refusals.some(refusal => refusal.test(line)) || line.includes('https://127.0.0.1:9/'));
+  // The main process writes each to the log (src-main/record-console-errors.ts), which the page could not do for one
+  // before its scripts ran...
+  const logFile = await app.evaluate(({ app }) => {
+    const require = globalThis.__plmTestRequire;
+    const configPath = require('node:path').join(app.getAppPath(), 'out/app/src-shared/log/file-config/log-file-config.js');
+    return require(configPath).LogFileConfig.filePath;
+  });
+  await expect.poll(async () => {
+    const lines = (await readFile(logFile, 'utf8')).split(/\r?\n/).filter(line => line.includes('[Content Security Policy] The main window\'s page: '));
+    return refusals.filter(refusal => !lines.some(line => refusal.test(line))).map(String);
+  }).toEqual([]);
+  // ...and records it as an error of the page's console, with the origin of an address and not its path.
+  for (const service of ['amplitude', 'mixpanel']) {
+    await expect.poll(() => app.evaluate((_electron, service) => globalThis.__plmAnalyticsEvents
+      .filter(event => event.service === service && event.action === 'Console Error (Renderer)' && /Content Security Policy/.test(event.label))
+      .map(event => event.label), service), { timeout: 20000 })
+      .toEqual(expect.arrayContaining([expect.stringContaining("'http://127.0.0.1:9/<path>'")]));
+  }
 });
 test('the main window gets animation frames while its page changes', async () => {
   // A hidden window on Windows gets about 1 frame per second once its page changes (see
@@ -2796,20 +2871,26 @@ for (const [name, fixture, specialPath] of [
     expect(await viewer.evaluate(() => [typeof window.require, typeof window.process])).toEqual(['undefined', 'undefined']);
     expect(new URL(viewer.url()).searchParams.get('photoPath')).toBeNull();
     expect(new URL(viewer.url()).searchParams.get('plmBridge')).toBe('1');
-    // The photo's URL is the viewer's alone: the main window's page cannot read it, and it ends with the window.
+    // The photo's URL is the viewer's alone, and it ends with the window. The main window's page cannot read it: its
+    // Content Security Policy refuses the fetch, and the main process would answer only the viewer's page.
     const { url } = await viewer.evaluate(() => window.plmPhotoDataViewer.readPhoto());
     expect(url).toMatch(/^plm-photo:\/\/photo\/[0-9a-f]{64}$/);
-    expect(await page.evaluate(url => fetch(url).then(answer => answer.status, error => error.message), url)).not.toBe(200);
-    const status = () => app.evaluate(async ({ app }, { url, referrer }) => {
+    expect(await page.evaluate(url => fetch(url).then(answer => answer.status, error => error.name), url)).toBe('TypeError');
+    await expect.poll(() => policyViolations.some(line => line.includes(`'${url}'`))).toBe(true);
+    // That line, and the fetch's second one, which gives the address without quotes.
+    takePolicyViolations(line => line.includes(url));
+    const status = referrer => app.evaluate(async ({ app }, { url, referrer }) => {
       const require = globalThis.__plmTestRequire;
       const delivery = require(require('node:path').join(app.getAppPath(), 'out/app/src-main/photo-data-viewer/photo-delivery.js'));
       // What protocol.handle passes for the viewer's fetch(): the URL, the mode and the referrer that Chromium sets.
       const request = { url, mode: 'cors', referrer, headers: new Headers() };
       return (await delivery.respondToPhotoRequest(request)).status;
-    }, { url, referrer: `${new URL(viewer.url()).origin}/` });
-    expect(await status()).toBe(200);
+    }, { url, referrer });
+    const viewerReferrer = `${new URL(viewer.url()).origin}/`;
+    expect(await status(page.url())).toBe(403);
+    expect(await status(viewerReferrer)).toBe(200);
     await viewerWindow.evaluate(window => new Promise(resolve => { window.once('closed', resolve); window.close(); }));
-    expect(await status()).toBe(404);
+    expect(await status(viewerReferrer)).toBe(404);
   });
 }
 test('a link of Photo Data Viewer to Google Maps or Google Earth opens in the browser, recorded without the place', async () => {

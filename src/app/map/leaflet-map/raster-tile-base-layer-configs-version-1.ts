@@ -3,6 +3,7 @@
 import { parse as parseJsonc } from 'jsonc-parser';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { toLoggableString } from '../../../../src-shared/log/to-loggable-string';
+import { rasterTileBaseLayerConfigsVersion1Urls } from '../../../../src-shared/map/raster-tile-base-layer-configs-version-1-urls';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
 
 // Represents the content of raster-tile-base-layer-configs-version-1.jsonc in photo-location-map-resources repo.
@@ -52,18 +53,18 @@ export const rasterTileBaseLayerConfigsVersion1Fallback: RasterTileBaseLayerConf
   ],
 };
 
-// In the production environment, the content of main branch in photo-location-map-resources repo is used.
-// In the development environment, the content of the feature branch can be used as needed.
+// The addresses, and which branch of photo-location-map-resources they are of, are in src-shared, as the main window's
+// Content Security Policy lets the page fetch them.
 const configsFileFetchArguments: Array<{ url: string, options: RequestInit }> = [
   {
-    url: 'https://raw.githubusercontent.com/TomoyukiAota/photo-location-map-resources/refs/heads/main/map-configs/raster-tile-base-layer-configs-version-1.jsonc',
+    url: rasterTileBaseLayerConfigsVersion1Urls.gitHub,
     options: {
       cache: 'no-store',
       signal: AbortSignal.timeout(10000 /* milliseconds */),
     },
   },
   {
-    url: 'https://cdn.jsdelivr.net/gh/TomoyukiAota/photo-location-map-resources@main/map-configs/raster-tile-base-layer-configs-version-1.jsonc',
+    url: rasterTileBaseLayerConfigsVersion1Urls.jsDelivr,
     options: {
       cache: 'no-store',
       // No timeout for the last attempt.

@@ -61,7 +61,7 @@
               "outputHashing": "none",
               "sourceMap": true,
               "namedChunks": false,
-              "aot": false,
+              "aot": true,
               "extractLicenses": true,
               "fileReplacements": [
                 {

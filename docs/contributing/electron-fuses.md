@@ -53,7 +53,9 @@ its page loads no `file:` URL, and gets the user's photos and their thumbnails
 from `plm-file:`, which answers only for the files of the folders that the user
 opened and for the thumbnails that the application made
 (`src-main/file-server/photo-files.ts`). Nothing that these settings decide is
-left open.
+left open. The page also has a Content Security Policy, which lets it run only
+the scripts of the application's build and load only what it needs
+(`src-main/file-server/content-security-policy.ts`).
 
 ## When the package test fails on the fuses
 
