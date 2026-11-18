@@ -411,13 +411,15 @@ whenever one can be expected to pass. Examples:
 - No runner for the job: a job canceled after 15 minutes in the queue, with
   `The job was not acquired by Runner of type hosted even after multiple attempts`,
   as happened twice to `test (macos-arm64)` when GitHub was short of macOS arm64
-  runners.
+  runners. Such a job has no log, as no runner started it: `gh run view <run>`
+  shows the message under "ANNOTATIONS". Rerun it even when both triggers show
+  it, as nothing of the code ran.
 - Any other failure whose log points at the runner rather than the code, when
   the other trigger passed on the same commit.
 
 Tell the owner what was rerun and why. Stop and report anything that may be a
-real defect: a failure both triggers share, or one in the app's own tests or
-behavior. If the same environmental cause keeps coming back, propose a narrow
+real defect: a failure both triggers share, unless it is one of the runner's
+above, or one in the app's own tests or behavior. If the same environmental cause keeps coming back, propose a narrow
 workaround (see above) instead of rerunning indefinitely.
 
 **Handle each failed check as soon as it fails.** Do not wait for all checks to

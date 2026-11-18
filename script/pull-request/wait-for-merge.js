@@ -35,12 +35,15 @@ function gh(args, { noneWhen } = {}) {
   throw new Error(`gh ${args.join(' ')} failed with ${result.status}: ${result.stderr?.trim()}`);
 }
 
-/** The pull request and its required checks, as merge-wait.js takes them. */
+/** The pull request and its required checks, as merge-wait.js takes them, or undefined to look again later. */
 function look() {
   const pullRequest = gh(['pr', 'view', number, '--json', viewFields]);
   // Until the checks of a new commit are reported, gh says that there are none.
   const checks = gh(['pr', 'checks', number, '--required', '--json', checkFields], { noneWhen: /no (required )?checks/i });
-  return { pullRequest, checks };
+  // gh pr checks reads the checks of the pull request's latest commit by itself. When a commit was pushed between the
+  // two, the checks may not be those of the commit that the pull request was read with, so this look is left out.
+  const { headRefOid } = gh(['pr', 'view', number, '--json', 'headRefOid']);
+  return headRefOid === pullRequest.headRefOid ? { pullRequest, checks } : undefined;
 }
 
 const startedAt = Date.now();

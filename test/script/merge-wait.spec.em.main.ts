@@ -81,26 +81,47 @@ describe('merge-wait (script/pull-request/)', () => {
 
   it('ends on a new review or comment, but not on the summaries that CodeRabbit and Mergify post as comments', () => {
     const summaries = [
-      { author: { login: 'coderabbitai' }, createdAt: '2026-11-18T09:00:30Z' },
-      { author: { login: 'mergify' }, createdAt: '2026-11-18T09:00:40Z' },
+      { id: 'IC_1', author: { login: 'coderabbitai' }, createdAt: '2026-11-18T09:00:30Z' },
+      { id: 'IC_2', author: { login: 'mergify' }, createdAt: '2026-11-18T09:00:40Z' },
     ];
     assert.strictEqual(waitThrough({}, { comments: summaries }).end, false);
 
-    const review = { author: { login: 'coderabbitai' }, state: 'COMMENTED', submittedAt: '2026-11-18T09:06:00Z' };
+    const review = { id: 'PRR_1', author: { login: 'coderabbitai' }, state: 'COMMENTED', submittedAt: '2026-11-18T09:06:00Z' };
     const fromReview = waitThrough({ comments: summaries }, { comments: summaries, reviews: [review] });
     assert.strictEqual(fromReview.end, true);
     assert.match(fromReview.message, /#7 has a new review or comment by coderabbitai: change what it is right about/);
 
-    const comment = { author: { login: 'TomoyukiAota' }, createdAt: '2026-11-18T09:07:00Z' };
+    const comment = { id: 'IC_3', author: { login: 'TomoyukiAota' }, createdAt: '2026-11-18T09:07:00Z' };
     const fromComment = waitThrough({}, { comments: [comment] });
     assert.match(fromComment.message, /by TomoyukiAota/);
   });
 
   it('counts neither a review that is not submitted, nor the feedback that was there when it began', () => {
-    const pending = { author: { login: 'TomoyukiAota' }, state: 'PENDING', submittedAt: null };
+    const pending = { id: 'PRR_2', author: { login: 'TomoyukiAota' }, state: 'PENDING', submittedAt: null };
     assert.deepStrictEqual(feedbackOf(pullRequestWith({ reviews: [pending] })), []);
-    const review = { author: { login: 'coderabbitai' }, state: 'COMMENTED', submittedAt: '2026-11-18T09:06:00Z' };
+    const review = { id: 'PRR_1', author: { login: 'coderabbitai' }, state: 'COMMENTED', submittedAt: '2026-11-18T09:06:00Z' };
     assert.strictEqual(waitThrough({ reviews: [review] }, { reviews: [review] }).end, false);
+  });
+
+  it('ends on a comment that takes the place of a deleted one, which leaves their number as it was', () => {
+    const deleted = { id: 'IC_4', author: { login: 'TomoyukiAota' }, createdAt: '2026-11-18T09:02:00Z' };
+    const added = { id: 'IC_5', author: { login: 'TomoyukiAota' }, createdAt: '2026-11-18T09:03:00Z' };
+    const result = waitThrough({ comments: [deleted] }, { comments: [added] });
+    assert.strictEqual(result.end, true);
+    assert.match(result.message, /has a new review or comment by TomoyukiAota/);
+  });
+
+  it('says all that is new at once, so that none of it is taken as known when the waiting starts again', () => {
+    const review = { id: 'PRR_1', author: { login: 'coderabbitai' }, state: 'COMMENTED', submittedAt: '2026-11-18T09:06:00Z' };
+    const after = { mergeable: 'CONFLICTING', mergeStateStatus: 'DIRTY', reviews: [review] };
+    const checksAfter = checksWith('pending', { failing: 'test (ubuntu)' });
+    const result = waitThrough({}, after, { checksAfter });
+    assert.strictEqual(result.end, true);
+    const lines = result.message.split('\n');
+    assert.strictEqual(lines.length, 3, result.message);
+    assert.match(lines[0], /conflicts with main/);
+    assert.match(lines[1], /test \(ubuntu\) of the push run failed/);
+    assert.match(lines[2], /new review or comment by coderabbitai/);
   });
 
 
