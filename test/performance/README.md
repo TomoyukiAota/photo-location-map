@@ -79,7 +79,8 @@ trial's details.
 `tree-rows.mjs` is a measurement of its own, apart from the series above, for a change to what a row of the folder
 tree shows. A folder that has its photos in it has a row, and so a viewer of the photo
 (`src/app/photo-info-viewer/`), for each photo as soon as it is opened, thousands for a large folder, while the
-large workload above has its photos in folders that are not expanded.
+large workload above has its photos in folders that are not expanded. A row's viewer makes the photo's thumbnail and
+buttons once the row comes near the sidebar's view; a build before 2026-11-19 made them for every row at once.
 
 ```sh
 mise exec -- node test/performance/tree-rows.mjs --app before=<build> --app now=checkout --photos 2000 --trials 3
@@ -93,9 +94,10 @@ prints for each trial, and as medians at the end:
 
 | Figure | What it is |
 | --- | --- |
-| `openMs` | From the click on Open Folder to the frame after the last row is in the page. Most of it is reading the photos. |
-| `rowsAgainMs` | The folder collapsed, then from the click that expands it to the frame after the last row: the rows made again. |
+| `openMs` | From the click on Open Folder to the frame after the last row is in the page, with the thumbnails of the rows in the sidebar's view. Most of it is reading the photos. |
+| `rowsAgainMs` | The folder collapsed, then from the click that expands it to the frame after the last row, with the thumbnails in view: the rows made again. |
 | `checkboxMs` | From a click on one row's checkbox to the frame after it shows: what the other rows cost a change of one. |
+| `scrollFrameMs`, `scrollLongestFrameMs` | The mean and the longest time between two frames while the sidebar scrolls down from the top by 100 pixels a frame, past about a hundred rows, which make their photos' thumbnails and buttons as they come near the view. |
 | `heapMb`, `nodes`, `listeners` | The page's JavaScript heap after a garbage collection, and its nodes and event listeners, once the folder is open. |
 | `processMb` | The working set of the page's process then, which Electron reports. Most of it is the thumbnails. |
 | `heapAfterRowsAgainMb` | The heap after the rows were made again three times: more than `heapMb` by much is a leak. |
