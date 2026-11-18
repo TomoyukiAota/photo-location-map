@@ -1,7 +1,8 @@
 import * as path from 'path';
 
-// The folders that the user chose in this launch, in the folder picker or with --open. The main window's page may read
-// the tree of such a folder, and open the files and folders in it with the OS, but not those of any other folder.
+// The folders that the user chose in this launch: in the folder picker, with --open, or by dropping the folder, or a
+// file in it, on the main window and confirming. The main window's page may read the tree of such a folder, and open
+// the files and folders in it with the OS, but not those of any other folder.
 // A relative path, which --open can give, is relative to the main process's working directory, as for the tree.
 
 // Each folder by its comparable path, with its path as resolved.

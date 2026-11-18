@@ -81,6 +81,10 @@
       "openFolder": "Apri cartella"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Vuoi aprire la cartella seguente?",
+    "openFile": "Vuoi aprire il file seguente?"
+  },
   "photoInfo": {
     "unavailable": "Le informazioni sulla foto non sono disponibili.",
     "openFile": "Apri file",

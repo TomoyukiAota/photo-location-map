@@ -6,7 +6,7 @@
 // Details: The channels are copies of src-shared/ipc/ipc-constants.ts and of the analytics and log channels;
 // test/electron-util/main-window-preload.spec.em.main.ts checks that they stay the same.
 'use strict';
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer, webUtils } = require('electron');
 
 const channels = {
   startupMetadata: 'ipc-constants-get-startup-metadata',
@@ -29,6 +29,8 @@ const channels = {
   openContainingFolder: 'ipc-constants-open-containing-folder',
   restart: 'ipc-constants-restart-app',
   openTarget: 'ipc-constants-get-open-target',
+  droppedItemOpenTarget: 'ipc-constants-dropped-item-open-target',
+  droppedItemChoose: 'ipc-constants-dropped-item-choose',
   updateUndoRedoMenus: 'ipc-constants-photo-selection-update-undo-redo-menus',
   photoDataViewer: 'ipc-constants-launch-photo-data-viewer',
   explorerContextMenuAdd: 'ipc-constants-explorer-context-menu-add',
@@ -75,6 +77,18 @@ function subscribe(channel, listener) {
   return () => { hub.listeners.delete(subscription); };
 }
 
+/**
+ * TL;DR: Asks the main process on `channel` about the folder or file that the user dropped on the page, given as its
+ * File, by the path that Electron knows for that File.
+ * Details: The page gives the File of the drop, never a path, so that what it can have opened, and then read through
+ * the main process, is what the user dropped: a File that the page makes itself has no path, and opens nothing,
+ * without a request. webUtils.getPathForFile throws for what is not a File, which the page then gets.
+ */
+function askAboutDroppedItem(channel, file) {
+  const filePath = webUtils.getPathForFile(file);
+  return filePath ? ipcRenderer.invoke(channel, filePath) : Promise.resolve({ kind: 'none' });
+}
+
 const plm = {
   version: 1,
   // Read while the page's modules are evaluated, before Angular starts, so asked for synchronously, once, here.
@@ -110,6 +124,10 @@ const plm = {
   },
   app: { restart: () => { ipcRenderer.send(channels.restart); } },
   commandLine: { openTarget: () => ipcRenderer.invoke(channels.openTarget) },
+  droppedItem: {
+    openTarget: file => askAboutDroppedItem(channels.droppedItemOpenTarget, file),
+    choose: file => askAboutDroppedItem(channels.droppedItemChoose, file),
+  },
   menus: { updateUndoRedo: params => ipcRenderer.invoke(channels.updateUndoRedoMenus, params) },
   photoDataViewer: { open: params => ipcRenderer.invoke(channels.photoDataViewer, params) },
   explorerContextMenu: {

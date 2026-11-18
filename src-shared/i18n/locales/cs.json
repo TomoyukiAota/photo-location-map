@@ -81,6 +81,10 @@
       "openFolder": "Otevřít složku"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Chcete otevřít níže uvedenou složku?",
+    "openFile": "Chcete otevřít níže uvedený soubor?"
+  },
   "photoInfo": {
     "unavailable": "Informace o fotce nejsou k dispozici.",
     "openFile": "Otevřít soubor",

@@ -81,6 +81,10 @@
       "openFolder": "Ava kaust"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Kas soovite avada alloleva kausta?",
+    "openFile": "Kas soovite avada alloleva faili?"
+  },
   "photoInfo": {
     "unavailable": "Foto teave pole saadaval.",
     "openFile": "Ava fail",
