@@ -92,6 +92,7 @@
       "openFolder": "Open map",
       "openGoogleMaps": "Open Google Maps",
       "openGoogleStreetView": "Open Google Street View",
+      "openGoogleEarth": "Open Google Earth",
       "viewData": "Bekijk gegevens"
     },
     "pathTooLong": "De miniatuur kan niet worden weergegeven, omdat het bestandspad {{length}} tekens lang is. Windows beperkt de lengte van een pad tot {{maximum}} tekens. Verplaats het bestand om het pad korter te maken. Druk voor details op Ctrl+Shift+I en lees de meldingen in de console.",

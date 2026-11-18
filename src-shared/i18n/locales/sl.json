@@ -92,6 +92,7 @@
       "openFolder": "Odpri mapo",
       "openGoogleMaps": "Odpri Google Zemljevide",
       "openGoogleStreetView": "Odpri Google Street View",
+      "openGoogleEarth": "Odpri Google Earth",
       "viewData": "Prikaži podatke"
     },
     "pathTooLong": "Sličice ni mogoče prikazati, ker je število znakov v poti datoteke {{length}}. Windows omejuje število znakov v poti na {{maximum}}. Premaknite datoteko, da skrajšate njeno pot. Za podrobnosti pritisnite Ctrl+Shift+I in preberite sporočila v konzoli.",

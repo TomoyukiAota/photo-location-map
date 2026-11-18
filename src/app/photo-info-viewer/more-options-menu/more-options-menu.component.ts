@@ -66,6 +66,7 @@ export class MoreOptionsMenuComponent {
     if (photo.hasGpsInfo) {
       items.push({ textKey: 'photoInfo.menu.openGoogleMaps', onClick: () => this.openGoogleMaps(photo) });
       items.push({ textKey: 'photoInfo.menu.openGoogleStreetView', onClick: () => this.openGoogleStreetView(photo) });
+      items.push({ textKey: 'photoInfo.menu.openGoogleEarth', onClick: () => this.openGoogleEarth(photo) });
     }
     items.push({ textKey: 'photoInfo.menu.viewData', onClick: () => this.viewData(photo) });
     return items;
@@ -121,6 +122,21 @@ export class MoreOptionsMenuComponent {
             '"Open Google Street View" Menu Item',
             'Photo Info Viewer',
             'https://www.google.com/maps/ with query parameters for latitude, longitude');
+  }
+
+  /**
+   * Google Earth searches for the latitude and the longitude: it goes to the place and marks it with a pin. The address
+   * is that of Photo Data Viewer's Google Earth button (src/components/photo-data/row/LatLngRow.tsx of
+   * https://github.com/TomoyukiAota/photo-data-viewer), so that both open the same view.
+   */
+  private openGoogleEarth(photo: Photo): void {
+    logger.info(`Clicked "Open Google Earth" menu item for ${photo.path}`);
+    Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Open Google Earth"');
+    const { latitude, longitude } = photo.exif.gpsInfo.latLng;
+    openUrl(`https://earth.google.com/web/search/${latitude},${longitude}`,
+            '"Open Google Earth" Menu Item',
+            'Photo Info Viewer',
+            'https://earth.google.com/web/search/ with latitude and longitude');
   }
 
   private viewData(photo: Photo): void {

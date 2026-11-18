@@ -92,6 +92,7 @@
       "openFolder": "Buka folder",
       "openGoogleMaps": "Buka Google Maps",
       "openGoogleStreetView": "Buka Google Street View",
+      "openGoogleEarth": "Buka Google Earth",
       "viewData": "Lihat data"
     },
     "pathTooLong": "Gambar mini tidak dapat ditampilkan karena panjang jalur file adalah {{length}} karakter. Windows membatasi panjang jalur hingga maksimum {{maximum}} karakter. Ubah lokasi file untuk memperpendek jalurnya. Untuk detailnya, tekan Ctrl+Shift+I dan baca pesan konsol.",
