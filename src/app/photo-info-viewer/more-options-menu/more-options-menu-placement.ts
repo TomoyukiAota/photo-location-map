@@ -30,7 +30,9 @@ export interface RoomAroundButton {
  */
 export function placeMenu(room: RoomAroundButton): MoreOptionsMenuPlacement {
   const insetInlineEnd = room.isWithinSidebar ? 0 : -25;
-  const enoughRoomBelow = room.below > 195; // Adjust the value if the menu height changes.
+  // The menu opens 1 px below its button, and its items are 35 px high each: 211 px for the 6 items of a photo with a
+  // location, and 19 px to spare. Adjust the value when the menu has more or fewer items.
+  const enoughRoomBelow = room.below > 230;
   const enoughRoomBeside = !room.isWithinSidebar && room.beside > 230; // Adjust the value if the menu width changes.
 
   if (enoughRoomBelow)

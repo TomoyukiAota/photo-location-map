@@ -2,7 +2,7 @@ import { cutOffAtEdgeOfArea, placeMenu, roomAround } from './more-options-menu-p
 
 describe('placeMenu', () => {
   it('opens the menu below its button where there is room, from the button\'s side in the sidebar', () => {
-    expect(placeMenu({ isWithinSidebar: true, below: 196, beside: 0 }))
+    expect(placeMenu({ isWithinSidebar: true, below: 231, beside: 0 }))
       .toEqual({ top: '37px', bottom: null, insetInlineStart: null, insetInlineEnd: 0 });
   });
 
@@ -12,12 +12,12 @@ describe('placeMenu', () => {
   });
 
   it('opens the menu beside its button on the map where there is no room below but room beside', () => {
-    expect(placeMenu({ isWithinSidebar: false, below: 195, beside: 231 }))
+    expect(placeMenu({ isWithinSidebar: false, below: 230, beside: 231 }))
       .toEqual({ top: null, bottom: '0', insetInlineStart: '37px', insetInlineEnd: null });
   });
 
   it('opens the menu above its button where there is room neither below nor beside', () => {
-    expect(placeMenu({ isWithinSidebar: false, below: 195, beside: 230 }))
+    expect(placeMenu({ isWithinSidebar: false, below: 230, beside: 230 }))
       .toEqual({ top: null, bottom: '37px', insetInlineStart: null, insetInlineEnd: -25 });
   });
 
