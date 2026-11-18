@@ -49,6 +49,19 @@ describe('The app\'s page (in main process)', () => {
     }
   });
 
+  // TL;DR: protocol.handle has the network service send the file of an answer that is still net.fetch's, as
+  // app-page.ts says, and streams any other through JavaScript.
+  // Details: These are the conditions of relayUntouchedFetch in Electron's lib/browser/api/protocol.ts, which reads
+  // the __fetch that net.fetch puts on its answer. After an upgrade of Electron that fails here, look again at how
+  // protocol.handle answers.
+  it('answers with the Response of net.fetch itself, unread, which protocol.handle relays without JavaScript', async () => {
+    const answer = await respond('plm-app://app/main-ABC.js') as Response & { __fetch?: { body: unknown } };
+    assert.ok(answer.__fetch, 'The answer is not the Response of net.fetch.');
+    assert.strictEqual(answer.body, answer.__fetch.body);
+    assert.strictEqual(answer.bodyUsed, false);
+    assert.strictEqual(answer.body?.locked, false);
+  });
+
   it('answers nothing outside the build, of another host, or that is not a file', async () => {
     for (const url of [
       'plm-app://app/%2E%2E/secret.txt',

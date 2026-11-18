@@ -48,17 +48,18 @@ export async function respondToAppPageRequest(request: Request, distFolder: stri
     return notFound();
   // Past any handler of file: URLs that protocol.handle may have, as photo-delivery.ts goes.
   const file = await net.fetch(pathToFileURL(filePath).href, { bypassCustomProtocolHandlers: true });
-  return withContentSecurityPolicy(file);
-}
-
-/**
- * `response` with the page's Content Security Policy (content-security-policy.ts). Each file of the page has it: the
- * policy applies to the document that index.html is, and would apply to a worker by its script's answer.
- */
-function withContentSecurityPolicy(response: Response): Response {
-  const headers = new Headers(response.headers);
-  headers.set('Content-Security-Policy', mainWindowContentSecurityPolicy);
-  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+  // TL;DR: The answer is net.fetch's own, with the page's Content Security Policy (content-security-policy.ts) added
+  // to its headers, so that the files of the page are sent as they were before the policy.
+  // Details: protocol.handle has the network service send the file of an answer that is still net.fetch's, unread,
+  // and streams the body of any other answer through JavaScript (relayUntouchedFetch in Electron's
+  // lib/browser/api/protocol.ts); either way, it takes the answer's headers. The policy's first version put the body
+  // in a Response of its own, which sent every file of the page through that stream, and in one run of the e2e suite
+  // on Windows CI, the page then went without styles.css: the map's tile containers, which Leaflet's CSS there lets
+  // the mouse pass through, took a click. Why was not found, as 150 launches on macOS applied it each time, so the
+  // files go as they did. Each file has the policy: it applies to the document that index.html is, and would apply to
+  // a worker by its script's answer.
+  file.headers.set('Content-Security-Policy', mainWindowContentSecurityPolicy);
+  return file;
 }
 
 function notFound(): Response {
