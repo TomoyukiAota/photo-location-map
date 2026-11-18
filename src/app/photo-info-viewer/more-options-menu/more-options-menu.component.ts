@@ -64,9 +64,10 @@ export class MoreOptionsMenuComponent {
       items.push({ textKey: 'photoInfo.menu.selectOnlyThis', onClick: () => this.selectOnlyThis(photo) });
     items.push({ textKey: 'photoInfo.menu.openFolder', onClick: () => this.openFolder(photo) });
     if (photo.hasGpsInfo) {
+      // In the order of Photo Data Viewer's buttons beside the latitude and the longitude.
       items.push({ textKey: 'photoInfo.menu.openGoogleMaps', onClick: () => this.openGoogleMaps(photo) });
-      items.push({ textKey: 'photoInfo.menu.openGoogleStreetView', onClick: () => this.openGoogleStreetView(photo) });
       items.push({ textKey: 'photoInfo.menu.openGoogleEarth', onClick: () => this.openGoogleEarth(photo) });
+      items.push({ textKey: 'photoInfo.menu.openGoogleStreetView', onClick: () => this.openGoogleStreetView(photo) });
     }
     items.push({ textKey: 'photoInfo.menu.viewData', onClick: () => this.viewData(photo) });
     return items;
@@ -114,16 +115,6 @@ export class MoreOptionsMenuComponent {
             'https://maps.google.com/ with query parameters for latitude, longitude, and zoom');
   }
 
-  private openGoogleStreetView(photo: Photo): void {
-    logger.info(`Clicked "Open Google Street View" menu item for ${photo.path}`);
-    Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Open Google Street View"');
-    const { latitude, longitude } = photo.exif.gpsInfo.latLng;
-    openUrl(`https://www.google.com/maps/@?api=1&map_action=pano&parameters&viewpoint=${latitude},${longitude}`,
-            '"Open Google Street View" Menu Item',
-            'Photo Info Viewer',
-            'https://www.google.com/maps/ with query parameters for latitude, longitude');
-  }
-
   /**
    * Google Earth searches for the latitude and the longitude: it goes to the place and marks it with a pin. The address
    * is that of Photo Data Viewer's Google Earth button (src/components/photo-data/row/LatLngRow.tsx of
@@ -137,6 +128,16 @@ export class MoreOptionsMenuComponent {
             '"Open Google Earth" Menu Item',
             'Photo Info Viewer',
             'https://earth.google.com/web/search/ with latitude and longitude');
+  }
+
+  private openGoogleStreetView(photo: Photo): void {
+    logger.info(`Clicked "Open Google Street View" menu item for ${photo.path}`);
+    Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Open Google Street View"');
+    const { latitude, longitude } = photo.exif.gpsInfo.latLng;
+    openUrl(`https://www.google.com/maps/@?api=1&map_action=pano&parameters&viewpoint=${latitude},${longitude}`,
+            '"Open Google Street View" Menu Item',
+            'Photo Info Viewer',
+            'https://www.google.com/maps/ with query parameters for latitude, longitude');
   }
 
   private viewData(photo: Photo): void {

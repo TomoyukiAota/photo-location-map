@@ -697,7 +697,7 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   await expect(popup.locator('.photo-info-viewer-date-time-taken')).toHaveText(/^\d{4}-\d{2}-\d{2} \([日月火水木金土]\) \d{2}:\d{2}:\d{2}$/);
   await popup.locator('.photo-info-viewer-more-options-button').click();
   await expect(page.locator('.photo-info-viewer-more-options-menu-item'))
-    .toHaveText(['このファイルのみを選択', 'フォルダーを開く', 'Google マップを開く', 'Google ストリートビューを開く', 'Google Earth を開く', 'データを表示']);
+    .toHaveText(['このファイルのみを選択', 'フォルダーを開く', 'Google マップを開く', 'Google Earth を開く', 'Google ストリートビューを開く', 'データを表示']);
   // The menu is wider than in English, and this popup is at the map's left edge: the menu is not cut off there.
   const menuBox = await page.locator('.photo-info-viewer-more-options-menu').boundingBox();
   const mapBox = await page.locator('#home-map').boundingBox();
@@ -795,7 +795,7 @@ test('on a computer whose language is Arabic, the application is laid out from r
   // The photo's menu opens the other way round, and stays within the map.
   await popup.locator('.photo-info-viewer-more-options-button').click();
   await expect(page.locator('.photo-info-viewer-more-options-menu-item'))
-    .toHaveText(['تحديد هذا الملف فقط', 'فتح المجلد', 'فتح خرائط Google', 'فتح Google Street View', 'فتح Google Earth', 'عرض البيانات']);
+    .toHaveText(['تحديد هذا الملف فقط', 'فتح المجلد', 'فتح خرائط Google', 'فتح Google Earth', 'فتح Google Street View', 'عرض البيانات']);
   const menuBox = await page.locator('.photo-info-viewer-more-options-menu').boundingBox();
   const mapBox = await map.boundingBox();
   expect(menuBox.x).toBeGreaterThanOrEqual(mapBox.x);
@@ -1523,7 +1523,7 @@ test('a photo\'s information, in the tree and in a popup of the map, opens the p
   await thumbnailInTree.click();
   await inTree.getByRole('button', { name: 'More Options' }).click();
   await expect(page.locator('.photo-info-viewer-more-options-menu-item'))
-    .toHaveText(['Select Only This', 'Open Folder', 'Open Google Maps', 'Open Google Street View', 'Open Google Earth', 'View Data']);
+    .toHaveText(['Select Only This', 'Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data']);
   // A click on an item does what the item says, and closes the menu.
   await menuItem('Open Folder').click();
   await expect(menu).toHaveCount(0);
@@ -1559,20 +1559,20 @@ test('a photo\'s information, in the tree and in a popup of the map, opens the p
   await inPopup.getByRole('button', { name: 'More Options' }).click();
   await menuItem('Open Google Maps').click();
   await inPopup.getByRole('button', { name: 'More Options' }).click();
-  await menuItem('Open Google Street View').click();
-  await inPopup.getByRole('button', { name: 'More Options' }).click();
   await menuItem('Open Google Earth').click();
+  await inPopup.getByRole('button', { name: 'More Options' }).click();
+  await menuItem('Open Google Street View').click();
   await expect.poll(openedUrls).toEqual([
     expect.stringMatching(/^https:\/\/maps\.google\.com\/\?q=[\d.]+,[\d.]+&ll=[\d.]+,[\d.]+&z=14$/),
-    expect.stringMatching(/^https:\/\/www\.google\.com\/maps\/@\?api=1&map_action=pano&parameters&viewpoint=[\d.]+,[\d.]+$/),
     expect.stringMatching(/^https:\/\/earth\.google\.com\/web\/search\/[\d.]+,[\d.]+$/),
+    expect.stringMatching(/^https:\/\/www\.google\.com\/maps\/@\?api=1&map_action=pano&parameters&viewpoint=[\d.]+,[\d.]+$/),
   ]);
   // All three at the photo's place, which none of the analytics' events has: they get the site alone.
   const place = new URL((await openedUrls())[0]).searchParams.get('q');
   expect(await openedUrls()).toEqual([
     `https://maps.google.com/?q=${place}&ll=${place}&z=14`,
-    `https://www.google.com/maps/@?api=1&map_action=pano&parameters&viewpoint=${place}`,
     `https://earth.google.com/web/search/${place}`,
+    `https://www.google.com/maps/@?api=1&map_action=pano&parameters&viewpoint=${place}`,
   ]);
   const openedUrlEvents = service => app.evaluate((_electron, service) => globalThis.__plmAnalyticsEvents
     .filter(event => event.service === service && event.action === 'Opened URL')

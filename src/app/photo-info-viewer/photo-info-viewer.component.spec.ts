@@ -277,7 +277,7 @@ describe('PhotoInfoViewerComponent', () => {
 
       const menu = element.querySelector('.photo-info-viewer-more-options-menu');
       expect(menu.parentElement).toBe(button('More Options'));
-      expect(menuItems().map(item => item.textContent)).toEqual(['Select Only This', 'Open Folder', 'Open Google Maps', 'Open Google Street View', 'Open Google Earth', 'View Data']);
+      expect(menuItems().map(item => item.textContent)).toEqual(['Select Only This', 'Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data']);
     });
 
     it('has no item that needs a location for a photo without one', async () => {
@@ -309,7 +309,7 @@ describe('PhotoInfoViewerComponent', () => {
       await show(cameraPhoto(), 'leaflet-map-popup');
       document.body.appendChild(element);
       try {
-        for (const text of ['Select Only This', 'Open Folder', 'Open Google Maps', 'Open Google Street View', 'Open Google Earth', 'View Data']) {
+        for (const text of ['Select Only This', 'Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data']) {
           button('More Options').focus();
           await click(button('More Options'));
           const item = menuItems().find(candidate => candidate.textContent === text);
@@ -329,8 +329,8 @@ describe('PhotoInfoViewerComponent', () => {
       expect(openContainingFolder).toHaveBeenCalledExactlyOnceWith('/photos/IMG_0001.JPG');
       expect(openExternal.mock.calls).toEqual([
         ['https://maps.google.com/?q=34.68,135.19&ll=34.68,135.19&z=14'],
-        ['https://www.google.com/maps/@?api=1&map_action=pano&parameters&viewpoint=34.68,135.19'],
         ['https://earth.google.com/web/search/34.68,135.19'],
+        ['https://www.google.com/maps/@?api=1&map_action=pano&parameters&viewpoint=34.68,135.19'],
       ]);
       expect(openPhotoDataViewer).toHaveBeenCalledExactlyOnceWith({ photo: { name: 'IMG_0001.JPG', path: '/photos/IMG_0001.JPG' } });
     });
@@ -341,7 +341,7 @@ describe('PhotoInfoViewerComponent', () => {
       document.body.appendChild(element);
       const trackEvent = vi.spyOn(Analytics, 'trackEvent');
       try {
-        for (const text of ['Open Google Maps', 'Open Google Street View', 'Open Google Earth']) {
+        for (const text of ['Open Google Maps', 'Open Google Earth', 'Open Google Street View']) {
           button('More Options').focus();
           await click(button('More Options'));
           await click(menuItems().find(candidate => candidate.textContent === text));
@@ -351,12 +351,12 @@ describe('PhotoInfoViewerComponent', () => {
           ['Photo Info Viewer', '[PIV] Clicked "Open Google Maps"'],
           ['Opened URL', 'Opened URL', '[Photo Info Viewer] Opened URL for "Open Google Maps" Menu Item',
             'https://maps.google.com/ with query parameters for latitude, longitude, and zoom'],
-          ['Photo Info Viewer', '[PIV] Clicked "Open Google Street View"'],
-          ['Opened URL', 'Opened URL', '[Photo Info Viewer] Opened URL for "Open Google Street View" Menu Item',
-            'https://www.google.com/maps/ with query parameters for latitude, longitude'],
           ['Photo Info Viewer', '[PIV] Clicked "Open Google Earth"'],
           ['Opened URL', 'Opened URL', '[Photo Info Viewer] Opened URL for "Open Google Earth" Menu Item',
             'https://earth.google.com/web/search/ with latitude and longitude'],
+          ['Photo Info Viewer', '[PIV] Clicked "Open Google Street View"'],
+          ['Opened URL', 'Opened URL', '[Photo Info Viewer] Opened URL for "Open Google Street View" Menu Item',
+            'https://www.google.com/maps/ with query parameters for latitude, longitude'],
         ]);
         expect(JSON.stringify(trackEvent.mock.calls)).not.toMatch(/34\.68|135\.19/);
       } finally {
