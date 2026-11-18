@@ -81,6 +81,10 @@
       "openFolder": "폴더 열기"
     }
   },
+  "dropToOpen": {
+    "openFolder": "아래 폴더를 여시겠습니까?",
+    "openFile": "아래 파일을 여시겠습니까?"
+  },
   "photoInfo": {
     "unavailable": "사진 정보가 없습니다.",
     "openFile": "파일 열기",

@@ -81,6 +81,10 @@
       "openFolder": "פתיחת התיקייה"
     }
   },
+  "dropToOpen": {
+    "openFolder": "לפתוח את התיקייה שלהלן?",
+    "openFile": "לפתוח את הקובץ שלהלן?"
+  },
   "photoInfo": {
     "unavailable": "פרטי התמונה אינם זמינים.",
     "openFile": "פתיחת הקובץ",

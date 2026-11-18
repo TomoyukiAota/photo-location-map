@@ -81,6 +81,10 @@
       "openFolder": "Odpri mapo"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Ali želite odpreti spodnjo mapo?",
+    "openFile": "Ali želite odpreti spodnjo datoteko?"
+  },
   "photoInfo": {
     "unavailable": "Podatki o fotografiji niso na voljo.",
     "openFile": "Odpri datoteko",

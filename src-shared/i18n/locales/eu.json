@@ -81,6 +81,10 @@
       "openFolder": "Ireki karpeta"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Beheko karpeta ireki nahi duzu?",
+    "openFile": "Beheko fitxategia ireki nahi duzu?"
+  },
   "photoInfo": {
     "unavailable": "Argazkiaren informazioa ez dago erabilgarri.",
     "openFile": "Ireki fitxategia",

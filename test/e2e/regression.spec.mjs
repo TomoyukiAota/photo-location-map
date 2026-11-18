@@ -276,6 +276,55 @@ async function openFolderWithPicker(folder) {
   await page.getByRole('button', { name: 'Open Folder', exact: true }).click();
 }
 /**
+ * Drags the files and folders at `itemPaths` over the map, as from Explorer or Finder, and drops them there unless
+ * `drop` is false. Resolves with whether the page took the drag, and the effect that it set: copy for a drop that it
+ * takes, none for one that it refuses.
+ * TL;DR: The Files of the drag have the items' paths on the disk, as a drag from the OS has, so that the preload reads
+ * their paths as it does for a real drop (electron-util/preload/main-window.cjs).
+ * Details: Playwright cannot start a drag of the OS. The Files come from a file input that this adds to the page, as
+ * Chromium's DOM.setFileInputFiles makes them from paths, a folder's too: Playwright's setInputFiles takes a folder
+ * only for an input with webkitdirectory, which then has the files in it rather than the folder. The drag's events
+ * are dispatched with a DataTransfer that holds those Files. Chromium ignores the dropEffect that is set on a
+ * DataTransfer which a script made, as it is not a drag's, so this one records what the page sets.
+ */
+async function dragOnWindow(itemPaths, { drop = true } = {}) {
+  await page.evaluate(() => {
+    const input = Object.assign(document.createElement('input'), { type: 'file', multiple: true, hidden: true, id: 'plm-e2e-dragged-files' });
+    document.body.append(input);
+  });
+  const cdp = await page.context().newCDPSession(page);
+  try {
+    const { result } = await cdp.send('Runtime.evaluate', { expression: `document.getElementById('plm-e2e-dragged-files')` });
+    await cdp.send('DOM.setFileInputFiles', { objectId: result.objectId, files: itemPaths });
+  } finally {
+    await cdp.detach();
+  }
+  return page.evaluate(drop => {
+    const input = document.getElementById('plm-e2e-dragged-files');
+    const dataTransfer = new DataTransfer();
+    for (const file of input.files) dataTransfer.items.add(file);
+    input.remove();
+    let dropEffect = 'none';
+    Object.defineProperty(dataTransfer, 'dropEffect', { get: () => dropEffect, set: effect => { dropEffect = effect; } });
+    const map = document.getElementById('plm-leaflet-map');
+    // false when the page prevented the event's default action, which takes the drag.
+    const dispatch = type => !map.dispatchEvent(new DragEvent(type, { bubbles: true, cancelable: true, dataTransfer }));
+    dispatch('dragenter');
+    const taken = dispatch('dragover');
+    const effect = dataTransfer.dropEffect;
+    if (drop) dispatch('drop');
+    return { taken, effect };
+  }, drop);
+}
+/** Checks the question that a drop asks, about the folder or the file at `itemPath`, then clicks `answer`, OK or Cancel. */
+async function answerDropQuestion(question, itemPath, answer) {
+  const dialog = page.locator('app-confirm-dialog');
+  await expect(dialog.locator('.message')).toHaveText(question);
+  await expect(dialog.locator('.path')).toHaveText(itemPath);
+  await dialog.getByRole('button', { name: answer, exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+}
+/**
  * What the dialog of an error that nothing handled in the main process shows, for a promise rejected there with
  * `message`. The dialog is replaced while it is shown, as the real one would wait for a click.
  */
@@ -1764,6 +1813,53 @@ test('--open with a photo opens its folder with only that photo selected', async
     else process.env.PLM_E2E_OPEN = previousOpen;
   }
 });
+test('a folder dropped on the window opens once the user confirms, with all of its photos selected', async () => {
+  const folder = path.join(profile, 'dropped 写真 # 100%');
+  await mkdir(folder);
+  await copyFile(path.join(photoFolder, 'Gold Coast/IMG_1579.JPG'), path.join(folder, 'Gold Coast.JPG'));
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'Kobe.JPG'));
+  // While a dialog is open, Open Folder cannot be clicked, and a drop is refused.
+  await expect(page.locator('app-welcome-dialog')).toBeVisible();
+  expect(await dragOnWindow([folder], { drop: false })).toEqual({ taken: true, effect: 'none' });
+  await dismissWelcome();
+  // A File that the page makes is not on the disk: it opens nothing, and nothing is asked.
+  await page.evaluate(() => {
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(new File(['not a photo'], 'made by the page.jpg'));
+    document.getElementById('plm-leaflet-map').dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer }));
+  });
+  await expect.poll(() => app.evaluate(() => globalThis.__plmAnalyticsEvents
+    .filter(event => event.action === 'Drop to Open: Nothing to Open').map(event => event.label)))
+    .toEqual(['Item Type: none', 'Item Type: none']);
+  await expect(page.locator('app-confirm-dialog')).toHaveCount(0);
+  // Canceled, the folder is not opened, and the page may not read it.
+  expect(await dragOnWindow([folder])).toEqual({ taken: true, effect: 'copy' });
+  await answerDropQuestion('Do you want to open the folder below?', folder, 'Cancel');
+  await expect(page.evaluate(folder => window.plm.directoryTree.create(folder), folder)).rejects.toThrow('Only a folder that the user chose can be read.');
+  await expect(page.locator('mat-tree-node')).toHaveCount(0);
+  await dragOnWindow([folder]);
+  await answerDropQuestion('Do you want to open the folder below?', folder, 'OK');
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('2 files have location data.');
+  await expect(page.locator('mat-tree-node').filter({ hasText: path.basename(folder) })).toBeVisible();
+  await expect(treeCheckbox('Kobe.JPG')).toBeChecked();
+  await expect(treeCheckbox('Gold Coast.JPG')).toBeChecked();
+  await expectRepresentedPhotos(2);
+});
+test('a photo dropped on the window opens its folder once the user confirms, with only that photo selected', async () => {
+  const folder = path.join(profile, 'dropped through a photo');
+  await mkdir(folder);
+  await copyFile(path.join(photoFolder, 'Gold Coast/IMG_1579.JPG'), path.join(folder, 'Gold Coast.JPG'));
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'Kobe.JPG'));
+  await dismissWelcome();
+  const photo = path.join(folder, 'Kobe.JPG');
+  // Of two photos dropped at once, the first is asked about.
+  expect(await dragOnWindow([photo, path.join(folder, 'Gold Coast.JPG')])).toEqual({ taken: true, effect: 'copy' });
+  await answerDropQuestion('Do you want to open the file below?', photo, 'OK');
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('2 files have location data.');
+  await expect(treeCheckbox('Kobe.JPG')).toBeChecked();
+  await expect(treeCheckbox('Gold Coast.JPG')).not.toBeChecked();
+  await expectRepresentedPhotos(1);
+});
 test('a photo whose GPS values are empty leaves the other photos on the map', async () => {
   // exifr gives such a photo's latitude and longitude as the text "NaNNaN", and Leaflet threw on its marker. The
   // error ended the loop that added the markers, so the folder had no markers at all, and the map kept its progress
@@ -2424,6 +2520,41 @@ test('closing Photo Data Viewer while its page loads shows and records no error'
   expect(await app.evaluate(() => globalThis.__plmE2eErrorDialogs.map(options => options.detail))).toEqual([]);
   expect(await app.evaluate(() => globalThis.__plmAnalyticsEvents
     .filter(event => event.action === 'Unhandled Error (Main)').map(event => event.label))).toEqual([]);
+});
+test('Photo Data Viewer opens first wide enough to split its panes, in the middle of the main window\'s display, and then where the user left it', async () => {
+  await dismissWelcome();
+  const photo = path.join(root, 'test/test-resources/actual-photos/Kobe/IMG_4676.JPG');
+  await openFolderWithPicker(path.dirname(photo));
+  const openViewer = async () => {
+    const newWindow = app.waitForEvent('window');
+    await page.evaluate(photo => window.plm.photoDataViewer.open({ photo: { name: 'IMG_4676.JPG', path: photo } }), photo);
+    const viewer = await newWindow;
+    return { viewer, viewerWindow: await app.browserWindow(viewer) };
+  };
+  const bounds = window => window.evaluate(window => window.getBounds());
+  // The default bounds, 1240x800 where the work area has the room (src-main/photo-data-viewer/photo-data-viewer-window-state.ts).
+  const area = await (await app.browserWindow(page)).evaluate(window =>
+    globalThis.__plmTestRequire('electron').screen.getDisplayMatching(window.getBounds()).workArea);
+  const width = Math.min(1240, area.width);
+  const height = Math.min(800, area.height);
+  const { viewer, viewerWindow } = await openViewer();
+  expect(await bounds(viewerWindow)).toEqual({ x: area.x + Math.round((area.width - width) / 2),
+    y: area.y + Math.round((area.height - height) / 2), width, height });
+  // The viewer splits its panes in a page wider than 1200 pixels: the photo and the map beside the data, which are
+  // not behind the tabs of a single pane. The display may be too small for it, as the 1024x768 of CI's macOS and
+  // Windows runners is; Ubuntu's, of 1280x1024, is not.
+  if (width === 1240) {
+    await expect(viewer.locator('.leaflet-container')).toBeVisible({ timeout: 30000 });
+    await expect(viewer.getByRole('tab', { name: 'General', exact: true })).toBeVisible();
+    await expect(viewer.getByRole('tab', { name: 'Map', exact: true })).toHaveCount(0);
+    expect(await viewer.evaluate(() => document.documentElement.clientWidth)).toBeGreaterThan(1200);
+  }
+  // Bounds that the user gave the window, saved when it closes, are where it opens next.
+  const userBounds = { x: area.x + 30, y: area.y + 40, width: Math.min(720, area.width - 30), height: Math.min(560, area.height - 40) };
+  await viewerWindow.evaluate((window, userBounds) => window.setBounds(userBounds), userBounds);
+  await expect.poll(() => bounds(viewerWindow)).toEqual(userBounds);
+  await viewerWindow.evaluate(window => new Promise(resolve => { window.once('closed', resolve); window.close(); }));
+  expect(await bounds((await openViewer()).viewerWindow)).toEqual(userBounds);
 });
 test('the page shows the photos of a folder that the user opened, and no other file', async () => {
   // The page's web security is on: no file: URL loads, and plm-file: answers only for the opened folders

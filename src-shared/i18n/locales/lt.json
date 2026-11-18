@@ -81,6 +81,10 @@
       "openFolder": "Atidaryti aplanką"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Ar norite atidaryti toliau nurodytą aplanką?",
+    "openFile": "Ar norite atidaryti toliau nurodytą failą?"
+  },
   "photoInfo": {
     "unavailable": "Nuotraukos informacijos nėra.",
     "openFile": "Atidaryti failą",

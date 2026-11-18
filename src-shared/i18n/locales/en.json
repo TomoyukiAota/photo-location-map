@@ -81,6 +81,10 @@
       "openFolder": "Open Folder"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Do you want to open the folder below?",
+    "openFile": "Do you want to open the file below?"
+  },
   "photoInfo": {
     "unavailable": "Photo information is unavailable.",
     "openFile": "Open File",

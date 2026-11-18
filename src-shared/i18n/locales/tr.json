@@ -81,6 +81,10 @@
       "openFolder": "Klasörü aç"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Aşağıdaki klasörü açmak istiyor musunuz?",
+    "openFile": "Aşağıdaki dosyayı açmak istiyor musunuz?"
+  },
   "photoInfo": {
     "unavailable": "Fotoğraf bilgileri mevcut değil.",
     "openFile": "Dosyayı aç",

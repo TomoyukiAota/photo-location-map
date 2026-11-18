@@ -81,6 +81,10 @@
       "openFolder": "開啟資料夾"
     }
   },
+  "dropToOpen": {
+    "openFolder": "要開啟下列資料夾嗎？",
+    "openFile": "要開啟下列檔案嗎？"
+  },
   "photoInfo": {
     "unavailable": "無法取得照片資訊。",
     "openFile": "開啟檔案",

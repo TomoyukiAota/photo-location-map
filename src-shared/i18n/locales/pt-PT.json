@@ -81,6 +81,10 @@
       "openFolder": "Abrir pasta"
     }
   },
+  "dropToOpen": {
+    "openFolder": "Pretende abrir a pasta abaixo?",
+    "openFile": "Pretende abrir o ficheiro abaixo?"
+  },
   "photoInfo": {
     "unavailable": "As informações da fotografia não estão disponíveis.",
     "openFile": "Abrir ficheiro",

@@ -81,6 +81,10 @@
       "openFolder": "Abrir carpeta"
     }
   },
+  "dropToOpen": {
+    "openFolder": "¿Quieres abrir la siguiente carpeta?",
+    "openFile": "¿Quieres abrir el siguiente archivo?"
+  },
   "photoInfo": {
     "unavailable": "La información de la foto no está disponible.",
     "openFile": "Abrir archivo",

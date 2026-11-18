@@ -4,8 +4,8 @@
 //   node test/layout/app-in-every-language.mjs [--languages=de,fi] [--pictures] [--output=<folder>]
 //
 // For each language, on an empty profile of a computer in that language, it goes through the screens that show
-// texts: the Language dialog, the Welcome dialog, the home view without and with a folder of photos (in a window of
-// 1200x800 and of 800x600), a photo's popup with its menu, the tree's menu, the Sort menu and its info dialog, the
+// texts: the Language dialog, the Welcome dialog, the question that a dropped folder asks, the home view without and
+// with a folder of photos (in a window of 1200x800 and of 800x600), a photo's popup with its menu, the tree's menu, the Sort menu and its info dialog, the
 // chart's menu, its message for a duration that it cannot show and its button for the photos within a zoom, a region
 // on the map, the tabs of the Settings dialog with the choices of the clock's field, the question before a restart,
 // the About box, the dialog of the thumbnails that failed, and the dialog of a folder without location data.
@@ -220,6 +220,28 @@ for (const code of codes) {
       await page.waitForSelector('app-welcome-dialog', { state: 'detached' });
     });
     await step('home-empty', () => screen('home-empty', 'app-root'));
+    await step('drop-question', async () => {
+      // The question that a dropped folder asks, with its path below it. The drop's File has the folder's path, as
+      // in a drop from the OS (dragOnWindow in test/e2e/regression.spec.mjs).
+      await page.evaluate(() => document.body.append(Object.assign(document.createElement('input'),
+        { type: 'file', hidden: true, id: 'plm-layout-dragged-files' })));
+      const cdp = await page.context().newCDPSession(page);
+      const { result } = await cdp.send('Runtime.evaluate', { expression: `document.getElementById('plm-layout-dragged-files')` });
+      await cdp.send('DOM.setFileInputFiles', { objectId: result.objectId, files: [photos] });
+      await cdp.detach();
+      await page.evaluate(() => {
+        const input = document.getElementById('plm-layout-dragged-files');
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(input.files[0]);
+        input.remove();
+        for (const type of ['dragenter', 'dragover', 'drop'])
+          document.body.dispatchEvent(new DragEvent(type, { bubbles: true, cancelable: true, dataTransfer }));
+      });
+      await page.waitForSelector('app-confirm-dialog .path');
+      await screen('drop-question', 'app-confirm-dialog', 'mat-dialog-container:has(app-confirm-dialog)');
+      await page.locator('app-confirm-dialog .cancel-button').click();
+      await page.waitForSelector('app-confirm-dialog', { state: 'detached' });
+    });
     await step('home-loaded', async () => {
       await openFolder(photos);
       // The loading dialog is there for a moment only: it is measured at once, if it is caught at all.

@@ -6,6 +6,8 @@ import { TranslatePipe } from '../i18n/translate.pipe';
 export interface ConfirmDialogData {
   /** The question; a line break in it starts a new line. */
   message: string;
+  /** The path of the folder or the file that the question is about, shown as it is on the line below it. */
+  path?: string;
 }
 
 /** A question with OK and Cancel, which closes with true for OK (ConfirmDialogService). */
