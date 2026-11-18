@@ -2497,6 +2497,41 @@ test('closing Photo Data Viewer while its page loads shows and records no error'
   expect(await app.evaluate(() => globalThis.__plmAnalyticsEvents
     .filter(event => event.action === 'Unhandled Error (Main)').map(event => event.label))).toEqual([]);
 });
+test('Photo Data Viewer opens first wide enough to split its panes, in the middle of the main window\'s display, and then where the user left it', async () => {
+  await dismissWelcome();
+  const photo = path.join(root, 'test/test-resources/actual-photos/Kobe/IMG_4676.JPG');
+  await openFolderWithPicker(path.dirname(photo));
+  const openViewer = async () => {
+    const newWindow = app.waitForEvent('window');
+    await page.evaluate(photo => window.plm.photoDataViewer.open({ photo: { name: 'IMG_4676.JPG', path: photo } }), photo);
+    const viewer = await newWindow;
+    return { viewer, viewerWindow: await app.browserWindow(viewer) };
+  };
+  const bounds = window => window.evaluate(window => window.getBounds());
+  // The default bounds, 1240x800 where the work area has the room (src-main/photo-data-viewer/photo-data-viewer-window-state.ts).
+  const area = await (await app.browserWindow(page)).evaluate(window =>
+    globalThis.__plmTestRequire('electron').screen.getDisplayMatching(window.getBounds()).workArea);
+  const width = Math.min(1240, area.width);
+  const height = Math.min(800, area.height);
+  const { viewer, viewerWindow } = await openViewer();
+  expect(await bounds(viewerWindow)).toEqual({ x: area.x + Math.round((area.width - width) / 2),
+    y: area.y + Math.round((area.height - height) / 2), width, height });
+  // The viewer splits its panes in a page wider than 1200 pixels: the photo and the map beside the data, which are
+  // not behind the tabs of a single pane. The display may be too small for it, as the 1024x768 of CI's macOS and
+  // Windows runners is; Ubuntu's, of 1280x1024, is not.
+  if (width === 1240) {
+    await expect(viewer.locator('.leaflet-container')).toBeVisible({ timeout: 30000 });
+    await expect(viewer.getByRole('tab', { name: 'General', exact: true })).toBeVisible();
+    await expect(viewer.getByRole('tab', { name: 'Map', exact: true })).toHaveCount(0);
+    expect(await viewer.evaluate(() => document.documentElement.clientWidth)).toBeGreaterThan(1200);
+  }
+  // Bounds that the user gave the window, saved when it closes, are where it opens next.
+  const userBounds = { x: area.x + 30, y: area.y + 40, width: Math.min(720, area.width - 30), height: Math.min(560, area.height - 40) };
+  await viewerWindow.evaluate((window, userBounds) => window.setBounds(userBounds), userBounds);
+  await expect.poll(() => bounds(viewerWindow)).toEqual(userBounds);
+  await viewerWindow.evaluate(window => new Promise(resolve => { window.once('closed', resolve); window.close(); }));
+  expect(await bounds((await openViewer()).viewerWindow)).toEqual(userBounds);
+});
 test('the page shows the photos of a folder that the user opened, and no other file', async () => {
   // The page's web security is on: no file: URL loads, and plm-file: answers only for the opened folders
   // (src-main/file-server/photo-files.ts).
