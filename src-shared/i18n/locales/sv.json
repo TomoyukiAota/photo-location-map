@@ -94,6 +94,8 @@
     "rotateThumbnail": "Rotera miniatyr",
     "menu": {
       "selectOnlyThis": "Markera endast den här filen",
+      "selectPrevious": "Markera föregående fil",
+      "selectNext": "Markera nästa fil",
       "openFolder": "Öppna mapp",
       "revealInMap": "Visa på kartan",
       "revealInSidebar": "Visa i sidofältet",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "Markering",
       "undo": "Ångra",
-      "redo": "Gör om"
+      "redo": "Gör om",
+      "selectPrevious": "Markera föregående fil",
+      "selectNext": "Markera nästa fil"
     },
     "settings": {
       "title": "Inställningar",

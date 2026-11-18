@@ -1,4 +1,4 @@
-import { inject, Service } from '@angular/core';
+import { inject, Service, signal } from '@angular/core';
 import { Subject } from 'rxjs';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { DirTreeViewSortService } from './dir-tree-view-sort/dir-tree-view-sort.service';
@@ -20,9 +20,18 @@ export class DirectoryTreeViewDataService {
    */
   public readonly dataReplaced = new Subject<NestedNode[]>();
 
+  private readonly treeState = signal<readonly NestedNode[]>([]);
+  /**
+   * The tree that replace() made last: the opened folder's root, or nothing before a folder is opened. For what is
+   * derived from the whole tree, such as the order that Select Previous and Select Next go through. The tree view sorts
+   * the children of these nodes in place, which leaves what is in the tree as it is.
+   */
+  public readonly tree = this.treeState.asReadonly();
+
   public replace(directoryTreeObject: DirectoryTree): void {
     const nestedNodeArray = this.convertToNestedNodeArray([directoryTreeObject]);
     const sorted = this.sortService.sortData(nestedNodeArray, {key: 'Name', direction: 'Ascending'});
+    this.treeState.set(sorted);
     this.dataReplaced.next(sorted);
   }
 

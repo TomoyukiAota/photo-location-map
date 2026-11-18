@@ -94,6 +94,8 @@
     "rotateThumbnail": "Kierrä pikkukuvaa",
     "menu": {
       "selectOnlyThis": "Valitse vain tämä tiedosto",
+      "selectPrevious": "Valitse edellinen tiedosto",
+      "selectNext": "Valitse seuraava tiedosto",
       "openFolder": "Avaa kansio",
       "revealInMap": "Näytä kartalla",
       "revealInSidebar": "Näytä sivupalkissa",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "Valinta",
       "undo": "Kumoa",
-      "redo": "Tee uudelleen"
+      "redo": "Tee uudelleen",
+      "selectPrevious": "Valitse edellinen tiedosto",
+      "selectNext": "Valitse seuraava tiedosto"
     },
     "settings": {
       "title": "Asetukset",

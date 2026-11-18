@@ -94,6 +94,8 @@
     "rotateThumbnail": "Zakreni minijaturu",
     "menu": {
       "selectOnlyThis": "Odaberi samo ovu datoteku",
+      "selectPrevious": "Odaberi prethodnu datoteku",
+      "selectNext": "Odaberi sljedeću datoteku",
       "openFolder": "Otvori mapu",
       "revealInMap": "Prikaži na karti",
       "revealInSidebar": "Prikaži na bočnoj traci",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "Odabir",
       "undo": "Poništi",
-      "redo": "Ponovi"
+      "redo": "Ponovi",
+      "selectPrevious": "Odaberi prethodnu datoteku",
+      "selectNext": "Odaberi sljedeću datoteku"
     },
     "settings": {
       "title": "Postavke",

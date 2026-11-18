@@ -94,6 +94,8 @@
     "rotateThumbnail": "Miniatur drehen",
     "menu": {
       "selectOnlyThis": "Nur diese Datei auswählen",
+      "selectPrevious": "Vorherige Datei auswählen",
+      "selectNext": "Nächste Datei auswählen",
       "openFolder": "Ordner öffnen",
       "revealInMap": "Auf der Karte anzeigen",
       "revealInSidebar": "In der Seitenleiste anzeigen",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "Auswahl",
       "undo": "Rückgängig",
-      "redo": "Wiederholen"
+      "redo": "Wiederholen",
+      "selectPrevious": "Vorherige Datei auswählen",
+      "selectNext": "Nächste Datei auswählen"
     },
     "settings": {
       "title": "Einstellungen",

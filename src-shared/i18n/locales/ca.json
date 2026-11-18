@@ -94,6 +94,8 @@
     "rotateThumbnail": "Gira la miniatura",
     "menu": {
       "selectOnlyThis": "Selecciona només aquest fitxer",
+      "selectPrevious": "Selecciona el fitxer anterior",
+      "selectNext": "Selecciona el fitxer següent",
       "openFolder": "Obre la carpeta",
       "revealInMap": "Mostra al mapa",
       "revealInSidebar": "Mostra a la barra lateral",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "Selecció",
       "undo": "Desfés",
-      "redo": "Refés"
+      "redo": "Refés",
+      "selectPrevious": "Selecciona el fitxer anterior",
+      "selectNext": "Selecciona el fitxer següent"
     },
     "settings": {
       "title": "Configuració",

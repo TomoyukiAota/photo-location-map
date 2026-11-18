@@ -94,6 +94,8 @@
     "rotateThumbnail": "Küçük resmi döndür",
     "menu": {
       "selectOnlyThis": "Yalnızca bu dosyayı seç",
+      "selectPrevious": "Önceki dosyayı seç",
+      "selectNext": "Sonraki dosyayı seç",
       "openFolder": "Klasörü aç",
       "revealInMap": "Haritada göster",
       "revealInSidebar": "Kenar çubuğunda göster",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "Seçim",
       "undo": "Geri al",
-      "redo": "Yinele"
+      "redo": "Yinele",
+      "selectPrevious": "Önceki dosyayı seç",
+      "selectNext": "Sonraki dosyayı seç"
     },
     "settings": {
       "title": "Ayarlar",

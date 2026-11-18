@@ -26,4 +26,6 @@ export class PlmInternalRendererPhotoSelection implements IPlmInternalRendererPh
   public undo: () => void;
   public redo: () => void;
   public selectOnlyThis: (photoPath: string) => void;
+  public selectPrevious: () => void;
+  public selectNext: () => void;
 }

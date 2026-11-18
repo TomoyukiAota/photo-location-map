@@ -94,6 +94,8 @@
     "rotateThumbnail": "थंबनेल घुमाएँ",
     "menu": {
       "selectOnlyThis": "सिर्फ़ यह फ़ाइल चुनें",
+      "selectPrevious": "पिछली फ़ाइल चुनें",
+      "selectNext": "अगली फ़ाइल चुनें",
       "openFolder": "फ़ोल्डर खोलें",
       "revealInMap": "मैप पर दिखाएँ",
       "revealInSidebar": "साइडबार में दिखाएँ",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "चयन",
       "undo": "पहले जैसा करें",
-      "redo": "फिर से करें"
+      "redo": "फिर से करें",
+      "selectPrevious": "पिछली फ़ाइल चुनें",
+      "selectNext": "अगली फ़ाइल चुनें"
     },
     "settings": {
       "title": "सेटिंग",

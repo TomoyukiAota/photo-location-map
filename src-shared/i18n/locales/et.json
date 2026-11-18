@@ -94,6 +94,8 @@
     "rotateThumbnail": "Pööra pisipilti",
     "menu": {
       "selectOnlyThis": "Vali ainult see fail",
+      "selectPrevious": "Vali eelmine fail",
+      "selectNext": "Vali järgmine fail",
       "openFolder": "Ava kaust",
       "revealInMap": "Kuva kaardil",
       "revealInSidebar": "Kuva külgribal",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "Valik",
       "undo": "Võta tagasi",
-      "redo": "Tee uuesti"
+      "redo": "Tee uuesti",
+      "selectPrevious": "Vali eelmine fail",
+      "selectNext": "Vali järgmine fail"
     },
     "settings": {
       "title": "Seaded",

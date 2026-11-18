@@ -94,6 +94,8 @@
     "rotateThumbnail": "Повернути мініатюру",
     "menu": {
       "selectOnlyThis": "Вибрати лише цей файл",
+      "selectPrevious": "Вибрати попередній файл",
+      "selectNext": "Вибрати наступний файл",
       "openFolder": "Відкрити папку",
       "revealInMap": "Показати на карті",
       "revealInSidebar": "Показати на бічній панелі",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "Вибір",
       "undo": "Скасувати",
-      "redo": "Повторити"
+      "redo": "Повторити",
+      "selectPrevious": "Вибрати попередній файл",
+      "selectNext": "Вибрати наступний файл"
     },
     "settings": {
       "title": "Параметри",

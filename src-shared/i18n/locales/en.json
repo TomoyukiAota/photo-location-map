@@ -94,6 +94,8 @@
     "rotateThumbnail": "Rotate Thumbnail",
     "menu": {
       "selectOnlyThis": "Select Only This",
+      "selectPrevious": "Select Previous",
+      "selectNext": "Select Next",
       "openFolder": "Open Folder",
       "revealInMap": "Reveal in Map",
       "revealInSidebar": "Reveal in Sidebar",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "Selection",
       "undo": "Undo",
-      "redo": "Redo"
+      "redo": "Redo",
+      "selectPrevious": "Select Previous",
+      "selectNext": "Select Next"
     },
     "settings": {
       "title": "Settings",

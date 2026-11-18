@@ -45,6 +45,10 @@ export namespace IpcConstants {
     export const Undo = 'ipc-constants-photo-selection-undo';
     export const Redo = 'ipc-constants-photo-selection-redo';
     export const UpdateUndoRedoMenus = 'ipc-constants-photo-selection-update-undo-redo-menus';
+    /** The Selection menu's Select Previous and Select Next, which act on the one selected photo (src-main/menu/selection-menu.ts). */
+    export const SelectPrevious = 'ipc-constants-photo-selection-select-previous';
+    export const SelectNext = 'ipc-constants-photo-selection-select-next';
+    export const UpdateSelectPreviousNextMenus = 'ipc-constants-photo-selection-update-select-previous-next-menus';
   }
 
   export namespace ExplorerContextMenu {

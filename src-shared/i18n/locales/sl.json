@@ -94,6 +94,8 @@
     "rotateThumbnail": "Zasukaj sličico",
     "menu": {
       "selectOnlyThis": "Izberi samo to datoteko",
+      "selectPrevious": "Izberi prejšnjo datoteko",
+      "selectNext": "Izberi naslednjo datoteko",
       "openFolder": "Odpri mapo",
       "revealInMap": "Prikaži na zemljevidu",
       "revealInSidebar": "Prikaži v stranski vrstici",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "Izbor",
       "undo": "Razveljavi",
-      "redo": "Uveljavi"
+      "redo": "Uveljavi",
+      "selectPrevious": "Izberi prejšnjo datoteko",
+      "selectNext": "Izberi naslednjo datoteko"
     },
     "settings": {
       "title": "Nastavitve",

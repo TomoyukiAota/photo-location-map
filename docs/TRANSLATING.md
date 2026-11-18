@@ -151,6 +151,11 @@ npm run test:unit:ng
   one item of the menu of the list of folders, as it is shown on a file and on
   a folder. English says the same of both; name the file and the folder where
   your language does, as Japanese does.
+- `photoInfo.menu.selectPrevious` and `selectNext` are items of a photo's menu,
+  and `menu.selection.selectPrevious` and `selectNext` the same items of the
+  application menu, for the one selected photo. They select the photo taken
+  just before or just after it, by the date taken. Name what they select as
+  `photoInfo.menu.selectOnlyThis` does: a file in most languages.
 - `photoInfo.menu.revealInMap` and `revealInSidebar`, with
   `directoryTree.contextMenu.revealInMap`, are items of a photo's menus that
   show the photo in the other part of the window: on the map, from the list of

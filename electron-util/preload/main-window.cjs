@@ -32,6 +32,7 @@ const channels = {
   droppedItemOpenTarget: 'ipc-constants-dropped-item-open-target',
   droppedItemChoose: 'ipc-constants-dropped-item-choose',
   updateUndoRedoMenus: 'ipc-constants-photo-selection-update-undo-redo-menus',
+  updateSelectPreviousNextMenus: 'ipc-constants-photo-selection-update-select-previous-next-menus',
   photoDataViewer: 'ipc-constants-launch-photo-data-viewer',
   explorerContextMenuAdd: 'ipc-constants-explorer-context-menu-add',
   explorerContextMenuRemove: 'ipc-constants-explorer-context-menu-remove',
@@ -40,6 +41,8 @@ const channels = {
   welcomeDialog: 'ipc-constants-show-welcome-dialog',
   undo: 'ipc-constants-photo-selection-undo',
   redo: 'ipc-constants-photo-selection-redo',
+  selectPrevious: 'ipc-constants-photo-selection-select-previous',
+  selectNext: 'ipc-constants-photo-selection-select-next',
   recordAtAppLaunchFinished: 'ipc-constants-record-at-app-launch-finished',
 };
 
@@ -49,7 +52,8 @@ const channels = {
 // the main process has sent, as it sends the end of the launch's records, which opens the folder of --open, and the
 // analytics events of the launch, once the window is ready to show. A channel keeps at most maxPending messages.
 const eventChannels = [channels.amplitude, channels.mixpanel, channels.aboutBox, channels.manageSettings,
-  channels.welcomeDialog, channels.undo, channels.redo, channels.recordAtAppLaunchFinished];
+  channels.welcomeDialog, channels.undo, channels.redo, channels.selectPrevious, channels.selectNext,
+  channels.recordAtAppLaunchFinished];
 const maxPending = 1000;
 const hubs = new Map();
 for (const channel of eventChannels) {
@@ -128,7 +132,10 @@ const plm = {
     openTarget: file => askAboutDroppedItem(channels.droppedItemOpenTarget, file),
     choose: file => askAboutDroppedItem(channels.droppedItemChoose, file),
   },
-  menus: { updateUndoRedo: params => ipcRenderer.invoke(channels.updateUndoRedoMenus, params) },
+  menus: {
+    updateUndoRedo: params => ipcRenderer.invoke(channels.updateUndoRedoMenus, params),
+    updateSelectPreviousNext: params => ipcRenderer.invoke(channels.updateSelectPreviousNextMenus, params),
+  },
   photoDataViewer: { open: params => ipcRenderer.invoke(channels.photoDataViewer, params) },
   explorerContextMenu: {
     add: () => ipcRenderer.invoke(channels.explorerContextMenuAdd),
@@ -140,6 +147,8 @@ const plm = {
     onWelcomeDialog: listener => subscribe(channels.welcomeDialog, listener),
     onUndo: listener => subscribe(channels.undo, listener),
     onRedo: listener => subscribe(channels.redo, listener),
+    onSelectPrevious: listener => subscribe(channels.selectPrevious, listener),
+    onSelectNext: listener => subscribe(channels.selectNext, listener),
     onRecordAtAppLaunchFinished: listener => subscribe(channels.recordAtAppLaunchFinished, listener),
   },
 };

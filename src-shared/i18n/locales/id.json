@@ -94,6 +94,8 @@
     "rotateThumbnail": "Putar gambar mini",
     "menu": {
       "selectOnlyThis": "Pilih hanya file ini",
+      "selectPrevious": "Pilih file sebelumnya",
+      "selectNext": "Pilih file berikutnya",
       "openFolder": "Buka folder",
       "revealInMap": "Tampilkan di peta",
       "revealInSidebar": "Tampilkan di bilah samping",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "Pilihan",
       "undo": "Urungkan",
-      "redo": "Ulangi"
+      "redo": "Ulangi",
+      "selectPrevious": "Pilih file sebelumnya",
+      "selectNext": "Pilih file berikutnya"
     },
     "settings": {
       "title": "Pengaturan",

@@ -94,6 +94,8 @@
     "rotateThumbnail": "Pasukti miniatiūrą",
     "menu": {
       "selectOnlyThis": "Pasirinkti tik šį failą",
+      "selectPrevious": "Pasirinkti ankstesnį failą",
+      "selectNext": "Pasirinkti kitą failą",
       "openFolder": "Atidaryti aplanką",
       "revealInMap": "Rodyti žemėlapyje",
       "revealInSidebar": "Rodyti šoninėje juostoje",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "Pasirinkimas",
       "undo": "Anuliuoti",
-      "redo": "Perdaryti"
+      "redo": "Perdaryti",
+      "selectPrevious": "Pasirinkti ankstesnį failą",
+      "selectNext": "Pasirinkti kitą failą"
     },
     "settings": {
       "title": "Nustatymai",

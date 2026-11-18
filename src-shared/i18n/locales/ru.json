@@ -94,6 +94,8 @@
     "rotateThumbnail": "Повернуть миниатюру",
     "menu": {
       "selectOnlyThis": "Выбрать только этот файл",
+      "selectPrevious": "Выбрать предыдущий файл",
+      "selectNext": "Выбрать следующий файл",
       "openFolder": "Открыть папку",
       "revealInMap": "Показать на карте",
       "revealInSidebar": "Показать на боковой панели",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "Выбор",
       "undo": "Отменить",
-      "redo": "Повторить"
+      "redo": "Повторить",
+      "selectPrevious": "Выбрать предыдущий файл",
+      "selectNext": "Выбрать следующий файл"
     },
     "settings": {
       "title": "Настройки",

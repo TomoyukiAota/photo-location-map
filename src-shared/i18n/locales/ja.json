@@ -94,6 +94,8 @@
     "rotateThumbnail": "サムネイルを回転",
     "menu": {
       "selectOnlyThis": "このファイルのみを選択",
+      "selectPrevious": "前のファイルを選択",
+      "selectNext": "次のファイルを選択",
       "openFolder": "フォルダーを開く",
       "revealInMap": "マップで表示",
       "revealInSidebar": "サイドバーで表示",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "選択",
       "undo": "元に戻す",
-      "redo": "やり直す"
+      "redo": "やり直す",
+      "selectPrevious": "前のファイルを選択",
+      "selectNext": "次のファイルを選択"
     },
     "settings": {
       "title": "設定",

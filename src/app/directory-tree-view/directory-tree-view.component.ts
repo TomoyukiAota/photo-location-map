@@ -1,4 +1,4 @@
-import { FocusMonitor } from '@angular/cdk/a11y';
+import { FocusMonitor, TREE_KEY_MANAGER } from '@angular/cdk/a11y';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Component, DestroyRef, effect, Injector, signal, untracked, viewChild, viewChildren, inject } from '@angular/core';
 import { MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem } from '@angular/material/menu';
@@ -14,6 +14,7 @@ import { PhotoRevealService } from '../shared/service/photo-reveal.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
 import { DirTreeViewContextMenuHelper } from './dir-tree-view-context-menu/dir-tree-view-context-menu-helper';
 import { dirTreeViewContextMenuItems } from './dir-tree-view-context-menu/dir-tree-view-context-menu-item';
+import { dirTreeViewKeyManagerFactory } from './dir-tree-view-key-manager';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { DirectoryTreeViewSelectionService } from './directory-tree-view-selection.service';
 import { DirTreeViewSortConfig } from './dir-tree-view-sort/dir-tree-view-sort-config';
@@ -37,7 +38,9 @@ export const revealHighlightMs = 3000;
     MatTree, MatTreeNodeDef, MatTreeNode, MatTreeNodeToggle, MatTreeNodePadding, MatIconButton, MatCheckbox,
     MatLabel, PhotoInfoViewerComponent, MatIcon, MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem,
     TranslatePipe,
-  ]
+  ],
+  // The tree's keys leave Select Previous and Select Next to the Selection menu.
+  providers: [{ provide: TREE_KEY_MANAGER, useValue: dirTreeViewKeyManagerFactory }],
 })
 export class DirectoryTreeViewComponent {
   private sortService = inject(DirTreeViewSortService);

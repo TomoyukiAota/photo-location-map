@@ -94,6 +94,8 @@
     "rotateThumbnail": "Xirar a miniatura",
     "menu": {
       "selectOnlyThis": "Seleccionar só este ficheiro",
+      "selectPrevious": "Seleccionar o ficheiro anterior",
+      "selectNext": "Seleccionar o ficheiro seguinte",
       "openFolder": "Abrir o cartafol",
       "revealInMap": "Mostrar no mapa",
       "revealInSidebar": "Mostrar na barra lateral",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "Selección",
       "undo": "Desfacer",
-      "redo": "Refacer"
+      "redo": "Refacer",
+      "selectPrevious": "Seleccionar o ficheiro anterior",
+      "selectNext": "Seleccionar o ficheiro seguinte"
     },
     "settings": {
       "title": "Configuración",

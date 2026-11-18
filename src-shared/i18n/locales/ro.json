@@ -94,6 +94,8 @@
     "rotateThumbnail": "Rotește miniatura",
     "menu": {
       "selectOnlyThis": "Selectează doar acest fișier",
+      "selectPrevious": "Selectează fișierul anterior",
+      "selectNext": "Selectează fișierul următor",
       "openFolder": "Deschide dosarul",
       "revealInMap": "Afișează pe hartă",
       "revealInSidebar": "Afișează în bara laterală",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "Selecție",
       "undo": "Anulează acțiunea",
-      "redo": "Refă acțiunea"
+      "redo": "Refă acțiunea",
+      "selectPrevious": "Selectează fișierul anterior",
+      "selectNext": "Selectează fișierul următor"
     },
     "settings": {
       "title": "Setări",

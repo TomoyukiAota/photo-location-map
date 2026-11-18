@@ -94,6 +94,8 @@
     "rotateThumbnail": "Xoay hình thu nhỏ",
     "menu": {
       "selectOnlyThis": "Chỉ chọn tệp này",
+      "selectPrevious": "Chọn tệp trước đó",
+      "selectNext": "Chọn tệp tiếp theo",
       "openFolder": "Mở thư mục",
       "revealInMap": "Hiển thị trên bản đồ",
       "revealInSidebar": "Hiển thị trong thanh bên",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "Lựa chọn",
       "undo": "Hoàn tác",
-      "redo": "Làm lại"
+      "redo": "Làm lại",
+      "selectPrevious": "Chọn tệp trước đó",
+      "selectNext": "Chọn tệp tiếp theo"
     },
     "settings": {
       "title": "Cài đặt",

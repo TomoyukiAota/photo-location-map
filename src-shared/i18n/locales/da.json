@@ -94,6 +94,8 @@
     "rotateThumbnail": "Roter miniature",
     "menu": {
       "selectOnlyThis": "Vælg kun denne fil",
+      "selectPrevious": "Vælg forrige fil",
+      "selectNext": "Vælg næste fil",
       "openFolder": "Åbn mappe",
       "revealInMap": "Vis på kortet",
       "revealInSidebar": "Vis i sidepanelet",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "Valg",
       "undo": "Fortryd",
-      "redo": "Gentag"
+      "redo": "Gentag",
+      "selectPrevious": "Vælg forrige fil",
+      "selectNext": "Vælg næste fil"
     },
     "settings": {
       "title": "Indstillinger",

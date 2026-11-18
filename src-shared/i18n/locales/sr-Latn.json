@@ -94,6 +94,8 @@
     "rotateThumbnail": "Rotiraj sličicu",
     "menu": {
       "selectOnlyThis": "Izaberi samo ovu datoteku",
+      "selectPrevious": "Izaberi prethodnu datoteku",
+      "selectNext": "Izaberi sledeću datoteku",
       "openFolder": "Otvori fasciklu",
       "revealInMap": "Prikaži na mapi",
       "revealInSidebar": "Prikaži na bočnoj traci",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "Izbor",
       "undo": "Opozovi",
-      "redo": "Ponovi"
+      "redo": "Ponovi",
+      "selectPrevious": "Izaberi prethodnu datoteku",
+      "selectNext": "Izaberi sledeću datoteku"
     },
     "settings": {
       "title": "Podešavanja",

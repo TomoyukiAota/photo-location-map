@@ -94,6 +94,8 @@
     "rotateThumbnail": "썸네일 회전",
     "menu": {
       "selectOnlyThis": "이 파일만 선택",
+      "selectPrevious": "이전 파일 선택",
+      "selectNext": "다음 파일 선택",
       "openFolder": "폴더 열기",
       "revealInMap": "지도에서 보기",
       "revealInSidebar": "사이드바에서 보기",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "선택",
       "undo": "실행 취소",
-      "redo": "다시 실행"
+      "redo": "다시 실행",
+      "selectPrevious": "이전 파일 선택",
+      "selectNext": "다음 파일 선택"
     },
     "settings": {
       "title": "설정",

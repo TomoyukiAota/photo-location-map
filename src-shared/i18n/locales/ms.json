@@ -94,6 +94,8 @@
     "rotateThumbnail": "Putar lakaran kecil",
     "menu": {
       "selectOnlyThis": "Pilih fail ini sahaja",
+      "selectPrevious": "Pilih fail sebelumnya",
+      "selectNext": "Pilih fail seterusnya",
       "openFolder": "Buka folder",
       "revealInMap": "Tunjukkan pada peta",
       "revealInSidebar": "Tunjukkan dalam bar sisi",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "Pilihan",
       "undo": "Buat asal",
-      "redo": "Buat semula"
+      "redo": "Buat semula",
+      "selectPrevious": "Pilih fail sebelumnya",
+      "selectNext": "Pilih fail seterusnya"
     },
     "settings": {
       "title": "Tetapan",

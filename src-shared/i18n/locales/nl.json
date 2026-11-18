@@ -94,6 +94,8 @@
     "rotateThumbnail": "Roteer miniatuur",
     "menu": {
       "selectOnlyThis": "Selecteer alleen dit bestand",
+      "selectPrevious": "Selecteer het vorige bestand",
+      "selectNext": "Selecteer het volgende bestand",
       "openFolder": "Open map",
       "revealInMap": "Toon op de kaart",
       "revealInSidebar": "Toon in de zijbalk",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "Selectie",
       "undo": "Herstel",
-      "redo": "Opnieuw"
+      "redo": "Opnieuw",
+      "selectPrevious": "Selecteer het vorige bestand",
+      "selectNext": "Selecteer het volgende bestand"
     },
     "settings": {
       "title": "Instellingen",

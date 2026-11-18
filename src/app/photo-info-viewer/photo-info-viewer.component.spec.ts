@@ -11,6 +11,7 @@ import { Photo } from '../shared/model/photo.model';
 import { Thumbnail } from '../shared/model/thumbnail.model';
 import { OpenedDirectory } from '../shared/opened-directory';
 import { PhotoRevealService } from '../shared/service/photo-reveal.service';
+import { SelectPreviousNextService } from '../shared/service/select-previous-next.service';
 import { GeneratedThumbnailService, thumbnailCheckIntervalMs } from './generated-thumbnail.service';
 import { PhotoInfoViewerComponent } from './photo-info-viewer.component';
 import { PhotoInfoViewerPlace } from './photo-info-viewer-place';
@@ -291,6 +292,46 @@ describe('PhotoInfoViewerComponent', () => {
       expect(menuItems().map(item => item.textContent)).toEqual(['Select Only This', 'Reveal in Map', 'Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data']);
       await click(menuItems().find(item => item.textContent === 'Reveal in Map'));
       expect(revealInMap).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ path: '/photos/IMG_0001.JPG' }));
+    });
+
+    it('has Select Previous and Select Next where a photo was taken before or after, which select that photo', async () => {
+      // The photos taken just before and after, which SelectPreviousNextService has tests of its own for.
+      const neighbors: Record<string, [string | null, string | null]> = {
+        '/photos/IMG_0001.JPG': [null, '/photos/IMG_0002.JPG'],
+        '/photos/IMG_0002.JPG': ['/photos/IMG_0001.JPG', '/photos/IMG_0003.JPG'],
+        '/photos/IMG_0003.JPG': ['/photos/IMG_0002.JPG', null],
+      };
+      const select = vi.fn();
+      TestBed.overrideProvider(SelectPreviousNextService, { useValue: {
+        previousOf: (path: string) => neighbors[path]?.[0] ?? null,
+        nextOf: (path: string) => neighbors[path]?.[1] ?? null,
+        select,
+      } });
+      const itemsOf = async (path: string) => {
+        await show(cameraPhoto(path), 'dir-tree-view');
+        await click(button('More Options'));
+        return menuItems().map(item => item.textContent);
+      };
+
+      // After them, what a row of the tree has for a photo with a location.
+      const withLocation = ['Reveal in Map', 'Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data'];
+      expect(await itemsOf('/photos/IMG_0001.JPG')).toEqual(['Select Only This', 'Select Next', ...withLocation]);
+      expect(await itemsOf('/photos/IMG_0003.JPG')).toEqual(['Select Only This', 'Select Previous', ...withLocation]);
+      expect(await itemsOf('/photos/IMG_0002.JPG')).toEqual(['Select Only This', 'Select Previous', 'Select Next', ...withLocation]);
+      document.body.appendChild(element);
+      try {
+        for (const text of ['Select Previous', 'Select Next']) {
+          button('More Options').focus();
+          if (menuItems().length === 0)
+            await click(button('More Options'));
+          await click(menuItems().find(item => item.textContent === text));
+          expect(menuItems()).toEqual([]);
+        }
+      } finally {
+        element.remove();
+      }
+
+      expect(select.mock.calls).toEqual([['/photos/IMG_0001.JPG'], ['/photos/IMG_0003.JPG']]);
     });
 
     it('has no item that needs a location for a photo without one', async () => {

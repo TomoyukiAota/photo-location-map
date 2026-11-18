@@ -94,6 +94,8 @@
     "rotateThumbnail": "تدوير الصورة المصغّرة",
     "menu": {
       "selectOnlyThis": "تحديد هذا الملف فقط",
+      "selectPrevious": "تحديد الملف السابق",
+      "selectNext": "تحديد الملف التالي",
       "openFolder": "فتح المجلد",
       "revealInMap": "عرض على الخريطة",
       "revealInSidebar": "عرض في الشريط الجانبي",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "التحديد",
       "undo": "تراجع",
-      "redo": "إعادة"
+      "redo": "إعادة",
+      "selectPrevious": "تحديد الملف السابق",
+      "selectNext": "تحديد الملف التالي"
     },
     "settings": {
       "title": "الإعدادات",

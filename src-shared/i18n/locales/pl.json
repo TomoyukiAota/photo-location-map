@@ -94,6 +94,8 @@
     "rotateThumbnail": "Obróć miniaturkę",
     "menu": {
       "selectOnlyThis": "Zaznacz tylko ten plik",
+      "selectPrevious": "Zaznacz poprzedni plik",
+      "selectNext": "Zaznacz następny plik",
       "openFolder": "Otwórz folder",
       "revealInMap": "Pokaż na mapie",
       "revealInSidebar": "Pokaż na pasku bocznym",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "Zaznaczenie",
       "undo": "Cofnij",
-      "redo": "Ponów"
+      "redo": "Ponów",
+      "selectPrevious": "Zaznacz poprzedni plik",
+      "selectNext": "Zaznacz następny plik"
     },
     "settings": {
       "title": "Ustawienia",

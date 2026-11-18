@@ -94,6 +94,8 @@
     "rotateThumbnail": "Otočit miniaturu",
     "menu": {
       "selectOnlyThis": "Vybrat jen tento soubor",
+      "selectPrevious": "Vybrat předchozí soubor",
+      "selectNext": "Vybrat další soubor",
       "openFolder": "Otevřít složku",
       "revealInMap": "Zobrazit na mapě",
       "revealInSidebar": "Zobrazit v postranním panelu",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "Výběr",
       "undo": "Zpět",
-      "redo": "Znovu"
+      "redo": "Znovu",
+      "selectPrevious": "Vybrat předchozí soubor",
+      "selectNext": "Vybrat další soubor"
     },
     "settings": {
       "title": "Nastavení",

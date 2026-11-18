@@ -94,6 +94,8 @@
     "rotateThumbnail": "Pagriezt sīktēlu",
     "menu": {
       "selectOnlyThis": "Atlasīt tikai šo failu",
+      "selectPrevious": "Atlasīt iepriekšējo failu",
+      "selectNext": "Atlasīt nākamo failu",
       "openFolder": "Atvērt mapi",
       "revealInMap": "Rādīt kartē",
       "revealInSidebar": "Rādīt sānjoslā",
@@ -246,7 +248,9 @@
     "selection": {
       "title": "Atlase",
       "undo": "Atsaukt",
-      "redo": "Atcelt atsaukšanu"
+      "redo": "Atcelt atsaukšanu",
+      "selectPrevious": "Atlasīt iepriekšējo failu",
+      "selectNext": "Atlasīt nākamo failu"
     },
     "settings": {
       "title": "Iestatījumi",
