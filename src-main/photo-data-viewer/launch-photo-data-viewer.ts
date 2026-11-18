@@ -14,13 +14,16 @@ import { trackOpeningPhotoDataViewer } from './photo-data-viewer-tracker.js';
 import { createPhotoDataViewerUrl } from './photo-data-viewer-url.js';
 import { PhotoDataViewerWindowState } from './photo-data-viewer-window-state.js';
 
-/** Opens Photo Data Viewer's window for the photo of `ipcParams`, where the last one was, and shows it once loaded. */
-export async function launchPhotoDataViewer(ipcParams: PhotoDataViewerIpcParams) {
+/**
+ * Opens Photo Data Viewer's window for the photo of `ipcParams`, where the last one was, or else on the display of
+ * `mainWindowBounds`, the main window's (photo-data-viewer-window-state.ts), and shows it once loaded.
+ */
+export async function launchPhotoDataViewer(ipcParams: PhotoDataViewerIpcParams, mainWindowBounds?: Electron.Rectangle) {
   perfMark('view-data:launch');
   const photo = ipcParams.photo;
   logger.info(`Open Window for ${photo.path}`);
 
-  const windowState = PhotoDataViewerWindowState.get();
+  const windowState = PhotoDataViewerWindowState.get(mainWindowBounds);
 
   const browserWindow = new BrowserWindow(withHeadlessTestOptions({
     x: windowState.x,
