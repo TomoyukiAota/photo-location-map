@@ -96,6 +96,7 @@
       "openFolder": "Klasörü aç",
       "openGoogleMaps": "Google Haritalar’da aç",
       "openGoogleStreetView": "Google Street View’da aç",
+      "openGoogleEarth": "Google Earth’te aç",
       "viewData": "Verileri görüntüle"
     },
     "pathTooLong": "Dosya yolunun uzunluğu {{length}} karakter olduğu için küçük resim gösterilemiyor. Windows, yol uzunluğunu en fazla {{maximum}} karakterle sınırlar. Yolu kısaltmak için dosyanın konumunu değiştirin. Ayrıntılar için Ctrl+Shift+I tuşlarına basın ve konsol iletilerini okuyun.",

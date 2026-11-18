@@ -96,6 +96,7 @@
       "openFolder": "Ireki karpeta",
       "openGoogleMaps": "Ireki Google Maps",
       "openGoogleStreetView": "Ireki Google Street View",
+      "openGoogleEarth": "Ireki Google Earth",
       "viewData": "Ikusi datuak"
     },
     "pathTooLong": "Ezin da miniatura erakutsi, fitxategiaren bide-izenaren luzera {{length}} karaktere delako. Windows-ek gehienez {{maximum}} karaktereko bide-izenak onartzen ditu. Aldatu fitxategiaren kokalekua bide-izena laburtzeko. Xehetasunak ikusteko, sakatu Ctrl+Shift+I eta irakurri kontsolako mezuak.",

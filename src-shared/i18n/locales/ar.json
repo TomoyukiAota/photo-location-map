@@ -96,6 +96,7 @@
       "openFolder": "فتح المجلد",
       "openGoogleMaps": "فتح خرائط Google",
       "openGoogleStreetView": "فتح Google Street View",
+      "openGoogleEarth": "فتح Google Earth",
       "viewData": "عرض البيانات"
     },
     "pathTooLong": "لا يمكن عرض الصورة المصغّرة لأن عدد أحرف مسار الملف هو {{length}}. يحدّ Windows عدد أحرف المسار بـ {{maximum}} كحد أقصى. غيّر موقع الملف لتقصير المسار. لمعرفة التفاصيل، اضغط Ctrl+Shift+I واقرأ رسائل وحدة التحكم.",

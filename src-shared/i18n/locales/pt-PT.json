@@ -96,6 +96,7 @@
       "openFolder": "Abrir pasta",
       "openGoogleMaps": "Abrir o Google Maps",
       "openGoogleStreetView": "Abrir o Google Street View",
+      "openGoogleEarth": "Abrir o Google Earth",
       "viewData": "Ver dados"
     },
     "pathTooLong": "Não é possível mostrar a miniatura porque o comprimento do caminho do ficheiro é de {{length}} caracteres. O Windows limita o comprimento máximo dos caminhos a {{maximum}} caracteres. Mude o ficheiro de local para encurtar o caminho. Para ver os detalhes, prima Ctrl+Shift+I e leia as mensagens da consola.",

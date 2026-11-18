@@ -96,6 +96,7 @@
       "openFolder": "Atvērt mapi",
       "openGoogleMaps": "Atvērt Google Maps",
       "openGoogleStreetView": "Atvērt Google Street View",
+      "openGoogleEarth": "Atvērt Google Earth",
       "viewData": "Skatīt datus"
     },
     "pathTooLong": "Sīktēlu nevar parādīt, jo rakstzīmju skaits faila ceļā ir {{length}}. Windows ierobežo rakstzīmju skaitu ceļā līdz {{maximum}}. Lai saīsinātu ceļu, mainiet faila atrašanās vietu. Lai skatītu detalizētu informāciju, nospiediet Ctrl+Shift+I un izlasiet konsoles ziņojumus.",

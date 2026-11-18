@@ -96,6 +96,7 @@
       "openFolder": "Отваряне на папката",
       "openGoogleMaps": "Отваряне на Google Карти",
       "openGoogleStreetView": "Отваряне на Google Street View",
+      "openGoogleEarth": "Отваряне на Google Earth",
       "viewData": "Преглед на данните"
     },
     "pathTooLong": "Миниатюрата не може да се покаже, защото дължината на пътя до файла е {{length}} символа. Windows ограничава дължината на пътя до {{maximum}} символа. Преместете файла, за да скъсите пътя до него. За подробности натиснете Ctrl+Shift+I и прочетете съобщенията в конзолата.",

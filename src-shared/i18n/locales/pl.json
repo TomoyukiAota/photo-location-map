@@ -96,6 +96,7 @@
       "openFolder": "Otwórz folder",
       "openGoogleMaps": "Otwórz Mapy Google",
       "openGoogleStreetView": "Otwórz Google Street View",
+      "openGoogleEarth": "Otwórz Google Earth",
       "viewData": "Pokaż dane"
     },
     "pathTooLong": "Nie można wyświetlić miniaturki, ponieważ liczba znaków w ścieżce pliku wynosi {{length}}. System Windows ogranicza liczbę znaków w ścieżce do {{maximum}}. Przenieś plik w inne miejsce, aby skrócić jego ścieżkę. Aby poznać szczegóły, naciśnij Ctrl+Shift+I i przeczytaj komunikaty w konsoli.",

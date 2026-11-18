@@ -96,6 +96,7 @@
       "openFolder": "Mở thư mục",
       "openGoogleMaps": "Mở Google Maps",
       "openGoogleStreetView": "Mở Google Street View",
+      "openGoogleEarth": "Mở Google Earth",
       "viewData": "Xem dữ liệu"
     },
     "pathTooLong": "Không thể hiển thị hình thu nhỏ vì độ dài đường dẫn tệp là {{length}} ký tự. Windows giới hạn độ dài đường dẫn tối đa là {{maximum}} ký tự. Hãy đổi vị trí của tệp để rút ngắn đường dẫn. Để biết chi tiết, nhấn Ctrl+Shift+I và đọc các thông báo trong bảng điều khiển.",
