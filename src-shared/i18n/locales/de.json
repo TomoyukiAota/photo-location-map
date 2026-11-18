@@ -93,6 +93,8 @@
     "rotateThumbnail": "Miniatur drehen",
     "menu": {
       "selectOnlyThis": "Nur diese Datei auswählen",
+      "selectPrevious": "Vorherige Datei auswählen",
+      "selectNext": "Nächste Datei auswählen",
       "openFolder": "Ordner öffnen",
       "openGoogleMaps": "Google Maps öffnen",
       "openGoogleStreetView": "Google Street View öffnen",
@@ -243,7 +245,9 @@
     "selection": {
       "title": "Auswahl",
       "undo": "Rückgängig",
-      "redo": "Wiederholen"
+      "redo": "Wiederholen",
+      "selectPrevious": "Vorherige Datei auswählen",
+      "selectNext": "Nächste Datei auswählen"
     },
     "settings": {
       "title": "Einstellungen",

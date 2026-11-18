@@ -93,6 +93,8 @@
     "rotateThumbnail": "Faire pivoter la vignette",
     "menu": {
       "selectOnlyThis": "Sélectionner uniquement ce fichier",
+      "selectPrevious": "Sélectionner le fichier précédent",
+      "selectNext": "Sélectionner le fichier suivant",
       "openFolder": "Ouvrir le dossier",
       "openGoogleMaps": "Ouvrir Google Maps",
       "openGoogleStreetView": "Ouvrir Google Street View",
@@ -243,7 +245,9 @@
     "selection": {
       "title": "Sélection",
       "undo": "Annuler",
-      "redo": "Rétablir"
+      "redo": "Rétablir",
+      "selectPrevious": "Sélectionner le fichier précédent",
+      "selectNext": "Sélectionner le fichier suivant"
     },
     "settings": {
       "title": "Paramètres",

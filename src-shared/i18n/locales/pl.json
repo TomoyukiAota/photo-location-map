@@ -93,6 +93,8 @@
     "rotateThumbnail": "Obróć miniaturkę",
     "menu": {
       "selectOnlyThis": "Zaznacz tylko ten plik",
+      "selectPrevious": "Zaznacz poprzedni plik",
+      "selectNext": "Zaznacz następny plik",
       "openFolder": "Otwórz folder",
       "openGoogleMaps": "Otwórz Mapy Google",
       "openGoogleStreetView": "Otwórz Google Street View",
@@ -243,7 +245,9 @@
     "selection": {
       "title": "Zaznaczenie",
       "undo": "Cofnij",
-      "redo": "Ponów"
+      "redo": "Ponów",
+      "selectPrevious": "Zaznacz poprzedni plik",
+      "selectNext": "Zaznacz następny plik"
     },
     "settings": {
       "title": "Ustawienia",

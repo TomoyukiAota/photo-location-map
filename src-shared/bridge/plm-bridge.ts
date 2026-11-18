@@ -99,7 +99,10 @@ export interface PlmBridge {
      */
     choose(file: File): Promise<OpenTarget>;
   };
-  readonly menus: { updateUndoRedo(params: IpcParams.PhotoSelection.UpdateUndoRedoMenus): Promise<void> };
+  readonly menus: {
+    updateUndoRedo(params: IpcParams.PhotoSelection.UpdateUndoRedoMenus): Promise<void>;
+    updateSelectPreviousNext(params: IpcParams.PhotoSelection.UpdateSelectPreviousNextMenus): Promise<void>;
+  };
   readonly photoDataViewer: { open(params: PhotoDataViewerIpcParams): Promise<void> };
   readonly explorerContextMenu: { add(): Promise<void>; remove(): Promise<void> };
   readonly events: {
@@ -108,6 +111,8 @@ export interface PlmBridge {
     onWelcomeDialog(listener: Listener): Unsubscribe;
     onUndo(listener: Listener): Unsubscribe;
     onRedo(listener: Listener): Unsubscribe;
+    onSelectPrevious(listener: Listener): Unsubscribe;
+    onSelectNext(listener: Listener): Unsubscribe;
     onRecordAtAppLaunchFinished(listener: Listener): Unsubscribe;
   };
 }

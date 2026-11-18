@@ -93,6 +93,8 @@
     "rotateThumbnail": "Zasukaj sličico",
     "menu": {
       "selectOnlyThis": "Izberi samo to datoteko",
+      "selectPrevious": "Izberi prejšnjo datoteko",
+      "selectNext": "Izberi naslednjo datoteko",
       "openFolder": "Odpri mapo",
       "openGoogleMaps": "Odpri Google Zemljevide",
       "openGoogleStreetView": "Odpri Google Street View",
@@ -243,7 +245,9 @@
     "selection": {
       "title": "Izbor",
       "undo": "Razveljavi",
-      "redo": "Uveljavi"
+      "redo": "Uveljavi",
+      "selectPrevious": "Izberi prejšnjo datoteko",
+      "selectNext": "Izberi naslednjo datoteko"
     },
     "settings": {
       "title": "Nastavitve",

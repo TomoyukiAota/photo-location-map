@@ -93,6 +93,8 @@
     "rotateThumbnail": "Pööra pisipilti",
     "menu": {
       "selectOnlyThis": "Vali ainult see fail",
+      "selectPrevious": "Vali eelmine fail",
+      "selectNext": "Vali järgmine fail",
       "openFolder": "Ava kaust",
       "openGoogleMaps": "Ava Google Maps",
       "openGoogleStreetView": "Ava Google Street View",
@@ -243,7 +245,9 @@
     "selection": {
       "title": "Valik",
       "undo": "Võta tagasi",
-      "redo": "Tee uuesti"
+      "redo": "Tee uuesti",
+      "selectPrevious": "Vali eelmine fail",
+      "selectNext": "Vali järgmine fail"
     },
     "settings": {
       "title": "Seaded",

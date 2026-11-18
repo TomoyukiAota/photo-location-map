@@ -93,6 +93,8 @@
     "rotateThumbnail": "Gira la miniatura",
     "menu": {
       "selectOnlyThis": "Selecciona només aquest fitxer",
+      "selectPrevious": "Selecciona el fitxer anterior",
+      "selectNext": "Selecciona el fitxer següent",
       "openFolder": "Obre la carpeta",
       "openGoogleMaps": "Obre Google Maps",
       "openGoogleStreetView": "Obre Google Street View",
@@ -243,7 +245,9 @@
     "selection": {
       "title": "Selecció",
       "undo": "Desfés",
-      "redo": "Refés"
+      "redo": "Refés",
+      "selectPrevious": "Selecciona el fitxer anterior",
+      "selectNext": "Selecciona el fitxer següent"
     },
     "settings": {
       "title": "Configuració",

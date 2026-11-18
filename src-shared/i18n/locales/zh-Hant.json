@@ -93,6 +93,8 @@
     "rotateThumbnail": "旋轉縮圖",
     "menu": {
       "selectOnlyThis": "僅選取此檔案",
+      "selectPrevious": "選取上一個檔案",
+      "selectNext": "選取下一個檔案",
       "openFolder": "開啟資料夾",
       "openGoogleMaps": "開啟 Google 地圖",
       "openGoogleStreetView": "開啟 Google 街景服務",
@@ -243,7 +245,9 @@
     "selection": {
       "title": "選取",
       "undo": "復原",
-      "redo": "重做"
+      "redo": "重做",
+      "selectPrevious": "選取上一個檔案",
+      "selectNext": "選取下一個檔案"
     },
     "settings": {
       "title": "設定",

@@ -93,6 +93,8 @@
     "rotateThumbnail": "Xoay hình thu nhỏ",
     "menu": {
       "selectOnlyThis": "Chỉ chọn tệp này",
+      "selectPrevious": "Chọn tệp trước đó",
+      "selectNext": "Chọn tệp tiếp theo",
       "openFolder": "Mở thư mục",
       "openGoogleMaps": "Mở Google Maps",
       "openGoogleStreetView": "Mở Google Street View",
@@ -243,7 +245,9 @@
     "selection": {
       "title": "Lựa chọn",
       "undo": "Hoàn tác",
-      "redo": "Làm lại"
+      "redo": "Làm lại",
+      "selectPrevious": "Chọn tệp trước đó",
+      "selectNext": "Chọn tệp tiếp theo"
     },
     "settings": {
       "title": "Cài đặt",

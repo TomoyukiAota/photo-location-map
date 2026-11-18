@@ -93,6 +93,8 @@
     "rotateThumbnail": "Περιστροφή μικρογραφίας",
     "menu": {
       "selectOnlyThis": "Επιλογή μόνο αυτού του αρχείου",
+      "selectPrevious": "Επιλογή προηγούμενου αρχείου",
+      "selectNext": "Επιλογή επόμενου αρχείου",
       "openFolder": "Άνοιγμα φακέλου",
       "openGoogleMaps": "Άνοιγμα στους Χάρτες Google",
       "openGoogleStreetView": "Άνοιγμα στο Google Street View",
@@ -243,7 +245,9 @@
     "selection": {
       "title": "Επιλογή",
       "undo": "Αναίρεση",
-      "redo": "Επανάληψη"
+      "redo": "Επανάληψη",
+      "selectPrevious": "Επιλογή προηγούμενου αρχείου",
+      "selectNext": "Επιλογή επόμενου αρχείου"
     },
     "settings": {
       "title": "Ρυθμίσεις",

@@ -68,4 +68,42 @@ describe('DirectoryTreeViewComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('photo.jpg');
     expect(fixture.nativeElement.textContent).not.toContain('subfolder');
   });
+
+  it('leaves the keys of Select Previous and Select Next to the Selection menu while a node has the focus', async () => {
+    // Ctrl or Cmd with the Left or Right arrow key, which Electron gives the menu when the page leaves it unhandled.
+    const folder = node('/folder', [node('/folder/photo.jpg')]);
+    dataService.dataReplaced.next([folder]);
+    await fixture.whenStable();
+    document.body.appendChild(fixture.nativeElement);
+    try {
+      const folderNode = fixture.nativeElement.querySelector('mat-tree-node') as HTMLElement;
+      folderNode.focus();
+      expect(document.activeElement).toBe(folderNode);
+      /** Presses a key on the folder's node, and says whether the page handled it. */
+      async function press(key: string, modifiers: KeyboardEventInit = {}): Promise<boolean> {
+        const event = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...modifiers });
+        folderNode.dispatchEvent(event);
+        await fixture.whenStable();
+        return event.defaultPrevented;
+      }
+
+      for (const modifiers of [{ ctrlKey: true }, { metaKey: true }]) {
+        expect(await press('ArrowLeft', modifiers)).toBe(false);
+        expect(tree.isExpanded(folder)).toBe(true);
+      }
+      // The arrow alone collapses and expands the node, as the CDK's tree does.
+      expect(await press('ArrowLeft')).toBe(true);
+      expect(tree.isExpanded(folder)).toBe(false);
+      for (const modifiers of [{ ctrlKey: true }, { metaKey: true }]) {
+        expect(await press('ArrowRight', modifiers)).toBe(false);
+        expect(tree.isExpanded(folder)).toBe(false);
+      }
+      expect(await press('ArrowRight')).toBe(true);
+      expect(tree.isExpanded(folder)).toBe(true);
+      // The other arrows keep the CDK's keys, with Ctrl or Cmd too.
+      expect(await press('ArrowDown', { ctrlKey: true })).toBe(true);
+    } finally {
+      fixture.nativeElement.remove();
+    }
+  });
 });

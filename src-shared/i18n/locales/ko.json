@@ -93,6 +93,8 @@
     "rotateThumbnail": "썸네일 회전",
     "menu": {
       "selectOnlyThis": "이 파일만 선택",
+      "selectPrevious": "이전 파일 선택",
+      "selectNext": "다음 파일 선택",
       "openFolder": "폴더 열기",
       "openGoogleMaps": "Google 지도 열기",
       "openGoogleStreetView": "Google 스트리트 뷰 열기",
@@ -243,7 +245,9 @@
     "selection": {
       "title": "선택",
       "undo": "실행 취소",
-      "redo": "다시 실행"
+      "redo": "다시 실행",
+      "selectPrevious": "이전 파일 선택",
+      "selectNext": "다음 파일 선택"
     },
     "settings": {
       "title": "설정",

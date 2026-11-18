@@ -33,4 +33,7 @@ interface IPlmInternalRendererPhotoSelection {
   undo(): void;
   redo(): void;
   selectOnlyThis(photoPath: string): void;
+  /** The Selection menu's Select Previous and Select Next, for the one selected photo. */
+  selectPrevious(): void;
+  selectNext(): void;
 }

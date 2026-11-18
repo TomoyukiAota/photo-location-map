@@ -93,6 +93,8 @@
     "rotateThumbnail": "Завъртане на миниатюрата",
     "menu": {
       "selectOnlyThis": "Избиране само на този файл",
+      "selectPrevious": "Избиране на предишния файл",
+      "selectNext": "Избиране на следващия файл",
       "openFolder": "Отваряне на папката",
       "openGoogleMaps": "Отваряне на Google Карти",
       "openGoogleStreetView": "Отваряне на Google Street View",
@@ -243,7 +245,9 @@
     "selection": {
       "title": "Избор",
       "undo": "Отмяна",
-      "redo": "Възстановяване"
+      "redo": "Възстановяване",
+      "selectPrevious": "Избиране на предишния файл",
+      "selectNext": "Избиране на следващия файл"
     },
     "settings": {
       "title": "Настройки",

@@ -1,6 +1,5 @@
 import { computed, signal, inject, Service } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import moment from 'moment/moment';
 import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/user-data-stroage-path';
 import { PhotoDataService } from '../../shared/service/photo-data.service';
@@ -11,6 +10,7 @@ import {
   DirTreeViewSortDirection,
   DirTreeViewSortKey,
 } from './dir-tree-view-sort-config';
+import { compareByShootingTime, compareNames, shootingTimeOf, ShootingTimeSortKey } from './dir-tree-view-sort-comparison';
 import {
   DirTreeViewSortShootingTimeInfoComponent
 } from './shooting-time-info/dir-tree-view-sort-shooting-time-info.component';
@@ -89,33 +89,23 @@ export class DirTreeViewSortService {
     }
   }
 
+  // The comparisons are those of dir-tree-view-sort-comparison.ts, which Select Previous and Select Next go through the
+  // photos by too (SelectPreviousNextService). Descending is the reverse of ascending, files taken at the same time too.
   private compareNodesUsingSortConfig(a: NestedNode, b: NestedNode, sortConfig: SortConfig): number {
+    let ascendingOrder: number;
     if (sortConfig.key === 'Name') {
-      const nameA = a.name.toUpperCase();
-      const nameB = b.name.toUpperCase();
-      if (sortConfig.direction === 'Ascending') {
-        return nameA < nameB ? -1 : 1;
-      } else { // if Descending
-        return nameA < nameB ? 1 : -1;
-      }
+      ascendingOrder = compareNames(a.name, b.name);
     } else if (sortConfig.key === 'ShootingTime') {
-      const momentA = this.getMoment(a);
-      const momentB = this.getMoment(b);
-      if (sortConfig.direction === 'Ascending') {
-        return momentA < momentB ? -1 : 1;
-      } else { // if Descending
-        return momentA < momentB ? 1 : -1;
-      }
+      ascendingOrder = compareByShootingTime(this.shootingTimeSortKey(a), this.shootingTimeSortKey(b));
+    } else {
+      console.error('Something went wrong. This line should not run.');
+      return 0;
     }
-
-    console.error('Something went wrong. This line should not run.');
-    return 0;
+    return sortConfig.direction === 'Ascending' ? ascendingOrder : -ascendingOrder;
   }
 
-  private getMoment(node: NestedNode) {
-    const momentOfDateTimeOriginal = this.photoDataService.getPhoto(node.path)?.exif?.dateTimeOriginal?.moment;
-    const momentForThisNode = momentOfDateTimeOriginal ?? moment(node.fsStats.mtime);
-    return momentForThisNode;
+  private shootingTimeSortKey(node: NestedNode): ShootingTimeSortKey {
+    return { shootingTime: shootingTimeOf(this.photoDataService.getPhoto(node.path), node.fsStats.mtime), name: node.name };
   }
 
   public showShootingTimeInfoDialog() {
