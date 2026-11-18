@@ -5,24 +5,24 @@ import { assess, checkFields, startOf, viewFields } from './merge-wait.js';
 
 // TL;DR: Waits until a pull request is merged, or until it needs the agent that opened it, and says which.
 // Details: Mergify merges a pull request with the label automerge, and brings it up to date with main, by itself
-// (.mergify.yml), and nothing tells the agent that opened it: the Claude desktop app's Auto-fix wakes a session on a
-// failed check, a conflict or a review comment, but not on a merge. So the agent runs this in the background once it
-// has opened the pull request (AGENTS.md, "Wait for your pull request until it is merged"), and Claude Code wakes the
-// agent when it ends. It looks at the pull request with gh every minute, and ends on what changed since it began
+// (.mergify.yml), and nothing tells the agent that opened it. So the agent runs this in the background once it has
+// opened the pull request (AGENTS.md, "Wait for your pull request until it is merged"), and Claude Code wakes the agent
+// when it ends. It looks at the pull request with gh every minute, and ends on what changed since it began
 // (merge-wait.js): exit code 0 when the pull request is merged, 1 when it needs the agent, and 2 when it cannot look.
-// With --with-auto-fix, it leaves to Auto-fix what Auto-fix reports.
+// It reports a failed check itself even where the Claude desktop app's Auto-fix is on: Auto-fix did not wake the
+// session of #737 for any of the four checks that were canceled or failed on it, which another agent found and ran
+// again instead.
 
-const usage = 'Usage: node script/pull-request/wait-for-merge.js <number of the pull request> [--with-auto-fix]';
+const usage = 'Usage: node script/pull-request/wait-for-merge.js <number of the pull request>';
 const intervalMinutes = 1;
 const limitHours = 24;
 const attemptsInARow = 5;
 
-const [number, ...options] = process.argv.slice(2);
-if (!/^[1-9]\d*$/.test(number ?? '') || options.some(option => option !== '--with-auto-fix')) {
+const [number, ...rest] = process.argv.slice(2);
+if (!/^[1-9]\d*$/.test(number ?? '') || rest.length > 0) {
   logger.error(usage);
   process.exit(2);
 }
-const withAutoFix = options.includes('--with-auto-fix');
 
 /** Runs gh, and gives what it wrote as JSON, or throws with what it wrote to stderr. */
 function gh(args, { noneWhen } = {}) {
@@ -60,7 +60,7 @@ for (;;) {
 
   if (looked) {
     seen ??= startOf(looked.pullRequest, looked.checks);
-    const result = assess(looked.pullRequest, looked.checks, seen, Date.now(), { withAutoFix });
+    const result = assess(looked.pullRequest, looked.checks, seen, Date.now());
     if (result.end) {
       logger.info(result.message);
       process.exit(result.merged ? 0 : 1);

@@ -51,12 +51,11 @@ export function startOf(pullRequest, checks) {
 /**
  * What to do about the pull request, given it from `gh pr view --json <viewFields>`, its required checks from
  * `gh pr checks --required --json <checkFields>`, what was seen before (from `startOf`, then from the last call), and
- * the time in milliseconds. With `withAutoFix`, what the Claude desktop app's Auto-fix reports itself is left to it:
- * failed checks, conflicts, reviews and comments.
+ * the time in milliseconds.
  *
  * Returns `{ end: true, merged, message }` to stop waiting, or `{ end: false, status, seen }` to look again later.
  */
-export function assess(pullRequest, checks, seen, now, { withAutoFix = false } = {}) {
+export function assess(pullRequest, checks, seen, now) {
   const name = `#${pullRequest.number}`;
   const commit = String(pullRequest.headRefOid).slice(0, 8);
   const end = (merged, message) => ({ end: true, merged, message });
@@ -69,20 +68,22 @@ export function assess(pullRequest, checks, seen, now, { withAutoFix = false } =
   }
 
   const conflicting = pullRequest.mergeable === 'CONFLICTING';
-  if (conflicting && !seen.conflicting && !withAutoFix) {
+  if (conflicting && !seen.conflicting) {
     return end(false, `${name} conflicts with main, so Mergify cannot bring it up to date: merge main into its branch, ` +
       'resolve the conflicts, and push.');
   }
 
   const newlyFailed = failedChecksOf(checks).filter(check => !seen.failedChecks.includes(check.link));
-  if (newlyFailed.length > 0 && !withAutoFix) {
-    const names = newlyFailed.map(check => `${check.name} of the ${check.event} run`).join(', ');
-    return end(false, `On ${commit} of ${name}, ${names} failed: read the log, and classify the failure before ` +
-      'running it again (AGENTS.md, "Classify a CI failure before rerunning it").');
+  if (newlyFailed.length > 0) {
+    const what = newlyFailed
+      .map(check => `${check.name} of the ${check.event} run ${check.bucket === 'cancel' ? 'was canceled' : 'failed'}`)
+      .join(', ');
+    return end(false, `On ${commit} of ${name}, ${what}: read the log, and classify the failure before running it ` +
+      'again (AGENTS.md, "Classify a CI failure before rerunning it").');
   }
 
   const feedback = feedbackOf(pullRequest);
-  if (feedback.length > seen.feedback && !withAutoFix) {
+  if (feedback.length > seen.feedback) {
     const authors = [...new Set(feedback.slice(seen.feedback).map(item => item.author))].join(', ');
     return end(false, `${name} has a new review or comment by ${authors}: change what it is right about, and answer ` +
       `the rest. Take the label ${label} off while you change the pull request.`);
