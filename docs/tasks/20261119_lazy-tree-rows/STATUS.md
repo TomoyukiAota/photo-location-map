@@ -215,16 +215,18 @@ in parentheses.
 
 ## Checks
 
-On macOS (Apple Silicon), 2026-11-19.
+On macOS (Apple Silicon), 2026-11-19, with `main` merged up to the Content
+Security Policy of the main window's page, whose guard fails an end-to-end
+case on any violation of it.
 
 | Check | Result |
 | --- | --- |
 | `npm run lint:all` | passed |
-| `npm run test:unit:ng` | 456 tests passed |
-| `npm run test:unit:em:both` | 320 passed and 2 pending in the main process, 96 passed in the renderer |
+| `npm run test:unit:ng` | 516 tests passed |
+| `npm run test:unit:em:both` | 351 passed and 2 pending in the main process, 96 passed in the renderer |
 | `npm run build:prod` | built, with the same lazy chunks as before |
-| `npm run test:e2e` on the production build | 56 passed, 1 skipped (Windows only) |
-| `npm run test:e2e` on the development build, which fails a case with a binding that changed without telling Angular: the 14 cases that look into the tree | 14 passed |
+| `npm run test:e2e` on the production build | 64 passed, 1 skipped (Windows only) |
+| `npm run test:e2e` on the development build, which fails a case with a binding that changed without telling Angular: the 20 cases that look into the tree | 20 passed |
 
 A script opened a folder of 40 photos in English, Japanese, Arabic and German,
 and compared the last row, far below the view, with the first, then with
@@ -238,7 +240,11 @@ pixels in itself since.
 New tests: the service and the directive of `src/app/shared/near-view/`; the
 row's checkbox and name, until the row is near and once it is; the viewer of a
 row that is not near; a photo's row of the tree, which makes its checkbox once
-it is near. The end-to-end suite has a new case: in a folder of 40 photos, the
+it is near, with a selection made while it was away, as Select Previous and
+Select Next make one, and has the highlight of a photo revealed from the map
+before it has made its checkbox; the opening of a folder, which takes the
+folder's Live Photos movies when its tree replaces the one shown. The
+end-to-end suite has a new case: in a folder of 40 photos, the
 last row has no checkbox, thumbnail or buttons, and no thumbnail far below the
 view is loaded; once scrolled into view, the row makes them, with the same
 height, its name in the same place and as wide, and its viewer as big. The
