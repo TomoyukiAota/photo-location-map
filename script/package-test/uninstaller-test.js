@@ -30,8 +30,8 @@ import testUtil from './package-test-util.js';
 //   build/installer.nsh, whose uninstaller deletes no key.
 // - The e2e suite runs a copy of the installed application, which it makes when it starts
 //   (script/package-test/inspectable-package.js), so the application can be uninstalled after the suite.
-// - After the update, it waits until no process has the application's executable open, which the uninstaller could
-//   not delete (waitUntilNoProcessHasOpen).
+// - After the update, it waits until it finds no process with the application's executable open, which the
+//   uninstaller could not delete (waitUntilNoProcessHasOpen).
 
 const installerScript = path.resolve(import.meta.dirname, '../../build/installer.nsh');
 const regExe = path.win32.join(process.env.SystemRoot || 'C:\\Windows', 'System32', 'reg.exe');
@@ -54,6 +54,7 @@ const fileHoldersSource = `
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text;
 
 public static class FileHolders {
   [StructLayout(LayoutKind.Sequential)]
@@ -74,7 +75,7 @@ public static class FileHolders {
   }
 
   [DllImport("rstrtmgr.dll", CharSet = CharSet.Unicode)]
-  static extern int RmStartSession(out uint handle, int flags, string key);
+  static extern int RmStartSession(out uint handle, int flags, StringBuilder key);
   [DllImport("rstrtmgr.dll")]
   static extern int RmEndSession(uint handle);
   [DllImport("rstrtmgr.dll", CharSet = CharSet.Unicode)]
@@ -86,7 +87,8 @@ public static class FileHolders {
 
   public static string[] Of(string path) {
     uint handle;
-    int result = RmStartSession(out handle, 0, Guid.NewGuid().ToString("N"));
+    // RmStartSession writes the session's key there: CCH_RM_SESSION_KEY (32) characters and a terminator.
+    int result = RmStartSession(out handle, 0, new StringBuilder(33));
     if (result != 0) throw new InvalidOperationException("RmStartSession failed with " + result + ".");
     try {
       result = RmRegisterResources(handle, 1, new[] { path }, 0, null, 0, null);
@@ -94,14 +96,16 @@ public static class FileHolders {
       uint needed;
       uint count = 0;
       uint reasons = 0;
-      result = RmGetList(handle, out needed, ref count, null, ref reasons);
-      if (result == 0) return new string[0];
-      // ERROR_MORE_DATA: count is too small for the list, whose length is in needed.
-      if (result != 234) throw new InvalidOperationException("RmGetList failed with " + result + ".");
-      var infos = new RM_PROCESS_INFO[needed];
-      count = needed;
-      result = RmGetList(handle, out needed, ref count, infos, ref reasons);
-      if (result != 0) throw new InvalidOperationException("RmGetList failed with " + result + ".");
+      RM_PROCESS_INFO[] infos = null;
+      // ERROR_MORE_DATA (234): infos is too small for the list, whose length is in needed. The list can grow between two
+      // calls, as another process opens the file.
+      for (int attempt = 1; ; attempt++) {
+        result = RmGetList(handle, out needed, ref count, infos, ref reasons);
+        if (result == 0) break;
+        if (result != 234 || attempt == 5) throw new InvalidOperationException("RmGetList failed with " + result + ".");
+        infos = new RM_PROCESS_INFO[needed];
+        count = needed;
+      }
       var holders = new List<string>();
       for (int i = 0; i < count; i++) holders.Add(infos[i].Process.dwProcessId + "\\t" + infos[i].strAppName);
       return holders.ToArray();
@@ -178,14 +182,17 @@ function setDeletionDenied(key, isDenied) {
 }
 
 /**
- * Looks, every 100 ms, at which processes have `file` open, until none has had it open for `unopenedFor` ms or `timeout`
- * ms have passed, and returns { unopened, waitedMs, seen, now }: whether none had it open for that long, how long it
- * took, every process that had it open meanwhile and those that have it open at the end, each as
- * "<process id> <name> (<application's name>)". With 0 and 0, it looks once.
+ * Looks, every 100 ms, at which processes have `file` open, until none of the looks has found one for `unopenedFor` ms
+ * since the first that found none, or `timeout` ms have passed, and returns { unopened, waitedMs, seen, now }: whether
+ * the looks found none for that long, how long it took, every process that they found and those that the last found,
+ * each as "<process id> <name> (<application's name>)". With 0 and 0, it looks once. The looks are samples: a process
+ * that opens the file and lets it go between two of them is not seen.
  */
 function processesThatHaveOpen(file, { unopenedFor, timeout }) {
   const script = `
     $ErrorActionPreference = 'Stop'
+    # Node reads the output as UTF-8, and a process's name can be in any language.
+    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
     Add-Type -TypeDefinition $env:PLM_UNINSTALLER_TEST_HOLDERS_SOURCE
     $unopenedFor = [int]$env:PLM_UNINSTALLER_TEST_UNOPENED_FOR
     $timeout = [int]$env:PLM_UNINSTALLER_TEST_TIMEOUT
@@ -197,27 +204,33 @@ function processesThatHaveOpen(file, { unopenedFor, timeout }) {
       }
     }
     $clock = [System.Diagnostics.Stopwatch]::StartNew()
-    $unopenedSince = 0
+    # When the first of the looks since the last that found a process found none.
+    $emptySince = $null
     $seen = [System.Collections.Generic.SortedSet[string]]::new()
     while ($true) {
       $holders = [FileHolders]::Of($env:PLM_UNINSTALLER_TEST_FILE)
       $now = @(Describe $holders)
       foreach ($each in $now) { [void]$seen.Add($each) }
-      if ($holders.Length -gt 0) { $unopenedSince = $clock.ElapsedMilliseconds }
-      $unopened = $holders.Length -eq 0 -and $clock.ElapsedMilliseconds - $unopenedSince -ge $unopenedFor
+      if ($holders.Length -gt 0) { $emptySince = $null } elseif ($null -eq $emptySince) { $emptySince = $clock.ElapsedMilliseconds }
+      $unopened = $null -ne $emptySince -and $clock.ElapsedMilliseconds - $emptySince -ge $unopenedFor
       if ($unopened -or $clock.ElapsedMilliseconds -ge $timeout) { break }
       Start-Sleep -Milliseconds 100
     }
     [pscustomobject]@{ unopened = $unopened; waitedMs = $clock.ElapsedMilliseconds; seen = @($seen); now = $now } |
       ConvertTo-Json -Compress
   `;
+  // Beyond the looks, PowerShell takes a few seconds to start and to compile the source of Add-Type.
+  const processTimeout = timeout + 60000;
   const result = child_process.spawnSync(powerShellExe, ['-NoProfile', '-NonInteractive', '-Command', script], {
-    windowsHide: true, encoding: 'utf8',
+    windowsHide: true, encoding: 'utf8', timeout: processTimeout,
     env: {
       ...process.env, PLM_UNINSTALLER_TEST_HOLDERS_SOURCE: fileHoldersSource, PLM_UNINSTALLER_TEST_FILE: file,
       PLM_UNINSTALLER_TEST_UNOPENED_FOR: `${unopenedFor}`, PLM_UNINSTALLER_TEST_TIMEOUT: `${timeout}`,
     },
   });
+  if (result.error?.code === 'ETIMEDOUT') {
+    throw new Error(`PowerShell did not list the processes that have "${file}" open in ${processTimeout} ms.`);
+  }
   if (result.error) throw result.error;
   if (result.status !== 0) {
     throw new Error(`PowerShell could not list the processes that have "${file}" open (exit code ${result.status}): `
@@ -230,8 +243,8 @@ function processesThatHaveOpen(file, { unopenedFor, timeout }) {
 }
 
 /**
- * TL;DR: Waits until no process has had the application's executable open for 2 seconds, as the uninstaller cannot
- * delete it while one has it open.
+ * TL;DR: Waits until looks every 100 ms have found no process with the application's executable open for 2 seconds,
+ * as the uninstaller cannot delete it while one has it open.
  * Details:
  * - The uninstaller removes the installation's folder with RMDir /r, which leaves a file that a process has open
  *   without telling (electron-builder's templates/nsis/uninstaller.nsh). This test failed so now and then, on 2 of the
@@ -244,7 +257,9 @@ function processesThatHaveOpen(file, { unopenedFor, timeout }) {
  * - In 15 more runs that uninstalled at once after the update, the executable was never left either, so the failure
  *   was not reproduced; in 15 with this wait, Explorer had the executable open twice, which it waited 2.2 seconds for.
  *   What was seen is a time when a process has the executable open, which the uninstallation can meet. This wait
- *   leaves none, and should the executable be left all the same, the test's message names the processes that have it
+ *   lets that time pass: the looks are samples, so a process can still open the executable between two of them, or after
+ *   the last, while the test changes the keys before uninstalling, but those seen let go within 2 seconds of an
+ *   installation. Should the executable be left all the same, the test's message names the processes that have it
  *   open then.
  * - A user does not uninstall the application the moment that it is installed, so this waits rather than retries.
  */
@@ -256,8 +271,9 @@ function waitUntilNoProcessHasOpen(applicationExe) {
       + 'let it go too late'}, so the uninstaller could not delete it.`);
   }
   logger.info(seen.length === 0
-    ? `No process had "${applicationExe}" open after the update.`
-    : `Waited ${waitedMs} ms for these processes to let "${applicationExe}" go: ${seen.join(', ')}.`);
+    ? `No look in ${waitedMs} ms found a process with "${applicationExe}" open after the update.`
+    : `Waited ${waitedMs} ms, until no look had found a process with "${applicationExe}" open for ${unopenedForMs} ms. `
+      + `These had it open: ${seen.join(', ')}.`);
 }
 
 /**
@@ -381,9 +397,15 @@ function runUninstallerTest() {
     setDeletionDenied(protectedKey, true);
     uninstall(installationDirectory);
     if (fs.existsSync(applicationExe)) {
-      const { now } = processesThatHaveOpen(applicationExe, { unopenedFor: 0, timeout: 0 });
-      throw new Error(`"${applicationExe}" is still there after uninstalling`
-        + `${now.length > 0 ? `, open by ${now.join(', ')}` : ''}.`);
+      // The processes that have the executable open are told if they can be listed: the failure is the executable.
+      let holders;
+      try {
+        const { now } = processesThatHaveOpen(applicationExe, { unopenedFor: 0, timeout: 0 });
+        holders = now.length > 0 ? `open by ${now.join(', ')}` : 'open by no process now';
+      } catch (error) {
+        holders = `the processes that have it open could not be listed: ${error.message}`;
+      }
+      throw new Error(`"${applicationExe}" is still there after uninstalling (${holders}).`);
     }
     checkKeys([protectedKey], true, 'Gone after uninstalling, though its deletion was denied, so the test did not check '
       + 'a key that the uninstaller cannot delete');
