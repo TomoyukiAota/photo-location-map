@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "이 파일만 선택",
       "selectOnlyThisFolder": "이 폴더만 선택",
+      "revealInMap": "지도에서 보기",
       "open": "열기",
       "openFolder": "폴더 열기"
     }
@@ -96,6 +97,8 @@
       "selectPrevious": "이전 파일 선택",
       "selectNext": "다음 파일 선택",
       "openFolder": "폴더 열기",
+      "revealInMap": "지도에서 보기",
+      "revealInSidebar": "사이드바에서 보기",
       "openGoogleMaps": "Google 지도 열기",
       "openGoogleStreetView": "Google 스트리트 뷰 열기",
       "openGoogleEarth": "Google 어스 열기",

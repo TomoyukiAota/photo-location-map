@@ -156,6 +156,12 @@ npm run test:unit:ng
   application menu, for the one selected photo. They select the photo taken
   just before or just after it, by the date taken. Name what they select as
   `photoInfo.menu.selectOnlyThis` does: a file in most languages.
+- `photoInfo.menu.revealInMap` and `revealInSidebar`, with
+  `directoryTree.contextMenu.revealInMap`, are items of a photo's menus that
+  show the photo in the other part of the window: on the map, from the list of
+  folders, and in the list of folders, from the map. The sidebar is the part of
+  the window that has the list of folders: use the word that your language's
+  operating system has for a sidebar, as Finder has one on macOS.
 - `language.confirm` is the button that confirms the language at the first
   launch, shown in the language that is chosen in the list above it. Use the
   word that a button confirming a choice has in your language: Japanese has

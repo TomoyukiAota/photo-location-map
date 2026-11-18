@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "Markera endast den här filen",
       "selectOnlyThisFolder": "Markera endast den här mappen",
+      "revealInMap": "Visa på kartan",
       "open": "Öppna",
       "openFolder": "Öppna mapp"
     }
@@ -96,6 +97,8 @@
       "selectPrevious": "Markera föregående fil",
       "selectNext": "Markera nästa fil",
       "openFolder": "Öppna mapp",
+      "revealInMap": "Visa på kartan",
+      "revealInSidebar": "Visa i sidofältet",
       "openGoogleMaps": "Öppna Google Maps",
       "openGoogleStreetView": "Öppna Google Street View",
       "openGoogleEarth": "Öppna Google Earth",

@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "Chỉ chọn tệp này",
       "selectOnlyThisFolder": "Chỉ chọn thư mục này",
+      "revealInMap": "Hiển thị trên bản đồ",
       "open": "Mở",
       "openFolder": "Mở thư mục"
     }
@@ -96,6 +97,8 @@
       "selectPrevious": "Chọn tệp trước đó",
       "selectNext": "Chọn tệp tiếp theo",
       "openFolder": "Mở thư mục",
+      "revealInMap": "Hiển thị trên bản đồ",
+      "revealInSidebar": "Hiển thị trong thanh bên",
       "openGoogleMaps": "Mở Google Maps",
       "openGoogleStreetView": "Mở Google Street View",
       "openGoogleEarth": "Mở Google Earth",

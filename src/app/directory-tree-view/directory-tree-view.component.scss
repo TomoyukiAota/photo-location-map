@@ -22,6 +22,22 @@ mat-tree-node {
   transition: background-color 0.2s ease;
 }
 
+// TL;DR: The row of a photo revealed from the map is highlighted, then fades back, as a message that a link of a chat
+// application shows.
+// Details: Two animations of the same keyframes, which a row revealed again while it is highlighted changes between,
+// as an animation starts anew when its name changes (revealHighlightOf() in the component). 3s is revealHighlightMs
+// in the component.
+@each $highlight in 1, 2 {
+  @keyframes reveal-highlight-#{$highlight} {
+    0%, 30% { background-color: $white-background_revealed; }
+    100%    { background-color: transparent; }
+  }
+
+  mat-tree-node[data-reveal-highlight="#{$highlight}"] {
+    animation: reveal-highlight-#{$highlight} 3s ease-in;
+  }
+}
+
 .leaf-tree-node {
   display: flex;
   align-items: center;

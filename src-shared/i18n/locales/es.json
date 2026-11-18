@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "Seleccionar solo este archivo",
       "selectOnlyThisFolder": "Seleccionar solo esta carpeta",
+      "revealInMap": "Mostrar en el mapa",
       "open": "Abrir",
       "openFolder": "Abrir carpeta"
     }
@@ -96,6 +97,8 @@
       "selectPrevious": "Seleccionar el archivo anterior",
       "selectNext": "Seleccionar el archivo siguiente",
       "openFolder": "Abrir carpeta",
+      "revealInMap": "Mostrar en el mapa",
+      "revealInSidebar": "Mostrar en la barra lateral",
       "openGoogleMaps": "Abrir Google Maps",
       "openGoogleStreetView": "Abrir Google Street View",
       "openGoogleEarth": "Abrir Google Earth",

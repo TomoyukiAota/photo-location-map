@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "Pilih hanya file ini",
       "selectOnlyThisFolder": "Pilih hanya folder ini",
+      "revealInMap": "Tampilkan di peta",
       "open": "Buka",
       "openFolder": "Buka folder"
     }
@@ -96,6 +97,8 @@
       "selectPrevious": "Pilih file sebelumnya",
       "selectNext": "Pilih file berikutnya",
       "openFolder": "Buka folder",
+      "revealInMap": "Tampilkan di peta",
+      "revealInSidebar": "Tampilkan di bilah samping",
       "openGoogleMaps": "Buka Google Maps",
       "openGoogleStreetView": "Buka Google Street View",
       "openGoogleEarth": "Buka Google Earth",

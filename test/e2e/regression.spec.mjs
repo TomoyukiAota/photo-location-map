@@ -746,8 +746,8 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   await expect(popup.locator('.photo-info-viewer-date-time-taken')).toHaveText(/^\d{4}-\d{2}-\d{2} \([日月火水木金土]\) \d{2}:\d{2}:\d{2}$/);
   await popup.locator('.photo-info-viewer-more-options-button').click();
   await expect(page.locator('.photo-info-viewer-more-options-menu-item'))
-    .toHaveText(['このファイルのみを選択', '前のファイルを選択', 'フォルダーを開く', 'Google マップを開く', 'Google Earth を開く',
-      'Google ストリートビューを開く', 'データを表示']);
+    .toHaveText(['このファイルのみを選択', '前のファイルを選択', 'サイドバーで表示', 'フォルダーを開く', 'Google マップを開く',
+      'Google Earth を開く', 'Google ストリートビューを開く', 'データを表示']);
   // The menu is wider than in English, and this popup is at the map's left edge: the menu is not cut off there.
   const menuBox = await page.locator('.photo-info-viewer-more-options-menu').boundingBox();
   const mapBox = await page.locator('#home-map').boundingBox();
@@ -762,7 +762,7 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   await expect(treeMenuItems).toHaveCount(0);
   await appleParkFolder.locator('button[mattreenodetoggle]').click();
   await page.locator('mat-tree-node').filter({ hasText: 'IMG_5769.JPG' }).click({ button: 'right' });
-  await expect(treeMenuItems).toHaveText(['このファイルのみを選択', '開く', 'フォルダーを開く']);
+  await expect(treeMenuItems).toHaveText(['このファイルのみを選択', 'マップで表示', '開く', 'フォルダーを開く']);
   await page.keyboard.press('Escape');
   await expect(treeMenuItems).toHaveCount(0);
   // Photo Data Viewer is asked for the same language in its address, next to the date format.
@@ -845,8 +845,8 @@ test('on a computer whose language is Arabic, the application is laid out from r
   // The photo's menu opens the other way round, and stays within the map.
   await popup.locator('.photo-info-viewer-more-options-button').click();
   await expect(page.locator('.photo-info-viewer-more-options-menu-item'))
-    .toHaveText(['تحديد هذا الملف فقط', 'تحديد الملف السابق', 'فتح المجلد', 'فتح خرائط Google', 'فتح Google Earth',
-      'فتح Google Street View', 'عرض البيانات']);
+    .toHaveText(['تحديد هذا الملف فقط', 'تحديد الملف السابق', 'عرض في الشريط الجانبي', 'فتح المجلد', 'فتح خرائط Google',
+      'فتح Google Earth', 'فتح Google Street View', 'عرض البيانات']);
   const menuBox = await page.locator('.photo-info-viewer-more-options-menu').boundingBox();
   const mapBox = await map.boundingBox();
   expect(menuBox.x).toBeGreaterThanOrEqual(mapBox.x);
@@ -1539,6 +1539,140 @@ test('a cluster of photos taken at one place opens a popup with each of them', a
   await expect(shownName).toHaveText(firstName);
   await expect(page.locator('.photo-cluster-viewer-right-pane .photo-info-viewer-thumbnail')).toHaveCSS('transform', 'none');
 });
+test('Reveal in Sidebar from a popup of the map expands the folders above the photo, scrolls its row to the middle of the sidebar and highlights it, without changing the selection', async () => {
+  // The photo is three folders down, after twenty folders of a photo without a location and before three such photos,
+  // so that its row is far below what the sidebar shows, with enough rows after it to be scrolled to the middle.
+  const folder = path.join(profile, 'many folders');
+  const withoutLocation = path.join(photoFolder, 'Unga/IMG_2581_WithoutGpsInfo.JPG');
+  for (let index = 1; index <= 20; index++) {
+    const subfolder = path.join(folder, `folder ${String(index).padStart(2, '0')}`);
+    await mkdir(subfolder, { recursive: true });
+    await copyFile(withoutLocation, path.join(subfolder, 'no location.JPG'));
+  }
+  const folderOfPhoto = path.join(folder, 'the photo', 'taken', 'in Kobe');
+  await mkdir(folderOfPhoto, { recursive: true });
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folderOfPhoto, 'IMG_4676.JPG'));
+  for (const name of ['a.JPG', 'b.JPG', 'c.JPG']) await copyFile(withoutLocation, path.join(folder, name));
+  await dismissWelcome();
+  await openFolderWithPicker(folder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('1 files have location data.');
+  const treeNode = name => page.locator('mat-tree-node').filter({ has: page.getByText(name, { exact: true }) });
+  const row = treeNode('IMG_4676.JPG');
+  await expect(row).toHaveCount(0);
+  await expect(treeNode('the photo')).toHaveAttribute('aria-expanded', 'false');
+  const pane = page.locator('#home-sidebar-lower-pane');
+  expect(await pane.evaluate(element => element.scrollTop)).toBe(0);
+
+  // The popup of the folder's only photo on the map, which opens by itself.
+  const popup = page.locator('.leaflet-popup');
+  await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_4676.JPG');
+  await popup.getByRole('button', { name: 'More Options' }).click();
+  await popup.locator('.photo-info-viewer-more-options-menu-item').filter({ hasText: 'Reveal in Sidebar' }).click();
+  for (const name of ['the photo', 'taken', 'in Kobe']) await expect(treeNode(name)).toHaveAttribute('aria-expanded', 'true');
+  await expect(row).toHaveAttribute('data-reveal-highlight', '1');
+  await expect(row).toHaveCSS('animation-name', /reveal-highlight-1/);
+  expect(await pane.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
+  // In the middle of what the sidebar shows: above its horizontal scrollbar, which Windows and Linux draw below the
+  // rows, so that the middle of the sidebar's box is half the scrollbar lower there. macOS draws it over the rows.
+  const distanceFromMiddle = await row.evaluate(rowElement => {
+    const sidebar = rowElement.closest('#home-sidebar-lower-pane');
+    const shownMiddle = sidebar.getBoundingClientRect().top + sidebar.clientTop + sidebar.clientHeight / 2;
+    const rowBox = rowElement.getBoundingClientRect();
+    return Math.abs(rowBox.top + rowBox.height / 2 - shownMiddle);
+  });
+  expect(distanceFromMiddle).toBeLessThan(2);
+  // The highlight fades, and the row is as before. The selection, and so the map, are as they were.
+  await expect(row).not.toHaveAttribute('data-reveal-highlight', /./, { timeout: 5000 });
+  await expect(row).toHaveCSS('animation-name', 'none');
+  await expect(treeCheckbox('IMG_4676.JPG')).toBeChecked();
+  await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_4676.JPG');
+});
+test('Reveal in Map from a row of the tree opens the photo\'s popup, selecting the photo too when it is not, and ending the chart\'s zoom when that leaves the photo out', async () => {
+  await dismissWelcome();
+  await openFolderWithPicker(photoFolder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
+  await expectRepresentedPhotos(4);
+  const treeNode = name => page.locator('mat-tree-node').filter({ has: page.getByText(name, { exact: true }) });
+  await treeNode('Kobe').getByRole('button').click();
+  const row = treeNode('IMG_4676.JPG');
+  const popup = page.locator('.leaflet-popup');
+  // The item of the row's own menu: a menu that has just closed fades out for a moment, with its items.
+  async function revealFromMoreOptions() {
+    await row.getByRole('button', { name: 'More Options' }).click();
+    await row.locator('.photo-info-viewer-more-options-menu-item').filter({ hasText: 'Reveal in Map' }).click();
+  }
+
+  // A photo on the map: its popup opens, and its marker looks chosen, as when the marker is clicked. Both are in the
+  // middle of the map.
+  await revealFromMoreOptions();
+  await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_4676.JPG');
+  const marker = page.locator('.plm-leaflet-map-div-icon').filter({ hasText: '2017-12-16' });
+  await expect(marker.locator('.plm-leaflet-map-div-icon-content-container')).toHaveCSS('background-color', 'rgba(63, 81, 181, 0.15)');
+  const mapBox = await page.locator('#home-map').boundingBox();
+  const popupBox = await popup.boundingBox();
+  const markerBox = await marker.boundingBox();
+  expect(Math.abs((popupBox.y + markerBox.y + markerBox.height) / 2 - (mapBox.y + mapBox.height / 2))).toBeLessThan(40);
+  expect(popupBox.x).toBeGreaterThanOrEqual(mapBox.x);
+  expect(popupBox.x + popupBox.width).toBeLessThanOrEqual(mapBox.x + mapBox.width);
+
+  // A photo that is not selected, from the tree's context menu: it is selected too, which Undo takes back.
+  await treeCheckbox('IMG_4676.JPG').uncheck();
+  await expect(popup).toHaveCount(0);
+  await expectRepresentedPhotos(3);
+  await row.click({ button: 'right' });
+  await expect(page.getByRole('menuitem')).toHaveText(['Select Only This', 'Reveal in Map', 'Open', 'Open Folder']);
+  await page.getByRole('menuitem', { name: 'Reveal in Map' }).click();
+  await expect(treeCheckbox('IMG_4676.JPG')).toBeChecked();
+  for (const name of ['Apple Park', 'Gold Coast', 'Unga']) await expect(treeCheckbox(name)).toBeChecked();
+  await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_4676.JPG');
+  await app.evaluate(({ Menu }) => Menu.getApplicationMenu().getMenuItemById('photo-selection-undo').click());
+  await expect(treeCheckbox('IMG_4676.JPG')).not.toBeChecked();
+  await expectRepresentedPhotos(3);
+
+  // A selected photo that the chart's zoom leaves out: the zoom ends, as with the chart's Reset Zoom button. As in the
+  // chart's case, the slider's left handle is dragged to the last year, which has only the photo of Apple Park.
+  await treeCheckbox('IMG_4676.JPG').check();
+  await expectRepresentedPhotos(4);
+  await page.locator('app-date-time-taken-chart-config select').selectOption('Year');
+  const chart = page.locator('app-date-time-taken-chart .chart');
+  const chartBox = await chart.boundingBox();
+  const y = chartBox.y + chartBox.height - 23;
+  await page.mouse.move(chartBox.x + 94, y);
+  await page.mouse.down();
+  await page.mouse.move(chartBox.x + 90 + (chartBox.width - 180) * 0.92, y, { steps: 12 });
+  await page.mouse.up();
+  const choose = page.getByRole('button', { name: 'Select Photos in the Zoomed Range', exact: true });
+  await expect(choose).toBeVisible();
+  await expectRepresentedPhotos(1);
+  await revealFromMoreOptions();
+  await expect(choose).toBeHidden();
+  await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_4676.JPG');
+  for (const name of ['Apple Park', 'Gold Coast', 'Kobe', 'Unga']) await expect(treeCheckbox(name)).toBeChecked();
+});
+test('Reveal in Map opens the popup of a cluster of photos taken at one place with the photo\'s tile chosen, and Reveal in Sidebar there shows that photo\'s row', async () => {
+  const folder = path.join(profile, 'photos taken at one place');
+  await mkdir(folder);
+  for (const name of ['Kobe 1.JPG', 'Kobe 2.JPG']) await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, name));
+  await dismissWelcome();
+  await openFolderWithPicker(folder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('2 files have location data.');
+  await expect(page.locator('.marker-cluster')).toHaveCount(1);
+  const rowOf = name => page.locator('mat-tree-node').filter({ hasText: name });
+  const shownName = page.locator('.photo-cluster-viewer-right-pane .photo-info-viewer-name');
+  // Taken at the same time, the two photos can have their tiles in either order: each is chosen in turn. The item is
+  // that of the row's own menu, as the menu of the previous row fades out for a moment, with its items.
+  for (const name of ['Kobe 2.JPG', 'Kobe 1.JPG']) {
+    await rowOf(name).getByRole('button', { name: 'More Options' }).click();
+    await rowOf(name).locator('.photo-info-viewer-more-options-menu-item').filter({ hasText: 'Reveal in Map' }).click();
+    await expect(shownName).toHaveText(name);
+    await expect(page.locator('.photo-cluster-viewer-tile.selected-tile')).toHaveCount(1);
+  }
+  const shownPhoto = page.locator('.photo-cluster-viewer-right-pane');
+  await shownPhoto.getByRole('button', { name: 'More Options' }).click();
+  await shownPhoto.locator('.photo-info-viewer-more-options-menu-item').filter({ hasText: 'Reveal in Sidebar' }).click();
+  await expect(rowOf('Kobe 1.JPG')).toHaveAttribute('data-reveal-highlight', '1');
+  await expect(rowOf('Kobe 2.JPG')).not.toHaveAttribute('data-reveal-highlight', /./);
+});
 test('a photo\'s information, in the tree and in a popup of the map, opens the photo, its folder and its Live Photos movie, and keeps its thumbnail turned', async () => {
   // The same Angular component in both places, with what it keeps in services: a row of the tree and the content of a
   // popup are made again, and show the thumbnail as it was turned.
@@ -1574,7 +1708,7 @@ test('a photo\'s information, in the tree and in a popup of the map, opens the p
   await thumbnailInTree.click();
   await inTree.getByRole('button', { name: 'More Options' }).click();
   await expect(page.locator('.photo-info-viewer-more-options-menu-item'))
-    .toHaveText(['Select Only This', 'Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data']);
+    .toHaveText(['Select Only This', 'Reveal in Map', 'Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data']);
   // A click on an item does what the item says, and closes the menu.
   await menuItem('Open Folder').click();
   await expect(menu).toHaveCount(0);
@@ -1750,7 +1884,7 @@ test('Select Previous and Select Next go through the photos in the order they we
   const moreOptionsItems = page.locator('.photo-info-viewer-more-options-menu-item');
   const withLocation = ['Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data'];
   await popup.locator('.photo-info-viewer-more-options-button').click();
-  await expect(moreOptionsItems).toHaveText(['Select Only This', 'Select Previous', 'Select Next', ...withLocation]);
+  await expect(moreOptionsItems).toHaveText(['Select Only This', 'Select Previous', 'Select Next', 'Reveal in Sidebar', ...withLocation]);
   await moreOptionsItems.filter({ hasText: 'Select Next' }).click();
   await expectSelected('IMG_4676.JPG');
   const kobe = page.locator('mat-tree-node').filter({ has: page.getByText('Kobe', { exact: true }) });
@@ -1758,11 +1892,11 @@ test('Select Previous and Select Next go through the photos in the order they we
   const row = page.locator('mat-tree-node').filter({ hasText: 'IMG_4676.JPG' });
   await row.locator('.photo-info-viewer-thumbnail').hover();
   await row.getByRole('button', { name: 'More Options' }).click();
-  await expect(moreOptionsItems).toHaveText(['Select Only This', 'Select Previous', 'Select Next', ...withLocation]);
+  await expect(moreOptionsItems).toHaveText(['Select Only This', 'Select Previous', 'Select Next', 'Reveal in Map', ...withLocation]);
   await moreOptionsItems.filter({ hasText: 'Select Next' }).click();
   await expectSelected('IMG_5769.JPG');
   await popup.locator('.photo-info-viewer-more-options-button').click();
-  await expect(moreOptionsItems).toHaveText(['Select Only This', 'Select Previous', ...withLocation]);
+  await expect(moreOptionsItems).toHaveText(['Select Only This', 'Select Previous', 'Reveal in Sidebar', ...withLocation]);
   await moreOptionsItems.filter({ hasText: 'Select Previous' }).click();
   await expectSelected('IMG_4676.JPG');
   await expect.poll(enabled).toEqual({ previous: true, next: true });

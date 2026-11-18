@@ -77,6 +77,7 @@
     "contextMenu": {
       "selectOnlyThisFile": "Selecciona només aquest fitxer",
       "selectOnlyThisFolder": "Selecciona només aquesta carpeta",
+      "revealInMap": "Mostra al mapa",
       "open": "Obre",
       "openFolder": "Obre la carpeta"
     }
@@ -96,6 +97,8 @@
       "selectPrevious": "Selecciona el fitxer anterior",
       "selectNext": "Selecciona el fitxer següent",
       "openFolder": "Obre la carpeta",
+      "revealInMap": "Mostra al mapa",
+      "revealInSidebar": "Mostra a la barra lateral",
       "openGoogleMaps": "Obre Google Maps",
       "openGoogleStreetView": "Obre Google Street View",
       "openGoogleEarth": "Obre Google Earth",

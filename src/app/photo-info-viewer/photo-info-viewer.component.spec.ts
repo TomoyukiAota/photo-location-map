@@ -10,6 +10,7 @@ import { LatLng } from '../shared/model/lat-lng.model';
 import { Photo } from '../shared/model/photo.model';
 import { Thumbnail } from '../shared/model/thumbnail.model';
 import { OpenedDirectory } from '../shared/opened-directory';
+import { PhotoRevealService } from '../shared/service/photo-reveal.service';
 import { SelectPreviousNextService } from '../shared/service/select-previous-next.service';
 import { GeneratedThumbnailService, thumbnailCheckIntervalMs } from './generated-thumbnail.service';
 import { PhotoInfoViewerComponent } from './photo-info-viewer.component';
@@ -278,7 +279,19 @@ describe('PhotoInfoViewerComponent', () => {
 
       const menu = element.querySelector('.photo-info-viewer-more-options-menu');
       expect(menu.parentElement).toBe(button('More Options'));
-      expect(menuItems().map(item => item.textContent)).toEqual(['Select Only This', 'Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data']);
+      expect(menuItems().map(item => item.textContent)).toEqual(
+        ['Select Only This', 'Reveal in Sidebar', 'Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data']);
+    });
+
+    it('shows a photo of a row of the folder tree on the map, rather than in the sidebar', async () => {
+      const revealInMap = vi.spyOn(TestBed.inject(PhotoRevealService), 'revealInMap').mockImplementation(() => undefined);
+      await show(cameraPhoto(), 'dir-tree-view');
+
+      await click(button('More Options'));
+
+      expect(menuItems().map(item => item.textContent)).toEqual(['Select Only This', 'Reveal in Map', 'Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data']);
+      await click(menuItems().find(item => item.textContent === 'Reveal in Map'));
+      expect(revealInMap).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ path: '/photos/IMG_0001.JPG' }));
     });
 
     it('has Select Previous and Select Next where a photo was taken before or after, which select that photo', async () => {
@@ -300,7 +313,8 @@ describe('PhotoInfoViewerComponent', () => {
         return menuItems().map(item => item.textContent);
       };
 
-      const withLocation = ['Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data'];
+      // After them, what a row of the tree has for a photo with a location.
+      const withLocation = ['Reveal in Map', 'Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data'];
       expect(await itemsOf('/photos/IMG_0001.JPG')).toEqual(['Select Only This', 'Select Next', ...withLocation]);
       expect(await itemsOf('/photos/IMG_0003.JPG')).toEqual(['Select Only This', 'Select Previous', ...withLocation]);
       expect(await itemsOf('/photos/IMG_0002.JPG')).toEqual(['Select Only This', 'Select Previous', 'Select Next', ...withLocation]);
@@ -363,7 +377,7 @@ describe('PhotoInfoViewerComponent', () => {
       expect(menuItems()).toEqual([]);
 
       await click(button('More Options'));
-      expect(menuItems()).toHaveLength(6);
+      expect(menuItems()).toHaveLength(7);
       button('More Options').dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
       await fixture.whenStable();
       expect(menuItems()).toEqual([]);
@@ -374,10 +388,11 @@ describe('PhotoInfoViewerComponent', () => {
       const openContainingFolder = vi.spyOn(window.plm.shell, 'openContainingFolder');
       const openExternal = vi.spyOn(window.plm.shell, 'openExternal');
       const openPhotoDataViewer = vi.spyOn(window.plm.photoDataViewer, 'open');
+      const revealInSidebar = vi.spyOn(TestBed.inject(PhotoRevealService), 'revealInSidebar');
       await show(cameraPhoto(), 'leaflet-map-popup');
       document.body.appendChild(element);
       try {
-        for (const text of ['Select Only This', 'Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data']) {
+        for (const text of ['Select Only This', 'Reveal in Sidebar', 'Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data']) {
           button('More Options').focus();
           await click(button('More Options'));
           const item = menuItems().find(candidate => candidate.textContent === text);
@@ -394,6 +409,7 @@ describe('PhotoInfoViewerComponent', () => {
       }
 
       expect(select).toHaveBeenCalledExactlyOnceWith(['/photos/IMG_0001.JPG']);
+      expect(revealInSidebar).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ path: '/photos/IMG_0001.JPG' }));
       expect(openContainingFolder).toHaveBeenCalledExactlyOnceWith('/photos/IMG_0001.JPG');
       expect(openExternal.mock.calls).toEqual([
         ['https://maps.google.com/?q=34.68,135.19&ll=34.68,135.19&z=14'],

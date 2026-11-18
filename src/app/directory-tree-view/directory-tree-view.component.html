@@ -4,10 +4,12 @@
   Arabic or Hebrew letters in the others.
 -->
 <mat-tree #tree="matTree" [dataSource]="treeData()" [childrenAccessor]="childrenAccessor">
+  <!-- A file's row, which a photo revealed from the map highlights for a moment: see reveal(). -->
   <mat-tree-node *matTreeNodeDef="let node"
                  matTreeNodeToggle
                  matTreeNodePadding
                  [matTreeNodePaddingIndent]="indentPerLevel"
+                 [attr.data-reveal-highlight]="revealHighlightOf(node)"
                  (contextmenu)="onContextMenu($event, node)"
                  class="leaf-tree-node">
     <div class="leaf-tree-node-checkbox-and-name">
@@ -67,7 +69,7 @@
   <ng-template matMenuContent let-data="contextMenuData">
     @for (menuItem of contextMenuItems; track menuItem) {
       @if (menuItem.visible(data)) {
-        <button mat-menu-item class="context-menu-button" (click)="menuItem.onClick(data)">{{ menuItem.textKey(data) | t }}</button>
+        <button mat-menu-item class="context-menu-button" (click)="menuItem.onClick(data, injector)">{{ menuItem.textKey(data) | t }}</button>
       }
     }
   </ng-template>
