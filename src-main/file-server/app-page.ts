@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { pathToFileURL } from 'url';
 import { appPageOrigin, appPageScheme } from '../../src-shared/main-window-schemes.js';
+import { mainWindowContentSecurityPolicy } from './content-security-policy.js';
 
 // TL;DR: The main window's page is served from plm-app://app/, a scheme of the application's own, not from file:.
 // Details: Electron gives a page of file: privileges that no browser gives a page, which the package turns off with the
@@ -46,7 +47,18 @@ export async function respondToAppPageRequest(request: Request, distFolder: stri
   if (!isFile)
     return notFound();
   // Past any handler of file: URLs that protocol.handle may have, as photo-delivery.ts goes.
-  return net.fetch(pathToFileURL(filePath).href, { bypassCustomProtocolHandlers: true });
+  const file = await net.fetch(pathToFileURL(filePath).href, { bypassCustomProtocolHandlers: true });
+  return withContentSecurityPolicy(file);
+}
+
+/**
+ * `response` with the page's Content Security Policy (content-security-policy.ts). Each file of the page has it: the
+ * policy applies to the document that index.html is, and would apply to a worker by its script's answer.
+ */
+function withContentSecurityPolicy(response: Response): Response {
+  const headers = new Headers(response.headers);
+  headers.set('Content-Security-Policy', mainWindowContentSecurityPolicy);
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }
 
 function notFound(): Response {

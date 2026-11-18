@@ -1,16 +1,18 @@
 import assert from 'assert';
 import { EventEmitter } from 'events';
-import { isRecordedOtherwise, recordConsoleErrors } from '../../../src-main/record-console-errors.js';
+import { isContentSecurityPolicyLine, isRecordedOtherwise, recordConsoleErrors } from '../../../src-main/record-console-errors.js';
 
 describe('recordConsoleErrors (in main process)', () => {
   /** A stand-in for the page, whose console lines the test emits, and for what records an error. */
   function setUp() {
     const contents = new EventEmitter();
     const recorded: string[][] = [];
-    recordConsoleErrors(contents as unknown as Electron.WebContents, (label, value) => recorded.push([label, value]));
+    const logged: string[] = [];
+    recordConsoleErrors(contents as unknown as Electron.WebContents, (label, value) => recorded.push([label, value]),
+      line => logged.push(line));
     const log = (level: string, message: string, sourceId = '', lineNumber = 1) =>
       contents.emit('console-message', { level, message, sourceId, lineNumber });
-    return { recorded, log };
+    return { recorded, logged, log };
   }
 
   it('records an error that only the console shows, with its source and line', () => {
@@ -54,6 +56,27 @@ describe('recordConsoleErrors (in main process)', () => {
       log('error', 'Failed to load resource: net::ERR_NAME_NOT_RESOLVED', `https://tile.example.org/${i}.png`);
 
     assert.equal(recorded.length, 3);
+  });
+
+  it('writes a violation of the page\'s Content Security Policy to the log, whole, and records it as an error', () => {
+    const { recorded, logged, log } = setUp();
+    const violation = "Loading the image 'http://tiles.example.org/12/3456/789.png' violates the following Content Security Policy directive: \"img-src 'self' data: blob: plm-file: https:\". The action has been blocked.";
+
+    log('error', violation, 'plm-app://app/chunk-ABC.js', 7);
+    log('error', 'Failed to load resource: net::ERR_CONNECTION_REFUSED', 'https://tile.example.org/1.png');
+    // A line of the page's logger is in the log already.
+    log('error', '[2026-11-19 09:00:00.000] [Renderer] [error] The Content Security Policy refused something.');
+
+    assert.deepEqual(logged, [`[Content Security Policy] The main window's page: ${violation} (plm-app://app/chunk-ABC.js:7)`]);
+    assert.equal(recorded.length, 2);
+    assert.match(recorded[0][0], /^Loading the image 'http:\/\/tiles\.example\.org\/<path>' violates the following Content Security Policy directive/);
+  });
+
+  it('tells the lines about the Content Security Policy', () => {
+    assert.equal(isContentSecurityPolicyLine("Executing inline script violates the following Content Security Policy directive 'script-src 'self''."), true);
+    assert.equal(isContentSecurityPolicyLine("Refused to connect to 'https://example.org/' because it violates the following Content Security Policy directive: \"connect-src 'none'\"."), true);
+    assert.equal(isContentSecurityPolicyLine("Unrecognized Content-Security-Policy directive 'script-scr'."), true);
+    assert.equal(isContentSecurityPolicyLine('Failed to load resource: net::ERR_NAME_NOT_RESOLVED'), false);
   });
 
   it('tells the lines that are recorded otherwise', () => {

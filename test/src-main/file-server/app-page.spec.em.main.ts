@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { respondToAppPageRequest } from '../../../src-main/file-server/app-page.js';
+import { mainWindowContentSecurityPolicy } from '../../../src-main/file-server/content-security-policy.js';
 
 describe('The app\'s page (in main process)', () => {
   let root: string;
@@ -36,6 +37,16 @@ describe('The app\'s page (in main process)', () => {
     const media = await respond(`plm-app://app/media/${encodeURIComponent('写真 #1.svg')}`);
     assert.strictEqual(media.status, 200);
     assert.match(media.headers.get('content-type') ?? '', /^image\/svg\+xml/);
+  });
+
+  it('answers each file with the page\'s Content Security Policy', async () => {
+    for (const url of ['plm-app://app/index.html', 'plm-app://app/main-ABC.js', `plm-app://app/media/${encodeURIComponent('写真 #1.svg')}`]) {
+      const answer = await respond(url);
+      assert.strictEqual(answer.headers.get('content-security-policy'), mainWindowContentSecurityPolicy, url);
+      // The answer is the file, whole, with its other headers.
+      assert.ok(answer.headers.get('content-type'), url);
+      assert.ok((await answer.arrayBuffer()).byteLength > 0, url);
+    }
   });
 
   it('answers nothing outside the build, of another host, or that is not a file', async () => {

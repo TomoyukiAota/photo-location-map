@@ -21,6 +21,13 @@ mise exec -- npm run test:e2e
 CI does so on Ubuntu, after its run against the AppImage, which is a production
 build (`.github/workflows/ci-on-ubuntu.yml`).
 
+With any build, the suite also fails a case in which the main window's page
+broke its Content Security Policy: Chromium, or the page for a string that the
+policy refused to evaluate, wrote a line about the policy to the page's console.
+A case that breaks the policy on purpose takes its lines with
+`takePolicyViolations()`. When the page needs something new, allow it in
+`src-main/file-server/content-security-policy.ts`, with why.
+
 On macOS and Windows, the application's windows stay off the screen, as
 Playwright's own browsers do, so that a run does not take over the screen. To
 watch them, add Playwright's `--headed` option:
