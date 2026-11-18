@@ -33,10 +33,18 @@ let changedWithoutNotification = [];
 // Details: Chromium writes them to the page's console, also for what happens before the page's scripts run, as of
 // index.html. Photo Data Viewer's page and the website's are not the app's page, and have policies of their own, if any.
 let policyViolations = [];
+/** What takePolicyViolations was given in the case: the lines that the case causes on purpose. */
+let expectedPolicyViolations = [];
 /** Whether `url` is the main window's page: the app's page, or ng serve's for live reload. */
 const isAppPageUrl = url => !!url && (url.startsWith('plm-app://app/') || (liveReload && url.startsWith('http://localhost:4200/')));
-/** The lines about the Content Security Policy that the case caused so far, which then no longer fail it. */
-const takePolicyViolations = () => policyViolations.splice(0);
+/**
+ * Returns the lines about the Content Security Policy so far that `expected` matches, which the case causes on
+ * purpose: those no longer fail it, nor does such a line that comes later. Any other line still does.
+ */
+const takePolicyViolations = expected => {
+  expectedPolicyViolations.push(expected);
+  return policyViolations.filter(line => expected(line));
+};
 // TL;DR: On macOS and Windows, the windows stay off the screen, as Playwright's browsers do, unless --headed
 // is given: hidden on macOS, and on Windows shown but transparent, click-through and never activated
 // (see electron-util/e2e-test-hooks.js). On Linux, they are shown; Linux CI runs under Xvfb.
@@ -395,6 +403,7 @@ test.beforeEach(async () => {
   profile = await mkdtemp(path.join(tmpdir(), 'plm-e2e-'));
   changedWithoutNotification = [];
   policyViolations = [];
+  expectedPolicyViolations = [];
   await launch();
 });
 /** The promise's value, or `otherwise` when it has none within 5 seconds: a process that hangs does not answer. */
@@ -482,7 +491,8 @@ test.afterEach(async ({}, testInfo) => {
     if (profile) await removeProfile(profile);
   }
   expect(changedWithoutNotification, 'Bindings changed without telling Angular').toEqual([]);
-  expect(policyViolations, 'The main window\'s page broke its Content Security Policy (src-main/file-server/content-security-policy.ts)').toEqual([]);
+  expect(policyViolations.filter(line => !expectedPolicyViolations.some(expected => expected(line))),
+    'The main window\'s page broke its Content Security Policy (src-main/file-server/content-security-policy.ts)').toEqual([]);
 });
 test('welcome, about and every available settings tab keep their appearance', async () => {
   await expect(page.locator('app-welcome-dialog')).toContainText(`Version ${manifest.version}`);
@@ -2292,7 +2302,7 @@ test('the main window\'s page runs isolated, without Node.js, and reaches the ma
   }));
   expect(inPage.globals).toEqual(['require', 'process', 'module', 'Buffer', 'global', 'setImmediate'].map(name => [name, 'undefined']));
   expect(inPage.worker).toBe('refused');
-  expect(takePolicyViolations()).toEqual([expect.stringMatching(/\bworker\b.*'blob:/i)]);
+  expect(takePolicyViolations(line => /\bworker\b.*'blob:/i.test(line))).toHaveLength(1);
   expect(inPage.frozen).toBe(true);
   for (const generic of ['send', 'sendSync', 'invoke', 'on', 'ipcRenderer']) expect(inPage.members).not.toContain(generic);
   // The main process answers the page only what it may ask for.
@@ -2365,7 +2375,8 @@ test('the main window\'s page refuses what its Content Security Policy does not 
   // The suite sees each refusal in the page's console, as it would one that a case does not cause on purpose.
   const refusals = [/\binline script\b/i, /\beval\b/i, /'https:\/\/127\.0\.0\.1:9\/'/, /'http:\/\/127\.0\.0\.1:9\/tile\.png'/];
   await expect.poll(() => refusals.filter(refusal => !policyViolations.some(line => refusal.test(line))).map(String)).toEqual([]);
-  takePolicyViolations();
+  // Those lines, and the fetch's second one, which gives the address without quotes.
+  takePolicyViolations(line => refusals.some(refusal => refusal.test(line)) || line.includes('https://127.0.0.1:9/'));
   // The main process writes each to the log (src-main/record-console-errors.ts), which the page could not do for one
   // before its scripts ran...
   const logFile = await app.evaluate(({ app }) => {
@@ -2814,7 +2825,8 @@ for (const [name, fixture, specialPath] of [
     expect(url).toMatch(/^plm-photo:\/\/photo\/[0-9a-f]{64}$/);
     expect(await page.evaluate(url => fetch(url).then(answer => answer.status, error => error.name), url)).toBe('TypeError');
     await expect.poll(() => policyViolations.some(line => line.includes(`'${url}'`))).toBe(true);
-    takePolicyViolations();
+    // That line, and the fetch's second one, which gives the address without quotes.
+    takePolicyViolations(line => line.includes(url));
     const status = referrer => app.evaluate(async ({ app }, { url, referrer }) => {
       const require = globalThis.__plmTestRequire;
       const delivery = require(require('node:path').join(app.getAppPath(), 'out/app/src-main/photo-data-viewer/photo-delivery.js'));

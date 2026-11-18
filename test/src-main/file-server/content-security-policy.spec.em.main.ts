@@ -25,9 +25,11 @@ describe('The Content Security Policy of the main window\'s page (in main proces
 
   it('refuses what it does not name, and runs only the scripts of the build: no other inline script, and no eval', () => {
     assert.deepStrictEqual(mainWindowPolicyDirectives['default-src'], [`'none'`]);
-    // Plugins, frames, workers and media are refused by default-src.
-    for (const name of ['object-src', 'child-src', 'frame-src', 'worker-src', 'media-src', 'manifest-src'])
+    // Plugins, frames and media are refused by default-src. Workers are refused by worker-src: without it, their
+    // scripts would be checked against script-src, not default-src.
+    for (const name of ['object-src', 'child-src', 'frame-src', 'media-src', 'manifest-src'])
       assert.strictEqual(mainWindowPolicyDirectives[name], undefined, name);
+    assert.deepStrictEqual(mainWindowPolicyDirectives['worker-src'], [`'none'`]);
     assert.deepStrictEqual(mainWindowPolicyDirectives['script-src'], [`'self'`, stylesheetMediaScriptHash]);
     for (const [name, ...sources] of parsed()) {
       for (const source of sources) {

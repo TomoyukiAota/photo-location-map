@@ -22,7 +22,7 @@ export const stylesheetMediaScriptHash = `'sha256-LMY6wYoFV9I4wWzxaq1N/dTpl4iurQ
 
 /** The policy's directives, with the sources that each allows. */
 export const mainWindowPolicyDirectives: Readonly<Record<string, readonly string[]>> = {
-  // What no directive below names is refused: frames, workers, plugins (object-src), audio and video, manifests.
+  // What no directive below names is refused: frames, plugins (object-src), audio and video, manifests.
   'default-src': [`'none'`],
   'script-src': [
     // The scripts of the app's build: its entry, its chunks and scripts.js, which has Leaflet and its plugins; in
@@ -31,6 +31,12 @@ export const mainWindowPolicyDirectives: Readonly<Record<string, readonly string
     `'self'`,
     stylesheetMediaScriptHash,
   ],
+  // TL;DR: No worker. Without this directive, a worker's script would be checked against script-src, whose 'self' lets
+  // the page start one from a file of the app, and not against default-src.
+  // Details: The page starts none. The only one in its build is that of the session recording of Mixpanel's SDK
+  // (rrweb, for canvases), which runs only for a record_sessions_percent above 0, its default, which the app does not
+  // change; it would be made from a blob:, which script-src did not allow either.
+  'worker-src': [`'none'`],
   'style-src': [
     // styles.css.
     `'self'`,

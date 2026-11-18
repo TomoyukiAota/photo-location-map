@@ -24,8 +24,9 @@ build (`.github/workflows/ci-on-ubuntu.yml`).
 With any build, the suite also fails a case in which the main window's page
 broke its Content Security Policy: Chromium, or the page for a string that the
 policy refused to evaluate, wrote a line about the policy to the page's console.
-A case that breaks the policy on purpose takes its lines with
-`takePolicyViolations()`. When the page needs something new, allow it in
+A case that breaks the policy on purpose takes the lines that it causes with
+`takePolicyViolations(line => …)`, and any other line still fails it. When the
+page needs something new, allow it in
 `src-main/file-server/content-security-policy.ts`, with why.
 
 On macOS and Windows, the application's windows stay off the screen, as
