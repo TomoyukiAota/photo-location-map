@@ -88,21 +88,22 @@ async function measure(build) {
     };
     /**
      * The time from now to the frame after the page has `count` rows, of which those in the sidebar's view show their
-     * photos' thumbnails, which the page has to within 5 minutes. A row makes its photo's thumbnail once it comes near
-     * that view, while a build before 2026-11-19 made it with the row: either way, this is when the user sees the rows
-     * in view complete.
+     * photos' thumbnails, loaded, which the page has to within 5 minutes. A row makes its photo's thumbnail once it
+     * comes near that view, while a build before 2026-11-19 made it with the row: either way, this is when the user
+     * sees the rows in view complete.
      */
     const rowsShown = count => page.evaluate(([selector, count]) => new Promise((resolve, reject) => {
       const start = performance.now();
       const pane = document.querySelector('#home-sidebar-lower-pane');
-      /** Whether the rows in the pane's view show their thumbnails. The rows are in their order on the page. */
+      /** Whether the rows in the pane's view show their thumbnails, loaded. The rows are in their order on the page. */
       const thumbnailsInView = shownRows => {
         const view = pane.getBoundingClientRect();
         for (const row of shownRows) {
           const box = row.getBoundingClientRect();
           if (box.top >= view.bottom)
             return true;
-          if (box.bottom > view.top && !row.querySelector('.photo-info-viewer-thumbnail'))
+          const thumbnail = row.querySelector('img.photo-info-viewer-thumbnail');
+          if (box.bottom > view.top && !(thumbnail?.complete && thumbnail.naturalWidth > 0))
             return false;
         }
         return true;
@@ -112,7 +113,7 @@ async function measure(build) {
         if (shownRows.length === count && thumbnailsInView(shownRows))
           requestAnimationFrame(() => resolve(Math.round(performance.now() - start)));
         else if (performance.now() - start > 300000)
-          reject(new Error(`The page has ${shownRows.length} rows after 5 minutes, not ${count} with the thumbnails of those in view.`));
+          reject(new Error(`The page has ${shownRows.length} rows after 5 minutes, not ${count} with the thumbnails of those in view loaded.`));
         else
           requestAnimationFrame(check);
       };

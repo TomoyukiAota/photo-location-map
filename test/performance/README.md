@@ -94,8 +94,8 @@ prints for each trial, and as medians at the end:
 
 | Figure | What it is |
 | --- | --- |
-| `openMs` | From the click on Open Folder to the frame after the last row is in the page, with the thumbnails of the rows in the sidebar's view. Most of it is reading the photos. |
-| `rowsAgainMs` | The folder collapsed, then from the click that expands it to the frame after the last row, with the thumbnails in view: the rows made again. |
+| `openMs` | From the click on Open Folder to the frame after the last row is in the page, with the thumbnails of the rows in the sidebar's view loaded. Most of it is reading the photos. |
+| `rowsAgainMs` | The folder collapsed, then from the click that expands it to the frame after the last row, with the thumbnails in view loaded: the rows made again. |
 | `checkboxMs` | From a click on one row's checkbox to the frame after it shows: what the other rows cost a change of one. |
 | `scrollFrameMs`, `scrollLongestFrameMs` | The mean and the longest time between two frames while the sidebar scrolls down from the top by 100 pixels a frame, past about a hundred rows, which make their checkboxes and their photos' thumbnails and buttons as they come near the view. |
 | `heapMb`, `nodes`, `listeners` | The page's JavaScript heap after a garbage collection, and its nodes and event listeners, once the folder is open. |
