@@ -4,6 +4,7 @@ import { MatTree } from '@angular/material/tree';
 import { By } from '@angular/platform-browser';
 import { PhotoInfoViewerComponent } from '../photo-info-viewer/photo-info-viewer.component';
 import { Photo } from '../shared/model/photo.model';
+import { NearViewService } from '../shared/near-view/near-view.service';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { DirectoryTreeViewComponent } from './directory-tree-view.component';
 import { NestedNode } from './directory-tree-view.model';
@@ -13,6 +14,30 @@ import { NestedNode } from './directory-tree-view.model';
 class DummyPhotoInfoViewerComponent {
   public readonly photo = input<Photo>();
   public readonly place = input<string>();
+}
+
+/**
+ * NearViewService, as jsdom has no IntersectionObserver: a row is near what is shown as soon as it is made, as the rows
+ * at the top of the tree are, unless the test keeps the rows away until it brings them near.
+ */
+class NearViewDouble implements Pick<NearViewService, 'watch'> {
+  public keepsAway = false;
+  private readonly waiting = new Map<Element, () => void>();
+
+  public watch(element: Element, whenNear: () => void): () => void {
+    if (!this.keepsAway) {
+      whenNear();
+      return () => undefined;
+    }
+    this.waiting.set(element, whenNear);
+    return () => this.waiting.delete(element);
+  }
+
+  public bringNear(): void {
+    const whenNear = [...this.waiting.values()];
+    this.waiting.clear();
+    whenNear.forEach(each => each());
+  }
 }
 
 /** A node of the tree that nothing can select, so that only what is expanded matters. */
@@ -31,10 +56,13 @@ describe('DirectoryTreeViewComponent', () => {
   let fixture: ComponentFixture<DirectoryTreeViewComponent>;
   let dataService: DirectoryTreeViewDataService;
   let tree: MatTree<NestedNode>;
+  let nearView: NearViewDouble;
 
   beforeEach(async () => {
+    nearView = new NearViewDouble();
     await TestBed.configureTestingModule({
       imports: [DirectoryTreeViewComponent],
+      providers: [{ provide: NearViewService, useValue: nearView }],
     })
       .overrideComponent(DirectoryTreeViewComponent, {
         remove: { imports: [PhotoInfoViewerComponent] },
@@ -67,5 +95,20 @@ describe('DirectoryTreeViewComponent', () => {
     expect(tree.isExpanded(second)).toBe(true);
     expect(fixture.nativeElement.textContent).toContain('photo.jpg');
     expect(fixture.nativeElement.textContent).not.toContain('subfolder');
+  });
+
+  it('makes the checkbox of a photo\'s row once the row comes near what is shown, with the photo\'s name before it', async () => {
+    nearView.keepsAway = true;
+    const photo = Object.assign(node('/folder/photo.jpg'), { isSelectable: true });
+    dataService.dataReplaced.next([node('/folder', [photo])]);
+    await fixture.whenStable();
+    const row: HTMLElement = fixture.nativeElement.querySelector('mat-tree-node.leaf-tree-node');
+    expect(row.querySelector('mat-checkbox')).toBeNull();
+    expect(row.querySelector('bdi').textContent).toBe('photo.jpg');
+
+    nearView.bringNear();
+    await fixture.whenStable();
+
+    expect(row.querySelector('mat-checkbox bdi').textContent).toBe('photo.jpg');
   });
 });

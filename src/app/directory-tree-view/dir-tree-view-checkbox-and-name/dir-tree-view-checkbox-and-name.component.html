@@ -1,0 +1,20 @@
+<!-- The name is in a bdi element, as in the tree's template, whose comment says why. -->
+@let shownNode = node();
+@if (shownNode.isSelectable && !nearView.isNear()) {
+  <!-- Until the row is near what is shown: the room of the disabled button and the checkbox below. -->
+  <span class="room-of-checkbox"></span>
+  <bdi class="name-beside-room-of-checkbox">{{ shownNode.name }}</bdi>
+} @else {
+  <button mat-icon-button disabled></button> <!-- Adjust space to align with tree expand button (which look like > or v) -->
+  @if (shownNode.isSelectable) {
+    <mat-checkbox [checked]="selected()"
+                  (change)="toggled.emit()">
+      <bdi>{{ shownNode.name }}</bdi>
+    </mat-checkbox>
+  } @else {
+    <mat-label class="non-selectable-node">
+      <div class="disabled-checkbox-alternative"></div>
+      <bdi class="non-selectable-node-name">{{ shownNode.name }}</bdi>
+    </mat-label>
+  }
+}

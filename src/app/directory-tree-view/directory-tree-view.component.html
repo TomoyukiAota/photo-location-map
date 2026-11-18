@@ -4,27 +4,22 @@
   Arabic or Hebrew letters in the others.
 -->
 <mat-tree #tree="matTree" [dataSource]="treeData()" [childrenAccessor]="childrenAccessor">
+  <!--
+    A file's row makes what is costly in it, a photo's checkbox and the photo's thumbnail and buttons, only once it
+    comes near the part of the tree that is shown (appNearView), as an expanded folder can have thousands of rows.
+    The components inside the row read whether it is near, in their own templates: this template must not (see
+    NearViewDirective).
+  -->
   <mat-tree-node *matTreeNodeDef="let node"
                  matTreeNodeToggle
                  matTreeNodePadding
                  [matTreeNodePaddingIndent]="indentPerLevel"
                  (contextmenu)="onContextMenu($event, node)"
+                 appNearView
                  class="leaf-tree-node">
-    <div class="leaf-tree-node-checkbox-and-name">
-      <button mat-icon-button disabled></button> <!-- Adjust space to align with tree expand button (which look like > or v) -->
-      @if (node.isSelectable) {
-        <mat-checkbox [checked]="isSelected(node)"
-                      (change)="handleCheckboxChange(node)">
-          <bdi>{{node.name}}</bdi>
-        </mat-checkbox>
-      }
-      @if (!node.isSelectable) {
-        <mat-label class="non-selectable-node">
-          <div class="disabled-checkbox-alternative"></div>
-          <bdi class="non-selectable-node-name">{{node.name}}</bdi>
-        </mat-label>
-      }
-    </div>
+    <app-dir-tree-view-checkbox-and-name [node]="node"
+                                         [selected]="isSelected(node)"
+                                         (toggled)="handleCheckboxChange(node)" />
     @if (photoOf(node); as photo) {
       <app-photo-info-viewer place="dir-tree-view" [photo]="photo" />
     }

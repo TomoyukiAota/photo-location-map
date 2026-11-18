@@ -33,6 +33,24 @@
       <div>{{ timeTaken() }}</div>
     </div>
   </div>
+} @else if (place() === 'dir-tree-view' && nearView && !nearView.isNear()) {
+  <!--
+    A row of the folder tree that is not yet near the part of the tree that is shown: the shooting time, in the layout
+    of the block below, with room for the thumbnail and the buttons, so that the row is as high and as wide as it is
+    with them.
+  -->
+  @let shownDateTimeTaken = dateTimeTaken();
+  <div>
+    <div class="photo-info-viewer-thumbnail-container">
+      <!-- In the thumbnail's place: an empty container would stand on the line of text by its bottom, 5 pixels higher. -->
+      <span></span>
+    </div>
+    <div class="photo-info-viewer-date-time-taken"
+         [class.photo-info-viewer-date-time-taken-unknown]="!shownDateTimeTaken">{{ shownDateTimeTaken }}</div>
+  </div>
+  <div class="photo-info-viewer-lower-div">
+    <span class="photo-info-viewer-button-room"></span>
+  </div>
 } @else {
   <!-- A row of the folder tree, or a popup of the map, which has the photo's name too. -->
   @let shownThumbnail = thumbnail();

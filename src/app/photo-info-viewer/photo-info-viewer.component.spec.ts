@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import type { ThumbnailState } from '../../../src-shared/bridge/plm-bridge';
 import { IconDataUrl } from '../../assets/icon-data-url';
@@ -7,6 +8,7 @@ import { Dimensions } from '../shared/model/dimensions.model';
 import { Exif } from '../shared/model/exif.model';
 import { LatLng } from '../shared/model/lat-lng.model';
 import { Photo } from '../shared/model/photo.model';
+import { NearViewDirective } from '../shared/near-view/near-view.directive';
 import { Thumbnail } from '../shared/model/thumbnail.model';
 import { OpenedDirectory } from '../shared/opened-directory';
 import { GeneratedThumbnailService, thumbnailCheckIntervalMs } from './generated-thumbnail.service';
@@ -100,6 +102,41 @@ describe('PhotoInfoViewerComponent', () => {
 
     expect(element.querySelector('.photo-info-viewer-date-time-taken').textContent).toBe('');
     expect(element.querySelector('.photo-info-viewer-date-time-taken-unknown')).not.toBeNull();
+  });
+
+  describe('in a row of the folder tree that is not yet near what is shown', () => {
+    /** Whether the row is near, as the row's NearViewDirective tells. */
+    const near = signal(false);
+
+    beforeEach(() => {
+      near.set(false);
+      TestBed.configureTestingModule({ providers: [{ provide: NearViewDirective, useValue: { isNear: near.asReadonly() } }] });
+    });
+
+    it('shows the shooting time with the room of the thumbnail and the buttons, and them once the row comes near', async () => {
+      await show(cameraPhoto(), 'dir-tree-view');
+
+      expect(element.querySelector('.photo-info-viewer-date-time-taken').textContent).toBe('2019-03-16 Sat 17:29:58');
+      expect(element.querySelector('.photo-info-viewer-thumbnail-container')).not.toBeNull();
+      expect(thumbnail()).toBeNull();
+      expect(buttons()).toEqual([]);
+      expect(element.querySelectorAll('.photo-info-viewer-lower-div > .photo-info-viewer-button-room')).toHaveLength(1);
+
+      near.set(true);
+      await fixture.whenStable();
+
+      expect(thumbnail().getAttribute('src')).toBe('blob:thumbnail-of-IMG_0001');
+      expect(buttons()).toHaveLength(3);
+      expect(element.querySelector('.photo-info-viewer-button-room')).toBeNull();
+      expect(element.querySelector('.photo-info-viewer-date-time-taken').textContent).toBe('2019-03-16 Sat 17:29:58');
+    });
+
+    it('marks the shooting time of a photo that has none, as the row does once it is near', async () => {
+      await show(photoAt('/photos/drawing.png'), 'dir-tree-view');
+
+      expect(element.querySelector('.photo-info-viewer-date-time-taken').textContent).toBe('');
+      expect(element.querySelector('.photo-info-viewer-date-time-taken-unknown')).not.toBeNull();
+    });
   });
 
   it('says that the information is unavailable for a photo without a path', async () => {

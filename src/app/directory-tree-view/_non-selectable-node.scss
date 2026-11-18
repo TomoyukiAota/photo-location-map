@@ -1,0 +1,18 @@
+// A node that nothing can select, in a folder's row and in a file's row: a grey box in place of the checkbox, and the
+// name in grey.
+
+.non-selectable-node {
+  display: inline-flex;
+  align-items: center;
+  color: #c0c0c0;
+}
+
+div.disabled-checkbox-alternative {
+  display: inline-block;
+  vertical-align: middle;
+  background-color: #e0e0e0;
+  width: 18px;
+  height: 18px;
+  border-radius: 2px;
+  margin: 11px;
+}
