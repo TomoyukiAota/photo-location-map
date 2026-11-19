@@ -101,23 +101,16 @@
              [title]="texts.livePhotos">
       </button>
     }
-    <!-- The menu is inside its button: see MoreOptionsMenuComponent. -->
+    <!-- Opens the menu that the home view has for every photo, with this photo: see MoreOptionsMenuComponent. -->
     <button class="photo-info-viewer-more-options-button"
             type="button"
-            (click)="onMoreOptionsButtonClick($event)"
-            (focusout)="closeMenu()">
+            [matMenuTriggerFor]="moreOptionsMenu()"
+            [matMenuTriggerData]="{ photo: shownPhoto, place: place() }"
+            (click)="onMoreOptionsButtonClick($event)">
       <img class="photo-info-viewer-button-icon"
            [src]="icons.moreOptions"
            [alt]="texts.moreOptions"
            [title]="texts.moreOptions">
-      @if (menuRoom(); as room) {
-        <app-photo-info-viewer-more-options-menu
-          animate.enter="photo-info-viewer-more-options-menu-fade-in"
-          animate.leave="photo-info-viewer-more-options-menu-fade-out"
-          [photo]="shownPhoto"
-          [place]="place()"
-          [room]="room" />
-      }
     </button>
   </div>
 }

@@ -1,4 +1,6 @@
-import { afterNextRender, Component, computed, ElementRef, inject, input, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { afterNextRender, Component, DestroyRef, Directive, inject, viewChild } from '@angular/core';
+import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { TranslationKey } from '../../../../src-shared/i18n/translation-key';
 import { openUrl } from '../../../../src-shared/url/open-url';
@@ -6,85 +8,136 @@ import { DirectoryTreeViewSelectionService } from '../../directory-tree-view/dir
 import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 import { Photo } from '../../shared/model/photo.model';
 import { openContainingFolder } from '../../shared/open-with-os';
-import { removeFocus } from '../../shared/remove-focus';
 import { PhotoRevealService } from '../../shared/service/photo-reveal.service';
 import { SelectPreviousNextService } from '../../shared/service/select-previous-next.service';
 import { photoInfoViewerLogger as logger } from '../photo-info-viewer-logger';
 import { PhotoInfoViewerPlace } from '../photo-info-viewer-place';
-import { cutOffAtEdgeOfArea, MoreOptionsMenuSize, placeMenu, RoomAroundButton } from './more-options-menu-placement';
+import { MoreOptionsMenuService } from './more-options-menu.service';
 import { requestMainProcessToLaunchPhotoDataViewer } from './view-data/request-main-process-to-launch-photo-data-viewer';
 
+/** What a photo's More Options button gives the menu when it opens it (matMenuTriggerData). */
+export interface MoreOptionsMenuData {
+  readonly photo: Photo;
+  /** Where the photo is shown, which decides the item that shows it in the other place. */
+  readonly place: PhotoInfoViewerPlace;
+}
+
+/** An item of the menu, which does what it says, or opens one of the menu's submenus. */
 interface MoreOptionsMenuItem {
   readonly textKey: TranslationKey;
-  readonly onClick: () => void;
+  readonly onClick?: () => void;
+  /** Select Previous or Select Next for a photo that has no photo before or after it: shown, and not chosen. */
+  readonly disabled?: boolean;
+  readonly submenu?: {
+    readonly name: 'selection' | 'google';
+    readonly items: readonly MoreOptionsMenuItem[];
+  };
 }
 
 /**
- * The menu of a photo's More Options button: what else can be done with the photo.
- * TL;DR: The menu is inside its button, which the viewer's template puts it in, and closes when the button loses the
- * focus.
- * Details: A click on an item keeps the focus on the button, as the item is inside it, so the item's click is
- * handled before the menu closes; the item then takes the focus off the button. Were the menu next to the button,
- * pressing the mouse on an item would take the focus, and close the menu before the click.
+ * While the menu is open, a press or a turn of the mouse wheel elsewhere closes it, and goes on to what it is on.
+ * TL;DR: As when the menu was inside its button, which lost the focus to whatever was pressed: one click on another
+ * photo's button or marker closes the menu and opens that one.
+ * Details: Angular Material's menu closes on a press elsewhere only through a backdrop over the window, which takes the
+ * press, and the wheel too. Without one, the menu, which is above the window rather than in its row or popup, would
+ * also stay where it is while the tree scrolls or the map pans or zooms under it: the wheel closes it, before the tree
+ * or the map moves. The listeners are on the document, in the capture phase, as Leaflet keeps some events from going
+ * further, and are there while the menu's content is: from when the menu opens until it has closed. The menus are in
+ * the overlay container. The open button, whose click closes the menu itself, is left to do so.
+ */
+@Directive({ selector: '[appClosesOnPressElsewhere]' })
+export class ClosesOnPressElsewhereDirective {
+  constructor() {
+    const menu = inject(MatMenu);
+    const document = inject(DOCUMENT);
+    const closeIfElsewhere = (event: Event) => {
+      const target = event.target as Element | null;
+      if (target?.closest?.('.cdk-overlay-container, .mat-mdc-menu-trigger[aria-expanded="true"]'))
+        return;
+      // As the menu's trigger closes it (MatMenuTrigger.closeMenu()).
+      menu.closed.emit();
+    };
+    document.addEventListener('pointerdown', closeIfElsewhere, true);
+    document.addEventListener('wheel', closeIfElsewhere, { capture: true, passive: true });
+    inject(DestroyRef).onDestroy(() => {
+      document.removeEventListener('pointerdown', closeIfElsewhere, true);
+      document.removeEventListener('wheel', closeIfElsewhere, { capture: true });
+    });
+  }
+}
+
+/**
+ * The menu of a photo's More Options button: what else can be done with the photo. The home view has it once, for
+ * every photo (MoreOptionsMenuService).
+ * TL;DR: Selection and Google are submenus, of the items that select a photo and of those that open Google's sites,
+ * around the items that show the photo in the other part of the window and open its folder, and before View Data.
+ * Details:
+ * - The button gives the menu its photo and place when it opens it, and the menu makes its items for them then.
+ * - Angular Material's menu, as the tree's context menu and the sidebar's Sort menu are: a submenu opens when the
+ *   pointer is on its item, when the item is clicked, and with Enter, Space or the arrow towards the submenu; the
+ *   keyboard goes through the items; a screen reader is told of the menus and their items.
+ * - The menu is above the window, so that neither the sidebar nor the map cuts it off at its edge. It opens below its
+ *   button, at the button's end, or above the button where the window has no room below. A submenu opens beside its
+ *   item, towards the end of the line, or the other way where the window has no room; in a language written from
+ *   right to left, all of it is the other way round.
+ * - Select Previous and Select Next keep their places in the Selection submenu where no photo was taken before or
+ *   after, and cannot be chosen there, as in the application's Selection menu.
  */
 @Component({
   selector: 'app-photo-info-viewer-more-options-menu',
-  template: `
-    @for (item of items(); track item.textKey) {
-      <div class="photo-info-viewer-more-options-menu-item" (click)="onItemClick($event, item)">{{ item.textKey | t }}</div>
-    }
-  `,
+  templateUrl: './more-options-menu.component.html',
   styleUrl: './more-options-menu.component.scss',
-  imports: [TranslatePipe],
-  host: {
-    'class': 'photo-info-viewer-more-options-menu',
-    '[style.top]': 'placement().top',
-    '[style.bottom]': 'placement().bottom',
-    '[style.inset-inline-start]': 'placement().insetInlineStart',
-    '[style.inset-inline-end.px]': 'insetInlineEnd()',
-  },
+  imports: [ClosesOnPressElsewhereDirective, MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger, TranslatePipe],
 })
 export class MoreOptionsMenuComponent {
   private readonly directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);
   private readonly photoRevealService = inject(PhotoRevealService);
   private readonly selectPreviousNextService = inject(SelectPreviousNextService);
-  private readonly element = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
 
-  public readonly photo = input.required<Photo>();
-  /** Where the photo is shown, which decides the item that shows it in the other place. */
-  public readonly place = input.required<PhotoInfoViewerPlace>();
-  /** The room around the button when it was clicked, which the viewer measures (roomAround()). */
-  public readonly room = input.required<RoomAroundButton>();
-
-  /** The menu's size once it is in the page: until then, the menu is below its button, where it is measured. */
-  private readonly size = signal<MoreOptionsMenuSize | null>(null);
-  /** Where the menu opens: where it fits, by its size and the room around the button (placeMenu()). */
-  protected readonly placement = computed(() => placeMenu(this.room(), this.size()));
-
-  /** How far the menu was beyond the edge of its area when it opened, by which it is moved towards the inside. */
-  private readonly cutOff = signal(0);
-  protected readonly insetInlineEnd = computed(() => {
-    const { insetInlineEnd } = this.placement();
-    return insetInlineEnd === null ? null : insetInlineEnd - this.cutOff();
-  });
+  private readonly menu = viewChild.required<MatMenu>('menu');
 
   /**
-   * A photo without a location has no item that needs one. Select Previous and Select Next are there when a photo was
-   * taken before or after this one (SelectPreviousNextService). A row of the folder tree has the item that shows the
-   * photo on the map, and a popup of the map the one that shows it in the folder tree.
+   * The items last made, for a photo, its place and the photos taken before and after it (itemsOf()): the template
+   * gets the same items, and their submenus the same data, each time that it is checked while the menu is open.
    */
-  protected readonly items = computed<MoreOptionsMenuItem[]>(() => {
-    const photo = this.photo();
-    const place = this.place();
+  private shown: {
+    readonly photo: Photo;
+    readonly place: PhotoInfoViewerPlace;
+    readonly previous: string | null;
+    readonly next: string | null;
+    readonly items: readonly MoreOptionsMenuItem[];
+  } | null = null;
+
+  constructor() {
+    const service = inject(MoreOptionsMenuService);
+    afterNextRender(() => service.menu.set(this.menu()));
+    inject(DestroyRef).onDestroy(() => service.menu.set(null));
+  }
+
+  /**
+   * The menu's items for the photo, with those of its submenus. A photo without a location has no item that needs
+   * one. A row of the folder tree has the item that shows the photo on the map, and a popup of the map the one that
+   * shows it in the folder tree.
+   */
+  protected itemsOf(photo: Photo, place: PhotoInfoViewerPlace): readonly MoreOptionsMenuItem[] {
+    const previous = photo.hasGpsInfo ? this.selectPreviousNextService.previousOf(photo.path) : null;
+    const next = photo.hasGpsInfo ? this.selectPreviousNextService.nextOf(photo.path) : null;
+    const shown = this.shown;
+    if (shown?.photo === photo && shown.place === place && shown.previous === previous && shown.next === next)
+      return shown.items;
+    const items = this.makeItems(photo, place, previous, next);
+    this.shown = { photo, place, previous, next, items };
+    return items;
+  }
+
+  private makeItems(photo: Photo, place: PhotoInfoViewerPlace, previous: string | null, next: string | null): MoreOptionsMenuItem[] {
     const items: MoreOptionsMenuItem[] = [];
     if (photo.hasGpsInfo) {
-      items.push({ textKey: 'photoInfo.menu.selectOnlyThis', onClick: () => this.selectOnlyThis(photo) });
-      const previous = this.selectPreviousNextService.previousOf(photo.path);
-      if (previous !== null)
-        items.push({ textKey: 'photoInfo.menu.selectPrevious', onClick: () => this.selectPrevious(photo, previous) });
-      const next = this.selectPreviousNextService.nextOf(photo.path);
-      if (next !== null)
-        items.push({ textKey: 'photoInfo.menu.selectNext', onClick: () => this.selectNext(photo, next) });
+      items.push({ textKey: 'photoInfo.menu.selection', submenu: { name: 'selection', items: [
+        { textKey: 'photoInfo.menu.selectOnlyThis', onClick: () => this.selectOnlyThis(photo) },
+        { textKey: 'photoInfo.menu.selectPrevious', disabled: previous === null, onClick: () => this.selectPrevious(photo, previous) },
+        { textKey: 'photoInfo.menu.selectNext', disabled: next === null, onClick: () => this.selectNext(photo, next) },
+      ] } });
     }
     if (place === 'dir-tree-view' && photo.hasGpsInfo)
       items.push({ textKey: 'photoInfo.menu.revealInMap', onClick: () => this.revealInMap(photo) });
@@ -92,37 +145,15 @@ export class MoreOptionsMenuComponent {
       items.push({ textKey: 'photoInfo.menu.revealInSidebar', onClick: () => this.revealInSidebar(photo) });
     items.push({ textKey: 'photoInfo.menu.openFolder', onClick: () => this.openFolder(photo) });
     if (photo.hasGpsInfo) {
-      // In the order of Photo Data Viewer's buttons beside the latitude and the longitude.
-      items.push({ textKey: 'photoInfo.menu.openGoogleMaps', onClick: () => this.openGoogleMaps(photo) });
-      items.push({ textKey: 'photoInfo.menu.openGoogleEarth', onClick: () => this.openGoogleEarth(photo) });
-      items.push({ textKey: 'photoInfo.menu.openGoogleStreetView', onClick: () => this.openGoogleStreetView(photo) });
+      items.push({ textKey: 'photoInfo.menu.google', submenu: { name: 'google', items: [
+        // In the order of Photo Data Viewer's buttons beside the latitude and the longitude.
+        { textKey: 'photoInfo.menu.openGoogleMaps', onClick: () => this.openGoogleMaps(photo) },
+        { textKey: 'photoInfo.menu.openGoogleEarth', onClick: () => this.openGoogleEarth(photo) },
+        { textKey: 'photoInfo.menu.openGoogleStreetView', onClick: () => this.openGoogleStreetView(photo) },
+      ] } });
     }
     items.push({ textKey: 'photoInfo.menu.viewData', onClick: () => this.viewData(photo) });
     return items;
-  });
-
-  constructor() {
-    // The menu is as high as its items and as wide as its longest item, so it is measured once it is in the page,
-    // below its button, and placed where it fits before it is painted: when a signal changes in this hook, Angular
-    // renders again before it returns to the browser (ApplicationRef's synchronize()). The size is the layout's, which
-    // no transform of the map's zoom changes.
-    afterNextRender({
-      read: () => {
-        const moreOptionsButton = this.element.parentElement;
-        if (!moreOptionsButton)
-          return;
-        this.size.set({ width: this.element.offsetWidth, height: this.element.offsetHeight });
-        this.cutOff.set(cutOffAtEdgeOfArea(this.element, moreOptionsButton));
-      },
-    });
-  }
-
-  protected onItemClick(event: MouseEvent, item: MoreOptionsMenuItem): void {
-    // Not a click on the button, which would open the menu again.
-    event.stopPropagation();
-    item.onClick();
-    // The button loses the focus, which closes this menu and gives the button back the look that it has without one.
-    removeFocus();
   }
 
   private selectOnlyThis(photo: Photo): void {
@@ -131,13 +162,17 @@ export class MoreOptionsMenuComponent {
     this.directoryTreeViewSelectionService.select([photo.path]);
   }
 
-  private selectPrevious(photo: Photo, previous: string): void {
+  private selectPrevious(photo: Photo, previous: string | null): void {
+    if (previous === null)
+      return;
     logger.info(`Clicked "Select Previous" menu item for ${photo.path}, which selects ${previous}`);
     Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Select Previous"');
     this.selectPreviousNextService.select(previous);
   }
 
-  private selectNext(photo: Photo, next: string): void {
+  private selectNext(photo: Photo, next: string | null): void {
+    if (next === null)
+      return;
     logger.info(`Clicked "Select Next" menu item for ${photo.path}, which selects ${next}`);
     Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Select Next"');
     this.selectPreviousNextService.select(next);

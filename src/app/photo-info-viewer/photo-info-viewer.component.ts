@@ -1,4 +1,5 @@
 import { Component, DestroyRef, effect, inject, input, signal } from '@angular/core';
+import { MatMenuTrigger } from '@angular/material/menu';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { FilenameExtension } from '../../../src-shared/filename-extension/filename-extension';
 import { t } from '../../../src-shared/i18n/i18n';
@@ -10,10 +11,8 @@ import { Photo } from '../shared/model/photo.model';
 import { openWithAssociatedApp } from '../shared/open-with-os';
 import { NearViewDirective } from '../shared/near-view/near-view.directive';
 import { OpenedDirectory } from '../shared/opened-directory';
-import { removeFocus } from '../shared/remove-focus';
 import { GeneratedThumbnailService } from './generated-thumbnail.service';
-import { MoreOptionsMenuComponent } from './more-options-menu/more-options-menu.component';
-import { roomAround, RoomAroundButton } from './more-options-menu/more-options-menu-placement';
+import { MoreOptionsMenuService } from './more-options-menu/more-options-menu.service';
 import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
 import { PhotoInfoViewerPlace } from './photo-info-viewer-place';
 import { ThumbnailRotationService } from './thumbnail-rotation.service';
@@ -128,7 +127,9 @@ File path of generated thumbnail is "${thumbnailFilePath}"
  * - Kept light: there is a component for every photo shown, thousands for a folder that has its photos in it, as
  *   each has a row in the tree. What the template shows is read through methods rather than computed values, which
  *   Angular follows in the same way, while a computed value is an object of its own in each component. The texts
- *   are read once for all the components, and the buttons have no listener that nothing needs.
+ *   are read once for all the components, and the buttons have no listener that nothing needs. The More Options
+ *   button opens the menu that the home view has once for every photo, rather than a menu of its own
+ *   (MoreOptionsMenuComponent).
  * - In a row of the tree, it makes the thumbnail and the buttons only once the row comes near the part of the tree
  *   that is shown, which the row's NearViewDirective tells; the other places have no such directive, and show
  *   everything at once. Until then it shows the shooting time, with room for the rest, so that the row is as high and
@@ -141,7 +142,7 @@ File path of generated thumbnail is "${thumbnailFilePath}"
   selector: 'app-photo-info-viewer',
   templateUrl: './photo-info-viewer.component.html',
   styleUrl: './photo-info-viewer.component.scss',
-  imports: [MoreOptionsMenuComponent],
+  imports: [MatMenuTrigger],
   host: {
     '[attr.data-place]': 'place()',
   },
@@ -159,11 +160,8 @@ export class PhotoInfoViewerComponent {
   /** Whether the thumbnail has just been made while this showed that it was being made, and fades in. */
   protected readonly fadesInAfterGeneration = signal(false);
 
-  /**
-   * The room around the More Options button when it was clicked, while its menu is open: the menu opens where it fits
-   * (MoreOptionsMenuComponent).
-   */
-  protected readonly menuRoom = signal<RoomAroundButton | null>(null);
+  /** The menu that the More Options button opens, which the home view has for every photo (MoreOptionsMenuComponent). */
+  protected readonly moreOptionsMenu = inject(MoreOptionsMenuService).menu;
 
   /** Whether the row of the tree that this is in has come near the part of the tree that is shown; none elsewhere. */
   protected readonly nearView = inject(NearViewDirective, { optional: true });
@@ -291,19 +289,9 @@ export class PhotoInfoViewerComponent {
     openWithAssociatedApp(livePhotosFilePath);
   }
 
-  /** Opens the menu, or closes it when it is open. */
+  /** The button opens its menu, or closes it when it is open, itself (matMenuTriggerFor in the template). */
   protected onMoreOptionsButtonClick(event: MouseEvent): void {
     this.keepToButton(event);
-    if (this.menuRoom()) {
-      this.closeMenu();
-      removeFocus(); // To restore the button's style
-      return;
-    }
-    this.menuRoom.set(roomAround(event.currentTarget as HTMLElement));
-  }
-
-  protected closeMenu(): void {
-    this.menuRoom.set(null);
   }
 
   /**

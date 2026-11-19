@@ -1,0 +1,38 @@
+<!--
+  The menu's content is made each time it opens, for the photo of the button that opens it (MoreOptionsMenuData). The
+  items are in this template, where each menu finds its items for the keyboard; each submenu is a menu of its own.
+-->
+<mat-menu #menu="matMenu" class="photo-info-viewer-more-options-menu" xPosition="before" [hasBackdrop]="false">
+  <ng-template matMenuContent let-photo="photo" let-place="place">
+    <ng-container appClosesOnPressElsewhere></ng-container>
+    @for (item of itemsOf(photo, place); track item.textKey) {
+      @if (item.submenu; as submenu) {
+        <button mat-menu-item
+                class="photo-info-viewer-more-options-menu-item"
+                [matMenuTriggerFor]="submenu.name === 'selection' ? selectionMenu : googleMenu"
+                [matMenuTriggerData]="{ items: submenu.items }">{{ item.textKey | t }}</button>
+      } @else {
+        <button mat-menu-item class="photo-info-viewer-more-options-menu-item" (click)="item.onClick?.()">{{ item.textKey | t }}</button>
+      }
+    }
+  </ng-template>
+</mat-menu>
+
+<mat-menu #selectionMenu="matMenu" class="photo-info-viewer-more-options-menu">
+  <ng-template matMenuContent let-items="items">
+    @for (item of items; track item.textKey) {
+      <button mat-menu-item
+              class="photo-info-viewer-more-options-menu-item"
+              [disabled]="item.disabled"
+              (click)="item.onClick?.()">{{ item.textKey | t }}</button>
+    }
+  </ng-template>
+</mat-menu>
+
+<mat-menu #googleMenu="matMenu" class="photo-info-viewer-more-options-menu">
+  <ng-template matMenuContent let-items="items">
+    @for (item of items; track item.textKey) {
+      <button mat-menu-item class="photo-info-viewer-more-options-menu-item" (click)="item.onClick?.()">{{ item.textKey | t }}</button>
+    }
+  </ng-template>
+</mat-menu>

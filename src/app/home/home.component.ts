@@ -12,12 +12,16 @@ import { LeafletMapComponent } from '../map/leaflet-map/leaflet-map.component';
 import { DateTimeTakenChartComponent } from '../date-time-taken-chart/date-time-taken-chart.component';
 import { ThumbnailGenerationStatusBarComponent } from '../thumbnail-generation/status-bar/component/thumbnail-generation-status-bar.component';
 import { LoadedFilesStatusBarComponent } from '../loaded-files-status-bar/component/loaded-files-status-bar.component';
+import { MoreOptionsMenuComponent } from '../photo-info-viewer/more-options-menu/more-options-menu.component';
 
 @Component({
   selector: 'app-home',
   styleUrls: ['./home.component.scss'],
   templateUrl: './home.component.html',
-  imports: [SidebarUpperPaneComponent, SidebarLowerPaneComponent, LeafletMapComponent, DateTimeTakenChartComponent, ThumbnailGenerationStatusBarComponent, LoadedFilesStatusBarComponent]
+  imports: [
+    SidebarUpperPaneComponent, SidebarLowerPaneComponent, LeafletMapComponent, DateTimeTakenChartComponent,
+    ThumbnailGenerationStatusBarComponent, LoadedFilesStatusBarComponent, MoreOptionsMenuComponent,
+  ]
 })
 export class HomeComponent implements AfterViewInit {
   public thumbnailGenerationStatusBarService = inject(ThumbnailGenerationStatusBarService);
