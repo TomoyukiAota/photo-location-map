@@ -11,6 +11,7 @@ import { DirectoryTreeViewDataService } from '../../directory-tree-view/director
 import { DirectoryTreeViewSelectionService } from '../../directory-tree-view/directory-tree-view-selection.service';
 import { NestedNode } from '../../directory-tree-view/directory-tree-view.model';
 import { PhotoDataService } from './photo-data.service';
+import { PhotoRevealService } from './photo-reveal.service';
 import { SelectedPhotoService } from './selected-photo.service';
 
 /** The photos that Select Previous and Select Next go through, by their paths, in the order that they were taken. */
@@ -44,13 +45,16 @@ function comparePaths(a: string, b: string): number {
  * Details: The order is by the shooting time of the tree's sort, DateTimeOriginal or the file's modified time, and
  * by name for photos taken at the same time, as in the tree (dir-tree-view-sort-comparison.ts). Photos of the same
  * time and name, in two subfolders, are in the order of their paths. It is made from the tree that the folder opened
- * with, once it is needed, and kept until another folder opens.
+ * with, once it is needed, and kept until another folder opens. The selected photo's row of the tree is shown, as
+ * Reveal in Sidebar shows a row, but the sidebar scrolls to it only when it does not show all of it: a step to the
+ * next row moves the sidebar only when the row would be out of sight.
  */
 @Service()
 export class SelectPreviousNextService {
   private readonly directoryTreeViewDataService = inject(DirectoryTreeViewDataService);
   private readonly directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);
   private readonly photoDataService = inject(PhotoDataService);
+  private readonly photoRevealService = inject(PhotoRevealService);
   private readonly selectedPhotoService = inject(SelectedPhotoService);
 
   private readonly order = computed<ShootingOrder>(() => {
@@ -101,9 +105,15 @@ export class SelectPreviousNextService {
     return this.neighborOf(photoPath, 1);
   }
 
-  /** Selects only the photo at `photoPath`, a neighbor that previousOf() or nextOf() gave, as Select Only This does. */
+  /**
+   * Selects only the photo at `photoPath`, a neighbor that previousOf() or nextOf() gave, as Select Only This does,
+   * and shows its row of the folder tree, highlighted for a moment.
+   */
   public select(photoPath: string): void {
     this.directoryTreeViewSelectionService.select([photoPath]);
+    const photo = this.photoDataService.getPhoto(photoPath);
+    if (photo)
+      this.photoRevealService.revealInSidebar(photo, { scroll: 'whenNotFullyShown' });
   }
 
   /** The Selection menu's Select Previous: nothing when it does not apply, as when the selection changed meanwhile. */
