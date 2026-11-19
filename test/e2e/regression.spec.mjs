@@ -1664,7 +1664,7 @@ test('a cluster of photos taken at one place opens a popup with each of them', a
   await expect(shownName).toHaveText(firstName);
   await expect(page.locator('.photo-cluster-viewer-right-pane .photo-info-viewer-thumbnail')).toHaveCSS('transform', 'none');
 });
-test('Reveal in Sidebar from a popup of the map expands the folders above the photo, scrolls its row to the middle of the sidebar and highlights it, without changing the selection', async () => {
+test('Reveal in Sidebar from a popup of the map expands the folders above the photo, scrolls its row smoothly to the middle of the sidebar and highlights it there, without changing the selection', async () => {
   // The photo is three folders down, after twenty folders of a photo without a location and before three such photos,
   // so that its row is far below what the sidebar shows, with enough rows after it to be scrolled to the middle.
   const folder = path.join(profile, 'many folders');
@@ -1692,11 +1692,35 @@ test('Reveal in Sidebar from a popup of the map expands the folders above the ph
   const popup = page.locator('.leaflet-popup');
   await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_4676.JPG');
   await popup.getByRole('button', { name: 'More Options' }).click();
+  // From before the click on, the sidebar's scroll position at each frame, and whether a row is highlighted then.
+  await pane.evaluate(element => {
+    const frames = globalThis.revealFrames = [];
+    const record = () => {
+      frames.push({ top: element.scrollTop, highlighted: element.querySelector('[data-reveal-highlight]') !== null });
+      if (frames.filter(frame => frame.highlighted).length < 5 && frames.length < 600)
+        requestAnimationFrame(record);
+    };
+    requestAnimationFrame(record);
+  });
   await popup.locator('.photo-info-viewer-more-options-menu-item').filter({ hasText: 'Reveal in Sidebar' }).click();
   for (const name of ['the photo', 'taken', 'in Kobe']) await expect(treeNode(name)).toHaveAttribute('aria-expanded', 'true');
-  await expect(row).toHaveAttribute('data-reveal-highlight', '1');
-  await expect(row).toHaveCSS('animation-name', /reveal-highlight-1/);
+  await expect(row).toHaveAttribute('data-reveal-highlight', 'lit');
+  await expect(row).toHaveCSS('background-color', 'rgba(255, 193, 7, 0.35)');
+  await expect(row).toHaveCSS('transition-timing-function', 'ease-in-out');
   expect(await pane.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
+  // The sidebar scrolls to the row over several frames, never back, and slows down to a stop: its last step is shorter
+  // than half its longest, which skips the middle of the way when the row is far (EasedScroll). The highlight starts
+  // once it has stopped. How it speeds up and slows down, frame by frame, is in EasedScroll's own tests.
+  await page.waitForFunction(() => globalThis.revealFrames.filter(frame => frame.highlighted).length >= 5);
+  const frames = await page.evaluate(() => globalThis.revealFrames);
+  const highlightedAt = frames.findIndex(frame => frame.highlighted);
+  const steps = frames.slice(1, highlightedAt + 1).map((frame, index) => frame.top - frames[index].top);
+  const moving = steps.filter(step => step !== 0);
+  const report = `Scroll steps until the highlight: ${steps.join(', ')}`;
+  expect(moving.length, report).toBeGreaterThanOrEqual(5);
+  expect(moving.every(step => step > 0), report).toBe(true);
+  expect(moving.at(-1), report).toBeLessThan(Math.max(...moving) / 2);
+  expect(frames.slice(highlightedAt).every(frame => frame.top === frames[highlightedAt].top), report).toBe(true);
   // In the middle of what the sidebar shows: above its horizontal scrollbar, which Windows and Linux draw below the
   // rows, so that the middle of the sidebar's box is half the scrollbar lower there. macOS draws it over the rows.
   const distanceFromMiddle = await row.evaluate(rowElement => {
@@ -1707,8 +1731,9 @@ test('Reveal in Sidebar from a popup of the map expands the folders above the ph
   });
   expect(distanceFromMiddle).toBeLessThan(2);
   // The highlight fades, and the row is as before. The selection, and so the map, are as they were.
+  await expect(row).toHaveAttribute('data-reveal-highlight', 'fading');
   await expect(row).not.toHaveAttribute('data-reveal-highlight', /./, { timeout: 5000 });
-  await expect(row).toHaveCSS('animation-name', 'none');
+  await expect(row).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   await expect(treeCheckbox('IMG_4676.JPG')).toBeChecked();
   await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_4676.JPG');
 });
@@ -1795,7 +1820,7 @@ test('Reveal in Map opens the popup of a cluster of photos taken at one place wi
   const shownPhoto = page.locator('.photo-cluster-viewer-right-pane');
   await shownPhoto.getByRole('button', { name: 'More Options' }).click();
   await shownPhoto.locator('.photo-info-viewer-more-options-menu-item').filter({ hasText: 'Reveal in Sidebar' }).click();
-  await expect(rowOf('Kobe 1.JPG')).toHaveAttribute('data-reveal-highlight', '1');
+  await expect(rowOf('Kobe 1.JPG')).toHaveAttribute('data-reveal-highlight', /^(lit|fading)$/);
   await expect(rowOf('Kobe 2.JPG')).not.toHaveAttribute('data-reveal-highlight', /./);
 });
 test('a photo\'s information, in the tree and in a popup of the map, opens the photo, its folder and its Live Photos movie, and keeps its thumbnail turned', async () => {

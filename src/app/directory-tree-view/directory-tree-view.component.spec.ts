@@ -2,16 +2,19 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatTree } from '@angular/material/tree';
 import { By } from '@angular/platform-browser';
+import type { MockInstance } from 'vitest';
 import { PhotoInfoViewerComponent } from '../photo-info-viewer/photo-info-viewer.component';
+import { EasedScroll } from '../shared/eased-scroll/eased-scroll';
 import { Photo } from '../shared/model/photo.model';
 import { NearViewService } from '../shared/near-view/near-view.service';
 import { PhotoDataService } from '../shared/service/photo-data.service';
-import { PhotoRevealService } from '../shared/service/photo-reveal.service';
+import { PhotoRevealService, SidebarRevealScroll } from '../shared/service/photo-reveal.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
 import { DirTreeViewNodeSelection } from './dir-tree-view-node-selection';
+import { revealHighlightMs } from './dir-tree-view-reveal-highlight';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { DirectoryTreeViewSelectionService } from './directory-tree-view-selection.service';
-import { DirectoryTreeViewComponent, revealHighlightMs } from './directory-tree-view.component';
+import { DirectoryTreeViewComponent } from './directory-tree-view.component';
 import { NestedNode } from './directory-tree-view.model';
 
 // A photo's information has tests of its own (src/app/photo-info-viewer/).
@@ -154,72 +157,126 @@ describe('DirectoryTreeViewComponent', () => {
     expect(tree.isExpanded(photo)).toBe(false);
   });
 
-  describe('revealing a photo from the map', () => {
+  describe('revealing a photo', () => {
     const photo = Object.assign(new Photo(), { name: 'photo.jpg', path: '/opened/a/b/photo.jpg' });
-    const b = node('/opened/a/b', [node('/opened/a/b/other.jpg'), node(photo.path)]);
+    const other = Object.assign(new Photo(), { name: 'other.jpg', path: '/opened/a/b/other.jpg' });
+    const b = node('/opened/a/b', [node(other.path), node(photo.path)]);
     const a = node('/opened/a', [b]);
     const opened = node('/opened', [a, node('/opened/z.jpg')]);
-    let scrolledIntoView: HTMLElement[];
-    let scrollOptions: ScrollIntoViewOptions[];
+    let toMiddle: MockInstance<EasedScroll['toMiddle']>;
 
+    const reveal = (each: Photo, scroll: SidebarRevealScroll = 'always') =>
+      TestBed.inject(PhotoRevealService).revealInSidebar(each, { scroll });
     const rowOf = (name: string) => Array.from((fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('mat-tree-node'))
       .find(row => row.textContent.includes(name));
+    const highlightOf = (name: string) => rowOf(name).getAttribute('data-reveal-highlight');
 
     beforeEach(async () => {
-      // The page has no layout here, and jsdom no scrollIntoView().
-      scrolledIntoView = [];
-      scrollOptions = [];
-      Element.prototype.scrollIntoView = function (this: HTMLElement, options: ScrollIntoViewOptions) {
-        scrolledIntoView.push(this);
-        scrollOptions.push(options);
-      };
+      // The page has no layout here, so nothing around a row scrolls: EasedScroll scrolls the row into view at once,
+      // with scrollIntoView(), which jsdom has none of, and the row lights up at once.
+      Element.prototype.scrollIntoView = () => undefined;
+      toMiddle = vi.spyOn(EasedScroll.prototype, 'toMiddle');
       dataService.dataReplaced.next([opened]);
       await fixture.whenStable();
     });
 
-    afterEach(() => delete Element.prototype.scrollIntoView);
+    afterEach(() => {
+      toMiddle.mockRestore();
+      delete Element.prototype.scrollIntoView;
+    });
 
     it('expands the folders above it, and scrolls its row to the middle of the sidebar', async () => {
       expect(rowOf('photo.jpg')).toBeUndefined();
 
-      TestBed.inject(PhotoRevealService).revealInSidebar(photo);
+      reveal(photo);
       await fixture.whenStable();
 
       expect(tree.isExpanded(a)).toBe(true);
       expect(tree.isExpanded(b)).toBe(true);
-      expect(scrolledIntoView).toEqual([rowOf('photo.jpg')]);
-      expect(scrollOptions).toEqual([{ block: 'center', inline: 'nearest' }]);
+      expect(toMiddle).toHaveBeenCalledExactlyOnceWith(rowOf('photo.jpg'), expect.any(Function), { evenWhenShown: true });
     });
 
-    it('highlights its row for a moment, anew when it is revealed again', async () => {
-      const reveal = () => TestBed.inject(PhotoRevealService).revealInSidebar(photo);
+    it('scrolls to the row of a photo that Select Previous or Select Next steps to only when the sidebar does not show all of it', async () => {
+      reveal(photo, 'whenNotFullyShown');
+      await fixture.whenStable();
+
+      expect(tree.isExpanded(b)).toBe(true);
+      expect(toMiddle).toHaveBeenCalledExactlyOnceWith(rowOf('photo.jpg'), expect.any(Function), { evenWhenShown: false });
+    });
+
+    it('lights its row up once the sidebar has stopped scrolling', async () => {
+      // EasedScroll has tests of its own. Here, the sidebar has stopped when the test says so.
+      let stopScrolling = () => undefined;
+      toMiddle.mockImplementation((_row, arrived) => {
+        stopScrolling = arrived;
+      });
+
+      reveal(photo);
+      await fixture.whenStable();
+      expect(rowOf('photo.jpg').hasAttribute('data-reveal-highlight')).toBe(false);
+
+      stopScrolling();
+      expect(highlightOf('photo.jpg')).toBe('lit');
+    });
+
+    it('lights its row up for a moment, then fades it back, anew when it is revealed again', async () => {
       vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
       try {
-        reveal();
-        fixture.detectChanges();
-        expect(rowOf('photo.jpg').getAttribute('data-reveal-highlight')).toBe('1');
+        reveal(photo);
+        expect(highlightOf('photo.jpg')).toBe('lit');
         expect(rowOf('other.jpg').hasAttribute('data-reveal-highlight')).toBe(false);
 
-        // Another animation of the same highlight, which starts from its beginning.
-        vi.advanceTimersByTime(revealHighlightMs - 1000);
-        reveal();
-        fixture.detectChanges();
-        expect(rowOf('photo.jpg').getAttribute('data-reveal-highlight')).toBe('2');
+        // Lit again, from where it is, and for as long again.
+        vi.advanceTimersByTime(revealHighlightMs.lit - 100);
+        reveal(photo);
+        vi.advanceTimersByTime(revealHighlightMs.lit - 1);
+        expect(highlightOf('photo.jpg')).toBe('lit');
+        vi.advanceTimersByTime(1);
+        expect(highlightOf('photo.jpg')).toBe('fading');
 
-        vi.advanceTimersByTime(revealHighlightMs);
-        fixture.detectChanges();
-        expect(rowOf('photo.jpg').getAttribute('data-reveal-highlight')).toBe('2');
-        vi.advanceTimersByTime(500);
-        fixture.detectChanges();
+        // Once its transition has ended in the styles.
+        vi.advanceTimersByTime(revealHighlightMs.fading);
+        expect(highlightOf('photo.jpg')).toBe('fading');
+        vi.advanceTimersByTime(100);
         expect(rowOf('photo.jpg').hasAttribute('data-reveal-highlight')).toBe(false);
+
+        // Revealed while it fades, it lights up again.
+        reveal(photo);
+        vi.advanceTimersByTime(revealHighlightMs.lit + 500);
+        reveal(photo);
+        expect(highlightOf('photo.jpg')).toBe('lit');
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('fades back a row that is lit, in less time, when another one is revealed, and lets one that is fading go on', async () => {
+      vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+      try {
+        reveal(photo, 'whenNotFullyShown');
+        reveal(other, 'whenNotFullyShown');
+        expect(highlightOf('photo.jpg')).toBe('fading-fast');
+        expect(highlightOf('other.jpg')).toBe('lit');
+        const fadedFast = revealHighlightMs.fadingFast + 100;
+        vi.advanceTimersByTime(fadedFast);
+        expect(rowOf('photo.jpg').hasAttribute('data-reveal-highlight')).toBe(false);
+
+        vi.advanceTimersByTime(revealHighlightMs.lit - fadedFast);
+        expect(highlightOf('other.jpg')).toBe('fading');
+        reveal(photo, 'whenNotFullyShown');
+        expect(highlightOf('other.jpg')).toBe('fading');
+        expect(highlightOf('photo.jpg')).toBe('lit');
+        vi.advanceTimersByTime(revealHighlightMs.fading + 100);
+        expect(rowOf('other.jpg').hasAttribute('data-reveal-highlight')).toBe(false);
+        expect(highlightOf('photo.jpg')).toBe('fading');
       } finally {
         vi.useRealTimers();
       }
     });
   });
 
-  it('highlights the row of a photo revealed from the map before the row has made its checkbox', async () => {
-    // The row is scrolled to and highlighted at once, and makes its checkbox once the observer finds it near.
+  it('lights up the row of a revealed photo before the row has made its checkbox', async () => {
+    // The row is scrolled to and lit at once, and makes its checkbox once the observer finds it near.
     Element.prototype.scrollIntoView = () => undefined; // jsdom has none.
     try {
       nearView.keepsAway = true;
@@ -230,12 +287,12 @@ describe('DirectoryTreeViewComponent', () => {
       TestBed.inject(PhotoRevealService).revealInSidebar(photo);
       await fixture.whenStable();
       const row: HTMLElement = fixture.nativeElement.querySelector('mat-tree-node.leaf-tree-node');
-      expect(row.getAttribute('data-reveal-highlight')).toBe('1');
+      expect(row.getAttribute('data-reveal-highlight')).toBe('lit');
       expect(row.querySelector('mat-checkbox')).toBeNull();
 
       nearView.bringNear();
       await fixture.whenStable();
-      expect(row.getAttribute('data-reveal-highlight')).toBe('1');
+      expect(row.getAttribute('data-reveal-highlight')).toBe('lit');
       expect(row.querySelector('mat-checkbox bdi').textContent).toBe('photo.jpg');
     } finally {
       delete Element.prototype.scrollIntoView;
@@ -311,7 +368,7 @@ describe('DirectoryTreeViewComponent, as Angular checks it after a change of the
   let rowOf: (name: string) => HTMLElement;
   let checkboxOf: (name: string) => HTMLInputElement;
   let stateOf: ReturnType<typeof vi.spyOn>;
-  let revealHighlightOf: ReturnType<typeof vi.spyOn>;
+  let photoOf: ReturnType<typeof vi.spyOn>;
   /** The names of the nodes whose rows read their states, which their components do when Angular checks them. */
   const statesRead = () => new Set(stateOf.mock.calls.map(([each]) => (each as NestedNode).name));
   const selectable = (path: string, children: NestedNode[] = []) => Object.assign(node(path, children), { isSelectable: true });
@@ -340,8 +397,8 @@ describe('DirectoryTreeViewComponent, as Angular checks it after a change of the
       .find(row => row.querySelector('bdi').textContent === name);
     checkboxOf = name => rowOf(name).querySelector<HTMLInputElement>('input[type="checkbox"]');
     stateOf = vi.spyOn(fixture.debugElement.injector.get(DirTreeViewNodeSelection), 'stateOf');
-    // The tree's template reads it for each file's row, which Angular checks with the row's node.
-    revealHighlightOf = vi.spyOn(fixture.componentInstance, 'revealHighlightOf');
+    // The tree's template calls it for each file's row, which Angular checks with the row's node.
+    photoOf = vi.spyOn(fixture.componentInstance, 'photoOf');
   });
 
   it('by a click on a photo\'s checkbox checks every row\'s node, as an event in the tree does, and the changed rows only', async () => {
@@ -349,7 +406,7 @@ describe('DirectoryTreeViewComponent, as Angular checks it after a change of the
     await fixture.whenStable();
 
     expect(statesRead()).toEqual(new Set(['b.jpg', 'folder']));
-    expect(new Set(revealHighlightOf.mock.calls.map(([each]) => (each as NestedNode).name))).toEqual(new Set(['a.jpg', 'b.jpg', 'c.jpg']));
+    expect(new Set(photoOf.mock.calls.map(([each]) => (each as NestedNode).name))).toEqual(new Set(['a.jpg', 'b.jpg', 'c.jpg']));
     expect(checkboxOf('b.jpg').checked).toBe(false);
     expect(checkboxOf('folder').indeterminate).toBe(true);
     expect(TestBed.inject(SelectedPhotoService).selectedPhotos().map(each => each.path)).toEqual(['/folder/a.jpg', '/folder/c.jpg']);
@@ -361,9 +418,27 @@ describe('DirectoryTreeViewComponent, as Angular checks it after a change of the
     await fixture.whenStable();
 
     expect(statesRead()).toEqual(new Set(['b.jpg', 'folder']));
-    expect(revealHighlightOf).not.toHaveBeenCalled();
+    expect(photoOf).not.toHaveBeenCalled();
     expect(checkboxOf('a.jpg').checked).toBe(true);
     expect(checkboxOf('b.jpg').checked).toBe(false);
     expect(checkboxOf('folder').indeterminate).toBe(true);
+  });
+
+  it('by a step of Select Previous or Select Next, which lights up the photo\'s row, checks no row\'s node', async () => {
+    // As Select Previous and Select Next do. The page has no layout here, so nothing around the row scrolls, and
+    // EasedScroll scrolls it into view at once, with scrollIntoView(), which jsdom has none of.
+    Element.prototype.scrollIntoView = () => undefined;
+    try {
+      TestBed.inject(DirectoryTreeViewSelectionService).select(['/folder/b.jpg']);
+      TestBed.inject(PhotoRevealService).revealInSidebar({ path: '/folder/b.jpg' } as Photo, { scroll: 'whenNotFullyShown' });
+      await fixture.whenStable();
+
+      expect(statesRead()).toEqual(new Set(['a.jpg', 'c.jpg', 'folder']));
+      expect(photoOf).not.toHaveBeenCalled();
+      expect(rowOf('b.jpg').getAttribute('data-reveal-highlight')).toBe('lit');
+      expect(checkboxOf('b.jpg').checked).toBe(true);
+    } finally {
+      delete Element.prototype.scrollIntoView;
+    }
   });
 });

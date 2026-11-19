@@ -22,20 +22,21 @@ mat-tree-node {
   transition: background-color 0.2s ease;
 }
 
-// TL;DR: The row of a photo revealed from the map is highlighted, then fades back, as a message that a link of a chat
-// application shows.
-// Details: Two animations of the same keyframes, which a row revealed again while it is highlighted changes between,
-// as an animation starts anew when its name changes (revealHighlightOf() in the component). 3s is revealHighlightMs
-// in the component.
-@each $highlight in 1, 2 {
-  @keyframes reveal-highlight-#{$highlight} {
-    0%, 30% { background-color: $white-background_revealed; }
-    100%    { background-color: transparent; }
+// TL;DR: The row of a revealed photo, from the map or by Select Previous and Select Next, lights up, stays lit for a
+// moment and fades back, as a message that a link of a chat application shows does: each speeds up from nothing and
+// slows down at its end, as the sidebar's scroll to it does (EasedScroll).
+// Details: Transitions of the row's background, by the states of its attribute data-reveal-highlight, which
+// RevealHighlights (dir-tree-view-reveal-highlight.ts) sets for as long as each takes: each starts from where the
+// background is, as when a row lights up again while it fades. A row that is lit when another one is revealed fades
+// back in less time. It fades back to its background as it is, with the pointer over it or not. After the hover's
+// rules, of the same specificity, so that a lit row stays lit under the pointer.
+mat-tree-node {
+  &[data-reveal-highlight="lit"] {
+    background-color: $white-background_revealed;
+    transition: background-color 0.45s ease-in-out;
   }
-
-  mat-tree-node[data-reveal-highlight="#{$highlight}"] {
-    animation: reveal-highlight-#{$highlight} 3s ease-in;
-  }
+  &[data-reveal-highlight="fading"]      { transition: background-color 1.5s ease-in-out; }
+  &[data-reveal-highlight="fading-fast"] { transition: background-color 0.4s ease-in-out; }
 }
 
 .leaf-tree-node {

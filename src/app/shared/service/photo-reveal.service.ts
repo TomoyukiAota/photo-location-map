@@ -7,10 +7,22 @@ import { PinnedPhotoService } from './pinned-photo.service';
 import { SelectedPhotoService } from './selected-photo.service';
 
 /**
+ * When the sidebar scrolls to a photo's row: always, to have the row in its middle, or only when it does not show all
+ * of the row, as for a step of Select Previous or Select Next from a row to the next.
+ */
+export type SidebarRevealScroll = 'always' | 'whenNotFullyShown';
+
+/** A request to show a photo's row of the folder tree, highlighted for a moment (DirectoryTreeViewComponent). */
+export interface SidebarRevealRequest {
+  readonly photo: Photo;
+  readonly scroll: SidebarRevealScroll;
+}
+
+/**
  * Shows a photo in the other part of the window: on the map, for its row of the folder tree ("Reveal in Map"), and in
- * the folder tree, for its popup on the map ("Reveal in Sidebar"). The map and the tree each handle their requests,
- * which are events, as the requests of the selection are: each is handled when it is made, and both exist from the
- * start, so that no request is missed.
+ * the folder tree, for its popup on the map ("Reveal in Sidebar") and for the photo that Select Previous or Select
+ * Next selects. The map and the tree each handle their requests, which are events, as the requests of the selection
+ * are: each is handled when it is made, and both exist from the start, so that no request is missed.
  */
 @Service()
 export class PhotoRevealService {
@@ -26,7 +38,7 @@ export class PhotoRevealService {
   public readonly revealInMapRequested = new Subject<Photo>();
 
   /** Requests to show a photo's row of the folder tree, highlighted for a moment (DirectoryTreeViewComponent). */
-  public readonly revealInSidebarRequested = new Subject<Photo>();
+  public readonly revealInSidebarRequested = new Subject<SidebarRevealRequest>();
 
   /**
    * Shows the photo on the map, with its popup open. A photo that the map does not show is put on the map first:
@@ -47,8 +59,11 @@ export class PhotoRevealService {
     this.revealInMapRequested.next(photo);
   }
 
-  /** Shows the photo's row of the folder tree, without changing the selection. */
-  public revealInSidebar(photo: Photo): void {
-    this.revealInSidebarRequested.next(photo);
+  /**
+   * Shows the photo's row of the folder tree, without changing the selection: the sidebar scrolls to have the row in
+   * its middle, unless `scroll` is 'whenNotFullyShown' and the sidebar shows all of the row.
+   */
+  public revealInSidebar(photo: Photo, { scroll = 'always' }: { scroll?: SidebarRevealScroll } = {}): void {
+    this.revealInSidebarRequested.next({ photo, scroll });
   }
 }
