@@ -83,6 +83,7 @@
     }
   },
   "dropToOpen": {
+    "hint": "Ablegen, um den Ordner zu öffnen.",
     "openFolder": "Möchten Sie den folgenden Ordner öffnen?",
     "openFile": "Möchten Sie die folgende Datei öffnen?"
   },

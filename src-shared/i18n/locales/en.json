@@ -83,6 +83,7 @@
     }
   },
   "dropToOpen": {
+    "hint": "Drop to open the folder.",
     "openFolder": "Do you want to open the folder below?",
     "openFile": "Do you want to open the file below?"
   },

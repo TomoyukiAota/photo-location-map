@@ -65,12 +65,36 @@ describe('AppComponent', () => {
 
   it('gives the drag events of the whole window to DropToOpenService', () => {
     const service = TestBed.inject(DropToOpenService);
+    const dragStart = vi.spyOn(service, 'dragStart').mockImplementation(() => undefined);
+    const dragEnd = vi.spyOn(service, 'dragEnd').mockImplementation(() => undefined);
+    const dragEnter = vi.spyOn(service, 'dragEnter').mockImplementation(() => undefined);
     const dragOver = vi.spyOn(service, 'dragOver').mockImplementation(() => undefined);
+    const dragLeave = vi.spyOn(service, 'dragLeave').mockImplementation(() => undefined);
     const drop = vi.spyOn(service, 'drop').mockResolvedValue(undefined);
-    const events = ['dragenter', 'dragover', 'drop'].map(type => new Event(type));
-    events.forEach(event => window.dispatchEvent(event));
-    expect(dragOver.mock.calls).toEqual([[events[0]], [events[1]]]);
-    expect(drop.mock.calls).toEqual([[events[2]]]);
+    const [start, end, enter, over, leave, dropped] = ['dragstart', 'dragend', 'dragenter', 'dragover', 'dragleave', 'drop']
+      .map(type => new Event(type));
+    [start, end, enter, over, leave, dropped].forEach(event => window.dispatchEvent(event));
+    expect(dragStart.mock.calls).toEqual([[]]);
+    expect(dragEnd.mock.calls).toEqual([[]]);
+    expect(dragEnter.mock.calls).toEqual([[enter]]);
+    expect(dragOver.mock.calls).toEqual([[over]]);
+    expect(dragLeave.mock.calls).toEqual([[leave]]);
+    expect(drop.mock.calls).toEqual([[dropped]]);
+  });
+
+  it('shows the hint over the window while files are dragged over it', async () => {
+    const service = TestBed.inject(DropToOpenService);
+    const host: HTMLElement = fixture.nativeElement;
+    expect(host.querySelector('app-drop-hint')).toBeNull();
+    // The files of a drag from Explorer or Finder, over the page.
+    const drag = { target: host, dataTransfer: { types: ['Files'], dropEffect: 'none' }, preventDefault: () => undefined };
+    service.dragEnter(drag as unknown as DragEvent);
+    await fixture.whenStable();
+    expect(host.querySelector('app-drop-hint')?.textContent.trim()).toBe('Drop to open the folder.');
+
+    service.dragLeave(drag as unknown as DragEvent);
+    await fixture.whenStable();
+    expect(host.querySelector('app-drop-hint')).toBeNull();
   });
 
   it('shows the Welcome dialog only once the Language dialog is closed', async () => {

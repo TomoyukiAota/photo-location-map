@@ -83,6 +83,7 @@
     }
   },
   "dropToOpen": {
+    "hint": "Ispustite da biste otvorili mapu.",
     "openFolder": "Želite li otvoriti sljedeću mapu?",
     "openFile": "Želite li otvoriti sljedeću datoteku?"
   },

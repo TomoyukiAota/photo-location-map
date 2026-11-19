@@ -9,9 +9,13 @@ import { ThumbnailGenerationService } from '../thumbnail-generation/service/thum
 import { DropToOpenService } from './drop-to-open.service';
 import type { Mock } from 'vitest';
 
-/** A drag event, as the window gets it, of a drag that carries `types` and, once dropped, `files`. */
-function dragEvent(types: string[], files: File[] = []) {
+/**
+ * A drag event, as the window gets it, of a drag that carries `types` and, once dropped, `files`, from the element
+ * `target` that it enters, is over or leaves.
+ */
+function dragEvent(types: string[], files: File[] = [], target: EventTarget | null = null) {
   const event = {
+    target,
     dataTransfer: { types, files, dropEffect: 'none' as DataTransfer['dropEffect'] },
     defaultPrevented: false,
     preventDefault: () => { event.defaultPrevented = true; },
@@ -19,6 +23,13 @@ function dragEvent(types: string[], files: File[] = []) {
   return event;
 }
 const asDragEvent = (event: ReturnType<typeof dragEvent>) => event as unknown as DragEvent;
+
+/**
+ * A mousemove of the window, with the movement from the one before: a move of the mouse has one, as some that Chromium
+ * sends during a drag do, and the one that Blink sends when what is under the mouse changes does not.
+ */
+const mouseMove = (movementX: number, movementY: number) =>
+  window.dispatchEvent(new MouseEvent('mousemove', { movementX, movementY }));
 
 /** A File of a drop. The bridge's double answers for it by its name, as the main process does by its path. */
 const dropped = (name: string) => new File([], name);
@@ -58,16 +69,144 @@ describe('DropToOpenService', () => {
     service = TestBed.inject(DropToOpenService);
   });
 
-  it('takes a drag of files from the window, with the copy cursor, and leaves other drags to the page', () => {
-    const files = dragEvent(['Files']);
-    service.dragOver(asDragEvent(files));
-    expect(files.defaultPrevented).toBe(true);
-    expect(files.dataTransfer.dropEffect).toBe('copy');
+  afterEach(() => {
+    vi.useRealTimers();
+    document.body.replaceChildren();
+  });
 
-    const text = dragEvent(['text/plain']);
+  it('takes a drag of files from the window, with the copy cursor and the hint, and leaves other drags to the page', () => {
+    const text = dragEvent(['text/plain'], [], document.body);
+    service.dragEnter(asDragEvent(text));
     service.dragOver(asDragEvent(text));
     expect(text.defaultPrevented).toBe(false);
     expect(text.dataTransfer.dropEffect).toBe('none');
+    expect(service.showsHint()).toBe(false);
+
+    const files = dragEvent(['Files'], [], document.body);
+    service.dragEnter(asDragEvent(files));
+    service.dragOver(asDragEvent(files));
+    expect(files.defaultPrevented).toBe(true);
+    expect(files.dataTransfer.dropEffect).toBe('copy');
+    expect(service.showsHint()).toBe(true);
+  });
+
+  describe('the hint over the window', () => {
+    /** An element of the page, which the files are dragged over. */
+    const element = () => document.body.appendChild(document.createElement('div'));
+    const files = (target: EventTarget) => asDragEvent(dragEvent(['Files'], [], target));
+
+    it('is shown while files are dragged over the window, and hidden once they leave it', () => {
+      const map = element();
+      const tree = element();
+      service.dragEnter(files(map));
+      expect(service.showsHint()).toBe(true);
+      // To another element, which the drag enters before it leaves the one before.
+      service.dragEnter(files(tree));
+      service.dragLeave(files(map));
+      service.dragOver(files(tree));
+      expect(service.showsHint()).toBe(true);
+      // Out of the window.
+      service.dragLeave(files(tree));
+      expect(service.showsHint()).toBe(false);
+    });
+
+    it('is hidden once the files are dropped', async () => {
+      service.dragEnter(files(element()));
+      const drop = service.drop(asDragEvent(dragEvent(['Files'], [dropped('trip')])));
+      expect(service.showsHint()).toBe(false);
+      await drop;
+      expect(open).toHaveBeenCalledOnce();
+    });
+
+    it('is not shown while a drop is refused, and is once it is taken again during the drag', () => {
+      openDialogs = [{}];
+      const map = element();
+      const enter = dragEvent(['Files'], [], map);
+      service.dragEnter(asDragEvent(enter));
+      expect(enter.dataTransfer.dropEffect).toBe('none');
+      expect(service.showsHint()).toBe(false);
+      // The dialog is closed while the files are over the window.
+      openDialogs = [];
+      service.dragOver(files(map));
+      expect(service.showsHint()).toBe(true);
+      service.dragLeave(files(map));
+      expect(service.showsHint()).toBe(false);
+    });
+
+    it('is hidden once the files leave the window, though an element that they entered has left the page', () => {
+      const row = element();
+      const map = element();
+      service.dragEnter(files(row));
+      service.dragEnter(files(map));
+      // The row is taken out of the page, as the tree does with a row far from its view: no dragleave comes from it.
+      row.remove();
+      service.dragLeave(files(map));
+      expect(service.showsHint()).toBe(false);
+    });
+
+    it('is hidden once the mouse has moved with no event of a drag, in case one of the drag\'s events was missed', () => {
+      vi.useFakeTimers();
+      service.dragEnter(files(element()));
+      mouseMove(3, 2);
+      expect(service.showsHint()).toBe(true);
+      vi.runOnlyPendingTimers();
+      expect(service.showsHint()).toBe(false);
+      // The next drag is followed as the first was.
+      const map = element();
+      service.dragEnter(files(map));
+      service.dragLeave(files(map));
+      expect(service.showsHint()).toBe(false);
+    });
+
+    it('is kept while the drag goes on, though Chromium sends mousemoves during it', () => {
+      vi.useFakeTimers();
+      const map = element();
+      service.dragEnter(files(map));
+      // Blink's, when what is under the mouse changes.
+      mouseMove(0, 0);
+      vi.runOnlyPendingTimers();
+      expect(service.showsHint()).toBe(true);
+      // One with a movement, which the drag's next event follows.
+      mouseMove(217, 185);
+      vi.advanceTimersByTime(5);
+      service.dragOver(files(map));
+      vi.runOnlyPendingTimers();
+      expect(service.showsHint()).toBe(true);
+      service.dragLeave(files(map));
+      expect(service.showsHint()).toBe(false);
+    });
+
+    it('is not shown for a drag that starts in the page, which is left to the page until it ends', async () => {
+      vi.useFakeTimers();
+      service.dragStart();
+      const over = dragEvent(['Files'], [], element());
+      service.dragEnter(asDragEvent(over));
+      // Chromium's mousemoves during the drag do not end it.
+      mouseMove(4, 0);
+      service.dragOver(asDragEvent(over));
+      vi.runOnlyPendingTimers();
+      service.dragOver(asDragEvent(over));
+      expect(over.defaultPrevented).toBe(false);
+      expect(service.showsHint()).toBe(false);
+      const drop = dragEvent(['Files'], [dropped('trip')]);
+      await service.drop(asDragEvent(drop));
+      expect(drop.defaultPrevented).toBe(false);
+      expect(openTarget).not.toHaveBeenCalled();
+
+      // It ends with its dragend, or once the mouse has moved with no event of a drag, when its dragend is missed.
+      const moveMouse = () => {
+        mouseMove(4, 0);
+        vi.runOnlyPendingTimers();
+      };
+      for (const end of [() => service.dragEnd(), moveMouse]) {
+        service.dragStart();
+        end();
+        const map = element();
+        service.dragEnter(files(map));
+        expect(service.showsHint()).toBe(true);
+        service.dragLeave(files(map));
+      }
+    });
   });
 
   it('asks whether to open a dropped folder, with its path, and opens it once the user clicks OK', async () => {
@@ -119,9 +258,10 @@ describe('DropToOpenService', () => {
       isGenerating.set(generating);
       const over = dragEvent(['Files']);
       service.dragOver(asDragEvent(over));
-      // Taken, so that the window does not load what is dropped, with no effect.
+      // Taken, so that the window does not load what is dropped, with no effect, and no hint.
       expect(over.defaultPrevented).toBe(true);
       expect(over.dataTransfer.dropEffect).toBe('none');
+      expect(service.showsHint()).toBe(false);
       const drop = dragEvent(['Files'], [dropped('trip')]);
       await service.drop(asDragEvent(drop));
       expect(drop.defaultPrevented).toBe(true);

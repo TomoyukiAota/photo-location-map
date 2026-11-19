@@ -4,7 +4,8 @@
 //   node test/layout/app-in-every-language.mjs [--languages=de,fi] [--pictures] [--output=<folder>]
 //
 // For each language, on an empty profile of a computer in that language, it goes through the screens that show
-// texts: the Language dialog, the Welcome dialog, the question that a dropped folder asks, the home view without and
+// texts: the Language dialog, the Welcome dialog, the hint over the window while files are dragged over it, the
+// question that a dropped folder asks, the home view without and
 // with a folder of photos (in a window of 1200x800 and of 800x600), a photo's popup with its menu, the tree's menu, the Sort menu and its info dialog, the
 // chart's menu, its message for a duration that it cannot show and its button for the photos within a zoom, a region
 // on the map, the tabs of the Settings dialog with the choices of the clock's field, the question before a restart,
@@ -220,6 +221,24 @@ for (const code of codes) {
       await page.waitForSelector('app-welcome-dialog', { state: 'detached' });
     });
     await step('home-empty', () => screen('home-empty', 'app-root'));
+    await step('drop-hint', async () => {
+      // The hint over the window while files are dragged over it, then taken out of it.
+      await page.evaluate(() => {
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(new File([], 'photo.jpg'));
+        window.__plmLayoutDrag = dataTransfer;
+        for (const type of ['dragenter', 'dragover'])
+          document.body.dispatchEvent(new DragEvent(type, { bubbles: true, cancelable: true, dataTransfer }));
+      });
+      await page.waitForSelector('app-drop-hint');
+      await screen('drop-hint', 'app-drop-hint');
+      await page.evaluate(() => {
+        const dataTransfer = window.__plmLayoutDrag;
+        delete window.__plmLayoutDrag;
+        document.body.dispatchEvent(new DragEvent('dragleave', { bubbles: true, cancelable: true, dataTransfer }));
+      });
+      await page.waitForSelector('app-drop-hint', { state: 'detached' });
+    });
     await step('drop-question', async () => {
       // The question that a dropped folder asks, with its path below it. The drop's File has the folder's path, as
       // in a drop from the OS (dragOnWindow in test/e2e/regression.spec.mjs).

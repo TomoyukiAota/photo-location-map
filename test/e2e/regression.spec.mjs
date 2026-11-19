@@ -296,9 +296,10 @@ async function openFolderWithPicker(folder) {
   await page.getByRole('button', { name: 'Open Folder', exact: true }).click();
 }
 /**
- * Drags the files and folders at `itemPaths` over the map, as from Explorer or Finder, and drops them there unless
- * `drop` is false. Resolves with whether the page took the drag, and the effect that it set: copy for a drop that it
- * takes, none for one that it refuses.
+ * Drags the files and folders at `itemPaths` over the map, as from Explorer or Finder, and drops them there, or with
+ * `drop: false` takes them out of the window. Resolves with whether the page took the drag, the effect that it set
+ * (copy for a drop that it takes, none for one that it refuses), and the text of the hint over the window meanwhile,
+ * null when there was none. Dropped or taken out, the files leave no hint.
  * TL;DR: The Files of the drag have the items' paths on the disk, as a drag from the OS has, so that the preload reads
  * their paths as it does for a real drop (electron-util/preload/main-window.cjs).
  * Details: Playwright cannot start a drag of the OS. The Files come from a file input that this adds to the page, as
@@ -319,7 +320,7 @@ async function dragOnWindow(itemPaths, { drop = true } = {}) {
   } finally {
     await cdp.detach();
   }
-  return page.evaluate(drop => {
+  const { taken, effect } = await page.evaluate(() => {
     const input = document.getElementById('plm-e2e-dragged-files');
     const dataTransfer = new DataTransfer();
     for (const file of input.files) dataTransfer.items.add(file);
@@ -329,12 +330,23 @@ async function dragOnWindow(itemPaths, { drop = true } = {}) {
     const map = document.getElementById('plm-leaflet-map');
     // false when the page prevented the event's default action, which takes the drag.
     const dispatch = type => !map.dispatchEvent(new DragEvent(type, { bubbles: true, cancelable: true, dataTransfer }));
+    window.__plmE2eDrag = dispatch;
     dispatch('dragenter');
     const taken = dispatch('dragover');
-    const effect = dataTransfer.dropEffect;
-    if (drop) dispatch('drop');
-    return { taken, effect };
+    return { taken, effect: dataTransfer.dropEffect };
+  });
+  // Angular shows the hint at the next frame at the latest.
+  const hint = await page.evaluate(async () => {
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    return document.querySelector('app-drop-hint')?.innerText.trim() ?? null;
+  });
+  await page.evaluate(drop => {
+    const dispatch = window.__plmE2eDrag;
+    delete window.__plmE2eDrag;
+    dispatch(drop ? 'drop' : 'dragleave');
   }, drop);
+  await expect(page.locator('app-drop-hint')).toHaveCount(0);
+  return { taken, effect, hint };
 }
 /** Checks the question that a drop asks, about the folder or the file at `itemPath`, then clicks `answer`, OK or Cancel. */
 async function answerDropQuestion(question, itemPath, answer) {
@@ -2183,9 +2195,9 @@ test('a folder dropped on the window opens once the user confirms, with all of i
   await mkdir(folder);
   await copyFile(path.join(photoFolder, 'Gold Coast/IMG_1579.JPG'), path.join(folder, 'Gold Coast.JPG'));
   await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'Kobe.JPG'));
-  // While a dialog is open, Open Folder cannot be clicked, and a drop is refused.
+  // While a dialog is open, Open Folder cannot be clicked, and a drop is refused, with no hint.
   await expect(page.locator('app-welcome-dialog')).toBeVisible();
-  expect(await dragOnWindow([folder], { drop: false })).toEqual({ taken: true, effect: 'none' });
+  expect(await dragOnWindow([folder], { drop: false })).toEqual({ taken: true, effect: 'none', hint: null });
   await dismissWelcome();
   // A File that the page makes is not on the disk: it opens nothing, and nothing is asked.
   await page.evaluate(() => {
@@ -2197,8 +2209,11 @@ test('a folder dropped on the window opens once the user confirms, with all of i
     .filter(event => event.action === 'Drop to Open: Nothing to Open').map(event => event.label)))
     .toEqual(['Item Type: none', 'Item Type: none']);
   await expect(page.locator('app-confirm-dialog')).toHaveCount(0);
+  // The hint shows while the folder is over the window, and goes once the folder is taken out of it.
+  expect(await dragOnWindow([folder], { drop: false })).toEqual({ taken: true, effect: 'copy', hint: 'Drop to open the folder.' });
+  await expect(page.locator('app-confirm-dialog')).toHaveCount(0);
   // Canceled, the folder is not opened, and the page may not read it.
-  expect(await dragOnWindow([folder])).toEqual({ taken: true, effect: 'copy' });
+  expect(await dragOnWindow([folder])).toEqual({ taken: true, effect: 'copy', hint: 'Drop to open the folder.' });
   await answerDropQuestion('Do you want to open the folder below?', folder, 'Cancel');
   await expect(page.evaluate(folder => window.plm.directoryTree.create(folder), folder)).rejects.toThrow('Only a folder that the user chose can be read.');
   await expect(page.locator('mat-tree-node')).toHaveCount(0);
@@ -2217,8 +2232,9 @@ test('a photo dropped on the window opens its folder once the user confirms, wit
   await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'Kobe.JPG'));
   await dismissWelcome();
   const photo = path.join(folder, 'Kobe.JPG');
-  // Of two photos dropped at once, the first is asked about.
-  expect(await dragOnWindow([photo, path.join(folder, 'Gold Coast.JPG')])).toEqual({ taken: true, effect: 'copy' });
+  // Of two photos dropped at once, the first is asked about. The hint is that of a folder, which a file opens too.
+  expect(await dragOnWindow([photo, path.join(folder, 'Gold Coast.JPG')]))
+    .toEqual({ taken: true, effect: 'copy', hint: 'Drop to open the folder.' });
   await answerDropQuestion('Do you want to open the file below?', photo, 'OK');
   await expect(page.locator('app-loaded-files-status-bar')).toContainText('2 files have location data.');
   await expect(treeCheckbox('Kobe.JPG')).toBeChecked();

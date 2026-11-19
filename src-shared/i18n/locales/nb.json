@@ -83,6 +83,7 @@
     }
   },
   "dropToOpen": {
+    "hint": "Slipp for å åpne mappen.",
     "openFolder": "Vil du åpne mappen nedenfor?",
     "openFile": "Vil du åpne filen nedenfor?"
   },

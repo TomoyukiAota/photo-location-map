@@ -83,6 +83,7 @@
     }
   },
   "dropToOpen": {
+    "hint": "Solta para abrir o cartafol.",
     "openFolder": "Queres abrir o seguinte cartafol?",
     "openFile": "Queres abrir o seguinte ficheiro?"
   },

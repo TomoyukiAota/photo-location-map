@@ -83,6 +83,7 @@
     }
   },
   "dropToOpen": {
+    "hint": "Släpp för att öppna mappen.",
     "openFolder": "Vill du öppna mappen nedan?",
     "openFile": "Vill du öppna filen nedan?"
   },

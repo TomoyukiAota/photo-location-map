@@ -1,0 +1,55 @@
+@use "../../../styles/balanced-lines" as *;
+@use "../../../styles/color" as *;
+
+// TL;DR: The whole window, while files are dragged over it, over the map and under the dialogs and menus.
+// Details: It shows that the window takes a folder or a file dropped anywhere on it, and says what that does; the
+// page stays in view under it, faintly, as under the veil of Photo Data Viewer. It takes no event: the elements under
+// it get the drag, as they would without it (DropToOpenService). The map's overlay is at 10000
+// (leaflet-map.component.scss), and the container of the dialogs and menus at the highest (global-styles.scss).
+:host {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background-color: rgba(255, 255, 255, 0.85);
+
+  // The dashed line, inside the window's edges.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 10px;
+    border: 2px dashed $primary;
+    border-radius: 12px;
+  }
+}
+
+// The icon and the text under it, in the middle, on as many lines as a language needs, on a white ground that hides
+// the page behind them.
+.message {
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  color: $primary;
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+.icon {
+  width: 48px;
+  height: 48px;
+  fill: currentColor;
+}
+
+.text {
+  @include balanced-lines;
+}

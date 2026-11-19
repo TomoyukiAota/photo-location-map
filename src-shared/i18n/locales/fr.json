@@ -83,6 +83,7 @@
     }
   },
   "dropToOpen": {
+    "hint": "Déposez pour ouvrir le dossier.",
     "openFolder": "Voulez-vous ouvrir le dossier ci-dessous ?",
     "openFile": "Voulez-vous ouvrir le fichier ci-dessous ?"
   },
