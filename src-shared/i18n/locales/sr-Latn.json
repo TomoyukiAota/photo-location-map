@@ -83,6 +83,7 @@
     }
   },
   "dropToOpen": {
+    "hint": "Otpustite da biste otvorili fasciklu.",
     "openFolder": "Želite li da otvorite sledeću fasciklu?",
     "openFile": "Želite li da otvorite sledeću datoteku?"
   },

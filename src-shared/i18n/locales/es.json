@@ -83,6 +83,7 @@
     }
   },
   "dropToOpen": {
+    "hint": "Suelta para abrir la carpeta.",
     "openFolder": "¿Quieres abrir la siguiente carpeta?",
     "openFile": "¿Quieres abrir el siguiente archivo?"
   },

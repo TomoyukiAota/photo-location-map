@@ -83,6 +83,7 @@
     }
   },
   "dropToOpen": {
+    "hint": "Thả để mở thư mục.",
     "openFolder": "Bạn có muốn mở thư mục bên dưới không?",
     "openFile": "Bạn có muốn mở tệp bên dưới không?"
   },

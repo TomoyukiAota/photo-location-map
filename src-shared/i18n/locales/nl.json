@@ -83,6 +83,7 @@
     }
   },
   "dropToOpen": {
+    "hint": "Zet neer om de map te openen.",
     "openFolder": "Wil je de onderstaande map openen?",
     "openFile": "Wil je het onderstaande bestand openen?"
   },

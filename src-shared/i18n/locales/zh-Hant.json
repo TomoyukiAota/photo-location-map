@@ -83,6 +83,7 @@
     }
   },
   "dropToOpen": {
+    "hint": "拖放即可開啟資料夾。",
     "openFolder": "要開啟下列資料夾嗎？",
     "openFile": "要開啟下列檔案嗎？"
   },

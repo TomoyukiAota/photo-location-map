@@ -83,6 +83,7 @@
     }
   },
   "dropToOpen": {
+    "hint": "Largue para abrir a pasta.",
     "openFolder": "Pretende abrir a pasta abaixo?",
     "openFile": "Pretende abrir o ficheiro abaixo?"
   },

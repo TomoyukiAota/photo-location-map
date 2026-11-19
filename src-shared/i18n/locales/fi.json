@@ -83,6 +83,7 @@
     }
   },
   "dropToOpen": {
+    "hint": "Pudota avataksesi kansion.",
     "openFolder": "Haluatko avata alla olevan kansion?",
     "openFile": "Haluatko avata alla olevan tiedoston?"
   },
