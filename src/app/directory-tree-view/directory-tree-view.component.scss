@@ -23,18 +23,20 @@ mat-tree-node {
 }
 
 // TL;DR: The row of a photo revealed from the map is highlighted, then fades back, as a message that a link of a chat
-// application shows.
-// Details: Two animations of the same keyframes, which a row revealed again while it is highlighted changes between,
+// application shows. The highlight fades in, stays, and fades out, each fade speeding up gradually and slowing down
+// gradually.
+// Details: ease-in-out is the timing of each part between two keyframes: of the fade in to 15%, and of the fade out
+// from 50%. Two animations of the same keyframes, which a row revealed again while it is highlighted changes between,
 // as an animation starts anew when its name changes (revealHighlightOf() in the component). 3s is revealHighlightMs
 // in the component.
 @each $highlight in 1, 2 {
   @keyframes reveal-highlight-#{$highlight} {
-    0%, 30% { background-color: $white-background_revealed; }
-    100%    { background-color: transparent; }
+    0%, 100% { background-color: transparent; }
+    15%, 50% { background-color: $white-background_revealed; }
   }
 
   mat-tree-node[data-reveal-highlight="#{$highlight}"] {
-    animation: reveal-highlight-#{$highlight} 3s ease-in;
+    animation: reveal-highlight-#{$highlight} 3s ease-in-out;
   }
 }
 

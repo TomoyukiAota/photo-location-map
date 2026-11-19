@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatTree } from '@angular/material/tree';
 import { By } from '@angular/platform-browser';
 import { PhotoInfoViewerComponent } from '../photo-info-viewer/photo-info-viewer.component';
+import { EasedScroll } from '../shared/eased-scroll/eased-scroll';
 import { Photo } from '../shared/model/photo.model';
 import { NearViewService } from '../shared/near-view/near-view.service';
 import { PhotoDataService } from '../shared/service/photo-data.service';
@@ -166,7 +167,8 @@ describe('DirectoryTreeViewComponent', () => {
       .find(row => row.textContent.includes(name));
 
     beforeEach(async () => {
-      // The page has no layout here, and jsdom no scrollIntoView().
+      // The page has no layout here, so nothing around a row scrolls, and EasedScroll scrolls the row into view at once
+      // with scrollIntoView(), which jsdom has none of.
       scrolledIntoView = [];
       scrollOptions = [];
       Element.prototype.scrollIntoView = function (this: HTMLElement, options: ScrollIntoViewOptions) {
@@ -189,6 +191,26 @@ describe('DirectoryTreeViewComponent', () => {
       expect(tree.isExpanded(b)).toBe(true);
       expect(scrolledIntoView).toEqual([rowOf('photo.jpg')]);
       expect(scrollOptions).toEqual([{ block: 'center', inline: 'nearest' }]);
+    });
+
+    it('highlights its row once the sidebar has scrolled to it', async () => {
+      // EasedScroll has tests of its own. Here, the scroll has arrived when the test says so.
+      let arrive = () => undefined;
+      const toMiddle = vi.spyOn(EasedScroll.prototype, 'toMiddle').mockImplementation((_, arrived) => {
+        arrive = arrived;
+      });
+      try {
+        TestBed.inject(PhotoRevealService).revealInSidebar(photo);
+        await fixture.whenStable();
+        expect(toMiddle).toHaveBeenCalledExactlyOnceWith(rowOf('photo.jpg'), expect.any(Function));
+        expect(rowOf('photo.jpg').hasAttribute('data-reveal-highlight')).toBe(false);
+
+        arrive();
+        await fixture.whenStable();
+        expect(rowOf('photo.jpg').getAttribute('data-reveal-highlight')).toBe('1');
+      } finally {
+        toMiddle.mockRestore();
+      }
     });
 
     it('highlights its row for a moment, anew when it is revealed again', async () => {

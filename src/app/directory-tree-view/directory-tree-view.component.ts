@@ -6,6 +6,7 @@ import { Analytics } from '../../../src-shared/analytics/analytics';
 import { createPrependedLogger } from '../../../src-shared/log/create-prepended-logger';
 import { logged } from '../../../src-shared/log/logged-line';
 import { PhotoInfoViewerComponent } from '../photo-info-viewer/photo-info-viewer.component';
+import { EasedScroll } from '../shared/eased-scroll/eased-scroll';
 import { NearViewDirective } from '../shared/near-view/near-view.directive';
 import { TranslatePipe } from '../shared/i18n/translate.pipe';
 import { Photo } from '../shared/model/photo.model';
@@ -90,7 +91,10 @@ export class DirectoryTreeViewComponent {
 
     inject(PhotoRevealService).revealInSidebarRequested
       .subscribe(photo => this.reveal(photo.path));
-    inject(DestroyRef).onDestroy(() => clearTimeout(this.revealHighlightTimer));
+    inject(DestroyRef).onDestroy(() => {
+      clearTimeout(this.revealHighlightTimer);
+      this.easedScroll.stop();
+    });
   }
 
   /** The photo of a file's node, whose information the node's row shows; null for a file that is not a photo. */
@@ -243,6 +247,8 @@ export class DirectoryTreeViewComponent {
    */
   private readonly revealedRow = signal<{ node: NestedNode; highlight: 1 | 2 } | null>(null);
   private revealHighlightTimer: ReturnType<typeof setTimeout> | undefined;
+  /** The sidebar's scroll to a revealed row. */
+  private readonly easedScroll = new EasedScroll();
 
   /** Which of the highlight's animations the node's row has while it is highlighted, and null otherwise. */
   public revealHighlightOf(node: NestedNode): 1 | 2 | null {
@@ -252,9 +258,10 @@ export class DirectoryTreeViewComponent {
 
   /**
    * Shows the row of a node, as a link to a message of a chat application shows the message: the folders above it are
-   * expanded, its row is scrolled to the middle of the sidebar, and it is highlighted for a moment. The selection does
-   * not change.
-   * TL;DR: The rows of an expanded folder are in the page as soon as it is expanded, so the row is scrolled to at once.
+   * expanded, its row is scrolled to the middle of the sidebar, speeding up gradually and slowing down gradually, and
+   * it is highlighted for a moment once it is there. The selection does not change.
+   * TL;DR: The rows of an expanded folder are in the page as soon as it is expanded, so the scroll to the row starts at
+   * once.
    * Details: The tree renders its nodes again whenever a folder is expanded, synchronously, as its data is an array
    * and its children come from childrenAccessor. A row stays in the page while its folder is expanded, so it is
    * scrolled to by its element, whatever its content is.
@@ -276,9 +283,9 @@ export class DirectoryTreeViewComponent {
       dirTreeViewLogger.warn(logged`Cannot reveal "${path}", whose row is not shown.`);
       return;
     }
-    // Scrolled within the sidebar, which is the only part of the window that scrolls.
-    row._elementRef.nativeElement.scrollIntoView({ block: 'center', inline: 'nearest' });
-    this.highlight(node);
+    // Within the sidebar, which is the only part of the window that scrolls. A row revealed before the last one has
+    // been scrolled to is scrolled to from where the sidebar is, at the speed that it has (EasedScroll).
+    this.easedScroll.toMiddle(row._elementRef.nativeElement, () => this.highlight(node));
   }
 
   /** The folders above a node, from the opened folder down. */
