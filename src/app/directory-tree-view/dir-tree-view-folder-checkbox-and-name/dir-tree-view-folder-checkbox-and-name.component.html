@@ -1,0 +1,15 @@
+<!-- The name is in a bdi element, as in the tree's template, whose comment says why. -->
+@let shownNode = node();
+@if (shownNode.isSelectable) {
+  @let state = selection.stateOf(shownNode)();
+  <mat-checkbox [checked]="state === 'selected'"
+                [indeterminate]="state === 'partlySelected'"
+                (change)="toggled.emit()">
+    <bdi>{{ shownNode.name }}</bdi>
+  </mat-checkbox>
+} @else {
+  <mat-label class="non-selectable-node">
+    <div class="disabled-checkbox-alternative"></div>
+    <bdi>{{ shownNode.name }}</bdi>
+  </mat-label>
+}

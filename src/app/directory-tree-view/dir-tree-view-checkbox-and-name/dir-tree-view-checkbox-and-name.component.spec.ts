@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NearViewDirective } from '../../shared/near-view/near-view.directive';
+import { DirTreeViewNodeSelection } from '../dir-tree-view-node-selection';
 import { NestedNode } from '../directory-tree-view.model';
 import { DirTreeViewCheckboxAndNameComponent } from './dir-tree-view-checkbox-and-name.component';
 
@@ -12,18 +13,26 @@ function fileNode(name: string, isSelectable: boolean): NestedNode {
 describe('DirTreeViewCheckboxAndNameComponent', () => {
   /** Whether the row is near what is shown, as the row's NearViewDirective tells. */
   const near = signal(false);
+  let selection: DirTreeViewNodeSelection;
   let fixture: ComponentFixture<DirTreeViewCheckboxAndNameComponent>;
   let element: HTMLElement;
 
   beforeEach(() => {
     near.set(false);
-    TestBed.configureTestingModule({ providers: [{ provide: NearViewDirective, useValue: { isNear: near.asReadonly() } }] });
+    TestBed.configureTestingModule({
+      providers: [{ provide: NearViewDirective, useValue: { isNear: near.asReadonly() } }, DirTreeViewNodeSelection],
+    });
+    selection = TestBed.inject(DirTreeViewNodeSelection);
   });
 
+  /** Shows the file's node, in a folder of its own, which is selected or not. */
   async function show(node: NestedNode, selected: boolean): Promise<void> {
+    selection.replace([Object.assign(new NestedNode(), { name: 'photos', path: '/photos', type: 'directory', fsStats: undefined,
+      isSelectable: node.isSelectable, children: [node] })]);
+    if (selected)
+      selection.toggle(node);
     fixture = TestBed.createComponent(DirTreeViewCheckboxAndNameComponent);
     fixture.componentRef.setInput('node', node);
-    fixture.componentRef.setInput('selected', selected);
     element = fixture.nativeElement;
     await fixture.whenStable();
   }
@@ -45,9 +54,10 @@ describe('DirTreeViewCheckboxAndNameComponent', () => {
     expect(element.querySelector('mat-checkbox bdi').textContent).toBe('IMG_0001.JPG');
   });
 
-  it('tells of a click on the checkbox, and shows the selection that it is given', async () => {
+  it('tells of a click on the checkbox, and shows its photo\'s selection whenever it changes', async () => {
     near.set(true);
-    await show(fileNode('IMG_0001.JPG', true), false);
+    const node = fileNode('IMG_0001.JPG', true);
+    await show(node, false);
     const toggled = vi.fn();
     fixture.componentInstance.toggled.subscribe(toggled);
     const checkbox = element.querySelector<HTMLInputElement>('mat-checkbox input');
@@ -55,10 +65,15 @@ describe('DirTreeViewCheckboxAndNameComponent', () => {
 
     checkbox.click();
     expect(toggled).toHaveBeenCalledTimes(1);
-    fixture.componentRef.setInput('selected', true);
+    // The tree selects the photo on the click.
+    selection.toggle(node);
     await fixture.whenStable();
-
     expect(checkbox.checked).toBe(true);
+
+    // As Undo in the Selection menu deselects it, outside any event of the page.
+    selection.selectOnly([]);
+    await fixture.whenStable();
+    expect(checkbox.checked).toBe(false);
   });
 
   it('shows a grey box in place of the checkbox of a file that nothing can select, whether or not the row is near', async () => {
