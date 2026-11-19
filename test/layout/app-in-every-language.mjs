@@ -6,7 +6,7 @@
 // For each language, on an empty profile of a computer in that language, it goes through the screens that show
 // texts: the Language dialog, the Welcome dialog, the hint over the window while files are dragged over it, the
 // question that a dropped folder asks, the home view without and
-// with a folder of photos (in a window of 1200x800 and of 800x600), a photo's popup with its menu, the tree's menu, the Sort menu and its info dialog, the
+// with a folder of photos (in a window of 1200x800 and of 800x600), a photo's popup with its menu and the menu's submenus, the tree's menu, the Sort menu and its info dialog, the
 // chart's menu, its message for a duration that it cannot show and its button for the photos within a zoom, a region
 // on the map, the tabs of the Settings dialog with the choices of the clock's field, the question before a restart,
 // the About box, the dialog of the thumbnails that failed, and the dialog of a folder without location data.
@@ -281,18 +281,27 @@ for (const code of codes) {
     await step('popup-menu', async () => {
       await page.locator('.plm-leaflet-map-div-icon').first().dispatchEvent('click');
       // TL;DR: The button is clicked with the mouse where it is once the map has panned, as a person clicks it.
-      // Details: The menu opens below its button, beside it or above it, where its size fits in the room around the
-      // button when it is clicked. Playwright's click of the element scrolled the map's container, which Leaflet keeps
-      // at no scroll, to bring the button into view: for the click, the button was 270 px higher, at the top of the
-      // map, and the menu opened below it, to be cut off at the map's bottom edge once Leaflet had scrolled the
-      // container back. The map also pans for about a quarter of a second after the popup opens, which moves the
-      // button.
+      // Details: The menu opens below its button, or above it, where the window has room for it from where the button
+      // is when it is clicked. Playwright's click of the element scrolled the map's container, which Leaflet keeps at
+      // no scroll, to bring the button into view: for the click, the button was 270 px higher, at the top of the map,
+      // and the menu opened below it, away from the button once Leaflet had scrolled the container back. The map also
+      // pans for about a quarter of a second after the popup opens, which moves the button.
       const moreOptionsButton = '.leaflet-popup .photo-info-viewer-more-options-button';
       await untilStill(moreOptionsButton);
       const buttonBox = await page.locator(moreOptionsButton).boundingBox();
       await page.mouse.click(buttonBox.x + buttonBox.width / 2, buttonBox.y + buttonBox.height / 2);
-      await page.waitForSelector('.photo-info-viewer-more-options-menu');
-      await screen('popup-menu', '.leaflet-popup', '#home-map', '#home-map');
+      const menus = '.photo-info-viewer-more-options-menu';
+      await page.waitForSelector(menus);
+      // The menu is above the window, rather than in the popup: within the window, as its submenus are.
+      await screen('popup-menu', `.leaflet-popup, ${menus}`);
+      // The submenus Selection and Google, the first and the fourth of the popup's items, which the pointer opens.
+      for (const [name, index] of [['popup-menu-selection', 0], ['popup-menu-google', 3]]) {
+        await page.locator(`${menus} .photo-info-viewer-more-options-menu-item`).nth(index).hover();
+        await page.waitForFunction(selector => document.querySelectorAll(selector).length === 2, menus);
+        await screen(name, menus);
+        await page.keyboard.press('Escape');
+        await page.waitForFunction(selector => document.querySelectorAll(selector).length === 1, menus);
+      }
       await page.keyboard.press('Escape');
       await page.locator('.leaflet-popup-close-button').click().catch(() => {});
     });

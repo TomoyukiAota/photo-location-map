@@ -1,5 +1,6 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MATERIAL_ANIMATIONS } from '@angular/material/core';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import type { ThumbnailState } from '../../../src-shared/bridge/plm-bridge';
 import { IconDataUrl } from '../../assets/icon-data-url';
@@ -15,6 +16,7 @@ import { OpenedDirectory } from '../shared/opened-directory';
 import { PhotoRevealService } from '../shared/service/photo-reveal.service';
 import { SelectPreviousNextService } from '../shared/service/select-previous-next.service';
 import { GeneratedThumbnailService, thumbnailCheckIntervalMs } from './generated-thumbnail.service';
+import { MoreOptionsMenuComponent } from './more-options-menu/more-options-menu.component';
 import { PhotoInfoViewerComponent } from './photo-info-viewer.component';
 import { PhotoInfoViewerPlace } from './photo-info-viewer-place';
 import { ThumbnailRotationService } from './thumbnail-rotation.service';
@@ -58,7 +60,6 @@ describe('PhotoInfoViewerComponent', () => {
   /** The buttons under or beside the thumbnail, by their tooltips. */
   const buttons = () => Array.from(element.querySelectorAll<HTMLButtonElement>('.photo-info-viewer-lower-div > button'));
   const button = (title: string) => buttons().find(candidate => candidate.querySelector('img').title === title);
-  const menuItems = () => Array.from(element.querySelectorAll<HTMLElement>('.photo-info-viewer-more-options-menu-item'));
   async function click(target: HTMLElement): Promise<void> {
     target.click();
     await fixture.whenStable();
@@ -308,30 +309,76 @@ describe('PhotoInfoViewerComponent', () => {
   });
 
   describe('More Options menu', () => {
-    it('opens inside its button, with what can be done with a photo that has a location', async () => {
-      await show(cameraPhoto(), 'leaflet-map-popup');
-      expect(menuItems()).toEqual([]);
+    let menuFixture: ComponentFixture<MoreOptionsMenuComponent> | undefined;
 
+    beforeEach(() => {
+      menuFixture = undefined;
+      // The menus open and close at once, rather than after an animation that jsdom never runs.
+      TestBed.configureTestingModule({ providers: [{ provide: MATERIAL_ANIMATIONS, useValue: { animationsDisabled: true } }] });
+    });
+
+    /** The photo's viewer, with the menu that the home view has for every photo, which its button opens. */
+    async function showWithMenu(photo: Photo, place: PhotoInfoViewerPlace): Promise<void> {
+      if (!menuFixture) {
+        menuFixture = TestBed.createComponent(MoreOptionsMenuComponent);
+        await menuFixture.whenStable();
+      }
+      await show(photo, place);
+    }
+
+    /** The open menus, above the page in the overlay container: the menu, and a submenu while one is open. */
+    const menus = () => Array.from(document.querySelectorAll<HTMLElement>('.cdk-overlay-container .photo-info-viewer-more-options-menu'));
+    const itemsOf = (menu: HTMLElement) => Array.from(menu.querySelectorAll<HTMLButtonElement>('.photo-info-viewer-more-options-menu-item'));
+    const textsOf = (menu: HTMLElement) => itemsOf(menu).map(item => item.textContent.trim());
+    const item = (menu: HTMLElement, text: string) => itemsOf(menu).find(candidate => candidate.textContent.trim() === text);
+    /** Once the menus have closed: the menu's content goes once it has closed, after a timeout. */
+    const closed = () => vi.waitFor(() => expect(menus()).toEqual([]));
+
+    /** Opens the menu, and the submenu of the item `submenu` if one is given; the menu that is then on top. */
+    async function open(submenu?: string): Promise<HTMLElement> {
       await click(button('More Options'));
+      if (submenu)
+        await click(item(menus()[0], submenu));
+      return menus().at(-1);
+    }
 
-      const menu = element.querySelector('.photo-info-viewer-more-options-menu');
-      expect(menu.parentElement).toBe(button('More Options'));
-      expect(menuItems().map(item => item.textContent)).toEqual(
-        ['Select Only This', 'Reveal in Sidebar', 'Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data']);
+    it('opens above the page, with what can be done with a photo that has a location, and the submenus of Selection and Google', async () => {
+      await showWithMenu(cameraPhoto(), 'leaflet-map-popup');
+      expect(menus()).toEqual([]);
+      expect(button('More Options').getAttribute('aria-haspopup')).toBe('menu');
+      expect(button('More Options').getAttribute('aria-expanded')).toBe('false');
+
+      const menu = await open();
+
+      expect(element.contains(menu)).toBe(false);
+      expect(menu.getAttribute('role')).toBe('menu');
+      expect(button('More Options').getAttribute('aria-expanded')).toBe('true');
+      expect(textsOf(menu)).toEqual(['Selection', 'Reveal in Sidebar', 'Open Folder', 'Google', 'View Data']);
+      expect(itemsOf(menu).map(each => each.getAttribute('aria-haspopup'))).toEqual(['menu', null, null, 'menu', null]);
+      await click(item(menu, 'Selection'));
+      expect(menus()).toHaveLength(2);
+      expect(textsOf(menus()[1])).toEqual(['Select Only This', 'Select Previous', 'Select Next']);
+      // The pointer on another item closes the submenu, and opens that item's submenu.
+      item(menu, 'Google').dispatchEvent(new MouseEvent('mouseenter'));
+      await vi.waitFor(() => expect(menus().map(textsOf)).toEqual([
+        ['Selection', 'Reveal in Sidebar', 'Open Folder', 'Google', 'View Data'],
+        ['Open Google Maps', 'Open Google Earth', 'Open Google Street View'],
+      ]));
     });
 
     it('shows a photo of a row of the folder tree on the map, rather than in the sidebar', async () => {
       const revealInMap = vi.spyOn(TestBed.inject(PhotoRevealService), 'revealInMap').mockImplementation(() => undefined);
-      await show(cameraPhoto(), 'dir-tree-view');
+      await showWithMenu(cameraPhoto(), 'dir-tree-view');
 
-      await click(button('More Options'));
+      const menu = await open();
 
-      expect(menuItems().map(item => item.textContent)).toEqual(['Select Only This', 'Reveal in Map', 'Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data']);
-      await click(menuItems().find(item => item.textContent === 'Reveal in Map'));
+      expect(textsOf(menu)).toEqual(['Selection', 'Reveal in Map', 'Open Folder', 'Google', 'View Data']);
+      await click(item(menu, 'Reveal in Map'));
       expect(revealInMap).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ path: '/photos/IMG_0001.JPG' }));
+      await closed();
     });
 
-    it('has Select Previous and Select Next where a photo was taken before or after, which select that photo', async () => {
+    it('has Select Previous and Select Next in Selection, which select the photo taken before or after, and cannot be chosen where there is none', async () => {
       // The photos taken just before and after, which SelectPreviousNextService has tests of its own for.
       const neighbors: Record<string, [string | null, string | null]> = {
         '/photos/IMG_0001.JPG': [null, '/photos/IMG_0002.JPG'],
@@ -344,102 +391,80 @@ describe('PhotoInfoViewerComponent', () => {
         nextOf: (path: string) => neighbors[path]?.[1] ?? null,
         select,
       } });
-      const itemsOf = async (path: string) => {
-        await show(cameraPhoto(path), 'dir-tree-view');
-        await click(button('More Options'));
-        return menuItems().map(item => item.textContent);
+      /** Which of the items of Selection can be chosen, for the photo. */
+      const choosable = async (path: string) => {
+        await showWithMenu(cameraPhoto(path), 'dir-tree-view');
+        const selection = await open('Selection');
+        const result = Object.fromEntries(itemsOf(selection).map(each => [each.textContent.trim(), !each.disabled]));
+        document.body.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true }));
+        await closed();
+        return result;
       };
 
-      // After them, what a row of the tree has for a photo with a location.
-      const withLocation = ['Reveal in Map', 'Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data'];
-      expect(await itemsOf('/photos/IMG_0001.JPG')).toEqual(['Select Only This', 'Select Next', ...withLocation]);
-      expect(await itemsOf('/photos/IMG_0003.JPG')).toEqual(['Select Only This', 'Select Previous', ...withLocation]);
-      expect(await itemsOf('/photos/IMG_0002.JPG')).toEqual(['Select Only This', 'Select Previous', 'Select Next', ...withLocation]);
-      document.body.appendChild(element);
-      try {
-        for (const text of ['Select Previous', 'Select Next']) {
-          button('More Options').focus();
-          if (menuItems().length === 0)
-            await click(button('More Options'));
-          await click(menuItems().find(item => item.textContent === text));
-          expect(menuItems()).toEqual([]);
-        }
-      } finally {
-        element.remove();
+      expect(await choosable('/photos/IMG_0001.JPG')).toEqual({ 'Select Only This': true, 'Select Previous': false, 'Select Next': true });
+      expect(await choosable('/photos/IMG_0003.JPG')).toEqual({ 'Select Only This': true, 'Select Previous': true, 'Select Next': false });
+      expect(await choosable('/photos/IMG_0002.JPG')).toEqual({ 'Select Only This': true, 'Select Previous': true, 'Select Next': true });
+      for (const text of ['Select Previous', 'Select Next']) {
+        await click(item(await open('Selection'), text));
+        await closed();
       }
 
       expect(select.mock.calls).toEqual([['/photos/IMG_0001.JPG'], ['/photos/IMG_0003.JPG']]);
     });
 
     it('has no item that needs a location for a photo without one', async () => {
-      await show(photoAt('/photos/drawing.png'), 'dir-tree-view');
+      await showWithMenu(photoAt('/photos/drawing.png'), 'dir-tree-view');
 
-      await click(button('More Options'));
-
-      expect(menuItems().map(item => item.textContent)).toEqual(['Open Folder', 'View Data']);
+      expect(textsOf(await open())).toEqual(['Open Folder', 'View Data']);
     });
 
-    it('opens where its items fit once it is in the page: below its button, or above it when they do not fit below', async () => {
-      // The page has no layout here: the sidebar, the button and the menu get the sizes that a layout would give them.
-      const sidebar = document.createElement('div');
-      sidebar.id = 'home-left-sidebar';
-      Object.defineProperty(sidebar, 'clientHeight', { value: 400 });
-      document.body.appendChild(sidebar);
-      const height = vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function (this: HTMLElement) {
-        return this.matches('.photo-info-viewer-more-options-menu') ? menuItems().length * 35 : 0;
-      });
+    it('closes when its button is clicked again, and when the pointer is pressed or the wheel turned elsewhere, and not in itself', async () => {
+      await showWithMenu(cameraPhoto(), 'leaflet-map-popup');
+      document.body.appendChild(element);
       try {
-        // 120 px below the button: room for the 2 items of a photo without a location, and not for the 6 of one with it.
-        for (const [photo, top, bottom] of [[photoAt('/photos/drawing.png'), '37px', ''], [cameraPhoto(), '', '37px']] as const) {
-          await show(photo, 'dir-tree-view');
-          sidebar.appendChild(element);
-          button('More Options').getBoundingClientRect = () => ({ left: 240, right: 276, bottom: 280 }) as DOMRect;
+        await open();
+        await click(button('More Options'));
+        await closed();
 
-          await click(button('More Options'));
+        const menu = await open('Selection');
+        menu.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true }));
+        menus()[0].dispatchEvent(new Event('wheel', { bubbles: true }));
+        expect(menus()).toHaveLength(2);
+        // What is pressed then is pressed too: nothing takes the press, which goes on to it. Listened for only now, as
+        // the presses in the menu above reach the page's body too.
+        const heard = vi.fn();
+        document.body.addEventListener('pointerdown', heard, { once: true });
+        const pressElsewhere = new MouseEvent('pointerdown', { bubbles: true, cancelable: true });
+        document.body.dispatchEvent(pressElsewhere);
+        expect(heard).toHaveBeenCalledExactlyOnceWith(pressElsewhere);
+        expect(pressElsewhere.defaultPrevented).toBe(false);
+        await closed();
 
-          const menu = element.querySelector<HTMLElement>('.photo-info-viewer-more-options-menu');
-          expect({ top: menu.style.top, bottom: menu.style.bottom }).toEqual({ top, bottom });
-          element.remove();
-        }
+        await open();
+        element.dispatchEvent(new Event('wheel', { bubbles: true }));
+        await closed();
       } finally {
-        height.mockRestore();
-        sidebar.remove();
+        element.remove();
       }
     });
 
-    it('closes when its button is clicked again, and when its button loses the focus', async () => {
-      await show(cameraPhoto(), 'leaflet-map-popup');
-      await click(button('More Options'));
-      await click(button('More Options'));
-      expect(menuItems()).toEqual([]);
-
-      await click(button('More Options'));
-      expect(menuItems()).toHaveLength(7);
-      button('More Options').dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
-      await fixture.whenStable();
-      expect(menuItems()).toEqual([]);
-    });
-
-    it('does what its items say, and closes by taking the focus off its button', async () => {
+    it('does what its items say, closes, and gives its button the focus back', async () => {
       const select = vi.spyOn(TestBed.inject(DirectoryTreeViewSelectionService), 'select');
       const openContainingFolder = vi.spyOn(window.plm.shell, 'openContainingFolder');
       const openExternal = vi.spyOn(window.plm.shell, 'openExternal');
       const openPhotoDataViewer = vi.spyOn(window.plm.photoDataViewer, 'open');
       const revealInSidebar = vi.spyOn(TestBed.inject(PhotoRevealService), 'revealInSidebar');
-      await show(cameraPhoto(), 'leaflet-map-popup');
+      await showWithMenu(cameraPhoto(), 'leaflet-map-popup');
       document.body.appendChild(element);
       try {
-        for (const text of ['Select Only This', 'Reveal in Sidebar', 'Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data']) {
+        for (const [submenu, text] of [
+          ['Selection', 'Select Only This'], [undefined, 'Reveal in Sidebar'], [undefined, 'Open Folder'],
+          ['Google', 'Open Google Maps'], ['Google', 'Open Google Earth'], ['Google', 'Open Google Street View'], [undefined, 'View Data'],
+        ] as const) {
           button('More Options').focus();
-          await click(button('More Options'));
-          const item = menuItems().find(candidate => candidate.textContent === text);
-          // A click on an item is not a click on the button around it, which would open the menu again.
-          const heardByButton = vi.fn();
-          button('More Options').addEventListener('click', heardByButton, { once: true });
-          await click(item);
-          expect(heardByButton).not.toHaveBeenCalled();
-          expect(document.activeElement).not.toBe(button('More Options'));
-          expect(menuItems()).toEqual([]);
+          await click(item(await open(submenu), text));
+          await closed();
+          expect(document.activeElement).toBe(button('More Options'));
         }
       } finally {
         element.remove();
@@ -457,15 +482,12 @@ describe('PhotoInfoViewerComponent', () => {
     });
 
     it('tells the analytics which of Google\'s sites its items open, without the photo\'s place', async () => {
-      await show(cameraPhoto(), 'leaflet-map-popup');
-      // In the page, so that a click on an item takes the focus off the button, which closes the menu.
-      document.body.appendChild(element);
+      await showWithMenu(cameraPhoto(), 'leaflet-map-popup');
       const trackEvent = vi.spyOn(Analytics, 'trackEvent');
       try {
         for (const text of ['Open Google Maps', 'Open Google Earth', 'Open Google Street View']) {
-          button('More Options').focus();
-          await click(button('More Options'));
-          await click(menuItems().find(candidate => candidate.textContent === text));
+          await click(item(await open('Google'), text));
+          await closed();
         }
 
         expect(trackEvent.mock.calls).toEqual([
@@ -482,7 +504,6 @@ describe('PhotoInfoViewerComponent', () => {
         expect(JSON.stringify(trackEvent.mock.calls)).not.toMatch(/34\.68|135\.19/);
       } finally {
         trackEvent.mockRestore();
-        element.remove();
       }
     });
   });

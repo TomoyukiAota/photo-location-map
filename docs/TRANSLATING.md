@@ -167,6 +167,11 @@ npm run test:unit:ng
   folders, and in the list of folders, from the map. The sidebar is the part of
   the window that has the list of folders: use the word that your language's
   operating system has for a sidebar, as Finder has one on macOS.
+- `photoInfo.menu.selection` and `google` name the two submenus of a photo's
+  menu. The first has `selectOnlyThis`, `selectPrevious` and `selectNext`, and
+  is named as the application menu's Selection menu (`menu.selection.title`),
+  which has items of the same kind. The second has the items that open
+  Google's sites, and is the company's name.
 - `language.confirm` is the button that confirms the language at the first
   launch, shown in the language that is chosen in the list above it. Use the
   word that a button confirming a choice has in your language: Japanese has

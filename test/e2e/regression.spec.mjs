@@ -268,6 +268,16 @@ async function dismissWelcome() {
     await expect(page.locator('app-welcome-dialog')).toHaveCount(0);
   }
 }
+/**
+ * Opens the menu of a photo's More Options button and chooses an item: the one named last, in the submenu of the item
+ * named before it if there is one ('Selection', 'Select Only This'). The menu is above the window, in the overlay
+ * container, rather than in the row or the popup of its button.
+ */
+async function chooseFromMoreOptions(moreOptionsButton, ...names) {
+  await moreOptionsButton.click();
+  for (const name of names)
+    await page.getByRole('menuitem', { name, exact: true }).click();
+}
 async function expectRepresentedPhotos(count) {
   // Cluster membership changes with available map space; the photo total must not.
   await expect.poll(async () => await page.locator('.plm-leaflet-map-div-icon').count() +
@@ -786,15 +796,28 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   await page.locator('.plm-leaflet-map-div-icon').first().dispatchEvent('click');
   const popup = page.locator('.leaflet-popup');
   await expect(popup.locator('.photo-info-viewer-date-time-taken')).toHaveText(/^\d{4}-\d{2}-\d{2} \([日月火水木金土]\) \d{2}:\d{2}:\d{2}$/);
+  // The menu, and the submenus that the pointer opens, with the items of the submenu open after the menu's.
   await popup.locator('.photo-info-viewer-more-options-button').click();
-  await expect(page.locator('.photo-info-viewer-more-options-menu-item'))
-    .toHaveText(['このファイルのみを選択', '前のファイルを選択', 'サイドバーで表示', 'フォルダーを開く', 'Google マップを開く',
-      'Google Earth を開く', 'Google ストリートビューを開く', 'データを表示']);
-  // The menu is wider than in English, and this popup is at the map's left edge: the menu is not cut off there.
-  const menuBox = await page.locator('.photo-info-viewer-more-options-menu').boundingBox();
-  const mapBox = await page.locator('#home-map').boundingBox();
-  expect(menuBox.x).toBeGreaterThanOrEqual(mapBox.x);
+  const moreOptionsItems = page.locator('.photo-info-viewer-more-options-menu-item');
+  const menuInJapaneseOfPopup = ['選択', 'サイドバーで表示', 'フォルダーを開く', 'Google', 'データを表示'];
+  await expect(moreOptionsItems).toHaveText(menuInJapaneseOfPopup);
+  await page.getByRole('menuitem', { name: '選択', exact: true }).hover();
+  await expect(moreOptionsItems).toHaveText([...menuInJapaneseOfPopup, 'このファイルのみを選択', '前のファイルを選択', '次のファイルを選択']);
+  await page.getByRole('menuitem', { name: 'Google', exact: true }).hover();
+  await expect(moreOptionsItems)
+    .toHaveText([...menuInJapaneseOfPopup, 'Google マップを開く', 'Google Earth を開く', 'Google ストリートビューを開く']);
+  // The menus are wider than in English, and this popup is at the map's left edge: they are above the window, which
+  // they stay within, and neither the map nor the sidebar cuts them off.
+  const windowWidth = await page.evaluate(() => window.innerWidth);
+  for (const menuBox of await page.locator('.photo-info-viewer-more-options-menu').evaluateAll(menus => menus.map(menu => menu.getBoundingClientRect().toJSON()))) {
+    expect(menuBox.left).toBeGreaterThanOrEqual(0);
+    expect(menuBox.right).toBeLessThanOrEqual(windowWidth);
+  }
+  // Escape closes the submenu, then the menu. A submenu takes the keys until it has faded out, as Angular Material's do.
   await page.keyboard.press('Escape');
+  await expect(moreOptionsItems).toHaveText(menuInJapaneseOfPopup);
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.photo-info-viewer-more-options-menu')).toHaveCount(0);
   // The tree's menu names what it is opened on, a folder or a file, where English says "Select Only This" of both.
   const treeMenuItems = page.getByRole('menuitem');
   const appleParkFolder = page.locator('mat-tree-node').filter({ hasText: 'Apple Park' });
@@ -884,16 +907,41 @@ test('on a computer whose language is Arabic, the application is laid out from r
   const popup = page.locator('.leaflet-popup');
   await expect(popup.locator('.leaflet-popup-content')).toHaveCSS('direction', 'rtl');
   await expect(popup.locator('.photo-info-viewer-date-time-taken')).toHaveText(/^\d{4}-\d{2}-\d{2} [\u0621-\u064A]+ \d{2}:\d{2}:\d{2}$/);
-  // The photo's menu opens the other way round, and stays within the map.
-  await popup.locator('.photo-info-viewer-more-options-button').click();
-  await expect(page.locator('.photo-info-viewer-more-options-menu-item'))
-    .toHaveText(['تحديد هذا الملف فقط', 'تحديد الملف السابق', 'عرض في الشريط الجانبي', 'فتح المجلد', 'فتح خرائط Google',
-      'فتح Google Earth', 'فتح Google Street View', 'عرض البيانات']);
-  const menuBox = await page.locator('.photo-info-viewer-more-options-menu').boundingBox();
-  const mapBox = await map.boundingBox();
-  expect(menuBox.x).toBeGreaterThanOrEqual(mapBox.x);
-  expect(menuBox.x + menuBox.width).toBeLessThanOrEqual(mapBox.x + mapBox.width);
+  // The photo's menu opens the other way round, from its button's left edge towards the right. Its submenu opens on
+  // its left where the window has room, and on its right otherwise; the arrow towards the left opens it.
+  const moreOptionsButton = popup.locator('.photo-info-viewer-more-options-button');
+  await moreOptionsButton.click();
+  const moreOptionsItems = page.locator('.photo-info-viewer-more-options-menu-item');
+  const menuInArabic = ['التحديد', 'عرض في الشريط الجانبي', 'فتح المجلد', 'Google', 'عرض البيانات'];
+  await expect(moreOptionsItems).toHaveText(menuInArabic);
+  // Where the menus are once they have opened. The CDK places a menu when it renders it, after the menu's content, and
+  // a menu grows from 80% of its size, from its corner at what opened it, as it opens: each is waited for in turn.
+  const moreOptionsMenus = page.locator('.photo-info-viewer-more-options-menu');
+  const grownBox = async menu => {
+    const width = await menu.evaluate(element => element.offsetWidth);
+    await expect.poll(async () => Math.round((await menu.boundingBox()).width)).toBe(width);
+    return menu.boundingBox();
+  };
+  const buttonBox = await moreOptionsButton.boundingBox();
+  await expect.poll(async () => Math.abs((await moreOptionsMenus.boundingBox()).x - buttonBox.x)).toBeLessThan(2);
+  const menuBox = await grownBox(moreOptionsMenus);
+  const selectionItem = page.getByRole('menuitem', { name: 'التحديد', exact: true });
+  await selectionItem.focus();
+  await page.keyboard.press('ArrowLeft');
+  await expect(moreOptionsItems).toHaveText([...menuInArabic, 'تحديد هذا الملف فقط', 'تحديد الملف السابق', 'تحديد الملف التالي']);
+  await expect(page.getByRole('menuitem', { name: 'تحديد هذا الملف فقط', exact: true })).toBeFocused();
+  // Beside its item, at the item's height.
+  const selectionItemBox = await selectionItem.boundingBox();
+  await expect.poll(async () => Math.abs((await moreOptionsMenus.nth(1).boundingBox()).y - selectionItemBox.y)).toBeLessThan(2);
+  const submenuBox = await grownBox(moreOptionsMenus.nth(1));
+  if (menuBox.x >= submenuBox.width)
+    expect(submenuBox.x + submenuBox.width).toBeLessThanOrEqual(menuBox.x + 1);
+  else
+    expect(submenuBox.x).toBeGreaterThanOrEqual(menuBox.x + menuBox.width - 1);
+  await page.keyboard.press('ArrowRight');
+  await expect(moreOptionsItems).toHaveText(menuInArabic);
   await page.keyboard.press('Escape');
+  await expect(moreOptionsMenus).toHaveCount(0);
   // A path is written from left to right within the text around it: its first slash stays at its start.
   await settings();
   await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'ذاكرة التخزين المؤقت' }).click();
@@ -1620,8 +1668,7 @@ test('Select Only This from a marker popup selects that photo in the tree and on
   const popup = page.locator('.leaflet-popup');
   await expect(popup.locator('.photo-info-viewer-name')).toBeVisible();
   const photoName = (await popup.locator('.photo-info-viewer-name').textContent()).trim();
-  await popup.locator('.photo-info-viewer-more-options-button').click();
-  await page.locator('.photo-info-viewer-more-options-menu-item').filter({ hasText: 'Select Only This' }).click();
+  await chooseFromMoreOptions(popup.locator('.photo-info-viewer-more-options-button'), 'Selection', 'Select Only This');
   await expectRepresentedPhotos(1);
   const folders = { 'IMG_5769.JPG': 'Apple Park', 'IMG_1579.JPG': 'Gold Coast', 'IMG_4676.JPG': 'Kobe', 'IMG_2581.JPG': 'Unga' };
   expect(Object.keys(folders)).toContain(photoName);
@@ -1702,7 +1749,7 @@ test('Reveal in Sidebar from a popup of the map expands the folders above the ph
     };
     requestAnimationFrame(record);
   });
-  await popup.locator('.photo-info-viewer-more-options-menu-item').filter({ hasText: 'Reveal in Sidebar' }).click();
+  await page.getByRole('menuitem', { name: 'Reveal in Sidebar', exact: true }).click();
   for (const name of ['the photo', 'taken', 'in Kobe']) await expect(treeNode(name)).toHaveAttribute('aria-expanded', 'true');
   await expect(row).toHaveAttribute('data-reveal-highlight', 'lit');
   await expect(row).toHaveCSS('background-color', 'rgba(255, 193, 7, 0.35)');
@@ -1746,11 +1793,7 @@ test('Reveal in Map from a row of the tree opens the photo\'s popup, selecting t
   await treeNode('Kobe').getByRole('button').click();
   const row = treeNode('IMG_4676.JPG');
   const popup = page.locator('.leaflet-popup');
-  // The item of the row's own menu: a menu that has just closed fades out for a moment, with its items.
-  async function revealFromMoreOptions() {
-    await row.getByRole('button', { name: 'More Options' }).click();
-    await row.locator('.photo-info-viewer-more-options-menu-item').filter({ hasText: 'Reveal in Map' }).click();
-  }
+  const revealFromMoreOptions = () => chooseFromMoreOptions(row.getByRole('button', { name: 'More Options' }), 'Reveal in Map');
 
   // A photo on the map: its popup opens, and its marker looks chosen, as when the marker is clicked. Both are in the
   // middle of the map.
@@ -1809,17 +1852,14 @@ test('Reveal in Map opens the popup of a cluster of photos taken at one place wi
   await expect(page.locator('.marker-cluster')).toHaveCount(1);
   const rowOf = name => page.locator('mat-tree-node').filter({ hasText: name });
   const shownName = page.locator('.photo-cluster-viewer-right-pane .photo-info-viewer-name');
-  // Taken at the same time, the two photos can have their tiles in either order: each is chosen in turn. The item is
-  // that of the row's own menu, as the menu of the previous row fades out for a moment, with its items.
+  // Taken at the same time, the two photos can have their tiles in either order: each is chosen in turn.
   for (const name of ['Kobe 2.JPG', 'Kobe 1.JPG']) {
-    await rowOf(name).getByRole('button', { name: 'More Options' }).click();
-    await rowOf(name).locator('.photo-info-viewer-more-options-menu-item').filter({ hasText: 'Reveal in Map' }).click();
+    await chooseFromMoreOptions(rowOf(name).getByRole('button', { name: 'More Options' }), 'Reveal in Map');
     await expect(shownName).toHaveText(name);
     await expect(page.locator('.photo-cluster-viewer-tile.selected-tile')).toHaveCount(1);
   }
   const shownPhoto = page.locator('.photo-cluster-viewer-right-pane');
-  await shownPhoto.getByRole('button', { name: 'More Options' }).click();
-  await shownPhoto.locator('.photo-info-viewer-more-options-menu-item').filter({ hasText: 'Reveal in Sidebar' }).click();
+  await chooseFromMoreOptions(shownPhoto.getByRole('button', { name: 'More Options' }), 'Reveal in Sidebar');
   await expect(rowOf('Kobe 1.JPG')).toHaveAttribute('data-reveal-highlight', /^(lit|fading)$/);
   await expect(rowOf('Kobe 2.JPG')).not.toHaveAttribute('data-reveal-highlight', /./);
 });
@@ -1857,15 +1897,20 @@ test('a photo\'s information, in the tree and in a popup of the map, opens the p
   await inTree.getByRole('button', { name: 'Live Photos' }).click();
   await thumbnailInTree.click();
   await inTree.getByRole('button', { name: 'More Options' }).click();
-  await expect(page.locator('.photo-info-viewer-more-options-menu-item'))
-    .toHaveText(['Select Only This', 'Reveal in Map', 'Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data']);
+  await expect(page.locator('.photo-info-viewer-more-options-menu-item')).toHaveText(['Selection', 'Reveal in Map', 'Open Folder', 'Google', 'View Data']);
+  // While the menu is open, which is above the window rather than in the row, the row keeps its buttons: the pointer is
+  // on the menu, off the row, for longer than the buttons take to fade (0.2 s).
+  await menuItem('View Data').hover();
+  await page.waitForTimeout(400);
+  await expect(inTree.locator('.photo-info-viewer-lower-div')).toHaveCSS('opacity', '1');
   // A click on an item does what the item says, and closes the menu.
   await menuItem('Open Folder').click();
   await expect(menu).toHaveCount(0);
   await expect.poll(openCommands).toEqual([
     osOpenCommand(photo), osOpenCommand(movie), osOpenCommand(photo), osOpenCommand(photo, { containingFolder: true }),
   ]);
-  // The menu closes when its button is clicked again, and when something else is clicked.
+  // The menu closes when its button is clicked again, and when something else is clicked, which the click goes on to:
+  // the button beside it opens the photo.
   await inTree.getByRole('button', { name: 'More Options' }).click();
   await expect(menu).toHaveCount(1);
   await inTree.getByRole('button', { name: 'More Options' }).click();
@@ -1873,6 +1918,19 @@ test('a photo\'s information, in the tree and in a popup of the map, opens the p
   await inTree.getByRole('button', { name: 'More Options' }).click();
   await expect(menu).toHaveCount(1);
   await page.locator('app-loaded-files-status-bar').click();
+  await expect(menu).toHaveCount(0);
+  await inTree.getByRole('button', { name: 'More Options' }).click();
+  await expect(menu).toHaveCount(1);
+  await inTree.getByRole('button', { name: 'Open File' }).click();
+  await expect(menu).toHaveCount(0);
+  await expect.poll(openCommands).toEqual([
+    osOpenCommand(photo), osOpenCommand(movie), osOpenCommand(photo), osOpenCommand(photo, { containingFolder: true }), osOpenCommand(photo),
+  ]);
+  // The wheel elsewhere closes it too, as the tree would scroll under it: on the folder's row, above the menu.
+  await inTree.getByRole('button', { name: 'More Options' }).click();
+  await expect(menu).toHaveCount(1);
+  await page.locator('mat-tree-node').first().hover();
+  await page.mouse.wheel(0, 40);
   await expect(menu).toHaveCount(0);
   // The row is made again when its folder is collapsed and expanded.
   const folderToggle = page.locator('mat-tree-node').filter({ has: page.getByText('a photo with a movie', { exact: true }) }).getByRole('button');
@@ -1891,12 +1949,8 @@ test('a photo\'s information, in the tree and in a popup of the map, opens the p
   await inPopup.getByRole('button', { name: 'Rotate Thumbnail' }).click();
   await inPopup.getByRole('button', { name: 'Rotate Thumbnail' }).click();
   await expect(thumbnailInPopup).toHaveAttribute('style', turned(180));
-  await inPopup.getByRole('button', { name: 'More Options' }).click();
-  await menuItem('Open Google Maps').click();
-  await inPopup.getByRole('button', { name: 'More Options' }).click();
-  await menuItem('Open Google Earth').click();
-  await inPopup.getByRole('button', { name: 'More Options' }).click();
-  await menuItem('Open Google Street View').click();
+  for (const name of ['Open Google Maps', 'Open Google Earth', 'Open Google Street View'])
+    await chooseFromMoreOptions(inPopup.getByRole('button', { name: 'More Options' }), 'Google', name);
   await expect.poll(openedUrls).toEqual([
     expect.stringMatching(/^https:\/\/maps\.google\.com\/\?q=[\d.]+,[\d.]+&ll=[\d.]+,[\d.]+&z=14$/),
     expect.stringMatching(/^https:\/\/earth\.google\.com\/web\/search\/[\d.]+,[\d.]+$/),
@@ -1923,6 +1977,37 @@ test('a photo\'s information, in the tree and in a popup of the map, opens the p
   const analyticsEvents = JSON.stringify(await app.evaluate(() => globalThis.__plmAnalyticsEvents));
   for (const coordinate of place.split(','))
     expect(analyticsEvents).not.toContain(coordinate);
+  // The keyboard: Enter opens the menu on its first item, the arrows go through the items and into a submenu and back,
+  // Enter opens a submenu too, and Escape closes the submenu, then the menu, which gives its button the focus back.
+  // A screen reader is told that the button and the submenus' items open menus, and whether they are open.
+  const moreOptionsInPopup = inPopup.getByRole('button', { name: 'More Options' });
+  await expect(moreOptionsInPopup).toHaveAttribute('aria-haspopup', 'menu');
+  await moreOptionsInPopup.focus();
+  await page.keyboard.press('Enter');
+  await expect(moreOptionsInPopup).toHaveAttribute('aria-expanded', 'true');
+  const focusedMenuItem = () => page.evaluate(() => document.activeElement.closest('[role="menuitem"]')?.textContent.trim());
+  await expect.poll(focusedMenuItem).toBe('Selection');
+  await expect(page.getByRole('menuitem', { name: 'Selection', exact: true })).toHaveAttribute('aria-haspopup', 'menu');
+  await page.keyboard.press('ArrowRight');
+  await expect.poll(focusedMenuItem).toBe('Select Only This');
+  await expect(page.getByRole('menuitem', { name: 'Selection', exact: true })).toHaveAttribute('aria-expanded', 'true');
+  // A submenu takes the keys until it has faded out, as Angular Material's do: the next key once it has.
+  await page.keyboard.press('ArrowLeft');
+  await expect.poll(focusedMenuItem).toBe('Selection');
+  await expect(menu).toHaveCount(1);
+  for (const name of ['Reveal in Sidebar', 'Open Folder', 'Google']) {
+    await page.keyboard.press('ArrowDown');
+    await expect.poll(focusedMenuItem).toBe(name);
+  }
+  await page.keyboard.press('Enter');
+  await expect.poll(focusedMenuItem).toBe('Open Google Maps');
+  await page.keyboard.press('Escape');
+  await expect.poll(focusedMenuItem).toBe('Google');
+  await expect(menu).toHaveCount(1);
+  await page.keyboard.press('Escape');
+  await expect(menu).toHaveCount(0);
+  await expect(moreOptionsInPopup).toBeFocused();
+  await expect(moreOptionsInPopup).toHaveAttribute('aria-expanded', 'false');
   // Closed and opened again, the popup shows the same content.
   await popup.locator('.leaflet-popup-close-button').click();
   await expect(popup).toHaveCount(0);
@@ -2042,24 +2127,30 @@ test('Select Previous and Select Next go through the photos in the order they we
   await expectSelected('IMG_2581.JPG');
   await expect.poll(enabled).toEqual({ previous: true, next: true });
 
-  // A photo's menu, right after Select Only This: in the popup of the map, and in the photo's row of the tree.
+  // A photo's menu, right after Select Only This: in the popup of the map, and in the photo's row of the tree. Its
+  // submenu Selection has Select Previous and Select Next, of which one that has no photo to select cannot be chosen.
   const moreOptionsItems = page.locator('.photo-info-viewer-more-options-menu-item');
-  const withLocation = ['Open Folder', 'Open Google Maps', 'Open Google Earth', 'Open Google Street View', 'View Data'];
+  const selection = ['Select Only This', 'Select Previous', 'Select Next'];
+  const menuItemNamed = name => page.getByRole('menuitem', { name, exact: true });
   await popup.locator('.photo-info-viewer-more-options-button').click();
-  await expect(moreOptionsItems).toHaveText(['Select Only This', 'Select Previous', 'Select Next', 'Reveal in Sidebar', ...withLocation]);
-  await moreOptionsItems.filter({ hasText: 'Select Next' }).click();
+  await menuItemNamed('Selection').click();
+  await expect(moreOptionsItems).toHaveText(['Selection', 'Reveal in Sidebar', 'Open Folder', 'Google', 'View Data', ...selection]);
+  for (const name of selection) await expect(menuItemNamed(name)).toBeEnabled();
+  await menuItemNamed('Select Next').click();
   await expectSelected('IMG_4676.JPG');
   await expectShownInSidebar('IMG_4676.JPG');
   const kobe = page.locator('mat-tree-node').filter({ has: page.getByText('Kobe', { exact: true }) });
   const row = page.locator('mat-tree-node').filter({ hasText: 'IMG_4676.JPG' });
   await row.locator('.photo-info-viewer-thumbnail').hover();
   await row.getByRole('button', { name: 'More Options' }).click();
-  await expect(moreOptionsItems).toHaveText(['Select Only This', 'Select Previous', 'Select Next', 'Reveal in Map', ...withLocation]);
-  await moreOptionsItems.filter({ hasText: 'Select Next' }).click();
+  await menuItemNamed('Selection').click();
+  await expect(moreOptionsItems).toHaveText(['Selection', 'Reveal in Map', 'Open Folder', 'Google', 'View Data', ...selection]);
+  await menuItemNamed('Select Next').click();
   await expectSelected('IMG_5769.JPG');
   await popup.locator('.photo-info-viewer-more-options-button').click();
-  await expect(moreOptionsItems).toHaveText(['Select Only This', 'Select Previous', 'Reveal in Sidebar', ...withLocation]);
-  await moreOptionsItems.filter({ hasText: 'Select Previous' }).click();
+  await menuItemNamed('Selection').click();
+  await expect(menuItemNamed('Select Next')).toBeDisabled();
+  await menuItemNamed('Select Previous').click();
   await expectSelected('IMG_4676.JPG');
   await expect.poll(enabled).toEqual({ previous: true, next: true });
 

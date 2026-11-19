@@ -11,11 +11,6 @@
   to   { opacity: 1; }
 }
 
-@keyframes fade-out {
-  from { opacity: 1; }
-  to   { opacity: 0; }
-}
-
 @mixin photo-info-viewer-text {
   font-size: 14px;
   font-weight: bold;
@@ -95,25 +90,17 @@
   @include icon-button;
 }
 
+// Dark while its menu is open, and while the keyboard is on it. A click leaves it as it was, as the menu gives the
+// button the focus back when it closes.
 .photo-info-viewer-more-options-button {
   @include icon-button;
-  position: relative;
-  &:focus  { background-color: #444444; }
+  &:focus-visible, &[aria-expanded="true"] { background-color: #444444; }
 }
 
 // The room of the buttons in a row of the tree that is not yet near what is shown: as wide as a button.
 .photo-info-viewer-button-room {
   @include icon-button;
   visibility: hidden;
-}
-
-// The menu, whose element is MoreOptionsMenuComponent's: it fades in when it opens and out when it closes.
-.photo-info-viewer-more-options-menu-fade-in {
-  animation: fade-in 0.4s ease 0s forwards;
-}
-
-.photo-info-viewer-more-options-menu-fade-out {
-  animation: fade-out 0.4s ease 0s forwards;
 }
 
 // A row of the folder tree: the thumbnail and the shooting time, with the buttons in a column beside them, which
@@ -140,7 +127,10 @@
   }
 }
 
-:host([data-place="dir-tree-view"]:hover) .photo-info-viewer-lower-div {
+:host([data-place="dir-tree-view"]:hover) .photo-info-viewer-lower-div,
+// Also while the menu of the More Options button is open, which is above the window rather than in the row, and while
+// the keyboard is on one of the buttons.
+:host([data-place="dir-tree-view"]) .photo-info-viewer-lower-div:has([aria-expanded="true"], :focus-visible) {
   opacity: 1;
 }
 

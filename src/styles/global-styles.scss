@@ -51,6 +51,12 @@ $max-z-index: 2147483647;
   max-width: none !important; // important! to override the max-width restriction of 280px given by mat-menu
 }
 
+// A photo's More Options menu and its submenus: without the room above and below the items that Angular Material's
+// menus have, as the menu was before it was one of them (src/app/photo-info-viewer/more-options-menu/).
+.photo-info-viewer-more-options-menu .mat-mdc-menu-content {
+  padding: 0;
+}
+
 .mdc-checkbox__ripple {
   display: none;
 }
