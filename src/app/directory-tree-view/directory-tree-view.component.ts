@@ -1,7 +1,7 @@
 import { FocusMonitor, TREE_KEY_MANAGER } from '@angular/cdk/a11y';
 import { Component, DestroyRef, effect, Injector, signal, untracked, viewChild, viewChildren, inject } from '@angular/core';
 import { MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem } from '@angular/material/menu';
-import { MatTree, MatTreeNodeDef, MatTreeNode, MatTreeNodeToggle, MatTreeNodePadding } from '@angular/material/tree';
+import { MatTree, MatTreeNodeDef, MatTreeNodeToggle, MatTreeNodePadding } from '@angular/material/tree';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { createPrependedLogger } from '../../../src-shared/log/create-prepended-logger';
 import { logged } from '../../../src-shared/log/logged-line';
@@ -18,6 +18,7 @@ import { dirTreeViewContextMenuItems } from './dir-tree-view-context-menu/dir-tr
 import { DirTreeViewFolderCheckboxAndNameComponent } from './dir-tree-view-folder-checkbox-and-name/dir-tree-view-folder-checkbox-and-name.component';
 import { dirTreeViewKeyManagerFactory } from './dir-tree-view-key-manager';
 import { DirTreeViewNodeSelection } from './dir-tree-view-node-selection';
+import { DirTreeViewNodePositions, DirTreeViewTreeNodeDirective } from './dir-tree-view-tree-node.directive';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { DirectoryTreeViewSelectionService } from './directory-tree-view-selection.service';
 import { DirTreeViewSortConfig } from './dir-tree-view-sort/dir-tree-view-sort-config';
@@ -35,8 +36,9 @@ export const revealHighlightMs = 3000;
   selector: 'app-directory-tree-view',
   templateUrl: 'directory-tree-view.component.html',
   styleUrls: ['directory-tree-view.component.scss'],
+  // DirTreeViewTreeNodeDirective is the rows' tree node, in place of MatTreeNode, which is not imported (see its comment).
   imports: [
-    MatTree, MatTreeNodeDef, MatTreeNode, MatTreeNodeToggle, MatTreeNodePadding, MatIconButton,
+    MatTree, MatTreeNodeDef, DirTreeViewTreeNodeDirective, MatTreeNodeToggle, MatTreeNodePadding, MatIconButton,
     PhotoInfoViewerComponent, MatIcon, MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem,
     TranslatePipe, NearViewDirective, DirTreeViewCheckboxAndNameComponent, DirTreeViewFolderCheckboxAndNameComponent,
   ],
@@ -45,6 +47,8 @@ export const revealHighlightMs = 3000;
     { provide: TREE_KEY_MANAGER, useValue: dirTreeViewKeyManagerFactory },
     // The selection, which the rows' components read their nodes' states from.
     DirTreeViewNodeSelection,
+    // Where each node is among its siblings, which the rows' tree nodes read for aria-posinset.
+    DirTreeViewNodePositions,
   ],
 })
 export class DirectoryTreeViewComponent {
@@ -67,6 +71,7 @@ export class DirectoryTreeViewComponent {
   public readonly hasChildren = (_: number, node: NestedNode) => this.isExpandable(node);
   private readonly tree = viewChild.required<MatTree<NestedNode>>('tree');
   private readonly selection = inject(DirTreeViewNodeSelection);
+  private readonly positions = inject(DirTreeViewNodePositions);
   // The parent of every node of the tree, shown or not, and null for the root. Its keys are all the nodes.
   private readonly parentNodes = new Map<NestedNode, NestedNode | null>();
 
@@ -116,6 +121,7 @@ export class DirectoryTreeViewComponent {
   private handleDirectoryTreeViewDataReplaced(data: NestedNode[]) {
     this.collapsePreviousFolder();
     this.selection.replace(data);
+    this.positions.replace(data);
     this.parentNodes.clear();
     this.addParentNodes(data, null);
     this.treeData.set(data);
@@ -162,6 +168,7 @@ export class DirectoryTreeViewComponent {
 
   private sortData(sortConfig: DirTreeViewSortConfig) {
     const sortedData = this.sortService.sortData(this.treeData(), sortConfig);
+    this.positions.replace(sortedData);
     this.treeData.set([...sortedData]); // A new array, as sortData() sorts the children of the same nodes in place.
   }
 
@@ -236,7 +243,7 @@ export class DirectoryTreeViewComponent {
 
   //#region --- Reveal ---
   /** The rows that the tree shows, each with its node as its data. */
-  private readonly treeNodes = viewChildren(MatTreeNode);
+  private readonly treeNodes = viewChildren(DirTreeViewTreeNodeDirective);
   /**
    * The row that was revealed last, while it is highlighted: its node, and which of the highlight's two animations it
    * has (see the styles), so that a row revealed again while it is highlighted starts its highlight anew.

@@ -106,6 +106,24 @@ patch. It checks only the launch: the quit hook's process is detached and its
 output discarded, so a failure there would only leave the temporary profile
 behind. Check that site in the release's source.
 
+**`DirTreeViewTreeNodeDirective`**
+(`src/app/directory-tree-view/dir-tree-view-tree-node.directive.ts`) overrides
+`_getPositionInSet()` of the CDK's tree node, which its leading underscore
+keeps out of the CDK's public API, so that the folder tree answers a click or a
+key in time with tens of
+thousands of photos in a folder. The CDK searches a row's siblings for the
+row's `aria-posinset` each time that Angular checks the row, and every click and
+key in the tree has Angular check every row: with 40,000 photos in a folder, a
+click took 1.6 s for that alone, and the time grows with the square of the
+photos ([record](../tasks/20261120_tree-aria-posinset-linear/STATUS.md)). The
+directive looks the position up instead.
+
+Remove the directive when the CDK's tree finds a node's position without
+searching: check `_getPositionInSet()` of `CdkTree` in
+`@angular/cdk/fesm2022/tree.mjs` on each upgrade of the CDK. Until then, the
+folder tree's unit tests fail when an upgrade has the CDK's bindings stop
+calling the node's `_getPositionInSet()`, or call the tree's.
+
 
 ## Electron binary
 

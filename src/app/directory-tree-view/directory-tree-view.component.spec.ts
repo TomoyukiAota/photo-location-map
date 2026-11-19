@@ -9,6 +9,8 @@ import { PhotoDataService } from '../shared/service/photo-data.service';
 import { PhotoRevealService } from '../shared/service/photo-reveal.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
 import { DirTreeViewNodeSelection } from './dir-tree-view-node-selection';
+import { DirTreeViewSortService } from './dir-tree-view-sort/dir-tree-view-sort.service';
+import { DirTreeViewTreeNodeDirective } from './dir-tree-view-tree-node.directive';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { DirectoryTreeViewSelectionService } from './directory-tree-view-selection.service';
 import { DirectoryTreeViewComponent, revealHighlightMs } from './directory-tree-view.component';
@@ -152,6 +154,29 @@ describe('DirectoryTreeViewComponent', () => {
     await fixture.whenStable();
 
     expect(tree.isExpanded(photo)).toBe(false);
+  });
+
+  it('gives each row where it is among its siblings, and how many they are, in their order after a sort too', async () => {
+    const sub = node('/folder/sub', [node('/folder/sub/c.jpg')]);
+    const folder = node('/folder', [node('/folder/b.jpg'), node('/folder/a.jpg'), sub]);
+    const rows = () => Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('mat-tree-node'))
+      .map(row => [row.querySelector('bdi').textContent, row.getAttribute('aria-posinset'), row.getAttribute('aria-setsize')]);
+    dataService.dataReplaced.next([folder]);
+    await fixture.whenStable();
+    tree.expand(sub);
+    await fixture.whenStable();
+
+    // By name, the folders first.
+    expect(rows()).toEqual([
+      ['folder', '1', '1'], ['sub', '1', '3'], ['c.jpg', '1', '1'], ['a.jpg', '2', '3'], ['b.jpg', '3', '3'],
+    ]);
+
+    TestBed.inject(DirTreeViewSortService).setSortDirection('Descending');
+    await fixture.whenStable();
+
+    expect(rows()).toEqual([
+      ['folder', '1', '1'], ['sub', '1', '3'], ['c.jpg', '1', '1'], ['b.jpg', '2', '3'], ['a.jpg', '3', '3'],
+    ]);
   });
 
   describe('revealing a photo from the map', () => {
@@ -353,6 +378,20 @@ describe('DirectoryTreeViewComponent, as Angular checks it after a change of the
     expect(checkboxOf('b.jpg').checked).toBe(false);
     expect(checkboxOf('folder').indeterminate).toBe(true);
     expect(TestBed.inject(SelectedPhotoService).selectedPhotos().map(each => each.path)).toEqual(['/folder/a.jpg', '/folder/c.jpg']);
+  });
+
+  it('by a click has each row\'s tree node give its position to both bindings of aria-posinset, without a search', async () => {
+    // CdkTree's, which searches the node's siblings, and the row's tree node's, which looks the position up.
+    const searched = vi.spyOn(fixture.debugElement.query(By.directive(MatTree)).componentInstance as MatTree<NestedNode>, '_getPositionInSet');
+    const lookedUp = vi.spyOn(DirTreeViewTreeNodeDirective.prototype, '_getPositionInSet');
+    checkboxOf('b.jpg').click();
+    await fixture.whenStable();
+
+    const askedRows = lookedUp.mock.contexts.map(each => (each as DirTreeViewTreeNodeDirective).data.name);
+    const timesAsked = Object.fromEntries(['folder', 'a.jpg', 'b.jpg', 'c.jpg'].map(name => [name, askedRows.filter(each => each === name).length]));
+    expect(timesAsked).toEqual({ 'folder': 2, 'a.jpg': 2, 'b.jpg': 2, 'c.jpg': 2 });
+    expect(lookedUp.mock.results.map(each => each.value)).toEqual(expect.arrayContaining([1, 2, 3]));
+    expect(searched).not.toHaveBeenCalled();
   });
 
   it('requested outside the tree checks no row\'s node, and the rows that it changes only', async () => {
