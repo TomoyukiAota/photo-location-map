@@ -13,6 +13,8 @@
     It has no matTreeNodeToggle, which a folder's button has: a click on the row, a click on its checkbox too, would
     expand or collapse the file in the tree's state, which shows nothing for a file but has the tree go through all of
     its nodes again and check every row (docs/tasks/20261119_checkbox-checks-changed-rows/STATUS.md).
+    Each mat-tree-node, a file's or a folder's, is a DirTreeViewTreeNodeDirective, which looks up where the row is
+    among its siblings, where MatTreeNode would search them.
   -->
   <mat-tree-node *matTreeNodeDef="let node"
                  matTreeNodePadding
