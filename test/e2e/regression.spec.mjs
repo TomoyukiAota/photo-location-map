@@ -2146,6 +2146,51 @@ test('Select Previous and Select Next go through the photos in the order they we
   await page.keyboard.press('ArrowLeft');
   await expect(kobe).toHaveAttribute('aria-expanded', 'false');
 });
+test('Select Previous and Select Next scroll the sidebar to the selected photo\'s row only when the sidebar does not show all of it', async () => {
+  // Copies of one photo, all taken at the same time, so that their names order them: twelve in a folder, which go
+  // further down than the sidebar shows, and three in the next folder.
+  const folder = path.join(profile, 'two days');
+  const pathOf = number => path.join(folder, number <= 12 ? 'day 1' : 'day 2', `photo ${String(number).padStart(2, '0')}.JPG`);
+  for (let number = 1; number <= 15; number++) {
+    await mkdir(path.dirname(pathOf(number)), { recursive: true });
+    await copyFile(path.join(photoFolder, 'Gold Coast/IMG_1579.JPG'), pathOf(number));
+  }
+  await dismissWelcome();
+  await openFolderWithPicker(folder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('15 files have location data.');
+  const step = id => app.evaluate(({ Menu }, id) => Menu.getApplicationMenu().getMenuItemById(id).click(), id);
+  const selectOnly = number => page.evaluate(photo => window.plmInternalRenderer.photoSelection.selectOnlyThis(photo), pathOf(number));
+  const folderRow = name => page.locator('mat-tree-node').filter({ has: page.getByText(name, { exact: true }) });
+  const row = number => page.locator('mat-tree-node.leaf-tree-node').filter({ hasText: path.basename(pathOf(number)) });
+  const scrollTop = () => page.locator('#home-sidebar-lower-pane').evaluate(pane => pane.scrollTop);
+  await expect(folderRow('day 1')).toHaveAttribute('aria-expanded', 'false');
+
+  // A step into a folder expands it. The sidebar shows all of the folder's second row, so it stays where it is.
+  await selectOnly(1);
+  await expectRepresentedPhotos(1);
+  await step('photo-selection-select-next');
+  await expect(row(2)).toHaveAttribute('data-reveal-highlight', /./);
+  await expect(folderRow('day 1')).toHaveAttribute('aria-expanded', 'true');
+  await expect(row(2)).toBeInViewport({ ratio: 1 });
+  expect(await scrollTop()).toBe(0);
+  // Below the middle of what the sidebar shows, where Reveal in Sidebar would have scrolled it.
+  expect(await row(2).evaluate(element => {
+    const pane = element.closest('#home-sidebar-lower-pane');
+    const box = element.getBoundingClientRect();
+    return box.top + box.height / 2 > pane.getBoundingClientRect().top + pane.clientTop + pane.clientHeight / 2;
+  })).toBe(true);
+
+  // A step to a row below what the sidebar shows scrolls there, and the row lights up once the sidebar has stopped.
+  await selectOnly(12);
+  await expectRepresentedPhotos(1);
+  await expect(folderRow('day 2')).not.toBeInViewport();
+  await step('photo-selection-select-next');
+  await expect(row(13)).toHaveAttribute('data-reveal-highlight', /./);
+  await expect(folderRow('day 2')).toHaveAttribute('aria-expanded', 'true');
+  await expect(row(13)).toBeInViewport({ ratio: 1 });
+  expect(await scrollTop()).toBeGreaterThan(0);
+  await expect(treeCheckbox('photo 13.JPG')).toBeChecked();
+});
 test('the sort menu orders the tree by name and by shooting time, shows its choice, and keeps it across a restart', async () => {
   // Photos named against the order they were taken in (Apple Park 2019, Kobe 2017, Unga 2015, Gold Coast 2013), so
   // that sorting by name and by shooting time give different orders, and two folders, which always sort by name.
