@@ -13,8 +13,9 @@
 //   English names of Windows' two buttons), which i18n.js keeps on one;
 // - the language picker's button on two lines, and its box outside a window of 320 pixels, with its line for a
 //   search that finds no language on two lines or the search field's hint wider than the field;
-// - the picker's first entry, "Use browser setting" with the name of the browser's language, on two lines in a
-//   desktop's window, where the box can grow with it.
+// - the picker's first entry, "Use browser setting", on two lines in a desktop's window, where the box can grow with
+//   it. The entry is in the browser's language, so each page is shown in a browser in the page's language, and the
+//   entry of each language is looked at with its page.
 // It prints the findings and writes everything to measurements.json in the output folder (the system's temporary
 // folder, or --output). With --pictures, it also writes a picture of each page in each language at 390 and 1000
 // pixels, landing-390-<code>.png and so on, with the video and the two pictures of Windows made low, as they are
@@ -151,10 +152,17 @@ try {
     && [...document.images].every(image => image.complete && image.naturalWidth > 0), language);
   // The landing page in the language, and the download page with the language in its address.
   const pages = { landing: code => `${code}/`, downloading: code => `github-pages/downloading-for-windows/downloading-for-windows.html?lang=${code}` };
+  // The browser's languages, which i18n.js reads from navigator, as a browser in a language gives them.
+  let browserLanguages;
 
   for (const { code } of languages) {
     if (only && !only.includes(code)) continue;
     results[code] = {};
+    await browserLanguages?.dispose();
+    browserLanguages = await page.addInitScript(code => {
+      Object.defineProperty(navigator, 'languages', { get: () => Object.freeze([code]) });
+      Object.defineProperty(navigator, 'language', { get: () => code });
+    }, code);
     for (const [name, address] of Object.entries(pages)) {
       await setWidth(1000);
       await page.goto(`${base}${address(code)}`, { waitUntil: 'load' });
@@ -170,8 +178,8 @@ try {
         await setWidth(1000);
         await page.locator('.language-button').click();
         results[code].pickerList = await page.evaluate(() => {
-          // The lines by the entry's height, as the name of the language in it is set in another font, whose boxes
-          // stand higher or lower on the same line.
+          // The lines by the entry's height, as a text can be set in several fonts, whose boxes stand higher or lower
+          // on the same line.
           const entry = document.querySelector('#language-option-browser');
           const style = getComputedStyle(entry);
           const height = entry.getBoundingClientRect().height - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);

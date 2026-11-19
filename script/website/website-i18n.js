@@ -17,6 +17,6 @@ const module = { exports: {} };
 vm.runInThisContext(`(function (module) {${readFileSync(file, 'utf8')}\n})`, { filename: file })(module);
 
 export const {
-  languages, defaultLanguage, matchLanguage, resolveLanguage, followsBrowser, languageParts, linkParts, textOf,
-  foldForSearch, searchFinds, matchesSearch, putTexts,
+  languages, browserSettingLabels, defaultLanguage, matchLanguage, resolveLanguage, followsBrowser, withLanguage, linkParts,
+  textOf, foldForSearch, searchFinds, matchesSearch, putTexts,
 } = module.exports;

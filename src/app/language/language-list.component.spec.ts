@@ -4,14 +4,17 @@ import { languages, LanguageSetting } from '../../../src-shared/i18n/languages';
 import { startupMetadata } from '../../../src-shared/startup/startup-metadata';
 import { LanguageListComponent } from './language-list.component';
 
-// The tests run in English, the operating system's language of the bridge's stand-in.
+// The tests run in English, the operating system's language of the bridge's stand-in. A case can give the operating
+// system other languages, which the first entry is written in, while the application stays in English.
 describe('LanguageListComponent', () => {
   const platformInUse = startupMetadata().platform;
+  const systemLanguagesInUse = startupMetadata().systemLanguages;
   const systemLanguageEntry = 'Use system setting (English)';
   let fixture: ComponentFixture<LanguageListComponent>;
 
   afterEach(() => {
     startupMetadata().platform = platformInUse;
+    startupMetadata().systemLanguages = systemLanguagesInUse;
   });
 
   function host(): HTMLElement {
@@ -26,11 +29,12 @@ describe('LanguageListComponent', () => {
     return host().querySelector('input[type="search"]');
   }
 
-  /** The entries of the list, with the text and the language of their names. */
+  /** The entries of the list, with the text, the language and the direction of their names. */
   function items() {
     return Array.from(listbox().querySelectorAll<HTMLElement>('[role="option"]')).map(element => ({
       label: element.textContent.trim(),
       labelLanguage: element.getAttribute('lang'),
+      labelDirection: element.querySelector('bdi').getAttribute('dir'),
       selected: element.getAttribute('aria-selected') === 'true',
       element,
     }));
@@ -44,9 +48,13 @@ describe('LanguageListComponent', () => {
     return items().filter(item => item.selected).map(item => item.label);
   }
 
-  /** Creates the list on `platform`, which the entry of the operating system's language is named after. */
-  async function create(selected: LanguageSetting, platform = 'linux') {
+  /**
+   * Creates the list on `platform`, which the entry of the operating system's language is named after, with
+   * `systemLanguages`, the operating system's languages, which that entry is written in.
+   */
+  async function create(selected: LanguageSetting, platform = 'linux', systemLanguages = ['en-US']) {
     startupMetadata().platform = platform;
+    startupMetadata().systemLanguages = systemLanguages;
     await TestBed.configureTestingModule({ imports: [LanguageListComponent] }).compileComponents();
     fixture = TestBed.createComponent(LanguageListComponent);
     fixture.componentRef.setInput('selected', selected);
@@ -69,6 +77,8 @@ describe('LanguageListComponent', () => {
     await create('auto');
     expect(labels()).toEqual([systemLanguageEntry, ...languages.map(language => language.name)]);
     expect(items().map(item => item.labelLanguage)).toEqual(['en', ...languages.map(language => language.code)]);
+    // Each in the direction of its language: Arabic and Hebrew from right to left.
+    expect(items().map(item => item.labelDirection)).toEqual(['ltr', ...languages.map(language => language.direction)]);
   });
 
   it.each([
@@ -78,6 +88,20 @@ describe('LanguageListComponent', () => {
   ])('on %s, names the operating system\'s language "%s"', async (platform, label) => {
     await create('auto', platform);
     expect(labels()[0]).toBe(label);
+  });
+
+  // The application is in English in these, and the operating system in another language.
+  it.each([
+    ['ja-JP', 'darwin', 'macOS の設定に従う（日本語）', 'ja', 'ltr'],
+    // The name of the language is a value of the text: between U+2068 and U+2069 in a language written from right to left.
+    ['ar-SA', 'win32', 'استخدام إعداد Windows (\u2068العربية\u2069)', 'ar', 'rtl'],
+    // A language that the application does not have: the entry stands for English, and is written in it.
+    ['is-IS', 'darwin', 'Use macOS setting (English)', 'en', 'ltr'],
+  ])('on a computer in %s, writes the operating system\'s entry in the language that it stands for, whatever the application\'s language is', async (
+    systemLanguage, platform, label, labelLanguage, labelDirection) => {
+    await create('auto', platform, [systemLanguage]);
+    expect(items()[0]).toMatchObject({ label, labelLanguage, labelDirection, selected: true });
+    expect(labels().slice(1)).toEqual(languages.map(language => language.name));
   });
 
   it('is a list box of which one entry is chosen', async () => {
@@ -153,6 +177,28 @@ describe('LanguageListComponent', () => {
       // The first entry is found by its text, which names the language that it stands for.
       await search('english');
       expect(labels()).toEqual([systemLanguageEntry, 'English']);
+    });
+
+    it('finds the operating system\'s entry by its text in that language, and by its text in the application\'s', async () => {
+      await create('auto', 'darwin', ['ja-JP']);
+      const entry = 'macOS の設定に従う（日本語）';
+
+      await search('設定に従う');
+      expect(labels()).toEqual([entry]);
+
+      // What the entry says in English, the application's language: "Use macOS setting (日本語)".
+      await search('setting');
+      expect(labels()).toEqual([entry]);
+
+      await search('日本');
+      expect(labels()).toEqual([entry, '日本語']);
+    });
+
+    it('finds the operating system\'s entry in Arabic by its text as it reads, without the characters that keep the name on its own', async () => {
+      await create('auto', 'darwin', ['ar-SA']);
+
+      await search('macOS (العربية)');
+      expect(labels()).toEqual(['استخدام إعداد macOS (\u2068العربية\u2069)']);
     });
 
     it('compares without regard to case, diacritics or the spaces around what is typed', async () => {
