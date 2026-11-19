@@ -426,15 +426,18 @@ describe('PhotoInfoViewerComponent', () => {
         await click(button('More Options'));
         await closed();
 
-        // What is pressed then is pressed too: nothing takes the press, which goes on to it.
-        const heard = vi.fn();
-        document.body.addEventListener('pointerdown', heard, { once: true });
         const menu = await open('Selection');
         menu.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true }));
         menus()[0].dispatchEvent(new Event('wheel', { bubbles: true }));
         expect(menus()).toHaveLength(2);
-        document.body.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true }));
-        expect(heard).toHaveBeenCalledOnce();
+        // What is pressed then is pressed too: nothing takes the press, which goes on to it. Listened for only now, as
+        // the presses in the menu above reach the page's body too.
+        const heard = vi.fn();
+        document.body.addEventListener('pointerdown', heard, { once: true });
+        const pressElsewhere = new MouseEvent('pointerdown', { bubbles: true, cancelable: true });
+        document.body.dispatchEvent(pressElsewhere);
+        expect(heard).toHaveBeenCalledExactlyOnceWith(pressElsewhere);
+        expect(pressElsewhere.defaultPrevented).toBe(false);
         await closed();
 
         await open();
