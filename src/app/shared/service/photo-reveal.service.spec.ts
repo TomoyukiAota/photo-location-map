@@ -5,7 +5,7 @@ import { DirectoryTreeViewSelectionService } from '../../directory-tree-view/dir
 import { DateTimeOriginal } from '../model/date-time-original';
 import { Exif } from '../model/exif.model';
 import { Photo } from '../model/photo.model';
-import { PhotoRevealService, SidebarRevealRequest } from './photo-reveal.service';
+import { PhotoRevealService } from './photo-reveal.service';
 import { PinnedPhotoService } from './pinned-photo.service';
 import { SelectedPhotoService } from './selected-photo.service';
 
@@ -97,18 +97,14 @@ describe('PhotoRevealService', () => {
     expect(names(pinnedPhotoService.pinnedPhotos())).toEqual(['2013.jpg', 'unknown.jpg']);
   });
 
-  it('asks the tree to reveal a photo, without changing the selection: in the middle of the sidebar, or where the sidebar shows it after a step', () => {
-    const revealedInSidebar: SidebarRevealRequest[] = [];
+  it('asks the tree to reveal a photo, without changing the selection', () => {
+    const revealedInSidebar: Photo[] = [];
     service.revealInSidebarRequested.subscribe(each => revealedInSidebar.push(each));
     selectedPhotoService.setSelectedPhotos([in2013]);
 
     service.revealInSidebar(in2013);
-    service.showSteppedToInSidebar(in2013.path);
 
-    expect(revealedInSidebar).toEqual([
-      { photoPath: in2013.path, toMiddleEvenWhenShown: true },
-      { photoPath: in2013.path, toMiddleEvenWhenShown: false },
-    ]);
+    expect(revealedInSidebar).toEqual([in2013]);
     expect(names(selectedPhotoService.selectedPhotos())).toEqual(['2013.jpg']);
   });
 });

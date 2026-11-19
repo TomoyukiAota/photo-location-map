@@ -46,7 +46,7 @@ function comparePaths(a: string, b: string): number {
  * by name for photos taken at the same time, as in the tree (dir-tree-view-sort-comparison.ts). Photos of the same
  * time and name, in two subfolders, are in the order of their paths. It is made from the tree that the folder opened
  * with, once it is needed, and kept until another folder opens. The selected photo's row of the tree is shown, as
- * Reveal in Sidebar shows a row, and the sidebar scrolls to it only when it does not show it.
+ * Reveal in Sidebar shows a row.
  */
 @Service()
 export class SelectPreviousNextService {
@@ -110,7 +110,9 @@ export class SelectPreviousNextService {
    */
   public select(photoPath: string): void {
     this.directoryTreeViewSelectionService.select([photoPath]);
-    this.photoRevealService.showSteppedToInSidebar(photoPath);
+    const photo = this.photoDataService.getPhoto(photoPath);
+    if (photo)
+      this.photoRevealService.revealInSidebar(photo);
   }
 
   /** The Selection menu's Select Previous: nothing when it does not apply, as when the selection changed meanwhile. */
