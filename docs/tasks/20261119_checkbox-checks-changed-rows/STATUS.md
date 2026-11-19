@@ -68,9 +68,9 @@ Five things made it, the last of which a request to select, as Undo's, has too:
   Enter from the checkbox, and prevented their default; Enter does nothing on a checkbox. Nothing else that a key or a
   click does changed: the same script, in both builds, found the focus where it was after each key and click.
 - `test/performance/tree-rows.mjs` measures `undoMs`: from Undo or Redo in the Selection menu, which change the
-  selection of the row that `checkboxMs` clicks, to the frame that shows it. It scrolls before the clicks and Undo,
-  which take another time in another build, so that the scrolling follows the same work in every build
-  (Measurements).
+  selection of the row that `checkboxMs` clicks, to the frame after it shows, as `checkboxMs` is timed. It scrolls
+  before the clicks and Undo, which take another time in another build, so that the scrolling follows the same work in
+  every build (Measurements), then goes back to the top, where the row that it clicks is in view.
 
 ## What is left: the tree node's `aria-posinset`
 
@@ -86,51 +86,55 @@ CDK, which AGENTS.md ("Stay on the documented setup") leaves to a needed feature
 
 `test/performance/tree-rows.mjs` of this change, the production build of `main` (fae3baa7) and the build with this
 change, each in a checkout of its own, in turns, on macOS (Apple Silicon). Other work shared the computer, an
-evaluation of another project, which took two to four cores and made the load average over a minute vary a lot; the
-range of it is given with each series. So every time is longer than on a quiet computer, and varies with that load.
-The medians are of interleaved trials, with the range of the trials in parentheses.
+evaluation of another project, which took two to four cores and made the load average over a minute vary; its range
+is given with each series. So every time is longer than on a quiet computer, and varies with that load. The medians
+are of interleaved trials, with the range of the trials in parentheses.
 
-| 2,000 photos, medians of 5 trials, at a load average of 3.9 to 15.8 | Before | Now |
+| 2,000 photos, medians of 5 trials, at a load average of 8.7 to 12.8 | Before | Now |
 | --- | --- | --- |
-| A click on a checkbox, to the frame that shows it (`checkboxMs`) | 43 ms (34–69) | 29 ms (19–48) |
-| Undo or Redo in the Selection menu, to the frame that shows it (`undoMs`) | 276 ms (182–406) | 15 ms (9–26) |
-| The rows made again (`rowsAgainMs`) | 235 ms (206–432) | 364 ms (205–481) |
-| Scrolling: the mean time between frames | 16.7 ms (16.7–19.3) | 17.6 ms (16.7–18.9) |
+| A click on a checkbox, to the frame after it shows (`checkboxMs`) | 71 ms (63–75) | 40 ms (35–42) |
+| Undo or Redo in the Selection menu, to the frame after it shows (`undoMs`) | 354 ms (349–398) | 29 ms (29–32) |
+| The rows made again (`rowsAgainMs`) | 393 ms (349–400) | 406 ms (355–420) |
+| Scrolling: the mean time between frames | 17.6 ms (16.7–19.7) | 16.7 ms (16.7–17.6) |
 | JavaScript heap | 47.6 MB | 45.9 MB |
 | Event listeners | 12,597 | 8,598 |
 
-In the two rounds at the lowest load, 3.9 to 6.9, a click took 34 and 43 ms before and 20 and 19 ms now, Undo or Redo
-187 and 276 ms before and 9 and 13 ms now, the rows were made again in 209 and 235 ms before and 205 and 224 ms now, and
-both builds scrolled at the display's rate. The medians of the rows made again differ by the rounds at a higher load:
-each build was the faster in some of them.
-
-| 10,000 photos, medians of 3 trials, at a load average of 12.1 to 61.6 | Before | Now |
+| 10,000 photos, medians of 3 trials, at a load average of 8.7 to 16.6 | Before | Now |
 | --- | --- | --- |
-| A click on a checkbox, to the frame that shows it (`checkboxMs`) | 817 ms (732–846) | 419 ms (362–434) |
-| Undo or Redo in the Selection menu, to the frame that shows it (`undoMs`) | 9,901 ms (9,670–10,626) | 76 ms (53–89) |
-| The rows made again (`rowsAgainMs`) | 2.82 s (2.78–2.96) | 2.75 s (2.33–2.88) |
-| Scrolling: the mean time between frames | 141.5 ms (140.3–159.9) | 155.2 ms (112.8–159.4) |
+| A click on a checkbox, to the frame after it shows (`checkboxMs`) | 635 ms (608–659) | 333 ms (302–349) |
+| Undo or Redo in the Selection menu, to the frame after it shows (`undoMs`) | 8,180 ms (8,059–8,371) | 121 ms (112–149) |
+| The rows made again (`rowsAgainMs`) | 2.21 s (2.03–2.35) | 2.14 s (2.06–2.14) |
+| Scrolling: the mean time between frames | 111.4 ms (107.1–113.1) | 108.0 ms (105.9–119.8) |
+| Scrolling: the longest time between frames | 300 ms (233–383) | 185 ms (184–267) |
 | JavaScript heap | 170.2 MB | 161.9 MB |
 | Event listeners | 60,597 | 40,598 |
 
-Earlier series, with the script before its last change (below), agree: with 2,000 photos, 7 trials of each at a load
-average of 15.7 to 55.2, a click took 78 ms before and 45 ms now, and Undo or Redo 422 ms and 27 ms; with 10,000, 5
-trials at 7.3 to 62.1, a click 580 ms and 338 ms, and Undo or Redo 7,501 ms and 73 ms, and 3 more at 7.3 to 28.1, a
-click 519 ms and 337 ms, and Undo or Redo 7,993 ms and 69 ms.
+Earlier series agree, with the script before its last changes, which clicked and undid with the row far above the
+view in some, and timed Undo when the checkbox changed rather than at the frame after: with 2,000 photos, a click took
+78 ms before and 45 ms now (7 trials each, at 15.7 to 55.2), then 43 ms and 29 ms (5 trials, at 3.9 to 15.8), and Undo
+or Redo 422 ms and 27 ms, then 276 ms and 15 ms; with 10,000, a click 580 ms and 338 ms (5 trials, at 7.3 to 62.1), 519
+ms and 337 ms (3, at 7.3 to 28.1) and 817 ms and 419 ms (3, at 12.1 to 61.6), and Undo or Redo 7,501 ms and 73 ms,
+7,993 ms and 69 ms, and 9,901 ms and 76 ms. With 10,000 photos, a frame of the page takes about 100 ms, which is most of
+what timing Undo at the frame after adds.
 
-- **A click is shown in 30 to 50% less time**: the click no longer expands the photo, so Angular checks every row once
+- **A click is shown in 40 to 50% less time**: the click no longer expands the photo, so Angular checks every row once
   rather than twice, and the tree does not go through its nodes again.
-- **Undo, Redo and the other requests to select are shown in a fifteenth of the time or less with 2,000 photos, and a
-  hundredth with 10,000**: the counts of the folders change by the photos that change, and Angular checks the rows
+- **Undo, Redo and the other requests to select are shown in a twelfth of the time with 2,000 photos, and a
+  sixty-eighth with 10,000**: the counts of the folders change by the photos that change, and Angular checks the rows
   whose state changed, two for Undo of a click, the photo's and its folder's.
-- **Scrolling is as fast.** In the earlier series, the script scrolled after the clicks and Undo, and the time between
-  frames was 5 to 7% longer now, in most rounds, with or without waiting for the map to render the last selection.
-  The work before it differed: Undo took the page's thread for about 45 s before, and less than a second now. Measured
-  alone, after the same work in each build (three launches of each, each scrolling three times from the top, with
-  10,000 photos, at a load average of 9.3 to 13.7), the first scroll, in which the rows make what they show, had 75.6
-  ms between frames before (72.2–78.5) and 71.0 ms now (68.3–76.2), and the later ones about 20 ms in both.
-  `tree-rows.mjs` now scrolls before the clicks and Undo, so that it follows the same work in every build, as in the
-  tables above, where each build scrolled faster in some rounds.
+- **The rows are made again in a little less time.** In the last series with 2,000 photos, `main` made them again in
+  less time in each of the five rounds, by 2 to 5%, and in the series before, the build with this change did in most
+  rounds. Expanded alone, 10 times in each of three launches of each build, in turns, at a load average of 10.0 to
+  12.7, the folder of 2,000 photos showed its rows in 285 ms before (the middle half of the expansions 264–302) and
+  264 ms now (244–284): a photo's row has one directive fewer, the toggle.
+- **Scrolling is as fast.** In each series above, each build was the faster in some rounds. In the earlier series, the
+  script scrolled after the clicks and Undo, and the time between frames was 5 to 7% longer now, in most rounds, with
+  or without waiting for the map to render the last selection. The work before it
+  differed: Undo took the page's thread for about 45 s before, and less than a second now. Measured alone, after the
+  same work in each build (three launches of each, each scrolling three times from the top, with 10,000 photos, at a
+  load average of 9.3 to 13.7), the first scroll, in which the rows make what they show, had 75.6 ms between frames
+  before (72.2–78.5) and 71.0 ms now (68.3–76.2), and the later ones about 20 ms in both. `tree-rows.mjs` now scrolls
+  before the clicks and Undo, so that it follows the same work in every build, as in the tables above.
 - **The page holds a little less**: each photo's row has two listeners fewer, those of the toggle.
 
 ## Checks
