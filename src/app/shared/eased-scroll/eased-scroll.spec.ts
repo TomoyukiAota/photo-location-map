@@ -74,15 +74,15 @@ describe('EasedScroll', () => {
     vi.useRealTimers();
   });
 
-  /** A box at a distance from the window's top. */
-  function box(top: number, height: number): DOMRect {
-    return { top, height, bottom: top + height, left: 0, right: 300, width: 300, x: 0, y: top, toJSON: () => ({}) };
+  /** A box 300 pixels wide, at a distance from the window's top, and from its left. */
+  function box(top: number, height: number, left = 0): DOMRect {
+    return { top, height, bottom: top + height, left, right: left + 300, width: 300, x: left, y: top, toJSON: () => ({}) };
   }
 
-  /** An element of the box's content, a distance below the content's top. */
+  /** An element of the box's content, a distance below the content's top, and as wide as the box. */
   function elementAt(contentTop: number): HTMLElement {
     const element = scroller.appendChild(document.createElement('div'));
-    element.getBoundingClientRect = () => box(100 + contentTop - scroller.scrollTop, 200);
+    element.getBoundingClientRect = () => box(100 + contentTop - scroller.scrollTop, 200, -scroller.scrollLeft);
     return element;
   }
 
@@ -126,16 +126,28 @@ describe('EasedScroll', () => {
   });
 
   it.each([
-    { from: 0, jumpedTo: middle - 1000 },
-    { from: 9500, jumpedTo: middle + 1000 },
-  ])('jumps from $from to two heights of the box from the element first, when it is farther, and scrolls from there', ({ from, jumpedTo }) => {
+    { from: 0, direction: 1 },
+    { from: 9500, direction: -1 },
+  ])('to an element farther than two heights of the box, from $from, shows a height at each end of the way, eased, and skips its middle', ({ from, direction }) => {
     scroller.scrollTop = from;
     const arrived = vi.fn();
     new EasedScroll().toMiddle(elementAt(3000), arrived);
-    expect(scroller.scrollTop).toBe(jumpedTo);
-    vi.advanceTimersToNextFrame();
-    expect(Math.abs(scroller.scrollTop - jumpedTo)).toBeLessThan(5);
-    expect(topsUntil(arrived).at(-1)).toBe(middle);
+    expect(scroller.scrollTop).toBe(from);
+
+    const tops = topsUntil(arrived);
+    expect(tops.at(-1)).toBe(middle);
+    // Within a height of the box from either end of the way, and never between.
+    expect(tops.every(top => Math.abs(top - from) <= 501 || Math.abs(top - middle) <= 501)).toBe(true);
+    const steps = stepsOf(tops).map(step => direction * step);
+    expect(steps.every(step => step >= 0)).toBe(true);
+    // One step, halfway through, skips the middle. The others are those of an eased scroll of 1,000 pixels.
+    const skip = steps.indexOf(Math.max(...steps));
+    expect(steps[skip]).toBeGreaterThan(1000);
+    expect(skip / steps.length).toBeCloseTo(0.5, 1);
+    const others = steps.filter((_, index) => index !== skip);
+    const longest = Math.max(...others);
+    expect(others[0]).toBeLessThan(longest / 10);
+    expect(others.at(-1)).toBeLessThan(longest / 10);
   });
 
   it('stops where the user\'s own scroll takes it, and has arrived there', () => {
@@ -196,6 +208,58 @@ describe('EasedScroll', () => {
         vi.advanceTimersToNextFrame();
       expect(scroller.scrollTop, end).toBe(top);
       expect(arrived, end).not.toHaveBeenCalled();
+    }
+  });
+
+  describe('asked to scroll only when the box does not show all of the element', () => {
+    it('stays where it is when the box shows all of it, and has arrived at once', () => {
+      scroller.scrollTop = 2800;
+      const arrived = vi.fn();
+      new EasedScroll().toMiddle(elementAt(3000), arrived, { evenWhenShown: false });
+      expect(arrived).toHaveBeenCalledOnce();
+      vi.advanceTimersToNextFrame();
+      expect(scroller.scrollTop).toBe(2800);
+    });
+
+    it('scrolls an element that the box shows only a part of to the middle', () => {
+      scroller.scrollTop = 2650;
+      const arrived = vi.fn();
+      new EasedScroll().toMiddle(elementAt(3000), arrived, { evenWhenShown: false });
+      expect(arrived).not.toHaveBeenCalled();
+      expect(topsUntil(arrived).at(-1)).toBe(middle);
+    });
+
+    it('judges by where a running scroll goes, which goes on there, and has arrived once it stops', () => {
+      scroller.scrollTop = 2000;
+      const toFirst = vi.fn();
+      const toSecond = vi.fn();
+      const easedScroll = new EasedScroll();
+      easedScroll.toMiddle(elementAt(3000), toFirst);
+      for (let frame = 0; frame < 5; frame++)
+        vi.advanceTimersToNextFrame();
+
+      // Shown where the first scroll ends, at 2,850, but not where the box is now.
+      easedScroll.toMiddle(elementAt(3120), toSecond, { evenWhenShown: false });
+      expect(toSecond).not.toHaveBeenCalled();
+      expect(topsUntil(toSecond).at(-1)).toBe(middle);
+      expect(toFirst).not.toHaveBeenCalled();
+      expect(toSecond).toHaveBeenCalledOnce();
+    });
+  });
+
+  it('scrolls sideways to the element when the box shows less than 32 pixels of its width, as scrollIntoView() does', () => {
+    // A long name of another row makes the content wider than the box, which the user has scrolled sideways.
+    let scrollLeft = 0;
+    Object.defineProperties(scroller, {
+      scrollLeft: { get: () => scrollLeft, set: (left: number) => scrollLeft = Math.min(Math.max(left, 0), 400) },
+      clientLeft: { value: 0 },
+      clientWidth: { value: 300 },
+    });
+    // From 260, the box shows 40 pixels of the element; from 290, 10.
+    for (const [from, to] of [[200, 200], [260, 260], [290, 0], [400, 0]]) {
+      scrollLeft = from;
+      new EasedScroll().toMiddle(elementAt(3000), vi.fn());
+      expect(scrollLeft, `from ${from}`).toBe(to);
     }
   });
 

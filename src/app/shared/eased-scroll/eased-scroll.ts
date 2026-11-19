@@ -54,13 +54,31 @@ export function easedScrollDurationMs(distancePx: number): number {
 
 interface RunningScroll {
   readonly scroller: HTMLElement;
-  readonly element: HTMLElement;
+  // The scroll positions where the scroll starts and ends, and 1 when it goes down, -1 when it goes up.
+  readonly from: number;
+  readonly to: number;
+  readonly direction: number;
+  // How far it goes on screen (wayShown()), along which its curve goes from 0.
+  readonly travel: number;
   readonly curve: EasedScrollCurve;
   readonly startedAt: number;
-  readonly arrived: () => void;
+  // The element to show, and what to do once the scroll has ended, which a later element that the scroll's end shows
+  // takes over.
+  element: HTMLElement;
+  arrived: () => void;
   // The scroll position that the scroll set last, which only the user's own scroll changes before the next frame.
   lastTop: number;
   frame: number;
+}
+
+/**
+ * The scroll position of a scroll when its curve has gone `gone` of its travel: all the way along, when the scroll
+ * goes no further than its travel. A longer way is the first and the last halves of its travel, with what is between
+ * skipped at its middle, where it is at its fastest.
+ */
+function positionOf(scroll: Pick<RunningScroll, 'from' | 'to' | 'direction' | 'travel'>, gone: number): number {
+  const { from, to, direction, travel } = scroll;
+  return gone < travel / 2 ? from + direction * gone : to - direction * (travel - gone);
 }
 
 /**
@@ -78,12 +96,33 @@ export class EasedScroll {
    * Scrolls the element to the middle of the box that scrolls it, and calls `arrived` once the scroll has ended, there,
    * or where the user's own scroll stopped it. `arrived` is not called when the element leaves the page, when another
    * scroll takes this one's place, or when stop() ends it.
+   * With `evenWhenShown` false, the box stays where it is when it shows all of the element there, or where the scroll
+   * that is going on takes it: `arrived` is called at once, or when that scroll ends, in place of that scroll's own.
+   * Sideways, the box shows the element, as `scrollIntoView({ inline: 'nearest' })` does, when it shows little or
+   * nothing of the element's width: a long name makes the tree wider than the sidebar, which the user may have
+   * scrolled sideways past the element.
    */
-  public toMiddle(element: HTMLElement, arrived: () => void): void {
+  public toMiddle(element: HTMLElement, arrived: () => void, { evenWhenShown = true }: { evenWhenShown?: boolean } = {}): void {
     const now = performance.now();
     const scroller = scrollerOf(element);
-    const previous = this.running;
-    const speed = previous && previous.scroller === scroller ? previous.curve.speedAt(now - previous.startedAt) : 0;
+    const previous = this.running?.scroller === scroller ? this.running : undefined;
+    if (scroller) {
+      const left = nearestScrollLeft(scroller, element);
+      if (left !== scroller.scrollLeft)
+        scroller.scrollLeft = left;
+    }
+    if (scroller && !evenWhenShown && isFullyShownAt(scroller, element, previous?.to ?? scroller.scrollTop)) {
+      if (previous) {
+        previous.element = element;
+        previous.arrived = arrived;
+      } else {
+        this.stop();
+        arrived();
+      }
+      return;
+    }
+    // Downward, in pixels per millisecond.
+    const speed = previous ? previous.direction * previous.curve.speedAt(now - previous.startedAt) : 0;
     this.stop();
     if (!scroller) {
       // Nothing around it scrolls, as when what is around it shows all of it.
@@ -93,26 +132,25 @@ export class EasedScroll {
     }
 
     const to = middleScrollTop(scroller, element);
-    let from = scroller.scrollTop;
+    const from = scroller.scrollTop;
     if (Math.abs(to - from) < 1 || prefersReducedMotion()) {
       scroller.scrollTop = to;
       arrived();
       return;
     }
-    // TL;DR: An element farther than two heights of the box is jumped to that distance first, and scrolled to from there.
+    // TL;DR: Toward an element farther than two heights of the box, the scroll shows the first height of its way and
+    // the last, and skips what is between at its middle, where it is at its fastest (positionOf()).
     // Details: The rows of the folder tree that the scroll passes come near the sidebar's view on its way, and each one
     // makes its checkbox, thumbnail and buttons when it does, and keeps them (NearViewDirective): a scroll through a
-    // folder of thousands of photos would make them all. Two heights keep the scroll long enough to be seen as one.
-    let startSpeed = speed;
-    const farthest = 2 * scroller.clientHeight;
-    if (Math.abs(to - from) > farthest) {
-      scroller.scrollTop = to - Math.sign(to - from) * farthest;
-      from = scroller.scrollTop;
-      startSpeed = 0;
-    }
-    const curve = new EasedScrollCurve(from, to, durationMs(to - from, startSpeed), startSpeed);
+    // folder of thousands of photos would make them all. Shown in part, the way still starts and ends eased, and takes
+    // as long as a way of two heights.
+    const direction = Math.sign(to - from);
+    const travel = Math.min(Math.abs(to - from), 2 * scroller.clientHeight);
+    const startSpeed = direction * speed;
+    const curve = new EasedScrollCurve(0, travel, durationMs(travel, startSpeed), startSpeed);
     this.running = {
-      scroller, element, curve, arrived, startedAt: now, lastTop: from, frame: requestAnimationFrame(this.step),
+      scroller, from, to, direction, travel, curve, element, arrived, startedAt: now, lastTop: from,
+      frame: requestAnimationFrame(this.step),
     };
   }
 
@@ -136,12 +174,12 @@ export class EasedScroll {
     const stoppedByUser = Math.abs(scroller.scrollTop - running.lastTop) >= 1;
     if (stoppedByUser || elapsed >= curve.durationMs) {
       if (!stoppedByUser)
-        scroller.scrollTop = curve.to;
+        scroller.scrollTop = running.to;
       this.running = undefined;
       running.arrived();
       return;
     }
-    scroller.scrollTop = curve.positionAt(elapsed);
+    scroller.scrollTop = positionOf(running, curve.positionAt(elapsed));
     running.lastTop = scroller.scrollTop;
     running.frame = requestAnimationFrame(this.step);
   };
@@ -178,6 +216,32 @@ function middleScrollTop(scroller: HTMLElement, element: HTMLElement): number {
   const box = element.getBoundingClientRect();
   const top = scroller.scrollTop + box.top + box.height / 2 - shownMiddle;
   return Math.min(Math.max(top, 0), scroller.scrollHeight - scroller.clientHeight);
+}
+
+/** Whether the box shows all of the element's height when it is scrolled to `top`. */
+function isFullyShownAt(scroller: HTMLElement, element: HTMLElement, top: number): boolean {
+  const shownTop = scroller.getBoundingClientRect().top + scroller.clientTop;
+  const box = element.getBoundingClientRect();
+  const elementTop = scroller.scrollTop + box.top - shownTop;
+  return elementTop >= top - 0.5 && elementTop + box.height <= top + scroller.clientHeight + 0.5;
+}
+
+/**
+ * The horizontal scroll position at which the box shows the element, as Chromium's `scrollIntoView({ inline: 'nearest'
+ * })` gives it: where the box is when it shows all of the element's width, or 32 pixels of it, and otherwise with the
+ * element's side that is out of sight at the box's side. Right to left, scrollLeft counts from the right and is 0 or
+ * less, which the subtractions here leave as it is.
+ */
+function nearestScrollLeft(scroller: HTMLElement, element: HTMLElement): number {
+  const shownLeft = scroller.scrollLeft;
+  const shownRight = shownLeft + scroller.clientWidth;
+  const box = element.getBoundingClientRect();
+  const left = shownLeft + box.left - (scroller.getBoundingClientRect().left + scroller.clientLeft);
+  const right = left + box.width;
+  const shownWidth = Math.min(right, shownRight) - Math.max(left, shownLeft);
+  if (shownWidth >= Math.min(32, box.width, scroller.clientWidth))
+    return shownLeft;
+  return left < shownLeft ? left : right - scroller.clientWidth;
 }
 
 function prefersReducedMotion(): boolean {
