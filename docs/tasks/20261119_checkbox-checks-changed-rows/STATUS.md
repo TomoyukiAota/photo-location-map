@@ -82,6 +82,9 @@ paint. Only the CDK can make the bindings linear, for example with the index of 
 `MatTreeNode` that overrides `_getPositionInSet()` would do it here, but it would depend on a private method of the
 CDK, which AGENTS.md ("Stay on the documented setup") leaves to a needed feature or a serious vulnerability. Not done.
 
+The owner chose that override on 2026-11-20, once its time with up to a million photos was measured:
+`docs/tasks/20261120_tree-aria-posinset-linear/STATUS.md`.
+
 ## Measurements
 
 `test/performance/tree-rows.mjs` of this change, the production build of `main` (fae3baa7) and the build with this
