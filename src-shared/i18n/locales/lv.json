@@ -83,6 +83,7 @@
     }
   },
   "dropToOpen": {
+    "hint": "Nometiet, lai atvērtu mapi.",
     "openFolder": "Vai vēlaties atvērt tālāk norādīto mapi?",
     "openFile": "Vai vēlaties atvērt tālāk norādīto failu?"
   },

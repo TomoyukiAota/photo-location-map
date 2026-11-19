@@ -83,6 +83,7 @@
     }
   },
   "dropToOpen": {
+    "hint": "Slip for at åbne mappen.",
     "openFolder": "Vil du åbne mappen nedenfor?",
     "openFile": "Vil du åbne filen nedenfor?"
   },

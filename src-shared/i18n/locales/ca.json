@@ -83,6 +83,7 @@
     }
   },
   "dropToOpen": {
+    "hint": "Deixeu anar per obrir la carpeta.",
     "openFolder": "Voleu obrir la carpeta següent?",
     "openFile": "Voleu obrir el fitxer següent?"
   },

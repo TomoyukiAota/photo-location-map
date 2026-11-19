@@ -83,6 +83,7 @@
     }
   },
   "dropToOpen": {
+    "hint": "Numeskite, kad atidarytumėte aplanką.",
     "openFolder": "Ar norite atidaryti toliau nurodytą aplanką?",
     "openFile": "Ar norite atidaryti toliau nurodytą failą?"
   },

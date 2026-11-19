@@ -83,6 +83,7 @@
     }
   },
   "dropToOpen": {
+    "hint": "Engedje el a mappa megnyitásához.",
     "openFolder": "Megnyitja az alábbi mappát?",
     "openFile": "Megnyitja az alábbi fájlt?"
   },

@@ -83,6 +83,7 @@
     }
   },
   "dropToOpen": {
+    "hint": "Klasörü açmak için bırakın.",
     "openFolder": "Aşağıdaki klasörü açmak istiyor musunuz?",
     "openFile": "Aşağıdaki dosyayı açmak istiyor musunuz?"
   },

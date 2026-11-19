@@ -83,6 +83,7 @@
     }
   },
   "dropToOpen": {
+    "hint": "Jaregin karpeta irekitzeko.",
     "openFolder": "Beheko karpeta ireki nahi duzu?",
     "openFile": "Beheko fitxategia ireki nahi duzu?"
   },

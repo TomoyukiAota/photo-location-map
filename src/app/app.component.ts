@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit, inject } from '@angular/co
 import { recordUnhandledError } from '../../src-shared/analytics/record-error';
 import { Logger } from '../../src-shared/log/logger';
 import { PlmInternalRendererService } from '../global-variables/plm-internal-renderer.service';
+import { DropHintComponent } from './drop-to-open/drop-hint/drop-hint.component';
 import { DropToOpenService } from './drop-to-open/drop-to-open.service';
 import { LanguageDialogAtAppLaunchService } from './language/language-dialog-at-app-launch.service';
 import { PhotoSelectionHistoryService } from './shared/service/photo-selection-history.service';
@@ -12,11 +13,14 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  imports: [RouterOutlet],
+  imports: [DropHintComponent, RouterOutlet],
   // The drag events of the whole window, over a dialog too: a folder or a file dropped on it opens (DropToOpenService).
   host: {
-    '(window:dragenter)': 'dropToOpenService.dragOver($event)',
+    '(window:dragstart)': 'dropToOpenService.dragStart()',
+    '(window:dragend)': 'dropToOpenService.dragEnd()',
+    '(window:dragenter)': 'dropToOpenService.dragEnter($event)',
     '(window:dragover)': 'dropToOpenService.dragOver($event)',
+    '(window:dragleave)': 'dropToOpenService.dragLeave($event)',
     '(window:drop)': 'dropToOpenService.drop($event)',
   },
 })

@@ -83,6 +83,7 @@
     }
   },
   "dropToOpen": {
+    "hint": "Pustite, ak chcete otvoriť priečinok.",
     "openFolder": "Chcete otvoriť nižšie uvedený priečinok?",
     "openFile": "Chcete otvoriť nižšie uvedený súbor?"
   },

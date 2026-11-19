@@ -83,6 +83,7 @@
     }
   },
   "dropToOpen": {
+    "hint": "Kausta avamiseks laske lahti.",
     "openFolder": "Kas soovite avada alloleva kausta?",
     "openFile": "Kas soovite avada alloleva faili?"
   },
