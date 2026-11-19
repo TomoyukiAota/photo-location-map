@@ -5,7 +5,7 @@ import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { languages as websiteLanguages, matchLanguage } from '../../script/website/website-i18n.js';
+import { browserSettingLabels, languages as websiteLanguages, matchLanguage } from '../../script/website/website-i18n.js';
 import { jpegWithEmptyGpsValues } from '../test-util/jpeg-with-empty-gps-values.mjs';
 import { jpegWithLocationOnly } from '../test-util/jpeg-with-location-only.mjs';
 const require = createRequire(import.meta.url);
@@ -676,9 +676,12 @@ test('a language chosen in the Language dialog, and another chosen later in the 
   expect(await page.evaluate(() => document.documentElement.lang)).toBe('ja');
   expect(await menuLabels()).toEqual(menuInJapanese);
   // English, chosen in the Settings dialog, which opens on its Language tab: Save asks, then restarts the application.
+  // The operating system's entry is in English, the operating system's language here, as each language is under its
+  // own name, while the application is in Japanese.
   await settings();
   const languageSettings = page.locator('app-language-settings');
-  await expect(languageSettings.getByRole('option')).toHaveText([systemLanguageInJapanese('English'), ...languageNames]);
+  await expect(languageSettings.getByRole('option')).toHaveText([systemLanguageInEnglish('English'), ...languageNames]);
+  await expect(languageSettings.getByRole('option').first()).toHaveAttribute('lang', 'en');
   await expect(languageSettings.getByRole('option', { name: '日本語', exact: true })).toHaveAttribute('aria-selected', 'true');
   // The list opens where the chosen language is, far down the list.
   await expect(languageSettings.getByRole('option', { name: '日本語', exact: true })).toBeInViewport();
@@ -688,8 +691,11 @@ test('a language chosen in the Language dialog, and another chosen later in the 
   await expect(languageSettings.getByRole('option')).toHaveText(['Deutsch']);
   await languageSearch.fill('見つからない言語');
   await expect(languageSettings.getByRole('status')).toHaveText('言語が見つかりません');
+  // The operating system's entry is found by what it says in Japanese as well.
+  await languageSearch.fill('の設定に従う');
+  await expect(languageSettings.getByRole('option')).toHaveText([systemLanguageInEnglish('English')]);
   await languageSearch.fill('engl');
-  await expect(languageSettings.getByRole('option')).toHaveText([systemLanguageInJapanese('English'), 'English']);
+  await expect(languageSettings.getByRole('option')).toHaveText([systemLanguageInEnglish('English'), 'English']);
   const save = page.getByRole('button', { name: '保存', exact: true });
   const restartNotice = page.locator('app-settings-dialog').getByText('設定を保存すると、このアプリは再起動します。');
   await expect(save).toBeDisabled();
@@ -895,6 +901,40 @@ test('on a computer whose language is Arabic, the application is laid out from r
     { label: 'مساعدة', items: [...(isMac ? [] : ['حول Photo Location Map']),
       'إظهار مربع حوار الترحيب', 'القائمة المتقدمة', 'فتح مجلد السجلات', 'إظهار/إخفاء أدوات المطوّرين'] },
   ]);
+});
+test('on a computer whose language is Arabic, the application in English lists the operating system\'s entry in Arabic, from right to left', async () => {
+  await launchAsNew({ env: { PLM_TEST_SYSTEM_LANGUAGES: 'ar-SA,en-US' } });
+  // English, as a user chooses it in the Settings dialog: the application is in it from its next launch.
+  await page.evaluate(() => Promise.all([window.plm.storage.write(['UserSettings', 'Language'], 'en'),
+    window.plm.storage.write(['History', 'ClickedOkOnLanguageDialog'], 'true')]));
+  await app.close();
+  await launch({ env: { PLM_TEST_SYSTEM_LANGUAGES: 'ar-SA,en-US' } });
+  await dismissWelcome();
+  expect(await page.evaluate(() => [document.documentElement.lang, document.documentElement.dir])).toEqual(['en', 'ltr']);
+  await settings();
+  const languageSettings = page.locator('app-language-settings');
+  const options = languageSettings.getByRole('option');
+  // The entry is in Arabic, the operating system's language, as each language is under its own name. The name of the
+  // language is a value of its text, between U+2068 and U+2069.
+  const systemInArabic = `استخدام إعداد ${operatingSystemName ?? 'النظام'} (\u2068العربية\u2069)`;
+  await expect(options).toHaveText([systemInArabic, ...languageNames]);
+  const systemEntry = options.first();
+  await expect(systemEntry).toHaveAttribute('lang', 'ar');
+  await expect(languageSettings.getByRole('option', { name: 'English', exact: true })).toHaveAttribute('aria-selected', 'true');
+  // It is written from right to left, and starts where the lines of the list start, at the left, as the entry of
+  // Arabic does. The two are measured in one frame, as the dialog may still be growing while it opens.
+  await expect(systemEntry.locator('bdi')).toHaveCSS('direction', 'rtl');
+  const [systemLeft, arabicLeft] = await languageSettings.evaluate(settings => ['auto', 'ar']
+    .map(setting => settings.querySelector(`[data-setting="${setting}"] bdi`).getBoundingClientRect().left));
+  expect(systemLeft).toBeCloseTo(arabicLeft, 1);
+  // The search finds it by what it says in English as well, and by its own words.
+  const search = languageSettings.getByRole('searchbox', { name: 'Search' });
+  await search.fill('setting');
+  await expect(options).toHaveText([systemInArabic]);
+  await search.fill('إعداد');
+  await expect(options).toHaveText([systemInArabic]);
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await expect(page.locator('app-settings-dialog')).toHaveCount(0);
 });
 test('map regions preserve drawing, removal and real photo selection', async () => {
   await page.addInitScript(() => {
@@ -3187,18 +3227,19 @@ test('download website is in the language of its address, and in the one chosen 
     const search = pickerBox.getByRole('searchbox', { name: '検索' });
     await expect(search).toBeFocused();
     await expect(search).toHaveAttribute('placeholder', '検索');
-    // "Use browser setting", with the language that the browser stands for, as the application's list has the
-    // operating system's: the language of the computer that the suite runs on. Then the application's languages, in
-    // the order of its list. With more of them than the box shows, the list scrolls: it ends half an entry down, so
-    // that it is seen to go on, and shows the chosen language. The address asked for Japanese, so the page does not
-    // follow the browser.
+    // "Use browser setting", written in the language that the browser stands for and with its name, as the
+    // application's list has the operating system's: the language of the computer that the suite runs on. Then the
+    // application's languages, in the order of its list. With more of them than the box shows, the list scrolls: it
+    // ends half an entry down, so that it is seen to go on, and shows the chosen language. The address asked for
+    // Japanese, so the page does not follow the browser.
     const browserCode = matchLanguage(await page.evaluate(() => navigator.languages)) ?? 'en';
     const browserName = websiteLanguages.find(language => language.code === browserCode).name;
     const options = pickerBox.getByRole('listbox', { name: '言語' }).getByRole('option');
     const languageOptions = pickerBox.locator('.language-option[data-code]');
     const optionOf = name => pickerBox.getByRole('option', { name, exact: true });
     const browserEntry = pickerBox.locator('#language-option-browser');
-    await expect(options).toHaveText([`ブラウザの設定に従う（${browserName}）`, ...languageNames]);
+    await expect(options).toHaveText([browserSettingLabels[browserCode], ...languageNames]);
+    await expect(browserEntry).toHaveAttribute('lang', browserCode);
     await expect(optionOf('日本語')).toHaveAttribute('aria-selected', 'true');
     await expect(browserEntry).toHaveAttribute('aria-selected', 'false');
     await expect(pickerBox.locator('[role="option"][aria-selected="true"]')).toHaveCount(1);
@@ -3222,9 +3263,10 @@ test('download website is in the language of its address, and in the one chosen 
       await search.fill(typed);
       await expect(languageOptions.filter({ visible: true })).toHaveText(found);
     }
-    // The first entry is found by its words, as the application's is.
+    // The first entry is found by its words in the page's language, as the application's is, whatever language it is
+    // written in.
     await search.fill('ブラウザ');
-    await expect(options.filter({ visible: true })).toHaveText([`ブラウザの設定に従う（${browserName}）`]);
+    await expect(options.filter({ visible: true })).toHaveText([browserSettingLabels[browserCode]]);
     await search.fill('xyz');
     await expect(options.filter({ visible: true })).toHaveCount(0);
     await expect(pickerBox.getByRole('status')).toHaveText('言語が見つかりません');
@@ -3417,9 +3459,9 @@ test('download website is in the language of its address, and in the one chosen 
     await expect(chosenOnButton).toHaveText('العربية');
     await pickerButton.click();
     await expect(pickerBox.getByRole('searchbox', { name: 'بحث' })).toBeFocused();
-    // The first entry is worded in the page's language, around the name of the browser's language in its own.
-    await expect(browserEntry).toHaveText(`استخدام إعداد المتصفح (${browserName})`);
-    await expect(browserEntry.locator('bdi bdi')).toHaveAttribute('lang', browserCode);
+    // The first entry is in the browser's language, on a page in Arabic as on any other.
+    await expect(browserEntry).toHaveText(browserSettingLabels[browserCode]);
+    await expect(browserEntry).toHaveAttribute('lang', browserCode);
     const buttonInArabic = await pickerButton.boundingBox();
     const boxInArabic = await pickerBox.boundingBox();
     expect(buttonInArabic.x + buttonInArabic.width).toBeLessThan(600);
@@ -3501,6 +3543,140 @@ test('download website is in the language of its address, and in the one chosen 
     await expect.poll(() => websiteEvents('Changed Language Setting'))
       .toEqual([expect.objectContaining({ languageSetting: 'ja', languageInUse: 'ja' })]);
   } finally {
+    // The other cases have the requests for GitHub's installers cancelled again.
+    await app.evaluate(() => { delete globalThis.__plmInstallerRedirect; }).catch(() => {});
+    await website.close();
+  }
+});
+test('the website\'s language picker has its first entry in the browser\'s language, whatever language the page is in', async () => {
+  test.skip(!!packagedExecutable, 'The static website is verified separately from the packaged application.');
+  const website = await serveWebsite();
+  const origin = new URL(website.url).origin;
+  const initScripts = [];
+  let browserLanguages;
+  try {
+    /**
+     * Gives the website's pages `languages` as the browser's, which i18n.js reads from navigator, as a browser set to
+     * them gives them: from the next page that is loaded on.
+     */
+    const setBrowserLanguages = async languages => {
+      await browserLanguages?.dispose();
+      browserLanguages = await app.context().addInitScript(([origin, languages]) => {
+        if (location.origin !== origin) return;
+        Object.defineProperty(navigator, 'languages', { get: () => Object.freeze([...languages]) });
+        Object.defineProperty(navigator, 'language', { get: () => languages[0] });
+      }, [origin, languages]);
+    };
+    // Every text that the first entry has, from when it is in the page: a page records them anew at each load.
+    initScripts.push(await app.context().addInitScript(origin => {
+      if (location.origin !== origin) return;
+      const texts = [];
+      globalThis.__plmBrowserEntryTexts = texts;
+      new MutationObserver(() => {
+        const text = document.querySelector('#language-option-browser')?.textContent;
+        if (text !== undefined && texts.at(-1) !== text) texts.push(text);
+      }).observe(document, { childList: true, subtree: true, characterData: true });
+    }, origin));
+    // The landing page in English, in a browser in Japanese.
+    await setBrowserLanguages(['ja-JP', 'en-US']);
+    const websiteWindow = app.waitForEvent('window');
+    await app.evaluate(({ app, BrowserWindow }, url) => {
+      const require = globalThis.__plmTestRequire;
+      const { withHeadlessTestOptions } = require(require('node:path').join(app.getAppPath(), 'out/app/electron-util/e2e-test-hooks.js'));
+      const window = new BrowserWindow(withHeadlessTestOptions({ useContentSize: true, width: 1200, height: 800 }));
+      void window.loadURL(url);
+    }, `${website.url}en/`);
+    page = await websiteWindow;
+    await expect(page.locator('.app-summary')).toHaveText('Display the locations where photos were taken on a map.');
+    const pickerButton = page.locator('.language-button');
+    const pickerBox = page.locator('#language-popup');
+    const search = pickerBox.getByRole('searchbox');
+    const options = pickerBox.getByRole('option');
+    const browserEntry = pickerBox.locator('#language-option-browser');
+    const entryText = browserEntry.locator('bdi');
+    /** Where the texts of the first entry and of the entry of `code` start and end, measured in one frame. */
+    const edgesBesideEntryOf = code => pickerBox.evaluate((box, code) => ['browser', code].map(id => {
+      const { left, right } = box.querySelector(`#language-option-${id} bdi`).getBoundingClientRect();
+      return { left, right };
+    }), code);
+    const entryTexts = () => page.evaluate(() => globalThis.__plmBrowserEntryTexts);
+    /** The texts of languages that the page has asked for since it was loaded, by their files. */
+    const textsAskedFor = () => page.evaluate(() => performance.getEntriesByType('resource')
+      .map(entry => new URL(entry.name).pathname).filter(pathname => pathname.includes('/locales/')));
+    // The entry is in Japanese, the browser's language, as each language is under its own name, and from the first.
+    // The page asked for no texts, of Japanese or of any language: it holds its own.
+    await pickerButton.click();
+    await expect(options).toHaveText(['ブラウザの設定に従う（日本語）', ...languageNames]);
+    await expect(browserEntry).toHaveAttribute('lang', 'ja');
+    await expect(entryText).toHaveCSS('direction', 'ltr');
+    expect(await entryTexts()).toEqual(['ブラウザの設定に従う（日本語）']);
+    expect(await textsAskedFor()).toEqual([]);
+    // The search finds it by its words in the page's language as well, "Use browser setting (日本語)", and by its own.
+    await search.fill('browser');
+    await expect(options).toHaveText(['ブラウザの設定に従う（日本語）']);
+    await search.fill('ブラウザ');
+    await expect(options).toHaveText(['ブラウザの設定に従う（日本語）']);
+    await search.press('Escape');
+    // In a browser in Arabic, the entry is written from right to left, and starts where the page's lines start, at
+    // the left, as the entry of Arabic does.
+    await setBrowserLanguages(['ar-SA']);
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await pickerButton.click();
+    await expect(options.first()).toHaveText('استخدام إعداد المتصفح (العربية)');
+    await expect(browserEntry).toHaveAttribute('lang', 'ar');
+    await expect(entryText).toHaveCSS('direction', 'rtl');
+    const [entryInArabic, arabic] = await edgesBesideEntryOf('ar');
+    expect(entryInArabic.left).toBeCloseTo(arabic.left, 1);
+    expect(await entryTexts()).toEqual(['استخدام إعداد المتصفح (العربية)']);
+    await search.fill('browser');
+    await expect(options).toHaveText(['استخدام إعداد المتصفح (العربية)']);
+    await search.press('Escape');
+    // On the landing page in Arabic, in a browser in English, the other way round: the entry is in English, from left
+    // to right, and starts at the right, where the lines of that page start, as the entry of English does.
+    await setBrowserLanguages(['en-US']);
+    await page.goto(`${website.url}ar/`, { waitUntil: 'domcontentloaded' });
+    await pickerButton.click();
+    await expect(options.first()).toHaveText('Use browser setting (English)');
+    await expect(browserEntry).toHaveAttribute('lang', 'en');
+    await expect(entryText).toHaveCSS('direction', 'ltr');
+    const [entryInEnglish, english] = await edgesBesideEntryOf('en');
+    expect(entryInEnglish.right).toBeCloseTo(english.right, 1);
+    await search.fill('المتصفح');
+    await expect(options).toHaveText(['Use browser setting (English)']);
+    await search.press('Escape');
+    // In a browser in a language that the website does not have, the entry stands for English, and is written in it,
+    // on the landing page in Japanese. Chosen, it goes to the landing page as it is, which is then in English.
+    await setBrowserLanguages(['is-IS']);
+    await page.goto(`${website.url}ja/`, { waitUntil: 'domcontentloaded' });
+    await pickerButton.click();
+    await expect(options.first()).toHaveText('Use browser setting (English)');
+    await expect(browserEntry).toHaveAttribute('lang', 'en');
+    await search.fill('ブラウザ');
+    await expect(options).toHaveText(['Use browser setting (English)']);
+    await browserEntry.click();
+    await expect(page).toHaveURL(website.url);
+    await expect(page.locator('.app-summary')).toHaveText('Display the locations where photos were taken on a map.');
+    expect(await page.evaluate(() => document.documentElement.lang)).toBe('en');
+    // The download page, in a browser in Japanese, shows itself in German in place: the entry stays as it was, in
+    // Japanese, and the search finds it by its words in German, "Browsereinstellung verwenden (日本語)". The page asked
+    // for the texts of German only. It starts its download as on GitHub Pages, from this server.
+    await app.evaluate((_electron, installer) => { globalThis.__plmInstallerRedirect = installer; }, website.installer);
+    await setBrowserLanguages(['ja-JP']);
+    await page.goto(`${website.url}github-pages/downloading-for-windows/downloading-for-windows.html?lang=en`, { waitUntil: 'domcontentloaded' });
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('How to install');
+    await pickerButton.click();
+    await expect(options.first()).toHaveText('ブラウザの設定に従う（日本語）');
+    await pickerBox.getByRole('option', { name: 'Deutsch', exact: true }).click();
+    await expect(page.locator('html')).toHaveAttribute('lang', 'de');
+    await pickerButton.click();
+    await expect(options.first()).toHaveText('ブラウザの設定に従う（日本語）');
+    await search.fill('browsereinstellung');
+    await expect(options).toHaveText(['ブラウザの設定に従う（日本語）']);
+    expect(await entryTexts()).toEqual(['ブラウザの設定に従う（日本語）']);
+    expect(await textsAskedFor()).toEqual(['/github-pages/locales/de.json']);
+  } finally {
+    await browserLanguages?.dispose().catch(() => {});
+    for (const script of initScripts) await script.dispose().catch(() => {});
     // The other cases have the requests for GitHub's installers cancelled again.
     await app.evaluate(() => { delete globalThis.__plmInstallerRedirect; }).catch(() => {});
     await website.close();

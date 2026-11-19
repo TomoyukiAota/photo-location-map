@@ -144,9 +144,14 @@ npm run test:unit:ng
   current language still finds where to change it.
 - The three texts under `language.systemLanguage` are one choice, to use the
   language that the operating system is set to, as it is shown on macOS, on
-  Windows and on any other operating system. Write each as your language needs it around the
-  name. `{{language}}` is the language that the choice stands for on the
-  computer, such as `English`.
+  Windows and on any other operating system. It is the first entry of the
+  list of languages, in which each language is under its own name, and it is
+  written in the language that it stands for, whatever language the
+  application is shown in: your text is read by someone whose operating
+  system is set to your language, in an application that may be in any
+  language. `{{language}}` is therefore always the name of your own language,
+  as the list has it, such as `日本語` in Japanese. Write each text as your
+  language needs it around that name.
 - `directoryTree.contextMenu.selectOnlyThisFile` and `selectOnlyThisFolder` are
   one item of the menu of the list of folders, as it is shown on a file and on
   a folder. English says the same of both; name the file and the folder where
@@ -263,7 +268,7 @@ its script, which would otherwise find every language in English.
 | --- | --- |
 | `docs/github-pages/locales/en.json` | English, the source, which the pages themselves hold as well. |
 | `docs/github-pages/locales/<code>.json` | One file per language, with the keys of `en.json`. |
-| `docs/github-pages/i18n.js` | The languages that the website offers, at its top, and how a page gets its texts. |
+| `docs/github-pages/i18n.js` | The languages that the website offers, at its top, the picker's first entry in each language, which `npm run generate:website` writes, and how a page gets its texts. |
 | `docs/<code>/index.html` | The landing page in each language, written by `npm run generate:website`: do not edit it. |
 
 To add a language:
@@ -279,10 +284,13 @@ To add a language:
      what the application does, in the words of `landing.summary` without its
      full stop.
    - `useBrowserSetting` is the first entry of the language picker, which
-     follows the browser's language: the page puts that language's name in
-     the place of `{{language}}`, which you keep as it is. Word it as Photo
-     Data Viewer's `language.useBrowserSetting` is in your language, as the
-     two are the same entry.
+     follows the browser's language. It is written in that language, whatever
+     language the page is in, as each language of the list is under its own
+     name: your text is read by someone whose browser is set to your
+     language, on a page that may be in any language. The page puts the name
+     of your own language in the place of `{{language}}`, which you keep as
+     it is. Word it as Photo Data Viewer's `language.useBrowserSetting` is in
+     your language, as the two are the same entry.
    - The names stay as they are: Photo Location Map, Photo Data Viewer,
      Windows Defender SmartScreen, GitHub, EXIF. Write them with ordinary
      spaces: the page keeps Photo Location Map, Photo Data Viewer, the
@@ -296,22 +304,25 @@ To add a language:
    same name and English name, and with `rtl: true` when it is written from
    right to left.
 3. Run `npm run generate:website`. It writes the landing page in your
-   language, `docs/<code>/index.html`, and gives search engines its address,
-   in the head of each landing page and in `docs/sitemap.xml`. Commit what it
-   writes with your files.
+   language, `docs/<code>/index.html`, gives search engines its address, in
+   the head of each landing page and in `docs/sitemap.xml`, and puts your
+   `useBrowserSetting` into the picker, in `docs/github-pages/i18n.js`.
+   Commit what it writes with your files.
 4. Open a pull request titled `Add <language> translation of the website`, or
    add this to the pull request of the application's translation.
 
 To improve a text of the website, edit it in
 `docs/github-pages/locales/<code>.json` and run `npm run generate:website` as
-well, which writes it into the landing page in that language. If you cannot
-run it, say so in the pull request, and the maintainer will.
+well, which writes it into the landing page in that language, and
+`useBrowserSetting` into the picker. If you cannot run it, say so in the pull
+request, and the maintainer will.
 
 `npm run test:website`, which runs on every pull request, checks what the check
 of the application's texts checks, and a little more: the keys, the `<link>`
 tags, the `{{language}}`, the names, the numbers of the steps, that each file
 is listed, that the list is in the order of the application's, and that the
-landing page in each language is as `npm run generate:website` writes it. To
+landing page in each language and the picker's first entry are as
+`npm run generate:website` writes them. To
 look at the result, serve the folder
 (`python3 -m http.server 8080 --directory docs`) and open
 `http://localhost:8080/<code>/`.

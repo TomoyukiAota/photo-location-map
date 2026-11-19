@@ -1,12 +1,12 @@
 import { CdkListbox, CdkOption, ListboxValueChangeEvent } from '@angular/cdk/listbox';
 import { afterNextRender, ChangeDetectorRef, Component, computed, ElementRef, inject, Injector, model, signal, viewChild } from '@angular/core';
 import { IconDataUrl } from '../../assets/icon-data-url';
-import { currentLanguage, systemLanguage, t } from '../../../src-shared/i18n/i18n';
-import { getLanguage, languages, LanguageSetting, languageSettingAuto } from '../../../src-shared/i18n/languages';
-import { currentPlatform } from '../../../src-shared/startup/startup-metadata';
+import { currentLanguage } from '../../../src-shared/i18n/i18n';
+import { languages, LanguageSetting } from '../../../src-shared/i18n/languages';
+import { currentPlatform, startupMetadata } from '../../../src-shared/startup/startup-metadata';
 import { TranslatePipe } from '../shared/i18n/translate.pipe';
 import { LanguageListItem, matchesSearch } from './language-search';
-import { systemLanguageLabelKey } from './system-language-label';
+import { systemLanguageItem } from './system-language-label';
 
 /** The number of the next list, by which its search field names it. */
 let nextListNumber = 0;
@@ -26,15 +26,17 @@ const namesInApplicationLanguage = new Intl.DisplayNames([currentLanguage], { ty
 
 /**
  * The list to choose the Language setting from, in the Language dialog and in the Settings dialog, with a field above
- * it that narrows the list down: the operating system's language first, by the name of macOS or Windows and with the
- * language that it stands for on this computer, then each language under its own name, so that a user who cannot read
- * the current language still finds theirs. The field has a magnifying glass at its end, as search fields usually do.
+ * it that narrows the list down: the operating system's language first, by the name of macOS or Windows and written in
+ * the language that it stands for on this computer (system-language-label.ts), then each language under its own name,
+ * so that a user who cannot read the current language still finds theirs. The field has a magnifying glass at its
+ * end, as search fields usually do.
  * TL;DR: A list in a box that scrolls, like the one in the setup of macOS, so that the dialogs stay as they are when
  * languages are added. Photo Data Viewer's list looks and works like this one.
  * Details: Radio buttons, which this was at first, make the dialog taller with every language. A menu would show one
  * language until it is opened, while at the first launch the languages themselves are what the user looks for. The
  * search is without regard to case or diacritics, and finds a language by its own name, its English name, its name in
- * the application's language or its code. The chosen entry stays chosen while the search hides it.
+ * the application's language or its code, and the first entry by its text in the operating system's language or in
+ * the application's. The chosen entry stays chosen while the search hides it.
  */
 @Component({
   selector: 'app-language-list',
@@ -63,8 +65,9 @@ const namesInApplicationLanguage = new Intl.DisplayNames([currentLanguage], { ty
           [cdkListboxValue]="[selected()]"
           (cdkListboxValueChange)="onChosen($event)">
         @for (item of listedItems(); track item.setting) {
-          <!-- The name is on its own, so that one written in the other direction than the page keeps its order. -->
-          <li class="language" [cdkOption]="item.setting" [attr.data-setting]="item.setting" [attr.lang]="item.labelLanguage"><bdi>{{ item.label }}</bdi></li>
+          <!-- The text is on its own, in the direction of its language, so that one written in the other direction
+               than the page keeps its order there, and starts where the page's lines start, as every entry does. -->
+          <li class="language" [cdkOption]="item.setting" [attr.data-setting]="item.setting" [attr.lang]="item.labelLanguage"><bdi [attr.dir]="item.labelDirection">{{ item.label }}</bdi></li>
         }
       </ul>
       <div class="no-languages" role="status">{{ listedItems().length === 0 ? ('language.noLanguagesFound' | t) : '' }}</div>
@@ -89,16 +92,12 @@ export class LanguageListComponent {
   protected readonly searchIcon = IconDataUrl.search;
 
   public readonly items: readonly LanguageListItem[] = [
-    {
-      setting: languageSettingAuto,
-      label: t(systemLanguageLabelKey(currentPlatform()), { language: getLanguage(systemLanguage).name }),
-      labelLanguage: currentLanguage,
-      keywords: [],
-    },
+    systemLanguageItem(currentPlatform(), startupMetadata().systemLanguages),
     ...languages.map(language => ({
       setting: language.code,
       label: language.name,
       labelLanguage: language.code,
+      labelDirection: language.direction,
       keywords: [language.englishName, namesInApplicationLanguage.of(language.code) ?? '', language.code],
     })),
   ];

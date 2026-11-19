@@ -1,12 +1,13 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { JSDOM } from 'jsdom';
-import { languages, putTexts } from './website-i18n.js';
+import { defaultLanguage, languages, putTexts, withLanguage } from './website-i18n.js';
 
-// Writes the landing page of the website in each of its languages, and the addresses of them all for search engines.
-// Run `npm run generate:website` after a change to docs/index.html, to a text in docs/github-pages/locales/ or to the
-// list of languages in docs/github-pages/i18n.js, and commit what it writes: test/website/website-texts.mjs fails
-// until that is done (docs/TRANSLATING.md, "The website").
+// Writes the landing page of the website in each of its languages, the addresses of them all for search engines, and
+// the language picker's first entry in each language. Run `npm run generate:website` after a change to
+// docs/index.html, to a text in docs/github-pages/locales/ or to the list of languages in docs/github-pages/i18n.js,
+// and commit what it writes: test/website/website-texts.mjs fails until that is done (docs/TRANSLATING.md, "The
+// website").
 //
 // TL;DR: A search engine or the preview of a link reads a page as it is served, mostly without running its scripts.
 // Details: docs/index.html holds the English texts, and github-pages/i18n.js puts those of the visitor's language into
@@ -18,6 +19,10 @@ import { languages, putTexts } from './website-i18n.js';
 // - in the head of docs/index.html, and so of each of those pages, the address of the page in each language, and what
 //   the application is, in the words of schema.org (structured data), with the summary of the page's language;
 // - docs/sitemap.xml, with those addresses.
+// The picker's first entry, "Use browser setting", is written in the browser's language, on a page in any language
+// (docs/github-pages/i18n.js). The page has the texts of its own language only, so this writes into i18n.js the
+// entry's text in every language, from useBrowserSetting of each language's file, which the entry then has without a
+// request.
 
 const docs = path.resolve(import.meta.dirname, '../../docs');
 /** Where GitHub Pages publishes the website. */
@@ -35,6 +40,9 @@ export const writtenMark = 'Written by `npm run generate:website` (script/websit
 // The head of docs/index.html has the lines that this writes between these two comments.
 const startOfLinks = '<!-- Written by `npm run generate:website`:';
 const endOfLinks = '<!-- End of what `npm run generate:website` writes. -->';
+// And github-pages/i18n.js between these two.
+const startOfLabels = '// Written by `npm run generate:website`:';
+const endOfLabels = '// End of what `npm run generate:website` writes.';
 
 /**
  * A file's text with the line endings of the repository. A checkout on Windows may have CRLF, as Git converts them
@@ -123,6 +131,34 @@ function pageInLanguage(landing, code, texts) {
   return `<!DOCTYPE html>\n<!--${comment}-->\n${document.documentElement.outerHTML.replace(/^(<html[^>]*>)<head>/, '$1\n<head>')}\n`;
 }
 
+/**
+ * The language picker's first entry in each language, "Use browser setting" with the language's own name, by its code:
+ * 「ブラウザの設定に従う（日本語）」 for `ja`. `textsOf` gives the texts of a language's file. A language whose file
+ * leaves the text out has the English one, as a page shows any text that its language leaves out.
+ */
+export function browserSettingLabelsOf(textsOf) {
+  const english = textsOf(defaultLanguage).useBrowserSetting;
+  return Object.fromEntries(languages.map(({ code, name }) => [code, withLanguage(textsOf(code).useBrowserSetting ?? english, name)]));
+}
+
+/** A text as a string of JavaScript in single quotes, as i18n.js writes its strings. */
+const quoted = text => `'${text.replace(/[\\']/g, '\\$&').replace(/\n/g, '\\n')}'`;
+
+/** github-pages/i18n.js, `source`, with `labels`, the picker's first entry in each language, between its two comments. */
+function scriptWithLabels(source, labels) {
+  const start = source.indexOf(startOfLabels);
+  const end = source.indexOf(endOfLabels);
+  if (start === -1 || end < start) throw new Error(`docs/github-pages/i18n.js has no "${startOfLabels}" followed by "${endOfLabels}".`);
+  const afterStart = source.indexOf('\n', start) + 1;
+  const indent = source.slice(source.lastIndexOf('\n', end) + 1, end);
+  const lines = [
+    'const browserSettingLabels = {',
+    ...Object.entries(labels).map(([code, label]) => `  ${/^[a-z]+$/.test(code) ? code : quoted(code)}: ${quoted(label)},`),
+    '};',
+  ].map(line => `${indent}${line}\n`).join('');
+  return `${source.slice(0, afterStart)}${lines}${indent}${source.slice(end)}`;
+}
+
 /** docs/sitemap.xml: the landing page as it is, then in each language. */
 function sitemap() {
   const pages = languages.length + 1;
@@ -148,15 +184,14 @@ ${urls.join('\n')}
 
 /** What this writes: each file by its path in docs/, with its text. */
 export function websiteFiles() {
-  const english = JSON.parse(readText(path.join(docs, 'github-pages/locales/en.json')));
-  const landing = landingPage(readText(path.join(docs, 'index.html')), english.landing.summary);
+  const textsOf = code => JSON.parse(readText(path.join(docs, 'github-pages/locales', `${code}.json`)));
+  const landing = landingPage(readText(path.join(docs, 'index.html')), textsOf(defaultLanguage).landing.summary);
   const files = new Map([['index.html', landing]]);
   const { document } = new JSDOM(landing).window;
-  for (const { code } of languages) {
-    const texts = JSON.parse(readText(path.join(docs, 'github-pages/locales', `${code}.json`)));
-    files.set(`${code}/index.html`, pageInLanguage(document, code, texts));
-  }
+  for (const { code } of languages)
+    files.set(`${code}/index.html`, pageInLanguage(document, code, textsOf(code)));
   files.set('sitemap.xml', sitemap());
+  files.set('github-pages/i18n.js', scriptWithLabels(readText(path.join(docs, 'github-pages/i18n.js')), browserSettingLabelsOf(textsOf)));
   return files;
 }
 

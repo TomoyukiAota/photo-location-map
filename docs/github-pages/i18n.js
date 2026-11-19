@@ -72,6 +72,60 @@
     { code: 'zh-Hans', name: '简体中文', englishName: 'Chinese (Simplified)' },
     { code: 'zh-Hant', name: '繁體中文', englishName: 'Chinese (Traditional)' },
   ];
+  // TL;DR: The picker's first entry, "Use browser setting", in each language, with that language's own name. The
+  // entry is written in the browser's language, whatever language the page is in, as each language of the list is
+  // under its own name.
+  // Details: script/website/generate-website.js writes these from useBrowserSetting of each language's file: change
+  // that and run `npm run generate:website`, rather than changing them here. A page has the texts of its own language
+  // only, and fetching those of the browser's would leave the entry in another language, or empty, until they arrived,
+  // and for good where they cannot be fetched, as on a page opened from a disk. These take 1.5 kB of this script with
+  // gzip, about as much as one language's file.
+  // Written by `npm run generate:website`:
+  const browserSettingLabels = {
+    id: 'Gunakan pengaturan browser (Bahasa Indonesia)',
+    ms: 'Guna tetapan pelayar (Bahasa Melayu)',
+    ca: 'Utilitza la configuració del navegador (Català)',
+    cs: 'Použít nastavení prohlížeče (Čeština)',
+    da: 'Brug browserens indstilling (Dansk)',
+    de: 'Browsereinstellung verwenden (Deutsch)',
+    et: 'Kasuta brauseri seadet (Eesti)',
+    en: 'Use browser setting (English)',
+    es: 'Usar el ajuste del navegador (Español)',
+    eu: 'Erabili nabigatzailearen ezarpena (Euskara)',
+    fr: 'Utiliser le réglage du navigateur (Français)',
+    gl: 'Usar a configuración do navegador (Galego)',
+    hr: 'Koristi postavku preglednika (Hrvatski)',
+    it: 'Usa l’impostazione del browser (Italiano)',
+    lv: 'Izmantot pārlūkprogrammas iestatījumu (Latviešu)',
+    lt: 'Naudoti naršyklės nustatymą (Lietuvių)',
+    hu: 'A böngésző beállításának használata (Magyar)',
+    nl: 'Gebruik de instelling van de browser (Nederlands)',
+    nb: 'Bruk nettleserens innstilling (Norsk bokmål)',
+    pl: 'Użyj ustawienia przeglądarki (Polski)',
+    'pt-BR': 'Usar a configuração do navegador (Português (Brasil))',
+    'pt-PT': 'Usar a definição do navegador (Português (Portugal))',
+    ro: 'Folosește setarea browserului (Română)',
+    sk: 'Použiť nastavenie prehliadača (Slovenčina)',
+    sl: 'Uporabi nastavitev brskalnika (Slovenščina)',
+    'sr-Latn': 'Koristi podešavanje pregledača (Srpski (latinica))',
+    fi: 'Käytä selaimen asetusta (Suomi)',
+    sv: 'Använd webbläsarens inställning (Svenska)',
+    vi: 'Dùng cài đặt của trình duyệt (Tiếng Việt)',
+    tr: 'Tarayıcı ayarını kullan (Türkçe)',
+    el: 'Χρήση της ρύθμισης του προγράμματος περιήγησης (Ελληνικά)',
+    bg: 'Използване на настройката на браузъра (Български)',
+    ru: 'Использовать настройку браузера (Русский)',
+    uk: 'Використовувати параметр браузера (Українська)',
+    he: 'שימוש בהגדרת הדפדפן (עברית)',
+    ar: 'استخدام إعداد المتصفح (العربية)',
+    hi: 'ब्राउज़र की सेटिंग का उपयोग करें (हिन्दी)',
+    th: 'ใช้การตั้งค่าของเบราว์เซอร์ (ไทย)',
+    ko: '브라우저 설정 따르기 (한국어)',
+    ja: 'ブラウザの設定に従う（日本語）',
+    'zh-Hans': '跟随浏览器设置（简体中文）',
+    'zh-Hant': '依照瀏覽器設定（繁體中文）',
+  };
+  // End of what `npm run generate:website` writes.
   const defaultLanguage = 'en';
   const storageKey = 'PhotoLocationMapWebsiteLanguage';
 
@@ -128,11 +182,8 @@
    */
   const followsBrowser = ({ param, saved }) => !matchLanguage([param]) && !matchLanguage([saved]);
 
-  /** The parts of a text around {{language}}, where the name of a language goes, or the text alone without one. */
-  const languageParts = (text) => {
-    const at = text.indexOf('{{language}}');
-    return at === -1 ? { before: text, after: '' } : { before: text.slice(0, at), after: text.slice(at + '{{language}}'.length) };
-  };
+  /** A text with the name of a language in the place of {{language}}, as the picker's first entry has it. */
+  const withLanguage = (text, name) => text.replace('{{language}}', () => name);
 
   /** The parts of a text around and inside <link>…</link>, or the text alone when it has no such tag. */
   const linkParts = (text) => {
@@ -194,8 +245,8 @@
   // In Node, where the tests and the generator of the landing page in each language read these functions, there is no
   // page to show.
   if (typeof module === 'object' && module.exports) {
-    module.exports = { languages, defaultLanguage, matchLanguage, resolveLanguage, followsBrowser, languageParts, linkParts, textOf,
-      foldForSearch, searchFinds, matchesSearch, putTexts };
+    module.exports = { languages, browserSettingLabels, defaultLanguage, matchLanguage, resolveLanguage, followsBrowser, withLanguage,
+      linkParts, textOf, foldForSearch, searchFinds, matchesSearch, putTexts };
     return;
   }
 
@@ -250,7 +301,8 @@
   const browserLanguages = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language];
   // The landing page in a language is in it, whatever else asks for one.
   const language = pageLanguage ?? resolveLanguage({ param, saved, browserLanguages });
-  // The language that the browser asks for, which the picker's first entry names: "Use browser setting (日本語)".
+  // The language that the browser asks for, which the picker's first entry is written in and names, on a page in any
+  // language: 「ブラウザの設定に従う（日本語）」 in a browser in Japanese.
   const browserLanguage = matchLanguage(browserLanguages) ?? defaultLanguage;
   // Whether the page follows the browser: until a language is asked for in the address or chosen in the picker, and
   // again once that entry is chosen. The landing page in a language does not.
@@ -313,15 +365,11 @@
     }
   };
 
-  // What the picker does when the page gets the texts of another language: it words its first entry in it.
-  let relabelPicker = () => {};
-
   /** Puts the texts of a language into the page, with what depends on them. */
   const apply = (code, texts) => {
     putTexts(document, code, texts);
     keepNamesWhole();
     layDownloadButtonsOut();
-    relabelPicker();
   };
 
   // TL;DR: A page in another language is not shown until its texts are in it, or a second and a half have passed.
@@ -427,9 +475,9 @@
   /**
    * Makes the language picker of the page, which each page has empty and hidden: without this script there is nothing
    * to choose. A button that shows the page's language opens a box under it, with a search field above the list, as
-   * the list of the application has: "Use browser setting", with the language that it stands for in this browser,
-   * then each language under its own name. Returns how to show a language as the chosen one, or null for a page
-   * without a picker.
+   * the list of the application has: "Use browser setting", written in the language that it stands for in this
+   * browser, then each language under its own name. Returns how to show a language as the chosen one, or null for a
+   * page without a picker.
    */
   const makePicker = () => {
     const picker = document.querySelector('.language-picker');
@@ -443,41 +491,36 @@
     const useBrowserSetting = picker.querySelector('.language-browser-text');
     const languageOf = (code) => languages.find((each) => each.code === code);
 
-    // TL;DR: The first entry follows the browser's language, as the application's list has one that follows the
-    // operating system's, and Photo Data Viewer's one that follows the browser's.
-    // Details: A visitor who has chosen a language, or followed a link that says one, keeps it on every visit. This
-    // entry forgets that choice. It says which language the browser stands for, in the page's language, with the name
-    // of that language in an element of its own, so that one written in the other direction keeps its order.
-    const browserEntry = document.createElement('li');
-    browserEntry.className = 'language-option';
-    browserEntry.id = 'language-option-browser';
-    browserEntry.setAttribute('role', 'option');
-    browserEntry.tabIndex = -1;
-    const labelBrowserEntry = () => {
-      const { before, after } = languageParts(useBrowserSetting.textContent);
-      const name = document.createElement('bdi');
-      name.lang = browserLanguage;
-      name.textContent = languageOf(browserLanguage).name;
+    /**
+     * An entry of the list, with its text in a language. The text is on its own, in the direction of its language, so
+     * that one written in the other direction than the page keeps its order there, and starts where the page's lines
+     * start, as every entry does.
+     */
+    const entryOf = (id, code, text) => {
+      const entry = document.createElement('li');
+      entry.className = 'language-option';
+      entry.id = id;
+      entry.setAttribute('role', 'option');
+      entry.lang = code;
+      entry.tabIndex = -1;
       const label = document.createElement('bdi');
-      label.append(before, name, after);
-      browserEntry.lang = root.lang;
-      browserEntry.replaceChildren(label);
+      label.dir = languageOf(code).rtl ? 'rtl' : 'ltr';
+      label.textContent = text;
+      entry.append(label);
+      return entry;
     };
-    labelBrowserEntry();
-    relabelPicker = labelBrowserEntry;
 
-    // The name is on its own, so that one written in the other direction than the page keeps its order.
+    // TL;DR: The first entry follows the browser's language, as the application's list has one that follows the
+    // operating system's, and Photo Data Viewer's one that follows the browser's. It is written in that language,
+    // with that language's own name, from browserSettingLabels: 「ブラウザの設定に従う（日本語）」 in a browser in
+    // Japanese, on a page in any language.
+    // Details: A visitor who has chosen a language, or followed a link that says one, keeps it on every visit. This
+    // entry forgets that choice. It is made once, with its text: the page's language, which can change, is not the
+    // entry's.
+    const browserEntry = entryOf('language-option-browser', browserLanguage, browserSettingLabels[browserLanguage]);
     const options = languages.map(({ code, name }) => {
-      const option = document.createElement('li');
-      option.className = 'language-option';
-      option.id = `language-option-${code}`;
-      option.setAttribute('role', 'option');
+      const option = entryOf(`language-option-${code}`, code, name);
       option.dataset.code = code;
-      option.lang = code;
-      option.tabIndex = -1;
-      const label = document.createElement('bdi');
-      label.textContent = name;
-      option.append(label);
       return option;
     });
     const allEntries = [browserEntry, ...options];
@@ -512,8 +555,11 @@
       } catch {
         // The search then finds a language by its other names.
       }
-      // The first entry is found by its words, the name of the browser's language among them, as in the application.
-      browserEntry.hidden = !searchFinds([browserEntry.textContent], search.value);
+      // The first entry is found by its words, the name of the browser's language among them, as in the application,
+      // and by those that the page's language has for it, which a visitor who reads the page types: "browser" finds
+      // 「ブラウザの設定に従う（日本語）」 on a page in English.
+      const inPageLanguage = withLanguage(useBrowserSetting.textContent, languageOf(browserLanguage).name);
+      browserEntry.hidden = !searchFinds([browserEntry.textContent, inPageLanguage], search.value);
       for (const option of options) {
         const code = option.dataset.code;
         option.hidden = !matchesSearch(languageOf(code), search.value, namesInPageLanguage?.of(code) ?? '');

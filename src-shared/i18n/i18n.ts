@@ -77,7 +77,8 @@ export function t(key: TranslationKey, values?: TranslationValues): string {
 
 /**
  * The text of `key` in `language`, whatever the application's language is: for what must be read in a language that
- * the user has just chosen, before the application restarts in it.
+ * the user has just chosen, before the application restarts in it, and for the choice of the operating system's
+ * language, which is written in that language (src/app/language/system-language-label.ts).
  */
 export function tIn(language: LanguageCode, key: TranslationKey, values?: TranslationValues): string {
   return translations.t(key, { ...valuesIn(language, values), lng: language });

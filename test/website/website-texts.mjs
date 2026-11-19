@@ -6,9 +6,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { describe, it } from 'node:test';
 import { JSDOM } from 'jsdom';
-import { addressOf, foldersOfLanguagePages, iconAddress, readText, site, websiteFiles } from '../../script/website/generate-website.js';
 import {
-  languages, matchLanguage, resolveLanguage, followsBrowser, languageParts, linkParts, textOf, foldForSearch, searchFinds, matchesSearch,
+  addressOf, browserSettingLabelsOf, foldersOfLanguagePages, iconAddress, readText, site, websiteFiles,
+} from '../../script/website/generate-website.js';
+import {
+  languages, browserSettingLabels, matchLanguage, resolveLanguage, followsBrowser, withLanguage, linkParts, textOf, foldForSearch, searchFinds,
+  matchesSearch,
 } from '../../script/website/website-i18n.js';
 
 const docs = path.join(import.meta.dirname, '../../docs');
@@ -151,7 +154,7 @@ describe('The landing page in each language (docs/<code>/index.html, written by 
   const documentOf = html => new JSDOM(html).window.document;
   const pagesInLanguages = codes.map(code => ({ code, document: documentOf(written.get(`${code}/index.html`)) }));
 
-  it('is as npm run generate:website writes it from docs/index.html and the texts, as are the head\'s addresses and the sitemap', () => {
+  it('is as npm run generate:website writes it from docs/index.html and the texts, as are the head\'s addresses, the sitemap and the picker\'s first entry in i18n.js', () => {
     const outdated = [...written].filter(([file, text]) => !fs.existsSync(path.join(docs, file)) || readText(path.join(docs, file)) !== text)
       .map(([file]) => `docs/${file}`);
     assert.deepEqual(outdated, [], 'Run `npm run generate:website` after a change to docs/index.html, to a text of the website or to its '
@@ -305,10 +308,23 @@ describe('The language of the website (docs/github-pages/i18n.js)', () => {
     assert.equal(followsBrowser({ param: 'xx', saved: 'yy' }), true);
   });
 
-  it('puts the name of the browser\'s language where {{language}} is in the first entry of the picker', () => {
-    assert.deepEqual(languageParts('Use browser setting ({{language}})'), { before: 'Use browser setting (', after: ')' });
-    assert.deepEqual(languageParts('ブラウザの設定に従う（{{language}}）'), { before: 'ブラウザの設定に従う（', after: '）' });
-    assert.deepEqual(languageParts('No name here'), { before: 'No name here', after: '' });
+  it('puts the name of a language where {{language}} is in the first entry of the picker', () => {
+    assert.equal(withLanguage('Use browser setting ({{language}})', 'English'), 'Use browser setting (English)');
+    assert.equal(withLanguage('ブラウザの設定に従う（{{language}}）', '日本語'), 'ブラウザの設定に従う（日本語）');
+    // A name is put in as it is, whatever characters it has.
+    assert.equal(withLanguage('({{language}})', '$& $1'), '($& $1)');
+  });
+
+  it('writes the first entry of the picker in each language, with that language\'s own name, which a page shows in a browser in the language', () => {
+    // In i18n.js, as npm run generate:website writes it from the texts, in the order of the list.
+    assert.deepEqual(Object.keys(browserSettingLabels), languages.map(({ code }) => code));
+    assert.equal(browserSettingLabels.en, 'Use browser setting (English)');
+    assert.equal(browserSettingLabels.ja, 'ブラウザの設定に従う（日本語）');
+    assert.equal(browserSettingLabels.ar, 'استخدام إعداد المتصفح (العربية)');
+    assert.equal(browserSettingLabels['pt-BR'], 'Usar a configuração do navegador (Português (Brasil))');
+    // A language whose file leaves the text out has the English one, with its own name.
+    const labels = browserSettingLabelsOf(code => (code === 'en' ? { useBrowserSetting: 'Use browser setting ({{language}})' } : {}));
+    assert.equal(labels.de, 'Use browser setting (Deutsch)');
   });
 
   it('finds the first entry of the picker by any part of its words, the name of the browser\'s language among them', () => {
@@ -317,6 +333,8 @@ describe('The language of the website (docs/github-pages/i18n.js)', () => {
     assert.equal(searchFinds(['Use browser setting (English)'], 'BROWSER'), true);
     assert.equal(searchFinds(['Use browser setting (English)'], 'deutsch'), false);
     assert.equal(searchFinds(['Use browser setting (English)'], ' '), true);
+    // By its words in the page's language as well: "browser" on a page in English, in a browser in Japanese.
+    assert.equal(searchFinds(['ブラウザの設定に従う（日本語）', 'Use browser setting (日本語)'], 'browser'), true);
   });
 
   it('is found in the picker\'s list by any part of its own name, English name, name in the page\'s language or code', () => {
