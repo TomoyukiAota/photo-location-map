@@ -914,22 +914,26 @@ test('on a computer whose language is Arabic, the application is laid out from r
   const moreOptionsItems = page.locator('.photo-info-viewer-more-options-menu-item');
   const menuInArabic = ['التحديد', 'عرض في الشريط الجانبي', 'فتح المجلد', 'Google', 'عرض البيانات'];
   await expect(moreOptionsItems).toHaveText(menuInArabic);
-  // Where the menus are once they have opened: the CDK places a menu when it renders it, after the menu's content, and
-  // a menu grows from 80% of its size as it opens.
+  // Where the menus are once they have opened. The CDK places a menu when it renders it, after the menu's content, and
+  // a menu grows from 80% of its size, from its corner at what opened it, as it opens: each is waited for in turn.
   const moreOptionsMenus = page.locator('.photo-info-viewer-more-options-menu');
-  const openedBox = async menu => {
+  const grownBox = async menu => {
     const width = await menu.evaluate(element => element.offsetWidth);
     await expect.poll(async () => Math.round((await menu.boundingBox()).width)).toBe(width);
     return menu.boundingBox();
   };
   const buttonBox = await moreOptionsButton.boundingBox();
-  const menuBox = await openedBox(moreOptionsMenus);
-  expect(Math.abs(menuBox.x - buttonBox.x)).toBeLessThan(2);
-  await page.getByRole('menuitem', { name: 'التحديد', exact: true }).focus();
+  await expect.poll(async () => Math.abs((await moreOptionsMenus.boundingBox()).x - buttonBox.x)).toBeLessThan(2);
+  const menuBox = await grownBox(moreOptionsMenus);
+  const selectionItem = page.getByRole('menuitem', { name: 'التحديد', exact: true });
+  await selectionItem.focus();
   await page.keyboard.press('ArrowLeft');
   await expect(moreOptionsItems).toHaveText([...menuInArabic, 'تحديد هذا الملف فقط', 'تحديد الملف السابق', 'تحديد الملف التالي']);
   await expect(page.getByRole('menuitem', { name: 'تحديد هذا الملف فقط', exact: true })).toBeFocused();
-  const submenuBox = await openedBox(moreOptionsMenus.nth(1));
+  // Beside its item, at the item's height.
+  const selectionItemBox = await selectionItem.boundingBox();
+  await expect.poll(async () => Math.abs((await moreOptionsMenus.nth(1).boundingBox()).y - selectionItemBox.y)).toBeLessThan(2);
+  const submenuBox = await grownBox(moreOptionsMenus.nth(1));
   if (menuBox.x >= submenuBox.width)
     expect(submenuBox.x + submenuBox.width).toBeLessThanOrEqual(menuBox.x + 1);
   else
