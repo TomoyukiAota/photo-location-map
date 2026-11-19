@@ -1,4 +1,4 @@
-import { inject, Service, signal } from '@angular/core';
+import { DestroyRef, inject, Service, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { bridge, OpenTarget } from '../../../src-shared/bridge/plm-bridge';
@@ -13,6 +13,32 @@ import { ThumbnailGenerationService } from '../thumbnail-generation/service/thum
 function carriesFiles(event: DragEvent): boolean {
   return !!event.dataTransfer && Array.from(event.dataTransfer.types).includes('Files');
 }
+
+/** Whether a mousemove moved the mouse, which the one that Blink sends to update what is hovered does not. */
+function isMouseMoved(event: MouseEvent): boolean {
+  return !!(event.movementX || event.movementY);
+}
+
+/**
+ * How long the drags wait, once the mouse has moved, for an event of a drag, before they are taken to be over.
+ *
+ * TL;DR: A drag over the window ends with its dragleave, drop or dragend, but the window misses it when Chromium sends
+ * it to an element that has left the page. The mouse then moves with no drag, so a move of the mouse ends the drag,
+ * unless an event of the drag comes within this time: Chromium also sends mousemoves during a drag, which the drag's
+ * next event follows.
+ * Details:
+ * - Seen in drags from Finder on macOS, in Electron 45.3.2, with the window active: mousemoves came during the drag,
+ *   while the pointer was still and while it moved. Ending the drag at each of them hid the hint until the next
+ *   dragover, a few ms later, which showed as a flicker.
+ * - Blink sends one when what is under the mouse may have changed, at the mouse's last position, with no movement
+ *   (MouseEventManager::RecomputeMouseHoverStateIfNeeded), which isMouseMoved leaves out. Others came with the button
+ *   pressed, at a new position and with the movement from the mousemove before, as a move of the mouse does: neither
+ *   tells them apart.
+ * - Nine in ten of the gaps between the drag's events were under 20 ms, also while the pointer was still, and the
+ *   longest was 429 ms. This time is over twice that. The hint of a drag whose end was missed goes this long after the
+ *   mouse has moved.
+ */
+const endOfDragDelayMs = 1000;
 
 function isOpenable(target: OpenTarget): target is OpenableTarget {
   return target.kind === 'file' || target.kind === 'directory';
@@ -64,6 +90,14 @@ export class DropToOpenService {
   /** Whether a drag that started in the page goes on. */
   private isDragFromPage = false;
 
+  /** What ends the drags once the mouse has moved, unless an event of a drag comes first (endOfDragDelayMs). */
+  private endOfDragsTimer: ReturnType<typeof setTimeout> | undefined;
+
+  constructor() {
+    // So that a drag that goes on when the service goes, as at the end of a test, leaves no listener or timer behind.
+    inject(DestroyRef).onDestroy(() => this.endDrags());
+  }
+
   /** Whether a folder can be opened now, as Open Folder can be clicked. */
   private canOpenFolderNow(): boolean {
     return this.dialog.openDialogs.length === 0 && !this.thumbnailGenerationService.isGenerating();
@@ -83,8 +117,8 @@ export class DropToOpenService {
   public dragStart(): void {
     this.isDragFromPage = true;
     // Its dragend is not seen when its element leaves the page meanwhile, as a row of the tree does when the tree
-    // scrolls it far from the view. No mouse event comes while something is dragged, so the next one ends the drag.
-    window.addEventListener('mousemove', this.endDragFromPage);
+    // scrolls it far from the view.
+    this.endDragsOnMouseMove();
   }
 
   /** For dragend. */
@@ -92,13 +126,14 @@ export class DropToOpenService {
     this.endDragFromPage();
   }
 
-  private readonly endDragFromPage = () => {
+  private endDragFromPage(): void {
     this.isDragFromPage = false;
-    window.removeEventListener('mousemove', this.endDragFromPage);
-  };
+    this.stopEndingDragsOnMouseMove();
+  }
 
   /** For dragenter: takes a drag of files, as dragover does, and notes the element that it enters. */
   public dragEnter(event: DragEvent): void {
+    this.cancelEndOfDrags();
     if (!this.isDragOfFiles(event))
       return;
     if (event.target)
@@ -111,6 +146,7 @@ export class DropToOpenService {
    * nothing can be opened now.
    */
   public dragOver(event: DragEvent): void {
+    this.cancelEndOfDrags();
     if (!this.isDragOfFiles(event))
       return;
     this.takeDrag(event);
@@ -136,17 +172,42 @@ export class DropToOpenService {
     const takesDrop = this.takesDropNow();
     event.dataTransfer.dropEffect = takesDrop ? 'copy' : 'none';
     this.isHintShown.set(takesDrop);
-    // No mouse event comes while files are dragged over the window, so the next one means that the drag is over,
-    // whichever of its events was missed.
-    window.addEventListener('mousemove', this.endDrag);
+    // Its dragleave or drop is not seen when the element that it is over leaves the page meanwhile.
+    this.endDragsOnMouseMove();
+  }
+
+  /** Ends the drags once the mouse has moved, unless an event of a drag comes first (endOfDragDelayMs). */
+  private endDragsOnMouseMove(): void {
+    window.addEventListener('mousemove', this.startEndOfDrags);
+  }
+
+  private stopEndingDragsOnMouseMove(): void {
+    window.removeEventListener('mousemove', this.startEndOfDrags);
+    this.cancelEndOfDrags();
+  }
+
+  private readonly startEndOfDrags = (event: MouseEvent) => {
+    if (isMouseMoved(event) && this.endOfDragsTimer === undefined)
+      this.endOfDragsTimer = setTimeout(() => this.endDrags(), endOfDragDelayMs);
+  };
+
+  /** Stops the end of the drags that a move of the mouse has started, as an event of a drag does: the drag goes on. */
+  private cancelEndOfDrags(): void {
+    clearTimeout(this.endOfDragsTimer);
+    this.endOfDragsTimer = undefined;
+  }
+
+  private endDrags(): void {
+    this.endDragFromPage();
+    this.endDrag();
   }
 
   /** Hides the hint and forgets the elements that the drag entered. */
-  private readonly endDrag = () => {
+  private endDrag(): void {
     this.enteredTargets.clear();
     this.isHintShown.set(false);
-    window.removeEventListener('mousemove', this.endDrag);
-  };
+    this.stopEndingDragsOnMouseMove();
+  }
 
   /** For drop: opens the first of the dropped items, once the user has confirmed it; resolves when that is done. */
   public async drop(event: DragEvent): Promise<void> {

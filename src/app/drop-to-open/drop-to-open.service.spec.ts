@@ -24,6 +24,13 @@ function dragEvent(types: string[], files: File[] = [], target: EventTarget | nu
 }
 const asDragEvent = (event: ReturnType<typeof dragEvent>) => event as unknown as DragEvent;
 
+/**
+ * A mousemove of the window, with the movement from the one before: a move of the mouse has one, as some that Chromium
+ * sends during a drag do, and the one that Blink sends when what is under the mouse changes does not.
+ */
+const mouseMove = (movementX: number, movementY: number) =>
+  window.dispatchEvent(new MouseEvent('mousemove', { movementX, movementY }));
+
 /** A File of a drop. The bridge's double answers for it by its name, as the main process does by its path. */
 const dropped = (name: string) => new File([], name);
 
@@ -63,8 +70,7 @@ describe('DropToOpenService', () => {
   });
 
   afterEach(() => {
-    // Ends whatever drag a test left, as a mouse event does.
-    window.dispatchEvent(new MouseEvent('mousemove'));
+    vi.useRealTimers();
     document.body.replaceChildren();
   });
 
@@ -138,9 +144,12 @@ describe('DropToOpenService', () => {
       expect(service.showsHint()).toBe(false);
     });
 
-    it('is hidden by the next mouse event, which comes only once no drag is over the window', () => {
+    it('is hidden once the mouse has moved with no event of a drag, in case one of the drag\'s events was missed', () => {
+      vi.useFakeTimers();
       service.dragEnter(files(element()));
-      window.dispatchEvent(new MouseEvent('mousemove'));
+      mouseMove(3, 2);
+      expect(service.showsHint()).toBe(true);
+      vi.runOnlyPendingTimers();
       expect(service.showsHint()).toBe(false);
       // The next drag is followed as the first was.
       const map = element();
@@ -149,10 +158,33 @@ describe('DropToOpenService', () => {
       expect(service.showsHint()).toBe(false);
     });
 
+    it('is kept while the drag goes on, though Chromium sends mousemoves during it', () => {
+      vi.useFakeTimers();
+      const map = element();
+      service.dragEnter(files(map));
+      // Blink's, when what is under the mouse changes.
+      mouseMove(0, 0);
+      vi.runOnlyPendingTimers();
+      expect(service.showsHint()).toBe(true);
+      // One with a movement, which the drag's next event follows.
+      mouseMove(217, 185);
+      vi.advanceTimersByTime(5);
+      service.dragOver(files(map));
+      vi.runOnlyPendingTimers();
+      expect(service.showsHint()).toBe(true);
+      service.dragLeave(files(map));
+      expect(service.showsHint()).toBe(false);
+    });
+
     it('is not shown for a drag that starts in the page, which is left to the page until it ends', async () => {
+      vi.useFakeTimers();
       service.dragStart();
       const over = dragEvent(['Files'], [], element());
       service.dragEnter(asDragEvent(over));
+      // Chromium's mousemoves during the drag do not end it.
+      mouseMove(4, 0);
+      service.dragOver(asDragEvent(over));
+      vi.runOnlyPendingTimers();
       service.dragOver(asDragEvent(over));
       expect(over.defaultPrevented).toBe(false);
       expect(service.showsHint()).toBe(false);
@@ -161,13 +193,18 @@ describe('DropToOpenService', () => {
       expect(drop.defaultPrevented).toBe(false);
       expect(openTarget).not.toHaveBeenCalled();
 
-      // It ends with its dragend, or with the next mouse event when its dragend is missed.
-      for (const end of [() => service.dragEnd(), () => window.dispatchEvent(new MouseEvent('mousemove'))]) {
+      // It ends with its dragend, or once the mouse has moved with no event of a drag, when its dragend is missed.
+      const moveMouse = () => {
+        mouseMove(4, 0);
+        vi.runOnlyPendingTimers();
+      };
+      for (const end of [() => service.dragEnd(), moveMouse]) {
         service.dragStart();
         end();
-        service.dragEnter(files(element()));
+        const map = element();
+        service.dragEnter(files(map));
         expect(service.showsHint()).toBe(true);
-        window.dispatchEvent(new MouseEvent('mousemove'));
+        service.dragLeave(files(map));
       }
     });
   });
