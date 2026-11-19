@@ -2978,6 +2978,33 @@ test('Photo Data Viewer opens first wide enough to split its panes, in the middl
   await viewerWindow.evaluate(window => new Promise(resolve => { window.once('closed', resolve); window.close(); }));
   expect(await bounds((await openViewer()).viewerWindow)).toEqual(userBounds);
 });
+test('Photo Data Viewer saved where no display is now opens with its size in the middle of the main window\'s display', async () => {
+  await dismissWelcome();
+  const photo = path.join(root, 'test/test-resources/actual-photos/Kobe/IMG_4676.JPG');
+  await openFolderWithPicker(path.dirname(photo));
+  // Bounds saved on a display that is no longer connected, at the right of every display there is, written as the
+  // window writes them when it closes (src-main/photo-data-viewer/photo-data-viewer-window-state.ts).
+  const saved = { width: 720, height: 560 };
+  await app.evaluate(async ({ app, screen }, saved) => {
+    const require = globalThis.__plmTestRequire;
+    const appModule = file => require(require('node:path').join(app.getAppPath(), 'out/app', file));
+    const { UserDataStorage } = appModule('src-shared/user-data-storage/user-data-storage.js');
+    const { UserDataStoragePath } = appModule('src-shared/user-data-storage/user-data-stroage-path.js');
+    const right = Math.max(...screen.getAllDisplays().map(({ bounds }) => bounds.x + bounds.width));
+    const values = { WindowX: right + 1000, WindowY: 40, WindowWidth: saved.width, WindowHeight: saved.height };
+    for (const [name, value] of Object.entries(values))
+      await UserDataStorage.write(UserDataStoragePath.PhotoDataViewer[name], `${value}`);
+  }, saved);
+  const area = await (await app.browserWindow(page)).evaluate(window =>
+    globalThis.__plmTestRequire('electron').screen.getDisplayMatching(window.getBounds()).workArea);
+  const width = Math.min(saved.width, area.width);
+  const height = Math.min(saved.height, area.height);
+  const newWindow = app.waitForEvent('window');
+  await page.evaluate(photo => window.plm.photoDataViewer.open({ photo: { name: 'IMG_4676.JPG', path: photo } }), photo);
+  const viewerWindow = await app.browserWindow(await newWindow);
+  expect(await viewerWindow.evaluate(window => window.getBounds())).toEqual({ x: area.x + Math.round((area.width - width) / 2),
+    y: area.y + Math.round((area.height - height) / 2), width, height });
+});
 test('the page shows the photos of a folder that the user opened, and no other file', async () => {
   // The page's web security is on: no file: URL loads, and plm-file: answers only for the opened folders
   // (src-main/file-server/photo-files.ts).

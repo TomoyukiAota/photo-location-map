@@ -15,8 +15,9 @@ import { createPhotoDataViewerUrl } from './photo-data-viewer-url.js';
 import { PhotoDataViewerWindowState } from './photo-data-viewer-window-state.js';
 
 /**
- * Opens Photo Data Viewer's window for the photo of `ipcParams`, where the last one was, or else on the display of
- * `mainWindowBounds`, the main window's (photo-data-viewer-window-state.ts), and shows it once loaded.
+ * Opens Photo Data Viewer's window for the photo of `ipcParams`, where the last one was while that is on a display, or
+ * else on the display of `mainWindowBounds`, the main window's (photo-data-viewer-window-state.ts), and shows it once
+ * loaded.
  */
 export async function launchPhotoDataViewer(ipcParams: PhotoDataViewerIpcParams, mainWindowBounds?: Electron.Rectangle) {
   perfMark('view-data:launch');
