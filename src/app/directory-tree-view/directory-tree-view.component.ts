@@ -1,16 +1,17 @@
 import { FocusMonitor, TREE_KEY_MANAGER } from '@angular/cdk/a11y';
 import { Component, DestroyRef, effect, Injector, signal, untracked, viewChild, viewChildren, inject } from '@angular/core';
 import { MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem } from '@angular/material/menu';
-import { MatTree, MatTreeNodeDef, MatTreeNode, MatTreeNodeToggle, MatTreeNodePadding } from '@angular/material/tree';
+import { MatTree, MatTreeNodeDef, MatTreeNodeToggle, MatTreeNodePadding } from '@angular/material/tree';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { createPrependedLogger } from '../../../src-shared/log/create-prepended-logger';
 import { logged } from '../../../src-shared/log/logged-line';
 import { PhotoInfoViewerComponent } from '../photo-info-viewer/photo-info-viewer.component';
+import { EasedScroll } from '../shared/eased-scroll/eased-scroll';
 import { NearViewDirective } from '../shared/near-view/near-view.directive';
 import { TranslatePipe } from '../shared/i18n/translate.pipe';
 import { Photo } from '../shared/model/photo.model';
 import { PhotoDataService } from '../shared/service/photo-data.service';
-import { PhotoRevealService } from '../shared/service/photo-reveal.service';
+import { PhotoRevealService, SidebarRevealRequest } from '../shared/service/photo-reveal.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
 import { DirTreeViewCheckboxAndNameComponent } from './dir-tree-view-checkbox-and-name/dir-tree-view-checkbox-and-name.component';
 import { DirTreeViewContextMenuHelper } from './dir-tree-view-context-menu/dir-tree-view-context-menu-helper';
@@ -18,6 +19,8 @@ import { dirTreeViewContextMenuItems } from './dir-tree-view-context-menu/dir-tr
 import { DirTreeViewFolderCheckboxAndNameComponent } from './dir-tree-view-folder-checkbox-and-name/dir-tree-view-folder-checkbox-and-name.component';
 import { dirTreeViewKeyManagerFactory } from './dir-tree-view-key-manager';
 import { DirTreeViewNodeSelection } from './dir-tree-view-node-selection';
+import { RevealHighlights } from './dir-tree-view-reveal-highlight';
+import { DirTreeViewNodePositions, DirTreeViewTreeNodeDirective } from './dir-tree-view-tree-node.directive';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { DirectoryTreeViewSelectionService } from './directory-tree-view-selection.service';
 import { DirTreeViewSortConfig } from './dir-tree-view-sort/dir-tree-view-sort-config';
@@ -28,15 +31,13 @@ import { MatIcon } from '@angular/material/icon';
 
 const dirTreeViewLogger = createPrependedLogger('[Directory Tree View]');
 
-/** How long a revealed row is highlighted: the length of its animation in directory-tree-view.component.scss. */
-export const revealHighlightMs = 3000;
-
 @Component({
   selector: 'app-directory-tree-view',
   templateUrl: 'directory-tree-view.component.html',
   styleUrls: ['directory-tree-view.component.scss'],
+  // DirTreeViewTreeNodeDirective is the rows' tree node, in place of MatTreeNode, which is not imported (see its comment).
   imports: [
-    MatTree, MatTreeNodeDef, MatTreeNode, MatTreeNodeToggle, MatTreeNodePadding, MatIconButton,
+    MatTree, MatTreeNodeDef, DirTreeViewTreeNodeDirective, MatTreeNodeToggle, MatTreeNodePadding, MatIconButton,
     PhotoInfoViewerComponent, MatIcon, MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem,
     TranslatePipe, NearViewDirective, DirTreeViewCheckboxAndNameComponent, DirTreeViewFolderCheckboxAndNameComponent,
   ],
@@ -45,6 +46,8 @@ export const revealHighlightMs = 3000;
     { provide: TREE_KEY_MANAGER, useValue: dirTreeViewKeyManagerFactory },
     // The selection, which the rows' components read their nodes' states from.
     DirTreeViewNodeSelection,
+    // Where each node is among its siblings, which the rows' tree nodes read for aria-posinset.
+    DirTreeViewNodePositions,
   ],
 })
 export class DirectoryTreeViewComponent {
@@ -67,6 +70,7 @@ export class DirectoryTreeViewComponent {
   public readonly hasChildren = (_: number, node: NestedNode) => this.isExpandable(node);
   private readonly tree = viewChild.required<MatTree<NestedNode>>('tree');
   private readonly selection = inject(DirTreeViewNodeSelection);
+  private readonly positions = inject(DirTreeViewNodePositions);
   // The parent of every node of the tree, shown or not, and null for the root. Its keys are all the nodes.
   private readonly parentNodes = new Map<NestedNode, NestedNode | null>();
 
@@ -89,8 +93,11 @@ export class DirectoryTreeViewComponent {
       .subscribe(photoPath => this.handleDirectoryTreeViewAdditionRequested(photoPath));
 
     inject(PhotoRevealService).revealInSidebarRequested
-      .subscribe(photo => this.reveal(photo.path));
-    inject(DestroyRef).onDestroy(() => clearTimeout(this.revealHighlightTimer));
+      .subscribe(request => this.reveal(request));
+    inject(DestroyRef).onDestroy(() => {
+      this.easedScroll.stop();
+      this.revealHighlights.clear();
+    });
   }
 
   /** The photo of a file's node, whose information the node's row shows; null for a file that is not a photo. */
@@ -116,6 +123,7 @@ export class DirectoryTreeViewComponent {
   private handleDirectoryTreeViewDataReplaced(data: NestedNode[]) {
     this.collapsePreviousFolder();
     this.selection.replace(data);
+    this.positions.replace(data);
     this.parentNodes.clear();
     this.addParentNodes(data, null);
     this.treeData.set(data);
@@ -162,6 +170,7 @@ export class DirectoryTreeViewComponent {
 
   private sortData(sortConfig: DirTreeViewSortConfig) {
     const sortedData = this.sortService.sortData(this.treeData(), sortConfig);
+    this.positions.replace(sortedData);
     this.treeData.set([...sortedData]); // A new array, as sortData() sorts the children of the same nodes in place.
   }
 
@@ -236,49 +245,44 @@ export class DirectoryTreeViewComponent {
 
   //#region --- Reveal ---
   /** The rows that the tree shows, each with its node as its data. */
-  private readonly treeNodes = viewChildren(MatTreeNode);
-  /**
-   * The row that was revealed last, while it is highlighted: its node, and which of the highlight's two animations it
-   * has (see the styles), so that a row revealed again while it is highlighted starts its highlight anew.
-   */
-  private readonly revealedRow = signal<{ node: NestedNode; highlight: 1 | 2 } | null>(null);
-  private revealHighlightTimer: ReturnType<typeof setTimeout> | undefined;
-
-  /** Which of the highlight's animations the node's row has while it is highlighted, and null otherwise. */
-  public revealHighlightOf(node: NestedNode): 1 | 2 | null {
-    const revealedRow = this.revealedRow();
-    return revealedRow?.node === node ? revealedRow.highlight : null;
-  }
+  private readonly treeNodes = viewChildren(DirTreeViewTreeNodeDirective);
+  /** The sidebar's scroll to a revealed row. */
+  private readonly easedScroll = new EasedScroll();
+  private readonly revealHighlights = new RevealHighlights();
 
   /**
    * Shows the row of a node, as a link to a message of a chat application shows the message: the folders above it are
-   * expanded, its row is scrolled to the middle of the sidebar, and it is highlighted for a moment. The selection does
-   * not change.
-   * TL;DR: The rows of an expanded folder are in the page as soon as it is expanded, so the row is scrolled to at once.
+   * expanded, the sidebar scrolls to have the row in its middle, speeding up gradually and slowing down gradually, and
+   * the row lights up for a moment once the sidebar has stopped there. The selection does not change. For a step of
+   * Select Previous or Select Next, the sidebar stays where it is when it shows all of the row. A row lit by an earlier
+   * reveal fades back.
+   * TL;DR: The rows of an expanded folder are in the page as soon as it is expanded, so the scroll to the row starts at
+   * once.
    * Details: The tree renders its nodes again whenever a folder is expanded, synchronously, as its data is an array
    * and its children come from childrenAccessor. A row stays in the page while its folder is expanded, so it is
    * scrolled to by its element, whatever its content is.
    */
-  private reveal(path: string): void {
-    const node = this.nodeOf(path);
+  private reveal({ photo, scroll }: SidebarRevealRequest): void {
+    const node = this.nodeOf(photo.path);
     if (!node) {
-      dirTreeViewLogger.warn(logged`Cannot reveal "${path}", which is not in the tree.`);
+      dirTreeViewLogger.warn(logged`Cannot reveal "${photo.path}", which is not in the tree.`);
       return;
     }
-    dirTreeViewLogger.info(`Reveal "${path}"`);
+    dirTreeViewLogger.info(`Reveal "${photo.path}"`);
     const tree = this.tree();
     for (const folder of this.foldersAbove(node)) {
       if (!tree.isExpanded(folder))
         tree.expand(folder);
     }
-    const row = this.treeNodes().find(treeNode => treeNode.data === node);
+    const row = this.treeNodes().find(treeNode => treeNode.data === node)?._elementRef.nativeElement;
     if (!row) {
-      dirTreeViewLogger.warn(logged`Cannot reveal "${path}", whose row is not shown.`);
+      dirTreeViewLogger.warn(logged`Cannot reveal "${photo.path}", whose row is not shown.`);
       return;
     }
-    // Scrolled within the sidebar, which is the only part of the window that scrolls.
-    row._elementRef.nativeElement.scrollIntoView({ block: 'center', inline: 'nearest' });
-    this.highlight(node);
+    this.revealHighlights.fadeLitRows();
+    // Within the sidebar, which is the only part of the window that scrolls. A row revealed before the last one has
+    // been scrolled to is scrolled to from where the sidebar is, at the speed that it has (EasedScroll).
+    this.easedScroll.toMiddle(row, () => this.revealHighlights.light(row), { evenWhenShown: scroll === 'always' });
   }
 
   /** The folders above a node, from the opened folder down. */
@@ -287,15 +291,6 @@ export class DirectoryTreeViewComponent {
     for (let parent = this.getParentNode(node); parent; parent = this.getParentNode(parent))
       folders.unshift(parent);
     return folders;
-  }
-
-  private highlight(node: NestedNode): void {
-    const previous = this.revealedRow();
-    const highlight = previous?.node === node && previous.highlight === 1 ? 2 : 1;
-    this.revealedRow.set({ node, highlight });
-    clearTimeout(this.revealHighlightTimer);
-    // Once the animation has ended, so that a row made again, as when its folder is expanded again, has none.
-    this.revealHighlightTimer = setTimeout(() => this.revealedRow.set(null), revealHighlightMs + 500);
   }
   //#endregion --- Reveal ---
 }

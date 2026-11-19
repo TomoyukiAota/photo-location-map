@@ -5,19 +5,20 @@
 -->
 <mat-tree #tree="matTree" [dataSource]="treeData()" [childrenAccessor]="childrenAccessor">
   <!--
-    A file's row, which a photo revealed from the map highlights for a moment: see reveal(). It makes what is costly
-    in it, a photo's checkbox and the photo's thumbnail and buttons, only once it comes near the part of the tree that
-    is shown (appNearView), as an expanded folder can have thousands of rows. The components inside the row read
-    whether it is near, and how much of the selection is theirs, in their own templates: this template must not (see
-    NearViewDirective).
+    A file's row, which a revealed photo highlights for a moment, by an attribute set on the row rather than bound
+    here (RevealHighlights). It makes what is costly in it, a photo's checkbox and the photo's thumbnail and buttons,
+    only once it comes near the part of the tree that is shown (appNearView), as an expanded folder can have thousands
+    of rows. The components inside the row read whether it is near, and how much of the selection is theirs, in their
+    own templates: this template must not (see NearViewDirective).
     It has no matTreeNodeToggle, which a folder's button has: a click on the row, a click on its checkbox too, would
     expand or collapse the file in the tree's state, which shows nothing for a file but has the tree go through all of
     its nodes again and check every row (docs/tasks/20261119_checkbox-checks-changed-rows/STATUS.md).
+    Each mat-tree-node, a file's or a folder's, is a DirTreeViewTreeNodeDirective, which looks up where the row is
+    among its siblings, where MatTreeNode would search them.
   -->
   <mat-tree-node *matTreeNodeDef="let node"
                  matTreeNodePadding
                  [matTreeNodePaddingIndent]="indentPerLevel"
-                 [attr.data-reveal-highlight]="revealHighlightOf(node)"
                  (contextmenu)="onContextMenu($event, node)"
                  appNearView
                  class="leaf-tree-node">
