@@ -144,6 +144,30 @@ async function measure(build) {
     await page.waitForTimeout(3000);
     const afterRowsAgain = await memory();
 
+    // Scrolling down the rows from the top, by 100 pixels a frame for 240 frames, past about a hundred rows: the
+    // time between frames, as each row makes what it shows when it comes near the view. It comes before the clicks and
+    // Undo below, which change the selection, have the map render its photos again and take another time in another
+    // build, so that it follows the same work in every build.
+    const frameGaps = await page.evaluate(() => new Promise(resolve => {
+      const pane = document.querySelector('#home-sidebar-lower-pane');
+      pane.scrollTop = 0;
+      const gaps = [];
+      let previous;
+      const step = now => {
+        if (previous !== undefined)
+          gaps.push(now - previous);
+        previous = now;
+        if (gaps.length === 240)
+          return resolve(gaps);
+        pane.scrollTop += 100;
+        requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }));
+    // Back at the top, where the row that is clicked below is in view, as a row that a user clicks is.
+    await page.evaluate(() => { document.querySelector('#home-sidebar-lower-pane').scrollTop = 0; });
+    await page.waitForTimeout(1500);
+
     // A click that changes one row, to the frame after the change is shown: what every other row costs then.
     const checkbox = page.locator('mat-tree-node').nth(5).locator('input[type="checkbox"]');
     const checkboxMs = [];
@@ -165,25 +189,35 @@ async function measure(build) {
       await page.waitForTimeout(1500);
     }
 
-    // Scrolling down the rows from the top, by 100 pixels a frame for 240 frames, past about a hundred rows: the
-    // time between frames, as each row makes what it shows when it comes near the view.
-    const frameGaps = await page.evaluate(() => new Promise(resolve => {
-      const pane = document.querySelector('#home-sidebar-lower-pane');
-      pane.scrollTop = 0;
-      const gaps = [];
-      let previous;
-      const step = now => {
-        if (previous !== undefined)
-          gaps.push(now - previous);
-        previous = now;
-        if (gaps.length === 240)
-          return resolve(gaps);
-        pane.scrollTop += 100;
-        requestAnimationFrame(step);
-      };
-      requestAnimationFrame(step);
-    }));
-    return { openMs, rowsAgainMs: median(rowsAgainMs), checkboxMs: median(checkboxMs),
+    // Undo and Redo of the Selection menu, in turns, each of which changes the selection of the row clicked above: a
+    // change that comes from outside the tree, as the map's, the chart's and the menu's do, to the frame after it is
+    // shown, as for the click. The menu reaches the page through IPC; the time is the epoch's, which the harness and the
+    // page share.
+    const undoMs = [];
+    for (let turn = 0; turn < 6; turn++) {
+      await checkbox.evaluate(input => {
+        const before = input.checked;
+        globalThis.__plmCheckboxChanged = new Promise((resolve, reject) => {
+          const timeout = setTimeout(() => reject(new Error('The checkbox did not change within a minute of Undo or Redo.')), 60000);
+          // The checkbox's class changes with its state when Angular renders it, which is mostly before the frame that
+          // shows it: the time is taken at that frame, as the click's is.
+          new MutationObserver((_, observer) => {
+            if (input.checked === before)
+              return;
+            observer.disconnect();
+            clearTimeout(timeout);
+            requestAnimationFrame(() => resolve(performance.timeOrigin + performance.now()));
+          }).observe(input.closest('mat-checkbox'), { attributes: true, attributeFilter: ['class'] });
+        });
+      });
+      const clickedMs = Date.now();
+      await app.evaluate(({ Menu }, id) => Menu.getApplicationMenu().getMenuItemById(id).click(),
+        turn % 2 === 0 ? 'photo-selection-undo' : 'photo-selection-redo');
+      undoMs.push(Math.round(await page.evaluate(() => globalThis.__plmCheckboxChanged) - clickedMs));
+      await page.waitForTimeout(1500);
+    }
+
+    return { openMs, rowsAgainMs: median(rowsAgainMs), checkboxMs: median(checkboxMs), undoMs: median(undoMs),
       scrollFrameMs: Math.round(frameGaps.reduce((sum, gap) => sum + gap, 0) / frameGaps.length * 10) / 10,
       scrollLongestFrameMs: Math.round(Math.max(...frameGaps)), heapMb: afterOpen.heapMb, nodes: afterOpen.nodes,
       listeners: afterOpen.listeners, processMb: afterOpen.processMb, heapAfterRowsAgainMb: afterRowsAgain.heapMb };

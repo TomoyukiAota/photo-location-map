@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatTree } from '@angular/material/tree';
 import { By } from '@angular/platform-browser';
@@ -8,6 +8,7 @@ import { NearViewService } from '../shared/near-view/near-view.service';
 import { PhotoDataService } from '../shared/service/photo-data.service';
 import { PhotoRevealService } from '../shared/service/photo-reveal.service';
 import { SelectedPhotoService } from '../shared/service/selected-photo.service';
+import { DirTreeViewNodeSelection } from './dir-tree-view-node-selection';
 import { DirectoryTreeViewDataService } from './directory-tree-view-data.service';
 import { DirectoryTreeViewSelectionService } from './directory-tree-view-selection.service';
 import { DirectoryTreeViewComponent, revealHighlightMs } from './directory-tree-view.component';
@@ -140,6 +141,17 @@ describe('DirectoryTreeViewComponent', () => {
     selection.select(['/folder/a.jpg']);
     await fixture.whenStable();
     expect(checked()).toEqual({ 'a.jpg': true, 'b.jpg': false });
+  });
+
+  it('does not expand a photo\'s node when its row is clicked, which would render the tree again', async () => {
+    const photo = Object.assign(node('/folder/photo.jpg'), { isSelectable: true });
+    dataService.dataReplaced.next([node('/folder', [photo])]);
+    await fixture.whenStable();
+
+    (fixture.nativeElement as HTMLElement).querySelector<HTMLElement>('mat-tree-node.leaf-tree-node').click();
+    await fixture.whenStable();
+
+    expect(tree.isExpanded(photo)).toBe(false);
   });
 
   describe('revealing a photo from the map', () => {
@@ -291,5 +303,67 @@ describe('DirectoryTreeViewComponent', () => {
     } finally {
       fixture.nativeElement.remove();
     }
+  });
+});
+
+describe('DirectoryTreeViewComponent, as Angular checks it after a change of the selection', () => {
+  let fixture: ComponentFixture<DirectoryTreeViewComponent>;
+  let rowOf: (name: string) => HTMLElement;
+  let checkboxOf: (name: string) => HTMLInputElement;
+  let stateOf: ReturnType<typeof vi.spyOn>;
+  let revealHighlightOf: ReturnType<typeof vi.spyOn>;
+  /** The names of the nodes whose rows read their states, which their components do when Angular checks them. */
+  const statesRead = () => new Set(stateOf.mock.calls.map(([each]) => (each as NestedNode).name));
+  const selectable = (path: string, children: NestedNode[] = []) => Object.assign(node(path, children), { isSelectable: true });
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [DirectoryTreeViewComponent],
+      providers: [{ provide: NearViewService, useValue: new NearViewDouble() }],
+    })
+      .overrideComponent(DirectoryTreeViewComponent, {
+        remove: { imports: [PhotoInfoViewerComponent] },
+        add: { imports: [DummyPhotoInfoViewerComponent] },
+      })
+      // OnPush, Angular's default, which the application's build gives it: an override makes a component's metadata
+      // again, with the strategy that checks it whenever its parent is checked, and the development mode's check
+      // after each change detection would then go through every row.
+      .overrideComponent(DirectoryTreeViewComponent, { set: { changeDetection: ChangeDetectionStrategy.OnPush } })
+      .compileComponents();
+    fixture = TestBed.createComponent(DirectoryTreeViewComponent);
+    await fixture.whenStable();
+    vi.spyOn(TestBed.inject(PhotoDataService), 'getPhoto').mockImplementation(path => ({ path }) as Photo);
+    const photos = ['/folder/a.jpg', '/folder/b.jpg', '/folder/c.jpg'].map(path => selectable(path));
+    TestBed.inject(DirectoryTreeViewDataService).dataReplaced.next([selectable('/folder', photos)]);
+    await fixture.whenStable();
+    rowOf = name => Array.from((fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('mat-tree-node'))
+      .find(row => row.querySelector('bdi').textContent === name);
+    checkboxOf = name => rowOf(name).querySelector<HTMLInputElement>('input[type="checkbox"]');
+    stateOf = vi.spyOn(fixture.debugElement.injector.get(DirTreeViewNodeSelection), 'stateOf');
+    // The tree's template reads it for each file's row, which Angular checks with the row's node.
+    revealHighlightOf = vi.spyOn(fixture.componentInstance, 'revealHighlightOf');
+  });
+
+  it('by a click on a photo\'s checkbox checks every row\'s node, as an event in the tree does, and the changed rows only', async () => {
+    checkboxOf('b.jpg').click();
+    await fixture.whenStable();
+
+    expect(statesRead()).toEqual(new Set(['b.jpg', 'folder']));
+    expect(new Set(revealHighlightOf.mock.calls.map(([each]) => (each as NestedNode).name))).toEqual(new Set(['a.jpg', 'b.jpg', 'c.jpg']));
+    expect(checkboxOf('b.jpg').checked).toBe(false);
+    expect(checkboxOf('folder').indeterminate).toBe(true);
+    expect(TestBed.inject(SelectedPhotoService).selectedPhotos().map(each => each.path)).toEqual(['/folder/a.jpg', '/folder/c.jpg']);
+  });
+
+  it('requested outside the tree checks no row\'s node, and the rows that it changes only', async () => {
+    // As Undo and Redo in the Selection menu, the map and the chart request one.
+    TestBed.inject(DirectoryTreeViewSelectionService).select(['/folder/a.jpg', '/folder/c.jpg']);
+    await fixture.whenStable();
+
+    expect(statesRead()).toEqual(new Set(['b.jpg', 'folder']));
+    expect(revealHighlightOf).not.toHaveBeenCalled();
+    expect(checkboxOf('a.jpg').checked).toBe(true);
+    expect(checkboxOf('b.jpg').checked).toBe(false);
+    expect(checkboxOf('folder').indeterminate).toBe(true);
   });
 });

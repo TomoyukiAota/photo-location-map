@@ -7,7 +7,7 @@
 } @else {
   <button mat-icon-button disabled></button> <!-- Adjust space to align with tree expand button (which look like > or v) -->
   @if (shownNode.isSelectable) {
-    <mat-checkbox [checked]="selected()"
+    <mat-checkbox [checked]="selection.stateOf(shownNode)() === 'selected'"
                   (change)="toggled.emit()">
       <bdi>{{ shownNode.name }}</bdi>
     </mat-checkbox>
