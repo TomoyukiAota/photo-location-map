@@ -97,7 +97,8 @@ prints for each trial, and as medians at the end:
 | `openMs` | From the click on Open Folder to the frame after the last row is in the page, with the thumbnails of the rows in the sidebar's view loaded. Most of it is reading the photos. |
 | `rowsAgainMs` | The folder collapsed, then from the click that expands it to the frame after the last row, with the thumbnails in view loaded: the rows made again. |
 | `checkboxMs` | From a click on one row's checkbox to the frame after it shows: what the other rows cost a change of one. |
-| `scrollFrameMs`, `scrollLongestFrameMs` | The mean and the longest time between two frames while the sidebar scrolls down from the top by 100 pixels a frame, past about a hundred rows, which make their checkboxes and their photos' thumbnails and buttons as they come near the view. |
+| `undoMs` | From Undo or Redo in the Selection menu, which change that row's selection again, to the frame that shows it: what the other rows cost a change that comes from outside the tree, as the map's and the chart's do. |
+| `scrollFrameMs`, `scrollLongestFrameMs` | The mean and the longest time between two frames while the sidebar scrolls down from the top by 100 pixels a frame, past about a hundred rows, which make their checkboxes and their photos' thumbnails and buttons as they come near the view. It comes before the clicks of `checkboxMs` and the Undo of `undoMs`, which change the selection, have the map render its photos again and take another time in another build, so that it follows the same work in every build. |
 | `heapMb`, `nodes`, `listeners` | The page's JavaScript heap after a garbage collection, and its nodes and event listeners, once the folder is open. |
 | `processMb` | The working set of the page's process then, which Electron reports. Most of it is the thumbnails. |
 | `heapAfterRowsAgainMb` | The heap after the rows were made again three times: more than `heapMb` by much is a leak. |
