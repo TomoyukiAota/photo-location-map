@@ -1,0 +1,6 @@
+@use "../non-selectable-node";
+
+// The checkbox, or the grey box and the name, are laid out in the folder's row, after its button.
+:host {
+  display: contents;
+}

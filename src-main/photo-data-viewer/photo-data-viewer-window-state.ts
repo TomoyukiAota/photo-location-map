@@ -47,10 +47,10 @@ export function fitInto(bounds: Rectangle, area: Rectangle): Rectangle {
   };
 }
 
-/** The default size in the middle of `area`, a display's work area, made smaller where the area is. */
-export function defaultBoundsIn(area: Rectangle): Rectangle {
-  const width = Math.min(defaultWindowSize.width, area.width);
-  const height = Math.min(defaultWindowSize.height, area.height);
+/** A window of `size` in the middle of `area`, a display's work area, made smaller where the area is. */
+export function centeredIn(area: Rectangle, size: Pick<Rectangle, 'width' | 'height'>): Rectangle {
+  const width = Math.min(size.width, area.width);
+  const height = Math.min(size.height, area.height);
   return {
     x: area.x + Math.round((area.width - width) / 2),
     y: area.y + Math.round((area.height - height) / 2),
@@ -59,25 +59,76 @@ export function defaultBoundsIn(area: Rectangle): Rectangle {
   };
 }
 
+/** The default size in the middle of `area`, a display's work area, made smaller where the area is. */
+export function defaultBoundsIn(area: Rectangle): Rectangle {
+  return centeredIn(area, defaultWindowSize);
+}
+
+/**
+ * The height of the window's title bar, by which the user drags the window: about 31 pixels on Windows, 28 to 32 on
+ * macOS.
+ */
+const titleBarHeight = 32;
+
+/**
+ * TL;DR: How much of its title bar the window needs in the work area of a display for the user to see it and drag it.
+ * Details: Saved bounds can be where no display is now, as after the display that the window was on was disconnected
+ * or the displays were arranged anew, and the window would open where the user cannot see it. 100 pixels of the title
+ * bar's width leave a part to take hold of. Half of its height leaves room for a window saved while maximized on
+ * Windows, whose bounds go past the work area by its frame, about 8 pixels, at the top too. Not the whole window, as
+ * electron-window-state asks of the main window: the user can leave a window partly past an edge of the screen, or
+ * across two displays, and it opens there again.
+ */
+const visibleTitleBar = { width: 100, height: titleBarHeight / 2 } as const;
+
+/**
+ * The work area, of `workAreas`, that has the most of the title bar of a window of `bounds`, where one has enough of
+ * it for the user to see it and drag it (visibleTitleBar), or undefined.
+ */
+function workAreaWithTitleBar(bounds: Rectangle, workAreas: ReadonlyArray<Rectangle>): Rectangle | undefined {
+  const titleBar = { ...bounds, height: Math.min(bounds.height, titleBarHeight) };
+  const parts = workAreas.map(area => ({
+    area,
+    width: Math.min(titleBar.x + titleBar.width, area.x + area.width) - Math.max(titleBar.x, area.x),
+    height: Math.min(titleBar.y + titleBar.height, area.y + area.height) - Math.max(titleBar.y, area.y),
+  })).filter(part => part.width >= Math.min(visibleTitleBar.width, titleBar.width)
+    && part.height >= Math.min(visibleTitleBar.height, titleBar.height));
+  return parts.sort((a, b) => b.width * b.height - a.width * a.height)[0]?.area;
+}
+
+/** The work areas of the displays, in the same pixels as the window's bounds. */
+export interface WorkAreas {
+  /** The main window's display's, where the window opens by default. */
+  readonly main: Rectangle;
+  /** Every display's. */
+  readonly all: ReadonlyArray<Rectangle>;
+}
+
 /**
  * The bounds that the window opens with, from those saved (`saved`):
- * - Bounds that the user gave the window stay as they are.
+ * - Bounds that the user gave the window stay as they are, where enough of the window's title bar is in the work area
+ *   of a display for the user to see it and drag it (visibleTitleBar).
  * - The old default size, which only a window that was never resized has, is replaced by the default size, where the
- *   window was, moved and made smaller where needed to be in the work area of that display (`workAreaOf`).
+ *   window was, moved and made smaller where needed to be in the work area of that display.
+ * - A window that would be out of sight there keeps its size, made smaller where needed, in the middle of the work
+ *   area of the main window's display, or gets the default size there instead of the old one.
  * - With nothing saved, or the old default bounds, of a window never moved either, the window opens in the middle of
- *   `defaultArea`, the work area of the main window's display (defaultBoundsIn).
+ *   the main window's display (defaultBoundsIn).
  */
-export function boundsToOpen(saved: SavedBounds, defaultArea: Rectangle,
-                             workAreaOf: (bounds: Rectangle) => Rectangle): Rectangle {
+export function boundsToOpen(saved: SavedBounds, workAreas: WorkAreas): Rectangle {
   const { x, y, width, height } = saved;
   // The four are saved together: one without the others is not the window's.
   if (x === undefined || y === undefined || width === undefined || height === undefined)
-    return defaultBoundsIn(defaultArea);
-  if (width !== oldDefaultBounds.width || height !== oldDefaultBounds.height)
+    return defaultBoundsIn(workAreas.main);
+  const hasOldDefaultSize = width === oldDefaultBounds.width && height === oldDefaultBounds.height;
+  if (hasOldDefaultSize && x === oldDefaultBounds.x && y === oldDefaultBounds.y)
+    return defaultBoundsIn(workAreas.main);
+  const area = workAreaWithTitleBar({ x, y, width, height }, workAreas.all);
+  if (!area)
+    return centeredIn(workAreas.main, hasOldDefaultSize ? defaultWindowSize : { width, height });
+  if (!hasOldDefaultSize)
     return { x, y, width, height };
-  if (x === oldDefaultBounds.x && y === oldDefaultBounds.y)
-    return defaultBoundsIn(defaultArea);
-  return fitInto({ x, y, ...defaultWindowSize }, workAreaOf({ x, y, width, height }));
+  return fitInto({ x, y, ...defaultWindowSize }, area);
 }
 
 /** The saved number at `storagePath`, as "-12.5" is, or undefined where none is saved or it is not a finite number. */
@@ -93,9 +144,9 @@ export class PhotoDataViewerWindowState {
   private static readonly browserWindowRefHolder: StateManageParams[] = [];
 
   /**
-   * The bounds to open the window with (boundsToOpen): the saved ones, or by default in the middle of the work area of
-   * the display of `mainWindowBounds`, the main window's, from which the user opens the viewer, or of the primary
-   * display without it.
+   * The bounds to open the window with (boundsToOpen): the saved ones, where the user can see the window there, or
+   * else in the middle of the work area of the display of `mainWindowBounds`, the main window's, from which the user
+   * opens the viewer, or of the primary display without it.
    */
   public static get(mainWindowBounds?: Rectangle): Rectangle {
     const saved: SavedBounds = {
@@ -104,8 +155,9 @@ export class PhotoDataViewerWindowState {
       width: readSavedNumber(UserDataStoragePath.PhotoDataViewer.WindowWidth),
       height: readSavedNumber(UserDataStoragePath.PhotoDataViewer.WindowHeight),
     };
-    const defaultDisplay = mainWindowBounds ? screen.getDisplayMatching(mainWindowBounds) : screen.getPrimaryDisplay();
-    return boundsToOpen(saved, defaultDisplay.workArea, bounds => screen.getDisplayMatching(bounds).workArea);
+    const mainDisplay = mainWindowBounds ? screen.getDisplayMatching(mainWindowBounds) : screen.getPrimaryDisplay();
+    const all = screen.getAllDisplays().map(display => display.workArea);
+    return boundsToOpen(saved, { main: mainDisplay.workArea, all });
   }
 
   public static manage(params: StateManageParams) {

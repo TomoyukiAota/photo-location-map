@@ -205,6 +205,7 @@ in parentheses.
   photos, a click took 0.35 to 0.51 s to show before this change and 0.29 to
   0.42 s with it, the map's markers included. A component of the row that read
   the selection itself would make a click check only the rows that change.
+  What was found and done since: `docs/tasks/20261119_checkbox-checks-changed-rows/STATUS.md`.
 - **A row that nothing can select puts the room before its name on the wrong
   side in a language written from right to left.** The name's `bdi` element
   has `padding-inline-start`, and a `bdi` takes its direction from its text:
