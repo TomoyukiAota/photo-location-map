@@ -7,6 +7,7 @@ import { DateTimeOriginal } from '../model/date-time-original';
 import { LatLng } from '../model/lat-lng.model';
 import { Photo } from '../model/photo.model';
 import { PhotoDataService } from './photo-data.service';
+import { PhotoRevealService } from './photo-reveal.service';
 import { SelectPreviousNextService } from './select-previous-next.service';
 import { SelectedPhotoService } from './selected-photo.service';
 
@@ -177,10 +178,14 @@ describe('SelectPreviousNextService', () => {
     expect(service.nextOf('/second/b.jpg')).toBe('/second/a.jpg');
   });
 
-  it('selects only the photo it is given, as Select Only This does', () => {
+  it('selects only the photo it is given, as Select Only This does, and shows its row of the tree', () => {
+    const shownInSidebar = vi.spyOn(TestBed.inject(PhotoRevealService), 'showSteppedToInSidebar');
+
     service.select('/photos/b.jpg');
 
     expect(select).toHaveBeenCalledExactlyOnceWith(['/photos/b.jpg']);
+    expect(shownInSidebar).toHaveBeenCalledExactlyOnceWith('/photos/b.jpg');
+    expect(select.mock.invocationCallOrder[0]).toBeLessThan(shownInSidebar.mock.invocationCallOrder[0]);
   });
 
   describe('in the Selection menu', () => {

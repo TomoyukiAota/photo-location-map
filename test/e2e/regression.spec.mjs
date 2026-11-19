@@ -1,5 +1,6 @@
 import { test, expect, _electron } from 'playwright/test';
 import { createRequire } from 'node:module';
+import { constants as fsConstants } from 'node:fs';
 import { copyFile, mkdir, mkdtemp, readFile, realpath, rm, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
@@ -378,6 +379,58 @@ async function mainProcessErrorDialog(message) {
 }
 function treeCheckbox(name) {
   return page.locator('mat-tree-node').filter({ hasText: name }).getByRole('checkbox');
+}
+/**
+ * Records where the sidebar is scrolled at each animation frame from now on. `frames()` stops, and gives the time and
+ * the scrollTop of each frame.
+ */
+async function recordSidebarScrolling() {
+  await page.evaluate(() => {
+    const pane = document.querySelector('#home-sidebar-lower-pane');
+    const recording = window.__plmSidebarScrolling = { frames: [], stopped: false };
+    const record = time => {
+      recording.frames.push({ time, scrollTop: pane.scrollTop });
+      if (!recording.stopped) requestAnimationFrame(record);
+    };
+    requestAnimationFrame(record);
+  });
+  return {
+    frames: () => page.evaluate(() => {
+      window.__plmSidebarScrolling.stopped = true;
+      return window.__plmSidebarScrolling.frames;
+    }),
+  };
+}
+/**
+ * Expects the sidebar to have scrolled once, smoothly, by CSS's ease-in-out (src/app/shared/smooth-scroll/): at each
+ * frame on its way, slowly at its start and at its end, and fastest in its middle. Gives how far it went.
+ */
+function expectSmoothScrolling(frames) {
+  const start = frames.findIndex((frame, index) => index + 1 < frames.length && frames[index + 1].scrollTop !== frame.scrollTop);
+  expect(start).toBeGreaterThanOrEqual(0);
+  const endTop = frames.at(-1).scrollTop;
+  const moving = frames.slice(start, frames.findIndex((frame, index) => index > start && frame.scrollTop === endTop) + 1);
+  // About half a second, a frame at each 60th of it at least.
+  expect(moving.length).toBeGreaterThanOrEqual(10);
+  const from = moving[0].scrollTop;
+  const direction = Math.sign(endTop - from);
+  for (let index = 1; index < moving.length; index++)
+    expect(direction * (moving[index].scrollTop - moving[index - 1].scrollTop)).toBeGreaterThanOrEqual(0);
+  // How much of its way it had gone at a part of its time, between the frames before and after then.
+  const startTime = moving[0].time;
+  const duration = moving.at(-1).time - startTime;
+  const gone = part => {
+    const time = startTime + part * duration;
+    const after = Math.max(1, moving.findIndex(frame => frame.time >= time));
+    const [before, next] = [moving[after - 1], moving[after]];
+    const scrollTop = before.scrollTop + (next.scrollTop - before.scrollTop) * (time - before.time) / (next.time - before.time);
+    return (scrollTop - from) / (endTop - from);
+  };
+  // Ease-in-out goes 5% of its way in its first 15% of its time, as much in its last 15%, and 52% in its middle 30%.
+  expect(gone(0.15)).toBeLessThan(0.12);
+  expect(1 - gone(0.85)).toBeLessThan(0.12);
+  expect(gone(0.65) - gone(0.35)).toBeGreaterThan(0.4);
+  return Math.abs(endTop - from);
 }
 /** Records the URLs that the main process opens in the OS browser for the page, instead of opening them. */
 async function recordOpenedUrls() {
@@ -1692,10 +1745,14 @@ test('Reveal in Sidebar from a popup of the map expands the folders above the ph
   const popup = page.locator('.leaflet-popup');
   await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_4676.JPG');
   await popup.getByRole('button', { name: 'More Options' }).click();
+  const scrolling = await recordSidebarScrolling();
   await popup.locator('.photo-info-viewer-more-options-menu-item').filter({ hasText: 'Reveal in Sidebar' }).click();
   for (const name of ['the photo', 'taken', 'in Kobe']) await expect(treeNode(name)).toHaveAttribute('aria-expanded', 'true');
-  await expect(row).toHaveAttribute('data-reveal-highlight', '1');
-  await expect(row).toHaveCSS('animation-name', /reveal-highlight-1/);
+  // Once the sidebar has scrolled there, smoothly.
+  await expect(row).toHaveAttribute('data-reveal-highlight', 'lit');
+  expectSmoothScrolling(await scrolling.frames());
+  await expect(row).toHaveCSS('background-color', 'rgba(255, 193, 7, 0.35)');
+  await expect(row).toHaveCSS('transition-timing-function', 'ease-in-out');
   expect(await pane.evaluate(element => element.scrollTop)).toBeGreaterThan(0);
   // In the middle of what the sidebar shows: above its horizontal scrollbar, which Windows and Linux draw below the
   // rows, so that the middle of the sidebar's box is half the scrollbar lower there. macOS draws it over the rows.
@@ -1707,8 +1764,9 @@ test('Reveal in Sidebar from a popup of the map expands the folders above the ph
   });
   expect(distanceFromMiddle).toBeLessThan(2);
   // The highlight fades, and the row is as before. The selection, and so the map, are as they were.
+  await expect(row).toHaveAttribute('data-reveal-highlight', 'fading');
   await expect(row).not.toHaveAttribute('data-reveal-highlight', /./, { timeout: 5000 });
-  await expect(row).toHaveCSS('animation-name', 'none');
+  await expect(row).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
   await expect(treeCheckbox('IMG_4676.JPG')).toBeChecked();
   await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_4676.JPG');
 });
@@ -1795,7 +1853,7 @@ test('Reveal in Map opens the popup of a cluster of photos taken at one place wi
   const shownPhoto = page.locator('.photo-cluster-viewer-right-pane');
   await shownPhoto.getByRole('button', { name: 'More Options' }).click();
   await shownPhoto.locator('.photo-info-viewer-more-options-menu-item').filter({ hasText: 'Reveal in Sidebar' }).click();
-  await expect(rowOf('Kobe 1.JPG')).toHaveAttribute('data-reveal-highlight', '1');
+  await expect(rowOf('Kobe 1.JPG')).toHaveAttribute('data-reveal-highlight', /^(lit|fading)$/);
   await expect(rowOf('Kobe 2.JPG')).not.toHaveAttribute('data-reveal-highlight', /./);
 });
 test('a photo\'s information, in the tree and in a popup of the map, opens the photo, its folder and its Live Photos movie, and keeps its thumbnail turned', async () => {
@@ -1978,6 +2036,13 @@ test('Select Previous and Select Next go through the photos in the order they we
     for (const [photo, folder] of Object.entries(folders))
       await expect(treeCheckbox(folder)).toBeChecked({ checked: photo === name });
   }
+  /** The photo's row is shown in the sidebar, its folder expanded, and lights up for a moment. */
+  async function expectShownInSidebar(name) {
+    await expect(page.locator('mat-tree-node').filter({ has: page.getByText(folders[name], { exact: true }) })).toHaveAttribute('aria-expanded', 'true');
+    const row = page.locator('mat-tree-node.leaf-tree-node').filter({ hasText: name });
+    await expect(row).toHaveAttribute('data-reveal-highlight', /^(lit|fading)$/);
+    await expect(row).toBeInViewport({ ratio: 1 });
+  }
   await dismissWelcome();
   await openFolderWithPicker(photoFolder);
   await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
@@ -1987,10 +2052,11 @@ test('Select Previous and Select Next go through the photos in the order they we
   await expectSelected('IMG_1579.JPG');
   await expect.poll(enabled).toEqual({ previous: false, next: true });
 
-  // The Selection menu, from the first photo to the last, and back.
+  // The Selection menu, from the first photo to the last, and back. Each step shows the photo in the sidebar.
   for (const name of ['IMG_2581.JPG', 'IMG_4676.JPG', 'IMG_5769.JPG']) {
     await selectNext.click();
     await expectSelected(name);
+    await expectShownInSidebar(name);
   }
   await expect.poll(enabled).toEqual({ previous: true, next: false });
   // Nothing comes after the last photo, nor round to the first: clicked anyway, the item leaves the selection.
@@ -1998,6 +2064,7 @@ test('Select Previous and Select Next go through the photos in the order they we
   for (const name of ['IMG_4676.JPG', 'IMG_2581.JPG', 'IMG_1579.JPG']) {
     await selectPrevious.click();
     await expectSelected(name);
+    await expectShownInSidebar(name);
   }
   await expect.poll(enabled).toEqual({ previous: false, next: true });
   // Each step is in the selection's history.
@@ -2012,8 +2079,8 @@ test('Select Previous and Select Next go through the photos in the order they we
   await expect(moreOptionsItems).toHaveText(['Select Only This', 'Select Previous', 'Select Next', 'Reveal in Sidebar', ...withLocation]);
   await moreOptionsItems.filter({ hasText: 'Select Next' }).click();
   await expectSelected('IMG_4676.JPG');
+  await expectShownInSidebar('IMG_4676.JPG');
   const kobe = page.locator('mat-tree-node').filter({ has: page.getByText('Kobe', { exact: true }) });
-  await kobe.getByRole('button').click();
   const row = page.locator('mat-tree-node').filter({ hasText: 'IMG_4676.JPG' });
   await row.locator('.photo-info-viewer-thumbnail').hover();
   await row.getByRole('button', { name: 'More Options' }).click();
@@ -2108,6 +2175,54 @@ test('Select Previous and Select Next go through the photos in the order they we
   await kobe.focus();
   await page.keyboard.press('ArrowLeft');
   await expect(kobe).toHaveAttribute('aria-expanded', 'false');
+});
+test('Select Previous and Select Next scroll the sidebar smoothly to the selected photo\'s row only when it is out of sight, and light it up', async () => {
+  // Copies of one photo, all taken at the same time, so that their names order them: twelve in a folder, which go
+  // further down than the sidebar shows, and three in the next folder.
+  const folder = path.join(profile, 'two days');
+  const pathOf = number => path.join(folder, number <= 12 ? 'day 1' : 'day 2', `photo ${String(number).padStart(2, '0')}.JPG`);
+  for (let number = 1; number <= 15; number++) {
+    await mkdir(path.dirname(pathOf(number)), { recursive: true });
+    await copyFile(path.join(photoFolder, 'Gold Coast/IMG_1579.JPG'), pathOf(number), fsConstants.COPYFILE_FICLONE);
+  }
+  await dismissWelcome();
+  await openFolderWithPicker(folder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('15 files have location data.');
+  const step = id => app.evaluate(({ Menu }, id) => Menu.getApplicationMenu().getMenuItemById(id).click(), id);
+  const selectOnly = number => page.evaluate(photo => window.plmInternalRenderer.photoSelection.selectOnlyThis(photo), pathOf(number));
+  const folderRow = name => page.locator('mat-tree-node').filter({ has: page.getByText(name, { exact: true }) });
+  const row = number => page.locator('mat-tree-node.leaf-tree-node').filter({ hasText: path.basename(pathOf(number)) });
+  const scrollTop = () => page.locator('#home-sidebar-lower-pane').evaluate(pane => pane.scrollTop);
+  await expect(folderRow('day 1')).toHaveAttribute('aria-expanded', 'false');
+
+  // A step into a folder expands it. The sidebar shows the folder's first row, so it stays where it is.
+  await selectOnly(2);
+  await expectRepresentedPhotos(1);
+  await step('photo-selection-select-previous');
+  await expect(row(1)).toHaveAttribute('data-reveal-highlight', /^(lit|fading)$/);
+  await expect(folderRow('day 1')).toHaveAttribute('aria-expanded', 'true');
+  await expect(folderRow('day 2')).toHaveAttribute('aria-expanded', 'false');
+  expect(await scrollTop()).toBe(0);
+
+  // A step to a row below what the sidebar shows scrolls there, smoothly, and the row lights up once it has.
+  await selectOnly(12);
+  await expectRepresentedPhotos(1);
+  await expect(folderRow('day 2')).not.toBeInViewport();
+  const scrolling = await recordSidebarScrolling();
+  await step('photo-selection-select-next');
+  await expect(row(13)).toHaveAttribute('data-reveal-highlight', 'lit');
+  expect(expectSmoothScrolling(await scrolling.frames())).toBeGreaterThan(0);
+  await expect(row(13)).toBeInViewport({ ratio: 1 });
+  await expect(row(13)).toHaveCSS('background-color', 'rgba(255, 193, 7, 0.35)');
+  // The next step lights up its row, and the row lit before fades back (in less time, when it is still lit:
+  // DirectoryTreeViewComponent's unit tests time that).
+  await step('photo-selection-select-previous');
+  await expect(row(12)).toHaveAttribute('data-reveal-highlight', /^(lit|fading)$/);
+  await expect(row(12)).toBeInViewport({ ratio: 1 });
+  await expect(row(13)).not.toHaveAttribute('data-reveal-highlight', /./);
+  await expect(row(13)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+  await expect(row(12)).not.toHaveAttribute('data-reveal-highlight', /./, { timeout: 5000 });
+  await expect(treeCheckbox('photo 12.JPG')).toBeChecked();
 });
 test('the sort menu orders the tree by name and by shooting time, shows its choice, and keeps it across a restart', async () => {
   // Photos named against the order they were taken in (Apple Park 2019, Kobe 2017, Unga 2015, Gold Coast 2013), so
