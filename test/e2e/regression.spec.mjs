@@ -2165,20 +2165,31 @@ test('Select Previous and Select Next scroll the sidebar to the selected photo\'
   const scrollTop = () => page.locator('#home-sidebar-lower-pane').evaluate(pane => pane.scrollTop);
   await expect(folderRow('day 1')).toHaveAttribute('aria-expanded', 'false');
 
-  // A step into a folder expands it. The sidebar shows all of the folder's second row, so it stays where it is.
+  // A step into a folder expands it, and shows the row.
   await selectOnly(1);
   await expectRepresentedPhotos(1);
   await step('photo-selection-select-next');
   await expect(row(2)).toHaveAttribute('data-reveal-highlight', /./);
   await expect(folderRow('day 1')).toHaveAttribute('aria-expanded', 'true');
   await expect(row(2)).toBeInViewport({ ratio: 1 });
-  expect(await scrollTop()).toBe(0);
-  // Below the middle of what the sidebar shows, where Reveal in Sidebar would have scrolled it.
-  expect(await row(2).evaluate(element => {
+
+  // A step to a row that the sidebar shows all of leaves the sidebar where it is, although the row is far from the
+  // middle of the sidebar, where Reveal in Sidebar would have scrolled it: here at the top of what the sidebar shows,
+  // whatever the sidebar's height is, which is less on Windows CI's screen.
+  await selectOnly(3);
+  await expectRepresentedPhotos(1);
+  const { shownTop, fromMiddle } = await row(4).evaluate(element => {
     const pane = element.closest('#home-sidebar-lower-pane');
+    const paneTop = () => pane.getBoundingClientRect().top + pane.clientTop;
+    pane.scrollTop += element.getBoundingClientRect().top - paneTop() - 1;
     const box = element.getBoundingClientRect();
-    return box.top + box.height / 2 > pane.getBoundingClientRect().top + pane.clientTop + pane.clientHeight / 2;
-  })).toBe(true);
+    return { shownTop: pane.scrollTop, fromMiddle: paneTop() + pane.clientHeight / 2 - (box.top + box.height / 2) };
+  });
+  await expect(row(4)).toBeInViewport({ ratio: 1 });
+  expect(fromMiddle).toBeGreaterThan(20);
+  await step('photo-selection-select-next');
+  await expect(row(4)).toHaveAttribute('data-reveal-highlight', /./);
+  expect(await scrollTop()).toBe(shownTop);
 
   // A step to a row below what the sidebar shows scrolls there, and the row lights up once the sidebar has stopped.
   await selectOnly(12);
