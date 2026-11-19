@@ -164,6 +164,9 @@ async function measure(build) {
       };
       requestAnimationFrame(step);
     }));
+    // Back at the top, where the row that is clicked below is in view, as a row that a user clicks is.
+    await page.evaluate(() => { document.querySelector('#home-sidebar-lower-pane').scrollTop = 0; });
+    await page.waitForTimeout(1500);
 
     // A click that changes one row, to the frame after the change is shown: what every other row costs then.
     const checkbox = page.locator('mat-tree-node').nth(5).locator('input[type="checkbox"]');
@@ -187,21 +190,23 @@ async function measure(build) {
     }
 
     // Undo and Redo of the Selection menu, in turns, each of which changes the selection of the row clicked above: a
-    // change that comes from outside the tree, as the map's, the chart's and the menu's do, to the frame that shows it.
-    // The menu reaches the page through IPC; the time is the epoch's, which the harness and the page share.
+    // change that comes from outside the tree, as the map's, the chart's and the menu's do, to the frame after it is
+    // shown, as for the click. The menu reaches the page through IPC; the time is the epoch's, which the harness and the
+    // page share.
     const undoMs = [];
     for (let turn = 0; turn < 6; turn++) {
       await checkbox.evaluate(input => {
         const before = input.checked;
         globalThis.__plmCheckboxChanged = new Promise((resolve, reject) => {
           const timeout = setTimeout(() => reject(new Error('The checkbox did not change within a minute of Undo or Redo.')), 60000);
-          // The checkbox's class changes with its state, while Angular renders the frame that shows it.
+          // The checkbox's class changes with its state when Angular renders it, which is mostly before the frame that
+          // shows it: the time is taken at that frame, as the click's is.
           new MutationObserver((_, observer) => {
             if (input.checked === before)
               return;
             observer.disconnect();
             clearTimeout(timeout);
-            resolve(performance.timeOrigin + performance.now());
+            requestAnimationFrame(() => resolve(performance.timeOrigin + performance.now()));
           }).observe(input.closest('mat-checkbox'), { attributes: true, attributeFilter: ['class'] });
         });
       });
