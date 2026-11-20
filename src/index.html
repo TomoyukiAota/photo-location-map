@@ -1,5 +1,8 @@
 <!doctype html>
-<html>
+<!-- The main process writes the application's language and direction here, and the loading text in that language
+     below, as it serves this page (src-main/file-server/app-page-language.ts). In live reload, ng serve sends the page
+     as it is, in English until src/start-app.ts sets its language. -->
+<html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8">
   <title>Photo Location Map</title>
@@ -16,10 +19,9 @@
 </head>
 <body>
   <app-root>
-    <div class="app-loading-indicator-container">
-      <span class="app-loading-indicator"></span>
-      <!-- In English until the app's code sets it in the application's language (src/start-app.ts). -->
-      <span id="app-loading-text">Loading...</span>
+    <div class="app-loading-indicator-container" role="status">
+      <span class="app-loading-indicator" aria-hidden="true"></span>
+      <span class="app-loading-text" id="app-loading-text">Loading...</span>
     </div>
   </app-root>
 </body>

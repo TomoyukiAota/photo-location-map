@@ -52,6 +52,9 @@ export class LanguageDialogComponent {
   /** That the application will restart, in the chosen language, which is the one that the user reads. */
   public readonly restartNote = computed(() => tIn(this.selectedLanguage(), 'language.restartToApply'));
 
+  /** The note in the language on screen, which gives the room of the note its height whatever language is chosen. */
+  protected readonly restartNoteOnScreen = tIn(currentLanguage, 'language.restartToApply');
+
   /** The button's text, in the chosen language as well. */
   public readonly confirmLabel = computed(() => tIn(this.selectedLanguage(), 'language.confirm'));
 
