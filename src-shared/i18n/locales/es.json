@@ -95,9 +95,9 @@
     "rotateThumbnail": "Girar miniatura",
     "menu": {
       "selection": "Selección",
-      "selectOnlyThis": "Seleccionar solo este archivo",
-      "selectPrevious": "Seleccionar el archivo anterior",
-      "selectNext": "Seleccionar el archivo siguiente",
+      "selectOnlyThis": "Solo este archivo",
+      "selectPrevious": "Foto tomada antes",
+      "selectNext": "Foto tomada después",
       "openFolder": "Abrir carpeta",
       "revealInMap": "Mostrar en el mapa",
       "revealInSidebar": "Mostrar en la barra lateral",
@@ -252,8 +252,8 @@
       "title": "Selección",
       "undo": "Deshacer",
       "redo": "Rehacer",
-      "selectPrevious": "Seleccionar el archivo anterior",
-      "selectNext": "Seleccionar el archivo siguiente"
+      "selectPrevious": "Foto tomada antes",
+      "selectNext": "Foto tomada después"
     },
     "settings": {
       "title": "Ajustes",

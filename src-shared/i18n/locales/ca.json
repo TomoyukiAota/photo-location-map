@@ -95,9 +95,9 @@
     "rotateThumbnail": "Gira la miniatura",
     "menu": {
       "selection": "Selecció",
-      "selectOnlyThis": "Selecciona només aquest fitxer",
-      "selectPrevious": "Selecciona el fitxer anterior",
-      "selectNext": "Selecciona el fitxer següent",
+      "selectOnlyThis": "Només aquest fitxer",
+      "selectPrevious": "Foto feta abans",
+      "selectNext": "Foto feta després",
       "openFolder": "Obre la carpeta",
       "revealInMap": "Mostra al mapa",
       "revealInSidebar": "Mostra a la barra lateral",
@@ -252,8 +252,8 @@
       "title": "Selecció",
       "undo": "Desfés",
       "redo": "Refés",
-      "selectPrevious": "Selecciona el fitxer anterior",
-      "selectNext": "Selecciona el fitxer següent"
+      "selectPrevious": "Foto feta abans",
+      "selectNext": "Foto feta després"
     },
     "settings": {
       "title": "Configuració",

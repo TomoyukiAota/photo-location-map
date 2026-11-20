@@ -95,9 +95,9 @@
     "rotateThumbnail": "Xirar a miniatura",
     "menu": {
       "selection": "Selección",
-      "selectOnlyThis": "Seleccionar só este ficheiro",
-      "selectPrevious": "Seleccionar o ficheiro anterior",
-      "selectNext": "Seleccionar o ficheiro seguinte",
+      "selectOnlyThis": "Só este ficheiro",
+      "selectPrevious": "Foto tirada antes",
+      "selectNext": "Foto tirada despois",
       "openFolder": "Abrir o cartafol",
       "revealInMap": "Mostrar no mapa",
       "revealInSidebar": "Mostrar na barra lateral",
@@ -252,8 +252,8 @@
       "title": "Selección",
       "undo": "Desfacer",
       "redo": "Refacer",
-      "selectPrevious": "Seleccionar o ficheiro anterior",
-      "selectNext": "Seleccionar o ficheiro seguinte"
+      "selectPrevious": "Foto tirada antes",
+      "selectNext": "Foto tirada despois"
     },
     "settings": {
       "title": "Configuración",

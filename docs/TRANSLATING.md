@@ -160,8 +160,11 @@ npm run test:unit:ng
 - `photoInfo.menu.selectPrevious` and `selectNext` are items of a photo's menu,
   and `menu.selection.selectPrevious` and `selectNext` the same items of the
   application menu, for the one selected photo. They select the photo taken
-  just before or just after it, by the date taken. Name what they select as
-  `photoInfo.menu.selectOnlyThis` does: a file in most languages.
+  just before or just after it, by the date taken, and name that photo by when
+  it was taken, without a word for selecting: the menu that they are in says
+  it. Say before and after with the pair of words that your language has for
+  them, which need not be the words for before and after: Japanese has 前 and
+  次, as in 前へ and 次へ.
 - `photoInfo.menu.revealInMap` and `revealInSidebar`, with
   `directoryTree.contextMenu.revealInMap`, are items of a photo's menus that
   show the photo in the other part of the window: on the map, from the list of
@@ -169,10 +172,14 @@ npm run test:unit:ng
   the window that has the list of folders: use the word that your language's
   operating system has for a sidebar, as Finder has one on macOS.
 - `photoInfo.menu.selection` and `google` name the two submenus of a photo's
-  menu. The first has `selectOnlyThis`, `selectPrevious` and `selectNext`, and
-  is named as the application menu's Selection menu (`menu.selection.title`),
-  which has items of the same kind. The second has the items that open
-  Google's sites, and is the company's name.
+  menu. The first has `selectOnlyThis`, `selectPrevious` and `selectNext`,
+  which say what it selects, without a word for selecting. English names it
+  with the verb, Select, so that each of its items reads as what it selects;
+  the application menu's Selection menu (`menu.selection.title`), which has
+  Undo and Redo too, has the noun. Use the word that your language names such
+  a menu with, which may be the Selection menu's: Japanese has 選択 for both.
+  The second has the items that open Google's sites, and is the company's
+  name.
 - `language.confirm` is the button that confirms the language at the first
   launch, shown in the language that is chosen in the list above it. Use the
   word that a button confirming a choice has in your language: Japanese has

@@ -95,9 +95,9 @@
     "rotateThumbnail": "サムネイルを回転",
     "menu": {
       "selection": "選択",
-      "selectOnlyThis": "このファイルのみを選択",
-      "selectPrevious": "前のファイルを選択",
-      "selectNext": "次のファイルを選択",
+      "selectOnlyThis": "このファイルのみ",
+      "selectPrevious": "前に撮影された写真",
+      "selectNext": "次に撮影された写真",
       "openFolder": "フォルダーを開く",
       "revealInMap": "マップで表示",
       "revealInSidebar": "サイドバーで表示",
@@ -252,8 +252,8 @@
       "title": "選択",
       "undo": "元に戻す",
       "redo": "やり直す",
-      "selectPrevious": "前のファイルを選択",
-      "selectNext": "次のファイルを選択"
+      "selectPrevious": "前に撮影された写真",
+      "selectNext": "次に撮影された写真"
     },
     "settings": {
       "title": "設定",
