@@ -3174,9 +3174,11 @@ async function describeViewerPage(viewer) {
 }
 /**
  * Waits until `shown`, a locator in the page of Photo Data Viewer's window `viewer`, is visible, and loads the page
- * again while the viewer's server answers it without some files of the viewer's own build.
+ * again while the viewer's server answers it without some files of the viewer's own build, and the page does not load
+ * itself again.
  * TL;DR: Such a page was loaded while the viewer's production deployment changed. It has the HTML of one deployment,
- * and got its scripts from the other one, which does not have them, so it never starts and shows nothing.
+ * and got its scripts from the other one, which does not have them, so it never starts and shows nothing. The viewer
+ * now loads such a page again by itself; the helper does so only where the viewer did not.
  * Details:
  * - The suite loads the viewer from its production server, https://pdv-in-plm.vercel.app/
  *   (src-main/photo-data-viewer/photo-data-viewer-server-config.ts). Each merge to Photo Data Viewer's main deploys
@@ -3200,12 +3202,23 @@ async function describeViewerPage(viewer) {
  *   manifests. Reproduced with the server on a later deployment, cf4b714's: given the HTML of 26faec8's, the page got
  *   404 for those files and others, and showed nothing for 15 seconds; loaded again, it showed the photo 0.4 seconds
  *   later.
- * - A page that has started asks for more files, which can be missing as well: the scripts of the map (Leaflet) and
- *   of the HEIC decoder (libheif), which webpack loads after the page's load event. So the page is watched until it
- *   shows `shown`.
- * - Only a 404 of the viewer's own server for a file under /_next/static/ counts. While the page has one, it is loaded
- *   again, 2 seconds after its load has ended, until `timeout` has passed: any other failure, and a page that still
- *   shows nothing then, fails the case with what the page shows (describeViewerPage).
+ * - Since Photo Data Viewer's 1b42c3c (its pull request #104, src/page-load/reload-for-missing-build-files.ts), the
+ *   page loads itself again half a second after its load event, at most 3 times a minute, while its app has not
+ *   started. The helper is left for the rest: a page that has used up those loads, the HTML of a deployment before
+ *   that one, and the files that a page that has started asks for, which the viewer leaves to its app: the scripts of
+ *   the map (Leaflet) and of the HEIC decoder (libheif), which webpack loads after the page's load event. So the page
+ *   is watched until it shows `shown`.
+ * - Only a 404 of the viewer's own server for a file under /_next/static/ counts. The helper then lets the page's load
+ *   end and waits 2 seconds more, and loads the page again only if it is still the same document, is not loading,
+ *   still misses such a file and still does not show `shown`, and `timeout` has not passed; otherwise it goes back to
+ *   watching. A load of its own would stop the page's: in an emulation of the two by the viewer's session, against a
+ *   server that answered in up to 600 ms, they stopped each other in 5 of 12 runs whose page needed its third load
+ *   (page.reload: net::ERR_ABORTED), and with those checks, 48 of 48 runs passed. In this suite, against the viewer
+ *   of 1b42c3c, a page given broken HTML once was loaded again by the viewer alone, and a page given it four times
+ *   was loaded again by the viewer three times and then by the helper. Any other failure, and a page that still shows
+ *   nothing when `timeout` has passed, fails the case with what the page shows (describeViewerPage).
+ * - A load of the helper's waits only until the new document commits, and the helper then watches it as before: the
+ *   page's load event can wait on a file that `shown` does not need, such as a font.
  * - A load is let end before the next one. A new load stops one that is still going, as loading the page again 3
  *   seconds early did in a reproduction: loadURL() then rejects with ERR_ABORTED (-3), an unhandled error, whose
  *   dialog holds the main process in the suite (load-viewer-page.ts).
@@ -3224,6 +3237,10 @@ async function expectShownInViewer(viewer, shown, timeout = 30000) {
   // expect.poll() does not poll again after a function that throws, as one that reads a page being loaded can.
   const state = async () => await shown.isVisible().catch(() => false) ? 'shown'
     : (await missingFiles()).length ? 'missing files' : 'loading';
+  // Each load of the page makes a new document, with a time origin of its own.
+  const currentDocument = () => viewer.evaluate(() => performance.timeOrigin).catch(() => undefined);
+  const viewerWindow = await app.browserWindow(viewer);
+  const isLoading = () => viewerWindow.evaluate(window => window.webContents.isLoading()).catch(() => true);
   const notShown = async error => {
     throw new Error(`The page of Photo Data Viewer did not show ${shown} within ${timeout} ms.\n${await describeViewerPage(viewer)}`,
       { cause: error });
@@ -3231,14 +3248,14 @@ async function expectShownInViewer(viewer, shown, timeout = 30000) {
   for (;;) {
     await expect.poll(state, { timeout: left(), intervals: [100, 250] }).not.toBe('loading').catch(notShown);
     if (await state() !== 'missing files') break;
+    const missingDocument = await currentDocument();
+    await expect.poll(isLoading, { timeout: left() }).toBe(false).catch(notShown);
+    await viewer.waitForTimeout(Math.min(2000, left()));
+    if (await currentDocument() !== missingDocument || await isLoading() || await state() !== 'missing files') continue;
     if (Date.now() >= deadline) await notShown(new Error('The page was still missing files of its own build.'));
     console.log(`Photo Data Viewer's server did not have ${(await missingFiles()).join(', ')}, of the page's own build: `
       + 'loading the page again.');
-    const viewerWindow = await app.browserWindow(viewer);
-    await expect.poll(() => viewerWindow.evaluate(window => window.webContents.isLoading()), { timeout: left() })
-      .toBe(false).catch(notShown);
-    await viewer.waitForTimeout(Math.min(2000, left()));
-    await viewer.reload({ timeout: left() }).catch(notShown);
+    await viewer.reload({ timeout: left(), waitUntil: 'commit' }).catch(notShown);
   }
   await expect(shown).toBeVisible({ timeout: left() }).catch(notShown);
 }
