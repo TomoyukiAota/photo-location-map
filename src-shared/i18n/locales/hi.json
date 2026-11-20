@@ -95,9 +95,9 @@
     "rotateThumbnail": "थंबनेल घुमाएँ",
     "menu": {
       "selection": "चयन",
-      "selectOnlyThis": "सिर्फ़ यह फ़ाइल चुनें",
-      "selectPrevious": "पिछली फ़ाइल चुनें",
-      "selectNext": "अगली फ़ाइल चुनें",
+      "selectOnlyThis": "सिर्फ़ यह फ़ाइल",
+      "selectPrevious": "इससे पहले ली गई फ़ोटो",
+      "selectNext": "इसके बाद ली गई फ़ोटो",
       "openFolder": "फ़ोल्डर खोलें",
       "revealInMap": "मैप पर दिखाएँ",
       "revealInSidebar": "साइडबार में दिखाएँ",
@@ -252,8 +252,8 @@
       "title": "चयन",
       "undo": "पहले जैसा करें",
       "redo": "फिर से करें",
-      "selectPrevious": "पिछली फ़ाइल चुनें",
-      "selectNext": "अगली फ़ाइल चुनें"
+      "selectPrevious": "इससे पहले ली गई फ़ोटो",
+      "selectNext": "इसके बाद ली गई फ़ोटो"
     },
     "settings": {
       "title": "सेटिंग",

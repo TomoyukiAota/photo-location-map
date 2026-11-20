@@ -342,7 +342,7 @@ describe('PhotoInfoViewerComponent', () => {
       return menus().at(-1);
     }
 
-    it('opens above the page, with what can be done with a photo that has a location, and the submenus of Selection and Google', async () => {
+    it('opens above the page, with what can be done with a photo that has a location, and the submenus of Select and Google', async () => {
       await showWithMenu(cameraPhoto(), 'leaflet-map-popup');
       expect(menus()).toEqual([]);
       expect(button('More Options').getAttribute('aria-haspopup')).toBe('menu');
@@ -353,15 +353,15 @@ describe('PhotoInfoViewerComponent', () => {
       expect(element.contains(menu)).toBe(false);
       expect(menu.getAttribute('role')).toBe('menu');
       expect(button('More Options').getAttribute('aria-expanded')).toBe('true');
-      expect(textsOf(menu)).toEqual(['Selection', 'Reveal in Sidebar', 'Open Folder', 'Google', 'View Data']);
+      expect(textsOf(menu)).toEqual(['Select', 'Reveal in Sidebar', 'Open Folder', 'Google', 'View Data']);
       expect(itemsOf(menu).map(each => each.getAttribute('aria-haspopup'))).toEqual(['menu', null, null, 'menu', null]);
-      await click(item(menu, 'Selection'));
+      await click(item(menu, 'Select'));
       expect(menus()).toHaveLength(2);
-      expect(textsOf(menus()[1])).toEqual(['Select Only This', 'Select Previous', 'Select Next']);
+      expect(textsOf(menus()[1])).toEqual(['Only This', 'Photo Taken Before', 'Photo Taken After']);
       // The pointer on another item closes the submenu, and opens that item's submenu.
       item(menu, 'Google').dispatchEvent(new MouseEvent('mouseenter'));
       await vi.waitFor(() => expect(menus().map(textsOf)).toEqual([
-        ['Selection', 'Reveal in Sidebar', 'Open Folder', 'Google', 'View Data'],
+        ['Select', 'Reveal in Sidebar', 'Open Folder', 'Google', 'View Data'],
         ['Open Google Maps', 'Open Google Earth', 'Open Google Street View'],
       ]));
     });
@@ -372,13 +372,13 @@ describe('PhotoInfoViewerComponent', () => {
 
       const menu = await open();
 
-      expect(textsOf(menu)).toEqual(['Selection', 'Reveal in Map', 'Open Folder', 'Google', 'View Data']);
+      expect(textsOf(menu)).toEqual(['Select', 'Reveal in Map', 'Open Folder', 'Google', 'View Data']);
       await click(item(menu, 'Reveal in Map'));
       expect(revealInMap).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ path: '/photos/IMG_0001.JPG' }));
       await closed();
     });
 
-    it('has Select Previous and Select Next in Selection, which select the photo taken before or after, and cannot be chosen where there is none', async () => {
+    it('has Photo Taken Before and Photo Taken After in Select, which select the photo taken before or after, and cannot be chosen where there is none', async () => {
       // The photos taken just before and after, which SelectPreviousNextService has tests of its own for.
       const neighbors: Record<string, [string | null, string | null]> = {
         '/photos/IMG_0001.JPG': [null, '/photos/IMG_0002.JPG'],
@@ -391,21 +391,21 @@ describe('PhotoInfoViewerComponent', () => {
         nextOf: (path: string) => neighbors[path]?.[1] ?? null,
         select,
       } });
-      /** Which of the items of Selection can be chosen, for the photo. */
+      /** Which of the items of Select can be chosen, for the photo. */
       const choosable = async (path: string) => {
         await showWithMenu(cameraPhoto(path), 'dir-tree-view');
-        const selection = await open('Selection');
+        const selection = await open('Select');
         const result = Object.fromEntries(itemsOf(selection).map(each => [each.textContent.trim(), !each.disabled]));
         document.body.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true }));
         await closed();
         return result;
       };
 
-      expect(await choosable('/photos/IMG_0001.JPG')).toEqual({ 'Select Only This': true, 'Select Previous': false, 'Select Next': true });
-      expect(await choosable('/photos/IMG_0003.JPG')).toEqual({ 'Select Only This': true, 'Select Previous': true, 'Select Next': false });
-      expect(await choosable('/photos/IMG_0002.JPG')).toEqual({ 'Select Only This': true, 'Select Previous': true, 'Select Next': true });
-      for (const text of ['Select Previous', 'Select Next']) {
-        await click(item(await open('Selection'), text));
+      expect(await choosable('/photos/IMG_0001.JPG')).toEqual({ 'Only This': true, 'Photo Taken Before': false, 'Photo Taken After': true });
+      expect(await choosable('/photos/IMG_0003.JPG')).toEqual({ 'Only This': true, 'Photo Taken Before': true, 'Photo Taken After': false });
+      expect(await choosable('/photos/IMG_0002.JPG')).toEqual({ 'Only This': true, 'Photo Taken Before': true, 'Photo Taken After': true });
+      for (const text of ['Photo Taken Before', 'Photo Taken After']) {
+        await click(item(await open('Select'), text));
         await closed();
       }
 
@@ -426,7 +426,7 @@ describe('PhotoInfoViewerComponent', () => {
         await click(button('More Options'));
         await closed();
 
-        const menu = await open('Selection');
+        const menu = await open('Select');
         menu.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true }));
         menus()[0].dispatchEvent(new Event('wheel', { bubbles: true }));
         expect(menus()).toHaveLength(2);
@@ -458,7 +458,7 @@ describe('PhotoInfoViewerComponent', () => {
       document.body.appendChild(element);
       try {
         for (const [submenu, text] of [
-          ['Selection', 'Select Only This'], [undefined, 'Reveal in Sidebar'], [undefined, 'Open Folder'],
+          ['Select', 'Only This'], [undefined, 'Reveal in Sidebar'], [undefined, 'Open Folder'],
           ['Google', 'Open Google Maps'], ['Google', 'Open Google Earth'], ['Google', 'Open Google Street View'], [undefined, 'View Data'],
         ] as const) {
           button('More Options').focus();

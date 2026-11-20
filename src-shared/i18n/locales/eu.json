@@ -95,9 +95,9 @@
     "rotateThumbnail": "Biratu miniatura",
     "menu": {
       "selection": "Hautapena",
-      "selectOnlyThis": "Hautatu fitxategi hau bakarrik",
-      "selectPrevious": "Hautatu aurreko fitxategia",
-      "selectNext": "Hautatu hurrengo fitxategia",
+      "selectOnlyThis": "Fitxategi hau bakarrik",
+      "selectPrevious": "Aurretik ateratako argazkia",
+      "selectNext": "Ondoren ateratako argazkia",
       "openFolder": "Ireki karpeta",
       "revealInMap": "Erakutsi mapan",
       "revealInSidebar": "Erakutsi alboko barran",
@@ -252,8 +252,8 @@
       "title": "Hautapena",
       "undo": "Desegin",
       "redo": "Berregin",
-      "selectPrevious": "Hautatu aurreko fitxategia",
-      "selectNext": "Hautatu hurrengo fitxategia"
+      "selectPrevious": "Aurretik ateratako argazkia",
+      "selectNext": "Ondoren ateratako argazkia"
     },
     "settings": {
       "title": "Ezarpenak",
