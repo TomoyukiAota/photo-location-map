@@ -2,6 +2,7 @@ import { inject, Service } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
 import { appName } from '../../../../src-shared/i18n/i18n';
+import { LanguageCode } from '../../../../src-shared/i18n/languages';
 import { ConfirmDialogComponent, ConfirmDialogData } from './confirm-dialog.component';
 
 @Service()
@@ -16,13 +17,26 @@ export class ConfirmDialogService {
    * setting is.
    */
   public async confirm(message: string, path?: string): Promise<boolean> {
+    return await this.open(path === undefined ? { message } : { message, path });
+  }
+
+  /**
+   * Asks `message`, which is in `language`, with OK and Cancel named in it too, whatever the application's language
+   * is: the question that saving the settings asks in the language just chosen in them, which is the one that the
+   * user reads (SettingsDialogComponent).
+   */
+  public async confirmIn(language: LanguageCode, message: string): Promise<boolean> {
+    return await this.open({ message, language });
+  }
+
+  private async open(data: ConfirmDialogData): Promise<boolean> {
     const dialogRef = this.dialog.open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, {
       // As wide as the longest line of the question, in any language, so that a line is not broken in two.
       minWidth: '360px',
       panelClass: 'custom-dialog-container',
       role: 'alertdialog',
       ariaLabel: appName,
-      data: path === undefined ? { message } : { message, path },
+      data,
       restoreFocus: false,
     });
     return await firstValueFrom(dialogRef.afterClosed()) === true;

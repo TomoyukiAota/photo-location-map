@@ -3,7 +3,7 @@ import { MatButton } from '@angular/material/button';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { currentLanguage, tIn } from '../../../src-shared/i18n/i18n';
-import { LanguageSetting } from '../../../src-shared/i18n/languages';
+import { getLanguage, LanguageSetting } from '../../../src-shared/i18n/languages';
 import { resolveLanguage } from '../../../src-shared/i18n/resolve-language';
 import { Logger } from '../../../src-shared/log/logger';
 import { startupMetadata } from '../../../src-shared/startup/startup-metadata';
@@ -38,6 +38,13 @@ export class LanguageDialogComponent {
   /** The language that the chosen setting shows the application in. */
   public readonly selectedLanguage = computed(() =>
     resolveLanguage({ languageSetting: this.selected(), systemLanguages: startupMetadata().systemLanguages }));
+
+  /**
+   * The direction of the chosen language, which the note and the button's name are written in. Without it, a sentence
+   * written in the other direction than the application had its full stop at its start: the note in Arabic, in an
+   * application in English.
+   */
+  public readonly selectedDirection = computed(() => getLanguage(this.selectedLanguage()).direction);
 
   /** Whether the button restarts the application: the texts on screen are in another language than the chosen one. */
   public readonly isRestartRequired = computed(() => this.selectedLanguage() !== currentLanguage);

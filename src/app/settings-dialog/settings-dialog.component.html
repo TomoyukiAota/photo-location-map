@@ -17,21 +17,28 @@
   <app-cache-settings      [style.display]="isSelectedTab('cache')      ? 'block' : 'none'"></app-cache-settings>
 </div>
 <div class="settings-dialog-footer">
+  <!-- In the language chosen on the Language tab, which the user reads (selectedLanguage). -->
   <div class="settings-dialog-footer-description"
-       [style.visibility]="isAppRestartRequired() ? 'visible' : 'hidden'">
-    {{ 'settings.restartAfterSaving' | t }}
+       [style.visibility]="isAppRestartRequired() ? 'visible' : 'hidden'"
+       [attr.lang]="selectedLanguage()"
+       [attr.dir]="selectedDirection()">
+    {{ restartNote() }}
   </div>
   <div class="settings-dialog-footer-buttons">
     <button mat-flat-button
             color="primary"
+            [attr.lang]="selectedLanguage()"
+            [attr.dir]="selectedDirection()"
             [disabled]="!isSaveButtonEnabled()"
             (click)="saveSettings()">
-      {{ 'settings.save' | t }}
+      {{ saveLabel() }}
     </button>
     <button mat-button
+            [attr.lang]="selectedLanguage()"
+            [attr.dir]="selectedDirection()"
             (click)="handleCancelClicked()"
             class="settings-dialog-cancel-button">
-      {{ 'common.cancel' | t }}
+      {{ cancelLabel() }}
     </button>
   </div>
 </div>

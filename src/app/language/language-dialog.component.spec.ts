@@ -148,6 +148,17 @@ describe('LanguageDialogComponent', () => {
     expect(trackEvent).toHaveBeenCalledWith('User Setting', 'Changed User Setting', 'Language: en');
   });
 
+  it('writes the note and the name of its button in the direction of the chosen language', async () => {
+    await choose('العربية');
+    expect(restartNote().textContent.trim()).toBe('سيُعاد تشغيل هذا التطبيق لتطبيق اللغة.');
+    expect([restartNote().getAttribute('lang'), restartNote().getAttribute('dir')]).toEqual(['ar', 'rtl']);
+    expect(okButton().textContent.trim()).toBe('موافق');
+    expect([okButton().getAttribute('lang'), okButton().getAttribute('dir')]).toEqual(['ar', 'rtl']);
+
+    await choose('English');
+    expect([okButton().getAttribute('lang'), okButton().getAttribute('dir')]).toEqual(['en', 'ltr']);
+  });
+
   it('says in the chosen language that the application will restart, names its button in it, and restarts once the choice is saved', async () => {
     const restart = vi.spyOn(window.plm.app, 'restart');
     await choose('日本語');
@@ -155,8 +166,10 @@ describe('LanguageDialogComponent', () => {
     expect(restartNote().style.visibility).toBe('visible');
     expect(restartNote().textContent.trim()).toBe('言語を適用するため、このアプリを再起動します。');
     expect(restartNote().getAttribute('lang')).toBe('ja');
+    expect(restartNote().getAttribute('dir')).toBe('ltr');
     expect(okButton().textContent.trim()).toBe('決定');
     expect(okButton().getAttribute('lang')).toBe('ja');
+    expect(okButton().getAttribute('dir')).toBe('ltr');
 
     await clickOk();
 
