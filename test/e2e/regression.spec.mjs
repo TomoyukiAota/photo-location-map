@@ -64,6 +64,27 @@ async function expectWindowOffScreenOnlyIfHeadless(window) {
       .toEqual({ visible: true, opacity: 0, focused: false });
   } else expect(state.visible, 'A headless run must keep the window hidden.').toBe(false);
 }
+/** The requests of the application's pages that have not finished, since its last launch. */
+let unfinishedRequests = new Set();
+const addressOf = request => request.url().slice(0, 160);
+/** The page that made `request`, or undefined for a request that has none, such as a service worker's. */
+function pageOf(request) {
+  try {
+    return request.frame().page();
+  } catch {
+    return undefined;
+  }
+}
+/**
+ * What each page other than the main window's wrote to its console, threw and did not load, from its start, which
+ * describeViewerPage tells for a page of Photo Data Viewer.
+ */
+const otherPagesEvents = new WeakMap();
+function recordForOtherPage(otherPage, line) {
+  if (!otherPage || isAppPageUrl(otherPage.url())) return;
+  if (!otherPagesEvents.has(otherPage)) otherPagesEvents.set(otherPage, []);
+  otherPagesEvents.get(otherPage).push(line.slice(0, 300));
+}
 /**
  * Launches the application on the test profile, finds its main window as `page`, and checks how it runs. In a
  * profile whose user has not confirmed a language, the application shows the Language dialog first: it is confirmed
@@ -90,30 +111,35 @@ async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'con
     if (message.type() === 'error' && message.text().includes('NG0100')) changedWithoutNotification.push(message.text());
     if (/\bContent[- ]Security[- ]Policy\b/i.test(message.text()) && isAppPageUrl(message.page()?.url()))
       policyViolations.push(`${message.type()}: ${message.text()}`);
+    recordForOtherPage(message.page(), `console ${message.type()}: ${message.text()}`);
   });
   const pageErrors = [];
   app.context().on('weberror', webError => {
     pageErrors.push(webError.error().message);
     if (webError.error().message.includes('NG0100')) changedWithoutNotification.push(webError.error().message);
+    recordForOtherPage(webError.page(), `uncaught: ${webError.error().message}`);
   });
   // The requests that have not finished, and those that failed, for a launch whose home view does not render: the
   // page waits for the list of the map's base layers, which it downloads, before it starts Angular
   // (src/start-app.ts). Each request is kept by itself, as two can have one address, and counts as finished once its
   // answer is read to the end, which is what the page waits for.
-  const unfinishedRequests = new Set();
+  unfinishedRequests = new Set();
   const failedRequests = [];
-  const addressOf = request => request.url().slice(0, 160);
   app.context().on('request', request => unfinishedRequests.add(request));
   app.context().on('requestfinished', request => unfinishedRequests.delete(request));
   app.context().on('requestfailed', request => {
     unfinishedRequests.delete(request);
     // The suite cancels the requests of analytics and of downloads itself (electron-util/e2e-test-hooks.js).
     const reason = request.failure()?.errorText ?? 'failed';
-    if (reason !== 'net::ERR_BLOCKED_BY_CLIENT') failedRequests.push(`${addressOf(request)}: ${reason}`);
+    if (reason === 'net::ERR_BLOCKED_BY_CLIENT') return;
+    failedRequests.push(`${addressOf(request)}: ${reason}`);
+    recordForOtherPage(pageOf(request), `request failed: ${addressOf(request)}: ${reason}`);
   });
   // A request that the server refuses, as one too many, finishes like any other.
   app.context().on('response', response => {
-    if (response.status() >= 400) failedRequests.push(`${addressOf(response.request())}: HTTP ${response.status()}`);
+    if (response.status() < 400) return;
+    failedRequests.push(`${addressOf(response.request())}: HTTP ${response.status()}`);
+    recordForOtherPage(pageOf(response.request()), `HTTP ${response.status()}: ${addressOf(response.request())}`);
   });
   const runtime = await app.evaluate(({ app }) => {
     const require = globalThis.__plmTestRequire;
@@ -3231,6 +3257,122 @@ test('deleting the thumbnail cache empties it before the app relaunches itself',
   expect(await readdir(cacheFolder)).toEqual([]);
   await launch();
 });
+/**
+ * What the page of Photo Data Viewer's window `viewer` shows and could not load, and what it wrote to its console and
+ * threw, for a case whose viewer did not show what the case waited for (expectShownInViewer).
+ */
+async function describeViewerPage(viewer) {
+  const shown = await within5Seconds(viewer.evaluate(() => JSON.stringify({
+    address: location.href, readyState: document.readyState, title: document.title,
+    text: (document.body?.innerText ?? '').replace(/\s+/g, ' ').trim().slice(0, 300),
+    images: [...document.images].map(image => `${image.alt || 'no alt'}: ${image.naturalWidth}x${image.naturalHeight}`),
+    notLoaded: performance.getEntriesByType('resource').filter(entry => entry.responseStatus >= 400)
+      .map(entry => `${entry.name}: HTTP ${entry.responseStatus}`),
+  })).catch(error => `could not be read: ${error.message}`), 'no answer within 5 seconds');
+  const notFinished = [...unfinishedRequests].filter(request => pageOf(request) === viewer).map(addressOf);
+  const events = otherPagesEvents.get(viewer) ?? [];
+  return [`The page: ${shown}`, `Its requests not finished: ${JSON.stringify(notFinished)}`,
+    `What it wrote to its console, threw and did not load: ${events.length > 30 ? `the last 30 of ${events.length}` : 'all'}`,
+    ...events.slice(-30), await describeApplication().catch(error => `The application could not be read: ${error.message}`)]
+    .join('\n');
+}
+/**
+ * Waits until `shown`, a locator in the page of Photo Data Viewer's window `viewer`, is visible, and loads the page
+ * again while the viewer's server answers it without some files of the viewer's own build, and the page does not load
+ * itself again.
+ * TL;DR: Such a page was loaded while the viewer's production deployment changed. It has the HTML of one deployment,
+ * and got its scripts from the other one, which does not have them, so it never starts and shows nothing. The viewer
+ * now loads such a page again by itself; the helper does so only where the viewer did not.
+ * Details:
+ * - The suite loads the viewer from its production server, https://pdv-in-plm.vercel.app/
+ *   (src-main/photo-data-viewer/photo-data-viewer-server-config.ts). Each merge to Photo Data Viewer's main deploys
+ *   it anew, apart from this app: 13 times on 2026-11-18, 9 on 2026-11-19. The server has the files of its current
+ *   deployment only, as their addresses name no deployment (Vercel's Skew Protection would add ?dpl= to them), and
+ *   each deployment's build names some of its files anew: Next.js names a script by its content, the _app script
+ *   holds the commit that it was built from, and the build manifests are in a folder named after the build. The
+ *   page's HTML has no content of its own (3.4 kB, an empty root): without its scripts, the page never asks its window
+ *   for the photo.
+ * - The change takes seconds. Watched on 2026-11-20, as Photo Data Viewer's 46342a9 became the deployment (its status
+ *   said so at 12:31:25 UTC): from 12:31:26.3 to 12:31:34.1, the server gave the HTML of either deployment, and each
+ *   script from either, so that 10 of the 44 page loads made then got their HTML with its _app or main script
+ *   answered 404. The old HTML still came 6.9 seconds after the new one first had.
+ * - Seen twice in CI on Ubuntu, a case that found no img in 30 seconds, while the cases before and after it passed:
+ *   - In the push run of main on a12b956b (run 44535489119), the case of a JPEG with Unicode, spaces, # and % in its
+ *     path, against the development build. The status of Photo Data Viewer's 931cfb4 said its deployment was ready
+ *     at 14:02:14 UTC on 2026-11-19, and the case opened the viewer at about 14:02:15.
+ *   - In the pull_request run of #760 on de127696 (run 44734642049), the case of a HEIC, against the AppImage. It
+ *     opened the viewer at about 12:31:28 UTC on 2026-11-20, in the seconds watched above.
+ * - The deployments of 26faec8 and 931cfb4 each answer 404 for the other's webpack, main and _app scripts and build
+ *   manifests. Reproduced with the server on a later deployment, cf4b714's: given the HTML of 26faec8's, the page got
+ *   404 for those files and others, and showed nothing for 15 seconds; loaded again, it showed the photo 0.4 seconds
+ *   later.
+ * - Since Photo Data Viewer's 1b42c3c (its pull request #104, src/page-load/reload-for-missing-build-files.ts), the
+ *   page loads itself again half a second after its load event, at most 3 times a minute, while its app has not
+ *   started. The helper is left for the rest: a page that has used up those loads, the HTML of a deployment before
+ *   that one, and the files that a page that has started asks for, which the viewer leaves to its app: the scripts of
+ *   the map (Leaflet) and of the HEIC decoder (libheif), which webpack loads after the page's load event. So the page
+ *   is watched until it shows `shown`.
+ * - Only a 404 of the viewer's own server for a file under /_next/static/ counts. The helper then lets the page's load
+ *   end, unless the page shows `shown` first, and waits 2 seconds more, and loads the page again only if it is still
+ *   the same document, is not loading, still misses such a file and still does not show `shown`, and `timeout` has not
+ *   passed; otherwise it goes back to watching. A load of its own would stop the page's: in an emulation of the two by
+ *   the viewer's session, against a server that answered in up to 600 ms, they stopped each other in 5 of 12 runs whose
+ *   page needed its third load (page.reload: net::ERR_ABORTED), and with those checks, 48 of 48 runs passed. In this
+ *   suite, against the viewer of 1b42c3c, a page given broken HTML once was loaded again by the viewer alone, and a
+ *   page given it four times was loaded again by the viewer three times and then by the helper. Any other failure, and
+ *   a page that still shows nothing when `timeout` has passed, fails the case with what the page shows
+ *   (describeViewerPage).
+ * - A load of the helper's waits only until the new document commits, and the helper then watches it as before: the
+ *   page's load event can wait on a file that `shown` does not need, such as a font. For the same reason, the helper
+ *   stops waiting for the page's load once the page shows `shown`.
+ * - A load is let end before the next one. A new load stops one that is still going, as loading the page again 3
+ *   seconds early did in a reproduction: loadURL() then rejects with ERR_ABORTED (-3), an unhandled error, whose
+ *   dialog holds the main process in the suite (load-viewer-page.ts).
+ * - Not chosen: rerunning the case (Playwright's retries), which would also pass a real failure that does not happen
+ *   every time; serving the viewer from a local build (PLM_TEST_PHOTO_DATA_VIEWER_SERVER), which needs Photo Data
+ *   Viewer's checkout in CI and would no longer check the viewer that users get; Skew Protection, a setting of the
+ *   viewer's own Vercel project.
+ */
+async function expectShownInViewer(viewer, shown, timeout = 30000) {
+  const deadline = Date.now() + timeout;
+  // At least 1 ms, as a timeout of 0 is none.
+  const left = () => Math.max(deadline - Date.now(), 1);
+  const missingFiles = () => viewer.evaluate(() => performance.getEntriesByType('resource')
+    .filter(entry => entry.responseStatus === 404 && entry.name.startsWith(`${location.origin}/_next/static/`))
+    .map(entry => entry.name.slice(location.origin.length))).catch(() => []);
+  // expect.poll() does not poll again after a function that throws, as one that reads a page being loaded can.
+  const state = async () => await shown.isVisible().catch(() => false) ? 'shown'
+    : (await missingFiles()).length ? 'missing files' : 'loading';
+  // Each load of the page makes a new document, with a time origin of its own.
+  const currentDocument = () => viewer.evaluate(() => performance.timeOrigin).catch(() => undefined);
+  const viewerWindow = await app.browserWindow(viewer);
+  const isLoading = () => viewerWindow.evaluate(window => window.webContents.isLoading()).catch(() => true);
+  const notShown = async error => {
+    throw new Error(`The page of Photo Data Viewer did not show ${shown} within ${timeout} ms.\n${await describeViewerPage(viewer)}`,
+      { cause: error });
+  };
+  for (;;) {
+    // Decided by what ended the poll. A second look could find the document of a load that the page made meanwhile,
+    // still loading, and the helper would then no longer load that page again. A poll that outlives its test ends
+    // without a look, so anything but 'missing files' leaves the loop.
+    let seen;
+    await expect.poll(async () => (seen = await state()), { timeout: left(), intervals: [100, 250] }).not.toBe('loading')
+      .catch(notShown);
+    if (seen !== 'missing files') break;
+    const missingDocument = await currentDocument();
+    // Until the page's load has ended or the page shows `shown`, as its load can wait on a file that `shown` does not
+    // need. The check after the wait still keeps the helper from loading a page that is loading.
+    const loadedOrShown = async () => !await isLoading() || await shown.isVisible().catch(() => false);
+    await expect.poll(loadedOrShown, { timeout: left() }).toBe(true).catch(notShown);
+    await viewer.waitForTimeout(Math.min(2000, left()));
+    if (await currentDocument() !== missingDocument || await isLoading() || await state() !== 'missing files') continue;
+    if (Date.now() >= deadline) await notShown(new Error('The page was still missing files of its own build.'));
+    console.log(`Photo Data Viewer's server did not have ${(await missingFiles()).join(', ')}, of the page's own build: `
+      + 'loading the page again.');
+    await viewer.reload({ timeout: left(), waitUntil: 'commit' }).catch(notShown);
+  }
+  await expect(shown).toBeVisible({ timeout: left() }).catch(notShown);
+}
 for (const [name, fixture, specialPath] of [
   ['JPEG', 'actual-photos/Kobe/IMG_4676.JPG'],
   ['HEIC', '../../e2e/fixtures/demo.heic'],
@@ -3253,7 +3395,7 @@ for (const [name, fixture, specialPath] of [
     await page.evaluate(({ name, photo }) => window.plm.photoDataViewer.open({ photo: { name, path: photo } }),
       { name: path.basename(photo), photo });
     const viewer = await newWindow;
-    await expect(viewer.locator('img[alt]').filter({ hasNotText: 'dummy' }).first()).toBeVisible({ timeout: 30000 });
+    await expectShownInViewer(viewer, viewer.locator('img[alt]').filter({ hasNotText: 'dummy' }).first());
     await viewer.waitForFunction(() => [...document.querySelectorAll('img')].some(img => img.naturalWidth > 100), { timeout: 30000 });
     await expect(viewer).toHaveTitle(`${path.basename(photo)} - Photo Location Map`);
     // The viewer calls show() once loaded; its window, too, must stay off the screen in a headless run.
@@ -3363,7 +3505,7 @@ test('Photo Data Viewer opens first wide enough to split its panes, in the middl
   // not behind the tabs of a single pane. The display may be too small for it, as the 1024x768 of CI's macOS and
   // Windows runners is; Ubuntu's, of 1280x1024, is not.
   if (width === 1240) {
-    await expect(viewer.locator('.leaflet-container')).toBeVisible({ timeout: 30000 });
+    await expectShownInViewer(viewer, viewer.locator('.leaflet-container'));
     await expect(viewer.getByRole('tab', { name: 'General', exact: true })).toBeVisible();
     await expect(viewer.getByRole('tab', { name: 'Map', exact: true })).toHaveCount(0);
     expect(await viewer.evaluate(() => document.documentElement.clientWidth)).toBeGreaterThan(1200);
