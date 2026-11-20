@@ -133,7 +133,7 @@ describe('SettingsDialogComponent', () => {
 
     settingsChanged.languageSettingsChanged.next({ language: 'ja' });
     await fixture.whenStable();
-    vi.spyOn(TestBed.inject(ConfirmDialogService), 'confirm').mockResolvedValue(true);
+    vi.spyOn(TestBed.inject(ConfirmDialogService), 'confirmIn').mockResolvedValue(true);
     const restart = vi.spyOn(window.plm.app, 'restart');
     saveButton().click();
     await fixture.whenStable();
@@ -156,16 +156,49 @@ describe('SettingsDialogComponent', () => {
   });
 
   it('asks before the restart, and saves nothing when it is declined', async () => {
-    const confirm = vi.spyOn(TestBed.inject(ConfirmDialogService), 'confirm').mockResolvedValue(false);
+    const confirm = vi.spyOn(TestBed.inject(ConfirmDialogService), 'confirmIn').mockResolvedValue(false);
     settingsChanged.dateTimeSettingsChanged.next({ dateFormat: otherDateFormat, clockSystemFormat: settingsInUse.clockSystemFormat });
     await fixture.whenStable();
 
     saveButton().click();
     await fixture.whenStable();
 
-    expect(confirm).toHaveBeenCalledWith('This application will restart after saving settings.\nDo you want to continue?');
+    // In the application's language, as the language setting is the one in use.
+    expect(confirm).toHaveBeenCalledWith('en', 'This application will restart after saving settings.\nDo you want to continue?');
     expect(currentUserSettings.dateFormat).toBe(settingsInUse.dateFormat);
     expect(close).not.toHaveBeenCalled();
+  });
+
+  it('says what saving does in the language chosen on the Language tab, as its user reads it, and asks in it before the restart', async () => {
+    const host: HTMLElement = fixture.nativeElement;
+    const notice: HTMLElement = host.querySelector('.settings-dialog-footer-description');
+    const cancelButton: HTMLButtonElement = host.querySelector('.settings-dialog-cancel-button');
+    /** The texts of the footer, with the lang and dir of each. */
+    const footer = () => [notice, saveButton(), cancelButton]
+      .map(element => [element.textContent.trim(), element.getAttribute('lang'), element.getAttribute('dir')]);
+    // The setting in use, auto, is English here, the operating system's language of the tests.
+    expect(footer()).toEqual([
+      ['This application will restart after saving settings.', 'en', 'ltr'], ['Save', 'en', 'ltr'], ['Cancel', 'en', 'ltr'],
+    ]);
+
+    settingsChanged.languageSettingsChanged.next({ language: 'ja' });
+    await fixture.whenStable();
+    expect(footer()).toEqual([['設定を保存すると、このアプリは再起動します。', 'ja', 'ltr'], ['保存', 'ja', 'ltr'], ['キャンセル', 'ja', 'ltr']]);
+    const confirm = vi.spyOn(TestBed.inject(ConfirmDialogService), 'confirmIn').mockResolvedValue(false);
+    saveButton().click();
+    await fixture.whenStable();
+    expect(confirm).toHaveBeenCalledExactlyOnceWith('ja', '設定を保存すると、このアプリは再起動します。\n続けますか？');
+
+    // Arabic is written from right to left, in the footer laid out as the application is.
+    settingsChanged.languageSettingsChanged.next({ language: 'ar' });
+    await fixture.whenStable();
+    expect(footer()).toEqual([['سيُعاد تشغيل هذا التطبيق بعد حفظ الإعدادات.', 'ar', 'rtl'], ['حفظ', 'ar', 'rtl'], ['إلغاء', 'ar', 'rtl']]);
+
+    // Back to the setting in use: the application's language again, with nothing to say.
+    settingsChanged.languageSettingsChanged.next({ language: 'auto' });
+    await fixture.whenStable();
+    expect(footer()[1]).toEqual(['Save', 'en', 'ltr']);
+    expect(isRestartNoticeShown()).toBe(false);
   });
 
   it('opens on the Language tab, the first, and shows the tab chosen in the list', async () => {
