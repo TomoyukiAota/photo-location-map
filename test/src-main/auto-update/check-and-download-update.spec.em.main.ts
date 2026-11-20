@@ -30,37 +30,42 @@ describe('checkAndDownloadUpdate (in main process)', () => {
     fs.rmSync(folder, { recursive: true, force: true, maxRetries: 5 });
   });
 
+  interface UpdateServer {
+    /** The app-update.yml to give the updaters. */
+    configPath: string;
+    /** Resolves once the first download of the installer has been sent its first half; the rest waits. */
+    firstDownloadHalfSent: Promise<void>;
+    /** Sends the first download the rest of the installer. The downloads after the first get it whole at once. */
+    finishFirstDownload: () => void;
+  }
+
   /**
    * Serves an update as the app's releases do: latest.yml (latest-mac.yml on macOS, latest-linux.yml on Linux, which
-   * the updater asks for by its platform), and the installer, or a 404 in its place. The installer is sent in parts, and
-   * only once `downloadsAtOnce` requests for it have arrived, so that their downloads overlap.
+   * the updater asks for by its platform), and the installer, or a 404 in its place.
    */
-  async function serveUpdate(installer: 'served' | 'missing', downloadsAtOnce = 1): Promise<string> {
+  async function serveUpdate(installer: 'served' | 'missing'): Promise<UpdateServer> {
     const content = crypto.randomBytes(1024 * 1024);
     const sha512 = crypto.createHash('sha512').update(content).digest('base64');
     const latestYml = `version: 99.0.0\nfiles:\n  - url: ${installerName}\n    sha512: ${sha512}\n    size: ${content.length}\n`
       + `path: ${installerName}\nsha512: ${sha512}\nreleaseDate: '2026-01-01T00:00:00.000Z'\n`;
-    const waiting: http.ServerResponse[] = [];
-    const send = (response: http.ServerResponse) => {
-      response.writeHead(200, { 'Content-Type': 'application/octet-stream', 'Content-Length': content.length });
-      const parts = 10;
-      let sent = 0;
-      const timer = setInterval(() => {
-        response.write(content.subarray(sent * content.length / parts, (sent + 1) * content.length / parts));
-        if (++sent === parts) {
-          clearInterval(timer);
-          response.end();
-        }
-      }, 20);
-    };
+    let halfSent = () => {};
+    const firstDownloadHalfSent = new Promise<void>(resolve => (halfSent = resolve));
+    let finishFirstDownload = () => {};
+    const firstDownloadFinished = new Promise<void>(resolve => (finishFirstDownload = resolve));
+    let downloads = 0;
 
     server = http.createServer((request, response) => {
       if (/^\/latest[\w-]*\.yml/.test(request.url ?? '')) {
         response.end(latestYml);
-      } else if (request.url?.startsWith(`/${installerName}`) && installer === 'served') {
-        waiting.push(response);
-        if (waiting.length === downloadsAtOnce)
-          waiting.forEach(send);
+      } else if (request.url === `/${installerName}` && installer === 'served') {
+        response.writeHead(200, { 'Content-Type': 'application/octet-stream', 'Content-Length': content.length });
+        if (++downloads > 1) {
+          response.end(content);
+          return;
+        }
+        const half = content.length / 2;
+        response.write(content.subarray(0, half), () => halfSent());
+        void firstDownloadFinished.then(() => response.end(content.subarray(half)));
       } else {
         response.statusCode = 404;
         response.end();
@@ -73,7 +78,16 @@ describe('checkAndDownloadUpdate (in main process)', () => {
     // signed Windows installer is checked against.
     const configPath = path.join(folder, 'app-update.yml');
     fs.writeFileSync(configPath, `provider: generic\nurl: ${url}\nupdaterCacheDirName: plm-test-updater\n`);
-    return configPath;
+    return { configPath, firstDownloadHalfSent, finishFirstDownload };
+  }
+
+  /** Resolves once the file exists, as a download's file does once the server has answered. */
+  async function fileToExist(file: string): Promise<void> {
+    for (let waited = 0; !fs.existsSync(file); waited += 10) {
+      if (waited >= 10_000)
+        throw new Error(`${file} did not appear in 10 s.`);
+      await new Promise(resolve => setTimeout(resolve, 10));
+    }
   }
 
   /** An updater of the app, as installed: each process of the app has its own, and they share the cache folder. */
@@ -115,7 +129,7 @@ describe('checkAndDownloadUpdate (in main process)', () => {
   }
 
   it('reports a download that fails with the error event only, not as an unhandled rejection', async () => {
-    const updater = updaterOf(await serveUpdate('missing'));
+    const updater = updaterOf((await serveUpdate('missing')).configPath);
     const end = endOf(updater);
 
     const unhandled = await unhandledRejectionsWhile(async () => {
@@ -130,21 +144,27 @@ describe('checkAndDownloadUpdate (in main process)', () => {
   });
 
   it('reports the failed one of two downloads of the same update at once with the error event only', async () => {
-    // Two processes of the app, started together, download the update into the same cache folder.
-    const configPath = await serveUpdate('served', 2);
-    const updaters = [updaterOf(configPath), updaterOf(configPath)];
-    const ends = updaters.map(endOf);
+    // Two processes of the app download the update into the same cache folder: the second starts and finishes while
+    // the first downloads, and the first finishes after it. Both write the folder's one temp- file, which the second
+    // makes anew and renames; the first then finds no file to rename.
+    const update = await serveUpdate('served');
+    const [first, second] = [updaterOf(update.configPath), updaterOf(update.configPath)];
+    const [firstEnd, secondEnd] = [endOf(first), endOf(second)];
 
     const unhandled = await unhandledRejectionsWhile(async () => {
-      await Promise.all(updaters.map(checkAndDownloadUpdate));
-      await Promise.all(ends);
+      await checkAndDownloadUpdate(first);
+      await update.firstDownloadHalfSent;
+      await fileToExist(path.join(folder, 'plm-test-updater', 'pending', `temp-${installerName}`));
+      await checkAndDownloadUpdate(second);
+      await secondEnd;
+      update.finishFirstDownload();
+      await firstEnd;
     });
 
-    const results = await Promise.all(ends);
-    const failures = results.filter(end => end instanceof Error);
-    assert.deepEqual(results.filter(end => !(end instanceof Error)), ['99.0.0']);
-    assert.equal(failures.length, 1, `one of the downloads should fail, but they ended with ${results.join(', ')}`);
-    assert.match(failures[0].message, /^ENOENT: no such file or directory, rename '.*temp-Photo-Location-Map-Setup-99\.0\.0\.exe' -> /);
+    assert.equal(await secondEnd, '99.0.0');
+    const error = await firstEnd;
+    assert.ok(error instanceof Error, `the first download should fail, but it ended with ${error}`);
+    assert.match(error.message, /^ENOENT: no such file or directory, rename '.*temp-Photo-Location-Map-Setup-99\.0\.0\.exe' -> /);
     assert.deepEqual(unhandled, []);
   });
 });
