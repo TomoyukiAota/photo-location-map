@@ -36,7 +36,8 @@ export class DirTreeViewNodePositions {
  *
  * TL;DR: The CDK searches a row's siblings for its position each time that Angular checks the row, and every click and
  * key in the tree has Angular check every row: quadratic in the photos of a folder, 1.6 s with 40,000 photos in one.
- * Remove this when the CDK's tree finds a node's position without searching.
+ * Remove this when the CDK's tree finds a node's position without searching, which
+ * https://github.com/angular/components/issues/34163 reports.
  *
  * Details: CdkTreeNode and MatTreeNode (@angular/cdk and @angular/material 22.2.5) both bind aria-posinset to
  * _getPositionInSet(), which asks CdkTree, whose _getPositionInSet() finds the node in the set of its siblings with
@@ -52,9 +53,9 @@ export class DirTreeViewNodePositions {
  * This directive matches mat-tree-node in place of MatTreeNode, which the folder tree does not import: with both,
  * MatTreeNode's bindings would still search. A shown node's set is the children of its parent, expanded, in the order
  * in which DirTreeViewNodePositions counts them, or the roots.
- * On an upgrade of the CDK, check CdkTree's _getPositionInSet() in fesm2022/tree.mjs, and remove this once it does not
- * search. Until then, the tests of the folder tree fail when the CDK's bindings stop calling the node's
- * _getPositionInSet(), or when CdkTree's is called.
+ * On an upgrade of the CDK, check the report above and CdkTree's _getPositionInSet() in fesm2022/tree.mjs, and remove
+ * this once it does not search. Until then, the tests of the folder tree fail when the CDK's bindings stop calling the
+ * node's _getPositionInSet(), or when CdkTree's is called.
  */
 @Directive({
   selector: 'mat-tree-node',

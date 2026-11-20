@@ -68,6 +68,14 @@ them, and no change of ours keeps Angular from checking every row after an event
 The owner chose the second, on 2026-11-20. It is listed in `docs/contributing/dependencies.md`, "Departures kept for a
 needed feature", with when to remove it.
 
+The owner had the search reported as well, the same day, where no earlier report covered it:
+[angular/components#34163](https://github.com/angular/components/issues/34163). The report has a reproduction on
+StackBlitz (<https://stackblitz.com/edit/ordthymq>), a `MatTree` with one parent of many children, and suggests a change
+to `CdkTree` that stores each node's index in its set when the sets are built. Made to `@angular/cdk` 22.2.5, the change
+kept every row's `aria-posinset` and `aria-setsize`, and a click with 40,000 children took 9 ms rather than 2.0 s in a
+production build of the reproduction, on a computer busier than for the measurements above. The directive's comment and
+`docs/contributing/dependencies.md` link to the report, as what to watch before removing the directive.
+
 ## What changed
 
 - **`DirTreeViewTreeNodeDirective`** (`src/app/directory-tree-view/dir-tree-view-tree-node.directive.ts`) is the rows'
