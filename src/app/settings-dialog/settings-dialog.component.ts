@@ -1,9 +1,11 @@
 import { Component, computed, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatDialogRef } from '@angular/material/dialog';
-import { t } from '../../../src-shared/i18n/i18n';
+import { tIn } from '../../../src-shared/i18n/i18n';
+import { getLanguage } from '../../../src-shared/i18n/languages';
+import { resolveLanguage } from '../../../src-shared/i18n/resolve-language';
 import { TranslationKey } from '../../../src-shared/i18n/translation-key';
-import { currentPlatform } from '../../../src-shared/startup/startup-metadata';
+import { currentPlatform, startupMetadata } from '../../../src-shared/startup/startup-metadata';
 import {
   currentUserSettings,
   getUserSettingsToBeSaved,
@@ -75,6 +77,24 @@ export class SettingsDialogComponent {
     return showStatusBarChanged || this.isAppRestartRequired();
   });
 
+  /**
+   * The language that the Language setting chosen in the dialog shows the application in, which is the application's
+   * own until another is chosen. The restart note, Save, Cancel and the question that Save asks are in it.
+   * TL;DR: A user who chooses a language reads it, so the dialog tells them in it what saving does.
+   * Details: The application changes its language only once it restarts, and a user who chose another language may
+   * not read the one on screen. The Language dialog of the first launch does the same with its note and its button
+   * (LanguageDialogComponent). The texts take that language's lang and dir, while the dialog keeps the application's
+   * layout.
+   */
+  public readonly selectedLanguage = computed(() => resolveLanguage({
+    languageSetting: this.userSettingsToBeSaved().language,
+    systemLanguages: startupMetadata().systemLanguages,
+  }));
+  public readonly selectedDirection = computed(() => getLanguage(this.selectedLanguage()).direction);
+  public readonly restartNote = computed(() => tIn(this.selectedLanguage(), 'settings.restartAfterSaving'));
+  public readonly saveLabel = computed(() => tIn(this.selectedLanguage(), 'settings.save'));
+  public readonly cancelLabel = computed(() => tIn(this.selectedLanguage(), 'common.cancel'));
+
   constructor() {
     const settingsChangedService = inject(SettingsChangedService);
 
@@ -105,7 +125,8 @@ export class SettingsDialogComponent {
   /** Saves the settings and closes, after asking first when a setting that needs a restart has changed. */
   public async saveSettings() {
     if (this.isAppRestartRequired()) {
-      const isOkPressed = await this.confirmDialogService.confirm(t('settings.confirmRestart'));
+      const language = this.selectedLanguage();
+      const isOkPressed = await this.confirmDialogService.confirmIn(language, tIn(language, 'settings.confirmRestart'));
       if (!isOkPressed)
         return;
 

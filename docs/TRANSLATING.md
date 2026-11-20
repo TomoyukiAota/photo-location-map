@@ -139,9 +139,10 @@ npm run test:unit:ng
 - Names stay as they are: Photo Location Map, macOS, Windows, EXIF, DateTimeOriginal, JPEG,
   HEIF, TIFF, Live Photos, GitHub, Google Maps, Google Street View, Explorer
   (or the name that Windows gives it in your language).
-- `language.title` and `settings.tabs.language` keep the English word in
-  parentheses, as in `言語 (Language)`, so that someone who cannot read the
-  current language still finds where to change it.
+- `language.title`, `settings.tabs.language` and `language.search` keep the
+  English word in parentheses, as in `言語 (Language)` and `検索 (Search)`, so
+  that someone who cannot read the current language still finds where to
+  change it, and the field that finds their language in the list.
 - The three texts under `language.systemLanguage` are one choice, to use the
   language that the operating system is set to, as it is shown on macOS, on
   Windows and on any other operating system. It is the first entry of the
@@ -183,6 +184,14 @@ npm run test:unit:ng
   launch, shown in the language that is chosen in the list above it. Use the
   word that a button confirming a choice has in your language: Japanese has
   `決定` rather than `OK`.
+- Some texts are shown in the language chosen in the list of languages, before
+  the application restarts in it, as the user who chose it reads that
+  language: at the first launch, `language.restartToApply` and
+  `language.confirm`; in the Settings dialog, `settings.restartAfterSaving`,
+  `settings.save` and `common.cancel`, and the question that Save then asks,
+  `settings.confirmRestart`, with `common.ok` and `common.cancel`. Your text is
+  read there by someone who has just chosen your language, in an application
+  that may be in any language.
 - `language.search` is the placeholder of the field above the list of
   languages, which narrows the list down to what is typed in it;
   `language.noLanguagesFound` is shown in the list when nothing is left.

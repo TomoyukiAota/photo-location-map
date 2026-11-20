@@ -698,6 +698,13 @@ test('the Language dialog comes before the Welcome dialog at the first launch, a
   await expect(korean).toHaveAttribute('aria-selected', 'true');
   await expect(restartNote).toHaveText('언어를 적용하기 위해 이 앱을 다시 시작합니다.');
   await expect(okButton).toHaveText('확인');
+  // Arabic, written from right to left in the dialog laid out as the application is: the note ends at its left.
+  await search.fill('arab');
+  await dialog.getByRole('option', { name: 'العربية', exact: true }).click();
+  await expect(restartNote).toHaveText('سيُعاد تشغيل هذا التطبيق لتطبيق اللغة.');
+  await expect(restartNote).toHaveCSS('direction', 'rtl');
+  await expect(okButton).toHaveText('موافق');
+  await expect(okButton).toHaveCSS('direction', 'rtl');
   // The language on screen, found by the search and chosen by its name, needs no restart.
   await search.fill('english');
   await expect(options).toHaveText([systemLanguageInEnglish('English'), 'English']);
@@ -754,7 +761,9 @@ test('a language chosen in the Language dialog, and another chosen later in the 
   // The list opens where the chosen language is, far down the list.
   await expect(languageSettings.getByRole('option', { name: '日本語', exact: true })).toBeInViewport();
   // The search finds a language by its name in the application's language as well: ドイツ語 is German in Japanese.
-  const languageSearch = languageSettings.getByRole('searchbox', { name: '検索' });
+  // The search field keeps the English word, as the Language tab does, for a user who cannot read Japanese.
+  const languageSearch = languageSettings.getByRole('searchbox', { name: '検索 (Search)', exact: true });
+  await expect(languageSearch).toHaveAttribute('placeholder', '検索 (Search)');
   await languageSearch.fill('ドイツ');
   await expect(languageSettings.getByRole('option')).toHaveText(['Deutsch']);
   await languageSearch.fill('見つからない言語');
@@ -764,17 +773,23 @@ test('a language chosen in the Language dialog, and another chosen later in the 
   await expect(languageSettings.getByRole('option')).toHaveText([systemLanguageInEnglish('English')]);
   await languageSearch.fill('engl');
   await expect(languageSettings.getByRole('option')).toHaveText([systemLanguageInEnglish('English'), 'English']);
-  const save = page.getByRole('button', { name: '保存', exact: true });
-  const restartNotice = page.locator('app-settings-dialog').getByText('設定を保存すると、このアプリは再起動します。');
-  await expect(save).toBeDisabled();
+  const settingsDialog = page.locator('app-settings-dialog');
+  const restartNotice = settingsDialog.locator('.settings-dialog-footer-description');
+  await expect(settingsDialog.getByRole('button', { name: '保存', exact: true })).toBeDisabled();
   await expect(restartNotice).toBeHidden();
   await languageSettings.getByRole('option', { name: 'English', exact: true }).click();
-  await expect(save).toBeEnabled();
+  // The note, Save and Cancel are in the language chosen, which its user reads, before the application restarts in it,
+  // and so is the question that Save asks.
   await expect(restartNotice).toBeVisible();
+  await expect(restartNotice).toHaveText('This application will restart after saving settings.');
+  await expect(restartNotice).toHaveAttribute('lang', 'en');
+  const save = settingsDialog.getByRole('button', { name: 'Save', exact: true });
+  await expect(save).toBeEnabled();
+  await expect(settingsDialog.getByRole('button', { name: 'Cancel', exact: true })).toHaveAttribute('lang', 'en');
   await save.click();
   // Declined, nothing is saved and the dialog stays.
-  await answerConfirmation(['設定を保存すると、このアプリは再起動します。', '続けますか？'], 'キャンセル');
-  await expect(page.locator('app-settings-dialog')).toBeVisible();
+  await answerConfirmation(['This application will restart after saving settings.', 'Do you want to continue?'], 'Cancel');
+  await expect(settingsDialog).toBeVisible();
   expect(await savedSetting(userData, ['UserSettings', 'Language'])).toBe('ja');
   pid = await mainProcessId();
   exited = new Promise(resolve => app.process().once('exit', resolve));
@@ -1066,8 +1081,24 @@ test('on a computer whose language is Arabic, the application in English lists t
   await expect(options).toHaveText([systemInArabic]);
   await search.fill('إعداد');
   await expect(options).toHaveText([systemInArabic]);
-  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
-  await expect(page.locator('app-settings-dialog')).toHaveCount(0);
+  // Chosen, it needs a restart. The note, Save, Cancel and the question that Save asks are in Arabic, which the user
+  // who chose it reads, written from right to left, while the dialog keeps the application's layout: Save, then
+  // Cancel, from the left.
+  await systemEntry.click();
+  const settingsDialog = page.locator('app-settings-dialog');
+  const restartNotice = settingsDialog.locator('.settings-dialog-footer-description');
+  await expect(restartNotice).toHaveText('سيُعاد تشغيل هذا التطبيق بعد حفظ الإعدادات.');
+  await expect(restartNotice).toHaveAttribute('lang', 'ar');
+  await expect(restartNotice).toHaveCSS('direction', 'rtl');
+  const save = settingsDialog.getByRole('button', { name: 'حفظ', exact: true });
+  const cancel = settingsDialog.getByRole('button', { name: 'إلغاء', exact: true });
+  await expect(save).toHaveCSS('direction', 'rtl');
+  expect((await save.boundingBox()).x).toBeLessThan((await cancel.boundingBox()).x);
+  await save.click();
+  await expect(page.locator('app-confirm-dialog .message')).toHaveCSS('direction', 'rtl');
+  await answerConfirmation(['سيُعاد تشغيل هذا التطبيق بعد حفظ الإعدادات.', 'هل تريد المتابعة؟'], 'إلغاء');
+  await cancel.click();
+  await expect(settingsDialog).toHaveCount(0);
 });
 test('map regions preserve drawing, removal and real photo selection', async () => {
   await page.addInitScript(() => {
