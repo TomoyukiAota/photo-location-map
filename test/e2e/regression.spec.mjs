@@ -949,6 +949,19 @@ test('on a computer whose language is Arabic, the application is laid out from r
   await expect(page.locator('app-date-time-taken-chart')).toHaveCSS('direction', 'ltr');
   await expect(page.locator('app-date-time-taken-chart canvas')).toBeVisible();
   await shot('loaded-home-ar');
+  // A photo without location data has a grey box in place of its checkbox, and its name starts as far from the row's
+  // right edge as the name beside a checkbox does: the room between the box and the name is on the side towards which
+  // the page's text runs, though the name, in Latin letters, runs the other way
+  // (src/app/directory-tree-view/dir-tree-view-checkbox-and-name/).
+  const treeRow = name => page.locator('mat-tree-node').filter({ has: page.locator('bdi').getByText(name, { exact: true }) });
+  await treeRow('Unga').getByRole('button').click();
+  const nameStart = name => treeRow(name).evaluate(row => {
+    const text = document.createRange();
+    text.selectNodeContents(row.querySelector('bdi'));
+    return row.getBoundingClientRect().right - text.getBoundingClientRect().right;
+  });
+  await expect(treeRow('IMG_2581_WithoutGpsInfo.JPG').locator('.disabled-checkbox-alternative')).toBeVisible();
+  expect(await nameStart('IMG_2581_WithoutGpsInfo.JPG')).toBeCloseTo(await nameStart('IMG_2581.JPG'), 0);
   // A date has the day of the week in Arabic, from moment's locale, and the digits 0 to 9.
   await page.locator('.plm-leaflet-map-div-icon').first().dispatchEvent('click');
   const popup = page.locator('.leaflet-popup');
