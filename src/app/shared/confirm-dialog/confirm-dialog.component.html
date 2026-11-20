@@ -1,4 +1,4 @@
-<div class="message">{{ data.message }}</div>
+<div class="message" [attr.lang]="textLanguage" [attr.dir]="textDirection">{{ data.message }}</div>
 @if (data.path) {
   <div class="path"><bdi>{{ data.path }}</bdi></div>
 }
@@ -6,12 +6,16 @@
   <button mat-flat-button
           color="primary"
           class="ok-button"
+          [attr.lang]="textLanguage"
+          [attr.dir]="textDirection"
           [mat-dialog-close]="true">
-    {{ 'common.ok' | t }}
+    {{ okLabel }}
   </button>
   <button mat-button
           class="cancel-button"
+          [attr.lang]="textLanguage"
+          [attr.dir]="textDirection"
           [mat-dialog-close]="false">
-    {{ 'common.cancel' | t }}
+    {{ cancelLabel }}
   </button>
 </div>

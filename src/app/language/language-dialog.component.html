@@ -2,13 +2,15 @@
 <app-language-list class="language-list" [(selected)]="selected"></app-language-list>
 <div class="restart-note"
      [style.visibility]="isRestartRequired() ? 'visible' : 'hidden'"
-     [attr.lang]="selectedLanguage()">
+     [attr.lang]="selectedLanguage()"
+     [attr.dir]="selectedDirection()">
   {{ restartNote() }}
 </div>
 <button mat-flat-button
         color="primary"
         class="ok-button"
         [attr.lang]="selectedLanguage()"
+        [attr.dir]="selectedDirection()"
         [disabled]="isSaving()"
         (click)="onOkClicked()">
   {{ confirmLabel() }}
