@@ -81,6 +81,6 @@ describe('DirTreeViewCheckboxAndNameComponent', () => {
 
     expect(element.querySelector('mat-checkbox')).toBeNull();
     expect(element.querySelector('.non-selectable-node .disabled-checkbox-alternative')).not.toBeNull();
-    expect(element.querySelector('.non-selectable-node-name').textContent).toBe('IMG_0001.MOV');
+    expect(element.querySelector('.non-selectable-node bdi').textContent).toBe('IMG_0001.MOV');
   });
 });
