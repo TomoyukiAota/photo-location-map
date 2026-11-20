@@ -64,6 +64,14 @@ describe('The translation files (src-shared/i18n/locales)', () => {
       expect(Object.keys(texts).filter(key => key in english && tags(texts[key]) !== tags(english[key]))).toEqual([]);
     });
 
+    it('keeps the English word in parentheses where a user who cannot read the language looks for another', () => {
+      // The title of the Language dialog, the Language tab and the search field of the list, as in 言語 (Language) and
+      // 検索 (Search) (docs/TRANSLATING.md). English has the word alone.
+      const keys = ['language.title', 'settings.tabs.language', 'language.search'];
+      const withoutIt = keys.filter(key => key in texts && file !== 'en.json' && !new RegExp(`[(（]${english[key]}[)）]`).test(texts[key]));
+      expect(withoutIt).toEqual([]);
+    });
+
     it('keeps ddd, the day of the week, in dateTime.weekdayPattern', () => {
       // The one value that is a pattern of moment, not a text (docs/TRANSLATING.md).
       expect(texts['dateTime.weekdayPattern'] ?? 'ddd').toContain('ddd');

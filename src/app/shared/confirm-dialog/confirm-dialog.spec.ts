@@ -26,6 +26,31 @@ describe('ConfirmDialogComponent', () => {
     ok.click();
     expect(close).toHaveBeenLastCalledWith(true);
     expect(host.querySelector('.path')).toBeNull();
+    // In the application's language, whose lang and dir the page has.
+    expect([host.querySelector('.message'), ok, cancel].map(element => [element.getAttribute('lang'), element.getAttribute('dir')]))
+      .toEqual([[null, null], [null, null], [null, null]]);
+  });
+
+  it.each([
+    { language: 'ja', ok: 'OK', cancel: 'キャンセル', direction: 'ltr' },
+    { language: 'ar', ok: 'موافق', cancel: 'إلغاء', direction: 'rtl' },
+  ])('asks a question in $language with the buttons named in it, whatever the application\'s language is', async ({ language, ok, cancel, direction }) => {
+    await TestBed.configureTestingModule({
+      imports: [ConfirmDialogComponent],
+      providers: [
+        { provide: MAT_DIALOG_DATA, useValue: { message: 'A question in the chosen language', language } },
+        { provide: MatDialogRef, useValue: { close: vi.fn() } },
+      ],
+    }).compileComponents();
+    const fixture = TestBed.createComponent(ConfirmDialogComponent);
+    await fixture.whenStable();
+    const host: HTMLElement = fixture.nativeElement;
+
+    const [okButton, cancelButton] = Array.from(host.querySelectorAll('button'));
+    expect([okButton.textContent.trim(), cancelButton.textContent.trim()]).toEqual([ok, cancel]);
+    // Each text has the language's lang and dir; the dialog keeps the application's layout.
+    expect([host.querySelector('.message'), okButton, cancelButton].map(element => [element.getAttribute('lang'), element.getAttribute('dir')]))
+      .toEqual([[language, direction], [language, direction], [language, direction]]);
   });
 
   it('shows the path that the question is about on the line below it, as it is, in either direction of the text', async () => {
@@ -70,6 +95,15 @@ describe('ConfirmDialogService', () => {
     await TestBed.inject(ConfirmDialogService).confirm('Do you want to open the file below?', '/photos/a.jpg');
     expect(open).toHaveBeenCalledExactlyOnceWith(ConfirmDialogComponent, expect.objectContaining({
       data: { message: 'Do you want to open the file below?', path: '/photos/a.jpg' },
+    }));
+  });
+
+  it('gives the dialog the language that a question is in', async () => {
+    const open = vi.fn().mockReturnValue({ afterClosed: () => of(true) });
+    TestBed.configureTestingModule({ providers: [{ provide: MatDialog, useValue: { open } }] });
+    expect(await TestBed.inject(ConfirmDialogService).confirmIn('ja', '続けますか？')).toBe(true);
+    expect(open).toHaveBeenCalledExactlyOnceWith(ConfirmDialogComponent, expect.objectContaining({
+      data: { message: '続けますか？', language: 'ja' }, role: 'alertdialog',
     }));
   });
 
