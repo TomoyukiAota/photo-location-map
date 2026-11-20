@@ -507,6 +507,28 @@ function within5Seconds(promise, otherwise) {
     .finally(() => clearTimeout(timer));
 }
 /**
+ * The main window's page as the main process serves it (src-main/file-server/app-page.ts), which the window's first
+ * frame shows before the app's code has run: the language and the direction of its root element, its loading text,
+ * the policy that comes with it, and the CSS in the page itself. Undefined in live reload, where ng serve sends it.
+ */
+async function servedAppPage() {
+  if (liveReload) return undefined;
+  return app.evaluate(async ({ net }) => {
+    const answer = await net.fetch('plm-app://app/index.html');
+    const html = await answer.text();
+    const root = html.match(/<html\b[^>]*>/)?.[0] ?? '';
+    return {
+      lang: root.match(/\slang="([^"]*)"/)?.[1],
+      dir: root.match(/\sdir="([^"]*)"/)?.[1],
+      loadingText: html.match(/\bid="app-loading-text"[^>]*>([^<]*)</)?.[1],
+      policy: answer.headers.get('content-security-policy'),
+      css: [...html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/g)].map(match => match[1]).join('\n'),
+      // A production build puts the CSS that the page needs first in the page, and loads styles.css after it.
+      stylesheetDeferred: /<link rel="stylesheet" href="styles\.css" media="print"/.test(html),
+    };
+  });
+}
+/**
  * What the application was doing, for a case that timed out: whether its main process and each of its pages still
  * answer, and what each window was loading.
  * TL;DR: A case that times out says only that it did, and which step it was in, when that step has no time limit of
@@ -869,6 +891,8 @@ test('a new Language setting is sent to the analytics services', async () => {
 test('on a computer whose language is Japanese, the application is in Japanese: its dialogs, menu, map, dates and viewer', async () => {
   // The operating system's languages, the most preferred first, as macOS and Windows give them.
   await launchAsNew({ env: { PLM_TEST_SYSTEM_LANGUAGES: 'ja-JP,en-US' } });
+  // The page is in Japanese as it is served, so its loading text is, before the app's code runs.
+  if (!liveReload) expect(await servedAppPage()).toMatchObject({ lang: 'ja', dir: 'ltr', loadingText: '読み込み中...' });
   const languageDialog = page.locator('app-language-dialog');
   await expect(languageDialog.locator('.language-dialog-title')).toHaveText('言語 (Language)');
   await expect(languageDialog.getByRole('option')).toHaveText([systemLanguageInJapanese('日本語'), ...languageNames]);
@@ -968,6 +992,8 @@ test('on a computer whose language is Arabic, the application is laid out from r
   // The one language written from right to left that is run here; Hebrew is laid out by the same rules.
   await launchAsNew({ env: { PLM_TEST_SYSTEM_LANGUAGES: 'ar-SA,en-US' } });
   expect(await page.evaluate(() => [document.documentElement.lang, document.documentElement.dir])).toEqual(['ar', 'rtl']);
+  // So is the page as it is served, with its loading text, before the app's code runs.
+  if (!liveReload) expect(await servedAppPage()).toMatchObject({ lang: 'ar', dir: 'rtl', loadingText: 'جارٍ التحميل...' });
   const languageDialog = page.locator('app-language-dialog');
   await expect(languageDialog.locator('.language-dialog-title')).toHaveText('اللغة (Language)');
   // The name of the language that the first entry stands for is a value of its text: it is on its own there, between
@@ -2773,6 +2799,22 @@ test('a saved maximized or full-screen main window stays off the screen in a hea
   expect(await mainWindow.evaluate(window => [window.isMaximized(), window.isFullScreen()])).toEqual([false, false]);
   // On macOS, a window becomes full screen only after a transition, so check that none was asked for.
   expect(await app.evaluate(() => globalThis.__plmWindowStateCalls)).toEqual([]);
+});
+test('the main window\'s page is served in the application\'s language, with its loading text in a font of the computer that its first frame has', async () => {
+  test.skip(liveReload, 'In live reload, ng serve sends the page as it is.');
+  const served = await servedAppPage();
+  // Japanese and Arabic are checked in their cases.
+  expect(served).toMatchObject({ lang: 'en', dir: 'ltr', loadingText: 'Loading...' });
+  expect(served.policy).toContain('default-src \'none\'');
+  // TL;DR: In a production build, the loading text's font and the spinner's stop for reduced motion are in the page
+  // itself, which the window's first frame draws with, not only in styles.css, which comes after it.
+  // Details: The page's main thread can wait seconds before the app's code runs (src/styles/_app-loading-indicator.scss),
+  // and only the first frame shows meanwhile. Beasties puts in the page the rules whose elements the page has. A
+  // development build has no such CSS: its styles.css comes before the page is drawn.
+  if (served.stylesheetDeferred) {
+    expect(served.css).toMatch(/\.app-loading-text\{[^}]*font-family:system-ui,sans-serif/);
+    expect(served.css).toMatch(/@media\s*\(prefers-reduced-motion:\s*reduce\)\{\.app-loading-indicator\{animation:none\}\}/);
+  }
 });
 test('the main window\'s page runs isolated, without Node.js, and reaches the main process only through its bridge', async () => {
   // The preferences that Electron applied to the window, not only those that the code asked for.

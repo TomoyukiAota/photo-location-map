@@ -1,4 +1,8 @@
 // Reference: https://cssloaders.github.io/
+//
+// The page shows this until Angular starts. The production build puts these rules in index.html itself (Beasties), so
+// that the window's first frame has them; the e2e suite checks that it does (test/e2e/regression.spec.mjs).
+@use "balanced-lines" as *;
 
 $loading-indicator-color: #888888;
 
@@ -36,5 +40,24 @@ $loading-indicator-color: #888888;
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+// TL;DR: The loading text is in a font of the computer, which the window's first frame draws, not in the page's web
+// font, Roboto.
+// Details: Chromium draws a text whose web font has not loaded yet as invisible, for up to 3 s, and draws it again on
+// the page's main thread once the font has loaded. When two instances started at once on one profile, that thread
+// waited 0.5 to 4 s before the app's code ran (docs/tasks/20261121_launch-loading-screen/REPORT.md): the spinner kept
+// turning all that time, as the compositor turns it, but the text did not show. The computer's fonts have the texts
+// of every language, which the main process writes into the page (src-main/file-server/app-page-language.ts).
+.app-loading-text {
+  font-family: system-ui, sans-serif;
+  text-align: center;
+  @include balanced-lines;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-loading-indicator {
+    animation: none;
   }
 }

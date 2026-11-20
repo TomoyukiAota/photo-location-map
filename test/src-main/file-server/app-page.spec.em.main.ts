@@ -8,30 +8,38 @@ import { mainWindowContentSecurityPolicy } from '../../../src-main/file-server/c
 describe('The app\'s page (in main process)', () => {
   let root: string;
   let dist: string;
+  /** A build whose page has nowhere to write its language. */
+  let plainDist: string;
+  const page = (lang: string, dir: string, text: string) => `<!doctype html><html lang="${lang}" dir="${dir}"><title>app</title>`
+    + `<span class="app-loading-text" id="app-loading-text">${text}</span></html>`;
 
   before(() => {
     root = fs.mkdtempSync(path.join(os.tmpdir(), 'plm-app-page-'));
     dist = path.join(root, 'dist');
     fs.mkdirSync(path.join(dist, 'media'), { recursive: true });
-    fs.writeFileSync(path.join(dist, 'index.html'), '<!doctype html><title>app</title>');
+    fs.writeFileSync(path.join(dist, 'index.html'), page('en', 'ltr', 'Loading...'));
     fs.writeFileSync(path.join(dist, 'main-ABC.js'), 'export const app = 1;');
     fs.writeFileSync(path.join(dist, 'media', '写真 #1.svg'), '<svg xmlns="http://www.w3.org/2000/svg"/>');
     fs.writeFileSync(path.join(root, 'secret.txt'), 'not of the page');
+    plainDist = path.join(root, 'plain-dist');
+    fs.mkdirSync(plainDist);
+    fs.writeFileSync(path.join(plainDist, 'index.html'), '<!doctype html><title>app</title>');
   });
 
   after(() => fs.rmSync(root, { recursive: true, force: true }));
 
   /** The answer to a request of the page, as protocol.handle gives it, with only what the handler reads. */
-  const respond = (url: string, method = 'GET') => respondToAppPageRequest({ url, method } as Request, dist);
+  const respond = (url: string, method = 'GET') => respondToAppPageRequest({ url, method } as Request, dist, 'en');
 
   it('answers a file of the build, with the type of its extension', async () => {
-    const page = await respond('plm-app://app/index.html');
-    assert.strictEqual(page.status, 200);
-    assert.strictEqual(await page.text(), '<!doctype html><title>app</title>');
-    assert.match(page.headers.get('content-type') ?? '', /^text\/html/);
+    const index = await respond('plm-app://app/index.html');
+    assert.strictEqual(index.status, 200);
+    assert.strictEqual(await index.text(), page('en', 'ltr', 'Loading...'));
+    assert.match(index.headers.get('content-type') ?? '', /^text\/html/);
 
     const script = await respond('plm-app://app/main-ABC.js');
     assert.strictEqual(script.status, 200);
+    assert.strictEqual(await script.text(), 'export const app = 1;');
     assert.match(script.headers.get('content-type') ?? '', /javascript/);
 
     const media = await respond(`plm-app://app/media/${encodeURIComponent('写真 #1.svg')}`);
@@ -60,6 +68,23 @@ describe('The app\'s page (in main process)', () => {
     assert.strictEqual(answer.body, answer.__fetch.body);
     assert.strictEqual(answer.bodyUsed, false);
     assert.strictEqual(answer.body?.locked, false);
+  });
+
+  it('answers the page in the application\'s language, with its direction and its loading text in it', async () => {
+    const japanese = await respondToAppPageRequest({ url: 'plm-app://app/index.html', method: 'GET' } as Request, dist, 'ja');
+    assert.strictEqual(await japanese.text(), page('ja', 'ltr', '読み込み中...'));
+    assert.match(japanese.headers.get('content-type') ?? '', /^text\/html; charset=utf-8$/);
+    assert.strictEqual(japanese.headers.get('content-security-policy'), mainWindowContentSecurityPolicy);
+
+    const arabic = await respondToAppPageRequest({ url: 'plm-app://app/index.html', method: 'GET' } as Request, dist, 'ar');
+    assert.strictEqual(await arabic.text(), page('ar', 'rtl', 'جارٍ التحميل...'));
+  });
+
+  it('answers a page that has nowhere to write its language as it is, with the policy', async () => {
+    const answer = await respondToAppPageRequest({ url: 'plm-app://app/index.html', method: 'GET' } as Request, plainDist, 'ja');
+    assert.strictEqual(answer.status, 200);
+    assert.strictEqual(await answer.text(), '<!doctype html><title>app</title>');
+    assert.strictEqual(answer.headers.get('content-security-policy'), mainWindowContentSecurityPolicy);
   });
 
   it('answers nothing outside the build, of another host, or that is not a file', async () => {
