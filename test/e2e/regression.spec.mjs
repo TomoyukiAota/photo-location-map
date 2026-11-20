@@ -3313,16 +3313,18 @@ async function describeViewerPage(viewer) {
  *   the map (Leaflet) and of the HEIC decoder (libheif), which webpack loads after the page's load event. So the page
  *   is watched until it shows `shown`.
  * - Only a 404 of the viewer's own server for a file under /_next/static/ counts. The helper then lets the page's load
- *   end and waits 2 seconds more, and loads the page again only if it is still the same document, is not loading,
- *   still misses such a file and still does not show `shown`, and `timeout` has not passed; otherwise it goes back to
- *   watching. A load of its own would stop the page's: in an emulation of the two by the viewer's session, against a
- *   server that answered in up to 600 ms, they stopped each other in 5 of 12 runs whose page needed its third load
- *   (page.reload: net::ERR_ABORTED), and with those checks, 48 of 48 runs passed. In this suite, against the viewer
- *   of 1b42c3c, a page given broken HTML once was loaded again by the viewer alone, and a page given it four times
- *   was loaded again by the viewer three times and then by the helper. Any other failure, and a page that still shows
- *   nothing when `timeout` has passed, fails the case with what the page shows (describeViewerPage).
+ *   end, unless the page shows `shown` first, and waits 2 seconds more, and loads the page again only if it is still
+ *   the same document, is not loading, still misses such a file and still does not show `shown`, and `timeout` has not
+ *   passed; otherwise it goes back to watching. A load of its own would stop the page's: in an emulation of the two by
+ *   the viewer's session, against a server that answered in up to 600 ms, they stopped each other in 5 of 12 runs whose
+ *   page needed its third load (page.reload: net::ERR_ABORTED), and with those checks, 48 of 48 runs passed. In this
+ *   suite, against the viewer of 1b42c3c, a page given broken HTML once was loaded again by the viewer alone, and a
+ *   page given it four times was loaded again by the viewer three times and then by the helper. Any other failure, and
+ *   a page that still shows nothing when `timeout` has passed, fails the case with what the page shows
+ *   (describeViewerPage).
  * - A load of the helper's waits only until the new document commits, and the helper then watches it as before: the
- *   page's load event can wait on a file that `shown` does not need, such as a font.
+ *   page's load event can wait on a file that `shown` does not need, such as a font. For the same reason, the helper
+ *   stops waiting for the page's load once the page shows `shown`.
  * - A load is let end before the next one. A new load stops one that is still going, as loading the page again 3
  *   seconds early did in a reproduction: loadURL() then rejects with ERR_ABORTED (-3), an unhandled error, whose
  *   dialog holds the main process in the suite (load-viewer-page.ts).
@@ -3358,7 +3360,10 @@ async function expectShownInViewer(viewer, shown, timeout = 30000) {
       .catch(notShown);
     if (seen !== 'missing files') break;
     const missingDocument = await currentDocument();
-    await expect.poll(isLoading, { timeout: left() }).toBe(false).catch(notShown);
+    // Until the page's load has ended or the page shows `shown`, as its load can wait on a file that `shown` does not
+    // need. The check after the wait still keeps the helper from loading a page that is loading.
+    const loadedOrShown = async () => !await isLoading() || await shown.isVisible().catch(() => false);
+    await expect.poll(loadedOrShown, { timeout: left() }).toBe(true).catch(notShown);
     await viewer.waitForTimeout(Math.min(2000, left()));
     if (await currentDocument() !== missingDocument || await isLoading() || await state() !== 'missing files') continue;
     if (Date.now() >= deadline) await notShown(new Error('The page was still missing files of its own build.'));
