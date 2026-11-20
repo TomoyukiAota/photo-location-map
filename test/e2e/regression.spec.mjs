@@ -338,10 +338,27 @@ async function expectRepresentedPhotos(count) {
   await expect.poll(async () => await page.locator('.plm-leaflet-map-div-icon').count() +
     await page.locator('.marker-cluster span').evaluateAll(nodes => nodes.reduce((sum, node) => sum + Number(node.textContent), 0))).toBe(count);
 }
-/** Opens the Settings dialog, which opens on its Language tab, and shows the tab named `tab` if one is given. */
+/**
+ * Opens the Settings dialog, which opens on its Language tab, and shows the tab named `tab` if one is given. It returns
+ * once Angular has rendered the dialog, with its list of languages.
+ * TL;DR: A case types in the dialog only once it is rendered, as a person sees it before typing in it. A search typed
+ * before makes the language list's first render list only what it finds, and the CDK's list box throws as it starts,
+ * in a development build, when the chosen entry is not among them.
+ * Details: The dialog's elements are made, and visible, when MatDialog.open() returns, and Angular renders them a
+ * moment later, in the render that zoneless change detection schedules. "Select Previous and Select Next…" waited for
+ * the dialog to be visible and typed "Norsk bokmål" in its search: before the first render in 3 of 20 recorded runs on
+ * macOS. That render listed Norsk bokmål alone, without the chosen setting, the operating system's language, and
+ * CdkListbox's ngAfterContentInit threw "Listbox has selected values that do not match any of its options.", which a
+ * production build does not check. The render ended there, before the list box's own bindings, and Angular does not
+ * call ngAfterContentInit again: the list box went without its keyboard, and threw at each later render. When the check
+ * of each second (src/app/app.config.ts) came before the next render, it found the list box's id never rendered and
+ * reported NG0100 with the previous value 'undefined', which failed the case in 2 of 19 runs. Typing in the same turn
+ * of the page as the opening threw every time. The application is not changed: nobody can type in the dialog before it
+ * is drawn, and the focus stays outside the dialog until then.
+ */
 async function settings(tab) {
   await page.evaluate(() => window.plmInternalRenderer.settingsDialog.showSettingsDialog());
-  await expect(page.locator('app-settings-dialog')).toBeVisible();
+  await expect(page.locator('app-settings-dialog').getByRole('option').first()).toBeVisible();
   if (tab) await page.locator('app-settings-dialog mat-list-item').filter({ hasText: tab }).click();
 }
 /**
