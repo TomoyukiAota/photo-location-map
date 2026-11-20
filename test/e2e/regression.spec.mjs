@@ -269,14 +269,43 @@ async function dismissWelcome() {
   }
 }
 /**
+ * TL;DR: Waits until the menus that are open have appeared, as a person sees a menu before choosing from it.
+ * Details: Angular Material's menu grows from 80% of its size as it opens, and takes no pointer events while it grows.
+ * Before the growth starts, which came two frames and more after the menu in the test's hidden or transparent window,
+ * the menu is transparent and at 80% of its size, but takes pointer events: Playwright took its items for stable, and
+ * clicked Google in the middle of where it was at 80%. Once the menu had grown, that point was over Open Folder, the
+ * item above, and Chromium moved the hover there, as it does when the page moves under a pointer that stays where it
+ * is. The menu then closed the submenu of Google, as it does for a person who goes on to another item. On Windows CI,
+ * the click on Open Google Maps came after that: Playwright found the submenu's pane in the way ("intercepts pointer
+ * events") while the submenu faded out, and then the item gone. With a pause after the click on Google, the case
+ * failed in the same way on macOS every time, and passed once the menus were waited for. A menu runs an animation
+ * until it has appeared: for a moment after it is made, the exit animation of its last closing, then its growth. Its
+ * class mat-menu-panel-animating, which takes no pointer events, goes once Angular renders it again.
+ */
+async function untilMenusShown() {
+  await page.waitForFunction(() => [...document.querySelectorAll('.mat-mdc-menu-panel')]
+    .every(panel => !panel.getAnimations().length && !panel.classList.contains('mat-menu-panel-animating')));
+}
+/**
+ * Opens the menu of a photo's More Options button, and the submenus of the items named ('Selection'), each item clicked
+ * once its menu has appeared. The menu is above the window, in the overlay container, rather than in the row or the
+ * popup of its button.
+ */
+async function openMoreOptions(moreOptionsButton, ...submenus) {
+  await moreOptionsButton.click();
+  for (const name of submenus) {
+    await untilMenusShown();
+    await page.getByRole('menuitem', { name, exact: true }).click();
+  }
+  await untilMenusShown();
+}
+/**
  * Opens the menu of a photo's More Options button and chooses an item: the one named last, in the submenu of the item
- * named before it if there is one ('Selection', 'Select Only This'). The menu is above the window, in the overlay
- * container, rather than in the row or the popup of its button.
+ * named before it if there is one ('Selection', 'Select Only This').
  */
 async function chooseFromMoreOptions(moreOptionsButton, ...names) {
-  await moreOptionsButton.click();
-  for (const name of names)
-    await page.getByRole('menuitem', { name, exact: true }).click();
+  await openMoreOptions(moreOptionsButton, ...names.slice(0, -1));
+  await page.getByRole('menuitem', { name: names.at(-1), exact: true }).click();
 }
 async function expectRepresentedPhotos(count) {
   // Cluster membership changes with available map space; the photo total must not.
@@ -797,7 +826,7 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   const popup = page.locator('.leaflet-popup');
   await expect(popup.locator('.photo-info-viewer-date-time-taken')).toHaveText(/^\d{4}-\d{2}-\d{2} \([日月火水木金土]\) \d{2}:\d{2}:\d{2}$/);
   // The menu, and the submenus that the pointer opens, with the items of the submenu open after the menu's.
-  await popup.locator('.photo-info-viewer-more-options-button').click();
+  await openMoreOptions(popup.locator('.photo-info-viewer-more-options-button'));
   const moreOptionsItems = page.locator('.photo-info-viewer-more-options-menu-item');
   const menuInJapaneseOfPopup = ['選択', 'サイドバーで表示', 'フォルダーを開く', 'Google', 'データを表示'];
   await expect(moreOptionsItems).toHaveText(menuInJapaneseOfPopup);
@@ -807,7 +836,8 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   await expect(moreOptionsItems)
     .toHaveText([...menuInJapaneseOfPopup, 'Google マップを開く', 'Google Earth を開く', 'Google ストリートビューを開く']);
   // The menus are wider than in English, and this popup is at the map's left edge: they are above the window, which
-  // they stay within, and neither the map nor the sidebar cuts them off.
+  // they stay within, and neither the map nor the sidebar cuts them off. They are measured once they have grown.
+  await untilMenusShown();
   const windowWidth = await page.evaluate(() => window.innerWidth);
   for (const menuBox of await page.locator('.photo-info-viewer-more-options-menu').evaluateAll(menus => menus.map(menu => menu.getBoundingClientRect().toJSON()))) {
     expect(menuBox.left).toBeGreaterThanOrEqual(0);
@@ -1738,7 +1768,7 @@ test('Reveal in Sidebar from a popup of the map expands the folders above the ph
   // The popup of the folder's only photo on the map, which opens by itself.
   const popup = page.locator('.leaflet-popup');
   await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_4676.JPG');
-  await popup.getByRole('button', { name: 'More Options' }).click();
+  await openMoreOptions(popup.getByRole('button', { name: 'More Options' }));
   // From before the click on, the sidebar's scroll position at each frame, and whether a row is highlighted then.
   await pane.evaluate(element => {
     const frames = globalThis.revealFrames = [];
@@ -1896,7 +1926,7 @@ test('a photo\'s information, in the tree and in a popup of the map, opens the p
   await inTree.getByRole('button', { name: 'Open File' }).click();
   await inTree.getByRole('button', { name: 'Live Photos' }).click();
   await thumbnailInTree.click();
-  await inTree.getByRole('button', { name: 'More Options' }).click();
+  await openMoreOptions(inTree.getByRole('button', { name: 'More Options' }));
   await expect(page.locator('.photo-info-viewer-more-options-menu-item')).toHaveText(['Selection', 'Reveal in Map', 'Open Folder', 'Google', 'View Data']);
   // While the menu is open, which is above the window rather than in the row, the row keeps its buttons: the pointer is
   // on the menu, off the row, for longer than the buttons take to fade (0.2 s).
@@ -2132,8 +2162,7 @@ test('Select Previous and Select Next go through the photos in the order they we
   const moreOptionsItems = page.locator('.photo-info-viewer-more-options-menu-item');
   const selection = ['Select Only This', 'Select Previous', 'Select Next'];
   const menuItemNamed = name => page.getByRole('menuitem', { name, exact: true });
-  await popup.locator('.photo-info-viewer-more-options-button').click();
-  await menuItemNamed('Selection').click();
+  await openMoreOptions(popup.locator('.photo-info-viewer-more-options-button'), 'Selection');
   await expect(moreOptionsItems).toHaveText(['Selection', 'Reveal in Sidebar', 'Open Folder', 'Google', 'View Data', ...selection]);
   for (const name of selection) await expect(menuItemNamed(name)).toBeEnabled();
   await menuItemNamed('Select Next').click();
@@ -2142,13 +2171,11 @@ test('Select Previous and Select Next go through the photos in the order they we
   const kobe = page.locator('mat-tree-node').filter({ has: page.getByText('Kobe', { exact: true }) });
   const row = page.locator('mat-tree-node').filter({ hasText: 'IMG_4676.JPG' });
   await row.locator('.photo-info-viewer-thumbnail').hover();
-  await row.getByRole('button', { name: 'More Options' }).click();
-  await menuItemNamed('Selection').click();
+  await openMoreOptions(row.getByRole('button', { name: 'More Options' }), 'Selection');
   await expect(moreOptionsItems).toHaveText(['Selection', 'Reveal in Map', 'Open Folder', 'Google', 'View Data', ...selection]);
   await menuItemNamed('Select Next').click();
   await expectSelected('IMG_5769.JPG');
-  await popup.locator('.photo-info-viewer-more-options-button').click();
-  await menuItemNamed('Selection').click();
+  await openMoreOptions(popup.locator('.photo-info-viewer-more-options-button'), 'Selection');
   await expect(menuItemNamed('Select Next')).toBeDisabled();
   await menuItemNamed('Select Previous').click();
   await expectSelected('IMG_4676.JPG');
