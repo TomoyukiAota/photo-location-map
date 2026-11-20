@@ -176,6 +176,15 @@
       "openFolder": "開啟資料夾"
     }
   },
+  "faceSearch": {
+    "looking": "正在所選照片中尋找人臉...",
+    "progress": "已檢查 {{done}} / {{total}} 張照片。",
+    "waitingForThumbnails": "正在等待產生 HEIF 檔案的縮圖...",
+    "onThisComputer": "人臉只在這台電腦上尋找，有關人臉的任何資訊都不會傳送到任何地方。",
+    "noFacesFound": "所選照片中找不到人臉。選取範圍維持不變。",
+    "notLookedAt": "有 {{count}} 張照片無法尋找人臉，已取消選取。",
+    "failed": "無法在所選照片中尋找人臉。選取範圍維持不變。"
+  },
   "settings": {
     "title": "設定",
     "tabs": {
@@ -253,7 +262,8 @@
       "undo": "復原",
       "redo": "重做",
       "selectPrevious": "前一張拍攝的照片",
-      "selectNext": "後一張拍攝的照片"
+      "selectNext": "後一張拍攝的照片",
+      "narrowDownToPhotosWithFaces": "篩選出有人臉的照片"
     },
     "settings": {
       "title": "設定",

@@ -176,6 +176,15 @@
       "openFolder": "Obre la carpeta"
     }
   },
+  "faceSearch": {
+    "looking": "S’estan cercant cares a les fotos seleccionades...",
+    "progress": "Fotos revisades: {{done}} de {{total}}.",
+    "waitingForThumbnails": "S’està esperant que es generin les miniatures dels fitxers HEIF...",
+    "onThisComputer": "Les cares es cerquen només en aquest ordinador. No s’envia res sobre elles enlloc.",
+    "noFacesFound": "No s’han trobat cares a les fotos seleccionades. La selecció es manté tal com està.",
+    "notLookedAt": "Fotos en què no s’han pogut cercar cares i que ja no estan seleccionades: {{count}}.",
+    "failed": "No s’han pogut cercar cares a les fotos seleccionades. La selecció es manté tal com està."
+  },
   "settings": {
     "title": "Configuració",
     "tabs": {
@@ -253,7 +262,8 @@
       "undo": "Desfés",
       "redo": "Refés",
       "selectPrevious": "Foto feta abans",
-      "selectNext": "Foto feta després"
+      "selectNext": "Foto feta després",
+      "narrowDownToPhotosWithFaces": "Restringeix a les fotos amb cares"
     },
     "settings": {
       "title": "Configuració",

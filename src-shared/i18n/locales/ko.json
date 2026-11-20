@@ -176,6 +176,15 @@
       "openFolder": "폴더 열기"
     }
   },
+  "faceSearch": {
+    "looking": "선택한 사진에서 얼굴을 찾는 중...",
+    "progress": "사진 {{total}}장 중 {{done}}장을 확인했습니다.",
+    "waitingForThumbnails": "HEIF 파일의 썸네일이 생성되기를 기다리는 중...",
+    "onThisComputer": "얼굴은 이 컴퓨터에서만 찾습니다. 얼굴에 관한 어떤 정보도 어디로도 보내지 않습니다.",
+    "noFacesFound": "선택한 사진에서 얼굴을 찾지 못했습니다. 선택은 그대로 유지됩니다.",
+    "notLookedAt": "얼굴을 확인할 수 없었던 사진 {{count}}장을 선택에서 제외했습니다.",
+    "failed": "선택한 사진에서 얼굴 찾기를 할 수 없었습니다. 선택은 그대로 유지됩니다."
+  },
   "settings": {
     "title": "설정",
     "tabs": {
@@ -253,7 +262,8 @@
       "undo": "실행 취소",
       "redo": "다시 실행",
       "selectPrevious": "이전에 촬영된 사진",
-      "selectNext": "다음에 촬영된 사진"
+      "selectNext": "다음에 촬영된 사진",
+      "narrowDownToPhotosWithFaces": "얼굴이 있는 사진으로 좁히기"
     },
     "settings": {
       "title": "설정",

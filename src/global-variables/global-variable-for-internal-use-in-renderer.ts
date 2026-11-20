@@ -28,4 +28,5 @@ export class PlmInternalRendererPhotoSelection implements IPlmInternalRendererPh
   public selectOnlyThis: (photoPath: string) => void;
   public selectPrevious: () => void;
   public selectNext: () => void;
+  public narrowDownToPhotosWithFaces: () => void;
 }

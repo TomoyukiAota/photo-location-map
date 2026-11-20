@@ -176,6 +176,15 @@
       "openFolder": "Open map"
     }
   },
+  "faceSearch": {
+    "looking": "Gezichten zoeken in de geselecteerde foto’s...",
+    "progress": "Doorzochte foto’s: {{done}} van {{total}}.",
+    "waitingForThumbnails": "Wachten tot de miniaturen van de HEIF-bestanden zijn aangemaakt...",
+    "onThisComputer": "Gezichten worden alleen op deze computer gezocht. Er wordt niets over verzonden.",
+    "noFacesFound": "Er zijn geen gezichten gevonden in de geselecteerde foto’s. De selectie blijft zoals ze is.",
+    "notLookedAt": "Foto’s die niet op gezichten konden worden doorzocht en niet meer geselecteerd zijn: {{count}}.",
+    "failed": "In de geselecteerde foto’s kon niet naar gezichten worden gezocht. De selectie blijft zoals ze is."
+  },
   "settings": {
     "title": "Instellingen",
     "tabs": {
@@ -253,7 +262,8 @@
       "undo": "Herstel",
       "redo": "Opnieuw",
       "selectPrevious": "Eerder gemaakte foto",
-      "selectNext": "Later gemaakte foto"
+      "selectNext": "Later gemaakte foto",
+      "narrowDownToPhotosWithFaces": "Beperken tot foto’s met gezichten"
     },
     "settings": {
       "title": "Instellingen",

@@ -1,0 +1,22 @@
+@let current = state();
+@if (current.kind === 'searching') {
+  <mat-progress-bar mode="determinate" [value]="percent()" [attr.aria-label]="'faceSearch.looking' | t"></mat-progress-bar>
+  <div class="texts">
+    <div>{{ 'faceSearch.looking' | t }}</div>
+    <div class="progress">{{ 'faceSearch.progress' | t: { done: current.done, total: current.total } }}</div>
+    @if (current.waitingForThumbnails) {
+      <div class="waiting">{{ 'faceSearch.waitingForThumbnails' | t }}</div>
+    }
+    <div class="on-this-computer">{{ 'faceSearch.onThisComputer' | t }}</div>
+  </div>
+  <button mat-stroked-button class="button" (click)="cancel()">{{ 'common.cancel' | t }}</button>
+} @else {
+  <div class="texts message">
+    @switch (current.kind) {
+      @case ('noFacesFound') { {{ 'faceSearch.noFacesFound' | t }} }
+      @case ('notLookedAt') { {{ 'faceSearch.notLookedAt' | t: { count: current.count } }} }
+      @case ('failed') { {{ 'faceSearch.failed' | t }} }
+    }
+  </div>
+  <button mat-stroked-button mat-dialog-close class="button">{{ 'common.close' | t }}</button>
+}

@@ -7,6 +7,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { browserSettingLabels, languages as websiteLanguages, matchLanguage } from '../../script/website/website-i18n.js';
 import { jpegWithEmptyGpsValues } from '../test-util/jpeg-with-empty-gps-values.mjs';
+import { jpegWithFaceRegion } from '../test-util/jpeg-with-face-region.mjs';
 import { jpegWithLocationOnly } from '../test-util/jpeg-with-location-only.mjs';
 const require = createRequire(import.meta.url);
 const root = path.resolve(import.meta.dirname, '../..');
@@ -657,7 +658,7 @@ const menuInEnglish = [
     items: ['About Photo Location Map', 'Services', 'Hide Photo Location Map', 'Hide Others', 'Show All', 'Quit Photo Location Map'],
   }] : []),
   { label: 'View', items: ['Reload', 'Actual Size', 'Zoom In', 'Zoom Out', 'Toggle Full Screen'] },
-  { label: 'Selection', items: ['Undo', 'Redo', 'Photo Taken Before', 'Photo Taken After'] },
+  { label: 'Selection', items: ['Undo', 'Redo', 'Photo Taken Before', 'Photo Taken After', 'Narrow Down to Photos with Faces'] },
   { label: 'Settings', items: ['Open Settings'] },
   { label: 'Help', items: [...(isMac ? [] : ['About Photo Location Map']),
     'Show Welcome Dialog', 'Advanced Menu', 'Open Log Folder', 'Toggle Developer Tools'] },
@@ -668,7 +669,7 @@ const menuInJapanese = [
     items: ['Photo Location Map について', 'サービス', 'Photo Location Map を非表示', 'ほかを非表示', 'すべてを表示', 'Photo Location Map を終了'],
   }] : []),
   { label: '表示', items: ['再読み込み', '実際のサイズ', '拡大', '縮小', 'フルスクリーンの切り替え'] },
-  { label: '選択', items: ['元に戻す', 'やり直す', '前に撮影された写真', '次に撮影された写真'] },
+  { label: '選択', items: ['元に戻す', 'やり直す', '前に撮影された写真', '次に撮影された写真', '顔が写っている写真に絞り込む'] },
   { label: '設定', items: ['設定を開く'] },
   { label: 'ヘルプ', items: [...(isMac ? [] : ['Photo Location Map について']),
     '「ようこそダイアログ」を表示', '詳細メニュー', 'ログフォルダーを開く', '開発者ツールの切り替え'] },
@@ -1103,7 +1104,7 @@ test('on a computer whose language is Arabic, the application is laid out from r
       items: ['حول Photo Location Map', 'الخدمات', 'إخفاء Photo Location Map', 'إخفاء الأخرى', 'إظهار الكل', 'إنهاء Photo Location Map'],
     }] : []),
     { label: 'عرض', items: ['إعادة التحميل', 'الحجم الفعلي', 'تكبير', 'تصغير', 'تبديل وضع ملء الشاشة'] },
-    { label: 'التحديد', items: ['تراجع', 'إعادة', 'الصورة الملتقطة قبلها', 'الصورة الملتقطة بعدها'] },
+    { label: 'التحديد', items: ['تراجع', 'إعادة', 'الصورة الملتقطة قبلها', 'الصورة الملتقطة بعدها', 'تضييق التحديد إلى الصور التي تظهر فيها وجوه'] },
     { label: 'الإعدادات', items: ['فتح الإعدادات'] },
     { label: 'مساعدة', items: [...(isMac ? [] : ['حول Photo Location Map']),
       'إظهار مربع حوار الترحيب', 'القائمة المتقدمة', 'فتح مجلد السجلات', 'إظهار/إخفاء أدوات المطوّرين'] },
@@ -2465,6 +2466,62 @@ test('Select Previous and Select Next go through the photos in the order they we
   await kobe.focus();
   await page.keyboard.press('ArrowLeft');
   await expect(kobe).toHaveAttribute('aria-expanded', 'false');
+});
+test('Narrow Down to Photos with Faces keeps selected the photos in which faces are found, as a step that Undo takes back', async () => {
+  // Faces are found in the two photos of astronauts by the detector, which runs in a worker of the page with the
+  // page's Content Security Policy, and gets the photos through plm-file: with CORS. The photo of Unga has a face in its
+  // metadata, as Lightroom writes one, which counts without being looked at. The photo of Kobe and the HEIF photo have
+  // none; the HEIF photo is looked at in the thumbnail that the app makes of it, which the search waits for.
+  const folder = path.join(profile, 'Faces');
+  await mkdir(folder);
+  await copyFile(path.join(root, 'test/e2e/fixtures/faces/astronaut-portrait.jpg'), path.join(folder, 'portrait.jpg'));
+  await copyFile(path.join(root, 'test/e2e/fixtures/faces/astronaut-crew.jpg'), path.join(folder, 'crew.jpg'));
+  await writeFile(path.join(folder, 'tagged.jpg'), jpegWithFaceRegion(await readFile(path.join(photoFolder, 'Unga/IMG_2581.JPG'))));
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'kobe.jpg'));
+  await copyFile(path.join(root, 'test/e2e/fixtures/demo.heic'), path.join(folder, 'demo.heic'));
+  const menuItem = id => ({
+    click: () => app.evaluate(({ Menu }, id) => Menu.getApplicationMenu().getMenuItemById(id).click(), id),
+    enabled: () => app.evaluate(({ Menu }, id) => Menu.getApplicationMenu().getMenuItemById(id).enabled, id),
+  });
+  const narrowDown = menuItem('photo-selection-narrow-down-to-photos-with-faces');
+  const withFaces = ['portrait.jpg', 'crew.jpg', 'tagged.jpg'];
+  const withoutFaces = ['kobe.jpg', 'demo.heic'];
+  async function expectSelected(names) {
+    for (const name of [...withFaces, ...withoutFaces])
+      await expect(treeCheckbox(name)).toBeChecked({ checked: names.includes(name) });
+    await expectRepresentedPhotos(names.length);
+  }
+  const dialog = page.locator('app-face-search-dialog');
+  await dismissWelcome();
+  // Nothing is selected before a folder is opened.
+  await expect.poll(narrowDown.enabled).toBe(false);
+  await openFolderWithPicker(folder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('5 files have location data.');
+  await expectSelected([...withFaces, ...withoutFaces]);
+  await expect.poll(narrowDown.enabled).toBe(true);
+
+  await narrowDown.click();
+  // The HEIF photo's thumbnail may take a while to be made.
+  await expect(treeCheckbox('kobe.jpg')).not.toBeChecked({ timeout: 30000 });
+  await expectSelected(withFaces);
+  await expect(dialog).toHaveCount(0);
+
+  // A step of the selection's history.
+  await menuItem('photo-selection-undo').click();
+  await expectSelected([...withFaces, ...withoutFaces]);
+  // What was found is kept while the folder is open: the selection narrows down again at once.
+  await narrowDown.click();
+  await expectSelected(withFaces);
+
+  // Without a face among the selected photos, the selection stays, and the dialog says so until it is closed.
+  await menuItem('photo-selection-undo').click();
+  for (const name of withFaces) await treeCheckbox(name).uncheck();
+  await expectSelected(withoutFaces);
+  await narrowDown.click();
+  await expect(dialog).toContainText('No faces were found in the selected photos. The selection stays as it is.');
+  await dialog.getByRole('button', { name: 'Close', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  await expectSelected(withoutFaces);
 });
 test('Select Previous and Select Next scroll the sidebar to the selected photo\'s row only when the sidebar does not show all of it', async () => {
   // Copies of one photo, all taken at the same time, so that their names order them: twelve in a folder, which go

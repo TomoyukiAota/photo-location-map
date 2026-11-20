@@ -9,7 +9,8 @@
 // with a folder of photos (in a window of 1200x800 and of 800x600), a photo's popup with its menu and the menu's submenus, the tree's menu, the Sort menu and its info dialog, the
 // chart's menu, its message for a duration that it cannot show and its button for the photos within a zoom, a region
 // on the map, the tabs of the Settings dialog with the choices of the clock's field, the question before a restart,
-// the About box, the dialog of the thumbnails that failed, and the dialog of a folder without location data.
+// the About box, the dialog of the thumbnails that failed, the dialog of a folder without location data, and the
+// dialog of the search for faces, while it looks and when it found none.
 //
 // In each screen it finds the texts that are cut, the texts that reach outside their dialog or the window, to a side
 // or in height, the texts of buttons, tabs, menu items, labels and headings that are on more than one line, and the
@@ -52,6 +53,12 @@ await copyFile(path.join(root, 'test/test-resources/actual-photos/Kobe/IMG_4676.
 const nowhere = path.join(folders, 'Nowhere');
 await mkdir(nowhere);
 await copyFile(path.join(root, 'test/test-resources/unsupported-files/Invalid Photo.JPG'), path.join(nowhere, 'Invalid Photo.JPG'));
+// A photo with a face, and a HEIF file of its own, whose thumbnail the search for faces waits for, which keeps its
+// dialog open while it is measured.
+const faces = path.join(folders, 'Faces');
+await mkdir(faces);
+await copyFile(path.join(root, 'test/e2e/fixtures/faces/astronaut-portrait.jpg'), path.join(faces, 'portrait.jpg'));
+await copyFile(path.join(root, 'test/e2e/fixtures/demo.heic'), path.join(faces, 'faces.heic'));
 
 /**
  * What is wrong with the texts within the elements of `selector`, in the page: those that an element around them
@@ -403,6 +410,29 @@ for (const code of codes) {
       await screen('error-dialog', dialog, dialog);
       await page.locator('app-thumbnail-generation-error-dialog .close-button').first().click();
       await page.waitForSelector('app-thumbnail-generation-error-dialog', { state: 'detached' });
+    });
+    const narrowDownToPhotosWithFaces = () => app.evaluate(({ Menu }) =>
+      Menu.getApplicationMenu().getMenuItemById('photo-selection-narrow-down-to-photos-with-faces').click());
+    await step('face-search', async () => {
+      // The search waits for the thumbnail of the HEIF file, which is made after the folder opens.
+      await openFolder(faces);
+      await page.waitForSelector('mat-tree-node:has-text("faces.heic")');
+      await narrowDownToPhotosWithFaces();
+      await page.waitForSelector('app-face-search-dialog .waiting');
+      await screen('face-search', dialog, dialog);
+      await page.waitForSelector('app-face-search-dialog', { state: 'detached', timeout: 40000 });
+      // Open Folder is disabled until the app has seen that the thumbnail is made, which it checks every 5 seconds.
+      await page.waitForSelector('.open-folder-button button:enabled', { timeout: 40000 });
+    });
+    await step('face-search-none-found', async () => {
+      // The photos of the folder have no faces.
+      await openFolder(photos);
+      await page.waitForSelector('mat-tree-node:has-text("Kobe")');
+      await narrowDownToPhotosWithFaces();
+      await page.waitForSelector('app-face-search-dialog .message', { timeout: 40000 });
+      await screen('face-search-none-found', dialog, dialog);
+      await page.locator('app-face-search-dialog button').click();
+      await page.waitForSelector('app-face-search-dialog', { state: 'detached' });
     });
     await step('no-location', async () => {
       await openFolder(nowhere);

@@ -176,6 +176,15 @@
       "openFolder": "Otevřít složku"
     }
   },
+  "faceSearch": {
+    "looking": "Hledají se obličeje ve vybraných fotkách...",
+    "progress": "Prohlédnuté fotky: {{done}} z {{total}}.",
+    "waitingForThumbnails": "Čeká se na vytvoření miniatur souborů HEIF...",
+    "onThisComputer": "Obličeje se hledají jen v tomto počítači. Nic o nich se nikam neodesílá.",
+    "noFacesFound": "Ve vybraných fotkách nebyly nalezeny žádné obličeje. Výběr zůstává beze změny.",
+    "notLookedAt": "Fotky, ve kterých nebylo možné hledat obličeje a které už nejsou vybrané: {{count}}.",
+    "failed": "Ve vybraných fotkách nebylo možné hledat obličeje. Výběr zůstává beze změny."
+  },
   "settings": {
     "title": "Nastavení",
     "tabs": {
@@ -253,7 +262,8 @@
       "undo": "Zpět",
       "redo": "Znovu",
       "selectPrevious": "Fotka pořízená předtím",
-      "selectNext": "Fotka pořízená potom"
+      "selectNext": "Fotka pořízená potom",
+      "narrowDownToPhotosWithFaces": "Zúžit na fotky s obličeji"
     },
     "settings": {
       "title": "Nastavení",

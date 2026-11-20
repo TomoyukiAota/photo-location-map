@@ -176,6 +176,15 @@
       "openFolder": "Åpne mappe"
     }
   },
+  "faceSearch": {
+    "looking": "Søker etter ansikter i de markerte bildene...",
+    "progress": "Gjennomgåtte bilder: {{done}} av {{total}}.",
+    "waitingForThumbnails": "Venter på at miniatyrbildene for HEIF-filene blir laget...",
+    "onThisComputer": "Det søkes bare etter ansikter på denne datamaskinen. Ingenting om dem sendes noe sted.",
+    "noFacesFound": "Fant ingen ansikter i de markerte bildene. Markeringen forblir som den er.",
+    "notLookedAt": "Bilder som det ikke var mulig å søke etter ansikter i, og som ikke lenger er markert: {{count}}.",
+    "failed": "Kunne ikke søke etter ansikter i de markerte bildene. Markeringen forblir som den er."
+  },
   "settings": {
     "title": "Innstillinger",
     "tabs": {
@@ -253,7 +262,8 @@
       "undo": "Angre",
       "redo": "Gjør om",
       "selectPrevious": "Bilde tatt før",
-      "selectNext": "Bilde tatt etter"
+      "selectNext": "Bilde tatt etter",
+      "narrowDownToPhotosWithFaces": "Begrens til bilder med ansikter"
     },
     "settings": {
       "title": "Innstillinger",

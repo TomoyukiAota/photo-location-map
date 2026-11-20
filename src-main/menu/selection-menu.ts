@@ -32,6 +32,14 @@ const handleSelectNextClicked = () => {
   mainWindow?.webContents.send(IpcConstants.PhotoSelection.SelectNext);
 };
 
+// The click alone is tracked, as for the other items: nothing about the faces that are found, nor how many photos
+// have them, is sent anywhere (src/app/face-search/face-search.service.ts).
+const handleNarrowDownToPhotosWithFacesClicked = () => {
+  Logger.info(`[Main Window Menu] Clicked "Selection -> Narrow Down to Photos with Faces".`);
+  Analytics.trackEvent('Main Window Menu', 'Clicked "Selection -> Narrow Down to Photos with Faces"');
+  mainWindow?.webContents.send(IpcConstants.PhotoSelection.NarrowDownToPhotosWithFaces);
+};
+
 export const selectionMenuTemplate: MenuItemConstructorOptions = {
   label: t('menu.selection.title'),
   submenu: [
@@ -84,10 +92,22 @@ export const selectionMenuTemplate: MenuItemConstructorOptions = {
       accelerator: 'CmdOrCtrl+Right',
       click: () => handleSelectNextClicked(),
     },
+    { type: 'separator' },
+    // Keeps selected only the selected photos in which faces are found, on this computer; enabled while any photo is
+    // selected (src/app/face-search/face-search.service.ts).
+    {
+      label: t('menu.selection.narrowDownToPhotosWithFaces'),
+      id: MenuId.Selection.NarrowDownToPhotosWithFaces,
+      enabled: false,
+      click: () => handleNarrowDownToPhotosWithFacesClicked(),
+    },
   ]
 };
 
-/** The renderer enables the items of the Selection menu that apply to the selection (src/app/shared/service/). */
+/**
+ * The renderer enables the items of the Selection menu that apply to the selection (src/app/shared/service/,
+ * src/app/face-search/).
+ */
 export function configureIpcForSelectionMenu(menu: Electron.Menu) {
   ipcMain.handle(IpcConstants.PhotoSelection.UpdateUndoRedoMenus, (event, ipcParams: IpcParams.PhotoSelection.UpdateUndoRedoMenus) => {
     Logger.debug(`[IPC Main Received] ${IpcConstants.PhotoSelection.UpdateUndoRedoMenus}`);
@@ -108,5 +128,14 @@ export function configureIpcForSelectionMenu(menu: Electron.Menu) {
       throw new Error('Updating the Selection menu needs whether Select Previous and Select Next are enabled.');
     menu.getMenuItemById(MenuId.Selection.SelectPrevious).enabled = ipcParams.isSelectPreviousMenuEnabled;
     menu.getMenuItemById(MenuId.Selection.SelectNext).enabled = ipcParams.isSelectNextMenuEnabled;
+  });
+
+  ipcMain.handle(IpcConstants.PhotoSelection.UpdateNarrowDownToPhotosWithFacesMenu,
+                 (event, ipcParams: IpcParams.PhotoSelection.UpdateNarrowDownToPhotosWithFacesMenu) => {
+    Logger.debug(`[IPC Main Received] ${IpcConstants.PhotoSelection.UpdateNarrowDownToPhotosWithFacesMenu}`);
+    assertFromMainWindow(event, 'Updating the Selection menu');
+    if (typeof ipcParams?.isEnabled !== 'boolean')
+      throw new Error('Updating the Selection menu needs whether Narrow Down to Photos with Faces is enabled.');
+    menu.getMenuItemById(MenuId.Selection.NarrowDownToPhotosWithFaces).enabled = ipcParams.isEnabled;
   });
 }

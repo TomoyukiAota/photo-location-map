@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Logger } from '../../src-shared/log/logger';
 import { AboutBoxComponent } from '../app/about-box/about-box.component';
 import { DirectoryTreeViewSelectionService } from '../app/directory-tree-view/directory-tree-view-selection.service';
+import { FaceSearchService } from '../app/face-search/face-search.service';
 import { SettingsDialogComponent } from '../app/settings-dialog/settings-dialog.component';
 import { OpenAfterLaunchService } from '../app/shared/service/open-after-launch.service';
 import { PhotoSelectionHistoryService } from '../app/shared/service/photo-selection-history.service';
@@ -25,6 +26,8 @@ export class PlmInternalRendererService {
   private photoSelectionHistoryService = inject(PhotoSelectionHistoryService);
   // Made with this service, at the start: it enables the Selection menu's Select Previous and Select Next.
   private selectPreviousNextService = inject(SelectPreviousNextService);
+  // Made with this service, at the start: it enables the Selection menu's Narrow Down to Photos with Faces.
+  private faceSearchService = inject(FaceSearchService);
 
   public initialize(): void {
     window.plmInternalRenderer = window.plmInternalRenderer || new PlmInternalRenderer();
@@ -47,6 +50,7 @@ export class PlmInternalRendererService {
     window.plmInternalRenderer.photoSelection.selectOnlyThis = (photoPath) => this.selectOnlyThis(photoPath);
     window.plmInternalRenderer.photoSelection.selectPrevious = () => this.selectPreviousNextService.selectPreviousOfSelectedPhoto();
     window.plmInternalRenderer.photoSelection.selectNext = () => this.selectPreviousNextService.selectNextOfSelectedPhoto();
+    window.plmInternalRenderer.photoSelection.narrowDownToPhotosWithFaces = () => void this.faceSearchService.narrowDownSelectedPhotos();
   }
 
   public destroy(): void {

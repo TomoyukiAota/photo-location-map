@@ -2,9 +2,10 @@ import { net } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
 import { pathToFileURL } from 'url';
-import { photoFilePathOf } from '../../src-shared/main-window-schemes.js';
+import { appPageOrigin, devServerPageOrigin, photoFilePathOf } from '../../src-shared/main-window-schemes.js';
 import { plmThumbnailCacheDir } from '../../src-shared/thumbnail/cache/thumbnail-cache-util.js';
 import { userChosenFolderPaths } from '../ipc/user-chosen-folders.js';
+import { LiveReload } from '../live-reload.js';
 
 // TL;DR: The main window's page gets the user's photos and their thumbnails from plm-file:, which answers only for the
 // files of the folders that the user opened and for the thumbnails that the app made.
@@ -33,6 +34,11 @@ export async function showablePathIn(filePath: string, folders: readonly string[
   return undefined;
 }
 
+/** The origin of the main window's page: the app's own, or ng serve's in live reload (file-server.ts). */
+export function mainWindowPageOrigin(): string {
+  return LiveReload.enabled ? devServerPageOrigin : appPageOrigin;
+}
+
 /** The real path of a file that the page may show: one in a folder that the user opened, or a thumbnail of the app's. */
 export function showablePath(filePath: string): Promise<string | undefined> {
   return showablePathIn(filePath, [...userChosenFolderPaths(), plmThumbnailCacheDir]);
@@ -42,7 +48,7 @@ export function showablePath(filePath: string): Promise<string | undefined> {
  * The file that a request of the page for a photo or a thumbnail stands for (photoFileUrl), if the page may show it:
  * a file, by its absolute path; otherwise 404, which does not tell whether such a file is there. Only to be read.
  */
-export async function respondToPhotoFileRequest(request: Request, showable = showablePath): Promise<Response> {
+export async function respondToPhotoFileRequest(request: Request, showable = showablePath, pageOrigin = appPageOrigin): Promise<Response> {
   if (request.method !== 'GET')
     return new Response(null, { status: 405 });
 
@@ -56,7 +62,16 @@ export async function respondToPhotoFileRequest(request: Request, showable = sho
   const isFile = await fs.promises.stat(filePath).then(stats => stats.isFile(), () => false);
   if (!isFile)
     return notFound();
-  return net.fetch(pathToFileURL(filePath).href, { bypassCustomProtocolHandlers: true });
+  const file = await net.fetch(pathToFileURL(filePath).href, { bypassCustomProtocolHandlers: true });
+  // TL;DR: The app's page may read the pixels of what it shows, which the search for faces looks at
+  // (src/app/face-search/), and no other origin may.
+  // Details: The page is of another origin, plm-app://app, or ng serve's in live reload, so an image of plm-file: that
+  // it draws makes its canvas unreadable, unless the image is requested with CORS (crossorigin) and its answer allows
+  // the page's origin, for which the scheme is CORS-enabled (src-main/privileged-schemes-setup.ts). Only the page's
+  // origin is allowed, as the main process knows it, never as a request says: for any other, the file stays
+  // unreadable, as before.
+  file.headers.set('Access-Control-Allow-Origin', pageOrigin);
+  return file;
 }
 
 /** Whether the real path `realFile` is the real path `realFolder`, or is in it, by their case as the file system has it. */

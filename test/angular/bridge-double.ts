@@ -28,6 +28,8 @@ export function createBridgeDouble(temporaryRoot: string): PlmBridge {
     analytics: { sendToBackend: () => {}, onAmplitudeEvent: listen, onMixpanelEvent: listen },
     folderDialog: { show: async () => ({ canceled: true, filePaths: [] }), isDirectory: async () => false },
     exif: { read: async () => ({ parse: 'empty' as const }) },
+    // No photo's metadata marks a face.
+    faceRegions: { have: async filePaths => filePaths.map(() => false) },
     directoryTree: { create: async () => ({ kind: 'failed', message: 'No folder can be read in a unit test.' }) },
     // The files exist nowhere: no thumbnail was attempted or is in the cache.
     thumbnails: {
@@ -42,12 +44,13 @@ export function createBridgeDouble(temporaryRoot: string): PlmBridge {
     commandLine: { openTarget: async () => ({ kind: 'none' }) },
     // As for a File that is not on the disk, which every File of a unit test is.
     droppedItem: { openTarget: async () => ({ kind: 'none' }), choose: async () => ({ kind: 'none' }) },
-    menus: { updateUndoRedo: async () => {}, updateSelectPreviousNext: async () => {} },
+    menus: { updateUndoRedo: async () => {}, updateSelectPreviousNext: async () => {}, updateNarrowDownToPhotosWithFaces: async () => {} },
     photoDataViewer: { open: async () => {} },
     explorerContextMenu: { add: async () => {}, remove: async () => {} },
     events: {
       onAboutBox: listen, onManageSettings: listen, onWelcomeDialog: listen,
-      onUndo: listen, onRedo: listen, onSelectPrevious: listen, onSelectNext: listen, onRecordAtAppLaunchFinished: listen,
+      onUndo: listen, onRedo: listen, onSelectPrevious: listen, onSelectNext: listen, onNarrowDownToPhotosWithFaces: listen,
+      onRecordAtAppLaunchFinished: listen,
     },
   };
 }

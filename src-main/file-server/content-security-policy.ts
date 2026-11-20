@@ -3,8 +3,8 @@ import { rasterTileBaseLayerConfigsVersion1Urls } from '../../src-shared/map/ras
 // TL;DR: The Content Security Policy of the main window's page: what the page may run, load and send, each source
 // with why it is allowed. Anything else is refused.
 // Details: The handler of plm-app: sends it with each file of the page (app-page.ts), and live reload with each answer
-// of ng serve (file-server.ts), so that a development run has the policy of a release, but for what the client of ng
-// serve needs (devServerPageContentSecurityPolicy). It is a response header, not a <meta> of index.html: a header
+// of ng serve (file-server.ts), so that a development run has the policy of a release
+// (devServerPageContentSecurityPolicy). It is a response header, not a <meta> of index.html: a header
 // applies before the page is parsed, and also gives frame-ancestors, which a <meta> cannot. A violation is in the
 // console of the page (src/main.ts writes those that Chromium does not), which the main process writes to the log and
 // records for analytics (src-main/record-console-errors.ts); the e2e suite fails a case in which the page had one
@@ -30,13 +30,18 @@ export const mainWindowPolicyDirectives: Readonly<Record<string, readonly string
     // Angular compiles its templates when the app is built, for a development build too (aot in angular.json).
     `'self'`,
     stylesheetMediaScriptHash,
+    // TL;DR: WebAssembly, for the search for faces, whose model runs on ONNX Runtime Web (src/app/face-search/). It
+    // compiles WebAssembly only: eval() and new Function() stay refused.
+    // Details: The worker of the search has this policy too, as every file of the page does (app-page.ts), and the
+    // runtime compiles its .wasm file, from the app's build, there.
+    `'wasm-unsafe-eval'`,
   ],
-  // TL;DR: No worker. Without this directive, a worker's script would be checked against script-src, whose 'self' lets
-  // the page start one from a file of the app, and not against default-src.
-  // Details: The page starts none. The only one in its build is that of the session recording of Mixpanel's SDK
-  // (rrweb, for canvases), which runs only for a record_sessions_percent above 0, its default, which the app does not
-  // change; it would be made from a blob:, which script-src did not allow either.
-  'worker-src': [`'none'`],
+  // TL;DR: The workers of the app's build only: that of the search for faces (src/app/face-search/). Without this
+  // directive, a worker's script would be checked against script-src, and not against default-src.
+  // Details: The only other worker in the page's build is that of the session recording of Mixpanel's SDK (rrweb, for
+  // canvases), which runs only for a record_sessions_percent above 0, its default, which the app does not change; it
+  // would be made from a blob:, which stays refused.
+  'worker-src': [`'self'`],
   'style-src': [
     // styles.css.
     `'self'`,
@@ -75,6 +80,10 @@ export const mainWindowPolicyDirectives: Readonly<Record<string, readonly string
     // the events of the analytics backend go from the main process.
     'https://api2.amplitude.com',
     'https://api-js.mixpanel.com',
+    // The files of the app's build that the worker of the search for faces fetches: the runtime's .wasm file and the
+    // model (src/app/face-search/). In live reload, the client of ng serve in the page connects to its origin too, with
+    // a WebSocket and a fetch().
+    `'self'`,
   ],
   // index.html's <base href="">, which is the page's own address.
   'base-uri': [`'self'`],
@@ -92,10 +101,7 @@ function headerValue(directives: Readonly<Record<string, readonly string[]>>): s
 export const mainWindowContentSecurityPolicy = headerValue(mainWindowPolicyDirectives);
 
 /**
- * The policy of the page of ng serve in live reload (file-server.ts): that of a release, but that the page may also
- * connect to its own origin, ng serve's, as the client of ng serve in the page does, with a WebSocket and a fetch().
+ * The policy of the page of ng serve in live reload (file-server.ts): that of a release, which lets the page connect
+ * to its own origin, ng serve's there, as the client of ng serve in the page does, with a WebSocket and a fetch().
  */
-export const devServerPageContentSecurityPolicy = headerValue({
-  ...mainWindowPolicyDirectives,
-  'connect-src': [...mainWindowPolicyDirectives['connect-src'], `'self'`],
-});
+export const devServerPageContentSecurityPolicy = mainWindowContentSecurityPolicy;

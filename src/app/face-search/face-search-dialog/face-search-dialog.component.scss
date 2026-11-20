@@ -1,0 +1,42 @@
+@use "../../../styles/balanced-lines" as *;
+
+// TL;DR: A column of the progress bar, the texts and the button, as tall as the texts need, whose lines wrap.
+// Details: The dialog is as wide in every language (face-search.service.ts); a longer text takes more lines, and the
+// dialog grows down for them, from its height in English. The texts are centered, which reads the same from the
+// right in Arabic and Hebrew.
+:host {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+mat-progress-bar {
+  width: 90%;
+}
+
+// A text that takes two lines gets lines of about the same length, broken where its language breaks its lines, rather
+// than a word or two alone on the last one.
+.texts {
+  @include balanced-lines;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.message {
+  margin: 8px 0;
+}
+
+// That nothing leaves the computer: said apart from the progress, in the dialog's secondary text.
+.on-this-computer {
+  margin-top: 4px;
+  font-size: 0.9em;
+  opacity: 0.75;
+}
+
+.button {
+  min-width: 80px; // At least its width in English; wider for a longer text of another language.
+}

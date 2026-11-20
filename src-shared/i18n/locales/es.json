@@ -176,6 +176,15 @@
       "openFolder": "Abrir carpeta"
     }
   },
+  "faceSearch": {
+    "looking": "Buscando caras en las fotos seleccionadas...",
+    "progress": "Fotos revisadas: {{done}} de {{total}}.",
+    "waitingForThumbnails": "Esperando a que se generen las miniaturas de los archivos HEIF...",
+    "onThisComputer": "Las caras se buscan solo en este equipo. No se envía nada sobre ellas a ningún sitio.",
+    "noFacesFound": "No se encontraron caras en las fotos seleccionadas. La selección se mantiene como está.",
+    "notLookedAt": "Fotos en las que no se pudieron buscar caras y que ya no están seleccionadas: {{count}}.",
+    "failed": "No se pudieron buscar caras en las fotos seleccionadas. La selección se mantiene como está."
+  },
   "settings": {
     "title": "Ajustes",
     "tabs": {
@@ -253,7 +262,8 @@
       "undo": "Deshacer",
       "redo": "Rehacer",
       "selectPrevious": "Foto tomada antes",
-      "selectNext": "Foto tomada después"
+      "selectNext": "Foto tomada después",
+      "narrowDownToPhotosWithFaces": "Reducir a las fotos con caras"
     },
     "settings": {
       "title": "Ajustes",

@@ -176,6 +176,15 @@
       "openFolder": "Otwórz folder"
     }
   },
+  "faceSearch": {
+    "looking": "Wyszukiwanie twarzy na zaznaczonych zdjęciach...",
+    "progress": "Przejrzane zdjęcia: {{done}} z {{total}}.",
+    "waitingForThumbnails": "Oczekiwanie na utworzenie miniaturek plików HEIF...",
+    "onThisComputer": "Twarze są wyszukiwane wyłącznie na tym komputerze. Nic na ich temat nie jest nigdzie wysyłane.",
+    "noFacesFound": "Na zaznaczonych zdjęciach nie znaleziono twarzy. Zaznaczenie pozostaje bez zmian.",
+    "notLookedAt": "Zdjęcia, na których nie udało się wyszukać twarzy i które nie są już zaznaczone: {{count}}.",
+    "failed": "Nie udało się wyszukać twarzy na zaznaczonych zdjęciach. Zaznaczenie pozostaje bez zmian."
+  },
   "settings": {
     "title": "Ustawienia",
     "tabs": {
@@ -253,7 +262,8 @@
       "undo": "Cofnij",
       "redo": "Ponów",
       "selectPrevious": "Zdjęcie zrobione wcześniej",
-      "selectNext": "Zdjęcie zrobione później"
+      "selectNext": "Zdjęcie zrobione później",
+      "narrowDownToPhotosWithFaces": "Zawęź do zdjęć z twarzami"
     },
     "settings": {
       "title": "Ustawienia",
