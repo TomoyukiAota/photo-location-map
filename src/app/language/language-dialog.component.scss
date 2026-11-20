@@ -14,15 +14,48 @@
   --language-list-text-align: center; // As in the setup of macOS, which this dialog is modeled on.
 }
 
-// Takes its place while it is hidden, so that the dialog keeps its size when a language is chosen.
-.restart-note {
-  margin-top: 15px;
+// TL;DR: The note of a restart is in a room as tall as the note in the language on screen, with 15px above it and
+// 20px below, which it keeps when a language is chosen whose note is taller: the note then takes from the room above
+// and below it, and the dialog keeps its size, so that its list stays where it is, under the pointer.
+// Details: A note in the chosen language may take two lines where the one on screen takes one, as 16 languages' do in
+// an application in English, or have taller lines, as Japanese does. The dialog grew with it, by up to 18px, and moved
+// up by half of that while the user was choosing in its list. The room grows only for a note that leaves less than
+// 3px above it and 4px below, so that no text is cut or touches the list or the button.
+.restart-room {
+  display: grid;
   font-size: 15px;
+}
+
+.restart-room > * {
+  grid-area: 1 / 1;
+}
+
+.restart-room-height {
+  visibility: hidden;
+  padding-block: 15px 20px;
+}
+
+// The room left around the note is shared above and below it as 15px and 20px are.
+.restart-note-place {
+  display: flex;
+  flex-direction: column;
+
+  &::before {
+    content: '';
+    flex: 15 0 3px;
+  }
+
+  &::after {
+    content: '';
+    flex: 20 0 4px;
+  }
+}
+
+.restart-note {
   color: red;
 }
 
 .ok-button {
-  margin-top: 20px;
   align-self: center;
   min-width: 80px; // At least its width in English; wider for a longer text of another language.
 }
