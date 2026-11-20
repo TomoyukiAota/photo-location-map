@@ -6,6 +6,9 @@ export const appPageScheme = 'plm-app';
 /** The origin of the app's page, before the path of a file of its build. */
 export const appPageOrigin = `${appPageScheme}://app`;
 
+/** The origin of the page in live reload, which ng serve serves (src-main/file-server/file-server.ts). */
+export const devServerPageOrigin = 'http://localhost:4200';
+
 /** The scheme of the user's photos and of the thumbnails that the app made, as the page shows them. */
 export const photoFileScheme = 'plm-file';
 const photoFileOrigin = `${photoFileScheme}://local`;

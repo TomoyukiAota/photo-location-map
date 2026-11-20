@@ -32,9 +32,10 @@ describe('FaceSearchDialogComponent', () => {
   it('shows how far the search is, that it runs on this computer only, and Cancel', () => {
     state.set({ kind: 'searching', done: 3, total: 12, waitingForThumbnails: false });
     fixture.detectChanges();
-    expect(text()).toBe('Looking for faces in the selected photos... Looked at 3 of 12 photos. '
+    expect(text()).toBe('Looking for faces in the selected photos... Photos looked at: 3 of 12. '
       + 'Faces are looked for on this computer only. Nothing about them is sent anywhere. Cancel');
     expect(progress().getAttribute('aria-valuenow')).toBe('25');
+    expect(progress().getAttribute('aria-label')).toBe('Looking for faces in the selected photos...');
     button().click();
     expect(cancel).toHaveBeenCalledTimes(1);
   });
@@ -48,7 +49,7 @@ describe('FaceSearchDialogComponent', () => {
   it('says what came of the search, with Close', () => {
     const messages: [FaceSearchDialogState, string][] = [
       [{ kind: 'noFacesFound' }, 'No faces were found in the selected photos. The selection stays as it is.'],
-      [{ kind: 'notLookedAt', count: 2 }, '2 photos could not be looked at for faces and are no longer selected.'],
+      [{ kind: 'notLookedAt', count: 1 }, 'Photos that could not be looked at for faces and are no longer selected: 1.'],
       [{ kind: 'failed' }, 'Faces could not be looked for in the selected photos. The selection stays as it is.'],
     ];
     for (const [shown, message] of messages) {

@@ -31,6 +31,8 @@ describe('FaceSearchService', () => {
   let scores: Map<string, number>;
   /** The addresses that cannot be decoded. */
   let undecodable: Set<string>;
+  /** The addresses whose decoding waits until the promise of each resolves. */
+  let decodingHeld: Map<string, Promise<void>>;
   /** The photos whose metadata marks a face. */
   let regions: Set<string>;
   /** The thumbnail of each HEIF photo, by the photo's path, once the attempt to make it has finished. */
@@ -51,6 +53,7 @@ describe('FaceSearchService', () => {
   beforeEach(() => {
     scores = new Map();
     undecodable = new Set();
+    decodingHeld = new Map();
     regions = new Set();
     thumbnails = new Map();
     close = vi.fn();
@@ -73,9 +76,10 @@ describe('FaceSearchService', () => {
         {
           provide: FaceSearchImageDecoder,
           useValue: { decode: async (url: string) => {
+            await decodingHeld.get(url);
             if (undecodable.has(url))
               throw new Error('The image cannot be decoded.');
-            return { url };
+            return { url, close: () => {} };
           } },
         },
         { provide: GeneratedThumbnailService, useValue: { watch: vi.fn(), filePathOf: (path: string) => thumbnails.get(path) } },
@@ -218,6 +222,52 @@ describe('FaceSearchService', () => {
     await service.narrowDownSelectedPhotos();
     expect(score).toHaveBeenCalledTimes(2);
     expect(select).toHaveBeenCalledWith([a.path, b.path]);
+  });
+
+  it('does not keep what it found in a photo of a folder that is no longer open', async () => {
+    const a = photo('/trip/a.jpg');
+    scores.set(photoFileUrl(a.path), 0.9);
+    let release: () => void;
+    const held = new Promise<void>(resolve => release = resolve);
+    score.mockImplementationOnce(async () => { await held; return 0.9; });
+    selectPhotos([a]);
+
+    const searching = service.narrowDownSelectedPhotos();
+    await vi.waitFor(() => expect(score).toHaveBeenCalledTimes(1));
+    // A folder of the same path opens while the photo is looked at: its photo may be another one.
+    dataReplaced.next([]);
+    release();
+    await searching;
+    expect(select).not.toHaveBeenCalled();
+
+    await service.narrowDownSelectedPhotos();
+    expect(score).toHaveBeenCalledTimes(2);
+    expect(select).toHaveBeenCalledWith([a.path]);
+  });
+
+  it('stops looking at the other photo when the detector fails, and keeps saying that faces could not be looked for', async () => {
+    const [a, b] = [photo('/trip/a.jpg'), photo('/trip/b.jpg')];
+    scores.set(photoFileUrl(b.path), 0.9);
+    let release: () => void;
+    decodingHeld.set(photoFileUrl(b.path), new Promise<void>(resolve => release = resolve));
+    score.mockRejectedValueOnce(new FaceDetectorError('TypeError: Failed to fetch', 'model'));
+    selectPhotos([a, b]);
+
+    const searching = service.narrowDownSelectedPhotos();
+    await vi.waitFor(() => expect(score).toHaveBeenCalledTimes(1));
+    // The search ends once the photo that is still decoded has stopped too: its end changes nothing that the dialog says.
+    release();
+    await searching;
+    expect(score).toHaveBeenCalledTimes(1);
+    expect(state()).toEqual({ kind: 'failed' });
+    expect(select).not.toHaveBeenCalled();
+
+    // The next search looks at both photos, as nothing was kept of them.
+    decodingHeld.clear();
+    scores.set(photoFileUrl(a.path), 0.1);
+    await service.narrowDownSelectedPhotos();
+    expect(score).toHaveBeenCalledTimes(3);
+    expect(select).toHaveBeenCalledWith([b.path]);
   });
 
   it('ignores the item while a search runs', async () => {

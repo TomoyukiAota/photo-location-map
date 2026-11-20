@@ -1,6 +1,6 @@
 @let current = state();
 @if (current.kind === 'searching') {
-  <mat-progress-bar mode="determinate" [value]="percent()"></mat-progress-bar>
+  <mat-progress-bar mode="determinate" [value]="percent()" [attr.aria-label]="'faceSearch.looking' | t"></mat-progress-bar>
   <div class="texts">
     <div>{{ 'faceSearch.looking' | t }}</div>
     <div class="progress">{{ 'faceSearch.progress' | t: { done: current.done, total: current.total } }}</div>

@@ -59,10 +59,16 @@ export class FaceDetectorService {
     if (!waiting)
       return;
     this.pending.delete(response.id);
-    if ('score' in response)
+    if ('score' in response) {
       waiting.resolve(response.score);
-    else
-      waiting.reject(new FaceDetectorError(response.error, response.stage));
+      return;
+    }
+    const error = new FaceDetectorError(response.error, response.stage);
+    waiting.reject(error);
+    // The worker keeps a model that failed to load, so it goes, and what waits for it fails too: the next image starts
+    // a new worker, which loads the model again.
+    if (response.stage === 'model')
+      this.failAll(error);
   }
 
   private failAll(error: FaceDetectorError): void {

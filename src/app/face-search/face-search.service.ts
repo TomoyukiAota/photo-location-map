@@ -59,6 +59,8 @@ export class FaceSearchService {
 
   /** What was found in each photo of the opened folder that has been looked at, by the photo's path. */
   private readonly outcomes = new Map<string, Outcome>();
+  /** Counts the folders opened, so that what is found in a photo of the previous folder is not kept. */
+  private folderNumber = 0;
   private search: Search | undefined;
   private dialogRef: MatDialogRef<FaceSearchDialogComponent> | undefined;
 
@@ -78,6 +80,7 @@ export class FaceSearchService {
     });
     // The photos of another folder have not been looked at, and a search of the previous folder ends.
     inject(DirectoryTreeViewDataService).dataReplaced.subscribe(() => {
+      this.folderNumber++;
       this.outcomes.clear();
       this.cancel();
     });
@@ -136,9 +139,15 @@ export class FaceSearchService {
       this.closeDialog();
   }
 
-  /** Looks at the photos, keeping what is found; false when the search was canceled. Throws when the detector fails. */
+  /**
+   * Looks at the photos, keeping what is found; false when the search was canceled. Throws when the detector fails.
+   * TL;DR: Two photos at a time; the first failure stops both, and the search ends once both have stopped.
+   * Details: What is found in a photo after Cancel is kept, as it is true of the photo; what is found after another
+   * folder opened is not, as the photo of the same path there may be another (folderNumber).
+   */
   private async lookAt(photos: readonly Photo[], search: Search): Promise<boolean> {
     const startMs = performance.now();
+    const folderNumber = this.folderNumber;
     let done = 0;
     let waiting = 0;
     const report = () => this.dialogStateValue.set({ kind: 'searching', done, total: photos.length, waitingForThumbnails: waiting > 0 });
@@ -146,7 +155,7 @@ export class FaceSearchService {
     // The faces that the metadata marks, of the JPEG files, whose XMP the main process reads.
     for (const batch of chunk(photos.filter(photo => FilenameExtension.isJpeg(photo.filenameExtension)), maxFaceRegionPathsPerRequest)) {
       const haveRegions = await bridge().faceRegions.have(batch.map(photo => photo.path));
-      if (search.canceled)
+      if (search.canceled || folderNumber !== this.folderNumber)
         return false;
       batch.forEach((photo, index) => {
         if (haveRegions[index]) {
@@ -162,21 +171,30 @@ export class FaceSearchService {
     const isHeif = (photo: Photo) => faceSearchImageKindOf(photo) === 'generatedThumbnail';
     const queue = [...toDetect.filter(photo => !isHeif(photo)), ...toDetect.filter(isHeif)];
     let next = 0;
+    let failure: unknown;
     const lookAtTheNext = async () => {
-      while (next < queue.length && !search.canceled) {
-        const photo = queue[next++];
-        const outcome = await this.outcomeOf(photo, search, isWaiting => {
-          waiting += isWaiting ? 1 : -1;
+      try {
+        while (next < queue.length && !search.canceled) {
+          const photo = queue[next++];
+          const outcome = await this.outcomeOf(photo, search, isWaiting => {
+            waiting += isWaiting ? 1 : -1;
+            report();
+          });
+          if (outcome === undefined || folderNumber !== this.folderNumber)
+            return; // The search ended before the photo was looked at, or another folder opened meanwhile.
+          this.outcomes.set(photo.path, outcome);
+          done++;
           report();
-        });
-        if (outcome === undefined)
-          return; // Canceled while it waited for its thumbnail.
-        this.outcomes.set(photo.path, outcome);
-        done++;
-        report();
+        }
+      } catch (error) {
+        // The first failure ends the search, as Cancel does, so that the other photo's work stops too.
+        failure ??= error;
+        search.canceled = true;
       }
     };
     await Promise.all([lookAtTheNext(), lookAtTheNext()]);
+    if (failure !== undefined)
+      throw failure;
     if (search.canceled)
       return false;
     logger.info(`Looked for faces in ${photos.length} photos in ${Math.round(performance.now() - startMs)} ms.`);
@@ -185,7 +203,8 @@ export class FaceSearchService {
 
   /**
    * What is found in the photo: a face, none, or nothing when its image cannot be decoded or looked at. Undefined when
-   * the search is canceled while the photo waits for its thumbnail. Throws when the detector's model fails.
+   * the search ends before the photo is looked at: while it waits for its thumbnail, or is decoded. Throws when the
+   * detector's model fails.
    */
   private async outcomeOf(photo: Photo, search: Search, setWaiting: (isWaiting: boolean) => void): Promise<Outcome | undefined> {
     const kind = faceSearchImageKindOf(photo);
@@ -206,6 +225,10 @@ export class FaceSearchService {
       image = await this.imageDecoder.decode(url);
     } catch {
       return 'failed'; // As a file that was removed, or a thumbnail that could not be made.
+    }
+    if (search.canceled) {
+      image.close();
+      return undefined;
     }
     try {
       return await this.faceDetector.score(image) >= faceScoreThreshold ? 'face' : 'noFace';

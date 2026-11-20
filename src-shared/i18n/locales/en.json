@@ -178,11 +178,11 @@
   },
   "faceSearch": {
     "looking": "Looking for faces in the selected photos...",
-    "progress": "Looked at {{done}} of {{total}} photos.",
+    "progress": "Photos looked at: {{done}} of {{total}}.",
     "waitingForThumbnails": "Waiting for the thumbnails of HEIF files to be generated...",
     "onThisComputer": "Faces are looked for on this computer only. Nothing about them is sent anywhere.",
     "noFacesFound": "No faces were found in the selected photos. The selection stays as it is.",
-    "notLookedAt": "{{count}} photos could not be looked at for faces and are no longer selected.",
+    "notLookedAt": "Photos that could not be looked at for faces and are no longer selected: {{count}}.",
     "failed": "Faces could not be looked for in the selected photos. The selection stays as it is."
   },
   "settings": {

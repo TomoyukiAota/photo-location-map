@@ -104,7 +104,8 @@ in the same photos on every OS, Linux too, and the tests check that on the three
   main process when the item is chosen, 100 photos a request, for the folders that the user opened.
 - **What the page may do**: its Content Security Policy now lets it compile WebAssembly (`'wasm-unsafe-eval'`), start
   the workers of its build (`worker-src 'self'`) and fetch its own files (`connect-src 'self'`). `plm-file:` allows CORS
-  for the page's origin, so that the page may read the pixels of the photos that it shows.
+  for the page's origin, `plm-app://app`, or ng serve's in live reload, so that the page may read the pixels of the
+  photos that it shows.
 - **The dialog** (`face-search-dialog/`): the progress, that the faces are looked for on this computer only, and
   Cancel; then what came of the search. Its texts are in the 42 languages.
 

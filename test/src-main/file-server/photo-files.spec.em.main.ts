@@ -74,6 +74,10 @@ describe('The photos of the main window\'s page (in main process)', () => {
       assert.strictEqual((await respond(photoFileUrl(filePath))).headers.get('access-control-allow-origin'), 'plm-app://app');
     // What is not answered allows nothing.
     assert.strictEqual((await respond(photoFileUrl(secret))).headers.get('access-control-allow-origin'), null);
+    // In live reload, the page is ng serve's, whatever origin a request names.
+    const request = { url: photoFileUrl(photo), method: 'GET', headers: new Headers({ Origin: 'https://example.com' }) } as Request;
+    const devServerAnswer = await respondToPhotoFileRequest(request, filePath => showablePathIn(filePath, [opened]), 'http://localhost:4200');
+    assert.strictEqual(devServerAnswer.headers.get('access-control-allow-origin'), 'http://localhost:4200');
   });
 
   it('answers nothing of another folder, as a file that is not there, however the path is written', async () => {
