@@ -3319,8 +3319,13 @@ async function expectShownInViewer(viewer, shown, timeout = 30000) {
       { cause: error });
   };
   for (;;) {
-    await expect.poll(state, { timeout: left(), intervals: [100, 250] }).not.toBe('loading').catch(notShown);
-    if (await state() !== 'missing files') break;
+    // Decided by what ended the poll. A second look could find the document of a load that the page made meanwhile,
+    // still loading, and the helper would then no longer load that page again. A poll that outlives its test ends
+    // without a look, so anything but 'missing files' leaves the loop.
+    let seen;
+    await expect.poll(async () => (seen = await state()), { timeout: left(), intervals: [100, 250] }).not.toBe('loading')
+      .catch(notShown);
+    if (seen !== 'missing files') break;
     const missingDocument = await currentDocument();
     await expect.poll(isLoading, { timeout: left() }).toBe(false).catch(notShown);
     await viewer.waitForTimeout(Math.min(2000, left()));
