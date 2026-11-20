@@ -95,9 +95,9 @@
     "rotateThumbnail": "Obróć miniaturkę",
     "menu": {
       "selection": "Zaznaczenie",
-      "selectOnlyThis": "Zaznacz tylko ten plik",
-      "selectPrevious": "Zaznacz poprzedni plik",
-      "selectNext": "Zaznacz następny plik",
+      "selectOnlyThis": "Tylko ten plik",
+      "selectPrevious": "Zdjęcie zrobione wcześniej",
+      "selectNext": "Zdjęcie zrobione później",
       "openFolder": "Otwórz folder",
       "revealInMap": "Pokaż na mapie",
       "revealInSidebar": "Pokaż na pasku bocznym",
@@ -252,8 +252,8 @@
       "title": "Zaznaczenie",
       "undo": "Cofnij",
       "redo": "Ponów",
-      "selectPrevious": "Zaznacz poprzedni plik",
-      "selectNext": "Zaznacz następny plik"
+      "selectPrevious": "Zdjęcie zrobione wcześniej",
+      "selectNext": "Zdjęcie zrobione później"
     },
     "settings": {
       "title": "Ustawienia",

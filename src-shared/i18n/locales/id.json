@@ -95,9 +95,9 @@
     "rotateThumbnail": "Putar gambar mini",
     "menu": {
       "selection": "Pilihan",
-      "selectOnlyThis": "Pilih hanya file ini",
-      "selectPrevious": "Pilih file sebelumnya",
-      "selectNext": "Pilih file berikutnya",
+      "selectOnlyThis": "Hanya file ini",
+      "selectPrevious": "Foto yang diambil sebelumnya",
+      "selectNext": "Foto yang diambil sesudahnya",
       "openFolder": "Buka folder",
       "revealInMap": "Tampilkan di peta",
       "revealInSidebar": "Tampilkan di bilah samping",
@@ -252,8 +252,8 @@
       "title": "Pilihan",
       "undo": "Urungkan",
       "redo": "Ulangi",
-      "selectPrevious": "Pilih file sebelumnya",
-      "selectNext": "Pilih file berikutnya"
+      "selectPrevious": "Foto yang diambil sebelumnya",
+      "selectNext": "Foto yang diambil sesudahnya"
     },
     "settings": {
       "title": "Pengaturan",

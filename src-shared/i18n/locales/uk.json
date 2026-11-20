@@ -95,9 +95,9 @@
     "rotateThumbnail": "Повернути мініатюру",
     "menu": {
       "selection": "Вибір",
-      "selectOnlyThis": "Вибрати лише цей файл",
-      "selectPrevious": "Вибрати попередній файл",
-      "selectNext": "Вибрати наступний файл",
+      "selectOnlyThis": "Лише цей файл",
+      "selectPrevious": "Фотографія, знята до неї",
+      "selectNext": "Фотографія, знята після неї",
       "openFolder": "Відкрити папку",
       "revealInMap": "Показати на карті",
       "revealInSidebar": "Показати на бічній панелі",
@@ -252,8 +252,8 @@
       "title": "Вибір",
       "undo": "Скасувати",
       "redo": "Повторити",
-      "selectPrevious": "Вибрати попередній файл",
-      "selectNext": "Вибрати наступний файл"
+      "selectPrevious": "Фотографія, знята до неї",
+      "selectNext": "Фотографія, знята після неї"
     },
     "settings": {
       "title": "Параметри",

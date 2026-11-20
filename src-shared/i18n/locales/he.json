@@ -95,9 +95,9 @@
     "rotateThumbnail": "סיבוב התמונה הממוזערת",
     "menu": {
       "selection": "בחירה",
-      "selectOnlyThis": "בחירת קובץ זה בלבד",
-      "selectPrevious": "בחירת הקובץ הקודם",
-      "selectNext": "בחירת הקובץ הבא",
+      "selectOnlyThis": "קובץ זה בלבד",
+      "selectPrevious": "התמונה שצולמה לפניה",
+      "selectNext": "התמונה שצולמה אחריה",
       "openFolder": "פתיחת התיקייה",
       "revealInMap": "הצגה על המפה",
       "revealInSidebar": "הצגה בסרגל הצד",
@@ -252,8 +252,8 @@
       "title": "בחירה",
       "undo": "ביטול פעולה",
       "redo": "ביצוע חוזר",
-      "selectPrevious": "בחירת הקובץ הקודם",
-      "selectNext": "בחירת הקובץ הבא"
+      "selectPrevious": "התמונה שצולמה לפניה",
+      "selectNext": "התמונה שצולמה אחריה"
     },
     "settings": {
       "title": "הגדרות",

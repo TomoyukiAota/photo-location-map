@@ -95,9 +95,9 @@
     "rotateThumbnail": "تدوير الصورة المصغّرة",
     "menu": {
       "selection": "التحديد",
-      "selectOnlyThis": "تحديد هذا الملف فقط",
-      "selectPrevious": "تحديد الملف السابق",
-      "selectNext": "تحديد الملف التالي",
+      "selectOnlyThis": "هذا الملف فقط",
+      "selectPrevious": "الصورة الملتقطة قبلها",
+      "selectNext": "الصورة الملتقطة بعدها",
       "openFolder": "فتح المجلد",
       "revealInMap": "عرض على الخريطة",
       "revealInSidebar": "عرض في الشريط الجانبي",
@@ -252,8 +252,8 @@
       "title": "التحديد",
       "undo": "تراجع",
       "redo": "إعادة",
-      "selectPrevious": "تحديد الملف السابق",
-      "selectNext": "تحديد الملف التالي"
+      "selectPrevious": "الصورة الملتقطة قبلها",
+      "selectNext": "الصورة الملتقطة بعدها"
     },
     "settings": {
       "title": "الإعدادات",
