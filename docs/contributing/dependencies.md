@@ -119,10 +119,12 @@ photos ([record](../tasks/20261120_tree-aria-posinset-linear/STATUS.md)). The
 directive looks the position up instead.
 
 Remove the directive when the CDK's tree finds a node's position without
-searching: check `_getPositionInSet()` of `CdkTree` in
-`@angular/cdk/fesm2022/tree.mjs` on each upgrade of the CDK. Until then, the
-folder tree's unit tests fail when an upgrade has the CDK's bindings stop
-calling the node's `_getPositionInSet()`, or call the tree's.
+searching, which
+[angular/components#34163](https://github.com/angular/components/issues/34163)
+reports: on each upgrade of the CDK, check that report and `_getPositionInSet()`
+of `CdkTree` in `@angular/cdk/fesm2022/tree.mjs`. Until then, the folder tree's
+unit tests fail when an upgrade has the CDK's bindings stop calling the node's
+`_getPositionInSet()`, or call the tree's.
 
 
 ## Electron binary
