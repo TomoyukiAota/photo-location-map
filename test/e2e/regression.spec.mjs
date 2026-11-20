@@ -1857,6 +1857,62 @@ test('Reveal in Sidebar from a popup of the map expands the folders above the ph
   await expect(treeCheckbox('IMG_4676.JPG')).toBeChecked();
   await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_4676.JPG');
 });
+test('Reveal in Sidebar reaches a row far down the sidebar, though the rows above what the sidebar shows grow on the way', async () => {
+  // Twenty photos before the photo, in a folder that is collapsed, so that its row is farther than two heights of the
+  // sidebar below what the sidebar shows once the folder is expanded, and five after it, so that the row can come to
+  // the middle.
+  const folder = path.join(profile, 'photos far down');
+  const photos = path.join(folder, 'photos');
+  await mkdir(photos, { recursive: true });
+  const withoutLocation = path.join(photoFolder, 'Unga/IMG_2581_WithoutGpsInfo.JPG');
+  for (let index = 1; index <= 20; index++)
+    await copyFile(withoutLocation, path.join(photos, `${String(index).padStart(2, '0')}.JPG`));
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(photos, 'IMG_4676.JPG'));
+  for (let index = 1; index <= 5; index++)
+    await copyFile(withoutLocation, path.join(photos, `x ${index}.JPG`));
+  await dismissWelcome();
+  await openFolderWithPicker(folder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('1 files have location data.');
+  const treeNode = name => page.locator('mat-tree-node').filter({ has: page.getByText(name, { exact: true }) });
+  await expect(treeNode('photos')).toHaveAttribute('aria-expanded', 'false');
+  const popup = page.locator('.leaflet-popup');
+  await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_4676.JPG');
+  await openMoreOptions(popup.getByRole('button', { name: 'More Options' }));
+  // Once the sidebar has skipped the middle of the way (EasedScroll), the rows above what it shows grow by 4 pixels
+  // each, as the rows of photos whose thumbnails fill the height of their room, those of HEIC photos taken upright, do
+  // when the tree makes them there. Chromium moves the sidebar as much to keep what it shows in place (scroll
+  // anchoring), which is not the user's own scroll.
+  await page.locator('#home-sidebar-lower-pane').evaluate(sidebar => {
+    let lastTop = sidebar.scrollTop;
+    const growRowsAboveOnceSkipped = () => {
+      if (sidebar.scrollTop - lastTop <= sidebar.clientHeight) {
+        lastTop = sidebar.scrollTop;
+        requestAnimationFrame(growRowsAboveOnceSkipped);
+        return;
+      }
+      const shownTop = sidebar.getBoundingClientRect().top + sidebar.clientTop;
+      const rowsAbove = [...sidebar.querySelectorAll('mat-tree-node')].filter(row => {
+        const { bottom } = row.getBoundingClientRect();
+        return bottom <= shownTop && bottom > shownTop - 1000;
+      });
+      for (const row of rowsAbove) row.style.paddingBottom = '4px';
+      globalThis.grownRows = rowsAbove.length;
+    };
+    requestAnimationFrame(growRowsAboveOnceSkipped);
+  });
+  await page.getByRole('menuitem', { name: 'Reveal in Sidebar', exact: true }).click();
+  const row = treeNode('IMG_4676.JPG');
+  await expect(row).toHaveAttribute('data-reveal-highlight', 'lit');
+  expect(await page.evaluate(() => globalThis.grownRows)).toBeGreaterThan(0);
+  // In the middle of what the sidebar shows, as in the case above.
+  const distanceFromMiddle = await row.evaluate(rowElement => {
+    const sidebar = rowElement.closest('#home-sidebar-lower-pane');
+    const shownMiddle = sidebar.getBoundingClientRect().top + sidebar.clientTop + sidebar.clientHeight / 2;
+    const rowBox = rowElement.getBoundingClientRect();
+    return Math.abs(rowBox.top + rowBox.height / 2 - shownMiddle);
+  });
+  expect(distanceFromMiddle).toBeLessThan(2);
+});
 test('Reveal in Map from a row of the tree opens the photo\'s popup, selecting the photo too when it is not, and ending the chart\'s zoom when that leaves the photo out', async () => {
   await dismissWelcome();
   await openFolderWithPicker(photoFolder);

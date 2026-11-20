@@ -81,9 +81,15 @@ describe('EasedScroll', () => {
 
   /** An element of the box's content, a distance below the content's top, and as wide as the box. */
   function elementAt(contentTop: number): HTMLElement {
+    return movingElementAt(contentTop).element;
+  }
+
+  /** Such an element, which `moveDown` moves further down, as when what is above it grows. */
+  function movingElementAt(contentTop: number): { element: HTMLElement; moveDown: (px: number) => void } {
+    let top = contentTop;
     const element = scroller.appendChild(document.createElement('div'));
-    element.getBoundingClientRect = () => box(100 + contentTop - scroller.scrollTop, 200, -scroller.scrollLeft);
-    return element;
+    element.getBoundingClientRect = () => box(100 + top - scroller.scrollTop, 200, -scroller.scrollLeft);
+    return { element, moveDown: px => top += px };
   }
 
   /** The box's scroll positions, now and after each frame until the scroll has arrived. */
@@ -150,21 +156,91 @@ describe('EasedScroll', () => {
     expect(others.at(-1)).toBeLessThan(longest / 10);
   });
 
-  it('stops where the user\'s own scroll takes it, and has arrived there', () => {
+  const userScrolls: { by: string; start: (element: HTMLElement) => void }[] = [
+    { by: 'the wheel', start: element => element.dispatchEvent(new WheelEvent('wheel', { bubbles: true, deltaY: -120 })) },
+    { by: 'a press on the scroll bar', start: () => scroller.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true })) },
+    { by: 'a key in the box', start: element => element.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'ArrowUp' })) },
+    { by: 'a key with nothing focused', start: () => document.body.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'PageUp' })) },
+  ];
+
+  it.each(userScrolls)('stops where the user\'s own scroll takes it, by $by, and has arrived there', ({ start }) => {
     scroller.scrollTop = 2000;
     const arrived = vi.fn();
-    new EasedScroll().toMiddle(elementAt(3000), arrived);
+    const element = elementAt(3000);
+    new EasedScroll().toMiddle(element, arrived);
     for (let frame = 0; frame < 10; frame++)
       vi.advanceTimersToNextFrame();
     expect(arrived).not.toHaveBeenCalled();
 
-    scroller.scrollTop -= 120; // As the wheel does between two frames.
-    const takenTo = scroller.scrollTop;
-    vi.advanceTimersToNextFrame();
+    start(element);
     expect(arrived).toHaveBeenCalledOnce();
+    scroller.scrollTop -= 120; // As the browser then scrolls, between two frames.
+    const takenTo = scroller.scrollTop;
     for (let frame = 0; frame < 50; frame++)
       vi.advanceTimersToNextFrame();
     expect(scroller.scrollTop).toBe(takenTo);
+    // It no longer watches the user, once it has stopped.
+    start(element);
+    expect(arrived).toHaveBeenCalledOnce();
+  });
+
+  it('goes on through keys that do not scroll the box: Select Next\'s shortcuts, and keys pressed outside the box', () => {
+    const outside = document.body.appendChild(document.createElement('button'));
+    scroller.scrollTop = 2000;
+    const arrived = vi.fn();
+    const element = elementAt(3000);
+    new EasedScroll().toMiddle(element, arrived);
+    vi.advanceTimersToNextFrame();
+
+    element.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'ArrowRight', metaKey: true }));
+    element.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'ArrowRight', ctrlKey: true }));
+    outside.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'ArrowDown' }));
+    expect(arrived).not.toHaveBeenCalled();
+    expect(topsUntil(arrived).at(-1)).toBe(middle);
+    outside.remove();
+  });
+
+  it.each([
+    { from: 0, direction: 1 },
+    { from: 9500, direction: -1 },
+  ])('to a far element, from $from, goes on when the browser moves the box as what is above it grows, and ends where the element has moved to', ({ from, direction }) => {
+    scroller.scrollTop = from;
+    const arrived = vi.fn();
+    const { element, moveDown } = movingElementAt(3000);
+    new EasedScroll().toMiddle(element, arrived);
+    const tops = [scroller.scrollTop];
+    while (Math.abs(scroller.scrollTop - from) <= 501) {
+      vi.advanceTimersToNextFrame();
+      tops.push(scroller.scrollTop);
+    }
+
+    // Once it has skipped the middle of the way, the rows above what the box shows grow by 30 pixels, as those of
+    // HEIC photos do when they are made there. Chromium moves the box as much, so that what it shows stays in place.
+    moveDown(30);
+    scroller.scrollTop += 30;
+    tops.push(scroller.scrollTop);
+    const rest = topsUntil(arrived).slice(1);
+    tops.push(...rest);
+    expect(arrived).toHaveBeenCalledOnce();
+    expect(tops.at(-1)).toBe(middle + 30);
+    // The rest of the way, rather than stopping there, with no step back but the browser's.
+    expect(rest.length).toBeGreaterThan(10);
+    const steps = stepsOf(tops).map(step => direction * step);
+    expect(steps.filter(step => step < 0)).toEqual(direction === 1 ? [] : [-30]);
+  });
+
+  it('goes to where the element has moved to, when what is between it and the box grows', () => {
+    scroller.scrollTop = 2000;
+    const arrived = vi.fn();
+    const { element, moveDown } = movingElementAt(3000);
+    new EasedScroll().toMiddle(element, arrived);
+    for (let frame = 0; frame < 10; frame++)
+      vi.advanceTimersToNextFrame();
+
+    moveDown(60);
+    const tops = topsUntil(arrived);
+    expect(tops.at(-1)).toBe(middle + 60);
+    expect(stepsOf(tops).every(step => step >= 0)).toBe(true);
   });
 
   it('goes on to another element from where it is and at its speed, when asked to before it has arrived', () => {
