@@ -48,8 +48,9 @@ describe('The photo of Photo Data Viewer\'s window (in main process)', () => {
     if (!('url' in given)) return;
     const answer = await respondToPhotoRequest(request(given.url));
     assert.strictEqual(answer.status, 200);
-    assert.strictEqual(answer.headers.get('access-control-allow-origin'), viewerOrigin);
-    assert.strictEqual(answer.headers.get('content-type'), 'image/jpeg');
+    // The photo's headers alone, not the file's, such as its Last-Modified time.
+    assert.deepStrictEqual([...answer.headers], [
+      ['access-control-allow-origin', viewerOrigin], ['cache-control', 'no-store'], ['content-type', 'image/jpeg']]);
     assert.deepStrictEqual(Buffer.from(await answer.arrayBuffer()), fs.readFileSync(photo.path));
     // Another page, one that sends no referrer, and a request that Chromium's CORS check would not cover.
     assert.strictEqual((await respondToPhotoRequest(request(given.url, 'https://example.com/'))).status, 403);
@@ -57,6 +58,24 @@ describe('The photo of Photo Data Viewer\'s window (in main process)', () => {
     assert.strictEqual((await respondToPhotoRequest(request(given.url, `${viewerOrigin}/`, 'no-cors'))).status, 403);
     const anotherToken = given.url.slice(0, -1) + (given.url.endsWith('0') ? '1' : '0');
     assert.strictEqual((await respondToPhotoRequest(request(anotherToken))).status, 404);
+    contents.destroy();
+  });
+
+  // TL;DR: protocol.handle relays the photo of an answer that is still net.fetch's without JavaScript, as
+  // photo-delivery.ts says, and streams any other through JavaScript.
+  // Details: These are the conditions of relayUntouchedFetch in Electron's lib/browser/api/protocol.ts, which reads
+  // the __fetch that net.fetch puts on its answer. After an upgrade of Electron that fails here, look again at how
+  // protocol.handle answers, as for the files of the main window's page (app-page.spec.em.main.ts).
+  it('answers with the Response of net.fetch itself, unread, which protocol.handle relays without JavaScript', async () => {
+    const contents = new Contents();
+    grantPhoto(asWebContents(contents), photo);
+    const given = await photoFor(asWebContents(contents), 'url');
+    if (!('url' in given)) throw new Error('No URL');
+    const answer = await respondToPhotoRequest(request(given.url)) as Response & { __fetch?: { body: unknown } };
+    assert.ok(answer.__fetch, 'The answer is not the Response of net.fetch.');
+    assert.strictEqual(answer.body, answer.__fetch.body);
+    assert.strictEqual(answer.bodyUsed, false);
+    assert.strictEqual(answer.body?.locked, false);
     contents.destroy();
   });
 
