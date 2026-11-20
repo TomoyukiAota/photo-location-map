@@ -935,7 +935,7 @@ test('on a computer whose language is Arabic, the application is laid out from r
   // A photo without location data has a grey box in place of its checkbox, and its name starts as far from the row's
   // right edge as the name beside a checkbox does: the room between the box and the name is on the side towards which
   // the page's text runs, though the name, in Latin letters, runs the other way
-  // (src/app/directory-tree-view/dir-tree-view-checkbox-and-name/).
+  // (src/app/directory-tree-view/_non-selectable-node.scss).
   const treeRow = name => page.locator('mat-tree-node').filter({ has: page.locator('bdi').getByText(name, { exact: true }) });
   await treeRow('Unga').getByRole('button').click();
   const nameStart = name => treeRow(name).evaluate(row => {
@@ -1004,6 +1004,19 @@ test('on a computer whose language is Arabic, the application is laid out from r
     { label: 'مساعدة', items: [...(isMac ? [] : ['حول Photo Location Map']),
       'إظهار مربع حوار الترحيب', 'القائمة المتقدمة', 'فتح مجلد السجلات', 'إظهار/إخفاء أدوات المطوّرين'] },
   ]);
+  // A folder without a photo with location data has the grey box too, and its name starts where the name of a folder
+  // beside it starts, after its checkbox (src/app/directory-tree-view/_non-selectable-node.scss).
+  const folders = path.join(profile, 'folders with and without location data');
+  for (const [folder, photo] of [['with location data', 'Kobe/IMG_4676.JPG'], ['without location data', 'Unga/IMG_2581_WithoutGpsInfo.JPG']]) {
+    await mkdir(path.join(folders, folder), { recursive: true });
+    await copyFile(path.join(photoFolder, photo), path.join(folders, folder, path.basename(photo)));
+  }
+  await app.evaluate(({ dialog }, folder) => {
+    dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [folder] });
+  }, folders);
+  await page.getByRole('button', { name: 'فتح مجلد', exact: true }).click();
+  await expect(treeRow('without location data').locator('.disabled-checkbox-alternative')).toBeVisible();
+  expect(await nameStart('without location data')).toBeCloseTo(await nameStart('with location data'), 0);
 });
 test('on a computer whose language is Arabic, the application in English lists the operating system\'s entry in Arabic, from right to left', async () => {
   await launchAsNew({ env: { PLM_TEST_SYSTEM_LANGUAGES: 'ar-SA,en-US' } });

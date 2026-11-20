@@ -1,9 +1,14 @@
 // A node that nothing can select, in a folder's row and in a file's row: a grey box in place of the checkbox, and the
 // name in grey.
 
+// The 4 pixels between the grey box and the name, as between a checkbox and its label, are a gap of the label that
+// holds both, which is laid out in the page's direction, rather than a padding of the name, as the name's bdi element
+// takes its direction from the name, not from the page: a padding at the name's start would be on the far side of a
+// name in Latin letters in Arabic and Hebrew, and of a name in Arabic or Hebrew letters in the other languages.
 .non-selectable-node {
   display: inline-flex;
   align-items: center;
+  gap: 4px;
   color: #c0c0c0;
 }
 
