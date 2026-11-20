@@ -716,6 +716,9 @@ test('the Language dialog comes before the Welcome dialog at the first launch, a
   await expect(restartNote).toBeVisible();
   await expect(restartNote).toHaveText('言語を適用するため、このアプリを再起動します。');
   await expect(okButton).toHaveText('決定');
+  // Its line is taller than the English one, whose room the note has: the dialog keeps its size, and its list its
+  // place under the pointer.
+  expect(await dialogSize()).toEqual(sizeWithEveryLanguage);
   // The keyboard chooses as well: the arrow keys move along the list, and Space chooses the language under them.
   await page.keyboard.press('ArrowUp');
   await expect(korean).toBeFocused();
@@ -731,6 +734,23 @@ test('the Language dialog comes before the Welcome dialog at the first launch, a
   await expect(restartNote).toHaveCSS('direction', 'rtl');
   await expect(okButton).toHaveText('موافق');
   await expect(okButton).toHaveCSS('direction', 'rtl');
+  // French, whose note takes two lines, takes the room around it, between the list and the button: the dialog keeps
+  // its size there too.
+  await search.fill('fran');
+  await dialog.getByRole('option', { name: 'Français', exact: true }).click();
+  await expect(restartNote).toHaveText('Cette application va redémarrer pour appliquer la langue.');
+  const frenchNote = await dialog.evaluate(host => {
+    const range = document.createRange();
+    range.selectNodeContents(host.querySelector('.restart-note'));
+    const lines = new Set(Array.from(range.getClientRects()).filter(line => line.width > 0).map(line => Math.round(line.top)));
+    const note = host.querySelector('.restart-note').getBoundingClientRect();
+    return { lines: lines.size, aboveList: note.top - host.querySelector('app-language-list').getBoundingClientRect().bottom,
+      belowButton: host.querySelector('.ok-button').getBoundingClientRect().top - note.bottom };
+  });
+  expect(frenchNote.lines).toBe(2);
+  expect(frenchNote.aboveList).toBeGreaterThanOrEqual(3);
+  expect(frenchNote.belowButton).toBeGreaterThanOrEqual(4);
+  expect(await dialogSize()).toEqual(sizeWithEveryLanguage);
   // The language on screen, found by the search and chosen by its name, needs no restart.
   await search.fill('english');
   await expect(options).toHaveText([systemLanguageInEnglish('English'), 'English']);
