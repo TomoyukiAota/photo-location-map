@@ -34,6 +34,10 @@
   font-weight: var(--mat-checkbox-label-text-weight, var(--mat-sys-body-medium-weight));
 }
 
-.non-selectable-node-name {
-  padding-inline-start: 4px;
+// The 4 pixels between the grey box and the name, as between a checkbox and its label. They are a gap of the label
+// that holds both, which is laid out in the page's direction, rather than a padding of the name, as the name's bdi
+// element takes its direction from the name, not from the page: a padding at the name's start was on the far side of
+// a name in Latin letters in Arabic and Hebrew, and of a name in Arabic or Hebrew letters in the other languages.
+.non-selectable-node {
+  gap: 4px;
 }
