@@ -95,9 +95,9 @@
     "rotateThumbnail": "Pööra pisipilti",
     "menu": {
       "selection": "Valik",
-      "selectOnlyThis": "Vali ainult see fail",
-      "selectPrevious": "Vali eelmine fail",
-      "selectNext": "Vali järgmine fail",
+      "selectOnlyThis": "Ainult see fail",
+      "selectPrevious": "Varem pildistatud foto",
+      "selectNext": "Hiljem pildistatud foto",
       "openFolder": "Ava kaust",
       "revealInMap": "Kuva kaardil",
       "revealInSidebar": "Kuva külgribal",
@@ -252,8 +252,8 @@
       "title": "Valik",
       "undo": "Võta tagasi",
       "redo": "Tee uuesti",
-      "selectPrevious": "Vali eelmine fail",
-      "selectNext": "Vali järgmine fail"
+      "selectPrevious": "Varem pildistatud foto",
+      "selectNext": "Hiljem pildistatud foto"
     },
     "settings": {
       "title": "Seaded",

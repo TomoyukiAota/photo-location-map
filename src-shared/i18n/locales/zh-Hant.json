@@ -95,9 +95,9 @@
     "rotateThumbnail": "旋轉縮圖",
     "menu": {
       "selection": "選取",
-      "selectOnlyThis": "僅選取此檔案",
-      "selectPrevious": "選取上一個檔案",
-      "selectNext": "選取下一個檔案",
+      "selectOnlyThis": "僅此檔案",
+      "selectPrevious": "前一張拍攝的照片",
+      "selectNext": "後一張拍攝的照片",
       "openFolder": "開啟資料夾",
       "revealInMap": "在地圖上顯示",
       "revealInSidebar": "在側邊欄中顯示",
@@ -252,8 +252,8 @@
       "title": "選取",
       "undo": "復原",
       "redo": "重做",
-      "selectPrevious": "選取上一個檔案",
-      "selectNext": "選取下一個檔案"
+      "selectPrevious": "前一張拍攝的照片",
+      "selectNext": "後一張拍攝的照片"
     },
     "settings": {
       "title": "設定",

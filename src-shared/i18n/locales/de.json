@@ -95,9 +95,9 @@
     "rotateThumbnail": "Miniatur drehen",
     "menu": {
       "selection": "Auswahl",
-      "selectOnlyThis": "Nur diese Datei auswählen",
-      "selectPrevious": "Vorherige Datei auswählen",
-      "selectNext": "Nächste Datei auswählen",
+      "selectOnlyThis": "Nur diese Datei",
+      "selectPrevious": "Davor aufgenommenes Foto",
+      "selectNext": "Danach aufgenommenes Foto",
       "openFolder": "Ordner öffnen",
       "revealInMap": "Auf der Karte anzeigen",
       "revealInSidebar": "In der Seitenleiste anzeigen",
@@ -252,8 +252,8 @@
       "title": "Auswahl",
       "undo": "Rückgängig",
       "redo": "Wiederholen",
-      "selectPrevious": "Vorherige Datei auswählen",
-      "selectNext": "Nächste Datei auswählen"
+      "selectPrevious": "Davor aufgenommenes Foto",
+      "selectNext": "Danach aufgenommenes Foto"
     },
     "settings": {
       "title": "Einstellungen",

@@ -95,9 +95,9 @@
     "rotateThumbnail": "Rotiraj sličicu",
     "menu": {
       "selection": "Izbor",
-      "selectOnlyThis": "Izaberi samo ovu datoteku",
-      "selectPrevious": "Izaberi prethodnu datoteku",
-      "selectNext": "Izaberi sledeću datoteku",
+      "selectOnlyThis": "Samo ova datoteka",
+      "selectPrevious": "Fotografija snimljena pre",
+      "selectNext": "Fotografija snimljena posle",
       "openFolder": "Otvori fasciklu",
       "revealInMap": "Prikaži na mapi",
       "revealInSidebar": "Prikaži na bočnoj traci",
@@ -252,8 +252,8 @@
       "title": "Izbor",
       "undo": "Opozovi",
       "redo": "Ponovi",
-      "selectPrevious": "Izaberi prethodnu datoteku",
-      "selectNext": "Izaberi sledeću datoteku"
+      "selectPrevious": "Fotografija snimljena pre",
+      "selectNext": "Fotografija snimljena posle"
     },
     "settings": {
       "title": "Podešavanja",

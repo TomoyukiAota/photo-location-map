@@ -95,9 +95,9 @@
     "rotateThumbnail": "Kierrä pikkukuvaa",
     "menu": {
       "selection": "Valinta",
-      "selectOnlyThis": "Valitse vain tämä tiedosto",
-      "selectPrevious": "Valitse edellinen tiedosto",
-      "selectNext": "Valitse seuraava tiedosto",
+      "selectOnlyThis": "Vain tämä tiedosto",
+      "selectPrevious": "Sitä ennen otettu kuva",
+      "selectNext": "Sen jälkeen otettu kuva",
       "openFolder": "Avaa kansio",
       "revealInMap": "Näytä kartalla",
       "revealInSidebar": "Näytä sivupalkissa",
@@ -252,8 +252,8 @@
       "title": "Valinta",
       "undo": "Kumoa",
       "redo": "Tee uudelleen",
-      "selectPrevious": "Valitse edellinen tiedosto",
-      "selectNext": "Valitse seuraava tiedosto"
+      "selectPrevious": "Sitä ennen otettu kuva",
+      "selectNext": "Sen jälkeen otettu kuva"
     },
     "settings": {
       "title": "Asetukset",

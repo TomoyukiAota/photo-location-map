@@ -95,9 +95,9 @@
     "rotateThumbnail": "旋转缩略图",
     "menu": {
       "selection": "选择",
-      "selectOnlyThis": "仅选择此文件",
-      "selectPrevious": "选择上一个文件",
-      "selectNext": "选择下一个文件",
+      "selectOnlyThis": "仅此文件",
+      "selectPrevious": "前一张拍摄的照片",
+      "selectNext": "后一张拍摄的照片",
       "openFolder": "打开文件夹",
       "revealInMap": "在地图上显示",
       "revealInSidebar": "在边栏中显示",
@@ -252,8 +252,8 @@
       "title": "选择",
       "undo": "撤销",
       "redo": "重做",
-      "selectPrevious": "选择上一个文件",
-      "selectNext": "选择下一个文件"
+      "selectPrevious": "前一张拍摄的照片",
+      "selectNext": "后一张拍摄的照片"
     },
     "settings": {
       "title": "设置",

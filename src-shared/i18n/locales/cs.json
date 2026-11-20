@@ -95,9 +95,9 @@
     "rotateThumbnail": "Otočit miniaturu",
     "menu": {
       "selection": "Výběr",
-      "selectOnlyThis": "Vybrat jen tento soubor",
-      "selectPrevious": "Vybrat předchozí soubor",
-      "selectNext": "Vybrat další soubor",
+      "selectOnlyThis": "Jen tento soubor",
+      "selectPrevious": "Fotka pořízená předtím",
+      "selectNext": "Fotka pořízená potom",
       "openFolder": "Otevřít složku",
       "revealInMap": "Zobrazit na mapě",
       "revealInSidebar": "Zobrazit v postranním panelu",
@@ -252,8 +252,8 @@
       "title": "Výběr",
       "undo": "Zpět",
       "redo": "Znovu",
-      "selectPrevious": "Vybrat předchozí soubor",
-      "selectNext": "Vybrat další soubor"
+      "selectPrevious": "Fotka pořízená předtím",
+      "selectNext": "Fotka pořízená potom"
     },
     "settings": {
       "title": "Nastavení",

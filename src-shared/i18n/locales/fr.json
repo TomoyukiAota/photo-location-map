@@ -95,9 +95,9 @@
     "rotateThumbnail": "Faire pivoter la vignette",
     "menu": {
       "selection": "Sélection",
-      "selectOnlyThis": "Sélectionner uniquement ce fichier",
-      "selectPrevious": "Sélectionner le fichier précédent",
-      "selectNext": "Sélectionner le fichier suivant",
+      "selectOnlyThis": "Uniquement ce fichier",
+      "selectPrevious": "Photo prise avant",
+      "selectNext": "Photo prise après",
       "openFolder": "Ouvrir le dossier",
       "revealInMap": "Afficher sur la carte",
       "revealInSidebar": "Afficher dans la barre latérale",
@@ -252,8 +252,8 @@
       "title": "Sélection",
       "undo": "Annuler",
       "redo": "Rétablir",
-      "selectPrevious": "Sélectionner le fichier précédent",
-      "selectNext": "Sélectionner le fichier suivant"
+      "selectPrevious": "Photo prise avant",
+      "selectNext": "Photo prise après"
     },
     "settings": {
       "title": "Paramètres",

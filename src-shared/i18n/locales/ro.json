@@ -95,9 +95,9 @@
     "rotateThumbnail": "Rotește miniatura",
     "menu": {
       "selection": "Selecție",
-      "selectOnlyThis": "Selectează doar acest fișier",
-      "selectPrevious": "Selectează fișierul anterior",
-      "selectNext": "Selectează fișierul următor",
+      "selectOnlyThis": "Doar acest fișier",
+      "selectPrevious": "Poza făcută înaintea ei",
+      "selectNext": "Poza făcută după ea",
       "openFolder": "Deschide dosarul",
       "revealInMap": "Afișează pe hartă",
       "revealInSidebar": "Afișează în bara laterală",
@@ -252,8 +252,8 @@
       "title": "Selecție",
       "undo": "Anulează acțiunea",
       "redo": "Refă acțiunea",
-      "selectPrevious": "Selectează fișierul anterior",
-      "selectNext": "Selectează fișierul următor"
+      "selectPrevious": "Poza făcută înaintea ei",
+      "selectNext": "Poza făcută după ea"
     },
     "settings": {
       "title": "Setări",

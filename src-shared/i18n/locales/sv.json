@@ -95,9 +95,9 @@
     "rotateThumbnail": "Rotera miniatyr",
     "menu": {
       "selection": "Markering",
-      "selectOnlyThis": "Markera endast den här filen",
-      "selectPrevious": "Markera föregående fil",
-      "selectNext": "Markera nästa fil",
+      "selectOnlyThis": "Endast den här filen",
+      "selectPrevious": "Bild tagen före",
+      "selectNext": "Bild tagen efter",
       "openFolder": "Öppna mapp",
       "revealInMap": "Visa på kartan",
       "revealInSidebar": "Visa i sidofältet",
@@ -252,8 +252,8 @@
       "title": "Markering",
       "undo": "Ångra",
       "redo": "Gör om",
-      "selectPrevious": "Markera föregående fil",
-      "selectNext": "Markera nästa fil"
+      "selectPrevious": "Bild tagen före",
+      "selectNext": "Bild tagen efter"
     },
     "settings": {
       "title": "Inställningar",

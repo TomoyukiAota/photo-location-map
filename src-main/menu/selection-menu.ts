@@ -21,14 +21,14 @@ const handleRedoClicked = () => {
 };
 
 const handleSelectPreviousClicked = () => {
-  Logger.info(`[Main Window Menu] Clicked "Selection -> Select Previous".`);
-  Analytics.trackEvent('Main Window Menu', 'Clicked "Selection -> Select Previous"');
+  Logger.info(`[Main Window Menu] Clicked "Selection -> Photo Taken Before".`);
+  Analytics.trackEvent('Main Window Menu', 'Clicked "Selection -> Photo Taken Before"');
   mainWindow?.webContents.send(IpcConstants.PhotoSelection.SelectPrevious);
 };
 
 const handleSelectNextClicked = () => {
-  Logger.info(`[Main Window Menu] Clicked "Selection -> Select Next".`);
-  Analytics.trackEvent('Main Window Menu', 'Clicked "Selection -> Select Next"');
+  Logger.info(`[Main Window Menu] Clicked "Selection -> Photo Taken After".`);
+  Analytics.trackEvent('Main Window Menu', 'Clicked "Selection -> Photo Taken After"');
   mainWindow?.webContents.send(IpcConstants.PhotoSelection.SelectNext);
 };
 
@@ -50,7 +50,8 @@ export const selectionMenuTemplate: MenuItemConstructorOptions = {
       click: () => handleRedoClicked(),
     },
     { type: 'separator' },
-    // The photo taken just before or just after the one selected photo, which the renderer enables these for
+    // Select Previous and Select Next, shown as Photo Taken Before and Photo Taken After: the photo taken just before
+    // or just after the one selected photo, which the renderer enables these for
     // (src/app/shared/service/select-previous-next.service.ts).
     // TL;DR: Cmd+Left and Cmd+Right on macOS, Ctrl+Left and Ctrl+Right on Windows and Linux: the arrows that photo
     // viewers go through photos with, earlier to the left as the chart lays the time out, with a modifier that lets

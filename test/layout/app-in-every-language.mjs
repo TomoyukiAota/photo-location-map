@@ -294,7 +294,7 @@ for (const code of codes) {
       await page.waitForSelector(menus);
       // The menu is above the window, rather than in the popup: within the window, as its submenus are.
       await screen('popup-menu', `.leaflet-popup, ${menus}`);
-      // The submenus Selection and Google, the first and the fourth of the popup's items, which the pointer opens.
+      // The submenus Select and Google, the first and the fourth of the popup's items, which the pointer opens.
       for (const [name, index] of [['popup-menu-selection', 0], ['popup-menu-google', 3]]) {
         await page.locator(`${menus} .photo-info-viewer-more-options-menu-item`).nth(index).hover();
         await page.waitForFunction(selector => document.querySelectorAll(selector).length === 2, menus);

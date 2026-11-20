@@ -95,9 +95,9 @@
     "rotateThumbnail": "Bélyegkép elforgatása",
     "menu": {
       "selection": "Kijelölés",
-      "selectOnlyThis": "Csak ennek a fájlnak a kijelölése",
-      "selectPrevious": "Az előző fájl kijelölése",
-      "selectNext": "A következő fájl kijelölése",
+      "selectOnlyThis": "Csak ez a fájl",
+      "selectPrevious": "Az előtte készült fotó",
+      "selectNext": "Az utána készült fotó",
       "openFolder": "Mappa megnyitása",
       "revealInMap": "Megjelenítés a térképen",
       "revealInSidebar": "Megjelenítés az oldalsávon",
@@ -252,8 +252,8 @@
       "title": "Kijelölés",
       "undo": "Visszavonás",
       "redo": "Mégis",
-      "selectPrevious": "Az előző fájl kijelölése",
-      "selectNext": "A következő fájl kijelölése"
+      "selectPrevious": "Az előtte készült fotó",
+      "selectNext": "Az utána készült fotó"
     },
     "settings": {
       "title": "Beállítások",

@@ -95,9 +95,9 @@
     "rotateThumbnail": "Zasukaj sličico",
     "menu": {
       "selection": "Izbor",
-      "selectOnlyThis": "Izberi samo to datoteko",
-      "selectPrevious": "Izberi prejšnjo datoteko",
-      "selectNext": "Izberi naslednjo datoteko",
+      "selectOnlyThis": "Samo ta datoteka",
+      "selectPrevious": "Fotografija, posneta prej",
+      "selectNext": "Fotografija, posneta potem",
       "openFolder": "Odpri mapo",
       "revealInMap": "Prikaži na zemljevidu",
       "revealInSidebar": "Prikaži v stranski vrstici",
@@ -252,8 +252,8 @@
       "title": "Izbor",
       "undo": "Razveljavi",
       "redo": "Uveljavi",
-      "selectPrevious": "Izberi prejšnjo datoteko",
-      "selectNext": "Izberi naslednjo datoteko"
+      "selectPrevious": "Fotografija, posneta prej",
+      "selectNext": "Fotografija, posneta potem"
     },
     "settings": {
       "title": "Nastavitve",

@@ -94,10 +94,10 @@
     "livePhotos": "Live Photos",
     "rotateThumbnail": "Rotate Thumbnail",
     "menu": {
-      "selection": "Selection",
-      "selectOnlyThis": "Select Only This",
-      "selectPrevious": "Select Previous",
-      "selectNext": "Select Next",
+      "selection": "Select",
+      "selectOnlyThis": "Only This",
+      "selectPrevious": "Photo Taken Before",
+      "selectNext": "Photo Taken After",
       "openFolder": "Open Folder",
       "revealInMap": "Reveal in Map",
       "revealInSidebar": "Reveal in Sidebar",
@@ -252,8 +252,8 @@
       "title": "Selection",
       "undo": "Undo",
       "redo": "Redo",
-      "selectPrevious": "Select Previous",
-      "selectNext": "Select Next"
+      "selectPrevious": "Photo Taken Before",
+      "selectNext": "Photo Taken After"
     },
     "settings": {
       "title": "Settings",

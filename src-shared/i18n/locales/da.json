@@ -95,9 +95,9 @@
     "rotateThumbnail": "Roter miniature",
     "menu": {
       "selection": "Valg",
-      "selectOnlyThis": "Vælg kun denne fil",
-      "selectPrevious": "Vælg forrige fil",
-      "selectNext": "Vælg næste fil",
+      "selectOnlyThis": "Kun denne fil",
+      "selectPrevious": "Billede taget før",
+      "selectNext": "Billede taget efter",
       "openFolder": "Åbn mappe",
       "revealInMap": "Vis på kortet",
       "revealInSidebar": "Vis i sidepanelet",
@@ -252,8 +252,8 @@
       "title": "Valg",
       "undo": "Fortryd",
       "redo": "Gentag",
-      "selectPrevious": "Vælg forrige fil",
-      "selectNext": "Vælg næste fil"
+      "selectPrevious": "Billede taget før",
+      "selectNext": "Billede taget efter"
     },
     "settings": {
       "title": "Indstillinger",
