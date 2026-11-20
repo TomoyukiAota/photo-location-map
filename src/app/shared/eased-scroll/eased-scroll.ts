@@ -54,31 +54,66 @@ export function easedScrollDurationMs(distancePx: number): number {
 
 interface RunningScroll {
   readonly scroller: HTMLElement;
-  // The scroll positions where the scroll starts and ends, and 1 when it goes down, -1 when it goes up.
-  readonly from: number;
-  readonly to: number;
+  // The scroll position where the scroll started, moved as much as anything else has moved the box since (step()),
+  // and 1 when it goes down, -1 when it goes up.
+  from: number;
   readonly direction: number;
-  // How far it goes on screen (wayShown()), along which its curve goes from 0.
+  // How far it goes on screen, along which its curve goes from 0, and whether its way is longer, so that it skips the
+  // middle of the way (positionOf()).
   readonly travel: number;
+  readonly skips: boolean;
   readonly curve: EasedScrollCurve;
   readonly startedAt: number;
-  // The element to show, and what to do once the scroll has ended, which a later element that the scroll's end shows
-  // takes over.
+  // The element that the scroll brings to the middle.
+  readonly target: HTMLElement;
+  // The element to show, and what to do once the scroll has ended: the target's, or a later element's, which the
+  // scroll's end shows too and which takes them over.
   element: HTMLElement;
   arrived: () => void;
-  // The scroll position that the scroll set last, which only the user's own scroll changes before the next frame.
+  // The scroll position that the scroll set last.
   lastTop: number;
   frame: number;
+  // Ends the watching of the user's own scroll (watchUserScroll()).
+  readonly watching: AbortController;
 }
 
 /**
- * The scroll position of a scroll when its curve has gone `gone` of its travel: all the way along, when the scroll
- * goes no further than its travel. A longer way is the first and the last halves of its travel, with what is between
- * skipped at its middle, where it is at its fastest.
+ * The scroll position of a scroll when its curve has gone `gone` of its travel, toward `to`, where its target is in
+ * the middle now: the rest of the travel before `to`. A longer way starts with the first half of its travel from
+ * where it started, and skips what is between at its middle, where it is at its fastest.
  */
-function positionOf(scroll: Pick<RunningScroll, 'from' | 'to' | 'direction' | 'travel'>, gone: number): number {
-  const { from, to, direction, travel } = scroll;
-  return gone < travel / 2 ? from + direction * gone : to - direction * (travel - gone);
+function positionOf(scroll: Pick<RunningScroll, 'from' | 'direction' | 'travel' | 'skips'>, gone: number, to: number): number {
+  const { from, direction, travel, skips } = scroll;
+  return skips && gone < travel / 2 ? from + direction * gone : to - direction * (travel - gone);
+}
+
+/**
+ * The keys that scroll a box up or down, with or without a modifier, as Shift+Space and Cmd+Down do. Not Left and
+ * Right: Cmd+Left and Cmd+Right, Ctrl+ on Windows and Linux, are Select Previous and Select Next, which reach the page
+ * first and reveal the photo that they select, going on with the scroll (src-main/menu/selection-menu.ts).
+ */
+const keysThatScroll = new Set(['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' ']);
+
+/**
+ * Calls `scrolled` when the user starts to scroll the box: with the wheel or the trackpad, by pressing the box or its
+ * scroll bar, or with a key that scrolls, pressed in the box or with nothing else focused. Until `signal` aborts.
+ * TL;DR: By what the user does, rather than by the scroll position, which the browser moves too.
+ * Details: Chromium keeps what a box shows in place when what is above it changes its height (scroll anchoring), by
+ * moving its scroll position as much. The row of a photo whose thumbnail fills the height of its room, as that of a
+ * HEIC photo taken upright does, grows by a few pixels as the tree makes it, 3.5 on macOS. A scroll that took this for
+ * the user's stopped a height before a row far down a large folder, as soon as it had skipped the middle of the way,
+ * with the row below what the sidebar showed.
+ */
+function watchUserScroll(scroller: HTMLElement, scrolled: () => void, signal: AbortSignal): void {
+  const options = { capture: true, passive: true, signal };
+  scroller.addEventListener('wheel', scrolled, options);
+  scroller.addEventListener('pointerdown', scrolled, options);
+  const { body, documentElement } = scroller.ownerDocument;
+  scroller.ownerDocument.addEventListener('keydown', ({ key, target }) => {
+    if (keysThatScroll.has(key) && target instanceof Node
+      && (scroller.contains(target) || target === body || target === documentElement))
+      scrolled();
+  }, options);
 }
 
 /**
@@ -86,8 +121,9 @@ function positionOf(scroll: Pick<RunningScroll, 'from' | 'to' | 'direction' | 't
  * `scrollIntoView({ block: 'center' })` does, with an eased scroll (EasedScrollCurve), frame by frame.
  *
  * One scroll at a time: another one, started before this one has ended, goes on from where this one is and at its
- * speed. The user's own scroll, with the wheel, the scroll bar or the keys, stops it where the user takes it. With less
- * motion asked for in the system's settings, it scrolls there at once.
+ * speed. It goes to where the element is at each frame, which moves when what is above it changes its height. The
+ * user's own scroll, with the wheel, the scroll bar or the keys, stops it where the user takes it
+ * (watchUserScroll()). With less motion asked for in the system's settings, it scrolls there at once.
  */
 export class EasedScroll {
   private running: RunningScroll | undefined;
@@ -111,7 +147,9 @@ export class EasedScroll {
       if (left !== scroller.scrollLeft)
         scroller.scrollLeft = left;
     }
-    if (scroller && !evenWhenShown && isFullyShownAt(scroller, element, previous?.to ?? scroller.scrollTop)) {
+    // Where the box is to show the element: where the running scroll takes it, or where it is.
+    if (scroller && !evenWhenShown
+      && isFullyShownAt(scroller, element, previous ? middleScrollTop(scroller, previous.target) : scroller.scrollTop)) {
       if (previous) {
         previous.element = element;
         previous.arrived = arrived;
@@ -145,41 +183,58 @@ export class EasedScroll {
     // folder of thousands of photos would make them all. Shown in part, the way still starts and ends eased, and takes
     // as long as a way of two heights.
     const direction = Math.sign(to - from);
-    const travel = Math.min(Math.abs(to - from), 2 * scroller.clientHeight);
+    const distance = Math.abs(to - from);
+    const travel = Math.min(distance, 2 * scroller.clientHeight);
     const startSpeed = direction * speed;
     const curve = new EasedScrollCurve(0, travel, durationMs(travel, startSpeed), startSpeed);
+    const watching = new AbortController();
     this.running = {
-      scroller, from, to, direction, travel, curve, element, arrived, startedAt: now, lastTop: from,
-      frame: requestAnimationFrame(this.step),
+      scroller, from, direction, travel, skips: distance > travel, curve, startedAt: now, target: element, element,
+      arrived, lastTop: from, watching, frame: requestAnimationFrame(this.step),
     };
+    watchUserScroll(scroller, this.stopByUser, watching.signal);
   }
 
   /** Stops the scroll where it is, without calling its `arrived`. */
   public stop(): void {
-    if (this.running)
+    if (this.running) {
       cancelAnimationFrame(this.running.frame);
+      this.running.watching.abort();
+    }
     this.running = undefined;
   }
+
+  /** Stops the scroll where the user's own scroll takes the box, which is where it has arrived. */
+  private readonly stopByUser = (): void => {
+    const running = this.running;
+    this.stop();
+    running?.arrived();
+  };
 
   private readonly step = (): void => {
     const running = this.running;
     if (!running)
       return;
-    const { scroller, element, curve } = running;
-    if (!element.isConnected) {
+    const { scroller, target, element, curve } = running;
+    if (!target.isConnected || !element.isConnected) {
       this.stop();
       return;
     }
+    // TL;DR: The scroll goes on from wherever something else has moved the box, and to wherever the target is now.
+    // Details: Chromium moves the box when what is above what it shows changes its height, by as much, so that what it
+    // shows stays in place (scroll anchoring). The rows that come near the sidebar's view on the way are made then,
+    // and some of them change their height (watchUserScroll()): above what the box shows, which moves the box and the
+    // target alike, or between the two, which moves the target.
+    running.from += scroller.scrollTop - running.lastTop;
+    const to = middleScrollTop(scroller, target);
     const elapsed = performance.now() - running.startedAt;
-    const stoppedByUser = Math.abs(scroller.scrollTop - running.lastTop) >= 1;
-    if (stoppedByUser || elapsed >= curve.durationMs) {
-      if (!stoppedByUser)
-        scroller.scrollTop = running.to;
-      this.running = undefined;
+    if (elapsed >= curve.durationMs) {
+      scroller.scrollTop = to;
+      this.stop();
       running.arrived();
       return;
     }
-    scroller.scrollTop = positionOf(running, curve.positionAt(elapsed));
+    scroller.scrollTop = positionOf(running, curve.positionAt(elapsed), to);
     running.lastTop = scroller.scrollTop;
     running.frame = requestAnimationFrame(this.step);
   };
