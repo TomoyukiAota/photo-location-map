@@ -19,6 +19,8 @@ const logger = createPrependedLogger('[Face Search]');
 
 /** What the search found in a photo: a face, no face, or nothing, as when its image could not be decoded. */
 type Outcome = 'face' | 'noFace' | 'failed';
+/** What is kept of a photo that was looked at: whether it has a face. */
+type Found = Exclude<Outcome, 'failed'>;
 
 /** A search that runs, which the dialog's Cancel, or another folder, ends. */
 interface Search {
@@ -41,7 +43,8 @@ const thumbnailWaitIntervalMs = 250;
  *   A photo is decoded while the detector looks at the one before, two at a time.
  * - The photos are those selected when the item is chosen. A HEIF photo waits for the thumbnail that the app makes of
  *   it, which the dialog says; they come last. A photo whose image cannot be decoded is not taken for one with a
- *   face: the dialog says how many such photos were deselected.
+ *   face: the dialog says how many such photos were deselected, and the next search looks at them again, as what kept
+ *   them from being looked at may have passed.
  * - When no selected photo has a face, the selection stays, so that the map is not left empty, and the dialog says
  *   so. Cancel leaves the selection as it was; what was found until then is kept.
  * - The log says how many photos were looked at and how long it took, never which photos have faces, and an error of
@@ -58,7 +61,7 @@ export class FaceSearchService {
   private readonly selectionService = inject(DirectoryTreeViewSelectionService);
 
   /** What was found in each photo of the opened folder that has been looked at, by the photo's path. */
-  private readonly outcomes = new Map<string, Outcome>();
+  private readonly outcomes = new Map<string, Found>();
   /** Counts the folders opened, so that what is found in a photo of the previous folder is not kept. */
   private folderNumber = 0;
   private search: Search | undefined;
@@ -99,16 +102,18 @@ export class FaceSearchService {
     const search: Search = { canceled: false };
     this.search = search;
     try {
+      let notLookedAt: ReadonlySet<string> = new Set();
       const notSeen = selected.filter(photo => !this.outcomes.has(photo.path));
       if (notSeen.length > 0) {
         this.showDialog({ kind: 'searching', done: 0, total: notSeen.length, waitingForThumbnails: false });
-        const completed = await this.lookAt(notSeen, search);
-        if (!completed) {
+        const notLookedAtNow = await this.lookAt(notSeen, search);
+        if (notLookedAtNow === undefined) {
           this.closeDialog();
           return;
         }
+        notLookedAt = notLookedAtNow;
       }
-      this.narrowDown(selected);
+      this.narrowDown(selected, notLookedAt);
     } catch (error) {
       // The detector's model, or a request to the main process, fails a search as a whole (lookAt).
       logger.error('Faces could not be looked for, as the face detector or the main process failed.', error);
@@ -124,9 +129,10 @@ export class FaceSearchService {
       this.search.canceled = true;
   }
 
-  private narrowDown(selected: readonly Photo[]): void {
+  /** Selects the photos with faces among `selected`, where the search could not look at those of `notLookedAt`. */
+  private narrowDown(selected: readonly Photo[], notLookedAtPaths: ReadonlySet<string>): void {
     const withFaces = selected.filter(photo => this.outcomes.get(photo.path) === 'face');
-    const notLookedAt = selected.filter(photo => this.outcomes.get(photo.path) === 'failed').length;
+    const notLookedAt = selected.filter(photo => notLookedAtPaths.has(photo.path)).length;
     logger.info(`Faces were found in ${withFaces.length} of the ${selected.length} selected photos; ${notLookedAt} could not be looked at.`);
     if (withFaces.length === 0) {
       this.showDialog({ kind: 'noFacesFound' });
@@ -140,12 +146,14 @@ export class FaceSearchService {
   }
 
   /**
-   * Looks at the photos, keeping what is found; false when the search was canceled. Throws when the detector fails.
+   * Looks at the photos, keeping what is found, and gives those that it could not look at; undefined when the search
+   * was canceled. Throws when the detector fails.
    * TL;DR: Two photos at a time; the first failure stops both, and the search ends once both have stopped.
-   * Details: What is found in a photo after Cancel is kept, as it is true of the photo; what is found after another
-   * folder opened is not, as the photo of the same path there may be another (folderNumber).
+   * Details: Whether a photo has a face is kept, also when it is found after Cancel, as it is true of the photo; not
+   * after another folder opened, as the photo of the same path there may be another (folderNumber). A photo that could
+   * not be looked at is not kept: the next search looks at it again.
    */
-  private async lookAt(photos: readonly Photo[], search: Search): Promise<boolean> {
+  private async lookAt(photos: readonly Photo[], search: Search): Promise<ReadonlySet<string> | undefined> {
     const startMs = performance.now();
     const folderNumber = this.folderNumber;
     let done = 0;
@@ -156,7 +164,7 @@ export class FaceSearchService {
     for (const batch of chunk(photos.filter(photo => FilenameExtension.isJpeg(photo.filenameExtension)), maxFaceRegionPathsPerRequest)) {
       const haveRegions = await bridge().faceRegions.have(batch.map(photo => photo.path));
       if (search.canceled || folderNumber !== this.folderNumber)
-        return false;
+        return undefined;
       batch.forEach((photo, index) => {
         if (haveRegions[index]) {
           this.outcomes.set(photo.path, 'face');
@@ -172,6 +180,7 @@ export class FaceSearchService {
     const queue = [...toDetect.filter(photo => !isHeif(photo)), ...toDetect.filter(isHeif)];
     let next = 0;
     let failure: unknown;
+    const notLookedAt = new Set<string>();
     const lookAtTheNext = async () => {
       try {
         while (next < queue.length && !search.canceled) {
@@ -182,7 +191,10 @@ export class FaceSearchService {
           });
           if (outcome === undefined || folderNumber !== this.folderNumber)
             return; // The search ended before the photo was looked at, or another folder opened meanwhile.
-          this.outcomes.set(photo.path, outcome);
+          if (outcome === 'failed')
+            notLookedAt.add(photo.path);
+          else
+            this.outcomes.set(photo.path, outcome);
           done++;
           report();
         }
@@ -196,9 +208,9 @@ export class FaceSearchService {
     if (failure !== undefined)
       throw failure;
     if (search.canceled)
-      return false;
+      return undefined;
     logger.info(`Looked for faces in ${photos.length} photos in ${Math.round(performance.now() - startMs)} ms.`);
-    return true;
+    return notLookedAt;
   }
 
   /**

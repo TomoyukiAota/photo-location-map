@@ -165,7 +165,7 @@ describe('FaceSearchService', () => {
     expect(close).not.toHaveBeenCalled();
   });
 
-  it('deselects a photo that it could not look at, and says how many', async () => {
+  it('deselects a photo that it could not look at, says how many, and looks at it again the next time', async () => {
     const [a, broken, unreadable] = [photo('/trip/a.jpg'), photo('/trip/broken.jpg'), photo('/trip/unreadable.jpg')];
     scores.set(photoFileUrl(a.path), 0.9).set(photoFileUrl(broken.path), 0.9);
     undecodable.add(photoFileUrl(broken.path));
@@ -175,6 +175,14 @@ describe('FaceSearchService', () => {
 
     expect(select).toHaveBeenCalledWith([a.path]);
     expect(state()).toEqual({ kind: 'notLookedAt', count: 2 });
+
+    // What kept a photo from being looked at may pass: the file was being written, say.
+    undecodable.clear();
+    await service.narrowDownSelectedPhotos();
+    expect(score.mock.calls.map(([image]) => image.url)).toEqual([
+      photoFileUrl(a.path), photoFileUrl(unreadable.path), photoFileUrl(broken.path), photoFileUrl(unreadable.path)]);
+    expect(select).toHaveBeenLastCalledWith([a.path, broken.path]);
+    expect(state()).toEqual({ kind: 'notLookedAt', count: 1 });
   });
 
   it('looks at a TIFF file\'s EXIF thumbnail, and cannot look at one without', async () => {
@@ -268,6 +276,27 @@ describe('FaceSearchService', () => {
     await service.narrowDownSelectedPhotos();
     expect(score).toHaveBeenCalledTimes(3);
     expect(select).toHaveBeenCalledWith([b.path]);
+  });
+
+  it('keeps nothing of a photo whose decoding failed after the search had failed, and looks at it the next time', async () => {
+    const [a, b] = [photo('/trip/a.jpg'), photo('/trip/b.jpg')];
+    scores.set(photoFileUrl(a.path), 0.1).set(photoFileUrl(b.path), 0.9);
+    let failDecoding: () => void;
+    decodingHeld.set(photoFileUrl(b.path), new Promise<void>((_, reject) => failDecoding = () => reject(new Error('Busy.'))));
+    score.mockRejectedValueOnce(new FaceDetectorError('TypeError: Failed to fetch', 'model'));
+    selectPhotos([a, b]);
+
+    const searching = service.narrowDownSelectedPhotos();
+    await vi.waitFor(() => expect(score).toHaveBeenCalledTimes(1));
+    failDecoding();
+    await searching;
+    expect(state()).toEqual({ kind: 'failed' });
+
+    decodingHeld.clear();
+    await service.narrowDownSelectedPhotos();
+    expect(score).toHaveBeenCalledTimes(3);
+    expect(select).toHaveBeenCalledWith([b.path]);
+    expect(state()).toEqual({ kind: 'searching', done: 2, total: 2, waitingForThumbnails: false });
   });
 
   it('ignores the item while a search runs', async () => {
