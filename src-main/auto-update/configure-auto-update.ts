@@ -8,6 +8,7 @@ import { t } from '../../src-shared/i18n/i18n.js';
 import { isPrereleaseVersion } from '../../src-shared/version/is-prerelease-version.js';
 import { mainWindow } from '../electron-main.js';
 import { autoUpdateLogger } from './auto-update-logger.js';
+import { checkAndDownloadUpdate } from './check-and-download-update.js';
 import { currentSystemVersion, isVersionAtLeast, minimumSystemVersionOf } from './minimum-system-version.js';
 import { logged, shown } from '../../src-shared/log/logged-line.js';
 
@@ -96,8 +97,5 @@ app.on('ready', async () => {
     return;
   }
 
-  await autoUpdater.checkForUpdates().catch(reason => {
-    // The same failure as the error event's, which records it.
-    autoUpdateLogger.warnNotRecorded(`Promise from autoUpdater.checkForUpdates() is rejected. ${reason}`);
-  });
+  await checkAndDownloadUpdate(autoUpdater);
 });
