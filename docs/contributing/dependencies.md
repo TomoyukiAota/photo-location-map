@@ -46,11 +46,24 @@ repository's own files.
 | `@turf/jsts`, `concaveman`, `earcut`, `fast-deep-equal`, `rbush`, `skmeans` | Dependencies of `@turf/turf`, which the map's regions use. |
 
 
+### WebAssembly in the renderer
+
+`onnxruntime-web` runs the face detector of the Selection menu's Narrow Down to
+Photos with Faces in a worker of the page (`src/app/face-search/`). Angular's
+build bundles its JavaScript into the worker's chunk. Its WebAssembly file is
+not imported: `angular.json`'s assets copy it to `assets/face-search/`, next to
+the model, and the worker gives the runtime its address (`env.wasm.wasmPaths`).
+An upgrade whose WebAssembly file has another name changes both places. The
+model and its license are in `src/assets/face-search/`.
+
+
 ## Install scripts
 
 Dependency install scripts are reviewed in `allowScripts` in `package.json`.
 When upgrading a package with an install script, inspect that script and update
 its exact-version entry. `.npmrc` rejects unreviewed scripts during installation.
+`protobufjs`, a dependency of `onnxruntime-web`, has one that only warns about
+the version scheme of a package that depends on it, so it does not run.
 
 
 ## Stay on the documented setup

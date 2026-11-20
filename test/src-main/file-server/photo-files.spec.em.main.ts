@@ -69,6 +69,13 @@ describe('The photos of the main window\'s page (in main process)', () => {
     assert.strictEqual(await thumbnail.text(), 'thumbnail');
   });
 
+  it('lets the app\'s page alone read what it answers, for the search for faces', async () => {
+    for (const filePath of [photo, path.join(cache, 'IMG_0002.HEIC.plm.jpg')])
+      assert.strictEqual((await respond(photoFileUrl(filePath))).headers.get('access-control-allow-origin'), 'plm-app://app');
+    // What is not answered allows nothing.
+    assert.strictEqual((await respond(photoFileUrl(secret))).headers.get('access-control-allow-origin'), null);
+  });
+
   it('answers nothing of another folder, as a file that is not there, however the path is written', async () => {
     for (const filePath of [
       secret,

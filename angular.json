@@ -17,6 +17,7 @@
             },
             "index": "src/index.html",
             "tsConfig": "src/tsconfig.app.json",
+            "webWorkerTsConfig": "tsconfig.worker.json",
             "allowedCommonJsDependencies": [
               "@turf/jsts",
               "concaveman",
@@ -38,7 +39,12 @@
               "src/favicon.icns",
               "src/favicon.256x256.png",
               "src/favicon.512x512.png",
-              "src/favicon.svg"
+              "src/favicon.svg",
+              {
+                "glob": "ort-wasm-simd-threaded.wasm",
+                "input": "node_modules/onnxruntime-web/dist",
+                "output": "assets/face-search"
+              }
             ],
             "styles": [
               "./node_modules/leaflet/dist/leaflet.css",

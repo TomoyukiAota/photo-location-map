@@ -176,6 +176,15 @@
       "openFolder": "Abrir pasta"
     }
   },
+  "faceSearch": {
+    "looking": "Procurando rostos nas fotos selecionadas...",
+    "progress": "Fotos verificadas: {{done}} de {{total}}.",
+    "waitingForThumbnails": "Aguardando a geração das miniaturas dos arquivos HEIF...",
+    "onThisComputer": "Os rostos são procurados somente neste computador. Nada sobre eles é enviado para lugar nenhum.",
+    "noFacesFound": "Nenhum rosto foi encontrado nas fotos selecionadas. A seleção continua como está.",
+    "notLookedAt": "Fotos em que não foi possível procurar rostos e que não estão mais selecionadas: {{count}}.",
+    "failed": "Não foi possível procurar rostos nas fotos selecionadas. A seleção continua como está."
+  },
   "settings": {
     "title": "Configurações",
     "tabs": {
@@ -253,7 +262,8 @@
       "undo": "Desfazer",
       "redo": "Refazer",
       "selectPrevious": "Foto tirada antes",
-      "selectNext": "Foto tirada depois"
+      "selectNext": "Foto tirada depois",
+      "narrowDownToPhotosWithFaces": "Restringir às fotos com rostos"
     },
     "settings": {
       "title": "Configurações",

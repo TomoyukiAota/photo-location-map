@@ -135,6 +135,7 @@
     "ngx-echarts": "22.0.0",
     "npm-check-updates": "23.1.1",
     "npm-run-all2": "9.0.4",
+    "onnxruntime-web": "1.31.1",
     "p-queue": "9.3.5",
     "playwright": "1.64.1",
     "reflect-metadata": "0.2.2",
@@ -161,6 +162,7 @@
     "fsevents@2.3.3": false,
     "lmdb@3.5.6": true,
     "msgpackr-extract@3.0.4": true,
-    "electron-winstaller@5.4.0": false
+    "electron-winstaller@5.4.0": false,
+    "protobufjs@7.6.6": false
   }
 }

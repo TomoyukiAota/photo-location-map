@@ -176,6 +176,15 @@
       "openFolder": "Ordner öffnen"
     }
   },
+  "faceSearch": {
+    "looking": "Gesichter in den ausgewählten Fotos werden gesucht...",
+    "progress": "Durchsuchte Fotos: {{done}} von {{total}}.",
+    "waitingForThumbnails": "Warten auf die Erstellung der Miniaturen der HEIF-Dateien...",
+    "onThisComputer": "Gesichter werden nur auf diesem Computer gesucht. Nichts darüber wird irgendwohin gesendet.",
+    "noFacesFound": "In den ausgewählten Fotos wurden keine Gesichter gefunden. Die Auswahl bleibt unverändert.",
+    "notLookedAt": "Fotos, die nicht nach Gesichtern durchsucht werden konnten und nicht mehr ausgewählt sind: {{count}}.",
+    "failed": "In den ausgewählten Fotos konnte nicht nach Gesichtern gesucht werden. Die Auswahl bleibt unverändert."
+  },
   "settings": {
     "title": "Einstellungen",
     "tabs": {
@@ -253,7 +262,8 @@
       "undo": "Rückgängig",
       "redo": "Wiederholen",
       "selectPrevious": "Davor aufgenommenes Foto",
-      "selectNext": "Danach aufgenommenes Foto"
+      "selectNext": "Danach aufgenommenes Foto",
+      "narrowDownToPhotosWithFaces": "Auf Fotos mit Gesichtern eingrenzen"
     },
     "settings": {
       "title": "Einstellungen",

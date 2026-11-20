@@ -178,6 +178,13 @@ npm run test:unit:ng
   the application menu's Selection menu (`menu.selection.title`), which has
   Undo and Redo too, has the noun. Use the word that your language names such
   a menu with, which may be the Selection menu's: Japanese has 選択 for both.
+- `menu.selection.narrowDownToPhotosWithFaces` is an item of the Selection
+  menu that keeps selected only the selected photos in which a face is found,
+  and deselects the others. The texts under `faceSearch` are those of its
+  dialog: "look at" and "look for" are what the application does with each
+  photo, on the computer itself. `onThisComputer` tells the user that nothing
+  about the faces leaves the computer: say it as plainly and as surely as the
+  English text does.
   The second has the items that open Google's sites, and is the company's
   name.
 - `language.confirm` is the button that confirms the language at the first

@@ -23,38 +23,37 @@ describe('The Content Security Policy of the main window\'s page (in main proces
     assert.doesNotMatch(mainWindowContentSecurityPolicy, /[\r\n,]/);
   });
 
-  it('refuses what it does not name, and runs only the scripts of the build: no other inline script, and no eval', () => {
+  it('refuses what it does not name, and runs only the scripts and workers of the build: no other inline script, and no eval', () => {
     assert.deepStrictEqual(mainWindowPolicyDirectives['default-src'], [`'none'`]);
-    // Plugins, frames and media are refused by default-src. Workers are refused by worker-src: without it, their
+    // Plugins, frames and media are refused by default-src. Workers are limited by worker-src: without it, their
     // scripts would be checked against script-src, not default-src.
     for (const name of ['object-src', 'child-src', 'frame-src', 'media-src', 'manifest-src'])
       assert.strictEqual(mainWindowPolicyDirectives[name], undefined, name);
-    assert.deepStrictEqual(mainWindowPolicyDirectives['worker-src'], [`'none'`]);
-    assert.deepStrictEqual(mainWindowPolicyDirectives['script-src'], [`'self'`, stylesheetMediaScriptHash]);
+    assert.deepStrictEqual(mainWindowPolicyDirectives['worker-src'], [`'self'`]);
+    // WebAssembly is compiled, for the search for faces; strings are never evaluated.
+    assert.deepStrictEqual(mainWindowPolicyDirectives['script-src'], [`'self'`, stylesheetMediaScriptHash, `'wasm-unsafe-eval'`]);
     for (const [name, ...sources] of parsed()) {
       for (const source of sources) {
-        assert.doesNotMatch(source, /^(\*|'unsafe-eval'|'wasm-unsafe-eval'|'unsafe-hashes'|'strict-dynamic')$/, `${name} ${source}`);
+        assert.doesNotMatch(source, /^(\*|'unsafe-eval'|'unsafe-hashes'|'strict-dynamic')$/, `${name} ${source}`);
         assert.doesNotMatch(source, /^https?:\/\/\*/, `${name} ${source}`);
+        if (source === `'wasm-unsafe-eval'`)
+          assert.strictEqual(name, 'script-src');
       }
     }
   });
 
-  it('lets the page fetch only the list of the map\'s base layers, at its addresses, and the servers of the analytics SDKs', () => {
+  it('lets the page fetch only the list of the map\'s base layers, at its addresses, the servers of the analytics SDKs and its own files', () => {
     assert.deepStrictEqual(mainWindowPolicyDirectives['connect-src'], [
       rasterTileBaseLayerConfigsVersion1Urls.gitHub,
       rasterTileBaseLayerConfigsVersion1Urls.jsDelivr,
       'https://api2.amplitude.com',
       'https://api-js.mixpanel.com',
+      `'self'`,
     ]);
   });
 
-  it('is the same for the page of ng serve in live reload, but that the page may connect to its own origin', () => {
-    const release = mainWindowContentSecurityPolicy.split('; ');
-    const devServer = devServerPageContentSecurityPolicy.split('; ');
-    assert.deepStrictEqual(devServer.filter(directive => !directive.startsWith('connect-src ')),
-      release.filter(directive => !directive.startsWith('connect-src ')));
-    assert.strictEqual(devServer.find(directive => directive.startsWith('connect-src ')),
-      `${release.find(directive => directive.startsWith('connect-src '))} 'self'`);
+  it('is the same for the page of ng serve in live reload, which connects to its own origin', () => {
+    assert.strictEqual(devServerPageContentSecurityPolicy, mainWindowContentSecurityPolicy);
   });
 
   it('keeps the page\'s base address, sends no form, and is no other page\'s frame', () => {

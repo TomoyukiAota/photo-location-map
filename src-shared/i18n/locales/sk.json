@@ -176,6 +176,15 @@
       "openFolder": "Otvoriť priečinok"
     }
   },
+  "faceSearch": {
+    "looking": "Hľadajú sa tváre vo vybraných fotkách...",
+    "progress": "Prezreté fotky: {{done}} z {{total}}.",
+    "waitingForThumbnails": "Čaká sa na vytvorenie miniatúr súborov HEIF...",
+    "onThisComputer": "Tváre sa hľadajú iba v tomto počítači. Nič o nich sa nikam neodosiela.",
+    "noFacesFound": "Vo vybraných fotkách sa nenašli žiadne tváre. Výber zostáva bez zmeny.",
+    "notLookedAt": "Fotky, v ktorých nebolo možné hľadať tváre a ktoré už nie sú vybrané: {{count}}.",
+    "failed": "Vo vybraných fotkách nebolo možné hľadať tváre. Výber zostáva bez zmeny."
+  },
   "settings": {
     "title": "Nastavenia",
     "tabs": {
@@ -253,7 +262,8 @@
       "undo": "Späť",
       "redo": "Znova",
       "selectPrevious": "Fotka nasnímaná predtým",
-      "selectNext": "Fotka nasnímaná potom"
+      "selectNext": "Fotka nasnímaná potom",
+      "narrowDownToPhotosWithFaces": "Zúžiť na fotky s tvárami"
     },
     "settings": {
       "title": "Nastavenia",

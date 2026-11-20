@@ -2,7 +2,7 @@ import { net } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
 import { pathToFileURL } from 'url';
-import { photoFilePathOf } from '../../src-shared/main-window-schemes.js';
+import { appPageOrigin, photoFilePathOf } from '../../src-shared/main-window-schemes.js';
 import { plmThumbnailCacheDir } from '../../src-shared/thumbnail/cache/thumbnail-cache-util.js';
 import { userChosenFolderPaths } from '../ipc/user-chosen-folders.js';
 
@@ -56,7 +56,15 @@ export async function respondToPhotoFileRequest(request: Request, showable = sho
   const isFile = await fs.promises.stat(filePath).then(stats => stats.isFile(), () => false);
   if (!isFile)
     return notFound();
-  return net.fetch(pathToFileURL(filePath).href, { bypassCustomProtocolHandlers: true });
+  const file = await net.fetch(pathToFileURL(filePath).href, { bypassCustomProtocolHandlers: true });
+  // TL;DR: The app's page may read the pixels of what it shows, which the search for faces looks at
+  // (src/app/face-search/), and no other origin may.
+  // Details: The page is of another origin, plm-app://app, so an image of plm-file: that it draws makes its canvas
+  // unreadable, unless the image is requested with CORS (crossorigin) and its answer allows the page's origin, for
+  // which the scheme is CORS-enabled (src-main/privileged-schemes-setup.ts). Only the page's origin is allowed: for
+  // any other, the file stays unreadable, as before.
+  file.headers.set('Access-Control-Allow-Origin', appPageOrigin);
+  return file;
 }
 
 /** Whether the real path `realFile` is the real path `realFolder`, or is in it, by their case as the file system has it. */

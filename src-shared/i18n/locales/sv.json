@@ -176,6 +176,15 @@
       "openFolder": "Öppna mapp"
     }
   },
+  "faceSearch": {
+    "looking": "Söker efter ansikten i de markerade bilderna...",
+    "progress": "Genomsökta bilder: {{done}} av {{total}}.",
+    "waitingForThumbnails": "Väntar på att miniatyrerna för HEIF-filerna skapas...",
+    "onThisComputer": "Ansikten söks bara på den här datorn. Ingenting om dem skickas någonstans.",
+    "noFacesFound": "Inga ansikten hittades i de markerade bilderna. Markeringen förblir som den är.",
+    "notLookedAt": "Bilder som inte kunde genomsökas efter ansikten och som inte längre är markerade: {{count}}.",
+    "failed": "Det gick inte att söka efter ansikten i de markerade bilderna. Markeringen förblir som den är."
+  },
   "settings": {
     "title": "Inställningar",
     "tabs": {
@@ -253,7 +262,8 @@
       "undo": "Ångra",
       "redo": "Gör om",
       "selectPrevious": "Bild tagen före",
-      "selectNext": "Bild tagen efter"
+      "selectNext": "Bild tagen efter",
+      "narrowDownToPhotosWithFaces": "Begränsa till bilder med ansikten"
     },
     "settings": {
       "title": "Inställningar",

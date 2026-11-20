@@ -33,6 +33,8 @@ const channels = {
   droppedItemChoose: 'ipc-constants-dropped-item-choose',
   updateUndoRedoMenus: 'ipc-constants-photo-selection-update-undo-redo-menus',
   updateSelectPreviousNextMenus: 'ipc-constants-photo-selection-update-select-previous-next-menus',
+  updateNarrowDownToPhotosWithFacesMenu: 'ipc-constants-photo-selection-update-narrow-down-to-photos-with-faces-menu',
+  faceRegionsHave: 'ipc-constants-face-regions-have',
   photoDataViewer: 'ipc-constants-launch-photo-data-viewer',
   explorerContextMenuAdd: 'ipc-constants-explorer-context-menu-add',
   explorerContextMenuRemove: 'ipc-constants-explorer-context-menu-remove',
@@ -43,6 +45,7 @@ const channels = {
   redo: 'ipc-constants-photo-selection-redo',
   selectPrevious: 'ipc-constants-photo-selection-select-previous',
   selectNext: 'ipc-constants-photo-selection-select-next',
+  narrowDownToPhotosWithFaces: 'ipc-constants-photo-selection-narrow-down-to-photos-with-faces',
   recordAtAppLaunchFinished: 'ipc-constants-record-at-app-launch-finished',
 };
 
@@ -53,7 +56,7 @@ const channels = {
 // analytics events of the launch, once the window is ready to show. A channel keeps at most maxPending messages.
 const eventChannels = [channels.amplitude, channels.mixpanel, channels.aboutBox, channels.manageSettings,
   channels.welcomeDialog, channels.undo, channels.redo, channels.selectPrevious, channels.selectNext,
-  channels.recordAtAppLaunchFinished];
+  channels.narrowDownToPhotosWithFaces, channels.recordAtAppLaunchFinished];
 const maxPending = 1000;
 const hubs = new Map();
 for (const channel of eventChannels) {
@@ -112,6 +115,7 @@ const plm = {
     isDirectory: directoryPath => ipcRenderer.invoke(channels.folderDialogIsDirectory, directoryPath),
   },
   exif: { read: filePath => ipcRenderer.invoke(channels.exifRead, filePath) },
+  faceRegions: { have: filePaths => ipcRenderer.invoke(channels.faceRegionsHave, filePaths) },
   directoryTree: { create: directoryPath => ipcRenderer.invoke(channels.directoryTreeCreate, directoryPath) },
   thumbnails: {
     generate: (allHeifFilePaths, heifFilePathsToGenerate) => ipcRenderer.invoke(channels.thumbnailsGenerate, allHeifFilePaths, heifFilePathsToGenerate),
@@ -135,6 +139,7 @@ const plm = {
   menus: {
     updateUndoRedo: params => ipcRenderer.invoke(channels.updateUndoRedoMenus, params),
     updateSelectPreviousNext: params => ipcRenderer.invoke(channels.updateSelectPreviousNextMenus, params),
+    updateNarrowDownToPhotosWithFaces: params => ipcRenderer.invoke(channels.updateNarrowDownToPhotosWithFacesMenu, params),
   },
   photoDataViewer: { open: params => ipcRenderer.invoke(channels.photoDataViewer, params) },
   explorerContextMenu: {
@@ -149,6 +154,7 @@ const plm = {
     onRedo: listener => subscribe(channels.redo, listener),
     onSelectPrevious: listener => subscribe(channels.selectPrevious, listener),
     onSelectNext: listener => subscribe(channels.selectNext, listener),
+    onNarrowDownToPhotosWithFaces: listener => subscribe(channels.narrowDownToPhotosWithFaces, listener),
     onRecordAtAppLaunchFinished: listener => subscribe(channels.recordAtAppLaunchFinished, listener),
   },
 };

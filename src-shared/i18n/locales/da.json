@@ -176,6 +176,15 @@
       "openFolder": "Åbn mappe"
     }
   },
+  "faceSearch": {
+    "looking": "Søger efter ansigter i de valgte billeder...",
+    "progress": "Gennemsete billeder: {{done}} af {{total}}.",
+    "waitingForThumbnails": "Venter på, at miniaturerne til HEIF-filerne bliver oprettet...",
+    "onThisComputer": "Der søges kun efter ansigter på denne computer. Intet om dem sendes nogen steder hen.",
+    "noFacesFound": "Der blev ikke fundet ansigter i de valgte billeder. Valget forbliver uændret.",
+    "notLookedAt": "Billeder, der ikke kunne gennemses for ansigter, og som ikke længere er valgt: {{count}}.",
+    "failed": "Der kunne ikke søges efter ansigter i de valgte billeder. Valget forbliver uændret."
+  },
   "settings": {
     "title": "Indstillinger",
     "tabs": {
@@ -253,7 +262,8 @@
       "undo": "Fortryd",
       "redo": "Gentag",
       "selectPrevious": "Billede taget før",
-      "selectNext": "Billede taget efter"
+      "selectNext": "Billede taget efter",
+      "narrowDownToPhotosWithFaces": "Indsnævr til billeder med ansigter"
     },
     "settings": {
       "title": "Indstillinger",
