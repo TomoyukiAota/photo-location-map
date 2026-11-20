@@ -165,12 +165,18 @@ export async function respondToPhotoRequest(request: Request): Promise<Response>
     logger.warn(logged`The photo of Photo Data Viewer's window could not be read: ${error as Error}`);
     return new Response(null, { status: 404 });
   }
-  return new Response(file.body, {
-    status: file.status,
-    headers: {
-      'content-type': capability.type || 'application/octet-stream',
-      'access-control-allow-origin': viewerOrigin(),
-      'cache-control': 'no-store',
-    },
-  });
+  // TL;DR: The answer is net.fetch's own, with the photo's headers in place of the file's, so that the photo is sent
+  // as the files of the main window's page are (app-page.ts), not streamed through JavaScript.
+  // Details: protocol.handle relays the body of an answer that is still net.fetch's, unread, without JavaScript, and
+  // streams the body of any other answer through it (relayUntouchedFetch in Electron's lib/browser/api/protocol.ts);
+  // either way, it sends the answer's status and headers. The photo was first put in a Response of its own, which
+  // took the stream, as the page's files did when one run of the e2e suite on Windows CI went without styles.css. The
+  // file's headers are removed: its type by the extension, which the photo's replaces, and its Last-Modified time,
+  // which CORS would let the viewer's page read, and which the page does not need.
+  for (const name of [...file.headers.keys()])
+    file.headers.delete(name);
+  file.headers.set('content-type', capability.type || 'application/octet-stream');
+  file.headers.set('access-control-allow-origin', viewerOrigin());
+  file.headers.set('cache-control', 'no-store');
+  return file;
 }
