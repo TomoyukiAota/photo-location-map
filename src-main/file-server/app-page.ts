@@ -2,7 +2,12 @@ import { app, net, protocol } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
 import { pathToFileURL } from 'url';
+import { currentLanguage } from '../../src-shared/i18n/i18n.js';
+import type { LanguageCode } from '../../src-shared/i18n/languages.js';
+import { logged, shown } from '../../src-shared/log/logged-line.js';
+import { Logger } from '../../src-shared/log/logger.js';
 import { appPageOrigin, appPageScheme } from '../../src-shared/main-window-schemes.js';
+import { appPageInLanguage } from './app-page-language.js';
 import { mainWindowContentSecurityPolicy } from './content-security-policy.js';
 
 // TL;DR: The main window's page is served from plm-app://app/, a scheme of the application's own, not from file:.
@@ -23,9 +28,10 @@ export function serveAppPage(distFolder = path.join(app.getAppPath(), 'dist')): 
 
 /**
  * A file of the app's build, in `distFolder` (dist/ in the app's folder, app.asar in a package), for a request of its
- * page: only a file in that folder, and only to be read.
+ * page: only a file in that folder, and only to be read. The page itself, index.html, is in `language`.
  */
-export async function respondToAppPageRequest(request: Request, distFolder: string): Promise<Response> {
+export async function respondToAppPageRequest(request: Request, distFolder: string,
+                                              language: LanguageCode = currentLanguage): Promise<Response> {
   if (request.method !== 'GET')
     return new Response(null, { status: 405 });
 
@@ -46,6 +52,11 @@ export async function respondToAppPageRequest(request: Request, distFolder: stri
   const isFile = await fs.promises.stat(filePath).then(stats => stats.isFile(), () => false);
   if (!isFile)
     return notFound();
+  if (relative === 'index.html') {
+    const page = await pageInLanguage(filePath, language);
+    if (page)
+      return page;
+  }
   // Past any handler of file: URLs that protocol.handle may have, as photo-delivery.ts goes.
   const file = await net.fetch(pathToFileURL(filePath).href, { bypassCustomProtocolHandlers: true });
   // TL;DR: The answer is net.fetch's own, with the page's Content Security Policy (content-security-policy.ts) added
@@ -57,9 +68,28 @@ export async function respondToAppPageRequest(request: Request, distFolder: stri
   // on Windows CI, the page then went without styles.css: the map's tile containers, which Leaflet's CSS there lets
   // the mouse pass through, took a click. Why was not found, as 150 launches on macOS applied it each time, so the
   // files go as they did. Each file has the policy: it applies to the document that index.html is, and would apply to
-  // a worker by its script's answer.
+  // a worker by its script's answer. index.html alone is a Response of its own (pageInLanguage), whose body is a
+  // string of the size of the page, not a file read as it is sent.
   file.headers.set('Content-Security-Policy', mainWindowContentSecurityPolicy);
   return file;
+}
+
+/**
+ * The page, index.html at `filePath`, in `language` (app-page-language.ts), with the page's Content Security Policy.
+ * Undefined when the page cannot be written in it, once that is logged and recorded: the page is then answered as the
+ * file is, in English until src/start-app.ts sets its language, rather than not at all.
+ */
+async function pageInLanguage(filePath: string, language: LanguageCode): Promise<Response | undefined> {
+  try {
+    const page = appPageInLanguage(await fs.promises.readFile(filePath, 'utf8'), language);
+    return new Response(page, { headers: {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Content-Security-Policy': mainWindowContentSecurityPolicy,
+    } });
+  } catch (error) {
+    Logger.error(logged`The app's page could not be written in ${shown(language)}, so it is served as it is.`, error);
+    return undefined;
+  }
 }
 
 function notFound(): Response {
