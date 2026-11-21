@@ -21,7 +21,9 @@ export class SelectedPhotoService {
 
     this.selectedPhotosState.set(desiredSelectedPhotos);
     this.photoSelectionHistoryService.add(desiredSelectedPhotos);
-    Logger.info('Selected Photos: ', desiredSelectedPhotos);
+    // How many, not the photos: the file got the text alone, while the console got the photos, of which V8 made a
+    // string at each change of the selection (160,042 characters for 10,000 photos), sent to the main process.
+    Logger.info(`Selected Photos: ${desiredSelectedPhotos.length}`);
   }
 
   public getSelectedPhotos(): Photo[] {
