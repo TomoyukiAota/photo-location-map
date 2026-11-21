@@ -1460,12 +1460,18 @@ test('the map stays as it is while other photos are pinned: its markers change, 
   await expectRepresentedPhotos(4);
   const popup = page.locator('.leaflet-popup');
   const map = () => page.evaluate(() => ({ zoom: window.__plmLeafletMap.getZoom(), maps: window.__plmLeafletMaps }));
-  /** Whether the popup is in the middle of the map, from left to right, above its marker, as centerOnPopup() puts it. */
-  const popupInMiddle = () => page.evaluate(() => {
-    const popupBox = document.querySelector('.leaflet-popup').getBoundingClientRect();
-    const mapBox = window.__plmLeafletMap.getContainer().getBoundingClientRect();
-    return Math.abs((popupBox.left + popupBox.right) / 2 - (mapBox.left + mapBox.right) / 2) < 2;
-  });
+  /**
+   * Whether the popup is in the middle of the map, from left to right, above its marker, as centerOnPopup() puts it:
+   * once the popup of the photo before has gone, which Leaflet fades out for 200 ms.
+   */
+  async function popupInMiddle() {
+    await expect(popup).toHaveCount(1);
+    return page.evaluate(() => {
+      const popupBox = document.querySelector('.leaflet-popup').getBoundingClientRect();
+      const mapBox = window.__plmLeafletMap.getContainer().getBoundingClientRect();
+      return Math.abs((popupBox.left + popupBox.right) / 2 - (mapBox.left + mapBox.right) / 2) < 2;
+    });
+  }
   await page.evaluate(photo => window.plmInternalRenderer.photoSelection.selectOnlyThis(photo), path.join(photoFolder, 'Gold Coast/IMG_1579.JPG'));
   await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_1579.JPG');
   await expectRepresentedPhotos(1);
