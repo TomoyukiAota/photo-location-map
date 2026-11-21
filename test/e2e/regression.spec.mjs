@@ -496,6 +496,28 @@ async function mainProcessErrorDialog(message) {
 function treeCheckbox(name) {
   return page.locator('mat-tree-node').filter({ hasText: name }).getByRole('checkbox');
 }
+/**
+ * Expects a row of the tree where Reveal in Sidebar puts it: in the middle of what the sidebar shows, or, where the rows
+ * of the folders above that the tree keeps at its top would cover it there, lower, right below them. What the sidebar
+ * shows is above its horizontal scrollbar, which Windows and Linux draw below the rows, so that the middle of the
+ * sidebar's box is half the scrollbar lower there. macOS draws it over the rows.
+ */
+async function expectWhereRevealPutsIt(row) {
+  const { belowMiddle, belowKept } = await row.evaluate(rowElement => {
+    const sidebar = rowElement.closest('#home-sidebar-lower-pane');
+    const shownTop = sidebar.getBoundingClientRect().top + sidebar.clientTop;
+    const rowBox = rowElement.getBoundingClientRect();
+    const kept = [...document.querySelectorAll('app-dir-tree-view-sticky-rows .sticky-row')];
+    return {
+      belowMiddle: rowBox.top + rowBox.height / 2 - (shownTop + sidebar.clientHeight / 2),
+      belowKept: rowBox.top - Math.max(shownTop, ...kept.map(each => each.getBoundingClientRect().bottom)),
+    };
+  });
+  const inTheMiddle = Math.abs(belowMiddle) < 2;
+  const rightBelowTheKeptRows = belowMiddle > 0 && Math.abs(belowKept) < 1;
+  expect(inTheMiddle || rightBelowTheKeptRows, `The row's middle is ${belowMiddle} pixels below the middle of what the `
+    + `sidebar shows, and its top ${belowKept} pixels below the rows kept at the top.`).toBe(true);
+}
 /** Records the URLs that the main process opens in the OS browser for the page, instead of opening them. */
 async function recordOpenedUrls() {
   await app.evaluate(({ shell }) => {
@@ -2270,15 +2292,9 @@ test('Reveal in Sidebar from a popup of the map expands the folders above the ph
   expect(moving.every(step => step > 0), report).toBe(true);
   expect(moving.at(-1), report).toBeLessThan(Math.max(...moving) / 2);
   expect(frames.slice(highlightedAt).every(frame => frame.top === frames[highlightedAt].top), report).toBe(true);
-  // In the middle of what the sidebar shows: above its horizontal scrollbar, which Windows and Linux draw below the
-  // rows, so that the middle of the sidebar's box is half the scrollbar lower there. macOS draws it over the rows.
-  const distanceFromMiddle = await row.evaluate(rowElement => {
-    const sidebar = rowElement.closest('#home-sidebar-lower-pane');
-    const shownMiddle = sidebar.getBoundingClientRect().top + sidebar.clientTop + sidebar.clientHeight / 2;
-    const rowBox = rowElement.getBoundingClientRect();
-    return Math.abs(rowBox.top + rowBox.height / 2 - shownMiddle);
-  });
-  expect(distanceFromMiddle).toBeLessThan(2);
+  // In the middle of what the sidebar shows, or right below the rows kept at the top where they would cover it there:
+  // with the row in the middle of a sidebar of little height, those of the three folders above the photo are kept.
+  await expectWhereRevealPutsIt(row);
   // The highlight fades, and the row is as before. The selection, and so the map, are as they were.
   await expect(row).toHaveAttribute('data-reveal-highlight', 'fading');
   await expect(row).not.toHaveAttribute('data-reveal-highlight', /./, { timeout: 5000 });
@@ -2334,13 +2350,7 @@ test('Reveal in Sidebar reaches a row far down the sidebar, though the rows abov
   await expect(row).toHaveAttribute('data-reveal-highlight', 'lit');
   expect(await page.evaluate(() => globalThis.grownRows)).toBeGreaterThan(0);
   // In the middle of what the sidebar shows, as in the case above.
-  const distanceFromMiddle = await row.evaluate(rowElement => {
-    const sidebar = rowElement.closest('#home-sidebar-lower-pane');
-    const shownMiddle = sidebar.getBoundingClientRect().top + sidebar.clientTop + sidebar.clientHeight / 2;
-    const rowBox = rowElement.getBoundingClientRect();
-    return Math.abs(rowBox.top + rowBox.height / 2 - shownMiddle);
-  });
-  expect(distanceFromMiddle).toBeLessThan(2);
+  await expectWhereRevealPutsIt(row);
 });
 test('Reveal in Map from a row of the tree opens the photo\'s popup, selecting the photo too when it is not, and ending the chart\'s zoom when that leaves the photo out', async () => {
   await dismissWelcome();
@@ -2892,13 +2902,17 @@ test('Select Previous and Select Next scroll the sidebar to the selected photo\'
 
   // A step to a row that the sidebar shows all of leaves the sidebar where it is, although the row is far from the
   // middle of the sidebar, where Reveal in Sidebar would have scrolled it: here at the top of what the sidebar shows,
-  // whatever the sidebar's height is, which is less on Windows CI's screen.
+  // below the rows that the tree keeps at its top, whatever the sidebar's height is, which is less on Windows CI's
+  // screen.
   await selectOnly(3);
   await expectRepresentedPhotos(1);
-  const { shownTop, fromMiddle } = await row(4).evaluate(element => {
+  // Right below the rows of the folders above it, which the tree keeps at its top, and which cover what is under them.
+  const { shownTop, fromMiddle } = await row(4).evaluate(async element => {
     const pane = element.closest('#home-sidebar-lower-pane');
     const paneTop = () => pane.getBoundingClientRect().top + pane.clientTop;
     pane.scrollTop += element.getBoundingClientRect().top - paneTop() - 1;
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    pane.scrollTop -= parseFloat(pane.style.scrollPaddingTop) || 0;
     const box = element.getBoundingClientRect();
     return { shownTop: pane.scrollTop, fromMiddle: paneTop() + pane.clientHeight / 2 - (box.top + box.height / 2) };
   });
@@ -2918,6 +2932,107 @@ test('Select Previous and Select Next scroll the sidebar to the selected photo\'
   await expect(row(13)).toBeInViewport({ ratio: 1 });
   expect(await scrollTop()).toBeGreaterThan(0);
   await expect(treeCheckbox('photo 13.JPG')).toBeChecked();
+});
+test('the rows of the folders above the rows shown stay at the top of the tree, as many as the settings and the pane allow, and a folder\'s own row comes out below them', async () => {
+  // Eight folders, each in the one before, with ten copies of a photo in the last, and as many in a folder beside it,
+  // below which the tree goes on once the last folder is collapsed.
+  const folders = ['deep', '2017', 'Japan', 'Kansai', 'Hyogo', 'Kobe', 'Harborland', 'Night'];
+  for (const [folder, name] of [[path.join(profile, ...folders), 'photo'], [path.join(profile, ...folders.slice(0, -1), 'Night 2'), 'more']]) {
+    await mkdir(folder, { recursive: true });
+    for (let number = 1; number <= 10; number++)
+      await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, `${name} ${String(number).padStart(2, '0')}.JPG`));
+  }
+  await dismissWelcome();
+  await openFolderWithPicker(path.join(profile, 'deep'));
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('20 files have location data.');
+  const folderRow = name => page.locator('mat-tree mat-tree-node').filter({ has: page.getByText(name, { exact: true }) });
+  for (const name of [...folders.slice(1), 'Night 2']) {
+    await folderRow(name).getByRole('button').click();
+    await expect(folderRow(name)).toHaveAttribute('aria-expanded', 'true');
+  }
+  const pane = page.locator('#home-sidebar-lower-pane');
+  const photoRow = number => page.locator('mat-tree-node.leaf-tree-node').filter({ hasText: `photo ${String(number).padStart(2, '0')}.JPG` });
+  const stickyRows = page.locator('app-dir-tree-view-sticky-rows .sticky-row');
+  /** The rows kept at the top: each folder's name, and in brackets the names of those that the row of the folders left out stands for. */
+  const kept = () => stickyRows.evaluateAll(rows => rows.map(row => row.classList.contains('left-out')
+    ? `[${row.title.split('\n').join(', ')}]` : row.querySelector('bdi').textContent));
+  /** Where a row is from the top of what the pane shows, and how high the rows kept at the top are. */
+  const placeOf = row => row.evaluate(element => {
+    const box = element.closest('#home-sidebar-lower-pane');
+    const top = box.getBoundingClientRect().top + box.clientTop;
+    const kept = [...document.querySelectorAll('app-dir-tree-view-sticky-rows .sticky-row')];
+    return { top: element.getBoundingClientRect().top - top, covered: Math.max(0, ...kept.map(each => each.getBoundingClientRect().bottom - top)) };
+  });
+  /** Scrolls the tree so that the row is at the top of the pane. */
+  const scrollToTop = row => row.evaluate(element => {
+    const box = element.closest('#home-sidebar-lower-pane');
+    box.scrollTop += element.getBoundingClientRect().top - box.getBoundingClientRect().top - box.clientTop;
+  });
+  /** The rows kept for the folders: all of them, or `allowed` − 1 and one for those in the middle. */
+  const expected = (allowed, kept = folders) => {
+    if (kept.length <= allowed) return kept;
+    const head = Math.floor((allowed - 1) / 2);
+    const tail = allowed - 1 - head;
+    return [...kept.slice(0, head), `[${kept.slice(head, kept.length - tail).join(', ')}]`, ...kept.slice(kept.length - tail)];
+  };
+  // At the top of the tree, no row is kept there. The clicks above scrolled the tree to each folder's row, the last
+  // one below the photos of the folder before it, and the rows are placed at the frame after a scroll: without
+  // scrolling back and waiting for it, this check passed or failed by which came first.
+  await pane.evaluate(async box => {
+    box.scrollTop = 0;
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  });
+  await expect(stickyRows).toHaveCount(0);
+
+  // Within the photos of the last folder: at most 7 rows by default, the folders in the middle left out, and fewer in
+  // a pane of less height, as on a CI runner's small screen: at most a third of it, with a photo's row left below.
+  await scrollToTop(photoRow(5));
+  const allowed = await pane.evaluate((box, maximum) => {
+    const photoRowHeight = document.querySelector('mat-tree-node.leaf-tree-node').getBoundingClientRect().height;
+    return Math.max(3, Math.min(maximum, Math.floor(box.clientHeight / 3 / 32), Math.floor((box.clientHeight - photoRowHeight) / 32)));
+  }, 7);
+  await expect.poll(kept).toEqual(expected(allowed));
+  // The pane leaves them out when it scrolls a row into view: the keyboard's focus never goes under them.
+  await expect.poll(() => pane.evaluate(box => box.style.scrollPaddingTop)).toBe(`${allowed * 32}px`);
+  await photoRow(7).evaluate(element => element.focus({ preventScroll: true }));
+  for (const number of [6, 5, 4]) {
+    await page.keyboard.press('ArrowUp');
+    await expect(photoRow(number)).toBeFocused();
+    const { top, covered } = await placeOf(photoRow(number));
+    expect(top).toBeGreaterThanOrEqual(covered - 1);
+  }
+
+  // Scroll to Here, from the menu of the row of the photos' folder, which every setting keeps, scrolls to the folder's
+  // own row, right below the rows of the folders above it, which stay, and lights it up and focuses it, as Reveal does.
+  await scrollToTop(photoRow(5));
+  await expect.poll(kept).toEqual(expected(allowed));
+  await stickyRows.filter({ hasText: 'Night' }).click({ button: 'right' });
+  await untilMenusShown();
+  await expect(page.locator('.context-menu-button')).toHaveText(['Scroll to Here', 'Select Only This', 'Open', 'Open Folder']);
+  await page.getByRole('menuitem', { name: 'Scroll to Here' }).click();
+  await expect(folderRow('Night')).toHaveAttribute('data-reveal-highlight', /./);
+  await expect(folderRow('Night')).toBeFocused();
+  const above = folders.slice(0, -1);
+  await expect.poll(kept).toEqual(expected(allowed, above));
+  expect(Math.round((await placeOf(folderRow('Night'))).top)).toBe(Math.min(above.length, allowed) * 32);
+
+  // A setting of at most 3 rows keeps the opened folder, the row of the folders left out and the last folder, from
+  // the Settings dialog's Save on, and is saved.
+  await settings('Appearance');
+  await page.locator('mat-form-field.sticky-folders-maximum').click();
+  await page.getByRole('option', { name: '3', exact: true }).click();
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(page.locator('app-settings-dialog')).toHaveCount(0);
+  const userData = await app.evaluate(({ app }) => app.getPath('userData'));
+  await expect.poll(() => savedSetting(userData, ['UserSettings', 'StickyFolderRowsMaximum'])).toBe('3');
+  await scrollToTop(photoRow(5));
+  await expect.poll(kept).toEqual(['deep', '[2017, Japan, Kansai, Hyogo, Kobe, Harborland]', 'Night']);
+
+  // The chevron of a row kept at the top collapses its folder, whose own row comes out below the rows above it.
+  await stickyRows.filter({ hasText: 'Night' }).locator('.chevron').click();
+  await expect(folderRow('Night')).toHaveAttribute('aria-expanded', 'false');
+  await expect(photoRow(5)).toHaveCount(0);
+  await expect.poll(async () => Math.round((await placeOf(folderRow('Night'))).top)).toBe(3 * 32);
 });
 test('the sort menu orders the tree by name and by shooting time, shows its choice, and keeps it across a restart', async () => {
   // Photos named against the order they were taken in (Apple Park 2019, Kobe 2017, Unga 2015, Gold Coast 2013), so

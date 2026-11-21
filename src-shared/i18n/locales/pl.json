@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Otwarty folder - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Przewiń tutaj",
       "selectOnlyThisFile": "Zaznacz tylko ten plik",
       "selectOnlyThisFolder": "Zaznacz tylko ten folder",
       "revealInMap": "Pokaż na mapie",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Wygląd",
-      "showStatusBar": "Pokaż pasek stanu"
+      "showStatusBar": "Pokaż pasek stanu",
+      "stickyFolders": {
+        "title": "Foldery przypięte u góry drzewa",
+        "description": "Podczas przewijania drzewa folderów foldery nad wyświetlanymi wierszami pozostają u góry. Otwarty folder i folder tych wierszy pozostają zawsze.",
+        "maximum": "Maksymalna liczba wierszy",
+        "leftOut": "Gdy folderów jest więcej niż wierszy, pomiń:",
+        "middle": "Foldery w środku",
+        "nearOpenedFolder": "Foldery blisko otwartego folderu",
+        "nearPhotos": "Foldery blisko zdjęć"
+      }
     },
     "dateTime": {
       "title": "Format daty i czasu",

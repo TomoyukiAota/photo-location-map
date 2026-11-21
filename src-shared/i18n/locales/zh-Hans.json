@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "已打开的文件夹 - {{path}}",
     "contextMenu": {
+      "scrollToHere": "滚动到此处",
       "selectOnlyThisFile": "仅选择此文件",
       "selectOnlyThisFolder": "仅选择此文件夹",
       "revealInMap": "在地图上显示",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "外观",
-      "showStatusBar": "显示状态栏"
+      "showStatusBar": "显示状态栏",
+      "stickyFolders": {
+        "title": "固定在树顶部的文件夹",
+        "description": "滚动文件夹树时，所显示行上方的文件夹会停留在顶部。已打开的文件夹和这些行所在的文件夹始终保留。",
+        "maximum": "最大行数",
+        "leftOut": "文件夹多于行数时，省略：",
+        "middle": "中间的文件夹",
+        "nearOpenedFolder": "靠近已打开文件夹的文件夹",
+        "nearPhotos": "靠近照片的文件夹"
+      }
     },
     "dateTime": {
       "title": "日期和时间格式",

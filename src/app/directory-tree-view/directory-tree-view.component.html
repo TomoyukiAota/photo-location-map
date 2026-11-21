@@ -3,6 +3,8 @@
   letter says, so that a name in Latin letters keeps its order in a language written from right to left, and a name in
   Arabic or Hebrew letters in the others.
 -->
+<!-- The rows of the folders above the rows shown, kept at the top while the tree is scrolled. -->
+<app-dir-tree-view-sticky-rows [host]="stickyRowsHost" />
 <mat-tree #tree="matTree" [dataSource]="treeData()" [childrenAccessor]="childrenAccessor">
   <!--
     A file's row, which a revealed photo highlights for a moment, by an attribute set on the row rather than bound

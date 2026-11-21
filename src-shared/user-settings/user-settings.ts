@@ -6,6 +6,13 @@ import { restartApp } from '../process/restart-app.js';
 import { UserDataStorage } from '../user-data-storage/user-data-storage.js';
 import { UserDataStoragePath } from '../user-data-storage/user-data-stroage-path.js';
 import { BooleanSetting, BooleanSettingType } from './boolean-setting.js';
+import {
+  defaultStickyFolderRowsLeftOut,
+  defaultStickyFolderRowsMaximum,
+  isStickyFolderRowsLeftOut,
+  StickyFolderRowsLeftOut,
+  stickyFolderRowsMaximumOf,
+} from './sticky-folder-rows.js';
 import { defaultThumbnailQuality, isThumbnailQuality, ThumbnailQuality } from './thumbnail-quality.js';
 import DateFormatType = DateTimeFormat.ForUser.DateFormatType;
 import ClockSystemFormatType = DateTimeFormat.ForUser.ClockSystemFormatType;
@@ -18,6 +25,10 @@ interface UserSettings {
   language: LanguageSetting;
   /** The quality of the thumbnails of HEIF photos (thumbnail-quality.ts). */
   thumbnailQuality: ThumbnailQuality;
+  /** The most rows of folders that the folder tree keeps at its top while it is scrolled (sticky-folder-rows.ts). */
+  stickyFolderRowsMaximum: number;
+  /** Which folders those rows leave out when there are more folders than rows (sticky-folder-rows.ts). */
+  stickyFolderRowsLeftOut: StickyFolderRowsLeftOut;
 }
 
 export class CurrentUserSettings implements UserSettings {
@@ -25,7 +36,9 @@ export class CurrentUserSettings implements UserSettings {
               public dateFormat: DateFormatType,
               public clockSystemFormat: ClockSystemFormatType,
               public language: LanguageSetting,
-              public thumbnailQuality: ThumbnailQuality) {}
+              public thumbnailQuality: ThumbnailQuality,
+              public stickyFolderRowsMaximum: number,
+              public stickyFolderRowsLeftOut: StickyFolderRowsLeftOut) {}
 }
 
 export class UserSettingsToBeSaved implements UserSettings {
@@ -34,6 +47,8 @@ export class UserSettingsToBeSaved implements UserSettings {
   public clockSystemFormat: ClockSystemFormatType;
   public language: LanguageSetting;
   public thumbnailQuality: ThumbnailQuality;
+  public stickyFolderRowsMaximum: number;
+  public stickyFolderRowsLeftOut: StickyFolderRowsLeftOut;
 }
 
 const loadShowStatusBar: (() => BooleanSettingType) = () => {
@@ -85,13 +100,30 @@ const loadThumbnailQuality: (() => ThumbnailQuality) = () => {
   return isThumbnailQuality(loaded) ? loaded : defaultThumbnailQuality;
 };
 
+/** The saved most rows of the folders at the top of the folder tree, or the default when none, or no valid one, is saved. */
+const loadStickyFolderRowsMaximum: (() => number) = () => {
+  const loaded: string = UserDataStorage.readOrDefault(
+    UserDataStoragePath.UserSettings.StickyFolderRowsMaximum, String(defaultStickyFolderRowsMaximum));
+  return stickyFolderRowsMaximumOf(loaded) ?? defaultStickyFolderRowsMaximum;
+};
+
+/** The saved choice of the folders that those rows leave out, or the default when none, or no valid one, is saved. */
+const loadStickyFolderRowsLeftOut: (() => StickyFolderRowsLeftOut) = () => {
+  const loaded: string = UserDataStorage.readOrDefault(
+    UserDataStoragePath.UserSettings.StickyFolderRowsLeftOut, defaultStickyFolderRowsLeftOut);
+  return isStickyFolderRowsLeftOut(loaded) ? loaded : defaultStickyFolderRowsLeftOut;
+};
+
 const loadUserSettings: (() => CurrentUserSettings) = () => {
   const showStatusBar = loadShowStatusBar();
   const dateFormat = loadDateFormat();
   const clockSystemFormat = loadClockSystemFormat();
   const language = loadLanguage();
   const thumbnailQuality = loadThumbnailQuality();
-  const userSettings = new CurrentUserSettings(showStatusBar, dateFormat, clockSystemFormat, language, thumbnailQuality);
+  const stickyFolderRowsMaximum = loadStickyFolderRowsMaximum();
+  const stickyFolderRowsLeftOut = loadStickyFolderRowsLeftOut();
+  const userSettings = new CurrentUserSettings(showStatusBar, dateFormat, clockSystemFormat, language, thumbnailQuality,
+    stickyFolderRowsMaximum, stickyFolderRowsLeftOut);
   Logger.info(`Loaded user settings ${JSON.stringify(userSettings)}`);
   return userSettings;
 };
@@ -128,6 +160,8 @@ export const saveUserSetting: ((settings: UserSettingsToBeSaved) => Promise<void
     UserDataStorage.write(UserDataStoragePath.UserSettings.ClockSystemFormat, settings.clockSystemFormat),
     UserDataStorage.write(UserDataStoragePath.UserSettings.Language, settings.language),
     UserDataStorage.write(UserDataStoragePath.UserSettings.ThumbnailQuality, settings.thumbnailQuality),
+    UserDataStorage.write(UserDataStoragePath.UserSettings.StickyFolderRowsMaximum, String(settings.stickyFolderRowsMaximum)),
+    UserDataStorage.write(UserDataStoragePath.UserSettings.StickyFolderRowsLeftOut, settings.stickyFolderRowsLeftOut),
   ]);
   Logger.info(`Saved user settings ${JSON.stringify(settings)}`);
   if (settings.language !== savedLanguage) {

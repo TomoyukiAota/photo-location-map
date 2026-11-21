@@ -9,6 +9,8 @@ import { BooleanSetting } from '../../../src-shared/user-settings/boolean-settin
 import { currentUserSettings } from '../../../src-shared/user-settings/user-settings';
 import { HeifThumbnailService } from '../heif-thumbnail/heif-thumbnail.service';
 import { ConfirmDialogService } from '../shared/confirm-dialog/confirm-dialog.service';
+import { DirTreeViewStickyRowsService } from '../directory-tree-view/dir-tree-view-sticky-rows/dir-tree-view-sticky-rows.service';
+import { AppearanceSettingsChangedParameter } from './appearance-settings/appearance-settings-changed-parameter';
 import { AppearanceSettingsComponent } from './appearance-settings/appearance-settings.component';
 import { CacheSettingsComponent } from './cache-settings/cache-settings.component';
 import { DateTimeSettingsComponent } from './date-time-settings/date-time-settings.component';
@@ -44,6 +46,13 @@ describe('SettingsDialogComponent', () => {
   const applyThumbnailQuality = vi.fn(async () => false);
   const settingsInUse = { ...currentUserSettings };
   const otherShowStatusBar = settingsInUse.showStatusBar === BooleanSetting.TrueValue ? BooleanSetting.FalseValue : BooleanSetting.TrueValue;
+  /** What the Appearance tab tells the dialog, all of its settings: those in use, but for `changed`. */
+  const appearance = (changed: Partial<AppearanceSettingsChangedParameter> = {}): AppearanceSettingsChangedParameter => ({
+    showStatusBar: settingsInUse.showStatusBar,
+    stickyFolderRowsMaximum: settingsInUse.stickyFolderRowsMaximum,
+    stickyFolderRowsLeftOut: settingsInUse.stickyFolderRowsLeftOut,
+    ...changed,
+  });
   const otherDateFormat = DateTimeFormat.ForUser.DateFormat_List.find(format => format !== settingsInUse.dateFormat);
   const otherClockSystemFormat = DateTimeFormat.ForUser.ClockSystemFormat_List.find(format => format !== settingsInUse.clockSystemFormat);
   let fixture: ComponentFixture<SettingsDialogComponent>;
@@ -108,12 +117,12 @@ describe('SettingsDialogComponent', () => {
     await createDialog();
     expect(saveButton().disabled).toBe(true);
 
-    settingsChanged.appearanceSettingsChanged.next({ showStatusBar: otherShowStatusBar });
+    settingsChanged.appearanceSettingsChanged.next(appearance({ showStatusBar: otherShowStatusBar }));
     await fixture.whenStable();
     expect(saveButton().disabled).toBe(false);
     expect(isRestartNoticeShown()).toBe(false);
 
-    settingsChanged.appearanceSettingsChanged.next({ showStatusBar: settingsInUse.showStatusBar });
+    settingsChanged.appearanceSettingsChanged.next(appearance());
     await fixture.whenStable();
     expect(saveButton().disabled).toBe(true);
   });
@@ -166,7 +175,7 @@ describe('SettingsDialogComponent', () => {
 
   it('saves a new status bar setting without a restart and closes', async () => {
     await createDialog();
-    settingsChanged.appearanceSettingsChanged.next({ showStatusBar: otherShowStatusBar });
+    settingsChanged.appearanceSettingsChanged.next(appearance({ showStatusBar: otherShowStatusBar }));
     await fixture.whenStable();
 
     saveButton().click();
@@ -174,6 +183,34 @@ describe('SettingsDialogComponent', () => {
     expect(currentUserSettings.showStatusBar).toBe(otherShowStatusBar);
     expect(UserDataStorage.read(UserDataStoragePath.UserSettings.ShowStatusBar)).toBe(otherShowStatusBar);
     expect(close).toHaveBeenCalledTimes(1);
+  });
+
+  it('saves the rows kept at the top of the folder tree without a restart, and the tree takes them at once', async () => {
+    await createDialog();
+    const stickyRows = TestBed.inject(DirTreeViewStickyRowsService);
+    const otherMaximum = settingsInUse.stickyFolderRowsMaximum === 4 ? 5 : 4;
+    settingsChanged.appearanceSettingsChanged.next(appearance({ stickyFolderRowsMaximum: otherMaximum }));
+    await fixture.whenStable();
+    expect(saveButton().disabled).toBe(false);
+    expect(isRestartNoticeShown()).toBe(false);
+    settingsChanged.appearanceSettingsChanged.next(appearance());
+    await fixture.whenStable();
+    expect(saveButton().disabled).toBe(true);
+
+    settingsChanged.appearanceSettingsChanged.next(appearance({ stickyFolderRowsMaximum: otherMaximum, stickyFolderRowsLeftOut: 'nearPhotos' }));
+    await fixture.whenStable();
+    saveButton().click();
+
+    expect(currentUserSettings.stickyFolderRowsMaximum).toBe(otherMaximum);
+    expect(currentUserSettings.stickyFolderRowsLeftOut).toBe('nearPhotos');
+    expect(UserDataStorage.read(UserDataStoragePath.UserSettings.StickyFolderRowsMaximum)).toBe(String(otherMaximum));
+    expect(UserDataStorage.read(UserDataStoragePath.UserSettings.StickyFolderRowsLeftOut)).toBe('nearPhotos');
+    expect(stickyRows.maximum()).toBe(otherMaximum);
+    expect(stickyRows.leftOut()).toBe('nearPhotos');
+    expect(close).toHaveBeenCalledTimes(1);
+    // The settings in use again, for the tests after this one.
+    Object.assign(currentUserSettings, settingsInUse);
+    stickyRows.applySettings();
   });
 
   it('asks before the restart, and saves nothing when it is declined', async () => {

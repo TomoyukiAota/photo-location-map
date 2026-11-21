@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Otevřená složka - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Posunout zobrazení k této složce",
       "selectOnlyThisFile": "Vybrat jen tento soubor",
       "selectOnlyThisFolder": "Vybrat jen tuto složku",
       "revealInMap": "Zobrazit na mapě",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Vzhled",
-      "showStatusBar": "Zobrazit stavový řádek"
+      "showStatusBar": "Zobrazit stavový řádek",
+      "stickyFolders": {
+        "title": "Složky připnuté nahoře ve stromu",
+        "description": "Při posouvání stromu složek zůstávají složky nad zobrazenými řádky nahoře. Otevřená složka a složka těchto řádků zůstávají vždy.",
+        "maximum": "Maximální počet řádků",
+        "leftOut": "Pokud je složek více než řádků, vynechat:",
+        "middle": "Složky uprostřed",
+        "nearOpenedFolder": "Složky blízko otevřené složky",
+        "nearPhotos": "Složky blízko fotek"
+      }
     },
     "dateTime": {
       "title": "Formát data a času",

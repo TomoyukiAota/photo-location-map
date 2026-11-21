@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Açılan klasör - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Buraya kaydır",
       "selectOnlyThisFile": "Yalnızca bu dosyayı seç",
       "selectOnlyThisFolder": "Yalnızca bu klasörü seç",
       "revealInMap": "Haritada göster",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Görünüm",
-      "showStatusBar": "Durum çubuğunu göster"
+      "showStatusBar": "Durum çubuğunu göster",
+      "stickyFolders": {
+        "title": "Ağacın üstüne sabitlenen klasörler",
+        "description": "Klasör ağacı kaydırılırken gösterilen satırların üstündeki klasörler yukarıda kalır. Açılan klasör ve bu satırların klasörü her zaman kalır.",
+        "maximum": "En fazla satır sayısı",
+        "leftOut": "Satırdan çok klasör olduğunda dışarıda bırak:",
+        "middle": "Ortadaki klasörler",
+        "nearOpenedFolder": "Açılan klasöre yakın klasörler",
+        "nearPhotos": "Fotoğraflara yakın klasörler"
+      }
     },
     "dateTime": {
       "title": "Tarih ve saat biçimi",

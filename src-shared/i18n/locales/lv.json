@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Atvērtā mape - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Ritināt līdz šejienei",
       "selectOnlyThisFile": "Atlasīt tikai šo failu",
       "selectOnlyThisFolder": "Atlasīt tikai šo mapi",
       "revealInMap": "Rādīt kartē",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Izskats",
-      "showStatusBar": "Rādīt statusa joslu"
+      "showStatusBar": "Rādīt statusa joslu",
+      "stickyFolders": {
+        "title": "Koka augšā piespraustās mapes",
+        "description": "Kamēr mapju koks tiek ritināts, mapes virs parādītajām rindām paliek augšā. Atvērtā mape un šo rindu mape vienmēr paliek.",
+        "maximum": "Maksimālais rindu skaits",
+        "leftOut": "Ja mapju ir vairāk nekā rindu, izlaist:",
+        "middle": "Mapes vidū",
+        "nearOpenedFolder": "Mapes, kas ir tuvu atvērtajai mapei",
+        "nearPhotos": "Mapes, kas ir tuvu fotoattēliem"
+      }
     },
     "dateTime": {
       "title": "Datuma un laika formāts",

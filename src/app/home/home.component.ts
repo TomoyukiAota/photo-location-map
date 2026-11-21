@@ -13,6 +13,7 @@ import { DateTimeTakenChartComponent } from '../date-time-taken-chart/date-time-
 import { ThumbnailGenerationStatusBarComponent } from '../thumbnail-generation/status-bar/component/thumbnail-generation-status-bar.component';
 import { LoadedFilesStatusBarComponent } from '../loaded-files-status-bar/component/loaded-files-status-bar.component';
 import { MoreOptionsMenuComponent } from '../photo-info-viewer/more-options-menu/more-options-menu.component';
+import { DirTreeViewStickyRowsService } from '../directory-tree-view/dir-tree-view-sticky-rows/dir-tree-view-sticky-rows.service';
 
 @Component({
   selector: 'app-home',
@@ -26,6 +27,8 @@ import { MoreOptionsMenuComponent } from '../photo-info-viewer/more-options-menu
 export class HomeComponent implements AfterViewInit {
   public thumbnailGenerationStatusBarService = inject(ThumbnailGenerationStatusBarService);
   public loadedFilesStatusBarService = inject(LoadedFilesStatusBarService);
+  /** The rows kept at the top of the folder tree, which cover the top of the sidebar's lower pane. */
+  public stickyRowsService = inject(DirTreeViewStickyRowsService);
   private leafletMapForceRenderService = inject(LeafletMapForceRenderService);
 
   private sidebarSplitInstance: Split.Instance;

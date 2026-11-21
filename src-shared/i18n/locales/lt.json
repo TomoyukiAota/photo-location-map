@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Atidarytas aplankas - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Slinkti iki čia",
       "selectOnlyThisFile": "Pasirinkti tik šį failą",
       "selectOnlyThisFolder": "Pasirinkti tik šį aplanką",
       "revealInMap": "Rodyti žemėlapyje",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Išvaizda",
-      "showStatusBar": "Rodyti būsenos juostą"
+      "showStatusBar": "Rodyti būsenos juostą",
+      "stickyFolders": {
+        "title": "Medžio viršuje prisegti aplankai",
+        "description": "Kol aplankų medis slenkamas, virš rodomų eilučių esantys aplankai lieka viršuje. Atidarytas aplankas ir šių eilučių aplankas visada lieka.",
+        "maximum": "Didžiausias eilučių skaičius",
+        "leftOut": "Kai aplankų yra daugiau nei eilučių, praleisti:",
+        "middle": "Aplankai viduryje",
+        "nearOpenedFolder": "Aplankai šalia atidaryto aplanko",
+        "nearPhotos": "Aplankai šalia nuotraukų"
+      }
     },
     "dateTime": {
       "title": "Datos ir laiko formatas",

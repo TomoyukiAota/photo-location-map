@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Megnyitott mappa - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Görgetés idáig",
       "selectOnlyThisFile": "Csak ennek a fájlnak a kijelölése",
       "selectOnlyThisFolder": "Csak ennek a mappának a kijelölése",
       "revealInMap": "Megjelenítés a térképen",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Megjelenés",
-      "showStatusBar": "Állapotsor megjelenítése"
+      "showStatusBar": "Állapotsor megjelenítése",
+      "stickyFolders": {
+        "title": "A fa tetején rögzített mappák",
+        "description": "A mappafa görgetése közben a megjelenített sorok feletti mappák fent maradnak. A megnyitott mappa és ezeknek a soroknak a mappája mindig megmarad.",
+        "maximum": "Sorok legnagyobb száma",
+        "leftOut": "Ha több mappa van, mint sor, kihagyandók:",
+        "middle": "A középen lévő mappák",
+        "nearOpenedFolder": "A megnyitott mappához közeli mappák",
+        "nearPhotos": "A fotókhoz közeli mappák"
+      }
     },
     "dateTime": {
       "title": "Dátum- és időformátum",

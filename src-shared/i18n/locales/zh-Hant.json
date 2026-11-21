@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "已開啟的資料夾 - {{path}}",
     "contextMenu": {
+      "scrollToHere": "捲動到此處",
       "selectOnlyThisFile": "僅選取此檔案",
       "selectOnlyThisFolder": "僅選取此資料夾",
       "revealInMap": "在地圖上顯示",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "外觀",
-      "showStatusBar": "顯示狀態列"
+      "showStatusBar": "顯示狀態列",
+      "stickyFolders": {
+        "title": "固定在樹狀結構頂端的資料夾",
+        "description": "捲動資料夾樹狀結構時，所顯示列上方的資料夾會停留在頂端。已開啟的資料夾和這些列所在的資料夾一律保留。",
+        "maximum": "最大列數",
+        "leftOut": "資料夾多於列數時，省略：",
+        "middle": "中間的資料夾",
+        "nearOpenedFolder": "靠近已開啟資料夾的資料夾",
+        "nearPhotos": "靠近照片的資料夾"
+      }
     },
     "dateTime": {
       "title": "日期與時間格式",

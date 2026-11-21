@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Öppnad mapp - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Rulla hit",
       "selectOnlyThisFile": "Markera endast den här filen",
       "selectOnlyThisFolder": "Markera endast den här mappen",
       "revealInMap": "Visa på kartan",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Utseende",
-      "showStatusBar": "Visa statusfältet"
+      "showStatusBar": "Visa statusfältet",
+      "stickyFolders": {
+        "title": "Mappar fästa överst i trädet",
+        "description": "Medan mappträdet rullas stannar mapparna ovanför de visade raderna överst. Den öppnade mappen och mappen för dessa rader stannar alltid kvar.",
+        "maximum": "Högsta antal rader",
+        "leftOut": "När det finns fler mappar än rader, utelämna:",
+        "middle": "Mapparna i mitten",
+        "nearOpenedFolder": "Mapparna nära den öppnade mappen",
+        "nearPhotos": "Mapparna nära bilderna"
+      }
     },
     "dateTime": {
       "title": "Datum- och tidsformat",

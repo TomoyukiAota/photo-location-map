@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Dossier ouvert - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Faire défiler jusqu’ici",
       "selectOnlyThisFile": "Sélectionner uniquement ce fichier",
       "selectOnlyThisFolder": "Sélectionner uniquement ce dossier",
       "revealInMap": "Afficher sur la carte",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Apparence",
-      "showStatusBar": "Afficher la barre d’état"
+      "showStatusBar": "Afficher la barre d’état",
+      "stickyFolders": {
+        "title": "Dossiers fixés en haut de l’arborescence",
+        "description": "Pendant le défilement de l’arborescence des dossiers, les dossiers au-dessus des lignes affichées restent en haut. Le dossier ouvert et le dossier de ces lignes sont toujours conservés.",
+        "maximum": "Nombre maximal de lignes",
+        "leftOut": "Quand il y a plus de dossiers que de lignes, omettre\u00a0:",
+        "middle": "Les dossiers du milieu",
+        "nearOpenedFolder": "Les dossiers proches du dossier ouvert",
+        "nearPhotos": "Les dossiers proches des photos"
+      }
     },
     "dateTime": {
       "title": "Format de la date et de l’heure",

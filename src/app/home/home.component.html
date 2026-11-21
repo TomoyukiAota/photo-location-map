@@ -3,7 +3,11 @@
     <div id="home-sidebar-upper-pane" #sidebarUpperPane>
       <app-sidebar-upper-pane></app-sidebar-upper-pane>
     </div>
-    <div id="home-sidebar-lower-pane">
+    <!--
+      A row that the keyboard focuses is scrolled into view below the rows that the folder tree keeps at its top,
+      rather than under them (DirTreeViewStickyRowsComponent).
+    -->
+    <div id="home-sidebar-lower-pane" [style.scroll-padding-top.px]="stickyRowsService.coveredHeight()">
       <app-sidebar-lower-pane></app-sidebar-lower-pane>
     </div>
   </div>

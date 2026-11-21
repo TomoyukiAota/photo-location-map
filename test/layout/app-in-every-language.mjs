@@ -6,7 +6,7 @@
 // For each language, on an empty profile of a computer in that language, it goes through the screens that show
 // texts: the Language dialog, the Welcome dialog, the hint over the window while files are dragged over it, the
 // question that a dropped folder asks, the home view without and
-// with a folder of photos (in a window of 1200x800 and of 800x600), a photo's popup with its menu and the menu's submenus, the tree's menu, the Sort menu and its info dialog, the
+// with a folder of photos (in a window of 1200x800 and of 800x600), a photo's popup with its menu and the menu's submenus, the tree's menu, the rows that the tree keeps at its top with the menu of one of them, the Sort menu and its info dialog, the
 // chart's menu, its message for a duration that it cannot show and its button for the photos within a zoom, the date of
 // the map's layers of a past date, a region on the map, the tabs of the Settings dialog with the choices of the clock's
 // field, the question before a restart, the About box, the status bar while the thumbnails of HEIF files are made, the
@@ -328,6 +328,27 @@ for (const code of codes) {
       await page.waitForSelector('.mat-mdc-menu-panel');
       await screen('tree-menu', '.mat-mdc-menu-panel', '#home-left-sidebar');
       await closeMenus();
+    });
+    await step('tree-sticky-rows', async () => {
+      // The rows of the folders above the rows shown, which the tree keeps at its top once it is scrolled into a folder,
+      // and the menu of one of them, with Scroll to Here.
+      const folderRow = name => page.locator('mat-tree mat-tree-node').filter({ has: page.getByText(name, { exact: true }) });
+      const expanded = ['Apple Park', 'Gold Coast', 'Kobe', 'Unga'];
+      for (const name of expanded) await folderRow(name).getByRole('button').click();
+      await page.locator('mat-tree-node.leaf-tree-node').filter({ hasText: 'IMG_4676.JPG' }).evaluate(element => {
+        const box = element.closest('#home-sidebar-lower-pane');
+        box.scrollTop += element.getBoundingClientRect().top - box.getBoundingClientRect().top - box.clientTop;
+      });
+      const kept = page.locator('app-dir-tree-view-sticky-rows .sticky-row');
+      await kept.nth(1).waitFor();
+      await kept.nth(1).click({ button: 'right' });
+      await page.waitForSelector('.mat-mdc-menu-panel');
+      // The window, as the menu is over the map beside the sidebar.
+      await screen('tree-sticky-rows', '.mat-mdc-menu-panel, app-dir-tree-view-sticky-rows');
+      await closeMenus();
+      // The tree as it was, for the steps after this one.
+      await page.locator('#home-sidebar-lower-pane').evaluate(box => box.scrollTop = 0);
+      for (const name of expanded) await folderRow(name).getByRole('button').click();
     });
     await step('sort-menu', async () => {
       // The menu's one item opens the Sort menu, whose second item has the button of the info dialog.

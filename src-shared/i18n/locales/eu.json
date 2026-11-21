@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Irekitako karpeta - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Korritu hona arte",
       "selectOnlyThisFile": "Hautatu fitxategi hau bakarrik",
       "selectOnlyThisFolder": "Hautatu karpeta hau bakarrik",
       "revealInMap": "Erakutsi mapan",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Itxura",
-      "showStatusBar": "Erakutsi egoera-barra"
+      "showStatusBar": "Erakutsi egoera-barra",
+      "stickyFolders": {
+        "title": "Zuhaitzaren goialdean finkatutako karpetak",
+        "description": "Karpeten zuhaitza korritzen den bitartean, erakutsitako errenkaden gaineko karpetak goian geratzen dira. Irekitako karpeta eta errenkada horien karpeta beti mantentzen dira.",
+        "maximum": "Gehieneko errenkada kopurua",
+        "leftOut": "Errenkadak baino karpeta gehiago daudenean, kanpoan utzi:",
+        "middle": "Erdiko karpetak",
+        "nearOpenedFolder": "Irekitako karpetatik hurbil dauden karpetak",
+        "nearPhotos": "Argazkietatik hurbil dauden karpetak"
+      }
     },
     "dateTime": {
       "title": "Dataren eta orduaren formatua",

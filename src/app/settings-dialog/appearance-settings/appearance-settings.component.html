@@ -5,3 +5,32 @@
     <label class="show-status-bar-label">{{ 'settings.appearance.showStatusBar' | t }}</label>
   </mat-checkbox>
 </div>
+<!-- The rows of the folders that the folder tree keeps at its top while it is scrolled (DirTreeViewStickyRowsComponent). -->
+<div class="sticky-folders-title">{{ 'settings.appearance.stickyFolders.title' | t }}</div>
+<div class="setting-container sticky-folders">
+  <div class="sticky-folders-description">{{ 'settings.appearance.stickyFolders.description' | t }}</div>
+  <!-- As wide as its label and its widest choice need (settings-styles). -->
+  <div class="dropdown-box"
+       [attr.data-label]="'settings.appearance.stickyFolders.maximum' | t"
+       [attr.data-choices]="maximumChoicesText">
+    <mat-form-field class="sticky-folders-maximum">
+      <mat-label>{{ 'settings.appearance.stickyFolders.maximum' | t }}</mat-label>
+      <mat-select [(value)]="selectedMaximum" (selectionChange)="notifySettingsChanged()">
+        @for (maximum of maximumChoices; track maximum) {
+          <mat-option [value]="maximum">{{ maximum }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div class="sticky-folders-left-out-label" id="sticky-folders-left-out-label">
+    {{ 'settings.appearance.stickyFolders.leftOut' | t }}
+  </div>
+  <mat-radio-group class="sticky-folders-left-out-choices"
+                   aria-labelledby="sticky-folders-left-out-label"
+                   [(ngModel)]="selectedLeftOut"
+                   (change)="notifySettingsChanged()">
+    @for (choice of leftOutChoices; track choice.value) {
+      <mat-radio-button class="sticky-folders-left-out-choice" [value]="choice.value">{{ choice.label | t }}</mat-radio-button>
+    }
+  </mat-radio-group>
+</div>

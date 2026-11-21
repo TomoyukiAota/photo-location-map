@@ -66,4 +66,13 @@ describe('DirTreeViewFolderCheckboxAndNameComponent', () => {
     expect(element.querySelector('.non-selectable-node .disabled-checkbox-alternative')).not.toBeNull();
     expect(element.querySelector('.non-selectable-node bdi').textContent).toBe('movies');
   });
+
+  it('leaves the checkbox out of the order of the Tab key in a copy of the row, as one kept at the top of the tree', async () => {
+    await show(node('/photos', true, [node('/photos/a.jpg', true)]));
+    const input = () => element.querySelector<HTMLInputElement>('mat-checkbox input');
+    expect(input().tabIndex).toBe(0);
+    fixture.componentRef.setInput('focusable', false);
+    await fixture.whenStable();
+    expect(input().tabIndex).toBe(-1);
+  });
 });

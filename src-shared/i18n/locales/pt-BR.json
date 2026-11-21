@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Pasta aberta - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Rolar até aqui",
       "selectOnlyThisFile": "Selecionar apenas este arquivo",
       "selectOnlyThisFolder": "Selecionar apenas esta pasta",
       "revealInMap": "Mostrar no mapa",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Aparência",
-      "showStatusBar": "Mostrar a barra de status"
+      "showStatusBar": "Mostrar a barra de status",
+      "stickyFolders": {
+        "title": "Pastas fixas no topo da árvore",
+        "description": "Enquanto a árvore de pastas é rolada, as pastas acima das linhas exibidas ficam no topo. A pasta aberta e a pasta dessas linhas são sempre mantidas.",
+        "maximum": "Número máximo de linhas",
+        "leftOut": "Quando houver mais pastas do que linhas, omitir:",
+        "middle": "As pastas do meio",
+        "nearOpenedFolder": "As pastas próximas da pasta aberta",
+        "nearPhotos": "As pastas próximas das fotos"
+      }
     },
     "dateTime": {
       "title": "Formato de data e hora",

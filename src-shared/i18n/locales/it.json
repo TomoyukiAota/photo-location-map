@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Cartella aperta - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Scorri fino a qui",
       "selectOnlyThisFile": "Seleziona solo questo file",
       "selectOnlyThisFolder": "Seleziona solo questa cartella",
       "revealInMap": "Mostra sulla mappa",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Aspetto",
-      "showStatusBar": "Mostra la barra di stato"
+      "showStatusBar": "Mostra la barra di stato",
+      "stickyFolders": {
+        "title": "Cartelle fisse in cima all’albero",
+        "description": "Mentre l’albero delle cartelle scorre, le cartelle sopra le righe visualizzate restano in cima. La cartella aperta e la cartella di quelle righe restano sempre.",
+        "maximum": "Numero massimo di righe",
+        "leftOut": "Se ci sono più cartelle che righe, ometti:",
+        "middle": "Le cartelle al centro",
+        "nearOpenedFolder": "Le cartelle vicine alla cartella aperta",
+        "nearPhotos": "Le cartelle vicine alle foto"
+      }
     },
     "dateTime": {
       "title": "Formato di data e ora",

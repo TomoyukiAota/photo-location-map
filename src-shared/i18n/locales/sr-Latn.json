@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Otvorena fascikla - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Pomeri prikaz do ove fascikle",
       "selectOnlyThisFile": "Izaberi samo ovu datoteku",
       "selectOnlyThisFolder": "Izaberi samo ovu fasciklu",
       "revealInMap": "Prikaži na mapi",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Izgled",
-      "showStatusBar": "Prikaži statusnu traku"
+      "showStatusBar": "Prikaži statusnu traku",
+      "stickyFolders": {
+        "title": "Fascikle zakačene na vrhu stabla",
+        "description": "Dok se stablo fascikli pomera, fascikle iznad prikazanih redova ostaju na vrhu. Otvorena fascikla i fascikla tih redova uvek ostaju.",
+        "maximum": "Najveći broj redova",
+        "leftOut": "Kada ima više fascikli nego redova, izostavi:",
+        "middle": "Fascikle u sredini",
+        "nearOpenedFolder": "Fascikle blizu otvorene fascikle",
+        "nearPhotos": "Fascikle blizu fotografija"
+      }
     },
     "dateTime": {
       "title": "Format datuma i vremena",

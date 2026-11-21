@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "התיקייה שנפתחה – {{path}}",
     "contextMenu": {
+      "scrollToHere": "גלילה עד לכאן",
       "selectOnlyThisFile": "בחירת קובץ זה בלבד",
       "selectOnlyThisFolder": "בחירת תיקייה זו בלבד",
       "revealInMap": "הצגה על המפה",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "מראה",
-      "showStatusBar": "הצגת שורת המצב"
+      "showStatusBar": "הצגת שורת המצב",
+      "stickyFolders": {
+        "title": "תיקיות מוצמדות לראש העץ",
+        "description": "בזמן גלילת עץ התיקיות, התיקיות שמעל השורות המוצגות נשארות למעלה. התיקייה שנפתחה והתיקייה של שורות אלה נשארות תמיד.",
+        "maximum": "מספר השורות המרבי",
+        "leftOut": "כשיש יותר תיקיות משורות, להשמיט את:",
+        "middle": "התיקיות שבאמצע",
+        "nearOpenedFolder": "התיקיות הקרובות לתיקייה שנפתחה",
+        "nearPhotos": "התיקיות הקרובות לתמונות"
+      }
     },
     "dateTime": {
       "title": "תבנית תאריך ושעה",

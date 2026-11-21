@@ -17,6 +17,12 @@ export interface DirTreeViewContextMenuItem {
 
 export const dirTreeViewContextMenuItems: DirTreeViewContextMenuItem[] = [
   {
+    // The menu of a row kept at the top of the tree, whose own row is out of sight (DirTreeViewStickyRowsComponent).
+    textKey: () => 'directoryTree.contextMenu.scrollToHere',
+    onClick: (data) => data.scrollToHere?.(),
+    visible: (data) => !!data.scrollToHere,
+  },
+  {
     // TL;DR: A text for a file and one for a folder, though English says "Select Only This" of both.
     // Details: Japanese names what is selected, "このファイルのみを選択" and "このフォルダーのみを選択": one text for
     // both said "this file" of a folder.

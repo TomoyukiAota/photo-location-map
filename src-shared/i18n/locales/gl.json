@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Cartafol aberto - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Desprazarse ata aquí",
       "selectOnlyThisFile": "Seleccionar só este ficheiro",
       "selectOnlyThisFolder": "Seleccionar só este cartafol",
       "revealInMap": "Mostrar no mapa",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Aparencia",
-      "showStatusBar": "Mostrar a barra de estado"
+      "showStatusBar": "Mostrar a barra de estado",
+      "stickyFolders": {
+        "title": "Cartafoles fixados na parte superior da árbore",
+        "description": "Mentres se despraza a árbore de cartafoles, os cartafoles que están por riba das filas mostradas quedan arriba. O cartafol aberto e o cartafol desas filas mantéñense sempre.",
+        "maximum": "Número máximo de filas",
+        "leftOut": "Cando hai máis cartafoles ca filas, omitir:",
+        "middle": "Os cartafoles do medio",
+        "nearOpenedFolder": "Os cartafoles próximos ao cartafol aberto",
+        "nearPhotos": "Os cartafoles próximos ás fotos"
+      }
     },
     "dateTime": {
       "title": "Formato de data e hora",
