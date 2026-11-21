@@ -13,7 +13,7 @@ import * as path from 'path';
 // - No file is removed that another instance may have made in its place, as a file is removed by its path: the lock
 //   is removed only by its holder, or, when stale, by the instance that holds the takeover of that very lock, and only
 //   while it is still that lock (takeOverStaleLock). A takeover's file is named after the lock that it takes over, and
-//   is removed only by its instance, or once that lock is gone for good (removeObsoleteTakeovers).
+//   is removed only by its instance, or an hour later once a later lock has replaced that lock (removeObsoleteTakeovers).
 
 /** What the lock and the cleanup need of the computer, so that a test can give its own. */
 export interface SessionDataHost {
@@ -29,6 +29,8 @@ export interface SessionDataHost {
 
 /** How long an empty lock or takeover file is taken as one that its instance is still writing. */
 export const unwrittenLockMs = 10 * 1000;
+/** How old the file of a takeover has to be to be removed: a takeover takes a moment, so it is not one under way. */
+export const abandonedTakeoverMs = 60 * 60 * 1000;
 /** How many takeovers of one stale lock are tried, each after the instance of the one before ended in the middle. */
 const maxTakeovers = 3;
 
@@ -88,9 +90,13 @@ function makeIfAbsent(filePath: string, host: Pick<SessionDataHost, 'pid'>): boo
   }
 }
 
-/** The name that the takeovers of the lock `found` share, which no other lock's takeovers have. */
+/**
+ * The name that the takeovers of the lock `found` share, which no other lock's takeovers have: when the lock was
+ * written, which tells the takeovers of an earlier lock, then what makes it unique.
+ */
 function takeoverName(found: FoundFile): string {
-  return createHash('sha256').update(found.content).update(`\n${found.modifiedMs}`).digest('hex').slice(0, 16);
+  const hash = createHash('sha256').update(found.content).update(`\n${found.modifiedMs}`).digest('hex').slice(0, 16);
+  return `${Math.floor(found.modifiedMs)}-${hash}`;
 }
 
 /** The file of the `attempt`th takeover of the lock `found` at `lockPath`. */
@@ -165,20 +171,32 @@ export function releaseSessionDataLock(lockPath: string, host: Pick<SessionDataH
 }
 
 /**
- * Removes the files of the takeovers, next to the lock at `lockPath`, of locks that are gone, and returns their names.
- * Such a lock does not come back, as no two locks have the same content: nobody takes it over again.
+ * TL;DR: Removes the files of the takeovers, next to the lock at `lockPath`, that are over an hour old and of a lock
+ * written before the lock that is there now, and returns their names.
+ * Details: A lock written before the one that is there now has been replaced, and does not come back, as no two locks
+ * have the same content: nobody takes it over again. The lock may change while this runs, but the new one is written
+ * later than the one read here, so its takeovers are kept; and a takeover under way is a moment old, which keeps it
+ * too, even if the clock went back. With no lock there, nothing is removed: a lock may be made at any moment.
  */
-export async function removeObsoleteTakeovers(lockPath: string): Promise<string[]> {
+export async function removeObsoleteTakeovers(lockPath: string, host: SessionDataHost): Promise<string[]> {
+  const current = readFound(lockPath);
+  if (current === undefined)
+    return [];
   const folder = path.dirname(lockPath);
   const prefix = `${path.basename(lockPath)}.takeover-`;
-  const current = readFound(lockPath);
-  const currentName = current === undefined ? undefined : takeoverName(current);
   const names = await fs.promises.readdir(folder).catch(() => [] as string[]);
   const removed: string[] = [];
   for (const name of names) {
-    if (!name.startsWith(prefix) || name.slice(prefix.length).startsWith(`${currentName}-`))
+    if (!name.startsWith(prefix))
       continue;
-    await fs.promises.rm(path.join(folder, name), { force: true }).then(() => removed.push(name), () => {});
+    const lockWrittenMs = Number(name.slice(prefix.length).split('-')[0]);
+    if (!(lockWrittenMs < Math.floor(current.modifiedMs)))
+      continue;
+    const filePath = path.join(folder, name);
+    const modifiedMs = await fs.promises.stat(filePath).then(stats => stats.mtimeMs, () => undefined);
+    if (modifiedMs === undefined || host.now() - modifiedMs < abandonedTakeoverMs)
+      continue;
+    await fs.promises.rm(filePath, { force: true }).then(() => removed.push(name), () => {});
   }
   return removed;
 }

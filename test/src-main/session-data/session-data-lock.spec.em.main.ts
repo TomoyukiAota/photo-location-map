@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import {
-  instanceSessionDataFolder, readSessionDataLock, releaseSessionDataLock, removeEndedInstancesSessionData,
+  abandonedTakeoverMs, instanceSessionDataFolder, readSessionDataLock, releaseSessionDataLock, removeEndedInstancesSessionData,
   removeObsoleteTakeovers, SessionDataHost, takeoverPath, takeSessionDataLock, unwrittenLockMs,
 } from '../../../src-main/session-data/session-data-lock.js';
 
@@ -96,13 +96,15 @@ describe('The lock of the session data shared by the instances on one profile (i
 
     it('with the next takeover when the instance of one ended in the middle, whose file the cleanup removes later', async () => {
       write(lockPath, 100);
+      age(lockPath, 5000);
       const abandoned = takeover(1);
       write(abandoned, 150);
       assert.strictEqual(takeSessionDataLock(lockPath, instance(200)), true);
       assert.strictEqual(holder(), 200);
       // Its own takeover's file is gone; the abandoned one is left while the taking over can still go on.
       assert.deepStrictEqual(takeovers(), [path.basename(abandoned)]);
-      assert.deepStrictEqual(await removeObsoleteTakeovers(lockPath), [path.basename(abandoned)]);
+      age(abandoned, abandonedTakeoverMs + 1000);
+      assert.deepStrictEqual(await removeObsoleteTakeovers(lockPath, instance(200)), [path.basename(abandoned)]);
       assert.deepStrictEqual(takeovers(), []);
     });
 
@@ -147,14 +149,35 @@ describe('The lock of the session data shared by the instances on one profile (i
     });
   });
 
-  it('keeps, when removing the takeovers of locks that are gone, those of the lock that is there', async () => {
-    write(lockPath, 100);
-    const current = takeover(1);
-    write(current, 150);
-    const obsolete = takeoverPath(lockPath, { content: '90\nan earlier lock', modifiedMs: 1 }, 1);
-    write(obsolete, 95);
-    assert.deepStrictEqual(await removeObsoleteTakeovers(lockPath), [path.basename(obsolete)]);
-    assert.deepStrictEqual(takeovers(), [path.basename(current)]);
+  describe('removes the takeovers', () => {
+    const hour = 3600 * 1000;
+    /** The file of a takeover, written `fileAgeMs` ago, of a lock written at `lockWrittenMs`. */
+    const takeoverOf = (lockWrittenMs: number, fileAgeMs: number) => {
+      const filePath = takeoverPath(lockPath, { content: `90\n${Math.random()}`, modifiedMs: lockWrittenMs }, 1);
+      write(filePath, 95);
+      age(filePath, fileAgeMs);
+      return path.basename(filePath);
+    };
+
+    it('over an hour old of a lock written before the lock that is there now, and no other', async () => {
+      write(lockPath, 100);
+      const lockWrittenMs = readSessionDataLock(lockPath)!.modifiedMs;
+      const obsolete = takeoverOf(lockWrittenMs - 2 * hour, 2 * hour);
+      const recent = takeoverOf(lockWrittenMs - 2 * hour, 60 * 1000);
+      const ofThisLock = path.basename(takeover(1));
+      write(takeover(1), 150);
+      age(takeover(1), 2 * hour);
+      // As when the lock changed after the cleanup read it: a lock written later than the one read, which may be stale.
+      const ofLaterLock = takeoverOf(lockWrittenMs + hour, 2 * hour);
+      assert.deepStrictEqual(await removeObsoleteTakeovers(lockPath, instance(200)), [obsolete]);
+      assert.deepStrictEqual(takeovers().sort(), [recent, ofThisLock, ofLaterLock].sort());
+    });
+
+    it('not at all while there is no lock', async () => {
+      const obsolete = takeoverOf(Date.now() - 3 * hour, 2 * hour);
+      assert.deepStrictEqual(await removeObsoleteTakeovers(lockPath, instance(200)), []);
+      assert.deepStrictEqual(takeovers(), [obsolete]);
+    });
   });
 
   it('leaves, when removing the storage of the instances that have ended, that of the running ones and other files', async () => {

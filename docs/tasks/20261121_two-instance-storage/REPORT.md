@@ -67,7 +67,8 @@ wait is from its arrival to the app's code.
   the lock only while it is still the same lock. No file is removed that
   another instance may have made in its place.
 - Each launch removes, once the app is ready, the folders of the instances
-  that have ended, and the takeover files of locks that are gone.
+  that have ended, and the takeover files over an hour old of locks that a
+  later lock has replaced, which never come back.
 - The settings, the thumbnails and the other files of the application stay
   shared, as before.
 

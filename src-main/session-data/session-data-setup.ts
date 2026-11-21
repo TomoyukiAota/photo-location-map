@@ -67,7 +67,7 @@ if (holdsLock()) {
 // Once the app is ready, so as not to slow its start: the folders of the instances that have ended, and the files of the
 // takeovers of locks that are gone.
 app.whenReady()
-  .then(async () => [...await removeEndedInstancesSessionData(instancesFolder, host), ...await removeObsoleteTakeovers(lockPath)])
+  .then(async () => [...await removeEndedInstancesSessionData(instancesFolder, host), ...await removeObsoleteTakeovers(lockPath, host)])
   .then(removed => {
     if (removed.length > 0)
       Logger.info(`[Session Data] Removed what the instances that have ended left: ${removed.join(', ')}`);
