@@ -1,15 +1,36 @@
 @use "../../../styles/balanced-lines" as *;
 
-// TL;DR: A column of the progress bar, the texts and the button, as tall as the texts need, whose lines wrap.
-// Details: The dialog is as wide in every language (face-search.service.ts); a longer text takes more lines, and the
-// dialog grows down for them, from its height in English. The texts are centered, which reads the same from the
-// right in Arabic and Hebrew.
+// TL;DR: The dialog keeps its height while it is open, whatever it shows: it is as tall as the tallest of its states
+// in the language that it is shown in, and as wide as in every language (face-search.service.ts).
+// Details:
+// - Its states, the search's progress and the three messages, are laid out on top of one another in one cell of a
+//   grid, which is as tall as the tallest of them; the one that applies is shown, and the others keep their room
+//   unseen. A fixed height would cut the texts of a language with longer ones.
+// - The line that says that the search waits for thumbnails keeps its room while it is not shown, and the lines with
+//   a number keep the room of the largest number that they can show, that of the selected photos (.sizer).
+// - Before this, the dialog grew and shrank by a line each time the search came to a HEIF photo and found its
+//   thumbnail made, and from the search's progress to its message.
 :host {
   padding: 16px;
+  display: block;
+}
+
+.states {
+  display: grid;
+}
+
+.state {
+  grid-area: 1 / 1;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 16px;
+  visibility: hidden;
+}
+
+.shown {
+  visibility: visible;
 }
 
 mat-progress-bar {
@@ -28,6 +49,20 @@ mat-progress-bar {
 
 .message {
   margin: 8px 0;
+}
+
+// The text that is shown, over a copy of it with the largest number, which is not shown and gives it its room.
+.with-number {
+  display: grid;
+
+  > * {
+    grid-area: 1 / 1;
+  }
+}
+
+.sizer,
+.not-now {
+  visibility: hidden;
 }
 
 // That nothing leaves the computer: said apart from the progress, in the dialog's secondary text.
