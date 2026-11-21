@@ -95,9 +95,9 @@
     "rotateThumbnail": "サムネイルを回転",
     "menu": {
       "selection": "選択",
-      "selectOnlyThis": "このファイルのみを選択",
-      "selectPrevious": "前のファイルを選択",
-      "selectNext": "次のファイルを選択",
+      "selectOnlyThis": "このファイルのみ",
+      "selectPrevious": "前に撮影された写真",
+      "selectNext": "次に撮影された写真",
       "openFolder": "フォルダーを開く",
       "revealInMap": "マップで表示",
       "revealInSidebar": "サイドバーで表示",
@@ -176,6 +176,15 @@
       "openFolder": "フォルダーを開く"
     }
   },
+  "faceSearch": {
+    "looking": "選択した写真から顔を探しています...",
+    "progress": "{{total}} 枚中 {{done}} 枚を調べました。",
+    "waitingForThumbnails": "HEIF ファイルのサムネイルの生成を待っています...",
+    "onThisComputer": "顔はこのコンピューター上でのみ探し、顔に関する情報はどこにも送信しません。",
+    "noFacesFound": "選択した写真に顔は見つかりませんでした。選択はそのままです。",
+    "notLookedAt": "顔を探せなかった {{count}} 枚の写真を選択から外しました。",
+    "failed": "選択した写真から顔を探せませんでした。選択はそのままです。"
+  },
   "settings": {
     "title": "設定",
     "tabs": {
@@ -252,8 +261,9 @@
       "title": "選択",
       "undo": "元に戻す",
       "redo": "やり直す",
-      "selectPrevious": "前のファイルを選択",
-      "selectNext": "次のファイルを選択"
+      "selectPrevious": "前に撮影された写真",
+      "selectNext": "次に撮影された写真",
+      "narrowDownToPhotosWithFaces": "顔が写っている写真に絞り込む"
     },
     "settings": {
       "title": "設定",

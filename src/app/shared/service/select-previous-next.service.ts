@@ -38,7 +38,8 @@ function comparePaths(a: string, b: string): number {
 /**
  * Select Previous and Select Next: they select only the photo taken just before or just after a photo, as Select
  * Only This does for the photo itself, in a photo's menu (MoreOptionsMenuComponent) and, for the one selected photo,
- * in the Selection menu (src-main/menu/selection-menu.ts).
+ * in the Selection menu (src-main/menu/selection-menu.ts). Both menus show them as "Photo Taken Before" and "Photo
+ * Taken After", which say by what order they go: "Select Previous" told a person neither that nor what it selects.
  * TL;DR: The photos are those that can be selected, which have location data, in the folder tree's order "By Date
  * Taken", ascending, over the whole opened folder rather than within each of its folders: a trip from its beginning to
  * its end, whatever subfolders its photos are in. There is no photo before the first or after the last.
@@ -116,14 +117,18 @@ export class SelectPreviousNextService {
       this.photoRevealService.revealInSidebar(photo, { scroll: 'whenNotFullyShown' });
   }
 
-  /** The Selection menu's Select Previous: nothing when it does not apply, as when the selection changed meanwhile. */
+  /**
+   * The Selection menu's Photo Taken Before: nothing when it does not apply, as when the selection changed meanwhile.
+   */
   public selectPreviousOfSelectedPhoto(): void {
-    this.selectNeighborOfSelectedPhoto('Select Previous', photoPath => this.previousOf(photoPath));
+    this.selectNeighborOfSelectedPhoto('Photo Taken Before', photoPath => this.previousOf(photoPath));
   }
 
-  /** The Selection menu's Select Next: nothing when it does not apply, as when the selection changed meanwhile. */
+  /**
+   * The Selection menu's Photo Taken After: nothing when it does not apply, as when the selection changed meanwhile.
+   */
   public selectNextOfSelectedPhoto(): void {
-    this.selectNeighborOfSelectedPhoto('Select Next', photoPath => this.nextOf(photoPath));
+    this.selectNeighborOfSelectedPhoto('Photo Taken After', photoPath => this.nextOf(photoPath));
   }
 
   private selectNeighborOfSelectedPhoto(item: string, neighborOf: (photoPath: string) => string | null): void {

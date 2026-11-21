@@ -36,4 +36,6 @@ interface IPlmInternalRendererPhotoSelection {
   /** The Selection menu's Select Previous and Select Next, for the one selected photo. */
   selectPrevious(): void;
   selectNext(): void;
+  /** The Selection menu's Narrow Down to Photos with Faces, for the selected photos. */
+  narrowDownToPhotosWithFaces(): void;
 }

@@ -22,3 +22,8 @@ bridge().events.onSelectNext(() => {
   Logger.debug(`[IPC Renderer Received] ${IpcConstants.PhotoSelection.SelectNext}`);
   window.plmInternalRenderer.photoSelection.selectNext();
 });
+
+bridge().events.onNarrowDownToPhotosWithFaces(() => {
+  Logger.debug(`[IPC Renderer Received] ${IpcConstants.PhotoSelection.NarrowDownToPhotosWithFaces}`);
+  window.plmInternalRenderer.photoSelection.narrowDownToPhotosWithFaces();
+});

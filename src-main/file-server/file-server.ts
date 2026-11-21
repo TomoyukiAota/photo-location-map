@@ -1,5 +1,6 @@
 import { session } from 'electron';
 import { createPrependedLogger } from '../../src-shared/log/create-prepended-logger.js';
+import { devServerPageOrigin } from '../../src-shared/main-window-schemes.js';
 import { LiveReload } from '../live-reload.js';
 import { appPageUrl, serveAppPage } from './app-page.js';
 import { devServerPageContentSecurityPolicy } from './content-security-policy.js';
@@ -8,7 +9,7 @@ const fileServerLogger = createPrependedLogger('[File Server]');
 
 export async function getUrlForMainWindow(): Promise<string> {
   if (LiveReload.enabled) {
-    const url = `http://localhost:4200`;
+    const url = devServerPageOrigin;
     fileServerLogger.info(`isLiveReloadMode === true, so "ng serve" command runs the server for ${url}`);
     sendContentSecurityPolicyWithDevServer(url);
     return url;

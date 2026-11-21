@@ -80,8 +80,9 @@ export class ClosesOnPressElsewhereDirective {
  *   button, at the button's end, or above the button where the window has no room below. A submenu opens beside its
  *   item, towards the end of the line, or the other way where the window has no room; in a language written from
  *   right to left, all of it is the other way round.
- * - Select Previous and Select Next keep their places in the Selection submenu where no photo was taken before or
- *   after, and cannot be chosen there, as in the application's Selection menu.
+ * - Select Previous and Select Next, shown as Photo Taken Before and Photo Taken After, keep their places in the Select
+ *   submenu where no photo was taken before or after, and cannot be chosen there, as in the application's Selection
+ *   menu.
  */
 @Component({
   selector: 'app-photo-info-viewer-more-options-menu',
@@ -157,7 +158,8 @@ export class MoreOptionsMenuComponent {
   }
 
   private selectOnlyThis(photo: Photo): void {
-    logger.info(`Clicked "Select Only This" menu item for ${photo.path}`);
+    logger.info(`Clicked "Only This" menu item for ${photo.path}`);
+    // Named as the item was before it moved under Select, which the analytics have counted it by.
     Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Select Only This"');
     this.directoryTreeViewSelectionService.select([photo.path]);
   }
@@ -165,16 +167,16 @@ export class MoreOptionsMenuComponent {
   private selectPrevious(photo: Photo, previous: string | null): void {
     if (previous === null)
       return;
-    logger.info(`Clicked "Select Previous" menu item for ${photo.path}, which selects ${previous}`);
-    Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Select Previous"');
+    logger.info(`Clicked "Photo Taken Before" menu item for ${photo.path}, which selects ${previous}`);
+    Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Photo Taken Before"');
     this.selectPreviousNextService.select(previous);
   }
 
   private selectNext(photo: Photo, next: string | null): void {
     if (next === null)
       return;
-    logger.info(`Clicked "Select Next" menu item for ${photo.path}, which selects ${next}`);
-    Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Select Next"');
+    logger.info(`Clicked "Photo Taken After" menu item for ${photo.path}, which selects ${next}`);
+    Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Photo Taken After"');
     this.selectPreviousNextService.select(next);
   }
 

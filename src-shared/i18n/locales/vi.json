@@ -95,9 +95,9 @@
     "rotateThumbnail": "Xoay hình thu nhỏ",
     "menu": {
       "selection": "Lựa chọn",
-      "selectOnlyThis": "Chỉ chọn tệp này",
-      "selectPrevious": "Chọn tệp trước đó",
-      "selectNext": "Chọn tệp tiếp theo",
+      "selectOnlyThis": "Chỉ tệp này",
+      "selectPrevious": "Ảnh chụp trước đó",
+      "selectNext": "Ảnh chụp sau đó",
       "openFolder": "Mở thư mục",
       "revealInMap": "Hiển thị trên bản đồ",
       "revealInSidebar": "Hiển thị trong thanh bên",
@@ -176,6 +176,15 @@
       "openFolder": "Mở thư mục"
     }
   },
+  "faceSearch": {
+    "looking": "Đang tìm khuôn mặt trong các ảnh đã chọn...",
+    "progress": "Số ảnh đã xem xét: {{done}} / {{total}}.",
+    "waitingForThumbnails": "Đang chờ tạo hình thu nhỏ cho các tệp HEIF...",
+    "onThisComputer": "Khuôn mặt chỉ được tìm trên máy tính này. Không có thông tin nào về chúng được gửi đi bất cứ đâu.",
+    "noFacesFound": "Không tìm thấy khuôn mặt nào trong các ảnh đã chọn. Lựa chọn vẫn giữ nguyên.",
+    "notLookedAt": "Số ảnh không thể tìm khuôn mặt và không còn được chọn: {{count}}.",
+    "failed": "Không thể tìm khuôn mặt trong các ảnh đã chọn. Lựa chọn vẫn giữ nguyên."
+  },
   "settings": {
     "title": "Cài đặt",
     "tabs": {
@@ -252,8 +261,9 @@
       "title": "Lựa chọn",
       "undo": "Hoàn tác",
       "redo": "Làm lại",
-      "selectPrevious": "Chọn tệp trước đó",
-      "selectNext": "Chọn tệp tiếp theo"
+      "selectPrevious": "Ảnh chụp trước đó",
+      "selectNext": "Ảnh chụp sau đó",
+      "narrowDownToPhotosWithFaces": "Thu hẹp còn các ảnh có khuôn mặt"
     },
     "settings": {
       "title": "Cài đặt",

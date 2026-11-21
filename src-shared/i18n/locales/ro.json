@@ -95,9 +95,9 @@
     "rotateThumbnail": "Rotește miniatura",
     "menu": {
       "selection": "Selecție",
-      "selectOnlyThis": "Selectează doar acest fișier",
-      "selectPrevious": "Selectează fișierul anterior",
-      "selectNext": "Selectează fișierul următor",
+      "selectOnlyThis": "Doar acest fișier",
+      "selectPrevious": "Poza făcută înaintea ei",
+      "selectNext": "Poza făcută după ea",
       "openFolder": "Deschide dosarul",
       "revealInMap": "Afișează pe hartă",
       "revealInSidebar": "Afișează în bara laterală",
@@ -176,6 +176,15 @@
       "openFolder": "Deschide dosarul"
     }
   },
+  "faceSearch": {
+    "looking": "Se caută fețe în pozele selectate...",
+    "progress": "Poze verificate: {{done}} din {{total}}.",
+    "waitingForThumbnails": "Se așteaptă crearea miniaturilor fișierelor HEIF...",
+    "onThisComputer": "Fețele sunt căutate doar pe acest calculator. Nimic despre ele nu este trimis nicăieri.",
+    "noFacesFound": "Nu s-au găsit fețe în pozele selectate. Selecția rămâne neschimbată.",
+    "notLookedAt": "Poze în care nu s-au putut căuta fețe și care nu mai sunt selectate: {{count}}.",
+    "failed": "Nu s-au putut căuta fețe în pozele selectate. Selecția rămâne neschimbată."
+  },
   "settings": {
     "title": "Setări",
     "tabs": {
@@ -252,8 +261,9 @@
       "title": "Selecție",
       "undo": "Anulează acțiunea",
       "redo": "Refă acțiunea",
-      "selectPrevious": "Selectează fișierul anterior",
-      "selectNext": "Selectează fișierul următor"
+      "selectPrevious": "Poza făcută înaintea ei",
+      "selectNext": "Poza făcută după ea",
+      "narrowDownToPhotosWithFaces": "Restrânge la pozele cu fețe"
     },
     "settings": {
       "title": "Setări",

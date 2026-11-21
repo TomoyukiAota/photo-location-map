@@ -95,9 +95,9 @@
     "rotateThumbnail": "Pagriezt sīktēlu",
     "menu": {
       "selection": "Atlase",
-      "selectOnlyThis": "Atlasīt tikai šo failu",
-      "selectPrevious": "Atlasīt iepriekšējo failu",
-      "selectNext": "Atlasīt nākamo failu",
+      "selectOnlyThis": "Tikai šis fails",
+      "selectPrevious": "Pirms tam uzņemtais fotoattēls",
+      "selectNext": "Pēc tam uzņemtais fotoattēls",
       "openFolder": "Atvērt mapi",
       "revealInMap": "Rādīt kartē",
       "revealInSidebar": "Rādīt sānjoslā",
@@ -176,6 +176,15 @@
       "openFolder": "Atvērt mapi"
     }
   },
+  "faceSearch": {
+    "looking": "Notiek seju meklēšana atlasītajos fotoattēlos...",
+    "progress": "Pārbaudīti fotoattēli: {{done}} no {{total}}.",
+    "waitingForThumbnails": "Notiek gaidīšana, līdz tiks izveidoti HEIF failu sīktēli...",
+    "onThisComputer": "Sejas tiek meklētas tikai šajā datorā. Nekas par tām netiek nekur sūtīts.",
+    "noFacesFound": "Atlasītajos fotoattēlos sejas netika atrastas. Atlase paliek nemainīga.",
+    "notLookedAt": "Fotoattēli, kuros nevarēja meklēt sejas un kuri vairs nav atlasīti: {{count}}.",
+    "failed": "Atlasītajos fotoattēlos nevarēja meklēt sejas. Atlase paliek nemainīga."
+  },
   "settings": {
     "title": "Iestatījumi",
     "tabs": {
@@ -252,8 +261,9 @@
       "title": "Atlase",
       "undo": "Atsaukt",
       "redo": "Atcelt atsaukšanu",
-      "selectPrevious": "Atlasīt iepriekšējo failu",
-      "selectNext": "Atlasīt nākamo failu"
+      "selectPrevious": "Pirms tam uzņemtais fotoattēls",
+      "selectNext": "Pēc tam uzņemtais fotoattēls",
+      "narrowDownToPhotosWithFaces": "Sašaurināt līdz fotoattēliem ar sejām"
     },
     "settings": {
       "title": "Iestatījumi",

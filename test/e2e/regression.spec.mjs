@@ -8,6 +8,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { browserSettingLabels, languages as websiteLanguages, matchLanguage } from '../../script/website/website-i18n.js';
 import { jpegWithEmptyGpsValues } from '../test-util/jpeg-with-empty-gps-values.mjs';
+import { jpegWithFaceRegion } from '../test-util/jpeg-with-face-region.mjs';
 import { jpegWithLocationOnly } from '../test-util/jpeg-with-location-only.mjs';
 const require = createRequire(import.meta.url);
 const root = path.resolve(import.meta.dirname, '../..');
@@ -67,6 +68,27 @@ async function expectWindowOffScreenOnlyIfHeadless(window) {
       .toEqual({ visible: true, opacity: 0, focused: false });
   } else expect(state.visible, 'A headless run must keep the window hidden.').toBe(false);
 }
+/** The requests of the application's pages that have not finished, since its last launch. */
+let unfinishedRequests = new Set();
+const addressOf = request => request.url().slice(0, 160);
+/** The page that made `request`, or undefined for a request that has none, such as a service worker's. */
+function pageOf(request) {
+  try {
+    return request.frame().page();
+  } catch {
+    return undefined;
+  }
+}
+/**
+ * What each page other than the main window's wrote to its console, threw and did not load, from its start, which
+ * describeViewerPage tells for a page of Photo Data Viewer.
+ */
+const otherPagesEvents = new WeakMap();
+function recordForOtherPage(otherPage, line) {
+  if (!otherPage || isAppPageUrl(otherPage.url())) return;
+  if (!otherPagesEvents.has(otherPage)) otherPagesEvents.set(otherPage, []);
+  otherPagesEvents.get(otherPage).push(line.slice(0, 300));
+}
 /**
  * Launches the application on the test profile, finds its main window as `page`, and checks how it runs. In a
  * profile whose user has not confirmed a language, the application shows the Language dialog first: it is confirmed
@@ -94,30 +116,35 @@ async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'con
     if (message.type() === 'error' && message.text().includes('NG0100')) changedWithoutNotification.push(message.text());
     if (/\bContent[- ]Security[- ]Policy\b/i.test(message.text()) && isAppPageUrl(message.page()?.url()))
       policyViolations.push(`${message.type()}: ${message.text()}`);
+    recordForOtherPage(message.page(), `console ${message.type()}: ${message.text()}`);
   });
   const pageErrors = [];
   app.context().on('weberror', webError => {
     pageErrors.push(webError.error().message);
     if (webError.error().message.includes('NG0100')) changedWithoutNotification.push(webError.error().message);
+    recordForOtherPage(webError.page(), `uncaught: ${webError.error().message}`);
   });
   // The requests that have not finished, and those that failed, for a launch whose home view does not render: the
   // page waits for the list of the map's base layers, which it downloads, before it starts Angular
   // (src/start-app.ts). Each request is kept by itself, as two can have one address, and counts as finished once its
   // answer is read to the end, which is what the page waits for.
-  const unfinishedRequests = new Set();
+  unfinishedRequests = new Set();
   const failedRequests = [];
-  const addressOf = request => request.url().slice(0, 160);
   app.context().on('request', request => unfinishedRequests.add(request));
   app.context().on('requestfinished', request => unfinishedRequests.delete(request));
   app.context().on('requestfailed', request => {
     unfinishedRequests.delete(request);
     // The suite cancels the requests of analytics and of downloads itself (electron-util/e2e-test-hooks.js).
     const reason = request.failure()?.errorText ?? 'failed';
-    if (reason !== 'net::ERR_BLOCKED_BY_CLIENT') failedRequests.push(`${addressOf(request)}: ${reason}`);
+    if (reason === 'net::ERR_BLOCKED_BY_CLIENT') return;
+    failedRequests.push(`${addressOf(request)}: ${reason}`);
+    recordForOtherPage(pageOf(request), `request failed: ${addressOf(request)}: ${reason}`);
   });
   // A request that the server refuses, as one too many, finishes like any other.
   app.context().on('response', response => {
-    if (response.status() >= 400) failedRequests.push(`${addressOf(response.request())}: HTTP ${response.status()}`);
+    if (response.status() < 400) return;
+    failedRequests.push(`${addressOf(response.request())}: HTTP ${response.status()}`);
+    recordForOtherPage(pageOf(response.request()), `HTTP ${response.status()}: ${addressOf(response.request())}`);
   });
   const runtime = await app.evaluate(({ app }) => {
     const require = globalThis.__plmTestRequire;
@@ -300,7 +327,7 @@ async function untilMenusShown() {
     .every(panel => !panel.getAnimations().length && !panel.classList.contains('mat-menu-panel-animating')));
 }
 /**
- * Opens the menu of a photo's More Options button, and the submenus of the items named ('Selection'), each item clicked
+ * Opens the menu of a photo's More Options button, and the submenus of the items named ('Select'), each item clicked
  * once its menu has appeared. The menu is above the window, in the overlay container, rather than in the row or the
  * popup of its button.
  */
@@ -314,7 +341,7 @@ async function openMoreOptions(moreOptionsButton, ...submenus) {
 }
 /**
  * Opens the menu of a photo's More Options button and chooses an item: the one named last, in the submenu of the item
- * named before it if there is one ('Selection', 'Select Only This').
+ * named before it if there is one ('Select', 'Only This').
  */
 async function chooseFromMoreOptions(moreOptionsButton, ...names) {
   await openMoreOptions(moreOptionsButton, ...names.slice(0, -1));
@@ -492,6 +519,28 @@ function within5Seconds(promise, otherwise) {
   let timer;
   return Promise.race([promise, new Promise(resolve => { timer = setTimeout(() => resolve(otherwise), 5000); })])
     .finally(() => clearTimeout(timer));
+}
+/**
+ * The main window's page as the main process serves it (src-main/file-server/app-page.ts), which the window's first
+ * frame shows before the app's code has run: the language and the direction of its root element, its loading text,
+ * the policy that comes with it, and the CSS in the page itself. Undefined in live reload, where ng serve sends it.
+ */
+async function servedAppPage() {
+  if (liveReload) return undefined;
+  return app.evaluate(async ({ net }) => {
+    const answer = await net.fetch('plm-app://app/index.html');
+    const html = await answer.text();
+    const root = html.match(/<html\b[^>]*>/)?.[0] ?? '';
+    return {
+      lang: root.match(/\slang="([^"]*)"/)?.[1],
+      dir: root.match(/\sdir="([^"]*)"/)?.[1],
+      loadingText: html.match(/\bid="app-loading-text"[^>]*>([^<]*)</)?.[1],
+      policy: answer.headers.get('content-security-policy'),
+      css: [...html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/g)].map(match => match[1]).join('\n'),
+      // A production build puts the CSS that the page needs first in the page, and loads styles.css after it.
+      stylesheetDeferred: /<link rel="stylesheet" href="styles\.css" media="print"/.test(html),
+    };
+  });
 }
 /**
  * What the application was doing, for a case that timed out: whether its main process and each of its pages still
@@ -811,7 +860,7 @@ const menuInEnglish = [
     items: ['About Photo Location Map', 'Services', 'Hide Photo Location Map', 'Hide Others', 'Show All', 'Quit Photo Location Map'],
   }] : []),
   { label: 'View', items: ['Reload', 'Actual Size', 'Zoom In', 'Zoom Out', 'Toggle Full Screen'] },
-  { label: 'Selection', items: ['Undo', 'Redo', 'Select Previous', 'Select Next'] },
+  { label: 'Selection', items: ['Undo', 'Redo', 'Photo Taken Before', 'Photo Taken After', 'Narrow Down to Photos with Faces'] },
   { label: 'Settings', items: ['Open Settings'] },
   { label: 'Help', items: [...(isMac ? [] : ['About Photo Location Map']),
     'Show Welcome Dialog', 'Advanced Menu', 'Open Log Folder', 'Toggle Developer Tools'] },
@@ -822,7 +871,7 @@ const menuInJapanese = [
     items: ['Photo Location Map について', 'サービス', 'Photo Location Map を非表示', 'ほかを非表示', 'すべてを表示', 'Photo Location Map を終了'],
   }] : []),
   { label: '表示', items: ['再読み込み', '実際のサイズ', '拡大', '縮小', 'フルスクリーンの切り替え'] },
-  { label: '選択', items: ['元に戻す', 'やり直す', '前のファイルを選択', '次のファイルを選択'] },
+  { label: '選択', items: ['元に戻す', 'やり直す', '前に撮影された写真', '次に撮影された写真', '顔が写っている写真に絞り込む'] },
   { label: '設定', items: ['設定を開く'] },
   { label: 'ヘルプ', items: [...(isMac ? [] : ['Photo Location Map について']),
     '「ようこそダイアログ」を表示', '詳細メニュー', 'ログフォルダーを開く', '開発者ツールの切り替え'] },
@@ -892,6 +941,9 @@ test('the Language dialog comes before the Welcome dialog at the first launch, a
   await expect(restartNote).toBeVisible();
   await expect(restartNote).toHaveText('言語を適用するため、このアプリを再起動します。');
   await expect(okButton).toHaveText('決定');
+  // Its line is taller than the English one, whose room the note has: the dialog keeps its size, and its list its
+  // place under the pointer.
+  expect(await dialogSize()).toEqual(sizeWithEveryLanguage);
   // The keyboard chooses as well: the arrow keys move along the list, and Space chooses the language under them.
   await page.keyboard.press('ArrowUp');
   await expect(korean).toBeFocused();
@@ -907,6 +959,23 @@ test('the Language dialog comes before the Welcome dialog at the first launch, a
   await expect(restartNote).toHaveCSS('direction', 'rtl');
   await expect(okButton).toHaveText('موافق');
   await expect(okButton).toHaveCSS('direction', 'rtl');
+  // French, whose note takes two lines, takes the room around it, between the list and the button: the dialog keeps
+  // its size there too.
+  await search.fill('fran');
+  await dialog.getByRole('option', { name: 'Français', exact: true }).click();
+  await expect(restartNote).toHaveText('Cette application va redémarrer pour appliquer la langue.');
+  const frenchNote = await dialog.evaluate(host => {
+    const range = document.createRange();
+    range.selectNodeContents(host.querySelector('.restart-note'));
+    const lines = new Set(Array.from(range.getClientRects()).filter(line => line.width > 0).map(line => Math.round(line.top)));
+    const note = host.querySelector('.restart-note').getBoundingClientRect();
+    return { lines: lines.size, aboveList: note.top - host.querySelector('app-language-list').getBoundingClientRect().bottom,
+      belowButton: host.querySelector('.ok-button').getBoundingClientRect().top - note.bottom };
+  });
+  expect(frenchNote.lines).toBe(2);
+  expect(frenchNote.aboveList).toBeGreaterThanOrEqual(3);
+  expect(frenchNote.belowButton).toBeGreaterThanOrEqual(4);
+  expect(await dialogSize()).toEqual(sizeWithEveryLanguage);
   // The language on screen, found by the search and chosen by its name, needs no restart.
   await search.fill('english');
   await expect(options).toHaveText([systemLanguageInEnglish('English'), 'English']);
@@ -1025,6 +1094,8 @@ test('a new Language setting is sent to the analytics services', async () => {
 test('on a computer whose language is Japanese, the application is in Japanese: its dialogs, menu, map, dates and viewer', async () => {
   // The operating system's languages, the most preferred first, as macOS and Windows give them.
   await launchAsNew({ env: { PLM_TEST_SYSTEM_LANGUAGES: 'ja-JP,en-US' } });
+  // The page is in Japanese as it is served, so its loading text is, before the app's code runs.
+  if (!liveReload) expect(await servedAppPage()).toMatchObject({ lang: 'ja', dir: 'ltr', loadingText: '読み込み中...' });
   const languageDialog = page.locator('app-language-dialog');
   await expect(languageDialog.locator('.language-dialog-title')).toHaveText('言語 (Language)');
   await expect(languageDialog.getByRole('option')).toHaveText([systemLanguageInJapanese('日本語'), ...languageNames]);
@@ -1065,7 +1136,7 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   const menuInJapaneseOfPopup = ['選択', 'サイドバーで表示', 'フォルダーを開く', 'Google', 'データを表示'];
   await expect(moreOptionsItems).toHaveText(menuInJapaneseOfPopup);
   await page.getByRole('menuitem', { name: '選択', exact: true }).hover();
-  await expect(moreOptionsItems).toHaveText([...menuInJapaneseOfPopup, 'このファイルのみを選択', '前のファイルを選択', '次のファイルを選択']);
+  await expect(moreOptionsItems).toHaveText([...menuInJapaneseOfPopup, 'このファイルのみ', '前に撮影された写真', '次に撮影された写真']);
   await page.getByRole('menuitem', { name: 'Google', exact: true }).hover();
   await expect(moreOptionsItems)
     .toHaveText([...menuInJapaneseOfPopup, 'Google マップを開く', 'Google Earth を開く', 'Google ストリートビューを開く']);
@@ -1124,6 +1195,8 @@ test('on a computer whose language is Arabic, the application is laid out from r
   // The one language written from right to left that is run here; Hebrew is laid out by the same rules.
   await launchAsNew({ env: { PLM_TEST_SYSTEM_LANGUAGES: 'ar-SA,en-US' } });
   expect(await page.evaluate(() => [document.documentElement.lang, document.documentElement.dir])).toEqual(['ar', 'rtl']);
+  // So is the page as it is served, with its loading text, before the app's code runs.
+  if (!liveReload) expect(await servedAppPage()).toMatchObject({ lang: 'ar', dir: 'rtl', loadingText: 'جارٍ التحميل...' });
   const languageDialog = page.locator('app-language-dialog');
   await expect(languageDialog.locator('.language-dialog-title')).toHaveText('اللغة (Language)');
   // The name of the language that the first entry stands for is a value of its text: it is on its own there, between
@@ -1205,8 +1278,8 @@ test('on a computer whose language is Arabic, the application is laid out from r
   const selectionItem = page.getByRole('menuitem', { name: 'التحديد', exact: true });
   await selectionItem.focus();
   await page.keyboard.press('ArrowLeft');
-  await expect(moreOptionsItems).toHaveText([...menuInArabic, 'تحديد هذا الملف فقط', 'تحديد الملف السابق', 'تحديد الملف التالي']);
-  await expect(page.getByRole('menuitem', { name: 'تحديد هذا الملف فقط', exact: true })).toBeFocused();
+  await expect(moreOptionsItems).toHaveText([...menuInArabic, 'هذا الملف فقط', 'الصورة الملتقطة قبلها', 'الصورة الملتقطة بعدها']);
+  await expect(page.getByRole('menuitem', { name: 'هذا الملف فقط', exact: true })).toBeFocused();
   // Beside its item, at the item's height.
   const selectionItemBox = await selectionItem.boundingBox();
   await expect.poll(async () => Math.abs((await moreOptionsMenus.nth(1).boundingBox()).y - selectionItemBox.y)).toBeLessThan(2);
@@ -1233,7 +1306,7 @@ test('on a computer whose language is Arabic, the application is laid out from r
       items: ['حول Photo Location Map', 'الخدمات', 'إخفاء Photo Location Map', 'إخفاء الأخرى', 'إظهار الكل', 'إنهاء Photo Location Map'],
     }] : []),
     { label: 'عرض', items: ['إعادة التحميل', 'الحجم الفعلي', 'تكبير', 'تصغير', 'تبديل وضع ملء الشاشة'] },
-    { label: 'التحديد', items: ['تراجع', 'إعادة', 'تحديد الملف السابق', 'تحديد الملف التالي'] },
+    { label: 'التحديد', items: ['تراجع', 'إعادة', 'الصورة الملتقطة قبلها', 'الصورة الملتقطة بعدها', 'تضييق التحديد إلى الصور التي تظهر فيها وجوه'] },
     { label: 'الإعدادات', items: ['فتح الإعدادات'] },
     { label: 'مساعدة', items: [...(isMac ? [] : ['حول Photo Location Map']),
       'إظهار مربع حوار الترحيب', 'القائمة المتقدمة', 'فتح مجلد السجلات', 'إظهار/إخفاء أدوات المطوّرين'] },
@@ -1974,7 +2047,7 @@ test('Select Only This from a marker popup selects that photo in the tree and on
   const popup = page.locator('.leaflet-popup');
   await expect(popup.locator('.photo-info-viewer-name')).toBeVisible();
   const photoName = (await popup.locator('.photo-info-viewer-name').textContent()).trim();
-  await chooseFromMoreOptions(popup.locator('.photo-info-viewer-more-options-button'), 'Selection', 'Select Only This');
+  await chooseFromMoreOptions(popup.locator('.photo-info-viewer-more-options-button'), 'Select', 'Only This');
   await expectRepresentedPhotos(1);
   const folders = { 'IMG_5769.JPG': 'Apple Park', 'IMG_1579.JPG': 'Gold Coast', 'IMG_4676.JPG': 'Kobe', 'IMG_2581.JPG': 'Unga' };
   expect(Object.keys(folders)).toContain(photoName);
@@ -2259,7 +2332,7 @@ test('a photo\'s information, in the tree and in a popup of the map, opens the p
   await inTree.getByRole('button', { name: 'Live Photos' }).click();
   await thumbnailInTree.click();
   await openMoreOptions(inTree.getByRole('button', { name: 'More Options' }));
-  await expect(page.locator('.photo-info-viewer-more-options-menu-item')).toHaveText(['Selection', 'Reveal in Map', 'Open Folder', 'Google', 'View Data']);
+  await expect(page.locator('.photo-info-viewer-more-options-menu-item')).toHaveText(['Select', 'Reveal in Map', 'Open Folder', 'Google', 'View Data']);
   // While the menu is open, which is above the window rather than in the row, the row keeps its buttons: the pointer is
   // on the menu, off the row, for longer than the buttons take to fade (0.2 s).
   await menuItem('View Data').hover();
@@ -2348,14 +2421,14 @@ test('a photo\'s information, in the tree and in a popup of the map, opens the p
   await page.keyboard.press('Enter');
   await expect(moreOptionsInPopup).toHaveAttribute('aria-expanded', 'true');
   const focusedMenuItem = () => page.evaluate(() => document.activeElement.closest('[role="menuitem"]')?.textContent.trim());
-  await expect.poll(focusedMenuItem).toBe('Selection');
-  await expect(page.getByRole('menuitem', { name: 'Selection', exact: true })).toHaveAttribute('aria-haspopup', 'menu');
+  await expect.poll(focusedMenuItem).toBe('Select');
+  await expect(page.getByRole('menuitem', { name: 'Select', exact: true })).toHaveAttribute('aria-haspopup', 'menu');
   await page.keyboard.press('ArrowRight');
-  await expect.poll(focusedMenuItem).toBe('Select Only This');
-  await expect(page.getByRole('menuitem', { name: 'Selection', exact: true })).toHaveAttribute('aria-expanded', 'true');
+  await expect.poll(focusedMenuItem).toBe('Only This');
+  await expect(page.getByRole('menuitem', { name: 'Select', exact: true })).toHaveAttribute('aria-expanded', 'true');
   // A submenu takes the keys until it has faded out, as Angular Material's do: the next key once it has.
   await page.keyboard.press('ArrowLeft');
-  await expect.poll(focusedMenuItem).toBe('Selection');
+  await expect.poll(focusedMenuItem).toBe('Select');
   await expect(menu).toHaveCount(1);
   for (const name of ['Reveal in Sidebar', 'Open Folder', 'Google']) {
     await page.keyboard.press('ArrowDown');
@@ -2490,26 +2563,26 @@ test('Select Previous and Select Next go through the photos in the order they we
   await expect.poll(enabled).toEqual({ previous: true, next: true });
 
   // A photo's menu, right after Select Only This: in the popup of the map, and in the photo's row of the tree. Its
-  // submenu Selection has Select Previous and Select Next, of which one that has no photo to select cannot be chosen.
+  // submenu Select has Photo Taken Before and Photo Taken After, and one that has no photo to select cannot be chosen.
   const moreOptionsItems = page.locator('.photo-info-viewer-more-options-menu-item');
-  const selection = ['Select Only This', 'Select Previous', 'Select Next'];
+  const selection = ['Only This', 'Photo Taken Before', 'Photo Taken After'];
   const menuItemNamed = name => page.getByRole('menuitem', { name, exact: true });
-  await openMoreOptions(popup.locator('.photo-info-viewer-more-options-button'), 'Selection');
-  await expect(moreOptionsItems).toHaveText(['Selection', 'Reveal in Sidebar', 'Open Folder', 'Google', 'View Data', ...selection]);
+  await openMoreOptions(popup.locator('.photo-info-viewer-more-options-button'), 'Select');
+  await expect(moreOptionsItems).toHaveText(['Select', 'Reveal in Sidebar', 'Open Folder', 'Google', 'View Data', ...selection]);
   for (const name of selection) await expect(menuItemNamed(name)).toBeEnabled();
-  await menuItemNamed('Select Next').click();
+  await menuItemNamed('Photo Taken After').click();
   await expectSelected('IMG_4676.JPG');
   await expectShownInSidebar('IMG_4676.JPG');
   const kobe = page.locator('mat-tree-node').filter({ has: page.getByText('Kobe', { exact: true }) });
   const row = page.locator('mat-tree-node').filter({ hasText: 'IMG_4676.JPG' });
   await row.locator('.photo-info-viewer-thumbnail').hover();
-  await openMoreOptions(row.getByRole('button', { name: 'More Options' }), 'Selection');
-  await expect(moreOptionsItems).toHaveText(['Selection', 'Reveal in Map', 'Open Folder', 'Google', 'View Data', ...selection]);
-  await menuItemNamed('Select Next').click();
+  await openMoreOptions(row.getByRole('button', { name: 'More Options' }), 'Select');
+  await expect(moreOptionsItems).toHaveText(['Select', 'Reveal in Map', 'Open Folder', 'Google', 'View Data', ...selection]);
+  await menuItemNamed('Photo Taken After').click();
   await expectSelected('IMG_5769.JPG');
-  await openMoreOptions(popup.locator('.photo-info-viewer-more-options-button'), 'Selection');
-  await expect(menuItemNamed('Select Next')).toBeDisabled();
-  await menuItemNamed('Select Previous').click();
+  await openMoreOptions(popup.locator('.photo-info-viewer-more-options-button'), 'Select');
+  await expect(menuItemNamed('Photo Taken After')).toBeDisabled();
+  await menuItemNamed('Photo Taken Before').click();
   await expectSelected('IMG_4676.JPG');
   await expect.poll(enabled).toEqual({ previous: true, next: true });
 
@@ -2595,6 +2668,62 @@ test('Select Previous and Select Next go through the photos in the order they we
   await kobe.focus();
   await page.keyboard.press('ArrowLeft');
   await expect(kobe).toHaveAttribute('aria-expanded', 'false');
+});
+test('Narrow Down to Photos with Faces keeps selected the photos in which faces are found, as a step that Undo takes back', async () => {
+  // Faces are found in the two photos of astronauts by the detector, which runs in a worker of the page with the
+  // page's Content Security Policy, and gets the photos through plm-file: with CORS. The photo of Unga has a face in its
+  // metadata, as Lightroom writes one, which counts without being looked at. The photo of Kobe and the HEIF photo have
+  // none; the HEIF photo is looked at in the thumbnail that the app makes of it, which the search waits for.
+  const folder = path.join(profile, 'Faces');
+  await mkdir(folder);
+  await copyFile(path.join(root, 'test/e2e/fixtures/faces/astronaut-portrait.jpg'), path.join(folder, 'portrait.jpg'));
+  await copyFile(path.join(root, 'test/e2e/fixtures/faces/astronaut-crew.jpg'), path.join(folder, 'crew.jpg'));
+  await writeFile(path.join(folder, 'tagged.jpg'), jpegWithFaceRegion(await readFile(path.join(photoFolder, 'Unga/IMG_2581.JPG'))));
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'kobe.jpg'));
+  await copyFile(path.join(root, 'test/e2e/fixtures/demo.heic'), path.join(folder, 'demo.heic'));
+  const menuItem = id => ({
+    click: () => app.evaluate(({ Menu }, id) => Menu.getApplicationMenu().getMenuItemById(id).click(), id),
+    enabled: () => app.evaluate(({ Menu }, id) => Menu.getApplicationMenu().getMenuItemById(id).enabled, id),
+  });
+  const narrowDown = menuItem('photo-selection-narrow-down-to-photos-with-faces');
+  const withFaces = ['portrait.jpg', 'crew.jpg', 'tagged.jpg'];
+  const withoutFaces = ['kobe.jpg', 'demo.heic'];
+  async function expectSelected(names) {
+    for (const name of [...withFaces, ...withoutFaces])
+      await expect(treeCheckbox(name)).toBeChecked({ checked: names.includes(name) });
+    await expectRepresentedPhotos(names.length);
+  }
+  const dialog = page.locator('app-face-search-dialog');
+  await dismissWelcome();
+  // Nothing is selected before a folder is opened.
+  await expect.poll(narrowDown.enabled).toBe(false);
+  await openFolderWithPicker(folder);
+  await expect(page.locator('app-loaded-files-status-bar')).toContainText('5 files have location data.');
+  await expectSelected([...withFaces, ...withoutFaces]);
+  await expect.poll(narrowDown.enabled).toBe(true);
+
+  await narrowDown.click();
+  // The HEIF photo's thumbnail may take a while to be made.
+  await expect(treeCheckbox('kobe.jpg')).not.toBeChecked({ timeout: 30000 });
+  await expectSelected(withFaces);
+  await expect(dialog).toHaveCount(0);
+
+  // A step of the selection's history.
+  await menuItem('photo-selection-undo').click();
+  await expectSelected([...withFaces, ...withoutFaces]);
+  // What was found is kept while the folder is open: the selection narrows down again at once.
+  await narrowDown.click();
+  await expectSelected(withFaces);
+
+  // Without a face among the selected photos, the selection stays, and the dialog says so until it is closed.
+  await menuItem('photo-selection-undo').click();
+  for (const name of withFaces) await treeCheckbox(name).uncheck();
+  await expectSelected(withoutFaces);
+  await narrowDown.click();
+  await expect(dialog).toContainText('No faces were found in the selected photos. The selection stays as it is.');
+  await dialog.getByRole('button', { name: 'Close', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  await expectSelected(withoutFaces);
 });
 test('Select Previous and Select Next scroll the sidebar to the selected photo\'s row only when the sidebar does not show all of it', async () => {
   // Copies of one photo, all taken at the same time, so that their names order them: twelve in a folder, which go
@@ -2929,6 +3058,22 @@ test('a saved maximized or full-screen main window stays off the screen in a hea
   expect(await mainWindow.evaluate(window => [window.isMaximized(), window.isFullScreen()])).toEqual([false, false]);
   // On macOS, a window becomes full screen only after a transition, so check that none was asked for.
   expect(await app.evaluate(() => globalThis.__plmWindowStateCalls)).toEqual([]);
+});
+test('the main window\'s page is served in the application\'s language, with its loading text in a font of the computer that its first frame has', async () => {
+  test.skip(liveReload, 'In live reload, ng serve sends the page as it is.');
+  const served = await servedAppPage();
+  // Japanese and Arabic are checked in their cases.
+  expect(served).toMatchObject({ lang: 'en', dir: 'ltr', loadingText: 'Loading...' });
+  expect(served.policy).toContain('default-src \'none\'');
+  // TL;DR: In a production build, the loading text's font and the spinner's stop for reduced motion are in the page
+  // itself, which the window's first frame draws with, not only in styles.css, which comes after it.
+  // Details: The page's main thread can wait seconds before the app's code runs (src/styles/_app-loading-indicator.scss),
+  // and only the first frame shows meanwhile. Beasties puts in the page the rules whose elements the page has. A
+  // development build has no such CSS: its styles.css comes before the page is drawn.
+  if (served.stylesheetDeferred) {
+    expect(served.css).toMatch(/\.app-loading-text\{[^}]*font-family:system-ui,sans-serif/);
+    expect(served.css).toMatch(/@media\s*\(prefers-reduced-motion:\s*reduce\)\{\.app-loading-indicator\{animation:none\}\}/);
+  }
 });
 test('the main window\'s page runs isolated, without Node.js, and reaches the main process only through its bridge', async () => {
   // The preferences that Electron applied to the window, not only those that the code asked for.
@@ -3433,6 +3578,122 @@ test('deleting the thumbnail cache empties it before the app relaunches itself',
   expect(await readdir(cacheFolder)).toEqual([]);
   await launch();
 });
+/**
+ * What the page of Photo Data Viewer's window `viewer` shows and could not load, and what it wrote to its console and
+ * threw, for a case whose viewer did not show what the case waited for (expectShownInViewer).
+ */
+async function describeViewerPage(viewer) {
+  const shown = await within5Seconds(viewer.evaluate(() => JSON.stringify({
+    address: location.href, readyState: document.readyState, title: document.title,
+    text: (document.body?.innerText ?? '').replace(/\s+/g, ' ').trim().slice(0, 300),
+    images: [...document.images].map(image => `${image.alt || 'no alt'}: ${image.naturalWidth}x${image.naturalHeight}`),
+    notLoaded: performance.getEntriesByType('resource').filter(entry => entry.responseStatus >= 400)
+      .map(entry => `${entry.name}: HTTP ${entry.responseStatus}`),
+  })).catch(error => `could not be read: ${error.message}`), 'no answer within 5 seconds');
+  const notFinished = [...unfinishedRequests].filter(request => pageOf(request) === viewer).map(addressOf);
+  const events = otherPagesEvents.get(viewer) ?? [];
+  return [`The page: ${shown}`, `Its requests not finished: ${JSON.stringify(notFinished)}`,
+    `What it wrote to its console, threw and did not load: ${events.length > 30 ? `the last 30 of ${events.length}` : 'all'}`,
+    ...events.slice(-30), await describeApplication().catch(error => `The application could not be read: ${error.message}`)]
+    .join('\n');
+}
+/**
+ * Waits until `shown`, a locator in the page of Photo Data Viewer's window `viewer`, is visible, and loads the page
+ * again while the viewer's server answers it without some files of the viewer's own build, and the page does not load
+ * itself again.
+ * TL;DR: Such a page was loaded while the viewer's production deployment changed. It has the HTML of one deployment,
+ * and got its scripts from the other one, which does not have them, so it never starts and shows nothing. The viewer
+ * now loads such a page again by itself; the helper does so only where the viewer did not.
+ * Details:
+ * - The suite loads the viewer from its production server, https://pdv-in-plm.vercel.app/
+ *   (src-main/photo-data-viewer/photo-data-viewer-server-config.ts). Each merge to Photo Data Viewer's main deploys
+ *   it anew, apart from this app: 13 times on 2026-11-18, 9 on 2026-11-19. The server has the files of its current
+ *   deployment only, as their addresses name no deployment (Vercel's Skew Protection would add ?dpl= to them), and
+ *   each deployment's build names some of its files anew: Next.js names a script by its content, the _app script
+ *   holds the commit that it was built from, and the build manifests are in a folder named after the build. The
+ *   page's HTML has no content of its own (3.4 kB, an empty root): without its scripts, the page never asks its window
+ *   for the photo.
+ * - The change takes seconds. Watched on 2026-11-20, as Photo Data Viewer's 46342a9 became the deployment (its status
+ *   said so at 12:31:25 UTC): from 12:31:26.3 to 12:31:34.1, the server gave the HTML of either deployment, and each
+ *   script from either, so that 10 of the 44 page loads made then got their HTML with its _app or main script
+ *   answered 404. The old HTML still came 6.9 seconds after the new one first had.
+ * - Seen twice in CI on Ubuntu, a case that found no img in 30 seconds, while the cases before and after it passed:
+ *   - In the push run of main on a12b956b (run 44535489119), the case of a JPEG with Unicode, spaces, # and % in its
+ *     path, against the development build. The status of Photo Data Viewer's 931cfb4 said its deployment was ready
+ *     at 14:02:14 UTC on 2026-11-19, and the case opened the viewer at about 14:02:15.
+ *   - In the pull_request run of #760 on de127696 (run 44734642049), the case of a HEIC, against the AppImage. It
+ *     opened the viewer at about 12:31:28 UTC on 2026-11-20, in the seconds watched above.
+ * - The deployments of 26faec8 and 931cfb4 each answer 404 for the other's webpack, main and _app scripts and build
+ *   manifests. Reproduced with the server on a later deployment, cf4b714's: given the HTML of 26faec8's, the page got
+ *   404 for those files and others, and showed nothing for 15 seconds; loaded again, it showed the photo 0.4 seconds
+ *   later.
+ * - Since Photo Data Viewer's 1b42c3c (its pull request #104, src/page-load/reload-for-missing-build-files.ts), the
+ *   page loads itself again half a second after its load event, at most 3 times a minute, while its app has not
+ *   started. The helper is left for the rest: a page that has used up those loads, the HTML of a deployment before
+ *   that one, and the files that a page that has started asks for, which the viewer leaves to its app: the scripts of
+ *   the map (Leaflet) and of the HEIC decoder (libheif), which webpack loads after the page's load event. So the page
+ *   is watched until it shows `shown`.
+ * - Only a 404 of the viewer's own server for a file under /_next/static/ counts. The helper then lets the page's load
+ *   end, unless the page shows `shown` first, and waits 2 seconds more, and loads the page again only if it is still
+ *   the same document, is not loading, still misses such a file and still does not show `shown`, and `timeout` has not
+ *   passed; otherwise it goes back to watching. A load of its own would stop the page's: in an emulation of the two by
+ *   the viewer's session, against a server that answered in up to 600 ms, they stopped each other in 5 of 12 runs whose
+ *   page needed its third load (page.reload: net::ERR_ABORTED), and with those checks, 48 of 48 runs passed. In this
+ *   suite, against the viewer of 1b42c3c, a page given broken HTML once was loaded again by the viewer alone, and a
+ *   page given it four times was loaded again by the viewer three times and then by the helper. Any other failure, and
+ *   a page that still shows nothing when `timeout` has passed, fails the case with what the page shows
+ *   (describeViewerPage).
+ * - A load of the helper's waits only until the new document commits, and the helper then watches it as before: the
+ *   page's load event can wait on a file that `shown` does not need, such as a font. For the same reason, the helper
+ *   stops waiting for the page's load once the page shows `shown`.
+ * - A load is let end before the next one. A new load stops one that is still going, as loading the page again 3
+ *   seconds early did in a reproduction: loadURL() then rejects with ERR_ABORTED (-3), an unhandled error, whose
+ *   dialog holds the main process in the suite (load-viewer-page.ts).
+ * - Not chosen: rerunning the case (Playwright's retries), which would also pass a real failure that does not happen
+ *   every time; serving the viewer from a local build (PLM_TEST_PHOTO_DATA_VIEWER_SERVER), which needs Photo Data
+ *   Viewer's checkout in CI and would no longer check the viewer that users get; Skew Protection, a setting of the
+ *   viewer's own Vercel project.
+ */
+async function expectShownInViewer(viewer, shown, timeout = 30000) {
+  const deadline = Date.now() + timeout;
+  // At least 1 ms, as a timeout of 0 is none.
+  const left = () => Math.max(deadline - Date.now(), 1);
+  const missingFiles = () => viewer.evaluate(() => performance.getEntriesByType('resource')
+    .filter(entry => entry.responseStatus === 404 && entry.name.startsWith(`${location.origin}/_next/static/`))
+    .map(entry => entry.name.slice(location.origin.length))).catch(() => []);
+  // expect.poll() does not poll again after a function that throws, as one that reads a page being loaded can.
+  const state = async () => await shown.isVisible().catch(() => false) ? 'shown'
+    : (await missingFiles()).length ? 'missing files' : 'loading';
+  // Each load of the page makes a new document, with a time origin of its own.
+  const currentDocument = () => viewer.evaluate(() => performance.timeOrigin).catch(() => undefined);
+  const viewerWindow = await app.browserWindow(viewer);
+  const isLoading = () => viewerWindow.evaluate(window => window.webContents.isLoading()).catch(() => true);
+  const notShown = async error => {
+    throw new Error(`The page of Photo Data Viewer did not show ${shown} within ${timeout} ms.\n${await describeViewerPage(viewer)}`,
+      { cause: error });
+  };
+  for (;;) {
+    // Decided by what ended the poll. A second look could find the document of a load that the page made meanwhile,
+    // still loading, and the helper would then no longer load that page again. A poll that outlives its test ends
+    // without a look, so anything but 'missing files' leaves the loop.
+    let seen;
+    await expect.poll(async () => (seen = await state()), { timeout: left(), intervals: [100, 250] }).not.toBe('loading')
+      .catch(notShown);
+    if (seen !== 'missing files') break;
+    const missingDocument = await currentDocument();
+    // Until the page's load has ended or the page shows `shown`, as its load can wait on a file that `shown` does not
+    // need. The check after the wait still keeps the helper from loading a page that is loading.
+    const loadedOrShown = async () => !await isLoading() || await shown.isVisible().catch(() => false);
+    await expect.poll(loadedOrShown, { timeout: left() }).toBe(true).catch(notShown);
+    await viewer.waitForTimeout(Math.min(2000, left()));
+    if (await currentDocument() !== missingDocument || await isLoading() || await state() !== 'missing files') continue;
+    if (Date.now() >= deadline) await notShown(new Error('The page was still missing files of its own build.'));
+    console.log(`Photo Data Viewer's server did not have ${(await missingFiles()).join(', ')}, of the page's own build: `
+      + 'loading the page again.');
+    await viewer.reload({ timeout: left(), waitUntil: 'commit' }).catch(notShown);
+  }
+  await expect(shown).toBeVisible({ timeout: left() }).catch(notShown);
+}
 for (const [name, fixture, specialPath] of [
   ['JPEG', 'actual-photos/Kobe/IMG_4676.JPG'],
   ['HEIC', '../../e2e/fixtures/demo.heic'],
@@ -3455,7 +3716,7 @@ for (const [name, fixture, specialPath] of [
     await page.evaluate(({ name, photo }) => window.plm.photoDataViewer.open({ photo: { name, path: photo } }),
       { name: path.basename(photo), photo });
     const viewer = await newWindow;
-    await expect(viewer.locator('img[alt]').filter({ hasNotText: 'dummy' }).first()).toBeVisible({ timeout: 30000 });
+    await expectShownInViewer(viewer, viewer.locator('img[alt]').filter({ hasNotText: 'dummy' }).first());
     await viewer.waitForFunction(() => [...document.querySelectorAll('img')].some(img => img.naturalWidth > 100), { timeout: 30000 });
     await expect(viewer).toHaveTitle(`${path.basename(photo)} - Photo Location Map`);
     // The viewer calls show() once loaded; its window, too, must stay off the screen in a headless run.
@@ -3565,7 +3826,7 @@ test('Photo Data Viewer opens first wide enough to split its panes, in the middl
   // not behind the tabs of a single pane. The display may be too small for it, as the 1024x768 of CI's macOS and
   // Windows runners is; Ubuntu's, of 1280x1024, is not.
   if (width === 1240) {
-    await expect(viewer.locator('.leaflet-container')).toBeVisible({ timeout: 30000 });
+    await expectShownInViewer(viewer, viewer.locator('.leaflet-container'));
     await expect(viewer.getByRole('tab', { name: 'General', exact: true })).toBeVisible();
     await expect(viewer.getByRole('tab', { name: 'Map', exact: true })).toHaveCount(0);
     expect(await viewer.evaluate(() => document.documentElement.clientWidth)).toBeGreaterThan(1200);

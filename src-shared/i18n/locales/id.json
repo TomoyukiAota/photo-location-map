@@ -95,9 +95,9 @@
     "rotateThumbnail": "Putar gambar mini",
     "menu": {
       "selection": "Pilihan",
-      "selectOnlyThis": "Pilih hanya file ini",
-      "selectPrevious": "Pilih file sebelumnya",
-      "selectNext": "Pilih file berikutnya",
+      "selectOnlyThis": "Hanya file ini",
+      "selectPrevious": "Foto yang diambil sebelumnya",
+      "selectNext": "Foto yang diambil sesudahnya",
       "openFolder": "Buka folder",
       "revealInMap": "Tampilkan di peta",
       "revealInSidebar": "Tampilkan di bilah samping",
@@ -176,6 +176,15 @@
       "openFolder": "Buka folder"
     }
   },
+  "faceSearch": {
+    "looking": "Mencari wajah di foto yang dipilih...",
+    "progress": "Foto yang diperiksa: {{done}} dari {{total}}.",
+    "waitingForThumbnails": "Menunggu gambar mini file HEIF selesai dibuat...",
+    "onThisComputer": "Wajah hanya dicari di komputer ini. Tidak ada apa pun tentangnya yang dikirim ke mana pun.",
+    "noFacesFound": "Tidak ditemukan wajah di foto yang dipilih. Pilihan tetap seperti semula.",
+    "notLookedAt": "Foto yang tidak dapat diperiksa untuk mencari wajah dan tidak lagi dipilih: {{count}}.",
+    "failed": "Wajah tidak dapat dicari di foto yang dipilih. Pilihan tetap seperti semula."
+  },
   "settings": {
     "title": "Pengaturan",
     "tabs": {
@@ -252,8 +261,9 @@
       "title": "Pilihan",
       "undo": "Urungkan",
       "redo": "Ulangi",
-      "selectPrevious": "Pilih file sebelumnya",
-      "selectNext": "Pilih file berikutnya"
+      "selectPrevious": "Foto yang diambil sebelumnya",
+      "selectNext": "Foto yang diambil sesudahnya",
+      "narrowDownToPhotosWithFaces": "Persempit ke foto yang berisi wajah"
     },
     "settings": {
       "title": "Pengaturan",

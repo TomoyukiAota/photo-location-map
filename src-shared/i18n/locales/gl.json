@@ -95,9 +95,9 @@
     "rotateThumbnail": "Xirar a miniatura",
     "menu": {
       "selection": "Selección",
-      "selectOnlyThis": "Seleccionar só este ficheiro",
-      "selectPrevious": "Seleccionar o ficheiro anterior",
-      "selectNext": "Seleccionar o ficheiro seguinte",
+      "selectOnlyThis": "Só este ficheiro",
+      "selectPrevious": "Foto tirada antes",
+      "selectNext": "Foto tirada despois",
       "openFolder": "Abrir o cartafol",
       "revealInMap": "Mostrar no mapa",
       "revealInSidebar": "Mostrar na barra lateral",
@@ -176,6 +176,15 @@
       "openFolder": "Abrir o cartafol"
     }
   },
+  "faceSearch": {
+    "looking": "Buscando caras nas fotos seleccionadas...",
+    "progress": "Fotos revisadas: {{done}} de {{total}}.",
+    "waitingForThumbnails": "Agardando a que se xeren as miniaturas dos ficheiros HEIF...",
+    "onThisComputer": "As caras búscanse só neste ordenador. Non se envía nada sobre elas a ningures.",
+    "noFacesFound": "Non se atoparon caras nas fotos seleccionadas. A selección queda como está.",
+    "notLookedAt": "Fotos nas que non se puideron buscar caras e que xa non están seleccionadas: {{count}}.",
+    "failed": "Non se puideron buscar caras nas fotos seleccionadas. A selección queda como está."
+  },
   "settings": {
     "title": "Configuración",
     "tabs": {
@@ -252,8 +261,9 @@
       "title": "Selección",
       "undo": "Desfacer",
       "redo": "Refacer",
-      "selectPrevious": "Seleccionar o ficheiro anterior",
-      "selectNext": "Seleccionar o ficheiro seguinte"
+      "selectPrevious": "Foto tirada antes",
+      "selectNext": "Foto tirada despois",
+      "narrowDownToPhotosWithFaces": "Restrinxir ás fotos con caras"
     },
     "settings": {
       "title": "Configuración",

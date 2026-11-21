@@ -95,9 +95,9 @@
     "rotateThumbnail": "Küçük resmi döndür",
     "menu": {
       "selection": "Seçim",
-      "selectOnlyThis": "Yalnızca bu dosyayı seç",
-      "selectPrevious": "Önceki dosyayı seç",
-      "selectNext": "Sonraki dosyayı seç",
+      "selectOnlyThis": "Yalnızca bu dosya",
+      "selectPrevious": "Ondan önce çekilen fotoğraf",
+      "selectNext": "Ondan sonra çekilen fotoğraf",
       "openFolder": "Klasörü aç",
       "revealInMap": "Haritada göster",
       "revealInSidebar": "Kenar çubuğunda göster",
@@ -176,6 +176,15 @@
       "openFolder": "Klasörü aç"
     }
   },
+  "faceSearch": {
+    "looking": "Seçili fotoğraflarda yüz aranıyor...",
+    "progress": "İncelenen fotoğraflar: {{done}} / {{total}}.",
+    "waitingForThumbnails": "HEIF dosyalarının küçük resimlerinin oluşturulması bekleniyor...",
+    "onThisComputer": "Yüzler yalnızca bu bilgisayarda aranır. Yüzlerle ilgili hiçbir şey hiçbir yere gönderilmez.",
+    "noFacesFound": "Seçili fotoğraflarda yüz bulunamadı. Seçim olduğu gibi kalır.",
+    "notLookedAt": "Yüz aranamayan ve artık seçili olmayan fotoğraflar: {{count}}.",
+    "failed": "Seçili fotoğraflarda yüz aranamadı. Seçim olduğu gibi kalır."
+  },
   "settings": {
     "title": "Ayarlar",
     "tabs": {
@@ -252,8 +261,9 @@
       "title": "Seçim",
       "undo": "Geri al",
       "redo": "Yinele",
-      "selectPrevious": "Önceki dosyayı seç",
-      "selectNext": "Sonraki dosyayı seç"
+      "selectPrevious": "Ondan önce çekilen fotoğraf",
+      "selectNext": "Ondan sonra çekilen fotoğraf",
+      "narrowDownToPhotosWithFaces": "Yüz içeren fotoğraflara daralt"
     },
     "settings": {
       "title": "Ayarlar",

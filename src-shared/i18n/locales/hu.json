@@ -95,9 +95,9 @@
     "rotateThumbnail": "Bélyegkép elforgatása",
     "menu": {
       "selection": "Kijelölés",
-      "selectOnlyThis": "Csak ennek a fájlnak a kijelölése",
-      "selectPrevious": "Az előző fájl kijelölése",
-      "selectNext": "A következő fájl kijelölése",
+      "selectOnlyThis": "Csak ez a fájl",
+      "selectPrevious": "Az előtte készült fotó",
+      "selectNext": "Az utána készült fotó",
       "openFolder": "Mappa megnyitása",
       "revealInMap": "Megjelenítés a térképen",
       "revealInSidebar": "Megjelenítés az oldalsávon",
@@ -176,6 +176,15 @@
       "openFolder": "Mappa megnyitása"
     }
   },
+  "faceSearch": {
+    "looking": "Arcok keresése a kijelölt fotókon...",
+    "progress": "Átvizsgált fotók: {{done}} / {{total}}.",
+    "waitingForThumbnails": "Várakozás a HEIF-fájlok bélyegképeinek elkészülésére...",
+    "onThisComputer": "Az arcok keresése csak ezen a számítógépen történik. Róluk semmi nem kerül elküldésre sehova.",
+    "noFacesFound": "A kijelölt fotókon nem található arc. A kijelölés változatlan marad.",
+    "notLookedAt": "Fotók, amelyeken nem lehetett arcokat keresni, és már nincsenek kijelölve: {{count}}.",
+    "failed": "A kijelölt fotókon nem lehetett arcokat keresni. A kijelölés változatlan marad."
+  },
   "settings": {
     "title": "Beállítások",
     "tabs": {
@@ -252,8 +261,9 @@
       "title": "Kijelölés",
       "undo": "Visszavonás",
       "redo": "Mégis",
-      "selectPrevious": "Az előző fájl kijelölése",
-      "selectNext": "A következő fájl kijelölése"
+      "selectPrevious": "Az előtte készült fotó",
+      "selectNext": "Az utána készült fotó",
+      "narrowDownToPhotosWithFaces": "Szűkítés az arcokat tartalmazó fotókra"
     },
     "settings": {
       "title": "Beállítások",

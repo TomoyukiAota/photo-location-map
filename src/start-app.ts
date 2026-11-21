@@ -18,7 +18,11 @@ import { recordErrorsOutsideAngular } from './app/shared/error/analytics-error-h
 import { AppConfig } from './environments/environment';
 import './ipc-renderer-setup/ipc-renderer-all-setup';
 
-/** Shows the page in the application's language, as far as it is shown before Angular renders it. */
+/**
+ * Shows the page in the application's language, as far as it is shown before Angular renders it. The main process has
+ * written all of this into the page already (src-main/file-server/app-page-language.ts), except in live reload, where
+ * ng serve sends the page as it is.
+ */
 function applyLanguageToPage(): void {
   // Chromium chooses the glyphs of Japanese and Chinese, which share code points, by the page's language.
   document.documentElement.lang = currentLanguage;

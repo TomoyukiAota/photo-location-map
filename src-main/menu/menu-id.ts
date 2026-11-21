@@ -4,5 +4,6 @@ export namespace MenuId {
     export const Redo = 'photo-selection-redo';
     export const SelectPrevious = 'photo-selection-select-previous';
     export const SelectNext = 'photo-selection-select-next';
+    export const NarrowDownToPhotosWithFaces = 'photo-selection-narrow-down-to-photos-with-faces';
   }
 }

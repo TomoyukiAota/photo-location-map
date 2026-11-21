@@ -95,9 +95,9 @@
     "rotateThumbnail": "Ruota miniatura",
     "menu": {
       "selection": "Selezione",
-      "selectOnlyThis": "Seleziona solo questo file",
-      "selectPrevious": "Seleziona il file precedente",
-      "selectNext": "Seleziona il file successivo",
+      "selectOnlyThis": "Solo questo file",
+      "selectPrevious": "Foto scattata prima",
+      "selectNext": "Foto scattata dopo",
       "openFolder": "Apri cartella",
       "revealInMap": "Mostra sulla mappa",
       "revealInSidebar": "Mostra nella barra laterale",
@@ -176,6 +176,15 @@
       "openFolder": "Apri cartella"
     }
   },
+  "faceSearch": {
+    "looking": "Ricerca di volti nelle foto selezionate...",
+    "progress": "Foto esaminate: {{done}} di {{total}}.",
+    "waitingForThumbnails": "In attesa della creazione delle miniature dei file HEIF...",
+    "onThisComputer": "I volti vengono cercati solo su questo computer. Nulla che li riguardi viene inviato altrove.",
+    "noFacesFound": "Nelle foto selezionate non sono stati trovati volti. La selezione resta invariata.",
+    "notLookedAt": "Foto in cui non è stato possibile cercare volti e che non sono più selezionate: {{count}}.",
+    "failed": "Non è stato possibile cercare volti nelle foto selezionate. La selezione resta invariata."
+  },
   "settings": {
     "title": "Impostazioni",
     "tabs": {
@@ -252,8 +261,9 @@
       "title": "Selezione",
       "undo": "Annulla",
       "redo": "Ripristina",
-      "selectPrevious": "Seleziona il file precedente",
-      "selectNext": "Seleziona il file successivo"
+      "selectPrevious": "Foto scattata prima",
+      "selectNext": "Foto scattata dopo",
+      "narrowDownToPhotosWithFaces": "Restringi alle foto con volti"
     },
     "settings": {
       "title": "Impostazioni",

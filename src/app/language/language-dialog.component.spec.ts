@@ -159,6 +159,14 @@ describe('LanguageDialogComponent', () => {
     expect([okButton().getAttribute('lang'), okButton().getAttribute('dir')]).toEqual(['en', 'ltr']);
   });
 
+  it('gives the note the room of the note in the language on screen, whatever language is chosen, without reading it aloud', async () => {
+    const room: HTMLElement = host.querySelector('.restart-room-height');
+    await choose('Français');
+    expect(restartNote().textContent.trim()).toBe('Cette application va redémarrer pour appliquer la langue.');
+    expect(room.textContent.trim()).toBe('This application will restart to apply the language.');
+    expect(room.getAttribute('aria-hidden')).toBe('true');
+  });
+
   it('says in the chosen language that the application will restart, names its button in it, and restarts once the choice is saved', async () => {
     const restart = vi.spyOn(window.plm.app, 'restart');
     await choose('日本語');

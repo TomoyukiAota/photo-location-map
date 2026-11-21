@@ -95,9 +95,9 @@
     "rotateThumbnail": "Pasukti miniatiūrą",
     "menu": {
       "selection": "Pasirinkimas",
-      "selectOnlyThis": "Pasirinkti tik šį failą",
-      "selectPrevious": "Pasirinkti ankstesnį failą",
-      "selectNext": "Pasirinkti kitą failą",
+      "selectOnlyThis": "Tik šis failas",
+      "selectPrevious": "Prieš tai padaryta nuotrauka",
+      "selectNext": "Po to padaryta nuotrauka",
       "openFolder": "Atidaryti aplanką",
       "revealInMap": "Rodyti žemėlapyje",
       "revealInSidebar": "Rodyti šoninėje juostoje",
@@ -176,6 +176,15 @@
       "openFolder": "Atidaryti aplanką"
     }
   },
+  "faceSearch": {
+    "looking": "Ieškoma veidų pasirinktose nuotraukose...",
+    "progress": "Peržiūrėta nuotraukų: {{done}} iš {{total}}.",
+    "waitingForThumbnails": "Laukiama, kol bus sukurtos HEIF failų miniatiūros...",
+    "onThisComputer": "Veidų ieškoma tik šiame kompiuteryje. Niekas apie juos niekur nesiunčiama.",
+    "noFacesFound": "Pasirinktose nuotraukose veidų nerasta. Pasirinkimas lieka nepakitęs.",
+    "notLookedAt": "Nuotraukų, kuriose nepavyko ieškoti veidų ir kurios nebėra pasirinktos: {{count}}.",
+    "failed": "Pasirinktose nuotraukose nepavyko ieškoti veidų. Pasirinkimas lieka nepakitęs."
+  },
   "settings": {
     "title": "Nustatymai",
     "tabs": {
@@ -252,8 +261,9 @@
       "title": "Pasirinkimas",
       "undo": "Anuliuoti",
       "redo": "Perdaryti",
-      "selectPrevious": "Pasirinkti ankstesnį failą",
-      "selectNext": "Pasirinkti kitą failą"
+      "selectPrevious": "Prieš tai padaryta nuotrauka",
+      "selectNext": "Po to padaryta nuotrauka",
+      "narrowDownToPhotosWithFaces": "Susiaurinti iki nuotraukų su veidais"
     },
     "settings": {
       "title": "Nustatymai",

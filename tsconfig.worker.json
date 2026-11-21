@@ -1,0 +1,13 @@
+/* The workers of the page (src/**/*.worker.ts), which Angular's build compiles apart, as its guide sets them up:
+   https://angular.dev/ecosystem/web-workers */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/worker",
+    "lib": ["es2022", "webworker"],
+    "types": []
+  },
+  "include": [
+    "src/**/*.worker.ts"
+  ]
+}

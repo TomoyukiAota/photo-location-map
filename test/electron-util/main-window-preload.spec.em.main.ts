@@ -92,6 +92,7 @@ describe('The main window\'s preload', () => {
   it('sends each operation on its channel, with only its own arguments', async () => {
     const photoSelection = { isUndoMenuEnabled: true, isRedoMenuEnabled: false };
     const previousNext = { isSelectPreviousMenuEnabled: false, isSelectNextMenuEnabled: true };
+    const narrowDown = { isEnabled: true };
     const viewerParams = { photo: { name: 'a.jpg', path: '/photos/a.jpg' } };
     const operations: [(plm: any) => unknown, Call][] = [
       [plm => plm.storage.snapshot(), { method: 'sendSync', channel: IpcConstants.UserDataStorage.Snapshot, args: [] }],
@@ -101,6 +102,8 @@ describe('The main window\'s preload', () => {
       [plm => plm.folderDialog.show({ defaultPath: '/photos' }), { method: 'invoke', channel: IpcConstants.FolderDialog.Show, args: [{ defaultPath: '/photos' }] }],
       [plm => plm.folderDialog.isDirectory('/photos'), { method: 'invoke', channel: IpcConstants.FolderDialog.IsDirectory, args: ['/photos'] }],
       [plm => plm.exif.read('/photos/a.jpg'), { method: 'invoke', channel: IpcConstants.Exif.Read, args: ['/photos/a.jpg'] }],
+      [plm => plm.faceRegions.have(['/photos/a.jpg', '/photos/b.jpg']),
+        { method: 'invoke', channel: IpcConstants.FaceRegions.Have, args: [['/photos/a.jpg', '/photos/b.jpg']] }],
       [plm => plm.directoryTree.create('/photos'), { method: 'invoke', channel: IpcConstants.DirectoryTree.Create, args: ['/photos'] }],
       [plm => plm.thumbnails.generate(['/a.heic', '/b.heic'], ['/b.heic']),
         { method: 'invoke', channel: IpcConstants.ThumbnailGenerationInMainProcess.Name, args: [['/a.heic', '/b.heic'], ['/b.heic']] }],
@@ -118,6 +121,8 @@ describe('The main window\'s preload', () => {
       [plm => plm.menus.updateUndoRedo(photoSelection), { method: 'invoke', channel: IpcConstants.PhotoSelection.UpdateUndoRedoMenus, args: [photoSelection] }],
       [plm => plm.menus.updateSelectPreviousNext(previousNext),
         { method: 'invoke', channel: IpcConstants.PhotoSelection.UpdateSelectPreviousNextMenus, args: [previousNext] }],
+      [plm => plm.menus.updateNarrowDownToPhotosWithFaces(narrowDown),
+        { method: 'invoke', channel: IpcConstants.PhotoSelection.UpdateNarrowDownToPhotosWithFacesMenu, args: [narrowDown] }],
       [plm => plm.photoDataViewer.open(viewerParams), { method: 'invoke', channel: IpcConstants.PhotoDataViewer.Name, args: [viewerParams] }],
       [plm => plm.explorerContextMenu.add(), { method: 'invoke', channel: IpcConstants.ExplorerContextMenu.Add, args: [] }],
       [plm => plm.explorerContextMenu.remove(), { method: 'invoke', channel: IpcConstants.ExplorerContextMenu.Remove, args: [] }],
@@ -158,6 +163,7 @@ describe('The main window\'s preload', () => {
       ['onRedo', IpcConstants.PhotoSelection.Redo, []],
       ['onSelectPrevious', IpcConstants.PhotoSelection.SelectPrevious, []],
       ['onSelectNext', IpcConstants.PhotoSelection.SelectNext, []],
+      ['onNarrowDownToPhotosWithFaces', IpcConstants.PhotoSelection.NarrowDownToPhotosWithFaces, []],
       ['onRecordAtAppLaunchFinished', IpcConstants.RecordAtAppLaunch.Finished, []],
     ];
     for (const [name, channel, args] of events) {
@@ -225,7 +231,7 @@ describe('The main window\'s preload', () => {
     const { exposed } = runPreload(true);
     const api = exposed[0].api;
     assert.deepStrictEqual(Object.keys(api), ['version', 'startup', 'storage', 'log', 'analytics', 'folderDialog', 'exif',
-      'directoryTree', 'thumbnails', 'thumbnailCache', 'shell', 'app', 'commandLine', 'droppedItem', 'menus',
+      'faceRegions', 'directoryTree', 'thumbnails', 'thumbnailCache', 'shell', 'app', 'commandLine', 'droppedItem', 'menus',
       'photoDataViewer', 'explorerContextMenu', 'events']);
     const memberNames = Object.values(api).flatMap(member => typeof member === 'object' && member !== null ? Object.keys(member) : []);
     for (const generic of ['send', 'sendSync', 'invoke', 'on', 'require', 'ipcRenderer', 'process', 'exec', 'spawn', 'readFile'])

@@ -95,9 +95,9 @@
     "rotateThumbnail": "Zasukaj sličico",
     "menu": {
       "selection": "Izbor",
-      "selectOnlyThis": "Izberi samo to datoteko",
-      "selectPrevious": "Izberi prejšnjo datoteko",
-      "selectNext": "Izberi naslednjo datoteko",
+      "selectOnlyThis": "Samo ta datoteka",
+      "selectPrevious": "Fotografija, posneta prej",
+      "selectNext": "Fotografija, posneta potem",
       "openFolder": "Odpri mapo",
       "revealInMap": "Prikaži na zemljevidu",
       "revealInSidebar": "Prikaži v stranski vrstici",
@@ -176,6 +176,15 @@
       "openFolder": "Odpri mapo"
     }
   },
+  "faceSearch": {
+    "looking": "Iskanje obrazov na izbranih fotografijah...",
+    "progress": "Pregledane fotografije: {{done}} od {{total}}.",
+    "waitingForThumbnails": "Čakanje na ustvarjanje sličic datotek HEIF...",
+    "onThisComputer": "Obrazi se iščejo samo v tem računalniku. Nič o njih se nikamor ne pošilja.",
+    "noFacesFound": "Na izbranih fotografijah ni bilo najdenih obrazov. Izbor ostane nespremenjen.",
+    "notLookedAt": "Fotografije, na katerih ni bilo mogoče iskati obrazov in ki niso več izbrane: {{count}}.",
+    "failed": "Na izbranih fotografijah ni bilo mogoče iskati obrazov. Izbor ostane nespremenjen."
+  },
   "settings": {
     "title": "Nastavitve",
     "tabs": {
@@ -252,8 +261,9 @@
       "title": "Izbor",
       "undo": "Razveljavi",
       "redo": "Uveljavi",
-      "selectPrevious": "Izberi prejšnjo datoteko",
-      "selectNext": "Izberi naslednjo datoteko"
+      "selectPrevious": "Fotografija, posneta prej",
+      "selectNext": "Fotografija, posneta potem",
+      "narrowDownToPhotosWithFaces": "Zoži na fotografije z obrazi"
     },
     "settings": {
       "title": "Nastavitve",

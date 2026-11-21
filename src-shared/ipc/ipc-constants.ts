@@ -49,6 +49,14 @@ export namespace IpcConstants {
     export const SelectPrevious = 'ipc-constants-photo-selection-select-previous';
     export const SelectNext = 'ipc-constants-photo-selection-select-next';
     export const UpdateSelectPreviousNextMenus = 'ipc-constants-photo-selection-update-select-previous-next-menus';
+    /** The Selection menu's Narrow Down to Photos with Faces, which acts on the selected photos (src/app/face-search/). */
+    export const NarrowDownToPhotosWithFaces = 'ipc-constants-photo-selection-narrow-down-to-photos-with-faces';
+    export const UpdateNarrowDownToPhotosWithFacesMenu = 'ipc-constants-photo-selection-update-narrow-down-to-photos-with-faces-menu';
+  }
+
+  /** The faces that a photo's metadata marks, which the search for faces takes as found (src-main/face-search/). */
+  export namespace FaceRegions {
+    export const Have = 'ipc-constants-face-regions-have';
   }
 
   export namespace ExplorerContextMenu {

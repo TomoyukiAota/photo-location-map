@@ -9,5 +9,9 @@ export namespace IpcParams {
       isSelectPreviousMenuEnabled: boolean;
       isSelectNextMenuEnabled: boolean;
     }
+
+    export interface UpdateNarrowDownToPhotosWithFacesMenu {
+      isEnabled: boolean;
+    }
   }
 }

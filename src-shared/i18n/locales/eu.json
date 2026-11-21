@@ -95,9 +95,9 @@
     "rotateThumbnail": "Biratu miniatura",
     "menu": {
       "selection": "Hautapena",
-      "selectOnlyThis": "Hautatu fitxategi hau bakarrik",
-      "selectPrevious": "Hautatu aurreko fitxategia",
-      "selectNext": "Hautatu hurrengo fitxategia",
+      "selectOnlyThis": "Fitxategi hau bakarrik",
+      "selectPrevious": "Aurretik ateratako argazkia",
+      "selectNext": "Ondoren ateratako argazkia",
       "openFolder": "Ireki karpeta",
       "revealInMap": "Erakutsi mapan",
       "revealInSidebar": "Erakutsi alboko barran",
@@ -176,6 +176,15 @@
       "openFolder": "Ireki karpeta"
     }
   },
+  "faceSearch": {
+    "looking": "Aurpegiak bilatzen hautatutako argazkietan...",
+    "progress": "Aztertutako argazkiak: {{done}} / {{total}}.",
+    "waitingForThumbnails": "HEIF fitxategien miniaturak sortu arte itxaroten...",
+    "onThisComputer": "Aurpegiak ordenagailu honetan bakarrik bilatzen dira. Ez da haiei buruzko ezer inora bidaltzen.",
+    "noFacesFound": "Ez da aurpegirik aurkitu hautatutako argazkietan. Hautapena dagoen bezala geratzen da.",
+    "notLookedAt": "Aurpegiak bilatu ezin izan diren eta jada hautatuta ez dauden argazkiak: {{count}}.",
+    "failed": "Ezin izan dira aurpegiak bilatu hautatutako argazkietan. Hautapena dagoen bezala geratzen da."
+  },
   "settings": {
     "title": "Ezarpenak",
     "tabs": {
@@ -252,8 +261,9 @@
       "title": "Hautapena",
       "undo": "Desegin",
       "redo": "Berregin",
-      "selectPrevious": "Hautatu aurreko fitxategia",
-      "selectNext": "Hautatu hurrengo fitxategia"
+      "selectPrevious": "Aurretik ateratako argazkia",
+      "selectNext": "Ondoren ateratako argazkia",
+      "narrowDownToPhotosWithFaces": "Murriztu aurpegiak dituzten argazkietara"
     },
     "settings": {
       "title": "Ezarpenak",

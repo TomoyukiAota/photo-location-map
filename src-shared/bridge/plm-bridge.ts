@@ -68,6 +68,11 @@ export interface PlmBridge {
     isDirectory(directoryPath: string): Promise<boolean>;
   };
   readonly exif: { read(filePath: string): Promise<ExifReadResult> };
+  /**
+   * Whether the metadata of each photo marks a face, for the search for faces (src-main/face-search/): up to 100
+   * photos of the folders that the user opened at a time, answered in their order.
+   */
+  readonly faceRegions: { have(filePaths: string[]): Promise<boolean[]> };
   readonly directoryTree: { create(directoryPath: string): Promise<DirectoryTreeResult> };
   readonly thumbnails: {
     generate(allHeifFilePaths: string[], heifFilePathsToGenerate: string[]): Promise<void>;
@@ -102,6 +107,7 @@ export interface PlmBridge {
   readonly menus: {
     updateUndoRedo(params: IpcParams.PhotoSelection.UpdateUndoRedoMenus): Promise<void>;
     updateSelectPreviousNext(params: IpcParams.PhotoSelection.UpdateSelectPreviousNextMenus): Promise<void>;
+    updateNarrowDownToPhotosWithFaces(params: IpcParams.PhotoSelection.UpdateNarrowDownToPhotosWithFacesMenu): Promise<void>;
   };
   readonly photoDataViewer: { open(params: PhotoDataViewerIpcParams): Promise<void> };
   readonly explorerContextMenu: { add(): Promise<void>; remove(): Promise<void> };
@@ -113,6 +119,7 @@ export interface PlmBridge {
     onRedo(listener: Listener): Unsubscribe;
     onSelectPrevious(listener: Listener): Unsubscribe;
     onSelectNext(listener: Listener): Unsubscribe;
+    onNarrowDownToPhotosWithFaces(listener: Listener): Unsubscribe;
     onRecordAtAppLaunchFinished(listener: Listener): Unsubscribe;
   };
 }

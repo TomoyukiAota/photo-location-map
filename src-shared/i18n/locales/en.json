@@ -94,10 +94,10 @@
     "livePhotos": "Live Photos",
     "rotateThumbnail": "Rotate Thumbnail",
     "menu": {
-      "selection": "Selection",
-      "selectOnlyThis": "Select Only This",
-      "selectPrevious": "Select Previous",
-      "selectNext": "Select Next",
+      "selection": "Select",
+      "selectOnlyThis": "Only This",
+      "selectPrevious": "Photo Taken Before",
+      "selectNext": "Photo Taken After",
       "openFolder": "Open Folder",
       "revealInMap": "Reveal in Map",
       "revealInSidebar": "Reveal in Sidebar",
@@ -176,6 +176,15 @@
       "openFolder": "Open Folder"
     }
   },
+  "faceSearch": {
+    "looking": "Looking for faces in the selected photos...",
+    "progress": "Photos looked at: {{done}} of {{total}}.",
+    "waitingForThumbnails": "Waiting for the thumbnails of HEIF files to be generated...",
+    "onThisComputer": "Faces are looked for on this computer only. Nothing about them is sent anywhere.",
+    "noFacesFound": "No faces were found in the selected photos. The selection stays as it is.",
+    "notLookedAt": "Photos that could not be looked at for faces and are no longer selected: {{count}}.",
+    "failed": "Faces could not be looked for in the selected photos. The selection stays as it is."
+  },
   "settings": {
     "title": "Settings",
     "tabs": {
@@ -252,8 +261,9 @@
       "title": "Selection",
       "undo": "Undo",
       "redo": "Redo",
-      "selectPrevious": "Select Previous",
-      "selectNext": "Select Next"
+      "selectPrevious": "Photo Taken Before",
+      "selectNext": "Photo Taken After",
+      "narrowDownToPhotosWithFaces": "Narrow Down to Photos with Faces"
     },
     "settings": {
       "title": "Settings",
