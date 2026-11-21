@@ -31,11 +31,6 @@ interface Search {
 const maxFaceRegionPathsPerRequest = 100;
 /** How often a photo that waits for its HEIF thumbnail looks again whether it is there. */
 const thumbnailWaitIntervalMs = 250;
-/**
- * How long the dialog keeps saying that the search waits for thumbnails once no photo waits any more: the search
- * waits again for the next HEIF photo's thumbnail, which the app makes one after another, a moment later.
- */
-const waitingShownAfterMs = 1000;
 
 /**
  * The Selection menu's Narrow Down to Photos with Faces: the selected photos in which a face is found stay selected,
@@ -47,9 +42,9 @@ const waitingShownAfterMs = 1000;
  *   others are looked at by YuNet (face-detector.service.ts), in an image of 640 pixels at most (face-search-image.ts).
  *   A photo is decoded while the detector looks at the one before, two at a time.
  * - The photos are those selected when the item is chosen. A HEIF photo waits for the thumbnail that the app makes of
- *   it (HeifThumbnailService), of the quality that the settings choose, which the dialog says; they come last. A photo
- *   whose image cannot be decoded is not taken for one with a face: the dialog says how many such photos were
- *   deselected, and the next search looks at them again, as what kept them from being looked at may have passed.
+ *   it (HeifThumbnailService), of the quality that the settings choose; they come last. A photo whose image cannot be
+ *   decoded is not taken for one with a face: the dialog says how many such photos were deselected, and the next
+ *   search looks at them again, as what kept them from being looked at may have passed.
  * - When no selected photo has a face, the selection stays, so that the map is not left empty, and the dialog says
  *   so. Cancel leaves the selection as it was; what was found until then is kept.
  * - The log says how many photos were looked at and how long it took, never which photos have faces, and an error of
@@ -72,7 +67,7 @@ export class FaceSearchService {
   private search: Search | undefined;
   private dialogRef: MatDialogRef<FaceSearchDialogComponent> | undefined;
 
-  private readonly dialogStateValue = signal<FaceSearchDialogState>({ kind: 'searching', done: 0, total: 0, waitingForThumbnails: false });
+  private readonly dialogStateValue = signal<FaceSearchDialogState>({ kind: 'searching', done: 0, total: 0 });
   /** What the dialog shows. */
   public readonly dialogState = this.dialogStateValue.asReadonly();
   /** How many photos are selected for the search, whose room the dialog's lines with a number keep. */
@@ -113,7 +108,7 @@ export class FaceSearchService {
       let notLookedAt: ReadonlySet<string> = new Set();
       const notSeen = selected.filter(photo => !this.outcomes.has(photo.path));
       if (notSeen.length > 0) {
-        this.showDialog({ kind: 'searching', done: 0, total: notSeen.length, waitingForThumbnails: false });
+        this.showDialog({ kind: 'searching', done: 0, total: notSeen.length });
         const notLookedAtNow = await this.lookAt(notSeen, search);
         if (notLookedAtNow === undefined) {
           this.closeDialog();
@@ -165,27 +160,7 @@ export class FaceSearchService {
     const startMs = performance.now();
     const folderNumber = this.folderNumber;
     let done = 0;
-    let waiting = 0;
-    let waitingShown = false;
-    let waitingTimer: ReturnType<typeof setTimeout> | undefined;
-    const report = () => this.dialogStateValue.set({ kind: 'searching', done, total: photos.length, waitingForThumbnails: waitingShown });
-    // The dialog says that the search waits from the first photo that waits for its thumbnail, until none has waited
-    // for a second, rather than for each photo in turn, which made its line flash.
-    const setWaiting = (isWaiting: boolean) => {
-      waiting += isWaiting ? 1 : -1;
-      if (waiting > 0) {
-        clearTimeout(waitingTimer);
-        waitingTimer = undefined;
-        waitingShown = true;
-        report();
-      } else if (waitingShown && waitingTimer === undefined) {
-        waitingTimer = setTimeout(() => {
-          waitingTimer = undefined;
-          waitingShown = false;
-          report();
-        }, waitingShownAfterMs);
-      }
-    };
+    const report = () => this.dialogStateValue.set({ kind: 'searching', done, total: photos.length });
 
     // The faces that the metadata marks, of the JPEG files, whose XMP the main process reads.
     for (const batch of chunk(photos.filter(photo => FilenameExtension.isJpeg(photo.filenameExtension)), maxFaceRegionPathsPerRequest)) {
@@ -212,7 +187,7 @@ export class FaceSearchService {
       try {
         while (next < queue.length && !search.canceled) {
           const photo = queue[next++];
-          const outcome = await this.outcomeOf(photo, search, setWaiting);
+          const outcome = await this.outcomeOf(photo, search);
           if (outcome === undefined || folderNumber !== this.folderNumber)
             return; // The search ended before the photo was looked at, or another folder opened meanwhile.
           if (outcome === 'failed')
@@ -229,7 +204,6 @@ export class FaceSearchService {
       }
     };
     await Promise.all([lookAtTheNext(), lookAtTheNext()]);
-    clearTimeout(waitingTimer);
     if (failure !== undefined)
       throw failure;
     if (search.canceled)
@@ -243,13 +217,13 @@ export class FaceSearchService {
    * the search ends before the photo is looked at: while it waits for its thumbnail, or is decoded. Throws when the
    * detector's model fails.
    */
-  private async outcomeOf(photo: Photo, search: Search, setWaiting: (isWaiting: boolean) => void): Promise<Outcome | undefined> {
+  private async outcomeOf(photo: Photo, search: Search): Promise<Outcome | undefined> {
     const kind = faceSearchImageKindOf(photo);
     let url: string;
     if (kind === 'none') {
       return 'failed';
     } else if (kind === 'generatedThumbnail') {
-      const thumbnailUrl = await this.heifThumbnailOf(photo, search, setWaiting);
+      const thumbnailUrl = await this.heifThumbnailOf(photo, search);
       if (thumbnailUrl === undefined)
         return undefined;
       url = thumbnailUrl;
@@ -281,19 +255,12 @@ export class FaceSearchService {
    * choose (HeifThumbnailService), or the cache's file, which is not there when the main process could not make it.
    * Undefined when the search is canceled meanwhile.
    */
-  private async heifThumbnailOf(photo: Photo, search: Search, setWaiting: (isWaiting: boolean) => void): Promise<string | undefined> {
+  private async heifThumbnailOf(photo: Photo, search: Search): Promise<string | undefined> {
     this.heifThumbnailService.watch(photo.path);
     let state = this.heifThumbnailService.stateOf(photo.path);
-    if (state.kind === 'pending') {
-      setWaiting(true);
-      try {
-        while (state.kind === 'pending' && !search.canceled) {
-          await new Promise(resolve => setTimeout(resolve, thumbnailWaitIntervalMs));
-          state = this.heifThumbnailService.stateOf(photo.path);
-        }
-      } finally {
-        setWaiting(false);
-      }
+    while (state.kind === 'pending' && !search.canceled) {
+      await new Promise(resolve => setTimeout(resolve, thumbnailWaitIntervalMs));
+      state = this.heifThumbnailService.stateOf(photo.path);
     }
     if (search.canceled || state.kind === 'pending')
       return undefined;

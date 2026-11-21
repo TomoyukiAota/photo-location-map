@@ -199,8 +199,6 @@
   "faceSearch": {
     "looking": "Recherche de visages dans les photos sélectionnées...",
     "progress": "Photos examinées\u00a0: {{done}} sur {{total}}.",
-    "waitingForThumbnails": "En attente de la création des vignettes des fichiers HEIF...",
-    "onThisComputer": "Les visages sont recherchés uniquement sur cet ordinateur. Rien à leur sujet n’est envoyé nulle part.",
     "noFacesFound": "Aucun visage n’a été trouvé dans les photos sélectionnées. La sélection reste telle quelle.",
     "notLookedAt": "Photos dans lesquelles les visages n’ont pas pu être recherchés et qui ne sont plus sélectionnées\u00a0: {{count}}.",
     "failed": "Les visages n’ont pas pu être recherchés dans les photos sélectionnées. La sélection reste telle quelle."

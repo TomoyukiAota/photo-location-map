@@ -199,8 +199,6 @@
   "faceSearch": {
     "looking": "Iskanje obrazov na izbranih fotografijah...",
     "progress": "Pregledane fotografije: {{done}} od {{total}}.",
-    "waitingForThumbnails": "Čakanje na ustvarjanje sličic datotek HEIF...",
-    "onThisComputer": "Obrazi se iščejo samo v tem računalniku. Nič o njih se nikamor ne pošilja.",
     "noFacesFound": "Na izbranih fotografijah ni bilo najdenih obrazov. Izbor ostane nespremenjen.",
     "notLookedAt": "Fotografije, na katerih ni bilo mogoče iskati obrazov in ki niso več izbrane: {{count}}.",
     "failed": "Na izbranih fotografijah ni bilo mogoče iskati obrazov. Izbor ostane nespremenjen."

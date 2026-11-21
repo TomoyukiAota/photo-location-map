@@ -199,8 +199,6 @@
   "faceSearch": {
     "looking": "正在所选照片中查找人脸...",
     "progress": "已检查 {{done}} / {{total}} 张照片。",
-    "waitingForThumbnails": "正在等待生成 HEIF 文件的缩略图...",
-    "onThisComputer": "人脸只在这台电脑上查找，有关人脸的任何信息都不会发送到任何地方。",
     "noFacesFound": "所选照片中未找到人脸。选择保持不变。",
     "notLookedAt": "有 {{count}} 张照片无法查找人脸，已取消选择。",
     "failed": "无法在所选照片中查找人脸。选择保持不变。"

@@ -2869,6 +2869,15 @@ test('Narrow Down to Photos with Faces keeps selected the photos in which faces 
   }));
   expect(states).toHaveLength(4);
   for (const state of states) expect(state).toEqual({ height: states[0].height, fits: true });
+  // The progress bar, laid out while another state is shown, is that of the dialog of a folder that opens, where it
+  // is: the dots after the progress, 90% of the dialog's width, in its middle, with its top edge 34px below the dialog's.
+  const bar = await dialog.locator('mat-progress-bar').evaluate(element => {
+    const box = element.getBoundingClientRect();
+    const frame = element.closest('mat-dialog-container').getBoundingClientRect();
+    return { mode: element.getAttribute('mode'), widthPercent: Math.round(100 * box.width / frame.width),
+      start: Math.round(box.left - frame.left), end: Math.round(frame.right - box.right), top: Math.round(box.top - frame.top) };
+  });
+  expect(bar).toEqual({ mode: 'buffer', widthPercent: 90, start: 24, end: 24, top: 34 });
   await dialog.getByRole('button', { name: 'Close', exact: true }).click();
   await expect(dialog).toHaveCount(0);
   await expectSelected(withoutFaces);

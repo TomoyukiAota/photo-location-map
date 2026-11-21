@@ -199,8 +199,6 @@
   "faceSearch": {
     "looking": "選択した写真から顔を探しています...",
     "progress": "{{total}} 枚中 {{done}} 枚を調べました。",
-    "waitingForThumbnails": "HEIF ファイルのサムネイルの生成を待っています...",
-    "onThisComputer": "顔はこのコンピューター上でのみ探し、顔に関する情報はどこにも送信しません。",
     "noFacesFound": "選択した写真に顔は見つかりませんでした。選択はそのままです。",
     "notLookedAt": "顔を探せなかった {{count}} 枚の写真を選択から外しました。",
     "failed": "選択した写真から顔を探せませんでした。選択はそのままです。"

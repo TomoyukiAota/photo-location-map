@@ -199,8 +199,6 @@
   "faceSearch": {
     "looking": "Traženje lica na odabranim fotografijama...",
     "progress": "Pregledane fotografije: {{done}} od {{total}}.",
-    "waitingForThumbnails": "Čekanje na izradu minijatura datoteka HEIF...",
-    "onThisComputer": "Lica se traže samo na ovom računalu. Ništa o njima ne šalje se nikamo.",
     "noFacesFound": "Na odabranim fotografijama nisu pronađena lica. Odabir ostaje nepromijenjen.",
     "notLookedAt": "Fotografije na kojima nije bilo moguće tražiti lica i koje više nisu odabrane: {{count}}.",
     "failed": "Na odabranim fotografijama nije bilo moguće tražiti lica. Odabir ostaje nepromijenjen."

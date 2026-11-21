@@ -106,7 +106,7 @@ in the same photos on every OS, Linux too, and the tests check that on the three
   the workers of its build (`worker-src 'self'`) and fetch its own files (`connect-src 'self'`). `plm-file:` allows CORS
   for the page's origin, `plm-app://app`, or ng serve's in live reload, so that the page may read the pixels of the
   photos that it shows.
-- **The dialog** (`face-search-dialog/`): the progress, that the faces are looked for on this computer only, and
+- **The dialog** (`face-search-dialog/`): the progress, on the progress bar of the dialog of a folder that opens, and
   Cancel; then what came of the search. Its texts are in the 42 languages.
 
 ## Checked
@@ -142,3 +142,16 @@ different heights too.
   the number of the selected photos.
 - Sampled every 30 ms while the search looked at 6 new HEIF photos and 2 JPEG files: one height in 99 samples, and the
   line about thumbnails shown once, without going.
+
+## The progress bar of a folder that opens, and two lines fewer (2026-11-22)
+
+The owner asked for the progress bar of the dialog of a folder that opens, with more room between the bar and the
+dialog's edge, and for two of the dialog's lines to go.
+
+- The bar shows the dots after its progress (`mode="buffer"`), and is laid out as in that dialog: 90% of the dialog's
+  width, in its middle, with its top edge 34px below the dialog's, where it was 16px below it.
+- The line that said that the search waited for the thumbnails of HEIF files is gone, with what kept it from flashing:
+  the status bar of the thumbnails says how their generation goes, and the number of the photos looked at goes on
+  as each thumbnail is made.
+- The line that said that the faces are looked for on this computer only, and that nothing about them is sent, is
+  gone. The search itself is the same: nothing about the faces leaves the computer.

@@ -199,8 +199,6 @@
   "faceSearch": {
     "looking": "A procurar rostos nas fotografias selecionadas...",
     "progress": "Fotografias verificadas: {{done}} de {{total}}.",
-    "waitingForThumbnails": "A aguardar a geração das miniaturas dos ficheiros HEIF...",
-    "onThisComputer": "Os rostos são procurados apenas neste computador. Nada sobre eles é enviado para lado nenhum.",
     "noFacesFound": "Não foram encontrados rostos nas fotografias selecionadas. A seleção mantém-se como está.",
     "notLookedAt": "Fotografias em que não foi possível procurar rostos e que já não estão selecionadas: {{count}}.",
     "failed": "Não foi possível procurar rostos nas fotografias selecionadas. A seleção mantém-se como está."

@@ -199,8 +199,6 @@
   "faceSearch": {
     "looking": "Mencari wajah di foto yang dipilih...",
     "progress": "Foto yang diperiksa: {{done}} dari {{total}}.",
-    "waitingForThumbnails": "Menunggu gambar mini file HEIF selesai dibuat...",
-    "onThisComputer": "Wajah hanya dicari di komputer ini. Tidak ada apa pun tentangnya yang dikirim ke mana pun.",
     "noFacesFound": "Tidak ditemukan wajah di foto yang dipilih. Pilihan tetap seperti semula.",
     "notLookedAt": "Foto yang tidak dapat diperiksa untuk mencari wajah dan tidak lagi dipilih: {{count}}.",
     "failed": "Wajah tidak dapat dicari di foto yang dipilih. Pilihan tetap seperti semula."

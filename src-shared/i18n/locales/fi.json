@@ -199,8 +199,6 @@
   "faceSearch": {
     "looking": "Etsitään kasvoja valituista kuvista...",
     "progress": "Läpikäytyjä kuvia: {{done}} / {{total}}.",
-    "waitingForThumbnails": "Odotetaan HEIF-tiedostojen pikkukuvien luomista...",
-    "onThisComputer": "Kasvoja etsitään vain tällä tietokoneella. Niistä ei lähetetä mitään minnekään.",
     "noFacesFound": "Valituista kuvista ei löytynyt kasvoja. Valinta pysyy ennallaan.",
     "notLookedAt": "Kuvia, joista kasvoja ei voitu etsiä ja jotka eivät ole enää valittuina: {{count}}.",
     "failed": "Kasvoja ei voitu etsiä valituista kuvista. Valinta pysyy ennallaan."

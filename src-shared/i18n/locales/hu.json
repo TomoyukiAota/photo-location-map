@@ -199,8 +199,6 @@
   "faceSearch": {
     "looking": "Arcok keresése a kijelölt fotókon...",
     "progress": "Átvizsgált fotók: {{done}} / {{total}}.",
-    "waitingForThumbnails": "Várakozás a HEIF-fájlok bélyegképeinek elkészülésére...",
-    "onThisComputer": "Az arcok keresése csak ezen a számítógépen történik. Róluk semmi nem kerül elküldésre sehova.",
     "noFacesFound": "A kijelölt fotókon nem található arc. A kijelölés változatlan marad.",
     "notLookedAt": "Fotók, amelyeken nem lehetett arcokat keresni, és már nincsenek kijelölve: {{count}}.",
     "failed": "A kijelölt fotókon nem lehetett arcokat keresni. A kijelölés változatlan marad."
