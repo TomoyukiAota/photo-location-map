@@ -54,7 +54,7 @@ await copyFile(path.join(root, 'test/test-resources/actual-photos/Kobe/IMG_4676.
 // fast thumbnails.
 const generating = path.join(folders, 'Generating');
 await mkdir(generating);
-for (let index = 1; index <= 30; index++)
+for (let index = 1; index <= 20; index++)
   await copyFile(path.join(root, 'test/e2e/fixtures/demo.heic'), path.join(generating, `demo ${index}.heic`));
 await copyFile(path.join(root, 'test/test-resources/actual-photos/Kobe/IMG_4676.JPG'), path.join(generating, 'Kobe.JPG'));
 const nowhere = path.join(folders, 'Nowhere');
@@ -282,6 +282,8 @@ for (const code of codes) {
       await openFolder(generating);
       await page.locator('app-thumbnail-generation-status-bar .faster-in-settings').waitFor({ timeout: 40000 });
       await screen('home-generating', 'app-thumbnail-generation-status-bar, app-loaded-files-status-bar', 'app-root');
+      // Open Folder is disabled until the app has seen that the thumbnails are made, which it checks every 5 seconds.
+      await page.waitForSelector('.open-folder-button button:enabled', { timeout: 60000 });
     });
     await step('home-loaded', async () => {
       await openFolder(photos);
@@ -415,12 +417,15 @@ for (const code of codes) {
     await step('error-dialog', async () => {
       await openFolder(broken);
       const statusBar = page.locator('app-thumbnail-generation-status-bar');
-      await statusBar.locator('.anchor-tag-like-text').waitFor({ state: 'attached', timeout: 40000 });
+      // The link of the details to the files with errors, once the generation has finished: while it runs, the
+      // status bar has another, to the fast thumbnails.
+      const filesWithErrors = statusBar.locator('.details .anchor-tag-like-text');
+      await filesWithErrors.waitFor({ state: 'attached', timeout: 40000 });
       const details = statusBar.locator('.progress-bar-with-details');
       if (!await details.evaluate(element => element.classList.contains('expanded-progress-bar-with-details'))) await details.click();
       await page.waitForTimeout(400);
       await screen('home-errors', 'app-thumbnail-generation-status-bar, app-loaded-files-status-bar', 'app-root');
-      await statusBar.locator('.anchor-tag-like-text').click();
+      await filesWithErrors.click();
       await page.waitForSelector('app-thumbnail-generation-error-dialog tr[mat-row]');
       await screen('error-dialog', dialog, dialog);
       await page.locator('app-thumbnail-generation-error-dialog .close-button').first().click();
