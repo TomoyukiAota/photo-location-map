@@ -565,15 +565,13 @@ async function describeApplication() {
   const [pages, computer] = await Promise.all([describePages(), describeComputer()]);
   return [...lines, ...pages, computer].join('\n');
 }
-/** Whether each page of the application answers within 5 seconds, and how far it has loaded. */
-async function describePages() {
-  const lines = [];
-  for (const openPage of app.windows()) {
+/** Whether each page of the application answers within 5 seconds, all asked at once, and how far it has loaded. */
+function describePages() {
+  return Promise.all(app.windows().map(async openPage => {
     const state = await within5Seconds(openPage.evaluate(() => `answers, ${document.readyState}`)
       .catch(error => `failed: ${error.message}`), 'no answer within 5 seconds');
-    lines.push(`page ${openPage.url()}: ${state}`);
-  }
-  return lines;
+    return `page ${openPage.url()}: ${state}`;
+  }));
 }
 /**
  * How busy the computer was over a second: its processors and its free memory, and on Windows the processes that used
@@ -593,7 +591,10 @@ async function describeComputer() {
   ...process.platform === 'win32' ? await describeWindowsLoad() : []].join('\n');
 }
 // Run by describeWindowsLoad: what each process used of the processors while Get-Counter took its sample of a second,
-// as a share of one processor, and the counters of the disks and of the memory's paging.
+// as a share of one processor, and the counters of the disks and of the memory's paging. It gets 8 seconds: the
+// after-hooks have a minute outside a packaged run (Playwright gives them the case's timeout again), in which a
+// teardown may describe a case that timed out, then a quit over the limit, and still has to stop the application and
+// remove the profile.
 const windowsLoadScript = `
 $ErrorActionPreference = 'SilentlyContinue'
 $before = @{}
@@ -613,7 +614,7 @@ $busiest = Get-Process | Where-Object { $_.Id -ne 0 -and $before.ContainsKey($_.
 function describeWindowsLoad() {
   const encoded = Buffer.from(windowsLoadScript, 'utf16le').toString('base64');
   return new Promise(resolve => execFile('powershell.exe', ['-NoProfile', '-NonInteractive', '-EncodedCommand', encoded],
-    { windowsHide: true, timeout: 20000 }, (error, stdout) => {
+    { windowsHide: true, timeout: 8000 }, (error, stdout) => {
       try {
         if (error) throw error;
         // ConvertTo-Json writes an array of one element as the element.
