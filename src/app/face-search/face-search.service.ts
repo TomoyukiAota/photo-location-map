@@ -31,6 +31,11 @@ interface Search {
 const maxFaceRegionPathsPerRequest = 100;
 /** How often a photo that waits for its HEIF thumbnail looks again whether it is there. */
 const thumbnailWaitIntervalMs = 250;
+/**
+ * How long the dialog keeps saying that the search waits for thumbnails once no photo waits any more: the search
+ * waits again for the next HEIF photo's thumbnail, which the app makes one after another, a moment later.
+ */
+const waitingShownAfterMs = 1000;
 
 /**
  * The Selection menu's Narrow Down to Photos with Faces: the selected photos in which a face is found stay selected,
@@ -70,6 +75,8 @@ export class FaceSearchService {
   private readonly dialogStateValue = signal<FaceSearchDialogState>({ kind: 'searching', done: 0, total: 0, waitingForThumbnails: false });
   /** What the dialog shows. */
   public readonly dialogState = this.dialogStateValue.asReadonly();
+  /** How many photos are selected for the search, whose room the dialog's lines with a number keep. */
+  private readonly photoCount = signal(0);
 
   /** Whether the menu's item applies: while any photo is selected. */
   private readonly isMenuEnabled = computed(() => this.selectedPhotoService.selectedPhotos().length > 0);
@@ -99,6 +106,7 @@ export class FaceSearchService {
     if (selected.length === 0)
       return;
 
+    this.photoCount.set(selected.length);
     const search: Search = { canceled: false };
     this.search = search;
     try {
@@ -158,7 +166,26 @@ export class FaceSearchService {
     const folderNumber = this.folderNumber;
     let done = 0;
     let waiting = 0;
-    const report = () => this.dialogStateValue.set({ kind: 'searching', done, total: photos.length, waitingForThumbnails: waiting > 0 });
+    let waitingShown = false;
+    let waitingTimer: ReturnType<typeof setTimeout> | undefined;
+    const report = () => this.dialogStateValue.set({ kind: 'searching', done, total: photos.length, waitingForThumbnails: waitingShown });
+    // The dialog says that the search waits from the first photo that waits for its thumbnail, until none has waited
+    // for a second, rather than for each photo in turn, which made its line flash.
+    const setWaiting = (isWaiting: boolean) => {
+      waiting += isWaiting ? 1 : -1;
+      if (waiting > 0) {
+        clearTimeout(waitingTimer);
+        waitingTimer = undefined;
+        waitingShown = true;
+        report();
+      } else if (waitingShown && waitingTimer === undefined) {
+        waitingTimer = setTimeout(() => {
+          waitingTimer = undefined;
+          waitingShown = false;
+          report();
+        }, waitingShownAfterMs);
+      }
+    };
 
     // The faces that the metadata marks, of the JPEG files, whose XMP the main process reads.
     for (const batch of chunk(photos.filter(photo => FilenameExtension.isJpeg(photo.filenameExtension)), maxFaceRegionPathsPerRequest)) {
@@ -185,10 +212,7 @@ export class FaceSearchService {
       try {
         while (next < queue.length && !search.canceled) {
           const photo = queue[next++];
-          const outcome = await this.outcomeOf(photo, search, isWaiting => {
-            waiting += isWaiting ? 1 : -1;
-            report();
-          });
+          const outcome = await this.outcomeOf(photo, search, setWaiting);
           if (outcome === undefined || folderNumber !== this.folderNumber)
             return; // The search ended before the photo was looked at, or another folder opened meanwhile.
           if (outcome === 'failed')
@@ -205,6 +229,7 @@ export class FaceSearchService {
       }
     };
     await Promise.all([lookAtTheNext(), lookAtTheNext()]);
+    clearTimeout(waitingTimer);
     if (failure !== undefined)
       throw failure;
     if (search.canceled)
@@ -280,7 +305,7 @@ export class FaceSearchService {
     if (this.dialogRef)
       return;
     this.dialogRef = this.dialog.open<FaceSearchDialogComponent, FaceSearchDialogData>(FaceSearchDialogComponent, {
-      data: { state: this.dialogState, cancel: () => this.cancel() },
+      data: { state: this.dialogState, photoCount: this.photoCount.asReadonly(), cancel: () => this.cancel() },
       width: '480px',
       // At least its height in English; taller for texts that take more lines in another language.
       minHeight: '150px',

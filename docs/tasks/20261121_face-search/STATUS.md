@@ -126,3 +126,19 @@ in the same photos on every OS, Linux too, and the tests check that on the three
 - The face regions of HEIF files, which exifr does not read.
 - OpenCV Zoo has published `face_detection_yunet_2026may.onnx`, the same model with an input of any size, which was
   not measured.
+
+## The dialog keeps its height (2026-11-21)
+
+The owner saw the dialog grow and shrink while it searched a folder of HEIF photos: the line that says the search
+waits for thumbnails went for a moment each time a thumbnail was made, before the search waited for the next one, and
+the dialog, centered in the window, moved by a line up and down. The progress and the messages after it were of
+different heights too.
+
+- The dialog's states, the progress and its three messages, are laid out on top of one another in one cell of a grid,
+  and the one that applies is shown (`face-search-dialog.component.scss`): the dialog is as tall as the tallest of them
+  in its language, whatever it shows. A fixed height would cut the texts of a language with longer ones.
+- The line about thumbnails keeps its room while it is not shown, and stays shown until no photo has waited for a
+  second, so that it no longer flashes. The lines with a number keep the room of the largest number that they show,
+  the number of the selected photos.
+- Sampled every 30 ms while the search looked at 6 new HEIF photos and 2 JPEG files: one height in 99 samples, and the
+  line about thumbnails shown once, without going.

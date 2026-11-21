@@ -2530,7 +2530,22 @@ test('Narrow Down to Photos with Faces keeps selected the photos in which faces 
   for (const name of withFaces) await treeCheckbox(name).uncheck();
   await expectSelected(withoutFaces);
   await narrowDown.click();
-  await expect(dialog).toContainText('No faces were found in the selected photos. The selection stays as it is.');
+  // Every state of the dialog is laid out, one on top of another, and the one that applies is shown.
+  const shownState = dialog.locator('.state.shown');
+  await expect(shownState.locator('.message')).toHaveText('No faces were found in the selected photos. The selection stays as it is.');
+  await expect(shownState.getByRole('button')).toHaveText('Close');
+  // The dialog is as tall whatever it shows: its states are, and what each has fits in it, the search's progress, the
+  // tallest, too. Each child's box is measured, as a button's touch target reaches past the button's on purpose.
+  const states = await dialog.locator('.state').evaluateAll(elements => elements.map(state => {
+    const box = state.getBoundingClientRect();
+    const fits = [...state.children].every(child => {
+      const childBox = child.getBoundingClientRect();
+      return childBox.top >= box.top - 1 && childBox.bottom <= box.bottom + 1;
+    });
+    return { height: Math.round(box.height), fits };
+  }));
+  expect(states).toHaveLength(4);
+  for (const state of states) expect(state).toEqual({ height: states[0].height, fits: true });
   await dialog.getByRole('button', { name: 'Close', exact: true }).click();
   await expect(dialog).toHaveCount(0);
   await expectSelected(withoutFaces);
