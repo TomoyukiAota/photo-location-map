@@ -641,6 +641,9 @@ test('welcome, about and every available settings tab keep their appearance', as
   await shot('settings-appearance');
   await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Date & Time' }).click();
   await shot('settings-date', [page.locator('.date-time-example')]);
+  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Thumbnails' }).click();
+  await expect(page.locator('app-thumbnail-settings')).toBeVisible();
+  await shot('settings-thumbnails');
   await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Cache' }).click();
   await shot('settings-cache', [page.locator('.location-value')]);
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
