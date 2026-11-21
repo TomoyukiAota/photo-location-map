@@ -75,7 +75,7 @@
   "directoryTree": {
     "openedFolder": "Otvorena mapa - {{path}}",
     "contextMenu": {
-      "scrollToHere": "Pomakni ovamo",
+      "scrollToHere": "Pomakni prikaz do ove mape",
       "selectOnlyThisFile": "Odaberi samo ovu datoteku",
       "selectOnlyThisFolder": "Odaberi samo ovu mapu",
       "revealInMap": "Prikaži na karti",

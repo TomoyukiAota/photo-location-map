@@ -43,11 +43,22 @@ Apple M5, macOS 27, a development build, windows hidden.
 
 ## Found while implementing
 
-- Reveal in Sidebar scrolls a row to the middle of what the sidebar shows, now below the rows kept at the top. Going by
-  the rows of each frame, the middle moved up as rows appeared on the way, and the scroll went back by 6 pixels in its
-  middle (the e2e case that checks its steps failed). It goes by the rows that will be kept at the top where it stops:
-  `DirTreeViewStickyRowsService.coveredHeightAt()` works them out for a scroll position, and `EasedScroll` finds where
-  to stop in at most three rounds, each below the rows of the stop before, which only grow.
+- Reveal in Sidebar scrolls a row to the middle of the sidebar, as before the rows, and right below the rows kept at
+  the top where it stops when they would cover the row there: `DirTreeViewStickyRowsService.coveredHeightAt()` works
+  them out for a scroll position, which `EasedScroll` is given. A first version went to the middle of what the rows
+  leave, which moves with them, and did not hold:
+  - Going by the rows of each frame, the middle moved up as rows appeared on the way, and the scroll went back by 6
+    pixels in its middle (the e2e case that checks its steps failed).
+  - Going by the rows kept where it would stop, found in rounds, each below the rows of the stop before, it stopped in
+    a window 600 pixels high (`PLM_E2E_COMPACT=1`) with the row 48 pixels below that middle: three rows fewer were
+    kept there than it had gone by. Which rows are kept depends on where the box stops, and where it stops on them,
+    so that such a middle may not exist.
+
+  With the photo of the first e2e case of Reveal in the middle, the rows of the three folders above it are kept in a
+  sidebar of little height: 128 pixels with the opened folder's. In a window 580 pixels high, they would cover the
+  photo's row in the middle, which went right below them, 3.75 pixels lower than the middle; in one 600 pixels high, it
+  stayed in the middle, 6 pixels below them. The e2e cases of Reveal accept either, as the sidebar of a CI runner may
+  be as low.
 - jsdom has no `ResizeObserver`: the component's spec stubs it.
 
 ## Measured with the implementation
@@ -73,9 +84,9 @@ main with only that took 32.0 ms. Why the rows kept at the top make the scroll f
 
 - `src/app/directory-tree-view/dir-tree-view-sticky-rows/`: the component, the choice of the rows (`sticky-rows.ts`,
   pure functions with their tests), and the service with the settings and the height that the rows cover.
-- `src/app/shared/eased-scroll/eased-scroll.ts`: what covers the top of the box is left out of what it shows, for
-  Reveal in Sidebar and Select Previous and Select Next; `toTop()` and `placeAtTop()` for Scroll to Here and the
-  chevron.
+- `src/app/shared/eased-scroll/eased-scroll.ts`: what covers the top of the box, which Reveal in Sidebar keeps a row
+  out of, and under which Select Previous and Select Next do not count a row as shown; `toTop()` and `placeAtTop()`
+  for Scroll to Here and the chevron.
 - `src-shared/user-settings/sticky-folder-rows.ts` and the Appearance tab.
 
 ## Not done

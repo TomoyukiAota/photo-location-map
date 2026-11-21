@@ -323,42 +323,45 @@ describe('EasedScroll', () => {
     });
   });
 
-  describe('below what covers the top of the box, as the rows that the folder tree keeps at its top do', () => {
-    // 100 pixels of the box's top are covered: what it shows is the 400 pixels below them, whose middle is 300
-    // pixels below the box's top.
-    const covered = () => 100;
-
-    it('scrolls an element to the middle of what the box shows below them', () => {
+  describe('with what covers the top of the box, as the rows that the folder tree keeps at its top do', () => {
+    it('keeps an element in the middle of the box when what covers its top there leaves it shown', () => {
       reducedMotion = true;
-      new EasedScroll(covered).toMiddle(elementAt(3000), vi.fn());
-      expect(scroller.scrollTop).toBe(3000 + 100 - 300);
+      // The element is from 150 to 350 pixels below the box's top in the middle: 100 covered leave it shown.
+      new EasedScroll(() => 100).toMiddle(elementAt(3000), vi.fn());
+      expect(scroller.scrollTop).toBe(middle);
     });
 
-    it('does not take an element under them for one that the box shows', () => {
+    it('takes an element lower, right below what covers the top of the box, when it would be under it', () => {
+      reducedMotion = true;
+      new EasedScroll(() => 200).toMiddle(elementAt(3000), vi.fn());
+      expect(scroller.scrollTop).toBe(3000 - 200);
+    });
+
+    it('does not take an element under it for one that the box shows', () => {
       // The element is at the top of the box, under what covers it.
       scroller.scrollTop = 3000;
       const arrived = vi.fn();
-      new EasedScroll(covered).toMiddle(elementAt(3000), arrived, { evenWhenShown: false });
+      new EasedScroll(() => 100).toMiddle(elementAt(3000), arrived, { evenWhenShown: false });
       expect(arrived).not.toHaveBeenCalled();
-      expect(topsUntil(arrived).at(-1)).toBe(2800);
-      // Right below them, it is shown.
+      expect(topsUntil(arrived).at(-1)).toBe(middle);
+      // Right below it, an element is shown.
       const below = vi.fn();
-      new EasedScroll(covered).toMiddle(elementAt(2900), below, { evenWhenShown: false });
+      new EasedScroll(() => 100).toMiddle(elementAt(middle + 100), below, { evenWhenShown: false });
       expect(below).toHaveBeenCalledOnce();
     });
-  });
 
-  it('goes by what will cover the top of the box where it stops, so that it never goes back on its way', () => {
-    // Nothing covers the box until it is scrolled past 2,500, and 160 pixels from there on, as when the tree keeps the
-    // rows of the folders above a folder's photos at its top.
-    const coveredTopAt = (scrollTop: number) => scrollTop > 2500 ? 160 : 0;
-    scroller.scrollTop = 1000;
-    const arrived = vi.fn();
-    new EasedScroll(coveredTopAt).toMiddle(elementAt(3000), arrived);
-    const tops = topsUntil(arrived);
-    // In the middle of the 340 pixels below the 160 covered: 160 + 170 below the box's top, for the element's middle.
-    expect(tops.at(-1)).toBe(3100 - 330);
-    expect(stepsOf(tops).every(step => step >= 0)).toBe(true);
+    it('goes by what will cover the top of the box where it stops, so that it never goes back on its way', () => {
+      // Nothing covers the box until it is scrolled past 2,500, and 160 pixels from there on, as when the tree keeps the
+      // rows of the folders above a folder's photos at its top: the element, 150 pixels below the box's top in the
+      // middle, would be under them, and goes right below them.
+      const coveredTopAt = (scrollTop: number) => scrollTop > 2500 ? 160 : 0;
+      scroller.scrollTop = 1000;
+      const arrived = vi.fn();
+      new EasedScroll(coveredTopAt).toMiddle(elementAt(3000), arrived);
+      const tops = topsUntil(arrived);
+      expect(tops.at(-1)).toBe(3000 - 160);
+      expect(stepsOf(tops).every(step => step >= 0)).toBe(true);
+    });
   });
 
   it('scrolls an element to a distance below the top of its box, and puts one there at once', () => {

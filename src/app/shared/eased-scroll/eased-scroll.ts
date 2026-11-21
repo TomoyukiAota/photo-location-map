@@ -132,11 +132,7 @@ type Place = (scroller: HTMLElement, element: HTMLElement) => number;
  *
  * What covers the top of the box is not what the box shows: the folder tree keeps the rows of the folders above at
  * its top (src/app/directory-tree-view/dir-tree-view-sticky-rows/), as high as `coveredTopAt` says they will be with
- * the box at a scroll position.
- * TL;DR: The scroll goes by the rows that will cover the top of the box where it ends, not by those that cover it on
- * its way.
- * Details: The rows change as the box scrolls into other folders. Going by those of each frame, the middle of what the
- * box shows below them moved up as they grew, and the scroll went back by 6 pixels in the middle of its way.
+ * the box at a scroll position. The scroll goes by those where it stops (middleScrollTop()).
  */
 export class EasedScroll {
   private running: RunningScroll | undefined;
@@ -145,9 +141,10 @@ export class EasedScroll {
   }
 
   /**
-   * Scrolls the element to the middle of what the box that scrolls it shows, below what covers its top, and calls
-   * `arrived` once the scroll has ended, there, or where the user's own scroll stopped it. `arrived` is not called when
-   * the element leaves the page, when another scroll takes this one's place, or when stop() ends it.
+   * Scrolls the element to the middle of the box that scrolls it, or right below what covers its top when it would be
+   * under it there, and calls `arrived` once the scroll has ended, there, or where the user's own scroll stopped it.
+   * `arrived` is not called when the element leaves the page, when another scroll takes this one's place, or when
+   * stop() ends it.
    * With `evenWhenShown` false, the box stays where it is when it shows all of the element there, below what covers
    * its top, or where the scroll that is going on takes it: `arrived` is called at once, or when that scroll ends, in
    * place of that scroll's own.
@@ -303,26 +300,28 @@ function scrollerOf(element: HTMLElement): HTMLElement | null {
 }
 
 /**
- * The scroll position of the box at which the element's middle is in the middle of what the box shows: below what
- * will cover its top there (`coveredTopAt`), and above its horizontal scroll bar, which Windows and Linux draw below
- * its content (clientHeight leaves it out).
- * TL;DR: Found in at most three rounds, each with the cover of the position before, which only grows.
- * Details: Where the box stops decides what covers its top, which decides where it stops. Each round places the
- * element below what covers the box where the round before stopped; once that is no higher, the element is below it.
+ * The scroll position of the box at which the element's middle is in the middle of what the box shows, above its
+ * horizontal scroll bar, which Windows and Linux draw below its content (clientHeight leaves it out); or lower, right
+ * below what covers the box's top there (`coveredTopAt`), when the element would be under it.
+ * TL;DR: The middle of the box, as without the rows that the folder tree keeps at its top, unless they would cover the
+ * element there.
+ * Details: Those rows change in steps as the box scrolls, so that a middle of what they leave would not hold still: an
+ * element placed in the middle below the rows where the box would stop had other rows above it once there, and the
+ * middle that went by the rows of each frame moved the scroll back by 6 pixels on its way. Where the box stops is
+ * worked out from where the element is, and so does not change on the way.
  */
 function middleScrollTop(scroller: HTMLElement, element: HTMLElement, coveredTopAt: (scrollTop: number) => number): number {
   const shownTop = scroller.getBoundingClientRect().top + scroller.clientTop;
   const box = element.getBoundingClientRect();
-  const middleBelow = (covered: number) => clampedScrollTop(scroller,
-    scroller.scrollTop + box.top + box.height / 2 - (shownTop + covered + (scroller.clientHeight - covered) / 2));
-  let covered = 0;
-  let top = middleBelow(covered);
-  for (let round = 0; round < 3; round++) {
-    const next = coveredTopAt(top);
-    if (next <= covered)
+  // The element's top from the top of the box's content.
+  const elementTop = scroller.scrollTop + box.top - shownTop;
+  let top = clampedScrollTop(scroller, elementTop + box.height / 2 - scroller.clientHeight / 2);
+  // Twice at most: below the rows that cover the top where the box would be, then below those where that takes it.
+  for (let round = 0; round < 2; round++) {
+    const covered = coveredTopAt(top);
+    if (elementTop - top >= covered - 0.5)
       break;
-    covered = next;
-    top = middleBelow(covered);
+    top = clampedScrollTop(scroller, elementTop - covered);
   }
   return top;
 }

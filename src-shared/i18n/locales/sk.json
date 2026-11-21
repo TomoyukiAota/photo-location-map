@@ -75,7 +75,7 @@
   "directoryTree": {
     "openedFolder": "Otvorený priečinok - {{path}}",
     "contextMenu": {
-      "scrollToHere": "Posunúť sem",
+      "scrollToHere": "Posunúť zobrazenie k tomuto priečinku",
       "selectOnlyThisFile": "Vybrať len tento súbor",
       "selectOnlyThisFolder": "Vybrať len tento priečinok",
       "revealInMap": "Zobraziť na mape",

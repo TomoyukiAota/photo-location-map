@@ -302,10 +302,18 @@ export class DirectoryTreeViewComponent {
   //#endregion --- Reveal ---
 
   //#region --- Rows kept at the top ---
-  // The rows by their nodes and the nodes by their rows, made again only when one is not found: the tree makes and
-  // removes rows only when a folder is expanded or collapsed, or the tree is sorted or replaced.
+  // The rows by their nodes and the nodes by their rows, made again on the first lookup after the tree's rows have
+  // changed, which they do only when a folder is expanded or collapsed, or the tree is sorted or replaced. They are
+  // forgotten at each change, so that they keep no row that has left the page, as the rows of a collapsed folder.
   private rowsByNode = new Map<NestedNode, HTMLElement>();
   private nodesByRow = new WeakMap<Element, NestedNode>();
+  private readonly forgetRowsOnChange = effect(() => {
+    this.treeNodes();
+    untracked(() => {
+      this.rowsByNode = new Map();
+      this.nodesByRow = new WeakMap();
+    });
+  });
 
   private findRows(): void {
     this.rowsByNode = new Map();

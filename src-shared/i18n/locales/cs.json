@@ -75,7 +75,7 @@
   "directoryTree": {
     "openedFolder": "Otevřená složka - {{path}}",
     "contextMenu": {
-      "scrollToHere": "Posunout sem",
+      "scrollToHere": "Posunout zobrazení k této složce",
       "selectOnlyThisFile": "Vybrat jen tento soubor",
       "selectOnlyThisFolder": "Vybrat jen tuto složku",
       "revealInMap": "Zobrazit na mapě",

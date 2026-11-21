@@ -75,7 +75,7 @@
   "directoryTree": {
     "openedFolder": "Otvorena fascikla - {{path}}",
     "contextMenu": {
-      "scrollToHere": "Pomeri dovde",
+      "scrollToHere": "Pomeri prikaz do ove fascikle",
       "selectOnlyThisFile": "Izaberi samo ovu datoteku",
       "selectOnlyThisFolder": "Izaberi samo ovu fasciklu",
       "revealInMap": "Prikaži na mapi",

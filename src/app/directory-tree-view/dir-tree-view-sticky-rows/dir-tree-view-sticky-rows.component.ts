@@ -81,6 +81,8 @@ export class DirTreeViewStickyRowsComponent {
 
   /** The box that scrolls the tree: the sidebar's lower pane. */
   private box: HTMLElement | null = null;
+  /** The tree's element, which has its rows. */
+  private tree: HTMLElement | null = null;
   private frame = 0;
   /** The height of a photo's row, which the rows leave room for: measured once there is one, and on a resize. */
   private photoRowHeight = 0;
@@ -117,9 +119,9 @@ export class DirTreeViewStickyRowsComponent {
       this.service.measureWith(this.heightAt);
       box.addEventListener('scroll', this.schedule, { passive: true });
       resizes.observe(box);
-      const tree = this.element.parentElement?.querySelector('mat-tree');
-      if (tree)
-        rowChanges.observe(tree, { childList: true });
+      this.tree = this.element.parentElement?.querySelector('mat-tree') ?? null;
+      if (this.tree)
+        rowChanges.observe(this.tree, { childList: true });
     });
   }
 
@@ -140,7 +142,10 @@ export class DirTreeViewStickyRowsComponent {
       maximum: this.service.maximum(), boxHeight: box.clientHeight, photoRowHeight: this.photoRowHeightIn(),
     });
     this.show(this.rowsAt(box, box.scrollTop));
-    const width = box.scrollWidth;
+    // TL;DR: As wide as the tree with what its long names make it overflow, rather than as what the pane scrolls.
+    // Details: The pane's scrollWidth counts these rows too: with that width, they kept it once the pane had become
+    // narrower, and so its horizontal scroll bar while they were shown.
+    const width = this.tree?.scrollWidth ?? 0;
     if (width !== this.width())
       this.width.set(width);
   }
