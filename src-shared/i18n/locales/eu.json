@@ -5,7 +5,8 @@
   "common": {
     "ok": "Ados",
     "cancel": "Utzi",
-    "close": "Itxi"
+    "close": "Itxi",
+    "ctrlKey": "Ctrl"
   },
   "dateTime": {
     "weekdayPattern": "ddd"

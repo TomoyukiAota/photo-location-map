@@ -4,6 +4,7 @@ import { t } from '../../src-shared/i18n/i18n.js';
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
 import { IpcParams } from '../../src-shared/ipc/ipc-params.js';
 import { Logger } from '../../src-shared/log/logger.js';
+import { acceleratorOf, selectNextShortcut, selectPreviousShortcut } from '../../src-shared/shortcut/shortcut.js';
 import { mainWindow } from '../electron-main.js';
 import { assertFromMainWindow } from '../ipc/ipc-sender.js';
 import { MenuId } from './menu-id.js';
@@ -78,18 +79,20 @@ export const selectionMenuTemplate: MenuItemConstructorOptions = {
     //   (src/app/directory-tree-view/dir-tree-view-key-manager.ts).
     // - Not the system's: macOS moves between spaces with Ctrl+Left and Ctrl+Right, hence Cmd there, and Windows
     //   snaps a window with Win+Left and Win+Right.
+    // - The keys are written once, in src-shared/shortcut/shortcut.ts, for this menu and for a photo's menu, which has
+    //   these items too, shows their shortcuts and takes them while it is open.
     {
       label: t('menu.selection.selectPrevious'),
       id: MenuId.Selection.SelectPrevious,
       enabled: false,
-      accelerator: 'CmdOrCtrl+Left',
+      accelerator: acceleratorOf(selectPreviousShortcut),
       click: () => handleSelectPreviousClicked(),
     },
     {
       label: t('menu.selection.selectNext'),
       id: MenuId.Selection.SelectNext,
       enabled: false,
-      accelerator: 'CmdOrCtrl+Right',
+      accelerator: acceleratorOf(selectNextShortcut),
       click: () => handleSelectNextClicked(),
     },
     { type: 'separator' },
