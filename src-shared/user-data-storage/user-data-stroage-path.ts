@@ -22,6 +22,10 @@ export namespace UserDataStoragePath {
 
   export namespace LeafletMap {
     export const SelectedBaseLayer: ReadonlyArray<string> = ['LeafletMap', 'SelectedBaseLayer'];
+    // The configs of the map's base layers that a launch last fetched, for a launch whose fetches give none
+    // (src/app/map/leaflet-map/raster-tile-base-layer-configs-version-1.ts). Named with the version of their format.
+    export const RasterTileBaseLayerConfigsVersion1: ReadonlyArray<string>
+      = ['LeafletMap', 'RasterTileBaseLayerConfigsVersion1'];
   }
 
   export namespace PhotoDataViewer {
