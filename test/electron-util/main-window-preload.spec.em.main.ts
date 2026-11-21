@@ -108,6 +108,10 @@ describe('The main window\'s preload', () => {
       [plm => plm.thumbnails.generate(['/a.heic', '/b.heic'], ['/b.heic']),
         { method: 'invoke', channel: IpcConstants.ThumbnailGenerationInMainProcess.Name, args: [['/a.heic', '/b.heic'], ['/b.heic']] }],
       [plm => plm.thumbnails.state(['/a.heic']), { method: 'invoke', channel: IpcConstants.ThumbnailCache.State, args: [['/a.heic']] }],
+      [plm => plm.thumbnails.cancel(), { method: 'invoke', channel: IpcConstants.ThumbnailGenerationInMainProcess.Cancel, args: [] }],
+      [plm => plm.heif.embeddedThumbnail('/a.heic'), { method: 'invoke', channel: IpcConstants.Heif.EmbeddedThumbnail, args: ['/a.heic'] }],
+      [plm => plm.heif.embeddedThumbnailJpeg('/a.heic'), { method: 'invoke', channel: IpcConstants.Heif.EmbeddedThumbnailJpeg, args: ['/a.heic'] }],
+      [plm => plm.heif.wholeImage('/a.heic'), { method: 'invoke', channel: IpcConstants.Heif.WholeImage, args: ['/a.heic'] }],
       [plm => plm.thumbnailCache.open(), { method: 'invoke', channel: IpcConstants.ThumbnailCache.Open, args: [] }],
       [plm => plm.thumbnailCache.deleteAndRestart(), { method: 'invoke', channel: IpcConstants.ThumbnailCache.DeleteAndRestart, args: [] }],
       [plm => plm.shell.openExternal('https://example.com/'), { method: 'invoke', channel: IpcConstants.Shell.OpenExternal, args: ['https://example.com/'] }],
@@ -231,7 +235,7 @@ describe('The main window\'s preload', () => {
     const { exposed } = runPreload(true);
     const api = exposed[0].api;
     assert.deepStrictEqual(Object.keys(api), ['version', 'startup', 'storage', 'log', 'analytics', 'folderDialog', 'exif',
-      'faceRegions', 'directoryTree', 'thumbnails', 'thumbnailCache', 'shell', 'app', 'commandLine', 'droppedItem', 'menus',
+      'faceRegions', 'directoryTree', 'thumbnails', 'heif', 'thumbnailCache', 'shell', 'app', 'commandLine', 'droppedItem', 'menus',
       'photoDataViewer', 'explorerContextMenu', 'events']);
     const memberNames = Object.values(api).flatMap(member => typeof member === 'object' && member !== null ? Object.keys(member) : []);
     for (const generic of ['send', 'sendSync', 'invoke', 'on', 'require', 'ipcRenderer', 'process', 'exec', 'spawn', 'readFile'])

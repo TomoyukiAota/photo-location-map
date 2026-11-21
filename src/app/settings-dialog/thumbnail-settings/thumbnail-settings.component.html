@@ -1,0 +1,14 @@
+<div class="setting-title">{{ 'settings.thumbnails.title' | t }}</div>
+<div class="setting-container">
+  <p class="thumbnail-settings-description">{{ 'settings.thumbnails.description' | t }}</p>
+  <mat-radio-group class="thumbnail-quality-choices"
+                   [(ngModel)]="selectedQuality"
+                   (change)="handleQualityChanged($event)">
+    @for (choice of choices; track choice.quality) {
+      <mat-radio-button class="thumbnail-quality-choice" [value]="choice.quality">
+        <span class="thumbnail-quality-label">{{ choice.label | t }}</span>
+        <span class="thumbnail-quality-description">{{ choice.description | t }}</span>
+      </mat-radio-button>
+    }
+  </mat-radio-group>
+</div>

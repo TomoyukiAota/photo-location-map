@@ -158,6 +158,7 @@
   },
   "thumbnailGeneration": {
     "generating": "HEIF 파일의 썸네일을 생성하는 중...",
+    "fasterInSettings": "더 빨리 표시하려면 <settingsLink>설정에서 속도 우선을 선택하세요</settingsLink>.",
     "completed": "HEIF 파일의 썸네일 생성을 완료했습니다.",
     "finishedWithErrors": "HEIF 파일의 썸네일 생성이 끝났지만 오류가 있었습니다.",
     "showDetails": "세부 정보 표시",
@@ -191,6 +192,7 @@
       "language": "언어 (Language)",
       "appearance": "모양",
       "dateTime": "날짜 및 시간",
+      "thumbnails": "썸네일",
       "os": "OS",
       "cache": "캐시"
     },
@@ -213,6 +215,14 @@
       "clock12": "12시간제",
       "clock24": "24시간제",
       "example": "예"
+    },
+    "thumbnails": {
+      "title": "HEIF 썸네일",
+      "description": "iPhone으로 찍은 사진 같은 HEIF 파일의 썸네일은 이 애플리케이션이 생성합니다. 화질과 속도 중 무엇을 우선할지 선택하세요.",
+      "highQuality": "고화질",
+      "highQualityDescription": "사진 전체에서 긴 변 400픽셀로 생성합니다. 생성될 때까지는 사진에 저장된 작은 썸네일을 표시합니다. 그래픽 하드웨어로 HEVC를 디코딩할 수 없는 컴퓨터에서는 생성하는 데 시간이 걸립니다.",
+      "fast": "속도 우선",
+      "fastDescription": "사진에 저장된 작은 썸네일을 바로 표시합니다. 덜 선명하며, iPhone으로 찍은 1,200만 화소 사진에서는 320 × 240픽셀입니다."
     },
     "os": {
       "title": "파일 탐색기의 컨텍스트 메뉴",

@@ -158,6 +158,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Menjana lakaran kecil untuk fail HEIF...",
+    "fasterInSettings": "Untuk memaparkannya lebih awal, <settingsLink>pilih lakaran kecil pantas dalam Tetapan</settingsLink>.",
     "completed": "Lakaran kecil untuk fail HEIF telah siap dijana.",
     "finishedWithErrors": "Penjanaan lakaran kecil untuk fail HEIF selesai dengan ralat.",
     "showDetails": "Tunjukkan butiran",
@@ -191,6 +192,7 @@
       "language": "Bahasa (Language)",
       "appearance": "Penampilan",
       "dateTime": "Tarikh & Masa",
+      "thumbnails": "Lakaran Kecil",
       "os": "Sistem Pengendalian",
       "cache": "Cache"
     },
@@ -213,6 +215,14 @@
       "clock12": "12 jam",
       "clock24": "24 jam",
       "example": "Contoh"
+    },
+    "thumbnails": {
+      "title": "Lakaran Kecil HEIF",
+      "description": "Lakaran kecil fail HEIF, seperti foto yang diambil dengan iPhone, dijana oleh aplikasi ini. Pilih sama ada ia dijana untuk kualiti atau untuk kelajuan.",
+      "highQuality": "Kualiti tinggi",
+      "highQualityDescription": "Dijana daripada keseluruhan foto, 400 piksel pada sisi yang lebih panjang. Sehingga itu, lakaran kecil yang tersimpan dalam foto dipaparkan. Pada komputer yang perkakasan grafiknya tidak dapat menyahkod HEVC, penjanaannya mengambil masa.",
+      "fast": "Pantas",
+      "fastDescription": "Lakaran kecil yang tersimpan dalam foto, dipaparkan serta-merta. Ia kurang tajam: 320 × 240 piksel bagi foto 12 megapiksel yang diambil dengan iPhone."
     },
     "os": {
       "title": "Menu konteks Penjelajah Fail",

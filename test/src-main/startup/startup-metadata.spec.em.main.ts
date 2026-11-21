@@ -27,6 +27,14 @@ describe('startupMetadata (in main process)', () => {
     assert.strictEqual(createStartupMetadata(standIn, { PLM_E2E: 'yes' }).isE2e, false);
   });
 
+  it('turns off the decoding of HEVC in the page for a test profile that asks for it, and for nothing else', () => {
+    const standIn = { getVersion: () => '', getPath: () => '', getPreferredSystemLanguages: () => [] } as unknown as Electron.App;
+    assert.strictEqual(createStartupMetadata(standIn, {}).hevcInPage, 'auto');
+    assert.strictEqual(createStartupMetadata(standIn, { PLM_TEST_ROOT: '/profile', PLM_TEST_HEVC_IN_PAGE: 'off' }).hevcInPage, 'off');
+    assert.strictEqual(createStartupMetadata(standIn, { PLM_TEST_HEVC_IN_PAGE: 'off' }).hevcInPage, 'auto');
+    assert.strictEqual(createStartupMetadata(standIn, { PLM_TEST_ROOT: '/profile', PLM_TEST_HEVC_IN_PAGE: 'on' }).hevcInPage, 'auto');
+  });
+
   it('gives the operating system\'s languages, and in a test only what the test asks for', () => {
     const standIn = { getPreferredSystemLanguages: () => ['ja-JP', 'en-US'] };
     assert.deepStrictEqual(systemLanguagesOf(standIn, {}), ['ja-JP', 'en-US']);

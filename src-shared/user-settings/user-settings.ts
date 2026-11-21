@@ -6,6 +6,7 @@ import { restartApp } from '../process/restart-app.js';
 import { UserDataStorage } from '../user-data-storage/user-data-storage.js';
 import { UserDataStoragePath } from '../user-data-storage/user-data-stroage-path.js';
 import { BooleanSetting, BooleanSettingType } from './boolean-setting.js';
+import { defaultThumbnailQuality, isThumbnailQuality, ThumbnailQuality } from './thumbnail-quality.js';
 import DateFormatType = DateTimeFormat.ForUser.DateFormatType;
 import ClockSystemFormatType = DateTimeFormat.ForUser.ClockSystemFormatType;
 
@@ -15,13 +16,16 @@ interface UserSettings {
   clockSystemFormat: ClockSystemFormatType;
   /** `auto`, the operating system's language, or a language; the language in use is in src-shared/i18n/i18n.ts. */
   language: LanguageSetting;
+  /** The quality of the thumbnails of HEIF photos (thumbnail-quality.ts). */
+  thumbnailQuality: ThumbnailQuality;
 }
 
 export class CurrentUserSettings implements UserSettings {
   constructor(public showStatusBar: BooleanSettingType,
               public dateFormat: DateFormatType,
               public clockSystemFormat: ClockSystemFormatType,
-              public language: LanguageSetting) {}
+              public language: LanguageSetting,
+              public thumbnailQuality: ThumbnailQuality) {}
 }
 
 export class UserSettingsToBeSaved implements UserSettings {
@@ -29,6 +33,7 @@ export class UserSettingsToBeSaved implements UserSettings {
   public dateFormat: DateFormatType;
   public clockSystemFormat: ClockSystemFormatType;
   public language: LanguageSetting;
+  public thumbnailQuality: ThumbnailQuality;
 }
 
 const loadShowStatusBar: (() => BooleanSettingType) = () => {
@@ -74,12 +79,19 @@ const loadLanguage: (() => LanguageSetting) = () => {
   return isLanguageSetting(loadedLanguage) ? loadedLanguage : languageSettingAuto;
 };
 
+/** The saved quality of the thumbnails of HEIF photos, or the default when none, or no valid one, is saved. */
+const loadThumbnailQuality: (() => ThumbnailQuality) = () => {
+  const loaded: string = UserDataStorage.readOrDefault(UserDataStoragePath.UserSettings.ThumbnailQuality, defaultThumbnailQuality);
+  return isThumbnailQuality(loaded) ? loaded : defaultThumbnailQuality;
+};
+
 const loadUserSettings: (() => CurrentUserSettings) = () => {
   const showStatusBar = loadShowStatusBar();
   const dateFormat = loadDateFormat();
   const clockSystemFormat = loadClockSystemFormat();
   const language = loadLanguage();
-  const userSettings = new CurrentUserSettings(showStatusBar, dateFormat, clockSystemFormat, language);
+  const thumbnailQuality = loadThumbnailQuality();
+  const userSettings = new CurrentUserSettings(showStatusBar, dateFormat, clockSystemFormat, language, thumbnailQuality);
   Logger.info(`Loaded user settings ${JSON.stringify(userSettings)}`);
   return userSettings;
 };
@@ -115,6 +127,7 @@ export const saveUserSetting: ((settings: UserSettingsToBeSaved) => Promise<void
     UserDataStorage.write(UserDataStoragePath.UserSettings.DateFormat, settings.dateFormat),
     UserDataStorage.write(UserDataStoragePath.UserSettings.ClockSystemFormat, settings.clockSystemFormat),
     UserDataStorage.write(UserDataStoragePath.UserSettings.Language, settings.language),
+    UserDataStorage.write(UserDataStoragePath.UserSettings.ThumbnailQuality, settings.thumbnailQuality),
   ]);
   Logger.info(`Saved user settings ${JSON.stringify(settings)}`);
   if (settings.language !== savedLanguage) {

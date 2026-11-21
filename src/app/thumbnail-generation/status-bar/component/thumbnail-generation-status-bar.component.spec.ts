@@ -1,5 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { currentUserSettings } from '../../../../../src-shared/user-settings/user-settings';
+import { SettingsDialogService } from '../../../settings-dialog/service/settings-dialog.service';
 
 import {
   idleThumbnailGenerationStatus,
@@ -16,14 +18,18 @@ describe('ThumbnailGenerationStatusBarComponent', () => {
   const text = (selector: string) => element().querySelector(selector).textContent.replace(/\s+/g, ' ').trim();
   const generating: ThumbnailGenerationStatus = {
     phase: 'generating', numOfAllHeifFiles: 3, numOfCacheAvailableThumbnails: 1, numOfGenerationRequiredThumbnails: 2,
-    numOfProcessedThumbnails: 0, progressPercent: 0, result: null,
+    numOfProcessedThumbnails: 0, progressPercent: 0, result: null, isWholeFolder: true,
   };
+  const settingsDialogService = { open: vi.fn() };
 
   beforeEach(async () => {
     status.set(idleThumbnailGenerationStatus);
     await TestBed.configureTestingModule({
       imports: [ThumbnailGenerationStatusBarComponent],
-      providers: [{ provide: ThumbnailGenerationService, useValue: { status } }],
+      providers: [
+        { provide: ThumbnailGenerationService, useValue: { status } },
+        { provide: SettingsDialogService, useValue: settingsDialogService },
+      ],
     })
     .compileComponents();
     fixture = TestBed.createComponent(ThumbnailGenerationStatusBarComponent);
@@ -33,7 +39,7 @@ describe('ThumbnailGenerationStatusBarComponent', () => {
   it('follows the generation from start to end, without being asked to', async () => {
     status.set(generating);
     await fixture.whenStable();
-    expect(text('.summary')).toBe('Generating thumbnails for HEIF files...');
+    expect(text('.summary')).toBe('Generating thumbnails for HEIF files... To show them sooner, choose fast thumbnails in Settings.');
     expect(text('.details')).toContain('Processed 0 out of 2 files.');
     expect(text('.details')).toContain('2 thumbnails need generation, which is given by "HEIF files (3 files) − Cache-available files (1 files)".');
     expect(element().querySelector('.close-button').classList).toContain('hidden');
@@ -47,6 +53,35 @@ describe('ThumbnailGenerationStatusBarComponent', () => {
     await fixture.whenStable();
     expect(text('.summary')).toBe('Completed generating thumbnails for HEIF files.');
     expect(element().querySelector('.close-button').classList).not.toContain('hidden');
+  });
+
+  it('offers the fast thumbnails while thumbnails of high quality are made, through the Settings dialog', async () => {
+    settingsDialogService.open.mockClear();
+    status.set(generating);
+    await fixture.whenStable();
+    const link = element().querySelector('.faster-in-settings .anchor-tag-like-text') as HTMLElement;
+    expect(link.textContent).toBe('choose fast thumbnails in Settings');
+    link.click();
+    expect(settingsDialogService.open).toHaveBeenCalledExactlyOnceWith('thumbnails');
+  });
+
+  it('offers nothing more where the thumbnails are fast already', async () => {
+    const quality = currentUserSettings.thumbnailQuality;
+    currentUserSettings.thumbnailQuality = 'fast';
+    try {
+      status.set({ ...generating });
+      await fixture.whenStable();
+      expect(text('.summary')).toBe('Generating thumbnails for HEIF files...');
+    } finally {
+      currentUserSettings.thumbnailQuality = quality;
+    }
+  });
+
+  it('counts the folder\'s files only for a generation of the whole folder', async () => {
+    status.set({ ...generating, isWholeFolder: false });
+    await fixture.whenStable();
+    expect(text('.details')).toContain('Processed 0 out of 2 files.');
+    expect(element().querySelector('.generation-required-files-description')).toBeNull();
   });
 
   it('offers the files with errors once a generation finishes with errors', async () => {

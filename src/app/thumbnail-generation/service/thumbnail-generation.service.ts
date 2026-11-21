@@ -1,4 +1,4 @@
-import { computed, signal, Service } from '@angular/core';
+import { computed, inject, signal, Service } from '@angular/core';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { bridge, ThumbnailState } from '../../../../src-shared/bridge/plm-bridge';
 import { convertToFlattenedDirTree } from '../../../../src-shared/dir-tree/dir-tree-util';
@@ -6,6 +6,9 @@ import { FilenameExtension } from '../../../../src-shared/filename-extension/fil
 import { stringArrayToLogText } from '../../../../src-shared/log/multiline-log-text';
 import { perfMark } from '../../../../src-shared/perf/perf-mark';
 import { thumbnailGenerationLogger as logger } from '../../../../src-shared/thumbnail/generation/thumbnail-generation-logger';
+import { currentUserSettings } from '../../../../src-shared/user-settings/user-settings';
+import { pageDecodesHevc } from '../../heif-thumbnail/heif-image-decoding';
+import { ThumbnailGenerationStatusBarService } from '../status-bar/service/thumbnail-generation-status-bar.service';
 
 export interface ThumbnailGenerationResult {
   errorOccurred: boolean,
@@ -23,6 +26,11 @@ export interface ThumbnailGenerationStatus {
   readonly progressPercent: number;
   /** Set once the phase is 'done'. */
   readonly result: ThumbnailGenerationResult | null;
+  /**
+   * Whether the generation makes every HEIF file of the folder without a thumbnail in the cache, as the details of the
+   * status bar count it, rather than the photos that the page could not make the thumbnails of, one by one.
+   */
+  readonly isWholeFolder: boolean;
 }
 
 /** The HEIF files of a folder, and whether each has its thumbnail in the cache, as the main process checked them. */
@@ -39,20 +47,37 @@ export const idleThumbnailGenerationStatus: ThumbnailGenerationStatus = {
   numOfProcessedThumbnails: 0,
   progressPercent: 0,
   result: null,
+  isWholeFolder: true,
 };
 
+/**
+ * The thumbnails of HEIF photos that the main process makes (src-main/thumbnail-generation/), with libheif in its
+ * utility processes, and caches.
+ * TL;DR: Every such photo of a folder from the start, where the page cannot decode HEVC and the thumbnails are of high
+ * quality; elsewhere only those that the page could not make itself, one by one (src/app/heif-thumbnail/).
+ * Details: The page decodes a photo's images with WebCodecs where the platform decodes HEVC: 20 to 35 ms for a
+ * thumbnail of high quality, 4 ms for the small thumbnail that the photo holds, against 0.6 to 2 seconds for the main
+ * process to make one. Where it cannot, the main process makes a high-quality thumbnail of each photo, as it always did,
+ * while the page shows the photo's small thumbnail, which libheif decodes for it in a few milliseconds.
+ */
 @Service()
 export class ThumbnailGenerationService {
+  private readonly statusBarService = inject(ThumbnailGenerationStatusBarService);
   private readonly statusState = signal<ThumbnailGenerationStatus>(idleThumbnailGenerationStatus);
   public readonly status = this.statusState.asReadonly();
   public readonly isGenerating = computed(() => this.status().phase === 'generating');
 
-  private allHeifFilePaths: string[];
-  private get numOfAllHeifFiles(): number { return this.allHeifFilePaths.length; }
+  private allHeifFilePaths: string[] = [];
+  /** The folder's HEIF files whose thumbnail was in the cache when it was opened. */
+  private cachedFilePaths = new Set<string>();
 
-  private heifFilePathsToGenerateThumbnail: string[];
-  private get numOfHeifFilesToGenerateThumbnail(): number { return this.heifFilePathsToGenerateThumbnail.length; }
-  private get numOfGenerationRequiredThumbnails(): number { return this.numOfHeifFilesToGenerateThumbnail; }
+  /** The files that the current generation makes, in the order that they were asked for, and the same as a set. */
+  private heifFilePathsToGenerateThumbnail: string[] = [];
+  private readonly filesToGenerate = new Set<string>();
+  private get numOfGenerationRequiredThumbnails(): number { return this.heifFilePathsToGenerateThumbnail.length; }
+  private progressTimer: ReturnType<typeof setInterval> | undefined;
+  /** The files asked for one by one in this turn, which are asked for together. */
+  private readonly filesAskedFor = new Set<string>();
 
   /**
    * Has the main process check which HEIF files of a folder have their thumbnail in the cache
@@ -65,29 +90,124 @@ export class ThumbnailGenerationService {
     return { allHeifFilePaths, states: await this.thumbnailStates(allHeifFilePaths) };
   }
 
-  /** @returns Whether a generation started, which it does when a HEIF file has no thumbnail in the cache. */
-  public startThumbnailGeneration(check: ThumbnailCacheCheck): boolean {
+  /**
+   * Starts making the thumbnails of the folder's HEIF files that are not in the cache, where the page cannot decode
+   * HEVC and the thumbnails are of high quality.
+   * @returns Whether a generation started.
+   */
+  public async startThumbnailGeneration(check: ThumbnailCacheCheck): Promise<boolean> {
+    // The thumbnails of the previous folder that wait to be made are not made before this folder's.
+    if (this.isGenerating())
+      await bridge().thumbnails.cancel().catch(error => logger.error('Failed to drop the thumbnails that wait to be made.', error));
+    this.stopProgressPolling();
+    this.filesAskedFor.clear();
     this.allHeifFilePaths = check.allHeifFilePaths;
-    this.heifFilePathsToGenerateThumbnail = this.allHeifFilePaths
-      .filter((_filePath, index) => !check.states[index].cacheAvailable);
+    this.cachedFilePaths = new Set(this.allHeifFilePaths.filter((_filePath, index) => check.states[index].cacheAvailable));
+    this.setFilesToGenerate([]);
+    this.statusState.set(idleThumbnailGenerationStatus);
+    return this.startForTheFolder();
+  }
 
-    if (this.numOfHeifFilesToGenerateThumbnail >= 1) {
-      perfMark('thumbnails:generation-started', { all: this.numOfAllHeifFiles, required: this.numOfHeifFilesToGenerateThumbnail });
-      this.startGenerationInMainProcess();
-      this.updateGenerationStatusAsStarted();
-      this.updateGenerationStatusFromInProgressToDone();
-      return true;
-    } else {
+  /** Whether the thumbnail of `filePath` was in the cache when its folder was opened. */
+  public isCached(filePath: string): boolean {
+    return this.cachedFilePaths.has(filePath);
+  }
+
+  /** Whether the main process makes the thumbnail of `filePath`, or has made it, in this folder. */
+  public isMade(filePath: string): boolean {
+    return this.filesToGenerate.has(filePath);
+  }
+
+  private setFilesToGenerate(filePaths: string[]): void {
+    this.heifFilePathsToGenerateThumbnail = filePaths;
+    this.filesToGenerate.clear();
+    filePaths.forEach(filePath => this.filesToGenerate.add(filePath));
+  }
+
+  /**
+   * Has the main process make the thumbnail of a photo that the page could not make: one whose image the page cannot
+   * decode, or read. The status bar shows it with those of the folder, or alone.
+   */
+  public generate(filePath: string): void {
+    if (this.isMade(filePath) || this.filesAskedFor.has(filePath))
+      return;
+    this.filesAskedFor.add(filePath);
+    if (this.filesAskedFor.size === 1)
+      queueMicrotask(() => this.generateFilesAskedFor());
+  }
+
+  /**
+   * Follows a new setting of the thumbnails' quality: the thumbnails that wait to be made are dropped for 'fast', and
+   * those of the folder are made for 'high' where the page cannot decode HEVC.
+   */
+  public async applyThumbnailQuality(): Promise<boolean> {
+    if (currentUserSettings.thumbnailQuality === 'fast') {
+      if (this.isGenerating()) {
+        logger.info('The thumbnails that wait to be made are dropped, as the fast ones were chosen.');
+        await bridge().thumbnails.cancel();
+        this.stopProgressPolling();
+        this.statusState.set(idleThumbnailGenerationStatus);
+        this.statusBarService.hide();
+      }
+      this.setFilesToGenerate([]);
+      return false;
+    }
+    if (this.isGenerating())
+      return false;
+    const states = await this.thumbnailStates(this.allHeifFilePaths);
+    this.cachedFilePaths = new Set(this.allHeifFilePaths.filter((_filePath, index) => states[index].cacheAvailable));
+    this.setFilesToGenerate([]);
+    const started = await this.startForTheFolder();
+    if (started)
+      this.statusBarService.showForNewGeneration();
+    return started;
+  }
+
+  private async startForTheFolder(): Promise<boolean> {
+    if (currentUserSettings.thumbnailQuality !== 'high' || await pageDecodesHevc()) {
+      logger.info(`The page makes the thumbnails of HEIF files (quality: ${currentUserSettings.thumbnailQuality}). `
+        + 'The main process makes those that the page cannot.');
+      return false;
+    }
+
+    const filePaths = this.allHeifFilePaths.filter(filePath => !this.cachedFilePaths.has(filePath));
+    if (filePaths.length === 0) {
       logger.info(`Cached thumbnails are available for all HEIF files. Thumbnail generation is skipped.`);
       return false;
     }
+    this.setFilesToGenerate(filePaths);
+    perfMark('thumbnails:generation-started', { all: this.allHeifFilePaths.length, required: filePaths.length });
+    this.startGenerationInMainProcess(filePaths);
+    this.updateGenerationStatusAsStarted(true);
+    this.updateGenerationStatusFromInProgressToDone();
+    return true;
   }
 
-  private startGenerationInMainProcess() {
+  private generateFilesAskedFor(): void {
+    const filePaths = [...this.filesAskedFor].filter(filePath => !this.isMade(filePath));
+    this.filesAskedFor.clear();
+    if (filePaths.length === 0)
+      return;
+    logger.info(`The page could not make the thumbnails of ${filePaths.length} HEIF files, which the main process makes.`);
+    const isNewGeneration = !this.isGenerating();
+    this.setFilesToGenerate([...(isNewGeneration ? [] : this.heifFilePathsToGenerateThumbnail), ...filePaths]);
+    this.startGenerationInMainProcess(filePaths);
+    if (isNewGeneration) {
+      this.updateGenerationStatusAsStarted(false);
+      this.updateGenerationStatusFromInProgressToDone();
+      this.statusBarService.showForNewGeneration();
+    } else {
+      this.statusState.update(status => ({ ...status, isWholeFolder: false,
+        numOfGenerationRequiredThumbnails: this.numOfGenerationRequiredThumbnails,
+        progressPercent: (status.numOfProcessedThumbnails / this.numOfGenerationRequiredThumbnails) * 100 }));
+    }
+  }
+
+  private startGenerationInMainProcess(filePaths: string[]) {
     logger.info(`Thumbnails for HEIF files will be generated in the main process.`);
     logger.info(`Sending the IPC invoke request about thumbnail generation to the main process.`);
 
-    bridge().thumbnails.generate(this.allHeifFilePaths, this.heifFilePathsToGenerateThumbnail)
+    bridge().thumbnails.generate(this.allHeifFilePaths, filePaths)
       .catch(error => logger.error(`Failed to request thumbnail generation.`, error));
   }
 
@@ -96,43 +216,54 @@ export class ThumbnailGenerationService {
     return filePaths.length === 0 ? Promise.resolve([]) : bridge().thumbnails.state(filePaths);
   }
 
-  private updateGenerationStatusAsStarted() {
-    const numOfCacheAvailableThumbnails = this.numOfAllHeifFiles - this.numOfGenerationRequiredThumbnails;
+  private updateGenerationStatusAsStarted(isWholeFolder: boolean) {
+    const numOfAllHeifFiles = this.allHeifFilePaths.length;
+    const numOfCacheAvailableThumbnails = this.cachedFilePaths.size;
     this.statusState.set({
       phase: 'generating',
-      numOfAllHeifFiles: this.numOfAllHeifFiles,
-      numOfCacheAvailableThumbnails: numOfCacheAvailableThumbnails,
+      numOfAllHeifFiles,
+      numOfCacheAvailableThumbnails,
       numOfGenerationRequiredThumbnails: this.numOfGenerationRequiredThumbnails,
       numOfProcessedThumbnails: 0,
       progressPercent: 0,
       result: null,
+      isWholeFolder,
     });
-    this.recordAtThumbnailGenerationStart(numOfCacheAvailableThumbnails);
+    this.recordAtThumbnailGenerationStart(numOfAllHeifFiles, numOfCacheAvailableThumbnails);
   }
 
-  private recordAtThumbnailGenerationStart(numOfCacheAvailableThumbnails: number) {
-    logger.info(`Total HEIF files: ${this.numOfAllHeifFiles}, Cache-available: ${numOfCacheAvailableThumbnails}, `
+  private recordAtThumbnailGenerationStart(numOfAllHeifFiles: number, numOfCacheAvailableThumbnails: number) {
+    logger.info(`Total HEIF files: ${numOfAllHeifFiles}, Cache-available: ${numOfCacheAvailableThumbnails}, `
       + `Generation-required: ${this.numOfGenerationRequiredThumbnails}`);
     Analytics.trackEvent('Thumbnail Generation', 'Thumbnail Generation Started',
-      `Total: ${this.numOfAllHeifFiles}, Cache-available: ${numOfCacheAvailableThumbnails}, Generation-required: ${this.numOfGenerationRequiredThumbnails}`);
-    Analytics.trackEvent('Thumbnail Generation', 'Thumbnail Generation: Total', `Total HEIF files: ${this.numOfAllHeifFiles}`);
+      `Total: ${numOfAllHeifFiles}, Cache-available: ${numOfCacheAvailableThumbnails}, Generation-required: ${this.numOfGenerationRequiredThumbnails}`);
+    Analytics.trackEvent('Thumbnail Generation', 'Thumbnail Generation: Total', `Total HEIF files: ${numOfAllHeifFiles}`);
     Analytics.trackEvent('Thumbnail Generation', 'Thumbnail Generation: Cache-available', `Cache-available: ${numOfCacheAvailableThumbnails}`);
     Analytics.trackEvent('Thumbnail Generation', 'Thumbnail Generation: Gen-required', `Generation-required: ${this.numOfGenerationRequiredThumbnails}`);
+  }
+
+  private stopProgressPolling(): void {
+    clearInterval(this.progressTimer);
+    this.progressTimer = undefined;
   }
 
   private updateGenerationStatusFromInProgressToDone(): void {
     const updateMilliseconds = 5000;
     let isChecking = false;  // A check that takes longer than the interval is not overlapped by the next.
-    const intervalId = setInterval(async () => {
+    this.stopProgressPolling();
+    const timer = setInterval(async () => {
       if (isChecking) return;
       isChecking = true;
       try {
-        const filePaths = this.heifFilePathsToGenerateThumbnail;
+        // The files of the generation as they are now: a photo that the page could not make is added while it runs.
+        const filePaths = [...this.heifFilePathsToGenerateThumbnail];
         const states = await this.thumbnailStates(filePaths);
+        if (timer !== this.progressTimer)
+          return;  // Another folder, or another setting, ended this generation meanwhile.
         const numberOfProcessedThumbnails = states.filter(state => state.attemptFinished).length;
         this.updateGenerationProgress(numberOfProcessedThumbnails);
         if (numberOfProcessedThumbnails === this.numOfGenerationRequiredThumbnails) {
-          clearInterval(intervalId);
+          this.stopProgressPolling();
           this.updateGenerationStatusToDone(filePaths.filter((_filePath, index) => !states[index].cacheAvailable));
           this.recordThumbnailGenerationResult();
         }
@@ -142,6 +273,7 @@ export class ThumbnailGenerationService {
         isChecking = false;
       }
     }, updateMilliseconds);
+    this.progressTimer = timer;
   }
 
   private updateGenerationProgress(numberOfProcessedThumbnails: number) {

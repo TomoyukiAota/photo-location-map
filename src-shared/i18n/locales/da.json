@@ -158,6 +158,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Opretter miniaturer til HEIF-filer...",
+    "fasterInSettings": "For at vise dem hurtigere skal du <settingsLink>vælge hurtige miniaturer i indstillingerne</settingsLink>.",
     "completed": "Miniaturerne til HEIF-filer er oprettet.",
     "finishedWithErrors": "Oprettelsen af miniaturer til HEIF-filer blev afsluttet med fejl.",
     "showDetails": "Vis detaljer",
@@ -191,6 +192,7 @@
       "language": "Sprog (Language)",
       "appearance": "Udseende",
       "dateTime": "Dato og tid",
+      "thumbnails": "Miniaturer",
       "os": "Operativsystem",
       "cache": "Cache"
     },
@@ -213,6 +215,14 @@
       "clock12": "12-timers ur",
       "clock24": "24-timers ur",
       "example": "Eksempel"
+    },
+    "thumbnails": {
+      "title": "HEIF-miniaturer",
+      "description": "Miniaturer til HEIF-filer, f.eks. fotos taget med en iPhone, oprettes af dette program. Vælg, om de skal oprettes med vægt på kvalitet eller hastighed.",
+      "highQuality": "Høj kvalitet",
+      "highQualityDescription": "Oprettes ud fra hele fotoet med 400 pixel på den længste side. Indtil da vises den lille miniature, der er gemt i fotoet. På en computer, der ikke kan afkode HEVC med sin grafikhardware, tager det tid at oprette dem.",
+      "fast": "Hurtig",
+      "fastDescription": "Den lille miniature, der er gemt i fotoet, vises med det samme. Den er mindre skarp: 320 × 240 pixel for et 12-megapixel-foto taget med en iPhone."
     },
     "os": {
       "title": "Stifinders genvejsmenu",

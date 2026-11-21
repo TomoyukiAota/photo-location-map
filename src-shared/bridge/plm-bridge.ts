@@ -1,4 +1,5 @@
 import type { ExifReadResult } from '../exif/exif-read-result.js';
+import type { HeifEmbeddedThumbnail, HeifWholeImage } from '../heif/heif-images.js';
 import type { IpcParams } from '../ipc/ipc-params.js';
 import type { PhotoDataViewerIpcParams } from '../photo-data-viewer/photo-data-viewer-ipc-params.js';
 import type { StartupMetadata } from '../startup/startup-metadata.js';
@@ -75,8 +76,23 @@ export interface PlmBridge {
   readonly faceRegions: { have(filePaths: string[]): Promise<boolean[]> };
   readonly directoryTree: { create(directoryPath: string): Promise<DirectoryTreeResult> };
   readonly thumbnails: {
+    /** Has the main process make the thumbnails of `heifFilePathsToGenerate`, after any that wait to be made. */
     generate(allHeifFilePaths: string[], heifFilePathsToGenerate: string[]): Promise<void>;
     state(filePaths: string[]): Promise<ThumbnailState[]>;
+    /** Drops the thumbnails that wait to be made, for a new setting of their quality; those being made are finished. */
+    cancel(): Promise<void>;
+  };
+  /**
+   * The images of a HEIF photo of a folder that the user opened, which the page decodes for its thumbnail
+   * (src-main/heif/); null when the file has no such image, or it cannot be read.
+   */
+  readonly heif: {
+    /** The thumbnail item of the primary image. */
+    embeddedThumbnail(filePath: string): Promise<HeifEmbeddedThumbnail | null>;
+    /** The same, an HEVC one, decoded by libheif to a JPEG of the image, for a page that cannot decode HEVC. */
+    embeddedThumbnailJpeg(filePath: string): Promise<Uint8Array | null>;
+    /** The tiles of the primary image. */
+    wholeImage(filePath: string): Promise<HeifWholeImage | null>;
   };
   readonly thumbnailCache: {
     open(): Promise<void>;

@@ -6,7 +6,7 @@
 // For each language, on an empty profile of a computer in that language, it goes through the screens that show
 // texts: the Language dialog, the Welcome dialog, the hint over the window while files are dragged over it, the
 // question that a dropped folder asks, the home view without and
-// with a folder of photos (in a window of 1200x800 and of 800x600), a photo's popup with its menu and the menu's submenus, the tree's menu, the Sort menu and its info dialog, the
+// with a folder of photos (in a window of 1200x800 and of 800x600), while the thumbnails of HEIF files are made, a photo's popup with its menu and the menu's submenus, the tree's menu, the Sort menu and its info dialog, the
 // chart's menu, its message for a duration that it cannot show and its button for the photos within a zoom, a region
 // on the map, the tabs of the Settings dialog with the choices of the clock's field, the question before a restart,
 // the About box, the dialog of the thumbnails that failed, the dialog of a folder without location data, and the
@@ -50,6 +50,13 @@ await mkdir(broken);
 for (const name of ['A broken.HEIC', 'B broken.HEIC'])
   await copyFile(path.join(root, 'test/test-resources/unsupported-files/Invalid Photo.JPG'), path.join(broken, name));
 await copyFile(path.join(root, 'test/test-resources/actual-photos/Kobe/IMG_4676.JPG'), path.join(broken, 'Kobe.JPG'));
+// Many HEIF files, whose thumbnails take long enough to be made for the status bar to be measured while it offers the
+// fast thumbnails.
+const generating = path.join(folders, 'Generating');
+await mkdir(generating);
+for (let index = 1; index <= 30; index++)
+  await copyFile(path.join(root, 'test/e2e/fixtures/demo.heic'), path.join(generating, `demo ${index}.heic`));
+await copyFile(path.join(root, 'test/test-resources/actual-photos/Kobe/IMG_4676.JPG'), path.join(generating, 'Kobe.JPG'));
 const nowhere = path.join(folders, 'Nowhere');
 await mkdir(nowhere);
 await copyFile(path.join(root, 'test/test-resources/unsupported-files/Invalid Photo.JPG'), path.join(nowhere, 'Invalid Photo.JPG'));
@@ -149,8 +156,10 @@ const failures = [];
 for (const code of codes) {
   const profile = await mkdtemp(path.join(tmpdir(), 'plm-layout-profile-'));
   // The application takes PLM_TEST_SYSTEM_LANGUAGES as the operating system's languages in a test profile.
+  // The page decodes no HEVC, so that the main process makes the thumbnails of the HEIF files, whose status bar is
+  // measured, as on a computer without a decoder for HEVC (src/app/heif-thumbnail/).
   const env = { ...process.env, PLM_TEST_ROOT: profile, PLM_E2E: '1', PLM_TEST_HEADLESS: process.platform === 'linux' ? '0' : '1',
-    PLM_TEST_SYSTEM_LANGUAGES: `${code},en-US` };
+    PLM_TEST_SYSTEM_LANGUAGES: `${code},en-US`, PLM_TEST_HEVC_IN_PAGE: 'off' };
   for (const key of ['PLM_EM_MAIN', 'PLM_EM_RENDERER', 'ELECTRON_RUN_AS_NODE', 'NODE_OPTIONS']) delete env[key];
   const app = await _electron.launch({ executablePath: require('electron'), args: ['test/e2e/main.mjs'], cwd: root, env, timeout: 30000 });
   results[code] = {};
@@ -268,6 +277,12 @@ for (const code of codes) {
       await page.locator('app-confirm-dialog .cancel-button').click();
       await page.waitForSelector('app-confirm-dialog', { state: 'detached' });
     });
+    await step('home-generating', async () => {
+      // The status bar while the thumbnails are made, which offers the fast thumbnails in the Settings dialog.
+      await openFolder(generating);
+      await page.locator('app-thumbnail-generation-status-bar .faster-in-settings').waitFor({ timeout: 40000 });
+      await screen('home-generating', 'app-thumbnail-generation-status-bar, app-loaded-files-status-bar', 'app-root');
+    });
     await step('home-loaded', async () => {
       await openFolder(photos);
       // The loading dialog is there for a moment only: it is measured at once, if it is caught at all.
@@ -369,7 +384,7 @@ for (const code of codes) {
       await page.waitForSelector('app-settings-dialog');
       const tabs = page.locator('app-settings-dialog mat-list-item');
       // The OS tab is there on Windows only.
-      const names = ['language', 'appearance', 'datetime', ...(process.platform === 'win32' ? ['os'] : []), 'cache'];
+      const names = ['language', 'appearance', 'datetime', 'thumbnails', ...(process.platform === 'win32' ? ['os'] : []), 'cache'];
       for (const [index, name] of names.entries()) {
         await tabs.nth(index).click();
         await screen(`settings-${name}`, dialog, dialog);

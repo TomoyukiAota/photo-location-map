@@ -41,6 +41,7 @@ import './restart-ipc-setup.js';
 import './shell/shell-ipc-setup.js';
 import './thumbnail-generation/thumbnail-generation-ipc-setup.js';
 import './thumbnail-generation/thumbnail-cache-ipc-setup.js';
+import './heif/heif-ipc-setup.js';
 import { startDirectoryTreeWorker } from './directory-tree/directory-tree-requests.js';
 import { setMainWindow } from './ipc/ipc-sender.js';
 import { keepOnAppPage } from './ipc/main-window-pages.js';

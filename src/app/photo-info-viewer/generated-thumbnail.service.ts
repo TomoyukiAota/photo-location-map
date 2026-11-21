@@ -22,6 +22,8 @@ export const thumbnailCheckIntervalMs = 1000;
 export class GeneratedThumbnailService {
   /** The thumbnail's file by the photo's path, for the photos whose attempt has finished. */
   private readonly filePaths = signal<ReadonlyMap<string, string>>(new Map());
+  /** The photos whose attempt has finished without a thumbnail in the cache. */
+  private readonly failed = signal<ReadonlySet<string>>(new Set());
   private readonly awaitedPhotoPaths = new Set<string>();
   private timer: ReturnType<typeof setTimeout> | undefined;
   private isChecking = false;
@@ -34,6 +36,11 @@ export class GeneratedThumbnailService {
    */
   public filePathOf(photoPath: string): string | undefined {
     return this.filePaths().get(photoPath);
+  }
+
+  /** Whether the attempt to make the photo's thumbnail has finished without one. */
+  public hasFailed(photoPath: string): boolean {
+    return this.failed().has(photoPath);
   }
 
   /** Asks the main process about the photo's thumbnail until the attempt to make it has finished. */
@@ -50,11 +57,20 @@ export class GeneratedThumbnailService {
 
   /** Forgets every thumbnail, for the photos of another folder. */
   public reset(): void {
+    this.stopWaiting();
+    this.filePaths.set(new Map());
+    this.failed.set(new Set());
+  }
+
+  /**
+   * Stops asking about the thumbnails that are still being made, which the main process may no longer make, as after
+   * a new setting of their quality (HeifThumbnailService); what is known of the others is kept.
+   */
+  public stopWaiting(): void {
     this.folderNumber++;
     clearTimeout(this.timer);
     this.timer = undefined;
     this.awaitedPhotoPaths.clear();
-    this.filePaths.set(new Map());
   }
 
   private checkAfter(delayMs: number): void {
@@ -84,6 +100,9 @@ export class GeneratedThumbnailService {
 
       for (const [photoPath] of finished)
         this.awaitedPhotoPaths.delete(photoPath);
+      const failed = photoPaths.filter((_photoPath, index) => states[index]?.attemptFinished && !states[index].cacheAvailable);
+      if (failed.length > 0)
+        this.failed.update(paths => new Set([...paths, ...failed]));
       this.filePaths.update(filePaths => new Map([...filePaths, ...finished]));
     } catch (error) {
       logger.error(logged`Failed to check the thumbnails of ${photoPaths.length} photos.`, error);
