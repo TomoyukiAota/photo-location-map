@@ -1,15 +1,17 @@
 // TL;DR: The order of the first imports matters: each sets up what the next ones use while they are evaluated.
 // Details: The test profile moves the app's folders; errors are scrubbed, and handled from the start, so that an error
 // of the setups that follow is recorded; the launch's file is written before them too, so that a launch whose setup
-// fails and stops it before analytics are set is told at the next, which sends its error (src-main/launch/); the
-// startup metadata needs the log's location; the settings hold the analytics user ID, which the crash reporter's dumps
-// carry, and the language, which the texts of the menu and the dialogs are in; analytics then sends what was tracked
-// before.
+// fails and stops it before analytics are set is told at the next, which sends its error (src-main/launch/); where
+// Chromium keeps its storage is decided once the log can tell it, and before the app is ready (src-main/session-data/);
+// the startup metadata needs the log's location; the settings hold the analytics user ID, which the crash reporter's
+// dumps carry, and the language, which the texts of the menu and the dialogs are in; analytics then sends what was
+// tracked before.
 import '../electron-util/isolated-test-profile.js';
 import './analytics/error-scrubbing-setup.js';
 import './unhandled-errors-setup.js';
 import './launch/launch-file-setup.js';
 import './log/log-setup.js';
+import './session-data/session-data-setup.js';
 import './startup/startup-metadata-setup.js';
 import './user-data-storage/user-data-storage-setup.js';
 import './crash-reporter-setup.js';

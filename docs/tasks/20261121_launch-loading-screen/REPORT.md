@@ -86,7 +86,8 @@ the case of a list that does not answer, where the text already showed).
 ## Not changed
 
 - The wait itself. It comes from the shared profile and from the storage that
-  the analytics SDKs open when they start.
+  the analytics SDKs open when they start. A later change removed it
+  ([its report](../20261121_two-instance-storage/REPORT.md)).
 - Two instances started in the same millisecond wrote to one log file, whose
   name is the time to the millisecond.
 
