@@ -8,7 +8,7 @@
 // question that a dropped folder asks, the home view without and
 // with a folder of photos (in a window of 1200x800 and of 800x600), a photo's popup with its menu and the menu's submenus, the tree's menu, the rows that the tree keeps at its top with the menu of one of them, the Sort menu and its info dialog, the
 // chart's menu, its message for a duration that it cannot show and its button for the photos within a zoom, the date of
-// the map's layers of a past date, a region on the map, the tabs of the Settings dialog with the choices of the clock's
+// the map's layers of a past date with the calendar that chooses it (its days and its months), a region on the map, the tabs of the Settings dialog with the choices of the clock's
 // field, the question before a restart, the About box, the status bar while the thumbnails of HEIF files are made, the
 // dialog of the thumbnails that failed, the dialog of a folder without location data, and the dialog of the search for
 // faces, while it looks and when it found none.
@@ -396,11 +396,22 @@ for (const code of codes) {
         await page.locator('.leaflet-control-layers-base label').filter({ hasText: name }).click();
         await page.mouse.move(1, 1);
       };
-      for (const [layer, name] of [['OpenHistoricalMap', 'map-date'], ['Esri World Imagery Wayback', 'map-date-imagery']]) {
-        await chooseLayer(layer);
-        await page.waitForFunction(() => !!document.querySelector('.plm-leaflet-map-date-value')?.textContent.trim());
-        await screen(name, '.plm-leaflet-map-date', '#home-map', '#home-map');
-      }
+      await chooseLayer('OpenHistoricalMap');
+      await page.waitForFunction(() => !!document.querySelector('.plm-leaflet-map-date-picker-field')?.value);
+      await screen('map-date', '.plm-leaflet-map-date', '#home-map', '#home-map');
+      // Its calendar, which is in the page's body, with the names of the days, and with those of the months a level
+      // up. The window is its bounds.
+      await page.locator('.plm-leaflet-map-date-picker-field').click();
+      await page.waitForSelector('body > .datepicker.active');
+      await screen('map-date-calendar', 'body > .datepicker', '#home-map');
+      await page.locator('body > .datepicker .view-switch').click();
+      await page.waitForSelector('body > .datepicker .months');
+      await screen('map-date-calendar-months', 'body > .datepicker', '#home-map');
+      await page.keyboard.press('Escape');
+      await page.waitForSelector('body > .datepicker.active', { state: 'detached' });
+      await chooseLayer('Esri World Imagery Wayback');
+      await page.waitForFunction(() => !!document.querySelector('.plm-leaflet-map-date-value')?.textContent.trim());
+      await screen('map-date-imagery', '.plm-leaflet-map-date', '#home-map', '#home-map');
       await chooseLayer('OpenStreetMap');
     });
     await step('region', async () => {

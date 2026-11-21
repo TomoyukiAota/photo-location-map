@@ -1,0 +1,30 @@
+// The field of the date, as the select of the date of Wayback's imagery beside it (map-date.component.scss): as wide
+// as the date in the user's format. The calendar that it opens is styled with the map (src/styles/plm-leaflet-map/).
+
+:host {
+  flex: 1 0 auto;
+  display: flex;
+}
+
+.plm-leaflet-map-date-picker-field {
+  flex: 1 0 auto;
+  field-sizing: content;
+  min-width: 6em;
+  height: 26px;
+  box-sizing: border-box;
+  padding-block: 0;
+  padding-inline: .4em;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  outline: none;
+  background: #ffffff;
+  color: #222222;
+  font: inherit;
+  font-size: 14px;
+  text-align: center;
+  cursor: pointer;
+
+  &:focus {
+    border-color: #3f51b5;
+  }
+}

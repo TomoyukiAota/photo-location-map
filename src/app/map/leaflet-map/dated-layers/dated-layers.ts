@@ -188,6 +188,7 @@ export class DatedLayers {
     content.instance.earlier.subscribe(() => this.step(+1));
     content.instance.later.subscribe(() => this.step(-1));
     content.instance.choose.subscribe(release => this.choose(release));
+    content.instance.pick.subscribe(date => this.pickDate(date));
     content.instance.matchPhotoDatesChange.subscribe(match => this.setMatchPhotoDates(match));
     const element: HTMLElement = content.location.nativeElement;
     const Control = L.Control.extend({
@@ -283,6 +284,13 @@ export class DatedLayers {
     const next = choices[choices.indexOf(this.shownChoice(choices)) + direction];
     if (next)
       this.choose(next.release);
+  }
+
+  /** A date of OpenHistoricalMap chosen in its calendar, which ends the matching of the photos' dates. */
+  private pickDate(date: string): void {
+    this.service.matchPhotoDates.openHistoricalMap.set(false);
+    this.service.chosenDate.set(date);
+    this.refresh();
   }
 
   private choose(release: number): void {
