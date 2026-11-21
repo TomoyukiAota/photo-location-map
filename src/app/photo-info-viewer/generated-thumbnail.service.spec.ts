@@ -131,4 +131,32 @@ describe('GeneratedThumbnailService', () => {
     expect(state).toHaveBeenLastCalledWith(['/next/b.heic']);
     expect(service.filePathOf('/next/b.heic')).toBe('/cache/next/b.heic.plm.jpg');
   });
+
+  it('tells the thumbnails that could not be made', async () => {
+    vi.spyOn(window.plm.thumbnails, 'state').mockImplementation(async photoPaths => photoPaths.map(photoPath =>
+      ({ attemptFinished: true, cacheAvailable: photoPath !== '/photos/broken.heic', thumbnailFilePath: `/cache${photoPath}.plm.jpg` })));
+    service.watch('/photos/a.heic');
+    service.watch('/photos/broken.heic');
+    await vi.advanceTimersByTimeAsync(0);
+    expect(service.hasFailed('/photos/a.heic')).toBe(false);
+    expect(service.hasFailed('/photos/broken.heic')).toBe(true);
+    expect(service.filePathOf('/photos/broken.heic')).toBe('/cache/photos/broken.heic.plm.jpg');
+  });
+
+  it('stops asking about the thumbnails being made, and keeps those that are known', async () => {
+    finishedPhotoPaths.add('/photos/a.heic');
+    service.watch('/photos/a.heic');
+    service.watch('/photos/b.heic');
+    await vi.advanceTimersByTimeAsync(0);
+    state.mockClear();
+
+    service.stopWaiting();
+    await vi.advanceTimersByTimeAsync(thumbnailCheckIntervalMs * 3);
+    expect(state).not.toHaveBeenCalled();
+    expect(service.filePathOf('/photos/a.heic')).toBe('/cache/photos/a.heic.plm.jpg');
+
+    service.watch('/photos/b.heic');
+    await vi.advanceTimersByTimeAsync(0);
+    expect(state).toHaveBeenCalledExactlyOnceWith(['/photos/b.heic']);
+  });
 });

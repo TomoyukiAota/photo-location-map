@@ -158,6 +158,7 @@
   },
   "thumbnailGeneration": {
     "generating": "HEIF-failide pisipiltide loomine...",
+    "fasterInSettings": "Et neid varem kuvada, <settingsLink>valige seadetes kiired pisipildid</settingsLink>.",
     "completed": "HEIF-failide pisipildid on loodud.",
     "finishedWithErrors": "HEIF-failide pisipiltide loomine lõppes vigadega.",
     "showDetails": "Kuva üksikasjad",
@@ -191,6 +192,7 @@
       "language": "Keel (Language)",
       "appearance": "Välimus",
       "dateTime": "Kuupäev ja kellaaeg",
+      "thumbnails": "Pisipildid",
       "os": "Operatsioonisüsteem",
       "cache": "Vahemälu"
     },
@@ -213,6 +215,14 @@
       "clock12": "12-tunnine vorming",
       "clock24": "24-tunnine vorming",
       "example": "Näide"
+    },
+    "thumbnails": {
+      "title": "HEIF-pisipildid",
+      "description": "HEIF-failide, näiteks iPhone’iga tehtud fotode pisipildid loob see rakendus. Valige, kas need luuakse kvaliteedi või kiiruse järgi.",
+      "highQuality": "Kõrge kvaliteet",
+      "highQualityDescription": "Luuakse tervest fotost, pikem külg 400 pikslit. Seni kuvatakse fotosse salvestatud väike pisipilt. Arvutis, mis ei suuda HEVC-d graafikariistvaraga dekodeerida, võtab nende loomine aega.",
+      "fast": "Kiire",
+      "fastDescription": "Fotosse salvestatud väike pisipilt, mis kuvatakse kohe. See on vähem terav: iPhone’iga tehtud 12-megapikslise foto puhul 320 × 240 pikslit."
     },
     "os": {
       "title": "File Exploreri kontekstimenüü",

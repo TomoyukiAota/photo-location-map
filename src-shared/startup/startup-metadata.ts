@@ -26,6 +26,11 @@ export interface StartupMetadata {
   logFile: { dirName: string, fileName: string, filePath: string };
   /** Where the HEIF thumbnails are kept (src-shared/thumbnail/cache/). */
   thumbnailCacheDir: string;
+  /**
+   * 'off' when a test profile has the page decode no HEVC (PLM_TEST_HEVC_IN_PAGE=off), so that the main process makes
+   * the thumbnails of HEIF photos as on a computer without a decoder (src/app/heif-thumbnail/heif-image-decoding.ts).
+   */
+  hevcInPage: 'auto' | 'off';
 }
 
 let metadata: StartupMetadata | undefined;

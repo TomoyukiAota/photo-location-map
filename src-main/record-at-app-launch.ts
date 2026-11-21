@@ -133,6 +133,7 @@ const recordLoadedUserSettings = () => {
   // The setting, `auto` unless the user chose a language, and the language that the application is shown in.
   Analytics.trackEvent('Loaded User Settings', `Language`, `Language: ${settings.language}`);
   Analytics.trackEvent('Loaded User Settings', `Language in Use`, `Language in Use: ${currentLanguage}`);
+  Analytics.trackEvent('Loaded User Settings', `Thumbnail Quality`, `Thumbnail Quality: ${settings.thumbnailQuality}`);
 };
 
 const recordLoadedLeafletBaseLayer = () => {

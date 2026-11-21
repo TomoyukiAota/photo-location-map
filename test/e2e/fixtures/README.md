@@ -9,6 +9,15 @@ existing public demo JPEG, sourced from revision
 No private photos are used. The zero-byte HEIF files in the older directory-tree
 fixtures test extension detection only; they are not decoder inputs.
 
+`demo-with-thumbnail.heic` is the same photo, as macOS's ImageIO writes it with
+the thumbnail item that an iPhone writes (`kCGImageDestinationEmbedThumbnail`):
+`demo.heic` decoded and written again at half its size, 2016x1512 in a grid of
+12 tiles of 512x512, quality 0.6, with its metadata and orientation, and a
+thumbnail item of 320x240 turned as the photo is. `sips` writes no thumbnail
+item, so `demo.heic` stands for a HEIF photo without one
+(`src/app/heif-thumbnail/`). The Swift program that wrote it is
+`docs/tasks/20261121_heif-thumbnails/make-heic.swift`.
+
 # Face fixtures
 
 `faces/` holds two photos with faces, for the search for faces of the

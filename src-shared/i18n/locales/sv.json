@@ -158,6 +158,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Skapar miniatyrer för HEIF-filer...",
+    "fasterInSettings": "Om du vill visa dem tidigare <settingsLink>väljer du snabba miniatyrer i inställningarna</settingsLink>.",
     "completed": "Miniatyrerna för HEIF-filer har skapats.",
     "finishedWithErrors": "Skapandet av miniatyrer för HEIF-filer avslutades med fel.",
     "showDetails": "Visa detaljer",
@@ -191,6 +192,7 @@
       "language": "Språk (Language)",
       "appearance": "Utseende",
       "dateTime": "Datum och tid",
+      "thumbnails": "Miniatyrer",
       "os": "Operativsystem",
       "cache": "Cache"
     },
@@ -213,6 +215,14 @@
       "clock12": "12-timmarsklocka",
       "clock24": "24-timmarsklocka",
       "example": "Exempel"
+    },
+    "thumbnails": {
+      "title": "HEIF-miniatyrer",
+      "description": "Miniatyrerna för HEIF-filer, till exempel foton tagna med en iPhone, skapas av det här programmet. Välj om de ska skapas med fokus på kvalitet eller hastighet.",
+      "highQuality": "Hög kvalitet",
+      "highQualityDescription": "Skapas från hela fotot, med 400 pixlar på den längre sidan. Tills dess visas den lilla miniatyr som är lagrad i fotot. På en dator vars grafikmaskinvara inte kan avkoda HEVC tar det tid att skapa dem.",
+      "fast": "Snabb",
+      "fastDescription": "Den lilla miniatyr som är lagrad i fotot visas direkt. Den är mindre skarp: 320 × 240 pixlar för ett 12-megapixelsfoto taget med en iPhone."
     },
     "os": {
       "title": "Utforskarens snabbmeny",

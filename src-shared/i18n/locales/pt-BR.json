@@ -158,6 +158,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Gerando miniaturas dos arquivos HEIF...",
+    "fasterInSettings": "Para exibi-las mais cedo, <settingsLink>escolha as miniaturas rápidas nas configurações</settingsLink>.",
     "completed": "A geração das miniaturas dos arquivos HEIF foi concluída.",
     "finishedWithErrors": "A geração das miniaturas dos arquivos HEIF terminou com erros.",
     "showDetails": "Mostrar detalhes",
@@ -191,6 +192,7 @@
       "language": "Idioma (Language)",
       "appearance": "Aparência",
       "dateTime": "Data e hora",
+      "thumbnails": "Miniaturas",
       "os": "Sistema",
       "cache": "Cache"
     },
@@ -213,6 +215,14 @@
       "clock12": "12 horas",
       "clock24": "24 horas",
       "example": "Exemplo"
+    },
+    "thumbnails": {
+      "title": "Miniaturas HEIF",
+      "description": "Este aplicativo gera as miniaturas dos arquivos HEIF, como as fotos tiradas com um iPhone. Escolha se elas são geradas priorizando a qualidade ou a velocidade.",
+      "highQuality": "Alta qualidade",
+      "highQualityDescription": "Geradas a partir da foto inteira, com 400 pixels no lado maior. Até lá, é exibida a miniatura pequena salva na foto. Em um computador cujo hardware gráfico não consegue decodificar HEVC, gerá-las leva tempo.",
+      "fast": "Rápida",
+      "fastDescription": "A miniatura pequena salva na foto, exibida na hora. Ela é menos nítida: 320 × 240 pixels em uma foto de 12 megapixels tirada com um iPhone."
     },
     "os": {
       "title": "Menu de contexto do Explorador de Arquivos",

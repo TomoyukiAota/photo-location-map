@@ -385,6 +385,15 @@ async function answerConfirmation(lines, answer) {
   await confirmation.getByRole('button', { name: answer, exact: true }).click();
   await expect(confirmation).toHaveCount(0);
 }
+/**
+ * Launches the application again with a page that decodes no HEVC (PLM_TEST_HEVC_IN_PAGE=off): the main process then
+ * makes the thumbnails of HEIF photos, as on a computer without a decoder for HEVC, and the cases of that generation
+ * run the same on every platform, whether its Chromium decodes HEVC or not (src/app/heif-thumbnail/).
+ */
+async function relaunchWithoutHevcInPage() {
+  await app.close();
+  await launch({ env: { PLM_TEST_HEVC_IN_PAGE: 'off' } });
+}
 async function openFolderWithPicker(folder) {
   await app.evaluate(({ dialog }, folder) => {
     dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [folder] });
@@ -835,6 +844,9 @@ test('welcome, about and every available settings tab keep their appearance', as
   await shot('settings-appearance');
   await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Date & Time' }).click();
   await shot('settings-date', [page.locator('.date-time-example')]);
+  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Thumbnails' }).click();
+  await expect(page.locator('app-thumbnail-settings')).toBeVisible();
+  await shot('settings-thumbnails');
   await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Cache' }).click();
   await shot('settings-cache', [page.locator('.location-value')]);
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
@@ -1176,7 +1188,7 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   // The Settings dialog, whose first tab keeps the English word for a user who cannot read Japanese.
   await settings();
   await expect(page.locator('app-settings-dialog mat-list-item')).toHaveText(
-    ['言語 (Language)', '外観', '日付と時刻', ...(process.platform === 'win32' ? ['OS'] : []), 'キャッシュ']);
+    ['言語 (Language)', '外観', '日付と時刻', 'サムネイル', ...(process.platform === 'win32' ? ['OS'] : []), 'キャッシュ']);
   const languageSettings = page.locator('app-language-settings');
   await expect(languageSettings.getByRole('option')).toHaveText([systemLanguageInJapanese('日本語'), ...languageNames]);
   await expect(languageSettings.getByRole('option', { name: systemLanguageInJapanese('日本語') })).toHaveAttribute('aria-selected', 'true');
@@ -3386,6 +3398,7 @@ test('a HEIF thumbnail that cannot be made is recorded with why, without paths',
 });
 test('the thumbnail status bar follows the generation of HEIF thumbnails from start to end', async () => {
   // The main process makes the thumbnails, and the status bar learns of them from a poll every 5 seconds.
+  await relaunchWithoutHevcInPage();
   const folder = path.join(profile, 'HEIF to make thumbnails of');
   await mkdir(folder);
   await copyFile(path.join(root, 'test/e2e/fixtures/demo.heic'), path.join(folder, 'demo.heic'));
@@ -3424,6 +3437,7 @@ test('the thumbnail status bar follows the generation of HEIF thumbnails from st
 });
 test('opening another folder hides the thumbnail status bar of the previous one', async () => {
   // Every open hides it, the second one too, although the application then already has a folder open.
+  await relaunchWithoutHevcInPage();
   const folder = path.join(profile, 'HEIF before another folder');
   await mkdir(folder);
   await copyFile(path.join(root, 'test/e2e/fixtures/demo.heic'), path.join(folder, 'demo.heic'));
@@ -3436,6 +3450,73 @@ test('opening another folder hides the thumbnail status bar of the previous one'
   await openFolderWithPicker(photoFolder);
   await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
   await expect(statusBar).toBeHidden();
+});
+test('a HEIF photo shows the thumbnail that it holds at once, then the one of high quality', async () => {
+  // demo-with-thumbnail.heic holds a thumbnail of 320x240, turned upright as the photo is, and the thumbnail of high
+  // quality is 400 pixels high, made from the whole image: by the page where its Chromium decodes HEVC, or by the main
+  // process. Either way, the small one is shown first, as a JPEG that the page or the main process decoded.
+  const folder = path.join(profile, 'HEIF with its own thumbnail');
+  await mkdir(folder);
+  await copyFile(path.join(root, 'test/e2e/fixtures/demo-with-thumbnail.heic'), path.join(folder, 'demo-with-thumbnail.heic'));
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'Kobe.JPG'));
+  await dismissWelcome();
+  const sizes = [];
+  await page.exposeFunction('__plmRecordThumbnailSize', size => sizes.push(size));
+  await openFolderWithPicker(folder);
+  const thumbnail = page.locator('mat-tree-node').filter({ hasText: 'demo-with-thumbnail.heic' }).locator('.photo-info-viewer-thumbnail');
+  await thumbnail.evaluate(image => {
+    // The image that stands in for a thumbnail being made is a data: URL, which is not counted.
+    const record = () => image.complete && image.naturalWidth && !image.src.startsWith('data:')
+      && window.__plmRecordThumbnailSize(`${image.naturalWidth}x${image.naturalHeight}`);
+    record();
+    image.addEventListener('load', record);
+  });
+  await expect.poll(() => thumbnail.evaluate(image => image.complete ? `${image.naturalWidth}x${image.naturalHeight}` : ''),
+    { timeout: 30000 }).toBe('300x400');
+  await expect(thumbnail).not.toHaveClass(/photo-info-viewer-generating-thumbnail/);
+  // The small thumbnail came first, unless the one of high quality was made before the page had loaded it.
+  expect(sizes.filter(size => size !== '300x400')).toEqual(sizes.filter(size => size === '240x320'));
+  // Made by the page, without the status bar of the generation, where its Chromium decodes HEVC, as on macOS.
+  const pageDecodesHevc = await page.evaluate(async () => typeof VideoDecoder !== 'undefined'
+    && (await VideoDecoder.isConfigSupported({ codec: 'hvc1.1.6.L93.B0' })).supported === true);
+  if (pageDecodesHevc) {
+    await expect(thumbnail).toHaveAttribute('src', /^blob:/);
+    await expect(page.locator('app-thumbnail-generation-status-bar')).toBeHidden();
+  } else {
+    await expect(thumbnail).toHaveAttribute('src', /demo-with-thumbnail\.heic\.plm\.jpg$/);
+  }
+});
+test('the thumbnail status bar offers the fast thumbnails, which are the thumbnails that the photos hold', async () => {
+  // Where the main process makes the thumbnails of high quality, the status bar says that the fast ones can be
+  // chosen, and its link opens the Settings dialog on the Thumbnails tab. Saved, the fast thumbnails apply at once:
+  // the main process drops the thumbnails that wait to be made, and the photo shows its own small thumbnail.
+  await relaunchWithoutHevcInPage();
+  const folder = path.join(profile, 'HEIF to make fast thumbnails of');
+  await mkdir(folder);
+  await copyFile(path.join(root, 'test/e2e/fixtures/demo-with-thumbnail.heic'), path.join(folder, 'a with its own thumbnail.heic'));
+  // Enough photos to make for the generation to last while the dialog is used, each with a thumbnail of its own: the
+  // fast quality makes the thumbnail of a photo that holds none from the whole image, and the status bar would show it.
+  for (let index = 1; index <= 150; index++)
+    await copyFile(path.join(root, 'test/e2e/fixtures/demo-with-thumbnail.heic'), path.join(folder, `b ${index}.heic`));
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'Kobe.JPG'));
+  await dismissWelcome();
+  await openFolderWithPicker(folder);
+  const statusBar = page.locator('app-thumbnail-generation-status-bar');
+  await expect(statusBar).toContainText('Generating thumbnails for HEIF files... To show them sooner, choose fast thumbnails in Settings.');
+  await statusBar.getByText('choose fast thumbnails in Settings', { exact: true }).click();
+  const dialog = page.locator('app-settings-dialog');
+  await expect(dialog.locator('mat-list-item.selected-tab')).toHaveText('Thumbnails');
+  await expect(dialog.locator('app-thumbnail-settings')).toBeVisible();
+  await dialog.getByRole('radio', { name: /^Fast/ }).check();
+  await dialog.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(statusBar).toBeHidden();
+  const userData = await app.evaluate(({ app }) => app.getPath('userData'));
+  await expect.poll(() => savedSetting(userData, ['UserSettings', 'ThumbnailQuality'])).toBe('fast');
+  const thumbnail = page.locator('mat-tree-node').filter({ hasText: 'a with its own thumbnail.heic' }).locator('.photo-info-viewer-thumbnail');
+  await expect.poll(() => thumbnail.evaluate(image => image.complete ? `${image.naturalWidth}x${image.naturalHeight}` : ''),
+    { timeout: 30000 }).toBe('240x320');
+  await expect(thumbnail).toHaveAttribute('src', /^blob:/);
 });
 test('the thumbnail error dialog lists, sorts and filters the HEIF files without a thumbnail', async () => {
   // Its table gets its rows from ng-table-virtual-scroll, which says nothing about zoneless Angular.

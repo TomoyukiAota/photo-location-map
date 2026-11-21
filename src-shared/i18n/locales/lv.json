@@ -158,6 +158,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Notiek HEIF failu sīktēlu veidošana...",
+    "fasterInSettings": "Lai tos parādītu ātrāk, <settingsLink>iestatījumos izvēlieties ātros sīktēlus</settingsLink>.",
     "completed": "HEIF failu sīktēli ir izveidoti.",
     "finishedWithErrors": "HEIF failu sīktēlu veidošana ir pabeigta ar kļūdām.",
     "showDetails": "Rādīt detalizētu informāciju",
@@ -191,6 +192,7 @@
       "language": "Valoda (Language)",
       "appearance": "Izskats",
       "dateTime": "Datums un laiks",
+      "thumbnails": "Sīktēli",
       "os": "Sistēma",
       "cache": "Kešatmiņa"
     },
@@ -213,6 +215,14 @@
       "clock12": "12 stundu",
       "clock24": "24 stundu",
       "example": "Piemērs"
+    },
+    "thumbnails": {
+      "title": "HEIF sīktēli",
+      "description": "HEIF failu, piemēram, ar iPhone uzņemtu fotoattēlu, sīktēlus veido šī lietotne. Izvēlieties, vai tos veidot, priekšroku dodot kvalitātei vai ātrumam.",
+      "highQuality": "Augsta kvalitāte",
+      "highQualityDescription": "Tiek veidoti no visa fotoattēla, garākajā malā 400 pikseļu. Līdz tam tiek rādīts fotoattēlā saglabātais mazais sīktēls. Datorā, kura grafikas aparatūra nevar dekodēt HEVC, to veidošana aizņem laiku.",
+      "fast": "Ātri",
+      "fastDescription": "Fotoattēlā saglabātais mazais sīktēls, kas tiek rādīts uzreiz. Tas ir mazāk ass: 320 × 240 pikseļu ar iPhone uzņemtā 12 megapikseļu fotoattēlā."
     },
     "os": {
       "title": "Failu pārlūka kontekstizvēlne",

@@ -158,6 +158,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Membuat gambar mini untuk file HEIF...",
+    "fasterInSettings": "Untuk menampilkannya lebih cepat, <settingsLink>pilih gambar mini cepat di Pengaturan</settingsLink>.",
     "completed": "Gambar mini untuk file HEIF selesai dibuat.",
     "finishedWithErrors": "Pembuatan gambar mini untuk file HEIF selesai dengan kesalahan.",
     "showDetails": "Tampilkan detail",
@@ -191,6 +192,7 @@
       "language": "Bahasa (Language)",
       "appearance": "Tampilan",
       "dateTime": "Tanggal & Waktu",
+      "thumbnails": "Gambar Mini",
       "os": "Sistem Operasi",
       "cache": "Cache"
     },
@@ -213,6 +215,14 @@
       "clock12": "12 jam",
       "clock24": "24 jam",
       "example": "Contoh"
+    },
+    "thumbnails": {
+      "title": "Gambar Mini HEIF",
+      "description": "Gambar mini file HEIF, seperti foto yang diambil dengan iPhone, dibuat oleh aplikasi ini. Pilih apakah gambar mini dibuat untuk kualitas atau untuk kecepatan.",
+      "highQuality": "Kualitas tinggi",
+      "highQualityDescription": "Dibuat dari seluruh foto, 400 piksel pada sisi terpanjang. Sampai saat itu, gambar mini kecil yang tersimpan di foto akan ditampilkan. Pada komputer yang perangkat keras grafisnya tidak dapat mendekode HEVC, pembuatannya memakan waktu.",
+      "fast": "Cepat",
+      "fastDescription": "Gambar mini kecil yang tersimpan di foto, langsung ditampilkan. Gambar ini kurang tajam: 320 × 240 piksel untuk foto 12 megapiksel yang diambil dengan iPhone."
     },
     "os": {
       "title": "Menu konteks File Explorer",
