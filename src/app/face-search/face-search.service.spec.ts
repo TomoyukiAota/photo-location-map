@@ -107,6 +107,37 @@ describe('FaceSearchService', () => {
     expect(state()).toEqual({ kind: 'searching', done: 3, total: 3, waitingForThumbnails: false });
   });
 
+  it('gives its dialog the number of the selected photos, whose room its lines keep', async () => {
+    const [a, b] = [photo('/trip/a.jpg'), photo('/trip/b.jpg')];
+    scores.set(photoFileUrl(a.path), 0.9).set(photoFileUrl(b.path), 0.1);
+    selectPhotos([a, b]);
+
+    await service.narrowDownSelectedPhotos();
+
+    const [[, config]] = open.mock.calls as unknown as [[unknown, { data: { photoCount: () => number } }]];
+    expect(config.data.photoCount()).toBe(2);
+  });
+
+  it('keeps saying that it waits for thumbnails for a second after no photo waits, so that the line does not flash', async () => {
+    const heif = photo('/trip/b.HEIC');
+    scores.set(photoFileUrl('/cache/b.HEIC.plm.jpg'), 0.9);
+    let release: () => void;
+    const held = new Promise<void>(resolve => release = resolve);
+    score.mockImplementationOnce(async () => { await held; return 0.9; });
+    selectPhotos([heif]);
+
+    const searching = service.narrowDownSelectedPhotos();
+    await vi.waitFor(() => expect(state()).toMatchObject({ waitingForThumbnails: true }));
+    thumbnails.set(heif.path, '/cache/b.HEIC.plm.jpg');
+    // The photo is looked at, and waits no more: the dialog still says that the search waits, for a second.
+    await vi.waitFor(() => expect(score).toHaveBeenCalledTimes(1));
+    expect(state()).toMatchObject({ waitingForThumbnails: true });
+    await vi.waitFor(() => expect(state()).toMatchObject({ waitingForThumbnails: false }), { timeout: 3000 });
+    release();
+    await searching;
+    expect(select).toHaveBeenCalledWith([heif.path]);
+  });
+
   it('takes a photo whose metadata marks a face as having one, without looking at it, for JPEG files only', async () => {
     const [tagged, other, heif] = [photo('/trip/tagged.JPG'), photo('/trip/other.jpg'), photo('/trip/c.heic')];
     regions.add(tagged.path).add(heif.path);

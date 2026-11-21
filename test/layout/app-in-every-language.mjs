@@ -418,7 +418,7 @@ for (const code of codes) {
       await openFolder(faces);
       await page.waitForSelector('mat-tree-node:has-text("faces.heic")');
       await narrowDownToPhotosWithFaces();
-      await page.waitForSelector('app-face-search-dialog .waiting');
+      await page.waitForSelector('app-face-search-dialog .state.shown .waiting:not(.not-now)');
       await screen('face-search', dialog, dialog);
       await page.waitForSelector('app-face-search-dialog', { state: 'detached', timeout: 40000 });
       // Open Folder is disabled until the app has seen that the thumbnail is made, which it checks every 5 seconds.
@@ -429,9 +429,9 @@ for (const code of codes) {
       await openFolder(photos);
       await page.waitForSelector('mat-tree-node:has-text("Kobe")');
       await narrowDownToPhotosWithFaces();
-      await page.waitForSelector('app-face-search-dialog .message', { timeout: 40000 });
+      await page.waitForSelector('app-face-search-dialog .state.shown .message', { timeout: 40000 });
       await screen('face-search-none-found', dialog, dialog);
-      await page.locator('app-face-search-dialog button').click();
+      await page.locator('app-face-search-dialog .state.shown button').click();
       await page.waitForSelector('app-face-search-dialog', { state: 'detached' });
     });
     await step('no-location', async () => {
