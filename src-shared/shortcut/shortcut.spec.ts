@@ -7,7 +7,7 @@ import {
   selectNextShortcut,
   selectPreviousShortcut,
   shortcutText,
-} from './shortcut';
+} from './shortcut.js';
 
 /** A key pressed with the modifiers given, and no others. */
 function pressed(key: string, modifiers: Partial<Omit<PressedKey, 'key'>> = {}): PressedKey {
