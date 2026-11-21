@@ -18,7 +18,7 @@ interface RasterTileBaseLayerConfigs {
   options?: any;
 }
 
-// The fallback configs used in case of failing to fetch the configs from photo-location-map-resources repo.
+// The fallback configs, used when no address gives the configs of photo-location-map-resources repo in its time.
 export const rasterTileBaseLayerConfigsVersion1Fallback: RasterTileBaseLayerConfigsVersion1 = {
   version: '1',
   rasterTileBaseLayerConfigs: [
@@ -53,27 +53,58 @@ export const rasterTileBaseLayerConfigsVersion1Fallback: RasterTileBaseLayerConf
   ],
 };
 
+export interface ConfigsFileFetchAttempt {
+  url: string;
+  /** How long the attempt waits for the whole file, from when it starts. */
+  timeoutMilliseconds: number;
+}
+
 // The addresses, and which branch of photo-location-map-resources they are of, are in src-shared, as the main window's
 // Content Security Policy lets the page fetch them.
-const configsFileFetchArguments: Array<{ url: string, options: RequestInit }> = [
+//
+// TL;DR: Each address gets 10 seconds, the last one too, so that the page starts with the fallback configs after
+// 20 seconds at most when neither address answers. The page starts Angular only once it has configs
+// (src/start-app.ts), and the last attempt had no time limit, so the page stayed at its loading text for as long as
+// the network left that request unanswered.
+// Details:
+// - Why the last attempt had none is not written down: not in the commits, nor in pull request #579, which brought
+//   it, nor in #585, which swapped the two addresses. The time limit came when jsDelivr was the only address (commit
+//   "Set timeout to 10 seconds.", 2025-01-07). The same night raw.githubusercontent.com came after it, with the
+//   comment "No timeout for the last attempt.": the limit served to go on to the next address, and the last has none
+//   to go on to. Yet the fallback configs come after it, and only an attempt that fails reaches them: a request that
+//   is not answered fails only when the network stack gives up on it.
+// - In CI on macOS on 2026-11-21, in the first two attempts of one run, ten launches did not render their home view
+//   in 30 seconds, with the request to jsDelivr unfinished and the one to raw.githubusercontent.com given up after its
+//   10 seconds. The third attempt passed, as did the pull request's run of the same commit.
+// - Measured on macOS with the production build, both hosts sent to a proxy that accepted the connections and never
+//   answered: the home view rendered after 40 seconds, when Chromium gave up on the connection to jsDelivr after 30;
+//   with this limit, after 20 seconds, with the fallback configs. A user whose network drops both hosts without an
+//   answer waited as long.
+// - 10 seconds is what the first address has had since the limit came. It is plenty for a file of 2 kilobytes:
+//   jsDelivr answered in 0.5 seconds when raw.githubusercontent.com did not
+//   (docs/tasks/20261121_launch-loading-screen/REPORT.md). 20 seconds in all is within the 30 that the e2e suite waits
+//   for the home view (test/e2e/regression.spec.mjs), so that a launch in CI whose hosts do not answer starts with the
+//   fallback configs rather than failing.
+// - The fallback configs lack only what photo-location-map-resources has changed since the release, and only for
+//   that launch: in November 2026, they list the same four maps as the file. A limit for each attempt, rather than
+//   one for the whole wait, also ends the request that is given up.
+// - Each attempt makes its signal as it starts (fetchRasterTileBaseLayerConfigsVersion1): AbortSignal.timeout()
+//   counts from when it is called, so a signal made in this list would count the last attempt's time from the first
+//   attempt's start.
+export const configsFileFetchAttempts: readonly ConfigsFileFetchAttempt[] = [
   {
     url: rasterTileBaseLayerConfigsVersion1Urls.gitHub,
-    options: {
-      cache: 'no-store',
-      signal: AbortSignal.timeout(10000 /* milliseconds */),
-    },
+    timeoutMilliseconds: 10000,
   },
   {
     url: rasterTileBaseLayerConfigsVersion1Urls.jsDelivr,
-    options: {
-      cache: 'no-store',
-      // No timeout for the last attempt.
-    },
+    timeoutMilliseconds: 10000,
   },
 ];
 
-async function fetchRasterTileBaseLayerConfigsVersion1(url: string, options: RequestInit): Promise<{configs: RasterTileBaseLayerConfigsVersion1, responseText: string}> {
-  const response = await fetch(url, options);
+async function fetchRasterTileBaseLayerConfigsVersion1(url: string, timeoutMilliseconds: number): Promise<{configs: RasterTileBaseLayerConfigsVersion1, responseText: string}> {
+  // The signal also ends the reading of the answer's body, which a server can leave unfinished as well.
+  const response = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(timeoutMilliseconds) });
   if (!response.ok) {
     throw new Error(`response.status: ${response.status}, response.statusText: ${response.statusText}`);
   }
@@ -112,11 +143,16 @@ function recordFetchFailedForAllUrls(): void {
   Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Fallback BaseLayerConfigs`, message);
 }
 
-async function fetchRasterTileBaseLayerConfigsVersion1WithRetry(): Promise<RasterTileBaseLayerConfigsVersion1> {
-  for (const {url, options} of configsFileFetchArguments) {
+/**
+ * Fetches the configs from each address in turn, and gives the fallback configs when none of them has given valid
+ * configs in its time. The attempts are configsFileFetchAttempts, or shorter ones in the tests.
+ */
+export async function fetchRasterTileBaseLayerConfigsVersion1WithRetry(
+  attempts: readonly ConfigsFileFetchAttempt[] = configsFileFetchAttempts): Promise<RasterTileBaseLayerConfigsVersion1> {
+  for (const {url, timeoutMilliseconds} of attempts) {
     try {
       recordFetchingConfigs(url);
-      const {configs, responseText} = await fetchRasterTileBaseLayerConfigsVersion1(url, options);
+      const {configs, responseText} = await fetchRasterTileBaseLayerConfigsVersion1(url, timeoutMilliseconds);
       if (!configs?.rasterTileBaseLayerConfigs?.length) {
         recordInvalidConfigsObjectError(url, configs, responseText);
         continue;
