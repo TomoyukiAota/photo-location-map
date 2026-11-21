@@ -1331,11 +1331,12 @@ test('on a computer whose language is Arabic, the application is laid out from r
   await page.keyboard.press('ArrowLeft');
   await expect(moreOptionsItems).toHaveText([...menuInArabic,
     'هذا الملف فقط', `الصورة الملتقطة قبلها${shownShortcuts.before}`, `الصورة الملتقطة بعدها${shownShortcuts.after}`]);
-  // A shortcut keeps the order of its keys, from left to right, at the end of its item's line, here its left.
+  // A shortcut keeps the order of its keys, from left to right, at the end of its item's line, here its left. Both are
+  // measured at once, in their item, as the submenu is placed and grows while it opens.
   const shortcutOfAfter = page.getByRole('menuitem', { name: 'الصورة الملتقطة بعدها', exact: true }).locator('.photo-info-viewer-more-options-menu-shortcut');
   await expect(shortcutOfAfter).toHaveCSS('direction', 'ltr');
-  expect((await shortcutOfAfter.boundingBox()).x)
-    .toBeLessThan((await page.getByText('الصورة الملتقطة بعدها', { exact: true }).boundingBox()).x);
+  expect(await shortcutOfAfter.evaluate(shortcut => shortcut.getBoundingClientRect().right
+    <= shortcut.parentElement.querySelector('.photo-info-viewer-more-options-menu-item-label').getBoundingClientRect().left)).toBe(true);
   await expect(page.getByRole('menuitem', { name: 'هذا الملف فقط', exact: true })).toBeFocused();
   // Beside its item, at the item's height.
   const selectionItemBox = await selectionItem.boundingBox();
