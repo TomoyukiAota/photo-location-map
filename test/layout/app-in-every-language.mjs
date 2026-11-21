@@ -6,11 +6,12 @@
 // For each language, on an empty profile of a computer in that language, it goes through the screens that show
 // texts: the Language dialog, the Welcome dialog, the hint over the window while files are dragged over it, the
 // question that a dropped folder asks, the home view without and
-// with a folder of photos (in a window of 1200x800 and of 800x600), while the thumbnails of HEIF files are made, a photo's popup with its menu and the menu's submenus, the tree's menu, the Sort menu and its info dialog, the
+// with a folder of photos (in a window of 1200x800 and of 800x600), a photo's popup with its menu and the menu's submenus, the tree's menu, the Sort menu and its info dialog, the
 // chart's menu, its message for a duration that it cannot show and its button for the photos within a zoom, a region
 // on the map, the tabs of the Settings dialog with the choices of the clock's field, the question before a restart,
-// the About box, the dialog of the thumbnails that failed, the dialog of a folder without location data, and the
-// dialog of the search for faces, while it looks and when it found none.
+// the About box, the status bar while the thumbnails of HEIF files are made, the dialog of the thumbnails that failed,
+// the dialog of a folder without location data, and the dialog of the search for faces, while it looks and when it
+// found none.
 //
 // In each screen it finds the texts that are cut, the texts that reach outside their dialog or the window, to a side
 // or in height, the texts of buttons, tabs, menu items, labels and headings that are on more than one line, and the
@@ -277,14 +278,6 @@ for (const code of codes) {
       await page.locator('app-confirm-dialog .cancel-button').click();
       await page.waitForSelector('app-confirm-dialog', { state: 'detached' });
     });
-    await step('home-generating', async () => {
-      // The status bar while the thumbnails are made, which offers the fast thumbnails in the Settings dialog.
-      await openFolder(generating);
-      await page.locator('app-thumbnail-generation-status-bar .faster-in-settings').waitFor({ timeout: 40000 });
-      await screen('home-generating', 'app-thumbnail-generation-status-bar, app-loaded-files-status-bar', 'app-root');
-      // Open Folder is disabled until the app has seen that the thumbnails are made, which it checks every 5 seconds.
-      await page.waitForSelector('.open-folder-button button:enabled', { timeout: 60000 });
-    });
     await step('home-loaded', async () => {
       await openFolder(photos);
       // The loading dialog is there for a moment only: it is measured at once, if it is caught at all.
@@ -413,6 +406,16 @@ for (const code of codes) {
       await screen('about', dialog, dialog);
       await page.keyboard.press('Escape');
       await page.waitForSelector('app-about-box', { state: 'detached' });
+    });
+    await step('home-generating', async () => {
+      // The status bar while the thumbnails are made, which offers the fast thumbnails in the Settings dialog. After
+      // the steps of the map: once this folder of many photos had been open, a marker of the next folder sometimes
+      // opened no popup for the popup's step, with the application before this step was added too.
+      await openFolder(generating);
+      await page.locator('app-thumbnail-generation-status-bar .faster-in-settings').waitFor({ timeout: 40000 });
+      await screen('home-generating', 'app-thumbnail-generation-status-bar, app-loaded-files-status-bar', 'app-root');
+      // Open Folder is disabled until the app has seen that the thumbnails are made, which it checks every 5 seconds.
+      await page.waitForSelector('.open-folder-button button:enabled', { timeout: 60000 });
     });
     await step('error-dialog', async () => {
       await openFolder(broken);
