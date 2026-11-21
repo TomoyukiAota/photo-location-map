@@ -121,7 +121,25 @@
     "setText": "הוספת טקסט",
     "editRegion": "עריכת האזור",
     "dragRegion": "הזזת האזור",
-    "removeRegion": "הסרת האזור"
+    "removeRegion": "הסרת האזור",
+    "dates": {
+      "imageryDate": "תאריך תצלום האוויר במרכז המפה",
+      "mapDate": "תאריך המפה",
+      "olderImagery": "תצלום אוויר ישן יותר",
+      "newerImagery": "תצלום אוויר חדש יותר",
+      "yearEarlier": "שנה אחת קודם",
+      "yearLater": "שנה אחת אחר כך",
+      "matchPhotoDates": "התאמה לתאריכי הצילום של התמונות",
+      "nearPhotoDates": "{{date}} (קרוב לתאריכי התמונות)",
+      "versionOf": "גרסה מ-{{date}}",
+      "photosTakenOn": "תמונות שצולמו ב-{{date}}",
+      "photosTakenFromTo": "תמונות שצולמו מ-{{first}} עד {{last}}",
+      "noPhotoDates": "לאף תמונה במפה אין תאריך צילום.",
+      "loading": "טוען את התאריכים...",
+      "failed": "לא ניתן היה לטעון את התאריכים.",
+      "zoomIn": "יש להתקרב כדי לראות מתי צולם תצלום האוויר.",
+      "mapFailed": "לא ניתן להציג את המפה הזו."
+    }
   },
   "chart": {
     "moreAlt": "עוד",

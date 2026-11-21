@@ -121,7 +121,25 @@
     "setText": "Col·loca un text",
     "editRegion": "Edita la regió",
     "dragRegion": "Mou la regió",
-    "removeRegion": "Elimina la regió"
+    "removeRegion": "Elimina la regió",
+    "dates": {
+      "imageryDate": "Data de les imatges al centre del mapa",
+      "mapDate": "Data del mapa",
+      "olderImagery": "Imatges més antigues",
+      "newerImagery": "Imatges més recents",
+      "yearEarlier": "Un any abans",
+      "yearLater": "Un any després",
+      "matchPhotoDates": "Ajusta a les dates de les fotos",
+      "nearPhotoDates": "{{date}} (a prop de les dates de les fotos)",
+      "versionOf": "Versió del {{date}}",
+      "photosTakenOn": "Fotos fetes el {{date}}",
+      "photosTakenFromTo": "Fotos fetes del {{first}} al {{last}}",
+      "noPhotoDates": "Cap foto del mapa no té data de captura.",
+      "loading": "S’estan carregant les dates...",
+      "failed": "No s’han pogut carregar les dates.",
+      "zoomIn": "Amplieu el mapa per veure quan es van captar les imatges.",
+      "mapFailed": "Aquest mapa no es pot mostrar."
+    }
   },
   "chart": {
     "moreAlt": "Més",

@@ -44,6 +44,7 @@ repository's own files.
 | `reflect-metadata` | Loaded for its effect, the metadata that decorators read. |
 | `zen-observable`, `safe-json-stringify` | Dependencies of `@amplitude/analytics-browser`. |
 | `@turf/jsts`, `concaveman`, `earcut`, `fast-deep-equal`, `rbush`, `skmeans` | Dependencies of `@turf/turf`, which the map's regions use. |
+| `@openhistoricalmap/maplibre-gl-dates` | Keeps the features of a date in OpenHistoricalMap's map (`src/app/map/leaflet-map/dated-layers/`). OpenHistoricalMap publishes it as CommonJS only. |
 
 
 ### WebAssembly in the renderer
@@ -55,6 +56,25 @@ not imported: `angular.json`'s assets copy it to `assets/face-search/`, next to
 the model, and the worker gives the runtime its address (`env.wasm.wasmPaths`).
 An upgrade whose WebAssembly file has another name changes both places. The
 model and its license are in `src/assets/face-search/`.
+
+
+### MapLibre's worker
+
+`maplibre-gl` draws OpenHistoricalMap, a layer of the map of a past date
+(`src/app/map/leaflet-map/dated-layers/`). Angular's build bundles its module
+into a chunk that the page loads when the layer is first shown. Its workers
+are not imported: `angular.json`'s assets copy `maplibre-gl-worker.mjs` to
+`assets/maplibre/`, and the layer gives MapLibre that address
+(`setWorkerUrl`), as MapLibre finds its worker by itself only on a page of
+http or https. Its stylesheet is among `angular.json`'s styles. An upgrade
+whose worker has another name changes both places. MapLibre draws with
+WebGL 2, which the page has only with hardware acceleration
+(`src-main/electron-main.ts`).
+
+The layer is the app's own rather than `@maplibre/maplibre-gl-leaflet`, as
+that binding imports `leaflet` as a module: the app's Leaflet is a global
+script with its plugins added, and a second Leaflet in the bundle would take
+its place (`open-historical-map-layer.ts`).
 
 
 ## Install scripts

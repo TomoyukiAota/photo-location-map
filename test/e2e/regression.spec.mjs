@@ -9,6 +9,8 @@ import { browserSettingLabels, languages as websiteLanguages, matchLanguage } fr
 import { jpegWithEmptyGpsValues } from '../test-util/jpeg-with-empty-gps-values.mjs';
 import { jpegWithFaceRegion } from '../test-util/jpeg-with-face-region.mjs';
 import { jpegWithLocationOnly } from '../test-util/jpeg-with-location-only.mjs';
+import { jpegWithLocationAndDate } from '../test-util/jpeg-with-location-and-date.mjs';
+import { answerDatedLayers } from '../test-util/dated-layer-answers.mjs';
 const require = createRequire(import.meta.url);
 const root = path.resolve(import.meta.dirname, '../..');
 const manifest = require('../../package.json');
@@ -357,6 +359,12 @@ async function expectRepresentedPhotos(count) {
  * of the page as the opening threw every time. The application is not changed: nobody can type in the dialog before it
  * is drawn, and the focus stays outside the dialog until then.
  */
+/** Chooses the map's base layer `name` in Leaflet's control of the layers, which opens while the pointer is over it. */
+async function chooseMapLayer(name) {
+  await page.locator('.leaflet-control-layers').hover();
+  await page.locator('.leaflet-control-layers-base label').filter({ hasText: name }).click();
+  await page.mouse.move(1, 1);
+}
 async function settings(tab) {
   await page.evaluate(() => window.plmInternalRenderer.settingsDialog.showSettingsDialog());
   await expect(page.locator('app-settings-dialog').getByRole('option').first()).toBeVisible();
@@ -1090,6 +1098,18 @@ test('on a computer whose language is Arabic, the application is laid out from r
   await expect(moreOptionsItems).toHaveText(menuInArabic);
   await page.keyboard.press('Escape');
   await expect(moreOptionsMenus).toHaveCount(0);
+  // The date of a layer of a past date is laid out from right to left on the map, which stays from left to right:
+  // the button to an earlier date is at its right (src/app/map/leaflet-map/dated-layers/).
+  await answerDatedLayers(page);
+  await chooseMapLayer('OpenHistoricalMap');
+  const dateControl = page.locator('.plm-leaflet-map-date');
+  await expect(dateControl.locator('.plm-leaflet-map-date-title')).toHaveText('تاريخ الخريطة');
+  await expect(dateControl).toHaveCSS('direction', 'rtl');
+  const earlierBox = await dateControl.getByRole('button', { name: 'قبل سنة', exact: true }).boundingBox();
+  const laterBox = await dateControl.getByRole('button', { name: 'بعد سنة', exact: true }).boundingBox();
+  expect(earlierBox.x).toBeGreaterThan(laterBox.x);
+  await chooseMapLayer('OpenStreetMap');
+  await expect(dateControl).toHaveCount(0);
   // A path is written from left to right within the text around it: its first slash stays at its start.
   await settings();
   await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'ذاكرة التخزين المؤقت' }).click();
@@ -1251,6 +1271,92 @@ test('map regions preserve drawing, removal and real photo selection', async () 
   await expect(page.locator('app-leaflet-map .update-in-progress-overlay')).toBeHidden();
   await expect(page.locator('.marker-cluster')).toHaveCount(0);
   await expect(page.locator('.plm-leaflet-map-region-info-text')).toBeHidden();
+});
+test('the map shows Esri World Imagery Wayback and OpenHistoricalMap at the dates of the photos on it, or at a date chosen', async () => {
+  // Two photos taken at the ring of EXPO 2025 on 2025-08-10, and the answers of the servers as they were for the ring
+  // (test/test-util/dated-layer-answers.mjs). The page's Content Security Policy still decides what it may ask for.
+  const folder = path.join(profile, 'EXPO 2025');
+  await mkdir(folder);
+  const source = await readFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'));
+  await writeFile(path.join(folder, 'ring-1.JPG'), jpegWithLocationAndDate(source, 34.6497, 135.3842, '2025:08:10 11:00:00'));
+  await writeFile(path.join(folder, 'ring-2.JPG'), jpegWithLocationAndDate(source, 34.6489, 135.3858, '2025:08:10 15:30:00'));
+  const tileReleases = await answerDatedLayers(page);
+  await page.addInitScript(() => {
+    let leaflet;
+    Object.defineProperty(window, 'L', {
+      configurable: true, enumerable: true,
+      get: () => leaflet,
+      set: lib => {
+        leaflet = lib;
+        lib?.Map?.addInitHook(function () {
+          if (this.getContainer().id === 'plm-leaflet-map') window.__plmLeafletMap = this;
+        });
+      }
+    });
+  });
+  await page.reload();
+  await page.waitForFunction(() => !!window.__plmLeafletMap?.pm);
+  await dismissWelcome();
+  await app.evaluate(({ dialog }, folder) => {
+    dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [folder] });
+  }, folder);
+  await page.getByRole('button', { name: 'Open Folder', exact: true }).click();
+  await expectRepresentedPhotos(2);
+  const control = page.locator('.plm-leaflet-map-date');
+  const options = control.locator('select option');
+  const view = (zoom) => page.evaluate(zoom => window.__plmLeafletMap.setView([34.6493, 135.3850], zoom, { animate: false }), zoom);
+  await expect(control).toHaveCount(0);
+
+  // Wayback: the dates of the imagery at the map's center at its zoom, the one taken nearest to the photos' dates
+  // shown, and the two taken nearest before and after them marked.
+  await chooseMapLayer('Esri World Imagery Wayback');
+  await view(13);
+  await expect(control.locator('.plm-leaflet-map-date-title')).toHaveText('Imagery date at the map’s center');
+  await expect(options).toHaveText(['2025-11-27 (near the photos’ dates)', '2024-08-24 (near the photos’ dates)', '2023-09-10']);
+  await expect(control.locator('select')).toHaveValue('49059');
+  await expect(control.getByRole('checkbox')).toBeChecked();
+  await expect(control.locator('.plm-leaflet-map-date-note')).toHaveText('Photos taken on 2025-08-10');
+  await expect.poll(() => tileReleases.at(-1)).toBe(49059);
+  // At zoom 16, the release of 2025-07-31 shows imagery taken on 2025-04-21, while the Expo was open.
+  await view(16);
+  await expect(options).toHaveText(['2025-11-27 (near the photos’ dates)', '2025-04-21 (near the photos’ dates)', '2023-09-10']);
+  await control.getByRole('button', { name: 'Older imagery', exact: true }).click();
+  await expect(control.locator('select')).toHaveValue('49999');
+  await expect(control.getByRole('checkbox')).not.toBeChecked();
+  await expect.poll(() => tileReleases.at(-1)).toBe(49999);
+  await control.locator('select').selectOption('52930');
+  await expect.poll(() => tileReleases.at(-1)).toBe(52930);
+  // Zoomed out, where the imagery has no dates, the release shown stays.
+  await view(10);
+  await expect(control.locator('.plm-leaflet-map-date-note')).toHaveText('Zoom in to see when the imagery was taken.');
+  await expect(control.locator('.plm-leaflet-map-date-value')).toHaveText('Version of 2024-05-09');
+  await expect(control.getByRole('button', { name: 'Older imagery', exact: true })).toBeDisabled();
+
+  // OpenHistoricalMap: the map of the photos' date, drawn by MapLibre where the computer has WebGL 2.
+  await view(16);
+  await chooseMapLayer('OpenHistoricalMap');
+  await expect(control.locator('.plm-leaflet-map-date-title')).toHaveText('Date of the map');
+  await expect(control.locator('.plm-leaflet-map-date-value')).toHaveText('2025-08-10');
+  await expect(control.getByRole('checkbox')).toBeChecked();
+  const hasWebGl2 = await page.evaluate(() => !!document.createElement('canvas').getContext('webgl2'));
+  if (hasWebGl2) {
+    await expect(page.locator('.plm-leaflet-map-maplibre-container canvas')).toBeVisible();
+    await expect(control.locator('.plm-leaflet-map-date-note')).toHaveText('Photos taken on 2025-08-10');
+  } else {
+    // As on a computer whose GPU Chromium cannot use, such as CI's.
+    await expect(control.locator('.plm-leaflet-map-date-note')).toHaveText('This map cannot be shown.');
+  }
+  await control.getByRole('button', { name: 'One year earlier', exact: true }).click();
+  await expect(control.locator('.plm-leaflet-map-date-value')).toHaveText('2024-08-10');
+  await expect(control.getByRole('checkbox')).not.toBeChecked();
+  // Matching again: the photos' date.
+  await control.getByRole('checkbox').check();
+  await expect(control.locator('.plm-leaflet-map-date-value')).toHaveText('2025-08-10');
+
+  // Another layer has no date.
+  await chooseMapLayer('OpenStreetMap');
+  await expect(control).toHaveCount(0);
+  await expect(page.locator('.plm-leaflet-map-maplibre-container')).toHaveCount(0);
 });
 test('the links of the welcome dialog, the about box and the cache settings open in the OS browser', async () => {
   // Some of them are elements that the components query, with signal queries since stage 2. Nothing opens here.

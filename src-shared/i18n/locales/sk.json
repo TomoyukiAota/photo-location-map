@@ -121,7 +121,25 @@
     "setText": "Umiestniť text",
     "editRegion": "Upraviť oblasť",
     "dragRegion": "Presunúť oblasť",
-    "removeRegion": "Odstrániť oblasť"
+    "removeRegion": "Odstrániť oblasť",
+    "dates": {
+      "imageryDate": "Dátum snímok v strede mapy",
+      "mapDate": "Dátum mapy",
+      "olderImagery": "Staršie snímky",
+      "newerImagery": "Novšie snímky",
+      "yearEarlier": "O rok skôr",
+      "yearLater": "O rok neskôr",
+      "matchPhotoDates": "Prispôsobiť dátumom nasnímania fotiek",
+      "nearPhotoDates": "{{date}} (blízko dátumov fotiek)",
+      "versionOf": "Verzia z {{date}}",
+      "photosTakenOn": "Fotky nasnímané {{date}}",
+      "photosTakenFromTo": "Fotky nasnímané od {{first}} do {{last}}",
+      "noPhotoDates": "Žiadna fotka na mape nemá dátum nasnímania.",
+      "loading": "Načítavajú sa dátumy...",
+      "failed": "Dátumy sa nepodarilo načítať.",
+      "zoomIn": "Priblížte mapu a uvidíte, kedy boli snímky nasnímané.",
+      "mapFailed": "Túto mapu nemožno zobraziť."
+    }
   },
   "chart": {
     "moreAlt": "Viac",

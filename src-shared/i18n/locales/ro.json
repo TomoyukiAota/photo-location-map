@@ -121,7 +121,25 @@
     "setText": "Plasează text",
     "editRegion": "Editează zona",
     "dragRegion": "Mută zona",
-    "removeRegion": "Elimină zona"
+    "removeRegion": "Elimină zona",
+    "dates": {
+      "imageryDate": "Data imaginilor în centrul hărții",
+      "mapDate": "Data hărții",
+      "olderImagery": "Imagini mai vechi",
+      "newerImagery": "Imagini mai noi",
+      "yearEarlier": "Cu un an mai devreme",
+      "yearLater": "Cu un an mai târziu",
+      "matchPhotoDates": "Potrivește cu datele pozelor",
+      "nearPhotoDates": "{{date}} (aproape de datele pozelor)",
+      "versionOf": "Versiunea din {{date}}",
+      "photosTakenOn": "Poze făcute pe {{date}}",
+      "photosTakenFromTo": "Poze făcute între {{first}} și {{last}}",
+      "noPhotoDates": "Nicio poză de pe hartă nu are data realizării.",
+      "loading": "Se încarcă datele...",
+      "failed": "Datele nu au putut fi încărcate.",
+      "zoomIn": "Măriți harta pentru a vedea când au fost realizate imaginile.",
+      "mapFailed": "Această hartă nu poate fi afișată."
+    }
   },
   "chart": {
     "moreAlt": "Mai multe",

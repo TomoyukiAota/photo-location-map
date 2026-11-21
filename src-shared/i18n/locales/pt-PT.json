@@ -121,7 +121,25 @@
     "setText": "Colocar texto",
     "editRegion": "Editar área",
     "dragRegion": "Mover área",
-    "removeRegion": "Remover área"
+    "removeRegion": "Remover área",
+    "dates": {
+      "imageryDate": "Data das imagens no centro do mapa",
+      "mapDate": "Data do mapa",
+      "olderImagery": "Imagens mais antigas",
+      "newerImagery": "Imagens mais recentes",
+      "yearEarlier": "Um ano antes",
+      "yearLater": "Um ano depois",
+      "matchPhotoDates": "Ajustar às datas das fotografias",
+      "nearPhotoDates": "{{date}} (perto das datas das fotografias)",
+      "versionOf": "Versão de {{date}}",
+      "photosTakenOn": "Fotografias tiradas a {{date}}",
+      "photosTakenFromTo": "Fotografias tiradas de {{first}} a {{last}}",
+      "noPhotoDates": "Nenhuma fotografia no mapa tem data de captura.",
+      "loading": "A carregar as datas...",
+      "failed": "Não foi possível carregar as datas.",
+      "zoomIn": "Amplie o mapa para ver quando as imagens foram captadas.",
+      "mapFailed": "Não é possível mostrar este mapa."
+    }
   },
   "chart": {
     "moreAlt": "Mais",

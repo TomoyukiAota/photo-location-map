@@ -121,7 +121,25 @@
     "setText": "Jarri testua",
     "editRegion": "Editatu eskualdea",
     "dragRegion": "Mugitu eskualdea",
-    "removeRegion": "Kendu eskualdea"
+    "removeRegion": "Kendu eskualdea",
+    "dates": {
+      "imageryDate": "Irudien data maparen erdian",
+      "mapDate": "Maparen data",
+      "olderImagery": "Irudi zaharragoak",
+      "newerImagery": "Irudi berriagoak",
+      "yearEarlier": "Urtebete lehenago",
+      "yearLater": "Urtebete geroago",
+      "matchPhotoDates": "Egokitu argazkiak atera ziren dataetara",
+      "nearPhotoDates": "{{date}} (argazkien dataetatik gertu)",
+      "versionOf": "Bertsioa: {{date}}",
+      "photosTakenOn": "Argazkien data: {{date}}",
+      "photosTakenFromTo": "Argazkien datak: {{first}} – {{last}}",
+      "noPhotoDates": "Mapako argazkietako batek ere ez du ateratze-datarik.",
+      "loading": "Datak kargatzen...",
+      "failed": "Ezin izan dira datak kargatu.",
+      "zoomIn": "Handitu mapa irudiak noiz atera ziren ikusteko.",
+      "mapFailed": "Ezin da mapa hau erakutsi."
+    }
   },
   "chart": {
     "moreAlt": "Gehiago",
