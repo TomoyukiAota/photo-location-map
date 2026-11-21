@@ -60,6 +60,8 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   private readonly mapContainer = viewChild.required<ElementRef<HTMLDivElement>>('mapContainer');
   // Tells Leaflet of each change of the map's size (watchSize()).
   private resizeObserver: ResizeObserver | null = null;
+  // Makes the map, a moment after the home view is shown (makeMapLater()).
+  private makeMapTimer: ReturnType<typeof setTimeout> | null = null;
 
   private readonly commonBaseLayerOptions = {
     // Set the common max zoom level for all base layers.
@@ -73,7 +75,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     maxZoom: 19,
   };
 
-  // Made by the first render, and kept until the component is destroyed.
+  // Made by the first render (makeMapLater()), and kept until the component is destroyed.
   private map: LeafletMap | null = null;
   // The Leaflet.markercluster group of the photos on the map, and the marker of each of them by the photo's path.
   private markerClusterGroup: any = null;
@@ -114,8 +116,8 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
 
   public ngAfterViewInit(): void {
     this.watchSize();
-    // Renders the photos whenever other photos are pinned; the first run makes the map, with the photos pinned now.
-    // Created here because the map needs its container.
+    // Renders the photos whenever other photos are pinned, once the map is made. Created here because the map needs its
+    // container.
     effect(() => {
       const pinnedPhotos = this.pinnedPhotoService.pinnedPhotos();
       untracked(() => {
@@ -123,13 +125,31 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
         this.updateMap([...pinnedPhotos]);
       });
     }, { injector: this.injector });
+    this.makeMapLater();
   }
 
   public ngOnDestroy(): void {
     this.resizeObserver?.disconnect();
     // A render still waiting would draw into the removed view.
+    clearTimeout(this.makeMapTimer);
     this.renderMapWithThrottling.cancel();
     this.removeMap();
+  }
+
+  /**
+   * Makes the map a second after the home view is shown, with the photos pinned then, as it was when every render of
+   * the map waited for a second.
+   * TL;DR: Making the map takes the page's main thread for a moment, which the window's first moments need.
+   * Details: The dialogs that open with the window, the Language dialog at the first launch and the Welcome dialog,
+   * take the focus at the end of their opening animation by a timer, and start the animation in the next frame. Made
+   * between the two, the map would hold back the frame, so that the dialog took the focus still small, before its
+   * animation. The e2e case of the Language dialog, which measures the dialog once it has the focus, saw that.
+   */
+  private makeMapLater(): void {
+    this.makeMapTimer = setTimeout(() => {
+      this.makeMapTimer = null;
+      this.renderMapWithThrottling([...(this.pinnedPhotosToRender ?? [])]);
+    }, 1000 /* ms */);
   }
 
   /**
@@ -143,7 +163,9 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
 
   private updateMap(photos: Photo[]): void {
     this.isRenderPending = true;
-    this.renderMapWithThrottling(photos);
+    // Until the map is made, which renders the photos pinned then.
+    if (this.map)
+      this.renderMapWithThrottling(photos);
   }
 
   /**
