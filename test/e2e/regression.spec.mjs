@@ -2857,6 +2857,8 @@ test('Narrow Down to Photos with Faces keeps selected the photos in which faces 
   const shownState = dialog.locator('.state.shown');
   await expect(shownState.locator('.message')).toHaveText('No faces were found in the selected photos. The selection stays as it is.');
   await expect(shownState.getByRole('button')).toHaveText('Close');
+  // What is measured is the dialog once it has opened, which scales it up from 80%.
+  await expect.poll(() => dialog.evaluate(element => getComputedStyle(element.closest('.mat-mdc-dialog-surface')).transform)).toBe('none');
   // The dialog is as tall whatever it shows: its states are, and what each has fits in it, the search's progress, the
   // tallest, too. Each child's box is measured, as a button's touch target reaches past the button's on purpose.
   const states = await dialog.locator('.state').evaluateAll(elements => elements.map(state => {
