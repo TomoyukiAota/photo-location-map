@@ -3,8 +3,8 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import {
-  instanceSessionDataFolder, releaseSessionDataLock, removeEndedInstancesSessionData, SessionDataHost, takeSessionDataLock,
-  unwrittenLockMs,
+  instanceSessionDataFolder, releaseSessionDataLock, removeEndedInstancesSessionData, SessionDataHost, takeoverPath,
+  takeSessionDataLock, unwrittenLockMs,
 } from '../../../src-main/session-data/session-data-lock.js';
 
 describe('The lock of the session data shared by the instances on one profile (in main process)', () => {
@@ -46,6 +46,44 @@ describe('The lock of the session data shared by the instances on one profile (i
     age(2 * 3600 * 1000);
     assert.strictEqual(takeSessionDataLock(lockPath, instance(300, [200])), true);
     assert.strictEqual(holder(), '300');
+  });
+
+  it('is taken over by one instance at a time, which leaves no file of the takeover', () => {
+    takeSessionDataLock(lockPath, instance(100));
+    // Another instance is taking the stale lock over.
+    fs.writeFileSync(takeoverPath(lockPath), '150');
+    assert.strictEqual(takeSessionDataLock(lockPath, instance(200)), false);
+    assert.strictEqual(holder(), '100');
+    fs.rmSync(takeoverPath(lockPath));
+    assert.strictEqual(takeSessionDataLock(lockPath, instance(200)), true);
+    assert.strictEqual(holder(), '200');
+    assert.strictEqual(fs.existsSync(takeoverPath(lockPath)), false);
+  });
+
+  it('removes the file of a takeover whose instance ended while making it, and leaves the lock to a later launch', () => {
+    takeSessionDataLock(lockPath, instance(100));
+    fs.writeFileSync(takeoverPath(lockPath), '150');
+    const time = new Date(Date.now() - unwrittenLockMs - 1000);
+    fs.utimesSync(takeoverPath(lockPath), time, time);
+    assert.strictEqual(takeSessionDataLock(lockPath, instance(200)), false);
+    assert.strictEqual(fs.existsSync(takeoverPath(lockPath)), false);
+    assert.strictEqual(takeSessionDataLock(lockPath, instance(300)), true);
+  });
+
+  it('never removes a lock that another instance made in place of the stale one', () => {
+    takeSessionDataLock(lockPath, instance(100));
+    // While this instance finds the lock stale, another one takes it over: 250 runs from then on.
+    let replaced = false;
+    const host: SessionDataHost = { ...instance(200), isRunning: pid => {
+      if (!replaced) {
+        replaced = true;
+        fs.rmSync(lockPath);
+        fs.writeFileSync(lockPath, '250');
+      }
+      return pid === 250;
+    } };
+    assert.strictEqual(takeSessionDataLock(lockPath, host), false);
+    assert.strictEqual(holder(), '250');
   });
 
   it('is left to an instance that is still writing it, for a while', () => {

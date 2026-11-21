@@ -28,26 +28,39 @@ const host: SessionDataHost = {
 const instancesFolder = path.join(app.getPath('userData'), 'instances');
 const lockPath = path.join(instancesFolder, 'shared-session-data.lock');
 
-/** Whether this instance keeps Chromium's storage in the profile: it holds the lock, or the lock cannot be written. */
-function keepsSharedSessionData(): boolean {
+/**
+ * Whether this instance holds the lock, and so keeps Chromium's storage in the profile. When the lock cannot be taken
+ * or read, another instance may hold it: this one does not take the profile's storage then.
+ */
+function holdsLock(): boolean {
   try {
     return takeSessionDataLock(lockPath, host);
   } catch (error) {
-    Logger.warn('[Session Data] The lock of the session data could not be taken, so this instance keeps it in the profile.', error);
-    return true;
+    Logger.warn('[Session Data] The lock of the session data could not be taken or read, so this instance keeps a storage of its own.', error);
+    return false;
   }
 }
 
-if (keepsSharedSessionData()) {
+/** Keeps this instance's storage in a folder of its own; in the profile, as before the lock, when that cannot be made. */
+function keepOwnSessionData(): void {
+  const folder = instanceSessionDataFolder(instancesFolder, process.pid);
+  try {
+    fs.mkdirSync(folder, { recursive: true });
+  } catch (error) {
+    Logger.warn('[Session Data] The folder of this instance\'s storage could not be made, so it keeps the profile\'s.', error);
+    return;
+  }
+  app.setPath('sessionData', folder);
+  Logger.info(`[Session Data] This instance keeps Chromium's storage in a folder of its own: ${folder}`);
+}
+
+if (holdsLock()) {
   // On Windows, a shutdown or a log-off ends the app without will-quit, but with a window's session-end.
   const release = () => releaseSessionDataLock(lockPath, host);
   app.on('will-quit', release);
   app.on('browser-window-created', (_event, window: BrowserWindow) => window.on('session-end', release));
 } else {
-  const folder = instanceSessionDataFolder(instancesFolder, process.pid);
-  fs.mkdirSync(folder, { recursive: true });
-  app.setPath('sessionData', folder);
-  Logger.info(`[Session Data] Another instance keeps Chromium's storage in the profile, so this one keeps its own in ${folder}`);
+  keepOwnSessionData();
 }
 
 // Once the app is ready, so as not to slow its start: the folders of the instances that have ended.

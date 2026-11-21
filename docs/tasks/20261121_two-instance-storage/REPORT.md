@@ -79,8 +79,8 @@ wait is from its arrival to the app's code.
 1. Start the application, then use "Open with Photo Location Map" on a folder
    in Explorer: a second window opens.
 2. In `%APPDATA%\Photo Location Map\logs\`, the newest log file says
-   "[Session Data] Another instance keeps Chromium's storage in the profile,
-   so this one keeps its own in ...", and "[Leaflet Map] Fetching
+   "[Session Data] This instance keeps Chromium's storage in a folder of its
+   own: ...", and "[Leaflet Map] Fetching
    https://raw.githubusercontent.com/..." comes about 0.1 s after "Launching
    the main window." rather than about 4 s after it.
 3. Quit both. The next launch removes the folder of the second in

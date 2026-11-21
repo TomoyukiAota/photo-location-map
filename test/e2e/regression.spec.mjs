@@ -2949,6 +2949,11 @@ test('a launch while the app runs keeps Chromium\'s storage in a folder of its o
   const second = await _electron.launch(launchOptions());
   const chromiumLines = [];
   second.process().stderr?.on('data', data => chromiumLines.push(...String(data).split(/\r?\n/)));
+  // The second page is held to its Content Security Policy as the first one is (see launch).
+  second.context().on('console', message => {
+    if (/\bContent[- ]Security[- ]Policy\b/i.test(message.text()) && isAppPageUrl(message.page()?.url()))
+      policyViolations.push(`${message.type()}: ${message.text()}`);
+  });
   try {
     const secondPage = await second.firstWindow();
     await secondPage.waitForSelector('app-root app-home', { timeout: 30000 });
