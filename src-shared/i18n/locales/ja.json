@@ -121,7 +121,25 @@
     "setText": "テキストを配置",
     "editRegion": "範囲を編集",
     "dragRegion": "範囲を移動",
-    "removeRegion": "範囲を削除"
+    "removeRegion": "範囲を削除",
+    "dates": {
+      "imageryDate": "撮影日（マップの中心）",
+      "mapDate": "マップの日付",
+      "olderImagery": "1 つ古い画像",
+      "newerImagery": "1 つ新しい画像",
+      "yearEarlier": "1 年前",
+      "yearLater": "1 年後",
+      "matchPhotoDates": "写真の撮影日に合わせる",
+      "nearPhotoDates": "{{date}}（写真の撮影日に近い）",
+      "versionOf": "{{date}} の版",
+      "photosTakenOn": "写真の撮影日: {{date}}",
+      "photosTakenFromTo": "写真の撮影日: {{first}} 〜 {{last}}",
+      "noPhotoDates": "マップ上の写真に撮影日がありません。",
+      "loading": "撮影日を読み込み中...",
+      "failed": "撮影日を読み込めませんでした。",
+      "zoomIn": "拡大すると、撮影日が表示されます。",
+      "mapFailed": "このマップは表示できません。"
+    }
   },
   "chart": {
     "moreAlt": "その他",

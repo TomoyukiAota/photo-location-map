@@ -121,7 +121,25 @@
     "setText": "Lisa tekst",
     "editRegion": "Muuda piirkonda",
     "dragRegion": "Liiguta piirkonda",
-    "removeRegion": "Eemalda piirkond"
+    "removeRegion": "Eemalda piirkond",
+    "dates": {
+      "imageryDate": "Satelliidipildi kuupäev kaardi keskel",
+      "mapDate": "Kaardi kuupäev",
+      "olderImagery": "Vanemad satelliidipildid",
+      "newerImagery": "Uuemad satelliidipildid",
+      "yearEarlier": "Aasta varem",
+      "yearLater": "Aasta hiljem",
+      "matchPhotoDates": "Sobita fotode pildistamise kuupäevadega",
+      "nearPhotoDates": "{{date}} (fotode kuupäevade lähedal)",
+      "versionOf": "Versioon {{date}}",
+      "photosTakenOn": "Fotod on tehtud {{date}}",
+      "photosTakenFromTo": "Fotod on tehtud {{first}} kuni {{last}}",
+      "noPhotoDates": "Ühelgi kaardil oleval fotol pole pildistamise kuupäeva.",
+      "loading": "Kuupäevade laadimine...",
+      "failed": "Kuupäevi ei õnnestunud laadida.",
+      "zoomIn": "Suurenda kaarti, et näha, millal pildid on tehtud.",
+      "mapFailed": "Seda kaarti ei saa kuvada."
+    }
   },
   "chart": {
     "moreAlt": "Veel",

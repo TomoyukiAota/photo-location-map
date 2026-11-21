@@ -121,7 +121,25 @@
     "setText": "Plasser tekst",
     "editRegion": "Rediger område",
     "dragRegion": "Flytt område",
-    "removeRegion": "Fjern område"
+    "removeRegion": "Fjern område",
+    "dates": {
+      "imageryDate": "Dato for satellittbildene midt på kartet",
+      "mapDate": "Kartets dato",
+      "olderImagery": "Eldre satellittbilder",
+      "newerImagery": "Nyere satellittbilder",
+      "yearEarlier": "Ett år tidligere",
+      "yearLater": "Ett år senere",
+      "matchPhotoDates": "Tilpass til datoene bildene ble tatt",
+      "nearPhotoDates": "{{date}} (nær bildenes datoer)",
+      "versionOf": "Versjon fra {{date}}",
+      "photosTakenOn": "Bilder tatt {{date}}",
+      "photosTakenFromTo": "Bilder tatt fra {{first}} til {{last}}",
+      "noPhotoDates": "Ingen bilder på kartet har en opptaksdato.",
+      "loading": "Laster inn datoene...",
+      "failed": "Datoene kunne ikke lastes inn.",
+      "zoomIn": "Zoom inn for å se når satellittbildene ble tatt.",
+      "mapFailed": "Dette kartet kan ikke vises."
+    }
   },
   "chart": {
     "moreAlt": "Mer",

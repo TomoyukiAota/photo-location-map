@@ -121,7 +121,25 @@
     "setText": "وضع نص",
     "editRegion": "تعديل المنطقة",
     "dragRegion": "تحريك المنطقة",
-    "removeRegion": "إزالة المنطقة"
+    "removeRegion": "إزالة المنطقة",
+    "dates": {
+      "imageryDate": "تاريخ التقاط الصورة في مركز الخريطة",
+      "mapDate": "تاريخ الخريطة",
+      "olderImagery": "صورة أقدم",
+      "newerImagery": "صورة أحدث",
+      "yearEarlier": "قبل سنة",
+      "yearLater": "بعد سنة",
+      "matchPhotoDates": "مطابقة تواريخ التقاط الصور",
+      "nearPhotoDates": "{{date}} (قريب من تواريخ الصور)",
+      "versionOf": "إصدار {{date}}",
+      "photosTakenOn": "الصور ملتقطة في {{date}}",
+      "photosTakenFromTo": "الصور ملتقطة من {{first}} إلى {{last}}",
+      "noPhotoDates": "لا توجد على الخريطة صورة لها تاريخ التقاط.",
+      "loading": "جارٍ تحميل التواريخ...",
+      "failed": "تعذّر تحميل التواريخ.",
+      "zoomIn": "كبّر الخريطة لترى تاريخ التقاط الصورة.",
+      "mapFailed": "لا يمكن عرض هذه الخريطة."
+    }
   },
   "chart": {
     "moreAlt": "المزيد",

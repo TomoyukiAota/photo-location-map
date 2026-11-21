@@ -121,7 +121,25 @@
     "setText": "Placera text",
     "editRegion": "Redigera område",
     "dragRegion": "Flytta område",
-    "removeRegion": "Ta bort område"
+    "removeRegion": "Ta bort område",
+    "dates": {
+      "imageryDate": "Datum för satellitbilderna i kartans mitt",
+      "mapDate": "Kartans datum",
+      "olderImagery": "Äldre satellitbilder",
+      "newerImagery": "Nyare satellitbilder",
+      "yearEarlier": "Ett år tidigare",
+      "yearLater": "Ett år senare",
+      "matchPhotoDates": "Anpassa till datumen då bilderna togs",
+      "nearPhotoDates": "{{date}} (nära bildernas datum)",
+      "versionOf": "Version från {{date}}",
+      "photosTakenOn": "Bilder tagna {{date}}",
+      "photosTakenFromTo": "Bilder tagna från {{first}} till {{last}}",
+      "noPhotoDates": "Ingen bild på kartan har ett tagningsdatum.",
+      "loading": "Läser in datumen...",
+      "failed": "Datumen kunde inte läsas in.",
+      "zoomIn": "Zooma in för att se när satellitbilderna togs.",
+      "mapFailed": "Den här kartan kan inte visas."
+    }
   },
   "chart": {
     "moreAlt": "Mer",

@@ -121,7 +121,25 @@
     "setText": "Postavi tekst",
     "editRegion": "Uredi područje",
     "dragRegion": "Premjesti područje",
-    "removeRegion": "Ukloni područje"
+    "removeRegion": "Ukloni područje",
+    "dates": {
+      "imageryDate": "Datum snimke u središtu karte",
+      "mapDate": "Datum karte",
+      "olderImagery": "Starija snimka",
+      "newerImagery": "Novija snimka",
+      "yearEarlier": "Godinu dana ranije",
+      "yearLater": "Godinu dana kasnije",
+      "matchPhotoDates": "Uskladi s datumima snimanja fotografija",
+      "nearPhotoDates": "{{date}} (blizu datuma fotografija)",
+      "versionOf": "Verzija od {{date}}",
+      "photosTakenOn": "Fotografije snimljene {{date}}",
+      "photosTakenFromTo": "Fotografije snimljene od {{first}} do {{last}}",
+      "noPhotoDates": "Nijedna fotografija na karti nema datum snimanja.",
+      "loading": "Učitavanje datuma...",
+      "failed": "Datumi se nisu mogli učitati.",
+      "zoomIn": "Povećajte kartu da biste vidjeli kada je snimka nastala.",
+      "mapFailed": "Ova se karta ne može prikazati."
+    }
   },
   "chart": {
     "moreAlt": "Više",

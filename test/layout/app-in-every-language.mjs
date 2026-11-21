@@ -7,11 +7,11 @@
 // texts: the Language dialog, the Welcome dialog, the hint over the window while files are dragged over it, the
 // question that a dropped folder asks, the home view without and
 // with a folder of photos (in a window of 1200x800 and of 800x600), a photo's popup with its menu and the menu's submenus, the tree's menu, the Sort menu and its info dialog, the
-// chart's menu, its message for a duration that it cannot show and its button for the photos within a zoom, a region
-// on the map, the tabs of the Settings dialog with the choices of the clock's field, the question before a restart,
-// the About box, the status bar while the thumbnails of HEIF files are made, the dialog of the thumbnails that failed,
-// the dialog of a folder without location data, and the dialog of the search for faces, while it looks and when it
-// found none.
+// chart's menu, its message for a duration that it cannot show and its button for the photos within a zoom, the date of
+// the map's layers of a past date, a region on the map, the tabs of the Settings dialog with the choices of the clock's
+// field, the question before a restart, the About box, the status bar while the thumbnails of HEIF files are made, the
+// dialog of the thumbnails that failed, the dialog of a folder without location data, and the dialog of the search for
+// faces, while it looks and when it found none.
 //
 // In each screen it finds the texts that are cut, the texts that reach outside their dialog or the window, to a side
 // or in height, the texts of buttons, tabs, menu items, labels and headings that are on more than one line, and the
@@ -26,6 +26,7 @@ import { createRequire } from 'node:module';
 import { cp, copyFile, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { answerDatedLayers } from '../test-util/dated-layer-answers.mjs';
 
 const root = path.resolve(import.meta.dirname, '../..');
 const option = name => process.argv.slice(2).find(argument => argument.startsWith(`--${name}=`))?.slice(name.length + 3);
@@ -364,6 +365,22 @@ for (const code of codes) {
       await page.mouse.up();
       await page.waitForSelector('app-select-photos-within-zoom button', { timeout: 5000 });
       await screen('chart-zoom', 'app-date-time-taken-chart .sidebar', 'app-date-time-taken-chart', 'app-date-time-taken-chart');
+    });
+    await step('map-date', async () => {
+      // The box of the date of each layer of a past date, with the servers' answers of the e2e suite: zoomed out to
+      // the photos of the world, Wayback's says that the imagery has a date only closer.
+      await answerDatedLayers(page);
+      const chooseLayer = async name => {
+        await page.locator('.leaflet-control-layers').hover();
+        await page.locator('.leaflet-control-layers-base label').filter({ hasText: name }).click();
+        await page.mouse.move(1, 1);
+      };
+      for (const [layer, name] of [['OpenHistoricalMap', 'map-date'], ['Esri World Imagery Wayback', 'map-date-imagery']]) {
+        await chooseLayer(layer);
+        await page.waitForFunction(() => !!document.querySelector('.plm-leaflet-map-date-value')?.textContent.trim());
+        await screen(name, '.plm-leaflet-map-date', '#home-map', '#home-map');
+      }
+      await chooseLayer('OpenStreetMap');
     });
     await step('region', async () => {
       const map = await page.locator('#plm-leaflet-map').boundingBox();

@@ -18,9 +18,11 @@
 }
 
 [dir="rtl"] .leaflet-popup-content,
-[dir="rtl"] .plm-leaflet-map-region-info {
+[dir="rtl"] .plm-leaflet-map-region-info,
+[dir="rtl"] .plm-leaflet-map-date {
   direction: rtl;
 }
 
 @include meta.load-css("plm-leaflet-map-div-icon");
 @include meta.load-css("plm-leaflet-map-region-info");
+@include meta.load-css("plm-leaflet-map-date");

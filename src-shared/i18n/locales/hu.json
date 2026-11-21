@@ -121,7 +121,25 @@
     "setText": "Szöveg elhelyezése",
     "editRegion": "Terület szerkesztése",
     "dragRegion": "Terület áthelyezése",
-    "removeRegion": "Terület eltávolítása"
+    "removeRegion": "Terület eltávolítása",
+    "dates": {
+      "imageryDate": "A felvétel dátuma a térkép közepén",
+      "mapDate": "A térkép dátuma",
+      "olderImagery": "Régebbi felvétel",
+      "newerImagery": "Újabb felvétel",
+      "yearEarlier": "Egy évvel korábban",
+      "yearLater": "Egy évvel később",
+      "matchPhotoDates": "Igazítás a fotók készítési dátumához",
+      "nearPhotoDates": "{{date}} (a fotók dátumához közel)",
+      "versionOf": "Változat: {{date}}",
+      "photosTakenOn": "A fotók készítése: {{date}}",
+      "photosTakenFromTo": "A fotók készítése: {{first}} – {{last}}",
+      "noPhotoDates": "A térképen egyik fotónak sincs készítési dátuma.",
+      "loading": "Dátumok betöltése...",
+      "failed": "A dátumokat nem sikerült betölteni.",
+      "zoomIn": "Nagyítson rá, hogy lássa, mikor készült a felvétel.",
+      "mapFailed": "Ez a térkép nem jeleníthető meg."
+    }
   },
   "chart": {
     "moreAlt": "Egyebek",
