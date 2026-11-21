@@ -39,7 +39,8 @@ function applyLanguageToPage(): void {
 async function bootstrap(): Promise<void> {
   perfMark('renderer:bootstrap-start');
   applyLanguageToPage();
-  // Load map choices before Angular creates the map, as the former module await did.
+  // Load map choices before Angular creates the map, as the former module await did. The wait has a bound: each
+  // address of them has a time limit, after which the next is tried, and the fallback configs come after the last.
   await initializeRasterTileBaseLayerConfigs();
 
   if (AppConfig.production) {
