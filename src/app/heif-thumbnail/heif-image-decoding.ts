@@ -1,5 +1,6 @@
-import type { HeifEmbeddedThumbnail, HeifTransformations, HeifWholeImage, HevcConfiguration } from '../../../src-shared/heif/heif-images';
-import { startupMetadata } from '../../../src-shared/startup/startup-metadata';
+import type { HeifEmbeddedThumbnail, HeifTransformations, HeifWholeImage, HevcConfiguration } from '../../../src-shared/heif/heif-images.js';
+import { startupMetadata } from '../../../src-shared/startup/startup-metadata.js';
+import { tilePlacements } from './tile-placement.js';
 
 // TL;DR: Decodes a HEIF photo's images in the page with WebCodecs' VideoDecoder, which hands HEVC to the operating
 // system's decoder, in the graphics hardware where it has one, and makes of them the JPEG that a thumbnail shows.
@@ -153,7 +154,8 @@ export async function decodeEmbeddedThumbnail(thumbnail: HeifEmbeddedThumbnail):
 
 /**
  * A JPEG of the whole image, at `longerSide` pixels on its longer side: each tile drawn small in its place as it is
- * decoded, which takes as long as drawing them whole and resizing once, without a canvas of the whole image.
+ * decoded, into whole pixels (tilePlacements), which takes as long as drawing them whole and resizing once, without a
+ * canvas of the whole image.
  */
 export async function decodeWholeImage(image: HeifWholeImage, longerSide = wholeImageThumbnailLongerSide): Promise<Blob> {
   const { crop } = image;
@@ -163,11 +165,14 @@ export async function decodeWholeImage(image: HeifWholeImage, longerSide = whole
   const small = new OffscreenCanvas(width, height);
   const context = small.getContext('2d');
   context.imageSmoothingQuality = 'high';
+  const placements = tilePlacements(image, width, height);
   await decodeFrames(image.hevc, image.tiles, (frame, index) => {
-    const row = Math.floor(index / image.columns), column = index % image.columns;
-    context.drawImage(frame, 0, 0, image.tileWidth, image.tileHeight,
-      (column * image.tileWidth - crop.x) * scale, (row * image.tileHeight - crop.y) * scale,
-      image.tileWidth * scale, image.tileHeight * scale);
+    const placement = placements[index];
+    if (!placement)
+      return;
+    const { source, destination } = placement;
+    context.drawImage(frame, source.x, source.y, source.width, source.height,
+      destination.x, destination.y, destination.width, destination.height);
   });
   return jpegOf(turned(small, width, height, image));
 }
