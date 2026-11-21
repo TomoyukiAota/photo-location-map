@@ -132,11 +132,14 @@ const createWindow = async () => {
 };
 
 
+// TL;DR: Hardware acceleration stays on, as Electron has it: OpenHistoricalMap, a layer of the map, is drawn by MapLibre
+// with WebGL 2 (src/app/map/leaflet-map/dated-layers/), which the page has only with it.
+// Details: It was turned off in 2022, to quiet the line "Passthrough is not supported, GL is disabled, ANGLE is" that
+// Chromium wrote to the log. Turned off, the page has no WebGL at all, not even in software: Chromium gives WebGL on
+// its software renderer, SwiftShader, only with --enable-unsafe-swiftshader, and not even then without a GPU process.
+// Where the GPU cannot be used, Chromium draws the page in software as before, and that layer says that it cannot be
+// shown.
 try {
-  // Disable hardware acceleration to address the error printed
-  // as "Passthrough is not supported, GL is disabled, ANGLE is".
-  app.disableHardwareAcceleration();
-
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.

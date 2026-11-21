@@ -121,7 +121,25 @@
     "setText": "Umieść tekst",
     "editRegion": "Edytuj obszar",
     "dragRegion": "Przesuń obszar",
-    "removeRegion": "Usuń obszar"
+    "removeRegion": "Usuń obszar",
+    "dates": {
+      "imageryDate": "Data zdjęć satelitarnych w środku mapy",
+      "mapDate": "Data mapy",
+      "olderImagery": "Starsze zdjęcia satelitarne",
+      "newerImagery": "Nowsze zdjęcia satelitarne",
+      "yearEarlier": "Rok wcześniej",
+      "yearLater": "Rok później",
+      "matchPhotoDates": "Dopasuj do dat wykonania zdjęć",
+      "nearPhotoDates": "{{date}} (blisko dat zdjęć)",
+      "versionOf": "Wersja z {{date}}",
+      "photosTakenOn": "Zdjęcia wykonane {{date}}",
+      "photosTakenFromTo": "Zdjęcia wykonane od {{first}} do {{last}}",
+      "noPhotoDates": "Żadne zdjęcie na mapie nie ma daty wykonania.",
+      "loading": "Wczytywanie dat...",
+      "failed": "Nie udało się wczytać dat.",
+      "zoomIn": "Powiększ mapę, aby zobaczyć, kiedy wykonano zdjęcia satelitarne.",
+      "mapFailed": "Nie można wyświetlić tej mapy."
+    }
   },
   "chart": {
     "moreAlt": "Więcej",

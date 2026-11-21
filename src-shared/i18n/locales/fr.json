@@ -121,7 +121,25 @@
     "setText": "Placer du texte",
     "editRegion": "Modifier la zone",
     "dragRegion": "Déplacer la zone",
-    "removeRegion": "Supprimer la zone"
+    "removeRegion": "Supprimer la zone",
+    "dates": {
+      "imageryDate": "Date des images au centre de la carte",
+      "mapDate": "Date de la carte",
+      "olderImagery": "Images plus anciennes",
+      "newerImagery": "Images plus récentes",
+      "yearEarlier": "Un an plus tôt",
+      "yearLater": "Un an plus tard",
+      "matchPhotoDates": "Suivre les dates de prise de vue des photos",
+      "nearPhotoDates": "{{date}} (proche des dates des photos)",
+      "versionOf": "Version du {{date}}",
+      "photosTakenOn": "Photos prises le {{date}}",
+      "photosTakenFromTo": "Photos prises du {{first}} au {{last}}",
+      "noPhotoDates": "Aucune photo de la carte n’a de date de prise de vue.",
+      "loading": "Chargement des dates...",
+      "failed": "Impossible de charger les dates.",
+      "zoomIn": "Faites un zoom avant pour voir quand les images ont été prises.",
+      "mapFailed": "Impossible d’afficher cette carte."
+    }
   },
   "chart": {
     "moreAlt": "Plus",

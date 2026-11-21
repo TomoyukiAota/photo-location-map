@@ -121,7 +121,25 @@
     "setText": "Ievietot tekstu",
     "editRegion": "Rediģēt apgabalu",
     "dragRegion": "Pārvietot apgabalu",
-    "removeRegion": "Noņemt apgabalu"
+    "removeRegion": "Noņemt apgabalu",
+    "dates": {
+      "imageryDate": "Attēlu datums kartes centrā",
+      "mapDate": "Kartes datums",
+      "olderImagery": "Vecāki attēli",
+      "newerImagery": "Jaunāki attēli",
+      "yearEarlier": "Gadu agrāk",
+      "yearLater": "Gadu vēlāk",
+      "matchPhotoDates": "Pielāgot fotoattēlu uzņemšanas datumiem",
+      "nearPhotoDates": "{{date}} (tuvu fotoattēlu datumiem)",
+      "versionOf": "Versija no {{date}}",
+      "photosTakenOn": "Fotoattēli uzņemti {{date}}",
+      "photosTakenFromTo": "Fotoattēli uzņemti no {{first}} līdz {{last}}",
+      "noPhotoDates": "Nevienam fotoattēlam kartē nav uzņemšanas datuma.",
+      "loading": "Notiek datumu ielāde...",
+      "failed": "Datumus neizdevās ielādēt.",
+      "zoomIn": "Tuviniet karti, lai redzētu, kad attēli uzņemti.",
+      "mapFailed": "Šo karti nevar parādīt."
+    }
   },
   "chart": {
     "moreAlt": "Vairāk",

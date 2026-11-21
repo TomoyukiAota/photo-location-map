@@ -20,6 +20,8 @@ import { PhotoClusterViewerComponent } from '../../photo-cluster-viewer/photo-cl
 import { PhotoInfoViewerComponent } from '../../photo-info-viewer/photo-info-viewer.component';
 import { LeafletMapForceRenderService } from './leaflet-map-force-render/leaflet-map-force-render.service';
 import { addEachMarker } from './add-each-marker';
+import { DatedLayers } from './dated-layers/dated-layers';
+import { MapDateService } from './dated-layers/map-date.service';
 import { createDivIconHtml } from './div-icon';
 import { LeafletContentService } from './leaflet-content.service';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
@@ -43,6 +45,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   private forceRenderService = inject(LeafletMapForceRenderService);
   private injector = inject(Injector);
   private leafletContentService = inject(LeafletContentService);
+  private mapDateService = inject(MapDateService);
   private photoRevealService = inject(PhotoRevealService);
   private pinnedPhotoService = inject(PinnedPhotoService);
 
@@ -66,6 +69,8 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   private markerClusterGroup: any = null;
   private readonly markers = new Map<string, Marker>();
   private regionInfo: Control;
+  // The layers of a past date, and their control, for this map (dated-layers/dated-layers.ts).
+  private datedLayers: DatedLayers | null = null;
   private regionInfoContent: ComponentRef<RegionInfoComponent>;
   // The viewer of each cluster whose popup has been opened on this map, which the cluster's popup shows again.
   private clusterViewers = new WeakMap<object, ComponentRef<PhotoClusterViewerComponent>>();
@@ -144,8 +149,9 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
 
   private renderMap(photos: Photo[]): void {
     this.ensureMapRemoved();
-    this.initializeMap();
+    // Before the map is made, as the layers of a past date take their date from the photos when they are added.
     this.photos = photos;
+    this.initializeMap();
 
     if (photos.length > 0) {
       this.renderMarkerClusterGroup(photos);
@@ -153,6 +159,8 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   }
 
   private ensureMapRemoved(): void {
+    this.datedLayers?.destroy();
+    this.datedLayers = null;
     if (this.map) {
       this.map.off();
       this.map.remove();
@@ -199,8 +207,13 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
 
   private configureBaseLayer() {
     const rasterTileBaseLayers = this.getRasterTileBaseLayers();
+    // The layers of a past date come after those of the list, which the app downloads.
+    const datedLayers = new DatedLayers(this.map, this.mapDateService, this.leafletContentService, () => this.photos,
+      this.commonBaseLayerOptions);
+    this.datedLayers = datedLayers;
     const baseLayers = {
       ...rasterTileBaseLayers,
+      ...datedLayers.baseLayers,
     };
     const layersControl: Control.Layers = L.control.layers(baseLayers, null, {position: 'topright'}).addTo(this.map);
     // Leaflet gives the control's button the tooltip "Layers", and no option to change it.
@@ -210,9 +223,11 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     const defaultBaseLayer = Object.values(baseLayers)[0];
     const selectedBaseLayer = previousBaseLayer ?? defaultBaseLayer;
     selectedBaseLayer.addTo(this.map);
+    datedLayers.baseLayerChanged(selectedBaseLayer);
 
     this.map.on('baselayerchange', (event: LayersControlEvent) => {
       this.selectedBaseLayerName = event.name;
+      datedLayers.baseLayerChanged(event.layer);
     });
   }
 

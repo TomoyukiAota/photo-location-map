@@ -1,0 +1,17 @@
+// The box of the date of a layer of a past date, Leaflet's control at the top right. What is in the box is
+// MapDateComponent's (src/app/map/leaflet-map/dated-layers/map-date/).
+// As wide as its title and its row of date need, which a long date in the list widens rather than being cut: the
+// sentences below them wrap to that width (MapDateComponent's styles).
+.plm-leaflet-map-date {
+  box-sizing: border-box;
+  // Room for the sentences on two lines in English, when the date is short.
+  min-width: 240px;
+  padding: 6px 10px;
+  background: #ffffff;
+}
+
+// The canvas of MapLibre, which draws OpenHistoricalMap (src/app/map/leaflet-map/dated-layers/): placed in the tile
+// pane by its layer, as Leaflet places its tiles. MapLibre's own CSS makes its container relative.
+.leaflet-tile-pane .plm-leaflet-map-maplibre-container {
+  position: absolute;
+}

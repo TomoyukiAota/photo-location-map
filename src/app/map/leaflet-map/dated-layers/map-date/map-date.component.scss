@@ -1,0 +1,117 @@
+@use "../../../../../styles/balanced-lines" as *;
+
+// The box that this is in, Leaflet's control, is styled with the map (src/styles/plm-leaflet-map/).
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.plm-leaflet-map-date-title {
+  font-weight: 500;
+}
+
+.plm-leaflet-map-date-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.plm-leaflet-map-date-step {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  background: #ffffff;
+  color: #333333;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover:not([disabled]) {
+    background: #f4f4f4;
+  }
+
+  &[disabled] {
+    color: #bbbbbb;
+    cursor: default;
+  }
+}
+
+// As the select of the chart's unit (src/app/date-time-taken-chart/config/), with its arrow at the end of the field. As
+// wide as its longest date, which is not cut.
+.plm-leaflet-map-date-select {
+  flex: 1 0 auto;
+  display: flex;
+  position: relative;
+
+  &::after {
+    position: absolute;
+    top: calc(50% - 3px);
+    inset-inline-end: 6px;
+    width: 10px;
+    height: 7px;
+    background-color: #535353;
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    content: '';
+    pointer-events: none;
+  }
+
+  select {
+    flex: 1 0 auto;
+    appearance: none;
+    height: 26px;
+    padding-block: 0;
+    padding-inline: .4em calc(.4em + 14px);
+    border: 1px solid #cccccc;
+    border-radius: 3px;
+    outline: none;
+    background: #ffffff;
+    color: #333333;
+    font-size: 13px;
+  }
+}
+
+.plm-leaflet-map-date-value {
+  flex: 1 0 auto;
+  text-align: center;
+  font-size: 14px;
+}
+
+// TL;DR: The sentences take the width of the title and of the row, and wrap within it, rather than widen the box.
+// Details: Without a width of their own, they do not count in the width that the box needs; the least width then
+// gives them all of it.
+.plm-leaflet-map-date-match,
+.plm-leaflet-map-date-note {
+  width: 0;
+  min-width: 100%;
+}
+
+.plm-leaflet-map-date-match {
+  // The checkbox's own room, which Material gives it for a touch, is not needed in this small box.
+  margin-inline-start: -10px;
+}
+
+// Short sentences that may take two or three lines, of about the same length.
+.plm-leaflet-map-date-match-label {
+  display: block;
+  @include balanced-lines;
+}
+
+.plm-leaflet-map-date-note {
+  @include balanced-lines;
+}
+
+.plm-leaflet-map-date-unbroken {
+  white-space: nowrap;
+}
+
+.plm-leaflet-map-date-note {
+  color: #555555;
+  font-size: 12px;
+}

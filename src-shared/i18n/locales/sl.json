@@ -121,7 +121,25 @@
     "setText": "Postavi besedilo",
     "editRegion": "Uredi območje",
     "dragRegion": "Premakni območje",
-    "removeRegion": "Odstrani območje"
+    "removeRegion": "Odstrani območje",
+    "dates": {
+      "imageryDate": "Datum posnetkov v središču zemljevida",
+      "mapDate": "Datum zemljevida",
+      "olderImagery": "Starejši posnetki",
+      "newerImagery": "Novejši posnetki",
+      "yearEarlier": "Leto prej",
+      "yearLater": "Leto pozneje",
+      "matchPhotoDates": "Prilagodi datumom zajema fotografij",
+      "nearPhotoDates": "{{date}} (blizu datumov fotografij)",
+      "versionOf": "Različica z dne {{date}}",
+      "photosTakenOn": "Fotografije, posnete {{date}}",
+      "photosTakenFromTo": "Fotografije, posnete od {{first}} do {{last}}",
+      "noPhotoDates": "Nobena fotografija na zemljevidu nima datuma zajema.",
+      "loading": "Nalaganje datumov...",
+      "failed": "Datumov ni bilo mogoče naložiti.",
+      "zoomIn": "Povečajte, da vidite, kdaj so bili posnetki narejeni.",
+      "mapFailed": "Tega zemljevida ni mogoče prikazati."
+    }
   },
   "chart": {
     "moreAlt": "Več",

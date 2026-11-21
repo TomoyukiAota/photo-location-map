@@ -121,7 +121,25 @@
     "setText": "Tempatkan teks",
     "editRegion": "Edit area",
     "dragRegion": "Pindahkan area",
-    "removeRegion": "Hapus area"
+    "removeRegion": "Hapus area",
+    "dates": {
+      "imageryDate": "Tanggal citra di tengah peta",
+      "mapDate": "Tanggal peta",
+      "olderImagery": "Citra lebih lama",
+      "newerImagery": "Citra lebih baru",
+      "yearEarlier": "Satu tahun sebelumnya",
+      "yearLater": "Satu tahun sesudahnya",
+      "matchPhotoDates": "Sesuaikan dengan tanggal pengambilan foto",
+      "nearPhotoDates": "{{date}} (dekat tanggal foto)",
+      "versionOf": "Versi {{date}}",
+      "photosTakenOn": "Foto diambil pada {{date}}",
+      "photosTakenFromTo": "Foto diambil dari {{first}} sampai {{last}}",
+      "noPhotoDates": "Tidak ada foto di peta yang memiliki tanggal pengambilan.",
+      "loading": "Memuat tanggal...",
+      "failed": "Tanggal tidak dapat dimuat.",
+      "zoomIn": "Perbesar untuk melihat kapan citra diambil.",
+      "mapFailed": "Peta ini tidak dapat ditampilkan."
+    }
   },
   "chart": {
     "moreAlt": "Lainnya",

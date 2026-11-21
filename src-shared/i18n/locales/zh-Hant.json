@@ -121,7 +121,25 @@
     "setText": "放置文字",
     "editRegion": "編輯區域",
     "dragRegion": "移動區域",
-    "removeRegion": "移除區域"
+    "removeRegion": "移除區域",
+    "dates": {
+      "imageryDate": "地圖中心的影像拍攝日期",
+      "mapDate": "地圖日期",
+      "olderImagery": "較舊的影像",
+      "newerImagery": "較新的影像",
+      "yearEarlier": "早一年",
+      "yearLater": "晚一年",
+      "matchPhotoDates": "配合照片的拍攝日期",
+      "nearPhotoDates": "{{date}}（接近照片的日期）",
+      "versionOf": "{{date}} 的版本",
+      "photosTakenOn": "照片拍攝於 {{date}}",
+      "photosTakenFromTo": "照片拍攝於 {{first}} 至 {{last}}",
+      "noPhotoDates": "地圖上沒有照片有拍攝日期。",
+      "loading": "正在載入日期...",
+      "failed": "無法載入日期。",
+      "zoomIn": "放大即可查看影像的拍攝時間。",
+      "mapFailed": "無法顯示此地圖。"
+    }
   },
   "chart": {
     "moreAlt": "更多",
