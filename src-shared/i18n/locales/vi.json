@@ -176,6 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Đang tạo hình thu nhỏ cho các tệp HEIF...",
+    "fasterInSettings": "Để hiển thị sớm hơn, <settingsLink>hãy chọn hình thu nhỏ nhanh trong Cài đặt</settingsLink>.",
     "completed": "Đã tạo xong hình thu nhỏ cho các tệp HEIF.",
     "finishedWithErrors": "Việc tạo hình thu nhỏ cho các tệp HEIF đã kết thúc nhưng có lỗi.",
     "showDetails": "Hiển thị chi tiết",
@@ -209,6 +210,7 @@
       "language": "Ngôn ngữ (Language)",
       "appearance": "Giao diện",
       "dateTime": "Ngày & giờ",
+      "thumbnails": "Hình thu nhỏ",
       "os": "Hệ điều hành",
       "cache": "Bộ nhớ đệm"
     },
@@ -231,6 +233,14 @@
       "clock12": "12 giờ",
       "clock24": "24 giờ",
       "example": "Ví dụ"
+    },
+    "thumbnails": {
+      "title": "Hình thu nhỏ HEIF",
+      "description": "Ứng dụng này tạo hình thu nhỏ của các tệp HEIF, chẳng hạn như ảnh chụp bằng iPhone. Hãy chọn tạo chúng ưu tiên chất lượng hay tốc độ.",
+      "highQuality": "Chất lượng cao",
+      "highQualityDescription": "Được tạo từ toàn bộ ảnh, cạnh dài 400 điểm ảnh. Trong lúc chờ, hình thu nhỏ cỡ nhỏ được lưu trong ảnh sẽ được hiển thị. Trên máy tính có phần cứng đồ họa không giải mã được HEVC, việc tạo chúng mất thời gian.",
+      "fast": "Nhanh",
+      "fastDescription": "Hình thu nhỏ cỡ nhỏ được lưu trong ảnh, hiển thị ngay. Hình này kém sắc nét hơn: 320 × 240 điểm ảnh với ảnh 12 megapixel chụp bằng iPhone."
     },
     "os": {
       "title": "Menu ngữ cảnh của File Explorer",

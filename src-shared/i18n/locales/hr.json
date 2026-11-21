@@ -176,6 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Izrada minijatura za datoteke HEIF...",
+    "fasterInSettings": "Da bi se prikazale ranije, <settingsLink>odaberite brze minijature u postavkama</settingsLink>.",
     "completed": "Minijature za datoteke HEIF su izrađene.",
     "finishedWithErrors": "Izrada minijatura za datoteke HEIF završila je s pogreškama.",
     "showDetails": "Prikaži pojedinosti",
@@ -209,6 +210,7 @@
       "language": "Jezik (Language)",
       "appearance": "Izgled",
       "dateTime": "Datum i vrijeme",
+      "thumbnails": "Minijature",
       "os": "Sustav",
       "cache": "Predmemorija"
     },
@@ -231,6 +233,14 @@
       "clock12": "12-satni",
       "clock24": "24-satni",
       "example": "Primjer"
+    },
+    "thumbnails": {
+      "title": "Minijature HEIF",
+      "description": "Minijature datoteka HEIF, primjerice fotografija snimljenih iPhoneom, izrađuje ova aplikacija. Odaberite izrađuju li se s naglaskom na kvalitetu ili na brzinu.",
+      "highQuality": "Visoka kvaliteta",
+      "highQualityDescription": "Izrađuju se od cijele fotografije, s 400 piksela na duljoj stranici. Do tada se prikazuje mala minijatura spremljena u fotografiji. Na računalu čiji grafički hardver ne može dekodirati HEVC njihova izrada traje neko vrijeme.",
+      "fast": "Brzo",
+      "fastDescription": "Mala minijatura spremljena u fotografiji, prikazana odmah. Manje je oštra: 320 × 240 piksela za fotografiju od 12 megapiksela snimljenu iPhoneom."
     },
     "os": {
       "title": "Kontekstni izbornik Eksplorera za datoteke",

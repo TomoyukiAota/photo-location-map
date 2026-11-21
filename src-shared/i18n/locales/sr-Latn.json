@@ -176,6 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Pravljenje sličica za datoteke HEIF...",
+    "fasterInSettings": "Da biste ih prikazali ranije, <settingsLink>izaberite brze sličice u podešavanjima</settingsLink>.",
     "completed": "Sličice za datoteke HEIF su napravljene.",
     "finishedWithErrors": "Pravljenje sličica za datoteke HEIF završeno je sa greškama.",
     "showDetails": "Prikaži detalje",
@@ -209,6 +210,7 @@
       "language": "Jezik (Language)",
       "appearance": "Izgled",
       "dateTime": "Datum i vreme",
+      "thumbnails": "Sličice",
       "os": "Sistem",
       "cache": "Keš"
     },
@@ -231,6 +233,14 @@
       "clock12": "12-časovni",
       "clock24": "24-časovni",
       "example": "Primer"
+    },
+    "thumbnails": {
+      "title": "Sličice HEIF",
+      "description": "Sličice datoteka HEIF, na primer fotografija snimljenih iPhone-om, pravi ova aplikacija. Izaberite da li se prave s naglaskom na kvalitet ili na brzinu.",
+      "highQuality": "Visok kvalitet",
+      "highQualityDescription": "Prave se od cele fotografije, sa 400 piksela na dužoj stranici. Do tada se prikazuje mala sličica sačuvana u fotografiji. Na računaru čiji grafički hardver ne može da dekodira HEVC, njihovo pravljenje traje neko vreme.",
+      "fast": "Brzo",
+      "fastDescription": "Mala sličica sačuvana u fotografiji, prikazana odmah. Manje je oštra: 320 × 240 piksela za fotografiju od 12 megapiksela snimljenu iPhone-om."
     },
     "os": {
       "title": "Kontekstualni meni Istraživača datoteka",

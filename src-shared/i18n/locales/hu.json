@@ -176,6 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Bélyegképek készítése a HEIF-fájlokhoz...",
+    "fasterInSettings": "Ha hamarabb szeretné látni őket, <settingsLink>válassza a gyors bélyegképeket a beállításokban</settingsLink>.",
     "completed": "A HEIF-fájlok bélyegképei elkészültek.",
     "finishedWithErrors": "A HEIF-fájlok bélyegképeinek készítése hibákkal fejeződött be.",
     "showDetails": "Részletek megjelenítése",
@@ -209,6 +210,7 @@
       "language": "Nyelv (Language)",
       "appearance": "Megjelenés",
       "dateTime": "Dátum és idő",
+      "thumbnails": "Bélyegképek",
       "os": "Operációs rendszer",
       "cache": "Gyorsítótár"
     },
@@ -231,6 +233,14 @@
       "clock12": "12 órás formátum",
       "clock24": "24 órás formátum",
       "example": "Példa"
+    },
+    "thumbnails": {
+      "title": "HEIF-bélyegképek",
+      "description": "A HEIF-fájlok, például az iPhone-nal készült fotók bélyegképeit ez az alkalmazás készíti el. Válassza ki, hogy a minőség vagy a sebesség legyen a fontosabb.",
+      "highQuality": "Kiváló minőség",
+      "highQualityDescription": "A teljes fotóból készül, a hosszabbik oldalon 400 képponttal. Addig a fotóban tárolt kis bélyegkép látható. Olyan számítógépen, amelynek grafikus hardvere nem tudja dekódolni a HEVC-t, az elkészítésük időbe telik.",
+      "fast": "Gyors",
+      "fastDescription": "A fotóban tárolt kis bélyegkép, amely azonnal megjelenik. Kevésbé éles: iPhone-nal készült 12 megapixeles fotónál 320 × 240 képpont."
     },
     "os": {
       "title": "A Fájlkezelő helyi menüje",

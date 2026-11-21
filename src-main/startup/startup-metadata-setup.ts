@@ -38,6 +38,8 @@ export function createStartupMetadata(electronApp: Pick<Electron.App, 'getVersio
     isE2e: env.PLM_E2E === '1',
     logFile: { dirName: LogFileConfig.dirName, fileName: LogFileConfig.fileName, filePath: LogFileConfig.filePath },
     thumbnailCacheDir: plmThumbnailCacheDir,
+    // A test profile may turn off WebCodecs' HEVC in the page, for the cases of the generation of thumbnails.
+    hevcInPage: env.PLM_TEST_ROOT && env.PLM_TEST_HEVC_IN_PAGE === 'off' ? 'off' : 'auto',
   };
 }
 

@@ -176,6 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Tworzenie miniaturek plików HEIF...",
+    "fasterInSettings": "Aby wyświetlić je wcześniej, <settingsLink>wybierz szybkie miniaturki w ustawieniach</settingsLink>.",
     "completed": "Zakończono tworzenie miniaturek plików HEIF.",
     "finishedWithErrors": "Tworzenie miniaturek plików HEIF zakończyło się z błędami.",
     "showDetails": "Pokaż szczegóły",
@@ -209,6 +210,7 @@
       "language": "Język (Language)",
       "appearance": "Wygląd",
       "dateTime": "Data i czas",
+      "thumbnails": "Miniaturki",
       "os": "System",
       "cache": "Pamięć podręczna"
     },
@@ -231,6 +233,14 @@
       "clock12": "12-godzinny",
       "clock24": "24-godzinny",
       "example": "Przykład"
+    },
+    "thumbnails": {
+      "title": "Miniaturki HEIF",
+      "description": "Miniaturki plików HEIF, na przykład zdjęć zrobionych iPhone’em, tworzy ta aplikacja. Wybierz, czy mają być tworzone z myślą o jakości, czy o szybkości.",
+      "highQuality": "Wysoka jakość",
+      "highQualityDescription": "Tworzone z całego zdjęcia, 400 pikseli na dłuższym boku. Do tego czasu wyświetlana jest mała miniaturka zapisana w zdjęciu. Na komputerze, którego sprzęt graficzny nie potrafi dekodować HEVC, ich tworzenie zajmuje czas.",
+      "fast": "Szybkie",
+      "fastDescription": "Mała miniaturka zapisana w zdjęciu, wyświetlana od razu. Jest mniej ostra: 320 × 240 pikseli w przypadku 12-megapikselowego zdjęcia z iPhone’a."
     },
     "os": {
       "title": "Menu kontekstowe Eksploratora plików",

@@ -176,6 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Miniaturen für HEIF-Dateien werden erstellt...",
+    "fasterInSettings": "Um sie früher anzuzeigen, <settingsLink>wählen Sie in den Einstellungen die schnellen Miniaturen</settingsLink>.",
     "completed": "Die Miniaturen für HEIF-Dateien wurden erstellt.",
     "finishedWithErrors": "Das Erstellen der Miniaturen für HEIF-Dateien wurde mit Fehlern beendet.",
     "showDetails": "Details anzeigen",
@@ -209,6 +210,7 @@
       "language": "Sprache (Language)",
       "appearance": "Darstellung",
       "dateTime": "Datum & Uhrzeit",
+      "thumbnails": "Miniaturen",
       "os": "Betriebssystem",
       "cache": "Cache"
     },
@@ -231,6 +233,14 @@
       "clock12": "12-Stunden-Format",
       "clock24": "24-Stunden-Format",
       "example": "Beispiel"
+    },
+    "thumbnails": {
+      "title": "HEIF-Miniaturen",
+      "description": "Die Miniaturen von HEIF-Dateien, etwa von Fotos eines iPhones, erstellt diese Anwendung. Wählen Sie, ob sie auf Qualität oder auf Geschwindigkeit ausgelegt werden.",
+      "highQuality": "Hohe Qualität",
+      "highQualityDescription": "Aus dem ganzen Foto erstellt, mit 400 Pixeln an der längeren Seite. Bis dahin wird die kleine Miniatur angezeigt, die im Foto gespeichert ist. Auf einem Computer, dessen Grafikhardware HEVC nicht decodieren kann, braucht das Erstellen Zeit.",
+      "fast": "Schnell",
+      "fastDescription": "Die kleine Miniatur, die im Foto gespeichert ist, sofort angezeigt. Sie ist weniger scharf: 320 × 240 Pixel bei einem 12-Megapixel-Foto eines iPhones."
     },
     "os": {
       "title": "Kontextmenü des Explorers",

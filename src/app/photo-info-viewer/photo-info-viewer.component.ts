@@ -11,7 +11,7 @@ import { Photo } from '../shared/model/photo.model';
 import { openWithAssociatedApp } from '../shared/open-with-os';
 import { NearViewDirective } from '../shared/near-view/near-view.directive';
 import { OpenedDirectory } from '../shared/opened-directory';
-import { GeneratedThumbnailService } from './generated-thumbnail.service';
+import { HeifThumbnailService } from '../heif-thumbnail/heif-thumbnail.service';
 import { MoreOptionsMenuService } from './more-options-menu/more-options-menu.service';
 import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
 import { PhotoInfoViewerPlace } from './photo-info-viewer-place';
@@ -121,7 +121,7 @@ File path of generated thumbnail is "${thumbnailFilePath}"
  * - The template is used in the tree and in the cluster's popup. Leaflet makes a marker's popup itself, so the map
  *   makes that popup's component outside any template (src/app/map/leaflet-map/leaflet-content.service.ts).
  * - Nothing that has to last is kept here: how far the thumbnail is turned is in ThumbnailRotationService, and
- *   whether a thumbnail has been made in GeneratedThumbnailService. A component is made when its place shows the
+ *   the thumbnail of a HEIF photo in HeifThumbnailService. A component is made when its place shows the
  *   photo and destroyed when it no longer does, as when a folder of the tree is collapsed, so that a large folder
  *   costs no more than what is shown of it.
  * - Kept light: there is a component for every photo shown, thousands for a folder that has its photos in it, as
@@ -148,7 +148,7 @@ File path of generated thumbnail is "${thumbnailFilePath}"
   },
 })
 export class PhotoInfoViewerComponent {
-  private readonly generatedThumbnailService = inject(GeneratedThumbnailService);
+  private readonly heifThumbnailService = inject(HeifThumbnailService);
   private readonly thumbnailRotationService = inject(ThumbnailRotationService);
 
   public readonly photo = input.required<Photo>();
@@ -187,9 +187,12 @@ export class PhotoInfoViewerComponent {
       if (thumbnail.warning)
         logger.warn(thumbnail.warning);
 
+      // A HEIF photo's thumbnail is made once a place shows the photo, and replaced once its high quality is made.
+      if (FilenameExtension.isThumbnailGenerationAvailable(photo.filenameExtension))
+        this.heifThumbnailService.watch(photo.path);
+
       if (thumbnail.kind === 'generating') {
         photoPathOfGeneratingThumbnail = photo.path;
-        this.generatedThumbnailService.watch(photo.path);
         return;
       }
 
@@ -206,7 +209,8 @@ export class PhotoInfoViewerComponent {
 
   /**
    * The photo's thumbnail: from the EXIF data where it has one, otherwise the photo itself where the page can show
-   * it, otherwise the thumbnail that the main process makes, for a HEIF photo.
+   * it, otherwise, for a HEIF photo, the one that HeifThumbnailService makes: the small thumbnail that the photo holds,
+   * shown until the one of the quality that the settings choose is made.
    */
   protected thumbnail(): Thumbnail {
     const photo = this.photo();
@@ -217,8 +221,16 @@ export class PhotoInfoViewerComponent {
     if (FilenameExtension.isDisplayableInBrowser(photo.filenameExtension))
       return thumbnailOfPhotoItself(photo);
     if (FilenameExtension.isThumbnailGenerationAvailable(photo.filenameExtension)) {
-      const thumbnailFilePath = this.generatedThumbnailService.filePathOf(photo.path);
-      return thumbnailFilePath === undefined ? generatingThumbnail : thumbnailOfGeneratedFile(photo, thumbnailFilePath);
+      const heifThumbnail = this.heifThumbnailService.stateOf(photo.path);
+      switch (heifThumbnail.kind) {
+        case 'decoded':
+          return { kind: 'image', src: heifThumbnail.url, alt: null, warning: null };
+        case 'generated':
+          return thumbnailOfGeneratedFile(photo, heifThumbnail.filePath);
+        default:
+          return heifThumbnail.provisionalUrl === null ? generatingThumbnail
+            : { kind: 'image', src: heifThumbnail.provisionalUrl, alt: null, warning: null };
+      }
     }
     return unavailableThumbnail;
   }

@@ -176,6 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Ustvarjanje sličic za datoteke HEIF...",
+    "fasterInSettings": "Če jih želite prikazati prej, <settingsLink>v nastavitvah izberite hitre sličice</settingsLink>.",
     "completed": "Sličice za datoteke HEIF so ustvarjene.",
     "finishedWithErrors": "Ustvarjanje sličic za datoteke HEIF se je končalo z napakami.",
     "showDetails": "Prikaži podrobnosti",
@@ -209,6 +210,7 @@
       "language": "Jezik (Language)",
       "appearance": "Videz",
       "dateTime": "Datum in ura",
+      "thumbnails": "Sličice",
       "os": "Sistem",
       "cache": "Predpomnilnik"
     },
@@ -231,6 +233,14 @@
       "clock12": "12-urna",
       "clock24": "24-urna",
       "example": "Primer"
+    },
+    "thumbnails": {
+      "title": "Sličice HEIF",
+      "description": "Sličice datotek HEIF, na primer fotografij, posnetih z iPhonom, ustvari ta aplikacija. Izberite, ali naj se ustvarjajo s poudarkom na kakovosti ali na hitrosti.",
+      "highQuality": "Visoka kakovost",
+      "highQualityDescription": "Ustvarijo se iz celotne fotografije, s 400 slikovnimi pikami na daljši stranici. Do takrat je prikazana majhna sličica, shranjena v fotografiji. V računalniku, katerega grafična strojna oprema ne zmore dekodirati HEVC, njihovo ustvarjanje traja nekaj časa.",
+      "fast": "Hitro",
+      "fastDescription": "Majhna sličica, shranjena v fotografiji, je prikazana takoj. Je manj ostra: 320 × 240 slikovnih pik pri 12-megapikselski fotografiji, posneti z iPhonom."
     },
     "os": {
       "title": "Priročni meni Raziskovalca",

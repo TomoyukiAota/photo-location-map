@@ -176,6 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "HEIF dosyaları için küçük resimler oluşturuluyor...",
+    "fasterInSettings": "Daha erken göstermek için <settingsLink>ayarlarda hızlı küçük resimleri seçin</settingsLink>.",
     "completed": "HEIF dosyaları için küçük resimler oluşturuldu.",
     "finishedWithErrors": "HEIF dosyaları için küçük resim oluşturma işlemi hatalarla tamamlandı.",
     "showDetails": "Ayrıntıları göster",
@@ -209,6 +210,7 @@
       "language": "Dil (Language)",
       "appearance": "Görünüm",
       "dateTime": "Tarih ve saat",
+      "thumbnails": "Küçük Resimler",
       "os": "Sistem",
       "cache": "Önbellek"
     },
@@ -231,6 +233,14 @@
       "clock12": "12 saat",
       "clock24": "24 saat",
       "example": "Örnek"
+    },
+    "thumbnails": {
+      "title": "HEIF Küçük Resimleri",
+      "description": "iPhone ile çekilen fotoğraflar gibi HEIF dosyalarının küçük resimlerini bu uygulama oluşturur. Küçük resimlerin kaliteye mi yoksa hıza mı öncelik verilerek oluşturulacağını seçin.",
+      "highQuality": "Yüksek kalite",
+      "highQualityDescription": "Fotoğrafın tamamından, uzun kenarı 400 piksel olacak şekilde oluşturulur. O zamana kadar fotoğrafta saklanan küçük resim gösterilir. Grafik donanımı HEVC kodunu çözemeyen bir bilgisayarda bunları oluşturmak zaman alır.",
+      "fast": "Hızlı",
+      "fastDescription": "Fotoğrafta saklanan küçük resim hemen gösterilir. Daha az nettir: iPhone ile çekilen 12 megapiksellik bir fotoğrafta 320 × 240 pikseldir."
     },
     "os": {
       "title": "Dosya Gezgini bağlam menüsü",

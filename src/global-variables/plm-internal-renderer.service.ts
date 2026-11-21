@@ -4,7 +4,7 @@ import { Logger } from '../../src-shared/log/logger';
 import { AboutBoxComponent } from '../app/about-box/about-box.component';
 import { DirectoryTreeViewSelectionService } from '../app/directory-tree-view/directory-tree-view-selection.service';
 import { FaceSearchService } from '../app/face-search/face-search.service';
-import { SettingsDialogComponent } from '../app/settings-dialog/settings-dialog.component';
+import { SettingsDialogService } from '../app/settings-dialog/service/settings-dialog.service';
 import { OpenAfterLaunchService } from '../app/shared/service/open-after-launch.service';
 import { PhotoSelectionHistoryService } from '../app/shared/service/photo-selection-history.service';
 import { SelectPreviousNextService } from '../app/shared/service/select-previous-next.service';
@@ -21,6 +21,7 @@ import {
 @Service()
 export class PlmInternalRendererService {
   private dialog = inject(MatDialog);
+  private settingsDialogService = inject(SettingsDialogService);
   private directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);
   private openAfterLaunchService = inject(OpenAfterLaunchService);
   private photoSelectionHistoryService = inject(PhotoSelectionHistoryService);
@@ -80,15 +81,7 @@ export class PlmInternalRendererService {
   }
 
   private showSettingsDialog() {
-    this.dialog.open(SettingsDialogComponent, {
-      width: '1000px',
-      height: '600px',
-      panelClass: 'custom-dialog-container',
-      autoFocus: false,
-      restoreFocus: false,
-      disableClose: true
-    });
-    Logger.info('Displayed Settings Dialog.');
+    this.settingsDialogService.open();
   }
 
   private showWelcomeDialog(): void {

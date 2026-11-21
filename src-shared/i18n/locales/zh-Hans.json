@@ -176,6 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "正在为 HEIF 文件生成缩略图...",
+    "fasterInSettings": "若要更快地显示，<settingsLink>请在设置中选择“速度优先”</settingsLink>。",
     "completed": "HEIF 文件的缩略图已生成完毕。",
     "finishedWithErrors": "HEIF 文件缩略图的生成已结束，但出现了错误。",
     "showDetails": "显示详细信息",
@@ -209,6 +210,7 @@
       "language": "语言 (Language)",
       "appearance": "外观",
       "dateTime": "日期和时间",
+      "thumbnails": "缩略图",
       "os": "操作系统",
       "cache": "缓存"
     },
@@ -231,6 +233,14 @@
       "clock12": "12 小时制",
       "clock24": "24 小时制",
       "example": "示例"
+    },
+    "thumbnails": {
+      "title": "HEIF 缩略图",
+      "description": "HEIF 文件（例如用 iPhone 拍摄的照片）的缩略图由本应用程序生成。请选择优先考虑画质还是速度。",
+      "highQuality": "高画质",
+      "highQualityDescription": "从整张照片生成，长边为 400 像素。生成之前，会显示照片中保存的小缩略图。在图形硬件无法解码 HEVC 的计算机上，生成需要一些时间。",
+      "fast": "速度优先",
+      "fastDescription": "立即显示照片中保存的小缩略图。画质较低：用 iPhone 拍摄的 1200 万像素照片为 320 × 240 像素。"
     },
     "os": {
       "title": "文件资源管理器的右键菜单",

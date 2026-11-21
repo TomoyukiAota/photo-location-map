@@ -176,6 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "HEIF fitxategien miniaturak sortzen...",
+    "fasterInSettings": "Lehenago erakusteko, <settingsLink>aukeratu miniatura azkarrak ezarpenetan</settingsLink>.",
     "completed": "HEIF fitxategien miniaturak sortu dira.",
     "finishedWithErrors": "HEIF fitxategien miniaturen sorrera erroreekin amaitu da.",
     "showDetails": "Erakutsi xehetasunak",
@@ -209,6 +210,7 @@
       "language": "Hizkuntza (Language)",
       "appearance": "Itxura",
       "dateTime": "Data eta ordua",
+      "thumbnails": "Miniaturak",
       "os": "Sistema",
       "cache": "Cachea"
     },
@@ -231,6 +233,14 @@
       "clock12": "12 ordu",
       "clock24": "24 ordu",
       "example": "Adibidea"
+    },
+    "thumbnails": {
+      "title": "HEIF miniaturak",
+      "description": "Aplikazio honek sortzen ditu HEIF fitxategien miniaturak, adibidez iPhone batekin ateratako argazkienak. Aukeratu kalitateari edo abiadurari eman nahi diozun lehentasuna.",
+      "highQuality": "Kalitate handia",
+      "highQualityDescription": "Argazki osotik sortzen dira, alde luzeenean 400 pixelekin. Bitartean, argazkian gordetako miniatura txikia erakusten da. Grafikoen hardwarearekin HEVC deskodetu ezin duen ordenagailu batean, denbora behar da horiek sortzeko.",
+      "fast": "Azkarra",
+      "fastDescription": "Argazkian gordetako miniatura txikia, berehala erakusten dena. Ez da hain zorrotza: 320 × 240 pixel iPhone batekin ateratako 12 megapixeleko argazki batean."
     },
     "os": {
       "title": "Fitxategi-arakatzailearen laster-menua",

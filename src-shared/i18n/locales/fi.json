@@ -176,6 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Luodaan pikkukuvia HEIF-tiedostoille...",
+    "fasterInSettings": "Jos haluat ne näkyviin aiemmin, <settingsLink>valitse asetuksista nopeat pikkukuvat</settingsLink>.",
     "completed": "HEIF-tiedostojen pikkukuvat on luotu.",
     "finishedWithErrors": "HEIF-tiedostojen pikkukuvien luonti päättyi virheisiin.",
     "showDetails": "Näytä lisätiedot",
@@ -209,6 +210,7 @@
       "language": "Kieli (Language)",
       "appearance": "Ulkoasu",
       "dateTime": "Päivämäärä ja aika",
+      "thumbnails": "Pikkukuvat",
       "os": "Käyttöjärjestelmä",
       "cache": "Välimuisti"
     },
@@ -231,6 +233,14 @@
       "clock12": "12 tunnin kello",
       "clock24": "24 tunnin kello",
       "example": "Esimerkki"
+    },
+    "thumbnails": {
+      "title": "HEIF-pikkukuvat",
+      "description": "Tämä sovellus luo HEIF-tiedostojen, kuten iPhonella otettujen kuvien, pikkukuvat. Valitse, luodaanko ne laadun vai nopeuden mukaan.",
+      "highQuality": "Korkea laatu",
+      "highQualityDescription": "Luodaan koko kuvasta, pidempi sivu 400 pikseliä. Siihen asti näytetään kuvaan tallennettu pieni pikkukuva. Tietokoneella, jonka grafiikkalaitteisto ei pysty purkamaan HEVC-koodausta, niiden luominen vie aikaa.",
+      "fast": "Nopea",
+      "fastDescription": "Kuvaan tallennettu pieni pikkukuva, joka näytetään heti. Se on epätarkempi: 320 × 240 pikseliä iPhonella otetussa 12 megapikselin kuvassa."
     },
     "os": {
       "title": "Resurssienhallinnan pikavalikko",

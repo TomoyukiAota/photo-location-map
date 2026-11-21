@@ -176,6 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Miniaturen voor HEIF-bestanden worden aangemaakt...",
+    "fasterInSettings": "Als u ze eerder wilt zien, <settingsLink>kiest u snelle miniaturen in de instellingen</settingsLink>.",
     "completed": "De miniaturen voor HEIF-bestanden zijn aangemaakt.",
     "finishedWithErrors": "Het aanmaken van miniaturen voor HEIF-bestanden is beëindigd met fouten.",
     "showDetails": "Toon details",
@@ -209,6 +210,7 @@
       "language": "Taal (Language)",
       "appearance": "Weergave",
       "dateTime": "Datum en tijd",
+      "thumbnails": "Miniaturen",
       "os": "Besturingssysteem",
       "cache": "Cache"
     },
@@ -231,6 +233,14 @@
       "clock12": "12-uursnotatie",
       "clock24": "24-uursnotatie",
       "example": "Voorbeeld"
+    },
+    "thumbnails": {
+      "title": "HEIF-miniaturen",
+      "description": "De miniaturen van HEIF-bestanden, zoals foto’s die met een iPhone zijn gemaakt, worden door deze app aangemaakt. Kies of ze worden aangemaakt met voorrang voor kwaliteit of voor snelheid.",
+      "highQuality": "Hoge kwaliteit",
+      "highQualityDescription": "Aangemaakt uit de hele foto, met 400 pixels aan de langste zijde. Tot dan wordt de kleine miniatuur getoond die in de foto is opgeslagen. Op een computer waarvan de grafische hardware HEVC niet kan decoderen, kost het aanmaken tijd.",
+      "fast": "Snel",
+      "fastDescription": "De kleine miniatuur die in de foto is opgeslagen, meteen getoond. Deze is minder scherp: 320 × 240 pixels bij een foto van 12 megapixel die met een iPhone is gemaakt."
     },
     "os": {
       "title": "Contextmenu van Verkenner",
