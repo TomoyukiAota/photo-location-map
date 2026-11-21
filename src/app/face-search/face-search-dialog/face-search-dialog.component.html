@@ -1,22 +1,35 @@
 @let current = state();
-@if (current.kind === 'searching') {
-  <mat-progress-bar mode="determinate" [value]="percent()" [attr.aria-label]="'faceSearch.looking' | t"></mat-progress-bar>
-  <div class="texts">
-    <div>{{ 'faceSearch.looking' | t }}</div>
-    <div class="progress">{{ 'faceSearch.progress' | t: { done: current.done, total: current.total } }}</div>
-    @if (current.waitingForThumbnails) {
-      <div class="waiting">{{ 'faceSearch.waitingForThumbnails' | t }}</div>
-    }
-    <div class="on-this-computer">{{ 'faceSearch.onThisComputer' | t }}</div>
+@let count = photoCount();
+@let searching = current.kind === 'searching' ? current : { done: count, total: count, waitingForThumbnails: false };
+<!-- Every state of the dialog is laid out, one on top of another, and the one that applies is shown: the dialog is as
+     tall as the tallest, whatever it shows (face-search-dialog.component.scss). -->
+<div class="states">
+  <div class="state" [class.shown]="current.kind === 'searching'">
+    <mat-progress-bar mode="determinate" [value]="percent()" [attr.aria-label]="'faceSearch.looking' | t"></mat-progress-bar>
+    <div class="texts">
+      <div>{{ 'faceSearch.looking' | t }}</div>
+      <div class="with-number">
+        <span class="progress">{{ 'faceSearch.progress' | t: { done: searching.done, total: searching.total } }}</span>
+        <span class="sizer" aria-hidden="true">{{ 'faceSearch.progress' | t: { done: count, total: count } }}</span>
+      </div>
+      <div class="waiting" [class.not-now]="!searching.waitingForThumbnails">{{ 'faceSearch.waitingForThumbnails' | t }}</div>
+      <div class="on-this-computer">{{ 'faceSearch.onThisComputer' | t }}</div>
+    </div>
+    <button mat-stroked-button class="button" (click)="cancel()">{{ 'common.cancel' | t }}</button>
   </div>
-  <button mat-stroked-button class="button" (click)="cancel()">{{ 'common.cancel' | t }}</button>
-} @else {
-  <div class="texts message">
-    @switch (current.kind) {
-      @case ('noFacesFound') { {{ 'faceSearch.noFacesFound' | t }} }
-      @case ('notLookedAt') { {{ 'faceSearch.notLookedAt' | t: { count: current.count } }} }
-      @case ('failed') { {{ 'faceSearch.failed' | t }} }
-    }
+  <div class="state" [class.shown]="current.kind === 'noFacesFound'">
+    <div class="texts message">{{ 'faceSearch.noFacesFound' | t }}</div>
+    <button mat-stroked-button mat-dialog-close class="button">{{ 'common.close' | t }}</button>
   </div>
-  <button mat-stroked-button mat-dialog-close class="button">{{ 'common.close' | t }}</button>
-}
+  <div class="state" [class.shown]="current.kind === 'notLookedAt'">
+    <div class="texts message with-number">
+      <span>{{ 'faceSearch.notLookedAt' | t: { count: current.kind === 'notLookedAt' ? current.count : count } }}</span>
+      <span class="sizer" aria-hidden="true">{{ 'faceSearch.notLookedAt' | t: { count } }}</span>
+    </div>
+    <button mat-stroked-button mat-dialog-close class="button">{{ 'common.close' | t }}</button>
+  </div>
+  <div class="state" [class.shown]="current.kind === 'failed'">
+    <div class="texts message">{{ 'faceSearch.failed' | t }}</div>
+    <button mat-stroked-button mat-dialog-close class="button">{{ 'common.close' | t }}</button>
+  </div>
+</div>
