@@ -3049,9 +3049,11 @@ test('a launch while the app runs keeps Chromium\'s storage in a folder of its o
   // (src-main/session-data/session-data-setup.ts). The wait itself is reported, not checked, as a slow runner takes
   // its time too.
   const lockPath = path.join(profile, 'userData', 'instances', 'shared-session-data.lock');
+  // The lock's first line is the ID of the process that holds it (src-main/session-data/session-data-lock.ts).
+  const lockHolder = content => Number(content.split('\n')[0]);
   const first = await app.evaluate(({ app }) => ({ pid: process.pid, sessionData: app.getPath('sessionData') }));
   expect(await realpath(first.sessionData)).toBe(await realpath(path.join(profile, 'sessionData')));
-  expect(await readFile(lockPath, 'utf8')).toBe(String(first.pid));
+  expect(lockHolder(await readFile(lockPath, 'utf8'))).toBe(first.pid);
   const second = await _electron.launch(launchOptions());
   const chromiumLines = [];
   second.process().stderr?.on('data', data => chromiumLines.push(...String(data).split(/\r?\n/)));
@@ -3078,7 +3080,7 @@ test('a launch while the app runs keeps Chromium\'s storage in a folder of its o
     if (child.exitCode === null && child.signalCode === null) await stopApplication(child);
   }
   // The running app keeps the lock, which the second launch neither took nor removed.
-  expect(await readFile(lockPath, 'utf8')).toBe(String(first.pid));
+  expect(lockHolder(await readFile(lockPath, 'utf8'))).toBe(first.pid);
 });
 test('a folder dropped on the window opens once the user confirms, with all of its photos selected', async () => {
   const folder = path.join(profile, 'dropped 写真 # 100%');

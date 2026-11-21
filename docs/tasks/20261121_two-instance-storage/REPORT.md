@@ -56,13 +56,18 @@ wait is from its arrival to the app's code.
 
 - `src-main/session-data/`: the instance that creates
   `userData/instances/shared-session-data.lock` keeps Chromium's storage in
-  the profile, as before. The file holds its process ID, and is removed when
-  it quits, or, on Windows, when a shutdown or a log-off ends it. A lock whose
-  process has ended, or that was written before the computer last started, is
-  taken over. Any other instance sets `sessionData` to
-  `userData/instances/<process ID>` before the app is ready.
+  the profile, as before. The file holds its process ID and a value that no
+  other lock has, and is removed when it quits, or, on Windows, when a
+  shutdown or a log-off ends it. Any other instance sets `sessionData` to
+  `userData/instances/<process ID>` before the app is ready, and so does one
+  that cannot take or read the lock.
+- A lock whose process has ended, or that was written before the computer
+  last started, is taken over, by one instance at a time: the one that makes
+  the file of that lock's takeover, which is named after the lock. It removes
+  the lock only while it is still the same lock. No file is removed that
+  another instance may have made in its place.
 - Each launch removes, once the app is ready, the folders of the instances
-  that have ended.
+  that have ended, and the takeover files of locks that are gone.
 - The settings, the thumbnails and the other files of the application stay
   shared, as before.
 
@@ -73,6 +78,9 @@ wait is from its arrival to the app's code.
 - A process ID that another process takes before the computer restarts, after
   the instance that held the lock crashed: the lock is then thought held, and
   each new instance keeps a storage of its own until that process ends.
+- When the instances of three takeovers of one stale lock each end in the
+  middle of it, nobody takes that lock over, and each new instance keeps a
+  storage of its own.
 
 ## Checking it on Windows
 

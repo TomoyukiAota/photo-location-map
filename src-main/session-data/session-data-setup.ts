@@ -5,7 +5,8 @@ import * as path from 'path';
 import { Logger } from '../../src-shared/log/logger.js';
 import { isProcessRunning } from '../../src-shared/process/is-process-running.js';
 import {
-  instanceSessionDataFolder, releaseSessionDataLock, removeEndedInstancesSessionData, SessionDataHost, takeSessionDataLock,
+  instanceSessionDataFolder, releaseSessionDataLock, removeEndedInstancesSessionData, removeObsoleteTakeovers, SessionDataHost,
+  takeSessionDataLock,
 } from './session-data-lock.js';
 
 // TL;DR: An instance that starts while another runs on the same profile keeps Chromium's storage (Local Storage,
@@ -63,11 +64,12 @@ if (holdsLock()) {
   keepOwnSessionData();
 }
 
-// Once the app is ready, so as not to slow its start: the folders of the instances that have ended.
+// Once the app is ready, so as not to slow its start: the folders of the instances that have ended, and the files of the
+// takeovers of locks that are gone.
 app.whenReady()
-  .then(() => removeEndedInstancesSessionData(instancesFolder, host))
+  .then(async () => [...await removeEndedInstancesSessionData(instancesFolder, host), ...await removeObsoleteTakeovers(lockPath)])
   .then(removed => {
     if (removed.length > 0)
-      Logger.info(`[Session Data] Removed the storage of the instances that have ended: ${removed.join(', ')}`);
+      Logger.info(`[Session Data] Removed what the instances that have ended left: ${removed.join(', ')}`);
   })
-  .catch(error => Logger.warn('[Session Data] Could not remove the storage of the instances that have ended.', error));
+  .catch(error => Logger.warn('[Session Data] Could not remove what the instances that have ended left.', error));
