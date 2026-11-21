@@ -3,7 +3,6 @@ import Split from 'split.js';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { Logger } from '../../../src-shared/log/logger';
 import { perfMark } from '../../../src-shared/perf/perf-mark';
-import { LeafletMapForceRenderService } from '../map/leaflet-map/leaflet-map-force-render/leaflet-map-force-render.service';
 import { LoadedFilesStatusBarService } from '../loaded-files-status-bar/service/loaded-files-status-bar.service';
 import { ThumbnailGenerationStatusBarService } from '../thumbnail-generation/status-bar/service/thumbnail-generation-status-bar.service';
 import { SidebarUpperPaneComponent } from '../sidebar/upper-pane/sidebar-upper-pane.component';
@@ -29,7 +28,6 @@ export class HomeComponent implements AfterViewInit {
   public loadedFilesStatusBarService = inject(LoadedFilesStatusBarService);
   /** The rows kept at the top of the folder tree, which cover the top of the sidebar's lower pane. */
   public stickyRowsService = inject(DirTreeViewStickyRowsService);
-  private leafletMapForceRenderService = inject(LeafletMapForceRenderService);
 
   private sidebarSplitInstance: Split.Instance;
   private currentSidebarUpperPaneHeightPx: number;
@@ -62,9 +60,7 @@ export class HomeComponent implements AfterViewInit {
       gutterSize: gutterSize,
       snapOffset: 0,
     });
-
-    // Leaflet needs to be rendered again after Split.js starts working. Otherwise, the map is not rendered correctly.
-    this.leafletMapForceRenderService.forceRenderMapWithoutPhoto();
+    // The map takes the size that Split.js gives its pane, as it watches its size (LeafletMapComponent.watchSize()).
   }
 
   private configureSplitWithinSidebar(gutterSize: number) {
