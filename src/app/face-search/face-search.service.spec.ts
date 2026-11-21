@@ -118,24 +118,54 @@ describe('FaceSearchService', () => {
     expect(config.data.photoCount()).toBe(2);
   });
 
-  it('keeps saying that it waits for thumbnails for a second after no photo waits, so that the line does not flash', async () => {
-    const heif = photo('/trip/b.HEIC');
-    scores.set(photoFileUrl('/cache/b.HEIC.plm.jpg'), 0.9);
-    let release: () => void;
-    const held = new Promise<void>(resolve => release = resolve);
-    score.mockImplementationOnce(async () => { await held; return 0.9; });
-    selectPhotos([heif]);
+  it('keeps saying that it waits for thumbnails until no photo has waited for a second, so that the line does not flash', async () => {
+    vi.useFakeTimers();
+    try {
+      const [h1, h2, h3] = ['h1', 'h2', 'h3'].map(name => photo(`/trip/${name}.HEIC`));
+      const thumbnailOf = (heif: Photo) => `/cache/${heif.name}.plm.jpg`;
+      for (const heif of [h1, h2, h3])
+        scores.set(photoFileUrl(thumbnailOf(heif)), 0.9);
+      let releaseFirst: () => void;
+      let releaseSecond: () => void;
+      const first = new Promise<void>(resolve => releaseFirst = resolve);
+      const second = new Promise<void>(resolve => releaseSecond = resolve);
+      score.mockImplementationOnce(async () => { await first; return 0.9; })
+        .mockImplementationOnce(async () => { await second; return 0.9; });
+      const waitingShown = () => (state() as { waitingForThumbnails?: boolean }).waitingForThumbnails;
+      selectPhotos([h1, h2, h3]);
 
-    const searching = service.narrowDownSelectedPhotos();
-    await vi.waitFor(() => expect(state()).toMatchObject({ waitingForThumbnails: true }));
-    thumbnails.set(heif.path, '/cache/b.HEIC.plm.jpg');
-    // The photo is looked at, and waits no more: the dialog still says that the search waits, for a second.
-    await vi.waitFor(() => expect(score).toHaveBeenCalledTimes(1));
-    expect(state()).toMatchObject({ waitingForThumbnails: true });
-    await vi.waitFor(() => expect(state()).toMatchObject({ waitingForThumbnails: false }), { timeout: 3000 });
-    release();
-    await searching;
-    expect(select).toHaveBeenCalledWith([heif.path]);
+      // At 0 ms, h1 and h2 wait for their thumbnails, which the search looks for every 250 ms.
+      const searching = service.narrowDownSelectedPhotos();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(waitingShown()).toBe(true);
+      // At 250 ms, h1's is there: h2 still waits.
+      thumbnails.set(h1.path, thumbnailOf(h1));
+      await vi.advanceTimersByTimeAsync(250);
+      expect(waitingShown()).toBe(true);
+      // At 500 ms, h2's is there: no photo waits, and the line stays until 1500 ms...
+      thumbnails.set(h2.path, thumbnailOf(h2));
+      await vi.advanceTimersByTimeAsync(250);
+      expect(waitingShown()).toBe(true);
+      // ...but at 1000 ms, h1 is looked at, and h3, after it, waits: 1500 ms passes with the line shown.
+      await vi.advanceTimersByTimeAsync(500);
+      releaseFirst();
+      await vi.advanceTimersByTimeAsync(500);
+      expect(waitingShown()).toBe(true);
+      // At 1750 ms, h3's is there, and no photo waits: the line is shown until 2750 ms, and not after.
+      thumbnails.set(h3.path, thumbnailOf(h3));
+      await vi.advanceTimersByTimeAsync(250);
+      await vi.advanceTimersByTimeAsync(999);
+      expect(waitingShown()).toBe(true);
+      await vi.advanceTimersByTimeAsync(1);
+      expect(waitingShown()).toBe(false);
+
+      releaseSecond();
+      await vi.advanceTimersByTimeAsync(0);
+      await searching;
+      expect(select).toHaveBeenCalledWith([h1.path, h2.path, h3.path]);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('takes a photo whose metadata marks a face as having one, without looking at it, for JPEG files only', async () => {
