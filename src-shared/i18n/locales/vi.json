@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Thư mục đã mở - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Cuộn đến đây",
       "selectOnlyThisFile": "Chỉ chọn tệp này",
       "selectOnlyThisFolder": "Chỉ chọn thư mục này",
       "revealInMap": "Hiển thị trên bản đồ",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Giao diện",
-      "showStatusBar": "Hiển thị thanh trạng thái"
+      "showStatusBar": "Hiển thị thanh trạng thái",
+      "stickyFolders": {
+        "title": "Thư mục ghim ở đầu cây",
+        "description": "Khi cuộn cây thư mục, các thư mục phía trên những hàng đang hiển thị vẫn ở trên cùng. Thư mục đã mở và thư mục của những hàng đó luôn được giữ lại.",
+        "maximum": "Số hàng tối đa",
+        "leftOut": "Khi có nhiều thư mục hơn số hàng, bỏ bớt:",
+        "middle": "Các thư mục ở giữa",
+        "nearOpenedFolder": "Các thư mục gần thư mục đã mở",
+        "nearPhotos": "Các thư mục gần ảnh"
+      }
     },
     "dateTime": {
       "title": "Định dạng ngày và giờ",

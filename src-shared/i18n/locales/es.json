@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Carpeta abierta - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Desplazarse hasta aquí",
       "selectOnlyThisFile": "Seleccionar solo este archivo",
       "selectOnlyThisFolder": "Seleccionar solo esta carpeta",
       "revealInMap": "Mostrar en el mapa",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Apariencia",
-      "showStatusBar": "Mostrar la barra de estado"
+      "showStatusBar": "Mostrar la barra de estado",
+      "stickyFolders": {
+        "title": "Carpetas fijas en la parte superior del árbol",
+        "description": "Mientras se desplaza el árbol de carpetas, las carpetas que están por encima de las filas mostradas permanecen arriba. La carpeta abierta y la carpeta de esas filas se mantienen siempre.",
+        "maximum": "Número máximo de filas",
+        "leftOut": "Si hay más carpetas que filas, omitir:",
+        "middle": "Las carpetas del medio",
+        "nearOpenedFolder": "Las carpetas cercanas a la carpeta abierta",
+        "nearPhotos": "Las carpetas cercanas a las fotos"
+      }
     },
     "dateTime": {
       "title": "Formato de fecha y hora",

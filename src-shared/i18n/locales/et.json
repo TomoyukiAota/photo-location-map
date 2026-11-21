@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Avatud kaust - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Keri siia",
       "selectOnlyThisFile": "Vali ainult see fail",
       "selectOnlyThisFolder": "Vali ainult see kaust",
       "revealInMap": "Kuva kaardil",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Välimus",
-      "showStatusBar": "Kuva olekuriba"
+      "showStatusBar": "Kuva olekuriba",
+      "stickyFolders": {
+        "title": "Puu ülaossa kinnitatud kaustad",
+        "description": "Kaustapuu kerimise ajal jäävad kuvatud ridade kohal olevad kaustad üles. Avatud kaust ja nende ridade kaust jäävad alati alles.",
+        "maximum": "Ridade maksimumarv",
+        "leftOut": "Kui kaustu on rohkem kui ridu, jäta välja:",
+        "middle": "Keskel olevad kaustad",
+        "nearOpenedFolder": "Avatud kausta lähedal olevad kaustad",
+        "nearPhotos": "Fotode lähedal olevad kaustad"
+      }
     },
     "dateTime": {
       "title": "Kuupäeva ja kellaaja vorming",

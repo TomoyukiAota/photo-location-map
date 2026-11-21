@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Otvorený priečinok - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Posunúť sem",
       "selectOnlyThisFile": "Vybrať len tento súbor",
       "selectOnlyThisFolder": "Vybrať len tento priečinok",
       "revealInMap": "Zobraziť na mape",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Vzhľad",
-      "showStatusBar": "Zobraziť stavový riadok"
+      "showStatusBar": "Zobraziť stavový riadok",
+      "stickyFolders": {
+        "title": "Priečinky pripnuté hore v strome",
+        "description": "Pri posúvaní stromu priečinkov zostávajú priečinky nad zobrazenými riadkami hore. Otvorený priečinok a priečinok týchto riadkov zostávajú vždy.",
+        "maximum": "Maximálny počet riadkov",
+        "leftOut": "Ak je priečinkov viac ako riadkov, vynechať:",
+        "middle": "Priečinky v strede",
+        "nearOpenedFolder": "Priečinky blízko otvoreného priečinka",
+        "nearPhotos": "Priečinky blízko fotiek"
+      }
     },
     "dateTime": {
       "title": "Formát dátumu a času",

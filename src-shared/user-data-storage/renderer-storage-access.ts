@@ -16,6 +16,8 @@ export const rendererWritableStoragePaths: ReadonlyArray<ReadonlyArray<string>> 
   UserDataStoragePath.UserSettings.ClockSystemFormat,
   UserDataStoragePath.UserSettings.Language,
   UserDataStoragePath.UserSettings.ThumbnailQuality,
+  UserDataStoragePath.UserSettings.StickyFolderRowsMaximum,
+  UserDataStoragePath.UserSettings.StickyFolderRowsLeftOut,
 ];
 
 /** What a renderer reads: what it writes, and the analytics user ID, which the main process makes. */

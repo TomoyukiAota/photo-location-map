@@ -41,4 +41,18 @@ describe('dirTreeViewContextMenuItems', () => {
 
     expect(revealInMap).toHaveBeenCalledExactlyOnceWith(photo);
   });
+
+  it('has Scroll to Here first in the menu of a row kept at the top of the tree, and nowhere else', () => {
+    const scrollToHere = vi.fn();
+    const data = { node: { type: 'directory', isSelectable: true } as NestedNode, scrollToHere };
+    const shown = (language: LanguageCode) => dirTreeViewContextMenuItems.filter(item => item.visible(data))
+      .map(item => tIn(language, item.textKey(data)));
+    expect(shown('en')).toEqual(['Scroll to Here', 'Select Only This', 'Open', 'Open Folder']);
+    expect(shown('ja')).toEqual(['このフォルダーまでスクロール', 'このフォルダーのみを選択', '開く', 'フォルダーを開く']);
+    expect(texts('directory', 'en')).not.toContain('Scroll to Here');
+
+    const item = dirTreeViewContextMenuItems.find(each => each.textKey(data) === 'directoryTree.contextMenu.scrollToHere');
+    item.onClick(data, TestBed.inject(Injector));
+    expect(scrollToHere).toHaveBeenCalledTimes(1);
+  });
 });

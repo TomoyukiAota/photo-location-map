@@ -16,10 +16,8 @@ export class DirTreeViewContextMenuHelper {
     });
   }
 
-  public static createData(node: NestedNode): ContextMenuData {
-    return {
-      node,
-    };
+  public static createData(node: NestedNode, scrollToHere?: () => void): ContextMenuData {
+    return scrollToHere ? { node, scrollToHere } : { node };
   }
 
   // Disable focus on all buttons in order to get rid of the first button being automatically focused when the context menu is opened.

@@ -1,0 +1,25 @@
+<!--
+  Each row as a folder's row of the tree, lower: the chevron collapses the folder, the checkbox and the name select or
+  deselect its photos, and the menu's Scroll to Here shows its own row. The rows of outer folders are drawn over those
+  of inner ones, which the end of a folder's contents pushes up under them. The row of the folders left out names them
+  in its tooltip.
+-->
+@for (row of rows(); track row.key; let index = $index, last = $last) {
+  @if (row.leftOutNames !== undefined) {
+    <div class="sticky-row left-out" [class.last]="last" [title]="row.leftOutNames"
+         [style.top.px]="row.top" [style.height.px]="rowHeight" [style.width.px]="width()"
+         [style.z-index]="rows().length - index"
+         [style.padding-inline-start.px]="row.level * host().indentPerLevel">
+      <mat-icon class="left-out-icon" fontIcon="more_horiz" />
+    </div>
+  } @else {
+    <div class="sticky-row" [class.last]="last"
+         [style.top.px]="row.top" [style.height.px]="rowHeight" [style.width.px]="width()"
+         [style.z-index]="rows().length - index"
+         [style.padding-inline-start.px]="row.level * host().indentPerLevel"
+         (contextmenu)="openMenu($event, row.node)">
+      <mat-icon class="chevron" fontIcon="expand_more" (click)="collapse(row.node)" />
+      <app-dir-tree-view-folder-checkbox-and-name [node]="row.node" [focusable]="false" (toggled)="toggle(row.node)" />
+    </div>
+  }
+}

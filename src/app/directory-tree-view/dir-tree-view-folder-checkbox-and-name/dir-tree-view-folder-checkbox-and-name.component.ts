@@ -21,6 +21,11 @@ import { NestedNode } from '../directory-tree-view.model';
 })
 export class DirTreeViewFolderCheckboxAndNameComponent {
   public readonly node = input.required<NestedNode>();
+  /**
+   * Whether the Tab key reaches the checkbox: not in a copy of the row, as those kept at the top of the tree are
+   * (DirTreeViewStickyRowsComponent), whose own row the keyboard reaches.
+   */
+  public readonly focusable = input(true);
   /** A click on the checkbox, which selects the folder's photos or deselects them. */
   public readonly toggled = output<void>();
 

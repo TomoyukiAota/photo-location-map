@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Folder yang dibuka - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Tatal ke sini",
       "selectOnlyThisFile": "Pilih fail ini sahaja",
       "selectOnlyThisFolder": "Pilih folder ini sahaja",
       "revealInMap": "Tunjukkan pada peta",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Penampilan",
-      "showStatusBar": "Tunjukkan bar status"
+      "showStatusBar": "Tunjukkan bar status",
+      "stickyFolders": {
+        "title": "Folder yang disematkan di bahagian atas pepohon",
+        "description": "Semasa pepohon folder ditatal, folder di atas baris yang ditunjukkan kekal di bahagian atas. Folder yang dibuka dan folder bagi baris tersebut sentiasa dikekalkan.",
+        "maximum": "Bilangan baris maksimum",
+        "leftOut": "Apabila terdapat lebih banyak folder daripada baris, tinggalkan:",
+        "middle": "Folder di tengah",
+        "nearOpenedFolder": "Folder yang dekat dengan folder yang dibuka",
+        "nearPhotos": "Folder yang dekat dengan foto"
+      }
     },
     "dateTime": {
       "title": "Format tarikh dan masa",

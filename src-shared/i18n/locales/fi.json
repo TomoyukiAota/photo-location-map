@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Avattu kansio - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Vieritä tähän",
       "selectOnlyThisFile": "Valitse vain tämä tiedosto",
       "selectOnlyThisFolder": "Valitse vain tämä kansio",
       "revealInMap": "Näytä kartalla",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Ulkoasu",
-      "showStatusBar": "Näytä tilapalkki"
+      "showStatusBar": "Näytä tilapalkki",
+      "stickyFolders": {
+        "title": "Puun yläreunaan kiinnitetyt kansiot",
+        "description": "Kun kansiopuuta vieritetään, näkyvien rivien yläpuolella olevat kansiot pysyvät ylhäällä. Avattu kansio ja näiden rivien kansio pysyvät aina.",
+        "maximum": "Rivien enimmäismäärä",
+        "leftOut": "Kun kansioita on enemmän kuin rivejä, jätä pois:",
+        "middle": "Keskellä olevat kansiot",
+        "nearOpenedFolder": "Avattua kansiota lähellä olevat kansiot",
+        "nearPhotos": "Kuvia lähellä olevat kansiot"
+      }
     },
     "dateTime": {
       "title": "Päivämäärän ja ajan muoto",

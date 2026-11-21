@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "開いたフォルダー - {{path}}",
     "contextMenu": {
+      "scrollToHere": "このフォルダーまでスクロール",
       "selectOnlyThisFile": "このファイルのみを選択",
       "selectOnlyThisFolder": "このフォルダーのみを選択",
       "revealInMap": "マップで表示",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "外観",
-      "showStatusBar": "ステータスバーを表示"
+      "showStatusBar": "ステータスバーを表示",
+      "stickyFolders": {
+        "title": "ツリーの上に残すフォルダー",
+        "description": "フォルダーのツリーをスクロールしている間、表示している行の上のフォルダーをツリーの上に残します。開いたフォルダーと、表示している行のフォルダーは常に残します。",
+        "maximum": "最大の段数",
+        "leftOut": "フォルダーが段数より多いときに省くもの:",
+        "middle": "真ん中のフォルダー",
+        "nearOpenedFolder": "開いたフォルダーに近いフォルダー",
+        "nearPhotos": "写真に近いフォルダー"
+      }
     },
     "dateTime": {
       "title": "日時の形式",

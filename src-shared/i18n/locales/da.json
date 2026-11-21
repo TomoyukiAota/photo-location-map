@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Åbnet mappe - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Rul hertil",
       "selectOnlyThisFile": "Vælg kun denne fil",
       "selectOnlyThisFolder": "Vælg kun denne mappe",
       "revealInMap": "Vis på kortet",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Udseende",
-      "showStatusBar": "Vis statuslinje"
+      "showStatusBar": "Vis statuslinje",
+      "stickyFolders": {
+        "title": "Mapper fastgjort øverst i træet",
+        "description": "Mens mappetræet rulles, bliver mapperne over de viste rækker stående øverst. Den åbnede mappe og mappen for disse rækker bliver altid stående.",
+        "maximum": "Maksimalt antal rækker",
+        "leftOut": "Når der er flere mapper end rækker, udelad:",
+        "middle": "Mapperne i midten",
+        "nearOpenedFolder": "Mapperne tæt på den åbnede mappe",
+        "nearPhotos": "Mapperne tæt på billederne"
+      }
     },
     "dateTime": {
       "title": "Dato- og tidsformat",

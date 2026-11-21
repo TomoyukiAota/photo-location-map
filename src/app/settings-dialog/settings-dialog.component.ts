@@ -13,6 +13,7 @@ import {
   saveUserSettingsAndRestartApp,
   UserSettingsToBeSaved
 } from '../../../src-shared/user-settings/user-settings';
+import { DirTreeViewStickyRowsService } from '../directory-tree-view/dir-tree-view-sticky-rows/dir-tree-view-sticky-rows.service';
 import { HeifThumbnailService } from '../heif-thumbnail/heif-thumbnail.service';
 import { ConfirmDialogService } from '../shared/confirm-dialog/confirm-dialog.service';
 import { TranslatePipe } from '../shared/i18n/translate.pipe';
@@ -64,6 +65,7 @@ export class SettingsDialogComponent {
   private restoreSettingsService = inject(RestoreSettingsService);
   private confirmDialogService = inject(ConfirmDialogService);
   private heifThumbnailService = inject(HeifThumbnailService);
+  private stickyRowsService = inject(DirTreeViewStickyRowsService);
   private data = inject<SettingsDialogData | null>(MAT_DIALOG_DATA, { optional: true });
 
   public readonly tabs = availableSettingsTabs;
@@ -86,7 +88,9 @@ export class SettingsDialogComponent {
     const settings = this.userSettingsToBeSaved();
     const showStatusBarChanged = settings.showStatusBar !== currentUserSettings.showStatusBar;
     const thumbnailQualityChanged = settings.thumbnailQuality !== currentUserSettings.thumbnailQuality;
-    return showStatusBarChanged || thumbnailQualityChanged || this.isAppRestartRequired();
+    const stickyFolderRowsChanged = settings.stickyFolderRowsMaximum !== currentUserSettings.stickyFolderRowsMaximum
+      || settings.stickyFolderRowsLeftOut !== currentUserSettings.stickyFolderRowsLeftOut;
+    return showStatusBarChanged || thumbnailQualityChanged || stickyFolderRowsChanged || this.isAppRestartRequired();
   });
 
   /**
@@ -112,7 +116,12 @@ export class SettingsDialogComponent {
 
     // The service outlives the dialog, so each dialog stops listening when it closes.
     settingsChangedService.appearanceSettingsChanged.pipe(takeUntilDestroyed()).subscribe(changed => {
-      this.userSettingsToBeSaved.update(settings => ({ ...settings, showStatusBar: changed.showStatusBar }));
+      this.userSettingsToBeSaved.update(settings => ({
+        ...settings,
+        showStatusBar: changed.showStatusBar,
+        stickyFolderRowsMaximum: changed.stickyFolderRowsMaximum,
+        stickyFolderRowsLeftOut: changed.stickyFolderRowsLeftOut,
+      }));
     });
     settingsChangedService.languageSettingsChanged.pipe(takeUntilDestroyed()).subscribe(changed => {
       this.userSettingsToBeSaved.update(settings => ({ ...settings, language: changed.language }));
@@ -152,6 +161,8 @@ export class SettingsDialogComponent {
       // Applies at once: the thumbnails of the opened folder are made again.
       if (isThumbnailQualityChanged)
         void this.heifThumbnailService.applyThumbnailQuality();
+      // Applies at once: the rows kept at the top of the folder tree, which saving has just set in currentUserSettings.
+      this.stickyRowsService.applySettings();
       this.settingsDialogRef.close();
     }
   }

@@ -1,5 +1,5 @@
 import { FocusMonitor, TREE_KEY_MANAGER } from '@angular/cdk/a11y';
-import { Component, DestroyRef, effect, Injector, signal, untracked, viewChild, viewChildren, inject } from '@angular/core';
+import { Component, DestroyRef, effect, ElementRef, Injector, signal, untracked, viewChild, viewChildren, inject } from '@angular/core';
 import { MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem } from '@angular/material/menu';
 import { MatTree, MatTreeNodeDef, MatTreeNodeToggle, MatTreeNodePadding } from '@angular/material/tree';
 import { Analytics } from '../../../src-shared/analytics/analytics';
@@ -25,6 +25,8 @@ import { DirectoryTreeViewDataService } from './directory-tree-view-data.service
 import { DirectoryTreeViewSelectionService } from './directory-tree-view-selection.service';
 import { DirTreeViewSortConfig } from './dir-tree-view-sort/dir-tree-view-sort-config';
 import { DirTreeViewSortService } from './dir-tree-view-sort/dir-tree-view-sort.service';
+import { DirTreeViewStickyRowsComponent, StickyRowsHost } from './dir-tree-view-sticky-rows/dir-tree-view-sticky-rows.component';
+import { DirTreeViewStickyRowsService } from './dir-tree-view-sticky-rows/dir-tree-view-sticky-rows.service';
 import { NestedNode } from './directory-tree-view.model';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -40,6 +42,7 @@ const dirTreeViewLogger = createPrependedLogger('[Directory Tree View]');
     MatTree, MatTreeNodeDef, DirTreeViewTreeNodeDirective, MatTreeNodeToggle, MatTreeNodePadding, MatIconButton,
     PhotoInfoViewerComponent, MatIcon, MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem,
     TranslatePipe, NearViewDirective, DirTreeViewCheckboxAndNameComponent, DirTreeViewFolderCheckboxAndNameComponent,
+    DirTreeViewStickyRowsComponent,
   ],
   providers: [
     // The tree's keys leave Select Previous and Select Next to the Selection menu.
@@ -69,6 +72,7 @@ export class DirectoryTreeViewComponent {
   public readonly childrenAccessor = (node: NestedNode): NestedNode[] => this.tree().isExpanded(node) ? node.children : [];
   public readonly hasChildren = (_: number, node: NestedNode) => this.isExpandable(node);
   private readonly tree = viewChild.required<MatTree<NestedNode>>('tree');
+  private readonly treeElement = viewChild.required('tree', { read: ElementRef<HTMLElement> });
   private readonly selection = inject(DirTreeViewNodeSelection);
   private readonly positions = inject(DirTreeViewNodePositions);
   // The parent of every node of the tree, shown or not, and null for the root. Its keys are all the nodes.
@@ -230,13 +234,14 @@ export class DirectoryTreeViewComponent {
   /** The services that the items of the context menu use. */
   protected readonly injector = inject(Injector);
 
-  public onContextMenu(event: MouseEvent, node: NestedNode) {
+  /** Opens the menu of a row; that of a row kept at the top of the tree has Scroll to Here, which `scrollToHere` does. */
+  public onContextMenu(event: MouseEvent, node: NestedNode, scrollToHere?: () => void) {
     event.preventDefault();
     const contextMenu = this.contextMenu();
     this.contextMenuHelper.configureStyleForContextMenuTarget(event, contextMenu);
     this.contextMenuPosition.x = event.clientX + 'px';
     this.contextMenuPosition.y = event.clientY + 'px';
-    contextMenu.menuData = { 'contextMenuData': this.contextMenuHelper.createData(node) };
+    contextMenu.menuData = { 'contextMenuData': this.contextMenuHelper.createData(node, scrollToHere) };
     contextMenu.openMenu();
     this.contextMenuHelper.disableFocus(this.focusMonitor);
     this.contextMenuHelper.configureClosingWithRightClick(contextMenu);
@@ -246,8 +251,10 @@ export class DirectoryTreeViewComponent {
   //#region --- Reveal ---
   /** The rows that the tree shows, each with its node as its data. */
   private readonly treeNodes = viewChildren(DirTreeViewTreeNodeDirective);
-  /** The sidebar's scroll to a revealed row. */
-  private readonly easedScroll = new EasedScroll();
+  /** The rows kept at the top of the tree, which cover the top of the sidebar's pane. */
+  private readonly stickyRows = inject(DirTreeViewStickyRowsService);
+  /** The sidebar's scroll to a revealed row, below the rows that the tree will keep at its top where it stops. */
+  private readonly easedScroll = new EasedScroll(scrollTop => this.stickyRows.coveredHeightAt(scrollTop));
   private readonly revealHighlights = new RevealHighlights();
 
   /**
@@ -293,4 +300,77 @@ export class DirectoryTreeViewComponent {
     return folders;
   }
   //#endregion --- Reveal ---
+
+  //#region --- Rows kept at the top ---
+  // The rows by their nodes and the nodes by their rows, made again only when one is not found: the tree makes and
+  // removes rows only when a folder is expanded or collapsed, or the tree is sorted or replaced.
+  private rowsByNode = new Map<NestedNode, HTMLElement>();
+  private nodesByRow = new WeakMap<Element, NestedNode>();
+
+  private findRows(): void {
+    this.rowsByNode = new Map();
+    this.nodesByRow = new WeakMap();
+    for (const treeNode of this.treeNodes()) {
+      const row: HTMLElement = treeNode._elementRef.nativeElement;
+      this.rowsByNode.set(treeNode.data, row);
+      this.nodesByRow.set(row, treeNode.data);
+    }
+  }
+
+  /** What the rows kept at the top of the tree ask of it (DirTreeViewStickyRowsComponent). */
+  public readonly stickyRowsHost: StickyRowsHost = {
+    indentPerLevel: this.indentPerLevel,
+    rowElements: () => this.treeElement().nativeElement.children,
+    rowOf: node => {
+      let row = this.rowsByNode.get(node);
+      if (!row?.isConnected) {
+        this.findRows();
+        row = this.rowsByNode.get(node);
+      }
+      return row;
+    },
+    nodeOfRow: row => {
+      let node = this.nodesByRow.get(row);
+      if (!node) {
+        this.findRows();
+        node = this.nodesByRow.get(row);
+      }
+      return node;
+    },
+    parentOf: node => this.getParentNode(node),
+    roots: () => this.treeData(),
+    isOpenFolder: node => this.isExpandable(node) && this.tree().isExpanded(node),
+    toggle: node => this.handleCheckboxChange(node),
+    collapse: (node, offset) => this.collapseFromStickyRow(node, offset),
+    scrollTo: (node, offset) => this.scrollToFolder(node, offset),
+    openMenu: (event, node, scrollToHere) => this.onContextMenu(event, node, scrollToHere),
+  };
+
+  /** Collapses the folder of a row kept at the top, whose own row then comes there, below the rows above it. */
+  private collapseFromStickyRow(node: NestedNode, offset: number): void {
+    dirTreeViewLogger.info(`Collapsed "${node.path}" from its row at the top of the tree.`);
+    Analytics.trackEvent('Directory Tree View', '[Tree View] [Sticky Row] Collapse');
+    this.tree().collapse(node);
+    const row = this.stickyRowsHost.rowOf(node);
+    if (row)
+      this.easedScroll.placeAtTop(row, offset);
+  }
+
+  /**
+   * Scroll to Here, from the menu of a row kept at the top: scrolls the tree to the folder's own row, which comes right
+   * below the rows of the folders above it, and lights it up and focuses it once there, as Reveal does a photo's row.
+   */
+  private scrollToFolder(node: NestedNode, offset: number): void {
+    const row = this.stickyRowsHost.rowOf(node);
+    if (!row)
+      return;
+    dirTreeViewLogger.info(`Scroll to Here: "${node.path}"`);
+    Analytics.trackEvent('Directory Tree View', '[Tree View] [Ctx Menu] Scroll to Here');
+    this.revealHighlights.fadeLitRows();
+    this.easedScroll.toTop(row, offset, () => {
+      this.revealHighlights.light(row);
+      row.focus({ preventScroll: true });
+    });
+  }
+  //#endregion --- Rows kept at the top ---
 }

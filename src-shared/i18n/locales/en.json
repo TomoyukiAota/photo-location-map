@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Opened Folder - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Scroll to Here",
       "selectOnlyThisFile": "Select Only This",
       "selectOnlyThisFolder": "Select Only This",
       "revealInMap": "Reveal in Map",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Appearance",
-      "showStatusBar": "Show Status Bar"
+      "showStatusBar": "Show Status Bar",
+      "stickyFolders": {
+        "title": "Folders Kept at the Top of the Tree",
+        "description": "While the folder tree is scrolled, the folders above the rows shown stay at its top. The opened folder and the folder of those rows are always kept.",
+        "maximum": "Maximum Rows",
+        "leftOut": "When there are more folders than rows, leave out:",
+        "middle": "The folders in the middle",
+        "nearOpenedFolder": "The folders near the opened folder",
+        "nearPhotos": "The folders near the photos"
+      }
     },
     "dateTime": {
       "title": "Date & Time Format",

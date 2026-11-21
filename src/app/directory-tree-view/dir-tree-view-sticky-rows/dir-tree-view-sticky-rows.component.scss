@@ -1,0 +1,54 @@
+@use "../../../styles/color" as *;
+
+// A box of no height that sticks at the top of the sidebar's pane, inside what the pane scrolls, so that it scrolls
+// sideways with the tree; the rows are placed in it, over the tree's rows.
+:host {
+  display: block;
+  position: sticky;
+  top: 0;
+  height: 0;
+  z-index: 2;
+}
+
+.sticky-row {
+  position: absolute;
+  inset-inline-start: 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  font-size: 13px;
+  background-color: #ffffff;
+  transition: background-color 0.2s ease;
+
+  // As a row of the tree under the pointer, and while its menu is open: over white, as the rows below show through.
+  &:hover,
+  &.context-menu-target {
+    background: linear-gradient($white-background_hover, $white-background_hover), #ffffff;
+  }
+
+  // The last row has a shadow below it, over the rows of the tree that scroll under the rows kept at the top.
+  &.last {
+    box-shadow: 0 4px 4px -3px rgba(0, 0, 0, 0.3);
+  }
+}
+
+// In the place of the 48 pixels of a row's chevron button, so that a row's checkbox is where it is in the tree.
+.chevron {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  margin-inline: 14px;
+  cursor: pointer;
+}
+
+// The checkbox's area that shows the pointer over it, as high as the row allows.
+app-dir-tree-view-folder-checkbox-and-name {
+  --mat-checkbox-state-layer-size: 24px;
+}
+
+.left-out-icon {
+  margin-inline-start: 48px;
+  color: rgba(0, 0, 0, 0.54);
+}

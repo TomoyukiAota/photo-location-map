@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Carpeta oberta - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Desplaça fins aquí",
       "selectOnlyThisFile": "Selecciona només aquest fitxer",
       "selectOnlyThisFolder": "Selecciona només aquesta carpeta",
       "revealInMap": "Mostra al mapa",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Aparença",
-      "showStatusBar": "Mostra la barra d’estat"
+      "showStatusBar": "Mostra la barra d’estat",
+      "stickyFolders": {
+        "title": "Carpetes fixades a la part superior de l’arbre",
+        "description": "Mentre es desplaça l’arbre de carpetes, les carpetes que hi ha per sobre de les files mostrades es queden a dalt. La carpeta oberta i la carpeta d’aquestes files sempre es mantenen.",
+        "maximum": "Nombre màxim de files",
+        "leftOut": "Quan hi ha més carpetes que files, omet:",
+        "middle": "Les carpetes del mig",
+        "nearOpenedFolder": "Les carpetes properes a la carpeta oberta",
+        "nearPhotos": "Les carpetes properes a les fotos"
+      }
     },
     "dateTime": {
       "title": "Format de data i hora",

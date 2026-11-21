@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Geöffneter Ordner - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Hierher scrollen",
       "selectOnlyThisFile": "Nur diese Datei auswählen",
       "selectOnlyThisFolder": "Nur diesen Ordner auswählen",
       "revealInMap": "Auf der Karte anzeigen",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Darstellung",
-      "showStatusBar": "Statusleiste anzeigen"
+      "showStatusBar": "Statusleiste anzeigen",
+      "stickyFolders": {
+        "title": "Oben fixierte Ordner",
+        "description": "Während die Ordnerstruktur gescrollt wird, bleiben die Ordner über den angezeigten Zeilen oben stehen. Der geöffnete Ordner und der Ordner dieser Zeilen bleiben immer stehen.",
+        "maximum": "Maximale Anzahl der Zeilen",
+        "leftOut": "Wenn es mehr Ordner als Zeilen gibt, auslassen:",
+        "middle": "Die Ordner in der Mitte",
+        "nearOpenedFolder": "Die Ordner nahe dem geöffneten Ordner",
+        "nearPhotos": "Die Ordner nahe den Fotos"
+      }
     },
     "dateTime": {
       "title": "Datums- und Uhrzeitformat",

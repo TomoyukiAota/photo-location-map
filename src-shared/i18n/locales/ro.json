@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Dosar deschis - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Derulează până aici",
       "selectOnlyThisFile": "Selectează doar acest fișier",
       "selectOnlyThisFolder": "Selectează doar acest dosar",
       "revealInMap": "Afișează pe hartă",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Aspect",
-      "showStatusBar": "Afișează bara de stare"
+      "showStatusBar": "Afișează bara de stare",
+      "stickyFolders": {
+        "title": "Dosare fixate în partea de sus a arborelui",
+        "description": "Cât timp arborele de dosare este derulat, dosarele de deasupra rândurilor afișate rămân sus. Dosarul deschis și dosarul acestor rânduri sunt păstrate mereu.",
+        "maximum": "Număr maxim de rânduri",
+        "leftOut": "Când sunt mai multe dosare decât rânduri, omite:",
+        "middle": "Dosarele din mijloc",
+        "nearOpenedFolder": "Dosarele apropiate de dosarul deschis",
+        "nearPhotos": "Dosarele apropiate de poze"
+      }
     },
     "dateTime": {
       "title": "Formatul datei și al orei",

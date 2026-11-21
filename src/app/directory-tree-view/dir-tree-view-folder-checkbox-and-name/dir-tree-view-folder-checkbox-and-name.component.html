@@ -3,6 +3,7 @@
 @if (shownNode.isSelectable) {
   @let state = selection.stateOf(shownNode)();
   <mat-checkbox [checked]="state === 'selected'"
+                [tabIndex]="focusable() ? 0 : -1"
                 [indeterminate]="state === 'partlySelected'"
                 (change)="toggled.emit()">
     <bdi>{{ shownNode.name }}</bdi>

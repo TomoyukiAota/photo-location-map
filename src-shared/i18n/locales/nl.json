@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Geopende map - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Hierheen scrollen",
       "selectOnlyThisFile": "Selecteer alleen dit bestand",
       "selectOnlyThisFolder": "Selecteer alleen deze map",
       "revealInMap": "Toon op de kaart",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Weergave",
-      "showStatusBar": "Toon statusbalk"
+      "showStatusBar": "Toon statusbalk",
+      "stickyFolders": {
+        "title": "Vastgezette mappen bovenaan de boomstructuur",
+        "description": "Tijdens het scrollen door de mappenstructuur blijven de mappen boven de getoonde rijen bovenaan staan. De geopende map en de map van die rijen blijven altijd staan.",
+        "maximum": "Maximaal aantal rijen",
+        "leftOut": "Als er meer mappen dan rijen zijn, weglaten:",
+        "middle": "De mappen in het midden",
+        "nearOpenedFolder": "De mappen dicht bij de geopende map",
+        "nearPhotos": "De mappen dicht bij de foto’s"
+      }
     },
     "dateTime": {
       "title": "Datum- en tijdnotatie",

@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "Odprta mapa - {{path}}",
     "contextMenu": {
+      "scrollToHere": "Pomakni sem",
       "selectOnlyThisFile": "Izberi samo to datoteko",
       "selectOnlyThisFolder": "Izberi samo to mapo",
       "revealInMap": "Prikaži na zemljevidu",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "Videz",
-      "showStatusBar": "Prikaži vrstico stanja"
+      "showStatusBar": "Prikaži vrstico stanja",
+      "stickyFolders": {
+        "title": "Mape, pripete na vrh drevesa",
+        "description": "Med pomikanjem drevesa map ostanejo mape nad prikazanimi vrsticami na vrhu. Odprta mapa in mapa teh vrstic ostaneta vedno.",
+        "maximum": "Največje število vrstic",
+        "leftOut": "Ko je map več kot vrstic, izpusti:",
+        "middle": "Mape na sredini",
+        "nearOpenedFolder": "Mape blizu odprte mape",
+        "nearPhotos": "Mape blizu fotografij"
+      }
     },
     "dateTime": {
       "title": "Oblika datuma in ure",

@@ -75,6 +75,7 @@
   "directoryTree": {
     "openedFolder": "열린 폴더 - {{path}}",
     "contextMenu": {
+      "scrollToHere": "여기까지 스크롤",
       "selectOnlyThisFile": "이 파일만 선택",
       "selectOnlyThisFolder": "이 폴더만 선택",
       "revealInMap": "지도에서 보기",
@@ -223,7 +224,16 @@
     },
     "appearance": {
       "title": "모양",
-      "showStatusBar": "상태 표시줄 표시"
+      "showStatusBar": "상태 표시줄 표시",
+      "stickyFolders": {
+        "title": "트리 위쪽에 고정되는 폴더",
+        "description": "폴더 트리를 스크롤하는 동안 표시된 행 위의 폴더가 위쪽에 남습니다. 열린 폴더와 그 행들의 폴더는 항상 남습니다.",
+        "maximum": "최대 행 수",
+        "leftOut": "폴더가 행보다 많을 때 생략할 폴더:",
+        "middle": "가운데 폴더",
+        "nearOpenedFolder": "열린 폴더에 가까운 폴더",
+        "nearPhotos": "사진에 가까운 폴더"
+      }
     },
     "dateTime": {
       "title": "날짜 및 시간 형식",
