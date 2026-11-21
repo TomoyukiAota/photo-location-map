@@ -5,7 +5,7 @@ import { Logger } from '../../../src-shared/log/logger';
 import { photoFileUrl } from '../../../src-shared/main-window-schemes';
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
 import { DirectoryTreeViewSelectionService } from '../directory-tree-view/directory-tree-view-selection.service';
-import { GeneratedThumbnailService } from '../photo-info-viewer/generated-thumbnail.service';
+import { HeifThumbnailService } from '../heif-thumbnail/heif-thumbnail.service';
 import { Photo } from '../shared/model/photo.model';
 import { Thumbnail } from '../shared/model/thumbnail.model';
 import { Dimensions } from '../shared/model/dimensions.model';
@@ -82,7 +82,14 @@ describe('FaceSearchService', () => {
             return { url, close: () => {} };
           } },
         },
-        { provide: GeneratedThumbnailService, useValue: { watch: vi.fn(), filePathOf: (path: string) => thumbnails.get(path) } },
+        {
+          provide: HeifThumbnailService,
+          useValue: {
+            watch: vi.fn(),
+            stateOf: (path: string) => thumbnails.has(path) ? { kind: 'generated', filePath: thumbnails.get(path) }
+              : { kind: 'pending', provisionalUrl: null },
+          },
+        },
       ],
     });
     select = vi.spyOn(TestBed.inject(DirectoryTreeViewSelectionService), 'select');
@@ -267,7 +274,7 @@ describe('FaceSearchService', () => {
     thumbnails.set(heif.path, '/cache/b.HEIC.plm.jpg');
     await searching;
 
-    expect(TestBed.inject(GeneratedThumbnailService).watch).toHaveBeenCalledWith(heif.path);
+    expect(TestBed.inject(HeifThumbnailService).watch).toHaveBeenCalledWith(heif.path);
     expect(select).toHaveBeenCalledWith([heif.path]);
   });
 

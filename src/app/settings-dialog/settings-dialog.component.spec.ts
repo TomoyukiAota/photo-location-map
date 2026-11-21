@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { DateTimeFormat } from '../../../src-shared/date-time/date-time-format';
 import { UserDataStorage } from '../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../src-shared/user-data-storage/user-data-stroage-path';
 import { BooleanSetting } from '../../../src-shared/user-settings/boolean-setting';
 import { currentUserSettings } from '../../../src-shared/user-settings/user-settings';
+import { HeifThumbnailService } from '../heif-thumbnail/heif-thumbnail.service';
 import { ConfirmDialogService } from '../shared/confirm-dialog/confirm-dialog.service';
 import { AppearanceSettingsComponent } from './appearance-settings/appearance-settings.component';
 import { CacheSettingsComponent } from './cache-settings/cache-settings.component';
@@ -16,6 +17,7 @@ import { OsSettingsComponent } from './os-settings/os-settings.component';
 import { RestoreSettingsService } from './service/restore-settings.service';
 import { SettingsChangedService } from './service/settings-changed.service';
 import { SettingsDialogComponent } from './settings-dialog.component';
+import { ThumbnailSettingsComponent } from './thumbnail-settings/thumbnail-settings.component';
 
 // The tabs are left out: they tell the dialog about their changes through SettingsChangedService, as the tests do.
 @Component({ selector: 'app-language-settings', template: '' })
@@ -33,9 +35,13 @@ class DummyOsSettingsComponent {}
 @Component({ selector: 'app-cache-settings', template: '' })
 class DummyCacheSettingsComponent {}
 
+@Component({ selector: 'app-thumbnail-settings', template: '' })
+class DummyThumbnailSettingsComponent {}
+
 describe('SettingsDialogComponent', () => {
   const close = vi.fn();
   const restore = vi.fn();
+  const applyThumbnailQuality = vi.fn(async () => false);
   const settingsInUse = { ...currentUserSettings };
   const otherShowStatusBar = settingsInUse.showStatusBar === BooleanSetting.TrueValue ? BooleanSetting.FalseValue : BooleanSetting.TrueValue;
   const otherDateFormat = DateTimeFormat.ForUser.DateFormat_List.find(format => format !== settingsInUse.dateFormat);
@@ -43,29 +49,40 @@ describe('SettingsDialogComponent', () => {
   let fixture: ComponentFixture<SettingsDialogComponent>;
   let settingsChanged: SettingsChangedService;
 
+  /** Makes the dialog, given what it is opened with. */
+  async function createDialog(data: unknown = null): Promise<void> {
+    TestBed.overrideProvider(MAT_DIALOG_DATA, { useValue: data });
+    fixture = TestBed.createComponent(SettingsDialogComponent);
+    settingsChanged = TestBed.inject(SettingsChangedService);
+    await fixture.whenStable();
+  }
+
   beforeEach(async () => {
     close.mockClear();
     restore.mockClear();
+    applyThumbnailQuality.mockClear();
     await TestBed.configureTestingModule({
       imports: [SettingsDialogComponent],
       providers: [
         { provide: MatDialogRef, useValue: { close } },
         { provide: RestoreSettingsService, useValue: { restore } },
+        { provide: HeifThumbnailService, useValue: { applyThumbnailQuality } },
+        { provide: MAT_DIALOG_DATA, useValue: null },
       ],
     })
       .overrideComponent(SettingsDialogComponent, {
-        remove: { imports: [LanguageSettingsComponent, AppearanceSettingsComponent, DateTimeSettingsComponent, OsSettingsComponent, CacheSettingsComponent] },
+        remove: {
+          imports: [LanguageSettingsComponent, AppearanceSettingsComponent, DateTimeSettingsComponent, OsSettingsComponent,
+            ThumbnailSettingsComponent, CacheSettingsComponent],
+        },
         add: {
           imports: [
             DummyLanguageSettingsComponent, DummyAppearanceSettingsComponent, DummyDateTimeSettingsComponent, DummyOsSettingsComponent,
-            DummyCacheSettingsComponent,
+            DummyThumbnailSettingsComponent, DummyCacheSettingsComponent,
           ],
         },
       })
       .compileComponents();
-    fixture = TestBed.createComponent(SettingsDialogComponent);
-    settingsChanged = TestBed.inject(SettingsChangedService);
-    await fixture.whenStable();
   });
 
   afterEach(() => {
@@ -88,6 +105,7 @@ describe('SettingsDialogComponent', () => {
   }
 
   it('enables Save only while a setting differs from the one in use', async () => {
+    await createDialog();
     expect(saveButton().disabled).toBe(true);
 
     settingsChanged.appearanceSettingsChanged.next({ showStatusBar: otherShowStatusBar });
@@ -101,6 +119,7 @@ describe('SettingsDialogComponent', () => {
   });
 
   it('says that saving restarts the app while the date or the clock format differs', async () => {
+    await createDialog();
     expect(isRestartNoticeShown()).toBe(false);
 
     settingsChanged.dateTimeSettingsChanged.next({ dateFormat: otherDateFormat, clockSystemFormat: settingsInUse.clockSystemFormat });
@@ -119,6 +138,7 @@ describe('SettingsDialogComponent', () => {
   });
 
   it('says that saving restarts the app while the language differs, and saves it once the restart is confirmed', async () => {
+    await createDialog();
     const trackEvent = vi.spyOn(Analytics, 'trackEvent');
     expect(settingsInUse.language).toBe('auto');
     settingsChanged.languageSettingsChanged.next({ language: 'ja' });
@@ -145,6 +165,7 @@ describe('SettingsDialogComponent', () => {
   });
 
   it('saves a new status bar setting without a restart and closes', async () => {
+    await createDialog();
     settingsChanged.appearanceSettingsChanged.next({ showStatusBar: otherShowStatusBar });
     await fixture.whenStable();
 
@@ -156,6 +177,7 @@ describe('SettingsDialogComponent', () => {
   });
 
   it('asks before the restart, and saves nothing when it is declined', async () => {
+    await createDialog();
     const confirm = vi.spyOn(TestBed.inject(ConfirmDialogService), 'confirmIn').mockResolvedValue(false);
     settingsChanged.dateTimeSettingsChanged.next({ dateFormat: otherDateFormat, clockSystemFormat: settingsInUse.clockSystemFormat });
     await fixture.whenStable();
@@ -170,6 +192,7 @@ describe('SettingsDialogComponent', () => {
   });
 
   it('says what saving does in the language chosen on the Language tab, as its user reads it, and asks in it before the restart', async () => {
+    await createDialog();
     const host: HTMLElement = fixture.nativeElement;
     const notice: HTMLElement = host.querySelector('.settings-dialog-footer-description');
     const cancelButton: HTMLButtonElement = host.querySelector('.settings-dialog-cancel-button');
@@ -202,6 +225,7 @@ describe('SettingsDialogComponent', () => {
   });
 
   it('opens on the Language tab, the first, and shows the tab chosen in the list', async () => {
+    await createDialog();
     const host: HTMLElement = fixture.nativeElement;
     expect(host.querySelector('mat-list-item').textContent.trim()).toBe('Language');
     expect(tab('Language').classList).toContain('selected-tab');
@@ -217,7 +241,30 @@ describe('SettingsDialogComponent', () => {
     expect((host.querySelector('app-appearance-settings') as HTMLElement).style.display).toBe('none');
   });
 
-  it('restores the settings in use and closes on Cancel', () => {
+  it('saves a new quality of thumbnails without a restart, and has the thumbnails made again', async () => {
+    await createDialog();
+    const otherQuality = settingsInUse.thumbnailQuality === 'high' ? 'fast' : 'high';
+    settingsChanged.thumbnailSettingsChanged.next({ thumbnailQuality: otherQuality });
+    await fixture.whenStable();
+    expect(saveButton().disabled).toBe(false);
+    expect(isRestartNoticeShown()).toBe(false);
+
+    saveButton().click();
+
+    expect(currentUserSettings.thumbnailQuality).toBe(otherQuality);
+    expect(UserDataStorage.read(UserDataStoragePath.UserSettings.ThumbnailQuality)).toBe(otherQuality);
+    expect(applyThumbnailQuality).toHaveBeenCalledOnce();
+    expect(close).toHaveBeenCalledTimes(1);
+  });
+
+  it('opens on the tab that it is opened with, as the Thumbnails tab from the status bar of thumbnails', async () => {
+    await createDialog({ initialTab: 'thumbnails' });
+    expect(tab('Thumbnails').classList).toContain('selected-tab');
+    expect((fixture.nativeElement.querySelector('app-thumbnail-settings') as HTMLElement).style.display).toBe('block');
+  });
+
+  it('restores the settings in use and closes on Cancel', async () => {
+    await createDialog();
     const cancelButton: HTMLButtonElement = fixture.nativeElement.querySelector('.settings-dialog-cancel-button');
     cancelButton.click();
 
@@ -225,7 +272,8 @@ describe('SettingsDialogComponent', () => {
     expect(close).toHaveBeenCalledTimes(1);
   });
 
-  it('stops listening to the tabs once it is closed', () => {
+  it('stops listening to the tabs once it is closed', async () => {
+    await createDialog();
     expect(settingsChanged.appearanceSettingsChanged.observed).toBe(true);
     expect(settingsChanged.dateTimeSettingsChanged.observed).toBe(true);
     expect(settingsChanged.languageSettingsChanged.observed).toBe(true);

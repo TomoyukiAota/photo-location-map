@@ -164,6 +164,13 @@ language that it offers, unless it is asked to keep it. The references ending
 in `-ja` are of the application in Japanese, whose text is set in the system's
 Japanese font.
 
+The thumbnails of HEIF photos are made by the page where its Chromium decodes
+HEVC, as on macOS, and by the main process elsewhere, as on the Linux and
+Windows runners of CI (`src/app/heif-thumbnail/`). A case of the main process's
+generation launches the application again with `PLM_TEST_HEVC_IN_PAGE=off`,
+which a test profile reads, so that it runs the same on every platform
+(`relaunchWithoutHevcInPage()`); the other cases hold either way.
+
 Coverage includes the Language dialog, a restart in another language, a Japanese
 launch, welcome/about/settings, recursive folder loading, map regions,
 photo selection, grouping/zoom/reset, splitters, chooser/window/settings restart

@@ -3,7 +3,6 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as pathModule from 'path';
 import physicalCpuCount from 'physical-cpu-count';
-import chunk from 'lodash-es/chunk.js';
 import { stringArrayToLogText } from '../../src-shared/log/multiline-log-text.js';
 import { perfMark } from '../../src-shared/perf/perf-mark.js';
 import { removeInvalidThumbnailCache } from '../../src-shared/thumbnail/cache/remove-invalid-thumbnail-cache.js';
@@ -13,6 +12,11 @@ import { ThumbnailFileGenerationArg, ThumbnailFileGenerationResult } from './gen
 import { ThumbnailFailures } from './thumbnail-failures.js';
 import { logged } from '../../src-shared/log/logged-line.js';
 
+/**
+ * Has the thumbnails of `heifFilePathsToGenerateThumbnail` made, after those that wait to be made: all those of a
+ * folder that the page has the main process make, or one that the page could not make itself
+ * (src/app/heif-thumbnail/). A file that waits or is being made is not added again.
+ */
 export function handleThumbnailGenerationIpcRequest(allHeifFilePaths: string[], heifFilePathsToGenerateThumbnail: string[]): void {
   if (!allHeifFilePaths || !heifFilePathsToGenerateThumbnail) {
     logger.error(`handleThumbnailGenerationIpcRequest should be called with string arrays.`);
@@ -21,14 +25,37 @@ export function handleThumbnailGenerationIpcRequest(allHeifFilePaths: string[], 
     return;
   }
 
-  checkFileForWorkerExists();
-  removeInvalidThumbnailCache();
   logAllHeifFiles(allHeifFilePaths);
   logHeifFilesToGenerateThumbnail(heifFilePathsToGenerateThumbnail);
+  for (const filePath of heifFilePathsToGenerateThumbnail) {
+    if (waitingOrBeingMade.has(filePath))
+      continue;
+    waitingOrBeingMade.add(filePath);
+    waiting.push(createThumbnailFileGenerationArg(filePath));
+  }
 
-  // noinspection JSUnusedLocalSymbols
-  const ignoredPromise = generateThumbnails(heifFilePathsToGenerateThumbnail);    // Promise is deliberately ignored.
+  if (!isGenerating) {
+    // noinspection JSUnusedLocalSymbols
+    const ignoredPromise = generateWaitingThumbnails();    // Promise is deliberately ignored.
+  }
 }
+
+/**
+ * Drops the thumbnails that wait to be made, as when the user chose the fast thumbnails while the main process made
+ * the thumbnails of a folder: those being made are finished.
+ */
+export function cancelThumbnailGeneration(): void {
+  logger.info(`Dropped ${waiting.length} thumbnails that waited to be made.`);
+  for (const arg of waiting)
+    waitingOrBeingMade.delete(arg.srcFilePath);
+  waiting.length = 0;
+}
+
+/** The thumbnails that wait to be made, in the order that they were asked for. */
+const waiting: ThumbnailFileGenerationArg[] = [];
+/** The files of the thumbnails that wait or are being made. */
+const waitingOrBeingMade = new Set<string>();
+let isGenerating = false;
 
 class FileForWorker {
   private static _fileName = 'generate-thumbnail-file-worker.js';
@@ -80,37 +107,45 @@ const logicalCpuCount = os.cpus().length;
 const numberOfProcessesToUse = physicalCpuCount >= 2 ? physicalCpuCount - 1 : 1;
 
 /**
- * Generates the thumbnails of `heifFilePaths` in worker processes, a new one for each file, and records the failures.
+ * Makes the thumbnails that wait, in worker processes, a new one for each file, until none waits, and records the
+ * failures.
  */
-async function generateThumbnails(heifFilePaths: string[]) {
+async function generateWaitingThumbnails() {
+  isGenerating = true;
+  try {
+    await generateUntilNoneWaits();
+  } finally {
+    isGenerating = false;
+  }
+}
+
+async function generateUntilNoneWaits() {
+  checkFileForWorkerExists();
+  removeInvalidThumbnailCache();
   logger.info(`Number of CPU cores, Physical: ${physicalCpuCount}, Logical: ${logicalCpuCount}`);
   logger.info(`Number of processes for thumbnail generation: ${numberOfProcessesToUse}`);
-
-  const argArray = heifFilePaths.map(filePath => createThumbnailFileGenerationArg(filePath));
 
   // The worker process needs to be restarted per thumbnail.
   // If the worker process continues to be used for multiple thumbnails,
   // the memory consumption of the process increases, and the app will eventually crash.
   // In the code below, thumbnail generation is split into chunks, and worker processes are restarted by each chunk.
   // By numberOfFilesInChunk === numberOfProcessesToUse, each worker process will be restarted per thumbnail.
-
   const numberOfFilesInChunk = numberOfProcessesToUse;
-  const argArrayChunks = chunk(argArray, numberOfFilesInChunk);
-  logger.info(`Files are split in ${argArrayChunks.length} chunks.`);
-  logger.info(`Each chunk contains up to ${numberOfFilesInChunk} files.`);
 
-  perfMark('thumbnails:main-started', { files: argArray.length });
+  perfMark('thumbnails:main-started', { files: waiting.length });
   const failures = new ThumbnailFailures();
-  for (let index = 0; index < argArrayChunks.length; index++){
-    const chunkNumber = `#${index + 1}`;
-    logger.info(`Started chunk ${chunkNumber} out of ${argArrayChunks.length} chunks.`);
-    const argChunk = argArrayChunks[index];
-    logger.info(`Chunk ${chunkNumber} contains ${argChunk.length} files.`);
+  let files = 0;
+  for (let chunkNumber = 1; waiting.length > 0; chunkNumber++) {
+    const argChunk = waiting.splice(0, numberOfFilesInChunk);
+    files += argChunk.length;
+    logger.info(`Started chunk #${chunkNumber}, of ${argChunk.length} files; ${waiting.length} files wait after it.`);
     await runWorkerForThumbnailGeneration(argChunk, failures);
-    logger.info(`Finished chunk ${chunkNumber} out of ${argArrayChunks.length} chunks.`);
+    for (const arg of argChunk)
+      waitingOrBeingMade.delete(arg.srcFilePath);
+    logger.info(`Finished chunk #${chunkNumber}.`);
   }
   failures.record();
-  perfMark('thumbnails:main-finished', { files: argArray.length });
+  perfMark('thumbnails:main-finished', { files });
 }
 
 async function runWorkerForThumbnailGeneration(argArray: ThumbnailFileGenerationArg[], failures: ThumbnailFailures) {

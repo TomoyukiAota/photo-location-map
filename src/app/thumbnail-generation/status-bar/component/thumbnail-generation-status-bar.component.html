@@ -8,6 +8,12 @@
     }
   } @else {
     <span>{{ 'thumbnailGeneration.generating' | t }}</span>
+    @if (isHighQuality()) {
+      <!-- Where the wait is seen, the faster thumbnails are offered, in the Settings dialog's Thumbnails tab. -->
+      @let fasterInSettings = 'thumbnailGeneration.fasterInSettings' | t | tagParts: 'settingsLink';
+      <span class="faster-in-settings"> {{ fasterInSettings.before }}<span class="anchor-tag-like-text"
+            (click)="handleThumbnailSettingsLinkClicked($event)">{{ fasterInSettings.inside }}</span>{{ fasterInSettings.after }}</span>
+    }
   }
 </div>
 <div class="progress-bar-with-details"
@@ -41,13 +47,15 @@
         <span>{{ 'thumbnailGeneration.processed' | t: processed }}</span>
       }
     </div>
-    <div class="generation-required-files-description">
-      {{ 'thumbnailGeneration.generationRequired' | t: {
-           required: generation.numOfGenerationRequiredThumbnails,
-           heif: generation.numOfAllHeifFiles,
-           cached: generation.numOfCacheAvailableThumbnails
-         } }}
-    </div>
+    @if (generation.isWholeFolder) {
+      <div class="generation-required-files-description">
+        {{ 'thumbnailGeneration.generationRequired' | t: {
+             required: generation.numOfGenerationRequiredThumbnails,
+             heif: generation.numOfAllHeifFiles,
+             cached: generation.numOfCacheAvailableThumbnails
+           } }}
+      </div>
+    }
   </div>
 </div>
 <span class="close-button"

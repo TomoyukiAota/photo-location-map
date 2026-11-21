@@ -158,6 +158,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Se creează miniaturile fișierelor HEIF...",
+    "fasterInSettings": "Pentru a le afișa mai devreme, <settingsLink>alegeți miniaturile rapide în setări</settingsLink>.",
     "completed": "Miniaturile fișierelor HEIF au fost create.",
     "finishedWithErrors": "Crearea miniaturilor fișierelor HEIF s-a încheiat cu erori.",
     "showDetails": "Afișează detaliile",
@@ -191,6 +192,7 @@
       "language": "Limbă (Language)",
       "appearance": "Aspect",
       "dateTime": "Dată și oră",
+      "thumbnails": "Miniaturi",
       "os": "Sistem",
       "cache": "Cache"
     },
@@ -213,6 +215,14 @@
       "clock12": "12 ore",
       "clock24": "24 de ore",
       "example": "Exemplu"
+    },
+    "thumbnails": {
+      "title": "Miniaturi HEIF",
+      "description": "Miniaturile fișierelor HEIF, cum ar fi fotografiile făcute cu un iPhone, sunt create de această aplicație. Alegeți dacă să fie create pentru calitate sau pentru viteză.",
+      "highQuality": "Calitate înaltă",
+      "highQualityDescription": "Create din întreaga fotografie, cu 400 de pixeli pe latura mai lungă. Până atunci se afișează miniatura mică salvată în fotografie. Pe un computer al cărui hardware grafic nu poate decoda HEVC, crearea lor durează.",
+      "fast": "Rapid",
+      "fastDescription": "Miniatura mică salvată în fotografie, afișată imediat. Este mai puțin clară: 320 × 240 de pixeli pentru o fotografie de 12 megapixeli făcută cu un iPhone."
     },
     "os": {
       "title": "Meniul contextual din Explorer",

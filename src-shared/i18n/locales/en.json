@@ -158,6 +158,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Generating thumbnails for HEIF files...",
+    "fasterInSettings": "To show them sooner, <settingsLink>choose fast thumbnails in Settings</settingsLink>.",
     "completed": "Completed generating thumbnails for HEIF files.",
     "finishedWithErrors": "Finished generating thumbnails for HEIF files with errors.",
     "showDetails": "Show Details",
@@ -191,6 +192,7 @@
       "language": "Language",
       "appearance": "Appearance",
       "dateTime": "Date & Time",
+      "thumbnails": "Thumbnails",
       "os": "OS",
       "cache": "Cache"
     },
@@ -213,6 +215,14 @@
       "clock12": "12-hour",
       "clock24": "24-hour",
       "example": "Example"
+    },
+    "thumbnails": {
+      "title": "HEIF Thumbnails",
+      "description": "Thumbnails of HEIF files, such as photos taken with an iPhone, are made by this application. Choose whether they are made for quality or for speed.",
+      "highQuality": "High quality",
+      "highQualityDescription": "Made from the whole photo, 400 pixels on the longer side. Until then, the small thumbnail stored in the photo is shown. On a computer that cannot decode HEVC with its graphics hardware, making them takes time.",
+      "fast": "Fast",
+      "fastDescription": "The small thumbnail stored in the photo, shown right away. It is less sharp: 320 × 240 pixels for a 12-megapixel photo taken with an iPhone."
     },
     "os": {
       "title": "Explorer Context Menu",

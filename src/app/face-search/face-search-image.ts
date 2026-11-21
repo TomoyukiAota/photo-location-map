@@ -7,7 +7,8 @@ import { yunetInputSize } from './yunet';
 /**
  * Where the search for faces takes a photo's image from, by what the page can decode of it:
  * - 'photo': a JPEG or PNG file itself, the most detail, decoded down to the size that the detector takes.
- * - 'generatedThumbnail': the thumbnail of 400 pixels that the app makes of a HEIF file, which the page cannot decode.
+ * - 'generatedThumbnail': the thumbnail that the app makes of a HEIF file, which the page cannot show as it is: 400
+ *   pixels in high quality, the file's own small thumbnail, 320 pixels or more, in fast (src/app/heif-thumbnail/).
  * - 'exifThumbnail': the thumbnail in the photo's EXIF data, as of a TIFF file, which the page cannot decode either:
  *   160 pixels, in which only larger faces are found.
  * - 'none': a photo of which the page has no image.

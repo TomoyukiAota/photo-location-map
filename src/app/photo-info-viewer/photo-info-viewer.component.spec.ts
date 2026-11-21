@@ -15,7 +15,9 @@ import { Thumbnail } from '../shared/model/thumbnail.model';
 import { OpenedDirectory } from '../shared/opened-directory';
 import { PhotoRevealService } from '../shared/service/photo-reveal.service';
 import { SelectPreviousNextService } from '../shared/service/select-previous-next.service';
-import { GeneratedThumbnailService, thumbnailCheckIntervalMs } from './generated-thumbnail.service';
+import { HeifImageSource } from '../heif-thumbnail/heif-image-source';
+import { HeifThumbnailService } from '../heif-thumbnail/heif-thumbnail.service';
+import { thumbnailCheckIntervalMs } from './generated-thumbnail.service';
 import { MoreOptionsMenuComponent } from './more-options-menu/more-options-menu.component';
 import { PhotoInfoViewerComponent } from './photo-info-viewer.component';
 import { PhotoInfoViewerPlace } from './photo-info-viewer-place';
@@ -167,7 +169,7 @@ describe('PhotoInfoViewerComponent', () => {
       expect(thumbnail().classList.contains('photo-info-viewer-generating-thumbnail')).toBe(false);
     });
 
-    describe('of a HEIF photo, which the main process makes', () => {
+    describe('of a HEIF photo, which the main process makes where the page cannot', () => {
       let finished: boolean;
 
       beforeEach(() => {
@@ -215,13 +217,47 @@ describe('PhotoInfoViewerComponent', () => {
 
       it('is the thumbnail at once, without fading in, when it is known already', async () => {
         finished = true;
-        TestBed.inject(GeneratedThumbnailService).watch('/photos/IMG_0002.HEIC');
+        TestBed.inject(HeifThumbnailService).watch('/photos/IMG_0002.HEIC');
         await vi.advanceTimersByTimeAsync(0);
 
         await showHeifPhoto();
 
         expect(thumbnail().getAttribute('src')).toBe(`plm-file://local/${encodeURIComponent('/cache/photos/IMG_0002.HEIC.plm.jpg')}`);
         expect(thumbnail().className).toBe('photo-info-viewer-thumbnail');
+      });
+    });
+  });
+
+  describe('thumbnail of a HEIF photo that the page decodes', () => {
+    let wholeImage: (blob: Blob | null) => void;
+
+    beforeEach(() => {
+      let urls = 0;
+      vi.spyOn(URL, 'createObjectURL').mockImplementation(() => `blob:heif/${++urls}`);
+      vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {});
+      TestBed.overrideProvider(HeifImageSource, {
+        useValue: {
+          pageDecodesHevc: async () => true,
+          embeddedThumbnail: async () => new Blob(['small']),
+          wholeImage: () => new Promise<Blob | null>(resolve => { wholeImage = resolve; }),
+        },
+      });
+    });
+
+    afterEach(() => vi.restoreAllMocks());
+
+    it('is the small thumbnail that the photo holds, then the one of high quality, which needs no fading in', async () => {
+      await show(photoAt('/photos/IMG_0003.HEIC'), 'leaflet-map-popup');
+      await vi.waitFor(() => {
+        fixture.detectChanges();
+        expect(thumbnail().getAttribute('src')).toBe('blob:heif/1');
+      });
+      expect(thumbnail().classList.contains('photo-info-viewer-thumbnail-placeholder')).toBe(false);
+
+      wholeImage(new Blob(['whole']));
+      await vi.waitFor(() => {
+        fixture.detectChanges();
+        expect(thumbnail().getAttribute('src')).toBe('blob:heif/2');
       });
     });
   });

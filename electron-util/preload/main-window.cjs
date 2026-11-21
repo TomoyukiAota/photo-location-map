@@ -22,6 +22,10 @@ const channels = {
   directoryTreeCreate: 'ipc-constants-create-directory-tree',
   thumbnailsGenerate: 'ipc-constants-thumbnail-generation-in-main-process',
   thumbnailsState: 'ipc-constants-thumbnail-state',
+  thumbnailsCancel: 'ipc-constants-thumbnail-generation-cancel',
+  heifEmbeddedThumbnail: 'ipc-constants-heif-embedded-thumbnail',
+  heifEmbeddedThumbnailJpeg: 'ipc-constants-heif-embedded-thumbnail-jpeg',
+  heifWholeImage: 'ipc-constants-heif-whole-image',
   thumbnailCacheOpen: 'ipc-constants-open-thumbnail-cache',
   thumbnailCacheDeleteAndRestart: 'ipc-constants-delete-thumbnail-cache-and-restart',
   openExternal: 'ipc-constants-open-external-url',
@@ -120,6 +124,12 @@ const plm = {
   thumbnails: {
     generate: (allHeifFilePaths, heifFilePathsToGenerate) => ipcRenderer.invoke(channels.thumbnailsGenerate, allHeifFilePaths, heifFilePathsToGenerate),
     state: filePaths => ipcRenderer.invoke(channels.thumbnailsState, filePaths),
+    cancel: () => ipcRenderer.invoke(channels.thumbnailsCancel),
+  },
+  heif: {
+    embeddedThumbnail: filePath => ipcRenderer.invoke(channels.heifEmbeddedThumbnail, filePath),
+    embeddedThumbnailJpeg: filePath => ipcRenderer.invoke(channels.heifEmbeddedThumbnailJpeg, filePath),
+    wholeImage: filePath => ipcRenderer.invoke(channels.heifWholeImage, filePath),
   },
   thumbnailCache: {
     open: () => ipcRenderer.invoke(channels.thumbnailCacheOpen),

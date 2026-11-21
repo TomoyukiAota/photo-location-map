@@ -158,6 +158,7 @@
   },
   "thumbnailGeneration": {
     "generating": "HEIF ファイルのサムネイルを生成中です...",
+    "fasterInSettings": "早く表示するには、<settingsLink>設定で「速さ優先」を選んでください</settingsLink>。",
     "completed": "HEIF ファイルのサムネイルの生成が完了しました。",
     "finishedWithErrors": "HEIF ファイルのサムネイルの生成が終了しましたが、エラーがありました。",
     "showDetails": "詳細を表示",
@@ -191,6 +192,7 @@
       "language": "言語 (Language)",
       "appearance": "外観",
       "dateTime": "日付と時刻",
+      "thumbnails": "サムネイル",
       "os": "OS",
       "cache": "キャッシュ"
     },
@@ -213,6 +215,14 @@
       "clock12": "12 時間制",
       "clock24": "24 時間制",
       "example": "例"
+    },
+    "thumbnails": {
+      "title": "HEIF のサムネイル",
+      "description": "iPhone で撮った写真などの HEIF ファイルのサムネイルは、このアプリケーションが生成します。画質と速さのどちらを優先するかを選んでください。",
+      "highQuality": "高画質",
+      "highQualityDescription": "写真全体から、長辺 400 ピクセルで生成します。生成されるまでは、写真に保存されている小さいサムネイルを表示します。グラフィックスのハードウェアで HEVC をデコードできないコンピューターでは、生成に時間がかかります。",
+      "fast": "速さ優先",
+      "fastDescription": "写真に保存されている小さいサムネイルを、すぐに表示します。画質は下がります（iPhone で撮った 1,200 万画素の写真では 320 × 240 ピクセル）。"
     },
     "os": {
       "title": "エクスプローラーのコンテキストメニュー",

@@ -33,6 +33,8 @@ export namespace IpcConstants {
 
   export namespace ThumbnailGenerationInMainProcess {
     export const Name = 'ipc-constants-thumbnail-generation-in-main-process';
+    /** Drops the thumbnails that wait to be made; those being made are finished. */
+    export const Cancel = 'ipc-constants-thumbnail-generation-cancel';
   }
 
   export namespace PhotoDataViewer {
@@ -79,6 +81,17 @@ export namespace IpcConstants {
   /** The tree of a folder that the user opens, made off the main thread by the main process (src-main/directory-tree/). */
   export namespace DirectoryTree {
     export const Create = 'ipc-constants-create-directory-tree';
+  }
+
+  /**
+   * The images of a HEIF photo that the main window's page decodes for its thumbnail (src-main/heif/): the file's
+   * thumbnail item, the same decoded to a JPEG by libheif for a page that cannot decode HEVC, and the tiles of the
+   * whole image.
+   */
+  export namespace Heif {
+    export const EmbeddedThumbnail = 'ipc-constants-heif-embedded-thumbnail';
+    export const EmbeddedThumbnailJpeg = 'ipc-constants-heif-embedded-thumbnail-jpeg';
+    export const WholeImage = 'ipc-constants-heif-whole-image';
   }
 
   /** The cache of HEIF thumbnails (src-main/thumbnail-generation/). */

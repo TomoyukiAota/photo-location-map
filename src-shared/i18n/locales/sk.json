@@ -158,6 +158,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Vytvárajú sa miniatúry súborov HEIF...",
+    "fasterInSettings": "Ak ich chcete zobraziť skôr, <settingsLink>vyberte v nastaveniach rýchle miniatúry</settingsLink>.",
     "completed": "Miniatúry súborov HEIF boli vytvorené.",
     "finishedWithErrors": "Vytváranie miniatúr súborov HEIF sa skončilo s chybami.",
     "showDetails": "Zobraziť podrobnosti",
@@ -191,6 +192,7 @@
       "language": "Jazyk (Language)",
       "appearance": "Vzhľad",
       "dateTime": "Dátum a čas",
+      "thumbnails": "Miniatúry",
       "os": "Systém",
       "cache": "Vyrovnávacia pamäť"
     },
@@ -213,6 +215,14 @@
       "clock12": "12-hodinový",
       "clock24": "24-hodinový",
       "example": "Príklad"
+    },
+    "thumbnails": {
+      "title": "Miniatúry HEIF",
+      "description": "Miniatúry súborov HEIF, napríklad fotiek nasnímaných iPhonom, vytvára táto aplikácia. Vyberte, či sa majú vytvárať s dôrazom na kvalitu, alebo na rýchlosť.",
+      "highQuality": "Vysoká kvalita",
+      "highQualityDescription": "Vytvárajú sa z celej fotky, s dlhšou stranou 400 pixelov. Dovtedy sa zobrazuje malá miniatúra uložená vo fotke. Na počítači, ktorého grafický hardvér nedokáže dekódovať HEVC, ich vytváranie chvíľu trvá.",
+      "fast": "Rýchle",
+      "fastDescription": "Malá miniatúra uložená vo fotke, zobrazená hneď. Je menej ostrá: 320 × 240 pixelov pri 12-megapixelovej fotke z iPhonu."
     },
     "os": {
       "title": "Kontextová ponuka Prieskumníka",

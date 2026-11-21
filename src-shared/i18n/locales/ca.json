@@ -158,6 +158,7 @@
   },
   "thumbnailGeneration": {
     "generating": "S’estan generant les miniatures dels fitxers HEIF...",
+    "fasterInSettings": "Per mostrar-les abans, <settingsLink>trieu les miniatures ràpides a la configuració</settingsLink>.",
     "completed": "S’han generat les miniatures dels fitxers HEIF.",
     "finishedWithErrors": "La generació de miniatures dels fitxers HEIF ha acabat amb errors.",
     "showDetails": "Mostra els detalls",
@@ -191,6 +192,7 @@
       "language": "Idioma (Language)",
       "appearance": "Aparença",
       "dateTime": "Data i hora",
+      "thumbnails": "Miniatures",
       "os": "Sistema",
       "cache": "Memòria cau"
     },
@@ -213,6 +215,14 @@
       "clock12": "12 hores",
       "clock24": "24 hores",
       "example": "Exemple"
+    },
+    "thumbnails": {
+      "title": "Miniatures HEIF",
+      "description": "Aquesta aplicació genera les miniatures dels fitxers HEIF, com ara les fotos fetes amb un iPhone. Trieu si s’han de generar per a la qualitat o per a la rapidesa.",
+      "highQuality": "Alta qualitat",
+      "highQualityDescription": "Es generen a partir de la foto sencera, amb 400 píxels al costat més llarg. Fins aleshores, es mostra la miniatura petita desada a la foto. En un ordinador que no pot descodificar HEVC amb el maquinari gràfic, generar-les porta temps.",
+      "fast": "Ràpid",
+      "fastDescription": "La miniatura petita desada a la foto, que es mostra de seguida. És menys nítida: 320 × 240 píxels per a una foto de 12 megapíxels feta amb un iPhone."
     },
     "os": {
       "title": "Menú contextual de l’Explorador de fitxers",

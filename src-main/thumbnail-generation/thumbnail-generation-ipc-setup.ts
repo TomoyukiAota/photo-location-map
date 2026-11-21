@@ -3,7 +3,7 @@ import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
 import { thumbnailGenerationLogger as logger } from '../../src-shared/thumbnail/generation/thumbnail-generation-logger.js';
 import { assertFromMainWindow } from '../ipc/ipc-sender.js';
 import { isInUserChosenFolder } from '../ipc/user-chosen-folders.js';
-import { handleThumbnailGenerationIpcRequest } from './thumbnail-generation.js';
+import { cancelThumbnailGeneration, handleThumbnailGenerationIpcRequest } from './thumbnail-generation.js';
 import { thumbnailStates } from './thumbnail-state.js';
 
 /** The HEIF files of a folder that the user opened, which the page asks about. */
@@ -18,6 +18,11 @@ ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Name, (event, allHe
   assertFilesInUserChosenFolders(allHeifFilePaths, 'Making thumbnails');
   assertFilesInUserChosenFolders(heifFilePathsToGenerateThumbnail, 'Making thumbnails');
   handleThumbnailGenerationIpcRequest(allHeifFilePaths, heifFilePathsToGenerateThumbnail);
+});
+
+ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Cancel, event => {
+  assertFromMainWindow(event, 'Cancelling the generation of thumbnails');
+  cancelThumbnailGeneration();
 });
 
 ipcMain.handle(IpcConstants.ThumbnailCache.State, (event, filePaths: unknown) => {
