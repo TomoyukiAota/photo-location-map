@@ -2,7 +2,6 @@ import { Component, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Analytics } from '../../../../../src-shared/analytics/analytics';
 import { Logger } from '../../../../../src-shared/log/logger';
-import { currentUserSettings } from '../../../../../src-shared/user-settings/user-settings';
 import { SettingsDialogService } from '../../../settings-dialog/service/settings-dialog.service';
 import { TagPartsPipe } from '../../../shared/i18n/tag-parts.pipe';
 import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
@@ -45,7 +44,7 @@ export class ThumbnailGenerationStatusBarComponent {
 
   /** Whether the thumbnails are of high quality, the slower: the bar offers the fast ones while they are made. */
   public isHighQuality(): boolean {
-    return currentUserSettings.thumbnailQuality === 'high';
+    return this.thumbnailGenerationService.thumbnailQuality() === 'high';
   }
 
   public handleThumbnailSettingsLinkClicked(event: MouseEvent) {

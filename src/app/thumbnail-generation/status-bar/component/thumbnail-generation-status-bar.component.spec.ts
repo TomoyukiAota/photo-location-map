@@ -1,6 +1,5 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { currentUserSettings } from '../../../../../src-shared/user-settings/user-settings';
 import { SettingsDialogService } from '../../../settings-dialog/service/settings-dialog.service';
 
 import {
@@ -13,6 +12,7 @@ import { ThumbnailGenerationStatusBarComponent } from './thumbnail-generation-st
 
 describe('ThumbnailGenerationStatusBarComponent', () => {
   const status = signal<ThumbnailGenerationStatus>(idleThumbnailGenerationStatus);
+  const thumbnailQuality = signal<'high' | 'fast'>('high');
   let fixture: ComponentFixture<ThumbnailGenerationStatusBarComponent>;
   const element = () => fixture.nativeElement as HTMLElement;
   const text = (selector: string) => element().querySelector(selector).textContent.replace(/\s+/g, ' ').trim();
@@ -24,10 +24,11 @@ describe('ThumbnailGenerationStatusBarComponent', () => {
 
   beforeEach(async () => {
     status.set(idleThumbnailGenerationStatus);
+    thumbnailQuality.set('high');
     await TestBed.configureTestingModule({
       imports: [ThumbnailGenerationStatusBarComponent],
       providers: [
-        { provide: ThumbnailGenerationService, useValue: { status } },
+        { provide: ThumbnailGenerationService, useValue: { status, thumbnailQuality } },
         { provide: SettingsDialogService, useValue: settingsDialogService },
       ],
     })
@@ -65,16 +66,14 @@ describe('ThumbnailGenerationStatusBarComponent', () => {
     expect(settingsDialogService.open).toHaveBeenCalledExactlyOnceWith('thumbnails');
   });
 
-  it('offers nothing more where the thumbnails are fast already', async () => {
-    const quality = currentUserSettings.thumbnailQuality;
-    currentUserSettings.thumbnailQuality = 'fast';
-    try {
-      status.set({ ...generating });
-      await fixture.whenStable();
-      expect(text('.summary')).toBe('Generating thumbnails for HEIF files...');
-    } finally {
-      currentUserSettings.thumbnailQuality = quality;
-    }
+  it('offers nothing more where the thumbnails are fast already, and follows a new setting', async () => {
+    status.set(generating);
+    await fixture.whenStable();
+    expect(text('.summary')).toContain('choose fast thumbnails in Settings');
+
+    thumbnailQuality.set('fast');
+    await fixture.whenStable();
+    expect(text('.summary')).toBe('Generating thumbnails for HEIF files...');
   });
 
   it('counts the folder\'s files only for a generation of the whole folder', async () => {

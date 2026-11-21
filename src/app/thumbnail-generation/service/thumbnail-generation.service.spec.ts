@@ -99,7 +99,9 @@ describe('ThumbnailGenerationService', () => {
     const quality = currentUserSettings.thumbnailQuality;
     try {
       currentUserSettings.thumbnailQuality = 'fast';
+      expect(service.thumbnailQuality()).toBe(quality);
       expect(await service.applyThumbnailQuality()).toBe(false);
+      expect(service.thumbnailQuality()).toBe('fast');
       expect(cancel).toHaveBeenCalledOnce();
       expect(service.status()).toEqual(idleThumbnailGenerationStatus);
       expect(service.isMade('/photos/a.heic')).toBe(false);

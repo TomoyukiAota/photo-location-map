@@ -6,6 +6,7 @@ import { FilenameExtension } from '../../../../src-shared/filename-extension/fil
 import { stringArrayToLogText } from '../../../../src-shared/log/multiline-log-text';
 import { perfMark } from '../../../../src-shared/perf/perf-mark';
 import { thumbnailGenerationLogger as logger } from '../../../../src-shared/thumbnail/generation/thumbnail-generation-logger';
+import { ThumbnailQuality } from '../../../../src-shared/user-settings/thumbnail-quality';
 import { currentUserSettings } from '../../../../src-shared/user-settings/user-settings';
 import { pageDecodesHevc } from '../../heif-thumbnail/heif-image-decoding';
 import { ThumbnailGenerationStatusBarService } from '../status-bar/service/thumbnail-generation-status-bar.service';
@@ -66,6 +67,12 @@ export class ThumbnailGenerationService {
   private readonly statusState = signal<ThumbnailGenerationStatus>(idleThumbnailGenerationStatus);
   public readonly status = this.statusState.asReadonly();
   public readonly isGenerating = computed(() => this.status().phase === 'generating');
+  private readonly thumbnailQualityState = signal<ThumbnailQuality>(currentUserSettings.thumbnailQuality);
+  /**
+   * The quality of the thumbnails as the settings have it, for what the page shows of it: a signal, as the settings
+   * are not one, so that the views follow a new setting (applyThumbnailQuality).
+   */
+  public readonly thumbnailQuality = this.thumbnailQualityState.asReadonly();
 
   private allHeifFilePaths: string[] = [];
   /** The folder's HEIF files whose thumbnail was in the cache when it was opened. */
@@ -141,6 +148,7 @@ export class ThumbnailGenerationService {
    * those of the folder are made for 'high' where the page cannot decode HEVC.
    */
   public async applyThumbnailQuality(): Promise<boolean> {
+    this.thumbnailQualityState.set(currentUserSettings.thumbnailQuality);
     if (currentUserSettings.thumbnailQuality === 'fast') {
       if (this.isGenerating()) {
         logger.info('The thumbnails that wait to be made are dropped, as the fast ones were chosen.');
