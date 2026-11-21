@@ -5,7 +5,7 @@ import { Logger } from '../../../src-shared/log/logger';
 import { photoFileUrl } from '../../../src-shared/main-window-schemes';
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
 import { DirectoryTreeViewSelectionService } from '../directory-tree-view/directory-tree-view-selection.service';
-import { GeneratedThumbnailService } from '../photo-info-viewer/generated-thumbnail.service';
+import { HeifThumbnailService } from '../heif-thumbnail/heif-thumbnail.service';
 import { Photo } from '../shared/model/photo.model';
 import { Thumbnail } from '../shared/model/thumbnail.model';
 import { Dimensions } from '../shared/model/dimensions.model';
@@ -82,7 +82,14 @@ describe('FaceSearchService', () => {
             return { url, close: () => {} };
           } },
         },
-        { provide: GeneratedThumbnailService, useValue: { watch: vi.fn(), filePathOf: (path: string) => thumbnails.get(path) } },
+        {
+          provide: HeifThumbnailService,
+          useValue: {
+            watch: vi.fn(),
+            stateOf: (path: string) => thumbnails.has(path) ? { kind: 'generated', filePath: thumbnails.get(path) }
+              : { kind: 'pending', provisionalUrl: null },
+          },
+        },
       ],
     });
     select = vi.spyOn(TestBed.inject(DirectoryTreeViewSelectionService), 'select');
@@ -105,6 +112,67 @@ describe('FaceSearchService', () => {
     expect(open).toHaveBeenCalledTimes(1);
     expect(close).toHaveBeenCalledTimes(1);
     expect(state()).toEqual({ kind: 'searching', done: 3, total: 3, waitingForThumbnails: false });
+  });
+
+  it('gives its dialog the number of the selected photos, whose room its lines keep', async () => {
+    const [a, b] = [photo('/trip/a.jpg'), photo('/trip/b.jpg')];
+    scores.set(photoFileUrl(a.path), 0.9).set(photoFileUrl(b.path), 0.1);
+    selectPhotos([a, b]);
+
+    await service.narrowDownSelectedPhotos();
+
+    const [[, config]] = open.mock.calls as unknown as [[unknown, { data: { photoCount: () => number } }]];
+    expect(config.data.photoCount()).toBe(2);
+  });
+
+  it('keeps saying that it waits for thumbnails until no photo has waited for a second, so that the line does not flash', async () => {
+    vi.useFakeTimers();
+    try {
+      const [h1, h2, h3] = ['h1', 'h2', 'h3'].map(name => photo(`/trip/${name}.HEIC`));
+      const thumbnailOf = (heif: Photo) => `/cache/${heif.name}.plm.jpg`;
+      for (const heif of [h1, h2, h3])
+        scores.set(photoFileUrl(thumbnailOf(heif)), 0.9);
+      let releaseFirst: () => void;
+      let releaseSecond: () => void;
+      const first = new Promise<void>(resolve => releaseFirst = resolve);
+      const second = new Promise<void>(resolve => releaseSecond = resolve);
+      score.mockImplementationOnce(async () => { await first; return 0.9; })
+        .mockImplementationOnce(async () => { await second; return 0.9; });
+      const waitingShown = () => (state() as { waitingForThumbnails?: boolean }).waitingForThumbnails;
+      selectPhotos([h1, h2, h3]);
+
+      // At 0 ms, h1 and h2 wait for their thumbnails, which the search looks for every 250 ms.
+      const searching = service.narrowDownSelectedPhotos();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(waitingShown()).toBe(true);
+      // At 250 ms, h1's is there: h2 still waits.
+      thumbnails.set(h1.path, thumbnailOf(h1));
+      await vi.advanceTimersByTimeAsync(250);
+      expect(waitingShown()).toBe(true);
+      // At 500 ms, h2's is there: no photo waits, and the line stays until 1500 ms...
+      thumbnails.set(h2.path, thumbnailOf(h2));
+      await vi.advanceTimersByTimeAsync(250);
+      expect(waitingShown()).toBe(true);
+      // ...but at 1000 ms, h1 is looked at, and h3, after it, waits: 1500 ms passes with the line shown.
+      await vi.advanceTimersByTimeAsync(500);
+      releaseFirst();
+      await vi.advanceTimersByTimeAsync(500);
+      expect(waitingShown()).toBe(true);
+      // At 1750 ms, h3's is there, and no photo waits: the line is shown until 2750 ms, and not after.
+      thumbnails.set(h3.path, thumbnailOf(h3));
+      await vi.advanceTimersByTimeAsync(250);
+      await vi.advanceTimersByTimeAsync(999);
+      expect(waitingShown()).toBe(true);
+      await vi.advanceTimersByTimeAsync(1);
+      expect(waitingShown()).toBe(false);
+
+      releaseSecond();
+      await vi.advanceTimersByTimeAsync(0);
+      await searching;
+      expect(select).toHaveBeenCalledWith([h1.path, h2.path, h3.path]);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('takes a photo whose metadata marks a face as having one, without looking at it, for JPEG files only', async () => {
@@ -206,7 +274,7 @@ describe('FaceSearchService', () => {
     thumbnails.set(heif.path, '/cache/b.HEIC.plm.jpg');
     await searching;
 
-    expect(TestBed.inject(GeneratedThumbnailService).watch).toHaveBeenCalledWith(heif.path);
+    expect(TestBed.inject(HeifThumbnailService).watch).toHaveBeenCalledWith(heif.path);
     expect(select).toHaveBeenCalledWith([heif.path]);
   });
 

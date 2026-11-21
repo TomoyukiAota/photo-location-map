@@ -9,8 +9,9 @@
 // with a folder of photos (in a window of 1200x800 and of 800x600), a photo's popup with its menu and the menu's submenus, the tree's menu, the Sort menu and its info dialog, the
 // chart's menu, its message for a duration that it cannot show and its button for the photos within a zoom, a region
 // on the map, the tabs of the Settings dialog with the choices of the clock's field, the question before a restart,
-// the About box, the dialog of the thumbnails that failed, the dialog of a folder without location data, and the
-// dialog of the search for faces, while it looks and when it found none.
+// the About box, the status bar while the thumbnails of HEIF files are made, the dialog of the thumbnails that failed,
+// the dialog of a folder without location data, and the dialog of the search for faces, while it looks and when it
+// found none.
 //
 // In each screen it finds the texts that are cut, the texts that reach outside their dialog or the window, to a side
 // or in height, the texts of buttons, tabs, menu items, labels and headings that are on more than one line, and the
@@ -50,6 +51,13 @@ await mkdir(broken);
 for (const name of ['A broken.HEIC', 'B broken.HEIC'])
   await copyFile(path.join(root, 'test/test-resources/unsupported-files/Invalid Photo.JPG'), path.join(broken, name));
 await copyFile(path.join(root, 'test/test-resources/actual-photos/Kobe/IMG_4676.JPG'), path.join(broken, 'Kobe.JPG'));
+// Many HEIF files, whose thumbnails take long enough to be made for the status bar to be measured while it offers the
+// fast thumbnails.
+const generating = path.join(folders, 'Generating');
+await mkdir(generating);
+for (let index = 1; index <= 20; index++)
+  await copyFile(path.join(root, 'test/e2e/fixtures/demo.heic'), path.join(generating, `demo ${index}.heic`));
+await copyFile(path.join(root, 'test/test-resources/actual-photos/Kobe/IMG_4676.JPG'), path.join(generating, 'Kobe.JPG'));
 const nowhere = path.join(folders, 'Nowhere');
 await mkdir(nowhere);
 await copyFile(path.join(root, 'test/test-resources/unsupported-files/Invalid Photo.JPG'), path.join(nowhere, 'Invalid Photo.JPG'));
@@ -149,8 +157,10 @@ const failures = [];
 for (const code of codes) {
   const profile = await mkdtemp(path.join(tmpdir(), 'plm-layout-profile-'));
   // The application takes PLM_TEST_SYSTEM_LANGUAGES as the operating system's languages in a test profile.
+  // The page decodes no HEVC, so that the main process makes the thumbnails of the HEIF files, whose status bar is
+  // measured, as on a computer without a decoder for HEVC (src/app/heif-thumbnail/).
   const env = { ...process.env, PLM_TEST_ROOT: profile, PLM_E2E: '1', PLM_TEST_HEADLESS: process.platform === 'linux' ? '0' : '1',
-    PLM_TEST_SYSTEM_LANGUAGES: `${code},en-US` };
+    PLM_TEST_SYSTEM_LANGUAGES: `${code},en-US`, PLM_TEST_HEVC_IN_PAGE: 'off' };
   for (const key of ['PLM_EM_MAIN', 'PLM_EM_RENDERER', 'ELECTRON_RUN_AS_NODE', 'NODE_OPTIONS']) delete env[key];
   const app = await _electron.launch({ executablePath: require('electron'), args: ['test/e2e/main.mjs'], cwd: root, env, timeout: 30000 });
   results[code] = {};
@@ -369,7 +379,7 @@ for (const code of codes) {
       await page.waitForSelector('app-settings-dialog');
       const tabs = page.locator('app-settings-dialog mat-list-item');
       // The OS tab is there on Windows only.
-      const names = ['language', 'appearance', 'datetime', ...(process.platform === 'win32' ? ['os'] : []), 'cache'];
+      const names = ['language', 'appearance', 'datetime', 'thumbnails', ...(process.platform === 'win32' ? ['os'] : []), 'cache'];
       for (const [index, name] of names.entries()) {
         await tabs.nth(index).click();
         await screen(`settings-${name}`, dialog, dialog);
@@ -397,15 +407,28 @@ for (const code of codes) {
       await page.keyboard.press('Escape');
       await page.waitForSelector('app-about-box', { state: 'detached' });
     });
+    await step('home-generating', async () => {
+      // The status bar while the thumbnails are made, which offers the fast thumbnails in the Settings dialog. After
+      // the steps of the map: once this folder of many photos had been open, a marker of the next folder sometimes
+      // opened no popup for the popup's step, with the application before this step was added too.
+      await openFolder(generating);
+      await page.locator('app-thumbnail-generation-status-bar .faster-in-settings').waitFor({ timeout: 40000 });
+      await screen('home-generating', 'app-thumbnail-generation-status-bar, app-loaded-files-status-bar', 'app-root');
+      // Open Folder is disabled until the app has seen that the thumbnails are made, which it checks every 5 seconds.
+      await page.waitForSelector('.open-folder-button button:enabled', { timeout: 60000 });
+    });
     await step('error-dialog', async () => {
       await openFolder(broken);
       const statusBar = page.locator('app-thumbnail-generation-status-bar');
-      await statusBar.locator('.anchor-tag-like-text').waitFor({ state: 'attached', timeout: 40000 });
+      // The link of the details to the files with errors, once the generation has finished: while it runs, the
+      // status bar has another, to the fast thumbnails.
+      const filesWithErrors = statusBar.locator('.details .anchor-tag-like-text');
+      await filesWithErrors.waitFor({ state: 'attached', timeout: 40000 });
       const details = statusBar.locator('.progress-bar-with-details');
       if (!await details.evaluate(element => element.classList.contains('expanded-progress-bar-with-details'))) await details.click();
       await page.waitForTimeout(400);
       await screen('home-errors', 'app-thumbnail-generation-status-bar, app-loaded-files-status-bar', 'app-root');
-      await statusBar.locator('.anchor-tag-like-text').click();
+      await filesWithErrors.click();
       await page.waitForSelector('app-thumbnail-generation-error-dialog tr[mat-row]');
       await screen('error-dialog', dialog, dialog);
       await page.locator('app-thumbnail-generation-error-dialog .close-button').first().click();
@@ -418,7 +441,7 @@ for (const code of codes) {
       await openFolder(faces);
       await page.waitForSelector('mat-tree-node:has-text("faces.heic")');
       await narrowDownToPhotosWithFaces();
-      await page.waitForSelector('app-face-search-dialog .waiting');
+      await page.waitForSelector('app-face-search-dialog .state.shown .waiting:not(.not-now)');
       await screen('face-search', dialog, dialog);
       await page.waitForSelector('app-face-search-dialog', { state: 'detached', timeout: 40000 });
       // Open Folder is disabled until the app has seen that the thumbnail is made, which it checks every 5 seconds.
@@ -429,9 +452,9 @@ for (const code of codes) {
       await openFolder(photos);
       await page.waitForSelector('mat-tree-node:has-text("Kobe")');
       await narrowDownToPhotosWithFaces();
-      await page.waitForSelector('app-face-search-dialog .message', { timeout: 40000 });
+      await page.waitForSelector('app-face-search-dialog .state.shown .message', { timeout: 40000 });
       await screen('face-search-none-found', dialog, dialog);
-      await page.locator('app-face-search-dialog button').click();
+      await page.locator('app-face-search-dialog .state.shown button').click();
       await page.waitForSelector('app-face-search-dialog', { state: 'detached' });
     });
     await step('no-location', async () => {

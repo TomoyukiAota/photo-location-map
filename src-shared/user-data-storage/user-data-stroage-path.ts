@@ -36,5 +36,6 @@ export namespace UserDataStoragePath {
     export const DateFormat: ReadonlyArray<string> = ['UserSettings', 'DateFormat'];
     export const ClockSystemFormat: ReadonlyArray<string> = ['UserSettings', 'ClockSystemFormat'];
     export const Language: ReadonlyArray<string> = ['UserSettings', 'Language'];
+    export const ThumbnailQuality: ReadonlyArray<string> = ['UserSettings', 'ThumbnailQuality'];
   }
 }

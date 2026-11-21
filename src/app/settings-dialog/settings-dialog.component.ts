@@ -1,6 +1,6 @@
 import { Component, computed, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { tIn } from '../../../src-shared/i18n/i18n';
 import { getLanguage } from '../../../src-shared/i18n/languages';
 import { resolveLanguage } from '../../../src-shared/i18n/resolve-language';
@@ -13,6 +13,7 @@ import {
   saveUserSettingsAndRestartApp,
   UserSettingsToBeSaved
 } from '../../../src-shared/user-settings/user-settings';
+import { HeifThumbnailService } from '../heif-thumbnail/heif-thumbnail.service';
 import { ConfirmDialogService } from '../shared/confirm-dialog/confirm-dialog.service';
 import { TranslatePipe } from '../shared/i18n/translate.pipe';
 import { RestoreSettingsService } from './service/restore-settings.service';
@@ -23,6 +24,7 @@ import { DateTimeSettingsComponent } from './date-time-settings/date-time-settin
 import { LanguageSettingsComponent } from './language-settings/language-settings.component';
 import { OsSettingsComponent } from './os-settings/os-settings.component';
 import { CacheSettingsComponent } from './cache-settings/cache-settings.component';
+import { ThumbnailSettingsComponent } from './thumbnail-settings/thumbnail-settings.component';
 import { MatButton } from '@angular/material/button';
 
 // The tabs: each with an identifier, which the code knows it by, and the key of its name. Language is first, and so
@@ -31,11 +33,17 @@ const settingsTabs = [
   { id: 'language', labelKey: 'settings.tabs.language' },
   { id: 'appearance', labelKey: 'settings.tabs.appearance' },
   { id: 'dateTime', labelKey: 'settings.tabs.dateTime' },
+  { id: 'thumbnails', labelKey: 'settings.tabs.thumbnails' },
   { id: 'os', labelKey: 'settings.tabs.os' },
   { id: 'cache', labelKey: 'settings.tabs.cache' },
 ] as const satisfies ReadonlyArray<{ id: string, labelKey: TranslationKey }>;
 type SettingsTab = typeof settingsTabs[number];
-type SettingsTabId = SettingsTab['id'];
+export type SettingsTabId = SettingsTab['id'];
+
+/** What opens the dialog may choose the tab that it opens on, as the status bar of thumbnails does (SettingsDialogService). */
+export interface SettingsDialogData {
+  readonly initialTab?: SettingsTabId;
+}
 
 // Show OS tab only on Windows
 const availableSettingsTabs: ReadonlyArray<SettingsTab> = currentPlatform() === 'win32'
@@ -48,16 +56,19 @@ const availableSettingsTabs: ReadonlyArray<SettingsTab> = currentPlatform() === 
   styleUrls: ['./settings-dialog.component.scss'],
   imports: [
     MatNavList, MatListItem, LanguageSettingsComponent, AppearanceSettingsComponent, DateTimeSettingsComponent, OsSettingsComponent,
-    CacheSettingsComponent, MatButton, TranslatePipe,
+    ThumbnailSettingsComponent, CacheSettingsComponent, MatButton, TranslatePipe,
   ]
 })
 export class SettingsDialogComponent {
   private settingsDialogRef = inject<MatDialogRef<SettingsDialogComponent>>(MatDialogRef);
   private restoreSettingsService = inject(RestoreSettingsService);
   private confirmDialogService = inject(ConfirmDialogService);
+  private heifThumbnailService = inject(HeifThumbnailService);
+  private data = inject<SettingsDialogData | null>(MAT_DIALOG_DATA, { optional: true });
 
   public readonly tabs = availableSettingsTabs;
-  public readonly selectedTab = signal<SettingsTabId>(availableSettingsTabs[0].id);
+  public readonly selectedTab = signal<SettingsTabId>(
+    availableSettingsTabs.find(tab => tab.id === this.data?.initialTab)?.id ?? availableSettingsTabs[0].id);
   /** The settings as the tabs have changed them, which Save saves. Each change makes a new object. */
   private readonly userSettingsToBeSaved = signal<UserSettingsToBeSaved>(getUserSettingsToBeSaved());
 
@@ -74,7 +85,8 @@ export class SettingsDialogComponent {
   public readonly isSaveButtonEnabled = computed(() => {
     const settings = this.userSettingsToBeSaved();
     const showStatusBarChanged = settings.showStatusBar !== currentUserSettings.showStatusBar;
-    return showStatusBarChanged || this.isAppRestartRequired();
+    const thumbnailQualityChanged = settings.thumbnailQuality !== currentUserSettings.thumbnailQuality;
+    return showStatusBarChanged || thumbnailQualityChanged || this.isAppRestartRequired();
   });
 
   /**
@@ -105,6 +117,9 @@ export class SettingsDialogComponent {
     settingsChangedService.languageSettingsChanged.pipe(takeUntilDestroyed()).subscribe(changed => {
       this.userSettingsToBeSaved.update(settings => ({ ...settings, language: changed.language }));
     });
+    settingsChangedService.thumbnailSettingsChanged.pipe(takeUntilDestroyed()).subscribe(changed => {
+      this.userSettingsToBeSaved.update(settings => ({ ...settings, thumbnailQuality: changed.thumbnailQuality }));
+    });
     settingsChangedService.dateTimeSettingsChanged.pipe(takeUntilDestroyed()).subscribe(changed => {
       this.userSettingsToBeSaved.update(settings => ({
         ...settings,
@@ -132,7 +147,11 @@ export class SettingsDialogComponent {
 
       saveUserSettingsAndRestartApp(this.userSettingsToBeSaved());
     } else {
+      const isThumbnailQualityChanged = this.userSettingsToBeSaved().thumbnailQuality !== currentUserSettings.thumbnailQuality;
       saveUserSetting(this.userSettingsToBeSaved());
+      // Applies at once: the thumbnails of the opened folder are made again.
+      if (isThumbnailQualityChanged)
+        void this.heifThumbnailService.applyThumbnailQuality();
       this.settingsDialogRef.close();
     }
   }

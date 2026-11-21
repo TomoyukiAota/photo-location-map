@@ -22,6 +22,7 @@ export function createBridgeDouble(temporaryRoot: string): PlmBridge {
       isE2e: false,
       logFile: { dirName: temporaryRoot, fileName: 'test.log', filePath: path.join(temporaryRoot, 'test.log') },
       thumbnailCacheDir,
+      hevcInPage: 'auto',
     },
     storage: { snapshot: () => ({}), write: async () => {} },
     log: { append: () => {} },
@@ -37,7 +38,10 @@ export function createBridgeDouble(temporaryRoot: string): PlmBridge {
       state: async filePaths => filePaths.map(filePath => ({
         attemptFinished: false, cacheAvailable: false, thumbnailFilePath: path.join(thumbnailCacheDir, `${path.basename(filePath)}.plm.jpg`),
       })),
+      cancel: async () => {},
     },
+    // The files exist nowhere: they have no image to read.
+    heif: { embeddedThumbnail: async () => null, embeddedThumbnailJpeg: async () => null, wholeImage: async () => null },
     thumbnailCache: { open: async () => {}, deleteAndRestart: async () => {} },
     shell: { openExternal: async () => {}, openWithAssociatedApp: async () => {}, openContainingFolder: async () => {} },
     app: { restart: () => {} },

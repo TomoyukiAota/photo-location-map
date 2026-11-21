@@ -158,6 +158,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Création des vignettes des fichiers HEIF...",
+    "fasterInSettings": "Pour les afficher plus tôt, <settingsLink>choisissez les vignettes rapides dans les paramètres</settingsLink>.",
     "completed": "La création des vignettes des fichiers HEIF est terminée.",
     "finishedWithErrors": "La création des vignettes des fichiers HEIF s’est terminée avec des erreurs.",
     "showDetails": "Afficher les détails",
@@ -191,6 +192,7 @@
       "language": "Langue (Language)",
       "appearance": "Apparence",
       "dateTime": "Date et heure",
+      "thumbnails": "Vignettes",
       "os": "Système",
       "cache": "Cache"
     },
@@ -213,6 +215,14 @@
       "clock12": "12 heures",
       "clock24": "24 heures",
       "example": "Exemple"
+    },
+    "thumbnails": {
+      "title": "Vignettes HEIF",
+      "description": "Cette application crée les vignettes des fichiers HEIF, comme les photos prises avec un iPhone. Choisissez si elles sont créées pour la qualité ou pour la rapidité.",
+      "highQuality": "Haute qualité",
+      "highQualityDescription": "Créées à partir de la photo entière, avec 400 pixels sur le côté le plus long. En attendant, la petite vignette enregistrée dans la photo est affichée. Sur un ordinateur dont le matériel graphique ne peut pas décoder le HEVC, leur création prend du temps.",
+      "fast": "Rapide",
+      "fastDescription": "La petite vignette enregistrée dans la photo, affichée tout de suite. Elle est moins nette\u00a0: 320 × 240 pixels pour une photo de 12 mégapixels prise avec un iPhone."
     },
     "os": {
       "title": "Menu contextuel de l’Explorateur de fichiers",

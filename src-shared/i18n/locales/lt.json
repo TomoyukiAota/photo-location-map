@@ -158,6 +158,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Kuriamos HEIF failų miniatiūros...",
+    "fasterInSettings": "Kad jos būtų rodomos anksčiau, <settingsLink>nustatymuose pasirinkite greitas miniatiūras</settingsLink>.",
     "completed": "HEIF failų miniatiūros sukurtos.",
     "finishedWithErrors": "HEIF failų miniatiūrų kūrimas baigtas su klaidomis.",
     "showDetails": "Rodyti išsamią informaciją",
@@ -191,6 +192,7 @@
       "language": "Kalba (Language)",
       "appearance": "Išvaizda",
       "dateTime": "Data ir laikas",
+      "thumbnails": "Miniatiūros",
       "os": "Sistema",
       "cache": "Talpykla"
     },
@@ -213,6 +215,14 @@
       "clock12": "12 valandų",
       "clock24": "24 valandų",
       "example": "Pavyzdys"
+    },
+    "thumbnails": {
+      "title": "HEIF miniatiūros",
+      "description": "HEIF failų, pavyzdžiui, „iPhone“ nufotografuotų nuotraukų, miniatiūras kuria ši programa. Pasirinkite, ar jas kurti pirmenybę teikiant kokybei, ar greičiui.",
+      "highQuality": "Aukšta kokybė",
+      "highQualityDescription": "Kuriamos iš visos nuotraukos, ilgesnėje kraštinėje 400 taškų. Iki tol rodoma nuotraukoje įrašyta maža miniatiūra. Kompiuteryje, kurio grafinė aparatinė įranga negali iškoduoti HEVC, jų kūrimas užtrunka.",
+      "fast": "Greitos",
+      "fastDescription": "Nuotraukoje įrašyta maža miniatiūra, rodoma iš karto. Ji mažiau ryški: 320 × 240 taškų 12 megapikselių „iPhone“ nuotraukoje."
     },
     "os": {
       "title": "Failų naršyklės kontekstinis meniu",

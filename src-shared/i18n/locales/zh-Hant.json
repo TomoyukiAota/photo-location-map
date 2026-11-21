@@ -158,6 +158,7 @@
   },
   "thumbnailGeneration": {
     "generating": "正在為 HEIF 檔案產生縮圖...",
+    "fasterInSettings": "若要更快顯示，<settingsLink>請在設定中選擇「速度優先」</settingsLink>。",
     "completed": "HEIF 檔案的縮圖已產生完畢。",
     "finishedWithErrors": "HEIF 檔案縮圖的產生已結束，但發生了錯誤。",
     "showDetails": "顯示詳細資訊",
@@ -191,6 +192,7 @@
       "language": "語言 (Language)",
       "appearance": "外觀",
       "dateTime": "日期與時間",
+      "thumbnails": "縮圖",
       "os": "作業系統",
       "cache": "快取"
     },
@@ -213,6 +215,14 @@
       "clock12": "12 小時制",
       "clock24": "24 小時制",
       "example": "範例"
+    },
+    "thumbnails": {
+      "title": "HEIF 縮圖",
+      "description": "HEIF 檔案（例如用 iPhone 拍攝的照片）的縮圖由本應用程式產生。請選擇要優先考慮畫質還是速度。",
+      "highQuality": "高畫質",
+      "highQualityDescription": "從整張照片產生，長邊為 400 像素。產生之前，會顯示照片中儲存的小縮圖。在圖形硬體無法解碼 HEVC 的電腦上，產生需要一些時間。",
+      "fast": "速度優先",
+      "fastDescription": "立即顯示照片中儲存的小縮圖。畫質較低：用 iPhone 拍攝的 1200 萬像素照片為 320 × 240 像素。"
     },
     "os": {
       "title": "檔案總管的右鍵選單",

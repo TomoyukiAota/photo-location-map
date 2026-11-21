@@ -1,8 +1,9 @@
 import { test, expect, _electron } from 'playwright/test';
+import { execFile } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { copyFile, mkdir, mkdtemp, readFile, realpath, rm, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
-import { tmpdir } from 'node:os';
+import { cpus, freemem, tmpdir, totalmem } from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { browserSettingLabels, languages as websiteLanguages, matchLanguage } from '../../script/website/website-i18n.js';
@@ -24,6 +25,8 @@ if (packagedLauncher && (!packagedExecutable || !path.isAbsolute(packagedLaunche
 }
 const photoFolder = path.join(root, 'test/test-resources/actual-photos');
 let app, page, profile, headless;
+/** The ID of the launched application's main process, which on Windows is not app.process().pid (mainProcessId). */
+let launchedMainProcessId;
 // What a development build reported as NG0100: a binding that changed without telling Angular, which OnPush
 // components and zoneless change detection would not render (see src/app/app.config.ts). A production build checks
 // nothing.
@@ -110,6 +113,7 @@ function launchOptions(extraEnv = {}) {
  * `env` gives others in PLM_TEST_SYSTEM_LANGUAGES (src-main/startup/startup-metadata-setup.ts).
  */
 async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'confirm' } = {}) {
+  launchedMainProcessId = undefined;
   app = await _electron.launch(launchOptions(extraEnv));
   // Listened to for every page from the launch on, so that what the first change detection reports is not missed.
   app.context().on('console', message => {
@@ -151,7 +155,7 @@ async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'con
     if (typeof require !== 'function') throw new Error('The application is missing its gated E2E hooks; rebuild it before testing.');
     const path = require('node:path');
     const appRoot = app.getAppPath();
-    return { packaged: app.isPackaged, appRoot, resources: process.resourcesPath, executable: process.execPath,
+    return { pid: process.pid, packaged: app.isPackaged, appRoot, resources: process.resourcesPath, executable: process.execPath,
       appImage: process.env.APPIMAGE, version: app.getVersion(), versions: process.versions,
       updated: process.argv.includes('--updated'),
       arch: process.arch, translated: app.runningUnderARM64Translation,
@@ -160,6 +164,7 @@ async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'con
       unitTest: require(path.join(appRoot, 'out/app/src-shared/environment/environment-detector.js')).EnvironmentDetector.isUnitTest,
       dependencies: require(path.join(appRoot, 'package.json')).dependencies };
   });
+  launchedMainProcessId = runtime.pid;
   expect(runtime.unitTest).toBe(false);
   expect(runtime.arch).toBe(expectedArch);
   for (const directory of runtime.paths) expect((await realpath(directory)).startsWith((await realpath(profile)) + path.sep)).toBe(true);
@@ -218,14 +223,22 @@ async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'con
     // Details: On Windows in CI, the home view did not render within 30 seconds for several launches in a row,
     // twice in one evening, with a bridge and without an error, while the same commit passed in the other run. The
     // marks tell a start that waits (renderer:bootstrap-start without renderer:bootstrap-done) from a page that
-    // did not come that far, and the requests tell what it waits for, or what it asked for in vain.
+    // did not come that far, and the requests tell what it waits for, or what it asked for in vain. On 2026-11-20,
+    // four launches stopped at renderer:bootstrap-start with the download from raw.githubusercontent.com unfinished
+    // after 30 seconds, though the page gives it 10, while the cases around them took several times as long as
+    // usual. Playwright hears from the page, and of its requests, through the main process: whether the main process
+    // answers, and how busy the computer was, tell a page that waits for the network from an application that does not
+    // get to run (see quitApplication).
     const bridge = await within5Seconds(page.evaluate(() => !window.plm ? 'no bridge' : window.plm.startup === null
       ? 'the startup metadata was refused' : 'a bridge').catch(() => 'unknown'), 'a page that does not answer');
     const marks = await within5Seconds(page.evaluate(() => performance.getEntriesByType('mark')
       .filter(mark => mark.name.startsWith('plm:')).map(mark => mark.name.slice(4))).catch(() => 'unknown'), 'unknown');
+    const mainProcess = await within5Seconds(app.evaluate(() => 'answers').catch(error => `failed: ${error.message}`),
+      'does not answer');
     throw new Error(`The home view did not render, with ${bridge}; marks: ${JSON.stringify(marks)}; `
       + `requests not finished: ${JSON.stringify([...unfinishedRequests].map(addressOf))}; `
-      + `requests that failed: ${JSON.stringify(failedRequests.slice(-10))}; page errors: ${JSON.stringify(pageErrors)}.`, { cause: error });
+      + `requests that failed: ${JSON.stringify(failedRequests.slice(-10))}; page errors: ${JSON.stringify(pageErrors)}; `
+      + `main process: ${mainProcess}.\n${await describeComputer()}`, { cause: error });
   });
   if (liveReload) expect(new URL(page.url()).origin).toBe('http://localhost:4200');
   await page.waitForFunction(() => !!window.plmInternalRenderer?.settingsDialog?.showSettingsDialog);
@@ -375,6 +388,15 @@ async function answerConfirmation(lines, answer) {
   await expect(confirmation.locator('.message')).toHaveText(lines.join('\n'), { useInnerText: true });
   await confirmation.getByRole('button', { name: answer, exact: true }).click();
   await expect(confirmation).toHaveCount(0);
+}
+/**
+ * Launches the application again with a page that decodes no HEVC (PLM_TEST_HEVC_IN_PAGE=off): the main process then
+ * makes the thumbnails of HEIF photos, as on a computer without a decoder for HEVC, and the cases of that generation
+ * run the same on every platform, whether its Chromium decodes HEVC or not (src/app/heif-thumbnail/).
+ */
+async function relaunchWithoutHevcInPage() {
+  await app.close();
+  await launch({ env: { PLM_TEST_HEVC_IN_PAGE: 'off' } });
 }
 async function openFolderWithPicker(folder) {
   await app.evaluate(({ dialog }, folder) => {
@@ -535,7 +557,7 @@ async function servedAppPage() {
 }
 /**
  * What the application was doing, for a case that timed out: whether its main process and each of its pages still
- * answer, and what each window was loading.
+ * answer, what each window was loading, and how busy the computer was.
  * TL;DR: A case that times out says only that it did, and which step it was in, when that step has no time limit of
  * its own, is not known: a call into the application waits as long as the application takes.
  * Details: The first case of Photo Data Viewer with a HEIC photo timed out on macOS in CI twice in one evening, and
@@ -543,8 +565,6 @@ async function servedAppPage() {
  * could not tell a page of the viewer that did not load from an application that hung.
  */
 async function describeApplication() {
-  const unanswered = 'no answer within 5 seconds';
-  const failed = error => `failed: ${error.message}`;
   const lines = [];
   const windows = await within5Seconds(app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows().map(window => ({
     title: window.getTitle(),
@@ -552,14 +572,215 @@ async function describeApplication() {
     loading: window.webContents.isLoading(),
     waitingForResponse: window.webContents.isWaitingForResponse(),
     crashed: window.webContents.isCrashed(),
-  }))).catch(failed), unanswered);
+  }))).catch(error => `failed: ${error.message}`), 'no answer within 5 seconds');
   lines.push(`main process: ${typeof windows === 'string' ? windows : `answers, with ${windows.length} windows`}`);
   if (typeof windows !== 'string') lines.push(...windows.map(window => `window: ${JSON.stringify(window)}`));
-  for (const openPage of app.windows()) {
-    const state = await within5Seconds(openPage.evaluate(() => `answers, ${document.readyState}`).catch(failed), unanswered);
-    lines.push(`page ${openPage.url()}: ${state}`);
+  const [pages, computer] = await Promise.all([describePages(), describeComputer()]);
+  return [...lines, ...pages, computer].join('\n');
+}
+/** Whether each page of the application answers within 5 seconds, all asked at once, and how far it has loaded. */
+function describePages() {
+  return Promise.all(app.windows().map(async openPage => {
+    const state = await within5Seconds(openPage.evaluate(() => `answers, ${document.readyState}`)
+      .catch(error => `failed: ${error.message}`), 'no answer within 5 seconds');
+    return `page ${openPage.url()}: ${state}`;
+  }));
+}
+/**
+ * How busy the computer was over a second: its processors and its free memory, and on Windows the processes that used
+ * the processors the most, how much of the time its disks were idle, and how many pages of memory it read or wrote.
+ */
+async function describeComputer() {
+  const sample = () => cpus().reduce((sum, { times }) => ({ idle: sum.idle + times.idle,
+    all: sum.all + times.user + times.nice + times.sys + times.idle + times.irq }), { idle: 0, all: 0 });
+  const before = sample();
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  const after = sample();
+  const busy = Math.round(100 * (1 - (after.idle - before.idle) / (after.all - before.all)));
+  const megabytes = bytes => Math.round(bytes / 2 ** 20);
+  // PowerShell starts after the second, so that what it uses to start is not counted.
+  return [`computer: ${cpus().length} processors, ${busy}% busy over a second; `
+    + `${megabytes(freemem())} of ${megabytes(totalmem())} MB of memory free`,
+  ...process.platform === 'win32' ? await describeWindowsLoad() : []].join('\n');
+}
+// Run by describeWindowsLoad: what each process used of the processors while Get-Counter took its sample of a second,
+// as a share of one processor, and the counters of the disks and of the memory's paging. It gets 8 seconds: the
+// after-hooks have a minute outside a packaged run (Playwright gives them the case's timeout again), in which a
+// teardown may describe a case that timed out, then a quit over the limit, and still has to stop the application and
+// remove the profile.
+const windowsLoadScript = `
+$ErrorActionPreference = 'SilentlyContinue'
+$before = @{}
+foreach ($process in Get-Process) { $before[$process.Id] = $process.TotalProcessorTime.TotalMilliseconds }
+$watch = [Diagnostics.Stopwatch]::StartNew()
+$counters = (Get-Counter '\\PhysicalDisk(_Total)\\% Idle Time', '\\PhysicalDisk(_Total)\\Avg. Disk Queue Length',
+  '\\Memory\\Pages/sec' -SampleInterval 1 -MaxSamples 1).CounterSamples |
+  ForEach-Object { '{0} {1:N1}' -f (($_.Path -split '\\\\')[-2..-1] -join '\\'), $_.CookedValue }
+$milliseconds = $watch.Elapsed.TotalMilliseconds
+$busiest = Get-Process | Where-Object { $_.Id -ne 0 -and $before.ContainsKey($_.Id) } | ForEach-Object {
+  [pscustomobject]@{ name = $_.ProcessName; id = $_.Id; megabytes = [math]::Round($_.WorkingSet64 / 1MB)
+    percent = [math]::Round(100 * ($_.TotalProcessorTime.TotalMilliseconds - $before[$_.Id]) / $milliseconds) }
+} | Sort-Object percent -Descending | Select-Object -First 8
+@{ counters = @($counters); busiest = @($busiest) } | ConvertTo-Json -Compress -Depth 3
+`;
+/** On Windows: the lines of windowsLoadScript, or why it could not tell them. */
+function describeWindowsLoad() {
+  const encoded = Buffer.from(windowsLoadScript, 'utf16le').toString('base64');
+  return new Promise(resolve => execFile('powershell.exe', ['-NoProfile', '-NonInteractive', '-EncodedCommand', encoded],
+    { windowsHide: true, timeout: 8000 }, (error, stdout) => {
+      try {
+        if (error) throw error;
+        // ConvertTo-Json writes an array of one element as the element.
+        const { counters, busiest } = JSON.parse(stdout);
+        resolve([`busiest processes, with their share of one processor: ${[busiest ?? []].flat()
+          .map(({ name, id, percent, megabytes }) => `${name} ${id} ${percent}% ${megabytes} MB`).join(', ')}`,
+        `counters: ${[counters ?? []].flat().filter(Boolean).join(', ')}`]);
+      } catch (failure) {
+        resolve([`busiest processes: could not be read: ${failure.message}`]);
+      }
+    }));
+}
+/**
+ * Runs in the main process, before the teardown quits the application (quitApplication). Writes to `timeline` what
+ * happens from the quit on, and once a second while the quit lasts, which windows are left and what each process of
+ * the application uses of the processors, which also shows that the main process still runs. Destroys a window that
+ * has not closed `pageLimit` milliseconds after the quit asked it to.
+ */
+function watchQuit({ app, BrowserWindow }, { timeline, pageLimit }) {
+  const fs = globalThis.__plmTestRequire('node:fs');
+  const start = Date.now();
+  const mark = text => {
+    try {
+      fs.appendFileSync(timeline, `+${Date.now() - start} ms ${text}\n`);
+    } catch {
+      // The quit goes on without the line.
+    }
+  };
+  const nameOf = window => `window ${window.id} (${window.webContents.getURL().split('?')[0].slice(0, 80)})`;
+  // Each call says what the processes used since the one before, as a share of all the processors.
+  const processors = globalThis.__plmTestRequire('node:os').cpus().length;
+  app.getAppMetrics();
+  app.once('before-quit', () => {
+    mark('before-quit');
+    setInterval(() => {
+      const windows = BrowserWindow.getAllWindows().map(window =>
+        `${nameOf(window)} in process ${window.webContents.getOSProcessId()}`);
+      const processes = app.getAppMetrics().map(({ type, pid, cpu, memory }) =>
+        `${type} ${pid} ${Math.round(cpu.percentCPUUsage * processors)}% ${Math.round(memory.workingSetSize / 1024)} MB`);
+      mark(`quitting: ${windows.join(', ') || 'no window'}; processes, with their share of one processor: `
+        + processes.join(', '));
+    }, 1000);
+  });
+  for (const window of BrowserWindow.getAllWindows()) {
+    const name = nameOf(window);
+    window.once('unresponsive', () => mark(`${name}: unresponsive`));
+    window.once('close', () => {
+      mark(`${name}: close`);
+      const timer = setTimeout(() => {
+        if (window.isDestroyed()) return;
+        mark(`${name}: its page did not let it close within ${pageLimit} ms, so it was destroyed`);
+        window.destroy();
+      }, pageLimit);
+      window.once('closed', () => {
+        clearTimeout(timer);
+        mark(`${name}: closed`);
+      });
+    });
   }
-  return lines.join('\n');
+  for (const event of ['will-quit', 'quit']) app.once(event, () => mark(event));
+  process.once('exit', () => mark('exit'));
+}
+/**
+ * Quits the application as a user does, and fails the case when it has not quit within 10 seconds, with what held it.
+ * TL;DR: A window whose page has not let it close a second after the quit asked it to is destroyed, which is when
+ * Chromium closes it for a user. Under Playwright, Chromium waits for the page without limit, so that a page that
+ * did not answer for 10 seconds failed the case, though a user's quit would not have waited for it.
+ * Details:
+ * - On 2026-11-20, six runs of Windows CI failed with "Test application did not quit within 10 seconds.", each in
+ *   another case, and passed when run again; none had from 2026-11-03 on. Five came in stretches of a few minutes in
+ *   which cases took 2 to 10 times as long as usual, around 12:59 UTC in three runs at once, one of which passed. In
+ *   those stretches, four launches did not render their home view in 30 seconds, still waiting for a download that
+ *   their page gives 10, and twice the page did not answer within 5 seconds. Such stretches failed launches and the
+ *   removal of profiles from 2026-11-08 on (see launch and removeProfile).
+ * - Electron asks a window's page to run its beforeunload handlers before it closes the window, when the page has a
+ *   handler of beforeunload, unload, pagehide or visibilitychange (BrowserWindow::OnCloseButtonClicked,
+ *   WebContentsImpl::NeedToFireBeforeUnloadOrUnloadEvents). The main window's page has: Amplitude's autocapture and
+ *   Mixpanel listen to beforeunload, and src/analytics-setup.ts to pagehide. Chromium goes on if the page has not
+ *   answered within 500 ms, and gives its unload handlers 500 ms more (kUnloadTimeout), but does not go on while a
+ *   debugger is attached to the page, which may hold it at a breakpoint (RenderFrameHostImpl::BeforeUnloadTimeout,
+ *   WebContentsImpl::ShouldIgnoreUnresponsiveRenderer, https://crbug.com/684202). Playwright is attached to every page.
+ * - Measured on macOS (Electron 45.3.2, Playwright 1.64.1): with the page kept busy for 15 seconds, app.close() took
+ *   14.8 seconds instead of 70 ms, and 1.06 seconds with the window destroyed after one. A window alone with a busy
+ *   page and a beforeunload listener quit in 1.0 second, and in 14.3 with a debugger attached; with only a pagehide
+ *   listener, in 0.5 second either way.
+ * - A network that does not answer neither held the quit nor kept the page from running: with every host sent to a
+ *   server on the computer that accepted connections and never answered, the page and the main process answered
+ *   within 3 ms, and the quit took 78 ms.
+ * - What did not run in those stretches is not known. A page does not answer Playwright while the main process is
+ *   busy either, as Chromium passes the calls to the page through the main process's thread, and a main process that
+ *   does not run cannot quit, nor destroy the window. A quit over the limit reports the main process's timeline,
+ *   which shows whether it ran, what each process used and how busy the computer was.
+ * - On Windows, the process that Playwright starts is cmd.exe, which runs the application (stopApplication).
+ */
+async function quitApplication(testInfo, child) {
+  const timeline = path.join(profile, 'quit-timeline.txt');
+  let exitedAt, closedAt;
+  child?.once('exit', () => { exitedAt = Date.now(); });
+  child?.once('close', () => { closedAt = Date.now(); });
+  // A main process that is busy runs the watch at once, but answers only when it is free: the quit does not wait for
+  // that answer longer than a second, and the limit applies to a main process that is not watched too.
+  let watchTimer;
+  await Promise.race([app.evaluate(watchQuit, { timeline, pageLimit: 1000 }).catch(() => {}),
+    new Promise(resolve => { watchTimer = setTimeout(resolve, 1000); })]).finally(() => clearTimeout(watchTimer));
+  const start = Date.now();
+  let timer;
+  const quit = await Promise.race([app.close().then(() => true),
+    new Promise(resolve => { timer = setTimeout(() => resolve(false), 10000); })]).finally(() => clearTimeout(timer));
+  const recorded = async () => 'In milliseconds from when it began to watch the quit, the main process recorded:\n'
+    + ((await readFile(timeline, 'utf8').catch(() => '')).trim() || 'nothing');
+  if (!quit) {
+    const ended = (time, what) => time === undefined ? `${what} not yet` : `${what} ${time - start} ms after the quit began`;
+    const [pages, computer] = await Promise.all([describePages(), describeComputer()]);
+    const mainProcess = launchedMainProcessId === undefined ? 'not known'
+      : `${launchedMainProcessId}, ${isRunning(launchedMainProcessId) ? 'running' : 'ended'}`;
+    const state = [await recorded(), `main process: ${mainProcess}; the process that Playwright started, ${child?.pid}: `
+      + `${ended(exitedAt, 'ended')}, ${ended(closedAt, 'its output closed')}`, ...pages, computer].join('\n');
+    throw new Error(`Test application did not quit within 10 seconds.\n${state}`);
+  }
+  const took = Date.now() - start;
+  const text = await recorded();
+  // A quit takes well under a second as a rule: one of more than three is logged as well.
+  if (took > 3000 || text.includes('destroyed')) {
+    const message = `The application took ${took} ms to quit. ${text}`;
+    console.log(message);
+    await testInfo.attach('quit', { body: message, contentType: 'text/plain' });
+  }
+}
+/** Whether the process `pid` runs. */
+function isRunning(pid) {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (error) {
+    return error.code === 'EPERM';
+  }
+}
+/**
+ * Stops the application, which did not quit, with every process that it started.
+ * TL;DR: On Windows, taskkill stops the whole tree. Playwright starts the application through cmd.exe there, so that
+ * child.kill() stopped cmd.exe alone and left the application running into the next case.
+ * Details: On Windows CI, the application's main process was still running 3 seconds after child.kill() had ended
+ * cmd.exe, and gone after this function had stopped it, in a case kept from quitting by a busy main process.
+ */
+async function stopApplication(child) {
+  const stopped = new Promise(resolve => child.once('exit', resolve));
+  if (process.platform === 'win32') {
+    await new Promise(resolve => execFile('taskkill', ['/pid', String(child.pid), '/t', '/f'], { windowsHide: true }, error => {
+      if (error) child.kill('SIGKILL');
+      resolve();
+    }));
+  } else child.kill('SIGKILL');
+  await stopped;
 }
 /**
  * Removes a case's profile.
@@ -587,7 +808,6 @@ async function removeProfile(folder) {
 // Playwright reads the names of the fixtures from the first parameter, which has to be written as a pattern.
 test.afterEach(async ({}, testInfo) => {
   const child = app?.process();
-  let timer;
   try {
     if (app && testInfo.status === 'timedOut') {
       const state = await describeApplication().catch(error => `could not be read: ${error.message}`);
@@ -598,17 +818,9 @@ test.afterEach(async ({}, testInfo) => {
     // case's last step, before the application closes. A page that hangs does not hold the hook up.
     if (page && !page.isClosed() && await within5Seconds(page.evaluate(() => !!globalThis.ngDevMode).catch(() => false), false))
       await page.waitForTimeout(1100);
-    if (app) await Promise.race([
-      app.close(),
-      new Promise((_, reject) => timer = setTimeout(() => reject(new Error('Test application did not quit within 10 seconds.')), 10000)),
-    ]);
+    if (app) await quitApplication(testInfo, child);
   } finally {
-    clearTimeout(timer);
-    if (child && child.exitCode === null && child.signalCode === null) {
-      const stopped = new Promise(resolve => child.once('exit', resolve));
-      child.kill('SIGKILL');
-      await stopped;
-    }
+    if (child && child.exitCode === null && child.signalCode === null) await stopApplication(child);
     if (profile) await removeProfile(profile);
   }
   expect(changedWithoutNotification, 'Bindings changed without telling Angular').toEqual([]);
@@ -636,6 +848,9 @@ test('welcome, about and every available settings tab keep their appearance', as
   await shot('settings-appearance');
   await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Date & Time' }).click();
   await shot('settings-date', [page.locator('.date-time-example')]);
+  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Thumbnails' }).click();
+  await expect(page.locator('app-thumbnail-settings')).toBeVisible();
+  await shot('settings-thumbnails');
   await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Cache' }).click();
   await shot('settings-cache', [page.locator('.location-value')]);
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
@@ -977,7 +1192,7 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   // The Settings dialog, whose first tab keeps the English word for a user who cannot read Japanese.
   await settings();
   await expect(page.locator('app-settings-dialog mat-list-item')).toHaveText(
-    ['言語 (Language)', '外観', '日付と時刻', ...(process.platform === 'win32' ? ['OS'] : []), 'キャッシュ']);
+    ['言語 (Language)', '外観', '日付と時刻', 'サムネイル', ...(process.platform === 'win32' ? ['OS'] : []), 'キャッシュ']);
   const languageSettings = page.locator('app-language-settings');
   await expect(languageSettings.getByRole('option')).toHaveText([systemLanguageInJapanese('日本語'), ...languageNames]);
   await expect(languageSettings.getByRole('option', { name: systemLanguageInJapanese('日本語') })).toHaveAttribute('aria-selected', 'true');
@@ -2522,7 +2737,22 @@ test('Narrow Down to Photos with Faces keeps selected the photos in which faces 
   for (const name of withFaces) await treeCheckbox(name).uncheck();
   await expectSelected(withoutFaces);
   await narrowDown.click();
-  await expect(dialog).toContainText('No faces were found in the selected photos. The selection stays as it is.');
+  // Every state of the dialog is laid out, one on top of another, and the one that applies is shown.
+  const shownState = dialog.locator('.state.shown');
+  await expect(shownState.locator('.message')).toHaveText('No faces were found in the selected photos. The selection stays as it is.');
+  await expect(shownState.getByRole('button')).toHaveText('Close');
+  // The dialog is as tall whatever it shows: its states are, and what each has fits in it, the search's progress, the
+  // tallest, too. Each child's box is measured, as a button's touch target reaches past the button's on purpose.
+  const states = await dialog.locator('.state').evaluateAll(elements => elements.map(state => {
+    const box = state.getBoundingClientRect();
+    const fits = [...state.children].every(child => {
+      const childBox = child.getBoundingClientRect();
+      return childBox.top >= box.top - 1 && childBox.bottom <= box.bottom + 1;
+    });
+    return { height: Math.round(box.height), fits };
+  }));
+  expect(states).toHaveLength(4);
+  for (const state of states) expect(state).toEqual({ height: states[0].height, fits: true });
   await dialog.getByRole('button', { name: 'Close', exact: true }).click();
   await expect(dialog).toHaveCount(0);
   await expectSelected(withoutFaces);
@@ -2734,11 +2964,7 @@ test('a launch while the app runs keeps Chromium\'s storage in a folder of its o
     let timer;
     await Promise.race([second.close(), new Promise(resolve => { timer = setTimeout(resolve, 10000); })]).catch(() => {});
     clearTimeout(timer);
-    if (child.exitCode === null && child.signalCode === null) {
-      const stopped = new Promise(resolve => child.once('exit', resolve));
-      child.kill('SIGKILL');
-      await stopped;
-    }
+    if (child.exitCode === null && child.signalCode === null) await stopApplication(child);
   }
   // The running app keeps the lock, which the second launch neither took nor removed.
   expect(await readFile(lockPath, 'utf8')).toBe(String(first.pid));
@@ -3211,6 +3437,7 @@ test('a HEIF thumbnail that cannot be made is recorded with why, without paths',
 });
 test('the thumbnail status bar follows the generation of HEIF thumbnails from start to end', async () => {
   // The main process makes the thumbnails, and the status bar learns of them from a poll every 5 seconds.
+  await relaunchWithoutHevcInPage();
   const folder = path.join(profile, 'HEIF to make thumbnails of');
   await mkdir(folder);
   await copyFile(path.join(root, 'test/e2e/fixtures/demo.heic'), path.join(folder, 'demo.heic'));
@@ -3249,6 +3476,7 @@ test('the thumbnail status bar follows the generation of HEIF thumbnails from st
 });
 test('opening another folder hides the thumbnail status bar of the previous one', async () => {
   // Every open hides it, the second one too, although the application then already has a folder open.
+  await relaunchWithoutHevcInPage();
   const folder = path.join(profile, 'HEIF before another folder');
   await mkdir(folder);
   await copyFile(path.join(root, 'test/e2e/fixtures/demo.heic'), path.join(folder, 'demo.heic'));
@@ -3261,6 +3489,73 @@ test('opening another folder hides the thumbnail status bar of the previous one'
   await openFolderWithPicker(photoFolder);
   await expect(page.locator('app-loaded-files-status-bar')).toContainText('4 files have location data.');
   await expect(statusBar).toBeHidden();
+});
+test('a HEIF photo shows the thumbnail that it holds at once, then the one of high quality', async () => {
+  // demo-with-thumbnail.heic holds a thumbnail of 320x240, turned upright as the photo is, and the thumbnail of high
+  // quality is 400 pixels high, made from the whole image: by the page where its Chromium decodes HEVC, or by the main
+  // process. Either way, the small one is shown first, as a JPEG that the page or the main process decoded.
+  const folder = path.join(profile, 'HEIF with its own thumbnail');
+  await mkdir(folder);
+  await copyFile(path.join(root, 'test/e2e/fixtures/demo-with-thumbnail.heic'), path.join(folder, 'demo-with-thumbnail.heic'));
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'Kobe.JPG'));
+  await dismissWelcome();
+  const sizes = [];
+  await page.exposeFunction('__plmRecordThumbnailSize', size => sizes.push(size));
+  await openFolderWithPicker(folder);
+  const thumbnail = page.locator('mat-tree-node').filter({ hasText: 'demo-with-thumbnail.heic' }).locator('.photo-info-viewer-thumbnail');
+  await thumbnail.evaluate(image => {
+    // The image that stands in for a thumbnail being made is a data: URL, which is not counted.
+    const record = () => image.complete && image.naturalWidth && !image.src.startsWith('data:')
+      && window.__plmRecordThumbnailSize(`${image.naturalWidth}x${image.naturalHeight}`);
+    record();
+    image.addEventListener('load', record);
+  });
+  await expect.poll(() => thumbnail.evaluate(image => image.complete ? `${image.naturalWidth}x${image.naturalHeight}` : ''),
+    { timeout: 30000 }).toBe('300x400');
+  await expect(thumbnail).not.toHaveClass(/photo-info-viewer-generating-thumbnail/);
+  // The small thumbnail came first, unless the one of high quality was made before the page had loaded it.
+  expect(sizes.filter(size => size !== '300x400')).toEqual(sizes.filter(size => size === '240x320'));
+  // Made by the page, without the status bar of the generation, where its Chromium decodes HEVC, as on macOS.
+  const pageDecodesHevc = await page.evaluate(async () => typeof VideoDecoder !== 'undefined'
+    && (await VideoDecoder.isConfigSupported({ codec: 'hvc1.1.6.L93.B0' })).supported === true);
+  if (pageDecodesHevc) {
+    await expect(thumbnail).toHaveAttribute('src', /^blob:/);
+    await expect(page.locator('app-thumbnail-generation-status-bar')).toBeHidden();
+  } else {
+    await expect(thumbnail).toHaveAttribute('src', /demo-with-thumbnail\.heic\.plm\.jpg$/);
+  }
+});
+test('the thumbnail status bar offers the fast thumbnails, which are the thumbnails that the photos hold', async () => {
+  // Where the main process makes the thumbnails of high quality, the status bar says that the fast ones can be
+  // chosen, and its link opens the Settings dialog on the Thumbnails tab. Saved, the fast thumbnails apply at once:
+  // the main process drops the thumbnails that wait to be made, and the photo shows its own small thumbnail.
+  await relaunchWithoutHevcInPage();
+  const folder = path.join(profile, 'HEIF to make fast thumbnails of');
+  await mkdir(folder);
+  await copyFile(path.join(root, 'test/e2e/fixtures/demo-with-thumbnail.heic'), path.join(folder, 'a with its own thumbnail.heic'));
+  // Enough photos to make for the generation to last while the dialog is used, each with a thumbnail of its own: the
+  // fast quality makes the thumbnail of a photo that holds none from the whole image, and the status bar would show it.
+  for (let index = 1; index <= 150; index++)
+    await copyFile(path.join(root, 'test/e2e/fixtures/demo-with-thumbnail.heic'), path.join(folder, `b ${index}.heic`));
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'Kobe.JPG'));
+  await dismissWelcome();
+  await openFolderWithPicker(folder);
+  const statusBar = page.locator('app-thumbnail-generation-status-bar');
+  await expect(statusBar).toContainText('Generating thumbnails for HEIF files... To show them sooner, choose fast thumbnails in Settings.');
+  await statusBar.getByText('choose fast thumbnails in Settings', { exact: true }).click();
+  const dialog = page.locator('app-settings-dialog');
+  await expect(dialog.locator('mat-list-item.selected-tab')).toHaveText('Thumbnails');
+  await expect(dialog.locator('app-thumbnail-settings')).toBeVisible();
+  await dialog.getByRole('radio', { name: /^Fast/ }).check();
+  await dialog.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(statusBar).toBeHidden();
+  const userData = await app.evaluate(({ app }) => app.getPath('userData'));
+  await expect.poll(() => savedSetting(userData, ['UserSettings', 'ThumbnailQuality'])).toBe('fast');
+  const thumbnail = page.locator('mat-tree-node').filter({ hasText: 'a with its own thumbnail.heic' }).locator('.photo-info-viewer-thumbnail');
+  await expect.poll(() => thumbnail.evaluate(image => image.complete ? `${image.naturalWidth}x${image.naturalHeight}` : ''),
+    { timeout: 30000 }).toBe('240x320');
+  await expect(thumbnail).toHaveAttribute('src', /^blob:/);
 });
 test('the thumbnail error dialog lists, sorts and filters the HEIF files without a thumbnail', async () => {
   // Its table gets its rows from ng-table-virtual-scroll, which says nothing about zoneless Angular.

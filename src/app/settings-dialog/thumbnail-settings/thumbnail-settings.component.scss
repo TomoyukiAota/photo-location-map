@@ -1,0 +1,34 @@
+@use "../settings-styles" as *;
+
+.setting-title {
+  font-size: $setting-title-font-size;
+}
+
+.setting-container {
+  padding: $setting-container-padding;
+}
+
+.thumbnail-settings-description {
+  margin: 0 0 12px;
+}
+
+.thumbnail-quality-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+// The name of a choice, with what it does on the lines under it: the text takes as many lines as it needs.
+.thumbnail-quality-choice {
+  align-items: flex-start;
+
+  .thumbnail-quality-label {
+    display: block;
+    font-weight: 500;
+  }
+
+  .thumbnail-quality-description {
+    display: block;
+    white-space: normal;
+  }
+}

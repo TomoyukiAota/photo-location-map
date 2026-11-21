@@ -15,6 +15,7 @@ export const rendererWritableStoragePaths: ReadonlyArray<ReadonlyArray<string>> 
   UserDataStoragePath.UserSettings.DateFormat,
   UserDataStoragePath.UserSettings.ClockSystemFormat,
   UserDataStoragePath.UserSettings.Language,
+  UserDataStoragePath.UserSettings.ThumbnailQuality,
 ];
 
 /** What a renderer reads: what it writes, and the analytics user ID, which the main process makes. */

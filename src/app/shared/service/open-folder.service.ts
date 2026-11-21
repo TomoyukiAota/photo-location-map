@@ -8,6 +8,7 @@ import { LoadingFolderDialogComponent } from '../../loading-folder/dialog/loadin
 import {
   NoPhotosWithLocationDataDialogComponent
 } from '../../no-photos-with-location-data-dialog/no-photos-with-location-data-dialog.component';
+import { HeifThumbnailService } from '../../heif-thumbnail/heif-thumbnail.service';
 import { GeneratedThumbnailService } from '../../photo-info-viewer/generated-thumbnail.service';
 import { ThumbnailRotationService } from '../../photo-info-viewer/thumbnail-rotation.service';
 import { OpenFolderRecorder } from '../../sidebar/upper-pane/open-folder-recorder';
@@ -28,6 +29,7 @@ export class OpenFolderService {
   private thumbnailGenerationStatusBarService = inject(ThumbnailGenerationStatusBarService);
   private photoSelectionHistoryService = inject(PhotoSelectionHistoryService);
   private generatedThumbnailService = inject(GeneratedThumbnailService);
+  private heifThumbnailService = inject(HeifThumbnailService);
   private thumbnailRotationService = inject(ThumbnailRotationService);
 
   private readonly isFolderOpenedState = signal(false);
@@ -70,14 +72,18 @@ export class OpenFolderService {
       // loading dialog, and its thumbnails would turn back and give way to the image that says they are being made.
       this.thumbnailRotationService.reset();
       this.generatedThumbnailService.reset();
+      this.heifThumbnailService.reset();
       await sleep(100); // To update the loading folder dialog before the work below, which freezes the GUI for a large folder.
 
       this.showPhotoWithLocationNotFoundDialogIfApplicable();
       // The folder's Live Photos movies with its tree, not when the tree was read: until here, the previous folder's
       // rows are shown, and one that comes near the view looks up its photo's movie then.
       OpenedDirectory.setLivePhotos(livePhotos);
+      // Before the tree, whose rows ask for their thumbnails as they are shown: which the main process makes, and
+      // which are in the cache, are known by then (HeifThumbnailService).
+      const isGenerationStarted = await this.thumbnailGenerationService.startThumbnailGeneration(await thumbnailCache);
       this.directoryTreeViewDataService.replace(directoryTreeObject);
-      if (this.thumbnailGenerationService.startThumbnailGeneration(await thumbnailCache))
+      if (isGenerationStarted)
         this.thumbnailGenerationStatusBarService.showForNewGeneration();
       DirTreeObjectRecorder.record(directoryTreeObject);
       OpenFolderRecorder.complete();

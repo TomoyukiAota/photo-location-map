@@ -158,6 +158,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Lager miniatyrbilder for HEIF-filer...",
+    "fasterInSettings": "For å vise dem tidligere kan du <settingsLink>velge raske miniatyrbilder i innstillingene</settingsLink>.",
     "completed": "Miniatyrbildene for HEIF-filer er laget.",
     "finishedWithErrors": "Ferdig med å lage miniatyrbilder for HEIF-filer, men med feil.",
     "showDetails": "Vis detaljer",
@@ -191,6 +192,7 @@
       "language": "Språk (Language)",
       "appearance": "Utseende",
       "dateTime": "Dato og tid",
+      "thumbnails": "Miniatyrbilder",
       "os": "Operativsystem",
       "cache": "Buffer"
     },
@@ -213,6 +215,14 @@
       "clock12": "12-timersklokke",
       "clock24": "24-timersklokke",
       "example": "Eksempel"
+    },
+    "thumbnails": {
+      "title": "HEIF-miniatyrbilder",
+      "description": "Miniatyrbildene for HEIF-filer, for eksempel bilder tatt med en iPhone, lages av dette programmet. Velg om de skal lages med vekt på kvalitet eller hastighet.",
+      "highQuality": "Høy kvalitet",
+      "highQualityDescription": "Lages fra hele bildet, med 400 piksler på den lengste siden. Inntil da vises det lille miniatyrbildet som er lagret i bildet. På en datamaskin som ikke kan dekode HEVC med grafikkmaskinvaren, tar det tid å lage dem.",
+      "fast": "Rask",
+      "fastDescription": "Det lille miniatyrbildet som er lagret i bildet, vises med en gang. Det er mindre skarpt: 320 × 240 piksler for et 12-megapikselbilde tatt med en iPhone."
     },
     "os": {
       "title": "Hurtigmenyen i Filutforsker",
