@@ -226,10 +226,11 @@
       "title": "Apparence",
       "showStatusBar": "Afficher la barre d’état",
       "stickyFolders": {
-        "title": "Dossiers fixés en haut de l’arborescence",
-        "description": "Pendant le défilement de l’arborescence des dossiers, les dossiers au-dessus des lignes affichées restent en haut. Le dossier ouvert et le dossier de ces lignes sont toujours conservés.",
+        "title": "Dossiers fixés",
+        "description": "Paramètres d’affichage des dossiers parents pendant le défilement de l’arborescence des dossiers.",
         "maximum": "Nombre maximal de lignes",
-        "leftOut": "Quand il y a plus de dossiers que de lignes, omettre\u00a0:",
+        "leftOut": "Où omettre des dossiers quand ils ne tiennent pas dans le nombre maximal de lignes",
+        "leftOutDescription": "Le dossier ouvert et le dossier des lignes affichées sont toujours conservés.",
         "middle": "Les dossiers du milieu",
         "nearOpenedFolder": "Les dossiers proches du dossier ouvert",
         "nearPhotos": "Les dossiers proches des photos"

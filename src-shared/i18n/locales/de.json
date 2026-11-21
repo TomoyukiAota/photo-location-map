@@ -226,10 +226,11 @@
       "title": "Darstellung",
       "showStatusBar": "Statusleiste anzeigen",
       "stickyFolders": {
-        "title": "Oben fixierte Ordner",
-        "description": "Während die Ordnerstruktur gescrollt wird, bleiben die Ordner über den angezeigten Zeilen oben stehen. Der geöffnete Ordner und der Ordner dieser Zeilen bleiben immer stehen.",
+        "title": "Fixierte Ordner",
+        "description": "Einstellungen für die Anzeige der übergeordneten Ordner beim Scrollen der Ordnerstruktur.",
         "maximum": "Maximale Anzahl der Zeilen",
-        "leftOut": "Wenn es mehr Ordner als Zeilen gibt, auslassen:",
+        "leftOut": "Wo Ordner ausgelassen werden, wenn sie nicht in die maximale Anzahl der Zeilen passen",
+        "leftOutDescription": "Der geöffnete Ordner und der Ordner der angezeigten Zeilen bleiben immer stehen.",
         "middle": "Die Ordner in der Mitte",
         "nearOpenedFolder": "Die Ordner nahe dem geöffneten Ordner",
         "nearPhotos": "Die Ordner nahe den Fotos"

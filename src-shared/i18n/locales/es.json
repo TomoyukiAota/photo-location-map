@@ -226,10 +226,11 @@
       "title": "Apariencia",
       "showStatusBar": "Mostrar la barra de estado",
       "stickyFolders": {
-        "title": "Carpetas fijas en la parte superior del árbol",
-        "description": "Mientras se desplaza el árbol de carpetas, las carpetas que están por encima de las filas mostradas permanecen arriba. La carpeta abierta y la carpeta de esas filas se mantienen siempre.",
+        "title": "Carpetas fijas",
+        "description": "Ajustes para mostrar las carpetas superiores al desplazar el árbol de carpetas.",
         "maximum": "Número máximo de filas",
-        "leftOut": "Si hay más carpetas que filas, omitir:",
+        "leftOut": "Dónde omitir carpetas cuando no caben en el número máximo de filas",
+        "leftOutDescription": "La carpeta abierta y la carpeta de las filas mostradas se mantienen siempre.",
         "middle": "Las carpetas del medio",
         "nearOpenedFolder": "Las carpetas cercanas a la carpeta abierta",
         "nearPhotos": "Las carpetas cercanas a las fotos"

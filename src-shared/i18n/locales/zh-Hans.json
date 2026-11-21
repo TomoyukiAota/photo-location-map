@@ -226,10 +226,11 @@
       "title": "外观",
       "showStatusBar": "显示状态栏",
       "stickyFolders": {
-        "title": "固定在树顶部的文件夹",
-        "description": "滚动文件夹树时，所显示行上方的文件夹会停留在顶部。已打开的文件夹和这些行所在的文件夹始终保留。",
+        "title": "置顶文件夹",
+        "description": "滚动文件夹树时显示上级文件夹的设置。",
         "maximum": "最大行数",
-        "leftOut": "文件夹多于行数时，省略：",
+        "leftOut": "超出最大行数时省略的位置",
+        "leftOutDescription": "已打开的文件夹和所显示行所在的文件夹始终保留。",
         "middle": "中间的文件夹",
         "nearOpenedFolder": "靠近已打开文件夹的文件夹",
         "nearPhotos": "靠近照片的文件夹"

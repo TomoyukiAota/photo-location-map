@@ -226,10 +226,11 @@
       "title": "Izskats",
       "showStatusBar": "Rādīt statusa joslu",
       "stickyFolders": {
-        "title": "Koka augšā piespraustās mapes",
-        "description": "Kamēr mapju koks tiek ritināts, mapes virs parādītajām rindām paliek augšā. Atvērtā mape un šo rindu mape vienmēr paliek.",
+        "title": "Piespraustās mapes",
+        "description": "Iestatījumi vecākmapju rādīšanai, ritinot mapju koku.",
         "maximum": "Maksimālais rindu skaits",
-        "leftOut": "Ja mapju ir vairāk nekā rindu, izlaist:",
+        "leftOut": "Kur izlaist mapes, ja tās neietilpst maksimālajā rindu skaitā",
+        "leftOutDescription": "Atvērtā mape un parādīto rindu mape vienmēr paliek.",
         "middle": "Mapes vidū",
         "nearOpenedFolder": "Mapes, kas ir tuvu atvērtajai mapei",
         "nearPhotos": "Mapes, kas ir tuvu fotoattēliem"

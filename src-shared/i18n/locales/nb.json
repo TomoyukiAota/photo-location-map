@@ -226,10 +226,11 @@
       "title": "Utseende",
       "showStatusBar": "Vis statuslinjen",
       "stickyFolders": {
-        "title": "Mapper festet øverst i treet",
-        "description": "Mens mappetreet rulles, blir mappene over radene som vises, stående øverst. Den åpnede mappen og mappen til disse radene blir alltid stående.",
+        "title": "Festede mapper",
+        "description": "Innstillinger for visning av overordnede mapper mens mappetreet rulles.",
         "maximum": "Maksimalt antall rader",
-        "leftOut": "Når det er flere mapper enn rader, utelat:",
+        "leftOut": "Hvor mapper utelates når de ikke får plass innenfor maksimalt antall rader",
+        "leftOutDescription": "Den åpnede mappen og mappen til radene som vises, blir alltid stående.",
         "middle": "Mappene i midten",
         "nearOpenedFolder": "Mappene nær den åpnede mappen",
         "nearPhotos": "Mappene nær bildene"

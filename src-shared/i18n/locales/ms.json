@@ -226,10 +226,11 @@
       "title": "Penampilan",
       "showStatusBar": "Tunjukkan bar status",
       "stickyFolders": {
-        "title": "Folder yang disematkan di bahagian atas pepohon",
-        "description": "Semasa pepohon folder ditatal, folder di atas baris yang ditunjukkan kekal di bahagian atas. Folder yang dibuka dan folder bagi baris tersebut sentiasa dikekalkan.",
+        "title": "Folder yang disematkan",
+        "description": "Tetapan untuk menunjukkan folder induk semasa pepohon folder ditatal.",
         "maximum": "Bilangan baris maksimum",
-        "leftOut": "Apabila terdapat lebih banyak folder daripada baris, tinggalkan:",
+        "leftOut": "Bahagian yang ditinggalkan apabila folder tidak muat dalam bilangan baris maksimum",
+        "leftOutDescription": "Folder yang dibuka dan folder bagi baris yang ditunjukkan sentiasa dikekalkan.",
         "middle": "Folder di tengah",
         "nearOpenedFolder": "Folder yang dekat dengan folder yang dibuka",
         "nearPhotos": "Folder yang dekat dengan foto"

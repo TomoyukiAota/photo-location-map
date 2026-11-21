@@ -226,10 +226,11 @@
       "title": "外觀",
       "showStatusBar": "顯示狀態列",
       "stickyFolders": {
-        "title": "固定在樹狀結構頂端的資料夾",
-        "description": "捲動資料夾樹狀結構時，所顯示列上方的資料夾會停留在頂端。已開啟的資料夾和這些列所在的資料夾一律保留。",
+        "title": "置頂資料夾",
+        "description": "捲動資料夾樹狀結構時顯示上層資料夾的設定。",
         "maximum": "最大列數",
-        "leftOut": "資料夾多於列數時，省略：",
+        "leftOut": "超出最大列數時省略的位置",
+        "leftOutDescription": "已開啟的資料夾和所顯示列所在的資料夾一律保留。",
         "middle": "中間的資料夾",
         "nearOpenedFolder": "靠近已開啟資料夾的資料夾",
         "nearPhotos": "靠近照片的資料夾"

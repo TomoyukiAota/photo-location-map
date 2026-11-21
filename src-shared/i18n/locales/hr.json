@@ -226,10 +226,11 @@
       "title": "Izgled",
       "showStatusBar": "Prikaži statusnu traku",
       "stickyFolders": {
-        "title": "Mape prikvačene na vrhu stabla",
-        "description": "Dok se stablo mapa pomiče, mape iznad prikazanih redaka ostaju na vrhu. Otvorena mapa i mapa tih redaka uvijek ostaju.",
+        "title": "Prikvačene mape",
+        "description": "Postavke prikaza nadređenih mapa pri pomicanju stabla mapa.",
         "maximum": "Najveći broj redaka",
-        "leftOut": "Kada ima više mapa nego redaka, izostavi:",
+        "leftOut": "Gdje izostaviti mape kada ne stanu u najveći broj redaka",
+        "leftOutDescription": "Otvorena mapa i mapa prikazanih redaka uvijek ostaju.",
         "middle": "Mape u sredini",
         "nearOpenedFolder": "Mape blizu otvorene mape",
         "nearPhotos": "Mape blizu fotografija"

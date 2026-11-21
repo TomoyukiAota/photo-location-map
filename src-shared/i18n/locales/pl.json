@@ -226,10 +226,11 @@
       "title": "Wygląd",
       "showStatusBar": "Pokaż pasek stanu",
       "stickyFolders": {
-        "title": "Foldery przypięte u góry drzewa",
-        "description": "Podczas przewijania drzewa folderów foldery nad wyświetlanymi wierszami pozostają u góry. Otwarty folder i folder tych wierszy pozostają zawsze.",
+        "title": "Przypięte foldery",
+        "description": "Ustawienia wyświetlania folderów nadrzędnych podczas przewijania drzewa folderów.",
         "maximum": "Maksymalna liczba wierszy",
-        "leftOut": "Gdy folderów jest więcej niż wierszy, pomiń:",
+        "leftOut": "Gdzie pomijać foldery, gdy nie mieszczą się w maksymalnej liczbie wierszy",
+        "leftOutDescription": "Otwarty folder i folder wyświetlanych wierszy pozostają zawsze.",
         "middle": "Foldery w środku",
         "nearOpenedFolder": "Foldery blisko otwartego folderu",
         "nearPhotos": "Foldery blisko zdjęć"

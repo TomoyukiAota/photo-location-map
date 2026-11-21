@@ -22,11 +22,18 @@
       </mat-select>
     </mat-form-field>
   </div>
-  <div class="sticky-folders-left-out-label" id="sticky-folders-left-out-label">
-    {{ 'settings.appearance.stickyFolders.leftOut' | t }}
+  <!-- Where the folders that do not fit are left out, with what is always kept. -->
+  <div class="sticky-folders-left-out">
+    <div class="sticky-folders-left-out-label" id="sticky-folders-left-out-label">
+      {{ 'settings.appearance.stickyFolders.leftOut' | t }}
+    </div>
+    <div class="sticky-folders-description" id="sticky-folders-left-out-description">
+      {{ 'settings.appearance.stickyFolders.leftOutDescription' | t }}
+    </div>
   </div>
   <mat-radio-group class="sticky-folders-left-out-choices"
                    aria-labelledby="sticky-folders-left-out-label"
+                   aria-describedby="sticky-folders-left-out-description"
                    [(ngModel)]="selectedLeftOut"
                    (change)="notifySettingsChanged()">
     @for (choice of leftOutChoices; track choice.value) {

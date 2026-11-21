@@ -226,10 +226,11 @@
       "title": "Aspeto",
       "showStatusBar": "Mostrar a barra de estado",
       "stickyFolders": {
-        "title": "Pastas fixas no topo da árvore",
-        "description": "Enquanto a árvore de pastas é deslocada, as pastas acima das linhas apresentadas ficam no topo. A pasta aberta e a pasta dessas linhas são sempre mantidas.",
+        "title": "Pastas fixas",
+        "description": "Definições para mostrar as pastas superiores ao deslocar a árvore de pastas.",
         "maximum": "Número máximo de linhas",
-        "leftOut": "Quando houver mais pastas do que linhas, omitir:",
+        "leftOut": "Onde omitir pastas quando não cabem no número máximo de linhas",
+        "leftOutDescription": "A pasta aberta e a pasta das linhas apresentadas são sempre mantidas.",
         "middle": "As pastas do meio",
         "nearOpenedFolder": "As pastas próximas da pasta aberta",
         "nearPhotos": "As pastas próximas das fotografias"

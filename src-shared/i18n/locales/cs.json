@@ -226,10 +226,11 @@
       "title": "Vzhled",
       "showStatusBar": "Zobrazit stavový řádek",
       "stickyFolders": {
-        "title": "Složky připnuté nahoře ve stromu",
-        "description": "Při posouvání stromu složek zůstávají složky nad zobrazenými řádky nahoře. Otevřená složka a složka těchto řádků zůstávají vždy.",
+        "title": "Připnuté složky",
+        "description": "Nastavení zobrazení nadřazených složek při posouvání stromu složek.",
         "maximum": "Maximální počet řádků",
-        "leftOut": "Pokud je složek více než řádků, vynechat:",
+        "leftOut": "Kde vynechat složky, když se nevejdou do maximálního počtu řádků",
+        "leftOutDescription": "Otevřená složka a složka zobrazených řádků zůstávají vždy.",
         "middle": "Složky uprostřed",
         "nearOpenedFolder": "Složky blízko otevřené složky",
         "nearPhotos": "Složky blízko fotek"

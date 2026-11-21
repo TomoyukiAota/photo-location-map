@@ -226,10 +226,11 @@
       "title": "Megjelenés",
       "showStatusBar": "Állapotsor megjelenítése",
       "stickyFolders": {
-        "title": "A fa tetején rögzített mappák",
-        "description": "A mappafa görgetése közben a megjelenített sorok feletti mappák fent maradnak. A megnyitott mappa és ezeknek a soroknak a mappája mindig megmarad.",
+        "title": "Rögzített mappák",
+        "description": "A szülőmappák megjelenítésének beállításai a mappafa görgetése közben.",
         "maximum": "Sorok legnagyobb száma",
-        "leftOut": "Ha több mappa van, mint sor, kihagyandók:",
+        "leftOut": "Hol maradjanak ki mappák, ha nem férnek el a beállított legtöbb sorban",
+        "leftOutDescription": "A megnyitott mappa és a megjelenített sorok mappája mindig megmarad.",
         "middle": "A középen lévő mappák",
         "nearOpenedFolder": "A megnyitott mappához közeli mappák",
         "nearPhotos": "A fotókhoz közeli mappák"

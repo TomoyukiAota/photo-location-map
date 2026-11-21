@@ -226,10 +226,11 @@
       "title": "모양",
       "showStatusBar": "상태 표시줄 표시",
       "stickyFolders": {
-        "title": "트리 위쪽에 고정되는 폴더",
-        "description": "폴더 트리를 스크롤하는 동안 표시된 행 위의 폴더가 위쪽에 남습니다. 열린 폴더와 그 행들의 폴더는 항상 남습니다.",
+        "title": "고정 폴더",
+        "description": "폴더 트리를 스크롤할 때 상위 폴더를 표시하는 기능의 설정입니다.",
         "maximum": "최대 행 수",
-        "leftOut": "폴더가 행보다 많을 때 생략할 폴더:",
+        "leftOut": "최대 행 수에 다 들어가지 않을 때 생략할 부분",
+        "leftOutDescription": "열린 폴더와 표시된 행의 폴더는 항상 남습니다.",
         "middle": "가운데 폴더",
         "nearOpenedFolder": "열린 폴더에 가까운 폴더",
         "nearPhotos": "사진에 가까운 폴더"

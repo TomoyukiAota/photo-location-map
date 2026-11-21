@@ -226,10 +226,11 @@
       "title": "Weergave",
       "showStatusBar": "Toon statusbalk",
       "stickyFolders": {
-        "title": "Vastgezette mappen bovenaan de boomstructuur",
-        "description": "Tijdens het scrollen door de mappenstructuur blijven de mappen boven de getoonde rijen bovenaan staan. De geopende map en de map van die rijen blijven altijd staan.",
+        "title": "Vastgezette mappen",
+        "description": "Instellingen voor het tonen van de bovenliggende mappen tijdens het scrollen door de mappenstructuur.",
         "maximum": "Maximaal aantal rijen",
-        "leftOut": "Als er meer mappen dan rijen zijn, weglaten:",
+        "leftOut": "Waar mappen worden weggelaten als ze niet in het maximale aantal rijen passen",
+        "leftOutDescription": "De geopende map en de map van de getoonde rijen blijven altijd staan.",
         "middle": "De mappen in het midden",
         "nearOpenedFolder": "De mappen dicht bij de geopende map",
         "nearPhotos": "De mappen dicht bij de foto’s"

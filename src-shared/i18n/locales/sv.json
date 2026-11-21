@@ -226,10 +226,11 @@
       "title": "Utseende",
       "showStatusBar": "Visa statusfältet",
       "stickyFolders": {
-        "title": "Mappar fästa överst i trädet",
-        "description": "Medan mappträdet rullas stannar mapparna ovanför de visade raderna överst. Den öppnade mappen och mappen för dessa rader stannar alltid kvar.",
+        "title": "Fästa mappar",
+        "description": "Inställningar för att visa de överordnade mapparna medan mappträdet rullas.",
         "maximum": "Högsta antal rader",
-        "leftOut": "När det finns fler mappar än rader, utelämna:",
+        "leftOut": "Var mappar utelämnas när de inte ryms inom det högsta antalet rader",
+        "leftOutDescription": "Den öppnade mappen och mappen för de visade raderna stannar alltid kvar.",
         "middle": "Mapparna i mitten",
         "nearOpenedFolder": "Mapparna nära den öppnade mappen",
         "nearPhotos": "Mapparna nära bilderna"

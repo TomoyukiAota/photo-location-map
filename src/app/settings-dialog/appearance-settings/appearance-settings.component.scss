@@ -41,6 +41,14 @@
   min-width: 150px;
 }
 
+// The heading of the choices, with what is always kept on the lines under it, as close as a description is to its own
+// heading.
+.sticky-folders-left-out {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 // The choices, one on a line, each taking as many lines as its text needs.
 .sticky-folders-left-out-choices {
   display: flex;

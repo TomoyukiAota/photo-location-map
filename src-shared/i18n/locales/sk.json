@@ -226,10 +226,11 @@
       "title": "Vzhľad",
       "showStatusBar": "Zobraziť stavový riadok",
       "stickyFolders": {
-        "title": "Priečinky pripnuté hore v strome",
-        "description": "Pri posúvaní stromu priečinkov zostávajú priečinky nad zobrazenými riadkami hore. Otvorený priečinok a priečinok týchto riadkov zostávajú vždy.",
+        "title": "Pripnuté priečinky",
+        "description": "Nastavenia zobrazenia nadradených priečinkov pri posúvaní stromu priečinkov.",
         "maximum": "Maximálny počet riadkov",
-        "leftOut": "Ak je priečinkov viac ako riadkov, vynechať:",
+        "leftOut": "Kde vynechať priečinky, keď sa nezmestia do maximálneho počtu riadkov",
+        "leftOutDescription": "Otvorený priečinok a priečinok zobrazených riadkov zostávajú vždy.",
         "middle": "Priečinky v strede",
         "nearOpenedFolder": "Priečinky blízko otvoreného priečinka",
         "nearPhotos": "Priečinky blízko fotiek"

@@ -226,10 +226,11 @@
       "title": "Ulkoasu",
       "showStatusBar": "Näytä tilapalkki",
       "stickyFolders": {
-        "title": "Puun yläreunaan kiinnitetyt kansiot",
-        "description": "Kun kansiopuuta vieritetään, näkyvien rivien yläpuolella olevat kansiot pysyvät ylhäällä. Avattu kansio ja näiden rivien kansio pysyvät aina.",
+        "title": "Kiinnitetyt kansiot",
+        "description": "Yläkansioiden näyttämisen asetukset kansiopuuta vieritettäessä.",
         "maximum": "Rivien enimmäismäärä",
-        "leftOut": "Kun kansioita on enemmän kuin rivejä, jätä pois:",
+        "leftOut": "Mistä kansioita jätetään pois, kun ne eivät mahdu rivien enimmäismäärään",
+        "leftOutDescription": "Avattu kansio ja näkyvien rivien kansio pysyvät aina.",
         "middle": "Keskellä olevat kansiot",
         "nearOpenedFolder": "Avattua kansiota lähellä olevat kansiot",
         "nearPhotos": "Kuvia lähellä olevat kansiot"
