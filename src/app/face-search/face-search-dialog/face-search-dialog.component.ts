@@ -14,13 +14,15 @@ export type FaceSearchDialogState =
 /** What the search gives its dialog (face-search.service.ts). */
 export interface FaceSearchDialogData {
   readonly state: Signal<FaceSearchDialogState>;
+  /** How many photos are selected, the largest number that the dialog may show, whose room its lines keep. */
+  readonly photoCount: Signal<number>;
   readonly cancel: () => void;
 }
 
 /**
  * The dialog of the Selection menu's Narrow Down to Photos with Faces: while the photos are looked at, how many have
  * been, that this happens on this computer only, and Cancel; then, when the selection did not simply narrow down,
- * why. The search closes it otherwise.
+ * why. The search closes it otherwise. It keeps its height while it is open, whatever it shows (the styles).
  */
 @Component({
   selector: 'app-face-search-dialog',
@@ -32,6 +34,7 @@ export class FaceSearchDialogComponent {
   private readonly data = inject<FaceSearchDialogData>(MAT_DIALOG_DATA);
 
   public readonly state = this.data.state;
+  public readonly photoCount = this.data.photoCount;
   /** How far the search is, from 0 to 100. */
   public readonly percent = computed(() => {
     const state = this.state();
