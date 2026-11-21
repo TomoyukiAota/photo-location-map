@@ -86,14 +86,8 @@ function recordForOtherPage(otherPage, line) {
   if (!otherPagesEvents.has(otherPage)) otherPagesEvents.set(otherPage, []);
   otherPagesEvents.get(otherPage).push(line.slice(0, 300));
 }
-/**
- * Launches the application on the test profile, finds its main window as `page`, and checks how it runs. In a
- * profile whose user has not confirmed a language, the application shows the Language dialog first: it is confirmed
- * here, with the language that it offers, unless `languageDialog` is 'keep', for the cases about the dialog. The
- * application takes en-US as the operating system's language in a test profile, whatever the machine's is, unless
- * `env` gives others in PLM_TEST_SYSTEM_LANGUAGES (src-main/startup/startup-metadata-setup.ts).
- */
-async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'confirm' } = {}) {
+/** The options of Playwright's _electron.launch for the application on the test profile, with `extraEnv` in its environment. */
+function launchOptions(extraEnv = {}) {
   const env = { ...process.env, PLM_TEST_ROOT: profile, PLM_E2E: '1', PLM_TEST_HEADLESS: headless ? '1' : '0', ...extraEnv };
   for (const key of ['PLM_EM_MAIN', 'PLM_EM_RENDERER', 'ELECTRON_RUN_AS_NODE', 'NODE_OPTIONS']) delete env[key];
   // A publicly launched package has no npm development-profile override.
@@ -104,9 +98,19 @@ async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'con
     ...(liveReload ? ['--live-reload'] : []),
     ...(process.env.PLM_E2E_OPEN ? ['--open', process.env.PLM_E2E_OPEN] : []),
   ];
-  app = await _electron.launch({ executablePath: packagedLauncher || packagedExecutable || require('electron'),
+  return { executablePath: packagedLauncher || packagedExecutable || require('electron'),
     args: packagedExecutable ? openArgs : ['test/e2e/main.mjs', ...openArgs],
-    cwd: packagedExecutable ? profile : root, env, timeout: packagedExecutable ? 90000 : 30000 });
+    cwd: packagedExecutable ? profile : root, env, timeout: packagedExecutable ? 90000 : 30000 };
+}
+/**
+ * Launches the application on the test profile, finds its main window as `page`, and checks how it runs. In a
+ * profile whose user has not confirmed a language, the application shows the Language dialog first: it is confirmed
+ * here, with the language that it offers, unless `languageDialog` is 'keep', for the cases about the dialog. The
+ * application takes en-US as the operating system's language in a test profile, whatever the machine's is, unless
+ * `env` gives others in PLM_TEST_SYSTEM_LANGUAGES (src-main/startup/startup-metadata-setup.ts).
+ */
+async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'confirm' } = {}) {
+  app = await _electron.launch(launchOptions(extraEnv));
   // Listened to for every page from the launch on, so that what the first change detection reports is not missed.
   app.context().on('console', message => {
     if (message.type() === 'error' && message.text().includes('NG0100')) changedWithoutNotification.push(message.text());
@@ -2699,6 +2703,45 @@ test('--open with a photo opens its folder with only that photo selected', async
     if (previousOpen === undefined) delete process.env.PLM_E2E_OPEN;
     else process.env.PLM_E2E_OPEN = previousOpen;
   }
+});
+test('a launch while the app runs keeps Chromium\'s storage in a folder of its own, so that its page does not wait for the running app\'s', async () => {
+  test.skip(liveReload, 'Live reload runs one instance, whose page ng serve sends.');
+  // TL;DR: A second launch on the same profile, as one from Explorer's "Open with Photo Location Map" while the app
+  // runs: the running app keeps Chromium's storage in the profile, and the new one keeps its own.
+  // Details: With one storage, the new page's first call to Web Storage waited about 4 s, while Chromium tried again
+  // each second to open the IndexedDB that the running app held, and wrote "Failed to open LevelDB database" each time
+  // (src-main/session-data/session-data-setup.ts). The wait itself is reported, not checked, as a slow runner takes
+  // its time too.
+  const lockPath = path.join(profile, 'userData', 'instances', 'shared-session-data.lock');
+  const first = await app.evaluate(({ app }) => ({ pid: process.pid, sessionData: app.getPath('sessionData') }));
+  expect(await realpath(first.sessionData)).toBe(await realpath(path.join(profile, 'sessionData')));
+  expect(await readFile(lockPath, 'utf8')).toBe(String(first.pid));
+  const second = await _electron.launch(launchOptions());
+  const chromiumLines = [];
+  second.process().stderr?.on('data', data => chromiumLines.push(...String(data).split(/\r?\n/)));
+  try {
+    const secondPage = await second.firstWindow();
+    await secondPage.waitForSelector('app-root app-home', { timeout: 30000 });
+    const secondInstance = await second.evaluate(({ app }) => ({ pid: process.pid, sessionData: app.getPath('sessionData') }));
+    expect(await realpath(secondInstance.sessionData))
+      .toBe(await realpath(path.join(profile, 'userData', 'instances', String(secondInstance.pid))));
+    const waitMs = await secondPage.evaluate(() => performance.getEntriesByName('plm:renderer:bootstrap-start', 'mark')[0].startTime
+      - performance.getEntriesByType('navigation')[0].responseEnd);
+    test.info().annotations.push({ type: 'The second page, from its arrival to the app\'s code', description: `${Math.round(waitMs)} ms` });
+    expect(chromiumLines.filter(line => line.includes('Failed to open LevelDB database'))).toEqual([]);
+  } finally {
+    const child = second.process();
+    let timer;
+    await Promise.race([second.close(), new Promise(resolve => { timer = setTimeout(resolve, 10000); })]).catch(() => {});
+    clearTimeout(timer);
+    if (child.exitCode === null && child.signalCode === null) {
+      const stopped = new Promise(resolve => child.once('exit', resolve));
+      child.kill('SIGKILL');
+      await stopped;
+    }
+  }
+  // The running app keeps the lock, which the second launch neither took nor removed.
+  expect(await readFile(lockPath, 'utf8')).toBe(String(first.pid));
 });
 test('a folder dropped on the window opens once the user confirms, with all of its photos selected', async () => {
   const folder = path.join(profile, 'dropped 写真 # 100%');
