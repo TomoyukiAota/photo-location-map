@@ -3923,6 +3923,9 @@ test('the thumbnail status bar offers the fast thumbnails, which are the thumbna
   await expect(statusBar).toBeHidden();
   const userData = await app.evaluate(({ app }) => app.getPath('userData'));
   await expect.poll(() => savedSetting(userData, ['UserSettings', 'ThumbnailQuality'])).toBe('fast');
+  // The main process makes this photo first, and may have made its thumbnail of high quality by now: the photo shows
+  // its own small thumbnail all the same, as one that the main process no longer makes
+  // (HeifThumbnailService.applyThumbnailQuality).
   const thumbnail = page.locator('mat-tree-node').filter({ hasText: 'a with its own thumbnail.heic' }).locator('.photo-info-viewer-thumbnail');
   await expect.poll(() => thumbnail.evaluate(image => image.complete ? `${image.naturalWidth}x${image.naturalHeight}` : ''),
     { timeout: 30000 }).toBe('240x320');
