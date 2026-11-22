@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { Logger } from '../../../../src-shared/log/logger';
 import { Photo } from '../model/photo.model';
 import { PhotoSelectionHistoryService } from './photo-selection-history.service';
 import { SelectedPhotoService } from './selected-photo.service';
@@ -36,5 +37,16 @@ describe('SelectedPhotoService', () => {
 
     expect(service.selectedPhotos()).toBe(selected);
     expect(add).toHaveBeenCalledTimes(1);
+  });
+
+  it('logs how many photos are selected, not the photos', () => {
+    const info = vi.spyOn(Logger, 'info').mockImplementation(() => undefined);
+    try {
+      service.setSelectedPhotos([photo('/photos/a.jpg'), photo('/photos/b.jpg')]);
+
+      expect(info).toHaveBeenCalledExactlyOnceWith('Selected Photos: 2');
+    } finally {
+      info.mockRestore();
+    }
   });
 });

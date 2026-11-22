@@ -2,7 +2,7 @@ import PQueue from 'p-queue';
 import { FilenameExtension } from '../../../../src-shared/filename-extension/filename-extension.js';
 import { Logger } from '../../../../src-shared/log/logger.js';
 import { perfMark } from '../../../../src-shared/perf/perf-mark.js';
-import { exifPerfStats, resetExifPerfStats } from './exif-perf-stats.js';
+import { exifPerfStats, exifSummaryLine, resetExifPerfStats } from './exif-perf-stats.js';
 import { exifReadFailures } from './exif-read-failures.js';
 import { Exif } from '../model/exif.model.js';
 import { LoadingFolderProgress } from '../loading-folder-progress.js';
@@ -14,8 +14,11 @@ export class PathExifPair {
   }
 }
 
+/** How many photos are read at once. */
+const concurrency = 10;
+
 export class ExifFetcher {
-  private static readonly queue = new PQueue({concurrency: 10});
+  private static readonly queue = new PQueue({ concurrency });
   private static readonly pathExifPairPromiseFuncs: (() => Promise<PathExifPair>)[] = [];
 
   public static async generatePathExifPairs(directoryTreeObject: DirectoryTree): Promise<PathExifPair[]> {
@@ -31,9 +34,11 @@ export class ExifFetcher {
     LoadingFolderProgress.setNumberOfAllFilesToLoad(this.pathExifPairPromiseFuncs.length);
 
     Logger.debug(`ExifFetcher.generatePathExifPairs function: Before awaiting all PathExifPair promises.`);
+    const startMs = performance.now();
     const pathExifPairs = await this.queue.addAll(this.pathExifPairPromiseFuncs);
     perfMark('exif:all-done', { ...exifPerfStats });
     exifReadFailures.record();
+    Logger.info(exifSummaryLine(performance.now() - startMs, concurrency));
     Logger.debug(`ExifFetcher.generatePathExifPairs function: After awaiting all PathExifPair promises and gotten pathExifPairs`, pathExifPairs);
 
     return pathExifPairs;

@@ -5,7 +5,8 @@
   "common": {
     "ok": "OK",
     "cancel": "Loobu",
-    "close": "Sulge"
+    "close": "Sulge",
+    "ctrlKey": "Ctrl"
   },
   "dateTime": {
     "weekdayPattern": "ddd"

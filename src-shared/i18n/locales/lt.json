@@ -5,7 +5,8 @@
   "common": {
     "ok": "Gerai",
     "cancel": "Atšaukti",
-    "close": "Uždaryti"
+    "close": "Uždaryti",
+    "ctrlKey": "Ctrl"
   },
   "dateTime": {
     "weekdayPattern": "ddd"
