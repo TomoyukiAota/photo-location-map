@@ -4,7 +4,7 @@
 -->
 <mat-menu #menu="matMenu" class="photo-info-viewer-more-options-menu" xPosition="before" [hasBackdrop]="false">
   <ng-template matMenuContent let-photo="photo" let-place="place">
-    <ng-container appClosesOnPressElsewhere></ng-container>
+    <ng-container appClosesOnPressElsewhere [appTakesShortcuts]="itemsOf(photo, place)"></ng-container>
     @for (item of itemsOf(photo, place); track item.textKey) {
       @if (item.submenu; as submenu) {
         <button mat-menu-item
@@ -12,19 +12,34 @@
                 [matMenuTriggerFor]="submenu.name === 'selection' ? selectionMenu : googleMenu"
                 [matMenuTriggerData]="{ items: submenu.items }">{{ item.textKey | t }}</button>
       } @else {
-        <button mat-menu-item class="photo-info-viewer-more-options-menu-item" (click)="item.onClick?.()">{{ item.textKey | t }}</button>
+        <button mat-menu-item class="photo-info-viewer-more-options-menu-item" (click)="item.choose?.('click')">{{ item.textKey | t }}</button>
       }
     }
   </ng-template>
 </mat-menu>
 
+<!--
+  An item with a shortcut shows it at the end of its line, as the menus of the operating systems do. The shortcut is
+  written from left to right in every language, as its keys are, and a screen reader is told of it by
+  aria-keyshortcuts rather than by its symbols.
+-->
 <mat-menu #selectionMenu="matMenu" class="photo-info-viewer-more-options-menu">
   <ng-template matMenuContent let-items="items">
     @for (item of items; track item.textKey) {
       <button mat-menu-item
               class="photo-info-viewer-more-options-menu-item"
               [disabled]="item.disabled"
-              (click)="item.onClick?.()">{{ item.textKey | t }}</button>
+              [attr.aria-keyshortcuts]="item.shortcut?.ariaKeyShortcuts"
+              (click)="item.choose?.('click')">
+        @if (item.shortcut; as shortcut) {
+          <span class="photo-info-viewer-more-options-menu-item-with-shortcut">
+            <span class="photo-info-viewer-more-options-menu-item-label">{{ item.textKey | t }}</span>
+            <span class="photo-info-viewer-more-options-menu-shortcut" dir="ltr" aria-hidden="true">{{ shortcut.text }}</span>
+          </span>
+        } @else {
+          {{ item.textKey | t }}
+        }
+      </button>
     }
   </ng-template>
 </mat-menu>
@@ -32,7 +47,7 @@
 <mat-menu #googleMenu="matMenu" class="photo-info-viewer-more-options-menu">
   <ng-template matMenuContent let-items="items">
     @for (item of items; track item.textKey) {
-      <button mat-menu-item class="photo-info-viewer-more-options-menu-item" (click)="item.onClick?.()">{{ item.textKey | t }}</button>
+      <button mat-menu-item class="photo-info-viewer-more-options-menu-item" (click)="item.choose?.('click')">{{ item.textKey | t }}</button>
     }
   </ng-template>
 </mat-menu>

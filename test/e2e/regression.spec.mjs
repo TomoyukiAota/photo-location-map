@@ -887,6 +887,9 @@ test('welcome, about and every available settings tab keep their appearance', as
 });
 // The application menu in English, as it was when Electron gave the labels of the items with a role, and in Japanese.
 const isMac = process.platform === 'darwin';
+// The shortcuts that a photo's menu shows beside Photo Taken Before and Photo Taken After: with the symbols of macOS's
+// menus there, and as Windows and Linux write a shortcut elsewhere (src-shared/shortcut/shortcut.ts).
+const shownShortcuts = isMac ? { before: '⌘←', after: '⌘→' } : { before: 'Ctrl+←', after: 'Ctrl+→' };
 // The entry of the Language list that follows the operating system's language names macOS and Windows.
 const operatingSystemName = { darwin: 'macOS', win32: 'Windows' }[process.platform];
 const systemLanguageInEnglish = language => `Use ${operatingSystemName ?? 'system'} setting (${language})`;
@@ -1183,7 +1186,8 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   const menuInJapaneseOfPopup = ['選択', 'サイドバーで表示', 'フォルダーを開く', 'Google', 'データを表示'];
   await expect(moreOptionsItems).toHaveText(menuInJapaneseOfPopup);
   await page.getByRole('menuitem', { name: '選択', exact: true }).hover();
-  await expect(moreOptionsItems).toHaveText([...menuInJapaneseOfPopup, 'このファイルのみ', '前に撮影された写真', '次に撮影された写真']);
+  await expect(moreOptionsItems).toHaveText([...menuInJapaneseOfPopup,
+    'このファイルのみ', `前に撮影された写真${shownShortcuts.before}`, `次に撮影された写真${shownShortcuts.after}`]);
   await page.getByRole('menuitem', { name: 'Google', exact: true }).hover();
   await expect(moreOptionsItems)
     .toHaveText([...menuInJapaneseOfPopup, 'Google マップを開く', 'Google Earth を開く', 'Google ストリートビューを開く']);
@@ -1325,7 +1329,14 @@ test('on a computer whose language is Arabic, the application is laid out from r
   const selectionItem = page.getByRole('menuitem', { name: 'التحديد', exact: true });
   await selectionItem.focus();
   await page.keyboard.press('ArrowLeft');
-  await expect(moreOptionsItems).toHaveText([...menuInArabic, 'هذا الملف فقط', 'الصورة الملتقطة قبلها', 'الصورة الملتقطة بعدها']);
+  await expect(moreOptionsItems).toHaveText([...menuInArabic,
+    'هذا الملف فقط', `الصورة الملتقطة قبلها${shownShortcuts.before}`, `الصورة الملتقطة بعدها${shownShortcuts.after}`]);
+  // A shortcut keeps the order of its keys, from left to right, at the end of its item's line, here its left. Both are
+  // measured at once, in their item, as the submenu is placed and grows while it opens.
+  const shortcutOfAfter = page.getByRole('menuitem', { name: 'الصورة الملتقطة بعدها', exact: true }).locator('.photo-info-viewer-more-options-menu-shortcut');
+  await expect(shortcutOfAfter).toHaveCSS('direction', 'ltr');
+  expect(await shortcutOfAfter.evaluate(shortcut => shortcut.getBoundingClientRect().right
+    <= shortcut.parentElement.querySelector('.photo-info-viewer-more-options-menu-item-label').getBoundingClientRect().left)).toBe(true);
   await expect(page.getByRole('menuitem', { name: 'هذا الملف فقط', exact: true })).toBeFocused();
   // Beside its item, at the item's height.
   const selectionItemBox = await selectionItem.boundingBox();
@@ -2735,10 +2746,15 @@ test('Select Previous and Select Next go through the photos in the order they we
   // submenu Select has Photo Taken Before and Photo Taken After, and one that has no photo to select cannot be chosen.
   const moreOptionsItems = page.locator('.photo-info-viewer-more-options-menu-item');
   const selection = ['Only This', 'Photo Taken Before', 'Photo Taken After'];
+  // The last two show the shortcuts that they have in the Selection menu, which a screen reader is told of by name.
+  const shownSelection = ['Only This', `Photo Taken Before${shownShortcuts.before}`, `Photo Taken After${shownShortcuts.after}`];
   const menuItemNamed = name => page.getByRole('menuitem', { name, exact: true });
   await openMoreOptions(popup.locator('.photo-info-viewer-more-options-button'), 'Select');
-  await expect(moreOptionsItems).toHaveText(['Select', 'Reveal in Sidebar', 'Open Folder', 'Google', 'View Data', ...selection]);
+  await expect(moreOptionsItems).toHaveText(['Select', 'Reveal in Sidebar', 'Open Folder', 'Google', 'View Data', ...shownSelection]);
   for (const name of selection) await expect(menuItemNamed(name)).toBeEnabled();
+  await expect(menuItemNamed('Photo Taken Before')).toHaveAttribute('aria-keyshortcuts', isMac ? 'Meta+ArrowLeft' : 'Control+ArrowLeft');
+  await expect(menuItemNamed('Photo Taken After')).toHaveAttribute('aria-keyshortcuts', isMac ? 'Meta+ArrowRight' : 'Control+ArrowRight');
+  await expect(menuItemNamed('Only This')).not.toHaveAttribute('aria-keyshortcuts');
   await menuItemNamed('Photo Taken After').click();
   await expectSelected('IMG_4676.JPG');
   await expectShownInSidebar('IMG_4676.JPG');
@@ -2746,7 +2762,7 @@ test('Select Previous and Select Next go through the photos in the order they we
   const row = page.locator('mat-tree-node').filter({ hasText: 'IMG_4676.JPG' });
   await row.locator('.photo-info-viewer-thumbnail').hover();
   await openMoreOptions(row.getByRole('button', { name: 'More Options' }), 'Select');
-  await expect(moreOptionsItems).toHaveText(['Select', 'Reveal in Map', 'Open Folder', 'Google', 'View Data', ...selection]);
+  await expect(moreOptionsItems).toHaveText(['Select', 'Reveal in Map', 'Open Folder', 'Google', 'View Data', ...shownSelection]);
   await menuItemNamed('Photo Taken After').click();
   await expectSelected('IMG_5769.JPG');
   await openMoreOptions(popup.locator('.photo-info-viewer-more-options-button'), 'Select');
@@ -2754,6 +2770,32 @@ test('Select Previous and Select Next go through the photos in the order they we
   await menuItemNamed('Photo Taken Before').click();
   await expectSelected('IMG_4676.JPG');
   await expect.poll(enabled).toEqual({ previous: true, next: true });
+
+  // While a photo's menu is open, the items' shortcuts choose them, for the menu's photo, which need not be the
+  // selected one, and close the menu, whether its submenu Select is open or not. One that cannot be chosen does
+  // nothing, and leaves the menu open; any other shortcut closes it. Playwright's keys reach the page alone.
+  const openMenus = page.locator('.mat-mdc-menu-panel');
+  const rowOfPhoto = name => page.locator('mat-tree-node.leaf-tree-node').filter({ hasText: name });
+  async function openMoreOptionsInRow(name, ...submenus) {
+    await rowOfPhoto(name).scrollIntoViewIfNeeded();
+    await rowOfPhoto(name).locator('.photo-info-viewer-thumbnail').hover();
+    await openMoreOptions(rowOfPhoto(name).getByRole('button', { name: 'More Options' }), ...submenus);
+  }
+  await openMoreOptionsInRow('IMG_1579.JPG', 'Select');
+  await page.keyboard.press('ControlOrMeta+ArrowRight');
+  await expect(openMenus).toHaveCount(0);
+  await expectSelected('IMG_2581.JPG');
+  await openMoreOptionsInRow('IMG_5769.JPG');
+  await page.keyboard.press('ControlOrMeta+ArrowLeft');
+  await expect(openMenus).toHaveCount(0);
+  await expectSelected('IMG_4676.JPG');
+  await openMoreOptionsInRow('IMG_5769.JPG', 'Select');
+  await page.keyboard.press('ControlOrMeta+ArrowRight');
+  await expect(menuItemNamed('Photo Taken After')).toBeDisabled();
+  await expect(openMenus).toHaveCount(2);
+  await page.keyboard.press('ControlOrMeta+z');
+  await expect(openMenus).toHaveCount(0);
+  await expectSelected('IMG_4676.JPG');
 
   // The items' keys: Cmd on macOS and Ctrl on Windows and Linux, with the Left and Right arrow keys. Electron gives
   // the menu only a key that the page leaves unhandled, which the page does where nothing else uses them, a node of
@@ -2830,6 +2872,23 @@ test('Select Previous and Select Next go through the photos in the order they we
     await page.getByRole('button', { name: 'Cancel', exact: true }).click();
     await expect(page.locator('app-settings-dialog')).toHaveCount(0);
     // The key went to the text field only: one step back from where the selection was.
+    await selectPrevious.click();
+    await expectSelected('IMG_2581.JPG');
+    // With a photo's menu open, the menu takes the key, which the application menu then does not get: the page has
+    // handled it. One step from the menu's photo, which is not the selected one, and no step more.
+    await page.evaluate(() => {
+      window.__plmHandledKeys = [];
+      // Before the menu's listener, which keeps the key from going further; read once the key has been handled.
+      window.addEventListener('keydown', event => {
+        if (event.key.startsWith('Arrow')) setTimeout(() => window.__plmHandledKeys.push(event.defaultPrevented));
+      }, true);
+    });
+    await openMoreOptionsInRow('IMG_5769.JPG');
+    await pressWithCmdOrCtrl('ArrowLeft');
+    await expect(openMenus).toHaveCount(0);
+    await expectSelected('IMG_4676.JPG');
+    await expect.poll(() => page.evaluate(() => window.__plmHandledKeys)).toEqual([true]);
+    await expect.poll(enabled).toEqual({ previous: true, next: true });
     await selectPrevious.click();
     await expectSelected('IMG_2581.JPG');
   }

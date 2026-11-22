@@ -1,8 +1,19 @@
 import { DOCUMENT } from '@angular/common';
-import { afterNextRender, Component, DestroyRef, Directive, inject, viewChild } from '@angular/core';
+import { afterNextRender, Component, DestroyRef, Directive, inject, input, viewChild } from '@angular/core';
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { TranslationKey } from '../../../../src-shared/i18n/translation-key';
+import {
+  ariaKeyShortcutsOf,
+  isShortcut,
+  isWithCmdOrCtrl,
+  PressedKey,
+  selectNextShortcut,
+  selectPreviousShortcut,
+  Shortcut,
+  shortcutText,
+} from '../../../../src-shared/shortcut/shortcut';
+import { currentPlatform } from '../../../../src-shared/startup/startup-metadata';
 import { openUrl } from '../../../../src-shared/url/open-url';
 import { DirectoryTreeViewSelectionService } from '../../directory-tree-view/directory-tree-view-selection.service';
 import { TranslatePipe } from '../../shared/i18n/translate.pipe';
@@ -22,16 +33,46 @@ export interface MoreOptionsMenuData {
   readonly place: PhotoInfoViewerPlace;
 }
 
+/** How an item was chosen, as the log and the analytics say it. */
+type ChosenWith = 'click' | 'shortcut';
+
+const chosenWithInLog: Readonly<Record<ChosenWith, string>> = { click: 'Clicked', shortcut: 'Pressed the shortcut of' };
+const chosenWithInAnalytics: Readonly<Record<ChosenWith, string>> = { click: 'Clicked', shortcut: 'Pressed Shortcut of' };
+
+/** An item's shortcut, as the item shows it and tells a screen reader of it. */
+interface MoreOptionsMenuShortcut {
+  readonly shortcut: Shortcut;
+  /** Beside the item's text: `⌘←` on macOS (shortcutText()). */
+  readonly text: string;
+  /** For the item's aria-keyshortcuts. */
+  readonly ariaKeyShortcuts: string;
+}
+
 /** An item of the menu, which does what it says, or opens one of the menu's submenus. */
-interface MoreOptionsMenuItem {
+export interface MoreOptionsMenuItem {
   readonly textKey: TranslationKey;
-  readonly onClick?: () => void;
+  /** Does what the item says, chosen with a click or, for an item that has one, with its shortcut. */
+  readonly choose?: (chosenWith: ChosenWith) => void;
   /** Select Previous or Select Next for a photo that has no photo before or after it: shown, and not chosen. */
   readonly disabled?: boolean;
+  /** The shortcut of the application menu's same item, for the one selected photo, which chooses this one here. */
+  readonly shortcut?: MoreOptionsMenuShortcut;
   readonly submenu?: {
     readonly name: 'selection' | 'google';
     readonly items: readonly MoreOptionsMenuItem[];
   };
+}
+
+/** The item of `items`, or of their submenus, whose shortcut the key pressed is. */
+function itemWithShortcut(items: readonly MoreOptionsMenuItem[], pressed: PressedKey, platform: string): MoreOptionsMenuItem | null {
+  for (const item of items) {
+    if (item.shortcut && isShortcut(pressed, item.shortcut.shortcut, platform))
+      return item;
+    const inSubmenu = item.submenu ? itemWithShortcut(item.submenu.items, pressed, platform) : null;
+    if (inSubmenu)
+      return inSubmenu;
+  }
+  return null;
 }
 
 /**
@@ -67,6 +108,54 @@ export class ClosesOnPressElsewhereDirective {
 }
 
 /**
+ * While the menu is open, the shortcut of one of its items chooses that item, for the menu's photo, and closes the
+ * menu; any other shortcut of the application closes the menu, and goes on to the application menu.
+ * TL;DR: As in the menus of macOS and Windows, a shortcut that a menu shows beside an item chooses the item there.
+ * The application menu's Photo Taken Before and Photo Taken After, which have the same shortcuts, are for the one
+ * selected photo, which need not be the menu's, and would leave the menu open.
+ * Details:
+ * - The listener is on the document, in the capture phase, from when the menu opens until it has closed: a key goes
+ *   to it before the menus' own listeners, which take Left and Right, with a modifier or without, to close and to open
+ *   a submenu.
+ * - A shortcut that the menu takes goes no further: Electron gives an accelerator only a key that the page leaves
+ *   unhandled (src-main/menu/selection-menu.ts). An item that cannot be chosen takes its shortcut too, which then does
+ *   nothing, and the menu stays open with the item as it is shown.
+ * - Any other key pressed with Cmd, on macOS, or with Ctrl, on Windows and Linux, such as Undo's, goes on to the
+ *   application menu, and closes the menu, as a press elsewhere does: the key acts on the window around the menu.
+ * - The menu takes a key once: those that come while it closes, as when a shortcut is held down, go on to the
+ *   application menu, which then goes on from the photo that the menu has selected.
+ */
+@Directive({ selector: '[appTakesShortcuts]' })
+export class TakesShortcutsDirective {
+  /** The menu's items, with those of its submenus. */
+  public readonly items = input.required<readonly MoreOptionsMenuItem[]>({ alias: 'appTakesShortcuts' });
+
+  constructor() {
+    const menu = inject(MatMenu);
+    const document = inject(DOCUMENT);
+    const platform = currentPlatform();
+    let closing = false;
+    const takeShortcut = (event: KeyboardEvent) => {
+      if (closing || !isWithCmdOrCtrl(event, platform))
+        return;
+      const item = itemWithShortcut(this.items(), event, platform);
+      if (item) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (item.disabled)
+          return;
+        item.choose?.('shortcut');
+      }
+      closing = true;
+      // As Escape closes the menu (MatMenu._handleKeydown()).
+      menu.closed.emit('keydown');
+    };
+    document.addEventListener('keydown', takeShortcut, true);
+    inject(DestroyRef).onDestroy(() => document.removeEventListener('keydown', takeShortcut, true));
+  }
+}
+
+/**
  * The menu of a photo's More Options button: what else can be done with the photo. The home view has it once, for
  * every photo (MoreOptionsMenuService).
  * TL;DR: Selection and Google are submenus, of the items that select a photo and of those that open Google's sites,
@@ -82,13 +171,14 @@ export class ClosesOnPressElsewhereDirective {
  *   right to left, all of it is the other way round.
  * - Select Previous and Select Next, shown as Photo Taken Before and Photo Taken After, keep their places in the Select
  *   submenu where no photo was taken before or after, and cannot be chosen there, as in the application's Selection
- *   menu.
+ *   menu. They show the shortcuts that they have there, which choose them here while the menu is open
+ *   (TakesShortcutsDirective).
  */
 @Component({
   selector: 'app-photo-info-viewer-more-options-menu',
   templateUrl: './more-options-menu.component.html',
   styleUrl: './more-options-menu.component.scss',
-  imports: [ClosesOnPressElsewhereDirective, MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger, TranslatePipe],
+  imports: [ClosesOnPressElsewhereDirective, MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger, TakesShortcutsDirective, TranslatePipe],
 })
 export class MoreOptionsMenuComponent {
   private readonly directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);
@@ -96,6 +186,7 @@ export class MoreOptionsMenuComponent {
   private readonly selectPreviousNextService = inject(SelectPreviousNextService);
 
   private readonly menu = viewChild.required<MatMenu>('menu');
+  private readonly platform = currentPlatform();
 
   /**
    * The items last made, for a photo, its place and the photos taken before and after it (itemsOf()): the template
@@ -135,25 +226,31 @@ export class MoreOptionsMenuComponent {
     const items: MoreOptionsMenuItem[] = [];
     if (photo.hasGpsInfo) {
       items.push({ textKey: 'photoInfo.menu.selection', submenu: { name: 'selection', items: [
-        { textKey: 'photoInfo.menu.selectOnlyThis', onClick: () => this.selectOnlyThis(photo) },
-        { textKey: 'photoInfo.menu.selectPrevious', disabled: previous === null, onClick: () => this.selectPrevious(photo, previous) },
-        { textKey: 'photoInfo.menu.selectNext', disabled: next === null, onClick: () => this.selectNext(photo, next) },
+        { textKey: 'photoInfo.menu.selectOnlyThis', choose: () => this.selectOnlyThis(photo) },
+        {
+          textKey: 'photoInfo.menu.selectPrevious', disabled: previous === null, shortcut: this.shortcut(selectPreviousShortcut),
+          choose: chosenWith => this.selectPrevious(photo, previous, chosenWith),
+        },
+        {
+          textKey: 'photoInfo.menu.selectNext', disabled: next === null, shortcut: this.shortcut(selectNextShortcut),
+          choose: chosenWith => this.selectNext(photo, next, chosenWith),
+        },
       ] } });
     }
     if (place === 'dir-tree-view' && photo.hasGpsInfo)
-      items.push({ textKey: 'photoInfo.menu.revealInMap', onClick: () => this.revealInMap(photo) });
+      items.push({ textKey: 'photoInfo.menu.revealInMap', choose: () => this.revealInMap(photo) });
     if (place === 'leaflet-map-popup')
-      items.push({ textKey: 'photoInfo.menu.revealInSidebar', onClick: () => this.revealInSidebar(photo) });
-    items.push({ textKey: 'photoInfo.menu.openFolder', onClick: () => this.openFolder(photo) });
+      items.push({ textKey: 'photoInfo.menu.revealInSidebar', choose: () => this.revealInSidebar(photo) });
+    items.push({ textKey: 'photoInfo.menu.openFolder', choose: () => this.openFolder(photo) });
     if (photo.hasGpsInfo) {
       items.push({ textKey: 'photoInfo.menu.google', submenu: { name: 'google', items: [
         // In the order of Photo Data Viewer's buttons beside the latitude and the longitude.
-        { textKey: 'photoInfo.menu.openGoogleMaps', onClick: () => this.openGoogleMaps(photo) },
-        { textKey: 'photoInfo.menu.openGoogleEarth', onClick: () => this.openGoogleEarth(photo) },
-        { textKey: 'photoInfo.menu.openGoogleStreetView', onClick: () => this.openGoogleStreetView(photo) },
+        { textKey: 'photoInfo.menu.openGoogleMaps', choose: () => this.openGoogleMaps(photo) },
+        { textKey: 'photoInfo.menu.openGoogleEarth', choose: () => this.openGoogleEarth(photo) },
+        { textKey: 'photoInfo.menu.openGoogleStreetView', choose: () => this.openGoogleStreetView(photo) },
       ] } });
     }
-    items.push({ textKey: 'photoInfo.menu.viewData', onClick: () => this.viewData(photo) });
+    items.push({ textKey: 'photoInfo.menu.viewData', choose: () => this.viewData(photo) });
     return items;
   }
 
@@ -164,20 +261,25 @@ export class MoreOptionsMenuComponent {
     this.directoryTreeViewSelectionService.select([photo.path]);
   }
 
-  private selectPrevious(photo: Photo, previous: string | null): void {
+  private selectPrevious(photo: Photo, previous: string | null, chosenWith: ChosenWith): void {
     if (previous === null)
       return;
-    logger.info(`Clicked "Photo Taken Before" menu item for ${photo.path}, which selects ${previous}`);
-    Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Photo Taken Before"');
+    logger.info(`${chosenWithInLog[chosenWith]} "Photo Taken Before" menu item for ${photo.path}, which selects ${previous}`);
+    Analytics.trackEvent('Photo Info Viewer', `[PIV] ${chosenWithInAnalytics[chosenWith]} "Photo Taken Before"`);
     this.selectPreviousNextService.select(previous);
   }
 
-  private selectNext(photo: Photo, next: string | null): void {
+  private selectNext(photo: Photo, next: string | null, chosenWith: ChosenWith): void {
     if (next === null)
       return;
-    logger.info(`Clicked "Photo Taken After" menu item for ${photo.path}, which selects ${next}`);
-    Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Photo Taken After"');
+    logger.info(`${chosenWithInLog[chosenWith]} "Photo Taken After" menu item for ${photo.path}, which selects ${next}`);
+    Analytics.trackEvent('Photo Info Viewer', `[PIV] ${chosenWithInAnalytics[chosenWith]} "Photo Taken After"`);
     this.selectPreviousNextService.select(next);
+  }
+
+  /** An item's shortcut, as it is shown on this platform. */
+  private shortcut(shortcut: Shortcut): MoreOptionsMenuShortcut {
+    return { shortcut, text: shortcutText(shortcut, this.platform), ariaKeyShortcuts: ariaKeyShortcutsOf(shortcut, this.platform) };
   }
 
   private revealInMap(photo: Photo): void {

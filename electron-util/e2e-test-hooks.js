@@ -181,7 +181,8 @@ if (testRoot) {
       ...youTubeHosts.map(host => `*://*.${host}/*`),
     ];
     // TL;DR: PLM_TEST_OFFLINE=1 also cancels every other request that leaves the computer, so that a measurement does
-    // not wait on the network: the map's base-layer list then falls back to its built-in copy, and tiles stay blank.
+    // not wait on the network: the map's base-layer list then comes from the copy that an earlier launch on the
+    // profile saved, or else from its built-in copy, and tiles stay blank.
     // Details: The renderer awaits that list before Angular starts (src/start-app.ts), so its download is part of every
     // startup. Electron keeps one onBeforeRequest listener per session, so this listener does both.
     const offline = process.env.PLM_TEST_OFFLINE === '1';
