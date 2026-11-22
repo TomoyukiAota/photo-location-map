@@ -17,8 +17,8 @@ export class PinnedPhotoService {
 
   /**
    * The photos pinned on the map: the selected photos that the chart's zoom and its menu's checkbox let through
-   * (photosToPin). While the same photos are pinned, in any order, it keeps the photos that it has, so that the maps,
-   * which render again whenever it changes, are not reset and do not use their quota again.
+   * (photosToPin). While the same photos are pinned, in any order, it keeps the photos that it has, so that the map,
+   * which renders its markers again and moves to them whenever it changes, stays as it is.
    */
   public readonly pinnedPhotos = computed<readonly Photo[]>(() => photosToPin(this.selectedPhotoService.selectedPhotos(), {
     xValuesWithinZoom: this.chartConfigService.xValuesWithinZoom(),

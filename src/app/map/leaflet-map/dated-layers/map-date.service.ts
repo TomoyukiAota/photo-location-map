@@ -4,8 +4,8 @@ import { waybackUrls } from '../../../../../src-shared/map/dated-layer-urls';
 import { centerOf, releasesOf, tileAt, versionsAt, WaybackRelease, WaybackVersion } from './wayback';
 
 /**
- * What the map's layers of a past date keep while the map is made again, as it is whenever other photos are pinned
- * (LeafletMapComponent.renderMap()): the dates that the user chose, and what Esri World Imagery Wayback answered.
+ * What the map's layers of a past date keep apart from the map (DatedLayers), which they are made with: the dates that
+ * the user chose, and what Esri World Imagery Wayback answered.
  */
 @Service()
 export class MapDateService {

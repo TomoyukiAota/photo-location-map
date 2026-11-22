@@ -1445,6 +1445,66 @@ test('on a computer whose language is Arabic, the application in English lists t
   await cancel.click();
   await expect(settingsDialog).toHaveCount(0);
 });
+test('the map stays as it is while other photos are pinned: its markers change, and its zoom stays from one photo to the next', async () => {
+  // The map is made once. Each change of the pinned photos changes its markers, and moves its view to them: one photo
+  // at the zoom level that shows a photo's place, or at the map's zoom when one photo follows another, as Photo Taken
+  // Before and Photo Taken After go; several photos fitted in it.
+  await page.addInitScript(() => {
+    let leaflet;
+    Object.defineProperty(window, 'L', {
+      configurable: true, enumerable: true,
+      get: () => leaflet,
+      set: lib => {
+        leaflet = lib;
+        lib?.Map?.addInitHook(function () {
+          if (this.getContainer().id !== 'plm-leaflet-map') return;
+          window.__plmLeafletMap = this;
+          window.__plmLeafletMaps = (window.__plmLeafletMaps ?? 0) + 1;
+        });
+      }
+    });
+  });
+  await page.reload();
+  await page.waitForFunction(() => !!window.__plmLeafletMap);
+  await dismissWelcome();
+  await openFolderWithPicker(photoFolder);
+  await expectRepresentedPhotos(4);
+  const popup = page.locator('.leaflet-popup');
+  const map = () => page.evaluate(() => ({ zoom: window.__plmLeafletMap.getZoom(), maps: window.__plmLeafletMaps }));
+  /**
+   * Whether the popup is in the middle of the map, from left to right, above its marker, as centerOnPopup() puts it:
+   * once the popup of the photo before has gone, which Leaflet fades out for 200 ms.
+   */
+  async function popupInMiddle() {
+    await expect(popup).toHaveCount(1);
+    return page.evaluate(() => {
+      const popupBox = document.querySelector('.leaflet-popup').getBoundingClientRect();
+      const mapBox = window.__plmLeafletMap.getContainer().getBoundingClientRect();
+      return Math.abs((popupBox.left + popupBox.right) / 2 - (mapBox.left + mapBox.right) / 2) < 2;
+    });
+  }
+  await page.evaluate(photo => window.plmInternalRenderer.photoSelection.selectOnlyThis(photo), path.join(photoFolder, 'Gold Coast/IMG_1579.JPG'));
+  await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_1579.JPG');
+  await expectRepresentedPhotos(1);
+  expect(await map()).toEqual({ zoom: 13, maps: 1 });
+  expect(await popupInMiddle()).toBe(true);
+  // Zoomed in, as the user would to see the place, the map keeps the zoom for the photo taken next, far from there.
+  await page.evaluate(() => window.__plmLeafletMap.setZoom(16, { animate: false }));
+  await page.evaluate(() => window.plmInternalRenderer.photoSelection.selectNext());
+  await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_2581.JPG');
+  await expectRepresentedPhotos(1);
+  expect(await map()).toEqual({ zoom: 16, maps: 1 });
+  expect(await popupInMiddle()).toBe(true);
+  await page.evaluate(() => window.plmInternalRenderer.photoSelection.undo());
+  await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_1579.JPG');
+  expect(await map()).toEqual({ zoom: 16, maps: 1 });
+  // The four photos again: the view fits them, which are around the world.
+  await page.evaluate(() => window.plmInternalRenderer.photoSelection.undo());
+  await expectRepresentedPhotos(4);
+  await expect(popup).toHaveCount(0);
+  await expect.poll(async () => (await map()).zoom).toBeLessThan(5);
+  expect((await map()).maps).toBe(1);
+});
 test('map regions preserve drawing, removal and real photo selection', async () => {
   await page.addInitScript(() => {
     let leaflet;
@@ -1456,6 +1516,7 @@ test('map regions preserve drawing, removal and real photo selection', async () 
         lib?.Map?.addInitHook(function () {
           if (this.getContainer().id !== 'plm-leaflet-map') return;
           window.__plmLeafletMap = this;
+          window.__plmLeafletMaps = (window.__plmLeafletMaps ?? 0) + 1;
           this.on('movestart', () => window.__plmMapMoving = true);
           this.on('moveend', () => window.__plmMapMoving = false);
         });
@@ -1520,9 +1581,11 @@ test('map regions preserve drawing, removal and real photo selection', async () 
   await expect(page.locator('mat-tree-node').filter({ hasText: 'Gold Coast' }).getByRole('checkbox')).not.toBeChecked();
   await expect(page.locator('mat-tree-node').filter({ hasText: 'Apple Park' }).getByRole('checkbox')).not.toBeChecked();
   await expect(page.locator('.plm-leaflet-map-div-icon')).toHaveCount(2);
-  await expect(page.locator('app-leaflet-map .update-in-progress-overlay')).toBeHidden();
   await expect(page.locator('.marker-cluster')).toHaveCount(0);
-  await expect(page.locator('.plm-leaflet-map-region-info-text')).toBeHidden();
+  // The map stays, with the region drawn, which counts the photos that it selected again: all of them are in it.
+  await expect(shapes).toHaveCount(1);
+  await expect(page.locator('.plm-leaflet-map-region-info-text')).toHaveText('Photos in Regions: 2');
+  expect(await page.evaluate(() => window.__plmLeafletMaps)).toBe(1);
 });
 test('the map shows Esri World Imagery Wayback and OpenHistoricalMap at the dates of the photos on it, or at a date chosen', async () => {
   // Two photos taken at the ring of EXPO 2025 on 2025-08-10, and the answers of the servers as they were for the ring
@@ -3320,8 +3383,8 @@ test('a photo dropped on the window opens its folder once the user confirms, wit
 });
 test('a photo whose GPS values are empty leaves the other photos on the map', async () => {
   // exifr gives such a photo's latitude and longitude as the text "NaNNaN", and Leaflet threw on its marker. The
-  // error ended the loop that added the markers, so the folder had no markers at all, and the map kept its progress
-  // bar. The photo sorts first, so that the loop would end before any marker.
+  // error ended the loop that added the markers, so the folder had no markers at all. The photo sorts first, so that
+  // the loop would end before any marker.
   const folder = path.join(profile, 'empty GPS values');
   await mkdir(folder);
   await writeFile(path.join(folder, '1 empty GPS values.JPG'),
@@ -3338,16 +3401,16 @@ test('a photo whose GPS values are empty leaves the other photos on the map', as
     await expect(page.locator('app-loaded-files-status-bar')).toContainText('Loaded 2 files.');
     await expect(page.locator('app-loaded-files-status-bar')).toContainText('1 files have location data.');
     await expect(page.locator('.plm-leaflet-map-div-icon')).toHaveCount(1);
-    await expect(page.locator('.update-in-progress-overlay')).toHaveCSS('visibility', 'hidden');
     expect(errors).toEqual([]);
   } finally {
     if (previousOpen === undefined) delete process.env.PLM_E2E_OPEN;
     else process.env.PLM_E2E_OPEN = previousOpen;
   }
 });
-test('a window resize keeps the sidebar\'s upper pane, and Leaflet fits the map to its pane', async () => {
-  // Home sets the sidebar's split again on a resize, keeping its upper pane's height, and Leaflet, which tracks the
-  // window's size, takes its pane's new size. Neither goes through change detection.
+test('a window resize keeps the sidebar\'s upper pane, and Leaflet fits the map to its pane, which a gutter resizes too', async () => {
+  // Home sets the sidebar's split again on a resize, keeping its upper pane's height, and Leaflet takes its pane's new
+  // size, which the map watches, as Leaflet itself tracks only the window's size. Neither goes through change
+  // detection.
   await page.addInitScript(() => {
     let leaflet;
     Object.defineProperty(window, 'L', {
@@ -3383,6 +3446,16 @@ test('a window resize keeps the sidebar\'s upper pane, and Leaflet fits the map 
   await expect.poll(async () => (await mapSizes()).pane[0]).toBeLessThan(before.pane[0] - 100);
   await expect.poll(async () => { const sizes = await mapSizes(); return sizes.leaflet.join() === sizes.pane.join(); }).toBe(true);
   await expect.poll(async () => Math.round((await upperPane.boundingBox()).height)).toBe(Math.round(upperPaneHeight));
+  await expectRepresentedPhotos(4);
+  // The gutter between the map and the chart, dragged up, makes the map's pane alone smaller.
+  const gutter = (await page.locator('#home-right > .gutter').boundingBox());
+  const beforeDrag = await mapSizes();
+  await page.mouse.move(gutter.x + gutter.width / 2, gutter.y + gutter.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(gutter.x + gutter.width / 2, gutter.y + gutter.height / 2 - 100, { steps: 5 });
+  await page.mouse.up();
+  await expect.poll(async () => (await mapSizes()).pane[1]).toBeLessThan(beforeDrag.pane[1] - 50);
+  await expect.poll(async () => { const sizes = await mapSizes(); return sizes.leaflet.join() === sizes.pane.join(); }).toBe(true);
   await expectRepresentedPhotos(4);
 });
 test('window bounds survive restart and the Windows fullscreen menu stays visible', async () => {
