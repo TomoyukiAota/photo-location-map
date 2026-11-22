@@ -225,10 +225,11 @@
       "title": "Giao diện",
       "showStatusBar": "Hiển thị thanh trạng thái",
       "stickyFolders": {
-        "title": "Thư mục ghim ở đầu cây",
-        "description": "Khi cuộn cây thư mục, các thư mục phía trên những hàng đang hiển thị vẫn ở trên cùng. Thư mục đã mở và thư mục của những hàng đó luôn được giữ lại.",
+        "title": "Thư mục ghim",
+        "description": "Cài đặt hiển thị các thư mục cha khi cuộn cây thư mục.",
         "maximum": "Số hàng tối đa",
-        "leftOut": "Khi có nhiều thư mục hơn số hàng, bỏ bớt:",
+        "leftOut": "Vị trí bỏ bớt thư mục khi không vừa số hàng tối đa",
+        "leftOutDescription": "Thư mục đã mở và thư mục của những hàng đang hiển thị luôn được giữ lại.",
         "middle": "Các thư mục ở giữa",
         "nearOpenedFolder": "Các thư mục gần thư mục đã mở",
         "nearPhotos": "Các thư mục gần ảnh"

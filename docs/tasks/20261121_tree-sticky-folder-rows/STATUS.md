@@ -15,6 +15,10 @@ What the owner decided:
 - The most rows (3 to 10) and which folders are left out (in the middle, near the opened folder, near the photos) are
   settings of the Appearance tab. Whatever they are, the opened folder and the folder of the rows shown are kept.
 - Scroll to Here is in the menu only: a click on a row does what it does on the folder's own row.
+- The settings are named Sticky Folders, スティッキーフォルダー in Japanese (2026-11-22, after the first release of
+  this). Their description says what they are for; that the opened folder and the folder of the rows shown are always
+  kept is said under the heading of the choices of the folders left out, which says where they are left out when they
+  do not fit in the maximum rows.
 
 ## Measured on a prototype
 

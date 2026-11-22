@@ -225,10 +225,11 @@
       "title": "Görünüm",
       "showStatusBar": "Durum çubuğunu göster",
       "stickyFolders": {
-        "title": "Ağacın üstüne sabitlenen klasörler",
-        "description": "Klasör ağacı kaydırılırken gösterilen satırların üstündeki klasörler yukarıda kalır. Açılan klasör ve bu satırların klasörü her zaman kalır.",
+        "title": "Sabitlenen klasörler",
+        "description": "Klasör ağacı kaydırılırken üst klasörleri gösterme ayarları.",
         "maximum": "En fazla satır sayısı",
-        "leftOut": "Satırdan çok klasör olduğunda dışarıda bırak:",
+        "leftOut": "Klasörler en fazla satır sayısına sığmadığında dışarıda bırakılacak kısım",
+        "leftOutDescription": "Açılan klasör ve gösterilen satırların klasörü her zaman kalır.",
         "middle": "Ortadaki klasörler",
         "nearOpenedFolder": "Açılan klasöre yakın klasörler",
         "nearPhotos": "Fotoğraflara yakın klasörler"
