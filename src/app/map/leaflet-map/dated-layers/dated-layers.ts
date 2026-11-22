@@ -30,15 +30,16 @@ const openHistoricalMapAttribution = 'OpenHistoricalMap &mdash; Land cover: &cop
 
 /**
  * The layers of the map that show a past date, Esri World Imagery Wayback and OpenHistoricalMap, and the control with
- * their date, for one Leaflet map: LeafletMapComponent makes one with each map, and destroys it with the map.
+ * their date, for one Leaflet map: LeafletMapComponent makes one with its map, and destroys it with the map.
  * TL;DR: While one of them is the map's base layer, its date follows the dates of the photos on the map, or the date
  * that the user chose, and the control says which.
  * Details:
  * - The photos are those on the map that are in its view, or all of those on the map when none is. Wayback shows the
  *   imagery taken nearest to their middle date, from the versions at the map's center at its zoom; its list marks the
- *   versions taken nearest before and after that date (photo-dates.ts). OpenHistoricalMap shows that very date.
+ *   versions taken nearest before and after that date (photo-dates.ts). OpenHistoricalMap shows that very date. The
+ *   date follows them after each move of the map, and when other photos are on it (photosChanged()).
  * - A date that the user chooses ends the matching, until they check its box again. What they chose, and what is
- *   shown, are kept in MapDateService, as the map is made again whenever other photos are pinned.
+ *   shown, are kept in MapDateService.
  */
 export class DatedLayers {
   /** The layers, by their names, for the map's list of base layers. */
@@ -92,6 +93,11 @@ export class DatedLayers {
     }
     this.showControl();
     this.refresh();
+  }
+
+  /** Other photos are on the map: the date follows theirs, as after a move of the map, which their render may not make. */
+  public photosChanged(): void {
+    this.refreshAfterMove();
   }
 
   /** Stops what is still to come, with the map that is removed. */
