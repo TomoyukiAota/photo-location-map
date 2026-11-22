@@ -1,11 +1,20 @@
 import { Logger } from '../../../../src-shared/log/logger';
+// The storage of the tests (test/angular/storage-double.ts), which setup.ts empties before each test.
+import { UserDataStorage } from '../../../../src-shared/user-data-storage/user-data-storage';
+import { UserDataStoragePath } from '../../../../src-shared/user-data-storage/user-data-stroage-path';
 import type * as ConfigsModule from './raster-tile-base-layer-configs-version-1';
 
-// Configs that a server answers with, told apart from the fallback configs by their map.
+// Configs that a server answers with, and those that an earlier launch saved, told apart from each other and from the
+// fallback configs by their maps.
 const fetchedConfigs = {
   version: '1',
   rasterTileBaseLayerConfigs: [{ name: 'A Fetched Map', url: 'https://tiles.example/{z}/{x}/{y}.png' }],
 };
+const savedConfigs = {
+  version: '1',
+  rasterTileBaseLayerConfigs: [{ name: 'A Saved Map', url: 'https://saved-tiles.example/{z}/{x}/{y}.png' }],
+};
+const savedConfigsPath = UserDataStoragePath.LeafletMap.RasterTileBaseLayerConfigsVersion1;
 const firstAddress = 'https://first.example/raster-tile-base-layer-configs-version-1.jsonc';
 const lastAddress = 'https://last.example/raster-tile-base-layer-configs-version-1.jsonc';
 
@@ -73,7 +82,43 @@ describe('raster-tile-base-layer-configs-version-1', () => {
       expect.stringContaining(`Failed to fetch ${firstAddress}.`));
   });
 
-  it('uses the fallback configs when no address answers in its time', async () => {
+  it('saves the configs that an address gives, and writes them again only once they have changed', async () => {
+    const write = vi.spyOn(UserDataStorage, 'write');
+    const fetchFrom = async (body: unknown) => {
+      fetch.mockImplementation(answeredAfter(0, body));
+      return configsModule.fetchRasterTileBaseLayerConfigsVersion1WithRetry([
+        { url: firstAddress, timeoutMilliseconds: 1000 },
+      ]);
+    };
+
+    expect(await fetchFrom(fetchedConfigs)).toEqual(fetchedConfigs);
+    expect(JSON.parse(UserDataStorage.read(savedConfigsPath))).toEqual(fetchedConfigs);
+    await fetchFrom(fetchedConfigs);
+    expect(write).toHaveBeenCalledTimes(1);
+
+    await fetchFrom(savedConfigs);
+    expect(write).toHaveBeenCalledTimes(2);
+    expect(JSON.parse(UserDataStorage.read(savedConfigsPath))).toEqual(savedConfigs);
+  });
+
+  it('uses the configs that an earlier launch saved when no address answers in its time', async () => {
+    await UserDataStorage.write(savedConfigsPath, JSON.stringify(savedConfigs));
+    fetch.mockImplementation(neverAnswered);
+
+    const configs = await configsModule.fetchRasterTileBaseLayerConfigsVersion1WithRetry([
+      { url: firstAddress, timeoutMilliseconds: 20 },
+      { url: lastAddress, timeoutMilliseconds: 20 },
+    ]);
+
+    expect(configs).toEqual(savedConfigs);
+    expect(vi.mocked(Logger.errorNotRecorded).mock.calls.map(([message]) => message)).toEqual([
+      expect.stringContaining(`Failed to fetch ${firstAddress}.`),
+      expect.stringContaining(`Failed to fetch ${lastAddress}.`),
+      expect.stringContaining('Using the configs that an earlier launch saved.'),
+    ]);
+  });
+
+  it('uses the fallback configs when no address answers in its time, and none are saved', async () => {
     fetch.mockImplementation(neverAnswered);
 
     const configs = await configsModule.fetchRasterTileBaseLayerConfigsVersion1WithRetry([
@@ -88,6 +133,30 @@ describe('raster-tile-base-layer-configs-version-1', () => {
       expect.stringContaining(`Failed to fetch ${lastAddress}.`),
       expect.stringContaining('Using the fallback configs.'),
     ]);
+  });
+
+  it('uses the fallback configs when what is saved is not valid configs', async () => {
+    const notValid = [
+      'not JSON',
+      JSON.stringify({ version: '1', rasterTileBaseLayerConfigs: 'A Saved Map' }),
+      JSON.stringify({ version: '1', rasterTileBaseLayerConfigs: [] }),
+    ];
+    for (const saved of notValid) {
+      await UserDataStorage.write(savedConfigsPath, saved);
+      fetch.mockImplementation(neverAnswered);
+      vi.mocked(Logger.errorNotRecorded).mockClear();
+
+      const configs = await configsModule.fetchRasterTileBaseLayerConfigsVersion1WithRetry([
+        { url: firstAddress, timeoutMilliseconds: 20 },
+      ]);
+
+      expect(configs).toBe(configsModule.rasterTileBaseLayerConfigsVersion1Fallback);
+      expect(vi.mocked(Logger.errorNotRecorded).mock.calls.map(([message]) => message)).toEqual([
+        expect.stringContaining(`Failed to fetch ${firstAddress}.`),
+        expect.stringContaining('The saved configs are not valid configs, and are not used.'),
+        expect.stringContaining('Using the fallback configs.'),
+      ]);
+    }
   });
 
   it('gives each address that the start tries a time limit, 20 seconds in all', () => {

@@ -8,7 +8,7 @@ import { GpsInfo } from '../../model/gps-info.model.js';
 import { LatLng } from '../../model/lat-lng.model.js';
 import { Thumbnail } from '../../model/thumbnail.model.js';
 import { rotateImage, getRotatedSize } from '../../image-rotation.js';
-import { exifPerfStats } from '../exif-perf-stats.js';
+import { addExifFileTime, exifPerfStats } from '../exif-perf-stats.js';
 import { ExifReadError, exifReadFailures } from '../exif-read-failures.js';
 
 // exifr runs in the main process (src-main/exif/read-exif.ts), which also extracts the embedded thumbnail.
@@ -42,10 +42,8 @@ export function fetchExifUsingExifr(filePath: string): Promise<Exif> {
         exifReadFailures.add('exif-failed', error);
       return null;
     })
-    .finally(() => {
-      exifPerfStats.files++;
-      exifPerfStats.maxFileMs = Math.max(exifPerfStats.maxFileMs, performance.now() - startMs);
-    });
+    // Counted for the log's line of the folder, which takes the place of a line per photo (exifSummaryLine).
+    .finally(() => addExifFileTime(filePath, performance.now() - startMs));
 
   return exifPromise;
 }
@@ -62,9 +60,7 @@ async function fetchExifrParseOutput(filePath: string): Promise<ExifrRead | null
   if (result.parse === 'failed')
     throw new ExifReadError('read-failed', result.error);
 
-  const read = result.parse === 'ok' ? { output: result.output, thumbnail: result.thumbnail, thumbnailError: result.thumbnailError } : null;
-  Logger.info(`[using exifr] Fetched EXIF of ${filePath} `, read?.output);
-  return read;
+  return result.parse === 'ok' ? { output: result.output, thumbnail: result.thumbnail, thumbnailError: result.thumbnailError } : null;
 }
 
 /**
@@ -109,8 +105,6 @@ async function createExifFromExifrParseOutput(read: ExifrRead | null, filePath: 
     exifPerfStats.rotateMs += performance.now() - rotateStartMs;
     exif.thumbnail = thumbnail;
   }
-
-  Logger.info(`[using exifr] Created Exif class instance of ${filePath} `, exif);
 
   return exif;
 }
