@@ -41,7 +41,7 @@ describe('PinnedPhotoService', () => {
     expect(service.pinnedPhotos()).toHaveLength(1);
   });
 
-  it('keeps the photos that it has while the same ones are pinned, so that the maps do not render again', () => {
+  it('keeps the photos that it has while the same ones are pinned, so that the map does not render them again', () => {
     selectedPhotoService.setSelectedPhotos([photo('a.jpg', '2019-03-16T17:29:58'), photo('b.jpg', '2019-05-01T00:00:00')]);
     const pinned = service.pinnedPhotos();
 

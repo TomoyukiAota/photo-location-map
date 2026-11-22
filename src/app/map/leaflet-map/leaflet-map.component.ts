@@ -1,10 +1,8 @@
-import { AfterViewInit, Component, ComponentRef, ElementRef, Injector, OnDestroy, effect, untracked, viewChild, inject } from '@angular/core';
+import { AfterViewInit, Component, ComponentRef, ElementRef, Injector, OnDestroy, Type, effect, untracked, viewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import * as turf from '@turf/turf';
 import { Control, LayersControlEvent, LeafletEvent, Map as LeafletMap, Marker, Popup, PopupEvent } from 'leaflet';
-import debounce from 'lodash-es/debounce.js';
 import throttle from 'lodash-es/throttle.js';
-import { Subscription } from 'rxjs';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { recordUnhandledError } from '../../../../src-shared/analytics/record-error';
 import { currentLanguage, t } from '../../../../src-shared/i18n/i18n';
@@ -18,7 +16,6 @@ import { PhotoRevealService } from '../../shared/service/photo-reveal.service';
 import { PinnedPhotoService } from '../../shared/service/pinned-photo.service';
 import { PhotoClusterViewerComponent } from '../../photo-cluster-viewer/photo-cluster-viewer.component';
 import { PhotoInfoViewerComponent } from '../../photo-info-viewer/photo-info-viewer.component';
-import { LeafletMapForceRenderService } from './leaflet-map-force-render/leaflet-map-force-render.service';
 import { addEachMarker } from './add-each-marker';
 import { DatedLayers } from './dated-layers/dated-layers';
 import { MapDateService } from './dated-layers/map-date.service';
@@ -28,29 +25,43 @@ import { leafletMapLogger as logger } from './leaflet-map-logger';
 import { rasterTileBaseLayerConfigsVersion1 } from './raster-tile-base-layer-configs-version-1';
 import { RegionInfoComponent } from './region-info/region-info.component';
 import { ClusteredMarker, viewToReveal } from './view-to-reveal';
-import { MatProgressBar } from '@angular/material/progress-bar';
 
 // "declare let L: any;" is defined here (in addition to global scope typing given by types/index.d.ts)
 // in order to avoid the compile errors for the types from leaflet.markercluster
 declare let L: any;
 
+/**
+ * The highest zoom level that the map goes to by itself to show the photos pinned: a photo's place with what is
+ * around it. A higher one that the user chose is kept while one photo follows another (renderMap()).
+ */
+const maxZoomToShowPhotos = 13;
+
+/**
+ * The map of the home view, with a marker for each photo pinned.
+ * TL;DR: The map is made once, and stays as it is while other photos are pinned: its markers change, and its view
+ * moves to them (renderMap()).
+ * Details: The map, its base layer and the tiles that it has loaded, the regions drawn on it and its controls stay. It
+ * was made again for every change of the pinned photos until November 2026, which loaded its tiles again, and dropped
+ * the regions drawn.
+ */
 @Component({
   selector: 'app-leaflet-map',
   templateUrl: './leaflet-map.component.html',
   styleUrls: ['./leaflet-map.component.scss'],
-  imports: [MatProgressBar]
 })
 export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   private directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);
-  private forceRenderService = inject(LeafletMapForceRenderService);
   private injector = inject(Injector);
   private leafletContentService = inject(LeafletContentService);
   private mapDateService = inject(MapDateService);
   private photoRevealService = inject(PhotoRevealService);
   private pinnedPhotoService = inject(PinnedPhotoService);
 
-  public readonly updateInProgressOverlay = viewChild.required<ElementRef<HTMLDivElement>>('updateInProgressOverlay');
-  private forceRenderServiceSubscription: Subscription;
+  private readonly mapContainer = viewChild.required<ElementRef<HTMLDivElement>>('mapContainer');
+  // Tells Leaflet of each change of the map's size (watchSize()).
+  private resizeObserver: ResizeObserver | null = null;
+  // Makes the map, a moment after the home view is shown (makeMapLater()).
+  private makeMapTimer: ReturnType<typeof setTimeout> | null = null;
 
   private readonly commonBaseLayerOptions = {
     // Set the common max zoom level for all base layers.
@@ -64,10 +75,13 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     maxZoom: 19,
   };
 
-  private map: LeafletMap;
+  // Made by the first render (makeMapLater()), and kept until the component is destroyed.
+  private map: LeafletMap | null = null;
   // The Leaflet.markercluster group of the photos on the map, and the marker of each of them by the photo's path.
   private markerClusterGroup: any = null;
   private readonly markers = new Map<string, Marker>();
+  // The components that the popups of the markers and of their clusters show, which go with the markers.
+  private readonly markerContents = new Set<ComponentRef<unknown>>();
   private regionInfo: Control;
   // The layers of a past date, and their control, for this map (dated-layers/dated-layers.ts).
   private datedLayers: DatedLayers | null = null;
@@ -76,12 +90,12 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   private clusterViewers = new WeakMap<object, ComponentRef<PhotoClusterViewerComponent>>();
   private photos: Photo[] = [];
   private photosWithinRegion: Set<Photo> = new Set<Photo>();
-  // What is needed to reveal a photo once the map shows it. The map renders the pinned photos a second after they
-  // change (renderMapWithDebouncing), and the effect that asks it to runs a moment after the change, so a request to
-  // reveal a photo that the request has just pinned comes before both.
+  // What is needed to reveal a photo once the map shows it. The effect that asks the map to render the pinned photos
+  // runs a moment after they change, and the render may wait for a moment more (renderMapWithThrottling), so a
+  // request to reveal a photo that the request has just pinned comes before both.
   // - The photo to reveal, until the map shows the photos pinned now.
   private photoToReveal: Photo | null = null;
-  // - The pinned photos that the map was last asked to render, or null for a render without them.
+  // - The pinned photos that the map was last asked to render.
   private pinnedPhotosToRender: readonly Photo[] | null = null;
   // - Whether the map is about to render.
   private isRenderPending = false;
@@ -101,8 +115,9 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   }
 
   public ngAfterViewInit(): void {
-    // Render again whenever other photos are pinned; the first run renders the photos pinned now. Created here because
-    // rendering needs the overlay and the map's container.
+    this.watchSize();
+    // Renders the photos whenever other photos are pinned, once the map is made. Created here because the map needs its
+    // container.
     effect(() => {
       const pinnedPhotos = this.pinnedPhotoService.pinnedPhotos();
       untracked(() => {
@@ -110,69 +125,125 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
         this.updateMap([...pinnedPhotos]);
       });
     }, { injector: this.injector });
-    this.forceRenderServiceSubscription = this.forceRenderService.forceRenderWithoutPhotoHappened.subscribe(() => {
-      this.pinnedPhotosToRender = null;
-      this.updateMap([]);
-    });
+    this.makeMapLater();
   }
 
   public ngOnDestroy(): void {
-    this.forceRenderServiceSubscription.unsubscribe();
+    this.resizeObserver?.disconnect();
     // A render still waiting would draw into the removed view.
-    this.renderMapWithDebouncing.cancel();
-    this.leafletContentService.destroyAll();
+    clearTimeout(this.makeMapTimer);
+    this.renderMapWithThrottling.cancel();
+    this.removeMap();
   }
 
-  // The overlay is shown and hidden through its style rather than a binding, so it needs no change detection.
+  /**
+   * Makes the map a second after the home view is shown, with the photos pinned then, as it was when every render of
+   * the map waited for a second.
+   * TL;DR: Making the map takes the page's main thread for a moment, which the window's first moments need.
+   * Details: The dialogs that open with the window, the Language dialog at the first launch and the Welcome dialog,
+   * take the focus at the end of their opening animation by a timer, and start the animation in the next frame. Made
+   * between the two, the map would hold back the frame, so that the dialog took the focus still small, before its
+   * animation. The e2e case of the Language dialog, which measures the dialog once it has the focus, saw that.
+   */
+  private makeMapLater(): void {
+    this.makeMapTimer = setTimeout(() => {
+      this.makeMapTimer = null;
+      this.renderMapWithThrottling([...(this.pinnedPhotosToRender ?? [])]);
+    }, 1000 /* ms */);
+  }
+
+  /**
+   * Tells Leaflet of each change of the map's size, as Split.js lays the home view out and as the gutters around the
+   * map are dragged: Leaflet measures its container by itself only when the window is resized. Its center stays.
+   */
+  private watchSize(): void {
+    this.resizeObserver = new ResizeObserver(() => this.map?.invalidateSize({ debounceMoveend: true }));
+    this.resizeObserver.observe(this.mapContainer().nativeElement);
+  }
+
   private updateMap(photos: Photo[]): void {
     this.isRenderPending = true;
-    const updateInProgressOverlay = this.updateInProgressOverlay();
-    updateInProgressOverlay.nativeElement.style.visibility = 'visible';
-    updateInProgressOverlay.nativeElement.style.opacity = '1';
-    this.renderMapWithDebouncing(photos);
+    // Until the map is made, which renders the photos pinned then.
+    if (this.map)
+      this.renderMapWithThrottling(photos);
   }
 
-  // renderMap function needs debouncing.
-  // Otherwise, changing pinned photos in a short time results in sending frequent requests to the tile server.
-  private renderMapWithDebouncing = debounce((photos: Photo[]) => {
+  /**
+   * Renders the photos at once, and, when other photos are pinned within the next 300 ms, the last of them at the end
+   * of that time: a key held down, or clicks in a row, would otherwise move the map many times a second, and load the
+   * tiles of each of its views.
+   */
+  private renderMapWithThrottling = throttle((photos: Photo[]) => {
     try {
       this.renderMap(photos);
     } finally {
       this.isRenderPending = false;
-      // Hidden even when rendering threw: the error is recorded as any other, and the overlay would stay over the map.
-      const updateInProgressOverlay = this.updateInProgressOverlay();
-      updateInProgressOverlay.nativeElement.style.visibility = 'hidden';
-      updateInProgressOverlay.nativeElement.style.opacity = '0';
     }
     this.revealPhotoToReveal();
-  }, 1000 /* ms */);
+  }, 300 /* ms */);
 
+  /**
+   * Shows the photos in place of those that the map showed: only the markers change, and the view moves to them, as
+   * it did when the map was made for them, without an animation, as Reveal in Map moves it.
+   * - Several photos: the view fits them, at maxZoomToShowPhotos at the most.
+   * - One photo: its popup opens in the middle of the map, at maxZoomToShowPhotos; or at the map's zoom when the map
+   *   showed one photo before, as Photo Taken Before and Photo Taken After go from one photo to the next.
+   * - No photo: the view stays.
+   * The regions drawn on the map count the photos again, and the layers of a past date follow their dates.
+   */
   private renderMap(photos: Photo[]): void {
-    this.ensureMapRemoved();
+    const showedOnePhoto = this.map !== null && this.photos.length === 1;
+    this.removeMarkers();
     // Before the map is made, as the layers of a past date take their date from the photos when they are added.
     this.photos = photos;
-    this.initializeMap();
+    if (!this.map)
+      this.initializeMap();
 
-    if (photos.length > 0) {
-      this.renderMarkerClusterGroup(photos);
-    }
+    if (photos.length === 1)
+      this.renderMarkerClusterGroupForSinglePhoto(photos[0], showedOnePhoto);
+    else if (photos.length > 1)
+      this.renderMarkerClusterGroupForMultiplePhotos(photos);
+    this.updateRegionInfo();
+    this.datedLayers.photosChanged();
   }
 
-  private ensureMapRemoved(): void {
+  /** Takes the markers off the map, with the popup that is open and the components that their popups showed. */
+  private removeMarkers(): void {
+    this.map?.closePopup();
+    if (this.markerClusterGroup)
+      this.map.removeLayer(this.markerClusterGroup);
+    this.markerClusterGroup = null;
+    this.markers.clear();
+    this.clusterViewers = new WeakMap();
+    for (const content of this.markerContents)
+      content.destroy();
+    this.markerContents.clear();
+  }
+
+  private removeMap(): void {
     this.datedLayers?.destroy();
     this.datedLayers = null;
     if (this.map) {
       this.map.off();
       this.map.remove();
+      this.map = null;
     }
     this.markerClusterGroup = null;
     this.markers.clear();
-    // The components that the removed map showed in its popups and its region info.
+    this.markerContents.clear();
+    // The components that the map showed: in its popups, its region info and its control of a past date.
     this.leafletContentService.destroyAll();
   }
 
+  /** A component for a popup of a marker or of a cluster, which goes when the markers do (removeMarkers()). */
+  private createMarkerContent<C>(component: Type<C>, inputs: Readonly<Record<string, unknown>>): ComponentRef<C> {
+    const content = this.leafletContentService.create(component, inputs);
+    this.markerContents.add(content);
+    return content;
+  }
+
   private initializeMap(): void {
-    this.map = L.map('plm-leaflet-map', {zoomControl: false}).setView([0, 0], 2);
+    this.map = L.map(this.mapContainer().nativeElement, {zoomControl: false}).setView([0, 0], 2);
     this.configureAttribution();
     this.configureScale();
     this.configureZoom();
@@ -193,16 +264,6 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
 
   private configureZoom() {
     L.control.zoom({position: 'bottomright', zoomInTitle: t('map.zoomIn'), zoomOutTitle: t('map.zoomOut')}).addTo(this.map);
-    this.configureInitialMaxZoomLevel();
-  }
-
-  private configureInitialMaxZoomLevel() {
-    this.map.once('moveend', event => {
-      const initialMaxZoomLevel = 13;
-      if (this.map.getZoom() > initialMaxZoomLevel) {
-        this.map.setZoom(initialMaxZoomLevel);
-      }
-    });
   }
 
   private configureBaseLayer() {
@@ -375,24 +436,18 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     });
   }
 
-  private renderMarkerClusterGroup(photos: Photo[]): void {
-    if (photos.length === 1) {
-      this.renderMarkerClusterGroupForSinglePhoto(photos[0]);
-    } else {
-      this.renderMarkerClusterGroupForMultiplePhotos(photos);
-    }
-  }
-
-  private renderMarkerClusterGroupForSinglePhoto(photo: Photo): void {
+  /**
+   * The photo's marker, with its popup open in the middle of the map: at maxZoomToShowPhotos, or at the map's zoom when
+   * `keepZoom`. The view is set before the group is added, which then adds the marker, in view.
+   */
+  private renderMarkerClusterGroupForSinglePhoto(photo: Photo, keepZoom: boolean): void {
     const markerClusterGroup = L.markerClusterGroup({ animate: false }); // Animation does not look good for single photo case.
     const marker = this.addMarkerToMarkerClusterGroup(markerClusterGroup, photo);
     this.markerClusterGroup = markerClusterGroup;
+    this.map.setView(marker.getLatLng(), keepZoom ? this.map.getZoom() : maxZoomToShowPhotos, { animate: false });
     this.map.addLayer(markerClusterGroup);
-    this.map.fitBounds(markerClusterGroup.getBounds());
-
-    // For single photo case, open the popup with centering in the map.
-    this.configureCenteringIncludingPopupAndMarker();
     marker.openPopup();
+    this.centerOnPopup(marker.getPopup());
   }
 
   private renderMarkerClusterGroupForMultiplePhotos(photos: Photo[]): void {
@@ -410,8 +465,9 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
       });
     markerClusterGroup.on('clusterclick',  e => this.handleClusterClick(e));
     this.markerClusterGroup = markerClusterGroup;
+    // Before the group is added, which then clusters the markers at the zoom of the view that shows them.
+    this.map.fitBounds(markerClusterGroup.getBounds(), { maxZoom: maxZoomToShowPhotos, animate: false });
     this.map.addLayer(markerClusterGroup);
-    this.map.fitBounds(markerClusterGroup.getBounds());
   }
 
   // When a marker cluster is clicked, this function is called.
@@ -455,7 +511,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
       viewer.setInput('chosenPhoto', chosenPhoto);
       viewer.changeDetectorRef.detectChanges();
     } else {
-      viewer = this.leafletContentService.create(PhotoClusterViewerComponent, { photos, chosenPhoto });
+      viewer = this.createMarkerContent(PhotoClusterViewerComponent, { photos, chosenPhoto });
       this.clusterViewers.set(cluster, viewer);
     }
     const popupContent: HTMLElement = viewer.location.nativeElement;
@@ -482,7 +538,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     // The popup shows the same component when it opens again.
     let viewer: ComponentRef<PhotoInfoViewerComponent> | undefined;
     marker.bindPopup(() => {
-      viewer ??= this.leafletContentService.create(PhotoInfoViewerComponent, { photo, place: 'leaflet-map-popup' });
+      viewer ??= this.createMarkerContent(PhotoInfoViewerComponent, { photo, place: 'leaflet-map-popup' });
       return viewer.location.nativeElement as HTMLElement;
     });
     marker.on('popupopen',  event => this.updateDivIconBackgroundColor(event, 'rgba( 63,  81, 181, .15)')); // Same as $white-background_selected in _color.scss
@@ -499,18 +555,12 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     contentContainer.style.backgroundColor = color;
   }
 
-  private configureCenteringIncludingPopupAndMarker() {
-    // The code in this function and centerOnPopup() is based on the Stack Overflow answer in https://stackoverflow.com/a/23960984/7947548
-    // There are 2 major changes from the Stack Overflow answer:
-    // 1) 'popupopen' event is handled only once using map.once (not map.on).
-    //    Centering including the popup and the marker is needed only when the map is initially displayed.
-    //    Using map.on results in centering always happening when the marker is clicked, which does not look good.
-    // 2) {animate: false} is passed to map.panTo function because the animation does not look good.
-    // Other changes are minor changes (e.g. using const instead of var).
-    this.map.once('popupopen', (e: PopupEvent) => this.centerOnPopup(e.popup));
-  }
-
-  /** Pans the map without an animation, so that the popup and its marker are in the middle of the map. */
+  /**
+   * Pans the map without an animation, so that the popup and its marker are in the middle of the map: for the popup of
+   * a photo that the map renders alone, or reveals, rather than for one that a click on a marker opens, where the map
+   * would move under the pointer. Based on the Stack Overflow answer in https://stackoverflow.com/a/23960984/7947548,
+   * without the animation of its pan, which does not look good.
+   */
   private centerOnPopup(popup: Popup) {
     const px = this.map.project(popup.getLatLng());          // find the pixel location on the map where the popup anchor is
     px.y -= popup.getElement().clientHeight/2;               // find the height of the popup container, divide by 2, subtract from the Y axis of marker location
@@ -571,7 +621,7 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
   }
 
   /**
-   * Calls `callback` once the map and its clusters have stopped moving, unless the map is rendered again before.
+   * Calls `callback` once the map and its clusters have stopped moving, unless the map renders other markers before.
    * TL;DR: Leaflet does not change its view while it animates a zoom, and Leaflet.markercluster moves its markers for a
    * moment after each zoom.
    * Details:
@@ -584,8 +634,8 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
    */
   private whenStill(map: LeafletMap, markerClusterGroup: any, callback: () => void): void {
     const check = () => requestAnimationFrame(() => {
-      if (map !== this.map)
-        return; // Rendered again: the map that the photo was to be revealed on is gone.
+      if (map !== this.map || markerClusterGroup !== this.markerClusterGroup)
+        return; // Rendered again: the marker that was to be revealed is gone.
       if ((map as any)._animatingZoom)
         map.once('moveend', check);
       else if (markerClusterGroup?._inZoomAnimation > 0)

@@ -10,9 +10,10 @@ import { ApplicationRef, ComponentRef, createComponent, EnvironmentInjector, inj
  *   and to pan the map so that the popup is in view.
  * - It is attached to the application, so that it is rendered again whenever what it shows changes, as a
  *   component in a template is.
- * - The components last as long as the map that shows them: the map component destroys them all when it renders the
- *   map again, which makes a new Leaflet map, and when it is destroyed itself. A popup that closes keeps its
- *   component, as Leaflet keeps the popup's content, which is shown again when the popup opens again.
+ * - The components last as long as what shows them. The map component destroys those of the popups of the markers and
+ *   of their clusters with the markers, when the map shows other photos, and all of them when it is destroyed itself,
+ *   with the map. A popup that closes keeps its component, as Leaflet keeps the popup's content, which is shown again
+ *   when the popup opens again.
  */
 @Service()
 export class LeafletContentService {
@@ -33,7 +34,7 @@ export class LeafletContentService {
     return componentRef;
   }
 
-  /** Destroys every component that create() made, with the map that showed them. */
+  /** Destroys every component that create() made, with the map that showed them. One is destroyed by itself too. */
   public destroyAll(): void {
     for (const componentRef of [...this.componentRefs])
       componentRef.destroy();
