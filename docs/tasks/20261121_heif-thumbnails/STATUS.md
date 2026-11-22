@@ -91,6 +91,16 @@ hardly move. Now an image of one grey in tiles (`test/e2e/fixtures/uniform-tiles
 another grey where the platform decodes HEVC in the page, and a unit test checks on every platform that the tiles draw
 each pixel of the thumbnail once.
 
+## Fast thumbnails chosen while the main process makes them
+
+An end-to-end case failed once in CI, on Linux: the fast thumbnails were chosen while the main process made those of
+the folder, and the first photo kept its thumbnail of high quality, 300x400, rather than showing the 240x320 one that
+it holds. The page forgot the thumbnails at once, and its places asked for them again before the main process had
+answered: the photo was then still one that the main process made (`ThumbnailGenerationService.isMade`), and waited for
+the thumbnail of high quality that the main process had made, or was finishing. A photo that waited to be made would
+have waited for ever, as the main process had dropped it. The page now forgets the thumbnails once the main process has
+followed the new setting (`HeifThumbnailService.applyThumbnailQuality`), which a unit test checks.
+
 ## Not checked
 
 - Windows and Linux were not measured. Chromium decodes HEVC on Windows 8 and later with a graphics adapter that does

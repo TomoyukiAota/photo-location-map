@@ -106,15 +106,27 @@ export class HeifThumbnailService {
   }
 
   /**
-   * Remakes the thumbnails for a new setting of their quality: the shown photos ask for theirs again, and the main
-   * process drops the thumbnails that wait to be made, or makes the folder's, as the setting asks
-   * (ThumbnailGenerationService.applyThumbnailQuality).
+   * Remakes the thumbnails for a new setting of their quality. The main process follows it first, dropping the
+   * thumbnails that wait to be made or making the folder's, as the setting asks
+   * (ThumbnailGenerationService.applyThumbnailQuality); then the shown photos ask for theirs again.
+   * TL;DR: The thumbnails are forgotten only once the main process has followed the setting, as a photo asked for
+   * before is made for the setting that the main process still has.
+   * Details: The places that show a photo ask for its thumbnail again as soon as it is forgotten (watch). When the
+   * fast thumbnails were chosen while the main process made the folder's, the photos were forgotten before it had
+   * answered, and a photo asked for again was still one that the main process made (ThumbnailGenerationService.isMade).
+   * It waited for its thumbnail of high quality and showed it once made, rather than the small one that the photo
+   * holds, or waited for ever for one that the main process had dropped. The end-to-end test of the fast thumbnails
+   * failed so once in CI, on Linux.
    */
   public async applyThumbnailQuality(): Promise<boolean> {
     logger.info(`The thumbnails of HEIF photos are made again, of the quality ${currentUserSettings.thumbnailQuality}.`);
-    this.generatedThumbnailService.stopWaiting();
-    this.reset();
-    return this.thumbnailGenerationService.applyThumbnailQuality();
+    try {
+      return await this.thumbnailGenerationService.applyThumbnailQuality();
+    } finally {
+      // Not before either: a photo that a place showed meanwhile may wait for a thumbnail that is no longer made.
+      this.generatedThumbnailService.stopWaiting();
+      this.reset();
+    }
   }
 
   private update(photoPath: string, change: PhotoState): void {

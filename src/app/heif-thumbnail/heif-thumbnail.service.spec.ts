@@ -192,4 +192,38 @@ describe('HeifThumbnailService', () => {
     await settle();
     expect(service.stateOf('/a.heic')).toEqual({ kind: 'decoded', url: 'blob:test/3' });
   });
+
+  it('asks for the thumbnails again only once the main process has followed a new quality', async () => {
+    // The main process makes the thumbnails of the folder, of high quality, and has made this one.
+    currentUserSettings.thumbnailQuality = 'high';
+    generation.isMade.mockReturnValue(true);
+    smallThumbnails.set('/a.heic', small());
+    service.watch('/a.heic');
+    await settle();
+    generatedFiles.set(new Map([['/a.heic', '/cache/a.heic.plm.jpg']]));
+    expect(service.stateOf('/a.heic')).toEqual({ kind: 'generated', filePath: '/cache/a.heic.plm.jpg' });
+
+    // The fast thumbnails are chosen, which the main process follows once it has dropped those that wait to be made.
+    currentUserSettings.thumbnailQuality = 'fast';
+    const followed = held<void>();
+    generation.applyThumbnailQuality.mockImplementation(async () => {
+      await followed.promise;
+      generation.isMade.mockReturnValue(false);
+      return false;
+    });
+    smallThumbnails.set('/a.heic', small());
+    const applied = service.applyThumbnailQuality();
+    // A place that shows the photo asks for it again whenever what it shows changes, as the viewer's effect does.
+    service.watch('/a.heic');
+    await settle();
+    expect(service.stateOf('/a.heic')).toEqual({ kind: 'generated', filePath: '/cache/a.heic.plm.jpg' });
+    expect(generated.stopWaiting).not.toHaveBeenCalled();
+
+    followed.resolve();
+    await applied;
+    expect(generated.stopWaiting).toHaveBeenCalledOnce();
+    service.watch('/a.heic');
+    await settle();
+    expect(service.stateOf('/a.heic')).toEqual({ kind: 'decoded', url: 'blob:test/2' });
+  });
 });
