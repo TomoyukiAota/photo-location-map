@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { MapDatePickerComponent } from './map-date-picker.component';
 import { MapDateComponent, MapDateView, withDates } from './map-date.component';
 
 const wayback: MapDateView = {
@@ -70,7 +72,11 @@ describe('MapDateComponent', () => {
 
     expect(text('.plm-leaflet-map-date-title')).toBe('Date of the map');
     expect(select()).toBeNull();
-    expect(text('.plm-leaflet-map-date-value')).toBe('2025-08-10');
+    // A field that opens a calendar (map-date-picker.component.spec.ts).
+    const field = element.querySelector<HTMLInputElement>('app-leaflet-map-date-picker input');
+    expect(field.value).toBe('2025-08-10');
+    expect(field.getAttribute('aria-label')).toBe('Date of the map');
+    expect(element.querySelector('.plm-leaflet-map-date-value')).toBeNull();
     expect(button('earlier').title).toBe('One year earlier');
     expect(button('later').title).toBe('One year later');
     expect(button('earlier').disabled).toBe(false);
@@ -101,6 +107,17 @@ describe('MapDateComponent', () => {
     expect(select()).toBeNull();
     expect(text('.plm-leaflet-map-date-value')).toBe('Version of 2026-11-18');
     expect(button('earlier').disabled).toBe(true);
+  });
+
+  it('tells of a date chosen in the calendar of OpenHistoricalMap', async () => {
+    const picked: string[] = [];
+    fixture.componentInstance.pick.subscribe(date => picked.push(date));
+    await show(openHistoricalMap);
+
+    const picker: MapDatePickerComponent = fixture.debugElement.query(By.directive(MapDatePickerComponent)).componentInstance;
+    picker.pick.emit('1970-01-01');
+
+    expect(picked).toEqual(['1970-01-01']);
   });
 
   it('tells which date was chosen, by a button, the list or the box', async () => {
