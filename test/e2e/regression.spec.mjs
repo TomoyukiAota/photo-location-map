@@ -2337,11 +2337,13 @@ test('Reveal in Sidebar from a popup of the map expands the folders above the ph
   const popup = page.locator('.leaflet-popup');
   await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_4676.JPG');
   await openMoreOptions(popup.getByRole('button', { name: 'More Options' }));
-  // From before the click on, the sidebar's scroll position at each frame, and whether a row is highlighted then.
+  // From before the click on, the sidebar's scroll position at each frame, the frame's time, and whether a row is
+  // highlighted then.
   await pane.evaluate(element => {
     const frames = globalThis.revealFrames = [];
-    const record = () => {
-      frames.push({ top: element.scrollTop, highlighted: element.querySelector('[data-reveal-highlight]') !== null });
+    const record = time => {
+      const highlighted = element.querySelector('[data-reveal-highlight]') !== null;
+      frames.push({ time, top: element.scrollTop, highlighted });
       if (frames.filter(frame => frame.highlighted).length < 5 && frames.length < 600)
         requestAnimationFrame(record);
     };
@@ -2361,11 +2363,32 @@ test('Reveal in Sidebar from a popup of the map expands the folders above the ph
   const highlightedAt = frames.findIndex(frame => frame.highlighted);
   const steps = frames.slice(1, highlightedAt + 1).map((frame, index) => frame.top - frames[index].top);
   const moving = steps.filter(step => step !== 0);
-  const report = `Scroll steps until the highlight: ${steps.join(', ')}`;
-  expect(moving.length, report).toBeGreaterThanOrEqual(5);
+  // TL;DR: How many steps the scroll takes, and how long its last one is, are judged only when the frames came at
+  // their pace, at most 50 ms apart.
+  // Details: EasedScroll goes by the time since the scroll started, as Chromium's own smooth scroll does: a frame that
+  // comes late takes the box as far as that time says, and one that comes after the scroll's time has run out ends
+  // the scroll at once. On a runner of CI on macOS, no frame came for 345 ms or more from a third of the way into this
+  // scroll of about 530 ms, which then ended with a step of 712 pixels, after steps of 2 to 51 (run 45069290727). In
+  // 12 runs of this case on that runner, which recorded the time of each frame, the frames came every 17 ms, and 50 ms
+  // apart at the most; no frame of 50 ms or more ran a script, and no row was made, nor an image loaded, after the
+  // scroll's first frame. The pause was the runner's, not the application's. On the runners of Windows and Ubuntu, the
+  // frames came every 16 or 17 ms. Frames 50 ms apart, three frames at 60 Hz, leave the last step of this scroll at
+  // about 7 pixels, of about 55 for its longest.
+  const timed = frames.slice(frames.findIndex(frame => frame.top !== frames[0].top) - 1, highlightedAt + 1);
+  const gaps = timed.slice(1).map((frame, index) => Math.round(frame.time - timed[index].time));
+  const report = `Scroll steps until the highlight: ${steps.join(', ')}; ms between the frames from the one before the`
+    + ` first step: ${gaps.join(', ')}`;
   expect(moving.every(step => step > 0), report).toBe(true);
-  expect(moving.at(-1), report).toBeLessThan(Math.max(...moving) / 2);
   expect(frames.slice(highlightedAt).every(frame => frame.top === frames[highlightedAt].top), report).toBe(true);
+  if (Math.max(...gaps) <= 50) {
+    expect(moving.length, report).toBeGreaterThanOrEqual(5);
+    expect(moving.at(-1), report).toBeLessThan(Math.max(...moving) / 2);
+  } else {
+    const message = `The frames did not come at their pace while the sidebar scrolled to the revealed row, so how many`
+      + ` steps it took and how long its last one was are not judged. ${report}`;
+    console.log(message);
+    await test.info().attach('frames', { body: message, contentType: 'text/plain' });
+  }
   // In the middle of what the sidebar shows, or right below the rows kept at the top where they would cover it there:
   // with the row in the middle of a sidebar of little height, those of the three folders above the photo are kept.
   await expectWhereRevealPutsIt(row);
