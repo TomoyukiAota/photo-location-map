@@ -200,8 +200,6 @@
   "faceSearch": {
     "looking": "Notiek seju meklēšana atlasītajos fotoattēlos...",
     "progress": "Pārbaudīti fotoattēli: {{done}} no {{total}}.",
-    "waitingForThumbnails": "Notiek gaidīšana, līdz tiks izveidoti HEIF failu sīktēli...",
-    "onThisComputer": "Sejas tiek meklētas tikai šajā datorā. Nekas par tām netiek nekur sūtīts.",
     "noFacesFound": "Atlasītajos fotoattēlos sejas netika atrastas. Atlase paliek nemainīga.",
     "notLookedAt": "Fotoattēli, kuros nevarēja meklēt sejas un kuri vairs nav atlasīti: {{count}}.",
     "failed": "Atlasītajos fotoattēlos nevarēja meklēt sejas. Atlase paliek nemainīga."

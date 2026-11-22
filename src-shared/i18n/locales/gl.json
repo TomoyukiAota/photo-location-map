@@ -200,8 +200,6 @@
   "faceSearch": {
     "looking": "Buscando caras nas fotos seleccionadas...",
     "progress": "Fotos revisadas: {{done}} de {{total}}.",
-    "waitingForThumbnails": "Agardando a que se xeren as miniaturas dos ficheiros HEIF...",
-    "onThisComputer": "As caras búscanse só neste ordenador. Non se envía nada sobre elas a ningures.",
     "noFacesFound": "Non se atoparon caras nas fotos seleccionadas. A selección queda como está.",
     "notLookedAt": "Fotos nas que non se puideron buscar caras e que xa non están seleccionadas: {{count}}.",
     "failed": "Non se puideron buscar caras nas fotos seleccionadas. A selección queda como está."

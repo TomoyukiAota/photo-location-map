@@ -1,19 +1,17 @@
 @let current = state();
 @let count = photoCount();
-@let searching = current.kind === 'searching' ? current : { done: count, total: count, waitingForThumbnails: false };
+@let searching = current.kind === 'searching' ? current : { done: count, total: count };
 <!-- Every state of the dialog is laid out, one on top of another, and the one that applies is shown: the dialog is as
      tall as the tallest, whatever it shows (face-search-dialog.component.scss). -->
 <div class="states">
   <div class="state" [class.shown]="current.kind === 'searching'">
-    <mat-progress-bar mode="determinate" [value]="percent()" [attr.aria-label]="'faceSearch.looking' | t"></mat-progress-bar>
+    <mat-progress-bar mode="buffer" [value]="percent()" [attr.aria-label]="'faceSearch.looking' | t"></mat-progress-bar>
     <div class="texts">
       <div>{{ 'faceSearch.looking' | t }}</div>
       <div class="with-number">
         <span class="progress">{{ 'faceSearch.progress' | t: { done: searching.done, total: searching.total } }}</span>
         <span class="sizer" aria-hidden="true">{{ 'faceSearch.progress' | t: { done: count, total: count } }}</span>
       </div>
-      <div class="waiting" [class.not-now]="!searching.waitingForThumbnails">{{ 'faceSearch.waitingForThumbnails' | t }}</div>
-      <div class="on-this-computer">{{ 'faceSearch.onThisComputer' | t }}</div>
     </div>
     <button mat-stroked-button class="button" (click)="cancel()">{{ 'common.cancel' | t }}</button>
   </div>

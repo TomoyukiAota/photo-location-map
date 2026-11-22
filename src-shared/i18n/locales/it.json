@@ -200,8 +200,6 @@
   "faceSearch": {
     "looking": "Ricerca di volti nelle foto selezionate...",
     "progress": "Foto esaminate: {{done}} di {{total}}.",
-    "waitingForThumbnails": "In attesa della creazione delle miniature dei file HEIF...",
-    "onThisComputer": "I volti vengono cercati solo su questo computer. Nulla che li riguardi viene inviato altrove.",
     "noFacesFound": "Nelle foto selezionate non sono stati trovati volti. La selezione resta invariata.",
     "notLookedAt": "Foto in cui non è stato possibile cercare volti e che non sono più selezionate: {{count}}.",
     "failed": "Non è stato possibile cercare volti nelle foto selezionate. La selezione resta invariata."

@@ -200,8 +200,6 @@
   "faceSearch": {
     "looking": "Aurpegiak bilatzen hautatutako argazkietan...",
     "progress": "Aztertutako argazkiak: {{done}} / {{total}}.",
-    "waitingForThumbnails": "HEIF fitxategien miniaturak sortu arte itxaroten...",
-    "onThisComputer": "Aurpegiak ordenagailu honetan bakarrik bilatzen dira. Ez da haiei buruzko ezer inora bidaltzen.",
     "noFacesFound": "Ez da aurpegirik aurkitu hautatutako argazkietan. Hautapena dagoen bezala geratzen da.",
     "notLookedAt": "Aurpegiak bilatu ezin izan diren eta jada hautatuta ez dauden argazkiak: {{count}}.",
     "failed": "Ezin izan dira aurpegiak bilatu hautatutako argazkietan. Hautapena dagoen bezala geratzen da."
