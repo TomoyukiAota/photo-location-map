@@ -2,11 +2,11 @@ import { languages } from '../../../../src-shared/i18n/languages';
 import { datepickerLocaleLoaders } from './datepicker-locales';
 
 describe('The locales of the datepicker', () => {
-  it('are there for each language, but English, which the datepicker has built in', () => {
+  it('are there for each locale that a language names, but English, which the datepicker has built in', () => {
+    // A language that the datepicker has no locale for names English (docs/TRANSLATING.md), whose calendar is then in
+    // English.
     for (const language of languages) {
-      if (language.datepickerLocale === 'en')
-        expect(language.code).toBe('en');
-      else
+      if (language.datepickerLocale !== 'en')
         expect(datepickerLocaleLoaders, language.code).toHaveProperty([language.datepickerLocale]);
     }
   });

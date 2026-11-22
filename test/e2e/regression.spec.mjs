@@ -1360,8 +1360,11 @@ test('on a computer whose language is Arabic, the application is laid out from r
   const earlierBox = await dateControl.getByRole('button', { name: 'قبل سنة', exact: true }).boundingBox();
   const laterBox = await dateControl.getByRole('button', { name: 'بعد سنة', exact: true }).boundingBox();
   expect(earlierBox.x).toBeGreaterThan(laterBox.x);
-  // So is its calendar, in Arabic, whose week starts on Sunday.
-  await dateControl.getByRole('textbox', { name: 'تاريخ الخريطة', exact: true }).click();
+  // So is its calendar, in Arabic, whose week starts on Sunday. The field opens it once its datepicker, loaded with
+  // the field, has marked it.
+  const dateField = dateControl.getByRole('textbox', { name: 'تاريخ الخريطة', exact: true });
+  await expect(dateField).toHaveClass(/(^|\s)datepicker-input(\s|$)/);
+  await dateField.click();
   const calendar = page.locator('body > .datepicker.active');
   await expect(calendar).toHaveCSS('direction', 'rtl');
   await expect(calendar.locator('.dow').first()).toHaveText('ح');
@@ -1677,8 +1680,10 @@ test('the map shows Esri World Imagery Wayback and OpenHistoricalMap at the date
   await control.getByRole('checkbox').check();
   await expect(dateField).toHaveValue('2025-08-10');
   await expect(control.getByRole('checkbox')).toBeChecked();
-  // A day chosen in the calendar, which opens at the date shown, in the page's body (MapDatePickerComponent).
+  // A day chosen in the calendar, which opens at the date shown, in the page's body (MapDatePickerComponent). The
+  // field opens it once its datepicker, loaded with the field, has marked it.
   const calendar = page.locator('body > .datepicker.active');
+  await expect(dateField).toHaveClass(/(^|\s)datepicker-input(\s|$)/);
   await dateField.click();
   await expect(calendar.locator('.view-switch')).toHaveText('August 2025');
   await expect(calendar.locator('.datepicker-cell.day.selected')).toHaveText('10');

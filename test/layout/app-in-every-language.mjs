@@ -397,6 +397,9 @@ for (const code of codes) {
         await page.mouse.move(1, 1);
       };
       await chooseLayer('OpenHistoricalMap');
+      // The field shows the date at once, and opens the calendar once its datepicker, which is loaded then, has marked
+      // it (MapDatePickerComponent).
+      await page.waitForSelector('.plm-leaflet-map-date-picker-field.datepicker-input');
       await page.waitForFunction(() => !!document.querySelector('.plm-leaflet-map-date-picker-field')?.value);
       await screen('map-date', '.plm-leaflet-map-date', '#home-map', '#home-map');
       // Its calendar, which is in the page's body, with the names of the days, and with those of the months a level
