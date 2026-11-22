@@ -5,7 +5,8 @@
   "common": {
     "ok": "OK",
     "cancel": "Zrušiť",
-    "close": "Zavrieť"
+    "close": "Zavrieť",
+    "ctrlKey": "Ctrl"
   },
   "dateTime": {
     "weekdayPattern": "ddd"
