@@ -200,8 +200,6 @@
   "faceSearch": {
     "looking": "Ieškoma veidų pasirinktose nuotraukose...",
     "progress": "Peržiūrėta nuotraukų: {{done}} iš {{total}}.",
-    "waitingForThumbnails": "Laukiama, kol bus sukurtos HEIF failų miniatiūros...",
-    "onThisComputer": "Veidų ieškoma tik šiame kompiuteryje. Niekas apie juos niekur nesiunčiama.",
     "noFacesFound": "Pasirinktose nuotraukose veidų nerasta. Pasirinkimas lieka nepakitęs.",
     "notLookedAt": "Nuotraukų, kuriose nepavyko ieškoti veidų ir kurios nebėra pasirinktos: {{count}}.",
     "failed": "Pasirinktose nuotraukose nepavyko ieškoti veidų. Pasirinkimas lieka nepakitęs."

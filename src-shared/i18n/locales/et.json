@@ -200,8 +200,6 @@
   "faceSearch": {
     "looking": "Valitud fotodelt otsitakse nägusid...",
     "progress": "Läbivaadatud fotosid: {{done}} / {{total}}.",
-    "waitingForThumbnails": "Oodatakse HEIF-failide pisipiltide loomist...",
-    "onThisComputer": "Nägusid otsitakse ainult selles arvutis. Nende kohta ei saadeta midagi kuhugi.",
     "noFacesFound": "Valitud fotodelt nägusid ei leitud. Valik jääb samaks.",
     "notLookedAt": "Fotosid, millelt ei saanud nägusid otsida ja mis pole enam valitud: {{count}}.",
     "failed": "Valitud fotodelt ei saanud nägusid otsida. Valik jääb samaks."

@@ -6,7 +6,7 @@ import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 
 /** What the dialog of the search for faces shows: the search's progress, or what came of it. */
 export type FaceSearchDialogState =
-  | { readonly kind: 'searching'; readonly done: number; readonly total: number; readonly waitingForThumbnails: boolean }
+  | { readonly kind: 'searching'; readonly done: number; readonly total: number }
   | { readonly kind: 'noFacesFound' }
   | { readonly kind: 'notLookedAt'; readonly count: number }
   | { readonly kind: 'failed' };
@@ -21,8 +21,8 @@ export interface FaceSearchDialogData {
 
 /**
  * The dialog of the Selection menu's Narrow Down to Photos with Faces: while the photos are looked at, how many have
- * been, that this happens on this computer only, and Cancel; then, when the selection did not simply narrow down,
- * why. The search closes it otherwise. It keeps its height while it is open, whatever it shows (the styles).
+ * been, and Cancel; then, when the selection did not simply narrow down, why. The search closes it otherwise. It keeps
+ * its height while it is open, whatever it shows (the styles).
  */
 @Component({
   selector: 'app-face-search-dialog',

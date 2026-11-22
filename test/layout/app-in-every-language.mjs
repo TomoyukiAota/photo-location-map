@@ -493,7 +493,7 @@ for (const code of codes) {
       await openFolder(faces);
       await page.waitForSelector('mat-tree-node:has-text("faces.heic")');
       await narrowDownToPhotosWithFaces();
-      await page.waitForSelector('app-face-search-dialog .state.shown .waiting:not(.not-now)');
+      await page.waitForSelector('app-face-search-dialog .state.shown mat-progress-bar');
       await screen('face-search', dialog, dialog);
       await page.waitForSelector('app-face-search-dialog', { state: 'detached', timeout: 40000 });
       // Open Folder is disabled until the app has seen that the thumbnail is made, which it checks every 5 seconds.
