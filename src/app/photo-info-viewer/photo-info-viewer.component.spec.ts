@@ -14,6 +14,12 @@ import { NearViewDirective } from '../shared/near-view/near-view.directive';
 import { Thumbnail } from '../shared/model/thumbnail.model';
 import { OpenedDirectory } from '../shared/opened-directory';
 import { PhotoRevealService } from '../shared/service/photo-reveal.service';
+import {
+  ariaKeyShortcutsOf,
+  selectNextShortcut,
+  selectPreviousShortcut,
+  shortcutText,
+} from '../../../src-shared/shortcut/shortcut';
 import { SelectPreviousNextService } from '../shared/service/select-previous-next.service';
 import { HeifImageSource } from '../heif-thumbnail/heif-image-source';
 import { HeifThumbnailService } from '../heif-thumbnail/heif-thumbnail.service';
@@ -365,8 +371,11 @@ describe('PhotoInfoViewerComponent', () => {
     /** The open menus, above the page in the overlay container: the menu, and a submenu while one is open. */
     const menus = () => Array.from(document.querySelectorAll<HTMLElement>('.cdk-overlay-container .photo-info-viewer-more-options-menu'));
     const itemsOf = (menu: HTMLElement) => Array.from(menu.querySelectorAll<HTMLButtonElement>('.photo-info-viewer-more-options-menu-item'));
-    const textsOf = (menu: HTMLElement) => itemsOf(menu).map(item => item.textContent.trim());
-    const item = (menu: HTMLElement, text: string) => itemsOf(menu).find(candidate => candidate.textContent.trim() === text);
+    /** An item's text, without the shortcut that it shows beside the text. */
+    const labelOf = (menuItem: HTMLElement) => (menuItem.querySelector('.photo-info-viewer-more-options-menu-item-label') ?? menuItem).textContent.trim();
+    const textsOf = (menu: HTMLElement) => itemsOf(menu).map(labelOf);
+    const item = (menu: HTMLElement, text: string) => itemsOf(menu).find(candidate => labelOf(candidate) === text);
+    const shortcutOf = (menuItem: HTMLElement) => menuItem.querySelector('.photo-info-viewer-more-options-menu-shortcut');
     /** Once the menus have closed: the menu's content goes once it has closed, after a timeout. */
     const closed = () => vi.waitFor(() => expect(menus()).toEqual([]));
 
@@ -431,7 +440,7 @@ describe('PhotoInfoViewerComponent', () => {
       const choosable = async (path: string) => {
         await showWithMenu(cameraPhoto(path), 'dir-tree-view');
         const selection = await open('Select');
-        const result = Object.fromEntries(itemsOf(selection).map(each => [each.textContent.trim(), !each.disabled]));
+        const result = Object.fromEntries(itemsOf(selection).map(each => [labelOf(each), !each.disabled]));
         document.body.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true }));
         await closed();
         return result;
@@ -446,6 +455,96 @@ describe('PhotoInfoViewerComponent', () => {
       }
 
       expect(select.mock.calls).toEqual([['/photos/IMG_0001.JPG'], ['/photos/IMG_0003.JPG']]);
+    });
+
+    describe('shortcuts', () => {
+      // The unit tests run with the platform that they run on (test/angular/bridge-double.ts).
+      const platform = process.platform;
+      const select = vi.fn();
+
+      beforeEach(() => {
+        select.mockReset();
+        // Three photos, the first and the last of which have none before and none after them.
+        const neighbors: Record<string, [string | null, string | null]> = {
+          '/photos/IMG_0001.JPG': [null, '/photos/IMG_0002.JPG'],
+          '/photos/IMG_0002.JPG': ['/photos/IMG_0001.JPG', '/photos/IMG_0003.JPG'],
+          '/photos/IMG_0003.JPG': ['/photos/IMG_0002.JPG', null],
+        };
+        TestBed.overrideProvider(SelectPreviousNextService, { useValue: {
+          previousOf: (path: string) => neighbors[path]?.[0] ?? null,
+          nextOf: (path: string) => neighbors[path]?.[1] ?? null,
+          select,
+        } });
+      });
+
+      /** A key pressed with Cmd on macOS, or with Ctrl on Windows and Linux, unless `init` says otherwise; once dispatched. */
+      function press(key: string, init: KeyboardEventInit = {}): KeyboardEvent {
+        const mac = platform === 'darwin';
+        const event = new KeyboardEvent('keydown', { key, metaKey: mac, ctrlKey: !mac, bubbles: true, cancelable: true, ...init });
+        (document.activeElement ?? document.body).dispatchEvent(event);
+        return event;
+      }
+
+      it('are shown beside Photo Taken Before and Photo Taken After, apart from their texts, and told to a screen reader', async () => {
+        await showWithMenu(cameraPhoto('/photos/IMG_0002.JPG'), 'dir-tree-view');
+        const selection = await open('Select');
+
+        expect(itemsOf(selection).map(each => [labelOf(each), shortcutOf(each)?.textContent ?? null, each.getAttribute('aria-keyshortcuts')])).toEqual([
+          ['Only This', null, null],
+          ['Photo Taken Before', shortcutText(selectPreviousShortcut, platform), ariaKeyShortcutsOf(selectPreviousShortcut, platform)],
+          ['Photo Taken After', shortcutText(selectNextShortcut, platform), ariaKeyShortcutsOf(selectNextShortcut, platform)],
+        ]);
+        const shown = shortcutOf(item(selection, 'Photo Taken After'));
+        expect(shown.getAttribute('aria-hidden')).toBe('true');
+        expect(shown.getAttribute('dir')).toBe('ltr');
+      });
+
+      it('choose their items while the menu is open, for its photo, whether Select is open or not, and close the menu', async () => {
+        const trackEvent = vi.spyOn(Analytics, 'trackEvent');
+        try {
+          await showWithMenu(cameraPhoto('/photos/IMG_0002.JPG'), 'dir-tree-view');
+          await open('Select');
+          // Cmd or Ctrl itself, pressed first, is no shortcut.
+          expect(press(platform === 'darwin' ? 'Meta' : 'Control').defaultPrevented).toBe(false);
+          expect(menus()).toHaveLength(2);
+          const after = press('ArrowRight');
+          // Taken by the menu: the page has handled it, which Electron does not give the application menu.
+          expect(after.defaultPrevented).toBe(true);
+          await closed();
+          await open();
+          expect(press('ArrowLeft').defaultPrevented).toBe(true);
+          await closed();
+
+          expect(select.mock.calls).toEqual([['/photos/IMG_0003.JPG'], ['/photos/IMG_0001.JPG']]);
+          expect(trackEvent.mock.calls).toEqual([
+            ['Photo Info Viewer', '[PIV] Pressed Shortcut of "Photo Taken After"'],
+            ['Photo Info Viewer', '[PIV] Pressed Shortcut of "Photo Taken Before"'],
+          ]);
+        } finally {
+          trackEvent.mockRestore();
+        }
+      });
+
+      it('do nothing for an item that cannot be chosen, which keeps the menu open, and any other closes the menu and goes on', async () => {
+        await showWithMenu(cameraPhoto('/photos/IMG_0003.JPG'), 'dir-tree-view');
+        await open('Select');
+
+        expect(press('ArrowRight').defaultPrevented).toBe(true);
+        expect(menus()).toHaveLength(2);
+        // An arrow with another modifier is no shortcut of the menu, nor is an arrow alone, which moves in the menu.
+        expect(press('ArrowLeft', { metaKey: false, ctrlKey: false }).defaultPrevented).toBe(false);
+        expect(menus()).toHaveLength(2);
+        const undo = press('z');
+        expect(undo.defaultPrevented).toBe(false);
+        await closed();
+        expect(select).not.toHaveBeenCalled();
+
+        await open();
+        const withShift = press('ArrowLeft', { shiftKey: true });
+        expect(withShift.defaultPrevented).toBe(false);
+        await closed();
+        expect(select).not.toHaveBeenCalled();
+      });
     });
 
     it('has no item that needs a location for a photo without one', async () => {

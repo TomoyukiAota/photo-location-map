@@ -5,7 +5,8 @@
   "common": {
     "ok": "確定",
     "cancel": "取消",
-    "close": "關閉"
+    "close": "關閉",
+    "ctrlKey": "Ctrl"
   },
   "dateTime": {
     "weekdayPattern": "ddd"
