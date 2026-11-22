@@ -225,10 +225,11 @@
       "title": "Aparença",
       "showStatusBar": "Mostra la barra d’estat",
       "stickyFolders": {
-        "title": "Carpetes fixades a la part superior de l’arbre",
-        "description": "Mentre es desplaça l’arbre de carpetes, les carpetes que hi ha per sobre de les files mostrades es queden a dalt. La carpeta oberta i la carpeta d’aquestes files sempre es mantenen.",
+        "title": "Carpetes fixades",
+        "description": "Configuració per mostrar les carpetes pare mentre es desplaça l’arbre de carpetes.",
         "maximum": "Nombre màxim de files",
-        "leftOut": "Quan hi ha més carpetes que files, omet:",
+        "leftOut": "On s’ometen carpetes quan no caben en el nombre màxim de files",
+        "leftOutDescription": "La carpeta oberta i la carpeta de les files mostrades sempre es mantenen.",
         "middle": "Les carpetes del mig",
         "nearOpenedFolder": "Les carpetes properes a la carpeta oberta",
         "nearPhotos": "Les carpetes properes a les fotos"

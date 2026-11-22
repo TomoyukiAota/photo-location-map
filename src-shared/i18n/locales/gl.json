@@ -225,10 +225,11 @@
       "title": "Aparencia",
       "showStatusBar": "Mostrar a barra de estado",
       "stickyFolders": {
-        "title": "Cartafoles fixados na parte superior da árbore",
-        "description": "Mentres se despraza a árbore de cartafoles, os cartafoles que están por riba das filas mostradas quedan arriba. O cartafol aberto e o cartafol desas filas mantéñense sempre.",
+        "title": "Cartafoles fixados",
+        "description": "Configuración para mostrar os cartafoles superiores mentres se despraza a árbore de cartafoles.",
         "maximum": "Número máximo de filas",
-        "leftOut": "Cando hai máis cartafoles ca filas, omitir:",
+        "leftOut": "Onde omitir cartafoles cando non caben no número máximo de filas",
+        "leftOutDescription": "O cartafol aberto e o cartafol das filas mostradas mantéñense sempre.",
         "middle": "Os cartafoles do medio",
         "nearOpenedFolder": "Os cartafoles próximos ao cartafol aberto",
         "nearPhotos": "Os cartafoles próximos ás fotos"

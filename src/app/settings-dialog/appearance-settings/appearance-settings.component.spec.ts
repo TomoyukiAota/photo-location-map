@@ -19,7 +19,9 @@ describe('AppearanceSettingsComponent', () => {
   });
 
   it('shows the rows kept at the top of the folder tree as they are set, with their texts', () => {
-    expect(element.querySelector('.sticky-folders-title').textContent).toBe('Folders Kept at the Top of the Tree');
+    expect(element.querySelector('.sticky-folders-title').textContent).toBe('Sticky Folders');
+    expect(element.querySelector('.sticky-folders-description').textContent)
+      .toBe('Settings for showing the parent folders while the folder tree is scrolled.');
     expect(element.querySelector('.sticky-folders-maximum mat-label').textContent).toBe('Maximum Rows');
     expect(element.querySelector('.sticky-folders-maximum .mat-mdc-select-value').textContent.trim())
       .toBe(String(currentUserSettings.stickyFolderRowsMaximum));
@@ -30,6 +32,15 @@ describe('AppearanceSettingsComponent', () => {
       .toBe('The folders in the middle');
     // The field's box is as wide as the widest of its choices and its label (settings-styles).
     expect(element.querySelector('.dropdown-box').getAttribute('data-choices')).toBe('3\n4\n5\n6\n7\n8\n9\n10');
+  });
+
+  it('heads the choices of the folders left out with what is always kept, which names and describes them', () => {
+    const choices = element.querySelector('.sticky-folders-left-out-choices');
+    const heading = element.querySelector(`#${choices.getAttribute('aria-labelledby')}`);
+    const description = element.querySelector(`#${choices.getAttribute('aria-describedby')}`);
+    expect(heading.textContent.trim()).toBe('Where to leave out folders when they do not fit in the maximum rows');
+    expect(description.textContent.trim()).toBe('The opened folder and the folder of the rows shown are always kept.');
+    expect(heading.parentElement).toBe(description.parentElement);
   });
 
   it('tells the dialog every setting of the tab when one of them changes', async () => {

@@ -225,10 +225,11 @@
       "title": "Välimus",
       "showStatusBar": "Kuva olekuriba",
       "stickyFolders": {
-        "title": "Puu ülaossa kinnitatud kaustad",
-        "description": "Kaustapuu kerimise ajal jäävad kuvatud ridade kohal olevad kaustad üles. Avatud kaust ja nende ridade kaust jäävad alati alles.",
+        "title": "Kinnitatud kaustad",
+        "description": "Ülemkaustade kuvamise seaded kaustapuu kerimise ajal.",
         "maximum": "Ridade maksimumarv",
-        "leftOut": "Kui kaustu on rohkem kui ridu, jäta välja:",
+        "leftOut": "Kus kaustu välja jätta, kui need ei mahu ridade maksimumarvu",
+        "leftOutDescription": "Avatud kaust ja kuvatud ridade kaust jäävad alati alles.",
         "middle": "Keskel olevad kaustad",
         "nearOpenedFolder": "Avatud kausta lähedal olevad kaustad",
         "nearPhotos": "Fotode lähedal olevad kaustad"

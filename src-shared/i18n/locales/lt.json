@@ -225,10 +225,11 @@
       "title": "Išvaizda",
       "showStatusBar": "Rodyti būsenos juostą",
       "stickyFolders": {
-        "title": "Medžio viršuje prisegti aplankai",
-        "description": "Kol aplankų medis slenkamas, virš rodomų eilučių esantys aplankai lieka viršuje. Atidarytas aplankas ir šių eilučių aplankas visada lieka.",
+        "title": "Prisegti aplankai",
+        "description": "Aukštesnio lygio aplankų rodymo nustatymai slenkant aplankų medį.",
         "maximum": "Didžiausias eilučių skaičius",
-        "leftOut": "Kai aplankų yra daugiau nei eilučių, praleisti:",
+        "leftOut": "Kur praleisti aplankus, kai jie netelpa į didžiausią eilučių skaičių",
+        "leftOutDescription": "Atidarytas aplankas ir rodomų eilučių aplankas visada lieka.",
         "middle": "Aplankai viduryje",
         "nearOpenedFolder": "Aplankai šalia atidaryto aplanko",
         "nearPhotos": "Aplankai šalia nuotraukų"

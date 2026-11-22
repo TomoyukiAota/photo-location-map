@@ -225,10 +225,11 @@
       "title": "Udseende",
       "showStatusBar": "Vis statuslinje",
       "stickyFolders": {
-        "title": "Mapper fastgjort øverst i træet",
-        "description": "Mens mappetræet rulles, bliver mapperne over de viste rækker stående øverst. Den åbnede mappe og mappen for disse rækker bliver altid stående.",
+        "title": "Fastgjorte mapper",
+        "description": "Indstillinger for visning af de overordnede mapper, mens mappetræet rulles.",
         "maximum": "Maksimalt antal rækker",
-        "leftOut": "Når der er flere mapper end rækker, udelad:",
+        "leftOut": "Hvor mapper udelades, når de ikke kan være i det maksimale antal rækker",
+        "leftOutDescription": "Den åbnede mappe og mappen for de viste rækker bliver altid stående.",
         "middle": "Mapperne i midten",
         "nearOpenedFolder": "Mapperne tæt på den åbnede mappe",
         "nearPhotos": "Mapperne tæt på billederne"

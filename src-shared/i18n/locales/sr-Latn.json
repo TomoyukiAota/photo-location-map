@@ -225,10 +225,11 @@
       "title": "Izgled",
       "showStatusBar": "Prikaži statusnu traku",
       "stickyFolders": {
-        "title": "Fascikle zakačene na vrhu stabla",
-        "description": "Dok se stablo fascikli pomera, fascikle iznad prikazanih redova ostaju na vrhu. Otvorena fascikla i fascikla tih redova uvek ostaju.",
+        "title": "Zakačene fascikle",
+        "description": "Podešavanja prikaza nadređenih fascikli pri pomeranju stabla fascikli.",
         "maximum": "Najveći broj redova",
-        "leftOut": "Kada ima više fascikli nego redova, izostavi:",
+        "leftOut": "Gde izostaviti fascikle kada ne staju u najveći broj redova",
+        "leftOutDescription": "Otvorena fascikla i fascikla prikazanih redova uvek ostaju.",
         "middle": "Fascikle u sredini",
         "nearOpenedFolder": "Fascikle blizu otvorene fascikle",
         "nearPhotos": "Fascikle blizu fotografija"
