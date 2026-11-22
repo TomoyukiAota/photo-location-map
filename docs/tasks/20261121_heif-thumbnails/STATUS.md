@@ -77,6 +77,20 @@ of 12, 24 and 48 megapixels:
 - The Settings dialog's Thumbnails tab chooses between high quality (the default) and fast; the status bar of the
   generation links to it while it makes thumbnails of high quality.
 
+## Lines between the tiles
+
+Once it was merged, the owner saw a grid of thin lines over the thumbnails of high quality that the page made. Each
+tile was drawn scaled by the same factor, so its edges fell within pixels of the thumbnail (a tile of an iPhone's
+photo of 12 megapixels is 50.8 pixels wide at 400), which it covered in part and left transparent in part, and a JPEG
+shows a transparent pixel black: lines 15 to 25% darker. Where the thumbnail's last row or column took in the image's
+edge, it also took in what the tiles hold past the image. Each tile now fills whole pixels of the thumbnail, from the
+part of it that the image shows only (`src/app/heif-thumbnail/tile-placement.ts`).
+
+The tests had checked the thumbnails' sizes, and their colours as a mean over the whole image, which lines of a pixel
+hardly move. Now an image of one grey in tiles (`test/e2e/fixtures/uniform-tiles.heic`) shows such a line as pixels of
+another grey where the platform decodes HEVC in the page, and a unit test checks on every platform that the tiles draw
+each pixel of the thumbnail once.
+
 ## Not checked
 
 - Windows and Linux were not measured. Chromium decodes HEVC on Windows 8 and later with a graphics adapter that does

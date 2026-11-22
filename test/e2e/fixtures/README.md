@@ -18,6 +18,15 @@ item, so `demo.heic` stands for a HEIF photo without one
 (`src/app/heif-thumbnail/`). The Swift program that wrote it is
 `docs/tasks/20261121_heif-thumbnails/make-heic.swift`.
 
+`uniform-tiles.heic` is an image of one grey, 200 of 255, 1100x700, as ImageIO
+writes it: in a grid of 3x2 tiles of 512x512, quality 0.6, without a thumbnail
+item. Its tiles go on past the image, and at 400 pixels their edges fall
+within pixels of a thumbnail, so a line between them, or what they hold past
+the image, shows as pixels of another grey
+(`test/src/app/heif-thumbnail/heif-image-decoding.spec.em.renderer.ts`). The
+same Swift program wrote it from a PNG of that grey:
+`swift make-heic.swift uniform.png uniform-tiles.heic 1 0.6 0`.
+
 # Face fixtures
 
 `faces/` holds two photos with faces, for the search for faces of the
