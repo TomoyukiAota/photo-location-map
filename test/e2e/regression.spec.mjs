@@ -2979,6 +2979,8 @@ test('Narrow Down to Photos with Faces keeps selected the photos in which faces 
   const shownState = dialog.locator('.state.shown');
   await expect(shownState.locator('.message')).toHaveText('No faces were found in the selected photos. The selection stays as it is.');
   await expect(shownState.getByRole('button')).toHaveText('Close');
+  // What is measured is the dialog once it has opened, which scales it up from 80%.
+  await expect.poll(() => dialog.evaluate(element => getComputedStyle(element.closest('.mat-mdc-dialog-surface')).transform)).toBe('none');
   // The dialog is as tall whatever it shows: its states are, and what each has fits in it, the search's progress, the
   // tallest, too. Each child's box is measured, as a button's touch target reaches past the button's on purpose.
   const states = await dialog.locator('.state').evaluateAll(elements => elements.map(state => {
@@ -2991,6 +2993,15 @@ test('Narrow Down to Photos with Faces keeps selected the photos in which faces 
   }));
   expect(states).toHaveLength(4);
   for (const state of states) expect(state).toEqual({ height: states[0].height, fits: true });
+  // The progress bar, laid out while another state is shown, is that of the dialog of a folder that opens, where it
+  // is: the dots after the progress, 90% of the dialog's width, in its middle, with its top edge 34px below the dialog's.
+  const bar = await dialog.locator('mat-progress-bar').evaluate(element => {
+    const box = element.getBoundingClientRect();
+    const frame = element.closest('mat-dialog-container').getBoundingClientRect();
+    return { mode: element.getAttribute('mode'), widthPercent: Math.round(100 * box.width / frame.width),
+      start: Math.round(box.left - frame.left), end: Math.round(frame.right - box.right), top: Math.round(box.top - frame.top) };
+  });
+  expect(bar).toEqual({ mode: 'buffer', widthPercent: 90, start: 24, end: 24, top: 34 });
   await dialog.getByRole('button', { name: 'Close', exact: true }).click();
   await expect(dialog).toHaveCount(0);
   await expectSelected(withoutFaces);

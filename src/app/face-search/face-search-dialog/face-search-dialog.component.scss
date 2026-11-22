@@ -6,12 +6,13 @@
 // - Its states, the search's progress and the three messages, are laid out on top of one another in one cell of a
 //   grid, which is as tall as the tallest of them; the one that applies is shown, and the others keep their room
 //   unseen. A fixed height would cut the texts of a language with longer ones.
-// - The line that says that the search waits for thumbnails keeps its room while it is not shown, and the lines with
-//   a number keep the room of the largest number that they can show, that of the selected photos (.sizer).
-// - Before this, the dialog grew and shrank by a line each time the search came to a HEIF photo and found its
-//   thumbnail made, and from the search's progress to its message.
+// - The lines with a number keep the room of the largest number that they can show, that of the selected photos
+//   (.sizer).
+// - Before this, the dialog grew and shrank from the search's progress to its message, and by a line, since removed,
+//   that said when the search waited for the thumbnails of HEIF files.
 :host {
-  padding: 16px;
+  // Above and below; the texts have their room at the sides (.texts), and the progress bar its own.
+  padding: 16px 0;
   display: block;
 }
 
@@ -33,14 +34,18 @@
   visibility: visible;
 }
 
+// As in the dialog of a folder that opens (loading-folder-dialog.component.scss): 90% of the dialog's width, in its
+// middle, with its top edge 34px below the dialog's, the dialog's 16px and these 18px.
 mat-progress-bar {
   width: 90%;
+  margin-top: 18px;
 }
 
 // A text that takes two lines gets lines of about the same length, broken where its language breaks its lines, rather
 // than a word or two alone on the last one.
 .texts {
   @include balanced-lines;
+  padding-inline: 16px;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -60,16 +65,8 @@ mat-progress-bar {
   }
 }
 
-.sizer,
-.not-now {
+.sizer {
   visibility: hidden;
-}
-
-// That nothing leaves the computer: said apart from the progress, in the dialog's secondary text.
-.on-this-computer {
-  margin-top: 4px;
-  font-size: 0.9em;
-  opacity: 0.75;
 }
 
 .button {
