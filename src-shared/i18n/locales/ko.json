@@ -5,7 +5,8 @@
   "common": {
     "ok": "확인",
     "cancel": "취소",
-    "close": "닫기"
+    "close": "닫기",
+    "ctrlKey": "Ctrl"
   },
   "dateTime": {
     "weekdayPattern": "(ddd)"

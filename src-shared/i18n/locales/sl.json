@@ -5,7 +5,8 @@
   "common": {
     "ok": "V redu",
     "cancel": "Prekliči",
-    "close": "Zapri"
+    "close": "Zapri",
+    "ctrlKey": "Ctrl"
   },
   "dateTime": {
     "weekdayPattern": "ddd"

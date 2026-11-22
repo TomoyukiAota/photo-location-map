@@ -5,7 +5,8 @@
   "common": {
     "ok": "OK",
     "cancel": "Anulează",
-    "close": "Închide"
+    "close": "Închide",
+    "ctrlKey": "Ctrl"
   },
   "dateTime": {
     "weekdayPattern": "ddd"

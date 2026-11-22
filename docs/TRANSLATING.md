@@ -247,6 +247,11 @@ npm run test:unit:ng
   keyboards and Windows name them in your language: `Strg+Umschalt+I` in
   German, `Ctrl+Maj+I` in French, and `Ctrl+Shift+I` where the keys keep their
   English names.
+- `common.ctrlKey` is the name of the Ctrl key, which a menu shows on Windows
+  and Linux in the shortcut of an item, before the arrow of the other key:
+  `Ctrl+←`. Name it as keyboards and Windows name it in your language, as in
+  the shortcut above: `Strg` in German, and `Ctrl` where the key keeps its
+  English name. macOS shows the shortcut with symbols alone, `⌘←`.
 - In a language written from right to left, the application puts each value of
   a placeholder on its own in the text, so that a path, a number or a name in
   Latin letters keeps its order: write the text around the placeholder as you

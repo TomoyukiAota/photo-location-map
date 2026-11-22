@@ -16,3 +16,19 @@
   --mat-menu-item-leading-spacing: 16px;
   --mat-menu-item-trailing-spacing: 16px;
 }
+
+// An item with a shortcut: its text, then the shortcut at the end of the line, apart from the text, as the menus of
+// the operating systems show one. A text that needs another line takes it beside the shortcut, which keeps its line.
+.photo-info-viewer-more-options-menu-item-with-shortcut {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  column-gap: 24px;
+}
+
+.photo-info-viewer-more-options-menu-shortcut {
+  flex: none;
+  white-space: nowrap;
+  // The secondary text of Material's menus.
+  color: rgba(0, 0, 0, 0.54);
+}
