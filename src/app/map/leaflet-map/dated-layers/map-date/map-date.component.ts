@@ -6,6 +6,7 @@ import { TranslationKey } from '../../../../../../src-shared/i18n/translation-ke
 import { momentToDateString } from '../../../../shared/moment-to-string';
 import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 import { PhotoDates } from '../photo-dates';
+import { MapDatePickerComponent } from './map-date-picker.component';
 
 /** The layers of a past date: Esri World Imagery Wayback, and OpenHistoricalMap. */
 export type MapDateKind = 'wayback' | 'openHistoricalMap';
@@ -81,9 +82,10 @@ export function withDates(key: TranslationKey, dates: Readonly<Record<string, st
 }
 
 /**
- * The date of a layer of a past date, on the map: when its imagery was taken, or the date that its map shows, with
- * the buttons to an earlier and a later one, and the choice of matching the dates of the photos on the map. The map
- * makes this component for its control at the top right (../dated-layers.ts, ../../leaflet-content.service.ts).
+ * The date of a layer of a past date, on the map: when its imagery was taken, in a list, or the date that its map
+ * shows, in a field that opens a calendar (map-date-picker.component.ts), with the buttons to an earlier and a later
+ * one, and the choice of matching the dates of the photos on the map. The map makes this component for its control at
+ * the top right (../dated-layers.ts, ../../leaflet-content.service.ts).
  */
 @Component({
   selector: 'app-leaflet-map-date',
@@ -104,6 +106,8 @@ export function withDates(key: TranslationKey, dates: Readonly<Record<string, st
             }
           </select>
         </div>
+      } @else if (view().kind === 'openHistoricalMap' && view().date) {
+        <app-leaflet-map-date-picker [date]="view().date" [label]="titleKey() | t" (pick)="pick.emit($event)"/>
       } @else {
         <div class="plm-leaflet-map-date-value">{{ dateText() }}</div>
       }
@@ -120,7 +124,7 @@ export function withDates(key: TranslationKey, dates: Readonly<Record<string, st
     <div class="plm-leaflet-map-date-note">@for (part of noteParts(); track $index) {<span [class.plm-leaflet-map-date-unbroken]="part.isDate">{{ part.text }}</span>}</div>
   `,
   styleUrl: './map-date.component.scss',
-  imports: [MatCheckbox, TranslatePipe],
+  imports: [MatCheckbox, MapDatePickerComponent, TranslatePipe],
   host: {
     'class': 'plm-leaflet-map-date-container',
   },
@@ -133,6 +137,8 @@ export class MapDateComponent {
   public readonly later = output<void>();
   /** A version of Wayback's imagery was chosen in the list, by its release's number. */
   public readonly choose = output<number>();
+  /** A date of OpenHistoricalMap was chosen in the calendar, YYYY-MM-DD. */
+  public readonly pick = output<string>();
   /** The choice of matching the photos' dates changed. */
   public readonly matchPhotoDatesChange = output<boolean>();
 

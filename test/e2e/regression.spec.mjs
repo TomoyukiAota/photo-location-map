@@ -1360,6 +1360,16 @@ test('on a computer whose language is Arabic, the application is laid out from r
   const earlierBox = await dateControl.getByRole('button', { name: 'قبل سنة', exact: true }).boundingBox();
   const laterBox = await dateControl.getByRole('button', { name: 'بعد سنة', exact: true }).boundingBox();
   expect(earlierBox.x).toBeGreaterThan(laterBox.x);
+  // So is its calendar, in Arabic, whose week starts on Sunday. The field opens it once its datepicker, loaded with
+  // the field, has marked it.
+  const dateField = dateControl.getByRole('textbox', { name: 'تاريخ الخريطة', exact: true });
+  await expect(dateField).toHaveClass(/(^|\s)datepicker-input(\s|$)/);
+  await dateField.click();
+  const calendar = page.locator('body > .datepicker.active');
+  await expect(calendar).toHaveCSS('direction', 'rtl');
+  await expect(calendar.locator('.dow').first()).toHaveText('ح');
+  await page.keyboard.press('Escape');
+  await expect(calendar).toHaveCount(0);
   await chooseMapLayer('OpenStreetMap');
   await expect(dateControl).toHaveCount(0);
   // A path is written from left to right within the text around it: its first slash stays at its start.
@@ -1647,11 +1657,13 @@ test('the map shows Esri World Imagery Wayback and OpenHistoricalMap at the date
   await expect(control.locator('.plm-leaflet-map-date-value')).toHaveText('Version of 2024-05-09');
   await expect(control.getByRole('button', { name: 'Older imagery', exact: true })).toBeDisabled();
 
-  // OpenHistoricalMap: the map of the photos' date, drawn by MapLibre where the computer has WebGL 2.
+  // OpenHistoricalMap: the map of the photos' date, drawn by MapLibre where the computer has WebGL 2. The date is a
+  // field, which opens a calendar.
   await view(16);
   await chooseMapLayer('OpenHistoricalMap');
   await expect(control.locator('.plm-leaflet-map-date-title')).toHaveText('Date of the map');
-  await expect(control.locator('.plm-leaflet-map-date-value')).toHaveText('2025-08-10');
+  const dateField = control.getByRole('textbox', { name: 'Date of the map', exact: true });
+  await expect(dateField).toHaveValue('2025-08-10');
   await expect(control.getByRole('checkbox')).toBeChecked();
   const hasWebGl2 = await page.evaluate(() => !!document.createElement('canvas').getContext('webgl2'));
   if (hasWebGl2) {
@@ -1662,16 +1674,45 @@ test('the map shows Esri World Imagery Wayback and OpenHistoricalMap at the date
     await expect(control.locator('.plm-leaflet-map-date-note')).toHaveText('This map cannot be shown.');
   }
   await control.getByRole('button', { name: 'One year earlier', exact: true }).click();
-  await expect(control.locator('.plm-leaflet-map-date-value')).toHaveText('2024-08-10');
+  await expect(dateField).toHaveValue('2024-08-10');
   await expect(control.getByRole('checkbox')).not.toBeChecked();
-  // Matching again: the photos' date.
+  // Matching again: the photos' date, which the field shows without taking it as a date chosen.
   await control.getByRole('checkbox').check();
-  await expect(control.locator('.plm-leaflet-map-date-value')).toHaveText('2025-08-10');
+  await expect(dateField).toHaveValue('2025-08-10');
+  await expect(control.getByRole('checkbox')).toBeChecked();
+  // A day chosen in the calendar, which opens at the date shown, in the page's body (MapDatePickerComponent). The
+  // field opens it once its datepicker, loaded with the field, has marked it.
+  const calendar = page.locator('body > .datepicker.active');
+  await expect(dateField).toHaveClass(/(^|\s)datepicker-input(\s|$)/);
+  await dateField.click();
+  await expect(calendar.locator('.view-switch')).toHaveText('August 2025');
+  await expect(calendar.locator('.datepicker-cell.day.selected')).toHaveText('10');
+  await calendar.locator('.datepicker-cell.day:not(.prev):not(.next)').filter({ hasText: /^1$/ }).click();
+  await expect(calendar).toHaveCount(0);
+  await expect(dateField).toHaveValue('2025-08-01');
+  await expect(control.getByRole('checkbox')).not.toBeChecked();
+  // A date typed in the field.
+  await dateField.click();
+  await dateField.selectText();
+  await dateField.pressSequentially('1970-01-01');
+  await dateField.press('Enter');
+  await expect(calendar).toHaveCount(0);
+  await expect(dateField).toHaveValue('1970-01-01');
+  // A click on the map closes the calendar.
+  await dateField.click();
+  await expect(calendar).toHaveCount(1);
+  const mapBox = await page.locator('#plm-leaflet-map').boundingBox();
+  await page.mouse.click(mapBox.x + mapBox.width / 3, mapBox.y + mapBox.height / 2);
+  await expect(calendar).toHaveCount(0);
+  await expect(dateField).toHaveValue('1970-01-01');
+  await control.getByRole('checkbox').check();
+  await expect(dateField).toHaveValue('2025-08-10');
 
-  // Another layer has no date.
+  // Another layer has no date, nor a calendar.
   await chooseMapLayer('OpenStreetMap');
   await expect(control).toHaveCount(0);
   await expect(page.locator('.plm-leaflet-map-maplibre-container')).toHaveCount(0);
+  await expect(page.locator('body > .datepicker')).toHaveCount(0);
 });
 test('the links of the welcome dialog, the about box and the cache settings open in the OS browser', async () => {
   // Some of them are elements that the components query, with signal queries since stage 2. Nothing opens here.
