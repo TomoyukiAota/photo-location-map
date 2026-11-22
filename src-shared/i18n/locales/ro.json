@@ -225,10 +225,11 @@
       "title": "Aspect",
       "showStatusBar": "Afișează bara de stare",
       "stickyFolders": {
-        "title": "Dosare fixate în partea de sus a arborelui",
-        "description": "Cât timp arborele de dosare este derulat, dosarele de deasupra rândurilor afișate rămân sus. Dosarul deschis și dosarul acestor rânduri sunt păstrate mereu.",
+        "title": "Dosare fixate",
+        "description": "Setări pentru afișarea dosarelor părinte în timpul derulării arborelui de dosare.",
         "maximum": "Număr maxim de rânduri",
-        "leftOut": "Când sunt mai multe dosare decât rânduri, omite:",
+        "leftOut": "Unde se omit dosare când nu încap în numărul maxim de rânduri",
+        "leftOutDescription": "Dosarul deschis și dosarul rândurilor afișate sunt păstrate mereu.",
         "middle": "Dosarele din mijloc",
         "nearOpenedFolder": "Dosarele apropiate de dosarul deschis",
         "nearPhotos": "Dosarele apropiate de poze"

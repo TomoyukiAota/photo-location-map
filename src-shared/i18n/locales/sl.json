@@ -225,10 +225,11 @@
       "title": "Videz",
       "showStatusBar": "Prikaži vrstico stanja",
       "stickyFolders": {
-        "title": "Mape, pripete na vrh drevesa",
-        "description": "Med pomikanjem drevesa map ostanejo mape nad prikazanimi vrsticami na vrhu. Odprta mapa in mapa teh vrstic ostaneta vedno.",
+        "title": "Pripete mape",
+        "description": "Nastavitve za prikaz nadrejenih map med pomikanjem drevesa map.",
         "maximum": "Največje število vrstic",
-        "leftOut": "Ko je map več kot vrstic, izpusti:",
+        "leftOut": "Kje izpustiti mape, ko največje število vrstic ne zadostuje",
+        "leftOutDescription": "Odprta mapa in mapa prikazanih vrstic ostaneta vedno.",
         "middle": "Mape na sredini",
         "nearOpenedFolder": "Mape blizu odprte mape",
         "nearPhotos": "Mape blizu fotografij"

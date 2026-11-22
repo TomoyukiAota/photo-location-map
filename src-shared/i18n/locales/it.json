@@ -225,10 +225,11 @@
       "title": "Aspetto",
       "showStatusBar": "Mostra la barra di stato",
       "stickyFolders": {
-        "title": "Cartelle fisse in cima all’albero",
-        "description": "Mentre l’albero delle cartelle scorre, le cartelle sopra le righe visualizzate restano in cima. La cartella aperta e la cartella di quelle righe restano sempre.",
+        "title": "Cartelle fisse",
+        "description": "Impostazioni per mostrare le cartelle superiori durante lo scorrimento dell’albero delle cartelle.",
         "maximum": "Numero massimo di righe",
-        "leftOut": "Se ci sono più cartelle che righe, ometti:",
+        "leftOut": "Dove omettere cartelle quando non entrano nel numero massimo di righe",
+        "leftOutDescription": "La cartella aperta e la cartella delle righe visualizzate restano sempre.",
         "middle": "Le cartelle al centro",
         "nearOpenedFolder": "Le cartelle vicine alla cartella aperta",
         "nearPhotos": "Le cartelle vicine alle foto"

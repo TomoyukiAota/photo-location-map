@@ -225,10 +225,11 @@
       "title": "Appearance",
       "showStatusBar": "Show Status Bar",
       "stickyFolders": {
-        "title": "Folders Kept at the Top of the Tree",
-        "description": "While the folder tree is scrolled, the folders above the rows shown stay at its top. The opened folder and the folder of those rows are always kept.",
+        "title": "Sticky Folders",
+        "description": "Settings for showing the parent folders while the folder tree is scrolled.",
         "maximum": "Maximum Rows",
-        "leftOut": "When there are more folders than rows, leave out:",
+        "leftOut": "Where to leave out folders when they do not fit in the maximum rows",
+        "leftOutDescription": "The opened folder and the folder of the rows shown are always kept.",
         "middle": "The folders in the middle",
         "nearOpenedFolder": "The folders near the opened folder",
         "nearPhotos": "The folders near the photos"

@@ -225,10 +225,11 @@
       "title": "Tampilan",
       "showStatusBar": "Tampilkan bilah status",
       "stickyFolders": {
-        "title": "Folder yang disematkan di bagian atas pohon",
-        "description": "Saat pohon folder digulir, folder di atas baris yang ditampilkan tetap berada di atas. Folder yang dibuka dan folder dari baris tersebut selalu dipertahankan.",
+        "title": "Folder yang disematkan",
+        "description": "Pengaturan untuk menampilkan folder induk saat pohon folder digulir.",
         "maximum": "Jumlah baris maksimum",
-        "leftOut": "Jika folder lebih banyak daripada baris, hilangkan:",
+        "leftOut": "Bagian yang dihilangkan jika folder tidak muat dalam jumlah baris maksimum",
+        "leftOutDescription": "Folder yang dibuka dan folder dari baris yang ditampilkan selalu dipertahankan.",
         "middle": "Folder di tengah",
         "nearOpenedFolder": "Folder yang dekat dengan folder yang dibuka",
         "nearPhotos": "Folder yang dekat dengan foto"

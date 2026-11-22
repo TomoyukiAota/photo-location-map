@@ -225,10 +225,11 @@
       "title": "Itxura",
       "showStatusBar": "Erakutsi egoera-barra",
       "stickyFolders": {
-        "title": "Zuhaitzaren goialdean finkatutako karpetak",
-        "description": "Karpeten zuhaitza korritzen den bitartean, erakutsitako errenkaden gaineko karpetak goian geratzen dira. Irekitako karpeta eta errenkada horien karpeta beti mantentzen dira.",
+        "title": "Karpeta finkoak",
+        "description": "Karpeten zuhaitza korritzean karpeta gurasoak erakusteko ezarpenak.",
         "maximum": "Gehieneko errenkada kopurua",
-        "leftOut": "Errenkadak baino karpeta gehiago daudenean, kanpoan utzi:",
+        "leftOut": "Non utzi kanpoan karpetak gehieneko errenkada kopuruan sartzen ez direnean",
+        "leftOutDescription": "Irekitako karpeta eta erakutsitako errenkaden karpeta beti mantentzen dira.",
         "middle": "Erdiko karpetak",
         "nearOpenedFolder": "Irekitako karpetatik hurbil dauden karpetak",
         "nearPhotos": "Argazkietatik hurbil dauden karpetak"
