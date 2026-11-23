@@ -9,6 +9,7 @@ import { removeInvalidThumbnailCacheOncePerLaunch } from '../../src-shared/thumb
 import { createThumbnailGenerationLogFile, getThumbnailFilePath } from '../../src-shared/thumbnail/cache/thumbnail-cache-util.js';
 import { thumbnailGenerationLogger as logger } from '../../src-shared/thumbnail/generation/thumbnail-generation-logger.js';
 import { ThumbnailFileGenerationArg, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result.js';
+import { oneWriteAtATime } from './one-write-at-a-time.js';
 import { ThumbnailFailures } from './thumbnail-failures.js';
 import { logged } from '../../src-shared/log/logged-line.js';
 
@@ -169,15 +170,22 @@ async function runWorkerForThumbnailGeneration(argArray: ThumbnailFileGeneration
 
 /**
  * Makes the thumbnail of `arg` in a process of its own, and writes the log of the attempt, which says whether it was
- * made, at its size. Never rejects: a failure is in the log, and in `failures`.
+ * made, at its size, once the thumbnails of the same file that started before have ended (oneWriteAtATime): the
+ * previous size's, when a folder's thumbnails are made again at a new size. Never rejects: a failure is in the log,
+ * and in `failures`.
  * TL;DR: The thumbnail and the log that were there go first, so that the cache never says that it has the new
  * thumbnail, of another size or of a newer version of the photo, while it has the previous one.
  * Details: The worker writes the thumbnail last, once it has made it, in the same file as the previous one. The previous
  * file stayed when the worker failed, and the log said that the thumbnail was made at the new size, as only whether a
  * file was there was looked at; and the previous log stayed beside the new file when the new log could not be written.
  */
-export async function generateThumbnailAndLog(arg: ThumbnailFileGenerationArg, failures: ThumbnailFailures,
-                                              workerFile = FileForWorker.absoluteFilePath): Promise<void> {
+export function generateThumbnailAndLog(arg: ThumbnailFileGenerationArg, failures: ThumbnailFailures,
+                                        workerFile = FileForWorker.absoluteFilePath): Promise<void> {
+  return oneWriteAtATime(arg.outputFilePath, () => generateThumbnailAndLogNow(arg, failures, workerFile));
+}
+
+async function generateThumbnailAndLogNow(arg: ThumbnailFileGenerationArg, failures: ThumbnailFailures,
+                                          workerFile: string): Promise<void> {
   const logFilePath = pathModule.join(arg.outputFileDir, `${pathModule.basename(arg.srcFilePath)}.log.json`);
   await Promise.all([logFilePath, arg.outputFilePath].map(filePath => fs.promises.rm(filePath, { force: true }).catch(error =>
     logger.warn(logged`Failed to remove "${filePath}" before its thumbnail is made again. error: ${error}`, error))));

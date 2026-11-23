@@ -8,6 +8,7 @@ import {
   getThumbnailLogFilePath,
   plmThumbnailCacheDir,
 } from '../../src-shared/thumbnail/cache/thumbnail-cache-util.js';
+import { oneWriteAtATime } from './one-write-at-a-time.js';
 
 // TL;DR: The files of the thumbnails that the main window's page makes of JPEG and PNG photos
 // (src/app/jpeg-png-thumbnail/): the main process reads a photo for the page, and keeps the thumbnail that the page
@@ -44,7 +45,8 @@ export async function readPhotoForThumbnail(filePath: string): Promise<PhotoFile
  * Writes the thumbnail of the photo at `srcFilePath`, made from the file as it was at `lastModified`, at `longerSide`,
  * into the cache, then the log of its generation; with `jpeg` null, only the log, which says that none could be made,
  * and the photo's previous thumbnail, of an earlier version of the file or of another size, is removed. Resolves with
- * where the thumbnail is. The cache is the app's unless a test gives another.
+ * where the thumbnail is, once the saves of the photo's thumbnail that started before have ended (oneWriteAtATime).
+ * The cache is the app's unless a test gives another.
  * TL;DR: The previous log goes first, so that the cache never says that the new thumbnail is the previous one.
  * Details: The new thumbnail is written in the previous one's file. With the previous log left until the new one was
  * written, a log that could not be written left the previous size's log beside the new size's thumbnail.
@@ -52,14 +54,16 @@ export async function readPhotoForThumbnail(filePath: string): Promise<PhotoFile
 export async function saveJpegPngThumbnail(srcFilePath: string, lastModified: string, jpeg: Uint8Array | null,
                                            longerSide: number, cacheDir = plmThumbnailCacheDir): Promise<string> {
   const { thumbnailFileDir, thumbnailFilePath } = getThumbnailFilePath(srcFilePath, cacheDir);
-  await fs.promises.mkdir(thumbnailFileDir, { recursive: true });
-  await fs.promises.rm(getThumbnailLogFilePath(srcFilePath, cacheDir), { force: true });
-  if (jpeg)
-    await fs.promises.writeFile(thumbnailFilePath, jpeg);
-  else
-    await fs.promises.rm(thumbnailFilePath, { force: true });
-  await createThumbnailGenerationLogFile(srcFilePath, thumbnailFileDir, !!jpeg, logger, lastModified, longerSide);
-  return thumbnailFilePath;
+  return oneWriteAtATime(thumbnailFilePath, async () => {
+    await fs.promises.mkdir(thumbnailFileDir, { recursive: true });
+    await fs.promises.rm(getThumbnailLogFilePath(srcFilePath, cacheDir), { force: true });
+    if (jpeg)
+      await fs.promises.writeFile(thumbnailFilePath, jpeg);
+    else
+      await fs.promises.rm(thumbnailFilePath, { force: true });
+    await createThumbnailGenerationLogFile(srcFilePath, thumbnailFileDir, !!jpeg, logger, lastModified, longerSide);
+    return thumbnailFilePath;
+  });
 }
 
 /** Whether `value` is a time as readPhotoForThumbnail gives it. */

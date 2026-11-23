@@ -23,6 +23,18 @@ describe('generateThumbnailInProcess (in main process)', () => {
       + "process.parentPort.postMessage({ status: 'success' }); });\n");
     fs.writeFileSync(path.join(folder, 'failing-worker.mjs'), "process.parentPort.once('message', () => "
       + "process.parentPort.postMessage({ status: 'failed-in-heic-convert', error: 'Error: cannot decode' }));\n");
+    // A worker that takes a while to make the thumbnail, which holds its size, and says when it starts and ends.
+    fs.writeFileSync(path.join(folder, 'slow-making-worker.mjs'), "import { appendFileSync, writeFileSync } from 'fs';\n"
+      + "import { join } from 'path';\n"
+      + "process.parentPort.once('message', ({ data }) => {\n"
+      + "  const events = join(data.outputFileDir, 'events.txt');\n"
+      + "  appendFileSync(events, `started ${data.longerSide}\\n`);\n"
+      + "  setTimeout(() => {\n"
+      + "    writeFileSync(data.outputFilePath, String(data.longerSide));\n"
+      + "    appendFileSync(events, `ended ${data.longerSide}\\n`);\n"
+      + "    process.parentPort.postMessage({ status: 'success' });\n"
+      + "  }, 300);\n"
+      + "});\n");
   });
 
   after(() => fs.rmSync(folder, { recursive: true, force: true }));
@@ -60,6 +72,14 @@ describe('generateThumbnailInProcess (in main process)', () => {
       assert.strictEqual(fs.existsSync(thumbnail()), false);
       assert.deepStrictEqual(JSON.parse(fs.readFileSync(log(), 'utf8')),
         { LastModified: fs.statSync(photo).mtime.toISOString(), IsThumbnailFileCreated: false, LongerSide: 800 });
+    });
+
+    it('makes the thumbnails of the photo at two sizes one after the other, which leaves the second with its log', async () => {
+      const worker = path.join(folder, 'slow-making-worker.mjs');
+      await Promise.all([600, 800].map(longerSide => generateThumbnailAndLog({ ...next, longerSide }, new ThumbnailFailures(), worker)));
+      assert.strictEqual(fs.readFileSync(path.join(cache, 'events.txt'), 'utf8'), 'started 600\nended 600\nstarted 800\nended 800\n');
+      assert.strictEqual(fs.readFileSync(thumbnail(), 'utf8'), '800');
+      assert.strictEqual(JSON.parse(fs.readFileSync(log(), 'utf8')).LongerSide, 800);
     });
   });
 

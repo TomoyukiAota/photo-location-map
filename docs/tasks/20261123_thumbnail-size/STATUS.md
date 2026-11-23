@@ -252,6 +252,11 @@ one looks softer and is made no faster (above); a larger one is not seen.
   a new size a moment before the services forget the files of the previous one. The proposal had a file for each
   size; one file keeps the cache as large as one size's thumbnails, and a change of size, which is rare, makes them
   again.
+- **From the review of #812**: a photo's previous log goes before a thumbnail of a new size is written in its file,
+  and a thumbnail is logged as made only when its worker says so (`saveJpegPngThumbnail`, `generateThumbnailAndLog`).
+  The writes of one thumbnail and its log run one after another (`oneWriteAtATime`), as those of two sizes may
+  overlap once the settings changed. New settings look the HEIF photos up in the cache again at the new size: at
+  Fast, those that were cached when the folder was opened keep their thumbnails only if they are of 400.
 - **The provisional thumbnail**: the viewer shows a JPEG's EXIF thumbnail while its larger one is made, as a HEIF
   photo's small thumbnail, filling the box with `object-fit: contain`, without a shadow, as its element is as large as
   the box then.
