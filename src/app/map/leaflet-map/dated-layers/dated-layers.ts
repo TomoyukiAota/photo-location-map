@@ -26,6 +26,12 @@ export const openHistoricalMapLayerName = 'OpenHistoricalMap';
 /** The zoom level from which Wayback's imagery has dates: below it, it is a mosaic without them. */
 export const minZoomOfImageryDates = 12;
 
+/**
+ * The name of the map's corner that the control is in (corner()). Leaflet adds a control at the end of a corner whose
+ * name has no "bottom" in it, as it does in a top corner.
+ */
+const mapDateCorner = 'plmMapDate';
+
 /** World Imagery as it is now, which the newest release of Wayback shows: until a release is known. */
 const currentImageryTile = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
 
@@ -216,7 +222,25 @@ export class DatedLayers {
       },
     });
     this.content = content;
-    this.control = new Control({ position: 'topright' }).addTo(this.map);
+    this.control = new Control({ position: this.corner() }).addTo(this.map);
+  }
+
+  /**
+   * The corner of the map that the control is in, which Leaflet does not have: at the top, beside the layers button.
+   * TL;DR: So that the box does not cover the buttons that draw a region, at the bottom right, however short the map is.
+   * Details:
+   * - In the top right corner, below the layers button, the box covered the top of Leaflet-Geoman's toolbar in a map
+   *   shorter than about 520px in English, and 560px in the languages with longer sentences: in every language at the
+   *   window's default size. Beside the layers button, the box is apart from the toolbar's column.
+   * - The corner is below the other ones (_plm-leaflet-map-date.scss): a tool's actions, which open to the left of its
+   *   button, are above the box, and so is the list of the layers, which opens over the box without moving it.
+   * - Leaflet has no method that adds a corner. The map keeps its corners in _controlCorners, where its own
+   *   _initControlPos() puts them, and its remove() takes every one of them away, this one too.
+   */
+  private corner(): string {
+    if (!this.map._controlCorners[mapDateCorner])
+      this.map._controlCorners[mapDateCorner] = L.DomUtil.create('div', 'leaflet-top leaflet-right plm-leaflet-map-date-corner', this.map._controlContainer);
+    return mapDateCorner;
   }
 
   private hideControl(): void {

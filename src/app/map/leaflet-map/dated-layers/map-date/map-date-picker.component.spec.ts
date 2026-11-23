@@ -48,6 +48,27 @@ describe('MapDatePickerComponent', () => {
     expect(field.value).toBe('2025-08-01');
   });
 
+  it('closes its calendar at a press elsewhere, even one kept from the page, and takes the date typed', async () => {
+    // As Leaflet keeps a press in a control of the map, such as the box of the field, from reaching the document.
+    const box = document.createElement('div');
+    box.addEventListener('mousedown', event => event.stopPropagation());
+    document.body.append(box);
+    try {
+      field.focus();
+      await vi.waitFor(() => expect(calendar().classList.contains('active')).toBe(true));
+      field.value = '2019-10-01';
+
+      box.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+      // The press takes the focus from the field, as a browser does.
+      field.blur();
+
+      expect(calendar().classList.contains('active')).toBe(false);
+      expect(picked).toEqual(['2019-10-01']);
+    } finally {
+      box.remove();
+    }
+  });
+
   it('shows a date given to it without telling of it as chosen, and keeps it when its text is deleted', async () => {
     await show('1964-10-10');
     expect(field.value).toBe('1964-10-10');
