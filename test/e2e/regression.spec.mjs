@@ -1374,6 +1374,30 @@ test('on a computer whose language is Arabic, the application is laid out from r
   await expect(moreOptionsItems).toHaveText(menuInArabic);
   await page.keyboard.press('Escape');
   await expect(moreOptionsMenus).toHaveCount(0);
+  // A submenu that opens while its menu still grows is beside its item as well, once the menu has grown, though
+  // Angular Material places it against the item as the item is then (MoreOptionsMenuComponent.placeAgainOnceShown()).
+  // The arrow is pressed in the page as soon as the menu is placed, while the menu is at 80% of its size.
+  await page.evaluate(() => {
+    const observer = new MutationObserver(() => {
+      const menu = document.querySelector('.photo-info-viewer-more-options-menu');
+      if (!menu || menu.classList.contains('mat-menu-panel-exit-animation')) return;
+      observer.disconnect();
+      const selection = menu.querySelector('.photo-info-viewer-more-options-menu-item');
+      selection.focus();
+      selection.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', code: 'ArrowLeft', keyCode: 37, bubbles: true }));
+    });
+    observer.observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
+  });
+  await moreOptionsButton.click();
+  await expect(moreOptionsItems).toHaveText([...menuInArabic,
+    'هذا الملف فقط', `الصورة الملتقطة قبلها${shownShortcuts.before}`, `الصورة الملتقطة بعدها${shownShortcuts.after}`]);
+  await untilMenusShown();
+  await expect.poll(() => moreOptionsMenus.evaluateAll(([menu, submenu]) =>
+    Math.abs(submenu.getBoundingClientRect().left - menu.getBoundingClientRect().right))).toBeLessThan(1);
+  await page.keyboard.press('Escape');
+  await expect(moreOptionsItems).toHaveText(menuInArabic);
+  await page.keyboard.press('Escape');
+  await expect(moreOptionsMenus).toHaveCount(0);
   // The date of a layer of a past date is laid out from right to left on the map, which stays from left to right:
   // the button to an earlier date is at its right (src/app/map/leaflet-map/dated-layers/).
   await answerDatedLayers(page);
