@@ -23,6 +23,8 @@ export function datepickerFormatOf(dateFormat: DateTimeFormat.ForUser.DateFormat
  *   height would be cut in a short map. Its style is with the map's (src/styles/plm-leaflet-map/).
  * - The datepicker tells of a date set from here, such as the photos' date, as of one chosen in it (changeDate), so
  *   the dates set from here are told apart.
+ * - The calendar closes at a press of the mouse anywhere but in it and the field, in a control of the map too
+ *   (closeOnPressElsewhere).
  */
 @Component({
   selector: 'app-leaflet-map-date-picker',
@@ -56,6 +58,7 @@ export class MapDatePickerComponent implements OnDestroy {
 
   public ngOnDestroy(): void {
     this.destroyed = true;
+    document.removeEventListener('mousedown', this.closeOnPressElsewhere, { capture: true });
     this.datepicker?.destroy();
     this.datepicker = null;
   }
@@ -74,8 +77,41 @@ export class MapDatePickerComponent implements OnDestroy {
       autohide: true,
       todayHighlight: true,
     });
+    document.addEventListener('mousedown', this.closeOnPressElsewhere, { capture: true });
     this.show(this.date());
   }
+
+  /**
+   * Closes the calendar at a press of the mouse anywhere but in it and the field, as the datepicker does at a press
+   * that reaches the document (onClickOutside, in its js/events/otherListeners.js).
+   * TL;DR: Leaflet keeps a press in a control of the map, such as the box of this field, from reaching the document, so
+   * that the map is not dragged. This hears the press on its way down to the control, before Leaflet stops it.
+   * Details:
+   * - Once the field has lost the focus, which the press takes from it, the field's text is taken as the date, or the
+   *   date replaces it when it is not one, as the datepicker's updateOnBlur does, and the calendar closes. This is also
+   *   done when the field has the focus while its calendar is hidden, as after Escape.
+   * - A press that reaches the document is heard by the datepicker too, which then finds nothing left to do.
+   */
+  private readonly closeOnPressElsewhere = (event: MouseEvent): void => {
+    const datepicker = this.datepicker;
+    const field = this.field().nativeElement;
+    const fieldFocused = document.activeElement === field;
+    if (!datepicker || (!datepicker.active && !fieldFocused))
+      return;
+    const path = event.composedPath();
+    if (path.includes(field) || path.includes(datepicker.pickerElement))
+      return;
+    const close = () => {
+      if (this.datepicker !== datepicker)
+        return; // Destroyed with the component.
+      datepicker.update({ revert: true });
+      datepicker.hide();
+    };
+    if (fieldFocused)
+      field.addEventListener('blur', close, { once: true });
+    else
+      close();
+  };
 
   /** Makes the date, YYYY-MM-DD, the calendar's choice, once the datepicker is there. */
   private show(date: string): void {
