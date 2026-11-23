@@ -72,8 +72,9 @@
   animation: flicker 3s infinite;
 }
 
+// As long as fadeInAfterGenerationMs of the component allows, with its late start.
 .photo-info-viewer-fade-in-after-thumbnail-generation {
-  animation: fade-in 2s ease 0s;
+  animation: fade-in 0.3s ease 0s;
 }
 
 .photo-info-viewer-name {

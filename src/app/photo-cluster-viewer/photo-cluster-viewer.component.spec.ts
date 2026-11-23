@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DateTimeOriginal } from '../shared/model/date-time-original';
 import { Photo } from '../shared/model/photo.model';
+import { NearViewService } from '../shared/near-view/near-view.service';
 import { OpenedDirectory } from '../shared/opened-directory';
 import { ThumbnailRotationService } from '../photo-info-viewer/thumbnail-rotation.service';
 import { PhotoClusterViewerComponent, sortByShootingTime } from './photo-cluster-viewer.component';
@@ -35,6 +36,10 @@ describe('PhotoClusterViewerComponent', () => {
   beforeEach(async () => {
     // The opened folder is a stand-in here (test/angular/directory-double.ts), which knows of no Live Photos.
     livePhotos = vi.spyOn(OpenedDirectory, 'getLivePhotosFilePathIfAvailable').mockReturnValue({ livePhotosAvailable: false, livePhotosFilePath: '' });
+    // Each tile is near what the tiles show as soon as it is made: jsdom has no IntersectionObserver.
+    TestBed.configureTestingModule({
+      providers: [{ provide: NearViewService, useValue: { watch: (_element: Element, whenNear: () => void) => { whenNear(); return () => undefined; } } }],
+    });
     fixture = TestBed.createComponent(PhotoClusterViewerComponent);
     fixture.componentRef.setInput('photos', [photo('late.jpg', 20), photo('early.jpg', 8), photo('noon.jpg', 12)]);
     element = fixture.nativeElement;

@@ -12,6 +12,7 @@ import { openWithAssociatedApp } from '../shared/open-with-os';
 import { NearViewDirective } from '../shared/near-view/near-view.directive';
 import { OpenedDirectory } from '../shared/opened-directory';
 import { HeifThumbnailService } from '../heif-thumbnail/heif-thumbnail.service';
+import { JpegPngThumbnailService, needsMadeThumbnail } from '../jpeg-png-thumbnail/jpeg-png-thumbnail.service';
 import { MoreOptionsMenuService } from './more-options-menu/more-options-menu.service';
 import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
 import { PhotoInfoViewerPlace } from './photo-info-viewer-place';
@@ -33,8 +34,12 @@ interface Thumbnail {
 const generatingThumbnail: Thumbnail = { kind: 'generating', src: IconDataUrl.generatingThumbnail, alt: null, warning: null };
 const unavailableThumbnail: Thumbnail = { kind: 'unavailable', src: IconDataUrl.noThumbnailAvailable, alt: null, warning: null };
 
-/** How long the class that fades a new thumbnail in stays: 2000 ms of its animation, and 500 ms for a late start. */
-const fadeInAfterGenerationMs = 2500;
+/**
+ * How long the class that fades a new thumbnail in stays: 300 ms of its animation (photo-info-viewer.component.scss),
+ * and 500 ms for a late start. The animation took 2 s while only HEIF thumbnails were made, each of which took about
+ * that long; a JPEG's thumbnail is made in tens of milliseconds, and would look faded long after it came.
+ */
+const fadeInAfterGenerationMs = 800;
 
 /** The icons of the buttons, by what each button does. */
 const buttonIcons = {
@@ -63,7 +68,10 @@ function thumbnailOfExif(photo: Photo): Thumbnail {
   return { kind: 'image', src: photo.exif.thumbnail.objectUrl, alt: null, warning: null };
 }
 
-/** The photo itself as its thumbnail, which the page can show for a JPEG or PNG file. */
+/**
+ * The photo itself as its thumbnail, which the page can show for a JPEG or PNG file, for one whose thumbnail the page
+ * cannot make (JpegPngThumbnailService).
+ */
 function thumbnailOfPhotoItself(photo: Photo): Thumbnail {
   if (!isFilePathTooLongOnWindows(photo.path))
     return { kind: 'image', src: photoFileUrl(photo.path), alt: null, warning: null };
@@ -84,7 +92,7 @@ File path of ${photo.name} is "${photo.path}"
   };
 }
 
-/** The thumbnail that the main process made of a photo, in its cache. */
+/** The thumbnail that the app made of a photo, in its cache. */
 function thumbnailOfGeneratedFile(photo: Photo, thumbnailFilePath: string): Thumbnail {
   if (!isFilePathTooLongOnWindows(thumbnailFilePath))
     return { kind: 'image', src: photoFileUrl(thumbnailFilePath), alt: null, warning: null };
@@ -120,10 +128,10 @@ File path of generated thumbnail is "${thumbnailFilePath}"
  *   rather than opening the file.
  * - The template is used in the tree and in the cluster's popup. Leaflet makes a marker's popup itself, so the map
  *   makes that popup's component outside any template (src/app/map/leaflet-map/leaflet-content.service.ts).
- * - Nothing that has to last is kept here: how far the thumbnail is turned is in ThumbnailRotationService, and
- *   the thumbnail of a HEIF photo in HeifThumbnailService. A component is made when its place shows the
- *   photo and destroyed when it no longer does, as when a folder of the tree is collapsed, so that a large folder
- *   costs no more than what is shown of it.
+ * - Nothing that has to last is kept here: how far the thumbnail is turned is in ThumbnailRotationService, the
+ *   thumbnail of a HEIF photo in HeifThumbnailService, and that of a JPEG or PNG photo without one in its EXIF data in
+ *   JpegPngThumbnailService. A component is made when its place shows the photo and destroyed when it no longer does,
+ *   as when a folder of the tree is collapsed, so that a large folder costs no more than what is shown of it.
  * - Kept light: there is a component for every photo shown, thousands for a folder that has its photos in it, as
  *   each has a row in the tree. What the template shows is read through methods rather than computed values, which
  *   Angular follows in the same way, while a computed value is an object of its own in each component. The texts
@@ -131,10 +139,11 @@ File path of generated thumbnail is "${thumbnailFilePath}"
  *   button opens the menu that the home view has once for every photo, rather than a menu of its own
  *   (MoreOptionsMenuComponent).
  * - In a row of the tree, it makes the thumbnail and the buttons only once the row comes near the part of the tree
- *   that is shown, which the row's NearViewDirective tells; the other places have no such directive, and show
- *   everything at once. Until then it shows the shooting time, with room for the rest, so that the row is as high and
- *   as wide as it is with them, and nothing moves when they are made. A large folder expands faster and holds less
- *   so, and no thumbnail far from the view is loaded (docs/tasks/20261119_lazy-tree-rows/STATUS.md).
+ *   that is shown, which the row's NearViewDirective tells; the other places show everything at once. Until then it
+ *   shows the shooting time, with room for the rest, so that the row is as high and as wide as it is with them, and
+ *   nothing moves when they are made. A large folder expands faster and holds less so, and no thumbnail far from the
+ *   view is loaded (docs/tasks/20261119_lazy-tree-rows/STATUS.md). A tile of a cluster's popup has the directive too,
+ *   only for when to ask for the thumbnail that the app makes of a JPEG or PNG photo (JpegPngThumbnailService).
  * - Each element keeps the class that it had when this content was built with DOM calls, which the end-to-end
  *   tests find the elements by.
  */
@@ -149,6 +158,7 @@ File path of generated thumbnail is "${thumbnailFilePath}"
 })
 export class PhotoInfoViewerComponent {
   private readonly heifThumbnailService = inject(HeifThumbnailService);
+  private readonly jpegPngThumbnailService = inject(JpegPngThumbnailService);
   private readonly thumbnailRotationService = inject(ThumbnailRotationService);
 
   public readonly photo = input.required<Photo>();
@@ -190,6 +200,10 @@ export class PhotoInfoViewerComponent {
       // A HEIF photo's thumbnail is made once a place shows the photo, and replaced once its high quality is made.
       if (FilenameExtension.isThumbnailGenerationAvailable(photo.filenameExtension))
         this.heifThumbnailService.watch(photo.path);
+      // That of a JPEG or PNG photo without one in its EXIF data, once a row or a tile comes near the view, as its
+      // NearViewDirective says, and at once in a popup, which has none.
+      if (needsMadeThumbnail(photo) && (this.nearView?.isNear() ?? true))
+        this.jpegPngThumbnailService.watch(photo.path);
 
       if (thumbnail.kind === 'generating') {
         photoPathOfGeneratingThumbnail = photo.path;
@@ -208,9 +222,10 @@ export class PhotoInfoViewerComponent {
   }
 
   /**
-   * The photo's thumbnail: from the EXIF data where it has one, otherwise the photo itself where the page can show
-   * it, otherwise, for a HEIF photo, the one that HeifThumbnailService makes: the small thumbnail that the photo holds,
-   * shown until the one of the quality that the settings choose is made.
+   * The photo's thumbnail: from the EXIF data where it has one; otherwise, for a JPEG or PNG photo, the one that
+   * JpegPngThumbnailService makes, or the photo itself where none can be made; for a HEIF photo, the one that
+   * HeifThumbnailService makes: the small thumbnail that the photo holds, shown until the one of the quality that the
+   * settings choose is made.
    */
   protected thumbnail(): Thumbnail {
     const photo = this.photo();
@@ -218,8 +233,19 @@ export class PhotoInfoViewerComponent {
       return unavailableThumbnail;
     if (photo.exif?.thumbnail)
       return thumbnailOfExif(photo);
-    if (FilenameExtension.isDisplayableInBrowser(photo.filenameExtension))
-      return thumbnailOfPhotoItself(photo);
+    if (FilenameExtension.isDisplayableInBrowser(photo.filenameExtension)) {
+      const jpegPngThumbnail = this.jpegPngThumbnailService.stateOf(photo.path);
+      switch (jpegPngThumbnail.kind) {
+        case 'cached':
+          return thumbnailOfGeneratedFile(photo, jpegPngThumbnail.filePath);
+        case 'decoded':
+          return { kind: 'image', src: jpegPngThumbnail.url, alt: null, warning: null };
+        case 'photoItself':
+          return thumbnailOfPhotoItself(photo);
+        default:
+          return generatingThumbnail;
+      }
+    }
     if (FilenameExtension.isThumbnailGenerationAvailable(photo.filenameExtension)) {
       const heifThumbnail = this.heifThumbnailService.stateOf(photo.path);
       switch (heifThumbnail.kind) {

@@ -23,6 +23,8 @@ import {
 import { SelectPreviousNextService } from '../shared/service/select-previous-next.service';
 import { HeifImageSource } from '../heif-thumbnail/heif-image-source';
 import { HeifThumbnailService } from '../heif-thumbnail/heif-thumbnail.service';
+import { JpegPngImageSource } from '../jpeg-png-thumbnail/jpeg-png-image-source';
+import { JpegPngThumbnailService } from '../jpeg-png-thumbnail/jpeg-png-thumbnail.service';
 import { thumbnailCheckIntervalMs } from './generated-thumbnail.service';
 import { MoreOptionsMenuComponent } from './more-options-menu/more-options-menu.component';
 import { PhotoInfoViewerComponent } from './photo-info-viewer.component';
@@ -143,6 +145,16 @@ describe('PhotoInfoViewerComponent', () => {
       expect(element.querySelector('.photo-info-viewer-date-time-taken').textContent).toBe('2019-03-16 Sat 17:29:58');
     });
 
+    it('asks for the thumbnail that the app makes of a JPEG or PNG photo only once the row comes near', async () => {
+      const watch = vi.spyOn(TestBed.inject(JpegPngThumbnailService), 'watch');
+      await show(photoAt('/photos/drawing.png'), 'dir-tree-view');
+      expect(watch).not.toHaveBeenCalled();
+
+      near.set(true);
+      await fixture.whenStable();
+      expect(watch).toHaveBeenCalledWith('/photos/drawing.png');
+    });
+
     it('marks the shooting time of a photo that has none, as the row does once it is near', async () => {
       await show(photoAt('/photos/drawing.png'), 'dir-tree-view');
 
@@ -159,12 +171,48 @@ describe('PhotoInfoViewerComponent', () => {
   });
 
   describe('thumbnail', () => {
-    it('is the photo itself, where its EXIF data has no thumbnail and the page can show it', async () => {
-      await show(photoAt('/photos/# 1/drawing #2.png'), 'leaflet-map-popup');
+    describe('of a JPEG or PNG photo without one in its EXIF data, which the app makes', () => {
+      const drawing = '/photos/# 1/drawing #2.png';
+      let canMake: boolean;
+      let decoded: (jpeg: Blob) => void;
 
-      // The whole path in one segment of the address, escaped, so that a # does not start a fragment.
-      expect(thumbnail().getAttribute('src')).toBe(`plm-file://local/${encodeURIComponent('/photos/# 1/drawing #2.png')}`);
-      expect(thumbnail().className).toBe('photo-info-viewer-thumbnail');
+      beforeEach(() => {
+        canMake = true;
+        TestBed.overrideProvider(JpegPngImageSource, {
+          useValue: {
+            canMake: () => canMake,
+            states: async (photoPaths: string[]) => photoPaths.map((): ThumbnailState =>
+              ({ attemptFinished: false, cacheAvailable: false, thumbnailFilePath: '/cache/photos/# 1/drawing #2.png.plm.jpg' })),
+            readPhoto: async () => ({ bytes: new Uint8Array([1]), lastModified: '2026-11-23T01:02:03.000Z' }),
+            makeThumbnail: () => new Promise<Blob>(resolve => { decoded = resolve; }),
+            save: async () => '/cache/photos/# 1/drawing #2.png.plm.jpg',
+          },
+        });
+      });
+
+      it('is an image that flickers while the thumbnail is being made, then the thumbnail of the cache', async () => {
+        await TestBed.inject(JpegPngThumbnailService).prepare([photoAt(drawing)]);
+        await show(photoAt(drawing), 'leaflet-map-popup');
+        expect(thumbnail().getAttribute('src')).toBe(IconDataUrl.generatingThumbnail);
+        expect(thumbnail().classList.contains('photo-info-viewer-generating-thumbnail')).toBe(true);
+
+        await vi.waitFor(() => expect(decoded).toBeDefined());
+        decoded(new Blob(['jpeg']));
+        await vi.waitFor(() => {
+          fixture.detectChanges();
+          // The whole path in one segment of the address, escaped, so that a # does not start a fragment.
+          expect(thumbnail().getAttribute('src')).toBe(`plm-file://local/${encodeURIComponent('/cache/photos/# 1/drawing #2.png.plm.jpg')}`);
+        });
+      });
+
+      it('is the photo itself, where the page cannot make the thumbnail', async () => {
+        canMake = false;
+        await TestBed.inject(JpegPngThumbnailService).prepare([photoAt(drawing)]);
+        await show(photoAt(drawing), 'leaflet-map-popup');
+
+        expect(thumbnail().getAttribute('src')).toBe(`plm-file://local/${encodeURIComponent(drawing)}`);
+        expect(thumbnail().className).toBe('photo-info-viewer-thumbnail');
+      });
     });
 
     it('is an image that says so, for a photo that the page cannot show and that no thumbnail is made of', async () => {
@@ -215,7 +263,7 @@ describe('PhotoInfoViewerComponent', () => {
 
         // The class goes once the animation is over, so that the thumbnail does not fade in again in a popup that is
         // opened again.
-        await pass(2499);
+        await pass(799);
         expect(thumbnail().classList.contains('photo-info-viewer-fade-in-after-thumbnail-generation')).toBe(true);
         await pass(1);
         expect(thumbnail().className).toBe('photo-info-viewer-thumbnail');

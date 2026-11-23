@@ -15,7 +15,7 @@ export type DirectoryTreeResult =
   }
   | { kind: 'failed'; message: string };
 
-/** Where the thumbnail of one HEIF file is (src-main/thumbnail-generation/thumbnail-state.ts). */
+/** Where the thumbnail of one photo is in the cache (src-main/thumbnail-generation/thumbnail-state.ts). */
 export interface ThumbnailState {
   /** A thumbnail was attempted for the file as it is now: made, or failed. */
   attemptFinished: boolean;
@@ -23,6 +23,13 @@ export interface ThumbnailState {
   cacheAvailable: boolean;
   /** Where the thumbnail is, or will be. */
   thumbnailFilePath: string;
+}
+
+/** A JPEG or PNG photo's file, read for its thumbnail (src-main/thumbnail-generation/jpeg-png-thumbnail-files.ts). */
+export interface PhotoFileForThumbnail {
+  bytes: Uint8Array;
+  /** The time that the file was last modified when it was read, as an ISO string, which the cache keeps. */
+  lastModified: string;
 }
 
 /**
@@ -93,6 +100,19 @@ export interface PlmBridge {
     embeddedThumbnailJpeg(filePath: string): Promise<Uint8Array | null>;
     /** The tiles of the primary image. */
     wholeImage(filePath: string): Promise<HeifWholeImage | null>;
+  };
+  /**
+   * The thumbnails that the page makes of the JPEG and PNG photos of a folder that the user opened that have none in
+   * their EXIF data (src/app/jpeg-png-thumbnail/), which the main process keeps in the cache.
+   */
+  readonly jpegPngThumbnails: {
+    /** The photo's file as it is now; null when it cannot be read. */
+    readPhoto(filePath: string): Promise<PhotoFileForThumbnail | null>;
+    /**
+     * Keeps the thumbnail of the photo as it was when it was read, or, with null, that none could be made of it, so
+     * that it is not tried again until the file changes. Resolves with where the thumbnail is, once it is written.
+     */
+    save(filePath: string, lastModified: string, jpeg: Uint8Array | null): Promise<string>;
   };
   readonly thumbnailCache: {
     open(): Promise<void>;

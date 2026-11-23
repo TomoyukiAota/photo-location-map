@@ -23,7 +23,8 @@ function getThumbnailIntermediateDirOnWindows(originalFilePath: string) {
   return intermediateDir;
 }
 
-export function getThumbnailFilePath(originalFilePath: string) {
+/** Where the thumbnail of a photo is in the cache, `cacheDir`, the app's unless a test gives another. */
+export function getThumbnailFilePath(originalFilePath: string, cacheDir = plmThumbnailCacheDir) {
   let intermediateDir: string;
 
   if (os.platform() === 'darwin' || os.platform() === 'linux') {
@@ -32,20 +33,20 @@ export function getThumbnailFilePath(originalFilePath: string) {
     intermediateDir = getThumbnailIntermediateDirOnWindows(originalFilePath);
   }
 
-  const thumbnailFileDir = pathModule.join(plmThumbnailCacheDir, intermediateDir);
+  const thumbnailFileDir = pathModule.join(cacheDir, intermediateDir);
   const thumbnailFileName = `${pathModule.basename(originalFilePath)}.plm`;
   const thumbnailFilePath = pathModule.join(thumbnailFileDir, `${thumbnailFileName}.jpg`);
   return { thumbnailFileDir, thumbnailFilePath };
 }
 
-export function getThumbnailLogFilePath(originalFilePath: string): string {
+export function getThumbnailLogFilePath(originalFilePath: string, cacheDir = plmThumbnailCacheDir): string {
   const originalFileName = pathModule.basename(originalFilePath);
-  const { thumbnailFileDir } = getThumbnailFilePath(originalFilePath);
+  const { thumbnailFileDir } = getThumbnailFilePath(originalFilePath, cacheDir);
   const logFilePath = pathModule.join(thumbnailFileDir, `${originalFileName}.log.json`);
   return logFilePath;
 }
 
-export function getOriginalFilePath(thumbnailFilePath: string): string {
+export function getOriginalFilePath(thumbnailFilePath: string, cacheDir = plmThumbnailCacheDir): string {
   // Converting thumbnailFilePath to pathAfterStep2
   // -----------------------------------------------------
   // On Windows, assuming that plmThumbnailCacheDir is "C:\Users\Tomoyuki\.PlmCache",
@@ -60,7 +61,7 @@ export function getOriginalFilePath(thumbnailFilePath: string): string {
   // After step 1      | "/Users/Tomoyuki/Desktop/IMG_100.HEIC.plm.jpg"                              | "/Volumes/VolumeName/Folder/IMG_100.HEIC.plm.jpg"
   // After step 2      | "/Users/Tomoyuki/Desktop/IMG_100.HEIC"                                      | "/Volumes/VolumeName/Folder/IMG_100.HEIC"
   const pathAfterStep2 = thumbnailFilePath
-    .replace(`${plmThumbnailCacheDir}`, '')    // See step 1 above
+    .replace(`${cacheDir}`, '')                // See step 1 above
     .replace(/(.+)\.plm\.jpg$/, '$1');         // See step 2 above
 
   let originalFilePath = pathAfterStep2;
@@ -86,9 +87,13 @@ export function getOriginalFilePath(thumbnailFilePath: string): string {
 const lastModifiedKey = 'LastModified';
 const isThumbnailFileCreatedKey = 'IsThumbnailFileCreated';
 
-export async function createThumbnailGenerationLogFile(srcFilePath: string, thumbnailFileDir: string, isThumbnailFileCreated: boolean, logger: PrependedLogger) {
+/**
+ * Writes the log of a thumbnail's generation, which says for which version of the photo the thumbnail was attempted:
+ * `lastModified`, the time that the photo had when it was read for its thumbnail, by default the time that it has now.
+ */
+export async function createThumbnailGenerationLogFile(srcFilePath: string, thumbnailFileDir: string, isThumbnailFileCreated: boolean, logger: PrependedLogger,
+                                                       lastModified = fs.statSync(srcFilePath).mtime.toISOString()) {
   const srcFileName = pathModule.basename(srcFilePath);
-  const lastModified = fs.statSync(srcFilePath).mtime.toISOString();
   const fileContentObj = {};
   fileContentObj[lastModifiedKey] = lastModified;
   fileContentObj[isThumbnailFileCreatedKey] = isThumbnailFileCreated;

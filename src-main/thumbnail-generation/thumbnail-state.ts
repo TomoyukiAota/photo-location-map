@@ -4,9 +4,10 @@ import { Logger } from '../../src-shared/log/logger.js';
 import { getThumbnailFilePath, getThumbnailLogFilePath } from '../../src-shared/thumbnail/cache/thumbnail-cache-util.js';
 import { logged } from '../../src-shared/log/logged-line.js';
 
-// TL;DR: Where the thumbnail of each HEIF file is, which the main window's page asks when it opens a folder and polls
-// while thumbnails are made: the checks of thumbnail-cache-util.ts, which the renderer made itself until the main
-// window was isolated, now made here for it.
+// TL;DR: Where the thumbnail of each photo is, which the main window's page asks when it opens a folder, and polls
+// while the main process makes thumbnails: the checks of thumbnail-cache-util.ts, which the renderer made itself until
+// the main window was isolated, now made here for it. The photos are HEIF files, and the JPEG and PNG files without a
+// thumbnail in their EXIF data (src/app/jpeg-png-thumbnail/).
 // Details: Synchronous, as they were in the renderer: a file that was never attempted costs one check of its log,
 // the others four small reads, so a folder's files take a few milliseconds. Made asynchronous at first, the checks
 // of the large folder of the measurements took 34 ms more before the first open completed (series rer-2-C1), as each
