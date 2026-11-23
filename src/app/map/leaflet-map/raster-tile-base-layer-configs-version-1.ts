@@ -12,6 +12,11 @@ import { leafletMapLogger as logger } from './leaflet-map-logger';
 interface RasterTileBaseLayerConfigsVersion1 {
   version: string;
   rasterTileBaseLayerConfigs: RasterTileBaseLayerConfigs[];
+  /**
+   * Optional: the base layers of the app's own that the app does not show, by their names
+   * (hiddenBuiltInBaseLayersOf()).
+   */
+  hiddenBuiltInBaseLayers?: string[];
 }
 
 interface RasterTileBaseLayerConfigs {
@@ -159,6 +164,24 @@ function recordFetchFailedForAllUrls(): void {
   const message = `Failed to fetch the configs from all the possible URLs, and none are saved. Using the fallback configs.`;
   logger.errorNotRecorded(message);  // Recorded as the event below.
   Analytics.trackEvent('Leaflet Map', `[Leaflet Map] Fallback BaseLayerConfigs`, message);
+}
+
+/**
+ * The base layers of the app's own (dated-layers/dated-layers.ts) that `configs` asks the app not to show, by the
+ * names that the map's list of layers gives them: none when hiddenBuiltInBaseLayers is missing or is not a list.
+ * TL;DR: So that a map that the app has of its own can be taken off the map's list of layers without a release, as
+ * when its service asks the app to stop showing it. A map of the configs is taken off by taking it out of the configs.
+ * Details:
+ * - A name of no such layer, and a value that is not a string, hide nothing.
+ * - The page reads the configs once, when it starts, so a layer hidden, or shown again, changes at the next launch.
+ * - The configs that an earlier launch saved hide what they hid when it fetched them (readSavedConfigs), and the
+ *   fallback configs hide nothing.
+ * - Releases up to 1.13.0 read only rasterTileBaseLayerConfigs of the file, so the field does not change them, and
+ *   they have none of these layers.
+ */
+export function hiddenBuiltInBaseLayersOf(configs: RasterTileBaseLayerConfigsVersion1): ReadonlySet<string> {
+  const names: unknown = configs.hiddenBuiltInBaseLayers;
+  return new Set(Array.isArray(names) ? names.filter((name): name is string => typeof name === 'string') : []);
 }
 
 /** Whether `configs` has base layers to show: what fetched configs, and saved ones, need to be used. */

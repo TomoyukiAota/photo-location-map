@@ -22,7 +22,7 @@ import { MapDateService } from './dated-layers/map-date.service';
 import { createDivIconHtml } from './div-icon';
 import { LeafletContentService } from './leaflet-content.service';
 import { leafletMapLogger as logger } from './leaflet-map-logger';
-import { rasterTileBaseLayerConfigsVersion1 } from './raster-tile-base-layer-configs-version-1';
+import { hiddenBuiltInBaseLayersOf, rasterTileBaseLayerConfigsVersion1 } from './raster-tile-base-layer-configs-version-1';
 import { RegionInfoComponent } from './region-info/region-info.component';
 import { ClusteredMarker, viewToReveal } from './view-to-reveal';
 
@@ -268,9 +268,9 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
 
   private configureBaseLayer() {
     const rasterTileBaseLayers = this.getRasterTileBaseLayers();
-    // The layers of a past date come after those of the list, which the app downloads.
+    // The layers of a past date come after those of the list, which the app downloads, and which can hide them.
     const datedLayers = new DatedLayers(this.map, this.mapDateService, this.leafletContentService, () => this.photos,
-      this.commonBaseLayerOptions);
+      this.commonBaseLayerOptions, hiddenBuiltInBaseLayersOf(rasterTileBaseLayerConfigsVersion1));
     this.datedLayers = datedLayers;
     const baseLayers = {
       ...rasterTileBaseLayers,
@@ -280,6 +280,8 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     // Leaflet gives the control's button the tooltip "Layers", and no option to change it.
     layersControl.getContainer()?.querySelector('.leaflet-control-layers-toggle')?.setAttribute('title', t('map.layers'));
 
+    // A layer chosen before that is not offered now, as one that the list hides, gives way to the first one. It stays
+    // the one saved until the user chooses another, so that it is shown again once it is offered again.
     const previousBaseLayer = baseLayers[this.selectedBaseLayerName];
     const defaultBaseLayer = Object.values(baseLayers)[0];
     const selectedBaseLayer = previousBaseLayer ?? defaultBaseLayer;
