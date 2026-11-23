@@ -256,7 +256,9 @@ one looks softer and is made no faster (above); a larger one is not seen.
   and a thumbnail is logged as made only when its worker says so (`saveJpegPngThumbnail`, `generateThumbnailAndLog`).
   The writes of one thumbnail and its log run one after another (`oneWriteAtATime`), as those of two sizes may
   overlap once the settings changed. New settings look the HEIF photos up in the cache again at the new size: at
-  Fast, those that were cached when the folder was opened keep their thumbnails only if they are of 400.
+  Fast, those that were cached when the folder was opened keep their thumbnails only if they are of 400. An e2e case
+  opens a folder whose HEIF photo has its thumbnail of 800 in the cache, then chooses Fast: with the fix undone, the
+  photo kept the generating image, and the case failed.
 - **The provisional thumbnail**: the viewer shows a JPEG's EXIF thumbnail while its larger one is made, as a HEIF
   photo's small thumbnail, filling the box with `object-fit: contain`, without a shadow, as its element is as large as
   the box then.

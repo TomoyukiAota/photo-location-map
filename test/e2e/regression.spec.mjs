@@ -4275,6 +4275,38 @@ test('the thumbnail status bar offers the fast thumbnails, which are the thumbna
     { timeout: 30000 }).toBe('240x320');
   await expect(thumbnail).toHaveAttribute('src', /^blob:/);
 });
+test('Fast shows the thumbnail that a HEIF photo holds, though the folder was opened with its thumbnail of 800 pixels in the cache', async () => {
+  // The main process makes the photo's thumbnail of high quality at 800 pixels, which the cache keeps, and the folder,
+  // opened again, finds it there. Fast asks for thumbnails of 400 pixels: the photo shows the small thumbnail that it
+  // holds, rather than wait for one of 400 from the cache, which nothing makes then
+  // (ThumbnailGenerationService.applyThumbnailSettings).
+  await relaunchWithoutHevcInPage();
+  const folder = path.join(profile, 'HEIF made at 800 pixels');
+  await mkdir(folder);
+  await copyFile(path.join(root, 'test/e2e/fixtures/demo-with-thumbnail.heic'), path.join(folder, 'a.heic'));
+  await dismissWelcome();
+  const dialog = page.locator('app-settings-dialog');
+  await settings('Thumbnails');
+  await dialog.locator('.thumbnail-size-slider input').fill('800');
+  await dialog.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+
+  const thumbnail = page.locator('mat-tree-node').filter({ hasText: 'a.heic' }).locator('.photo-info-viewer-thumbnail');
+  /** The image that the thumbnail shows once it is loaded. */
+  const shown = () => thumbnail.evaluate(image => image.complete && image.naturalWidth && !image.src.startsWith('data:')
+    ? { src: image.src, size: `${image.naturalWidth}x${image.naturalHeight}` } : null);
+  await openFolderWithPicker(folder);
+  await expect.poll(async () => (await shown())?.src, { timeout: 30000 }).toMatch(/a\.heic\.plm\.jpg\?size=800$/);
+  await openFolderWithPicker(folder);
+  await expect.poll(async () => (await shown())?.src, { timeout: 30000 }).toMatch(/a\.heic\.plm\.jpg\?size=800$/);
+
+  await settings('Thumbnails');
+  await dialog.getByRole('radio', { name: /^Fast/ }).check();
+  await dialog.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect.poll(async () => (await shown())?.size, { timeout: 30000 }).toBe('240x320');
+  expect((await shown()).src).toMatch(/^blob:/);
+});
 test('the thumbnail error dialog lists, sorts and filters the HEIF files without a thumbnail', async () => {
   // Its table gets its rows from ng-table-virtual-scroll, which says nothing about zoneless Angular.
   const folder = path.join(profile, 'HEIF without thumbnails');
