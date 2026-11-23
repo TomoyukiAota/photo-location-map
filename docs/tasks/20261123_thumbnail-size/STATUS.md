@@ -1,6 +1,7 @@
 # The size of the thumbnails, chosen by the user: status
 
-Investigated and proposed on 2026-11-23. Nothing is implemented: the owner picks an option first.
+Investigated and proposed on 2026-11-23; the owner chose the design on 2026-11-24 ("What the owner chose", at the
+end). Nothing is implemented yet.
 
 ## What was asked
 
@@ -206,3 +207,19 @@ one looks softer and is made no faster (above); a larger one is not seen.
 - A quiet computer: every time here was taken with a load average of 11 to 32 on 10 cores.
 - Chromium's temporary file at each size.
 - What the search for faces finds in HEIF thumbnails of 200 and 600 pixels.
+
+## What the owner chose (2026-11-24)
+
+- A slider chooses the longer side of the thumbnails, from 400 to 1,000 pixels in steps of 100, shown in a box of
+  half that, 200 to 500 CSS pixels, in the tree's rows and the popups; the tiles of a cluster's popup keep theirs.
+  Nothing below 400: a smaller thumbnail is not faster (above), and Fast stays the choice for speed.
+- The slider sits under High quality, in the choice that is of HEIF thumbnails today and becomes one of every
+  thumbnail: Fast shows the thumbnails that the photos hold, in today's box; High quality makes them from the photos,
+  at the slider's size. The slider is disabled while Fast is chosen.
+- At High quality, a thumbnail that the photo holds is not stretched to fill the box: where it is smaller than the
+  chosen size, one is made from the photo, at 400 too. A JPEG with a camera's EXIF thumbnail of 160 x 120 then gets
+  one made at the default setting, as it does not today: the first open of a folder reads every JPEG once (2,000
+  photos in 1 to 2.5 minutes, the rows in view first), and the cache keeps 52 KB more for each JPEG.
+- No item in the View menu.
+- Not decided yet: whether the photo's own small thumbnail is shown while the larger one is made, as a HEIF photo's is
+  today.
