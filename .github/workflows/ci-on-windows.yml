@@ -38,24 +38,34 @@ jobs:
         predicate-quantifier: every
         filters: .github/ci-filters.yml
 
-  test:
-    # The name is given here rather than by a matrix, so that the required check is reported even when the job is skipped.
-    name: test (windows-latest)
+  part-1:
+    # TL;DR: The tests on Windows, in two parts that run at once, each on a runner of its own. Each part makes and
+    # installs the package and runs half of the e2e suite against it; part 1 also runs the checks, the unit tests and the
+    # uninstaller test, and part 2 publishes. The job "test" below reports both as the required check
+    # "test (windows-latest)".
+    # Details: In one job, the e2e suite took about 9 minutes after about 7 for the rest, and the publishing about 4
+    # more. PLM_E2E_SHARD names the half of the suite (test/e2e/playwright.config.mjs), and PLM_CI_PART leaves out of
+    # each part what the other runs alone.
+    # The names are written out rather than given by a matrix or an expression, so that the checks are reported even
+    # when the jobs are skipped: a skipped job's name expression is not evaluated.
+    name: test (windows-latest), part 1 of 2
     runs-on: windows-latest
 
-    # Skipped when only documents changed, which passes the required check. If "changes" fails, the tests run.
-    # The publish steps below are skipped with it, since documents cannot break publishing.
+    # Skipped when only documents changed. If "changes" fails, the tests run.
+    # The publish steps are skipped with part 2, since documents cannot break publishing.
     needs: changes
     if: ${{ !cancelled() && needs.changes.outputs.app != 'false' }}
 
     # The timeout below is a preventative measure to bound the duration of a hung job.
-    # This job usually takes about 10 minutes, so the timeout below has enough margin.
+    # This job usually takes about 12 minutes, so the timeout below has enough margin.
     timeout-minutes: 30
 
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # for electron-builder
+      PLM_CI_PART: '1'
+      PLM_E2E_SHARD: '1/2'
 
-    steps:
+    steps: &steps
     - uses: actions/checkout@v7.0.1
 
     - name: Install Node.js with the version in mise.toml
@@ -70,28 +80,37 @@ jobs:
     - name: Verify Electron and embedded Node
       run: npm run verify:electron
 
+    # From here to "npm run test:live-reload", the steps run in part 1 only.
     - name: npm run test:dependency-compat
+      if: ${{ env.PLM_CI_PART != '2' }}
       run: npm run test:dependency-compat
 
     - name: npm run test:website
+      if: ${{ env.PLM_CI_PART != '2' }}
       run: npm run test:website
 
     - name: npm run lint:ng
+      if: ${{ env.PLM_CI_PART != '2' }}
       run: npm run lint:ng
 
     - name: npm run lint:main
+      if: ${{ env.PLM_CI_PART != '2' }}
       run: npm run lint:main
 
     - name: npm run lint:script
+      if: ${{ env.PLM_CI_PART != '2' }}
       run: npm run lint:script
 
     - name: npm run test:unit:ng
+      if: ${{ env.PLM_CI_PART != '2' }}
       run: npm run test:unit:ng
 
     - name: npm run test:unit:em:main
+      if: ${{ env.PLM_CI_PART != '2' }}
       run: npm run test:unit:em:main
 
     - name: npm run test:unit:em:renderer
+      if: ${{ env.PLM_CI_PART != '2' }}
       run: npm run test:unit:em:renderer
 
     # TL;DR: Check that the Electron-Mocha suites start from a checkout whose path contains a space, which
@@ -103,6 +122,7 @@ jobs:
     # does not see the quit hook's detached cleanup, so check that site in the release's source
     # (see "Departures kept for a needed feature" in docs/contributing/dependencies.md).
     - name: npm run test:unit:em:main and test:unit:em:renderer from a checkout path with a space
+      if: ${{ env.PLM_CI_PART != '2' }}
       run: |
         $PSNativeCommandUseErrorActionPreference = $true
         $checkout = Join-Path $env:RUNNER_TEMP 'checkout with spaces'
@@ -114,6 +134,7 @@ jobs:
         npm run test:unit:em:renderer
 
     - name: npm run test:live-reload
+      if: ${{ env.PLM_CI_PART != '2' }}
       run: npm run test:live-reload
 
     - name: npm run test:package
@@ -134,26 +155,62 @@ jobs:
       # uninstalls the application that the package test installed, and checks that build/installer.nsh deletes the
       # Explorer context menu on uninstall, without stopping at a key that it cannot delete, and keeps it on an update
       # (script/package-test/uninstaller-test.js).
-      # It runs when only the e2e suite failed, as the suite cannot change the installation.
-      if: ${{ !cancelled() && steps.package-test.outcome == 'success' }}
+      # It runs when only the e2e suite failed, as the suite cannot change the installation. In part 1 only.
+      if: ${{ !cancelled() && steps.package-test.outcome == 'success' && env.PLM_CI_PART != '2' }}
       timeout-minutes: 6
       env:
         PLM_UNINSTALLER_TEST: 'true'
       run: npm run test:uninstaller
 
+    # The publish steps run in part 2 only, after its half of the e2e suite: on every push (AGENTS.md, "The Windows CI
+    # publishes on purpose").
     - name: '[Publish to GitHub Releases] Clean-up by "git clean -fdx" (1st time)'
+      if: ${{ env.PLM_CI_PART != '1' }}
       run: git clean -fdx
 
     - name: '[Publish to GitHub Releases] Clean-up by "git clean -fdx" (2nd time to be sure)'
+      if: ${{ env.PLM_CI_PART != '1' }}
       run: git clean -fdx
 
     - name: '[Publish to GitHub Releases] npm ci'
+      if: ${{ env.PLM_CI_PART != '1' }}
       run: npm ci
 
     - name: '[Publish to GitHub Releases] Create and publish Windows package'
+      if: ${{ env.PLM_CI_PART != '1' }}
       uses: nick-fields/retry@v4.0.0
       with:
         timeout_minutes: 60
         max_attempts: 10
         retry_on: error
         command: npm run publish:windows      # To publish, GH_TOKEN environment variable needs to be set.
+
+  part-2:
+    # See part-1.
+    name: test (windows-latest), part 2 of 2
+    runs-on: windows-latest
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.app != 'false' }}
+    timeout-minutes: 30    # See part-1. This job usually takes about 13 minutes.
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # for electron-builder
+      PLM_CI_PART: '2'
+      PLM_E2E_SHARD: '2/2'
+    steps: *steps
+
+  test:
+    # The required check of Windows: it passes when both parts passed. When only documents changed, it is skipped with
+    # them, which passes the check too. It only reads their results, so it runs on Ubuntu.
+    name: test (windows-latest)
+    runs-on: ubuntu-26.04
+    needs: [changes, part-1, part-2]
+    if: ${{ !cancelled() && needs.changes.outputs.app != 'false' }}
+    timeout-minutes: 5
+    steps:
+    - name: Check that both parts passed
+      run: |
+        echo "Part 1 of 2: ${{ needs.part-1.result }}. Part 2 of 2: ${{ needs.part-2.result }}."
+        if [ "${{ needs.part-1.result }}" != success ] || [ "${{ needs.part-2.result }}" != success ]; then
+          echo "::error::Read the log of the part that did not pass, which is a job of its own in this run."
+          exit 1
+        fi
