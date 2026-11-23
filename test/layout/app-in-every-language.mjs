@@ -8,7 +8,7 @@
 // question that a dropped folder asks, the home view without and
 // with a folder of photos (in a window of 1200x800 and of 800x600), a photo's popup with its menu and the menu's submenus, the tree's menu, the rows that the tree keeps at its top with the menu of one of them, the Sort menu and its info dialog, the
 // chart's menu, its message for a duration that it cannot show and its button for the photos within a zoom, the date of
-// the map's layers of a past date with the calendar that chooses it (its days and its months) and while it loads, a region on the map, the tabs of the Settings dialog with the choices of the clock's
+// the map's layer of a past date and while its dates load, a region on the map, the tabs of the Settings dialog with the choices of the clock's
 // field, the question before a restart, the About box, the status bar while the thumbnails of HEIF files are made, the
 // dialog of the thumbnails that failed, the dialog of a folder without location data, and the dialog of the search for
 // faces, while it looks and when it found none.
@@ -388,9 +388,9 @@ for (const code of codes) {
       await screen('chart-zoom', 'app-date-time-taken-chart .sidebar', 'app-date-time-taken-chart', 'app-date-time-taken-chart');
     });
     await step('map-date', async () => {
-      // The box of the date of each layer of a past date, with the servers' answers of the e2e suite: zoomed out to
-      // the photos of the world, Wayback's says that the imagery has a date only closer. Its dates are held at first,
-      // to see them loading.
+      // The box of the date of the layer of a past date, with the servers' answers of the e2e suite: zoomed out to the
+      // photos of the world, it says that the imagery has a date only closer. Its dates are held at first, to see them
+      // loading.
       let answerDates;
       await answerDatedLayers(page, { held: new Promise(resolve => answerDates = resolve) });
       const chooseLayer = async name => {
@@ -398,22 +398,6 @@ for (const code of codes) {
         await page.locator('.leaflet-control-layers-base label').filter({ hasText: name }).click();
         await page.mouse.move(1, 1);
       };
-      await chooseLayer('OpenHistoricalMap');
-      // The field shows the date at once, and opens the calendar once its datepicker, which is loaded then, has marked
-      // it (MapDatePickerComponent).
-      await page.waitForSelector('.plm-leaflet-map-date-picker-field.datepicker-input');
-      await page.waitForFunction(() => !!document.querySelector('.plm-leaflet-map-date-picker-field')?.value);
-      await screen('map-date', '.plm-leaflet-map-date', '#home-map', '#home-map');
-      // Its calendar, which is in the page's body, with the names of the days, and with those of the months a level
-      // up. The window is its bounds.
-      await page.locator('.plm-leaflet-map-date-picker-field').click();
-      await page.waitForSelector('body > .datepicker.active');
-      await screen('map-date-calendar', 'body > .datepicker', '#home-map');
-      await page.locator('body > .datepicker .view-switch').click();
-      await page.waitForSelector('body > .datepicker .months');
-      await screen('map-date-calendar-months', 'body > .datepicker', '#home-map');
-      await page.keyboard.press('Escape');
-      await page.waitForSelector('body > .datepicker.active', { state: 'detached' });
       await chooseLayer('Esri World Imagery Wayback');
       await page.waitForSelector('.plm-leaflet-map-date-spinner');
       await screen('map-date-loading', '.plm-leaflet-map-date', '#home-map', '#home-map');

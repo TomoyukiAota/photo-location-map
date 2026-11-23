@@ -1,5 +1,4 @@
 import { inject, Service, signal } from '@angular/core';
-import moment from 'moment';
 import { waybackUrls } from '../../../../../src-shared/map/dated-layer-urls';
 import { centerOf, releasesOf, tileAt, versionsAt, WaybackRelease, WaybackVersion } from './wayback';
 import { WaybackDateCache } from './wayback-date-cache';
@@ -22,22 +21,17 @@ interface VersionsLookup {
 }
 
 /**
- * What the map's layers of a past date keep apart from the map (DatedLayers), which they are made with: the dates that
+ * What the map's layer of a past date keeps apart from the map (DatedLayers), which it is made with: the imagery that
  * the user chose, and what Esri World Imagery Wayback answered, which WaybackDateCache keeps on the computer too.
  */
 @Service()
 export class MapDateService {
-  /**
-   * Whether each layer of a past date shows the date of the photos on the map, rather than the one chosen: each layer
-   * on its own, as a date chosen in one says nothing of the other.
-   */
-  public readonly matchPhotoDates = { wayback: signal(true), openHistoricalMap: signal(true) } as const;
+  /** Whether Wayback shows the imagery taken nearest to the dates of the photos on the map, rather than the one chosen. */
+  public readonly matchPhotoDates = signal(true);
   /** The release of Wayback that the user chose, by its number, or null for the newest one. */
   public readonly chosenRelease = signal<number | null>(null);
   /** The release of Wayback that the map shows, chosen or matched to the photos, or null before one is known. */
   public readonly shownRelease = signal<number | null>(null);
-  /** The date of OpenHistoricalMap that the user chose, YYYY-MM-DD: today until they choose one. */
-  public readonly chosenDate = signal(moment().format('YYYY-MM-DD'));
 
   private readonly cache = inject(WaybackDateCache);
   private releases: Promise<WaybackRelease[]> | null = null;

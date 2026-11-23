@@ -126,11 +126,8 @@
     "removeRegion": "Remove Region",
     "dates": {
       "imageryDate": "Imagery date at the map’s center",
-      "mapDate": "Date of the map",
       "olderImagery": "Older imagery",
       "newerImagery": "Newer imagery",
-      "yearEarlier": "One year earlier",
-      "yearLater": "One year later",
       "matchPhotoDates": "Match the dates the photos were taken",
       "nearPhotoDates": "{{date}} (near the photos’ dates)",
       "versionOf": "Version of {{date}}",
@@ -139,8 +136,7 @@
       "noPhotoDates": "No photo on the map has a date taken.",
       "loading": "Loading the dates...",
       "failed": "The dates could not be loaded.",
-      "zoomIn": "Zoom in to see when the imagery was taken.",
-      "mapFailed": "This map cannot be shown."
+      "zoomIn": "Zoom in to see when the imagery was taken."
     }
   },
   "chart": {
