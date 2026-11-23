@@ -23,7 +23,7 @@ export class JpegPngImageSource {
     return bridge().jpegPngThumbnails.readPhoto(photoPath);
   }
 
-  /** A JPEG of the photo's thumbnail; rejects when the file cannot be decoded. */
+  /** A JPEG of the photo's thumbnail, which takes the bytes' buffer; rejects when the file cannot be decoded. */
   public makeThumbnail(bytes: Uint8Array, photoPath: string): Promise<Blob> {
     return makeThumbnailJpeg(bytes, photoPath);
   }

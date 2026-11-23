@@ -51,9 +51,17 @@ export function pageHasImageDecoder(): boolean {
  * A JPEG of the photo whose file holds `bytes`, at most 400 pixels on its longer side, turned as the photo is shown.
  * What a PNG leaves transparent is white, as the page is around the thumbnail: a JPEG has no transparency, and shows
  * a transparent pixel black. Rejects when the photo cannot be decoded, as one whose file is cut short.
+ * TL;DR: The decoder takes the bytes' buffer, rather than a copy of it, where the bytes are the whole of it, as those
+ * that the main process sends are: they are empty afterwards.
+ * Details: Copied, each photo's bytes stayed in the page until it collected its garbage, which it did later than it
+ * made thumbnails: the page went up to 1.39 GB while it made those of 2,000 photos of 12 megapixels, 4.5 MB each,
+ * against 903 MB while it showed the photos themselves. Taken, they go with the decoder.
  */
 export async function makeThumbnailJpeg(bytes: Uint8Array, filePath: string): Promise<Blob> {
-  const decoder = new ImageDecoder({ data: bytes, type: imageTypeOf(bytes, filePath), desiredWidth: desiredSize, desiredHeight: desiredSize });
+  const type = imageTypeOf(bytes, filePath);
+  const isWholeBuffer = bytes.buffer instanceof ArrayBuffer && bytes.byteOffset === 0 && bytes.byteLength === bytes.buffer.byteLength;
+  const decoder = new ImageDecoder({ data: bytes, type, desiredWidth: desiredSize, desiredHeight: desiredSize,
+    transfer: isWholeBuffer ? [bytes.buffer as ArrayBuffer] : [] });
   let frame: VideoFrame | undefined;
   let timer: ReturnType<typeof setTimeout> | undefined;
   try {

@@ -84,6 +84,20 @@ describe('makeThumbnailJpeg', function () {
     assert.strictEqual(imageTypeOf(new Uint8Array([0, 0, 0, 0]), '/photos/a.jpg'), 'image/jpeg');
   });
 
+  it('gives the decoder the bytes\' buffer where they are the whole of it, and copies the bytes of a part of one', async () => {
+    const whole = bytesOf(uprightPhoto);
+    await makeThumbnailJpeg(whole, uprightPhoto);
+    assert.strictEqual(whole.byteLength, 0);
+
+    const file = bytesOf(uprightPhoto);
+    const larger = new Uint8Array(file.byteLength + 16);
+    larger.set(file, 16);
+    const part = larger.subarray(16);
+    const pixels = await pixelsOf(await makeThumbnailJpeg(part, uprightPhoto));
+    assert.deepStrictEqual([pixels.width, pixels.height], [400, 300]);
+    assert.strictEqual(part.byteLength, file.byteLength);
+  });
+
   it('rejects a photo whose file is cut short, which the decoder refuses', async () => {
     const cutShort = bytesOf(uprightPhoto).slice(0, 2_000_000);
     await assert.rejects(makeThumbnailJpeg(cutShort, uprightPhoto), (error: unknown) => error instanceof DOMException && error.name === 'EncodingError');

@@ -124,7 +124,9 @@ describe('PhotoInfoViewerComponent', () => {
 
     beforeEach(() => {
       near.set(false);
-      TestBed.configureTestingModule({ providers: [{ provide: NearViewDirective, useValue: { isNear: near.asReadonly() } }] });
+      TestBed.configureTestingModule({
+        providers: [{ provide: NearViewDirective, useValue: { isNear: near.asReadonly(), distanceFromMiddleWhenNear: 120 } }],
+      });
     });
 
     it('shows the shooting time with the room of the thumbnail and the buttons, and them once the row comes near', async () => {
@@ -145,14 +147,14 @@ describe('PhotoInfoViewerComponent', () => {
       expect(element.querySelector('.photo-info-viewer-date-time-taken').textContent).toBe('2019-03-16 Sat 17:29:58');
     });
 
-    it('asks for the thumbnail that the app makes of a JPEG or PNG photo only once the row comes near', async () => {
+    it('asks for the thumbnail that the app makes of a JPEG or PNG photo only once the row comes near, with how near', async () => {
       const watch = vi.spyOn(TestBed.inject(JpegPngThumbnailService), 'watch');
       await show(photoAt('/photos/drawing.png'), 'dir-tree-view');
       expect(watch).not.toHaveBeenCalled();
 
       near.set(true);
       await fixture.whenStable();
-      expect(watch).toHaveBeenCalledWith('/photos/drawing.png');
+      expect(watch).toHaveBeenCalledWith('/photos/drawing.png', 120);
     });
 
     it('marks the shooting time of a photo that has none, as the row does once it is near', async () => {

@@ -9,6 +9,16 @@ import { Service } from '@angular/core';
 export const nearViewMarginPx = 1250;
 
 /**
+ * How far the middle of an entry's element is from the middle of the window, in pixels, as the observer measured it:
+ * the middle of its root's bounds, which its margin widens on each side alike. 0 where it gives no bounds.
+ */
+function distanceFromMiddle({ boundingClientRect: element, rootBounds: window }: IntersectionObserverEntry): number {
+  if (!element || !window)
+    return 0;
+  return Math.abs((element.top + element.bottom) / 2 - (window.top + window.bottom) / 2);
+}
+
+/**
  * Tells when an element comes near the part of the page that is shown.
  * TL;DR: One IntersectionObserver for every element, with a margin around the window and around each box that the
  * element scrolls in, such as the sidebar's pane; it stops watching an element once the element has come near.
@@ -19,15 +29,15 @@ export const nearViewMarginPx = 1250;
 @Service()
 export class NearViewService {
   /** What to do when each element that is watched comes near. */
-  private readonly whenNear = new Map<Element, () => void>();
+  private readonly whenNear = new Map<Element, (distanceFromMiddle: number) => void>();
   private observer: IntersectionObserver | undefined;
 
   /**
    * Calls `whenNear` once, when the element comes near the part of the page that is shown, or, when it is near
-   * already, as soon as the page has been laid out. Returns a function that stops watching the element, for an
-   * element that is removed before it came near.
+   * already, as soon as the page has been laid out, with how far the element's middle is from the window's then, in
+   * pixels. Returns a function that stops watching the element, for an element that is removed before it came near.
    */
-  public watch(element: Element, whenNear: () => void): () => void {
+  public watch(element: Element, whenNear: (distanceFromMiddle: number) => void): () => void {
     this.observer ??= new IntersectionObserver(entries => this.handle(entries), {
       rootMargin: `${nearViewMarginPx}px`,
       scrollMargin: `${nearViewMarginPx}px`,
@@ -43,7 +53,7 @@ export class NearViewService {
       if (!entry.isIntersecting || !whenNear)
         continue;
       this.stopWatching(entry.target);
-      whenNear();
+      whenNear(distanceFromMiddle(entry));
     }
   }
 

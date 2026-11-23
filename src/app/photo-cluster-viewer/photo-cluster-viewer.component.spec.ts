@@ -38,7 +38,10 @@ describe('PhotoClusterViewerComponent', () => {
     livePhotos = vi.spyOn(OpenedDirectory, 'getLivePhotosFilePathIfAvailable').mockReturnValue({ livePhotosAvailable: false, livePhotosFilePath: '' });
     // Each tile is near what the tiles show as soon as it is made: jsdom has no IntersectionObserver.
     TestBed.configureTestingModule({
-      providers: [{ provide: NearViewService, useValue: { watch: (_element: Element, whenNear: () => void) => { whenNear(); return () => undefined; } } }],
+      providers: [{
+        provide: NearViewService,
+        useValue: { watch: (_element: Element, whenNear: (distanceFromMiddle: number) => void) => { whenNear(0); return () => undefined; } },
+      }],
     });
     fixture = TestBed.createComponent(PhotoClusterViewerComponent);
     fixture.componentRef.setInput('photos', [photo('late.jpg', 20), photo('early.jpg', 8), photo('noon.jpg', 12)]);

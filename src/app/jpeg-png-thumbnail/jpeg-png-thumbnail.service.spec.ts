@@ -144,6 +144,26 @@ describe('JpegPngThumbnailService', () => {
     expect(read).toHaveLength(5);
   });
 
+  it('makes the photos asked for in a turn nearest first, then in the order that they asked', async () => {
+    const paths = ['/above-2.jpg', '/above-1.jpg', '/in-view-1.jpg', '/in-view-2.jpg', '/below-1.jpg'];
+    // The first is read at once, as a lane is free: held, so that the others wait, and are taken by their order.
+    const first = held<PhotoFileForThumbnail | null>();
+    reading.set('/in-view-1.jpg', first.promise);
+    await service.prepare(paths.map(path => photoAt(path)));
+
+    // Rows that a jump brought near, in their order in the tree, each with how far it was from the window's middle.
+    service.watch('/above-2.jpg', 900);
+    service.watch('/above-1.jpg', 600);
+    service.watch('/in-view-1.jpg', 50);
+    service.watch('/in-view-2.jpg', 50);
+    service.watch('/below-1.jpg', 500);
+    await pass();
+    first.resolve({ bytes: new Uint8Array([1]), lastModified });
+    await pass();
+
+    expect(read).toEqual(['/in-view-1.jpg', '/in-view-2.jpg', '/below-1.jpg', '/above-1.jpg', '/above-2.jpg']);
+  });
+
   it('makes the folder\'s other photos in its order, one at a time, once its tree has shown its first', async () => {
     const paths = ['/a.png', '/b.png', '/c.png'];
     const files = new Map(paths.map(path => [path, held<PhotoFileForThumbnail | null>()]));

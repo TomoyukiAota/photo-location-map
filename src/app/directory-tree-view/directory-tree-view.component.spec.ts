@@ -32,11 +32,11 @@ class DummyPhotoInfoViewerComponent {
  */
 class NearViewDouble implements Pick<NearViewService, 'watch'> {
   public keepsAway = false;
-  private readonly waiting = new Map<Element, () => void>();
+  private readonly waiting = new Map<Element, (distanceFromMiddle: number) => void>();
 
-  public watch(element: Element, whenNear: () => void): () => void {
+  public watch(element: Element, whenNear: (distanceFromMiddle: number) => void): () => void {
     if (!this.keepsAway) {
-      whenNear();
+      whenNear(0);
       return () => undefined;
     }
     this.waiting.set(element, whenNear);
@@ -46,7 +46,7 @@ class NearViewDouble implements Pick<NearViewService, 'watch'> {
   public bringNear(): void {
     const whenNear = [...this.waiting.values()];
     this.waiting.clear();
-    whenNear.forEach(each => each());
+    whenNear.forEach(each => each(0));
   }
 }
 

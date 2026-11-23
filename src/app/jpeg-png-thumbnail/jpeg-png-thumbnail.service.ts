@@ -59,9 +59,10 @@ function isRefusedData(error: unknown): boolean {
  *   thumbnails of HEIF photos, with the time that the photo had when it was read
  *   (src-main/thumbnail-generation/jpeg-png-thumbnail-files.ts).
  * - A place asks for its photo once it comes near the view: a row of the tree or a tile of a cluster's popup by its
- *   NearViewDirective, a marker's popup at once. The photos asked for in one turn are made in the order that they
- *   asked, the first rows of a folder expanded first, and those of a later turn before them, as a scroll brings
- *   them nearer.
+ *   NearViewDirective, a marker's popup at once. The photos asked for in one turn are made nearest first, as a row
+ *   tells how far it was from the window's middle, then in the order that they asked: the rows in view before those
+ *   that a jump brought near above them, the first tiles of a popup first. Those of a later turn are made before
+ *   them, as a scroll brings them nearer.
  * - Each photo has a signal of its own, so that a thumbnail made renders only the places of its photo.
  * - A photo whose thumbnail cannot be made shows itself, as before; the cache says so for one whose file the decoder
  *   refused, so that it is not tried again until the file changes.
@@ -73,8 +74,8 @@ export class JpegPngThumbnailService {
   private states = new Map<string, WritableSignal<JpegPngThumbnailState>>();
   /** The photos whose thumbnails wait to be made. */
   private readonly waiting = new Set<string>();
-  /** The photos that the places asked for in this turn, in the order that they asked. */
-  private readonly askedInThisTurn: string[] = [];
+  /** The photos that the places asked for in this turn, in the order that they asked, with how near each was. */
+  private readonly askedInThisTurn: { photoPath: string, distance: number }[] = [];
   /** The photos that the places asked for, taken from the end: each turn's put on in reverse. */
   private readonly asked: string[] = [];
   /** The folder's photos to make, in its order, which are made from `nextOfFolder` on once no place asks for any. */
@@ -161,11 +162,14 @@ export class JpegPngThumbnailService {
     }, backgroundStartDelayMs);
   }
 
-  /** Makes the photo's thumbnail before the folder's others, as a place shows it, unless it is made or being made. */
-  public watch(photoPath: string): void {
+  /**
+   * Makes the photo's thumbnail before the folder's others, as a place shows it, unless it is made or being made:
+   * before those asked for in the same turn that are farther than `distance` from what is shown, in pixels.
+   */
+  public watch(photoPath: string, distance = 0): void {
     if (!this.waiting.has(photoPath))
       return;
-    this.askedInThisTurn.push(photoPath);
+    this.askedInThisTurn.push({ photoPath, distance });
     if (this.askedInThisTurn.length === 1)
       queueMicrotask(() => this.takeAskedInThisTurn());
   }
@@ -198,9 +202,10 @@ export class JpegPngThumbnailService {
   }
 
   private takeAskedInThisTurn(): void {
-    const asked = this.askedInThisTurn.splice(0);
+    // The nearest first, and those as near in the order that they asked, as sort() keeps it.
+    const asked = this.askedInThisTurn.splice(0).sort((a, b) => a.distance - b.distance);
     for (let index = asked.length - 1; index >= 0; index--)
-      this.asked.push(asked[index]);
+      this.asked.push(asked[index].photoPath);
     this.makeNext();
   }
 

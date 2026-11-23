@@ -201,9 +201,13 @@ export class PhotoInfoViewerComponent {
       if (FilenameExtension.isThumbnailGenerationAvailable(photo.filenameExtension))
         this.heifThumbnailService.watch(photo.path);
       // That of a JPEG or PNG photo without one in its EXIF data, once a row or a tile comes near the view, as its
-      // NearViewDirective says, and at once in a popup, which has none.
-      if (needsMadeThumbnail(photo) && (this.nearView?.isNear() ?? true))
-        this.jpegPngThumbnailService.watch(photo.path);
+      // NearViewDirective says, and at once in a popup, which has none. A row tells how far it was from the window's
+      // middle, as the sidebar fills the window's height; the tiles of a popup are made in their order, whose first
+      // are those that the popup shows.
+      if (needsMadeThumbnail(photo) && (this.nearView?.isNear() ?? true)) {
+        const distance = this.place() === 'dir-tree-view' ? this.nearView?.distanceFromMiddleWhenNear ?? 0 : 0;
+        this.jpegPngThumbnailService.watch(photo.path, distance);
+      }
 
       if (thumbnail.kind === 'generating') {
         photoPathOfGeneratingThumbnail = photo.path;
