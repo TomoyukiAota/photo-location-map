@@ -19,10 +19,7 @@ import { mainWindowContentSecurityPolicy } from './content-security-policy.js';
 
 /** The address of the app's page. */
 export const appPageUrl = `${appPageOrigin}/index.html`;
-const appPageHost = new URL(appPageUrl).host;
 const appPageLogger = createPrependedLogger('[App Page]');
-/** How many requests of the page the handler is answering, for the line of one that is not answered. */
-let requestsBeingAnswered = 0;
 
 /** Answers the requests for the app's page from now on, once, however often the main window is made. */
 export function serveAppPage(distFolder = path.join(app.getAppPath(), 'dist')): void {
@@ -39,59 +36,43 @@ export async function respondToAppPageRequest(request: Request, distFolder: stri
   if (request.method !== 'GET')
     return new Response(null, { status: 405 });
 
-  let filePath: string;
-  try {
-    const url = new URL(request.url);
-    if (url.host !== appPageHost)
-      return notFound(request, 'its host is not the page\'s');
-    filePath = path.join(distFolder, decodeURIComponent(url.pathname));
-  } catch {
-    return notFound(request, 'its address, or an escape in it, is not one');
-  }
+  // TL;DR: The file's path is read from the request's address as a text, as photoFilePathOf reads a photo's, and not
+  // with Node.js's URL, whose parts were now and then those of another URL in the e2e suite.
+  // Details:
+  // - What happened: on Windows CI, from 2026-11-18, one launch of the app in a run of the e2e suite now and then
+  //   went without a file of its page: main.js, which left the home view unrendered, scripts.js, which left the map
+  //   without its drawing toolbar, or styles.css, which left Leaflet-Geoman's buttons visible, in six runs of about 550,
+  //   four of them on 2026-11-23. In 16 runs of the suite on Windows CI with each answer of 404 logged, the handler,
+  //   which then checked the host of new URL(request.url), answered plm-app://app/scripts.js once and
+  //   plm-app://app/chunk-….js once as of another host, both at the first launch of a case, while the suite's launch
+  //   evaluated code in the main process.
+  // - Why: Node.js's URL (Node.js 24.22.2, in Electron 45.3.2) takes where a URL's host and path start and end from a
+  //   buffer that every parse writes (bindingUrl.urlComponents in lib/internal/url.js), and reads it after it has
+  //   called another function, where V8 runs what interrupts it. Node.js's inspector runs a debugger's messages there,
+  //   in the middle of the code that runs, and Playwright controls the e2e suite's main process through the inspector:
+  //   a URL that code evaluated by Playwright parses at that point, as require() of a module does, leaves its parts to
+  //   the URL that was being made. On macOS, with an inspector client evaluating new URL() of a file: address, 36 of
+  //   2.3 million new URL('plm-app://app/chunk-BCYMLwnQ.js') had the host "" and the path "://app/chunk-BCYMLwnQ.js".
+  //   Node.js's main branch reads the buffer in the same way (2026-11-23).
+  // - Users do not have it: the package's main process has no inspector, which its fuse enableNodeCliInspectArguments
+  //   keeps off (docs/contributing/electron-fuses.md), so nothing runs between a parse and its read. Only the e2e
+  //   suite's copy of the package has the fuse on (script/package-test/inspectable-package.js).
+  // - Ruled out on the way: stat of a path in app.asar, which looks the path up in the archive's header in memory; and
+  //   a race of the requests among themselves, as 1,902 launches on Windows CI, after each of which the page's files
+  //   were requested 660 times at once from the page and the main process, got every file.
+  const pathInBuild = pathInBuildOf(request.url);
+  if (pathInBuild === undefined)
+    return notFound(request, 'it is not an address of the page, or an escape in it is not one');
+  const filePath = path.join(distFolder, pathInBuild);
 
   // A path that leaves the folder, as with an escaped "..\" on Windows, is not answered.
   const relative = path.relative(distFolder, filePath);
   if (!relative || relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative))
     return notFound(request, 'its path is not of a file in the build');
-  requestsBeingAnswered++;
-  try {
-    return await respondWithFile(filePath, relative, language);
-  } finally {
-    requestsBeingAnswered--;
-  }
-}
-
-/** The file at `filePath`, `relative` in the build, for a request of the page: 404 when it is not a file. */
-async function respondWithFile(filePath: string, relative: string, language: LanguageCode): Promise<Response> {
-  // TL;DR: A file that stat does not find is answered with 404, and logged with what tells why (logNotFound), as the
-  // page went without one of its files now and then on Windows CI, for a reason not found yet.
-  // Details:
-  // - What happened: from 2026-11-18, six runs of the e2e suite on Windows CI in about 550 failed so, four of them on
-  //   2026-11-23, each at one launch of the packaged app, most of them the first launch of a case. Twice main.js was
-  //   answered with 404, which left the home view unrendered; as far as the cases' failures tell, the other four went
-  //   without scripts.js (the map had no drawing toolbar) or styles.css (Leaflet-Geoman's buttons showed, and the
-  //   map's tile containers took a click). The suite now fails such a launch at once, with what is logged here
-  //   (launch in test/e2e/regression.spec.mjs).
-  // - The 404 is this handler's: Electron answers a handler that throws with net::ERR_UNEXPECTED, and net.fetch of a
-  //   file of the archive that cannot be read rejects (AsarURLLoader's net::ERR_FILE_NOT_FOUND); nothing else in
-  //   Electron answers 404. Of the ways here to a 404, only this stat depends on more than the address.
-  // - Ruled out by Electron 45.3.2's source: fs.promises.stat of a path in app.asar reads nothing from the disk, but
-  //   looks the path up in the archive's header, which the main process has held since it loaded its own code from
-  //   the archive (lib/node/asar-fs-wrapper.ts, shell/common/asar/archive.cc), so a lock on the file or a scan of it
-  //   cannot make it fail. It fails for an archive that cannot be opened, which then is not kept, or with asar support
-  //   off (process.noAsar), which Electron turns on only during child_process.exec and execSync, which return before
-  //   anything else runs, and which the main process does not call.
-  // - Ruled out by measurement: 1,902 launches of the package on Windows CI, each followed by 120 fetches of the page's
-  //   files from the page and 450 stats and 90 requests of them from the main process, all at once, got every file.
-  //   So did 200,000 stats at once of the files in an archive on macOS. The page's first load in a launch is what
-  //   goes without a file.
-  // Undefined for a file, and otherwise why it is not answered: what stat threw, or that it is not a file.
   const notAFile = await fs.promises.stat(filePath)
-    .then(stats => stats.isFile() ? undefined : shown('it is not a file'), (error: unknown) => error ?? shown('stat failed'));
-  if (notAFile !== undefined) {
-    logNotFound(filePath, relative, notAFile);
-    return notFound();
-  }
+    .then(stats => stats.isFile() ? undefined : 'it is not a file', (error: unknown) => `stat failed: ${String(error)}`);
+  if (notAFile !== undefined)
+    return notFound(request, notAFile);
   if (relative === 'index.html') {
     const page = await pageInLanguage(filePath, language);
     if (page)
@@ -111,13 +92,27 @@ async function respondWithFile(filePath: string, relative: string, language: Lan
   // lib/browser/api/protocol.ts); either way, it takes the answer's headers. The policy's first version put the body
   // in a Response of its own, which sent every file of the page through that stream, and in one run of the e2e suite
   // on Windows CI, the page then went without styles.css: the map's tile containers, which Leaflet's CSS there lets
-  // the mouse pass through, took a click. Why was not found, as 150 launches on macOS applied it each time, so the
-  // files go as they did. The page has gone without a file since, with net.fetch's own answer too, so the stream was
-  // not the cause, or not the only one (see the start of this function). Each file has the policy: it applies to the
-  // document that index.html is, and would apply to a worker by its script's answer. index.html alone is a Response
-  // of its own (pageInLanguage), whose body is a string of the size of the page, not a file read as it is sent.
+  // the mouse pass through, took a click. The stream was not why: the address was read wrong, as the comment above
+  // tells, which the page met with net.fetch's own answer too. Each file has the policy: it applies to the document
+  // that index.html is, and would apply to a worker by its script's answer. index.html alone is a Response of its own
+  // (pageInLanguage), whose body is a string of the size of the page, not a file read as it is sent.
   file.headers.set('Content-Security-Policy', mainWindowContentSecurityPolicy);
   return file;
+}
+
+/**
+ * The path in the build that an address of the page stands for, decoded; undefined for an address of another scheme
+ * or host, or an escape that is not one. The query and the fragment are not of the path.
+ */
+function pathInBuildOf(url: string): string | undefined {
+  const start = `${appPageOrigin}/`;
+  if (!url.startsWith(start))
+    return undefined;
+  try {
+    return decodeURIComponent(url.slice(start.length).replace(/[?#][\s\S]*$/, ''));
+  } catch {
+    return undefined;
+  }
 }
 
 /**
@@ -138,32 +133,11 @@ async function pageInLanguage(filePath: string, language: LanguageCode): Promise
   }
 }
 
-/** The answer of 404, for `request`, if given, which is logged with `reason`. */
-function notFound(request?: Request, reason?: string): Response {
-  if (request)
-    appPageLogger.info(`${request.url.slice(0, 200)} is answered with 404, as ${reason}.`);
-  return new Response(null, { status: 404 });
-}
-
 /**
- * Logs why the file at `filePath`, `relative` in the build, is answered with 404: `reason`, what stat threw or that
- * it is not a file. It is looked at again at once, which tells a file that is missing, logged as information, from one
- * that stat did not find for a moment, logged as an error.
+ * The answer of 404 to `request`, logged with `reason`, so that a page that went without a file tells why: the page
+ * asks only for the files of its build (launch in test/e2e/regression.spec.mjs reports these lines).
  */
-function logNotFound(filePath: string, relative: string, reason: unknown): void {
-  let isFileNow = false;
-  let again: unknown;
-  try {
-    isFileNow = fs.statSync(filePath).isFile();
-    again = shown(isFileNow ? 'a file' : 'not a file');
-  } catch (error) {
-    again = error;
-  }
-  const noAsar = !!process.noAsar;
-  const uptime = Math.round(process.uptime() * 1000);
-  const line = logged`${shown(relative)} is answered with 404, as ${reason}. Again at once: ${again}. noAsar: ${noAsar}, being answered: ${requestsBeingAnswered}, at ${uptime} ms.`;
-  if (isFileNow)
-    appPageLogger.error(line);
-  else
-    appPageLogger.info(line);
+function notFound(request: Request, reason: string): Response {
+  appPageLogger.info(`${request.url.slice(0, 200)} is answered with 404, as ${reason}.`);
+  return new Response(null, { status: 404 });
 }

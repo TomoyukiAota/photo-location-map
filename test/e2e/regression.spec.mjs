@@ -274,10 +274,11 @@ async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'con
   // TL;DR: A file of its build that the page did not get fails the launch here, with what the main process logged
   // about it, rather than a later step with what the file would have done.
   // Details: On Windows CI, the main process answered a file of the page with 404 now and then: main.js, which left
-  // the home view unrendered, and, as far as the cases' failures tell, scripts.js, which left the map without its
-  // drawing toolbar, and styles.css, which left Leaflet-Geoman's buttons for editing a region visible beside a
-  // dialog's (src-main/file-server/app-page.ts). The page's load event comes once each file of the page has come or
-  // failed.
+  // the home view unrendered, scripts.js, which left the map without its drawing toolbar, and styles.css, which left
+  // Leaflet-Geoman's buttons for editing a region visible beside a dialog's. Its handler read the address with
+  // Node.js's URL, whose parts were another URL's when code that this suite evaluates in the main process parsed one
+  // at that moment (src-main/file-server/app-page.ts). The page's load event comes once each file of the page has come
+  // or failed.
   await page.waitForLoadState('load');
   const filesNotGot = failedRequests.filter(isFileOfAppPageNotGot);
   if (filesNotGot.length) {
