@@ -23,6 +23,20 @@
   direction: rtl;
 }
 
+// TL;DR: A popup of the map opens and closes at once, without Leaflet's fade, which showed a popup that was closing
+// as a thin bar.
+// Details: Leaflet fades a popup in and out for 200 ms (`.leaflet-fade-anim .leaflet-popup` in leaflet.css), and the
+// content of a popup can leave it before it has faded out: the content of the markers' popups goes with the markers
+// when the map shows other photos (removeMarkers() in leaflet-map.component.ts), and a cluster's popup that opens
+// again takes its content from the popup that the cluster had (showPopupForMarkerCluster()), which may still be
+// fading out. The popup that faded out shrank to a thin bar, under the one that faded in: going from photo to photo
+// with the shortcut of Photo Taken After showed a popup that came small and then grew, at each step. While the map
+// animates a zoom, the popups keep Leaflet's transition of their place (`.leaflet-zoom-anim .leaflet-zoom-animated`),
+// which `transition: none` would stop.
+.leaflet-map-pane:not(.leaflet-zoom-anim) .leaflet-popup {
+  transition: none;
+}
+
 @include meta.load-css("plm-leaflet-map-div-icon");
 @include meta.load-css("plm-leaflet-map-region-info");
 @include meta.load-css("plm-leaflet-map-date");
