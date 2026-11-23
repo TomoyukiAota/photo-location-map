@@ -17,16 +17,6 @@ workflow and confirm that the new check passes, then replace the old context in
 branch protection.
 
 
-## One run of the tests per commit
-
-The tests run on push, for every branch. A pull request from a branch of this
-repository skips the jobs of its `pull_request` run, so each of its checks shows
-twice, once as skipped: branch protection and Mergify take both, and the skipped
-one passes only once the push run's has passed. A pull request from a fork is
-tested by its `pull_request` run alone. Mergify merges only the owner's pull
-requests, so the owner merges one from a fork by hand.
-
-
 ## Merging
 
 Mergify merges a pull request of the owner that has the label `automerge` once
