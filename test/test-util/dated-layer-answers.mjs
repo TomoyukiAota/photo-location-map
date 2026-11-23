@@ -34,24 +34,33 @@ const hosts = ['s3-us-west-2.amazonaws.com', 'wayback.maptiles.arcgis.com', 'met
 /**
  * Answers the page's requests to those servers with these: the list of releases, the tilemaps, the metadata, the
  * tiles and OpenHistoricalMap's style; anything else of them fails. Gives the releases of the Wayback tiles that the
- * page asks for, in order.
+ * page asks for, in order. `held`, a promise, holds the answers of Wayback's list of releases and of its metadata until
+ * it resolves, so that the dates are seen loading, at any zoom.
  */
-export async function answerDatedLayers(page) {
+export async function answerDatedLayers(page, { held } = {}) {
   const tileReleases = [];
-  await page.route(url => hosts.includes(url.hostname), route => {
+  await page.route(url => hosts.includes(url.hostname), async route => {
     const url = new URL(route.request().url());
-    if (url.pathname === '/config.maptiles.arcgis.com/waybackconfig.json')
+    if (url.pathname === '/config.maptiles.arcgis.com/waybackconfig.json') {
+      await held;
       return route.fulfill({ json: config });
+    }
     const tilemap = /\/MapServer\/tilemap\/(\d+)\//.exec(url.pathname);
     if (tilemap)
       return route.fulfill({ json: tilemaps[tilemap[1]] ? { data: [1], select: [tilemaps[tilemap[1]]] } : { data: [1] } });
     const query = /\/World_Imagery_Metadata_(\w+)\/MapServer\/(\d+)\/query$/.exec(url.pathname);
     if (query) {
+      await held;
       // The sources in the layer of a zoom, which are those shown at it (metadataLayerOf() in wayback.ts).
       const zoom = 23 - Number(query[2]);
       const features = (sources[query[1]] ?? []).filter(([, min, max]) => min <= zoom && zoom <= max)
         .map(([date, min, max]) => ({ attributes: { SRC_DATE: Number(date), MinMapLevel: min, MaxMapLevel: max } }));
-      return route.fulfill({ json: { features } });
+      // A held request may have been stopped meanwhile, as a lookup is once the map no longer waits for it
+      // (MapDateService), and cannot be answered then.
+      return route.fulfill({ json: { features } }).catch(error => {
+        if (!held)
+          throw error;
+      });
     }
     const waybackTile = /\/WMTS\/1\.0\.0\/default028mm\/MapServer\/tile\/(\d+)\//.exec(url.pathname);
     if (url.hostname === 'wayback.maptiles.arcgis.com' && waybackTile) {

@@ -8,7 +8,7 @@
 // question that a dropped folder asks, the home view without and
 // with a folder of photos (in a window of 1200x800 and of 800x600), a photo's popup with its menu and the menu's submenus, the tree's menu, the rows that the tree keeps at its top with the menu of one of them, the Sort menu and its info dialog, the
 // chart's menu, its message for a duration that it cannot show and its button for the photos within a zoom, the date of
-// the map's layers of a past date with the calendar that chooses it (its days and its months), a region on the map, the tabs of the Settings dialog with the choices of the clock's
+// the map's layers of a past date with the calendar that chooses it (its days and its months) and while it loads, a region on the map, the tabs of the Settings dialog with the choices of the clock's
 // field, the question before a restart, the About box, the status bar while the thumbnails of HEIF files are made, the
 // dialog of the thumbnails that failed, the dialog of a folder without location data, and the dialog of the search for
 // faces, while it looks and when it found none.
@@ -389,8 +389,10 @@ for (const code of codes) {
     });
     await step('map-date', async () => {
       // The box of the date of each layer of a past date, with the servers' answers of the e2e suite: zoomed out to
-      // the photos of the world, Wayback's says that the imagery has a date only closer.
-      await answerDatedLayers(page);
+      // the photos of the world, Wayback's says that the imagery has a date only closer. Its dates are held at first,
+      // to see them loading.
+      let answerDates;
+      await answerDatedLayers(page, { held: new Promise(resolve => answerDates = resolve) });
       const chooseLayer = async name => {
         await page.locator('.leaflet-control-layers').hover();
         await page.locator('.leaflet-control-layers-base label').filter({ hasText: name }).click();
@@ -413,6 +415,9 @@ for (const code of codes) {
       await page.keyboard.press('Escape');
       await page.waitForSelector('body > .datepicker.active', { state: 'detached' });
       await chooseLayer('Esri World Imagery Wayback');
+      await page.waitForSelector('.plm-leaflet-map-date-spinner');
+      await screen('map-date-loading', '.plm-leaflet-map-date', '#home-map', '#home-map');
+      answerDates();
       await page.waitForFunction(() => !!document.querySelector('.plm-leaflet-map-date-value')?.textContent.trim());
       await screen('map-date-imagery', '.plm-leaflet-map-date', '#home-map', '#home-map');
       await chooseLayer('OpenStreetMap');

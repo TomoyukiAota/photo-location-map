@@ -1637,7 +1637,9 @@ test('the map shows Esri World Imagery Wayback and OpenHistoricalMap at the date
   const source = await readFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'));
   await writeFile(path.join(folder, 'ring-1.JPG'), jpegWithLocationAndDate(source, 34.6497, 135.3842, '2025:08:10 11:00:00'));
   await writeFile(path.join(folder, 'ring-2.JPG'), jpegWithLocationAndDate(source, 34.6489, 135.3858, '2025:08:10 15:30:00'));
-  const tileReleases = await answerDatedLayers(page);
+  // The dates are held at first, to see them loading.
+  let answerDates;
+  const tileReleases = await answerDatedLayers(page, { held: new Promise(resolve => answerDates = resolve) });
   await page.addInitScript(() => {
     let leaflet;
     Object.defineProperty(window, 'L', {
@@ -1668,6 +1670,11 @@ test('the map shows Esri World Imagery Wayback and OpenHistoricalMap at the date
   // shown, and the two taken nearest before and after them marked.
   await chooseMapLayer('Esri World Imagery Wayback');
   await view(13);
+  // A spinner goes before the note while the dates load, which take seconds with Esri's servers.
+  await expect(control.locator('.plm-leaflet-map-date-note')).toHaveText('Loading the dates...');
+  await expect(control.locator('.plm-leaflet-map-date-note .plm-leaflet-map-date-spinner')).toBeVisible();
+  answerDates();
+  await expect(control.locator('.plm-leaflet-map-date-spinner')).toHaveCount(0);
   await expect(control.locator('.plm-leaflet-map-date-title')).toHaveText('Imagery date at the map’s center');
   await expect(options).toHaveText(['2025-11-27 (near the photos’ dates)', '2024-08-24 (near the photos’ dates)', '2023-09-10']);
   await expect(control.locator('select')).toHaveValue('49059');

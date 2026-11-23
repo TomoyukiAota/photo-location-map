@@ -1,5 +1,6 @@
 import { Component, computed, input, output } from '@angular/core';
 import { MatCheckbox, MatCheckboxChange } from '@angular/material/checkbox';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import moment from 'moment';
 import { t } from '../../../../../../src-shared/i18n/i18n';
 import { TranslationKey } from '../../../../../../src-shared/i18n/translation-key';
@@ -121,10 +122,15 @@ export function withDates(key: TranslationKey, dates: Readonly<Record<string, st
     <mat-checkbox class="plm-leaflet-map-date-match"
                   [checked]="view().matchPhotoDates"
                   (change)="onMatchChange($event)"><span class="plm-leaflet-map-date-match-label">{{ 'map.dates.matchPhotoDates' | t }}</span></mat-checkbox>
-    <div class="plm-leaflet-map-date-note">@for (part of noteParts(); track $index) {<span [class.plm-leaflet-map-date-unbroken]="part.isDate">{{ part.text }}</span>}</div>
+    <div class="plm-leaflet-map-date-note" [class.plm-leaflet-map-date-loading]="view().status === 'loading'">
+      @if (view().status === 'loading') {
+        <mat-spinner class="plm-leaflet-map-date-spinner" aria-hidden="true" [diameter]="14" [strokeWidth]="2"/>
+      }
+      @for (part of noteParts(); track $index) {<span [class.plm-leaflet-map-date-unbroken]="part.isDate">{{ part.text }}</span>}
+    </div>
   `,
   styleUrl: './map-date.component.scss',
-  imports: [MatCheckbox, MapDatePickerComponent, TranslatePipe],
+  imports: [MatCheckbox, MatProgressSpinner, MapDatePickerComponent, TranslatePipe],
   host: {
     'class': 'plm-leaflet-map-date-container',
   },
@@ -158,7 +164,8 @@ export class MapDateComponent {
 
   /**
    * The note below the box's choice: what the date waits for or what went wrong, or the dates of the photos, which are
-   * not broken across lines.
+   * not broken across lines. While the dates load, which takes seconds with Esri's servers (../wayback.ts), a spinner
+   * goes before the note. A screen reader skips it, as the note says the same.
    */
   protected readonly noteParts = computed<NotePart[]>(() => {
     const view = this.view();
