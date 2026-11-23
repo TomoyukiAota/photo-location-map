@@ -10,6 +10,16 @@ Ubuntu CI uses Ubuntu 26.04 LTS and reports `test (ubuntu)`, and
 `e2e against the development build (ubuntu)` from a job of its own that runs
 beside it. The regular macOS check is `test (macos-arm64)`; the manual Intel
 check is `test (macos-x64)`.
+
+Each of `test (ubuntu)`, `test (macos-arm64)` and `test (windows-latest)` comes
+from a job that only reads the results of two jobs, `test (<os>), part 1 of 2`
+and `part 2 of 2`, which run the tests on that OS at once: each makes the
+package and runs half of the e2e suite (`PLM_E2E_SHARD`, in
+[`test/e2e/playwright.config.mjs`](../../test/e2e/playwright.config.mjs)), and
+part 1 also runs the checks and the unit tests. On Windows, part 1 runs the
+uninstaller test and part 2 publishes. The manual Intel check runs all of it in
+one job.
+
 These check names stay stable when runner versions change. Branch protection
 requires the regular ones, and Mergify takes them from it (see "Merging" below),
 so they are listed there only. When renaming a required check, first change the
