@@ -1,8 +1,8 @@
 <div class="setting-title">{{ 'settings.cache.title' | t }}</div>
 <div class="setting-container">
   <div class="cache-description">
-    @let requiredForHeif = 'settings.cache.requiredForHeif' | t | tagParts: 'heifLink';
-    <p>{{ requiredForHeif.before }}<a #heifWikipediaLink href="">{{ requiredForHeif.inside }}</a>{{ requiredForHeif.after }}</p>
+    @let generationRequired = 'settings.cache.generationRequired' | t | tagParts: 'heifLink';
+    <p>{{ generationRequired.before }}<a #heifWikipediaLink href="">{{ generationRequired.inside }}</a>{{ generationRequired.after }}</p>
     <p>{{ 'settings.cache.thereforeCached' | t }}</p>
     <p>{{ 'settings.cache.usedNextTime' | t }}</p>
   </div>

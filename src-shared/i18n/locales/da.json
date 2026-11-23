@@ -264,8 +264,8 @@
       "confirmInExplorer": "Åbn Stifinder, og højreklik på en fil eller mappe for at kontrollere."
     },
     "cache": {
-      "title": "Cache til HEIF-miniaturer",
-      "requiredForHeif": "Til <heifLink>HEIF-filer</heifLink> skal der oprettes miniaturer, og det tager tid.",
+      "title": "Cache til miniaturer",
+      "generationRequired": "Til JPEG-/PNG-filer uden en miniature i EXIF-oplysningerne og til <heifLink>HEIF-filer</heifLink>, som denne computer ikke kan afkode med sin grafikhardware, skal der oprettes miniaturer, og det tager tid.",
       "thereforeCached": "Derfor gemmes de oprettede miniaturer i en cache.",
       "usedNextTime": "Fra næste gang bruges cachen, så miniaturerne ikke skal oprettes igen.",
       "location": "Cachens placering:",

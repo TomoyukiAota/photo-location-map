@@ -18,9 +18,17 @@ export class NearViewDirective {
   private readonly near = signal(false);
   /** Whether the element has come near the part of the page that is shown. It stays near once it has. */
   public readonly isNear = this.near.asReadonly();
+  /**
+   * How far the element's middle was from the window's when it came near, in pixels: of the rows of the tree that
+   * come near together, those nearest it are those that the sidebar shows (JpegPngThumbnailService).
+   */
+  public distanceFromMiddleWhenNear = 0;
 
   constructor() {
-    const stopWatching = inject(NearViewService).watch(inject(ElementRef).nativeElement, () => this.near.set(true));
+    const stopWatching = inject(NearViewService).watch(inject(ElementRef).nativeElement, distanceFromMiddle => {
+      this.distanceFromMiddleWhenNear = distanceFromMiddle;
+      this.near.set(true);
+    });
     inject(DestroyRef).onDestroy(stopWatching);
   }
 }

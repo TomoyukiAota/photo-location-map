@@ -264,8 +264,8 @@
       "confirmInExplorer": "Öffnen Sie den Explorer und klicken Sie mit der rechten Maustaste auf eine Datei oder einen Ordner, um dies zu prüfen."
     },
     "cache": {
-      "title": "Cache für HEIF-Miniaturen",
-      "requiredForHeif": "Für <heifLink>HEIF-Dateien</heifLink> müssen Miniaturen erstellt werden, was Zeit braucht.",
+      "title": "Cache für Miniaturen",
+      "generationRequired": "Für JPEG-/PNG-Dateien ohne Miniatur in ihren EXIF-Daten und für <heifLink>HEIF-Dateien</heifLink>, die die Grafikhardware dieses Computers nicht decodieren kann, müssen Miniaturen erstellt werden, was Zeit braucht.",
       "thereforeCached": "Daher werden die erstellten Miniaturen im Cache gespeichert.",
       "usedNextTime": "Ab dem nächsten Mal wird der Cache verwendet, sodass die Miniaturen nicht erneut erstellt werden.",
       "location": "Speicherort des Caches:",

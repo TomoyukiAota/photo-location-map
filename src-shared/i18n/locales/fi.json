@@ -264,8 +264,8 @@
       "confirmInExplorer": "Avaa Resurssienhallinta ja tarkista klikkaamalla tiedostoa tai kansiota hiiren kakkospainikkeella."
     },
     "cache": {
-      "title": "HEIF-pikkukuvien välimuisti",
-      "requiredForHeif": "<heifLink>HEIF-tiedostoille</heifLink> on luotava pikkukuvat, mikä vie aikaa.",
+      "title": "Pikkukuvien välimuisti",
+      "generationRequired": "JPEG-/PNG-tiedostoille, joiden EXIF-tiedoissa ei ole pikkukuvaa, ja <heifLink>HEIF-tiedostoille</heifLink>, joita tämän tietokoneen grafiikkalaitteisto ei pysty purkamaan, on luotava pikkukuvat, mikä vie aikaa.",
       "thereforeCached": "Siksi luodut pikkukuvat tallennetaan välimuistiin.",
       "usedNextTime": "Seuraavasta kerrasta alkaen käytetään välimuistia, jolloin pikkukuvia ei tarvitse luoda uudelleen.",
       "location": "Välimuistin sijainti:",

@@ -264,8 +264,8 @@
       "confirmInExplorer": "Abra o Explorador de Arquivos e clique com o botão direito em um arquivo ou uma pasta para conferir."
     },
     "cache": {
-      "title": "Cache de miniaturas HEIF",
-      "requiredForHeif": "Os <heifLink>arquivos HEIF</heifLink> exigem a geração de miniaturas, o que leva tempo.",
+      "title": "Cache de miniaturas",
+      "generationRequired": "Os arquivos JPEG/PNG sem miniatura nos dados EXIF e os <heifLink>arquivos HEIF</heifLink> que o hardware gráfico deste computador não consegue decodificar exigem a geração de miniaturas, o que leva tempo.",
       "thereforeCached": "Por isso, as miniaturas geradas ficam guardadas no cache.",
       "usedNextTime": "A partir da próxima vez, o cache será usado para não gerar as miniaturas de novo.",
       "location": "Local do cache:",

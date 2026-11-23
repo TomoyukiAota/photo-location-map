@@ -29,7 +29,10 @@ describe('OpenFolderService', () => {
     TestBed.configureTestingModule({
       providers: [
         { provide: MatDialog, useValue: { open: () => ({ close: () => {} }) } },
-        { provide: PhotoDataService, useValue: { update: async () => { givenWhileRead = [...setLivePhotos.mock.calls]; }, getPhotosWithGpsInfo: () => [{}] } },
+        {
+          provide: PhotoDataService,
+          useValue: { update: async () => { givenWhileRead = [...setLivePhotos.mock.calls]; }, getPhotosWithGpsInfo: () => [{}], getAllPhotos: () => [] },
+        },
         { provide: DirectoryTreeViewDataService, useValue: { replace: () => { givenWhenReplaced = [...setLivePhotos.mock.calls]; } } },
         { provide: ThumbnailGenerationService, useValue: { checkThumbnailCache: async () => ({}), startThumbnailGeneration: () => false } },
       ],

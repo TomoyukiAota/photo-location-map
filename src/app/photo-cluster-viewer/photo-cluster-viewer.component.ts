@@ -1,5 +1,6 @@
 import { afterRenderEffect, Component, computed, ElementRef, input, linkedSignal, untracked, viewChild, viewChildren } from '@angular/core';
 import { PhotoInfoViewerComponent } from '../photo-info-viewer/photo-info-viewer.component';
+import { NearViewDirective } from '../shared/near-view/near-view.directive';
 import { Photo } from '../shared/model/photo.model';
 
 /** The photos in the order of their shooting times, then those without one by their names. */
@@ -22,7 +23,9 @@ export function sortByShootingTime(photos: readonly Photo[]): Photo[] {
   template: `
     <div #tiles class="photo-cluster-viewer-left-pane">
       @for (photo of sortedPhotos(); track photo.path) {
+        <!-- appNearView: a tile has its photo's thumbnail made once it comes near what the tiles show. -->
         <app-photo-info-viewer #tile
+                               appNearView
                                class="photo-cluster-viewer-tile"
                                place="leaflet-map-tile"
                                [class.selected-tile]="photo === selectedPhoto()"
@@ -41,7 +44,7 @@ export function sortByShootingTime(photos: readonly Photo[]): Photo[] {
     </div>
   `,
   styleUrl: './photo-cluster-viewer.component.scss',
-  imports: [PhotoInfoViewerComponent],
+  imports: [PhotoInfoViewerComponent, NearViewDirective],
   host: {
     'class': 'photo-cluster-viewer-root',
   },

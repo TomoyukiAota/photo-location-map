@@ -264,8 +264,8 @@
       "confirmInExplorer": "Otvorte Prieskumníka a kliknite pravým tlačidlom na súbor alebo priečinok, aby ste to overili."
     },
     "cache": {
-      "title": "Vyrovnávacia pamäť miniatúr HEIF",
-      "requiredForHeif": "Pre <heifLink>súbory HEIF</heifLink> treba vytvárať miniatúry, čo nejaký čas trvá.",
+      "title": "Vyrovnávacia pamäť miniatúr",
+      "generationRequired": "Pre súbory JPEG/PNG bez miniatúry v údajoch EXIF a pre <heifLink>súbory HEIF</heifLink>, ktoré grafický hardvér tohto počítača nedokáže dekódovať, treba vytvárať miniatúry, čo nejaký čas trvá.",
       "thereforeCached": "Vytvorené miniatúry sa preto ukladajú do vyrovnávacej pamäte.",
       "usedNextTime": "Nabudúce sa použije vyrovnávacia pamäť, takže sa miniatúry nebudú vytvárať znova.",
       "location": "Umiestnenie vyrovnávacej pamäte:",

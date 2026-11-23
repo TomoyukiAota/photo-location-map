@@ -264,8 +264,8 @@
       "confirmInExplorer": "Untuk memeriksanya, buka File Explorer, lalu klik kanan file atau folder."
     },
     "cache": {
-      "title": "Cache gambar mini HEIF",
-      "requiredForHeif": "<heifLink>File HEIF</heifLink> memerlukan pembuatan gambar mini, dan itu memakan waktu.",
+      "title": "Cache gambar mini",
+      "generationRequired": "File JPEG/PNG tanpa gambar mini di EXIF-nya, serta <heifLink>file HEIF</heifLink> yang tidak dapat didekode oleh perangkat keras grafis komputer ini, memerlukan pembuatan gambar mini, dan itu memakan waktu.",
       "thereforeCached": "Karena itu, gambar mini yang dibuat disimpan dalam cache.",
       "usedNextTime": "Selanjutnya, cache digunakan sehingga gambar mini tidak perlu dibuat lagi.",
       "location": "Lokasi cache:",

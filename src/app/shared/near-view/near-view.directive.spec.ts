@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { NearViewDirective } from './near-view.directive';
 import { NearViewService } from './near-view.service';
 
@@ -14,7 +15,7 @@ class HostComponent {}
 
 describe('NearViewDirective', () => {
   /** What to do when each element that is watched comes near, which the service would do. */
-  let watched: Map<Element, () => void>;
+  let watched: Map<Element, (distanceFromMiddle: number) => void>;
 
   beforeEach(() => {
     watched = new Map();
@@ -34,10 +35,12 @@ describe('NearViewDirective', () => {
     expect(element.textContent).toBe('not near');
     expect([...watched.keys()]).toEqual([element]);
 
-    watched.get(element)();
+    watched.get(element)(120);
     await fixture.whenStable();
 
     expect(element.textContent).toBe('near');
+    // How far it was from the middle of the window, for the components that are made in order.
+    expect(fixture.debugElement.query(By.directive(NearViewDirective)).injector.get(NearViewDirective).distanceFromMiddleWhenNear).toBe(120);
   });
 
   it('stops watching its element when the element goes', async () => {
