@@ -17,10 +17,8 @@ describe('MapDateService', () => {
   });
   afterEach(() => vi.unstubAllGlobals());
 
-  it('matches the dates of the photos in each layer until told otherwise, and shows today on OpenHistoricalMap when not', () => {
-    expect(service.matchPhotoDates.wayback()).toBe(true);
-    expect(service.matchPhotoDates.openHistoricalMap()).toBe(true);
-    expect(service.chosenDate()).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  it('matches the dates of the photos until told otherwise, with no release chosen or shown at first', () => {
+    expect(service.matchPhotoDates()).toBe(true);
     expect(service.chosenRelease()).toBeNull();
     expect(service.shownRelease()).toBeNull();
   });

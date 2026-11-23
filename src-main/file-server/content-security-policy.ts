@@ -1,4 +1,4 @@
-import { openHistoricalMapUrls, waybackUrls } from '../../src-shared/map/dated-layer-urls.js';
+import { waybackUrls } from '../../src-shared/map/dated-layer-urls.js';
 import { rasterTileBaseLayerConfigsVersion1Urls } from '../../src-shared/map/raster-tile-base-layer-configs-version-1-urls.js';
 
 // TL;DR: The Content Security Policy of the main window's page: what the page may run, load and send, each source
@@ -37,10 +37,8 @@ export const mainWindowPolicyDirectives: Readonly<Record<string, readonly string
     // runtime compiles its .wasm file, from the app's build, there.
     `'wasm-unsafe-eval'`,
   ],
-  // TL;DR: The workers of the app's build only: that of the search for faces (src/app/face-search/), and those of
-  // MapLibre, which draws OpenHistoricalMap (src/app/map/leaflet-map/dated-layers/), from the file that angular.json
-  // copies to assets/maplibre/. Without this directive, a worker's script would be checked against script-src, and not
-  // against default-src.
+  // TL;DR: The workers of the app's build only: that of the search for faces (src/app/face-search/). Without this
+  // directive, a worker's script would be checked against script-src, and not against default-src.
   // Details: The only other worker in the page's build is that of the session recording of Mixpanel's SDK (rrweb, for
   // canvases), which runs only for a record_sessions_percent above 0, its default, which the app does not change; it
   // would be made from a blob:, which stays refused.
@@ -79,16 +77,12 @@ export const mainWindowPolicyDirectives: Readonly<Record<string, readonly string
   'connect-src': [
     // The list of the map's base layers, at the two addresses that the page tries, and no other of their servers.
     ...Object.values(rasterTileBaseLayerConfigsVersion1Urls),
-    // TL;DR: The layers of the map that show a past date (src-shared/map/dated-layer-urls.ts): what Esri World Imagery
-    // Wayback tells of its releases and their imagery, and the style and tiles of OpenHistoricalMap.
-    // Details: Wayback's tiles are images, which img-src allows. OpenHistoricalMap is drawn by MapLibre, whose workers
-    // fetch the tiles; a worker has this policy too, as every file of the page does (app-page.ts).
+    // TL;DR: The layer of the map that shows a past date (src-shared/map/dated-layer-urls.ts): what Esri World Imagery
+    // Wayback tells of its releases and their imagery.
+    // Details: Wayback's tiles are images, which img-src allows.
     waybackUrls.releases,
     waybackUrls.tilemap,
     waybackUrls.metadata,
-    openHistoricalMapUrls.styleFolder,
-    openHistoricalMapUrls.vectorTiles,
-    openHistoricalMapUrls.rasterTiles,
     // The browser SDKs of analytics, which run in the page (src-shared/analytics/analytics-renderer.ts), send to these;
     // the events of the analytics backend go from the main process.
     'https://api2.amplitude.com',

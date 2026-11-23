@@ -1,14 +1,12 @@
 import { ComponentRef } from '@angular/core';
 import debounce from 'lodash-es/debounce.js';
-import moment from 'moment';
 import { Analytics } from '../../../../../src-shared/analytics/analytics';
 import { waybackUrls } from '../../../../../src-shared/map/dated-layer-urls';
 import { Photo } from '../../../shared/model/photo.model';
 import { LeafletContentService } from '../leaflet-content.service';
 import { leafletMapLogger as logger } from '../leaflet-map-logger';
 import { MapDateService } from './map-date.service';
-import { MapDateChoice, MapDateComponent, MapDateKind, MapDateStatus, MapDateView } from './map-date/map-date.component';
-import { openHistoricalMapLayer } from './open-historical-map-layer';
+import { MapDateChoice, MapDateComponent, MapDateStatus, MapDateView } from './map-date/map-date.component';
 import { nearestVersion, PhotoDates, photoDatesOf, versionsNearDate } from './photo-dates';
 import { distinctVersions, versionShownIn, WaybackRelease, WaybackVersion } from './wayback';
 
@@ -16,12 +14,11 @@ import { distinctVersions, versionShownIn, WaybackRelease, WaybackVersion } from
 declare let L: any;
 
 /**
- * The layers' names in the map's list of layers: their products' names, as those of the other layers are.
- * They are also the layers' identifiers, by which the list of base layers that the app downloads hides them
+ * The layer's name in the map's list of layers: its product's name, as those of the other layers are.
+ * It is also the layer's identifier, by which the list of base layers that the app downloads hides it
  * (hiddenBuiltInBaseLayersOf()). A layer that is renamed keeps its old name as its identifier.
  */
 export const waybackLayerName = 'Esri World Imagery Wayback';
-export const openHistoricalMapLayerName = 'OpenHistoricalMap';
 
 /** The zoom level from which Wayback's imagery has dates: below it, it is a mosaic without them. */
 export const minZoomOfImageryDates = 12;
@@ -36,35 +33,36 @@ const mapDateCorner = 'plmMapDate';
 const currentImageryTile = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
 
 const waybackAttribution = 'Tiles &copy; Esri &mdash; World Imagery Wayback &mdash; Source: Esri, Vantor, Maxar, Earthstar Geographics, and the GIS User Community';
-const openHistoricalMapAttribution = 'OpenHistoricalMap &mdash; Land cover: &copy; ESA 2010 and UCLouvain';
 
 /**
- * The layers of the map that show a past date, Esri World Imagery Wayback and OpenHistoricalMap, and the control with
- * their date, for one Leaflet map: LeafletMapComponent makes one with its map, and destroys it with the map.
- * TL;DR: While one of them is the map's base layer, its date follows the dates of the photos on the map, or the date
- * that the user chose, and the control says which.
+ * The layer of the map that shows a past date, Esri World Imagery Wayback, and the control with its date, for one
+ * Leaflet map: LeafletMapComponent makes one with its map, and destroys it with the map.
+ * TL;DR: While it is the map's base layer, it shows the imagery taken nearest to the dates of the photos on the map, or
+ * the imagery that the user chose, and the control says which.
  * Details:
  * - The photos are those on the map that are in its view, or all of those on the map when none is. Wayback shows the
  *   imagery taken nearest to their middle date, from the versions at the map's center at its zoom; its list marks the
- *   versions taken nearest before and after that date (photo-dates.ts). OpenHistoricalMap shows that very date. The
- *   date follows them after each move of the map, and when other photos are on it (photosChanged()).
- * - A date that the user chooses ends the matching, until they check its box again. What they chose, and what is
+ *   versions taken nearest before and after that date (photo-dates.ts). The imagery follows them after each move of
+ *   the map, and when other photos are on it (photosChanged()).
+ * - A version that the user chooses ends the matching, until they check its box again. What they chose, and what is
  *   shown, are kept in MapDateService.
- * - The list of base layers that the app downloads can hide either layer (hiddenBuiltInBaseLayersOf()).
+ * - The list of base layers that the app downloads can hide the layer (hiddenBuiltInBaseLayersOf()).
+ * - OpenHistoricalMap, whose map shows a date as its volunteers have drawn it, was a second such layer, and was
+ *   removed before any release, as it had little of most places that were looked at. Its code is in the history of
+ *   src/app/map/leaflet-map/dated-layers/open-historical-map-layer.ts.
  */
 export class DatedLayers {
   /** The layers, by their names, for the map's list of base layers: those that are not hidden. */
   public readonly baseLayers: Readonly<Record<string, unknown>>;
   private readonly wayback: any;
-  private readonly openHistoricalMap: any;
-  private kind: MapDateKind | null = null;
+  /** Whether Wayback is the map's base layer, which the control is shown with. */
+  private active = false;
   private control: any = null;
   private content: ComponentRef<MapDateComponent> | null = null;
   private status: MapDateStatus = 'ready';
   private releases: readonly WaybackRelease[] = [];
   private versions: readonly WaybackVersion[] = [];
   private photoDates: PhotoDates | null = null;
-  private openHistoricalMapFailed = false;
   /** Counts the refreshes, so that one that a newer one has overtaken does nothing when its answers come. */
   private refreshCount = 0;
   private destroyed = false;
@@ -82,27 +80,19 @@ export class DatedLayers {
       ...layerOptions,
       attribution: waybackAttribution,
     });
-    this.photoDates = this.photoDatesOnMap();
-    this.openHistoricalMap = openHistoricalMapLayer({
-      date: this.openHistoricalMapDate(),
-      attribution: openHistoricalMapAttribution,
-      maxZoom: Number(layerOptions['maxZoom']),
-      onError: error => this.onOpenHistoricalMapError(error),
-    });
     const layers = {
       [waybackLayerName]: this.wayback,
-      [openHistoricalMapLayerName]: this.openHistoricalMap,
     };
     // A hidden layer is made all the same: a layer asks its server for nothing until it is shown.
     this.baseLayers = Object.fromEntries(Object.entries(layers).filter(([name]) => !hiddenLayers.has(name)));
     map.on('moveend', this.refreshAfterMove);
   }
 
-  /** The map's base layer is now `layer`: one of these, with the control, or another one, without it. */
+  /** The map's base layer is now `layer`: Wayback, with the control, or another one, without it. */
   public baseLayerChanged(layer: unknown): void {
-    this.kind = layer === this.wayback ? 'wayback' : layer === this.openHistoricalMap ? 'openHistoricalMap' : null;
+    this.active = layer === this.wayback;
     this.versions = [];
-    if (!this.kind) {
+    if (!this.active) {
       this.hideControl();
       return;
     }
@@ -124,19 +114,10 @@ export class DatedLayers {
   private readonly refreshAfterMove = debounce(() => this.refresh(), 400);
 
   private async refresh(): Promise<void> {
-    if (this.destroyed || !this.kind)
+    if (this.destroyed || !this.active)
       return;
     const count = ++this.refreshCount;
     this.photoDates = this.photoDatesOnMap();
-    if (this.kind === 'openHistoricalMap') {
-      this.status = this.openHistoricalMapFailed ? 'mapFailed' : 'ready';
-      const date = this.openHistoricalMapDate();
-      this.openHistoricalMap.setDate(date);
-      this.render();
-      this.record(`Layer: "${openHistoricalMapLayerName}", Date: ${date}, Matched to Photos: ${this.matchPhotoDates('openHistoricalMap')}`);
-      return;
-    }
-
     const zoom = Math.round(this.map.getZoom());
     this.status = 'loading';
     this.render();
@@ -158,7 +139,7 @@ export class DatedLayers {
       }
       this.versions = versions;
       this.status = 'ready';
-      const matched = this.matchPhotoDates('wayback') && this.photoDates ? nearestVersion(versions, this.photoDates.middle) : undefined;
+      const matched = this.service.matchPhotoDates() && this.photoDates ? nearestVersion(versions, this.photoDates.middle) : undefined;
       const release = matched?.release ?? this.service.chosenReleaseOf(releases);
       this.showRelease(release.number);
       const shown = versionShownIn(versions, release);
@@ -182,14 +163,6 @@ export class DatedLayers {
     return photoDatesOf((inView.length > 0 ? inView : dated).map(photo => photo.exif.dateTimeOriginal.moment));
   }
 
-  private openHistoricalMapDate(): string {
-    return this.matchPhotoDates('openHistoricalMap') && this.photoDates ? this.photoDates.middle : this.service.chosenDate();
-  }
-
-  private matchPhotoDates(kind: MapDateKind): boolean {
-    return this.service.matchPhotoDates[kind]();
-  }
-
   private waybackTile(release: number): string {
     return waybackUrls.tile.replace('{release}', String(release));
   }
@@ -209,7 +182,6 @@ export class DatedLayers {
     content.instance.earlier.subscribe(() => this.step(+1));
     content.instance.later.subscribe(() => this.step(-1));
     content.instance.choose.subscribe(release => this.choose(release));
-    content.instance.pick.subscribe(date => this.pickDate(date));
     content.instance.matchPhotoDatesChange.subscribe(match => this.setMatchPhotoDates(match));
     const element: HTMLElement = content.location.nativeElement;
     const Control = L.Control.extend({
@@ -255,16 +227,6 @@ export class DatedLayers {
   }
 
   private view(): MapDateView {
-    const common = {
-      status: this.status,
-      photoDates: this.photoDates,
-      matchPhotoDates: this.kind ? this.matchPhotoDates(this.kind) : false,
-    };
-    if (this.kind !== 'wayback') {
-      const date = this.openHistoricalMapDate();
-      return { ...common, kind: 'openHistoricalMap', choices: [], chosenRelease: null, date,
-        canGoEarlier: true, canGoLater: date < moment().format('YYYY-MM-DD') };
-    }
     const choices = this.choices();
     const shown = this.shownChoice(choices);
     const index = choices.indexOf(shown);
@@ -273,11 +235,12 @@ export class DatedLayers {
     const shownNumber = this.service.shownRelease();
     const shownRelease = shownNumber === null ? this.releases[0] : this.releases.find(release => release.number === shownNumber);
     return {
-      ...common,
-      kind: 'wayback',
+      status: this.status,
       choices,
       chosenRelease: shown?.release ?? null,
       date: choices.length === 0 ? shownRelease?.date ?? null : null,
+      photoDates: this.photoDates,
+      matchPhotoDates: this.service.matchPhotoDates(),
       canGoEarlier: index >= 0 && index < choices.length - 1,
       canGoLater: index > 0,
     };
@@ -307,56 +270,26 @@ export class DatedLayers {
       ?? choices.find(choice => choice.captureDate !== null && choice.captureDate === version.captureDate);
   }
 
-  /** One version older (+1) or newer (-1) in Wayback's list, or one year earlier or later for OpenHistoricalMap. */
+  /** One version older (+1) or newer (-1) in Wayback's list. */
   private step(direction: 1 | -1): void {
-    if (this.kind === 'openHistoricalMap') {
-      // A year later than today is today.
-      const today = moment().format('YYYY-MM-DD');
-      const shifted = moment(this.openHistoricalMapDate(), 'YYYY-MM-DD').subtract(direction, 'year').format('YYYY-MM-DD');
-      const date = shifted > today ? today : shifted;
-      this.service.matchPhotoDates.openHistoricalMap.set(false);
-      this.service.chosenDate.set(date);
-      this.refresh();
-      return;
-    }
     const choices = this.choices();
     const next = choices[choices.indexOf(this.shownChoice(choices)) + direction];
     if (next)
       this.choose(next.release);
   }
 
-  /** A date of OpenHistoricalMap chosen in its calendar, which ends the matching of the photos' dates. */
-  private pickDate(date: string): void {
-    this.service.matchPhotoDates.openHistoricalMap.set(false);
-    this.service.chosenDate.set(date);
-    this.refresh();
-  }
-
   private choose(release: number): void {
-    this.service.matchPhotoDates.wayback.set(false);
+    this.service.matchPhotoDates.set(false);
     this.service.chosenRelease.set(release);
     this.refresh();
   }
 
   private setMatchPhotoDates(match: boolean): void {
-    if (!this.kind)
-      return;
-    this.service.matchPhotoDates[this.kind].set(match);
-    const name = this.kind === 'wayback' ? waybackLayerName : openHistoricalMapLayerName;
-    Analytics.trackEvent('Leaflet Map', '[Leaflet Map] Changed Matching of Map Date', `Layer: "${name}", Match Photo Dates: ${match}`);
+    this.service.matchPhotoDates.set(match);
+    Analytics.trackEvent('Leaflet Map', '[Leaflet Map] Changed Matching of Map Date', `Layer: "${waybackLayerName}", Match Photo Dates: ${match}`);
     this.refresh();
   }
   //#endregion --- The control ---
-
-  private onOpenHistoricalMapError(error: unknown): void {
-    this.openHistoricalMapFailed = true;
-    logger.errorNotRecorded(`Failed to show ${openHistoricalMapLayerName}`, error);
-    Analytics.trackEvent('Leaflet Map', '[Leaflet Map] Failed to Show Map', `Layer: "${openHistoricalMapLayerName}", Error: ${(error as Error)?.message ?? error}`);
-    if (this.kind === 'openHistoricalMap') {
-      this.status = 'mapFailed';
-      this.render();
-    }
-  }
 
   /** Records the date shown, once for each date. */
   private record(description: string): void {
