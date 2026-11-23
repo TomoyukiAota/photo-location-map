@@ -211,8 +211,7 @@
       "appearance": "Izgled",
       "dateTime": "Datum i vreme",
       "thumbnails": "Sličice",
-      "os": "Sistem",
-      "cache": "Keš"
+      "os": "Sistem"
     },
     "restartAfterSaving": "Aplikacija će se ponovo pokrenuti nakon čuvanja podešavanja.",
     "confirmRestart": "Aplikacija će se ponovo pokrenuti nakon čuvanja podešavanja.\nŽelite li da nastavite?",

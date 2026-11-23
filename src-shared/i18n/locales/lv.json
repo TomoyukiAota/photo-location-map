@@ -211,8 +211,7 @@
       "appearance": "Izskats",
       "dateTime": "Datums un laiks",
       "thumbnails": "Sīktēli",
-      "os": "Sistēma",
-      "cache": "Kešatmiņa"
+      "os": "Sistēma"
     },
     "restartAfterSaving": "Pēc iestatījumu saglabāšanas šī lietotne tiks restartēta.",
     "confirmRestart": "Pēc iestatījumu saglabāšanas šī lietotne tiks restartēta.\nVai vēlaties turpināt?",

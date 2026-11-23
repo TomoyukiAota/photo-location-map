@@ -211,8 +211,7 @@
       "appearance": "Aparença",
       "dateTime": "Data i hora",
       "thumbnails": "Miniatures",
-      "os": "Sistema",
-      "cache": "Memòria cau"
+      "os": "Sistema"
     },
     "restartAfterSaving": "Aquesta aplicació es reiniciarà després de desar la configuració.",
     "confirmRestart": "Aquesta aplicació es reiniciarà després de desar la configuració.\nVoleu continuar?",

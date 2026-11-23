@@ -211,8 +211,7 @@
       "appearance": "Itxura",
       "dateTime": "Data eta ordua",
       "thumbnails": "Miniaturak",
-      "os": "Sistema",
-      "cache": "Cachea"
+      "os": "Sistema"
     },
     "restartAfterSaving": "Aplikazioa berrabiarazi egingo da ezarpenak gorde ondoren.",
     "confirmRestart": "Aplikazioa berrabiarazi egingo da ezarpenak gorde ondoren.\nJarraitu nahi duzu?",

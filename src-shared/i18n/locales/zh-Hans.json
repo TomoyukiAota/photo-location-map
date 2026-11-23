@@ -211,8 +211,7 @@
       "appearance": "外观",
       "dateTime": "日期和时间",
       "thumbnails": "缩略图",
-      "os": "操作系统",
-      "cache": "缓存"
+      "os": "操作系统"
     },
     "restartAfterSaving": "保存设置后，此应用将重新启动。",
     "confirmRestart": "保存设置后，此应用将重新启动。\n是否继续？",

@@ -211,8 +211,7 @@
       "appearance": "Aspeto",
       "dateTime": "Data e hora",
       "thumbnails": "Miniaturas",
-      "os": "Sistema",
-      "cache": "Cache"
+      "os": "Sistema"
     },
     "restartAfterSaving": "Esta aplicação será reiniciada depois de guardar as definições.",
     "confirmRestart": "Esta aplicação será reiniciada depois de guardar as definições.\nPretende continuar?",

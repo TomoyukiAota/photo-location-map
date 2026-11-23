@@ -211,8 +211,7 @@
       "appearance": "Izgled",
       "dateTime": "Datum i vrijeme",
       "thumbnails": "Minijature",
-      "os": "Sustav",
-      "cache": "Predmemorija"
+      "os": "Sustav"
     },
     "restartAfterSaving": "Aplikacija će se ponovno pokrenuti nakon spremanja postavki.",
     "confirmRestart": "Aplikacija će se ponovno pokrenuti nakon spremanja postavki.\nŽelite li nastaviti?",

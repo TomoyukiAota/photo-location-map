@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { DateTimeFormat } from '../../../src-shared/date-time/date-time-format';
+import { currentPlatform } from '../../../src-shared/startup/startup-metadata';
 import { UserDataStorage } from '../../../src-shared/user-data-storage/user-data-storage';
 import { UserDataStoragePath } from '../../../src-shared/user-data-storage/user-data-stroage-path';
 import { BooleanSetting } from '../../../src-shared/user-settings/boolean-setting';
@@ -12,7 +13,6 @@ import { ConfirmDialogService } from '../shared/confirm-dialog/confirm-dialog.se
 import { DirTreeViewStickyRowsService } from '../directory-tree-view/dir-tree-view-sticky-rows/dir-tree-view-sticky-rows.service';
 import { AppearanceSettingsChangedParameter } from './appearance-settings/appearance-settings-changed-parameter';
 import { AppearanceSettingsComponent } from './appearance-settings/appearance-settings.component';
-import { CacheSettingsComponent } from './cache-settings/cache-settings.component';
 import { DateTimeSettingsComponent } from './date-time-settings/date-time-settings.component';
 import { LanguageSettingsComponent } from './language-settings/language-settings.component';
 import { OsSettingsComponent } from './os-settings/os-settings.component';
@@ -33,9 +33,6 @@ class DummyDateTimeSettingsComponent {}
 
 @Component({ selector: 'app-os-settings', template: '' })
 class DummyOsSettingsComponent {}
-
-@Component({ selector: 'app-cache-settings', template: '' })
-class DummyCacheSettingsComponent {}
 
 @Component({ selector: 'app-thumbnail-settings', template: '' })
 class DummyThumbnailSettingsComponent {}
@@ -82,12 +79,12 @@ describe('SettingsDialogComponent', () => {
       .overrideComponent(SettingsDialogComponent, {
         remove: {
           imports: [LanguageSettingsComponent, AppearanceSettingsComponent, DateTimeSettingsComponent, OsSettingsComponent,
-            ThumbnailSettingsComponent, CacheSettingsComponent],
+            ThumbnailSettingsComponent],
         },
         add: {
           imports: [
             DummyLanguageSettingsComponent, DummyAppearanceSettingsComponent, DummyDateTimeSettingsComponent, DummyOsSettingsComponent,
-            DummyThumbnailSettingsComponent, DummyCacheSettingsComponent,
+            DummyThumbnailSettingsComponent,
           ],
         },
       })
@@ -264,16 +261,18 @@ describe('SettingsDialogComponent', () => {
   it('opens on the Language tab, the first, and shows the tab chosen in the list', async () => {
     await createDialog();
     const host: HTMLElement = fixture.nativeElement;
-    expect(host.querySelector('mat-list-item').textContent.trim()).toBe('Language');
+    // The cache of the thumbnails is on the Thumbnails tab, and the OS tab is there on Windows only.
+    const names = Array.from(host.querySelectorAll('mat-list-item'), item => item.textContent.trim());
+    expect(names).toEqual(['Language', 'Appearance', 'Date & Time', 'Thumbnails', ...(currentPlatform() === 'win32' ? ['OS'] : [])]);
     expect(tab('Language').classList).toContain('selected-tab');
     expect((host.querySelector('app-language-settings') as HTMLElement).style.display).toBe('block');
 
-    tab('Cache').click();
+    tab('Thumbnails').click();
     await fixture.whenStable();
 
-    expect(tab('Cache').classList).toContain('selected-tab');
+    expect(tab('Thumbnails').classList).toContain('selected-tab');
     expect(tab('Language').classList).not.toContain('selected-tab');
-    expect((host.querySelector('app-cache-settings') as HTMLElement).style.display).toBe('block');
+    expect((host.querySelector('app-thumbnail-settings') as HTMLElement).style.display).toBe('block');
     expect((host.querySelector('app-language-settings') as HTMLElement).style.display).toBe('none');
     expect((host.querySelector('app-appearance-settings') as HTMLElement).style.display).toBe('none');
   });

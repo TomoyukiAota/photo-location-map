@@ -1,0 +1,24 @@
+// TL;DR: A scrollbar of the box's own, which stays in view while the box has more than it shows.
+// Details: macOS hides its scrollbar until a box is scrolled, so a box that ends between two of its entries, or two
+// of its paragraphs, looks like the whole of what it holds. A scrollbar styled here is drawn by Chromium in place of
+// the system's, at all times. The language list and the tabs of the Settings dialog have it.
+@mixin scrollbar-in-view($width: 12px) {
+  &::-webkit-scrollbar {
+    width: $width;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  // The border leaves the thumb narrower than its track, and rounded at both ends.
+  &::-webkit-scrollbar-thumb {
+    border: 2px solid #f1f1f1;
+    border-radius: calc(#{$width} / 2);
+    background: #8a8a8a;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #6e6e6e;
+  }
+}

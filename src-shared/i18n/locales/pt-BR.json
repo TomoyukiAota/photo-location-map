@@ -211,8 +211,7 @@
       "appearance": "Aparência",
       "dateTime": "Data e hora",
       "thumbnails": "Miniaturas",
-      "os": "Sistema",
-      "cache": "Cache"
+      "os": "Sistema"
     },
     "restartAfterSaving": "Este aplicativo será reiniciado após salvar as configurações.",
     "confirmRestart": "Este aplicativo será reiniciado após salvar as configurações.\nDeseja continuar?",

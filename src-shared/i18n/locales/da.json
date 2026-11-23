@@ -211,8 +211,7 @@
       "appearance": "Udseende",
       "dateTime": "Dato og tid",
       "thumbnails": "Miniaturer",
-      "os": "Operativsystem",
-      "cache": "Cache"
+      "os": "Operativsystem"
     },
     "restartAfterSaving": "Appen genstarter, når indstillingerne er gemt.",
     "confirmRestart": "Appen genstarter, når indstillingerne er gemt.\nVil du fortsætte?",

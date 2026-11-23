@@ -211,8 +211,7 @@
       "appearance": "모양",
       "dateTime": "날짜 및 시간",
       "thumbnails": "썸네일",
-      "os": "OS",
-      "cache": "캐시"
+      "os": "OS"
     },
     "restartAfterSaving": "설정을 저장하면 이 앱이 다시 시작됩니다.",
     "confirmRestart": "설정을 저장하면 이 앱이 다시 시작됩니다.\n계속하시겠습니까?",

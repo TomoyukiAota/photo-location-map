@@ -15,9 +15,10 @@
 
 // TL;DR: A part of the tab below Show Status Bar, with a title of its own, smaller than the tab's, and little room
 // between its lines.
-// Details: The Settings dialog is 600 pixels high, which the tab has to hold in every language: with more room, its
+// Details: The Settings dialog is 600 pixels high, which the tab holds in every language: with more room, its
 // description took the dialog's height in Japanese and Hindi, whose lines are higher, and the dialog scrolled by 16
-// pixels.
+// pixels. A tab that is higher now scrolls between the dialog's header and footer (settings-dialog.component.scss),
+// as the Thumbnails tab does, but this one need not.
 .sticky-folders-title {
   margin-top: 20px;
   font-size: 16px;

@@ -211,8 +211,7 @@
       "appearance": "Videz",
       "dateTime": "Datum in ura",
       "thumbnails": "Sličice",
-      "os": "Sistem",
-      "cache": "Predpomnilnik"
+      "os": "Sistem"
     },
     "restartAfterSaving": "Aplikacija se bo po shranjevanju nastavitev znova zagnala.",
     "confirmRestart": "Aplikacija se bo po shranjevanju nastavitev znova zagnala.\nAli želite nadaljevati?",

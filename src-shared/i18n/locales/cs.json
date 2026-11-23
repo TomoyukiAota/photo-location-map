@@ -211,8 +211,7 @@
       "appearance": "Vzhled",
       "dateTime": "Datum a čas",
       "thumbnails": "Miniatury",
-      "os": "Systém",
-      "cache": "Mezipaměť"
+      "os": "Systém"
     },
     "restartAfterSaving": "Aplikace se po uložení nastavení restartuje.",
     "confirmRestart": "Aplikace se po uložení nastavení restartuje.\nChcete pokračovat?",

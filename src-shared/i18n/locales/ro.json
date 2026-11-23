@@ -211,8 +211,7 @@
       "appearance": "Aspect",
       "dateTime": "Dată și oră",
       "thumbnails": "Miniaturi",
-      "os": "Sistem",
-      "cache": "Cache"
+      "os": "Sistem"
     },
     "restartAfterSaving": "Aplicația va reporni după salvarea setărilor.",
     "confirmRestart": "Aplicația va reporni după salvarea setărilor.\nDoriți să continuați?",

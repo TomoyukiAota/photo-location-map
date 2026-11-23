@@ -211,8 +211,7 @@
       "appearance": "Giao diện",
       "dateTime": "Ngày & giờ",
       "thumbnails": "Hình thu nhỏ",
-      "os": "Hệ điều hành",
-      "cache": "Bộ nhớ đệm"
+      "os": "Hệ điều hành"
     },
     "restartAfterSaving": "Ứng dụng này sẽ khởi động lại sau khi lưu cài đặt.",
     "confirmRestart": "Ứng dụng này sẽ khởi động lại sau khi lưu cài đặt.\nBạn có muốn tiếp tục không?",

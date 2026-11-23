@@ -211,8 +211,7 @@
       "appearance": "Utseende",
       "dateTime": "Dato og tid",
       "thumbnails": "Miniatyrbilder",
-      "os": "Operativsystem",
-      "cache": "Buffer"
+      "os": "Operativsystem"
     },
     "restartAfterSaving": "Appen starter på nytt etter at innstillingene er lagret.",
     "confirmRestart": "Appen starter på nytt etter at innstillingene er lagret.\nVil du fortsette?",
