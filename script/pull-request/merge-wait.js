@@ -117,13 +117,30 @@ export function assess(pullRequest, checks, seen, now) {
   };
 }
 
+/**
+ * Where each required check stands, by its name: 'failed' when one of its runs failed or was canceled, 'pending' when
+ * one is still to end, else 'passed'. GitHub and Mergify take every run of a check of the same name on the commit, the
+ * push's and the pull request's, which skips its jobs for a pull request from a branch of this repository (AGENTS.md,
+ * "CI tests each commit once, on push"): a skipped run passes the check only once the push's has passed too.
+ */
+function standingOfChecks(checks) {
+  const standing = new Map();
+  for (const check of checks) {
+    const now = check.bucket === 'fail' || check.bucket === 'cancel' ? 'failed'
+      : check.bucket === 'pass' || check.bucket === 'skipping' ? 'passed' : 'pending';
+    const before = standing.get(check.name);
+    if (before !== 'failed' && (before !== 'pending' || now === 'failed')) standing.set(check.name, now);
+  }
+  return [...standing.values()];
+}
+
 /** A line about where the pull request stands, which wait-for-merge.js writes when it changes. */
 function statusOf(pullRequest, checks, { labeled, behind, conflicting }) {
   if (conflicting) return 'conflicts with main';
   if (!labeled) return `waits for the label ${label}`;
   if (behind) return 'is behind main, for Mergify to bring it up to date';
-  const count = bucket => checks.filter(check => check.bucket === bucket).length;
-  const done = count('pass') + count('skipping');
-  return `${String(pullRequest.headRefOid).slice(0, 8)}: ${done} of ${checks.length} required checks passed, ` +
-    `${count('pending')} pending, ${failedChecksOf(checks).length} failed`;
+  const standing = standingOfChecks(checks);
+  const count = state => standing.filter(each => each === state).length;
+  return `${String(pullRequest.headRefOid).slice(0, 8)}: ${count('passed')} of ${standing.length} required checks ` +
+    `passed, ${count('pending')} pending, ${count('failed')} failed`;
 }
