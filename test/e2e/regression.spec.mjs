@@ -1527,10 +1527,10 @@ test('on a computer whose language is Arabic, the application in English lists t
   await cancel.click();
   await expect(settingsDialog).toHaveCount(0);
 });
-test('the map stays as it is while other photos are pinned: its markers change, and its zoom stays from one photo to the next', async () => {
+test('the map stays as it is while other photos are pinned: its markers change, its zoom stays from one photo to the next, and the next popup shows at once', async () => {
   // The map is made once. Each change of the pinned photos changes its markers, and moves its view to them: one photo
   // at the zoom level that shows a photo's place, or at the map's zoom when one photo follows another, as Photo Taken
-  // Before and Photo Taken After go; several photos fitted in it.
+  // Before and Photo Taken After go; several photos fitted in it. The popup of one photo gives way to the next at once.
   await page.addInitScript(() => {
     let leaflet;
     Object.defineProperty(window, 'L', {
@@ -1555,7 +1555,7 @@ test('the map stays as it is while other photos are pinned: its markers change, 
   const map = () => page.evaluate(() => ({ zoom: window.__plmLeafletMap.getZoom(), maps: window.__plmLeafletMaps }));
   /**
    * Whether the popup is in the middle of the map, from left to right, above its marker, as centerOnPopup() puts it:
-   * once the popup of the photo before has gone, which Leaflet fades out for 200 ms.
+   * once the popup of the photo before has gone, which Leaflet keeps, hidden, for 200 ms after it closes.
    */
   async function popupInMiddle() {
     await expect(popup).toHaveCount(1);
@@ -1565,6 +1565,30 @@ test('the map stays as it is while other photos are pinned: its markers change, 
       return Math.abs((popupBox.left + popupBox.right) / 2 - (mapBox.left + mapBox.right) / 2) < 2;
     });
   }
+  /**
+   * Calls the method `selection` of the photo selection, and records the popups that are seen, by their opacity and
+   * their photo's name, each time that the popups change from then until shownPopups() is called: as the page has them
+   * before it paints them, as the observer is called before then.
+   */
+  async function selectRecordingShownPopups(selection) {
+    await page.evaluate(selection => {
+      const pane = window.__plmLeafletMap.getPanes().popupPane;
+      const records = [];
+      const observer = new MutationObserver(() => records.push([...pane.querySelectorAll('.leaflet-popup')]
+        .map(shown => ({
+          opacity: getComputedStyle(shown).opacity,
+          name: shown.querySelector('.photo-info-viewer-name')?.textContent ?? null,
+        }))
+        .filter(shown => shown.opacity !== '0')));
+      observer.observe(pane, { childList: true, subtree: true });
+      window.__plmShownPopups = () => {
+        observer.disconnect();
+        return records;
+      };
+      window.plmInternalRenderer.photoSelection[selection]();
+    }, selection);
+  }
+  const shownPopups = () => page.evaluate(() => window.__plmShownPopups());
   await page.evaluate(photo => window.plmInternalRenderer.photoSelection.selectOnlyThis(photo), path.join(photoFolder, 'Gold Coast/IMG_1579.JPG'));
   await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_1579.JPG');
   await expectRepresentedPhotos(1);
@@ -1577,9 +1601,19 @@ test('the map stays as it is while other photos are pinned: its markers change, 
   await expectRepresentedPhotos(1);
   expect(await map()).toEqual({ zoom: 16, maps: 1 });
   expect(await popupInMiddle()).toBe(true);
-  await page.evaluate(() => window.plmInternalRenderer.photoSelection.undo());
+  // Back to the photo before, with the popup of this one open: the popup open goes at once, and that of the photo
+  // before is there at once, whole. With Leaflet's fade, the popup going showed as a thin bar while it faded out, as
+  // its content goes with its marker, under the one coming, which faded in: a popup that grew. Not checked at the step
+  // above, where the zoom had closed the popup: Leaflet.markercluster takes a marker off the map and puts it back at
+  // each zoom, and Leaflet closes the popup of a marker taken off.
+  await selectRecordingShownPopups('undo');
   await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_1579.JPG');
   expect(await map()).toEqual({ zoom: 16, maps: 1 });
+  await expect(popup).toHaveCount(1);
+  const shownWhileChanging = await shownPopups();
+  expect(shownWhileChanging).toContainEqual([{ opacity: '1', name: 'IMG_1579.JPG' }]);
+  for (const shown of shownWhileChanging)
+    expect([[{ opacity: '1', name: 'IMG_2581.JPG' }], [{ opacity: '1', name: 'IMG_1579.JPG' }]]).toContainEqual(shown);
   // The four photos again: the view fits them, which are around the world.
   await page.evaluate(() => window.plmInternalRenderer.photoSelection.undo());
   await expectRepresentedPhotos(4);
