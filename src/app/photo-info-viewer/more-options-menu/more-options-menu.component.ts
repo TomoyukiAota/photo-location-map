@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { afterNextRender, Component, DestroyRef, Directive, inject, input, viewChild } from '@angular/core';
+import { afterNextRender, Component, DestroyRef, Directive, inject, Injector, input, viewChild } from '@angular/core';
 import { MatMenu, MatMenuContent, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { TranslationKey } from '../../../../src-shared/i18n/translation-key';
@@ -185,6 +185,9 @@ export class MoreOptionsMenuComponent {
   private readonly photoRevealService = inject(PhotoRevealService);
   private readonly selectPreviousNextService = inject(SelectPreviousNextService);
 
+  private readonly document = inject(DOCUMENT);
+  private readonly injector = inject(Injector);
+
   private readonly menu = viewChild.required<MatMenu>('menu');
   private readonly platform = currentPlatform();
 
@@ -220,6 +223,47 @@ export class MoreOptionsMenuComponent {
     const items = this.makeItems(photo, place, previous, next);
     this.shown = { photo, place, previous, next, items };
     return items;
+  }
+
+  /**
+   * Places a submenu that has opened beside its item again, once the item is where it stays: after the submenu's first
+   * render, and once the menu that holds the item has grown.
+   * TL;DR: Angular Material places a submenu once, beside its item as the item is when the submenu opens, and leaves it
+   * there. A submenu that opened while its menu still grew stayed where its item was then: in the e2e case of Arabic on
+   * macOS CI, 11.5 px into its menu, as the menu was at 92.7% of its width (run 45113405487).
+   * Details:
+   * - A menu grows from 80% of its size as it opens, for 120 ms, from its corner at what opened it, and its items with
+   *   it. The CDK places a submenu against its item's box as the box is (MatMenuTrigger._openMenu(),
+   *   FlexibleConnectedPositionStrategy.apply()). It places an open menu again only when the page scrolls, when the
+   *   window is resized, or when the menu's own items change: not when the menu that holds the item has grown. A
+   *   submenu that opens while the menu grows is off by up to a fifth of the item's distance from that corner: in the
+   *   Arabic case, at the item's right, where the submenu opens as the window has no room for it on the left.
+   * - A submenu that opens again while it fades out, within about 125 ms of closing, is not placed at all: its overlay
+   *   is still attached, so it stays where it opened last (MatMenuTrigger._openMenu() attaches it only when it is not).
+   *   updatePosition() places it anew then, as opening it again discarded the position that the CDK had chosen for it
+   *   (FlexibleConnectedPositionStrategy.withPositions()).
+   * - Reproduced in the Arabic case: the arrow towards the submenu as soon as the menu was placed put the submenu at
+   *   255.7 px, against its item at 80%; 128 ms after the click, at 283.2 px; once the menu had grown, at 287.3 px.
+   *   A person can open a submenu so with the keyboard: Enter on the button, then the arrow within about 0.1 s.
+   * - Not found: what opened the submenu that early in run 45113405487. The case presses the arrow once Playwright's
+   *   box of the menu, which includes its growth, is as wide as the menu: in 301 runs recorded frame by frame, 241 of
+   *   them on macOS CI, the arrow came 5 to 352 ms after the menu had grown, with no scroll, resize or pointer over the
+   *   menus in between.
+   * - Rejected: a menu that does not grow, which every menu of Angular Material does; a submenu that opens only once its
+   *   menu has grown, which would leave the arrow without an answer for up to 0.1 s.
+   */
+  protected placeAgainOnceShown(trigger: MatMenuTrigger): void {
+    afterNextRender(() => {
+      const menuPanel = this.document.getElementById(this.menu().panelId);
+      // The growth of a menu that closes before it has grown ends without finishing, which rejects. jsdom, where the unit
+      // tests run, has no getAnimations(), as Angular finds before it uses it.
+      Promise.all((menuPanel?.getAnimations?.() ?? []).map(animation => animation.finished))
+        .catch(() => undefined)
+        .then(() => {
+          if (trigger.menuOpen)
+            trigger.updatePosition();
+        });
+    }, { injector: this.injector });
   }
 
   private makeItems(photo: Photo, place: PhotoInfoViewerPlace, previous: string | null, next: string | null): MoreOptionsMenuItem[] {
