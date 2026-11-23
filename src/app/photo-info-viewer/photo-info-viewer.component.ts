@@ -37,6 +37,19 @@ const unavailableThumbnail: Thumbnail = { kind: 'unavailable', src: IconDataUrl.
 /** How long the class that fades a new thumbnail in stays: 2000 ms of its animation, and 500 ms for a late start. */
 const fadeInAfterGenerationMs = 2500;
 
+/**
+ * How long a thumbnail is waited for before the image that says that it is being made shows, as its style waits too
+ * (.photo-info-viewer-generating-thumbnail). A thumbnail that comes sooner is shown at once, without fading in.
+ * TL;DR: Most thumbnails that are made come within a fraction of a second, and the image shown only for that looked
+ * like a flicker.
+ * Details: On a Mac that decodes HEVC in the page, a HEIF photo's small thumbnail came 1 to 3 frames after its row was
+ * shown in the tree, and 100 to 220 ms after it among the rows of a folder just opened; a thumbnail in the cache comes
+ * after one request to the main process. The image showed for that time, and the thumbnail then faded in for 2 seconds.
+ * Those that take longer are those that the main process makes, 0.6 to 2 seconds each, and those that wait behind
+ * many others.
+ */
+const generatingThumbnailDelayMs = 500;
+
 /** The icons of the buttons, by what each button does. */
 const buttonIcons = {
   rotate: IconDataUrl.rotate,
@@ -175,8 +188,9 @@ export class PhotoInfoViewerComponent {
   constructor() {
     let fadeInTimer: ReturnType<typeof setTimeout> | undefined;
     inject(DestroyRef).onDestroy(() => clearTimeout(fadeInTimer));
-    /** The photo whose thumbnail was being made when this last looked. */
+    /** The photo whose thumbnail was being made when this last looked, and since when. */
     let photoPathOfGeneratingThumbnail: string | undefined;
+    let generatingSince = 0;
 
     // What follows from the photo and its thumbnail, apart from what the template shows.
     effect(() => {
@@ -195,13 +209,18 @@ export class PhotoInfoViewerComponent {
         this.heifThumbnailService.watch(photo.path);
 
       if (thumbnail.kind === 'generating') {
-        photoPathOfGeneratingThumbnail = photo.path;
+        if (photoPathOfGeneratingThumbnail !== photo.path) {
+          photoPathOfGeneratingThumbnail = photo.path;
+          generatingSince = performance.now();
+        }
         return;
       }
 
       // The class is applied and removed, so that the thumbnail fades in just once: an animation starts again
-      // whenever its element is put back into the page, as a popup's content is.
-      if (thumbnail.kind === 'image' && photoPathOfGeneratingThumbnail === photo.path) {
+      // whenever its element is put back into the page, as a popup's content is. A thumbnail that came while the
+      // image that says that it is being made was still hidden is shown at once (generatingThumbnailDelayMs).
+      if (thumbnail.kind === 'image' && photoPathOfGeneratingThumbnail === photo.path
+        && performance.now() - generatingSince >= generatingThumbnailDelayMs) {
         this.fadesInAfterGeneration.set(true);
         clearTimeout(fadeInTimer);
         fadeInTimer = setTimeout(() => this.fadesInAfterGeneration.set(false), fadeInAfterGenerationMs);

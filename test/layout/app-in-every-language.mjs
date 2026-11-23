@@ -531,7 +531,10 @@ await writeFile(path.join(output, 'measurements.json'), JSON.stringify(results, 
 // its text and its numbers are. The lines of a text are the exception: a text on more lines than the English one
 // is reported, as "Open Folder" on two lines does not excuse a translation on four.
 const kinds = ['cut', 'outside', 'lines', 'scrolls'];
-const kindOf = item => item.replace(/“.*?”/g, '').replace(/\d+/g, 'N');
+// The text is everything between the item's first “ and its last ”, whatever it has in it: the end of a line, or
+// quotes of its own, which end with the same ” in many languages (“…” in Korean, „…” in Polish, ”…” in Finnish).
+// Ended at the text's own ”, the kind would keep the rest of the text, and would not match English's.
+const kindOf = item => item.replace(/“.*”/s, '').replace(/\d+/g, 'N');
 const linesOf = item => Number(item.match(/: (\d+) lines$/)?.[1] ?? 1);
 let found = 0;
 for (const [code, screens] of Object.entries(results)) {
