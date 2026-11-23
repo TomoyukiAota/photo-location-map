@@ -1556,21 +1556,24 @@ test('the map stays as it is while other photos are pinned: its markers change, 
   expect(await popupInMiddle()).toBe(true);
   // Zoomed in, as the user would to see the place, the map keeps the zoom for the photo taken next, far from there.
   await page.evaluate(() => window.__plmLeafletMap.setZoom(16, { animate: false }));
-  await selectRecordingShownPopups('selectNext');
+  await page.evaluate(() => window.plmInternalRenderer.photoSelection.selectNext());
   await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_2581.JPG');
   await expectRepresentedPhotos(1);
   expect(await map()).toEqual({ zoom: 16, maps: 1 });
   expect(await popupInMiddle()).toBe(true);
-  // The popup of the photo before went at once, and the next one was there at once, whole. With Leaflet's fade, the
-  // popup before showed as a thin bar while it faded out, as its content goes with its marker, under the next one,
-  // which faded in: a popup that grew, at each step.
-  const shownWhileChanging = await shownPopups();
-  expect(shownWhileChanging.length).toBeGreaterThan(0);
-  for (const shown of shownWhileChanging)
-    expect(shown).toEqual([{ opacity: '1', name: 'IMG_2581.JPG' }]);
-  await page.evaluate(() => window.plmInternalRenderer.photoSelection.undo());
+  // Back to the photo before, with the popup of this one open: the popup open goes at once, and that of the photo
+  // before is there at once, whole. With Leaflet's fade, the popup going showed as a thin bar while it faded out, as
+  // its content goes with its marker, under the one coming, which faded in: a popup that grew. Not checked at the step
+  // above, where the zoom had closed the popup: Leaflet.markercluster takes a marker off the map and puts it back at
+  // each zoom, and Leaflet closes the popup of a marker taken off.
+  await selectRecordingShownPopups('undo');
   await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_1579.JPG');
   expect(await map()).toEqual({ zoom: 16, maps: 1 });
+  await expect(popup).toHaveCount(1);
+  const shownWhileChanging = await shownPopups();
+  expect(shownWhileChanging).toContainEqual([{ opacity: '1', name: 'IMG_1579.JPG' }]);
+  for (const shown of shownWhileChanging)
+    expect([[{ opacity: '1', name: 'IMG_2581.JPG' }], [{ opacity: '1', name: 'IMG_1579.JPG' }]]).toContainEqual(shown);
   // The four photos again: the view fits them, which are around the world.
   await page.evaluate(() => window.plmInternalRenderer.photoSelection.undo());
   await expectRepresentedPhotos(4);
