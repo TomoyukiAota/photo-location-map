@@ -271,6 +271,22 @@ describe('PhotoInfoViewerComponent', () => {
         expect(thumbnail().className).toBe('photo-info-viewer-thumbnail');
       });
 
+      it('is the thumbnail without fading in, when it comes before the image that says that it is being made shows', async () => {
+        // The main process answers 499 ms after it is asked, with the thumbnail made: as the image that says that it is
+        // being made shows only after 500 ms, which its style waits (generatingThumbnailDelayMs), it was never seen.
+        vi.mocked(window.plm.thumbnails.state).mockImplementation(photoPaths => new Promise(resolve => setTimeout(() =>
+          resolve(photoPaths.map((photoPath): ThumbnailState =>
+            ({ attemptFinished: true, cacheAvailable: true, thumbnailFilePath: `/cache${photoPath}.plm.jpg` }))), 499)));
+        await showHeifPhoto();
+        await pass(498);
+        expect(thumbnail().getAttribute('src')).toBe(IconDataUrl.generatingThumbnail);
+        expect(thumbnail().classList.contains('photo-info-viewer-generating-thumbnail')).toBe(true);
+
+        await pass(1);
+        expect(thumbnail().getAttribute('src')).toBe(`plm-file://local/${encodeURIComponent('/cache/photos/IMG_0002.HEIC.plm.jpg')}`);
+        expect(thumbnail().className).toBe('photo-info-viewer-thumbnail');
+      });
+
       it('is the thumbnail at once, without fading in, when it is known already', async () => {
         finished = true;
         TestBed.inject(HeifThumbnailService).watch('/photos/IMG_0002.HEIC');
@@ -300,7 +316,28 @@ describe('PhotoInfoViewerComponent', () => {
       });
     });
 
-    afterEach(() => vi.restoreAllMocks());
+    afterEach(() => {
+      vi.useRealTimers();
+      vi.restoreAllMocks();
+    });
+
+    it('is the small thumbnail that the photo holds at once, without the image that says that it is being made', async () => {
+      vi.useFakeTimers();
+      fixture = TestBed.createComponent(PhotoInfoViewerComponent);
+      fixture.componentRef.setInput('photo', photoAt('/photos/IMG_0004.HEIC'));
+      fixture.componentRef.setInput('place', 'dir-tree-view');
+      element = fixture.nativeElement;
+      fixture.detectChanges();
+      // The image that says so is in the page, which its style hides for 500 ms (generatingThumbnailDelayMs).
+      expect(thumbnail().getAttribute('src')).toBe(IconDataUrl.generatingThumbnail);
+
+      // The small thumbnail comes within a few milliseconds, with no time passing here.
+      await vi.advanceTimersByTimeAsync(0);
+      fixture.detectChanges();
+
+      expect(thumbnail().getAttribute('src')).toBe('blob:heif/1');
+      expect(thumbnail().className).toBe('photo-info-viewer-thumbnail');
+    });
 
     it('is the small thumbnail that the photo holds, then the one of high quality, which needs no fading in', async () => {
       await show(photoAt('/photos/IMG_0003.HEIC'), 'leaflet-map-popup');
