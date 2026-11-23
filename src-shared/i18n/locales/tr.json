@@ -264,8 +264,8 @@
       "confirmInExplorer": "Doğrulamak için Dosya Gezgini’ni açın ve bir dosyaya veya klasöre sağ tıklayın."
     },
     "cache": {
-      "title": "HEIF küçük resim önbelleği",
-      "requiredForHeif": "<heifLink>HEIF dosyaları</heifLink> için küçük resim oluşturulması gerekir ve bu zaman alır.",
+      "title": "Küçük resim önbelleği",
+      "generationRequired": "EXIF verisinde küçük resmi olmayan JPEG/PNG dosyaları ve bu bilgisayarın grafik donanımının kodunu çözemediği <heifLink>HEIF dosyaları</heifLink> için küçük resim oluşturulması gerekir ve bu zaman alır.",
       "thereforeCached": "Bu nedenle oluşturulan küçük resimler önbelleğe alınır.",
       "usedNextTime": "Bir sonraki seferden itibaren önbellek kullanılır ve küçük resimler yeniden oluşturulmaz.",
       "location": "Önbellek konumu:",

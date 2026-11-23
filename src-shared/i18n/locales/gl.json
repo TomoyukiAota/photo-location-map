@@ -264,8 +264,8 @@
       "confirmInExplorer": "Para comprobalo, abre o Explorador de ficheiros e fai clic co botón dereito nun ficheiro ou cartafol."
     },
     "cache": {
-      "title": "Caché de miniaturas HEIF",
-      "requiredForHeif": "Para os <heifLink>ficheiros HEIF</heifLink> hai que xerar miniaturas, e iso leva tempo.",
+      "title": "Caché de miniaturas",
+      "generationRequired": "Para os ficheiros JPEG/PNG sen miniatura nos seus datos EXIF e para os <heifLink>ficheiros HEIF</heifLink> que este ordenador non pode descodificar co seu hardware gráfico, hai que xerar miniaturas, e iso leva tempo.",
       "thereforeCached": "Por iso, as miniaturas xeradas gárdanse na caché.",
       "usedNextTime": "A partir da seguinte vez úsase a caché e non se volven xerar as miniaturas.",
       "location": "Localización da caché:",

@@ -264,8 +264,8 @@
       "confirmInExplorer": "请打开文件资源管理器，右键点击文件或文件夹进行确认。"
     },
     "cache": {
-      "title": "HEIF 缩略图缓存",
-      "requiredForHeif": "<heifLink>HEIF 文件</heifLink>需要生成缩略图，而生成需要一些时间。",
+      "title": "缩略图缓存",
+      "generationRequired": "EXIF 中没有缩略图的 JPEG/PNG 文件，以及这台计算机的图形硬件无法解码的<heifLink>HEIF 文件</heifLink>，需要生成缩略图，而生成需要一些时间。",
       "thereforeCached": "因此，生成的缩略图会被缓存。",
       "usedNextTime": "下次起将使用缓存，不再重新生成缩略图。",
       "location": "缓存位置：",

@@ -264,8 +264,8 @@
       "confirmInExplorer": "Kontrollimiseks avage File Explorer ja paremklõpsake faili või kausta."
     },
     "cache": {
-      "title": "HEIF-pisipiltide vahemälu",
-      "requiredForHeif": "<heifLink>HEIF-failide</heifLink> jaoks tuleb luua pisipildid ja see võtab aega.",
+      "title": "Pisipiltide vahemälu",
+      "generationRequired": "JPEG/PNG-failide jaoks, mille EXIF-andmetes pole pisipilti, ja <heifLink>HEIF-failide</heifLink> jaoks, mida see arvuti ei suuda graafikariistvaraga dekodeerida, tuleb luua pisipildid ja see võtab aega.",
       "thereforeCached": "Seepärast salvestatakse loodud pisipildid vahemällu.",
       "usedNextTime": "Järgmisest korrast alates kasutatakse vahemälu ja pisipilte uuesti ei looda.",
       "location": "Vahemälu asukoht:",

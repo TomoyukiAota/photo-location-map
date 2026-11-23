@@ -264,8 +264,8 @@
       "confirmInExplorer": "Pro ověření otevřete Průzkumníka souborů a klikněte pravým tlačítkem na soubor nebo složku."
     },
     "cache": {
-      "title": "Mezipaměť miniatur HEIF",
-      "requiredForHeif": "Pro <heifLink>soubory HEIF</heifLink> je třeba vytvářet miniatury, což nějakou dobu trvá.",
+      "title": "Mezipaměť miniatur",
+      "generationRequired": "Pro soubory JPEG/PNG bez miniatury v datech EXIF a pro <heifLink>soubory HEIF</heifLink>, které tento počítač neumí dekódovat grafickým hardwarem, je třeba vytvářet miniatury, což nějakou dobu trvá.",
       "thereforeCached": "Vytvořené miniatury se proto ukládají do mezipaměti.",
       "usedNextTime": "Příště se použije mezipaměť, takže se miniatury nebudou vytvářet znovu.",
       "location": "Umístění mezipaměti:",

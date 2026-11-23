@@ -22,9 +22,12 @@ class ObserverDouble {
     this.observed.clear();
   }
 
-  /** Reports each element as near or not, as the page does after a layout that changed it. */
-  public report(...changes: [Element, boolean][]): void {
-    const entries = changes.map(([target, isIntersecting]) => ({ target, isIntersecting }) as IntersectionObserverEntry);
+  /**
+   * Reports each element as near or not, as the page does after a layout that changed it, with where it is and where
+   * the window is when they are given.
+   */
+  public report(...changes: [Element, boolean, Partial<IntersectionObserverEntry>?][]): void {
+    const entries = changes.map(([target, isIntersecting, geometry]) => ({ target, isIntersecting, ...geometry }) as IntersectionObserverEntry);
     this.callback(entries, this as unknown as IntersectionObserver);
   }
 }
@@ -63,6 +66,23 @@ describe('NearViewService', () => {
     // A report that the observer had made before it stopped watching the element.
     observer.report([near, true]);
     expect(told).toEqual(['near']);
+  });
+
+  it('tells how far the middle of an element that has come near is from the middle of the window', () => {
+    const [above, inView, unknown] = [document.createElement('div'), document.createElement('div'), document.createElement('div')];
+    const told: [string, number][] = [];
+    service.watch(above, distance => told.push(['above', distance]));
+    service.watch(inView, distance => told.push(['in view', distance]));
+    service.watch(unknown, distance => told.push(['unknown', distance]));
+    // A window of 800 pixels, whose bounds the observer's margin widens to -1250 and 2050.
+    const rootBounds = { top: -1250, bottom: 2050 } as DOMRectReadOnly;
+
+    ObserverDouble.made[0].report(
+      [above, true, { boundingClientRect: { top: -700, bottom: -400 } as DOMRectReadOnly, rootBounds }],
+      [inView, true, { boundingClientRect: { top: 300, bottom: 600 } as DOMRectReadOnly, rootBounds }],
+      [unknown, true]);
+
+    expect(told).toEqual([['above', 950], ['in view', 50], ['unknown', 0]]);
   });
 
   it('stops watching an element that goes before it has come near', () => {

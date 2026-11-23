@@ -42,10 +42,11 @@ describe('CacheSettingsComponent', () => {
     expect(confirm).toHaveBeenCalledWith('This application will restart after deleting the thumbnail cache.\nDo you want to continue?');
   });
 
-  it('shows the sentence about HEIF files with its link around the words of the translation', () => {
+  it('shows the sentence about the files whose thumbnails are made, with its link around the words of the translation', () => {
     const host: HTMLElement = fixture.nativeElement;
     const sentence = host.querySelector('.cache-description p');
-    expect(sentence.textContent).toBe('Thumbnail generation is required for HEIF files, but it takes time.');
+    expect(sentence.textContent).toBe('Thumbnail generation is required for JPEG/PNG files without a thumbnail in their EXIF data, '
+      + 'and for HEIF files that this computer cannot decode with its graphics hardware, but it takes time.');
     expect(sentence.querySelector('a').textContent).toBe('HEIF files');
   });
 });

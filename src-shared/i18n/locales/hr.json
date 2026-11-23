@@ -264,8 +264,8 @@
       "confirmInExplorer": "Otvorite Eksplorer za datoteke i desnom tipkom miša kliknite datoteku ili mapu da biste provjerili."
     },
     "cache": {
-      "title": "Predmemorija minijatura HEIF",
-      "requiredForHeif": "Za <heifLink>datoteke HEIF</heifLink> potrebno je izraditi minijature, što traje neko vrijeme.",
+      "title": "Predmemorija minijatura",
+      "generationRequired": "Za datoteke JPEG/PNG bez minijature u podacima EXIF i za <heifLink>datoteke HEIF</heifLink> koje grafički hardver ovog računala ne može dekodirati potrebno je izraditi minijature, što traje neko vrijeme.",
       "thereforeCached": "Zato se izrađene minijature spremaju u predmemoriju.",
       "usedNextTime": "Od sljedećeg puta koristit će se predmemorija, pa se minijature neće ponovno izrađivati.",
       "location": "Lokacija predmemorije:",

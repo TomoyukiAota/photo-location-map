@@ -10,6 +10,7 @@ import {
   NoPhotosWithLocationDataDialogComponent
 } from '../../no-photos-with-location-data-dialog/no-photos-with-location-data-dialog.component';
 import { HeifThumbnailService } from '../../heif-thumbnail/heif-thumbnail.service';
+import { JpegPngThumbnailService } from '../../jpeg-png-thumbnail/jpeg-png-thumbnail.service';
 import { GeneratedThumbnailService } from '../../photo-info-viewer/generated-thumbnail.service';
 import { ThumbnailRotationService } from '../../photo-info-viewer/thumbnail-rotation.service';
 import { OpenFolderRecorder } from '../../sidebar/upper-pane/open-folder-recorder';
@@ -31,6 +32,7 @@ export class OpenFolderService {
   private photoSelectionHistoryService = inject(PhotoSelectionHistoryService);
   private generatedThumbnailService = inject(GeneratedThumbnailService);
   private heifThumbnailService = inject(HeifThumbnailService);
+  private jpegPngThumbnailService = inject(JpegPngThumbnailService);
   private thumbnailRotationService = inject(ThumbnailRotationService);
   private loadingFolderProgressReporter = inject(LoadingFolderProgressReporterService);
 
@@ -40,7 +42,8 @@ export class OpenFolderService {
 
   /**
    * Opens a folder: reads its photos while the loading dialog is shown, then shows its tree, which pins its photos on
-   * the map and the chart, and starts making the thumbnails of its HEIF files.
+   * the map and the chart, and starts making the thumbnails of its HEIF files, and of its JPEG and PNG files without
+   * one in their EXIF data.
    */
   public async open(folderPath: string) {
     let loadingFolderDialogRef: MatDialogRef<LoadingFolderDialogComponent> = null;
@@ -78,6 +81,10 @@ export class OpenFolderService {
       this.thumbnailRotationService.reset();
       this.generatedThumbnailService.reset();
       this.heifThumbnailService.reset();
+      this.jpegPngThumbnailService.reset();
+      // Which of the photos without a thumbnail in their EXIF data have one in the cache, known only now that their
+      // EXIF data are read: asked while the dialog is updated, and known before the tree shows them.
+      const jpegPngThumbnailsPrepared = this.jpegPngThumbnailService.prepare(this.photoDataService.getAllPhotos());
       await sleep(100); // To update the loading folder dialog before the work below, which freezes the GUI for a large folder.
 
       this.showPhotoWithLocationNotFoundDialogIfApplicable();
@@ -87,7 +94,9 @@ export class OpenFolderService {
       // Before the tree, whose rows ask for their thumbnails as they are shown: which the main process makes, and
       // which are in the cache, are known by then (HeifThumbnailService).
       const isGenerationStarted = await this.thumbnailGenerationService.startThumbnailGeneration(await thumbnailCache);
+      await jpegPngThumbnailsPrepared;
       this.directoryTreeViewDataService.replace(directoryTreeObject);
+      this.jpegPngThumbnailService.startFolder();
       if (isGenerationStarted)
         this.thumbnailGenerationStatusBarService.showForNewGeneration();
       DirTreeObjectRecorder.record(directoryTreeObject);

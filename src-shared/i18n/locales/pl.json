@@ -264,8 +264,8 @@
       "confirmInExplorer": "Otwórz Eksplorator plików i kliknij prawym przyciskiem plik lub folder, aby to sprawdzić."
     },
     "cache": {
-      "title": "Pamięć podręczna miniaturek HEIF",
-      "requiredForHeif": "Dla <heifLink>plików HEIF</heifLink> trzeba tworzyć miniaturki, a to zajmuje czas.",
+      "title": "Pamięć podręczna miniaturek",
+      "generationRequired": "Dla plików JPEG/PNG bez miniaturki w danych EXIF i dla <heifLink>plików HEIF</heifLink>, których sprzęt graficzny tego komputera nie potrafi dekodować, trzeba tworzyć miniaturki, a to zajmuje czas.",
       "thereforeCached": "Dlatego utworzone miniaturki są zapisywane w pamięci podręcznej.",
       "usedNextTime": "Od następnego razu będzie używana pamięć podręczna, dzięki czemu miniaturki nie będą tworzone ponownie.",
       "location": "Położenie pamięci podręcznej:",

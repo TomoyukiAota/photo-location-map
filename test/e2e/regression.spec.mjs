@@ -1,7 +1,7 @@
 import { test, expect, _electron } from 'playwright/test';
 import { execFile } from 'node:child_process';
 import { createRequire } from 'node:module';
-import { copyFile, mkdir, mkdtemp, readFile, realpath, rm, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, mkdtemp, readFile, realpath, rm, stat, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { cpus, freemem, tmpdir, totalmem } from 'node:os';
 import path from 'node:path';
@@ -11,6 +11,7 @@ import { jpegWithEmptyGpsValues } from '../test-util/jpeg-with-empty-gps-values.
 import { jpegWithFaceRegion } from '../test-util/jpeg-with-face-region.mjs';
 import { jpegWithLocationOnly } from '../test-util/jpeg-with-location-only.mjs';
 import { jpegWithLocationAndDate } from '../test-util/jpeg-with-location-and-date.mjs';
+import { jpegWithoutExifThumbnail } from '../test-util/jpeg-without-exif-thumbnail.mjs';
 import { answerDatedLayers } from '../test-util/dated-layer-answers.mjs';
 const require = createRequire(import.meta.url);
 const root = path.resolve(import.meta.dirname, '../..');
@@ -4078,6 +4079,65 @@ test('a HEIF photo shows the thumbnail that it holds at once, then the one of hi
   } else {
     await expect(thumbnail).toHaveAttribute('src', /demo-with-thumbnail\.heic\.plm\.jpg$/);
   }
+});
+test('a JPEG or PNG photo without a thumbnail in its EXIF data shows one of 400 pixels that the app keeps in its cache, never the photo itself', async () => {
+  // A photo that showed itself was loaded whole into the page, which kept it for the rest of the session
+  // (docs/tasks/20261121_full-file-thumbnails/STATUS.md). Kobe's photo without its EXIF thumbnail keeps its location,
+  // so that its marker's popup shows it too; the portrait's EXIF data, as its fixture has them, hold a location and no
+  // thumbnail; the PNG, which has no EXIF data, is made here.
+  const folder = path.join(profile, 'Without EXIF thumbnails');
+  await mkdir(folder);
+  const kobe = path.join(folder, 'Kobe.JPG');
+  await writeFile(kobe, jpegWithoutExifThumbnail(await readFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'))));
+  const portrait = path.join(folder, 'portrait.jpg');
+  await copyFile(path.join(root, 'test/e2e/fixtures/faces/astronaut-portrait.jpg'), portrait);
+  await dismissWelcome();
+  const drawing = path.join(folder, 'drawing.png');
+  await writeFile(drawing, Buffer.from(await page.evaluate(async () => {
+    const canvas = new OffscreenCanvas(800, 400);
+    const context = canvas.getContext('2d');
+    context.fillStyle = '#3366cc';
+    context.fillRect(0, 0, 800, 400);
+    return [...new Uint8Array(await (await canvas.convertToBlob({ type: 'image/png' })).arrayBuffer())];
+  })));
+  const photos = [[kobe, '400x300'], [portrait, '320x400'], [drawing, '400x200']];
+  const photoFileUrl = filePath => `plm-file://local/${encodeURIComponent(filePath)}`;
+  const thumbnailOf = filePath => page.locator('mat-tree-node').filter({ hasText: path.basename(filePath) }).locator('.photo-info-viewer-thumbnail');
+  /** The image that a thumbnail shows, once it has loaded one: not the image that stands in for one being made. */
+  const shown = thumbnail => thumbnail.evaluate(image => image.complete && image.naturalWidth && !image.src.startsWith('data:')
+    ? { src: image.src, size: `${image.naturalWidth}x${image.naturalHeight}` } : null);
+  /** Opens the folder, and expects each photo to show its thumbnail from the cache, which the page loaded, not the photo. */
+  async function expectThumbnailsOfCache() {
+    const requested = [];
+    const record = request => requested.push(request.url());
+    page.on('request', record);
+    await openFolderWithPicker(folder);
+    const files = [];
+    for (const [photo, size] of photos) {
+      await expect.poll(async () => (await shown(thumbnailOf(photo)))?.size, { timeout: 30000 }).toBe(size);
+      const file = decodeURIComponent((await shown(thumbnailOf(photo))).src.slice('plm-file://local/'.length));
+      expect(file.startsWith(path.join(profile, 'thumbnail-cache') + path.sep), file).toBe(true);
+      expect(path.basename(file)).toBe(`${path.basename(photo)}.plm.jpg`);
+      files.push(file);
+    }
+    page.off('request', record);
+    for (const file of files) expect(requested).toContain(photoFileUrl(file));
+    for (const [photo] of photos) expect(requested).not.toContain(photoFileUrl(photo));
+    return files;
+  }
+
+  const files = await expectThumbnailsOfCache();
+  // The marker of Kobe's photo, which its shooting time labels: the portrait has a location too.
+  await page.locator('.plm-leaflet-map-div-icon').filter({ hasText: '2017' }).dispatchEvent('click');
+  await expect(page.locator('.leaflet-popup .photo-info-viewer-name')).toHaveText('Kobe.JPG');
+  await expect(page.locator('.leaflet-popup .photo-info-viewer-thumbnail')).toHaveAttribute('src', photoFileUrl(files[0]));
+
+  // The next launch shows them from the cache, without making them again.
+  const madeAt = await Promise.all(files.map(async file => (await stat(file)).mtimeMs));
+  await app.close();
+  await launch();
+  expect(await expectThumbnailsOfCache()).toEqual(files);
+  expect(await Promise.all(files.map(async file => (await stat(file)).mtimeMs))).toEqual(madeAt);
 });
 test('the thumbnail status bar offers the fast thumbnails, which are the thumbnails that the photos hold', async () => {
   // Where the main process makes the thumbnails of high quality, the status bar says that the fast ones can be

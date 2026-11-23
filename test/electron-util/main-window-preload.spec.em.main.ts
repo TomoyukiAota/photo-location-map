@@ -94,6 +94,7 @@ describe('The main window\'s preload', () => {
     const previousNext = { isSelectPreviousMenuEnabled: false, isSelectNextMenuEnabled: true };
     const narrowDown = { isEnabled: true };
     const viewerParams = { photo: { name: 'a.jpg', path: '/photos/a.jpg' } };
+    const jpeg = new Uint8Array([0xff, 0xd8, 0xff]);
     const operations: [(plm: any) => unknown, Call][] = [
       [plm => plm.storage.snapshot(), { method: 'sendSync', channel: IpcConstants.UserDataStorage.Snapshot, args: [] }],
       [plm => plm.storage.write(['A', 'B'], 'v'), { method: 'invoke', channel: IpcConstants.UserDataStorage.Write, args: [['A', 'B'], 'v'] }],
@@ -112,6 +113,9 @@ describe('The main window\'s preload', () => {
       [plm => plm.heif.embeddedThumbnail('/a.heic'), { method: 'invoke', channel: IpcConstants.Heif.EmbeddedThumbnail, args: ['/a.heic'] }],
       [plm => plm.heif.embeddedThumbnailJpeg('/a.heic'), { method: 'invoke', channel: IpcConstants.Heif.EmbeddedThumbnailJpeg, args: ['/a.heic'] }],
       [plm => plm.heif.wholeImage('/a.heic'), { method: 'invoke', channel: IpcConstants.Heif.WholeImage, args: ['/a.heic'] }],
+      [plm => plm.jpegPngThumbnails.readPhoto('/a.png'), { method: 'invoke', channel: IpcConstants.JpegPngThumbnail.ReadPhoto, args: ['/a.png'] }],
+      [plm => plm.jpegPngThumbnails.save('/a.png', '2026-11-23T00:00:00.000Z', jpeg),
+        { method: 'invoke', channel: IpcConstants.JpegPngThumbnail.Save, args: ['/a.png', '2026-11-23T00:00:00.000Z', jpeg] }],
       [plm => plm.thumbnailCache.open(), { method: 'invoke', channel: IpcConstants.ThumbnailCache.Open, args: [] }],
       [plm => plm.thumbnailCache.deleteAndRestart(), { method: 'invoke', channel: IpcConstants.ThumbnailCache.DeleteAndRestart, args: [] }],
       [plm => plm.shell.openExternal('https://example.com/'), { method: 'invoke', channel: IpcConstants.Shell.OpenExternal, args: ['https://example.com/'] }],
@@ -235,8 +239,8 @@ describe('The main window\'s preload', () => {
     const { exposed } = runPreload(true);
     const api = exposed[0].api;
     assert.deepStrictEqual(Object.keys(api), ['version', 'startup', 'storage', 'log', 'analytics', 'folderDialog', 'exif',
-      'faceRegions', 'directoryTree', 'thumbnails', 'heif', 'thumbnailCache', 'shell', 'app', 'commandLine', 'droppedItem', 'menus',
-      'photoDataViewer', 'explorerContextMenu', 'events']);
+      'faceRegions', 'directoryTree', 'thumbnails', 'heif', 'jpegPngThumbnails', 'thumbnailCache', 'shell', 'app', 'commandLine',
+      'droppedItem', 'menus', 'photoDataViewer', 'explorerContextMenu', 'events']);
     const memberNames = Object.values(api).flatMap(member => typeof member === 'object' && member !== null ? Object.keys(member) : []);
     for (const generic of ['send', 'sendSync', 'invoke', 'on', 'require', 'ipcRenderer', 'process', 'exec', 'spawn', 'readFile'])
       assert(!memberNames.includes(generic), generic);
