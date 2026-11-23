@@ -1381,6 +1381,13 @@ test('on a computer whose language is Arabic, the application is laid out from r
   const dateControl = page.locator('.plm-leaflet-map-date');
   await expect(dateControl.locator('.plm-leaflet-map-date-title')).toHaveText('تاريخ الخريطة');
   await expect(dateControl).toHaveCSS('direction', 'rtl');
+  // Beside the layers button, as in English: the map's corners stay where they are.
+  const layersControl = page.locator('.leaflet-control-layers');
+  await expect(layersControl).not.toHaveClass(/(^|\s)leaflet-control-layers-expanded(\s|$)/);
+  const dateControlBox = await dateControl.boundingBox();
+  const layersBox = await layersControl.boundingBox();
+  expect(dateControlBox.x + dateControlBox.width).toBeCloseTo(layersBox.x - 10, 0);
+  expect(dateControlBox.y).toBeCloseTo(layersBox.y, 0);
   const earlierBox = await dateControl.getByRole('button', { name: 'قبل سنة', exact: true }).boundingBox();
   const laterBox = await dateControl.getByRole('button', { name: 'بعد سنة', exact: true }).boundingBox();
   expect(earlierBox.x).toBeGreaterThan(laterBox.x);
@@ -1680,6 +1687,61 @@ test('the map shows Esri World Imagery Wayback and OpenHistoricalMap at the date
   await expect(control.locator('.plm-leaflet-map-date-note')).toHaveText('Zoom in to see when the imagery was taken.');
   await expect(control.locator('.plm-leaflet-map-date-value')).toHaveText('Version of 2024-05-09');
   await expect(control.getByRole('button', { name: 'Older imagery', exact: true })).toBeDisabled();
+  // The box is beside the layers button, at its height, apart from the column of the toolbar that draws a region
+  // (src/app/map/leaflet-map/dated-layers/dated-layers.ts, corner()). In a map 400px high, where the box reaches below
+  // the toolbar's top, each tool can be turned on and off, and each of its actions, which open to the left of its
+  // button and some of them over the box, can be clicked. The list of the layers opens over the box, which stays.
+  const mapPane = page.locator('#plm-leaflet-map');
+  const layersControl = page.locator('.leaflet-control-layers');
+  const tools = page.locator('.leaflet-pm-toolbar .button-container');
+  const expanded = /(^|\s)leaflet-control-layers-expanded(\s|$)/;
+  const active = /(^|\s)active(\s|$)/;
+  const overlap = (a, b) => a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
+  /** Drags the gutter below the map, which makes the map's pane alone `by` pixels higher. */
+  async function dragGutterBelowMap(by) {
+    const gutter = await page.locator('#home-right > .gutter').boundingBox();
+    await page.mouse.move(gutter.x + gutter.width / 2, gutter.y + gutter.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(gutter.x + gutter.width / 2, gutter.y + gutter.height / 2 + by, { steps: 5 });
+    await page.mouse.up();
+  }
+  const mapHeight = (await mapPane.boundingBox()).height;
+  await dragGutterBelowMap(400 - mapHeight);
+  await expect.poll(async () => (await mapPane.boundingBox()).height).toBeCloseTo(400, -1);
+  await expect(layersControl).not.toHaveClass(expanded);
+  const layersBox = await layersControl.boundingBox();
+  const controlBox = await control.boundingBox();
+  expect(controlBox.x + controlBox.width).toBeCloseTo(layersBox.x - 10, 0);
+  expect(controlBox.y).toBeCloseTo(layersBox.y, 0);
+  expect((await tools.first().boundingBox()).y).toBeLessThan(controlBox.y + controlBox.height);
+  await expect(tools).toHaveCount(6);
+  let actionsOverControl = 0;
+  for (const tool of await tools.all()) {
+    const button = tool.locator('a.leaflet-buttons-control-button');
+    await button.click();
+    await expect(tool).toHaveClass(active);
+    for (const action of await tool.locator('a.leaflet-pm-action').all()) {
+      await action.click({ trial: true });
+      if (overlap(await action.boundingBox(), controlBox)) actionsOverControl++;
+    }
+    await button.click();
+    await expect(tool).not.toHaveClass(active);
+  }
+  expect(actionsOverControl).toBeGreaterThan(0);
+  await layersControl.hover();
+  await expect(layersControl).toHaveClass(expanded);
+  const listBox = await layersControl.boundingBox();
+  expect(overlap(listBox, controlBox)).toBe(true);
+  const controlBoxWithList = await control.boundingBox();
+  expect(controlBoxWithList.x + controlBoxWithList.width).toBeCloseTo(controlBox.x + controlBox.width, 0);
+  expect(controlBoxWithList.y).toBeCloseTo(controlBox.y, 0);
+  const bothX = (Math.max(listBox.x, controlBox.x) + Math.min(listBox.x + listBox.width, controlBox.x + controlBox.width)) / 2;
+  const bothY = (Math.max(listBox.y, controlBox.y) + Math.min(listBox.y + listBox.height, controlBox.y + controlBox.height)) / 2;
+  expect(await page.evaluate(([x, y]) => !!document.elementFromPoint(x, y)?.closest('.leaflet-control-layers'), [bothX, bothY])).toBe(true);
+  await page.mouse.move(1, 1);
+  await expect(layersControl).not.toHaveClass(expanded);
+  await dragGutterBelowMap(mapHeight - 400);
+  await expect.poll(async () => (await mapPane.boundingBox()).height).toBeCloseTo(mapHeight, -1);
 
   // OpenHistoricalMap: the map of the photos' date, drawn by MapLibre where the computer has WebGL 2. The date is a
   // field, which opens a calendar.
