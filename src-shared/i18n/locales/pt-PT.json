@@ -207,7 +207,8 @@
       "appearance": "Aspeto",
       "dateTime": "Data e hora",
       "thumbnails": "Miniaturas",
-      "os": "Sistema"
+      "os": "Sistema",
+      "cache": "Cache"
     },
     "restartAfterSaving": "Esta aplicação será reiniciada depois de guardar as definições.",
     "confirmRestart": "Esta aplicação será reiniciada depois de guardar as definições.\nPretende continuar?",
@@ -267,6 +268,25 @@
       "restartAfterDeleting": "Esta aplicação será reiniciada depois de apagar a cache de miniaturas.",
       "delete": "Apagar a cache de miniaturas",
       "confirmDelete": "Esta aplicação será reiniciada depois de apagar a cache de miniaturas.\nPretende continuar?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Miniaturas",
+        "description": "A cache das miniaturas que esta aplicação cria está no separador «Miniaturas».",
+        "open": "Abrir o separador «Miniaturas»"
+      },
+      "map": {
+        "title": "Mapa",
+        "description": "As datas em que as imagens do Esri World Imagery Wayback foram captadas são guardadas na cache para até {{max}} locais vistos no mapa, para que apareçam de imediato na próxima vez.",
+        "count": "Locais na cache: {{count}}",
+        "delete": "Apagar a cache do mapa"
+      },
+      "all": {
+        "title": "Todas as caches",
+        "restartAfterDeleting": "Esta aplicação será reiniciada depois de apagar todas as caches.",
+        "delete": "Apagar todas as caches",
+        "confirmDelete": "Esta aplicação será reiniciada depois de apagar todas as caches.\nPretende continuar?"
+      }
     }
   },
   "explorerContextMenu": {

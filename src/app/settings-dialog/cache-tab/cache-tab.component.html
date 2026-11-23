@@ -1,0 +1,20 @@
+<div class="setting-title">{{ 'settings.cacheTab.thumbnails.title' | t }}</div>
+<div class="setting-container">
+  <p class="cache-tab-description">{{ 'settings.cacheTab.thumbnails.description' | t }}</p>
+  <button type="button" class="cache-tab-link" (click)="openThumbnailsTab.emit()">{{ 'settings.cacheTab.thumbnails.open' | t }}</button>
+</div>
+<div class="setting-title">{{ 'settings.cacheTab.map.title' | t }}</div>
+<div class="setting-container">
+  <p class="cache-tab-description">{{ mapDescription }}</p>
+  <p class="cache-tab-map-count">{{ mapCount() }}</p>
+  <button mat-stroked-button class="cache-tab-delete-map" [disabled]="!mapPlaces()" (click)="deleteMapCache()">
+    {{ 'settings.cacheTab.map.delete' | t }}
+  </button>
+</div>
+<div class="setting-title">{{ 'settings.cacheTab.all.title' | t }}</div>
+<div class="setting-container">
+  <div class="delete-button-description">{{ 'settings.cacheTab.all.restartAfterDeleting' | t }}</div>
+  <button mat-flat-button color="warn" class="delete-button cache-tab-delete-all" (click)="deleteAllCaches()">
+    {{ 'settings.cacheTab.all.delete' | t }}
+  </button>
+</div>

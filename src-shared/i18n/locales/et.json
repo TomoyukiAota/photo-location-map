@@ -207,7 +207,8 @@
       "appearance": "Välimus",
       "dateTime": "Kuupäev ja kellaaeg",
       "thumbnails": "Pisipildid",
-      "os": "Operatsioonisüsteem"
+      "os": "Operatsioonisüsteem",
+      "cache": "Vahemälu"
     },
     "restartAfterSaving": "Pärast seadete salvestamist taaskäivitatakse see rakendus.",
     "confirmRestart": "Pärast seadete salvestamist taaskäivitatakse see rakendus.\nKas soovite jätkata?",
@@ -267,6 +268,25 @@
       "restartAfterDeleting": "Pärast pisipiltide vahemälu kustutamist taaskäivitatakse see rakendus.",
       "delete": "Kustuta pisipiltide vahemälu",
       "confirmDelete": "Pärast pisipiltide vahemälu kustutamist taaskäivitatakse see rakendus.\nKas soovite jätkata?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Pisipildid",
+        "description": "Selle rakenduse loodud pisipiltide vahemälu on vahekaardil „Pisipildid“.",
+        "open": "Ava vahekaart „Pisipildid“"
+      },
+      "map": {
+        "title": "Kaart",
+        "description": "Esri World Imagery Waybacki piltide tegemise kuupäevad salvestatakse vahemällu kuni {{max}} kaardil vaadatud koha kohta, et need järgmisel korral kohe kuvada.",
+        "count": "Kohti vahemälus: {{count}}",
+        "delete": "Kustuta kaardi vahemälu"
+      },
+      "all": {
+        "title": "Kõik vahemälud",
+        "restartAfterDeleting": "Pärast kõigi vahemälude kustutamist taaskäivitatakse see rakendus.",
+        "delete": "Kustuta kõik vahemälud",
+        "confirmDelete": "Pärast kõigi vahemälude kustutamist taaskäivitatakse see rakendus.\nKas soovite jätkata?"
+      }
     }
   },
   "explorerContextMenu": {

@@ -207,7 +207,8 @@
       "appearance": "Aparença",
       "dateTime": "Data i hora",
       "thumbnails": "Miniatures",
-      "os": "Sistema"
+      "os": "Sistema",
+      "cache": "Memòria cau"
     },
     "restartAfterSaving": "Aquesta aplicació es reiniciarà després de desar la configuració.",
     "confirmRestart": "Aquesta aplicació es reiniciarà després de desar la configuració.\nVoleu continuar?",
@@ -267,6 +268,25 @@
       "restartAfterDeleting": "Aquesta aplicació es reiniciarà després de suprimir la memòria cau de miniatures.",
       "delete": "Suprimeix la memòria cau de miniatures",
       "confirmDelete": "Aquesta aplicació es reiniciarà després de suprimir la memòria cau de miniatures.\nVoleu continuar?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Miniatures",
+        "description": "La memòria cau de les miniatures que fa aquesta aplicació és a la pestanya «Miniatures».",
+        "open": "Obre la pestanya «Miniatures»"
+      },
+      "map": {
+        "title": "Mapa",
+        "description": "Les dates en què es van captar les imatges d’Esri World Imagery Wayback es desen a la memòria cau per a un màxim de {{max}} llocs vistos al mapa, perquè es mostrin a l’instant la vegada següent.",
+        "count": "Llocs a la memòria cau: {{count}}",
+        "delete": "Suprimeix la memòria cau del mapa"
+      },
+      "all": {
+        "title": "Totes les memòries cau",
+        "restartAfterDeleting": "Aquesta aplicació es reiniciarà després de suprimir totes les memòries cau.",
+        "delete": "Suprimeix totes les memòries cau",
+        "confirmDelete": "Aquesta aplicació es reiniciarà després de suprimir totes les memòries cau.\nVoleu continuar?"
+      }
     }
   },
   "explorerContextMenu": {

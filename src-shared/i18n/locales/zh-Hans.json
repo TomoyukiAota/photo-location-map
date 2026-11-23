@@ -207,7 +207,8 @@
       "appearance": "外观",
       "dateTime": "日期和时间",
       "thumbnails": "缩略图",
-      "os": "操作系统"
+      "os": "操作系统",
+      "cache": "缓存"
     },
     "restartAfterSaving": "保存设置后，此应用将重新启动。",
     "confirmRestart": "保存设置后，此应用将重新启动。\n是否继续？",
@@ -267,6 +268,25 @@
       "restartAfterDeleting": "删除缩略图缓存后，此应用将重新启动。",
       "delete": "删除缩略图缓存",
       "confirmDelete": "删除缩略图缓存后，此应用将重新启动。\n是否继续？"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "缩略图",
+        "description": "此应用生成的缩略图的缓存位于“缩略图”选项卡中。",
+        "open": "打开“缩略图”选项卡"
+      },
+      "map": {
+        "title": "地图",
+        "description": "在地图上查看过的地点的 Esri World Imagery Wayback 影像拍摄日期会被缓存，最多 {{max}} 个地点，以便下次立即显示。",
+        "count": "已缓存的地点：{{count}} 个",
+        "delete": "删除地图缓存"
+      },
+      "all": {
+        "title": "所有缓存",
+        "restartAfterDeleting": "删除所有缓存后，此应用将重新启动。",
+        "delete": "删除所有缓存",
+        "confirmDelete": "删除所有缓存后，此应用将重新启动。\n是否继续？"
+      }
     }
   },
   "explorerContextMenu": {
