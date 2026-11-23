@@ -8,6 +8,8 @@ import { GpsInfo } from '../../model/gps-info.model.js';
 import { LatLng } from '../../model/lat-lng.model.js';
 import { Thumbnail } from '../../model/thumbnail.model.js';
 import { rotateImage, getRotatedSize } from '../../image-rotation.js';
+import { orientedJpeg } from '../../oriented-jpeg.js';
+import { ThumbnailObjectUrlStorage } from '../../thumbnail-object-url-storage.js';
 import { addExifFileTime, exifPerfStats } from '../exif-perf-stats.js';
 import { ExifReadError, exifReadFailures } from '../exif-read-failures.js';
 
@@ -109,7 +111,30 @@ async function createExifFromExifrParseOutput(read: ExifrRead | null, filePath: 
   return exif;
 }
 
+/**
+ * The thumbnail that the camera wrote into the photo's EXIF data, turned as the photo is.
+ * TL;DR: A JPEG thumbnail is kept as it is, with the photo's orientation in an EXIF segment of its own, which the img
+ * element applies as it shows it (orientedJpeg()). Only another thumbnail is turned on a canvas, as every one was,
+ * which took most of the time that a folder of photos took to open: its rows of 10,000 photos came after 18.6 s, and
+ * come after 3.2 s now.
+ * Details:
+ * - canvas.toBlob() encodes the PNG in an idle task of the page, which Chromium runs only in the idle time after a
+ *   frame, and the page draws a frame every 16.7 ms while a folder opens. So a photo's thumbnail came after the next
+ *   frame, and with the 10 photos that ExifFetcher reads at once, at most 10 came in a frame: 16.7 s for 10,000
+ *   photos. The call also read the canvas back from the GPU, for 0.8 ms a photo on the page's thread. Measured on
+ *   macOS, November 2026 (docs/tasks/20261122_exif-thumbnail-orientation-tag/STATUS.md).
+ * - Nothing decodes the thumbnail while the folder opens, as the canvas did, so one that the page cannot decode is
+ *   found once it is shown: the viewers then show what they show for a photo without one, the photo itself where the
+ *   page can show it (UndecodableThumbnailService). The canvas left such a photo without a thumbnail ('rotate-failed').
+ */
 async function createThumbnail(thumbnailBuffer: Uint8Array, orientation: number, filePath: string): Promise<Thumbnail> {
+  const oriented = orientedJpeg(thumbnailBuffer, orientation);
+  if (oriented) {
+    const objectUrl = URL.createObjectURL(new Blob(oriented.parts as BlobPart[], { type: 'image/jpeg' }));
+    ThumbnailObjectUrlStorage.add(objectUrl);
+    return new Thumbnail(objectUrl, oriented.dimensions);
+  }
+
   const base64String = btoa(String.fromCharCode.apply(null, thumbnailBuffer));
   const dataUrl = `data:image/jpg;base64,${base64String}`;
   const thumbnail = rotateImage(dataUrl, orientation)
