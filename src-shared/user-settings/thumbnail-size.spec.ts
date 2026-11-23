@@ -1,4 +1,4 @@
-import { isThumbnailSize, madeThumbnailLongerSide, thumbnailBoxOf, thumbnailSizeOf, thumbnailSizes } from './thumbnail-size';
+import { isThumbnailSize, madeThumbnailLongerSide, thumbnailBoxOf, thumbnailSizeOf, thumbnailSizes } from './thumbnail-size.js';
 
 describe('The size of the thumbnails', () => {
   it('can be chosen from 400 to 1,000 pixels in steps of 100', () => {

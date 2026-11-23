@@ -164,35 +164,56 @@ async function runWorkerForThumbnailGeneration(argArray: ThumbnailFileGeneration
   const logText = stringArrayToLogText(logLines);
   logger.info(`Queuing tasks for worker to generate thumbnail:${logText}`);
 
-  const workerPromises = argArray.map(arg => {
-    return generateThumbnailInProcess(arg)
-      .then(async result => {
-        const { status, error } = result ?? {};
-        logger.info(`Observed completion of worker for thumbnail generation. Status: ${status}`);
-        logger.info(`Finished attempting to create a thumbnail file "${arg.outputFilePath}" from "${arg.srcFilePath}".`);
-        const isThumbnailFileCreated = await fs.promises.access(arg.outputFilePath).then(() => true, () => false);
-        logger.info(`Does the thumbnail file exist? -> ${isThumbnailFileCreated}`);
-        if(!isThumbnailFileCreated) {
-          // Recorded as a reason of failed thumbnails (thumbnail-failures.ts), below.
-          logger.warnNotRecorded(`Failed to create a thumbnail file since it does not exist after an attempt to create it.` +
-            ` Attempted to create a thumbnail file "${arg.outputFilePath}" from "${arg.srcFilePath}". Error: ${error}`);
-          failures.add(status ?? 'unknown', error);
-        }
-        await createThumbnailGenerationLogFile(arg.srcFilePath, arg.outputFileDir, isThumbnailFileCreated, logger, undefined, arg.longerSide);
-      }, async error => {
-        // The worker process failed and sent nothing back, such as when it crashed. The generation log file is still
-        // written: the window counts a thumbnail as done by it, and without it would wait for this one for ever.
-        logger.errorNotRecorded(`The worker for thumbnail generation failed for "${arg.srcFilePath}". error: ${error}`, error);  // Recorded as "worker-failed", below.
-        failures.add('worker-failed', error);
-        try {
-          await createThumbnailGenerationLogFile(arg.srcFilePath, arg.outputFileDir, false, logger, undefined, arg.longerSide);
-        } catch (logFileError) {
-          logger.error(logged`Failed to write the thumbnail generation log file for "${arg.srcFilePath}".`, logFileError);
-        }
-      });
-  });
+  await Promise.allSettled(argArray.map(arg => generateThumbnailAndLog(arg, failures)));
+}
 
-  await Promise.allSettled(workerPromises);
+/**
+ * Makes the thumbnail of `arg` in a process of its own, and writes the log of the attempt, which says whether it was
+ * made, at its size. Never rejects: a failure is in the log, and in `failures`.
+ * TL;DR: The thumbnail and the log that were there go first, so that the cache never says that it has the new
+ * thumbnail, of another size or of a newer version of the photo, while it has the previous one.
+ * Details: The worker writes the thumbnail last, once it has made it, in the same file as the previous one. The previous
+ * file stayed when the worker failed, and the log said that the thumbnail was made at the new size, as only whether a
+ * file was there was looked at; and the previous log stayed beside the new file when the new log could not be written.
+ */
+export async function generateThumbnailAndLog(arg: ThumbnailFileGenerationArg, failures: ThumbnailFailures,
+                                              workerFile = FileForWorker.absoluteFilePath): Promise<void> {
+  const logFilePath = pathModule.join(arg.outputFileDir, `${pathModule.basename(arg.srcFilePath)}.log.json`);
+  await Promise.all([logFilePath, arg.outputFilePath].map(filePath => fs.promises.rm(filePath, { force: true }).catch(error =>
+    logger.warn(logged`Failed to remove "${filePath}" before its thumbnail is made again. error: ${error}`, error))));
+
+  let result: ThumbnailFileGenerationResult;
+  try {
+    result = await generateThumbnailInProcess(arg, workerFile);
+  } catch (error) {
+    // The worker process failed and sent nothing back, such as when it crashed. The generation log file is still
+    // written: the window counts a thumbnail as done by it, and without it would wait for this one for ever.
+    logger.errorNotRecorded(`The worker for thumbnail generation failed for "${arg.srcFilePath}". error: ${error}`, error);  // Recorded as "worker-failed", below.
+    failures.add('worker-failed', error);
+    try {
+      await createThumbnailGenerationLogFile(arg.srcFilePath, arg.outputFileDir, false, logger, undefined, arg.longerSide);
+    } catch (logFileError) {
+      logger.error(logged`Failed to write the thumbnail generation log file for "${arg.srcFilePath}".`, logFileError);
+    }
+    return;
+  }
+
+  const { status, error } = result ?? {};
+  logger.info(`Observed completion of worker for thumbnail generation. Status: ${status}`);
+  logger.info(`Finished attempting to create a thumbnail file "${arg.outputFilePath}" from "${arg.srcFilePath}".`);
+  const isThumbnailFileCreated = status === 'success' && await fs.promises.access(arg.outputFilePath).then(() => true, () => false);
+  logger.info(`Was the thumbnail file created? -> ${isThumbnailFileCreated}`);
+  if (!isThumbnailFileCreated) {
+    // Recorded as a reason of failed thumbnails (thumbnail-failures.ts), below.
+    logger.warnNotRecorded(`Failed to create a thumbnail file: the worker answered ${status}, or the file is not there.` +
+      ` Attempted to create a thumbnail file "${arg.outputFilePath}" from "${arg.srcFilePath}". Error: ${error}`);
+    failures.add(status ?? 'unknown', error);
+  }
+  try {
+    await createThumbnailGenerationLogFile(arg.srcFilePath, arg.outputFileDir, isThumbnailFileCreated, logger, undefined, arg.longerSide);
+  } catch (logFileError) {
+    logger.error(logged`Failed to write the thumbnail generation log file for "${arg.srcFilePath}".`, logFileError);
+  }
 }
 
 /**

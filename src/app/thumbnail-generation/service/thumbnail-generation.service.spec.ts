@@ -117,6 +117,25 @@ describe('ThumbnailGenerationService', () => {
     expect(service.isGenerating()).toBe(true);
   });
 
+  it('looks up the thumbnails of the cache again at Fast, so that one at another size is not taken for cached', async () => {
+    // At the folder's open, the cache has a's thumbnail at 800 pixels, b's at 400 and 800, c's at neither.
+    const cachedAt = new Map([['/photos/a.heic', [800]], ['/photos/b.heic', [400, 800]], ['/photos/c.heic', []]]);
+    vi.spyOn(window.plm.thumbnails, 'state').mockImplementation(async (filePaths, longerSide) => filePaths.map(filePath => ({
+      attemptFinished: cachedAt.get(filePath).includes(longerSide), cacheAvailable: cachedAt.get(filePath).includes(longerSide),
+      thumbnailFilePath: `${filePath}.plm.jpg`,
+    })));
+    size.set(800);
+    await service.startThumbnailGeneration(await service.checkThumbnailCache(folder('a.heic', 'b.heic', 'c.heic')));
+    expect(['a', 'b', 'c'].map(name => service.isCached(`/photos/${name}.heic`))).toEqual([true, true, false]);
+    // The main process makes c's at 800 meanwhile, and the cache happens to have one of 400 too: one of this session.
+    cachedAt.set('/photos/c.heic', [400, 800]);
+
+    quality.set('fast');
+    expect(await service.applyThumbnailSettings()).toBe(false);
+    // a's is not at 400, which Fast asks for; c's was not in the cache when the folder was opened.
+    expect(['a', 'b', 'c'].map(name => service.isCached(`/photos/${name}.heic`))).toEqual([false, true, false]);
+  });
+
   it('drops the thumbnails that wait to be made at the previous size, and makes the folder\'s at the new size', async () => {
     const state = vi.spyOn(window.plm.thumbnails, 'state');
     await service.startThumbnailGeneration(await service.checkThumbnailCache(folder('a.heic', 'b.heic')));

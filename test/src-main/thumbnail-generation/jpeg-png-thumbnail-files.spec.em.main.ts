@@ -76,6 +76,20 @@ describe('The files of the thumbnails that the page makes of JPEG and PNG photos
     assert.deepStrictEqual(stateOf(photo), { attemptFinished: true, cacheAvailable: false });
   });
 
+  it('lets the previous log go before it writes the new thumbnail, so that a failure leaves no log of the previous size', async () => {
+    const { lastModified } = await readPhotoForThumbnail(photo);
+    await saveJpegPngThumbnail(photo, lastModified, jpeg, 400, cache);
+    const writeFile = fs.promises.writeFile;
+    fs.promises.writeFile = (async () => { throw new Error('The disk is full.'); }) as typeof fs.promises.writeFile;
+    try {
+      await assert.rejects(saveJpegPngThumbnail(photo, lastModified, jpeg, 700, cache), /The disk is full/);
+    } finally {
+      fs.promises.writeFile = writeFile;
+    }
+    assert.strictEqual(fs.existsSync(getThumbnailLogFilePath(photo, cache)), false);
+    assert.deepStrictEqual(stateOf(photo, 400), { attemptFinished: false, cacheAvailable: false });
+  });
+
   it('has no thumbnail in the cache for a photo changed since it was read for its thumbnail', async () => {
     await saveJpegPngThumbnail(photo, '2000-01-01T00:00:00.000Z', jpeg, 400, cache);
     assert.deepStrictEqual(stateOf(photo), { attemptFinished: false, cacheAvailable: false });

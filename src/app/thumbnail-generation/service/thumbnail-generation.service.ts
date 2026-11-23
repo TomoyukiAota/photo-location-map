@@ -144,8 +144,15 @@ export class ThumbnailGenerationService {
 
   /**
    * Follows new settings of the thumbnails' quality and size (ThumbnailSizeService): the thumbnails that wait to be
-   * made are dropped, as they are of the previous settings, and those of the folder are made for 'high', at the new
-   * size, where the page cannot decode HEVC.
+   * made are dropped, as they are of the previous settings, those in the cache are looked up again at the new size,
+   * and those of the folder are made for 'high', at the new size, where the page cannot decode HEVC.
+   * TL;DR: At Fast, whose size is 400, a photo counts as cached only if it did when the folder was opened and its
+   * thumbnail is in the cache at 400.
+   * Details: A photo whose thumbnail is in the cache shows it (HeifThumbnailService.watch), and waits for it until the
+   * cache has it at the size asked for (GeneratedThumbnailService). With the set of the previous size, one cached at
+   * 800 pixels waited for ever at Fast, as nothing makes it at 400 then. One that the main process made in this
+   * session at High is not taken either: Fast shows the small thumbnail that the photo holds, rather than the one
+   * that the main process no longer makes (the e2e case of the status bar that offers the fast thumbnails).
    */
   public async applyThumbnailSettings(): Promise<boolean> {
     if (this.isGenerating()) {
@@ -156,11 +163,13 @@ export class ThumbnailGenerationService {
       this.statusBarService.hide();
     }
     this.setFilesToGenerate([]);
-    if (untracked(this.thumbnailSizeService.quality) === 'fast')
-      return false;
     const states = await this.thumbnailStates(this.allHeifFilePaths);
-    this.cachedFilePaths = new Set(this.allHeifFilePaths.filter((_filePath, index) => states[index].cacheAvailable));
-    this.setFilesToGenerate([]);
+    const cached = new Set(this.allHeifFilePaths.filter((_filePath, index) => states[index].cacheAvailable));
+    if (untracked(this.thumbnailSizeService.quality) === 'fast') {
+      this.cachedFilePaths = new Set([...this.cachedFilePaths].filter(filePath => cached.has(filePath)));
+      return false;
+    }
+    this.cachedFilePaths = cached;
     const started = await this.startForTheFolder();
     if (started)
       this.statusBarService.showForNewGeneration();
