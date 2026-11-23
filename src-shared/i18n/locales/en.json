@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Looking for faces in the selected photos...",
-    "progress": "Photos looked at: {{done}} of {{total}}.",
+    "looking": "Detecting faces...",
+    "progress": "Photos processed: {{done}} of {{total}}",
     "noFacesFound": "No faces were found in the selected photos. The selection stays as it is.",
     "notLookedAt": "Photos that could not be looked at for faces and are no longer selected: {{count}}.",
     "failed": "Faces could not be looked for in the selected photos. The selection stays as it is."
@@ -207,7 +207,8 @@
       "appearance": "Appearance",
       "dateTime": "Date & Time",
       "thumbnails": "Thumbnails",
-      "os": "OS"
+      "os": "OS",
+      "cache": "Cache"
     },
     "restartAfterSaving": "This application will restart after saving settings.",
     "confirmRestart": "This application will restart after saving settings.\nDo you want to continue?",
@@ -270,6 +271,25 @@
       "restartAfterDeleting": "This application will restart after deleting the thumbnail cache.",
       "delete": "Delete Thumbnail Cache",
       "confirmDelete": "This application will restart after deleting the thumbnail cache.\nDo you want to continue?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Thumbnails",
+        "description": "The cache of the thumbnails that this application makes is on the Thumbnails tab.",
+        "open": "Open the Thumbnails Tab"
+      },
+      "map": {
+        "title": "Map",
+        "description": "The dates when the imagery of Esri World Imagery Wayback was taken are cached for up to {{max}} places looked at on the map, so that they are shown at once the next time.",
+        "count": "Places cached: {{count}}",
+        "delete": "Delete Map Cache"
+      },
+      "all": {
+        "title": "All Caches",
+        "restartAfterDeleting": "This application will restart after deleting all caches.",
+        "delete": "Delete All Caches",
+        "confirmDelete": "This application will restart after deleting all caches.\nDo you want to continue?"
+      }
     }
   },
   "explorerContextMenu": {

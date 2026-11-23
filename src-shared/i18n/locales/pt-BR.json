@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Procurando rostos nas fotos selecionadas...",
-    "progress": "Fotos verificadas: {{done}} de {{total}}.",
+    "looking": "Detectando rostos...",
+    "progress": "Fotos processadas: {{done}} de {{total}}",
     "noFacesFound": "Nenhum rosto foi encontrado nas fotos selecionadas. A seleção continua como está.",
     "notLookedAt": "Fotos em que não foi possível procurar rostos e que não estão mais selecionadas: {{count}}.",
     "failed": "Não foi possível procurar rostos nas fotos selecionadas. A seleção continua como está."
@@ -207,7 +207,8 @@
       "appearance": "Aparência",
       "dateTime": "Data e hora",
       "thumbnails": "Miniaturas",
-      "os": "Sistema"
+      "os": "Sistema",
+      "cache": "Cache"
     },
     "restartAfterSaving": "Este aplicativo será reiniciado após salvar as configurações.",
     "confirmRestart": "Este aplicativo será reiniciado após salvar as configurações.\nDeseja continuar?",
@@ -270,6 +271,25 @@
       "restartAfterDeleting": "Este aplicativo será reiniciado após apagar o cache de miniaturas.",
       "delete": "Apagar o cache de miniaturas",
       "confirmDelete": "Este aplicativo será reiniciado após apagar o cache de miniaturas.\nDeseja continuar?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Miniaturas",
+        "description": "O cache das miniaturas que este aplicativo cria fica na guia “Miniaturas”.",
+        "open": "Abrir a guia “Miniaturas”"
+      },
+      "map": {
+        "title": "Mapa",
+        "description": "As datas em que as imagens do Esri World Imagery Wayback foram capturadas ficam no cache para até {{max}} lugares vistos no mapa, para que apareçam na hora da próxima vez.",
+        "count": "Lugares no cache: {{count}}",
+        "delete": "Apagar o cache do mapa"
+      },
+      "all": {
+        "title": "Todos os caches",
+        "restartAfterDeleting": "Este aplicativo será reiniciado após apagar todos os caches.",
+        "delete": "Apagar todos os caches",
+        "confirmDelete": "Este aplicativo será reiniciado após apagar todos os caches.\nDeseja continuar?"
+      }
     }
   },
   "explorerContextMenu": {

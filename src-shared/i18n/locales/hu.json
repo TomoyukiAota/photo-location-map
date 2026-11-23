@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Arcok keresése a kijelölt fotókon...",
-    "progress": "Átvizsgált fotók: {{done}} / {{total}}.",
+    "looking": "Arcok észlelése...",
+    "progress": "Feldolgozott fotók: {{done}} / {{total}}",
     "noFacesFound": "A kijelölt fotókon nem található arc. A kijelölés változatlan marad.",
     "notLookedAt": "Fotók, amelyeken nem lehetett arcokat keresni, és már nincsenek kijelölve: {{count}}.",
     "failed": "A kijelölt fotókon nem lehetett arcokat keresni. A kijelölés változatlan marad."
@@ -207,7 +207,8 @@
       "appearance": "Megjelenés",
       "dateTime": "Dátum és idő",
       "thumbnails": "Bélyegképek",
-      "os": "Operációs rendszer"
+      "os": "Operációs rendszer",
+      "cache": "Gyorsítótár"
     },
     "restartAfterSaving": "Az alkalmazás a beállítások mentése után újraindul.",
     "confirmRestart": "Az alkalmazás a beállítások mentése után újraindul.\nFolytatja?",
@@ -270,6 +271,25 @@
       "restartAfterDeleting": "Az alkalmazás a bélyegképek gyorsítótárának törlése után újraindul.",
       "delete": "A bélyegképek gyorsítótárának törlése",
       "confirmDelete": "Az alkalmazás a bélyegképek gyorsítótárának törlése után újraindul.\nFolytatja?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Bélyegképek",
+        "description": "Az alkalmazás által készített bélyegképek gyorsítótára a „Bélyegképek” lapon található.",
+        "open": "A „Bélyegképek” lap megnyitása"
+      },
+      "map": {
+        "title": "Térkép",
+        "description": "Az Esri World Imagery Wayback felvételeinek készítési dátumait az alkalmazás a térképen megtekintett legfeljebb {{max}} helyhez gyorsítótárazza, hogy legközelebb azonnal megjelenjenek.",
+        "count": "Gyorsítótárazott helyek: {{count}}",
+        "delete": "A térkép gyorsítótárának törlése"
+      },
+      "all": {
+        "title": "Minden gyorsítótár",
+        "restartAfterDeleting": "Az alkalmazás az összes gyorsítótár törlése után újraindul.",
+        "delete": "Az összes gyorsítótár törlése",
+        "confirmDelete": "Az alkalmazás az összes gyorsítótár törlése után újraindul.\nFolytatja?"
+      }
     }
   },
   "explorerContextMenu": {

@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Wyszukiwanie twarzy na zaznaczonych zdjęciach...",
-    "progress": "Przejrzane zdjęcia: {{done}} z {{total}}.",
+    "looking": "Wykrywanie twarzy...",
+    "progress": "Przetworzone zdjęcia: {{done}} z {{total}}",
     "noFacesFound": "Na zaznaczonych zdjęciach nie znaleziono twarzy. Zaznaczenie pozostaje bez zmian.",
     "notLookedAt": "Zdjęcia, na których nie udało się wyszukać twarzy i które nie są już zaznaczone: {{count}}.",
     "failed": "Nie udało się wyszukać twarzy na zaznaczonych zdjęciach. Zaznaczenie pozostaje bez zmian."
@@ -207,7 +207,8 @@
       "appearance": "Wygląd",
       "dateTime": "Data i czas",
       "thumbnails": "Miniaturki",
-      "os": "System"
+      "os": "System",
+      "cache": "Pamięć podręczna"
     },
     "restartAfterSaving": "Aplikacja uruchomi się ponownie po zapisaniu ustawień.",
     "confirmRestart": "Aplikacja uruchomi się ponownie po zapisaniu ustawień.\nCzy chcesz kontynuować?",
@@ -270,6 +271,25 @@
       "restartAfterDeleting": "Aplikacja uruchomi się ponownie po usunięciu pamięci podręcznej miniaturek.",
       "delete": "Usuń pamięć podręczną miniaturek",
       "confirmDelete": "Aplikacja uruchomi się ponownie po usunięciu pamięci podręcznej miniaturek.\nCzy chcesz kontynuować?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Miniaturki",
+        "description": "Pamięć podręczna miniaturek tworzonych przez aplikację znajduje się na karcie „Miniaturki”.",
+        "open": "Otwórz kartę „Miniaturki”"
+      },
+      "map": {
+        "title": "Mapa",
+        "description": "Daty wykonania zdjęć satelitarnych Esri World Imagery Wayback są przechowywane w pamięci podręcznej dla maksymalnie {{max}} miejsc oglądanych na mapie, aby następnym razem wyświetlały się od razu.",
+        "count": "Miejsca w pamięci podręcznej: {{count}}",
+        "delete": "Usuń pamięć podręczną mapy"
+      },
+      "all": {
+        "title": "Cała pamięć podręczna",
+        "restartAfterDeleting": "Aplikacja uruchomi się ponownie po usunięciu całej pamięci podręcznej.",
+        "delete": "Usuń całą pamięć podręczną",
+        "confirmDelete": "Aplikacja uruchomi się ponownie po usunięciu całej pamięci podręcznej.\nCzy chcesz kontynuować?"
+      }
     }
   },
   "explorerContextMenu": {

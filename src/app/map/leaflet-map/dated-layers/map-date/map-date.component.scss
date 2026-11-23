@@ -115,3 +115,14 @@
   color: #555555;
   font-size: 12px;
 }
+
+// While the dates load: the spinner before the note, whose words wrap beside it.
+.plm-leaflet-map-date-loading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.plm-leaflet-map-date-spinner {
+  flex: none;
+}

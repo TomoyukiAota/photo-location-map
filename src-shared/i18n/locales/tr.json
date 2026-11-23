@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Seçili fotoğraflarda yüz aranıyor...",
-    "progress": "İncelenen fotoğraflar: {{done}} / {{total}}.",
+    "looking": "Yüzler algılanıyor...",
+    "progress": "İşlenen fotoğraflar: {{done}} / {{total}}",
     "noFacesFound": "Seçili fotoğraflarda yüz bulunamadı. Seçim olduğu gibi kalır.",
     "notLookedAt": "Yüz aranamayan ve artık seçili olmayan fotoğraflar: {{count}}.",
     "failed": "Seçili fotoğraflarda yüz aranamadı. Seçim olduğu gibi kalır."
@@ -207,7 +207,8 @@
       "appearance": "Görünüm",
       "dateTime": "Tarih ve saat",
       "thumbnails": "Küçük Resimler",
-      "os": "Sistem"
+      "os": "Sistem",
+      "cache": "Önbellek"
     },
     "restartAfterSaving": "Ayarlar kaydedildikten sonra bu uygulama yeniden başlatılacak.",
     "confirmRestart": "Ayarlar kaydedildikten sonra bu uygulama yeniden başlatılacak.\nDevam etmek istiyor musunuz?",
@@ -270,6 +271,25 @@
       "restartAfterDeleting": "Küçük resim önbelleği silindikten sonra bu uygulama yeniden başlatılacak.",
       "delete": "Küçük resim önbelleğini sil",
       "confirmDelete": "Küçük resim önbelleği silindikten sonra bu uygulama yeniden başlatılacak.\nDevam etmek istiyor musunuz?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Küçük Resimler",
+        "description": "Bu uygulamanın oluşturduğu küçük resimlerin önbelleği “Küçük Resimler” sekmesindedir.",
+        "open": "“Küçük Resimler” sekmesini aç"
+      },
+      "map": {
+        "title": "Harita",
+        "description": "Esri World Imagery Wayback görüntülerinin çekildiği tarihler, haritada bakılan en fazla {{max}} yer için önbellekte tutulur; böylece bir dahaki sefere hemen gösterilir.",
+        "count": "Önbellekteki yerler: {{count}}",
+        "delete": "Harita önbelleğini sil"
+      },
+      "all": {
+        "title": "Tüm önbellekler",
+        "restartAfterDeleting": "Tüm önbellekler silindikten sonra bu uygulama yeniden başlatılacak.",
+        "delete": "Tüm önbellekleri sil",
+        "confirmDelete": "Tüm önbellekler silindikten sonra bu uygulama yeniden başlatılacak.\nDevam etmek istiyor musunuz?"
+      }
     }
   },
   "explorerContextMenu": {

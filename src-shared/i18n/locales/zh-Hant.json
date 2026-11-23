@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "正在所選照片中尋找人臉...",
-    "progress": "已檢查 {{done}} / {{total}} 張照片。",
+    "looking": "正在偵測人臉...",
+    "progress": "已處理的照片：{{done}} / {{total}} 張",
     "noFacesFound": "所選照片中找不到人臉。選取範圍維持不變。",
     "notLookedAt": "有 {{count}} 張照片無法尋找人臉，已取消選取。",
     "failed": "無法在所選照片中尋找人臉。選取範圍維持不變。"
@@ -207,7 +207,8 @@
       "appearance": "外觀",
       "dateTime": "日期與時間",
       "thumbnails": "縮圖",
-      "os": "作業系統"
+      "os": "作業系統",
+      "cache": "快取"
     },
     "restartAfterSaving": "儲存設定後，此應用程式將重新啟動。",
     "confirmRestart": "儲存設定後，此應用程式將重新啟動。\n要繼續嗎？",
@@ -270,6 +271,25 @@
       "restartAfterDeleting": "刪除縮圖快取後，此應用程式將重新啟動。",
       "delete": "刪除縮圖快取",
       "confirmDelete": "刪除縮圖快取後，此應用程式將重新啟動。\n要繼續嗎？"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "縮圖",
+        "description": "此應用程式產生的縮圖快取位於「縮圖」分頁中。",
+        "open": "開啟「縮圖」分頁"
+      },
+      "map": {
+        "title": "地圖",
+        "description": "在地圖上檢視過的地點的 Esri World Imagery Wayback 影像拍攝日期會被快取，最多 {{max}} 個地點，以便下次立即顯示。",
+        "count": "已快取的地點：{{count}} 個",
+        "delete": "刪除地圖快取"
+      },
+      "all": {
+        "title": "所有快取",
+        "restartAfterDeleting": "刪除所有快取後，此應用程式將重新啟動。",
+        "delete": "刪除所有快取",
+        "confirmDelete": "刪除所有快取後，此應用程式將重新啟動。\n要繼續嗎？"
+      }
     }
   },
   "explorerContextMenu": {

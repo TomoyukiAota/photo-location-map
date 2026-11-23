@@ -1,0 +1,42 @@
+@use "../../../styles/anchor-tag-like-text" as *;
+@use "../settings-styles" as *;
+
+.setting-title {
+  font-size: $setting-title-font-size;
+}
+
+.setting-container {
+  padding: $setting-container-padding;
+}
+
+// Apart from the section before it, and with no room after the last one, which would make the tab scroll where its
+// texts take more lines, as in Japanese and Hindi.
+.setting-container + .setting-title {
+  margin-top: 24px;
+}
+
+.cache-tab-description,
+.cache-tab-map-count {
+  margin: 0 0 10px;
+  font-size: 14px;
+}
+
+// A link, as the location of the thumbnails' cache is (CacheSettingsComponent), which is a button for the keyboard.
+.cache-tab-link {
+  @include anchor-tag-like-text;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  text-align: start;
+}
+
+.delete-button-description {
+  font-size: 14px;
+  color: red;
+}
+
+.delete-button {
+  margin-top: 20px;
+}

@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Søger efter ansigter i de valgte billeder...",
-    "progress": "Gennemsete billeder: {{done}} af {{total}}.",
+    "looking": "Registrerer ansigter...",
+    "progress": "Behandlede billeder: {{done}} af {{total}}",
     "noFacesFound": "Der blev ikke fundet ansigter i de valgte billeder. Valget forbliver uændret.",
     "notLookedAt": "Billeder, der ikke kunne gennemses for ansigter, og som ikke længere er valgt: {{count}}.",
     "failed": "Der kunne ikke søges efter ansigter i de valgte billeder. Valget forbliver uændret."
@@ -207,7 +207,8 @@
       "appearance": "Udseende",
       "dateTime": "Dato og tid",
       "thumbnails": "Miniaturer",
-      "os": "Operativsystem"
+      "os": "Operativsystem",
+      "cache": "Cache"
     },
     "restartAfterSaving": "Appen genstarter, når indstillingerne er gemt.",
     "confirmRestart": "Appen genstarter, når indstillingerne er gemt.\nVil du fortsætte?",
@@ -270,6 +271,25 @@
       "restartAfterDeleting": "Appen genstarter, når miniaturecachen er slettet.",
       "delete": "Slet miniaturecachen",
       "confirmDelete": "Appen genstarter, når miniaturecachen er slettet.\nVil du fortsætte?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Miniaturer",
+        "description": "Cachen til de miniaturer, som appen laver, findes under fanen “Miniaturer”.",
+        "open": "Åbn fanen “Miniaturer”"
+      },
+      "map": {
+        "title": "Kort",
+        "description": "Datoerne for, hvornår satellitbillederne fra Esri World Imagery Wayback er taget, gemmes i cachen for op til {{max}} steder, der er set på kortet, så de vises med det samme næste gang.",
+        "count": "Steder i cachen: {{count}}",
+        "delete": "Slet kortcachen"
+      },
+      "all": {
+        "title": "Alle cacher",
+        "restartAfterDeleting": "Appen genstarter, når alle cacher er slettet.",
+        "delete": "Slet alle cacher",
+        "confirmDelete": "Appen genstarter, når alle cacher er slettet.\nVil du fortsætte?"
+      }
     }
   },
   "explorerContextMenu": {

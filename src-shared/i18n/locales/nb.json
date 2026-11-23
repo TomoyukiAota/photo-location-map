@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Søker etter ansikter i de markerte bildene...",
-    "progress": "Gjennomgåtte bilder: {{done}} av {{total}}.",
+    "looking": "Oppdager ansikter...",
+    "progress": "Behandlede bilder: {{done}} av {{total}}",
     "noFacesFound": "Fant ingen ansikter i de markerte bildene. Markeringen forblir som den er.",
     "notLookedAt": "Bilder som det ikke var mulig å søke etter ansikter i, og som ikke lenger er markert: {{count}}.",
     "failed": "Kunne ikke søke etter ansikter i de markerte bildene. Markeringen forblir som den er."
@@ -207,7 +207,8 @@
       "appearance": "Utseende",
       "dateTime": "Dato og tid",
       "thumbnails": "Miniatyrbilder",
-      "os": "Operativsystem"
+      "os": "Operativsystem",
+      "cache": "Buffer"
     },
     "restartAfterSaving": "Appen starter på nytt etter at innstillingene er lagret.",
     "confirmRestart": "Appen starter på nytt etter at innstillingene er lagret.\nVil du fortsette?",
@@ -270,6 +271,25 @@
       "restartAfterDeleting": "Appen starter på nytt etter at bufferen for miniatyrbilder er slettet.",
       "delete": "Slett bufferen for miniatyrbilder",
       "confirmDelete": "Appen starter på nytt etter at bufferen for miniatyrbilder er slettet.\nVil du fortsette?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Miniatyrbilder",
+        "description": "Bufferen for miniatyrbildene som appen lager, finnes i fanen «Miniatyrbilder».",
+        "open": "Åpne fanen «Miniatyrbilder»"
+      },
+      "map": {
+        "title": "Kart",
+        "description": "Datoene for når satellittbildene fra Esri World Imagery Wayback ble tatt, lagres i bufferen for opptil {{max}} steder som er sett på kartet, slik at de vises med en gang neste gang.",
+        "count": "Steder i bufferen: {{count}}",
+        "delete": "Slett kartbufferen"
+      },
+      "all": {
+        "title": "Alle buffere",
+        "restartAfterDeleting": "Appen starter på nytt etter at alle buffere er slettet.",
+        "delete": "Slett alle buffere",
+        "confirmDelete": "Appen starter på nytt etter at alle buffere er slettet.\nVil du fortsette?"
+      }
     }
   },
   "explorerContextMenu": {

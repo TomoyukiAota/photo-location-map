@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Mencari wajah di foto yang dipilih...",
-    "progress": "Foto yang diperiksa: {{done}} dari {{total}}.",
+    "looking": "Mendeteksi wajah...",
+    "progress": "Foto yang diproses: {{done}} dari {{total}}",
     "noFacesFound": "Tidak ditemukan wajah di foto yang dipilih. Pilihan tetap seperti semula.",
     "notLookedAt": "Foto yang tidak dapat diperiksa untuk mencari wajah dan tidak lagi dipilih: {{count}}.",
     "failed": "Wajah tidak dapat dicari di foto yang dipilih. Pilihan tetap seperti semula."
@@ -207,7 +207,8 @@
       "appearance": "Tampilan",
       "dateTime": "Tanggal & Waktu",
       "thumbnails": "Gambar Mini",
-      "os": "Sistem Operasi"
+      "os": "Sistem Operasi",
+      "cache": "Cache"
     },
     "restartAfterSaving": "Aplikasi ini akan dimulai ulang setelah pengaturan disimpan.",
     "confirmRestart": "Aplikasi ini akan dimulai ulang setelah pengaturan disimpan.\nIngin melanjutkan?",
@@ -270,6 +271,25 @@
       "restartAfterDeleting": "Aplikasi ini akan dimulai ulang setelah cache gambar mini dihapus.",
       "delete": "Hapus cache gambar mini",
       "confirmDelete": "Aplikasi ini akan dimulai ulang setelah cache gambar mini dihapus.\nIngin melanjutkan?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Gambar Mini",
+        "description": "Cache gambar mini yang dibuat aplikasi ini ada di tab “Gambar Mini”.",
+        "open": "Buka Tab “Gambar Mini”"
+      },
+      "map": {
+        "title": "Peta",
+        "description": "Tanggal pengambilan citra Esri World Imagery Wayback disimpan dalam cache untuk hingga {{max}} tempat yang dilihat di peta, agar langsung ditampilkan lain kali.",
+        "count": "Tempat dalam cache: {{count}}",
+        "delete": "Hapus cache peta"
+      },
+      "all": {
+        "title": "Semua Cache",
+        "restartAfterDeleting": "Aplikasi ini akan dimulai ulang setelah semua cache dihapus.",
+        "delete": "Hapus semua cache",
+        "confirmDelete": "Aplikasi ini akan dimulai ulang setelah semua cache dihapus.\nIngin melanjutkan?"
+      }
     }
   },
   "explorerContextMenu": {

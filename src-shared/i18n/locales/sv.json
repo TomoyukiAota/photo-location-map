@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Söker efter ansikten i de markerade bilderna...",
-    "progress": "Genomsökta bilder: {{done}} av {{total}}.",
+    "looking": "Upptäcker ansikten...",
+    "progress": "Bearbetade bilder: {{done}} av {{total}}",
     "noFacesFound": "Inga ansikten hittades i de markerade bilderna. Markeringen förblir som den är.",
     "notLookedAt": "Bilder som inte kunde genomsökas efter ansikten och som inte längre är markerade: {{count}}.",
     "failed": "Det gick inte att söka efter ansikten i de markerade bilderna. Markeringen förblir som den är."
@@ -207,7 +207,8 @@
       "appearance": "Utseende",
       "dateTime": "Datum och tid",
       "thumbnails": "Miniatyrer",
-      "os": "Operativsystem"
+      "os": "Operativsystem",
+      "cache": "Cache"
     },
     "restartAfterSaving": "Appen startas om när inställningarna har sparats.",
     "confirmRestart": "Appen startas om när inställningarna har sparats.\nVill du fortsätta?",
@@ -270,6 +271,25 @@
       "restartAfterDeleting": "Appen startas om när miniatyrcachen har raderats.",
       "delete": "Radera miniatyrcachen",
       "confirmDelete": "Appen startas om när miniatyrcachen har raderats.\nVill du fortsätta?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Miniatyrer",
+        "description": "Cachen för de miniatyrer som appen skapar finns på fliken ”Miniatyrer”.",
+        "open": "Öppna fliken ”Miniatyrer”"
+      },
+      "map": {
+        "title": "Karta",
+        "description": "Datumen då satellitbilderna från Esri World Imagery Wayback togs sparas i cachen för upp till {{max}} platser som har visats på kartan, så att de visas direkt nästa gång.",
+        "count": "Platser i cachen: {{count}}",
+        "delete": "Radera kartcachen"
+      },
+      "all": {
+        "title": "Alla cacher",
+        "restartAfterDeleting": "Appen startas om när alla cacher har raderats.",
+        "delete": "Radera alla cacher",
+        "confirmDelete": "Appen startas om när alla cacher har raderats.\nVill du fortsätta?"
+      }
     }
   },
   "explorerContextMenu": {

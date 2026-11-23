@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Traženje lica na odabranim fotografijama...",
-    "progress": "Pregledane fotografije: {{done}} od {{total}}.",
+    "looking": "Otkrivanje lica...",
+    "progress": "Obrađene fotografije: {{done}} od {{total}}",
     "noFacesFound": "Na odabranim fotografijama nisu pronađena lica. Odabir ostaje nepromijenjen.",
     "notLookedAt": "Fotografije na kojima nije bilo moguće tražiti lica i koje više nisu odabrane: {{count}}.",
     "failed": "Na odabranim fotografijama nije bilo moguće tražiti lica. Odabir ostaje nepromijenjen."
@@ -207,7 +207,8 @@
       "appearance": "Izgled",
       "dateTime": "Datum i vrijeme",
       "thumbnails": "Minijature",
-      "os": "Sustav"
+      "os": "Sustav",
+      "cache": "Predmemorija"
     },
     "restartAfterSaving": "Aplikacija će se ponovno pokrenuti nakon spremanja postavki.",
     "confirmRestart": "Aplikacija će se ponovno pokrenuti nakon spremanja postavki.\nŽelite li nastaviti?",
@@ -270,6 +271,25 @@
       "restartAfterDeleting": "Aplikacija će se ponovno pokrenuti nakon brisanja predmemorije minijatura.",
       "delete": "Izbriši predmemoriju minijatura",
       "confirmDelete": "Aplikacija će se ponovno pokrenuti nakon brisanja predmemorije minijatura.\nŽelite li nastaviti?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Minijature",
+        "description": "Predmemorija minijatura koje izrađuje ova aplikacija nalazi se na kartici „Minijature”.",
+        "open": "Otvori karticu „Minijature”"
+      },
+      "map": {
+        "title": "Karta",
+        "description": "Datumi snimanja snimaka Esri World Imagery Wayback spremaju se u predmemoriju za najviše {{max}} mjesta pregledanih na karti kako bi se sljedeći put odmah prikazali.",
+        "count": "Mjesta u predmemoriji: {{count}}",
+        "delete": "Izbriši predmemoriju karte"
+      },
+      "all": {
+        "title": "Sve predmemorije",
+        "restartAfterDeleting": "Aplikacija će se ponovno pokrenuti nakon brisanja svih predmemorija.",
+        "delete": "Izbriši sve predmemorije",
+        "confirmDelete": "Aplikacija će se ponovno pokrenuti nakon brisanja svih predmemorija.\nŽelite li nastaviti?"
+      }
     }
   },
   "explorerContextMenu": {

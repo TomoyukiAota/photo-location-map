@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Hledají se obličeje ve vybraných fotkách...",
-    "progress": "Prohlédnuté fotky: {{done}} z {{total}}.",
+    "looking": "Detekují se obličeje...",
+    "progress": "Zpracované fotky: {{done}} z {{total}}",
     "noFacesFound": "Ve vybraných fotkách nebyly nalezeny žádné obličeje. Výběr zůstává beze změny.",
     "notLookedAt": "Fotky, ve kterých nebylo možné hledat obličeje a které už nejsou vybrané: {{count}}.",
     "failed": "Ve vybraných fotkách nebylo možné hledat obličeje. Výběr zůstává beze změny."
@@ -207,7 +207,8 @@
       "appearance": "Vzhled",
       "dateTime": "Datum a čas",
       "thumbnails": "Miniatury",
-      "os": "Systém"
+      "os": "Systém",
+      "cache": "Mezipaměť"
     },
     "restartAfterSaving": "Aplikace se po uložení nastavení restartuje.",
     "confirmRestart": "Aplikace se po uložení nastavení restartuje.\nChcete pokračovat?",
@@ -270,6 +271,25 @@
       "restartAfterDeleting": "Aplikace se po smazání mezipaměti miniatur restartuje.",
       "delete": "Smazat mezipaměť miniatur",
       "confirmDelete": "Aplikace se po smazání mezipaměti miniatur restartuje.\nChcete pokračovat?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Miniatury",
+        "description": "Mezipaměť miniatur, které tato aplikace vytváří, je na kartě „Miniatury“.",
+        "open": "Otevřít kartu „Miniatury“"
+      },
+      "map": {
+        "title": "Mapa",
+        "description": "Data pořízení snímků Esri World Imagery Wayback se ukládají do mezipaměti až pro {{max}} míst zobrazených na mapě, aby se příště zobrazila hned.",
+        "count": "Místa v mezipaměti: {{count}}",
+        "delete": "Smazat mezipaměť mapy"
+      },
+      "all": {
+        "title": "Všechny mezipaměti",
+        "restartAfterDeleting": "Aplikace se po smazání všech mezipamětí restartuje.",
+        "delete": "Smazat všechny mezipaměti",
+        "confirmDelete": "Aplikace se po smazání všech mezipamětí restartuje.\nChcete pokračovat?"
+      }
     }
   },
   "explorerContextMenu": {

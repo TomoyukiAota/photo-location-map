@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Buscando caras en las fotos seleccionadas...",
-    "progress": "Fotos revisadas: {{done}} de {{total}}.",
+    "looking": "Detectando caras...",
+    "progress": "Fotos procesadas: {{done}} de {{total}}",
     "noFacesFound": "No se encontraron caras en las fotos seleccionadas. La selección se mantiene como está.",
     "notLookedAt": "Fotos en las que no se pudieron buscar caras y que ya no están seleccionadas: {{count}}.",
     "failed": "No se pudieron buscar caras en las fotos seleccionadas. La selección se mantiene como está."
@@ -207,7 +207,8 @@
       "appearance": "Apariencia",
       "dateTime": "Fecha y hora",
       "thumbnails": "Miniaturas",
-      "os": "Sistema"
+      "os": "Sistema",
+      "cache": "Caché"
     },
     "restartAfterSaving": "Esta aplicación se reiniciará después de guardar los ajustes.",
     "confirmRestart": "Esta aplicación se reiniciará después de guardar los ajustes.\n¿Quieres continuar?",
@@ -270,6 +271,25 @@
       "restartAfterDeleting": "Esta aplicación se reiniciará después de eliminar la caché de miniaturas.",
       "delete": "Eliminar la caché de miniaturas",
       "confirmDelete": "Esta aplicación se reiniciará después de eliminar la caché de miniaturas.\n¿Quieres continuar?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Miniaturas",
+        "description": "La caché de las miniaturas que crea esta aplicación está en la pestaña «Miniaturas».",
+        "open": "Abrir la pestaña «Miniaturas»"
+      },
+      "map": {
+        "title": "Mapa",
+        "description": "Las fechas en que se tomaron las imágenes de Esri World Imagery Wayback se guardan en la caché para un máximo de {{max}} lugares vistos en el mapa, para que se muestren al instante la próxima vez.",
+        "count": "Lugares en la caché: {{count}}",
+        "delete": "Eliminar la caché del mapa"
+      },
+      "all": {
+        "title": "Todas las cachés",
+        "restartAfterDeleting": "Esta aplicación se reiniciará después de eliminar todas las cachés.",
+        "delete": "Eliminar todas las cachés",
+        "confirmDelete": "Esta aplicación se reiniciará después de eliminar todas las cachés.\n¿Quieres continuar?"
+      }
     }
   },
   "explorerContextMenu": {

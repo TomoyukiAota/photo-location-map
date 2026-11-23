@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Ricerca di volti nelle foto selezionate...",
-    "progress": "Foto esaminate: {{done}} di {{total}}.",
+    "looking": "Rilevamento dei volti...",
+    "progress": "Foto elaborate: {{done}} di {{total}}",
     "noFacesFound": "Nelle foto selezionate non sono stati trovati volti. La selezione resta invariata.",
     "notLookedAt": "Foto in cui non è stato possibile cercare volti e che non sono più selezionate: {{count}}.",
     "failed": "Non è stato possibile cercare volti nelle foto selezionate. La selezione resta invariata."
@@ -207,7 +207,8 @@
       "appearance": "Aspetto",
       "dateTime": "Data e ora",
       "thumbnails": "Miniature",
-      "os": "Sistema"
+      "os": "Sistema",
+      "cache": "Cache"
     },
     "restartAfterSaving": "Questa applicazione verrà riavviata dopo il salvataggio delle impostazioni.",
     "confirmRestart": "Questa applicazione verrà riavviata dopo il salvataggio delle impostazioni.\nVuoi continuare?",
@@ -270,6 +271,25 @@
       "restartAfterDeleting": "Questa applicazione verrà riavviata dopo l’eliminazione della cache delle miniature.",
       "delete": "Elimina la cache delle miniature",
       "confirmDelete": "Questa applicazione verrà riavviata dopo l’eliminazione della cache delle miniature.\nVuoi continuare?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Miniature",
+        "description": "La cache delle miniature create da questa applicazione si trova nella scheda «Miniature».",
+        "open": "Apri la scheda «Miniature»"
+      },
+      "map": {
+        "title": "Mappa",
+        "description": "Le date di ripresa delle immagini di Esri World Imagery Wayback vengono memorizzate nella cache per un massimo di {{max}} luoghi visti sulla mappa, così da essere mostrate subito la volta successiva.",
+        "count": "Luoghi nella cache: {{count}}",
+        "delete": "Elimina la cache della mappa"
+      },
+      "all": {
+        "title": "Tutte le cache",
+        "restartAfterDeleting": "Questa applicazione verrà riavviata dopo l’eliminazione di tutte le cache.",
+        "delete": "Elimina tutte le cache",
+        "confirmDelete": "Questa applicazione verrà riavviata dopo l’eliminazione di tutte le cache.\nVuoi continuare?"
+      }
     }
   },
   "explorerContextMenu": {

@@ -5,12 +5,16 @@ import { waybackUrls } from '../../../../../src-shared/map/dated-layer-urls';
 // Details:
 // - A release covers the whole world, and most of its tiles are those of an earlier release, which the address of a
 //   tile redirects to. The tilemap of a release names the release in which a tile last changed (`select`), so a walk
-//   from the newest release back finds the versions of a tile in as many requests as it has versions: 12 at the ring
-//   of EXPO 2025 at zoom 17, out of 199 releases from 2014-02-20 to 2026-11-18.
-// - Each release has a metadata service, whose features tell the source of the imagery at a point, with the date when
-//   it was taken and the zoom levels it is shown at (MinMapLevel to MaxMapLevel): at the ring, the release of
-//   2025-07-31 shows imagery taken on 2025-04-21 at zoom 16 to 19, of 2024-08-24 at 12 to 15, and an undated mosaic
-//   below. One identify request answers for every level at once.
+//   back from a release finds the versions of a tile one request after another: 12 at the ring of EXPO 2025 at zoom
+//   17, out of 199 releases from 2014-02-20 to 2026-11-18. The list is walked in `walksAtOnce` stretches at once,
+//   each from its newest release to the next stretch: in 1.0 to 1.7 seconds rather than 2.7 to 3.7 for one walk, for
+//   12 to 24 versions around Osaka and Tokyo at zoom 12 to 17 (2026-11-23), with one more request for each stretch.
+// - Each release has a metadata service, with a layer for each zoom level from 23 to 10 (metadataLayerOf()), whose
+//   features tell the source of the imagery at a point, with the date when it was taken and the zoom levels it is
+//   shown at (MinMapLevel to MaxMapLevel): at the ring, the release of 2025-07-31 shows imagery taken on 2025-04-21 at
+//   zoom 16 to 19, of 2024-08-24 at 12 to 15, and an undated mosaic below. The layer of the zoom is queried for each
+//   version. An identify on all 14 layers, which this asked before, gave the same dates in 10 to 19 seconds rather
+//   than 2.4 to 6.4 for the same versions, asked 6 at a time, as Chromium asks a server of HTTP/1.1 such as Esri's.
 
 /** A release of World Imagery Wayback. */
 export interface WaybackRelease {
@@ -39,8 +43,14 @@ export interface Tile {
 /** What fetches an address: fetch(), or a fake in the tests. */
 export type Fetcher = (url: string) => Promise<Response>;
 
-/** The most versions that versionsAt() looks for, which a tile at a low zoom could otherwise have one per release. */
+/**
+ * The most versions that versionsAt() gives, the newest, and asks the dates of: a tile at a low zoom can have one in
+ * each release.
+ */
 export const maxVersions = 40;
+
+/** How many stretches of the list of the releases releasesThatChanged() walks at once. */
+export const walksAtOnce = 8;
 
 /**
  * The releases in the list (waybackconfig.json), newest first. An entry without a date in its title, or whose
@@ -89,33 +99,39 @@ export function tilemapUrl(release: WaybackRelease, tile: Tile): string {
   return `${waybackUrls.tilemap}${release.number}/${tile.z}/${tile.y}/${tile.x}`;
 }
 
-/** The address that identifies the sources of the imagery at a point in a release, at every zoom level. */
-export function identifyUrl(release: WaybackRelease, latitude: number, longitude: number): string {
-  const delta = 0.001;
+/**
+ * The layer of a release's metadata service that has the sources of the imagery at a zoom level: 0 for zoom 23, the
+ * most detailed, to 13 for zoom 10, which has those of the levels below it too.
+ */
+export function metadataLayerOf(zoom: number): number {
+  return Math.min(13, Math.max(0, 23 - zoom));
+}
+
+/** The address that queries a release's metadata for the sources of the imagery at a point, at a zoom level. */
+export function metadataQueryUrl(release: WaybackRelease, latitude: number, longitude: number, zoom: number): string {
   const parameters = new URLSearchParams({
     geometry: `${longitude},${latitude}`,
     geometryType: 'esriGeometryPoint',
-    sr: '4326',
-    layers: 'all',
-    tolerance: '0',
-    mapExtent: `${longitude - delta},${latitude - delta},${longitude + delta},${latitude + delta}`,
-    imageDisplay: '100,100,96',
+    inSR: '4326',
+    spatialRel: 'esriSpatialRelIntersects',
+    outFields: 'SRC_DATE,MinMapLevel,MaxMapLevel',
     returnGeometry: 'false',
     f: 'json',
   });
-  return `${release.metadataUrl}/identify?${parameters}`;
+  return `${release.metadataUrl}/${metadataLayerOf(zoom)}/query?${parameters}`;
 }
 
 /**
- * When the imagery that a release shows at a zoom level was taken, as YYYY-MM-DD, from the answer of identifyUrl():
- * the source whose levels include the zoom. Null when none does, or when it has no date, as the mosaic at low zooms.
+ * When the imagery that a release shows at a zoom level was taken, as YYYY-MM-DD, from the answer of
+ * metadataQueryUrl(): the source whose levels include the zoom. Null when none does, or when it has no date, as the
+ * mosaic at low zooms.
  */
-export function captureDateOf(identifyAnswer: unknown, zoom: number): string | null {
-  const results = (identifyAnswer as { results?: unknown })?.results;
-  if (!Array.isArray(results))
+export function captureDateOf(queryAnswer: unknown, zoom: number): string | null {
+  const features = (queryAnswer as { features?: unknown })?.features;
+  if (!Array.isArray(features))
     return null;
-  for (const result of results) {
-    const attributes = (result as { attributes?: Record<string, unknown> })?.attributes ?? {};
+  for (const feature of features) {
+    const attributes = (feature as { attributes?: Record<string, unknown> })?.attributes ?? {};
     const min = Number(attributes['MinMapLevel']);
     const max = Number(attributes['MaxMapLevel']);
     if (!(min <= zoom && zoom <= max))
@@ -134,36 +150,70 @@ async function json(fetcher: Fetcher, url: string): Promise<unknown> {
 }
 
 /**
- * The versions of the imagery of a tile, newest first: the releases in which it changed, found by walking back from
- * the newest release with the tilemap, at most `maxVersions`. Without the dates when they were taken.
+ * The versions of the imagery of a tile, newest first: the releases in which it changed, at most `maxVersions`, the
+ * newest. Without the dates when they were taken.
+ * TL;DR: Found with the tilemap, by walking back through `walks` stretches of the releases at once, each from its
+ * newest release to the next stretch.
+ * Details: The walk of a stretch asks the tilemap of its newest release, which names the release in which the tile
+ * last changed. When that release is in the stretch, it is a version, and the walk goes on from the release before
+ * it; when it is in an older stretch, the walk of that stretch finds it. A walk asks at most once more than its
+ * stretch has versions, and no more times than it has releases.
  */
-export async function releasesThatChanged(releases: readonly WaybackRelease[], tile: Tile, fetcher: Fetcher): Promise<WaybackRelease[]> {
+export async function releasesThatChanged(releases: readonly WaybackRelease[], tile: Tile, fetcher: Fetcher,
+                                          walks = walksAtOnce, end = releases.length): Promise<WaybackRelease[]> {
   const indexOf = new Map(releases.map((release, index) => [release.number, index]));
-  const changed: WaybackRelease[] = [];
-  let index = 0;
-  while (index < releases.length && changed.length < maxVersions) {
-    const tilemap = await json(fetcher, tilemapUrl(releases[index], tile)) as { data?: unknown[], select?: unknown[] };
-    // No tile in this release, nor in any before it.
-    if (!Array.isArray(tilemap?.data) || tilemap.data[0] !== 1)
-      break;
-    const selected = Array.isArray(tilemap.select) ? indexOf.get(Number(tilemap.select[0])) : index;
-    // A release that the list does not have, or one that is not older: the walk would not end.
-    if (selected === undefined || selected < index)
-      throw new Error(`The tilemap of release ${releases[index].number} for ${tile.z}/${tile.y}/${tile.x} names release ${tilemap.select?.[0]}.`);
-    changed.push(releases[selected]);
-    index = selected + 1;
-  }
-  return changed;
+  const walk = async (start: number, end: number): Promise<WaybackRelease[]> => {
+    const changed: WaybackRelease[] = [];
+    let index = start;
+    while (index < end && changed.length < maxVersions) {
+      const tilemap = await json(fetcher, tilemapUrl(releases[index], tile)) as { data?: unknown[], select?: unknown[] };
+      // No tile in this release, nor in any before it.
+      if (!Array.isArray(tilemap?.data) || tilemap.data[0] !== 1)
+        break;
+      const selected = Array.isArray(tilemap.select) ? indexOf.get(Number(tilemap.select[0])) : index;
+      // A release that the list does not have, or one that is not older: the walk would not end.
+      if (selected === undefined || selected < index)
+        throw new Error(`The tilemap of release ${releases[index].number} for ${tile.z}/${tile.y}/${tile.x} names release ${tilemap.select?.[0]}.`);
+      // Found by the walk of an older stretch.
+      if (selected >= end)
+        break;
+      changed.push(releases[selected]);
+      index = selected + 1;
+    }
+    return changed;
+  };
+  const length = Math.ceil(end / walks);
+  const starts = Array.from({ length: Math.ceil(end / length) }, (_, index) => index * length);
+  const stretches = await Promise.all(starts.map(start => walk(start, Math.min(start + length, end))));
+  return stretches.flat().slice(0, maxVersions);
 }
 
-/** The versions of the imagery at a point at a zoom level, newest first, with when each was taken there. */
+/** The versions at a place as they were looked up before, as WaybackDateCache keeps them. */
+export interface KnownVersions {
+  /** The number of the newest release when they were looked up. */
+  readonly newestRelease: number;
+  /** The versions, newest first. */
+  readonly versions: readonly WaybackVersion[];
+}
+
+/**
+ * The versions of the imagery at a point at a zoom level, newest first, with when each was taken there: the dates are
+ * asked for all at once, once the versions are known.
+ * TL;DR: With `known`, only the releases newer than its newest are asked about.
+ * Details: What a release answers never changes, neither its tilemap nor its metadata, so the versions of the releases
+ * that `known` was looked up with stay the same: a release published since is a version only when the tile changed in
+ * it. Without the newest release of `known` in the list, as if Esri took it away, everything is asked again.
+ */
 export async function versionsAt(releases: readonly WaybackRelease[], latitude: number, longitude: number, zoom: number,
-                                 fetcher: Fetcher): Promise<WaybackVersion[]> {
-  const changed = await releasesThatChanged(releases, tileAt(latitude, longitude, zoom), fetcher);
-  return Promise.all(changed.map(async release => ({
+                                 fetcher: Fetcher, known?: KnownVersions): Promise<WaybackVersion[]> {
+  const newer = known ? releases.findIndex(release => release.number === known.newestRelease) : -1;
+  const end = newer < 0 ? releases.length : newer;
+  const changed = end === 0 ? [] : await releasesThatChanged(releases, tileAt(latitude, longitude, zoom), fetcher, walksAtOnce, end);
+  const dated = await Promise.all(changed.map(async release => ({
     release,
-    captureDate: captureDateOf(await json(fetcher, identifyUrl(release, latitude, longitude)), zoom),
+    captureDate: captureDateOf(await json(fetcher, metadataQueryUrl(release, latitude, longitude, zoom)), zoom),
   })));
+  return [...dated, ...(newer < 0 ? [] : known.versions)].slice(0, maxVersions);
 }
 
 /**

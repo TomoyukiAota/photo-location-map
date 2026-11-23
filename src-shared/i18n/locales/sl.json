@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Iskanje obrazov na izbranih fotografijah...",
-    "progress": "Pregledane fotografije: {{done}} od {{total}}.",
+    "looking": "Zaznavanje obrazov...",
+    "progress": "Obdelane fotografije: {{done}} od {{total}}",
     "noFacesFound": "Na izbranih fotografijah ni bilo najdenih obrazov. Izbor ostane nespremenjen.",
     "notLookedAt": "Fotografije, na katerih ni bilo mogoče iskati obrazov in ki niso več izbrane: {{count}}.",
     "failed": "Na izbranih fotografijah ni bilo mogoče iskati obrazov. Izbor ostane nespremenjen."
@@ -207,7 +207,8 @@
       "appearance": "Videz",
       "dateTime": "Datum in ura",
       "thumbnails": "Sličice",
-      "os": "Sistem"
+      "os": "Sistem",
+      "cache": "Predpomnilnik"
     },
     "restartAfterSaving": "Aplikacija se bo po shranjevanju nastavitev znova zagnala.",
     "confirmRestart": "Aplikacija se bo po shranjevanju nastavitev znova zagnala.\nAli želite nadaljevati?",
@@ -270,6 +271,25 @@
       "restartAfterDeleting": "Aplikacija se bo po brisanju predpomnilnika sličic znova zagnala.",
       "delete": "Izbriši predpomnilnik sličic",
       "confirmDelete": "Aplikacija se bo po brisanju predpomnilnika sličic znova zagnala.\nAli želite nadaljevati?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Sličice",
+        "description": "Predpomnilnik sličic, ki jih ustvari ta aplikacija, je na zavihku »Sličice«.",
+        "open": "Odpri zavihek »Sličice«"
+      },
+      "map": {
+        "title": "Zemljevid",
+        "description": "Datumi posnetkov Esri World Imagery Wayback se shranijo v predpomnilnik za največ {{max}} krajev, ogledanih na zemljevidu, da so naslednjič takoj prikazani.",
+        "count": "Kraji v predpomnilniku: {{count}}",
+        "delete": "Izbriši predpomnilnik zemljevida"
+      },
+      "all": {
+        "title": "Vsi predpomnilniki",
+        "restartAfterDeleting": "Aplikacija se bo po brisanju vseh predpomnilnikov znova zagnala.",
+        "delete": "Izbriši vse predpomnilnike",
+        "confirmDelete": "Aplikacija se bo po brisanju vseh predpomnilnikov znova zagnala.\nAli želite nadaljevati?"
+      }
     }
   },
   "explorerContextMenu": {

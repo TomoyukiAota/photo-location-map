@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Recherche de visages dans les photos sélectionnées...",
-    "progress": "Photos examinées\u00a0: {{done}} sur {{total}}.",
+    "looking": "Détection des visages...",
+    "progress": "Photos traitées\u00a0: {{done}} sur {{total}}",
     "noFacesFound": "Aucun visage n’a été trouvé dans les photos sélectionnées. La sélection reste telle quelle.",
     "notLookedAt": "Photos dans lesquelles les visages n’ont pas pu être recherchés et qui ne sont plus sélectionnées\u00a0: {{count}}.",
     "failed": "Les visages n’ont pas pu être recherchés dans les photos sélectionnées. La sélection reste telle quelle."
@@ -207,7 +207,8 @@
       "appearance": "Apparence",
       "dateTime": "Date et heure",
       "thumbnails": "Vignettes",
-      "os": "Système"
+      "os": "Système",
+      "cache": "Cache"
     },
     "restartAfterSaving": "Cette application redémarrera après l’enregistrement des paramètres.",
     "confirmRestart": "Cette application redémarrera après l’enregistrement des paramètres.\nVoulez-vous continuer\u00a0?",
@@ -270,6 +271,25 @@
       "restartAfterDeleting": "Cette application redémarrera après la suppression du cache des vignettes.",
       "delete": "Supprimer le cache des vignettes",
       "confirmDelete": "Cette application redémarrera après la suppression du cache des vignettes.\nVoulez-vous continuer\u00a0?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Vignettes",
+        "description": "Le cache des vignettes que crée cette application se trouve dans l’onglet «\u00a0Vignettes\u00a0».",
+        "open": "Ouvrir l’onglet «\u00a0Vignettes\u00a0»"
+      },
+      "map": {
+        "title": "Carte",
+        "description": "Les dates de prise des images d’Esri World Imagery Wayback sont mises en cache pour au plus {{max}}\u00a0lieux consultés sur la carte, afin de s’afficher immédiatement la fois suivante.",
+        "count": "Lieux en cache\u00a0: {{count}}",
+        "delete": "Supprimer le cache de la carte"
+      },
+      "all": {
+        "title": "Tous les caches",
+        "restartAfterDeleting": "Cette application redémarrera après la suppression de tous les caches.",
+        "delete": "Supprimer tous les caches",
+        "confirmDelete": "Cette application redémarrera après la suppression de tous les caches.\nVoulez-vous continuer\u00a0?"
+      }
     }
   },
   "explorerContextMenu": {

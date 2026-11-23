@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, output } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { By } from '@angular/platform-browser';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { DateTimeFormat } from '../../../src-shared/date-time/date-time-format';
 import { currentPlatform } from '../../../src-shared/startup/startup-metadata';
@@ -15,6 +16,7 @@ import { ConfirmDialogService } from '../shared/confirm-dialog/confirm-dialog.se
 import { DirTreeViewStickyRowsService } from '../directory-tree-view/dir-tree-view-sticky-rows/dir-tree-view-sticky-rows.service';
 import { AppearanceSettingsChangedParameter } from './appearance-settings/appearance-settings-changed-parameter';
 import { AppearanceSettingsComponent } from './appearance-settings/appearance-settings.component';
+import { CacheTabComponent } from './cache-tab/cache-tab.component';
 import { DateTimeSettingsComponent } from './date-time-settings/date-time-settings.component';
 import { LanguageSettingsComponent } from './language-settings/language-settings.component';
 import { OsSettingsComponent } from './os-settings/os-settings.component';
@@ -38,6 +40,11 @@ class DummyOsSettingsComponent {}
 
 @Component({ selector: 'app-thumbnail-settings', template: '' })
 class DummyThumbnailSettingsComponent {}
+
+@Component({ selector: 'app-cache-tab', template: '' })
+class DummyCacheTabComponent {
+  public readonly openThumbnailsTab = output<void>();
+}
 
 describe('SettingsDialogComponent', () => {
   const close = vi.fn();
@@ -84,12 +91,12 @@ describe('SettingsDialogComponent', () => {
       .overrideComponent(SettingsDialogComponent, {
         remove: {
           imports: [LanguageSettingsComponent, AppearanceSettingsComponent, DateTimeSettingsComponent, OsSettingsComponent,
-            ThumbnailSettingsComponent],
+            ThumbnailSettingsComponent, CacheTabComponent],
         },
         add: {
           imports: [
             DummyLanguageSettingsComponent, DummyAppearanceSettingsComponent, DummyDateTimeSettingsComponent, DummyOsSettingsComponent,
-            DummyThumbnailSettingsComponent,
+            DummyThumbnailSettingsComponent, DummyCacheTabComponent,
           ],
         },
       })
@@ -266,9 +273,9 @@ describe('SettingsDialogComponent', () => {
   it('opens on the Language tab, the first, and shows the tab chosen in the list', async () => {
     await createDialog();
     const host: HTMLElement = fixture.nativeElement;
-    // The cache of the thumbnails is on the Thumbnails tab, and the OS tab is there on Windows only.
+    // The OS tab is there on Windows only.
     const names = Array.from(host.querySelectorAll('mat-list-item'), item => item.textContent.trim());
-    expect(names).toEqual(['Language', 'Appearance', 'Date & Time', 'Thumbnails', ...(currentPlatform() === 'win32' ? ['OS'] : [])]);
+    expect(names).toEqual(['Language', 'Appearance', 'Date & Time', 'Thumbnails', ...(currentPlatform() === 'win32' ? ['OS'] : []), 'Cache']);
     expect(tab('Language').classList).toContain('selected-tab');
     expect((host.querySelector('app-language-settings') as HTMLElement).style.display).toBe('block');
 
@@ -326,6 +333,19 @@ describe('SettingsDialogComponent', () => {
 
     expect(applyThumbnailSettings).not.toHaveBeenCalled();
     expect(applyJpegPngSettings).not.toHaveBeenCalled();
+  });
+
+  it('opens the Thumbnails tab, where the cache of the thumbnails is, from the Cache tab', async () => {
+    await createDialog({ initialTab: 'cache' });
+    const host: HTMLElement = fixture.nativeElement;
+    expect((host.querySelector('app-cache-tab') as HTMLElement).style.display).toBe('block');
+
+    fixture.debugElement.query(By.directive(DummyCacheTabComponent)).componentInstance.openThumbnailsTab.emit();
+    await fixture.whenStable();
+
+    expect(tab('Thumbnails').classList).toContain('selected-tab');
+    expect((host.querySelector('app-thumbnail-settings') as HTMLElement).style.display).toBe('block');
+    expect((host.querySelector('app-cache-tab') as HTMLElement).style.display).toBe('none');
   });
 
   it('opens on the tab that it is opened with, as the Thumbnails tab from the status bar of thumbnails', async () => {

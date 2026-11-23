@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Đang tìm khuôn mặt trong các ảnh đã chọn...",
-    "progress": "Số ảnh đã xem xét: {{done}} / {{total}}.",
+    "looking": "Đang phát hiện khuôn mặt...",
+    "progress": "Số ảnh đã xử lý: {{done}} / {{total}}",
     "noFacesFound": "Không tìm thấy khuôn mặt nào trong các ảnh đã chọn. Lựa chọn vẫn giữ nguyên.",
     "notLookedAt": "Số ảnh không thể tìm khuôn mặt và không còn được chọn: {{count}}.",
     "failed": "Không thể tìm khuôn mặt trong các ảnh đã chọn. Lựa chọn vẫn giữ nguyên."
@@ -207,7 +207,8 @@
       "appearance": "Giao diện",
       "dateTime": "Ngày & giờ",
       "thumbnails": "Hình thu nhỏ",
-      "os": "Hệ điều hành"
+      "os": "Hệ điều hành",
+      "cache": "Bộ nhớ đệm"
     },
     "restartAfterSaving": "Ứng dụng này sẽ khởi động lại sau khi lưu cài đặt.",
     "confirmRestart": "Ứng dụng này sẽ khởi động lại sau khi lưu cài đặt.\nBạn có muốn tiếp tục không?",
@@ -270,6 +271,25 @@
       "restartAfterDeleting": "Ứng dụng này sẽ khởi động lại sau khi xóa bộ nhớ đệm hình thu nhỏ.",
       "delete": "Xóa bộ nhớ đệm hình thu nhỏ",
       "confirmDelete": "Ứng dụng này sẽ khởi động lại sau khi xóa bộ nhớ đệm hình thu nhỏ.\nBạn có muốn tiếp tục không?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Hình thu nhỏ",
+        "description": "Bộ nhớ đệm của các hình thu nhỏ mà ứng dụng này tạo nằm ở thẻ “Hình thu nhỏ”.",
+        "open": "Mở thẻ “Hình thu nhỏ”"
+      },
+      "map": {
+        "title": "Bản đồ",
+        "description": "Ngày chụp ảnh vệ tinh của Esri World Imagery Wayback được lưu trong bộ nhớ đệm cho tối đa {{max}} địa điểm đã xem trên bản đồ, để lần sau hiển thị ngay.",
+        "count": "Địa điểm trong bộ nhớ đệm: {{count}}",
+        "delete": "Xóa bộ nhớ đệm bản đồ"
+      },
+      "all": {
+        "title": "Tất cả bộ nhớ đệm",
+        "restartAfterDeleting": "Ứng dụng này sẽ khởi động lại sau khi xóa tất cả bộ nhớ đệm.",
+        "delete": "Xóa tất cả bộ nhớ đệm",
+        "confirmDelete": "Ứng dụng này sẽ khởi động lại sau khi xóa tất cả bộ nhớ đệm.\nBạn có muốn tiếp tục không?"
+      }
     }
   },
   "explorerContextMenu": {
