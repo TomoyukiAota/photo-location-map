@@ -7,10 +7,11 @@ const pullRequestWith = (fields: object = {}) => ({
   labels: [{ name: 'automerge' }], headRefOid: '0123456789abcdef', reviews: [], comments: [], ...fields,
 });
 
-// The required checks as `gh pr checks --required --json <checkFields>` gives them: of the push and of the pull request.
+// The required checks as `gh pr checks --required --json <checkFields>` gives them: the push run's alone, as a pull
+// request runs no workflow with jobs of their names (AGENTS.md, "CI tests each commit once, on push").
 const checksWith = (bucket: string, { failing = '', link = 'job-2' } = {}) => ['ubuntu', 'windows-latest', 'macos-arm64']
-  .flatMap(os => ['push', 'pull_request'].map(event => ({ name: `test (${os})`, event, link: `${os}-${event}-1`, bucket })))
-  .map(check => check.name === failing && check.event === 'push' ? { ...check, bucket: 'fail', link } : check);
+  .map(os => ({ name: `test (${os})`, event: 'push', link: `${os}-push-1`, bucket }))
+  .map(check => check.name === failing ? { ...check, bucket: 'fail', link } : check);
 
 const minute = 60_000;
 const start = Date.UTC(2026, 10, 18, 9, 0, 0);
@@ -76,7 +77,7 @@ describe('merge-wait (script/pull-request/)', () => {
   it('goes on while the checks run or pass, and says how far they are', () => {
     const result = waitThrough({}, {}, { checksAfter: checksWith('pass').map((check, index) => index < 2 ? { ...check, bucket: 'pending' } : check) });
     assert.strictEqual(result.end, false);
-    assert.strictEqual(result.status, '01234567: 4 of 6 required checks passed, 2 pending, 0 failed');
+    assert.strictEqual(result.status, '01234567: 1 of 3 required checks passed, 2 pending, 0 failed');
   });
 
   it('ends on a new review or comment, but not on the summaries that CodeRabbit and Mergify post as comments', () => {
