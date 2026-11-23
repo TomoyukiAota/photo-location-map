@@ -1,7 +1,7 @@
 import { test, expect, _electron } from 'playwright/test';
 import { execFile } from 'node:child_process';
 import { createRequire } from 'node:module';
-import { copyFile, mkdir, mkdtemp, readFile, realpath, rm, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, mkdtemp, readdir, readFile, realpath, rm, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { cpus, freemem, tmpdir, totalmem } from 'node:os';
 import path from 'node:path';
@@ -73,6 +73,34 @@ async function expectWindowOffScreenOnlyIfHeadless(window) {
 /** The requests of the application's pages that have not finished, since its last launch. */
 let unfinishedRequests = new Set();
 const addressOf = request => request.url().slice(0, 160);
+/**
+ * Whether `line`, of the requests that failed (launch), is one of a file of the main window's build that the page did
+ * not get: its answer was an error, or none came. A request that the page or Chromium cancelled, as after an answer
+ * of 404, is told by that answer.
+ */
+const isFileOfAppPageNotGot = line => line.startsWith('plm-app://app/') && !line.endsWith(': net::ERR_ABORTED');
+/**
+ * What the main process logged about the files of the main window's page (src-main/file-server/app-page.ts): why it
+ * answered one with 404, or could not read it. Its log is in the test profile's appData; a line is written there a
+ * little after it is logged, so the log is read again for a few seconds while `failedRequests` has such a file.
+ */
+async function appPageLog(failedRequests) {
+  const logs = path.join(profile, 'appData', 'Photo Location Map', 'logs');
+  const read = async () => {
+    const lines = [];
+    for (const name of (await readdir(logs).catch(() => [])).sort()) {
+      lines.push(...(await readFile(path.join(logs, name), 'utf8').catch(() => '')).split(/\r?\n/)
+        .filter(line => line.includes('[App Page]')));
+    }
+    return lines;
+  };
+  let lines = await read();
+  for (const started = Date.now(); !lines.length && failedRequests.some(isFileOfAppPageNotGot) && Date.now() - started < 3000;) {
+    await new Promise(resolve => setTimeout(resolve, 200));
+    lines = await read();
+  }
+  return lines.length ? `The main process logged:\n${lines.slice(-10).join('\n')}\n` : 'The main process logged nothing about the files of the page.\n';
+}
 /** The page that made `request`, or undefined for a request that has none, such as a service worker's. */
 function pageOf(request) {
   try {
@@ -240,8 +268,21 @@ async function launch({ resize = true, env: extraEnv = {}, languageDialog = 'con
     throw new Error(`The home view did not render, with ${bridge}; marks: ${JSON.stringify(marks)}; `
       + `requests not finished: ${JSON.stringify([...unfinishedRequests].map(addressOf))}; `
       + `requests that failed: ${JSON.stringify(failedRequests.slice(-10))}; page errors: ${JSON.stringify(pageErrors)}; `
-      + `main process: ${mainProcess}.\n${await describeComputer()}`, { cause: error });
+      + `main process: ${mainProcess}.\n${await appPageLog(failedRequests)}${await describeComputer()}`, { cause: error });
   });
+  // TL;DR: A file of its build that the page did not get fails the launch here, with what the main process logged
+  // about it, rather than a later step with what the file would have done.
+  // Details: On Windows CI, the main process answered a file of the page with 404 now and then: main.js, which left
+  // the home view unrendered, and, as far as the cases' failures tell, scripts.js, which left the map without its
+  // drawing toolbar, and styles.css, which left Leaflet-Geoman's buttons for editing a region visible beside a
+  // dialog's (src-main/file-server/app-page.ts). The page's load event comes once each file of the page has come or
+  // failed.
+  await page.waitForLoadState('load');
+  const filesNotGot = failedRequests.filter(isFileOfAppPageNotGot);
+  if (filesNotGot.length) {
+    throw new Error(`The main window's page did not get files of its build: ${JSON.stringify(filesNotGot)}.\n`
+      + await appPageLog(failedRequests));
+  }
   if (liveReload) expect(new URL(page.url()).origin).toBe('http://localhost:4200');
   await page.waitForFunction(() => !!window.plmInternalRenderer?.settingsDialog?.showSettingsDialog);
   await expect(page.locator('.leaflet-pm-toolbar').first()).toBeVisible();

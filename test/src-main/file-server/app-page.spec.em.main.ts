@@ -104,4 +104,41 @@ describe('The app\'s page (in main process)', () => {
   it('only reads', async () => {
     assert.strictEqual((await respond('plm-app://app/index.html', 'POST')).status, 405);
   });
+
+  /** What the handler writes as errors while `run` runs, with fs.promises.stat replaced by `stat` if given. */
+  async function errorsLoggedWhile(run: () => Promise<void>, stat?: typeof fs.promises.stat): Promise<string[]> {
+    const originalStat = fs.promises.stat;
+    const consoleError = console.error;
+    const written: string[] = [];
+    if (stat)
+      fs.promises.stat = stat;
+    console.error = (text: unknown) => { written.push(String(text)); };
+    try {
+      await run();
+    } finally {
+      fs.promises.stat = originalStat;
+      console.error = consoleError;
+    }
+    return written;
+  }
+
+  it('logs as an error a file of the build that stat did not find, but that is there when looked at again', async () => {
+    const notFound = (async () => {
+      throw Object.assign(new Error('ENOENT, dist/main-ABC.js not found in app.asar'), { code: 'ENOENT' });
+    }) as typeof fs.promises.stat;
+    const written = await errorsLoggedWhile(async () => {
+      assert.strictEqual((await respond('plm-app://app/main-ABC.js')).status, 404);
+    }, notFound);
+    assert.strictEqual(written.length, 1, written.join('\n'));
+    assert.match(written[0], new RegExp(String.raw`\[App Page\] main-ABC\.js is answered with 404, as Error: ENOENT, `
+      + String.raw`dist/main-ABC\.js not found in app\.asar\. Again at once: a file\. noAsar: false, being answered: 1, at \d+ ms\.$`));
+  });
+
+  it('logs no error for a file that is not in the build', async () => {
+    const written = await errorsLoggedWhile(async () => {
+      assert.strictEqual((await respond('plm-app://app/missing.js')).status, 404);
+      assert.strictEqual((await respond('plm-app://app/media')).status, 404);
+    });
+    assert.deepStrictEqual(written, []);
+  });
 });
