@@ -255,3 +255,31 @@ one looks softer and is made no faster (above); a larger one is not seen.
 - **The provisional thumbnail**: the viewer shows a JPEG's EXIF thumbnail while its larger one is made, as a HEIF
   photo's small thumbnail, filling the box with `object-fit: contain`, without a shadow, as its element is as large as
   the box then.
+
+## Checked (2026-11-24)
+
+On macOS 27, Apple M5, headless, with Electron's `--no-sandbox` added locally for the runs and not committed (this
+Mac's stuck `backupd`), on a computer busy with other sessions' work (load average 15 to 40):
+
+- `npm run test:unit:all` (96 Angular test files; Electron-Mocha 409 in the main process, 114 in the renderer),
+  `lint:ng`, `lint:main`.
+- The e2e cases of thumbnails and of the Settings dialog, against the production build and the development build:
+  the new case of the size, the cases of HEIF and JPEG/PNG thumbnails, of the rows made near the view, of a photo's
+  information in the tree and the popup, of the cache, and the dialogs' appearance, whose `settings-thumbnails` and
+  `settings-thumbnails-cache` were written anew.
+- `test/layout/app-in-every-language.mjs`, the Settings dialog in all 42 languages: no text cut or outside its box.
+  The only findings are High quality's description on 4 lines, against 3 in English, in Bulgarian, Greek, French,
+  Indonesian, Malay, Dutch and Russian: a description takes the lines that it needs. Arabic and Hebrew lay the
+  slider out from right to left.
+- `test/performance/tree-rows.mjs`, the base of this change (PR #803's branch at 1e14082f) against this change, 2,000
+  photos, 3 trials each, medians:
+
+  | | open | rows again | checkbox | Undo | scroll, mean / longest frame | heap | nodes | listeners | page's process | heap after rows again |
+  | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+  | before | 1,499 ms | 223 ms | 26 ms | 28 ms | 16.7 / 34 ms | 45.3 MB | 57,025 | 8,482 | 315 MB | 45.4 MB |
+  | now | 989 ms | 220 ms | 35 ms | 32 ms | 16.7 / 18 ms | 46.0 MB | 57,025 | 8,482 | 375 MB | 46.5 MB |
+
+  The rows and their viewers cost what they did: the same nodes and listeners, 0.7 MB more heap, none more after
+  the rows were made again. The photos are copies of a JPEG with a camera's thumbnail, of which the app now makes
+  thumbnails of 400 pixels, in the background while the trial goes on: the page's process holds 60 MB more, and the
+  clicks took a few milliseconds more, within the trials' spread on this busy computer (23 to 36 ms).
