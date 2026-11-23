@@ -42,12 +42,15 @@ export function rotateImage(dataUrl: string, orientation: number): Promise<Rotat
 
       const rotatedImage = new RotatedImage();
       rotatedImage.dimensions = new Dimensions(canvas.width, canvas.height);
+      // TL;DR: A JPEG, as the thumbnail in the EXIF data is, of the quality of the thumbnails that the app makes.
+      // Details: The canvas gave a PNG without a type, 46 KB for a thumbnail of 160x120 against 10 KB in the photo:
+      // made for every photo of a folder when it opens and kept until another opens, 0.9 GB for 20,000 photos.
       canvas.toBlob(blob => {
         const objectUrl = URL.createObjectURL(blob);
         rotatedImage.objectUrl = objectUrl;
         ThumbnailObjectUrlStorage.add(objectUrl);
         resolve(rotatedImage);
-      });
+      }, 'image/jpeg', 0.92);
     };
 
     img.addEventListener('error', errorEvent => reject(errorEvent));
