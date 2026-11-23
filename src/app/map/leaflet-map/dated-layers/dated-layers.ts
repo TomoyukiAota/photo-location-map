@@ -15,7 +15,11 @@ import { distinctVersions, versionShownIn, WaybackRelease, WaybackVersion } from
 // Leaflet and its plugins are the global L of angular.json's scripts.
 declare let L: any;
 
-/** The layers' names in the map's list of layers: their products' names, as those of the other layers are. */
+/**
+ * The layers' names in the map's list of layers: their products' names, as those of the other layers are.
+ * They are also the layers' identifiers, by which the list of base layers that the app downloads hides them
+ * (hiddenBuiltInBaseLayersOf()). A layer that is renamed keeps its old name as its identifier.
+ */
 export const waybackLayerName = 'Esri World Imagery Wayback';
 export const openHistoricalMapLayerName = 'OpenHistoricalMap';
 
@@ -46,9 +50,10 @@ const openHistoricalMapAttribution = 'OpenHistoricalMap &mdash; Land cover: &cop
  *   date follows them after each move of the map, and when other photos are on it (photosChanged()).
  * - A date that the user chooses ends the matching, until they check its box again. What they chose, and what is
  *   shown, are kept in MapDateService.
+ * - The list of base layers that the app downloads can hide either layer (hiddenBuiltInBaseLayersOf()).
  */
 export class DatedLayers {
-  /** The layers, by their names, for the map's list of base layers. */
+  /** The layers, by their names, for the map's list of base layers: those that are not hidden. */
   public readonly baseLayers: Readonly<Record<string, unknown>>;
   private readonly wayback: any;
   private readonly openHistoricalMap: any;
@@ -65,11 +70,13 @@ export class DatedLayers {
   private destroyed = false;
   private lastRecorded = '';
 
+  /** `hiddenLayers` has the names of the layers that are hidden, which the map neither offers nor shows. */
   constructor(private readonly map: any,
               private readonly service: MapDateService,
               private readonly contents: LeafletContentService,
               private readonly photos: () => readonly Photo[],
-              layerOptions: Readonly<Record<string, unknown>>) {
+              layerOptions: Readonly<Record<string, unknown>>,
+              hiddenLayers: ReadonlySet<string>) {
     const shownRelease = service.shownRelease();
     this.wayback = L.tileLayer(shownRelease === null ? currentImageryTile : this.waybackTile(shownRelease), {
       ...layerOptions,
@@ -82,10 +89,12 @@ export class DatedLayers {
       maxZoom: Number(layerOptions['maxZoom']),
       onError: error => this.onOpenHistoricalMapError(error),
     });
-    this.baseLayers = {
+    const layers = {
       [waybackLayerName]: this.wayback,
       [openHistoricalMapLayerName]: this.openHistoricalMap,
     };
+    // A hidden layer is made all the same: a layer asks its server for nothing until it is shown.
+    this.baseLayers = Object.fromEntries(Object.entries(layers).filter(([name]) => !hiddenLayers.has(name)));
     map.on('moveend', this.refreshAfterMove);
   }
 

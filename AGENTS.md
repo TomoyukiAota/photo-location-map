@@ -75,8 +75,11 @@ English.
 
 - The log, analytics events and the messages of errors stay in English, written
   where they are used.
-- A word that the code also compares or saves, such as a tab or a unit, gets an
-  identifier apart from its text.
+- A word that the code also compares or saves gets an identifier apart from
+  its text where the text would cause trouble as its identifier. A translated
+  text would, as it differs from one language to another: a tab or a unit has
+  an identifier of its own. A name that is not translated, such as a map
+  layer's, can be its own identifier.
 - A sentence with a link is one text, with a tag around the linked words, which
   the `tagParts` pipe splits.
 - The tests run in English on a machine in any language. A test of another

@@ -1311,6 +1311,30 @@ test('on a computer whose language is Arabic, the application is laid out from r
   // The photo's menu opens the other way round, from its button's left edge towards the right. Its submenu opens on
   // its left where the window has room, and on its right otherwise; the arrow towards the left opens it.
   const moreOptionsButton = popup.locator('.photo-info-viewer-more-options-button');
+  // The button is clicked once Leaflet has panned the map to bring the popup into view, which it does for a quarter of
+  // a second after the popup opens, with leaflet-pan-anim on the map's pane.
+  // TL;DR: A click while the map panned made Playwright scroll the map's container for a moment, and the button or the
+  // menu was measured while the container was scrolled.
+  // Details:
+  // - On macOS CI, now and then, the menu stayed 102 px from the button's box for 10 s (runs 44915303689, 45063276227
+  //   and 45074164430). 102 px is as far as the map's container scrolls across: its content reaches 878 px into its
+  //   776.
+  // - Playwright clicks an element once it is in the same place in two frames in a row, and otherwise tries again,
+  //   scrolling the element into view in another way at each try: at the second, by scrollIntoView({ block: 'end',
+  //   inline: 'end' }). In the popup, written from right to left, the button's inline end is its left edge, which that
+  //   brings to the left edge of the map's container: the container hides what overflows it, but a script scrolls it,
+  //   here as far as it goes. The click lands on the button there, and Leaflet scrolls the container back at its
+  //   scroll event, about 10 ms later (Map._onScroll). The case's measuring of the button and the CDK's placing of the
+  //   menu fall on either side of that, as the frames come: in the run reproduced, the button was measured at 27.5 px,
+  //   and the menu placed at its place, 129.5 px. The later tries, with 'center' and with 'start', scroll the
+  //   container down instead, which the case does not measure.
+  // - Reproduced with the click 210 ms after the marker's: 102 px, as on CI. Locally, the click otherwise started about
+  //   20 ms after the pan had ended, and did not try again.
+  // - Ruled out: the CDK's other horizontal position, which would put the menu 121.8 px off (its width less the
+  //   button's), not a whole 102; and a pan of the map across after the menu opened, as the map pans only down here.
+  // - The app is not at fault: Playwright's scrollIntoView() scrolls the map's container, which a person's click does
+  //   not. A forced click, which does not try again, would click wherever the pan had taken the button.
+  await expect(page.locator('.leaflet-map-pane.leaflet-pan-anim')).toHaveCount(0);
   await moreOptionsButton.click();
   const moreOptionsItems = page.locator('.photo-info-viewer-more-options-menu-item');
   const menuInArabic = ['التحديد', 'عرض في الشريط الجانبي', 'فتح المجلد', 'Google', 'عرض البيانات'];
@@ -1775,6 +1799,33 @@ test('the map shows Esri World Imagery Wayback and OpenHistoricalMap at the date
   await expect(control).toHaveCount(0);
   await expect(page.locator('.plm-leaflet-map-maplibre-container')).toHaveCount(0);
   await expect(page.locator('body > .datepicker')).toHaveCount(0);
+});
+test('a layer of a past date that the list of base layers hides is neither offered nor shown, though the user chose it, until the list no longer hides it', async () => {
+  // The list that the page downloads, from either of its addresses, as photo-location-map-resources could have it:
+  // first with Wayback hidden, then without the field. The user chose Wayback before, and Wayback's servers answer
+  // from test/test-util/dated-layer-answers.mjs once it is shown.
+  const openStreetMap = { name: 'OpenStreetMap', url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    options: { attribution: '© OpenStreetMap contributors' } };
+  let list = { version: '1', rasterTileBaseLayerConfigs: [openStreetMap], hiddenBuiltInBaseLayers: ['Esri World Imagery Wayback'] };
+  await page.route(url => url.pathname.endsWith('/map-configs/raster-tile-base-layer-configs-version-1.jsonc'),
+    route => route.fulfill({ contentType: 'text/plain; charset=utf-8', body: JSON.stringify(list) }));
+  await answerDatedLayers(page);
+  await page.evaluate(() => window.plm.storage.write(['LeafletMap', 'SelectedBaseLayer'], 'Esri World Imagery Wayback'));
+  const layers = page.locator('.leaflet-control-layers-base label');
+  const shownLayer = layers.filter({ has: page.locator('input:checked') });
+  const dateControl = page.locator('.plm-leaflet-map-date');
+
+  await page.reload();
+  await expect(layers).toHaveText(['OpenStreetMap', 'OpenHistoricalMap']);
+  await expect(shownLayer).toHaveText('OpenStreetMap');
+  await expect(dateControl).toHaveCount(0);
+
+  // The choice stayed, and is shown again.
+  list = { version: '1', rasterTileBaseLayerConfigs: [openStreetMap] };
+  await page.reload();
+  await expect(layers).toHaveText(['OpenStreetMap', 'Esri World Imagery Wayback', 'OpenHistoricalMap']);
+  await expect(shownLayer).toHaveText('Esri World Imagery Wayback');
+  await expect(dateControl).toHaveCount(1);
 });
 test('the links of the welcome dialog, the about box and the cache settings open in the OS browser', async () => {
   // Some of them are elements that the components query, with signal queries since stage 2. Nothing opens here.

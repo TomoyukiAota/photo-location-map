@@ -159,6 +159,36 @@ describe('raster-tile-base-layer-configs-version-1', () => {
     }
   });
 
+  it('reads the names of the layers of the app\'s own that the configs hide, and hides none without a list of them', () => {
+    const { hiddenBuiltInBaseLayersOf, rasterTileBaseLayerConfigsVersion1Fallback } = configsModule;
+    const hidden = (field: unknown) =>
+      [...hiddenBuiltInBaseLayersOf({ ...fetchedConfigs, hiddenBuiltInBaseLayers: field as string[] })];
+    const wayback = 'Esri World Imagery Wayback';
+    const openHistoricalMap = 'OpenHistoricalMap';
+
+    expect(hidden([wayback, openHistoricalMap])).toEqual([wayback, openHistoricalMap]);
+    expect(hidden([openHistoricalMap, 1, null, { name: wayback }])).toEqual([openHistoricalMap]);
+    expect(hidden([])).toEqual([]);
+    expect(hidden(wayback)).toEqual([]);
+    expect(hidden({ [wayback]: true })).toEqual([]);
+    expect(hidden(null)).toEqual([]);
+    expect([...hiddenBuiltInBaseLayersOf(fetchedConfigs)]).toEqual([]);
+    expect([...hiddenBuiltInBaseLayersOf(rasterTileBaseLayerConfigsVersion1Fallback)]).toEqual([]);
+  });
+
+  it('hides what the configs that it saved hide, at a launch whose addresses do not answer', async () => {
+    const hiding = { ...fetchedConfigs, hiddenBuiltInBaseLayers: ['Esri World Imagery Wayback'] };
+    fetch.mockImplementationOnce(answeredAfter(0, hiding)).mockImplementationOnce(neverAnswered);
+    await configsModule.fetchRasterTileBaseLayerConfigsVersion1WithRetry([{ url: firstAddress, timeoutMilliseconds: 1000 }]);
+
+    const configs = await configsModule.fetchRasterTileBaseLayerConfigsVersion1WithRetry([
+      { url: firstAddress, timeoutMilliseconds: 20 },
+    ]);
+
+    expect(configs).toEqual(hiding);
+    expect([...configsModule.hiddenBuiltInBaseLayersOf(configs)]).toEqual(['Esri World Imagery Wayback']);
+  });
+
   it('gives each address that the start tries a time limit, 20 seconds in all', () => {
     // Within the 30 seconds that the e2e suite waits for the home view (test/e2e/regression.spec.mjs), so that a
     // launch whose hosts do not answer starts with the fallback configs there, rather than failing.
