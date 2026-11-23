@@ -4,14 +4,12 @@ on:
   push:
     branches:
       - '**'    # matches every branch
-  # Only for a pull request from a fork, whose commits have no push run here. A pull request from a branch of this
-  # repository skips every job, as the push run tests its commit (AGENTS.md, "CI tests each commit once, on push").
   pull_request:
     branches:
       - main
 
-# A new commit on a branch cancels the runs of the commit before it, the push's and a fork's pull request's each in a
-# group of their own, so that only the latest commit is tested when Mergify brings a pull request up to date with main
+# A new commit on a branch cancels the runs of the commit before it, the push's and the pull request's each in a group
+# of their own, so that only the latest commit is tested when Mergify brings a pull request up to date with main
 # (.mergify.yml). Each run on main has a group of its own, and is never canceled.
 concurrency:
   group: ${{ github.ref == 'refs/heads/main' && github.run_id || format('{0} {1} {2}', github.workflow, github.event_name, github.event.pull_request.number || github.ref_name) }}
@@ -20,8 +18,6 @@ concurrency:
 jobs:
   changes:
     # Finds out whether anything other than documents changed (see .github/ci-filters.yml).
-    # Skipped for a pull request from a branch of this repository, and with it the jobs that need it.
-    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository }}
     runs-on: ubuntu-26.04
     permissions:
       contents: read
@@ -44,9 +40,8 @@ jobs:
     runs-on: ubuntu-26.04
 
     # Skipped when only documents changed, which passes the required check. If "changes" fails, the tests run.
-    # Skipped with "changes" for a pull request from a branch of this repository, whose push run reports this check.
     needs: changes
-    if: ${{ !cancelled() && needs.changes.result != 'skipped' && needs.changes.outputs.app != 'false' }}
+    if: ${{ !cancelled() && needs.changes.outputs.app != 'false' }}
 
     # The timeout below is a preventative measure to bound the duration of a hung job.
     # This job usually takes about 15 minutes, so the timeout below has enough margin.
@@ -154,9 +149,8 @@ jobs:
     runs-on: ubuntu-26.04
 
     # Skipped when only documents changed, as "test" is, which passes the check. If "changes" fails, the tests run.
-    # Skipped with "changes" for a pull request from a branch of this repository, as "test" is.
     needs: changes
-    if: ${{ !cancelled() && needs.changes.result != 'skipped' && needs.changes.outputs.app != 'false' }}
+    if: ${{ !cancelled() && needs.changes.outputs.app != 'false' }}
 
     # To bound the duration of a hung job. This job usually takes about 12 minutes.
     timeout-minutes: 30
