@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Ieškoma veidų pasirinktose nuotraukose...",
-    "progress": "Peržiūrėta nuotraukų: {{done}} iš {{total}}.",
+    "looking": "Aptinkami veidai...",
+    "progress": "Apdorota nuotraukų: {{done}} iš {{total}}",
     "noFacesFound": "Pasirinktose nuotraukose veidų nerasta. Pasirinkimas lieka nepakitęs.",
     "notLookedAt": "Nuotraukų, kuriose nepavyko ieškoti veidų ir kurios nebėra pasirinktos: {{count}}.",
     "failed": "Pasirinktose nuotraukose nepavyko ieškoti veidų. Pasirinkimas lieka nepakitęs."

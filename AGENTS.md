@@ -413,8 +413,10 @@ session on a merge, and did not always wake it on a failed check.
 ## Classify a CI failure before rerunning it
 
 When asked to keep a pull request green, **read the failed job's log and classify
-the cause before rerunning**. The push and pull_request triggers build the same
-commit, so compare the two runs: if one passed on the same commit, the failure is
+the cause before rerunning**. Each commit's tests run once, on push (see "CI
+tests each commit once, on push"), so there is no second run of the commit to
+compare with: compare by rerunning the failed job instead. When the log points at
+the runner, a rerun that passes on the same commit confirms that the cause was
 environmental.
 
 **Why:** blind reruns hide real defects. An intermittent Windows failure here
@@ -434,10 +436,9 @@ whenever one can be expected to pass. Examples:
   `The job was not acquired by Runner of type hosted even after multiple attempts`,
   as happened twice to `test (macos-arm64)` when GitHub was short of macOS arm64
   runners. Such a job has no log, as no runner started it: `gh run view <run>`
-  shows the message under "ANNOTATIONS". Rerun it even when both triggers show
-  it, as nothing of the code ran.
-- Any other failure whose log points at the runner rather than the code, when
-  the other trigger passed on the same commit.
+  shows the message under "ANNOTATIONS". Rerun it, as nothing of the code ran.
+- Any other failure whose log points at the runner rather than the code. If its
+  rerun fails the same way, stop and report.
 
 **Also rerun without asking a known intermittent failure whose fix is under
 way.** It is known when its symptom (its error, and the step or case where it
@@ -460,14 +461,25 @@ already made. On 2026-11-23, the e2e suite's launch whose page got a 404 for one
 of its files failed seven runs before #798 fixed it.
 
 Tell the owner what was rerun and why, and for a known failure, which record it
-matched. Stop and report anything else that may be a real defect: a failure both
-triggers share, unless it is one of the above, or one in the app's own tests or
-behavior that is not known. If the same environmental cause keeps coming back,
-propose a narrow workaround (see above) instead of rerunning indefinitely.
+matched. Stop and report anything else that may be a real defect: a failure that
+comes back when its job is rerun, unless it is one of the runner's above, or one
+in the app's own tests or behavior that is not known. If the same environmental
+cause keeps coming back, propose a narrow workaround (see above) instead of
+rerunning indefinitely.
 
 **Handle each failed check as soon as it fails.** Do not wait for all checks to
-finish: the slowest job takes about 20 minutes (15–28 for `macos-26-intel` when
+finish: the slowest job takes about 15 minutes (15–28 for `macos-26-intel` when
 it is run on demand), and a failed job would sit unattended that long.
+
+Each required check `test (<os>)` passes when the two jobs that run the tests on
+that OS at once, `test (<os>), part 1 of 2` and `part 2 of 2`, have passed, and
+fails once both have ended if either did not. Read the log of the part that
+failed, and classify the failure, at once. Rerun only once the whole run has
+ended: GitHub reruns no job of a run that is still running, and `gh run rerun`
+then fails with "This workflow is already running". On Ubuntu,
+`e2e against the development build (ubuntu)` can still run after
+`test (ubuntu)` has failed. Wait with `gh run watch <run>`, then
+`gh run rerun <run> --failed` reruns the parts that failed and the check.
 
 ## CI skips pushes that change only documents
 
@@ -497,12 +509,35 @@ name, so it would report no check of that name, such as `test (<os>)`, and leave
 the required check pending.
 If the `changes` job fails, the tests run.
 
+## CI tests each commit once, on push
+
+The three CI workflows (`.github/workflows/ci-on-*.yml`) run on every push to
+every branch, and have no `pull_request` trigger: a pull request from a branch of
+this repository is tested by its push run alone, so a branch that is pushed
+before its pull request is opened is tested already. A pull request from a fork
+has no push run here, and `ci-on-fork-pull-request.yml` runs the three workflows
+for it, with check names of their own, such as `CI on Ubuntu / test (ubuntu)`.
+Branch protection does not require those, so the owner merges such a pull
+request by hand, as Mergify merges only the owner's anyway.
+
+**Do not give a workflow that a pull request runs a job named like a required
+check**, `test (…)` or `e2e against the development build (ubuntu)`, not even
+one that is always skipped. Its check is reported as skipped at once, while the
+push run's job of that name has no check run until the `changes` job that it
+needs has ended, and a skipped check passes a required one. #807 was merged
+untested that way, before #808 reverted it.
+
+**Why:** each commit ran its tests twice, on push and on pull_request, on three
+OSes each. That took twice the runners, with the macOS ones waiting at busy
+times, and gave an intermittent failure two chances to block the merge.
+
 ## The Windows CI publishes on purpose
 
 `.github/workflows/ci-on-windows.yml` runs the `[Publish to GitHub Releases]`
-steps (`npm run publish:windows`) on every push to every branch, unless the
-push changes only documents (see above). This is deliberate: it verifies that
-publishing still works, rather than finding out on release day. The draft
+steps (`npm run publish:windows`) on every push to every branch, in its job
+`test (windows-latest), part 2 of 2`, unless the push changes only documents
+(see above). This is deliberate: it verifies that publishing still works,
+rather than finding out on release day. The draft
 GitHub release that appears as a result (`1.12.1-alpha`, for example) is an
 **expected byproduct, not leftover junk**.
 
@@ -516,9 +551,9 @@ because it needs the signing and notarization credentials described above.
 ## The Intel macOS CI runs only on demand
 
 `.github/workflows/ci-on-mac.yml` runs on `macos-26` (Apple Silicon) for every
-push and pull request. The `macos-26-intel` (x64) job runs only when the
-workflow is run manually, together with `macos-26`: **Run workflow** on the
-"CI on macOS" page of the Actions tab, or
+push (see "CI tests each commit once, on push"). The `macos-26-intel` (x64) job
+runs only when the workflow is run manually, together with `macos-26`: **Run
+workflow** on the "CI on macOS" page of the Actions tab, or
 `gh workflow run ci-on-mac.yml --ref <branch>`.
 
 **Run it before merging a pull request that can break the x64 half of the

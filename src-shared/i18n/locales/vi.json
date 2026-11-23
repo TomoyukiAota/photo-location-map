@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Đang tìm khuôn mặt trong các ảnh đã chọn...",
-    "progress": "Số ảnh đã xem xét: {{done}} / {{total}}.",
+    "looking": "Đang phát hiện khuôn mặt...",
+    "progress": "Số ảnh đã xử lý: {{done}} / {{total}}",
     "noFacesFound": "Không tìm thấy khuôn mặt nào trong các ảnh đã chọn. Lựa chọn vẫn giữ nguyên.",
     "notLookedAt": "Số ảnh không thể tìm khuôn mặt và không còn được chọn: {{count}}.",
     "failed": "Không thể tìm khuôn mặt trong các ảnh đã chọn. Lựa chọn vẫn giữ nguyên."

@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Iskanje obrazov na izbranih fotografijah...",
-    "progress": "Pregledane fotografije: {{done}} od {{total}}.",
+    "looking": "Zaznavanje obrazov...",
+    "progress": "Obdelane fotografije: {{done}} od {{total}}",
     "noFacesFound": "Na izbranih fotografijah ni bilo najdenih obrazov. Izbor ostane nespremenjen.",
     "notLookedAt": "Fotografije, na katerih ni bilo mogoče iskati obrazov in ki niso več izbrane: {{count}}.",
     "failed": "Na izbranih fotografijah ni bilo mogoče iskati obrazov. Izbor ostane nespremenjen."

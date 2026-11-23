@@ -40,11 +40,11 @@ describe('FaceSearchDialogComponent', () => {
   it('shows how far the search is, with the progress bar of a folder that opens, and Cancel', () => {
     state.set({ kind: 'searching', done: 3, total: 12 });
     fixture.detectChanges();
-    expect(text()).toBe('Looking for faces in the selected photos... Photos looked at: 3 of 12. Cancel');
+    expect(text()).toBe('Detecting faces... Photos processed: 3 of 12 Cancel');
     // The bar with the dots after it, as the dialog of a folder that opens has (loading-folder-dialog.component.html).
     expect(progress().getAttribute('mode')).toBe('buffer');
     expect(progress().getAttribute('aria-valuenow')).toBe('25');
-    expect(progress().getAttribute('aria-label')).toBe('Looking for faces in the selected photos...');
+    expect(progress().getAttribute('aria-label')).toBe('Detecting faces...');
     button().click();
     expect(cancel).toHaveBeenCalledTimes(1);
   });
@@ -56,7 +56,7 @@ describe('FaceSearchDialogComponent', () => {
     expect(root().querySelectorAll('.state')).toHaveLength(4);
     expect(root().querySelectorAll('.state.shown')).toHaveLength(1);
     // The lines with a number keep the room of the largest number, the selected photos'.
-    expect(shown().querySelector('.with-number .sizer').textContent).toBe('Photos looked at: 12 of 12.');
+    expect(shown().querySelector('.with-number .sizer').textContent).toBe('Photos processed: 12 of 12');
     state.set({ kind: 'notLookedAt', count: 1 });
     fixture.detectChanges();
     expect(shown().querySelector('.sizer').textContent)

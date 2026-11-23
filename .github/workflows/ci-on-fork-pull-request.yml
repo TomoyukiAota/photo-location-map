@@ -1,0 +1,30 @@
+name: CI on a pull request from a fork
+
+# TL;DR: A pull request from a fork has no push run in this repository, so this runs the three CI workflows for it.
+# Their checks get names of their own here, such as "CI on Ubuntu / test (ubuntu)", which branch protection does not
+# require: the owner merges such a pull request by hand, as Mergify merges only the owner's anyway.
+# Details: The three workflows test each commit once, on push, and have no pull_request trigger (AGENTS.md, "CI tests
+# each commit once, on push"). With one, the pull_request run of a pull request from a branch of this repository would
+# report their required checks, as skipped, at once, while the push run's jobs of the same names have no check run
+# until the "changes" job that they need has ended; a skipped check passes a required one, and #807 was merged untested
+# that way (#808 reverted it). Such a pull request skips the three jobs below, whose names are not required.
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  ubuntu:
+    name: CI on Ubuntu
+    if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
+    uses: ./.github/workflows/ci-on-ubuntu.yml
+
+  macos:
+    name: CI on macOS
+    if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
+    uses: ./.github/workflows/ci-on-mac.yml
+
+  windows:
+    name: CI on Windows
+    if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
+    uses: ./.github/workflows/ci-on-windows.yml

@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Arcok keresése a kijelölt fotókon...",
-    "progress": "Átvizsgált fotók: {{done}} / {{total}}.",
+    "looking": "Arcok észlelése...",
+    "progress": "Feldolgozott fotók: {{done}} / {{total}}",
     "noFacesFound": "A kijelölt fotókon nem található arc. A kijelölés változatlan marad.",
     "notLookedAt": "Fotók, amelyeken nem lehetett arcokat keresni, és már nincsenek kijelölve: {{count}}.",
     "failed": "A kijelölt fotókon nem lehetett arcokat keresni. A kijelölés változatlan marad."

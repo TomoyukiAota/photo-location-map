@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Hledají se obličeje ve vybraných fotkách...",
-    "progress": "Prohlédnuté fotky: {{done}} z {{total}}.",
+    "looking": "Detekují se obličeje...",
+    "progress": "Zpracované fotky: {{done}} z {{total}}",
     "noFacesFound": "Ve vybraných fotkách nebyly nalezeny žádné obličeje. Výběr zůstává beze změny.",
     "notLookedAt": "Fotky, ve kterých nebylo možné hledat obličeje a které už nejsou vybrané: {{count}}.",
     "failed": "Ve vybraných fotkách nebylo možné hledat obličeje. Výběr zůstává beze změny."
