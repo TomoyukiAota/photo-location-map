@@ -89,7 +89,12 @@ of the cache shows as fast as an EXIF thumbnail, and is made only once.
   thumbnail kept, and removes the logs of failed attempts too.
 - The Cache tab of the Settings dialog says which photos have their thumbnails made, in every language.
 - The fade-in of a thumbnail that has been made is 0.3 s rather than 2 s, as a JPEG's comes in tens of milliseconds.
-- A thumbnail of the EXIF data is kept as a JPEG rather than a PNG: 46 KB each was 0.9 GB for 20,000 photos.
+- The thumbnails of the EXIF data, which the canvas kept as PNGs of 46 KB, 0.9 GB for 20,000 photos, are kept as the
+  JPEGs that the cameras wrote since #796, merged before this change, with the photo's orientation in an EXIF segment
+  of their own (`src/app/shared/oriented-jpeg.ts`). The canvas, which now turns only another thumbnail, still gives a
+  PNG, as this change had made it give a JPEG: #796's test compares its thumbnails with the canvas's, pixel by pixel.
+- A JPEG or PNG photo whose EXIF thumbnail the page cannot decode shows the photo itself, as #796 made it: the app
+  makes no thumbnail of it, as `JpegPngThumbnailService` knows the photos without one in their EXIF data only.
 
 ## Measured after the change
 
