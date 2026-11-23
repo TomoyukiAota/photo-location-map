@@ -44,7 +44,7 @@ jobs:
     if: ${{ !cancelled() && needs.changes.outputs.app != 'false' }}
 
     # The timeout below is a preventative measure to bound the duration of a hung job.
-    # This job usually takes about 12 minutes, so the timeout below has enough margin.
+    # This job usually takes about 15 minutes, so the timeout below has enough margin.
     timeout-minutes: 30
 
     env:
@@ -116,17 +116,6 @@ jobs:
     - name: npm run test:e2e
       run: xvfb-run --auto-servernum npm run test:e2e
 
-    - name: npm run build:dev
-      run: npm run build:dev
-
-    - name: npm run test:e2e against the development build
-      # A development build checks every view each second for a binding that changed without telling Angular, which
-      # would not be rendered, and the suite fails a case that logged one, as NG0100 (test/e2e/README.md). The AppImage
-      # above is a production build, which checks nothing. This job, the shortest, runs it: it takes about 5 minutes
-      # more, and the Windows job still takes longer. PLM_PACKAGED_EXECUTABLE, which "Make an AppImage for E2E"
-      # set, is unset so that the suite runs the checkout.
-      run: env -u PLM_PACKAGED_EXECUTABLE xvfb-run --auto-servernum npm run test:e2e
-
 # Uncomment the lines below to publish Linux package to GitHub Releases.
 #
 #    - name: '[Publish to GitHub Releases] Clean-up by "git clean -fdx" (1st time)'
@@ -145,3 +134,46 @@ jobs:
 #        max_attempts: 10
 #        retry_on: error
 #        command: npm run publish:linux      # To publish, GH_TOKEN environment variable needs to be set.
+
+  e2e-dev:
+    # TL;DR: The e2e suite against a development build of the checkout, beside "test", which runs it against the
+    # AppImage, a production build. The two runs of the suite take place at the same time.
+    # Details: A development build checks every view each second for a binding that changed without telling Angular,
+    # which would not be rendered, and the suite fails a case that logged one, as NG0100 (test/e2e/README.md). A
+    # production build checks nothing. Run against the checkout, the suite also has the cases of the website, which it
+    # skips for a package. This run took about 9 minutes after the AppImage's in "test", which made that job the
+    # longest of CI's, about 24 minutes against about 20 for macOS and Windows.
+    # The name is written out rather than given by a matrix or an expression, so that the check is reported even when
+    # the job is skipped: a skipped job's name expression is not evaluated.
+    name: e2e against the development build (ubuntu)
+    runs-on: ubuntu-26.04
+
+    # Skipped when only documents changed, as "test" is, which passes the check. If "changes" fails, the tests run.
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.app != 'false' }}
+
+    # To bound the duration of a hung job. This job usually takes about 12 minutes.
+    timeout-minutes: 30
+
+    env:
+      ELECTRON_DISABLE_SANDBOX: '1'
+
+    steps:
+    - uses: actions/checkout@v7.0.1
+
+    - name: Install Node.js with the version in mise.toml
+      uses: jdx/mise-action@v5.2.5
+
+    - name: npm ci
+      run: npm ci
+
+    - name: Install virtual display dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y xvfb x11-xserver-utils
+
+    - name: npm run build:dev
+      run: npm run build:dev
+
+    - name: npm run test:e2e against the development build
+      run: xvfb-run --auto-servernum npm run test:e2e

@@ -164,10 +164,11 @@ describe('raster-tile-base-layer-configs-version-1', () => {
     const hidden = (field: unknown) =>
       [...hiddenBuiltInBaseLayersOf({ ...fetchedConfigs, hiddenBuiltInBaseLayers: field as string[] })];
     const wayback = 'Esri World Imagery Wayback';
-    const openHistoricalMap = 'OpenHistoricalMap';
+    // A layer that this release does not have, as one of a later release: its name hides nothing here.
+    const laterLayer = 'A layer of a later release';
 
-    expect(hidden([wayback, openHistoricalMap])).toEqual([wayback, openHistoricalMap]);
-    expect(hidden([openHistoricalMap, 1, null, { name: wayback }])).toEqual([openHistoricalMap]);
+    expect(hidden([wayback, laterLayer])).toEqual([wayback, laterLayer]);
+    expect(hidden([laterLayer, 1, null, { name: wayback }])).toEqual([laterLayer]);
     expect(hidden([])).toEqual([]);
     expect(hidden(wayback)).toEqual([]);
     expect(hidden({ [wayback]: true })).toEqual([]);

@@ -18,7 +18,8 @@ mise exec -- npm run build:dev
 mise exec -- npm run test:e2e
 ```
 
-CI does so on Ubuntu, after its run against the AppImage, which is a production
+CI does so on Ubuntu, in the job `e2e against the development build (ubuntu)`,
+beside the one that runs the suite against the AppImage, which is a production
 build (`.github/workflows/ci-on-ubuntu.yml`).
 
 With any build, the suite also fails a case in which the main window's page

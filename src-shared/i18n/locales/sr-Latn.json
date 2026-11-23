@@ -126,11 +126,8 @@
     "removeRegion": "Ukloni oblast",
     "dates": {
       "imageryDate": "Datum snimaka u centru mape",
-      "mapDate": "Datum mape",
       "olderImagery": "Stariji snimci",
       "newerImagery": "Noviji snimci",
-      "yearEarlier": "Godinu dana ranije",
-      "yearLater": "Godinu dana kasnije",
       "matchPhotoDates": "Uskladi sa datumima snimanja fotografija",
       "nearPhotoDates": "{{date}} (blizu datuma fotografija)",
       "versionOf": "Verzija od {{date}}",
@@ -139,8 +136,7 @@
       "noPhotoDates": "Nijedna fotografija na mapi nema datum snimanja.",
       "loading": "Učitavanje datuma...",
       "failed": "Datumi nisu mogli da se učitaju.",
-      "zoomIn": "Uvećajte mapu da biste videli kada su snimci napravljeni.",
-      "mapFailed": "Ova mapa ne može da se prikaže."
+      "zoomIn": "Uvećajte mapu da biste videli kada su snimci napravljeni."
     }
   },
   "chart": {
