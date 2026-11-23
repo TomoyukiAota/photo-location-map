@@ -7,8 +7,12 @@
 
 .setting-container {
   padding: $setting-container-padding;
-  // Apart from the next section's title.
-  margin-bottom: 24px;
+}
+
+// Apart from the section before it, and with no room after the last one, which would make the tab scroll where its
+// texts take more lines, as in Japanese and Hindi.
+.setting-container + .setting-title {
+  margin-top: 24px;
 }
 
 .cache-tab-description,
