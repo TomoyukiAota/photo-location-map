@@ -45,11 +45,13 @@ export async function answerDatedLayers(page) {
     const tilemap = /\/MapServer\/tilemap\/(\d+)\//.exec(url.pathname);
     if (tilemap)
       return route.fulfill({ json: tilemaps[tilemap[1]] ? { data: [1], select: [tilemaps[tilemap[1]]] } : { data: [1] } });
-    const identify = /\/World_Imagery_Metadata_(\w+)\/MapServer\/identify$/.exec(url.pathname);
-    if (identify) {
-      const results = (sources[identify[1]] ?? []).map(([date, min, max]) =>
-        ({ attributes: { SRC_DATE: date, MinMapLevel: String(min), MaxMapLevel: String(max) } }));
-      return route.fulfill({ json: { results } });
+    const query = /\/World_Imagery_Metadata_(\w+)\/MapServer\/(\d+)\/query$/.exec(url.pathname);
+    if (query) {
+      // The sources in the layer of a zoom, which are those shown at it (metadataLayerOf() in wayback.ts).
+      const zoom = 23 - Number(query[2]);
+      const features = (sources[query[1]] ?? []).filter(([, min, max]) => min <= zoom && zoom <= max)
+        .map(([date, min, max]) => ({ attributes: { SRC_DATE: Number(date), MinMapLevel: min, MaxMapLevel: max } }));
+      return route.fulfill({ json: { features } });
     }
     const waybackTile = /\/WMTS\/1\.0\.0\/default028mm\/MapServer\/tile\/(\d+)\//.exec(url.pathname);
     if (url.hostname === 'wayback.maptiles.arcgis.com' && waybackTile) {

@@ -2,7 +2,7 @@
 import 'leaflet';
 import { TestBed } from '@angular/core/testing';
 import { LeafletContentService } from '../leaflet-content.service';
-import { DatedLayers, openHistoricalMapLayerName } from './dated-layers';
+import { DatedLayers, openHistoricalMapLayerName, waybackLayerName } from './dated-layers';
 import { MapDateService } from './map-date.service';
 
 // The global L that the import of Leaflet makes, as dated-layers.ts declares it.
@@ -56,6 +56,42 @@ describe('DatedLayers', () => {
     map.remove();
     contents.destroyAll();
     expect(corners()).toEqual([]);
+    container.remove();
+  });
+
+  it('stops waiting for Wayback\'s versions at the place that the map left, once it waits for those at the new one', () => {
+    const container = document.body.appendChild(document.createElement('div'));
+    const map = L.map(container, { center: [34.6493, 135.385], zoom: 16 });
+    const service = TestBed.inject(MapDateService);
+    const contents = TestBed.inject(LeafletContentService);
+    // The signals of the waits, and whether the wait before each had ended when it began.
+    const waits: AbortSignal[] = [];
+    const lastEndedBefore: boolean[] = [];
+    vi.spyOn(service, 'waybackReleases').mockReturnValue(new Promise(() => undefined));
+    vi.spyOn(service, 'waybackVersionsAt').mockImplementation((latitude, longitude, zoom, signal) => {
+      lastEndedBefore.push(waits.at(-1)?.aborted ?? false);
+      waits.push(signal);
+      return new Promise(() => undefined);
+    });
+    const layers = new DatedLayers(map, service, contents, () => [], { maxZoom: 19 }, new Set());
+
+    layers.baseLayerChanged(layers.baseLayers[waybackLayerName]);
+    // Moved, and refreshed, as after the move.
+    map.setView([35.6812, 139.7671], 16, { animate: false });
+    layers.baseLayerChanged(layers.baseLayers[waybackLayerName]);
+
+    expect(waits).toHaveLength(2);
+    expect(waits.map(signal => signal.aborted)).toEqual([true, false]);
+    // The service goes on with a lookup that another caller waits for, as the next one at the same place does.
+    expect(lastEndedBefore).toEqual([false, false]);
+
+    // Another layer, which has no date.
+    layers.baseLayerChanged(null);
+    expect(waits[1].aborted).toBe(true);
+
+    layers.destroy();
+    map.remove();
+    contents.destroyAll();
     container.remove();
   });
 });
