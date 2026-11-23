@@ -244,12 +244,15 @@
       "example": "Príklad"
     },
     "thumbnails": {
-      "title": "Miniatúry HEIF",
-      "description": "Miniatúry súborov HEIF, napríklad fotiek nasnímaných iPhonom, vytvára táto aplikácia. Vyberte, či sa majú vytvárať s dôrazom na kvalitu, alebo na rýchlosť.",
+      "title": "Miniatúry",
+      "description": "Vyberte, či sa majú miniatúry vytvárať s dôrazom na kvalitu, alebo na rýchlosť.",
       "highQuality": "Vysoká kvalita",
-      "highQualityDescription": "Vytvárajú sa z celej fotky, s dlhšou stranou 400 pixelov. Dovtedy sa zobrazuje malá miniatúra uložená vo fotke. Na počítači, ktorého grafický hardvér nedokáže dekódovať HEVC, ich vytváranie chvíľu trvá.",
+      "highQualityDescription": "Vytvárajú sa z celej fotky, vo veľkosti zvolenej nižšie. Dovtedy sa zobrazuje malá miniatúra uložená vo fotke. Ich vytváranie chvíľu trvá pri prvom otvorení priečinka a dlhšie pri súboroch HEIF na počítači, ktorého grafický hardvér nedokáže dekódovať HEVC.",
+      "size": "Veľkosť",
+      "sizeValue": "{{size}} pixelov na dlhšej strane",
+      "sizeDescription": "Čím väčšia veľkosť, tým väčšie sa miniatúry zobrazujú, ale tým dlhšie trvá ich vytváranie a tým viac miesta zaberajú vo vyrovnávacej pamäti miniatúr.",
       "fast": "Rýchle",
-      "fastDescription": "Malá miniatúra uložená vo fotke, zobrazená hneď. Je menej ostrá: 320 × 240 pixelov pri 12-megapixelovej fotke z iPhonu."
+      "fastDescription": "Malá miniatúra uložená vo fotke, zobrazená hneď. Je menej ostrá: 160 × 120 pixelov vo väčšine fotiek JPEG a 320 × 240 pixelov pri 12-megapixelovej fotke z iPhonu."
     },
     "os": {
       "title": "Kontextová ponuka Prieskumníka",
@@ -264,7 +267,7 @@
     },
     "cache": {
       "title": "Vyrovnávacia pamäť miniatúr",
-      "generationRequired": "Pre súbory JPEG/PNG bez miniatúry v údajoch EXIF a pre <heifLink>súbory HEIF</heifLink>, ktoré grafický hardvér tohto počítača nedokáže dekódovať, treba vytvárať miniatúry, čo nejaký čas trvá.",
+      "generationRequired": "Pre súbory JPEG/PNG bez dostatočne veľkej miniatúry v údajoch EXIF a pre <heifLink>súbory HEIF</heifLink>, ktoré grafický hardvér tohto počítača nedokáže dekódovať, treba vytvárať miniatúry, čo nejaký čas trvá.",
       "thereforeCached": "Vytvorené miniatúry sa preto ukladajú do vyrovnávacej pamäte.",
       "usedNextTime": "Nabudúce sa použije vyrovnávacia pamäť, takže sa miniatúry nebudú vytvárať znova.",
       "location": "Umiestnenie vyrovnávacej pamäte:",

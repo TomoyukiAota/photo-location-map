@@ -244,12 +244,15 @@
       "example": "Przykład"
     },
     "thumbnails": {
-      "title": "Miniaturki HEIF",
-      "description": "Miniaturki plików HEIF, na przykład zdjęć zrobionych iPhone’em, tworzy ta aplikacja. Wybierz, czy mają być tworzone z myślą o jakości, czy o szybkości.",
+      "title": "Miniaturki",
+      "description": "Wybierz, czy miniaturki mają być tworzone z myślą o jakości, czy o szybkości.",
       "highQuality": "Wysoka jakość",
-      "highQualityDescription": "Tworzone z całego zdjęcia, 400 pikseli na dłuższym boku. Do tego czasu wyświetlana jest mała miniaturka zapisana w zdjęciu. Na komputerze, którego sprzęt graficzny nie potrafi dekodować HEVC, ich tworzenie zajmuje czas.",
+      "highQualityDescription": "Tworzone z całego zdjęcia, w rozmiarze wybranym poniżej. Do tego czasu wyświetlana jest mała miniaturka zapisana w zdjęciu. Ich tworzenie zajmuje czas przy pierwszym otwarciu folderu, a dłużej w przypadku plików HEIF na komputerze, którego sprzęt graficzny nie potrafi dekodować HEVC.",
+      "size": "Rozmiar",
+      "sizeValue": "{{size}} pikseli na dłuższym boku",
+      "sizeDescription": "Im większy rozmiar, tym większe są wyświetlane miniaturki, ale tym dłużej trwa ich tworzenie i tym więcej miejsca zajmują w pamięci podręcznej miniaturek.",
       "fast": "Szybkie",
-      "fastDescription": "Mała miniaturka zapisana w zdjęciu, wyświetlana od razu. Jest mniej ostra: 320 × 240 pikseli w przypadku 12-megapikselowego zdjęcia z iPhone’a."
+      "fastDescription": "Mała miniaturka zapisana w zdjęciu, wyświetlana od razu. Jest mniej ostra: 160 × 120 pikseli w większości zdjęć JPEG i 320 × 240 pikseli w przypadku 12-megapikselowego zdjęcia z iPhone’a."
     },
     "os": {
       "title": "Menu kontekstowe Eksploratora plików",
@@ -264,7 +267,7 @@
     },
     "cache": {
       "title": "Pamięć podręczna miniaturek",
-      "generationRequired": "Dla plików JPEG/PNG bez miniaturki w danych EXIF i dla <heifLink>plików HEIF</heifLink>, których sprzęt graficzny tego komputera nie potrafi dekodować, trzeba tworzyć miniaturki, a to zajmuje czas.",
+      "generationRequired": "Dla plików JPEG/PNG bez dostatecznie dużej miniaturki w danych EXIF i dla <heifLink>plików HEIF</heifLink>, których sprzęt graficzny tego komputera nie potrafi dekodować, trzeba tworzyć miniaturki, a to zajmuje czas.",
       "thereforeCached": "Dlatego utworzone miniaturki są zapisywane w pamięci podręcznej.",
       "usedNextTime": "Od następnego razu będzie używana pamięć podręczna, dzięki czemu miniaturki nie będą tworzone ponownie.",
       "location": "Położenie pamięci podręcznej:",

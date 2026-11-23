@@ -33,6 +33,53 @@
   }
 }
 
+// The size, under the text of High quality, in the type of the choices' texts, which Angular Material's radio buttons
+// have: as far from the start as that text, past the radio button's circle (40 pixels) and the label's padding (4).
+// The label, the slider and the size go on to a second row where they do not fit side by side, and the description
+// takes as many lines as it needs.
+.thumbnail-size {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-inline-start: 44px;
+  font-family: var(--mat-radio-label-text-font);
+  font-size: var(--mat-radio-label-text-size);
+  line-height: var(--mat-radio-label-text-line-height);
+  letter-spacing: var(--mat-radio-label-text-tracking);
+  color: var(--mat-radio-label-text-color, inherit);
+}
+
+.thumbnail-size-control {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 12px;
+}
+
+// As wide as seven sizes need to be told apart by a pointer: the slider has no text of its own.
+.thumbnail-size-slider {
+  width: 240px;
+  margin: 0;
+}
+
+// The digits keep their widths, so that the text does not move while the slider is dragged.
+.thumbnail-size-value {
+  font-variant-numeric: tabular-nums;
+}
+
+.thumbnail-size-description {
+  white-space: normal;
+}
+
+// While Fast is chosen, the texts are as faint as the slider, which Angular Material shows disabled.
+.thumbnail-size-disabled {
+  .thumbnail-size-label,
+  .thumbnail-size-value,
+  .thumbnail-size-description {
+    opacity: 0.38;
+  }
+}
+
 // The cache, a part of the tab with a title as large as its first one: set apart from the choices above it, as far as
 // the cache's own parts are from each other.
 .thumbnail-cache {

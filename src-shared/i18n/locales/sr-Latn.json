@@ -244,12 +244,15 @@
       "example": "Primer"
     },
     "thumbnails": {
-      "title": "Sličice HEIF",
-      "description": "Sličice datoteka HEIF, na primer fotografija snimljenih iPhone-om, pravi ova aplikacija. Izaberite da li se prave s naglaskom na kvalitet ili na brzinu.",
+      "title": "Sličice",
+      "description": "Izaberite da li se sličice prave s naglaskom na kvalitet ili na brzinu.",
       "highQuality": "Visok kvalitet",
-      "highQualityDescription": "Prave se od cele fotografije, sa 400 piksela na dužoj stranici. Do tada se prikazuje mala sličica sačuvana u fotografiji. Na računaru čiji grafički hardver ne može da dekodira HEVC, njihovo pravljenje traje neko vreme.",
+      "highQualityDescription": "Prave se od cele fotografije, u veličini izabranoj ispod. Do tada se prikazuje mala sličica sačuvana u fotografiji. Njihovo pravljenje traje neko vreme kada se fascikla otvori prvi put, a duže za datoteke HEIF na računaru čiji grafički hardver ne može da dekodira HEVC.",
+      "size": "Veličina",
+      "sizeValue": "{{size}} piksela na dužoj stranici",
+      "sizeDescription": "Što je veličina veća, sličice se prikazuju veće, ali njihovo pravljenje traje duže i zauzimaju više prostora u kešu sličica.",
       "fast": "Brzo",
-      "fastDescription": "Mala sličica sačuvana u fotografiji, prikazana odmah. Manje je oštra: 320 × 240 piksela za fotografiju od 12 megapiksela snimljenu iPhone-om."
+      "fastDescription": "Mala sličica sačuvana u fotografiji, prikazana odmah. Manje je oštra: 160 × 120 piksela u većini fotografija JPEG i 320 × 240 piksela za fotografiju od 12 megapiksela snimljenu iPhone-om."
     },
     "os": {
       "title": "Kontekstualni meni Istraživača datoteka",
@@ -264,7 +267,7 @@
     },
     "cache": {
       "title": "Keš sličica",
-      "generationRequired": "Za datoteke JPEG/PNG bez sličice u podacima EXIF i za <heifLink>datoteke HEIF</heifLink> koje grafički hardver ovog računara ne može da dekodira potrebno je napraviti sličice, što traje neko vreme.",
+      "generationRequired": "Za datoteke JPEG/PNG bez dovoljno velike sličice u podacima EXIF i za <heifLink>datoteke HEIF</heifLink> koje grafički hardver ovog računara ne može da dekodira potrebno je napraviti sličice, što traje neko vreme.",
       "thereforeCached": "Zato se napravljene sličice čuvaju u kešu.",
       "usedNextTime": "Od sledećeg puta koristiće se keš, pa se sličice neće praviti ponovo.",
       "location": "Lokacija keša:",

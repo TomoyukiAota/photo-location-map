@@ -1,7 +1,7 @@
 # The size of the thumbnails, chosen by the user: status
 
-Investigated and proposed on 2026-11-23; the owner chose the design on 2026-11-24 ("What the owner chose", at the
-end). Nothing is implemented yet.
+Investigated and proposed on 2026-11-23; the owner chose the design on 2026-11-24, and it was implemented then ("What
+the owner chose" and "What was built", at the end).
 
 ## What was asked
 
@@ -221,5 +221,37 @@ one looks softer and is made no faster (above); a larger one is not seen.
   one made at the default setting, as it does not today: the first open of a folder reads every JPEG once (2,000
   photos in 1 to 2.5 minutes, the rows in view first), and the cache keeps 52 KB more for each JPEG.
 - No item in the View menu.
-- Not decided yet: whether the photo's own small thumbnail is shown while the larger one is made, as a HEIF photo's is
-  today.
+- While the larger one is made, the photo's own small thumbnail is shown, stretched to fill the box, as a HEIF
+  photo's is.
+
+## What was built (2026-11-24)
+
+- **The setting**: `thumbnailSize` (`src-shared/user-settings/thumbnail-size.ts`), 400 to 1,000 in steps of 100, 400
+  by default, saved beside the quality (`UserSettings/ThumbnailSize`, which a renderer may write,
+  `renderer-storage-access.ts`). At Fast, the thumbnails that the app makes are of 400 pixels, as before.
+- **The Thumbnails tab**: the choice of quality is of every thumbnail now ("Thumbnails" rather than "HEIF
+  Thumbnails"), with a slider of Angular Material right under High quality, disabled while Fast is chosen, the size
+  beside it and what it costs under it, in the type of the choices' texts. The radio group follows its choice with
+  `ngModelChange`: a `(change)` binding on the group's element also heard the slider's own change event, which
+  bubbles, and took the quality as undefined (a unit test fires that event). The texts of the tab and the cache's
+  first sentence are new in every language.
+- **The box**: a CSS custom property, `--plm-thumbnail-box`, on the application's root element (`AppComponent`, from
+  `ThumbnailSizeService`), which the viewer's styles read for the tree and the popups: nothing of the size is bound in
+  each viewer. The box sits at the top of its line now (`vertical-align: top`): on the baseline, an image as high as the
+  box, as the small thumbnail that fills it or a portrait thumbnail, made the row 242 pixels high against 237.
+- **What is made**: `needsMadeThumbnail(photo, quality, longerSide)` takes a JPEG whose EXIF thumbnail is smaller
+  than the size at High quality too. `JpegPngThumbnailService` makes them at the size, from the folder's opening or
+  from new settings (`applySettings()`), and a place reads a photo's new state through an epoch signal, as each photo's
+  signal is a new one then. HEIF photos' whole images, in the page and in the main process (`resizeAndEncode`), are
+  made at the size; a new size drops the thumbnails that wait to be made in the main process and asks for the
+  folder's again.
+- **The cache**: one file per photo, as before, whose log holds the size (`LongerSide`, 400 when a log has none); a
+  thumbnail of another size counts as not attempted, and is made again in the same file. The page asks for a made
+  thumbnail at an address with its size in its query (`madeThumbnailUrl`), the size that it was made at, which the
+  services keep with each file: the page keeps the images that it loaded by their addresses, and the settings choose
+  a new size a moment before the services forget the files of the previous one. The proposal had a file for each
+  size; one file keeps the cache as large as one size's thumbnails, and a change of size, which is rare, makes them
+  again.
+- **The provisional thumbnail**: the viewer shows a JPEG's EXIF thumbnail while its larger one is made, as a HEIF
+  photo's small thumbnail, filling the box with `object-fit: contain`, without a shadow, as its element is as large as
+  the box then.

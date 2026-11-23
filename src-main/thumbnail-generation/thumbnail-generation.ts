@@ -13,11 +13,12 @@ import { ThumbnailFailures } from './thumbnail-failures.js';
 import { logged } from '../../src-shared/log/logged-line.js';
 
 /**
- * Has the thumbnails of `heifFilePathsToGenerateThumbnail` made, after those that wait to be made: all those of a
- * folder that the page has the main process make, or one that the page could not make itself
- * (src/app/heif-thumbnail/). A file that waits or is being made is not added again.
+ * Has the thumbnails of `heifFilePathsToGenerateThumbnail` made at `longerSide`, after those that wait to be made: all
+ * those of a folder that the page has the main process make, or one that the page could not make itself
+ * (src/app/heif-thumbnail/). A file that waits or is being made at that size is not added again.
  */
-export function handleThumbnailGenerationIpcRequest(allHeifFilePaths: string[], heifFilePathsToGenerateThumbnail: string[]): void {
+export function handleThumbnailGenerationIpcRequest(allHeifFilePaths: string[], heifFilePathsToGenerateThumbnail: string[],
+                                                    longerSide: number): void {
   if (!allHeifFilePaths || !heifFilePathsToGenerateThumbnail) {
     logger.error(`handleThumbnailGenerationIpcRequest should be called with string arrays.`);
     logger.errorNotRecorded(`allHeifFilePaths: ${allHeifFilePaths}, heifFilePathsToGenerateThumbnail: ${heifFilePathsToGenerateThumbnail}`,
@@ -28,10 +29,11 @@ export function handleThumbnailGenerationIpcRequest(allHeifFilePaths: string[], 
   logAllHeifFiles(allHeifFilePaths);
   logHeifFilesToGenerateThumbnail(heifFilePathsToGenerateThumbnail);
   for (const filePath of heifFilePathsToGenerateThumbnail) {
-    if (waitingOrBeingMade.has(filePath))
+    const key = waitingOrBeingMadeKey(filePath, longerSide);
+    if (waitingOrBeingMade.has(key))
       continue;
-    waitingOrBeingMade.add(filePath);
-    waiting.push(createThumbnailFileGenerationArg(filePath));
+    waitingOrBeingMade.add(key);
+    waiting.push(createThumbnailFileGenerationArg(filePath, longerSide));
   }
 
   if (!isGenerating) {
@@ -47,14 +49,22 @@ export function handleThumbnailGenerationIpcRequest(allHeifFilePaths: string[], 
 export function cancelThumbnailGeneration(): void {
   logger.info(`Dropped ${waiting.length} thumbnails that waited to be made.`);
   for (const arg of waiting)
-    waitingOrBeingMade.delete(arg.srcFilePath);
+    waitingOrBeingMade.delete(waitingOrBeingMadeKey(arg.srcFilePath, arg.longerSide));
   waiting.length = 0;
 }
 
 /** The thumbnails that wait to be made, in the order that they were asked for. */
 const waiting: ThumbnailFileGenerationArg[] = [];
-/** The files of the thumbnails that wait or are being made. */
+/**
+ * The thumbnails that wait or are being made, by their file and size (waitingOrBeingMadeKey). TL;DR: By the size too,
+ * so that a thumbnail asked for at a new size, while the previous size's is being made, is made after it rather than
+ * left out: the previous one's log would not say the new size, and the page would wait for ever.
+ */
 const waitingOrBeingMade = new Set<string>();
+
+function waitingOrBeingMadeKey(filePath: string, longerSide: number): string {
+  return `${longerSide}:${filePath}`;
+}
 let isGenerating = false;
 
 class FileForWorker {
@@ -94,12 +104,13 @@ function logHeifFilesToGenerateThumbnail(heifFilePathsToGenerateThumbnail: strin
   }
 }
 
-function createThumbnailFileGenerationArg(filePath: string) {
+function createThumbnailFileGenerationArg(filePath: string, longerSide: number) {
   const arg = new ThumbnailFileGenerationArg();
   arg.srcFilePath = filePath;
   const {thumbnailFileDir, thumbnailFilePath} = getThumbnailFilePath(arg.srcFilePath);
   arg.outputFileDir = thumbnailFileDir;
   arg.outputFilePath = thumbnailFilePath;
+  arg.longerSide = longerSide;
   return arg;
 }
 
@@ -141,7 +152,7 @@ async function generateUntilNoneWaits() {
     logger.info(`Started chunk #${chunkNumber}, of ${argChunk.length} files; ${waiting.length} files wait after it.`);
     await runWorkerForThumbnailGeneration(argChunk, failures);
     for (const arg of argChunk)
-      waitingOrBeingMade.delete(arg.srcFilePath);
+      waitingOrBeingMade.delete(waitingOrBeingMadeKey(arg.srcFilePath, arg.longerSide));
     logger.info(`Finished chunk #${chunkNumber}.`);
   }
   failures.record();
@@ -167,14 +178,14 @@ async function runWorkerForThumbnailGeneration(argArray: ThumbnailFileGeneration
             ` Attempted to create a thumbnail file "${arg.outputFilePath}" from "${arg.srcFilePath}". Error: ${error}`);
           failures.add(status ?? 'unknown', error);
         }
-        await createThumbnailGenerationLogFile(arg.srcFilePath, arg.outputFileDir, isThumbnailFileCreated, logger);
+        await createThumbnailGenerationLogFile(arg.srcFilePath, arg.outputFileDir, isThumbnailFileCreated, logger, undefined, arg.longerSide);
       }, async error => {
         // The worker process failed and sent nothing back, such as when it crashed. The generation log file is still
         // written: the window counts a thumbnail as done by it, and without it would wait for this one for ever.
         logger.errorNotRecorded(`The worker for thumbnail generation failed for "${arg.srcFilePath}". error: ${error}`, error);  // Recorded as "worker-failed", below.
         failures.add('worker-failed', error);
         try {
-          await createThumbnailGenerationLogFile(arg.srcFilePath, arg.outputFileDir, false, logger);
+          await createThumbnailGenerationLogFile(arg.srcFilePath, arg.outputFileDir, false, logger, undefined, arg.longerSide);
         } catch (logFileError) {
           logger.error(logged`Failed to write the thumbnail generation log file for "${arg.srcFilePath}".`, logFileError);
         }

@@ -14,6 +14,7 @@ import {
   stickyFolderRowsMaximumOf,
 } from './sticky-folder-rows.js';
 import { defaultThumbnailQuality, isThumbnailQuality, ThumbnailQuality } from './thumbnail-quality.js';
+import { defaultThumbnailSize, thumbnailSizeOf } from './thumbnail-size.js';
 import DateFormatType = DateTimeFormat.ForUser.DateFormatType;
 import ClockSystemFormatType = DateTimeFormat.ForUser.ClockSystemFormatType;
 
@@ -23,8 +24,10 @@ interface UserSettings {
   clockSystemFormat: ClockSystemFormatType;
   /** `auto`, the operating system's language, or a language; the language in use is in src-shared/i18n/i18n.ts. */
   language: LanguageSetting;
-  /** The quality of the thumbnails of HEIF photos (thumbnail-quality.ts). */
+  /** The quality of the thumbnails (thumbnail-quality.ts). */
   thumbnailQuality: ThumbnailQuality;
+  /** The longer side of the thumbnails at High quality, in pixels (thumbnail-size.ts). */
+  thumbnailSize: number;
   /** The most rows of folders that the folder tree keeps at its top while it is scrolled (sticky-folder-rows.ts). */
   stickyFolderRowsMaximum: number;
   /** Which folders those rows leave out when there are more folders than rows (sticky-folder-rows.ts). */
@@ -37,6 +40,7 @@ export class CurrentUserSettings implements UserSettings {
               public clockSystemFormat: ClockSystemFormatType,
               public language: LanguageSetting,
               public thumbnailQuality: ThumbnailQuality,
+              public thumbnailSize: number,
               public stickyFolderRowsMaximum: number,
               public stickyFolderRowsLeftOut: StickyFolderRowsLeftOut) {}
 }
@@ -47,6 +51,7 @@ export class UserSettingsToBeSaved implements UserSettings {
   public clockSystemFormat: ClockSystemFormatType;
   public language: LanguageSetting;
   public thumbnailQuality: ThumbnailQuality;
+  public thumbnailSize: number;
   public stickyFolderRowsMaximum: number;
   public stickyFolderRowsLeftOut: StickyFolderRowsLeftOut;
 }
@@ -94,10 +99,16 @@ const loadLanguage: (() => LanguageSetting) = () => {
   return isLanguageSetting(loadedLanguage) ? loadedLanguage : languageSettingAuto;
 };
 
-/** The saved quality of the thumbnails of HEIF photos, or the default when none, or no valid one, is saved. */
+/** The saved quality of the thumbnails, or the default when none, or no valid one, is saved. */
 const loadThumbnailQuality: (() => ThumbnailQuality) = () => {
   const loaded: string = UserDataStorage.readOrDefault(UserDataStoragePath.UserSettings.ThumbnailQuality, defaultThumbnailQuality);
   return isThumbnailQuality(loaded) ? loaded : defaultThumbnailQuality;
+};
+
+/** The saved size of the thumbnails, or the default when none, or no valid one, is saved. */
+const loadThumbnailSize: (() => number) = () => {
+  const loaded: string = UserDataStorage.readOrDefault(UserDataStoragePath.UserSettings.ThumbnailSize, String(defaultThumbnailSize));
+  return thumbnailSizeOf(loaded) ?? defaultThumbnailSize;
 };
 
 /** The saved most rows of the folders at the top of the folder tree, or the default when none, or no valid one, is saved. */
@@ -120,10 +131,11 @@ const loadUserSettings: (() => CurrentUserSettings) = () => {
   const clockSystemFormat = loadClockSystemFormat();
   const language = loadLanguage();
   const thumbnailQuality = loadThumbnailQuality();
+  const thumbnailSize = loadThumbnailSize();
   const stickyFolderRowsMaximum = loadStickyFolderRowsMaximum();
   const stickyFolderRowsLeftOut = loadStickyFolderRowsLeftOut();
   const userSettings = new CurrentUserSettings(showStatusBar, dateFormat, clockSystemFormat, language, thumbnailQuality,
-    stickyFolderRowsMaximum, stickyFolderRowsLeftOut);
+    thumbnailSize, stickyFolderRowsMaximum, stickyFolderRowsLeftOut);
   Logger.info(`Loaded user settings ${JSON.stringify(userSettings)}`);
   return userSettings;
 };
@@ -160,6 +172,7 @@ export const saveUserSetting: ((settings: UserSettingsToBeSaved) => Promise<void
     UserDataStorage.write(UserDataStoragePath.UserSettings.ClockSystemFormat, settings.clockSystemFormat),
     UserDataStorage.write(UserDataStoragePath.UserSettings.Language, settings.language),
     UserDataStorage.write(UserDataStoragePath.UserSettings.ThumbnailQuality, settings.thumbnailQuality),
+    UserDataStorage.write(UserDataStoragePath.UserSettings.ThumbnailSize, String(settings.thumbnailSize)),
     UserDataStorage.write(UserDataStoragePath.UserSettings.StickyFolderRowsMaximum, String(settings.stickyFolderRowsMaximum)),
     UserDataStorage.write(UserDataStoragePath.UserSettings.StickyFolderRowsLeftOut, settings.stickyFolderRowsLeftOut),
   ]);

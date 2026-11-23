@@ -13,9 +13,9 @@ export class JpegPngImageSource {
     return pageHasImageDecoder();
   }
 
-  /** Where the thumbnail of each photo is in the cache, if it is. */
-  public states(photoPaths: string[]): Promise<ThumbnailState[]> {
-    return bridge().thumbnails.state(photoPaths);
+  /** Where the thumbnail of each photo is in the cache, if it is there at `longerSide`. */
+  public states(photoPaths: string[], longerSide: number): Promise<ThumbnailState[]> {
+    return bridge().thumbnails.state(photoPaths, longerSide);
   }
 
   /** The photo's file as it is now; null when it cannot be read. */
@@ -23,13 +23,16 @@ export class JpegPngImageSource {
     return bridge().jpegPngThumbnails.readPhoto(photoPath);
   }
 
-  /** A JPEG of the photo's thumbnail, which takes the bytes' buffer; rejects when the file cannot be decoded. */
-  public makeThumbnail(bytes: Uint8Array, photoPath: string): Promise<Blob> {
-    return makeThumbnailJpeg(bytes, photoPath);
+  /**
+   * A JPEG of the photo's thumbnail, `longerSide` pixels on its longer side, which takes the bytes' buffer; rejects when
+   * the file cannot be decoded.
+   */
+  public makeThumbnail(bytes: Uint8Array, photoPath: string, longerSide: number): Promise<Blob> {
+    return makeThumbnailJpeg(bytes, photoPath, longerSide);
   }
 
-  /** Keeps the thumbnail in the cache, or that none could be made: where the thumbnail is. */
-  public save(photoPath: string, lastModified: string, jpeg: Uint8Array | null): Promise<string> {
-    return bridge().jpegPngThumbnails.save(photoPath, lastModified, jpeg);
+  /** Keeps the thumbnail of `longerSide` in the cache, or that none could be made: where the thumbnail is. */
+  public save(photoPath: string, lastModified: string, jpeg: Uint8Array | null, longerSide: number): Promise<string> {
+    return bridge().jpegPngThumbnails.save(photoPath, lastModified, jpeg, longerSide);
   }
 }

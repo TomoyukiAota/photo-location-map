@@ -244,12 +244,15 @@
       "example": "Primer"
     },
     "thumbnails": {
-      "title": "Sličice HEIF",
-      "description": "Sličice datotek HEIF, na primer fotografij, posnetih z iPhonom, ustvari ta aplikacija. Izberite, ali naj se ustvarjajo s poudarkom na kakovosti ali na hitrosti.",
+      "title": "Sličice",
+      "description": "Izberite, ali naj se sličice ustvarjajo s poudarkom na kakovosti ali na hitrosti.",
       "highQuality": "Visoka kakovost",
-      "highQualityDescription": "Ustvarijo se iz celotne fotografije, s 400 slikovnimi pikami na daljši stranici. Do takrat je prikazana majhna sličica, shranjena v fotografiji. V računalniku, katerega grafična strojna oprema ne zmore dekodirati HEVC, njihovo ustvarjanje traja nekaj časa.",
+      "highQualityDescription": "Ustvarijo se iz celotne fotografije, v velikosti, izbrani spodaj. Do takrat je prikazana majhna sličica, shranjena v fotografiji. Njihovo ustvarjanje traja nekaj časa, ko se mapa odpre prvič, za datoteke HEIF pa še dlje v računalniku, katerega grafična strojna oprema ne zmore dekodirati HEVC.",
+      "size": "Velikost",
+      "sizeValue": "{{size}} slikovnih pik na daljši stranici",
+      "sizeDescription": "Večja ko je velikost, večje so prikazane sličice, vendar njihovo ustvarjanje traja dlje in zasedejo več prostora v predpomnilniku sličic.",
       "fast": "Hitro",
-      "fastDescription": "Majhna sličica, shranjena v fotografiji, je prikazana takoj. Je manj ostra: 320 × 240 slikovnih pik pri 12-megapikselski fotografiji, posneti z iPhonom."
+      "fastDescription": "Majhna sličica, shranjena v fotografiji, je prikazana takoj. Je manj ostra: 160 × 120 slikovnih pik v večini fotografij JPEG in 320 × 240 slikovnih pik pri 12-megapikselski fotografiji, posneti z iPhonom."
     },
     "os": {
       "title": "Priročni meni Raziskovalca",
@@ -264,7 +267,7 @@
     },
     "cache": {
       "title": "Predpomnilnik sličic",
-      "generationRequired": "Za datoteke JPEG/PNG brez sličice v podatkih EXIF in za <heifLink>datoteke HEIF</heifLink>, ki jih grafična strojna oprema tega računalnika ne zmore dekodirati, je treba ustvariti sličice, kar traja nekaj časa.",
+      "generationRequired": "Za datoteke JPEG/PNG brez dovolj velike sličice v podatkih EXIF in za <heifLink>datoteke HEIF</heifLink>, ki jih grafična strojna oprema tega računalnika ne zmore dekodirati, je treba ustvariti sličice, kar traja nekaj časa.",
       "thereforeCached": "Zato se ustvarjene sličice shranijo v predpomnilnik.",
       "usedNextTime": "Naslednjič bo uporabljen predpomnilnik, zato sličic ne bo treba znova ustvarjati.",
       "location": "Mesto predpomnilnika:",

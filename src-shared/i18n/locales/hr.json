@@ -244,12 +244,15 @@
       "example": "Primjer"
     },
     "thumbnails": {
-      "title": "Minijature HEIF",
-      "description": "Minijature datoteka HEIF, primjerice fotografija snimljenih iPhoneom, izrađuje ova aplikacija. Odaberite izrađuju li se s naglaskom na kvalitetu ili na brzinu.",
+      "title": "Minijature",
+      "description": "Odaberite izrađuju li se minijature s naglaskom na kvalitetu ili na brzinu.",
       "highQuality": "Visoka kvaliteta",
-      "highQualityDescription": "Izrađuju se od cijele fotografije, s 400 piksela na duljoj stranici. Do tada se prikazuje mala minijatura spremljena u fotografiji. Na računalu čiji grafički hardver ne može dekodirati HEVC njihova izrada traje neko vrijeme.",
+      "highQualityDescription": "Izrađuju se od cijele fotografije, u veličini odabranoj ispod. Do tada se prikazuje mala minijatura spremljena u fotografiji. Njihova izrada traje neko vrijeme kad se mapa otvori prvi put, a dulje za datoteke HEIF na računalu čiji grafički hardver ne može dekodirati HEVC.",
+      "size": "Veličina",
+      "sizeValue": "{{size}} piksela na duljoj stranici",
+      "sizeDescription": "Što je veličina veća, minijature se prikazuju veće, ali njihova izrada traje dulje i zauzimaju više mjesta u predmemoriji minijatura.",
       "fast": "Brzo",
-      "fastDescription": "Mala minijatura spremljena u fotografiji, prikazana odmah. Manje je oštra: 320 × 240 piksela za fotografiju od 12 megapiksela snimljenu iPhoneom."
+      "fastDescription": "Mala minijatura spremljena u fotografiji, prikazana odmah. Manje je oštra: 160 × 120 piksela u većini fotografija JPEG i 320 × 240 piksela u fotografiji od 12 megapiksela snimljenoj iPhoneom."
     },
     "os": {
       "title": "Kontekstni izbornik Eksplorera za datoteke",
@@ -264,7 +267,7 @@
     },
     "cache": {
       "title": "Predmemorija minijatura",
-      "generationRequired": "Za datoteke JPEG/PNG bez minijature u podacima EXIF i za <heifLink>datoteke HEIF</heifLink> koje grafički hardver ovog računala ne može dekodirati potrebno je izraditi minijature, što traje neko vrijeme.",
+      "generationRequired": "Za datoteke JPEG/PNG bez dovoljno velike minijature u podacima EXIF i za <heifLink>datoteke HEIF</heifLink> koje grafički hardver ovog računala ne može dekodirati potrebno je izraditi minijature, što traje neko vrijeme.",
       "thereforeCached": "Zato se izrađene minijature spremaju u predmemoriju.",
       "usedNextTime": "Od sljedećeg puta koristit će se predmemorija, pa se minijature neće ponovno izrađivati.",
       "location": "Lokacija predmemorije:",

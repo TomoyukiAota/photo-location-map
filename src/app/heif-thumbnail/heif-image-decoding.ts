@@ -17,8 +17,6 @@ import { tilePlacements } from './tile-placement.js';
 //   a JPEG of quality 0.92, the generation's, for an img element.
 
 const jpegQuality = 0.92;
-/** The longer side of a thumbnail made from the whole image, as the generation makes it: 200 CSS pixels at twice. */
-export const wholeImageThumbnailLongerSide = 400;
 /** How long a decoding may take before it is taken as failed, which no decoder takes in practice. */
 const decodingTimeoutMs = 10_000;
 
@@ -157,7 +155,7 @@ export async function decodeEmbeddedThumbnail(thumbnail: HeifEmbeddedThumbnail):
  * decoded, into whole pixels (tilePlacements), which takes as long as drawing them whole and resizing once, without a
  * canvas of the whole image.
  */
-export async function decodeWholeImage(image: HeifWholeImage, longerSide = wholeImageThumbnailLongerSide): Promise<Blob> {
+export async function decodeWholeImage(image: HeifWholeImage, longerSide: number): Promise<Blob> {
   const { crop } = image;
   const scale = Math.min(1, longerSide / Math.max(crop.width, crop.height));
   const width = Math.max(1, Math.round(crop.width * scale));

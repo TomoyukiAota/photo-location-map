@@ -5,6 +5,7 @@ import {
 } from '../dir-tree-view-folder-checkbox-and-name/dir-tree-view-folder-checkbox-and-name.component';
 import { NestedNode } from '../directory-tree-view.model';
 import { DirTreeViewStickyRowsService } from './dir-tree-view-sticky-rows.service';
+import { ThumbnailSizeService } from '../../shared/thumbnail-size/thumbnail-size.service';
 import { allowedStickyRows, StickyRow, stickyRowHeight, StickyRowsLayout, stickyFoldersOf, stickyRowsOf } from './sticky-rows';
 
 /** What the rows kept at the top ask of the folder tree. */
@@ -72,6 +73,7 @@ interface ShownRow {
 export class DirTreeViewStickyRowsComponent {
   public readonly host = input.required<StickyRowsHost>();
   private readonly service = inject(DirTreeViewStickyRowsService);
+  private readonly thumbnailSizeService = inject(ThumbnailSizeService);
   private readonly element: HTMLElement = inject(ElementRef).nativeElement;
 
   protected readonly rows = signal<readonly ShownRow[]>([]);
@@ -84,18 +86,25 @@ export class DirTreeViewStickyRowsComponent {
   /** The tree's element, which has its rows. */
   private tree: HTMLElement | null = null;
   private frame = 0;
-  /** The height of a photo's row, which the rows leave room for: measured once there is one, and on a resize. */
+  /**
+   * The height of a photo's row, which the rows leave room for: measured once there is one, and on a resize or a new
+   * size of the thumbnails.
+   */
   private photoRowHeight = 0;
   /** The rows allowed last, which places a folder's row below the rows of the folders above it. */
   private allowed = 3;
 
   public constructor() {
     const destroyRef = inject(DestroyRef);
-    // A new setting places the rows again.
+    // A new setting places the rows again: a new size of the thumbnails, with a photo's row measured again.
     effect(() => {
       this.service.maximum();
       this.service.leftOut();
-      untracked(() => this.schedule());
+      this.thumbnailSizeService.box();
+      untracked(() => {
+        this.photoRowHeight = 0;
+        this.schedule();
+      });
     });
     afterNextRender(() => {
       this.box = scrollingBoxOf(this.element);

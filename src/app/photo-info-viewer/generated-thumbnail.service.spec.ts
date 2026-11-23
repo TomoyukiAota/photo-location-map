@@ -30,8 +30,10 @@ describe('GeneratedThumbnailService', () => {
 
     await vi.advanceTimersByTimeAsync(0);
 
-    expect(state).toHaveBeenCalledExactlyOnceWith(['/photos/a.heic', '/photos/b.heic']);
+    expect(state).toHaveBeenCalledExactlyOnceWith(['/photos/a.heic', '/photos/b.heic'], 400);
     expect(service.filePathOf('/photos/a.heic')).toBe('/cache/photos/a.heic.plm.jpg');
+    // The size that the main process was asked about, which the thumbnail was made at.
+    expect(service.longerSideOf('/photos/a.heic')).toBe(400);
     expect(service.filePathOf('/photos/b.heic')).toBeUndefined();
   });
 
@@ -49,7 +51,7 @@ describe('GeneratedThumbnailService', () => {
     finishedPhotoPaths.add('/photos/b.heic');
     await vi.advanceTimersByTimeAsync(thumbnailCheckIntervalMs);
     // Only about the one that was still being made.
-    expect(state).toHaveBeenLastCalledWith(['/photos/b.heic']);
+    expect(state).toHaveBeenLastCalledWith(['/photos/b.heic'], 400);
     expect(service.filePathOf('/photos/b.heic')).toBe('/cache/photos/b.heic.plm.jpg');
 
     await vi.advanceTimersByTimeAsync(10 * thumbnailCheckIntervalMs);
@@ -68,7 +70,7 @@ describe('GeneratedThumbnailService', () => {
     finishedPhotoPaths.add('/photos/c.heic');
     service.watch('/photos/c.heic');
     await vi.advanceTimersByTimeAsync(0);
-    expect(state).toHaveBeenLastCalledWith(['/photos/c.heic']);
+    expect(state).toHaveBeenLastCalledWith(['/photos/c.heic'], 400);
     expect(service.filePathOf('/photos/c.heic')).toBe('/cache/photos/c.heic.plm.jpg');
   });
 
@@ -87,7 +89,7 @@ describe('GeneratedThumbnailService', () => {
     answer([stateOf('/photos/a.heic')]);
     await vi.advanceTimersByTimeAsync(thumbnailCheckIntervalMs);
     expect(state).toHaveBeenCalledTimes(2);
-    expect(state).toHaveBeenLastCalledWith(['/photos/a.heic', '/photos/b.heic']);
+    expect(state).toHaveBeenLastCalledWith(['/photos/a.heic', '/photos/b.heic'], 400);
   });
 
   it('goes on asking after a request has failed', async () => {
@@ -128,7 +130,7 @@ describe('GeneratedThumbnailService', () => {
     await vi.advanceTimersByTimeAsync(0);
 
     expect(service.filePathOf('/previous/a.heic')).toBeUndefined();
-    expect(state).toHaveBeenLastCalledWith(['/next/b.heic']);
+    expect(state).toHaveBeenLastCalledWith(['/next/b.heic'], 400);
     expect(service.filePathOf('/next/b.heic')).toBe('/cache/next/b.heic.plm.jpg');
   });
 
@@ -157,6 +159,6 @@ describe('GeneratedThumbnailService', () => {
 
     service.watch('/photos/b.heic');
     await vi.advanceTimersByTimeAsync(0);
-    expect(state).toHaveBeenCalledExactlyOnceWith(['/photos/b.heic']);
+    expect(state).toHaveBeenCalledExactlyOnceWith(['/photos/b.heic'], 400);
   });
 });

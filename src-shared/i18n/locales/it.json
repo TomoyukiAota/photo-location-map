@@ -244,12 +244,15 @@
       "example": "Esempio"
     },
     "thumbnails": {
-      "title": "Miniature HEIF",
-      "description": "Questa applicazione crea le miniature dei file HEIF, come le foto scattate con un iPhone. Scegli se crearle privilegiando la qualità o la velocità.",
+      "title": "Miniature",
+      "description": "Scegli se creare le miniature privilegiando la qualità o la velocità.",
       "highQuality": "Alta qualità",
-      "highQualityDescription": "Create dall’intera foto, con 400 pixel sul lato più lungo. Nel frattempo viene mostrata la piccola miniatura salvata nella foto. Su un computer il cui hardware grafico non può decodificare HEVC, la loro creazione richiede tempo.",
+      "highQualityDescription": "Create dall’intera foto, nella dimensione scelta qui sotto. Nel frattempo viene mostrata la piccola miniatura salvata nella foto. La loro creazione richiede tempo la prima volta che si apre una cartella, e di più per i file HEIF su un computer il cui hardware grafico non può decodificare HEVC.",
+      "size": "Dimensione",
+      "sizeValue": "{{size}} pixel sul lato più lungo",
+      "sizeDescription": "Più grande è la dimensione, più grandi vengono mostrate le miniature, ma più tempo richiede la loro creazione e più spazio occupano nella cache delle miniature.",
       "fast": "Veloce",
-      "fastDescription": "La piccola miniatura salvata nella foto, mostrata subito. È meno nitida: 320 × 240 pixel per una foto da 12 megapixel scattata con un iPhone."
+      "fastDescription": "La piccola miniatura salvata nella foto, mostrata subito. È meno nitida: 160 × 120 pixel nella maggior parte delle foto JPEG e 320 × 240 pixel in una foto da 12 megapixel scattata con un iPhone."
     },
     "os": {
       "title": "Menu contestuale di Esplora file",
@@ -264,7 +267,7 @@
     },
     "cache": {
       "title": "Cache delle miniature",
-      "generationRequired": "Per i file JPEG/PNG senza miniatura nei dati EXIF e per i <heifLink>file HEIF</heifLink> che l’hardware grafico di questo computer non può decodificare è necessario creare le miniature, il che richiede tempo.",
+      "generationRequired": "Per i file JPEG/PNG senza una miniatura abbastanza grande nei dati EXIF e per i <heifLink>file HEIF</heifLink> che l’hardware grafico di questo computer non può decodificare è necessario creare le miniature, il che richiede tempo.",
       "thereforeCached": "Per questo le miniature create vengono salvate nella cache.",
       "usedNextTime": "Dalla prossima volta verrà usata la cache, evitando di creare di nuovo le miniature.",
       "location": "Posizione della cache:",

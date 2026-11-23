@@ -244,12 +244,15 @@
       "example": "Ví dụ"
     },
     "thumbnails": {
-      "title": "Hình thu nhỏ HEIF",
-      "description": "Ứng dụng này tạo hình thu nhỏ của các tệp HEIF, chẳng hạn như ảnh chụp bằng iPhone. Hãy chọn tạo chúng ưu tiên chất lượng hay tốc độ.",
+      "title": "Hình thu nhỏ",
+      "description": "Hãy chọn tạo hình thu nhỏ ưu tiên chất lượng hay tốc độ.",
       "highQuality": "Chất lượng cao",
-      "highQualityDescription": "Được tạo từ toàn bộ ảnh, cạnh dài 400 điểm ảnh. Trong lúc chờ, hình thu nhỏ cỡ nhỏ được lưu trong ảnh sẽ được hiển thị. Trên máy tính có phần cứng đồ họa không giải mã được HEVC, việc tạo chúng mất thời gian.",
+      "highQualityDescription": "Được tạo từ toàn bộ ảnh, theo kích thước chọn bên dưới. Trong lúc chờ, hình thu nhỏ cỡ nhỏ được lưu trong ảnh sẽ được hiển thị. Việc tạo chúng mất thời gian khi mở một thư mục lần đầu, và lâu hơn với tệp HEIF trên máy tính có phần cứng đồ họa không giải mã được HEVC.",
+      "size": "Kích thước",
+      "sizeValue": "cạnh dài {{size}} điểm ảnh",
+      "sizeDescription": "Kích thước càng lớn, hình thu nhỏ hiển thị càng lớn, nhưng việc tạo chúng càng lâu và chúng chiếm càng nhiều dung lượng trong bộ nhớ đệm hình thu nhỏ.",
       "fast": "Nhanh",
-      "fastDescription": "Hình thu nhỏ cỡ nhỏ được lưu trong ảnh, hiển thị ngay. Hình này kém sắc nét hơn: 320 × 240 điểm ảnh với ảnh 12 megapixel chụp bằng iPhone."
+      "fastDescription": "Hình thu nhỏ cỡ nhỏ được lưu trong ảnh, hiển thị ngay. Hình này kém sắc nét hơn: 160 × 120 điểm ảnh trong hầu hết ảnh JPEG, và 320 × 240 điểm ảnh với ảnh 12 megapixel chụp bằng iPhone."
     },
     "os": {
       "title": "Menu ngữ cảnh của File Explorer",
@@ -264,7 +267,7 @@
     },
     "cache": {
       "title": "Bộ nhớ đệm hình thu nhỏ",
-      "generationRequired": "Tệp JPEG/PNG không có hình thu nhỏ trong EXIF và <heifLink>tệp HEIF</heifLink> mà phần cứng đồ họa của máy tính này không giải mã được cần được tạo hình thu nhỏ, và việc này mất thời gian.",
+      "generationRequired": "Tệp JPEG/PNG không có hình thu nhỏ đủ lớn trong EXIF và <heifLink>tệp HEIF</heifLink> mà phần cứng đồ họa của máy tính này không giải mã được cần được tạo hình thu nhỏ, và việc này mất thời gian.",
       "thereforeCached": "Vì vậy, các hình thu nhỏ đã tạo được lưu vào bộ nhớ đệm.",
       "usedNextTime": "Từ lần sau, bộ nhớ đệm sẽ được dùng và hình thu nhỏ không được tạo lại.",
       "location": "Vị trí bộ nhớ đệm:",

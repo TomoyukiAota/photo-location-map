@@ -244,12 +244,15 @@
       "example": "Příklad"
     },
     "thumbnails": {
-      "title": "Miniatury HEIF",
-      "description": "Miniatury souborů HEIF, například fotek pořízených iPhonem, vytváří tato aplikace. Zvolte, zda se mají vytvářet s důrazem na kvalitu, nebo na rychlost.",
+      "title": "Miniatury",
+      "description": "Zvolte, zda se mají miniatury vytvářet s důrazem na kvalitu, nebo na rychlost.",
       "highQuality": "Vysoká kvalita",
-      "highQualityDescription": "Vytvářejí se z celé fotky, s delší stranou 400 pixelů. Do té doby se zobrazuje malá miniatura uložená ve fotce. Na počítači, který neumí dekódovat HEVC grafickým hardwarem, jejich vytváření chvíli trvá.",
+      "highQualityDescription": "Vytvářejí se z celé fotky, ve velikosti zvolené níže. Do té doby se zobrazuje malá miniatura uložená ve fotce. Jejich vytváření chvíli trvá při prvním otevření složky a déle u souborů HEIF na počítači, který neumí dekódovat HEVC grafickým hardwarem.",
+      "size": "Velikost",
+      "sizeValue": "{{size}} pixelů na delší straně",
+      "sizeDescription": "Čím větší velikost, tím větší jsou zobrazené miniatury, ale jejich vytváření trvá déle a zabírají více místa v mezipaměti miniatur.",
       "fast": "Rychlé",
-      "fastDescription": "Malá miniatura uložená ve fotce, zobrazená hned. Je méně ostrá: 320 × 240 pixelů u 12megapixelové fotky z iPhonu."
+      "fastDescription": "Malá miniatura uložená ve fotce, zobrazená hned. Je méně ostrá: 160 × 120 pixelů u většiny fotek JPEG a 320 × 240 pixelů u 12megapixelové fotky z iPhonu."
     },
     "os": {
       "title": "Místní nabídka Průzkumníka souborů",
@@ -264,7 +267,7 @@
     },
     "cache": {
       "title": "Mezipaměť miniatur",
-      "generationRequired": "Pro soubory JPEG/PNG bez miniatury v datech EXIF a pro <heifLink>soubory HEIF</heifLink>, které tento počítač neumí dekódovat grafickým hardwarem, je třeba vytvářet miniatury, což nějakou dobu trvá.",
+      "generationRequired": "Pro soubory JPEG/PNG bez dostatečně velké miniatury v datech EXIF a pro <heifLink>soubory HEIF</heifLink>, které tento počítač neumí dekódovat grafickým hardwarem, je třeba vytvářet miniatury, což nějakou dobu trvá.",
       "thereforeCached": "Vytvořené miniatury se proto ukládají do mezipaměti.",
       "usedNextTime": "Příště se použije mezipaměť, takže se miniatury nebudou vytvářet znovu.",
       "location": "Umístění mezipaměti:",

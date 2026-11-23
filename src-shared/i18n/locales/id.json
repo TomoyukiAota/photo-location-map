@@ -244,12 +244,15 @@
       "example": "Contoh"
     },
     "thumbnails": {
-      "title": "Gambar Mini HEIF",
-      "description": "Gambar mini file HEIF, seperti foto yang diambil dengan iPhone, dibuat oleh aplikasi ini. Pilih apakah gambar mini dibuat untuk kualitas atau untuk kecepatan.",
+      "title": "Gambar Mini",
+      "description": "Pilih apakah gambar mini dibuat untuk kualitas atau untuk kecepatan.",
       "highQuality": "Kualitas tinggi",
-      "highQualityDescription": "Dibuat dari seluruh foto, 400 piksel pada sisi terpanjang. Sampai saat itu, gambar mini kecil yang tersimpan di foto akan ditampilkan. Pada komputer yang perangkat keras grafisnya tidak dapat mendekode HEVC, pembuatannya memakan waktu.",
+      "highQualityDescription": "Dibuat dari seluruh foto, dengan ukuran yang dipilih di bawah. Sampai saat itu, gambar mini kecil yang tersimpan di foto akan ditampilkan. Pembuatannya memakan waktu saat folder dibuka untuk pertama kalinya, dan lebih lama untuk file HEIF pada komputer yang perangkat keras grafisnya tidak dapat mendekode HEVC.",
+      "size": "Ukuran",
+      "sizeValue": "{{size}} piksel pada sisi terpanjang",
+      "sizeDescription": "Makin besar ukurannya, makin besar gambar mini ditampilkan, tetapi makin lama pembuatannya dan makin banyak ruang yang dipakai di cache gambar mini.",
       "fast": "Cepat",
-      "fastDescription": "Gambar mini kecil yang tersimpan di foto, langsung ditampilkan. Gambar ini kurang tajam: 320 × 240 piksel untuk foto 12 megapiksel yang diambil dengan iPhone."
+      "fastDescription": "Gambar mini kecil yang tersimpan di foto, langsung ditampilkan. Gambar ini kurang tajam: 160 × 120 piksel pada sebagian besar foto JPEG, dan 320 × 240 piksel untuk foto 12 megapiksel yang diambil dengan iPhone."
     },
     "os": {
       "title": "Menu konteks File Explorer",
@@ -264,7 +267,7 @@
     },
     "cache": {
       "title": "Cache gambar mini",
-      "generationRequired": "File JPEG/PNG tanpa gambar mini di EXIF-nya, serta <heifLink>file HEIF</heifLink> yang tidak dapat didekode oleh perangkat keras grafis komputer ini, memerlukan pembuatan gambar mini, dan itu memakan waktu.",
+      "generationRequired": "File JPEG/PNG tanpa gambar mini yang cukup besar di EXIF-nya, serta <heifLink>file HEIF</heifLink> yang tidak dapat didekode oleh perangkat keras grafis komputer ini, memerlukan pembuatan gambar mini, dan itu memakan waktu.",
       "thereforeCached": "Karena itu, gambar mini yang dibuat disimpan dalam cache.",
       "usedNextTime": "Selanjutnya, cache digunakan sehingga gambar mini tidak perlu dibuat lagi.",
       "location": "Lokasi cache:",

@@ -244,12 +244,15 @@
       "example": "Exempel"
     },
     "thumbnails": {
-      "title": "HEIF-miniatyrer",
-      "description": "Miniatyrerna för HEIF-filer, till exempel foton tagna med en iPhone, skapas av det här programmet. Välj om de ska skapas med fokus på kvalitet eller hastighet.",
+      "title": "Miniatyrer",
+      "description": "Välj om miniatyrerna ska skapas med fokus på kvalitet eller hastighet.",
       "highQuality": "Hög kvalitet",
-      "highQualityDescription": "Skapas från hela fotot, med 400 pixlar på den längre sidan. Tills dess visas den lilla miniatyr som är lagrad i fotot. På en dator vars grafikmaskinvara inte kan avkoda HEVC tar det tid att skapa dem.",
+      "highQualityDescription": "Skapas från hela fotot, i den storlek som väljs nedan. Tills dess visas den lilla miniatyr som är lagrad i fotot. Det tar tid att skapa dem första gången en mapp öppnas, och längre tid för HEIF-filer på en dator vars grafikmaskinvara inte kan avkoda HEVC.",
+      "size": "Storlek",
+      "sizeValue": "{{size}} pixlar på den längre sidan",
+      "sizeDescription": "Ju större storlek, desto större visas miniatyrerna, men desto längre tid tar det att skapa dem och desto mer plats tar de i cachen för miniatyrer.",
       "fast": "Snabb",
-      "fastDescription": "Den lilla miniatyr som är lagrad i fotot visas direkt. Den är mindre skarp: 320 × 240 pixlar för ett 12-megapixelsfoto taget med en iPhone."
+      "fastDescription": "Den lilla miniatyr som är lagrad i fotot visas direkt. Den är mindre skarp: 160 × 120 pixlar i de flesta JPEG-foton och 320 × 240 pixlar för ett 12-megapixelsfoto taget med en iPhone."
     },
     "os": {
       "title": "Utforskarens snabbmeny",
@@ -264,7 +267,7 @@
     },
     "cache": {
       "title": "Cache för miniatyrer",
-      "generationRequired": "För JPEG/PNG-filer utan miniatyr i EXIF-informationen och för <heifLink>HEIF-filer</heifLink> som den här datorns grafikmaskinvara inte kan avkoda måste miniatyrer skapas, vilket tar tid.",
+      "generationRequired": "För JPEG/PNG-filer utan en tillräckligt stor miniatyr i EXIF-informationen och för <heifLink>HEIF-filer</heifLink> som den här datorns grafikmaskinvara inte kan avkoda måste miniatyrer skapas, vilket tar tid.",
       "thereforeCached": "Därför sparas de skapade miniatyrerna i en cache.",
       "usedNextTime": "Från och med nästa gång används cachen, så att miniatyrerna inte behöver skapas igen.",
       "location": "Cachens plats:",

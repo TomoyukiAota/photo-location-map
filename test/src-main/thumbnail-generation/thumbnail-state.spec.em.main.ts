@@ -34,7 +34,7 @@ describe('thumbnailStates (in main process)', () => {
     fs.writeFileSync(paths.thumbnailFilePath(file('changed.heic')), 'jpeg');
     writeLog(file('broken-log.heic'), '{ not JSON');
 
-    const states = await thumbnailStates(['made.heic', 'failed.heic', 'changed.heic', 'pending.heic', 'broken-log.heic'].map(file), paths);
+    const states = await thumbnailStates(['made.heic', 'failed.heic', 'changed.heic', 'pending.heic', 'broken-log.heic'].map(file), 400, paths);
     assert.deepStrictEqual(states.map(({ attemptFinished, cacheAvailable }) => ({ attemptFinished, cacheAvailable })), [
       { attemptFinished: true, cacheAvailable: true },
       { attemptFinished: true, cacheAvailable: false },
@@ -50,7 +50,22 @@ describe('thumbnailStates (in main process)', () => {
     fs.writeFileSync(deleted, '');
     writeLog(deleted, { LastModified: mtimeOf(deleted), IsThumbnailFileCreated: true });
     fs.rmSync(deleted);
-    assert.deepStrictEqual(await thumbnailStates([deleted], paths),
+    assert.deepStrictEqual(await thumbnailStates([deleted], 400, paths),
       [{ attemptFinished: false, cacheAvailable: false, thumbnailFilePath: paths.thumbnailFilePath(deleted) }]);
+  });
+
+  it('counts a thumbnail of another size as not attempted, and a log without a size as one of 400 pixels, as logs were before', async () => {
+    const file = path.join(root, 'made.heic');
+    fs.writeFileSync(paths.thumbnailFilePath(file), 'jpeg');
+    const stateAt = async (longerSide: number) => (await thumbnailStates([file], longerSide, paths))
+      .map(({ attemptFinished, cacheAvailable }) => ({ attemptFinished, cacheAvailable }))[0];
+
+    writeLog(file, { LastModified: mtimeOf(file), IsThumbnailFileCreated: true, LongerSide: 800 });
+    assert.deepStrictEqual(await stateAt(800), { attemptFinished: true, cacheAvailable: true });
+    assert.deepStrictEqual(await stateAt(400), { attemptFinished: false, cacheAvailable: false });
+
+    writeLog(file, { LastModified: mtimeOf(file), IsThumbnailFileCreated: true });
+    assert.deepStrictEqual(await stateAt(400), { attemptFinished: true, cacheAvailable: true });
+    assert.deepStrictEqual(await stateAt(800), { attemptFinished: false, cacheAvailable: false });
   });
 });

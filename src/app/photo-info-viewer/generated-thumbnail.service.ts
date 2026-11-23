@@ -1,5 +1,6 @@
-import { Service, signal, untracked } from '@angular/core';
+import { inject, Service, signal, untracked } from '@angular/core';
 import { bridge } from '../../../src-shared/bridge/plm-bridge';
+import { ThumbnailSizeService } from '../shared/thumbnail-size/thumbnail-size.service';
 import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
 import { logged } from '../../../src-shared/log/logged-line';
 
@@ -20,8 +21,12 @@ export const thumbnailCheckIntervalMs = 1000;
  */
 @Service()
 export class GeneratedThumbnailService {
-  /** The thumbnail's file by the photo's path, for the photos whose attempt has finished. */
-  private readonly filePaths = signal<ReadonlyMap<string, string>>(new Map());
+  private readonly thumbnailSizeService = inject(ThumbnailSizeService);
+  /**
+   * The thumbnail's file by the photo's path, for the photos whose attempt has finished, with the size that it was
+   * attempted at, the longer side that the settings chose when it was asked about.
+   */
+  private readonly filePaths = signal<ReadonlyMap<string, { readonly filePath: string, readonly longerSide: number }>>(new Map());
   /** The photos whose attempt has finished without a thumbnail in the cache. */
   private readonly failed = signal<ReadonlySet<string>>(new Set());
   private readonly awaitedPhotoPaths = new Set<string>();
@@ -35,7 +40,12 @@ export class GeneratedThumbnailService {
    * for. The file is not there when the attempt failed.
    */
   public filePathOf(photoPath: string): string | undefined {
-    return this.filePaths().get(photoPath);
+    return this.filePaths().get(photoPath)?.filePath;
+  }
+
+  /** The longer side that the photo's thumbnail was made at, with filePathOf. */
+  public longerSideOf(photoPath: string): number | undefined {
+    return this.filePaths().get(photoPath)?.longerSide;
   }
 
   /** Whether the attempt to make the photo's thumbnail has finished without one. */
@@ -64,7 +74,7 @@ export class GeneratedThumbnailService {
 
   /**
    * Stops asking about the thumbnails that are still being made, which the main process may no longer make, as after
-   * a new setting of their quality (HeifThumbnailService); what is known of the others is kept.
+   * new settings of their quality or size (HeifThumbnailService); what is known of the others is kept.
    */
   public stopWaiting(): void {
     this.folderNumber++;
@@ -89,12 +99,13 @@ export class GeneratedThumbnailService {
 
     this.isChecking = true;
     try {
-      const states = await bridge().thumbnails.state(photoPaths);
+      const longerSide = untracked(this.thumbnailSizeService.longerSide);
+      const states = await bridge().thumbnails.state(photoPaths, longerSide);
       if (folderNumber !== this.folderNumber)
         return;
 
       const finished = photoPaths.flatMap((photoPath, index) =>
-        states[index]?.attemptFinished ? [[photoPath, states[index].thumbnailFilePath] as const] : []);
+        states[index]?.attemptFinished ? [[photoPath, { filePath: states[index].thumbnailFilePath, longerSide }] as const] : []);
       if (finished.length === 0)
         return;
 

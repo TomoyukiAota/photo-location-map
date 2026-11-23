@@ -1,14 +1,40 @@
 <div class="setting-title">{{ 'settings.thumbnails.title' | t }}</div>
 <div class="setting-container">
   <p class="thumbnail-settings-description">{{ 'settings.thumbnails.description' | t }}</p>
+  <!--
+    ngModelChange rather than change: the slider's input is in the group, and a change event of its own, which bubbles,
+    would reach a (change) binding of the group's element as the group's.
+  -->
   <mat-radio-group class="thumbnail-quality-choices"
-                   [(ngModel)]="selectedQuality"
-                   (change)="handleQualityChanged($event)">
+                   [ngModel]="selectedQuality"
+                   (ngModelChange)="handleQualityChanged($event)">
     @for (choice of choices; track choice.quality) {
       <mat-radio-button class="thumbnail-quality-choice" [value]="choice.quality">
         <span class="thumbnail-quality-label">{{ choice.label | t }}</span>
         <span class="thumbnail-quality-description">{{ choice.description | t }}</span>
       </mat-radio-button>
+      @if (choice.quality === 'high') {
+        <!-- The size, which High quality makes the thumbnails at: under its choice, and disabled while Fast is chosen. -->
+        <div class="thumbnail-size" [class.thumbnail-size-disabled]="selectedQuality !== 'high'">
+          <div class="thumbnail-size-control">
+            <span class="thumbnail-size-label" id="thumbnail-size-label">{{ 'settings.thumbnails.size' | t }}</span>
+            <mat-slider class="thumbnail-size-slider"
+                        showTickMarks
+                        [min]="minSize"
+                        [max]="maxSize"
+                        [step]="sizeStep"
+                        [disabled]="selectedQuality !== 'high'"
+                        [displayWith]="sizeText">
+              <input matSliderThumb
+                     aria-labelledby="thumbnail-size-label"
+                     [ngModel]="selectedSize"
+                     (ngModelChange)="handleSizeChanged($event)">
+            </mat-slider>
+            <span class="thumbnail-size-value">{{ sizeText(selectedSize) }}</span>
+          </div>
+          <span class="thumbnail-size-description">{{ 'settings.thumbnails.sizeDescription' | t }}</span>
+        </div>
+      }
     }
   </mat-radio-group>
 </div>

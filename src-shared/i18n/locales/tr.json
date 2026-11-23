@@ -244,12 +244,15 @@
       "example": "Örnek"
     },
     "thumbnails": {
-      "title": "HEIF Küçük Resimleri",
-      "description": "iPhone ile çekilen fotoğraflar gibi HEIF dosyalarının küçük resimlerini bu uygulama oluşturur. Küçük resimlerin kaliteye mi yoksa hıza mı öncelik verilerek oluşturulacağını seçin.",
+      "title": "Küçük Resimler",
+      "description": "Küçük resimlerin kaliteye mi yoksa hıza mı öncelik verilerek oluşturulacağını seçin.",
       "highQuality": "Yüksek kalite",
-      "highQualityDescription": "Fotoğrafın tamamından, uzun kenarı 400 piksel olacak şekilde oluşturulur. O zamana kadar fotoğrafta saklanan küçük resim gösterilir. Grafik donanımı HEVC kodunu çözemeyen bir bilgisayarda bunları oluşturmak zaman alır.",
+      "highQualityDescription": "Fotoğrafın tamamından, aşağıda seçilen boyutta oluşturulur. O zamana kadar fotoğrafta saklanan küçük resim gösterilir. Bir klasör ilk kez açıldığında bunları oluşturmak zaman alır; grafik donanımı HEVC kodunu çözemeyen bir bilgisayarda HEIF dosyaları için daha da uzun sürer.",
+      "size": "Boyut",
+      "sizeValue": "uzun kenarı {{size}} piksel",
+      "sizeDescription": "Boyut büyüdükçe küçük resimler daha büyük gösterilir, ancak oluşturulmaları daha uzun sürer ve küçük resim önbelleğinde daha fazla yer kaplarlar.",
       "fast": "Hızlı",
-      "fastDescription": "Fotoğrafta saklanan küçük resim hemen gösterilir. Daha az nettir: iPhone ile çekilen 12 megapiksellik bir fotoğrafta 320 × 240 pikseldir."
+      "fastDescription": "Fotoğrafta saklanan küçük resim hemen gösterilir. Daha az nettir: çoğu JPEG fotoğrafta 160 × 120 piksel, iPhone ile çekilen 12 megapiksellik bir fotoğrafta 320 × 240 pikseldir."
     },
     "os": {
       "title": "Dosya Gezgini bağlam menüsü",
@@ -264,7 +267,7 @@
     },
     "cache": {
       "title": "Küçük resim önbelleği",
-      "generationRequired": "EXIF verisinde küçük resmi olmayan JPEG/PNG dosyaları ve bu bilgisayarın grafik donanımının kodunu çözemediği <heifLink>HEIF dosyaları</heifLink> için küçük resim oluşturulması gerekir ve bu zaman alır.",
+      "generationRequired": "EXIF verisinde yeterince büyük küçük resmi olmayan JPEG/PNG dosyaları ve bu bilgisayarın grafik donanımının kodunu çözemediği <heifLink>HEIF dosyaları</heifLink> için küçük resim oluşturulması gerekir ve bu zaman alır.",
       "thereforeCached": "Bu nedenle oluşturulan küçük resimler önbelleğe alınır.",
       "usedNextTime": "Bir sonraki seferden itibaren önbellek kullanılır ve küçük resimler yeniden oluşturulmaz.",
       "location": "Önbellek konumu:",

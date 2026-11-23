@@ -15,7 +15,9 @@ import {
 } from '../../../src-shared/user-settings/user-settings';
 import { DirTreeViewStickyRowsService } from '../directory-tree-view/dir-tree-view-sticky-rows/dir-tree-view-sticky-rows.service';
 import { HeifThumbnailService } from '../heif-thumbnail/heif-thumbnail.service';
+import { JpegPngThumbnailService } from '../jpeg-png-thumbnail/jpeg-png-thumbnail.service';
 import { ConfirmDialogService } from '../shared/confirm-dialog/confirm-dialog.service';
+import { ThumbnailSizeService } from '../shared/thumbnail-size/thumbnail-size.service';
 import { TranslatePipe } from '../shared/i18n/translate.pipe';
 import { RestoreSettingsService } from './service/restore-settings.service';
 import { SettingsChangedService } from './service/settings-changed.service';
@@ -64,6 +66,8 @@ export class SettingsDialogComponent {
   private restoreSettingsService = inject(RestoreSettingsService);
   private confirmDialogService = inject(ConfirmDialogService);
   private heifThumbnailService = inject(HeifThumbnailService);
+  private jpegPngThumbnailService = inject(JpegPngThumbnailService);
+  private thumbnailSizeService = inject(ThumbnailSizeService);
   private stickyRowsService = inject(DirTreeViewStickyRowsService);
   private data = inject<SettingsDialogData | null>(MAT_DIALOG_DATA, { optional: true });
 
@@ -86,10 +90,11 @@ export class SettingsDialogComponent {
   public readonly isSaveButtonEnabled = computed(() => {
     const settings = this.userSettingsToBeSaved();
     const showStatusBarChanged = settings.showStatusBar !== currentUserSettings.showStatusBar;
-    const thumbnailQualityChanged = settings.thumbnailQuality !== currentUserSettings.thumbnailQuality;
+    const thumbnailSettingsChanged = settings.thumbnailQuality !== currentUserSettings.thumbnailQuality
+      || settings.thumbnailSize !== currentUserSettings.thumbnailSize;
     const stickyFolderRowsChanged = settings.stickyFolderRowsMaximum !== currentUserSettings.stickyFolderRowsMaximum
       || settings.stickyFolderRowsLeftOut !== currentUserSettings.stickyFolderRowsLeftOut;
-    return showStatusBarChanged || thumbnailQualityChanged || stickyFolderRowsChanged || this.isAppRestartRequired();
+    return showStatusBarChanged || thumbnailSettingsChanged || stickyFolderRowsChanged || this.isAppRestartRequired();
   });
 
   /**
@@ -126,7 +131,11 @@ export class SettingsDialogComponent {
       this.userSettingsToBeSaved.update(settings => ({ ...settings, language: changed.language }));
     });
     settingsChangedService.thumbnailSettingsChanged.pipe(takeUntilDestroyed()).subscribe(changed => {
-      this.userSettingsToBeSaved.update(settings => ({ ...settings, thumbnailQuality: changed.thumbnailQuality }));
+      this.userSettingsToBeSaved.update(settings => ({
+        ...settings,
+        thumbnailQuality: changed.thumbnailQuality,
+        thumbnailSize: changed.thumbnailSize,
+      }));
     });
     settingsChangedService.dateTimeSettingsChanged.pipe(takeUntilDestroyed()).subscribe(changed => {
       this.userSettingsToBeSaved.update(settings => ({
@@ -155,11 +164,13 @@ export class SettingsDialogComponent {
 
       saveUserSettingsAndRestartApp(this.userSettingsToBeSaved());
     } else {
-      const isThumbnailQualityChanged = this.userSettingsToBeSaved().thumbnailQuality !== currentUserSettings.thumbnailQuality;
       saveUserSetting(this.userSettingsToBeSaved());
-      // Applies at once: the thumbnails of the opened folder are made again.
-      if (isThumbnailQualityChanged)
-        void this.heifThumbnailService.applyThumbnailQuality();
+      // Applies at once, as saving has just set it in currentUserSettings: the thumbnails of the opened folder are
+      // shown in their new box, and made again at their new quality and size.
+      if (this.thumbnailSizeService.follow()) {
+        void this.heifThumbnailService.applyThumbnailSettings();
+        void this.jpegPngThumbnailService.applySettings();
+      }
       // Applies at once: the rows kept at the top of the folder tree, which saving has just set in currentUserSettings.
       this.stickyRowsService.applySettings();
       this.settingsDialogRef.close();

@@ -22,12 +22,20 @@
   text-align: center;
 }
 
+// The box of the thumbnail: in the folder tree and the map's popups, half the size of the thumbnails that the settings
+// choose, which the application's root element has (ThumbnailSizeService); 200 pixels by default.
+// TL;DR: At the top of its line, so that the box takes the same height whatever it holds.
+// Details: On the line's baseline, as an inline box is, it stood on the image's bottom edge: an image as high as the
+// box, as the photo's small thumbnail that fills it until a larger one is made, or a portrait thumbnail, left room for
+// the text's descenders under the box. A row of the tree with a portrait thumbnail was 242 pixels high, against 237
+// with a landscape one, which every row is now.
 .photo-info-viewer-thumbnail-container {
   display: inline-flex;
+  vertical-align: top;
   justify-content: center;
   align-items: center;
-  width: 200px;
-  height: 200px;
+  width: var(--plm-thumbnail-box, 200px);
+  height: var(--plm-thumbnail-box, 200px);
 
   position: relative;
   &:hover > .photo-info-viewer-rotate-button-in-thumbnail-container {
@@ -60,6 +68,17 @@
 
   filter: brightness(1);
   &:active { filter: brightness(0.8); }
+}
+
+// The small thumbnail that the photo holds, shown until a larger one is made of it: it fills the box, stretched, as the
+// one made will, rather than taking its own size, which is smaller. Its element is as large as the box then, so it has
+// no shadow, which would frame the box rather than the image.
+.photo-info-viewer-thumbnail.photo-info-viewer-provisional-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+
+  &, &:hover { box-shadow: none; }
 }
 
 // The image that stands in for a thumbnail that is being made, or that cannot be made.

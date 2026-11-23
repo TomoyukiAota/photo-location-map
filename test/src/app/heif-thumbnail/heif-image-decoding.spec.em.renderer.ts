@@ -72,7 +72,7 @@ describe('decodeWholeImage', function () {
   for (const transformation of transformations) {
     it(`draws the tiles with no line between them or along the edges, ${JSON.stringify(transformation)}`, async () => {
       const image = { ...await readWholeImage(uniformTiles), ...transformation };
-      const pixels = await pixelsOf(await decodeWholeImage(image));
+      const pixels = await pixelsOf(await decodeWholeImage(image, 400));
       const sideways = transformation.rotation === 90 || transformation.rotation === 270;
       assert.deepStrictEqual([pixels.width, pixels.height], sideways ? [255, 400] : [400, 255]);
       const grey = greyOf(pixels);
@@ -80,4 +80,12 @@ describe('decodeWholeImage', function () {
       assert.deepStrictEqual(pixelsApart(pixels, grey), { count: 0, lines: [] });
     });
   }
+
+  it('makes the image at the longer side that it is given, the size that the settings choose', async () => {
+    const image = await readWholeImage(uniformTiles);
+    for (const [longerSide, height] of [[400, 255], [1000, 636]]) {
+      const pixels = await pixelsOf(await decodeWholeImage(image, longerSide));
+      assert.deepStrictEqual([pixels.width, pixels.height], [longerSide, height]);
+    }
+  });
 });

@@ -54,4 +54,12 @@ describe('Thumbnail resize and JPEG compatibility', () => {
       assert.equal(createHash('sha256').update(result.data).digest('hex'), sample.jpegSha256);
     });
   }
+
+  it('fits the image to the longer side that it is given, the size that the settings choose', () => {
+    const data = Buffer.alloc(800 * 600 * 4, 128);
+    for (const [longerSide, width, height] of [[600, 600, 450], [1000, 1000, 750]]) {
+      const result = resizeAndEncode({ width: 800, height: 600, data }, 92, longerSide);
+      assert.deepEqual([result.width, result.height], [width, height]);
+    }
+  });
 });

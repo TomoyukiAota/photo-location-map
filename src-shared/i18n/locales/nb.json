@@ -244,12 +244,15 @@
       "example": "Eksempel"
     },
     "thumbnails": {
-      "title": "HEIF-miniatyrbilder",
-      "description": "Miniatyrbildene for HEIF-filer, for eksempel bilder tatt med en iPhone, lages av dette programmet. Velg om de skal lages med vekt på kvalitet eller hastighet.",
+      "title": "Miniatyrbilder",
+      "description": "Velg om miniatyrbildene skal lages med vekt på kvalitet eller hastighet.",
       "highQuality": "Høy kvalitet",
-      "highQualityDescription": "Lages fra hele bildet, med 400 piksler på den lengste siden. Inntil da vises det lille miniatyrbildet som er lagret i bildet. På en datamaskin som ikke kan dekode HEVC med grafikkmaskinvaren, tar det tid å lage dem.",
+      "highQualityDescription": "Lages fra hele bildet, i størrelsen som er valgt nedenfor. Inntil da vises det lille miniatyrbildet som er lagret i bildet. Det tar tid å lage dem første gang en mappe åpnes, og lengre tid for HEIF-filer på en datamaskin som ikke kan dekode HEVC med grafikkmaskinvaren.",
+      "size": "Størrelse",
+      "sizeValue": "{{size}} piksler på den lengste siden",
+      "sizeDescription": "Jo større størrelse, desto større vises miniatyrbildene, men desto lengre tid tar det å lage dem, og desto mer plass tar de i bufferen for miniatyrbilder.",
       "fast": "Rask",
-      "fastDescription": "Det lille miniatyrbildet som er lagret i bildet, vises med en gang. Det er mindre skarpt: 320 × 240 piksler for et 12-megapikselbilde tatt med en iPhone."
+      "fastDescription": "Det lille miniatyrbildet som er lagret i bildet, vises med en gang. Det er mindre skarpt: 160 × 120 piksler i de fleste JPEG-bilder og 320 × 240 piksler i et 12-megapikselbilde tatt med en iPhone."
     },
     "os": {
       "title": "Hurtigmenyen i Filutforsker",
@@ -264,7 +267,7 @@
     },
     "cache": {
       "title": "Buffer for miniatyrbilder",
-      "generationRequired": "For JPEG/PNG-filer uten miniatyrbilde i EXIF-informasjonen og for <heifLink>HEIF-filer</heifLink> som denne datamaskinen ikke kan dekode med grafikkmaskinvaren, må det lages miniatyrbilder, og det tar tid.",
+      "generationRequired": "For JPEG/PNG-filer uten et stort nok miniatyrbilde i EXIF-informasjonen og for <heifLink>HEIF-filer</heifLink> som denne datamaskinen ikke kan dekode med grafikkmaskinvaren, må det lages miniatyrbilder, og det tar tid.",
       "thereforeCached": "Derfor lagres de genererte miniatyrbildene i en buffer.",
       "usedNextTime": "Fra neste gang brukes bufferen, slik at miniatyrbildene ikke må lages på nytt.",
       "location": "Bufferens plassering:",

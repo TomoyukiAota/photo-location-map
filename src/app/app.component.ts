@@ -6,6 +6,7 @@ import { DropHintComponent } from './drop-to-open/drop-hint/drop-hint.component'
 import { DropToOpenService } from './drop-to-open/drop-to-open.service';
 import { LanguageDialogAtAppLaunchService } from './language/language-dialog-at-app-launch.service';
 import { PhotoSelectionHistoryService } from './shared/service/photo-selection-history.service';
+import { ThumbnailSizeService } from './shared/thumbnail-size/thumbnail-size.service';
 import { WelcomeDialogAtAppLaunchService } from './welcome-dialog/welcome-dialog-at-app-launch/welcome-dialog-at-app-launch.service';
 import { RouterOutlet } from '@angular/router';
 
@@ -15,7 +16,9 @@ import { RouterOutlet } from '@angular/router';
   styleUrls: ['./app.component.scss'],
   imports: [DropHintComponent, RouterOutlet],
   // The drag events of the whole window, over a dialog too: a folder or a file dropped on it opens (DropToOpenService).
+  // The box of a thumbnail, which the viewer of every photo below reads in its styles (ThumbnailSizeService).
   host: {
+    '[style.--plm-thumbnail-box]': 'thumbnailSizeService.box()',
     '(window:dragstart)': 'dropToOpenService.dragStart()',
     '(window:dragend)': 'dropToOpenService.dragEnd()',
     '(window:dragenter)': 'dropToOpenService.dragEnter($event)',
@@ -26,6 +29,7 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   protected readonly dropToOpenService = inject(DropToOpenService);
+  protected readonly thumbnailSizeService = inject(ThumbnailSizeService);
   private languageDialogAtAppLaunchService = inject(LanguageDialogAtAppLaunchService);
   private photoSelectionHistoryService = inject(PhotoSelectionHistoryService);
   private plmInternalRendererService = inject(PlmInternalRendererService);

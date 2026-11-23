@@ -4,9 +4,9 @@ import { createPrependedLogger } from '../../src-shared/log/create-prepended-log
 import { logged } from '../../src-shared/log/logged-line.js';
 import { createThumbnailGenerationLogFile, getThumbnailFilePath, plmThumbnailCacheDir } from '../../src-shared/thumbnail/cache/thumbnail-cache-util.js';
 
-// TL;DR: The files of the thumbnails that the main window's page makes of the JPEG and PNG photos without one in
-// their EXIF data (src/app/jpeg-png-thumbnail/): the main process reads a photo for the page, and keeps the thumbnail
-// that the page made of it in the cache, beside those of HEIF photos, with the log of its generation.
+// TL;DR: The files of the thumbnails that the main window's page makes of JPEG and PNG photos
+// (src/app/jpeg-png-thumbnail/): the main process reads a photo for the page, and keeps the thumbnail that the page
+// made of it in the cache, beside those of HEIF photos, with the log of its generation, which holds its size.
 // Details: The page decodes the photo itself, with Chromium's decoder, which it reaches only from a page; the main
 // process only reads and writes files, as the page cannot. The log holds the time that the photo had when it was
 // read, so that a photo changed while its thumbnail was made gets a new one the next time, not the old one
@@ -14,7 +14,7 @@ import { createThumbnailGenerationLogFile, getThumbnailFilePath, plmThumbnailCac
 
 const logger = createPrependedLogger('[JPEG/PNG Thumbnail]');
 
-/** The largest thumbnail that the page may keep: one of 400 pixels is 50 to 100 KB. */
+/** The largest thumbnail that the page may keep: one of 400 pixels is 50 to 100 KB, one of 1,000 about 300 to 500 KB. */
 export const maxThumbnailBytes = 2 * 1024 * 1024;
 
 /** The photo's file, and the time that it was last modified, as it is now; null when it cannot be read. */
@@ -36,20 +36,20 @@ export async function readPhotoForThumbnail(filePath: string): Promise<PhotoFile
 }
 
 /**
- * Writes the thumbnail of the photo at `srcFilePath`, made from the file as it was at `lastModified`, into the cache,
- * then the log of its generation; with `jpeg` null, only the log, which says that none could be made, and the
- * photo's previous thumbnail, of an earlier version of the file, is removed. Resolves with where the thumbnail is.
- * The cache is the app's unless a test gives another.
+ * Writes the thumbnail of the photo at `srcFilePath`, made from the file as it was at `lastModified`, at `longerSide`,
+ * into the cache, then the log of its generation; with `jpeg` null, only the log, which says that none could be made,
+ * and the photo's previous thumbnail, of an earlier version of the file or of another size, is removed. Resolves with
+ * where the thumbnail is. The cache is the app's unless a test gives another.
  */
 export async function saveJpegPngThumbnail(srcFilePath: string, lastModified: string, jpeg: Uint8Array | null,
-                                           cacheDir = plmThumbnailCacheDir): Promise<string> {
+                                           longerSide: number, cacheDir = plmThumbnailCacheDir): Promise<string> {
   const { thumbnailFileDir, thumbnailFilePath } = getThumbnailFilePath(srcFilePath, cacheDir);
   await fs.promises.mkdir(thumbnailFileDir, { recursive: true });
   if (jpeg)
     await fs.promises.writeFile(thumbnailFilePath, jpeg);
   else
     await fs.promises.rm(thumbnailFilePath, { force: true });
-  await createThumbnailGenerationLogFile(srcFilePath, thumbnailFileDir, !!jpeg, logger, lastModified);
+  await createThumbnailGenerationLogFile(srcFilePath, thumbnailFileDir, !!jpeg, logger, lastModified, longerSide);
   return thumbnailFilePath;
 }
 

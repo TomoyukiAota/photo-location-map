@@ -86,17 +86,29 @@ export function getOriginalFilePath(thumbnailFilePath: string, cacheDir = plmThu
 
 const lastModifiedKey = 'LastModified';
 const isThumbnailFileCreatedKey = 'IsThumbnailFileCreated';
+const longerSideKey = 'LongerSide';
+
+/**
+ * The longer side of the thumbnail that a log of its generation is of, in pixels: 400 for a log written before the
+ * size could be chosen, which has none (src-shared/user-settings/thumbnail-size.ts).
+ */
+export function longerSideInThumbnailGenerationLog(log: { LongerSide?: unknown }): number {
+  return typeof log?.[longerSideKey] === 'number' ? log[longerSideKey] : 400;
+}
 
 /**
  * Writes the log of a thumbnail's generation, which says for which version of the photo the thumbnail was attempted:
- * `lastModified`, the time that the photo had when it was read for its thumbnail, by default the time that it has now.
+ * `lastModified`, the time that the photo had when it was read for its thumbnail, by default the time that it has now;
+ * and of which size, `longerSide`, so that a thumbnail of another size is made again
+ * (src-main/thumbnail-generation/thumbnail-state.ts).
  */
 export async function createThumbnailGenerationLogFile(srcFilePath: string, thumbnailFileDir: string, isThumbnailFileCreated: boolean, logger: PrependedLogger,
-                                                       lastModified = fs.statSync(srcFilePath).mtime.toISOString()) {
+                                                       lastModified = fs.statSync(srcFilePath).mtime.toISOString(), longerSide = 400) {
   const srcFileName = pathModule.basename(srcFilePath);
   const fileContentObj = {};
   fileContentObj[lastModifiedKey] = lastModified;
   fileContentObj[isThumbnailFileCreatedKey] = isThumbnailFileCreated;
+  fileContentObj[longerSideKey] = longerSide;
   const fileContentStr = JSON.stringify(fileContentObj, null, 2);
   const logFilePath = pathModule.join(thumbnailFileDir, `${srcFileName}.log.json`);
 
