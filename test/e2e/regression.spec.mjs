@@ -1738,6 +1738,33 @@ test('the map shows Esri World Imagery Wayback and OpenHistoricalMap at the date
   await expect(page.locator('.plm-leaflet-map-maplibre-container')).toHaveCount(0);
   await expect(page.locator('body > .datepicker')).toHaveCount(0);
 });
+test('a layer of a past date that the list of base layers hides is neither offered nor shown, though the user chose it, until the list no longer hides it', async () => {
+  // The list that the page downloads, from either of its addresses, as photo-location-map-resources could have it:
+  // first with Wayback hidden, then without the field. The user chose Wayback before, and Wayback's servers answer
+  // from test/test-util/dated-layer-answers.mjs once it is shown.
+  const openStreetMap = { name: 'OpenStreetMap', url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    options: { attribution: '© OpenStreetMap contributors' } };
+  let list = { version: '1', rasterTileBaseLayerConfigs: [openStreetMap], hiddenBuiltInBaseLayers: ['Esri World Imagery Wayback'] };
+  await page.route(url => url.pathname.endsWith('/map-configs/raster-tile-base-layer-configs-version-1.jsonc'),
+    route => route.fulfill({ contentType: 'text/plain; charset=utf-8', body: JSON.stringify(list) }));
+  await answerDatedLayers(page);
+  await page.evaluate(() => window.plm.storage.write(['LeafletMap', 'SelectedBaseLayer'], 'Esri World Imagery Wayback'));
+  const layers = page.locator('.leaflet-control-layers-base label');
+  const shownLayer = layers.filter({ has: page.locator('input:checked') });
+  const dateControl = page.locator('.plm-leaflet-map-date');
+
+  await page.reload();
+  await expect(layers).toHaveText(['OpenStreetMap', 'OpenHistoricalMap']);
+  await expect(shownLayer).toHaveText('OpenStreetMap');
+  await expect(dateControl).toHaveCount(0);
+
+  // The choice stayed, and is shown again.
+  list = { version: '1', rasterTileBaseLayerConfigs: [openStreetMap] };
+  await page.reload();
+  await expect(layers).toHaveText(['OpenStreetMap', 'Esri World Imagery Wayback', 'OpenHistoricalMap']);
+  await expect(shownLayer).toHaveText('Esri World Imagery Wayback');
+  await expect(dateControl).toHaveCount(1);
+});
 test('the links of the welcome dialog, the about box and the cache settings open in the OS browser', async () => {
   // Some of them are elements that the components query, with signal queries since stage 2. Nothing opens here.
   const openedUrls = await recordOpenedUrls();
