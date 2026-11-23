@@ -18,6 +18,7 @@
            [src]="shownThumbnail.src"
            [attr.alt]="shownThumbnail.alt"
            [style.transform]="thumbnailTransform()"
+           (error)="onThumbnailError()"
            (click)="onThumbnailClick()">
       <button class="photo-info-viewer-rotate-button-in-thumbnail-container"
               type="button"
@@ -65,6 +66,7 @@
            [src]="shownThumbnail.src"
            [attr.alt]="shownThumbnail.alt"
            [style.transform]="thumbnailTransform()"
+           (error)="onThumbnailError()"
            (click)="onThumbnailClick()">
     </div>
     @if (place() === 'leaflet-map-popup') {
