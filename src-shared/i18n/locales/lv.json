@@ -264,8 +264,8 @@
       "confirmInExplorer": "Lai pārbaudītu, atveriet failu pārlūku un ar peles labo pogu noklikšķiniet uz faila vai mapes."
     },
     "cache": {
-      "title": "HEIF sīktēlu kešatmiņa",
-      "requiredForHeif": "<heifLink>HEIF failiem</heifLink> ir jāveido sīktēli, un tas aizņem laiku.",
+      "title": "Sīktēlu kešatmiņa",
+      "generationRequired": "JPEG/PNG failiem, kuru EXIF datos nav sīktēla, un <heifLink>HEIF failiem</heifLink>, kurus šī datora grafikas aparatūra nevar dekodēt, ir jāveido sīktēli, un tas aizņem laiku.",
       "thereforeCached": "Tāpēc izveidotie sīktēli tiek saglabāti kešatmiņā.",
       "usedNextTime": "Sākot ar nākamo reizi, tiek izmantota kešatmiņa, un sīktēli netiek veidoti atkārtoti.",
       "location": "Kešatmiņas atrašanās vieta:",

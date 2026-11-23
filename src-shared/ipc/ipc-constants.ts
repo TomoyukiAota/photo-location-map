@@ -94,7 +94,17 @@ export namespace IpcConstants {
     export const WholeImage = 'ipc-constants-heif-whole-image';
   }
 
-  /** The cache of HEIF thumbnails (src-main/thumbnail-generation/). */
+  /**
+   * The thumbnails that the main window's page makes of the JPEG and PNG photos without one in their EXIF data
+   * (src/app/jpeg-png-thumbnail/): the photo's file, which the main process reads for the page, and the thumbnail,
+   * which it keeps in the cache (src-main/thumbnail-generation/jpeg-png-thumbnail-files.ts).
+   */
+  export namespace JpegPngThumbnail {
+    export const ReadPhoto = 'ipc-constants-jpeg-png-thumbnail-read-photo';
+    export const Save = 'ipc-constants-jpeg-png-thumbnail-save';
+  }
+
+  /** The cache of thumbnails (src-main/thumbnail-generation/). */
   export namespace ThumbnailCache {
     /** Whether each file's thumbnail was attempted and is in the cache, and where it is. */
     export const State = 'ipc-constants-thumbnail-state';

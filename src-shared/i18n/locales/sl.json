@@ -264,8 +264,8 @@
       "confirmInExplorer": "Odprite Raziskovalca in z desno tipko miške kliknite datoteko ali mapo, da to preverite."
     },
     "cache": {
-      "title": "Predpomnilnik sličic HEIF",
-      "requiredForHeif": "Za <heifLink>datoteke HEIF</heifLink> je treba ustvariti sličice, kar traja nekaj časa.",
+      "title": "Predpomnilnik sličic",
+      "generationRequired": "Za datoteke JPEG/PNG brez sličice v podatkih EXIF in za <heifLink>datoteke HEIF</heifLink>, ki jih grafična strojna oprema tega računalnika ne zmore dekodirati, je treba ustvariti sličice, kar traja nekaj časa.",
       "thereforeCached": "Zato se ustvarjene sličice shranijo v predpomnilnik.",
       "usedNextTime": "Naslednjič bo uporabljen predpomnilnik, zato sličic ne bo treba znova ustvarjati.",
       "location": "Mesto predpomnilnika:",

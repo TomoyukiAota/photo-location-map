@@ -264,8 +264,8 @@
       "confirmInExplorer": "Norėdami patikrinti, atidarykite failų naršyklę ir dešiniuoju pelės mygtuku spustelėkite failą arba aplanką."
     },
     "cache": {
-      "title": "HEIF miniatiūrų talpykla",
-      "requiredForHeif": "<heifLink>HEIF failams</heifLink> reikia kurti miniatiūras, o tai užtrunka.",
+      "title": "Miniatiūrų talpykla",
+      "generationRequired": "JPEG/PNG failams, kurių EXIF duomenyse nėra miniatiūros, ir <heifLink>HEIF failams</heifLink>, kurių šio kompiuterio grafinė aparatinė įranga negali iškoduoti, reikia kurti miniatiūras, o tai užtrunka.",
       "thereforeCached": "Todėl sukurtos miniatiūros įrašomos į talpyklą.",
       "usedNextTime": "Nuo kito karto naudojama talpykla ir miniatiūros iš naujo nekuriamos.",
       "location": "Talpyklos vieta:",

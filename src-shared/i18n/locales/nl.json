@@ -264,8 +264,8 @@
       "confirmInExplorer": "Open Verkenner en klik met de rechtermuisknop op een bestand of map om dit te controleren."
     },
     "cache": {
-      "title": "Cache voor HEIF-miniaturen",
-      "requiredForHeif": "Voor <heifLink>HEIF-bestanden</heifLink> moeten miniaturen worden aangemaakt, en dat kost tijd.",
+      "title": "Cache voor miniaturen",
+      "generationRequired": "Voor JPEG/PNG-bestanden zonder miniatuur in hun EXIF-gegevens en voor <heifLink>HEIF-bestanden</heifLink> die de grafische hardware van deze computer niet kan decoderen, moeten miniaturen worden aangemaakt, en dat kost tijd.",
       "thereforeCached": "Daarom worden de aangemaakte miniaturen in de cache bewaard.",
       "usedNextTime": "Vanaf de volgende keer wordt de cache gebruikt, zodat de miniaturen niet opnieuw worden aangemaakt.",
       "location": "Locatie van de cache:",

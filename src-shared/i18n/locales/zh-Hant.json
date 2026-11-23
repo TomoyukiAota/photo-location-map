@@ -264,8 +264,8 @@
       "confirmInExplorer": "請開啟檔案總管，在檔案或資料夾上按一下滑鼠右鍵來確認。"
     },
     "cache": {
-      "title": "HEIF 縮圖快取",
-      "requiredForHeif": "<heifLink>HEIF 檔案</heifLink>需要產生縮圖，而產生需要一些時間。",
+      "title": "縮圖快取",
+      "generationRequired": "EXIF 中沒有縮圖的 JPEG/PNG 檔案，以及這台電腦的圖形硬體無法解碼的<heifLink>HEIF 檔案</heifLink>，需要產生縮圖，而產生需要一些時間。",
       "thereforeCached": "因此，產生的縮圖會存入快取。",
       "usedNextTime": "下次起會使用快取，不再重新產生縮圖。",
       "location": "快取位置：",

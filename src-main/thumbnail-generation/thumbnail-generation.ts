@@ -5,7 +5,7 @@ import * as pathModule from 'path';
 import physicalCpuCount from 'physical-cpu-count';
 import { stringArrayToLogText } from '../../src-shared/log/multiline-log-text.js';
 import { perfMark } from '../../src-shared/perf/perf-mark.js';
-import { removeInvalidThumbnailCache } from '../../src-shared/thumbnail/cache/remove-invalid-thumbnail-cache.js';
+import { removeInvalidThumbnailCacheOncePerLaunch } from '../../src-shared/thumbnail/cache/remove-invalid-thumbnail-cache.js';
 import { createThumbnailGenerationLogFile, getThumbnailFilePath } from '../../src-shared/thumbnail/cache/thumbnail-cache-util.js';
 import { thumbnailGenerationLogger as logger } from '../../src-shared/thumbnail/generation/thumbnail-generation-logger.js';
 import { ThumbnailFileGenerationArg, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result.js';
@@ -121,7 +121,7 @@ async function generateWaitingThumbnails() {
 
 async function generateUntilNoneWaits() {
   checkFileForWorkerExists();
-  removeInvalidThumbnailCache();
+  void removeInvalidThumbnailCacheOncePerLaunch();
   logger.info(`Number of CPU cores, Physical: ${physicalCpuCount}, Logical: ${logicalCpuCount}`);
   logger.info(`Number of processes for thumbnail generation: ${numberOfProcessesToUse}`);
 

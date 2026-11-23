@@ -264,8 +264,8 @@
       "confirmInExplorer": "Per comprovar-ho, obriu l’Explorador de fitxers i feu clic amb el botó dret en un fitxer o una carpeta."
     },
     "cache": {
-      "title": "Memòria cau de miniatures HEIF",
-      "requiredForHeif": "Per als <heifLink>fitxers HEIF</heifLink> cal generar miniatures, i això porta temps.",
+      "title": "Memòria cau de miniatures",
+      "generationRequired": "Per als fitxers JPEG/PNG sense miniatura a les dades EXIF i per als <heifLink>fitxers HEIF</heifLink> que aquest ordinador no pot descodificar amb el maquinari gràfic, cal generar miniatures, i això porta temps.",
       "thereforeCached": "Per això, les miniatures generades es desen a la memòria cau.",
       "usedNextTime": "A partir de la vegada següent s’utilitza la memòria cau i no es tornen a generar les miniatures.",
       "location": "Ubicació de la memòria cau:",

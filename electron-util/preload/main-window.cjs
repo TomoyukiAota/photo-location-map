@@ -26,6 +26,8 @@ const channels = {
   heifEmbeddedThumbnail: 'ipc-constants-heif-embedded-thumbnail',
   heifEmbeddedThumbnailJpeg: 'ipc-constants-heif-embedded-thumbnail-jpeg',
   heifWholeImage: 'ipc-constants-heif-whole-image',
+  jpegPngThumbnailReadPhoto: 'ipc-constants-jpeg-png-thumbnail-read-photo',
+  jpegPngThumbnailSave: 'ipc-constants-jpeg-png-thumbnail-save',
   thumbnailCacheOpen: 'ipc-constants-open-thumbnail-cache',
   thumbnailCacheDeleteAndRestart: 'ipc-constants-delete-thumbnail-cache-and-restart',
   openExternal: 'ipc-constants-open-external-url',
@@ -130,6 +132,10 @@ const plm = {
     embeddedThumbnail: filePath => ipcRenderer.invoke(channels.heifEmbeddedThumbnail, filePath),
     embeddedThumbnailJpeg: filePath => ipcRenderer.invoke(channels.heifEmbeddedThumbnailJpeg, filePath),
     wholeImage: filePath => ipcRenderer.invoke(channels.heifWholeImage, filePath),
+  },
+  jpegPngThumbnails: {
+    readPhoto: filePath => ipcRenderer.invoke(channels.jpegPngThumbnailReadPhoto, filePath),
+    save: (filePath, lastModified, jpeg) => ipcRenderer.invoke(channels.jpegPngThumbnailSave, filePath, lastModified, jpeg),
   },
   thumbnailCache: {
     open: () => ipcRenderer.invoke(channels.thumbnailCacheOpen),

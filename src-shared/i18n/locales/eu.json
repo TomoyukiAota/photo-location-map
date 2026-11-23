@@ -264,8 +264,8 @@
       "confirmInExplorer": "Egiaztatzeko, ireki Fitxategi-arakatzailea eta egin klik eskuineko botoiarekin fitxategi edo karpeta batean."
     },
     "cache": {
-      "title": "HEIF miniaturen cachea",
-      "requiredForHeif": "<heifLink>HEIF fitxategietarako</heifLink> miniaturak sortu behar dira, eta horrek denbora behar du.",
+      "title": "Miniaturen cachea",
+      "generationRequired": "EXIF datuetan miniaturarik ez duten JPEG/PNG fitxategietarako eta ordenagailu honek grafikoen hardwarearekin deskodetu ezin dituen <heifLink>HEIF fitxategietarako</heifLink> miniaturak sortu behar dira, eta horrek denbora behar du.",
       "thereforeCached": "Horregatik, sortutako miniaturak cachean gordetzen dira.",
       "usedNextTime": "Hurrengo alditik aurrera cachea erabiltzen da, eta miniaturak ez dira berriro sortzen.",
       "location": "Cachearen kokalekua:",

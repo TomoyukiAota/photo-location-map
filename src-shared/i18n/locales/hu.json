@@ -264,8 +264,8 @@
       "confirmInExplorer": "Nyissa meg a Fájlkezelőt, és az ellenőrzéshez kattintson a jobb gombbal egy fájlra vagy mappára."
     },
     "cache": {
-      "title": "HEIF-bélyegképek gyorsítótára",
-      "requiredForHeif": "A <heifLink>HEIF-fájlokhoz</heifLink> bélyegképeket kell készíteni, ami időbe telik.",
+      "title": "Bélyegképek gyorsítótára",
+      "generationRequired": "Az EXIF-adataikban bélyegképet nem tartalmazó JPEG/PNG fájlokhoz és azokhoz a <heifLink>HEIF-fájlokhoz</heifLink>, amelyeket ennek a számítógépnek a grafikus hardvere nem tud dekódolni, bélyegképeket kell készíteni, ami időbe telik.",
       "thereforeCached": "Ezért az elkészített bélyegképek a gyorsítótárba kerülnek.",
       "usedNextTime": "A következő alkalomtól a gyorsítótárat használjuk, így a bélyegképeket nem kell újra elkészíteni.",
       "location": "A gyorsítótár helye:",
