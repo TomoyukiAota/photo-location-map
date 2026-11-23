@@ -415,10 +415,15 @@ for (const code of codes) {
       await page.waitForSelector('app-settings-dialog');
       const tabs = page.locator('app-settings-dialog mat-list-item');
       // The OS tab is there on Windows only.
-      const names = ['language', 'appearance', 'datetime', 'thumbnails', ...(process.platform === 'win32' ? ['os'] : []), 'cache'];
+      const names = ['language', 'appearance', 'datetime', 'thumbnails', ...(process.platform === 'win32' ? ['os'] : [])];
       for (const [index, name] of names.entries()) {
         await tabs.nth(index).click();
         await screen(`settings-${name}`, dialog, dialog);
+        if (name === 'thumbnails') {
+          // The cache under the quality, which the tab scrolls to (settings-dialog.component.scss).
+          await page.locator('app-cache-settings .delete-button').scrollIntoViewIfNeeded();
+          await screen('settings-thumbnails-cache', dialog, dialog);
+        }
         if (name !== 'datetime') continue;
         // The choices of the clock's field, then one of them, after which the dialog says that it restarts.
         await page.locator('.clock-system-format-dropdown mat-select').click();

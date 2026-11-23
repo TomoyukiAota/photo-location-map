@@ -45,4 +45,12 @@ describe('ThumbnailSettingsComponent', () => {
     expect(changes).toEqual([{ thumbnailQuality: 'fast' }]);
     expect(currentUserSettings.thumbnailQuality).toBe('high');
   });
+
+  it('has the cache of the thumbnails that are made under the choices, with a title of its own', async () => {
+    await create();
+    expect(Array.from(element().querySelectorAll('.setting-title'), title => title.textContent)).toEqual(['HEIF Thumbnails', 'Thumbnail Cache']);
+    const cache = element().querySelector('app-cache-settings');
+    expect(element().querySelector('mat-radio-group').compareDocumentPosition(cache) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(cache.querySelector('.delete-button').textContent.trim()).toBe('Delete Thumbnail Cache');
+  });
 });

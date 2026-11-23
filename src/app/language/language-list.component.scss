@@ -1,7 +1,7 @@
 @use "../../styles/color" as *;
+@use "../../styles/scrollbar" as *;
 
 $row-height: 32px;
-$scrollbar-width: 12px;
 $border: 1px solid #7f7f7f;
 $secondary-text: #6e6e6e;
 $search-icon-size: 20px;
@@ -78,28 +78,9 @@ $search-icon-gap: 8px; // Between the icon and the field's end, and between the 
   padding: 0;
   overflow-y: auto;
   list-style: none;
-
-  // TL;DR: A scrollbar of the list's own, which stays in view while there are more entries than the box shows.
-  // Details: macOS hides its scrollbar until the list is scrolled, so a box that ends between two entries looks like
-  // the whole list. A scrollbar styled here is drawn by Chromium in place of the system's, at all times.
-  &::-webkit-scrollbar {
-    width: $scrollbar-width;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-
-  // The border leaves the thumb narrower than its track, and rounded at both ends.
-  &::-webkit-scrollbar-thumb {
-    border: 2px solid #f1f1f1;
-    border-radius: calc(#{$scrollbar-width} / 2);
-    background: #8a8a8a;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background: #6e6e6e;
-  }
+  // In view while there are more entries than the box shows: a box that ends between two entries looks like the whole
+  // list.
+  @include scrollbar-in-view;
 }
 
 .language {
