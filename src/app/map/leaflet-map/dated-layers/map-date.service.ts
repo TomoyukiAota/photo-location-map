@@ -1,6 +1,7 @@
-import { Service, signal } from '@angular/core';
+import { inject, Service, signal } from '@angular/core';
 import { waybackUrls } from '../../../../../src-shared/map/dated-layer-urls';
 import { centerOf, releasesOf, tileAt, versionsAt, WaybackRelease, WaybackVersion } from './wayback';
+import { WaybackDateCache } from './wayback-date-cache';
 
 /**
  * How long Wayback may take to answer for the map: its list of releases, or the versions at a place. Their requests
@@ -21,7 +22,7 @@ interface VersionsLookup {
 
 /**
  * What the map's layer of a past date keeps apart from the map (DatedLayers), which it is made with: the imagery that
- * the user chose, and what Esri World Imagery Wayback answered.
+ * the user chose, and what Esri World Imagery Wayback answered, which WaybackDateCache keeps on the computer too.
  */
 @Service()
 export class MapDateService {
@@ -32,18 +33,26 @@ export class MapDateService {
   /** The release of Wayback that the map shows, chosen or matched to the photos, or null before one is known. */
   public readonly shownRelease = signal<number | null>(null);
 
+  private readonly cache = inject(WaybackDateCache);
   private releases: Promise<WaybackRelease[]> | null = null;
   private readonly versions = new Map<string, VersionsLookup>();
 
-  /** The releases of Wayback, newest first, fetched once; again after a failure. */
+  /**
+   * The releases of Wayback, newest first, fetched once; again after a failure. Those that WaybackDateCache kept less
+   * than a day ago are not fetched, so that a place kept is shown at once after a restart too.
+   */
   public waybackReleases(): Promise<WaybackRelease[]> {
-    this.releases ??= fetch(waybackUrls.releases, { signal: AbortSignal.timeout(waybackTimeoutMs) })
-      .then(response => {
+    this.releases ??= this.cache.releases()
+      .then(async kept => {
+        if (kept)
+          return kept;
+        const response = await fetch(waybackUrls.releases, { signal: AbortSignal.timeout(waybackTimeoutMs) });
         if (!response.ok)
           throw new Error(`${waybackUrls.releases} answered ${response.status} ${response.statusText}`);
-        return response.json();
+        const releases = releasesOf(await response.json());
+        await this.cache.saveReleases(releases);
+        return releases;
       })
-      .then(releasesOf)
       .catch(error => {
         this.releases = null;
         throw error;
@@ -64,6 +73,8 @@ export class MapDateService {
    *   a time, and a lookup asks for up to 40 dates (wayback.ts). The place is looked up again when it is asked again.
    * - A lookup that has not ended in `waybackTimeoutMs` is stopped too, and fails. So is the rest of a lookup one of
    *   whose requests fails.
+   * - The versions found are kept on the computer (WaybackDateCache). A place kept is shown at once, after a restart
+   *   too: only the releases published since it was looked up are asked about, often with one request.
    */
   public waybackVersionsAt(latitude: number, longitude: number, zoom: number, signal?: AbortSignal): Promise<WaybackVersion[]> {
     const spot = tileAt(latitude, longitude, zoom + 2);
@@ -76,7 +87,13 @@ export class MapDateService {
       const { latitude: spotLatitude, longitude: spotLongitude } = centerOf(spot);
       const created: VersionsLookup = {
         versions: this.waybackReleases()
-          .then(releases => versionsAt(releases, spotLatitude, spotLongitude, zoom, url => fetch(url, { signal: stop.signal })))
+          .then(async releases => {
+            const kept = await this.cache.place(key, releases);
+            const versions = await versionsAt(releases, spotLatitude, spotLongitude, zoom, url => fetch(url, { signal: stop.signal }),
+              kept.known);
+            await this.cache.savePlace(key, releases[0].number, versions, kept.kept);
+            return versions;
+          })
           .catch(error => {
             // The other requests stop too, as the walks of the other stretches, which would go on asking servers that
             // fail, as with a 503.

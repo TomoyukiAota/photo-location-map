@@ -207,7 +207,8 @@
       "appearance": "모양",
       "dateTime": "날짜 및 시간",
       "thumbnails": "썸네일",
-      "os": "OS"
+      "os": "OS",
+      "cache": "캐시"
     },
     "restartAfterSaving": "설정을 저장하면 이 앱이 다시 시작됩니다.",
     "confirmRestart": "설정을 저장하면 이 앱이 다시 시작됩니다.\n계속하시겠습니까?",
@@ -267,6 +268,25 @@
       "restartAfterDeleting": "썸네일 캐시를 삭제하면 이 앱이 다시 시작됩니다.",
       "delete": "썸네일 캐시 삭제",
       "confirmDelete": "썸네일 캐시를 삭제하면 이 앱이 다시 시작됩니다.\n계속하시겠습니까?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "썸네일",
+        "description": "이 앱이 만든 썸네일의 캐시는 “썸네일” 탭에 있습니다.",
+        "open": "“썸네일” 탭 열기"
+      },
+      "map": {
+        "title": "지도",
+        "description": "지도에서 본 장소의 Esri World Imagery Wayback 이미지 촬영 날짜를 최대 {{max}}곳까지 캐시하여, 다음에 볼 때 바로 표시합니다.",
+        "count": "캐시된 장소: {{count}}곳",
+        "delete": "지도 캐시 삭제"
+      },
+      "all": {
+        "title": "모든 캐시",
+        "restartAfterDeleting": "모든 캐시를 삭제하면 이 앱이 다시 시작됩니다.",
+        "delete": "모든 캐시 삭제",
+        "confirmDelete": "모든 캐시를 삭제하면 이 앱이 다시 시작됩니다.\n계속하시겠습니까?"
+      }
     }
   },
   "explorerContextMenu": {

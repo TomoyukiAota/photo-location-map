@@ -207,7 +207,8 @@
       "appearance": "Vzhľad",
       "dateTime": "Dátum a čas",
       "thumbnails": "Miniatúry",
-      "os": "Systém"
+      "os": "Systém",
+      "cache": "Vyrovnávacia pamäť"
     },
     "restartAfterSaving": "Aplikácia sa po uložení nastavení reštartuje.",
     "confirmRestart": "Aplikácia sa po uložení nastavení reštartuje.\nChcete pokračovať?",
@@ -267,6 +268,25 @@
       "restartAfterDeleting": "Aplikácia sa po vymazaní vyrovnávacej pamäte miniatúr reštartuje.",
       "delete": "Vymazať vyrovnávaciu pamäť miniatúr",
       "confirmDelete": "Aplikácia sa po vymazaní vyrovnávacej pamäte miniatúr reštartuje.\nChcete pokračovať?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Miniatúry",
+        "description": "Vyrovnávacia pamäť miniatúr, ktoré vytvára táto aplikácia, je na karte „Miniatúry“.",
+        "open": "Otvoriť kartu „Miniatúry“"
+      },
+      "map": {
+        "title": "Mapa",
+        "description": "Dátumy nasnímania snímok Esri World Imagery Wayback sa ukladajú do vyrovnávacej pamäte najviac pre {{max}} miest zobrazených na mape, aby sa nabudúce zobrazili hneď.",
+        "count": "Miesta vo vyrovnávacej pamäti: {{count}}",
+        "delete": "Vymazať vyrovnávaciu pamäť mapy"
+      },
+      "all": {
+        "title": "Všetky vyrovnávacie pamäte",
+        "restartAfterDeleting": "Aplikácia sa po vymazaní všetkých vyrovnávacích pamätí reštartuje.",
+        "delete": "Vymazať všetky vyrovnávacie pamäte",
+        "confirmDelete": "Aplikácia sa po vymazaní všetkých vyrovnávacích pamätí reštartuje.\nChcete pokračovať?"
+      }
     }
   },
   "explorerContextMenu": {

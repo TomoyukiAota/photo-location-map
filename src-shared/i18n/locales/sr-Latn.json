@@ -207,7 +207,8 @@
       "appearance": "Izgled",
       "dateTime": "Datum i vreme",
       "thumbnails": "Sličice",
-      "os": "Sistem"
+      "os": "Sistem",
+      "cache": "Keš"
     },
     "restartAfterSaving": "Aplikacija će se ponovo pokrenuti nakon čuvanja podešavanja.",
     "confirmRestart": "Aplikacija će se ponovo pokrenuti nakon čuvanja podešavanja.\nŽelite li da nastavite?",
@@ -267,6 +268,25 @@
       "restartAfterDeleting": "Aplikacija će se ponovo pokrenuti nakon brisanja keša sličica.",
       "delete": "Izbriši keš sličica",
       "confirmDelete": "Aplikacija će se ponovo pokrenuti nakon brisanja keša sličica.\nŽelite li da nastavite?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Sličice",
+        "description": "Keš sličica koje pravi ova aplikacija nalazi se na kartici „Sličice“.",
+        "open": "Otvori karticu „Sličice“"
+      },
+      "map": {
+        "title": "Mapa",
+        "description": "Datumi snimanja snimaka Esri World Imagery Wayback čuvaju se u kešu za najviše {{max}} mesta pregledanih na mapi, da bi se sledeći put odmah prikazali.",
+        "count": "Mesta u kešu: {{count}}",
+        "delete": "Izbriši keš mape"
+      },
+      "all": {
+        "title": "Svi keševi",
+        "restartAfterDeleting": "Aplikacija će se ponovo pokrenuti nakon brisanja svih keševa.",
+        "delete": "Izbriši sve keševe",
+        "confirmDelete": "Aplikacija će se ponovo pokrenuti nakon brisanja svih keševa.\nŽelite li da nastavite?"
+      }
     }
   },
   "explorerContextMenu": {

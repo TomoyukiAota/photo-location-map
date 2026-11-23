@@ -934,6 +934,15 @@ test('welcome, about and every available settings tab keep their appearance', as
   await expect(page.getByRole('button', { name: 'Delete Thumbnail Cache', exact: true })).toBeInViewport();
   await expect(page.getByRole('button', { name: 'Cancel', exact: true })).toBeInViewport();
   await shot('settings-thumbnails-cache', [page.locator('.location-value')]);
+  // The Cache tab, from its top, with no place of the map kept in a new profile. Its link opens the Thumbnails tab.
+  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Cache' }).click();
+  await expect(page.locator('app-cache-tab')).toBeVisible();
+  await expect(page.locator('app-cache-tab .cache-tab-map-count')).toHaveText('Places cached: 0');
+  await settingsContent.evaluate(content => content.scrollTop = 0);
+  await shot('settings-cache');
+  await page.getByRole('button', { name: 'Open the Thumbnails Tab', exact: true }).click();
+  await expect(page.locator('app-thumbnail-settings')).toBeVisible();
+  await expect(page.locator('app-cache-tab')).toBeHidden();
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
 });
 // The application menu in English, as it was when Electron gave the labels of the items with a role, and in Japanese.
@@ -1277,7 +1286,7 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   // The Settings dialog, whose first tab keeps the English word for a user who cannot read Japanese.
   await settings();
   await expect(page.locator('app-settings-dialog mat-list-item')).toHaveText(
-    ['言語 (Language)', '外観', '日付と時刻', 'サムネイル', ...(process.platform === 'win32' ? ['OS'] : [])]);
+    ['言語 (Language)', '外観', '日付と時刻', 'サムネイル', ...(process.platform === 'win32' ? ['OS'] : []), 'キャッシュ']);
   const languageSettings = page.locator('app-language-settings');
   await expect(languageSettings.getByRole('option')).toHaveText([systemLanguageInJapanese('日本語'), ...languageNames]);
   await expect(languageSettings.getByRole('option', { name: systemLanguageInJapanese('日本語') })).toHaveAttribute('aria-selected', 'true');
@@ -1864,6 +1873,68 @@ test('the map shows Esri World Imagery Wayback at the dates of the photos on it,
   // Another layer has no date.
   await chooseMapLayer('OpenStreetMap');
   await expect(control).toHaveCount(0);
+});
+test('the dates of Wayback\'s imagery at a place looked at before are shown after the page is loaded again, without asking Wayback', async () => {
+  // A photo at the ring of EXPO 2025, and the answers of the servers as they were for the ring
+  // (test/test-util/dated-layer-answers.mjs), whose list of releases, tilemaps and metadata are counted.
+  const folder = path.join(profile, 'EXPO 2025');
+  await mkdir(folder);
+  const source = await readFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'));
+  await writeFile(path.join(folder, 'ring.JPG'), jpegWithLocationAndDate(source, 34.6497, 135.3842, '2025:08:10 11:00:00'));
+  await answerDatedLayers(page);
+  const asked = [];
+  page.on('request', request => {
+    const { hostname, pathname } = new URL(request.url());
+    if (hostname === 's3-us-west-2.amazonaws.com' || pathname.includes('/MapServer/tilemap/') || pathname.endsWith('/query'))
+      asked.push(pathname);
+  });
+  await page.addInitScript(() => {
+    let leaflet;
+    Object.defineProperty(window, 'L', {
+      configurable: true, enumerable: true,
+      get: () => leaflet,
+      set: lib => {
+        leaflet = lib;
+        lib?.Map?.addInitHook(function () {
+          if (this.getContainer().id === 'plm-leaflet-map') window.__plmLeafletMap = this;
+        });
+      }
+    });
+  });
+  await app.evaluate(({ dialog }, folder) => {
+    dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [folder] });
+  }, folder);
+  const options = page.locator('.plm-leaflet-map-date select option');
+  /** Loads the page again, as a restart does, and shows Wayback's dates at the ring at zoom 16. */
+  async function lookAtTheRing() {
+    await page.reload();
+    await page.waitForFunction(() => !!window.__plmLeafletMap?.pm);
+    await dismissWelcome();
+    await page.getByRole('button', { name: 'Open Folder', exact: true }).click();
+    await expectRepresentedPhotos(1);
+    await chooseMapLayer('Esri World Imagery Wayback');
+    await page.evaluate(() => window.__plmLeafletMap.setView([34.6493, 135.3850], 16, { animate: false }));
+    await expect(options).toHaveText(['2025-11-27 (near the photos’ dates)', '2025-04-21 (near the photos’ dates)', '2023-09-10']);
+  }
+
+  await lookAtTheRing();
+  expect(asked.length).toBeGreaterThan(0);
+  // The list of the releases, and the versions at the places looked at, are kept on the computer (WaybackDateCache).
+  asked.length = 0;
+  await lookAtTheRing();
+  expect(asked).toEqual([]);
+
+  // The Cache tab counts the places kept, the one that the photo is fitted at and the one at zoom 16, and deletes them
+  // without a restart. The places are then asked about again.
+  await settings('Cache');
+  const count = page.locator('app-cache-tab .cache-tab-map-count');
+  await expect(count).toHaveText(/^Places cached: [1-9]\d*$/);
+  await page.getByRole('button', { name: 'Delete Map Cache', exact: true }).click();
+  await expect(count).toHaveText('Places cached: 0');
+  await expect(page.getByRole('button', { name: 'Delete Map Cache', exact: true })).toBeDisabled();
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+  await lookAtTheRing();
+  expect(asked.filter(pathname => pathname.endsWith('/query')).length).toBeGreaterThan(0);
 });
 test('a layer of a past date that the list of base layers hides is neither offered nor shown, though the user chose it, until the list no longer hides it', async () => {
   // The list that the page downloads, from either of its addresses, as photo-location-map-resources could have it:
@@ -4388,6 +4459,47 @@ test('deleting the thumbnail cache empties it before the app relaunches itself',
   const { readdir } = await import('node:fs/promises');
   expect(await readdir(cacheFolder)).toEqual([]);
   await launch();
+});
+test('deleting all caches empties the thumbnails\' cache and the map\'s before the app relaunches itself', async () => {
+  const report = path.join(profile, 'launches.jsonl');
+  await app.close();
+  await launch({ env: { PLM_TEST_LAUNCH_REPORT: report } });
+  await dismissWelcome();
+  await settings('Thumbnails');
+  const cacheFolder = (await page.locator('app-cache-settings .location-value').textContent()).trim();
+  await mkdir(path.join(cacheFolder, 'some', 'folder'), { recursive: true });
+  await writeFile(path.join(cacheFolder, 'some', 'folder', 'IMG_0001.HEIC.plm.jpg'), 'thumbnail');
+  // A place in the map's cache, put where WaybackDateCache keeps its places, the page's IndexedDB, once the Cache tab
+  // has counted them, which opens it.
+  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Cache' }).click();
+  await expect(page.locator('app-cache-tab .cache-tab-map-count')).toHaveText('Places cached: 0');
+  await page.evaluate(() => new Promise((resolve, reject) => {
+    const opening = indexedDB.open('plm-wayback-dates');
+    opening.onerror = () => reject(opening.error);
+    opening.onsuccess = () => {
+      const transaction = opening.result.transaction('places', 'readwrite');
+      transaction.objectStore('places').put({ key: '16/57413/26036', newestRelease: 3692, versions: [[3692, '2026-01-17']], seenAt: 1 });
+      transaction.onerror = () => reject(transaction.error);
+      transaction.oncomplete = () => {
+        opening.result.close();
+        resolve();
+      };
+    };
+  }));
+  const pid = await mainProcessId();
+  const exited = new Promise(resolve => app.process().once('exit', resolve));
+  await page.getByRole('button', { name: 'Delete All Caches', exact: true }).click();
+  const confirmation = page.locator('app-confirm-dialog');
+  await expect(confirmation.locator('.message')).toHaveText(
+    'This application will restart after deleting all caches.\nDo you want to continue?', { useInnerText: true });
+  await confirmation.getByRole('button', { name: 'OK', exact: true }).click();
+  await waitForRealRelaunch(report, exited, pid);
+  const { readdir } = await import('node:fs/promises');
+  expect(await readdir(cacheFolder)).toEqual([]);
+  await launch();
+  await dismissWelcome();
+  await settings('Cache');
+  await expect(page.locator('app-cache-tab .cache-tab-map-count')).toHaveText('Places cached: 0');
 });
 /**
  * What the page of Photo Data Viewer's window `viewer` shows and could not load, and what it wrote to its console and

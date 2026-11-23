@@ -207,7 +207,8 @@
       "appearance": "Izskats",
       "dateTime": "Datums un laiks",
       "thumbnails": "Sīktēli",
-      "os": "Sistēma"
+      "os": "Sistēma",
+      "cache": "Kešatmiņa"
     },
     "restartAfterSaving": "Pēc iestatījumu saglabāšanas šī lietotne tiks restartēta.",
     "confirmRestart": "Pēc iestatījumu saglabāšanas šī lietotne tiks restartēta.\nVai vēlaties turpināt?",
@@ -267,6 +268,25 @@
       "restartAfterDeleting": "Pēc sīktēlu kešatmiņas dzēšanas šī lietotne tiks restartēta.",
       "delete": "Dzēst sīktēlu kešatmiņu",
       "confirmDelete": "Pēc sīktēlu kešatmiņas dzēšanas šī lietotne tiks restartēta.\nVai vēlaties turpināt?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Sīktēli",
+        "description": "Šīs lietotnes veidoto sīktēlu kešatmiņa ir cilnē “Sīktēli”.",
+        "open": "Atvērt cilni “Sīktēli”"
+      },
+      "map": {
+        "title": "Karte",
+        "description": "Esri World Imagery Wayback attēlu uzņemšanas datumi tiek saglabāti kešatmiņā līdz {{max}} kartē skatītām vietām, lai nākamreiz tie tiktu parādīti uzreiz.",
+        "count": "Vietas kešatmiņā: {{count}}",
+        "delete": "Dzēst kartes kešatmiņu"
+      },
+      "all": {
+        "title": "Visas kešatmiņas",
+        "restartAfterDeleting": "Pēc visu kešatmiņu dzēšanas šī lietotne tiks restartēta.",
+        "delete": "Dzēst visas kešatmiņas",
+        "confirmDelete": "Pēc visu kešatmiņu dzēšanas šī lietotne tiks restartēta.\nVai vēlaties turpināt?"
+      }
     }
   },
   "explorerContextMenu": {

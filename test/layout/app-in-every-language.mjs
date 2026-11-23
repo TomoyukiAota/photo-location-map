@@ -420,7 +420,7 @@ for (const code of codes) {
       await page.waitForSelector('app-settings-dialog');
       const tabs = page.locator('app-settings-dialog mat-list-item');
       // The OS tab is there on Windows only.
-      const names = ['language', 'appearance', 'datetime', 'thumbnails', ...(process.platform === 'win32' ? ['os'] : [])];
+      const names = ['language', 'appearance', 'datetime', 'thumbnails', ...(process.platform === 'win32' ? ['os'] : []), 'cache'];
       for (const [index, name] of names.entries()) {
         await tabs.nth(index).click();
         await screen(`settings-${name}`, dialog, dialog);

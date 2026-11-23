@@ -207,7 +207,8 @@
       "appearance": "Aspect",
       "dateTime": "Dată și oră",
       "thumbnails": "Miniaturi",
-      "os": "Sistem"
+      "os": "Sistem",
+      "cache": "Cache"
     },
     "restartAfterSaving": "Aplicația va reporni după salvarea setărilor.",
     "confirmRestart": "Aplicația va reporni după salvarea setărilor.\nDoriți să continuați?",
@@ -267,6 +268,25 @@
       "restartAfterDeleting": "Aplicația va reporni după ștergerea cache-ului de miniaturi.",
       "delete": "Șterge cache-ul de miniaturi",
       "confirmDelete": "Aplicația va reporni după ștergerea cache-ului de miniaturi.\nDoriți să continuați?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Miniaturi",
+        "description": "Cache-ul miniaturilor create de această aplicație se află în fila „Miniaturi”.",
+        "open": "Deschide fila „Miniaturi”"
+      },
+      "map": {
+        "title": "Hartă",
+        "description": "Datele la care au fost realizate imaginile Esri World Imagery Wayback sunt păstrate în cache pentru cel mult {{max}} de locuri văzute pe hartă, ca să fie afișate imediat data viitoare.",
+        "count": "Locuri în cache: {{count}}",
+        "delete": "Șterge cache-ul hărții"
+      },
+      "all": {
+        "title": "Toate cache-urile",
+        "restartAfterDeleting": "Aplicația va reporni după ștergerea tuturor cache-urilor.",
+        "delete": "Șterge toate cache-urile",
+        "confirmDelete": "Aplicația va reporni după ștergerea tuturor cache-urilor.\nDoriți să continuați?"
+      }
     }
   },
   "explorerContextMenu": {

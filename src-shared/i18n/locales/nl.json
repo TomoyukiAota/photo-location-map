@@ -207,7 +207,8 @@
       "appearance": "Weergave",
       "dateTime": "Datum en tijd",
       "thumbnails": "Miniaturen",
-      "os": "Besturingssysteem"
+      "os": "Besturingssysteem",
+      "cache": "Cache"
     },
     "restartAfterSaving": "Deze app wordt opnieuw gestart nadat de instellingen zijn bewaard.",
     "confirmRestart": "Deze app wordt opnieuw gestart nadat de instellingen zijn bewaard.\nWil je doorgaan?",
@@ -267,6 +268,25 @@
       "restartAfterDeleting": "Deze app wordt opnieuw gestart nadat de miniaturencache is verwijderd.",
       "delete": "Verwijder miniaturencache",
       "confirmDelete": "Deze app wordt opnieuw gestart nadat de miniaturencache is verwijderd.\nWil je doorgaan?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Miniaturen",
+        "description": "De cache van de miniaturen die deze app maakt, staat op het tabblad Miniaturen.",
+        "open": "Open het tabblad Miniaturen"
+      },
+      "map": {
+        "title": "Kaart",
+        "description": "De opnamedata van de beelden van Esri World Imagery Wayback worden in de cache bewaard voor maximaal {{max}} plaatsen die op de kaart zijn bekeken, zodat ze de volgende keer meteen worden getoond.",
+        "count": "Plaatsen in de cache: {{count}}",
+        "delete": "Verwijder kaartcache"
+      },
+      "all": {
+        "title": "Alle caches",
+        "restartAfterDeleting": "Deze app wordt opnieuw gestart nadat alle caches zijn verwijderd.",
+        "delete": "Verwijder alle caches",
+        "confirmDelete": "Deze app wordt opnieuw gestart nadat alle caches zijn verwijderd.\nWil je doorgaan?"
+      }
     }
   },
   "explorerContextMenu": {

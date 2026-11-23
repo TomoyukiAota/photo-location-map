@@ -207,7 +207,8 @@
       "appearance": "Išvaizda",
       "dateTime": "Data ir laikas",
       "thumbnails": "Miniatiūros",
-      "os": "Sistema"
+      "os": "Sistema",
+      "cache": "Talpykla"
     },
     "restartAfterSaving": "Įrašius nustatymus, ši programa bus paleista iš naujo.",
     "confirmRestart": "Įrašius nustatymus, ši programa bus paleista iš naujo.\nAr norite tęsti?",
@@ -267,6 +268,25 @@
       "restartAfterDeleting": "Ištrynus miniatiūrų talpyklą, ši programa bus paleista iš naujo.",
       "delete": "Ištrinti miniatiūrų talpyklą",
       "confirmDelete": "Ištrynus miniatiūrų talpyklą, ši programa bus paleista iš naujo.\nAr norite tęsti?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Miniatiūros",
+        "description": "Šios programos kuriamų miniatiūrų talpykla yra skirtuke „Miniatiūros“.",
+        "open": "Atidaryti skirtuką „Miniatiūros“"
+      },
+      "map": {
+        "title": "Žemėlapis",
+        "description": "Esri World Imagery Wayback vaizdų užfiksavimo datos saugomos talpykloje ne daugiau kaip {{max}} žemėlapyje peržiūrėtų vietų, kad kitą kartą būtų rodomos iš karto.",
+        "count": "Vietos talpykloje: {{count}}",
+        "delete": "Ištrinti žemėlapio talpyklą"
+      },
+      "all": {
+        "title": "Visos talpyklos",
+        "restartAfterDeleting": "Ištrynus visas talpyklas, ši programa bus paleista iš naujo.",
+        "delete": "Ištrinti visas talpyklas",
+        "confirmDelete": "Ištrynus visas talpyklas, ši programa bus paleista iš naujo.\nAr norite tęsti?"
+      }
     }
   },
   "explorerContextMenu": {

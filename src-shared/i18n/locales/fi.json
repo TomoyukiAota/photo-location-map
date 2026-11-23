@@ -207,7 +207,8 @@
       "appearance": "Ulkoasu",
       "dateTime": "Päivämäärä ja aika",
       "thumbnails": "Pikkukuvat",
-      "os": "Käyttöjärjestelmä"
+      "os": "Käyttöjärjestelmä",
+      "cache": "Välimuisti"
     },
     "restartAfterSaving": "Tämä sovellus käynnistyy uudelleen, kun asetukset on tallennettu.",
     "confirmRestart": "Tämä sovellus käynnistyy uudelleen, kun asetukset on tallennettu.\nHaluatko jatkaa?",
@@ -267,6 +268,25 @@
       "restartAfterDeleting": "Tämä sovellus käynnistyy uudelleen, kun pikkukuvien välimuisti on poistettu.",
       "delete": "Poista pikkukuvien välimuisti",
       "confirmDelete": "Tämä sovellus käynnistyy uudelleen, kun pikkukuvien välimuisti on poistettu.\nHaluatko jatkaa?"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "Pikkukuvat",
+        "description": "Tämän sovelluksen tekemien pikkukuvien välimuisti on ”Pikkukuvat”-välilehdellä.",
+        "open": "Avaa ”Pikkukuvat”-välilehti"
+      },
+      "map": {
+        "title": "Kartta",
+        "description": "Esri World Imagery Waybackin ilmakuvien kuvauspäivät tallennetaan välimuistiin enintään {{max}} kartalla katsotulle paikalle, jotta ne näkyvät seuraavalla kerralla heti.",
+        "count": "Paikkoja välimuistissa: {{count}}",
+        "delete": "Poista kartan välimuisti"
+      },
+      "all": {
+        "title": "Kaikki välimuistit",
+        "restartAfterDeleting": "Tämä sovellus käynnistyy uudelleen, kun kaikki välimuistit on poistettu.",
+        "delete": "Poista kaikki välimuistit",
+        "confirmDelete": "Tämä sovellus käynnistyy uudelleen, kun kaikki välimuistit on poistettu.\nHaluatko jatkaa?"
+      }
     }
   },
   "explorerContextMenu": {

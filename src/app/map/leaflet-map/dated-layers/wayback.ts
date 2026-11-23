@@ -160,7 +160,7 @@ async function json(fetcher: Fetcher, url: string): Promise<unknown> {
  * stretch has versions, and no more times than it has releases.
  */
 export async function releasesThatChanged(releases: readonly WaybackRelease[], tile: Tile, fetcher: Fetcher,
-                                          walks = walksAtOnce): Promise<WaybackRelease[]> {
+                                          walks = walksAtOnce, end = releases.length): Promise<WaybackRelease[]> {
   const indexOf = new Map(releases.map((release, index) => [release.number, index]));
   const walk = async (start: number, end: number): Promise<WaybackRelease[]> => {
     const changed: WaybackRelease[] = [];
@@ -182,23 +182,38 @@ export async function releasesThatChanged(releases: readonly WaybackRelease[], t
     }
     return changed;
   };
-  const length = Math.ceil(releases.length / walks);
-  const starts = Array.from({ length: Math.ceil(releases.length / length) }, (_, index) => index * length);
-  const stretches = await Promise.all(starts.map(start => walk(start, Math.min(start + length, releases.length))));
+  const length = Math.ceil(end / walks);
+  const starts = Array.from({ length: Math.ceil(end / length) }, (_, index) => index * length);
+  const stretches = await Promise.all(starts.map(start => walk(start, Math.min(start + length, end))));
   return stretches.flat().slice(0, maxVersions);
+}
+
+/** The versions at a place as they were looked up before, as WaybackDateCache keeps them. */
+export interface KnownVersions {
+  /** The number of the newest release when they were looked up. */
+  readonly newestRelease: number;
+  /** The versions, newest first. */
+  readonly versions: readonly WaybackVersion[];
 }
 
 /**
  * The versions of the imagery at a point at a zoom level, newest first, with when each was taken there: the dates are
  * asked for all at once, once the versions are known.
+ * TL;DR: With `known`, only the releases newer than its newest are asked about.
+ * Details: What a release answers never changes, neither its tilemap nor its metadata, so the versions of the releases
+ * that `known` was looked up with stay the same: a release published since is a version only when the tile changed in
+ * it. Without the newest release of `known` in the list, as if Esri took it away, everything is asked again.
  */
 export async function versionsAt(releases: readonly WaybackRelease[], latitude: number, longitude: number, zoom: number,
-                                 fetcher: Fetcher): Promise<WaybackVersion[]> {
-  const changed = await releasesThatChanged(releases, tileAt(latitude, longitude, zoom), fetcher);
-  return Promise.all(changed.map(async release => ({
+                                 fetcher: Fetcher, known?: KnownVersions): Promise<WaybackVersion[]> {
+  const newer = known ? releases.findIndex(release => release.number === known.newestRelease) : -1;
+  const end = newer < 0 ? releases.length : newer;
+  const changed = end === 0 ? [] : await releasesThatChanged(releases, tileAt(latitude, longitude, zoom), fetcher, walksAtOnce, end);
+  const dated = await Promise.all(changed.map(async release => ({
     release,
     captureDate: captureDateOf(await json(fetcher, metadataQueryUrl(release, latitude, longitude, zoom)), zoom),
   })));
+  return [...dated, ...(newer < 0 ? [] : known.versions)].slice(0, maxVersions);
 }
 
 /**

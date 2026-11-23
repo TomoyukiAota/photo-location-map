@@ -207,7 +207,8 @@
       "appearance": "外観",
       "dateTime": "日付と時刻",
       "thumbnails": "サムネイル",
-      "os": "OS"
+      "os": "OS",
+      "cache": "キャッシュ"
     },
     "restartAfterSaving": "設定を保存すると、このアプリは再起動します。",
     "confirmRestart": "設定を保存すると、このアプリは再起動します。\n続けますか？",
@@ -267,6 +268,25 @@
       "restartAfterDeleting": "サムネイルのキャッシュを削除すると、このアプリは再起動します。",
       "delete": "サムネイルのキャッシュを削除",
       "confirmDelete": "サムネイルのキャッシュを削除すると、このアプリは再起動します。\n続けますか？"
+    },
+    "cacheTab": {
+      "thumbnails": {
+        "title": "サムネイル",
+        "description": "このアプリが作るサムネイルのキャッシュは、「サムネイル」タブにあります。",
+        "open": "「サムネイル」タブを開く"
+      },
+      "map": {
+        "title": "マップ",
+        "description": "マップで見た場所の Esri World Imagery Wayback の撮影日を、{{max}} か所までキャッシュしています。次に見るときは、すぐに表示されます。",
+        "count": "キャッシュしている場所: {{count}} か所",
+        "delete": "マップのキャッシュを削除"
+      },
+      "all": {
+        "title": "すべてのキャッシュ",
+        "restartAfterDeleting": "すべてのキャッシュを削除すると、このアプリは再起動します。",
+        "delete": "すべてのキャッシュを削除",
+        "confirmDelete": "すべてのキャッシュを削除すると、このアプリは再起動します。\n続けますか？"
+      }
     }
   },
   "explorerContextMenu": {
