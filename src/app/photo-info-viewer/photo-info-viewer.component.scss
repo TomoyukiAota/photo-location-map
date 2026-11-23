@@ -68,8 +68,11 @@
   max-height: 80% !important;
 }
 
+// The image that says that the thumbnail is being made: hidden while the thumbnail may still come soon, as most come in
+// a few frames, then flickering. The wait is generatingThumbnailDelayMs in photo-info-viewer.component.ts.
 .photo-info-viewer-generating-thumbnail {
-  animation: flicker 3s infinite;
+  opacity: 0;
+  animation: flicker 3s 500ms infinite;
 }
 
 .photo-info-viewer-fade-in-after-thumbnail-generation {
