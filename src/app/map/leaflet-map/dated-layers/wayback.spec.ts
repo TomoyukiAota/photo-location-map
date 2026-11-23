@@ -156,6 +156,38 @@ describe('Esri World Imagery Wayback', () => {
     expect(asked.filter(url => url.startsWith(waybackUrls.metadata))).toHaveLength(3);
   });
 
+  it('asks about the releases newer than those of the versions known only, and keeps the known ones', async () => {
+    const tile = tileAt(34.6495, 135.3840, 17);
+    const known = {
+      newestRelease: 22869,
+      versions: [{ release: release(49999), captureDate: '2025-04-21' }, { release: release(52930), captureDate: '2023-09-10' }],
+    };
+    const ask = async (answers: Record<string, unknown>, knownVersions = known) => {
+      const { fetcher, asked } = fetcherOf(answers);
+      const versions = await versionsAt(releases, 34.6495, 135.3840, 17, fetcher, knownVersions);
+      return { versions: versions.map(({ release: { number }, captureDate }) => `${number} ${captureDate}`), asked };
+    };
+
+    // The newest release known: nothing is asked.
+    expect(await ask({}, { ...known, newestRelease: 3692 })).toEqual({ versions: ['49999 2025-04-21', '52930 2023-09-10'], asked: [] });
+    // Two releases since, in one of which the tile changed: their tilemaps, and the date of the new version.
+    const since = await ask({
+      [tilemapUrl(release(3692), tile)]: { data: [1], select: [49059] },
+      [tilemapUrl(release(49059), tile)]: { data: [1] },
+      [metadataQueryUrl(release(49059), 34.6495, 135.3840, 17)]: { features: [source('20251127', 13, 19)] },
+    });
+    expect(since.versions).toEqual(['49059 2025-11-27', '49999 2025-04-21', '52930 2023-09-10']);
+    expect(since.asked).toHaveLength(3);
+    // A newest release that the list no longer has: everything is asked again.
+    const again = await ask({
+      ...ringTilemaps(tile),
+      [metadataQueryUrl(release(49059), 34.6495, 135.3840, 17)]: { features: [source('20251127', 13, 19)] },
+      [metadataQueryUrl(release(49999), 34.6495, 135.3840, 17)]: { features: [source('20250421', 16, 19)] },
+      [metadataQueryUrl(release(52930), 34.6495, 135.3840, 17)]: { features: [source('20230910', 12, 19)] },
+    }, { ...known, newestRelease: 1 });
+    expect(again.versions).toEqual(['49059 2025-11-27', '49999 2025-04-21', '52930 2023-09-10']);
+  });
+
   it('keeps one version for each date taken, the newest, and finds the version that a release shows', () => {
     const version = (number: number, captureDate: string | null): WaybackVersion => ({ release: release(number), captureDate });
     const versions = [version(49059, '2025-11-27'), version(22869, '2025-04-21'), version(49999, '2025-04-21'), version(6543, null),
