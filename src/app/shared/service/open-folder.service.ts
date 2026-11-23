@@ -5,6 +5,7 @@ import { perfMark } from '../../../../src-shared/perf/perf-mark';
 import { sleep } from '../../../../src-shared/sleep/sleep';
 import { DirectoryTreeViewDataService } from '../../directory-tree-view/directory-tree-view-data.service';
 import { LoadingFolderDialogComponent } from '../../loading-folder/dialog/loading-folder-dialog.component';
+import { LoadingFolderProgressReporterService } from '../../loading-folder/progress-reporter/loading-folder-progress-reporter.service';
 import {
   NoPhotosWithLocationDataDialogComponent
 } from '../../no-photos-with-location-data-dialog/no-photos-with-location-data-dialog.component';
@@ -33,6 +34,7 @@ export class OpenFolderService {
   private heifThumbnailService = inject(HeifThumbnailService);
   private jpegPngThumbnailService = inject(JpegPngThumbnailService);
   private thumbnailRotationService = inject(ThumbnailRotationService);
+  private loadingFolderProgressReporter = inject(LoadingFolderProgressReporterService);
 
   private readonly isFolderOpenedState = signal(false);
   /** Whether a folder has been opened since the application started. */
@@ -69,6 +71,9 @@ export class OpenFolderService {
       thumbnailCache.catch(() => {});  // Awaited below; a failure then fails the open, as other failures do.
       await this.photoDataService.update(directoryTreeObject); // Photo data is fetched from files. The loading folder dialog displays file loading status.
       perfMark('open-folder:photo-data-loaded');
+      // The dialog says that loading completed during the 100 ms below, whichever moment between two of its reports
+      // this is: the photos of a small folder are read within a few milliseconds (reportProgress()).
+      this.loadingFolderProgressReporter.reportProgress();
       // TL;DR: What was kept of the previous folder's photos is dropped here: how far each thumbnail is turned, and
       // which thumbnails were made.
       // Details: Not before the folder's photos are read: the previous folder is shown until then, behind the

@@ -20,6 +20,9 @@ export const notStartedLoadingFolderProgressStatus: LoadingFolderProgressStatus 
   isCompleted: false,
 };
 
+/** How often the progress is reported while the folder loads. */
+const updateMilliseconds = 100;
+
 /** Whether two statuses show the same progress: the status signal's equality, so that an update to the same one notifies no one. */
 function isSameStatus(a: LoadingFolderProgressStatus, b: LoadingFolderProgressStatus): boolean {
   return a.numberOfLoadedFiles === b.numberOfLoadedFiles && a.numberOfAllFilesToLoad === b.numberOfAllFilesToLoad
@@ -33,38 +36,56 @@ export class LoadingFolderProgressReporterService {
   private readonly statusState = signal(notStartedLoadingFolderProgressStatus, { equal: isSameStatus });
   /** The progress of loading the opened folder, which the loading-folder dialog shows. */
   public readonly status = this.statusState.asReadonly();
-  private intervalId: ReturnType<typeof setInterval> | undefined;
+  /** The next report, until loading has completed. */
+  private timerId: ReturnType<typeof setTimeout> | undefined;
 
   /**
-   * Starts reporting the progress of the folder being opened from the start, every 100 ms until it has loaded, and
-   * stops reporting that of the previous folder if it never finished.
+   * Starts reporting the progress of the folder being opened: first that its files are being collected, then the
+   * progress, at once and every 100 ms until it has loaded. Stops reporting that of the previous folder if it never
+   * finished.
+   * TL;DR: The dialog of a new folder starts from collecting its files, not from where the previous folder ended. Its
+   * first report comes right after, rather than 100 ms after, so that the dialog of a folder whose photos were read
+   * before the dialog was made also says that loading completed before the open closes it.
+   * Details: The photos of a small folder are read within a few milliseconds, as the thumbnails of their EXIF data are
+   * no longer turned on a canvas, which waited for a frame. The open closed the dialog before its first report, while
+   * it still said that it collected the files.
    */
   public startUpdatingProgress(): void {
     Logger.info('[Loading Folder] Collecting files to load from the opened folder...');
-    // The dialog of a new folder starts from collecting the files, not from where the previous folder ended.
-    clearInterval(this.intervalId);
+    clearTimeout(this.timerId);
     this.statusState.set(notStartedLoadingFolderProgressStatus);
+    const report = () => {
+      this.reportProgress();
+      if (!this.status().isCompleted)
+        this.timerId = setTimeout(report, updateMilliseconds);
+    };
+    this.timerId = setTimeout(report, 0);
+  }
 
-    const updateMilliseconds = 100;
-    this.intervalId = setInterval(() => {
-      const status: LoadingFolderProgressStatus = {
-        numberOfLoadedFiles: progress.numberOfLoadedFiles,
-        numberOfAllFilesToLoad: progress.numberOfAllFilesToLoad,
-        loadedPercent: progress.loadedPercent,
-        isStarted: progress.isStarted,
-        isInProgress: progress.isInProgress,
-        isCompleted: progress.isCompleted,
-      };
+  /**
+   * Reports the progress as it is now, and stops the reports once loading has completed.
+   * TL;DR: The open asks for it too, once the folder's photos are read, so that the dialog says that loading completed
+   * during the 100 ms that the open waits for it (OpenFolderService), whichever moment between two reports that is.
+   */
+  public reportProgress(): void {
+    const status: LoadingFolderProgressStatus = {
+      numberOfLoadedFiles: progress.numberOfLoadedFiles,
+      numberOfAllFilesToLoad: progress.numberOfAllFilesToLoad,
+      loadedPercent: progress.loadedPercent,
+      isStarted: progress.isStarted,
+      isInProgress: progress.isInProgress,
+      isCompleted: progress.isCompleted,
+    };
 
-      if (status.isStarted) {
-        Logger.info(`[Loading Folder] Loaded ${status.numberOfLoadedFiles} files out of ${status.numberOfAllFilesToLoad} files.`);
-      }
+    if (status.isStarted) {
+      Logger.info(`[Loading Folder] Loaded ${status.numberOfLoadedFiles} files out of ${status.numberOfAllFilesToLoad} files.`);
+    }
 
-      this.statusState.set(status);
+    this.statusState.set(status);
 
-      if (status.isCompleted) {
-        clearInterval(this.intervalId);
-      }
-    }, updateMilliseconds);
+    if (status.isCompleted) {
+      clearTimeout(this.timerId);
+      this.timerId = undefined;
+    }
   }
 }

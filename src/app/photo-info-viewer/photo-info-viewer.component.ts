@@ -17,6 +17,7 @@ import { MoreOptionsMenuService } from './more-options-menu/more-options-menu.se
 import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
 import { PhotoInfoViewerPlace } from './photo-info-viewer-place';
 import { ThumbnailRotationService } from './thumbnail-rotation.service';
+import { UndecodableThumbnailService } from './undecodable-thumbnail.service';
 import { LoggedLine, logged } from '../../../src-shared/log/logged-line';
 import { photoFileUrl } from '../../../src-shared/main-window-schemes';
 
@@ -142,9 +143,10 @@ File path of generated thumbnail is "${thumbnailFilePath}"
  * - The template is used in the tree and in the cluster's popup. Leaflet makes a marker's popup itself, so the map
  *   makes that popup's component outside any template (src/app/map/leaflet-map/leaflet-content.service.ts).
  * - Nothing that has to last is kept here: how far the thumbnail is turned is in ThumbnailRotationService, the
- *   thumbnail of a HEIF photo in HeifThumbnailService, and that of a JPEG or PNG photo without one in its EXIF data in
- *   JpegPngThumbnailService. A component is made when its place shows the photo and destroyed when it no longer does,
- *   as when a folder of the tree is collapsed, so that a large folder costs no more than what is shown of it.
+ *   thumbnail of a HEIF photo in HeifThumbnailService, that of a JPEG or PNG photo without one in its EXIF data in
+ *   JpegPngThumbnailService, and the thumbnails of EXIF data that the page could not decode in
+ *   UndecodableThumbnailService. A component is made when its place shows the photo and destroyed when it no longer
+ *   does, as when a folder of the tree is collapsed, so that a large folder costs no more than what is shown of it.
  * - Kept light: there is a component for every photo shown, thousands for a folder that has its photos in it, as
  *   each has a row in the tree. What the template shows is read through methods rather than computed values, which
  *   Angular follows in the same way, while a computed value is an object of its own in each component. The texts
@@ -173,6 +175,7 @@ export class PhotoInfoViewerComponent {
   private readonly heifThumbnailService = inject(HeifThumbnailService);
   private readonly jpegPngThumbnailService = inject(JpegPngThumbnailService);
   private readonly thumbnailRotationService = inject(ThumbnailRotationService);
+  private readonly undecodableThumbnailService = inject(UndecodableThumbnailService);
 
   public readonly photo = input.required<Photo>();
   public readonly place = input.required<PhotoInfoViewerPlace>();
@@ -245,18 +248,21 @@ export class PhotoInfoViewerComponent {
   }
 
   /**
-   * The photo's thumbnail: from the EXIF data where it has one; otherwise, for a JPEG or PNG photo, the one that
-   * JpegPngThumbnailService makes, or the photo itself where none can be made; for a HEIF photo, the one that
-   * HeifThumbnailService makes: the small thumbnail that the photo holds, shown until the one of the quality that the
-   * settings choose is made.
+   * The photo's thumbnail: from the EXIF data where it has one that the page decodes; otherwise, for a JPEG or PNG
+   * photo, the one that JpegPngThumbnailService makes, or the photo itself where none can be made or where the page
+   * could not decode the one in its EXIF data (UndecodableThumbnailService), as the service makes none for it; for a
+   * HEIF photo, the one that HeifThumbnailService makes: the small thumbnail that the photo holds, shown until the one
+   * of the quality that the settings choose is made.
    */
   protected thumbnail(): Thumbnail {
     const photo = this.photo();
     if (!photo?.path)
       return unavailableThumbnail;
-    if (photo.exif?.thumbnail)
+    if (photo.exif?.thumbnail && !this.undecodableThumbnailService.isUndecodable(photo.exif.thumbnail))
       return thumbnailOfExif(photo);
     if (FilenameExtension.isDisplayableInBrowser(photo.filenameExtension)) {
+      if (!needsMadeThumbnail(photo))
+        return thumbnailOfPhotoItself(photo);
       const jpegPngThumbnail = this.jpegPngThumbnailService.stateOf(photo.path);
       switch (jpegPngThumbnail.kind) {
         case 'cached':
@@ -314,6 +320,20 @@ export class PhotoInfoViewerComponent {
       this.livePhotos = { photo, filePath: livePhotosAvailable ? livePhotosFilePath : null };
     }
     return this.livePhotos.filePath;
+  }
+
+  /**
+   * A thumbnail of the EXIF data that the page could not decode: from then on, the viewers show what they show for a
+   * photo without one, the photo itself where the page can show it (UndecodableThumbnailService). An image of another
+   * kind that does not load is left as it is.
+   */
+  protected onThumbnailError(): void {
+    const photo = this.photo();
+    const exifThumbnail = photo.exif?.thumbnail;
+    if (!exifThumbnail || this.thumbnail().src !== exifThumbnail.objectUrl)
+      return;
+    logger.warn(logged`The thumbnail in the EXIF data of ${photo.path} could not be decoded. The photo is shown as one without it.`);
+    this.undecodableThumbnailService.add(exifThumbnail);
   }
 
   protected onThumbnailClick(): void {

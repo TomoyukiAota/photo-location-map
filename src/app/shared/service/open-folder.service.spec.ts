@@ -1,8 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { DirectoryTreeViewDataService } from '../../directory-tree-view/directory-tree-view-data.service';
+import {
+  LoadingFolderProgressReporterService,
+  LoadingFolderProgressStatus,
+} from '../../loading-folder/progress-reporter/loading-folder-progress-reporter.service';
 import { OpenFolderRecorder } from '../../sidebar/upper-pane/open-folder-recorder';
 import { ThumbnailGenerationService } from '../../thumbnail-generation/service/thumbnail-generation.service';
+import { LoadingFolderProgress } from '../loading-folder-progress';
 import { OpenedDirectory } from '../opened-directory';
 import { OpenFolderService } from './open-folder.service';
 import { PhotoDataService } from './photo-data.service';
@@ -38,5 +43,34 @@ describe('OpenFolderService', () => {
     expect(failed).not.toHaveBeenCalled();
     expect(givenWhileRead).toEqual([]);
     expect(givenWhenReplaced).toEqual([[livePhotos]]);
+  });
+
+  it('has the loading dialog say that loading completed before it closes the dialog, however soon the photos were read', async () => {
+    // The dialog's component, which reports the progress every 100 ms, is not made here: the open reports it itself.
+    const tree: DirectoryTree = { name: 'b', path: '/b', type: 'directory', children: [] };
+    vi.spyOn(OpenedDirectory, 'createDirectoryTree').mockResolvedValue({ tree, livePhotos: {} });
+    vi.spyOn(OpenedDirectory, 'setLivePhotos').mockImplementation(() => {});
+    let statusWhenClosed: LoadingFolderProgressStatus | undefined;
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: MatDialog, useValue: { open: () => ({ close: () => { statusWhenClosed = TestBed.inject(LoadingFolderProgressReporterService).status(); } }) } },
+        {
+          provide: PhotoDataService, useValue: {
+            update: async () => {
+              LoadingFolderProgress.setNumberOfAllFilesToLoad(2);
+              LoadingFolderProgress.incrementNumberOfLoadedFiles();
+              LoadingFolderProgress.incrementNumberOfLoadedFiles();
+            },
+            getPhotosWithGpsInfo: () => [{}],
+          },
+        },
+        { provide: DirectoryTreeViewDataService, useValue: { replace: () => {} } },
+        { provide: ThumbnailGenerationService, useValue: { checkThumbnailCache: async () => ({}), startThumbnailGeneration: () => false } },
+      ],
+    });
+
+    await TestBed.inject(OpenFolderService).open('/b');
+
+    expect(statusWhenClosed).toMatchObject({ numberOfLoadedFiles: 2, numberOfAllFilesToLoad: 2, isCompleted: true });
   });
 });

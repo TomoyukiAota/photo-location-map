@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MATERIAL_ANIMATIONS } from '@angular/material/core';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import type { ThumbnailState } from '../../../src-shared/bridge/plm-bridge';
+import { Logger } from '../../../src-shared/log/logger';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { DirectoryTreeViewSelectionService } from '../directory-tree-view/directory-tree-view-selection.service';
 import { DateTimeOriginal } from '../shared/model/date-time-original';
@@ -223,6 +224,54 @@ describe('PhotoInfoViewerComponent', () => {
       expect(thumbnail().getAttribute('src')).toBe(IconDataUrl.noThumbnailAvailable);
       expect(thumbnail().classList.contains('photo-info-viewer-thumbnail-placeholder')).toBe(true);
       expect(thumbnail().classList.contains('photo-info-viewer-generating-thumbnail')).toBe(false);
+    });
+
+    // Nothing decodes the EXIF thumbnails while a folder opens: the img element finds one that does not decode.
+    describe('in the EXIF data, which the page cannot decode', () => {
+      /** The img element's error, as when the page could not decode the image that it was to show. */
+      async function failToDecode(): Promise<void> {
+        thumbnail().dispatchEvent(new Event('error'));
+        await fixture.whenStable();
+      }
+
+      it('gives way to the photo itself, in every place that shows the photo, once one place has tried to show it', async () => {
+        const warn = vi.spyOn(Logger, 'warn').mockImplementation(() => undefined);
+        const photo = cameraPhoto();
+        const photoItself = `plm-file://local/${encodeURIComponent('/photos/IMG_0001.JPG')}`;
+        await show(photo, 'dir-tree-view');
+        expect(thumbnail().getAttribute('src')).toBe('blob:thumbnail-of-IMG_0001');
+
+        await failToDecode();
+        expect(thumbnail().getAttribute('src')).toBe(photoItself);
+        expect(warn).toHaveBeenCalledOnce();
+        expect(String(warn.mock.calls[0][0])).toBe('[Photo Info Viewer] The thumbnail in the EXIF data of '
+          + '/photos/IMG_0001.JPG could not be decoded. The photo is shown as one without it.');
+        // Another viewer of the photo, as its popup or its row made again, shows the photo itself at once.
+        await show(photo, 'leaflet-map-popup');
+        expect(thumbnail().getAttribute('src')).toBe(photoItself);
+        warn.mockRestore();
+      });
+
+      it('gives way to the image that says that there is none, for a photo that the page cannot show itself', async () => {
+        const warn = vi.spyOn(Logger, 'warn').mockImplementation(() => undefined);
+        await show(photoAt('/photos/scan.tif', { thumbnail: new Thumbnail('blob:thumbnail-of-scan', new Dimensions(160, 120)) }), 'leaflet-map-tile');
+        expect(thumbnail().getAttribute('src')).toBe('blob:thumbnail-of-scan');
+
+        await failToDecode();
+        expect(thumbnail().getAttribute('src')).toBe(IconDataUrl.noThumbnailAvailable);
+        warn.mockRestore();
+      });
+
+      it('is told apart from an image of another kind that does not load, which stays as it is', async () => {
+        const warn = vi.spyOn(Logger, 'warn').mockImplementation(() => undefined);
+        await show(photoAt('/photos/drawing.png'), 'dir-tree-view');
+        const shown = thumbnail().getAttribute('src');
+
+        await failToDecode();
+        expect(thumbnail().getAttribute('src')).toBe(shown);
+        expect(warn).not.toHaveBeenCalled();
+        warn.mockRestore();
+      });
     });
 
     describe('of a HEIF photo, which the main process makes where the page cannot', () => {
