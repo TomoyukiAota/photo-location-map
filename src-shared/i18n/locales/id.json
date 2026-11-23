@@ -198,8 +198,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Mencari wajah di foto yang dipilih...",
-    "progress": "Foto yang diperiksa: {{done}} dari {{total}}.",
+    "looking": "Mendeteksi wajah...",
+    "progress": "Foto yang diproses: {{done}} dari {{total}}",
     "noFacesFound": "Tidak ditemukan wajah di foto yang dipilih. Pilihan tetap seperti semula.",
     "notLookedAt": "Foto yang tidak dapat diperiksa untuk mencari wajah dan tidak lagi dipilih: {{count}}.",
     "failed": "Wajah tidak dapat dicari di foto yang dipilih. Pilihan tetap seperti semula."

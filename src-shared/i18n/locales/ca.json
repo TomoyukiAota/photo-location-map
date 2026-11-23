@@ -198,8 +198,8 @@
     }
   },
   "faceSearch": {
-    "looking": "S’estan cercant cares a les fotos seleccionades...",
-    "progress": "Fotos revisades: {{done}} de {{total}}.",
+    "looking": "S’estan detectant cares...",
+    "progress": "Fotos processades: {{done}} de {{total}}",
     "noFacesFound": "No s’han trobat cares a les fotos seleccionades. La selecció es manté tal com està.",
     "notLookedAt": "Fotos en què no s’han pogut cercar cares i que ja no estan seleccionades: {{count}}.",
     "failed": "No s’han pogut cercar cares a les fotos seleccionades. La selecció es manté tal com està."

@@ -198,8 +198,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Søker etter ansikter i de markerte bildene...",
-    "progress": "Gjennomgåtte bilder: {{done}} av {{total}}.",
+    "looking": "Oppdager ansikter...",
+    "progress": "Behandlede bilder: {{done}} av {{total}}",
     "noFacesFound": "Fant ingen ansikter i de markerte bildene. Markeringen forblir som den er.",
     "notLookedAt": "Bilder som det ikke var mulig å søke etter ansikter i, og som ikke lenger er markert: {{count}}.",
     "failed": "Kunne ikke søke etter ansikter i de markerte bildene. Markeringen forblir som den er."

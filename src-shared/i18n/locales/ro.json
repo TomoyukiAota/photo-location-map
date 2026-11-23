@@ -198,8 +198,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Se caută fețe în pozele selectate...",
-    "progress": "Poze verificate: {{done}} din {{total}}.",
+    "looking": "Se detectează fețe...",
+    "progress": "Poze procesate: {{done}} din {{total}}",
     "noFacesFound": "Nu s-au găsit fețe în pozele selectate. Selecția rămâne neschimbată.",
     "notLookedAt": "Poze în care nu s-au putut căuta fețe și care nu mai sunt selectate: {{count}}.",
     "failed": "Nu s-au putut căuta fețe în pozele selectate. Selecția rămâne neschimbată."

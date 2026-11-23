@@ -198,8 +198,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Søger efter ansigter i de valgte billeder...",
-    "progress": "Gennemsete billeder: {{done}} af {{total}}.",
+    "looking": "Registrerer ansigter...",
+    "progress": "Behandlede billeder: {{done}} af {{total}}",
     "noFacesFound": "Der blev ikke fundet ansigter i de valgte billeder. Valget forbliver uændret.",
     "notLookedAt": "Billeder, der ikke kunne gennemses for ansigter, og som ikke længere er valgt: {{count}}.",
     "failed": "Der kunne ikke søges efter ansigter i de valgte billeder. Valget forbliver uændret."

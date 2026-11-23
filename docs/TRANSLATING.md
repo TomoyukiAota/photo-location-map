@@ -197,8 +197,11 @@ npm run test:unit:ng
 - `menu.selection.narrowDownToPhotosWithFaces` is an item of the Selection
   menu that keeps selected only the selected photos in which a face is found,
   and deselects the others. The texts under `faceSearch` are those of its
-  dialog: "look at" and "look for" are what the application does with each
-  photo, on the computer itself.
+  dialog: "detect", "process", "look at" and "look for" are what the
+  application does with each photo, on the computer itself. It finds where the
+  faces are, not whose they are: where your language has one word for face
+  detection and another for face recognition, use the one for detection, as
+  Japanese has 顔検出 and not 顔認識.
 - `language.confirm` is the button that confirms the language at the first
   launch, shown in the language that is chosen in the list above it. Use the
   word that a button confirming a choice has in your language: Japanese has

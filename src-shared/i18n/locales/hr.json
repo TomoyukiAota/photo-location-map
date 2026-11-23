@@ -198,8 +198,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Traženje lica na odabranim fotografijama...",
-    "progress": "Pregledane fotografije: {{done}} od {{total}}.",
+    "looking": "Otkrivanje lica...",
+    "progress": "Obrađene fotografije: {{done}} od {{total}}",
     "noFacesFound": "Na odabranim fotografijama nisu pronađena lica. Odabir ostaje nepromijenjen.",
     "notLookedAt": "Fotografije na kojima nije bilo moguće tražiti lica i koje više nisu odabrane: {{count}}.",
     "failed": "Na odabranim fotografijama nije bilo moguće tražiti lica. Odabir ostaje nepromijenjen."

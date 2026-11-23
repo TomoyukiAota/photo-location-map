@@ -198,8 +198,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Notiek seju meklēšana atlasītajos fotoattēlos...",
-    "progress": "Pārbaudīti fotoattēli: {{done}} no {{total}}.",
+    "looking": "Notiek seju noteikšana...",
+    "progress": "Apstrādāti fotoattēli: {{done}} no {{total}}",
     "noFacesFound": "Atlasītajos fotoattēlos sejas netika atrastas. Atlase paliek nemainīga.",
     "notLookedAt": "Fotoattēli, kuros nevarēja meklēt sejas un kuri vairs nav atlasīti: {{count}}.",
     "failed": "Atlasītajos fotoattēlos nevarēja meklēt sejas. Atlase paliek nemainīga."

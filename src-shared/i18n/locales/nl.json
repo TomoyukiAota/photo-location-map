@@ -198,8 +198,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Gezichten zoeken in de geselecteerde foto’s...",
-    "progress": "Doorzochte foto’s: {{done}} van {{total}}.",
+    "looking": "Gezichten detecteren...",
+    "progress": "Verwerkte foto’s: {{done}} van {{total}}",
     "noFacesFound": "Er zijn geen gezichten gevonden in de geselecteerde foto’s. De selectie blijft zoals ze is.",
     "notLookedAt": "Foto’s die niet op gezichten konden worden doorzocht en niet meer geselecteerd zijn: {{count}}.",
     "failed": "In de geselecteerde foto’s kon niet naar gezichten worden gezocht. De selectie blijft zoals ze is."

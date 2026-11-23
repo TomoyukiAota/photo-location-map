@@ -198,8 +198,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Valitud fotodelt otsitakse nägusid...",
-    "progress": "Läbivaadatud fotosid: {{done}} / {{total}}.",
+    "looking": "Tuvastatakse nägusid...",
+    "progress": "Töödeldud fotosid: {{done}} / {{total}}",
     "noFacesFound": "Valitud fotodelt nägusid ei leitud. Valik jääb samaks.",
     "notLookedAt": "Fotosid, millelt ei saanud nägusid otsida ja mis pole enam valitud: {{count}}.",
     "failed": "Valitud fotodelt ei saanud nägusid otsida. Valik jääb samaks."

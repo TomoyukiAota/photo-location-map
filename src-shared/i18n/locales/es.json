@@ -198,8 +198,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Buscando caras en las fotos seleccionadas...",
-    "progress": "Fotos revisadas: {{done}} de {{total}}.",
+    "looking": "Detectando caras...",
+    "progress": "Fotos procesadas: {{done}} de {{total}}",
     "noFacesFound": "No se encontraron caras en las fotos seleccionadas. La selección se mantiene como está.",
     "notLookedAt": "Fotos en las que no se pudieron buscar caras y que ya no están seleccionadas: {{count}}.",
     "failed": "No se pudieron buscar caras en las fotos seleccionadas. La selección se mantiene como está."

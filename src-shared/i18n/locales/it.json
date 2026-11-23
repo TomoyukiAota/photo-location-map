@@ -198,8 +198,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Ricerca di volti nelle foto selezionate...",
-    "progress": "Foto esaminate: {{done}} di {{total}}.",
+    "looking": "Rilevamento dei volti...",
+    "progress": "Foto elaborate: {{done}} di {{total}}",
     "noFacesFound": "Nelle foto selezionate non sono stati trovati volti. La selezione resta invariata.",
     "notLookedAt": "Foto in cui non è stato possibile cercare volti e che non sono più selezionate: {{count}}.",
     "failed": "Non è stato possibile cercare volti nelle foto selezionate. La selezione resta invariata."
