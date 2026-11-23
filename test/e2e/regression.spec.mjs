@@ -1734,12 +1734,15 @@ test('the map shows Esri World Imagery Wayback at the dates of the photos on it,
   await dragGutterBelowMap(mapHeight - 400);
   await expect.poll(async () => (await mapPane.boundingBox()).height).toBeCloseTo(mapHeight, -1);
 
-  // Matching again: the imagery taken nearest to the photos' dates, in place of the one chosen.
+  // Matching again: the imagery taken nearest to the photos' dates, in place of the one chosen. The map showed the
+  // tiles of that release here before, which the page may take from the images that it has without asking the server
+  // again, as it did on CI: the tiles shown are checked, rather than those asked for.
   await view(16);
   await expect(control.locator('select')).toHaveValue('52930');
   await control.getByRole('checkbox').check();
   await expect(control.locator('select')).toHaveValue('49059');
-  await expect.poll(() => tileReleases.at(-1)).toBe(49059);
+  await expect.poll(() => page.locator('.leaflet-tile-pane img.leaflet-tile').evaluateAll(tiles =>
+    tiles.length > 0 && tiles.every(tile => tile.src.includes('/tile/49059/')))).toBe(true);
 
   // Another layer has no date.
   await chooseMapLayer('OpenStreetMap');
