@@ -1797,6 +1797,56 @@ test('the map shows Esri World Imagery Wayback at the dates of the photos on it,
   await chooseMapLayer('OpenStreetMap');
   await expect(control).toHaveCount(0);
 });
+test('the dates of Wayback\'s imagery at a place looked at before are shown after the page is loaded again, without asking Wayback', async () => {
+  // A photo at the ring of EXPO 2025, and the answers of the servers as they were for the ring
+  // (test/test-util/dated-layer-answers.mjs), whose list of releases, tilemaps and metadata are counted.
+  const folder = path.join(profile, 'EXPO 2025');
+  await mkdir(folder);
+  const source = await readFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'));
+  await writeFile(path.join(folder, 'ring.JPG'), jpegWithLocationAndDate(source, 34.6497, 135.3842, '2025:08:10 11:00:00'));
+  await answerDatedLayers(page);
+  const asked = [];
+  page.on('request', request => {
+    const { hostname, pathname } = new URL(request.url());
+    if (hostname === 's3-us-west-2.amazonaws.com' || pathname.includes('/MapServer/tilemap/') || pathname.endsWith('/query'))
+      asked.push(pathname);
+  });
+  await page.addInitScript(() => {
+    let leaflet;
+    Object.defineProperty(window, 'L', {
+      configurable: true, enumerable: true,
+      get: () => leaflet,
+      set: lib => {
+        leaflet = lib;
+        lib?.Map?.addInitHook(function () {
+          if (this.getContainer().id === 'plm-leaflet-map') window.__plmLeafletMap = this;
+        });
+      }
+    });
+  });
+  await app.evaluate(({ dialog }, folder) => {
+    dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [folder] });
+  }, folder);
+  const options = page.locator('.plm-leaflet-map-date select option');
+  /** Loads the page again, as a restart does, and shows Wayback's dates at the ring at zoom 16. */
+  async function lookAtTheRing() {
+    await page.reload();
+    await page.waitForFunction(() => !!window.__plmLeafletMap?.pm);
+    await dismissWelcome();
+    await page.getByRole('button', { name: 'Open Folder', exact: true }).click();
+    await expectRepresentedPhotos(1);
+    await chooseMapLayer('Esri World Imagery Wayback');
+    await page.evaluate(() => window.__plmLeafletMap.setView([34.6493, 135.3850], 16, { animate: false }));
+    await expect(options).toHaveText(['2025-11-27 (near the photos’ dates)', '2025-04-21 (near the photos’ dates)', '2023-09-10']);
+  }
+
+  await lookAtTheRing();
+  expect(asked.length).toBeGreaterThan(0);
+  // The list of the releases, and the versions at the places looked at, are kept on the computer (WaybackDateCache).
+  asked.length = 0;
+  await lookAtTheRing();
+  expect(asked).toEqual([]);
+});
 test('a layer of a past date that the list of base layers hides is neither offered nor shown, though the user chose it, until the list no longer hides it', async () => {
   // The list that the page downloads, from either of its addresses, as photo-location-map-resources could have it:
   // first with Wayback hidden, then without the field. The user chose Wayback before, and Wayback's servers answer
