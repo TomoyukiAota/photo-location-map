@@ -6,8 +6,10 @@ merging a change related to Intel Mac support.
 
 ## Check names
 
-Ubuntu CI uses Ubuntu 26.04 LTS and reports `test (ubuntu)`. The regular macOS
-check is `test (macos-arm64)`; the manual Intel check is `test (macos-x64)`.
+Ubuntu CI uses Ubuntu 26.04 LTS and reports `test (ubuntu)`, and
+`e2e against the development build (ubuntu)` from a job of its own that runs
+beside it. The regular macOS check is `test (macos-arm64)`; the manual Intel
+check is `test (macos-x64)`.
 These check names stay stable when runner versions change. Branch protection
 requires the regular ones, and Mergify takes them from it (see "Merging" below),
 so they are listed there only. When renaming a required check, first change the
