@@ -1375,8 +1375,8 @@ test('on a computer whose language is Arabic, the application is laid out from r
   await expect(moreOptionsItems).toHaveText(menuInArabic);
   await page.keyboard.press('Escape');
   await expect(moreOptionsMenus).toHaveCount(0);
-  // The date of the layer of a past date is laid out from right to left on the map, which stays from left to right:
-  // the button to older imagery is at its right (src/app/map/leaflet-map/dated-layers/).
+  // The date of a layer of a past date is laid out from right to left on the map, which stays from left to right:
+  // the button to an earlier date is at its right (src/app/map/leaflet-map/dated-layers/).
   await answerDatedLayers(page);
   await chooseMapLayer('Esri World Imagery Wayback');
   const dateControl = page.locator('.plm-leaflet-map-date');
