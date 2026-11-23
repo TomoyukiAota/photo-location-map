@@ -1,6 +1,6 @@
 name: CI on Ubuntu
 
-# Probe, not to be merged: "changes" is held back, 7 minutes on push and 1 minute when ci-on-fork-pull-request.yml
+# Probe, not to be merged: "changes" is held back, 10 minutes on push and not at all when ci-on-fork-pull-request.yml
 # calls this workflow, so that the push run's test (ubuntu) has no check run yet while the called one has passed.
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
     outputs:
       app: 'true'
     steps:
-    - run: sleep ${{ github.event_name == 'push' && 420 || 60 }}
+    - run: sleep ${{ github.event_name == 'push' && 600 || 1 }}
 
   test:
     name: test (ubuntu)
