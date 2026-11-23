@@ -126,11 +126,8 @@
     "removeRegion": "Eliminar a rexión",
     "dates": {
       "imageryDate": "Data das imaxes no centro do mapa",
-      "mapDate": "Data do mapa",
       "olderImagery": "Imaxes máis antigas",
       "newerImagery": "Imaxes máis recentes",
-      "yearEarlier": "Un ano antes",
-      "yearLater": "Un ano despois",
       "matchPhotoDates": "Axustar ás datas das fotos",
       "nearPhotoDates": "{{date}} (preto das datas das fotos)",
       "versionOf": "Versión do {{date}}",
@@ -139,8 +136,7 @@
       "noPhotoDates": "Ningunha foto do mapa ten data de captura.",
       "loading": "Cargando as datas...",
       "failed": "Non se puideron cargar as datas.",
-      "zoomIn": "Amplía o mapa para ver cando se tomaron as imaxes.",
-      "mapFailed": "Este mapa non se pode mostrar."
+      "zoomIn": "Amplía o mapa para ver cando se tomaron as imaxes."
     }
   },
   "chart": {
