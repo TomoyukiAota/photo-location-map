@@ -207,8 +207,7 @@
       "appearance": "Megjelenés",
       "dateTime": "Dátum és idő",
       "thumbnails": "Bélyegképek",
-      "os": "Operációs rendszer",
-      "cache": "Gyorsítótár"
+      "os": "Operációs rendszer"
     },
     "restartAfterSaving": "Az alkalmazás a beállítások mentése után újraindul.",
     "confirmRestart": "Az alkalmazás a beállítások mentése után újraindul.\nFolytatja?",

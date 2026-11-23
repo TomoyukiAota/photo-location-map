@@ -1,4 +1,5 @@
 @use "../../styles/color" as *;
+@use "../../styles/scrollbar" as *;
 
 :host {
   height: 100%;
@@ -36,8 +37,19 @@
   }
 }
 
+// TL;DR: A tab that is higher than the room between the header and the footer scrolls there, with a scrollbar in view,
+// while the header and the footer stay.
+// Details: The dialog is 600 pixels high (SettingsDialogService), which leaves a tab about 455. The Thumbnails tab,
+// with the cache under the quality, needed 519 to 588 pixels in the nine languages measured on macOS, 539 in English
+// and 588 in Japanese. Without a height of its own, the row of the grid grew with the tab, and the dialog scrolled as
+// a whole, with Save and Cancel below its bottom. The padding, rather than a margin, puts the scrollbar at the
+// dialog's edge. In Japanese, the room ended between two paragraphs of the cache, with its location and its Delete
+// button below, which macOS's hidden scrollbar did not tell of.
 .settings-content {
-  margin: 20px;
+  min-height: 0;
+  padding: 20px;
+  overflow-y: auto;
+  @include scrollbar-in-view;
 }
 
 .settings-dialog-footer {

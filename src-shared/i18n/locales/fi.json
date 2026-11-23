@@ -207,8 +207,7 @@
       "appearance": "Ulkoasu",
       "dateTime": "Päivämäärä ja aika",
       "thumbnails": "Pikkukuvat",
-      "os": "Käyttöjärjestelmä",
-      "cache": "Välimuisti"
+      "os": "Käyttöjärjestelmä"
     },
     "restartAfterSaving": "Tämä sovellus käynnistyy uudelleen, kun asetukset on tallennettu.",
     "confirmRestart": "Tämä sovellus käynnistyy uudelleen, kun asetukset on tallennettu.\nHaluatko jatkaa?",

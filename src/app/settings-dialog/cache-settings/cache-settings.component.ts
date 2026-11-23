@@ -9,6 +9,10 @@ import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 import { configureOpeningInOsBrowser } from '../../shared/open-url/configure-opening-in-os-browser';
 import { MatButton } from '@angular/material/button';
 
+/**
+ * The cache of the thumbnails that are made, on the Thumbnails tab under their quality (ThumbnailSettingsComponent):
+ * which files it is for, where it is, and deleting it, which restarts the app.
+ */
 @Component({
   selector: 'app-cache-settings',
   templateUrl: './cache-settings.component.html',
