@@ -255,8 +255,9 @@ export class MoreOptionsMenuComponent {
   protected placeAgainOnceShown(trigger: MatMenuTrigger): void {
     afterNextRender(() => {
       const menuPanel = this.document.getElementById(this.menu().panelId);
-      // The growth of a menu that closes before it has grown ends without finishing, which rejects.
-      Promise.all((menuPanel?.getAnimations() ?? []).map(animation => animation.finished))
+      // The growth of a menu that closes before it has grown ends without finishing, which rejects. jsdom, where the unit
+      // tests run, has no getAnimations(), as Angular finds before it uses it.
+      Promise.all((menuPanel?.getAnimations?.() ?? []).map(animation => animation.finished))
         .catch(() => undefined)
         .then(() => {
           if (trigger.menuOpen)
