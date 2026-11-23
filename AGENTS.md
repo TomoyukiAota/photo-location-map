@@ -349,6 +349,25 @@ installer failure is still surfaced. Record the investigation — the evidence, 
 hypotheses ruled out, why other fixes were rejected — in a comment next to the
 workaround rather than in an issue, using a `TL;DR:` / `Details:` structure.
 
+## Run the unit tests and the lints before you push
+
+Before each push that changes more than documents (see "CI skips pushes that
+change only documents"), a merge of `main` included, run these locally. They
+take a minute or two together, far less than a cycle of CI:
+
+- `npm run test:unit:all`, which runs `test:unit:ng`, `test:unit:em:main` and
+  `test:unit:em:renderer`. Each of the three runs tests that the others do not.
+- The lints of what you changed: `npm run lint:ng` for `src/`,
+  `npm run lint:main` for `src-main/` and `src-shared/`, and
+  `npm run lint:script` for `script/`.
+
+Fix what fails before you push. In a git worktree, run them through mise (see
+"In a git worktree").
+
+**Why:** after `main` was merged into a pull request, a test that only
+`test:unit:em:renderer` runs failed in every CI job that reached it, in November
+2026: a cycle of CI to learn what a minute of local tests would have shown.
+
 ## Wait for your pull request until it is merged
 
 Mergify merges a pull request of the owner that has the label `automerge`, and
@@ -420,10 +439,31 @@ whenever one can be expected to pass. Examples:
 - Any other failure whose log points at the runner rather than the code, when
   the other trigger passed on the same commit.
 
-Tell the owner what was rerun and why. Stop and report anything that may be a
-real defect: a failure both triggers share, unless it is one of the runner's
-above, or one in the app's own tests or behavior. If the same environmental cause keeps coming back, propose a narrow
-workaround (see above) instead of rerunning indefinitely.
+**Also rerun without asking a known intermittent failure whose fix is under
+way.** It is known when its symptom (its error, and the step or case where it
+shows) is recorded in an open pull request or issue of this repository, or in
+the notes that you share with the other sessions working on this repository,
+and someone is working on its fix. Rerun it only when all of these hold:
+
+- The log shows that symptom: the same error at the same step or case. Another
+  failure of the same case is not a match.
+- The commit that failed does not contain the fix. If it does, the fix did not
+  work: stop and report.
+- The job has not been rerun for this failure yet. If the rerun fails too, stop
+  and report.
+
+This covers no other failure of the app's own tests or behavior.
+
+**Why:** a known intermittent failure costs a cycle of CI each time that it
+fails a run, and then the wait for a decision to rerun that its record has
+already made. On 2026-11-23, the e2e suite's launch whose page got a 404 for one
+of its files failed seven runs before #798 fixed it.
+
+Tell the owner what was rerun and why, and for a known failure, which record it
+matched. Stop and report anything else that may be a real defect: a failure both
+triggers share, unless it is one of the above, or one in the app's own tests or
+behavior that is not known. If the same environmental cause keeps coming back,
+propose a narrow workaround (see above) instead of rerunning indefinitely.
 
 **Handle each failed check as soon as it fails.** Do not wait for all checks to
 finish: the slowest job takes about 10 minutes (15–28 for `macos-26-intel` when
