@@ -85,6 +85,24 @@ describe('MapDateService', () => {
       expect(requests[1].aborted).toBe(false);
     });
 
+    it('stops the rest of a lookup once one of its requests fails, as the walk of another stretch', async () => {
+      const twoReleases = { ...config, '43291': { itemTitle: 'World Imagery (Wayback 2026-10-29)', metadataLayerUrl: metadata } };
+      fetch.mockImplementation((url: string, init: RequestInit) => {
+        if (url === waybackUrls.releases)
+          return Promise.resolve(new Response(JSON.stringify(twoReleases)));
+        // The tilemap of the newest release fails, as a busy server answers, while that of the other one waits.
+        if (url.includes('/tilemap/3692/'))
+          return Promise.resolve(new Response('Busy', { status: 503, statusText: 'Service Unavailable' }));
+        requests.push(init.signal);
+        return new Promise((_, reject) => init.signal.addEventListener('abort', () => reject(init.signal.reason)));
+      });
+
+      await expect(service.waybackVersionsAt(34.6495, 135.3840, 17)).rejects.toThrow(/503/);
+
+      expect(requests).toHaveLength(1);
+      expect(requests[0].aborted).toBe(true);
+    });
+
     it('stops a lookup that takes longer than its time, which then fails', async () => {
       vi.useFakeTimers();
       try {

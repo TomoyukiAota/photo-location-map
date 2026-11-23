@@ -62,7 +62,8 @@ export class MapDateService {
    * - The caller aborts `signal` when it no longer waits. A lookup that no caller waits for is stopped, as its requests
    *   would hold up those of the place that the map shows now: Chromium asks Esri's servers, of HTTP/1.1, 6 requests at
    *   a time, and a lookup asks for up to 40 dates (wayback.ts). The place is looked up again when it is asked again.
-   * - A lookup that has not ended in `waybackTimeoutMs` is stopped too, and fails.
+   * - A lookup that has not ended in `waybackTimeoutMs` is stopped too, and fails. So is the rest of a lookup one of
+   *   whose requests fails.
    */
   public waybackVersionsAt(latitude: number, longitude: number, zoom: number, signal?: AbortSignal): Promise<WaybackVersion[]> {
     const spot = tileAt(latitude, longitude, zoom + 2);
@@ -77,6 +78,9 @@ export class MapDateService {
         versions: this.waybackReleases()
           .then(releases => versionsAt(releases, spotLatitude, spotLongitude, zoom, url => fetch(url, { signal: stop.signal })))
           .catch(error => {
+            // The other requests stop too, as the walks of the other stretches, which would go on asking servers that
+            // fail, as with a 503.
+            stop.abort(error);
             this.forget(key, created);
             throw error;
           })
