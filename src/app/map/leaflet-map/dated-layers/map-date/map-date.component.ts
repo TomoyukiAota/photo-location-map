@@ -85,7 +85,7 @@ export function withDates(key: TranslationKey, dates: Readonly<Record<string, st
  * The date of a layer of a past date, on the map: when its imagery was taken, in a list, or the date that its map
  * shows, in a field that opens a calendar (map-date-picker.component.ts), with the buttons to an earlier and a later
  * one, and the choice of matching the dates of the photos on the map. The map makes this component for its control at
- * the top right (../dated-layers.ts, ../../leaflet-content.service.ts).
+ * the top, beside the layers button (../dated-layers.ts, ../../leaflet-content.service.ts).
  */
 @Component({
   selector: 'app-leaflet-map-date',

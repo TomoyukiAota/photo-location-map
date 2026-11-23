@@ -1,11 +1,27 @@
-// The box of the date of a layer of a past date, Leaflet's control at the top right. What is in the box is
-// MapDateComponent's (src/app/map/leaflet-map/dated-layers/map-date/).
+// TL;DR: The corner of the box of the date, at the top of the map, to the left of the layers button, and below the
+// other corners (src/app/map/leaflet-map/dated-layers/dated-layers.ts, corner()).
+// Details: The layers button is 44px wide, with a border of 2px on each side, 10px from the map's right edge: Leaflet's
+// styles of .leaflet-touch, which a map has wherever the browser has pointer events, as Chromium has. The box keeps
+// its own margin of 10px from it. The corner reaches the map's left edge, so that the box, which floats to its right,
+// is never wider than the map. The other corners are at z-index 1000, and the top right one at 1001
+// (_plm-leaflet-map.scss).
+.leaflet-top.leaflet-right.plm-leaflet-map-date-corner {
+  left: 0;
+  right: 10px + 2px + 44px + 2px;
+  z-index: 999;
+}
+
+// The box of the date of a layer of a past date, Leaflet's control. What is in the box is MapDateComponent's
+// (src/app/map/leaflet-map/dated-layers/map-date/).
 // As wide as its title and its row of date need, which a long date in the list widens rather than being cut: the
-// sentences below them wrap to that width (MapDateComponent's styles).
+// sentences below them wrap to that width (MapDateComponent's styles). In a map too narrow for that, as wide as the
+// map leaves, where the texts take more lines.
 .plm-leaflet-map-date {
   box-sizing: border-box;
-  // Room for the sentences on two lines in English, when the date is short.
-  min-width: 240px;
+  // Room for the sentences on two lines in English, when the date is short, within what the corner leaves: the box
+  // keeps its margin of 10px at its right, and as much from the map's left edge.
+  min-width: min(240px, 100% - 20px);
+  max-width: calc(100% - 20px);
   padding: 6px 10px;
   background: #ffffff;
 }
