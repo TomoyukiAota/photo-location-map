@@ -264,8 +264,8 @@
       "confirmInExplorer": "Öppna Utforskaren och högerklicka på en fil eller mapp för att kontrollera."
     },
     "cache": {
-      "title": "Cache för HEIF-miniatyrer",
-      "requiredForHeif": "För <heifLink>HEIF-filer</heifLink> måste miniatyrer skapas, vilket tar tid.",
+      "title": "Cache för miniatyrer",
+      "generationRequired": "För JPEG/PNG-filer utan miniatyr i EXIF-informationen och för <heifLink>HEIF-filer</heifLink> som den här datorns grafikmaskinvara inte kan avkoda måste miniatyrer skapas, vilket tar tid.",
       "thereforeCached": "Därför sparas de skapade miniatyrerna i en cache.",
       "usedNextTime": "Från och med nästa gång används cachen, så att miniatyrerna inte behöver skapas igen.",
       "location": "Cachens plats:",

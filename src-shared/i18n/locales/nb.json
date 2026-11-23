@@ -264,8 +264,8 @@
       "confirmInExplorer": "Åpne Filutforsker og høyreklikk på en fil eller mappe for å kontrollere."
     },
     "cache": {
-      "title": "Buffer for HEIF-miniatyrbilder",
-      "requiredForHeif": "For <heifLink>HEIF-filer</heifLink> må det lages miniatyrbilder, og det tar tid.",
+      "title": "Buffer for miniatyrbilder",
+      "generationRequired": "For JPEG/PNG-filer uten miniatyrbilde i EXIF-informasjonen og for <heifLink>HEIF-filer</heifLink> som denne datamaskinen ikke kan dekode med grafikkmaskinvaren, må det lages miniatyrbilder, og det tar tid.",
       "thereforeCached": "Derfor lagres de genererte miniatyrbildene i en buffer.",
       "usedNextTime": "Fra neste gang brukes bufferen, slik at miniatyrbildene ikke må lages på nytt.",
       "location": "Bufferens plassering:",

@@ -264,8 +264,8 @@
       "confirmInExplorer": "Otvorite Istraživač datoteka i kliknite desnim tasterom miša na datoteku ili fasciklu da biste proverili."
     },
     "cache": {
-      "title": "Keš sličica HEIF",
-      "requiredForHeif": "Za <heifLink>datoteke HEIF</heifLink> potrebno je napraviti sličice, što traje neko vreme.",
+      "title": "Keš sličica",
+      "generationRequired": "Za datoteke JPEG/PNG bez sličice u podacima EXIF i za <heifLink>datoteke HEIF</heifLink> koje grafički hardver ovog računara ne može da dekodira potrebno je napraviti sličice, što traje neko vreme.",
       "thereforeCached": "Zato se napravljene sličice čuvaju u kešu.",
       "usedNextTime": "Od sledećeg puta koristiće se keš, pa se sličice neće praviti ponovo.",
       "location": "Lokacija keša:",

@@ -264,8 +264,8 @@
       "confirmInExplorer": "Deschideți Explorer și faceți clic dreapta pe un fișier sau pe un dosar pentru a verifica."
     },
     "cache": {
-      "title": "Cache pentru miniaturile HEIF",
-      "requiredForHeif": "Pentru <heifLink>fișierele HEIF</heifLink> trebuie create miniaturi, ceea ce durează.",
+      "title": "Cache pentru miniaturi",
+      "generationRequired": "Pentru fișierele JPEG/PNG fără miniatură în datele EXIF și pentru <heifLink>fișierele HEIF</heifLink> pe care hardware-ul grafic al acestui computer nu le poate decoda trebuie create miniaturi, ceea ce durează.",
       "thereforeCached": "De aceea, miniaturile create sunt păstrate în cache.",
       "usedNextTime": "Începând de data viitoare se va folosi cache-ul, astfel încât miniaturile să nu mai fie create din nou.",
       "location": "Locația cache-ului:",

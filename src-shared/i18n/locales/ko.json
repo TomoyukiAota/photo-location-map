@@ -264,8 +264,8 @@
       "confirmInExplorer": "확인하려면 파일 탐색기를 열고 파일이나 폴더를 마우스 오른쪽 버튼으로 클릭하세요."
     },
     "cache": {
-      "title": "HEIF 썸네일 캐시",
-      "requiredForHeif": "<heifLink>HEIF 파일</heifLink>은 썸네일을 생성해야 하며, 생성에는 시간이 걸립니다.",
+      "title": "썸네일 캐시",
+      "generationRequired": "EXIF에 썸네일이 없는 JPEG/PNG 파일과 이 컴퓨터가 그래픽 하드웨어로 디코딩할 수 없는 <heifLink>HEIF 파일</heifLink>은 썸네일을 생성해야 하며, 생성에는 시간이 걸립니다.",
       "thereforeCached": "따라서 생성한 썸네일을 캐시에 저장합니다.",
       "usedNextTime": "다음부터는 캐시를 사용하므로 썸네일을 다시 생성하지 않습니다.",
       "location": "캐시 위치:",

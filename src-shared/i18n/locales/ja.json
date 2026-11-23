@@ -264,8 +264,8 @@
       "confirmInExplorer": "エクスプローラーを開き、ファイルまたはフォルダーを右クリックして確認してください。"
     },
     "cache": {
-      "title": "HEIF サムネイルのキャッシュ",
-      "requiredForHeif": "<heifLink>HEIF ファイル</heifLink>にはサムネイルの生成が必要ですが、生成には時間がかかります。",
+      "title": "サムネイルのキャッシュ",
+      "generationRequired": "EXIF にサムネイルの無い JPEG/PNG ファイルと、このコンピューターがグラフィックスのハードウェアでデコードできない<heifLink>HEIF ファイル</heifLink>にはサムネイルの生成が必要ですが、生成には時間がかかります。",
       "thereforeCached": "そのため、生成したサムネイルをキャッシュしています。",
       "usedNextTime": "次回からはキャッシュを使用して、サムネイルの生成を省略します。",
       "location": "キャッシュの場所:",
