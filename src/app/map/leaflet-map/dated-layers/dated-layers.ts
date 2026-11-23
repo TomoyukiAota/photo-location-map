@@ -65,6 +65,8 @@ export class DatedLayers {
   private photoDates: PhotoDates | null = null;
   /** Counts the refreshes, so that one that a newer one has overtaken does nothing when its answers come. */
   private refreshCount = 0;
+  /** Tells MapDateService that the last refresh no longer waits for Wayback's versions at the map's center. */
+  private lookup: AbortController | null = null;
   private destroyed = false;
   private lastRecorded = '';
 
@@ -93,6 +95,7 @@ export class DatedLayers {
     this.active = layer === this.wayback;
     this.versions = [];
     if (!this.active) {
+      this.stopLookup();
       this.hideControl();
       return;
     }
@@ -109,6 +112,7 @@ export class DatedLayers {
   public destroy(): void {
     this.destroyed = true;
     this.refreshAfterMove.cancel();
+    this.stopLookup();
   }
 
   private readonly refreshAfterMove = debounce(() => this.refresh(), 400);
@@ -121,12 +125,16 @@ export class DatedLayers {
     const zoom = Math.round(this.map.getZoom());
     this.status = 'loading';
     this.render();
+    const lookup = new AbortController();
     try {
       const center = this.map.getCenter();
-      const [releases, versions] = await Promise.all([
-        this.service.waybackReleases(),
-        zoom < minZoomOfImageryDates ? Promise.resolve(null) : this.service.waybackVersionsAt(center.lat, center.lng, zoom),
-      ]);
+      const versionsAtCenter = zoom < minZoomOfImageryDates ? Promise.resolve(null)
+        : this.service.waybackVersionsAt(center.lat, center.lng, zoom, lookup.signal);
+      // The last refresh's wait ends once this one waits: the place shown before may be this one, whose versions then go
+      // on loading.
+      this.stopLookup();
+      this.lookup = lookup;
+      const [releases, versions] = await Promise.all([this.service.waybackReleases(), versionsAtCenter]);
       if (count !== this.refreshCount || this.destroyed)
         return;
       this.releases = releases;
@@ -146,13 +154,20 @@ export class DatedLayers {
       this.record(`Layer: "${waybackLayerName}", Release: ${release.date} (${release.number}), Captured: ${shown?.captureDate}, `
         + `Matched to Photos: ${!!matched}`);
     } catch (error) {
-      if (count !== this.refreshCount || this.destroyed)
+      // Overtaken, or stopped, as when the map shows another layer.
+      if (count !== this.refreshCount || this.destroyed || lookup.signal.aborted)
         return;
       this.status = 'failed';
       logger.errorNotRecorded(`Failed to load the dates of ${waybackLayerName}`, error);
       Analytics.trackEvent('Leaflet Map', '[Leaflet Map] Failed to Load Map Dates', `Layer: "${waybackLayerName}", Error: ${error?.message ?? error}`);
     }
     this.render();
+  }
+
+  /** Tells MapDateService that the last refresh no longer waits for Wayback's versions, which it stops if none does. */
+  private stopLookup(): void {
+    this.lookup?.abort();
+    this.lookup = null;
   }
 
   /** The dates of the photos on the map that are in its view, or of all those on the map when none is. */
