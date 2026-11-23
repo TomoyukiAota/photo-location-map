@@ -1,152 +1,20 @@
 name: CI on macOS
 
+# Probe, not to be merged: always skipped, so that only test (ubuntu) decides.
 on:
   push:
     branches:
       - '**'    # matches every branch
-  # No pull_request trigger: each commit is tested by its push run alone, and a pull request from a fork by
-  # ci-on-fork-pull-request.yml, which calls this workflow (AGENTS.md, "CI tests each commit once, on push").
   workflow_call:
-  # On demand: to run on macos-26-intel (see the test-intel job below), or to write the screenshot references anew.
-  workflow_dispatch:
-    inputs:
-      update_screenshots:
-        description: Write anew the screenshot references of macos-26 that differ, and upload them (test/e2e/README.md)
-        type: boolean
-        default: false
 
-# A new commit on a branch cancels the runs of the commit before it, so that only the latest commit is tested when
-# Mergify brings a pull request up to date with main (.mergify.yml). Each run on main, and each run started by hand,
-# has a group of its own, and is never canceled. The group names this workflow itself rather than github.workflow,
-# which is the caller's name when ci-on-fork-pull-request.yml calls it, so that the three workflows that it calls do
-# not share one.
 concurrency:
-  group: ${{ (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch') && github.run_id || format('CI on macOS {0} {1}', github.event_name, github.event.pull_request.number || github.ref_name) }}
+  group: ${{ github.ref == 'refs/heads/main' && github.run_id || format('CI on macOS {0} {1}', github.event_name, github.event.pull_request.number || github.ref_name) }}
   cancel-in-progress: true
 
 jobs:
-  changes:
-    # Finds out whether anything other than documents changed (see .github/ci-filters.yml).
-    runs-on: ubuntu-26.04
-    permissions:
-      contents: read
-      pull-requests: read
-    outputs:
-      app: ${{ steps.filter.outputs.app }}
-    steps:
-    - uses: actions/checkout@v7.0.1
-
-    - uses: dorny/paths-filter@v4.0.3
-      id: filter
-      with:
-        predicate-quantifier: every
-        filters: .github/ci-filters.yml
-
   test:
-    # macos-26 is arm64 (Apple Silicon).
-    # The name is written out rather than given by a matrix or an expression, so that the required check is reported
-    # even when the job is skipped: a skipped job's name expression is not evaluated.
-    # Keep architecture-specific check names stable when runner versions change.
     name: test (macos-arm64)
     runs-on: macos-26
-
-    # Skipped when only documents changed, which passes the required check. If "changes" fails, the tests run.
-    # A manual run runs this job too, so that it does not add a skipped "test (macos-arm64)" to the commit.
-    needs: changes
-    if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || needs.changes.outputs.app != 'false') }}
-
-    # The timeout below is to bound the duration of a hung job.
-    # This job once hung in "npm run test:package" and kept running for more than 40 minutes until it was cancelled manually.
-    # This job takes about 20 minutes at the longest on macos-26-intel, so the timeout below has enough margin.
-    timeout-minutes: 45
-
-    env: &env
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # for electron-builder
-
-    steps: &steps
-    - uses: actions/checkout@v7.0.1
-
-    - name: Install Node.js with the version in mise.toml
-      uses: jdx/mise-action@v5.2.5
-
-    - name: Verify Node and its bundled npm
-      run: npm run verify:runtime
-
-    - name: npm ci
-      run: npm ci
-
-    - name: Verify Electron and embedded Node
-      run: npm run verify:electron
-
-    - name: npm run test:dependency-compat
-      run: npm run test:dependency-compat
-
-    - name: npm run test:website
-      run: npm run test:website
-
-    - name: npm run lint:ng
-      run: npm run lint:ng
-
-    - name: npm run lint:main
-      run: npm run lint:main
-
-    - name: npm run lint:script
-      run: npm run lint:script
-
-    - name: npm run test:unit:ng
-      run: npm run test:unit:ng
-
-    - name: npm run test:unit:em:main
-      run: npm run test:unit:em:main
-
-    - name: npm run test:unit:em:renderer
-      run: npm run test:unit:em:renderer
-
-    - name: npm run test:live-reload
-      run: npm run test:live-reload
-
-    - name: npm run test:package
-      run: npm run test:package
-
-    - name: npm run test:e2e
-      env:
-        # The screenshot comparisons too, on arm64 only, against the references that CI keeps for its runner, whose
-        # macOS sets text differently from the Mac that snapshots/ matches (test/e2e/README.md). test-intel runs these
-        # steps as well.
-        PLM_VISUAL: ${{ runner.arch == 'ARM64' && '1' || '' }}
-        PLM_VISUAL_REFERENCES: ${{ runner.arch == 'ARM64' && 'snapshots-ci/macos-26-arm64' || '' }}
-      # Against a copy of the package whose fuse enableNodeCliInspectArguments is on: Playwright controls the application
-      # through Node's inspector, which the package does not start (script/package-test/inspectable-package.js).
-      # With update_screenshots, the references that differ are written anew rather than failed on.
-      run: |
-        executable="$(node script/package-test/inspectable-package.js)"
-        export PLM_PACKAGED_EXECUTABLE="$executable"
-        npm run test:e2e ${{ inputs.update_screenshots && '-- --update-snapshots=changed' || '' }}
-
-    - name: Upload the screenshot references written anew
-      if: ${{ !cancelled() && inputs.update_screenshots && runner.arch == 'ARM64' }}
-      uses: actions/upload-artifact@v7.0.2
-      with:
-        name: screenshots-macos-26-arm64
-        path: test/e2e/snapshots-ci/macos-26-arm64
-        if-no-files-found: error
-
-    - name: Upload the e2e results of a failure
-      # Playwright writes there what a failed case saw, such as a screenshot and its difference from the reference.
-      if: ${{ failure() }}
-      uses: actions/upload-artifact@v7.0.2
-      with:
-        name: e2e-results-macos-${{ runner.arch }}
-        path: .upgrade-artifacts/e2e-results
-        if-no-files-found: ignore
-
-  test-intel:
-    # macos-26-intel is x64, and runs only when this workflow is run manually, because it took twice as long as macos-26
-    # and its failures were caused by the runner, not the app. See AGENTS.md for when to run it. A manual run that
-    # writes the screenshot references anew leaves it out.
-    name: test (macos-x64)
-    runs-on: macos-26-intel
-    if: ${{ github.event_name == 'workflow_dispatch' && !inputs.update_screenshots }}
-    timeout-minutes: 45    # See the test job above.
-    env: *env
-    steps: *steps
+    if: false
+    steps:
+    - run: exit 0

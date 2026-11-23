@@ -16,7 +16,7 @@ on:
 jobs:
   ubuntu:
     name: CI on Ubuntu
-    if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
+    if: true    # Probe, not to be merged: called for this pull request from a branch of this repository.
     uses: ./.github/workflows/ci-on-ubuntu.yml
 
   macos:
