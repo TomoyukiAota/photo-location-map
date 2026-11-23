@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Wyszukiwanie twarzy na zaznaczonych zdjęciach...",
-    "progress": "Przejrzane zdjęcia: {{done}} z {{total}}.",
+    "looking": "Wykrywanie twarzy...",
+    "progress": "Przetworzone zdjęcia: {{done}} z {{total}}",
     "noFacesFound": "Na zaznaczonych zdjęciach nie znaleziono twarzy. Zaznaczenie pozostaje bez zmian.",
     "notLookedAt": "Zdjęcia, na których nie udało się wyszukać twarzy i które nie są już zaznaczone: {{count}}.",
     "failed": "Nie udało się wyszukać twarzy na zaznaczonych zdjęciach. Zaznaczenie pozostaje bez zmian."

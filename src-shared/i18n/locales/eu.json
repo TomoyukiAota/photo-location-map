@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Aurpegiak bilatzen hautatutako argazkietan...",
-    "progress": "Aztertutako argazkiak: {{done}} / {{total}}.",
+    "looking": "Aurpegiak detektatzen...",
+    "progress": "Prozesatutako argazkiak: {{done}} / {{total}}",
     "noFacesFound": "Ez da aurpegirik aurkitu hautatutako argazkietan. Hautapena dagoen bezala geratzen da.",
     "notLookedAt": "Aurpegiak bilatu ezin izan diren eta jada hautatuta ez dauden argazkiak: {{count}}.",
     "failed": "Ezin izan dira aurpegiak bilatu hautatutako argazkietan. Hautapena dagoen bezala geratzen da."
