@@ -126,11 +126,8 @@
     "removeRegion": "Odstrániť oblasť",
     "dates": {
       "imageryDate": "Dátum snímok v strede mapy",
-      "mapDate": "Dátum mapy",
       "olderImagery": "Staršie snímky",
       "newerImagery": "Novšie snímky",
-      "yearEarlier": "O rok skôr",
-      "yearLater": "O rok neskôr",
       "matchPhotoDates": "Prispôsobiť dátumom nasnímania fotiek",
       "nearPhotoDates": "{{date}} (blízko dátumov fotiek)",
       "versionOf": "Verzia z {{date}}",
@@ -139,8 +136,7 @@
       "noPhotoDates": "Žiadna fotka na mape nemá dátum nasnímania.",
       "loading": "Načítavajú sa dátumy...",
       "failed": "Dátumy sa nepodarilo načítať.",
-      "zoomIn": "Priblížte mapu a uvidíte, kedy boli snímky nasnímané.",
-      "mapFailed": "Túto mapu nemožno zobraziť."
+      "zoomIn": "Priblížte mapu a uvidíte, kedy boli snímky nasnímané."
     }
   },
   "chart": {

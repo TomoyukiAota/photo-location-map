@@ -25,19 +25,3 @@
   padding: 6px 10px;
   background: #ffffff;
 }
-
-// The canvas of MapLibre, which draws OpenHistoricalMap (src/app/map/leaflet-map/dated-layers/): placed in the tile
-// pane by its layer, as Leaflet places its tiles. MapLibre's own CSS makes its container relative.
-.leaflet-tile-pane .plm-leaflet-map-maplibre-container {
-  position: absolute;
-}
-
-// TL;DR: The calendar of the date of OpenHistoricalMap, vanillajs-datepicker's, which is in the page's body
-// (src/app/map/leaflet-map/dated-layers/map-date/map-date-picker.component.ts): above the map and its controls.
-// Details: Leaflet's controls are at z-index 1000 and 1001 (_plm-leaflet-map.scss), and the dialogs and menus are
-// above everything (.cdk-overlay-container in global-styles.scss). The datepicker's own style is that of its plain
-// stylesheet, among angular.json's styles.
-body > .datepicker.datepicker-dropdown {
-  z-index: 1002;
-  font-size: 13px;
-}

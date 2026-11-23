@@ -8,7 +8,7 @@ import { pathToFileURL } from 'url';
 import {
   devServerPageContentSecurityPolicy, mainWindowContentSecurityPolicy, mainWindowPolicyDirectives, stylesheetMediaScriptHash,
 } from '../../../src-main/file-server/content-security-policy.js';
-import { openHistoricalMapUrls, waybackUrls } from '../../../src-shared/map/dated-layer-urls.js';
+import { waybackUrls } from '../../../src-shared/map/dated-layer-urls.js';
 import { rasterTileBaseLayerConfigsVersion1Urls } from '../../../src-shared/map/raster-tile-base-layer-configs-version-1-urls.js';
 
 describe('The Content Security Policy of the main window\'s page (in main process)', () => {
@@ -43,29 +43,24 @@ describe('The Content Security Policy of the main window\'s page (in main proces
     }
   });
 
-  it('lets the page fetch only the list of the map\'s base layers, at its addresses, what the layers of a past date read, the servers of the analytics SDKs and its own files', () => {
+  it('lets the page fetch only the list of the map\'s base layers, at its addresses, what the layer of a past date reads, the servers of the analytics SDKs and its own files', () => {
     assert.deepStrictEqual(mainWindowPolicyDirectives['connect-src'], [
       rasterTileBaseLayerConfigsVersion1Urls.gitHub,
       rasterTileBaseLayerConfigsVersion1Urls.jsDelivr,
       'https://s3-us-west-2.amazonaws.com/config.maptiles.arcgis.com/waybackconfig.json',
       'https://wayback.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tilemap/',
       'https://metadata.maptiles.arcgis.com/arcgis/rest/services/',
-      'https://www.openhistoricalmap.org/map-styles/',
-      'https://vtiles.openhistoricalmap.org/maps/',
-      'https://static-tiles.openhistoricalmap.org/',
       'https://api2.amplitude.com',
       'https://api-js.mixpanel.com',
       `'self'`,
     ]);
   });
 
-  it('lets the layers of a past date connect to their folders and files only, which the renderer reads from the same module', () => {
+  it('lets the layer of a past date connect to its folders and files only, which the renderer reads from the same module', () => {
     const connect = mainWindowPolicyDirectives['connect-src'];
-    for (const url of [waybackUrls.releases, waybackUrls.tilemap, waybackUrls.metadata, openHistoricalMapUrls.styleFolder,
-      openHistoricalMapUrls.vectorTiles, openHistoricalMapUrls.rasterTiles])
+    for (const url of [waybackUrls.releases, waybackUrls.tilemap, waybackUrls.metadata])
       assert.ok(connect.includes(url), url);
-    // The style and the tiles that the renderer fetches are within those folders.
-    assert.ok(openHistoricalMapUrls.style.startsWith(openHistoricalMapUrls.styleFolder));
+    // Its tiles are images, which img-src lets load from any server on https.
     assert.ok(waybackUrls.tile.startsWith('https://'));
   });
 
