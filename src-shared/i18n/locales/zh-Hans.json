@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "正在所选照片中查找人脸...",
-    "progress": "已检查 {{done}} / {{total}} 张照片。",
+    "looking": "正在检测人脸...",
+    "progress": "已处理的照片：{{done}} / {{total}} 张",
     "noFacesFound": "所选照片中未找到人脸。选择保持不变。",
     "notLookedAt": "有 {{count}} 张照片无法查找人脸，已取消选择。",
     "failed": "无法在所选照片中查找人脸。选择保持不变。"

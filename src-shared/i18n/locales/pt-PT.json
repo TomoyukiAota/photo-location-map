@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "A procurar rostos nas fotografias selecionadas...",
-    "progress": "Fotografias verificadas: {{done}} de {{total}}.",
+    "looking": "A detetar rostos...",
+    "progress": "Fotografias processadas: {{done}} de {{total}}",
     "noFacesFound": "Não foram encontrados rostos nas fotografias selecionadas. A seleção mantém-se como está.",
     "notLookedAt": "Fotografias em que não foi possível procurar rostos e que já não estão selecionadas: {{count}}.",
     "failed": "Não foi possível procurar rostos nas fotografias selecionadas. A seleção mantém-se como está."
