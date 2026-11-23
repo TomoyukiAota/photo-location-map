@@ -73,11 +73,12 @@ describe('MapDateComponent', () => {
       await show({ ...wayback, status: status as MapDateView['status'] });
       // Without the spaces of the template around it.
       expect(element.querySelector('.plm-leaflet-map-date-note').textContent).toBe(note);
-      // A spinner while the dates load, before the note, which a screen reader skips, as the note says the same.
-      const spinner = element.querySelector('.plm-leaflet-map-date-note > mat-spinner:first-child');
-      expect(spinner !== null).toBe(status === 'loading');
-      expect(spinner?.getAttribute('aria-hidden') ?? 'true').toBe('true');
+      // A spinner while the dates load only, before the note.
+      expect(element.querySelector('.plm-leaflet-map-date-note > mat-spinner:first-child') !== null).toBe(status === 'loading');
     }
+    // A screen reader skips the spinner, as the note says the same.
+    await show({ ...wayback, status: 'loading' });
+    expect(element.querySelector('.plm-leaflet-map-date-note > mat-spinner').getAttribute('aria-hidden')).toBe('true');
     await show({ ...wayback, photoDates: null });
     expect(text('.plm-leaflet-map-date-note')).toBe('No photo on the map has a date taken.');
     // Nothing to choose from, as when zoomed out: the release shown.

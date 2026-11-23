@@ -207,7 +207,10 @@ export class LeafletMapComponent implements OnDestroy, AfterViewInit {
     this.datedLayers.photosChanged();
   }
 
-  /** Takes the markers off the map, with the popup that is open and the components that their popups showed. */
+  /**
+   * Takes the markers off the map, with the popup that is open and the components that their popups showed. The popup
+   * goes at once, as Leaflet's fade would show it for 200 ms without its component (_plm-leaflet-map.scss).
+   */
   private removeMarkers(): void {
     this.map?.closePopup();
     if (this.markerClusterGroup)
