@@ -126,11 +126,8 @@
     "removeRegion": "영역 삭제",
     "dates": {
       "imageryDate": "지도 중심의 이미지 촬영 날짜",
-      "mapDate": "지도 날짜",
       "olderImagery": "이전 이미지",
       "newerImagery": "더 새로운 이미지",
-      "yearEarlier": "1년 전",
-      "yearLater": "1년 후",
       "matchPhotoDates": "사진 촬영 날짜에 맞추기",
       "nearPhotoDates": "{{date}} (사진 날짜와 가까움)",
       "versionOf": "{{date}} 버전",
@@ -139,8 +136,7 @@
       "noPhotoDates": "지도에 촬영 날짜가 있는 사진이 없습니다.",
       "loading": "날짜를 불러오는 중...",
       "failed": "날짜를 불러올 수 없습니다.",
-      "zoomIn": "확대하면 이미지 촬영 날짜가 표시됩니다.",
-      "mapFailed": "이 지도를 표시할 수 없습니다."
+      "zoomIn": "확대하면 이미지 촬영 날짜가 표시됩니다."
     }
   },
   "chart": {

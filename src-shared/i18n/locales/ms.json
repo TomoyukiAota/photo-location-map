@@ -126,11 +126,8 @@
     "removeRegion": "Buang kawasan",
     "dates": {
       "imageryDate": "Tarikh imej di tengah peta",
-      "mapDate": "Tarikh peta",
       "olderImagery": "Imej lebih lama",
       "newerImagery": "Imej lebih baharu",
-      "yearEarlier": "Setahun lebih awal",
-      "yearLater": "Setahun kemudian",
       "matchPhotoDates": "Padankan dengan tarikh foto diambil",
       "nearPhotoDates": "{{date}} (hampir dengan tarikh foto)",
       "versionOf": "Versi {{date}}",
@@ -139,8 +136,7 @@
       "noPhotoDates": "Tiada foto pada peta yang mempunyai tarikh diambil.",
       "loading": "Memuatkan tarikh...",
       "failed": "Tarikh tidak dapat dimuatkan.",
-      "zoomIn": "Zum masuk untuk melihat bila imej diambil.",
-      "mapFailed": "Peta ini tidak dapat dipaparkan."
+      "zoomIn": "Zum masuk untuk melihat bila imej diambil."
     }
   },
   "chart": {

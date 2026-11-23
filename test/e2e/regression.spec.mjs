@@ -1428,9 +1428,9 @@ test('on a computer whose language is Arabic, the application is laid out from r
   // The date of a layer of a past date is laid out from right to left on the map, which stays from left to right:
   // the button to an earlier date is at its right (src/app/map/leaflet-map/dated-layers/).
   await answerDatedLayers(page);
-  await chooseMapLayer('OpenHistoricalMap');
+  await chooseMapLayer('Esri World Imagery Wayback');
   const dateControl = page.locator('.plm-leaflet-map-date');
-  await expect(dateControl.locator('.plm-leaflet-map-date-title')).toHaveText('تاريخ الخريطة');
+  await expect(dateControl.locator('.plm-leaflet-map-date-title')).toHaveText('تاريخ التقاط الصورة في مركز الخريطة');
   await expect(dateControl).toHaveCSS('direction', 'rtl');
   // Beside the layers button, as in English: the map's corners stay where they are.
   const layersControl = page.locator('.leaflet-control-layers');
@@ -1439,19 +1439,9 @@ test('on a computer whose language is Arabic, the application is laid out from r
   const layersBox = await layersControl.boundingBox();
   expect(dateControlBox.x + dateControlBox.width).toBeCloseTo(layersBox.x - 10, 0);
   expect(dateControlBox.y).toBeCloseTo(layersBox.y, 0);
-  const earlierBox = await dateControl.getByRole('button', { name: 'قبل سنة', exact: true }).boundingBox();
-  const laterBox = await dateControl.getByRole('button', { name: 'بعد سنة', exact: true }).boundingBox();
+  const earlierBox = await dateControl.getByRole('button', { name: 'صورة أقدم', exact: true }).boundingBox();
+  const laterBox = await dateControl.getByRole('button', { name: 'صورة أحدث', exact: true }).boundingBox();
   expect(earlierBox.x).toBeGreaterThan(laterBox.x);
-  // So is its calendar, in Arabic, whose week starts on Sunday. The field opens it once its datepicker, loaded with
-  // the field, has marked it.
-  const dateField = dateControl.getByRole('textbox', { name: 'تاريخ الخريطة', exact: true });
-  await expect(dateField).toHaveClass(/(^|\s)datepicker-input(\s|$)/);
-  await dateField.click();
-  const calendar = page.locator('body > .datepicker.active');
-  await expect(calendar).toHaveCSS('direction', 'rtl');
-  await expect(calendar.locator('.dow').first()).toHaveText('ح');
-  await page.keyboard.press('Escape');
-  await expect(calendar).toHaveCount(0);
   await chooseMapLayer('OpenStreetMap');
   await expect(dateControl).toHaveCount(0);
   // A path is written from left to right within the text around it: its first slash stays at its start.
@@ -1537,10 +1527,10 @@ test('on a computer whose language is Arabic, the application in English lists t
   await cancel.click();
   await expect(settingsDialog).toHaveCount(0);
 });
-test('the map stays as it is while other photos are pinned: its markers change, and its zoom stays from one photo to the next', async () => {
+test('the map stays as it is while other photos are pinned: its markers change, its zoom stays from one photo to the next, and the next popup shows at once', async () => {
   // The map is made once. Each change of the pinned photos changes its markers, and moves its view to them: one photo
   // at the zoom level that shows a photo's place, or at the map's zoom when one photo follows another, as Photo Taken
-  // Before and Photo Taken After go; several photos fitted in it.
+  // Before and Photo Taken After go; several photos fitted in it. The popup of one photo gives way to the next at once.
   await page.addInitScript(() => {
     let leaflet;
     Object.defineProperty(window, 'L', {
@@ -1565,7 +1555,7 @@ test('the map stays as it is while other photos are pinned: its markers change, 
   const map = () => page.evaluate(() => ({ zoom: window.__plmLeafletMap.getZoom(), maps: window.__plmLeafletMaps }));
   /**
    * Whether the popup is in the middle of the map, from left to right, above its marker, as centerOnPopup() puts it:
-   * once the popup of the photo before has gone, which Leaflet fades out for 200 ms.
+   * once the popup of the photo before has gone, which Leaflet keeps, hidden, for 200 ms after it closes.
    */
   async function popupInMiddle() {
     await expect(popup).toHaveCount(1);
@@ -1575,6 +1565,30 @@ test('the map stays as it is while other photos are pinned: its markers change, 
       return Math.abs((popupBox.left + popupBox.right) / 2 - (mapBox.left + mapBox.right) / 2) < 2;
     });
   }
+  /**
+   * Calls the method `selection` of the photo selection, and records the popups that are seen, by their opacity and
+   * their photo's name, each time that the popups change from then until shownPopups() is called: as the page has them
+   * before it paints them, as the observer is called before then.
+   */
+  async function selectRecordingShownPopups(selection) {
+    await page.evaluate(selection => {
+      const pane = window.__plmLeafletMap.getPanes().popupPane;
+      const records = [];
+      const observer = new MutationObserver(() => records.push([...pane.querySelectorAll('.leaflet-popup')]
+        .map(shown => ({
+          opacity: getComputedStyle(shown).opacity,
+          name: shown.querySelector('.photo-info-viewer-name')?.textContent ?? null,
+        }))
+        .filter(shown => shown.opacity !== '0')));
+      observer.observe(pane, { childList: true, subtree: true });
+      window.__plmShownPopups = () => {
+        observer.disconnect();
+        return records;
+      };
+      window.plmInternalRenderer.photoSelection[selection]();
+    }, selection);
+  }
+  const shownPopups = () => page.evaluate(() => window.__plmShownPopups());
   await page.evaluate(photo => window.plmInternalRenderer.photoSelection.selectOnlyThis(photo), path.join(photoFolder, 'Gold Coast/IMG_1579.JPG'));
   await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_1579.JPG');
   await expectRepresentedPhotos(1);
@@ -1587,9 +1601,19 @@ test('the map stays as it is while other photos are pinned: its markers change, 
   await expectRepresentedPhotos(1);
   expect(await map()).toEqual({ zoom: 16, maps: 1 });
   expect(await popupInMiddle()).toBe(true);
-  await page.evaluate(() => window.plmInternalRenderer.photoSelection.undo());
+  // Back to the photo before, with the popup of this one open: the popup open goes at once, and that of the photo
+  // before is there at once, whole. With Leaflet's fade, the popup going showed as a thin bar while it faded out, as
+  // its content goes with its marker, under the one coming, which faded in: a popup that grew. Not checked at the step
+  // above, where the zoom had closed the popup: Leaflet.markercluster takes a marker off the map and puts it back at
+  // each zoom, and Leaflet closes the popup of a marker taken off.
+  await selectRecordingShownPopups('undo');
   await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_1579.JPG');
   expect(await map()).toEqual({ zoom: 16, maps: 1 });
+  await expect(popup).toHaveCount(1);
+  const shownWhileChanging = await shownPopups();
+  expect(shownWhileChanging).toContainEqual([{ opacity: '1', name: 'IMG_1579.JPG' }]);
+  for (const shown of shownWhileChanging)
+    expect([[{ opacity: '1', name: 'IMG_2581.JPG' }], [{ opacity: '1', name: 'IMG_1579.JPG' }]]).toContainEqual(shown);
   // The four photos again: the view fits them, which are around the world.
   await page.evaluate(() => window.plmInternalRenderer.photoSelection.undo());
   await expectRepresentedPhotos(4);
@@ -1679,7 +1703,7 @@ test('map regions preserve drawing, removal and real photo selection', async () 
   await expect(page.locator('.plm-leaflet-map-region-info-text')).toHaveText('Photos in Regions: 2');
   expect(await page.evaluate(() => window.__plmLeafletMaps)).toBe(1);
 });
-test('the map shows Esri World Imagery Wayback and OpenHistoricalMap at the dates of the photos on it, or at a date chosen', async () => {
+test('the map shows Esri World Imagery Wayback at the dates of the photos on it, or at a date chosen', async () => {
   // Two photos taken at the ring of EXPO 2025 on 2025-08-10, and the answers of the servers as they were for the ring
   // (test/test-util/dated-layer-answers.mjs). The page's Content Security Policy still decides what it may ask for.
   const folder = path.join(profile, 'EXPO 2025');
@@ -1794,68 +1818,19 @@ test('the map shows Esri World Imagery Wayback and OpenHistoricalMap at the date
   await dragGutterBelowMap(mapHeight - 400);
   await expect.poll(async () => (await mapPane.boundingBox()).height).toBeCloseTo(mapHeight, -1);
 
-  // OpenHistoricalMap: the map of the photos' date, drawn by MapLibre where the computer has WebGL 2. The date is a
-  // field, which opens a calendar.
+  // Matching again: the imagery taken nearest to the photos' dates, in place of the one chosen. The map showed the
+  // tiles of that release here before, which the page may take from the images that it has without asking the server
+  // again, as it did on CI: the tiles shown are checked, rather than those asked for.
   await view(16);
-  await chooseMapLayer('OpenHistoricalMap');
-  await expect(control.locator('.plm-leaflet-map-date-title')).toHaveText('Date of the map');
-  const dateField = control.getByRole('textbox', { name: 'Date of the map', exact: true });
-  await expect(dateField).toHaveValue('2025-08-10');
-  await expect(control.getByRole('checkbox')).toBeChecked();
-  const hasWebGl2 = await page.evaluate(() => !!document.createElement('canvas').getContext('webgl2'));
-  if (hasWebGl2) {
-    await expect(page.locator('.plm-leaflet-map-maplibre-container canvas')).toBeVisible();
-    await expect(control.locator('.plm-leaflet-map-date-note')).toHaveText('Photos taken on 2025-08-10');
-  } else {
-    // As on a computer whose GPU Chromium cannot use, such as CI's.
-    await expect(control.locator('.plm-leaflet-map-date-note')).toHaveText('This map cannot be shown.');
-  }
-  await control.getByRole('button', { name: 'One year earlier', exact: true }).click();
-  await expect(dateField).toHaveValue('2024-08-10');
-  await expect(control.getByRole('checkbox')).not.toBeChecked();
-  // Matching again: the photos' date, which the field shows without taking it as a date chosen.
+  await expect(control.locator('select')).toHaveValue('52930');
   await control.getByRole('checkbox').check();
-  await expect(dateField).toHaveValue('2025-08-10');
-  await expect(control.getByRole('checkbox')).toBeChecked();
-  // A day chosen in the calendar, which opens at the date shown, in the page's body (MapDatePickerComponent). The
-  // field opens it once its datepicker, loaded with the field, has marked it.
-  const calendar = page.locator('body > .datepicker.active');
-  await expect(dateField).toHaveClass(/(^|\s)datepicker-input(\s|$)/);
-  await dateField.click();
-  await expect(calendar.locator('.view-switch')).toHaveText('August 2025');
-  await expect(calendar.locator('.datepicker-cell.day.selected')).toHaveText('10');
-  await calendar.locator('.datepicker-cell.day:not(.prev):not(.next)').filter({ hasText: /^1$/ }).click();
-  await expect(calendar).toHaveCount(0);
-  await expect(dateField).toHaveValue('2025-08-01');
-  await expect(control.getByRole('checkbox')).not.toBeChecked();
-  // A date typed in the field.
-  await dateField.click();
-  await dateField.selectText();
-  await dateField.pressSequentially('1970-01-01');
-  await dateField.press('Enter');
-  await expect(calendar).toHaveCount(0);
-  await expect(dateField).toHaveValue('1970-01-01');
-  // A click on the map closes the calendar.
-  await dateField.click();
-  await expect(calendar).toHaveCount(1);
-  const mapBox = await page.locator('#plm-leaflet-map').boundingBox();
-  await page.mouse.click(mapBox.x + mapBox.width / 3, mapBox.y + mapBox.height / 2);
-  await expect(calendar).toHaveCount(0);
-  await expect(dateField).toHaveValue('1970-01-01');
-  // So does a click in a control of the map, such as the box of the date, whose presses Leaflet keeps from the page
-  // (MapDatePickerComponent).
-  await dateField.click();
-  await expect(calendar).toHaveCount(1);
-  await control.locator('.plm-leaflet-map-date-title').click();
-  await expect(calendar).toHaveCount(0);
-  await control.getByRole('checkbox').check();
-  await expect(dateField).toHaveValue('2025-08-10');
+  await expect(control.locator('select')).toHaveValue('49059');
+  await expect.poll(() => page.locator('.leaflet-tile-pane img.leaflet-tile').evaluateAll(tiles =>
+    tiles.length > 0 && tiles.every(tile => tile.src.includes('/tile/49059/')))).toBe(true);
 
-  // Another layer has no date, nor a calendar.
+  // Another layer has no date.
   await chooseMapLayer('OpenStreetMap');
   await expect(control).toHaveCount(0);
-  await expect(page.locator('.plm-leaflet-map-maplibre-container')).toHaveCount(0);
-  await expect(page.locator('body > .datepicker')).toHaveCount(0);
 });
 test('a layer of a past date that the list of base layers hides is neither offered nor shown, though the user chose it, until the list no longer hides it', async () => {
   // The list that the page downloads, from either of its addresses, as photo-location-map-resources could have it:
@@ -1873,14 +1848,14 @@ test('a layer of a past date that the list of base layers hides is neither offer
   const dateControl = page.locator('.plm-leaflet-map-date');
 
   await page.reload();
-  await expect(layers).toHaveText(['OpenStreetMap', 'OpenHistoricalMap']);
+  await expect(layers).toHaveText(['OpenStreetMap']);
   await expect(shownLayer).toHaveText('OpenStreetMap');
   await expect(dateControl).toHaveCount(0);
 
   // The choice stayed, and is shown again.
   list = { version: '1', rasterTileBaseLayerConfigs: [openStreetMap] };
   await page.reload();
-  await expect(layers).toHaveText(['OpenStreetMap', 'Esri World Imagery Wayback', 'OpenHistoricalMap']);
+  await expect(layers).toHaveText(['OpenStreetMap', 'Esri World Imagery Wayback']);
   await expect(shownLayer).toHaveText('Esri World Imagery Wayback');
   await expect(dateControl).toHaveCount(1);
 });

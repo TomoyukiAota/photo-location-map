@@ -126,11 +126,8 @@
     "removeRegion": "Kendu eskualdea",
     "dates": {
       "imageryDate": "Irudien data maparen erdian",
-      "mapDate": "Maparen data",
       "olderImagery": "Irudi zaharragoak",
       "newerImagery": "Irudi berriagoak",
-      "yearEarlier": "Urtebete lehenago",
-      "yearLater": "Urtebete geroago",
       "matchPhotoDates": "Egokitu argazkiak atera ziren dataetara",
       "nearPhotoDates": "{{date}} (argazkien dataetatik gertu)",
       "versionOf": "Bertsioa: {{date}}",
@@ -139,8 +136,7 @@
       "noPhotoDates": "Mapako argazkietako batek ere ez du ateratze-datarik.",
       "loading": "Datak kargatzen...",
       "failed": "Ezin izan dira datak kargatu.",
-      "zoomIn": "Handitu mapa irudiak noiz atera ziren ikusteko.",
-      "mapFailed": "Ezin da mapa hau erakutsi."
+      "zoomIn": "Handitu mapa irudiak noiz atera ziren ikusteko."
     }
   },
   "chart": {

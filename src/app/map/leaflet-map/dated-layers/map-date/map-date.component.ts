@@ -6,13 +6,9 @@ import { TranslationKey } from '../../../../../../src-shared/i18n/translation-ke
 import { momentToDateString } from '../../../../shared/moment-to-string';
 import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 import { PhotoDates } from '../photo-dates';
-import { MapDatePickerComponent } from './map-date-picker.component';
-
-/** The layers of a past date: Esri World Imagery Wayback, and OpenHistoricalMap. */
-export type MapDateKind = 'wayback' | 'openHistoricalMap';
 
 /** What the layer's date is waiting for, or what went wrong. */
-export type MapDateStatus = 'ready' | 'loading' | 'failed' | 'zoomIn' | 'mapFailed';
+export type MapDateStatus = 'ready' | 'loading' | 'failed' | 'zoomIn';
 
 /** A version of Wayback's imagery to choose. */
 export interface MapDateChoice {
@@ -28,12 +24,11 @@ export interface MapDateChoice {
 
 /** What the control shows. */
 export interface MapDateView {
-  readonly kind: MapDateKind;
   readonly status: MapDateStatus;
-  /** Wayback: the versions at the map's center, newest first, and the release of the one shown. */
+  /** The versions at the map's center, newest first, and the release of the one shown. */
   readonly choices: readonly MapDateChoice[];
   readonly chosenRelease: number | null;
-  /** The date shown when there is nothing to choose from: the map's date, or the date of Wayback's release. */
+  /** The date shown when there is nothing to choose from: the date of the release shown. */
   readonly date: string | null;
   readonly photoDates: PhotoDates | null;
   readonly matchPhotoDates: boolean;
@@ -82,39 +77,36 @@ export function withDates(key: TranslationKey, dates: Readonly<Record<string, st
 }
 
 /**
- * The date of a layer of a past date, on the map: when its imagery was taken, in a list, or the date that its map
- * shows, in a field that opens a calendar (map-date-picker.component.ts), with the buttons to an earlier and a later
- * one, and the choice of matching the dates of the photos on the map. The map makes this component for its control at
- * the top, beside the layers button (../dated-layers.ts, ../../leaflet-content.service.ts).
+ * The date of Esri World Imagery Wayback, on the map: when its imagery was taken, in a list, with the buttons to an
+ * older and a newer version, and the choice of matching the dates of the photos on the map. The map makes this
+ * component for its control at the top, beside the layers button (../dated-layers.ts, ../../leaflet-content.service.ts).
  */
 @Component({
   selector: 'app-leaflet-map-date',
   template: `
-    <div class="plm-leaflet-map-date-title">{{ titleKey() | t }}</div>
+    <div class="plm-leaflet-map-date-title">{{ 'map.dates.imageryDate' | t }}</div>
     <div class="plm-leaflet-map-date-row">
       <button class="plm-leaflet-map-date-step plm-leaflet-map-date-earlier"
               type="button"
-              [title]="earlierKey() | t"
-              [attr.aria-label]="earlierKey() | t"
+              [title]="'map.dates.olderImagery' | t"
+              [attr.aria-label]="'map.dates.olderImagery' | t"
               [disabled]="!view().canGoEarlier"
               (click)="earlier.emit()">‹</button>
       @if (view().choices.length > 0) {
         <div class="plm-leaflet-map-date-select">
-          <select [attr.aria-label]="titleKey() | t" (change)="onSelectChange($event)">
+          <select [attr.aria-label]="'map.dates.imageryDate' | t" (change)="onSelectChange($event)">
             @for (choice of view().choices; track choice.release) {
               <option [value]="choice.release" [selected]="choice.release === view().chosenRelease">{{ labelOf(choice) }}</option>
             }
           </select>
         </div>
-      } @else if (view().kind === 'openHistoricalMap' && view().date) {
-        <app-leaflet-map-date-picker [date]="view().date" [label]="titleKey() | t" (pick)="pick.emit($event)"/>
       } @else {
         <div class="plm-leaflet-map-date-value">{{ dateText() }}</div>
       }
       <button class="plm-leaflet-map-date-step plm-leaflet-map-date-later"
               type="button"
-              [title]="laterKey() | t"
-              [attr.aria-label]="laterKey() | t"
+              [title]="'map.dates.newerImagery' | t"
+              [attr.aria-label]="'map.dates.newerImagery' | t"
               [disabled]="!view().canGoLater"
               (click)="later.emit()">›</button>
     </div>
@@ -124,7 +116,7 @@ export function withDates(key: TranslationKey, dates: Readonly<Record<string, st
     <div class="plm-leaflet-map-date-note">@for (part of noteParts(); track $index) {<span [class.plm-leaflet-map-date-unbroken]="part.isDate">{{ part.text }}</span>}</div>
   `,
   styleUrl: './map-date.component.scss',
-  imports: [MatCheckbox, MapDatePickerComponent, TranslatePipe],
+  imports: [MatCheckbox, TranslatePipe],
   host: {
     'class': 'plm-leaflet-map-date-container',
   },
@@ -137,23 +129,12 @@ export class MapDateComponent {
   public readonly later = output<void>();
   /** A version of Wayback's imagery was chosen in the list, by its release's number. */
   public readonly choose = output<number>();
-  /** A date of OpenHistoricalMap was chosen in the calendar, YYYY-MM-DD. */
-  public readonly pick = output<string>();
   /** The choice of matching the photos' dates changed. */
   public readonly matchPhotoDatesChange = output<boolean>();
 
-  protected readonly titleKey = computed<TranslationKey>(() =>
-    this.view().kind === 'wayback' ? 'map.dates.imageryDate' : 'map.dates.mapDate');
-  protected readonly earlierKey = computed<TranslationKey>(() =>
-    this.view().kind === 'wayback' ? 'map.dates.olderImagery' : 'map.dates.yearEarlier');
-  protected readonly laterKey = computed<TranslationKey>(() =>
-    this.view().kind === 'wayback' ? 'map.dates.newerImagery' : 'map.dates.yearLater');
-
   protected readonly dateText = computed(() => {
     const date = this.view().date;
-    if (!date)
-      return '';
-    return this.view().kind === 'wayback' ? t('map.dates.versionOf', { date: formatted(date) }) : formatted(date);
+    return date ? t('map.dates.versionOf', { date: formatted(date) }) : '';
   });
 
   /**
@@ -166,7 +147,6 @@ export class MapDateComponent {
       case 'loading': return [{ text: t('map.dates.loading'), isDate: false }];
       case 'failed': return [{ text: t('map.dates.failed'), isDate: false }];
       case 'zoomIn': return [{ text: t('map.dates.zoomIn'), isDate: false }];
-      case 'mapFailed': return [{ text: t('map.dates.mapFailed'), isDate: false }];
     }
     const dates = view.photoDates;
     if (!dates)
