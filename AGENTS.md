@@ -466,7 +466,7 @@ behavior that is not known. If the same environmental cause keeps coming back,
 propose a narrow workaround (see above) instead of rerunning indefinitely.
 
 **Handle each failed check as soon as it fails.** Do not wait for all checks to
-finish: the slowest job takes about 10 minutes (15–28 for `macos-26-intel` when
+finish: the slowest job takes about 20 minutes (15–28 for `macos-26-intel` when
 it is run on demand), and a failed job would sit unattended that long.
 
 ## CI skips pushes that change only documents
@@ -476,9 +476,9 @@ pull request changes with [dorny/paths-filter](https://github.com/dorny/paths-fi
 and `.github/ci-filters.yml`. When every one of them is a document — a
 Markdown file directly in `docs/`, any file in its `contributing/`, `tasks/`,
 `troubleshooting/` or `README/` folder, `README.md`, `AGENTS.md`, `LICENSE` or
-`.github/ISSUE_TEMPLATE/` — the `test` job is skipped. A skipped job passes
-GitHub's required checks, which are also Mergify's (`.mergify.yml`), so such a
-pull request does not wait for the tests.
+`.github/ISSUE_TEMPLATE/` — the jobs that run the tests are skipped. A skipped
+job passes GitHub's required checks, which are also Mergify's (`.mergify.yml`),
+so such a pull request does not wait for the tests.
 
 The website is not a document: `docs/index.html`, the landing page in each
 language (`docs/<code>/index.html`, which `npm run generate:website` writes),
@@ -491,9 +491,10 @@ e2e suite's cases of the website), so a change to it runs the tests.
 every push ran the tests on three OSes for about 10 minutes.
 
 Keep anything that the app or CI uses out of `.github/ci-filters.yml`. Write
-out the `test` jobs' names rather than giving them by a matrix or an
-expression: a skipped job neither expands its matrix nor evaluates its name, so
-it would report no `test (<os>)` check and leave the required check pending.
+out the names of the jobs that run the tests rather than giving them by a matrix
+or an expression: a skipped job neither expands its matrix nor evaluates its
+name, so it would report no check of that name, such as `test (<os>)`, and leave
+the required check pending.
 If the `changes` job fails, the tests run.
 
 ## The Windows CI publishes on purpose
