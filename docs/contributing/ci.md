@@ -17,6 +17,19 @@ workflow and confirm that the new check passes, then replace the old context in
 branch protection.
 
 
+## One run of the tests per commit
+
+The tests run on push, for every branch: the three CI workflows have no
+`pull_request` trigger, so the required checks of a pull request from a branch
+of this repository come from its push run alone. A pull request from a fork is
+tested by
+[`ci-on-fork-pull-request.yml`](../../.github/workflows/ci-on-fork-pull-request.yml),
+which calls the three workflows, and whose checks, such as
+`CI on Ubuntu / test (ubuntu)`, are not required: the owner merges it by hand,
+bypassing branch protection. Do not add a `pull_request` trigger to the three
+workflows (AGENTS.md, "CI tests each commit once, on push").
+
+
 ## Merging
 
 Mergify merges a pull request of the owner that has the label `automerge` once

@@ -4,15 +4,16 @@ on:
   push:
     branches:
       - '**'    # matches every branch
-  pull_request:
-    branches:
-      - main
+  # No pull_request trigger: each commit is tested by its push run alone, and a pull request from a fork by
+  # ci-on-fork-pull-request.yml, which calls this workflow (AGENTS.md, "CI tests each commit once, on push").
+  workflow_call:
 
-# A new commit on a branch cancels the runs of the commit before it, the push's and the pull request's each in a group
-# of their own, so that only the latest commit is tested when Mergify brings a pull request up to date with main
-# (.mergify.yml). Each run on main has a group of its own, and is never canceled.
+# A new commit on a branch cancels the runs of the commit before it, so that only the latest commit is tested when
+# Mergify brings a pull request up to date with main (.mergify.yml). Each run on main has a group of its own, and is
+# never canceled. The group names this workflow itself rather than github.workflow, which is the caller's name when
+# ci-on-fork-pull-request.yml calls it, so that the three workflows that it calls do not share one.
 concurrency:
-  group: ${{ github.ref == 'refs/heads/main' && github.run_id || format('{0} {1} {2}', github.workflow, github.event_name, github.event.pull_request.number || github.ref_name) }}
+  group: ${{ github.ref == 'refs/heads/main' && github.run_id || format('CI on Ubuntu {0} {1}', github.event_name, github.event.pull_request.number || github.ref_name) }}
   cancel-in-progress: true
 
 jobs:
