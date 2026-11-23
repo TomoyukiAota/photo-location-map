@@ -1419,13 +1419,15 @@ test('on a computer whose language is Arabic, the application is laid out from r
   await expect(moreOptionsMenus).toHaveCount(0);
   // A submenu that opens while its menu still grows is beside its item as well, once the menu has grown, though
   // Angular Material places it against the item as the item is then (MoreOptionsMenuComponent.placeAgainOnceShown()).
-  // The arrow is pressed in the page as soon as the menu is placed, while the menu is at 80% of its size.
+  // The arrow is pressed in the page as soon as the menu is placed, while the menu is at 80% of its size: once the
+  // menu that opens has its items and has lost the class of its last closing, which it loses as it is placed. No other
+  // menu is open, as the case has waited for both to close.
   await page.evaluate(() => {
     const observer = new MutationObserver(() => {
       const menu = document.querySelector('.photo-info-viewer-more-options-menu');
-      if (!menu || menu.classList.contains('mat-menu-panel-exit-animation')) return;
+      const selection = menu?.querySelector('.photo-info-viewer-more-options-menu-item');
+      if (!selection || menu.classList.contains('mat-menu-panel-exit-animation')) return;
       observer.disconnect();
-      const selection = menu.querySelector('.photo-info-viewer-more-options-menu-item');
       selection.focus();
       selection.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', code: 'ArrowLeft', keyCode: 37, bubbles: true }));
     });
