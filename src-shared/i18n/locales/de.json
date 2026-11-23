@@ -126,11 +126,8 @@
     "removeRegion": "Bereich entfernen",
     "dates": {
       "imageryDate": "Aufnahmedatum der Luftbilder in der Kartenmitte",
-      "mapDate": "Datum der Karte",
       "olderImagery": "Ältere Luftbilder",
       "newerImagery": "Neuere Luftbilder",
-      "yearEarlier": "Ein Jahr früher",
-      "yearLater": "Ein Jahr später",
       "matchPhotoDates": "An die Aufnahmedaten der Fotos anpassen",
       "nearPhotoDates": "{{date}} (nahe den Aufnahmedaten der Fotos)",
       "versionOf": "Version vom {{date}}",
@@ -139,8 +136,7 @@
       "noPhotoDates": "Kein Foto auf der Karte hat ein Aufnahmedatum.",
       "loading": "Datumsangaben werden geladen...",
       "failed": "Die Datumsangaben konnten nicht geladen werden.",
-      "zoomIn": "Vergrößern Sie die Karte, um zu sehen, wann die Luftbilder aufgenommen wurden.",
-      "mapFailed": "Diese Karte kann nicht angezeigt werden."
+      "zoomIn": "Vergrößern Sie die Karte, um zu sehen, wann die Luftbilder aufgenommen wurden."
     }
   },
   "chart": {

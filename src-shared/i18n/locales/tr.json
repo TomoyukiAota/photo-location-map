@@ -126,11 +126,8 @@
     "removeRegion": "Bölgeyi kaldır",
     "dates": {
       "imageryDate": "Harita merkezindeki görüntü tarihi",
-      "mapDate": "Haritanın tarihi",
       "olderImagery": "Daha eski görüntü",
       "newerImagery": "Daha yeni görüntü",
-      "yearEarlier": "Bir yıl önce",
-      "yearLater": "Bir yıl sonra",
       "matchPhotoDates": "Fotoğrafların çekim tarihlerine uydur",
       "nearPhotoDates": "{{date}} (fotoğrafların tarihlerine yakın)",
       "versionOf": "{{date}} sürümü",
@@ -139,8 +136,7 @@
       "noPhotoDates": "Haritadaki hiçbir fotoğrafın çekim tarihi yok.",
       "loading": "Tarihler yükleniyor...",
       "failed": "Tarihler yüklenemedi.",
-      "zoomIn": "Görüntünün ne zaman çekildiğini görmek için yakınlaştırın.",
-      "mapFailed": "Bu harita gösterilemiyor."
+      "zoomIn": "Görüntünün ne zaman çekildiğini görmek için yakınlaştırın."
     }
   },
   "chart": {

@@ -126,11 +126,8 @@
     "removeRegion": "Poista alue",
     "dates": {
       "imageryDate": "Ilmakuvien päivämäärä kartan keskellä",
-      "mapDate": "Kartan päivämäärä",
       "olderImagery": "Vanhemmat ilmakuvat",
       "newerImagery": "Uudemmat ilmakuvat",
-      "yearEarlier": "Vuotta aiemmin",
-      "yearLater": "Vuotta myöhemmin",
       "matchPhotoDates": "Sovita kuvien ottopäiviin",
       "nearPhotoDates": "{{date}} (lähellä kuvien päivämääriä)",
       "versionOf": "Versio {{date}}",
@@ -139,8 +136,7 @@
       "noPhotoDates": "Millään kartalla olevalla kuvalla ei ole ottopäivää.",
       "loading": "Ladataan päivämääriä...",
       "failed": "Päivämääriä ei voitu ladata.",
-      "zoomIn": "Lähennä, niin näet, milloin ilmakuvat on otettu.",
-      "mapFailed": "Tätä karttaa ei voi näyttää."
+      "zoomIn": "Lähennä, niin näet, milloin ilmakuvat on otettu."
     }
   },
   "chart": {

@@ -27,7 +27,6 @@ those sources are read in `sources.md`: a good place to start.
 | `src-shared/i18n/locales/<code>.json` | One file per language, named by its language tag (`ja`, `de`, `pt-BR`), with the keys of `en.json`. |
 | `src-shared/i18n/languages.ts` | The languages that the application offers, in the order that it lists them. |
 | `src/app/shared/i18n/moment-locales.ts` | Loads, for each language, the days of the week and AM and PM of dates. |
-| `src/app/shared/i18n/datepicker-locales.ts` | Loads, for each language, the names of the months and days in the calendar that chooses the date of the map. |
 
 Each text has a key on the left and the text on the right:
 
@@ -51,7 +50,7 @@ finds the texts by them.
 3. Add the language to `src-shared/i18n/languages.ts`. For German, say:
    - at the top, `import de from './locales/de.json';`
    - in the `languages` list,
-     `{ code: 'de', name: 'Deutsch', englishName: 'German', direction: 'ltr', momentLocale: 'de', geomanLocale: 'de', datepickerLocale: 'de', translation: de },`
+     `{ code: 'de', name: 'Deutsch', englishName: 'German', direction: 'ltr', momentLocale: 'de', geomanLocale: 'de', translation: de },`
      - `name` is the language's name written in the language itself, with a
        capital letter where the script has them. The list is in the order of
        these names: those in Latin letters by the alphabet, then those in
@@ -68,20 +67,10 @@ finds the texts by them.
        [Leaflet-Geoman's type definitions](https://github.com/geoman-io/leaflet-geoman/blob/develop/leaflet-geoman.d.ts),
        which gives the tooltips shown while a region is drawn on the map. Write
        `en` when the language is not there.
-     - `datepickerLocale` is the name of the language in
-       [vanillajs-datepicker's locales](https://github.com/mymth/vanillajs-datepicker/tree/master/js/i18n/locales),
-       the file's name without `.js` (`pt-BR`, `zh-TW`), which gives the names
-       of the months and days in the calendar that chooses the date of the map.
-       Write `en` when the language is not there.
 4. Add `import 'moment/locale/de';` to `src/app/shared/i18n/moment-locales.ts`,
    with the name you gave as `momentLocale`. Without it, dates keep English
    days of the week.
-5. Unless `datepickerLocale` is `en`, add
-   `'de': () => import('vanillajs-datepicker/locales/de'),` to
-   `src/app/shared/i18n/datepicker-locales.ts`, in the order of the names, with
-   the name you gave as `datepickerLocale` in both places. Without it, the
-   calendar is in English.
-6. Open a pull request titled `Add <language> translation`. If you can, add
+5. Open a pull request titled `Add <language> translation`. If you can, add
    screenshots of the application in your language; see
    [Checking how it looks](#checking-how-it-looks).
 
@@ -128,9 +117,6 @@ and tell you what is wrong before anyone reviews the pull request
 - The list of `languages.ts` is in the order of the languages' names, each has
   the English name that `Intl.DisplayNames` gives its code, and each names a
   locale that Leaflet-Geoman has (`src-shared/i18n/languages.spec.ts`).
-- The locale of vanillajs-datepicker that each language names is loaded, and
-  has the names of the months and days
-  (`src/app/shared/i18n/datepicker-locales.spec.ts`).
 
 To run them on your computer, set the repository up as
 [CONTRIBUTING.md](./CONTRIBUTING.md) says, then:
@@ -254,10 +240,6 @@ npm run test:unit:ng
   change only what is around it, or leave the key out when your language writes
   the day of the week plainly. Letters would be read as a pattern too, so a word
   goes in square brackets: `[le] ddd`.
-- The names of the months and days in the calendar that chooses the date of the
-  map come from vanillajs-datepicker's locale, not from the file. A mistake in
-  them is for
-  [vanillajs-datepicker](https://github.com/mymth/vanillajs-datepicker) to fix.
 - Texts with a number keep one form, whatever the number is ("Loaded 1
   files."). Where your language has several forms of a word for several
   numbers, word the text so that the number can be any, as "Loaded files:

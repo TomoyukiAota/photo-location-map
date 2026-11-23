@@ -126,11 +126,8 @@
     "removeRegion": "Xóa vùng",
     "dates": {
       "imageryDate": "Ngày chụp ảnh vệ tinh ở giữa bản đồ",
-      "mapDate": "Ngày của bản đồ",
       "olderImagery": "Ảnh vệ tinh cũ hơn",
       "newerImagery": "Ảnh vệ tinh mới hơn",
-      "yearEarlier": "Một năm trước đó",
-      "yearLater": "Một năm sau đó",
       "matchPhotoDates": "Khớp với ngày chụp ảnh",
       "nearPhotoDates": "{{date}} (gần ngày chụp ảnh)",
       "versionOf": "Phiên bản ngày {{date}}",
@@ -139,8 +136,7 @@
       "noPhotoDates": "Không có ảnh nào trên bản đồ có ngày chụp.",
       "loading": "Đang tải ngày...",
       "failed": "Không thể tải ngày.",
-      "zoomIn": "Phóng to để xem ảnh vệ tinh được chụp khi nào.",
-      "mapFailed": "Không thể hiển thị bản đồ này."
+      "zoomIn": "Phóng to để xem ảnh vệ tinh được chụp khi nào."
     }
   },
   "chart": {
