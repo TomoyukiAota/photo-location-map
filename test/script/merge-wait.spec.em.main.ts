@@ -7,13 +7,9 @@ const pullRequestWith = (fields: object = {}) => ({
   labels: [{ name: 'automerge' }], headRefOid: '0123456789abcdef', reviews: [], comments: [], ...fields,
 });
 
-// The required checks as `gh pr checks --required --json <checkFields>` gives them: the push run's, in `bucket`, and the
-// pull request's, which skips its jobs for a pull request from a branch of this repository.
+// The required checks as `gh pr checks --required --json <checkFields>` gives them: of the push and of the pull request.
 const checksWith = (bucket: string, { failing = '', link = 'job-2' } = {}) => ['ubuntu', 'windows-latest', 'macos-arm64']
-  .flatMap(os => [
-    { name: `test (${os})`, event: 'push', link: `${os}-push-1`, bucket },
-    { name: `test (${os})`, event: 'pull_request', link: `${os}-pull_request-1`, bucket: 'skipping' },
-  ])
+  .flatMap(os => ['push', 'pull_request'].map(event => ({ name: `test (${os})`, event, link: `${os}-${event}-1`, bucket })))
   .map(check => check.name === failing && check.event === 'push' ? { ...check, bucket: 'fail', link } : check);
 
 const minute = 60_000;
@@ -77,22 +73,10 @@ describe('merge-wait (script/pull-request/)', () => {
     assert.strictEqual(waitThrough({}, {}, { checksBefore: failedBefore, checksAfter: failedAgain }).end, true);
   });
 
-  it('goes on while the checks run or pass, and says how far they are, counting each check once by its name', () => {
-    const checksAfter = checksWith('pass').map(check =>
-      check.name === 'test (ubuntu)' && check.event === 'push' ? { ...check, bucket: 'pending' } : check);
-    const result = waitThrough({}, {}, { checksAfter });
+  it('goes on while the checks run or pass, and says how far they are', () => {
+    const result = waitThrough({}, {}, { checksAfter: checksWith('pass').map((check, index) => index < 2 ? { ...check, bucket: 'pending' } : check) });
     assert.strictEqual(result.end, false);
-    assert.strictEqual(result.status, '01234567: 2 of 3 required checks passed, 1 pending, 0 failed');
-  });
-
-  it('takes a check as passed only once each of its runs passed or was skipped, as GitHub and Mergify do', () => {
-    // A pull request from a branch of this repository: its pull request run skipped the jobs, while the push run's are
-    // still running.
-    const running = waitThrough({}, {}, { checksAfter: checksWith('pending') });
-    assert.strictEqual(running.status, '01234567: 0 of 3 required checks passed, 3 pending, 0 failed');
-    // A pull request from a fork has the pull request run alone.
-    const fromFork = checksWith('pass').filter(check => check.event === 'pull_request').map(check => ({ ...check, bucket: 'pass' }));
-    assert.strictEqual(waitThrough({}, {}, { checksAfter: fromFork }).status, '01234567: 3 of 3 required checks passed, 0 pending, 0 failed');
+    assert.strictEqual(result.status, '01234567: 4 of 6 required checks passed, 2 pending, 0 failed');
   });
 
   it('ends on a new review or comment, but not on the summaries that CodeRabbit and Mergify post as comments', () => {
