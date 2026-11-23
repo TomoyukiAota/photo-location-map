@@ -207,8 +207,7 @@
       "appearance": "Apparence",
       "dateTime": "Date et heure",
       "thumbnails": "Vignettes",
-      "os": "Système",
-      "cache": "Cache"
+      "os": "Système"
     },
     "restartAfterSaving": "Cette application redémarrera après l’enregistrement des paramètres.",
     "confirmRestart": "Cette application redémarrera après l’enregistrement des paramètres.\nVoulez-vous continuer\u00a0?",

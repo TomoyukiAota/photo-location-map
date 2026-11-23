@@ -207,8 +207,7 @@
       "appearance": "Aspetto",
       "dateTime": "Data e ora",
       "thumbnails": "Miniature",
-      "os": "Sistema",
-      "cache": "Cache"
+      "os": "Sistema"
     },
     "restartAfterSaving": "Questa applicazione verrà riavviata dopo il salvataggio delle impostazioni.",
     "confirmRestart": "Questa applicazione verrà riavviata dopo il salvataggio delle impostazioni.\nVuoi continuare?",

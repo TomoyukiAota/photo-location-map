@@ -24,19 +24,18 @@ import { AppearanceSettingsComponent } from './appearance-settings/appearance-se
 import { DateTimeSettingsComponent } from './date-time-settings/date-time-settings.component';
 import { LanguageSettingsComponent } from './language-settings/language-settings.component';
 import { OsSettingsComponent } from './os-settings/os-settings.component';
-import { CacheSettingsComponent } from './cache-settings/cache-settings.component';
 import { ThumbnailSettingsComponent } from './thumbnail-settings/thumbnail-settings.component';
 import { MatButton } from '@angular/material/button';
 
 // The tabs: each with an identifier, which the code knows it by, and the key of its name. Language is first, and so
-// the tab that the dialog opens on, for a user who cannot read the current language to find it.
+// the tab that the dialog opens on, for a user who cannot read the current language to find it. The cache of the
+// thumbnails is on the Thumbnails tab (ThumbnailSettingsComponent).
 const settingsTabs = [
   { id: 'language', labelKey: 'settings.tabs.language' },
   { id: 'appearance', labelKey: 'settings.tabs.appearance' },
   { id: 'dateTime', labelKey: 'settings.tabs.dateTime' },
   { id: 'thumbnails', labelKey: 'settings.tabs.thumbnails' },
   { id: 'os', labelKey: 'settings.tabs.os' },
-  { id: 'cache', labelKey: 'settings.tabs.cache' },
 ] as const satisfies ReadonlyArray<{ id: string, labelKey: TranslationKey }>;
 type SettingsTab = typeof settingsTabs[number];
 export type SettingsTabId = SettingsTab['id'];
@@ -57,7 +56,7 @@ const availableSettingsTabs: ReadonlyArray<SettingsTab> = currentPlatform() === 
   styleUrls: ['./settings-dialog.component.scss'],
   imports: [
     MatNavList, MatListItem, LanguageSettingsComponent, AppearanceSettingsComponent, DateTimeSettingsComponent, OsSettingsComponent,
-    ThumbnailSettingsComponent, CacheSettingsComponent, MatButton, TranslatePipe,
+    ThumbnailSettingsComponent, MatButton, TranslatePipe,
   ]
 })
 export class SettingsDialogComponent {
