@@ -101,6 +101,18 @@ the thumbnail of high quality that the main process had made, or was finishing. 
 have waited for ever, as the main process had dropped it. The page now forgets the thumbnails once the main process has
 followed the new setting (`HeifThumbnailService.applyThumbnailQuality`), which a unit test checks.
 
+## The image that says that a thumbnail is being made
+
+The owner saw the image that says "Generating Thumbnail" flash before the thumbnails of HEIF photos, as folders were
+expanded in the tree. A screen recording at 60 frames a second showed it for 1 to 3 frames, on a Mac that decodes
+HEVC in the page, after which each thumbnail faded in for 2 seconds. The image now shows only once a thumbnail has
+been waited for 500 ms, which its style waits (`.photo-info-viewer-generating-thumbnail`), and a thumbnail that comes
+sooner is shown at once, without fading in (`generatingThumbnailDelayMs` in `PhotoInfoViewerComponent`). The
+thumbnails that take longer are those that the main process makes, 0.6 to 2 seconds each, and those that wait behind
+many others. Checked in the application, hidden, on a Mac: the rows of a folder just opened waited 100 to 220 ms for
+their small thumbnails and never showed the image, and the photos that the main process made showed it from 511 ms,
+and faded in once made.
+
 ## Not checked
 
 - Windows and Linux were not measured. Chromium decodes HEVC on Windows 8 and later with a graphics adapter that does
