@@ -120,8 +120,9 @@ in the same photos on every OS, Linux too, and the tests check that on the three
 
 ## Left for later
 
-- Keeping the results on disk, only whether each photo has a face, deletable from the Settings' Cache tab, so that a
-  folder opened again is not looked at again; and the item in the tree's menu of a folder.
+- Keeping the results on disk, only whether each photo has a face, deletable from the Settings dialog as the
+  thumbnail cache is (on the Thumbnails tab, where the Cache tab went in November 2026), so that a folder opened again
+  is not looked at again; and the item in the tree's menu of a folder.
 - Looking at the photos of a folder once it opens, for those who turn it on in the settings.
 - The face regions of HEIF files, which exifr does not read.
 - OpenCV Zoo has published `face_detection_yunet_2026may.onnx`, the same model with an input of any size, which was

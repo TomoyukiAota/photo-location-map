@@ -207,8 +207,7 @@
       "appearance": "Tampilan",
       "dateTime": "Tanggal & Waktu",
       "thumbnails": "Gambar Mini",
-      "os": "Sistem Operasi",
-      "cache": "Cache"
+      "os": "Sistem Operasi"
     },
     "restartAfterSaving": "Aplikasi ini akan dimulai ulang setelah pengaturan disimpan.",
     "confirmRestart": "Aplikasi ini akan dimulai ulang setelah pengaturan disimpan.\nIngin melanjutkan?",

@@ -207,8 +207,7 @@
       "appearance": "Välimus",
       "dateTime": "Kuupäev ja kellaaeg",
       "thumbnails": "Pisipildid",
-      "os": "Operatsioonisüsteem",
-      "cache": "Vahemälu"
+      "os": "Operatsioonisüsteem"
     },
     "restartAfterSaving": "Pärast seadete salvestamist taaskäivitatakse see rakendus.",
     "confirmRestart": "Pärast seadete salvestamist taaskäivitatakse see rakendus.\nKas soovite jätkata?",

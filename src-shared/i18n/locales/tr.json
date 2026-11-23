@@ -207,8 +207,7 @@
       "appearance": "Görünüm",
       "dateTime": "Tarih ve saat",
       "thumbnails": "Küçük Resimler",
-      "os": "Sistem",
-      "cache": "Önbellek"
+      "os": "Sistem"
     },
     "restartAfterSaving": "Ayarlar kaydedildikten sonra bu uygulama yeniden başlatılacak.",
     "confirmRestart": "Ayarlar kaydedildikten sonra bu uygulama yeniden başlatılacak.\nDevam etmek istiyor musunuz?",

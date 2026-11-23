@@ -207,8 +207,7 @@
       "appearance": "Wygląd",
       "dateTime": "Data i czas",
       "thumbnails": "Miniaturki",
-      "os": "System",
-      "cache": "Pamięć podręczna"
+      "os": "System"
     },
     "restartAfterSaving": "Aplikacja uruchomi się ponownie po zapisaniu ustawień.",
     "confirmRestart": "Aplikacja uruchomi się ponownie po zapisaniu ustawień.\nCzy chcesz kontynuować?",

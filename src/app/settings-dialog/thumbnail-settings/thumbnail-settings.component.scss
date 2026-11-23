@@ -32,3 +32,10 @@
     white-space: normal;
   }
 }
+
+// The cache, a part of the tab with a title as large as its first one: set apart from the choices above it, as far as
+// the cache's own parts are from each other.
+.thumbnail-cache {
+  display: block;
+  margin-top: 30px;
+}
