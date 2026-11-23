@@ -44,6 +44,8 @@ declare module 'vanillajs-datepicker' {
     readonly pickerElement: HTMLElement;
     getDate(): Date | undefined;
     setDate(date: Date | string | number, options?: SetDateOptions): void;
+    /** Takes the text of the field as the date. With `revert`, the date replaces a text that is not one. */
+    update(options?: Pick<SetDateOptions, 'autohide' | 'revert' | 'forceRefresh'>): void;
     show(): void;
     hide(): void;
     destroy(): this;

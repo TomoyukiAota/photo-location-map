@@ -1730,6 +1730,12 @@ test('the map shows Esri World Imagery Wayback and OpenHistoricalMap at the date
   await page.mouse.click(mapBox.x + mapBox.width / 3, mapBox.y + mapBox.height / 2);
   await expect(calendar).toHaveCount(0);
   await expect(dateField).toHaveValue('1970-01-01');
+  // So does a click in a control of the map, such as the box of the date, whose presses Leaflet keeps from the page
+  // (MapDatePickerComponent).
+  await dateField.click();
+  await expect(calendar).toHaveCount(1);
+  await control.locator('.plm-leaflet-map-date-title').click();
+  await expect(calendar).toHaveCount(0);
   await control.getByRole('checkbox').check();
   await expect(dateField).toHaveValue('2025-08-10');
 
