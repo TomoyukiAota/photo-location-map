@@ -8,7 +8,7 @@ import { assertFromMainWindow } from '../ipc/ipc-sender.js';
 import { relaunchAndQuit } from '../process/relaunch-and-quit.js';
 import { openWithAssociatedApp } from '../shell/open-with-os.js';
 
-// The Cache tab of the settings dialog (src/app/settings-dialog/cache-settings/).
+// The cache on the Thumbnails tab of the settings dialog (src/app/settings-dialog/cache-settings/).
 
 ipcMain.handle(IpcConstants.ThumbnailCache.Open, async event => {
   assertFromMainWindow(event, 'Opening the thumbnail cache');

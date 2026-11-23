@@ -207,8 +207,7 @@
       "appearance": "Penampilan",
       "dateTime": "Tarikh & Masa",
       "thumbnails": "Lakaran Kecil",
-      "os": "Sistem Pengendalian",
-      "cache": "Cache"
+      "os": "Sistem Pengendalian"
     },
     "restartAfterSaving": "Aplikasi ini akan dimulakan semula selepas tetapan disimpan.",
     "confirmRestart": "Aplikasi ini akan dimulakan semula selepas tetapan disimpan.\nAdakah anda mahu meneruskan?",

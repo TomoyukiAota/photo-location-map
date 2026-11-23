@@ -207,8 +207,7 @@
       "appearance": "Darstellung",
       "dateTime": "Datum & Uhrzeit",
       "thumbnails": "Miniaturen",
-      "os": "Betriebssystem",
-      "cache": "Cache"
+      "os": "Betriebssystem"
     },
     "restartAfterSaving": "Diese App wird nach dem Speichern der Einstellungen neu gestartet.",
     "confirmRestart": "Diese App wird nach dem Speichern der Einstellungen neu gestartet.\nMöchten Sie fortfahren?",

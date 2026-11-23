@@ -207,8 +207,7 @@
       "appearance": "外観",
       "dateTime": "日付と時刻",
       "thumbnails": "サムネイル",
-      "os": "OS",
-      "cache": "キャッシュ"
+      "os": "OS"
     },
     "restartAfterSaving": "設定を保存すると、このアプリは再起動します。",
     "confirmRestart": "設定を保存すると、このアプリは再起動します。\n続けますか？",

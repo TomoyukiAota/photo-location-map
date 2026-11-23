@@ -5,6 +5,7 @@ import { ThumbnailQuality, thumbnailQualities } from '../../../../src-shared/use
 import { currentUserSettings } from '../../../../src-shared/user-settings/user-settings';
 import { TranslationKey } from '../../../../src-shared/i18n/translation-key';
 import { TranslatePipe } from '../../shared/i18n/translate.pipe';
+import { CacheSettingsComponent } from '../cache-settings/cache-settings.component';
 import { SettingsChangedService } from '../service/settings-changed.service';
 import { ThumbnailSettingsChangedParameter } from './thumbnail-settings-changed-parameter';
 
@@ -17,12 +18,13 @@ const choiceTexts: Record<ThumbnailQuality, { label: TranslationKey, description
 /**
  * The Thumbnails tab: the quality of the thumbnails of HEIF photos, against how soon they are shown
  * (src-shared/user-settings/thumbnail-quality.ts). It applies once saved, without a restart (SettingsDialogComponent).
+ * Under it, the cache of the thumbnails that are made (CacheSettingsComponent).
  */
 @Component({
   selector: 'app-thumbnail-settings',
   templateUrl: './thumbnail-settings.component.html',
   styleUrls: ['./thumbnail-settings.component.scss'],
-  imports: [MatRadioGroup, MatRadioButton, FormsModule, TranslatePipe],
+  imports: [MatRadioGroup, MatRadioButton, FormsModule, TranslatePipe, CacheSettingsComponent],
 })
 export class ThumbnailSettingsComponent {
   private readonly settingsChangedService = inject(SettingsChangedService);
