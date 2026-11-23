@@ -10,7 +10,9 @@
         <button mat-menu-item
                 class="photo-info-viewer-more-options-menu-item"
                 [matMenuTriggerFor]="submenu.name === 'selection' ? selectionMenu : googleMenu"
-                [matMenuTriggerData]="{ items: submenu.items }">{{ item.textKey | t }}</button>
+                [matMenuTriggerData]="{ items: submenu.items }"
+                #submenuTrigger="matMenuTrigger"
+                (menuOpened)="placeAgainOnceShown(submenuTrigger)">{{ item.textKey | t }}</button>
       } @else {
         <button mat-menu-item class="photo-info-viewer-more-options-menu-item" (click)="item.choose?.('click')">{{ item.textKey | t }}</button>
       }
