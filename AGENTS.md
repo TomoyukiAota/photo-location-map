@@ -474,8 +474,12 @@ it is run on demand), and a failed job would sit unattended that long.
 Each required check `test (<os>)` passes when the two jobs that run the tests on
 that OS at once, `test (<os>), part 1 of 2` and `part 2 of 2`, have passed, and
 fails once both have ended if either did not. Read the log of the part that
-failed, and rerun with `gh run rerun <run> --failed`, which reruns that part and
-the check.
+failed, and classify the failure, at once. Rerun only once the whole run has
+ended: GitHub reruns no job of a run that is still running, and `gh run rerun`
+then fails with "This workflow is already running". On Ubuntu,
+`e2e against the development build (ubuntu)` can still run after
+`test (ubuntu)` has failed. Wait with `gh run watch <run>`, then
+`gh run rerun <run> --failed` reruns the parts that failed and the check.
 
 ## CI skips pushes that change only documents
 
