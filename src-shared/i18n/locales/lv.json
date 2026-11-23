@@ -126,11 +126,8 @@
     "removeRegion": "Noņemt apgabalu",
     "dates": {
       "imageryDate": "Attēlu datums kartes centrā",
-      "mapDate": "Kartes datums",
       "olderImagery": "Vecāki attēli",
       "newerImagery": "Jaunāki attēli",
-      "yearEarlier": "Gadu agrāk",
-      "yearLater": "Gadu vēlāk",
       "matchPhotoDates": "Pielāgot fotoattēlu uzņemšanas datumiem",
       "nearPhotoDates": "{{date}} (tuvu fotoattēlu datumiem)",
       "versionOf": "Versija no {{date}}",
@@ -139,8 +136,7 @@
       "noPhotoDates": "Nevienam fotoattēlam kartē nav uzņemšanas datuma.",
       "loading": "Notiek datumu ielāde...",
       "failed": "Datumus neizdevās ielādēt.",
-      "zoomIn": "Tuviniet karti, lai redzētu, kad attēli uzņemti.",
-      "mapFailed": "Šo karti nevar parādīt."
+      "zoomIn": "Tuviniet karti, lai redzētu, kad attēli uzņemti."
     }
   },
   "chart": {

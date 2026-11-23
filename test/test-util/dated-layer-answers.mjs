@@ -1,7 +1,7 @@
-// What Esri World Imagery Wayback and OpenHistoricalMap answer for the ring of EXPO 2025, as they answered on
-// 2026-11-21, for the map's layers of a past date (src/app/map/leaflet-map/dated-layers/). The e2e suite and the
-// layout tool answer the app's requests with these, so that neither depends on those servers, and the page's
-// Content Security Policy still decides what it may ask for.
+// What Esri World Imagery Wayback answers for the ring of EXPO 2025, as it answered on 2026-11-21, for the map's layer
+// of a past date (src/app/map/leaflet-map/dated-layers/). The e2e suite and the layout tool answer the app's requests
+// with these, so that neither depends on its servers, and the page's Content Security Policy still decides what it may
+// ask for.
 
 const metadata = name => `https://metadata.maptiles.arcgis.com/arcgis/rest/services/World_Imagery_Metadata_${name}/MapServer`;
 
@@ -24,17 +24,13 @@ const sources = {
   '2025_r07': [['20250421', 16, 19], ['20240824', 12, 15]],
   '2024_r05': [['20230910', 12, 19]],
 };
-/** A style of one color for OpenHistoricalMap, which MapLibre draws without tiles, glyphs or sprites. */
-export const oneColorStyle = { version: 8, sources: {}, layers: [{ id: 'background', type: 'background', paint: { 'background-color': '#4b8bbe' } }] };
 /** A tile: an image of one pixel. */
 const tile = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64');
-const hosts = ['s3-us-west-2.amazonaws.com', 'wayback.maptiles.arcgis.com', 'metadata.maptiles.arcgis.com', 'server.arcgisonline.com',
-  'www.openhistoricalmap.org'];
+const hosts = ['s3-us-west-2.amazonaws.com', 'wayback.maptiles.arcgis.com', 'metadata.maptiles.arcgis.com', 'server.arcgisonline.com'];
 
 /**
- * Answers the page's requests to those servers with these: the list of releases, the tilemaps, the metadata, the
- * tiles and OpenHistoricalMap's style; anything else of them fails. Gives the releases of the Wayback tiles that the
- * page asks for, in order.
+ * Answers the page's requests to those servers with these: the list of releases, the tilemaps, the metadata and the
+ * tiles; anything else of them fails. Gives the releases of the Wayback tiles that the page asks for, in order.
  */
 export async function answerDatedLayers(page) {
   const tileReleases = [];
@@ -58,8 +54,6 @@ export async function answerDatedLayers(page) {
     }
     if (url.hostname === 'server.arcgisonline.com')
       return route.fulfill({ body: tile, contentType: 'image/png' });
-    if (url.pathname === '/map-styles/main/main.json')
-      return route.fulfill({ json: oneColorStyle });
     return route.abort();
   });
   return tileReleases;

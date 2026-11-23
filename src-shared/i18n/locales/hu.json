@@ -126,11 +126,8 @@
     "removeRegion": "Terület eltávolítása",
     "dates": {
       "imageryDate": "A felvétel dátuma a térkép közepén",
-      "mapDate": "A térkép dátuma",
       "olderImagery": "Régebbi felvétel",
       "newerImagery": "Újabb felvétel",
-      "yearEarlier": "Egy évvel korábban",
-      "yearLater": "Egy évvel később",
       "matchPhotoDates": "Igazítás a fotók készítési dátumához",
       "nearPhotoDates": "{{date}} (a fotók dátumához közel)",
       "versionOf": "Változat: {{date}}",
@@ -139,8 +136,7 @@
       "noPhotoDates": "A térképen egyik fotónak sincs készítési dátuma.",
       "loading": "Dátumok betöltése...",
       "failed": "A dátumokat nem sikerült betölteni.",
-      "zoomIn": "Nagyítson rá, hogy lássa, mikor készült a felvétel.",
-      "mapFailed": "Ez a térkép nem jeleníthető meg."
+      "zoomIn": "Nagyítson rá, hogy lássa, mikor készült a felvétel."
     }
   },
   "chart": {

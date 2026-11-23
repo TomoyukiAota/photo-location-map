@@ -126,11 +126,8 @@
     "removeRegion": "Verwijder gebied",
     "dates": {
       "imageryDate": "Opnamedatum van de beelden in het midden van de kaart",
-      "mapDate": "Datum van de kaart",
       "olderImagery": "Oudere beelden",
       "newerImagery": "Nieuwere beelden",
-      "yearEarlier": "Een jaar eerder",
-      "yearLater": "Een jaar later",
       "matchPhotoDates": "Aanpassen aan de opnamedata van de foto’s",
       "nearPhotoDates": "{{date}} (dicht bij de data van de foto’s)",
       "versionOf": "Versie van {{date}}",
@@ -139,8 +136,7 @@
       "noPhotoDates": "Geen enkele foto op de kaart heeft een opnamedatum.",
       "loading": "Data laden...",
       "failed": "De data konden niet worden geladen.",
-      "zoomIn": "Zoom in om te zien wanneer de beelden zijn gemaakt.",
-      "mapFailed": "Deze kaart kan niet worden weergegeven."
+      "zoomIn": "Zoom in om te zien wanneer de beelden zijn gemaakt."
     }
   },
   "chart": {

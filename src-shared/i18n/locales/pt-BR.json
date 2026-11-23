@@ -126,11 +126,8 @@
     "removeRegion": "Remover área",
     "dates": {
       "imageryDate": "Data das imagens no centro do mapa",
-      "mapDate": "Data do mapa",
       "olderImagery": "Imagens mais antigas",
       "newerImagery": "Imagens mais recentes",
-      "yearEarlier": "Um ano antes",
-      "yearLater": "Um ano depois",
       "matchPhotoDates": "Ajustar às datas das fotos",
       "nearPhotoDates": "{{date}} (perto das datas das fotos)",
       "versionOf": "Versão de {{date}}",
@@ -139,8 +136,7 @@
       "noPhotoDates": "Nenhuma foto no mapa tem data de captura.",
       "loading": "Carregando as datas...",
       "failed": "Não foi possível carregar as datas.",
-      "zoomIn": "Amplie o mapa para ver quando as imagens foram capturadas.",
-      "mapFailed": "Não é possível mostrar este mapa."
+      "zoomIn": "Amplie o mapa para ver quando as imagens foram capturadas."
     }
   },
   "chart": {

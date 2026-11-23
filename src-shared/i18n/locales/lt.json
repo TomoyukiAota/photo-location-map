@@ -126,11 +126,8 @@
     "removeRegion": "Pašalinti sritį",
     "dates": {
       "imageryDate": "Vaizdų data žemėlapio centre",
-      "mapDate": "Žemėlapio data",
       "olderImagery": "Senesni vaizdai",
       "newerImagery": "Naujesni vaizdai",
-      "yearEarlier": "Metais anksčiau",
-      "yearLater": "Metais vėliau",
       "matchPhotoDates": "Derinti prie nuotraukų fotografavimo datų",
       "nearPhotoDates": "{{date}} (arti nuotraukų datų)",
       "versionOf": "{{date}} versija",
@@ -139,8 +136,7 @@
       "noPhotoDates": "Nė viena žemėlapio nuotrauka neturi fotografavimo datos.",
       "loading": "Įkeliamos datos...",
       "failed": "Nepavyko įkelti datų.",
-      "zoomIn": "Priartinkite, kad pamatytumėte, kada vaizdai buvo užfiksuoti.",
-      "mapFailed": "Šio žemėlapio negalima parodyti."
+      "zoomIn": "Priartinkite, kad pamatytumėte, kada vaizdai buvo užfiksuoti."
     }
   },
   "chart": {
