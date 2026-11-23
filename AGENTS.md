@@ -468,8 +468,14 @@ cause keeps coming back, propose a narrow workaround (see above) instead of
 rerunning indefinitely.
 
 **Handle each failed check as soon as it fails.** Do not wait for all checks to
-finish: the slowest job takes about 20 minutes (15–28 for `macos-26-intel` when
+finish: the slowest job takes about 15 minutes (15–28 for `macos-26-intel` when
 it is run on demand), and a failed job would sit unattended that long.
+
+Each required check `test (<os>)` passes when the two jobs that run the tests on
+that OS at once, `test (<os>), part 1 of 2` and `part 2 of 2`, have passed, and
+fails once both have ended if either did not. Read the log of the part that
+failed, and rerun with `gh run rerun <run> --failed`, which reruns that part and
+the check.
 
 ## CI skips pushes that change only documents
 
@@ -524,9 +530,10 @@ times, and gave an intermittent failure two chances to block the merge.
 ## The Windows CI publishes on purpose
 
 `.github/workflows/ci-on-windows.yml` runs the `[Publish to GitHub Releases]`
-steps (`npm run publish:windows`) on every push to every branch, unless the
-push changes only documents (see above). This is deliberate: it verifies that
-publishing still works, rather than finding out on release day. The draft
+steps (`npm run publish:windows`) on every push to every branch, in its job
+`test (windows-latest), part 2 of 2`, unless the push changes only documents
+(see above). This is deliberate: it verifies that publishing still works,
+rather than finding out on release day. The draft
 GitHub release that appears as a result (`1.12.1-alpha`, for example) is an
 **expected byproduct, not leftover junk**.
 
