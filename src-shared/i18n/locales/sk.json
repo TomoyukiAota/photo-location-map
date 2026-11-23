@@ -207,8 +207,7 @@
       "appearance": "Vzhľad",
       "dateTime": "Dátum a čas",
       "thumbnails": "Miniatúry",
-      "os": "Systém",
-      "cache": "Vyrovnávacia pamäť"
+      "os": "Systém"
     },
     "restartAfterSaving": "Aplikácia sa po uložení nastavení reštartuje.",
     "confirmRestart": "Aplikácia sa po uložení nastavení reštartuje.\nChcete pokračovať?",

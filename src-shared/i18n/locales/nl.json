@@ -207,8 +207,7 @@
       "appearance": "Weergave",
       "dateTime": "Datum en tijd",
       "thumbnails": "Miniaturen",
-      "os": "Besturingssysteem",
-      "cache": "Cache"
+      "os": "Besturingssysteem"
     },
     "restartAfterSaving": "Deze app wordt opnieuw gestart nadat de instellingen zijn bewaard.",
     "confirmRestart": "Deze app wordt opnieuw gestart nadat de instellingen zijn bewaard.\nWil je doorgaan?",

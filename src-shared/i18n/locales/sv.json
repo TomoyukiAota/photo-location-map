@@ -207,8 +207,7 @@
       "appearance": "Utseende",
       "dateTime": "Datum och tid",
       "thumbnails": "Miniatyrer",
-      "os": "Operativsystem",
-      "cache": "Cache"
+      "os": "Operativsystem"
     },
     "restartAfterSaving": "Appen startas om när inställningarna har sparats.",
     "confirmRestart": "Appen startas om när inställningarna har sparats.\nVill du fortsätta?",

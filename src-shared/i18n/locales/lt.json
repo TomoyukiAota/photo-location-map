@@ -207,8 +207,7 @@
       "appearance": "Išvaizda",
       "dateTime": "Data ir laikas",
       "thumbnails": "Miniatiūros",
-      "os": "Sistema",
-      "cache": "Talpykla"
+      "os": "Sistema"
     },
     "restartAfterSaving": "Įrašius nustatymus, ši programa bus paleista iš naujo.",
     "confirmRestart": "Įrašius nustatymus, ši programa bus paleista iš naujo.\nAr norite tęsti?",

@@ -207,8 +207,7 @@
       "appearance": "外觀",
       "dateTime": "日期與時間",
       "thumbnails": "縮圖",
-      "os": "作業系統",
-      "cache": "快取"
+      "os": "作業系統"
     },
     "restartAfterSaving": "儲存設定後，此應用程式將重新啟動。",
     "confirmRestart": "儲存設定後，此應用程式將重新啟動。\n要繼續嗎？",

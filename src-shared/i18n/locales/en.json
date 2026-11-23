@@ -207,8 +207,7 @@
       "appearance": "Appearance",
       "dateTime": "Date & Time",
       "thumbnails": "Thumbnails",
-      "os": "OS",
-      "cache": "Cache"
+      "os": "OS"
     },
     "restartAfterSaving": "This application will restart after saving settings.",
     "confirmRestart": "This application will restart after saving settings.\nDo you want to continue?",

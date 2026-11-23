@@ -923,9 +923,17 @@ test('welcome, about and every available settings tab keep their appearance', as
   await shot('settings-date', [page.locator('.date-time-example')]);
   await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Thumbnails' }).click();
   await expect(page.locator('app-thumbnail-settings')).toBeVisible();
-  await shot('settings-thumbnails');
-  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Cache' }).click();
-  await shot('settings-cache', [page.locator('.location-value')]);
+  // The tab, with the cache under the quality, is higher than the dialog leaves it: it scrolls between the header and
+  // the footer, which stay, rather than the dialog as a whole.
+  const settingsContent = page.locator('app-settings-dialog .settings-content');
+  expect(await settingsContent.evaluate(content => content.scrollHeight > content.clientHeight)).toBe(true);
+  await expect(page.getByRole('button', { name: 'Cancel', exact: true })).toBeInViewport();
+  await expect(page.getByRole('button', { name: 'Delete Thumbnail Cache', exact: true })).not.toBeInViewport();
+  await shot('settings-thumbnails', [page.locator('.location-value')]);
+  await page.getByRole('button', { name: 'Delete Thumbnail Cache', exact: true }).scrollIntoViewIfNeeded();
+  await expect(page.getByRole('button', { name: 'Delete Thumbnail Cache', exact: true })).toBeInViewport();
+  await expect(page.getByRole('button', { name: 'Cancel', exact: true })).toBeInViewport();
+  await shot('settings-thumbnails-cache', [page.locator('.location-value')]);
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
 });
 // The application menu in English, as it was when Electron gave the labels of the items with a role, and in Japanese.
@@ -1269,7 +1277,7 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   // The Settings dialog, whose first tab keeps the English word for a user who cannot read Japanese.
   await settings();
   await expect(page.locator('app-settings-dialog mat-list-item')).toHaveText(
-    ['言語 (Language)', '外観', '日付と時刻', 'サムネイル', ...(process.platform === 'win32' ? ['OS'] : []), 'キャッシュ']);
+    ['言語 (Language)', '外観', '日付と時刻', 'サムネイル', ...(process.platform === 'win32' ? ['OS'] : [])]);
   const languageSettings = page.locator('app-language-settings');
   await expect(languageSettings.getByRole('option')).toHaveText([systemLanguageInJapanese('日本語'), ...languageNames]);
   await expect(languageSettings.getByRole('option', { name: systemLanguageInJapanese('日本語') })).toHaveAttribute('aria-selected', 'true');
@@ -1438,7 +1446,7 @@ test('on a computer whose language is Arabic, the application is laid out from r
   await expect(dateControl).toHaveCount(0);
   // A path is written from left to right within the text around it: its first slash stays at its start.
   await settings();
-  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'ذاكرة التخزين المؤقت' }).click();
+  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'الصور المصغّرة' }).click();
   const cacheLocation = page.locator('app-cache-settings .location-value bdi');
   await expect(cacheLocation).toHaveText(/thumbnail-cache$/);
   await expect(cacheLocation).toHaveCSS('direction', 'ltr');
@@ -1869,7 +1877,7 @@ test('the links of the welcome dialog, the about box and the cache settings open
   await page.keyboard.press('Escape');
   await expect(about).toHaveCount(0);
   await settings();
-  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Cache' }).click();
+  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Thumbnails' }).click();
   await page.locator('app-cache-settings').getByText('HEIF files').click();
   const troubleshooting = 'https://github.com/TomoyukiAota/photo-location-map/blob/main/docs/troubleshooting/troubleshooting.md';
   await expect.poll(openedUrls).toEqual([
@@ -1887,7 +1895,7 @@ test('the cache settings open the cache folder, and ask before deleting the cach
   await dismissWelcome();
   const openCommands = await recordOpenCommands();
   await settings();
-  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Cache' }).click();
+  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Thumbnails' }).click();
   const location = page.locator('app-cache-settings .location-value');
   const cacheFolder = (await location.textContent()).trim();
   expect(cacheFolder.startsWith(profile)).toBe(true);
@@ -4335,7 +4343,7 @@ test('deleting the thumbnail cache empties it before the app relaunches itself',
   await launch({ env: { PLM_TEST_LAUNCH_REPORT: report } });
   await dismissWelcome();
   await settings();
-  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Cache' }).click();
+  await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Thumbnails' }).click();
   const cacheFolder = (await page.locator('app-cache-settings .location-value').textContent()).trim();
   await mkdir(path.join(cacheFolder, 'some', 'folder'), { recursive: true });
   await writeFile(path.join(cacheFolder, 'some', 'folder', 'IMG_0001.HEIC.plm.jpg'), 'thumbnail');
