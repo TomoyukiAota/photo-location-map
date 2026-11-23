@@ -194,8 +194,8 @@
     }
   },
   "faceSearch": {
-    "looking": "Söker efter ansikten i de markerade bilderna...",
-    "progress": "Genomsökta bilder: {{done}} av {{total}}.",
+    "looking": "Upptäcker ansikten...",
+    "progress": "Bearbetade bilder: {{done}} av {{total}}",
     "noFacesFound": "Inga ansikten hittades i de markerade bilderna. Markeringen förblir som den är.",
     "notLookedAt": "Bilder som inte kunde genomsökas efter ansikten och som inte längre är markerade: {{count}}.",
     "failed": "Det gick inte att söka efter ansikten i de markerade bilderna. Markeringen förblir som den är."
