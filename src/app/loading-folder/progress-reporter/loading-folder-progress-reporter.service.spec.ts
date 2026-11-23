@@ -17,7 +17,7 @@ describe('LoadingFolderProgressReporterService', () => {
     vi.useRealTimers();
   });
 
-  it('reports the progress of loading every 100 ms, and stops once loading completes', () => {
+  it('reports the progress of loading right after it starts and every 100 ms, and stops once loading completes', () => {
     service.startUpdatingProgress();
     expect(service.status()).toEqual(notStartedLoadingFolderProgressStatus);
 
@@ -31,6 +31,30 @@ describe('LoadingFolderProgressReporterService', () => {
     LoadingFolderProgress.incrementNumberOfLoadedFiles();
     vi.advanceTimersByTime(100);
     expect(service.status()).toMatchObject({ numberOfLoadedFiles: 2, isInProgress: false, isCompleted: true });
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('reports the progress right after it starts, as of a folder whose photos were read before its dialog was made', () => {
+    LoadingFolderProgress.setNumberOfAllFilesToLoad(3);
+    for (let file = 0; file < 3; file++)
+      LoadingFolderProgress.incrementNumberOfLoadedFiles();
+
+    service.startUpdatingProgress();
+    // First that the files are being collected, as for any folder, then what is so.
+    expect(service.status()).toEqual(notStartedLoadingFolderProgressStatus);
+    vi.advanceTimersByTime(0);
+    expect(service.status()).toMatchObject({ numberOfLoadedFiles: 3, isInProgress: false, isCompleted: true });
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('reports the progress when asked, as the open does once the photos are read, and then stops', () => {
+    service.startUpdatingProgress();
+    vi.advanceTimersByTime(30);
+    LoadingFolderProgress.setNumberOfAllFilesToLoad(1);
+    LoadingFolderProgress.incrementNumberOfLoadedFiles();
+
+    service.reportProgress();
+    expect(service.status()).toMatchObject({ numberOfLoadedFiles: 1, isCompleted: true });
     expect(vi.getTimerCount()).toBe(0);
   });
 
