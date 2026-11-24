@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 import { Logger } from '../../../src-shared/log/logger';
-import { photoFileUrl } from '../../../src-shared/main-window-schemes';
+import { madeThumbnailUrl, photoFileUrl } from '../../../src-shared/main-window-schemes';
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
 import { DirectoryTreeViewSelectionService } from '../directory-tree-view/directory-tree-view-selection.service';
 import { HeifThumbnailService } from '../heif-thumbnail/heif-thumbnail.service';
@@ -86,7 +86,7 @@ describe('FaceSearchService', () => {
           provide: HeifThumbnailService,
           useValue: {
             watch: vi.fn(),
-            stateOf: (path: string) => thumbnails.has(path) ? { kind: 'generated', filePath: thumbnails.get(path) }
+            stateOf: (path: string) => thumbnails.has(path) ? { kind: 'generated', filePath: thumbnails.get(path), longerSide: 400 }
               : { kind: 'pending', provisionalUrl: null },
           },
         },
@@ -130,13 +130,13 @@ describe('FaceSearchService', () => {
     regions.add(tagged.path).add(heif.path);
     scores.set(photoFileUrl(other.path), 0.1);
     thumbnails.set(heif.path, '/cache/c.heic.plm.jpg');
-    scores.set(photoFileUrl('/cache/c.heic.plm.jpg'), 0.2);
+    scores.set(madeThumbnailUrl('/cache/c.heic.plm.jpg', 400), 0.2);
     selectPhotos([tagged, other, heif]);
 
     await service.narrowDownSelectedPhotos();
 
     expect(haveRegions).toHaveBeenCalledWith([tagged.path, other.path]);
-    expect(score.mock.calls.map(([image]) => image.url)).toEqual([photoFileUrl(other.path), photoFileUrl('/cache/c.heic.plm.jpg')]);
+    expect(score.mock.calls.map(([image]) => image.url)).toEqual([photoFileUrl(other.path), madeThumbnailUrl('/cache/c.heic.plm.jpg', 400)]);
     expect(select).toHaveBeenCalledWith([tagged.path]);
   });
 
@@ -216,7 +216,7 @@ describe('FaceSearchService', () => {
 
   it('waits for the thumbnail that the app makes of a HEIF photo, and looks at it once it is made', async () => {
     const [jpeg, heif] = [photo('/trip/a.jpg'), photo('/trip/b.HEIC')];
-    scores.set(photoFileUrl(jpeg.path), 0.1).set(photoFileUrl('/cache/b.HEIC.plm.jpg'), 0.9);
+    scores.set(photoFileUrl(jpeg.path), 0.1).set(madeThumbnailUrl('/cache/b.HEIC.plm.jpg', 400), 0.9);
     selectPhotos([heif, jpeg]);
 
     const searching = service.narrowDownSelectedPhotos();

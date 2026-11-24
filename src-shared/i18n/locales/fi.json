@@ -241,12 +241,15 @@
       "example": "Esimerkki"
     },
     "thumbnails": {
-      "title": "HEIF-pikkukuvat",
-      "description": "Tämä sovellus luo HEIF-tiedostojen, kuten iPhonella otettujen kuvien, pikkukuvat. Valitse, luodaanko ne laadun vai nopeuden mukaan.",
+      "title": "Pikkukuvat",
+      "description": "Valitse, luodaanko pikkukuvat laadun vai nopeuden mukaan.",
       "highQuality": "Korkea laatu",
-      "highQualityDescription": "Luodaan koko kuvasta, pidempi sivu 400 pikseliä. Siihen asti näytetään kuvaan tallennettu pieni pikkukuva. Tietokoneella, jonka grafiikkalaitteisto ei pysty purkamaan HEVC-koodausta, niiden luominen vie aikaa.",
+      "highQualityDescription": "Luodaan koko kuvasta alla valitun kokoisina. Siihen asti näytetään kuvaan tallennettu pieni pikkukuva. Niiden luominen vie aikaa, kun kansio avataan ensimmäisen kerran, ja kauemmin HEIF-tiedostoille tietokoneella, jonka grafiikkalaitteisto ei pysty purkamaan HEVC-koodausta.",
+      "size": "Koko",
+      "sizeValue": "pidempi sivu {{size}} pikseliä",
+      "sizeDescription": "Mitä suurempi koko, sitä suurempina pikkukuvat näytetään, mutta sitä kauemmin niiden luominen kestää ja sitä enemmän tilaa ne vievät pikkukuvien välimuistissa.",
       "fast": "Nopea",
-      "fastDescription": "Kuvaan tallennettu pieni pikkukuva, joka näytetään heti. Se on epätarkempi: 320 × 240 pikseliä iPhonella otetussa 12 megapikselin kuvassa."
+      "fastDescription": "Kuvaan tallennettu pieni pikkukuva, joka näytetään heti. Se on epätarkempi: useimmissa JPEG-kuvissa 160 × 120 pikseliä ja iPhonella otetussa 12 megapikselin kuvassa 320 × 240 pikseliä."
     },
     "os": {
       "title": "Resurssienhallinnan pikavalikko",
@@ -261,7 +264,7 @@
     },
     "cache": {
       "title": "Pikkukuvien välimuisti",
-      "generationRequired": "JPEG-/PNG-tiedostoille, joiden EXIF-tiedoissa ei ole pikkukuvaa, ja <heifLink>HEIF-tiedostoille</heifLink>, joita tämän tietokoneen grafiikkalaitteisto ei pysty purkamaan, on luotava pikkukuvat, mikä vie aikaa.",
+      "generationRequired": "JPEG-/PNG-tiedostoille, joiden EXIF-tiedoissa ei ole riittävän suurta pikkukuvaa, ja <heifLink>HEIF-tiedostoille</heifLink>, joita tämän tietokoneen grafiikkalaitteisto ei pysty purkamaan, on luotava pikkukuvat, mikä vie aikaa.",
       "thereforeCached": "Siksi luodut pikkukuvat tallennetaan välimuistiin.",
       "usedNextTime": "Seuraavasta kerrasta alkaen käytetään välimuistia, jolloin pikkukuvia ei tarvitse luoda uudelleen.",
       "location": "Välimuistin sijainti:",

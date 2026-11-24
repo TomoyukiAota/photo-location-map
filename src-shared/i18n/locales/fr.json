@@ -241,12 +241,15 @@
       "example": "Exemple"
     },
     "thumbnails": {
-      "title": "Vignettes HEIF",
-      "description": "Cette application crée les vignettes des fichiers HEIF, comme les photos prises avec un iPhone. Choisissez si elles sont créées pour la qualité ou pour la rapidité.",
+      "title": "Vignettes",
+      "description": "Choisissez si les vignettes sont créées pour la qualité ou pour la rapidité.",
       "highQuality": "Haute qualité",
-      "highQualityDescription": "Créées à partir de la photo entière, avec 400 pixels sur le côté le plus long. En attendant, la petite vignette enregistrée dans la photo est affichée. Sur un ordinateur dont le matériel graphique ne peut pas décoder le HEVC, leur création prend du temps.",
+      "highQualityDescription": "Créées à partir de la photo entière, à la taille choisie ci-dessous. En attendant, la petite vignette enregistrée dans la photo est affichée. Leur création prend du temps la première fois qu’un dossier est ouvert, et plus encore pour les fichiers HEIF sur un ordinateur dont le matériel graphique ne peut pas décoder le HEVC.",
+      "size": "Taille",
+      "sizeValue": "{{size}} pixels sur le côté le plus long",
+      "sizeDescription": "Plus la taille est grande, plus les vignettes sont affichées en grand, mais plus leur création prend de temps et plus elles occupent de place dans le cache des vignettes.",
       "fast": "Rapide",
-      "fastDescription": "La petite vignette enregistrée dans la photo, affichée tout de suite. Elle est moins nette\u00a0: 320 × 240 pixels pour une photo de 12 mégapixels prise avec un iPhone."
+      "fastDescription": "La petite vignette enregistrée dans la photo, affichée tout de suite. Elle est moins nette\u00a0: 160 × 120 pixels dans la plupart des photos JPEG, et 320 × 240 pixels dans une photo de 12 mégapixels prise avec un iPhone."
     },
     "os": {
       "title": "Menu contextuel de l’Explorateur de fichiers",
@@ -261,7 +264,7 @@
     },
     "cache": {
       "title": "Cache des vignettes",
-      "generationRequired": "Les fichiers JPEG/PNG sans vignette dans leurs données EXIF et les <heifLink>fichiers HEIF</heifLink> que le matériel graphique de cet ordinateur ne peut pas décoder nécessitent la création de vignettes, ce qui prend du temps.",
+      "generationRequired": "Les fichiers JPEG/PNG sans vignette assez grande dans leurs données EXIF et les <heifLink>fichiers HEIF</heifLink> que le matériel graphique de cet ordinateur ne peut pas décoder nécessitent la création de vignettes, ce qui prend du temps.",
       "thereforeCached": "Les vignettes créées sont donc mises en cache.",
       "usedNextTime": "Le cache sera utilisé dès la prochaine fois pour éviter de recréer les vignettes.",
       "location": "Emplacement du cache\u00a0:",

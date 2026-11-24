@@ -241,12 +241,15 @@
       "example": "Ejemplo"
     },
     "thumbnails": {
-      "title": "Miniaturas HEIF",
-      "description": "Esta aplicación genera las miniaturas de los archivos HEIF, como las fotos tomadas con un iPhone. Elija si se generan priorizando la calidad o la velocidad.",
+      "title": "Miniaturas",
+      "description": "Elija si las miniaturas se generan priorizando la calidad o la velocidad.",
       "highQuality": "Alta calidad",
-      "highQualityDescription": "Se generan a partir de la foto completa, con 400 píxeles en el lado más largo. Hasta entonces, se muestra la miniatura pequeña guardada en la foto. En un equipo que no puede descodificar HEVC con su hardware gráfico, generarlas lleva tiempo.",
+      "highQualityDescription": "Se generan a partir de la foto completa, con el tamaño elegido abajo. Hasta entonces, se muestra la miniatura pequeña guardada en la foto. Generarlas lleva tiempo la primera vez que se abre una carpeta, y más para los archivos HEIF en un equipo que no puede descodificar HEVC con su hardware gráfico.",
+      "size": "Tamaño",
+      "sizeValue": "{{size}} píxeles en el lado más largo",
+      "sizeDescription": "Cuanto mayor es el tamaño, más grandes se muestran las miniaturas, pero más tardan en generarse y más espacio ocupan en la caché de miniaturas.",
       "fast": "Rápida",
-      "fastDescription": "La miniatura pequeña guardada en la foto, que se muestra al instante. Es menos nítida: 320 × 240 píxeles en una foto de 12 megapíxeles tomada con un iPhone."
+      "fastDescription": "La miniatura pequeña guardada en la foto, que se muestra al instante. Es menos nítida: 160 × 120 píxeles en la mayoría de las fotos JPEG, y 320 × 240 píxeles en una foto de 12 megapíxeles tomada con un iPhone."
     },
     "os": {
       "title": "Menú contextual del Explorador de archivos",
@@ -261,7 +264,7 @@
     },
     "cache": {
       "title": "Caché de miniaturas",
-      "generationRequired": "Los archivos JPEG/PNG sin miniatura en sus datos EXIF y los <heifLink>archivos HEIF</heifLink> que este equipo no puede descodificar con su hardware gráfico necesitan que se generen miniaturas, lo que lleva tiempo.",
+      "generationRequired": "Los archivos JPEG/PNG sin una miniatura lo bastante grande en sus datos EXIF y los <heifLink>archivos HEIF</heifLink> que este equipo no puede descodificar con su hardware gráfico necesitan que se generen miniaturas, lo que lleva tiempo.",
       "thereforeCached": "Por eso, las miniaturas generadas se guardan en la caché.",
       "usedNextTime": "A partir de la próxima vez se usará la caché para no volver a generar las miniaturas.",
       "location": "Ubicación de la caché:",

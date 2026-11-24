@@ -241,12 +241,15 @@
       "example": "Exemple"
     },
     "thumbnails": {
-      "title": "Miniatures HEIF",
-      "description": "Aquesta aplicació genera les miniatures dels fitxers HEIF, com ara les fotos fetes amb un iPhone. Trieu si s’han de generar per a la qualitat o per a la rapidesa.",
+      "title": "Miniatures",
+      "description": "Trieu si les miniatures s’han de generar per a la qualitat o per a la rapidesa.",
       "highQuality": "Alta qualitat",
-      "highQualityDescription": "Es generen a partir de la foto sencera, amb 400 píxels al costat més llarg. Fins aleshores, es mostra la miniatura petita desada a la foto. En un ordinador que no pot descodificar HEVC amb el maquinari gràfic, generar-les porta temps.",
+      "highQualityDescription": "Es generen a partir de la foto sencera, amb la mida triada a sota. Fins aleshores, es mostra la miniatura petita desada a la foto. Generar-les porta temps la primera vegada que s’obre una carpeta, i més per als fitxers HEIF en un ordinador que no pot descodificar HEVC amb el maquinari gràfic.",
+      "size": "Mida",
+      "sizeValue": "{{size}} píxels al costat més llarg",
+      "sizeDescription": "Com més gran és la mida, més grans es mostren les miniatures, però més triguen a generar-se i més espai ocupen a la memòria cau de miniatures.",
       "fast": "Ràpid",
-      "fastDescription": "La miniatura petita desada a la foto, que es mostra de seguida. És menys nítida: 320 × 240 píxels per a una foto de 12 megapíxels feta amb un iPhone."
+      "fastDescription": "La miniatura petita desada a la foto, que es mostra de seguida. És menys nítida: 160 × 120 píxels a la majoria de fotos JPEG, i 320 × 240 píxels en una foto de 12 megapíxels feta amb un iPhone."
     },
     "os": {
       "title": "Menú contextual de l’Explorador de fitxers",
@@ -261,7 +264,7 @@
     },
     "cache": {
       "title": "Memòria cau de miniatures",
-      "generationRequired": "Per als fitxers JPEG/PNG sense miniatura a les dades EXIF i per als <heifLink>fitxers HEIF</heifLink> que aquest ordinador no pot descodificar amb el maquinari gràfic, cal generar miniatures, i això porta temps.",
+      "generationRequired": "Per als fitxers JPEG/PNG sense una miniatura prou gran a les dades EXIF i per als <heifLink>fitxers HEIF</heifLink> que aquest ordinador no pot descodificar amb el maquinari gràfic, cal generar miniatures, i això porta temps.",
       "thereforeCached": "Per això, les miniatures generades es desen a la memòria cau.",
       "usedNextTime": "A partir de la vegada següent s’utilitza la memòria cau i no es tornen a generar les miniatures.",
       "location": "Ubicació de la memòria cau:",

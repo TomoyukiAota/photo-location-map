@@ -2,6 +2,8 @@ export class ThumbnailFileGenerationArg {
   public srcFilePath: string;
   public outputFileDir: string;
   public outputFilePath: string;
+  /** The longer side of the thumbnail, in pixels (src-shared/user-settings/thumbnail-size.ts). */
+  public longerSide: number;
 }
 
 export type ThumbnailFileGenerationResultStatus =

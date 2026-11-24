@@ -2,6 +2,7 @@ import assert from 'assert';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import { setTimeout as delay } from 'timers/promises';
 import {
   isLastModified,
   isThumbnailJpeg,
@@ -19,7 +20,8 @@ describe('The files of the thumbnails that the page makes of JPEG and PNG photos
   let cachePaths: ThumbnailCachePaths;
   let photo: string;
   const jpeg = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 1, 2, 3]);
-  const stateOf = (filePath: string) => thumbnailStates([filePath], cachePaths).map(({ attemptFinished, cacheAvailable }) => ({ attemptFinished, cacheAvailable }))[0];
+  const stateOf = (filePath: string, longerSide = 400) => thumbnailStates([filePath], longerSide, cachePaths)
+    .map(({ attemptFinished, cacheAvailable }) => ({ attemptFinished, cacheAvailable }))[0];
 
   beforeEach(() => {
     root = fs.mkdtempSync(path.join(os.tmpdir(), 'plm-jpeg-png-thumbnail-'));
@@ -44,28 +46,85 @@ describe('The files of the thumbnails that the page makes of JPEG and PNG photos
 
   it('keeps a thumbnail, with the log of its generation for the photo as it was read, which the cache then has', async () => {
     const { lastModified } = await readPhotoForThumbnail(photo);
-    const thumbnailFilePath = await saveJpegPngThumbnail(photo, lastModified, jpeg, cache);
+    const thumbnailFilePath = await saveJpegPngThumbnail(photo, lastModified, jpeg, 400, cache);
 
     assert.strictEqual(thumbnailFilePath, getThumbnailFilePath(photo, cache).thumbnailFilePath);
     assert.deepStrictEqual(new Uint8Array(fs.readFileSync(thumbnailFilePath)), jpeg);
     assert.deepStrictEqual(JSON.parse(fs.readFileSync(getThumbnailLogFilePath(photo, cache), 'utf8')),
-      { LastModified: lastModified, IsThumbnailFileCreated: true });
+      { LastModified: lastModified, IsThumbnailFileCreated: true, LongerSide: 400 });
     assert.deepStrictEqual(stateOf(photo), { attemptFinished: true, cacheAvailable: true });
   });
 
-  it('keeps that no thumbnail could be made, and lets the thumbnail of the photo as it was before go', async () => {
-    await saveJpegPngThumbnail(photo, '2000-01-01T00:00:00.000Z', jpeg, cache);
+  it('keeps a thumbnail of another size in the same file, which the cache has at that size only', async () => {
     const { lastModified } = await readPhotoForThumbnail(photo);
-    const thumbnailFilePath = await saveJpegPngThumbnail(photo, lastModified, null, cache);
+    await saveJpegPngThumbnail(photo, lastModified, jpeg, 400, cache);
+    const thumbnailFilePath = await saveJpegPngThumbnail(photo, lastModified, jpeg, 700, cache);
+
+    assert.strictEqual(thumbnailFilePath, getThumbnailFilePath(photo, cache).thumbnailFilePath);
+    assert.strictEqual(JSON.parse(fs.readFileSync(getThumbnailLogFilePath(photo, cache), 'utf8')).LongerSide, 700);
+    assert.deepStrictEqual(stateOf(photo, 700), { attemptFinished: true, cacheAvailable: true });
+    assert.deepStrictEqual(stateOf(photo, 400), { attemptFinished: false, cacheAvailable: false });
+  });
+
+  it('keeps that no thumbnail could be made, and lets the thumbnail of the photo as it was before go', async () => {
+    await saveJpegPngThumbnail(photo, '2000-01-01T00:00:00.000Z', jpeg, 400, cache);
+    const { lastModified } = await readPhotoForThumbnail(photo);
+    const thumbnailFilePath = await saveJpegPngThumbnail(photo, lastModified, null, 400, cache);
 
     assert.strictEqual(fs.existsSync(thumbnailFilePath), false);
     assert.deepStrictEqual(JSON.parse(fs.readFileSync(getThumbnailLogFilePath(photo, cache), 'utf8')),
-      { LastModified: lastModified, IsThumbnailFileCreated: false });
+      { LastModified: lastModified, IsThumbnailFileCreated: false, LongerSide: 400 });
     assert.deepStrictEqual(stateOf(photo), { attemptFinished: true, cacheAvailable: false });
   });
 
+  it('lets the previous log go before it writes the new thumbnail, so that a failure leaves no log of the previous size', async () => {
+    const { lastModified } = await readPhotoForThumbnail(photo);
+    await saveJpegPngThumbnail(photo, lastModified, jpeg, 400, cache);
+    const writeFile = fs.promises.writeFile;
+    fs.promises.writeFile = (async () => { throw new Error('The disk is full.'); }) as typeof fs.promises.writeFile;
+    try {
+      await assert.rejects(saveJpegPngThumbnail(photo, lastModified, jpeg, 700, cache), /The disk is full/);
+    } finally {
+      fs.promises.writeFile = writeFile;
+    }
+    assert.strictEqual(fs.existsSync(getThumbnailLogFilePath(photo, cache)), false);
+    assert.deepStrictEqual(stateOf(photo, 400), { attemptFinished: false, cacheAvailable: false });
+  });
+
+  it('writes a thumbnail and its log before the next save of the photo starts, so that the log is of the thumbnail there', async () => {
+    const { lastModified } = await readPhotoForThumbnail(photo);
+    const logFilePath = getThumbnailLogFilePath(photo, cache);
+    const jpegOf800 = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 8, 0, 0]);
+    let secondSaved: () => void;
+    const isSecondSaved = new Promise<void>(resolve => secondSaved = resolve);
+    // The first save's log is written once the second save has ended, or after a while, as the second waits for the
+    // first: had it not, it would have written its thumbnail and its log meanwhile, and the first save's log, of 400,
+    // would have been left beside the second's thumbnail, of 800.
+    const writeFile = fs.promises.writeFile;
+    let isFirstLog = true;
+    fs.promises.writeFile = (async (...args: Parameters<typeof writeFile>) => {
+      if (args[0] === logFilePath && isFirstLog) {
+        isFirstLog = false;
+        await Promise.race([isSecondSaved, delay(300)]);
+      }
+      return writeFile(...args);
+    }) as typeof fs.promises.writeFile;
+    try {
+      const first = saveJpegPngThumbnail(photo, lastModified, jpeg, 400, cache);
+      const second = saveJpegPngThumbnail(photo, lastModified, jpegOf800, 800, cache);
+      void second.then(() => secondSaved());
+      await Promise.all([first, second]);
+    } finally {
+      fs.promises.writeFile = writeFile;
+    }
+
+    assert.deepStrictEqual(new Uint8Array(fs.readFileSync(getThumbnailFilePath(photo, cache).thumbnailFilePath)), jpegOf800);
+    assert.strictEqual(JSON.parse(fs.readFileSync(logFilePath, 'utf8')).LongerSide, 800);
+    assert.deepStrictEqual(stateOf(photo, 800), { attemptFinished: true, cacheAvailable: true });
+  });
+
   it('has no thumbnail in the cache for a photo changed since it was read for its thumbnail', async () => {
-    await saveJpegPngThumbnail(photo, '2000-01-01T00:00:00.000Z', jpeg, cache);
+    await saveJpegPngThumbnail(photo, '2000-01-01T00:00:00.000Z', jpeg, 400, cache);
     assert.deepStrictEqual(stateOf(photo), { attemptFinished: false, cacheAvailable: false });
   });
 

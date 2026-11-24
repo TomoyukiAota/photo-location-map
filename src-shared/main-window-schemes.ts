@@ -25,6 +25,20 @@ export function photoFileUrl(filePath: string): string {
 }
 
 /**
+ * The address of a thumbnail that the app made of a photo, in its cache, `longerSide` pixels on its longer side.
+ * TL;DR: photoFileUrl with the size in its query, which photoFilePathOf leaves out, so that a thumbnail made again at
+ * another size is loaded anew.
+ * Details: A thumbnail of each size is kept in the same file (src-main/thumbnail-generation/thumbnail-state.ts), and
+ * the page keeps every image that it loaded, by its address, for the rest of the session: at the same address, it
+ * would show the previous size's. The size is the one that the file was made at, which the services that know of the
+ * file keep with it, not the one that the settings choose now: they choose the new one a moment before the services
+ * have forgotten the files of the previous one.
+ */
+export function madeThumbnailUrl(filePath: string, longerSide: number): string {
+  return `${photoFileUrl(filePath)}?size=${longerSide}`;
+}
+
+/**
  * An address of photoFileUrl, whole, in a text such as a console message, which holds the path of a user's file: the
  * analytics of errors take it as a path (src-shared/analytics/error-for-analytics.ts).
  */

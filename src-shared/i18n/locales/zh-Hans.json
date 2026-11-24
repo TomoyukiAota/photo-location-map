@@ -241,12 +241,15 @@
       "example": "示例"
     },
     "thumbnails": {
-      "title": "HEIF 缩略图",
-      "description": "HEIF 文件（例如用 iPhone 拍摄的照片）的缩略图由本应用程序生成。请选择优先考虑画质还是速度。",
+      "title": "缩略图",
+      "description": "请选择缩略图优先考虑画质还是速度。",
       "highQuality": "高画质",
-      "highQualityDescription": "从整张照片生成，长边为 400 像素。生成之前，会显示照片中保存的小缩略图。在图形硬件无法解码 HEVC 的计算机上，生成需要一些时间。",
+      "highQualityDescription": "从整张照片按下方选择的尺寸生成。生成之前，会显示照片中保存的小缩略图。首次打开文件夹时生成需要一些时间；在图形硬件无法解码 HEVC 的计算机上，HEIF 文件的生成需要更长时间。",
+      "size": "尺寸",
+      "sizeValue": "长边 {{size}} 像素",
+      "sizeDescription": "尺寸越大，缩略图显示得越大，但生成所需时间越长，在缩略图缓存中占用的空间也越多。",
       "fast": "速度优先",
-      "fastDescription": "立即显示照片中保存的小缩略图。画质较低：用 iPhone 拍摄的 1200 万像素照片为 320 × 240 像素。"
+      "fastDescription": "立即显示照片中保存的小缩略图。画质较低：大多数 JPEG 照片为 160 × 120 像素，用 iPhone 拍摄的 1200 万像素照片为 320 × 240 像素。"
     },
     "os": {
       "title": "文件资源管理器的右键菜单",
@@ -261,7 +264,7 @@
     },
     "cache": {
       "title": "缩略图缓存",
-      "generationRequired": "EXIF 中没有缩略图的 JPEG/PNG 文件，以及这台计算机的图形硬件无法解码的<heifLink>HEIF 文件</heifLink>，需要生成缩略图，而生成需要一些时间。",
+      "generationRequired": "EXIF 中没有足够大的缩略图的 JPEG/PNG 文件，以及这台计算机的图形硬件无法解码的<heifLink>HEIF 文件</heifLink>，需要生成缩略图，而生成需要一些时间。",
       "thereforeCached": "因此，生成的缩略图会被缓存。",
       "usedNextTime": "下次起将使用缓存，不再重新生成缩略图。",
       "location": "缓存位置：",

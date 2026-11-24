@@ -241,12 +241,15 @@
       "example": "Pavyzdys"
     },
     "thumbnails": {
-      "title": "HEIF miniatiūros",
-      "description": "HEIF failų, pavyzdžiui, „iPhone“ nufotografuotų nuotraukų, miniatiūras kuria ši programa. Pasirinkite, ar jas kurti pirmenybę teikiant kokybei, ar greičiui.",
+      "title": "Miniatiūros",
+      "description": "Pasirinkite, ar miniatiūras kurti pirmenybę teikiant kokybei, ar greičiui.",
       "highQuality": "Aukšta kokybė",
-      "highQualityDescription": "Kuriamos iš visos nuotraukos, ilgesnėje kraštinėje 400 taškų. Iki tol rodoma nuotraukoje įrašyta maža miniatiūra. Kompiuteryje, kurio grafinė aparatinė įranga negali iškoduoti HEVC, jų kūrimas užtrunka.",
+      "highQualityDescription": "Kuriamos iš visos nuotraukos, žemiau pasirinkto dydžio. Iki tol rodoma nuotraukoje įrašyta maža miniatiūra. Jų kūrimas užtrunka pirmą kartą atidarius aplanką, o HEIF failams – dar ilgiau kompiuteryje, kurio grafinė aparatinė įranga negali iškoduoti HEVC.",
+      "size": "Dydis",
+      "sizeValue": "{{size}} taškų ilgesnėje kraštinėje",
+      "sizeDescription": "Kuo didesnis dydis, tuo didesnės rodomos miniatiūros, bet tuo ilgiau užtrunka jų kūrimas ir tuo daugiau vietos jos užima miniatiūrų talpykloje.",
       "fast": "Greitos",
-      "fastDescription": "Nuotraukoje įrašyta maža miniatiūra, rodoma iš karto. Ji mažiau ryški: 320 × 240 taškų 12 megapikselių „iPhone“ nuotraukoje."
+      "fastDescription": "Nuotraukoje įrašyta maža miniatiūra, rodoma iš karto. Ji mažiau ryški: 160 × 120 taškų daugumoje JPEG nuotraukų ir 320 × 240 taškų 12 megapikselių „iPhone“ nuotraukoje."
     },
     "os": {
       "title": "Failų naršyklės kontekstinis meniu",
@@ -261,7 +264,7 @@
     },
     "cache": {
       "title": "Miniatiūrų talpykla",
-      "generationRequired": "JPEG/PNG failams, kurių EXIF duomenyse nėra miniatiūros, ir <heifLink>HEIF failams</heifLink>, kurių šio kompiuterio grafinė aparatinė įranga negali iškoduoti, reikia kurti miniatiūras, o tai užtrunka.",
+      "generationRequired": "JPEG/PNG failams, kurių EXIF duomenyse nėra pakankamai didelės miniatiūros, ir <heifLink>HEIF failams</heifLink>, kurių šio kompiuterio grafinė aparatinė įranga negali iškoduoti, reikia kurti miniatiūras, o tai užtrunka.",
       "thereforeCached": "Todėl sukurtos miniatiūros įrašomos į talpyklą.",
       "usedNextTime": "Nuo kito karto naudojama talpykla ir miniatiūros iš naujo nekuriamos.",
       "location": "Talpyklos vieta:",

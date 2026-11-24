@@ -4,7 +4,7 @@ import chunk from 'lodash-es/chunk.js';
 import { bridge } from '../../../src-shared/bridge/plm-bridge';
 import { FilenameExtension } from '../../../src-shared/filename-extension/filename-extension';
 import { createPrependedLogger } from '../../../src-shared/log/create-prepended-logger';
-import { photoFileUrl } from '../../../src-shared/main-window-schemes';
+import { madeThumbnailUrl } from '../../../src-shared/main-window-schemes';
 import { DirectoryTreeViewDataService } from '../directory-tree-view/directory-tree-view-data.service';
 import { DirectoryTreeViewSelectionService } from '../directory-tree-view/directory-tree-view-selection.service';
 import { HeifThumbnailService } from '../heif-thumbnail/heif-thumbnail.service';
@@ -264,7 +264,7 @@ export class FaceSearchService {
     }
     if (search.canceled || state.kind === 'pending')
       return undefined;
-    return state.kind === 'decoded' ? state.url : photoFileUrl(state.filePath);
+    return state.kind === 'decoded' ? state.url : madeThumbnailUrl(state.filePath, state.longerSide);
   }
 
   private showDialog(state: FaceSearchDialogState): void {

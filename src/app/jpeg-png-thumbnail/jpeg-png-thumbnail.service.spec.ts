@@ -1,9 +1,12 @@
+import { computed, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import type { PhotoFileForThumbnail, ThumbnailState } from '../../../src-shared/bridge/plm-bridge';
+import { ThumbnailQuality } from '../../../src-shared/user-settings/thumbnail-quality';
 import { Dimensions } from '../shared/model/dimensions.model';
 import { Exif } from '../shared/model/exif.model';
 import { Photo } from '../shared/model/photo.model';
 import { Thumbnail } from '../shared/model/thumbnail.model';
+import { ThumbnailSizeService } from '../shared/thumbnail-size/thumbnail-size.service';
 import { JpegPngImageSource } from './jpeg-png-image-source';
 import { backgroundStartDelayMs, JpegPngThumbnailService, needsMadeThumbnail } from './jpeg-png-thumbnail.service';
 
@@ -18,6 +21,11 @@ function held<T>() {
 function photoAt(path: string, exif?: Exif): Photo {
   const name = path.slice(path.lastIndexOf('/') + 1);
   return Object.assign(new Photo(), { name, path, filenameExtension: name.slice(name.lastIndexOf('.')).toLowerCase(), exif });
+}
+
+/** EXIF data with a thumbnail of `width` x `height`, as a camera writes one of 160 x 120. */
+function exifWithThumbnail(width: number, height: number): Exif {
+  return { thumbnail: new Thumbnail('blob:exif', new Dimensions(width, height)) } as Exif;
 }
 
 const lastModified = '2026-11-23T01:02:03.000Z';
@@ -36,6 +44,12 @@ describe('JpegPngThumbnailService', () => {
   let saved: [string, string, boolean][];
   let saveFails: boolean;
   let canMake: boolean;
+  /** The settings, and the sizes that the cache was asked about, that thumbnails were made at and kept at. */
+  let quality: ReturnType<typeof signal<ThumbnailQuality>>;
+  let size: ReturnType<typeof signal<number>>;
+  let sizesAsked: number[];
+  let sizesMade: number[];
+  let sizesSaved: number[];
 
   beforeEach(() => {
     vi.useFakeTimers();
@@ -46,6 +60,11 @@ describe('JpegPngThumbnailService', () => {
     saved = [];
     saveFails = false;
     canMake = true;
+    quality = signal<ThumbnailQuality>('high');
+    size = signal(400);
+    sizesAsked = [];
+    sizesMade = [];
+    sizesSaved = [];
     let urls = 0;
     vi.spyOn(URL, 'createObjectURL').mockImplementation(() => `blob:test/${++urls}`);
     vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {});
@@ -54,20 +73,30 @@ describe('JpegPngThumbnailService', () => {
         provide: JpegPngImageSource,
         useValue: {
           canMake: () => canMake,
-          states: async (photoPaths: string[]) => photoPaths.map((photoPath): ThumbnailState => ({
-            attemptFinished: false, cacheAvailable: false, thumbnailFilePath: cachePathOf(photoPath), ...cacheStates.get(photoPath) })),
+          states: async (photoPaths: string[], longerSide: number) => {
+            sizesAsked.push(longerSide);
+            return photoPaths.map((photoPath): ThumbnailState => ({
+              attemptFinished: false, cacheAvailable: false, thumbnailFilePath: cachePathOf(photoPath), ...cacheStates.get(photoPath) }));
+          },
           readPhoto: (photoPath: string) => {
             read.push(photoPath);
             return reading.get(photoPath) ?? Promise.resolve({ bytes: new Uint8Array([1, 2, 3]), lastModified });
           },
-          makeThumbnail: (_bytes: Uint8Array, photoPath: string) => decoding.get(photoPath)?.() ?? Promise.resolve(new Blob(['jpeg'])),
-          save: async (photoPath: string, time: string, jpeg: Uint8Array | null) => {
+          makeThumbnail: (_bytes: Uint8Array, photoPath: string, longerSide: number) => {
+            sizesMade.push(longerSide);
+            return decoding.get(photoPath)?.() ?? Promise.resolve(new Blob(['jpeg']));
+          },
+          save: async (photoPath: string, time: string, jpeg: Uint8Array | null, longerSide: number) => {
             saved.push([photoPath, time, jpeg !== null]);
+            sizesSaved.push(longerSide);
             if (saveFails)
               throw new Error('The disk is full.');
             return cachePathOf(photoPath);
           },
         },
+      }, {
+        provide: ThumbnailSizeService,
+        useValue: { quality, longerSide: computed(() => quality() === 'high' ? size() : 400) },
       }],
     });
     service = TestBed.inject(JpegPngThumbnailService);
@@ -81,21 +110,77 @@ describe('JpegPngThumbnailService', () => {
   /** Lets what was started finish, the timers included. */
   const pass = (milliseconds = 0) => vi.advanceTimersByTimeAsync(milliseconds);
 
-  it('makes the thumbnails of the JPEG and PNG photos without one in their EXIF data only', () => {
-    const exifThumbnail = { thumbnail: new Thumbnail('blob:exif', new Dimensions(160, 120)) } as Exif;
-    expect(needsMadeThumbnail(photoAt('/photos/a.jpg'))).toBe(true);
-    expect(needsMadeThumbnail(photoAt('/photos/b.PNG'))).toBe(true);
-    expect(needsMadeThumbnail(photoAt('/photos/c.jpeg', {} as Exif))).toBe(true);
-    expect(needsMadeThumbnail(photoAt('/photos/d.jpg', exifThumbnail))).toBe(false);
-    expect(needsMadeThumbnail(photoAt('/photos/e.heic'))).toBe(false);
-    expect(needsMadeThumbnail(photoAt('/photos/f.tif'))).toBe(false);
+  it('makes the thumbnails of the JPEG and PNG photos without one in their EXIF data, and at High quality of those whose EXIF thumbnail is smaller than the size', () => {
+    for (const quality of ['high', 'fast'] as const) {
+      expect(needsMadeThumbnail(photoAt('/photos/a.jpg'), quality, 400)).toBe(true);
+      expect(needsMadeThumbnail(photoAt('/photos/b.PNG'), quality, 400)).toBe(true);
+      expect(needsMadeThumbnail(photoAt('/photos/c.jpeg', {} as Exif), quality, 400)).toBe(true);
+      expect(needsMadeThumbnail(photoAt('/photos/e.heic'), quality, 400)).toBe(false);
+      expect(needsMadeThumbnail(photoAt('/photos/f.tif', exifWithThumbnail(160, 120)), quality, 400)).toBe(false);
+    }
+    // A camera's EXIF thumbnail is smaller than any size, which High quality does not show stretched.
+    expect(needsMadeThumbnail(photoAt('/photos/d.jpg', exifWithThumbnail(160, 120)), 'high', 400)).toBe(true);
+    expect(needsMadeThumbnail(photoAt('/photos/d.jpg', exifWithThumbnail(160, 120)), 'fast', 400)).toBe(false);
+    // One as large as the size, on its longer side, is shown as it is, whichever side that is.
+    expect(needsMadeThumbnail(photoAt('/photos/g.jpg', exifWithThumbnail(512, 384)), 'high', 500)).toBe(false);
+    expect(needsMadeThumbnail(photoAt('/photos/g.jpg', exifWithThumbnail(384, 512)), 'high', 500)).toBe(false);
+    expect(needsMadeThumbnail(photoAt('/photos/g.jpg', exifWithThumbnail(512, 384)), 'high', 600)).toBe(true);
+  });
+
+  it('makes the thumbnail of a JPEG photo whose EXIF thumbnail is smaller than the size, at High quality only', async () => {
+    const photo = photoAt('/photos/camera.jpg', exifWithThumbnail(160, 120));
+    await service.prepare([photo]);
+    service.watch(photo.path);
+    await pass();
+    expect(service.stateOf(photo.path)).toEqual({ kind: 'cached', filePath: '/cache/photos/camera.jpg.plm.jpg', longerSide: 400 });
+
+    service.reset();
+    read = [];
+    quality.set('fast');
+    await service.prepare([photo]);
+    service.watch(photo.path);
+    service.startFolder();
+    await pass(backgroundStartDelayMs);
+    expect(read).toEqual([]);
+  });
+
+  it('asks the cache about the thumbnails at the size that the settings choose, and makes and keeps them at it', async () => {
+    size.set(800);
+    await service.prepare([photoAt('/photos/a.jpg')]);
+    service.watch('/photos/a.jpg');
+    await pass();
+
+    expect(sizesAsked).toEqual([800]);
+    expect(sizesMade).toEqual([800]);
+    expect(sizesSaved).toEqual([800]);
+  });
+
+  it('makes the folder\'s thumbnails again at new settings, and the places that read a photo\'s state read its new one', async () => {
+    const photo = photoAt('/photos/a.jpg');
+    cacheStates.set(photo.path, { attemptFinished: true, cacheAvailable: true });
+    await service.prepare([photo]);
+    const shown = computed(() => service.stateOf(photo.path).kind);
+    expect(shown()).toBe('cached');
+
+    // At the new size, the cache has none.
+    size.set(600);
+    cacheStates.clear();
+    await service.applySettings();
+    expect(shown()).toBe('pending');
+    expect(sizesAsked).toEqual([400, 600]);
+
+    // The folder's photos are made again, as they were when it was opened.
+    await pass(backgroundStartDelayMs);
+    expect(read).toEqual([photo.path]);
+    expect(sizesMade).toEqual([600]);
+    expect(shown()).toBe('cached');
   });
 
   it('shows the thumbnail of the cache of a photo that has one, and makes none', async () => {
     cacheStates.set('/photos/a.jpg', { attemptFinished: true, cacheAvailable: true });
     await service.prepare([photoAt('/photos/a.jpg')]);
 
-    expect(service.stateOf('/photos/a.jpg')).toEqual({ kind: 'cached', filePath: '/cache/photos/a.jpg.plm.jpg' });
+    expect(service.stateOf('/photos/a.jpg')).toEqual({ kind: 'cached', filePath: '/cache/photos/a.jpg.plm.jpg', longerSide: 400 });
     service.watch('/photos/a.jpg');
     service.startFolder();
     await pass(backgroundStartDelayMs);
@@ -111,7 +196,7 @@ describe('JpegPngThumbnailService', () => {
 
     expect(read).toEqual(['/photos/a.jpg']);
     expect(saved).toEqual([['/photos/a.jpg', lastModified, true]]);
-    expect(service.stateOf('/photos/a.jpg')).toEqual({ kind: 'cached', filePath: '/cache/photos/a.jpg.plm.jpg' });
+    expect(service.stateOf('/photos/a.jpg')).toEqual({ kind: 'cached', filePath: '/cache/photos/a.jpg.plm.jpg', longerSide: 400 });
   });
 
   it('makes the photos that the places ask for in a turn in their order, a later turn\'s first, two at a time', async () => {

@@ -1,9 +1,10 @@
-import { signal } from '@angular/core';
+import { computed, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MATERIAL_ANIMATIONS } from '@angular/material/core';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import type { ThumbnailState } from '../../../src-shared/bridge/plm-bridge';
 import { Logger } from '../../../src-shared/log/logger';
+import { ThumbnailQuality } from '../../../src-shared/user-settings/thumbnail-quality';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { DirectoryTreeViewSelectionService } from '../directory-tree-view/directory-tree-view-selection.service';
 import { DateTimeOriginal } from '../shared/model/date-time-original';
@@ -15,6 +16,7 @@ import { NearViewDirective } from '../shared/near-view/near-view.directive';
 import { Thumbnail } from '../shared/model/thumbnail.model';
 import { OpenedDirectory } from '../shared/opened-directory';
 import { PhotoRevealService } from '../shared/service/photo-reveal.service';
+import { ThumbnailSizeService } from '../shared/thumbnail-size/thumbnail-size.service';
 import {
   ariaKeyShortcutsOf,
   selectNextShortcut,
@@ -47,14 +49,27 @@ function cameraPhoto(path = '/photos/IMG_0001.JPG'): Photo {
   });
 }
 
+/** The address of a thumbnail that the app made, in its cache, at the size of 400 pixels. */
+function madeAddress(filePath: string): string {
+  return `plm-file://local/${encodeURIComponent(filePath)}?size=400`;
+}
+
 describe('PhotoInfoViewerComponent', () => {
   let fixture: ComponentFixture<PhotoInfoViewerComponent>;
   let element: HTMLElement;
   let livePhotos: ReturnType<typeof vi.spyOn>;
+  /** The thumbnails' quality and size, as ThumbnailSizeService has them: High quality, at 400 pixels, as by default. */
+  let quality: ReturnType<typeof signal<ThumbnailQuality>>;
+  let size: ReturnType<typeof signal<number>>;
 
   beforeEach(() => {
     // The opened folder is a stand-in here (test/angular/directory-double.ts), which knows of no Live Photos.
     livePhotos = vi.spyOn(OpenedDirectory, 'getLivePhotosFilePathIfAvailable').mockReturnValue({ livePhotosAvailable: false, livePhotosFilePath: '' });
+    quality = signal<ThumbnailQuality>('high');
+    size = signal(400);
+    TestBed.configureTestingModule({
+      providers: [{ provide: ThumbnailSizeService, useValue: { quality, longerSide: computed(() => quality() === 'high' ? size() : 400) } }],
+    });
   });
 
   afterEach(() => livePhotos.mockRestore());
@@ -80,10 +95,12 @@ describe('PhotoInfoViewerComponent', () => {
     await show(cameraPhoto(), 'leaflet-map-popup');
 
     expect(element.getAttribute('data-place')).toBe('leaflet-map-popup');
+    // The camera's EXIF thumbnail, smaller than the thumbnail of 400 pixels that the app makes of it at High quality:
+    // shown filling its box until that one is made.
     expect(thumbnail().getAttribute('src')).toBe('blob:thumbnail-of-IMG_0001');
     expect(thumbnail().getAttribute('loading')).toBe('lazy');
     expect(thumbnail().hasAttribute('alt')).toBe(false);
-    expect(thumbnail().className).toBe('photo-info-viewer-thumbnail');
+    expect(thumbnail().className).toBe('photo-info-viewer-thumbnail photo-info-viewer-provisional-thumbnail');
     expect(element.querySelector('.photo-info-viewer-name').textContent).toBe('IMG_0001.JPG');
     expect(element.querySelector('.photo-info-viewer-name').getAttribute('dir')).toBe('auto');
     expect(element.querySelector('.photo-info-viewer-date-time-taken').textContent).toBe('2019-03-16 Sat 17:29:58');
@@ -204,7 +221,7 @@ describe('PhotoInfoViewerComponent', () => {
         await vi.waitFor(() => {
           fixture.detectChanges();
           // The whole path in one segment of the address, escaped, so that a # does not start a fragment.
-          expect(thumbnail().getAttribute('src')).toBe(`plm-file://local/${encodeURIComponent('/cache/photos/# 1/drawing #2.png.plm.jpg')}`);
+          expect(thumbnail().getAttribute('src')).toBe(madeAddress('/cache/photos/# 1/drawing #2.png.plm.jpg'));
         });
       });
 
@@ -234,7 +251,8 @@ describe('PhotoInfoViewerComponent', () => {
         await fixture.whenStable();
       }
 
-      it('gives way to the photo itself, in every place that shows the photo, once one place has tried to show it', async () => {
+      it('gives way to the photo itself at Fast, in every place that shows the photo, once one place has tried to show it', async () => {
+        quality.set('fast');
         const warn = vi.spyOn(Logger, 'warn').mockImplementation(() => undefined);
         const photo = cameraPhoto();
         const photoItself = `plm-file://local/${encodeURIComponent('/photos/IMG_0001.JPG')}`;
@@ -249,6 +267,17 @@ describe('PhotoInfoViewerComponent', () => {
         // Another viewer of the photo, as its popup or its row made again, shows the photo itself at once.
         await show(photo, 'leaflet-map-popup');
         expect(thumbnail().getAttribute('src')).toBe(photoItself);
+        warn.mockRestore();
+      });
+
+      it('gives way to the thumbnail that the app makes of the photo at High quality', async () => {
+        const warn = vi.spyOn(Logger, 'warn').mockImplementation(() => undefined);
+        await show(cameraPhoto(), 'leaflet-map-popup');
+        expect(thumbnail().getAttribute('src')).toBe('blob:thumbnail-of-IMG_0001');
+
+        await failToDecode();
+        expect(thumbnail().getAttribute('src')).toBe(IconDataUrl.generatingThumbnail);
+        expect(warn).toHaveBeenCalledOnce();
         warn.mockRestore();
       });
 
@@ -271,6 +300,51 @@ describe('PhotoInfoViewerComponent', () => {
         expect(thumbnail().getAttribute('src')).toBe(shown);
         expect(warn).not.toHaveBeenCalled();
         warn.mockRestore();
+      });
+    });
+
+    describe('of a JPEG photo with a camera\'s EXIF thumbnail, smaller than the size', () => {
+      let decoded: (jpeg: Blob) => void;
+
+      beforeEach(() => {
+        TestBed.overrideProvider(JpegPngImageSource, {
+          useValue: {
+            canMake: () => true,
+            states: async (photoPaths: string[]) => photoPaths.map((photoPath): ThumbnailState =>
+              ({ attemptFinished: false, cacheAvailable: false, thumbnailFilePath: `/cache${photoPath}.plm.jpg` })),
+            readPhoto: async () => ({ bytes: new Uint8Array([1]), lastModified: '2026-11-23T01:02:03.000Z' }),
+            makeThumbnail: () => new Promise<Blob>(resolve => { decoded = resolve; }),
+            save: async (photoPath: string) => `/cache${photoPath}.plm.jpg`,
+          },
+        });
+      });
+
+      it('is the EXIF thumbnail, filling the box, until the app has made one from the photo at High quality, then that one', async () => {
+        const photo = cameraPhoto();
+        await TestBed.inject(JpegPngThumbnailService).prepare([photo]);
+        await show(photo, 'leaflet-map-popup');
+        expect(thumbnail().getAttribute('src')).toBe('blob:thumbnail-of-IMG_0001');
+        expect(thumbnail().classList.contains('photo-info-viewer-provisional-thumbnail')).toBe(true);
+
+        await vi.waitFor(() => expect(decoded).toBeDefined());
+        decoded(new Blob(['jpeg']));
+        await vi.waitFor(() => {
+          fixture.detectChanges();
+          expect(thumbnail().getAttribute('src')).toBe(madeAddress('/cache/photos/IMG_0001.JPG.plm.jpg'));
+        });
+        expect(thumbnail().className).toBe('photo-info-viewer-thumbnail');
+      });
+
+      it('is the EXIF thumbnail as it is at Fast, which makes none', async () => {
+        quality.set('fast');
+        const photo = cameraPhoto();
+        const watch = vi.spyOn(TestBed.inject(JpegPngThumbnailService), 'watch');
+        await TestBed.inject(JpegPngThumbnailService).prepare([photo]);
+        await show(photo, 'leaflet-map-popup');
+
+        expect(thumbnail().getAttribute('src')).toBe('blob:thumbnail-of-IMG_0001');
+        expect(thumbnail().className).toBe('photo-info-viewer-thumbnail');
+        expect(watch).not.toHaveBeenCalled();
       });
     });
 
@@ -309,7 +383,7 @@ describe('PhotoInfoViewerComponent', () => {
 
         finished = true;
         await pass(thumbnailCheckIntervalMs);
-        expect(thumbnail().getAttribute('src')).toBe(`plm-file://local/${encodeURIComponent('/cache/photos/IMG_0002.HEIC.plm.jpg')}`);
+        expect(thumbnail().getAttribute('src')).toBe(madeAddress('/cache/photos/IMG_0002.HEIC.plm.jpg'));
         expect(thumbnail().className).toBe('photo-info-viewer-thumbnail photo-info-viewer-fade-in-after-thumbnail-generation');
 
         // The class goes once the animation is over, so that the thumbnail does not fade in again in a popup that is
@@ -332,8 +406,22 @@ describe('PhotoInfoViewerComponent', () => {
         expect(thumbnail().classList.contains('photo-info-viewer-generating-thumbnail')).toBe(true);
 
         await pass(1);
-        expect(thumbnail().getAttribute('src')).toBe(`plm-file://local/${encodeURIComponent('/cache/photos/IMG_0002.HEIC.plm.jpg')}`);
+        expect(thumbnail().getAttribute('src')).toBe(madeAddress('/cache/photos/IMG_0002.HEIC.plm.jpg'));
         expect(thumbnail().className).toBe('photo-info-viewer-thumbnail');
+      });
+
+      it('is asked for at the size that it was made at, which a new setting does not change before it is made again', async () => {
+        finished = true;
+        TestBed.inject(HeifThumbnailService).watch('/photos/IMG_0002.HEIC');
+        await vi.advanceTimersByTimeAsync(0);
+        await showHeifPhoto();
+        expect(thumbnail().getAttribute('src')).toBe(madeAddress('/cache/photos/IMG_0002.HEIC.plm.jpg'));
+
+        // The settings choose a new size a moment before the services forget the thumbnails of the previous one: the
+        // page would otherwise keep the previous size's image as the new size's.
+        size.set(800);
+        fixture.detectChanges();
+        expect(thumbnail().getAttribute('src')).toBe(madeAddress('/cache/photos/IMG_0002.HEIC.plm.jpg'));
       });
 
       it('is the thumbnail at once, without fading in, when it is known already', async () => {
@@ -343,7 +431,7 @@ describe('PhotoInfoViewerComponent', () => {
 
         await showHeifPhoto();
 
-        expect(thumbnail().getAttribute('src')).toBe(`plm-file://local/${encodeURIComponent('/cache/photos/IMG_0002.HEIC.plm.jpg')}`);
+        expect(thumbnail().getAttribute('src')).toBe(madeAddress('/cache/photos/IMG_0002.HEIC.plm.jpg'));
         expect(thumbnail().className).toBe('photo-info-viewer-thumbnail');
       });
     });
@@ -384,8 +472,9 @@ describe('PhotoInfoViewerComponent', () => {
       await vi.advanceTimersByTimeAsync(0);
       fixture.detectChanges();
 
+      // Until the whole image is made, the small thumbnail fills the box, stretched where it is smaller.
       expect(thumbnail().getAttribute('src')).toBe('blob:heif/1');
-      expect(thumbnail().className).toBe('photo-info-viewer-thumbnail');
+      expect(thumbnail().className).toBe('photo-info-viewer-thumbnail photo-info-viewer-provisional-thumbnail');
     });
 
     it('is the small thumbnail that the photo holds, then the one of high quality, which needs no fading in', async () => {
@@ -401,6 +490,7 @@ describe('PhotoInfoViewerComponent', () => {
         fixture.detectChanges();
         expect(thumbnail().getAttribute('src')).toBe('blob:heif/2');
       });
+      expect(thumbnail().classList.contains('photo-info-viewer-provisional-thumbnail')).toBe(false);
     });
   });
 
@@ -457,7 +547,7 @@ describe('PhotoInfoViewerComponent', () => {
         each.dispatchEvent(new MouseEvent('click', { bubbles: true }));
       thumbnail().dispatchEvent(new MouseEvent('click', { bubbles: true }));
 
-      expect(heardAround).toEqual(['photo-info-viewer-thumbnail']);
+      expect(heardAround).toEqual(['photo-info-viewer-thumbnail photo-info-viewer-provisional-thumbnail']);
     });
   });
 

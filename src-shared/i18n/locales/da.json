@@ -241,12 +241,15 @@
       "example": "Eksempel"
     },
     "thumbnails": {
-      "title": "HEIF-miniaturer",
-      "description": "Miniaturer til HEIF-filer, f.eks. fotos taget med en iPhone, oprettes af dette program. Vælg, om de skal oprettes med vægt på kvalitet eller hastighed.",
+      "title": "Miniaturer",
+      "description": "Vælg, om miniaturerne skal oprettes med vægt på kvalitet eller hastighed.",
       "highQuality": "Høj kvalitet",
-      "highQualityDescription": "Oprettes ud fra hele fotoet med 400 pixel på den længste side. Indtil da vises den lille miniature, der er gemt i fotoet. På en computer, der ikke kan afkode HEVC med sin grafikhardware, tager det tid at oprette dem.",
+      "highQualityDescription": "Oprettes ud fra hele fotoet i den størrelse, der er valgt nedenfor. Indtil da vises den lille miniature, der er gemt i fotoet. Det tager tid at oprette dem, første gang en mappe åbnes, og længere tid for HEIF-filer på en computer, der ikke kan afkode HEVC med sin grafikhardware.",
+      "size": "Størrelse",
+      "sizeValue": "{{size}} pixel på den længste side",
+      "sizeDescription": "Jo større størrelse, jo større vises miniaturerne, men det tager længere tid at oprette dem, og de fylder mere i cachen til miniaturer.",
       "fast": "Hurtig",
-      "fastDescription": "Den lille miniature, der er gemt i fotoet, vises med det samme. Den er mindre skarp: 320 × 240 pixel for et 12-megapixel-foto taget med en iPhone."
+      "fastDescription": "Den lille miniature, der er gemt i fotoet, vises med det samme. Den er mindre skarp: 160 × 120 pixel i de fleste JPEG-fotos og 320 × 240 pixel i et 12-megapixel-foto taget med en iPhone."
     },
     "os": {
       "title": "Stifinders genvejsmenu",
@@ -261,7 +264,7 @@
     },
     "cache": {
       "title": "Cache til miniaturer",
-      "generationRequired": "Til JPEG-/PNG-filer uden en miniature i EXIF-oplysningerne og til <heifLink>HEIF-filer</heifLink>, som denne computer ikke kan afkode med sin grafikhardware, skal der oprettes miniaturer, og det tager tid.",
+      "generationRequired": "Til JPEG-/PNG-filer uden en stor nok miniature i EXIF-oplysningerne og til <heifLink>HEIF-filer</heifLink>, som denne computer ikke kan afkode med sin grafikhardware, skal der oprettes miniaturer, og det tager tid.",
       "thereforeCached": "Derfor gemmes de oprettede miniaturer i en cache.",
       "usedNextTime": "Fra næste gang bruges cachen, så miniaturerne ikke skal oprettes igen.",
       "location": "Cachens placering:",

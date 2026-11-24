@@ -241,12 +241,15 @@
       "example": "Példa"
     },
     "thumbnails": {
-      "title": "HEIF-bélyegképek",
-      "description": "A HEIF-fájlok, például az iPhone-nal készült fotók bélyegképeit ez az alkalmazás készíti el. Válassza ki, hogy a minőség vagy a sebesség legyen a fontosabb.",
+      "title": "Bélyegképek",
+      "description": "Válassza ki, hogy a bélyegképek készítésénél a minőség vagy a sebesség legyen a fontosabb.",
       "highQuality": "Kiváló minőség",
-      "highQualityDescription": "A teljes fotóból készül, a hosszabbik oldalon 400 képponttal. Addig a fotóban tárolt kis bélyegkép látható. Olyan számítógépen, amelynek grafikus hardvere nem tudja dekódolni a HEVC-t, az elkészítésük időbe telik.",
+      "highQualityDescription": "A teljes fotóból készül, az alább választott méretben. Addig a fotóban tárolt kis bélyegkép látható. Az elkészítésük időbe telik, amikor egy mappát először nyit meg, és még tovább tart a HEIF-fájloknál olyan számítógépen, amelynek grafikus hardvere nem tudja dekódolni a HEVC-t.",
+      "size": "Méret",
+      "sizeValue": "{{size}} képpont a hosszabbik oldalon",
+      "sizeDescription": "Minél nagyobb a méret, annál nagyobbak a bélyegképek, de annál tovább tart az elkészítésük, és annál több helyet foglalnak a bélyegképek gyorsítótárában.",
       "fast": "Gyors",
-      "fastDescription": "A fotóban tárolt kis bélyegkép, amely azonnal megjelenik. Kevésbé éles: iPhone-nal készült 12 megapixeles fotónál 320 × 240 képpont."
+      "fastDescription": "A fotóban tárolt kis bélyegkép, amely azonnal megjelenik. Kevésbé éles: a legtöbb JPEG-fotónál 160 × 120 képpont, iPhone-nal készült 12 megapixeles fotónál 320 × 240 képpont."
     },
     "os": {
       "title": "A Fájlkezelő helyi menüje",
@@ -261,7 +264,7 @@
     },
     "cache": {
       "title": "Bélyegképek gyorsítótára",
-      "generationRequired": "Az EXIF-adataikban bélyegképet nem tartalmazó JPEG/PNG fájlokhoz és azokhoz a <heifLink>HEIF-fájlokhoz</heifLink>, amelyeket ennek a számítógépnek a grafikus hardvere nem tud dekódolni, bélyegképeket kell készíteni, ami időbe telik.",
+      "generationRequired": "Az EXIF-adataikban elég nagy bélyegképet nem tartalmazó JPEG/PNG fájlokhoz és azokhoz a <heifLink>HEIF-fájlokhoz</heifLink>, amelyeket ennek a számítógépnek a grafikus hardvere nem tud dekódolni, bélyegképeket kell készíteni, ami időbe telik.",
       "thereforeCached": "Ezért az elkészített bélyegképek a gyorsítótárba kerülnek.",
       "usedNextTime": "A következő alkalomtól a gyorsítótárat használjuk, így a bélyegképeket nem kell újra elkészíteni.",
       "location": "A gyorsítótár helye:",

@@ -17,6 +17,7 @@ export const rendererWritableStoragePaths: ReadonlyArray<ReadonlyArray<string>> 
   UserDataStoragePath.UserSettings.ClockSystemFormat,
   UserDataStoragePath.UserSettings.Language,
   UserDataStoragePath.UserSettings.ThumbnailQuality,
+  UserDataStoragePath.UserSettings.ThumbnailSize,
   UserDataStoragePath.UserSettings.StickyFolderRowsMaximum,
   UserDataStoragePath.UserSettings.StickyFolderRowsLeftOut,
 ];

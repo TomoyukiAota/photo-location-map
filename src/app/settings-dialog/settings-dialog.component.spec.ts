@@ -10,6 +10,8 @@ import { UserDataStoragePath } from '../../../src-shared/user-data-storage/user-
 import { BooleanSetting } from '../../../src-shared/user-settings/boolean-setting';
 import { currentUserSettings } from '../../../src-shared/user-settings/user-settings';
 import { HeifThumbnailService } from '../heif-thumbnail/heif-thumbnail.service';
+import { JpegPngThumbnailService } from '../jpeg-png-thumbnail/jpeg-png-thumbnail.service';
+import { ThumbnailSizeService } from '../shared/thumbnail-size/thumbnail-size.service';
 import { ConfirmDialogService } from '../shared/confirm-dialog/confirm-dialog.service';
 import { DirTreeViewStickyRowsService } from '../directory-tree-view/dir-tree-view-sticky-rows/dir-tree-view-sticky-rows.service';
 import { AppearanceSettingsChangedParameter } from './appearance-settings/appearance-settings-changed-parameter';
@@ -47,7 +49,8 @@ class DummyCacheTabComponent {
 describe('SettingsDialogComponent', () => {
   const close = vi.fn();
   const restore = vi.fn();
-  const applyThumbnailQuality = vi.fn(async () => false);
+  const applyThumbnailSettings = vi.fn(async () => false);
+  const applyJpegPngSettings = vi.fn(async () => {});
   const settingsInUse = { ...currentUserSettings };
   const otherShowStatusBar = settingsInUse.showStatusBar === BooleanSetting.TrueValue ? BooleanSetting.FalseValue : BooleanSetting.TrueValue;
   /** What the Appearance tab tells the dialog, all of its settings: those in use, but for `changed`. */
@@ -73,13 +76,15 @@ describe('SettingsDialogComponent', () => {
   beforeEach(async () => {
     close.mockClear();
     restore.mockClear();
-    applyThumbnailQuality.mockClear();
+    applyThumbnailSettings.mockClear();
+    applyJpegPngSettings.mockClear();
     await TestBed.configureTestingModule({
       imports: [SettingsDialogComponent],
       providers: [
         { provide: MatDialogRef, useValue: { close } },
         { provide: RestoreSettingsService, useValue: { restore } },
-        { provide: HeifThumbnailService, useValue: { applyThumbnailQuality } },
+        { provide: HeifThumbnailService, useValue: { applyThumbnailSettings } },
+        { provide: JpegPngThumbnailService, useValue: { applySettings: applyJpegPngSettings } },
         { provide: MAT_DIALOG_DATA, useValue: null },
       ],
     })
@@ -287,7 +292,7 @@ describe('SettingsDialogComponent', () => {
   it('saves a new quality of thumbnails without a restart, and has the thumbnails made again', async () => {
     await createDialog();
     const otherQuality = settingsInUse.thumbnailQuality === 'high' ? 'fast' : 'high';
-    settingsChanged.thumbnailSettingsChanged.next({ thumbnailQuality: otherQuality });
+    settingsChanged.thumbnailSettingsChanged.next({ thumbnailQuality: otherQuality, thumbnailSize: settingsInUse.thumbnailSize });
     await fixture.whenStable();
     expect(saveButton().disabled).toBe(false);
     expect(isRestartNoticeShown()).toBe(false);
@@ -296,8 +301,38 @@ describe('SettingsDialogComponent', () => {
 
     expect(currentUserSettings.thumbnailQuality).toBe(otherQuality);
     expect(UserDataStorage.read(UserDataStoragePath.UserSettings.ThumbnailQuality)).toBe(otherQuality);
-    expect(applyThumbnailQuality).toHaveBeenCalledOnce();
+    expect(applyThumbnailSettings).toHaveBeenCalledOnce();
+    expect(applyJpegPngSettings).toHaveBeenCalledOnce();
     expect(close).toHaveBeenCalledTimes(1);
+  });
+
+  it('saves a new size of thumbnails without a restart, shows the thumbnails in their new box, and has them made again', async () => {
+    await createDialog();
+    const otherSize = settingsInUse.thumbnailSize === 800 ? 600 : 800;
+    settingsChanged.thumbnailSettingsChanged.next({ thumbnailQuality: 'high', thumbnailSize: otherSize });
+    await fixture.whenStable();
+    expect(saveButton().disabled).toBe(false);
+    expect(isRestartNoticeShown()).toBe(false);
+
+    saveButton().click();
+
+    expect(currentUserSettings.thumbnailSize).toBe(otherSize);
+    expect(UserDataStorage.read(UserDataStoragePath.UserSettings.ThumbnailSize)).toBe(String(otherSize));
+    expect(TestBed.inject(ThumbnailSizeService).box()).toBe(`${otherSize / 2}px`);
+    expect(applyThumbnailSettings).toHaveBeenCalledOnce();
+    expect(applyJpegPngSettings).toHaveBeenCalledOnce();
+  });
+
+  it('makes no thumbnail again when the thumbnails\' settings are saved as they were', async () => {
+    await createDialog();
+    settingsChanged.thumbnailSettingsChanged.next({ thumbnailQuality: settingsInUse.thumbnailQuality, thumbnailSize: settingsInUse.thumbnailSize });
+    settingsChanged.appearanceSettingsChanged.next(appearance({ showStatusBar: otherShowStatusBar }));
+    await fixture.whenStable();
+
+    saveButton().click();
+
+    expect(applyThumbnailSettings).not.toHaveBeenCalled();
+    expect(applyJpegPngSettings).not.toHaveBeenCalled();
   });
 
   it('opens the Thumbnails tab, where the cache of the thumbnails is, from the Cache tab', async () => {

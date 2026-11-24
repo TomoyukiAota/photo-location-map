@@ -241,12 +241,15 @@
       "example": "Voorbeeld"
     },
     "thumbnails": {
-      "title": "HEIF-miniaturen",
-      "description": "De miniaturen van HEIF-bestanden, zoals foto’s die met een iPhone zijn gemaakt, worden door deze app aangemaakt. Kies of ze worden aangemaakt met voorrang voor kwaliteit of voor snelheid.",
+      "title": "Miniaturen",
+      "description": "Kies of de miniaturen worden aangemaakt met voorrang voor kwaliteit of voor snelheid.",
       "highQuality": "Hoge kwaliteit",
-      "highQualityDescription": "Aangemaakt uit de hele foto, met 400 pixels aan de langste zijde. Tot dan wordt de kleine miniatuur getoond die in de foto is opgeslagen. Op een computer waarvan de grafische hardware HEVC niet kan decoderen, kost het aanmaken tijd.",
+      "highQualityDescription": "Aangemaakt uit de hele foto, op het formaat dat hieronder is gekozen. Tot dan wordt de kleine miniatuur getoond die in de foto is opgeslagen. Het aanmaken kost tijd wanneer een map voor het eerst wordt geopend, en meer tijd voor HEIF-bestanden op een computer waarvan de grafische hardware HEVC niet kan decoderen.",
+      "size": "Formaat",
+      "sizeValue": "{{size}} pixels aan de langste zijde",
+      "sizeDescription": "Hoe groter het formaat, hoe groter de miniaturen worden getoond, maar hoe langer het aanmaken duurt en hoe meer ruimte ze innemen in de cache voor miniaturen.",
       "fast": "Snel",
-      "fastDescription": "De kleine miniatuur die in de foto is opgeslagen, meteen getoond. Deze is minder scherp: 320 × 240 pixels bij een foto van 12 megapixel die met een iPhone is gemaakt."
+      "fastDescription": "De kleine miniatuur die in de foto is opgeslagen, meteen getoond. Deze is minder scherp: 160 × 120 pixels bij de meeste JPEG-foto’s en 320 × 240 pixels bij een foto van 12 megapixel die met een iPhone is gemaakt."
     },
     "os": {
       "title": "Contextmenu van Verkenner",
@@ -261,7 +264,7 @@
     },
     "cache": {
       "title": "Cache voor miniaturen",
-      "generationRequired": "Voor JPEG/PNG-bestanden zonder miniatuur in hun EXIF-gegevens en voor <heifLink>HEIF-bestanden</heifLink> die de grafische hardware van deze computer niet kan decoderen, moeten miniaturen worden aangemaakt, en dat kost tijd.",
+      "generationRequired": "Voor JPEG/PNG-bestanden zonder een voldoende grote miniatuur in hun EXIF-gegevens en voor <heifLink>HEIF-bestanden</heifLink> die de grafische hardware van deze computer niet kan decoderen, moeten miniaturen worden aangemaakt, en dat kost tijd.",
       "thereforeCached": "Daarom worden de aangemaakte miniaturen in de cache bewaard.",
       "usedNextTime": "Vanaf de volgende keer wordt de cache gebruikt, zodat de miniaturen niet opnieuw worden aangemaakt.",
       "location": "Locatie van de cache:",

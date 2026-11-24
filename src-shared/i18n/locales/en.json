@@ -241,12 +241,15 @@
       "example": "Example"
     },
     "thumbnails": {
-      "title": "HEIF Thumbnails",
-      "description": "Thumbnails of HEIF files, such as photos taken with an iPhone, are made by this application. Choose whether they are made for quality or for speed.",
+      "title": "Thumbnails",
+      "description": "Choose whether the thumbnails are made for quality or for speed.",
       "highQuality": "High quality",
-      "highQualityDescription": "Made from the whole photo, 400 pixels on the longer side. Until then, the small thumbnail stored in the photo is shown. On a computer that cannot decode HEVC with its graphics hardware, making them takes time.",
+      "highQualityDescription": "Made from the whole photo, at the size chosen below. Until then, the small thumbnail stored in the photo is shown. Making them takes time the first time that a folder is opened, and longer for HEIF files on a computer that cannot decode HEVC with its graphics hardware.",
+      "size": "Size",
+      "sizeValue": "{{size}} pixels on the longer side",
+      "sizeDescription": "A larger size shows the thumbnails larger, but they take longer to make and more space in the thumbnail cache.",
       "fast": "Fast",
-      "fastDescription": "The small thumbnail stored in the photo, shown right away. It is less sharp: 320 × 240 pixels for a 12-megapixel photo taken with an iPhone."
+      "fastDescription": "The small thumbnail stored in the photo, shown right away. It is less sharp: 160 × 120 pixels in most JPEG photos, and 320 × 240 pixels in a 12-megapixel photo taken with an iPhone."
     },
     "os": {
       "title": "Explorer Context Menu",
@@ -261,7 +264,7 @@
     },
     "cache": {
       "title": "Thumbnail Cache",
-      "generationRequired": "Thumbnail generation is required for JPEG/PNG files without a thumbnail in their EXIF data, and for <heifLink>HEIF files</heifLink> that this computer cannot decode with its graphics hardware, but it takes time.",
+      "generationRequired": "Thumbnail generation is required for JPEG/PNG files without a large enough thumbnail in their EXIF data, and for <heifLink>HEIF files</heifLink> that this computer cannot decode with its graphics hardware, but it takes time.",
       "thereforeCached": "Therefore, the generated thumbnails are cached.",
       "usedNextTime": "The cache will be used from the next time to skip thumbnail generation.",
       "location": "Cache location:",

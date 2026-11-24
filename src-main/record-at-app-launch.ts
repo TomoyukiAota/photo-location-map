@@ -134,6 +134,7 @@ const recordLoadedUserSettings = () => {
   Analytics.trackEvent('Loaded User Settings', `Language`, `Language: ${settings.language}`);
   Analytics.trackEvent('Loaded User Settings', `Language in Use`, `Language in Use: ${currentLanguage}`);
   Analytics.trackEvent('Loaded User Settings', `Thumbnail Quality`, `Thumbnail Quality: ${settings.thumbnailQuality}`);
+  Analytics.trackEvent('Loaded User Settings', `Thumbnail Size`, `Thumbnail Size: ${settings.thumbnailSize}`);
   Analytics.trackEvent('Loaded User Settings', `Sticky Folder Rows Maximum`, `Sticky Folder Rows Maximum: ${settings.stickyFolderRowsMaximum}`);
   Analytics.trackEvent('Loaded User Settings', `Sticky Folder Rows Left Out`, `Sticky Folder Rows Left Out: ${settings.stickyFolderRowsLeftOut}`);
 };

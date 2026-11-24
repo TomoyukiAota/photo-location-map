@@ -1,10 +1,10 @@
 import assert from 'assert';
 import * as fs from 'fs';
-import { imageTypeOf, makeThumbnailJpeg, thumbnailLongerSide } from '../../../../src/app/jpeg-png-thumbnail/jpeg-png-image-decoding.js';
+import { imageTypeOf, makeThumbnailJpeg } from '../../../../src/app/jpeg-png-thumbnail/jpeg-png-image-decoding.js';
 import { repositoryPath } from '../../../test-util/repository.js';
 
-// The thumbnails that the page makes of JPEG and PNG photos without one in their EXIF data, with Chromium's decoder,
-// which only a page has: decoded as Chromium shows the photo, at 400 pixels on the longer side.
+// The thumbnails that the page makes of JPEG and PNG photos, with Chromium's decoder, which only a page has: decoded as
+// Chromium shows the photo, at the longer side that the settings choose, 400 pixels by default.
 
 /** Photos of 4032x3024 as an iPhone writes them: one turned by its EXIF orientation (6), one not (1). */
 const turnedPhoto = repositoryPath('test', 'test-resources', 'actual-photos', 'Apple Park', 'IMG_5769.JPG');
@@ -40,15 +40,22 @@ async function imageFile(width: number, height: number, type: string, draw: (con
 
 describe('makeThumbnailJpeg', function () {
   it('makes a JPEG of 400 pixels on the longer side of a photo of 12 megapixels', async () => {
-    const jpeg = await makeThumbnailJpeg(bytesOf(uprightPhoto), uprightPhoto);
+    const jpeg = await makeThumbnailJpeg(bytesOf(uprightPhoto), uprightPhoto, 400);
     assert.strictEqual(jpeg.type, 'image/jpeg');
     const pixels = await pixelsOf(jpeg);
-    assert.deepStrictEqual([pixels.width, pixels.height], [thumbnailLongerSide, 300]);
+    assert.deepStrictEqual([pixels.width, pixels.height], [400, 300]);
+  });
+
+  it('makes a JPEG of the longer side that it is given, the size that the settings choose', async () => {
+    for (const [longerSide, height] of [[600, 450], [1000, 750]]) {
+      const pixels = await pixelsOf(await makeThumbnailJpeg(bytesOf(uprightPhoto), uprightPhoto, longerSide));
+      assert.deepStrictEqual([pixels.width, pixels.height], [longerSide, height]);
+    }
   });
 
   it('turns the thumbnail as the photo\'s EXIF orientation says, as an img element shows the photo', async () => {
-    const pixels = await pixelsOf(await makeThumbnailJpeg(bytesOf(turnedPhoto), turnedPhoto));
-    assert.deepStrictEqual([pixels.width, pixels.height], [300, thumbnailLongerSide]);
+    const pixels = await pixelsOf(await makeThumbnailJpeg(bytesOf(turnedPhoto), turnedPhoto, 400));
+    assert.deepStrictEqual([pixels.width, pixels.height], [300, 400]);
   });
 
   it('keeps a photo smaller than a thumbnail at its own size', async () => {
@@ -56,7 +63,7 @@ describe('makeThumbnailJpeg', function () {
       context.fillStyle = '#336699';
       context.fillRect(0, 0, 300, 200);
     });
-    const pixels = await pixelsOf(await makeThumbnailJpeg(small, '/photos/small.jpg'));
+    const pixels = await pixelsOf(await makeThumbnailJpeg(small, '/photos/small.jpg', 400));
     assert.deepStrictEqual([pixels.width, pixels.height], [300, 200]);
   });
 
@@ -66,7 +73,7 @@ describe('makeThumbnailJpeg', function () {
       context.fillStyle = '#ff0000';
       context.fillRect(400, 0, 400, 600);
     });
-    const pixels = await pixelsOf(await makeThumbnailJpeg(png, '/photos/sticker.png'));
+    const pixels = await pixelsOf(await makeThumbnailJpeg(png, '/photos/sticker.png', 400));
     assert.deepStrictEqual([pixels.width, pixels.height], [400, 300]);
     const [left, right] = [colourAt(pixels, 50, 150), colourAt(pixels, 350, 150)];
     assert(left.every(channel => channel >= 250), `The transparent half is ${left}, not white.`);
@@ -75,7 +82,7 @@ describe('makeThumbnailJpeg', function () {
 
   it('decodes a file by what its bytes are, whatever its name says', async () => {
     assert.strictEqual(imageTypeOf(bytesOf(uprightPhoto), '/photos/named-as.png'), 'image/jpeg');
-    const pixels = await pixelsOf(await makeThumbnailJpeg(bytesOf(uprightPhoto), '/photos/named-as.png'));
+    const pixels = await pixelsOf(await makeThumbnailJpeg(bytesOf(uprightPhoto), '/photos/named-as.png', 400));
     assert.deepStrictEqual([pixels.width, pixels.height], [400, 300]);
     const png = await imageFile(10, 10, 'image/png', () => {});
     assert.strictEqual(imageTypeOf(png, '/photos/named-as.jpg'), 'image/png');
@@ -86,20 +93,20 @@ describe('makeThumbnailJpeg', function () {
 
   it('gives the decoder the bytes\' buffer where they are the whole of it, and copies the bytes of a part of one', async () => {
     const whole = bytesOf(uprightPhoto);
-    await makeThumbnailJpeg(whole, uprightPhoto);
+    await makeThumbnailJpeg(whole, uprightPhoto, 400);
     assert.strictEqual(whole.byteLength, 0);
 
     const file = bytesOf(uprightPhoto);
     const larger = new Uint8Array(file.byteLength + 16);
     larger.set(file, 16);
     const part = larger.subarray(16);
-    const pixels = await pixelsOf(await makeThumbnailJpeg(part, uprightPhoto));
+    const pixels = await pixelsOf(await makeThumbnailJpeg(part, uprightPhoto, 400));
     assert.deepStrictEqual([pixels.width, pixels.height], [400, 300]);
     assert.strictEqual(part.byteLength, file.byteLength);
   });
 
   it('rejects a photo whose file is cut short, which the decoder refuses', async () => {
     const cutShort = bytesOf(uprightPhoto).slice(0, 2_000_000);
-    await assert.rejects(makeThumbnailJpeg(cutShort, uprightPhoto), (error: unknown) => error instanceof DOMException && error.name === 'EncodingError');
+    await assert.rejects(makeThumbnailJpeg(cutShort, uprightPhoto, 400), (error: unknown) => error instanceof DOMException && error.name === 'EncodingError');
   });
 });

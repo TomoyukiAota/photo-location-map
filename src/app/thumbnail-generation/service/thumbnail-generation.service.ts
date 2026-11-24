@@ -1,4 +1,4 @@
-import { computed, inject, signal, Service } from '@angular/core';
+import { computed, inject, signal, Service, untracked } from '@angular/core';
 import { Analytics } from '../../../../src-shared/analytics/analytics';
 import { bridge, ThumbnailState } from '../../../../src-shared/bridge/plm-bridge';
 import { convertToFlattenedDirTree } from '../../../../src-shared/dir-tree/dir-tree-util';
@@ -6,9 +6,8 @@ import { FilenameExtension } from '../../../../src-shared/filename-extension/fil
 import { stringArrayToLogText } from '../../../../src-shared/log/multiline-log-text';
 import { perfMark } from '../../../../src-shared/perf/perf-mark';
 import { thumbnailGenerationLogger as logger } from '../../../../src-shared/thumbnail/generation/thumbnail-generation-logger';
-import { ThumbnailQuality } from '../../../../src-shared/user-settings/thumbnail-quality';
-import { currentUserSettings } from '../../../../src-shared/user-settings/user-settings';
 import { pageDecodesHevc } from '../../heif-thumbnail/heif-image-decoding';
+import { ThumbnailSizeService } from '../../shared/thumbnail-size/thumbnail-size.service';
 import { ThumbnailGenerationStatusBarService } from '../status-bar/service/thumbnail-generation-status-bar.service';
 
 export interface ThumbnailGenerationResult {
@@ -64,15 +63,15 @@ export const idleThumbnailGenerationStatus: ThumbnailGenerationStatus = {
 @Service()
 export class ThumbnailGenerationService {
   private readonly statusBarService = inject(ThumbnailGenerationStatusBarService);
+  private readonly thumbnailSizeService = inject(ThumbnailSizeService);
   private readonly statusState = signal<ThumbnailGenerationStatus>(idleThumbnailGenerationStatus);
   public readonly status = this.statusState.asReadonly();
   public readonly isGenerating = computed(() => this.status().phase === 'generating');
-  private readonly thumbnailQualityState = signal<ThumbnailQuality>(currentUserSettings.thumbnailQuality);
   /**
    * The quality of the thumbnails as the settings have it, for what the page shows of it: a signal, as the settings
-   * are not one, so that the views follow a new setting (applyThumbnailQuality).
+   * are not one, so that the views follow a new setting (ThumbnailSizeService.follow()).
    */
-  public readonly thumbnailQuality = this.thumbnailQualityState.asReadonly();
+  public readonly thumbnailQuality = this.thumbnailSizeService.quality;
 
   private allHeifFilePaths: string[] = [];
   /** The folder's HEIF files whose thumbnail was in the cache when it was opened. */
@@ -144,27 +143,33 @@ export class ThumbnailGenerationService {
   }
 
   /**
-   * Follows a new setting of the thumbnails' quality: the thumbnails that wait to be made are dropped for 'fast', and
-   * those of the folder are made for 'high' where the page cannot decode HEVC.
+   * Follows new settings of the thumbnails' quality and size (ThumbnailSizeService): the thumbnails that wait to be
+   * made are dropped, as they are of the previous settings, those in the cache are looked up again at the new size,
+   * and those of the folder are made for 'high', at the new size, where the page cannot decode HEVC.
+   * TL;DR: At Fast, whose size is 400, a photo counts as cached only if it did when the folder was opened and its
+   * thumbnail is in the cache at 400.
+   * Details: A photo whose thumbnail is in the cache shows it (HeifThumbnailService.watch), and waits for it until the
+   * cache has it at the size asked for (GeneratedThumbnailService). With the set of the previous size, one cached at
+   * 800 pixels waited for ever at Fast, as nothing makes it at 400 then. One that the main process made in this
+   * session at High is not taken either: Fast shows the small thumbnail that the photo holds, rather than the one
+   * that the main process no longer makes (the e2e case of the status bar that offers the fast thumbnails).
    */
-  public async applyThumbnailQuality(): Promise<boolean> {
-    this.thumbnailQualityState.set(currentUserSettings.thumbnailQuality);
-    if (currentUserSettings.thumbnailQuality === 'fast') {
-      if (this.isGenerating()) {
-        logger.info('The thumbnails that wait to be made are dropped, as the fast ones were chosen.');
-        await bridge().thumbnails.cancel();
-        this.stopProgressPolling();
-        this.statusState.set(idleThumbnailGenerationStatus);
-        this.statusBarService.hide();
-      }
-      this.setFilesToGenerate([]);
+  public async applyThumbnailSettings(): Promise<boolean> {
+    if (this.isGenerating()) {
+      logger.info('The thumbnails that wait to be made are dropped, as they are of the previous settings.');
+      await bridge().thumbnails.cancel();
+      this.stopProgressPolling();
+      this.statusState.set(idleThumbnailGenerationStatus);
+      this.statusBarService.hide();
+    }
+    this.setFilesToGenerate([]);
+    const states = await this.thumbnailStates(this.allHeifFilePaths);
+    const cached = new Set(this.allHeifFilePaths.filter((_filePath, index) => states[index].cacheAvailable));
+    if (untracked(this.thumbnailSizeService.quality) === 'fast') {
+      this.cachedFilePaths = new Set([...this.cachedFilePaths].filter(filePath => cached.has(filePath)));
       return false;
     }
-    if (this.isGenerating())
-      return false;
-    const states = await this.thumbnailStates(this.allHeifFilePaths);
-    this.cachedFilePaths = new Set(this.allHeifFilePaths.filter((_filePath, index) => states[index].cacheAvailable));
-    this.setFilesToGenerate([]);
+    this.cachedFilePaths = cached;
     const started = await this.startForTheFolder();
     if (started)
       this.statusBarService.showForNewGeneration();
@@ -172,8 +177,9 @@ export class ThumbnailGenerationService {
   }
 
   private async startForTheFolder(): Promise<boolean> {
-    if (currentUserSettings.thumbnailQuality !== 'high' || await pageDecodesHevc()) {
-      logger.info(`The page makes the thumbnails of HEIF files (quality: ${currentUserSettings.thumbnailQuality}). `
+    const quality = untracked(this.thumbnailSizeService.quality);
+    if (quality !== 'high' || await pageDecodesHevc()) {
+      logger.info(`The page makes the thumbnails of HEIF files (quality: ${quality}). `
         + 'The main process makes those that the page cannot.');
       return false;
     }
@@ -215,13 +221,17 @@ export class ThumbnailGenerationService {
     logger.info(`Thumbnails for HEIF files will be generated in the main process.`);
     logger.info(`Sending the IPC invoke request about thumbnail generation to the main process.`);
 
-    bridge().thumbnails.generate(this.allHeifFilePaths, filePaths)
+    bridge().thumbnails.generate(this.allHeifFilePaths, filePaths, untracked(this.thumbnailSizeService.longerSide))
       .catch(error => logger.error(`Failed to request thumbnail generation.`, error));
   }
 
-  /** Where the thumbnail of each file is; none to ask about for a folder without HEIF files. */
+  /**
+   * Where the thumbnail of each file is, at the size that the settings choose; none to ask about for a folder without
+   * HEIF files.
+   */
   private thumbnailStates(filePaths: string[]): Promise<ThumbnailState[]> {
-    return filePaths.length === 0 ? Promise.resolve([]) : bridge().thumbnails.state(filePaths);
+    return filePaths.length === 0 ? Promise.resolve([])
+      : bridge().thumbnails.state(filePaths, untracked(this.thumbnailSizeService.longerSide));
   }
 
   private updateGenerationStatusAsStarted(isWholeFolder: boolean) {

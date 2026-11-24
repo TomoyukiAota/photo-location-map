@@ -4152,7 +4152,7 @@ test('the thumbnail status bar follows the generation of HEIF thumbnails from st
   // The photo's row of the tree shows the thumbnail that was made, from the cache, in place of the image that
   // stood in for it.
   const thumbnail = page.locator('mat-tree-node').filter({ hasText: 'demo.heic' }).locator('.photo-info-viewer-thumbnail');
-  await expect(thumbnail).toHaveAttribute('src', /demo\.heic\.plm\.jpg$/);
+  await expect(thumbnail).toHaveAttribute('src', /demo\.heic\.plm\.jpg\?size=400$/);
   await expect(thumbnail).not.toHaveClass(/photo-info-viewer-generating-thumbnail/);
   await expect.poll(() => thumbnail.evaluate(image => image.complete && image.naturalWidth)).toBeGreaterThan(0);
   await statusBar.getByTitle('Close Thumbnail Generation Status Bar').click();
@@ -4206,7 +4206,7 @@ test('a HEIF photo shows the thumbnail that it holds at once, then the one of hi
     await expect(thumbnail).toHaveAttribute('src', /^blob:/);
     await expect(page.locator('app-thumbnail-generation-status-bar')).toBeHidden();
   } else {
-    await expect(thumbnail).toHaveAttribute('src', /demo-with-thumbnail\.heic\.plm\.jpg$/);
+    await expect(thumbnail).toHaveAttribute('src', /demo-with-thumbnail\.heic\.plm\.jpg\?size=400$/);
   }
 });
 test('a JPEG or PNG photo without a thumbnail in its EXIF data shows one of 400 pixels that the app keeps in its cache, never the photo itself', async () => {
@@ -4231,6 +4231,8 @@ test('a JPEG or PNG photo without a thumbnail in its EXIF data shows one of 400 
   })));
   const photos = [[kobe, '400x300'], [portrait, '320x400'], [drawing, '400x200']];
   const photoFileUrl = filePath => `plm-file://local/${encodeURIComponent(filePath)}`;
+  // A thumbnail of the cache is asked for at its size, which the main process leaves out of the file's path.
+  const madeFileUrl = filePath => `${photoFileUrl(filePath)}?size=400`;
   const thumbnailOf = filePath => page.locator('mat-tree-node').filter({ hasText: path.basename(filePath) }).locator('.photo-info-viewer-thumbnail');
   /** The image that a thumbnail shows, once it has loaded one: not the image that stands in for one being made. */
   const shown = thumbnail => thumbnail.evaluate(image => image.complete && image.naturalWidth && !image.src.startsWith('data:')
@@ -4244,13 +4246,13 @@ test('a JPEG or PNG photo without a thumbnail in its EXIF data shows one of 400 
     const files = [];
     for (const [photo, size] of photos) {
       await expect.poll(async () => (await shown(thumbnailOf(photo)))?.size, { timeout: 30000 }).toBe(size);
-      const file = decodeURIComponent((await shown(thumbnailOf(photo))).src.slice('plm-file://local/'.length));
+      const file = decodeURIComponent((await shown(thumbnailOf(photo))).src.slice('plm-file://local/'.length).replace(/\?size=400$/, ''));
       expect(file.startsWith(path.join(profile, 'thumbnail-cache') + path.sep), file).toBe(true);
       expect(path.basename(file)).toBe(`${path.basename(photo)}.plm.jpg`);
       files.push(file);
     }
     page.off('request', record);
-    for (const file of files) expect(requested).toContain(photoFileUrl(file));
+    for (const file of files) expect(requested).toContain(madeFileUrl(file));
     for (const [photo] of photos) expect(requested).not.toContain(photoFileUrl(photo));
     return files;
   }
@@ -4259,7 +4261,7 @@ test('a JPEG or PNG photo without a thumbnail in its EXIF data shows one of 400 
   // The marker of Kobe's photo, which its shooting time labels: the portrait has a location too.
   await page.locator('.plm-leaflet-map-div-icon').filter({ hasText: '2017' }).dispatchEvent('click');
   await expect(page.locator('.leaflet-popup .photo-info-viewer-name')).toHaveText('Kobe.JPG');
-  await expect(page.locator('.leaflet-popup .photo-info-viewer-thumbnail')).toHaveAttribute('src', photoFileUrl(files[0]));
+  await expect(page.locator('.leaflet-popup .photo-info-viewer-thumbnail')).toHaveAttribute('src', madeFileUrl(files[0]));
 
   // The next launch shows them from the cache, without making them again.
   const madeAt = await Promise.all(files.map(async file => (await stat(file)).mtimeMs));
@@ -4267,6 +4269,54 @@ test('a JPEG or PNG photo without a thumbnail in its EXIF data shows one of 400 
   await launch();
   expect(await expectThumbnailsOfCache()).toEqual(files);
   expect(await Promise.all(files.map(async file => (await stat(file)).mtimeMs))).toEqual(madeAt);
+});
+test('the Thumbnails tab chooses the size of the thumbnails, which applies at once, with thumbnails made from the photos', async () => {
+  // A camera's JPEG holds a thumbnail of 160 x 120, which High quality does not show stretched: the app makes one from
+  // the photo at the size chosen, 400 pixels by default, which the tree shows in a box of half that, and makes it again
+  // at a new size, which it keeps in the same file of the cache. Fast shows the photo's own, at its own size.
+  const folder = path.join(profile, 'Thumbnail sizes');
+  await mkdir(folder);
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'Kobe.JPG'));
+  await dismissWelcome();
+  await openFolderWithPicker(folder);
+  const thumbnail = page.locator('mat-tree-node').filter({ hasText: 'Kobe.JPG' }).locator('.photo-info-viewer-thumbnail');
+  /** The image that the thumbnail shows once it is loaded, and the width of its box, in CSS pixels. */
+  const shown = () => thumbnail.evaluate(image => image.complete && image.naturalWidth && !image.src.startsWith('data:')
+    ? { src: image.src, size: `${image.naturalWidth}x${image.naturalHeight}`,
+      box: Math.round(image.closest('.photo-info-viewer-thumbnail-container').getBoundingClientRect().width) } : null);
+  const userData = await app.evaluate(({ app }) => app.getPath('userData'));
+  /** The log of the thumbnail's generation, beside the thumbnail in the cache, which the thumbnail's address leads to. */
+  const logOfCache = async () => {
+    const file = decodeURIComponent((await shown()).src.slice('plm-file://local/'.length).replace(/\?size=\d+$/, ''));
+    return JSON.parse(await readFile(path.join(path.dirname(file), 'Kobe.JPG.log.json'), 'utf8'));
+  };
+
+  await expect.poll(async () => (await shown())?.size, { timeout: 30000 }).toBe('400x300');
+  expect(await shown()).toEqual(expect.objectContaining({ src: expect.stringMatching(/Kobe\.JPG\.plm\.jpg\?size=400$/), box: 200 }));
+
+  // 800 pixels on the slider under High quality: a box of 400, and the thumbnail made again at once.
+  await settings('Thumbnails');
+  const tab = page.locator('app-thumbnail-settings');
+  const slider = tab.locator('.thumbnail-size-slider input');
+  await expect(slider).toBeEnabled();
+  await expect(tab.locator('.thumbnail-size-value')).toHaveText('400 pixels on the longer side');
+  await slider.fill('800');
+  await expect(tab.locator('.thumbnail-size-value')).toHaveText('800 pixels on the longer side');
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(page.locator('app-settings-dialog')).toHaveCount(0);
+  await expect.poll(async () => (await shown())?.size, { timeout: 30000 }).toBe('800x600');
+  expect(await shown()).toEqual(expect.objectContaining({ src: expect.stringMatching(/Kobe\.JPG\.plm\.jpg\?size=800$/), box: 400 }));
+  await expect.poll(() => savedSetting(userData, ['UserSettings', 'ThumbnailSize'])).toBe('800');
+  await expect.poll(async () => (await logOfCache()).LongerSide).toBe(800);
+
+  // Fast: the photo's own thumbnail, in today's box, and the slider disabled.
+  await settings('Thumbnails');
+  await tab.getByRole('radio', { name: /^Fast/ }).check();
+  await expect(slider).toBeDisabled();
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(page.locator('app-settings-dialog')).toHaveCount(0);
+  await expect.poll(async () => (await shown())?.size).toBe('160x120');
+  expect(await shown()).toEqual(expect.objectContaining({ src: expect.stringMatching(/^blob:/), box: 200 }));
 });
 test('the thumbnail status bar offers the fast thumbnails, which are the thumbnails that the photos hold', async () => {
   // Where the main process makes the thumbnails of high quality, the status bar says that the fast ones can be
@@ -4297,11 +4347,43 @@ test('the thumbnail status bar offers the fast thumbnails, which are the thumbna
   await expect.poll(() => savedSetting(userData, ['UserSettings', 'ThumbnailQuality'])).toBe('fast');
   // The main process makes this photo first, and may have made its thumbnail of high quality by now: the photo shows
   // its own small thumbnail all the same, as one that the main process no longer makes
-  // (HeifThumbnailService.applyThumbnailQuality).
+  // (HeifThumbnailService.applyThumbnailSettings).
   const thumbnail = page.locator('mat-tree-node').filter({ hasText: 'a with its own thumbnail.heic' }).locator('.photo-info-viewer-thumbnail');
   await expect.poll(() => thumbnail.evaluate(image => image.complete ? `${image.naturalWidth}x${image.naturalHeight}` : ''),
     { timeout: 30000 }).toBe('240x320');
   await expect(thumbnail).toHaveAttribute('src', /^blob:/);
+});
+test('Fast shows the thumbnail that a HEIF photo holds, though the folder was opened with its thumbnail of 800 pixels in the cache', async () => {
+  // The main process makes the photo's thumbnail of high quality at 800 pixels, which the cache keeps, and the folder,
+  // opened again, finds it there. Fast asks for thumbnails of 400 pixels: the photo shows the small thumbnail that it
+  // holds, rather than wait for one of 400 from the cache, which nothing makes then
+  // (ThumbnailGenerationService.applyThumbnailSettings).
+  await relaunchWithoutHevcInPage();
+  const folder = path.join(profile, 'HEIF made at 800 pixels');
+  await mkdir(folder);
+  await copyFile(path.join(root, 'test/e2e/fixtures/demo-with-thumbnail.heic'), path.join(folder, 'a.heic'));
+  await dismissWelcome();
+  const dialog = page.locator('app-settings-dialog');
+  await settings('Thumbnails');
+  await dialog.locator('.thumbnail-size-slider input').fill('800');
+  await dialog.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+
+  const thumbnail = page.locator('mat-tree-node').filter({ hasText: 'a.heic' }).locator('.photo-info-viewer-thumbnail');
+  /** The image that the thumbnail shows once it is loaded. */
+  const shown = () => thumbnail.evaluate(image => image.complete && image.naturalWidth && !image.src.startsWith('data:')
+    ? { src: image.src, size: `${image.naturalWidth}x${image.naturalHeight}` } : null);
+  await openFolderWithPicker(folder);
+  await expect.poll(async () => (await shown())?.src, { timeout: 30000 }).toMatch(/a\.heic\.plm\.jpg\?size=800$/);
+  await openFolderWithPicker(folder);
+  await expect.poll(async () => (await shown())?.src, { timeout: 30000 }).toMatch(/a\.heic\.plm\.jpg\?size=800$/);
+
+  await settings('Thumbnails');
+  await dialog.getByRole('radio', { name: /^Fast/ }).check();
+  await dialog.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect.poll(async () => (await shown())?.size, { timeout: 30000 }).toBe('240x320');
+  expect((await shown()).src).toMatch(/^blob:/);
 });
 test('the thumbnail error dialog lists, sorts and filters the HEIF files without a thumbnail', async () => {
   // Its table gets its rows from ng-table-virtual-scroll, which says nothing about zoneless Angular.

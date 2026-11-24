@@ -13,18 +13,24 @@ import { NearViewDirective } from '../shared/near-view/near-view.directive';
 import { OpenedDirectory } from '../shared/opened-directory';
 import { HeifThumbnailService } from '../heif-thumbnail/heif-thumbnail.service';
 import { JpegPngThumbnailService, needsMadeThumbnail } from '../jpeg-png-thumbnail/jpeg-png-thumbnail.service';
+import { ThumbnailSizeService } from '../shared/thumbnail-size/thumbnail-size.service';
 import { MoreOptionsMenuService } from './more-options-menu/more-options-menu.service';
 import { photoInfoViewerLogger as logger } from './photo-info-viewer-logger';
 import { PhotoInfoViewerPlace } from './photo-info-viewer-place';
 import { ThumbnailRotationService } from './thumbnail-rotation.service';
 import { UndecodableThumbnailService } from './undecodable-thumbnail.service';
 import { LoggedLine, logged } from '../../../src-shared/log/logged-line';
-import { photoFileUrl } from '../../../src-shared/main-window-schemes';
+import { madeThumbnailUrl, photoFileUrl } from '../../../src-shared/main-window-schemes';
 
 /** What the img element of a thumbnail shows. */
 interface Thumbnail {
   /** An image of the photo; or what stands in for one that is being made, or for one that cannot be made. */
   readonly kind: 'image' | 'generating' | 'unavailable';
+  /**
+   * Whether the image is the small thumbnail that the photo holds, shown until a larger one is made of it: it fills
+   * its place, stretched, rather than being shown at its own size, which is smaller than its place.
+   */
+  readonly provisional?: boolean;
   readonly src: string;
   /** Shown in place of an image that cannot be loaded: why, for a file whose path is too long for Windows. */
   readonly alt: string | null;
@@ -77,9 +83,9 @@ const viewerTexts = {
   unavailable: t('photoInfo.unavailable'),
 } as const;
 
-/** The thumbnail that the camera wrote into the photo's EXIF data. */
-function thumbnailOfExif(photo: Photo): Thumbnail {
-  return { kind: 'image', src: photo.exif.thumbnail.objectUrl, alt: null, warning: null };
+/** The thumbnail that the camera wrote into the photo's EXIF data: until a larger one is made, when `provisional`. */
+function thumbnailOfExif(photo: Photo, provisional = false): Thumbnail {
+  return { kind: 'image', provisional, src: photo.exif.thumbnail.objectUrl, alt: null, warning: null };
 }
 
 /**
@@ -106,14 +112,14 @@ File path of ${photo.name} is "${photo.path}"
   };
 }
 
-/** The thumbnail that the app made of a photo, in its cache. */
-function thumbnailOfGeneratedFile(photo: Photo, thumbnailFilePath: string): Thumbnail {
+/** The thumbnail that the app made of a photo, in its cache, at `longerSide`, which its address says (madeThumbnailUrl). */
+function thumbnailOfGeneratedFile(photo: Photo, thumbnailFilePath: string, longerSide: number): Thumbnail {
   if (!isFilePathTooLongOnWindows(thumbnailFilePath))
-    return { kind: 'image', src: photoFileUrl(thumbnailFilePath), alt: null, warning: null };
+    return { kind: 'image', src: madeThumbnailUrl(thumbnailFilePath, longerSide), alt: null, warning: null };
 
   return {
     kind: 'image',
-    src: photoFileUrl(thumbnailFilePath),
+    src: madeThumbnailUrl(thumbnailFilePath, longerSide),
     alt: t('photoInfo.generatedThumbnailPathTooLong', { length: thumbnailFilePath.length, maximum: maxFilePathLengthOnWindows }),
     warning: logged`
 Thumbnail of ${photo.name} cannot be displayed because the length of the file path of the generated thumbnail exceeds the maximum.
@@ -143,10 +149,12 @@ File path of generated thumbnail is "${thumbnailFilePath}"
  * - The template is used in the tree and in the cluster's popup. Leaflet makes a marker's popup itself, so the map
  *   makes that popup's component outside any template (src/app/map/leaflet-map/leaflet-content.service.ts).
  * - Nothing that has to last is kept here: how far the thumbnail is turned is in ThumbnailRotationService, the
- *   thumbnail of a HEIF photo in HeifThumbnailService, that of a JPEG or PNG photo without one in its EXIF data in
+ *   thumbnail of a HEIF photo in HeifThumbnailService, that which the app makes of a JPEG or PNG photo in
  *   JpegPngThumbnailService, and the thumbnails of EXIF data that the page could not decode in
- *   UndecodableThumbnailService. A component is made when its place shows the photo and destroyed when it no longer
- *   does, as when a folder of the tree is collapsed, so that a large folder costs no more than what is shown of it.
+ *   UndecodableThumbnailService. The size of the box is a CSS custom property of the application's root element
+ *   (ThumbnailSizeService), which the styles read. A component is made when its place shows the photo and destroyed
+ *   when it no longer does, as when a folder of the tree is collapsed, so that a large folder costs no more than what
+ *   is shown of it.
  * - Kept light: there is a component for every photo shown, thousands for a folder that has its photos in it, as
  *   each has a row in the tree. What the template shows is read through methods rather than computed values, which
  *   Angular follows in the same way, while a computed value is an object of its own in each component. The texts
@@ -174,6 +182,7 @@ File path of generated thumbnail is "${thumbnailFilePath}"
 export class PhotoInfoViewerComponent {
   private readonly heifThumbnailService = inject(HeifThumbnailService);
   private readonly jpegPngThumbnailService = inject(JpegPngThumbnailService);
+  private readonly thumbnailSizeService = inject(ThumbnailSizeService);
   private readonly thumbnailRotationService = inject(ThumbnailRotationService);
   private readonly undecodableThumbnailService = inject(UndecodableThumbnailService);
 
@@ -217,11 +226,11 @@ export class PhotoInfoViewerComponent {
       // A HEIF photo's thumbnail is made once a place shows the photo, and replaced once its high quality is made.
       if (FilenameExtension.isThumbnailGenerationAvailable(photo.filenameExtension))
         this.heifThumbnailService.watch(photo.path);
-      // That of a JPEG or PNG photo without one in its EXIF data, once a row or a tile comes near the view, as its
-      // NearViewDirective says, and at once in a popup, which has none. A row tells how far it was from the window's
-      // middle, as the sidebar fills the window's height; the tiles of a popup are made in their order, whose first
-      // are those that the popup shows.
-      if (needsMadeThumbnail(photo) && (this.nearView?.isNear() ?? true)) {
+      // That of a JPEG or PNG photo that the app makes, without one in its EXIF data or, at High quality, with one
+      // smaller than the chosen size, once a row or a tile comes near the view, as its NearViewDirective says, and at
+      // once in a popup, which has none. A row tells how far it was from the window's middle, as the sidebar fills the
+      // window's height; the tiles of a popup are made in their order, whose first are those that the popup shows.
+      if (this.needsMadeThumbnail(photo) && (this.nearView?.isNear() ?? true)) {
         const distance = this.place() === 'dir-tree-view' ? this.nearView?.distanceFromMiddleWhenNear ?? 0 : 0;
         this.jpegPngThumbnailService.watch(photo.path, distance);
       }
@@ -248,46 +257,53 @@ export class PhotoInfoViewerComponent {
   }
 
   /**
-   * The photo's thumbnail: from the EXIF data where it has one that the page decodes; otherwise, for a JPEG or PNG
-   * photo, the one that JpegPngThumbnailService makes, or the photo itself where none can be made or where the page
-   * could not decode the one in its EXIF data (UndecodableThumbnailService), as the service makes none for it; for a
-   * HEIF photo, the one that HeifThumbnailService makes: the small thumbnail that the photo holds, shown until the one
-   * of the quality that the settings choose is made.
+   * The photo's thumbnail. For a JPEG or PNG photo, the one in its EXIF data, unless the app makes one of it
+   * (needsMadeThumbnail): then the one that JpegPngThumbnailService makes, with its EXIF thumbnail shown until then,
+   * and shown instead where none can be made, or the photo itself where it has none that the page decodes
+   * (UndecodableThumbnailService). For a HEIF photo, the one that HeifThumbnailService makes: the small thumbnail that
+   * the photo holds, shown until the one of the quality that the settings choose is made. For another photo, the one
+   * in its EXIF data where it has one that the page decodes.
    */
   protected thumbnail(): Thumbnail {
     const photo = this.photo();
     if (!photo?.path)
       return unavailableThumbnail;
-    if (photo.exif?.thumbnail && !this.undecodableThumbnailService.isUndecodable(photo.exif.thumbnail))
-      return thumbnailOfExif(photo);
+    const hasExifThumbnail = !!photo.exif?.thumbnail && !this.undecodableThumbnailService.isUndecodable(photo.exif.thumbnail);
     if (FilenameExtension.isDisplayableInBrowser(photo.filenameExtension)) {
-      if (!needsMadeThumbnail(photo))
-        return thumbnailOfPhotoItself(photo);
+      if (!this.needsMadeThumbnail(photo))
+        return hasExifThumbnail ? thumbnailOfExif(photo) : thumbnailOfPhotoItself(photo);
       const jpegPngThumbnail = this.jpegPngThumbnailService.stateOf(photo.path);
       switch (jpegPngThumbnail.kind) {
         case 'cached':
-          return thumbnailOfGeneratedFile(photo, jpegPngThumbnail.filePath);
+          return thumbnailOfGeneratedFile(photo, jpegPngThumbnail.filePath, jpegPngThumbnail.longerSide);
         case 'decoded':
           return { kind: 'image', src: jpegPngThumbnail.url, alt: null, warning: null };
         case 'photoItself':
-          return thumbnailOfPhotoItself(photo);
+          return hasExifThumbnail ? thumbnailOfExif(photo) : thumbnailOfPhotoItself(photo);
         default:
-          return generatingThumbnail;
+          return hasExifThumbnail ? thumbnailOfExif(photo, true) : generatingThumbnail;
       }
     }
+    if (hasExifThumbnail)
+      return thumbnailOfExif(photo);
     if (FilenameExtension.isThumbnailGenerationAvailable(photo.filenameExtension)) {
       const heifThumbnail = this.heifThumbnailService.stateOf(photo.path);
       switch (heifThumbnail.kind) {
         case 'decoded':
           return { kind: 'image', src: heifThumbnail.url, alt: null, warning: null };
         case 'generated':
-          return thumbnailOfGeneratedFile(photo, heifThumbnail.filePath);
+          return thumbnailOfGeneratedFile(photo, heifThumbnail.filePath, heifThumbnail.longerSide);
         default:
           return heifThumbnail.provisionalUrl === null ? generatingThumbnail
-            : { kind: 'image', src: heifThumbnail.provisionalUrl, alt: null, warning: null };
+            : { kind: 'image', provisional: true, src: heifThumbnail.provisionalUrl, alt: null, warning: null };
       }
     }
     return unavailableThumbnail;
+  }
+
+  /** Whether the app makes the photo's thumbnail at the quality and the size that the settings choose. */
+  private needsMadeThumbnail(photo: Photo): boolean {
+    return needsMadeThumbnail(photo, this.thumbnailSizeService.quality(), this.thumbnailSizeService.longerSide());
   }
 
   /** The thumbnail as it is turned: by a quarter more for each click, so that it always turns clockwise. */

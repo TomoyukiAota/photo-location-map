@@ -39,17 +39,17 @@ export class HeifImageSource {
   }
 
   /**
-   * The thumbnail of high quality, from the whole image, where the page decodes its tiles. Null when it cannot, which
-   * leaves it to the main process.
+   * The thumbnail of high quality, from the whole image, `longerSide` pixels on its longer side, where the page decodes
+   * its tiles. Null when it cannot, which leaves it to the main process.
    */
-  public async wholeImage(photoPath: string): Promise<Blob | null> {
+  public async wholeImage(photoPath: string, longerSide: number): Promise<Blob | null> {
     if (!await pageDecodesHevc())
       return null;
     const image = await bridge().heif.wholeImage(photoPath);
     if (!image || !await isSupported(image.hevc))
       return null;
     try {
-      return await decodeWholeImage(image);
+      return await decodeWholeImage(image, longerSide);
     } catch (error) {
       logger.warn(logged`The image of "${photoPath}" could not be decoded in the page: ${error}`);
       return null;

@@ -4,6 +4,7 @@ import { FilenameExtension } from '../../src-shared/filename-extension/filename-
 import { IpcConstants } from '../../src-shared/ipc/ipc-constants.js';
 import { removeInvalidThumbnailCacheOncePerLaunch } from '../../src-shared/thumbnail/cache/remove-invalid-thumbnail-cache.js';
 import { thumbnailGenerationLogger as logger } from '../../src-shared/thumbnail/generation/thumbnail-generation-logger.js';
+import { isThumbnailSize } from '../../src-shared/user-settings/thumbnail-size.js';
 import { assertFromMainWindow } from '../ipc/ipc-sender.js';
 import { isInUserChosenFolder } from '../ipc/user-chosen-folders.js';
 import { isLastModified, isThumbnailJpeg, readPhotoForThumbnail, saveJpegPngThumbnail } from './jpeg-png-thumbnail-files.js';
@@ -16,18 +17,26 @@ function assertJpegOrPngInUserChosenFolder(filePath: unknown, operation: string)
     throw new Error(`${operation} needs the path of a JPEG or PNG file in a folder that the user opened.`);
 }
 
+/** The longer side of a thumbnail, one of the sizes that the settings can choose. */
+function assertThumbnailSize(longerSide: unknown, operation: string): asserts longerSide is number {
+  if (!isThumbnailSize(longerSide))
+    throw new Error(`${operation} needs the size of a thumbnail that the settings can choose.`);
+}
+
 /** The photos of a folder that the user opened, which the page asks about: HEIF, JPEG or PNG files. */
 function assertFilesInUserChosenFolders(filePaths: unknown, operation: string): asserts filePaths is string[] {
   if (!Array.isArray(filePaths) || !filePaths.every(filePath => isInUserChosenFolder(filePath)))
     throw new Error(`${operation} needs the paths of files in a folder that the user opened.`);
 }
 
-ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Name, (event, allHeifFilePaths: unknown, heifFilePathsToGenerateThumbnail: unknown) => {
+ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Name, (event, allHeifFilePaths: unknown, heifFilePathsToGenerateThumbnail: unknown,
+                                                                     longerSide: unknown) => {
   logger.debug(`[IPC Main Received] ${IpcConstants.ThumbnailGenerationInMainProcess.Name}`);
   assertFromMainWindow(event, 'Making thumbnails');
   assertFilesInUserChosenFolders(allHeifFilePaths, 'Making thumbnails');
   assertFilesInUserChosenFolders(heifFilePathsToGenerateThumbnail, 'Making thumbnails');
-  handleThumbnailGenerationIpcRequest(allHeifFilePaths, heifFilePathsToGenerateThumbnail);
+  assertThumbnailSize(longerSide, 'Making thumbnails');
+  handleThumbnailGenerationIpcRequest(allHeifFilePaths, heifFilePathsToGenerateThumbnail, longerSide);
 });
 
 ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Cancel, event => {
@@ -35,10 +44,11 @@ ipcMain.handle(IpcConstants.ThumbnailGenerationInMainProcess.Cancel, event => {
   cancelThumbnailGeneration();
 });
 
-ipcMain.handle(IpcConstants.ThumbnailCache.State, (event, filePaths: unknown) => {
+ipcMain.handle(IpcConstants.ThumbnailCache.State, (event, filePaths: unknown, longerSide: unknown) => {
   assertFromMainWindow(event, 'Reading the thumbnail cache');
   assertFilesInUserChosenFolders(filePaths, 'Reading the thumbnail cache');
-  return thumbnailStates(filePaths);
+  assertThumbnailSize(longerSide, 'Reading the thumbnail cache');
+  return thumbnailStates(filePaths, longerSide);
 });
 
 ipcMain.handle(IpcConstants.JpegPngThumbnail.ReadPhoto, (event, filePath: unknown) => {
@@ -47,14 +57,15 @@ ipcMain.handle(IpcConstants.JpegPngThumbnail.ReadPhoto, (event, filePath: unknow
   return readPhotoForThumbnail(filePath);
 });
 
-ipcMain.handle(IpcConstants.JpegPngThumbnail.Save, (event, filePath: unknown, lastModified: unknown, jpeg: unknown) => {
+ipcMain.handle(IpcConstants.JpegPngThumbnail.Save, (event, filePath: unknown, lastModified: unknown, jpeg: unknown, longerSide: unknown) => {
   assertFromMainWindow(event, 'Keeping the thumbnail of a photo');
   assertJpegOrPngInUserChosenFolder(filePath, 'Keeping the thumbnail of a photo');
+  assertThumbnailSize(longerSide, 'Keeping the thumbnail of a photo');
   if (!isLastModified(lastModified))
     throw new Error('Keeping the thumbnail of a photo needs the time that the photo had when it was read.');
   if (jpeg !== null && !isThumbnailJpeg(jpeg))
     throw new Error('Keeping the thumbnail of a photo needs a JPEG of a thumbnail, or null.');
   // The first thumbnail of the launch, which the page made, has the thumbnails of photos no longer there removed.
   void removeInvalidThumbnailCacheOncePerLaunch();
-  return saveJpegPngThumbnail(filePath, lastModified, jpeg as Uint8Array | null);
+  return saveJpegPngThumbnail(filePath, lastModified, jpeg as Uint8Array | null, longerSide);
 });

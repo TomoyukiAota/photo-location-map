@@ -32,26 +32,27 @@ const logger = new WorkerLogger();
 // Also, note that "jpeg-js": "^0.4.1" and "heic-decode": "^1.1.2" are the dependencies of heic-convert v1.2.4.
 
 const to = {
-  JPEG: ({ data, width, height, quality }) => resizeAndEncode({data, width, height}, quality).data, // Originally jpegJs.encode({ data, width, height }, quality).data,
+  JPEG: ({ data, width, height, quality, longerSide }) => resizeAndEncode({data, width, height}, quality, longerSide).data, // Originally jpegJs.encode({ data, width, height }, quality).data,
 };
 
-const convertImage = async ({ image, format, quality }) => {
+const convertImage = async ({ image, format, quality, longerSide }) => {
   return await to[format]({
     width: image.width,
     height: image.height,
     data: Buffer.from(image.data),
-    quality: Math.floor(quality * 100)
+    quality: Math.floor(quality * 100),
+    longerSide,
   });
 };
 
-const convert = async ({ buffer, format, quality, all }) => {
+const convert = async ({ buffer, format, quality, longerSide, all }) => {
   if (!to[format]) {
     throw new Error(`output format needs to be one of [${Object.keys(to)}]`);
   }
 
   if (!all) {
     const image = await decode({ buffer });
-    return await convertImage({ image, format, quality });
+    return await convertImage({ image, format, quality, longerSide });
   }
 
   const images = await decode.all({ buffer });
@@ -61,13 +62,14 @@ const convert = async ({ buffer, format, quality, all }) => {
       convert: async () => await convertImage({
         image: await image.decode(),
         format,
-        quality
+        quality,
+        longerSide,
       })
     };
   });
 };
 
-const heicConvert = async ({ buffer, format, quality = 0.92 }) => await convert({ buffer, format, quality, all: false });
+const heicConvert = async ({ buffer, format, quality = 0.92, longerSide = 400 }) => await convert({ buffer, format, quality, longerSide, all: false });
 
 //#endregion ---------------------- Modified heic-convert ----------------------
 
@@ -110,6 +112,7 @@ async function generateThumbnailFile(arg: ThumbnailFileGenerationArg): Promise<T
       buffer: inputBuffer,     // the HEIC file buffer
       format: 'JPEG',          // output format
       quality: jpegQuality,    // the jpeg compression quality, between 0 and 1
+      longerSide: arg.longerSide ?? 400,   // the thumbnail's longer side, in pixels
     });
   } catch (error) {
     logger.error(`Failed in heic-convert. error: ${error}`, error);

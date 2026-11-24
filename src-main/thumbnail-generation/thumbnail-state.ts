@@ -1,18 +1,20 @@
 import * as fs from 'fs';
 import type { ThumbnailState } from '../../src-shared/bridge/plm-bridge.js';
 import { Logger } from '../../src-shared/log/logger.js';
-import { getThumbnailFilePath, getThumbnailLogFilePath } from '../../src-shared/thumbnail/cache/thumbnail-cache-util.js';
+import { getThumbnailFilePath, getThumbnailLogFilePath, longerSideInThumbnailGenerationLog } from '../../src-shared/thumbnail/cache/thumbnail-cache-util.js';
 import { logged } from '../../src-shared/log/logged-line.js';
 
 // TL;DR: Where the thumbnail of each photo is, which the main window's page asks when it opens a folder, and polls
 // while the main process makes thumbnails: the checks of thumbnail-cache-util.ts, which the renderer made itself until
-// the main window was isolated, now made here for it. The photos are HEIF files, and the JPEG and PNG files without a
-// thumbnail in their EXIF data (src/app/jpeg-png-thumbnail/).
+// the main window was isolated, now made here for it. The photos are HEIF files, and the JPEG and PNG files whose
+// thumbnails the page makes (src/app/jpeg-png-thumbnail/).
 // Details: Synchronous, as they were in the renderer: a file that was never attempted costs one check of its log,
 // the others four small reads, so a folder's files take a few milliseconds. Made asynchronous at first, the checks
 // of the large folder of the measurements took 34 ms more before the first open completed (series rer-2-C1), as each
 // read waited for the thread pool. A file that cannot be checked, such as one deleted since the folder was opened, is
-// reported as having no thumbnail, rather than failing the files with it.
+// reported as having no thumbnail, rather than failing the files with it. A thumbnail is asked about at a size, the
+// longer side that the settings choose (src-shared/user-settings/thumbnail-size.ts): one of another size counts as not
+// attempted, so that it is made again, at the size asked for, in the same file.
 
 /** Where a file's thumbnail and the log of its generation are: in the cache, or elsewhere for tests. */
 export interface ThumbnailCachePaths {
@@ -25,18 +27,18 @@ const cachePaths: ThumbnailCachePaths = {
   logFilePath: getThumbnailLogFilePath,
 };
 
-export function thumbnailStates(srcFilePaths: string[], paths: ThumbnailCachePaths = cachePaths): ThumbnailState[] {
-  return srcFilePaths.map(srcFilePath => thumbnailState(srcFilePath, paths));
+export function thumbnailStates(srcFilePaths: string[], longerSide: number, paths: ThumbnailCachePaths = cachePaths): ThumbnailState[] {
+  return srcFilePaths.map(srcFilePath => thumbnailState(srcFilePath, longerSide, paths));
 }
 
 /**
- * Whether the thumbnail of `srcFilePath` was tried for the file as it is, and is cached; neither if that cannot be
- * read.
+ * Whether the thumbnail of `srcFilePath` was tried for the file as it is, at `longerSide`, and is cached; neither if
+ * that cannot be read.
  */
-function thumbnailState(srcFilePath: string, paths: ThumbnailCachePaths): ThumbnailState {
+function thumbnailState(srcFilePath: string, longerSide: number, paths: ThumbnailCachePaths): ThumbnailState {
   const thumbnailFilePath = paths.thumbnailFilePath(srcFilePath);
   try {
-    const attemptFinished = lastModifiedMatchesLogFile(srcFilePath, paths.logFilePath(srcFilePath));
+    const attemptFinished = logFileMatches(srcFilePath, longerSide, paths.logFilePath(srcFilePath));
     return { attemptFinished, cacheAvailable: attemptFinished && fs.existsSync(thumbnailFilePath), thumbnailFilePath };
   } catch (error) {
     Logger.warn(logged`Failed to check the thumbnail of "${srcFilePath}". error: ${error}`, error);
@@ -44,8 +46,12 @@ function thumbnailState(srcFilePath: string, paths: ThumbnailCachePaths): Thumbn
   }
 }
 
-/** lastModifiedMatchBetweenSrcFileAndThumbnailGenerationLogFile of thumbnail-cache-util.ts, at another log's path. */
-function lastModifiedMatchesLogFile(srcFilePath: string, logFilePath: string): boolean {
+/**
+ * Whether the log says that the thumbnail was attempted for the file as it is now, at `longerSide`:
+ * lastModifiedMatchBetweenSrcFileAndThumbnailGenerationLogFile of thumbnail-cache-util.ts, at another log's path, and of
+ * the size.
+ */
+function logFileMatches(srcFilePath: string, longerSide: number, logFilePath: string): boolean {
   if (!fs.existsSync(logFilePath))
     return false;
 
@@ -57,7 +63,7 @@ function lastModifiedMatchesLogFile(srcFilePath: string, logFilePath: string): b
     return false;
   }
 
-  let fileContentObj: { LastModified?: unknown };
+  let fileContentObj: { LastModified?: unknown, LongerSide?: unknown };
   try {
     fileContentObj = JSON.parse(fileContentStr);
   } catch (error) {
@@ -67,6 +73,9 @@ function lastModifiedMatchesLogFile(srcFilePath: string, logFilePath: string): b
 
   const lastModifiedFromLogFile = fileContentObj?.LastModified;
   if (!lastModifiedFromLogFile)
+    return false;
+
+  if (longerSideInThumbnailGenerationLog(fileContentObj) !== longerSide)
     return false;
 
   const lastModifiedFromSrcFile = fs.statSync(srcFilePath).mtime.toISOString();

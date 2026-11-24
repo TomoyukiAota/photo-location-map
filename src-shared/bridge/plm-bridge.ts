@@ -83,9 +83,13 @@ export interface PlmBridge {
   readonly faceRegions: { have(filePaths: string[]): Promise<boolean[]> };
   readonly directoryTree: { create(directoryPath: string): Promise<DirectoryTreeResult> };
   readonly thumbnails: {
-    /** Has the main process make the thumbnails of `heifFilePathsToGenerate`, after any that wait to be made. */
-    generate(allHeifFilePaths: string[], heifFilePathsToGenerate: string[]): Promise<void>;
-    state(filePaths: string[]): Promise<ThumbnailState[]>;
+    /**
+     * Has the main process make the thumbnails of `heifFilePathsToGenerate`, `longerSide` pixels on their longer side
+     * (src-shared/user-settings/thumbnail-size.ts), after any that wait to be made.
+     */
+    generate(allHeifFilePaths: string[], heifFilePathsToGenerate: string[], longerSide: number): Promise<void>;
+    /** Where the thumbnail of each file is, as it is in the cache at `longerSide`: one of another size counts as none. */
+    state(filePaths: string[], longerSide: number): Promise<ThumbnailState[]>;
     /** Drops the thumbnails that wait to be made, for a new setting of their quality; those being made are finished. */
     cancel(): Promise<void>;
   };
@@ -102,17 +106,18 @@ export interface PlmBridge {
     wholeImage(filePath: string): Promise<HeifWholeImage | null>;
   };
   /**
-   * The thumbnails that the page makes of the JPEG and PNG photos of a folder that the user opened that have none in
-   * their EXIF data (src/app/jpeg-png-thumbnail/), which the main process keeps in the cache.
+   * The thumbnails that the page makes of the JPEG and PNG photos of a folder that the user opened
+   * (src/app/jpeg-png-thumbnail/), which the main process keeps in the cache.
    */
   readonly jpegPngThumbnails: {
     /** The photo's file as it is now; null when it cannot be read. */
     readPhoto(filePath: string): Promise<PhotoFileForThumbnail | null>;
     /**
-     * Keeps the thumbnail of the photo as it was when it was read, or, with null, that none could be made of it, so
-     * that it is not tried again until the file changes. Resolves with where the thumbnail is, once it is written.
+     * Keeps the thumbnail of the photo as it was when it was read, `longerSide` pixels on its longer side, or, with
+     * null, that none could be made of it, so that it is not tried again until the file or the size changes. Resolves
+     * with where the thumbnail is, once it is written.
      */
-    save(filePath: string, lastModified: string, jpeg: Uint8Array | null): Promise<string>;
+    save(filePath: string, lastModified: string, jpeg: Uint8Array | null, longerSide: number): Promise<string>;
   };
   readonly thumbnailCache: {
     open(): Promise<void>;

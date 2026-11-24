@@ -241,12 +241,15 @@
       "example": "範例"
     },
     "thumbnails": {
-      "title": "HEIF 縮圖",
-      "description": "HEIF 檔案（例如用 iPhone 拍攝的照片）的縮圖由本應用程式產生。請選擇要優先考慮畫質還是速度。",
+      "title": "縮圖",
+      "description": "請選擇縮圖要優先考慮畫質還是速度。",
       "highQuality": "高畫質",
-      "highQualityDescription": "從整張照片產生，長邊為 400 像素。產生之前，會顯示照片中儲存的小縮圖。在圖形硬體無法解碼 HEVC 的電腦上，產生需要一些時間。",
+      "highQualityDescription": "從整張照片按下方選擇的尺寸產生。產生之前，會顯示照片中儲存的小縮圖。首次開啟資料夾時產生需要一些時間；在圖形硬體無法解碼 HEVC 的電腦上，HEIF 檔案的產生需要更長時間。",
+      "size": "尺寸",
+      "sizeValue": "長邊 {{size}} 像素",
+      "sizeDescription": "尺寸越大，縮圖顯示得越大，但產生所需時間越長，在縮圖快取中佔用的空間也越多。",
       "fast": "速度優先",
-      "fastDescription": "立即顯示照片中儲存的小縮圖。畫質較低：用 iPhone 拍攝的 1200 萬像素照片為 320 × 240 像素。"
+      "fastDescription": "立即顯示照片中儲存的小縮圖。畫質較低：大多數 JPEG 照片為 160 × 120 像素，用 iPhone 拍攝的 1200 萬像素照片為 320 × 240 像素。"
     },
     "os": {
       "title": "檔案總管的右鍵選單",
@@ -261,7 +264,7 @@
     },
     "cache": {
       "title": "縮圖快取",
-      "generationRequired": "EXIF 中沒有縮圖的 JPEG/PNG 檔案，以及這台電腦的圖形硬體無法解碼的<heifLink>HEIF 檔案</heifLink>，需要產生縮圖，而產生需要一些時間。",
+      "generationRequired": "EXIF 中沒有足夠大的縮圖的 JPEG/PNG 檔案，以及這台電腦的圖形硬體無法解碼的<heifLink>HEIF 檔案</heifLink>，需要產生縮圖，而產生需要一些時間。",
       "thereforeCached": "因此，產生的縮圖會存入快取。",
       "usedNextTime": "下次起會使用快取，不再重新產生縮圖。",
       "location": "快取位置：",

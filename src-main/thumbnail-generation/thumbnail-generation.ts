@@ -9,15 +9,17 @@ import { removeInvalidThumbnailCacheOncePerLaunch } from '../../src-shared/thumb
 import { createThumbnailGenerationLogFile, getThumbnailFilePath } from '../../src-shared/thumbnail/cache/thumbnail-cache-util.js';
 import { thumbnailGenerationLogger as logger } from '../../src-shared/thumbnail/generation/thumbnail-generation-logger.js';
 import { ThumbnailFileGenerationArg, ThumbnailFileGenerationResult } from './generate-thumbnail-file-arg-and-result.js';
+import { oneWriteAtATime } from './one-write-at-a-time.js';
 import { ThumbnailFailures } from './thumbnail-failures.js';
 import { logged } from '../../src-shared/log/logged-line.js';
 
 /**
- * Has the thumbnails of `heifFilePathsToGenerateThumbnail` made, after those that wait to be made: all those of a
- * folder that the page has the main process make, or one that the page could not make itself
- * (src/app/heif-thumbnail/). A file that waits or is being made is not added again.
+ * Has the thumbnails of `heifFilePathsToGenerateThumbnail` made at `longerSide`, after those that wait to be made: all
+ * those of a folder that the page has the main process make, or one that the page could not make itself
+ * (src/app/heif-thumbnail/). A file that waits or is being made at that size is not added again.
  */
-export function handleThumbnailGenerationIpcRequest(allHeifFilePaths: string[], heifFilePathsToGenerateThumbnail: string[]): void {
+export function handleThumbnailGenerationIpcRequest(allHeifFilePaths: string[], heifFilePathsToGenerateThumbnail: string[],
+                                                    longerSide: number): void {
   if (!allHeifFilePaths || !heifFilePathsToGenerateThumbnail) {
     logger.error(`handleThumbnailGenerationIpcRequest should be called with string arrays.`);
     logger.errorNotRecorded(`allHeifFilePaths: ${allHeifFilePaths}, heifFilePathsToGenerateThumbnail: ${heifFilePathsToGenerateThumbnail}`,
@@ -28,10 +30,11 @@ export function handleThumbnailGenerationIpcRequest(allHeifFilePaths: string[], 
   logAllHeifFiles(allHeifFilePaths);
   logHeifFilesToGenerateThumbnail(heifFilePathsToGenerateThumbnail);
   for (const filePath of heifFilePathsToGenerateThumbnail) {
-    if (waitingOrBeingMade.has(filePath))
+    const key = waitingOrBeingMadeKey(filePath, longerSide);
+    if (waitingOrBeingMade.has(key))
       continue;
-    waitingOrBeingMade.add(filePath);
-    waiting.push(createThumbnailFileGenerationArg(filePath));
+    waitingOrBeingMade.add(key);
+    waiting.push(createThumbnailFileGenerationArg(filePath, longerSide));
   }
 
   if (!isGenerating) {
@@ -47,14 +50,22 @@ export function handleThumbnailGenerationIpcRequest(allHeifFilePaths: string[], 
 export function cancelThumbnailGeneration(): void {
   logger.info(`Dropped ${waiting.length} thumbnails that waited to be made.`);
   for (const arg of waiting)
-    waitingOrBeingMade.delete(arg.srcFilePath);
+    waitingOrBeingMade.delete(waitingOrBeingMadeKey(arg.srcFilePath, arg.longerSide));
   waiting.length = 0;
 }
 
 /** The thumbnails that wait to be made, in the order that they were asked for. */
 const waiting: ThumbnailFileGenerationArg[] = [];
-/** The files of the thumbnails that wait or are being made. */
+/**
+ * The thumbnails that wait or are being made, by their file and size (waitingOrBeingMadeKey). TL;DR: By the size too,
+ * so that a thumbnail asked for at a new size, while the previous size's is being made, is made after it rather than
+ * left out: the previous one's log would not say the new size, and the page would wait for ever.
+ */
 const waitingOrBeingMade = new Set<string>();
+
+function waitingOrBeingMadeKey(filePath: string, longerSide: number): string {
+  return `${longerSide}:${filePath}`;
+}
 let isGenerating = false;
 
 class FileForWorker {
@@ -94,12 +105,13 @@ function logHeifFilesToGenerateThumbnail(heifFilePathsToGenerateThumbnail: strin
   }
 }
 
-function createThumbnailFileGenerationArg(filePath: string) {
+function createThumbnailFileGenerationArg(filePath: string, longerSide: number) {
   const arg = new ThumbnailFileGenerationArg();
   arg.srcFilePath = filePath;
   const {thumbnailFileDir, thumbnailFilePath} = getThumbnailFilePath(arg.srcFilePath);
   arg.outputFileDir = thumbnailFileDir;
   arg.outputFilePath = thumbnailFilePath;
+  arg.longerSide = longerSide;
   return arg;
 }
 
@@ -141,7 +153,7 @@ async function generateUntilNoneWaits() {
     logger.info(`Started chunk #${chunkNumber}, of ${argChunk.length} files; ${waiting.length} files wait after it.`);
     await runWorkerForThumbnailGeneration(argChunk, failures);
     for (const arg of argChunk)
-      waitingOrBeingMade.delete(arg.srcFilePath);
+      waitingOrBeingMade.delete(waitingOrBeingMadeKey(arg.srcFilePath, arg.longerSide));
     logger.info(`Finished chunk #${chunkNumber}.`);
   }
   failures.record();
@@ -153,35 +165,63 @@ async function runWorkerForThumbnailGeneration(argArray: ThumbnailFileGeneration
   const logText = stringArrayToLogText(logLines);
   logger.info(`Queuing tasks for worker to generate thumbnail:${logText}`);
 
-  const workerPromises = argArray.map(arg => {
-    return generateThumbnailInProcess(arg)
-      .then(async result => {
-        const { status, error } = result ?? {};
-        logger.info(`Observed completion of worker for thumbnail generation. Status: ${status}`);
-        logger.info(`Finished attempting to create a thumbnail file "${arg.outputFilePath}" from "${arg.srcFilePath}".`);
-        const isThumbnailFileCreated = await fs.promises.access(arg.outputFilePath).then(() => true, () => false);
-        logger.info(`Does the thumbnail file exist? -> ${isThumbnailFileCreated}`);
-        if(!isThumbnailFileCreated) {
-          // Recorded as a reason of failed thumbnails (thumbnail-failures.ts), below.
-          logger.warnNotRecorded(`Failed to create a thumbnail file since it does not exist after an attempt to create it.` +
-            ` Attempted to create a thumbnail file "${arg.outputFilePath}" from "${arg.srcFilePath}". Error: ${error}`);
-          failures.add(status ?? 'unknown', error);
-        }
-        await createThumbnailGenerationLogFile(arg.srcFilePath, arg.outputFileDir, isThumbnailFileCreated, logger);
-      }, async error => {
-        // The worker process failed and sent nothing back, such as when it crashed. The generation log file is still
-        // written: the window counts a thumbnail as done by it, and without it would wait for this one for ever.
-        logger.errorNotRecorded(`The worker for thumbnail generation failed for "${arg.srcFilePath}". error: ${error}`, error);  // Recorded as "worker-failed", below.
-        failures.add('worker-failed', error);
-        try {
-          await createThumbnailGenerationLogFile(arg.srcFilePath, arg.outputFileDir, false, logger);
-        } catch (logFileError) {
-          logger.error(logged`Failed to write the thumbnail generation log file for "${arg.srcFilePath}".`, logFileError);
-        }
-      });
-  });
+  await Promise.allSettled(argArray.map(arg => generateThumbnailAndLog(arg, failures)));
+}
 
-  await Promise.allSettled(workerPromises);
+/**
+ * Makes the thumbnail of `arg` in a process of its own, and writes the log of the attempt, which says whether it was
+ * made, at its size, once the thumbnails of the same file that started before have ended (oneWriteAtATime): the
+ * previous size's, when a folder's thumbnails are made again at a new size. Never rejects: a failure is in the log,
+ * and in `failures`.
+ * TL;DR: The thumbnail and the log that were there go first, so that the cache never says that it has the new
+ * thumbnail, of another size or of a newer version of the photo, while it has the previous one.
+ * Details: The worker writes the thumbnail last, once it has made it, in the same file as the previous one. The previous
+ * file stayed when the worker failed, and the log said that the thumbnail was made at the new size, as only whether a
+ * file was there was looked at; and the previous log stayed beside the new file when the new log could not be written.
+ */
+export function generateThumbnailAndLog(arg: ThumbnailFileGenerationArg, failures: ThumbnailFailures,
+                                        workerFile = FileForWorker.absoluteFilePath): Promise<void> {
+  return oneWriteAtATime(arg.outputFilePath, () => generateThumbnailAndLogNow(arg, failures, workerFile));
+}
+
+async function generateThumbnailAndLogNow(arg: ThumbnailFileGenerationArg, failures: ThumbnailFailures,
+                                          workerFile: string): Promise<void> {
+  const logFilePath = pathModule.join(arg.outputFileDir, `${pathModule.basename(arg.srcFilePath)}.log.json`);
+  await Promise.all([logFilePath, arg.outputFilePath].map(filePath => fs.promises.rm(filePath, { force: true }).catch(error =>
+    logger.warn(logged`Failed to remove "${filePath}" before its thumbnail is made again. error: ${error}`, error))));
+
+  let result: ThumbnailFileGenerationResult;
+  try {
+    result = await generateThumbnailInProcess(arg, workerFile);
+  } catch (error) {
+    // The worker process failed and sent nothing back, such as when it crashed. The generation log file is still
+    // written: the window counts a thumbnail as done by it, and without it would wait for this one for ever.
+    logger.errorNotRecorded(`The worker for thumbnail generation failed for "${arg.srcFilePath}". error: ${error}`, error);  // Recorded as "worker-failed", below.
+    failures.add('worker-failed', error);
+    try {
+      await createThumbnailGenerationLogFile(arg.srcFilePath, arg.outputFileDir, false, logger, undefined, arg.longerSide);
+    } catch (logFileError) {
+      logger.error(logged`Failed to write the thumbnail generation log file for "${arg.srcFilePath}".`, logFileError);
+    }
+    return;
+  }
+
+  const { status, error } = result ?? {};
+  logger.info(`Observed completion of worker for thumbnail generation. Status: ${status}`);
+  logger.info(`Finished attempting to create a thumbnail file "${arg.outputFilePath}" from "${arg.srcFilePath}".`);
+  const isThumbnailFileCreated = status === 'success' && await fs.promises.access(arg.outputFilePath).then(() => true, () => false);
+  logger.info(`Was the thumbnail file created? -> ${isThumbnailFileCreated}`);
+  if (!isThumbnailFileCreated) {
+    // Recorded as a reason of failed thumbnails (thumbnail-failures.ts), below.
+    logger.warnNotRecorded(`Failed to create a thumbnail file: the worker answered ${status}, or the file is not there.` +
+      ` Attempted to create a thumbnail file "${arg.outputFilePath}" from "${arg.srcFilePath}". Error: ${error}`);
+    failures.add(status ?? 'unknown', error);
+  }
+  try {
+    await createThumbnailGenerationLogFile(arg.srcFilePath, arg.outputFileDir, isThumbnailFileCreated, logger, undefined, arg.longerSide);
+  } catch (logFileError) {
+    logger.error(logged`Failed to write the thumbnail generation log file for "${arg.srcFilePath}".`, logFileError);
+  }
 }
 
 /**

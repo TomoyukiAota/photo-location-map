@@ -241,12 +241,15 @@
       "example": "Piemērs"
     },
     "thumbnails": {
-      "title": "HEIF sīktēli",
-      "description": "HEIF failu, piemēram, ar iPhone uzņemtu fotoattēlu, sīktēlus veido šī lietotne. Izvēlieties, vai tos veidot, priekšroku dodot kvalitātei vai ātrumam.",
+      "title": "Sīktēli",
+      "description": "Izvēlieties, vai sīktēlus veidot, priekšroku dodot kvalitātei vai ātrumam.",
       "highQuality": "Augsta kvalitāte",
-      "highQualityDescription": "Tiek veidoti no visa fotoattēla, garākajā malā 400 pikseļu. Līdz tam tiek rādīts fotoattēlā saglabātais mazais sīktēls. Datorā, kura grafikas aparatūra nevar dekodēt HEVC, to veidošana aizņem laiku.",
+      "highQualityDescription": "Tiek veidoti no visa fotoattēla zemāk izvēlētajā izmērā. Līdz tam tiek rādīts fotoattēlā saglabātais mazais sīktēls. To veidošana aizņem laiku, kad mape tiek atvērta pirmo reizi, un vēl ilgāk HEIF failiem datorā, kura grafikas aparatūra nevar dekodēt HEVC.",
+      "size": "Izmērs",
+      "sizeValue": "garākajā malā {{size}} pikseļu",
+      "sizeDescription": "Jo lielāks izmērs, jo lielāki tiek rādīti sīktēli, bet jo ilgāk aizņem to veidošana un jo vairāk vietas tie aizņem sīktēlu kešatmiņā.",
       "fast": "Ātri",
-      "fastDescription": "Fotoattēlā saglabātais mazais sīktēls, kas tiek rādīts uzreiz. Tas ir mazāk ass: 320 × 240 pikseļu ar iPhone uzņemtā 12 megapikseļu fotoattēlā."
+      "fastDescription": "Fotoattēlā saglabātais mazais sīktēls, kas tiek rādīts uzreiz. Tas ir mazāk ass: lielākajā daļā JPEG fotoattēlu 160 × 120 pikseļu un ar iPhone uzņemtā 12 megapikseļu fotoattēlā 320 × 240 pikseļu."
     },
     "os": {
       "title": "Failu pārlūka kontekstizvēlne",
@@ -261,7 +264,7 @@
     },
     "cache": {
       "title": "Sīktēlu kešatmiņa",
-      "generationRequired": "JPEG/PNG failiem, kuru EXIF datos nav sīktēla, un <heifLink>HEIF failiem</heifLink>, kurus šī datora grafikas aparatūra nevar dekodēt, ir jāveido sīktēli, un tas aizņem laiku.",
+      "generationRequired": "JPEG/PNG failiem, kuru EXIF datos nav pietiekami liela sīktēla, un <heifLink>HEIF failiem</heifLink>, kurus šī datora grafikas aparatūra nevar dekodēt, ir jāveido sīktēli, un tas aizņem laiku.",
       "thereforeCached": "Tāpēc izveidotie sīktēli tiek saglabāti kešatmiņā.",
       "usedNextTime": "Sākot ar nākamo reizi, tiek izmantota kešatmiņa, un sīktēli netiek veidoti atkārtoti.",
       "location": "Kešatmiņas atrašanās vieta:",

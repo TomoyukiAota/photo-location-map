@@ -1,8 +1,8 @@
-import { inject, Service, signal } from '@angular/core';
+import { inject, Service, signal, untracked } from '@angular/core';
 import { createPrependedLogger } from '../../../src-shared/log/create-prepended-logger';
 import { logged } from '../../../src-shared/log/logged-line';
-import { currentUserSettings } from '../../../src-shared/user-settings/user-settings';
 import { GeneratedThumbnailService } from '../photo-info-viewer/generated-thumbnail.service';
+import { ThumbnailSizeService } from '../shared/thumbnail-size/thumbnail-size.service';
 import { ThumbnailGenerationService } from '../thumbnail-generation/service/thumbnail-generation.service';
 import { HeifImageSource } from './heif-image-source';
 
@@ -14,8 +14,11 @@ export type HeifThumbnailState =
   | { readonly kind: 'pending', readonly provisionalUrl: string | null }
   /** Made by the page: an object URL of a JPEG. */
   | { readonly kind: 'decoded', readonly url: string }
-  /** Made by the main process, in the cache; the file is not there when it could not be made. */
-  | { readonly kind: 'generated', readonly filePath: string };
+  /**
+   * Made by the main process, in the cache, at `longerSide`, which its address says (madeThumbnailUrl); the file is not
+   * there when it could not be made.
+   */
+  | { readonly kind: 'generated', readonly filePath: string, readonly longerSide: number };
 
 interface PhotoState {
   readonly provisionalUrl?: string;
@@ -29,11 +32,11 @@ const lanes = 2;
 
 /**
  * The thumbnails of the HEIF photos of the opened folder, which the page cannot show as they are: made when a place
- * shows a photo (watch), and kept until another folder opens or the setting of their quality changes.
+ * shows a photo (watch), and kept until another folder opens or the settings of their quality and size change.
  * TL;DR: The photo's small thumbnail first, which takes a few milliseconds; then, for the high quality, the whole image
- * at 400 pixels, which the page decodes with WebCodecs where it can, in 20 to 35 ms, and the main process makes where
- * it cannot, in 0.6 to 2 seconds, as it always did (ThumbnailGenerationService). A thumbnail in the cache is shown as
- * it is.
+ * at the chosen size, 400 pixels by default, which the page decodes with WebCodecs where it can, in 20 to 35 ms, and
+ * the main process makes where it cannot, in 0.6 to 2 seconds, as it always did (ThumbnailGenerationService). A
+ * thumbnail in the cache at that size is shown as it is.
  * Details:
  * - The fast quality keeps the small thumbnail: 320x240 for an iPhone's photo of 12 megapixels, 416x312 for 24 and
  *   576x432 for 48. A photo that holds none, as one converted by macOS's sips, gets its thumbnail from the whole image
@@ -48,6 +51,7 @@ const lanes = 2;
 export class HeifThumbnailService {
   private readonly generatedThumbnailService = inject(GeneratedThumbnailService);
   private readonly thumbnailGenerationService = inject(ThumbnailGenerationService);
+  private readonly thumbnailSizeService = inject(ThumbnailSizeService);
   private readonly images = inject(HeifImageSource);
 
   private readonly photos = signal<ReadonlyMap<string, PhotoState>>(new Map());
@@ -70,7 +74,7 @@ export class HeifThumbnailService {
       if (filePath !== undefined && state.provisionalUrl && this.generatedThumbnailService.hasFailed(photoPath))
         return { kind: 'decoded', url: state.provisionalUrl };
       if (filePath !== undefined)
-        return { kind: 'generated', filePath };
+        return { kind: 'generated', filePath, longerSide: this.generatedThumbnailService.longerSideOf(photoPath) };
     }
     return { kind: 'pending', provisionalUrl: state?.provisionalUrl ?? null };
   }
@@ -106,9 +110,9 @@ export class HeifThumbnailService {
   }
 
   /**
-   * Remakes the thumbnails for a new setting of their quality. The main process follows it first, dropping the
-   * thumbnails that wait to be made or making the folder's, as the setting asks
-   * (ThumbnailGenerationService.applyThumbnailQuality); then the shown photos ask for theirs again.
+   * Remakes the thumbnails for new settings of their quality or size. The main process follows them first, dropping
+   * the thumbnails that wait to be made or making the folder's, as the settings ask
+   * (ThumbnailGenerationService.applyThumbnailSettings); then the shown photos ask for theirs again.
    * TL;DR: The thumbnails are forgotten only once the main process has followed the setting, as a photo asked for
    * before is made for the setting that the main process still has.
    * Details: The places that show a photo ask for its thumbnail again as soon as it is forgotten (watch). When the
@@ -118,13 +122,15 @@ export class HeifThumbnailService {
    * holds, or waited for ever for one that the main process had dropped. The end-to-end test of the fast thumbnails
    * failed so once in CI, on Linux.
    */
-  public async applyThumbnailQuality(): Promise<boolean> {
-    logger.info(`The thumbnails of HEIF photos are made again, of the quality ${currentUserSettings.thumbnailQuality}.`);
+  public async applyThumbnailSettings(): Promise<boolean> {
+    logger.info(`The thumbnails of HEIF photos are made again, of the quality ${untracked(this.thumbnailSizeService.quality)}, `
+      + `${untracked(this.thumbnailSizeService.longerSide)} pixels.`);
     try {
-      return await this.thumbnailGenerationService.applyThumbnailQuality();
+      return await this.thumbnailGenerationService.applyThumbnailSettings();
     } finally {
-      // Not before either: a photo that a place showed meanwhile may wait for a thumbnail that is no longer made.
-      this.generatedThumbnailService.stopWaiting();
+      // Not before either: a photo that a place showed meanwhile may wait for a thumbnail that is no longer made. What
+      // is known of the main process's thumbnails is forgotten too, as those of the cache may be of another size.
+      this.generatedThumbnailService.reset();
       this.reset();
     }
   }
@@ -176,7 +182,7 @@ export class HeifThumbnailService {
     if (generation !== this.generation)
       return;
     const url = blob ? this.objectUrlOf(blob) : undefined;
-    if (url && currentUserSettings.thumbnailQuality === 'fast' && !isMadeByMainProcess) {
+    if (url && untracked(this.thumbnailSizeService.quality) === 'fast' && !isMadeByMainProcess) {
       this.update(photoPath, { decodedUrl: url });
       return;
     }
@@ -190,7 +196,7 @@ export class HeifThumbnailService {
   }
 
   private async makeWholeImage(photoPath: string, generation: number): Promise<void> {
-    const blob = await this.images.wholeImage(photoPath);
+    const blob = await this.images.wholeImage(photoPath, untracked(this.thumbnailSizeService.longerSide));
     if (generation !== this.generation)
       return;
     if (blob) {

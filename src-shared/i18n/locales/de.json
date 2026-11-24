@@ -241,12 +241,15 @@
       "example": "Beispiel"
     },
     "thumbnails": {
-      "title": "HEIF-Miniaturen",
-      "description": "Die Miniaturen von HEIF-Dateien, etwa von Fotos eines iPhones, erstellt diese Anwendung. Wählen Sie, ob sie auf Qualität oder auf Geschwindigkeit ausgelegt werden.",
+      "title": "Miniaturen",
+      "description": "Wählen Sie, ob die Miniaturen auf Qualität oder auf Geschwindigkeit ausgelegt werden.",
       "highQuality": "Hohe Qualität",
-      "highQualityDescription": "Aus dem ganzen Foto erstellt, mit 400 Pixeln an der längeren Seite. Bis dahin wird die kleine Miniatur angezeigt, die im Foto gespeichert ist. Auf einem Computer, dessen Grafikhardware HEVC nicht decodieren kann, braucht das Erstellen Zeit.",
+      "highQualityDescription": "Aus dem ganzen Foto erstellt, in der unten gewählten Größe. Bis dahin wird die kleine Miniatur angezeigt, die im Foto gespeichert ist. Das Erstellen braucht Zeit, wenn ein Ordner zum ersten Mal geöffnet wird, und länger für HEIF-Dateien auf einem Computer, dessen Grafikhardware HEVC nicht decodieren kann.",
+      "size": "Größe",
+      "sizeValue": "{{size}} Pixel an der längeren Seite",
+      "sizeDescription": "Je größer, desto größer werden die Miniaturen angezeigt, aber desto länger dauert ihr Erstellen und desto mehr Platz belegen sie im Cache für Miniaturen.",
       "fast": "Schnell",
-      "fastDescription": "Die kleine Miniatur, die im Foto gespeichert ist, sofort angezeigt. Sie ist weniger scharf: 320 × 240 Pixel bei einem 12-Megapixel-Foto eines iPhones."
+      "fastDescription": "Die kleine Miniatur, die im Foto gespeichert ist, sofort angezeigt. Sie ist weniger scharf: 160 × 120 Pixel bei den meisten JPEG-Fotos und 320 × 240 Pixel bei einem 12-Megapixel-Foto eines iPhones."
     },
     "os": {
       "title": "Kontextmenü des Explorers",
@@ -261,7 +264,7 @@
     },
     "cache": {
       "title": "Cache für Miniaturen",
-      "generationRequired": "Für JPEG-/PNG-Dateien ohne Miniatur in ihren EXIF-Daten und für <heifLink>HEIF-Dateien</heifLink>, die die Grafikhardware dieses Computers nicht decodieren kann, müssen Miniaturen erstellt werden, was Zeit braucht.",
+      "generationRequired": "Für JPEG-/PNG-Dateien ohne ausreichend große Miniatur in ihren EXIF-Daten und für <heifLink>HEIF-Dateien</heifLink>, die die Grafikhardware dieses Computers nicht decodieren kann, müssen Miniaturen erstellt werden, was Zeit braucht.",
       "thereforeCached": "Daher werden die erstellten Miniaturen im Cache gespeichert.",
       "usedNextTime": "Ab dem nächsten Mal wird der Cache verwendet, sodass die Miniaturen nicht erneut erstellt werden.",
       "location": "Speicherort des Caches:",

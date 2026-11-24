@@ -124,8 +124,9 @@ const plm = {
   faceRegions: { have: filePaths => ipcRenderer.invoke(channels.faceRegionsHave, filePaths) },
   directoryTree: { create: directoryPath => ipcRenderer.invoke(channels.directoryTreeCreate, directoryPath) },
   thumbnails: {
-    generate: (allHeifFilePaths, heifFilePathsToGenerate) => ipcRenderer.invoke(channels.thumbnailsGenerate, allHeifFilePaths, heifFilePathsToGenerate),
-    state: filePaths => ipcRenderer.invoke(channels.thumbnailsState, filePaths),
+    generate: (allHeifFilePaths, heifFilePathsToGenerate, longerSide) =>
+      ipcRenderer.invoke(channels.thumbnailsGenerate, allHeifFilePaths, heifFilePathsToGenerate, longerSide),
+    state: (filePaths, longerSide) => ipcRenderer.invoke(channels.thumbnailsState, filePaths, longerSide),
     cancel: () => ipcRenderer.invoke(channels.thumbnailsCancel),
   },
   heif: {
@@ -135,7 +136,7 @@ const plm = {
   },
   jpegPngThumbnails: {
     readPhoto: filePath => ipcRenderer.invoke(channels.jpegPngThumbnailReadPhoto, filePath),
-    save: (filePath, lastModified, jpeg) => ipcRenderer.invoke(channels.jpegPngThumbnailSave, filePath, lastModified, jpeg),
+    save: (filePath, lastModified, jpeg, longerSide) => ipcRenderer.invoke(channels.jpegPngThumbnailSave, filePath, lastModified, jpeg, longerSide),
   },
   thumbnailCache: {
     open: () => ipcRenderer.invoke(channels.thumbnailCacheOpen),
