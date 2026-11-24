@@ -38,14 +38,14 @@
   }
 }
 
-// The size, under the text of High quality, in the type of the choices' texts, which Angular Material's radio buttons
+// The sizes, under the text of High quality, in the type of the choices' texts, which Angular Material's radio buttons
 // have: as far from the start as that text, past the radio button's circle (40 pixels) and the label's padding (4).
-// The label, the slider and its button go on to a second row where they do not fit side by side.
+// The heading over a row for each place, in a column as wide as the rows, or as the room where there is less. The rows
+// are a little apart, so that the name of a row on two lines is nearer its own slider than the sizes above it.
 .thumbnail-size {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  column-gap: 12px;
+  display: grid;
+  grid-template-columns: fit-content(100%);
+  row-gap: 8px;
   margin-inline-start: 44px;
   font-family: var(--mat-radio-label-text-font);
   font-size: var(--mat-radio-label-text-size);
@@ -53,11 +53,49 @@
   letter-spacing: var(--mat-radio-label-text-tracking);
 }
 
-// The slider, with some of the sizes under its marks. They are below its thumb, in the margin under the slider rather
-// than in a row of their own, so that the label and the button stay level with the slider's track.
+// The heading, with the button of the note at its end, over the end of the last size under the sliders.
+.thumbnail-size-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 12px;
+}
+
+// A place: its name, and its slider beside it, or under it where they do not fit side by side.
+.thumbnail-size-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  column-gap: 12px;
+}
+
+// TL;DR: The name of a place, in a cell as wide as the longest name, so that the sliders start together.
+// Details: The other places' names are in the cell too, over each other and unseen, as the rows are apart and a row
+// knows no other's name: in a column of a grid, the rows could not go on to a second line where they do not fit. The
+// name's line of 20 pixels is centered where the slider's track is, 24 pixels down the slider's 48: level with the track
+// beside it, or 14 pixels over the thumb where the row is on two lines.
+.thumbnail-size-place-cell {
+  display: grid;
+  margin-top: 14px;
+
+  > * {
+    grid-area: 1 / 1;
+  }
+}
+
+.thumbnail-size-place-room {
+  visibility: hidden;
+}
+
+// TL;DR: The slider, with some of the sizes under its marks, and room past its end for the last of them, which reaches
+// past the slider's end, by up to 24 pixels in Arabic.
+// Details: The sizes are below the thumb, in the margin under the slider rather than in a row of their own, so that
+// the name stays level with the slider's track. They are out of the layout, as each is centered under its mark: the
+// room is a margin, outside the box that they are placed in.
 .thumbnail-size-scale {
   position: relative;
   margin-bottom: 6px;
+  margin-inline-end: 24px;
 }
 
 // As wide as seven sizes need to be told apart by a pointer: the slider has no text of its own.
@@ -89,16 +127,11 @@
   white-space: nowrap;
 }
 
-// The button stands clear of the last size under the slider, which reaches past the slider's end, by up to 24 pixels
-// in Arabic: the circle that the button shows under a pointer starts 4 pixels into its box.
-.thumbnail-size-info-button {
-  margin-inline-start: 8px;
-}
-
 // While Fast is chosen, the texts are as faint as the slider, which Angular Material shows disabled. The button stays
 // as it is: what the size costs can be read before High quality is chosen.
 .thumbnail-size-disabled {
   .thumbnail-size-label,
+  .thumbnail-size-place,
   .thumbnail-size-ticks {
     opacity: 0.38;
   }

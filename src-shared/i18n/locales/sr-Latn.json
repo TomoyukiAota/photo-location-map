@@ -247,10 +247,12 @@
       "highQuality": "Prednost kvalitetu sličica",
       "highQualityDescription": "Sličice se uvek prave od datoteka fotografija.",
       "size": "Veličina sličica",
+      "sidebarSize": "Bočna traka",
+      "mapSize": "Mapa",
       "sizeValue": "{{size}} piksela na dužoj stranici",
       "sizeTick": "{{size}} px",
       "aboutSize": "O veličini sličica",
-      "sizeDescription": "Što je veličina veća, sličice se prikazuju veće, ali njihovo pravljenje traje duže i zauzimaju više prostora u kešu sličica.",
+      "sizeDescription": "Bočna traka i mapa prikazuju sličice svaka u svojoj veličini, a aplikacija pravi jednu sličicu svake fotografije, u većoj od dve veličine. Što je veličina veća, sličice se prikazuju veće, ali njihovo pravljenje traje duže i zauzimaju više prostora u kešu sličica.",
       "fast": "Prednost performansama aplikacije",
       "fastDescription": "Kada datoteka, na primer JPEG ili PNG, već sadrži sličicu, ona se prikazuje onakva kakva jeste. Sličica od 400 piksela na dužoj stranici pravi se samo za datoteku koja je nema."
     },

@@ -247,10 +247,12 @@
       "highQuality": "Prioritate calității miniaturilor",
       "highQualityDescription": "Miniaturile sunt create întotdeauna din fișierele fotografiilor.",
       "size": "Dimensiunea miniaturilor",
+      "sidebarSize": "Bara laterală",
+      "mapSize": "Hartă",
       "sizeValue": "{{size}} de pixeli pe latura mai lungă",
       "sizeTick": "{{size}} px",
       "aboutSize": "Despre dimensiunea miniaturilor",
-      "sizeDescription": "Cu cât dimensiunea este mai mare, cu atât miniaturile sunt afișate mai mari, dar crearea lor durează mai mult și ocupă mai mult spațiu în cache-ul pentru miniaturi.",
+      "sizeDescription": "Bara laterală și harta afișează miniaturile fiecare la dimensiunea sa, iar aplicația creează o singură miniatură pentru fiecare fotografie, la cea mai mare dintre cele două dimensiuni. Cu cât dimensiunea este mai mare, cu atât miniaturile sunt afișate mai mari, dar crearea lor durează mai mult și ocupă mai mult spațiu în cache-ul pentru miniaturi.",
       "fast": "Prioritate performanței aplicației",
       "fastDescription": "Când un fișier, de exemplu un JPEG sau PNG, conține deja o miniatură, aceasta se afișează așa cum este. O miniatură de 400 de pixeli pe latura mai lungă se creează doar pentru un fișier care nu are una."
     },

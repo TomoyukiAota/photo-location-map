@@ -22,8 +22,17 @@
   text-align: center;
 }
 
-// The box of the thumbnail: in the folder tree and the map's popups, half the size of the thumbnails that the settings
-// choose, which the application's root element has (ThumbnailSizeService); 200 pixels by default.
+// The box of the thumbnail in the folder tree of the sidebar and in the map's popups: half the size that the settings
+// choose for each, which the application's root element has (ThumbnailSizeService); 200 pixels by default.
+:host([data-place="dir-tree-view"]) {
+  --plm-thumbnail-box: var(--plm-thumbnail-box-sidebar, 200px);
+}
+
+:host([data-place="leaflet-map-popup"]) {
+  --plm-thumbnail-box: var(--plm-thumbnail-box-map, 200px);
+}
+
+// The box of the thumbnail, of its place's size (above).
 // TL;DR: At the top of its line, so that the box takes the same height whatever it holds.
 // Details: On the line's baseline, as an inline box is, it stood on the image's bottom edge: an image as high as the
 // box, as the photo's small thumbnail that fills it until a larger one is made, or a portrait thumbnail, left room for

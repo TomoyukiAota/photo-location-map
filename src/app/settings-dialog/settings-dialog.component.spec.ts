@@ -23,6 +23,7 @@ import { OsSettingsComponent } from './os-settings/os-settings.component';
 import { RestoreSettingsService } from './service/restore-settings.service';
 import { SettingsChangedService } from './service/settings-changed.service';
 import { SettingsDialogComponent } from './settings-dialog.component';
+import { ThumbnailSettingsChangedParameter } from './thumbnail-settings/thumbnail-settings-changed-parameter';
 import { ThumbnailSettingsComponent } from './thumbnail-settings/thumbnail-settings.component';
 
 // The tabs are left out: they tell the dialog about their changes through SettingsChangedService, as the tests do.
@@ -58,6 +59,13 @@ describe('SettingsDialogComponent', () => {
     showStatusBar: settingsInUse.showStatusBar,
     stickyFolderRowsMaximum: settingsInUse.stickyFolderRowsMaximum,
     stickyFolderRowsLeftOut: settingsInUse.stickyFolderRowsLeftOut,
+    ...changed,
+  });
+  /** What the Thumbnails tab tells the dialog, all of its settings: those in use as it is called, but for `changed`. */
+  const thumbnails = (changed: Partial<ThumbnailSettingsChangedParameter> = {}): ThumbnailSettingsChangedParameter => ({
+    thumbnailQuality: currentUserSettings.thumbnailQuality,
+    sidebarThumbnailSize: currentUserSettings.sidebarThumbnailSize,
+    mapThumbnailSize: currentUserSettings.mapThumbnailSize,
     ...changed,
   });
   const otherDateFormat = DateTimeFormat.ForUser.DateFormat_List.find(format => format !== settingsInUse.dateFormat);
@@ -292,7 +300,7 @@ describe('SettingsDialogComponent', () => {
   it('saves a new quality of thumbnails without a restart, and has the thumbnails made again', async () => {
     await createDialog();
     const otherQuality = settingsInUse.thumbnailQuality === 'high' ? 'fast' : 'high';
-    settingsChanged.thumbnailSettingsChanged.next({ thumbnailQuality: otherQuality, thumbnailSize: settingsInUse.thumbnailSize });
+    settingsChanged.thumbnailSettingsChanged.next(thumbnails({ thumbnailQuality: otherQuality }));
     await fixture.whenStable();
     expect(saveButton().disabled).toBe(false);
     expect(isRestartNoticeShown()).toBe(false);
@@ -306,26 +314,45 @@ describe('SettingsDialogComponent', () => {
     expect(close).toHaveBeenCalledTimes(1);
   });
 
-  it('saves a new size of thumbnails without a restart, shows the thumbnails in their new box, and has them made again', async () => {
+  it('saves new sizes of thumbnails without a restart, shows the thumbnails in the new box of each place, and has them made again', async () => {
+    Object.assign(currentUserSettings, { thumbnailQuality: 'high', sidebarThumbnailSize: 400, mapThumbnailSize: 400 });
     await createDialog();
-    const otherSize = settingsInUse.thumbnailSize === 800 ? 600 : 800;
-    settingsChanged.thumbnailSettingsChanged.next({ thumbnailQuality: 'high', thumbnailSize: otherSize });
+    settingsChanged.thumbnailSettingsChanged.next(thumbnails({ sidebarThumbnailSize: 600, mapThumbnailSize: 800 }));
     await fixture.whenStable();
     expect(saveButton().disabled).toBe(false);
     expect(isRestartNoticeShown()).toBe(false);
 
     saveButton().click();
 
-    expect(currentUserSettings.thumbnailSize).toBe(otherSize);
-    expect(UserDataStorage.read(UserDataStoragePath.UserSettings.ThumbnailSize)).toBe(String(otherSize));
-    expect(TestBed.inject(ThumbnailSizeService).box()).toBe(`${otherSize / 2}px`);
+    expect([currentUserSettings.sidebarThumbnailSize, currentUserSettings.mapThumbnailSize]).toEqual([600, 800]);
+    expect(UserDataStorage.read(UserDataStoragePath.UserSettings.SidebarThumbnailSize)).toBe('600');
+    expect(UserDataStorage.read(UserDataStoragePath.UserSettings.MapThumbnailSize)).toBe('800');
+    // Made at the larger of the two sizes.
+    const sizes = TestBed.inject(ThumbnailSizeService);
+    expect([sizes.longerSide(), sizes.sidebarBox(), sizes.mapBox()]).toEqual([800, '300px', '400px']);
     expect(applyThumbnailSettings).toHaveBeenCalledOnce();
     expect(applyJpegPngSettings).toHaveBeenCalledOnce();
   });
 
+  it('shows the thumbnails of a place in its new box without making them again, when the larger of the two sizes stays', async () => {
+    Object.assign(currentUserSettings, { thumbnailQuality: 'high', sidebarThumbnailSize: 400, mapThumbnailSize: 800 });
+    await createDialog();
+    settingsChanged.thumbnailSettingsChanged.next(thumbnails({ sidebarThumbnailSize: 600 }));
+    await fixture.whenStable();
+    expect(saveButton().disabled).toBe(false);
+
+    saveButton().click();
+
+    expect(currentUserSettings.sidebarThumbnailSize).toBe(600);
+    expect(TestBed.inject(ThumbnailSizeService).sidebarBox()).toBe('300px');
+    expect(applyThumbnailSettings).not.toHaveBeenCalled();
+    expect(applyJpegPngSettings).not.toHaveBeenCalled();
+    expect(close).toHaveBeenCalledTimes(1);
+  });
+
   it('makes no thumbnail again when the thumbnails\' settings are saved as they were', async () => {
     await createDialog();
-    settingsChanged.thumbnailSettingsChanged.next({ thumbnailQuality: settingsInUse.thumbnailQuality, thumbnailSize: settingsInUse.thumbnailSize });
+    settingsChanged.thumbnailSettingsChanged.next(thumbnails());
     settingsChanged.appearanceSettingsChanged.next(appearance({ showStatusBar: otherShowStatusBar }));
     await fixture.whenStable();
 

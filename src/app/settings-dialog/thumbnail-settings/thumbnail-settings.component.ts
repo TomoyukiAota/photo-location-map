@@ -11,6 +11,8 @@ import { ThumbnailQuality, thumbnailQualities } from '../../../../src-shared/use
 import {
   maxThumbnailSize,
   minThumbnailSize,
+  ThumbnailSizePlace,
+  thumbnailSizePlaces,
   thumbnailSizes,
   thumbnailSizeStep
 } from '../../../../src-shared/user-settings/thumbnail-size';
@@ -26,6 +28,12 @@ const choiceTexts: Record<ThumbnailQuality, { label: TranslationKey, description
   fast: { label: 'settings.thumbnails.fast', description: 'settings.thumbnails.fastDescription' },
 };
 
+/** The name of each place that has a size of its own, beside its slider. */
+const sizePlaceLabels: Record<ThumbnailSizePlace, TranslationKey> = {
+  sidebar: 'settings.thumbnails.sidebarSize',
+  map: 'settings.thumbnails.mapSize',
+};
+
 /**
  * The sizes written under the slider, from the smallest to the largest: every other mark. The slider's marks are 39
  * pixels apart, about as wide as "1000 px" is: under every mark, the sizes would run into each other.
@@ -33,9 +41,10 @@ const choiceTexts: Record<ThumbnailQuality, { label: TranslationKey, description
 const sizeTickStep = 200;
 
 /**
- * Where the note on the size opens: under its button, ending where the button ends, or above it when there is no room
- * under it. The button ends the row of the size, so that the note stays over the dialog: from where the button
- * started, it reached past the dialog's edge. From where the button starts when a narrow window leaves no room.
+ * Where the note on the sizes opens: under its button, ending where the button ends, or above it when there is no room
+ * under it. The button ends the heading of the sizes, over the end of the sizes under the sliders, so that the note
+ * stays over the dialog: from where the button started, it reached past the dialog's edge. From where the button starts
+ * when a narrow window leaves no room.
  */
 const sizeNotePositions: ConnectedPosition[] = [
   { originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top', offsetY: 4 },
@@ -45,11 +54,11 @@ const sizeNotePositions: ConnectedPosition[] = [
 
 /**
  * The Thumbnails tab: the quality of the thumbnails, against how soon they are shown
- * (src-shared/user-settings/thumbnail-quality.ts), and under High quality their size, with a slider
- * (src-shared/user-settings/thumbnail-size.ts), which is disabled while Fast is chosen, as the thumbnails that the
- * photos hold have sizes of their own. They apply once saved, without a restart (SettingsDialogComponent). What a
- * larger size costs is in a note that a button after the slider opens. Under them, the cache of the thumbnails that
- * are made (CacheSettingsComponent).
+ * (src-shared/user-settings/thumbnail-quality.ts), and under High quality their sizes, in the sidebar and on the map,
+ * with a slider each (src-shared/user-settings/thumbnail-size.ts), which are disabled while Fast is chosen, as the
+ * thumbnails that the photos hold have sizes of their own. They apply once saved, without a restart
+ * (SettingsDialogComponent). What a larger size costs is in a note that a button at the end of the sizes' heading opens.
+ * Under them, the cache of the thumbnails that are made (CacheSettingsComponent).
  */
 @Component({
   selector: 'app-thumbnail-settings',
@@ -65,7 +74,12 @@ export class ThumbnailSettingsComponent {
 
   protected readonly choices = thumbnailQualities.map(quality => ({ quality, ...choiceTexts[quality] }));
   protected selectedQuality: ThumbnailQuality = currentUserSettings.thumbnailQuality;
-  protected selectedSize: number = currentUserSettings.thumbnailSize;
+  protected readonly selectedSizes: Record<ThumbnailSizePlace, number> = {
+    sidebar: currentUserSettings.sidebarThumbnailSize,
+    map: currentUserSettings.mapThumbnailSize,
+  };
+  /** The places that have a size of their own, each with its name, in the order of their sliders. */
+  protected readonly sizePlaces = thumbnailSizePlaces.map(place => ({ place, label: sizePlaceLabels[place] }));
 
   protected readonly minSize = minThumbnailSize;
   protected readonly maxSize = maxThumbnailSize;
@@ -90,8 +104,8 @@ export class ThumbnailSettingsComponent {
     this.notifyChanged();
   }
 
-  protected handleSizeChanged(size: number): void {
-    this.selectedSize = size;
+  protected handleSizeChanged(place: ThumbnailSizePlace, size: number): void {
+    this.selectedSizes[place] = size;
     this.notifyChanged();
   }
 
@@ -117,7 +131,8 @@ export class ThumbnailSettingsComponent {
   private notifyChanged(): void {
     const parameter = new ThumbnailSettingsChangedParameter();
     parameter.thumbnailQuality = this.selectedQuality;
-    parameter.thumbnailSize = this.selectedSize;
+    parameter.sidebarThumbnailSize = this.selectedSizes.sidebar;
+    parameter.mapThumbnailSize = this.selectedSizes.map;
     this.settingsChangedService.thumbnailSettingsChanged.next(parameter);
   }
 }

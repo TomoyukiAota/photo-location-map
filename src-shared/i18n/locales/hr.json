@@ -247,10 +247,12 @@
       "highQuality": "Prednost kvaliteti minijatura",
       "highQualityDescription": "Minijature se uvijek izrađuju iz datoteka fotografija.",
       "size": "Veličina minijatura",
+      "sidebarSize": "Bočna traka",
+      "mapSize": "Karta",
       "sizeValue": "{{size}} piksela na duljoj stranici",
       "sizeTick": "{{size}} px",
       "aboutSize": "O veličini minijatura",
-      "sizeDescription": "Što je veličina veća, minijature se prikazuju veće, ali njihova izrada traje dulje i zauzimaju više mjesta u predmemoriji minijatura.",
+      "sizeDescription": "Bočna traka i karta prikazuju minijature svaka u svojoj veličini, a aplikacija izrađuje jednu minijaturu svake fotografije, u većoj od dviju veličina. Što je veličina veća, minijature se prikazuju veće, ali njihova izrada traje dulje i zauzimaju više mjesta u predmemoriji minijatura.",
       "fast": "Prednost performansama aplikacije",
       "fastDescription": "Kad datoteka, primjerice JPEG ili PNG, već sadrži minijaturu, ona se prikazuje kakva jest. Minijatura od 400 piksela na duljoj stranici izrađuje se samo za datoteku koja je nema."
     },

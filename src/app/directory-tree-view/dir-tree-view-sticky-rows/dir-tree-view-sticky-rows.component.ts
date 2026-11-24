@@ -96,11 +96,11 @@ export class DirTreeViewStickyRowsComponent {
 
   public constructor() {
     const destroyRef = inject(DestroyRef);
-    // A new setting places the rows again: a new size of the thumbnails, with a photo's row measured again.
+    // A new setting places the rows again: a new size of the sidebar's thumbnails, with a photo's row measured again.
     effect(() => {
       this.service.maximum();
       this.service.leftOut();
-      this.thumbnailSizeService.box();
+      this.thumbnailSizeService.sidebarBox();
       untracked(() => {
         this.photoRowHeight = 0;
         this.schedule();

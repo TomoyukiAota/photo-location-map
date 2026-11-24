@@ -1,4 +1,11 @@
-import { isThumbnailSize, madeThumbnailLongerSide, thumbnailBoxOf, thumbnailSizeOf, thumbnailSizes } from './thumbnail-size.js';
+import {
+  isThumbnailSize,
+  madeThumbnailLongerSide,
+  shownThumbnailSize,
+  thumbnailBoxOf,
+  thumbnailSizeOf,
+  thumbnailSizes
+} from './thumbnail-size.js';
 
 describe('The size of the thumbnails', () => {
   it('can be chosen from 400 to 1,000 pixels in steps of 100', () => {
@@ -14,9 +21,15 @@ describe('The size of the thumbnails', () => {
       expect(thumbnailSizeOf(text)).toBeUndefined();
   });
 
-  it('is that of the thumbnails that the app makes at High quality, and 400 at Fast, shown in a box of half that', () => {
-    expect(madeThumbnailLongerSide('high', 800)).toBe(800);
-    expect(madeThumbnailLongerSide('fast', 800)).toBe(400);
+  it('of the thumbnails that the app makes is the larger of the sidebar\'s and the map\'s at High quality, and 400 at Fast', () => {
+    expect(madeThumbnailLongerSide('high', { sidebar: 600, map: 800 })).toBe(800);
+    expect(madeThumbnailLongerSide('high', { sidebar: 1000, map: 400 })).toBe(1000);
+    expect(madeThumbnailLongerSide('fast', { sidebar: 600, map: 800 })).toBe(400);
+  });
+
+  it('that a place shows is its own at High quality, and 400 at Fast, in a box of half that', () => {
+    expect(shownThumbnailSize('high', 600)).toBe(600);
+    expect(shownThumbnailSize('fast', 600)).toBe(400);
     expect(thumbnailBoxOf(400)).toBe(200);
     expect(thumbnailBoxOf(1000)).toBe(500);
   });
