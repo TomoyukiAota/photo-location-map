@@ -923,12 +923,12 @@ test('welcome, about and every available settings tab keep their appearance', as
   await shot('settings-date', [page.locator('.date-time-example')]);
   await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Thumbnails' }).click();
   await expect(page.locator('app-thumbnail-settings')).toBeVisible();
-  // The tab, with the cache under the quality, is higher than the dialog leaves it: it scrolls between the header and
-  // the footer, which stay, rather than the dialog as a whole.
-  const settingsContent = page.locator('app-settings-dialog .settings-content');
-  expect(await settingsContent.evaluate(content => content.scrollHeight > content.clientHeight)).toBe(true);
+  // TL;DR: The tab scrolls between the header and the footer where it is higher than the dialog leaves it, rather than
+  // the dialog as a whole: Cancel stays in view, at the tab's top and once the cache's Delete button is scrolled to.
+  // Details: In English, the tab ends at about the dialog's height since its texts were shortened, so that whether it
+  // scrolls, and whether the Delete button shows at its top, depends on how the platform sets text: on CI's runner the
+  // button showed, and here it did not. Japanese, with higher lines, scrolls.
   await expect(page.getByRole('button', { name: 'Cancel', exact: true })).toBeInViewport();
-  await expect(page.getByRole('button', { name: 'Delete Thumbnail Cache', exact: true })).not.toBeInViewport();
   await shot('settings-thumbnails', [page.locator('.location-value')]);
   await page.getByRole('button', { name: 'Delete Thumbnail Cache', exact: true }).scrollIntoViewIfNeeded();
   await expect(page.getByRole('button', { name: 'Delete Thumbnail Cache', exact: true })).toBeInViewport();
