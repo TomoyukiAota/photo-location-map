@@ -5,12 +5,17 @@
 // something that is already known: a failed check that is being run again, or a conflict that waits for the owner.
 // It says all that changed at once: what it left unsaid would be known when it is started again, and never said.
 
-/** The label with which Mergify merges a pull request of the owner, and brings it up to date with main (.mergify.yml). */
+/** The label with which Mergify puts a pull request of the owner in its merge queue, which merges it (.mergify.yml). */
 export const label = 'automerge';
 
-/** How long a pull request with the label may stay behind main before Mergify is taken to have missed it: Mergify
- * brings it up to date within a minute or so. */
-export const behindLimitMinutes = 10;
+/** The labels that Mergify gives a pull request while it is in the merge queue, and once it took it out of the queue,
+ * as when its test on top of main failed: the defaults of queued_label and dequeued_label, which .mergify.yml keeps. */
+export const queuedLabel = 'queued';
+export const dequeuedLabel = 'dequeued';
+
+/** How long a pull request with the label may stay out of the merge queue once its required checks have passed, before
+ * Mergify is taken to have missed it: Mergify queues it within a minute or so. */
+export const unqueuedLimitMinutes = 10;
 
 /** The fields that wait-for-merge.js asks `gh pr view` for. */
 export const viewFields = 'number,state,mergedAt,mergeable,mergeStateStatus,labels,headRefOid,reviews,comments';
@@ -46,8 +51,14 @@ export function startOf(pullRequest, checks) {
     feedback: feedbackOf(pullRequest).map(item => item.id),
     failedChecks: failedChecksOf(checks).map(check => check.link),
     conflicting: pullRequest.mergeable === 'CONFLICTING',
-    behindSince: undefined,
+    dequeued: hasLabel(pullRequest, dequeuedLabel),
+    unqueuedSince: undefined,
   };
+}
+
+/** Whether the pull request has the label `name`. */
+function hasLabel(pullRequest, name) {
+  return (pullRequest.labels ?? []).some(each => each.name === name);
 }
 
 /**
@@ -74,8 +85,8 @@ export function assess(pullRequest, checks, seen, now) {
 
   const conflicting = pullRequest.mergeable === 'CONFLICTING';
   if (conflicting && !seen.conflicting) {
-    news.push(`${name} conflicts with main, so Mergify cannot bring it up to date: merge main into its branch, ` +
-      'resolve the conflicts, and push.');
+    news.push(`${name} conflicts with main, so the merge queue cannot test it on top of main: merge main into its ` +
+      'branch, resolve the conflicts, and push.');
   }
 
   const newlyFailed = failedChecksOf(checks).filter(check => !seen.failedChecks.includes(check.link));
@@ -95,35 +106,45 @@ export function assess(pullRequest, checks, seen, now) {
       `rest. Take the label ${label} off while you change the pull request.`);
   }
 
-  const labeled = (pullRequest.labels ?? []).some(each => each.name === label);
-  const behind = labeled && pullRequest.mergeStateStatus === 'BEHIND';
-  const behindSince = behind ? (seen.behindSince ?? now) : undefined;
-  if (behind && now - behindSince >= behindLimitMinutes * 60_000) {
-    news.push(`${name} has been behind main for ${behindLimitMinutes} minutes with the label ${label}, but ` +
-      'Mergify has not brought it up to date: read its check "Summary", which says what it waits for.');
+  const dequeued = hasLabel(pullRequest, dequeuedLabel);
+  if (dequeued && !seen.dequeued) {
+    news.push(`${name} was taken out of the merge queue (label ${dequeuedLabel}): its test on top of main failed, or ` +
+      'it changed. Read the comment of Mergify on it, and the log of the failed check of its draft pull request ' +
+      '"merge queue: …", and classify the failure (AGENTS.md, "Classify a CI failure before rerunning it").');
+  }
+
+  // Mergify did not queue a pull request that can be: it may have taken it out of the queue without the label.
+  const labeled = hasLabel(pullRequest, label);
+  const queued = hasLabel(pullRequest, queuedLabel);
+  const checksPassed = checks.length > 0 && checks.every(check => check.bucket === 'pass' || check.bucket === 'skipping');
+  const unqueued = labeled && checksPassed && !queued && !conflicting;
+  const unqueuedSince = unqueued ? (seen.unqueuedSince ?? now) : undefined;
+  if (unqueued && now - unqueuedSince >= unqueuedLimitMinutes * 60_000) {
+    news.push(`${name} has had the label ${label} and passed its required checks for ${unqueuedLimitMinutes} ` +
+      'minutes, but is not in the merge queue: read its check "Mergify Merge Queue", which says why.');
   }
 
   if (news.length > 0) return end(false, news.join('\n'));
 
   return {
     end: false,
-    status: statusOf(pullRequest, checks, { labeled, behind, conflicting }),
+    status: statusOf(pullRequest, checks, { labeled, queued, conflicting }),
     seen: {
       feedback: feedback.map(item => item.id),
       failedChecks: [...seen.failedChecks, ...newlyFailed.map(check => check.link)],
       conflicting,
-      behindSince,
+      dequeued,
+      unqueuedSince,
     },
   };
 }
 
 /** A line about where the pull request stands, which wait-for-merge.js writes when it changes. */
-function statusOf(pullRequest, checks, { labeled, behind, conflicting }) {
+function statusOf(pullRequest, checks, { labeled, queued, conflicting }) {
   if (conflicting) return 'conflicts with main';
   if (!labeled) return `waits for the label ${label}`;
-  if (behind) return 'is behind main, for Mergify to bring it up to date';
   const count = bucket => checks.filter(check => check.bucket === bucket).length;
   const done = count('pass') + count('skipping');
-  return `${String(pullRequest.headRefOid).slice(0, 8)}: ${done} of ${checks.length} required checks passed, ` +
-    `${count('pending')} pending, ${failedChecksOf(checks).length} failed`;
+  return `${String(pullRequest.headRefOid).slice(0, 8)}: ${queued ? 'in the merge queue' : 'not in the merge queue'}, ` +
+    `${done} of ${checks.length} required checks passed, ${count('pending')} pending, ${failedChecksOf(checks).length} failed`;
 }

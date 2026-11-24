@@ -4,7 +4,7 @@ import logger from '../util/logger.js';
 import { assess, checkFields, startOf, viewFields } from './merge-wait.js';
 
 // TL;DR: Waits until a pull request is merged, or until it needs the agent that opened it, and says which.
-// Details: Mergify merges a pull request with the label automerge, and brings it up to date with main, by itself
+// Details: Mergify's merge queue merges a pull request with the label automerge, or takes it out of the queue, by itself
 // (.mergify.yml), and nothing tells the agent that opened it. So the agent runs this in the background once it has
 // opened the pull request (AGENTS.md, "Wait for your pull request until it is merged"), and Claude Code wakes the agent
 // when it ends. It looks at the pull request with gh every minute, and ends on what changed since it began

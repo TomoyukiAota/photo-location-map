@@ -1,7 +1,7 @@
 import assert from 'assert';
-import { assess, behindLimitMinutes, feedbackOf, startOf } from '../../script/pull-request/merge-wait.js';
+import { assess, dequeuedLabel, feedbackOf, queuedLabel, startOf, unqueuedLimitMinutes } from '../../script/pull-request/merge-wait.js';
 
-// A pull request as `gh pr view --json <viewFields>` describes one: open, with the label, and up to date with main.
+// A pull request as `gh pr view --json <viewFields>` describes one: open, and with the label.
 const pullRequestWith = (fields: object = {}) => ({
   number: 7, state: 'OPEN', mergedAt: null, mergeable: 'MERGEABLE', mergeStateStatus: 'BLOCKED',
   labels: [{ name: 'automerge' }], headRefOid: '0123456789abcdef', reviews: [], comments: [], ...fields,
@@ -35,10 +35,10 @@ describe('merge-wait (script/pull-request/)', () => {
     assert.match(result.message, /closed without being merged/);
   });
 
-  it('ends when main moved on and the pull request now conflicts with it, which Mergify cannot bring it up to date over', () => {
+  it('ends when main moved on and the pull request now conflicts with it, which the merge queue cannot test it over', () => {
     const result = waitThrough({}, { mergeable: 'CONFLICTING', mergeStateStatus: 'DIRTY' });
     assert.deepStrictEqual([result.end, result.merged], [true, false]);
-    assert.match(result.message, /#7 conflicts with main, so Mergify cannot bring it up to date: merge main/);
+    assert.match(result.message, /#7 conflicts with main, so the merge queue cannot test it on top of main: merge main/);
   });
 
   it('does not end on a conflict that was there when it began, which is known', () => {
@@ -77,7 +77,7 @@ describe('merge-wait (script/pull-request/)', () => {
   it('goes on while the checks run or pass, and says how far they are', () => {
     const result = waitThrough({}, {}, { checksAfter: checksWith('pass').map((check, index) => index < 2 ? { ...check, bucket: 'pending' } : check) });
     assert.strictEqual(result.end, false);
-    assert.strictEqual(result.status, '01234567: 1 of 3 required checks passed, 2 pending, 0 failed');
+    assert.strictEqual(result.status, '01234567: not in the merge queue, 1 of 3 required checks passed, 2 pending, 0 failed');
   });
 
   it('ends on a new review or comment, but not on the summaries that CodeRabbit and Mergify post as comments', () => {
@@ -125,22 +125,39 @@ describe('merge-wait (script/pull-request/)', () => {
     assert.match(lines[2], /new review or comment by coderabbitai/);
   });
 
+  it('ends when Mergify takes the pull request out of its merge queue, but not on such a label that was there when it began', () => {
+    const queued = { labels: [{ name: 'automerge' }, { name: queuedLabel }] };
+    const dequeued = { labels: [{ name: 'automerge' }, { name: dequeuedLabel }] };
+    const result = waitThrough(queued, dequeued);
+    assert.deepStrictEqual([result.end, result.merged], [true, false]);
+    assert.match(result.message, /#7 was taken out of the merge queue \(label dequeued\): its test on top of main failed/);
+    assert.strictEqual(waitThrough(dequeued, dequeued).end, false);
+  });
 
-  it('waits some minutes for Mergify to bring a pull request with the label up to date, then ends', () => {
-    const behind = pullRequestWith({ mergeStateStatus: 'BEHIND' });
-    const checks = checksWith('pending');
-    let result = assess(behind, checks, startOf(behind, checks), start);
-    assert.deepStrictEqual([result.end, result.status], [false, 'is behind main, for Mergify to bring it up to date']);
-    result = assess(behind, checks, result.seen, start + (behindLimitMinutes * minute) - 1);
+  it('says when the pull request is in the merge queue', () => {
+    const result = waitThrough({}, { labels: [{ name: 'automerge' }, { name: queuedLabel }] }, { checksAfter: checksWith('pass') });
+    assert.strictEqual(result.status, '01234567: in the merge queue, 3 of 3 required checks passed, 0 pending, 0 failed');
+  });
+
+  it('waits some minutes for Mergify to queue a pull request with the label whose required checks passed, then ends', () => {
+    const passed = checksWith('pass');
+    const waiting = pullRequestWith();
+    let result = assess(waiting, passed, startOf(waiting, passed), start);
     assert.strictEqual(result.end, false);
-    const updated = assess(pullRequestWith(), checks, result.seen, start + (behindLimitMinutes - 1) * minute);
-    assert.strictEqual(updated.seen.behindSince, undefined);
-    result = assess(behind, checks, result.seen, start + behindLimitMinutes * minute);
+    result = assess(waiting, passed, result.seen, start + unqueuedLimitMinutes * minute - 1);
+    assert.strictEqual(result.end, false);
+    // Queued meanwhile, the waiting starts over.
+    const queued = pullRequestWith({ labels: [{ name: 'automerge' }, { name: queuedLabel }] });
+    assert.strictEqual(assess(queued, passed, result.seen, start + minute).seen.unqueuedSince, undefined);
+    result = assess(waiting, passed, result.seen, start + unqueuedLimitMinutes * minute);
     assert.strictEqual(result.end, true);
-    assert.match(result.message, /behind main for 10 minutes with the label automerge, but Mergify has not brought it up to date/);
-    // Without the label, Mergify does not bring it up to date: the waiting goes on, for whoever adds the label.
-    const unlabeled = pullRequestWith({ mergeStateStatus: 'BEHIND', labels: [] });
-    result = assess(unlabeled, checks, startOf(unlabeled, checks), start + 60 * minute);
+    assert.match(result.message, /passed its required checks for 10 minutes, but is not in the merge queue: read its check "Mergify Merge Queue"/);
+    // Until its checks have passed, or without the label, the waiting goes on.
+    const pending = checksWith('pending');
+    result = assess(waiting, pending, startOf(waiting, pending), start + 60 * minute);
+    assert.strictEqual(result.end, false);
+    const unlabeled = pullRequestWith({ labels: [] });
+    result = assess(unlabeled, passed, startOf(unlabeled, passed), start + 60 * minute);
     assert.deepStrictEqual([result.end, result.status], [false, 'waits for the label automerge']);
   });
 });

@@ -370,10 +370,12 @@ Fix what fails before you push. In a git worktree, run them through mise (see
 
 ## Wait for your pull request until it is merged
 
-Mergify merges a pull request of the owner that has the label `automerge`, and
-brings it up to date with `main` when `main` moves on (`.mergify.yml`). Nothing
-tells you when either happens, so once you have opened a pull request, wait for
-it:
+Mergify's merge queue merges a pull request of the owner that has the label
+`automerge`: once its required checks have passed, it tests it on top of `main`
+and of the pull requests queued before it, and merges it when that test has
+passed (`.mergify.yml`, and "Merging" in `docs/contributing/ci.md`). Nothing
+tells you when it is merged or taken out of the queue, so once you have opened a
+pull request, wait for it:
 
 ```sh
 node script/pull-request/wait-for-merge.js <number>
@@ -386,12 +388,18 @@ changed since it began. Do what it says:
 - **Merged**: go on with the next step of the work, without waiting to be asked.
 - **A required check failed or was canceled**: classify the failure (see the
   next section).
-- **It conflicts with `main`**, which Mergify cannot bring it up to date over:
-  merge `main` into the branch, resolve the conflicts and push.
+- **Taken out of the merge queue** (label `dequeued`): its test on top of `main`
+  failed, in a draft pull request `merge queue: …` of a branch
+  `mergify/merge-queue/…`. Read Mergify's comment, and the log of that draft's
+  failed check, and classify the failure (see the next section). For a failure
+  that may be rerun, comment `@mergifyio queue` on the pull request, which tests
+  it anew; for a fix, push it.
+- **With the label and its checks passed, but not in the queue**: read its check
+  "Mergify Merge Queue", which says why.
+- **It conflicts with `main`**, which the queue cannot test it on top of: merge
+  `main` into the branch, resolve the conflicts and push.
 - **A new review or comment**: change what it is right about, and answer the
   rest.
-- **Behind `main` with the label, and not brought up to date**: read Mergify's
-  check "Summary", which says what it waits for.
 
 Then start it again while the pull request is open. Without the label, it waits
 for whoever adds it. Run it in the Claude desktop app too, even when its Auto-fix
@@ -399,11 +407,11 @@ is on: Auto-fix may wake you for the same failure or comment as well, which is
 the lesser harm, as it did not wake the session of #737 for any of the four
 checks that were canceled or failed there.
 
-Take the label off while you change the pull request, so that Mergify neither
-merges it nor pushes to it meanwhile, and pull before you push, as Mergify may
-have pushed a merge of `main`. Do not merge `main` into a pull request with the
-label yourself, unless to resolve a conflict. In a git worktree, run the script
-through mise (see "In a git worktree").
+Take the label off while you change the pull request, which takes it out of the
+queue, so that Mergify does not merge it meanwhile. Mergify pushes nothing to
+the pull request: the queue tests it on top of `main` in a branch of its own. So
+do not merge `main` into it yourself, unless to resolve a conflict. In a git
+worktree, run the script through mise (see "In a git worktree").
 
 **Why:** an agent stopped once it had opened a pull request, as nothing told it
 that the pull request had been merged or that `main` had moved on, and the
@@ -537,9 +545,10 @@ times, and gave an intermittent failure two chances to block the merge.
 steps (`npm run publish:windows`) on every push to every branch, in its job
 `test (windows-latest), part 2 of 2`, unless the push changes only documents
 (see above). This is deliberate: it verifies that publishing still works,
-rather than finding out on release day. The draft
-GitHub release that appears as a result (`1.12.1-alpha`, for example) is an
-**expected byproduct, not leftover junk**.
+rather than finding out on release day. The draft GitHub release that appears
+as a result (`1.12.1-alpha`, for example) is an **expected byproduct, not
+leftover junk**. The branches `mergify/merge-queue/…` that the merge queue
+tests are pushed too, so they publish as well.
 
 **Do not propose removing or gating these steps any further, and do not treat
 the draft releases as cleanup work.**
