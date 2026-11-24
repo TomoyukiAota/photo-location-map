@@ -290,3 +290,42 @@ Mac's stuck `backupd`), on a computer busy with other sessions' work (load avera
   the rows were made again. The photos are copies of a JPEG with a camera's thumbnail, of which the app now makes
   thumbnails of 400 pixels, in the background while the trial goes on: the page's process holds 60 MB more, and the
   clicks took a few milliseconds more, within the trials' spread on this busy computer (23 to 36 ms).
+
+## The owner's changes to the tab (2026-11-24)
+
+Once the slider was merged, the owner asked for these, from screenshots of the tab in Japanese, in a few rounds:
+
+- **The texts** are the owner's, in Japanese:
+
+  | | Before | Now |
+  | --- | --- | --- |
+  | The part's title | サムネイル | サムネイルの画質とアプリのパフォーマンス |
+  | The sentence above the choices | サムネイルの画質と速さのどちらを優先するかを選んでください。 | (none) |
+  | High quality | 高画質 | サムネイルの画質を優先 |
+  | What it does | 写真全体から、下で選んだ大きさで生成します。… | 常に写真ファイルからサムネイルを生成します。 |
+  | Fast | 速さ優先 | アプリのパフォーマンスを優先 |
+  | What it does | 写真に保存されている小さいサムネイルを、すぐに表示します。… | JPEG や PNG が元々サムネイルを持っている場合はそのまま表示します。それ以外の場合のみ長辺 400 ピクセルのサムネイルを生成します。 |
+  | The slider's label | 大きさ | サムネイルの大きさ |
+
+  English has them as "Thumbnail Quality and App Performance", "Prefer thumbnail quality" and "Prefer app
+  performance", and the other languages as machine translations. The status bar of the thumbnails, which names the
+  choice for performance as the way to show them sooner, names it in quotation marks: it named "Fast" ("速さ優先"),
+  or "fast thumbnails". The size that Fast makes thumbnails at is 400, whatever the slider says
+  (`madeThumbnailLongerSide`), which its text says, as the owner asked once they had checked it.
+- **The size beside the slider is gone** ("400 pixels on the longer side"): the slider says it to a screen reader on
+  its thumb (`displayWith`), and the sizes under the marks show it.
+- **What a larger size costs** is in a note that an info button right after the slider opens and closes, rather than
+  a paragraph under the slider. The owner had the button after the size beside the slider, which went. The note opens
+  over the tab, under the button and ending where it ends (from where the button started, it reached past the
+  dialog's edge), and a click elsewhere, Escape, or a scroll of the tab closes it; the dialog's content is a
+  `cdkScrollable` for that. The button is named "About the thumbnail size", a new text in every language, and stays
+  enabled while the choice for performance is chosen. Its icon is the outlined one: the filled one was a black disc
+  among the texts. It stands 20 pixels from the slider, clear of the last size under it, which reaches up to 24 pixels
+  past the slider's end in Arabic.
+- **The slider's marks have sizes under them**, with "px" as the owner asked: 400 px and 1000 px at its ends, and
+  600 px and 800 px between them. The marks are 39 pixels apart, about as wide as "1000 px", so every other mark has
+  its size. Each size is centered under its mark in either direction, and an e2e case checks it within a pixel. The
+  size is a text of its own, "{{size}} px", in every language but Arabic, which writes the word that its size on the
+  slider has (بكسل).
+- **The choices' texts are as dark as the tab's others**: Angular Material's theme gives a radio button's label 87%
+  black and letters 0.25 pixels apart (0.0178571429em), with which the choices looked paler, in Japanese the most.

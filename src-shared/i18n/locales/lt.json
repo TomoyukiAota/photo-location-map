@@ -116,6 +116,8 @@
     "zoomIn": "Artinti",
     "zoomOut": "Tolinti",
     "layers": "Sluoksniai",
+    "fullScreen": "Visas ekranas",
+    "exitFullScreen": "Išeiti iš viso ekrano režimo",
     "photosInRegions": "Nuotraukos srityse: {{count}}",
     "selectPhotos": "Pasirinkti nuotraukas",
     "setRegionByRectangle": "Nustatyti sritį stačiakampiu",
@@ -174,7 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Kuriamos HEIF failų miniatiūros...",
-    "fasterInSettings": "Kad jos būtų rodomos anksčiau, <settingsLink>nustatymuose pasirinkite greitas miniatiūras</settingsLink>.",
+    "fasterInSettings": "Kad jos būtų rodomos anksčiau, <settingsLink>nustatymuose pasirinkite „Pirmenybė programos našumui“</settingsLink>.",
     "completed": "HEIF failų miniatiūros sukurtos.",
     "finishedWithErrors": "HEIF failų miniatiūrų kūrimas baigtas su klaidomis.",
     "showDetails": "Rodyti išsamią informaciją",
@@ -241,15 +243,16 @@
       "example": "Pavyzdys"
     },
     "thumbnails": {
-      "title": "Miniatiūros",
-      "description": "Pasirinkite, ar miniatiūras kurti pirmenybę teikiant kokybei, ar greičiui.",
-      "highQuality": "Aukšta kokybė",
-      "highQualityDescription": "Kuriamos iš visos nuotraukos, žemiau pasirinkto dydžio. Iki tol rodoma nuotraukoje įrašyta maža miniatiūra. Jų kūrimas užtrunka pirmą kartą atidarius aplanką, o HEIF failams – dar ilgiau kompiuteryje, kurio grafinė aparatinė įranga negali iškoduoti HEVC.",
-      "size": "Dydis",
+      "title": "Miniatiūrų kokybė ir programos našumas",
+      "highQuality": "Pirmenybė miniatiūrų kokybei",
+      "highQualityDescription": "Miniatiūros visada kuriamos iš nuotraukų failų.",
+      "size": "Miniatiūrų dydis",
       "sizeValue": "{{size}} taškų ilgesnėje kraštinėje",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "Apie miniatiūrų dydį",
       "sizeDescription": "Kuo didesnis dydis, tuo didesnės rodomos miniatiūros, bet tuo ilgiau užtrunka jų kūrimas ir tuo daugiau vietos jos užima miniatiūrų talpykloje.",
-      "fast": "Greitos",
-      "fastDescription": "Nuotraukoje įrašyta maža miniatiūra, rodoma iš karto. Ji mažiau ryški: 160 × 120 taškų daugumoje JPEG nuotraukų ir 320 × 240 taškų 12 megapikselių „iPhone“ nuotraukoje."
+      "fast": "Pirmenybė programos našumui",
+      "fastDescription": "Jei failas, pavyzdžiui, JPEG ar PNG, jau turi miniatiūrą, ji rodoma tokia, kokia yra. Miniatiūra, kurios ilgesnė kraštinė yra 400 taškų, kuriama tik failui, kuris jos neturi."
     },
     "os": {
       "title": "Failų naršyklės kontekstinis meniu",
@@ -312,7 +315,8 @@
       "actualSize": "Tikrasis dydis",
       "zoomIn": "Artinti",
       "zoomOut": "Tolinti",
-      "toggleFullScreen": "Įjungti arba išjungti viso ekrano režimą"
+      "toggleFullScreen": "Įjungti arba išjungti viso ekrano režimą",
+      "mapFullScreen": "Žemėlapis per visą ekraną"
     },
     "selection": {
       "title": "Pasirinkimas",

@@ -116,6 +116,8 @@
     "zoomIn": "Zoom inn",
     "zoomOut": "Zoom ut",
     "layers": "Lag",
+    "fullScreen": "Fullskjerm",
+    "exitFullScreen": "Avslutt fullskjerm",
     "photosInRegions": "Bilder i områdene: {{count}}",
     "selectPhotos": "Marker bilder",
     "setRegionByRectangle": "Angi et område med et rektangel",
@@ -174,7 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Lager miniatyrbilder for HEIF-filer...",
-    "fasterInSettings": "For å vise dem tidligere kan du <settingsLink>velge raske miniatyrbilder i innstillingene</settingsLink>.",
+    "fasterInSettings": "For å vise dem tidligere kan du <settingsLink>velge «Prioriter appens ytelse» i innstillingene</settingsLink>.",
     "completed": "Miniatyrbildene for HEIF-filer er laget.",
     "finishedWithErrors": "Ferdig med å lage miniatyrbilder for HEIF-filer, men med feil.",
     "showDetails": "Vis detaljer",
@@ -241,15 +243,16 @@
       "example": "Eksempel"
     },
     "thumbnails": {
-      "title": "Miniatyrbilder",
-      "description": "Velg om miniatyrbildene skal lages med vekt på kvalitet eller hastighet.",
-      "highQuality": "Høy kvalitet",
-      "highQualityDescription": "Lages fra hele bildet, i størrelsen som er valgt nedenfor. Inntil da vises det lille miniatyrbildet som er lagret i bildet. Det tar tid å lage dem første gang en mappe åpnes, og lengre tid for HEIF-filer på en datamaskin som ikke kan dekode HEVC med grafikkmaskinvaren.",
-      "size": "Størrelse",
+      "title": "Kvaliteten på miniatyrbilder og appens ytelse",
+      "highQuality": "Prioriter kvaliteten på miniatyrbildene",
+      "highQualityDescription": "Miniatyrbildene lages alltid fra bildefilene.",
+      "size": "Størrelse på miniatyrbilder",
       "sizeValue": "{{size}} piksler på den lengste siden",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "Om størrelsen på miniatyrbilder",
       "sizeDescription": "Jo større størrelse, desto større vises miniatyrbildene, men desto lengre tid tar det å lage dem, og desto mer plass tar de i bufferen for miniatyrbilder.",
-      "fast": "Rask",
-      "fastDescription": "Det lille miniatyrbildet som er lagret i bildet, vises med en gang. Det er mindre skarpt: 160 × 120 piksler i de fleste JPEG-bilder og 320 × 240 piksler i et 12-megapikselbilde tatt med en iPhone."
+      "fast": "Prioriter appens ytelse",
+      "fastDescription": "Når en fil, for eksempel en JPEG eller PNG, allerede inneholder et miniatyrbilde, vises det som det er. Et miniatyrbilde på 400 piksler på den lengste siden lages bare for en fil som ikke har et."
     },
     "os": {
       "title": "Hurtigmenyen i Filutforsker",
@@ -312,7 +315,8 @@
       "actualSize": "Faktisk størrelse",
       "zoomIn": "Zoom inn",
       "zoomOut": "Zoom ut",
-      "toggleFullScreen": "Fullskjerm av/på"
+      "toggleFullScreen": "Fullskjerm av/på",
+      "mapFullScreen": "Kart i fullskjerm"
     },
     "selection": {
       "title": "Markering",

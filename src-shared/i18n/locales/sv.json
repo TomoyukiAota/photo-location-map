@@ -116,6 +116,8 @@
     "zoomIn": "Zooma in",
     "zoomOut": "Zooma ut",
     "layers": "Lager",
+    "fullScreen": "Helskärm",
+    "exitFullScreen": "Avsluta helskärm",
     "photosInRegions": "Bilder i områdena: {{count}}",
     "selectPhotos": "Markera bilder",
     "setRegionByRectangle": "Ange område med rektangel",
@@ -174,7 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Skapar miniatyrer för HEIF-filer...",
-    "fasterInSettings": "Om du vill visa dem tidigare <settingsLink>väljer du snabba miniatyrer i inställningarna</settingsLink>.",
+    "fasterInSettings": "Om du vill visa dem tidigare <settingsLink>väljer du ”Prioritera appens prestanda” i inställningarna</settingsLink>.",
     "completed": "Miniatyrerna för HEIF-filer har skapats.",
     "finishedWithErrors": "Skapandet av miniatyrer för HEIF-filer avslutades med fel.",
     "showDetails": "Visa detaljer",
@@ -241,15 +243,16 @@
       "example": "Exempel"
     },
     "thumbnails": {
-      "title": "Miniatyrer",
-      "description": "Välj om miniatyrerna ska skapas med fokus på kvalitet eller hastighet.",
-      "highQuality": "Hög kvalitet",
-      "highQualityDescription": "Skapas från hela fotot, i den storlek som väljs nedan. Tills dess visas den lilla miniatyr som är lagrad i fotot. Det tar tid att skapa dem första gången en mapp öppnas, och längre tid för HEIF-filer på en dator vars grafikmaskinvara inte kan avkoda HEVC.",
-      "size": "Storlek",
+      "title": "Miniatyrernas kvalitet och appens prestanda",
+      "highQuality": "Prioritera miniatyrernas kvalitet",
+      "highQualityDescription": "Miniatyrerna skapas alltid från fotofilerna.",
+      "size": "Storlek på miniatyrer",
       "sizeValue": "{{size}} pixlar på den längre sidan",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "Om miniatyrernas storlek",
       "sizeDescription": "Ju större storlek, desto större visas miniatyrerna, men desto längre tid tar det att skapa dem och desto mer plats tar de i cachen för miniatyrer.",
-      "fast": "Snabb",
-      "fastDescription": "Den lilla miniatyr som är lagrad i fotot visas direkt. Den är mindre skarp: 160 × 120 pixlar i de flesta JPEG-foton och 320 × 240 pixlar för ett 12-megapixelsfoto taget med en iPhone."
+      "fast": "Prioritera appens prestanda",
+      "fastDescription": "När en fil, till exempel en JPEG eller PNG, redan innehåller en miniatyr visas den som den är. En miniatyr på 400 pixlar på den längre sidan skapas bara för en fil som saknar en."
     },
     "os": {
       "title": "Utforskarens snabbmeny",
@@ -312,7 +315,8 @@
       "actualSize": "Verklig storlek",
       "zoomIn": "Zooma in",
       "zoomOut": "Zooma ut",
-      "toggleFullScreen": "Helskärmsläge av/på"
+      "toggleFullScreen": "Helskärmsläge av/på",
+      "mapFullScreen": "Karta i helskärm"
     },
     "selection": {
       "title": "Markering",

@@ -116,6 +116,8 @@
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom out",
     "layers": "Layers",
+    "fullScreen": "Full Screen",
+    "exitFullScreen": "Exit Full Screen",
     "photosInRegions": "Photos in Regions: {{count}}",
     "selectPhotos": "Select Photos",
     "setRegionByRectangle": "Set Region by Rectangle",
@@ -174,7 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Generating thumbnails for HEIF files...",
-    "fasterInSettings": "To show them sooner, <settingsLink>choose fast thumbnails in Settings</settingsLink>.",
+    "fasterInSettings": "To show them sooner, <settingsLink>choose “Prefer app performance” in Settings</settingsLink>.",
     "completed": "Completed generating thumbnails for HEIF files.",
     "finishedWithErrors": "Finished generating thumbnails for HEIF files with errors.",
     "showDetails": "Show Details",
@@ -241,15 +243,16 @@
       "example": "Example"
     },
     "thumbnails": {
-      "title": "Thumbnails",
-      "description": "Choose whether the thumbnails are made for quality or for speed.",
-      "highQuality": "High quality",
-      "highQualityDescription": "Made from the whole photo, at the size chosen below. Until then, the small thumbnail stored in the photo is shown. Making them takes time the first time that a folder is opened, and longer for HEIF files on a computer that cannot decode HEVC with its graphics hardware.",
-      "size": "Size",
+      "title": "Thumbnail Quality and App Performance",
+      "highQuality": "Prefer thumbnail quality",
+      "highQualityDescription": "Thumbnails are always generated from the photo files.",
+      "size": "Thumbnail size",
       "sizeValue": "{{size}} pixels on the longer side",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "About the thumbnail size",
       "sizeDescription": "A larger size shows the thumbnails larger, but they take longer to make and more space in the thumbnail cache.",
-      "fast": "Fast",
-      "fastDescription": "The small thumbnail stored in the photo, shown right away. It is less sharp: 160 × 120 pixels in most JPEG photos, and 320 × 240 pixels in a 12-megapixel photo taken with an iPhone."
+      "fast": "Prefer app performance",
+      "fastDescription": "When a file such as a JPEG or PNG already holds a thumbnail, it is shown as it is. A thumbnail of 400 pixels on the longer side is generated only for a file that holds none."
     },
     "os": {
       "title": "Explorer Context Menu",
@@ -312,7 +315,8 @@
       "actualSize": "Actual Size",
       "zoomIn": "Zoom In",
       "zoomOut": "Zoom Out",
-      "toggleFullScreen": "Toggle Full Screen"
+      "toggleFullScreen": "Toggle Full Screen",
+      "mapFullScreen": "Map in Full Screen"
     },
     "selection": {
       "title": "Selection",

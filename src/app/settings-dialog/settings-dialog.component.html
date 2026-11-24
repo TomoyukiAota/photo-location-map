@@ -9,7 +9,8 @@
     </mat-list-item>
   }
 </mat-nav-list>
-<div class="settings-content">
+<!-- cdkScrollable: what opens over a tab, as the note on the thumbnails' size, closes when the tab scrolls. -->
+<div class="settings-content" cdkScrollable>
   <app-language-settings   [style.display]="isSelectedTab('language')   ? 'block' : 'none'"></app-language-settings>
   <app-appearance-settings [style.display]="isSelectedTab('appearance') ? 'block' : 'none'"></app-appearance-settings>
   <app-date-time-settings  [style.display]="isSelectedTab('dateTime')   ? 'block' : 'none'"></app-date-time-settings>

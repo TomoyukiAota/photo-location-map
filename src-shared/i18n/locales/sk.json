@@ -116,6 +116,8 @@
     "zoomIn": "Priblížiť",
     "zoomOut": "Vzdialiť",
     "layers": "Vrstvy",
+    "fullScreen": "Celá obrazovka",
+    "exitFullScreen": "Ukončiť režim celej obrazovky",
     "photosInRegions": "Fotky v oblastiach: {{count}}",
     "selectPhotos": "Vybrať fotky",
     "setRegionByRectangle": "Určiť oblasť obdĺžnikom",
@@ -174,7 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Vytvárajú sa miniatúry súborov HEIF...",
-    "fasterInSettings": "Ak ich chcete zobraziť skôr, <settingsLink>vyberte v nastaveniach rýchle miniatúry</settingsLink>.",
+    "fasterInSettings": "Ak ich chcete zobraziť skôr, <settingsLink>vyberte v nastaveniach „Uprednostniť výkon aplikácie“</settingsLink>.",
     "completed": "Miniatúry súborov HEIF boli vytvorené.",
     "finishedWithErrors": "Vytváranie miniatúr súborov HEIF sa skončilo s chybami.",
     "showDetails": "Zobraziť podrobnosti",
@@ -241,15 +243,16 @@
       "example": "Príklad"
     },
     "thumbnails": {
-      "title": "Miniatúry",
-      "description": "Vyberte, či sa majú miniatúry vytvárať s dôrazom na kvalitu, alebo na rýchlosť.",
-      "highQuality": "Vysoká kvalita",
-      "highQualityDescription": "Vytvárajú sa z celej fotky, vo veľkosti zvolenej nižšie. Dovtedy sa zobrazuje malá miniatúra uložená vo fotke. Ich vytváranie chvíľu trvá pri prvom otvorení priečinka a dlhšie pri súboroch HEIF na počítači, ktorého grafický hardvér nedokáže dekódovať HEVC.",
-      "size": "Veľkosť",
+      "title": "Kvalita miniatúr a výkon aplikácie",
+      "highQuality": "Uprednostniť kvalitu miniatúr",
+      "highQualityDescription": "Miniatúry sa vždy vytvárajú zo súborov fotiek.",
+      "size": "Veľkosť miniatúr",
       "sizeValue": "{{size}} pixelov na dlhšej strane",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "O veľkosti miniatúr",
       "sizeDescription": "Čím väčšia veľkosť, tým väčšie sa miniatúry zobrazujú, ale tým dlhšie trvá ich vytváranie a tým viac miesta zaberajú vo vyrovnávacej pamäti miniatúr.",
-      "fast": "Rýchle",
-      "fastDescription": "Malá miniatúra uložená vo fotke, zobrazená hneď. Je menej ostrá: 160 × 120 pixelov vo väčšine fotiek JPEG a 320 × 240 pixelov pri 12-megapixelovej fotke z iPhonu."
+      "fast": "Uprednostniť výkon aplikácie",
+      "fastDescription": "Keď súbor, napríklad JPEG alebo PNG, už obsahuje miniatúru, zobrazí sa tak, ako je. Miniatúra so 400 pixelmi na dlhšej strane sa vytvára len pre súbor, ktorý žiadnu nemá."
     },
     "os": {
       "title": "Kontextová ponuka Prieskumníka",
@@ -312,7 +315,8 @@
       "actualSize": "Skutočná veľkosť",
       "zoomIn": "Priblížiť",
       "zoomOut": "Vzdialiť",
-      "toggleFullScreen": "Zapnúť/vypnúť celú obrazovku"
+      "toggleFullScreen": "Zapnúť/vypnúť celú obrazovku",
+      "mapFullScreen": "Mapa na celú obrazovku"
     },
     "selection": {
       "title": "Výber",

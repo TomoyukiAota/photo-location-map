@@ -8,6 +8,7 @@ import { LoadedFilesStatusBarService } from '../loaded-files-status-bar/service/
 import { ThumbnailGenerationStatusBarService } from '../thumbnail-generation/status-bar/service/thumbnail-generation-status-bar.service';
 import { SidebarUpperPaneComponent } from '../sidebar/upper-pane/sidebar-upper-pane.component';
 import { SidebarLowerPaneComponent } from '../sidebar/lower-pane/sidebar-lower-pane.component';
+import { MapFullScreenService } from '../map/leaflet-map/full-screen/map-full-screen.service';
 import { LeafletMapComponent } from '../map/leaflet-map/leaflet-map.component';
 import { DateTimeTakenChartComponent } from '../date-time-taken-chart/date-time-taken-chart.component';
 import { ThumbnailGenerationStatusBarComponent } from '../thumbnail-generation/status-bar/component/thumbnail-generation-status-bar.component';
@@ -38,6 +39,11 @@ export class HomeComponent implements AfterViewInit {
   public loadedFilesStatusBarService = inject(LoadedFilesStatusBarService);
   /** The rows kept at the top of the folder tree, which cover the top of the sidebar's lower pane. */
   public stickyRowsService = inject(DirTreeViewStickyRowsService);
+  /**
+   * The map in full screen, which hides the sidebar and the chart. Their splits wait meanwhile, and show their panes at
+   * their sizes again once they are shown, in a window that may have been resized (pane-sizes/pane-split.ts).
+   */
+  public mapFullScreenService = inject(MapFullScreenService);
   private readonly destroyRef = inject(DestroyRef);
 
   private sidebarSplit: PaneSplit;

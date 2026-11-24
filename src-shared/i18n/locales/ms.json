@@ -116,6 +116,8 @@
     "zoomIn": "Zum masuk",
     "zoomOut": "Zum keluar",
     "layers": "Lapisan",
+    "fullScreen": "Skrin penuh",
+    "exitFullScreen": "Keluar dari skrin penuh",
     "photosInRegions": "Foto dalam kawasan: {{count}}",
     "selectPhotos": "Pilih foto",
     "setRegionByRectangle": "Tetapkan kawasan dengan segi empat tepat",
@@ -174,7 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Menjana lakaran kecil untuk fail HEIF...",
-    "fasterInSettings": "Untuk memaparkannya lebih awal, <settingsLink>pilih lakaran kecil pantas dalam Tetapan</settingsLink>.",
+    "fasterInSettings": "Untuk memaparkannya lebih awal, <settingsLink>pilih “Utamakan prestasi aplikasi” dalam Tetapan</settingsLink>.",
     "completed": "Lakaran kecil untuk fail HEIF telah siap dijana.",
     "finishedWithErrors": "Penjanaan lakaran kecil untuk fail HEIF selesai dengan ralat.",
     "showDetails": "Tunjukkan butiran",
@@ -241,15 +243,16 @@
       "example": "Contoh"
     },
     "thumbnails": {
-      "title": "Lakaran Kecil",
-      "description": "Pilih sama ada lakaran kecil dijana untuk kualiti atau untuk kelajuan.",
-      "highQuality": "Kualiti tinggi",
-      "highQualityDescription": "Dijana daripada keseluruhan foto, pada saiz yang dipilih di bawah. Sehingga itu, lakaran kecil yang tersimpan dalam foto dipaparkan. Penjanaannya mengambil masa apabila folder dibuka buat kali pertama, dan lebih lama bagi fail HEIF pada komputer yang perkakasan grafiknya tidak dapat menyahkod HEVC.",
-      "size": "Saiz",
+      "title": "Kualiti lakaran kecil dan prestasi aplikasi",
+      "highQuality": "Utamakan kualiti lakaran kecil",
+      "highQualityDescription": "Lakaran kecil sentiasa dijana daripada fail foto.",
+      "size": "Saiz lakaran kecil",
       "sizeValue": "{{size}} piksel pada sisi yang lebih panjang",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "Perihal saiz lakaran kecil",
       "sizeDescription": "Lebih besar saiznya, lebih besar lakaran kecil dipaparkan, tetapi lebih lama penjanaannya dan lebih banyak ruang yang digunakan dalam cache lakaran kecil.",
-      "fast": "Pantas",
-      "fastDescription": "Lakaran kecil yang tersimpan dalam foto, dipaparkan serta-merta. Ia kurang tajam: 160 × 120 piksel dalam kebanyakan foto JPEG, dan 320 × 240 piksel bagi foto 12 megapiksel yang diambil dengan iPhone."
+      "fast": "Utamakan prestasi aplikasi",
+      "fastDescription": "Jika fail seperti JPEG atau PNG sudah mempunyai lakaran kecil, lakaran kecil itu dipaparkan seadanya. Lakaran kecil bersaiz 400 piksel pada sisi yang lebih panjang hanya dijana untuk fail yang tidak mempunyainya."
     },
     "os": {
       "title": "Menu konteks Penjelajah Fail",
@@ -312,7 +315,8 @@
       "actualSize": "Saiz sebenar",
       "zoomIn": "Zum masuk",
       "zoomOut": "Zum keluar",
-      "toggleFullScreen": "Togol skrin penuh"
+      "toggleFullScreen": "Togol skrin penuh",
+      "mapFullScreen": "Peta dalam skrin penuh"
     },
     "selection": {
       "title": "Pilihan",

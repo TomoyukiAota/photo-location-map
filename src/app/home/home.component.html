@@ -2,7 +2,7 @@
   Each gutter is Split.js's, which it takes from here rather than making one, so that a double-click on it can put its
   panes back to their default sizes (pane-sizes/pane-split.ts).
 -->
-<div class="sidebar-and-map-container">
+<div class="sidebar-and-map-container" [class.map-full-screen]="mapFullScreenService.on()">
   <div id="home-left-sidebar" #sidebar>
     <div id="home-sidebar-upper-pane" #sidebarUpperPane>
       <app-sidebar-upper-pane></app-sidebar-upper-pane>

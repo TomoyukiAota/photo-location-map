@@ -116,6 +116,8 @@
     "zoomIn": "Nagyítás",
     "zoomOut": "Kicsinyítés",
     "layers": "Rétegek",
+    "fullScreen": "Teljes képernyő",
+    "exitFullScreen": "Kilépés a teljes képernyős módból",
     "photosInRegions": "Fotók a területeken: {{count}}",
     "selectPhotos": "Fotók kijelölése",
     "setRegionByRectangle": "Terület megadása téglalappal",
@@ -174,7 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Bélyegképek készítése a HEIF-fájlokhoz...",
-    "fasterInSettings": "Ha hamarabb szeretné látni őket, <settingsLink>válassza a gyors bélyegképeket a beállításokban</settingsLink>.",
+    "fasterInSettings": "Ha hamarabb szeretné látni őket, <settingsLink>válassza „Az alkalmazás teljesítménye az első” lehetőséget a beállításokban</settingsLink>.",
     "completed": "A HEIF-fájlok bélyegképei elkészültek.",
     "finishedWithErrors": "A HEIF-fájlok bélyegképeinek készítése hibákkal fejeződött be.",
     "showDetails": "Részletek megjelenítése",
@@ -241,15 +243,16 @@
       "example": "Példa"
     },
     "thumbnails": {
-      "title": "Bélyegképek",
-      "description": "Válassza ki, hogy a bélyegképek készítésénél a minőség vagy a sebesség legyen a fontosabb.",
-      "highQuality": "Kiváló minőség",
-      "highQualityDescription": "A teljes fotóból készül, az alább választott méretben. Addig a fotóban tárolt kis bélyegkép látható. Az elkészítésük időbe telik, amikor egy mappát először nyit meg, és még tovább tart a HEIF-fájloknál olyan számítógépen, amelynek grafikus hardvere nem tudja dekódolni a HEVC-t.",
-      "size": "Méret",
+      "title": "A bélyegképek minősége és az alkalmazás teljesítménye",
+      "highQuality": "A bélyegképek minősége az első",
+      "highQualityDescription": "A bélyegképek mindig a fotófájlokból készülnek.",
+      "size": "Bélyegképek mérete",
       "sizeValue": "{{size}} képpont a hosszabbik oldalon",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "A bélyegképek méretéről",
       "sizeDescription": "Minél nagyobb a méret, annál nagyobbak a bélyegképek, de annál tovább tart az elkészítésük, és annál több helyet foglalnak a bélyegképek gyorsítótárában.",
-      "fast": "Gyors",
-      "fastDescription": "A fotóban tárolt kis bélyegkép, amely azonnal megjelenik. Kevésbé éles: a legtöbb JPEG-fotónál 160 × 120 képpont, iPhone-nal készült 12 megapixeles fotónál 320 × 240 képpont."
+      "fast": "Az alkalmazás teljesítménye az első",
+      "fastDescription": "Ha egy fájl, például egy JPEG vagy PNG, már tartalmaz bélyegképet, az változatlanul jelenik meg. A hosszabbik oldalán 400 képpontos bélyegkép csak olyan fájlhoz készül, amelyben nincs."
     },
     "os": {
       "title": "A Fájlkezelő helyi menüje",
@@ -312,7 +315,8 @@
       "actualSize": "Tényleges méret",
       "zoomIn": "Nagyítás",
       "zoomOut": "Kicsinyítés",
-      "toggleFullScreen": "Teljes képernyő be/ki"
+      "toggleFullScreen": "Teljes képernyő be/ki",
+      "mapFullScreen": "Térkép teljes képernyőn"
     },
     "selection": {
       "title": "Kijelölés",

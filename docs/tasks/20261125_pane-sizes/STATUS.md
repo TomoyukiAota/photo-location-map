@@ -188,6 +188,11 @@ on a gutter to put back the default.
   - A drag's end is logged and tracked, as the upper pane's already was; so is a reset. The sizes found at launch are
     logged.
 - The paths are in `rendererWritableStoragePaths`.
+- Merged with the map's full screen (#823), which landed first: its class on `.sidebar-and-map-container` hides the
+  sidebar, the chart and the gutters, and the splits wait meanwhile. The sidebar's and the map's splits follow their
+  parents, which their observers measure, and the sidebar's upper pane is shown at its height again once the sidebar
+  is shown. So #823's own `fitSidebarPanes()`, `handleWindowResize()` and `afterRenderEffect` were dropped in the
+  merge.
 - `window.onresize` is gone: the upper pane listens to the window's `resize` event, which it can stop listening to.
 
 ### Tests

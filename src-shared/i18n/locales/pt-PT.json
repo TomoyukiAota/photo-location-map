@@ -116,6 +116,8 @@
     "zoomIn": "Ampliar",
     "zoomOut": "Reduzir",
     "layers": "Camadas",
+    "fullScreen": "Ecrã completo",
+    "exitFullScreen": "Sair do ecrã completo",
     "photosInRegions": "Fotografias nas áreas: {{count}}",
     "selectPhotos": "Selecionar fotografias",
     "setRegionByRectangle": "Definir uma área com um retângulo",
@@ -174,7 +176,7 @@
   },
   "thumbnailGeneration": {
     "generating": "A gerar miniaturas dos ficheiros HEIF...",
-    "fasterInSettings": "Para as apresentar mais cedo, <settingsLink>escolha as miniaturas rápidas nas definições</settingsLink>.",
+    "fasterInSettings": "Para as apresentar mais cedo, <settingsLink>escolha «Dar prioridade ao desempenho da aplicação» nas definições</settingsLink>.",
     "completed": "A geração das miniaturas dos ficheiros HEIF foi concluída.",
     "finishedWithErrors": "A geração das miniaturas dos ficheiros HEIF terminou com erros.",
     "showDetails": "Mostrar detalhes",
@@ -241,15 +243,16 @@
       "example": "Exemplo"
     },
     "thumbnails": {
-      "title": "Miniaturas",
-      "description": "Escolha se as miniaturas são geradas dando prioridade à qualidade ou à rapidez.",
-      "highQuality": "Alta qualidade",
-      "highQualityDescription": "Geradas a partir da fotografia inteira, no tamanho escolhido abaixo. Até lá, é apresentada a miniatura pequena guardada na fotografia. Gerá-las demora tempo na primeira vez que uma pasta é aberta, e mais ainda para os ficheiros HEIF num computador cujo hardware gráfico não consegue descodificar HEVC.",
-      "size": "Tamanho",
+      "title": "Qualidade das miniaturas e desempenho da aplicação",
+      "highQuality": "Dar prioridade à qualidade das miniaturas",
+      "highQualityDescription": "As miniaturas são sempre geradas a partir dos ficheiros das fotografias.",
+      "size": "Tamanho das miniaturas",
       "sizeValue": "{{size}} píxeis no lado maior",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "Sobre o tamanho das miniaturas",
       "sizeDescription": "Quanto maior o tamanho, maiores são apresentadas as miniaturas, mas mais tempo demora a gerá-las e mais espaço ocupam na cache de miniaturas.",
-      "fast": "Rápida",
-      "fastDescription": "A miniatura pequena guardada na fotografia, apresentada de imediato. É menos nítida: 160 × 120 píxeis na maioria das fotografias JPEG e 320 × 240 píxeis numa fotografia de 12 megapíxeis tirada com um iPhone."
+      "fast": "Dar prioridade ao desempenho da aplicação",
+      "fastDescription": "Quando um ficheiro, como um JPEG ou PNG, já contém uma miniatura, esta é apresentada tal como está. Só é gerada uma miniatura de 400 píxeis no lado maior para um ficheiro que não tenha nenhuma."
     },
     "os": {
       "title": "Menu de contexto do Explorador de Ficheiros",
@@ -312,7 +315,8 @@
       "actualSize": "Tamanho real",
       "zoomIn": "Ampliar",
       "zoomOut": "Reduzir",
-      "toggleFullScreen": "Ativar/desativar ecrã completo"
+      "toggleFullScreen": "Ativar/desativar ecrã completo",
+      "mapFullScreen": "Mapa em ecrã completo"
     },
     "selection": {
       "title": "Seleção",
