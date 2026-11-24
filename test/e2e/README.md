@@ -22,8 +22,9 @@ CI does so on Ubuntu, in the job `e2e against the development build (ubuntu)`,
 beside the ones that run the suite against the AppImage, which is a production
 build (`.github/workflows/ci-on-ubuntu.yml`).
 
-Against the package, CI runs the suite in two halves at once on each OS, each
-in a job of its own. `PLM_E2E_SHARD` names the half, `1/2` or `2/2`, which runs
+Against the package, CI runs the suite in two halves at once on Windows and
+Ubuntu, each in a job of its own, and whole in one job on macOS, which was short
+of runners for two. `PLM_E2E_SHARD` names the half, `1/2` or `2/2`, which runs
 the first or the last half of the cases in their order (`playwright.config.mjs`):
 
 ```sh
@@ -155,9 +156,9 @@ change or when the runner's fonts change, run "CI on macOS" by hand with
 gh workflow run ci-on-mac.yml --ref <branch> -f update_screenshots=true
 ```
 
-Such a run has the whole suite in one job, part 1, so that its artifact
-`screenshots-macos-26-arm64` holds the whole folder, with the references that
-differed written anew. Compare them with `snapshots/` before committing
+As every run on macOS, such a run has the whole suite in one job, so that its
+artifact `screenshots-macos-26-arm64` holds the whole folder, with the
+references that differed written anew. Compare them with `snapshots/` before committing
 them: they should differ only in how text is set and in saturated colors.
 
 The negative controls `PLM_NEGATIVE_CONTROL=1` and `PLM_MAP_NEGATIVE_CONTROL=1`,

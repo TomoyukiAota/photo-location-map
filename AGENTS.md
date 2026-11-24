@@ -476,18 +476,22 @@ cause keeps coming back, propose a narrow workaround (see above) instead of
 rerunning indefinitely.
 
 **Handle each failed check as soon as it fails.** Do not wait for all checks to
-finish: the slowest job takes about 15 minutes (15–28 for `macos-26-intel` when
-it is run on demand), and a failed job would sit unattended that long.
+finish: the slowest job, `test (macos-arm64)`, takes about 21 minutes (15–28 for
+`macos-26-intel` when it is run on demand), and a failed job would sit
+unattended that long.
 
-Each required check `test (<os>)` passes when the two jobs that run the tests on
-that OS at once, `test (<os>), part 1 of 2` and `part 2 of 2`, have passed, and
-fails once both have ended if either did not. Read the log of the part that
-failed, and classify the failure, at once. Rerun only once the whole run has
-ended: GitHub reruns no job of a run that is still running, and `gh run rerun`
-then fails with "This workflow is already running". On Ubuntu,
-`e2e against the development build (ubuntu)` can still run after
+On Windows and Ubuntu, the required check `test (<os>)` passes when the two jobs
+that run the tests on that OS at once, `test (<os>), part 1 of 2` and
+`part 2 of 2`, have passed, and fails once both have ended if either did not.
+Read the log of the part that failed, and classify the failure, at once. On
+macOS, `test (macos-arm64)` is the one job that runs the tests, as GitHub was
+short of macOS runners for two parts (`.github/workflows/ci-on-mac.yml`). Rerun
+only once the whole run has ended: GitHub reruns no job of a run that is still
+running, and `gh run rerun` then fails with "This workflow is already running".
+On Ubuntu, `e2e against the development build (ubuntu)` can still run after
 `test (ubuntu)` has failed. Wait with `gh run watch <run>`, then
-`gh run rerun <run> --failed` reruns the parts that failed and the check.
+`gh run rerun <run> --failed` reruns the jobs that failed, and the check of
+their parts.
 
 ## CI skips pushes that change only documents
 

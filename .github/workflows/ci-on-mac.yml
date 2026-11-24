@@ -43,34 +43,33 @@ jobs:
         filters: .github/ci-filters.yml
 
 
-  part-1:
-    # TL;DR: The tests on macos-26, which is arm64 (Apple Silicon), in two parts that run at once, each on a runner of
-    # its own. Each part makes the package and runs half of the e2e suite against it; part 1 also runs the checks and the
-    # unit tests. The job "test" below reports both as the required check "test (macos-arm64)".
-    # Details: In one job, the e2e suite took about 10 minutes after about 9 for the rest, and the job bounded each cycle
-    # of CI with Windows'. PLM_E2E_SHARD names the half of the suite (test/e2e/playwright.config.mjs). PLM_CI_PART
-    # leaves out of part 2 what part 1 runs alone, and test-intel, which has no part, runs everything.
-    # The names are written out rather than given by a matrix or an expression, so that the checks are reported even
-    # when the jobs are skipped: a skipped job's name expression is not evaluated.
-    name: test (macos-arm64), part 1 of 2
+  test:
+    # TL;DR: The tests on macos-26, which is arm64 (Apple Silicon), in one job, which reports the required check
+    # "test (macos-arm64)": the checks, the unit tests, the package, and the whole e2e suite against it.
+    # Details: From #813 on, it ran in two parts at once, each on a runner of its own, as Windows and Ubuntu still do,
+    # which made a cycle of CI about 6 minutes shorter. But GitHub was short of macos-26 runners: a job that waits about
+    # 15 minutes for one is canceled ("The job was not acquired by Runner of type hosted even after multiple attempts"),
+    # and a part that got none failed the check. On 2026-11-24, from 16:00 to 19:30 UTC, six runs of pull requests, of
+    # the merge queue and of main lost a part that way, and the owner had it put back into one job, which asks for one
+    # runner where the parts asked for two, and takes about 21 minutes where they took 15.
+    # The name is written out rather than given by a matrix or an expression, so that the check is reported even when
+    # the job is skipped: a skipped job's name expression is not evaluated. Keep architecture-specific check names
+    # stable when runner versions change.
+    name: test (macos-arm64)
     runs-on: macos-26
 
-    # Skipped when only documents changed. If "changes" fails, the tests run.
+    # Skipped when only documents changed, which passes the check too. If "changes" fails, the tests run.
     # A manual run runs this job too, so that it does not add a skipped "test (macos-arm64)" to the commit.
     needs: changes
     if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || needs.changes.outputs.app != 'false') }}
 
     # The timeout below is to bound the duration of a hung job.
     # This job once hung in "npm run test:package" and kept running for more than 40 minutes until it was cancelled manually.
-    # This job takes about 20 minutes at the longest on macos-26-intel, so the timeout below has enough margin.
+    # This job takes about 28 minutes at the longest on macos-26-intel, so the timeout below has enough margin.
     timeout-minutes: 45
 
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # for electron-builder
-      PLM_CI_PART: '1'
-      # A run that writes the screenshot references anew runs the whole suite in this part, so that one artifact holds
-      # all of them.
-      PLM_E2E_SHARD: ${{ !inputs.update_screenshots && '1/2' || '' }}
 
     steps: &steps
     - uses: actions/checkout@v7.0.1
@@ -87,49 +86,37 @@ jobs:
     - name: Verify Electron and embedded Node
       run: npm run verify:electron
 
-    # From here to "npm run test:live-reload", the steps run in part 1, and in test-intel, which has no part.
     - name: npm run test:dependency-compat
-      if: ${{ env.PLM_CI_PART != '2' }}
       run: npm run test:dependency-compat
 
     - name: npm run test:website
-      if: ${{ env.PLM_CI_PART != '2' }}
       run: npm run test:website
 
     - name: npm run lint:ng
-      if: ${{ env.PLM_CI_PART != '2' }}
       run: npm run lint:ng
 
     - name: npm run lint:main
-      if: ${{ env.PLM_CI_PART != '2' }}
       run: npm run lint:main
 
     - name: npm run lint:script
-      if: ${{ env.PLM_CI_PART != '2' }}
       run: npm run lint:script
 
     - name: npm run test:unit:ng
-      if: ${{ env.PLM_CI_PART != '2' }}
       run: npm run test:unit:ng
 
     - name: npm run test:unit:em:main
-      if: ${{ env.PLM_CI_PART != '2' }}
       run: npm run test:unit:em:main
 
     - name: npm run test:unit:em:renderer
-      if: ${{ env.PLM_CI_PART != '2' }}
       run: npm run test:unit:em:renderer
 
     - name: npm run test:live-reload
-      if: ${{ env.PLM_CI_PART != '2' }}
       run: npm run test:live-reload
 
     - name: npm run test:package
       run: npm run test:package
 
     - name: npm run test:e2e
-      # Part 2 has no half of the suite to run in a run that writes the screenshot references anew (see part-1's env).
-      if: ${{ !inputs.update_screenshots || env.PLM_CI_PART != '2' }}
       env:
         # The screenshot comparisons too, on arm64 only, against the references that CI keeps for its runner, whose
         # macOS sets text differently from the Mac that snapshots/ matches (test/e2e/README.md). test-intel runs these
@@ -145,7 +132,7 @@ jobs:
         npm run test:e2e ${{ inputs.update_screenshots && '-- --update-snapshots=changed' || '' }}
 
     - name: Upload the screenshot references written anew
-      if: ${{ !cancelled() && inputs.update_screenshots && runner.arch == 'ARM64' && env.PLM_CI_PART != '2' }}
+      if: ${{ !cancelled() && inputs.update_screenshots && runner.arch == 'ARM64' }}
       uses: actions/upload-artifact@v7.0.2
       with:
         name: screenshots-macos-26-arm64
@@ -157,50 +144,18 @@ jobs:
       if: ${{ failure() }}
       uses: actions/upload-artifact@v7.0.2
       with:
-        name: e2e-results-macos-${{ runner.arch }}${{ env.PLM_CI_PART && format('-part-{0}', env.PLM_CI_PART) || '' }}
+        name: e2e-results-macos-${{ runner.arch }}
         path: .upgrade-artifacts/e2e-results
         if-no-files-found: ignore
-
-  part-2:
-    # See part-1.
-    name: test (macos-arm64), part 2 of 2
-    runs-on: macos-26
-    needs: changes
-    if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || needs.changes.outputs.app != 'false') }}
-    timeout-minutes: 45    # See part-1.
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # for electron-builder
-      PLM_CI_PART: '2'
-      PLM_E2E_SHARD: '2/2'
-    steps: *steps
-
-  test:
-    # The required check of macos-26: it passes when both parts passed. When only documents changed, it is skipped with
-    # them, which passes the check too. It only reads their results, so it runs on Ubuntu rather than wait for a macOS
-    # runner. Keep architecture-specific check names stable when runner versions change.
-    name: test (macos-arm64)
-    runs-on: ubuntu-26.04
-    needs: [changes, part-1, part-2]
-    if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || needs.changes.outputs.app != 'false') }}
-    timeout-minutes: 5
-    steps:
-    - name: Check that both parts passed
-      run: |
-        echo "Part 1 of 2: ${{ needs.part-1.result }}. Part 2 of 2: ${{ needs.part-2.result }}."
-        if [ "${{ needs.part-1.result }}" != success ] || [ "${{ needs.part-2.result }}" != success ]; then
-          echo "::error::Read the log of the part that did not pass, which is a job of its own in this run."
-          exit 1
-        fi
 
   test-intel:
     # macos-26-intel is x64, and runs only when this workflow is run manually, because it took twice as long as macos-26
     # and its failures were caused by the runner, not the app. See AGENTS.md for when to run it. A manual run that
-    # writes the screenshot references anew leaves it out. It runs the steps of both parts in one job, the whole e2e
-    # suite included, as it has neither PLM_CI_PART nor PLM_E2E_SHARD.
+    # writes the screenshot references anew leaves it out. It runs the same steps as test.
     name: test (macos-x64)
     runs-on: macos-26-intel
     if: ${{ github.event_name == 'workflow_dispatch' && !inputs.update_screenshots }}
-    timeout-minutes: 45    # See part-1.
+    timeout-minutes: 45    # See test.
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # for electron-builder
     steps: *steps
