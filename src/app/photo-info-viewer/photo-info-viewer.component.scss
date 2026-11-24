@@ -57,20 +57,25 @@
 // - The thumbnail's box is as large as the settings choose (ThumbnailSizeService), and square, no larger than the room
 //   less the rest of the column with the name on two lines (112 pixels). The box is lower where a longer name takes
 //   more lines, never lower than a cluster's tiles.
+// - Where even that leaves too little room for a long name, in a short and narrow map, the column scrolls. Its parts
+//   are neither laid over each other nor past the popup: the buttons had been over the name's last line.
+// - The column's padding, which its negative margin takes back, keeps the shadow of the thumbnail under the pointer
+//   from being cut at the column's edges, where a column that may scroll cuts what it holds.
 :host([data-place="leaflet-map-popup"]) {
   display: flex;
   flex-direction: column;
   align-items: center;
   max-width: calc(100cqw - var(--plm-popup-room-beside-thumbnail, 56px));
   max-height: calc(100cqh - 58px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 5px;
+  margin: -5px;
 
-  // The thumbnail, the name and the shooting time.
+  // The thumbnail, the name and the shooting time are parts of the column themselves, so that only the thumbnail
+  // gives way to the name.
   > div:first-child {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 100%;
-    min-height: 0;
+    display: contents;
   }
 
   .photo-info-viewer-thumbnail-container {

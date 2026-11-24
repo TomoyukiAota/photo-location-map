@@ -2636,6 +2636,32 @@ test('a photo\'s popup holds its thumbnail of 1,000 pixels and its long name, an
     await expect.poll(fits).toEqual(fitting);
     expect((await places()).name.height).toBeGreaterThan(40);
   }
+
+  // A map too short and narrow for the smallest thumbnail and the whole of the long name without spaces: the popup's
+  // column scrolls, inside the popup, and its parts follow each other, with the buttons under the shooting time.
+  await mainWindow.evaluate((window, [w, h]) => window.setContentSize(w, h), [Math.min(width, 600), Math.min(height, 380)]);
+  await openFolderWithPicker(folder(2));
+  const column = () => page.evaluate(() => {
+    const rect = selector => document.querySelector(selector).getBoundingClientRect().toJSON();
+    const host = document.querySelector('.leaflet-popup app-photo-info-viewer');
+    return {
+      wrapper: rect('.leaflet-popup-content-wrapper'), host: host.getBoundingClientRect().toJSON(),
+      box: rect('.leaflet-popup .photo-info-viewer-thumbnail-container'), name: rect('.leaflet-popup .photo-info-viewer-name'),
+      date: rect('.leaflet-popup .photo-info-viewer-date-time-taken'), buttons: rect('.leaflet-popup .photo-info-viewer-lower-div'),
+      scrolls: host.scrollHeight > host.clientHeight,
+    };
+  });
+  await expect.poll(async () => {
+    const { wrapper, host, box, name, date, buttons, scrolls } = await column();
+    return {
+      columnInPopup: inside(host, wrapper),
+      apart: box.bottom <= name.top + 0.5 && name.bottom <= date.top + 0.5 && date.bottom <= buttons.top + 0.5,
+      scrolls,
+    };
+  }).toEqual({ columnInPopup: true, apart: true, scrolls: true });
+  await page.locator('.leaflet-popup app-photo-info-viewer').evaluate(host => host.scrollTop = host.scrollHeight);
+  const { host, buttons } = await column();
+  expect(inside(buttons, host)).toBe(true);
 });
 test('a cluster of photos taken at one place opens a popup with each of them', async () => {
   const folder = path.join(profile, 'photos taken at one place');
