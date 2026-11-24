@@ -1,3 +1,4 @@
+import { CdkScrollable } from '@angular/cdk/scrolling';
 import { Component, computed, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -61,7 +62,7 @@ const availableSettingsTabs: ReadonlyArray<SettingsTab> = currentPlatform() === 
   styleUrls: ['./settings-dialog.component.scss'],
   imports: [
     MatNavList, MatListItem, LanguageSettingsComponent, AppearanceSettingsComponent, DateTimeSettingsComponent, OsSettingsComponent,
-    ThumbnailSettingsComponent, CacheTabComponent, MatButton, TranslatePipe,
+    ThumbnailSettingsComponent, CacheTabComponent, MatButton, TranslatePipe, CdkScrollable,
   ]
 })
 export class SettingsDialogComponent {

@@ -245,8 +245,9 @@
       "description": "Choose whether the thumbnails are made for quality or for speed.",
       "highQuality": "High quality",
       "highQualityDescription": "Made from the whole photo, at the size chosen below. Until then, the small thumbnail stored in the photo is shown. Making them takes time the first time that a folder is opened, and longer for HEIF files on a computer that cannot decode HEVC with its graphics hardware.",
-      "size": "Size",
+      "size": "Thumbnail size",
       "sizeValue": "{{size}} pixels on the longer side",
+      "aboutSize": "About the thumbnail size",
       "sizeDescription": "A larger size shows the thumbnails larger, but they take longer to make and more space in the thumbnail cache.",
       "fast": "Fast",
       "fastDescription": "The small thumbnail stored in the photo, shown right away. It is less sharp: 160 × 120 pixels in most JPEG photos, and 320 × 240 pixels in a 12-megapixel photo taken with an iPhone."

@@ -245,8 +245,9 @@
       "description": "Izaberite da li se sličice prave s naglaskom na kvalitet ili na brzinu.",
       "highQuality": "Visok kvalitet",
       "highQualityDescription": "Prave se od cele fotografije, u veličini izabranoj ispod. Do tada se prikazuje mala sličica sačuvana u fotografiji. Njihovo pravljenje traje neko vreme kada se fascikla otvori prvi put, a duže za datoteke HEIF na računaru čiji grafički hardver ne može da dekodira HEVC.",
-      "size": "Veličina",
+      "size": "Veličina sličica",
       "sizeValue": "{{size}} piksela na dužoj stranici",
+      "aboutSize": "O veličini sličica",
       "sizeDescription": "Što je veličina veća, sličice se prikazuju veće, ali njihovo pravljenje traje duže i zauzimaju više prostora u kešu sličica.",
       "fast": "Brzo",
       "fastDescription": "Mala sličica sačuvana u fotografiji, prikazana odmah. Manje je oštra: 160 × 120 piksela u većini fotografija JPEG i 320 × 240 piksela za fotografiju od 12 megapiksela snimljenu iPhone-om."

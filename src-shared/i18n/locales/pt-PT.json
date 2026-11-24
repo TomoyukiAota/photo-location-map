@@ -245,8 +245,9 @@
       "description": "Escolha se as miniaturas são geradas dando prioridade à qualidade ou à rapidez.",
       "highQuality": "Alta qualidade",
       "highQualityDescription": "Geradas a partir da fotografia inteira, no tamanho escolhido abaixo. Até lá, é apresentada a miniatura pequena guardada na fotografia. Gerá-las demora tempo na primeira vez que uma pasta é aberta, e mais ainda para os ficheiros HEIF num computador cujo hardware gráfico não consegue descodificar HEVC.",
-      "size": "Tamanho",
+      "size": "Tamanho das miniaturas",
       "sizeValue": "{{size}} píxeis no lado maior",
+      "aboutSize": "Sobre o tamanho das miniaturas",
       "sizeDescription": "Quanto maior o tamanho, maiores são apresentadas as miniaturas, mas mais tempo demora a gerá-las e mais espaço ocupam na cache de miniaturas.",
       "fast": "Rápida",
       "fastDescription": "A miniatura pequena guardada na fotografia, apresentada de imediato. É menos nítida: 160 × 120 píxeis na maioria das fotografias JPEG e 320 × 240 píxeis numa fotografia de 12 megapíxeis tirada com um iPhone."

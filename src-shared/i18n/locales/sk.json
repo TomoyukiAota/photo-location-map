@@ -245,8 +245,9 @@
       "description": "Vyberte, či sa majú miniatúry vytvárať s dôrazom na kvalitu, alebo na rýchlosť.",
       "highQuality": "Vysoká kvalita",
       "highQualityDescription": "Vytvárajú sa z celej fotky, vo veľkosti zvolenej nižšie. Dovtedy sa zobrazuje malá miniatúra uložená vo fotke. Ich vytváranie chvíľu trvá pri prvom otvorení priečinka a dlhšie pri súboroch HEIF na počítači, ktorého grafický hardvér nedokáže dekódovať HEVC.",
-      "size": "Veľkosť",
+      "size": "Veľkosť miniatúr",
       "sizeValue": "{{size}} pixelov na dlhšej strane",
+      "aboutSize": "O veľkosti miniatúr",
       "sizeDescription": "Čím väčšia veľkosť, tým väčšie sa miniatúry zobrazujú, ale tým dlhšie trvá ich vytváranie a tým viac miesta zaberajú vo vyrovnávacej pamäti miniatúr.",
       "fast": "Rýchle",
       "fastDescription": "Malá miniatúra uložená vo fotke, zobrazená hneď. Je menej ostrá: 160 × 120 pixelov vo väčšine fotiek JPEG a 320 × 240 pixelov pri 12-megapixelovej fotke z iPhonu."

@@ -245,8 +245,9 @@
       "description": "Kies of de miniaturen worden aangemaakt met voorrang voor kwaliteit of voor snelheid.",
       "highQuality": "Hoge kwaliteit",
       "highQualityDescription": "Aangemaakt uit de hele foto, op het formaat dat hieronder is gekozen. Tot dan wordt de kleine miniatuur getoond die in de foto is opgeslagen. Het aanmaken kost tijd wanneer een map voor het eerst wordt geopend, en meer tijd voor HEIF-bestanden op een computer waarvan de grafische hardware HEVC niet kan decoderen.",
-      "size": "Formaat",
+      "size": "Formaat van miniaturen",
       "sizeValue": "{{size}} pixels aan de langste zijde",
+      "aboutSize": "Over het formaat van miniaturen",
       "sizeDescription": "Hoe groter het formaat, hoe groter de miniaturen worden getoond, maar hoe langer het aanmaken duurt en hoe meer ruimte ze innemen in de cache voor miniaturen.",
       "fast": "Snel",
       "fastDescription": "De kleine miniatuur die in de foto is opgeslagen, meteen getoond. Deze is minder scherp: 160 × 120 pixels bij de meeste JPEG-foto’s en 320 × 240 pixels bij een foto van 12 megapixel die met een iPhone is gemaakt."

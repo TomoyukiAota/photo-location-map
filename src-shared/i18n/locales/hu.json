@@ -245,8 +245,9 @@
       "description": "Válassza ki, hogy a bélyegképek készítésénél a minőség vagy a sebesség legyen a fontosabb.",
       "highQuality": "Kiváló minőség",
       "highQualityDescription": "A teljes fotóból készül, az alább választott méretben. Addig a fotóban tárolt kis bélyegkép látható. Az elkészítésük időbe telik, amikor egy mappát először nyit meg, és még tovább tart a HEIF-fájloknál olyan számítógépen, amelynek grafikus hardvere nem tudja dekódolni a HEVC-t.",
-      "size": "Méret",
+      "size": "Bélyegképek mérete",
       "sizeValue": "{{size}} képpont a hosszabbik oldalon",
+      "aboutSize": "A bélyegképek méretéről",
       "sizeDescription": "Minél nagyobb a méret, annál nagyobbak a bélyegképek, de annál tovább tart az elkészítésük, és annál több helyet foglalnak a bélyegképek gyorsítótárában.",
       "fast": "Gyors",
       "fastDescription": "A fotóban tárolt kis bélyegkép, amely azonnal megjelenik. Kevésbé éles: a legtöbb JPEG-fotónál 160 × 120 képpont, iPhone-nal készült 12 megapixeles fotónál 320 × 240 képpont."

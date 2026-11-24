@@ -243,10 +243,11 @@
     "thumbnails": {
       "title": "縮圖",
       "description": "請選擇縮圖要優先考慮畫質還是速度。",
-      "highQuality": "高畫質",
+      "highQuality": "畫質優先",
       "highQualityDescription": "從整張照片按下方選擇的尺寸產生。產生之前，會顯示照片中儲存的小縮圖。首次開啟資料夾時產生需要一些時間；在圖形硬體無法解碼 HEVC 的電腦上，HEIF 檔案的產生需要更長時間。",
-      "size": "尺寸",
+      "size": "縮圖尺寸",
       "sizeValue": "長邊 {{size}} 像素",
+      "aboutSize": "關於縮圖尺寸",
       "sizeDescription": "尺寸越大，縮圖顯示得越大，但產生所需時間越長，在縮圖快取中佔用的空間也越多。",
       "fast": "速度優先",
       "fastDescription": "立即顯示照片中儲存的小縮圖。畫質較低：大多數 JPEG 照片為 160 × 120 像素，用 iPhone 拍攝的 1200 萬像素照片為 320 × 240 像素。"

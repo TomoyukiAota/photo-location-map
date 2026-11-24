@@ -245,8 +245,9 @@
       "description": "Valitse, luodaanko pikkukuvat laadun vai nopeuden mukaan.",
       "highQuality": "Korkea laatu",
       "highQualityDescription": "Luodaan koko kuvasta alla valitun kokoisina. Siihen asti näytetään kuvaan tallennettu pieni pikkukuva. Niiden luominen vie aikaa, kun kansio avataan ensimmäisen kerran, ja kauemmin HEIF-tiedostoille tietokoneella, jonka grafiikkalaitteisto ei pysty purkamaan HEVC-koodausta.",
-      "size": "Koko",
+      "size": "Pikkukuvien koko",
       "sizeValue": "pidempi sivu {{size}} pikseliä",
+      "aboutSize": "Tietoa pikkukuvien koosta",
       "sizeDescription": "Mitä suurempi koko, sitä suurempina pikkukuvat näytetään, mutta sitä kauemmin niiden luominen kestää ja sitä enemmän tilaa ne vievät pikkukuvien välimuistissa.",
       "fast": "Nopea",
       "fastDescription": "Kuvaan tallennettu pieni pikkukuva, joka näytetään heti. Se on epätarkempi: useimmissa JPEG-kuvissa 160 × 120 pikseliä ja iPhonella otetussa 12 megapikselin kuvassa 320 × 240 pikseliä."

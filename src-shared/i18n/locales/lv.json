@@ -245,8 +245,9 @@
       "description": "Izvēlieties, vai sīktēlus veidot, priekšroku dodot kvalitātei vai ātrumam.",
       "highQuality": "Augsta kvalitāte",
       "highQualityDescription": "Tiek veidoti no visa fotoattēla zemāk izvēlētajā izmērā. Līdz tam tiek rādīts fotoattēlā saglabātais mazais sīktēls. To veidošana aizņem laiku, kad mape tiek atvērta pirmo reizi, un vēl ilgāk HEIF failiem datorā, kura grafikas aparatūra nevar dekodēt HEVC.",
-      "size": "Izmērs",
+      "size": "Sīktēlu izmērs",
       "sizeValue": "garākajā malā {{size}} pikseļu",
+      "aboutSize": "Par sīktēlu izmēru",
       "sizeDescription": "Jo lielāks izmērs, jo lielāki tiek rādīti sīktēli, bet jo ilgāk aizņem to veidošana un jo vairāk vietas tie aizņem sīktēlu kešatmiņā.",
       "fast": "Ātri",
       "fastDescription": "Fotoattēlā saglabātais mazais sīktēls, kas tiek rādīts uzreiz. Tas ir mazāk ass: lielākajā daļā JPEG fotoattēlu 160 × 120 pikseļu un ar iPhone uzņemtā 12 megapikseļu fotoattēlā 320 × 240 pikseļu."

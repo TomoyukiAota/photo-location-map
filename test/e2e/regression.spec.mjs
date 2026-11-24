@@ -4300,6 +4300,33 @@ test('the Thumbnails tab chooses the size of the thumbnails, which applies at on
   const slider = tab.locator('.thumbnail-size-slider input');
   await expect(slider).toBeEnabled();
   await expect(tab.locator('.thumbnail-size-value')).toHaveText('400 pixels on the longer side');
+  // The sizes under the slider, each centered under its mark, from the first to the last. Angular Material draws the
+  // marks once it has measured the slider, a moment after the tab is shown.
+  await expect(tab.locator('.mdc-slider__tick-marks > *')).toHaveCount(7);
+  const ticks = await tab.locator('.thumbnail-size-scale').evaluate(scale => {
+    const center = element => { const box = element.getBoundingClientRect(); return box.left + box.width / 2; };
+    const range = document.createRange();
+    return [...scale.querySelectorAll('.thumbnail-size-tick')].map((tick, index) => {
+      range.selectNodeContents(tick);
+      return { text: tick.textContent, offset: Math.abs(center(range) - center(scale.querySelectorAll('.mdc-slider__tick-marks > *')[index * 2])) };
+    });
+  });
+  expect(ticks.map(tick => tick.text)).toEqual(['400', '600', '800', '1000']);
+  expect(ticks.every(tick => tick.offset < 1)).toBe(true);
+  // What a larger size costs, in a note that the button beside the slider opens, and a click elsewhere or Escape closes.
+  const aboutSize = tab.getByRole('button', { name: 'About the thumbnail size', exact: true });
+  const sizeNote = page.locator('.thumbnail-size-note');
+  await expect(sizeNote).toHaveCount(0);
+  await aboutSize.click();
+  await expect(sizeNote).toHaveText('A larger size shows the thumbnails larger, but they take longer to make and more space in the thumbnail cache.');
+  await expect(aboutSize).toHaveAttribute('aria-expanded', 'true');
+  await page.keyboard.press('Escape');
+  await expect(sizeNote).toHaveCount(0);
+  await expect(page.locator('app-settings-dialog')).toHaveCount(1);
+  await aboutSize.click();
+  await expect(sizeNote).toBeVisible();
+  await tab.locator('.thumbnail-settings-description').click();
+  await expect(sizeNote).toHaveCount(0);
   await slider.fill('800');
   await expect(tab.locator('.thumbnail-size-value')).toHaveText('800 pixels on the longer side');
   await page.getByRole('button', { name: 'Save', exact: true }).click();

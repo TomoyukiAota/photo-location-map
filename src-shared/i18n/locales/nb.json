@@ -245,8 +245,9 @@
       "description": "Velg om miniatyrbildene skal lages med vekt på kvalitet eller hastighet.",
       "highQuality": "Høy kvalitet",
       "highQualityDescription": "Lages fra hele bildet, i størrelsen som er valgt nedenfor. Inntil da vises det lille miniatyrbildet som er lagret i bildet. Det tar tid å lage dem første gang en mappe åpnes, og lengre tid for HEIF-filer på en datamaskin som ikke kan dekode HEVC med grafikkmaskinvaren.",
-      "size": "Størrelse",
+      "size": "Størrelse på miniatyrbilder",
       "sizeValue": "{{size}} piksler på den lengste siden",
+      "aboutSize": "Om størrelsen på miniatyrbilder",
       "sizeDescription": "Jo større størrelse, desto større vises miniatyrbildene, men desto lengre tid tar det å lage dem, og desto mer plass tar de i bufferen for miniatyrbilder.",
       "fast": "Rask",
       "fastDescription": "Det lille miniatyrbildet som er lagret i bildet, vises med en gang. Det er mindre skarpt: 160 × 120 piksler i de fleste JPEG-bilder og 320 × 240 piksler i et 12-megapikselbilde tatt med en iPhone."

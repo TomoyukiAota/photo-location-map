@@ -245,8 +245,9 @@
       "description": "Izberite, ali naj se sličice ustvarjajo s poudarkom na kakovosti ali na hitrosti.",
       "highQuality": "Visoka kakovost",
       "highQualityDescription": "Ustvarijo se iz celotne fotografije, v velikosti, izbrani spodaj. Do takrat je prikazana majhna sličica, shranjena v fotografiji. Njihovo ustvarjanje traja nekaj časa, ko se mapa odpre prvič, za datoteke HEIF pa še dlje v računalniku, katerega grafična strojna oprema ne zmore dekodirati HEVC.",
-      "size": "Velikost",
+      "size": "Velikost sličic",
       "sizeValue": "{{size}} slikovnih pik na daljši stranici",
+      "aboutSize": "O velikosti sličic",
       "sizeDescription": "Večja ko je velikost, večje so prikazane sličice, vendar njihovo ustvarjanje traja dlje in zasedejo več prostora v predpomnilniku sličic.",
       "fast": "Hitro",
       "fastDescription": "Majhna sličica, shranjena v fotografiji, je prikazana takoj. Je manj ostra: 160 × 120 slikovnih pik v večini fotografij JPEG in 320 × 240 slikovnih pik pri 12-megapikselski fotografiji, posneti z iPhonom."

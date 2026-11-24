@@ -290,3 +290,22 @@ Mac's stuck `backupd`), on a computer busy with other sessions' work (load avera
   the rows were made again. The photos are copies of a JPEG with a camera's thumbnail, of which the app now makes
   thumbnails of 400 pixels, in the background while the trial goes on: the page's process holds 60 MB more, and the
   clicks took a few milliseconds more, within the trials' spread on this busy computer (23 to 36 ms).
+
+## The owner's changes to the tab (2026-11-24)
+
+Once the slider was merged, the owner asked for these, from a screenshot of the tab in Japanese:
+
+- **What a larger size costs** is in a note that an info button right beside the slider opens and closes, rather than
+  a paragraph under the slider. The note opens over the tab, centered under the button (from where the button
+  started, it reached past the dialog's edge), and a click elsewhere, Escape, or a scroll of the tab closes it; the
+  dialog's content is a `cdkScrollable` for that. The button is named "About the thumbnail size", a new text in every
+  language, and stays enabled while Fast is chosen. Its icon is the outlined one: the filled one was a black disc
+  among the texts.
+- **The slider's marks have sizes under them**: 400 and 1000 at its ends, and 600 and 800 between them. The marks are
+  39 pixels apart, which left 900 and 1000 seven pixels apart, too close to read as two sizes. Each size is centered
+  under its mark in either direction, and an e2e case checks it within a pixel.
+- **The label** is "Thumbnail size" ("サムネイルの大きさ") rather than "Size", in every language.
+- **High quality** is "画質優先" in Japanese, beside "速さ優先"; Korean and Chinese, whose Fast had the same form, have
+  it too ("화질 우선", "画质优先", "畫質優先"). The other languages keep their words.
+- **The choices' texts are as dark as the tab's others**: Angular Material's theme gives a radio button's label 87%
+  black and letters 0.25 pixels apart (0.0178571429em), with which the choices looked paler, in Japanese the most.

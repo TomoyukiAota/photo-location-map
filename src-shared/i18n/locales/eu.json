@@ -245,8 +245,9 @@
       "description": "Aukeratu miniaturak sortzean kalitateari edo abiadurari eman nahi diozun lehentasuna.",
       "highQuality": "Kalitate handia",
       "highQualityDescription": "Argazki osotik sortzen dira, behean aukeratutako tamainan. Bitartean, argazkian gordetako miniatura txikia erakusten da. Denbora behar da horiek sortzeko karpeta bat lehen aldiz irekitzean, eta gehiago HEIF fitxategietarako grafikoen hardwarearekin HEVC deskodetu ezin duen ordenagailu batean.",
-      "size": "Tamaina",
+      "size": "Miniaturen tamaina",
       "sizeValue": "{{size}} pixel alde luzeenean",
+      "aboutSize": "Miniaturen tamainari buruz",
       "sizeDescription": "Zenbat eta tamaina handiagoa, orduan eta handiago erakusten dira miniaturak, baina denbora gehiago behar da horiek sortzeko eta leku gehiago hartzen dute miniaturen cachean.",
       "fast": "Azkarra",
       "fastDescription": "Argazkian gordetako miniatura txikia, berehala erakusten dena. Ez da hain zorrotza: 160 × 120 pixel JPEG argazki gehienetan, eta 320 × 240 pixel iPhone batekin ateratako 12 megapixeleko argazki batean."

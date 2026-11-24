@@ -12,10 +12,19 @@
   margin: 0 0 12px;
 }
 
+// TL;DR: The choices' names, what they do and the size under High quality are in the color and the letter spacing of
+// the tab's other texts.
+// Details: Angular Material's theme gives the label of a radio button 87% black, on each radio button, and letters
+// 0.25 pixels apart, on the page: the choices looked paler than the rest of the tab, in Japanese the most.
 .thumbnail-quality-choices {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  --mat-radio-label-text-tracking: normal;
+
+  .thumbnail-quality-choice {
+    --mat-radio-label-text-color: currentColor;
+  }
 }
 
 // The name of a choice, with what it does on the lines under it: the text takes as many lines as it needs.
@@ -35,31 +44,58 @@
 
 // The size, under the text of High quality, in the type of the choices' texts, which Angular Material's radio buttons
 // have: as far from the start as that text, past the radio button's circle (40 pixels) and the label's padding (4).
-// The label, the slider and the size go on to a second row where they do not fit side by side, and the description
-// takes as many lines as it needs.
+// The label, the slider, its button and the size go on to a second row where they do not fit side by side.
 .thumbnail-size {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 12px;
   margin-inline-start: 44px;
   font-family: var(--mat-radio-label-text-font);
   font-size: var(--mat-radio-label-text-size);
   line-height: var(--mat-radio-label-text-line-height);
   letter-spacing: var(--mat-radio-label-text-tracking);
-  color: var(--mat-radio-label-text-color, inherit);
 }
 
-.thumbnail-size-control {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  column-gap: 12px;
+// The slider, with some of the sizes under its marks. They are below its thumb, in the margin under the slider rather
+// than in a row of their own, so that the label, the button and the size stay level with the slider's track.
+.thumbnail-size-scale {
+  position: relative;
+  margin-bottom: 6px;
 }
 
 // As wide as seven sizes need to be told apart by a pointer: the slider has no text of its own.
 .thumbnail-size-slider {
+  display: block;
   width: 240px;
   margin: 0;
+}
+
+// TL;DR: The sizes under the marks, from the first mark to the last.
+// Details: Angular Material 22 puts the first and the last marks 3 pixels in from the ends of a slider without
+// margins, and the thumb reaches 10 pixels below the middle of the slider's 48.
+.thumbnail-size-ticks {
+  position: absolute;
+  inset-inline: 3px;
+  top: 36px;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+// A size, centered under its mark in either direction: an element as wide as nothing, out of which its text stands as
+// far to each side.
+.thumbnail-size-tick {
+  position: absolute;
+  top: 0;
+  width: 0;
+  display: flex;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+// The button is as close to the slider as to the size: its icon has room of its own around it.
+.thumbnail-size-info-button {
+  margin-inline: -8px;
 }
 
 // The digits keep their widths, so that the text does not move while the slider is dragged.
@@ -67,17 +103,26 @@
   font-variant-numeric: tabular-nums;
 }
 
-.thumbnail-size-description {
-  white-space: normal;
-}
-
-// While Fast is chosen, the texts are as faint as the slider, which Angular Material shows disabled.
+// While Fast is chosen, the texts are as faint as the slider, which Angular Material shows disabled. The button stays
+// as it is: what the size costs can be read before High quality is chosen.
 .thumbnail-size-disabled {
   .thumbnail-size-label,
-  .thumbnail-size-value,
-  .thumbnail-size-description {
+  .thumbnail-size-ticks,
+  .thumbnail-size-value {
     opacity: 0.38;
   }
+}
+
+// The note on what a larger size costs, over the tab, in the type of the tab's texts: as wide as its text, up to lines
+// that are read at a glance.
+.thumbnail-size-note {
+  max-width: 320px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  background: white;
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
+  font-size: 14px;
+  line-height: 20px;
 }
 
 // The cache, a part of the tab with a title as large as its first one: set apart from the choices above it, as far as

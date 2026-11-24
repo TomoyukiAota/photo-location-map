@@ -16,8 +16,8 @@
       @if (choice.quality === 'high') {
         <!-- The size, which High quality makes the thumbnails at: under its choice, and disabled while Fast is chosen. -->
         <div class="thumbnail-size" [class.thumbnail-size-disabled]="selectedQuality !== 'high'">
-          <div class="thumbnail-size-control">
-            <span class="thumbnail-size-label" id="thumbnail-size-label">{{ 'settings.thumbnails.size' | t }}</span>
+          <span class="thumbnail-size-label" id="thumbnail-size-label">{{ 'settings.thumbnails.size' | t }}</span>
+          <div class="thumbnail-size-scale">
             <mat-slider class="thumbnail-size-slider"
                         showTickMarks
                         [min]="minSize"
@@ -30,10 +30,39 @@
                      [ngModel]="selectedSize"
                      (ngModelChange)="handleSizeChanged($event)">
             </mat-slider>
-            <span class="thumbnail-size-value">{{ sizeText(selectedSize) }}</span>
+            <!-- Some of the sizes, each under its mark. A screen reader has the size from the slider's own value. -->
+            <div class="thumbnail-size-ticks" aria-hidden="true">
+              @for (tick of sizeTicks; track tick.size) {
+                <span class="thumbnail-size-tick" [style.inset-inline-start.%]="tick.position">{{ tick.size }}</span>
+              }
+            </div>
           </div>
-          <span class="thumbnail-size-description">{{ 'settings.thumbnails.sizeDescription' | t }}</span>
+          <!-- What the size costs, in a note that the button beside the slider opens and closes. -->
+          <button mat-icon-button
+                  type="button"
+                  class="thumbnail-size-info-button"
+                  cdkOverlayOrigin
+                  #sizeNoteOrigin="cdkOverlayOrigin"
+                  [title]="'settings.thumbnails.aboutSize' | t"
+                  [attr.aria-label]="'settings.thumbnails.aboutSize' | t"
+                  [attr.aria-expanded]="isSizeNoteOpen"
+                  [attr.aria-controls]="isSizeNoteOpen ? 'thumbnail-size-note' : null"
+                  (click)="toggleSizeNote()">
+            <!-- Outlined, which is as dark as the texts beside it without a black disc among them. -->
+            <mat-icon fontIcon="info_outline"></mat-icon>
+          </button>
+          <span class="thumbnail-size-value">{{ sizeText(selectedSize) }}</span>
         </div>
+        <ng-template cdkConnectedOverlay
+                     [cdkConnectedOverlayOrigin]="sizeNoteOrigin"
+                     [cdkConnectedOverlayOpen]="isSizeNoteOpen"
+                     [cdkConnectedOverlayPositions]="sizeNotePositions"
+                     [cdkConnectedOverlayScrollStrategy]="sizeNoteScrollStrategy"
+                     (overlayOutsideClick)="closeSizeNoteOnClickOutside($event, sizeNoteOrigin.elementRef.nativeElement)"
+                     (overlayKeydown)="closeSizeNoteOnEscape($event)"
+                     (detach)="closeSizeNote()">
+          <div class="thumbnail-size-note" id="thumbnail-size-note">{{ 'settings.thumbnails.sizeDescription' | t }}</div>
+        </ng-template>
       }
     }
   </mat-radio-group>

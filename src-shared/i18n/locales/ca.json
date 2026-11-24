@@ -245,8 +245,9 @@
       "description": "Trieu si les miniatures s’han de generar per a la qualitat o per a la rapidesa.",
       "highQuality": "Alta qualitat",
       "highQualityDescription": "Es generen a partir de la foto sencera, amb la mida triada a sota. Fins aleshores, es mostra la miniatura petita desada a la foto. Generar-les porta temps la primera vegada que s’obre una carpeta, i més per als fitxers HEIF en un ordinador que no pot descodificar HEVC amb el maquinari gràfic.",
-      "size": "Mida",
+      "size": "Mida de les miniatures",
       "sizeValue": "{{size}} píxels al costat més llarg",
+      "aboutSize": "Sobre la mida de les miniatures",
       "sizeDescription": "Com més gran és la mida, més grans es mostren les miniatures, però més triguen a generar-se i més espai ocupen a la memòria cau de miniatures.",
       "fast": "Ràpid",
       "fastDescription": "La miniatura petita desada a la foto, que es mostra de seguida. És menys nítida: 160 × 120 píxels a la majoria de fotos JPEG, i 320 × 240 píxels en una foto de 12 megapíxels feta amb un iPhone."

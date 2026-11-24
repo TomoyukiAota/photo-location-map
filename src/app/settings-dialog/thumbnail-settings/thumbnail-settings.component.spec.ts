@@ -1,3 +1,4 @@
+import { OverlayContainer } from '@angular/cdk/overlay';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSliderHarness } from '@angular/material/slider/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
@@ -68,12 +69,61 @@ describe('ThumbnailSettingsComponent', () => {
     await create();
 
     expect(choices()[0].nextElementSibling).toBe(sizeBlock());
-    expect(sizeBlock().querySelector('.thumbnail-size-label').textContent).toBe('Size');
+    expect(sizeBlock().querySelector('.thumbnail-size-label').textContent).toBe('Thumbnail size');
     expect(sizeBlock().querySelector('.thumbnail-size-value').textContent).toBe('700 pixels on the longer side');
     const harness = await slider();
     expect([await harness.getMinValue(), await harness.getMaxValue(), await harness.getStep()]).toEqual([400, 1000, 100]);
     expect(await (await harness.getEndThumb()).getValue()).toBe(700);
     expect(await harness.isDisabled()).toBe(false);
+  });
+
+  it('writes the first size, the last, and every other one between them under the slider', async () => {
+    await create();
+    const ticks = Array.from(sizeBlock().querySelectorAll('.thumbnail-size-scale .thumbnail-size-tick'), tick => tick.textContent);
+    expect(ticks).toEqual(['400', '600', '800', '1000']);
+    expect(sizeBlock().querySelector('.thumbnail-size-ticks').getAttribute('aria-hidden')).toBe('true');
+  });
+
+  it('opens the note on what a larger size costs with the button beside the slider, which closes it as a click elsewhere and Escape do', async () => {
+    currentUserSettings.thumbnailQuality = 'high';
+    await create();
+    const button = sizeBlock().querySelector<HTMLButtonElement>('.thumbnail-size-info-button');
+    const note = () => TestBed.inject(OverlayContainer).getContainerElement().querySelector('.thumbnail-size-note');
+    const click = async (target: HTMLElement) => {
+      target.click();
+      await fixture.whenStable();
+    };
+    expect(button.previousElementSibling.classList).toContain('thumbnail-size-scale');
+    expect([button.title, button.getAttribute('aria-label')]).toEqual(['About the thumbnail size', 'About the thumbnail size']);
+    expect(button.getAttribute('aria-expanded')).toBe('false');
+    expect(note()).toBeNull();
+
+    await click(button);
+    expect(note().textContent).toBe('A larger size shows the thumbnails larger, but they take longer to make and more space in the thumbnail cache.');
+    expect(button.getAttribute('aria-expanded')).toBe('true');
+    expect(button.getAttribute('aria-controls')).toBe(note().id);
+    // A click on the note leaves it open.
+    await click(note() as HTMLElement);
+    expect(note()).not.toBeNull();
+
+    await click(button);
+    expect(note()).toBeNull();
+    expect(button.getAttribute('aria-expanded')).toBe('false');
+
+    await click(button);
+    await click(element().querySelector('.thumbnail-settings-description'));
+    expect(note()).toBeNull();
+
+    await click(button);
+    document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    await fixture.whenStable();
+    expect(note()).toBeNull();
+  });
+
+  it('keeps the button of the note enabled while Fast is chosen, when the size\'s texts are faint', async () => {
+    currentUserSettings.thumbnailQuality = 'fast';
+    await create();
+    expect(sizeBlock().querySelector<HTMLButtonElement>('.thumbnail-size-info-button').disabled).toBe(false);
   });
 
   it('tells the dialog of the size chosen with the slider, and shows it', async () => {

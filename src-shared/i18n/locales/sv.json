@@ -245,8 +245,9 @@
       "description": "Välj om miniatyrerna ska skapas med fokus på kvalitet eller hastighet.",
       "highQuality": "Hög kvalitet",
       "highQualityDescription": "Skapas från hela fotot, i den storlek som väljs nedan. Tills dess visas den lilla miniatyr som är lagrad i fotot. Det tar tid att skapa dem första gången en mapp öppnas, och längre tid för HEIF-filer på en dator vars grafikmaskinvara inte kan avkoda HEVC.",
-      "size": "Storlek",
+      "size": "Storlek på miniatyrer",
       "sizeValue": "{{size}} pixlar på den längre sidan",
+      "aboutSize": "Om miniatyrernas storlek",
       "sizeDescription": "Ju större storlek, desto större visas miniatyrerna, men desto längre tid tar det att skapa dem och desto mer plats tar de i cachen för miniatyrer.",
       "fast": "Snabb",
       "fastDescription": "Den lilla miniatyr som är lagrad i fotot visas direkt. Den är mindre skarp: 160 × 120 pixlar i de flesta JPEG-foton och 320 × 240 pixlar för ett 12-megapixelsfoto taget med en iPhone."
