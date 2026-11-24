@@ -116,6 +116,8 @@
     "zoomIn": "Μεγέθυνση",
     "zoomOut": "Σμίκρυνση",
     "layers": "Επίπεδα",
+    "fullScreen": "Πλήρης οθόνη",
+    "exitFullScreen": "Έξοδος από πλήρη οθόνη",
     "photosInRegions": "Φωτογραφίες στις περιοχές: {{count}}",
     "selectPhotos": "Επιλογή φωτογραφιών",
     "setRegionByRectangle": "Ορισμός περιοχής με ορθογώνιο",
@@ -313,7 +315,8 @@
       "actualSize": "Πραγματικό μέγεθος",
       "zoomIn": "Μεγέθυνση",
       "zoomOut": "Σμίκρυνση",
-      "toggleFullScreen": "Εναλλαγή πλήρους οθόνης"
+      "toggleFullScreen": "Εναλλαγή πλήρους οθόνης",
+      "mapFullScreen": "Χάρτης σε πλήρη οθόνη"
     },
     "selection": {
       "title": "Επιλογή",

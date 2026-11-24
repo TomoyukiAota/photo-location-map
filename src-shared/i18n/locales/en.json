@@ -116,6 +116,8 @@
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom out",
     "layers": "Layers",
+    "fullScreen": "Full Screen",
+    "exitFullScreen": "Exit Full Screen",
     "photosInRegions": "Photos in Regions: {{count}}",
     "selectPhotos": "Select Photos",
     "setRegionByRectangle": "Set Region by Rectangle",
@@ -313,7 +315,8 @@
       "actualSize": "Actual Size",
       "zoomIn": "Zoom In",
       "zoomOut": "Zoom Out",
-      "toggleFullScreen": "Toggle Full Screen"
+      "toggleFullScreen": "Toggle Full Screen",
+      "mapFullScreen": "Map in Full Screen"
     },
     "selection": {
       "title": "Selection",

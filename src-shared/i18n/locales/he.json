@@ -116,6 +116,8 @@
     "zoomIn": "התקרבות",
     "zoomOut": "התרחקות",
     "layers": "שכבות",
+    "fullScreen": "מסך מלא",
+    "exitFullScreen": "יציאה ממסך מלא",
     "photosInRegions": "תמונות באזורים: {{count}}",
     "selectPhotos": "בחירת תמונות",
     "setRegionByRectangle": "הגדרת אזור באמצעות מלבן",
@@ -313,7 +315,8 @@
       "actualSize": "גודל אמיתי",
       "zoomIn": "הגדלה",
       "zoomOut": "הקטנה",
-      "toggleFullScreen": "מעבר למסך מלא ובחזרה"
+      "toggleFullScreen": "מעבר למסך מלא ובחזרה",
+      "mapFullScreen": "מפה במסך מלא"
     },
     "selection": {
       "title": "בחירה",

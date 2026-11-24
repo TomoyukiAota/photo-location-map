@@ -49,6 +49,7 @@ import { setMainWindow } from './ipc/ipc-sender.js';
 import { keepOnAppPage } from './ipc/main-window-pages.js';
 import { configureMainWindowForAnalytics } from './configure-main-window-for-analytics.js';
 import { handleAppQuit } from './handle-app-quit.js';
+import { configureMainWindowForMapFullScreen } from './map-full-screen/map-full-screen-window.js';
 import { LiveReload } from './live-reload.js';
 import { configureLiveReload } from './configure-live-reload.js';
 import { recordAtAppLaunch } from './record-at-app-launch.js';
@@ -80,6 +81,7 @@ const createWindow = async () => {
 
   perfMark('main:window-created');
   configureMainWindowForAnalytics(mainWindow);
+  configureMainWindowForMapFullScreen(mainWindow);
 
   if (process.platform === 'win32') {
     // TL;DR: Restore the original Windows fullscreen menu on the next event-loop turn.

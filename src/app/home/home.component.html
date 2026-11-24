@@ -1,4 +1,4 @@
-<div class="sidebar-and-map-container">
+<div class="sidebar-and-map-container" [class.map-full-screen]="mapFullScreenService.on()">
   <div id="home-left-sidebar" #sidebar>
     <div id="home-sidebar-upper-pane" #sidebarUpperPane>
       <app-sidebar-upper-pane></app-sidebar-upper-pane>
