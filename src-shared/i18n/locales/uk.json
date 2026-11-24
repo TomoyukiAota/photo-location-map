@@ -116,6 +116,8 @@
     "zoomIn": "Збільшити",
     "zoomOut": "Зменшити",
     "layers": "Шари",
+    "fullScreen": "Повноекранний режим",
+    "exitFullScreen": "Вийти з повноекранного режиму",
     "photosInRegions": "Фотографій в областях: {{count}}",
     "selectPhotos": "Вибрати фотографії",
     "setRegionByRectangle": "Задати область прямокутником",
@@ -315,7 +317,8 @@
       "actualSize": "Фактичний розмір",
       "zoomIn": "Збільшити",
       "zoomOut": "Зменшити",
-      "toggleFullScreen": "Повноекранний режим"
+      "toggleFullScreen": "Повноекранний режим",
+      "mapFullScreen": "Карта на весь екран"
     },
     "selection": {
       "title": "Вибір",

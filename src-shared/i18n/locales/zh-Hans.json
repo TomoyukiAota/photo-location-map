@@ -116,6 +116,8 @@
     "zoomIn": "放大",
     "zoomOut": "缩小",
     "layers": "图层",
+    "fullScreen": "全屏",
+    "exitFullScreen": "退出全屏",
     "photosInRegions": "区域内的照片：{{count}} 张",
     "selectPhotos": "选择照片",
     "setRegionByRectangle": "用矩形设置区域",
@@ -315,7 +317,8 @@
       "actualSize": "实际大小",
       "zoomIn": "放大",
       "zoomOut": "缩小",
-      "toggleFullScreen": "切换全屏"
+      "toggleFullScreen": "切换全屏",
+      "mapFullScreen": "地图全屏"
     },
     "selection": {
       "title": "选择",

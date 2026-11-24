@@ -116,6 +116,8 @@
     "zoomIn": "Увеличить",
     "zoomOut": "Уменьшить",
     "layers": "Слои",
+    "fullScreen": "Полноэкранный режим",
+    "exitFullScreen": "Выйти из полноэкранного режима",
     "photosInRegions": "Фотографий в областях: {{count}}",
     "selectPhotos": "Выбрать фотографии",
     "setRegionByRectangle": "Задать область прямоугольником",
@@ -315,7 +317,8 @@
       "actualSize": "Реальный размер",
       "zoomIn": "Увеличить",
       "zoomOut": "Уменьшить",
-      "toggleFullScreen": "Полноэкранный режим"
+      "toggleFullScreen": "Полноэкранный режим",
+      "mapFullScreen": "Карта во весь экран"
     },
     "selection": {
       "title": "Выбор",

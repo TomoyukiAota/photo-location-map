@@ -116,6 +116,8 @@
     "zoomIn": "Uvećaj",
     "zoomOut": "Umanji",
     "layers": "Slojevi",
+    "fullScreen": "Ceo ekran",
+    "exitFullScreen": "Izađi iz prikaza preko celog ekrana",
     "photosInRegions": "Fotografije u oblastima: {{count}}",
     "selectPhotos": "Izaberi fotografije",
     "setRegionByRectangle": "Zadaj oblast pravougaonikom",
@@ -315,7 +317,8 @@
       "actualSize": "Stvarna veličina",
       "zoomIn": "Uvećaj",
       "zoomOut": "Umanji",
-      "toggleFullScreen": "Uključi/isključi ceo ekran"
+      "toggleFullScreen": "Uključi/isključi ceo ekran",
+      "mapFullScreen": "Mapa preko celog ekrana"
     },
     "selection": {
       "title": "Izbor",

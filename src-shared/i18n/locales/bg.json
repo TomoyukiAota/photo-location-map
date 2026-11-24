@@ -116,6 +116,8 @@
     "zoomIn": "Увеличаване",
     "zoomOut": "Намаляване",
     "layers": "Слоеве",
+    "fullScreen": "Цял екран",
+    "exitFullScreen": "Изход от цял екран",
     "photosInRegions": "Снимки в областите: {{count}}",
     "selectPhotos": "Избиране на снимките",
     "setRegionByRectangle": "Задаване на област с правоъгълник",
@@ -315,7 +317,8 @@
       "actualSize": "Действителен размер",
       "zoomIn": "Увеличаване",
       "zoomOut": "Намаляване",
-      "toggleFullScreen": "Цял екран"
+      "toggleFullScreen": "Цял екран",
+      "mapFullScreen": "Картата на цял екран"
     },
     "selection": {
       "title": "Избор",

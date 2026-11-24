@@ -116,6 +116,8 @@
     "zoomIn": "Zoom ind",
     "zoomOut": "Zoom ud",
     "layers": "Lag",
+    "fullScreen": "Fuld skærm",
+    "exitFullScreen": "Afslut fuld skærm",
     "photosInRegions": "Billeder i områderne: {{count}}",
     "selectPhotos": "Vælg billeder",
     "setRegionByRectangle": "Angiv et område med et rektangel",
@@ -315,7 +317,8 @@
       "actualSize": "Faktisk størrelse",
       "zoomIn": "Zoom ind",
       "zoomOut": "Zoom ud",
-      "toggleFullScreen": "Fuld skærm til/fra"
+      "toggleFullScreen": "Fuld skærm til/fra",
+      "mapFullScreen": "Kort i fuld skærm"
     },
     "selection": {
       "title": "Valg",

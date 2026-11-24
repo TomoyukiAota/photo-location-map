@@ -116,6 +116,8 @@
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom uit",
     "layers": "Lagen",
+    "fullScreen": "Schermvullende weergave",
+    "exitFullScreen": "Schermvullende weergave sluiten",
     "photosInRegions": "Foto’s in de gebieden: {{count}}",
     "selectPhotos": "Selecteer foto’s",
     "setRegionByRectangle": "Stel een gebied in met een rechthoek",
@@ -315,7 +317,8 @@
       "actualSize": "Werkelijke grootte",
       "zoomIn": "Zoom in",
       "zoomOut": "Zoom uit",
-      "toggleFullScreen": "Schermvullende weergave aan/uit"
+      "toggleFullScreen": "Schermvullende weergave aan/uit",
+      "mapFullScreen": "Kaart schermvullend"
     },
     "selection": {
       "title": "Selectie",

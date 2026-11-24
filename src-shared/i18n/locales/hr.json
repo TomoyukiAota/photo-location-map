@@ -116,6 +116,8 @@
     "zoomIn": "Povećaj",
     "zoomOut": "Smanji",
     "layers": "Slojevi",
+    "fullScreen": "Cijeli zaslon",
+    "exitFullScreen": "Izađi iz prikaza preko cijelog zaslona",
     "photosInRegions": "Fotografije u područjima: {{count}}",
     "selectPhotos": "Odaberi fotografije",
     "setRegionByRectangle": "Zadaj područje pravokutnikom",
@@ -315,7 +317,8 @@
       "actualSize": "Stvarna veličina",
       "zoomIn": "Povećaj",
       "zoomOut": "Smanji",
-      "toggleFullScreen": "Uključi/isključi prikaz preko cijelog zaslona"
+      "toggleFullScreen": "Uključi/isključi prikaz preko cijelog zaslona",
+      "mapFullScreen": "Karta preko cijelog zaslona"
     },
     "selection": {
       "title": "Odabir",

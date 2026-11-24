@@ -116,6 +116,8 @@
     "zoomIn": "Zoom avant",
     "zoomOut": "Zoom arrière",
     "layers": "Calques",
+    "fullScreen": "Plein écran",
+    "exitFullScreen": "Quitter le plein écran",
     "photosInRegions": "Photos dans les zones\u00a0: {{count}}",
     "selectPhotos": "Sélectionner les photos",
     "setRegionByRectangle": "Définir une zone par un rectangle",
@@ -315,7 +317,8 @@
       "actualSize": "Taille réelle",
       "zoomIn": "Zoom avant",
       "zoomOut": "Zoom arrière",
-      "toggleFullScreen": "Activer/désactiver le plein écran"
+      "toggleFullScreen": "Activer/désactiver le plein écran",
+      "mapFullScreen": "Carte en plein écran"
     },
     "selection": {
       "title": "Sélection",

@@ -116,6 +116,8 @@
     "zoomIn": "ज़ूम इन करें",
     "zoomOut": "ज़ूम आउट करें",
     "layers": "लेयर",
+    "fullScreen": "फ़ुल स्क्रीन",
+    "exitFullScreen": "फ़ुल स्क्रीन से बाहर निकलें",
     "photosInRegions": "क्षेत्रों में फ़ोटो: {{count}}",
     "selectPhotos": "फ़ोटो चुनें",
     "setRegionByRectangle": "आयत से क्षेत्र तय करें",
@@ -315,7 +317,8 @@
       "actualSize": "वास्तविक आकार",
       "zoomIn": "ज़ूम इन करें",
       "zoomOut": "ज़ूम आउट करें",
-      "toggleFullScreen": "फ़ुल स्क्रीन टॉगल करें"
+      "toggleFullScreen": "फ़ुल स्क्रीन टॉगल करें",
+      "mapFullScreen": "मैप फ़ुल स्क्रीन में"
     },
     "selection": {
       "title": "चयन",

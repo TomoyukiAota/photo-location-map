@@ -116,6 +116,8 @@
     "zoomIn": "ขยาย",
     "zoomOut": "ย่อ",
     "layers": "เลเยอร์",
+    "fullScreen": "เต็มหน้าจอ",
+    "exitFullScreen": "ออกจากโหมดเต็มหน้าจอ",
     "photosInRegions": "รูปภาพในพื้นที่: {{count}}",
     "selectPhotos": "เลือกรูปภาพ",
     "setRegionByRectangle": "กำหนดพื้นที่ด้วยสี่เหลี่ยมผืนผ้า",
@@ -315,7 +317,8 @@
       "actualSize": "ขนาดจริง",
       "zoomIn": "ขยาย",
       "zoomOut": "ย่อ",
-      "toggleFullScreen": "สลับโหมดเต็มหน้าจอ"
+      "toggleFullScreen": "สลับโหมดเต็มหน้าจอ",
+      "mapFullScreen": "แผนที่เต็มหน้าจอ"
     },
     "selection": {
       "title": "การเลือก",
