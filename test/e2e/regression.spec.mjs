@@ -2622,7 +2622,8 @@ test('a photo\'s popup holds its thumbnail of 1,000 pixels and its long name, an
   await dismissWelcome();
   const dialog = page.locator('app-settings-dialog');
   await settings('Thumbnails');
-  await dialog.locator('.thumbnail-size-slider input').fill('1000');
+  // The map's size: the app makes the thumbnails at the larger of the sidebar's and the map's.
+  await dialog.getByRole('slider', { name: 'Thumbnail size Map', exact: true }).fill('1000');
   await dialog.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(dialog).toHaveCount(0);
   await openFolderWithPicker(folder(0));
@@ -4809,8 +4810,9 @@ test('a JPEG or PNG photo without a thumbnail in its EXIF data shows one of 400 
 test('the Thumbnails tab chooses the sizes of the thumbnails in the sidebar and on the map, which apply at once, with thumbnails made from the photos at the larger one', async () => {
   // A camera's JPEG holds a thumbnail of 160 x 120, which High quality does not show stretched: the app makes one from
   // the photo at the larger of the two sizes chosen, 400 pixels by default, which the folder tree and the map's popup
-  // each show in a box of half their own size, and makes it again at a new larger size, which it keeps in the same file
-  // of the cache. Fast shows the photo's own, at its own size, in either place.
+  // each show in a box of half their own size, the popup's no larger than the room that the map leaves, and makes it
+  // again at a new larger size, which it keeps in the same file of the cache. Fast shows the photo's own, at its own
+  // size, in either place.
   const folder = path.join(profile, 'Thumbnail sizes');
   await mkdir(folder);
   await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'Kobe.JPG'));
@@ -4879,29 +4881,32 @@ test('the Thumbnails tab chooses the sizes of the thumbnails in the sidebar and 
   await tab.locator('.setting-title').first().click();
   await expect(sizeNote).toHaveCount(0);
 
-  // 800 pixels in the sidebar and 600 on the map: boxes of 400 and 300, and the thumbnail made again at once, at 800.
+  // 800 pixels in the sidebar, and the map's 400: the tree's box of 400 and the popup's of 200, the map's own, with the
+  // thumbnail made again at once, at 800, which both show.
   await sidebarSlider.fill('800');
-  await mapSlider.fill('600');
   await expect(sidebarSlider).toHaveAttribute('aria-valuetext', '800 pixels on the longer side');
-  await expect(mapSlider).toHaveAttribute('aria-valuetext', '600 pixels on the longer side');
+  await expect(mapSlider).toHaveAttribute('aria-valuetext', '400 pixels on the longer side');
   await page.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(page.locator('app-settings-dialog')).toHaveCount(0);
   await expect.poll(async () => (await shown(inTree))?.size, { timeout: 30000 }).toBe('800x600');
   expect(await shown(inTree)).toEqual(expect.objectContaining({ src: expect.stringMatching(/Kobe\.JPG\.plm\.jpg\?size=800$/), box: 400 }));
   await expect.poll(async () => (await shown(inPopup))?.size).toBe('800x600');
-  expect((await shown(inPopup)).box).toBe(300);
+  expect((await shown(inPopup)).box).toBe(200);
   await expect.poll(() => savedSetting(userData, ['UserSettings', 'SidebarThumbnailSize'])).toBe('800');
-  await expect.poll(() => savedSetting(userData, ['UserSettings', 'MapThumbnailSize'])).toBe('600');
+  await expect.poll(() => savedSetting(userData, ['UserSettings', 'MapThumbnailSize'])).toBe('400');
   await expect.poll(async () => (await logOfCache()).LongerSide).toBe(800);
 
-  // 400 on the map, smaller than the sidebar's: the popup's box follows at once, and the thumbnail stays the one of 800.
+  // 600 on the map, still smaller than the sidebar's: the popup's box grows at once, to 300, or to the room that the map
+  // leaves where that is less (photo-info-viewer.component.scss), and the thumbnail stays the one of 800.
   await settings('Thumbnails');
-  await mapSlider.fill('400');
+  await mapSlider.fill('600');
   await page.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(page.locator('app-settings-dialog')).toHaveCount(0);
-  await expect.poll(async () => (await shown(inPopup))?.box).toBe(200);
+  await expect.poll(async () => (await shown(inPopup))?.box).toBeGreaterThan(200);
+  expect((await shown(inPopup)).box).toBeLessThanOrEqual(300);
   expect(await shown(inPopup)).toEqual(expect.objectContaining({ src: expect.stringMatching(/Kobe\.JPG\.plm\.jpg\?size=800$/), size: '800x600' }));
   expect((await shown(inTree)).box).toBe(400);
+  await expect.poll(() => savedSetting(userData, ['UserSettings', 'MapThumbnailSize'])).toBe('600');
 
   // Fast: the photo's own thumbnail, in the box of 200 in either place, and both sliders disabled.
   await settings('Thumbnails');
