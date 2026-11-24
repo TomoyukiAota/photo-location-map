@@ -94,5 +94,10 @@ A push or pull request that changes only documents (the Markdown files and the
 document folders of `docs/`, `README.md`, `AGENTS.md`, `LICENSE` and
 `.github/ISSUE_TEMPLATE/`, as listed in
 [`.github/ci-filters.yml`](../../.github/ci-filters.yml)) skips the tests. The
-website, `docs/index.html` and `docs/github-pages/`, is not a document: CI
-checks its texts and its layout.
+website is not a document: `docs/index.html`, the landing page in each language
+(`docs/<code>/index.html`), `docs/github-pages/`, `docs/docs-resources/` and
+`docs/sitemap.xml`. CI checks its texts in every language
+(`npm run test:website`), and its layout in the e2e suite's cases of the
+website, which look at a few of its languages. After a change to its layout,
+run `node test/website/layout-in-every-language.mjs`, which looks at every
+language (`docs/TRANSLATING.md`).
