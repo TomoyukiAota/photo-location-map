@@ -245,10 +245,12 @@
       "highQuality": "Uprednostniť kvalitu miniatúr",
       "highQualityDescription": "Miniatúry sa vždy vytvárajú zo súborov fotiek.",
       "size": "Veľkosť miniatúr",
+      "sidebarSize": "Bočný panel",
+      "mapSize": "Mapa",
       "sizeValue": "{{size}} pixelov na dlhšej strane",
       "sizeTick": "{{size}} px",
       "aboutSize": "O veľkosti miniatúr",
-      "sizeDescription": "Čím väčšia veľkosť, tým väčšie sa miniatúry zobrazujú, ale tým dlhšie trvá ich vytváranie a tým viac miesta zaberajú vo vyrovnávacej pamäti miniatúr.",
+      "sizeDescription": "Bočný panel a mapa zobrazujú miniatúry každý vo svojej veľkosti a aplikácia vytvára z každej fotky jednu miniatúru vo väčšej z oboch veľkostí. Čím väčšia veľkosť, tým väčšie sa miniatúry zobrazujú, ale tým dlhšie trvá ich vytváranie a tým viac miesta zaberajú vo vyrovnávacej pamäti miniatúr.",
       "fast": "Uprednostniť výkon aplikácie",
       "fastDescription": "Keď súbor, napríklad JPEG alebo PNG, už obsahuje miniatúru, zobrazí sa tak, ako je. Miniatúra so 400 pixelmi na dlhšej strane sa vytvára len pre súbor, ktorý žiadnu nemá."
     },

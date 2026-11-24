@@ -245,10 +245,12 @@
       "highQuality": "Stawiaj na jakość miniaturek",
       "highQualityDescription": "Miniaturki są zawsze tworzone z plików zdjęć.",
       "size": "Rozmiar miniaturek",
+      "sidebarSize": "Pasek boczny",
+      "mapSize": "Mapa",
       "sizeValue": "{{size}} pikseli na dłuższym boku",
       "sizeTick": "{{size}} px",
       "aboutSize": "Informacje o rozmiarze miniaturek",
-      "sizeDescription": "Im większy rozmiar, tym większe są wyświetlane miniaturki, ale tym dłużej trwa ich tworzenie i tym więcej miejsca zajmują w pamięci podręcznej miniaturek.",
+      "sizeDescription": "Pasek boczny i mapa pokazują miniaturki każde w swoim rozmiarze, a aplikacja tworzy z każdego zdjęcia jedną miniaturkę w większym z dwóch rozmiarów. Im większy rozmiar, tym większe są wyświetlane miniaturki, ale tym dłużej trwa ich tworzenie i tym więcej miejsca zajmują w pamięci podręcznej miniaturek.",
       "fast": "Stawiaj na wydajność aplikacji",
       "fastDescription": "Gdy plik, na przykład JPEG lub PNG, zawiera już miniaturkę, jest ona wyświetlana bez zmian. Miniaturka o rozmiarze 400 pikseli na dłuższym boku jest tworzona tylko dla pliku, który jej nie ma."
     },

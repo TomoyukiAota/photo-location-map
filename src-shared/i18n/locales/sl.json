@@ -245,10 +245,12 @@
       "highQuality": "Prednost kakovosti sličic",
       "highQualityDescription": "Sličice se vedno ustvarijo iz datotek fotografij.",
       "size": "Velikost sličic",
+      "sidebarSize": "Stranska vrstica",
+      "mapSize": "Zemljevid",
       "sizeValue": "{{size}} slikovnih pik na daljši stranici",
       "sizeTick": "{{size}} px",
       "aboutSize": "O velikosti sličic",
-      "sizeDescription": "Večja ko je velikost, večje so prikazane sličice, vendar njihovo ustvarjanje traja dlje in zasedejo več prostora v predpomnilniku sličic.",
+      "sizeDescription": "Stranska vrstica in zemljevid prikazujeta sličice vsak v svoji velikosti, aplikacija pa za vsako fotografijo ustvari eno sličico v večji od obeh velikosti. Večja ko je velikost, večje so prikazane sličice, vendar njihovo ustvarjanje traja dlje in zasedejo več prostora v predpomnilniku sličic.",
       "fast": "Prednost zmogljivosti aplikacije",
       "fastDescription": "Ko datoteka, na primer JPEG ali PNG, že vsebuje sličico, je ta prikazana taka, kot je. Sličica s 400 slikovnimi pikami na daljši stranici se ustvari samo za datoteko, ki je nima."
     },

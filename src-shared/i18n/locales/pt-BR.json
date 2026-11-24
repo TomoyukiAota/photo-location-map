@@ -245,10 +245,12 @@
       "highQuality": "Priorizar a qualidade das miniaturas",
       "highQualityDescription": "As miniaturas são sempre geradas a partir dos arquivos de foto.",
       "size": "Tamanho das miniaturas",
+      "sidebarSize": "Barra lateral",
+      "mapSize": "Mapa",
       "sizeValue": "{{size}} pixels no lado maior",
       "sizeTick": "{{size}} px",
       "aboutSize": "Sobre o tamanho das miniaturas",
-      "sizeDescription": "Quanto maior o tamanho, maiores as miniaturas são exibidas, mas mais tempo leva para gerá-las e mais espaço elas ocupam no cache de miniaturas.",
+      "sizeDescription": "A barra lateral e o mapa exibem as miniaturas cada um no seu tamanho, e o aplicativo gera uma só miniatura de cada foto, no maior dos dois tamanhos. Quanto maior o tamanho, maiores as miniaturas são exibidas, mas mais tempo leva para gerá-las e mais espaço elas ocupam no cache de miniaturas.",
       "fast": "Priorizar o desempenho do aplicativo",
       "fastDescription": "Quando um arquivo, como um JPEG ou PNG, já contém uma miniatura, ela é exibida como está. Uma miniatura de 400 pixels no lado maior só é gerada para um arquivo que não tem nenhuma."
     },

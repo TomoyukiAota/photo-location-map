@@ -245,10 +245,12 @@
       "highQuality": "縮圖畫質優先",
       "highQualityDescription": "一律從照片檔案產生縮圖。",
       "size": "縮圖尺寸",
+      "sidebarSize": "側邊欄",
+      "mapSize": "地圖",
       "sizeValue": "長邊 {{size}} 像素",
       "sizeTick": "{{size}} px",
       "aboutSize": "關於縮圖尺寸",
-      "sizeDescription": "尺寸越大，縮圖顯示得越大，但產生所需時間越長，在縮圖快取中佔用的空間也越多。",
+      "sizeDescription": "側邊欄和地圖各自以自己的尺寸顯示縮圖，應用程式為每張相片只產生一張縮圖，採用兩個尺寸中較大的那個。尺寸越大，縮圖顯示得越大，但產生所需時間越長，在縮圖快取中佔用的空間也越多。",
       "fast": "應用程式效能優先",
       "fastDescription": "如果 JPEG 或 PNG 等檔案本身帶有縮圖，則直接顯示。僅在其他情況下才產生長邊 400 像素的縮圖。"
     },

@@ -245,10 +245,12 @@
       "highQuality": "Priekšroka sīktēlu kvalitātei",
       "highQualityDescription": "Sīktēli vienmēr tiek veidoti no fotoattēlu failiem.",
       "size": "Sīktēlu izmērs",
+      "sidebarSize": "Sānjosla",
+      "mapSize": "Karte",
       "sizeValue": "garākajā malā {{size}} pikseļu",
       "sizeTick": "{{size}} px",
       "aboutSize": "Par sīktēlu izmēru",
-      "sizeDescription": "Jo lielāks izmērs, jo lielāki tiek rādīti sīktēli, bet jo ilgāk aizņem to veidošana un jo vairāk vietas tie aizņem sīktēlu kešatmiņā.",
+      "sizeDescription": "Sānjosla un karte rāda sīktēlus katra savā izmērā, un lietotne katram fotoattēlam izveido vienu sīktēlu lielākajā no abiem izmēriem. Jo lielāks izmērs, jo lielāki tiek rādīti sīktēli, bet jo ilgāk aizņem to veidošana un jo vairāk vietas tie aizņem sīktēlu kešatmiņā.",
       "fast": "Priekšroka lietotnes veiktspējai",
       "fastDescription": "Ja failā, piemēram, JPEG vai PNG failā, jau ir sīktēls, tas tiek rādīts tāds, kāds tas ir. Sīktēls, kura garākā mala ir 400 pikseļu, tiek veidots tikai failam, kurā tā nav."
     },

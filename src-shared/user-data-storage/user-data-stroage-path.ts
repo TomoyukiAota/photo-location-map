@@ -41,7 +41,8 @@ export namespace UserDataStoragePath {
     export const ClockSystemFormat: ReadonlyArray<string> = ['UserSettings', 'ClockSystemFormat'];
     export const Language: ReadonlyArray<string> = ['UserSettings', 'Language'];
     export const ThumbnailQuality: ReadonlyArray<string> = ['UserSettings', 'ThumbnailQuality'];
-    export const ThumbnailSize: ReadonlyArray<string> = ['UserSettings', 'ThumbnailSize'];
+    export const SidebarThumbnailSize: ReadonlyArray<string> = ['UserSettings', 'SidebarThumbnailSize'];
+    export const MapThumbnailSize: ReadonlyArray<string> = ['UserSettings', 'MapThumbnailSize'];
     export const StickyFolderRowsMaximum: ReadonlyArray<string> = ['UserSettings', 'StickyFolderRowsMaximum'];
     export const StickyFolderRowsLeftOut: ReadonlyArray<string> = ['UserSettings', 'StickyFolderRowsLeftOut'];
   }

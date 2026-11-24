@@ -13,45 +13,68 @@
         <span class="thumbnail-quality-description">{{ choice.description | t }}</span>
       </mat-radio-button>
       @if (choice.quality === 'high') {
-        <!-- The size, which High quality makes the thumbnails at: under its choice, and disabled while Fast is chosen. -->
+        <!--
+          The sizes, in the sidebar and on the map, which High quality shows the thumbnails at: under its choice, and
+          disabled while Fast is chosen. A heading, with the button of the note at its end, over the sliders' end, then
+          a row for each place: its name, and its slider with some of the sizes under it, beside the name or under it.
+        -->
         <div class="thumbnail-size" [class.thumbnail-size-disabled]="selectedQuality !== 'high'">
-          <span class="thumbnail-size-label" id="thumbnail-size-label">{{ 'settings.thumbnails.size' | t }}</span>
-          <div class="thumbnail-size-scale">
-            <!-- displayWith: the size that a screen reader says on the thumb, which the sizes under the marks show. -->
-            <mat-slider class="thumbnail-size-slider"
-                        showTickMarks
-                        [min]="minSize"
-                        [max]="maxSize"
-                        [step]="sizeStep"
-                        [disabled]="selectedQuality !== 'high'"
-                        [displayWith]="sizeText">
-              <input matSliderThumb
-                     aria-labelledby="thumbnail-size-label"
-                     [ngModel]="selectedSize"
-                     (ngModelChange)="handleSizeChanged($event)">
-            </mat-slider>
-            <!-- Some of the sizes, each under its mark. A screen reader has the size from the slider's own value. -->
-            <div class="thumbnail-size-ticks" aria-hidden="true">
-              @for (tick of sizeTicks; track tick.size) {
-                <span class="thumbnail-size-tick"
-                      [style.inset-inline-start.%]="tick.position">{{ 'settings.thumbnails.sizeTick' | t: { size: tick.size } }}</span>
-              }
-            </div>
+          <div class="thumbnail-size-heading">
+            <span class="thumbnail-size-label" id="thumbnail-size-label">{{ 'settings.thumbnails.size' | t }}</span>
+            <!-- What the sizes cost, in a note that the button opens and closes. -->
+            <button mat-icon-button
+                    type="button"
+                    class="thumbnail-size-info-button"
+                    cdkOverlayOrigin
+                    #sizeNoteOrigin="cdkOverlayOrigin"
+                    [title]="'settings.thumbnails.aboutSize' | t"
+                    [attr.aria-label]="'settings.thumbnails.aboutSize' | t"
+                    [attr.aria-expanded]="isSizeNoteOpen"
+                    [attr.aria-controls]="isSizeNoteOpen ? 'thumbnail-size-note' : null"
+                    (click)="toggleSizeNote()">
+              <!-- Outlined, which is as dark as the texts beside it without a black disc among them. -->
+              <mat-icon fontIcon="info_outline"></mat-icon>
+            </button>
           </div>
-          <!-- What the size costs, in a note that the button after the slider opens and closes. -->
-          <button mat-icon-button
-                  type="button"
-                  class="thumbnail-size-info-button"
-                  cdkOverlayOrigin
-                  #sizeNoteOrigin="cdkOverlayOrigin"
-                  [title]="'settings.thumbnails.aboutSize' | t"
-                  [attr.aria-label]="'settings.thumbnails.aboutSize' | t"
-                  [attr.aria-expanded]="isSizeNoteOpen"
-                  [attr.aria-controls]="isSizeNoteOpen ? 'thumbnail-size-note' : null"
-                  (click)="toggleSizeNote()">
-            <!-- Outlined, which is as dark as the texts beside it without a black disc among them. -->
-            <mat-icon fontIcon="info_outline"></mat-icon>
-          </button>
+          @for (sizePlace of sizePlaces; track sizePlace.place) {
+            <div class="thumbnail-size-row">
+              <!--
+                The place's name, in a cell that every place's name widens, the others unseen: as wide as the longest
+                name, so that the sliders start together, beside the names or under them.
+              -->
+              <span class="thumbnail-size-place-cell">
+                @for (name of sizePlaces; track name.place) {
+                  @if (name.place === sizePlace.place) {
+                    <span class="thumbnail-size-place" [id]="'thumbnail-size-' + name.place">{{ name.label | t }}</span>
+                  } @else {
+                    <span class="thumbnail-size-place-room" aria-hidden="true">{{ name.label | t }}</span>
+                  }
+                }
+              </span>
+              <div class="thumbnail-size-scale" [attr.data-size-place]="sizePlace.place">
+                <!-- displayWith: the size that a screen reader says on the thumb, which the sizes under the marks show. -->
+                <mat-slider class="thumbnail-size-slider"
+                            showTickMarks
+                            [min]="minSize"
+                            [max]="maxSize"
+                            [step]="sizeStep"
+                            [disabled]="selectedQuality !== 'high'"
+                            [displayWith]="sizeText">
+                  <input matSliderThumb
+                         [attr.aria-labelledby]="'thumbnail-size-label thumbnail-size-' + sizePlace.place"
+                         [ngModel]="selectedSizes[sizePlace.place]"
+                         (ngModelChange)="handleSizeChanged(sizePlace.place, $event)">
+                </mat-slider>
+                <!-- Some of the sizes, each under its mark. A screen reader has the size from the slider's own value. -->
+                <div class="thumbnail-size-ticks" aria-hidden="true">
+                  @for (tick of sizeTicks; track tick.size) {
+                    <span class="thumbnail-size-tick"
+                          [style.inset-inline-start.%]="tick.position">{{ 'settings.thumbnails.sizeTick' | t: { size: tick.size } }}</span>
+                  }
+                </div>
+              </div>
+            </div>
+          }
         </div>
         <ng-template cdkConnectedOverlay
                      [cdkConnectedOverlayOrigin]="sizeNoteOrigin"

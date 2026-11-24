@@ -245,10 +245,12 @@
       "highQuality": "Privilégier la qualité des vignettes",
       "highQualityDescription": "Les vignettes sont toujours créées à partir des fichiers photo.",
       "size": "Taille des vignettes",
+      "sidebarSize": "Barre latérale",
+      "mapSize": "Carte",
       "sizeValue": "{{size}} pixels sur le côté le plus long",
       "sizeTick": "{{size}} px",
       "aboutSize": "À propos de la taille des vignettes",
-      "sizeDescription": "Plus la taille est grande, plus les vignettes sont affichées en grand, mais plus leur création prend de temps et plus elles occupent de place dans le cache des vignettes.",
+      "sizeDescription": "La barre latérale et la carte affichent les vignettes chacune à sa taille, et l’application crée une seule vignette de chaque photo, à la plus grande des deux tailles. Plus la taille est grande, plus les vignettes sont affichées en grand, mais plus leur création prend de temps et plus elles occupent de place dans le cache des vignettes.",
       "fast": "Privilégier les performances de l’application",
       "fastDescription": "Lorsqu’un fichier, comme un JPEG ou un PNG, contient déjà une vignette, elle est affichée telle quelle. Une vignette de 400 pixels sur le côté le plus long n’est créée que pour un fichier qui n’en contient pas."
     },

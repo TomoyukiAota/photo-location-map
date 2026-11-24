@@ -245,10 +245,12 @@
       "highQuality": "Qualität der Miniaturen bevorzugen",
       "highQualityDescription": "Die Miniaturen werden immer aus den Fotodateien erstellt.",
       "size": "Größe der Miniaturen",
+      "sidebarSize": "Seitenleiste",
+      "mapSize": "Karte",
       "sizeValue": "{{size}} Pixel an der längeren Seite",
       "sizeTick": "{{size}} px",
       "aboutSize": "Zur Größe der Miniaturen",
-      "sizeDescription": "Je größer, desto größer werden die Miniaturen angezeigt, aber desto länger dauert ihr Erstellen und desto mehr Platz belegen sie im Cache für Miniaturen.",
+      "sizeDescription": "Die Seitenleiste und die Karte zeigen die Miniaturen jeweils in ihrer eigenen Größe, und die App erstellt von jedem Foto eine Miniatur in der größeren der beiden Größen. Je größer, desto größer werden die Miniaturen angezeigt, aber desto länger dauert ihr Erstellen und desto mehr Platz belegen sie im Cache für Miniaturen.",
       "fast": "Leistung der App bevorzugen",
       "fastDescription": "Enthält eine Datei, etwa ein JPEG oder PNG, bereits eine Miniatur, wird diese unverändert angezeigt. Eine Miniatur mit 400 Pixeln an der längeren Seite wird nur für eine Datei erstellt, die keine enthält."
     },

@@ -245,10 +245,12 @@
       "highQuality": "Prioritza la qualitat de les miniatures",
       "highQualityDescription": "Les miniatures sempre es generen a partir dels fitxers de les fotos.",
       "size": "Mida de les miniatures",
+      "sidebarSize": "Barra lateral",
+      "mapSize": "Mapa",
       "sizeValue": "{{size}} píxels al costat més llarg",
       "sizeTick": "{{size}} px",
       "aboutSize": "Sobre la mida de les miniatures",
-      "sizeDescription": "Com més gran és la mida, més grans es mostren les miniatures, però més triguen a generar-se i més espai ocupen a la memòria cau de miniatures.",
+      "sizeDescription": "La barra lateral i el mapa mostren les miniatures cadascun a la seva mida, i l’aplicació fa una sola miniatura de cada foto, a la més gran de les dues mides. Com més gran és la mida, més grans es mostren les miniatures, però més triguen a generar-se i més espai ocupen a la memòria cau de miniatures.",
       "fast": "Prioritza el rendiment de l’aplicació",
       "fastDescription": "Quan un fitxer, com ara un JPEG o un PNG, ja conté una miniatura, es mostra tal com és. Només es genera una miniatura de 400 píxels al costat més llarg per als fitxers que no en tenen."
     },

@@ -245,10 +245,12 @@
       "highQuality": "Prioriter kvaliteten på miniatyrbildene",
       "highQualityDescription": "Miniatyrbildene lages alltid fra bildefilene.",
       "size": "Størrelse på miniatyrbilder",
+      "sidebarSize": "Sidepanel",
+      "mapSize": "Kart",
       "sizeValue": "{{size}} piksler på den lengste siden",
       "sizeTick": "{{size}} px",
       "aboutSize": "Om størrelsen på miniatyrbilder",
-      "sizeDescription": "Jo større størrelse, desto større vises miniatyrbildene, men desto lengre tid tar det å lage dem, og desto mer plass tar de i bufferen for miniatyrbilder.",
+      "sizeDescription": "Sidepanelet og kartet viser miniatyrbildene i hver sin størrelse, og appen lager ett miniatyrbilde av hvert bilde i den største av de to størrelsene. Jo større størrelse, desto større vises miniatyrbildene, men desto lengre tid tar det å lage dem, og desto mer plass tar de i bufferen for miniatyrbilder.",
       "fast": "Prioriter appens ytelse",
       "fastDescription": "Når en fil, for eksempel en JPEG eller PNG, allerede inneholder et miniatyrbilde, vises det som det er. Et miniatyrbilde på 400 piksler på den lengste siden lages bare for en fil som ikke har et."
     },

@@ -923,11 +923,9 @@ test('welcome, about and every available settings tab keep their appearance', as
   await shot('settings-date', [page.locator('.date-time-example')]);
   await page.locator('app-settings-dialog mat-list-item').filter({ hasText: 'Thumbnails' }).click();
   await expect(page.locator('app-thumbnail-settings')).toBeVisible();
-  // TL;DR: The tab scrolls between the header and the footer where it is higher than the dialog leaves it, rather than
-  // the dialog as a whole: Cancel stays in view, at the tab's top and once the cache's Delete button is scrolled to.
-  // Details: In English, the tab ends at about the dialog's height since its texts were shortened, so that whether it
-  // scrolls, and whether the Delete button shows at its top, depends on how the platform sets text: on CI's runner the
-  // button showed, and here it did not. Japanese, with higher lines, scrolls.
+  // The tab scrolls between the header and the footer where it is higher than the dialog leaves it, as it is in every
+  // language with a slider for the sidebar's size and one for the map's, rather than the dialog as a whole: Cancel
+  // stays in view, at the tab's top and once the cache's Delete button is scrolled to.
   const settingsContent = page.locator('app-settings-dialog .settings-content');
   await expect(page.getByRole('button', { name: 'Cancel', exact: true })).toBeInViewport();
   await shot('settings-thumbnails', [page.locator('.location-value')]);
@@ -4276,55 +4274,70 @@ test('a JPEG or PNG photo without a thumbnail in its EXIF data shows one of 400 
   expect(await expectThumbnailsOfCache()).toEqual(files);
   expect(await Promise.all(files.map(async file => (await stat(file)).mtimeMs))).toEqual(madeAt);
 });
-test('the Thumbnails tab chooses the size of the thumbnails, which applies at once, with thumbnails made from the photos', async () => {
+test('the Thumbnails tab chooses the sizes of the thumbnails in the sidebar and on the map, which apply at once, with thumbnails made from the photos at the larger one', async () => {
   // A camera's JPEG holds a thumbnail of 160 x 120, which High quality does not show stretched: the app makes one from
-  // the photo at the size chosen, 400 pixels by default, which the tree shows in a box of half that, and makes it again
-  // at a new size, which it keeps in the same file of the cache. Fast shows the photo's own, at its own size.
+  // the photo at the larger of the two sizes chosen, 400 pixels by default, which the folder tree and the map's popup
+  // each show in a box of half their own size, and makes it again at a new larger size, which it keeps in the same file
+  // of the cache. Fast shows the photo's own, at its own size, in either place.
   const folder = path.join(profile, 'Thumbnail sizes');
   await mkdir(folder);
   await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'Kobe.JPG'));
   await dismissWelcome();
   await openFolderWithPicker(folder);
-  const thumbnail = page.locator('mat-tree-node').filter({ hasText: 'Kobe.JPG' }).locator('.photo-info-viewer-thumbnail');
-  /** The image that the thumbnail shows once it is loaded, and the width of its box, in CSS pixels. */
-  const shown = () => thumbnail.evaluate(image => image.complete && image.naturalWidth && !image.src.startsWith('data:')
+  const inTree = page.locator('mat-tree-node').filter({ hasText: 'Kobe.JPG' }).locator('.photo-info-viewer-thumbnail');
+  const inPopup = page.locator('.leaflet-popup .photo-info-viewer-thumbnail');
+  /** The image that a thumbnail shows once it is loaded, and the width of its box, in CSS pixels. */
+  const shown = thumbnail => thumbnail.evaluate(image => image.complete && image.naturalWidth && !image.src.startsWith('data:')
     ? { src: image.src, size: `${image.naturalWidth}x${image.naturalHeight}`,
       box: Math.round(image.closest('.photo-info-viewer-thumbnail-container').getBoundingClientRect().width) } : null);
   const userData = await app.evaluate(({ app }) => app.getPath('userData'));
   /** The log of the thumbnail's generation, beside the thumbnail in the cache, which the thumbnail's address leads to. */
   const logOfCache = async () => {
-    const file = decodeURIComponent((await shown()).src.slice('plm-file://local/'.length).replace(/\?size=\d+$/, ''));
+    const file = decodeURIComponent((await shown(inTree)).src.slice('plm-file://local/'.length).replace(/\?size=\d+$/, ''));
     return JSON.parse(await readFile(path.join(path.dirname(file), 'Kobe.JPG.log.json'), 'utf8'));
   };
 
-  await expect.poll(async () => (await shown())?.size, { timeout: 30000 }).toBe('400x300');
-  expect(await shown()).toEqual(expect.objectContaining({ src: expect.stringMatching(/Kobe\.JPG\.plm\.jpg\?size=400$/), box: 200 }));
+  await expect.poll(async () => (await shown(inTree))?.size, { timeout: 30000 }).toBe('400x300');
+  expect(await shown(inTree)).toEqual(expect.objectContaining({ src: expect.stringMatching(/Kobe\.JPG\.plm\.jpg\?size=400$/), box: 200 }));
+  // The popup of the photo, which the map opens as it shows one photo, stays open while the dialog is used.
+  await expect.poll(async () => (await shown(inPopup))?.box).toBe(200);
 
-  // 800 pixels on the slider under High quality: a box of 400, and the thumbnail made again at once.
+  // A slider for each place under High quality, at 400, which a screen reader reads with the heading and the place.
   await settings('Thumbnails');
   const tab = page.locator('app-thumbnail-settings');
-  const slider = tab.locator('.thumbnail-size-slider input');
-  await expect(slider).toBeEnabled();
-  await expect(slider).toHaveAttribute('aria-valuetext', '400 pixels on the longer side');
-  // The sizes under the slider, each centered under its mark, from the first to the last. Angular Material draws the
+  const sidebarSlider = tab.getByRole('slider', { name: 'Thumbnail size Sidebar', exact: true });
+  const mapSlider = tab.getByRole('slider', { name: 'Thumbnail size Map', exact: true });
+  for (const slider of [sidebarSlider, mapSlider]) {
+    await expect(slider).toBeEnabled();
+    await expect(slider).toHaveAttribute('aria-valuetext', '400 pixels on the longer side');
+  }
+  // The sizes under each slider, each centered under its mark, from the first to the last. Angular Material draws the
   // marks once it has measured the slider, a moment after the tab is shown.
-  await expect(tab.locator('.mdc-slider__tick-marks > *')).toHaveCount(7);
-  const ticks = await tab.locator('.thumbnail-size-scale').evaluate(scale => {
-    const center = element => { const box = element.getBoundingClientRect(); return box.left + box.width / 2; };
-    const range = document.createRange();
-    return [...scale.querySelectorAll('.thumbnail-size-tick')].map((tick, index) => {
-      range.selectNodeContents(tick);
-      return { text: tick.textContent, offset: Math.abs(center(range) - center(scale.querySelectorAll('.mdc-slider__tick-marks > *')[index * 2])) };
+  await expect(tab.locator('.mdc-slider__tick-marks > *')).toHaveCount(14);
+  for (const place of ['sidebar', 'map']) {
+    const ticks = await tab.locator(`.thumbnail-size-scale[data-size-place="${place}"]`).evaluate(scale => {
+      const center = element => { const box = element.getBoundingClientRect(); return box.left + box.width / 2; };
+      const range = document.createRange();
+      return [...scale.querySelectorAll('.thumbnail-size-tick')].map((tick, index) => {
+        range.selectNodeContents(tick);
+        return { text: tick.textContent, offset: Math.abs(center(range) - center(scale.querySelectorAll('.mdc-slider__tick-marks > *')[index * 2])) };
+      });
     });
-  });
-  expect(ticks.map(tick => tick.text)).toEqual(['400 px', '600 px', '800 px', '1000 px']);
-  expect(ticks.every(tick => tick.offset < 1)).toBe(true);
-  // What a larger size costs, in a note that the button after the size opens, and a click elsewhere or Escape closes.
+    expect(ticks.map(tick => tick.text)).toEqual(['400 px', '600 px', '800 px', '1000 px']);
+    expect(ticks.every(tick => tick.offset < 1)).toBe(true);
+  }
+  // The sliders start together, past the longer of the places' names.
+  const sliderStarts = await Promise.all([sidebarSlider, mapSlider].map(slider =>
+    slider.evaluate(input => Math.round(input.closest('mat-slider').getBoundingClientRect().left))));
+  expect(sliderStarts[1]).toBe(sliderStarts[0]);
+  // What the sizes do and cost, in a note that the button at the end of their heading opens, and a click elsewhere or
+  // Escape closes.
   const aboutSize = tab.getByRole('button', { name: 'About the thumbnail size', exact: true });
   const sizeNote = page.locator('.thumbnail-size-note');
   await expect(sizeNote).toHaveCount(0);
   await aboutSize.click();
-  await expect(sizeNote).toHaveText('A larger size shows the thumbnails larger, but they take longer to make and more space in the thumbnail cache.');
+  await expect(sizeNote).toHaveText('The sidebar and the map show the thumbnails at their own sizes, and the app makes one thumbnail of each photo, at '
+    + 'the larger of the two. A larger size shows the thumbnails larger, but they take longer to make and more space in the thumbnail cache.');
   await expect(aboutSize).toHaveAttribute('aria-expanded', 'true');
   await page.keyboard.press('Escape');
   await expect(sizeNote).toHaveCount(0);
@@ -4333,23 +4346,41 @@ test('the Thumbnails tab chooses the size of the thumbnails, which applies at on
   await expect(sizeNote).toBeVisible();
   await tab.locator('.setting-title').first().click();
   await expect(sizeNote).toHaveCount(0);
-  await slider.fill('800');
-  await expect(slider).toHaveAttribute('aria-valuetext', '800 pixels on the longer side');
+
+  // 800 pixels in the sidebar and 600 on the map: boxes of 400 and 300, and the thumbnail made again at once, at 800.
+  await sidebarSlider.fill('800');
+  await mapSlider.fill('600');
+  await expect(sidebarSlider).toHaveAttribute('aria-valuetext', '800 pixels on the longer side');
+  await expect(mapSlider).toHaveAttribute('aria-valuetext', '600 pixels on the longer side');
   await page.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(page.locator('app-settings-dialog')).toHaveCount(0);
-  await expect.poll(async () => (await shown())?.size, { timeout: 30000 }).toBe('800x600');
-  expect(await shown()).toEqual(expect.objectContaining({ src: expect.stringMatching(/Kobe\.JPG\.plm\.jpg\?size=800$/), box: 400 }));
-  await expect.poll(() => savedSetting(userData, ['UserSettings', 'ThumbnailSize'])).toBe('800');
+  await expect.poll(async () => (await shown(inTree))?.size, { timeout: 30000 }).toBe('800x600');
+  expect(await shown(inTree)).toEqual(expect.objectContaining({ src: expect.stringMatching(/Kobe\.JPG\.plm\.jpg\?size=800$/), box: 400 }));
+  await expect.poll(async () => (await shown(inPopup))?.size).toBe('800x600');
+  expect((await shown(inPopup)).box).toBe(300);
+  await expect.poll(() => savedSetting(userData, ['UserSettings', 'SidebarThumbnailSize'])).toBe('800');
+  await expect.poll(() => savedSetting(userData, ['UserSettings', 'MapThumbnailSize'])).toBe('600');
   await expect.poll(async () => (await logOfCache()).LongerSide).toBe(800);
 
-  // Fast: the photo's own thumbnail, in today's box, and the slider disabled.
+  // 400 on the map, smaller than the sidebar's: the popup's box follows at once, and the thumbnail stays the one of 800.
   await settings('Thumbnails');
-  await tab.getByRole('radio', { name: /^Prefer app performance/ }).check();
-  await expect(slider).toBeDisabled();
+  await mapSlider.fill('400');
   await page.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(page.locator('app-settings-dialog')).toHaveCount(0);
-  await expect.poll(async () => (await shown())?.size).toBe('160x120');
-  expect(await shown()).toEqual(expect.objectContaining({ src: expect.stringMatching(/^blob:/), box: 200 }));
+  await expect.poll(async () => (await shown(inPopup))?.box).toBe(200);
+  expect(await shown(inPopup)).toEqual(expect.objectContaining({ src: expect.stringMatching(/Kobe\.JPG\.plm\.jpg\?size=800$/), size: '800x600' }));
+  expect((await shown(inTree)).box).toBe(400);
+
+  // Fast: the photo's own thumbnail, in the box of 200 in either place, and both sliders disabled.
+  await settings('Thumbnails');
+  await tab.getByRole('radio', { name: /^Prefer app performance/ }).check();
+  await expect(sidebarSlider).toBeDisabled();
+  await expect(mapSlider).toBeDisabled();
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(page.locator('app-settings-dialog')).toHaveCount(0);
+  await expect.poll(async () => (await shown(inTree))?.size).toBe('160x120');
+  expect(await shown(inTree)).toEqual(expect.objectContaining({ src: expect.stringMatching(/^blob:/), box: 200 }));
+  await expect.poll(async () => (await shown(inPopup))?.box).toBe(200);
 });
 test('the thumbnail status bar offers the fast thumbnails, which are the thumbnails that the photos hold', async () => {
   // Where the main process makes the thumbnails of high quality, the status bar says that the fast ones can be
@@ -4398,7 +4429,7 @@ test('Fast shows the thumbnail that a HEIF photo holds, though the folder was op
   await dismissWelcome();
   const dialog = page.locator('app-settings-dialog');
   await settings('Thumbnails');
-  await dialog.locator('.thumbnail-size-slider input').fill('800');
+  await dialog.getByRole('slider', { name: 'Thumbnail size Sidebar', exact: true }).fill('800');
   await dialog.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(dialog).toHaveCount(0);
 

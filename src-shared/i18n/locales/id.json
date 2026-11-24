@@ -245,10 +245,12 @@
       "highQuality": "Utamakan kualitas gambar mini",
       "highQualityDescription": "Gambar mini selalu dibuat dari file foto.",
       "size": "Ukuran gambar mini",
+      "sidebarSize": "Bilah samping",
+      "mapSize": "Peta",
       "sizeValue": "{{size}} piksel pada sisi terpanjang",
       "sizeTick": "{{size}} px",
       "aboutSize": "Tentang ukuran gambar mini",
-      "sizeDescription": "Makin besar ukurannya, makin besar gambar mini ditampilkan, tetapi makin lama pembuatannya dan makin banyak ruang yang dipakai di cache gambar mini.",
+      "sizeDescription": "Bilah samping dan peta menampilkan gambar mini dengan ukurannya masing-masing, dan aplikasi membuat satu gambar mini untuk setiap foto dengan ukuran yang lebih besar dari keduanya. Makin besar ukurannya, makin besar gambar mini ditampilkan, tetapi makin lama pembuatannya dan makin banyak ruang yang dipakai di cache gambar mini.",
       "fast": "Utamakan kinerja aplikasi",
       "fastDescription": "Jika file seperti JPEG atau PNG sudah memiliki gambar mini, gambar mini itu ditampilkan apa adanya. Gambar mini berukuran 400 piksel pada sisi terpanjang hanya dibuat untuk file yang tidak memilikinya."
     },

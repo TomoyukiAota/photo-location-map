@@ -26,8 +26,10 @@ interface UserSettings {
   language: LanguageSetting;
   /** The quality of the thumbnails (thumbnail-quality.ts). */
   thumbnailQuality: ThumbnailQuality;
-  /** The longer side of the thumbnails at High quality, in pixels (thumbnail-size.ts). */
-  thumbnailSize: number;
+  /** The longer side of the thumbnails at High quality in the sidebar's folder tree, in pixels (thumbnail-size.ts). */
+  sidebarThumbnailSize: number;
+  /** The longer side of the thumbnails at High quality in the map's popups, in pixels (thumbnail-size.ts). */
+  mapThumbnailSize: number;
   /** The most rows of folders that the folder tree keeps at its top while it is scrolled (sticky-folder-rows.ts). */
   stickyFolderRowsMaximum: number;
   /** Which folders those rows leave out when there are more folders than rows (sticky-folder-rows.ts). */
@@ -40,7 +42,8 @@ export class CurrentUserSettings implements UserSettings {
               public clockSystemFormat: ClockSystemFormatType,
               public language: LanguageSetting,
               public thumbnailQuality: ThumbnailQuality,
-              public thumbnailSize: number,
+              public sidebarThumbnailSize: number,
+              public mapThumbnailSize: number,
               public stickyFolderRowsMaximum: number,
               public stickyFolderRowsLeftOut: StickyFolderRowsLeftOut) {}
 }
@@ -51,7 +54,8 @@ export class UserSettingsToBeSaved implements UserSettings {
   public clockSystemFormat: ClockSystemFormatType;
   public language: LanguageSetting;
   public thumbnailQuality: ThumbnailQuality;
-  public thumbnailSize: number;
+  public sidebarThumbnailSize: number;
+  public mapThumbnailSize: number;
   public stickyFolderRowsMaximum: number;
   public stickyFolderRowsLeftOut: StickyFolderRowsLeftOut;
 }
@@ -105,9 +109,9 @@ const loadThumbnailQuality: (() => ThumbnailQuality) = () => {
   return isThumbnailQuality(loaded) ? loaded : defaultThumbnailQuality;
 };
 
-/** The saved size of the thumbnails, or the default when none, or no valid one, is saved. */
-const loadThumbnailSize: (() => number) = () => {
-  const loaded: string = UserDataStorage.readOrDefault(UserDataStoragePath.UserSettings.ThumbnailSize, String(defaultThumbnailSize));
+/** The saved size of the thumbnails in a place, at `path`, or the default when none, or no valid one, is saved. */
+const loadThumbnailSize: ((path: ReadonlyArray<string>) => number) = path => {
+  const loaded: string = UserDataStorage.readOrDefault(path, String(defaultThumbnailSize));
   return thumbnailSizeOf(loaded) ?? defaultThumbnailSize;
 };
 
@@ -131,11 +135,12 @@ const loadUserSettings: (() => CurrentUserSettings) = () => {
   const clockSystemFormat = loadClockSystemFormat();
   const language = loadLanguage();
   const thumbnailQuality = loadThumbnailQuality();
-  const thumbnailSize = loadThumbnailSize();
+  const sidebarThumbnailSize = loadThumbnailSize(UserDataStoragePath.UserSettings.SidebarThumbnailSize);
+  const mapThumbnailSize = loadThumbnailSize(UserDataStoragePath.UserSettings.MapThumbnailSize);
   const stickyFolderRowsMaximum = loadStickyFolderRowsMaximum();
   const stickyFolderRowsLeftOut = loadStickyFolderRowsLeftOut();
   const userSettings = new CurrentUserSettings(showStatusBar, dateFormat, clockSystemFormat, language, thumbnailQuality,
-    thumbnailSize, stickyFolderRowsMaximum, stickyFolderRowsLeftOut);
+    sidebarThumbnailSize, mapThumbnailSize, stickyFolderRowsMaximum, stickyFolderRowsLeftOut);
   Logger.info(`Loaded user settings ${JSON.stringify(userSettings)}`);
   return userSettings;
 };
@@ -172,7 +177,8 @@ export const saveUserSetting: ((settings: UserSettingsToBeSaved) => Promise<void
     UserDataStorage.write(UserDataStoragePath.UserSettings.ClockSystemFormat, settings.clockSystemFormat),
     UserDataStorage.write(UserDataStoragePath.UserSettings.Language, settings.language),
     UserDataStorage.write(UserDataStoragePath.UserSettings.ThumbnailQuality, settings.thumbnailQuality),
-    UserDataStorage.write(UserDataStoragePath.UserSettings.ThumbnailSize, String(settings.thumbnailSize)),
+    UserDataStorage.write(UserDataStoragePath.UserSettings.SidebarThumbnailSize, String(settings.sidebarThumbnailSize)),
+    UserDataStorage.write(UserDataStoragePath.UserSettings.MapThumbnailSize, String(settings.mapThumbnailSize)),
     UserDataStorage.write(UserDataStoragePath.UserSettings.StickyFolderRowsMaximum, String(settings.stickyFolderRowsMaximum)),
     UserDataStorage.write(UserDataStoragePath.UserSettings.StickyFolderRowsLeftOut, settings.stickyFolderRowsLeftOut),
   ]);

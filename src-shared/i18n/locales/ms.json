@@ -245,10 +245,12 @@
       "highQuality": "Utamakan kualiti lakaran kecil",
       "highQualityDescription": "Lakaran kecil sentiasa dijana daripada fail foto.",
       "size": "Saiz lakaran kecil",
+      "sidebarSize": "Bar sisi",
+      "mapSize": "Peta",
       "sizeValue": "{{size}} piksel pada sisi yang lebih panjang",
       "sizeTick": "{{size}} px",
       "aboutSize": "Perihal saiz lakaran kecil",
-      "sizeDescription": "Lebih besar saiznya, lebih besar lakaran kecil dipaparkan, tetapi lebih lama penjanaannya dan lebih banyak ruang yang digunakan dalam cache lakaran kecil.",
+      "sizeDescription": "Bar sisi dan peta memaparkan lakaran kecil pada saiz masing-masing, dan aplikasi menjana satu lakaran kecil bagi setiap foto, pada saiz yang lebih besar antara keduanya. Lebih besar saiznya, lebih besar lakaran kecil dipaparkan, tetapi lebih lama penjanaannya dan lebih banyak ruang yang digunakan dalam cache lakaran kecil.",
       "fast": "Utamakan prestasi aplikasi",
       "fastDescription": "Jika fail seperti JPEG atau PNG sudah mempunyai lakaran kecil, lakaran kecil itu dipaparkan seadanya. Lakaran kecil bersaiz 400 piksel pada sisi yang lebih panjang hanya dijana untuk fail yang tidak mempunyainya."
     },

@@ -245,10 +245,12 @@
       "highQuality": "Prefer thumbnail quality",
       "highQualityDescription": "Thumbnails are always generated from the photo files.",
       "size": "Thumbnail size",
+      "sidebarSize": "Sidebar",
+      "mapSize": "Map",
       "sizeValue": "{{size}} pixels on the longer side",
       "sizeTick": "{{size}} px",
       "aboutSize": "About the thumbnail size",
-      "sizeDescription": "A larger size shows the thumbnails larger, but they take longer to make and more space in the thumbnail cache.",
+      "sizeDescription": "The sidebar and the map show the thumbnails at their own sizes, and the app makes one thumbnail of each photo, at the larger of the two. A larger size shows the thumbnails larger, but they take longer to make and more space in the thumbnail cache.",
       "fast": "Prefer app performance",
       "fastDescription": "When a file such as a JPEG or PNG already holds a thumbnail, it is shown as it is. A thumbnail of 400 pixels on the longer side is generated only for a file that holds none."
     },

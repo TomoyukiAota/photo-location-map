@@ -9,7 +9,7 @@
 // with a folder of photos (in a window of 1200x800 and of 800x600), a photo's popup with its menu and the menu's submenus, the tree's menu, the rows that the tree keeps at its top with the menu of one of them, the Sort menu and its info dialog, the
 // chart's menu, its message for a duration that it cannot show and its button for the photos within a zoom, the date of
 // the map's layer of a past date and while its dates load, a region on the map, the tabs of the Settings dialog with the choices of the clock's
-// field and the note on the thumbnails' size, the question before a restart, the About box, the status bar while the thumbnails of HEIF files are made, the
+// field, the note on the thumbnails' sizes and the Thumbnails tab in a window of 800x600, the question before a restart, the About box, the status bar while the thumbnails of HEIF files are made, the
 // dialog of the thumbnails that failed, the dialog of a folder without location data, and the dialog of the search for
 // faces, while it looks and when it found none.
 //
@@ -425,7 +425,7 @@ for (const code of codes) {
         await tabs.nth(index).click();
         await screen(`settings-${name}`, dialog, dialog);
         if (name === 'thumbnails') {
-          // The note on what a larger size costs, which the button beside the slider opens over the dialog.
+          // The note on the sizes, which the button at the end of their heading opens over the dialog.
           await page.locator('.thumbnail-size-info-button').click();
           await page.waitForSelector('.thumbnail-size-note');
           await screen('settings-thumbnails-note', '.thumbnail-size-note', null, dialog);
@@ -434,6 +434,12 @@ for (const code of codes) {
           // The cache under the quality, which the tab scrolls to (settings-dialog.component.scss).
           await page.locator('app-cache-settings .delete-button').scrollIntoViewIfNeeded();
           await screen('settings-thumbnails-cache', dialog, dialog);
+          // The sizes in a small window, where a place's name and its slider are side by side in some languages, and
+          // the slider is under the name in the others.
+          await resize(800, 600);
+          await page.locator('.thumbnail-size').scrollIntoViewIfNeeded();
+          await screen('settings-thumbnails-small', dialog, dialog);
+          await resize(1200, 800);
         }
         if (name !== 'datetime') continue;
         // The choices of the clock's field, then one of them, after which the dialog says that it restarts.

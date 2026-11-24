@@ -16,9 +16,11 @@ import { RouterOutlet } from '@angular/router';
   styleUrls: ['./app.component.scss'],
   imports: [DropHintComponent, RouterOutlet],
   // The drag events of the whole window, over a dialog too: a folder or a file dropped on it opens (DropToOpenService).
-  // The box of a thumbnail, which the viewer of every photo below reads in its styles (ThumbnailSizeService).
+  // The boxes of a thumbnail in the sidebar and in the map's popups, which the viewer of every photo below reads in its
+  // styles by its place (ThumbnailSizeService).
   host: {
-    '[style.--plm-thumbnail-box]': 'thumbnailSizeService.box()',
+    '[style.--plm-thumbnail-box-sidebar]': 'thumbnailSizeService.sidebarBox()',
+    '[style.--plm-thumbnail-box-map]': 'thumbnailSizeService.mapBox()',
     '(window:dragstart)': 'dropToOpenService.dragStart()',
     '(window:dragend)': 'dropToOpenService.dragEnd()',
     '(window:dragenter)': 'dropToOpenService.dragEnter($event)',

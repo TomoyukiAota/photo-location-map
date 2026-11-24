@@ -245,10 +245,12 @@
       "highQuality": "Küçük resim kalitesine öncelik ver",
       "highQualityDescription": "Küçük resimler her zaman fotoğraf dosyalarından oluşturulur.",
       "size": "Küçük resim boyutu",
+      "sidebarSize": "Kenar çubuğu",
+      "mapSize": "Harita",
       "sizeValue": "uzun kenarı {{size}} piksel",
       "sizeTick": "{{size}} px",
       "aboutSize": "Küçük resim boyutu hakkında",
-      "sizeDescription": "Boyut büyüdükçe küçük resimler daha büyük gösterilir, ancak oluşturulmaları daha uzun sürer ve küçük resim önbelleğinde daha fazla yer kaplarlar.",
+      "sizeDescription": "Kenar çubuğu ve harita küçük resimleri kendi boyutlarında gösterir; uygulama her fotoğraftan, iki boyuttan büyük olanında tek bir küçük resim oluşturur. Boyut büyüdükçe küçük resimler daha büyük gösterilir, ancak oluşturulmaları daha uzun sürer ve küçük resim önbelleğinde daha fazla yer kaplarlar.",
       "fast": "Uygulama performansına öncelik ver",
       "fastDescription": "JPEG veya PNG gibi bir dosya zaten bir küçük resim içeriyorsa bu küçük resim olduğu gibi gösterilir. Uzun kenarı 400 piksel olan bir küçük resim yalnızca küçük resmi olmayan bir dosya için oluşturulur."
     },

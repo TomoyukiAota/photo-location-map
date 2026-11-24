@@ -245,10 +245,12 @@
       "highQuality": "Eelista pisipiltide kvaliteeti",
       "highQualityDescription": "Pisipildid luuakse alati fotofailidest.",
       "size": "Pisipiltide suurus",
+      "sidebarSize": "Külgriba",
+      "mapSize": "Kaart",
       "sizeValue": "pikem külg {{size}} pikslit",
       "sizeTick": "{{size}} px",
       "aboutSize": "Pisipiltide suurusest",
-      "sizeDescription": "Mida suurem suurus, seda suuremana pisipildid kuvatakse, kuid seda kauem võtab nende loomine aega ja seda rohkem ruumi võtavad need pisipiltide vahemälus.",
+      "sizeDescription": "Külgriba ja kaart kuvavad pisipilte kumbki oma suuruses ning rakendus loob igast fotost ühe pisipildi kahest suurusest suuremas. Mida suurem suurus, seda suuremana pisipildid kuvatakse, kuid seda kauem võtab nende loomine aega ja seda rohkem ruumi võtavad need pisipiltide vahemälus.",
       "fast": "Eelista rakenduse jõudlust",
       "fastDescription": "Kui failis, näiteks JPEG- või PNG-failis, on juba pisipilt, kuvatakse see muutmata kujul. Pisipilt, mille pikem külg on 400 pikslit, luuakse ainult failile, milles seda pole."
     },

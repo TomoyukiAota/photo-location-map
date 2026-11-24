@@ -2,6 +2,7 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSliderHarness } from '@angular/material/slider/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { ThumbnailSizePlace, thumbnailSizePlaces } from '../../../../src-shared/user-settings/thumbnail-size';
 import { currentUserSettings } from '../../../../src-shared/user-settings/user-settings';
 import { SettingsChangedService } from '../service/settings-changed.service';
 import { ThumbnailSettingsChangedParameter } from './thumbnail-settings-changed-parameter';
@@ -12,20 +13,19 @@ describe('ThumbnailSettingsComponent', () => {
   const element = () => fixture.nativeElement as HTMLElement;
   const choices = () => Array.from(element().querySelectorAll<HTMLElement>('mat-radio-button'));
   const sizeBlock = () => element().querySelector<HTMLElement>('.thumbnail-size');
-  const slider = () => TestbedHarnessEnvironment.loader(fixture).getHarness(MatSliderHarness);
-  let quality: typeof currentUserSettings.thumbnailQuality;
-  let size: number;
+  /** The scale of a place's size: its slider, with some of the sizes under it. */
+  const scale = (place: ThumbnailSizePlace) => sizeBlock().querySelector<HTMLElement>(`.thumbnail-size-scale[data-size-place="${place}"]`);
+  /** The sliders of the sizes, the sidebar's and then the map's. */
+  const sliders = () => TestbedHarnessEnvironment.loader(fixture).getAllHarnesses(MatSliderHarness);
+  let saved: Pick<typeof currentUserSettings, 'thumbnailQuality' | 'sidebarThumbnailSize' | 'mapThumbnailSize'>;
 
   beforeEach(async () => {
-    quality = currentUserSettings.thumbnailQuality;
-    size = currentUserSettings.thumbnailSize;
+    const { thumbnailQuality, sidebarThumbnailSize, mapThumbnailSize } = currentUserSettings;
+    saved = { thumbnailQuality, sidebarThumbnailSize, mapThumbnailSize };
     await TestBed.configureTestingModule({ imports: [ThumbnailSettingsComponent] }).compileComponents();
   });
 
-  afterEach(() => {
-    currentUserSettings.thumbnailQuality = quality;
-    currentUserSettings.thumbnailSize = size;
-  });
+  afterEach(() => Object.assign(currentUserSettings, saved));
 
   async function create(): Promise<void> {
     fixture = TestBed.createComponent(ThumbnailSettingsComponent);
@@ -50,41 +50,53 @@ describe('ThumbnailSettingsComponent', () => {
     expect(choices()[1].querySelector('input').checked).toBe(false);
   });
 
-  it('tells the dialog of the quality chosen, with the size, which the dialog saves', async () => {
-    currentUserSettings.thumbnailQuality = 'high';
-    currentUserSettings.thumbnailSize = 600;
+  it('tells the dialog of the quality chosen, with the sizes, which the dialog saves', async () => {
+    Object.assign(currentUserSettings, { thumbnailQuality: 'high', sidebarThumbnailSize: 600, mapThumbnailSize: 800 });
     await create();
     const changes = changesTold();
 
     choices()[1].querySelector('input').click();
     await fixture.whenStable();
 
-    expect(changes).toEqual([{ thumbnailQuality: 'fast', thumbnailSize: 600 }]);
+    expect(changes).toEqual([{ thumbnailQuality: 'fast', sidebarThumbnailSize: 600, mapThumbnailSize: 800 }]);
     expect(currentUserSettings.thumbnailQuality).toBe('high');
   });
 
-  it('has the slider of the size right under High quality, from 400 to 1,000 pixels in steps of 100, at the size in use', async () => {
-    currentUserSettings.thumbnailQuality = 'high';
-    currentUserSettings.thumbnailSize = 700;
+  it('has a slider for the sidebar\'s size and one for the map\'s right under High quality, from 400 to 1,000 pixels in steps of 100, at the sizes in use', async () => {
+    Object.assign(currentUserSettings, { thumbnailQuality: 'high', sidebarThumbnailSize: 500, mapThumbnailSize: 700 });
     await create();
 
     expect(choices()[0].nextElementSibling).toBe(sizeBlock());
     expect(sizeBlock().querySelector('.thumbnail-size-label').textContent).toBe('Thumbnail size');
-    expect(sizeBlock().querySelector('input').getAttribute('aria-valuetext')).toBe('700 pixels on the longer side');
-    const harness = await slider();
-    expect([await harness.getMinValue(), await harness.getMaxValue(), await harness.getStep()]).toEqual([400, 1000, 100]);
-    expect(await (await harness.getEndThumb()).getValue()).toBe(700);
-    expect(await harness.isDisabled()).toBe(false);
+    expect(Array.from(sizeBlock().querySelectorAll('.thumbnail-size-place'), place => place.textContent)).toEqual(['Sidebar', 'Map']);
+    // A screen reader reads each slider as the heading of the sizes and its place's name, and its size as a sentence.
+    const readAs = (place: ThumbnailSizePlace) => {
+      const input = scale(place).querySelector('input');
+      const names = input.getAttribute('aria-labelledby').split(' ').map(id => element().querySelector(`#${id}`).textContent);
+      return [...names, input.getAttribute('aria-valuetext')];
+    };
+    expect(readAs('sidebar')).toEqual(['Thumbnail size', 'Sidebar', '500 pixels on the longer side']);
+    expect(readAs('map')).toEqual(['Thumbnail size', 'Map', '700 pixels on the longer side']);
+
+    const harnesses = await sliders();
+    expect(harnesses.length).toBe(2);
+    for (const harness of harnesses) {
+      expect([await harness.getMinValue(), await harness.getMaxValue(), await harness.getStep()]).toEqual([400, 1000, 100]);
+      expect(await harness.isDisabled()).toBe(false);
+    }
+    expect(await Promise.all(harnesses.map(async harness => (await harness.getEndThumb()).getValue()))).toEqual([500, 700]);
   });
 
-  it('writes the first size, the last, and every other one between them under the slider', async () => {
+  it('writes the first size, the last, and every other one between them under each slider', async () => {
     await create();
-    const ticks = Array.from(sizeBlock().querySelectorAll('.thumbnail-size-scale .thumbnail-size-tick'), tick => tick.textContent);
-    expect(ticks).toEqual(['400 px', '600 px', '800 px', '1000 px']);
-    expect(sizeBlock().querySelector('.thumbnail-size-ticks').getAttribute('aria-hidden')).toBe('true');
+    for (const place of thumbnailSizePlaces) {
+      const ticks = Array.from(scale(place).querySelectorAll('.thumbnail-size-tick'), tick => tick.textContent);
+      expect(ticks).toEqual(['400 px', '600 px', '800 px', '1000 px']);
+      expect(scale(place).querySelector('.thumbnail-size-ticks').getAttribute('aria-hidden')).toBe('true');
+    }
   });
 
-  it('opens the note on what a larger size costs with the button after the slider, which closes it as a click elsewhere and Escape do', async () => {
+  it('opens the note on the sizes with the button at the end of their heading, which closes it as a click elsewhere and Escape do', async () => {
     currentUserSettings.thumbnailQuality = 'high';
     await create();
     const button = sizeBlock().querySelector<HTMLButtonElement>('.thumbnail-size-info-button');
@@ -93,13 +105,15 @@ describe('ThumbnailSettingsComponent', () => {
       target.click();
       await fixture.whenStable();
     };
-    expect(button.previousElementSibling.classList).toContain('thumbnail-size-scale');
+    expect(button.parentElement.classList).toContain('thumbnail-size-heading');
+    expect(button.previousElementSibling.classList).toContain('thumbnail-size-label');
     expect([button.title, button.getAttribute('aria-label')]).toEqual(['About the thumbnail size', 'About the thumbnail size']);
     expect(button.getAttribute('aria-expanded')).toBe('false');
     expect(note()).toBeNull();
 
     await click(button);
-    expect(note().textContent).toBe('A larger size shows the thumbnails larger, but they take longer to make and more space in the thumbnail cache.');
+    expect(note().textContent).toBe('The sidebar and the map show the thumbnails at their own sizes, and the app makes one thumbnail of each photo, at '
+      + 'the larger of the two. A larger size shows the thumbnails larger, but they take longer to make and more space in the thumbnail cache.');
     expect(button.getAttribute('aria-expanded')).toBe('true');
     expect(button.getAttribute('aria-controls')).toBe(note().id);
     // A click on the note leaves it open.
@@ -120,34 +134,38 @@ describe('ThumbnailSettingsComponent', () => {
     expect(note()).toBeNull();
   });
 
-  it('keeps the button of the note enabled while Fast is chosen, when the size\'s texts are faint', async () => {
+  it('keeps the button of the note enabled while Fast is chosen, when the sizes\' texts are faint', async () => {
     currentUserSettings.thumbnailQuality = 'fast';
     await create();
     expect(sizeBlock().querySelector<HTMLButtonElement>('.thumbnail-size-info-button').disabled).toBe(false);
   });
 
-  it('tells the dialog of the size chosen with the slider, and shows it', async () => {
-    currentUserSettings.thumbnailQuality = 'high';
-    currentUserSettings.thumbnailSize = 400;
+  it('tells the dialog of the size chosen with each slider, and shows it', async () => {
+    Object.assign(currentUserSettings, { thumbnailQuality: 'high', sidebarThumbnailSize: 400, mapThumbnailSize: 400 });
     await create();
     const changes = changesTold();
+    const [sidebar, map] = await sliders();
 
-    await (await (await slider()).getEndThumb()).setValue(900);
+    await (await sidebar.getEndThumb()).setValue(600);
     await fixture.whenStable();
+    expect(changes.at(-1)).toEqual({ thumbnailQuality: 'high', sidebarThumbnailSize: 600, mapThumbnailSize: 400 });
 
-    expect(changes.at(-1)).toEqual({ thumbnailQuality: 'high', thumbnailSize: 900 });
-    expect(sizeBlock().querySelector('input').getAttribute('aria-valuetext')).toBe('900 pixels on the longer side');
-    expect(currentUserSettings.thumbnailSize).toBe(400);
+    await (await map.getEndThumb()).setValue(900);
+    await fixture.whenStable();
+    expect(changes.at(-1)).toEqual({ thumbnailQuality: 'high', sidebarThumbnailSize: 600, mapThumbnailSize: 900 });
+
+    expect(scale('sidebar').querySelector('input').getAttribute('aria-valuetext')).toBe('600 pixels on the longer side');
+    expect(scale('map').querySelector('input').getAttribute('aria-valuetext')).toBe('900 pixels on the longer side');
+    expect([currentUserSettings.sidebarThumbnailSize, currentUserSettings.mapThumbnailSize]).toEqual([400, 400]);
   });
 
-  it('keeps the quality chosen when the slider\'s input fires its change event, which bubbles to the radio group', async () => {
-    currentUserSettings.thumbnailQuality = 'high';
-    currentUserSettings.thumbnailSize = 400;
+  it('keeps the quality chosen when a slider\'s input fires its change event, which bubbles to the radio group', async () => {
+    Object.assign(currentUserSettings, { thumbnailQuality: 'high', sidebarThumbnailSize: 400, mapThumbnailSize: 400 });
     await create();
     const changes = changesTold();
 
     // As a pointer or Playwright's fill() leaves it: an input event, then a change event that bubbles.
-    const input = sizeBlock().querySelector<HTMLInputElement>('input');
+    const input = scale('map').querySelector<HTMLInputElement>('input');
     input.value = '800';
     input.dispatchEvent(new Event('input', { bubbles: true }));
     input.dispatchEvent(new Event('change', { bubbles: true }));
@@ -155,18 +173,19 @@ describe('ThumbnailSettingsComponent', () => {
 
     expect(changes.length).toBeGreaterThan(0);
     expect(changes.every(change => change.thumbnailQuality === 'high')).toBe(true);
-    expect(changes.at(-1)).toEqual({ thumbnailQuality: 'high', thumbnailSize: 800 });
+    expect(changes.at(-1)).toEqual({ thumbnailQuality: 'high', sidebarThumbnailSize: 400, mapThumbnailSize: 800 });
   });
 
-  it('disables the slider while Fast is chosen, which shows the thumbnails that the photos hold', async () => {
+  it('disables both sliders while Fast is chosen, which shows the thumbnails that the photos hold', async () => {
     currentUserSettings.thumbnailQuality = 'fast';
     await create();
-    expect(await (await slider()).isDisabled()).toBe(true);
+    const disabled = async () => Promise.all((await sliders()).map(harness => harness.isDisabled()));
+    expect(await disabled()).toEqual([true, true]);
     expect(sizeBlock().classList).toContain('thumbnail-size-disabled');
 
     choices()[0].querySelector('input').click();
     await fixture.whenStable();
-    expect(await (await slider()).isDisabled()).toBe(false);
+    expect(await disabled()).toEqual([false, false]);
     expect(sizeBlock().classList).not.toContain('thumbnail-size-disabled');
   });
 
