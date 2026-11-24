@@ -24,7 +24,7 @@ export interface PaneSplitOptions {
   limits: KeptPaneLimits;
   /**
    * When the kept pane is shown at its size again: at each change of the parent's size, by default, or at a resize of
-   * the window only.
+   * the window only, and once a parent that was not shown is shown again.
    */
   showSizeAt?: 'parent-resize' | 'window-resize';
   /** At the end of a drag that moved the gutter: the panes' sizes then, in pixels and in the DOM's order. */
@@ -75,7 +75,20 @@ export class PaneSplit {
     if (options.showSizeAt === 'window-resize') {
       const listener = () => this.showKeptSize();
       window.addEventListener('resize', listener);
-      this.stopWatching = () => window.removeEventListener('resize', listener);
+      // A parent that is shown again, as the sidebar is once the map leaves full screen, may have another size than when
+      // it was hidden: the window may have been resized meanwhile, which showed nothing.
+      let shown = this.parentSize() > 0;
+      const resizeObserver = new ResizeObserver(() => {
+        const wasShown = shown;
+        shown = this.parentSize() > 0;
+        if (shown && !wasShown)
+          this.showKeptSize();
+      });
+      resizeObserver.observe(this.parent);
+      this.stopWatching = () => {
+        window.removeEventListener('resize', listener);
+        resizeObserver.disconnect();
+      };
     } else {
       // At each change of the parent's size: the window's, or the room that a status bar or the sidebar leaves it.
       const resizeObserver = new ResizeObserver(() => this.showKeptSize());
@@ -97,7 +110,7 @@ export class PaneSplit {
 
   /** Shows the kept pane at its size in the parent's room now. Without a size, the shares follow the parent by themselves. */
   private showKeptSize(): void {
-    // A parent that is not shown has no room: the pane is shown at its size at the next change, once it is.
+    // A parent that is not shown has no room: the pane is shown at its size once the parent is.
     if (this.keptSize === undefined || this.parentSize() === 0)
       return;
     this.setShares(this.sharesNow());

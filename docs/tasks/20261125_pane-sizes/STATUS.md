@@ -178,8 +178,9 @@ on a gutter to put back the default.
     200 px left to the map's side.
   - The chart: 30% until dragged; a dragged height kept, and saved in `HomeLayout/ChartHeight`; 200 px left to the
     map at a launch.
-  - The sidebar's upper pane: 66 px, kept at a resize of the window only, as before. Between two resizes, it stays a
-    share of the sidebar, so a status bar that appears makes it 2 or 3 px shorter. Keeping it at every change of the
+  - The sidebar's upper pane: 66 px, kept at a resize of the window only, as before, and once the sidebar is shown
+    again after it was hidden (as the map's full screen hides it), since the window may have been resized meanwhile.
+    Between two resizes, it stays a share of the sidebar, so a status bar that appears makes it 2 or 3 px shorter. Keeping it at every change of the
     sidebar's height would move the folder tree in the e2e screenshots where a status bar came or went: a change of
     its own, which this one leaves out. It is not saved, as proposed.
   - Each gutter is now an element of the home view's template, which Split.js takes through its `gutter` option, with
@@ -195,7 +196,7 @@ on a gutter to put back the default.
 - `test/src/app/home/pane-sizes/pane-split.spec.em.renderer.ts` (Electron-Mocha, a page with a real layout): the
   default shares, a saved size through parent resizes, the clamps and the fallback to the default shares, a drag and a
   click, a reversed row, `reset()`, the other pane's least size after a drag and at the next launch, a hidden parent,
-  and the upper pane's window-only mode. Without the reversal, the reversed row's case fails.
+  and the upper pane's window-only mode, with a parent shown again. Without the reversal, the reversed row's case fails.
 - `renderer-storage-requests.spec.em.main.ts`: the renderer can write the two paths.
 - e2e:
   - "folder picker loads real photo data, markers, tree selection and chart": the dragged sidebar comes back at its

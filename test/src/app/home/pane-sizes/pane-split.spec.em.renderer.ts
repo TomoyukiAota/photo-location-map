@@ -212,7 +212,7 @@ describe('PaneSplit', () => {
     assert.strictEqual(heightOf(fixture.panes[0]), 66);
   });
 
-  it('shows the size again at a resize of the window only, where it is asked to', async () => {
+  it('shows the size again at a resize of the window, or once the parent is shown again, where it is asked to', async () => {
     const fixture = makeParent('vertical', 300, 600);
     track(new PaneSplit({
       panes: fixture.panes, gutter: fixture.gutter, direction: 'vertical', gutterSize: 4, minSize: [0, 0],
@@ -224,6 +224,15 @@ describe('PaneSplit', () => {
     await nextFrames();
     assert.strictEqual(heightOf(fixture.panes[0]), 63);
     window.dispatchEvent(new Event('resize'));
+    assert.strictEqual(heightOf(fixture.panes[0]), 66);
+    // A parent that is hidden, and resized meanwhile, as the sidebar while the map is in full screen: the size again
+    // once it is shown.
+    fixture.parent.style.display = 'none';
+    await nextFrames();
+    window.dispatchEvent(new Event('resize'));
+    fixture.parent.style.height = '400px';
+    fixture.parent.style.display = '';
+    await nextFrames();
     assert.strictEqual(heightOf(fixture.panes[0]), 66);
   });
 });
