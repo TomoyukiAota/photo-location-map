@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "Kvalita miniatur a výkon aplikace",
       "highQuality": "Upřednostnit kvalitu miniatur",
-      "highQualityDescription": "Miniatury se vytvářejí ze souborů fotek. Do té doby se zobrazuje miniatura, kterou soubor fotky už obsahuje, pokud nějakou má.",
+      "highQualityDescription": "Miniatury se vždy vytvářejí ze souborů fotek.",
       "size": "Velikost miniatur",
       "sizeValue": "{{size}} pixelů na delší straně",
       "sizeTick": "{{size}} px",

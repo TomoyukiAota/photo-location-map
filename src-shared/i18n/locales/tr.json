@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "Küçük resim kalitesi ve uygulama performansı",
       "highQuality": "Küçük resim kalitesine öncelik ver",
-      "highQualityDescription": "Küçük resimler fotoğraf dosyalarından oluşturulur. O zamana kadar, varsa fotoğraf dosyasının zaten içerdiği küçük resim gösterilir.",
+      "highQualityDescription": "Küçük resimler her zaman fotoğraf dosyalarından oluşturulur.",
       "size": "Küçük resim boyutu",
       "sizeValue": "uzun kenarı {{size}} piksel",
       "sizeTick": "{{size}} px",

@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "A bélyegképek minősége és az alkalmazás teljesítménye",
       "highQuality": "A bélyegképek minősége az első",
-      "highQualityDescription": "A bélyegképek a fotófájlokból készülnek. Addig a fotófájlban már meglévő bélyegkép látható, ha van ilyen.",
+      "highQualityDescription": "A bélyegképek mindig a fotófájlokból készülnek.",
       "size": "Bélyegképek mérete",
       "sizeValue": "{{size}} képpont a hosszabbik oldalon",
       "sizeTick": "{{size}} px",

@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "Kualiti lakaran kecil dan prestasi aplikasi",
       "highQuality": "Utamakan kualiti lakaran kecil",
-      "highQualityDescription": "Lakaran kecil dijana daripada fail foto. Sehingga itu, lakaran kecil yang sedia ada dalam fail foto dipaparkan, jika ada.",
+      "highQualityDescription": "Lakaran kecil sentiasa dijana daripada fail foto.",
       "size": "Saiz lakaran kecil",
       "sizeValue": "{{size}} piksel pada sisi yang lebih panjang",
       "sizeTick": "{{size}} px",

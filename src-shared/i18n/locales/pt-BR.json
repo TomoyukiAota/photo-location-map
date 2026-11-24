@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "Qualidade das miniaturas e desempenho do aplicativo",
       "highQuality": "Priorizar a qualidade das miniaturas",
-      "highQualityDescription": "As miniaturas são geradas a partir dos arquivos de foto. Até lá, é exibida a miniatura que o arquivo de foto já contém, se houver.",
+      "highQualityDescription": "As miniaturas são sempre geradas a partir dos arquivos de foto.",
       "size": "Tamanho das miniaturas",
       "sizeValue": "{{size}} pixels no lado maior",
       "sizeTick": "{{size}} px",

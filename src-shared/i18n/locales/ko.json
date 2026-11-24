@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "썸네일 화질과 앱 성능",
       "highQuality": "썸네일 화질 우선",
-      "highQualityDescription": "사진 파일에서 썸네일을 생성합니다. 생성될 때까지는 사진 파일에 원래 들어 있는 썸네일이 있으면 그것을 표시합니다.",
+      "highQualityDescription": "항상 사진 파일에서 썸네일을 생성합니다.",
       "size": "썸네일 크기",
       "sizeValue": "긴 변 {{size}}픽셀",
       "sizeTick": "{{size}} px",

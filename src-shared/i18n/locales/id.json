@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "Kualitas gambar mini dan kinerja aplikasi",
       "highQuality": "Utamakan kualitas gambar mini",
-      "highQualityDescription": "Gambar mini dibuat dari file foto. Sampai saat itu, gambar mini yang sudah ada di file foto akan ditampilkan, jika ada.",
+      "highQualityDescription": "Gambar mini selalu dibuat dari file foto.",
       "size": "Ukuran gambar mini",
       "sizeValue": "{{size}} piksel pada sisi terpanjang",
       "sizeTick": "{{size}} px",

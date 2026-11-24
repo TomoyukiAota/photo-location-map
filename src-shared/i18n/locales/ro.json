@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "Calitatea miniaturilor și performanța aplicației",
       "highQuality": "Prioritate calității miniaturilor",
-      "highQualityDescription": "Miniaturile sunt create din fișierele fotografiilor. Până atunci se afișează miniatura pe care fișierul fotografiei o conține deja, dacă există.",
+      "highQualityDescription": "Miniaturile sunt create întotdeauna din fișierele fotografiilor.",
       "size": "Dimensiunea miniaturilor",
       "sizeValue": "{{size}} de pixeli pe latura mai lungă",
       "sizeTick": "{{size}} px",

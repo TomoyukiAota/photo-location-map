@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "Kwaliteit van miniaturen en prestaties van de app",
       "highQuality": "Voorrang aan de kwaliteit van miniaturen",
-      "highQualityDescription": "Miniaturen worden aangemaakt uit de fotobestanden. Tot dan wordt de miniatuur getoond die een fotobestand al bevat, als die er is.",
+      "highQualityDescription": "Miniaturen worden altijd aangemaakt uit de fotobestanden.",
       "size": "Formaat van miniaturen",
       "sizeValue": "{{size}} pixels aan de langste zijde",
       "sizeTick": "{{size}} px",

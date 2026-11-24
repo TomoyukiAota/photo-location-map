@@ -302,7 +302,7 @@ Once the slider was merged, the owner asked for these, from screenshots of the t
   | The part's title | サムネイル | サムネイルの画質とアプリのパフォーマンス |
   | The sentence above the choices | サムネイルの画質と速さのどちらを優先するかを選んでください。 | (none) |
   | High quality | 高画質 | サムネイルの画質を優先 |
-  | What it does | 写真全体から、下で選んだ大きさで生成します。… | 写真ファイルからサムネイルを生成します。生成されるまでは、写真ファイルが元々持っているサムネイルがあればそれを表示します。 |
+  | What it does | 写真全体から、下で選んだ大きさで生成します。… | 常に写真ファイルからサムネイルを生成します。 |
   | Fast | 速さ優先 | アプリのパフォーマンスを優先 |
   | What it does | 写真に保存されている小さいサムネイルを、すぐに表示します。… | JPEG や PNG が元々サムネイルを持っている場合はそのまま表示します。それ以外の場合のみ長辺 400 ピクセルのサムネイルを生成します。 |
   | The slider's label | 大きさ | サムネイルの大きさ |

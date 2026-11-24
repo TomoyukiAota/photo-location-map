@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "Pikkukuvien laatu ja sovelluksen suorituskyky",
       "highQuality": "Pikkukuvien laatu ensin",
-      "highQualityDescription": "Pikkukuvat luodaan kuvatiedostoista. Siihen asti näytetään pikkukuva, joka kuvatiedostossa jo on, jos sellainen on.",
+      "highQualityDescription": "Pikkukuvat luodaan aina kuvatiedostoista.",
       "size": "Pikkukuvien koko",
       "sizeValue": "pidempi sivu {{size}} pikseliä",
       "sizeTick": "{{size}} px",

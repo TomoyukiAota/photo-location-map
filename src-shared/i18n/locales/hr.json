@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "Kvaliteta minijatura i performanse aplikacije",
       "highQuality": "Prednost kvaliteti minijatura",
-      "highQualityDescription": "Minijature se izrađuju iz datoteka fotografija. Do tada se prikazuje minijatura koju datoteka fotografije već sadrži, ako je ima.",
+      "highQualityDescription": "Minijature se uvijek izrađuju iz datoteka fotografija.",
       "size": "Veličina minijatura",
       "sizeValue": "{{size}} piksela na duljoj stranici",
       "sizeTick": "{{size}} px",

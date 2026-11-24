@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "Qualité des vignettes et performances de l’application",
       "highQuality": "Privilégier la qualité des vignettes",
-      "highQualityDescription": "Les vignettes sont créées à partir des fichiers photo. En attendant, la vignette que contient déjà un fichier photo est affichée, s’il en a une.",
+      "highQualityDescription": "Les vignettes sont toujours créées à partir des fichiers photo.",
       "size": "Taille des vignettes",
       "sizeValue": "{{size}} pixels sur le côté le plus long",
       "sizeTick": "{{size}} px",

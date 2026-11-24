@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "Miniaturernes kvalitet og appens ydeevne",
       "highQuality": "Prioritér miniaturernes kvalitet",
-      "highQualityDescription": "Miniaturerne oprettes ud fra fotofilerne. Indtil da vises den miniature, som en fotofil allerede indeholder, hvis den har en.",
+      "highQualityDescription": "Miniaturerne oprettes altid ud fra fotofilerne.",
       "size": "Størrelse på miniaturer",
       "sizeValue": "{{size}} pixel på den længste side",
       "sizeTick": "{{size}} px",

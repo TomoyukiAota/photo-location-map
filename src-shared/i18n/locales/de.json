@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "Qualität der Miniaturen und Leistung der App",
       "highQuality": "Qualität der Miniaturen bevorzugen",
-      "highQualityDescription": "Die Miniaturen werden aus den Fotodateien erstellt. Bis dahin wird die Miniatur angezeigt, die eine Fotodatei bereits enthält, sofern es eine gibt.",
+      "highQualityDescription": "Die Miniaturen werden immer aus den Fotodateien erstellt.",
       "size": "Größe der Miniaturen",
       "sizeValue": "{{size}} Pixel an der längeren Seite",
       "sizeTick": "{{size}} px",

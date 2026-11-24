@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "Calidade das miniaturas e rendemento da aplicación",
       "highQuality": "Priorizar a calidade das miniaturas",
-      "highQualityDescription": "As miniaturas xéranse a partir dos ficheiros das fotos. Mentres tanto, móstrase a miniatura que xa contén o ficheiro da foto, se a hai.",
+      "highQualityDescription": "As miniaturas xéranse sempre a partir dos ficheiros das fotos.",
       "size": "Tamaño das miniaturas",
       "sizeValue": "{{size}} píxeles no lado máis longo",
       "sizeTick": "{{size}} px",

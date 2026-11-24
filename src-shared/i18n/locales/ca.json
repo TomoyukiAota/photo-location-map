@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "Qualitat de les miniatures i rendiment de l’aplicació",
       "highQuality": "Prioritza la qualitat de les miniatures",
-      "highQualityDescription": "Les miniatures es generen a partir dels fitxers de les fotos. Fins aleshores, es mostra la miniatura que ja conté el fitxer de la foto, si n’hi ha.",
+      "highQualityDescription": "Les miniatures sempre es generen a partir dels fitxers de les fotos.",
       "size": "Mida de les miniatures",
       "sizeValue": "{{size}} píxels al costat més llarg",
       "sizeTick": "{{size}} px",

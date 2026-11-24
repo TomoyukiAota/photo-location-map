@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "縮圖畫質與應用程式效能",
       "highQuality": "縮圖畫質優先",
-      "highQualityDescription": "從照片檔案產生縮圖。產生之前，如果照片檔案本身帶有縮圖，則顯示該縮圖。",
+      "highQualityDescription": "一律從照片檔案產生縮圖。",
       "size": "縮圖尺寸",
       "sizeValue": "長邊 {{size}} 像素",
       "sizeTick": "{{size}} px",

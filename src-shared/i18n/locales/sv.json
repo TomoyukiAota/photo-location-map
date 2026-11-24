@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "Miniatyrernas kvalitet och appens prestanda",
       "highQuality": "Prioritera miniatyrernas kvalitet",
-      "highQualityDescription": "Miniatyrerna skapas från fotofilerna. Tills dess visas den miniatyr som en fotofil redan innehåller, om den har en.",
+      "highQualityDescription": "Miniatyrerna skapas alltid från fotofilerna.",
       "size": "Storlek på miniatyrer",
       "sizeValue": "{{size}} pixlar på den längre sidan",
       "sizeTick": "{{size}} px",

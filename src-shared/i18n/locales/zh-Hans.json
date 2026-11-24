@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "缩略图画质与应用性能",
       "highQuality": "缩略图画质优先",
-      "highQualityDescription": "从照片文件生成缩略图。生成之前，如果照片文件本身带有缩略图，则显示该缩略图。",
+      "highQualityDescription": "始终从照片文件生成缩略图。",
       "size": "缩略图尺寸",
       "sizeValue": "长边 {{size}} 像素",
       "sizeTick": "{{size}} px",

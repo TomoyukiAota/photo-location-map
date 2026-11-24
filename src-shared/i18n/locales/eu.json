@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "Miniaturen kalitatea eta aplikazioaren errendimendua",
       "highQuality": "Lehenetsi miniaturen kalitatea",
-      "highQualityDescription": "Miniaturak argazki-fitxategietatik sortzen dira. Bitartean, argazki-fitxategiak dagoeneko duen miniatura erakusten da, baldin badu.",
+      "highQualityDescription": "Miniaturak beti argazki-fitxategietatik sortzen dira.",
       "size": "Miniaturen tamaina",
       "sizeValue": "{{size}} pixel alde luzeenean",
       "sizeTick": "{{size}} px",

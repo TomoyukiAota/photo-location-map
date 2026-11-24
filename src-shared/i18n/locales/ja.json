@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "サムネイルの画質とアプリのパフォーマンス",
       "highQuality": "サムネイルの画質を優先",
-      "highQualityDescription": "写真ファイルからサムネイルを生成します。生成されるまでは、写真ファイルが元々持っているサムネイルがあればそれを表示します。",
+      "highQualityDescription": "常に写真ファイルからサムネイルを生成します。",
       "size": "サムネイルの大きさ",
       "sizeValue": "長辺 {{size}} ピクセル",
       "sizeTick": "{{size}} px",

@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "Jakość miniaturek i wydajność aplikacji",
       "highQuality": "Stawiaj na jakość miniaturek",
-      "highQualityDescription": "Miniaturki są tworzone z plików zdjęć. Do tego czasu wyświetlana jest miniaturka, którą plik zdjęcia już zawiera, jeśli ją ma.",
+      "highQualityDescription": "Miniaturki są zawsze tworzone z plików zdjęć.",
       "size": "Rozmiar miniaturek",
       "sizeValue": "{{size}} pikseli na dłuższym boku",
       "sizeTick": "{{size}} px",

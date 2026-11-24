@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "Kvalitet sličica i performanse aplikacije",
       "highQuality": "Prednost kvalitetu sličica",
-      "highQualityDescription": "Sličice se prave od datoteka fotografija. Do tada se prikazuje sličica koju datoteka fotografije već sadrži, ako je ima.",
+      "highQualityDescription": "Sličice se uvek prave od datoteka fotografija.",
       "size": "Veličina sličica",
       "sizeValue": "{{size}} piksela na dužoj stranici",
       "sizeTick": "{{size}} px",

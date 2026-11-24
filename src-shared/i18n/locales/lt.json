@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "Miniatiūrų kokybė ir programos našumas",
       "highQuality": "Pirmenybė miniatiūrų kokybei",
-      "highQualityDescription": "Miniatiūros kuriamos iš nuotraukų failų. Iki tol rodoma miniatiūra, kurią nuotraukos failas jau turi, jei jos yra.",
+      "highQualityDescription": "Miniatiūros visada kuriamos iš nuotraukų failų.",
       "size": "Miniatiūrų dydis",
       "sizeValue": "{{size}} taškų ilgesnėje kraštinėje",
       "sizeTick": "{{size}} px",

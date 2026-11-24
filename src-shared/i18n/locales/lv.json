@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "Sīktēlu kvalitāte un lietotnes veiktspēja",
       "highQuality": "Priekšroka sīktēlu kvalitātei",
-      "highQualityDescription": "Sīktēli tiek veidoti no fotoattēlu failiem. Līdz tam tiek rādīts sīktēls, kas fotoattēla failā jau ir, ja tāds ir.",
+      "highQualityDescription": "Sīktēli vienmēr tiek veidoti no fotoattēlu failiem.",
       "size": "Sīktēlu izmērs",
       "sizeValue": "garākajā malā {{size}} pikseļu",
       "sizeTick": "{{size}} px",

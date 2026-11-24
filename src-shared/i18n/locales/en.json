@@ -243,7 +243,7 @@
     "thumbnails": {
       "title": "Thumbnail Quality and App Performance",
       "highQuality": "Prefer thumbnail quality",
-      "highQualityDescription": "Thumbnails are generated from the photo files. Until then, the thumbnail that a photo file already holds, if any, is shown.",
+      "highQualityDescription": "Thumbnails are always generated from the photo files.",
       "size": "Thumbnail size",
       "sizeValue": "{{size}} pixels on the longer side",
       "sizeTick": "{{size}} px",
