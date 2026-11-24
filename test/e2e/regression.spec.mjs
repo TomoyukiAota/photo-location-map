@@ -3790,14 +3790,27 @@ test('the map in full screen has the window alone, in full screen, with its cont
   // TL;DR: The window goes to full screen on Windows alone, whose window is transparent in a headless run.
   // Details: The map asks the main process for the window's full screen, which this records. A hidden window on macOS
   // would be shown by its full screen, and the window that Linux shows would take the screen: there, the window keeps
-  // its size, and the map fills it as it would fill the screen.
+  // its size, and the map fills it as it would fill the screen, while the window says that it is in full screen as it
+  // would, so that the main process asks it the same everywhere. The window leaves full screen by itself, as View >
+  // Toggle Full Screen has it, through __plmLeaveFullScreenByItself.
   const windowGoesFullScreen = process.platform === 'win32';
   await app.evaluate(({ BrowserWindow }, goesFullScreen) => {
     globalThis.__plmFullScreenRequests = [];
-    const setFullScreen = BrowserWindow.prototype.setFullScreen;
+    const { setFullScreen } = BrowserWindow.prototype;
+    let fullScreen = false;
     BrowserWindow.prototype.setFullScreen = function (flag) {
       globalThis.__plmFullScreenRequests.push(flag);
       if (goesFullScreen) setFullScreen.call(this, flag);
+      else fullScreen = flag;
+    };
+    if (!goesFullScreen) BrowserWindow.prototype.isFullScreen = () => fullScreen;
+    globalThis.__plmLeaveFullScreenByItself = window => {
+      if (goesFullScreen) {
+        setFullScreen.call(window, false);
+      } else {
+        fullScreen = false;
+        window.emit('leave-full-screen');
+      }
     };
   }, windowGoesFullScreen);
   const fullScreenRequests = () => app.evaluate(() => globalThis.__plmFullScreenRequests);
@@ -3855,7 +3868,7 @@ test('the map in full screen has the window alone, in full screen, with its cont
   await expect.poll(leafletFitsItsPane).toBe(true);
   expect(await fullScreenRequests()).toEqual([true]);
   expect(await viewMenuItemChecked()).toBe(true);
-  if (windowGoesFullScreen) await expect.poll(windowIsFullScreen).toBe(true);
+  await expect.poll(windowIsFullScreen).toBe(true);
   await expectRepresentedPhotos(4);
   // Its controls are there, and a popup with its menu. Esc closes the menu, which takes the key, not the full screen.
   await expect(page.locator('.leaflet-pm-toolbar').first()).toBeVisible();
@@ -3881,7 +3894,7 @@ test('the map in full screen has the window alone, in full screen, with its cont
   await expect.poll(leafletFitsItsPane).toBe(true);
   expect(await fullScreenRequests()).toEqual([true, false]);
   expect(await viewMenuItemChecked()).toBe(false);
-  if (windowGoesFullScreen) await expect.poll(windowIsFullScreen).toBe(false);
+  await expect.poll(windowIsFullScreen).toBe(false);
 
   // The View menu's item puts the map in full screen too. The window leaving full screen by its own means, as View >
   // Toggle Full Screen does, ends the map's full screen.
@@ -3889,10 +3902,11 @@ test('the map in full screen has the window alone, in full screen, with its cont
   await expect(sidebar).toBeHidden();
   await expect.poll(viewMenuItemChecked).toBe(true);
   expect(await fullScreenRequests()).toEqual([true, false, true]);
-  await app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].emit('leave-full-screen'));
+  await expect.poll(windowIsFullScreen).toBe(true);
+  await app.evaluate(({ BrowserWindow }) => globalThis.__plmLeaveFullScreenByItself(BrowserWindow.getAllWindows()[0]));
   await expect(sidebar).toBeVisible();
   await expect.poll(viewMenuItemChecked).toBe(false);
-  if (windowGoesFullScreen) await expect.poll(windowIsFullScreen).toBe(false);
+  await expect.poll(windowIsFullScreen).toBe(false);
   await expect.poll(boxes).toEqual(boxesBefore);
 
   // Reveal in Sidebar, from the popup of the map in full screen, shows the sidebar with the photo's row lit.
