@@ -28,19 +28,18 @@ const choiceTexts: Record<ThumbnailQuality, { label: TranslationKey, description
 
 /**
  * The sizes written under the slider, from the smallest to the largest: every other mark. The slider's marks are 39
- * pixels apart, which left "900" and "1000" 7 pixels apart, too close to read as two sizes.
+ * pixels apart, about as wide as "1000 px" is: under every mark, the sizes would run into each other.
  */
 const sizeTickStep = 200;
 
 /**
- * Where the note on the size opens: centered under its button, or above it when there is no room under it. The button
- * is near the middle of the tab, so that the note stays over the dialog: from where the button started, it reached
- * past the dialog's edge. From where the button ends or starts when a narrow window leaves no room to a side.
+ * Where the note on the size opens: under its button, ending where the button ends, or above it when there is no room
+ * under it. The button ends the row of the size, so that the note stays over the dialog: from where the button
+ * started, it reached past the dialog's edge. From where the button starts when a narrow window leaves no room.
  */
 const sizeNotePositions: ConnectedPosition[] = [
-  { originX: 'center', originY: 'bottom', overlayX: 'center', overlayY: 'top', offsetY: 4 },
-  { originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'bottom', offsetY: -4 },
   { originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top', offsetY: 4 },
+  { originX: 'end', originY: 'top', overlayX: 'end', overlayY: 'bottom', offsetY: -4 },
   { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 4 },
 ];
 
@@ -49,8 +48,8 @@ const sizeNotePositions: ConnectedPosition[] = [
  * (src-shared/user-settings/thumbnail-quality.ts), and under High quality their size, with a slider
  * (src-shared/user-settings/thumbnail-size.ts), which is disabled while Fast is chosen, as the thumbnails that the
  * photos hold have sizes of their own. They apply once saved, without a restart (SettingsDialogComponent). What a
- * larger size costs is in a note that a button beside the slider opens. Under them, the cache of the thumbnails that
- * are made (CacheSettingsComponent).
+ * larger size costs is in a note that a button after the size opens. Under them, the cache of the thumbnails that are
+ * made (CacheSettingsComponent).
  */
 @Component({
   selector: 'app-thumbnail-settings',

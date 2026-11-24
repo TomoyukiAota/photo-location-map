@@ -247,6 +247,7 @@
       "highQualityDescription": "Oprettes ud fra hele fotoet i den størrelse, der er valgt nedenfor. Indtil da vises den lille miniature, der er gemt i fotoet. Det tager tid at oprette dem, første gang en mappe åbnes, og længere tid for HEIF-filer på en computer, der ikke kan afkode HEVC med sin grafikhardware.",
       "size": "Størrelse på miniaturer",
       "sizeValue": "{{size}} pixel på den længste side",
+      "sizeTick": "{{size}} px",
       "aboutSize": "Om miniaturernes størrelse",
       "sizeDescription": "Jo større størrelse, jo større vises miniaturerne, men det tager længere tid at oprette dem, og de fylder mere i cachen til miniaturer.",
       "fast": "Hurtig",

@@ -247,6 +247,7 @@
       "highQualityDescription": "Aangemaakt uit de hele foto, op het formaat dat hieronder is gekozen. Tot dan wordt de kleine miniatuur getoond die in de foto is opgeslagen. Het aanmaken kost tijd wanneer een map voor het eerst wordt geopend, en meer tijd voor HEIF-bestanden op een computer waarvan de grafische hardware HEVC niet kan decoderen.",
       "size": "Formaat van miniaturen",
       "sizeValue": "{{size}} pixels aan de langste zijde",
+      "sizeTick": "{{size}} px",
       "aboutSize": "Over het formaat van miniaturen",
       "sizeDescription": "Hoe groter het formaat, hoe groter de miniaturen worden getoond, maar hoe langer het aanmaken duurt en hoe meer ruimte ze innemen in de cache voor miniaturen.",
       "fast": "Snel",

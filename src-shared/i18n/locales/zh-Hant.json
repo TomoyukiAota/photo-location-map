@@ -247,6 +247,7 @@
       "highQualityDescription": "從整張照片按下方選擇的尺寸產生。產生之前，會顯示照片中儲存的小縮圖。首次開啟資料夾時產生需要一些時間；在圖形硬體無法解碼 HEVC 的電腦上，HEIF 檔案的產生需要更長時間。",
       "size": "縮圖尺寸",
       "sizeValue": "長邊 {{size}} 像素",
+      "sizeTick": "{{size}} px",
       "aboutSize": "關於縮圖尺寸",
       "sizeDescription": "尺寸越大，縮圖顯示得越大，但產生所需時間越長，在縮圖快取中佔用的空間也越多。",
       "fast": "速度優先",

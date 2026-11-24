@@ -247,6 +247,7 @@
       "highQualityDescription": "从整张照片按下方选择的尺寸生成。生成之前，会显示照片中保存的小缩略图。首次打开文件夹时生成需要一些时间；在图形硬件无法解码 HEVC 的计算机上，HEIF 文件的生成需要更长时间。",
       "size": "缩略图尺寸",
       "sizeValue": "长边 {{size}} 像素",
+      "sizeTick": "{{size}} px",
       "aboutSize": "关于缩略图尺寸",
       "sizeDescription": "尺寸越大，缩略图显示得越大，但生成所需时间越长，在缩略图缓存中占用的空间也越多。",
       "fast": "速度优先",

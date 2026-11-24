@@ -80,11 +80,11 @@ describe('ThumbnailSettingsComponent', () => {
   it('writes the first size, the last, and every other one between them under the slider', async () => {
     await create();
     const ticks = Array.from(sizeBlock().querySelectorAll('.thumbnail-size-scale .thumbnail-size-tick'), tick => tick.textContent);
-    expect(ticks).toEqual(['400', '600', '800', '1000']);
+    expect(ticks).toEqual(['400 px', '600 px', '800 px', '1000 px']);
     expect(sizeBlock().querySelector('.thumbnail-size-ticks').getAttribute('aria-hidden')).toBe('true');
   });
 
-  it('opens the note on what a larger size costs with the button beside the slider, which closes it as a click elsewhere and Escape do', async () => {
+  it('opens the note on what a larger size costs with the button after the size, which closes it as a click elsewhere and Escape do', async () => {
     currentUserSettings.thumbnailQuality = 'high';
     await create();
     const button = sizeBlock().querySelector<HTMLButtonElement>('.thumbnail-size-info-button');
@@ -93,7 +93,7 @@ describe('ThumbnailSettingsComponent', () => {
       target.click();
       await fixture.whenStable();
     };
-    expect(button.previousElementSibling.classList).toContain('thumbnail-size-scale');
+    expect(button.previousElementSibling.classList).toContain('thumbnail-size-value');
     expect([button.title, button.getAttribute('aria-label')]).toEqual(['About the thumbnail size', 'About the thumbnail size']);
     expect(button.getAttribute('aria-expanded')).toBe('false');
     expect(note()).toBeNull();

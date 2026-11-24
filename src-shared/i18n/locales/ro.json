@@ -247,6 +247,7 @@
       "highQualityDescription": "Create din întreaga fotografie, la dimensiunea aleasă mai jos. Până atunci se afișează miniatura mică salvată în fotografie. Crearea lor durează la prima deschidere a unui dosar, și mai mult pentru fișierele HEIF pe un computer al cărui hardware grafic nu poate decoda HEVC.",
       "size": "Dimensiunea miniaturilor",
       "sizeValue": "{{size}} de pixeli pe latura mai lungă",
+      "sizeTick": "{{size}} px",
       "aboutSize": "Despre dimensiunea miniaturilor",
       "sizeDescription": "Cu cât dimensiunea este mai mare, cu atât miniaturile sunt afișate mai mari, dar crearea lor durează mai mult și ocupă mai mult spațiu în cache-ul pentru miniaturi.",
       "fast": "Rapid",

@@ -247,6 +247,7 @@
       "highQualityDescription": "Fotoğrafın tamamından, aşağıda seçilen boyutta oluşturulur. O zamana kadar fotoğrafta saklanan küçük resim gösterilir. Bir klasör ilk kez açıldığında bunları oluşturmak zaman alır; grafik donanımı HEVC kodunu çözemeyen bir bilgisayarda HEIF dosyaları için daha da uzun sürer.",
       "size": "Küçük resim boyutu",
       "sizeValue": "uzun kenarı {{size}} piksel",
+      "sizeTick": "{{size}} px",
       "aboutSize": "Küçük resim boyutu hakkında",
       "sizeDescription": "Boyut büyüdükçe küçük resimler daha büyük gösterilir, ancak oluşturulmaları daha uzun sürer ve küçük resim önbelleğinde daha fazla yer kaplarlar.",
       "fast": "Hızlı",

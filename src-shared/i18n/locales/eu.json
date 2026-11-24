@@ -247,6 +247,7 @@
       "highQualityDescription": "Argazki osotik sortzen dira, behean aukeratutako tamainan. Bitartean, argazkian gordetako miniatura txikia erakusten da. Denbora behar da horiek sortzeko karpeta bat lehen aldiz irekitzean, eta gehiago HEIF fitxategietarako grafikoen hardwarearekin HEVC deskodetu ezin duen ordenagailu batean.",
       "size": "Miniaturen tamaina",
       "sizeValue": "{{size}} pixel alde luzeenean",
+      "sizeTick": "{{size}} px",
       "aboutSize": "Miniaturen tamainari buruz",
       "sizeDescription": "Zenbat eta tamaina handiagoa, orduan eta handiago erakusten dira miniaturak, baina denbora gehiago behar da horiek sortzeko eta leku gehiago hartzen dute miniaturen cachean.",
       "fast": "Azkarra",

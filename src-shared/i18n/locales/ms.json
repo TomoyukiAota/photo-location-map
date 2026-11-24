@@ -247,6 +247,7 @@
       "highQualityDescription": "Dijana daripada keseluruhan foto, pada saiz yang dipilih di bawah. Sehingga itu, lakaran kecil yang tersimpan dalam foto dipaparkan. Penjanaannya mengambil masa apabila folder dibuka buat kali pertama, dan lebih lama bagi fail HEIF pada komputer yang perkakasan grafiknya tidak dapat menyahkod HEVC.",
       "size": "Saiz lakaran kecil",
       "sizeValue": "{{size}} piksel pada sisi yang lebih panjang",
+      "sizeTick": "{{size}} px",
       "aboutSize": "Perihal saiz lakaran kecil",
       "sizeDescription": "Lebih besar saiznya, lebih besar lakaran kecil dipaparkan, tetapi lebih lama penjanaannya dan lebih banyak ruang yang digunakan dalam cache lakaran kecil.",
       "fast": "Pantas",

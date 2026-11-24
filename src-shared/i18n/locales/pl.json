@@ -247,6 +247,7 @@
       "highQualityDescription": "Tworzone z całego zdjęcia, w rozmiarze wybranym poniżej. Do tego czasu wyświetlana jest mała miniaturka zapisana w zdjęciu. Ich tworzenie zajmuje czas przy pierwszym otwarciu folderu, a dłużej w przypadku plików HEIF na komputerze, którego sprzęt graficzny nie potrafi dekodować HEVC.",
       "size": "Rozmiar miniaturek",
       "sizeValue": "{{size}} pikseli na dłuższym boku",
+      "sizeTick": "{{size}} px",
       "aboutSize": "Informacje o rozmiarze miniaturek",
       "sizeDescription": "Im większy rozmiar, tym większe są wyświetlane miniaturki, ale tym dłużej trwa ich tworzenie i tym więcej miejsca zajmują w pamięci podręcznej miniaturek.",
       "fast": "Szybkie",

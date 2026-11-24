@@ -247,6 +247,7 @@
       "highQualityDescription": "Tiek veidoti no visa fotoattēla zemāk izvēlētajā izmērā. Līdz tam tiek rādīts fotoattēlā saglabātais mazais sīktēls. To veidošana aizņem laiku, kad mape tiek atvērta pirmo reizi, un vēl ilgāk HEIF failiem datorā, kura grafikas aparatūra nevar dekodēt HEVC.",
       "size": "Sīktēlu izmērs",
       "sizeValue": "garākajā malā {{size}} pikseļu",
+      "sizeTick": "{{size}} px",
       "aboutSize": "Par sīktēlu izmēru",
       "sizeDescription": "Jo lielāks izmērs, jo lielāki tiek rādīti sīktēli, bet jo ilgāk aizņem to veidošana un jo vairāk vietas tie aizņem sīktēlu kešatmiņā.",
       "fast": "Ātri",

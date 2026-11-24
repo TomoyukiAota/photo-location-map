@@ -33,11 +33,13 @@
             <!-- Some of the sizes, each under its mark. A screen reader has the size from the slider's own value. -->
             <div class="thumbnail-size-ticks" aria-hidden="true">
               @for (tick of sizeTicks; track tick.size) {
-                <span class="thumbnail-size-tick" [style.inset-inline-start.%]="tick.position">{{ tick.size }}</span>
+                <span class="thumbnail-size-tick"
+                      [style.inset-inline-start.%]="tick.position">{{ 'settings.thumbnails.sizeTick' | t: { size: tick.size } }}</span>
               }
             </div>
           </div>
-          <!-- What the size costs, in a note that the button beside the slider opens and closes. -->
+          <span class="thumbnail-size-value">{{ sizeText(selectedSize) }}</span>
+          <!-- What the size costs, in a note that the button after the size opens and closes. -->
           <button mat-icon-button
                   type="button"
                   class="thumbnail-size-info-button"
@@ -51,7 +53,6 @@
             <!-- Outlined, which is as dark as the texts beside it without a black disc among them. -->
             <mat-icon fontIcon="info_outline"></mat-icon>
           </button>
-          <span class="thumbnail-size-value">{{ sizeText(selectedSize) }}</span>
         </div>
         <ng-template cdkConnectedOverlay
                      [cdkConnectedOverlayOrigin]="sizeNoteOrigin"

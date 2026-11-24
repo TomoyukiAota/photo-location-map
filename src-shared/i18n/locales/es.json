@@ -247,6 +247,7 @@
       "highQualityDescription": "Se generan a partir de la foto completa, con el tamaño elegido abajo. Hasta entonces, se muestra la miniatura pequeña guardada en la foto. Generarlas lleva tiempo la primera vez que se abre una carpeta, y más para los archivos HEIF en un equipo que no puede descodificar HEVC con su hardware gráfico.",
       "size": "Tamaño de las miniaturas",
       "sizeValue": "{{size}} píxeles en el lado más largo",
+      "sizeTick": "{{size}} px",
       "aboutSize": "Acerca del tamaño de las miniaturas",
       "sizeDescription": "Cuanto mayor es el tamaño, más grandes se muestran las miniaturas, pero más tardan en generarse y más espacio ocupan en la caché de miniaturas.",
       "fast": "Rápida",

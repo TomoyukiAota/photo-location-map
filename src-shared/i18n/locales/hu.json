@@ -247,6 +247,7 @@
       "highQualityDescription": "A teljes fotóból készül, az alább választott méretben. Addig a fotóban tárolt kis bélyegkép látható. Az elkészítésük időbe telik, amikor egy mappát először nyit meg, és még tovább tart a HEIF-fájloknál olyan számítógépen, amelynek grafikus hardvere nem tudja dekódolni a HEVC-t.",
       "size": "Bélyegképek mérete",
       "sizeValue": "{{size}} képpont a hosszabbik oldalon",
+      "sizeTick": "{{size}} px",
       "aboutSize": "A bélyegképek méretéről",
       "sizeDescription": "Minél nagyobb a méret, annál nagyobbak a bélyegképek, de annál tovább tart az elkészítésük, és annál több helyet foglalnak a bélyegképek gyorsítótárában.",
       "fast": "Gyors",

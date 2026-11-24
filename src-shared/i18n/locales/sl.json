@@ -247,6 +247,7 @@
       "highQualityDescription": "Ustvarijo se iz celotne fotografije, v velikosti, izbrani spodaj. Do takrat je prikazana majhna sličica, shranjena v fotografiji. Njihovo ustvarjanje traja nekaj časa, ko se mapa odpre prvič, za datoteke HEIF pa še dlje v računalniku, katerega grafična strojna oprema ne zmore dekodirati HEVC.",
       "size": "Velikost sličic",
       "sizeValue": "{{size}} slikovnih pik na daljši stranici",
+      "sizeTick": "{{size}} px",
       "aboutSize": "O velikosti sličic",
       "sizeDescription": "Večja ko je velikost, večje so prikazane sličice, vendar njihovo ustvarjanje traja dlje in zasedejo več prostora v predpomnilniku sličic.",
       "fast": "Hitro",

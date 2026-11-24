@@ -247,6 +247,7 @@
       "highQualityDescription": "Izrađuju se od cijele fotografije, u veličini odabranoj ispod. Do tada se prikazuje mala minijatura spremljena u fotografiji. Njihova izrada traje neko vrijeme kad se mapa otvori prvi put, a dulje za datoteke HEIF na računalu čiji grafički hardver ne može dekodirati HEVC.",
       "size": "Veličina minijatura",
       "sizeValue": "{{size}} piksela na duljoj stranici",
+      "sizeTick": "{{size}} px",
       "aboutSize": "O veličini minijatura",
       "sizeDescription": "Što je veličina veća, minijature se prikazuju veće, ali njihova izrada traje dulje i zauzimaju više mjesta u predmemoriji minijatura.",
       "fast": "Brzo",

@@ -247,6 +247,7 @@
       "highQualityDescription": "Es generen a partir de la foto sencera, amb la mida triada a sota. Fins aleshores, es mostra la miniatura petita desada a la foto. Generar-les porta temps la primera vegada que s’obre una carpeta, i més per als fitxers HEIF en un ordinador que no pot descodificar HEVC amb el maquinari gràfic.",
       "size": "Mida de les miniatures",
       "sizeValue": "{{size}} píxels al costat més llarg",
+      "sizeTick": "{{size}} px",
       "aboutSize": "Sobre la mida de les miniatures",
       "sizeDescription": "Com més gran és la mida, més grans es mostren les miniatures, però més triguen a generar-se i més espai ocupen a la memòria cau de miniatures.",
       "fast": "Ràpid",

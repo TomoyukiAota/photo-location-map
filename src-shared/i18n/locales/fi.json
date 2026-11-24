@@ -247,6 +247,7 @@
       "highQualityDescription": "Luodaan koko kuvasta alla valitun kokoisina. Siihen asti näytetään kuvaan tallennettu pieni pikkukuva. Niiden luominen vie aikaa, kun kansio avataan ensimmäisen kerran, ja kauemmin HEIF-tiedostoille tietokoneella, jonka grafiikkalaitteisto ei pysty purkamaan HEVC-koodausta.",
       "size": "Pikkukuvien koko",
       "sizeValue": "pidempi sivu {{size}} pikseliä",
+      "sizeTick": "{{size}} px",
       "aboutSize": "Tietoa pikkukuvien koosta",
       "sizeDescription": "Mitä suurempi koko, sitä suurempina pikkukuvat näytetään, mutta sitä kauemmin niiden luominen kestää ja sitä enemmän tilaa ne vievät pikkukuvien välimuistissa.",
       "fast": "Nopea",

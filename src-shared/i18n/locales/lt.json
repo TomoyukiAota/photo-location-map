@@ -247,6 +247,7 @@
       "highQualityDescription": "Kuriamos iš visos nuotraukos, žemiau pasirinkto dydžio. Iki tol rodoma nuotraukoje įrašyta maža miniatiūra. Jų kūrimas užtrunka pirmą kartą atidarius aplanką, o HEIF failams – dar ilgiau kompiuteryje, kurio grafinė aparatinė įranga negali iškoduoti HEVC.",
       "size": "Miniatiūrų dydis",
       "sizeValue": "{{size}} taškų ilgesnėje kraštinėje",
+      "sizeTick": "{{size}} px",
       "aboutSize": "Apie miniatiūrų dydį",
       "sizeDescription": "Kuo didesnis dydis, tuo didesnės rodomos miniatiūros, bet tuo ilgiau užtrunka jų kūrimas ir tuo daugiau vietos jos užima miniatiūrų talpykloje.",
       "fast": "Greitos",

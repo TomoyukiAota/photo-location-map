@@ -44,7 +44,7 @@
 
 // The size, under the text of High quality, in the type of the choices' texts, which Angular Material's radio buttons
 // have: as far from the start as that text, past the radio button's circle (40 pixels) and the label's padding (4).
-// The label, the slider, its button and the size go on to a second row where they do not fit side by side.
+// The label, the slider, the size and its button go on to a second row where they do not fit side by side.
 .thumbnail-size {
   display: flex;
   flex-wrap: wrap;
@@ -93,9 +93,9 @@
   white-space: nowrap;
 }
 
-// The button is as close to the slider as to the size: its icon has room of its own around it.
+// The button follows the size closely: its icon has room of its own around it.
 .thumbnail-size-info-button {
-  margin-inline: -8px;
+  margin-inline-start: -8px;
 }
 
 // The digits keep their widths, so that the text does not move while the slider is dragged.

@@ -247,6 +247,7 @@
       "highQualityDescription": "Aus dem ganzen Foto erstellt, in der unten gewählten Größe. Bis dahin wird die kleine Miniatur angezeigt, die im Foto gespeichert ist. Das Erstellen braucht Zeit, wenn ein Ordner zum ersten Mal geöffnet wird, und länger für HEIF-Dateien auf einem Computer, dessen Grafikhardware HEVC nicht decodieren kann.",
       "size": "Größe der Miniaturen",
       "sizeValue": "{{size}} Pixel an der längeren Seite",
+      "sizeTick": "{{size}} px",
       "aboutSize": "Zur Größe der Miniaturen",
       "sizeDescription": "Je größer, desto größer werden die Miniaturen angezeigt, aber desto länger dauert ihr Erstellen und desto mehr Platz belegen sie im Cache für Miniaturen.",
       "fast": "Schnell",

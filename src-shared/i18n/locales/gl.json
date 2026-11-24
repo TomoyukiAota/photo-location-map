@@ -247,6 +247,7 @@
       "highQualityDescription": "Xéranse a partir da foto enteira, co tamaño escollido abaixo. Mentres tanto, móstrase a miniatura pequena gardada na foto. Xeralas leva tempo a primeira vez que se abre un cartafol, e máis para os ficheiros HEIF nun ordenador que non pode descodificar HEVC co seu hardware gráfico.",
       "size": "Tamaño das miniaturas",
       "sizeValue": "{{size}} píxeles no lado máis longo",
+      "sizeTick": "{{size}} px",
       "aboutSize": "Acerca do tamaño das miniaturas",
       "sizeDescription": "Canto maior é o tamaño, máis grandes se mostran as miniaturas, pero máis tardan en xerarse e máis espazo ocupan na caché de miniaturas.",
       "fast": "Rápida",

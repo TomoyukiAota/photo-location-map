@@ -247,6 +247,7 @@
       "highQualityDescription": "Lages fra hele bildet, i størrelsen som er valgt nedenfor. Inntil da vises det lille miniatyrbildet som er lagret i bildet. Det tar tid å lage dem første gang en mappe åpnes, og lengre tid for HEIF-filer på en datamaskin som ikke kan dekode HEVC med grafikkmaskinvaren.",
       "size": "Størrelse på miniatyrbilder",
       "sizeValue": "{{size}} piksler på den lengste siden",
+      "sizeTick": "{{size}} px",
       "aboutSize": "Om størrelsen på miniatyrbilder",
       "sizeDescription": "Jo større størrelse, desto større vises miniatyrbildene, men desto lengre tid tar det å lage dem, og desto mer plass tar de i bufferen for miniatyrbilder.",
       "fast": "Rask",

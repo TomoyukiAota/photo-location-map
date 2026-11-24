@@ -4311,9 +4311,9 @@ test('the Thumbnails tab chooses the size of the thumbnails, which applies at on
       return { text: tick.textContent, offset: Math.abs(center(range) - center(scale.querySelectorAll('.mdc-slider__tick-marks > *')[index * 2])) };
     });
   });
-  expect(ticks.map(tick => tick.text)).toEqual(['400', '600', '800', '1000']);
+  expect(ticks.map(tick => tick.text)).toEqual(['400 px', '600 px', '800 px', '1000 px']);
   expect(ticks.every(tick => tick.offset < 1)).toBe(true);
-  // What a larger size costs, in a note that the button beside the slider opens, and a click elsewhere or Escape closes.
+  // What a larger size costs, in a note that the button after the size opens, and a click elsewhere or Escape closes.
   const aboutSize = tab.getByRole('button', { name: 'About the thumbnail size', exact: true });
   const sizeNote = page.locator('.thumbnail-size-note');
   await expect(sizeNote).toHaveCount(0);

@@ -295,15 +295,18 @@ Mac's stuck `backupd`), on a computer busy with other sessions' work (load avera
 
 Once the slider was merged, the owner asked for these, from a screenshot of the tab in Japanese:
 
-- **What a larger size costs** is in a note that an info button right beside the slider opens and closes, rather than
-  a paragraph under the slider. The note opens over the tab, centered under the button (from where the button
-  started, it reached past the dialog's edge), and a click elsewhere, Escape, or a scroll of the tab closes it; the
-  dialog's content is a `cdkScrollable` for that. The button is named "About the thumbnail size", a new text in every
-  language, and stays enabled while Fast is chosen. Its icon is the outlined one: the filled one was a black disc
-  among the texts.
-- **The slider's marks have sizes under them**: 400 and 1000 at its ends, and 600 and 800 between them. The marks are
-  39 pixels apart, which left 900 and 1000 seven pixels apart, too close to read as two sizes. Each size is centered
-  under its mark in either direction, and an e2e case checks it within a pixel.
+- **What a larger size costs** is in a note that an info button right after the size ("400 pixels on the longer
+  side") opens and closes, rather than a paragraph under the slider. The owner first had the button right beside the
+  slider, then after the size. The note opens over the tab, under the button and ending where it ends (from where the
+  button started, it reached past the dialog's edge), and a click elsewhere, Escape, or a scroll of the tab closes it;
+  the dialog's content is a `cdkScrollable` for that. The button is named "About the thumbnail size", a new text in
+  every language, and stays enabled while Fast is chosen. Its icon is the outlined one: the filled one was a black
+  disc among the texts.
+- **The slider's marks have sizes under them**, with "px" as the owner asked: 400 px and 1000 px at its ends, and
+  600 px and 800 px between them. The marks are 39 pixels apart, about as wide as "1000 px", so every other mark has
+  its size. Each size is centered under its mark in either direction, and an e2e case checks it within a pixel. The
+  size is a text of its own, "{{size}} px", in every language but Arabic, which has the word of its size beside the
+  slider (بكسل); the size beside the slider keeps "pixels", which a screen reader says too.
 - **The label** is "Thumbnail size" ("サムネイルの大きさ") rather than "Size", in every language.
 - **High quality** is "画質優先" in Japanese, beside "速さ優先"; Korean and Chinese, whose Fast had the same form, have
   it too ("화질 우선", "画质优先", "畫質優先"). The other languages keep their words.

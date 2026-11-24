@@ -247,6 +247,7 @@
       "highQualityDescription": "Được tạo từ toàn bộ ảnh, theo kích thước chọn bên dưới. Trong lúc chờ, hình thu nhỏ cỡ nhỏ được lưu trong ảnh sẽ được hiển thị. Việc tạo chúng mất thời gian khi mở một thư mục lần đầu, và lâu hơn với tệp HEIF trên máy tính có phần cứng đồ họa không giải mã được HEVC.",
       "size": "Kích thước hình thu nhỏ",
       "sizeValue": "cạnh dài {{size}} điểm ảnh",
+      "sizeTick": "{{size}} px",
       "aboutSize": "Về kích thước hình thu nhỏ",
       "sizeDescription": "Kích thước càng lớn, hình thu nhỏ hiển thị càng lớn, nhưng việc tạo chúng càng lâu và chúng chiếm càng nhiều dung lượng trong bộ nhớ đệm hình thu nhỏ.",
       "fast": "Nhanh",
