@@ -1527,6 +1527,13 @@ test('on a computer whose language is Arabic, the application is laid out from r
   await page.getByRole('button', { name: 'فتح مجلد', exact: true }).click();
   await expect(treeRow('without location data').locator('.disabled-checkbox-alternative')).toBeVisible();
   expect(await nameStart('without location data')).toBeCloseTo(await nameStart('with location data'), 0);
+  // At the next launch, the sidebar is on the right, at the width that the drag gave it (src/app/home/pane-sizes/).
+  await app.close();
+  await launch({ env: { PLM_TEST_SYSTEM_LANGUAGES: 'ar-SA,en-US' } });
+  const sidebarAtNextLaunch = await page.locator('#home-left-sidebar').boundingBox();
+  const mapAtNextLaunch = await page.locator('#home-map').boundingBox();
+  expect(Math.abs(sidebarAtNextLaunch.width - sidebarAfterDrag.width)).toBeLessThan(1);
+  expect(sidebarAtNextLaunch.x).toBeGreaterThanOrEqual(mapAtNextLaunch.x + mapAtNextLaunch.width);
 });
 test('on a computer whose language is Arabic, the application in English lists the operating system\'s entry in Arabic, from right to left', async () => {
   await launchAsNew({ env: { PLM_TEST_SYSTEM_LANGUAGES: 'ar-SA,en-US' } });
@@ -2252,11 +2259,18 @@ test('folder picker loads real photo data, markers, tree selection and chart', a
       await cdp.detach();
     }
   }
+  const userData = await app.evaluate(({ app }) => app.getPath('userData'));
+  await expect.poll(() => savedSetting(userData, ['HomeLayout', 'SidebarWidth'])).toBe(`${Math.round(after.width)}`);
   await app.close();
   await launch();
-  // The original app resets Split.js to 25/75 on restart; keep that behavior.
+  // The sidebar keeps the width that the drag gave it at the next launch. A double-click on its gutter puts back 25% of
+  // the window, at the next launch too (src/app/home/pane-sizes/).
   const restarted = await page.locator('#home-left-sidebar').boundingBox();
-  expect(Math.abs(restarted.width - before.width)).toBeLessThan(1);
+  expect(Math.abs(restarted.width - after.width)).toBeLessThan(1);
+  await page.locator('.sidebar-and-map-container > .gutter-horizontal').dblclick();
+  const reset = await page.locator('#home-left-sidebar').boundingBox();
+  expect(Math.abs(reset.width - before.width)).toBeLessThan(1);
+  await expect.poll(() => savedSetting(userData, ['HomeLayout', 'SidebarWidth'])).toBe('');
 });
 test('the map starts and shows photos while the network cannot be reached', async () => {
   // Leaflet and its plugins once came from a CDN, so a launch without the network (offline, no DNS, or a firewall
@@ -3841,10 +3855,10 @@ test('a photo whose GPS values are empty leaves the other photos on the map', as
     else process.env.PLM_E2E_OPEN = previousOpen;
   }
 });
-test('a window resize keeps the sidebar\'s upper pane, and Leaflet fits the map to its pane, which a gutter resizes too', async () => {
-  // Home sets the sidebar's split again on a resize, keeping its upper pane's height, and Leaflet takes its pane's new
-  // size, which the map watches, as Leaflet itself tracks only the window's size. Neither goes through change
-  // detection.
+test('a window resize keeps the sizes of the panes around the map, and Leaflet fits the map to its pane, which a gutter resizes too', async () => {
+  // Home sets its splits again on a resize, keeping the sidebar's width, its upper pane's height and the chart's height
+  // where they have one, and Leaflet takes its pane's new size, which the map watches, as Leaflet itself tracks only
+  // the window's size. Neither goes through change detection.
   await page.addInitScript(() => {
     let leaflet;
     Object.defineProperty(window, 'L', {
@@ -3872,12 +3886,24 @@ test('a window resize keeps the sidebar\'s upper pane, and Leaflet fits the map 
   });
   const before = await mapSizes();
   expect(before.leaflet).toEqual(before.pane);
+  // The sidebar, dragged wider, keeps its width while the window is resized: the map takes the change
+  // (src/app/home/pane-sizes/).
+  const sidebar = page.locator('#home-left-sidebar');
+  const sidebarGutter = await page.locator('.sidebar-and-map-container > .gutter-horizontal').boundingBox();
+  await page.mouse.move(sidebarGutter.x + sidebarGutter.width / 2, sidebarGutter.y + 100);
+  await page.mouse.down();
+  await page.mouse.move(sidebarGutter.x + sidebarGutter.width / 2 + 60, sidebarGutter.y + 100, { steps: 5 });
+  await page.mouse.up();
+  const sidebarWidth = (await sidebar.boundingBox()).width;
+  await expect.poll(async () => (await mapSizes()).pane[0]).toBeLessThan(before.pane[0] - 50);
+  const afterSidebarDrag = await mapSizes();
   await app.evaluate(({ BrowserWindow }) => {
     const window = BrowserWindow.getAllWindows()[0];
     const [width, height] = window.getContentSize();
     window.setContentSize(width - 200, height - 120);
   });
-  await expect.poll(async () => (await mapSizes()).pane[0]).toBeLessThan(before.pane[0] - 100);
+  await expect.poll(async () => Math.abs((await mapSizes()).pane[0] - (afterSidebarDrag.pane[0] - 200))).toBeLessThanOrEqual(1);
+  expect(Math.abs((await sidebar.boundingBox()).width - sidebarWidth)).toBeLessThan(1);
   await expect.poll(async () => { const sizes = await mapSizes(); return sizes.leaflet.join() === sizes.pane.join(); }).toBe(true);
   await expect.poll(async () => Math.round((await upperPane.boundingBox()).height)).toBe(Math.round(upperPaneHeight));
   await expectRepresentedPhotos(4);
@@ -3891,6 +3917,25 @@ test('a window resize keeps the sidebar\'s upper pane, and Leaflet fits the map 
   await expect.poll(async () => (await mapSizes()).pane[1]).toBeLessThan(beforeDrag.pane[1] - 50);
   await expect.poll(async () => { const sizes = await mapSizes(); return sizes.leaflet.join() === sizes.pane.join(); }).toBe(true);
   await expectRepresentedPhotos(4);
+  // The chart keeps the height that the drag gave it while the window is resized: the map takes the change.
+  const chart = page.locator('#home-chart');
+  const chartHeight = (await chart.boundingBox()).height;
+  const afterChartDrag = await mapSizes();
+  await app.evaluate(({ BrowserWindow }) => {
+    const window = BrowserWindow.getAllWindows()[0];
+    const [width, height] = window.getContentSize();
+    window.setContentSize(width, height + 120);
+  });
+  await expect.poll(async () => Math.abs((await mapSizes()).pane[1] - (afterChartDrag.pane[1] + 120))).toBeLessThanOrEqual(1);
+  expect(Math.abs((await chart.boundingBox()).height - chartHeight)).toBeLessThan(1);
+  await expect.poll(async () => { const sizes = await mapSizes(); return sizes.leaflet.join() === sizes.pane.join(); }).toBe(true);
+  // A double-click on the gutter puts the chart back to 30% of the map's side, at the next launch too.
+  const userData = await app.evaluate(({ app }) => app.getPath('userData'));
+  await expect.poll(() => savedSetting(userData, ['HomeLayout', 'ChartHeight'])).toBe(`${Math.round(chartHeight)}`);
+  await page.locator('#home-right > .gutter').dblclick();
+  const rightHeight = (await page.locator('#home-right').boundingBox()).height;
+  expect(Math.abs((await chart.boundingBox()).height - (rightHeight * 0.3 - 4))).toBeLessThan(1);
+  await expect.poll(() => savedSetting(userData, ['HomeLayout', 'ChartHeight'])).toBe('');
 });
 test('the map in full screen has the window alone, in full screen, with its controls, popups and menus, until Esc, the View menu or the window ends it', async () => {
   // TL;DR: The window goes to full screen on Windows alone, whose window is transparent in a headless run.

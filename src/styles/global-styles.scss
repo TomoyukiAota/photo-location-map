@@ -12,7 +12,8 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-// The gutter provided by Split.js
+// The gutters between the panes of the home view, which Split.js takes from its template
+// (src/app/home/home.component.html).
 .gutter {
   height: 100%;
   background-color: #eeeeee;
