@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Miniaturas",
-        "description": "La caché de las miniaturas que crea esta aplicación está en la pestaña «Miniaturas».",
+        "title": "Caché de miniaturas",
+        "description": "La configuración de la caché de miniaturas está en la pestaña «Miniaturas».",
         "open": "Abrir la pestaña «Miniaturas»"
       },
       "map": {
-        "title": "Mapa",
-        "description": "Las fechas en que se tomaron las imágenes de Esri World Imagery Wayback se guardan en la caché para un máximo de {{max}} lugares vistos en el mapa, para que se muestren al instante la próxima vez.",
+        "title": "Caché del mapa",
+        "description": "Para mayor rapidez, las fechas en que se tomaron las imágenes se guardan en la caché para un máximo de {{max}} lugares mostrados con Esri World Imagery Wayback.",
         "count": "Lugares en la caché: {{count}}",
-        "delete": "Eliminar la caché del mapa"
+        "delete": "Eliminar la caché del mapa",
+        "confirmDelete": "¿Quieres eliminar la caché del mapa?"
       },
       "all": {
         "title": "Todas las cachés",

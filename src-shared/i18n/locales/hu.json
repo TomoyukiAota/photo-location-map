@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Bélyegképek",
-        "description": "Az alkalmazás által készített bélyegképek gyorsítótára a „Bélyegképek” lapon található.",
+        "title": "Bélyegképek gyorsítótára",
+        "description": "A bélyegképek gyorsítótárának beállításai a „Bélyegképek” lapon találhatók.",
         "open": "A „Bélyegképek” lap megnyitása"
       },
       "map": {
-        "title": "Térkép",
-        "description": "Az Esri World Imagery Wayback felvételeinek készítési dátumait az alkalmazás a térképen megtekintett legfeljebb {{max}} helyhez gyorsítótárazza, hogy legközelebb azonnal megjelenjenek.",
+        "title": "Térkép gyorsítótára",
+        "description": "A gyorsabb működés érdekében az alkalmazás a felvételek készítési dátumait legfeljebb {{max}}, az Esri World Imagery Wayback segítségével megjelenített helyhez gyorsítótárazza.",
         "count": "Gyorsítótárazott helyek: {{count}}",
-        "delete": "A térkép gyorsítótárának törlése"
+        "delete": "A térkép gyorsítótárának törlése",
+        "confirmDelete": "Törli a térkép gyorsítótárát?"
       },
       "all": {
         "title": "Minden gyorsítótár",

@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Minijature",
-        "description": "Predmemorija minijatura koje izrađuje ova aplikacija nalazi se na kartici „Minijature”.",
+        "title": "Predmemorija minijatura",
+        "description": "Postavke predmemorije minijatura nalaze se na kartici „Minijature”.",
         "open": "Otvori karticu „Minijature”"
       },
       "map": {
-        "title": "Karta",
-        "description": "Datumi snimanja snimaka Esri World Imagery Wayback spremaju se u predmemoriju za najviše {{max}} mjesta pregledanih na karti kako bi se sljedeći put odmah prikazali.",
+        "title": "Predmemorija karte",
+        "description": "Radi brzine, datumi snimanja snimaka spremaju se u predmemoriju za najviše {{max}} mjesta prikazanih pomoću Esri World Imagery Wayback.",
         "count": "Mjesta u predmemoriji: {{count}}",
-        "delete": "Izbriši predmemoriju karte"
+        "delete": "Izbriši predmemoriju karte",
+        "confirmDelete": "Želite li izbrisati predmemoriju karte?"
       },
       "all": {
         "title": "Sve predmemorije",

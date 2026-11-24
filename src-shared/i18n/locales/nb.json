@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Miniatyrbilder",
-        "description": "Bufferen for miniatyrbildene som appen lager, finnes i fanen «Miniatyrbilder».",
+        "title": "Buffer for miniatyrbilder",
+        "description": "Innstillingene for bufferen for miniatyrbilder finnes i fanen «Miniatyrbilder».",
         "open": "Åpne fanen «Miniatyrbilder»"
       },
       "map": {
-        "title": "Kart",
-        "description": "Datoene for når satellittbildene fra Esri World Imagery Wayback ble tatt, lagres i bufferen for opptil {{max}} steder som er sett på kartet, slik at de vises med en gang neste gang.",
+        "title": "Kartbuffer",
+        "description": "For å gjøre det raskere lagres datoene for når bildene ble tatt, i bufferen for opptil {{max}} steder som er vist med Esri World Imagery Wayback.",
         "count": "Steder i bufferen: {{count}}",
-        "delete": "Slett kartbufferen"
+        "delete": "Slett kartbufferen",
+        "confirmDelete": "Vil du slette kartbufferen?"
       },
       "all": {
         "title": "Alle buffere",

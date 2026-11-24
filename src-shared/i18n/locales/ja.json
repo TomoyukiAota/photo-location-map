@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "サムネイル",
-        "description": "このアプリが作るサムネイルのキャッシュは、「サムネイル」タブにあります。",
+        "title": "サムネイルのキャッシュ",
+        "description": "「サムネイル」タブにて、サムネイルのキャッシュの設定ができます。",
         "open": "「サムネイル」タブを開く"
       },
       "map": {
-        "title": "マップ",
-        "description": "マップで見た場所の Esri World Imagery Wayback の撮影日を、{{max}} か所までキャッシュしています。次に見るときは、すぐに表示されます。",
-        "count": "キャッシュしている場所: {{count}} か所",
-        "delete": "マップのキャッシュを削除"
+        "title": "マップのキャッシュ",
+        "description": "高速化のため、Esri World Imagery Waybackで表示した場所の撮影日を最大{{max}}ヶ所までキャッシュしています。",
+        "count": "キャッシュしている場所: {{count}}ヶ所",
+        "delete": "マップのキャッシュを削除",
+        "confirmDelete": "マップのキャッシュを削除しますか？"
       },
       "all": {
         "title": "すべてのキャッシュ",

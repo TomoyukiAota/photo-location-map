@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Pikkukuvat",
-        "description": "Tämän sovelluksen tekemien pikkukuvien välimuisti on ”Pikkukuvat”-välilehdellä.",
+        "title": "Pikkukuvien välimuisti",
+        "description": "Pikkukuvien välimuistin asetukset ovat ”Pikkukuvat”-välilehdellä.",
         "open": "Avaa ”Pikkukuvat”-välilehti"
       },
       "map": {
-        "title": "Kartta",
-        "description": "Esri World Imagery Waybackin ilmakuvien kuvauspäivät tallennetaan välimuistiin enintään {{max}} kartalla katsotulle paikalle, jotta ne näkyvät seuraavalla kerralla heti.",
+        "title": "Kartan välimuisti",
+        "description": "Nopeuden vuoksi kuvien kuvauspäivät tallennetaan välimuistiin enintään {{max}} paikalle, jotka on näytetty Esri World Imagery Waybackilla.",
         "count": "Paikkoja välimuistissa: {{count}}",
-        "delete": "Poista kartan välimuisti"
+        "delete": "Poista kartan välimuisti",
+        "confirmDelete": "Haluatko poistaa kartan välimuistin?"
       },
       "all": {
         "title": "Kaikki välimuistit",

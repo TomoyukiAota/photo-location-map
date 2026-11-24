@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Miniaturki",
-        "description": "Pamięć podręczna miniaturek tworzonych przez aplikację znajduje się na karcie „Miniaturki”.",
+        "title": "Pamięć podręczna miniaturek",
+        "description": "Ustawienia pamięci podręcznej miniaturek znajdują się na karcie „Miniaturki”.",
         "open": "Otwórz kartę „Miniaturki”"
       },
       "map": {
-        "title": "Mapa",
-        "description": "Daty wykonania zdjęć satelitarnych Esri World Imagery Wayback są przechowywane w pamięci podręcznej dla maksymalnie {{max}} miejsc oglądanych na mapie, aby następnym razem wyświetlały się od razu.",
+        "title": "Pamięć podręczna mapy",
+        "description": "Aby przyspieszyć działanie, daty wykonania zdjęć są przechowywane w pamięci podręcznej dla maksymalnie {{max}} miejsc wyświetlonych za pomocą Esri World Imagery Wayback.",
         "count": "Miejsca w pamięci podręcznej: {{count}}",
-        "delete": "Usuń pamięć podręczną mapy"
+        "delete": "Usuń pamięć podręczną mapy",
+        "confirmDelete": "Czy chcesz usunąć pamięć podręczną mapy?"
       },
       "all": {
         "title": "Cała pamięć podręczna",

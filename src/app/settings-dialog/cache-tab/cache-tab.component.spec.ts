@@ -38,17 +38,22 @@ describe('CacheTabComponent', () => {
     expect(opened).toEqual(['thumbnails']);
   });
 
-  it('counts the places that the map\'s cache keeps, and deletes them without a restart', async () => {
+  it('counts the places that the map\'s cache keeps, and deletes them once the user confirms only, without a restart', async () => {
     const deleteAndRestart = vi.spyOn(window.plm.thumbnailCache, 'deleteAndRestart');
+    const confirm = vi.spyOn(TestBed.inject(ConfirmDialogService), 'confirm').mockResolvedValueOnce(false).mockResolvedValueOnce(true);
     await rendered(() => expect(text('.cache-tab-map-count')).toBe('Places cached: 3'));
     // Its most, as English writes numbers.
-    expect(element.textContent).toContain('for up to 100,000 places looked at on the map');
+    expect(element.textContent).toContain('for up to 100,000 places shown with Esri World Imagery Wayback');
 
+    await fixture.componentInstance.deleteMapCache();
+    expect(store.places.size).toBe(3);
     button('.cache-tab-delete-map').click();
 
     await rendered(() => expect(text('.cache-tab-map-count')).toBe('Places cached: 0'));
     expect(store.places.size).toBe(0);
     expect(button('.cache-tab-delete-map').disabled).toBe(true);
+    expect(confirm).toHaveBeenCalledTimes(2);
+    expect(confirm).toHaveBeenCalledWith('Do you want to delete the map cache?');
     expect(deleteAndRestart).not.toHaveBeenCalled();
   });
 

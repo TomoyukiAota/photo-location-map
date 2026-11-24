@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "缩略图",
-        "description": "此应用生成的缩略图的缓存位于“缩略图”选项卡中。",
+        "title": "缩略图缓存",
+        "description": "缩略图缓存的设置位于“缩略图”选项卡中。",
         "open": "打开“缩略图”选项卡"
       },
       "map": {
-        "title": "地图",
-        "description": "在地图上查看过的地点的 Esri World Imagery Wayback 影像拍摄日期会被缓存，最多 {{max}} 个地点，以便下次立即显示。",
+        "title": "地图缓存",
+        "description": "为了提高速度，使用 Esri World Imagery Wayback 显示过的地点的影像拍摄日期会被缓存，最多 {{max}} 个地点。",
         "count": "已缓存的地点：{{count}} 个",
-        "delete": "删除地图缓存"
+        "delete": "删除地图缓存",
+        "confirmDelete": "要删除地图缓存吗？"
       },
       "all": {
         "title": "所有缓存",

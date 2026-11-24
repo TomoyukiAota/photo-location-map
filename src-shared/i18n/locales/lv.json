@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Sīktēli",
-        "description": "Šīs lietotnes veidoto sīktēlu kešatmiņa ir cilnē “Sīktēli”.",
+        "title": "Sīktēlu kešatmiņa",
+        "description": "Sīktēlu kešatmiņas iestatījumi ir cilnē “Sīktēli”.",
         "open": "Atvērt cilni “Sīktēli”"
       },
       "map": {
-        "title": "Karte",
-        "description": "Esri World Imagery Wayback attēlu uzņemšanas datumi tiek saglabāti kešatmiņā līdz {{max}} kartē skatītām vietām, lai nākamreiz tie tiktu parādīti uzreiz.",
+        "title": "Kartes kešatmiņa",
+        "description": "Ātrdarbības labad attēlu uzņemšanas datumi tiek saglabāti kešatmiņā līdz {{max}} vietām, kas parādītas ar Esri World Imagery Wayback.",
         "count": "Vietas kešatmiņā: {{count}}",
-        "delete": "Dzēst kartes kešatmiņu"
+        "delete": "Dzēst kartes kešatmiņu",
+        "confirmDelete": "Vai vēlaties dzēst kartes kešatmiņu?"
       },
       "all": {
         "title": "Visas kešatmiņas",

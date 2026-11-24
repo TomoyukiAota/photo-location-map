@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Pisipildid",
-        "description": "Selle rakenduse loodud pisipiltide vahemälu on vahekaardil „Pisipildid“.",
+        "title": "Pisipiltide vahemälu",
+        "description": "Pisipiltide vahemälu seaded on vahekaardil „Pisipildid“.",
         "open": "Ava vahekaart „Pisipildid“"
       },
       "map": {
-        "title": "Kaart",
-        "description": "Esri World Imagery Waybacki piltide tegemise kuupäevad salvestatakse vahemällu kuni {{max}} kaardil vaadatud koha kohta, et need järgmisel korral kohe kuvada.",
+        "title": "Kaardi vahemälu",
+        "description": "Kiiruse huvides salvestatakse piltide tegemise kuupäevad vahemällu kuni {{max}} koha kohta, mida on näidatud Esri World Imagery Waybackiga.",
         "count": "Kohti vahemälus: {{count}}",
-        "delete": "Kustuta kaardi vahemälu"
+        "delete": "Kustuta kaardi vahemälu",
+        "confirmDelete": "Kas soovite kaardi vahemälu kustutada?"
       },
       "all": {
         "title": "Kõik vahemälud",

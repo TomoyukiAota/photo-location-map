@@ -1925,13 +1925,18 @@ test('the dates of Wayback\'s imagery at a place looked at before are shown afte
   expect(asked).toEqual([]);
 
   // The Cache tab counts the places kept, the one that the photo is fitted at and the one at zoom 16, and deletes them
-  // without a restart. The places are then asked about again.
+  // once the user confirms, without a restart. The places are then asked about again.
   await settings('Cache');
   const count = page.locator('app-cache-tab .cache-tab-map-count');
   await expect(count).toHaveText(/^Places cached: [1-9]\d*$/);
-  await page.getByRole('button', { name: 'Delete Map Cache', exact: true }).click();
+  const deleteMapCache = page.getByRole('button', { name: 'Delete Map Cache', exact: true });
+  await deleteMapCache.click();
+  await answerConfirmation(['Do you want to delete the map cache?'], 'Cancel');
+  await expect(count).toHaveText(/^Places cached: [1-9]\d*$/);
+  await deleteMapCache.click();
+  await answerConfirmation(['Do you want to delete the map cache?'], 'OK');
   await expect(count).toHaveText('Places cached: 0');
-  await expect(page.getByRole('button', { name: 'Delete Map Cache', exact: true })).toBeDisabled();
+  await expect(deleteMapCache).toBeDisabled();
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
   await lookAtTheRing();
   expect(asked.filter(pathname => pathname.endsWith('/query')).length).toBeGreaterThan(0);

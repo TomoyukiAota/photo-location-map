@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "썸네일",
-        "description": "이 앱이 만든 썸네일의 캐시는 “썸네일” 탭에 있습니다.",
+        "title": "썸네일 캐시",
+        "description": "썸네일 캐시 설정은 “썸네일” 탭에 있습니다.",
         "open": "“썸네일” 탭 열기"
       },
       "map": {
-        "title": "지도",
-        "description": "지도에서 본 장소의 Esri World Imagery Wayback 이미지 촬영 날짜를 최대 {{max}}곳까지 캐시하여, 다음에 볼 때 바로 표시합니다.",
+        "title": "지도 캐시",
+        "description": "빠르게 표시하기 위해 Esri World Imagery Wayback으로 표시한 장소의 촬영 날짜를 최대 {{max}}곳까지 캐시합니다.",
         "count": "캐시된 장소: {{count}}곳",
-        "delete": "지도 캐시 삭제"
+        "delete": "지도 캐시 삭제",
+        "confirmDelete": "지도 캐시를 삭제하시겠습니까?"
       },
       "all": {
         "title": "모든 캐시",

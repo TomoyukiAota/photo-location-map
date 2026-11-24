@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Miniaturak",
-        "description": "Aplikazio honek sortzen dituen miniaturen cachea «Miniaturak» fitxan dago.",
+        "title": "Miniaturen cachea",
+        "description": "Miniaturen cachearen ezarpenak «Miniaturak» fitxan daude.",
         "open": "Ireki «Miniaturak» fitxa"
       },
       "map": {
-        "title": "Mapa",
-        "description": "Esri World Imagery Wayback-eko irudiak noiz atera ziren cachean gordetzen da mapan ikusitako gehienez {{max}} lekutarako, hurrengoan berehala erakusteko.",
+        "title": "Maparen cachea",
+        "description": "Azkarrago ibiltzeko, irudiak noiz atera ziren cachean gordetzen da Esri World Imagery Wayback-ekin erakutsitako gehienez {{max}} lekutarako.",
         "count": "Cachean dauden lekuak: {{count}}",
-        "delete": "Ezabatu maparen cachea"
+        "delete": "Ezabatu maparen cachea",
+        "confirmDelete": "Maparen cachea ezabatu nahi duzu?"
       },
       "all": {
         "title": "Cache guztiak",

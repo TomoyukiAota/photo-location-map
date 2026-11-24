@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Miniatúry",
-        "description": "Vyrovnávacia pamäť miniatúr, ktoré vytvára táto aplikácia, je na karte „Miniatúry“.",
+        "title": "Vyrovnávacia pamäť miniatúr",
+        "description": "Nastavenia vyrovnávacej pamäte miniatúr sú na karte „Miniatúry“.",
         "open": "Otvoriť kartu „Miniatúry“"
       },
       "map": {
-        "title": "Mapa",
-        "description": "Dátumy nasnímania snímok Esri World Imagery Wayback sa ukladajú do vyrovnávacej pamäte najviac pre {{max}} miest zobrazených na mape, aby sa nabudúce zobrazili hneď.",
+        "title": "Vyrovnávacia pamäť mapy",
+        "description": "Kvôli rýchlosti sa dátumy nasnímania snímok ukladajú do vyrovnávacej pamäte najviac pre {{max}} miest zobrazených pomocou Esri World Imagery Wayback.",
         "count": "Miesta vo vyrovnávacej pamäti: {{count}}",
-        "delete": "Vymazať vyrovnávaciu pamäť mapy"
+        "delete": "Vymazať vyrovnávaciu pamäť mapy",
+        "confirmDelete": "Chcete vymazať vyrovnávaciu pamäť mapy?"
       },
       "all": {
         "title": "Všetky vyrovnávacie pamäte",

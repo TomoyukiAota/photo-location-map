@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Sličice",
-        "description": "Predpomnilnik sličic, ki jih ustvari ta aplikacija, je na zavihku »Sličice«.",
+        "title": "Predpomnilnik sličic",
+        "description": "Nastavitve predpomnilnika sličic so na zavihku »Sličice«.",
         "open": "Odpri zavihek »Sličice«"
       },
       "map": {
-        "title": "Zemljevid",
-        "description": "Datumi posnetkov Esri World Imagery Wayback se shranijo v predpomnilnik za največ {{max}} krajev, ogledanih na zemljevidu, da so naslednjič takoj prikazani.",
+        "title": "Predpomnilnik zemljevida",
+        "description": "Zaradi hitrosti se datumi posnetkov shranijo v predpomnilnik za največ {{max}} krajev, prikazanih z Esri World Imagery Wayback.",
         "count": "Kraji v predpomnilniku: {{count}}",
-        "delete": "Izbriši predpomnilnik zemljevida"
+        "delete": "Izbriši predpomnilnik zemljevida",
+        "confirmDelete": "Ali želite izbrisati predpomnilnik zemljevida?"
       },
       "all": {
         "title": "Vsi predpomnilniki",

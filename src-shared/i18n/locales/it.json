@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Miniature",
-        "description": "La cache delle miniature create da questa applicazione si trova nella scheda «Miniature».",
+        "title": "Cache delle miniature",
+        "description": "Le impostazioni della cache delle miniature si trovano nella scheda «Miniature».",
         "open": "Apri la scheda «Miniature»"
       },
       "map": {
-        "title": "Mappa",
-        "description": "Le date di ripresa delle immagini di Esri World Imagery Wayback vengono memorizzate nella cache per un massimo di {{max}} luoghi visti sulla mappa, così da essere mostrate subito la volta successiva.",
+        "title": "Cache della mappa",
+        "description": "Per maggiore velocità, le date di ripresa delle immagini vengono memorizzate nella cache per un massimo di {{max}} luoghi mostrati con Esri World Imagery Wayback.",
         "count": "Luoghi nella cache: {{count}}",
-        "delete": "Elimina la cache della mappa"
+        "delete": "Elimina la cache della mappa",
+        "confirmDelete": "Vuoi eliminare la cache della mappa?"
       },
       "all": {
         "title": "Tutte le cache",

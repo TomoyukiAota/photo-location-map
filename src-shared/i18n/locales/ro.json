@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Miniaturi",
-        "description": "Cache-ul miniaturilor create de această aplicație se află în fila „Miniaturi”.",
+        "title": "Cache pentru miniaturi",
+        "description": "Setările cache-ului pentru miniaturi se află în fila „Miniaturi”.",
         "open": "Deschide fila „Miniaturi”"
       },
       "map": {
-        "title": "Hartă",
-        "description": "Datele la care au fost realizate imaginile Esri World Imagery Wayback sunt păstrate în cache pentru cel mult {{max}} de locuri văzute pe hartă, ca să fie afișate imediat data viitoare.",
+        "title": "Cache pentru hartă",
+        "description": "Pentru o funcționare mai rapidă, datele la care au fost realizate imaginile sunt păstrate în cache pentru cel mult {{max}} de locuri afișate cu Esri World Imagery Wayback.",
         "count": "Locuri în cache: {{count}}",
-        "delete": "Șterge cache-ul hărții"
+        "delete": "Șterge cache-ul hărții",
+        "confirmDelete": "Doriți să ștergeți cache-ul hărții?"
       },
       "all": {
         "title": "Toate cache-urile",

@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Miniaturas",
-        "description": "A caché das miniaturas que crea esta aplicación está na lapela «Miniaturas».",
+        "title": "Caché de miniaturas",
+        "description": "A configuración da caché de miniaturas está na lapela «Miniaturas».",
         "open": "Abrir a lapela «Miniaturas»"
       },
       "map": {
-        "title": "Mapa",
-        "description": "As datas en que se tomaron as imaxes de Esri World Imagery Wayback gárdanse na caché para un máximo de {{max}} lugares vistos no mapa, para que se mostren ao momento a próxima vez.",
+        "title": "Caché do mapa",
+        "description": "Para maior rapidez, as datas en que se tomaron as imaxes gárdanse na caché para un máximo de {{max}} lugares mostrados con Esri World Imagery Wayback.",
         "count": "Lugares na caché: {{count}}",
-        "delete": "Eliminar a caché do mapa"
+        "delete": "Eliminar a caché do mapa",
+        "confirmDelete": "Queres eliminar a caché do mapa?"
       },
       "all": {
         "title": "Todas as cachés",

@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Miniatiūros",
-        "description": "Šios programos kuriamų miniatiūrų talpykla yra skirtuke „Miniatiūros“.",
+        "title": "Miniatiūrų talpykla",
+        "description": "Miniatiūrų talpyklos nustatymai yra skirtuke „Miniatiūros“.",
         "open": "Atidaryti skirtuką „Miniatiūros“"
       },
       "map": {
-        "title": "Žemėlapis",
-        "description": "Esri World Imagery Wayback vaizdų užfiksavimo datos saugomos talpykloje ne daugiau kaip {{max}} žemėlapyje peržiūrėtų vietų, kad kitą kartą būtų rodomos iš karto.",
+        "title": "Žemėlapio talpykla",
+        "description": "Kad veiktų greičiau, vaizdų užfiksavimo datos saugomos talpykloje ne daugiau kaip {{max}} vietų, parodytų naudojant Esri World Imagery Wayback.",
         "count": "Vietos talpykloje: {{count}}",
-        "delete": "Ištrinti žemėlapio talpyklą"
+        "delete": "Ištrinti žemėlapio talpyklą",
+        "confirmDelete": "Ar norite ištrinti žemėlapio talpyklą?"
       },
       "all": {
         "title": "Visos talpyklos",

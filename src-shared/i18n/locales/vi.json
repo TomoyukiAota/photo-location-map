@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Hình thu nhỏ",
-        "description": "Bộ nhớ đệm của các hình thu nhỏ mà ứng dụng này tạo nằm ở thẻ “Hình thu nhỏ”.",
+        "title": "Bộ nhớ đệm hình thu nhỏ",
+        "description": "Cài đặt bộ nhớ đệm hình thu nhỏ nằm ở thẻ “Hình thu nhỏ”.",
         "open": "Mở thẻ “Hình thu nhỏ”"
       },
       "map": {
-        "title": "Bản đồ",
-        "description": "Ngày chụp ảnh vệ tinh của Esri World Imagery Wayback được lưu trong bộ nhớ đệm cho tối đa {{max}} địa điểm đã xem trên bản đồ, để lần sau hiển thị ngay.",
+        "title": "Bộ nhớ đệm bản đồ",
+        "description": "Để tăng tốc, ngày chụp ảnh được lưu trong bộ nhớ đệm cho tối đa {{max}} địa điểm đã hiển thị bằng Esri World Imagery Wayback.",
         "count": "Địa điểm trong bộ nhớ đệm: {{count}}",
-        "delete": "Xóa bộ nhớ đệm bản đồ"
+        "delete": "Xóa bộ nhớ đệm bản đồ",
+        "confirmDelete": "Bạn có muốn xóa bộ nhớ đệm bản đồ không?"
       },
       "all": {
         "title": "Tất cả bộ nhớ đệm",

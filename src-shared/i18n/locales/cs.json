@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Miniatury",
-        "description": "Mezipaměť miniatur, které tato aplikace vytváří, je na kartě „Miniatury“.",
+        "title": "Mezipaměť miniatur",
+        "description": "Nastavení mezipaměti miniatur je na kartě „Miniatury“.",
         "open": "Otevřít kartu „Miniatury“"
       },
       "map": {
-        "title": "Mapa",
-        "description": "Data pořízení snímků Esri World Imagery Wayback se ukládají do mezipaměti až pro {{max}} míst zobrazených na mapě, aby se příště zobrazila hned.",
+        "title": "Mezipaměť mapy",
+        "description": "Kvůli rychlosti se data pořízení snímků ukládají do mezipaměti až pro {{max}} míst zobrazených pomocí Esri World Imagery Wayback.",
         "count": "Místa v mezipaměti: {{count}}",
-        "delete": "Smazat mezipaměť mapy"
+        "delete": "Smazat mezipaměť mapy",
+        "confirmDelete": "Chcete smazat mezipaměť mapy?"
       },
       "all": {
         "title": "Všechny mezipaměti",

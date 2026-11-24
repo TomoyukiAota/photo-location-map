@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Miniaturer",
-        "description": "Cachen til de miniaturer, som appen laver, findes under fanen “Miniaturer”.",
+        "title": "Cache til miniaturer",
+        "description": "Indstillingerne for cachen til miniaturer findes under fanen “Miniaturer”.",
         "open": "Åbn fanen “Miniaturer”"
       },
       "map": {
-        "title": "Kort",
-        "description": "Datoerne for, hvornår satellitbillederne fra Esri World Imagery Wayback er taget, gemmes i cachen for op til {{max}} steder, der er set på kortet, så de vises med det samme næste gang.",
+        "title": "Kortcache",
+        "description": "For at gøre det hurtigere gemmes datoerne for, hvornår billederne er taget, i cachen for op til {{max}} steder, der er vist med Esri World Imagery Wayback.",
         "count": "Steder i cachen: {{count}}",
-        "delete": "Slet kortcachen"
+        "delete": "Slet kortcachen",
+        "confirmDelete": "Vil du slette kortcachen?"
       },
       "all": {
         "title": "Alle cacher",
