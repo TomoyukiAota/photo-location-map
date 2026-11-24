@@ -170,8 +170,9 @@ on a gutter to put back the default.
   (`parseSavedSize()`).
 - `src/app/home/pane-sizes/pane-split.ts`: `PaneSplit`, which makes a split of Split.js, keeps one of its panes at a
   size in pixels once it has one, and shows it again at each change of the parent's size (a ResizeObserver). It
-  ignores a click on the gutter, which moves nothing, keeps the least size of the other pane lower after a drag that
-  made it smaller, waits while the parent is not shown, and gives `setSizes()` the shares reversed in a reversed row.
+  ignores a press on the gutter that moves nothing, such as a click, even while the parent is resized meanwhile (a
+  move is what Split.js's `onDrag` tells), keeps the least size of the other pane lower after a drag that made it
+  smaller, waits while the parent is not shown, and gives `setSizes()` the shares reversed in a reversed row.
   `reset()` puts back the default.
 - `src/app/home/home.component.ts` makes the three splits with it:
   - The sidebar: 25% until dragged; a dragged width kept, and saved in `HomeLayout/SidebarWidth`; at least 200 px, and
@@ -199,8 +200,8 @@ on a gutter to put back the default.
 
 - `pane-size.spec.ts` (Vitest): the rules for the three splits' limits, the percentages and the saved text.
 - `test/src/app/home/pane-sizes/pane-split.spec.em.renderer.ts` (Electron-Mocha, a page with a real layout): the
-  default shares, a saved size through parent resizes, the clamps and the fallback to the default shares, a drag and a
-  click, a reversed row, `reset()`, the other pane's least size after a drag and at the next launch, a hidden parent,
+  default shares, a saved size through parent resizes, the clamps and the fallback to the default shares, a drag, a
+  click, a press while the parent is resized, a reversed row, `reset()`, the other pane's least size after a drag and at the next launch, a hidden parent,
   and the upper pane's window-only mode, with a parent shown again. Without the reversal, the reversed row's case fails.
 - `renderer-storage-requests.spec.em.main.ts`: the renderer can write the two paths.
 - e2e:

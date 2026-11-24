@@ -179,6 +179,25 @@ describe('PaneSplit', () => {
     assert.deepStrictEqual([heightOf(next.panes[0]), heightOf(next.panes[1])], [200, 392]);
   });
 
+  it('keeps its size through a press on the gutter that moves nothing, while the parent is resized', async () => {
+    const fixture = makeParent('vertical', 300, 800);
+    const dragged: number[][] = [];
+    chartLike(fixture, { savedSize: 500, onDragged: sizes => dragged.push(sizes) });
+    assert.strictEqual(heightOf(fixture.panes[1]), 500);
+    // Pressed, the parent made smaller, which shows the chart smaller, and released where it was pressed.
+    const box = fixture.gutter.getBoundingClientRect();
+    const at = { clientX: box.x + box.width / 2, clientY: box.y + box.height / 2 };
+    fixture.gutter.dispatchEvent(new MouseEvent('mousedown', { ...at, button: 0, bubbles: true }));
+    fixture.parent.style.height = '600px';
+    await nextFrames();
+    assert.strictEqual(heightOf(fixture.panes[1]), 392);
+    window.dispatchEvent(new MouseEvent('mouseup', at));
+    assert.deepStrictEqual(dragged, []);
+    fixture.parent.style.height = '800px';
+    await nextFrames();
+    assert.strictEqual(heightOf(fixture.panes[1]), 500);
+  });
+
   it('waits while the parent is not shown, and shows the size once it is', async () => {
     const fixture = makeParent('horizontal', 1000, 300);
     sidebarLike(fixture, { savedSize: 312 });

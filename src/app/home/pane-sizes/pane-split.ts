@@ -52,7 +52,11 @@ export class PaneSplit {
   private keptSize: number | undefined;
   /** The least size that the kept pane leaves the other: its limit, or less where a drag made the other smaller. */
   private otherMin: number;
-  private sharesAtDragStart: number[] | undefined;
+  /**
+   * Whether the gutter has moved since it was pressed. Split.js tells a move of the mouse or of a finger alone by
+   * onDrag, whereas its shares also change when the parent's size does meanwhile.
+   */
+  private movedSinceDragStart = false;
   private readonly stopWatching: () => void;
 
   constructor(private readonly options: PaneSplitOptions) {
@@ -69,8 +73,9 @@ export class PaneSplit {
       direction: options.direction,
       snapOffset: 0,
       gutter: () => options.gutter,
-      onDragStart: shares => this.sharesAtDragStart = shares,
-      onDragEnd: shares => this.endDrag(shares),
+      onDragStart: () => this.movedSinceDragStart = false,
+      onDrag: () => this.movedSinceDragStart = true,
+      onDragEnd: () => this.endDrag(),
     });
     if (options.showSizeAt === 'window-resize') {
       const listener = () => this.showKeptSize();
@@ -131,14 +136,14 @@ export class PaneSplit {
   }
 
   /**
-   * Keeps the size that a drag gave the kept pane. A click on the gutter, as each of a double-click's two, ends a drag
-   * that moved nothing, which keeps nothing: a pane that follows the parent keeps doing so.
+   * Keeps the size that a drag gave the kept pane. A press on the gutter that did not move it, as a click, or each of a
+   * double-click's two, keeps nothing: a pane that follows the parent keeps doing so, and a kept size stays, though the
+   * parent was resized meanwhile.
    */
-  private endDrag(shares: number[]): void {
-    const moved = shares.some((share, index) => share !== this.sharesAtDragStart?.[index]);
-    this.sharesAtDragStart = undefined;
-    if (!moved)
+  private endDrag(): void {
+    if (!this.movedSinceDragStart)
       return;
+    this.movedSinceDragStart = false;
     const sizes = this.options.panes.map(pane => Math.round(this.sizeOf(pane))) as [number, number];
     this.keptSize = sizes[this.options.keptPane];
     this.otherMin = Math.min(this.options.limits.otherMin, sizes[1 - this.options.keptPane]);
