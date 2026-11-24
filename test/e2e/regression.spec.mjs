@@ -1652,26 +1652,34 @@ test('the map stays as it is while other photos are pinned: its markers change, 
   await expectRepresentedPhotos(1);
   expect(await map()).toEqual({ zoom: 13, maps: 1 });
   expect(await popupInMiddle()).toBe(true);
+  /**
+   * Checks the popups seen while the selection changed, from the popup of the photo `going` to that of `coming`: the
+   * popup open went at once, and the next one was there at once, whole. With Leaflet's fade, the popup going showed as
+   * a thin bar while it faded out, as its content goes with its marker, under the one coming, which faded in: a popup
+   * that grew.
+   */
+  async function expectPopupReplacedAtOnce(going, coming) {
+    await expect(popup).toHaveCount(1);
+    const shownWhileChanging = await shownPopups();
+    expect(shownWhileChanging).toContainEqual([{ opacity: '1', name: coming }]);
+    for (const shown of shownWhileChanging)
+      expect([[{ opacity: '1', name: going }], [{ opacity: '1', name: coming }]]).toContainEqual(shown);
+  }
   // Zoomed in, as the user would to see the place, the map keeps the zoom for the photo taken next, far from there.
+  // The zoom leaves the popup open (configurePopups() in leaflet-map.component.ts), which the next one replaces.
   await page.evaluate(() => window.__plmLeafletMap.setZoom(16, { animate: false }));
-  await page.evaluate(() => window.plmInternalRenderer.photoSelection.selectNext());
+  await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_1579.JPG');
+  await selectRecordingShownPopups('selectNext');
   await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_2581.JPG');
   await expectRepresentedPhotos(1);
   expect(await map()).toEqual({ zoom: 16, maps: 1 });
+  await expectPopupReplacedAtOnce('IMG_1579.JPG', 'IMG_2581.JPG');
   expect(await popupInMiddle()).toBe(true);
-  // Back to the photo before, with the popup of this one open: the popup open goes at once, and that of the photo
-  // before is there at once, whole. With Leaflet's fade, the popup going showed as a thin bar while it faded out, as
-  // its content goes with its marker, under the one coming, which faded in: a popup that grew. Not checked at the step
-  // above, where the zoom had closed the popup: Leaflet.markercluster takes a marker off the map and puts it back at
-  // each zoom, and Leaflet closes the popup of a marker taken off.
+  // Back to the photo before, in the same way.
   await selectRecordingShownPopups('undo');
   await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_1579.JPG');
   expect(await map()).toEqual({ zoom: 16, maps: 1 });
-  await expect(popup).toHaveCount(1);
-  const shownWhileChanging = await shownPopups();
-  expect(shownWhileChanging).toContainEqual([{ opacity: '1', name: 'IMG_1579.JPG' }]);
-  for (const shown of shownWhileChanging)
-    expect([[{ opacity: '1', name: 'IMG_2581.JPG' }], [{ opacity: '1', name: 'IMG_1579.JPG' }]]).toContainEqual(shown);
+  await expectPopupReplacedAtOnce('IMG_2581.JPG', 'IMG_1579.JPG');
   // The four photos again: the view fits them, which are around the world.
   await page.evaluate(() => window.plmInternalRenderer.photoSelection.undo());
   await expectRepresentedPhotos(4);
@@ -2733,6 +2741,234 @@ test('a cluster of photos taken at one place opens a popup with each of them', a
   await tiles.first().click();
   await expect(shownName).toHaveText(firstName);
   await expect(page.locator('.photo-cluster-viewer-right-pane .photo-info-viewer-thumbnail')).toHaveCSS('transform', 'none');
+});
+/**
+ * Reloads the page with its map given as window.__plmLeafletMap once it is made, and with the popups that open and
+ * close on the map recorded, by the name of the photo that each shows (in a cluster's popup, the photo chosen), until
+ * takePopupEvents() takes them. The popup that opened last is window.__plmLastPopup.
+ */
+async function reloadRecordingPopups() {
+  await page.addInitScript(() => {
+    let leaflet;
+    Object.defineProperty(window, 'L', {
+      configurable: true, enumerable: true,
+      get: () => leaflet,
+      set: lib => {
+        leaflet = lib;
+        lib?.Map?.addInitHook(function () {
+          if (this.getContainer().id !== 'plm-leaflet-map') return;
+          window.__plmLeafletMap = this;
+          window.__plmPopupEvents = [];
+          const nameIn = popup => popup.getElement()?.querySelector('.photo-info-viewer-name')?.textContent.trim();
+          this.on('popupopen', event => {
+            window.__plmLastPopup = event.popup;
+            window.__plmPopupEvents.push(`open ${nameIn(event.popup)}`);
+          });
+          this.on('popupclose', event => window.__plmPopupEvents.push(`close ${nameIn(event.popup)}`));
+        });
+      }
+    });
+  });
+  await page.reload();
+  await page.waitForFunction(() => !!window.__plmLeafletMap);
+}
+const takePopupEvents = () => page.evaluate(() => window.__plmPopupEvents.splice(0));
+const mapZoom = () => page.evaluate(() => window.__plmLeafletMap.getZoom());
+/**
+ * Waits until the map is at zoom level `zoom`, and still: Leaflet has ended its animation of the zoom, and
+ * Leaflet.markercluster has split and merged its clusters, which it does for a moment after the zoom when it animates
+ * them.
+ */
+async function untilStillAtZoom(zoom) {
+  await expect.poll(mapZoom).toBe(zoom);
+  await page.waitForFunction(() => {
+    const map = window.__plmLeafletMap;
+    let group;
+    map.eachLayer(layer => { if (layer instanceof L.MarkerClusterGroup) group = layer; });
+    return !map._animatingZoom && !group?._inZoomAnimation && !group?._queueTimeout;
+  });
+}
+/** A place of the map where a click reaches the map itself: no popup, marker, cluster or control is there. */
+async function emptyPlaceOnMap() {
+  return page.evaluate(() => {
+    const map = window.__plmLeafletMap.getContainer();
+    const box = map.getBoundingClientRect();
+    for (const [x, y] of [[0.15, 0.5], [0.85, 0.5], [0.15, 0.25], [0.85, 0.25], [0.15, 0.75], [0.85, 0.75], [0.5, 0.9]]) {
+      const place = { x: box.left + box.width * x, y: box.top + box.height * y };
+      const element = document.elementFromPoint(place.x, place.y);
+      if (element === map || element?.closest('.leaflet-tile-pane')) return place;
+    }
+    throw new Error('Every place tried on the map has something over it.');
+  });
+}
+test('the popup of a photo stays open while the map zooms, by its buttons, the wheel, a pinch, a double-click, the keyboard or the application, and closes with a click on the map', async () => {
+  // The folder's only photo, whose popup opens by itself at zoom level 13. Its marker is in a group that
+  // Leaflet.markercluster takes off the map and puts back at each zoom (renderMarkerClusterGroupForSinglePhoto()).
+  const folder = path.join(profile, 'one photo');
+  await mkdir(folder);
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'IMG_4676.JPG'));
+  await reloadRecordingPopups();
+  await dismissWelcome();
+  await openFolderWithPicker(folder);
+  const popup = page.locator('.leaflet-popup');
+  const label = page.locator('.plm-leaflet-map-div-icon-content-container');
+  await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_4676.JPG');
+  await untilStillAtZoom(13);
+  await takePopupEvents();
+  /**
+   * Zooms by `zoomBy`, to the level `zoom`, and checks that the popup is the one that was open: it closed only as
+   * `events` say, which is never for a zoom alone, and its marker's label is colored as chosen.
+   */
+  async function expectPopupKept(zoomBy, zoom, events = []) {
+    await zoomBy();
+    await untilStillAtZoom(zoom);
+    expect(await takePopupEvents()).toEqual(events);
+    await expect(popup).toHaveCount(1);
+    await expect(popup).toHaveCSS('opacity', '1');
+    await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_4676.JPG');
+    await expect(label).toHaveCSS('background-color', 'rgba(63, 81, 181, 0.15)');
+  }
+  const zoomIn = page.getByRole('button', { name: 'Zoom in', exact: true });
+  const zoomOut = page.getByRole('button', { name: 'Zoom out', exact: true });
+  await expectPopupKept(() => zoomIn.click(), 14);
+  await expectPopupKept(() => zoomOut.click(), 13);
+  // The wheel and a pinch on a trackpad, which Chromium gives the page as the wheel with Control held, zoom by one level
+  // around the pointer, and back.
+  const place = await emptyPlaceOnMap();
+  await page.mouse.move(place.x, place.y);
+  await expectPopupKept(() => page.mouse.wheel(0, -20), 14);
+  await expectPopupKept(() => page.mouse.wheel(0, 20), 13);
+  await page.keyboard.down('Control');
+  await expectPopupKept(() => page.mouse.wheel(0, -20), 14);
+  await expectPopupKept(() => page.mouse.wheel(0, 20), 13);
+  await page.keyboard.up('Control');
+  // The first click of a double-click closes the popup, as any click on the map does, and the double-click opens it
+  // again. A double-click with Shift zooms out.
+  await expectPopupKept(() => page.mouse.dblclick(place.x, place.y), 14, ['close IMG_4676.JPG', 'open IMG_4676.JPG']);
+  await page.keyboard.down('Shift');
+  await expectPopupKept(() => page.mouse.dblclick(place.x, place.y), 13, ['close IMG_4676.JPG', 'open IMG_4676.JPG']);
+  await page.keyboard.up('Shift');
+  // The keyboard, once the map has the focus.
+  await page.locator('#plm-leaflet-map').focus();
+  await expectPopupKept(() => page.keyboard.press('Equal'), 14);
+  await expectPopupKept(() => page.keyboard.press('Minus'), 13);
+  // The application's own setZoom() and setView(), without and with an animation.
+  await expectPopupKept(() => page.evaluate(() => window.__plmLeafletMap.setZoom(14, { animate: false })), 14);
+  await expectPopupKept(() => page.evaluate(() => {
+    const map = window.__plmLeafletMap;
+    map.setView(map.getCenter(), 13);
+  }), 13);
+  // Far from the photo, where Leaflet.markercluster takes its marker off the map, the popup stays open, out of view, and
+  // the marker comes back under it.
+  const center = await page.evaluate(() => window.__plmLeafletMap.getCenter());
+  await page.evaluate(() => window.__plmLeafletMap.setView([0, 0], 12, { animate: false }));
+  await untilStillAtZoom(12);
+  await expect(label).toHaveCount(0);
+  expect(await takePopupEvents()).toEqual([]);
+  await expectPopupKept(() => page.evaluate(center => window.__plmLeafletMap.setView(center, 13, { animate: false }), center), 13);
+  // A click on the map still closes the popup, for good.
+  const placeToClick = await emptyPlaceOnMap();
+  await page.mouse.click(placeToClick.x, placeToClick.y);
+  await expect(popup).toHaveCount(0);
+  await expect(label).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  expect(await takePopupEvents()).toEqual(['close IMG_4676.JPG']);
+});
+test('a popup stays open where it is while a zoom puts its marker into a cluster or splits its cluster, and the label of the photo\'s marker shows it', async () => {
+  // Two photos taken 3 km apart in Osaka: at zoom level 13, the map shows them by their markers, 191 pixels apart; at
+  // 12, by a cluster, as 96 pixels are within its radius of 120. A click on that cluster shows the two photos in its
+  // popup, as the cluster splits into the two markers at the next level (handleClusterClick()).
+  const folder = path.join(profile, 'two photos 3 km apart');
+  await mkdir(folder);
+  const source = await readFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'));
+  await writeFile(path.join(folder, 'west.JPG'), jpegWithLocationAndDate(source, 34.6873, 135.5262, '2025:05:01 10:00:00'));
+  await writeFile(path.join(folder, 'east.JPG'), jpegWithLocationAndDate(source, 34.6873, 135.559, '2025:05:01 12:00:00'));
+  await reloadRecordingPopups();
+  await dismissWelcome();
+  await openFolderWithPicker(folder);
+  await expectRepresentedPhotos(2);
+  await untilStillAtZoom(13);
+  const popup = page.locator('.leaflet-popup');
+  const shownName = popup.locator('.photo-info-viewer-name');
+  const markers = page.locator('.plm-leaflet-map-div-icon');
+  const cluster = page.locator('.marker-cluster');
+  const labelOf = time => markers.filter({ hasText: time }).locator('.plm-leaflet-map-div-icon-content-container');
+  const chosen = 'rgba(63, 81, 181, 0.15)';
+  const zoomIn = page.getByRole('button', { name: 'Zoom in', exact: true });
+  const zoomOut = page.getByRole('button', { name: 'Zoom out', exact: true });
+  /** Where the popup that opened last points, which is where its photo is, or its cluster was. */
+  const popupPlace = () => page.evaluate(() => window.__plmLastPopup.getLatLng());
+
+  // The popup of the photo taken in the east, opened by a click on its marker, which Leaflet brings into view.
+  await labelOf('12:00:00').click();
+  await expect(shownName).toHaveText('east.JPG');
+  await expect(page.locator('.leaflet-map-pane.leaflet-pan-anim')).toHaveCount(0);
+  await expect(labelOf('12:00:00')).toHaveCSS('background-color', chosen);
+  await expect(labelOf('10:00:00')).not.toHaveCSS('background-color', chosen);
+  expect(await takePopupEvents()).toEqual(['open east.JPG']);
+  const eastPlace = await popupPlace();
+  expect(eastPlace.lat).toBeCloseTo(34.6873, 4);
+  expect(eastPlace.lng).toBeCloseTo(135.559, 4);
+  // Zoomed out, the marker goes into the cluster, and the popup stays open where the photo is.
+  await zoomOut.click();
+  await untilStillAtZoom(12);
+  await expect(cluster).toHaveCount(1);
+  await expect(markers).toHaveCount(0);
+  expect(await takePopupEvents()).toEqual([]);
+  await expect(popup).toHaveCSS('opacity', '1');
+  await expect(shownName).toHaveText('east.JPG');
+  expect(await popupPlace()).toEqual(eastPlace);
+  // Zoomed in, the marker is back under its popup, with its label colored as chosen.
+  await zoomIn.click();
+  await untilStillAtZoom(13);
+  await expect(markers).toHaveCount(2);
+  expect(await takePopupEvents()).toEqual([]);
+  await expect(shownName).toHaveText('east.JPG');
+  expect(await popupPlace()).toEqual(eastPlace);
+  await expect(labelOf('12:00:00')).toHaveCSS('background-color', chosen);
+  await expect(labelOf('10:00:00')).not.toHaveCSS('background-color', chosen);
+
+  // The cluster's popup, with the photo taken in the east chosen in it: the cluster colors no label.
+  await zoomOut.click();
+  await untilStillAtZoom(12);
+  await cluster.click();
+  // Once the popup of the photo has gone, which Leaflet keeps, hidden, for 200 ms after it closes.
+  await expect(popup).toHaveCount(1);
+  const tiles = popup.locator('.photo-cluster-viewer-tile');
+  await expect(tiles).toHaveCount(2);
+  await expect(shownName).toHaveText('west.JPG');
+  await tiles.nth(1).click();
+  await expect(shownName).toHaveText('east.JPG');
+  expect(await takePopupEvents()).toEqual(['close east.JPG', 'open west.JPG']);
+  const clusterPlace = await popupPlace();
+  // Zoomed in, the cluster splits into the two markers, and its popup stays where the cluster was, with the photo
+  // chosen.
+  await zoomIn.click();
+  await untilStillAtZoom(13);
+  await expect(markers).toHaveCount(2);
+  await expect(cluster).toHaveCount(0);
+  expect(await takePopupEvents()).toEqual([]);
+  await expect(popup).toHaveCSS('opacity', '1');
+  await expect(shownName).toHaveText('east.JPG');
+  await expect(tiles.nth(1)).toHaveClass(/selected-tile/);
+  expect(await popupPlace()).toEqual(clusterPlace);
+  await expect(labelOf('12:00:00')).not.toHaveCSS('background-color', chosen);
+  await expect(labelOf('10:00:00')).not.toHaveCSS('background-color', chosen);
+  // A double-click on the map opens the popup that its first click closed, with the same photo chosen.
+  const place = await emptyPlaceOnMap();
+  await page.mouse.dblclick(place.x, place.y);
+  await untilStillAtZoom(14);
+  expect(await takePopupEvents()).toEqual(['close east.JPG', 'open east.JPG']);
+  await expect(shownName).toHaveText('east.JPG');
+  await expect(tiles.nth(1)).toHaveClass(/selected-tile/);
+  // Zoomed out until the two markers are in the cluster again: the popup stays there.
+  await zoomOut.click();
+  await untilStillAtZoom(13);
+  await zoomOut.click();
+  await untilStillAtZoom(12);
+  await expect(cluster).toHaveCount(1);
+  expect(await takePopupEvents()).toEqual([]);
+  await expect(shownName).toHaveText('east.JPG');
+  expect(await popupPlace()).toEqual(clusterPlace);
 });
 test('Reveal in Sidebar from a popup of the map expands the folders above the photo, scrolls its row smoothly to the middle of the sidebar and highlights it there, without changing the selection', async () => {
   // The photo is three folders down, after twenty folders of a photo without a location and before three such photos,
