@@ -174,7 +174,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Izrada minijatura za datoteke HEIF...",
-    "fasterInSettings": "Da bi se prikazale ranije, <settingsLink>odaberite brze minijature u postavkama</settingsLink>.",
+    "fasterInSettings": "Da bi se prikazale ranije, <settingsLink>odaberite „Prednost performansama aplikacije” u postavkama</settingsLink>.",
     "completed": "Minijature za datoteke HEIF su izrađene.",
     "finishedWithErrors": "Izrada minijatura za datoteke HEIF završila je s pogreškama.",
     "showDetails": "Prikaži pojedinosti",
@@ -241,15 +241,16 @@
       "example": "Primjer"
     },
     "thumbnails": {
-      "title": "Minijature",
-      "description": "Odaberite izrađuju li se minijature s naglaskom na kvalitetu ili na brzinu.",
-      "highQuality": "Visoka kvaliteta",
-      "highQualityDescription": "Izrađuju se od cijele fotografije, u veličini odabranoj ispod. Do tada se prikazuje mala minijatura spremljena u fotografiji. Njihova izrada traje neko vrijeme kad se mapa otvori prvi put, a dulje za datoteke HEIF na računalu čiji grafički hardver ne može dekodirati HEVC.",
-      "size": "Veličina",
+      "title": "Kvaliteta minijatura i performanse aplikacije",
+      "highQuality": "Prednost kvaliteti minijatura",
+      "highQualityDescription": "Minijature se uvijek izrađuju iz datoteka fotografija.",
+      "size": "Veličina minijatura",
       "sizeValue": "{{size}} piksela na duljoj stranici",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "O veličini minijatura",
       "sizeDescription": "Što je veličina veća, minijature se prikazuju veće, ali njihova izrada traje dulje i zauzimaju više mjesta u predmemoriji minijatura.",
-      "fast": "Brzo",
-      "fastDescription": "Mala minijatura spremljena u fotografiji, prikazana odmah. Manje je oštra: 160 × 120 piksela u većini fotografija JPEG i 320 × 240 piksela u fotografiji od 12 megapiksela snimljenoj iPhoneom."
+      "fast": "Prednost performansama aplikacije",
+      "fastDescription": "Kad datoteka, primjerice JPEG ili PNG, već sadrži minijaturu, ona se prikazuje kakva jest. Minijatura od 400 piksela na duljoj stranici izrađuje se samo za datoteku koja je nema."
     },
     "os": {
       "title": "Kontekstni izbornik Eksplorera za datoteke",

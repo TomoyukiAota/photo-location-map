@@ -174,7 +174,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Vytvářejí se miniatury souborů HEIF...",
-    "fasterInSettings": "Chcete-li je zobrazit dříve, <settingsLink>zvolte v nastavení rychlé miniatury</settingsLink>.",
+    "fasterInSettings": "Chcete-li je zobrazit dříve, <settingsLink>zvolte v nastavení „Upřednostnit výkon aplikace“</settingsLink>.",
     "completed": "Miniatury souborů HEIF byly vytvořeny.",
     "finishedWithErrors": "Vytváření miniatur souborů HEIF skončilo s chybami.",
     "showDetails": "Zobrazit podrobnosti",
@@ -241,15 +241,16 @@
       "example": "Příklad"
     },
     "thumbnails": {
-      "title": "Miniatury",
-      "description": "Zvolte, zda se mají miniatury vytvářet s důrazem na kvalitu, nebo na rychlost.",
-      "highQuality": "Vysoká kvalita",
-      "highQualityDescription": "Vytvářejí se z celé fotky, ve velikosti zvolené níže. Do té doby se zobrazuje malá miniatura uložená ve fotce. Jejich vytváření chvíli trvá při prvním otevření složky a déle u souborů HEIF na počítači, který neumí dekódovat HEVC grafickým hardwarem.",
-      "size": "Velikost",
+      "title": "Kvalita miniatur a výkon aplikace",
+      "highQuality": "Upřednostnit kvalitu miniatur",
+      "highQualityDescription": "Miniatury se vždy vytvářejí ze souborů fotek.",
+      "size": "Velikost miniatur",
       "sizeValue": "{{size}} pixelů na delší straně",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "O velikosti miniatur",
       "sizeDescription": "Čím větší velikost, tím větší jsou zobrazené miniatury, ale jejich vytváření trvá déle a zabírají více místa v mezipaměti miniatur.",
-      "fast": "Rychlé",
-      "fastDescription": "Malá miniatura uložená ve fotce, zobrazená hned. Je méně ostrá: 160 × 120 pixelů u většiny fotek JPEG a 320 × 240 pixelů u 12megapixelové fotky z iPhonu."
+      "fast": "Upřednostnit výkon aplikace",
+      "fastDescription": "Když soubor, například JPEG nebo PNG, už obsahuje miniaturu, zobrazí se tak, jak je. Miniatura o 400 pixelech na delší straně se vytváří jen pro soubor, který žádnou nemá."
     },
     "os": {
       "title": "Místní nabídka Průzkumníka souborů",

@@ -174,7 +174,7 @@
   },
   "thumbnailGeneration": {
     "generating": "HEIF dosyaları için küçük resimler oluşturuluyor...",
-    "fasterInSettings": "Daha erken göstermek için <settingsLink>ayarlarda hızlı küçük resimleri seçin</settingsLink>.",
+    "fasterInSettings": "Daha erken göstermek için <settingsLink>ayarlarda “Uygulama performansına öncelik ver” seçeneğini seçin</settingsLink>.",
     "completed": "HEIF dosyaları için küçük resimler oluşturuldu.",
     "finishedWithErrors": "HEIF dosyaları için küçük resim oluşturma işlemi hatalarla tamamlandı.",
     "showDetails": "Ayrıntıları göster",
@@ -241,15 +241,16 @@
       "example": "Örnek"
     },
     "thumbnails": {
-      "title": "Küçük Resimler",
-      "description": "Küçük resimlerin kaliteye mi yoksa hıza mı öncelik verilerek oluşturulacağını seçin.",
-      "highQuality": "Yüksek kalite",
-      "highQualityDescription": "Fotoğrafın tamamından, aşağıda seçilen boyutta oluşturulur. O zamana kadar fotoğrafta saklanan küçük resim gösterilir. Bir klasör ilk kez açıldığında bunları oluşturmak zaman alır; grafik donanımı HEVC kodunu çözemeyen bir bilgisayarda HEIF dosyaları için daha da uzun sürer.",
-      "size": "Boyut",
+      "title": "Küçük resim kalitesi ve uygulama performansı",
+      "highQuality": "Küçük resim kalitesine öncelik ver",
+      "highQualityDescription": "Küçük resimler her zaman fotoğraf dosyalarından oluşturulur.",
+      "size": "Küçük resim boyutu",
       "sizeValue": "uzun kenarı {{size}} piksel",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "Küçük resim boyutu hakkında",
       "sizeDescription": "Boyut büyüdükçe küçük resimler daha büyük gösterilir, ancak oluşturulmaları daha uzun sürer ve küçük resim önbelleğinde daha fazla yer kaplarlar.",
-      "fast": "Hızlı",
-      "fastDescription": "Fotoğrafta saklanan küçük resim hemen gösterilir. Daha az nettir: çoğu JPEG fotoğrafta 160 × 120 piksel, iPhone ile çekilen 12 megapiksellik bir fotoğrafta 320 × 240 pikseldir."
+      "fast": "Uygulama performansına öncelik ver",
+      "fastDescription": "JPEG veya PNG gibi bir dosya zaten bir küçük resim içeriyorsa bu küçük resim olduğu gibi gösterilir. Uzun kenarı 400 piksel olan bir küçük resim yalnızca küçük resmi olmayan bir dosya için oluşturulur."
     },
     "os": {
       "title": "Dosya Gezgini bağlam menüsü",

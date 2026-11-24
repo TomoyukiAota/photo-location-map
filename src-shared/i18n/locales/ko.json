@@ -174,7 +174,7 @@
   },
   "thumbnailGeneration": {
     "generating": "HEIF 파일의 썸네일을 생성하는 중...",
-    "fasterInSettings": "더 빨리 표시하려면 <settingsLink>설정에서 속도 우선을 선택하세요</settingsLink>.",
+    "fasterInSettings": "더 빨리 표시하려면 <settingsLink>설정에서 “앱 성능 우선”을 선택하세요</settingsLink>.",
     "completed": "HEIF 파일의 썸네일 생성을 완료했습니다.",
     "finishedWithErrors": "HEIF 파일의 썸네일 생성이 끝났지만 오류가 있었습니다.",
     "showDetails": "세부 정보 표시",
@@ -241,15 +241,16 @@
       "example": "예"
     },
     "thumbnails": {
-      "title": "썸네일",
-      "description": "썸네일의 화질과 속도 중 무엇을 우선할지 선택하세요.",
-      "highQuality": "고화질",
-      "highQualityDescription": "사진 전체에서 아래에서 선택한 크기로 생성합니다. 생성될 때까지는 사진에 저장된 작은 썸네일을 표시합니다. 폴더를 처음 열 때는 생성하는 데 시간이 걸리며, 그래픽 하드웨어로 HEVC를 디코딩할 수 없는 컴퓨터에서는 HEIF 파일을 생성하는 데 더 오래 걸립니다.",
-      "size": "크기",
+      "title": "썸네일 화질과 앱 성능",
+      "highQuality": "썸네일 화질 우선",
+      "highQualityDescription": "항상 사진 파일에서 썸네일을 생성합니다.",
+      "size": "썸네일 크기",
       "sizeValue": "긴 변 {{size}}픽셀",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "썸네일 크기 정보",
       "sizeDescription": "크기가 클수록 썸네일이 크게 표시되지만, 생성하는 데 시간이 더 걸리고 썸네일 캐시도 더 많은 공간을 차지합니다.",
-      "fast": "속도 우선",
-      "fastDescription": "사진에 저장된 작은 썸네일을 바로 표시합니다. 덜 선명하며, 대부분의 JPEG 사진에서는 160 × 120픽셀, iPhone으로 찍은 1,200만 화소 사진에서는 320 × 240픽셀입니다."
+      "fast": "앱 성능 우선",
+      "fastDescription": "JPEG나 PNG 등이 원래 썸네일을 가지고 있으면 그대로 표시합니다. 그 외의 경우에만 긴 변 400픽셀의 썸네일을 생성합니다."
     },
     "os": {
       "title": "파일 탐색기의 컨텍스트 메뉴",
