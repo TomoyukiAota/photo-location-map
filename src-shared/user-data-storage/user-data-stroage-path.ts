@@ -20,6 +20,13 @@ export namespace UserDataStoragePath {
     export const LastConfirmedDirectory: ReadonlyArray<string> = ['FolderDialog', 'LastConfirmedDirectory'];
   }
 
+  // The sizes that the user gave the home view's panes by dragging their gutters, in CSS pixels, or '' where a
+  // double-click on the gutter put the default back (src/app/home/pane-sizes/).
+  export namespace HomeLayout {
+    export const SidebarWidth: ReadonlyArray<string> = ['HomeLayout', 'SidebarWidth'];
+    export const ChartHeight: ReadonlyArray<string> = ['HomeLayout', 'ChartHeight'];
+  }
+
   export namespace LeafletMap {
     export const SelectedBaseLayer: ReadonlyArray<string> = ['LeafletMap', 'SelectedBaseLayer'];
     // The configs of the map's base layers that a launch last fetched, for a launch whose fetches give none

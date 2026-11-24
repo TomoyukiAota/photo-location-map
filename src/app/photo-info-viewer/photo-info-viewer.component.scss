@@ -53,6 +53,55 @@
   }
 }
 
+// A popup of the map: a column no wider and no higher than the map leaves room for, so that the popup ends inside the
+// map. cqw and cqh are of the map's element, a container of its size (_plm-leaflet-map.scss).
+// TL;DR: The room is the map's size less what Leaflet puts around a popup, and the thumbnail gives way to the rest.
+// Details:
+// - Across, the room is less the margins of Leaflet's popup and of its content, and the room that Leaflet keeps
+//   between a popup and the map's edges when it pans to it (autoPanPadding): 56 pixels. Beside the chosen photo of a
+//   cluster's popup, it is less its tiles too (--plm-popup-room-beside-thumbnail, photo-cluster-viewer.component.scss).
+//   Up and down, it is less those margins and room, and the popup's tip: 58 pixels.
+// - The photo's name, which Leaflet measures on one line when it sizes the popup, takes another line where it is wider
+//   than the column, though it has no spaces: Leaflet's maxWidth no longer wraps it (leaflet-map.component.ts).
+// - The thumbnail's box is as large as the settings choose (ThumbnailSizeService), and square, no larger than the room
+//   less the rest of the column with the name on two lines (112 pixels). The box is lower where a longer name takes
+//   more lines, never lower than a cluster's tiles.
+// - Where even that leaves too little room for a long name, in a short and narrow map, the column scrolls. Its parts
+//   are neither laid over each other nor past the popup: the buttons had been over the name's last line.
+// - The column's padding, which its negative margin takes back, keeps the shadow of the thumbnail under the pointer
+//   from being cut at the column's edges, where a column that may scroll cuts what it holds.
+:host([data-place="leaflet-map-popup"]) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: calc(100cqw - var(--plm-popup-room-beside-thumbnail, 56px));
+  max-height: calc(100cqh - 58px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 5px;
+  margin: -5px;
+
+  // The thumbnail, the name and the shooting time are parts of the column themselves, so that only the thumbnail
+  // gives way to the name.
+  > div:first-child {
+    display: contents;
+  }
+
+  .photo-info-viewer-thumbnail-container {
+    --plm-popup-thumbnail-box: max(100px, min(var(--plm-thumbnail-box, 200px),
+      calc(100cqw - var(--plm-popup-room-beside-thumbnail, 56px)), calc(100cqh - 170px)));
+    flex: 0 1 auto;
+    width: var(--plm-popup-thumbnail-box);
+    height: var(--plm-popup-thumbnail-box);
+    min-height: 100px;
+  }
+
+  .photo-info-viewer-name {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+}
+
 .photo-info-viewer-thumbnail {
   cursor: pointer;
 

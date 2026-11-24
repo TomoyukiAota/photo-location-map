@@ -1525,6 +1525,13 @@ test('on a computer whose language is Arabic, the application is laid out from r
   await page.getByRole('button', { name: 'فتح مجلد', exact: true }).click();
   await expect(treeRow('without location data').locator('.disabled-checkbox-alternative')).toBeVisible();
   expect(await nameStart('without location data')).toBeCloseTo(await nameStart('with location data'), 0);
+  // At the next launch, the sidebar is on the right, at the width that the drag gave it (src/app/home/pane-sizes/).
+  await app.close();
+  await launch({ env: { PLM_TEST_SYSTEM_LANGUAGES: 'ar-SA,en-US' } });
+  const sidebarAtNextLaunch = await page.locator('#home-left-sidebar').boundingBox();
+  const mapAtNextLaunch = await page.locator('#home-map').boundingBox();
+  expect(Math.abs(sidebarAtNextLaunch.width - sidebarAfterDrag.width)).toBeLessThan(1);
+  expect(sidebarAtNextLaunch.x).toBeGreaterThanOrEqual(mapAtNextLaunch.x + mapAtNextLaunch.width);
 });
 test('on a computer whose language is Arabic, the application in English lists the operating system\'s entry in Arabic, from right to left', async () => {
   await launchAsNew({ env: { PLM_TEST_SYSTEM_LANGUAGES: 'ar-SA,en-US' } });
@@ -1643,26 +1650,34 @@ test('the map stays as it is while other photos are pinned: its markers change, 
   await expectRepresentedPhotos(1);
   expect(await map()).toEqual({ zoom: 13, maps: 1 });
   expect(await popupInMiddle()).toBe(true);
+  /**
+   * Checks the popups seen while the selection changed, from the popup of the photo `going` to that of `coming`: the
+   * popup open went at once, and the next one was there at once, whole. With Leaflet's fade, the popup going showed as
+   * a thin bar while it faded out, as its content goes with its marker, under the one coming, which faded in: a popup
+   * that grew.
+   */
+  async function expectPopupReplacedAtOnce(going, coming) {
+    await expect(popup).toHaveCount(1);
+    const shownWhileChanging = await shownPopups();
+    expect(shownWhileChanging).toContainEqual([{ opacity: '1', name: coming }]);
+    for (const shown of shownWhileChanging)
+      expect([[{ opacity: '1', name: going }], [{ opacity: '1', name: coming }]]).toContainEqual(shown);
+  }
   // Zoomed in, as the user would to see the place, the map keeps the zoom for the photo taken next, far from there.
+  // The zoom leaves the popup open (configurePopups() in leaflet-map.component.ts), which the next one replaces.
   await page.evaluate(() => window.__plmLeafletMap.setZoom(16, { animate: false }));
-  await page.evaluate(() => window.plmInternalRenderer.photoSelection.selectNext());
+  await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_1579.JPG');
+  await selectRecordingShownPopups('selectNext');
   await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_2581.JPG');
   await expectRepresentedPhotos(1);
   expect(await map()).toEqual({ zoom: 16, maps: 1 });
+  await expectPopupReplacedAtOnce('IMG_1579.JPG', 'IMG_2581.JPG');
   expect(await popupInMiddle()).toBe(true);
-  // Back to the photo before, with the popup of this one open: the popup open goes at once, and that of the photo
-  // before is there at once, whole. With Leaflet's fade, the popup going showed as a thin bar while it faded out, as
-  // its content goes with its marker, under the one coming, which faded in: a popup that grew. Not checked at the step
-  // above, where the zoom had closed the popup: Leaflet.markercluster takes a marker off the map and puts it back at
-  // each zoom, and Leaflet closes the popup of a marker taken off.
+  // Back to the photo before, in the same way.
   await selectRecordingShownPopups('undo');
   await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_1579.JPG');
   expect(await map()).toEqual({ zoom: 16, maps: 1 });
-  await expect(popup).toHaveCount(1);
-  const shownWhileChanging = await shownPopups();
-  expect(shownWhileChanging).toContainEqual([{ opacity: '1', name: 'IMG_1579.JPG' }]);
-  for (const shown of shownWhileChanging)
-    expect([[{ opacity: '1', name: 'IMG_2581.JPG' }], [{ opacity: '1', name: 'IMG_1579.JPG' }]]).toContainEqual(shown);
+  await expectPopupReplacedAtOnce('IMG_2581.JPG', 'IMG_1579.JPG');
   // The four photos again: the view fits them, which are around the world.
   await page.evaluate(() => window.plmInternalRenderer.photoSelection.undo());
   await expectRepresentedPhotos(4);
@@ -2250,11 +2265,18 @@ test('folder picker loads real photo data, markers, tree selection and chart', a
       await cdp.detach();
     }
   }
+  const userData = await app.evaluate(({ app }) => app.getPath('userData'));
+  await expect.poll(() => savedSetting(userData, ['HomeLayout', 'SidebarWidth'])).toBe(`${Math.round(after.width)}`);
   await app.close();
   await launch();
-  // The original app resets Split.js to 25/75 on restart; keep that behavior.
+  // The sidebar keeps the width that the drag gave it at the next launch. A double-click on its gutter puts back 25% of
+  // the window, at the next launch too (src/app/home/pane-sizes/).
   const restarted = await page.locator('#home-left-sidebar').boundingBox();
-  expect(Math.abs(restarted.width - before.width)).toBeLessThan(1);
+  expect(Math.abs(restarted.width - after.width)).toBeLessThan(1);
+  await page.locator('.sidebar-and-map-container > .gutter-horizontal').dblclick();
+  const reset = await page.locator('#home-left-sidebar').boundingBox();
+  expect(Math.abs(reset.width - before.width)).toBeLessThan(1);
+  await expect.poll(() => savedSetting(userData, ['HomeLayout', 'SidebarWidth'])).toBe('');
 });
 test('the map starts and shows photos while the network cannot be reached', async () => {
   // Leaflet and its plugins once came from a CDN, so a launch without the network (offline, no DNS, or a firewall
@@ -2582,6 +2604,106 @@ test('Select Only This from a marker popup selects that photo in the tree and on
   for (const [name, folder] of Object.entries(folders))
     await expect(treeCheckbox(folder)).toBeChecked({ checked: name === photoName });
 });
+test('a photo\'s popup holds its thumbnail of 1,000 pixels and its long name, and ends inside the map, as they take the room that the map leaves', async () => {
+  // Leaflet's popup was 300 pixels wide at most, which left a box of 500 pixels outside it, and taller than the map,
+  // which cut its buttons off. The popup's content takes the room that the map leaves (photo-info-viewer.component.scss):
+  // its thumbnail, and its name, which takes more lines, though it has no spaces. The map centers the popup below its
+  // top edge (centerOnPopup()). As the map's size changes, the popup is laid out again without moving the map
+  // (layOutPopupAtEachSize()). The window keeps the size that launch() gives it, and is made smaller from there.
+  const folder = index => path.join(profile, 'Popups of large thumbnails', String(index));
+  const longNames = [
+    'Kobe harbour seen from the Meriken Park walk at dusk with the Port Tower lit in red and the museum.JPG',
+    'Kobe_harbour_seen_from_the_Meriken_Park_walk_at_dusk_with_the_Port_Tower_lit_in_red_and_the_museum.JPG',
+  ];
+  for (const [index, name] of ['Kobe.JPG', ...longNames].entries()) {
+    await mkdir(folder(index), { recursive: true });
+    await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder(index), name));
+  }
+  await dismissWelcome();
+  const dialog = page.locator('app-settings-dialog');
+  await settings('Thumbnails');
+  await dialog.locator('.thumbnail-size-slider input').fill('1000');
+  await dialog.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  await openFolderWithPicker(folder(0));
+  // The map opens the popup of the one photo that it shows.
+  await expect.poll(() => page.locator('.leaflet-popup .photo-info-viewer-thumbnail').getAttribute('src'), { timeout: 30000 })
+    .toMatch(/Kobe\.JPG\.plm\.jpg\?size=1000$/);
+  /** The map, the popup, its white box, the thumbnail's box and the photo's name, in pixels of the page. */
+  const places = () => page.evaluate(() => Object.fromEntries(Object.entries({
+    map: '.leaflet-container', popup: '.leaflet-popup', wrapper: '.leaflet-popup-content-wrapper',
+    box: '.leaflet-popup .photo-info-viewer-thumbnail-container', name: '.leaflet-popup .photo-info-viewer-name',
+  }).map(([name, selector]) => [name, document.querySelector(selector).getBoundingClientRect().toJSON()])));
+  const inside = (inner, outer) =>
+    inner.left >= outer.left && inner.right <= outer.right && inner.top >= outer.top && inner.bottom <= outer.bottom;
+  /**
+   * Whether the box and the name are inside the white box; and the popup, with its tip under it, inside the map, and
+   * no larger than the map.
+   */
+  const fits = async () => {
+    const { map, popup, wrapper, box, name } = await places();
+    return {
+      boxInPopup: inside(box, wrapper),
+      nameInPopup: inside(name, wrapper),
+      popupInMap: inside({ ...popup, bottom: popup.bottom + 20 }, map),
+      popupFitsMap: popup.width <= map.width && popup.height + 20 <= map.height,
+    };
+  };
+  const fitting = { boxInPopup: true, nameInPopup: true, popupInMap: true, popupFitsMap: true };
+  await expect.poll(fits).toEqual(fitting);
+  const box = (await places()).box.height;
+  expect(box).toBeLessThanOrEqual(500);
+
+  // A smaller window, with a smaller map, by as much as the map has room to lose: the thumbnail of the popup, which
+  // stays open, is smaller too, and the popup still fits the map. Where it is in the map is the user's: the map does not
+  // move.
+  const mainWindow = await app.browserWindow(page);
+  const [width, height] = await mainWindow.evaluate(window => window.getContentSize());
+  const { map } = await places();
+  const smaller = { width: Math.max(0, Math.min(300, Math.floor(map.width) - 400)),
+    height: Math.max(0, Math.min(100, Math.floor(map.height) - 330)) };
+  await mainWindow.evaluate((window, [w, h]) => window.setContentSize(w, h), [width - smaller.width, height - smaller.height]);
+  if (smaller.height > 0)
+    await expect.poll(async () => (await places()).box.height).toBeLessThan(box);
+  await expect.poll(async () => {
+    const { boxInPopup, nameInPopup, popupFitsMap } = await fits();
+    return { boxInPopup, nameInPopup, popupFitsMap };
+  }).toEqual({ boxInPopup: true, nameInPopup: true, popupFitsMap: true });
+
+  // A long name, with spaces and without, takes two lines or more in the popup, rather than widening it past the map.
+  for (const [index, name] of longNames.entries()) {
+    await openFolderWithPicker(folder(index + 1));
+    await expect(page.locator('.leaflet-popup .photo-info-viewer-name')).toHaveText(name);
+    await expect.poll(fits).toEqual(fitting);
+    expect((await places()).name.height).toBeGreaterThan(40);
+  }
+
+  // A map too short and narrow for the smallest thumbnail and the whole of the long name without spaces: the popup's
+  // column scrolls, inside the popup, and its parts follow each other, with the buttons under the shooting time.
+  await mainWindow.evaluate((window, [w, h]) => window.setContentSize(w, h), [Math.min(width, 600), Math.min(height, 380)]);
+  await openFolderWithPicker(folder(2));
+  const column = () => page.evaluate(() => {
+    const rect = selector => document.querySelector(selector).getBoundingClientRect().toJSON();
+    const host = document.querySelector('.leaflet-popup app-photo-info-viewer');
+    return {
+      wrapper: rect('.leaflet-popup-content-wrapper'), host: host.getBoundingClientRect().toJSON(),
+      box: rect('.leaflet-popup .photo-info-viewer-thumbnail-container'), name: rect('.leaflet-popup .photo-info-viewer-name'),
+      date: rect('.leaflet-popup .photo-info-viewer-date-time-taken'), buttons: rect('.leaflet-popup .photo-info-viewer-lower-div'),
+      scrolls: host.scrollHeight > host.clientHeight,
+    };
+  });
+  await expect.poll(async () => {
+    const { wrapper, host, box, name, date, buttons, scrolls } = await column();
+    return {
+      columnInPopup: inside(host, wrapper),
+      apart: box.bottom <= name.top + 0.5 && name.bottom <= date.top + 0.5 && date.bottom <= buttons.top + 0.5,
+      scrolls,
+    };
+  }).toEqual({ columnInPopup: true, apart: true, scrolls: true });
+  await page.locator('.leaflet-popup app-photo-info-viewer').evaluate(host => host.scrollTop = host.scrollHeight);
+  const { host, buttons } = await column();
+  expect(inside(buttons, host)).toBe(true);
+});
 test('a cluster of photos taken at one place opens a popup with each of them', async () => {
   const folder = path.join(profile, 'photos taken at one place');
   await mkdir(folder);
@@ -2617,6 +2739,234 @@ test('a cluster of photos taken at one place opens a popup with each of them', a
   await tiles.first().click();
   await expect(shownName).toHaveText(firstName);
   await expect(page.locator('.photo-cluster-viewer-right-pane .photo-info-viewer-thumbnail')).toHaveCSS('transform', 'none');
+});
+/**
+ * Reloads the page with its map given as window.__plmLeafletMap once it is made, and with the popups that open and
+ * close on the map recorded, by the name of the photo that each shows (in a cluster's popup, the photo chosen), until
+ * takePopupEvents() takes them. The popup that opened last is window.__plmLastPopup.
+ */
+async function reloadRecordingPopups() {
+  await page.addInitScript(() => {
+    let leaflet;
+    Object.defineProperty(window, 'L', {
+      configurable: true, enumerable: true,
+      get: () => leaflet,
+      set: lib => {
+        leaflet = lib;
+        lib?.Map?.addInitHook(function () {
+          if (this.getContainer().id !== 'plm-leaflet-map') return;
+          window.__plmLeafletMap = this;
+          window.__plmPopupEvents = [];
+          const nameIn = popup => popup.getElement()?.querySelector('.photo-info-viewer-name')?.textContent.trim();
+          this.on('popupopen', event => {
+            window.__plmLastPopup = event.popup;
+            window.__plmPopupEvents.push(`open ${nameIn(event.popup)}`);
+          });
+          this.on('popupclose', event => window.__plmPopupEvents.push(`close ${nameIn(event.popup)}`));
+        });
+      }
+    });
+  });
+  await page.reload();
+  await page.waitForFunction(() => !!window.__plmLeafletMap);
+}
+const takePopupEvents = () => page.evaluate(() => window.__plmPopupEvents.splice(0));
+const mapZoom = () => page.evaluate(() => window.__plmLeafletMap.getZoom());
+/**
+ * Waits until the map is at zoom level `zoom`, and still: Leaflet has ended its animation of the zoom, and
+ * Leaflet.markercluster has split and merged its clusters, which it does for a moment after the zoom when it animates
+ * them.
+ */
+async function untilStillAtZoom(zoom) {
+  await expect.poll(mapZoom).toBe(zoom);
+  await page.waitForFunction(() => {
+    const map = window.__plmLeafletMap;
+    let group;
+    map.eachLayer(layer => { if (layer instanceof L.MarkerClusterGroup) group = layer; });
+    return !map._animatingZoom && !group?._inZoomAnimation && !group?._queueTimeout;
+  });
+}
+/** A place of the map where a click reaches the map itself: no popup, marker, cluster or control is there. */
+async function emptyPlaceOnMap() {
+  return page.evaluate(() => {
+    const map = window.__plmLeafletMap.getContainer();
+    const box = map.getBoundingClientRect();
+    for (const [x, y] of [[0.15, 0.5], [0.85, 0.5], [0.15, 0.25], [0.85, 0.25], [0.15, 0.75], [0.85, 0.75], [0.5, 0.9]]) {
+      const place = { x: box.left + box.width * x, y: box.top + box.height * y };
+      const element = document.elementFromPoint(place.x, place.y);
+      if (element === map || element?.closest('.leaflet-tile-pane')) return place;
+    }
+    throw new Error('Every place tried on the map has something over it.');
+  });
+}
+test('the popup of a photo stays open while the map zooms, by its buttons, the wheel, a pinch, a double-click, the keyboard or the application, and closes with a click on the map', async () => {
+  // The folder's only photo, whose popup opens by itself at zoom level 13. Its marker is in a group that
+  // Leaflet.markercluster takes off the map and puts back at each zoom (renderMarkerClusterGroupForSinglePhoto()).
+  const folder = path.join(profile, 'one photo');
+  await mkdir(folder);
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'IMG_4676.JPG'));
+  await reloadRecordingPopups();
+  await dismissWelcome();
+  await openFolderWithPicker(folder);
+  const popup = page.locator('.leaflet-popup');
+  const label = page.locator('.plm-leaflet-map-div-icon-content-container');
+  await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_4676.JPG');
+  await untilStillAtZoom(13);
+  await takePopupEvents();
+  /**
+   * Zooms by `zoomBy`, to the level `zoom`, and checks that the popup is the one that was open: it closed only as
+   * `events` say, which is never for a zoom alone, and its marker's label is colored as chosen.
+   */
+  async function expectPopupKept(zoomBy, zoom, events = []) {
+    await zoomBy();
+    await untilStillAtZoom(zoom);
+    expect(await takePopupEvents()).toEqual(events);
+    await expect(popup).toHaveCount(1);
+    await expect(popup).toHaveCSS('opacity', '1');
+    await expect(popup.locator('.photo-info-viewer-name')).toHaveText('IMG_4676.JPG');
+    await expect(label).toHaveCSS('background-color', 'rgba(63, 81, 181, 0.15)');
+  }
+  const zoomIn = page.getByRole('button', { name: 'Zoom in', exact: true });
+  const zoomOut = page.getByRole('button', { name: 'Zoom out', exact: true });
+  await expectPopupKept(() => zoomIn.click(), 14);
+  await expectPopupKept(() => zoomOut.click(), 13);
+  // The wheel and a pinch on a trackpad, which Chromium gives the page as the wheel with Control held, zoom by one level
+  // around the pointer, and back.
+  const place = await emptyPlaceOnMap();
+  await page.mouse.move(place.x, place.y);
+  await expectPopupKept(() => page.mouse.wheel(0, -20), 14);
+  await expectPopupKept(() => page.mouse.wheel(0, 20), 13);
+  await page.keyboard.down('Control');
+  await expectPopupKept(() => page.mouse.wheel(0, -20), 14);
+  await expectPopupKept(() => page.mouse.wheel(0, 20), 13);
+  await page.keyboard.up('Control');
+  // The first click of a double-click closes the popup, as any click on the map does, and the double-click opens it
+  // again. A double-click with Shift zooms out.
+  await expectPopupKept(() => page.mouse.dblclick(place.x, place.y), 14, ['close IMG_4676.JPG', 'open IMG_4676.JPG']);
+  await page.keyboard.down('Shift');
+  await expectPopupKept(() => page.mouse.dblclick(place.x, place.y), 13, ['close IMG_4676.JPG', 'open IMG_4676.JPG']);
+  await page.keyboard.up('Shift');
+  // The keyboard, once the map has the focus.
+  await page.locator('#plm-leaflet-map').focus();
+  await expectPopupKept(() => page.keyboard.press('Equal'), 14);
+  await expectPopupKept(() => page.keyboard.press('Minus'), 13);
+  // The application's own setZoom() and setView(), without and with an animation.
+  await expectPopupKept(() => page.evaluate(() => window.__plmLeafletMap.setZoom(14, { animate: false })), 14);
+  await expectPopupKept(() => page.evaluate(() => {
+    const map = window.__plmLeafletMap;
+    map.setView(map.getCenter(), 13);
+  }), 13);
+  // Far from the photo, where Leaflet.markercluster takes its marker off the map, the popup stays open, out of view, and
+  // the marker comes back under it.
+  const center = await page.evaluate(() => window.__plmLeafletMap.getCenter());
+  await page.evaluate(() => window.__plmLeafletMap.setView([0, 0], 12, { animate: false }));
+  await untilStillAtZoom(12);
+  await expect(label).toHaveCount(0);
+  expect(await takePopupEvents()).toEqual([]);
+  await expectPopupKept(() => page.evaluate(center => window.__plmLeafletMap.setView(center, 13, { animate: false }), center), 13);
+  // A click on the map still closes the popup, for good.
+  const placeToClick = await emptyPlaceOnMap();
+  await page.mouse.click(placeToClick.x, placeToClick.y);
+  await expect(popup).toHaveCount(0);
+  await expect(label).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  expect(await takePopupEvents()).toEqual(['close IMG_4676.JPG']);
+});
+test('a popup stays open where it is while a zoom puts its marker into a cluster or splits its cluster, and the label of the photo\'s marker shows it', async () => {
+  // Two photos taken 3 km apart in Osaka: at zoom level 13, the map shows them by their markers, 191 pixels apart; at
+  // 12, by a cluster, as 96 pixels are within its radius of 120. A click on that cluster shows the two photos in its
+  // popup, as the cluster splits into the two markers at the next level (handleClusterClick()).
+  const folder = path.join(profile, 'two photos 3 km apart');
+  await mkdir(folder);
+  const source = await readFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'));
+  await writeFile(path.join(folder, 'west.JPG'), jpegWithLocationAndDate(source, 34.6873, 135.5262, '2025:05:01 10:00:00'));
+  await writeFile(path.join(folder, 'east.JPG'), jpegWithLocationAndDate(source, 34.6873, 135.559, '2025:05:01 12:00:00'));
+  await reloadRecordingPopups();
+  await dismissWelcome();
+  await openFolderWithPicker(folder);
+  await expectRepresentedPhotos(2);
+  await untilStillAtZoom(13);
+  const popup = page.locator('.leaflet-popup');
+  const shownName = popup.locator('.photo-info-viewer-name');
+  const markers = page.locator('.plm-leaflet-map-div-icon');
+  const cluster = page.locator('.marker-cluster');
+  const labelOf = time => markers.filter({ hasText: time }).locator('.plm-leaflet-map-div-icon-content-container');
+  const chosen = 'rgba(63, 81, 181, 0.15)';
+  const zoomIn = page.getByRole('button', { name: 'Zoom in', exact: true });
+  const zoomOut = page.getByRole('button', { name: 'Zoom out', exact: true });
+  /** Where the popup that opened last points, which is where its photo is, or its cluster was. */
+  const popupPlace = () => page.evaluate(() => window.__plmLastPopup.getLatLng());
+
+  // The popup of the photo taken in the east, opened by a click on its marker, which Leaflet brings into view.
+  await labelOf('12:00:00').click();
+  await expect(shownName).toHaveText('east.JPG');
+  await expect(page.locator('.leaflet-map-pane.leaflet-pan-anim')).toHaveCount(0);
+  await expect(labelOf('12:00:00')).toHaveCSS('background-color', chosen);
+  await expect(labelOf('10:00:00')).not.toHaveCSS('background-color', chosen);
+  expect(await takePopupEvents()).toEqual(['open east.JPG']);
+  const eastPlace = await popupPlace();
+  expect(eastPlace.lat).toBeCloseTo(34.6873, 4);
+  expect(eastPlace.lng).toBeCloseTo(135.559, 4);
+  // Zoomed out, the marker goes into the cluster, and the popup stays open where the photo is.
+  await zoomOut.click();
+  await untilStillAtZoom(12);
+  await expect(cluster).toHaveCount(1);
+  await expect(markers).toHaveCount(0);
+  expect(await takePopupEvents()).toEqual([]);
+  await expect(popup).toHaveCSS('opacity', '1');
+  await expect(shownName).toHaveText('east.JPG');
+  expect(await popupPlace()).toEqual(eastPlace);
+  // Zoomed in, the marker is back under its popup, with its label colored as chosen.
+  await zoomIn.click();
+  await untilStillAtZoom(13);
+  await expect(markers).toHaveCount(2);
+  expect(await takePopupEvents()).toEqual([]);
+  await expect(shownName).toHaveText('east.JPG');
+  expect(await popupPlace()).toEqual(eastPlace);
+  await expect(labelOf('12:00:00')).toHaveCSS('background-color', chosen);
+  await expect(labelOf('10:00:00')).not.toHaveCSS('background-color', chosen);
+
+  // The cluster's popup, with the photo taken in the east chosen in it: the cluster colors no label.
+  await zoomOut.click();
+  await untilStillAtZoom(12);
+  await cluster.click();
+  // Once the popup of the photo has gone, which Leaflet keeps, hidden, for 200 ms after it closes.
+  await expect(popup).toHaveCount(1);
+  const tiles = popup.locator('.photo-cluster-viewer-tile');
+  await expect(tiles).toHaveCount(2);
+  await expect(shownName).toHaveText('west.JPG');
+  await tiles.nth(1).click();
+  await expect(shownName).toHaveText('east.JPG');
+  expect(await takePopupEvents()).toEqual(['close east.JPG', 'open west.JPG']);
+  const clusterPlace = await popupPlace();
+  // Zoomed in, the cluster splits into the two markers, and its popup stays where the cluster was, with the photo
+  // chosen.
+  await zoomIn.click();
+  await untilStillAtZoom(13);
+  await expect(markers).toHaveCount(2);
+  await expect(cluster).toHaveCount(0);
+  expect(await takePopupEvents()).toEqual([]);
+  await expect(popup).toHaveCSS('opacity', '1');
+  await expect(shownName).toHaveText('east.JPG');
+  await expect(tiles.nth(1)).toHaveClass(/selected-tile/);
+  expect(await popupPlace()).toEqual(clusterPlace);
+  await expect(labelOf('12:00:00')).not.toHaveCSS('background-color', chosen);
+  await expect(labelOf('10:00:00')).not.toHaveCSS('background-color', chosen);
+  // A double-click on the map opens the popup that its first click closed, with the same photo chosen.
+  const place = await emptyPlaceOnMap();
+  await page.mouse.dblclick(place.x, place.y);
+  await untilStillAtZoom(14);
+  expect(await takePopupEvents()).toEqual(['close east.JPG', 'open east.JPG']);
+  await expect(shownName).toHaveText('east.JPG');
+  await expect(tiles.nth(1)).toHaveClass(/selected-tile/);
+  // Zoomed out until the two markers are in the cluster again: the popup stays there.
+  await zoomOut.click();
+  await untilStillAtZoom(13);
+  await zoomOut.click();
+  await untilStillAtZoom(12);
+  await expect(cluster).toHaveCount(1);
+  expect(await takePopupEvents()).toEqual([]);
+  await expect(shownName).toHaveText('east.JPG');
+  expect(await popupPlace()).toEqual(clusterPlace);
 });
 test('Reveal in Sidebar from a popup of the map expands the folders above the photo, scrolls its row smoothly to the middle of the sidebar and highlights it there, without changing the selection', async () => {
   // The photo is three folders down, after twenty folders of a photo without a location and before three such photos,
@@ -3739,10 +4089,10 @@ test('a photo whose GPS values are empty leaves the other photos on the map', as
     else process.env.PLM_E2E_OPEN = previousOpen;
   }
 });
-test('a window resize keeps the sidebar\'s upper pane, and Leaflet fits the map to its pane, which a gutter resizes too', async () => {
-  // Home sets the sidebar's split again on a resize, keeping its upper pane's height, and Leaflet takes its pane's new
-  // size, which the map watches, as Leaflet itself tracks only the window's size. Neither goes through change
-  // detection.
+test('a window resize keeps the sizes of the panes around the map, and Leaflet fits the map to its pane, which a gutter resizes too', async () => {
+  // Home sets its splits again on a resize, keeping the sidebar's width, its upper pane's height and the chart's height
+  // where they have one, and Leaflet takes its pane's new size, which the map watches, as Leaflet itself tracks only
+  // the window's size. Neither goes through change detection.
   await page.addInitScript(() => {
     let leaflet;
     Object.defineProperty(window, 'L', {
@@ -3770,12 +4120,24 @@ test('a window resize keeps the sidebar\'s upper pane, and Leaflet fits the map 
   });
   const before = await mapSizes();
   expect(before.leaflet).toEqual(before.pane);
+  // The sidebar, dragged wider, keeps its width while the window is resized: the map takes the change
+  // (src/app/home/pane-sizes/).
+  const sidebar = page.locator('#home-left-sidebar');
+  const sidebarGutter = await page.locator('.sidebar-and-map-container > .gutter-horizontal').boundingBox();
+  await page.mouse.move(sidebarGutter.x + sidebarGutter.width / 2, sidebarGutter.y + 100);
+  await page.mouse.down();
+  await page.mouse.move(sidebarGutter.x + sidebarGutter.width / 2 + 60, sidebarGutter.y + 100, { steps: 5 });
+  await page.mouse.up();
+  const sidebarWidth = (await sidebar.boundingBox()).width;
+  await expect.poll(async () => (await mapSizes()).pane[0]).toBeLessThan(before.pane[0] - 50);
+  const afterSidebarDrag = await mapSizes();
   await app.evaluate(({ BrowserWindow }) => {
     const window = BrowserWindow.getAllWindows()[0];
     const [width, height] = window.getContentSize();
     window.setContentSize(width - 200, height - 120);
   });
-  await expect.poll(async () => (await mapSizes()).pane[0]).toBeLessThan(before.pane[0] - 100);
+  await expect.poll(async () => Math.abs((await mapSizes()).pane[0] - (afterSidebarDrag.pane[0] - 200))).toBeLessThanOrEqual(1);
+  expect(Math.abs((await sidebar.boundingBox()).width - sidebarWidth)).toBeLessThan(1);
   await expect.poll(async () => { const sizes = await mapSizes(); return sizes.leaflet.join() === sizes.pane.join(); }).toBe(true);
   await expect.poll(async () => Math.round((await upperPane.boundingBox()).height)).toBe(Math.round(upperPaneHeight));
   await expectRepresentedPhotos(4);
@@ -3789,6 +4151,25 @@ test('a window resize keeps the sidebar\'s upper pane, and Leaflet fits the map 
   await expect.poll(async () => (await mapSizes()).pane[1]).toBeLessThan(beforeDrag.pane[1] - 50);
   await expect.poll(async () => { const sizes = await mapSizes(); return sizes.leaflet.join() === sizes.pane.join(); }).toBe(true);
   await expectRepresentedPhotos(4);
+  // The chart keeps the height that the drag gave it while the window is resized: the map takes the change.
+  const chart = page.locator('#home-chart');
+  const chartHeight = (await chart.boundingBox()).height;
+  const afterChartDrag = await mapSizes();
+  await app.evaluate(({ BrowserWindow }) => {
+    const window = BrowserWindow.getAllWindows()[0];
+    const [width, height] = window.getContentSize();
+    window.setContentSize(width, height + 120);
+  });
+  await expect.poll(async () => Math.abs((await mapSizes()).pane[1] - (afterChartDrag.pane[1] + 120))).toBeLessThanOrEqual(1);
+  expect(Math.abs((await chart.boundingBox()).height - chartHeight)).toBeLessThan(1);
+  await expect.poll(async () => { const sizes = await mapSizes(); return sizes.leaflet.join() === sizes.pane.join(); }).toBe(true);
+  // A double-click on the gutter puts the chart back to 30% of the map's side, at the next launch too.
+  const userData = await app.evaluate(({ app }) => app.getPath('userData'));
+  await expect.poll(() => savedSetting(userData, ['HomeLayout', 'ChartHeight'])).toBe(`${Math.round(chartHeight)}`);
+  await page.locator('#home-right > .gutter').dblclick();
+  const rightHeight = (await page.locator('#home-right').boundingBox()).height;
+  expect(Math.abs((await chart.boundingBox()).height - (rightHeight * 0.3 - 4))).toBeLessThan(1);
+  await expect.poll(() => savedSetting(userData, ['HomeLayout', 'ChartHeight'])).toBe('');
 });
 test('the map in full screen has the window alone, in full screen, with its controls, popups and menus, until Esc, the View menu or the window ends it', async () => {
   // TL;DR: The window goes to full screen on Windows alone, whose window is transparent in a headless run.
