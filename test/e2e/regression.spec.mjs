@@ -928,6 +928,7 @@ test('welcome, about and every available settings tab keep their appearance', as
   // Details: In English, the tab ends at about the dialog's height since its texts were shortened, so that whether it
   // scrolls, and whether the Delete button shows at its top, depends on how the platform sets text: on CI's runner the
   // button showed, and here it did not. Japanese, with higher lines, scrolls.
+  const settingsContent = page.locator('app-settings-dialog .settings-content');
   await expect(page.getByRole('button', { name: 'Cancel', exact: true })).toBeInViewport();
   await shot('settings-thumbnails', [page.locator('.location-value')]);
   await page.getByRole('button', { name: 'Delete Thumbnail Cache', exact: true }).scrollIntoViewIfNeeded();
