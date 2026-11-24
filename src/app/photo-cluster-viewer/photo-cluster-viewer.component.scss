@@ -6,15 +6,24 @@
   gap: 20px;
 }
 
+// The tiles, which scroll: no higher than the map leaves room for in the popup, its margins and Leaflet's room around it
+// (58 pixels: cqh is of the map's element, _plm-leaflet-map.scss), so that the popup ends inside the map.
 .photo-cluster-viewer-left-pane {
-  min-height: 300px;
-  max-height: 400px;
+  min-height: min(300px, calc(100cqh - 58px));
+  max-height: min(400px, calc(100cqh - 58px));
   overflow-y: auto;
   overflow-x: hidden;
   padding-inline-end: 5px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-auto-rows: min-content;
+}
+
+// The chosen photo, whose thumbnail has less room across than in a photo's own popup (photo-info-viewer.component.scss):
+// the popup's 56 pixels, the gap, and the tiles, three of 104 pixels with their padding, the pane's own padding and
+// room for a scroll bar.
+.photo-cluster-viewer-right-pane {
+  --plm-popup-room-beside-thumbnail: calc(56px + 20px + 3 * 104px + 5px + 17px);
 }
 
 .photo-cluster-viewer-tile {
