@@ -18,8 +18,8 @@ queue_rules:
     merge_method: merge
 
 merge_queue:
-  # Two tests at once: each runs the macOS tests in two jobs (.github/workflows/ci-on-mac.yml), and GitHub runs five
-  # macOS jobs of the repository at once.
+  # Two tests at once: each takes a macOS runner (.github/workflows/ci-on-mac.yml), as do the push runs of the pull
+  # requests and of main, and GitHub runs five macOS jobs of the repository at once.
   max_parallel_checks: 2
 
 pull_request_rules:

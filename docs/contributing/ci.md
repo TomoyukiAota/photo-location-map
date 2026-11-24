@@ -11,14 +11,16 @@ Ubuntu CI uses Ubuntu 26.04 LTS and reports `test (ubuntu)`, and
 beside it. The regular macOS check is `test (macos-arm64)`; the manual Intel
 check is `test (macos-x64)`.
 
-Each of `test (ubuntu)`, `test (macos-arm64)` and `test (windows-latest)` comes
-from a job that only reads the results of two jobs, `test (<os>), part 1 of 2`
-and `part 2 of 2`, which run the tests on that OS at once: each makes the
-package and runs half of the e2e suite (`PLM_E2E_SHARD`, in
+Each of `test (ubuntu)` and `test (windows-latest)` comes from a job that only
+reads the results of two jobs, `test (<os>), part 1 of 2` and `part 2 of 2`,
+which run the tests on that OS at once: each makes the package and runs half of
+the e2e suite (`PLM_E2E_SHARD`, in
 [`test/e2e/playwright.config.mjs`](../../test/e2e/playwright.config.mjs)), and
 part 1 also runs the checks and the unit tests. On Windows, part 1 runs the
-uninstaller test and part 2 publishes. The manual Intel check runs all of it in
-one job.
+uninstaller test and part 2 publishes. `test (macos-arm64)` runs all of it in
+one job, as the manual Intel check does: GitHub was short of macOS runners, and
+a part that got none failed the check
+([`ci-on-mac.yml`](../../.github/workflows/ci-on-mac.yml)).
 
 These check names stay stable when runner versions change. Branch protection
 requires the regular ones, and Mergify takes them from it (see "Merging" below),
@@ -50,7 +52,8 @@ Mergify's merge queue merges a pull request of the owner that has the label
 2. The queue tests it on top of `main` and of the pull requests ahead of it. It
    pushes a branch `mergify/merge-queue/…` with them merged together, and opens
    a draft pull request of it, `merge queue: …`. Up to two such tests run at
-   once (`max_parallel_checks`), as each runs the macOS tests in two jobs.
+   once (`max_parallel_checks`), as each takes a macOS runner, of which GitHub
+   gives the repository five at once.
 3. The branch's push run of the three CI workflows reports the required checks.
    The draft pull request runs only `ci-on-fork-pull-request.yml`, whose jobs it
    skips. Once the checks have passed or been skipped, Mergify merges the pull
