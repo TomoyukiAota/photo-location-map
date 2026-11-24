@@ -174,7 +174,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Đang tạo hình thu nhỏ cho các tệp HEIF...",
-    "fasterInSettings": "Để hiển thị sớm hơn, <settingsLink>hãy chọn hình thu nhỏ nhanh trong Cài đặt</settingsLink>.",
+    "fasterInSettings": "Để hiển thị sớm hơn, <settingsLink>hãy chọn “Ưu tiên hiệu năng ứng dụng” trong Cài đặt</settingsLink>.",
     "completed": "Đã tạo xong hình thu nhỏ cho các tệp HEIF.",
     "finishedWithErrors": "Việc tạo hình thu nhỏ cho các tệp HEIF đã kết thúc nhưng có lỗi.",
     "showDetails": "Hiển thị chi tiết",
@@ -241,15 +241,16 @@
       "example": "Ví dụ"
     },
     "thumbnails": {
-      "title": "Hình thu nhỏ",
-      "description": "Hãy chọn tạo hình thu nhỏ ưu tiên chất lượng hay tốc độ.",
-      "highQuality": "Chất lượng cao",
-      "highQualityDescription": "Được tạo từ toàn bộ ảnh, theo kích thước chọn bên dưới. Trong lúc chờ, hình thu nhỏ cỡ nhỏ được lưu trong ảnh sẽ được hiển thị. Việc tạo chúng mất thời gian khi mở một thư mục lần đầu, và lâu hơn với tệp HEIF trên máy tính có phần cứng đồ họa không giải mã được HEVC.",
-      "size": "Kích thước",
+      "title": "Chất lượng hình thu nhỏ và hiệu năng ứng dụng",
+      "highQuality": "Ưu tiên chất lượng hình thu nhỏ",
+      "highQualityDescription": "Hình thu nhỏ luôn được tạo từ các tệp ảnh.",
+      "size": "Kích thước hình thu nhỏ",
       "sizeValue": "cạnh dài {{size}} điểm ảnh",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "Về kích thước hình thu nhỏ",
       "sizeDescription": "Kích thước càng lớn, hình thu nhỏ hiển thị càng lớn, nhưng việc tạo chúng càng lâu và chúng chiếm càng nhiều dung lượng trong bộ nhớ đệm hình thu nhỏ.",
-      "fast": "Nhanh",
-      "fastDescription": "Hình thu nhỏ cỡ nhỏ được lưu trong ảnh, hiển thị ngay. Hình này kém sắc nét hơn: 160 × 120 điểm ảnh trong hầu hết ảnh JPEG, và 320 × 240 điểm ảnh với ảnh 12 megapixel chụp bằng iPhone."
+      "fast": "Ưu tiên hiệu năng ứng dụng",
+      "fastDescription": "Khi một tệp như JPEG hoặc PNG đã có sẵn hình thu nhỏ, hình đó sẽ được hiển thị nguyên trạng. Chỉ tạo hình thu nhỏ cạnh dài 400 điểm ảnh cho tệp chưa có hình thu nhỏ."
     },
     "os": {
       "title": "Menu ngữ cảnh của File Explorer",

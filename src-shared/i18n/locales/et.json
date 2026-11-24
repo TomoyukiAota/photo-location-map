@@ -174,7 +174,7 @@
   },
   "thumbnailGeneration": {
     "generating": "HEIF-failide pisipiltide loomine...",
-    "fasterInSettings": "Et neid varem kuvada, <settingsLink>valige seadetes kiired pisipildid</settingsLink>.",
+    "fasterInSettings": "Et neid varem kuvada, <settingsLink>valige seadetes „Eelista rakenduse jõudlust“</settingsLink>.",
     "completed": "HEIF-failide pisipildid on loodud.",
     "finishedWithErrors": "HEIF-failide pisipiltide loomine lõppes vigadega.",
     "showDetails": "Kuva üksikasjad",
@@ -241,15 +241,16 @@
       "example": "Näide"
     },
     "thumbnails": {
-      "title": "Pisipildid",
-      "description": "Valige, kas pisipildid luuakse kvaliteedi või kiiruse järgi.",
-      "highQuality": "Kõrge kvaliteet",
-      "highQualityDescription": "Luuakse tervest fotost, allpool valitud suuruses. Seni kuvatakse fotosse salvestatud väike pisipilt. Nende loomine võtab aega, kui kausta esimest korda avatakse, ja kauem HEIF-failide puhul arvutis, mis ei suuda HEVC-d graafikariistvaraga dekodeerida.",
-      "size": "Suurus",
+      "title": "Pisipiltide kvaliteet ja rakenduse jõudlus",
+      "highQuality": "Eelista pisipiltide kvaliteeti",
+      "highQualityDescription": "Pisipildid luuakse alati fotofailidest.",
+      "size": "Pisipiltide suurus",
       "sizeValue": "pikem külg {{size}} pikslit",
+      "sizeTick": "{{size}} px",
+      "aboutSize": "Pisipiltide suurusest",
       "sizeDescription": "Mida suurem suurus, seda suuremana pisipildid kuvatakse, kuid seda kauem võtab nende loomine aega ja seda rohkem ruumi võtavad need pisipiltide vahemälus.",
-      "fast": "Kiire",
-      "fastDescription": "Fotosse salvestatud väike pisipilt, mis kuvatakse kohe. See on vähem terav: enamikus JPEG-fotodes 160 × 120 pikslit ja iPhone’iga tehtud 12-megapikslise foto puhul 320 × 240 pikslit."
+      "fast": "Eelista rakenduse jõudlust",
+      "fastDescription": "Kui failis, näiteks JPEG- või PNG-failis, on juba pisipilt, kuvatakse see muutmata kujul. Pisipilt, mille pikem külg on 400 pikslit, luuakse ainult failile, milles seda pole."
     },
     "os": {
       "title": "File Exploreri kontekstimenüü",
