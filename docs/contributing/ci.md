@@ -42,16 +42,38 @@ workflows (AGENTS.md, "CI tests each commit once, on push").
 
 ## Merging
 
-Mergify merges a pull request of the owner that has the label `automerge` once
-it meets branch protection: the required checks have passed or been skipped,
-and the pull request is up to date with `main`
-([`.mergify.yml`](../../.mergify.yml)).
+Mergify's merge queue merges a pull request of the owner that has the label
+`automerge` ([`.mergify.yml`](../../.mergify.yml)):
 
-When `main` moves on, Mergify merges it into each such pull request, unless they
-conflict, which is left to whoever made the pull request. The new commit cancels
-the CI runs of the commit before it (`concurrency` in each workflow), so the
-tests run again on `main` as it is now, and nobody has to notice that it moved.
-A run on `main`, or one started by hand, is never canceled. A push's run of the
+1. The pull request enters the queue once its own required checks have passed
+   or been skipped. Mergify takes them from branch protection.
+2. The queue tests it on top of `main` and of the pull requests ahead of it. It
+   pushes a branch `mergify/merge-queue/…` with them merged together, and opens
+   a draft pull request of it, `merge queue: …`. Up to two such tests run at
+   once (`max_parallel_checks`), as each runs the macOS tests in two jobs.
+3. The branch's push run of the three CI workflows reports the required checks.
+   The draft pull request runs only `ci-on-fork-pull-request.yml`, whose jobs it
+   skips. Once the checks have passed or been skipped, Mergify merges the pull
+   request with a merge commit, and deletes the branch.
+
+A pull request that already contains the latest commit of `main`, and is alone
+at the front of the queue, is merged at once on its own checks, which tested
+that very result (Mergify's "Direct Merge").
+
+A pull request whose test fails leaves the queue, with the label `dequeued` and
+a comment of Mergify, and the tests of those behind it start again without it.
+Taking the label off, or a new commit, also takes a pull request out of the
+queue. When `main` moves on outside the queue, the queue tests its pull requests
+again on top of it.
+
+Branch protection does not require a pull request to be up to date with `main`:
+the queue's test of the result replaces that, and Mergify pushes nothing to the
+pull request. While it did, Mergify queued nothing, and said so in a comment,
+"Configuration not compatible with a branch protection setting". A new commit on a branch cancels the CI runs of the commit before
+it (`concurrency` in each workflow); a run on `main`, or one started by hand, is
+never canceled. The push run of a queue branch also runs the Windows
+`[Publish to GitHub Releases]` steps, whose draft release is an expected
+byproduct (AGENTS.md, "The Windows CI publishes on purpose"). A run of the
 Windows CI that is canceled while it publishes leaves some files of its package
 in the draft release; the next run that publishes replaces them.
 

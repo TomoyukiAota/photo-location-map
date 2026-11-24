@@ -15,11 +15,11 @@ on:
         type: boolean
         default: false
 
-# A new commit on a branch cancels the runs of the commit before it, so that only the latest commit is tested when
-# Mergify brings a pull request up to date with main (.mergify.yml). Each run on main, and each run started by hand,
-# has a group of its own, and is never canceled. The group names this workflow itself rather than github.workflow,
-# which is the caller's name when ci-on-fork-pull-request.yml calls it, so that the three workflows that it calls do
-# not share one.
+# A new commit on a branch cancels the runs of the commit before it, so that only the latest commit is tested, as when
+# Mergify's merge queue makes a branch mergify/merge-queue/… anew (.mergify.yml). Each run on main, and each run started
+# by hand, has a group of its own, and is never canceled. The group names this workflow itself rather than
+# github.workflow, which is the caller's name when ci-on-fork-pull-request.yml calls it, so that the three workflows
+# that it calls do not share one.
 concurrency:
   group: ${{ (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch') && github.run_id || format('CI on macOS {0} {1}', github.event_name, github.event.pull_request.number || github.ref_name) }}
   cancel-in-progress: true

@@ -1,26 +1,33 @@
+# Mergify's merge queue merges the owner's pull requests that have the label automerge (docs/contributing/ci.md,
+# "Merging"). A pull request enters the queue once its own required checks have passed, and the queue tests it on top of
+# main and of the pull requests ahead of it: Mergify pushes a branch mergify/merge-queue/… with them merged together,
+# and opens a draft pull request of it. That branch's push run reports the required checks, and once they have passed,
+# Mergify merges the pull request, and deletes the branch.
+# Branch protection's required checks are Mergify's conditions both to enter the queue and to merge, and each passes
+# when it is skipped, as when only documents changed (.github/ci-filters.yml). The "Mergify Merge Queue" check of a
+# pull request shows them. Branch protection does not require a pull request to be up to date with main: the queue's
+# test of the result replaces that, and Mergify pushes nothing to the pull request.
+queue_rules:
+  - name: default
+    # Taking the label off takes a pull request out of the queue, and so does a new commit.
+    queue_conditions:
+      - base=main
+      - label=automerge
+      - author=TomoyukiAota
+      - -draft
+    merge_method: merge
+
+merge_queue:
+  # Two tests at once: each runs the macOS tests in two jobs (.github/workflows/ci-on-mac.yml), and GitHub runs five
+  # macOS jobs of the repository at once.
+  max_parallel_checks: 2
+
 pull_request_rules:
-  # Branch protection requires a pull request to be up to date with main. When main moves on, this merges main into
-  # each pull request that is to be merged, unless they conflict, and the new commit cancels the CI runs of the commit
-  # before it (the "concurrency" of each workflow in .github/workflows/). So the tests run again on main as it is now,
-  # without anyone having to notice that main moved (docs/contributing/ci.md, "Merging").
-  - name: keep automerge pull requests up to date with main
+  - name: queue the owner's pull requests that have the label automerge
     conditions:
       - base=main
       - label=automerge
       - author=TomoyukiAota
       - -draft
-      - "#commits-behind>0"
     actions:
-      update:
-
-  # Mergify adds to these conditions what branch protection requires, so that it is written in one place: the required
-  # checks, each of which passes when it is skipped, as it is when only documents changed (.github/ci-filters.yml), and
-  # that the pull request is up to date with main. The "Summary" check of a pull request shows them, marked "GitHub
-  # branch protection".
-  - name: automatic merge on CI success
-    conditions:
-      - label=automerge
-      - author=TomoyukiAota
-    actions:
-      merge:
-        method: merge
+      queue:
