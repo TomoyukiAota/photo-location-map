@@ -2563,6 +2563,56 @@ test('Select Only This from a marker popup selects that photo in the tree and on
   for (const [name, folder] of Object.entries(folders))
     await expect(treeCheckbox(folder)).toBeChecked({ checked: name === photoName });
 });
+test('a photo\'s popup holds its thumbnail of 1,000 pixels and ends inside the map, as the thumbnail takes the room that the map leaves', async () => {
+  // Leaflet's popup was 300 pixels wide at most, which left a box of 500 pixels outside it, and taller than the map,
+  // which cut its buttons off. The box takes the room that the map leaves for it (photo-info-viewer.component.scss),
+  // and the map centers the popup below its top edge (centerOnPopup()). As the map's size changes, the popup is laid
+  // out again without moving the map (layOutPopupAtEachSize()).
+  const folder = path.join(profile, 'Popup of large thumbnails');
+  await mkdir(folder);
+  await copyFile(path.join(photoFolder, 'Kobe/IMG_4676.JPG'), path.join(folder, 'Kobe.JPG'));
+  const mainWindow = await app.browserWindow(page);
+  await mainWindow.evaluate(window => window.setContentSize(1200, 800));
+  await dismissWelcome();
+  const dialog = page.locator('app-settings-dialog');
+  await settings('Thumbnails');
+  await dialog.locator('.thumbnail-size-slider input').fill('1000');
+  await dialog.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  await openFolderWithPicker(folder);
+  // The map opens the popup of the one photo that it shows.
+  await expect.poll(() => page.locator('.leaflet-popup .photo-info-viewer-thumbnail').getAttribute('src'), { timeout: 30000 })
+    .toMatch(/Kobe\.JPG\.plm\.jpg\?size=1000$/);
+  /** The map, the popup, its white box and the thumbnail's box, in pixels of the page. */
+  const places = () => page.evaluate(() => Object.fromEntries(Object.entries({
+    map: '.leaflet-container', popup: '.leaflet-popup', wrapper: '.leaflet-popup-content-wrapper',
+    box: '.leaflet-popup .photo-info-viewer-thumbnail-container',
+  }).map(([name, selector]) => [name, document.querySelector(selector).getBoundingClientRect().toJSON()])));
+  /**
+   * Whether the box is inside the white box; and the popup, with its tip under it, inside the map, and no larger than
+   * the map.
+   */
+  const fits = async () => {
+    const { map, popup, wrapper, box } = await places();
+    return {
+      boxInPopup: box.left >= wrapper.left && box.right <= wrapper.right && box.top >= wrapper.top && box.bottom <= wrapper.bottom,
+      popupInMap: popup.left >= map.left && popup.right <= map.right && popup.top >= map.top && popup.bottom + 20 <= map.bottom,
+      popupFitsMap: popup.width <= map.width && popup.height + 20 <= map.height,
+    };
+  };
+  await expect.poll(fits).toEqual({ boxInPopup: true, popupInMap: true, popupFitsMap: true });
+  const box = (await places()).box.height;
+  expect(box).toBeLessThanOrEqual(500);
+
+  // A smaller window, with a smaller map: the thumbnail of the popup, which stays open, is smaller too, still inside
+  // the popup, which still fits the map. Where it is in the map is the user's: the map does not move.
+  await mainWindow.evaluate(window => window.setContentSize(1000, 700));
+  await expect.poll(async () => (await places()).box.height).toBeLessThan(box);
+  await expect.poll(async () => {
+    const { boxInPopup, popupFitsMap } = await fits();
+    return { boxInPopup, popupFitsMap };
+  }).toEqual({ boxInPopup: true, popupFitsMap: true });
+});
 test('a cluster of photos taken at one place opens a popup with each of them', async () => {
   const folder = path.join(profile, 'photos taken at one place');
   await mkdir(folder);

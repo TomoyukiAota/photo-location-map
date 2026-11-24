@@ -44,6 +44,22 @@
   }
 }
 
+// A popup of the map: the box that the settings choose, made smaller where the map has less room, so that the popup
+// ends inside the map, and never smaller than a cluster's tiles. cqw and cqh are of the map's element, a container of
+// its size (_plm-leaflet-map.scss).
+// TL;DR: The room is the map's size less what the popup has besides the thumbnail.
+// Details: Across, the margins of Leaflet's popup and of its content, and the room that Leaflet keeps between a popup
+// and the map's edges when it pans to it (autoPanPadding): 56 pixels, more beside the chosen photo of a cluster's
+// popup, which has its tiles there (--plm-popup-room-beside-thumbnail, photo-cluster-viewer.component.scss). Up and
+// down, those margins and room, the popup's tip, the photo's name on up to two lines, its shooting time and the
+// buttons: 170 pixels.
+:host([data-place="leaflet-map-popup"]) .photo-info-viewer-thumbnail-container {
+  --plm-popup-thumbnail-box: max(100px, min(var(--plm-thumbnail-box, 200px),
+    calc(100cqw - var(--plm-popup-room-beside-thumbnail, 56px)), calc(100cqh - 170px)));
+  width: var(--plm-popup-thumbnail-box);
+  height: var(--plm-popup-thumbnail-box);
+}
+
 .photo-info-viewer-thumbnail {
   cursor: pointer;
 

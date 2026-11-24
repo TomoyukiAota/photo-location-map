@@ -23,6 +23,14 @@
   direction: rtl;
 }
 
+// The map's element is a container of its size, by which its popups size what they hold (cqw and cqh), so that a popup
+// ends inside the map: the thumbnail's box (photo-info-viewer.component.scss) and the tiles of a cluster's popup
+// (photo-cluster-viewer.component.scss). The element has its size from the home view's layout, not from what it holds,
+// as such a container must.
+.leaflet-container {
+  container-type: size;
+}
+
 // TL;DR: A popup of the map opens and closes at once, without Leaflet's fade, which showed a popup that was closing
 // as a thin bar.
 // Details: Leaflet fades a popup in and out for 200 ms (`.leaflet-fade-anim .leaflet-popup` in leaflet.css), and the
