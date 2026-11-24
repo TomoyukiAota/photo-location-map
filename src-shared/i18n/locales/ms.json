@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Lakaran Kecil",
-        "description": "Cache lakaran kecil yang dibuat oleh aplikasi ini berada di tab “Lakaran Kecil”.",
+        "title": "Cache lakaran kecil",
+        "description": "Tetapan cache lakaran kecil berada di tab “Lakaran Kecil”.",
         "open": "Buka Tab “Lakaran Kecil”"
       },
       "map": {
-        "title": "Peta",
-        "description": "Tarikh imej Esri World Imagery Wayback diambil disimpan dalam cache untuk sehingga {{max}} tempat yang dilihat pada peta, supaya ia dipaparkan serta-merta pada kali seterusnya.",
+        "title": "Cache peta",
+        "description": "Untuk mempercepat paparan, tarikh imej diambil disimpan dalam cache untuk sehingga {{max}} tempat yang dipaparkan dengan Esri World Imagery Wayback.",
         "count": "Tempat dalam cache: {{count}}",
-        "delete": "Padam cache peta"
+        "delete": "Padam cache peta",
+        "confirmDelete": "Adakah anda mahu memadam cache peta?"
       },
       "all": {
         "title": "Semua Cache",

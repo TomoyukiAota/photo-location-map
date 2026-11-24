@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Gambar Mini",
-        "description": "Cache gambar mini yang dibuat aplikasi ini ada di tab “Gambar Mini”.",
+        "title": "Cache gambar mini",
+        "description": "Pengaturan cache gambar mini ada di tab “Gambar Mini”.",
         "open": "Buka Tab “Gambar Mini”"
       },
       "map": {
-        "title": "Peta",
-        "description": "Tanggal pengambilan citra Esri World Imagery Wayback disimpan dalam cache untuk hingga {{max}} tempat yang dilihat di peta, agar langsung ditampilkan lain kali.",
+        "title": "Cache peta",
+        "description": "Agar lebih cepat, tanggal pengambilan citra disimpan dalam cache untuk hingga {{max}} tempat yang ditampilkan dengan Esri World Imagery Wayback.",
         "count": "Tempat dalam cache: {{count}}",
-        "delete": "Hapus cache peta"
+        "delete": "Hapus cache peta",
+        "confirmDelete": "Ingin menghapus cache peta?"
       },
       "all": {
         "title": "Semua Cache",

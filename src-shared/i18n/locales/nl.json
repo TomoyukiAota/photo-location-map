@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Miniaturen",
-        "description": "De cache van de miniaturen die deze app maakt, staat op het tabblad Miniaturen.",
+        "title": "Cache voor miniaturen",
+        "description": "De instellingen van de cache voor miniaturen staan op het tabblad Miniaturen.",
         "open": "Open het tabblad Miniaturen"
       },
       "map": {
-        "title": "Kaart",
-        "description": "De opnamedata van de beelden van Esri World Imagery Wayback worden in de cache bewaard voor maximaal {{max}} plaatsen die op de kaart zijn bekeken, zodat ze de volgende keer meteen worden getoond.",
+        "title": "Kaartcache",
+        "description": "Voor de snelheid worden de opnamedata van de beelden in de cache bewaard voor maximaal {{max}} plaatsen die met Esri World Imagery Wayback zijn getoond.",
         "count": "Plaatsen in de cache: {{count}}",
-        "delete": "Verwijder kaartcache"
+        "delete": "Verwijder kaartcache",
+        "confirmDelete": "Wil je de kaartcache verwijderen?"
       },
       "all": {
         "title": "Alle caches",

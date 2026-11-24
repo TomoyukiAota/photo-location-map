@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Thumbnails",
-        "description": "The cache of the thumbnails that this application makes is on the Thumbnails tab.",
+        "title": "Thumbnail Cache",
+        "description": "The settings of the thumbnail cache are on the Thumbnails tab.",
         "open": "Open the Thumbnails Tab"
       },
       "map": {
-        "title": "Map",
-        "description": "The dates when the imagery of Esri World Imagery Wayback was taken are cached for up to {{max}} places looked at on the map, so that they are shown at once the next time.",
+        "title": "Map Cache",
+        "description": "For speed, the dates when the imagery was taken are cached for up to {{max}} places shown with Esri World Imagery Wayback.",
         "count": "Places cached: {{count}}",
-        "delete": "Delete Map Cache"
+        "delete": "Delete Map Cache",
+        "confirmDelete": "Do you want to delete the map cache?"
       },
       "all": {
         "title": "All Caches",

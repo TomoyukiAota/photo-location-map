@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "縮圖",
-        "description": "此應用程式產生的縮圖快取位於「縮圖」分頁中。",
+        "title": "縮圖快取",
+        "description": "縮圖快取的設定位於「縮圖」分頁中。",
         "open": "開啟「縮圖」分頁"
       },
       "map": {
-        "title": "地圖",
-        "description": "在地圖上檢視過的地點的 Esri World Imagery Wayback 影像拍攝日期會被快取，最多 {{max}} 個地點，以便下次立即顯示。",
+        "title": "地圖快取",
+        "description": "為了提高速度，使用 Esri World Imagery Wayback 顯示過的地點的影像拍攝日期會被快取，最多 {{max}} 個地點。",
         "count": "已快取的地點：{{count}} 個",
-        "delete": "刪除地圖快取"
+        "delete": "刪除地圖快取",
+        "confirmDelete": "要刪除地圖快取嗎？"
       },
       "all": {
         "title": "所有快取",

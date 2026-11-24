@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Küçük Resimler",
-        "description": "Bu uygulamanın oluşturduğu küçük resimlerin önbelleği “Küçük Resimler” sekmesindedir.",
+        "title": "Küçük resim önbelleği",
+        "description": "Küçük resim önbelleğinin ayarları “Küçük Resimler” sekmesindedir.",
         "open": "“Küçük Resimler” sekmesini aç"
       },
       "map": {
-        "title": "Harita",
-        "description": "Esri World Imagery Wayback görüntülerinin çekildiği tarihler, haritada bakılan en fazla {{max}} yer için önbellekte tutulur; böylece bir dahaki sefere hemen gösterilir.",
+        "title": "Harita önbelleği",
+        "description": "Daha hızlı olması için, görüntülerin çekildiği tarihler Esri World Imagery Wayback ile gösterilen en fazla {{max}} yer için önbellekte tutulur.",
         "count": "Önbellekteki yerler: {{count}}",
-        "delete": "Harita önbelleğini sil"
+        "delete": "Harita önbelleğini sil",
+        "confirmDelete": "Harita önbelleğini silmek istiyor musunuz?"
       },
       "all": {
         "title": "Tüm önbellekler",

@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Miniaturen",
-        "description": "Der Cache der Miniaturen, die diese App erstellt, befindet sich auf dem Tab „Miniaturen“.",
+        "title": "Cache für Miniaturen",
+        "description": "Die Einstellungen des Caches für Miniaturen befinden sich auf dem Tab „Miniaturen“.",
         "open": "Tab „Miniaturen“ öffnen"
       },
       "map": {
-        "title": "Karte",
-        "description": "Die Aufnahmedaten der Luftbilder von Esri World Imagery Wayback werden für bis zu {{max}} auf der Karte angesehene Orte im Cache gespeichert, damit sie beim nächsten Mal sofort angezeigt werden.",
+        "title": "Karten-Cache",
+        "description": "Zur Beschleunigung werden die Aufnahmedaten der Bilder für bis zu {{max}} Orte, die mit Esri World Imagery Wayback angezeigt wurden, im Cache gespeichert.",
         "count": "Orte im Cache: {{count}}",
-        "delete": "Karten-Cache löschen"
+        "delete": "Karten-Cache löschen",
+        "confirmDelete": "Möchten Sie den Karten-Cache löschen?"
       },
       "all": {
         "title": "Alle Caches",

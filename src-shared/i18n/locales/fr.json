@@ -274,15 +274,16 @@
     },
     "cacheTab": {
       "thumbnails": {
-        "title": "Vignettes",
-        "description": "Le cache des vignettes que crée cette application se trouve dans l’onglet «\u00a0Vignettes\u00a0».",
+        "title": "Cache des vignettes",
+        "description": "Les réglages du cache des vignettes se trouvent dans l’onglet «\u00a0Vignettes\u00a0».",
         "open": "Ouvrir l’onglet «\u00a0Vignettes\u00a0»"
       },
       "map": {
-        "title": "Carte",
-        "description": "Les dates de prise des images d’Esri World Imagery Wayback sont mises en cache pour au plus {{max}}\u00a0lieux consultés sur la carte, afin de s’afficher immédiatement la fois suivante.",
+        "title": "Cache de la carte",
+        "description": "Pour plus de rapidité, les dates de prise des images sont mises en cache pour au plus {{max}}\u00a0lieux affichés avec Esri World Imagery Wayback.",
         "count": "Lieux en cache\u00a0: {{count}}",
-        "delete": "Supprimer le cache de la carte"
+        "delete": "Supprimer le cache de la carte",
+        "confirmDelete": "Voulez-vous supprimer le cache de la carte\u00a0?"
       },
       "all": {
         "title": "Tous les caches",
