@@ -281,7 +281,7 @@
       "map": {
         "title": "マップのキャッシュ",
         "description": "高速化のため、Esri World Imagery Waybackで表示した場所の撮影日を最大{{max}}ヶ所までキャッシュしています。",
-        "count": "キャッシュしている場所: {{count}} か所",
+        "count": "キャッシュしている場所: {{count}}ヶ所",
         "delete": "マップのキャッシュを削除",
         "confirmDelete": "マップのキャッシュを削除しますか？"
       },
