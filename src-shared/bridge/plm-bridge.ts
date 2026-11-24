@@ -150,6 +150,11 @@ export interface PlmBridge {
     updateSelectPreviousNext(params: IpcParams.PhotoSelection.UpdateSelectPreviousNextMenus): Promise<void>;
     updateNarrowDownToPhotosWithFaces(params: IpcParams.PhotoSelection.UpdateNarrowDownToPhotosWithFacesMenu): Promise<void>;
   };
+  /**
+   * The map in full screen (src/app/map/leaflet-map/full-screen/): the main process puts the window in full screen
+   * with it, unless the window is already, gives the window back as it was without it, and checks the View menu's item.
+   */
+  readonly mapFullScreen: { set(on: boolean): Promise<void> };
   readonly photoDataViewer: { open(params: PhotoDataViewerIpcParams): Promise<void> };
   readonly explorerContextMenu: { add(): Promise<void>; remove(): Promise<void> };
   readonly events: {
@@ -161,6 +166,10 @@ export interface PlmBridge {
     onSelectPrevious(listener: Listener): Unsubscribe;
     onSelectNext(listener: Listener): Unsubscribe;
     onNarrowDownToPhotosWithFaces(listener: Listener): Unsubscribe;
+    /** The View menu's Map in Full Screen was clicked. */
+    onToggleMapFullScreen(listener: Listener): Unsubscribe;
+    /** The window left full screen, by any means. */
+    onWindowLeftFullScreen(listener: Listener): Unsubscribe;
     onRecordAtAppLaunchFinished(listener: Listener): Unsubscribe;
   };
 }

@@ -116,6 +116,8 @@
     "zoomIn": "تكبير",
     "zoomOut": "تصغير",
     "layers": "الطبقات",
+    "fullScreen": "ملء الشاشة",
+    "exitFullScreen": "الخروج من ملء الشاشة",
     "photosInRegions": "الصور في المناطق: {{count}}",
     "selectPhotos": "تحديد الصور",
     "setRegionByRectangle": "تعيين منطقة بمستطيل",
@@ -311,7 +313,8 @@
       "actualSize": "الحجم الفعلي",
       "zoomIn": "تكبير",
       "zoomOut": "تصغير",
-      "toggleFullScreen": "تبديل وضع ملء الشاشة"
+      "toggleFullScreen": "تبديل وضع ملء الشاشة",
+      "mapFullScreen": "الخريطة بملء الشاشة"
     },
     "selection": {
       "title": "التحديد",

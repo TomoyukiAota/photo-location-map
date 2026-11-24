@@ -116,6 +116,8 @@
     "zoomIn": "Priblížiť",
     "zoomOut": "Vzdialiť",
     "layers": "Vrstvy",
+    "fullScreen": "Celá obrazovka",
+    "exitFullScreen": "Ukončiť režim celej obrazovky",
     "photosInRegions": "Fotky v oblastiach: {{count}}",
     "selectPhotos": "Vybrať fotky",
     "setRegionByRectangle": "Určiť oblasť obdĺžnikom",
@@ -311,7 +313,8 @@
       "actualSize": "Skutočná veľkosť",
       "zoomIn": "Priblížiť",
       "zoomOut": "Vzdialiť",
-      "toggleFullScreen": "Zapnúť/vypnúť celú obrazovku"
+      "toggleFullScreen": "Zapnúť/vypnúť celú obrazovku",
+      "mapFullScreen": "Mapa na celú obrazovku"
     },
     "selection": {
       "title": "Výber",

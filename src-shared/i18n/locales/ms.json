@@ -116,6 +116,8 @@
     "zoomIn": "Zum masuk",
     "zoomOut": "Zum keluar",
     "layers": "Lapisan",
+    "fullScreen": "Skrin penuh",
+    "exitFullScreen": "Keluar dari skrin penuh",
     "photosInRegions": "Foto dalam kawasan: {{count}}",
     "selectPhotos": "Pilih foto",
     "setRegionByRectangle": "Tetapkan kawasan dengan segi empat tepat",
@@ -311,7 +313,8 @@
       "actualSize": "Saiz sebenar",
       "zoomIn": "Zum masuk",
       "zoomOut": "Zum keluar",
-      "toggleFullScreen": "Togol skrin penuh"
+      "toggleFullScreen": "Togol skrin penuh",
+      "mapFullScreen": "Peta dalam skrin penuh"
     },
     "selection": {
       "title": "Pilihan",

@@ -116,6 +116,8 @@
     "zoomIn": "Nagyítás",
     "zoomOut": "Kicsinyítés",
     "layers": "Rétegek",
+    "fullScreen": "Teljes képernyő",
+    "exitFullScreen": "Kilépés a teljes képernyős módból",
     "photosInRegions": "Fotók a területeken: {{count}}",
     "selectPhotos": "Fotók kijelölése",
     "setRegionByRectangle": "Terület megadása téglalappal",
@@ -311,7 +313,8 @@
       "actualSize": "Tényleges méret",
       "zoomIn": "Nagyítás",
       "zoomOut": "Kicsinyítés",
-      "toggleFullScreen": "Teljes képernyő be/ki"
+      "toggleFullScreen": "Teljes képernyő be/ki",
+      "mapFullScreen": "Térkép teljes képernyőn"
     },
     "selection": {
       "title": "Kijelölés",

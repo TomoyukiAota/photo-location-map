@@ -54,11 +54,13 @@ export function createBridgeDouble(temporaryRoot: string): PlmBridge {
     // As for a File that is not on the disk, which every File of a unit test is.
     droppedItem: { openTarget: async () => ({ kind: 'none' }), choose: async () => ({ kind: 'none' }) },
     menus: { updateUndoRedo: async () => {}, updateSelectPreviousNext: async () => {}, updateNarrowDownToPhotosWithFaces: async () => {} },
+    mapFullScreen: { set: async () => {} },
     photoDataViewer: { open: async () => {} },
     explorerContextMenu: { add: async () => {}, remove: async () => {} },
     events: {
       onAboutBox: listen, onManageSettings: listen, onWelcomeDialog: listen,
       onUndo: listen, onRedo: listen, onSelectPrevious: listen, onSelectNext: listen, onNarrowDownToPhotosWithFaces: listen,
+      onToggleMapFullScreen: listen, onWindowLeftFullScreen: listen,
       onRecordAtAppLaunchFinished: listen,
     },
   };

@@ -16,6 +16,7 @@ import {
 import { currentPlatform } from '../../../../src-shared/startup/startup-metadata';
 import { openUrl } from '../../../../src-shared/url/open-url';
 import { DirectoryTreeViewSelectionService } from '../../directory-tree-view/directory-tree-view-selection.service';
+import { MapFullScreenService } from '../../map/leaflet-map/full-screen/map-full-screen.service';
 import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 import { Photo } from '../../shared/model/photo.model';
 import { openContainingFolder } from '../../shared/open-with-os';
@@ -182,6 +183,7 @@ export class TakesShortcutsDirective {
 })
 export class MoreOptionsMenuComponent {
   private readonly directoryTreeViewSelectionService = inject(DirectoryTreeViewSelectionService);
+  private readonly mapFullScreenService = inject(MapFullScreenService);
   private readonly photoRevealService = inject(PhotoRevealService);
   private readonly selectPreviousNextService = inject(SelectPreviousNextService);
 
@@ -335,6 +337,8 @@ export class MoreOptionsMenuComponent {
   private revealInSidebar(photo: Photo): void {
     logger.info(`Clicked "Reveal in Sidebar" menu item for ${photo.path}`);
     Analytics.trackEvent('Photo Info Viewer', '[PIV] Clicked "Reveal in Sidebar"');
+    // The sidebar is hidden while the map is in full screen: the tree shows the row once the sidebar is shown again.
+    this.mapFullScreenService.leave('revealInSidebar');
     this.photoRevealService.revealInSidebar(photo);
   }
 

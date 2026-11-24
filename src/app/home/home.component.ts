@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ElementRef, afterNextRender, viewChild, inject } from '@angular/core';
+import { Component, AfterViewInit, ElementRef, afterNextRender, afterRenderEffect, viewChild, inject } from '@angular/core';
 import Split from 'split.js';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { Logger } from '../../../src-shared/log/logger';
@@ -7,6 +7,7 @@ import { LoadedFilesStatusBarService } from '../loaded-files-status-bar/service/
 import { ThumbnailGenerationStatusBarService } from '../thumbnail-generation/status-bar/service/thumbnail-generation-status-bar.service';
 import { SidebarUpperPaneComponent } from '../sidebar/upper-pane/sidebar-upper-pane.component';
 import { SidebarLowerPaneComponent } from '../sidebar/lower-pane/sidebar-lower-pane.component';
+import { MapFullScreenService } from '../map/leaflet-map/full-screen/map-full-screen.service';
 import { LeafletMapComponent } from '../map/leaflet-map/leaflet-map.component';
 import { DateTimeTakenChartComponent } from '../date-time-taken-chart/date-time-taken-chart.component';
 import { ThumbnailGenerationStatusBarComponent } from '../thumbnail-generation/status-bar/component/thumbnail-generation-status-bar.component';
@@ -28,9 +29,13 @@ export class HomeComponent implements AfterViewInit {
   public loadedFilesStatusBarService = inject(LoadedFilesStatusBarService);
   /** The rows kept at the top of the folder tree, which cover the top of the sidebar's lower pane. */
   public stickyRowsService = inject(DirTreeViewStickyRowsService);
+  /** The map in full screen, which hides the sidebar and the chart. */
+  public mapFullScreenService = inject(MapFullScreenService);
 
   private sidebarSplitInstance: Split.Instance;
   private currentSidebarUpperPaneHeightPx: number;
+  private readonly gutterSizeWithinSidebar = 4; // Smaller compared to the other gutters, but this is for esthetic of GUI.
+  private wasMapFullScreen = false;
 
   private readonly sidebarDiv = viewChild.required<ElementRef>('sidebar');
   private readonly sidebarUpperPaneDiv = viewChild.required<ElementRef>('sidebarUpperPane');
@@ -38,11 +43,17 @@ export class HomeComponent implements AfterViewInit {
   constructor() {
     // The home view, with its map and toolbars, is on the screen for the first time: the application can be used.
     afterNextRender(() => perfMark('renderer:home-rendered'));
+    // The sidebar is shown again once the map has left full screen, in a window whose size has changed meanwhile.
+    afterRenderEffect(() => {
+      const mapFullScreen = this.mapFullScreenService.on();
+      if (this.wasMapFullScreen && !mapFullScreen)
+        this.fitSidebarPanes();
+      this.wasMapFullScreen = mapFullScreen;
+    });
   }
 
   ngAfterViewInit() {
     const gutterSize = 8;              // 8px, which is the same width as the splitter gutter in Photo Data Viewer.
-    const gutterSizeWithinSidebar = 4; // Smaller compared to the other gutters, but this is for esthetic of GUI.
 
     Split(['#home-left-sidebar', '#home-right'], {
       sizes: [25, 75],
@@ -51,7 +62,7 @@ export class HomeComponent implements AfterViewInit {
       snapOffset: 0,
     });
 
-    this.configureSplitWithinSidebar(gutterSizeWithinSidebar);
+    this.configureSplitWithinSidebar(this.gutterSizeWithinSidebar);
 
     Split(['#home-map', '#home-chart'], {
       direction: 'vertical',
@@ -80,7 +91,7 @@ export class HomeComponent implements AfterViewInit {
       }
     });
     this.currentSidebarUpperPaneHeightPx = upperPaneMaxHeightPx;
-    this.handleWindowResize(gutterSize);
+    this.handleWindowResize();
   }
 
   private calculateSidebarPanesHeightPercent(desiredUpperPaneHeightPx: number, gutterSize: number) {
@@ -100,10 +111,18 @@ export class HomeComponent implements AfterViewInit {
     return sidebarUpperPaneRect.height;
   }
 
-  private handleWindowResize(gutterSize: number) {
-    window.onresize = () => {
-      const panesHeight = this.calculateSidebarPanesHeightPercent(this.currentSidebarUpperPaneHeightPx, gutterSize);
-      this.sidebarSplitInstance.setSizes(panesHeight);
-    };
+  private handleWindowResize() {
+    window.onresize = () => this.fitSidebarPanes();
+  }
+
+  /**
+   * Sizes the sidebar's panes for the sidebar's height, keeping the upper pane's height. Not while the map is in full
+   * screen, which hides the sidebar, so that it has no height: it is done when the sidebar is shown again.
+   */
+  private fitSidebarPanes(): void {
+    if (this.getHeightPx(this.sidebarDiv()) === 0)
+      return;
+    const panesHeight = this.calculateSidebarPanesHeightPercent(this.currentSidebarUpperPaneHeightPx, this.gutterSizeWithinSidebar);
+    this.sidebarSplitInstance.setSizes(panesHeight);
   }
 }

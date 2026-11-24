@@ -131,6 +131,7 @@ describe('The main window\'s preload', () => {
         { method: 'invoke', channel: IpcConstants.PhotoSelection.UpdateSelectPreviousNextMenus, args: [previousNext] }],
       [plm => plm.menus.updateNarrowDownToPhotosWithFaces(narrowDown),
         { method: 'invoke', channel: IpcConstants.PhotoSelection.UpdateNarrowDownToPhotosWithFacesMenu, args: [narrowDown] }],
+      [plm => plm.mapFullScreen.set(true), { method: 'invoke', channel: IpcConstants.MapFullScreen.Set, args: [true] }],
       [plm => plm.photoDataViewer.open(viewerParams), { method: 'invoke', channel: IpcConstants.PhotoDataViewer.Name, args: [viewerParams] }],
       [plm => plm.explorerContextMenu.add(), { method: 'invoke', channel: IpcConstants.ExplorerContextMenu.Add, args: [] }],
       [plm => plm.explorerContextMenu.remove(), { method: 'invoke', channel: IpcConstants.ExplorerContextMenu.Remove, args: [] }],
@@ -172,6 +173,8 @@ describe('The main window\'s preload', () => {
       ['onSelectPrevious', IpcConstants.PhotoSelection.SelectPrevious, []],
       ['onSelectNext', IpcConstants.PhotoSelection.SelectNext, []],
       ['onNarrowDownToPhotosWithFaces', IpcConstants.PhotoSelection.NarrowDownToPhotosWithFaces, []],
+      ['onToggleMapFullScreen', IpcConstants.MapFullScreen.Toggle, []],
+      ['onWindowLeftFullScreen', IpcConstants.MapFullScreen.WindowLeft, []],
       ['onRecordAtAppLaunchFinished', IpcConstants.RecordAtAppLaunch.Finished, []],
     ];
     for (const [name, channel, args] of events) {
@@ -240,7 +243,7 @@ describe('The main window\'s preload', () => {
     const api = exposed[0].api;
     assert.deepStrictEqual(Object.keys(api), ['version', 'startup', 'storage', 'log', 'analytics', 'folderDialog', 'exif',
       'faceRegions', 'directoryTree', 'thumbnails', 'heif', 'jpegPngThumbnails', 'thumbnailCache', 'shell', 'app', 'commandLine',
-      'droppedItem', 'menus', 'photoDataViewer', 'explorerContextMenu', 'events']);
+      'droppedItem', 'menus', 'mapFullScreen', 'photoDataViewer', 'explorerContextMenu', 'events']);
     const memberNames = Object.values(api).flatMap(member => typeof member === 'object' && member !== null ? Object.keys(member) : []);
     for (const generic of ['send', 'sendSync', 'invoke', 'on', 'require', 'ipcRenderer', 'process', 'exec', 'spawn', 'readFile'])
       assert(!memberNames.includes(generic), generic);

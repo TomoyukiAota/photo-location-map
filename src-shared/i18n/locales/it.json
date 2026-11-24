@@ -116,6 +116,8 @@
     "zoomIn": "Ingrandisci",
     "zoomOut": "Riduci",
     "layers": "Livelli",
+    "fullScreen": "Schermo intero",
+    "exitFullScreen": "Esci da schermo intero",
     "photosInRegions": "Foto nelle aree: {{count}}",
     "selectPhotos": "Seleziona foto",
     "setRegionByRectangle": "Definisci un’area con un rettangolo",
@@ -311,7 +313,8 @@
       "actualSize": "Dimensioni reali",
       "zoomIn": "Ingrandisci",
       "zoomOut": "Riduci",
-      "toggleFullScreen": "Attiva/disattiva schermo intero"
+      "toggleFullScreen": "Attiva/disattiva schermo intero",
+      "mapFullScreen": "Mappa a schermo intero"
     },
     "selection": {
       "title": "Selezione",

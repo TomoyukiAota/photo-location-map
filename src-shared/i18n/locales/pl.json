@@ -116,6 +116,8 @@
     "zoomIn": "Powiększ",
     "zoomOut": "Pomniejsz",
     "layers": "Warstwy",
+    "fullScreen": "Pełny ekran",
+    "exitFullScreen": "Zamknij pełny ekran",
     "photosInRegions": "Zdjęcia w obszarach: {{count}}",
     "selectPhotos": "Zaznacz zdjęcia",
     "setRegionByRectangle": "Wyznacz obszar prostokątem",
@@ -311,7 +313,8 @@
       "actualSize": "Rzeczywisty rozmiar",
       "zoomIn": "Powiększ",
       "zoomOut": "Pomniejsz",
-      "toggleFullScreen": "Włącz/wyłącz pełny ekran"
+      "toggleFullScreen": "Włącz/wyłącz pełny ekran",
+      "mapFullScreen": "Mapa na pełnym ekranie"
     },
     "selection": {
       "title": "Zaznaczenie",

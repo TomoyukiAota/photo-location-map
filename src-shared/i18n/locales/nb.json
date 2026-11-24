@@ -116,6 +116,8 @@
     "zoomIn": "Zoom inn",
     "zoomOut": "Zoom ut",
     "layers": "Lag",
+    "fullScreen": "Fullskjerm",
+    "exitFullScreen": "Avslutt fullskjerm",
     "photosInRegions": "Bilder i områdene: {{count}}",
     "selectPhotos": "Marker bilder",
     "setRegionByRectangle": "Angi et område med et rektangel",
@@ -311,7 +313,8 @@
       "actualSize": "Faktisk størrelse",
       "zoomIn": "Zoom inn",
       "zoomOut": "Zoom ut",
-      "toggleFullScreen": "Fullskjerm av/på"
+      "toggleFullScreen": "Fullskjerm av/på",
+      "mapFullScreen": "Kart i fullskjerm"
     },
     "selection": {
       "title": "Markering",

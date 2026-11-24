@@ -116,6 +116,8 @@
     "zoomIn": "Tuvināt",
     "zoomOut": "Tālināt",
     "layers": "Slāņi",
+    "fullScreen": "Pilnekrāna režīms",
+    "exitFullScreen": "Iziet no pilnekrāna režīma",
     "photosInRegions": "Fotoattēli apgabalos: {{count}}",
     "selectPhotos": "Atlasīt fotoattēlus",
     "setRegionByRectangle": "Iestatīt apgabalu ar taisnstūri",
@@ -311,7 +313,8 @@
       "actualSize": "Faktiskais lielums",
       "zoomIn": "Tuvināt",
       "zoomOut": "Tālināt",
-      "toggleFullScreen": "Pārslēgt pilnekrāna režīmu"
+      "toggleFullScreen": "Pārslēgt pilnekrāna režīmu",
+      "mapFullScreen": "Karte pilnekrāna režīmā"
     },
     "selection": {
       "title": "Atlase",

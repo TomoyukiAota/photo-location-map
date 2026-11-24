@@ -116,6 +116,8 @@
     "zoomIn": "Suurenda",
     "zoomOut": "Vähenda",
     "layers": "Kihid",
+    "fullScreen": "Täisekraan",
+    "exitFullScreen": "Välju täisekraanist",
     "photosInRegions": "Fotosid piirkondades: {{count}}",
     "selectPhotos": "Vali fotod",
     "setRegionByRectangle": "Määra piirkond ristkülikuga",
@@ -311,7 +313,8 @@
       "actualSize": "Tegelik suurus",
       "zoomIn": "Suurenda",
       "zoomOut": "Vähenda",
-      "toggleFullScreen": "Lülita täisekraan sisse/välja"
+      "toggleFullScreen": "Lülita täisekraan sisse/välja",
+      "mapFullScreen": "Kaart täisekraanil"
     },
     "selection": {
       "title": "Valik",

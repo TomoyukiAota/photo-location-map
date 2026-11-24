@@ -1,6 +1,7 @@
 # Full screen for the map: status
 
-Investigated and proposed on 2026-11-25. Nothing is implemented: the owner chooses an option first.
+Investigated and proposed on 2026-11-25; the owner chose C the same day, and it was implemented then ("What the owner
+chose" and "What was built", at the end).
 
 ## What was asked
 
@@ -151,3 +152,43 @@ Leaflet 1.7 and later and 2.0's prereleases, released every few months in 2025 a
 1. A, B or C.
 2. A shortcut: none (the button, the View menu and Esc), or CmdOrCtrl+Shift+F, which the Microsoft Pinyin IME also
    takes, while it is on, to switch between simplified and traditional Chinese. Ctrl+Cmd+F and F11 stay the window's.
+
+## What the owner chose
+
+C, on 2026-11-25. The shortcut was left as proposed: none.
+
+## What was built
+
+- **The window** (`src-main/map-full-screen/map-full-screen-window.ts`): `MapFullScreenState` puts the window in full
+  screen when the page puts the map in it, unless the window is already, and gives it back as it was. On macOS it
+  asks the window to leave full screen without asking `isFullScreen()` first, as Electron queues a request made during
+  the window's transition and does nothing for a window that is not in full screen; elsewhere, where the window is in
+  full screen at once, it asks only a window in full screen. The window's `leave-full-screen`, by whatever means,
+  tells the page, which ends the map's full screen.
+- **The View menu** (`src-main/menu/map-full-screen.ts`): Map in Full Screen, a checkbox beside Toggle Full Screen,
+  checked from what the page says (`IpcConstants.MapFullScreen.Set`). A click sends `Toggle` to the page and puts the
+  check back as it was, as Electron turns it at the click and the page's answer sets it.
+- **The bridge** (`plm-bridge.ts`, `main-window.cjs`): `mapFullScreen.set(on)`, and the events
+  `onToggleMapFullScreen` and `onWindowLeftFullScreen`.
+- **The page** (`src/app/map/leaflet-map/full-screen/`): `MapFullScreenService` keeps the state, tells the main
+  process of each change, and leaves on Esc when the key reaches the window untaken (a popup that Leaflet closes, a
+  menu or a dialog take it first), no dialog is open and the key is not in a text field. `MapFullScreenButtonComponent`
+  is the button, made through `LeafletContentService` in a Leaflet bar at the map's top left
+  (`map-full-screen-control.ts`), with Material Icons' `fullscreen` and `fullscreen_exit` drawn in its template.
+- **The home view**: the class `map-full-screen` hides the sidebar and the chart (`home.component.scss`) and the
+  gutters (`global-styles.scss`), and gives `#home-right` and `#home-map` all the room with `!important` over
+  Split.js's inline sizes, which come back as they were. The window's resize handler, which sizes the sidebar's two
+  panes, waits while the sidebar is hidden (it had divided by its height of 0), and runs once the sidebar is shown.
+- **The tree** (`DirectoryTreeViewComponent`): a reveal asked for while the sidebar is hidden, as by Select Previous
+  and Select Next on the map, waits; the last one is done in the render that shows the sidebar again. Reveal in
+  Sidebar, in a popup's More Options menu, leaves the full screen first, and its reveal waits for that render too.
+- **Texts**: `map.fullScreen`, `map.exitFullScreen` and `menu.view.mapFullScreen` in every file of `locales/`. The
+  Japanese says マップ, as the application's other Japanese texts do. The button has no text on the page, only its
+  tooltip, and the menu is the system's, so the layout in every language (`test/layout/`) has nothing new to measure.
+- **Changed from the plan above**: the button's label says what a click does, Full Screen or Exit Full Screen, as
+  its tooltip does, without `aria-pressed`, which goes with a label that stays the same. A folder opened by a drop
+  during the full screen leaves it as it is: a folder's photos with a location are all selected when it opens, so the
+  map shows them, and the tree is not needed to choose them.
+- **Not done**: the map's full screen is not saved, and the application starts without it. Quitting during it starts
+  the next launch with the window in full screen, as after View > Toggle Full Screen, which electron-window-state
+  saves.

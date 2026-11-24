@@ -116,6 +116,8 @@
     "zoomIn": "Lähennä",
     "zoomOut": "Loitonna",
     "layers": "Tasot",
+    "fullScreen": "Koko näyttö",
+    "exitFullScreen": "Poistu koko näytön tilasta",
     "photosInRegions": "Kuvia alueilla: {{count}}",
     "selectPhotos": "Valitse kuvat",
     "setRegionByRectangle": "Määritä alue suorakulmiolla",
@@ -311,7 +313,8 @@
       "actualSize": "Todellinen koko",
       "zoomIn": "Lähennä",
       "zoomOut": "Loitonna",
-      "toggleFullScreen": "Koko näyttö päälle/pois"
+      "toggleFullScreen": "Koko näyttö päälle/pois",
+      "mapFullScreen": "Kartta koko näytöllä"
     },
     "selection": {
       "title": "Valinta",

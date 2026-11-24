@@ -116,6 +116,8 @@
     "zoomIn": "Phóng to",
     "zoomOut": "Thu nhỏ",
     "layers": "Lớp",
+    "fullScreen": "Toàn màn hình",
+    "exitFullScreen": "Thoát toàn màn hình",
     "photosInRegions": "Ảnh trong các vùng: {{count}}",
     "selectPhotos": "Chọn ảnh",
     "setRegionByRectangle": "Đặt vùng bằng hình chữ nhật",
@@ -311,7 +313,8 @@
       "actualSize": "Kích thước thực",
       "zoomIn": "Phóng to",
       "zoomOut": "Thu nhỏ",
-      "toggleFullScreen": "Bật/tắt toàn màn hình"
+      "toggleFullScreen": "Bật/tắt toàn màn hình",
+      "mapFullScreen": "Bản đồ toàn màn hình"
     },
     "selection": {
       "title": "Lựa chọn",
