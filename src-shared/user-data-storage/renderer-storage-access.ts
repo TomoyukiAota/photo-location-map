@@ -6,6 +6,8 @@ import { UserDataStoragePath } from './user-data-stroage-path.js';
  */
 export const rendererWritableStoragePaths: ReadonlyArray<ReadonlyArray<string>> = [
   UserDataStoragePath.FolderDialog.LastConfirmedDirectory,
+  UserDataStoragePath.HomeLayout.SidebarWidth,
+  UserDataStoragePath.HomeLayout.ChartHeight,
   UserDataStoragePath.LeafletMap.SelectedBaseLayer,
   UserDataStoragePath.LeafletMap.RasterTileBaseLayerConfigsVersion1,
   UserDataStoragePath.DirectoryTreeView.SortKey,

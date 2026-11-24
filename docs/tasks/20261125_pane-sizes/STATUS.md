@@ -1,6 +1,7 @@
 # Saving the sizes of the panes: status
 
-Investigated and proposed on 2026-11-25. Nothing is implemented yet: the owner chooses an option first.
+Investigated and proposed on 2026-11-25. The owner chose the recommendation the same day, and it was implemented
+then ("What the owner chose" and "What was built", at the end).
 
 ## What was asked
 
@@ -156,3 +157,52 @@ From `node_modules/split.js/dist/split.es.js`, and a probe in a hidden Electron 
 2. What to save: the sidebar's width and the chart's height (recommended), or the sidebar's width alone. The upper pane
    is left as it is.
 3. A way back: double-click on a gutter (recommended), the View menu, both, or none.
+
+## What the owner chose
+
+The recommendation, on 2026-11-25: B (pixels), saving the sidebar's width and the chart's height, and a double-click
+on a gutter to put back the default.
+
+## What was built
+
+- `src/app/home/pane-sizes/pane-size.ts`: the rules, as functions without the DOM: where a kept pane is shown
+  (`shownKeptPaneSize()`), the percentages that Split.js takes for it (`splitPercentages()`), and a saved size
+  (`parseSavedSize()`).
+- `src/app/home/pane-sizes/pane-split.ts`: `PaneSplit`, which makes a split of Split.js, keeps one of its panes at a
+  size in pixels once it has one, and shows it again at each change of the parent's size (a ResizeObserver). It
+  ignores a click on the gutter, which moves nothing, keeps the least size of the other pane lower after a drag that
+  made it smaller, waits while the parent is not shown, and gives `setSizes()` the shares reversed in a reversed row.
+  `reset()` puts back the default.
+- `src/app/home/home.component.ts` makes the three splits with it:
+  - The sidebar: 25% until dragged; a dragged width kept, and saved in `HomeLayout/SidebarWidth`; at least 200 px, and
+    200 px left to the map's side.
+  - The chart: 30% until dragged; a dragged height kept, and saved in `HomeLayout/ChartHeight`; 200 px left to the
+    map at a launch.
+  - The sidebar's upper pane: 66 px, kept at a resize of the window only, as before. Between two resizes, it stays a
+    share of the sidebar, so a status bar that appears makes it 2 or 3 px shorter. Keeping it at every change of the
+    sidebar's height would move the folder tree in the e2e screenshots where a status bar came or went: a change of
+    its own, which this one leaves out. It is not saved, as proposed.
+  - Each gutter is now an element of the home view's template, which Split.js takes through its `gutter` option, with
+    a `(dblclick)` binding that puts its split back to the default and saves `''` for it.
+  - A drag's end is logged and tracked, as the upper pane's already was; so is a reset. The sizes found at launch are
+    logged.
+- The paths are in `rendererWritableStoragePaths`.
+- `window.onresize` is gone: the upper pane listens to the window's `resize` event, which it can stop listening to.
+
+### Tests
+
+- `pane-size.spec.ts` (Vitest): the rules for the three splits' limits, the percentages and the saved text.
+- `test/src/app/home/pane-sizes/pane-split.spec.em.renderer.ts` (Electron-Mocha, a page with a real layout): the
+  default shares, a saved size through parent resizes, the clamps and the fallback to the default shares, a drag and a
+  click, a reversed row, `reset()`, the other pane's least size after a drag and at the next launch, a hidden parent,
+  and the upper pane's window-only mode. Without the reversal, the reversed row's case fails.
+- `renderer-storage-requests.spec.em.main.ts`: the renderer can write the two paths.
+- e2e:
+  - "folder picker loads real photo data, markers, tree selection and chart": the dragged sidebar comes back at its
+    width after a restart (it was checked to come back at 25%), and a double-click on the gutter puts back 25% and
+    saves `''`.
+  - "on a computer whose language is Arabic, the application is laid out from right to left": after a restart, the
+    sidebar is on the right, at its dragged width.
+  - "a window resize keeps the sizes of the panes around the map, …" (renamed from "a window resize keeps the
+    sidebar's upper pane, …"): a dragged sidebar and a dragged chart keep their sizes through window resizes while the
+    map takes them, and a double-click on the map's gutter puts back 30% and saves `''`.
