@@ -56,6 +56,19 @@ export namespace IpcConstants {
     export const UpdateNarrowDownToPhotosWithFacesMenu = 'ipc-constants-photo-selection-update-narrow-down-to-photos-with-faces-menu';
   }
 
+  /**
+   * The map in full screen: the window in full screen, with the map alone in it (src-main/menu/map-full-screen.ts,
+   * src/app/map/leaflet-map/full-screen/).
+   */
+  export namespace MapFullScreen {
+    /** The page puts the map in full screen, or takes it out, which the window and the View menu's item follow. */
+    export const Set = 'ipc-constants-map-full-screen-set';
+    /** The View menu's Map in Full Screen, clicked. */
+    export const Toggle = 'ipc-constants-map-full-screen-toggle';
+    /** The window has left full screen, whatever left it, which ends the map's full screen. */
+    export const WindowLeft = 'ipc-constants-map-full-screen-window-left';
+  }
+
   /** The faces that a photo's metadata marks, which the search for faces takes as found (src-main/face-search/). */
   export namespace FaceRegions {
     export const Have = 'ipc-constants-face-regions-have';

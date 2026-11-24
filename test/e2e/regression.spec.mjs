@@ -970,7 +970,7 @@ const menuInEnglish = [
     label: 'The name of the first menu item is the application name on macOS',
     items: ['About Photo Location Map', 'Services', 'Hide Photo Location Map', 'Hide Others', 'Show All', 'Quit Photo Location Map'],
   }] : []),
-  { label: 'View', items: ['Reload', 'Actual Size', 'Zoom In', 'Zoom Out', 'Toggle Full Screen'] },
+  { label: 'View', items: ['Reload', 'Actual Size', 'Zoom In', 'Zoom Out', 'Toggle Full Screen', 'Map in Full Screen'] },
   { label: 'Selection', items: ['Undo', 'Redo', 'Photo Taken Before', 'Photo Taken After', 'Narrow Down to Photos with Faces'] },
   { label: 'Settings', items: ['Open Settings'] },
   { label: 'Help', items: [...(isMac ? [] : ['About Photo Location Map']),
@@ -981,7 +981,7 @@ const menuInJapanese = [
     label: 'The name of the first menu item is the application name on macOS',
     items: ['Photo Location Map について', 'サービス', 'Photo Location Map を非表示', 'ほかを非表示', 'すべてを表示', 'Photo Location Map を終了'],
   }] : []),
-  { label: '表示', items: ['再読み込み', '実際のサイズ', '拡大', '縮小', 'フルスクリーンの切り替え'] },
+  { label: '表示', items: ['再読み込み', '実際のサイズ', '拡大', '縮小', 'フルスクリーンの切り替え', 'マップをフルスクリーンで表示'] },
   { label: '選択', items: ['元に戻す', 'やり直す', '前に撮影された写真', '次に撮影された写真', '顔が写っている写真に絞り込む'] },
   { label: '設定', items: ['設定を開く'] },
   { label: 'ヘルプ', items: [...(isMac ? [] : ['Photo Location Map について']),
@@ -1228,6 +1228,7 @@ test('on a computer whose language is Japanese, the application is in Japanese: 
   await expect(page.getByTitle('長方形で範囲を指定', { exact: true })).toBeVisible();
   await expect(page.locator('.leaflet-control-zoom-in')).toHaveAttribute('title', '拡大');
   await expect(page.locator('.leaflet-control-layers-toggle')).toHaveAttribute('title', 'レイヤー');
+  await expect(page.locator('.plm-leaflet-map-full-screen-button')).toHaveAttribute('title', 'フルスクリーン');
   await app.evaluate(({ dialog }, folder) => {
     dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [folder] });
   }, photoFolder);
@@ -1340,6 +1341,20 @@ test('on a computer whose language is Arabic, the application is laid out from r
   const sidebarAfterDrag = await sidebar.boundingBox();
   expect(Math.abs(sidebarAfterDrag.width - sidebarAtStart.width - 120)).toBeLessThan(3);
   expect(Math.abs(sidebarAfterDrag.x - (sidebarAtStart.x - 120))).toBeLessThan(3);
+  // The map in full screen has the window alone, with its button at its top left, as the map stays laid out from left
+  // to right. Out of it, the sidebar is back at the map's right, as wide as it was. The window keeps its size here:
+  // the English case has it go to full screen.
+  await app.evaluate(({ BrowserWindow }) => { BrowserWindow.prototype.setFullScreen = () => undefined; });
+  const fullScreenButton = page.locator('.leaflet-top.leaflet-left .plm-leaflet-map-full-screen-button');
+  await expect(fullScreenButton).toHaveAttribute('title', 'ملء الشاشة');
+  await fullScreenButton.click();
+  await expect(sidebar).toBeHidden();
+  await expect(fullScreenButton).toHaveAttribute('title', 'الخروج من ملء الشاشة');
+  await expect.poll(async () => Math.round((await map.boundingBox()).x)).toBe(0);
+  await page.keyboard.press('Escape');
+  await expect(sidebar).toBeVisible();
+  await expect.poll(async () => Object.values(await sidebar.boundingBox()).map(Math.round))
+    .toEqual(Object.values(sidebarAfterDrag).map(Math.round));
   // A folder of photos: the status bar, the tree and the map, which itself stays laid out from left to right.
   await app.evaluate(({ dialog }, folder) => {
     dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [folder] });
@@ -1493,7 +1508,7 @@ test('on a computer whose language is Arabic, the application is laid out from r
       label: 'The name of the first menu item is the application name on macOS',
       items: ['حول Photo Location Map', 'الخدمات', 'إخفاء Photo Location Map', 'إخفاء الأخرى', 'إظهار الكل', 'إنهاء Photo Location Map'],
     }] : []),
-    { label: 'عرض', items: ['إعادة التحميل', 'الحجم الفعلي', 'تكبير', 'تصغير', 'تبديل وضع ملء الشاشة'] },
+    { label: 'عرض', items: ['إعادة التحميل', 'الحجم الفعلي', 'تكبير', 'تصغير', 'تبديل وضع ملء الشاشة', 'الخريطة بملء الشاشة'] },
     { label: 'التحديد', items: ['تراجع', 'إعادة', 'الصورة الملتقطة قبلها', 'الصورة الملتقطة بعدها', 'تضييق التحديد إلى الصور التي تظهر فيها وجوه'] },
     { label: 'الإعدادات', items: ['فتح الإعدادات'] },
     { label: 'مساعدة', items: [...(isMac ? [] : ['حول Photo Location Map']),
@@ -3776,6 +3791,142 @@ test('a window resize keeps the sidebar\'s upper pane, and Leaflet fits the map 
   await expect.poll(async () => (await mapSizes()).pane[1]).toBeLessThan(beforeDrag.pane[1] - 50);
   await expect.poll(async () => { const sizes = await mapSizes(); return sizes.leaflet.join() === sizes.pane.join(); }).toBe(true);
   await expectRepresentedPhotos(4);
+});
+test('the map in full screen has the window alone, in full screen, with its controls, popups and menus, until Esc, the View menu or the window ends it', async () => {
+  // TL;DR: The window goes to full screen on Windows alone, whose window is transparent in a headless run.
+  // Details: The map asks the main process for the window's full screen, which this records. A hidden window on macOS
+  // would be shown by its full screen, and the window that Linux shows would take the screen: there, the window keeps
+  // its size, and the map fills it as it would fill the screen, while the window says that it is in full screen as it
+  // would, so that the main process asks it the same everywhere. The window leaves full screen by itself, as View >
+  // Toggle Full Screen has it, through __plmLeaveFullScreenByItself.
+  const windowGoesFullScreen = process.platform === 'win32';
+  await app.evaluate(({ BrowserWindow }, goesFullScreen) => {
+    globalThis.__plmFullScreenRequests = [];
+    const { setFullScreen } = BrowserWindow.prototype;
+    let fullScreen = false;
+    BrowserWindow.prototype.setFullScreen = function (flag) {
+      globalThis.__plmFullScreenRequests.push(flag);
+      if (goesFullScreen) setFullScreen.call(this, flag);
+      else fullScreen = flag;
+    };
+    if (!goesFullScreen) BrowserWindow.prototype.isFullScreen = () => fullScreen;
+    globalThis.__plmLeaveFullScreenByItself = window => {
+      if (goesFullScreen) {
+        setFullScreen.call(window, false);
+      } else {
+        fullScreen = false;
+        window.emit('leave-full-screen');
+      }
+    };
+  }, windowGoesFullScreen);
+  const fullScreenRequests = () => app.evaluate(() => globalThis.__plmFullScreenRequests);
+  const windowIsFullScreen = () => app.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].isFullScreen());
+  const viewMenuItemChecked = () => app.evaluate(({ Menu }) => Menu.getApplicationMenu().getMenuItemById('view-map-full-screen').checked);
+  await page.addInitScript(() => {
+    let leaflet;
+    Object.defineProperty(window, 'L', {
+      configurable: true, enumerable: true,
+      get: () => leaflet,
+      set: lib => {
+        leaflet = lib;
+        lib?.Map?.addInitHook(function () {
+          if (this.getContainer().id === 'plm-leaflet-map') window.__plmLeafletMap = this;
+        });
+      }
+    });
+  });
+  await page.reload();
+  // The map is made a second after the home view, by when the Welcome dialog is there to be dismissed.
+  await page.waitForFunction(() => !!window.__plmLeafletMap);
+  await dismissWelcome();
+  await openFolderWithPicker(photoFolder);
+  await expectRepresentedPhotos(4);
+  const leafletFitsItsPane = () => page.evaluate(() => {
+    const size = window.__plmLeafletMap.getSize();
+    const container = window.__plmLeafletMap.getContainer();
+    return size.x === container.clientWidth && size.y === container.clientHeight;
+  });
+  const sidebar = page.locator('#home-left-sidebar');
+  const chart = page.locator('#home-chart');
+  const mapPane = page.locator('#plm-leaflet-map');
+  // Where the sidebar, the map and the chart are, above the status bars.
+  const container = page.locator('.sidebar-and-map-container');
+  const gutters = page.locator('.gutter');
+  const roundedBox = async element => Object.values(await element.boundingBox()).map(Math.round);
+  const boxes = async () => ({ sidebar: await roundedBox(sidebar), chart: await roundedBox(chart), map: await roundedBox(mapPane) });
+  const boxesBefore = await boxes();
+  // The button is alone at the map's top left, which nothing else is in.
+  const button = page.locator('.leaflet-top.leaflet-left .plm-leaflet-map-full-screen-button');
+  await expect(button).toHaveAttribute('title', 'Full Screen');
+  const buttonBox = await button.boundingBox();
+  const mapBox = await mapPane.boundingBox();
+  expect(buttonBox.x - mapBox.x).toBeLessThan(20);
+  expect(buttonBox.y - mapBox.y).toBeLessThan(20);
+
+  // The map takes the window, but for the status bars at its bottom, and Leaflet fits it.
+  await button.click();
+  await expect(sidebar).toBeHidden();
+  await expect(chart).toBeHidden();
+  for (const gutter of await gutters.all()) await expect(gutter).toBeHidden();
+  await expect(button).toHaveAttribute('title', 'Exit Full Screen');
+  await expect.poll(async () => JSON.stringify([await roundedBox(mapPane), await page.evaluate(() => window.innerWidth)]))
+    .toBe(JSON.stringify([await roundedBox(container), (await roundedBox(container))[2]]));
+  await expect.poll(leafletFitsItsPane).toBe(true);
+  expect(await fullScreenRequests()).toEqual([true]);
+  expect(await viewMenuItemChecked()).toBe(true);
+  await expect.poll(windowIsFullScreen).toBe(true);
+  await expectRepresentedPhotos(4);
+  // Its controls are there, and a popup with its menu. Esc closes the menu, which takes the key, not the full screen.
+  await expect(page.locator('.leaflet-pm-toolbar').first()).toBeVisible();
+  await expect(page.locator('.leaflet-control-layers')).toBeVisible();
+  await expect(page.locator('.leaflet-control-zoom')).toBeVisible();
+  await page.locator('.plm-leaflet-map-div-icon').first().dispatchEvent('click');
+  const popup = page.locator('.leaflet-popup');
+  await expect(popup).toBeVisible();
+  await expect(page.locator('.leaflet-map-pane.leaflet-pan-anim')).toHaveCount(0);
+  await openMoreOptions(popup.getByRole('button', { name: 'More Options' }));
+  await expect(page.getByRole('menuitem', { name: 'Reveal in Sidebar', exact: true })).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.photo-info-viewer-more-options-menu')).toHaveCount(0);
+  await expect(sidebar).toBeHidden();
+
+  // Esc, which nothing else takes now, gives the sidebar and the chart back as they were.
+  await page.keyboard.press('Escape');
+  await expect(sidebar).toBeVisible();
+  await expect(chart).toBeVisible();
+  for (const gutter of await gutters.all()) await expect(gutter).toBeVisible();
+  await expect(button).toHaveAttribute('title', 'Full Screen');
+  await expect.poll(boxes).toEqual(boxesBefore);
+  await expect.poll(leafletFitsItsPane).toBe(true);
+  expect(await fullScreenRequests()).toEqual([true, false]);
+  expect(await viewMenuItemChecked()).toBe(false);
+  await expect.poll(windowIsFullScreen).toBe(false);
+
+  // The View menu's item puts the map in full screen too. The window leaving full screen by its own means, as View >
+  // Toggle Full Screen does, ends the map's full screen.
+  await app.evaluate(({ Menu }) => Menu.getApplicationMenu().getMenuItemById('view-map-full-screen').click());
+  await expect(sidebar).toBeHidden();
+  await expect.poll(viewMenuItemChecked).toBe(true);
+  expect(await fullScreenRequests()).toEqual([true, false, true]);
+  await expect.poll(windowIsFullScreen).toBe(true);
+  await app.evaluate(({ BrowserWindow }) => globalThis.__plmLeaveFullScreenByItself(BrowserWindow.getAllWindows()[0]));
+  await expect(sidebar).toBeVisible();
+  await expect.poll(viewMenuItemChecked).toBe(false);
+  await expect.poll(windowIsFullScreen).toBe(false);
+  await expect.poll(boxes).toEqual(boxesBefore);
+
+  // Reveal in Sidebar, from the popup of the map in full screen, shows the sidebar with the photo's row lit.
+  await button.click();
+  await expect(sidebar).toBeHidden();
+  await page.locator('.plm-leaflet-map-div-icon').first().dispatchEvent('click');
+  await expect(page.locator('.leaflet-map-pane.leaflet-pan-anim')).toHaveCount(0);
+  const name = await popup.locator('.photo-info-viewer-name').textContent();
+  await chooseFromMoreOptions(popup.getByRole('button', { name: 'More Options' }), 'Reveal in Sidebar');
+  await expect(sidebar).toBeVisible();
+  await expect(page.locator('mat-tree-node').filter({ has: page.getByText(name, { exact: true }) }))
+    .toHaveAttribute('data-reveal-highlight', 'lit');
+  await expect(button).toHaveAttribute('title', 'Full Screen');
+  expect(await viewMenuItemChecked()).toBe(false);
 });
 test('window bounds survive restart and the Windows fullscreen menu stays visible', async () => {
   await dismissWelcome();

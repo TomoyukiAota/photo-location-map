@@ -116,6 +116,8 @@
     "zoomIn": "확대",
     "zoomOut": "축소",
     "layers": "레이어",
+    "fullScreen": "전체 화면",
+    "exitFullScreen": "전체 화면 종료",
     "photosInRegions": "영역 내 사진: {{count}}장",
     "selectPhotos": "사진 선택",
     "setRegionByRectangle": "사각형으로 영역 지정",
@@ -313,7 +315,8 @@
       "actualSize": "실제 크기",
       "zoomIn": "확대",
       "zoomOut": "축소",
-      "toggleFullScreen": "전체 화면 전환"
+      "toggleFullScreen": "전체 화면 전환",
+      "mapFullScreen": "지도 전체 화면"
     },
     "selection": {
       "title": "선택",

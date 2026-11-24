@@ -7,6 +7,7 @@ import { Logger } from '../../../src-shared/log/logger';
 import { ThumbnailQuality } from '../../../src-shared/user-settings/thumbnail-quality';
 import { IconDataUrl } from '../../assets/icon-data-url';
 import { DirectoryTreeViewSelectionService } from '../directory-tree-view/directory-tree-view-selection.service';
+import { MapFullScreenService } from '../map/leaflet-map/full-screen/map-full-screen.service';
 import { DateTimeOriginal } from '../shared/model/date-time-original';
 import { Dimensions } from '../shared/model/dimensions.model';
 import { Exif } from '../shared/model/exif.model';
@@ -840,6 +841,24 @@ describe('PhotoInfoViewerComponent', () => {
         ['https://www.google.com/maps/@?api=1&map_action=pano&parameters&viewpoint=34.68,135.19'],
       ]);
       expect(openPhotoDataViewer).toHaveBeenCalledExactlyOnceWith({ photo: { name: 'IMG_0001.JPG', path: '/photos/IMG_0001.JPG' } });
+    });
+
+    it('takes the map out of full screen for Reveal in Sidebar, which the sidebar is hidden in, and leaves it there for the other items', async () => {
+      const mapFullScreen = TestBed.inject(MapFullScreenService);
+      mapFullScreen.enter('button');
+      await showWithMenu(cameraPhoto(), 'leaflet-map-popup');
+      document.body.appendChild(element);
+      try {
+        await click(item(await open(), 'Open Folder'));
+        await closed();
+        expect(mapFullScreen.on()).toBe(true);
+
+        await click(item(await open(), 'Reveal in Sidebar'));
+        await closed();
+        expect(mapFullScreen.on()).toBe(false);
+      } finally {
+        element.remove();
+      }
     });
 
     it('tells the analytics which of Google\'s sites its items open, without the photo\'s place', async () => {

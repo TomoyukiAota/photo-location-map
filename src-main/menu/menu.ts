@@ -3,6 +3,7 @@ import * as os from 'os';
 import { Logger } from '../../src-shared/log/logger.js';
 import { menuTemplateOnWindowsLinux } from './menu-template-on-windows-linux.js';
 import { menuTemplateOnMac } from './menu-template-on-mac.js';
+import { configureIpcForMapFullScreen } from './map-full-screen.js';
 import { configureIpcForSelectionMenu } from './selection-menu.js';
 
 const getMenuTemplate = () => {
@@ -23,3 +24,4 @@ const getMenuTemplate = () => {
 const menu = Menu.buildFromTemplate(getMenuTemplate());
 Menu.setApplicationMenu(menu);
 configureIpcForSelectionMenu(menu);
+configureIpcForMapFullScreen(menu);

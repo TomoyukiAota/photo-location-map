@@ -116,6 +116,8 @@
     "zoomIn": "放大",
     "zoomOut": "縮小",
     "layers": "圖層",
+    "fullScreen": "全螢幕",
+    "exitFullScreen": "結束全螢幕",
     "photosInRegions": "區域內的照片：{{count}} 張",
     "selectPhotos": "選取照片",
     "setRegionByRectangle": "以矩形設定區域",
@@ -313,7 +315,8 @@
       "actualSize": "實際大小",
       "zoomIn": "放大",
       "zoomOut": "縮小",
-      "toggleFullScreen": "切換全螢幕"
+      "toggleFullScreen": "切換全螢幕",
+      "mapFullScreen": "地圖全螢幕"
     },
     "selection": {
       "title": "選取",

@@ -116,6 +116,8 @@
     "zoomIn": "Zooma in",
     "zoomOut": "Zooma ut",
     "layers": "Lager",
+    "fullScreen": "Helskärm",
+    "exitFullScreen": "Avsluta helskärm",
     "photosInRegions": "Bilder i områdena: {{count}}",
     "selectPhotos": "Markera bilder",
     "setRegionByRectangle": "Ange område med rektangel",
@@ -313,7 +315,8 @@
       "actualSize": "Verklig storlek",
       "zoomIn": "Zooma in",
       "zoomOut": "Zooma ut",
-      "toggleFullScreen": "Helskärmsläge av/på"
+      "toggleFullScreen": "Helskärmsläge av/på",
+      "mapFullScreen": "Karta i helskärm"
     },
     "selection": {
       "title": "Markering",

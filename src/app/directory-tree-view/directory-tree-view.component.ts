@@ -1,10 +1,11 @@
 import { FocusMonitor, TREE_KEY_MANAGER } from '@angular/cdk/a11y';
-import { Component, DestroyRef, effect, ElementRef, Injector, signal, untracked, viewChild, viewChildren, inject } from '@angular/core';
+import { afterRenderEffect, Component, DestroyRef, effect, ElementRef, Injector, signal, untracked, viewChild, viewChildren, inject } from '@angular/core';
 import { MatMenuTrigger, MatMenu, MatMenuContent, MatMenuItem } from '@angular/material/menu';
 import { MatTree, MatTreeNodeDef, MatTreeNodeToggle, MatTreeNodePadding } from '@angular/material/tree';
 import { Analytics } from '../../../src-shared/analytics/analytics';
 import { createPrependedLogger } from '../../../src-shared/log/create-prepended-logger';
 import { logged } from '../../../src-shared/log/logged-line';
+import { MapFullScreenService } from '../map/leaflet-map/full-screen/map-full-screen.service';
 import { PhotoInfoViewerComponent } from '../photo-info-viewer/photo-info-viewer.component';
 import { EasedScroll } from '../shared/eased-scroll/eased-scroll';
 import { NearViewDirective } from '../shared/near-view/near-view.directive';
@@ -98,6 +99,17 @@ export class DirectoryTreeViewComponent {
 
     inject(PhotoRevealService).revealInSidebarRequested
       .subscribe(request => this.reveal(request));
+    // A reveal asked for while the sidebar was hidden is done once it is shown again.
+    afterRenderEffect(() => {
+      this.sidebarShown = !this.mapFullScreenService.on();
+      const request = this.pendingReveal();
+      if (request && this.sidebarShown) {
+        untracked(() => {
+          this.pendingReveal.set(null);
+          this.reveal(request);
+        });
+      }
+    });
     inject(DestroyRef).onDestroy(() => {
       this.easedScroll.stop();
       this.revealHighlights.clear();
@@ -256,6 +268,15 @@ export class DirectoryTreeViewComponent {
   /** The sidebar's scroll to a revealed row, below the rows that the tree will keep at its top where it stops. */
   private readonly easedScroll = new EasedScroll(scrollTop => this.stickyRows.coveredHeightAt(scrollTop));
   private readonly revealHighlights = new RevealHighlights();
+  /** The map in full screen, which hides the sidebar (HomeComponent). */
+  private readonly mapFullScreenService = inject(MapFullScreenService);
+  /** Whether the sidebar was shown at the last render: it is not while the map is in full screen. */
+  private sidebarShown = true;
+  /**
+   * The last reveal asked for while the sidebar was hidden, as by Select Previous and Select Next on the map in full
+   * screen, or asked for by Reveal in Sidebar as it leaves full screen, before the sidebar is shown again.
+   */
+  private readonly pendingReveal = signal<SidebarRevealRequest | null>(null);
 
   /**
    * Shows the row of a node, as a link to a message of a chat application shows the message: the folders above it are
@@ -268,8 +289,14 @@ export class DirectoryTreeViewComponent {
    * Details: The tree renders its nodes again whenever a folder is expanded, synchronously, as its data is an array
    * and its children come from childrenAccessor. A row stays in the page while its folder is expanded, so it is
    * scrolled to by its element, whatever its content is.
+   * While the map is in full screen, which hides the sidebar, the last reveal waits until the sidebar is shown again.
    */
-  private reveal({ photo, scroll }: SidebarRevealRequest): void {
+  private reveal(request: SidebarRevealRequest): void {
+    if (!this.sidebarShown || this.mapFullScreenService.on()) {
+      this.pendingReveal.set(request);
+      return;
+    }
+    const { photo, scroll } = request;
     const node = this.nodeOf(photo.path);
     if (!node) {
       dirTreeViewLogger.warn(logged`Cannot reveal "${photo.path}", which is not in the tree.`);
