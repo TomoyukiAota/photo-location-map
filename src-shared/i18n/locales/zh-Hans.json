@@ -174,7 +174,7 @@
   },
   "thumbnailGeneration": {
     "generating": "正在为 HEIF 文件生成缩略图...",
-    "fasterInSettings": "若要更快地显示，<settingsLink>请在设置中选择“速度优先”</settingsLink>。",
+    "fasterInSettings": "若要更快地显示，<settingsLink>请在设置中选择“应用性能优先”</settingsLink>。",
     "completed": "HEIF 文件的缩略图已生成完毕。",
     "finishedWithErrors": "HEIF 文件缩略图的生成已结束，但出现了错误。",
     "showDetails": "显示详细信息",
@@ -241,17 +241,16 @@
       "example": "示例"
     },
     "thumbnails": {
-      "title": "缩略图",
-      "description": "请选择缩略图优先考虑画质还是速度。",
-      "highQuality": "画质优先",
-      "highQualityDescription": "从整张照片按下方选择的尺寸生成。生成之前，会显示照片中保存的小缩略图。首次打开文件夹时生成需要一些时间；在图形硬件无法解码 HEVC 的计算机上，HEIF 文件的生成需要更长时间。",
+      "title": "缩略图画质与应用性能",
+      "highQuality": "缩略图画质优先",
+      "highQualityDescription": "从照片文件生成缩略图。生成之前，如果照片文件本身带有缩略图，则显示该缩略图。",
       "size": "缩略图尺寸",
       "sizeValue": "长边 {{size}} 像素",
       "sizeTick": "{{size}} px",
       "aboutSize": "关于缩略图尺寸",
       "sizeDescription": "尺寸越大，缩略图显示得越大，但生成所需时间越长，在缩略图缓存中占用的空间也越多。",
-      "fast": "速度优先",
-      "fastDescription": "立即显示照片中保存的小缩略图。画质较低：大多数 JPEG 照片为 160 × 120 像素，用 iPhone 拍摄的 1200 万像素照片为 320 × 240 像素。"
+      "fast": "应用性能优先",
+      "fastDescription": "如果 JPEG 或 PNG 等文件本身带有缩略图，则直接显示。仅在其他情况下才生成长边 400 像素的缩略图。"
     },
     "os": {
       "title": "文件资源管理器的右键菜单",

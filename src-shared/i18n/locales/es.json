@@ -174,7 +174,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Generando miniaturas de los archivos HEIF...",
-    "fasterInSettings": "Para mostrarlas antes, <settingsLink>elija las miniaturas rápidas en Ajustes</settingsLink>.",
+    "fasterInSettings": "Para mostrarlas antes, <settingsLink>elija «Priorizar el rendimiento de la aplicación» en Ajustes</settingsLink>.",
     "completed": "Se han generado las miniaturas de los archivos HEIF.",
     "finishedWithErrors": "La generación de miniaturas de los archivos HEIF ha terminado con errores.",
     "showDetails": "Mostrar detalles",
@@ -241,17 +241,16 @@
       "example": "Ejemplo"
     },
     "thumbnails": {
-      "title": "Miniaturas",
-      "description": "Elija si las miniaturas se generan priorizando la calidad o la velocidad.",
-      "highQuality": "Alta calidad",
-      "highQualityDescription": "Se generan a partir de la foto completa, con el tamaño elegido abajo. Hasta entonces, se muestra la miniatura pequeña guardada en la foto. Generarlas lleva tiempo la primera vez que se abre una carpeta, y más para los archivos HEIF en un equipo que no puede descodificar HEVC con su hardware gráfico.",
+      "title": "Calidad de las miniaturas y rendimiento de la aplicación",
+      "highQuality": "Priorizar la calidad de las miniaturas",
+      "highQualityDescription": "Las miniaturas se generan a partir de los archivos de fotos. Hasta entonces, se muestra la miniatura que ya contiene el archivo de la foto, si la hay.",
       "size": "Tamaño de las miniaturas",
       "sizeValue": "{{size}} píxeles en el lado más largo",
       "sizeTick": "{{size}} px",
       "aboutSize": "Acerca del tamaño de las miniaturas",
       "sizeDescription": "Cuanto mayor es el tamaño, más grandes se muestran las miniaturas, pero más tardan en generarse y más espacio ocupan en la caché de miniaturas.",
-      "fast": "Rápida",
-      "fastDescription": "La miniatura pequeña guardada en la foto, que se muestra al instante. Es menos nítida: 160 × 120 píxeles en la mayoría de las fotos JPEG, y 320 × 240 píxeles en una foto de 12 megapíxeles tomada con un iPhone."
+      "fast": "Priorizar el rendimiento de la aplicación",
+      "fastDescription": "Cuando un archivo, como un JPEG o un PNG, ya contiene una miniatura, se muestra tal cual. Solo se genera una miniatura de 400 píxeles en el lado más largo para un archivo que no tiene ninguna."
     },
     "os": {
       "title": "Menú contextual del Explorador de archivos",

@@ -174,7 +174,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Membuat gambar mini untuk file HEIF...",
-    "fasterInSettings": "Untuk menampilkannya lebih cepat, <settingsLink>pilih gambar mini cepat di Pengaturan</settingsLink>.",
+    "fasterInSettings": "Untuk menampilkannya lebih cepat, <settingsLink>pilih “Utamakan kinerja aplikasi” di Pengaturan</settingsLink>.",
     "completed": "Gambar mini untuk file HEIF selesai dibuat.",
     "finishedWithErrors": "Pembuatan gambar mini untuk file HEIF selesai dengan kesalahan.",
     "showDetails": "Tampilkan detail",
@@ -241,17 +241,16 @@
       "example": "Contoh"
     },
     "thumbnails": {
-      "title": "Gambar Mini",
-      "description": "Pilih apakah gambar mini dibuat untuk kualitas atau untuk kecepatan.",
-      "highQuality": "Kualitas tinggi",
-      "highQualityDescription": "Dibuat dari seluruh foto, dengan ukuran yang dipilih di bawah. Sampai saat itu, gambar mini kecil yang tersimpan di foto akan ditampilkan. Pembuatannya memakan waktu saat folder dibuka untuk pertama kalinya, dan lebih lama untuk file HEIF pada komputer yang perangkat keras grafisnya tidak dapat mendekode HEVC.",
+      "title": "Kualitas gambar mini dan kinerja aplikasi",
+      "highQuality": "Utamakan kualitas gambar mini",
+      "highQualityDescription": "Gambar mini dibuat dari file foto. Sampai saat itu, gambar mini yang sudah ada di file foto akan ditampilkan, jika ada.",
       "size": "Ukuran gambar mini",
       "sizeValue": "{{size}} piksel pada sisi terpanjang",
       "sizeTick": "{{size}} px",
       "aboutSize": "Tentang ukuran gambar mini",
       "sizeDescription": "Makin besar ukurannya, makin besar gambar mini ditampilkan, tetapi makin lama pembuatannya dan makin banyak ruang yang dipakai di cache gambar mini.",
-      "fast": "Cepat",
-      "fastDescription": "Gambar mini kecil yang tersimpan di foto, langsung ditampilkan. Gambar ini kurang tajam: 160 × 120 piksel pada sebagian besar foto JPEG, dan 320 × 240 piksel untuk foto 12 megapiksel yang diambil dengan iPhone."
+      "fast": "Utamakan kinerja aplikasi",
+      "fastDescription": "Jika file seperti JPEG atau PNG sudah memiliki gambar mini, gambar mini itu ditampilkan apa adanya. Gambar mini berukuran 400 piksel pada sisi terpanjang hanya dibuat untuk file yang tidak memilikinya."
     },
     "os": {
       "title": "Menu konteks File Explorer",

@@ -174,7 +174,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Miniaturen voor HEIF-bestanden worden aangemaakt...",
-    "fasterInSettings": "Als u ze eerder wilt zien, <settingsLink>kiest u snelle miniaturen in de instellingen</settingsLink>.",
+    "fasterInSettings": "Als u ze eerder wilt zien, <settingsLink>kiest u ‘Voorrang aan de prestaties van de app’ in de instellingen</settingsLink>.",
     "completed": "De miniaturen voor HEIF-bestanden zijn aangemaakt.",
     "finishedWithErrors": "Het aanmaken van miniaturen voor HEIF-bestanden is beëindigd met fouten.",
     "showDetails": "Toon details",
@@ -241,17 +241,16 @@
       "example": "Voorbeeld"
     },
     "thumbnails": {
-      "title": "Miniaturen",
-      "description": "Kies of de miniaturen worden aangemaakt met voorrang voor kwaliteit of voor snelheid.",
-      "highQuality": "Hoge kwaliteit",
-      "highQualityDescription": "Aangemaakt uit de hele foto, op het formaat dat hieronder is gekozen. Tot dan wordt de kleine miniatuur getoond die in de foto is opgeslagen. Het aanmaken kost tijd wanneer een map voor het eerst wordt geopend, en meer tijd voor HEIF-bestanden op een computer waarvan de grafische hardware HEVC niet kan decoderen.",
+      "title": "Kwaliteit van miniaturen en prestaties van de app",
+      "highQuality": "Voorrang aan de kwaliteit van miniaturen",
+      "highQualityDescription": "Miniaturen worden aangemaakt uit de fotobestanden. Tot dan wordt de miniatuur getoond die een fotobestand al bevat, als die er is.",
       "size": "Formaat van miniaturen",
       "sizeValue": "{{size}} pixels aan de langste zijde",
       "sizeTick": "{{size}} px",
       "aboutSize": "Over het formaat van miniaturen",
       "sizeDescription": "Hoe groter het formaat, hoe groter de miniaturen worden getoond, maar hoe langer het aanmaken duurt en hoe meer ruimte ze innemen in de cache voor miniaturen.",
-      "fast": "Snel",
-      "fastDescription": "De kleine miniatuur die in de foto is opgeslagen, meteen getoond. Deze is minder scherp: 160 × 120 pixels bij de meeste JPEG-foto’s en 320 × 240 pixels bij een foto van 12 megapixel die met een iPhone is gemaakt."
+      "fast": "Voorrang aan de prestaties van de app",
+      "fastDescription": "Als een bestand, zoals een JPEG of PNG, al een miniatuur bevat, wordt die ongewijzigd getoond. Alleen voor een bestand zonder miniatuur wordt er een aangemaakt, van 400 pixels aan de langste zijde."
     },
     "os": {
       "title": "Contextmenu van Verkenner",

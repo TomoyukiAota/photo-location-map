@@ -8,10 +8,6 @@
   padding: $setting-container-padding;
 }
 
-.thumbnail-settings-description {
-  margin: 0 0 12px;
-}
-
 // TL;DR: The choices' names, what they do and the size under High quality are in the color and the letter spacing of
 // the tab's other texts.
 // Details: Angular Material's theme gives the label of a radio button 87% black, on each radio button, and letters
@@ -44,7 +40,7 @@
 
 // The size, under the text of High quality, in the type of the choices' texts, which Angular Material's radio buttons
 // have: as far from the start as that text, past the radio button's circle (40 pixels) and the label's padding (4).
-// The label, the slider, the size and its button go on to a second row where they do not fit side by side.
+// The label, the slider and its button go on to a second row where they do not fit side by side.
 .thumbnail-size {
   display: flex;
   flex-wrap: wrap;
@@ -58,7 +54,7 @@
 }
 
 // The slider, with some of the sizes under its marks. They are below its thumb, in the margin under the slider rather
-// than in a row of their own, so that the label, the button and the size stay level with the slider's track.
+// than in a row of their own, so that the label and the button stay level with the slider's track.
 .thumbnail-size-scale {
   position: relative;
   margin-bottom: 6px;
@@ -93,22 +89,17 @@
   white-space: nowrap;
 }
 
-// The button follows the size closely: its icon has room of its own around it.
+// The button stands clear of the last size under the slider, which reaches past the slider's end, by up to 24 pixels
+// in Arabic: the circle that the button shows under a pointer starts 4 pixels into its box.
 .thumbnail-size-info-button {
-  margin-inline-start: -8px;
-}
-
-// The digits keep their widths, so that the text does not move while the slider is dragged.
-.thumbnail-size-value {
-  font-variant-numeric: tabular-nums;
+  margin-inline-start: 8px;
 }
 
 // While Fast is chosen, the texts are as faint as the slider, which Angular Material shows disabled. The button stays
 // as it is: what the size costs can be read before High quality is chosen.
 .thumbnail-size-disabled {
   .thumbnail-size-label,
-  .thumbnail-size-ticks,
-  .thumbnail-size-value {
+  .thumbnail-size-ticks {
     opacity: 0.38;
   }
 }

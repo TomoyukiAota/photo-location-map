@@ -174,7 +174,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Gerando miniaturas dos arquivos HEIF...",
-    "fasterInSettings": "Para exibi-las mais cedo, <settingsLink>escolha as miniaturas rápidas nas configurações</settingsLink>.",
+    "fasterInSettings": "Para exibi-las mais cedo, <settingsLink>escolha “Priorizar o desempenho do aplicativo” nas configurações</settingsLink>.",
     "completed": "A geração das miniaturas dos arquivos HEIF foi concluída.",
     "finishedWithErrors": "A geração das miniaturas dos arquivos HEIF terminou com erros.",
     "showDetails": "Mostrar detalhes",
@@ -241,17 +241,16 @@
       "example": "Exemplo"
     },
     "thumbnails": {
-      "title": "Miniaturas",
-      "description": "Escolha se as miniaturas são geradas priorizando a qualidade ou a velocidade.",
-      "highQuality": "Alta qualidade",
-      "highQualityDescription": "Geradas a partir da foto inteira, no tamanho escolhido abaixo. Até lá, é exibida a miniatura pequena salva na foto. Gerá-las leva tempo na primeira vez que uma pasta é aberta, e mais ainda para os arquivos HEIF em um computador cujo hardware gráfico não consegue decodificar HEVC.",
+      "title": "Qualidade das miniaturas e desempenho do aplicativo",
+      "highQuality": "Priorizar a qualidade das miniaturas",
+      "highQualityDescription": "As miniaturas são geradas a partir dos arquivos de foto. Até lá, é exibida a miniatura que o arquivo de foto já contém, se houver.",
       "size": "Tamanho das miniaturas",
       "sizeValue": "{{size}} pixels no lado maior",
       "sizeTick": "{{size}} px",
       "aboutSize": "Sobre o tamanho das miniaturas",
       "sizeDescription": "Quanto maior o tamanho, maiores as miniaturas são exibidas, mas mais tempo leva para gerá-las e mais espaço elas ocupam no cache de miniaturas.",
-      "fast": "Rápida",
-      "fastDescription": "A miniatura pequena salva na foto, exibida na hora. Ela é menos nítida: 160 × 120 pixels na maioria das fotos JPEG e 320 × 240 pixels em uma foto de 12 megapixels tirada com um iPhone."
+      "fast": "Priorizar o desempenho do aplicativo",
+      "fastDescription": "Quando um arquivo, como um JPEG ou PNG, já contém uma miniatura, ela é exibida como está. Uma miniatura de 400 pixels no lado maior só é gerada para um arquivo que não tem nenhuma."
     },
     "os": {
       "title": "Menu de contexto do Explorador de Arquivos",

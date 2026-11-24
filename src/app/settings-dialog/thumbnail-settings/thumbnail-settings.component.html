@@ -1,6 +1,5 @@
 <div class="setting-title">{{ 'settings.thumbnails.title' | t }}</div>
 <div class="setting-container">
-  <p class="thumbnail-settings-description">{{ 'settings.thumbnails.description' | t }}</p>
   <!--
     ngModelChange rather than change: the slider's input is in the group, and a change event of its own, which bubbles,
     would reach a (change) binding of the group's element as the group's.
@@ -18,6 +17,7 @@
         <div class="thumbnail-size" [class.thumbnail-size-disabled]="selectedQuality !== 'high'">
           <span class="thumbnail-size-label" id="thumbnail-size-label">{{ 'settings.thumbnails.size' | t }}</span>
           <div class="thumbnail-size-scale">
+            <!-- displayWith: the size that a screen reader says on the thumb, which the sizes under the marks show. -->
             <mat-slider class="thumbnail-size-slider"
                         showTickMarks
                         [min]="minSize"
@@ -38,8 +38,7 @@
               }
             </div>
           </div>
-          <span class="thumbnail-size-value">{{ sizeText(selectedSize) }}</span>
-          <!-- What the size costs, in a note that the button after the size opens and closes. -->
+          <!-- What the size costs, in a note that the button after the slider opens and closes. -->
           <button mat-icon-button
                   type="button"
                   class="thumbnail-size-info-button"

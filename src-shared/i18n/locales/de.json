@@ -174,7 +174,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Miniaturen für HEIF-Dateien werden erstellt...",
-    "fasterInSettings": "Um sie früher anzuzeigen, <settingsLink>wählen Sie in den Einstellungen die schnellen Miniaturen</settingsLink>.",
+    "fasterInSettings": "Um sie früher anzuzeigen, <settingsLink>wählen Sie in den Einstellungen „Leistung der App bevorzugen“</settingsLink>.",
     "completed": "Die Miniaturen für HEIF-Dateien wurden erstellt.",
     "finishedWithErrors": "Das Erstellen der Miniaturen für HEIF-Dateien wurde mit Fehlern beendet.",
     "showDetails": "Details anzeigen",
@@ -241,17 +241,16 @@
       "example": "Beispiel"
     },
     "thumbnails": {
-      "title": "Miniaturen",
-      "description": "Wählen Sie, ob die Miniaturen auf Qualität oder auf Geschwindigkeit ausgelegt werden.",
-      "highQuality": "Hohe Qualität",
-      "highQualityDescription": "Aus dem ganzen Foto erstellt, in der unten gewählten Größe. Bis dahin wird die kleine Miniatur angezeigt, die im Foto gespeichert ist. Das Erstellen braucht Zeit, wenn ein Ordner zum ersten Mal geöffnet wird, und länger für HEIF-Dateien auf einem Computer, dessen Grafikhardware HEVC nicht decodieren kann.",
+      "title": "Qualität der Miniaturen und Leistung der App",
+      "highQuality": "Qualität der Miniaturen bevorzugen",
+      "highQualityDescription": "Die Miniaturen werden aus den Fotodateien erstellt. Bis dahin wird die Miniatur angezeigt, die eine Fotodatei bereits enthält, sofern es eine gibt.",
       "size": "Größe der Miniaturen",
       "sizeValue": "{{size}} Pixel an der längeren Seite",
       "sizeTick": "{{size}} px",
       "aboutSize": "Zur Größe der Miniaturen",
       "sizeDescription": "Je größer, desto größer werden die Miniaturen angezeigt, aber desto länger dauert ihr Erstellen und desto mehr Platz belegen sie im Cache für Miniaturen.",
-      "fast": "Schnell",
-      "fastDescription": "Die kleine Miniatur, die im Foto gespeichert ist, sofort angezeigt. Sie ist weniger scharf: 160 × 120 Pixel bei den meisten JPEG-Fotos und 320 × 240 Pixel bei einem 12-Megapixel-Foto eines iPhones."
+      "fast": "Leistung der App bevorzugen",
+      "fastDescription": "Enthält eine Datei, etwa ein JPEG oder PNG, bereits eine Miniatur, wird diese unverändert angezeigt. Eine Miniatur mit 400 Pixeln an der längeren Seite wird nur für eine Datei erstellt, die keine enthält."
     },
     "os": {
       "title": "Kontextmenü des Explorers",

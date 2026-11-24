@@ -48,8 +48,8 @@ const sizeNotePositions: ConnectedPosition[] = [
  * (src-shared/user-settings/thumbnail-quality.ts), and under High quality their size, with a slider
  * (src-shared/user-settings/thumbnail-size.ts), which is disabled while Fast is chosen, as the thumbnails that the
  * photos hold have sizes of their own. They apply once saved, without a restart (SettingsDialogComponent). What a
- * larger size costs is in a note that a button after the size opens. Under them, the cache of the thumbnails that are
- * made (CacheSettingsComponent).
+ * larger size costs is in a note that a button after the slider opens. Under them, the cache of the thumbnails that
+ * are made (CacheSettingsComponent).
  */
 @Component({
   selector: 'app-thumbnail-settings',
@@ -76,7 +76,7 @@ export class ThumbnailSettingsComponent {
     .filter(size => (size - minThumbnailSize) % sizeTickStep === 0)
     .map(size => ({ size, position: (size - minThumbnailSize) / (maxThumbnailSize - minThumbnailSize) * 100 }));
 
-  /** The size as it is read: shown beside the slider, and said by a screen reader on its thumb. */
+  /** The size as it is read, which a screen reader says on the slider's thumb: the sizes under the marks show it. */
   protected readonly sizeText = (size: number): string => t('settings.thumbnails.sizeValue', { size });
 
   /** Whether the note on what a larger size costs is open. */

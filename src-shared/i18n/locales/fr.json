@@ -174,7 +174,7 @@
   },
   "thumbnailGeneration": {
     "generating": "Création des vignettes des fichiers HEIF...",
-    "fasterInSettings": "Pour les afficher plus tôt, <settingsLink>choisissez les vignettes rapides dans les paramètres</settingsLink>.",
+    "fasterInSettings": "Pour les afficher plus tôt, <settingsLink>choisissez «\u00a0Privilégier les performances de l’application\u00a0» dans les paramètres</settingsLink>.",
     "completed": "La création des vignettes des fichiers HEIF est terminée.",
     "finishedWithErrors": "La création des vignettes des fichiers HEIF s’est terminée avec des erreurs.",
     "showDetails": "Afficher les détails",
@@ -241,17 +241,16 @@
       "example": "Exemple"
     },
     "thumbnails": {
-      "title": "Vignettes",
-      "description": "Choisissez si les vignettes sont créées pour la qualité ou pour la rapidité.",
-      "highQuality": "Haute qualité",
-      "highQualityDescription": "Créées à partir de la photo entière, à la taille choisie ci-dessous. En attendant, la petite vignette enregistrée dans la photo est affichée. Leur création prend du temps la première fois qu’un dossier est ouvert, et plus encore pour les fichiers HEIF sur un ordinateur dont le matériel graphique ne peut pas décoder le HEVC.",
+      "title": "Qualité des vignettes et performances de l’application",
+      "highQuality": "Privilégier la qualité des vignettes",
+      "highQualityDescription": "Les vignettes sont créées à partir des fichiers photo. En attendant, la vignette que contient déjà un fichier photo est affichée, s’il en a une.",
       "size": "Taille des vignettes",
       "sizeValue": "{{size}} pixels sur le côté le plus long",
       "sizeTick": "{{size}} px",
       "aboutSize": "À propos de la taille des vignettes",
       "sizeDescription": "Plus la taille est grande, plus les vignettes sont affichées en grand, mais plus leur création prend de temps et plus elles occupent de place dans le cache des vignettes.",
-      "fast": "Rapide",
-      "fastDescription": "La petite vignette enregistrée dans la photo, affichée tout de suite. Elle est moins nette\u00a0: 160 × 120 pixels dans la plupart des photos JPEG, et 320 × 240 pixels dans une photo de 12 mégapixels prise avec un iPhone."
+      "fast": "Privilégier les performances de l’application",
+      "fastDescription": "Lorsqu’un fichier, comme un JPEG ou un PNG, contient déjà une vignette, elle est affichée telle quelle. Une vignette de 400 pixels sur le côté le plus long n’est créée que pour un fichier qui n’en contient pas."
     },
     "os": {
       "title": "Menu contextuel de l’Explorateur de fichiers",
